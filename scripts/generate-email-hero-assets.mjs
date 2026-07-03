@@ -73,7 +73,7 @@ const OUT_DIR = join(ROOT, 'public/assets/email/heroes');
 const MANIFEST_PATH = join(OUT_DIR, 'manifest.json');
 
 const FAL_MODEL = 'fal-ai/nano-banana-pro/edit';
-const EMAIL_HERO_ASPECT_RATIO = '2:3';
+const EMAIL_HERO_ASPECT_RATIO = '9:16';
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));

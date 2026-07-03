@@ -1,12 +1,12 @@
-/** Shared email hero graphic dimensions (520px wide, tall portrait for text overlay). */
+/** Shared email hero graphic dimensions (portrait 9:16 for text overlay + full scene). */
 
 export const EMAIL_HERO_WIDTH_PX = 520;
 
-/** Fal `aspect_ratio` — tall portrait so headline + CTA can overlay the upper third. */
-export const EMAIL_HERO_ASPECT_RATIO = '2:3';
+/** Fal `aspect_ratio` — tall 9:16 portrait matching reference design boards. */
+export const EMAIL_HERO_ASPECT_RATIO = '9:16';
 
-/** Minimum hero block height at 520px width (2:3). Used for overlay layout + generation. */
-export const EMAIL_HERO_HEIGHT_PX = Math.round((EMAIL_HERO_WIDTH_PX * 3) / 2);
+/** Hero block height at {@link EMAIL_HERO_WIDTH_PX} (9:16). */
+export const EMAIL_HERO_HEIGHT_PX = Math.round((EMAIL_HERO_WIDTH_PX * 16) / 9);
 
 /** Spacer below headline overlay — keeps product scene visible in the generated art. */
-export const EMAIL_HERO_PRODUCT_ZONE_PX = 300;
+export const EMAIL_HERO_PRODUCT_ZONE_PX = Math.round(EMAIL_HERO_HEIGHT_PX * 0.62);

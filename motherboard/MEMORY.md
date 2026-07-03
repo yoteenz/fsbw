@@ -34047,3 +34047,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`emailHeroPromptMeta.json`**, **`emailHeroPrompts.data.json`**, **`emailHeroPrompts.ts`**, **`scripts/generate-email-hero-assets.mjs`**, **`docs/EMAIL_SYSTEM.md`**.
 
 **Regen:** **`FORCE=1 npm run email:generate-heroes`** when Fal balance available.
+
+---
+
+## 2026-07-03 — Email hero 9:16 ratio (fix zoomed/cropped graphics)
+
+**Context:** User reported email template hero graphics looked zoomed in and not luxurious — should use **9:16** portrait like reference design boards.
+
+**Root cause:** Fal heroes were generated at **16:9** then **2:3**; layout used **`background-size:cover`** which crops mismatched aspect ratios into a tight zoom.
+
+**Fixes:**
+- **`heroDimensions.ts`** — **`EMAIL_HERO_ASPECT_RATIO = '9:16'`**, slot **520×924px**, product zone scaled to 62% of height.
+- **`layout.ts`** — hero background **`background-size:contain;background-position:center center`** (full scene visible until regen); keeps overlay composite (script/headline/CTA on graphic).
+- **`emailHeroPromptMeta.json`** — composition updated to 9:16 wide establishing shot, not tight crop.
+- **`generateHeroAsset.ts`** + **`scripts/generate-email-hero-assets.mjs`** — Fal **`aspect_ratio: '9:16'`**.
+
+**Regen:** Existing WebPs remain wrong ratio until **`FORCE=1 npm run email:generate-heroes:batch`** + **`npm run email:upload-assets`** (Fal balance required).
