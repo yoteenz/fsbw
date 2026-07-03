@@ -8,6 +8,21 @@ import {
 } from '../../../constants/emailTemplateCatalog';
 import { previewEmailTemplate } from '../../../utils/transactionalEmail';
 
+/** Ensure preview iframe can load brand fonts from the current site origin. */
+function enhanceEmailPreviewHtml(html: string): string {
+  if (!html || typeof window === 'undefined') return html;
+  const origin = window.location.origin.replace(/\/$/, '');
+  const injection = `<base href="${origin}/"/>
+  <style type="text/css">
+@font-face { font-family: 'Futura PT Book'; src: url('/assets/Futura%20PT%20Book.ttf') format('truetype'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Futura PT Medium'; src: url('/assets/Futura%20PT%20Medium.ttf') format('truetype'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Futura PT Demi'; src: url('/assets/fonnts.com-Futura_PT_Demi.otf') format('opentype'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Bohemy'; src: url('/assets/Bohemy.otf') format('opentype'); font-weight: 400; font-style: normal; font-display: swap; }
+</style>`;
+  if (html.includes('<base ')) return html;
+  return html.replace(/<head>/i, `<head>${injection}`);
+}
+
 const CATEGORY_TABS: Array<{ id: EmailTemplateCategoryId; label: string }> = [
   { id: 'account', label: 'ACCOUNT' },
   { id: 'orders', label: 'ORDERS' },
@@ -55,7 +70,7 @@ export default function EmailTemplatesDebugPage() {
         templateType,
         variables: sampleVariables,
       });
-      setPreviewHtml(html);
+      setPreviewHtml(enhanceEmailPreviewHtml(html));
       setPreviewSubject(subject);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Preview failed');
@@ -181,7 +196,6 @@ export default function EmailTemplatesDebugPage() {
               srcDoc={previewHtml}
               className="w-full border-0"
               style={{ minHeight: '720px', background: '#ececec' }}
-              sandbox="allow-same-origin"
             />
           ) : (
             <div className="p-8 text-center text-[10px] uppercase font-futura text-gray-500">

@@ -208,7 +208,7 @@ ${input.dataRows
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#ececec;">
     <tr>
       <td align="center" style="padding:24px 12px;">
-        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-collapse:collapse;background-color:${EMAIL_BRAND.white};background-image:url('${EMAIL_BRAND.marbleBackground}');background-repeat:repeat;background-position:center top;border:1px solid #ddd;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+        <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;border-collapse:collapse;background-color:${EMAIL_BRAND.white};border:1px solid #ddd;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
           <tr>
             <td style="padding:36px 32px 16px;text-align:center;">
               <div style="font-family:${EMAIL_FONT_FUTURA_MEDIUM};font-size:14px;letter-spacing:0.38em;color:${EMAIL_BRAND.black};text-transform:uppercase;font-weight:500;">

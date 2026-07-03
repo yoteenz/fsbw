@@ -55,7 +55,7 @@ export const EMAIL_BRAND = {
   diamondAccent: emailAssetUrl('email/icons/loyalty-points.png', { preferSite: true }),
   fsMonogram: emailAssetUrl('email/icons/hub-icon.png', { preferSite: true }),
   perksPoints: emailAssetUrl('email/icons/loyalty-points.png', { preferSite: true }),
-  perksUnlock: emailAssetUrl('email/icons/hub-icon.png', { preferSite: true }),
+  perksUnlock: emailAssetUrl('email/icons/rewards-icon.png', { preferSite: true }),
   perksMember: emailAssetUrl('email/icons/rose-accent.png', { preferSite: true }),
 } as const;
 

@@ -33739,3 +33739,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`emailTypography.ts`**, **`emailSocialLinks.ts`**, **`brandAssets.ts`**, **`layout.ts`**, **`build-email-icon-pngs.mjs`**, **`upload-email-assets.mjs`**, **`package.json`**, **`public/assets/email/icons/*`**, **`docs/EMAIL_SYSTEM.md`**, **`motherboard/MEMORY.md`**.
 
 **Conventions:** Email decorative icons must be **PNG** on **`SITE_URL`**; run **`npm run email:build-icons`** after changing source SVGs. No SVG in transactional email HTML.
+
+---
+
+## 2026-07-03 — Email brand fonts + white card background (fix)
+
+**Context:** Continuation of transactional email work (hero batch, branded senders, concierge support footer, broken icons). User reported preview still showed **generic serif fonts** (not Covered By Your Grace / Futura PT / Bohemy) and the **main 600px card had marble texture** instead of solid white.
+
+**Root cause (fonts):** **`emailTypography.ts`** font-family constants used **double quotes** inside HTML **`style="…"`** attributes — e.g. `style="font-family:"Futura PT Medium", …"` — which **breaks attribute parsing**, so browsers ignored font-family and fell back to generic serif. Secondary: **`@import`** inside `<style>` is stripped/blocked in many email clients and preview iframes.
+
+**Root cause (marble card):** **`layout.ts`** inner card table still had **`background-image:url(marble-half.png)`** on top of white.
+
+**Root cause (middle perk icon):** **`hub-icon.svg`** is a solid black rectangle placeholder — rasterized PNG showed as black block for “Unlock Exclusive Perks”.
+
+**Fixes:**
+- **`emailTypography.ts`** — font-family constants now use **single quotes** (safe in HTML style attrs); replaced **`@import`** with **`<link>`** preconnect + Google Grace stylesheet + **`@font-face`** with **`font-display:swap`**.
+- **`layout.ts`** — removed marble **`background-image`** from main card; **`background-color:#ffffff`** only.
+- **`brandAssets.ts`** + **`build-email-icon-pngs.mjs`** — perks unlock uses **`rewards-icon.png`** (from **`rewards-icon.svg`**) instead of hub-icon; re-ran **`npm run email:build-icons`**.
+- **`email-templates/page.tsx`** — preview iframe injects **`<base href>`** + same-origin **`@font-face`** overrides; removed restrictive **`sandbox`** so fonts load in **`srcDoc`** preview.
+
+**Changes:** **`emailTypography.ts`**, **`layout.ts`**, **`brandAssets.ts`**, **`build-email-icon-pngs.mjs`**, **`email-templates/page.tsx`**, **`public/assets/email/icons/rewards-icon.png`**, **`motherboard/MEMORY.md`**.
+
+**Conventions:** Email inline **`font-family`** values must use **single-quoted** family names inside double-quoted HTML **`style`** attributes. Main email card = **solid white**; marble stays on outer body/hero fallback only if needed elsewhere — not on the 600px card.

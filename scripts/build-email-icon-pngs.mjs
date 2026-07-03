@@ -16,6 +16,7 @@ const ICONS = [
   { src: 'public/assets/rose-alert.svg', out: 'rose-accent.png', size: 48 },
   { src: 'public/assets/points-icon.svg', out: 'points-icon.png', size: 48 },
   { src: 'public/assets/hub-icon.svg', out: 'hub-icon.png', size: 48 },
+  { src: 'public/assets/rewards-icon.svg', out: 'rewards-icon.png', size: 48 },
   { src: 'public/assets/loyalty-points-rewards.png', out: 'loyalty-points.png', size: 48, skipRaster: true },
   { src: 'public/assets/instagram-icon.svg', out: 'instagram-icon.png', size: 40 },
   { src: 'public/assets/twitter-icon.svg', out: 'twitter-icon.png', size: 40 },
