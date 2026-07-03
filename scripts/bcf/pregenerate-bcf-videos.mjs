@@ -21,7 +21,9 @@
  *   LIMIT=5                     — process at most N missing items
  *   FORCE=1                     — regenerate even when mp4 exists
  *   SLEEP_MS=2000               — delay between jobs
- *   SKIP_WEBM=1                 — skip ffmpeg WebM conversion
+ *   SKIP_PRODUCT_KEYS=bundles-curly-copper
+ *   ONLY_PRODUCT_KEYS=bundles-wavy-cherry,bundles-straight-plum
+ *   ONLY_COLOR_IDS=GINGER,CHERRY,RASPBERRY,TEAL,SLIME,CITRINE
  */
 import { createClient } from '@supabase/supabase-js';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -53,6 +55,18 @@ const skipProductKeys = new Set(
   (process.env.SKIP_PRODUCT_KEYS || '')
     .split(',')
     .map((s) => s.trim())
+    .filter(Boolean),
+);
+const onlyProductKeys = new Set(
+  (process.env.ONLY_PRODUCT_KEYS || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
+const onlyColorIds = new Set(
+  (process.env.ONLY_COLOR_IDS || '')
+    .split(',')
+    .map((s) => s.trim().toUpperCase())
     .filter(Boolean),
 );
 
@@ -142,6 +156,12 @@ async function main() {
   }
   if (skipProductKeys.size > 0) {
     items = items.filter((row) => !skipProductKeys.has(row.productKey));
+  }
+  if (onlyProductKeys.size > 0) {
+    items = items.filter((row) => onlyProductKeys.has(row.productKey));
+  }
+  if (onlyColorIds.size > 0) {
+    items = items.filter((row) => onlyColorIds.has(String(row.colorId || '').toUpperCase()));
   }
   if (limit > 0) items = items.slice(0, limit);
 

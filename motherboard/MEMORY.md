@@ -33962,3 +33962,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Resume:** Added **`SKIP_PRODUCT_KEYS`** env to **`pregenerate-bcf-videos.mjs`**; restarted tmux batch for **21** remaining rows with **`SKIP_PRODUCT_KEYS=bundles-curly-copper`**. Retry copper later with **`FORCE=1`** or alternate source still.
 
 **Follow-up:** When resume batch completes → **`npm run bcf:videos:manifest && npm run bcf:videos:sync`** + commit final **~74/75** (copper pending).
+
+---
+
+## 2026-07-03 — BCF video darkening: targeted regen for 6 colors
+
+**Context:** User reported hair/lighting darkens when VIDEO starts on BCF PDP. Not all videos affected. User confirmed exact colors: **GINGER, CHERRY, RASPBERRY, TEAL, SLIME, CITRINE** (all bundle textures).
+
+**Findings:**
+- Automated first-frame drift scan under-flagged **CHERRY, TEAL, SLIME** (looked OK at frame 0 but darken mid-playback or on crossfade).
+- Multi-frame scan (0–2.5s) catches more drift; user QA list is source of truth for regen scope.
+- UI: PNG underlay stayed visible during 0.2s video fade-in → perceived darkening at play start. **Fix:** hide underlay when **`bcfHeroVideoPaintReady`** (`opacity: 0`).
+
+**Prompt v2:** **`bcfVideoPrompt.mjs`** — stronger “do not darken/mute hair”, match reference exposure every frame; expanded negative prompt.
+
+**Selective regen (not all 44):**
+- **`ONLY_COLOR_IDS=GINGER,CHERRY,RASPBERRY,TEAL,SLIME,CITRINE`** + **`FORCE=1`** → **18** bundle rows (3 textures × 6 colors).
+- Stopped broader 26-video drift regen (included ASH, AUBURN, etc. user did not report).
+- **`npm run bcf:videos:detect-drift`** — multi-frame hair luma compare; report in **`manifests/bcf-video-color-drift-v1.json`**.
+- After regen: **`npm run bcf:videos:manifest && npm run bcf:videos:sync`** + commit.

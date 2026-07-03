@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "reportedAt": "2026-07-03",
+  "source": "User visual QA on BCF PDP VIDEO mode",
+  "colorIds": ["GINGER", "CHERRY", "RASPBERRY", "TEAL", "SLIME", "CITRINE"],
+  "note": "Automated first-frame drift scan under-flagged CHERRY, TEAL, SLIME; multi-frame scan and user QA confirm these six colors. Regenerate with prompt v2 only for these colors (18 bundle rows: 3 textures × 6 colors)."
+}

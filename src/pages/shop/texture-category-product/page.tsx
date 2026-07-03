@@ -1268,7 +1268,11 @@ export default function ShopTextureCategoryProductPage() {
                                   alt=""
                                   aria-hidden
                                   draggable={false}
-                                  style={bcfPdpHeroVideoUnderlayStyle(texture, 'bundles')}
+                                  style={{
+                                    ...bcfPdpHeroVideoUnderlayStyle(texture, 'bundles'),
+                                    opacity: bcfHeroVideoPaintReady ? 0 : 1,
+                                    transition: 'opacity 0.15s ease-out',
+                                  }}
                                 />
                                 <video
                                   key={`${texture}-video-${bcfHeroVideoPrimarySrc ?? 'default'}`}
@@ -1344,7 +1348,11 @@ export default function ShopTextureCategoryProductPage() {
                                   alt=""
                                   aria-hidden
                                   draggable={false}
-                                  style={bcfPdpHeroVideoUnderlayStyle(texture, category)}
+                                  style={{
+                                    ...bcfPdpHeroVideoUnderlayStyle(texture, category),
+                                    opacity: bcfHeroVideoPaintReady ? 0 : 1,
+                                    transition: 'opacity 0.15s ease-out',
+                                  }}
                                 />
                                 <video
                                   key={`${category}-${texture}-video-${bcfHeroVideoPrimarySrc ?? 'default'}`}

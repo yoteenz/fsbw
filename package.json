@@ -50,6 +50,7 @@
     "bcf:videos:generate": "node scripts/bcf/pregenerate-bcf-videos.mjs",
     "bcf:videos:sync": "node scripts/bcf/sync-bcf-video-manifest.mjs",
     "bcf:videos:batch": "node scripts/bcf/batch-bcf-videos.mjs",
+    "bcf:videos:detect-drift": "node scripts/bcf/detect-bcf-video-color-drift.mjs",
     "bcf:cf-photos:manifest": "node scripts/bcf/generate-bcf-cf-photo-manifest.mjs",
     "bcf:cf-photos:generate": "node scripts/bcf/pregenerate-bcf-cf-photos.mjs",
     "bcf:cf-photos:sync": "node scripts/bcf/sync-bcf-cf-photo-manifest.mjs",
