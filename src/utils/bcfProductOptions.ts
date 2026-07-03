@@ -82,6 +82,11 @@ export function bcfDefaultColorIdForOrigin(origin: BcfOriginId): string {
   return origin === 'RUSSIAN' ? 'PLATINUM' : 'OFF BLACK';
 }
 
+/** Non-default BCF colors require premium when adding to bag (browsing is allowed for all). */
+export function bcfColorRequiresPremiumMembership(origin: BcfOriginId, colorId: string): boolean {
+  return colorId !== bcfDefaultColorIdForOrigin(origin);
+}
+
 const BCF_FRONTAL_LACE_IDS = new Set(['13X4', '13X6']);
 /** Closures: closure lace grid only — no frontals sizes or 360 / FULL. */
 const BCF_CLOSURE_EXCLUDED_LACE_IDS = new Set(['13X4', '13X6', '360', 'FULL']);

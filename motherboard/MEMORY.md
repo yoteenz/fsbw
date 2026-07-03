@@ -34082,3 +34082,16 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Verify:** Preview any template at **`/tools/email-templates`** after deploy.
 
 **Still open:** Regenerate 9:16 hero WebPs when Fal balance available (separate from promo).
+
+---
+
+## 2026-07-03 — BCF color browse vs add-to-bag premium gate
+
+**Context:** User asked that non-signed-in / non-premium shoppers can **switch through all BCF hair color selections** without the upgrade modal; the gate should appear **only when they tap Add to Bag** with a premium-only color.
+
+**Decisions / outcomes:**
+- **`bcfColorRequiresPremiumMembership(origin, colorId)`** in **`bcfProductOptions.ts`** — true when color ≠ default for origin (OFF BLACK / PLATINUM).
+- **Mobile BCF PDP** (`texture-category-product/page.tsx`): **`handleBcfColorSelect`** no longer blocks; **`handleAddToBag`** shows **`showBcfColorUpgradeModal`** when non-premium adds non-default color. Bundle-deal and lace-treatment gates unchanged.
+- **Desktop Extensions Boutique** (`useBcfShopSelection.ts`): **`selectColor`** allows all colors; **`addToBag`** shows premium gate under same rule.
+
+**Changes:** **`bcfProductOptions.ts`**, **`texture-category-product/page.tsx`**, **`useBcfShopSelection.ts`**.

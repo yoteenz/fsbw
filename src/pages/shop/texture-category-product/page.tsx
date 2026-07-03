@@ -37,6 +37,7 @@ import {
   BCF_LACE_TREATMENT_OPTIONS,
   bcfLaceTreatmentPrice,
   bcfColorOptionsForOrigin,
+  bcfColorRequiresPremiumMembership,
   bcfDefaultColorIdForOrigin,
   bcfDefaultOriginForRouteTexture,
   bcfInitialColorFromSearch,
@@ -669,11 +670,6 @@ export default function ShopTextureCategoryProductPage() {
 
   const handleBcfColorSelect = React.useCallback(
     (colorId: string) => {
-      const defaultId = bcfDefaultColorIdForOrigin(bcfOrigin);
-      if (colorId !== defaultId && !isPremiumMemberForGatedFeatures()) {
-        setShowBcfColorUpgradeModal(true);
-        return;
-      }
       if (!category) return;
       skipBcfOriginDefaultOnNextPathRef.current = true;
       navigate(shopBcfColorSelectionHref(category, texture, colorId, bcfOrigin), { replace: true });
@@ -757,6 +753,13 @@ export default function ShopTextureCategoryProductPage() {
 
   const handleAddToBag = () => {
     if (!category || bcfSoldOut) return;
+    if (
+      bcfColorRequiresPremiumMembership(bcfOrigin, bcfColor) &&
+      !isPremiumMemberForGatedFeatures()
+    ) {
+      setShowBcfColorUpgradeModal(true);
+      return;
+    }
     setAddToBagState('adding');
     setTimeout(() => {
       try {

@@ -6,6 +6,7 @@ import {
   BCF_LACE_TREATMENT_OPTIONS,
   bcfBasePriceUsd,
   bcfColorOptionsForOrigin,
+  bcfColorRequiresPremiumMembership,
   bcfDefaultColorIdForOrigin,
   bcfDefaultOriginForRouteTexture,
   bcfLaceOptionsForCategory,
@@ -108,17 +109,12 @@ export function useBcfShopSelection(initialCategory: BcfPdpCategory = 'bundles')
 
   const selectColor = useCallback(
     (colorId: string) => {
-      const defaultId = bcfDefaultColorIdForOrigin(bcfOrigin);
-      if (colorId !== defaultId && !isPremiumMember) {
-        setShowPremiumGate(true);
-        return;
-      }
       setBcfColor(colorId);
       if (BCF_RUSSIAN_ONLY_COLOR_IDS.has(colorId)) {
         setBcfOrigin('RUSSIAN');
       }
     },
-    [bcfOrigin, isPremiumMember],
+    [],
   );
 
   const toggleLaceTreatment = useCallback(
@@ -144,6 +140,13 @@ export function useBcfShopSelection(initialCategory: BcfPdpCategory = 'bundles')
 
   const addToBag = useCallback(() => {
     if (soldOut) return;
+    if (
+      bcfColorRequiresPremiumMembership(bcfOrigin, bcfColor) &&
+      !isPremiumMemberForGatedFeatures()
+    ) {
+      setShowPremiumGate(true);
+      return;
+    }
     setAddToBagState('adding');
     window.setTimeout(() => {
       try {
