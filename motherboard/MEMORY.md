@@ -34431,3 +34431,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Studio editable demo state keys `adminStudioShowsEditable_v1` / `adminStudioContentPacksEditable_v1`; show/pack seeds in `adminStudioShowsDemo.ts` / `adminStudioContentPacksDemo.ts`; Milestone 1 files (`adminStudioDemo.ts`, hub page, placeholder shell, dashboard card) remain unchanged.
 
+---
+
+## 2026-07-03 — THE STUDIO AI Studio + Prompt Library (demo pipeline, editable prompts)
+
+**Context:** Continuation of THE STUDIO (Milestones 1–3 frozen). User requested **AI Studio** and **PROMPT LIBRARY** — frontend only, no AI integrations, no publishing. Luxury dark stage UI consistent with Shows/Content Packs.
+
+**Topics covered (full chat arc):**
+- Prior milestones: Lounge TV, Studio hub (M1), Shows + Content Packs (M2).
+- **AI Studio** (`/admin/studio/ai-studio`): large prompt area (placeholder *What do you want to create today?*, example *Cherry Red will trend this fall*); selectors for Show, Audience, Membership Tier, Featured Products, Reward, Publish Date, Distribution Targets, Desired Outputs (10 output types); premium **Generate Content Pack** button; animated 12-step faux pipeline (Research → Draft Complete); everything ends **DRAFT**; **New Generation** resets.
+- **Prompt Library** (`/admin/studio/prompt-library`): 9 editable master prompts (Slay Report, Slay Lab, Campaign, Build Studio, Academy, Journal, Email, Pinterest, Thumbnail); search, category filters, favorites (localStorage); prompt editor with title/description/body fields.
+
+**Decisions / outcomes:** No backend/AI; form state `adminStudioAiForm_v1`; prompt patches `adminStudioPromptLibrary_v1`; favorites `adminStudioPromptFavorites_v1`. Routes before `studio/:sectionId`; `BUILT_SECTIONS` includes `ai-studio` + `prompt-library`. Build verified.
+
+**Changes:** `adminStudioAiStudioDemo.ts`, `adminStudioPromptLibraryDemo.ts`, `useAdminStudioAiStudioState.ts`, `useAdminStudioPromptLibraryState.ts`, `AdminStudioChipSelect`, `AdminStudioSingleSelect`, `AdminStudioGenerationPipeline`, `AdminStudioPromptListItem`, `ai-studio/page.tsx`, `prompt-library/page.tsx`, `App.tsx`, `section/page.tsx`.
+
+**Conventions:** AI Studio pipeline is timed UI animation (~720ms/step) only; Generate hides form until reset; Prompt Library favorites use ★ toggle per prompt id.
+

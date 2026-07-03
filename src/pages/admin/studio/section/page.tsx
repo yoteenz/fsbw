@@ -2,7 +2,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { AdminStudioPlaceholderShell } from '../../../../components/admin/studio/AdminStudioPlaceholderShell';
 import { getAdminStudioSectionById } from '../../../../utils/adminStudioDemo';
 
-const BUILT_SECTIONS = new Set(['shows', 'content-packs']);
+const BUILT_SECTIONS = new Set(['shows', 'content-packs', 'ai-studio', 'prompt-library']);
 
 /** Dynamic Studio section placeholder — one route, all hub cards. */
 export default function AdminStudioSectionPage() {

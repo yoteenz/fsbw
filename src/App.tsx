@@ -125,6 +125,8 @@ const AdminStudioShows = lazyWithRetry(() => import('./pages/admin/studio/shows/
 const AdminStudioShowDetail = lazyWithRetry(() => import('./pages/admin/studio/shows/detail/page'), 'AdminStudioShowDetail');
 const AdminStudioContentPacks = lazyWithRetry(() => import('./pages/admin/studio/content-packs/page'), 'AdminStudioContentPacks');
 const AdminStudioContentPackDetail = lazyWithRetry(() => import('./pages/admin/studio/content-packs/detail/page'), 'AdminStudioContentPackDetail');
+const AdminStudioAiStudio = lazyWithRetry(() => import('./pages/admin/studio/ai-studio/page'), 'AdminStudioAiStudio');
+const AdminStudioPromptLibrary = lazyWithRetry(() => import('./pages/admin/studio/prompt-library/page'), 'AdminStudioPromptLibrary');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -740,6 +742,16 @@ function App() {
           <Route path="studio/content-packs" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioContentPacks />
+            </Suspense>
+          } />
+          <Route path="studio/ai-studio" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAiStudio />
+            </Suspense>
+          } />
+          <Route path="studio/prompt-library" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPromptLibrary />
             </Suspense>
           } />
           <Route path="studio/:sectionId" element={
