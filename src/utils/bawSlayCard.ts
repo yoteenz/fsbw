@@ -172,7 +172,7 @@ export async function paintBawSlayCard(
 
   ctx.fillStyle = header.subtitle.color;
   ctx.font = fontFromStyle(header.subtitle);
-  ctx.fillText('SLAY CARD — BUILD-A-WIG VIEW', header.subtitle.x, header.subtitle.y);
+  ctx.fillText('PERSONAL BUILD-A-WIG SLAY CARD', header.subtitle.x, header.subtitle.y);
 
   const specLines = [
     `LENGTH ${selections.length}`,

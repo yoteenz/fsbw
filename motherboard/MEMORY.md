@@ -33424,3 +33424,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User reported no save button on slay card debug page; saved tweaks were not obvious and try-hub cards did not use saved layout.
 
 **Changes:** Debug page **Save layout** button (red) commits to localStorage with dirty/saved indicator; removed silent auto-save on every tweak. **`getActiveBawSlayCardLayout()`** — try-hub **`renderBawSlayCardPng`** reads saved layout from localStorage when present.
+
+---
+
+## 2026-07-03 — BAW slay card subtitle copy
+
+**Context:** User asked to change slay card subtitle from **SLAY CARD — BUILD-A-WIG VIEW** to **personal build-a-Wig slay card**.
+
+**Changes:** **`paintBawSlayCard`** subtitle string → **PERSONAL BUILD-A-WIG SLAY CARD** (uppercase on card).
