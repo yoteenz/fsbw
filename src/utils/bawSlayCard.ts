@@ -295,7 +295,7 @@ export async function paintBawSlayCard(
 
   ctx.fillStyle = textPanel.footer.color;
   ctx.font = fontFromStyle(textPanel.footer);
-  ctx.fillText('TRY THE FULL BUILDER WITH MEMBERSHIP', textPanel.footer.x, textPanel.footer.y);
+  ctx.fillText('PURCHASE THIS CUSTOM DESIGNED UNIT WITH YOUR PREMIUM MEMBERSHIP.', textPanel.footer.x, textPanel.footer.y);
 
   return { mannequinBounds };
 }

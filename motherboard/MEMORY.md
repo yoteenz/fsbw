@@ -33617,3 +33617,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Fix:** **`lace/page.tsx`** and **`hairline/page.tsx`** now use **`pathnameIncludesBawProductSlug(pathname, 'blanco')`** (same as color/density). Hub summary icons in **`build-a-wig/page.tsx`** (**`getLaceIcon`**, **`getHairlineIcon`**, **`getDensityIcon`**, **`getTextureIcon`**) updated the same way.
 
 **Other units verified:** Wig hero/thumb mannequins on all sub-pages already use **`getBawSubpageStaticWigViews`** → **`resolveBawProductUnitLabelFromPathname`** (includes try routes). Texture sub-page already used **`includes('/blanco')`**. Length/cap/add-ons/styling use shared icons (not unit-specific art).
+
+---
+
+## 2026-07-03 — Slay card footer copy update
+
+**Context:** User asked to replace slay card footer **TRY THE FULL BUILDER WITH MEMBERSHIP** with **PURCHASE THIS CUSTOM DESIGNED UNIT WITH YOUR PREMIUM MEMBERSHIP.**
+
+**Changes:** **`bawSlayCard.ts`** **`paintBawSlayCard`** footer string; **`slay-card-debug/page.tsx`** **`FOOTER_LABEL`** for guide overlay.
