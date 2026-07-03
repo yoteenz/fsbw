@@ -346,7 +346,7 @@ function ItemEditor({ item, mainTab, onChange, onRemove }: ItemEditorProps) {
               e.target.value = '';
             }}
           />
-          {mainTab === 'watch-learn' ? (
+          {mainTab === 'learn' ? (
             <>
               <label className="block text-xs text-gray-600 mb-1" style={{ fontFamily: '"Futura PT Medium"' }}>
                 DURATION (E.G. 4:32)

@@ -34376,3 +34376,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Product tabs = **one active layer only** (`key` remount); tab zone uses **same frosted stack as card**, not a separate opaque white panel.
 
+---
+
+## 2026-07-03 — Lounge TV premium streaming UI (Content Packs; FEATURED/LEARN/EXPLORE/LIVE/LIBRARY)
+
+**Context:** User requested restructuring **only the black TV content panel** inside Members Lounge / Lounge TV — **no changes** to lounge background, remote hand, curtains, close button, or outer page layout. Goal: Netflix/MasterClass-style beauty media platform supporting **video + blog** weekly content packs, CMS-ready metadata, placeholder **CUTTING YOUR LACE** (BOTH, 8 MIN video / 4 MIN read, Lace Mastery, free preview).
+
+**Topics covered:**
+- Rename TV nav: **FEATURED, LEARN, EXPLORE, LIVE, LIBRARY** (replaces BRAND / SLAY TIPS / WATCH + LEARN / ACADEMY).
+- **`LoungeContentPack`** data model with full fields (title, subtitle, category, series, difficulty, runtime, readTime, ticketCost, thumbnail, heroImage, preview/full video, article steps/takeaways, transcript, checklist, productsUsed, relatedLessons, flags, featured row hints, learningPathId, exploreSectionId).
+- **FEATURED:** hero + Continue Watching / New This Week / Trending / PSA Recommends / Premium Exclusives rows.
+- **LEARN:** six learning paths; lesson hub with **WATCH EPISODE** + **READ GUIDE**; article + video detail views with CTAs (BUILD-A-WIG, SHOP, SAVE TO SLAY BOARD, COMPLETE LESSON).
+- **EXPLORE / LIVE / LIBRARY** sections per spec; Live = placeholders; Library = localStorage progress/saved/completed (`loungeTvLibrary.ts`).
+- Admin config legacy tab/placement migration; build verified (`npm run build`).
+
+**Decisions / outcomes:** Overlay shell (`LoungeTvOverlay` curtains/hand/animation) untouched; **`LoungeTvScreen`** extracted to dedicated module driving new components. Ticket/unlock flows preserved via **`contentPackToTile`**. No AI generation pipeline yet.
+
+**Changes:** New files under `src/components/lounge/` — `loungeTvContentPack.ts`, `loungeTvTheme.ts`, `LoungeTvScreen.tsx`, `LoungeTvContentPackCard.tsx`, `LoungeTvContentRow.tsx`, `LoungeTvFeaturedHome.tsx`, `LoungeTvArticleView.tsx`, `LoungeTvVideoDetailView.tsx`, `LoungeTvLivePlaceholder.tsx`, `LoungeTvLibrarySections.tsx`, `LoungeTvUiPrimitives.tsx`; `src/utils/loungeTvLibrary.ts`; updated `loungeTvContent.ts`, `LoungeTvOverlay.tsx`, `loungeTvAdminConfig.ts`, `AdminLoungeTvContentPanel.tsx`, `DesktopLoungeSlayCinemaPlay.tsx`, `motherboard/CORE.md`.
+
+**Conventions:** Lounge TV inner UI = dark streaming glass, **#EB1C24** accents, metadata-driven packs; weekly topics add rows via Supabase/admin without hardcoding Featured/Learn UI.
+

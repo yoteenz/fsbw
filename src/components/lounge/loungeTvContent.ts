@@ -1,4 +1,16 @@
-export type LoungeTvMainTab = 'brand' | 'slay-tips' | 'watch-learn' | 'academy';
+import {
+  contentPacksForExploreSection,
+  contentPacksForLearningPath,
+  getContentPackById,
+  LOUNGE_TV_CONTENT_PACKS,
+  type LoungeContentPack,
+} from './loungeTvContentPack';
+import {
+  LOUNGE_TV_CONTENT_VIDEO_SRC,
+  LOUNGE_TV_PLUCKING_LACE_TILE_ID,
+} from './loungeTvAssets';
+
+export type LoungeTvMainTab = 'featured' | 'learn' | 'explore' | 'live' | 'library';
 
 export type LoungeTvSidebarItem = {
   id: string;
@@ -9,90 +21,139 @@ export type LoungeTvContentFormat = 'video' | 'blog';
 
 export type LoungeTvAccessType = 'permanent' | 'rental';
 
+/** Legacy tile shape — maps from {@link LoungeContentPack} for ticket/unlock flows. */
 export type LoungeTvVideoTile = {
   id: string;
   title: string;
   isNew?: boolean;
-  /** Optional thumb; falls back to dark placeholder */
   thumbSrc?: string;
-  /** Watch + Learn expanded player */
   videoSrc?: string;
   durationLabel?: string;
   description?: string;
-  /** Blog tabs: full post body (defaults to description). */
   body?: string;
   format?: LoungeTvContentFormat;
-  /** Blog tabs: attachment below body (not the Watch + Learn player). */
   attachmentSrc?: string;
   attachmentType?: 'image' | 'video';
-  /** Slay Tickets required to unlock (0 = free). */
   ticketCost?: number;
   accessType?: LoungeTvAccessType;
   isFreePreview?: boolean;
   isPremium?: boolean;
+  /** Full content pack when resolved from catalog. */
+  contentPack?: LoungeContentPack;
 };
 
-import { LOUNGE_TV_CONTENT_VIDEO_SRC, LOUNGE_TV_PLUCKING_LACE_TILE_ID } from './loungeTvAssets';
-
-/** Stock clip for non–plucking-lace Watch + Learn tiles (remote fallback). */
-export const LOUNGE_TV_PLACEHOLDER_VIDEO_SRC =
-  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
-
-function watchLearnVideoSrcForTile(tileId: string): string | undefined {
-  if (tileId === LOUNGE_TV_PLUCKING_LACE_TILE_ID) return LOUNGE_TV_CONTENT_VIDEO_SRC;
-  return LOUNGE_TV_PLACEHOLDER_VIDEO_SRC;
-}
-
 export const LOUNGE_TV_MAIN_TABS: { id: LoungeTvMainTab; label: string }[] = [
-  { id: 'brand', label: 'BRAND' },
-  { id: 'slay-tips', label: 'SLAY TIPS' },
-  { id: 'watch-learn', label: 'WATCH + LEARN' },
-  { id: 'academy', label: 'ACADEMY' },
+  { id: 'featured', label: 'FEATURED' },
+  { id: 'learn', label: 'LEARN' },
+  { id: 'explore', label: 'EXPLORE' },
+  { id: 'live', label: 'LIVE' },
+  { id: 'library', label: 'LIBRARY' },
 ];
 
 export const LOUNGE_TV_SIDEBAR: Record<LoungeTvMainTab, LoungeTvSidebarItem[]> = {
-  brand: [
-    { id: 'new-drops', label: 'NEW DROPS' },
-    { id: 'campaigns', label: 'CAMPAIGNS' },
+  featured: [],
+  learn: [
+    { id: 'lace-mastery', label: 'LACE MASTERY' },
+    { id: 'install-pro', label: 'INSTALL LIKE A PRO' },
+    { id: 'hair-care', label: 'HAIR CARE' },
+    { id: 'styling-academy', label: 'STYLING ACADEMY' },
+    { id: 'color-lab', label: 'COLOR LAB' },
+    { id: 'baw-academy', label: 'BUILD-A-WIG ACADEMY' },
   ],
-  'slay-tips': [
-    { id: 'care', label: 'CARE' },
-    { id: 'lace', label: 'LACE' },
-    { id: 'install', label: 'INSTALL' },
-    { id: 'styling', label: 'STYLING' },
-    { id: 'storage', label: 'STORAGE' },
+  explore: [
+    { id: 'brand-films', label: 'BRAND FILMS' },
+    { id: 'trend-reports', label: 'TREND REPORTS' },
+    { id: 'slay-cam', label: 'SLAY CAM STORIES' },
+    { id: 'product-reveals', label: 'PRODUCT REVEALS' },
+    { id: 'behind-brand', label: 'BEHIND THE BRAND' },
+    { id: 'psa-sessions', label: 'PSA SESSIONS' },
   ],
-  'watch-learn': [
-    { id: 'lace', label: 'LACE' },
-    { id: 'install', label: 'INSTALL' },
-    { id: 'styling', label: 'STYLING' },
+  live: [
+    { id: 'upcoming-classes', label: 'UPCOMING CLASSES' },
+    { id: 'lounge-events', label: 'LOUNGE EVENTS' },
+    { id: 'product-premieres', label: 'PRODUCT PREMIERES' },
+    { id: 'live-shopping', label: 'LIVE SHOPPING' },
+    { id: 'founder-sessions', label: 'FOUNDER SESSIONS' },
   ],
-  academy: [
-    { id: 'classes', label: 'CLASSES' },
-    { id: 'events', label: 'EVENTS' },
+  library: [
+    { id: 'continue', label: 'CONTINUE WATCHING' },
+    { id: 'saved', label: 'SAVED' },
+    { id: 'unlocked', label: 'UNLOCKED' },
+    { id: 'purchased', label: 'PURCHASED' },
+    { id: 'completed', label: 'COMPLETED' },
+    { id: 'history', label: 'HISTORY' },
   ],
 };
 
-const LACE_TILES: LoungeTvVideoTile[] = [
-  { id: 'cutting-lace', title: 'CUTTING YOUR LACE', isNew: true, thumbSrc: '/assets/NOIR/wave-thumb.png' },
-  { id: 'tinting-lace', title: 'TINTING YOUR LACE', thumbSrc: '/assets/NOIR/curl-thumb.png' },
-  { id: 'bleaching-knots', title: 'BLEACHING YOUR KNOTS', thumbSrc: '/assets/NOIR/noir-thumb.png' },
-  { id: 'plucking-lace', title: 'PLUCKING YOUR LACE', thumbSrc: '/assets/NOIR/blanco-thumb.png' },
-  { id: 'melting-lace', title: 'MELTING YOUR LACE', thumbSrc: '/assets/NOIR/wave-thumb.png' },
-  { id: 'extending-install', title: 'EXTENDING YOUR INSTALL', thumbSrc: '/assets/NOIR/curl-thumb.png' },
-  { id: 'cleaning-lace', title: 'CLEANING YOUR LACE', thumbSrc: '/assets/NOIR/noir-thumb.png' },
-];
+/** Stock clip for non–plucking-lace tiles (remote fallback). */
+export const LOUNGE_TV_PLACEHOLDER_VIDEO_SRC =
+  'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
 
-const BRAND_NEW_DROPS: LoungeTvVideoTile[] = [
-  { id: 'cutting-lace', title: 'CUTTING YOUR LACE', isNew: true, thumbSrc: '/assets/NOIR/wave-thumb.png' },
-  { id: 'tinting-lace', title: 'TINTING YOUR LACE', thumbSrc: '/assets/NOIR/curl-thumb.png' },
-  { id: 'bleaching-knots', title: 'BLEACHING YOUR KNOTS', thumbSrc: '/assets/NOIR/noir-thumb.png' },
-  { id: 'plucking-lace', title: 'PLUCKING YOUR LACE', thumbSrc: '/assets/NOIR/blanco-thumb.png' },
-];
+/** Default Slay Ticket access per tile id (admin config can override). */
+export const LOUNGE_TV_DEFAULT_TICKET_ACCESS: Record<
+  string,
+  Pick<LoungeTvVideoTile, 'ticketCost' | 'accessType' | 'isFreePreview' | 'isPremium'>
+> = {
+  'cutting-lace': { ticketCost: 0, isFreePreview: true, accessType: 'permanent' },
+  'tinting-lace': { ticketCost: 1, accessType: 'permanent' },
+  'bleaching-knots': { ticketCost: 1, accessType: 'permanent' },
+  'plucking-lace': { ticketCost: 2, accessType: 'permanent' },
+  'melting-lace': { ticketCost: 1, accessType: 'permanent' },
+  'extending-install': { ticketCost: 2, accessType: 'permanent' },
+  'cleaning-lace': { ticketCost: 0, isFreePreview: true, accessType: 'permanent' },
+};
+
+export function applyDefaultLoungeTvTicketAccess(tile: LoungeTvVideoTile): LoungeTvVideoTile {
+  const defaults = LOUNGE_TV_DEFAULT_TICKET_ACCESS[tile.id];
+  if (!defaults) return tile;
+  return {
+    ...tile,
+    ticketCost: tile.ticketCost ?? defaults.ticketCost ?? 0,
+    accessType: tile.accessType ?? defaults.accessType ?? 'permanent',
+    isFreePreview: tile.isFreePreview ?? defaults.isFreePreview ?? false,
+    isPremium: tile.isPremium ?? defaults.isPremium ?? false,
+  };
+}
+
+export function contentPackToTile(pack: LoungeContentPack): LoungeTvVideoTile {
+  const body =
+    pack.article?.intro?.trim() ||
+    pack.subtitle?.trim() ||
+    '';
+  const tile: LoungeTvVideoTile = {
+    id: pack.id,
+    title: pack.title.toUpperCase(),
+    isNew: pack.isNew,
+    thumbSrc: pack.thumbnail,
+    videoSrc: pack.fullVideo || pack.previewVideo,
+    durationLabel: pack.runtime,
+    description: (pack.subtitle ?? body).toUpperCase(),
+    body: body.toUpperCase(),
+    ticketCost: pack.ticketCost,
+    accessType: pack.accessType,
+    isFreePreview: pack.isFreePreview,
+    isPremium: pack.isPremium,
+    contentPack: pack,
+  };
+  if (pack.contentFormat === 'read' || (!pack.fullVideo && !pack.previewVideo && pack.article)) {
+    tile.format = 'blog';
+  } else {
+    tile.format = 'video';
+  }
+  return applyDefaultLoungeTvTicketAccess(tile);
+}
+
+export function getAllContentPacks(): LoungeContentPack[] {
+  return LOUNGE_TV_CONTENT_PACKS;
+}
+
+export function resolveContentPack(id: string): LoungeContentPack | undefined {
+  return getContentPackById(id);
+}
 
 export const WATCH_LEARN_VIDEO_COPY: Record<string, { durationLabel: string; description: string }> = {
   'cutting-lace': {
-    durationLabel: '5:12',
+    durationLabel: '8:00',
     description: 'TRIM AND SHAPE YOUR LACE FRONT FOR A CLEAN HAIRLINE BEFORE INSTALL.',
   },
   'tinting-lace': {
@@ -121,44 +182,12 @@ export const WATCH_LEARN_VIDEO_COPY: Record<string, { durationLabel: string; des
   },
 };
 
-/** Default Slay Ticket access per tile id (admin config can override). */
-export const LOUNGE_TV_DEFAULT_TICKET_ACCESS: Record<
-  string,
-  Pick<LoungeTvVideoTile, 'ticketCost' | 'accessType' | 'isFreePreview' | 'isPremium'>
-> = {
-  'cutting-lace': { ticketCost: 0, isFreePreview: true, accessType: 'permanent' },
-  'tinting-lace': { ticketCost: 1, accessType: 'permanent' },
-  'bleaching-knots': { ticketCost: 1, accessType: 'permanent' },
-  'plucking-lace': { ticketCost: 2, accessType: 'permanent' },
-  'melting-lace': { ticketCost: 1, accessType: 'permanent' },
-  'extending-install': { ticketCost: 2, accessType: 'permanent' },
-  'cleaning-lace': { ticketCost: 0, isFreePreview: true, accessType: 'permanent' },
-};
-
-export function applyDefaultLoungeTvTicketAccess(tile: LoungeTvVideoTile): LoungeTvVideoTile {
-  const defaults = LOUNGE_TV_DEFAULT_TICKET_ACCESS[tile.id];
-  if (!defaults) return tile;
-  return {
-    ...tile,
-    ticketCost: tile.ticketCost ?? defaults.ticketCost ?? 0,
-    accessType: tile.accessType ?? defaults.accessType ?? 'permanent',
-    isFreePreview: tile.isFreePreview ?? defaults.isFreePreview ?? false,
-    isPremium: tile.isPremium ?? defaults.isPremium ?? false,
-  };
-}
-
-function withTicketAccessMeta(tiles: LoungeTvVideoTile[]): LoungeTvVideoTile[] {
-  return tiles.map(applyDefaultLoungeTvTicketAccess);
-}
-
-/** Static Watch + Learn copy for a tile (description + optional duration label). */
 export function getWatchLearnVideoCopy(
   tileId: string
 ): { durationLabel: string; description: string } | undefined {
   return WATCH_LEARN_VIDEO_COPY[tileId];
 }
 
-/** Resolved detail copy for the Watch + Learn player (admin body wins, then static). */
 export function resolveWatchLearnDescription(
   tile: Pick<LoungeTvVideoTile, 'id' | 'body' | 'description'>
 ): string {
@@ -170,77 +199,36 @@ export function resolveWatchLearnDescription(
   ).toUpperCase();
 }
 
-const SLAY_TIPS_BLOG_BODY: Record<string, string> = {
-  'cutting-lace': 'TRIM AND SHAPE YOUR LACE FRONT FOR A CLEAN HAIRLINE BEFORE INSTALL.',
-  'tinting-lace': 'CUSTOM TINT LACE TO MATCH YOUR SKIN TONE FOR AN UNDETECTABLE BLEND.',
-  'bleaching-knots': 'LIGHTEN KNOTS SAFELY SO PART LINES AND EDGES DISAPPEAR ON CAMERA.',
-  'plucking-lace': 'PLUCK DENSITY ALONG THE HAIRLINE FOR A NATURAL, LESS WIGGY FINISH.',
-  'melting-lace': 'MELT LACE INTO THE SKIN USING THE RIGHT ADHESIVE AND PRESSURE TECHNIQUE.',
-  'extending-install': 'EXTEND WEAR TIME WITH REINFORCEMENT ZONES AND TENSION-FREE STITCHING.',
-  'cleaning-lace': 'REMOVE BUILDUP AND RESET LACE WITHOUT DAMAGING FIBERS OR TINT.',
-};
-
-function withSlayTipsBlogMeta(tiles: LoungeTvVideoTile[]): LoungeTvVideoTile[] {
-  return withTicketAccessMeta(
-    tiles.map((tile) => {
-      const body = (tile.body ?? tile.description ?? SLAY_TIPS_BLOG_BODY[tile.id] ?? '').trim();
-      return {
-        ...tile,
-        format: 'blog',
-        body: body || 'SLAY TIPS AND CARE NOTES FROM THE FRONTAL SLAYER TEAM.',
-        description: body || tile.description,
-      };
-    })
-  );
-}
-
-function withWatchLearnVideoMeta(tiles: LoungeTvVideoTile[]): LoungeTvVideoTile[] {
-  return withTicketAccessMeta(
-    tiles.map((tile) => {
-      const copy = WATCH_LEARN_VIDEO_COPY[tile.id] ?? {
-        durationLabel: '4:32',
-        description: 'WATCH AND LEARN WITH STEP-BY-STEP GUIDANCE FROM THE FRONTAL SLAYER TEAM.',
-      };
-      const videoSrc = watchLearnVideoSrcForTile(tile.id);
-      return {
-        ...tile,
-        format: 'video',
-        videoSrc,
-        description: copy.description,
-        body: copy.description,
-        ...(tile.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID ? {} : { durationLabel: copy.durationLabel }),
-      };
-    })
-  );
+function packsToTiles(packs: LoungeContentPack[]): LoungeTvVideoTile[] {
+  return packs.map(contentPackToTile);
 }
 
 export function getLoungeTvTilesStatic(mainTab: LoungeTvMainTab, sidebarId: string): LoungeTvVideoTile[] | null {
-  if (mainTab === 'academy') return null;
-  if (mainTab === 'brand' && sidebarId === 'new-drops') return withTicketAccessMeta(BRAND_NEW_DROPS);
-  if (mainTab === 'brand' && sidebarId === 'campaigns') return [];
-  if (sidebarId === 'lace') {
-    if (mainTab === 'watch-learn') return withWatchLearnVideoMeta(LACE_TILES);
-    if (mainTab === 'slay-tips') return withSlayTipsBlogMeta(LACE_TILES);
-    return withTicketAccessMeta(LACE_TILES);
+  if (mainTab === 'featured') return packsToTiles(LOUNGE_TV_CONTENT_PACKS);
+  if (mainTab === 'learn' && sidebarId) {
+    return packsToTiles(contentPacksForLearningPath(sidebarId));
   }
-  if (mainTab === 'slay-tips' || mainTab === 'watch-learn') {
-    if (sidebarId === 'install') {
-      const installTiles = [
-        { id: 'extending-install', title: 'EXTENDING YOUR INSTALL', thumbSrc: '/assets/NOIR/curl-thumb.png' },
-      ];
-      if (mainTab === 'watch-learn') return withWatchLearnVideoMeta(installTiles);
-      if (mainTab === 'slay-tips') return withSlayTipsBlogMeta(installTiles);
-      return installTiles;
-    }
-    if (sidebarId === 'styling') {
-      const stylingTiles = [
-        { id: 'melting-lace', title: 'MELTING YOUR LACE', thumbSrc: '/assets/NOIR/wave-thumb.png' },
-      ];
-      if (mainTab === 'watch-learn') return withWatchLearnVideoMeta(stylingTiles);
-      if (mainTab === 'slay-tips') return withSlayTipsBlogMeta(stylingTiles);
-      return stylingTiles;
-    }
-    if (sidebarId === 'care' || sidebarId === 'storage') return [];
+  if (mainTab === 'explore' && sidebarId) {
+    return packsToTiles(contentPacksForExploreSection(sidebarId));
   }
+  if (mainTab === 'live') return [];
+  if (mainTab === 'library') return packsToTiles(LOUNGE_TV_CONTENT_PACKS);
   return [];
 }
+
+/** Migrate legacy admin / storage tab ids to the new navigation. */
+export const LOUNGE_TV_LEGACY_TAB_MAP: Record<string, LoungeTvMainTab> = {
+  brand: 'featured',
+  'slay-tips': 'learn',
+  'watch-learn': 'learn',
+  academy: 'live',
+};
+
+export function normalizeLoungeTvMainTab(tab: string): LoungeTvMainTab {
+  if (tab === 'featured' || tab === 'learn' || tab === 'explore' || tab === 'live' || tab === 'library') {
+    return tab;
+  }
+  return LOUNGE_TV_LEGACY_TAB_MAP[tab] ?? 'featured';
+}
+
+export { LOUNGE_TV_CONTENT_VIDEO_SRC, LOUNGE_TV_PLUCKING_LACE_TILE_ID };

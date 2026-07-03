@@ -5,6 +5,7 @@ import {
   applyDefaultLoungeTvTicketAccess,
   getLoungeTvTilesStatic,
   getWatchLearnVideoCopy,
+  normalizeLoungeTvMainTab,
 } from '../components/lounge/loungeTvContent';
 import {
   LOUNGE_TV_CONTENT_VIDEO_SRC,
@@ -43,8 +44,30 @@ export type LoungeTvAdminConfig = {
 
 export const LOUNGE_TV_ADMIN_STORAGE_KEY = 'loungeTvAdminConfig';
 
+const LOUNGE_TV_LEGACY_PLACEMENT_MAP: Record<string, { mainTab: LoungeTvMainTab; sidebarId: string }> = {
+  'brand:new-drops': { mainTab: 'learn', sidebarId: 'lace-mastery' },
+  'brand:campaigns': { mainTab: 'explore', sidebarId: 'brand-films' },
+  'slay-tips:lace': { mainTab: 'learn', sidebarId: 'lace-mastery' },
+  'slay-tips:install': { mainTab: 'learn', sidebarId: 'install-pro' },
+  'slay-tips:styling': { mainTab: 'learn', sidebarId: 'styling-academy' },
+  'slay-tips:care': { mainTab: 'learn', sidebarId: 'hair-care' },
+  'slay-tips:storage': { mainTab: 'learn', sidebarId: 'hair-care' },
+  'watch-learn:lace': { mainTab: 'learn', sidebarId: 'lace-mastery' },
+  'watch-learn:install': { mainTab: 'learn', sidebarId: 'install-pro' },
+  'watch-learn:styling': { mainTab: 'learn', sidebarId: 'styling-academy' },
+  'academy:classes': { mainTab: 'live', sidebarId: 'upcoming-classes' },
+  'academy:events': { mainTab: 'live', sidebarId: 'lounge-events' },
+};
+
 function placementKey(mainTab: LoungeTvMainTab, sidebarId: string): string {
   return `${mainTab}:${sidebarId}`;
+}
+
+function migratePlacementKey(mainTab: string, sidebarId: string): { mainTab: LoungeTvMainTab; sidebarId: string } {
+  const legacyKey = `${mainTab}:${sidebarId}`;
+  const mapped = LOUNGE_TV_LEGACY_PLACEMENT_MAP[legacyKey];
+  if (mapped) return mapped;
+  return { mainTab: normalizeLoungeTvMainTab(mainTab), sidebarId };
 }
 
 function tileToAdminItem(tile: LoungeTvVideoTile): LoungeTvAdminItem {
@@ -95,9 +118,10 @@ function normalizeConfig(raw: unknown): LoungeTvAdminConfig | null {
   for (const p of o.placements) {
     if (!p || typeof p !== 'object') continue;
     const row = p as Record<string, unknown>;
-    const mainTab = row.mainTab as LoungeTvMainTab;
-    const sidebarId = typeof row.sidebarId === 'string' ? row.sidebarId : '';
-    if (!mainTab || !sidebarId) continue;
+    const rawMainTab = typeof row.mainTab === 'string' ? row.mainTab : '';
+    const rawSidebarId = typeof row.sidebarId === 'string' ? row.sidebarId : '';
+    if (!rawMainTab || !rawSidebarId) continue;
+    const { mainTab, sidebarId } = migratePlacementKey(rawMainTab, rawSidebarId);
     const items: LoungeTvAdminItem[] = [];
     if (Array.isArray(row.items)) {
       for (const it of row.items) {
@@ -282,23 +306,20 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
     isPremium: item.isPremium,
   };
   const bodyUpper =
-    mainTab === 'watch-learn' ? watchLearnDescriptionForItem(item) : item.body.trim().toUpperCase();
+    mainTab === 'learn' || mainTab === 'explore'
+      ? watchLearnDescriptionForItem(item)
+      : item.body.trim().toUpperCase();
   if (bodyUpper) {
     tile.description = bodyUpper;
     tile.body = bodyUpper;
   }
-  if (mainTab === 'slay-tips') {
+  if (mainTab === 'explore' && item.mediaType === 'image' && item.mediaUrl.trim()) {
     tile.format = 'blog';
-    if (item.mediaUrl.trim()) {
-      tile.attachmentSrc = item.mediaUrl.trim();
-      tile.attachmentType = item.mediaType;
-      if (item.mediaType === 'image' && !item.thumbSrc?.trim()) {
-        tile.thumbSrc = item.mediaUrl.trim();
-      }
-    }
+    tile.attachmentSrc = item.mediaUrl.trim();
+    tile.attachmentType = 'image';
     return applyDefaultLoungeTvTicketAccess(tile);
   }
-  if (mainTab === 'watch-learn') {
+  if (mainTab === 'learn' || mainTab === 'featured' || mainTab === 'library') {
     if (item.id === LOUNGE_TV_PLUCKING_LACE_TILE_ID) {
       const customSrc = item.mediaType === 'video' && item.mediaUrl.trim() ? item.mediaUrl.trim() : '';
       tile.videoSrc = customSrc || LOUNGE_TV_CONTENT_VIDEO_SRC;
@@ -321,12 +342,12 @@ export function adminItemToVideoTile(item: LoungeTvAdminItem, mainTab: LoungeTvM
   return applyDefaultLoungeTvTicketAccess(tile);
 }
 
-function enrichWatchLearnTiles(
+function enrichLearnTiles(
   mainTab: LoungeTvMainTab,
   sidebarId: string,
   tiles: LoungeTvVideoTile[] | null
 ): LoungeTvVideoTile[] | null {
-  if (!tiles || mainTab !== 'watch-learn') return tiles;
+  if (!tiles || mainTab !== 'learn') return tiles;
   const staticTiles = getLoungeTvTilesStatic(mainTab, sidebarId);
   const staticById = new Map((staticTiles ?? []).map((tile) => [tile.id, tile]));
   return tiles.map((tile) => {
@@ -348,11 +369,11 @@ function enrichWatchLearnTiles(
   });
 }
 
-function applyWatchLearnTileOverrides(
+function applyLearnTileOverrides(
   mainTab: LoungeTvMainTab,
   tiles: LoungeTvVideoTile[] | null
 ): LoungeTvVideoTile[] | null {
-  if (!tiles || mainTab !== 'watch-learn') return tiles;
+  if (!tiles || mainTab !== 'learn') return tiles;
   return tiles.map((tile) => {
     if (tile.id !== LOUNGE_TV_PLUCKING_LACE_TILE_ID) return tile;
     const hasCustom = Boolean(tile.videoSrc && tile.videoSrc !== LOUNGE_TV_CONTENT_VIDEO_SRC);
@@ -404,10 +425,10 @@ export function resolveLoungeTvTiles(mainTab: LoungeTvMainTab, sidebarId: string
   const fromAdmin = getLoungeTvTilesFromAdminConfig(mainTab, sidebarId);
   const staticTiles = getLoungeTvTilesStatic(mainTab, sidebarId);
   const tiles = fromAdmin !== null && fromAdmin.length > 0 ? fromAdmin : staticTiles;
-  return enrichWatchLearnTiles(
+  return enrichLearnTiles(
     mainTab,
     sidebarId,
-    applyWatchLearnTileOverrides(mainTab, tiles)
+    applyLearnTileOverrides(mainTab, tiles)
   );
 }
 

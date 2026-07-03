@@ -41,8 +41,8 @@ export function DesktopLoungeSlayCinemaPlay({
 }: Props) {
   const frameConfig = useEffectiveDesktopLoungeTvFrameConfig();
   const tvDebug = useDesktopLoungeTvDebugEnabled();
-  const [mainTab, setMainTab] = useState<LoungeTvMainTab>('brand');
-  const [sidebarId, setSidebarId] = useState('new-drops');
+  const [mainTab, setMainTab] = useState<LoungeTvMainTab>('featured');
+  const [sidebarId, setSidebarId] = useState('lace-mastery');
 
   const frameMapped = useSceneCoverHitRect(
     frameConfig.rect,
