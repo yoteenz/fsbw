@@ -50,6 +50,7 @@ import UnitProductDetailsTab from '../../../components/shop/UnitProductDetailsTa
 import NoirProductShippingTab from '../../../components/shop/NoirProductShippingTab';
 import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab';
 import NoirProductCareStorageTab from '../../../components/shop/NoirProductCareStorageTab';
+import ProductReviewsComingSoonTab from '../../../components/shop/ProductReviewsComingSoonTab';
 import { attachStockStatusToLineItem, isWigUnitSoldOut } from '../../../utils/productInventoryAvailability';
 
 function SoftCurlSelection() {
@@ -1838,61 +1839,7 @@ function SoftCurlSelection() {
                   {activeTab === 'POLICY' && <NoirProductPolicyTab />}
                   {activeTab === 'CARE/STORAGE' && <NoirProductCareStorageTab />}
                   
-                  {activeTab === 'REVIEWS' && (
-                    <div style={{ textAlign: 'center', padding: '20px 0 0px 0', transform: 'translateY(-12px)' }}>
-                      <div style={{ marginBottom: '40px' }}>
-                        <h3 style={{ 
-                          fontFamily: '"Futura PT Medium"', 
-                          fontSize: '11px', 
-                          color: '#EB1C24', 
-                          fontWeight: '500',
-                          marginBottom: '15px',
-                          textTransform: 'uppercase'
-                        }}>
-                          LEAVE A REVIEW!
-                        </h3>
-                        
-                        <div className="flex justify-center mb-4 gap-1">
-                          {[...Array(5)].map((_, index) => (
-                            <img
-                              key={index}
-                              src="/assets/NOIR/filled-star.png"
-                              alt="Star Rating"
-                              className="w-auto h-auto cursor-pointer"
-                              style={{ 
-                                width: '14px', 
-                                height: '14px',
-                                filter: 'drop-shadow(0 0 0 1px black)',
-                                stroke: '1px black'
-                              }}
-                            />
-                          ))}
-                        </div>
-                        
-                        <div style={{ textAlign: 'center' }}>
-                          <p style={{ 
-                            fontFamily: '"Futura PT Medium"', 
-                            fontSize: '11px', 
-                            color: 'black',
-                            textTransform: 'uppercase',
-                            margin: '0'
-                          }}>
-                            4.97 OUT OF 5 STARS
-                          </p>
-                          <p style={{ 
-                            fontFamily: '"Futura PT Demi"', 
-                            fontSize: '9px', 
-                            color: '#808080',
-                            textTransform: 'uppercase',
-                            margin: '0',
-                            transform: 'translateY(3px)'
-                          }}>
-                            BASED ON 14 VERIFIED REVIEWS
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
+                  {activeTab === 'REVIEWS' && <ProductReviewsComingSoonTab />}
                 </div>
               </div>
             </div>

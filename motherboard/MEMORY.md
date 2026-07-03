@@ -34128,6 +34128,7 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`heroManifestReady.ts`**, download/regen scripts.
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 **Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`api/_lib/email/heroManifestReady.ts`**.
 
@@ -34141,3 +34142,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`heroManifestReady.ts`**.
 >>>>>>> 3b11f3ba (Regenerate email hero WebPs at 9:16 portrait ratio (41 templates))
+=======
+---
+
+## 2026-07-03 — Product PDP REVIEWS tab coming-soon (unified layout)
+
+**Context:** User asked to update the **REVIEWS** tab on **all product pages including BCF** to match the aesthetic of other PDP tabs (DETAILS/SHIPPING/POLICY) and show coming-soon copy for real client experiences.
+
+**Decisions / outcomes:**
+- New shared **`ProductReviewsComingSoonTab`** (`src/components/shop/ProductReviewsComingSoonTab.tsx`) — same typography as other tab components (**Futura PT Book** body, **Bohemy** section title, rose-alert SVG list markers).
+- Copy: **REAL CLIENT EXPERIENCES COMING SOON!**, intro line about first Frontal Slayer transformations, **this space will soon feature:** list — Verified Reviews, Client Photos, Video Reveals, Styling Tips, Before + Afters.
+- Replaced inconsistent inline REVIEWS blocks (placeholder text, fake star ratings, noir ask-a-question form) across **9 PDPs**: BCF **`texture-category-product`**, **noir**, **blanco**, **soft-wave**, **beach-wave**, **soft-curl**, **ocean-curl**, **gift-card**, **slay-tickets**.
+
+**Changes:** **`ProductReviewsComingSoonTab.tsx`**, nine product **`page.tsx`** files; removed ~17k chars of legacy noir reviews UI.
+
+**Conventions:** Future live reviews should extend **`ProductReviewsComingSoonTab`** or replace it in one place so all PDPs stay cohesive.
+
+>>>>>>> 97e6abd3 (Unify product REVIEWS tab with coming-soon layout across all PDPs)

@@ -77,6 +77,7 @@ import FrontalProductCareStorageTab from '../../../components/shop/FrontalProduc
 import FrontalProductDetailsTab from '../../../components/shop/FrontalProductDetailsTab';
 import FrontalProductPolicyTab from '../../../components/shop/FrontalProductPolicyTab';
 import FrontalProductShippingTab from '../../../components/shop/FrontalProductShippingTab';
+import ProductReviewsComingSoonTab from '../../../components/shop/ProductReviewsComingSoonTab';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import {
   marbleStripCellBand,
@@ -1871,20 +1872,7 @@ export default function ShopTextureCategoryProductPage() {
                     {activeTab === 'CARE/STORAGE' && category === 'bundles' && <BundleProductCareStorageTab />}
                     {activeTab === 'CARE/STORAGE' && category === 'closures' && <ClosureProductCareStorageTab />}
                     {activeTab === 'CARE/STORAGE' && category === 'frontals' && <FrontalProductCareStorageTab />}
-                    {activeTab === 'REVIEWS' && (
-                      <p
-                        style={{
-                          fontFamily: '"Futura PT Medium", Futura, Inter, sans-serif',
-                          fontSize: '11px',
-                          color: '#808080',
-                          marginBottom: '-8px',
-                          textAlign: 'left',
-                          textTransform: 'uppercase'
-                        }}
-                      >
-                        NO REVIEWS YET. BE THE FIRST TO REVIEW THIS PRODUCT.
-                      </p>
-                    )}
+                    {activeTab === 'REVIEWS' && <ProductReviewsComingSoonTab />}
                   </div>
                 </div>
               </div>

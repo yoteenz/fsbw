@@ -22,6 +22,7 @@ import {
 } from '../../../utils/premiumMemberAccess';
 import SlayTicketProductDetailsTab from '../../../components/shop/SlayTicketProductDetailsTab';
 import SlayTicketProductPolicyTab from '../../../components/shop/SlayTicketProductPolicyTab';
+import ProductReviewsComingSoonTab from '../../../components/shop/ProductReviewsComingSoonTab';
 import SlayTicketPackPicker from '../../../components/shop/SlayTicketPackPicker';
 import ThumbBox from '../../../components/ThumbBox';
 import { SLAY_TICKET_PREVIEW_IMAGES } from '../../../constants/slayTicketAssets';
@@ -847,13 +848,7 @@ function SlayTicketsPage() {
                 
                 {activeTab === 'POLICY' && <SlayTicketProductPolicyTab />}
                 
-                {activeTab === 'REVIEWS' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', whiteSpace: 'nowrap', marginBottom: '-8px', paddingBottom: '0px', textAlign: 'center', textTransform: 'uppercase' }}>
-                      NO REVIEWS YET. BE THE FIRST TO REVIEW THIS PRODUCT.
-                    </p>
-                  </>
-                )}
+                {activeTab === 'REVIEWS' && <ProductReviewsComingSoonTab />}
               </div>
             </div>
           </div>

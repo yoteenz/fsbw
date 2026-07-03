@@ -18,6 +18,7 @@ import { trackActivity } from '../../../utils/activity';
 import { writeGiftCardSelectionForCheckoutSession } from '../../../utils/giftCardCheckoutSession';
 import GiftCardProductDetailsTab from '../../../components/shop/GiftCardProductDetailsTab';
 import GiftCardProductPolicyTab from '../../../components/shop/GiftCardProductPolicyTab';
+import ProductReviewsComingSoonTab from '../../../components/shop/ProductReviewsComingSoonTab';
 import GiftCardBalancePicker from '../../../components/shop/GiftCardBalancePicker';
 import ThumbBox from '../../../components/ThumbBox';
 import { GIFT_CARD_CART_THUMBNAIL_SRC } from '../../../utils/giftCardCheckout';
@@ -835,13 +836,7 @@ function GiftCardPage() {
                 
                 {activeTab === 'POLICY' && <GiftCardProductPolicyTab />}
                 
-                {activeTab === 'REVIEWS' && (
-                  <>
-                    <p style={{ fontFamily: '"Futura PT Medium", futuristic-pt, Futura, Inter, sans-serif', fontSize: '11px', color: '#808080', whiteSpace: 'nowrap', marginBottom: '-8px', paddingBottom: '0px', textAlign: 'center', textTransform: 'uppercase' }}>
-                      NO REVIEWS YET. BE THE FIRST TO REVIEW THIS PRODUCT.
-                    </p>
-                  </>
-                )}
+                {activeTab === 'REVIEWS' && <ProductReviewsComingSoonTab />}
               </div>
             </div>
           </div>
