@@ -33477,7 +33477,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
-**Conventions:** Import **`sendEmail`** / **`triggerTransactionalEmailForUser`** only from server **`api/`** code. Add new lifecycle emails by extending **`templateRegistry`** and calling triggers from the relevant API route (order shipped, points earned, voucher expiring cron, etc.). Upload Storage assets after deploy: **`npm run email:upload-assets`**.
+## 2026-07-03 — Custom transactional email system (Frontal Slayer branded templates)
+
+**Context:** User requested a custom automated email system for the React/Vite + Supabase + Vercel app without Mailchimp — server-side Vercel API routes, reusable HTML templates matching Frontal Slayer luxury brand (marble, `#EB1C24`, glass panels, roses/diamonds, uppercase UI), dynamic variables, Supabase Storage assets, and a server-only **`sendEmail({ templateType, recipientEmail, subject, variables })`** function.
+
+**Decisions / outcomes:**
+- **`api/_lib/email/`** — types, **`brandAssets`**, table-based **`layout`**, inline SVG **`heroIcons`**, **`templateRegistry`** with **40+** template types, **`renderTemplate`**, **`sendEmail`** via **Resend**.
+- **`POST /api/email/send`** — admin session or **`X-Email-Send-Secret`**; **`preview: true`** for HTML preview.
+- **`scripts/upload-email-assets.mjs`** + migration **`20260703120000_email_assets_bucket.sql`**.
+- **Initial wired triggers:** Stripe order confirm/payment, membership welcome, affiliate pending/approve/deny, branded password reset, meeting alerts.
+- **`docs/EMAIL_SYSTEM.md`**, **`.env.example`**, **`motherboard/CORE.md`** updated.
+
+**Conventions:** Import **`sendEmail`** / **`triggerTransactionalEmailForUser`** only from server **`api/`** code. Upload Storage assets after deploy: **`npm run email:upload-assets`**.
 
 ---
 

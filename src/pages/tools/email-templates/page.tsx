@@ -2,12 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { canAccessAdminPages } from '../../../utils/adminAuth';
 import {
-  fetchEmailTemplateCatalog,
-  previewEmailTemplate,
-  type EmailTemplateCategory,
-} from '../../../utils/transactionalEmail';
+  EMAIL_PREVIEW_SAMPLE_VARIABLES,
+  EMAIL_TEMPLATE_CATEGORIES,
+  type EmailTemplateCategoryId,
+} from '../../../constants/emailTemplateCatalog';
+import { previewEmailTemplate } from '../../../utils/transactionalEmail';
 
-const CATEGORY_TABS: Array<{ id: EmailTemplateCategory['id']; label: string }> = [
+const CATEGORY_TABS: Array<{ id: EmailTemplateCategoryId; label: string }> = [
   { id: 'account', label: 'ACCOUNT' },
   { id: 'orders', label: 'ORDERS' },
   { id: 'rewards', label: 'REWARDS' },
@@ -17,42 +18,21 @@ const CATEGORY_TABS: Array<{ id: EmailTemplateCategory['id']; label: string }> =
 
 export default function EmailTemplatesDebugPage() {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState<EmailTemplateCategory[]>([]);
-  const [sampleVariables, setSampleVariables] = useState<Record<string, string | number>>({});
-  const [activeCategory, setActiveCategory] = useState<EmailTemplateCategory['id']>('account');
-  const [selectedType, setSelectedType] = useState<string>('welcome');
+  const categories = EMAIL_TEMPLATE_CATEGORIES;
+  const sampleVariables = EMAIL_PREVIEW_SAMPLE_VARIABLES;
+  const [activeCategory, setActiveCategory] = useState<EmailTemplateCategoryId>('account');
+  const [selectedType, setSelectedType] = useState<string>(
+    EMAIL_TEMPLATE_CATEGORIES[0]?.templates[0]?.type ?? 'welcome'
+  );
   const [previewHtml, setPreviewHtml] = useState('');
   const [previewSubject, setPreviewSubject] = useState('');
-  const [loading, setLoading] = useState(true);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (!canAccessAdminPages()) {
       navigate('/account', { replace: true });
-      return;
     }
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await fetchEmailTemplateCatalog();
-        if (cancelled) return;
-        setCategories(data.categories);
-        setSampleVariables(data.sampleVariables);
-        const first = data.categories[0]?.templates[0]?.type;
-        if (first) {
-          setSelectedType(first);
-          setActiveCategory(data.categories[0].id);
-        }
-      } catch (e) {
-        if (!cancelled) setError(e instanceof Error ? e.message : 'Failed to load catalog');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
   }, [navigate]);
 
   const activeTemplates = useMemo(() => {
@@ -87,24 +67,16 @@ export default function EmailTemplatesDebugPage() {
   }, [sampleVariables]);
 
   useEffect(() => {
-    if (!selectedType || loading) return;
+    if (!selectedType) return;
     void loadPreview(selectedType);
-  }, [selectedType, loading, loadPreview]);
+  }, [selectedType, loadPreview]);
 
-  const handleCategoryChange = (id: EmailTemplateCategory['id']) => {
+  const handleCategoryChange = (id: EmailTemplateCategoryId) => {
     setActiveCategory(id);
     const cat = categories.find((c) => c.id === id);
     const first = cat?.templates[0]?.type;
     if (first) setSelectedType(first);
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundImage: "url('/assets/marble-half.png')", backgroundSize: 'contain', backgroundRepeat: 'repeat' }}>
-        <p className="text-[11px] uppercase font-futura text-gray-500">Loading email templates…</p>
-      </div>
-    );
-  }
 
   return (
     <div

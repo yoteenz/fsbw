@@ -39,14 +39,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const internal = isAuthorizedInternal(req);
-  if (!internal) {
-    const admin = await requireAdmin(req);
-    if (!admin) return res.status(403).json({ error: 'Forbidden' });
-  }
-
   const body = parseBody(req);
   if (!body) return res.status(400).json({ error: 'JSON body required' });
+
+  const previewOnly = body.preview === true || req.query.preview === '1';
+
+  if (!previewOnly) {
+    const internal = isAuthorizedInternal(req);
+    if (!internal) {
+      const admin = await requireAdmin(req);
+      if (!admin) return res.status(403).json({ error: 'Forbidden' });
+    }
+  }
 
   const templateType = String(body.templateType || '').trim();
   if (!isEmailTemplateType(templateType)) {
@@ -61,8 +65,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     body.variables && typeof body.variables === 'object' && !Array.isArray(body.variables)
       ? (body.variables as EmailTemplateVariables)
       : {};
-
-  const previewOnly = body.preview === true || req.query.preview === '1';
 
   if (previewOnly) {
     const rendered = renderEmailTemplate(templateType, variables, subject);

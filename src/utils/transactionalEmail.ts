@@ -42,7 +42,14 @@ export async function previewEmailTemplate(payload: {
   });
   if (!res.ok) {
     const text = await res.text();
-    throw new Error(text.slice(0, 400));
+    let msg = text.slice(0, 400);
+    try {
+      const j = JSON.parse(text) as { error?: string };
+      if (typeof j?.error === 'string') msg = j.error;
+    } catch {
+      /* keep text */
+    }
+    throw new Error(msg);
   }
   const data = (await res.json()) as { html?: string; subject?: string };
   return { html: data.html || '', subject: data.subject || '' };
