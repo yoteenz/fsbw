@@ -5823,13 +5823,13 @@ export default function BuildAWigPage() {
         {!showMobileMenu && (
           isBawViewSubscriptionsFooterMode(rawPathname) ? (
             <>
-              <BawViewSubscriptionsFooter style={{ marginTop: '2px' }} />
               {isBawTryHubLandingPath(rawPathname) ? (
-                <>
-                  <PageActionsBelowCard.Spacer />
-                  <BawSlayCardFooterButton />
-                </>
+                <BawSlayCardFooterButton style={{ marginTop: '2px' }} />
               ) : null}
+              {isBawTryHubLandingPath(rawPathname) ? <PageActionsBelowCard.Spacer /> : null}
+              <BawViewSubscriptionsFooter
+                style={isBawTryHubLandingPath(rawPathname) ? undefined : { marginTop: '2px' }}
+              />
             </>
           ) : isBawStandardMemberHubBrowseMode(rawPathname) ? (
             <BawHubStandardMemberFooter style={{ marginTop: '2px' }} />

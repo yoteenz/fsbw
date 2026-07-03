@@ -33373,3 +33373,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to revert slay card button label from **CREATE SLAY CARD** to **SAVE SLAY CARD**.
 
 **Changes:** **`BawSlayCardFooterButton`** in **`BawViewSubscriptionsFooter.tsx`**.
+
+---
+
+## 2026-07-03 — BAW slay card button above VIEW SUBSCRIPTIONS
+
+**Context:** User asked to move **SAVE SLAY CARD** above **VIEW SUBSCRIPTIONS** on view-mode try hub.
+
+**Changes:** **`build-a-wig/page.tsx`** — slay card first (`marginTop: 2px`), **`PageActionsBelowCard.Spacer`**, then **VIEW SUBSCRIPTIONS**.
