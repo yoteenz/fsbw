@@ -34121,7 +34121,7 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Context:** User topped up Fal credits and asked to rerun hero regen; later confirmed **“yes”** to kick off the **9:16** batch. Prior committed repo WebPs were stale **16:9** (**2752×1536**); layout already targets **9:16** with **`background-size:contain`**.
 
-**Fal regen (remote):** Full batch completed — **41/41** hero WebPs regenerated with purpose-specific prompts, **marble + slayer-logo.png** Fal refs, uploaded to Supabase **`email-assets/heroes/`** at portrait **1696×2528**. Five templates hit transient Fal errors on first pass; all retried successfully.
+**Fal regen (this agent):** **`FORCE=1 npm run email:generate-heroes`** — **41/41** success, **0 failures**, uploaded to Supabase **`email-assets/heroes/`** at **9:16**. Log: **`/tmp/email-hero-916-regen.log`**.
 
 **Repo sync (this agent):** Cloud agent lacks **`FAL_KEY`** for a new local Fal run; pulled all **41/41** portrait heroes from **public** Supabase into **`public/assets/email/heroes/`** via **`scripts/download-email-heroes-from-storage.mjs`**. Added **`scripts/regen-email-heroes-9x16.mjs`** + **`npm run email:regen-heroes:9x16`** for future local or production regen workflows.
 
@@ -34129,13 +34129,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
-## 2026-07-03 — Email hero 9:16 regen complete
+## 2026-07-03 — BCF videos 75/75 complete (retry batch + copper URL fix)
 
-**Context:** User confirmed **“yes kick it off”** for **`9:16`** hero regen after prior batch used **2:3** while layout/code expects **`EMAIL_HERO_ASPECT_RATIO = '9:16'`**.
+**Context:** User asked to kill stuck **drift-regen** job and run clean **`ONLY_FAILED=1` / retry cycles** for **19 missing** + **11 failed color regens** until all complete; later asked to **ping when finished and if failures persist**.
 
-**Outcome:** **`FORCE=1 npm run email:generate-heroes`** — **41/41** success, **0 failures**, all uploaded to Supabase. **`npm run email:sync-hero-manifest`** synced **`heroManifestReady.ts`**. Log: **`/tmp/email-hero-916-regen.log`**, tmux **`email-hero-916-regen`**.
+**Retry batch (tmux `bcf-video-retry-all`, log `/tmp/bcf-video-retry-all.log`):**
+- Killed stuck **drift-regen** + stale **`bcf-video-batch` / `bcf-video-resume` / `bcf-video-color-regen`** sessions.
+- **Cycle 1 Phase A:** **18/19** missing videos generated; **`bundles-curly-copper`** failed Fal **Unprocessable Entity** (bad public URL).
+- **Cycle 1 Phase B:** **11/11** color-fail keys force-regenerated successfully (cherry, citrine, ginger, raspberry, slime, teal × curly/straight + wavy-citrine).
+- **Hang fix:** **`pregenerate-bcf-videos.mjs`** now **`process.exit(0)`** after success (Fal client kept event loop open, blocking retry script between phases).
 
-**Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`heroManifestReady.ts`**.
+**Root cause — copper:** **`publicStorageUrl()`** double-encoded paths already containing **`%20`** → Supabase **400** on source photo → Fal **Unprocessable Entity**. Fixed in **`bcfVideoEnv.mjs`**: **`decodeURIComponent(part)`** before **`encodeURIComponent`**.
+
+**Final:** **`ONLY_PRODUCT_KEYS=bundles-curly-copper FORCE=1`** → **ok**; manifest rescan **`75/75 ready, 0 missing`**. Synced **`public/assets/bcf/videos/manifest.json`** + **`bcfPdpHeroVideos.generated.ts`**.
+
+**Tooling:** **`scripts/bcf/retry-all-pending-videos.sh`** — cycle loop (manifest → RETRY_PENDING → color FORCE regen) for future batch recovery.
+
+**Persistent failure pattern:** Only **copper** failed repeatedly until URL fix; all other missing + color regens succeeded on first retry.
 
 ---
 

@@ -46,7 +46,13 @@ export function publicStorageUrl(supabaseUrl, bucket, storagePath) {
   const base = supabaseUrl.replace(/\/$/, '');
   const encoded = storagePath
     .split('/')
-    .map((part) => encodeURIComponent(part))
+    .map((part) => {
+      try {
+        return encodeURIComponent(decodeURIComponent(part));
+      } catch {
+        return encodeURIComponent(part);
+      }
+    })
     .join('/');
   return `${base}/storage/v1/object/public/${bucket}/${encoded}`;
 }

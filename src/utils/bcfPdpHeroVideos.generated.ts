@@ -54,6 +54,15 @@ export const BCF_PDP_HERO_VIDEOS = {
     "texture": "curly",
     "colorId": "COBALT"
   },
+  "bundles-curly-copper": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-curly-copper.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-curly-copper",
+    "category": "bundles",
+    "texture": "curly",
+    "colorId": "COPPER"
+  },
   "bundles-curly-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__24695.mov",
     "webmStoragePath": null,
@@ -423,6 +432,87 @@ export const BCF_PDP_HERO_VIDEOS = {
     "texture": "wavy",
     "colorId": "GINGER"
   },
+  "bundles-wavy-golden": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-wavy-golden.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-wavy-golden",
+    "category": "bundles",
+    "texture": "wavy",
+    "colorId": "GOLDEN"
+  },
+  "bundles-wavy-honey": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-wavy-honey.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-wavy-honey",
+    "category": "bundles",
+    "texture": "wavy",
+    "colorId": "HONEY"
+  },
+  "bundles-wavy-jet-black": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-wavy-jet-black.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-wavy-jet-black",
+    "category": "bundles",
+    "texture": "wavy",
+    "colorId": "JET BLACK"
+  },
+  "bundles-wavy-platinum": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-wavy-platinum.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-wavy-platinum",
+    "category": "bundles",
+    "texture": "wavy",
+    "colorId": "PLATINUM"
+  },
+  "bundles-wavy-plum": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-wavy-plum.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-wavy-plum",
+    "category": "bundles",
+    "texture": "wavy",
+    "colorId": "PLUM"
+  },
+  "bundles-wavy-raspberry": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-wavy-raspberry.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-wavy-raspberry",
+    "category": "bundles",
+    "texture": "wavy",
+    "colorId": "RASPBERRY"
+  },
+  "bundles-wavy-sangria": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-wavy-sangria.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-wavy-sangria",
+    "category": "bundles",
+    "texture": "wavy",
+    "colorId": "SANGRIA"
+  },
+  "bundles-wavy-slime": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-wavy-slime.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-wavy-slime",
+    "category": "bundles",
+    "texture": "wavy",
+    "colorId": "SLIME"
+  },
+  "bundles-wavy-teal": {
+    "mp4StoragePath": "BCF/videos/v1/bundles-wavy-teal.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "bundles-wavy-teal",
+    "category": "bundles",
+    "texture": "wavy",
+    "colorId": "TEAL"
+  },
   "closures-curly-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__28643.mov",
     "webmStoragePath": null,
@@ -431,6 +521,15 @@ export const BCF_PDP_HERO_VIDEOS = {
     "category": "closures",
     "texture": "curly",
     "colorId": "DEFAULT"
+  },
+  "closures-straight-ash": {
+    "mp4StoragePath": "BCF/videos/v1/closures-straight-ash.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-straight-ash",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "ASH"
   },
   "closures-straight-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__27854.mov",
@@ -441,6 +540,33 @@ export const BCF_PDP_HERO_VIDEOS = {
     "texture": "straight",
     "colorId": "DEFAULT"
   },
+  "closures-straight-golden": {
+    "mp4StoragePath": "BCF/videos/v1/closures-straight-golden.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-straight-golden",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "GOLDEN"
+  },
+  "closures-straight-platinum": {
+    "mp4StoragePath": "BCF/videos/v1/closures-straight-platinum.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-straight-platinum",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "PLATINUM"
+  },
+  "closures-wavy-ash": {
+    "mp4StoragePath": "BCF/videos/v1/closures-wavy-ash.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-wavy-ash",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "ASH"
+  },
   "closures-wavy-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__49906.mov",
     "webmStoragePath": null,
@@ -449,6 +575,24 @@ export const BCF_PDP_HERO_VIDEOS = {
     "category": "closures",
     "texture": "wavy",
     "colorId": "DEFAULT"
+  },
+  "closures-wavy-golden": {
+    "mp4StoragePath": "BCF/videos/v1/closures-wavy-golden.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-wavy-golden",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "GOLDEN"
+  },
+  "closures-wavy-platinum": {
+    "mp4StoragePath": "BCF/videos/v1/closures-wavy-platinum.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "closures-wavy-platinum",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "PLATINUM"
   },
   "frontals-curly-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__79392.mov",
@@ -459,6 +603,15 @@ export const BCF_PDP_HERO_VIDEOS = {
     "texture": "curly",
     "colorId": "DEFAULT"
   },
+  "frontals-straight-ash": {
+    "mp4StoragePath": "BCF/videos/v1/frontals-straight-ash.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "frontals-straight-ash",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "ASH"
+  },
   "frontals-straight-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_shake_the_hair_Kling_30__79719.mov",
     "webmStoragePath": null,
@@ -468,6 +621,33 @@ export const BCF_PDP_HERO_VIDEOS = {
     "texture": "straight",
     "colorId": "DEFAULT"
   },
+  "frontals-straight-golden": {
+    "mp4StoragePath": "BCF/videos/v1/frontals-straight-golden.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "frontals-straight-golden",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "GOLDEN"
+  },
+  "frontals-straight-platinum": {
+    "mp4StoragePath": "BCF/videos/v1/frontals-straight-platinum.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "frontals-straight-platinum",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "PLATINUM"
+  },
+  "frontals-wavy-ash": {
+    "mp4StoragePath": "BCF/videos/v1/frontals-wavy-ash.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "frontals-wavy-ash",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "ASH"
+  },
   "frontals-wavy-default": {
     "mp4StoragePath": "wig-preview-live/make_this_image_slowly_showcas_Kling_30__78091.mov",
     "webmStoragePath": null,
@@ -476,6 +656,24 @@ export const BCF_PDP_HERO_VIDEOS = {
     "category": "frontals",
     "texture": "wavy",
     "colorId": "DEFAULT"
+  },
+  "frontals-wavy-golden": {
+    "mp4StoragePath": "BCF/videos/v1/frontals-wavy-golden.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "frontals-wavy-golden",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "GOLDEN"
+  },
+  "frontals-wavy-platinum": {
+    "mp4StoragePath": "BCF/videos/v1/frontals-wavy-platinum.mp4",
+    "webmStoragePath": null,
+    "status": "ready_mp4_only",
+    "productKey": "frontals-wavy-platinum",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "PLATINUM"
   }
 } as const;
 export type BcfPdpHeroVideoEntry = (typeof BCF_PDP_HERO_VIDEOS)[keyof typeof BCF_PDP_HERO_VIDEOS];

@@ -1,7 +1,7 @@
 {
   "version": 1,
   "promptVersion": "v2",
-  "generatedAt": "2026-07-03T15:02:35.798Z",
+  "generatedAt": "2026-07-03T19:21:56.982Z",
   "bucket": "live-preview",
   "storagePrefix": "BCF/videos/v1",
   "falModel": "fal-ai/kling-video/v3/pro/image-to-video",
@@ -47,13 +47,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-curly-cherry.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-curly-cherry.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T15:57:55.097Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-curly-chestnut",
@@ -79,13 +77,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-curly-citrine.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-curly-citrine.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T15:57:55.254Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-curly-cobalt",
@@ -111,8 +107,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-curly-copper.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-curly-copper.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -156,13 +152,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-curly-ginger.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-curly-ginger.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T15:57:55.305Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-curly-golden",
@@ -248,13 +242,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-curly-raspberry.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-curly-raspberry.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T15:57:55.356Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-curly-sangria",
@@ -280,13 +272,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-curly-slime.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-curly-slime.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T15:57:55.407Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-curly-teal",
@@ -297,13 +287,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-curly-teal.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-curly-teal.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "6/18 bundles-curly-teal timed out after 600000ms",
-      "failedAt": "2026-07-03T16:07:55.409Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-straight-ash",
@@ -344,13 +332,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-straight-cherry.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-straight-cherry.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T16:07:55.468Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-straight-chestnut",
@@ -376,13 +362,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-straight-citrine.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-straight-citrine.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T16:07:55.630Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-straight-cobalt",
@@ -453,13 +437,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-straight-ginger.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-straight-ginger.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T16:07:55.683Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-straight-golden",
@@ -549,8 +531,7 @@
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "generatedAt": "2026-07-03T16:10:47.951Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-straight-sangria",
@@ -580,8 +561,7 @@
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "generatedAt": "2026-07-03T16:13:12.190Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-straight-teal",
@@ -592,13 +572,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-straight-teal.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-straight-teal.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T16:13:14.345Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-wavy-ash",
@@ -643,8 +621,7 @@
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "generatedAt": "2026-07-03T16:16:56.638Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-wavy-chestnut",
@@ -670,13 +647,11 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-wavy-citrine.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-wavy-citrine.webm",
-      "status": "failed",
+      "status": "ready_mp4_only",
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "lastError": "Forbidden",
-      "failedAt": "2026-07-03T16:16:58.794Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-wavy-cobalt",
@@ -751,8 +726,7 @@
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "generatedAt": "2026-07-03T16:19:13.284Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-wavy-golden",
@@ -763,8 +737,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-wavy-golden.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-wavy-golden.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -778,8 +752,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-wavy-honey.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-wavy-honey.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -793,8 +767,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-wavy-jet-black.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-wavy-jet-black.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -808,8 +782,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-wavy-platinum.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-wavy-platinum.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -823,8 +797,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-wavy-plum.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-wavy-plum.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -842,8 +816,7 @@
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "generatedAt": "2026-07-03T16:22:06.996Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-wavy-sangria",
@@ -854,8 +827,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/bundles-wavy-sangria.mp4",
       "webmStoragePath": "BCF/videos/v1/bundles-wavy-sangria.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -873,8 +846,7 @@
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "generatedAt": "2026-07-03T16:25:34.708Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "bundles-wavy-teal",
@@ -889,8 +861,7 @@
       "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
-      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump.",
-      "generatedAt": "2026-07-03T16:28:23.519Z"
+      "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
     },
     {
       "productKey": "closures-curly-default",
@@ -916,8 +887,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/closures-straight-ash.mp4",
       "webmStoragePath": "BCF/videos/v1/closures-straight-ash.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -946,8 +917,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/closures-straight-golden.mp4",
       "webmStoragePath": "BCF/videos/v1/closures-straight-golden.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -961,8 +932,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/closures-straight-platinum.mp4",
       "webmStoragePath": "BCF/videos/v1/closures-straight-platinum.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -976,8 +947,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/closures-wavy-ash.mp4",
       "webmStoragePath": "BCF/videos/v1/closures-wavy-ash.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -1006,8 +977,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/closures-wavy-golden.mp4",
       "webmStoragePath": "BCF/videos/v1/closures-wavy-golden.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -1021,8 +992,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/closures-wavy-platinum.mp4",
       "webmStoragePath": "BCF/videos/v1/closures-wavy-platinum.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -1051,8 +1022,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/frontals-straight-ash.mp4",
       "webmStoragePath": "BCF/videos/v1/frontals-straight-ash.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -1081,8 +1052,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/frontals-straight-golden.mp4",
       "webmStoragePath": "BCF/videos/v1/frontals-straight-golden.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -1096,8 +1067,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/frontals-straight-platinum.mp4",
       "webmStoragePath": "BCF/videos/v1/frontals-straight-platinum.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -1111,8 +1082,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/frontals-wavy-ash.mp4",
       "webmStoragePath": "BCF/videos/v1/frontals-wavy-ash.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -1141,8 +1112,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/frontals-wavy-golden.mp4",
       "webmStoragePath": "BCF/videos/v1/frontals-wavy-golden.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -1156,8 +1127,8 @@
       "legacyVideoStoragePath": null,
       "mp4StoragePath": "BCF/videos/v1/frontals-wavy-platinum.mp4",
       "webmStoragePath": "BCF/videos/v1/frontals-wavy-platinum.webm",
-      "status": "missing",
-      "hasMp4": false,
+      "status": "ready_mp4_only",
+      "hasMp4": true,
       "hasWebm": false,
       "hasLegacy": false,
       "prompt": "Recreate the attached product exactly on a pure white (#FFFFFF) seamless background.\n\nThe first frame and every frame must match the reference image's hair color, brightness, saturation, exposure, and white balance exactly — do NOT darken, mute, or shift the hair color at any point.\n\nPreserve every strand, texture, density, curl pattern, wave pattern, lace detail, taper, and overall silhouette exactly.\n\nThe hair should remain front-facing throughout the animation.\n\nDo NOT rotate the hair.\nDo NOT spin it.\nDo NOT flip it.\nDo NOT twist it.\nDo NOT orbit the camera.\nDo NOT zoom.\nDo NOT change the framing.\nDo NOT change exposure, contrast, or color grading.\n\nThe only animation should be a slow, elegant, natural side-to-side sway, as though someone is gently holding the product just outside the frame.\n\nMovement should be extremely subtle:\n- 2–4° total sway\n- smooth easing\n- no abrupt direction changes\n- premium studio product photography feel\n\nMaintain on every frame:\n- identical hair color brightness and saturation as the reference\n- identical lighting\n- identical shadows\n- identical white background (#FFFFFF, no gray cast)\n- photorealistic strand movement\n- luxury beauty campaign quality\n\nLength: 4–6 seconds\nLoop: perfect seamless loop with no visible jump."
@@ -1165,9 +1136,9 @@
   ],
   "summary": {
     "total": 75,
-    "ready": 45,
-    "missing": 19,
-    "failed": 11
-  },
-  "updatedAt": "2026-07-03T16:28:25.521Z"
+    "ready": 75,
+    "missing": 0,
+    "readyLegacy": 9,
+    "readyMp4Only": 66
+  }
 }
