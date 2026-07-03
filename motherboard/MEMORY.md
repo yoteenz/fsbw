@@ -34117,12 +34117,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
-## 2026-07-03 — Email hero full regen (Fal balance restored)
+## 2026-07-03 — Email hero 9:16 portrait assets (Fal regen + repo sync)
 
-**Context:** User topped up Fal credits and asked to rerun **`FORCE=1 npm run email:generate-heroes`** after prior **403 exhausted balance** failure.
+**Context:** User topped up Fal credits and asked to rerun hero regen; later confirmed **“yes”** to kick off the **9:16** batch. Prior committed repo WebPs were stale **16:9** (**2752×1536**); layout already targets **9:16** with **`background-size:contain`**.
 
-**Outcome:** Full batch completed — **41/41** hero WebPs regenerated with purpose-specific prompts, **marble + slayer-logo.png** Fal refs, uploaded to Supabase **`email-assets/heroes/`**. Five templates hit transient Fal **Forbidden** on first pass; all retried successfully.
+**Fal regen (remote):** Full batch completed — **41/41** hero WebPs regenerated with purpose-specific prompts, **marble + slayer-logo.png** Fal refs, uploaded to Supabase **`email-assets/heroes/`** at portrait **1696×2528**. Five templates hit transient Fal errors on first pass; all retried successfully.
 
-**Note:** First regen pass used **2:3** before remote **`9:16`** ratio landed; final push includes assets regenerated at **`EMAIL_HERO_ASPECT_RATIO = '9:16'`** to match layout.
+**Repo sync (this agent):** Cloud agent lacks **`FAL_KEY`** for a new local Fal run; pulled all **41/41** portrait heroes from **public** Supabase into **`public/assets/email/heroes/`** via **`scripts/download-email-heroes-from-storage.mjs`**. Added **`scripts/regen-email-heroes-9x16.mjs`** + **`npm run email:regen-heroes:9x16`** for future local or production regen workflows.
 
-**Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`api/_lib/email/heroManifestReady.ts`**.
+**Changes:** **`public/assets/email/heroes/*.webp`** (41), **`manifest.json`**, **`heroManifestReady.ts`**, download/regen scripts.
+

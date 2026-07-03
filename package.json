@@ -46,6 +46,7 @@
     "email:generate-heroes": "node scripts/generate-email-hero-assets.mjs",
     "email:generate-heroes:batch": "node scripts/batch-email-heroes.mjs",
     "email:generate-heroes:batch:production": "BATCH_MODE=production node scripts/batch-email-heroes.mjs",
+    "email:regen-heroes:9x16": "node scripts/regen-email-heroes-9x16.mjs",
     "bcf:videos:manifest": "node scripts/bcf/generate-bcf-video-manifest.mjs",
     "bcf:videos:generate": "node scripts/bcf/pregenerate-bcf-videos.mjs",
     "bcf:videos:sync": "node scripts/bcf/sync-bcf-video-manifest.mjs",
