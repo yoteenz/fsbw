@@ -23,6 +23,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'show-bible') {
       return <Navigate to="/admin/studio/show-bible" replace />;
     }
+    if (sectionId === 'studio-lot') {
+      return <Navigate to="/admin/studio/studio-lot" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

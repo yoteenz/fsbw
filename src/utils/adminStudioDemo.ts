@@ -31,7 +31,8 @@ export type AdminStudioSectionId =
   | 'creative-director'
   | 'intelligence-engine'
   | 'ai-orchestrator'
-  | 'show-bible';
+  | 'show-bible'
+  | 'studio-lot';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;

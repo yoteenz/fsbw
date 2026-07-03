@@ -34603,3 +34603,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Navigate `/admin/studio/show-bible`; cross-links at bottom to Creative Director / AI Orchestrator only (no edits to prior milestone pages). Future episode generation must call `showBibleStudioService.inheritForEpisode(showId)` before AI Orchestrator adapters.
 
+---
+
+## 2026-07-03 — THE STUDIO Studio Lot (virtual production campus milestone)
+
+**Context:** Continuation of THE STUDIO — all prior milestones frozen (no redesign). User requested new flagship module **STUDIO LOT** — subtitle *"Every story starts on set."* Master library of virtual production environments (not backgrounds — fully branded studios). Every Lounge TV episode, campaign, social, email, hero, PSA, and future Desktop Mansion scene must reference Studio Lot. AI providers must inherit visual identity from Studio Lot, never generate independent environments.
+
+**Topics covered (full chat arc):**
+- Prior: Show Bible (`8eb6fc80`), Creative Director, Intelligence Engine, AI Orchestrator, Content Brain, etc. — all unchanged.
+- **Studio Lot** (`/admin/studio/studio-lot`): production backlot landing with 13 default studios + ADD STUDIO; premium cards show artwork, name, purpose, primary shows, status, last updated, asset count, lighting profile, camera presets.
+- **Default studios:** Weather, Lab, Build, Vault, Academy, Lounge, Newsroom, Runway, Product, Campaign, Founder, PSA, Future Mansion.
+- **13-tab studio profile:** Profile, Visual DNA, Camera, Lighting, Motion, Graphics, Audio, Prompts (with version history), Assets (searchable catalog), Usage Map (visual timeline), Production Modes, Content Continuity, Mansion (design-only mapping).
+- **Data model** `adminStudioStudioLotDemo.ts`: `StudioLotEntry` with full production fields, camera/lighting presets, prompt versions, asset catalog, mansion floor/room mapping (not active).
+- **State** `useAdminStudioStudioLotState.ts`: localStorage patches + custom studios; prompt version CRUD; asset search.
+- **Service** `studioLotStudioService`: `getSnapshot`, `getStudioSnapshot`, `inheritForGeneration` — registered in `STUDIO_SERVICE_REGISTRY`.
+- **Architecture chain:** Brand Brain → Creative Director → Show Bible → **Studio Lot** → Content Pack → AI Orchestrator → AI Providers → Draft → Publishing.
+
+**Decisions / outcomes:** Separate from asset-library and Show Bible; mansion integration designed but not activated; continuity version locks documented per studio. Build verified.
+
+**Changes:** `adminStudioStudioLotDemo.ts`, `useAdminStudioStudioLotState.ts`, `services/studio/studioLot/service.ts`, `AdminStudioLotCard`, `AdminStudioLotFieldGroups`, `studio-lot/page.tsx`, `studio-lot/detail/page.tsx`, `adminStudioRoutes.ts`, `adminStudioDemo.ts`, `adminStudioStorage.ts`, `App.tsx`, `section/page.tsx`, `STUDIO_SERVICE_REGISTRY`.
+
+**Conventions:** Navigate `/admin/studio/studio-lot`; cross-links to Show Bible / AI Orchestrator at bottom only. Future generation calls `studioLotStudioService.inheritForGeneration(studioId)` — one reusable environment per studio, versioning supported.
+

@@ -18,6 +18,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'intelligence-engine'
   | 'ai-orchestrator'
   | 'show-bible'
+  | 'studio-lot'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -33,6 +34,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'intelligence-engine',
   'ai-orchestrator',
   'show-bible',
+  'studio-lot',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -56,6 +58,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   aiOrchestrator: 'studio/ai-orchestrator',
   showBible: 'studio/show-bible',
   showBibleDetail: 'studio/show-bible/:showId',
+  studioLot: 'studio/studio-lot',
+  studioLotDetail: 'studio/studio-lot/:studioId',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -73,4 +77,8 @@ export function adminStudioContentPackPath(packId: string): string {
 
 export function adminStudioShowBiblePath(showId: string): string {
   return `${ADMIN_STUDIO_BASE_PATH}/show-bible/${showId}`;
+}
+
+export function adminStudioLotPath(studioId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-lot/${studioId}`;
 }

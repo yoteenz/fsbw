@@ -44,6 +44,9 @@ export type { OrchestratedContentPack } from './orchestrator';
 export { showBibleStudioService, getShowSnapshot, inheritForEpisode, validateProductionChecklist } from './showBible/service';
 export type { ShowBibleSnapshot, ShowBibleEpisodeInheritance, ShowBibleChecklistValidation } from './showBible/service';
 
+export { studioLotStudioService, getStudioSnapshot, inheritForGeneration } from './studioLot/service';
+export type { StudioLotSnapshot, StudioLotInheritance } from './studioLot/service';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -56,6 +59,7 @@ import { creativeDirectorStudioService } from './creativeDirector/service';
 import { intelligenceEngineStudioService } from './intelligenceEngine';
 import { aiOrchestratorStudioService } from './orchestrator';
 import { showBibleStudioService } from './showBible/service';
+import { studioLotStudioService } from './studioLot/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -63,6 +67,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   contentBrainStudioService,
   creativeDirectorStudioService,
   showBibleStudioService,
+  studioLotStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,
