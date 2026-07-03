@@ -34014,3 +34014,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 - **`docs/EMAIL_SYSTEM.md`** — regen note: `FORCE=1 npm run email:generate-heroes`.
 
 **Regen:** Attempted **`FORCE=1 npm run email:generate-heroes`** — Fal **`403 Forbidden`** (exhausted balance). Existing **16:9** WebPs still render via **`background-size:cover`** until regen after top-up. Run **`FORCE=1 npm run email:generate-heroes`** then **`npm run email:upload-assets`** when Fal billing restored.
+
+---
+
+## 2026-07-03 — Email hero logo authenticity: official slayer-logo.png Fal reference
+
+**Context:** User reported email template hero images sometimes generate their own invented logos instead of the real Frontal Slayer mark. They want **only the actual logo** (`slayer-logo.png` — red FS monogram + FRONTAL SLAYER text) for brand authenticity.
+
+**Decisions / outcomes:**
+- Every Fal hero generation now attaches **`public/assets/email/slayer-logo.png`** as the second edit reference (after marble).
+- All **41** scene prompts updated: removed vague **FS monogram / FS seal / FS logo** language → **"official Frontal Slayer logo from the logo reference image (FRONTAL SLAYER fully legible)"**.
+- Base style changed from blanket **"NO logos"** to **"NO invented logos"** — allows the real mark when scene calls for seal/shopping bag logo.
+- **`emailHeroPromptFor()`** appends **`EMAIL_HERO_LOGO_AUTHENTICITY_PROMPT`** on every template (do not invent/redraw/substitute).
+
+**Changes:** **`api/_lib/email/emailHeroPrompts.ts`**, **`emailHeroPrompts.data.json`**, **`generateHeroAsset.ts`**, **`scripts/generate-email-hero-assets.mjs`**, **`docs/EMAIL_SYSTEM.md`**.
+
+**Regen:** Same as prior — **`FORCE=1 npm run email:generate-heroes`** after Fal balance restored to pick up logo ref + 2:3 prompts.

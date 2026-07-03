@@ -1,7 +1,10 @@
 import { readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { EMAIL_HERO_ASPECT_RATIO } from './heroDimensions.js';
-import { emailHeroPromptFor } from './emailHeroPrompts.js';
+import {
+  EMAIL_HERO_LOGO_REF_RELATIVE,
+  emailHeroPromptFor,
+} from './emailHeroPrompts.js';
 import { emailHeroStoragePath } from './heroImages.js';
 import type { EmailTemplateType } from './types.js';
 
@@ -17,6 +20,12 @@ function marbleRefPath(): string {
   const custom = process.env.MARBLE_REF?.trim();
   if (custom) return join(repoRoot(), custom.replace(/^\//, ''));
   return join(repoRoot(), 'public/assets/marble-half.png');
+}
+
+function logoRefPath(): string {
+  const custom = process.env.EMAIL_HERO_LOGO_REF?.trim();
+  if (custom) return join(repoRoot(), custom.replace(/^\//, ''));
+  return join(repoRoot(), EMAIL_HERO_LOGO_REF_RELATIVE);
 }
 
 async function falUpload(fal: { storage: { upload: (f: File) => Promise<string> } }, filePath: string) {
@@ -60,12 +69,18 @@ export async function generateAndUploadEmailHero(
     return { ok: false, templateType, error: `Marble reference missing: ${marbleRef}` };
   }
 
+  const logoRef = logoRefPath();
+  if (!existsSync(logoRef)) {
+    return { ok: false, templateType, error: `Logo reference missing: ${logoRef}` };
+  }
+
   const prompt = emailHeroPromptFor(templateType);
   const { fal } = await import('@fal-ai/client');
   fal.config({ credentials: falKey });
 
   const marbleUrl = await falUpload(fal, marbleRef);
-  const imageUrls = [marbleUrl];
+  const logoUrl = await falUpload(fal, logoRef);
+  const imageUrls = [marbleUrl, logoUrl];
 
   const extraRef = process.env.REFERENCE_IMAGE?.trim();
   if (extraRef) {
