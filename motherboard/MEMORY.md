@@ -33313,3 +33313,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to rename **try mode** to **view mode**.
 
 **Changes:** Top panel mode label **BUILD-A-WIG TRY MODE** → **BUILD-A-WIG VIEW MODE** (`bawModeGuideConfig.ts`); slay card header **BUILD-A-WIG TRY** → **BUILD-A-WIG VIEW** (`bawSlayCard.ts`). Guest routes remain **`/build-a-wig/try`**; PDP CTAs (**TRY BUILD-A-WIG**) unchanged.
+
+---
+
+## 2026-07-03 — BAW view-mode slay card button on try hub
+
+**Context:** User asked where the slay card was (it existed only as unused PNG generator code). User then wanted it restored as a button on the **view-mode main hub**, directly below **VIEW SUBSCRIPTIONS**.
+
+**Topics covered:** Slay card was orphaned after try flow unified with main BAW chrome — `renderBawSlayCardPng` / `shareOrDownloadBawSlayCard` in `bawSlayCard.ts` had no UI; tutorial step `'card'` and `BawTutorialGuidePanel` unused. Prior work in this chat: view-mode rename, try sub-page fixes, BUILD GUIDE copy.
+
+**Decisions / outcomes:** Add **SAVE SLAY CARD** footer button only on try **hub landing** (`/build-a-wig/try`, `/build-a-wig/try/{unit}`) when **VIEW SUBSCRIPTIONS** footer shows — not on option sub-pages. Button reads current picks from `selected*` / `customizeSelected*` localStorage and triggers native share or download. Share text updated to **Built with Build-A-Wig View**.
+
+**Changes:**
+- **`isBawTryHubLandingPath`** in `bawTutorialConfig.ts`
+- **`readBawSlayCardSelectionsFromPathname`** in `bawSlayCard.ts`
+- **`BawSlayCardFooterButton`** in `BawViewSubscriptionsFooter.tsx` — tracks `baw_tutorial_share_card`
+- **`build-a-wig/page.tsx`** — renders slay card button below `BawViewSubscriptionsFooter` on try hub
+
+**Conventions:** Slay card stays hub-only for guests in view mode; sub-pages keep VIEW SUBSCRIPTIONS without slay card duplicate.

@@ -14,7 +14,7 @@ import BuildAWigFeatureSignInModal from '../../components/BuildAWigFeatureSignIn
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 import { isBawStandardMemberHubBrowseMode, isBawViewSubscriptionsFooterMode, setBawTryBrowseActive } from '../../utils/bawClientTestMode';
 import LiveTryOnLaunchButton from '../../components/liveTryOn/LiveTryOnLaunchButton';
-import { BawHubStandardMemberFooter, BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
+import { BawHubStandardMemberFooter, BawSlayCardFooterButton, BawViewSubscriptionsFooter } from '../../components/buildWig/BawViewSubscriptionsFooter';
 import { BawModeChrome } from '../../components/buildWig/BawModeChrome';
 import { BuildWigSubscriptionPageRoot } from '../../components/buildWig/BawSubscriptionViewContext';
 import { BawSubscriptionMainCard } from '../../components/buildWig/BawSubscriptionMainCard';
@@ -50,7 +50,7 @@ import {
 } from '../../utils/bawCrossStepSummary';
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
-import { BAW_TUTORIAL_ROUTE, getBawTryFlowBasePath, getBawTryOptionSubPagePath, isBawTryStepSegment, isBawTryUnitSlug, isBawTutorialPath } from '../../constants/bawTutorialConfig';
+import { BAW_TUTORIAL_ROUTE, getBawTryFlowBasePath, getBawTryOptionSubPagePath, isBawTryHubLandingPath, isBawTryStepSegment, isBawTryUnitSlug, isBawTutorialPath } from '../../constants/bawTutorialConfig';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
 
@@ -5821,7 +5821,12 @@ export default function BuildAWigPage() {
 
         {!showMobileMenu && (
           isBawViewSubscriptionsFooterMode(rawPathname) ? (
-            <BawViewSubscriptionsFooter style={{ marginTop: '2px' }} />
+            <>
+              <BawViewSubscriptionsFooter style={{ marginTop: '2px' }} />
+              {isBawTryHubLandingPath(rawPathname) ? (
+                <BawSlayCardFooterButton style={{ marginTop: '2px' }} />
+              ) : null}
+            </>
           ) : isBawStandardMemberHubBrowseMode(rawPathname) ? (
             <BawHubStandardMemberFooter style={{ marginTop: '2px' }} />
           ) : (

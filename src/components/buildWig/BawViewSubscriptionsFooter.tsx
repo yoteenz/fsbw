@@ -1,8 +1,15 @@
 import type { CSSProperties } from 'react';
+import { useCallback, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
 import { isBawViewSubscriptionsFooterMode } from '../../utils/bawClientTestMode';
 import { getBuildAWigCustomizePathFromHub, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
+import { trackActivity } from '../../utils/activity';
+import {
+  readBawSlayCardSelectionsFromPathname,
+  renderBawSlayCardPng,
+  shareOrDownloadBawSlayCard,
+} from '../../utils/bawSlayCard';
 import { useBawSubscriptionView } from './BawSubscriptionViewContext';
 
 const defaultButtonStyle: CSSProperties = {
@@ -53,6 +60,61 @@ export function BawViewSubscriptionsFooter({
         dataAttribute="baw-subscription-validation"
       />
     </>
+  );
+}
+
+type BawSlayCardFooterButtonProps = {
+  buttonWidth?: string;
+  className?: string;
+  style?: CSSProperties;
+  fullWidth?: boolean;
+};
+
+export function BawSlayCardFooterButton({
+  buttonWidth = '100%',
+  className = 'border border-black font-futura text-center py-2 text-[12px] font-semibold bg-white cursor-pointer hover:bg-gray-50',
+  style,
+  fullWidth = true,
+}: BawSlayCardFooterButtonProps) {
+  const { pathname } = useLocation();
+  const [busy, setBusy] = useState(false);
+
+  const handleSlayCard = useCallback(async () => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const selections = readBawSlayCardSelectionsFromPathname(pathname);
+      const blob = await renderBawSlayCardPng(selections);
+      const result = await shareOrDownloadBawSlayCard(blob);
+      trackActivity('baw_tutorial_share_card', {
+        source: 'baw_view_hub',
+        unit: selections.unit,
+        result,
+      });
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return;
+    } finally {
+      setBusy(false);
+    }
+  }, [busy, pathname]);
+
+  return (
+    <div className="w-full px-0 md:px-0 flex justify-center flex-col items-center gap-2" style={style}>
+      <button
+        type="button"
+        onClick={() => void handleSlayCard()}
+        disabled={busy}
+        className={`${className}${busy ? ' opacity-70 cursor-not-allowed' : ''}`}
+        style={{
+          ...defaultButtonStyle,
+          width: buttonWidth,
+          maxWidth: fullWidth ? '100%' : undefined,
+        }}
+        data-attribute="baw-slay-card"
+      >
+        {busy ? 'GENERATING...' : 'SAVE SLAY CARD'}
+      </button>
+    </div>
   );
 }
 

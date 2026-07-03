@@ -130,6 +130,17 @@ export function isBawTutorialPath(pathname: string): boolean {
   return p === BAW_TUTORIAL_ROUTE || p.startsWith(`${BAW_TUTORIAL_ROUTE}/`);
 }
 
+/** View-mode hub only — `/build-a-wig/try` or `/build-a-wig/try/{unit}`, not option sub-pages. */
+export function isBawTryHubLandingPath(pathname: string): boolean {
+  const p = pathname.replace(/\/$/, '') || '/';
+  if (!isBawTutorialPath(p)) return false;
+  if (p === BAW_TUTORIAL_ROUTE) return true;
+  const prefix = `${BAW_TUTORIAL_ROUTE}/`;
+  if (!p.startsWith(prefix)) return false;
+  const segments = p.slice(prefix.length).split('/').filter(Boolean);
+  return segments.length === 1 && isBawTryUnitSlug(segments[0]);
+}
+
 /** Option step URL segments under `/build-a-wig/try/{unit}/…`. */
 export const BAW_TRY_STEP_SEGMENTS = [
   'cap',

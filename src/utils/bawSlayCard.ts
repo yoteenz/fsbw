@@ -1,5 +1,48 @@
 import type { BawTutorialSelections } from '../constants/bawTutorialConfig';
+import {
+  BAW_TUTORIAL_DEFAULT_SELECTIONS,
+  resolveBawTutorialUnitLabelFromPathname,
+} from '../constants/bawTutorialConfig';
 import { NOIR_NATURAL_FRONT_MANNEQUIN_SRC } from './bawStaticMannequinReferencePaths';
+
+export function readBawSlayCardSelectionsFromPathname(pathname: string): BawTutorialSelections {
+  const unit = resolveBawTutorialUnitLabelFromPathname(pathname);
+  const isBlanco = unit === 'BLANCO';
+  const capSize =
+    localStorage.getItem('selectedCapSize') ||
+    localStorage.getItem('customizeSelectedCapSize') ||
+    BAW_TUTORIAL_DEFAULT_SELECTIONS.capSize;
+  const length =
+    localStorage.getItem('selectedLength') ||
+    localStorage.getItem('customizeSelectedLength') ||
+    BAW_TUTORIAL_DEFAULT_SELECTIONS.length;
+  const density =
+    localStorage.getItem('selectedDensity') ||
+    localStorage.getItem('customizeSelectedDensity') ||
+    (isBlanco ? '250%' : BAW_TUTORIAL_DEFAULT_SELECTIONS.density);
+  const color =
+    localStorage.getItem('selectedColor') ||
+    localStorage.getItem('customizeSelectedColor') ||
+    (isBlanco ? 'PLATINUM' : BAW_TUTORIAL_DEFAULT_SELECTIONS.color);
+  const hairStyling =
+    localStorage.getItem('selectedHairStyling') ||
+    localStorage.getItem('customizeSelectedHairStyling') ||
+    '';
+  const stylingRaw =
+    localStorage.getItem('selectedStyling') ||
+    localStorage.getItem('customizeSelectedStyling') ||
+    BAW_TUTORIAL_DEFAULT_SELECTIONS.styling;
+  const styling = hairStyling.trim() || stylingRaw || 'NONE';
+
+  return {
+    unit,
+    capSize,
+    length,
+    density,
+    color,
+    styling: styling === '' ? 'NONE' : styling,
+  };
+}
 
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -106,7 +149,7 @@ export async function shareOrDownloadBawSlayCard(
         await navigator.share({
           files: [file],
           title: 'My Frontal Slayer look',
-          text: 'Built with Build-A-Wig Try',
+          text: 'Built with Build-A-Wig View',
         });
         return 'shared';
       }
