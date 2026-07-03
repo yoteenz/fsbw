@@ -33477,6 +33477,7 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-03 — Custom transactional email system (Frontal Slayer branded templates)
 
 **Context:** User requested a custom automated email system for the React/Vite + Supabase + Vercel app without Mailchimp — server-side Vercel API routes, reusable HTML templates matching Frontal Slayer luxury brand (marble, `#EB1C24`, glass panels, roses/diamonds, uppercase UI), dynamic variables, Supabase Storage assets, and a server-only **`sendEmail({ templateType, recipientEmail, subject, variables })`** function.
@@ -33491,3 +33492,12 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** New **`api/_lib/email/*`**, **`api/email/send.ts`**, **`scripts/upload-email-assets.mjs`**, **`supabase/migrations/20260703120000_email_assets_bucket.sql`**, **`docs/EMAIL_SYSTEM.md`**; wired **`recordProductOrderFromPaymentIntent.ts`**, **`client/submissions.ts`**, **`admin/pending-queue.ts`**, **`admin/users.ts`**, **`admin/meeting-client-alert.ts`**, **`stripe/webhook.ts`**; **`package.json`** script **`email:upload-assets`**; **`.env.example`**, **`motherboard/CORE.md`**, **`motherboard/MEMORY.md`** (this entry).
 
 **Conventions:** Import **`sendEmail`** / **`triggerTransactionalEmailForUser`** only from server **`api/`** code. Add new lifecycle emails by extending **`templateRegistry`** and calling triggers from the relevant API route (order shipped, points earned, voucher expiring cron, etc.). Upload Storage assets after deploy: **`npm run email:upload-assets`**.
+=======
+## 2026-07-03 — BAW slay card spec line format + brand red
+
+**Context:** User asked brand red hex; slay card detail text should be **value-first** (e.g. **`24" LENGTH`**, **`250% DENSITY`**, **`PLATINUM COLOR`**, **`MEDIUM CAP SIZE`**); omit **NONE** styling; when styling is set show **`LAYERS STYLING`** pattern.
+
+**Decisions:** Brand red remains **`#EB1C24`** (**`motherboard/CORE.md`**).
+
+**Changes:** **`bawSlayCard.ts`** — **`buildBawSlayCardSpecLines`**: value-before-label lines; cap size **M → MEDIUM CAP SIZE** (XS/S/L mapped; flexible caps keep token); styling line only when not **NONE**. **`paintBawSlayCard`** uses helper. Debug page max spec guide lines constant renamed **`MAX_SPEC_LINE_COUNT`** (5).
+>>>>>>> 473667c5 (Slay card spec lines value-first; omit NONE styling)

@@ -34,7 +34,7 @@ const SAMPLE_SELECTIONS: BawTutorialSelections = {
 
 const SUBTITLE_LABEL = 'PERSONAL BUILD-A-WIG SLAY CARD';
 const FOOTER_LABEL = 'TRY THE FULL BUILDER WITH MEMBERSHIP';
-const SPEC_LINE_COUNT = 5;
+const MAX_SPEC_LINE_COUNT = 5;
 
 function pointInRect(
   pt: { x: number; y: number },
@@ -251,7 +251,7 @@ export default function SlayCardDebugPage() {
         centeredTextBounds(selections.unit.toUpperCase(), layout.textPanel.unit.x, layout.textPanel.unit.y, layout.textPanel.unit.fontSize),
         selectedLayer === 'unit'
       );
-      const specsHeight = layout.textPanel.lineHeight * SPEC_LINE_COUNT + layout.textPanel.specsFontSize;
+      const specsHeight = layout.textPanel.lineHeight * MAX_SPEC_LINE_COUNT + layout.textPanel.specsFontSize;
       const specsWidth = layout.textPanel.specsFontSize * 14;
       drawTextGuide(
         {
@@ -359,7 +359,7 @@ export default function SlayCardDebugPage() {
     if (pointInRect(pt, footerBounds)) return { layer: 'footer', hit: true };
 
     const specsWidth = layout.textPanel.specsFontSize * 14;
-    const specsHeight = layout.textPanel.lineHeight * SPEC_LINE_COUNT + layout.textPanel.specsFontSize;
+    const specsHeight = layout.textPanel.lineHeight * MAX_SPEC_LINE_COUNT + layout.textPanel.specsFontSize;
     const specsBounds = {
       x: layout.textPanel.unit.x - specsWidth / 2,
       y: layout.textPanel.specsStartY - layout.textPanel.specsFontSize * 0.85,

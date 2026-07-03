@@ -21,6 +21,38 @@ import {
 export { BAW_SLAY_CARD_TEMPLATE_SRC, BAW_SLAY_CARD_SLAYER_LOGO_SRC } from './bawSlayCardLayout';
 export type { BawSlayCardLayout } from './bawSlayCardLayout';
 
+const BAW_SLAY_CARD_CAP_SIZE_DISPLAY: Record<string, string> = {
+  XS: 'EXTRA SMALL',
+  S: 'SMALL',
+  M: 'MEDIUM',
+  L: 'LARGE',
+  'XXS/XS/S': 'XXS/XS/S',
+  'S/M/L': 'S/M/L',
+};
+
+function formatBawSlayCardCapSizeLine(capSize: string): string {
+  const token = capSize.trim().toUpperCase();
+  const label = BAW_SLAY_CARD_CAP_SIZE_DISPLAY[token] ?? token;
+  return `${label} CAP SIZE`;
+}
+
+/** Detail lines under the unit name — value first, label second; styling omitted when NONE. */
+export function buildBawSlayCardSpecLines(selections: BawTutorialSelections): string[] {
+  const lines = [
+    `${selections.length} LENGTH`,
+    `${selections.density} DENSITY`,
+    `${selections.color} COLOR`,
+  ];
+
+  const styling = (selections.styling || '').trim().toUpperCase();
+  if (styling && styling !== 'NONE') {
+    lines.push(`${styling} STYLING`);
+  }
+
+  lines.push(formatBawSlayCardCapSizeLine(selections.capSize));
+  return lines;
+}
+
 export function readBawSlayCardSelectionsFromPathname(pathname: string): BawTutorialSelections {
   const unit = resolveBawTutorialUnitLabelFromPathname(pathname);
   const isBlanco = unit === 'BLANCO';
@@ -198,13 +230,7 @@ export async function paintBawSlayCard(
   ctx.font = fontFromStyle(header.subtitle);
   ctx.fillText('PERSONAL BUILD-A-WIG SLAY CARD', header.subtitle.x, header.subtitle.y);
 
-  const specLines = [
-    `LENGTH ${selections.length}`,
-    `DENSITY ${selections.density}`,
-    `COLOR ${selections.color}`,
-    `STYLING ${selections.styling}`,
-    `CAP ${selections.capSize}`,
-  ];
+  const specLines = buildBawSlayCardSpecLines(selections);
 
   ctx.fillStyle = textPanel.unit.color;
   ctx.font = fontFromStyle(textPanel.unit);
