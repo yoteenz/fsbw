@@ -33761,3 +33761,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Changes:** **`emailTypography.ts`**, **`layout.ts`**, **`brandAssets.ts`**, **`build-email-icon-pngs.mjs`**, **`email-templates/page.tsx`**, **`public/assets/email/icons/rewards-icon.png`**, **`motherboard/MEMORY.md`**.
 
 **Conventions:** Email inline **`font-family`** values must use **single-quoted** family names inside double-quoted HTML **`style`** attributes. Main email card = **solid white**; marble stays on outer body/hero fallback only if needed elsewhere — not on the 600px card.
+
+---
+
+## 2026-07-03 — Vercel deploy log fixes (ce3ab09 era errors)
+
+**Context:** User pasted Vercel build log from commit **ce3ab09** showing prebuild `fix_encoding.py` SyntaxError (null bytes), API TS errors (`emailHeroPrompts` duplicates, `send-email` path, `profile` types), and Edge Function **stripe/webhook** blocked by **heroManifest** importing **node:fs**.
+
+**Already fixed on master before this turn (90b97539+):** duplicate `EMAIL_HERO_*` exports, `send-email.ts` re-export path `./email/send.js`, `profile.ts` merged record cast, `heroManifest.ts` compile-time `heroManifestReady.ts` (no fs), empty manifest synced in **a7e9db16**.
+
+**This turn:** Rewrote **`scripts/fix_encoding.py`** as clean UTF-8 (file was UTF-16 LE with null bytes — ironically broke its own prebuild). Switched **`api/stripe/webhook.ts`** from **edge** to **Node.js** runtime so membership welcome emails via transactional email stack cannot hit Edge `node:fs` bundle restrictions.

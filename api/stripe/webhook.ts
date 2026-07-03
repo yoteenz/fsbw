@@ -4,7 +4,8 @@ import { grantHairstyleAnalysisPurchaseCredits } from '../_lib/hairstyleAnalysis
 import { appendOrderFromProductPaymentIntent } from '../_lib/recordProductOrderFromPaymentIntent.js';
 import { membershipTierForStripePriceId } from '../_lib/stripeMembership.js';
 
-export const config = { runtime: 'edge' };
+/** Node.js runtime — transactional email imports must not use Edge (no node:fs in bundle graph). */
+export const config = { maxDuration: 60 };
 
 function getStripe(): Stripe {
   const key = process.env.STRIPE_SECRET_KEY;
