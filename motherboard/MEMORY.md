@@ -34191,3 +34191,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Moved opaque layer to full tabs wrapper (**`UNIT_PDP_TABS_SECTION_STYLE`**, **`PDP_TABS_WRAPPER_STYLE`**); wired gift-card + slay-tickets to shared styles; noir tabs section uses **`UNIT_PDP_TABS_SECTION_STYLE`**.
 
+---
+
+## 2026-07-03 — Remove opaque white panel behind PDP tab text
+
+**Context:** User asked to remove the white background added behind product tab text — frosted card should show through.
+
+**Fix:** Removed **`backgroundColor: rgba(255,255,255,0.96)`**, **`isolation`**, and extra tab-body padding from **`UNIT_PDP_TABS_SECTION_STYLE`**, **`PDP_TABS_WRAPPER_STYLE`**, and **`UNIT_PDP_TAB_CONTENT_STYLE`**. BCF keeps **`zIndex`** stacking on options vs tabs (no opaque fill).
+
+**Changes:** **`unitPdpLayoutConstants.ts`**, **`texture-category-product/page.tsx`**.
+
