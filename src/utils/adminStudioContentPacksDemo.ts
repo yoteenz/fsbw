@@ -1,5 +1,10 @@
 /** Demo content packs — weekly multi-channel bundles (CMS-ready). */
 
+import {
+  createDefaultDistributionTargets,
+  type AdminStudioDistributionTarget,
+} from './adminStudioDistributionDemo';
+
 export type AdminStudioContentPackTabId =
   | 'episode'
   | 'journal'
@@ -32,6 +37,7 @@ export type AdminStudioContentPack = {
   status: string;
   thumbnailSrc: string;
   accentHex: string;
+  distributionTargets: AdminStudioDistributionTarget[];
   tabs: Record<AdminStudioContentPackTabId, AdminStudioContentPackField[]>;
 };
 
@@ -187,6 +193,7 @@ export const ADMIN_STUDIO_DEFAULT_CONTENT_PACKS: AdminStudioContentPack[] = [
     status: 'IN REVIEW',
     thumbnailSrc: '/assets/NOIR/curl-thumb.png',
     accentHex: '#EB1C24',
+    distributionTargets: createDefaultDistributionTargets(),
     tabs: cherryRedForecastTabs(),
   },
   {
@@ -197,6 +204,7 @@ export const ADMIN_STUDIO_DEFAULT_CONTENT_PACKS: AdminStudioContentPack[] = [
     status: 'PUBLISHED',
     thumbnailSrc: '/assets/NOIR/wave-thumb.png',
     accentHex: '#8B0000',
+    distributionTargets: createDefaultDistributionTargets(),
     tabs: cuttingLacePackTabs(),
   },
   {
@@ -207,6 +215,7 @@ export const ADMIN_STUDIO_DEFAULT_CONTENT_PACKS: AdminStudioContentPack[] = [
     status: 'DRAFT',
     thumbnailSrc: '/assets/NOIR/blanco-thumb.png',
     accentHex: '#C41E3A',
+    distributionTargets: createDefaultDistributionTargets(),
     tabs: cherryRedForecastTabs(),
   },
 ];

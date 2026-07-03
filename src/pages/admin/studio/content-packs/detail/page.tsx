@@ -3,6 +3,8 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioEditableField } from '../../../../../components/admin/studio/AdminStudioEditableField';
 import { AdminStudioTabBar } from '../../../../../components/admin/studio/AdminStudioTabBar';
+import { AdminStudioDistributionTargets } from '../../../../../components/admin/studio/AdminStudioDistributionTargets';
+import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { useAdminStudioContentPack } from '../../../../../hooks/useAdminStudioEditableState';
 import {
   ADMIN_STUDIO_CONTENT_PACK_TAB_LABELS,
@@ -13,7 +15,7 @@ import {
 export default function AdminStudioContentPackDetailPage() {
   const { packId } = useParams<{ packId: string }>();
   const navigate = useNavigate();
-  const { pack, updateTabField, updatePackMeta } = useAdminStudioContentPack(packId);
+  const { pack, updateTabField, updatePackMeta, updateDistributionTarget } = useAdminStudioContentPack(packId);
   const [activeTab, setActiveTab] = useState<AdminStudioContentPackTabId>('episode');
 
   if (!packId || !pack) {
@@ -36,7 +38,7 @@ export default function AdminStudioContentPackDetailPage() {
       onBack={() => navigate('/admin/studio/content-packs')}
       accentHex={pack.accentHex}
     >
-      <div className="flex gap-3 mb-5">
+      <div className="flex gap-3 mb-4">
         <div
           className="relative flex-shrink-0 overflow-hidden"
           style={{ width: '72px', height: '72px', border: `1px solid ${pack.accentHex}55` }}
@@ -63,6 +65,14 @@ export default function AdminStudioContentPackDetailPage() {
             accentHex={pack.accentHex}
           />
         </div>
+      </div>
+
+      <div className="mb-4">
+        <AdminStudioDistributionTargets
+          targets={pack.distributionTargets}
+          onToggle={updateDistributionTarget}
+          accentHex={pack.accentHex}
+        />
       </div>
 
       <AdminStudioTabBar
@@ -94,12 +104,7 @@ export default function AdminStudioContentPackDetailPage() {
         )}
       </div>
 
-      <p
-        className="mt-6 text-[7px] font-futura uppercase text-center"
-        style={{ fontWeight: 515, color: '#9A9A9A' }}
-      >
-        DEMO CONTENT · EDITS SAVED LOCALLY · NO PUBLISHING
-      </p>
+      <AdminStudioDisclaimerFooter />
     </AdminStudioStageShell>
   );
 }

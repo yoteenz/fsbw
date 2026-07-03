@@ -6,23 +6,14 @@ import type {
   AdminStudioContentPackTabId,
 } from '../utils/adminStudioContentPacksDemo';
 import { getAdminStudioContentPackById, ADMIN_STUDIO_DEFAULT_CONTENT_PACKS } from '../utils/adminStudioContentPacksDemo';
-
-const SHOWS_STORAGE_KEY = 'adminStudioShowsEditable_v1';
-const PACKS_STORAGE_KEY = 'adminStudioContentPacksEditable_v1';
-
-function readJson<T>(key: string): T | null {
-  try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return null;
-    return JSON.parse(raw) as T;
-  } catch {
-    return null;
-  }
-}
-
-function writeJson(key: string, value: unknown): void {
-  localStorage.setItem(key, JSON.stringify(value));
-}
+import type { AdminStudioDistributionTarget, AdminStudioDistributionTargetId } from '../utils/adminStudioDistributionDemo';
+import { mergeDistributionTargets } from '../utils/adminStudioDistributionDemo';
+import {
+  ADMIN_STUDIO_STORAGE_KEYS,
+  patchStudioRecord,
+  readStudioJson,
+  writeStudioJson,
+} from '../utils/adminStudioStorage';
 
 function deepCloneShow(show: AdminStudioShow): AdminStudioShow {
   return { ...show };
@@ -35,7 +26,11 @@ function deepClonePack(pack: AdminStudioContentPack): AdminStudioContentPack {
       fields.map((f) => ({ ...f })),
     ])
   ) as AdminStudioContentPack['tabs'];
-  return { ...pack, tabs };
+  return {
+    ...pack,
+    tabs,
+    distributionTargets: pack.distributionTargets.map((t) => ({ ...t })),
+  };
 }
 
 type ShowsStore = Record<string, Partial<AdminStudioShow>>;
@@ -49,7 +44,12 @@ function mergeShow(defaults: AdminStudioShow, patch?: Partial<AdminStudioShow>):
 function mergePack(defaults: AdminStudioContentPack, patch?: Partial<AdminStudioContentPack>): AdminStudioContentPack {
   const base = deepClonePack(defaults);
   if (!patch) return base;
-  const merged = { ...base, ...patch, tabs: base.tabs };
+  const merged: AdminStudioContentPack = {
+    ...base,
+    ...patch,
+    tabs: base.tabs,
+    distributionTargets: mergeDistributionTargets(base.distributionTargets, patch.distributionTargets),
+  };
   if (patch.tabs) {
     for (const tabId of Object.keys(patch.tabs) as AdminStudioContentPackTabId[]) {
       const patchFields = patch.tabs[tabId];
@@ -68,7 +68,7 @@ export function useAdminStudioShow(showId: string | undefined) {
   const defaults = showId ? getAdminStudioShowById(showId) : undefined;
   const [show, setShow] = useState<AdminStudioShow | null>(() => {
     if (!defaults || !showId) return null;
-    const store = readJson<ShowsStore>(SHOWS_STORAGE_KEY);
+    const store = readStudioJson<ShowsStore>(ADMIN_STUDIO_STORAGE_KEYS.shows);
     return mergeShow(defaults, store?.[showId]);
   });
 
@@ -77,7 +77,7 @@ export function useAdminStudioShow(showId: string | undefined) {
       setShow(null);
       return;
     }
-    const store = readJson<ShowsStore>(SHOWS_STORAGE_KEY);
+    const store = readStudioJson<ShowsStore>(ADMIN_STUDIO_STORAGE_KEYS.shows);
     setShow(mergeShow(defaults, store?.[showId]));
   }, [showId, defaults]);
 
@@ -87,9 +87,7 @@ export function useAdminStudioShow(showId: string | undefined) {
       setShow((prev) => {
         if (!prev) return prev;
         const next = { ...prev, [key]: value };
-        const store = readJson<ShowsStore>(SHOWS_STORAGE_KEY) ?? {};
-        store[showId] = { ...(store[showId] ?? {}), [key]: value };
-        writeJson(SHOWS_STORAGE_KEY, store);
+        patchStudioRecord(ADMIN_STUDIO_STORAGE_KEYS.shows, showId, { [key]: value });
         return next;
       });
     },
@@ -103,7 +101,7 @@ export function useAdminStudioContentPack(packId: string | undefined) {
   const defaults = packId ? getAdminStudioContentPackById(packId) : undefined;
   const [pack, setPack] = useState<AdminStudioContentPack | null>(() => {
     if (!defaults || !packId) return null;
-    const store = readJson<PacksStore>(PACKS_STORAGE_KEY);
+    const store = readStudioJson<PacksStore>(ADMIN_STUDIO_STORAGE_KEYS.contentPacks);
     return mergePack(defaults, store?.[packId]);
   });
 
@@ -112,9 +110,15 @@ export function useAdminStudioContentPack(packId: string | undefined) {
       setPack(null);
       return;
     }
-    const store = readJson<PacksStore>(PACKS_STORAGE_KEY);
+    const store = readStudioJson<PacksStore>(ADMIN_STUDIO_STORAGE_KEYS.contentPacks);
     setPack(mergePack(defaults, store?.[packId]));
   }, [packId, defaults]);
+
+  const persistPackPatch = useCallback((id: string, patch: Partial<AdminStudioContentPack>) => {
+    const store = readStudioJson<PacksStore>(ADMIN_STUDIO_STORAGE_KEYS.contentPacks) ?? {};
+    store[id] = { ...(store[id] ?? {}), ...patch };
+    writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.contentPacks, store);
+  }, []);
 
   const updateTabField = useCallback(
     (tabId: AdminStudioContentPackTabId, fieldKey: string, value: string) => {
@@ -126,19 +130,21 @@ export function useAdminStudioContentPack(packId: string | undefined) {
           field.key === fieldKey ? { ...field, value } : field
         );
         const next = { ...prev, tabs: nextTabs };
-        const store = readJson<PacksStore>(PACKS_STORAGE_KEY) ?? {};
-        const existingPatch = store[packId] ?? {};
+        const existingPatch = readStudioJson<PacksStore>(ADMIN_STUDIO_STORAGE_KEYS.contentPacks)?.[packId] ?? {};
         const existingTabs = existingPatch.tabs ?? {};
-        const tabFields = nextTabs[tabId].map((f) => ({ key: f.key, label: f.label, value: f.value, multiline: f.multiline }));
-        store[packId] = {
-          ...existingPatch,
+        const tabFields = nextTabs[tabId].map((f) => ({
+          key: f.key,
+          label: f.label,
+          value: f.value,
+          multiline: f.multiline,
+        }));
+        persistPackPatch(packId, {
           tabs: { ...existingTabs, [tabId]: tabFields } as AdminStudioContentPack['tabs'],
-        };
-        writeJson(PACKS_STORAGE_KEY, store);
+        });
         return next;
       });
     },
-    [pack, packId, defaults]
+    [pack, packId, defaults, persistPackPatch]
   );
 
   const updatePackMeta = useCallback(
@@ -147,25 +153,38 @@ export function useAdminStudioContentPack(packId: string | undefined) {
       setPack((prev) => {
         if (!prev) return prev;
         const next = { ...prev, [key]: value };
-        const store = readJson<PacksStore>(PACKS_STORAGE_KEY) ?? {};
-        store[packId] = { ...(store[packId] ?? {}), [key]: value };
-        writeJson(PACKS_STORAGE_KEY, store);
+        patchStudioRecord(ADMIN_STUDIO_STORAGE_KEYS.contentPacks, packId, { [key]: value });
         return next;
       });
     },
     [pack, packId, defaults]
   );
 
-  return { pack, updateTabField, updatePackMeta };
+  const updateDistributionTarget = useCallback(
+    (targetId: AdminStudioDistributionTargetId, enabled: boolean) => {
+      if (!pack || !packId || !defaults) return;
+      setPack((prev) => {
+        if (!prev) return prev;
+        const nextTargets: AdminStudioDistributionTarget[] = prev.distributionTargets.map((t) =>
+          t.id === targetId && t.activation === 'ACTIVE' ? { ...t, enabled } : t
+        );
+        const next = { ...prev, distributionTargets: nextTargets };
+        persistPackPatch(packId, { distributionTargets: nextTargets });
+        return next;
+      });
+    },
+    [pack, packId, defaults, persistPackPatch]
+  );
+
+  return { pack, updateTabField, updatePackMeta, updateDistributionTarget };
 }
 
 export function listAdminStudioShows(): AdminStudioShow[] {
-  const store = readJson<ShowsStore>(SHOWS_STORAGE_KEY) ?? {};
+  const store = readStudioJson<ShowsStore>(ADMIN_STUDIO_STORAGE_KEYS.shows) ?? {};
   return ADMIN_STUDIO_DEFAULT_SHOWS.map((defaults) => mergeShow(defaults, store[defaults.id]));
 }
 
 export function listAdminStudioContentPacks(): AdminStudioContentPack[] {
-  const store = readJson<PacksStore>(PACKS_STORAGE_KEY) ?? {};
+  const store = readStudioJson<PacksStore>(ADMIN_STUDIO_STORAGE_KEYS.contentPacks) ?? {};
   return ADMIN_STUDIO_DEFAULT_CONTENT_PACKS.map((defaults) => mergePack(defaults, store[defaults.id]));
 }
-

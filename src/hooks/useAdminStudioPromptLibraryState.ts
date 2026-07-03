@@ -4,39 +4,27 @@ import {
   type AdminStudioPromptCategoryId,
   type AdminStudioPromptEntry,
 } from '../utils/adminStudioPromptLibraryDemo';
-
-const PROMPTS_STORAGE_KEY = 'adminStudioPromptLibrary_v1';
-const FAVORITES_STORAGE_KEY = 'adminStudioPromptFavorites_v1';
+import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 
 type PromptPatch = Partial<Pick<AdminStudioPromptEntry, 'title' | 'description' | 'body'>>;
 
 function readPromptPatches(): Record<string, PromptPatch> {
-  try {
-    const raw = localStorage.getItem(PROMPTS_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, PromptPatch>) : {};
-  } catch {
-    return {};
-  }
+  return readStudioJson<Record<string, PromptPatch>>(ADMIN_STUDIO_STORAGE_KEYS.promptLibrary) ?? {};
 }
 
 function writePromptPatch(id: string, patch: PromptPatch): void {
   const store = readPromptPatches();
   store[id] = { ...(store[id] ?? {}), ...patch };
-  localStorage.setItem(PROMPTS_STORAGE_KEY, JSON.stringify(store));
+  writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.promptLibrary, store);
 }
 
 function readFavorites(): Set<AdminStudioPromptCategoryId> {
-  try {
-    const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
-    if (!raw) return new Set();
-    return new Set(JSON.parse(raw) as AdminStudioPromptCategoryId[]);
-  } catch {
-    return new Set();
-  }
+  const list = readStudioJson<AdminStudioPromptCategoryId[]>(ADMIN_STUDIO_STORAGE_KEYS.promptFavorites);
+  return new Set(list ?? []);
 }
 
 function writeFavorites(favorites: Set<AdminStudioPromptCategoryId>): void {
-  localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...favorites]));
+  writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.promptFavorites, [...favorites]);
 }
 
 function mergePrompt(defaults: AdminStudioPromptEntry, patch?: PromptPatch): AdminStudioPromptEntry {

@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioMetricTile } from '../../../../components/admin/studio/AdminStudioMetricTile';
 import { AdminStudioRankedList } from '../../../../components/admin/studio/AdminStudioRankedList';
+import { AdminStudioSectionHeading } from '../../../../components/admin/studio/AdminStudioSectionHeading';
+import { AdminStudioFilterBar } from '../../../../components/admin/studio/AdminStudioFilterBar';
+import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { ADMIN_STUDIO_DEFAULT_ANALYTICS } from '../../../../utils/adminStudioAnalyticsDemo';
 
 export default function AdminStudioAnalyticsPage() {
@@ -23,37 +26,17 @@ export default function AdminStudioAnalyticsPage() {
       onBack={() => navigate('/admin/studio')}
       accentHex={analytics?.accentHex}
     >
-      <p
-        className="text-lg mb-3"
-        style={{
-          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-          color: '#EB1C24',
-        }}
-      >
-        SHOW PERFORMANCE
-      </p>
+      <AdminStudioSectionHeading>SHOW PERFORMANCE</AdminStudioSectionHeading>
 
-      <div className="flex gap-1 overflow-x-auto pb-2 mb-4 -mx-1 px-1" style={{ scrollbarWidth: 'thin' }}>
-        {ADMIN_STUDIO_DEFAULT_ANALYTICS.map((show) => {
-          const isActive = showId === show.showId;
-          return (
-            <button
-              key={show.showId}
-              type="button"
-              onClick={() => setShowId(show.showId)}
-              className="flex-shrink-0 px-2 py-1 text-[6px] font-futura uppercase whitespace-nowrap"
-              style={{
-                fontWeight: 515,
-                color: isActive ? '#FFFFFF' : '#9A9A9A',
-                background: isActive ? `${show.accentHex}44` : 'rgba(255,255,255,0.04)',
-                borderBottom: isActive ? `2px solid ${show.accentHex}` : '2px solid transparent',
-              }}
-            >
-              {show.showName}
-            </button>
-          );
-        })}
-      </div>
+      <AdminStudioFilterBar
+        items={ADMIN_STUDIO_DEFAULT_ANALYTICS.map((show) => ({
+          id: show.showId,
+          label: show.showName,
+        }))}
+        activeId={showId}
+        onChange={setShowId}
+        accentHex={analytics?.accentHex}
+      />
 
       {analytics ? (
         <div className="space-y-4">
@@ -124,12 +107,7 @@ export default function AdminStudioAnalyticsPage() {
         </div>
       ) : null}
 
-      <p
-        className="mt-4 text-[7px] font-futura uppercase text-center"
-        style={{ fontWeight: 515, color: '#9A9A9A' }}
-      >
-        DEMO ANALYTICS · NO BACKEND · FRONTEND ONLY
-      </p>
+      <AdminStudioDisclaimerFooter>DEMO ANALYTICS · NO BACKEND · FRONTEND ONLY</AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );
 }

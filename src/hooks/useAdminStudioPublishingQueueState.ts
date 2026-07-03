@@ -6,14 +6,12 @@ import {
   type AdminStudioQueueItem,
   type AdminStudioPublishStatus,
 } from '../utils/adminStudioPublishingQueueDemo';
-
-const STORAGE_KEY = 'adminStudioPublishingQueue_v1';
+import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 
 function readItems(): AdminStudioQueueItem[] {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return ADMIN_STUDIO_DEFAULT_QUEUE_ITEMS.map((i) => ({ ...i }));
-    const parsed = JSON.parse(raw) as AdminStudioQueueItem[];
+    const parsed = readStudioJson<AdminStudioQueueItem[]>(ADMIN_STUDIO_STORAGE_KEYS.publishingQueue);
+    if (!parsed) return ADMIN_STUDIO_DEFAULT_QUEUE_ITEMS.map((i) => ({ ...i }));
     return parsed.map((i) => ({ ...i }));
   } catch {
     return ADMIN_STUDIO_DEFAULT_QUEUE_ITEMS.map((i) => ({ ...i }));
@@ -21,7 +19,7 @@ function readItems(): AdminStudioQueueItem[] {
 }
 
 function writeItems(items: AdminStudioQueueItem[]): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+  writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.publishingQueue, items);
 }
 
 export function useAdminStudioPublishingQueue() {

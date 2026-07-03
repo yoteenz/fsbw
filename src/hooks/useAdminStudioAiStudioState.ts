@@ -5,23 +5,22 @@ import {
   type AdminStudioAiFormState,
   type AdminStudioAiPipelineStepId,
 } from '../utils/adminStudioAiStudioDemo';
-
-const FORM_STORAGE_KEY = 'adminStudioAiForm_v1';
+import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 
 type PipelinePhase = 'idle' | 'running' | 'complete';
 
 function readForm(): AdminStudioAiFormState {
   try {
-    const raw = localStorage.getItem(FORM_STORAGE_KEY);
-    if (!raw) return { ...ADMIN_STUDIO_AI_DEFAULT_FORM };
-    return { ...ADMIN_STUDIO_AI_DEFAULT_FORM, ...JSON.parse(raw) };
+    const parsed = readStudioJson<AdminStudioAiFormState>(ADMIN_STUDIO_STORAGE_KEYS.aiForm);
+    if (!parsed) return { ...ADMIN_STUDIO_AI_DEFAULT_FORM };
+    return { ...ADMIN_STUDIO_AI_DEFAULT_FORM, ...parsed };
   } catch {
     return { ...ADMIN_STUDIO_AI_DEFAULT_FORM };
   }
 }
 
 function writeForm(form: AdminStudioAiFormState): void {
-  localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(form));
+  writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.aiForm, form);
 }
 
 const STEP_MS = 720;

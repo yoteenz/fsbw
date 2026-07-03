@@ -34466,3 +34466,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Queue drag sets non-published items to Scheduled on day move; Thursday highlighted as “today” in demo week; analytics read-only demo — no API wiring yet.
 
+---
+
+## 2026-07-03 — THE STUDIO Phase 2 prep (service stubs, distribution targets, shared architecture)
+
+**Context:** Continuation of THE STUDIO (all prior milestones frozen). User requested architecture review for future AI integrations **without connecting APIs** — reusable components, scalable state, modular routing, placeholder service layers (OpenAI, FAL, Resend, PSA Knowledge, Publishing, Scheduling, Distribution), **Distribution Targets** on every Content Pack, visual consistency. No backend/AI/publishing.
+
+**Topics covered (full chat arc):**
+- Prior: M1 hub, Shows, Content Packs, AI Studio, Prompt Library, Asset Library, Publishing Queue, Analytics.
+- **Service layer** `src/services/studio/` — typed stubs returning `NOT_CONNECTED` / `PHASE_2`; `STUDIO_SERVICE_REGISTRY` for OpenAI, FAL, Resend, PSA Knowledge, Publishing, Scheduling, Distribution.
+- **Scalable state** — `adminStudioStorage.ts` centralizes all `ADMIN_STUDIO_STORAGE_KEYS`; hooks migrated to `readStudioJson` / `writeStudioJson` / `patchStudioRecord`.
+- **Modular routing** — `adminStudioRoutes.ts` with `ADMIN_STUDIO_BUILT_SECTIONS`, `ADMIN_STUDIO_ROUTE_PATHS`, path helpers; `section/page.tsx` uses `ADMIN_STUDIO_BUILT_SECTION_SET`.
+- **Distribution Targets** on every Content Pack detail — Mobile Website, Lounge TV, Email, Social Media (ACTIVE toggles); Desktop Mansion, Mobile App (COMING SOON disabled + planned notes); `AdminStudioDistributionTargets` component; persisted in content pack store.
+- **Shared UI** — `AdminStudioSectionHeading`, `AdminStudioSearchInput`, `AdminStudioFilterBar`, `AdminStudioDisclaimerFooter`; refactored Asset Library, Prompt Library, Analytics for consistency.
+
+**Decisions / outcomes:** No live integrations; distribution toggles only for ACTIVE targets; Phase 2 wires replace stub method bodies. Build verified.
+
+**Changes:** `src/services/studio/*`, `adminStudioStorage.ts`, `adminStudioRoutes.ts`, `adminStudioDistributionDemo.ts`, shared components, `useAdminStudioEditableState.ts` (distribution + storage), content pack demo/detail, refactored library/analytics pages, `section/page.tsx`.
+
+**Conventions:** Phase 2 integrations import from `src/services/studio/index.ts`; content packs carry `distributionTargets[]`; COMING SOON targets never toggle until activation flag in distribution service.
+

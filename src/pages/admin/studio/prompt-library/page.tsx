@@ -1,11 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
+import { AdminStudioSectionHeading } from '../../../../components/admin/studio/AdminStudioSectionHeading';
+import { AdminStudioSearchInput } from '../../../../components/admin/studio/AdminStudioSearchInput';
+import { AdminStudioFilterBar } from '../../../../components/admin/studio/AdminStudioFilterBar';
+import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { AdminStudioEditableField } from '../../../../components/admin/studio/AdminStudioEditableField';
 import { AdminStudioPromptListItem } from '../../../../components/admin/studio/AdminStudioPromptListItem';
 import { useAdminStudioPromptLibrary } from '../../../../hooks/useAdminStudioPromptLibraryState';
 import {
   ADMIN_STUDIO_PROMPT_CATEGORIES,
-  type AdminStudioPromptCategoryId,
 } from '../../../../utils/adminStudioPromptLibraryDemo';
 
 export default function AdminStudioPromptLibraryPage() {
@@ -32,54 +35,19 @@ export default function AdminStudioPromptLibraryPage() {
       breadcrumbParentPath="/admin/studio"
       onBack={() => navigate('/admin/studio')}
     >
-      <p
-        className="text-lg mb-3"
-        style={{
-          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-          color: '#EB1C24',
-        }}
-      >
-        MASTER PROMPTS
-      </p>
+      <AdminStudioSectionHeading>MASTER PROMPTS</AdminStudioSectionHeading>
 
-      <div className="mb-3">
-        <input
-          type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="SEARCH PROMPTS..."
-          className="w-full bg-white/5 border border-white/15 text-white text-[9px] font-futura uppercase px-3 py-2.5 outline-none focus:border-white/40 placeholder:text-white/25"
-          style={{ fontWeight: 515 }}
-        />
-      </div>
+      <AdminStudioSearchInput value={search} onChange={setSearch} placeholder="SEARCH PROMPTS..." />
 
-      <div className="flex gap-1 overflow-x-auto pb-2 mb-4 -mx-1 px-1" style={{ scrollbarWidth: 'thin' }}>
-        {(
-          [
-            { id: 'all' as const, label: 'ALL' },
-            { id: 'favorites' as const, label: `★ FAVS (${favorites.size})` },
-            ...ADMIN_STUDIO_PROMPT_CATEGORIES,
-          ] as Array<{ id: AdminStudioPromptCategoryId | 'all' | 'favorites'; label: string }>
-        ).map((cat) => {
-          const isActive = categoryFilter === cat.id;
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setCategoryFilter(cat.id)}
-              className="flex-shrink-0 px-2 py-1 text-[7px] font-futura uppercase whitespace-nowrap"
-              style={{
-                fontWeight: 515,
-                color: isActive ? '#FFFFFF' : '#9A9A9A',
-                background: isActive ? 'rgba(235,28,36,0.25)' : 'rgba(255,255,255,0.04)',
-                borderBottom: isActive ? '2px solid #EB1C24' : '2px solid transparent',
-              }}
-            >
-              {cat.label}
-            </button>
-          );
-        })}
-      </div>
+      <AdminStudioFilterBar
+        items={[
+          { id: 'all' as const, label: 'ALL' },
+          { id: 'favorites' as const, label: `★ FAVS (${favorites.size})` },
+          ...ADMIN_STUDIO_PROMPT_CATEGORIES.map((c) => ({ id: c.id, label: c.label })),
+        ]}
+        activeId={categoryFilter}
+        onChange={setCategoryFilter}
+      />
 
       <div className="grid gap-3" style={{ gridTemplateColumns: '1fr' }}>
         <div className="space-y-1.5 max-h-[140px] overflow-y-auto pr-1" style={{ scrollbarWidth: 'thin' }}>
@@ -168,12 +136,7 @@ export default function AdminStudioPromptLibraryPage() {
         ) : null}
       </div>
 
-      <p
-        className="mt-4 text-[7px] font-futura uppercase text-center"
-        style={{ fontWeight: 515, color: '#9A9A9A' }}
-      >
-        EDITS SAVED LOCALLY · NO AI · FRONTEND ONLY
-      </p>
+      <AdminStudioDisclaimerFooter>EDITS SAVED LOCALLY · NO AI · FRONTEND ONLY</AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );
 }

@@ -1,6 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioAssetCard } from '../../../../components/admin/studio/AdminStudioAssetCard';
+import { AdminStudioSectionHeading } from '../../../../components/admin/studio/AdminStudioSectionHeading';
+import { AdminStudioSearchInput } from '../../../../components/admin/studio/AdminStudioSearchInput';
+import { AdminStudioFilterBar } from '../../../../components/admin/studio/AdminStudioFilterBar';
+import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { useAdminStudioAssetLibrary } from '../../../../hooks/useAdminStudioAssetLibraryState';
 import { getAdminStudioAssetCategoryLabel } from '../../../../utils/adminStudioAssetLibraryDemo';
 import type { AdminStudioAssetCategoryId } from '../../../../utils/adminStudioAssetLibraryDemo';
@@ -18,6 +22,11 @@ export default function AdminStudioAssetLibraryPage() {
     categories,
   } = useAdminStudioAssetLibrary();
 
+  const filterItems: Array<{ id: AdminStudioAssetCategoryId | 'all'; label: string }> = [
+    { id: 'all', label: 'ALL' },
+    ...categories.map((c) => ({ id: c.id, label: c.label })),
+  ];
+
   return (
     <AdminStudioStageShell
       title="ASSET LIBRARY"
@@ -26,59 +35,15 @@ export default function AdminStudioAssetLibraryPage() {
       breadcrumbParentPath="/admin/studio"
       onBack={() => navigate('/admin/studio')}
     >
-      <p
-        className="text-lg mb-3"
-        style={{
-          fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-          color: '#EB1C24',
-        }}
-      >
-        PRODUCTION VAULT
-      </p>
+      <AdminStudioSectionHeading>PRODUCTION VAULT</AdminStudioSectionHeading>
 
-      <input
-        type="search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="SEARCH ASSETS..."
-        className="w-full bg-white/5 border border-white/15 text-white text-[9px] font-futura uppercase px-3 py-2.5 outline-none focus:border-white/40 placeholder:text-white/25 mb-3"
-        style={{ fontWeight: 515 }}
+      <AdminStudioSearchInput value={search} onChange={setSearch} placeholder="SEARCH ASSETS..." />
+
+      <AdminStudioFilterBar
+        items={filterItems}
+        activeId={categoryFilter}
+        onChange={setCategoryFilter}
       />
-
-      <div className="flex gap-1 overflow-x-auto pb-2 mb-4 -mx-1 px-1" style={{ scrollbarWidth: 'thin' }}>
-        <button
-          type="button"
-          onClick={() => setCategoryFilter('all')}
-          className="flex-shrink-0 px-2 py-1 text-[6px] font-futura uppercase whitespace-nowrap"
-          style={{
-            fontWeight: 515,
-            color: categoryFilter === 'all' ? '#FFFFFF' : '#9A9A9A',
-            background: categoryFilter === 'all' ? 'rgba(235,28,36,0.25)' : 'rgba(255,255,255,0.04)',
-            borderBottom: categoryFilter === 'all' ? '2px solid #EB1C24' : '2px solid transparent',
-          }}
-        >
-          ALL
-        </button>
-        {categories.map((cat) => {
-          const isActive = categoryFilter === cat.id;
-          return (
-            <button
-              key={cat.id}
-              type="button"
-              onClick={() => setCategoryFilter(cat.id as AdminStudioAssetCategoryId)}
-              className="flex-shrink-0 px-2 py-1 text-[6px] font-futura uppercase whitespace-nowrap"
-              style={{
-                fontWeight: 515,
-                color: isActive ? '#FFFFFF' : '#9A9A9A',
-                background: isActive ? 'rgba(235,28,36,0.25)' : 'rgba(255,255,255,0.04)',
-                borderBottom: isActive ? '2px solid #EB1C24' : '2px solid transparent',
-              }}
-            >
-              {cat.label}
-            </button>
-          );
-        })}
-      </div>
 
       <p
         className="text-[7px] font-futura uppercase mb-3"
@@ -155,12 +120,7 @@ export default function AdminStudioAssetLibraryPage() {
         </div>
       ) : null}
 
-      <p
-        className="mt-4 text-[7px] font-futura uppercase text-center"
-        style={{ fontWeight: 515, color: '#9A9A9A' }}
-      >
-        DEMO ASSETS · NO UPLOAD · FRONTEND ONLY
-      </p>
+      <AdminStudioDisclaimerFooter>DEMO ASSETS · NO UPLOAD · FRONTEND ONLY</AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );
 }
