@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "updatedAt": "2026-07-03T10:26:54.767Z",
-  "promptVersion": "v1",
+  "updatedAt": "2026-07-03T19:27:15.306Z",
+  "promptVersion": "v2",
   "bucket": "live-preview",
   "falModel": "fal-ai/nano-banana-pro/edit",
   "photos": {

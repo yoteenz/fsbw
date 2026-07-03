@@ -79,4 +79,5 @@ After each successful batch run, **`npm run bcf:cf-photos:sync`** updates the ap
 
 - Idempotent: existing PNGs in storage are skipped
 - `FORCE=1` — regenerate even when PNG exists
+- `ONLY_PRODUCT_KEYS=closures-curly-ginger,frontals-wavy-espresso` — regenerate specific rows only (use with `FORCE=1`)
 - `LIMIT=N` — process at most N missing rows (testing)

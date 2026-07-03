@@ -19,6 +19,7 @@
  *   DRY_RUN=1
  *   LIMIT=5
  *   FORCE=1
+ *   ONLY_PRODUCT_KEYS=closures-curly-ginger,frontals-wavy-espresso
  *   SLEEP_MS=2000
  */
 import { createClient } from '@supabase/supabase-js';
@@ -42,6 +43,12 @@ const supabaseUrl = process.env.SUPABASE_URL?.trim() || '';
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim() || '';
 const falModel = process.env.BCF_CF_PHOTO_FAL_MODEL?.trim() || 'fal-ai/nano-banana-pro/edit';
 const resolution = process.env.BCF_CF_PHOTO_RESOLUTION?.trim() || '2K';
+const onlyProductKeys = new Set(
+  (process.env.ONLY_PRODUCT_KEYS || '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
 
 async function downloadUrlToBuffer(url) {
   const res = await fetch(url);
@@ -100,6 +107,9 @@ async function main() {
   let items = manifest.items || [];
   if (!force) {
     items = items.filter((row) => row.status === 'missing' || (!row.hasPhoto && row.status !== 'ready'));
+  }
+  if (onlyProductKeys.size > 0) {
+    items = items.filter((row) => onlyProductKeys.has(row.productKey));
   }
   if (limit > 0) items = items.slice(0, limit);
 

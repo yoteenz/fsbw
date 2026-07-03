@@ -1,0 +1,21 @@
+{
+  "description": "User-reported BCF closure/frontal color photos with missing or distorted hands (2026-07-03). Regenerate with prompt v2 + FORCE=1.",
+  "productKeys": [
+    "closures-straight-jet-black",
+    "closures-curly-jet-black",
+    "closures-curly-honey",
+    "closures-curly-ginger",
+    "closures-straight-sangria",
+    "closures-wavy-cherry",
+    "closures-wavy-plum",
+    "closures-straight-slime",
+    "closures-curly-slime",
+    "frontals-wavy-espresso",
+    "frontals-curly-espresso",
+    "frontals-wavy-chestnut",
+    "frontals-curly-chestnut",
+    "frontals-straight-cherry",
+    "frontals-curly-plum",
+    "frontals-curly-cobalt"
+  ]
+}

@@ -34211,3 +34211,26 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`unitPdpLayoutConstants.ts`**, **`texture-category-product/page.tsx`**.
 
+---
+
+## 2026-07-03 — BCF CF photo regen: missing/distorted hands (prompt v2)
+
+**Context:** User reported **16** closure/frontal color hero PNGs generated incorrectly — mostly **missing hands** holding the product; **closures-curly-ginger** also had **distorted/wrong-color hand**.
+
+**Root cause:** Prompt **v1** included “Do not add … **hands**” — Fal interpreted this as **removing** the reference hands.
+
+**Closures (9):** jet-black straight+curly; honey curly; ginger curly; sangria straight; cherry wavy; plum wavy; slime straight+curly.
+
+**Frontals (7):** espresso wavy+curly; chestnut wavy+curly; cherry straight; plum curly; cobalt curly.
+
+**Fix:**
+- **`bcfCfPhotoPrompt.mjs`** — **v2** prompt: change **only** hair color; **preserve** hands (pose, finger count, natural skin tone); explicit **do NOT remove/crop/distort** hands.
+- **`BCF_CF_PHOTO_PROMPT_VERSION`** → **`v2`**.
+- **`pregenerate-bcf-cf-photos.mjs`** — **`ONLY_PRODUCT_KEYS`** filter (parity with video batch).
+- **`manifests/bcf-cf-photos-user-reported-missing-hands.json`** — tracked regen list.
+- **`docs/BCF_CF_PHOTO_GENERATION.md`** — document **`ONLY_PRODUCT_KEYS`**.
+
+**Batch:** **`FORCE=1 ONLY_PRODUCT_KEYS=… npm run bcf:cf-photos:generate`** → **16/16 ok**, then **`bcf:cf-photos:sync`**. New PNGs uploaded to Supabase **`live-preview`**; storefront manifest + **`bcfPdpCfHeroPhotos.generated.ts`** updated.
+
+**Conventions:** BCF CF photo recolor prompts must **preserve reference hands** — never forbid “hands” in the negative list. Use **`ONLY_PRODUCT_KEYS` + `FORCE=1`** for targeted regens.
+

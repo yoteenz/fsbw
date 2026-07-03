@@ -1,7 +1,12 @@
 {
   "version": 1,
+<<<<<<< HEAD
   "promptVersion": "v1",
   "generatedAt": "2026-07-03T17:41:06.064Z",
+=======
+  "promptVersion": "v2",
+  "generatedAt": "2026-07-03T19:17:18.227Z",
+>>>>>>> a28c3a21 (BCF CF photo regen: v2 prompt preserves hands, 16 user-reported assets)
   "bucket": "live-preview",
   "falModel": "fal-ai/nano-banana-pro/edit",
   "resolution": "2K",
@@ -19,7 +24,7 @@
       "legacyFileName": "IMG_2037.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ASH BLONDE #E5E3CB instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ASH BLONDE #E5E3CB — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-auburn",
@@ -33,7 +38,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to AUBURN #9C5617 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-cherry",
@@ -47,7 +52,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHERRY #FF1400 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-chestnut",
@@ -61,7 +66,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHESTNUT #6C2D11 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-citrine",
@@ -75,7 +80,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CITRINE #E2E91C — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-cobalt",
@@ -89,7 +94,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COBALT #290481 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-copper",
@@ -103,7 +108,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COPPER #802F02 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-espresso",
@@ -117,7 +122,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ESPRESSO #3B1301 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-ginger",
@@ -131,7 +136,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GINGER #F64F07 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:18:03.342Z"
     },
     {
       "productKey": "closures-curly-golden",
@@ -145,7 +151,7 @@
       "legacyFileName": "IMG_2035.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GOLDEN BLONDE #FBF08B instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GOLDEN BLONDE #FBF08B — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-honey",
@@ -159,7 +165,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to HONEY #C58628 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:18:45.173Z"
     },
     {
       "productKey": "closures-curly-jet-black",
@@ -173,7 +180,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to JET BLACK #000000 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:19:28.654Z"
     },
     {
       "productKey": "closures-curly-platinum",
@@ -187,7 +195,7 @@
       "legacyFileName": "IMG_2036.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLATINUM BLONDE #F6F3D2 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLATINUM BLONDE #F6F3D2 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-plum",
@@ -201,7 +209,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLUM #640E82 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-raspberry",
@@ -215,7 +223,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to RASPBERRY #DA3063 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-sangria",
@@ -229,7 +237,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SANGRIA #7E0A1E — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-curly-slime",
@@ -243,7 +251,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SLIME #03D92A — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:20:08.021Z"
     },
     {
       "productKey": "closures-curly-teal",
@@ -257,7 +266,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to TEAL #46EBCA — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-ash",
@@ -271,7 +280,7 @@
       "legacyFileName": "IMG_2031.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ASH BLONDE #E5E3CB instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ASH BLONDE #E5E3CB — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-auburn",
@@ -285,7 +294,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to AUBURN #9C5617 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-cherry",
@@ -299,7 +308,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHERRY #FF1400 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-chestnut",
@@ -313,7 +322,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHESTNUT #6C2D11 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-citrine",
@@ -327,7 +336,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CITRINE #E2E91C — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-cobalt",
@@ -341,7 +350,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COBALT #290481 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-copper",
@@ -355,7 +364,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COPPER #802F02 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-espresso",
@@ -369,7 +378,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ESPRESSO #3B1301 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-ginger",
@@ -383,7 +392,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GINGER #F64F07 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-golden",
@@ -397,7 +406,7 @@
       "legacyFileName": "IMG_2029.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GOLDEN BLONDE #FBF08B instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GOLDEN BLONDE #FBF08B — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-honey",
@@ -411,7 +420,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to HONEY #C58628 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-jet-black",
@@ -425,7 +434,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to JET BLACK #000000 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:20:41.624Z"
     },
     {
       "productKey": "closures-straight-platinum",
@@ -439,7 +449,7 @@
       "legacyFileName": "IMG_2030.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLATINUM BLONDE #F6F3D2 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLATINUM BLONDE #F6F3D2 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-plum",
@@ -453,7 +463,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLUM #640E82 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-raspberry",
@@ -467,7 +477,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to RASPBERRY #DA3063 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-straight-sangria",
@@ -481,7 +491,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SANGRIA #7E0A1E — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:21:16.367Z"
     },
     {
       "productKey": "closures-straight-slime",
@@ -495,7 +506,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SLIME #03D92A — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:21:50.819Z"
     },
     {
       "productKey": "closures-straight-teal",
@@ -509,7 +521,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to TEAL #46EBCA — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-ash",
@@ -523,7 +535,7 @@
       "legacyFileName": "IMG_2034.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ASH BLONDE #E5E3CB instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ASH BLONDE #E5E3CB — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-auburn",
@@ -537,7 +549,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to AUBURN #9C5617 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-cherry",
@@ -551,7 +563,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHERRY #FF1400 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:22:21.746Z"
     },
     {
       "productKey": "closures-wavy-chestnut",
@@ -565,7 +578,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHESTNUT #6C2D11 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-citrine",
@@ -579,7 +592,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CITRINE #E2E91C — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-cobalt",
@@ -593,7 +606,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COBALT #290481 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-copper",
@@ -607,7 +620,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COPPER #802F02 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-espresso",
@@ -621,7 +634,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ESPRESSO #3B1301 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-ginger",
@@ -635,7 +648,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GINGER #F64F07 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-golden",
@@ -649,7 +662,7 @@
       "legacyFileName": "IMG_2032.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GOLDEN BLONDE #FBF08B instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GOLDEN BLONDE #FBF08B — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-honey",
@@ -663,7 +676,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to HONEY #C58628 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-jet-black",
@@ -677,7 +690,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to JET BLACK #000000 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-platinum",
@@ -691,7 +704,7 @@
       "legacyFileName": "IMG_2033.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLATINUM BLONDE #F6F3D2 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLATINUM BLONDE #F6F3D2 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-plum",
@@ -705,7 +718,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLUM #640E82 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:22:55.207Z"
     },
     {
       "productKey": "closures-wavy-raspberry",
@@ -719,7 +733,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to RASPBERRY #DA3063 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-sangria",
@@ -733,7 +747,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SANGRIA #7E0A1E — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-slime",
@@ -747,7 +761,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SLIME #03D92A — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "closures-wavy-teal",
@@ -761,7 +775,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to TEAL #46EBCA — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-ash",
@@ -775,7 +789,7 @@
       "legacyFileName": "IMG_2028.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ASH BLONDE #E5E3CB instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ASH BLONDE #E5E3CB — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-auburn",
@@ -789,7 +803,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to AUBURN #9C5617 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-cherry",
@@ -803,7 +817,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHERRY #FF1400 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-chestnut",
@@ -817,7 +831,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHESTNUT #6C2D11 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:23:29.447Z"
     },
     {
       "productKey": "frontals-curly-citrine",
@@ -831,7 +846,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CITRINE #E2E91C — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-cobalt",
@@ -845,7 +860,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COBALT #290481 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:24:07.389Z"
     },
     {
       "productKey": "frontals-curly-copper",
@@ -859,7 +875,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COPPER #802F02 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-espresso",
@@ -873,7 +889,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ESPRESSO #3B1301 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:24:44.346Z"
     },
     {
       "productKey": "frontals-curly-ginger",
@@ -887,7 +904,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GINGER #F64F07 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-golden",
@@ -901,7 +918,7 @@
       "legacyFileName": "IMG_2026.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GOLDEN BLONDE #FBF08B instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GOLDEN BLONDE #FBF08B — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-honey",
@@ -915,7 +932,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to HONEY #C58628 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-jet-black",
@@ -929,7 +946,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to JET BLACK #000000 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-platinum",
@@ -943,7 +960,7 @@
       "legacyFileName": "IMG_2027.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLATINUM BLONDE #F6F3D2 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLATINUM BLONDE #F6F3D2 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-plum",
@@ -957,7 +974,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLUM #640E82 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:25:18.254Z"
     },
     {
       "productKey": "frontals-curly-raspberry",
@@ -971,7 +989,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to RASPBERRY #DA3063 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-sangria",
@@ -985,7 +1003,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SANGRIA #7E0A1E — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-slime",
@@ -999,7 +1017,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SLIME #03D92A — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-curly-teal",
@@ -1013,7 +1031,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to TEAL #46EBCA — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-ash",
@@ -1027,7 +1045,7 @@
       "legacyFileName": "IMG_2017.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ASH BLONDE #E5E3CB instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ASH BLONDE #E5E3CB — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-auburn",
@@ -1041,7 +1059,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to AUBURN #9C5617 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-cherry",
@@ -1055,7 +1073,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHERRY #FF1400 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:26:09.330Z"
     },
     {
       "productKey": "frontals-straight-chestnut",
@@ -1069,7 +1088,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHESTNUT #6C2D11 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-citrine",
@@ -1083,7 +1102,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CITRINE #E2E91C — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-cobalt",
@@ -1097,7 +1116,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COBALT #290481 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-copper",
@@ -1111,7 +1130,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COPPER #802F02 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-espresso",
@@ -1125,7 +1144,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ESPRESSO #3B1301 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-ginger",
@@ -1139,7 +1158,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GINGER #F64F07 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-golden",
@@ -1153,7 +1172,7 @@
       "legacyFileName": "IMG_2014.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GOLDEN BLONDE #FBF08B instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GOLDEN BLONDE #FBF08B — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-honey",
@@ -1167,7 +1186,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to HONEY #C58628 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-jet-black",
@@ -1181,7 +1200,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to JET BLACK #000000 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-platinum",
@@ -1195,7 +1214,7 @@
       "legacyFileName": "IMG_2016.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLATINUM BLONDE #F6F3D2 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLATINUM BLONDE #F6F3D2 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-plum",
@@ -1209,7 +1228,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLUM #640E82 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-raspberry",
@@ -1223,7 +1242,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to RASPBERRY #DA3063 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-sangria",
@@ -1237,7 +1256,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SANGRIA #7E0A1E — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-slime",
@@ -1251,7 +1270,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SLIME #03D92A — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-straight-teal",
@@ -1265,7 +1284,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to TEAL #46EBCA — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-ash",
@@ -1279,7 +1298,7 @@
       "legacyFileName": "IMG_2025.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ASH BLONDE #E5E3CB instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ASH BLONDE #E5E3CB — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-auburn",
@@ -1293,7 +1312,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to AUBURN #9C5617 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-cherry",
@@ -1307,7 +1326,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHERRY #FF1400 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-chestnut",
@@ -1321,7 +1340,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CHESTNUT #6C2D11 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:26:41.516Z"
     },
     {
       "productKey": "frontals-wavy-citrine",
@@ -1335,7 +1355,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to CITRINE #E2E91C — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-cobalt",
@@ -1349,7 +1369,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COBALT #290481 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-copper",
@@ -1363,7 +1383,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to COPPER #802F02 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-espresso",
@@ -1377,7 +1397,8 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to ESPRESSO #3B1301 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props.",
+      "generatedAt": "2026-07-03T19:27:13.187Z"
     },
     {
       "productKey": "frontals-wavy-ginger",
@@ -1391,7 +1412,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GINGER #F64F07 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-golden",
@@ -1405,7 +1426,7 @@
       "legacyFileName": "IMG_2023.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GOLDEN BLONDE #FBF08B instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to GOLDEN BLONDE #FBF08B — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-honey",
@@ -1419,7 +1440,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to HONEY #C58628 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-jet-black",
@@ -1433,7 +1454,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to JET BLACK #000000 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-platinum",
@@ -1447,7 +1468,7 @@
       "legacyFileName": "IMG_2024.png",
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLATINUM BLONDE #F6F3D2 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLATINUM BLONDE #F6F3D2 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-plum",
@@ -1461,7 +1482,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to PLUM #640E82 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-raspberry",
@@ -1475,7 +1496,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to RASPBERRY #DA3063 — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-sangria",
@@ -1489,7 +1510,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SANGRIA #7E0A1E — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-slime",
@@ -1503,7 +1524,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to SLIME #03D92A — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     },
     {
       "productKey": "frontals-wavy-teal",
@@ -1517,7 +1538,7 @@
       "legacyFileName": null,
       "status": "ready",
       "hasPhoto": true,
-      "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
+      "prompt": "Recreate this image on a pure white (#FFFFFF) background. Change ONLY the hair color to TEAL #46EBCA — every strand must match that exact hue, brightness, and saturation.\n\nPreserve exactly from the reference image:\n- product type, lace shape, texture, curl/wave pattern, density, silhouette\n- strand detail, lace detail, lighting, crop, and front-facing product angle\n- the model's hands holding/presenting the product (same pose, position, finger count, and natural skin tone as reference)\n- pure white #FFFFFF background with no gray cast\n\nDo NOT redesign the product. Do NOT remove, crop out, or hide the hands. Do NOT distort hands or change hand skin tone. Do NOT add text, logos, extra shadows, mannequins, packaging, or other props."
     }
   ],
   "summary": {
@@ -1525,5 +1546,6 @@
     "ready": 108,
     "missing": 0,
     "failed": 0
-  }
+  },
+  "updatedAt": "2026-07-03T19:27:15.187Z"
 }
