@@ -1,7 +1,7 @@
 {
   "version": 1,
   "promptVersion": "v1",
-  "generatedAt": "2026-07-03T09:21:42.750Z",
+  "generatedAt": "2026-07-03T10:26:54.660Z",
   "bucket": "live-preview",
   "falModel": "fal-ai/nano-banana-pro/edit",
   "resolution": "2K",
@@ -45,8 +45,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/cherry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -59,8 +59,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/chestnut.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -73,8 +73,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/citrine.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -87,8 +87,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/cobalt.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -101,8 +101,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/copper.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -115,8 +115,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/espresso.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -129,8 +129,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/ginger.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -157,8 +157,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/honey.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -171,8 +171,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/jet-black.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -199,8 +199,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/plum.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -213,8 +213,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/raspberry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -227,8 +227,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/sangria.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -241,8 +241,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/slime.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -255,8 +255,8 @@
       "sourcePhotoStoragePath": "3D images/LeyLbku6UNCCi0kxINgoO_dvi4DQp1.jpeg",
       "photoStoragePath": "Closures Color/Curly/teal.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -283,8 +283,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/auburn.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -297,8 +297,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/cherry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -311,8 +311,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/chestnut.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -325,8 +325,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/citrine.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -339,8 +339,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/cobalt.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -353,8 +353,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/copper.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -367,8 +367,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/espresso.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -381,8 +381,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/ginger.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -409,8 +409,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/honey.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -423,8 +423,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/jet-black.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -451,8 +451,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/plum.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -465,8 +465,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/raspberry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -479,8 +479,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/sangria.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -493,8 +493,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/slime.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -507,8 +507,8 @@
       "sourcePhotoStoragePath": "3D images/eJn5HaBZjFrYSylTtbb0M_5rpwUenT.jpeg",
       "photoStoragePath": "Closures Color/Straight/teal.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -535,8 +535,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/auburn.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -549,8 +549,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/cherry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -563,8 +563,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/chestnut.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -577,8 +577,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/citrine.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -591,8 +591,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/cobalt.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -605,8 +605,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/copper.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -619,8 +619,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/espresso.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -633,8 +633,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/ginger.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -661,8 +661,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/honey.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -675,8 +675,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/jet-black.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -703,8 +703,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/plum.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -717,8 +717,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/raspberry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -731,8 +731,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/sangria.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -745,8 +745,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/slime.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -759,8 +759,8 @@
       "sourcePhotoStoragePath": "3D images/1Oxkel3HVLOhgB9JoyTEf_lqIBqIf9.jpeg",
       "photoStoragePath": "Closures Color/Wavy/teal.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -787,8 +787,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/auburn.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -801,8 +801,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/cherry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -815,8 +815,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/chestnut.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -829,8 +829,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/citrine.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -843,8 +843,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/cobalt.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -857,8 +857,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/copper.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -871,8 +871,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/espresso.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -885,8 +885,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/ginger.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -913,8 +913,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/honey.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -927,8 +927,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/jet-black.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -955,8 +955,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/plum.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -969,8 +969,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/raspberry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -983,8 +983,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/sangria.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -997,8 +997,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/slime.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1011,8 +1011,8 @@
       "sourcePhotoStoragePath": "3D images/_8voCgZgm-dyEMhxvP3kU_vNtnWVLA.jpeg",
       "photoStoragePath": "Frontals Color/Curly/teal.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1039,8 +1039,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/auburn.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1053,8 +1053,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/cherry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1067,8 +1067,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/chestnut.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1081,8 +1081,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/citrine.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1095,8 +1095,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/cobalt.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1109,8 +1109,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/copper.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1123,8 +1123,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/espresso.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1137,8 +1137,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/ginger.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1165,8 +1165,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/honey.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1179,8 +1179,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/jet-black.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1207,8 +1207,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/plum.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1221,8 +1221,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/raspberry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1235,8 +1235,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/sangria.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1249,8 +1249,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/slime.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1263,8 +1263,8 @@
       "sourcePhotoStoragePath": "3D images/cq8RwLDCRxEgXU2ypqQru_E0ie561k.jpeg",
       "photoStoragePath": "Frontals Color/Straight/teal.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1291,8 +1291,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/auburn.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to AUBURN #9C5617 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1305,8 +1305,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/cherry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHERRY #FF1400 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1319,8 +1319,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/chestnut.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CHESTNUT #6C2D11 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1333,8 +1333,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/citrine.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to CITRINE #E2E91C instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1347,8 +1347,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/cobalt.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COBALT #290481 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1361,8 +1361,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/copper.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to COPPER #802F02 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1375,8 +1375,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/espresso.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to ESPRESSO #3B1301 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1389,8 +1389,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/ginger.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to GINGER #F64F07 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1417,8 +1417,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/honey.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to HONEY #C58628 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1431,8 +1431,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/jet-black.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to JET BLACK #000000 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1459,8 +1459,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/plum.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to PLUM #640E82 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1473,8 +1473,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/raspberry.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to RASPBERRY #DA3063 instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1487,8 +1487,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/sangria.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SANGRIA #7E0A1E instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1501,8 +1501,8 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/slime.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to SLIME #03D92A instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     },
     {
@@ -1515,15 +1515,15 @@
       "sourcePhotoStoragePath": "3D images/soEIhbMX-172lkCFRci45_QRbCqwEV.jpeg",
       "photoStoragePath": "Frontals Color/Wavy/teal.png",
       "legacyFileName": null,
-      "status": "missing",
-      "hasPhoto": false,
+      "status": "ready",
+      "hasPhoto": true,
       "prompt": "Recreate this image on a pure white (#FFFFFF) background but change the hair color to TEAL #46EBCA instead of black. Preserve the exact product type, lace shape, texture, curl/wave pattern, density, silhouette, strand detail, lace detail, lighting, crop, and front-facing product angle. Do not redesign the product. Do not change the background. Do not add text, logos, shadows, props, mannequins, hands, packaging, or extra objects."
     }
   ],
   "summary": {
     "total": 108,
-    "ready": 19,
-    "missing": 89,
+    "ready": 108,
+    "missing": 0,
     "failed": 0
   }
 }

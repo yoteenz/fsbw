@@ -33936,3 +33936,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **npm:** `bcf:cf-photos:manifest`, `bcf:cf-photos:generate`, `bcf:cf-photos:sync`, `bcf:cf-photos:batch`.
 
 **First run:** manifest **19 ready** (18 legacy platinum trio + test **`closures-curly-auburn`**), **89 missing**; full batch started in tmux. Re-sync + commit when batch completes.
+
+---
+
+## 2026-07-03 — BCF closure/frontal color photos: full batch synced
+
+**Context:** User asked to run manifest → sync → commit when the CF photo batch finished.
+
+**Batch result:** **89/89** generated, **0 failed** (`pregenerate-bcf-cf-photos.mjs` via tmux). Storage rescan → **108/108 ready** (18 legacy platinum + **90** new noir palette PNGs across closures/frontals × straight/wavy/curly).
+
+**Synced + committed:**
+- **`npm run bcf:cf-photos:manifest`** + **`npm run bcf:cf-photos:sync`**
+- **`bcfPdpCfHeroPhotos.generated.ts`** + **`public/assets/bcf/photos/manifest.json`** — all closure/frontal color heroes live on storefront PDPs.

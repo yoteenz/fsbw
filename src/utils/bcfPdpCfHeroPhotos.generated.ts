@@ -16,6 +16,62 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "texture": "curly",
     "colorId": "AUBURN"
   },
+  "closures-curly-cherry": {
+    "photoStoragePath": "Closures Color/Curly/cherry.png",
+    "status": "ready",
+    "productKey": "closures-curly-cherry",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "CHERRY"
+  },
+  "closures-curly-chestnut": {
+    "photoStoragePath": "Closures Color/Curly/chestnut.png",
+    "status": "ready",
+    "productKey": "closures-curly-chestnut",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "CHESTNUT"
+  },
+  "closures-curly-citrine": {
+    "photoStoragePath": "Closures Color/Curly/citrine.png",
+    "status": "ready",
+    "productKey": "closures-curly-citrine",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "CITRINE"
+  },
+  "closures-curly-cobalt": {
+    "photoStoragePath": "Closures Color/Curly/cobalt.png",
+    "status": "ready",
+    "productKey": "closures-curly-cobalt",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "COBALT"
+  },
+  "closures-curly-copper": {
+    "photoStoragePath": "Closures Color/Curly/copper.png",
+    "status": "ready",
+    "productKey": "closures-curly-copper",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "COPPER"
+  },
+  "closures-curly-espresso": {
+    "photoStoragePath": "Closures Color/Curly/espresso.png",
+    "status": "ready",
+    "productKey": "closures-curly-espresso",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "ESPRESSO"
+  },
+  "closures-curly-ginger": {
+    "photoStoragePath": "Closures Color/Curly/ginger.png",
+    "status": "ready",
+    "productKey": "closures-curly-ginger",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "GINGER"
+  },
   "closures-curly-golden": {
     "photoStoragePath": "Closures Color/Platinum/IMG_2035.png",
     "status": "ready",
@@ -23,6 +79,22 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "category": "closures",
     "texture": "curly",
     "colorId": "GOLDEN"
+  },
+  "closures-curly-honey": {
+    "photoStoragePath": "Closures Color/Curly/honey.png",
+    "status": "ready",
+    "productKey": "closures-curly-honey",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "HONEY"
+  },
+  "closures-curly-jet-black": {
+    "photoStoragePath": "Closures Color/Curly/jet-black.png",
+    "status": "ready",
+    "productKey": "closures-curly-jet-black",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "JET BLACK"
   },
   "closures-curly-platinum": {
     "photoStoragePath": "Closures Color/Platinum/IMG_2036.png",
@@ -32,6 +104,46 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "texture": "curly",
     "colorId": "PLATINUM"
   },
+  "closures-curly-plum": {
+    "photoStoragePath": "Closures Color/Curly/plum.png",
+    "status": "ready",
+    "productKey": "closures-curly-plum",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "PLUM"
+  },
+  "closures-curly-raspberry": {
+    "photoStoragePath": "Closures Color/Curly/raspberry.png",
+    "status": "ready",
+    "productKey": "closures-curly-raspberry",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "RASPBERRY"
+  },
+  "closures-curly-sangria": {
+    "photoStoragePath": "Closures Color/Curly/sangria.png",
+    "status": "ready",
+    "productKey": "closures-curly-sangria",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "SANGRIA"
+  },
+  "closures-curly-slime": {
+    "photoStoragePath": "Closures Color/Curly/slime.png",
+    "status": "ready",
+    "productKey": "closures-curly-slime",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "SLIME"
+  },
+  "closures-curly-teal": {
+    "photoStoragePath": "Closures Color/Curly/teal.png",
+    "status": "ready",
+    "productKey": "closures-curly-teal",
+    "category": "closures",
+    "texture": "curly",
+    "colorId": "TEAL"
+  },
   "closures-straight-ash": {
     "photoStoragePath": "Closures Color/Platinum/IMG_2031.png",
     "status": "ready",
@@ -39,6 +151,70 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "category": "closures",
     "texture": "straight",
     "colorId": "ASH"
+  },
+  "closures-straight-auburn": {
+    "photoStoragePath": "Closures Color/Straight/auburn.png",
+    "status": "ready",
+    "productKey": "closures-straight-auburn",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "AUBURN"
+  },
+  "closures-straight-cherry": {
+    "photoStoragePath": "Closures Color/Straight/cherry.png",
+    "status": "ready",
+    "productKey": "closures-straight-cherry",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "CHERRY"
+  },
+  "closures-straight-chestnut": {
+    "photoStoragePath": "Closures Color/Straight/chestnut.png",
+    "status": "ready",
+    "productKey": "closures-straight-chestnut",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "CHESTNUT"
+  },
+  "closures-straight-citrine": {
+    "photoStoragePath": "Closures Color/Straight/citrine.png",
+    "status": "ready",
+    "productKey": "closures-straight-citrine",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "CITRINE"
+  },
+  "closures-straight-cobalt": {
+    "photoStoragePath": "Closures Color/Straight/cobalt.png",
+    "status": "ready",
+    "productKey": "closures-straight-cobalt",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "COBALT"
+  },
+  "closures-straight-copper": {
+    "photoStoragePath": "Closures Color/Straight/copper.png",
+    "status": "ready",
+    "productKey": "closures-straight-copper",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "COPPER"
+  },
+  "closures-straight-espresso": {
+    "photoStoragePath": "Closures Color/Straight/espresso.png",
+    "status": "ready",
+    "productKey": "closures-straight-espresso",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "ESPRESSO"
+  },
+  "closures-straight-ginger": {
+    "photoStoragePath": "Closures Color/Straight/ginger.png",
+    "status": "ready",
+    "productKey": "closures-straight-ginger",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "GINGER"
   },
   "closures-straight-golden": {
     "photoStoragePath": "Closures Color/Platinum/IMG_2029.png",
@@ -48,6 +224,22 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "texture": "straight",
     "colorId": "GOLDEN"
   },
+  "closures-straight-honey": {
+    "photoStoragePath": "Closures Color/Straight/honey.png",
+    "status": "ready",
+    "productKey": "closures-straight-honey",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "HONEY"
+  },
+  "closures-straight-jet-black": {
+    "photoStoragePath": "Closures Color/Straight/jet-black.png",
+    "status": "ready",
+    "productKey": "closures-straight-jet-black",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "JET BLACK"
+  },
   "closures-straight-platinum": {
     "photoStoragePath": "Closures Color/Platinum/IMG_2030.png",
     "status": "ready",
@@ -55,6 +247,46 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "category": "closures",
     "texture": "straight",
     "colorId": "PLATINUM"
+  },
+  "closures-straight-plum": {
+    "photoStoragePath": "Closures Color/Straight/plum.png",
+    "status": "ready",
+    "productKey": "closures-straight-plum",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "PLUM"
+  },
+  "closures-straight-raspberry": {
+    "photoStoragePath": "Closures Color/Straight/raspberry.png",
+    "status": "ready",
+    "productKey": "closures-straight-raspberry",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "RASPBERRY"
+  },
+  "closures-straight-sangria": {
+    "photoStoragePath": "Closures Color/Straight/sangria.png",
+    "status": "ready",
+    "productKey": "closures-straight-sangria",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "SANGRIA"
+  },
+  "closures-straight-slime": {
+    "photoStoragePath": "Closures Color/Straight/slime.png",
+    "status": "ready",
+    "productKey": "closures-straight-slime",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "SLIME"
+  },
+  "closures-straight-teal": {
+    "photoStoragePath": "Closures Color/Straight/teal.png",
+    "status": "ready",
+    "productKey": "closures-straight-teal",
+    "category": "closures",
+    "texture": "straight",
+    "colorId": "TEAL"
   },
   "closures-wavy-ash": {
     "photoStoragePath": "Closures Color/Platinum/IMG_2034.png",
@@ -64,6 +296,70 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "texture": "wavy",
     "colorId": "ASH"
   },
+  "closures-wavy-auburn": {
+    "photoStoragePath": "Closures Color/Wavy/auburn.png",
+    "status": "ready",
+    "productKey": "closures-wavy-auburn",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "AUBURN"
+  },
+  "closures-wavy-cherry": {
+    "photoStoragePath": "Closures Color/Wavy/cherry.png",
+    "status": "ready",
+    "productKey": "closures-wavy-cherry",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "CHERRY"
+  },
+  "closures-wavy-chestnut": {
+    "photoStoragePath": "Closures Color/Wavy/chestnut.png",
+    "status": "ready",
+    "productKey": "closures-wavy-chestnut",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "CHESTNUT"
+  },
+  "closures-wavy-citrine": {
+    "photoStoragePath": "Closures Color/Wavy/citrine.png",
+    "status": "ready",
+    "productKey": "closures-wavy-citrine",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "CITRINE"
+  },
+  "closures-wavy-cobalt": {
+    "photoStoragePath": "Closures Color/Wavy/cobalt.png",
+    "status": "ready",
+    "productKey": "closures-wavy-cobalt",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "COBALT"
+  },
+  "closures-wavy-copper": {
+    "photoStoragePath": "Closures Color/Wavy/copper.png",
+    "status": "ready",
+    "productKey": "closures-wavy-copper",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "COPPER"
+  },
+  "closures-wavy-espresso": {
+    "photoStoragePath": "Closures Color/Wavy/espresso.png",
+    "status": "ready",
+    "productKey": "closures-wavy-espresso",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "ESPRESSO"
+  },
+  "closures-wavy-ginger": {
+    "photoStoragePath": "Closures Color/Wavy/ginger.png",
+    "status": "ready",
+    "productKey": "closures-wavy-ginger",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "GINGER"
+  },
   "closures-wavy-golden": {
     "photoStoragePath": "Closures Color/Platinum/IMG_2032.png",
     "status": "ready",
@@ -71,6 +367,22 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "category": "closures",
     "texture": "wavy",
     "colorId": "GOLDEN"
+  },
+  "closures-wavy-honey": {
+    "photoStoragePath": "Closures Color/Wavy/honey.png",
+    "status": "ready",
+    "productKey": "closures-wavy-honey",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "HONEY"
+  },
+  "closures-wavy-jet-black": {
+    "photoStoragePath": "Closures Color/Wavy/jet-black.png",
+    "status": "ready",
+    "productKey": "closures-wavy-jet-black",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "JET BLACK"
   },
   "closures-wavy-platinum": {
     "photoStoragePath": "Closures Color/Platinum/IMG_2033.png",
@@ -80,6 +392,46 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "texture": "wavy",
     "colorId": "PLATINUM"
   },
+  "closures-wavy-plum": {
+    "photoStoragePath": "Closures Color/Wavy/plum.png",
+    "status": "ready",
+    "productKey": "closures-wavy-plum",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "PLUM"
+  },
+  "closures-wavy-raspberry": {
+    "photoStoragePath": "Closures Color/Wavy/raspberry.png",
+    "status": "ready",
+    "productKey": "closures-wavy-raspberry",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "RASPBERRY"
+  },
+  "closures-wavy-sangria": {
+    "photoStoragePath": "Closures Color/Wavy/sangria.png",
+    "status": "ready",
+    "productKey": "closures-wavy-sangria",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "SANGRIA"
+  },
+  "closures-wavy-slime": {
+    "photoStoragePath": "Closures Color/Wavy/slime.png",
+    "status": "ready",
+    "productKey": "closures-wavy-slime",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "SLIME"
+  },
+  "closures-wavy-teal": {
+    "photoStoragePath": "Closures Color/Wavy/teal.png",
+    "status": "ready",
+    "productKey": "closures-wavy-teal",
+    "category": "closures",
+    "texture": "wavy",
+    "colorId": "TEAL"
+  },
   "frontals-curly-ash": {
     "photoStoragePath": "Frontals Color/Platinum/IMG_2028.png",
     "status": "ready",
@@ -87,6 +439,70 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "category": "frontals",
     "texture": "curly",
     "colorId": "ASH"
+  },
+  "frontals-curly-auburn": {
+    "photoStoragePath": "Frontals Color/Curly/auburn.png",
+    "status": "ready",
+    "productKey": "frontals-curly-auburn",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "AUBURN"
+  },
+  "frontals-curly-cherry": {
+    "photoStoragePath": "Frontals Color/Curly/cherry.png",
+    "status": "ready",
+    "productKey": "frontals-curly-cherry",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "CHERRY"
+  },
+  "frontals-curly-chestnut": {
+    "photoStoragePath": "Frontals Color/Curly/chestnut.png",
+    "status": "ready",
+    "productKey": "frontals-curly-chestnut",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "CHESTNUT"
+  },
+  "frontals-curly-citrine": {
+    "photoStoragePath": "Frontals Color/Curly/citrine.png",
+    "status": "ready",
+    "productKey": "frontals-curly-citrine",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "CITRINE"
+  },
+  "frontals-curly-cobalt": {
+    "photoStoragePath": "Frontals Color/Curly/cobalt.png",
+    "status": "ready",
+    "productKey": "frontals-curly-cobalt",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "COBALT"
+  },
+  "frontals-curly-copper": {
+    "photoStoragePath": "Frontals Color/Curly/copper.png",
+    "status": "ready",
+    "productKey": "frontals-curly-copper",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "COPPER"
+  },
+  "frontals-curly-espresso": {
+    "photoStoragePath": "Frontals Color/Curly/espresso.png",
+    "status": "ready",
+    "productKey": "frontals-curly-espresso",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "ESPRESSO"
+  },
+  "frontals-curly-ginger": {
+    "photoStoragePath": "Frontals Color/Curly/ginger.png",
+    "status": "ready",
+    "productKey": "frontals-curly-ginger",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "GINGER"
   },
   "frontals-curly-golden": {
     "photoStoragePath": "Frontals Color/Platinum/IMG_2026.png",
@@ -96,6 +512,22 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "texture": "curly",
     "colorId": "GOLDEN"
   },
+  "frontals-curly-honey": {
+    "photoStoragePath": "Frontals Color/Curly/honey.png",
+    "status": "ready",
+    "productKey": "frontals-curly-honey",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "HONEY"
+  },
+  "frontals-curly-jet-black": {
+    "photoStoragePath": "Frontals Color/Curly/jet-black.png",
+    "status": "ready",
+    "productKey": "frontals-curly-jet-black",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "JET BLACK"
+  },
   "frontals-curly-platinum": {
     "photoStoragePath": "Frontals Color/Platinum/IMG_2027.png",
     "status": "ready",
@@ -103,6 +535,46 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "category": "frontals",
     "texture": "curly",
     "colorId": "PLATINUM"
+  },
+  "frontals-curly-plum": {
+    "photoStoragePath": "Frontals Color/Curly/plum.png",
+    "status": "ready",
+    "productKey": "frontals-curly-plum",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "PLUM"
+  },
+  "frontals-curly-raspberry": {
+    "photoStoragePath": "Frontals Color/Curly/raspberry.png",
+    "status": "ready",
+    "productKey": "frontals-curly-raspberry",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "RASPBERRY"
+  },
+  "frontals-curly-sangria": {
+    "photoStoragePath": "Frontals Color/Curly/sangria.png",
+    "status": "ready",
+    "productKey": "frontals-curly-sangria",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "SANGRIA"
+  },
+  "frontals-curly-slime": {
+    "photoStoragePath": "Frontals Color/Curly/slime.png",
+    "status": "ready",
+    "productKey": "frontals-curly-slime",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "SLIME"
+  },
+  "frontals-curly-teal": {
+    "photoStoragePath": "Frontals Color/Curly/teal.png",
+    "status": "ready",
+    "productKey": "frontals-curly-teal",
+    "category": "frontals",
+    "texture": "curly",
+    "colorId": "TEAL"
   },
   "frontals-straight-ash": {
     "photoStoragePath": "Frontals Color/Platinum/IMG_2017.png",
@@ -112,6 +584,70 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "texture": "straight",
     "colorId": "ASH"
   },
+  "frontals-straight-auburn": {
+    "photoStoragePath": "Frontals Color/Straight/auburn.png",
+    "status": "ready",
+    "productKey": "frontals-straight-auburn",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "AUBURN"
+  },
+  "frontals-straight-cherry": {
+    "photoStoragePath": "Frontals Color/Straight/cherry.png",
+    "status": "ready",
+    "productKey": "frontals-straight-cherry",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "CHERRY"
+  },
+  "frontals-straight-chestnut": {
+    "photoStoragePath": "Frontals Color/Straight/chestnut.png",
+    "status": "ready",
+    "productKey": "frontals-straight-chestnut",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "CHESTNUT"
+  },
+  "frontals-straight-citrine": {
+    "photoStoragePath": "Frontals Color/Straight/citrine.png",
+    "status": "ready",
+    "productKey": "frontals-straight-citrine",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "CITRINE"
+  },
+  "frontals-straight-cobalt": {
+    "photoStoragePath": "Frontals Color/Straight/cobalt.png",
+    "status": "ready",
+    "productKey": "frontals-straight-cobalt",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "COBALT"
+  },
+  "frontals-straight-copper": {
+    "photoStoragePath": "Frontals Color/Straight/copper.png",
+    "status": "ready",
+    "productKey": "frontals-straight-copper",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "COPPER"
+  },
+  "frontals-straight-espresso": {
+    "photoStoragePath": "Frontals Color/Straight/espresso.png",
+    "status": "ready",
+    "productKey": "frontals-straight-espresso",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "ESPRESSO"
+  },
+  "frontals-straight-ginger": {
+    "photoStoragePath": "Frontals Color/Straight/ginger.png",
+    "status": "ready",
+    "productKey": "frontals-straight-ginger",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "GINGER"
+  },
   "frontals-straight-golden": {
     "photoStoragePath": "Frontals Color/Platinum/IMG_2014.png",
     "status": "ready",
@@ -119,6 +655,22 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "category": "frontals",
     "texture": "straight",
     "colorId": "GOLDEN"
+  },
+  "frontals-straight-honey": {
+    "photoStoragePath": "Frontals Color/Straight/honey.png",
+    "status": "ready",
+    "productKey": "frontals-straight-honey",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "HONEY"
+  },
+  "frontals-straight-jet-black": {
+    "photoStoragePath": "Frontals Color/Straight/jet-black.png",
+    "status": "ready",
+    "productKey": "frontals-straight-jet-black",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "JET BLACK"
   },
   "frontals-straight-platinum": {
     "photoStoragePath": "Frontals Color/Platinum/IMG_2016.png",
@@ -128,6 +680,46 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "texture": "straight",
     "colorId": "PLATINUM"
   },
+  "frontals-straight-plum": {
+    "photoStoragePath": "Frontals Color/Straight/plum.png",
+    "status": "ready",
+    "productKey": "frontals-straight-plum",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "PLUM"
+  },
+  "frontals-straight-raspberry": {
+    "photoStoragePath": "Frontals Color/Straight/raspberry.png",
+    "status": "ready",
+    "productKey": "frontals-straight-raspberry",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "RASPBERRY"
+  },
+  "frontals-straight-sangria": {
+    "photoStoragePath": "Frontals Color/Straight/sangria.png",
+    "status": "ready",
+    "productKey": "frontals-straight-sangria",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "SANGRIA"
+  },
+  "frontals-straight-slime": {
+    "photoStoragePath": "Frontals Color/Straight/slime.png",
+    "status": "ready",
+    "productKey": "frontals-straight-slime",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "SLIME"
+  },
+  "frontals-straight-teal": {
+    "photoStoragePath": "Frontals Color/Straight/teal.png",
+    "status": "ready",
+    "productKey": "frontals-straight-teal",
+    "category": "frontals",
+    "texture": "straight",
+    "colorId": "TEAL"
+  },
   "frontals-wavy-ash": {
     "photoStoragePath": "Frontals Color/Platinum/IMG_2025.png",
     "status": "ready",
@@ -135,6 +727,70 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "category": "frontals",
     "texture": "wavy",
     "colorId": "ASH"
+  },
+  "frontals-wavy-auburn": {
+    "photoStoragePath": "Frontals Color/Wavy/auburn.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-auburn",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "AUBURN"
+  },
+  "frontals-wavy-cherry": {
+    "photoStoragePath": "Frontals Color/Wavy/cherry.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-cherry",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "CHERRY"
+  },
+  "frontals-wavy-chestnut": {
+    "photoStoragePath": "Frontals Color/Wavy/chestnut.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-chestnut",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "CHESTNUT"
+  },
+  "frontals-wavy-citrine": {
+    "photoStoragePath": "Frontals Color/Wavy/citrine.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-citrine",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "CITRINE"
+  },
+  "frontals-wavy-cobalt": {
+    "photoStoragePath": "Frontals Color/Wavy/cobalt.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-cobalt",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "COBALT"
+  },
+  "frontals-wavy-copper": {
+    "photoStoragePath": "Frontals Color/Wavy/copper.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-copper",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "COPPER"
+  },
+  "frontals-wavy-espresso": {
+    "photoStoragePath": "Frontals Color/Wavy/espresso.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-espresso",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "ESPRESSO"
+  },
+  "frontals-wavy-ginger": {
+    "photoStoragePath": "Frontals Color/Wavy/ginger.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-ginger",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "GINGER"
   },
   "frontals-wavy-golden": {
     "photoStoragePath": "Frontals Color/Platinum/IMG_2023.png",
@@ -144,6 +800,22 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "texture": "wavy",
     "colorId": "GOLDEN"
   },
+  "frontals-wavy-honey": {
+    "photoStoragePath": "Frontals Color/Wavy/honey.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-honey",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "HONEY"
+  },
+  "frontals-wavy-jet-black": {
+    "photoStoragePath": "Frontals Color/Wavy/jet-black.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-jet-black",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "JET BLACK"
+  },
   "frontals-wavy-platinum": {
     "photoStoragePath": "Frontals Color/Platinum/IMG_2024.png",
     "status": "ready",
@@ -151,6 +823,46 @@ export const BCF_PDP_CF_HERO_PHOTOS = {
     "category": "frontals",
     "texture": "wavy",
     "colorId": "PLATINUM"
+  },
+  "frontals-wavy-plum": {
+    "photoStoragePath": "Frontals Color/Wavy/plum.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-plum",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "PLUM"
+  },
+  "frontals-wavy-raspberry": {
+    "photoStoragePath": "Frontals Color/Wavy/raspberry.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-raspberry",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "RASPBERRY"
+  },
+  "frontals-wavy-sangria": {
+    "photoStoragePath": "Frontals Color/Wavy/sangria.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-sangria",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "SANGRIA"
+  },
+  "frontals-wavy-slime": {
+    "photoStoragePath": "Frontals Color/Wavy/slime.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-slime",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "SLIME"
+  },
+  "frontals-wavy-teal": {
+    "photoStoragePath": "Frontals Color/Wavy/teal.png",
+    "status": "ready",
+    "productKey": "frontals-wavy-teal",
+    "category": "frontals",
+    "texture": "wavy",
+    "colorId": "TEAL"
   }
 } as const;
 export type BcfPdpCfHeroPhotoEntry = (typeof BCF_PDP_CF_HERO_PHOTOS)[keyof typeof BCF_PDP_CF_HERO_PHOTOS];
