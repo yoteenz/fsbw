@@ -12,6 +12,7 @@ import {
   BAW_SLAY_CARD_SLAYER_LOGO_SRC,
   BAW_SLAY_CARD_TEMPLATE_SRC,
   DEFAULT_BAW_SLAY_CARD_LAYOUT,
+  getActiveBawSlayCardLayout,
   type BawSlayCardLayout,
   type BawSlayCardTextStyle,
 } from './bawSlayCardLayout';
@@ -202,16 +203,17 @@ export async function paintBawSlayCard(
 
 export async function renderBawSlayCardPng(
   selections: BawTutorialSelections,
-  layout: BawSlayCardLayout = DEFAULT_BAW_SLAY_CARD_LAYOUT
+  layout?: BawSlayCardLayout
 ): Promise<Blob> {
+  const resolvedLayout = layout ?? getActiveBawSlayCardLayout();
   const canvas = document.createElement('canvas');
-  canvas.width = layout.canvasWidth;
-  canvas.height = layout.canvasHeight;
+  canvas.width = resolvedLayout.canvasWidth;
+  canvas.height = resolvedLayout.canvasHeight;
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas not supported');
 
   await ensureCanvasFontsReady();
-  await paintBawSlayCard(ctx, selections, layout);
+  await paintBawSlayCard(ctx, selections, resolvedLayout);
 
   return new Promise((resolve, reject) => {
     canvas.toBlob(

@@ -33416,3 +33416,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Context:** User asked to change black **FRONTAL** header text above slayer logo to **Futura PT Book**.
 
 **Changes:** **`DEFAULT_BAW_SLAY_CARD_LAYOUT.header.frontal`** — `fontFamily` → Futura PT Book, `fontWeight` 500.
+
+---
+
+## 2026-07-03 — BAW slay card debug explicit Save layout
+
+**Context:** User reported no save button on slay card debug page; saved tweaks were not obvious and try-hub cards did not use saved layout.
+
+**Changes:** Debug page **Save layout** button (red) commits to localStorage with dirty/saved indicator; removed silent auto-save on every tweak. **`getActiveBawSlayCardLayout()`** — try-hub **`renderBawSlayCardPng`** reads saved layout from localStorage when present.

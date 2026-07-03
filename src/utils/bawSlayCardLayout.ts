@@ -136,6 +136,11 @@ export function loadBawSlayCardLayoutDebug(): BawSlayCardLayout {
   }
 }
 
+/** Layout used by try-hub SAVE SLAY CARD — saved debug layout or defaults. */
+export function getActiveBawSlayCardLayout(): BawSlayCardLayout {
+  return loadBawSlayCardLayoutDebug();
+}
+
 export function saveBawSlayCardLayoutDebug(layout: BawSlayCardLayout): void {
   localStorage.setItem(BAW_SLAY_CARD_LAYOUT_DEBUG_KEY, JSON.stringify(layout, null, 2));
 }

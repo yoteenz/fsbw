@@ -3,7 +3,6 @@ import type { BawTutorialSelections } from '../../../constants/bawTutorialConfig
 import { paintBawSlayCard } from '../../../utils/bawSlayCard';
 import { bawStaticMannequinFrontReferencePathFromUnitAndHairline } from '../../../utils/bawStaticMannequinReferencePaths';
 import {
-  clearBawSlayCardLayoutDebug,
   DEFAULT_BAW_SLAY_CARD_LAYOUT,
   formatBawSlayCardLayoutForCopy,
   loadBawSlayCardLayoutDebug,
@@ -125,6 +124,13 @@ export default function SlayCardDebugPage() {
   const [showGuides, setShowGuides] = useState(true);
   const [previewScale, setPreviewScale] = useState(0.45);
   const [copyStatus, setCopyStatus] = useState('');
+  const [savedLayoutJson, setSavedLayoutJson] = useState(() =>
+    JSON.stringify(loadBawSlayCardLayoutDebug())
+  );
+  const isDirty = useMemo(
+    () => JSON.stringify(layout) !== savedLayoutJson,
+    [layout, savedLayoutJson]
+  );
   const [mannequinBounds, setMannequinBounds] = useState<{
     x: number;
     y: number;
@@ -183,10 +189,6 @@ export default function SlayCardDebugPage() {
   useEffect(() => {
     void redraw();
   }, [redraw]);
-
-  useEffect(() => {
-    saveBawSlayCardLayoutDebug(layout);
-  }, [layout]);
 
   useEffect(() => {
     const el = previewWrapRef.current;
@@ -380,6 +382,13 @@ export default function SlayCardDebugPage() {
     e.currentTarget.releasePointerCapture(e.pointerId);
   };
 
+  const handleSaveLayout = () => {
+    saveBawSlayCardLayoutDebug(layout);
+    setSavedLayoutJson(JSON.stringify(layout));
+    setCopyStatus('Layout saved — try-hub SAVE SLAY CARD will use these settings');
+    setTimeout(() => setCopyStatus(''), 3500);
+  };
+
   const handleCopy = async () => {
     const text = formatBawSlayCardLayoutForCopy(layout);
     await navigator.clipboard.writeText(text);
@@ -388,10 +397,9 @@ export default function SlayCardDebugPage() {
   };
 
   const handleReset = () => {
-    clearBawSlayCardLayoutDebug();
     setLayout(DEFAULT_BAW_SLAY_CARD_LAYOUT);
-    setCopyStatus('Reset to defaults');
-    setTimeout(() => setCopyStatus(''), 2000);
+    setCopyStatus('Reset to defaults — click Save layout to apply');
+    setTimeout(() => setCopyStatus(''), 3500);
   };
 
   const handleDownload = async () => {
@@ -416,10 +424,21 @@ export default function SlayCardDebugPage() {
           <h1 className="text-sm font-semibold uppercase tracking-wider" style={{ fontFamily: '"Futura PT Medium"' }}>
             Slay Card Layout Debug
           </h1>
-          <p className="text-[10px] text-gray-600 uppercase">Drag mannequin or text on preview · edits auto-save to localStorage</p>
+          <p className="text-[10px] text-gray-600 uppercase">
+            Adjust layers, then click Save layout to apply on the try-hub SAVE SLAY CARD button
+            {isDirty ? ' · unsaved changes' : ' · saved'}
+          </p>
         </div>
         <div className="flex flex-wrap gap-2 items-center">
           {copyStatus ? <span className="text-[10px] text-green-700">{copyStatus}</span> : null}
+          <button
+            type="button"
+            onClick={handleSaveLayout}
+            className="border border-black px-3 py-1 text-[10px] uppercase bg-[#EB1C24] text-white font-semibold"
+            style={{ fontFamily: '"Futura PT Medium"' }}
+          >
+            Save layout
+          </button>
           <button type="button" onClick={() => void handleCopy()} className="border border-black px-3 py-1 text-[10px] uppercase bg-white">
             Copy JSON
           </button>
