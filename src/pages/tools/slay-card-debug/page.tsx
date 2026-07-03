@@ -3,7 +3,6 @@ import type { BawTutorialSelections } from '../../../constants/bawTutorialConfig
 import { paintBawSlayCard } from '../../../utils/bawSlayCard';
 import { bawStaticMannequinFrontReferencePathFromUnitAndHairline } from '../../../utils/bawStaticMannequinReferencePaths';
 import {
-  DEFAULT_BAW_SLAY_CARD_LAYOUT,
   formatBawSlayCardLayoutForCopy,
   loadBawSlayCardLayoutDebug,
   mergeBawSlayCardLayout,
@@ -549,8 +548,9 @@ export default function SlayCardDebugPage() {
   };
 
   const handleReset = () => {
-    setLayout(DEFAULT_BAW_SLAY_CARD_LAYOUT);
-    setCopyStatus('Reset to defaults — click Save layout to apply');
+    const saved = JSON.parse(savedLayoutJson) as BawSlayCardLayout;
+    setLayout(saved);
+    setCopyStatus('Reverted to last saved layout');
     setTimeout(() => setCopyStatus(''), 3500);
   };
 
@@ -595,7 +595,7 @@ export default function SlayCardDebugPage() {
             Copy JSON
           </button>
           <button type="button" onClick={handleReset} className="border border-black px-3 py-1 text-[10px] uppercase bg-white">
-            Reset defaults
+            Reset to saved
           </button>
           <button type="button" onClick={() => void handleDownload()} className="border border-black px-3 py-1 text-[10px] uppercase bg-white text-[#EB1C24]">
             Download PNG

@@ -33466,3 +33466,11 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Root cause:** **`onPointerDown`** pinned every drag to the sidebar-selected text layer via **`isTextLikeLayer(selectedLayer)`**, so once subtitle (or any text layer) was selected, canvas clicks never switched to image/mannequin layers. Subtitle hit box also overlapped the top of the mannequin fit box because mannequin was checked after text layers.
 
 **Changes:** **`slay-card-debug/page.tsx`** — removed text-layer pin; **`pickLayerAtPoint`** now returns **`{ layer, hit }`**: click on a guide/outline selects and drags that layer; click on empty canvas drags the sidebar-selected layer. Reordered hit-test so **mannequin** wins over subtitle in overlap. Updated helper copy. Build verified.
+
+---
+
+## 2026-07-03 — BAW slay card debug Reset to saved layout
+
+**Context:** User asked that **Reset** on slay card debug page revert to the **last saved layout**, not the original hardcoded factory defaults — saving layout should update what Reset restores.
+
+**Changes:** **`handleReset`** now loads from **`savedLayoutJson`** (updated on each **Save layout**) instead of **`DEFAULT_BAW_SLAY_CARD_LAYOUT`**. Button renamed **Reset to saved**; status copy **Reverted to last saved layout**.
