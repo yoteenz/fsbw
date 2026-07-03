@@ -21,6 +21,7 @@ import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSub
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { BawSubpageFooterAction } from '../../../components/buildWig/BawViewSubscriptionsFooter';
+import { resolveBawTrySubpageConfirmReturnPath } from '../../../utils/bawTrySubpageRoutes';
 import { BawModeChrome } from '../../../components/buildWig/BawModeChrome';
 import { BuildWigSubscriptionPageRoot } from '../../../components/buildWig/BawSubscriptionViewContext';
 import { BawSubscriptionMainCard } from '../../../components/buildWig/BawSubscriptionMainCard';
@@ -571,7 +572,9 @@ export default function AddOnsSelectionPage() {
     persistBawJsonConfirmed(pathname, 'AddOns', JSON.stringify(selectedAddOns), price, { isCustomizeMode, isEditMode });
     
     // Determine the correct route to navigate back to based on current pathname
-    let returnRoute = '/build-a-wig'; // Default
+    const tryReturnRoute = resolveBawTrySubpageConfirmReturnPath(location.pathname);
+    let returnRoute = tryReturnRoute ?? '/build-a-wig';
+    if (!tryReturnRoute) {
     if (location.pathname.startsWith('/build-a-wig/noir/edit/')) {
       returnRoute = '/build-a-wig/noir/edit';
     } else if (location.pathname.startsWith('/build-a-wig/blanco/edit/')) {
@@ -600,6 +603,7 @@ export default function AddOnsSelectionPage() {
       returnRoute = '/build-a-wig/ocean-curl/customize';
     } else if (sourceRoute) {
       returnRoute = sourceRoute;
+    }
     }
     
     console.log('Addons page - Navigating back to route:', returnRoute);

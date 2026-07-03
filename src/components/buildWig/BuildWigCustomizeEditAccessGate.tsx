@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../ConfirmationModal';
-import { isBuildAWigCustomizeOrEditPath, isBuildAWigCustomizePath } from '../../utils/buildAWigRoutes';
+import { isBuildAWigCustomizeOrEditPath, isBuildAWigCustomizePath, getBuildAWigFlowBasePath } from '../../utils/buildAWigRoutes';
 import { isBawEditPath } from '../../utils/bawClientTestMode';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
@@ -72,8 +72,8 @@ export function BuildWigCustomizeEditAccessGate() {
 
   const handleCancel = useCallback(() => {
     setShowUpgradeModal(false);
-    navigate('/build-a-wig/try', { replace: true });
-  }, [navigate]);
+    navigate(getBuildAWigFlowBasePath(location.pathname), { replace: true });
+  }, [navigate, location.pathname]);
 
   if (!needsMemberAccess) {
     return null;

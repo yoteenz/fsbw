@@ -33261,3 +33261,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Topics covered:** Prior BAW try/customize chrome work (duplicate headers, try route persistence, VIEW SUBSCRIPTIONS footer, BUILD GUIDE welcome copy); this turn refines intro detail text and mode-line branding.
 
 **Changes:** **`bawModeGuideConfig.ts`** — TRY intro body + **`bawBuildModeLabel`** strings; **`bawTutorialConfig.ts`** — matching intro body.
+
+---
+
+## 2026-07-03 — BAW try unit routing, footer width, marble background
+
+**Context:** User reported non-NOIR try units (e.g. Blanco) opening NOIR try sub-pages instead of unit-specific `/build-a-wig/try/{unit}/…` routes; VIEW SUBSCRIPTIONS button narrower than main card; marble background cut off at bottom on styling sub-page.
+
+**Topics covered:** Prior BAW try/customize chrome, BUILD GUIDE copy, hyphenated mode labels; this turn fixes try flow persistence per unit, footer layout, and background tiling.
+
+**Fixes:**
+- Try hub **`handleOptionSelect`** sets **`sourceRoute`** via **`getBawTryFlowBasePath`** before navigating to try sub-pages.
+- **`getBuildAWigFlowBasePath`** + **`resolveBawTrySubpageConfirmReturnPath`** — try paths return correct unit hub (not generic `/build-a-wig` or stale customize routes).
+- All BAW option sub-pages confirm back to **`/build-a-wig/try/{unit}`** when on try routes.
+- **`pathnameIncludesBawProductSlug`** on styling/density wig views; **`isCurlyUnitBawPath`** resolves try paths for product logic.
+- **`BawSubpageFooterAction`** default width **100%** + **`w-full`** wrappers on subscription footers.
+- Styling page marble **`backgroundRepeat: 'repeat'`** (was **`no-repeat`**, causing bottom clip).
+
+**Files:** **`buildAWigRoutes.ts`**, **`bawTrySubpageRoutes.ts`**, **`bawUnitStylingOptions.ts`**, hub + 9 sub-pages, **`BawViewSubscriptionsFooter.tsx`**, **`BuildWigCustomizeEditAccessGate.tsx`**.

@@ -28,7 +28,7 @@ export function BawViewSubscriptionsFooter({
 
   return (
     <>
-      <div className="px-0 md:px-0 flex justify-center flex-col items-center gap-2" style={style}>
+      <div className="w-full px-0 md:px-0 flex justify-center flex-col items-center gap-2" style={style}>
         <button
           type="button"
           onClick={premium.handleUpgradeAction}
@@ -74,7 +74,7 @@ export function BawCustomizeInBuildWigFooter({
   const navigate = useNavigate();
 
   return (
-    <div className="px-0 md:px-0 flex justify-center flex-col items-center gap-2" style={style}>
+    <div className="w-full px-0 md:px-0 flex justify-center flex-col items-center gap-2" style={style}>
       <button
         type="button"
         onClick={() => navigate(customizePath)}
@@ -123,9 +123,9 @@ type BawSubpageFooterActionProps = {
 export function BawSubpageFooterAction({
   onConfirm,
   hidden = false,
-  buttonWidth = '358px',
+  buttonWidth = '100%',
   wrapperStyle = { marginTop: '2px', transform: 'translateY(8px)' },
-  wrapperClassName = 'px-0 md:px-0 flex justify-center',
+  wrapperClassName = 'w-full px-0 md:px-0 flex justify-center',
   buttonClassName = '',
 }: BawSubpageFooterActionProps) {
   const { pathname } = useLocation();

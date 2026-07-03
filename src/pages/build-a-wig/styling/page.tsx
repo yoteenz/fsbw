@@ -7,7 +7,8 @@ import ConfirmationModal from '../../../components/ConfirmationModal';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
 import SocialMenuIcons from '../../../components/SocialMenuIcons';
 import { signOutAppAndSupabaseSession } from '../../../utils/adminAuth';
-import { isBuildAWigCustomizePath } from '../../../utils/buildAWigRoutes';
+import { isBuildAWigCustomizePath, pathnameIncludesBawProductSlug } from '../../../utils/buildAWigRoutes';
+import { resolveBawTrySubpageConfirmReturnPath } from '../../../utils/bawTrySubpageRoutes';
 import {
   isBawCustomizeSubPage,
   isBawEditSubPage,
@@ -338,24 +339,27 @@ export default function StylingSelectionPage() {
   // Get wig views based on selected hairline from localStorage
   const getWigViews = () => {
     const pathname = window.location.pathname;
-    // Check if we're in product-specific customize modes
-    if (pathname.includes('/blanco/customize') || pathname.includes('/blanco/edit')) {
+    if (pathnameIncludesBawProductSlug(pathname, 'blanco')) {
       return [
         '/assets/2D BLANCO LEFT.png',
         '/assets/2D BLANCO FRONT.png',
         '/assets/2D BLANCO RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-wave/customize') || pathname.includes('/soft-wave/edit') ||
-        pathname.includes('/beach-wave/customize') || pathname.includes('/beach-wave/edit')) {
+    if (
+      pathnameIncludesBawProductSlug(pathname, 'soft-wave') ||
+      pathnameIncludesBawProductSlug(pathname, 'beach-wave')
+    ) {
       return [
         '/assets/2D WAVY LEFT.png',
         '/assets/2D WAVY FRONT.png',
         '/assets/2D WAVY RIGHT.png'
       ];
     }
-    if (pathname.includes('/soft-curl/customize') || pathname.includes('/soft-curl/edit') ||
-        pathname.includes('/ocean-curl/customize') || pathname.includes('/ocean-curl/edit')) {
+    if (
+      pathnameIncludesBawProductSlug(pathname, 'soft-curl') ||
+      pathnameIncludesBawProductSlug(pathname, 'ocean-curl')
+    ) {
       return [
         '/assets/2D CURLY LEFT.png',
         '/assets/2D CURLY FRONT.png',
@@ -1187,7 +1191,9 @@ export default function StylingSelectionPage() {
     }
     
     // Determine the correct route to navigate back to based on current pathname
-    let returnRoute = '/build-a-wig'; // Default
+    const tryReturnRoute = resolveBawTrySubpageConfirmReturnPath(location.pathname);
+    let returnRoute = tryReturnRoute ?? '/build-a-wig';
+    if (!tryReturnRoute) {
     if (location.pathname.startsWith('/build-a-wig/noir/edit/')) {
       returnRoute = '/build-a-wig/noir/edit';
     } else if (location.pathname.startsWith('/build-a-wig/blanco/edit/')) {
@@ -1217,6 +1223,7 @@ export default function StylingSelectionPage() {
     } else if (sourceRoute) {
       returnRoute = sourceRoute;
     }
+    }
     
     console.log('Styling page - Navigating back to route:', returnRoute);
     
@@ -1240,7 +1247,7 @@ export default function StylingSelectionPage() {
         backgroundImage: `url('/assets/marble-half.png')`,
         backgroundSize: 'contain',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
+        backgroundRepeat: 'repeat',
         backgroundAttachment: 'fixed'
       }}
         ></div>

@@ -22,6 +22,7 @@ import { useBawSubpageLiveNoirCompositeWigViews } from '../../../hooks/useBawSub
 import { useSignedInFromStorage } from '../../../hooks/useSignedInFromStorage';
 import { BawNoirWigPreviewHeroThumbs } from '../../../components/buildWig/BawNoirWigPreviewFrames';
 import { BawSubpageFooterAction } from '../../../components/buildWig/BawViewSubscriptionsFooter';
+import { resolveBawTrySubpageConfirmReturnPath } from '../../../utils/bawTrySubpageRoutes';
 import { BawModeChrome } from '../../../components/buildWig/BawModeChrome';
 import { BuildWigSubscriptionPageRoot } from '../../../components/buildWig/BawSubscriptionViewContext';
 import { BawSubscriptionMainCard } from '../../../components/buildWig/BawSubscriptionMainCard';
@@ -364,7 +365,9 @@ function LaceSelection() {
       persistBawScalarConfirmed(pathname, 'Lace', selectedLace, price, { isCustomizeMode, isEditMode });
       
       // Determine the correct route to navigate back to based on current pathname
-      let returnRoute = '/build-a-wig'; // Default
+      const tryReturnRoute = resolveBawTrySubpageConfirmReturnPath(location.pathname);
+      let returnRoute = tryReturnRoute ?? '/build-a-wig';
+      if (!tryReturnRoute) {
       if (location.pathname.startsWith('/build-a-wig/noir/edit/')) {
         returnRoute = '/build-a-wig/noir/edit';
       } else if (location.pathname.startsWith('/build-a-wig/blanco/edit/')) {
@@ -379,6 +382,7 @@ function LaceSelection() {
         returnRoute = '/build-a-wig/noir/customize';
       } else if (sourceRoute) {
         returnRoute = sourceRoute;
+      }
       }
       
       console.log('Lace page - Navigating back to route:', returnRoute);

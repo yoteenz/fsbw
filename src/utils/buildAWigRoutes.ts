@@ -3,7 +3,13 @@
  * Keeps breadcrumb navigation and customize-mode detection consistent across the main page and sub-pages.
  */
 
-import { BAW_TUTORIAL_ROUTE, isBawTutorialPath, isBawTryStepSegment, isBawTryUnitSlug } from '../constants/bawTutorialConfig';
+import {
+  BAW_TUTORIAL_ROUTE,
+  getBawTryFlowBasePath,
+  isBawTutorialPath,
+  isBawTryStepSegment,
+  isBawTryUnitSlug,
+} from '../constants/bawTutorialConfig';
 
 /** URL segments for premium membership option steps (lace → add-ons). */
 const PREMIUM_STEP_SEGMENT = /\/(lace|texture|color|hairline|styling|addons)(?:$|[?#])/;
@@ -75,6 +81,9 @@ export function isBuildAWigCustomizeHubPathname(pathname: string): boolean {
 export function getBuildAWigFlowBasePath(pathname: string): string {
   if (!pathname.startsWith('/build-a-wig')) {
     return '/build-a-wig';
+  }
+  if (isBawTutorialPath(pathname)) {
+    return getBawTryFlowBasePath(pathname);
   }
   for (const base of FLOW_BASES_ORDERED) {
     if (pathname === base || pathname.startsWith(`${base}/`)) {

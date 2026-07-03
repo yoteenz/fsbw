@@ -3,6 +3,8 @@
  * soft-curl & ocean-curl use WAND CURLS ($140) + DEFINE ($200).
  */
 
+import { resolveBuildAWigTryPathToHubPath } from './buildAWigRoutes';
+
 export interface BawHairStylingOption {
   id: string;
   name: string;
@@ -34,9 +36,8 @@ export const BAW_SALON_STYLING_IDS = [
 ] as const;
 
 export function isCurlyUnitBawPath(pathname: string): boolean {
-  return (
-    pathname.includes('/build-a-wig/soft-curl') || pathname.includes('/build-a-wig/ocean-curl')
-  );
+  const p = resolveBuildAWigTryPathToHubPath(pathname);
+  return p.includes('/build-a-wig/soft-curl') || p.includes('/build-a-wig/ocean-curl');
 }
 
 export function isCurlyUnitProductName(name: string | undefined | null): boolean {

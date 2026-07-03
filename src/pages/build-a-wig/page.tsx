@@ -50,7 +50,7 @@ import {
 } from '../../utils/bawCrossStepSummary';
 import { computeBawStylingPriceUsd } from '../../utils/bawUnitStylingOptions';
 import { isBuildAWigCustomizeHubPathname, resolveBuildAWigTryPathToHubPath } from '../../utils/buildAWigRoutes';
-import { BAW_TUTORIAL_ROUTE, getBawTryOptionSubPagePath, isBawTryStepSegment, isBawTryUnitSlug, isBawTutorialPath } from '../../constants/bawTutorialConfig';
+import { BAW_TUTORIAL_ROUTE, getBawTryFlowBasePath, getBawTryOptionSubPagePath, isBawTryStepSegment, isBawTryUnitSlug, isBawTutorialPath } from '../../constants/bawTutorialConfig';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
 import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
 
@@ -4050,6 +4050,7 @@ export default function BuildAWigPage() {
       };
       const tryStep = tryStepByCategory[category];
       if (tryStep) {
+        sessionStorage.setItem('sourceRoute', getBawTryFlowBasePath(rawPathname));
         navigate(getBawTryOptionSubPagePath(rawPathname, tryStep));
         return;
       }
