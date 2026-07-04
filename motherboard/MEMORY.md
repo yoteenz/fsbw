@@ -35034,4 +35034,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`api/_lib/email/layout.ts`**, **`emailLayoutConfig.ts`**, **`src/utils/emailLayoutDebug.ts`**, **`src/utils/emailPreviewEditor.ts`**.
 
+---
+
+## 2026-07-04 — Email wordmark −30% + preview scroll vs layer drag
+
+**Context:** User asked to **decrease FRONTAL SLAYER wordmark 30% in tandem** (FRONTAL text + SLAYER logo together). Also could not **scroll** the email template preview on touch — layers were too sensitive (`touch-action: none`, immediate pointer capture) and intercepted scroll as layer select/drag.
+
+**Fix:**
+- **`layout.ts`**: **`EMAIL_WORDMARK_SCALE = 0.7`** — FRONTAL font size and SLAYER PNG (**55×36**) scaled together in **`renderEmailWordmark()`**.
+- **`emailPreviewEditor.ts`**: **`touch-action: pan-y`** on body/layers; **12px drag threshold**; vertical scroll gestures cancel drag; **`touch-action: none`** only while dragging; no **`preventDefault`** on tap-to-select; suppress click after scroll/drag.
+- **`EmailPreviewFrame.tsx`**: iframe **`height: 75vh`** with internal **`body { overflow-y: auto }`** so preview scrolls inside the frame.
+
+**Changes:** **`api/_lib/email/layout.ts`**, **`src/utils/emailPreviewEditor.ts`**, **`src/components/tools/EmailPreviewFrame.tsx`**.
+
 

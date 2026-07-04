@@ -729,7 +729,7 @@ export default function EmailTemplatesDebugPage() {
           </div>
         ) : null}
 
-        <div className="border border-gray-400 bg-white overflow-hidden">
+        <div className="border border-gray-400 bg-white">
           {previewHtml ? (
             <EmailPreviewFrame
               previewHtml={previewHtml}
