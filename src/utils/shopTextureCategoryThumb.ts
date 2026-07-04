@@ -4,33 +4,35 @@ import type { CSSProperties } from 'react';
 export type ShopTextureCategoryThumbTexture = 'straight' | 'wavy' | 'curly';
 export type ShopTextureCategoryThumbCategory = 'bundles' | 'closures' | 'frontals';
 
-/** Primary BCF transparent cutouts (home/shop grid, cart, similar standard slots). */
-const BCF_THUMB_SUPABASE_SRC: Record<
+/** Object paths under Supabase `live-preview/BCF/` (URL-encoded filenames). */
+const BCF_THUMB_SUPABASE_OBJECT: Record<
   ShopTextureCategoryThumbCategory,
   Record<ShopTextureCategoryThumbTexture, string>
 > = {
   bundles: {
-    straight:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(43).png',
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(44).png',
-    curly:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(45).png'
+    straight: 'image%20(43).png',
+    wavy: 'image%20(44).png',
+    curly: 'image%20(45).png',
   },
   closures: {
-    straight:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(46).png',
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(47).png',
-    curly:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(48).png'
+    straight: 'image%20(46).png',
+    wavy: 'image%20(47).png',
+    curly: 'image%20(48).png',
   },
   frontals: {
-    straight:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(49).png',
-    wavy: 'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(50).png',
-    curly:
-      'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF/image%20(51).png'
-  }
+    straight: 'image%20(49).png',
+    wavy: 'image%20(50).png',
+    curly: 'image%20(51).png',
+  },
 };
+
+function bcfSupabasePublicUrl(objectPath: string): string | null {
+  const base =
+    (import.meta as unknown as { env?: { VITE_SUPABASE_URL?: string } }).env?.VITE_SUPABASE_URL?.trim() ||
+    '';
+  if (!base || /YOUR_PROJECT|\[REDACTED\]/i.test(base)) return null;
+  return `${base.replace(/\/$/, '')}/storage/v1/object/public/live-preview/BCF/${objectPath}`;
+}
 
 /** Legacy `public/assets` cutout PNGs — `onError` fallback only. */
 const BCF_THUMB_LEGACY_ASSET_SRC: Record<
@@ -58,7 +60,8 @@ export function shopTextureCategoryThumbSrc(
   texture: ShopTextureCategoryThumbTexture,
   category: ShopTextureCategoryThumbCategory
 ): string {
-  return BCF_THUMB_SUPABASE_SRC[category][texture];
+  const objectPath = BCF_THUMB_SUPABASE_OBJECT[category][texture];
+  return bcfSupabasePublicUrl(objectPath) ?? BCF_THUMB_LEGACY_ASSET_SRC[category][texture];
 }
 
 /** Legacy cutout PNG for a BCF thumb (`onError` step before unit-style noir fallbacks). */
@@ -144,8 +147,16 @@ export function bcfThumbGridContainSlotStyle(
   };
 }
 
-const BCF_PLATINUM_SIMILAR_STORAGE_BASE =
-  'https://hyycomvcaqxxvyrfupes.supabase.co/storage/v1/object/public/live-preview/BCF';
+const BCF_PLATINUM_SIMILAR_OBJECTS: Record<'closures' | 'frontals', Record<'wavy' | 'curly', string>> = {
+  closures: {
+    wavy: 'image%20(58).png',
+    curly: 'image%20(60).png',
+  },
+  frontals: {
+    wavy: 'image%20(59).png',
+    curly: 'image%20(61).png',
+  },
+};
 
 /** BCF similar strip — platinum cross-category thumbs (closures / frontals only). */
 export const BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC: Record<
@@ -153,13 +164,13 @@ export const BCF_PLATINUM_CROSS_SIMILAR_THUMB_SRC: Record<
   Record<'wavy' | 'curly', string>
 > = {
   closures: {
-    wavy: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/image%20(58).png`,
-    curly: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/image%20(60).png`
+    wavy: bcfSupabasePublicUrl(BCF_PLATINUM_SIMILAR_OBJECTS.closures.wavy) ?? '',
+    curly: bcfSupabasePublicUrl(BCF_PLATINUM_SIMILAR_OBJECTS.closures.curly) ?? '',
   },
   frontals: {
-    wavy: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/image%20(59).png`,
-    curly: `${BCF_PLATINUM_SIMILAR_STORAGE_BASE}/image%20(61).png`
-  }
+    wavy: bcfSupabasePublicUrl(BCF_PLATINUM_SIMILAR_OBJECTS.frontals.wavy) ?? '',
+    curly: bcfSupabasePublicUrl(BCF_PLATINUM_SIMILAR_OBJECTS.frontals.curly) ?? '',
+  },
 };
 
 export function bcfPlatinumCrossSimilarThumbSrc(

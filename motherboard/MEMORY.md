@@ -35477,3 +35477,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Email header nav is white-on-light-gray panel below the wordmark; logo display width **180px** on 600px card unless overridden in layout debug store.
 
+---
+
+## 2026-07-04 — Email BCF promo thumbnails broken (`[REDACTED]` URLs)
+
+**Context:** User reported **EXTENSIONS ESSENTIALS** BCF cards (Bundles, Closures, Frontals) in email template **Explore the Collection** showed broken image icons; wig unit thumbs in the same section loaded fine.
+
+**Topics covered (full chat):** BAW view-mode footer scope + `/build-a-wig` redirect; email header logo −25% + white nav on gray panel; then BCF broken thumbs diagnosis.
+
+**Root cause:** `emailProductPromo.ts` BCF tiles pointed at hardcoded Supabase URLs whose host was literally **`[REDACTED]`** in committed source (invalid hostname). Unit tiles use **`emailAssetUrl(..., { preferSite: true })`** → `https://{site}/assets/...` and work. Email HTML has no `onError` fallback (unlike storefront **`BcfThumbImage`**).
+
+**Fix:**
+- **`emailProductPromo.ts`**: BCF essentials use site **`/assets/bundle-straight.png`**, **`closure-straight.png`**, **`frontal-straight.png`** via **`emailAssetUrl`** (same pattern as unit mannequin PNGs).
+- **`shopTextureCategoryThumb.ts`**: replace hardcoded `[REDACTED]` Supabase bases with runtime URLs from **`VITE_SUPABASE_URL`** + object path; fall back to legacy **`/assets/*`** PNGs when env missing.
+
+**Changes:** `api/_lib/email/emailProductPromo.ts`, `src/utils/shopTextureCategoryThumb.ts`, `motherboard/MEMORY.md`.
+
+**Conventions:** Email cross-promo images must use **`emailAssetUrl` / site `/assets/`** (or Supabase **`email-assets`** bucket via brandAssets) — never hardcoded Supabase project hosts in source. BCF shop thumbs resolve from **`VITE_SUPABASE_URL`** at runtime.
+

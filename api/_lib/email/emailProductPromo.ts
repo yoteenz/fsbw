@@ -50,14 +50,11 @@ function absoluteUrl(pathOrUrl: string): string {
   return `${origin}${raw.startsWith('/') ? raw : `/${raw}`}`;
 }
 
-/** BCF transparent cutouts — same public URLs as home/shop grid (`shopTextureCategoryThumb.ts`). */
+/** BCF straight-texture thumbs — site `/assets/` PNGs (reliable in email; same pattern as unit tiles). */
 const BCF_THUMB_SRC = {
-  bundles:
-    '[REDACTED]/storage/v1/object/public/live-preview/BCF/image%20(43).png',
-  closures:
-    '[REDACTED]/storage/v1/object/public/live-preview/BCF/image%20(46).png',
-  frontals:
-    '[REDACTED]/storage/v1/object/public/live-preview/BCF/image%20(49).png',
+  bundles: emailAssetUrl('bundle-straight.png', { preferSite: true }),
+  closures: emailAssetUrl('closure-straight.png', { preferSite: true }),
+  frontals: emailAssetUrl('frontal-straight.png', { preferSite: true }),
 } as const;
 
 /** Canonical cross-promo tiles: six wig units + bundles, closures, frontals. */
