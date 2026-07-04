@@ -22,7 +22,6 @@ import MembershipRouteSync from './components/MembershipRouteSync';
 import AccountCommerceSync from './components/AccountCommerceSync';
 import HomeLandingRedirect from './components/HomeLandingRedirect';
 import ProductInventorySync from './components/ProductInventorySync';
-import PsaAssistantWidget from './components/psa/PsaAssistantWidget';
 import { PsaChatCopyBootstrap } from './components/psa/PsaChatCopyBootstrap';
 import { DebugModeShell } from './components/debug-mode/DebugModeShell';
 import CreativePreviewBanner from './components/CreativePreviewBanner';
@@ -55,7 +54,7 @@ import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
 import { MobileMansionRoutes } from './routes/MobileMansionRoutes';
 import { BAW_TUTORIAL_ROUTE, normalizeBawViewPathname } from './constants/bawTutorialConfig';
-import { TutorialOsProvider } from './tutorial-os';
+import { TutorialOsProvider, TutorialOsPsaGate } from './tutorial-os';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -570,7 +569,7 @@ function App() {
       {!hidePreviewChrome ? <AccountCommerceSync /> : null}
       {!hidePreviewChrome ? <ProductInventorySync /> : null}
       {!hidePreviewChrome ? <PsaChatCopyBootstrap /> : null}
-      {!hidePreviewChrome ? <PsaAssistantWidget /> : null}
+      {!hidePreviewChrome ? <TutorialOsPsaGate /> : null}
       {!hidePreviewChrome ? <BuildWigCustomizeEditAccessGate /> : null}
       <DebugModeShell>
         <Route index element={<HomeLandingRedirect />} />

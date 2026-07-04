@@ -35740,3 +35740,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** tutorial-os module, admin workspace/page, API, migration, App wiring, account entry, hotspot attributes, services registry, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Hide PSA when FS Concierge is active
+
+**Context:** Follow-up after Tutorial OS / Mansion Tour ship — user asked to hide the PSA widget while FS Concierge (welcome prompt or active tour) is showing so the two concierge UIs do not compete.
+
+**Shipped:** `TutorialOsPsaGate` — reads `isTourActive` / `showWelcome` from `TutorialOsContext`; returns null (unmounts PSA) during welcome or tour; `App.tsx` uses gate instead of raw `PsaAssistantWidget`.
+
+**Changes:** `TutorialOsPsaGate.tsx`, `App.tsx`, `tutorial-os/index.ts`, `motherboard/MEMORY.md`.
+
