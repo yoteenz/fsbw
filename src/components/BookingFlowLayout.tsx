@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
+import { useSyncMenuToggleOpenState } from '../utils/menuToggleOpenState';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DynamicCartIcon from './DynamicCartIcon';
 import BrandMenuLinks from './BrandMenuLinks';
@@ -27,6 +28,7 @@ export default function BookingFlowLayout({ crumbHighlight, children, belowCard 
   const { NavCenter, SearchTrigger } = useShopNavSearchBar();
   const [cartCount, setCartCount] = useState(() => parseInt(localStorage.getItem('cartCount') || '0', 10));
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(() => localStorage.getItem('isSignedIn') === 'true');

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -1085,6 +1086,7 @@ function ConciergePage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/tools') || pathname === '/tools/gift-card') {

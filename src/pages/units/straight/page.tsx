@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useNavigate, useLocation } from 'react-router-dom';
 import type { MouseEvent } from 'react';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -42,6 +43,7 @@ function StraightUnitsPage() {
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/tools') || pathname === '/tools/gift-card') {

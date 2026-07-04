@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../components/BrandMenuLinks';
@@ -215,6 +216,7 @@ function ReviewsPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/tools') || pathname === '/tools/gift-card') {

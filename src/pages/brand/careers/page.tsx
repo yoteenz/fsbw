@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, type CSSProperties } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import BrandRedCloseIcon from '../../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -117,6 +118,7 @@ export default function BrandCareersPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>('BRAND');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn] = useState(() => {

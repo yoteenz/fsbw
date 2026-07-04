@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
 import ConfirmationModal from '../../../components/ConfirmationModal';
@@ -34,6 +35,7 @@ export default function ShopCategoryPage() {
   });
 
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const p = window.location.pathname;
     if (p.includes('/tools') || p === '/tools/gift-card') return 'TOOLS';

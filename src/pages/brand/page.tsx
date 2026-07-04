@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useSyncMenuToggleOpenState } from '../../utils/menuToggleOpenState';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
@@ -38,6 +39,7 @@ function BrandPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>('BRAND');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn] = useState(() => {

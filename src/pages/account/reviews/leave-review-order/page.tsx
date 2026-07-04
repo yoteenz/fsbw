@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../../utils/menuToggleOpenState';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../../../components/BrandMenuLinks';
@@ -82,6 +83,7 @@ function LeaveReviewOrderPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>('BRAND');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(() => {

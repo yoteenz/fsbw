@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
@@ -218,6 +219,7 @@ function NoirSelection() {
   const [similarSnapPx, setSimilarStripViewportRef] = useMarbleStripSnapStep();
   const [recentSnapPx, setRecentStripViewportRef] = useMarbleStripSnapStep();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/tools') || pathname === '/tools/gift-card') {

@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { trackActivity } from '../../../utils/activity';
 import { useNavigate, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -629,6 +630,7 @@ export default function ViewListsPage() {
   const cartItems = useMemo(() => readCartItems(), [cartCount, cartSyncVersion]);
   useProductInventorySnapshot();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<'SHOP' | 'TOOLS' | 'BRAND'>(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/tools') || pathname === '/tools/gift-card') return 'TOOLS';

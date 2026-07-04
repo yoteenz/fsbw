@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useSyncMenuToggleOpenState } from '../../utils/menuToggleOpenState';
 import BrandRedCloseIcon from '../../components/BrandRedCloseIcon';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
@@ -312,6 +313,7 @@ function CheckoutPage() {
     [billableCartItems]
   );
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/tools') || pathname === '/tools/gift-card' || pathname === '/tools/slay-tickets') {

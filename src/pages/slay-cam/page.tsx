@@ -1,4 +1,5 @@
 import { useEffect, useState, type CSSProperties } from 'react';
+import { useSyncMenuToggleOpenState } from '../../utils/menuToggleOpenState';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
 import BrandMenuLinks from '../../components/BrandMenuLinks';
@@ -232,6 +233,7 @@ export default function SlayCamPage() {
     }
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState<MobileMenuTab>('SHOP');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('ALL');

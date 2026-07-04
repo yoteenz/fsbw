@@ -53,6 +53,10 @@ import {
   subscribeCartDropdownOpenState,
 } from '../../utils/cartDropdownOpenState';
 import {
+  isMenuToggleOpen,
+  subscribeMenuToggleOpenState,
+} from '../../utils/menuToggleOpenState';
+import {
   resolveActivePsaSessionMode,
   resolvePsaAvatarExpression,
 } from './resolvePsaAvatarExpression';
@@ -133,6 +137,7 @@ export default function PsaAssistantWidget({ variant = 'global', measureRef }: P
   const [showSelfieStyleAnalysis, setShowSelfieStyleAnalysis] = useState(false);
   const [uiCopy, setUiCopy] = useState(() => getPsaChatUiCopy());
   const [cartDropdownOpen, setCartDropdownOpen] = useState(() => isCartDropdownOpen());
+  const [menuToggleOpen, setMenuToggleOpen] = useState(() => isMenuToggleOpen());
   const [nudgeBubbleReady, setNudgeBubbleReady] = useState(false);
   const idleExpressionCycle = usePsaIdleExpressionCycle(!isOpen && !showIdleWave && !isFabCollapsed);
   const welcomeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -172,7 +177,7 @@ export default function PsaAssistantWidget({ variant = 'global', measureRef }: P
   );
 
   const proactiveNudge = usePsaProactiveNudges(
-    !isSuite && !isOpen && !isFabCollapsed && !cartDropdownOpen
+    !isSuite && !isOpen && !isFabCollapsed && !cartDropdownOpen && !menuToggleOpen
   );
 
   const showContinueHint =
@@ -199,6 +204,7 @@ export default function PsaAssistantWidget({ variant = 'global', measureRef }: P
   }, [location.pathname]);
 
   useEffect(() => subscribeCartDropdownOpenState(setCartDropdownOpen), []);
+  useEffect(() => subscribeMenuToggleOpenState(setMenuToggleOpen), []);
 
   useEffect(() => {
     let cancelled = false;
@@ -728,6 +734,9 @@ export default function PsaAssistantWidget({ variant = 'global', measureRef }: P
     return null;
   }
   if (!isSuite && isPsaHiddenPath(location.pathname)) {
+    return null;
+  }
+  if (!isSuite && menuToggleOpen) {
     return null;
   }
 

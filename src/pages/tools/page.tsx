@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSyncMenuToggleOpenState } from '../../utils/menuToggleOpenState';
 import { useMarbleStripSnapStep } from '../../hooks/useMarbleStripSnapStep';
 import { useNavigate, useLocation } from 'react-router-dom';
 import DynamicCartIcon from '../../components/DynamicCartIcon';
@@ -150,6 +151,7 @@ function ToolsPage() {
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/tools') || pathname === '/tools/gift-card' || pathname === '/tools/slay-tickets') {

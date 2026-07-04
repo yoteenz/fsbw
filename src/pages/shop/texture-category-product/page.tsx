@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import ThumbBox from '../../../components/ThumbBox';
@@ -334,6 +335,7 @@ export default function ShopTextureCategoryProductPage() {
   const [addToBagState, setAddToBagState] = useState<'idle' | 'adding' | 'added'>('idle');
   const [cartCount, setCartCount] = useState(() => parseInt(localStorage.getItem('cartCount') || '0', 10));
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState('SHOP');
   const [mobileMenuExpandedItems, setMobileMenuExpandedItems] = useState<string[]>([]);
   const [isSignedIn, setIsSignedIn] = useState(() => localStorage.getItem('isSignedIn') === 'true');

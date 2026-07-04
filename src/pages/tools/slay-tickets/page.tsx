@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSyncMenuToggleOpenState } from '../../../utils/menuToggleOpenState';
 import { useMarbleStripSnapStep } from '../../../hooks/useMarbleStripSnapStep';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import DynamicCartIcon from '../../../components/DynamicCartIcon';
@@ -77,6 +78,7 @@ function SlayTicketsPage() {
     return parseInt(localStorage.getItem('cartCount') || '0');
   });
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/tools') || pathname === '/tools/slay-tickets') {

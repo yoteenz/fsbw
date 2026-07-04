@@ -35837,3 +35837,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** knowledge-graph module, KnowledgeGraphEntryPanel, KnowledgeHubWorkspace/Button/Panel, AdminStudioLayout, StudioInteractiveManualContext, buildFromKnowledge, moduleEnrichments, progressStorage, searchIndex, whatsNew, ManualWizardPanel, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Hide PSA when shop menu toggle is open
+
+**Context:** User asked to hide PSA when opening the mobile menu toggle (hamburger nav drawer).
+
+**Shipped:**
+- **`src/utils/menuToggleOpenState.ts`** — global open state + `useSyncMenuToggleOpenState(showMobileMenu)` hook (mirrors cart dropdown pattern).
+- **50 shop/account pages + `BookingFlowLayout`** — sync local `showMobileMenu` into global state via hook.
+- **`PsaAssistantWidget`** — returns null when menu open; suppresses proactive nudges.
+- **`TutorialOsPsaGate`** — also gates on menu open.
+
+**Changes:** `menuToggleOpenState.ts`, `PsaAssistantWidget.tsx`, `TutorialOsPsaGate.tsx`, 50 page files, `BookingFlowLayout.tsx`, `motherboard/MEMORY.md`.
+

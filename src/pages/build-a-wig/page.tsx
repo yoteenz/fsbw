@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { useSyncMenuToggleOpenState } from '../../utils/menuToggleOpenState';
 import { useNavigate, useLocation } from 'react-router-dom';
 import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
@@ -2798,6 +2799,7 @@ export default function BuildAWigPage() {
 
   // Mobile menu state
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  useSyncMenuToggleOpenState(showMobileMenu);
   const [mobileMenuActiveTab, setMobileMenuActiveTab] = useState(() => {
     const pathname = window.location.pathname;
     if (pathname.includes('/tools') || pathname === '/tools/gift-card') {
