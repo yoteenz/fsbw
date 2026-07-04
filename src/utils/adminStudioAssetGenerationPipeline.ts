@@ -53,6 +53,16 @@ export function buildGenerateRequest(
     variantId: target.variantId,
     variantName: target.variantName,
     promptStack: blueprintPromptStack(bp),
-    referenceImageUrl: target.previewSrc,
+    /** Only prior Fal uploads — demo tile thumbs are wig placeholders, not studio refs. */
+    referenceImageUrl: priorStudioGeneratedUrl(target.previewSrc),
   };
+}
+
+/** Optional identity anchor when regenerating from an existing uploaded studio asset. */
+function priorStudioGeneratedUrl(previewSrc?: string): string | undefined {
+  const src = (previewSrc || '').trim();
+  if (!src) return undefined;
+  if (!/^https?:\/\//i.test(src)) return undefined;
+  if (!/studio-assets\/frontal-slayer/i.test(src)) return undefined;
+  return src;
 }

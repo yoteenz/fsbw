@@ -78,6 +78,7 @@ function formatGeneratedVersionSubtitle(error?: string): string {
   }
   if (/admin access denied|not_admin/i.test(error)) return 'ADMIN ACCESS DENIED';
   if (/marble reference missing|studio reference missing/i.test(error)) return 'REFERENCE ASSETS UNAVAILABLE';
+  if (/failed to parse url/i.test(error)) return 'INVALID REFERENCE URL';
   return error.length > 48 ? `${error.slice(0, 45)}…` : error;
 }
 

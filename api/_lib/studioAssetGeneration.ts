@@ -85,11 +85,25 @@ async function falUploadFromUrl(
   fal: { storage: { upload: (f: File) => Promise<string> } },
   url: string
 ): Promise<string> {
-  const res = await fetch(url);
+  const resolved = await resolveFetchableAssetUrl(url);
+  const res = await fetch(resolved);
   if (!res.ok) throw new Error(`Reference download failed (${res.status})`);
   const bytes = Buffer.from(await res.arrayBuffer());
-  const name = url.split('/').pop()?.split('?')[0] || 'ref.png';
+  const name = resolved.split('/').pop()?.split('?')[0] || 'ref.png';
   return fal.storage.upload(new File([bytes], name, { type: 'image/png' }));
+}
+
+async function resolveFetchableAssetUrl(url: string): Promise<string> {
+  const trimmed = url.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (trimmed.startsWith('//')) {
+    return `https:${trimmed}`;
+  }
+  if (trimmed.startsWith('/')) {
+    const { resolveSiteOrigin } = await import('./email/brandAssets.js');
+    return `${resolveSiteOrigin()}${trimmed}`;
+  }
+  throw new Error(`Failed to parse URL from ${trimmed}`);
 }
 
 async function downloadImageToBuffer(url: string): Promise<Buffer> {

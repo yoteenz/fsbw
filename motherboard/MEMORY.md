@@ -35347,3 +35347,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Server Fal refs that live in `public/assets/` must use site-URL fallback or `includeFiles` on the API route — never assume `public/` is on disk in `/var/task`.
 
+---
+
+## 2026-07-04 — Studio GENERATE must not use wig demo thumbs as Fal refs
+
+**Context:** User confused why Weather Studio scene GENERATE needed “unit assets”; error **`Failed to parse URL from /assets/NOIR/wave-thumb.png`** on DAY tile.
+
+**Topics covered (full chat arc):** Live Asset Director pipeline; Forbidden auth fix; marble ref missing on Vercel; FAILED queue explanation; wave-thumb URL parse error; user asked why unit/wig assets are required for studio scene generation.
+
+**Decisions / outcomes:**
+- **Root cause:** `buildGenerateRequest` passed **`referenceImageUrl: target.previewSrc`**. Version tile `previewSrc` values are **demo placeholder art** (`wave-thumb`, `curl-thumb`, etc. from `adminStudioAssetDirectorVisual.ts` `ARTWORK` array) — not studio environment references. Server `fetch()` cannot use relative `/assets/...` paths → parse error.
+- **It should not need unit assets:** Studio scene Fal edit uses **marble-half.png** + **noir-thumb.png** (broadcast studio DNA) + **blueprint prompt stack** only. Wig thumbs are UI filler until real outputs exist.
+- **Fix:** `priorStudioGeneratedUrl()` — only pass `referenceImageUrl` when `previewSrc` is an absolute **https** URL under `studio-assets/frontal-slayer` (prior successful upload). Demo `/assets/...` thumbs omitted. Server `resolveFetchableAssetUrl()` defensively absolutizes `/assets/...` if ever sent again.
+
+**Changes:** `adminStudioAssetGenerationPipeline.ts`, `api/_lib/studioAssetGeneration.ts`, `useAdminStudioAssetDirectorState.ts`, `motherboard/MEMORY.md`.
+
+**Conventions:** Asset Director version tile thumbnails ≠ generation references until they are real Supabase studio-asset URLs from a prior GENERATE/REPLACE.
+
