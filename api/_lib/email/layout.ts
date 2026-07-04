@@ -176,8 +176,10 @@ ${perks
 }
 
 /** Header logo display size (source PNG 1800×873 — scaled for 600px email card). */
-const EMAIL_HEADER_LOGO_WIDTH = 240;
+const EMAIL_HEADER_LOGO_WIDTH = 180;
 const EMAIL_HEADER_LOGO_HEIGHT = Math.round(EMAIL_HEADER_LOGO_WIDTH * (873 / 1800));
+/** Light gray nav strip behind header links — white link text. */
+const EMAIL_HEADER_NAV_PANEL_BG = '#c8c8c8';
 
 function renderEmailWordmark(brandStyle: EmailLayerStyle): string {
   const logoUrl = escHtml(EMAIL_BRAND.emailHeaderLogo);
@@ -191,18 +193,18 @@ function renderEmailWordmark(brandStyle: EmailLayerStyle): string {
 }
 
 function renderEmailHeaderNav(navStyle: EmailLayerStyle): string {
-  const linkCss = emailTextStyleCss(navStyle);
+  const linkCss = emailTextStyleCss({ ...navStyle, color: navStyle.color ?? EMAIL_BRAND.white });
   const cells = EMAIL_HEADER_NAV_LINKS.map((link) => {
     const href = escHtml(resolveEmailHeaderNavUrl(link.path));
     const label = escHtml(link.label.toUpperCase());
     return `    <td style="padding:0 12px;white-space:nowrap;">
-      <a href="${href}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:${EMAIL_BRAND.black};${linkCss}">${label}</a>
+      <a href="${href}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:${EMAIL_BRAND.white};${linkCss}">${label}</a>
     </td>`;
   }).join('\n');
 
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background-color:${EMAIL_HEADER_NAV_PANEL_BG};">
   <tr>
-    <td align="center" style="${emailTdStyleCss(navStyle)}">
+    <td align="center" style="background-color:${EMAIL_HEADER_NAV_PANEL_BG};${emailTdStyleCss(navStyle)}">
       <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;border-collapse:collapse;">
         <tr>
 ${cells}

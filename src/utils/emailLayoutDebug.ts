@@ -109,15 +109,15 @@ export const DEFAULT_EMAIL_LAYER_STYLES: Record<EmailLayoutLayerId, EmailLayerSt
   headerNav: {
     fontFamily: 'futura-book',
     fontSize: 11,
-    color: '#111111',
+    color: '#ffffff',
     letterSpacing: '0.14em',
     textTransform: 'uppercase',
     textAlign: 'center',
-    paddingTop: 0,
+    paddingTop: 10,
     paddingRight: 24,
     paddingBottom: 14,
     paddingLeft: 24,
-    fontWeight: 400,
+    fontWeight: 500,
   },
   scriptAccent: {
     fontFamily: 'grace',

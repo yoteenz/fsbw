@@ -35460,3 +35460,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** View-mode subscription/slay-card CTAs are **`/build-a-wig/try/…` only**; never on member BAW URLs. Do not re-enable exact **`/build-a-wig`** as a hub — redirect instead.
 
+---
+
+## 2026-07-04 — Email template header logo + nav strip styling
+
+**Context:** User asked to reduce the Frontal Slayer wordmark at the top of email templates by **25%**, change header nav link text from black to **white**, and add a **light gray panel** background behind the nav strip.
+
+**Topics covered:** Prior BAW view-mode footer scope + `/build-a-wig` redirect (same chat, earlier turn); this turn adjusts transactional email header chrome only.
+
+**Decisions / outcomes:**
+- Header logo width **240 → 180px** (height scaled from 1800×873 source aspect).
+- Nav strip: **`#c8c8c8`** full-width panel behind links; link color **white** (`EMAIL_BRAND.white`); Futura Book **500** weight; slightly increased top padding on nav row.
+- Defaults synced in **`emailLayoutConfig.ts`** and **`emailLayoutDebug.ts`** (`headerNav` layer).
+
+**Changes:** `api/_lib/email/layout.ts`, `api/_lib/email/emailLayoutConfig.ts`, `src/utils/emailLayoutDebug.ts`, `motherboard/MEMORY.md`.
+
+**Conventions:** Email header nav is white-on-light-gray panel below the wordmark; logo display width **180px** on 600px card unless overridden in layout debug store.
+
