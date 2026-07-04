@@ -4,9 +4,6 @@ export const TUTORIAL_OS_MODULE_NAME = 'Tutorial OS';
 export const MANSION_TOUR_CUSTOMER_NAME = 'The Mansion Tour';
 export const ONBOARDING_TUTORIAL_LABEL = 'Onboarding Tutorial';
 
-/** @deprecated Use ONBOARDING_TUTORIAL_LABEL */
-export const FS_CONCIERGE_LABEL = ONBOARDING_TUTORIAL_LABEL;
-
 export const TUTORIAL_PROGRESS_STORAGE_KEY = 'fsTutorialProgress_v1';
 export const TUTORIAL_ADMIN_STORAGE_KEY = 'adminStudioTutorialOs_v1';
 export const TUTORIAL_MISSING_TARGETS_KEY = 'fsTutorialMissingTargets_v1';

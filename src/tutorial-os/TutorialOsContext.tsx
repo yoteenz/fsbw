@@ -12,9 +12,9 @@ import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { isSignedIn } from '../utils/adminAuth';
 import { getAccessToken } from '../utils/api';
-import type { TutorialStep, TutorialTour } from './types';
-import { MANSION_TOUR_ID } from './constants';
-import { getFeaturedTour, getTourById, getTourSteps } from './registry';
+import type { TutorialFeatureCardDef, TutorialStep, TutorialTour } from './types';
+import { MANSION_TOUR_ID, ONBOARDING_TUTORIAL_LABEL } from './constants';
+import { findStepIndex, getFeaturedTour, getTourById, getTourSteps } from './registry';
 import {
   exportProgressForApi,
   getTourProgress,
@@ -24,23 +24,40 @@ import {
   readTutorialProgressStore,
   shouldShowWelcomePrompt,
   upsertTourProgress,
+  writeTutorialProgressStore,
 } from './progressStorage';
 import { getAchievementForTour } from './achievements';
 import { waitForTarget, type ResolvedTarget } from './targetResolver';
 import { TutorialWelcomePrompt } from './components/TutorialWelcomePrompt';
 import { TutorialWizardPanel } from './components/TutorialWizardPanel';
 import { TutorialSpotlightOverlay } from './components/TutorialSpotlightOverlay';
+import { TutorialSearchModal } from './components/TutorialSearchModal';
+import { TutorialPageHelpButton } from './components/TutorialPageHelpButton';
 import { setTutorialOsConciergeBypassActive } from './conciergeBypass';
+import { markTutorialNodeCompleted } from './v2/progressHelpers';
+import { resolveTutorialPageForPathname } from './v2/pageRegistry';
+import type { TutorialSearchEntry } from './v2/schema';
+import { getSuggestedNextTutorial } from './v2/searchIndex';
+
+type TourStackEntry = {
+  tourId: string;
+  stepIndex: number;
+};
 
 export type TutorialOsContextValue = {
   activeTour: TutorialTour | null;
   activeStep: TutorialStep | null;
   activeStepIndex: number;
   isTourActive: boolean;
-  startTour: (tourId: string, options?: { preview?: boolean }) => void;
+  startTour: (tourId: string, options?: { preview?: boolean; stepId?: string; nested?: boolean }) => void;
   stopTour: () => void;
+  openPageHelp: (pathname: string) => void;
+  openSearchModal: () => void;
+  closeSearchModal: () => void;
+  searchModalOpen: boolean;
   mansionTourCompleted: boolean;
   showWelcome: boolean;
+  tourBreadcrumb: string | null;
 };
 
 const TutorialOsContext = createContext<TutorialOsContextValue | null>(null);
@@ -63,7 +80,10 @@ async function syncProgressToServer(): Promise<void> {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ tours: exportProgressForApi(), earnedAchievementIds: readTutorialProgressStore().earnedAchievementIds }),
+      body: JSON.stringify({
+        tours: exportProgressForApi(),
+        earnedAchievementIds: readTutorialProgressStore().earnedAchievementIds,
+      }),
     });
   } catch {
     // offline / migration not applied — localStorage remains source of truth
@@ -86,6 +106,18 @@ async function fetchRemoteProgress(): Promise<void> {
   }
 }
 
+function persistSuggestedNextTour(): void {
+  const store = readTutorialProgressStore();
+  const completedIds = Object.entries(store.tours)
+    .filter(([, p]) => p.status === 'completed')
+    .map(([id]) => id);
+  const next = getSuggestedNextTutorial(completedIds);
+  if (next && store.suggestedNextTutorialId !== next) {
+    store.suggestedNextTutorialId = next;
+    writeTutorialProgressStore(store);
+  }
+}
+
 export function TutorialOsProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
@@ -94,7 +126,9 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
 
   const [activeTourId, setActiveTourId] = useState<string | null>(null);
   const [stepIndex, setStepIndex] = useState(0);
+  const [tourStack, setTourStack] = useState<TourStackEntry[]>([]);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [target, setTarget] = useState<ResolvedTarget | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
   const navigatingRef = useRef(false);
@@ -117,6 +151,12 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
 
   const isTourActive = Boolean(activeTour && activeStep && !showWelcome);
 
+  const tourBreadcrumb = useMemo(() => {
+    if (tourStack.length === 0) return null;
+    const parent = getTourById(tourStack[tourStack.length - 1]?.tourId ?? '');
+    return parent?.customerName ?? null;
+  }, [tourStack]);
+
   const conciergeBypassActive = showWelcome || isTourActive;
 
   useEffect(() => {
@@ -137,6 +177,8 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
         startedAt: prev?.startedAt ?? new Date().toISOString(),
         completedAt: status === 'completed' ? new Date().toISOString() : prev?.completedAt,
       });
+      markTutorialNodeCompleted(step);
+      persistSuggestedNextTour();
       bumpStore();
       void syncProgressToServer();
     },
@@ -180,6 +222,7 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
       setPreviewMode(true);
       setActiveTourId(previewTour);
       setStepIndex(0);
+      setTourStack([]);
       setShowWelcome(false);
     }
   }, [location.search, hideChrome]);
@@ -203,18 +246,38 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
     return () => window.removeEventListener('signInStateChanged', onSignIn);
   }, [bumpStore]);
 
+  const finishOrResumeParent = useCallback(() => {
+    setTourStack((stack) => {
+      if (stack.length > 0) {
+        const parent = stack[stack.length - 1];
+        setActiveTourId(parent.tourId);
+        setStepIndex(parent.stepIndex);
+        setTarget(null);
+        return stack.slice(0, -1);
+      }
+      setActiveTourId(null);
+      setStepIndex(0);
+      setTarget(null);
+      setPreviewMode(false);
+      return [];
+    });
+  }, []);
+
   const startTour = useCallback(
-    (tourId: string, options?: { preview?: boolean }) => {
+    (tourId: string, options?: { preview?: boolean; stepId?: string; nested?: boolean }) => {
       const tour = getTourById(tourId);
       if (!tour || tour.steps.length === 0 || tour.status !== 'enabled') return;
+      const startIndex = options?.stepId ? Math.max(0, findStepIndex(tourId, options.stepId)) : 0;
       setPreviewMode(Boolean(options?.preview));
       setShowWelcome(false);
+      setSearchModalOpen(false);
       setActiveTourId(tourId);
-      setStepIndex(0);
+      setStepIndex(startIndex);
+      if (!options?.nested) setTourStack([]);
       const now = new Date().toISOString();
       upsertTourProgress(tourId, {
         status: 'started',
-        lastStepIndex: 0,
+        lastStepIndex: startIndex,
         startedAt: now,
       });
       bumpStore();
@@ -226,6 +289,7 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
   const stopTour = useCallback(() => {
     setActiveTourId(null);
     setStepIndex(0);
+    setTourStack([]);
     setTarget(null);
     setPreviewMode(false);
   }, []);
@@ -240,11 +304,12 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
         completedAt: new Date().toISOString(),
       });
       if (achievement) grantAchievementPlaceholder(achievement);
+      persistSuggestedNextTour();
       bumpStore();
       void syncProgressToServer();
-      stopTour();
+      finishOrResumeParent();
     },
-    [bumpStore, stopTour]
+    [bumpStore, finishOrResumeParent]
   );
 
   const skipTour = useCallback(
@@ -255,9 +320,9 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
       });
       bumpStore();
       void syncProgressToServer();
-      stopTour();
+      finishOrResumeParent();
     },
-    [bumpStore, stopTour]
+    [bumpStore, finishOrResumeParent]
   );
 
   const goNext = useCallback(() => {
@@ -301,6 +366,37 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
     navigate(activeStep.actionRoute);
   }, [activeStep, navigate]);
 
+  const openPageHelp = useCallback(
+    (pathname: string) => {
+      const page = resolveTutorialPageForPathname(pathname);
+      if (!page?.helpTourId) return;
+      startTour(page.helpTourId);
+    },
+    [startTour]
+  );
+
+  const openSearchModal = useCallback(() => setSearchModalOpen(true), []);
+  const closeSearchModal = useCallback(() => setSearchModalOpen(false), []);
+
+  const handleSearchSelect = useCallback(
+    (entry: TutorialSearchEntry) => {
+      if (entry.stepId) startTour(entry.tourId, { stepId: entry.stepId });
+      else startTour(entry.tourId);
+    },
+    [startTour]
+  );
+
+  const handleShowMeFeature = useCallback(
+    (feature: TutorialFeatureCardDef) => {
+      if (activeTour) {
+        setTourStack((stack) => [...stack, { tourId: activeTour.id, stepIndex }]);
+      }
+      if (feature.showMeRoute) navigate(feature.showMeRoute);
+      startTour(feature.nestedTourId, { nested: true });
+    },
+    [activeTour, stepIndex, navigate, startTour]
+  );
+
   const value = useMemo<TutorialOsContextValue>(
     () => ({
       activeTour,
@@ -309,10 +405,29 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
       isTourActive,
       startTour,
       stopTour,
+      openPageHelp,
+      openSearchModal,
+      closeSearchModal,
+      searchModalOpen,
       mansionTourCompleted,
       showWelcome,
+      tourBreadcrumb,
     }),
-    [activeTour, activeStep, stepIndex, isTourActive, startTour, stopTour, mansionTourCompleted, showWelcome]
+    [
+      activeTour,
+      activeStep,
+      stepIndex,
+      isTourActive,
+      startTour,
+      stopTour,
+      openPageHelp,
+      openSearchModal,
+      closeSearchModal,
+      searchModalOpen,
+      mansionTourCompleted,
+      showWelcome,
+      tourBreadcrumb,
+    ]
   );
 
   const featured = getFeaturedTour();
@@ -329,6 +444,8 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
                 onSkip={handleWelcomeSkip}
               />
             ) : null}
+            <TutorialSearchModal open={searchModalOpen} onClose={closeSearchModal} onSelect={handleSearchSelect} />
+            {!hideChrome ? <TutorialPageHelpButton pathname={location.pathname} /> : null}
             <TutorialSpotlightOverlay step={activeStep} target={target} visible={isTourActive} />
             {isTourActive && activeTour && activeStep ? (
               <TutorialWizardPanel
@@ -346,7 +463,11 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
                 onSkip={() => skipTour(activeTour.id)}
                 canBack={stepIndex > 0}
                 isLast={stepIndex >= steps.length - 1}
-                tourLabel={activeTour.optionalLabel ?? activeTour.customerName}
+                productLabel={activeTour.optionalLabel ?? ONBOARDING_TUTORIAL_LABEL}
+                tourName={activeTour.customerName}
+                breadcrumb={tourBreadcrumb}
+                featureCards={activeStep.featureCards}
+                onShowMeFeature={handleShowMeFeature}
               />
             ) : null}
           </>,

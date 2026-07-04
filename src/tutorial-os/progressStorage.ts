@@ -4,9 +4,13 @@ import { getTourSteps } from './registry';
 
 function emptyStore(): TutorialProgressStore {
   return {
-    version: 1,
+    version: 2,
     tours: {},
     earnedAchievementIds: [],
+    completedPageIds: [],
+    completedFeatureIds: [],
+    completedWidgetIds: [],
+    recentlyLearned: [],
   };
 }
 
@@ -15,14 +19,19 @@ export function readTutorialProgressStore(): TutorialProgressStore {
   try {
     const raw = localStorage.getItem(TUTORIAL_PROGRESS_STORAGE_KEY);
     if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as TutorialProgressStore;
-    if (parsed?.version !== 1) return emptyStore();
+    const parsed = JSON.parse(raw) as { version?: number } & Partial<Omit<TutorialProgressStore, 'version'>>;
+    if (parsed.version !== 1 && parsed.version !== 2) return emptyStore();
     return {
-      version: 1,
+      version: 2,
       tours: parsed.tours ?? {},
       welcomeDismissedAt: parsed.welcomeDismissedAt,
       welcomeMaybeLaterAt: parsed.welcomeMaybeLaterAt,
       earnedAchievementIds: parsed.earnedAchievementIds ?? [],
+      completedPageIds: parsed.completedPageIds ?? [],
+      completedFeatureIds: parsed.completedFeatureIds ?? [],
+      completedWidgetIds: parsed.completedWidgetIds ?? [],
+      recentlyLearned: parsed.recentlyLearned ?? [],
+      suggestedNextTutorialId: parsed.suggestedNextTutorialId,
     };
   } catch {
     return emptyStore();

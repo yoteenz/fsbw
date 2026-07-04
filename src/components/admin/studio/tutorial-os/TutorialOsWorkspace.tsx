@@ -35,8 +35,23 @@ const titleStyle: CSSProperties = {
 };
 
 export function TutorialOsWorkspace() {
-  const { section, setSection, tours, analytics, missingTargets, achievements, toggleTourEnabled } =
-    useAdminStudioTutorialOsState();
+  const {
+    section,
+    setSection,
+    tours,
+    analytics,
+    missingTargets,
+    achievements,
+    toggleTourEnabled,
+    pages,
+    features,
+    widgets,
+    animations,
+    searchIndex,
+    userProgress,
+    routeValidation,
+    copyLibrary,
+  } = useAdminStudioTutorialOsState();
   const [selectedTourId, setSelectedTourId] = useState(MANSION_TOUR_ID);
 
   const selectedTour = useMemo(() => tours.find((t) => t.id === selectedTourId), [tours, selectedTourId]);
@@ -109,33 +124,48 @@ export function TutorialOsWorkspace() {
         </section>
       ) : null}
 
-      {section === 'Steps' ? (
+      {section === 'Pages' ? (
         <section style={panelStyle}>
-          <p style={titleStyle}>STEPS · {selectedTour?.customerName ?? '—'}</p>
-          <select
-            value={selectedTourId}
-            onChange={(e) => setSelectedTourId(e.target.value)}
-            className="w-full border border-black mb-3 px-2 py-2"
-            style={{ fontFamily: '"Futura PT Book"', fontSize: '11px' }}
-          >
-            {tours.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.customerName}
-              </option>
-            ))}
-          </select>
-          {(selectedTour?.steps ?? []).map((s) => (
-            <div key={s.id} style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid #eee' }}>
-              <p style={{ ...caption, color: '#EB1C24' }}>
-                {s.order}. {s.title}
-              </p>
-              <p style={caption}>{s.body}</p>
-              <p style={caption}>BENEFIT: {s.benefit}</p>
-              {s.route ? <p style={caption}>ROUTE: {s.route}</p> : null}
-              {s.targetSelector ? <p style={caption}>TARGET: {s.targetSelector}</p> : null}
-            </div>
+          <p style={titleStyle}>PAGES ({pages.length})</p>
+          {pages.map((p) => (
+            <p key={p.id} style={caption}>
+              {p.title} — {p.route} {p.helpTourId ? `· HELP: ${p.helpTourId}` : ''}
+            </p>
           ))}
-          {!selectedTour?.steps.length ? <p style={caption}>NO STEPS SEEDED YET — ARCHITECTURE READY</p> : null}
+        </section>
+      ) : null}
+
+      {section === 'Features' ? (
+        <section style={panelStyle}>
+          <p style={titleStyle}>FEATURES ({features.length})</p>
+          {features.map((f) => (
+            <p key={f.id} style={caption}>
+              {f.title} · TOUR {f.tourId}
+              {f.nestedTourId ? ` → NESTED ${f.nestedTourId}` : ''}
+            </p>
+          ))}
+        </section>
+      ) : null}
+
+      {section === 'Widgets' ? (
+        <section style={panelStyle}>
+          <p style={titleStyle}>WIDGETS ({widgets.length})</p>
+          {widgets.map((w) => (
+            <p key={`${w.tourId}-${w.stepId}`} style={caption}>
+              {w.title} · {w.animationType} {w.targetSelector ? `→ ${w.targetSelector}` : ''}
+            </p>
+          ))}
+        </section>
+      ) : null}
+
+      {section === 'Animations' ? (
+        <section style={panelStyle}>
+          <p style={titleStyle}>ANIMATIONS</p>
+          {animations.map((a) => (
+            <p key={a.animationType} style={caption}>
+              {a.animationType.toUpperCase()} — {a.count} STEPS
+            </p>
+          ))}
         </section>
       ) : null}
 
@@ -149,6 +179,19 @@ export function TutorialOsWorkspace() {
                 {s.title} → {s.targetSelector} ({s.animationType})
               </p>
             ))}
+        </section>
+      ) : null}
+
+      {section === 'Search Index' ? (
+        <section style={panelStyle}>
+          <p style={titleStyle}>SEARCH INDEX ({searchIndex.length} ENTRIES)</p>
+          {searchIndex.slice(0, 40).map((e) => (
+            <p key={e.id} style={caption}>
+              {e.label} → {e.tourId}
+              {e.stepId ? `:${e.stepId}` : ''}
+            </p>
+          ))}
+          {searchIndex.length > 40 ? <p style={caption}>… AND {searchIndex.length - 40} MORE</p> : null}
         </section>
       ) : null}
 
@@ -169,6 +212,23 @@ export function TutorialOsWorkspace() {
         </section>
       ) : null}
 
+      {section === 'User Progress' ? (
+        <section style={panelStyle}>
+          <p style={titleStyle}>USER PROGRESS (LOCAL)</p>
+          <p style={caption}>COMPLETION {userProgress.percent}%</p>
+          <p style={caption}>
+            PAGES {userProgress.pages} · FEATURES {userProgress.features} · WIDGETS {userProgress.widgets} · TOURS{' '}
+            {userProgress.toursCompleted}
+          </p>
+          {userProgress.suggestedNextTutorialId ? (
+            <p style={caption}>SUGGESTED NEXT: {userProgress.suggestedNextTutorialId}</p>
+          ) : null}
+          {userProgress.recentlyLearned.length > 0 ? (
+            <p style={caption}>RECENTLY LEARNED: {userProgress.recentlyLearned.slice(0, 6).join(', ')}</p>
+          ) : null}
+        </section>
+      ) : null}
+
       {section === 'Missing Targets' ? (
         <section style={panelStyle}>
           <p style={titleStyle}>MISSING TARGETS (DEV SESSION)</p>
@@ -184,10 +244,33 @@ export function TutorialOsWorkspace() {
         </section>
       ) : null}
 
+      {section === 'Route Validation' ? (
+        <section style={panelStyle}>
+          <p style={titleStyle}>ROUTE VALIDATION</p>
+          {routeValidation.map((r) => (
+            <p key={r.pageId} style={caption}>
+              {r.pageId} — {r.route} {r.hasHelpTour ? '✓ HELP TOUR' : '— NO HELP TOUR'}
+            </p>
+          ))}
+        </section>
+      ) : null}
+
+      {section === 'Copy Library' ? (
+        <section style={panelStyle}>
+          <p style={titleStyle}>COPY LIBRARY ({copyLibrary.length} STEPS)</p>
+          {copyLibrary.slice(0, 20).map((c) => (
+            <div key={c.key} style={{ marginBottom: '8px', borderBottom: '1px solid #eee', paddingBottom: '6px' }}>
+              <p style={{ ...caption, color: '#EB1C24' }}>{c.key}</p>
+              <p style={caption}>{c.title}</p>
+            </div>
+          ))}
+        </section>
+      ) : null}
+
       {section === 'Preview Tour' ? (
         <section style={panelStyle}>
           <p style={titleStyle}>PREVIEW TOUR</p>
-          <p style={caption}>Opens customer storefront with concierge overlay (admin preview query).</p>
+          <p style={caption}>Opens customer storefront with onboarding tutorial overlay (admin preview query).</p>
           <select
             value={selectedTourId}
             onChange={(e) => setSelectedTourId(e.target.value)}
@@ -196,7 +279,7 @@ export function TutorialOsWorkspace() {
           >
             {tours.filter((t) => t.steps.length > 0).map((t) => (
               <option key={t.id} value={t.id}>
-                {t.customerName}
+                {t.customerName} ({t.steps.length} steps)
               </option>
             ))}
           </select>
@@ -214,6 +297,29 @@ export function TutorialOsWorkspace() {
           >
             PREVIEW IN NEW TAB
           </a>
+        </section>
+      ) : null}
+
+      {section === 'Tours' ? null : section !== 'Preview Tour' && section !== 'Hotspots' ? (
+        <section style={panelStyle}>
+          <p style={titleStyle}>SELECTED TOUR STEPS</p>
+          <select
+            value={selectedTourId}
+            onChange={(e) => setSelectedTourId(e.target.value)}
+            className="w-full border border-black mb-3 px-2 py-2"
+            style={{ fontFamily: '"Futura PT Book"', fontSize: '11px' }}
+          >
+            {tours.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.customerName} ({t.steps.length})
+              </option>
+            ))}
+          </select>
+          {(selectedTour?.steps ?? []).slice(0, 8).map((s) => (
+            <p key={s.id} style={caption}>
+              {s.order}. {s.title}
+            </p>
+          ))}
         </section>
       ) : null}
     </div>

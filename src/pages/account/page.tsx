@@ -2060,6 +2060,7 @@ function AccountPage() {
                     })()}
 
                     <div
+                      data-tutorial-target="voucher-balance"
                       style={{
                         marginTop: clientProfileVoucherBlockMarginTopPx ? `${clientProfileVoucherBlockMarginTopPx}px` : 0,
                         display: 'flex',
@@ -2070,6 +2071,7 @@ function AccountPage() {
                       <p
                         role="button"
                         tabIndex={0}
+                        data-tutorial-target="voucher-history-trigger"
                         onClick={() => setShowVoucherHistoryPopup(true)}
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' || e.key === ' ') {

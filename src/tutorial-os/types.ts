@@ -1,5 +1,17 @@
 /** Tutorial OS — reusable guided walkthrough schema for Frontal Slayer / StudioOS. */
 
+export type TutorialNodeKind = 'page' | 'section' | 'feature' | 'widget' | 'action';
+
+export type TutorialFeatureCardDef = {
+  id: string;
+  title: string;
+  description: string;
+  benefits: string[];
+  showMeRoute?: string;
+  targetSelector?: string;
+  nestedTourId: string;
+};
+
 export type TutorialAnimationType =
   | 'pulse'
   | 'glow'
@@ -36,6 +48,14 @@ export type TutorialStep = {
   order: number;
   /** Preview chip / icon key for wizard preview area. */
   previewKey?: string;
+  /** V2 — hierarchy metadata (data-driven). */
+  nodeKind?: TutorialNodeKind;
+  pageId?: string;
+  featureId?: string;
+  widgetId?: string;
+  featureCards?: TutorialFeatureCardDef[];
+  relatedTutorialIds?: string[];
+  suggestedNextTutorialId?: string;
 };
 
 export type TutorialTourStatus = 'enabled' | 'disabled' | 'draft';
@@ -79,12 +99,17 @@ export type TutorialTourProgress = {
 };
 
 export type TutorialProgressStore = {
-  version: 1;
+  version: 2;
   tours: Record<string, TutorialTourProgress>;
   welcomeDismissedAt?: string;
   welcomeMaybeLaterAt?: string;
-  /** Explorer / Builder badges earned (placeholders). */
   earnedAchievementIds: string[];
+  /** V2 granular completion tracking. */
+  completedPageIds?: string[];
+  completedFeatureIds?: string[];
+  completedWidgetIds?: string[];
+  recentlyLearned?: string[];
+  suggestedNextTutorialId?: string;
 };
 
 export type TutorialMissingTargetLog = {

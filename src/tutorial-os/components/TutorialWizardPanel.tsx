@@ -1,4 +1,6 @@
 import { TutorialPreviewArea } from './TutorialPreviewArea';
+import { TutorialFeatureCards } from './TutorialFeatureCards';
+import type { TutorialFeatureCardDef } from '../types';
 
 type Props = {
   previewKey?: string;
@@ -15,7 +17,11 @@ type Props = {
   onSkip: () => void;
   canBack: boolean;
   isLast: boolean;
-  tourLabel: string;
+  productLabel: string;
+  tourName: string;
+  breadcrumb?: string | null;
+  featureCards?: TutorialFeatureCardDef[];
+  onShowMeFeature?: (feature: TutorialFeatureCardDef) => void;
 };
 
 export function TutorialWizardPanel({
@@ -33,7 +39,11 @@ export function TutorialWizardPanel({
   onSkip,
   canBack,
   isLast,
-  tourLabel,
+  productLabel,
+  tourName,
+  breadcrumb,
+  featureCards,
+  onShowMeFeature,
 }: Props) {
   const progressPct = stepCount > 0 ? Math.round(((stepIndex + 1) / stepCount) * 100) : 0;
   const positionClass =
@@ -55,10 +65,48 @@ export function TutorialWizardPanel({
           letterSpacing: '0.2em',
           textTransform: 'uppercase',
           color: '#808080',
-          marginBottom: '4px',
+          marginBottom: '2px',
         }}
       >
-        {tourLabel} · STEP {stepIndex + 1} / {stepCount}
+        {productLabel.toUpperCase()}
+      </p>
+      <p
+        style={{
+          fontFamily: '"Futura PT Medium"',
+          fontSize: '11px',
+          letterSpacing: '0.1em',
+          textTransform: 'uppercase',
+          color: '#EB1C24',
+          marginBottom: breadcrumb ? '2px' : '4px',
+        }}
+      >
+        {tourName.toUpperCase()}
+      </p>
+      {breadcrumb ? (
+        <p
+          style={{
+            fontFamily: '"Futura PT Book"',
+            fontSize: '9px',
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: '#808080',
+            marginBottom: '4px',
+          }}
+        >
+          FROM {breadcrumb.toUpperCase()}
+        </p>
+      ) : null}
+      <p
+        style={{
+          fontFamily: '"Futura PT Medium"',
+          fontSize: '9px',
+          letterSpacing: '0.16em',
+          textTransform: 'uppercase',
+          color: '#808080',
+          marginBottom: '8px',
+        }}
+      >
+        STEP {stepIndex + 1} OF {stepCount}
       </p>
       <h2
         style={{
@@ -85,6 +133,9 @@ export function TutorialWizardPanel({
       >
         {body}
       </p>
+      {featureCards && featureCards.length > 0 && onShowMeFeature ? (
+        <TutorialFeatureCards features={featureCards} onShowMe={onShowMeFeature} />
+      ) : null}
       <p
         style={{
           fontFamily: '"Futura PT Medium"',

@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 import { useTutorialOs } from '../tutorial-os';
+import { TutorialSearchLauncher } from '../tutorial-os/components/TutorialSearchModal';
 import { MANSION_TOUR_ID } from '../tutorial-os/constants';
 
 const TOOLS_MENU_LINKS = [
@@ -26,7 +27,7 @@ const rowLabelStyle = (labelTranslateX: string): CSSProperties => ({
 });
 
 export function ShopMobileMenuToolsTab({ navigate, closeMenu, labelTranslateX = '7px' }: ShopMobileMenuToolsTabProps) {
-  const { startTour } = useTutorialOs();
+  const { startTour, openSearchModal } = useTutorialOs();
 
   return (
     <>
@@ -51,6 +52,13 @@ export function ShopMobileMenuToolsTab({ navigate, closeMenu, labelTranslateX = 
       >
         <span style={rowLabelStyle(labelTranslateX)}>ONBOARDING TUTORIAL</span>
       </div>
+      <TutorialSearchLauncher
+        labelTranslateX={labelTranslateX}
+        onOpen={() => {
+          openSearchModal();
+          closeMenu?.();
+        }}
+      />
     </>
   );
 }

@@ -1,62 +1,61 @@
-# Tutorial OS — The Mansion Tour
+# Onboarding Tutorial — The Mansion Tour
 
-Interactive concierge walkthrough system for Frontal Slayer customers and StudioOS admins.
+Interactive guided learning system for Frontal Slayer customers and StudioOS admins. The **Frontal Slayer Concierge** personality guides the experience; the product name is **Onboarding Tutorial**.
 
 ## Customer experience
 
-- **Module:** Tutorial OS
-- **Customer name:** The Mansion Tour
-- **Label:** Onboarding Tutorial
+- **Product label:** Onboarding Tutorial
+- **Tour name:** The Mansion Tour (18 steps)
+- **Philosophy:** Page → Feature → Widget → Action (Apple-style drill-down)
 
-Optional welcome prompt on first visit (~3 min). Not forced — **Start Tour**, **Maybe Later**, or **Skip**.
+Optional welcome prompt on first visit (~5 min). Not forced — **Start Tour**, **Maybe Later**, or **Skip**.
 
 Access points:
 
 - First-visit welcome modal
 - Menu toggle → **Tools** → **ONBOARDING TUTORIAL** (reopens the wizard)
+- Menu toggle → **Tools** → **TUTORIAL SEARCH**
+- Fixed **?** button on supported pages — **Learn this page** (opens page help tour)
 - Account dashboard — **Take The Mansion Tour**
 
-## Architecture
+## V2 architecture
 
 | Path | Role |
 |------|------|
-| `src/tutorial-os/types.ts` | Step + tour schema |
-| `src/tutorial-os/registry.ts` | Tour registry |
-| `src/tutorial-os/tours/mansionTour.ts` | Seeded 10-step Mansion Tour |
-| `src/tutorial-os/tours/placeholders.ts` | Empty shells for future tours |
-| `src/tutorial-os/TutorialOsContext.tsx` | Provider, navigation, progress |
-| `src/tutorial-os/progressStorage.ts` | localStorage + merge helpers |
-| `src/tutorial-os/targetResolver.ts` | Spotlight + missing-target logging |
+| `src/tutorial-os/v2/schema.ts` | Tour → Page → Feature → Widget → Action hierarchy |
+| `src/tutorial-os/v2/compiler.ts` | Compiles V2 defs to flat wizard steps |
+| `src/tutorial-os/v2/pageRegistry.ts` | Supported pages + help tour mapping |
+| `src/tutorial-os/v2/searchIndex.ts` | Tutorial search + suggested next tour |
+| `src/tutorial-os/v2/progressHelpers.ts` | Page/feature/widget completion tracking |
+| `src/tutorial-os/tours/v2/mansionTourV2.ts` | 18-step Mansion Tour with feature cards |
+| `src/tutorial-os/tours/v2/vouchersWalkthrough.ts` | 6-step nested Voucher walkthrough |
+| `src/tutorial-os/tours/v2/expandedTours.ts` | Wishlist (5), Checkout (9), Rewards (12), BAW (25) |
+| `src/tutorial-os/TutorialOsContext.tsx` | Nested tour stack, search, help mode, progress |
+| `src/tutorial-os/components/TutorialFeatureCards.tsx` | SHOW ME feature drill-down cards |
+| `src/tutorial-os/components/TutorialSearchModal.tsx` | Search modal |
+| `src/tutorial-os/components/TutorialPageHelpButton.tsx` | Per-page ? help |
 
-Placeholder tours (architecture only): Build-A-Wig, Rewards, Lounge TV, Hairstyle Analysis, Membership, Account, Checkout.
+Nested tours: finishing a child walkthrough (e.g. Vouchers) returns to the parent step (e.g. Mansion Tour Rewards).
 
-## Progress
+## Progress (V2)
 
+- **Store version:** 2
+- **Tracks:** completed pages, features, widgets, tours, recently learned, suggested next tutorial
 - **Guests:** `localStorage` key `fsTutorialProgress_v1`
 - **Signed-in:** `PUT/GET /api/tutorial/progress` → Supabase `tutorial_progress` table
 
-Migration: `supabase/migrations/20260704180000_tutorial_progress.sql`
-
 ## Admin
 
-**StudioOS → Tutorial OS** at `/admin/studio/tutorial-os`
+**StudioOS → Onboarding Tutorial** at `/admin/studio/tutorial-os`
 
-Sections: Tours, Steps, Hotspots, Completion Analytics, Missing Targets, Preview Tour.
+Sections: Tours, Pages, Features, Widgets, Animations, Hotspots, Search Index, Completion Analytics, User Progress, Missing Targets, Route Validation, Copy Library, Preview Tour.
 
 Preview URL: `/home/shop?tutorialPreview=mansion-tour`
 
-## Achievements (placeholders)
-
-- Mansion Tour → Explorer Badge
-- Build-A-Wig Tour → Builder Badge
-- Rewards Tour → Collector Badge
-
-No live reward issuance yet — stored in `earnedAchievementIds` locally / DB.
-
 ## Hotspot selectors
 
-Steps may define `targetSelector` (e.g. `[data-tutorial-target="nav-cart"]`). Missing targets log in dev and show the step without breaking.
+Steps define `targetSelector` (e.g. `[data-tutorial-target="voucher-history-trigger"]`). Missing targets log in dev and show the step without breaking.
 
 ## Premium / sign-in bypass (view-only tour)
 
-While the welcome prompt or an active tour step is showing, **`isTutorialOsConciergeBypassActive()`** treats the session as premium for gate checks and allows **Account** routes without sign-in — so guests can preview Lounge TV, Rewards, Account, and premium Build-A-Wig steps without upgrade modals. Bypass clears when the tour ends or is skipped.
+While the welcome prompt or an active tour step is showing, **`isTutorialOsConciergeBypassActive()`** treats the session as premium for gate checks and allows **Account** routes without sign-in.

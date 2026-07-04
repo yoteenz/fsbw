@@ -35780,3 +35780,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `ShopMobileMenuToolsTab.tsx`, `TutorialOsContext.tsx`, deleted `TutorialConciergeFab.tsx`, `tutorial-os.css`, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Onboarding Tutorial V2 (Milestone 23.5)
+
+**Context:** User asked to evolve the Onboarding Tutorial into a complete Apple-style guided learning system — Page → Feature → Widget → Action drill-down, dynamic multi-step tours, nested walkthroughs, search, per-page help, V2 progress tracking, and expanded StudioOS admin — without redesigning UI or removing existing functionality. Product label **Onboarding Tutorial**; tour name **The Mansion Tour**; concierge personality unchanged.
+
+**Topics covered:** Rename FS Concierge → Onboarding Tutorial (removed `FS_CONCIERGE_LABEL` alias); Mansion Tour expanded to **18 steps** with feature cards on Rewards (Points, Tickets, Vouchers, Collectibles); **6-step Voucher Walkthrough** nested tour; stub tours Wishlist (5), Checkout (9), Rewards (12), Build-A-Wig (25); tutorial search; **? Learn this page** help button; nested tour stack (finish child returns to parent); V2 progress (pages/features/widgets/recently learned/suggested next).
+
+**Shipped:**
+- **V2 data layer:** `src/tutorial-os/v2/` — schema, compiler, page registry (~30 pages), search index, progress helpers.
+- **Tours:** `tours/v2/mansionTourV2.ts`, `vouchersWalkthrough.ts`, `expandedTours.ts`; registry compiles V2 defs to flat wizard steps.
+- **UI:** dual wizard header (ONBOARDING TUTORIAL / tour name / Step X of Y), `TutorialFeatureCards` SHOW ME, `TutorialSearchModal`, `TutorialPageHelpButton`; Tools menu adds **TUTORIAL SEARCH**.
+- **Context:** nested tours, `openPageHelp`, search modal, `markTutorialNodeCompleted`, parent resume on finish/skip.
+- **Hotspots:** `data-tutorial-target="voucher-balance"` and `voucher-history-trigger` on Account profile.
+- **Admin:** StudioOS sections expanded — Pages, Features, Widgets, Animations, Search Index, User Progress, Route Validation, Copy Library (+ existing Tours/Hotspots/Analytics/Missing Targets/Preview).
+- **Docs:** `docs/frontal-slayer/tutorial-os/README.md` updated for V2.
+
+**Changes:** tutorial-os v2 module + components, `TutorialOsContext`, `TutorialWizardPanel`, `ShopMobileMenuToolsTab`, `account/page.tsx`, admin workspace + demo utils + hook, `progressStorage` v2 migration, docs, `motherboard/MEMORY.md`.
+
