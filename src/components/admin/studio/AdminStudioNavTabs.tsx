@@ -1,25 +1,26 @@
 import { useNavigate } from 'react-router-dom';
+import { AdminHubTabBar } from '../../admin/AdminHubTabBar';
 import {
   STUDIO_NAV_GROUPS,
   STUDIO_OVERVIEW_PATH,
   type StudioNavGroupId,
 } from '../../../utils/adminStudioNavigation';
-import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioNavTabsProps = {
   activeGroupId: StudioNavGroupId;
-  /** When true, tabs link to overview with ?group= filter. */
   linkToOverview?: boolean;
   onGroupChange?: (groupId: StudioNavGroupId) => void;
 };
 
-/** Grouped Studio navigation — OVERVIEW · CREATE · VISUALS · etc. */
+/** Grouped Studio navigation — same tab styling as Clients / Meetings / Marketing. */
 export function AdminStudioNavTabs({
   activeGroupId,
   linkToOverview = true,
   onGroupChange,
 }: AdminStudioNavTabsProps) {
   const navigate = useNavigate();
+
+  const tabs = STUDIO_NAV_GROUPS.map((g) => ({ id: g.id, label: g.label }));
 
   const handleSelect = (groupId: StudioNavGroupId) => {
     if (onGroupChange) {
@@ -31,38 +32,26 @@ export function AdminStudioNavTabs({
     }
   };
 
+  const activeGroup = STUDIO_NAV_GROUPS.find((g) => g.id === activeGroupId);
+
   return (
-    <div className="mb-4">
-      <div
-        className="flex gap-1 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin"
-        style={{ scrollbarWidth: 'thin' }}
-      >
-        {STUDIO_NAV_GROUPS.map((group) => {
-          const isActive = group.id === activeGroupId;
-          return (
-            <button
-              key={group.id}
-              type="button"
-              onClick={() => handleSelect(group.id)}
-              className="flex-shrink-0 px-2.5 py-1.5 text-[7px] font-futura uppercase transition-colors whitespace-nowrap"
-              style={{
-                fontWeight: 515,
-                color: isActive ? ADMIN_STUDIO_THEME.textPrimary : ADMIN_STUDIO_THEME.textSecondary,
-                background: isActive ? ADMIN_STUDIO_THEME.chipActiveBg : ADMIN_STUDIO_THEME.chipInactiveBg,
-                borderBottom: isActive ? `2px solid ${ADMIN_STUDIO_THEME.accent}` : '2px solid transparent',
-              }}
-            >
-              {group.label}
-            </button>
-          );
-        })}
-      </div>
-      <p
-        className="text-[6px] font-futura uppercase mt-1"
-        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.4 }}
-      >
-        {STUDIO_NAV_GROUPS.find((g) => g.id === activeGroupId)?.description}
-      </p>
+    <div className="mb-2">
+      <AdminHubTabBar tabs={tabs} activeTab={activeGroupId} onTabChange={handleSelect} fontSize="10px" />
+      {activeGroup ? (
+        <p
+          className="px-5 text-center"
+          style={{
+            fontFamily: '"Futura PT Medium"',
+            fontSize: '11px',
+            color: '#808080',
+            marginTop: '4px',
+            marginBottom: '8px',
+            lineHeight: 1.4,
+          }}
+        >
+          {activeGroup.description}
+        </p>
+      ) : null}
     </div>
   );
 }

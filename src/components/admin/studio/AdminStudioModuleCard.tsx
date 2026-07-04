@@ -1,79 +1,77 @@
 import { useNavigate } from 'react-router-dom';
 import type { AdminStudioModule } from '../../../utils/adminStudioNavigation';
 import { STUDIO_STATUS_LABELS } from '../../../utils/adminStudioNavigation';
-import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioModuleCardProps = {
   module: AdminStudioModule;
+  index?: number;
   compact?: boolean;
 };
 
-/** Studio module tile — title, purpose, status, metric, and CTA. */
-export function AdminStudioModuleCard({ module, compact = false }: AdminStudioModuleCardProps) {
+/**
+ * Studio module row — same list pattern as Admin Clients hub rows.
+ * White row, gray border, red title, Futura metadata.
+ */
+export function AdminStudioModuleCard({ module, index }: AdminStudioModuleCardProps) {
   const navigate = useNavigate();
   const statusLabel = STUDIO_STATUS_LABELS[module.status];
-  const statusColor =
-    module.status === 'live' ? '#16A34A' : module.status === 'demo' ? ADMIN_STUDIO_THEME.accent : '#6B7280';
+  const statusColor = module.status === 'live' ? '#EB1C24' : '#808080';
 
   return (
-    <div
-      className={`bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden shadow-lg ${compact ? 'p-3' : 'p-4'}`}
-      style={{ borderWidth: '1.3px' }}
+    <button
+      type="button"
+      onClick={() => navigate(module.route)}
+      className="w-full text-left bg-white border border-gray-200 px-4 py-3 mb-2 hover:opacity-90 transition-opacity"
     >
-      <div className="flex items-start justify-between gap-2">
-        <span
-          className={`font-bold tracking-wider uppercase ${compact ? 'text-base' : 'text-lg'}`}
+      <div
+        className="grid gap-2 items-start"
+        style={{ gridTemplateColumns: '1fr 4.5rem 4.5rem', marginLeft: '-4px' }}
+      >
+        <div className="min-w-0" style={{ paddingLeft: '8px' }}>
+          <span
+            className="font-medium block truncate"
+            style={{ fontSize: '12px', color: '#EB1C24', fontFamily: '"Futura PT Medium"' }}
+          >
+            {index != null ? `${index}. ` : ''}
+            {module.title}
+          </span>
+          <span
+            className="block truncate"
+            style={{
+              fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+              fontSize: '13px',
+              color: '#808080',
+              marginTop: '2px',
+            }}
+          >
+            {module.purpose}
+          </span>
+        </div>
+        <div
+          className="flex items-center justify-end w-full"
           style={{
-            fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-            color: ADMIN_STUDIO_THEME.accent,
-            lineHeight: 1.1,
+            fontFamily: '"Futura PT Book"',
+            fontSize: '11px',
+            color: statusColor,
+            textAlign: 'right',
+            marginRight: '2px',
           }}
         >
-          {module.title}
-        </span>
-        <span
-          className="text-black font-bold text-lg flex-shrink-0 uppercase"
-          style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
+          {statusLabel}
+        </div>
+        <div
+          className="flex items-center justify-end w-full"
+          style={{
+            fontFamily: '"Futura PT Book"',
+            fontSize: '12px',
+            color: module.metric === '—' ? '#000000' : '#EB1C24',
+            textAlign: 'right',
+            marginRight: '2px',
+          }}
         >
           {module.metric}
-        </span>
+        </div>
       </div>
-
-      <p
-        className={`mt-2 text-left font-futura uppercase ${compact ? 'text-[8px]' : 'text-[9px]'}`}
-        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.45 }}
-      >
-        {module.purpose}
-      </p>
-
-      <div className="mt-3 flex items-center justify-between gap-2">
-        <span
-          className="text-[7px] font-futura uppercase px-1.5 py-0.5 border"
-          style={{ fontWeight: 515, color: statusColor, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
-        >
-          {statusLabel}
-        </span>
-        <span
-          className="text-[6px] font-futura uppercase"
-          style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}
-        >
-          UPDATED · DEMO
-        </span>
-      </div>
-
-      <button
-        type="button"
-        onClick={() => navigate(module.route)}
-        className="mt-3 w-full py-2 text-[8px] font-futura uppercase border transition-colors active:scale-[0.99]"
-        style={{
-          fontWeight: 515,
-          color: ADMIN_STUDIO_THEME.textOnAccent,
-          background: ADMIN_STUDIO_THEME.accent,
-          borderColor: ADMIN_STUDIO_THEME.panelBorder,
-        }}
-      >
-        {module.ctaLabel}
-      </button>
-    </div>
+    </button>
   );
 }

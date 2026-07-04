@@ -3,41 +3,39 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { useWorkspace } from '../../../studio-os/context/WorkspaceProvider';
+import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { AdminStudioBreadcrumbTrail } from './AdminStudioBreadcrumbTrail';
 import { AdminStudioNavTabs } from './AdminStudioNavTabs';
 import {
   buildStudioBreadcrumbs,
+  getStudioNavGroup,
   resolveStudioModuleFromPath,
   STUDIO_OVERVIEW_PATH,
   type StudioNavGroupId,
 } from '../../../utils/adminStudioNavigation';
-import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioLayoutProps = {
-  /** Header title (shown in AdminHeader after parent crumb). */
   title: string;
-  /** Short helper under module title — plain English. */
   subtitle?: string;
   showBack?: boolean;
   onBack?: () => void;
   breadcrumbParentLabel?: string;
   breadcrumbParentPath?: string;
   children: ReactNode;
-  /** Override auto-detected nav group. */
   navGroupId?: StudioNavGroupId;
-  /** Hide grouped nav tabs (e.g. nested detail with own tabs). */
   hideNavTabs?: boolean;
-  /** Hide back-to-overview link (overview page itself). */
   hideOverviewLink?: boolean;
-  /** Extra breadcrumb leaf (detail page name). */
   breadcrumbPageTitle?: string;
-  /** Handwritten accent heading inside card (defaults to title). */
   pageHeading?: string;
+  /** Optional summary strip (stats cards) above tabs — same slot as Clients / Meetings. */
+  summarySlot?: ReactNode;
+  /** Primary actions below the main card (PAGE_LAYOUT.md). */
+  belowCardActions?: ReactNode;
 };
 
 /**
- * Shared Studio layout — marble, luxury card, grouped nav, breadcrumbs.
- * Matches admin dashboard visual language.
+ * Studio layout aligned with Admin Clients / Meetings hub structure.
+ * Card content only; primary actions render below the card.
  */
 export function AdminStudioLayout({
   title,
@@ -52,6 +50,8 @@ export function AdminStudioLayout({
   hideOverviewLink = false,
   breadcrumbPageTitle,
   pageHeading,
+  summarySlot,
+  belowCardActions,
 }: AdminStudioLayoutProps) {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
@@ -61,6 +61,7 @@ export function AdminStudioLayout({
   const resolvedModule = resolveStudioModuleFromPath(pathname);
   const activeGroupId: StudioNavGroupId = navGroupId ?? resolvedModule?.groupId ?? 'overview';
   const breadcrumbs = buildStudioBreadcrumbs(pathname, breadcrumbPageTitle ?? title);
+  const groupMeta = getStudioNavGroup(activeGroupId);
 
   const helperText =
     subtitle ??
@@ -72,9 +73,11 @@ export function AdminStudioLayout({
   const handleBack = onBack ?? (() => navigate(hideOverviewLink ? breadcrumbParentPath : STUDIO_OVERVIEW_PATH));
 
   const displayHeading = pageHeading ?? resolvedModule?.title ?? title;
+  const headerCrumbLabel = hideOverviewLink ? breadcrumbParentLabel : 'STUDIOOS';
+  const headerCrumbPath = hideOverviewLink ? breadcrumbParentPath : STUDIO_OVERVIEW_PATH;
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen" style={{ position: 'relative' }}>
       <div
         className="fixed inset-0 -z-10"
         style={{
@@ -85,69 +88,115 @@ export function AdminStudioLayout({
           backgroundAttachment: 'fixed',
         }}
       />
-      <div className="relative z-10 uppercase" style={{ textTransform: 'uppercase' }}>
+      <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
         <AdminHeader
           title={title}
           showBack={showBack}
           onBack={handleBack}
-          breadcrumbParentLabel={breadcrumbParentLabel}
-          breadcrumbParentPath={breadcrumbParentPath}
+          breadcrumbParentLabel={headerCrumbLabel}
+          breadcrumbParentPath={headerCrumbPath}
         />
 
-        <div className="pb-8 px-4">
+        <div className="pb-6 px-4">
           <div className="max-w-md mx-auto">
             <div
-              className={`bg-white/60 backdrop-blur-sm border border-black p-4 ${ADMIN_STUDIO_THEME.cardShadow}`}
-              style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 200px)' }}
+              className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
+              style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}
             >
-              <AdminStudioBreadcrumbTrail segments={breadcrumbs} />
+              <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }}>
+                {summarySlot}
+
+                <AdminStudioBreadcrumbTrail segments={breadcrumbs} />
+
+                <div className="flex items-center justify-between" style={{ minWidth: 0 }}>
+                  <h2
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      color: '#000000',
+                      fontSize: '12px',
+                      fontWeight: 500,
+                      margin: 0,
+                      minWidth: 0,
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {displayHeading}
+                  </h2>
+                  {resolvedModule?.metric ? (
+                    <span
+                      style={{
+                        fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
+                        fontSize: '20px',
+                        color: '#EB1C24',
+                        flexShrink: 0,
+                        marginLeft: '8px',
+                      }}
+                    >
+                      {resolvedModule.metric}
+                    </span>
+                  ) : null}
+                </div>
+
+                {helperText ? (
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Medium"',
+                      fontSize: '11px',
+                      color: '#808080',
+                      marginTop: '6px',
+                      marginBottom: 0,
+                      lineHeight: 1.45,
+                    }}
+                  >
+                    {helperText}
+                  </p>
+                ) : null}
+
+                {groupMeta && !hideNavTabs ? (
+                  <p
+                    style={{
+                      fontFamily: '"Futura PT Book"',
+                      fontSize: '10px',
+                      color: '#000000',
+                      marginTop: '6px',
+                      marginBottom: 0,
+                    }}
+                  >
+                    {groupMeta.label} · {groupMeta.description}
+                  </p>
+                ) : null}
+
+                <div style={{ borderBottom: '1px solid #e5e7eb', marginTop: '10px' }} />
+              </div>
 
               {!hideNavTabs && workspace.studioEnabled ? (
                 <AdminStudioNavTabs activeGroupId={activeGroupId} />
               ) : null}
 
-              {!hideOverviewLink ? (
+              <div
+                className="flex-1 min-h-0"
+                style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}
+              >
+                <div style={{ paddingTop: '8px', boxSizing: 'border-box' }}>{children}</div>
+              </div>
+            </div>
+
+            {!hideOverviewLink ? (
+              <PageActionsBelowCard adminHub>
                 <button
                   type="button"
                   onClick={() => navigate(STUDIO_OVERVIEW_PATH)}
-                  className="mb-3 text-[7px] font-futura uppercase hover:underline"
-                  style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.accent }}
+                  className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
+                  style={pageActionButtonStyle}
                 >
-                  ← BACK TO STUDIO OVERVIEW
+                  BACK TO STUDIO OVERVIEW
                 </button>
-              ) : null}
+              </PageActionsBelowCard>
+            ) : null}
 
-              <div className="flex items-center justify-between -mt-1 mb-1">
-                <span
-                  className="text-red-500 font-bold text-xl tracking-wider uppercase"
-                  style={{
-                    fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif',
-                    color: ADMIN_STUDIO_THEME.accent,
-                  }}
-                >
-                  {displayHeading}
-                </span>
-                {resolvedModule?.metric ? (
-                  <span
-                    className="text-black font-bold text-xl flex-shrink-0 ml-2 uppercase"
-                    style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
-                  >
-                    {resolvedModule.metric}
-                  </span>
-                ) : null}
-              </div>
-
-              {helperText ? (
-                <p
-                  className="text-[9px] font-futura uppercase mb-4 tracking-widest"
-                  style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.45 }}
-                >
-                  {helperText}
-                </p>
-              ) : null}
-
-              {children}
-            </div>
+            {belowCardActions ? <PageActionsBelowCard adminHub>{belowCardActions}</PageActionsBelowCard> : null}
           </div>
         </div>
       </div>

@@ -1,51 +1,55 @@
 import { useNavigate } from 'react-router-dom';
 import type { StudioBreadcrumbSegment } from '../../../utils/adminStudioNavigation';
-import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioBreadcrumbTrailProps = {
   segments: StudioBreadcrumbSegment[];
 };
 
-/** In-card breadcrumb: Admin / StudioOS / Group / Module */
+/** Minimal in-card path — Futura 10px, matches admin hub secondary labels. */
 export function AdminStudioBreadcrumbTrail({ segments }: AdminStudioBreadcrumbTrailProps) {
   const navigate = useNavigate();
 
-  if (segments.length === 0) return null;
+  if (segments.length <= 2) return null;
 
   return (
-    <nav
-      aria-label="Studio breadcrumb"
-      className="flex flex-wrap items-center gap-1 mb-3 text-[7px] font-futura uppercase"
-      style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.5 }}
+    <p
+      className="mb-2"
+      style={{
+        fontFamily: '"Futura PT Book"',
+        fontSize: '10px',
+        color: '#808080',
+        lineHeight: 1.45,
+        margin: 0,
+      }}
     >
       {segments.map((seg, index) => {
         const isLast = index === segments.length - 1;
-        const key = `${seg.label}-${index}`;
-
         return (
-          <span key={key} className="inline-flex items-center gap-1">
-            {index > 0 ? (
-              <span aria-hidden="true" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
-                /
-              </span>
-            ) : null}
+          <span key={`${seg.label}-${index}`}>
+            {index > 0 ? ' / ' : null}
             {seg.path && !isLast ? (
               <button
                 type="button"
                 onClick={() => navigate(seg.path!)}
                 className="hover:underline"
-                style={{ color: ADMIN_STUDIO_THEME.textSecondary }}
+                style={{
+                  fontFamily: '"Futura PT Book"',
+                  fontSize: '10px',
+                  color: '#808080',
+                  background: 'none',
+                  border: 'none',
+                  padding: 0,
+                  cursor: 'pointer',
+                }}
               >
                 {seg.label}
               </button>
             ) : (
-              <span style={{ color: isLast ? ADMIN_STUDIO_THEME.textPrimary : ADMIN_STUDIO_THEME.textSecondary }}>
-                {seg.label}
-              </span>
+              <span style={{ color: isLast ? '#000000' : '#808080' }}>{seg.label}</span>
             )}
           </span>
         );
       })}
-    </nav>
+    </p>
   );
 }

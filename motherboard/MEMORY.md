@@ -34898,3 +34898,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Studio subpages show breadcrumb `Admin / StudioOS / {Group} / {Module}`; subpage back arrow defaults to overview unless page passes custom `onBack`; nav tabs on subpages link to overview with `?group=`; UI-only — no service/data model changes.
 
+---
+
+## 2026-07-04 — Studio UI admin hub alignment (tabs, layout, list rows)
+
+**Context:** User feedback after first Studio UI pass — changes felt like rearrangement only; tabs had gray chip backgrounds unlike Clients / Meetings / Marketing admin pages. Request: align Studio structure, tabs, buttons, and text with those admin hubs.
+
+**Topics covered (full chat):** Asset Director + StudioOS milestones completed earlier; first Studio UI refinement added grouped nav + layout but user said it did not visually match admin pages (meetings, clients) — tabs wrong (gray bg), buttons/text/organization off.
+
+**Decisions / outcomes:**
+- **`AdminHubTabBar`** (`src/components/admin/AdminHubTabBar.tsx`) — shared tab component matching Clients/Marketing/Meetings: `background: none`, Futura PT Medium 10–11px, active red `#EB1C24` + 1px underline, inactive gray `#808080`.
+- **`AdminStudioNavTabs`** + **`AdminStudioTabBar`** now delegate to `AdminHubTabBar` (removed gray chip backgrounds).
+- **`AdminStudioLayout`** restructured like Clients/Meetings: `flex flex-col` card, `px-5` header block, Futura 12px title (not oversized Grace heading), 11px gray helper, `#e5e7eb` divider, content in `padding 20px`, actions via **`PageActionsBelowCard`** + **`pageActionButtonStyle`** below card (BACK TO STUDIO OVERVIEW).
+- **`AdminStudioModuleCard`** → client-style list rows (`bg-white border-gray-200`, red Futura title, Grace subtitle, STATUS/METRIC columns).
+- **Overview** (`/admin/studio/overview`) — summary stat tiles `rgba(0,0,0,0.04)`, column headers, scrollable module list like Clients hub.
+- Header crumb uses **STUDIOOS** → overview on subpages.
+
+**Changes:** `AdminHubTabBar.tsx`, `AdminStudioLayout.tsx`, `AdminStudioNavTabs.tsx`, `AdminStudioTabBar.tsx`, `AdminStudioBreadcrumbTrail.tsx`, `AdminStudioModuleCard.tsx`, `overview/page.tsx`, `studio/page.tsx` (hub).
+
+**Conventions:** Studio tabs/buttons must use admin hub patterns — no gray tab chips; primary CTAs below card with white bg + black border + red Futura text.
+
