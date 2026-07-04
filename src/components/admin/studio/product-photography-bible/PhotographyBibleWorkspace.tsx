@@ -1,8 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AdminStudioTabBar } from '../AdminStudioTabBar';
 import {
   PhotographyBibleProvider,
-  usePhotographySystem,
   DERIVATIVE_CROP_TEMPLATES,
   DERIVATIVE_SITE_BINDINGS,
   DERIVATIVE_SLOT_DEFINITIONS,
@@ -12,77 +12,92 @@ import {
 import { useAdminStudioProductPhotographyBible } from '../../../../hooks/useAdminStudioProductPhotographyBibleState';
 import { useAdminStudioPhotographyDerivatives } from '../../../../hooks/useAdminStudioPhotographyDerivativesState';
 import { useAdminStudioPhotographyCreativeDna } from '../../../../hooks/useAdminStudioPhotographyCreativeDnaState';
+import { getLatestProductAssetFactoryJob } from '../../../../hooks/useAdminStudioBrandAssetsProductAssetFactoryState';
 import {
   getPhotographyTabBody,
-  PHOTOGRAPHY_BIBLE_INHERITANCE_CHAIN,
   PHOTOGRAPHY_BIBLE_TABS,
   PHOTOGRAPHY_EXPORT_TEMPLATES,
-  PHOTOGRAPHY_INHERITANCE_FIELDS,
   MEDIA_KIT_ASSET_SLOTS,
   PHOTOGRAPHY_VERSION_HISTORY,
   type PhotographyBibleTabId,
 } from '../../../../utils/adminStudioProductPhotographyBibleDemo';
 import { SignatureUnitCard } from './SignatureUnitCard';
+import { CreativeDnaHeroPanel } from './CreativeDnaHeroPanel';
+import { PhotographyPipelineChain } from './PhotographyPipelineChain';
+import { CreativeDnaDetailsNav } from './CreativeDnaDetailsNav';
+import { PHOTOGRAPHY_BIBLE_OVERVIEW_LOCKED_SPECS } from './photographyBibleOverviewConfig';
 import { PP_VISUAL, ppCaption, ppPanelStyle, ppSectionTitle } from './photographyBibleTheme';
 import { buildMediaKitForUnit } from '../../../../studio-os/product-photography';
 import type { SignatureCollectionUnitSlug } from '../../../../studio-os/product-photography';
 
+function LockedBadge() {
+  return (
+    <span
+      style={{
+        ...ppCaption,
+        fontSize: '5px',
+        color: PP_VISUAL.red,
+        padding: '1px 4px',
+        border: `1px solid ${PP_VISUAL.red}`,
+        marginTop: 4,
+        display: 'inline-block',
+      }}
+    >
+      LOCKED
+    </span>
+  );
+}
+
 function PhotographyBibleDashboardInner() {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<PhotographyBibleTabId>('overview');
-  const { lockedSpecifications, currentVersion } = usePhotographySystem();
-  const { units, approveUnit } = useAdminStudioProductPhotographyBible();
+  const { units } = useAdminStudioProductPhotographyBible();
   const { getForUnit, results } = useAdminStudioPhotographyDerivatives();
   const { dna, generationPackagePreview } = useAdminStudioPhotographyCreativeDna();
 
   const tabBody = getPhotographyTabBody(activeTab);
   const preparedUnitCount = results.length;
 
+  const navigateTab = (tabId: PhotographyBibleTabId) => {
+    setActiveTab(tabId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="pb-6">
+      <CreativeDnaHeroPanel onNavigateTab={navigateTab} />
+
       <AdminStudioTabBar tabs={PHOTOGRAPHY_BIBLE_TABS} activeTab={activeTab} onTabChange={setActiveTab} />
 
       {activeTab === 'overview' && (
         <>
           <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px', marginBottom: '12px' }}>
-            <p style={{ ...ppCaption, color: PP_VISUAL.red }}>PHOTOGRAPHY SYSTEM {currentVersion.label.toUpperCase()}</p>
+            <p style={{ ...ppSectionTitle, color: PP_VISUAL.red }}>CREATIVE DNA v1.0</p>
             <p style={ppCaption}>{tabBody}</p>
-            <p style={{ ...ppSectionTitle, marginTop: 10 }}>LOCKED SPECIFICATIONS</p>
+            <p style={{ ...ppCaption, marginTop: 6, fontSize: '7px' }}>
+              EVERY SIGNATURE UNIT · BUILD-A-WIG · BUNDLES · CLOSURES · FRONTALS INHERIT THIS VISUAL SYSTEM AUTOMATICALLY
+            </p>
+
+            <p style={{ ...ppSectionTitle, marginTop: 12 }}>LOCKED SPECIFICATIONS</p>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-              {lockedSpecifications.map((spec) => (
-                <div key={spec.id} className="p-2" style={{ background: 'rgba(0,0,0,0.03)', border: `1px solid ${PP_VISUAL.panelBorder}` }}>
+              {PHOTOGRAPHY_BIBLE_OVERVIEW_LOCKED_SPECS.map((spec) => (
+                <div
+                  key={spec.id}
+                  className="p-2"
+                  style={{ background: 'rgba(255,255,255,0.88)', border: `1px solid ${PP_VISUAL.panelBorder}` }}
+                >
                   <p style={{ ...ppCaption, fontSize: '6px' }}>{spec.label}</p>
                   <p style={{ ...ppCaption, color: PP_VISUAL.black, fontFamily: '"Futura PT Medium"', fontSize: '9px' }}>
                     {spec.value}
                   </p>
-                  <p style={{ ...ppCaption, fontSize: '6px', color: PP_VISUAL.red }}>LOCKED</p>
+                  <LockedBadge />
                 </div>
               ))}
             </div>
           </section>
 
-          <section style={{ ...ppPanelStyle, padding: '12px', marginBottom: '12px' }}>
-            <p style={ppSectionTitle}>INHERITANCE CHAIN</p>
-            <p style={ppCaption}>Every new StudioOS product inherits: {PHOTOGRAPHY_INHERITANCE_FIELDS.join(' · ')}</p>
-            <div className="flex flex-col items-center gap-0 mt-2">
-              {PHOTOGRAPHY_BIBLE_INHERITANCE_CHAIN.map((step, i) => (
-                <div key={step} className="w-full flex flex-col items-center">
-                  {i > 0 ? <div className="w-px h-2" style={{ background: PP_VISUAL.panelBorder }} /> : null}
-                  <div
-                    className="w-full px-2 py-1 text-center border"
-                    style={{
-                      ...ppCaption,
-                      fontSize: '7px',
-                      color: step.includes('BIBLE') ? PP_VISUAL.red : PP_VISUAL.muted,
-                      background: 'rgba(255,255,255,0.7)',
-                      borderColor: PP_VISUAL.panelBorder,
-                    }}
-                  >
-                    {step}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
+          <PhotographyPipelineChain />
+          <CreativeDnaDetailsNav onNavigateTab={navigateTab} />
         </>
       )}
 
@@ -94,6 +109,7 @@ function PhotographyBibleDashboardInner() {
         activeTab === 'color-science' ||
         activeTab === 'exports') && (
         <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px' }}>
+          <p style={{ ...ppCaption, fontSize: '7px', color: PP_VISUAL.red, marginBottom: 4 }}>CREATIVE DNA v1.0</p>
           <p style={ppSectionTitle}>{PHOTOGRAPHY_BIBLE_TABS.find((t) => t.id === activeTab)?.label}</p>
           <p style={ppCaption}>{tabBody}</p>
           <p style={{ ...ppCaption, marginTop: 8, fontSize: '7px' }}>
@@ -104,6 +120,7 @@ function PhotographyBibleDashboardInner() {
 
       {activeTab === 'media-kits' && (
         <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px' }}>
+          <p style={{ ...ppCaption, fontSize: '7px', color: PP_VISUAL.red, marginBottom: 4 }}>CREATIVE DNA v1.0</p>
           <p style={ppSectionTitle}>MEDIA KIT ARCHITECTURE</p>
           <p style={ppCaption}>{tabBody}</p>
           <ul style={{ margin: '10px 0 0', paddingLeft: '16px' }}>
@@ -121,6 +138,7 @@ function PhotographyBibleDashboardInner() {
 
       {activeTab === 'templates' && (
         <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px' }}>
+          <p style={{ ...ppCaption, fontSize: '7px', color: PP_VISUAL.red, marginBottom: 4 }}>CREATIVE DNA v1.0</p>
           <p style={ppSectionTitle}>EXPORT TEMPLATES</p>
           <p style={ppCaption}>{tabBody}</p>
           <div className="grid grid-cols-1 gap-2 mt-3 sm:grid-cols-2">
@@ -139,6 +157,7 @@ function PhotographyBibleDashboardInner() {
 
       {activeTab === 'version-history' && (
         <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px' }}>
+          <p style={{ ...ppCaption, fontSize: '7px', color: PP_VISUAL.red, marginBottom: 4 }}>CREATIVE DNA v1.0</p>
           <p style={ppSectionTitle}>VERSION LINEAGE</p>
           {PHOTOGRAPHY_VERSION_HISTORY.map((v) => (
             <div key={v.version} className="mb-3 p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
@@ -155,6 +174,7 @@ function PhotographyBibleDashboardInner() {
 
       {activeTab === 'derivatives' && (
         <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px' }}>
+          <p style={{ ...ppCaption, fontSize: '7px', color: PP_VISUAL.red, marginBottom: 4 }}>CREATIVE DNA v1.0</p>
           <p style={ppSectionTitle}>PHOTOGRAPHY DERIVATIVE ENGINE</p>
           <p style={ppCaption}>{tabBody}</p>
           <p style={{ ...ppCaption, marginTop: 8 }}>
@@ -193,7 +213,7 @@ function PhotographyBibleDashboardInner() {
 
           <p style={{ ...ppSectionTitle, marginTop: 14 }}>PREPARED DERIVATIVES BY UNIT</p>
           <p style={{ ...ppCaption, marginBottom: 8 }}>
-            Approve a Signature unit below to auto-prepare {DERIVATIVE_SLOT_DEFINITIONS.length} derivative slots.
+            Asset Factory approval prepares {DERIVATIVE_SLOT_DEFINITIONS.length} smart asset slots per unit.
           </p>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
             {units.map((unit) => {
@@ -202,12 +222,12 @@ function PhotographyBibleDashboardInner() {
               return (
                 <div key={unit.slug} className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
                   <p style={{ ...ppCaption, color: PP_VISUAL.red }}>
-                    {unit.collectionNo} · {unit.label}
+                    UNIT {unit.collectionNo} · {unit.label}
                   </p>
                   <p style={ppCaption}>
                     {prepared > 0
-                      ? `${prepared} SLOTS PREPARED · STATUS ${derivatives[0]?.status?.toUpperCase() ?? '—'}`
-                      : 'NOT PREPARED — APPROVE HERO TO PREPARE'}
+                      ? `${prepared} SMART ASSET SLOTS PREPARED · ${derivatives[0]?.status?.toUpperCase() ?? '—'}`
+                      : 'NOT PREPARED — PROCESS IN ASSET FACTORY'}
                   </p>
                   {prepared > 0 ? (
                     <p style={{ ...ppCaption, fontSize: '7px' }}>{derivatives[0]?.folderPath.replace(/\/[^/]+$/, '/…')}</p>
@@ -224,7 +244,7 @@ function PhotographyBibleDashboardInner() {
           <p style={{ ...ppSectionTitle, color: PP_VISUAL.red }}>CREATIVE DNA {dna.version.toUpperCase()}</p>
           <p style={ppCaption}>{tabBody}</p>
           <p style={{ ...ppCaption, marginTop: 6, fontSize: '7px', color: PP_VISUAL.red }}>
-            LOCK STATUS · {dna.lockStatus.toUpperCase()} · APPROVED / LOCKED
+            STATUS · {dna.lockStatus.toUpperCase()} · APPROVED / LOCKED
           </p>
 
           <p style={{ ...ppSectionTitle, marginTop: 14 }}>APPROVED PROMPT</p>
@@ -292,7 +312,7 @@ function PhotographyBibleDashboardInner() {
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 mb-3">
             <div className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}` }}>
               <p style={{ ...ppCaption, color: PP_VISUAL.red }}>
-                {dna.benchmarkOutput.collectionNumber} · {dna.benchmarkOutput.unit}
+                UNIT {dna.benchmarkOutput.collectionNumber} · {dna.benchmarkOutput.unit}
               </p>
               <p style={ppCaption}>
                 {dna.benchmarkOutput.texture} · {dna.benchmarkOutput.length} · {dna.benchmarkOutput.density}
@@ -312,21 +332,9 @@ function PhotographyBibleDashboardInner() {
             </div>
           </div>
 
-          <p style={ppSectionTitle}>LOCKED SPECIFICATIONS</p>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 mb-3">
-            {dna.lockedSpecifications.map((spec) => (
-              <div key={spec.id} className="p-2" style={{ background: 'rgba(0,0,0,0.03)', border: `1px solid ${PP_VISUAL.panelBorder}` }}>
-                <p style={{ ...ppCaption, fontSize: '7px' }}>{spec.rule}</p>
-                <p style={{ ...ppCaption, fontSize: '6px', color: PP_VISUAL.red }}>LOCKED</p>
-              </div>
-            ))}
-          </div>
-
           <p style={ppSectionTitle}>GENERATION METADATA</p>
           <div className="p-2 mb-3" style={{ background: 'rgba(255,255,255,0.7)', border: `1px solid ${PP_VISUAL.panelBorder}` }}>
-            <p style={ppCaption}>
-              PER-UNIT VARIABLES ONLY · {dna.perUnitVariableFields.join(' · ')}
-            </p>
+            <p style={ppCaption}>PER-UNIT VARIABLES ONLY · {dna.perUnitVariableFields.join(' · ')}</p>
             <p style={{ ...ppCaption, marginTop: 6, fontSize: '7px' }}>
               AUTO PACKAGE · Creative DNA + Approved Prompt + Display Bust + Editorial Reference + Product Reference + Unit Metadata
             </p>
@@ -334,6 +342,13 @@ function PhotographyBibleDashboardInner() {
               PREVIEW (SOFT WAVE) · bust {generationPackagePreview.displayBustFrontSrc} · product{' '}
               {generationPackagePreview.productReferenceImageSrc}
             </p>
+            <button
+              type="button"
+              style={{ ...ppCaption, marginTop: 8, fontSize: '7px', color: PP_VISUAL.red, cursor: 'pointer', background: 'none', border: 'none', padding: 0, textDecoration: 'underline' }}
+              onClick={() => navigate('/admin/studio/brand-assets/asset-factory')}
+            >
+              OPEN ASSET FACTORY →
+            </button>
           </div>
 
           <p style={ppSectionTitle}>FUTURE UNITS (PREPARED — NO GENERATION)</p>
@@ -341,7 +356,7 @@ function PhotographyBibleDashboardInner() {
             {CREATIVE_DNA_FUTURE_UNIT_SLOTS.map((slot) => (
               <div key={slot.slug} className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}` }}>
                 <p style={{ ...ppCaption, color: slot.status === 'benchmark' ? PP_VISUAL.red : PP_VISUAL.muted }}>
-                  {slot.collectionNo} · {slot.label}
+                  UNIT {slot.collectionNo} · {slot.label}
                 </p>
                 <p style={{ ...ppCaption, fontSize: '7px' }}>{slot.status.toUpperCase()} · {slot.inheritsFrom}</p>
               </div>
@@ -367,20 +382,27 @@ function PhotographyBibleDashboardInner() {
 
       <section style={{ marginTop: '16px' }}>
         <p style={ppSectionTitle}>SIGNATURE COLLECTION</p>
-        <p style={{ ...ppCaption, marginBottom: 10 }}>6 FLAGSHIP UNITS · NO ASSETS GENERATED YET · ARCHITECTURE ONLY</p>
+        <p style={{ ...ppCaption, marginBottom: 10 }}>
+          6 FLAGSHIP UNITS · CREATIVE DNA INHERITED · ASSET FACTORY MANUFACTURES · SMART ASSETS DELIVER BY CONTEXT
+        </p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {units.map((unit) => (
-            <SignatureUnitCard
-              key={unit.slug}
-              unit={unit}
-              onApprove={() => approveUnit(unit.slug)}
-              onReplace={() => window.alert('REPLACE — infrastructure only (Milestone 20.5). No upload pipeline yet.')}
-              onView={() => window.open(unit.referenceImageSrc, '_blank', 'noopener,noreferrer')}
-              onGenerateVariants={() =>
-                window.alert('GENERATE VARIANTS — disabled in Milestone 20.5. No AI generation.')
-              }
-            />
-          ))}
+          {units.map((unit) => {
+            const derivatives = getForUnit('signature-collection', unit.slug);
+            const factoryJob = getLatestProductAssetFactoryJob(unit.slug);
+            return (
+              <SignatureUnitCard
+                key={unit.slug}
+                unit={unit}
+                factoryJob={factoryJob}
+                derivativeCount={derivatives.length}
+                onReplace={() => window.alert('REPLACE REFERENCE — infrastructure only. Upload via Asset Factory when enabled.')}
+                onView={() => window.open(unit.referenceImageSrc, '_blank', 'noopener,noreferrer')}
+                onGenerateVariants={() =>
+                  window.alert('GENERATE VARIANTS — run through Asset Factory using Creative DNA v1.0.')
+                }
+              />
+            );
+          })}
         </div>
       </section>
     </div>

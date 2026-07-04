@@ -35660,3 +35660,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** studio-os product-photography modules, Photography Bible workspace tab, Asset Factory pipeline/service, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Photography Bible Creative DNA page refinement (Milestone 22.5 revision)
+
+**Context (full chat):** After Milestone 22.5 Creative DNA v1.0 initialization, user requested **UI hierarchy + terminology refinement only** on Photography Bible — no admin redesign, no route breaks, no customer-facing changes, no removal of existing functionality.
+
+**Goal:** Photography Bible should read as the Creative DNA source of truth / brand genome command center, not a generic settings page.
+
+**Shipped:**
+- **Terminology:** Replaced redundant “Photography System” language with **Creative DNA v1.0**; subtitle → “Approved visual genome for Frontal Slayer product photography.”
+- **Hero panel:** Always-visible Creative DNA v1.0 hero with status, description, handwritten red “brand genome · locked” annotation, and 8 DNA component quick cards (Prompt DNA, Display Bust, Editorial Reference, Camera, Lighting, Composition, Color Science, Export Rules) with status/version/approved date + VIEW DETAILS → tab navigation.
+- **Locked specifications:** Real values (1:1, 4096×4096, Pure White Studio, Eye Level / Front Facing, Editorial Bottom Crop, etc.) with small Locked badge — not repetitive LOCKED-only cards.
+- **Manufacturing pipeline chain:** Photography Bible → Creative DNA → Asset Factory → Master Hero → Transparent Master → Derivative Engine → Smart Assets → delivery surfaces; caption explains DNA defines rules, Asset Factory manufactures, Smart Assets deliver by context.
+- **Creative DNA contents nav:** Clickable detail items jump to relevant tabs.
+- **Signature Collection cards:** Unit number (not “collection number”), pipeline statuses (Creative DNA inherited, Master Hero, Transparent Master, Media Kit, Smart Assets, Asset Factory), Creative DNA inheritance badge; buttons View / Open in Asset Factory / Replace Reference / Generate Variants; **Approve removed** (Asset Factory owns approval). SOFT WAVE benchmark defaults to approved master hero.
+- **New components:** `CreativeDnaHeroPanel`, `PhotographyPipelineChain`, `CreativeDnaDetailsNav`, `photographyBibleOverviewConfig.ts`, `signatureUnitPipelineStatus.ts`.
+- **Updated:** `PhotographySpecifications.ts` display values, page subtitle/footer, derivatives tab copy (Asset Factory not approve-on-page).
+
+**Changes:** Photography Bible workspace/components, demo config, specifications display values, page shell, `motherboard/MEMORY.md`.
+

@@ -20,7 +20,7 @@ export default function AdminStudioPhotographyBiblePage() {
     >
       <PhotographyBibleWorkspace />
       <AdminStudioDisclaimerFooter>
-        PHOTOGRAPHY SYSTEM V1.0 · IMMUTABLE · SPECIFICATION & FOLDER ARCHITECTURE ONLY · NO APIS · NO AI GENERATION
+        PHOTOGRAPHY BIBLE · CREATIVE DNA v1.0 · APPROVED / LOCKED · ASSET FACTORY MANUFACTURES FROM DNA · NO MANUAL IMAGE-BY-IMAGE MANAGEMENT
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

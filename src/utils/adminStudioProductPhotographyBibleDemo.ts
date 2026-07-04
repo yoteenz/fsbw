@@ -12,7 +12,7 @@ import {
 } from '../studio-os/product-photography';
 
 export const PHOTOGRAPHY_BIBLE_SUBTITLE =
-  'OFFICIAL SOURCE OF TRUTH FOR ALL FRONTAL SLAYER PRODUCT PHOTOGRAPHY — SIGNATURE COLLECTION & FUTURE PRODUCTS.';
+  'APPROVED VISUAL GENOME FOR FRONTAL SLAYER PRODUCT PHOTOGRAPHY · CREATIVE DNA v1.0 · SIGNATURE COLLECTION & FUTURE PRODUCTS.';
 
 export const BRAND_ASSETS_HUB_SUBTITLE =
   'BRAND ASSETS COMMAND · PHOTOGRAPHY BIBLE · ASSET FACTORY · MEDIA KITS.';
@@ -64,26 +64,26 @@ export type SignatureUnitPhotographyRecord = {
 };
 
 export const PHOTOGRAPHY_BIBLE_INHERITANCE_CHAIN = [
-  'PHOTOGRAPHY BIBLE V1.0',
-  'CREATIVE DNA V1.0',
-  'SIGNATURE COLLECTION',
-  'MEDIA KIT',
-  'EXPORT TEMPLATES',
+  'PHOTOGRAPHY BIBLE',
+  'CREATIVE DNA v1.0',
   'ASSET FACTORY',
-  'STUDIOOS PRODUCT',
+  'SIGNATURE COLLECTION',
+  'MEDIA KITS',
+  'WEBSITE / EMAIL / APP / SOCIAL / ADS',
 ] as const;
 
 function defaultUnitRecord(
   unit: (typeof SIGNATURE_COLLECTION_UNITS)[number]
 ): SignatureUnitPhotographyRecord {
+  const isBenchmark = unit.slug === 'soft-wave';
   return {
     slug: unit.slug,
     collectionNo: unit.collectionNo,
     label: unit.label,
     heroPortraitSrc: unit.referenceImageSrc,
     referenceImageSrc: unit.referenceImageSrc,
-    photographyStatus: 'reference',
-    mediaKitStatus: 'empty',
+    photographyStatus: isBenchmark ? 'approved' : 'reference',
+    mediaKitStatus: isBenchmark ? 'partial' : 'empty',
     version: '1.0',
     lastUpdated: '2026-07-04',
   };
@@ -108,7 +108,7 @@ export const MEDIA_KIT_STATUS_LABELS: Record<MediaKitStatus, string> = {
 export function getPhotographyTabBody(tabId: PhotographyBibleTabId): string {
   switch (tabId) {
     case 'overview':
-      return 'Photography System V1.0 — immutable baseline. All Signature units inherit locked specifications.';
+      return 'Creative DNA v1.0 is locked and approved. Every Signature unit, Build-A-Wig configuration, bundle, closure, and frontal inherits this visual system. Asset Factory manufactures assets from Creative DNA — products are never managed image-by-image.';
     case 'display-mannequin':
       return PHOTOGRAPHY_SYSTEM_V1_DETAIL.displayMannequin;
     case 'camera-system':

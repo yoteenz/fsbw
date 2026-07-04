@@ -27,15 +27,15 @@ export type PhotographyLockedSpec = {
 /** Canonical locked fields displayed in StudioOS Photography Bible admin. */
 export const PHOTOGRAPHY_LOCKED_SPECIFICATIONS: readonly PhotographyLockedSpec[] = [
   { id: 'aspectRatio', label: 'Aspect Ratio', value: '1:1', locked: true },
-  { id: 'masterResolution', label: 'Master Resolution', value: '4096×4096', locked: true },
+  { id: 'masterResolution', label: 'Resolution', value: '4096×4096', locked: true },
   { id: 'background', label: 'Background', value: 'Pure White Studio', locked: true },
-  { id: 'camera', label: 'Camera', value: 'Eye Level', locked: true },
-  { id: 'lens', label: 'Lens', value: 'Locked', locked: true },
-  { id: 'crop', label: 'Crop', value: 'Locked', locked: true },
-  { id: 'lighting', label: 'Lighting', value: 'Locked', locked: true },
-  { id: 'displayBust', label: 'Display Bust', value: 'Locked', locked: true },
-  { id: 'logoPlacement', label: 'Logo Placement', value: 'Locked', locked: true },
-  { id: 'colorProfile', label: 'Color Profile', value: 'Locked', locked: true },
+  { id: 'camera', label: 'Camera', value: 'Eye Level / Front Facing', locked: true },
+  { id: 'lens', label: 'Lens', value: 'Studio Standard', locked: true },
+  { id: 'crop', label: 'Crop', value: 'Editorial Bottom Crop', locked: true },
+  { id: 'lighting', label: 'Lighting', value: 'Soft Diffused Editorial', locked: true },
+  { id: 'displayBust', label: 'Display Bust', value: 'Official FS Bust v1.0', locked: true },
+  { id: 'logoPlacement', label: 'Logo', value: 'Centered Chest Placement', locked: true },
+  { id: 'colorProfile', label: 'Color', value: 'Neutral Editorial Grade', locked: true },
 ] as const;
 
 export type PhotographySystemSpecDetail = {
