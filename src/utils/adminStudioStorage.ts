@@ -51,6 +51,7 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   directorMode: 'adminStudioDirectorMode_v1',
   executiveAiDirector: 'adminStudioExecutiveAiDirector_v1',
   campaignOrchestrator: 'adminStudioCampaignOrchestrator_v1',
+  missionControl: 'adminStudioMissionControl_v1',
 } as const;
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];

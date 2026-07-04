@@ -78,7 +78,7 @@ export default function AdminStudioOsPage() {
                     type="button"
                     onClick={() => {
                       const entry = ws.id === 'frontal-slayer'
-                        ? '/admin/studio/executive-command-center'
+                        ? '/admin/studio/mission-control'
                         : `/admin/studio-os/workspace/${ws.id}`;
                       selectWorkspace(ws.id, entry);
                     }}

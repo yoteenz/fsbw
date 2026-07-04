@@ -101,7 +101,7 @@ export default function AdminStudioOsWorkspaceShellPage() {
                 type="button"
                 onClick={() => {
                   setActiveWorkspace('frontal-slayer');
-                  navigate('/admin/studio/executive-command-center');
+                  navigate('/admin/studio/mission-control');
                 }}
                 className="w-full py-2.5 text-[7px] font-futura uppercase border"
                 style={{ fontWeight: 515, color: '#FFF', background: '#EB1C24', borderColor: ADMIN_STUDIO_THEME.panelBorder }}

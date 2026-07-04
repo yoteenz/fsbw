@@ -32,6 +32,10 @@ export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
   ],
   permissions: DEFAULT_WORKSPACE_PERMISSIONS,
   moduleCopy: {
+    'mission-control': {
+      title: 'MISSION CONTROL',
+      subtitle: 'THE EXECUTIVE OPERATING ROOM — EVERY DEPARTMENT REPORTS HERE.',
+    },
     'executive-command-center': {
       title: 'THE STUDIO',
       subtitle: 'ONE COMPANY. ONE VIEW. — THE EXECUTIVE CONTROL ROOM OF FRONTAL SLAYER STUDIOS.',
@@ -84,7 +88,7 @@ export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
     },
   },
   studioEnabled: true,
-  studioEntryPath: '/admin/studio/executive-command-center',
+  studioEntryPath: '/admin/studio/mission-control',
   metadata: {
     industry: 'luxury-beauty',
     description: 'First production Workspace on StudioOS — luxury wig house and media studio.',

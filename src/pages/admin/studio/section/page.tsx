@@ -47,6 +47,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'executive-command-center') {
       return <Navigate to="/admin/studio/executive-command-center" replace />;
     }
+    if (sectionId === 'mission-control') {
+      return <Navigate to="/admin/studio/mission-control" replace />;
+    }
     if (sectionId === 'legacy-system') {
       return <Navigate to="/admin/studio/legacy-system" replace />;
     }

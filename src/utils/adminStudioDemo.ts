@@ -40,6 +40,7 @@ export type AdminStudioSectionId =
   | 'distribution-network'
   | 'audience-brain'
   | 'executive-command-center'
+  | 'mission-control'
   | 'legacy-system'
   | 'asset-director'
   | 'production-builder'

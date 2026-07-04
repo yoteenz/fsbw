@@ -4,6 +4,7 @@
  */
 
 export type StudioOsCoreModuleId =
+  | 'mission-control'
   | 'executive-command-center'
   | 'studio-dashboard'
   | 'content-brain'
@@ -29,6 +30,12 @@ export type StudioOsCoreModule = {
 
 /** Canonical registry of StudioOS platform modules. */
 export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
+  {
+    id: 'mission-control',
+    label: 'MISSION CONTROL',
+    description: 'Workspace executive operating room and mission HQ.',
+    routeSegment: 'mission-control',
+  },
   {
     id: 'executive-command-center',
     label: 'EXECUTIVE COMMAND CENTER',

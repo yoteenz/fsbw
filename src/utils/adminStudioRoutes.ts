@@ -26,6 +26,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'distribution-network'
   | 'audience-brain'
   | 'executive-command-center'
+  | 'mission-control'
   | 'legacy-system'
   | 'asset-director'
   | 'production-builder'
@@ -55,6 +56,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'distribution-network',
   'audience-brain',
   'executive-command-center',
+  'mission-control',
   'legacy-system',
   'asset-director',
   'production-builder',
@@ -101,6 +103,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   audienceBrain: 'studio/audience-brain',
   audienceBrainIntelligence: 'studio/audience-brain/intelligence',
   executiveCommandCenter: 'studio/executive-command-center',
+  missionControl: 'studio/mission-control',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -173,6 +176,10 @@ export function adminStudioAudienceBrainPath(): string {
 
 export function adminStudioExecutiveCommandCenterPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/executive-command-center`;
+}
+
+export function adminStudioMissionControlPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/mission-control`;
 }
 
 export function adminStudioSocialAccountsPath(): string {

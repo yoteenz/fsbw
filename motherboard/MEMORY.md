@@ -35182,3 +35182,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Campaign Orchestrator is additive operational layer — plans campaigns, assigns tasks, requires human approval at every gate; does not auto-execute production or publishing; integrates conceptually with Executive AI Director review, Production Builder, Content Packs, Distribution; recommendations label reasoning and source tags where applicable.
 
+---
+
+## 2026-07-04 — Mission Control executive HQ (Milestone 18)
+
+**Context:** User milestone for **Mission Control** — new workspace landing page after selecting a Workspace; central operating room for entire workspace without opening other pages. Must not redesign Frontal Slayer design language; maintain marble/glass/luxury spacing/minimal UI/existing nav. Prior thread: Milestones 14–17 (Asset Director through Campaign Orchestrator).
+
+**Topics covered (full chat arc):** StudioOS workspace picker flow; user requested Mission Control as executive headquarters combining Apple Park / NASA Mission Control / Bloomberg Terminal / luxury executive office aesthetics; modular layout (header · mission overview center · executive brief left · AI Director right · department grid bottom · live activity feed bar); workspace header, morning executive brief, mission hero with progress viz, active mission cards, docked Executive AI Director insights, 8-department live cards, horizontal mission timeline (research→legacy), executive calendar, approval center with inline approve, business health scorecards, quick actions, global mission search, smart notifications, workspace memory, ambient breathing glass + live indicators; becomes landing after workspace selection.
+
+**Decisions / outcomes:**
+- New route **`/admin/studio/mission-control`** — OVERVIEW group, featured first on Studio Overview.
+- **`/admin/studio`** redirect and Frontal Slayer **`studioEntryPath`** updated to Mission Control; workspace picker FRONTAL SLAYER → mission-control; Executive Command Center preserved unchanged.
+- **`adminStudioMissionControlDemo.ts`** — header state, brief, overview, active missions, AI dock, departments, timeline phases, calendar, activity feed, approvals, health scorecards, quick actions, notifications, memory, search index.
+- **`useAdminStudioMissionControlState.ts`** — approvals + notification dismiss in **`adminStudioMissionControl_v1`**.
+- UI under **`src/components/admin/studio/mission-control/`** — breathing glass theme, full workspace dashboard, sticky live activity footer.
+- **`missionControlStudioService`** Phase 2 stub in registry; **`mission-control`** added to StudioOS core modules.
+- Build verified.
+
+**Changes:** mission-control utils/hooks/components/page/service, storage/routes/nav/App, workspace config + studio-os picker, `studio-os/core/modules.ts`, `motherboard/CORE.md`.
+
+**Conventions:** Mission Control is additive HQ layer — does not replace Executive Command Center, Campaign Orchestrator, or other modules; department cards deep-link to existing routes; AI insights tag WORKSPACE HISTORY / CURRENT CONFIGURATION / PREDICTIVE ESTIMATE.
+

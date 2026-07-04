@@ -60,6 +60,17 @@ const p = (segment: string) => `${ADMIN_STUDIO_BASE_PATH}/${segment.replace(/^\/
 export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   // OVERVIEW
   {
+    id: 'mission-control',
+    title: 'MISSION CONTROL',
+    purpose: 'Executive operating room — missions, departments, approvals, and live workspace activity in one view.',
+    route: p('mission-control'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'HQ',
+    ctaLabel: 'ENTER HQ',
+    featuredOnOverview: true,
+  },
+  {
     id: 'executive-command-center',
     title: 'EXECUTIVE COMMAND CENTER',
     purpose: 'See company health, priorities, and decisions in one executive view.',
