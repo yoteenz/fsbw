@@ -43,6 +43,7 @@ export type BlueprintModuleId =
   | 'marketplace'
   | 'business-model-engine'
   | 'ecosystem'
+  | 'governance'
   | 'social-accounts'
   | 'system-health'
   | 'promotion-center'

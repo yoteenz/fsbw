@@ -251,6 +251,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-studio-os-ecosystem', 'node-publishing-center', 'node-installation-engine'],
     },
     {
+      id: 'name-studio-os-governance',
+      officialName: 'Studio OS Governance',
+      deprecatedNames: ['moderation panel', 'compliance tab', 'trust page'],
+      usageNotes:
+        'Platform pillar — trust, quality, compliance, moderation, verification, certification, AI governance, audit. Platform constitution for responsible growth. UI: STUDIO OS GOVERNANCE.',
+      relatedModules: ['governance'],
+      relatedGraphNodeIds: ['node-studio-os-governance', 'node-trust-engine', 'node-verification-center', 'node-audit-center'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -505,6 +514,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-studio-os-ecosystem', 'node-publishing-center', 'node-installation-engine', 'node-business-model-engine'],
       relatedManualChapter: 'CHAPTER · STUDIO OS ECOSYSTEM · BUSINESS OPERATING ECOSYSTEM',
+    },
+    {
+      id: 'dec-governance-v1',
+      title: 'Launch Studio OS Governance Engine v1.0',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'governance',
+      decision:
+        'Studio OS Governance is the trust, quality, compliance, moderation, verification, certification, and ecosystem health layer — the platform constitution. Trust engine for all participants, verification center with badges, quality assurance for ecosystem assets, certification engine, moderation with policy references, appeals, fraud detection, reputation engine, ecosystem health metrics, AI governance with audit trails, permanent audit center, enterprise governance rules.',
+      reason:
+        'Studio OS must grow responsibly — not simply grow. Governance is not punishment; it creates trustworthy ecosystems where businesses build long-term relationships. Every governance decision should improve ecosystem health.',
+      alternativesConsidered: ['External compliance SaaS only', 'Manual moderation without policy engine', 'Trust scores without appeals'],
+      outcome: 'Governance at /admin/studio/governance — core in src/studio-os-core/governance/, AI Media seeds in workspaces/ai-media/governance/.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-studio-os-governance', 'node-trust-engine', 'node-verification-center', 'node-audit-center', 'node-studio-os-ecosystem', 'node-marketplace'],
+      relatedManualChapter: 'CHAPTER · STUDIO OS GOVERNANCE · PLATFORM CONSTITUTION',
     },
   ],
   aiPreferences: {

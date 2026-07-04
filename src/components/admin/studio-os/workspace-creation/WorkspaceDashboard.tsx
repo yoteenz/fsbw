@@ -156,6 +156,11 @@ export function WorkspaceDashboard({
                 OPEN STUDIO OS ECOSYSTEM
               </button>
             ) : null}
+            {activeTab === 'governance' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/governance')}>
+                OPEN STUDIO OS GOVERNANCE
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

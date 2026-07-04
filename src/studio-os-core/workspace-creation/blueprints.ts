@@ -14,6 +14,7 @@ const CORE_PACKAGES = [
   'marketplace',
   'business-model-engine',
   'ecosystem',
+  'governance',
   'interactive-manual',
   'onboarding-tutorial',
   'prompt-library',

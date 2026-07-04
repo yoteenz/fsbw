@@ -28,6 +28,7 @@ export type StudioOsCoreModuleId =
   | 'marketplace'
   | 'business-model-engine'
   | 'ecosystem'
+  | 'governance'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -185,6 +186,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO OS ECOSYSTEM',
     description: 'Business operating ecosystem — community blueprints, DNA, automations, executives, and complete operating system packages.',
     routeSegment: 'ecosystem',
+  },
+  {
+    id: 'governance',
+    label: 'STUDIO OS GOVERNANCE',
+    description: 'Trust, quality, compliance, moderation, verification, certification, and ecosystem health — the platform constitution.',
+    routeSegment: 'governance',
   },
   {
     id: 'vision-engine',

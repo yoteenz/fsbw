@@ -46,6 +46,7 @@ export type AdminStudioSectionId =
   | 'marketplace'
   | 'business-model-engine'
   | 'ecosystem'
+  | 'governance'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'

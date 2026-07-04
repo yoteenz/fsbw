@@ -32,6 +32,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'marketplace'
   | 'business-model-engine'
   | 'ecosystem'
+  | 'governance'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'
@@ -75,6 +76,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'marketplace',
   'business-model-engine',
   'ecosystem',
+  'governance',
   'vision-engine',
   'executive-command-center',
   'mission-control',
@@ -135,6 +137,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   marketplace: 'studio/marketplace',
   businessModelEngine: 'studio/business-model-engine',
   ecosystem: 'studio/ecosystem',
+  governance: 'studio/governance',
   visionEngine: 'studio/vision-engine',
   executiveCommandCenter: 'studio/executive-command-center',
   missionControl: 'studio/mission-control',
@@ -327,6 +330,10 @@ export function adminStudioBusinessModelEnginePath(): string {
 
 export function adminStudioEcosystemPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ecosystem`;
+}
+
+export function adminStudioGovernancePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }
 
 export function adminStudioVisionEnginePath(): string {

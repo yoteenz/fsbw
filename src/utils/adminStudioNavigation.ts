@@ -577,6 +577,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'governance',
+    title: 'STUDIO OS GOVERNANCE',
+    purpose: 'Trust, quality, compliance, moderation, verification, certification — platform constitution for responsible growth.',
+    route: p('governance'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '14 TABS',
+    ctaLabel: 'OPEN GOVERNANCE',
+    moduleKey: 'governance',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',
