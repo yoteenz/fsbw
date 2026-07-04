@@ -32,6 +32,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'casting') {
       return <Navigate to="/admin/studio/casting" replace />;
     }
+    if (sectionId === 'production') {
+      return <Navigate to="/admin/studio/production" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

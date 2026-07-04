@@ -21,6 +21,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'studio-lot'
   | 'talent-agency'
   | 'casting'
+  | 'production'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -39,6 +40,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'studio-lot',
   'talent-agency',
   'casting',
+  'production',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -69,6 +71,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   casting: 'studio/casting',
   castingTalent: 'studio/casting/talent/:talentId',
   castingDetail: 'studio/casting/:castingId',
+  production: 'studio/production',
+  productionDetail: 'studio/production/:packId',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -102,4 +106,8 @@ export function adminStudioCastingPath(castingId: string): string {
 
 export function adminStudioCastingTalentPath(talentId: string): string {
   return `${ADMIN_STUDIO_BASE_PATH}/casting/talent/${talentId}`;
+}
+
+export function adminStudioProductionPath(packId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/production/${packId}`;
 }

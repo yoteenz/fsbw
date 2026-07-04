@@ -34,7 +34,8 @@ export type AdminStudioSectionId =
   | 'show-bible'
   | 'studio-lot'
   | 'talent-agency'
-  | 'casting';
+  | 'casting'
+  | 'production';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;

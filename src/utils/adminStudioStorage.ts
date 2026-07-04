@@ -33,6 +33,9 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   castingProductionsCustom: 'adminStudioCastingProductionsCustom_v1',
   castingTalent: 'adminStudioCastingTalent_v1',
   castingWorkflow: 'adminStudioCastingWorkflow_v1',
+  production: 'adminStudioProduction_v1',
+  productionCustom: 'adminStudioProductionCustom_v1',
+  productionQa: 'adminStudioProductionQa_v1',
 } as const;
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];

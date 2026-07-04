@@ -53,6 +53,9 @@ export type { TalentAgencySnapshot, TalentInheritance } from './talentAgency/ser
 export { castingStudioService, validateCastApproval, getCastingInheritance } from './casting/service';
 export type { CastingSnapshot, CastingApprovalValidation, CastingInheritance } from './casting/service';
 
+export { productionStudioService, validateProductionReadiness, getPackContext, PRODUCTION_QA_ITEMS } from './production/service';
+export type { ProductionSnapshot, ProductionReadiness, ProductionPackContext } from './production/service';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -68,6 +71,7 @@ import { showBibleStudioService } from './showBible/service';
 import { studioLotStudioService } from './studioLot/service';
 import { talentAgencyStudioService } from './talentAgency/service';
 import { castingStudioService } from './casting/service';
+import { productionStudioService } from './production/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -78,6 +82,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   studioLotStudioService,
   talentAgencyStudioService,
   castingStudioService,
+  productionStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,

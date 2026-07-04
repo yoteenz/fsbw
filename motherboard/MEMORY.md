@@ -34667,3 +34667,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Navigate `/admin/studio/casting`; cross-links to Talent Agency / AI Orchestrator only. Every content pack must pass `castingStudioService.validateApproval(productionId)` before production pipeline.
 
+---
+
+## 2026-07-04 — THE STUDIO Production Pipeline milestone
+
+**Context:** Continuation of THE STUDIO — all prior milestones frozen (hub cards, Show Bible, Studio Lot, Talent Agency, Casting, etc.). User requested new module **PRODUCTION** — subtitle *"Turning ideas into experiences."* Operational heart of Frontal Slayer Studios; every Content Pack must pass through this luxury production workflow before reaching customers. Not generic project management — premium production board aesthetic. Providers NOT connected; tracking and architecture only.
+
+**Topics covered (full chat arc):**
+- Prior: Casting (`5a0dcfea`), Talent Agency, Studio Lot, Show Bible, AI Orchestrator, etc. — unchanged.
+- **Production** (`/admin/studio/production`): premium dashboard (10 sections: Current Productions, Pre-Production, In Production, Post Production, Review Queue, Publishing Queue, Completed Productions, Production Calendar, Asset Progress, Quality Assurance); inheritance chain diagram; pack list + **Kanban board** with 17 stages (Idea → Completed) and HTML5 drag-and-drop; 7 seeded content packs + create new pack.
+- **Pack detail** (`/admin/studio/production/:packId`): 13 tabs — Board, Pre-Production (topic, CD rec, intelligence, show/studio/talent/campaign/products/CTA/distribution), Script Room, Storyboard (visual scenes), Shot List (8 auto shots), Asset Generation (tracking only), Assembly timeline, Post Production reviews, QA checklist with %, Calendar, Team Activity (architecture only), Content Package, Production Analytics (demo).
+- **Data model** `adminStudioProductionDemo.ts`: `ProductionContentPack`, kanban stages, QA items, field groups, assembly default, 7 defaults.
+- **State** `useAdminStudioProductionState.ts`: localStorage patches (`production`, `productionCustom`, `productionQa`); stage moves, QA toggles, scene updates, field edits.
+- **Service** `productionStudioService`: `getSnapshot`, `validateReadiness`, `getPackContext` — registered in `STUDIO_SERVICE_REGISTRY`.
+- **Architecture:** Creative Director → Intelligence Engine → Show Bible → Studio Lot → Talent Agency → Casting → **Production Pipeline** → AI Generation → Review → Publishing. Reusable assets, version history, modular tabs.
+
+**Decisions / outcomes:** No provider connections; team collaboration architecture-only; content package auto-includes episode/journal/email/social/thumbnail/transcript/metadata/history fields; cross-links at bottom of Production pages only (← Casting, AI Orchestrator →). Build verified (`npm run build`).
+
+**Changes:** `adminStudioProductionDemo.ts`, `useAdminStudioProductionState.ts`, `services/studio/production/service.ts`, `AdminStudioProductionPackCard`, `AdminStudioProductionFieldGroups`, `production/page.tsx`, `production/detail/page.tsx`, `adminStudioRoutes.ts`, `adminStudioDemo.ts`, `adminStudioStorage.ts`, `App.tsx`, `section/page.tsx`, `STUDIO_SERVICE_REGISTRY`, `motherboard/CORE.md`.
+
+**Conventions:** Navigate `/admin/studio/production`; route `studio/production/:packId` registered before `studio/:sectionId`. Every episode, campaign, journal, email, PSA, social post, hero video, and future Mansion experience flows through the same production lifecycle.
+

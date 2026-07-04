@@ -144,6 +144,8 @@ const AdminStudioTalentAgencyDetail = lazyWithRetry(() => import('./pages/admin/
 const AdminStudioCasting = lazyWithRetry(() => import('./pages/admin/studio/casting/page'), 'AdminStudioCasting');
 const AdminStudioCastingProduction = lazyWithRetry(() => import('./pages/admin/studio/casting/detail/page'), 'AdminStudioCastingProduction');
 const AdminStudioCastingTalent = lazyWithRetry(() => import('./pages/admin/studio/casting/talent/page'), 'AdminStudioCastingTalent');
+const AdminStudioProduction = lazyWithRetry(() => import('./pages/admin/studio/production/page'), 'AdminStudioProduction');
+const AdminStudioProductionDetail = lazyWithRetry(() => import('./pages/admin/studio/production/detail/page'), 'AdminStudioProductionDetail');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -854,6 +856,16 @@ function App() {
           <Route path="studio/casting" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioCasting />
+            </Suspense>
+          } />
+          <Route path="studio/production/:packId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioProductionDetail />
+            </Suspense>
+          } />
+          <Route path="studio/production" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioProduction />
             </Suspense>
           } />
           <Route path="studio/:sectionId" element={
