@@ -1,8 +1,10 @@
-import { useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useCallback, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../../layouts/PageActionsBelowCard';
+import { adminStudioDirectorModePath } from '../../../../utils/adminStudioRoutes';
 import { useAdminStudioProductionBuilder } from '../../../../hooks/useAdminStudioProductionBuilderState';
 import { useAdminStudioContentPack } from '../../../../hooks/useAdminStudioEditableState';
+import { DirectorModeEnterOverlay } from '../director-mode/DirectorModeWorkspace';
 import { ProductionBuilderDepartmentBar } from './ProductionBuilderDepartmentBar';
 import { ProductionBuilderAssetLibrary } from './ProductionBuilderAssetLibrary';
 import { ProductionBuilderSceneCanvas } from './ProductionBuilderSceneCanvas';
@@ -12,8 +14,10 @@ import { ProductionBuilderRelatedContent } from './ProductionBuilderRelatedConte
 import { pbActionBtnStyle } from './productionBuilderTheme';
 
 export function ProductionBuilderWorkspace() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const packId = searchParams.get('packId') ?? undefined;
+  const [enteringDirector, setEnteringDirector] = useState(false);
   const { pack } = useAdminStudioContentPack(packId);
   const packTitle = pack?.title;
 
@@ -40,8 +44,18 @@ export function ProductionBuilderWorkspace() {
 
   const onAssetDragStart = useCallback(() => {}, []);
 
+  const handleEnterDirectorMode = useCallback(() => {
+    setEnteringDirector(true);
+  }, []);
+
+  const completeDirectorEnter = useCallback(() => {
+    navigate(adminStudioDirectorModePath(draft.id, packId));
+    setEnteringDirector(false);
+  }, [navigate, draft.id, packId]);
+
   return (
     <div>
+      <DirectorModeEnterOverlay active={enteringDirector} onComplete={completeDirectorEnter} />
       <ProductionBuilderDepartmentBar departmentStatus={draft.departmentStatus} />
 
       <div
@@ -100,6 +114,13 @@ export function ProductionBuilderWorkspace() {
           title={draft.versionHistory[0] ? `LAST: ${draft.versionHistory[0].savedAt}` : 'NO VERSIONS YET'}
         >
           VERSION HISTORY ({draft.versionHistory.length})
+        </button>
+        <button
+          type="button"
+          onClick={handleEnterDirectorMode}
+          style={{ ...pageActionButtonStyle, ...pbActionBtnStyle, fontSize: '10px' }}
+        >
+          🎬 ENTER DIRECTOR MODE
         </button>
         <button
           type="button"

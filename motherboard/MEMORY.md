@@ -35118,3 +35118,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Production Builder is additive — Asset Director and Content Packs routes unchanged. Scene selections for pack-linked drafts write back to asset director store for Content Pack continuity.
 
+---
+
+## 2026-07-04 — Director Mode cinematic rehearsal workspace (Milestone 15)
+
+**Context:** User milestone to create brand-new **Director Mode** — cinematic production rehearsal before AI generation — without redesigning existing pages or replacing Production Builder. Prior thread: Studio UI alignment, Milestone 14 Asset Director, Milestone 14.5 Production Builder.
+
+**Topics covered (full chat arc):** Production Builder three-column assembly workspace; user then requested Director Mode as luxury virtual control room — four zones (timeline, cinema preview, director controls, production console), scene timeline with drag-reorder, live storyboard, script panel, shot list, camera/lighting simulation, talent/voice/music/graphics controls, readiness score, AI rehearsal, director notes, client preview, snapshots, emergency checklist before Generate Production; **🎬 Enter Director Mode** from Production Builder with fade/blur transition.
+
+**Decisions / outcomes:**
+- New route **`/admin/studio/director-mode?draftId=`** (+ optional **`packId`**); loads Production Builder draft from localStorage.
+- **`adminStudioDirectorModeDemo.ts`** — scene meta (script, shots, timing), camera/lighting presets with CSS filters, music tracks, graphics toggles, readiness dimensions, emergency checklist, rehearsal steps.
+- **`useAdminStudioDirectorModeState.ts`** — session in **`adminStudioDirectorMode_v1`**; syncs asset swaps to production builder + content pack; rehearsal overlay; client preview mode; snapshot save.
+- UI under **`src/components/admin/studio/director-mode/`** — entrance animation, timeline, cinema monitor, controls, storyboard strip, script/shot list, console with readiness + checklist, rehearsal + client preview overlays.
+- Production Builder: **🎬 ENTER DIRECTOR MODE** with **`DirectorModeEnterOverlay`** (glass blur fade) before navigate.
+- Nav: **DIRECTOR MODE** featured in PRODUCTION group; **`directorModeStudioService`** stub.
+- Build verified.
+
+**Changes:** director-mode utils/hooks/components/page, `adminStudioStorage.ts`, routes/nav/App, Production Builder CTA, `useAdminStudioProductionBuilderState` draft helpers, `services/studio/directorMode/`, `motherboard/CORE.md`.
+
+**Conventions:** Director Mode is additive final checkpoint before AI — connects to Production Builder, Content Packs, Asset Director; does not replace Production Builder.
+

@@ -77,6 +77,9 @@ export type { AssetDirectorSnapshot, AssetDirectorSummary } from './assetDirecto
 export { productionBuilderStudioService, PRODUCTION_BUILDER_INHERITANCE_CHAIN } from './productionBuilder/service';
 export type { ProductionBuilderSnapshot, ProductionBuilderSummary } from './productionBuilder/service';
 
+export { directorModeStudioService, DIRECTOR_MODE_INHERITANCE_CHAIN } from './directorMode/service';
+export type { DirectorModeSnapshot, DirectorModeSummary } from './directorMode/service';
+
 export { socialPublishingStudioService } from './socialPublishing/service';
 export type { SocialPublishingSnapshot } from './socialPublishing/service';
 
@@ -103,6 +106,7 @@ import { executiveCommandCenterStudioService } from './executiveCommandCenter/se
 import { legacySystemStudioService } from './legacySystem/service';
 import { assetDirectorStudioService } from './assetDirector/service';
 import { productionBuilderStudioService } from './productionBuilder/service';
+import { directorModeStudioService } from './directorMode/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
 import type { StudioServiceStub } from './types';
 
@@ -122,6 +126,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   legacySystemStudioService,
   assetDirectorStudioService,
   productionBuilderStudioService,
+  directorModeStudioService,
   socialPublishingStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,

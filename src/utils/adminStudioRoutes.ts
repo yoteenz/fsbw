@@ -29,6 +29,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'legacy-system'
   | 'asset-director'
   | 'production-builder'
+  | 'director-mode'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -55,6 +56,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'legacy-system',
   'asset-director',
   'production-builder',
+  'director-mode',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -107,6 +109,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   assetDirectorTalentDetail: 'studio/asset-director/talent/:talentId',
   assetDirectorSection: 'studio/asset-director/section/:sectionId',
   productionBuilder: 'studio/production-builder',
+  directorMode: 'studio/director-mode',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -197,4 +200,10 @@ export function adminStudioAssetDirectorSectionPath(sectionId: string): string {
 export function adminStudioProductionBuilderPath(packId?: string): string {
   const base = `${ADMIN_STUDIO_BASE_PATH}/production-builder`;
   return packId ? `${base}?packId=${encodeURIComponent(packId)}` : base;
+}
+
+export function adminStudioDirectorModePath(draftId: string, packId?: string): string {
+  const params = new URLSearchParams({ draftId });
+  if (packId) params.set('packId', packId);
+  return `${ADMIN_STUDIO_BASE_PATH}/director-mode?${params.toString()}`;
 }

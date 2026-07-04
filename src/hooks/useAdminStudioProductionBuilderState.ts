@@ -58,6 +58,54 @@ export function exportProductionBuilderSnapshot() {
   };
 }
 
+export function getProductionDraftById(draftId: string): ProductionDraft | null {
+  const store = readStore();
+  return store.drafts?.[draftId] ?? null;
+}
+
+export function persistProductionDraft(draft: ProductionDraft): void {
+  const store = readStore();
+  writeStore({
+    ...store,
+    drafts: { ...(store.drafts ?? {}), [draft.id]: { ...draft, updatedAt: new Date().toISOString().slice(0, 10) } },
+    activeDraftId: draft.id,
+  });
+}
+
+export function updateProductionDraftScene(
+  draftId: string,
+  sceneId: string,
+  patch: Partial<ProductionScene> | Partial<ProductionSceneAssetSelection>
+): ProductionDraft | null {
+  const draft = getProductionDraftById(draftId);
+  if (!draft) return null;
+  const isSelection = 'studioId' in patch || 'talentId' in patch || 'cameraId' in patch || 'lightingId' in patch;
+  const scenes = draft.scenes.map((s) => {
+    if (s.id !== sceneId) return s;
+    if (isSelection) return { ...s, selection: { ...s.selection, ...(patch as ProductionSceneAssetSelection) } };
+    return { ...s, ...(patch as Partial<ProductionScene>) };
+  });
+  const next = { ...draft, scenes };
+  persistProductionDraft(next);
+  if (next.contentPackId) {
+    const scene = scenes.find((s) => s.id === sceneId);
+    if (scene) syncSceneToContentPack(next.contentPackId, scene.selection);
+  }
+  return next;
+}
+
+export function reorderProductionDraftScenes(draftId: string, fromIndex: number, toIndex: number): ProductionDraft | null {
+  const draft = getProductionDraftById(draftId);
+  if (!draft) return null;
+  const sorted = [...draft.scenes].sort((a, b) => a.order - b.order);
+  const [moved] = sorted.splice(fromIndex, 1);
+  sorted.splice(toIndex, 0, moved);
+  const scenes = sorted.map((s, i) => ({ ...s, order: i }));
+  const next = { ...draft, scenes };
+  persistProductionDraft(next);
+  return next;
+}
+
 export function useAdminStudioProductionBuilder(packId?: string, packTitle?: string) {
   const [version, setVersion] = useState(0);
   const bump = useCallback(() => setVersion((v) => v + 1), []);

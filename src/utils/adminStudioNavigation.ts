@@ -245,6 +245,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   },
   // PRODUCTION
   {
+    id: 'director-mode',
+    title: 'DIRECTOR MODE',
+    purpose: 'Rehearse productions in a cinematic control room before AI generates assets.',
+    route: p('director-mode'),
+    groupId: 'production',
+    status: 'demo',
+    metric: 'CINEMA',
+    ctaLabel: 'ENTER DIRECTOR MODE',
+    featuredOnOverview: true,
+  },
+  {
     id: 'production-builder',
     title: 'PRODUCTION BUILDER',
     purpose: 'Visually assemble studios, talent, and scenes before AI generates your content pack.',
