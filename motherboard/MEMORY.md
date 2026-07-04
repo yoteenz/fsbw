@@ -34688,3 +34688,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Navigate `/admin/studio/production`; route `studio/production/:packId` registered before `studio/:sectionId`. Every episode, campaign, journal, email, PSA, social post, hero video, and future Mansion experience flows through the same production lifecycle.
 
+---
+
+## 2026-07-04 — THE STUDIO AI Production Engine milestone
+
+**Context:** Continuation of THE STUDIO — all prior milestones frozen. User requested activation of Frontal Slayer Studios via new module **AI PRODUCTION ENGINE** — subtitle *"Turning strategy into production."* Operational execution team that turns approved Content Packs into completed drafts. Never makes creative decisions (those originate upstream: Brand Brain → Creative Director → Show Bible → Studio Lot → Talent Agency → Casting → Production Pipeline). Providers hidden behind production departments; Studio communicates only with AI Production Engine.
+
+**Topics covered (full chat arc):**
+- Prior: Production Pipeline (`75851034`), Casting, Talent Agency, etc. — unchanged.
+- **AI Production Engine** (`/admin/studio/ai-production-engine`): 8 premium department cards (Research, Writing, Creative, Visual, Voice, Editorial, Quality Control, Publishing); production flow diagram (Approved Pack → departments → Draft Complete); cinematic **Live Production Monitor** with per-department status/progress; 4 seeded production runs + create new run.
+- **Run detail** (`/admin/studio/ai-production-engine/:runId`): 11 tabs — Monitor, Research, Writing, Creative, Visual, Voice, Editorial, Quality, Publishing, Traceability (prompt version, provider, deps, show/studio/talent/campaign, version history), Controls (pause/resume/advance/regenerate/approve/reject/skip/duplicate).
+- **Internal provider orchestration** (hidden): OpenAI, FAL, OpenArt, Voice, Resend, Future — mapped to departments via `adapters.ts`; interchangeable; NOT_CONNECTED.
+- **Quality Control:** Production Quality Score (computed); threshold 85%; revision recommendations below threshold.
+- **Publishing:** channel prep only — manual ship, no automatic publishing.
+- **Data model** `adminStudioAiProductionEngineDemo.ts`; **state** `useAdminStudioAiProductionEngineState.ts`; **service** `aiProductionEngineStudioService` in `STUDIO_SERVICE_REGISTRY`.
+
+**Decisions / outcomes:** Departments replace provider UI for admins; prompt traceability on every asset; all department outputs editable; cross-links at bottom of new pages only (← Production, Publishing Queue →). Build verified.
+
+**Changes:** `adminStudioAiProductionEngineDemo.ts`, `useAdminStudioAiProductionEngineState.ts`, `services/studio/aiProductionEngine/` (service, pipeline, adapters), UI components, `ai-production-engine/page.tsx`, `ai-production-engine/detail/page.tsx`, routes, storage, `App.tsx`, `STUDIO_SERVICE_REGISTRY`, `motherboard/CORE.md`.
+
+**Conventions:** Navigate `/admin/studio/ai-production-engine`; route `studio/ai-production-engine/:runId` before `studio/:sectionId`. AI Production Engine executes strategy — never overrides Creative Director or upstream milestones.
+
