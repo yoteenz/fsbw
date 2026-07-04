@@ -6,7 +6,7 @@ export const MANSION_TOUR: TutorialTour = {
   id: MANSION_TOUR_ID,
   moduleName: 'The Mansion Tour',
   customerName: 'The Mansion Tour',
-  optionalLabel: 'FS Concierge',
+  optionalLabel: 'Onboarding Tutorial',
   description:
     'A luxury guided walkthrough of Frontal Slayer — learn each feature by exploring the real site with your concierge.',
   estimatedMinutes: 3,
@@ -163,7 +163,7 @@ export const MANSION_TOUR: TutorialTour = {
       id: 'finish',
       tourId: MANSION_TOUR_ID,
       title: 'TOUR COMPLETE',
-      body: 'You have seen the mansion — explore freely, revisit any feature tour from FS Concierge, and enjoy the Frontal Slayer experience.',
+      body: 'You have seen the mansion — explore freely, revisit any feature tour from Onboarding Tutorial, and enjoy the Frontal Slayer experience.',
       benefit: 'You are ready to slay with confidence.',
       animationType: 'transition',
       position: 'center',

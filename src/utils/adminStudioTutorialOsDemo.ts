@@ -5,7 +5,7 @@ import { TUTORIAL_ACHIEVEMENTS } from '../tutorial-os/achievements';
 import { TUTORIAL_ADMIN_STORAGE_KEY } from '../tutorial-os/constants';
 
 export const TUTORIAL_OS_SUBTITLE =
-  'Interactive concierge walkthroughs — guided panels, hotspots, and mansion tours for every Frontal Slayer feature.';
+  'Interactive onboarding tutorials — guided panels, hotspots, and mansion tours for every Frontal Slayer feature.';
 
 export type TutorialOsAdminStore = {
   disabledTourIds?: string[];

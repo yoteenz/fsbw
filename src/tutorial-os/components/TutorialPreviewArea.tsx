@@ -16,7 +16,7 @@ type Props = {
 };
 
 export function TutorialPreviewArea({ previewKey }: Props) {
-  const chips = (previewKey && PREVIEW_CHIPS[previewKey]) || ['FS CONCIERGE'];
+  const chips = (previewKey && PREVIEW_CHIPS[previewKey]) || ['ONBOARDING TUTORIAL'];
   return (
     <div className="tutorial-os-preview-area" aria-hidden="true">
       <div className="tutorial-os-preview-chip">

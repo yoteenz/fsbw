@@ -6,14 +6,14 @@ Interactive concierge walkthrough system for Frontal Slayer customers and Studio
 
 - **Module:** Tutorial OS
 - **Customer name:** The Mansion Tour
-- **Label:** FS Concierge
+- **Label:** Onboarding Tutorial
 
 Optional welcome prompt on first visit (~3 min). Not forced — **Start Tour**, **Maybe Later**, or **Skip**.
 
 Access points:
 
 - First-visit welcome modal
-- Floating **FS** concierge FAB (bottom-right)
+- Floating **OT** onboarding FAB (bottom-right)
 - Account dashboard — **Take The Mansion Tour**
 
 ## Architecture

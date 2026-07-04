@@ -21,7 +21,7 @@ export function TutorialWelcomePrompt({ estimatedMinutes, onStart, onMaybeLater,
             marginBottom: '6px',
           }}
         >
-          FS CONCIERGE
+          ONBOARDING TUTORIAL
         </p>
         <h2
           style={{

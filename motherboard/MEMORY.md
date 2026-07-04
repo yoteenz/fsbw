@@ -35760,3 +35760,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `conciergeBypass.ts`, `TutorialOsContext.tsx`, `premiumMemberAccess.ts`, `AccountRouteGuard.tsx`, lobby page, BAW gates, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Rename FS Concierge → Onboarding Tutorial
+
+**Context:** User asked to change customer-facing **FS Concierge** label to **Onboarding Tutorial**.
+
+**Shipped:** `ONBOARDING_TUTORIAL_LABEL` constant; welcome prompt, wizard step label, preview chips, tour `optionalLabel`, finish copy, admin footer, docs, and floating FAB (`OT` + aria/title) updated. Deprecated alias `FS_CONCIERGE_LABEL` kept for imports. Admin Tutorial OS nav/subtitle copy updated.
+
+**Changes:** `tutorial-os/constants.ts`, welcome/preview/FAB components, mansion + placeholder tours, admin page, `adminStudioNavigation.ts`, `adminStudioTutorialOsDemo.ts`, docs, `motherboard/MEMORY.md`.
+

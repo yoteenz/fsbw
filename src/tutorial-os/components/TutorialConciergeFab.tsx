@@ -1,4 +1,4 @@
-import { FS_CONCIERGE_LABEL } from '../constants';
+import { ONBOARDING_TUTORIAL_LABEL } from '../constants';
 
 type Props = {
   onClick: () => void;
@@ -12,18 +12,19 @@ export function TutorialConciergeFab({ onClick, hidden }: Props) {
       type="button"
       className="tutorial-os-concierge-fab"
       onClick={onClick}
-      aria-label={`${FS_CONCIERGE_LABEL} — take a tour`}
-      title={FS_CONCIERGE_LABEL}
+      aria-label={`${ONBOARDING_TUTORIAL_LABEL} — take a tour`}
+      title={ONBOARDING_TUTORIAL_LABEL}
     >
       <span
         style={{
           fontFamily: '"Futura PT Medium"',
-          fontSize: '11px',
+          fontSize: '8px',
           letterSpacing: '0.04em',
           color: '#EB1C24',
+          textTransform: 'uppercase',
         }}
       >
-        FS
+        OT
       </span>
     </button>
   );

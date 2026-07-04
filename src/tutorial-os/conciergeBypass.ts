@@ -1,4 +1,4 @@
-/** FS Concierge is view-only — bypass premium (and account sign-in) gates while tour UI is active. */
+/** Onboarding Tutorial is view-only — bypass premium (and account sign-in) gates while tour UI is active. */
 
 const TUTORIAL_OS_CONCIERGE_CHANGED = 'tutorialOsConciergeChanged';
 

@@ -448,7 +448,7 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   {
     id: 'tutorial-os',
     title: 'TUTORIAL OS',
-    purpose: 'Manage concierge walkthroughs — The Mansion Tour, hotspots, progress analytics, and preview.',
+    purpose: 'Manage onboarding tutorial walkthroughs — The Mansion Tour, hotspots, progress analytics, and preview.',
     route: p('tutorial-os'),
     groupId: 'intelligence',
     status: 'demo',
