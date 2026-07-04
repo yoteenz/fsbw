@@ -35076,4 +35076,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Preview:** **`/tools/email-templates`** → Refresh preview.
 
+---
+
+## 2026-07-04 — Asset Director Visual Asset Management System (Milestone 14)
+
+**Context:** User milestone to transform Asset Director from metadata/settings page into true visual source of truth for StudioOS — Adobe Bridge / Figma Assets / Unreal Content Browser feel. Visuals first, metadata last. Do NOT redesign Frontal Slayer workspace, modify routes, change business logic, or remove Asset Director.
+
+**Topics covered (full chat arc):** Prior work in thread — Asset Director module, StudioOS platform, Studio UI alignment with admin Clients/Meetings hub (tabs, list rows, PageActionsBelowCard). User then requested Milestone 14 full visual asset management UX.
+
+**Decisions / outcomes:**
+- **`adminStudioAssetDirectorVisual.ts`** — `StudioVisualBundle` with 16 visual sections; rich **Weather Studio** demo; `getStudioVisualBundle` / `getTalentVisualBundle`; gallery list/filter/search helpers.
+- **Component library** under `src/components/admin/studio/asset-director/`: hero 21:9, page header + quick actions, visual tiles, studio detail view (all sections), talent detail view, gallery browser (gallery/list toggle, filters, bulk select, quick preview modal), hub dashboard.
+- **Hook extensions:** persisted `viewMode` (gallery/list), favorites, `useAdminStudioAssetDirectorBrowser` (filters, bulk, quick preview).
+- **Pages rebuilt (routes unchanged):** hub → visual department dashboard; studio/talent list → gallery browser; studio/talent detail → scrollable visual sections with metadata collapsed at bottom; section pages → masonry/health/relationship visuals; Content Pack picker → large visual grid + AdminHubTabBar categories, assembled prompt collapsed.
+- Build verified.
+
+**Changes:** `adminStudioAssetDirectorVisual.ts`, `useAdminStudioAssetDirectorState.ts`, asset-director components, all `asset-director/**/page.tsx`, `AdminStudioContentPackAssetPicker.tsx`, `motherboard/CORE.md`.
+
+**Conventions:** Asset detail pages order — Hero → Quick Actions → Versions → Collections → Relationships → Moodboard → Timeline → Health → Metadata (collapsed). Gallery preference in localStorage via asset director store.
 

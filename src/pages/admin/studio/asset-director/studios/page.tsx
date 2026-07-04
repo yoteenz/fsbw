@@ -1,35 +1,61 @@
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../components/admin/studio/AdminStudioStageShell';
-import { AdminStudioSectionHeading } from '../../../../../components/admin/studio/AdminStudioSectionHeading';
 import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
-import { AdminStudioAssetDirectorCard } from '../../../../../components/admin/studio/AdminStudioAssetDirectorCard';
-import { ASSET_DIRECTOR_STUDIOS } from '../../../../../utils/adminStudioAssetDirectorDemo';
-import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
+import { AssetDirectorGalleryBrowser } from '../../../../../components/admin/studio/asset-director/AssetDirectorGalleryBrowser';
+import { AssetDirectorQuickPreviewModal } from '../../../../../components/admin/studio/asset-director/AssetDirectorVisualPrimitives';
+import { useAdminStudioAssetDirector, useAdminStudioAssetDirectorBrowser } from '../../../../../hooks/useAdminStudioAssetDirectorState';
+import {
+  filterGalleryItems,
+  listAssetDirectorGalleryItems,
+  searchGalleryItems,
+} from '../../../../../utils/adminStudioAssetDirectorVisual';
 
 export default function AdminStudioAssetDirectorStudiosPage() {
   const navigate = useNavigate();
+  const { searchQuery, setSearchQuery, viewMode, setViewMode, favorites } = useAdminStudioAssetDirector();
+  const browser = useAdminStudioAssetDirectorBrowser();
+
+  const items = useMemo(() => {
+    let list = filterGalleryItems(listAssetDirectorGalleryItems('studios'), browser.activeFilter, favorites);
+    return searchGalleryItems(list, searchQuery);
+  }, [browser.activeFilter, favorites, searchQuery]);
 
   return (
     <AdminStudioStageShell
       title="STUDIOS"
-      subtitle="ASSET DIRECTOR · EVERY VIRTUAL STUDIO ENVIRONMENT"
+      subtitle="GALLERY VIEW — EVERY VIRTUAL ENVIRONMENT"
       breadcrumbParentLabel="ASSET DIRECTOR"
       breadcrumbParentPath="/admin/studio/asset-director"
       onBack={() => navigate('/admin/studio/asset-director')}
+      navGroupId="visuals"
+      hideNavTabs
     >
-      <AdminStudioSectionHeading>VIRTUAL STUDIOS</AdminStudioSectionHeading>
-      <p className="text-[7px] font-futura uppercase mb-3 -mt-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-        {ASSET_DIRECTOR_STUDIOS.length} ENVIRONMENTS · MASTER · DAY · NIGHT · SEASONAL
-      </p>
-      <div className="grid grid-cols-2 gap-3">
-        {ASSET_DIRECTOR_STUDIOS.map((studio) => (
-          <AdminStudioAssetDirectorCard
-            key={studio.id}
-            asset={studio}
-            onClick={() => navigate(`/admin/studio/asset-director/studios/${studio.id}`)}
-          />
-        ))}
-      </div>
+      <AssetDirectorGalleryBrowser
+        items={items}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        activeFilter={browser.activeFilter}
+        onFilterChange={browser.setActiveFilter}
+        selectedIds={browser.selectedIds}
+        onToggleSelect={browser.toggleSelect}
+        onItemClick={(item) => navigate(item.route)}
+        onQuickPreview={(item) =>
+          browser.setQuickPreview({
+            id: item.id,
+            name: item.name,
+            previewSrc: item.previewSrc,
+            status: item.status,
+            resolution: '3840×1600',
+            version: item.version,
+            accentHex: item.accentHex,
+          })
+        }
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onBulkAction={browser.bulkAction}
+      />
+      <AssetDirectorQuickPreviewModal item={browser.quickPreview} onClose={() => browser.setQuickPreview(null)} />
       <AdminStudioDisclaimerFooter />
     </AdminStudioStageShell>
   );

@@ -1,24 +1,26 @@
 import { useState } from 'react';
+import { AdminHubTabBar } from '../AdminHubTabBar';
 import type { ContentPackAssetPickerCategory } from '../../../utils/adminStudioAssetDirectorDemo';
 import {
   CONTENT_PACK_ASSET_PICKER_CATEGORIES,
   getPickerOptionsForCategory,
 } from '../../../utils/adminStudioAssetDirectorDemo';
 import { useAdminStudioContentPackAssets } from '../../../hooks/useAdminStudioAssetDirectorState';
-import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
+import { adActionBtnStyle, adCaptionStyle, AD_VISUAL } from './asset-director/assetDirectorVisualTheme';
 
 type AdminStudioContentPackAssetPickerProps = {
   packId: string;
   accentHex?: string;
 };
 
-/** Visual asset picker for Content Packs — assembles prompts from approved assets. */
+/** Visual-first asset picker — select studio, talent, wardrobe, etc. before typing prompts. */
 export function AdminStudioContentPackAssetPicker({ packId, accentHex = '#EB1C24' }: AdminStudioContentPackAssetPickerProps) {
   const [activeCategory, setActiveCategory] = useState<ContentPackAssetPickerCategory>('studio');
   const { selection, assembledPrompt, updateSelection, toggleMaterialId, togglePropId, clearSelection } =
     useAdminStudioContentPackAssets(packId);
 
   const options = getPickerOptionsForCategory(activeCategory);
+  const tabs = CONTENT_PACK_ASSET_PICKER_CATEGORIES.map((c) => ({ id: c.id, label: c.label }));
 
   const isSelected = (category: ContentPackAssetPickerCategory, id: string): boolean => {
     switch (category) {
@@ -90,37 +92,13 @@ export function AdminStudioContentPackAssetPicker({ packId, accentHex = '#EB1C24
   };
 
   return (
-    <div
-      className="p-3 border"
-      style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder, borderTop: `2px solid ${accentHex}` }}
-    >
-      <p className="text-[7px] font-futura uppercase mb-1" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary }}>
-        VISUAL ASSET PICKER
-      </p>
-      <p className="text-[5px] font-futura uppercase mb-3" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-        ASSET DIRECTOR · APPROVED ASSETS ONLY · DEMO PROMPT ASSEMBLY
-      </p>
+    <div className="border border-black p-3" style={{ borderWidth: '1.3px', borderTop: `2px solid ${accentHex}` }}>
+      <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: AD_VISUAL.black }}>VISUAL ASSET PICKER</p>
+      <p style={{ ...adCaptionStyle, marginBottom: '10px' }}>CHOOSE APPROVED ASSETS VISUALLY — PROMPT BUILDS AUTOMATICALLY</p>
 
-      <div className="flex flex-wrap gap-1 mb-3">
-        {CONTENT_PACK_ASSET_PICKER_CATEGORIES.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            onClick={() => setActiveCategory(cat.id)}
-            className="px-2 py-1 text-[5px] font-futura uppercase border"
-            style={{
-              fontWeight: 515,
-              color: activeCategory === cat.id ? '#FFF' : ADMIN_STUDIO_THEME.textSecondary,
-              background: activeCategory === cat.id ? accentHex : 'rgba(255,255,255,0.8)',
-              borderColor: ADMIN_STUDIO_THEME.panelBorder,
-            }}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
+      <AdminHubTabBar tabs={tabs} activeTab={activeCategory} onTabChange={setActiveCategory} fontSize="10px" />
 
-      <div className="grid grid-cols-4 gap-1.5 mb-3 max-h-40 overflow-y-auto">
+      <div className="grid grid-cols-3 gap-2 mb-3 max-h-56 overflow-y-auto mt-2">
         {options.map((opt) => {
           const selected = isSelected(activeCategory, opt.id);
           return (
@@ -128,54 +106,41 @@ export function AdminStudioContentPackAssetPicker({ packId, accentHex = '#EB1C24
               key={opt.id}
               type="button"
               onClick={() => handleSelect(activeCategory, opt.id)}
-              className="relative overflow-hidden border text-left"
+              className="relative overflow-hidden border text-left bg-white"
               style={{
-                aspectRatio: '1 / 1',
-                borderColor: selected ? accentHex : ADMIN_STUDIO_THEME.panelBorder,
+                aspectRatio: activeCategory === 'studio' ? '16 / 9' : '3 / 4',
+                borderColor: selected ? accentHex : '#e5e7eb',
                 borderWidth: selected ? '2px' : '1px',
-                opacity: selected ? 1 : 0.85,
               }}
             >
               <img src={opt.previewSrc} alt="" className="w-full h-full object-cover" />
-              <div
-                className="absolute bottom-0 left-0 right-0 px-0.5 py-0.5"
-                style={{ background: 'rgba(255,255,255,0.92)' }}
-              >
-                <p className="text-[4px] font-futura uppercase line-clamp-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary }}>
-                  {opt.name}
-                </p>
+              <div className="absolute bottom-0 left-0 right-0 px-1 py-1" style={{ background: 'rgba(255,255,255,0.92)' }}>
+                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: selected ? accentHex : AD_VISUAL.black }}>{opt.name}</p>
               </div>
+              {selected ? (
+                <span className="absolute top-1 right-1 px-1 text-[8px] text-white" style={{ background: accentHex }}>✓</span>
+              ) : null}
             </button>
           );
         })}
       </div>
 
-      <div className="p-2 border mb-2" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.7)' }}>
-        <p className="text-[5px] font-futura uppercase mb-1" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-          ASSEMBLED PROMPT PREVIEW
-        </p>
-        <pre
-          className="text-[5px] font-futura uppercase whitespace-pre-wrap"
-          style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary, lineHeight: 1.5 }}
-        >
-          {assembledPrompt || 'SELECT APPROVED VISUAL ASSETS TO BUILD PROMPT'}
+      <details className="border border-black mb-2" style={{ borderWidth: '1px' }}>
+        <summary style={{ ...adCaptionStyle, padding: '8px', cursor: 'pointer', fontSize: '9px' }}>ASSEMBLED PROMPT — COLLAPSED</summary>
+        <pre className="p-2 whitespace-pre-wrap" style={{ ...adCaptionStyle, fontSize: '8px', borderTop: AD_VISUAL.divider }}>
+          {assembledPrompt || 'SELECT VISUAL ASSETS ABOVE'}
         </pre>
-      </div>
+      </details>
 
       <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={clearSelection}
-          className="flex-1 py-1.5 text-[5px] font-futura uppercase border"
-          style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
-        >
-          CLEAR SELECTION
+        <button type="button" onClick={clearSelection} className="flex-1" style={adActionBtnStyle}>
+          CLEAR
         </button>
         <button
           type="button"
           onClick={() => window.open('/admin/studio/asset-director', '_self')}
-          className="flex-1 py-1.5 text-[5px] font-futura uppercase border"
-          style={{ fontWeight: 515, color: accentHex, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.8)' }}
+          className="flex-1"
+          style={{ ...adActionBtnStyle, color: accentHex }}
         >
           OPEN ASSET DIRECTOR
         </button>

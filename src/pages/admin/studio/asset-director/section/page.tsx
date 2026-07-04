@@ -1,8 +1,11 @@
+import { useMemo } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../components/admin/studio/AdminStudioStageShell';
-import { AdminStudioSectionHeading } from '../../../../../components/admin/studio/AdminStudioSectionHeading';
 import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { AdminStudioAssetDirectorCard } from '../../../../../components/admin/studio/AdminStudioAssetDirectorCard';
+import { AssetDirectorGalleryBrowser } from '../../../../../components/admin/studio/asset-director/AssetDirectorGalleryBrowser';
+import { AssetDirectorQuickPreviewModal, AssetDirectorSectionBlock } from '../../../../../components/admin/studio/asset-director/AssetDirectorVisualPrimitives';
+import { useAdminStudioAssetDirector, useAdminStudioAssetDirectorBrowser } from '../../../../../hooks/useAdminStudioAssetDirectorState';
 import {
   getAssetDirectorSectionById,
   getAssetDirectorSectionCards,
@@ -10,12 +13,15 @@ import {
   ASSET_DIRECTOR_RELATIONSHIPS,
   ASSET_DIRECTOR_VERSION_HISTORY,
   ASSET_DIRECTOR_HEALTH_QUEUE,
-  ASSET_DIRECTOR_MATERIALS,
   ASSET_HEALTH_LABELS,
   type AssetDirectorSectionId,
-  type AssetDirectorMaterial,
 } from '../../../../../utils/adminStudioAssetDirectorDemo';
-import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
+import {
+  filterGalleryItems,
+  listAssetDirectorGalleryItems,
+  searchGalleryItems,
+} from '../../../../../utils/adminStudioAssetDirectorVisual';
+import { AD_VISUAL, adCaptionStyle } from '../../../../../components/admin/studio/asset-director/assetDirectorVisualTheme';
 
 const VALID_SECTIONS = new Set<string>([
   'wardrobe', 'expressions', 'poses', 'camera', 'lighting', 'materials',
@@ -23,9 +29,17 @@ const VALID_SECTIONS = new Set<string>([
   'relationships', 'version-history', 'asset-health',
 ]);
 
+const GALLERY_KIND: Partial<Record<AssetDirectorSectionId, 'wardrobe' | 'props' | 'materials'>> = {
+  wardrobe: 'wardrobe',
+  props: 'props',
+  materials: 'materials',
+};
+
 export default function AdminStudioAssetDirectorSectionPage() {
   const { sectionId } = useParams<{ sectionId: string }>();
   const navigate = useNavigate();
+  const { searchQuery, setSearchQuery, viewMode, setViewMode, favorites } = useAdminStudioAssetDirector();
+  const browser = useAdminStudioAssetDirectorBrowser();
 
   if (!sectionId || !VALID_SECTIONS.has(sectionId)) {
     return <Navigate to="/admin/studio/asset-director" replace />;
@@ -33,6 +47,13 @@ export default function AdminStudioAssetDirectorSectionPage() {
 
   const section = getAssetDirectorSectionById(sectionId);
   const cards = getAssetDirectorSectionCards(sectionId as AssetDirectorSectionId);
+  const galleryKind = GALLERY_KIND[sectionId as AssetDirectorSectionId];
+
+  const galleryItems = useMemo(() => {
+    if (!galleryKind) return [];
+    let list = filterGalleryItems(listAssetDirectorGalleryItems(galleryKind), browser.activeFilter, favorites);
+    return searchGalleryItems(list, searchQuery);
+  }, [galleryKind, browser.activeFilter, favorites, searchQuery]);
 
   if (!section) {
     return <Navigate to="/admin/studio/asset-director" replace />;
@@ -41,151 +62,121 @@ export default function AdminStudioAssetDirectorSectionPage() {
   return (
     <AdminStudioStageShell
       title={section.title}
-      subtitle={`ASSET DIRECTOR · ${section.description}`}
+      subtitle={section.description}
       breadcrumbParentLabel="ASSET DIRECTOR"
       breadcrumbParentPath="/admin/studio/asset-director"
       onBack={() => navigate('/admin/studio/asset-director')}
-      accentHex={section.accentHex}
+      navGroupId="visuals"
+      hideNavTabs
     >
+      {galleryKind ? (
+        <AssetDirectorGalleryBrowser
+          items={galleryItems}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          activeFilter={browser.activeFilter}
+          onFilterChange={browser.setActiveFilter}
+          selectedIds={browser.selectedIds}
+          onToggleSelect={browser.toggleSelect}
+          onItemClick={() => undefined}
+          onQuickPreview={(item) =>
+            browser.setQuickPreview({
+              id: item.id,
+              name: item.name,
+              previewSrc: item.previewSrc,
+              status: item.status,
+              resolution: '1920×1080',
+              version: item.version,
+              accentHex: item.accentHex,
+            })
+          }
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onBulkAction={browser.bulkAction}
+        />
+      ) : null}
+
       {sectionId === 'moodboards' ? (
-        <>
-          <AdminStudioSectionHeading>LIVING MOODBOARDS</AdminStudioSectionHeading>
-          <div className="space-y-3 mb-4">
-            {ASSET_DIRECTOR_MOODBOARDS.map((board) => (
-              <div key={board.id} className="border overflow-hidden" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, borderTop: `2px solid ${board.accentHex}` }}>
-                <div className="relative h-24">
-                  <img src={board.coverSrc} alt="" className="w-full h-full object-cover opacity-90" />
-                  <div className="absolute bottom-0 left-0 right-0 p-2" style={{ background: 'linear-gradient(transparent, rgba(255,255,255,0.95))' }}>
-                    <p className="text-[9px]" style={{ fontFamily: '"Covered By Your Grace", sans-serif', color: ADMIN_STUDIO_THEME.textPrimary }}>{board.title}</p>
-                  </div>
+        <AssetDirectorSectionBlock title="MOODBOARDS" subtitle="PINTEREST-STYLE MASONRY">
+          <div className="columns-2 gap-2">
+            {ASSET_DIRECTOR_MOODBOARDS.flatMap((board) =>
+              board.images.map((img) => (
+                <div key={img.id} className="break-inside-avoid mb-2 border overflow-hidden" style={{ borderWidth: '1px', borderColor: '#e5e7eb' }}>
+                  <img src={img.src} alt="" className="w-full object-cover" style={{ aspectRatio: img.id.endsWith('1') ? '3/4' : '1/1' }} />
+                  <p style={{ ...adCaptionStyle, fontSize: '8px', padding: '4px' }}>{board.title} · {img.caption}</p>
                 </div>
-                <div className="p-2" style={{ background: ADMIN_STUDIO_THEME.panelBg }}>
-                  <p className="text-[6px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.5 }}>{board.notes}</p>
-                  <p className="text-[5px] font-futura uppercase mt-1" style={{ fontWeight: 515, color: board.accentHex }}>{board.visualDirection}</p>
-                  <div className="grid grid-cols-3 gap-1 mt-2">
-                    {board.images.map((img) => (
-                      <div key={img.id} className="relative aspect-square overflow-hidden border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
-                        <img src={img.src} alt="" className="w-full h-full object-cover" />
-                        <p className="absolute bottom-0 left-0 right-0 text-[4px] font-futura uppercase px-0.5" style={{ fontWeight: 515, background: 'rgba(255,255,255,0.9)', color: ADMIN_STUDIO_THEME.textSecondary }}>{img.caption}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-[4px] font-futura uppercase mt-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-                    PROMPTS: {board.promptReferences.join(' · ')} · UPD {board.lastUpdated}
-                  </p>
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
-        </>
+        </AssetDirectorSectionBlock>
       ) : null}
 
       {sectionId === 'relationships' ? (
-        <>
-          <AdminStudioSectionHeading>ASSET RELATIONSHIPS</AdminStudioSectionHeading>
-          <p className="text-[6px] font-futura uppercase mb-3 -mt-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-            WHERE ASSETS ARE USED · WHAT CHANGES IMPACT
-          </p>
-          <div className="space-y-3 mb-4">
+        <AssetDirectorSectionBlock title="RELATIONSHIPS">
+          <div className="grid grid-cols-2 gap-2">
             {ASSET_DIRECTOR_RELATIONSHIPS.map((rel) => (
-              <div key={rel.assetId} className="p-3 border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, background: ADMIN_STUDIO_THEME.panelBg }}>
-                <p className="text-[8px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary }}>{rel.assetName}</p>
-                <p className="text-[5px] font-futura uppercase mt-0.5" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>{rel.category}</p>
-                <p className="text-[5px] font-futura uppercase mt-2" style={{ fontWeight: 515, color: '#2563EB' }}>USED BY:</p>
-                {rel.usedBy.map((u) => (
-                  <p key={u} className="text-[5px] font-futura uppercase ml-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary }}>• {u}</p>
-                ))}
-                <p className="text-[5px] font-futura uppercase mt-2" style={{ fontWeight: 515, color: '#EB1C24' }}>IMPACTS:</p>
-                {rel.impacts.map((i) => (
-                  <p key={i} className="text-[5px] font-futura uppercase ml-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>• {i}</p>
-                ))}
-              </div>
-            ))}
-          </div>
-        </>
-      ) : null}
-
-      {sectionId === 'version-history' ? (
-        <>
-          <AdminStudioSectionHeading>VERSION HISTORY</AdminStudioSectionHeading>
-          <div className="space-y-2 mb-4">
-            {ASSET_DIRECTOR_VERSION_HISTORY.map((entry) => (
-              <div key={entry.id} className="p-2 border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.8)' }}>
-                <div className="flex justify-between gap-2">
-                  <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary }}>{entry.assetName}</p>
-                  <p className="text-[6px] font-futura uppercase" style={{ fontWeight: 515, color: section.accentHex }}>{entry.version}</p>
+              <div key={rel.assetId} className="border bg-white overflow-hidden" style={{ borderWidth: '1.3px' }}>
+                <div className="p-2" style={{ background: AD_VISUAL.glass }}>
+                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: AD_VISUAL.red }}>{rel.assetName}</p>
+                  <p style={adCaptionStyle}>{rel.category}</p>
                 </div>
-                <p className="text-[5px] font-futura uppercase mt-1" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-                  {entry.previousVersion} → {entry.version} · {entry.changedBy} · {entry.changedAt}
-                </p>
-                <p className="text-[6px] font-futura uppercase mt-1" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary }}>{entry.changeSummary}</p>
-              </div>
-            ))}
-          </div>
-        </>
-      ) : null}
-
-      {sectionId === 'asset-health' ? (
-        <>
-          <AdminStudioSectionHeading>ASSET HEALTH</AdminStudioSectionHeading>
-          <p className="text-[6px] font-futura uppercase mb-3 -mt-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-            REFRESH QUEUE · QUALITY INDICATORS
-          </p>
-          <div className="space-y-2 mb-4">
-            {ASSET_DIRECTOR_HEALTH_QUEUE.map((entry) => (
-              <div key={entry.assetId} className="p-2 border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, borderLeft: `3px solid ${entry.priority === 'high' ? '#EB1C24' : entry.priority === 'medium' ? '#CA8A04' : '#6B7280'}`, background: ADMIN_STUDIO_THEME.panelBg }}>
-                <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary }}>{entry.assetName}</p>
-                <p className="text-[5px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>{entry.category} · {entry.priority.toUpperCase()} · {entry.lastChecked}</p>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {entry.indicators.map((ind) => (
-                    <span key={ind} className="px-1 py-0.5 text-[4px] font-futura uppercase border" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.9)' }}>
-                      {ASSET_HEALTH_LABELS[ind]}
-                    </span>
+                <div className="p-2 grid grid-cols-2 gap-1">
+                  {rel.usedBy.map((u) => (
+                    <div key={u} className="border p-1 text-center" style={{ borderColor: '#e5e7eb' }}>
+                      <p style={{ ...adCaptionStyle, fontSize: '8px' }}>{u}</p>
+                    </div>
                   ))}
                 </div>
               </div>
             ))}
           </div>
-        </>
+        </AssetDirectorSectionBlock>
       ) : null}
 
-      {sectionId === 'materials' ? (
-        <>
-          <AdminStudioSectionHeading>MATERIAL LIBRARY</AdminStudioSectionHeading>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            {ASSET_DIRECTOR_MATERIALS.map((mat: AssetDirectorMaterial) => (
-              <div key={mat.id} className="border overflow-hidden" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
-                <AdminStudioAssetDirectorCard asset={mat} />
-                <div className="p-2" style={{ background: ADMIN_STUDIO_THEME.panelBg }}>
-                  <p className="text-[5px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.45 }}>{mat.promptDescription}</p>
-                  <p className="text-[4px] font-futura uppercase mt-1" style={{ fontWeight: 515, color: '#16A34A' }}>RULES: {mat.usageRules}</p>
-                  <p className="text-[4px] font-futura uppercase mt-0.5" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>EXAMPLES: {mat.approvedExamples}</p>
-                  <p className="text-[4px] font-futura uppercase mt-0.5" style={{ fontWeight: 515, color: '#EB1C24' }}>AVOID: {mat.doNotUseNotes}</p>
+      {sectionId === 'version-history' ? (
+        <AssetDirectorSectionBlock title="VERSION TIMELINE">
+          {ASSET_DIRECTOR_VERSION_HISTORY.map((entry, i) => (
+            <div key={entry.id} className="flex flex-col items-center">
+              {i > 0 ? <span style={adCaptionStyle}>↓</span> : null}
+              <div className="w-full border p-2 mb-1 bg-white flex gap-2" style={{ borderWidth: '1.3px' }}>
+                <div className="w-14 h-10 bg-gray-100 flex-shrink-0" />
+                <div>
+                  <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px' }}>{entry.version}</p>
+                  <p style={{ ...adCaptionStyle, fontSize: '9px' }}>{entry.changedAt} · {entry.changeSummary}</p>
                 </div>
               </div>
-            ))}
-          </div>
-        </>
+            </div>
+          ))}
+        </AssetDirectorSectionBlock>
       ) : null}
 
-      {cards.length > 0 && sectionId !== 'materials' ? (
-        <>
-          <AdminStudioSectionHeading>{section.title}</AdminStudioSectionHeading>
-          <div className="grid grid-cols-2 gap-2 mb-4">
-            {cards.map((asset) => (
-              <div key={asset.id}>
-                <AdminStudioAssetDirectorCard asset={asset} />
-                {asset.promptNotes ? (
-                  <p className="text-[5px] font-futura uppercase mt-1 px-1" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.4 }}>
-                    {asset.promptNotes}
-                  </p>
-                ) : null}
+      {sectionId === 'asset-health' ? (
+        <AssetDirectorSectionBlock title="ASSET HEALTH">
+          <div className="grid grid-cols-2 gap-2">
+            {ASSET_DIRECTOR_HEALTH_QUEUE.map((entry) => (
+              <div key={entry.assetId} className="border overflow-hidden" style={{ borderWidth: '1.3px', borderLeft: `3px solid ${entry.priority === 'high' ? AD_VISUAL.red : '#CA8A04'}` }}>
+                <img src="/assets/NOIR/noir-thumb.png" alt="" className="w-full aspect-video object-cover opacity-90" />
+                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', padding: '6px' }}>{entry.assetName}</p>
+                <p style={{ ...adCaptionStyle, fontSize: '8px', padding: '0 6px 6px' }}>
+                  {entry.indicators.map((ind) => ASSET_HEALTH_LABELS[ind]).join(' · ')}
+                </p>
               </div>
             ))}
           </div>
-        </>
+        </AssetDirectorSectionBlock>
       ) : null}
 
+      {cards.length > 0 && !galleryKind && sectionId !== 'materials' ? (
+        <AssetDirectorSectionBlock title={section.title}>
+          <div className="grid grid-cols-2 gap-2">
+            {cards.map((asset) => (
+              <AdminStudioAssetDirectorCard key={asset.id} asset={asset} />
+            ))}
+          </div>
+        </AssetDirectorSectionBlock>
+      ) : null}
+
+      <AssetDirectorQuickPreviewModal item={browser.quickPreview} onClose={() => browser.setQuickPreview(null)} />
       <AdminStudioDisclaimerFooter />
     </AdminStudioStageShell>
   );

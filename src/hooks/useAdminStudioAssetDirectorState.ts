@@ -7,11 +7,14 @@ import {
   assemblePromptFromAssets,
   searchAssetDirectorIndex,
 } from '../utils/adminStudioAssetDirectorDemo';
+import type { AssetDirectorFilterId, AssetDirectorViewMode, VisualAssetItem } from '../utils/adminStudioAssetDirectorVisual';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 
 type AssetDirectorStore = {
   packAssetSelections?: Record<string, ContentPackAssetSelection>;
   statusOverrides?: Record<string, AssetDirectorStatus>;
+  viewMode?: AssetDirectorViewMode;
+  favorites?: string[];
 };
 
 function readStore(): AssetDirectorStore {
@@ -43,7 +46,72 @@ export function useAdminStudioAssetDirector() {
 
   const searchResults = useMemo(() => searchAssetDirectorIndex(searchQuery), [searchQuery]);
 
-  return { searchQuery, setSearchQuery, searchResults, version, bump };
+  const store = useMemo(() => {
+    void version;
+    return readStore();
+  }, [version]);
+
+  const viewMode: AssetDirectorViewMode = store.viewMode ?? 'gallery';
+  const favorites = store.favorites ?? [];
+
+  const setViewMode = useCallback(
+    (mode: AssetDirectorViewMode) => {
+      writeStore({ ...readStore(), viewMode: mode });
+      bump();
+    },
+    [bump]
+  );
+
+  const toggleFavorite = useCallback(
+    (assetId: string) => {
+      const s = readStore();
+      const favs = s.favorites ?? [];
+      const next = favs.includes(assetId) ? favs.filter((id) => id !== assetId) : [...favs, assetId];
+      writeStore({ ...s, favorites: next });
+      bump();
+    },
+    [bump]
+  );
+
+  return {
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    version,
+    bump,
+    viewMode,
+    setViewMode,
+    favorites,
+    toggleFavorite,
+  };
+}
+
+export function useAdminStudioAssetDirectorBrowser(initialFilter: AssetDirectorFilterId = 'all') {
+  const [activeFilter, setActiveFilter] = useState<AssetDirectorFilterId>(initialFilter);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [quickPreview, setQuickPreview] = useState<VisualAssetItem | null>(null);
+
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+  }, []);
+
+  const clearSelection = useCallback(() => setSelectedIds([]), []);
+
+  const bulkAction = useCallback((action: string) => {
+    void action;
+    setSelectedIds([]);
+  }, []);
+
+  return {
+    activeFilter,
+    setActiveFilter,
+    selectedIds,
+    toggleSelect,
+    clearSelection,
+    bulkAction,
+    quickPreview,
+    setQuickPreview,
+  };
 }
 
 export function useAdminStudioContentPackAssets(packId: string | undefined) {
