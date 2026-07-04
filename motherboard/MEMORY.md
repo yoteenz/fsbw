@@ -36181,3 +36181,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** supabase migration, api/vision/share, api/admin/vision-share, api/_lib/visionShareDb, visionShareApi, shareBootstrap, vision page, admin hook/workspace, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Fix Vision Share blank white screen (manifest bootstrap)
+
+**Issue:** User reported black then blank white screen on fsbw.vercel.app /vision links.
+
+**Root cause:** `bootstrapFrontalSlayerVisionEngine()` only ran via `workspaces/index.ts`, which admin pages import — **never on public app load**. Vision Share API succeeded but `getVisionModeById()` returned undefined → presentation session stuck: white LoadingScreen or active session with no cinematic/tour UI.
+
+**Fixes:**
+- Call `bootstrapFrontalSlayerVisionEngine()` in `main.tsx` before React render (all routes)
+- Also call from `launch.ts`, `shareBootstrap.ts`, and `VisionEngineContext.syncFlagsFromStorage`
+- `activateVisionShareLink` rolls back share session if launch fails
+- `VisionEngineContext` sets `phase: 'opening'` when session activates; safety timeout exits broken session after 2.5s
+- Vision Share page: 20s timeout + clearer error instead of infinite white LoadingScreen
+
+**Try after deploy:** `https://fsbw.vercel.app/vision/creative` — brief white loader → black opening cinematic → tour.
+
+**If still stuck:** clear site sessionStorage for fsbw.vercel.app (stale failed session) and hard refresh.
+
+**Changes:** main.tsx, launch.ts, shareBootstrap.ts, VisionEngineContext.tsx, vision/page.tsx, `motherboard/MEMORY.md`.
+

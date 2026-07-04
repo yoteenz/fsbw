@@ -13,9 +13,13 @@ import { flushQueuedProfilePatch } from './utils/profileSyncQueue'
 import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from './utils/syncFromApi'
 import { registerGlobalChunkLoadRecovery } from './utils/chunkLoadRecovery'
 import { preloadPsaNudgeAssets } from './utils/psaNudgeAssetPreload'
+import { bootstrapFrontalSlayerVisionEngine } from './workspaces/frontal-slayer/vision-engine'
 
 registerGlobalChunkLoadRecovery()
 void preloadPsaNudgeAssets()
+
+// Vision Engine workspace manifest — required before Vision Share / presentations on public routes.
+bootstrapFrontalSlayerVisionEngine()
 
 // Strip any legacy plaintext passwords from browser storage (one-time migration).
 sanitizeStoredAuthPasswords()

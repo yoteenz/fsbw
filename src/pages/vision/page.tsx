@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getVisionModeById } from '../../studio-os-core/vision-engine/store';
 import { bootstrapVisionShareSlug } from '../../studio-os-core/vision-engine/shareBootstrap';
+import { bootstrapFrontalSlayerVisionEngine } from '../../workspaces/frontal-slayer/vision-engine';
 import LoadingScreen from '../../components/base/LoadingScreen';
 
 /** Vision Share™ — server-persisted interactive presentation (works on any device). */
@@ -12,6 +13,7 @@ export default function VisionSharePage() {
   const [label, setLabel] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(true);
 
   const launch = useCallback(
     async (pwd?: string) => {
@@ -20,29 +22,41 @@ export default function VisionSharePage() {
         return;
       }
 
+      setLoading(true);
       setError('');
-      const result = await bootstrapVisionShareSlug(slug, pwd);
+      bootstrapFrontalSlayerVisionEngine();
 
-      switch (result.status) {
-        case 'ready': {
-          const mode = getVisionModeById(result.link.modeId, result.link.workspaceId);
-          const firstRoute = mode?.stops.find((s) => s.route)?.route ?? '/home/shop';
-          navigate(firstRoute, { replace: true });
-          break;
+      try {
+        const result = await bootstrapVisionShareSlug(slug, pwd);
+
+        switch (result.status) {
+          case 'ready': {
+            const mode = getVisionModeById(result.link.modeId, result.link.workspaceId);
+            const firstRoute = mode?.stops.find((s) => s.route)?.route ?? '/home/shop';
+            navigate(firstRoute, { replace: true });
+            break;
+          }
+          case 'password':
+            setLabel(result.label ?? 'Protected Vision');
+            setPasswordPrompt(true);
+            setLoading(false);
+            break;
+          case 'expired':
+            setError('This Vision link has expired.');
+            setLoading(false);
+            break;
+          case 'not_found':
+            setError('Vision link not found. Ask your host for a valid link.');
+            setLoading(false);
+            break;
+          case 'error':
+            setError(result.message || 'Could not open Vision link.');
+            setLoading(false);
+            break;
         }
-        case 'password':
-          setLabel(result.label ?? 'Protected Vision');
-          setPasswordPrompt(true);
-          break;
-        case 'expired':
-          setError('This Vision link has expired.');
-          break;
-        case 'not_found':
-          setError('Vision link not found. Ask your host for a valid link.');
-          break;
-        case 'error':
-          setError(result.message || 'Could not open Vision link.');
-          break;
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Could not open Vision link.');
+        setLoading(false);
       }
     },
     [navigate, slug]
@@ -51,6 +65,15 @@ export default function VisionSharePage() {
   useEffect(() => {
     void launch();
   }, [launch]);
+
+  useEffect(() => {
+    if (!loading || passwordPrompt || error) return;
+    const t = window.setTimeout(() => {
+      setError('Vision link is taking too long. Try refreshing or use a stable connection.');
+      setLoading(false);
+    }, 20000);
+    return () => window.clearTimeout(t);
+  }, [loading, passwordPrompt, error]);
 
   if (passwordPrompt) {
     return (
@@ -85,7 +108,7 @@ export default function VisionSharePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="min-h-screen flex items-center justify-center p-6 bg-white">
         <div className="max-w-md text-center">
           <p className="text-sm text-neutral-600 mb-4">{error}</p>
           <button
@@ -100,5 +123,9 @@ export default function VisionSharePage() {
     );
   }
 
-  return <LoadingScreen />;
+  if (loading) {
+    return <LoadingScreen autoHideAfterMs={18000} />;
+  }
+
+  return null;
 }

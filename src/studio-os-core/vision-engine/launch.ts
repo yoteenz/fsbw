@@ -8,6 +8,7 @@ import {
   setVisionSessionActive,
 } from './session';
 import { canLaunchVisionPresentation } from './access';
+import { bootstrapFrontalSlayerVisionEngine } from '../../workspaces/frontal-slayer/vision-engine';
 
 export type LaunchVisionOptions = {
   modeId: string;
@@ -20,6 +21,7 @@ export type LaunchVisionOptions = {
 /** Internal-only — activate a Vision Mode presentation session. */
 export function launchVisionPresentation(options: LaunchVisionOptions): boolean {
   if (!canLaunchVisionPresentation()) return false;
+  bootstrapFrontalSlayerVisionEngine();
   const mode = getVisionModeById(options.modeId, options.workspaceId);
   if (!mode) return false;
 

@@ -1,20 +1,31 @@
 import type { VisionShareLink } from './types';
 import { setVisionShareSessionActive } from './access';
 import { launchVisionPresentation } from './launch';
-import { setActiveVisionMode } from './session';
+import { clearActiveVisionMode, setActiveVisionMode } from './session';
 import { getVisionShareBySlug } from './store';
 import { resolveVisionShareFromApi } from '../../utils/visionShareApi';
+import { bootstrapFrontalSlayerVisionEngine } from '../../workspaces/frontal-slayer/vision-engine';
+
+function ensureVisionManifestReady(): void {
+  bootstrapFrontalSlayerVisionEngine();
+}
 
 /** Activate Vision Share from a resolved link record. */
 export function activateVisionShareLink(link: VisionShareLink): boolean {
+  ensureVisionManifestReady();
   setVisionShareSessionActive(true);
   setActiveVisionMode(link.modeId, link.workspaceId);
-  return launchVisionPresentation({
+  const ok = launchVisionPresentation({
     modeId: link.modeId,
     workspaceId: link.workspaceId,
     presenterMode: link.presenterMode,
     luxuryAudio: true,
   });
+  if (!ok) {
+    setVisionShareSessionActive(false);
+    clearActiveVisionMode();
+  }
+  return ok;
 }
 
 /** Resolve slug from API first, then localStorage fallback (dev/offline). */
@@ -41,6 +52,8 @@ export type VisionShareResolveState =
   | { status: 'error'; message: string };
 
 export async function bootstrapVisionShareSlug(slug: string, password?: string): Promise<VisionShareResolveState> {
+  ensureVisionManifestReady();
+
   const api = await resolveVisionShareFromApi(slug, password);
   if (api.ok) {
     const activated = activateVisionShareLink(api.link);

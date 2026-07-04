@@ -32,6 +32,7 @@ import {
 } from '../../../studio-os-core/vision-engine/constants';
 import { getVisionModeById, recordVisionAnalyticsEvent } from '../../../studio-os-core/vision-engine/store';
 import { stopVisionPresentation } from '../../../studio-os-core/vision-engine/launch';
+import { bootstrapFrontalSlayerVisionEngine } from '../../../workspaces/frontal-slayer/vision-engine';
 import type { VisionPhase, VisionStop, VisionTransitionKind, WorkspaceVisionManifest } from '../../../studio-os-core/vision-engine/types';
 
 type VisionEngineContextValue = {
@@ -145,6 +146,7 @@ export function VisionEngineProvider({ children }: { children: ReactNode }) {
 
     const active = getActiveVisionMode();
     if (active) {
+      bootstrapFrontalSlayerVisionEngine();
       const resolved = getVisionModeById(active.modeId, active.workspaceId);
       if (resolved) {
         setModeState({
@@ -160,6 +162,11 @@ export function VisionEngineProvider({ children }: { children: ReactNode }) {
           },
         });
       }
+    }
+
+    if (isVisionSessionActive()) {
+      setPhase((p) => (p === 'idle' || p === 'complete' ? 'opening' : p));
+      setAutoTourRunning(true);
     }
   }, []);
 
@@ -240,9 +247,28 @@ export function VisionEngineProvider({ children }: { children: ReactNode }) {
     if (isVisionSessionActive()) {
       document.documentElement.setAttribute('data-vision-engine', 'active');
       syncFlagsFromStorage();
-      setAutoTourRunning(true);
     }
-  }, [stops.length, syncFlagsFromStorage]);
+  }, [syncFlagsFromStorage]);
+
+  /** If session is active but mode never resolves, exit so the site is not stuck on a blank screen. */
+  useEffect(() => {
+    if (!presentationActive || mode) return;
+    const t = window.setTimeout(() => {
+      bootstrapFrontalSlayerVisionEngine();
+      const active = getActiveVisionMode();
+      const resolved = active ? getVisionModeById(active.modeId, active.workspaceId) : undefined;
+      if (resolved) {
+        syncFlagsFromStorage();
+        return;
+      }
+      stopVisionPresentation();
+      clearActiveVisionMode();
+      setPhase('idle');
+      setAutoTourRunning(false);
+      document.documentElement.removeAttribute('data-vision-engine');
+    }, 2500);
+    return () => window.clearTimeout(t);
+  }, [presentationActive, mode, syncFlagsFromStorage]);
 
   useEffect(() => {
     if (phase === 'running' || phase === 'mobile' || phase === 'paused') {
