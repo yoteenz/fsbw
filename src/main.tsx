@@ -14,12 +14,23 @@ import { buildMinimalUserFromSupabaseSession, applyMinimalUserToStorage } from '
 import { registerGlobalChunkLoadRecovery } from './utils/chunkLoadRecovery'
 import { preloadPsaNudgeAssets } from './utils/psaNudgeAssetPreload'
 import { bootstrapFrontalSlayerVisionEngine } from './workspaces/frontal-slayer/vision-engine'
+import { purgeStaleVisionSessionOnBoot } from './utils/visionSessionBootGuard'
+
+const AUTH_BOOT_TIMEOUT_MS = 6000
+
+function withAuthTimeout<T>(promise: Promise<T>): Promise<T | undefined> {
+  return Promise.race([
+    promise,
+    new Promise<undefined>((resolve) => window.setTimeout(() => resolve(undefined), AUTH_BOOT_TIMEOUT_MS)),
+  ])
+}
 
 registerGlobalChunkLoadRecovery()
 void preloadPsaNudgeAssets()
 
 // Vision Engine workspace manifest — required before Vision Share / presentations on public routes.
 bootstrapFrontalSlayerVisionEngine()
+purgeStaleVisionSessionOnBoot()
 
 // Strip any legacy plaintext passwords from browser storage (one-time migration).
 sanitizeStoredAuthPasswords()
@@ -53,29 +64,30 @@ async function bootstrapAuthBeforeRender(): Promise<void> {
     return;
   }
   try {
-    const { data: { session } } = await supabase.auth.getSession();
+    const sessionResult = await withAuthTimeout(supabase.auth.getSession())
+    if (!sessionResult) return
+    const { data: { session } } = sessionResult
     if (await signOutIfSessionEmailUnconfirmed(supabase, session)) {
-      return;
+      return
     }
     if (session?.user) {
-      const minimal = buildMinimalUserFromSupabaseSession(session.user);
-      applyMinimalUserToStorage(minimal);
-      // Pull profile/orders/cart/wishlist from API so users are not stuck on minimal local state after refresh.
+      const minimal = buildMinimalUserFromSupabaseSession(session.user)
+      applyMinimalUserToStorage(minimal)
       try {
-        const { syncAllFromApi } = await import('./utils/syncFromApi');
-        await syncAllFromApi();
+        const { syncAllFromApi } = await import('./utils/syncFromApi')
+        await withAuthTimeout(syncAllFromApi())
       } catch {
         // ignore
       }
-      window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }));
-      return;
+      window.dispatchEvent(new CustomEvent('signInStateChanged', { detail: 'true' }))
+      return
     }
   } catch {
     // ignore
   }
 
   try {
-    await tryServerSessionRestore();
+    await withAuthTimeout(tryServerSessionRestore())
   } catch {
     // ignore
   }
@@ -98,12 +110,16 @@ if (typeof window !== 'undefined') {
   });
 }
 
-bootstrapAuthBeforeRender().finally(() => {
-  ReactDOM.createRoot(document.getElementById('root')!).render(
+const rootEl = document.getElementById('root')
+if (rootEl) {
+  ReactDOM.createRoot(rootEl).render(
     <React.StrictMode>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </React.StrictMode>
   )
-})
+}
+
+// Auth restore runs after first paint — never block React mount (fixes blank white screen if getSession/sync hangs).
+void bootstrapAuthBeforeRender()

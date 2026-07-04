@@ -36260,3 +36260,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** AI Media Network core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Fix blank white screen on all routes (auth bootstrap + vision session)
+
+**Issue:** User reported all page routes still white/blank on fsbw.vercel.app including `/home/shop` and admin studio routes — separate from Vision Share-only fix earlier.
+
+**Root causes identified:**
+1. **`main.tsx` blocked React mount** — `bootstrapAuthBeforeRender()` awaited `supabase.auth.getSession()` and `syncAllFromApi()` / `tryServerSessionRestore()` before `ReactDOM.createRoot().render()`. If any call hung, `#root` stayed empty → permanent white screen.
+2. **Stale Vision Engine sessionStorage** — `studioOs_visionSession_v1` flag could leave `data-vision-engine="active"` and opening phase on unrelated routes after aborted tours.
+3. **Corrupted `tutorial-os.css`** — progress bar styles were mistakenly inside `@keyframes tutorial-os-fade-in` (duplicate/broken keyframes block).
+
+**Fixes shipped:**
+- Render React **immediately** on boot; auth restore runs in background via `void bootstrapAuthBeforeRender()` with 6s timeouts on getSession/sync/restore.
+- New `purgeStaleVisionSessionOnBoot()` in `src/utils/visionSessionBootGuard.ts` — clears broken vision session if mode cannot resolve after manifest bootstrap.
+- VisionEngineContext broken-mode timeout reduced 2500ms → 800ms; also clears `data-vision-record`.
+- Restored `.tutorial-os-progress-bar` + single valid `@keyframes tutorial-os-fade-in` in `tutorial-os.css`.
+
+**Verify after deploy:** `https://fsbw.vercel.app/home/shop` should paint shop UI without waiting on auth; clear sessionStorage for fsbw.vercel.app if a stale vision session persists locally.
+
+**Changes:** `main.tsx`, `visionSessionBootGuard.ts`, `VisionEngineContext.tsx`, `tutorial-os.css`, `motherboard/MEMORY.md`.
+

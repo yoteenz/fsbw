@@ -266,7 +266,8 @@ export function VisionEngineProvider({ children }: { children: ReactNode }) {
       setPhase('idle');
       setAutoTourRunning(false);
       document.documentElement.removeAttribute('data-vision-engine');
-    }, 2500);
+      document.documentElement.removeAttribute('data-vision-record');
+    }, 800);
     return () => window.clearTimeout(t);
   }, [presentationActive, mode, syncFlagsFromStorage]);
 
