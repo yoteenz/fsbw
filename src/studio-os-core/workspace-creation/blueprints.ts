@@ -9,6 +9,7 @@ const CORE_PACKAGES = [
   'knowledge-graph',
   'growth-network',
   'labs',
+  'ai-media-network',
   'interactive-manual',
   'onboarding-tutorial',
   'prompt-library',

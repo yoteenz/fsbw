@@ -23,6 +23,7 @@ export type StudioOsCoreModuleId =
   | 'audience-brain'
   | 'growth-network'
   | 'labs'
+  | 'ai-media-network'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -150,6 +151,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO OS LABS',
     description: 'Research & experimentation — every published asset becomes an experiment; learning engine.',
     routeSegment: 'labs',
+  },
+  {
+    id: 'ai-media-network',
+    label: 'AI MEDIA NETWORK',
+    description: 'Digital media network — programming, pillars, calendar, monetization; AI Media pilot.',
+    routeSegment: 'ai-media-network',
   },
   {
     id: 'vision-engine',

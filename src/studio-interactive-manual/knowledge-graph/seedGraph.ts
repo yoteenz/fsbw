@@ -3,6 +3,7 @@ import {
   adminStudioBrandAssetsAssetFactoryPath,
   adminStudioGrowthNetworkPath,
   adminStudioLabsPath,
+  adminStudioAiMediaNetworkPath,
   adminStudioVisionEnginePath,
   adminStudioMemoryBiblePath,
   adminStudioPhotographyBiblePath,
@@ -298,6 +299,37 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     status: 'live',
     searchKeywords: ['learning engine', 'experiment insights', 'institutional memory'],
   },
+  {
+    id: 'node-ai-media-network',
+    name: 'AI MEDIA NETWORK',
+    type: 'module',
+    description:
+      'Digital media network — Company DNA, 5 evergreen pillars, 5 recurring shows (Money Monday–Future Friday), programming calendar, cross-platform publishing, monetization center.',
+    purpose: 'Transform AI Media from content workspace into structured TV network + AI publishing company.',
+    route: adminStudioAiMediaNetworkPath(),
+    moduleId: 'ai-media-network',
+    relatedManualChapter: 'CHAPTER · AI MEDIA NETWORK · DIGITAL MEDIA COMPANY',
+    versionIntroduced: 'Milestone 29',
+    status: 'live',
+    searchKeywords: [
+      'ai media network',
+      'programming network',
+      'money monday',
+      'content pillars',
+      'network calendar',
+    ],
+  },
+  {
+    id: 'node-programming-network',
+    name: 'PROGRAMMING NETWORK',
+    type: 'feature',
+    description: 'Recurring shows with own branding, thumbnail style, intro/outro, host, Creative DNA, and Knowledge Graph nodes.',
+    purpose: 'Replace random uploads with purposeful network programming.',
+    moduleId: 'ai-media-network',
+    versionIntroduced: 'Milestone 29',
+    status: 'live',
+    searchKeywords: ['programming network', 'money monday', 'truth tuesday', 'recurring shows'],
+  },
 ];
 
 export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
@@ -350,6 +382,11 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-distribution-labs', fromId: 'publishing-queue', toId: 'node-experiment-engine', type: 'feeds', label: 'EVERY PUBLISH' },
   { id: 'e-audience-labs', fromId: 'audience-brain', toId: 'node-studio-os-labs', type: 'feeds', label: 'PERFORMANCE SIGNALS' },
   { id: 'e-experiment-learning', fromId: 'node-experiment-engine', toId: 'node-learning-engine', type: 'feeds', label: 'COMPLETED EXPERIMENTS' },
+  { id: 'e-ai-media-network', fromId: 'node-ai-media-pilot', toId: 'node-ai-media-network', type: 'contains', label: 'NETWORK OPERATING MODEL' },
+  { id: 'e-network-labs', fromId: 'node-ai-media-network', toId: 'node-studio-os-labs', type: 'feeds', label: 'EVERY EPISODE = EXPERIMENT' },
+  { id: 'e-network-programming', fromId: 'node-ai-media-network', toId: 'node-programming-network', type: 'contains' },
+  { id: 'e-network-memory', fromId: 'node-ai-media-network', toId: 'node-memory-bible', type: 'inherits-from', label: 'COMPANY DNA' },
+  { id: 'e-network-knowledge', fromId: 'node-ai-media-network', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
 ];
 
 export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
@@ -453,6 +490,20 @@ export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
       'node-ai-media-pilot',
     ],
     moduleIds: ['labs', 'memory-bible', 'knowledge-hub', 'distribution-network', 'audience-brain'],
+  },
+  {
+    id: 'wf-ai-media-network',
+    title: 'AI MEDIA NETWORK LIFECYCLE',
+    subtitle: 'Company DNA → Pillars → Programming → Calendar → Publish → Labs → Monetization → Memory',
+    nodeIds: [
+      'node-ai-media-pilot',
+      'node-ai-media-network',
+      'node-programming-network',
+      'node-experiment-engine',
+      'node-studio-os-labs',
+      'node-memory-bible',
+    ],
+    moduleIds: ['ai-media-network', 'labs', 'memory-bible', 'knowledge-hub', 'distribution-network'],
   },
 ];
 

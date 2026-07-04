@@ -14,6 +14,7 @@ import {
 import { buildDemoGrowthStorePatch, OPPORTUNITY_CATALOG } from '../utils/adminStudioGrowthNetworkDemo';
 import { readGrowthNetworkStore, writeGrowthNetworkStore } from '../studio-os-core/growth-network/store';
 import { bootstrapAiMediaLabs } from './ai-media/labs/bootstrap';
+import { bootstrapAiMediaNetwork } from './ai-media/network/bootstrap';
 import { bootstrapFrontalSlayerVisionEngine } from './frontal-slayer/vision-engine';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
@@ -34,6 +35,7 @@ function bootstrapGrowthNetworkPlatform(): void {
 
 bootstrapGrowthNetworkPlatform();
 bootstrapAiMediaLabs();
+bootstrapAiMediaNetwork();
 bootstrapFrontalSlayerVisionEngine();
 
 const STATIC_WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {

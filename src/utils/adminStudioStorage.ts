@@ -46,6 +46,7 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   audienceBrain: 'adminStudioAudienceBrain_v1',
   growthNetwork: 'adminStudioGrowthNetwork_v1',
   labs: 'adminStudioLabs_v1',
+  aiMediaNetwork: 'adminStudioAiMediaNetwork_v1',
   executiveCommandCenter: 'adminStudioExecutiveCommandCenter_v1',
   legacySystem: 'adminStudioLegacySystem_v1',
   assetDirector: 'adminStudioAssetDirector_v1',

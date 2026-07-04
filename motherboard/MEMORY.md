@@ -36231,3 +36231,32 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** New labs core + admin UI + AI Media adapter + platform wiring + docs + `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 29: AI Media Network v1.0
+
+**Context:** User requested Milestone 29 — transform AI Media from a content workspace into a fully structured digital media network (TV network + AI publishing company). Constraints: continue building Studio OS, no platform redesign, no Frontal Slayer changes.
+
+**Topics covered:** Full chat = Milestone 29 implementation after Milestone 28 (Labs) shipped in prior turn.
+
+**Decisions / outcomes:**
+- **AI Media Network** at `/admin/studio/ai-media-network` — 9-tab admin dashboard
+- **Company DNA:** mission, 6 brand values (clarity, credibility, curiosity, consistency, continuous experimentation, audience-first education), permanent Studio OS pilot role
+- **5 evergreen pillars:** Money, Health, Psychology, AI & Technology, Consumer Intelligence — each with strategy + topic lists
+- **5 recurring shows:** Money Monday, Truth Tuesday, Workflow Wednesday, Smart Living Thursday, Future Friday — each with branding, thumbnail style, intro/outro, host, Creative DNA ref, KG node
+- **Series management:** episodes, season, cadence, analytics, recommendations per show
+- **Network calendar:** daily/weekly slots, season plans, special campaigns
+- **Cross-platform:** Instagram, TikTok, YouTube Shorts, Facebook, Threads, X, Pinterest packages per episode
+- **Monetization center:** revenue by series, pillar, platform, channel (affiliate, sponsorship, digital products, licensing, platform payouts)
+- **Labs integration:** `publishEpisodeToLabs()` bridges published episodes to Experiment Engine; learnings feed Creative DNA, KG, Memory Bible, hook/thumbnail libraries, recommendation engine
+
+**Architecture:**
+- Core: `src/studio-os-core/ai-media-network/`
+- Seeds: `src/workspaces/ai-media/network/bootstrap.ts` — 5 demo episodes linked to existing Labs experiment IDs
+- Wired: modules, routes, nav, App, services, KG (`node-ai-media-network`, `node-programming-network`), Memory Bible, moduleEnrichments, promotion `promo-ai-media-network-v1`, workspace dashboard tabs
+- Docs: `docs/studio-os/ai-media-network.md`
+
+**Conventions:** AI Media must feel like real media company — every show has purpose, every pillar has strategy, every episode teaches Studio OS via Labs. localStorage demo v1 like Labs/Growth Network.
+
+**Changes:** AI Media Network core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
+

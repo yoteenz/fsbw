@@ -41,6 +41,7 @@ export type AdminStudioSectionId =
   | 'audience-brain'
   | 'growth-network'
   | 'labs'
+  | 'ai-media-network'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'

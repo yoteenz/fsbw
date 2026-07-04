@@ -206,6 +206,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-studio-os-labs', 'node-experiment-engine', 'node-learning-engine'],
     },
     {
+      id: 'name-ai-media-network',
+      officialName: 'AI Media Network',
+      deprecatedNames: ['ai media channel', 'content account'],
+      usageNotes:
+        'Digital media network operating model for AI Media workspace — TV network + AI publishing company. 5 pillars, 5 recurring shows, network calendar. UI: AI MEDIA NETWORK.',
+      relatedModules: ['ai-media-network'],
+      relatedGraphNodeIds: ['node-ai-media-network', 'node-programming-network'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -380,6 +389,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-studio-os-labs', 'node-experiment-engine', 'node-learning-engine'],
       relatedManualChapter: 'CHAPTER · STUDIO OS LABS · EXPERIMENT ENGINE',
+    },
+    {
+      id: 'dec-ai-media-network-v1',
+      title: 'Launch AI Media Network v1.0',
+      date: '2026-07-04',
+      workspace: 'ai-media',
+      relatedModule: 'ai-media-network',
+      decision:
+        'AI Media operates as a structured digital media network — Company DNA, 5 evergreen pillars, 5 recurring shows (Money Monday through Future Friday), network programming calendar, cross-platform publishing, monetization center, and Labs integration on every published episode.',
+      reason:
+        'AI Media must feel like a real media company, not random AI video uploads. Every show has purpose; every pillar has strategy; every episode teaches Studio OS via Labs.',
+      alternativesConsidered: ['Unstructured content workspace only', 'External CMS for scheduling', 'Analytics without network programming model'],
+      outcome: 'AI Media Network at /admin/studio/ai-media-network — core in src/studio-os-core/ai-media-network/, seeds in workspaces/ai-media/network/.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-ai-media-network', 'node-programming-network', 'node-ai-media-pilot'],
+      relatedManualChapter: 'CHAPTER · AI MEDIA NETWORK · DIGITAL MEDIA COMPANY',
     },
   ],
   aiPreferences: {

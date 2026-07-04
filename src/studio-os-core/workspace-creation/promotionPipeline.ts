@@ -73,6 +73,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
       updatedAt: now,
     },
+    {
+      id: 'promo-ai-media-network-v1',
+      featureName: 'AI Media Network v1.0',
+      description: 'Digital media network — Company DNA, pillars, programming, calendar, monetization, Labs integration.',
+      currentStage: 'deploy-pilot',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
   ];
 }
 

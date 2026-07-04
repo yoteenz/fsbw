@@ -517,6 +517,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'ai-media-network',
+    title: 'AI MEDIA NETWORK',
+    purpose: 'Digital media network — 5 pillars, 5 shows, programming calendar, monetization, Labs integration.',
+    route: p('ai-media-network'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '9 TABS',
+    ctaLabel: 'OPEN NETWORK',
+    moduleKey: 'ai-media-network',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

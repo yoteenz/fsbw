@@ -131,6 +131,11 @@ export function WorkspaceDashboard({
                 OPEN STUDIO OS LABS (PLATFORM)
               </button>
             ) : null}
+            {activeTab === 'ai-media-network' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/ai-media-network')}>
+                OPEN AI MEDIA NETWORK
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

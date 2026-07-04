@@ -57,6 +57,7 @@ export function buildWorkspaceFromDraft(input: CreateWorkspaceInput): WorkspaceR
     ...input.enabledOptionalModules.filter((m) => blueprint.optionalModules.includes(m)),
     'growth-network',
     'labs',
+    'ai-media-network',
   ];
 
   return {

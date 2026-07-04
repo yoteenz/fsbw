@@ -370,6 +370,22 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
     ],
     relatedModuleIds: ['memory-bible', 'knowledge-hub', 'distribution-network', 'audience-brain', 'content-brain'],
   },
+  'ai-media-network': {
+    architecture:
+      'Company DNA → 5 pillars → 5 recurring shows (Mon–Fri) → Series management → Network calendar → Cross-platform packages → Monetization center → Labs experiment on publish → Memory Bible + KG feedback loop.',
+    versionIntroduced: 'Milestone 29',
+    workflowNodes: [
+      'COMPANY DNA',
+      'CONTENT PILLARS',
+      'PROGRAMMING NETWORK',
+      'SERIES MANAGEMENT',
+      'CONTENT CALENDAR',
+      'CROSS-PLATFORM',
+      'MONETIZATION',
+      'LABS INTEGRATION',
+    ],
+    relatedModuleIds: ['labs', 'memory-bible', 'knowledge-hub', 'distribution-network', 'content-brain'],
+  },
   'content-packs': {
     relatedModuleIds: ['production-builder', 'publishing-queue', 'lounge-tv'],
   },
