@@ -34728,3 +34728,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Routes: `channel/:channelId` before `:distributionId`. Separate from legacy `adminStudioDistributionDemo.ts` (content-pack targets) and `distributionStudioService` stub.
 
+---
+
+## 2026-07-04 — THE STUDIO Audience Brain milestone
+
+**Context:** Continuation of THE STUDIO — all prior milestones frozen. User requested **AUDIENCE BRAIN** module — subtitle *"Learning from every interaction."* Customer intelligence & learning system — feedback engine for entire Frontal Slayer ecosystem. Unlike traditional analytics: continuously learn from content, products, memberships, emails, PSA; transform insights into actionable recommendations. Aggregated privacy-first; never fabricate certainty; executive intelligence center aesthetic.
+
+**Topics covered (full chat arc):**
+- Prior: Distribution Network (`f1f2b655`), AI Production Engine, Production Pipeline, etc. — unchanged.
+- **Audience Brain** (`/admin/studio/audience-brain`): 10 dashboard cards (Overview, Member Behavior, Content/Product Insights, Journey, PSA, Community, Conversion, Predictions, Recommendations); audience profile metrics (8 aggregated widgets); customer journey funnel (10 stages with continue/drop-off %); top recommendations + predictions preview; feedback loop diagram into Brand Brain / Creative Director / Intelligence Engine / Show Bible / Content Planning / Production / Distribution.
+- **Intelligence Center** (`/admin/studio/audience-brain/intelligence`): 12 tabs — Overview, Content, Product, Membership, PSA, Community, Journey, Conversion, Predictions (confidence bars), Recommendations (evidence + confidence), Feedback Loop, Privacy (aggregation mode, consent architecture). All insight fields editable via localStorage.
+- **Data model** `adminStudioAudienceBrainDemo.ts`: metrics, journey steps, 8 recommendations, 6 predictions, insight record with all intelligence fields.
+- **Service** `audienceBrainStudioService`: `getSnapshot`, `getCreativeFeed`, `getRecommendation` — registered in `STUDIO_SERVICE_REGISTRY`.
+
+**Decisions / outcomes:** No PII in dashboards; confidence scores on all predictions/recommendations; connectors not connected (demo data). Cross-links: ← Distribution Network, Intelligence Engine →. Build verified.
+
+**Changes:** `adminStudioAudienceBrainDemo.ts`, `useAdminStudioAudienceBrainState.ts`, `services/studio/audienceBrain/service.ts`, UI components, `audience-brain/page.tsx`, `audience-brain/intelligence/page.tsx`, routes, storage, `App.tsx`, `STUDIO_SERVICE_REGISTRY`, `motherboard/CORE.md`.
+
+**Conventions:** Route `audience-brain/intelligence` before `audience-brain`. Audience Brain feeds future Content Packs via feedback loop — separate from Intelligence Engine (external signals) but complementary.
+

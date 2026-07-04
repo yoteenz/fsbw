@@ -24,6 +24,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'production'
   | 'ai-production-engine'
   | 'distribution-network'
+  | 'audience-brain'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -45,6 +46,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'production',
   'ai-production-engine',
   'distribution-network',
+  'audience-brain',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -82,6 +84,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   distributionNetwork: 'studio/distribution-network',
   distributionNetworkChannel: 'studio/distribution-network/channel/:channelId',
   distributionNetworkDetail: 'studio/distribution-network/:distributionId',
+  audienceBrain: 'studio/audience-brain',
+  audienceBrainIntelligence: 'studio/audience-brain/intelligence',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -131,4 +135,8 @@ export function adminStudioDistributionNetworkPath(distributionId: string): stri
 
 export function adminStudioDistributionChannelPath(channelId: string): string {
   return `${ADMIN_STUDIO_BASE_PATH}/distribution-network/channel/${channelId}`;
+}
+
+export function adminStudioAudienceBrainPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/audience-brain`;
 }

@@ -62,6 +62,9 @@ export type { AiProductionEngineSnapshot, AiProductionRunReadiness } from './aiP
 export { distributionNetworkStudioService, DISTRIBUTION_INHERITANCE_CHAIN } from './distributionNetwork/service';
 export type { DistributionNetworkSnapshot, DistributionPackValidation } from './distributionNetwork/service';
 
+export { audienceBrainStudioService, AUDIENCE_FEEDBACK_LOOP_TARGETS, AUDIENCE_INHERITANCE_CHAIN, confidenceLabel } from './audienceBrain/service';
+export type { AudienceBrainSnapshot, AudienceBrainFeed } from './audienceBrain/service';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -80,6 +83,7 @@ import { castingStudioService } from './casting/service';
 import { productionStudioService } from './production/service';
 import { aiProductionEngineStudioService } from './aiProductionEngine/service';
 import { distributionNetworkStudioService } from './distributionNetwork/service';
+import { audienceBrainStudioService } from './audienceBrain/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -93,6 +97,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   productionStudioService,
   aiProductionEngineStudioService,
   distributionNetworkStudioService,
+  audienceBrainStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,

@@ -37,7 +37,8 @@ export type AdminStudioSectionId =
   | 'casting'
   | 'production'
   | 'ai-production-engine'
-  | 'distribution-network';
+  | 'distribution-network'
+  | 'audience-brain';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;
