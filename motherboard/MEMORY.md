@@ -36094,3 +36094,28 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** growth-network/*, GrowthNetworkWorkspace, page, hook, demo utils, service, modules/nav/routes/App, workspaces bootstrap, seedGraph, moduleEnrichments, seedV1, promotion pipeline, workspace dashboard link, studio-os registry entry, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Frontal Slayer Guided Tour Experience (presentation layer)
+
+**Context (full chat):** After Milestone 27 Growth Network shipped, user requested a permanent **Guided Tour Experience** inside Frontal Slayer — premium presentation layer (Apple keynote / luxury hotel preview quality) for designers, collaborators, investors, agencies, press, and partners. **Not a redesign** — overlay only; do not change existing customer UX.
+
+**Guided Tour module (`src/workspaces/frontal-slayer/guided-tour/`):**
+- **Modes:** ✨ Guided Tour · 🎨 Creative Partner Tour (presenter panel + voiceover scripts) · 🎥 Record Walkthrough · 🎵 Luxury Audio (muted by default, Web Audio ambient pad)
+- **Auto tour:** 28 stops · 6–8s dwell · Previous / Pause / Resume / Next / Restart / Exit
+- **Opening cinematic:** fade from black · logo reveal · ambient drift → homepage
+- **Desktop path:** homepage → mansion floors (Concierge, Gallery, Lobby, Penthouse showroom/analysis/boutique) → Build-A-Wig atelier steps → PSA & Founder suites → TV Lounge → Members → Rewards
+- **Mobile path:** `/mobile/*` showroom, BAW, concierge
+- **Ending:** logo · **LUXURY WITHOUT LIMITS.** · 5s hold · fade out
+- **Cinematic transitions:** elevator (tower nav), bloom, glass-wipe, mobile-reveal
+- **Hotspots:** soft pulse on BAW, Members, Concierge, etc.
+- **Presentation flags:** hides debug panels, editor tools, tutorial overlays; nav shield during auto tour; `html[data-guided-tour="active"]` CSS
+
+**Activation:** `?guidedTour=<VITE_GUIDED_TOUR_TOKEN>` · `?guidedTour=record` · bottom-right launcher on preview/token env · `bootstrapGuidedTourMode()` in `main.tsx`
+
+**Integration:** `GuidedTourProvider` inside `DesktopTowerNavProvider` in `App.tsx`; `GuidedTourDebugGate` wraps mansion debug & panel debug; `guided-tour.css` global presentation styles.
+
+**Docs:** `docs/frontal-slayer/guided-tour-experience.md`
+
+**Changes:** `workspaces/frontal-slayer/guided-tour/*`, App.tsx, main.tsx, docs, `motherboard/MEMORY.md`.
+

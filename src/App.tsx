@@ -55,6 +55,9 @@ import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTower
 import { MobileMansionRoutes } from './routes/MobileMansionRoutes';
 import { BAW_TUTORIAL_ROUTE, normalizeBawViewPathname } from './constants/bawTutorialConfig';
 import { TutorialOsProvider, TutorialOsPsaGate } from './tutorial-os';
+import { GuidedTourProvider } from './workspaces/frontal-slayer/guided-tour';
+import { GuidedTourDebugGate } from './workspaces/frontal-slayer/guided-tour/GuidedTourDebugGate';
+import './workspaces/frontal-slayer/guided-tour/guided-tour.css';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -269,15 +272,19 @@ function DesktopRoutesLayout() {
             <DesktopRouteShell>
               <Outlet />
             </DesktopRouteShell>
-            <DesktopRoomTitlePlacementEditorPanel />
-            <DesktopLoungeTvFrameEditorPanel />
-            <DesktopPsaSuiteFrameEditorPanel />
-            <PerspectivePanelDebugToolbar />
+            <GuidedTourDebugGate>
+              <DesktopRoomTitlePlacementEditorPanel />
+              <DesktopLoungeTvFrameEditorPanel />
+              <DesktopPsaSuiteFrameEditorPanel />
+              <PerspectivePanelDebugToolbar />
+            </GuidedTourDebugGate>
           </DesktopPsaSuiteFrameEditorProvider>
         </DesktopLoungeTvFrameEditorProvider>
       </DesktopRoomTitlePlacementEditorProvider>
     </PerspectivePanelDebugProvider>
-    <MansionDebugControlPanel />
+    <GuidedTourDebugGate>
+      <MansionDebugControlPanel />
+    </GuidedTourDebugGate>
     </MansionDebugProvider>
   );
 }
@@ -569,6 +576,7 @@ function App() {
   return (
     <ErrorBoundary>
       <DesktopTowerNavProvider>
+      <GuidedTourProvider>
       <TutorialOsProvider>
       {!hidePreviewChrome ? <CreativePreviewBanner /> : null}
       {!hidePreviewChrome ? <MembershipRouteSync /> : null}
@@ -1675,6 +1683,7 @@ function App() {
         } />
       </DebugModeShell>
       </TutorialOsProvider>
+      </GuidedTourProvider>
       </DesktopTowerNavProvider>
     </ErrorBoundary>
   );
