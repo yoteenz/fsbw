@@ -39,6 +39,9 @@
     },
     "api/admin/generate-email-hero.ts": {
       "maxDuration": 120
+    },
+    "api/admin/studio-generate-asset.ts": {
+      "maxDuration": 120
     }
   },
   "crons": [

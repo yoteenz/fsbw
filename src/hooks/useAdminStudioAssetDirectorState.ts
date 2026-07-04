@@ -70,6 +70,16 @@ export function setGeneratedVersionRecord(
   });
 }
 
+function formatGeneratedVersionSubtitle(error?: string): string {
+  if (!error) return 'GENERATION FAILED';
+  if (/^forbidden$/i.test(error.trim())) return 'ADMIN ACCESS DENIED';
+  if (/session expired|sign in required|missing_token|invalid_token/i.test(error)) {
+    return 'SIGN IN REQUIRED';
+  }
+  if (/admin access denied|not_admin/i.test(error)) return 'ADMIN ACCESS DENIED';
+  return error;
+}
+
 export function mergeStudioBundleWithGeneratedVersions(bundle: StudioVisualBundle, studioId: string): StudioVisualBundle {
   const store = readStore();
   const generated = store.generatedVersions ?? {};
@@ -81,7 +91,14 @@ export function mergeStudioBundleWithGeneratedVersions(bundle: StudioVisualBundl
       ...v,
       previewSrc: gen.previewSrc || v.previewSrc,
       status: gen.status === 'generating' ? ('needs-review' as const) : gen.status === 'failed' ? ('draft' as const) : ('approved' as const),
-      subtitle: gen.status === 'generating' ? 'GENERATING…' : gen.status === 'failed' ? gen.error ?? 'GENERATION FAILED' : gen.source === 'replace' ? 'REPLACED' : 'FACTORY GENERATED',
+      subtitle:
+        gen.status === 'generating'
+          ? 'GENERATING…'
+          : gen.status === 'failed'
+            ? formatGeneratedVersionSubtitle(gen.error)
+            : gen.source === 'replace'
+              ? 'REPLACED'
+              : 'FACTORY GENERATED',
     };
   });
   const heroGen = versions.find((v) => v.name === 'DAY' && generated[versionStorageKey(studioId, v.id)]?.status === 'complete');

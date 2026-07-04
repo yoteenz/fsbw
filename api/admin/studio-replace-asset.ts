@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireAdmin } from '../_lib/adminAuth.js';
+import { resolveAdminAuth } from '../_lib/adminAuth.js';
 import { parseStudioImageDataUrl, uploadStudioAssetBytes } from '../_lib/studioAssetGeneration.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
@@ -28,8 +28,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const admin = await requireAdmin(req);
-  if (!admin) return res.status(403).json({ error: 'Forbidden' });
+  const auth = await resolveAdminAuth(req);
+  if (!auth.ok) {
+    const { status, error, code } = auth.failure;
+    return res.status(status).json({ error, code });
+  }
 
   const body = parseBody(req);
   const studioId = String(body?.studioId || '').trim();

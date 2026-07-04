@@ -136,6 +136,46 @@ export async function getAccessToken(): Promise<string | null> {
   return null;
 }
 
+/** One-shot Supabase session refresh before admin API calls (mirrors PSA retry pattern). */
+export async function refreshSupabaseSessionOnce(): Promise<void> {
+  try {
+    const supabase = (await import('./supabase')).getSupabase();
+    if (!supabase) return;
+    await hydrateSupabaseSessionFromStorageIfNeeded(supabase);
+    await supabase.auth.refreshSession();
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Returns a Bearer token, refreshing the Supabase session once if the first read is empty. */
+export async function ensureApiAccessToken(): Promise<string | null> {
+  let token = await getAccessToken();
+  if (!token) {
+    await refreshSupabaseSessionOnce();
+    token = await getAccessToken();
+  }
+  return token;
+}
+
+/** Plain-language admin API auth errors for studio generation and similar flows. */
+export function adminApiAuthErrorMessage(status: number, serverError?: string, code?: string): string {
+  if (status === 401 || code === 'MISSING_TOKEN' || code === 'INVALID_TOKEN') {
+    return 'SESSION EXPIRED — sign out and sign in with your admin Supabase email, then try GENERATE again';
+  }
+  if (status === 403 || code === 'NOT_ADMIN') {
+    return 'ADMIN ACCESS DENIED — your Supabase email must be listed in ADMIN_EMAILS on Vercel (and VITE_ADMIN_EMAILS for the app)';
+  }
+  if (status === 503 || code === 'SUPABASE_NOT_CONFIGURED') {
+    return 'SERVER NOT CONFIGURED — Supabase env vars missing on API';
+  }
+  const trimmed = (serverError || '').trim();
+  if (/^forbidden$/i.test(trimmed)) {
+    return 'ADMIN ACCESS DENIED — sign in with an admin Supabase email on this device';
+  }
+  return trimmed || `Request failed (${status})`;
+}
+
 /** Options for apiFetch; body can be any JSON-serializable value (not limited to RequestInit.body). */
 type ApiFetchOptions = Omit<RequestInit, 'body'> & { body?: unknown };
 

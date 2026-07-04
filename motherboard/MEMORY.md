@@ -35310,3 +35310,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Studio admin generation uses server Fal (not client); requires `FAL_KEY` + Supabase on Vercel; Asset Director is delivery layer — manufacturing runs through Asset Factory job records even for single-variant GENERATE from a tile.
 
+---
+
+## 2026-07-04 — Asset Director GENERATE 403 Forbidden fix
+
+**Context:** User reported live pipeline did not work — tapping GENERATE on DAY version showed **`GENERATION FAILED · DAY · Forbidden`** toast (live pipeline footer) and DAY tile subtitle **`FORBIDDEN`** instead of demo notice.
+
+**Topics covered (full chat arc):** StudioOS core extraction; Asset Director VERSIONS preview fix; demo toasts replaced with full Fal → Supabase → Asset Director pipeline; user confirmed “yes i want the full pipeline”; after deploy GENERATE failed with **403 Forbidden** on mobile (`fsbw.vercel.app`).
+
+**Decisions / outcomes:**
+- **Root cause:** `POST /api/admin/studio-generate-asset` returned generic **`{ error: 'Forbidden' }`** whenever `requireAdmin` failed — same 403 for **missing/expired Supabase JWT** and for **email not in `ADMIN_EMAILS`**. Client page gate (`canAccessAdminPages`) uses localStorage + `VITE_ADMIN_EMAILS`, so user could reach Asset Director while API rejected the call (known pattern from email templates catalog).
+- **Server:** Added **`resolveAdminAuth`** in `api/_lib/adminAuth.ts` — **401** + `MISSING_TOKEN` / `INVALID_TOKEN` vs **403** + `NOT_ADMIN`; studio generate/replace endpoints return `{ error, code }`.
+- **Client:** **`ensureApiAccessToken`** + **`refreshSupabaseSessionOnce`** in `src/utils/api.ts` (PSA-style retry before admin API); **`adminApiAuthErrorMessage`** maps codes to actionable copy; `services/studio/assetGeneration/api.ts` pre-checks token and surfaces friendly errors; tile subtitles no longer show raw “Forbidden”.
+- **Vercel:** `api/admin/studio-generate-asset.ts` **`maxDuration: 120`** in `vercel.json`.
+- Build verified.
+
+**Changes:** `api/_lib/adminAuth.ts`, `api/admin/studio-generate-asset.ts`, `api/admin/studio-replace-asset.ts`, `src/utils/api.ts`, `src/services/studio/assetGeneration/api.ts`, `src/hooks/useAdminStudioAssetDirectorState.ts`, `vercel.json`, `motherboard/MEMORY.md`.
+
+**Conventions:** If GENERATE still fails with **ADMIN ACCESS DENIED**, verify the signed-in Supabase email is in both **`ADMIN_EMAILS`** (Vercel API) and **`VITE_ADMIN_EMAILS`** (frontend build). If **SESSION EXPIRED**, sign out/in on the device so Bearer JWT is sent. After auth works, Fal/Supabase failures return 500/503 not 403.
+
