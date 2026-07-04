@@ -12,6 +12,7 @@ import {
   adminStudioKnowledgeHubPath,
   adminStudioKnowledgeHubProfilePath,
   adminStudioKnowledgeHubWorkflowPath,
+  adminStudioMemoryBiblePath,
 } from './adminStudioRoutes';
 
 export const KNOWLEDGE_HUB_SUBTITLE =
@@ -209,6 +210,46 @@ const PAGE_GUIDE_OVERRIDES: Partial<Record<string, Partial<KnowledgePageGuide>>>
     purpose: 'Living documentation — every studio os object explains itself.',
     whyItExists: 'Eliminate confusion about pages, assets, and workflows without leaving production.',
     whenToUse: ['Whenever you wonder what a page or object does', 'Onboarding new operators', 'Planning campaigns'],
+    relatedPages: [
+      { label: 'MEMORY BIBLE', route: adminStudioMemoryBiblePath() },
+    ],
+  },
+  'memory-bible': {
+    purpose: 'Curated institutional knowledge — founder context, naming, decisions, and AI context packages.',
+    whyItExists:
+      'studio os owns long-term business memory for agents, contractors, and team — not scattered chat history or a single AI vendor memory.',
+    whenToUse: [
+      'Before starting a development or design milestone',
+      'When onboarding a contractor, designer, or developer',
+      'To verify official names and past decisions',
+      'To generate a task-specific AI context package',
+    ],
+    bestPractices: [
+      'Use AI Context Builder for Cursor / OpenArt / contractor handoffs',
+      'Append Decision Log entries instead of overwriting history',
+      'Link decisions to Knowledge Graph nodes when relevant',
+    ],
+    commonMistakes: [
+      'Relying on ChatGPT memory instead of Memory Bible',
+      'Using deprecated names from Naming Bible',
+      'Exposing founder profile on customer-facing pages',
+    ],
+    relatedPages: [
+      { label: 'KNOWLEDGE HUB', route: adminStudioKnowledgeHubPath() },
+      { label: 'MISSION CONTROL', route: `${ADMIN_STUDIO_BASE_PATH}/mission-control` },
+    ],
+    exampleWorkflows: [
+      'OPEN MEMORY BIBLE → REVIEW NAMING → CHECK DECISION LOG → BUILD CURSOR CONTEXT PACKAGE',
+      'SELECT FRONTAL SLAYER WORKSPACE → PHOTOGRAPHY SCOPE → EXPORT MARKDOWN FOR CONTRACTOR',
+    ],
+    tourSteps: [
+      'Review Founder Profile and workspace memory',
+      'Search Naming Bible for official module names',
+      'Read Decision Log for architecture choices',
+      'Open AI Context Builder — select target, task, and scopes',
+      'Copy context or export markdown with traceable sources',
+    ],
+    ownersManualChapter: 'CHAPTER · MEMORY BIBLE · INSTITUTIONAL KNOWLEDGE',
   },
   'mission-control': {
     whenToUse: ['Start of every production day', 'Reviewing approvals and mission health'],

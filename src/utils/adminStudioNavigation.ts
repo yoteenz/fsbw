@@ -446,6 +446,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'memory-bible',
+    title: 'MEMORY BIBLE',
+    purpose: 'Institutional knowledge — founder context, naming bible, decision log, and AI context builder.',
+    route: p('memory-bible'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN MEMORY BIBLE',
+    moduleKey: 'memory-bible',
+    featuredOnOverview: true,
+  },
+  {
     id: 'tutorial-os',
     title: 'TUTORIAL OS',
     purpose: 'Manage onboarding tutorial walkthroughs — The Mansion Tour, hotspots, progress analytics, and preview.',

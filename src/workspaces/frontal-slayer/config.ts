@@ -90,6 +90,9 @@ export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
     'knowledge-hub': {
       subtitle: 'LEARN YOUR WORKSPACE. UNDERSTAND YOUR PRODUCTION.',
     },
+    'memory-bible': {
+      subtitle: 'CURATED INSTITUTIONAL KNOWLEDGE — FOUNDER CONTEXT, NAMING, DECISIONS, AI CONTEXT PACKAGES.',
+    },
     studioHub: {
       title: 'THE STUDIO',
       subtitle: 'WHERE EVERY FRONTAL SLAYER STORY BEGINS.',

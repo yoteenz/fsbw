@@ -50,6 +50,7 @@ export type AdminStudioSectionId =
   | 'executive-ai-director'
   | 'campaign-orchestrator'
   | 'knowledge-hub'
+  | 'memory-bible'
   | 'brand-assets';
 
 export type AdminStudioHubCard = {

@@ -128,7 +128,9 @@ export {
 export type { PhotographyCreativeDnaSnapshot } from './photographyCreativeDna/service';
 
 export { tutorialOsStudioService } from './tutorialOs/service';
-export type { TutorialOsSnapshot } from './tutorialOs/service';
+export type { MemoryBibleBuildInput, MemoryBibleBuildOutput } from './memoryBible/service';
+
+export { memoryBibleStudioService } from './memoryBible/service';
 
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
@@ -161,6 +163,7 @@ import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
 import { knowledgeHubStudioService } from './knowledgeHub/service';
+import { memoryBibleStudioService } from './memoryBible/service';
 import { productPhotographyBibleStudioService } from './productPhotographyBible/service';
 import { photographyDerivativeEngineStudioService } from './photographyDerivativeEngine/service';
 import { brandAssetsProductAssetFactoryStudioService } from './brandAssetsProductAssetFactory/service';
@@ -192,6 +195,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   assetFactoryStudioService,
   socialPublishingStudioService,
   knowledgeHubStudioService,
+  memoryBibleStudioService,
   tutorialOsStudioService,
   productPhotographyBibleStudioService,
   photographyDerivativeEngineStudioService,

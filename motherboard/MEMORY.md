@@ -35922,3 +35922,40 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** 93 files (platform config, admin UI, knowledge graph, interactive manual, navigation, docs, CORE.md), `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 25: Memory Bible + AI Context Builder
+
+**Context:** User requested a permanent **Memory Bible** system inside studio os — curated institutional knowledge (founder profile, communication/writing/cursor rules, design/engineering/brand philosophy, naming bible, decision log, workspace memory, AI Context Builder, export/version history). Admin-only; integrate with Knowledge Graph and Interactive Manual. Do not redesign admin dashboard, remove interactive manual/knowledge graph, break routes, or modify customer-facing Frontal Slayer pages.
+
+**Topics covered:** Continuation from prior chat that also shipped Master Hero pipeline audit (FAL-only canonical asset) and studio os branding correction. This chat completed Milestone 25 integration and ship.
+
+**Shipped — Memory Bible module (`/admin/studio/memory-bible`):**
+- **Core:** `src/studio-os/memory-bible/` — types, `MEMORY_BIBLE_V1_0` seed (founder profile, all rule blocks, 17 naming entries, 3 decisions, workspace memory for Frontal Slayer, version history v1.0), `buildContextPackage()` with traceable sources, do-not-break rules, cursor prompt output.
+- **UI:** `MemoryBibleWorkspace` (14 section tabs), `MemoryBibleContextBuilder` (workspace/target/task/scopes, copy context, copy cursor prompt, export markdown, save package, view sources), admin marble/glass theme.
+- **State:** `useAdminStudioMemoryBibleState` — localStorage `adminStudioMemoryBible_v1`; founder notes editable; saved packages + export history.
+- **Wiring:** Route in `App.tsx`, `adminStudioRoutes`, `adminStudioNavigation` (INTELLIGENCE group, featured), `studio-os-core` module id, Frontal Slayer module copy, `memoryBibleStudioService` in service registry.
+
+**AI Context Builder:** Targets Cursor, ChatGPT, OpenArt, FAL, future AI agent, contractor, designer, developer, internal team. Task types include development milestone, design, copywriting, photography generation, architecture review, onboarding handoff. Scopes include Asset Factory, Photography Bible, Creative DNA, Tutorial OS, Knowledge Graph, Memory Bible, Mission Control, Production Builder, Campaign Orchestrator, Build-A-Wig, Email Design.
+
+**Knowledge Graph integration:**
+- New node `node-memory-bible` with route, manual chapter, Milestone 25 version.
+- Edges to Interactive Manual, Creative DNA, Smart Asset Registry, Content Brain; Knowledge Hub contains Memory Bible.
+- Workflow map **Institutional Memory** — Memory Bible → Naming · Decisions · Context Builder → AI Sessions.
+- Decision log entries link to graph nodes; UI buttons navigate to Knowledge Hub `?graph=` and open memory-bible manual walkthrough.
+
+**Interactive Manual integration:**
+- `PAGE_GUIDE_OVERRIDES['memory-bible']` in Knowledge Hub demo with tour steps, related pages, owners manual chapter.
+- `MODULE_MANUAL_ENRICHMENTS['memory-bible']` — naming bible, decision log, AI Context Builder walkthrough steps.
+- Knowledge Hub override adds Memory Bible as related page.
+
+**Documentation:** `docs/studio-os/memory-bible.md`; index entry in `docs/studio-os/README.md`.
+
+**Decisions / conventions:**
+- Memory Bible is curated institutional knowledge — not chat history; append version history instead of silent overwrites.
+- Founder profile internal admin-only; never expose on customer pages.
+- Official naming registry includes studio os, Frontal Slayer, Creative DNA, Memory Bible, Asset Factory, Onboarding Tutorial (deprecated: studioos, creatoros, vxd studios os, FS Concierge for onboarding).
+- Context packages must show traceable sources (memory bible, writing bible, photography bible, knowledge graph, decision log, docs).
+
+**Changes:** `src/studio-os/memory-bible/*`, `src/components/admin/studio/memory-bible/*`, `src/pages/admin/studio/memory-bible/page.tsx`, hooks, utils, routes, nav, modules, services, seedGraph, moduleEnrichments, adminStudioKnowledgeHubDemo, docs, `motherboard/MEMORY.md`.
+

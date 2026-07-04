@@ -22,7 +22,8 @@ export type StudioOsCoreModuleId =
   | 'distribution-network'
   | 'audience-brain'
   | 'legacy-system'
-  | 'knowledge-hub';
+  | 'knowledge-hub'
+  | 'memory-bible';
 
 export type StudioOsCoreModule = {
   id: StudioOsCoreModuleId;
@@ -146,5 +147,11 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'KNOWLEDGE HUB',
     description: 'Living documentation — every object explains itself.',
     routeSegment: 'knowledge-hub',
+  },
+  {
+    id: 'memory-bible',
+    label: 'MEMORY BIBLE',
+    description: 'Curated institutional knowledge — naming, decisions, AI context packages.',
+    routeSegment: 'memory-bible',
   },
 ] as const;

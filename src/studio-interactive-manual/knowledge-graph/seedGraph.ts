@@ -1,6 +1,7 @@
 import type { KnowledgeGraphEdge, KnowledgeGraphNode, KnowledgeGraphWorkflowMap } from './schema';
 import {
   adminStudioBrandAssetsAssetFactoryPath,
+  adminStudioMemoryBiblePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -88,6 +89,28 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     searchKeywords: ['interactive manual', 'studio os manual', 'knowledge graph'],
   },
   {
+    id: 'node-memory-bible',
+    name: 'MEMORY BIBLE',
+    type: 'module',
+    description:
+      'Curated institutional knowledge — founder profile, naming bible, decision log, workspace memory, and AI Context Builder.',
+    purpose: 'studio os owns long-term context for agents, contractors, and team — not vendor chat history alone.',
+    route: adminStudioMemoryBiblePath(),
+    moduleId: 'memory-bible',
+    relatedManualChapter: 'CHAPTER · MEMORY BIBLE · INSTITUTIONAL KNOWLEDGE',
+    versionIntroduced: 'Milestone 25',
+    status: 'live',
+    searchKeywords: [
+      'memory bible',
+      'institutional knowledge',
+      'naming bible',
+      'decision log',
+      'ai context builder',
+      'founder profile',
+      'cursor prompt standards',
+    ],
+  },
+  {
     id: 'node-fallback-used',
     name: 'FALLBACK_USED STATUS',
     type: 'status',
@@ -109,6 +132,12 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-manual-documents-interactive', fromId: 'node-written-manual', toId: 'node-interactive-manual', type: 'documented-by' },
   { id: 'e-interactive-documents-manual', fromId: 'node-interactive-manual', toId: 'node-written-manual', type: 'related-to' },
   { id: 'e-knowledge-contains-graph', fromId: 'knowledge-hub', toId: 'node-interactive-manual', type: 'contains' },
+  { id: 'e-memory-bible-documents-platform', fromId: 'node-memory-bible', toId: 'memory-bible', type: 'documented-by', label: 'CURATED MEMORY' },
+  { id: 'e-memory-links-manual', fromId: 'node-memory-bible', toId: 'node-interactive-manual', type: 'related-to', label: 'INTERACTIVE MANUAL' },
+  { id: 'e-memory-links-dna-decision', fromId: 'node-memory-bible', toId: 'node-creative-dna', type: 'related-to', label: 'CREATIVE DNA DECISION' },
+  { id: 'e-memory-links-factory', fromId: 'node-memory-bible', toId: 'node-smart-asset-registry', type: 'related-to', label: 'ASSET PIPELINE' },
+  { id: 'e-knowledge-contains-memory', fromId: 'knowledge-hub', toId: 'node-memory-bible', type: 'contains' },
+  { id: 'e-writing-rules-memory', fromId: 'node-memory-bible', toId: 'content-brain', type: 'feeds', label: 'WRITING RULES' },
   { id: 'e-registry-fallback', fromId: 'node-smart-asset-registry', toId: 'node-fallback-used', type: 'displays' },
   { id: 'e-brand-assets-photo', fromId: 'brand-assets', toId: 'photography-bible', type: 'contains' },
   { id: 'e-brand-assets-factory', fromId: 'brand-assets', toId: 'brand-assets-asset-factory', type: 'contains' },
@@ -151,6 +180,19 @@ export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
     subtitle: 'Page → Feature → Widget → Action → Completion',
     nodeIds: ['node-onboarding-tutorial', 'tutorial-os', 'node-interactive-manual'],
     moduleIds: ['tutorial-os', 'knowledge-hub'],
+  },
+  {
+    id: 'wf-institutional-memory',
+    title: 'INSTITUTIONAL MEMORY',
+    subtitle: 'Memory Bible → Naming · Decisions · Context Builder → AI Sessions',
+    nodeIds: [
+      'node-memory-bible',
+      'memory-bible',
+      'node-interactive-manual',
+      'node-creative-dna',
+      'node-smart-asset-registry',
+    ],
+    moduleIds: ['memory-bible', 'knowledge-hub', 'photography-bible', 'brand-assets-asset-factory'],
   },
 ];
 

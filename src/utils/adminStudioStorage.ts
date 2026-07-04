@@ -55,6 +55,7 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   blueprintManager: 'adminStudioBlueprintManager_v1',
   assetFactory: 'adminStudioAssetFactory_v1',
   knowledgeHub: 'adminStudioKnowledgeHub_v1',
+  memoryBible: 'adminStudioMemoryBible_v1',
   productPhotographyBible: 'adminStudioProductPhotographyBible_v1',
   productPhotographyDerivatives: 'adminStudioProductPhotographyDerivatives_v1',
   brandAssetsProductAssetFactory: 'adminStudioBrandAssetsProductAssetFactory_v1',

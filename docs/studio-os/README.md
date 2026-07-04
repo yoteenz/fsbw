@@ -12,5 +12,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [API_STRUCTURE.md](./API_STRUCTURE.md) | Future API conventions |
 | [PLATFORM_CONCEPTS.md](./PLATFORM_CONCEPTS.md) | OS metaphor and scalability |
 | [EXTENSIBILITY.md](./EXTENSIBILITY.md) | Extension patterns |
+| [interactive-manual.md](./interactive-manual.md) | Knowledge Hub, Knowledge Graph, walkthroughs |
+| [memory-bible.md](./memory-bible.md) | Institutional knowledge, naming, decisions, AI Context Builder |
 
 Platform config: `src/studio-os/config/platform.ts`
