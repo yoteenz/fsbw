@@ -35063,4 +35063,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`src/utils/emailPreviewEditor.ts`**, **`src/components/tools/EmailPreviewFrame.tsx`**.
 
+---
+
+## 2026-07-04 — Email header logo: Stock Content image 69 lockup
+
+**Context:** User asked to preview a new header logo at the top of email templates instead of the FRONTAL + SLAYER wordmark — Supabase **`Stock Content/image (69).png`**.
+
+**Changes:**
+- Saved asset → **`public/assets/email/header-logo-candidate.png`** (1800×873).
+- **`brandAssets.ts`**: **`EMAIL_BRAND.emailHeaderLogo`** (site URL via **`emailAssetUrl`**).
+- **`layout.ts`**: **`renderEmailWordmark()`** now renders centered single **`<img>`** (240×116 display) — removed FRONTAL text + inline slayer PNG combo. Hero post-composite still uses **`slayerLogo`**.
+
+**Preview:** **`/tools/email-templates`** → Refresh preview.
+
 

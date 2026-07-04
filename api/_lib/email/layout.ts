@@ -175,23 +175,16 @@ ${perks
 </table>`;
 }
 
-/** FRONTAL (Futura) + SLAYER wordmark image inline — scaled together at 70% of debug slay card size. */
-const EMAIL_WORDMARK_SCALE = 0.7;
-const EMAIL_WORDMARK_LOGO_WIDTH = Math.round(78 * EMAIL_WORDMARK_SCALE);
-const EMAIL_WORDMARK_LOGO_HEIGHT = Math.round(52 * EMAIL_WORDMARK_SCALE);
+/** Header logo display size (source PNG 1800×873 — scaled for 600px email card). */
+const EMAIL_HEADER_LOGO_WIDTH = 240;
+const EMAIL_HEADER_LOGO_HEIGHT = Math.round(EMAIL_HEADER_LOGO_WIDTH * (873 / 1800));
 
 function renderEmailWordmark(brandStyle: EmailLayerStyle): string {
-  const logoUrl = escHtml(EMAIL_BRAND.slayerLogo);
-  const scaledStyle: EmailLayerStyle = {
-    ...brandStyle,
-    fontSize: Math.round((brandStyle.fontSize ?? 14) * EMAIL_WORDMARK_SCALE),
-  };
-  const frontalCss = emailTextStyleCss(scaledStyle);
+  const logoUrl = escHtml(EMAIL_BRAND.emailHeaderLogo);
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;border-collapse:collapse;">
   <tr>
-    <td align="right" style="vertical-align:middle;padding:0 4px 0 0;${frontalCss};line-height:1;white-space:nowrap;">FRONTAL</td>
-    <td align="left" style="vertical-align:middle;padding:0;line-height:0;font-size:0;">
-      <img src="${logoUrl}" width="${EMAIL_WORDMARK_LOGO_WIDTH}" height="${EMAIL_WORDMARK_LOGO_HEIGHT}" alt="Slayer" style="display:block;border:0;"/>
+    <td align="center" style="line-height:0;font-size:0;${emailTextStyleCss(brandStyle)}">
+      <img src="${logoUrl}" width="${EMAIL_HEADER_LOGO_WIDTH}" height="${EMAIL_HEADER_LOGO_HEIGHT}" alt="Frontal Slayer" style="display:block;margin:0 auto;border:0;max-width:100%;height:auto;"/>
     </td>
   </tr>
 </table>`;

@@ -57,8 +57,10 @@ export const EMAIL_BRAND = {
   perksPoints: emailAssetUrl('email/icons/loyalty-points.png', { preferSite: true }),
   perksUnlock: emailAssetUrl('email/icons/rewards-icon.png', { preferSite: true }),
   perksMember: emailAssetUrl('email/icons/rose-accent.png', { preferSite: true }),
-  /** Red SLAYER wordmark — same IMG_4820.png as debug slay card (`BAW_SLAY_CARD_SLAYER_LOGO_SRC`). */
+  /** Red SLAYER wordmark — composited on heroes in post; legacy inline header mark. */
   slayerLogo: emailAssetUrl('email/slayer-logo.png', { preferSite: true }),
+  /** Full-width header lockup for transactional email brand row (Stock Content image 69). */
+  emailHeaderLogo: emailAssetUrl('email/header-logo-candidate.png', { preferSite: true }),
 } as const;
 
 export { BRAND_RED };
