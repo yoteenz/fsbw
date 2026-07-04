@@ -41,7 +41,8 @@ export type AdminStudioSectionId =
   | 'audience-brain'
   | 'executive-command-center'
   | 'legacy-system'
-  | 'asset-director';
+  | 'asset-director'
+  | 'production-builder';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;

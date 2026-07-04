@@ -28,6 +28,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'executive-command-center'
   | 'legacy-system'
   | 'asset-director'
+  | 'production-builder'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -53,6 +54,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'executive-command-center',
   'legacy-system',
   'asset-director',
+  'production-builder',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -104,6 +106,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   assetDirectorTalent: 'studio/asset-director/talent',
   assetDirectorTalentDetail: 'studio/asset-director/talent/:talentId',
   assetDirectorSection: 'studio/asset-director/section/:sectionId',
+  productionBuilder: 'studio/production-builder',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -189,4 +192,9 @@ export function adminStudioAssetDirectorTalentPath(talentId: string): string {
 
 export function adminStudioAssetDirectorSectionPath(sectionId: string): string {
   return `${ADMIN_STUDIO_BASE_PATH}/asset-director/section/${sectionId}`;
+}
+
+export function adminStudioProductionBuilderPath(packId?: string): string {
+  const base = `${ADMIN_STUDIO_BASE_PATH}/production-builder`;
+  return packId ? `${base}?packId=${encodeURIComponent(packId)}` : base;
 }

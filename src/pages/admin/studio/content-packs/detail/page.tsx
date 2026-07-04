@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams, Link } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioEditableField } from '../../../../../components/admin/studio/AdminStudioEditableField';
 import { AdminStudioTabBar } from '../../../../../components/admin/studio/AdminStudioTabBar';
@@ -7,6 +7,8 @@ import { AdminStudioDistributionTargets } from '../../../../../components/admin/
 import { AdminStudioContentPackAssetPicker } from '../../../../../components/admin/studio/AdminStudioContentPackAssetPicker';
 import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { useAdminStudioContentPack } from '../../../../../hooks/useAdminStudioEditableState';
+import { adminStudioProductionBuilderPath } from '../../../../../utils/adminStudioRoutes';
+import { pageActionButtonStyle } from '../../../../../layouts/PageActionsBelowCard';
 import {
   ADMIN_STUDIO_CONTENT_PACK_TAB_LABELS,
   ADMIN_STUDIO_CONTENT_PACK_TAB_ORDER,
@@ -79,6 +81,16 @@ export default function AdminStudioContentPackDetailPage() {
 
       <div className="mb-4">
         <AdminStudioContentPackAssetPicker packId={packId} accentHex={pack.accentHex} />
+      </div>
+
+      <div className="mb-4 text-center">
+        <Link
+          to={adminStudioProductionBuilderPath(packId)}
+          style={pageActionButtonStyle}
+          className="inline-block no-underline"
+        >
+          OPEN IN PRODUCTION BUILDER
+        </Link>
       </div>
 
       <AdminStudioTabBar

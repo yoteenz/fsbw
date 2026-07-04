@@ -245,6 +245,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   },
   // PRODUCTION
   {
+    id: 'production-builder',
+    title: 'PRODUCTION BUILDER',
+    purpose: 'Visually assemble studios, talent, and scenes before AI generates your content pack.',
+    route: p('production-builder'),
+    groupId: 'production',
+    status: 'demo',
+    metric: 'VISUAL',
+    ctaLabel: 'OPEN BUILDER',
+    featuredOnOverview: true,
+  },
+  {
     id: 'content-packs',
     title: 'CONTENT PACKS',
     purpose: 'Bundle weekly video, article, and checklist releases.',

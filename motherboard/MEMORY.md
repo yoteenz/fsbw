@@ -35095,3 +35095,26 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Asset detail pages order — Hero → Quick Actions → Versions → Collections → Relationships → Moodboard → Timeline → Health → Metadata (collapsed). Gallery preference in localStorage via asset director store.
 
+---
+
+## 2026-07-04 — Production Builder visual assembly workspace (Milestone 14.5)
+
+**Context:** User milestone to create a brand-new Production Builder that bridges Asset Director and Content Packs — visual assembly room (Figma/Canva/Unreal scene-builder feel) without redesigning existing pages or removing Asset Director / Content Packs. Prior thread work: Studio UI alignment, Milestone 14 Asset Director visual system.
+
+**Topics covered (full chat arc):** StudioOS refinement, admin hub alignment, Milestone 14 Asset Director (gallery-first, visual bundles, Content Pack picker), then Milestone 14.5 Production Builder spec — three-column workspace, draggable asset library, scene builder canvas with live preview, production inspector, shot builder (multi-scene drag-reorder), output types, brand aspect previews, auto prompt assembly, templates, department team bar, related content, save system, Build Production demo.
+
+**Decisions / outcomes:**
+- New route **`/admin/studio/production-builder`** (+ **`?packId=`** loads/syncs Content Pack draft).
+- **`adminStudioProductionBuilderDemo.ts`** — asset categories, templates (Slay Report, PSA Interview, etc.), output types, brand preview formats, department statuses, related content seed.
+- **`adminStudioProductionBuilderPrompt.ts`** — scene + full production prompt assembly from approved assets; sync to Content Pack via asset director `packAssetSelections`.
+- **`useAdminStudioProductionBuilderState.ts`** — drafts in **`adminStudioProductionBuilder_v1`** localStorage; scene editing, reorder, templates, save/duplicate/favorite/archive, Build Production demo queue.
+- UI under **`src/components/admin/studio/production-builder/`** — department bar, asset library (drag), scene canvas (live storyboard stack + 16:9 preview), inspector (metadata + outputs + editable prompt), brand previews, related content.
+- Nav: **PRODUCTION BUILDER** featured in PRODUCTION group on Studio overview.
+- Content Pack detail: additive **OPEN IN PRODUCTION BUILDER** link (does not replace asset picker).
+- **`productionBuilderStudioService`** stub in service registry.
+- Build verified.
+
+**Changes:** production-builder utils/hooks/components/page, `adminStudioStorage.ts`, `adminStudioNavigation.ts`, `adminStudioRoutes.ts`, `adminStudioDemo.ts`, `App.tsx`, `content-packs/detail/page.tsx`, `services/studio/productionBuilder/`, `motherboard/CORE.md`.
+
+**Conventions:** Production Builder is additive — Asset Director and Content Packs routes unchanged. Scene selections for pack-linked drafts write back to asset director store for Content Pack continuity.
+
