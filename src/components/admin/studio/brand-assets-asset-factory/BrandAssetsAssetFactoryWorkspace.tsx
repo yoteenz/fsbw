@@ -28,11 +28,16 @@ import {
 } from './AssetFactoryDerivativeGallery';
 import { MasterHeroPreviewPanel } from './MasterHeroPreviewPanel';
 import { PhotographyBiblePromptValidationPanel } from './PhotographyBiblePromptValidationPanel';
+import { PhotographyBibleProviderValidationPanel } from './PhotographyBibleProviderValidationPanel';
 import { FinalPromptModal } from './FinalPromptModal';
-import { resolveCanonicalGeneratedMasterSrc } from '../../../../studio-os/product-photography/ProductAssetFactory';
+import { GenerationPackageModal } from './GenerationPackageModal';
+import { resolveCanonicalGeneratedMasterSrc, isLocalPlaceholderMasterSrc } from '../../../../studio-os/product-photography/ProductAssetFactory';
 import {
   CREATIVE_DNA_BENCHMARK_OUTPUT,
   compileAndValidatePhotographyBiblePrompt,
+  buildMasterHeroGenerationPackagePreview,
+  validateLockedProviderSettings,
+  resolveDisplayBustFrontForUnitSlug,
 } from '../../../../studio-os/product-photography';
 import { PP_VISUAL, ppActionBtn, ppCaption, ppPanelStyle, ppSectionTitle, statusColor } from '../product-photography-bible/photographyBibleTheme';
 
@@ -56,6 +61,7 @@ export function BrandAssetsAssetFactoryWorkspace() {
   const [previewItem, setPreviewItem] = useState<AdminStudioImagePreviewItem | null>(null);
   const [previewAllOpen, setPreviewAllOpen] = useState(false);
   const [finalPromptOpen, setFinalPromptOpen] = useState(false);
+  const [generationPackageOpen, setGenerationPackageOpen] = useState(false);
   const {
     store,
     latestJob,
@@ -75,6 +81,13 @@ export function BrandAssetsAssetFactoryWorkspace() {
 
   const productReferenceSrc =
     bibleUnit?.referenceImageSrc ?? PRODUCT_ASSET_FACTORY_POC_UNIT.productReferenceSrc;
+  const displayBustSrc = resolveDisplayBustFrontForUnitSlug(PRODUCT_ASSET_FACTORY_POC_UNIT.slug);
+  const benchmarkAssetSrc =
+    (bibleUnit?.heroPortraitSrc &&
+    !isLocalPlaceholderMasterSrc(bibleUnit.heroPortraitSrc) &&
+    /^https?:\/\//i.test(bibleUnit.heroPortraitSrc)
+      ? bibleUnit.heroPortraitSrc
+      : CREATIVE_DNA_BENCHMARK_OUTPUT.heroPortraitSrc) ?? CREATIVE_DNA_BENCHMARK_OUTPUT.heroPortraitSrc;
   const generatedMasterSrc = resolveCanonicalGeneratedMasterSrc(latestJob);
   const masterHeroGeneration = latestJob?.masterHeroGeneration;
 
@@ -102,6 +115,37 @@ export function BrandAssetsAssetFactoryWorkspace() {
     masterHeroGeneration?.promptValidation ?? promptCompilePreview?.validation;
   const activeFinalPrompt =
     masterHeroGeneration?.debugLog?.promptSent ?? promptCompilePreview?.compiledPrompt ?? '';
+
+  const providerValidationPreview = useMemo(() => {
+    const fromGeneration = masterHeroGeneration?.providerValidation;
+    if (fromGeneration) return fromGeneration;
+    return validateLockedProviderSettings({
+      benchmarkAssetSrc,
+      requestedModel: masterHeroGeneration?.falModel,
+    });
+  }, [masterHeroGeneration?.providerValidation, masterHeroGeneration?.falModel, benchmarkAssetSrc]);
+
+  const generationPackagePreview = useMemo(() => {
+    if (masterHeroGeneration?.generationPackage) return masterHeroGeneration.generationPackage;
+    if (!promptCompilePreview?.validation) return undefined;
+    return buildMasterHeroGenerationPackagePreview({
+      compiledPrompt: promptCompilePreview.compiledPrompt,
+      promptValidation: promptCompilePreview.validation,
+      providerValidation: providerValidationPreview,
+      displayBustSrc,
+      productReferenceSrc,
+      benchmarkAssetSrc,
+    });
+  }, [
+    masterHeroGeneration?.generationPackage,
+    promptCompilePreview,
+    providerValidationPreview,
+    displayBustSrc,
+    productReferenceSrc,
+    benchmarkAssetSrc,
+  ]);
+
+  const generationBlocked = providerValidationPreview.status === 'blocked';
 
   const showDerivativeBlocked =
     !latestJob?.heroApproved &&
@@ -156,8 +200,8 @@ export function BrandAssetsAssetFactoryWorkspace() {
         <div className="flex flex-wrap gap-2 mt-3">
           <button
             type="button"
-            style={{ ...ppActionBtn, opacity: running ? 0.6 : 1, color: PP_VISUAL.red }}
-            disabled={running}
+            style={{ ...ppActionBtn, opacity: running || generationBlocked ? 0.6 : 1, color: PP_VISUAL.red }}
+            disabled={running || generationBlocked}
             onClick={() => generateMasterHero(productReferenceSrc)}
           >
             {running ? 'PROCESSING…' : 'GENERATE MASTER HERO PORTRAIT'}
@@ -191,8 +235,18 @@ export function BrandAssetsAssetFactoryWorkspace() {
         {showDerivativeBlocked && !generatedMasterSrc ? (
           <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 8 }}>{DERIVATIVE_BLOCKED_MESSAGE}</p>
         ) : null}
+        {generationBlocked ? (
+          <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 8 }}>
+            {providerValidationPreview.blockedReason ?? providerValidationPreview.validationMessage}
+          </p>
+        ) : null}
         {lastError ? <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 8 }}>{lastError}</p> : null}
         {latestJob?.error ? <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 4 }}>{latestJob.error}</p> : null}
+
+        <PhotographyBibleProviderValidationPanel
+          validation={providerValidationPreview}
+          onViewGenerationPackage={() => setGenerationPackageOpen(true)}
+        />
 
         <PhotographyBiblePromptValidationPanel
           validation={activePromptValidation}
@@ -353,7 +407,7 @@ export function BrandAssetsAssetFactoryWorkspace() {
               src={generatedMasterSrc}
               alt="Generated master hero"
               label="GENERATED MASTER HERO"
-              subtitle="CREATIVE DNA v1.0 · FAL OUTPUT"
+              subtitle="CREATIVE DNA v1.0 · GPT IMAGE 2 OUTPUT"
               onExpand={setPreviewItem}
             />
           ) : (
@@ -386,6 +440,8 @@ export function BrandAssetsAssetFactoryWorkspace() {
           onExpand={setPreviewItem}
           onRegenerate={() => generateMasterHero(productReferenceSrc)}
           onViewFinalPrompt={() => setFinalPromptOpen(true)}
+          onViewGenerationPackage={() => setGenerationPackageOpen(true)}
+          providerValidation={providerValidationPreview}
         />
       </section>
 
@@ -400,6 +456,11 @@ export function BrandAssetsAssetFactoryWorkspace() {
       />
 
       <AdminStudioImagePreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
+      <GenerationPackageModal
+        open={generationPackageOpen}
+        onClose={() => setGenerationPackageOpen(false)}
+        generationPackage={generationPackagePreview}
+      />
       <FinalPromptModal
         open={finalPromptOpen}
         onClose={() => setFinalPromptOpen(false)}

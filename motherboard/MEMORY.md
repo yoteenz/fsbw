@@ -36004,3 +36004,33 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** promptCompiler (client+server), CreativeDnaApprovedPrompt, creativeDnaV1, FinalPromptModal, PhotographyBiblePromptValidationPanel, BrandAssetsAssetFactoryWorkspace, AdminStudioLayout, adminStudioTheme, index.css, studio portaled modals, memory-bible/photography UI, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Asset Factory locked provider preset (GPT Image 2) + generation package UI
+
+**Context (full chat):** Milestone 25 Memory Bible shipped earlier. Photography Bible prompt compiler shipped (placeholder-only substitution, segment validator, View Final Prompt modal). Studio os uppercase CSS shipped. User then reported Asset Factory still generating wrong master heroes — using `fal-ai/nano-banana-pro/edit` instead of approved provider, not enforcing golden prompt output style, proportions/crop/mannequin/background/framing drifting from approved SOFT WAVE benchmark.
+
+**Goal:** Locked provider preset **Photography Bible Master Hero v1** — Fal **GPT Image 2** (`openai/gpt-image-2/edit`), **2K HIGH** (`quality: high`), **1:1**, **4096×4096** (fallback 2048×2048 same model only), golden Photography Bible v2.0 prompt only, provider validation panel, generation package modal, settings lock blocking wrong models (no silent nano-banana fallback).
+
+**Provider preset (`providerPreset.ts` server + `PhotographyBibleProviderPreset.ts` client):**
+- Preset id `photography-bible-master-hero-v1`; banned models list includes nano-banana variants.
+- `validateLockedProviderSettings()` blocks generation on model/quality/version mismatch with clear errors (e.g. "Expected: GPT Image 2 / 2K HIGH / 1:1. Received: nano banana pro.").
+- Experimental presets stub (`status: experimental`, `publishable: false`) — blocked from approved master hero generation.
+
+**Server generation (`generateMasterHero.ts`):**
+- Replaced `fal-ai/nano-banana-pro/edit` with `openai/gpt-image-2/edit` via `buildGptImage2MasterHeroFalInput` (`image_size`, `quality: high`, PNG).
+- Provider + prompt validation before FAL; abort if either fails.
+- Stores `providerPresetId`, `providerValidation`, `generationPackage` on `MasterHeroGenerationRecord`.
+- Benchmark attachment enabled for HTTPS approved benchmark; env override `PRODUCT_PHOTOGRAPHY_APPROVED_BENCHMARK_URL`.
+- GPT Image 2 failure → error only — no model fallback.
+
+**UI (Asset Factory):**
+- `PhotographyBibleProviderValidationPanel` — preset, model, quality, aspect, resolution, versions, benchmark, ready/blocked status.
+- `GenerationPackageModal` — read-only package: template, variables, references, benchmark, editorial prompt (metadata), final prompt, validation.
+- Generate button disabled when provider validation blocked.
+- `MasterHeroPreviewPanel` shows provider preset + GPT Image 2 model label.
+
+**API/pipeline:** `product-photography-generate` + `productAssetFactory` pipeline pass `includeBenchmarkAttachment: true`; optional `benchmarkHeroSrc` body param.
+
+**Changes:** providerPreset.ts, PhotographyBibleProviderPreset.ts, generateMasterHero.ts, types (server+client), product-photography-generate.ts, pipeline.ts, BrandAssetsAssetFactoryWorkspace, MasterHeroPreviewPanel, PhotographyBibleProviderValidationPanel, GenerationPackageModal, index exports, `motherboard/MEMORY.md`.
+

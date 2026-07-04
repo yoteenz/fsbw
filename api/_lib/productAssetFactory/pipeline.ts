@@ -333,7 +333,7 @@ async function runHeroGenerationPhase(ctx: {
     action: 'generate-variants',
     unitSlug: unit.slug,
     productReferenceImageSrc: ctx.productRef,
-    includeBenchmarkAttachment: false,
+    includeBenchmarkAttachment: true,
   });
 
   for (const entry of generation.logs) {

@@ -39,6 +39,60 @@ export type MasterHeroGenerationDebugLog = {
   finalMasterHeroUrl: string;
 };
 
+export type PhotographyBibleProviderValidation = {
+  presetId: string;
+  presetName: string;
+  provider: string;
+  model: string;
+  modelLabel: string;
+  quality: string;
+  qualityLabel: string;
+  aspectRatio: string;
+  resolution: string;
+  promptVersion: string;
+  creativeDnaVersion: string;
+  benchmarkAsset: string;
+  background: string;
+  cropPhilosophy: string;
+  status: 'ready' | 'blocked';
+  blockedReason?: string;
+  validationMessage: string;
+};
+
+export type MasterHeroGenerationPackage = {
+  lockedCreativeDnaPromptTemplate: string;
+  injectedProductVariables: PhotographyBiblePromptValidation['injectedVariables'];
+  displayBustReferenceSrc: string;
+  productReferenceImageSrc: string;
+  editorialReferencePrompt: string;
+  benchmarkAssetSrc: string;
+  providerPreset: {
+    id: string;
+    name: string;
+    model: string;
+    modelLabel: string;
+    qualityLabel: string;
+    aspectRatio: string;
+    resolutionLabel: string;
+    status: 'approved' | 'experimental';
+    publishable: boolean;
+  };
+  outputSettings: {
+    aspectRatio: string;
+    resolution: string;
+    quality: string;
+    outputFormat: string;
+    background: string;
+    cropPhilosophy: string;
+  };
+  finalPrompt: string;
+  referenceAssetsUsed: string[];
+  validation: {
+    prompt: PhotographyBiblePromptValidation;
+    provider: PhotographyBibleProviderValidation;
+  };
+};
+
 export type MasterHeroGenerationRecord = {
   generationId: string;
   falRequestId?: string;
@@ -47,6 +101,9 @@ export type MasterHeroGenerationRecord = {
   generatedAt: string;
   promptVersion: string;
   falModel: string;
+  providerPresetId?: string;
+  providerValidation?: PhotographyBibleProviderValidation;
+  generationPackage?: MasterHeroGenerationPackage;
   productReferenceSrc: string;
   backgroundRemovalInputUrl?: string;
   promptValidation?: PhotographyBiblePromptValidation;

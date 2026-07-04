@@ -158,6 +158,22 @@ export {
   resolveCreativeDnaForAssetFactory,
 } from './CreativeDnaGenerationPackage';
 export type { CreativeDnaGenerationUnitInput, CreativeDnaGenerationPackage } from './CreativeDnaGenerationPackage';
+export {
+  PHOTOGRAPHY_BIBLE_MASTER_HERO_PRESET,
+  PHOTOGRAPHY_BIBLE_MASTER_HERO_PRESET_ID,
+  PHOTOGRAPHY_BIBLE_MASTER_HERO_FAL_MODEL,
+  PHOTOGRAPHY_BIBLE_MASTER_HERO_MODEL_LABEL,
+  PHOTOGRAPHY_BIBLE_MASTER_HERO_QUALITY_LABEL,
+  PHOTOGRAPHY_BIBLE_BANNED_FAL_MODELS,
+  validateLockedProviderSettings,
+  buildMasterHeroGenerationPackagePreview,
+  isBannedPhotographyBibleFalModel,
+} from './PhotographyBibleProviderPreset';
+export type {
+  PhotographyBibleProviderPreset,
+  PhotographyBibleProviderValidation,
+  MasterHeroGenerationPackage,
+} from './PhotographyBibleProviderPreset';
 
 /** Inheritance payload for future studio os product creation. */
 export function inheritPhotographyBibleForProduct(productSlug: string) {

@@ -2,7 +2,14 @@ import {
   AdminStudioExpandableImage,
   type AdminStudioImagePreviewItem,
 } from '../AdminStudioImagePreviewModal';
-import type { MasterHeroGenerationRecord } from '../../../../studio-os/product-photography/ProductAssetFactory';
+import type {
+  MasterHeroGenerationRecord,
+  PhotographyBibleProviderValidation,
+} from '../../../../studio-os/product-photography/ProductAssetFactory';
+import {
+  PHOTOGRAPHY_BIBLE_MASTER_HERO_MODEL_LABEL,
+  PHOTOGRAPHY_BIBLE_MASTER_HERO_PRESET_NAME,
+} from '../../../../studio-os/product-photography/PhotographyBibleProviderPreset';
 import { PP_VISUAL, ppActionBtn, ppCaption, ppSectionTitle } from '../product-photography-bible/photographyBibleTheme';
 import { PhotographyBiblePromptValidationPanel } from './PhotographyBiblePromptValidationPanel';
 
@@ -13,6 +20,8 @@ type MasterHeroPreviewPanelProps = {
   onExpand: (item: AdminStudioImagePreviewItem) => void;
   onRegenerate: () => void;
   onViewFinalPrompt?: () => void;
+  onViewGenerationPackage?: () => void;
+  providerValidation?: PhotographyBibleProviderValidation;
 };
 
 function formatTimestamp(iso: string | undefined): string {
@@ -34,6 +43,8 @@ export function MasterHeroPreviewPanel({
   onExpand,
   onRegenerate,
   onViewFinalPrompt,
+  onViewGenerationPackage,
+  providerValidation,
 }: MasterHeroPreviewPanelProps) {
   const falOriginal = generation?.falOriginalImageUrl;
 
@@ -62,7 +73,10 @@ export function MasterHeroPreviewPanel({
               GENERATION TIMESTAMP · {formatTimestamp(generation?.generatedAt)}
             </p>
             <p style={{ ...ppCaption, fontSize: '7px' }}>
-              MODEL · {generation?.falModel ?? '—'}
+              PROVIDER PRESET · {generation?.providerPresetId ?? PHOTOGRAPHY_BIBLE_MASTER_HERO_PRESET_NAME}
+            </p>
+            <p style={{ ...ppCaption, fontSize: '7px' }}>
+              MODEL · {generation?.providerValidation?.modelLabel ?? providerValidation?.modelLabel ?? PHOTOGRAPHY_BIBLE_MASTER_HERO_MODEL_LABEL}
             </p>
             <p style={{ ...ppCaption, fontSize: '7px' }}>
               PROMPT VERSION · {generation?.promptVersion ?? '—'}
@@ -89,6 +103,11 @@ export function MasterHeroPreviewPanel({
           />
 
           <div className="flex flex-wrap gap-2 mt-3">
+            {onViewGenerationPackage ? (
+              <button type="button" style={ppActionBtn} onClick={onViewGenerationPackage}>
+                VIEW GENERATION PACKAGE
+              </button>
+            ) : null}
             {onViewFinalPrompt ? (
               <button type="button" style={ppActionBtn} onClick={onViewFinalPrompt}>
                 VIEW FINAL PROMPT

@@ -52,6 +52,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const unitSlug = String(body?.unitSlug || PRODUCT_PHOTOGRAPHY_POC_UNIT.slug).trim();
   const productReferenceImageSrc =
     typeof body?.productReferenceImageSrc === 'string' ? body.productReferenceImageSrc.trim() : undefined;
+  const benchmarkHeroSrc =
+    typeof body?.benchmarkHeroSrc === 'string' ? body.benchmarkHeroSrc.trim() : undefined;
 
   if (action !== 'generate-variants' && action !== 'replace-reference') {
     return res.status(400).json({ error: 'Invalid action — use generate-variants or replace-reference' });
@@ -65,7 +67,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     action,
     unitSlug,
     productReferenceImageSrc,
-    includeBenchmarkAttachment: false,
+    benchmarkHeroSrc,
+    includeBenchmarkAttachment: true,
   });
 
   const result: ProductPhotographyGenerateResult = {
