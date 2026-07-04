@@ -80,6 +80,9 @@ export type { ProductionBuilderSnapshot, ProductionBuilderSummary } from './prod
 export { directorModeStudioService, DIRECTOR_MODE_INHERITANCE_CHAIN } from './directorMode/service';
 export type { DirectorModeSnapshot, DirectorModeSummary } from './directorMode/service';
 
+export { executiveAiDirectorStudioService, EXECUTIVE_AI_DIRECTOR_INHERITANCE_CHAIN } from './executiveAiDirector/service';
+export type { ExecutiveAiDirectorSnapshot, ExecutiveAiDirectorSummary } from './executiveAiDirector/service';
+
 export { socialPublishingStudioService } from './socialPublishing/service';
 export type { SocialPublishingSnapshot } from './socialPublishing/service';
 
@@ -107,6 +110,7 @@ import { legacySystemStudioService } from './legacySystem/service';
 import { assetDirectorStudioService } from './assetDirector/service';
 import { productionBuilderStudioService } from './productionBuilder/service';
 import { directorModeStudioService } from './directorMode/service';
+import { executiveAiDirectorStudioService } from './executiveAiDirector/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
 import type { StudioServiceStub } from './types';
 
@@ -127,6 +131,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   assetDirectorStudioService,
   productionBuilderStudioService,
   directorModeStudioService,
+  executiveAiDirectorStudioService,
   socialPublishingStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,

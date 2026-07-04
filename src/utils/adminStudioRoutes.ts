@@ -30,6 +30,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'asset-director'
   | 'production-builder'
   | 'director-mode'
+  | 'executive-ai-director'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -57,6 +58,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'asset-director',
   'production-builder',
   'director-mode',
+  'executive-ai-director',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -110,6 +112,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   assetDirectorSection: 'studio/asset-director/section/:sectionId',
   productionBuilder: 'studio/production-builder',
   directorMode: 'studio/director-mode',
+  executiveAiDirector: 'studio/executive-ai-director',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -206,4 +209,8 @@ export function adminStudioDirectorModePath(draftId: string, packId?: string): s
   const params = new URLSearchParams({ draftId });
   if (packId) params.set('packId', packId);
   return `${ADMIN_STUDIO_BASE_PATH}/director-mode?${params.toString()}`;
+}
+
+export function adminStudioExecutiveAiDirectorPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/executive-ai-director`;
 }

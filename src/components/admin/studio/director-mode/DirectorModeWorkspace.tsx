@@ -9,6 +9,7 @@ import { DirectorModeControls } from './DirectorModeControls';
 import { DirectorModeConsole } from './DirectorModeConsole';
 import { DirectorModeStoryboard, DirectorModeScriptPanel, DirectorModeShotList } from './DirectorModeStoryboard';
 import { DirectorModeRehearsalOverlay, DirectorModeClientPreview } from './DirectorModeRehearsal';
+import { ExecutiveAiDirectorAdvisorPanel } from '../executive-ai-director/ExecutiveAiDirectorAdvisorPanel';
 import { dmActionBtnStyle } from './directorModeTheme';
 
 export function DirectorModeWorkspace() {
@@ -109,6 +110,8 @@ export function DirectorModeWorkspace() {
         cta={draft.cta}
         onSelectScene={setActiveSceneId}
       />
+
+      <ExecutiveAiDirectorAdvisorPanel draftId={draftId} />
 
       <DirectorModeScriptPanel sceneName={activeScene?.name ?? ''} meta={activeMeta} onUpdate={updateSceneMeta} />
       <DirectorModeShotList meta={activeMeta} />

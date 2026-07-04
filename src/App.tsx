@@ -166,6 +166,7 @@ const AdminStudioAssetDirectorTalentDetail = lazyWithRetry(() => import('./pages
 const AdminStudioAssetDirectorSection = lazyWithRetry(() => import('./pages/admin/studio/asset-director/section/page'), 'AdminStudioAssetDirectorSection');
 const AdminStudioProductionBuilder = lazyWithRetry(() => import('./pages/admin/studio/production-builder/page'), 'AdminStudioProductionBuilder');
 const AdminStudioDirectorMode = lazyWithRetry(() => import('./pages/admin/studio/director-mode/page'), 'AdminStudioDirectorMode');
+const AdminStudioExecutiveAiDirector = lazyWithRetry(() => import('./pages/admin/studio/executive-ai-director/page'), 'AdminStudioExecutiveAiDirector');
 const AdminStudioOs = lazyWithRetry(() => import('./pages/admin/studio-os/page'), 'AdminStudioOs');
 const AdminStudioOsWorkspaceShell = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/page'), 'AdminStudioOsWorkspaceShell');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
@@ -948,6 +949,11 @@ function App() {
           <Route path="studio/legacy-system" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioLegacySystem />
+            </Suspense>
+          } />
+          <Route path="studio/executive-ai-director" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExecutiveAiDirector />
             </Suspense>
           } />
           <Route path="studio/director-mode" element={

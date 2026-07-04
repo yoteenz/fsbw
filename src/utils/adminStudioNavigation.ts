@@ -368,6 +368,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   },
   // INTELLIGENCE
   {
+    id: 'executive-ai-director',
+    title: 'EXECUTIVE AI DIRECTOR',
+    purpose: 'Executive advisor that coaches, forecasts, and optimizes from workspace intelligence.',
+    route: p('executive-ai-director'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'ADVISOR',
+    ctaLabel: 'OPEN ADVISOR',
+    featuredOnOverview: true,
+  },
+  {
     id: 'intelligence-engine',
     title: 'INTELLIGENCE ENGINE',
     purpose: 'Turn connected data into evidence-based recommendations.',

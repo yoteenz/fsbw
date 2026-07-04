@@ -35139,3 +35139,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Director Mode is additive final checkpoint before AI — connects to Production Builder, Content Packs, Asset Director; does not replace Production Builder.
 
+---
+
+## 2026-07-04 — Executive AI Director strategic intelligence (Milestone 16)
+
+**Context:** User milestone for **Executive AI Director** — strategic brain of StudioOS (not a chatbot) — coaches from workspace history, campaign/production/asset/prompt/publishing data; does not create content. Prior thread: Milestones 14–15 Production Builder + Director Mode.
+
+**Topics covered (full chat arc):** StudioOS production pipeline (Builder, Director Mode); user requested Executive AI Director with Today's Brief, creative insights, brand health, opportunities, production recommendations, trend signals, performance forecast, creative intelligence search, pre-generation production analysis, brand compliance, prompt review scorecard, executive scorecard, forecast engine, A/B strategy, content gaps, workspace memory, executive chat, Director Mode integration, production/executive timelines. Must distinguish history vs config vs estimates; never fabricate external trends.
+
+**Decisions / outcomes:**
+- New route **`/admin/studio/executive-ai-director`** — INTELLIGENCE group, featured overview hub cards.
+- **`adminStudioExecutiveAiDirectorDemo.ts`** — brief, scorecard, creative intel index, recommendations, A/B, gaps, forecasts, trend plugins (disconnected externals), memory, timelines.
+- **`adminStudioExecutiveAiDirectorAnalysis.ts`** — production draft coaching, prompt scoring, brand compliance, keyword executive chat responses with source labels.
+- **`useAdminStudioExecutiveAiDirectorState.ts`** — chat history + append-only memory in **`adminStudioExecutiveAiDirector_v1`**.
+- UI: hub cards, scorecard strip, tabbed workspace (brief/insights/production/brand/prompt/forecast/recommendations/timeline/chat).
+- **Director Mode:** **`ExecutiveAiDirectorAdvisorPanel`** — Ask Executive AI Director with production notes + chat.
+- **`executiveAiDirectorStudioService`** stub.
+- Build verified.
+
+**Changes:** executive-ai-director utils/hooks/components/page, Director Mode advisor panel, storage/routes/nav/App/services, `motherboard/CORE.md`.
+
+**Conventions:** Recommendations tag source (history/config/estimate); external trend plugins shown as disconnected; no fabricated social/trend data.
+
