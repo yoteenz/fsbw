@@ -111,6 +111,14 @@ export default function AdminStudioOsPage() {
               >
                 GROWTH NETWORK · PLATFORM PILLAR
               </button>
+              <button
+                type="button"
+                onClick={() => navigate('/admin/studio/labs')}
+                className="w-full py-2 text-[7px] font-futura border"
+                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
+              >
+                STUDIO OS LABS · EXPERIMENT ENGINE
+              </button>
             </div>
 
             <div className="grid grid-cols-1 gap-3">

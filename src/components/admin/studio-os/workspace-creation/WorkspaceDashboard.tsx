@@ -126,6 +126,11 @@ export function WorkspaceDashboard({
                 OPEN GROWTH NETWORK (PLATFORM)
               </button>
             ) : null}
+            {activeTab === 'labs' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/labs')}>
+                OPEN STUDIO OS LABS (PLATFORM)
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

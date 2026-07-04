@@ -8,6 +8,7 @@ const CORE_PACKAGES = [
   'writing-bible',
   'knowledge-graph',
   'growth-network',
+  'labs',
   'interactive-manual',
   'onboarding-tutorial',
   'prompt-library',

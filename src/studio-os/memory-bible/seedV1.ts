@@ -197,6 +197,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-vision-engine', 'node-vision-share'],
     },
     {
+      id: 'name-studio-os-labs',
+      officialName: 'Studio OS Labs',
+      deprecatedNames: ['analytics dashboard', 'content analytics'],
+      usageNotes:
+        'Research & experimentation division — not analytics. Every published asset becomes an experiment. UI: STUDIO OS LABS. AI Media is first workspace pilot.',
+      relatedModules: ['labs'],
+      relatedGraphNodeIds: ['node-studio-os-labs', 'node-experiment-engine', 'node-learning-engine'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -355,6 +364,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-vision-engine', 'node-vision-share'],
       relatedManualChapter: 'CHAPTER · VISION ENGINE · CINEMATIC PRESENTATIONS',
+    },
+    {
+      id: 'dec-labs-v1',
+      title: 'Launch Studio OS Labs + Experiment Engine v1.0',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'labs',
+      decision:
+        'Studio OS Labs is the research & experimentation division — every published asset automatically becomes an experiment with full variable capture, performance tracking, learning engine, hook/thumbnail/caption/series/pillar intelligence, benchmarks, and promotion pipeline. Not an analytics dashboard.',
+      reason:
+        'Platform must develop proprietary operating intelligence from real production data inside AI Media and future workspaces — insights promoted to Memory Bible, Creative DNA, and Writing Bible.',
+      alternativesConsidered: ['External analytics only', 'Workspace-specific A/B tools', 'Metrics dashboard without learning engine'],
+      outcome: 'Labs module at /admin/studio/labs — AI Media first pilot via bootstrap; core in src/studio-os-core/labs/.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-studio-os-labs', 'node-experiment-engine', 'node-learning-engine'],
+      relatedManualChapter: 'CHAPTER · STUDIO OS LABS · EXPERIMENT ENGINE',
     },
   ],
   aiPreferences: {

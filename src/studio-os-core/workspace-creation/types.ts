@@ -37,6 +37,7 @@ export type BlueprintModuleId =
   | 'distribution'
   | 'revenue'
   | 'growth-network'
+  | 'labs'
   | 'social-accounts'
   | 'system-health'
   | 'promotion-center'

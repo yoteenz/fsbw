@@ -2,6 +2,7 @@ import type { KnowledgeGraphEdge, KnowledgeGraphNode, KnowledgeGraphWorkflowMap 
 import {
   adminStudioBrandAssetsAssetFactoryPath,
   adminStudioGrowthNetworkPath,
+  adminStudioLabsPath,
   adminStudioVisionEnginePath,
   adminStudioMemoryBiblePath,
   adminStudioPhotographyBiblePath,
@@ -254,6 +255,49 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     status: 'live',
     searchKeywords: ['vision link', 'vision share', 'interactive presentation'],
   },
+  {
+    id: 'node-studio-os-labs',
+    name: 'STUDIO OS LABS',
+    type: 'module',
+    description:
+      'Research & experimentation division — Experiment Engine, performance tracking, learning engine, hook/thumbnail/caption intel, benchmarks, and promotion pipeline.',
+    purpose: 'Every published asset becomes an experiment; platform learns from real production data — not analytics dashboards.',
+    route: adminStudioLabsPath(),
+    moduleId: 'labs',
+    relatedManualChapter: 'CHAPTER · STUDIO OS LABS · EXPERIMENT ENGINE',
+    versionIntroduced: 'Milestone 28',
+    status: 'live',
+    searchKeywords: [
+      'studio os labs',
+      'experiment engine',
+      'learning engine',
+      'hook library',
+      'thumbnail intelligence',
+      'benchmarks',
+    ],
+  },
+  {
+    id: 'node-experiment-engine',
+    name: 'EXPERIMENT ENGINE',
+    type: 'feature',
+    description: 'Auto-creates unique experiment IDs on every publish — records topic, pillar, hook, script, voice, thumbnail, AI models, and DNA versions.',
+    purpose: 'Operating system that gets smarter every time content is published.',
+    moduleId: 'labs',
+    versionIntroduced: 'Milestone 28',
+    status: 'live',
+    searchKeywords: ['experiment engine', 'published asset experiment', 'variable capture'],
+  },
+  {
+    id: 'node-learning-engine',
+    name: 'LEARNING ENGINE',
+    type: 'feature',
+    description: 'Generates insights from completed experiments — not raw metrics. Promotes discoveries to Memory Bible and Knowledge Graph.',
+    purpose: 'Institutional intelligence from real business data.',
+    moduleId: 'labs',
+    versionIntroduced: 'Milestone 28',
+    status: 'live',
+    searchKeywords: ['learning engine', 'experiment insights', 'institutional memory'],
+  },
 ];
 
 export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
@@ -298,6 +342,14 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-vision-contains-share', fromId: 'node-vision-engine', toId: 'node-vision-share', type: 'contains' },
   { id: 'e-vision-knowledge', fromId: 'node-vision-engine', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
   { id: 'e-growth-vision', fromId: 'node-growth-network', toId: 'node-vision-engine', type: 'related-to', label: 'INVESTOR DEMOS' },
+  { id: 'e-labs-memory', fromId: 'node-studio-os-labs', toId: 'node-memory-bible', type: 'inherits-from', label: 'INSTITUTIONAL LEARNINGS' },
+  { id: 'e-labs-contains-experiment', fromId: 'node-studio-os-labs', toId: 'node-experiment-engine', type: 'contains' },
+  { id: 'e-labs-contains-learning', fromId: 'node-studio-os-labs', toId: 'node-learning-engine', type: 'contains' },
+  { id: 'e-labs-knowledge', fromId: 'node-studio-os-labs', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
+  { id: 'e-ai-media-labs', fromId: 'node-ai-media-pilot', toId: 'node-studio-os-labs', type: 'feeds', label: 'FIRST WORKSPACE PILOT' },
+  { id: 'e-distribution-labs', fromId: 'publishing-queue', toId: 'node-experiment-engine', type: 'feeds', label: 'EVERY PUBLISH' },
+  { id: 'e-audience-labs', fromId: 'audience-brain', toId: 'node-studio-os-labs', type: 'feeds', label: 'PERFORMANCE SIGNALS' },
+  { id: 'e-experiment-learning', fromId: 'node-experiment-engine', toId: 'node-learning-engine', type: 'feeds', label: 'COMPLETED EXPERIMENTS' },
 ];
 
 export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
@@ -387,6 +439,20 @@ export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
       'node-interactive-manual',
     ],
     moduleIds: ['vision-engine', 'memory-bible', 'knowledge-hub'],
+  },
+  {
+    id: 'wf-studio-os-labs',
+    title: 'STUDIO OS LABS LIFECYCLE',
+    subtitle: 'Publish → Experiment → Performance → Learning → Recommendation → Promotion → Memory Bible',
+    nodeIds: [
+      'node-experiment-engine',
+      'node-studio-os-labs',
+      'node-learning-engine',
+      'node-memory-bible',
+      'node-interactive-manual',
+      'node-ai-media-pilot',
+    ],
+    moduleIds: ['labs', 'memory-bible', 'knowledge-hub', 'distribution-network', 'audience-brain'],
   },
 ];
 

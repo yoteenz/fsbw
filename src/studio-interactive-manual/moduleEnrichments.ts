@@ -351,6 +351,25 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
     ],
     relatedModuleIds: ['memory-bible', 'knowledge-hub', 'growth-network', 'mission-control'],
   },
+  labs: {
+    architecture:
+      'Every publish → Experiment Engine (unique ID + full variable capture) → Performance tracking → Learning Engine (insights not metrics) → Hook/Thumbnail/Caption/Series/Pillar intel → Benchmarks → Promotion pipeline → Memory Bible + Knowledge Graph.',
+    versionIntroduced: 'Milestone 28',
+    workflowNodes: [
+      'EXPERIMENT ENGINE',
+      'PERFORMANCE TRACKING',
+      'LEARNING ENGINE',
+      'HOOK LIBRARY',
+      'THUMBNAIL INTEL',
+      'CAPTION INTEL',
+      'SERIES & PILLAR INTEL',
+      'COMPARE & RECOMMEND',
+      'BENCHMARKS',
+      'PROMOTION',
+      'INSTITUTIONAL MEMORY',
+    ],
+    relatedModuleIds: ['memory-bible', 'knowledge-hub', 'distribution-network', 'audience-brain', 'content-brain'],
+  },
   'content-packs': {
     relatedModuleIds: ['production-builder', 'publishing-queue', 'lounge-tv'],
   },

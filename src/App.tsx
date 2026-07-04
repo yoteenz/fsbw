@@ -158,6 +158,7 @@ const AdminStudioDistributionNetworkChannel = lazyWithRetry(() => import('./page
 const AdminStudioAudienceBrain = lazyWithRetry(() => import('./pages/admin/studio/audience-brain/page'), 'AdminStudioAudienceBrain');
 const AdminStudioAudienceBrainIntelligence = lazyWithRetry(() => import('./pages/admin/studio/audience-brain/intelligence/page'), 'AdminStudioAudienceBrainIntelligence');
 const AdminStudioGrowthNetwork = lazyWithRetry(() => import('./pages/admin/studio/growth-network/page'), 'AdminStudioGrowthNetwork');
+const AdminStudioLabs = lazyWithRetry(() => import('./pages/admin/studio/labs/page'), 'AdminStudioLabs');
 const AdminStudioVisionEngine = lazyWithRetry(() => import('./pages/admin/studio/vision-engine/page'), 'AdminStudioVisionEngine');
 const VisionSharePage = lazyWithRetry(() => import('./pages/vision/page'), 'VisionSharePage');
 const AdminStudioExecutiveCommandCenter = lazyWithRetry(() => import('./pages/admin/studio/executive-command-center/page'), 'AdminStudioExecutiveCommandCenter');
@@ -992,6 +993,11 @@ function App() {
           <Route path="studio/growth-network" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioGrowthNetwork />
+            </Suspense>
+          } />
+          <Route path="studio/labs" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioLabs />
             </Suspense>
           } />
           <Route path="studio/vision-engine" element={

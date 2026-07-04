@@ -505,6 +505,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'labs',
+    title: 'STUDIO OS LABS',
+    purpose: 'Experiment engine & learning system — every publish becomes institutional intelligence.',
+    route: p('labs'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '14 TABS',
+    ctaLabel: 'OPEN LABS',
+    moduleKey: 'labs',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

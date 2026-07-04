@@ -64,6 +64,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
       updatedAt: now,
     },
+    {
+      id: 'promo-labs-v1',
+      featureName: 'Studio OS Labs + Experiment Engine v1.0',
+      description: 'Every published asset becomes an experiment — learning engine, hook/thumbnail/caption intel, benchmarks, promotion pipeline.',
+      currentStage: 'deploy-pilot',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
   ];
 }
 

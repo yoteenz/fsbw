@@ -22,6 +22,7 @@ export type StudioOsCoreModuleId =
   | 'distribution-network'
   | 'audience-brain'
   | 'growth-network'
+  | 'labs'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -143,6 +144,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'GROWTH NETWORK',
     description: 'Intelligent business growth ecosystem — opportunities, partnerships, and revenue.',
     routeSegment: 'growth-network',
+  },
+  {
+    id: 'labs',
+    label: 'STUDIO OS LABS',
+    description: 'Research & experimentation — every published asset becomes an experiment; learning engine.',
+    routeSegment: 'labs',
   },
   {
     id: 'vision-engine',

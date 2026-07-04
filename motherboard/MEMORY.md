@@ -36202,3 +36202,32 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** main.tsx, launch.ts, shareBootstrap.ts, VisionEngineContext.tsx, vision/page.tsx, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 28: Studio OS Labs + Experiment Engine v1.0
+
+**Context:** User requested Milestone 28 — build Studio OS Labs as the research & experimentation division. Every published asset (starting with AI Media) becomes an experiment; platform learns from variables + performance and feeds learnings back into Memory Bible, Knowledge Graph, Creative DNA, etc. Constraints: do not redesign platform, do not modify Frontal Slayer, do not remove existing systems.
+
+**Topics covered (full chat arc):** Prior milestones (Growth Network v27, Vision Engine elevation, Vision Share server persistence, blank-screen fix) completed earlier in session. This turn implements Labs end-to-end.
+
+**Decisions / outcomes:**
+- **Studio OS Labs** is a platform pillar at `/admin/studio/labs` — learning engine, not analytics dashboard
+- **Experiment Engine:** `registerPublishedAsset()` / `createExperimentFromPublish()` auto-creates unique experiment ID + full variable capture on every publish
+- **Learning Engine:** generates insights (hook/thumbnail/length/pillar/revenue patterns) from completed experiments
+- **Intelligence:** hook library, thumbnail intel, caption intel, series intel, pillar intel with ROI recommendations
+- **Compare, recommendations, benchmarks, promotion pipeline** — nothing permanent until promoted to Creative DNA / Writing Bible / templates
+- **Executive AI:** CCO, Analytics Director, Growth Director, Creative Director, BD Director for Labs collaboration
+- **AI Media** = first workspace pilot via `bootstrapAiMediaLabs()` with 5 demo experiments (money myths, health myths, psychology, AI tools, credit secrets)
+- Frontal Slayer **not modified**
+
+**Architecture:**
+- Core: `src/studio-os-core/labs/` (types, store, experimentEngine, learningEngine, recommendationEngine, benchmarkEngine, promotionPipeline, intelligenceAggregator, comparisonEngine, labsExecutives)
+- Adapter: `src/workspaces/ai-media/labs/bootstrap.ts`
+- Admin UI: `LabsWorkspace.tsx` — 14 tabs (overview, experiments, learnings, hooks, thumbnails, captions, series, pillars, compare, recommendations, benchmarks, promotion, executives, knowledge)
+- Docs: `docs/studio-os/labs-experiment-engine.md`
+- Wired: modules.ts, routes, nav, App.tsx, services/studio/labs, KG nodes (`node-studio-os-labs`, `node-experiment-engine`, `node-learning-engine`), Memory Bible naming + decision, moduleEnrichments, workspace-creation (labs module auto-provision), promotion center `promo-labs-v1`
+
+**Conventions:** Follow Growth Network v1 pattern (localStorage demo store, bootstrap on platform load, admin hook + demo seeds). Future: server-persisted experiments + Distribution Network auto-hook on publish.
+
+**Changes:** New labs core + admin UI + AI Media adapter + platform wiring + docs + `motherboard/MEMORY.md`.
+

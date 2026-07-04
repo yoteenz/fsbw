@@ -69,6 +69,9 @@ export type { AudienceBrainSnapshot, AudienceBrainFeed } from './audienceBrain/s
 export { growthNetworkStudioService, GROWTH_INHERITANCE_CHAIN, getGrowthExecutivesForWorkspace } from './growthNetwork/service';
 export type { GrowthNetworkSnapshot, GrowthNetworkStudioService } from './growthNetwork/service';
 
+export { labsStudioService, LABS_INHERITANCE_CHAIN, getLabsExecutivesForWorkspace } from './labs/service';
+export type { LabsSnapshot, LabsStudioService } from './labs/service';
+
 export { visionEngineStudioService, VISION_ENGINE_INHERITANCE_CHAIN } from './visionEngine/service';
 export type { VisionEngineSnapshot } from './visionEngine/service';
 
@@ -158,6 +161,7 @@ import { aiProductionEngineStudioService } from './aiProductionEngine/service';
 import { distributionNetworkStudioService } from './distributionNetwork/service';
 import { audienceBrainStudioService } from './audienceBrain/service';
 import { growthNetworkStudioService } from './growthNetwork/service';
+import { labsStudioService } from './labs/service';
 import { executiveCommandCenterStudioService } from './executiveCommandCenter/service';
 import { legacySystemStudioService } from './legacySystem/service';
 import { assetDirectorStudioService } from './assetDirector/service';
@@ -191,6 +195,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   distributionNetworkStudioService,
   audienceBrainStudioService,
   growthNetworkStudioService,
+  labsStudioService,
   executiveCommandCenterStudioService,
   legacySystemStudioService,
   assetDirectorStudioService,
