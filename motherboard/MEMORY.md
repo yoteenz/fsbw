@@ -34933,4 +34933,14 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Next:** User confirms welcome at **`/tools/email-templates`** → then batch remaining templates.
 
+---
+
+## 2026-07-04 — Email hero anti-cube: welcome → vase/roses/crystals (VIP board)
+
+**Context:** User asked why heroes **keep using glass cube** designs despite VIP-minimal direction.
+
+**Why cubes kept appearing:** Early email hero system was built around **glass cube + roses + diamonds** (MEMORY 2026-07-03); **`welcome`** scene still said **frosted-glass membership plaque pedestal**; Fal defaults to cube when prompts mention glass/plaque/pedestal even with “no cube” rules; logo composite **`wipes`** were tuned for cube plaque faces.
+
+**Fix:** **`emailHeroPromptMeta.json`** — explicit **FORBIDDEN** list (glass cube, acrylic box, vitrine, etc.); canonical reference = **white fluted vase + crimson roses + quartz crystals**. **`welcome`** scene rewritten to match VIP mood board; removed **`welcome`** from **`emailHeroLogoPlacements.json`** (logo stays in email header wordmark only). Regen: **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-vase.log`**.
+
 
