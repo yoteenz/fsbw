@@ -31,6 +31,7 @@ import { TutorialWelcomePrompt } from './components/TutorialWelcomePrompt';
 import { TutorialWizardPanel } from './components/TutorialWizardPanel';
 import { TutorialSpotlightOverlay } from './components/TutorialSpotlightOverlay';
 import { TutorialConciergeFab } from './components/TutorialConciergeFab';
+import { setTutorialOsConciergeBypassActive } from './conciergeBypass';
 
 export type TutorialOsContextValue = {
   activeTour: TutorialTour | null;
@@ -116,6 +117,13 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
     location.pathname.startsWith('/debug-mode');
 
   const isTourActive = Boolean(activeTour && activeStep && !showWelcome);
+
+  const conciergeBypassActive = showWelcome || isTourActive;
+
+  useEffect(() => {
+    setTutorialOsConciergeBypassActive(conciergeBypassActive);
+    return () => setTutorialOsConciergeBypassActive(false);
+  }, [conciergeBypassActive]);
 
   const persistStepProgress = useCallback(
     (tourId: string, index: number, step: TutorialStep, status: 'in_progress' | 'completed') => {

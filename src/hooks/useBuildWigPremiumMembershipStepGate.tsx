@@ -4,6 +4,7 @@ import ConfirmationModal from '../components/ConfirmationModal';
 import { getBuildAWigFlowBasePath, pathnameIsBuildWigPremiumMembershipStep } from '../utils/buildAWigRoutes';
 import { isBawViewSubscriptionsFooterMode } from '../utils/bawClientTestMode';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../utils/premiumMemberAccess';
+import { TUTORIAL_OS_CONCIERGE_CHANGED } from '../tutorial-os/conciergeBypass';
 
 export { pathnameIsBuildWigPremiumMembershipStep };
 
@@ -40,11 +41,14 @@ export function useBuildWigPremiumMembershipStepGate(): JSX.Element | null {
   useEffect(() => {
     const onFocus = () => syncModalToEligibility();
     const onSignIn = () => syncModalToEligibility();
+    const onConcierge = () => syncModalToEligibility();
     window.addEventListener('focus', onFocus);
     window.addEventListener('signInStateChanged', onSignIn as EventListener);
+    window.addEventListener(TUTORIAL_OS_CONCIERGE_CHANGED, onConcierge);
     return () => {
       window.removeEventListener('focus', onFocus);
       window.removeEventListener('signInStateChanged', onSignIn as EventListener);
+      window.removeEventListener(TUTORIAL_OS_CONCIERGE_CHANGED, onConcierge);
     };
   }, [syncModalToEligibility]);
 

@@ -35750,3 +35750,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `TutorialOsPsaGate.tsx`, `App.tsx`, `tutorial-os/index.ts`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — FS Concierge bypasses premium gates (view-only tour)
+
+**Context:** User reported premium upgrade modals / gates blocking Mansion Tour navigation (lobby/lounge, rewards, BAW premium steps, account). Tour is view-only showcase of all features — should not trigger membership gates.
+
+**Shipped:** `conciergeBypass.ts` — active while welcome prompt or tour step overlay is open. `isPremiumMemberForGatedFeatures()` returns true during bypass (same pattern as creative preview). `AccountRouteGuard` allows account/rewards preview without sign-in during tour. Lobby + BAW gate hooks listen for bypass toggle to dismiss modals. Bypass clears when tour ends/skips.
+
+**Changes:** `conciergeBypass.ts`, `TutorialOsContext.tsx`, `premiumMemberAccess.ts`, `AccountRouteGuard.tsx`, lobby page, BAW gates, docs, `motherboard/MEMORY.md`.
+

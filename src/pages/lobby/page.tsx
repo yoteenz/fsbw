@@ -8,6 +8,7 @@ import LoadingScreen from '../../components/base/LoadingScreen';
 import ConfirmationModal from '../../components/ConfirmationModal';
 import { onSignInSuccess } from '../../utils/adminAuth';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
+import { TUTORIAL_OS_CONCIERGE_CHANGED } from '../../tutorial-os/conciergeBypass';
 import { getSupabase, isSupabaseConfigured, signOutIfSessionEmailUnconfirmed } from '../../utils/supabase';
 import {
   syncAllFromApi,
@@ -459,6 +460,14 @@ const LobbyApp: React.FC = () => {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  useEffect(() => {
+    const onConciergeChange = () => {
+      if (isPremiumMemberForGatedFeatures()) setShowUpgradeModal(false);
+    };
+    window.addEventListener(TUTORIAL_OS_CONCIERGE_CHANGED, onConciergeChange);
+    return () => window.removeEventListener(TUTORIAL_OS_CONCIERGE_CHANGED, onConciergeChange);
   }, []);
 
   const handleUpgrade = () => {

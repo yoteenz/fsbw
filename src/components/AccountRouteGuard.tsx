@@ -13,6 +13,7 @@ import { registerServerSessionCookie } from '../utils/sessionRestore';
 import { tryServerSessionRestore } from '../utils/sessionRestore';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isCreativePreviewMode } from '../utils/creativePreviewMode';
+import { isTutorialOsConciergeBypassActive } from '../tutorial-os/conciergeBypass';
 
 const SERVER_RESTORE_ATTEMPT_KEY = 'baw_server_restore_attempted_v1';
 
@@ -108,6 +109,10 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
     run();
     return () => { cancelled = true; };
   }, []);
+
+  if (isTutorialOsConciergeBypassActive()) {
+    return <>{children}</>;
+  }
 
   if (!recoveryDone) {
     return (

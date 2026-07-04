@@ -4,6 +4,7 @@ import ConfirmationModal from '../ConfirmationModal';
 import { isBuildAWigCustomizeOrEditPath, isBuildAWigCustomizePath, getBuildAWigFlowBasePath } from '../../utils/buildAWigRoutes';
 import { isBawEditPath } from '../../utils/bawClientTestMode';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
+import { TUTORIAL_OS_CONCIERGE_CHANGED, isTutorialOsConciergeBypassActive } from '../../tutorial-os/conciergeBypass';
 import { signInHrefWithReturnTo } from '../../utils/signInReturnTo';
 
 function isSignedInFromStorage(): boolean {
@@ -30,6 +31,10 @@ export function BuildWigCustomizeEditAccessGate() {
   );
 
   const syncAccess = useCallback(() => {
+    if (isTutorialOsConciergeBypassActive()) {
+      setShowUpgradeModal(false);
+      return;
+    }
     if (!needsMemberAccess) {
       setShowUpgradeModal(false);
       return;
@@ -56,11 +61,14 @@ export function BuildWigCustomizeEditAccessGate() {
   useEffect(() => {
     const onFocus = () => syncAccess();
     const onSignIn = () => syncAccess();
+    const onConcierge = () => syncAccess();
     window.addEventListener('focus', onFocus);
     window.addEventListener('signInStateChanged', onSignIn as EventListener);
+    window.addEventListener(TUTORIAL_OS_CONCIERGE_CHANGED, onConcierge);
     return () => {
       window.removeEventListener('focus', onFocus);
       window.removeEventListener('signInStateChanged', onSignIn as EventListener);
+      window.removeEventListener(TUTORIAL_OS_CONCIERGE_CHANGED, onConcierge);
     };
   }, [syncAccess]);
 

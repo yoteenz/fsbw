@@ -56,3 +56,7 @@ No live reward issuance yet — stored in `earnedAchievementIds` locally / DB.
 ## Hotspot selectors
 
 Steps may define `targetSelector` (e.g. `[data-tutorial-target="nav-cart"]`). Missing targets log in dev and show the step without breaking.
+
+## Premium / sign-in bypass (view-only tour)
+
+While the welcome prompt or an active tour step is showing, **`isTutorialOsConciergeBypassActive()`** treats the session as premium for gate checks and allows **Account** routes without sign-in — so guests can preview Lounge TV, Rewards, Account, and premium Build-A-Wig steps without upgrade modals. Bypass clears when the tour ends or is skipped.
