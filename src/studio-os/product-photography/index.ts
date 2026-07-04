@@ -86,6 +86,12 @@ export type {
 export { FACTORY_CROP_TEMPLATES, FACTORY_POC_DERIVATIVE_OUTPUTS } from './FactoryCropTemplates';
 export type { FactoryCropTemplate, FactoryCropAnchor } from './FactoryCropTemplates';
 export {
+  DERIVATIVE_GALLERY_SLOTS,
+  type DerivativeGalleryFilter,
+  type DerivativeGalleryItem,
+  type DerivativeGalleryItemStatus,
+} from './DerivativeGalleryCatalog';
+export {
   CREATIVE_DNA_APPROVED_PROMPT_NAME,
   CREATIVE_DNA_APPROVED_PROMPT_VERSION,
   CREATIVE_DNA_APPROVED_PROMPT_BODY,

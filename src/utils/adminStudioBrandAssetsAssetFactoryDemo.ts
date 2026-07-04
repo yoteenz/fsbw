@@ -57,7 +57,7 @@ export function getAssetFactoryTabBody(tabId: BrandAssetsAssetFactoryTabId): str
     case 'processing-queue':
       return 'Jobs progress through hero generation, approval, background removal, smart assets, and upload. Retry from failed derivative steps without regenerating the approved master.';
     case 'derivative-engine':
-      return `${FACTORY_POC_DERIVATIVE_OUTPUTS.length} smart asset outputs per unit using reusable crop templates — runs only after generated master approval.`;
+      return `${FACTORY_POC_DERIVATIVE_OUTPUTS.length} smart asset gallery slots with per-tile preview, filters, and Supabase proof — runs only after generated master approval.`;
     case 'crop-templates':
       return `${FACTORY_CROP_TEMPLATES.length} factory crop templates with aspect ratio, dimensions, anchor, padding, scale, transparency, format.`;
     case 'asset-registry':

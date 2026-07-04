@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AdminStudioTabBar } from '../AdminStudioTabBar';
 import {
   AdminStudioExpandableImage,
@@ -20,6 +20,12 @@ import {
   productAssetSupabasePath,
   type BrandAssetsAssetFactoryTabId,
 } from '../../../../utils/adminStudioBrandAssetsAssetFactoryDemo';
+import { buildDerivativeGalleryItems } from '../../../../utils/assetFactoryDerivativeGallery';
+import {
+  AssetFactoryDerivativeGallery,
+  AssetFactoryPreviewAllCropsModal,
+  derivativeItemToPreview,
+} from './AssetFactoryDerivativeGallery';
 import { PP_VISUAL, ppActionBtn, ppCaption, ppPanelStyle, ppSectionTitle, statusColor } from '../product-photography-bible/photographyBibleTheme';
 
 function stageLabel(stage: string): string {
@@ -40,6 +46,7 @@ function canApproveHero(job: { generatedMasterHeroUrl?: string; heroApproved?: b
 export function BrandAssetsAssetFactoryWorkspace() {
   const [activeTab, setActiveTab] = useState<BrandAssetsAssetFactoryTabId>('overview');
   const [previewItem, setPreviewItem] = useState<AdminStudioImagePreviewItem | null>(null);
+  const [previewAllOpen, setPreviewAllOpen] = useState(false);
   const {
     store,
     latestJob,
@@ -49,6 +56,8 @@ export function BrandAssetsAssetFactoryWorkspace() {
     approveHeroAndRunDerivatives,
     retryFromFailed,
     publishJob,
+    approveRegistryAsset,
+    regenerateDerivative,
   } = useAdminStudioBrandAssetsProductAssetFactory();
 
   const bibleUnit = getPhotographyBibleUnit(PRODUCT_ASSET_FACTORY_POC_UNIT.slug);
@@ -68,6 +77,17 @@ export function BrandAssetsAssetFactoryWorkspace() {
     !latestJob?.transparentMasterUrl &&
     latestJob?.stage !== 'ready-for-review' &&
     latestJob?.stage !== 'published';
+
+  const galleryItems = useMemo(
+    () =>
+      buildDerivativeGalleryItems({
+        registry: store.registry,
+        productSlug: PRODUCT_ASSET_FACTORY_POC_UNIT.slug,
+        version: PRODUCT_ASSET_FACTORY_POC_UNIT.version,
+        job: latestJob,
+      }),
+    [store.registry, latestJob]
+  );
 
   return (
     <div className="pb-6">
@@ -324,7 +344,28 @@ export function BrandAssetsAssetFactoryWorkspace() {
         </div>
       </section>
 
+      <AssetFactoryDerivativeGallery
+        items={galleryItems}
+        productLabel={PRODUCT_ASSET_FACTORY_POC_UNIT.label}
+        running={running}
+        onView={(item) => item.previewSrc && setPreviewItem(derivativeItemToPreview(item))}
+        onRegenerate={(assetType) => void regenerateDerivative(assetType)}
+        onApprove={approveRegistryAsset}
+        onPreviewAll={() => setPreviewAllOpen(true)}
+      />
+
       <AdminStudioImagePreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
+      {previewAllOpen ? (
+        <AssetFactoryPreviewAllCropsModal
+          items={galleryItems}
+          productLabel={PRODUCT_ASSET_FACTORY_POC_UNIT.label}
+          onClose={() => setPreviewAllOpen(false)}
+          onView={(item) => {
+            setPreviewAllOpen(false);
+            if (item.previewSrc) setPreviewItem(derivativeItemToPreview(item));
+          }}
+        />
+      ) : null}
     </div>
   );
 }

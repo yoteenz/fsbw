@@ -17,7 +17,12 @@ export type ProductAssetFactoryStage =
   | 'published'
   | 'failed';
 
-export type ProductAssetFactoryAction = 'generate-hero' | 'approve-hero' | 'run-derivatives' | 'retry';
+export type ProductAssetFactoryAction =
+  | 'generate-hero'
+  | 'approve-hero'
+  | 'run-derivatives'
+  | 'regenerate-derivative'
+  | 'retry';
 
 export const PRODUCT_ASSET_FACTORY_STAGES: readonly ProductAssetFactoryStage[] = [
   'reference-ready',
@@ -93,7 +98,7 @@ export type ProductAssetRegistryRecord = {
   storagePath: string;
   createdDate: string;
   lastUpdated: string;
-  status: 'ready-for-review' | 'published' | 'failed';
+  status: 'ready-for-review' | 'approved' | 'published' | 'failed';
 };
 
 export type ProductAssetFactoryJobRecord = {

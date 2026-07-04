@@ -35867,3 +35867,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** productAssetFactory pipeline/types/creativeDna, product-asset-factory-run, product-photography-generate, ProductAssetFactory.ts, BrandAssetsAssetFactoryWorkspace, PhotographyBibleWorkspace, SignatureUnitCard, signatureUnitPipelineStatus, hooks, demo configs, CreativeDnaRegistry/GenerationPackage, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Asset Factory Derivative Gallery
+
+**Context:** User asked for a Derivative Gallery inside Asset Factory product workspace — visual proof of all manufactured smart assets/crops with per-tile metadata, filters, grid/compact toggle, Preview All Crops modal, view/regenerate/copy URL/approve actions. Master Preview stays as 3 panels only (reference, generated hero, transparent master).
+
+**Shipped:**
+- **`DerivativeGalleryCatalog.ts`** — 16 canonical slots (Wishlist through Holographic Display) synced to factory crop templates.
+- **`AssetFactoryDerivativeGallery.tsx`** — filter bar (All/Pending/Generated/Needs Review/Approved/Published/Failed), compact/grid toggle, per-tile preview + metadata + VIEW/REGEN/COPY URL/APPROVE.
+- **`AssetFactoryPreviewAllCropsModal`** — all derivatives in one modal grid.
+- **`assetFactoryDerivativeGallery.ts`** — merges registry + slot catalog into gallery items with status derivation.
+- **Pipeline:** `regenerate-derivative` action re-crops single asset from transparent master; new crop templates (mini-wishlist, order-summary, marketing-composite, holographic-display).
+- **Hook:** `approveRegistryAsset`, `regenerateDerivative`.
+- **Workspace:** Master Preview + Derivative Gallery below; summary counts in gallery header.
+
+**Changes:** DerivativeGalleryCatalog, FactoryCropTemplates (client+server), AssetFactoryDerivativeGallery, BrandAssetsAssetFactoryWorkspace, assetFactoryDerivativeGallery util, pipeline/API/hook, `motherboard/MEMORY.md`.
+

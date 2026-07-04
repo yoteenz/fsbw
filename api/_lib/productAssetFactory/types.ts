@@ -15,7 +15,12 @@ export type ProductAssetFactoryStage =
   | 'published'
   | 'failed';
 
-export type ProductAssetFactoryAction = 'generate-hero' | 'approve-hero' | 'run-derivatives' | 'retry';
+export type ProductAssetFactoryAction =
+  | 'generate-hero'
+  | 'approve-hero'
+  | 'run-derivatives'
+  | 'regenerate-derivative'
+  | 'retry';
 
 export type ProductAssetFactoryAssetType =
   | 'master-white'
@@ -48,7 +53,7 @@ export type ProductAssetRegistryEntry = {
   storagePath: string;
   createdDate: string;
   lastUpdated: string;
-  status: 'ready-for-review' | 'published' | 'failed';
+  status: 'ready-for-review' | 'approved' | 'published' | 'failed';
 };
 
 export type ProductAssetFactoryLogEntry = {

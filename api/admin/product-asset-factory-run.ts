@@ -28,7 +28,13 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
   return null;
 }
 
-const VALID_ACTIONS: ProductAssetFactoryAction[] = ['generate-hero', 'approve-hero', 'run-derivatives', 'retry'];
+const VALID_ACTIONS: ProductAssetFactoryAction[] = [
+  'generate-hero',
+  'approve-hero',
+  'run-derivatives',
+  'regenerate-derivative',
+  'retry',
+];
 
 /**
  * POST /api/admin/product-asset-factory-run
@@ -57,6 +63,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const generatedMasterHeroSrc =
     typeof body?.generatedMasterHeroSrc === 'string' ? body.generatedMasterHeroSrc.trim() : undefined;
   const heroApproved = body?.heroApproved === true;
+  const assetType = typeof body?.assetType === 'string' ? body.assetType.trim() : undefined;
+  const transparentMasterUrl =
+    typeof body?.transparentMasterUrl === 'string' ? body.transparentMasterUrl.trim() : undefined;
 
   if (unitSlug !== PRODUCT_ASSET_FACTORY_POC_UNIT.slug) {
     return res.status(400).json({
@@ -81,6 +90,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     productReferenceSrc,
     generatedMasterHeroSrc,
     heroApproved,
+    assetType,
+    transparentMasterUrl,
   });
 
   return res.status(result.ok ? 200 : 500).json(result);

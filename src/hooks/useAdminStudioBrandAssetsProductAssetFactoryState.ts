@@ -42,6 +42,8 @@ export async function runProductAssetFactoryApi(opts: {
   productReferenceSrc?: string;
   generatedMasterHeroSrc?: string;
   heroApproved?: boolean;
+  assetType?: string;
+  transparentMasterUrl?: string;
 }): Promise<{ ok: boolean; job?: ProductAssetFactoryJobRecord; registry?: ProductAssetRegistryRecord[]; logs?: ProductAssetFactoryLogRecord[]; error?: string }> {
   const token = await getAccessToken();
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -174,6 +176,34 @@ export function useAdminStudioBrandAssetsProductAssetFactory() {
     });
   }, []);
 
+  const approveRegistryAsset = useCallback((registryId: string) => {
+    setStore((prev) => {
+      const next = {
+        ...prev,
+        registry: prev.registry.map((r) =>
+          r.id === registryId
+            ? { ...r, status: 'approved' as const, lastUpdated: new Date().toISOString().slice(0, 10) }
+            : r
+        ),
+      };
+      writeStore(next);
+      return next;
+    });
+  }, []);
+
+  const regenerateDerivative = useCallback(
+    (assetType: string) =>
+      callApi({
+        action: 'regenerate-derivative',
+        unitSlug: 'soft-wave',
+        assetType,
+        transparentMasterUrl: latestJob?.transparentMasterUrl,
+        generatedMasterHeroSrc: latestJob?.generatedMasterHeroUrl ?? latestJob?.masterHeroUrl,
+        heroApproved: true,
+      }),
+    [callApi, latestJob?.transparentMasterUrl, latestJob?.generatedMasterHeroUrl, latestJob?.masterHeroUrl]
+  );
+
   return {
     store,
     latestJob,
@@ -183,5 +213,7 @@ export function useAdminStudioBrandAssetsProductAssetFactory() {
     approveHeroAndRunDerivatives,
     retryFromFailed,
     publishJob,
+    approveRegistryAsset,
+    regenerateDerivative,
   };
 }

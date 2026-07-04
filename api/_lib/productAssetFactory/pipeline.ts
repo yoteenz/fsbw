@@ -85,6 +85,8 @@ export type RunProductAssetFactoryOpts = {
   generatedMasterHeroSrc?: string;
   heroApproved?: boolean;
   existingJob?: ProductAssetFactoryJob;
+  assetType?: string;
+  transparentMasterUrl?: string;
 };
 
 function buildBaseJob(productReferenceUrl: string): ProductAssetFactoryJob {
@@ -233,6 +235,16 @@ export async function runProductAssetFactoryPipeline(
       registry,
       now,
       fromStage: action === 'retry' ? opts.fromStage : undefined,
+    });
+  }
+
+  if (action === 'regenerate-derivative') {
+    return runRegenerateSingleDerivative({
+      assetType: opts.assetType,
+      transparentMasterUrl: opts.transparentMasterUrl ?? opts.existingJob?.transparentMasterUrl,
+      existingJob: opts.existingJob,
+      logs,
+      now,
     });
   }
 
@@ -485,6 +497,86 @@ function buildRegistryEntry(
     lastUpdated: date,
     status: 'ready-for-review',
   };
+}
+
+async function runRegenerateSingleDerivative(ctx: {
+  assetType?: string;
+  transparentMasterUrl?: string;
+  existingJob?: ProductAssetFactoryJob;
+  logs: ProductAssetFactoryLogEntry[];
+  now: string;
+}): Promise<RunProductAssetFactoryResult> {
+  const unit = PRODUCT_ASSET_FACTORY_POC_UNIT;
+  const assetType = ctx.assetType?.trim();
+  const transparentUrl = ctx.transparentMasterUrl?.trim();
+
+  let job = ctx.existingJob ?? buildBaseJob(resolveAbsoluteUrl(unit.productReferenceSrc));
+
+  if (!assetType) {
+    return {
+      ok: false,
+      job: buildFailedJob('generating-smart-assets', 'assetType required for regenerate-derivative', job),
+      registry: [],
+      logs: [...ctx.logs, logEntry('generating-smart-assets', 'assetType required', 'error')],
+      error: 'assetType required',
+    };
+  }
+
+  if (!transparentUrl) {
+    return {
+      ok: false,
+      job: buildFailedJob('generating-smart-assets', 'Transparent master required to regenerate derivative', job),
+      registry: [],
+      logs: [...ctx.logs, logEntry('generating-smart-assets', 'Transparent master URL missing', 'error')],
+      error: 'Transparent master required',
+    };
+  }
+
+  const output = FACTORY_POC_DERIVATIVE_OUTPUTS.find((o) => o.assetType === assetType);
+  if (!output) {
+    return {
+      ok: false,
+      job: buildFailedJob('generating-smart-assets', `Unknown asset type: ${assetType}`, job),
+      registry: [],
+      logs: [...ctx.logs, logEntry('generating-smart-assets', `Unknown asset type: ${assetType}`, 'error')],
+      error: `Unknown asset type: ${assetType}`,
+    };
+  }
+
+  try {
+    ctx.logs.push(logEntry('generating-smart-assets', `Regenerating ${assetType} from transparent master`));
+    const transparentBuf = await fetchMasterBuffer(transparentUrl);
+    const template = getFactoryCropTemplate(output.templateId);
+    if (!template) throw new Error(`Missing template ${output.templateId}`);
+
+    const buffer = await renderFactoryDerivative(transparentBuf, template);
+    const path = productAssetStoragePath(unit.productLine, unit.slug, unit.version, output.fileName);
+    const up = await uploadProductAsset(path, buffer);
+    const entry = buildRegistryEntry(unit, output.assetType, output.templateId, buffer, up, ctx.now, template);
+
+    job = {
+      ...job,
+      stage: 'ready-for-review',
+      transparentMasterUrl: transparentUrl,
+      heroApproved: true,
+      derivativeCount: (job.derivativeCount ?? 0) + 1,
+      registryEntryIds: [...new Set([...(job.registryEntryIds ?? []), entry.id])],
+      lastUpdated: new Date().toISOString(),
+    };
+    ctx.logs.push(logEntry('generating-smart-assets', `${assetType} regenerated and uploaded`));
+
+    return { ok: true, job, registry: [entry], logs: ctx.logs };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    ctx.logs.push(logEntry('generating-smart-assets', msg, 'error'));
+    return {
+      ok: false,
+      job: buildFailedJob('generating-smart-assets', msg, job),
+      registry: [],
+      logs: ctx.logs,
+      error: msg,
+    };
+  }
 }
 
 export { productAssetStoragePath } from './supabaseStorage.js';
