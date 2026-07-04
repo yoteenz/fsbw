@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ASSET_DIRECTOR_GALLERY_SECTIONS,
@@ -10,7 +10,7 @@ import {
 import { ASSET_DIRECTOR_STUDIOS } from '../../../../utils/adminStudioAssetDirectorDemo';
 import { useAdminStudioAssetDirector, useAdminStudioAssetDirectorBrowser } from '../../../../hooks/useAdminStudioAssetDirectorState';
 import { AssetDirectorGalleryBrowser } from './AssetDirectorGalleryBrowser';
-import { AssetDirectorHeroPreview, AssetDirectorQuickPreviewModal } from './AssetDirectorVisualPrimitives';
+import { AssetDirectorHeroPreview, AssetDirectorActionNotice, AssetDirectorQuickPreviewModal } from './AssetDirectorVisualPrimitives';
 import { AD_VISUAL, adCaptionStyle, adSectionTitleStyle } from './assetDirectorVisualTheme';
 
 /** Visual-first Asset Director hub — gallery department, not settings. */
@@ -18,6 +18,8 @@ export function AssetDirectorHubDashboard() {
   const navigate = useNavigate();
   const { searchQuery, setSearchQuery, viewMode, setViewMode, favorites } = useAdminStudioAssetDirector();
   const browser = useAdminStudioAssetDirectorBrowser();
+  const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const dismissNotice = useCallback(() => setActionNotice(null), []);
 
   const featured = getStudioVisualBundle('ad-studio-weather');
   const allItems = useMemo(() => listAssetDirectorGalleryItems('all'), []);
@@ -85,7 +87,10 @@ export function AssetDirectorHubDashboard() {
         }
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        onBulkAction={browser.bulkAction}
+        onBulkAction={(action) => {
+          browser.bulkAction(action);
+          setActionNotice(`${action} · ${browser.selectedIds.length} SELECTED`);
+        }}
       />
 
       <p style={{ ...adCaptionStyle, marginTop: '12px', fontSize: '9px' }}>
@@ -96,6 +101,7 @@ export function AssetDirectorHubDashboard() {
         item={browser.quickPreview}
         onClose={() => browser.setQuickPreview(null)}
       />
+      <AssetDirectorActionNotice message={actionNotice} onDismiss={dismissNotice} />
     </div>
   );
 }

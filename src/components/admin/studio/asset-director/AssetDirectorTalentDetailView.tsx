@@ -12,9 +12,16 @@ type TalentBundle = NonNullable<ReturnType<typeof getTalentVisualBundle>>;
 type AssetDirectorTalentDetailViewProps = {
   bundle: TalentBundle;
   onQuickPreview?: (item: { name: string; previewSrc: string }) => void;
+  onGenerate?: (item: { name: string }) => void;
+  onReplace?: (item: { name: string }) => void;
 };
 
-export function AssetDirectorTalentDetailView({ bundle, onQuickPreview }: AssetDirectorTalentDetailViewProps) {
+export function AssetDirectorTalentDetailView({
+  bundle,
+  onQuickPreview,
+  onGenerate,
+  onReplace,
+}: AssetDirectorTalentDetailViewProps) {
   const { talent } = bundle;
   const preview = (name: string, src: string) => onQuickPreview?.({ name, previewSrc: src });
 
@@ -37,7 +44,14 @@ export function AssetDirectorTalentDetailView({ bundle, onQuickPreview }: AssetD
       <AssetDirectorSectionBlock title="WARDROBE">
         <div className="grid grid-cols-2 gap-2">
           {bundle.wardrobe.map((w) => (
-            <AssetDirectorVisualTile key={w.id} item={w} aspect="3 / 4" onPreview={() => preview(w.name, w.previewSrc)} />
+            <AssetDirectorVisualTile
+              key={w.id}
+              item={w}
+              aspect="3 / 4"
+              onPreview={() => preview(w.name, w.previewSrc)}
+              onGenerate={() => onGenerate?.(w)}
+              onReplace={() => onReplace?.(w)}
+            />
           ))}
         </div>
       </AssetDirectorSectionBlock>
@@ -56,7 +70,14 @@ export function AssetDirectorTalentDetailView({ bundle, onQuickPreview }: AssetD
       <AssetDirectorSectionBlock title="POSES">
         <div className="grid grid-cols-2 gap-2">
           {bundle.poses.map((p) => (
-            <AssetDirectorVisualTile key={p.id} item={p} aspect="3 / 4" onPreview={() => preview(p.name, p.previewSrc)} />
+            <AssetDirectorVisualTile
+              key={p.id}
+              item={p}
+              aspect="3 / 4"
+              onPreview={() => preview(p.name, p.previewSrc)}
+              onGenerate={() => onGenerate?.(p)}
+              onReplace={() => onReplace?.(p)}
+            />
           ))}
         </div>
       </AssetDirectorSectionBlock>

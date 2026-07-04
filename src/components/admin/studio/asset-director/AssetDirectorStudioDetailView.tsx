@@ -12,11 +12,25 @@ import { AD_VISUAL, adCaptionStyle } from './assetDirectorVisualTheme';
 type AssetDirectorStudioDetailViewProps = {
   bundle: StudioVisualBundle;
   onQuickPreview?: (item: { name: string; previewSrc: string; resolution?: string; version?: string }) => void;
+  onGenerate?: (item: { name: string }) => void;
+  onReplace?: (item: { name: string }) => void;
+  onHeaderAction?: (action: string) => void;
 };
 
-export function AssetDirectorStudioDetailView({ bundle, onQuickPreview }: AssetDirectorStudioDetailViewProps) {
+export function AssetDirectorStudioDetailView({
+  bundle,
+  onQuickPreview,
+  onGenerate,
+  onReplace,
+  onHeaderAction,
+}: AssetDirectorStudioDetailViewProps) {
   const preview = (item: { name: string; previewSrc: string; resolution: string; version: string }) =>
     onQuickPreview?.(item);
+  const tileActions = (item: { name: string; previewSrc: string; resolution: string; version: string }) => ({
+    onPreview: () => preview(item),
+    onGenerate: () => onGenerate?.(item),
+    onReplace: () => onReplace?.(item),
+  });
 
   return (
     <div className="pb-4">
@@ -24,6 +38,7 @@ export function AssetDirectorStudioDetailView({ bundle, onQuickPreview }: AssetD
         studio={bundle.studio}
         subtitle={bundle.studio.masterEnvironment}
         productionCount={bundle.productionCount}
+        onAction={onHeaderAction}
       />
 
       <AssetDirectorHeroPreview src={bundle.heroSrc} type={bundle.heroType} />
@@ -31,7 +46,7 @@ export function AssetDirectorStudioDetailView({ bundle, onQuickPreview }: AssetD
       <AssetDirectorSectionBlock title="VERSIONS" subtitle="DAY · NIGHT · SEASONAL · CAMPAIGN VARIANTS">
         <div className="grid grid-cols-2 gap-2">
           {bundle.versions.map((v) => (
-            <AssetDirectorVisualTile key={v.id} item={v} onPreview={() => preview(v)} />
+            <AssetDirectorVisualTile key={v.id} item={v} {...tileActions(v)} />
           ))}
         </div>
       </AssetDirectorSectionBlock>
@@ -39,7 +54,7 @@ export function AssetDirectorStudioDetailView({ bundle, onQuickPreview }: AssetD
       <AssetDirectorSectionBlock title="VIDEOS" subtitle="INTRO · IDLE · LOOP · OUTRO · TRANSITION">
         <div className="grid grid-cols-2 gap-2">
           {bundle.videos.map((v) => (
-            <AssetDirectorVisualTile key={v.id} item={v} showPlay onPreview={() => preview(v)} />
+            <AssetDirectorVisualTile key={v.id} item={v} showPlay {...tileActions(v)} />
           ))}
         </div>
       </AssetDirectorSectionBlock>
@@ -47,7 +62,7 @@ export function AssetDirectorStudioDetailView({ bundle, onQuickPreview }: AssetD
       <AssetDirectorSectionBlock title="CAMERAS" subtitle="FRAMING PRESETS — VISUAL FIRST">
         <div className="grid grid-cols-2 gap-2">
           {bundle.cameras.map((c) => (
-            <AssetDirectorVisualTile key={c.id} item={c} aspect="16 / 9" onPreview={() => preview(c)} />
+            <AssetDirectorVisualTile key={c.id} item={c} aspect="16 / 9" {...tileActions(c)} />
           ))}
         </div>
       </AssetDirectorSectionBlock>
@@ -55,7 +70,7 @@ export function AssetDirectorStudioDetailView({ bundle, onQuickPreview }: AssetD
       <AssetDirectorSectionBlock title="LIGHTING">
         <div className="grid grid-cols-2 gap-2">
           {bundle.lighting.map((l) => (
-            <AssetDirectorVisualTile key={l.id} item={l} onPreview={() => preview(l)} />
+            <AssetDirectorVisualTile key={l.id} item={l} {...tileActions(l)} />
           ))}
         </div>
       </AssetDirectorSectionBlock>
@@ -63,7 +78,7 @@ export function AssetDirectorStudioDetailView({ bundle, onQuickPreview }: AssetD
       <AssetDirectorSectionBlock title="PROPS">
         <div className="grid grid-cols-2 gap-2">
           {bundle.props.map((p) => (
-            <AssetDirectorVisualTile key={p.id} item={p} onPreview={() => preview(p)} />
+            <AssetDirectorVisualTile key={p.id} item={p} {...tileActions(p)} />
           ))}
         </div>
       </AssetDirectorSectionBlock>
@@ -121,7 +136,7 @@ export function AssetDirectorStudioDetailView({ bundle, onQuickPreview }: AssetD
       <AssetDirectorSectionBlock title="POSE LIBRARY">
         <div className="grid grid-cols-2 gap-2">
           {bundle.poses.map((p) => (
-            <AssetDirectorVisualTile key={p.id} item={p} aspect="3 / 4" onPreview={() => preview(p)} />
+            <AssetDirectorVisualTile key={p.id} item={p} aspect="3 / 4" {...tileActions(p)} />
           ))}
         </div>
       </AssetDirectorSectionBlock>
@@ -129,7 +144,7 @@ export function AssetDirectorStudioDetailView({ bundle, onQuickPreview }: AssetD
       <AssetDirectorSectionBlock title="MATERIAL LIBRARY">
         <div className="grid grid-cols-2 gap-2">
           {bundle.materials.map((m) => (
-            <AssetDirectorVisualTile key={m.id} item={m} onPreview={() => preview(m)} />
+            <AssetDirectorVisualTile key={m.id} item={m} {...tileActions(m)} />
           ))}
         </div>
       </AssetDirectorSectionBlock>

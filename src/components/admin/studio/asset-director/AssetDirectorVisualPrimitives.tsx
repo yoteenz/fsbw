@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import type { AssetDirectorStudioProfile } from '../../../../utils/adminStudioAssetDirectorDemo';
 import { ASSET_DIRECTOR_STATUS_LABELS } from '../../../../utils/adminStudioAssetDirectorDemo';
 import type { StudioVisualBundle } from '../../../../utils/adminStudioAssetDirectorVisual';
@@ -171,23 +172,111 @@ type AssetDirectorQuickPreviewModalProps = {
 };
 
 export function AssetDirectorQuickPreviewModal({ item, onClose }: AssetDirectorQuickPreviewModalProps) {
-  if (!item) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{ background: 'rgba(0,0,0,0.45)' }} onClick={onClose}>
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [item?.previewSrc, item?.name]);
+
+  useEffect(() => {
+    if (!item) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [item]);
+
+  useEffect(() => {
+    if (!item) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [item, onClose]);
+
+  if (!item || typeof document === 'undefined') return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 flex items-center justify-center p-4"
+      style={{ zIndex: 10000, background: 'rgba(0,0,0,0.55)' }}
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Preview ${item.name}`}
+    >
       <div
         className="bg-white border border-black max-w-sm w-full overflow-hidden"
         style={{ borderWidth: '1.3px' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <img src={item.previewSrc} alt="" className="w-full" style={{ aspectRatio: '16 / 9', objectFit: 'cover' }} />
+        {imageFailed ? (
+          <div
+            className="w-full flex items-center justify-center bg-gray-100"
+            style={{ aspectRatio: '16 / 9', fontFamily: '"Futura PT Medium"', fontSize: '10px', color: AD_VISUAL.gray }}
+          >
+            PREVIEW UNAVAILABLE · PLACEHOLDER ASSET
+          </div>
+        ) : (
+          <img
+            src={item.previewSrc}
+            alt={item.name}
+            className="w-full"
+            style={{ aspectRatio: '16 / 9', objectFit: 'cover', display: 'block' }}
+            onError={() => setImageFailed(true)}
+          />
+        )}
         <div className="p-3">
           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: AD_VISUAL.red }}>{item.name}</p>
-          <p style={adCaptionStyle}>{item.resolution} {item.version ? `· ${item.version}` : ''}</p>
+          <p style={adCaptionStyle}>
+            {item.resolution}
+            {item.version ? ` · ${item.version}` : ''}
+          </p>
           <button type="button" onClick={onClose} className="mt-2 w-full" style={adActionBtnStyle}>
             CLOSE
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
+  );
+}
+
+type AssetDirectorActionNoticeProps = {
+  message: string | null;
+  onDismiss: () => void;
+};
+
+/** Demo-mode feedback for GENERATE / REPLACE / bulk actions (portal — avoids layout clipping). */
+export function AssetDirectorActionNotice({ message, onDismiss }: AssetDirectorActionNoticeProps) {
+  useEffect(() => {
+    if (!message) return;
+    const timer = window.setTimeout(onDismiss, 5000);
+    return () => window.clearTimeout(timer);
+  }, [message, onDismiss]);
+
+  if (!message || typeof document === 'undefined') return null;
+
+  return createPortal(
+    <div
+      className="fixed left-0 right-0 px-4"
+      style={{ zIndex: 10001, bottom: 'max(16px, env(safe-area-inset-bottom))' }}
+    >
+      <div
+        className="mx-auto max-w-md border border-black bg-white p-3 shadow-lg"
+        style={{ borderWidth: '1.3px' }}
+      >
+        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: AD_VISUAL.red, margin: 0 }}>{message}</p>
+        <p style={{ ...adCaptionStyle, marginTop: '6px', marginBottom: 0 }}>
+          DEMO MODE · AI GENERATION NOT CONNECTED · ACTION LOGGED FOR FUTURE PIPELINE
+        </p>
+        <button type="button" onClick={onDismiss} className="mt-2 w-full" style={adActionBtnStyle}>
+          DISMISS
+        </button>
+      </div>
+    </div>,
+    document.body
   );
 }

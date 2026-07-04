@@ -35270,3 +35270,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Core never imports workspace implementations or brand demo data; workspace layer registers via `configureWorkspaceRegistry()`; new code imports from `studio-os-core` not `studio-os/` subpaths; type casts at workspace boundary acceptable for Frontal Slayer demo types.
 
+---
+
+## 2026-07-04 — Asset Director preview & action buttons fix
+
+**Context:** User reported Asset Director studio detail VERSIONS section — PREVIEW / image tap showed blank grey screen; GENERATE and REPLACE buttons did nothing.
+
+**Topics covered:** Full chat arc includes StudioOS core extraction (prior turn) plus this bug report on Asset Director (`/admin/studio/asset-director/studios/...`) VERSIONS tiles (DAY, NIGHT, HOLIDAY, SUMMER).
+
+**Decisions / outcomes:**
+- Root cause: `AssetDirectorQuickPreviewModal` used `position: fixed` inside `AdminStudioLayout` card with `backdrop-blur-sm` + `overflow-hidden`, clipping the modal to a grey overlay with no visible content on mobile.
+- Fix: render preview modal via `createPortal(document.body)` with `z-index: 10000`, body scroll lock, Escape to close, image `onError` fallback.
+- GENERATE / REPLACE were never wired — added handlers through `AssetDirectorStudioDetailView` + talent detail; demo feedback via new `AssetDirectorActionNotice` portal toast (“DEMO MODE · AI GENERATION NOT CONNECTED”).
+- Hub bulk actions also show notice toast.
+- Build verified.
+
+**Changes:** `AssetDirectorVisualPrimitives.tsx`, `AssetDirectorStudioDetailView.tsx`, `AssetDirectorTalentDetailView.tsx`, `AssetDirectorHubDashboard.tsx`, studio/talent detail pages, `motherboard/MEMORY.md`.
+
+**Conventions:** Studio modals/overlays inside `AdminStudioLayout` must portal to `document.body` to avoid backdrop-filter clipping.
+
