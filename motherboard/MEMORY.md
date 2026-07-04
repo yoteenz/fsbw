@@ -35532,3 +35532,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Collection section = luxury exhibition not product grid; table-based inline styles for email clients; interactive carousel remains preview-only. Default promo title **The Signature Collection**.
 
+---
+
+## 2026-07-04 — Email Signature Collection: layered floating exhibit (not cards)
+
+**Context (full chat):** Prior luxury gallery pass still read as flat 2D ecommerce cards (single visual plane). User revision: **stop designing cards** — architect a **floating luxury product exhibit** with independent layers (marble → acrylic frame → glass inset → floating bust → orbiting chips → CTA → reflections → shadows).
+
+**Decisions / outcomes:**
+- **Architecture rewrite** in **`emailProductPromo.ts`**: removed nested white product-card stacks; each hero is an **installation** on **marble background** with semi-transparent **acrylic outer frame** + **inset glass panel**.
+- **Product:** bust presented editorially — **transparent bg**, **`object-position: top`**, **negative margin** to overlap frame and **clip stand**; reflection strip + ambient floor shadow beneath (Layers 7–8).
+- **Specs:** no row under product — **four orbiting acrylic chips** flank the bust via email-safe **3-column table** (length/density top, lace/origin bottom).
+- **Identity plaque** floats **above** exhibit (collection name + unit + **COLLECTION NO. 00X**).
+- **CTA** on separate floating plane below frame.
+- **Thumbnails:** miniature **collectible acrylic modules** — active rises (**padding-top 0**, glow), inactive recedes (**padding-top 12px**, faded); preview JS syncs opacity + elevation.
+- **Essentials:** individual marble-backed floating exhibits (not side-by-side cards).
+- Subtitle → **FRONTAL SLAYER FLAGSHIP SHOWROOM**. Builder/carousel hooks unchanged.
+
+**Changes:** `api/_lib/email/emailProductPromo.ts`, `src/utils/emailPreviewEditor.ts`, `motherboard/MEMORY.md`.
+
+**Conventions:** Signature Collection email block = multi-layer showroom installation; avoid single-plane card grids; orbit layout uses tables not absolute positioning for email compatibility.
+

@@ -1,4 +1,4 @@
-import { emailAssetUrl, resolveSiteOrigin } from './brandAssets.js';
+import { EMAIL_BRAND, emailAssetUrl, resolveSiteOrigin } from './brandAssets.js';
 import {
   emailTdStyleCss,
   emailTextStyleCss,
@@ -33,10 +33,9 @@ export type EmailEssentialTile = EmailProductPromoTile & {
 const FS_RED = '#EB1C24';
 const FS_RED_GLOW = 'rgba(235,28,36,0.42)';
 const FS_RED_SOFT = 'rgba(235,28,36,0.16)';
-const FS_RED_EDGE = 'rgba(235,28,36,0.22)';
-const ACRYLIC_BG = 'rgba(255,255,255,0.82)';
-const ACRYLIC_BORDER = 'rgba(255,255,255,0.96)';
-const CHROME = 'rgba(180,180,180,0.35)';
+const FS_RED_EDGE = 'rgba(235,28,36,0.28)';
+const GLASS_FILL = 'rgba(255,255,255,0.18)';
+const ACRYLIC_FRAME = 'rgba(255,255,255,0.38)';
 
 function escHtml(value: string): string {
   return value
@@ -53,6 +52,8 @@ function absoluteUrl(pathOrUrl: string): string {
   const origin = resolveSiteOrigin();
   return `${origin}${raw.startsWith('/') ? raw : `/${raw}`}`;
 }
+
+const MARBLE_BG = EMAIL_BRAND.marbleBackground;
 
 /** BCF straight-texture thumbs — site `/assets/` PNGs (reliable in email; same pattern as unit tiles). */
 const BCF_THUMB_SRC = {
@@ -150,52 +151,23 @@ export const EMAIL_ESSENTIAL_TILES: EmailEssentialTile[] = EMAIL_PRODUCT_PROMO_T
   descriptor: ESSENTIAL_DESCRIPTORS[tile.label] ?? tile.label.toUpperCase(),
 }));
 
-/** Layered acrylic exhibition panel — email-safe shadows and borders. */
-function acrylicExhibitionShell(inner: string): string {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;background:${ACRYLIC_BG};border:1px solid ${FS_RED_EDGE};border-radius:16px;box-shadow:0 0 22px ${FS_RED_SOFT},0 14px 36px rgba(0,0,0,0.05),inset 0 1px 0 ${ACRYLIC_BORDER},inset 0 -1px 0 ${CHROME};">
-  <tr>
-    <td style="padding:3px 14px 0;">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="height:2px;font-size:0;line-height:0;background:rgba(255,255,255,0.95);border-radius:1px;">&nbsp;</td></tr></table>
-    </td>
-  </tr>
-  <tr>
-    <td style="padding:12px 12px 16px;">
-      ${inner}
-    </td>
-  </tr>
-</table>`;
+/** Layer 5 — floating metadata chip (independent shadow plane). */
+function renderOrbitingChip(text: string, labelCss: string): string {
+  return `<span style="display:inline-block;padding:7px 11px;font-size:8px;letter-spacing:0.12em;line-height:1.2;white-space:nowrap;${labelCss};color:#1a1a1a;background:rgba(255,255,255,0.94);border:1px solid rgba(255,255,255,0.98);border-radius:999px;box-shadow:0 10px 22px rgba(0,0,0,0.1),0 0 14px ${FS_RED_SOFT},inset 0 1px 0 rgba(255,255,255,1);">${escHtml(text)}</span>`;
 }
 
-function renderPanelEyebrow(text: string, labelCss: string): string {
-  return `<p data-email-layer="productPromoLabel" style="margin:0 0 16px;text-align:center;letter-spacing:0.2em;font-size:8px;opacity:0.62;${labelCss}">${escHtml(text)}</p>`;
-}
-
-function renderAcrylicChip(text: string, labelCss: string): string {
-  return `<td align="center" valign="middle" style="padding:4px 3px;">
-    <span style="display:inline-block;padding:7px 11px;font-size:9px;letter-spacing:0.1em;white-space:nowrap;${labelCss};color:#1a1a1a;background:rgba(255,255,255,0.94);border:1px solid rgba(255,255,255,0.98);border-radius:999px;box-shadow:0 1px 0 rgba(255,255,255,1),0 4px 14px rgba(0,0,0,0.05),inset 0 1px 0 rgba(255,255,255,1),0 0 0 1px rgba(235,28,36,0.1);">${escHtml(text)}</span>
-  </td>`;
-}
-
-function renderSpecChipGrid(unit: EmailSignatureUnitTile, labelCss: string): string {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:260px;margin:14px auto 0;border-collapse:collapse;">
-    <tr>
-      ${renderAcrylicChip(unit.length, labelCss)}
-      ${renderAcrylicChip(unit.density, labelCss)}
-    </tr>
-    <tr>
-      ${renderAcrylicChip(unit.lace, labelCss)}
-      ${renderAcrylicChip(unit.origin, labelCss)}
-    </tr>
-  </table>`;
-}
-
-function renderLuxuryCapsuleCta(href: string, label: string, ctaCss: string, compact = false): string {
-  const pad = compact ? '10px 20px' : '13px 28px';
+/** Layer 6 — floating acrylic capsule CTA. */
+function renderFloatingCapsuleCta(href: string, label: string, ctaCss: string, compact = false): string {
+  const pad = compact ? '10px 22px' : '14px 32px';
   const fontSize = compact ? '9px' : '10px';
-  return `<a href="${escHtml(href)}" style="display:inline-block;margin-top:14px;padding:${pad};${ctaCss};font-size:${fontSize};letter-spacing:0.14em;text-decoration:none;color:${FS_RED};background:rgba(255,255,255,0.96);border:1px solid ${FS_RED_GLOW};border-radius:999px;box-shadow:0 0 14px ${FS_RED_SOFT},0 6px 18px rgba(0,0,0,0.06),inset 0 1px 0 rgba(255,255,255,1),inset 0 -1px 0 rgba(235,28,36,0.08);">${escHtml(label)}</a>`;
+  return `<a href="${escHtml(href)}" style="display:inline-block;padding:${pad};${ctaCss};font-size:${fontSize};letter-spacing:0.16em;text-decoration:none;color:${FS_RED};background:rgba(255,255,255,0.97);border:1px solid ${FS_RED_GLOW};border-radius:999px;box-shadow:0 12px 28px rgba(0,0,0,0.1),0 0 18px ${FS_RED_SOFT},inset 0 1px 0 rgba(255,255,255,1);">${escHtml(label)}</a>`;
 }
 
-function renderSignatureHeroSlide(
+/**
+ * Layers 2–8: marble chamber → acrylic frame → glass inset → floating bust → orbiting chips → CTA → reflections → shadow.
+ * Table orbit layout keeps chips email-safe without absolute positioning.
+ */
+function renderExhibitInstallation(
   unit: EmailSignatureUnitTile,
   index: number,
   labelCss: string,
@@ -206,82 +178,128 @@ function renderSignatureHeroSlide(
   const name = escHtml(emailUpper(unit.label));
   const collectionLine = escHtml(`COLLECTION NO. ${unit.collectionNo}`);
   const display = index === 0 ? 'block' : 'none';
+  const marbleUrl = escHtml(MARBLE_BG);
 
   return `<div data-collection-slide="${index}" data-collection-href="${href}" style="display:${display};">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;background:rgba(255,255,255,0.88);border:1px solid ${FS_RED_EDGE};border-radius:14px;box-shadow:0 0 26px ${FS_RED_SOFT},0 10px 32px rgba(0,0,0,0.06),inset 0 1px 0 rgba(255,255,255,0.98);">
+    <!-- Layer 1: marble environment -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;background-color:#f8f8f8;background-image:url('${marbleUrl}');background-repeat:repeat;background-size:contain;border-radius:18px;box-shadow:0 22px 48px rgba(0,0,0,0.09),inset 0 1px 0 rgba(255,255,255,0.85);">
       <tr>
-        <td align="center" style="padding:14px 12px 6px;">
-          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;background-color:#fafafa;border-radius:12px;border:1px solid rgba(255,255,255,0.92);box-shadow:inset 0 2px 10px rgba(0,0,0,0.04),0 0 24px rgba(255,255,255,0.85);">
+        <td align="center" style="padding:18px 8px 20px;">
+          <!-- Identity plaque (above exhibit, not under product) -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;border-collapse:collapse;">
             <tr>
-              <td align="center" style="padding:16px 10px 10px;">
-                <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;border:1px solid rgba(235,28,36,0.14);border-radius:10px;background:rgba(255,255,255,0.72);box-shadow:0 6px 20px rgba(0,0,0,0.06),inset 0 1px 0 rgba(255,255,255,1),0 0 16px rgba(235,28,36,0.06);">
+              <td align="center">
+                <div data-email-layer="productPromoLabel" style="margin:0 0 5px;font-size:7px;letter-spacing:0.24em;opacity:0.58;${labelCss}">THE SIGNATURE COLLECTION</div>
+                <div data-email-layer="productPromoLabel" style="margin:0 0 3px;font-size:17px;letter-spacing:0.18em;font-weight:600;${labelCss}">${name}</div>
+                <div style="margin:0;font-size:8px;letter-spacing:0.2em;opacity:0.68;${labelCss}">${collectionLine}</div>
+              </td>
+            </tr>
+          </table>
+
+          <!-- Layer 2: floating acrylic outer frame -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:300px;margin:0 auto;border-collapse:separate;border-spacing:0;background:${ACRYLIC_FRAME};border:1px solid ${FS_RED_EDGE};border-radius:16px;box-shadow:0 0 28px ${FS_RED_SOFT},0 16px 40px rgba(0,0,0,0.11),inset 0 1px 0 rgba(255,255,255,0.92),inset 0 -2px 8px rgba(0,0,0,0.04);">
+            <tr>
+              <td style="padding:10px 8px 14px;">
+                <!-- Chrome highlight strip -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 8px;"><tr><td style="height:2px;font-size:0;line-height:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.95) 50%,transparent 100%);border-radius:1px;">&nbsp;</td></tr></table>
+
+                <!-- Orbit stage: chips flank floating product (Layer 3–5) -->
+                <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
                   <tr>
-                    <td style="padding:10px 8px;">
-                      <img src="${imgUrl}" width="210" height="272" alt="${name}" style="display:block;width:100%;max-width:210px;height:auto;margin:0 auto;border:0;background-color:#f6f6f6;border-radius:6px;"/>
+                    <td width="24%" align="right" valign="middle" style="padding:0 4px 0 0;">
+                      ${renderOrbitingChip(unit.length, labelCss)}
+                    </td>
+                    <td width="52%" rowspan="2" align="center" valign="middle" style="padding:0 2px;">
+                      <!-- Layer 3: inner glass panel -->
+                      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;border-collapse:separate;border-spacing:0;border:1px solid rgba(255,255,255,0.82);border-radius:12px;background:${GLASS_FILL};box-shadow:inset 0 2px 12px rgba(255,255,255,0.65),inset 0 -3px 10px rgba(0,0,0,0.05),0 8px 24px rgba(0,0,0,0.08);">
+                        <tr>
+                          <td align="center" style="padding:10px 6px 0;overflow:hidden;line-height:0;">
+                            <!-- Layer 4: floating editorial bust — clip stand, overlap frame -->
+                            <img src="${imgUrl}" width="168" height="220" alt="${name}" style="display:block;width:100%;max-width:168px;height:auto;margin:0 auto -36px;border:0;background:transparent;object-fit:cover;object-position:center top;"/>
+                          </td>
+                        </tr>
+                      </table>
+                      <!-- Layer 7: reflection -->
+                      <table role="presentation" width="72%" cellpadding="0" cellspacing="0" style="margin:-28px auto 0;border-collapse:collapse;opacity:0.28;">
+                        <tr><td style="height:10px;font-size:0;line-height:0;background:linear-gradient(180deg,#bbbbbb 0%,transparent 100%);border-radius:0 0 8px 8px;">&nbsp;</td></tr>
+                      </table>
+                      <!-- Layer 8: ambient floor shadow -->
+                      <table role="presentation" width="64%" cellpadding="0" cellspacing="0" style="margin:4px auto 0;border-collapse:collapse;opacity:0.35;">
+                        <tr><td style="height:7px;font-size:0;line-height:0;background:#999999;border-radius:999px;">&nbsp;</td></tr>
+                      </table>
+                    </td>
+                    <td width="24%" align="left" valign="top" style="padding:8px 0 0 4px;">
+                      ${renderOrbitingChip(unit.density, labelCss)}
                     </td>
                   </tr>
-                </table>
-                <table role="presentation" width="62%" cellpadding="0" cellspacing="0" style="margin:6px auto 0;border-collapse:collapse;opacity:0.22;">
-                  <tr><td style="height:6px;font-size:0;line-height:0;background:#cccccc;border-radius:0 0 6px 6px;">&nbsp;</td></tr>
+                  <tr>
+                    <td align="right" valign="bottom" style="padding:0 4px 6px 0;">
+                      ${renderOrbitingChip(unit.lace, labelCss)}
+                    </td>
+                    <td align="left" valign="bottom" style="padding:0 0 6px 4px;">
+                      ${renderOrbitingChip(unit.origin, labelCss)}
+                    </td>
+                  </tr>
                 </table>
               </td>
             </tr>
           </table>
-        </td>
-      </tr>
-      <tr>
-        <td align="center" style="padding:6px 14px 18px;">
-          <div data-email-layer="productPromoLabel" style="margin:0 0 6px;font-size:8px;letter-spacing:0.22em;opacity:0.58;${labelCss}">THE SIGNATURE COLLECTION</div>
-          <div data-email-layer="productPromoLabel" style="margin:0 0 4px;font-size:16px;letter-spacing:0.16em;font-weight:600;${labelCss}">${name}</div>
-          <div style="margin:0 0 2px;font-size:9px;letter-spacing:0.18em;opacity:0.72;${labelCss}">${collectionLine}</div>
-          ${renderSpecChipGrid(unit, labelCss)}
-          ${renderLuxuryCapsuleCta(href, 'VIEW UNIT', ctaCss)}
+
+          <!-- Layer 6: CTA on its own floating plane -->
+          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:16px;border-collapse:collapse;">
+            <tr>
+              <td align="center">${renderFloatingCapsuleCta(href, 'VIEW UNIT', ctaCss)}</td>
+            </tr>
+          </table>
         </td>
       </tr>
     </table>
   </div>`;
 }
 
-function renderSignatureThumb(unit: EmailSignatureUnitTile, index: number, labelCss: string): string {
+/** Miniature acrylic collectible — active rises, inactive recedes. */
+function renderCollectibleThumb(unit: EmailSignatureUnitTile, index: number, labelCss: string): string {
   const href = escHtml(absoluteUrl(unit.href));
   const imgUrl = escHtml(unit.imageUrl);
   const name = escHtml(emailUpper(unit.label));
   const collectionNo = escHtml(`NO. ${unit.collectionNo}`);
   const isActive = index === 0;
-  const activeClass = isActive ? ' collection-thumb-active' : '';
-  const inactiveOpacity = isActive ? '1' : '0.48';
-  const activeBorder = isActive
-    ? `border:1px solid ${FS_RED};box-shadow:0 0 14px ${FS_RED_SOFT},0 8px 22px rgba(0,0,0,0.08),inset 0 1px 0 rgba(255,255,255,0.95);`
-    : 'border:1px solid rgba(0,0,0,0.08);box-shadow:0 2px 8px rgba(0,0,0,0.03),inset 0 1px 0 rgba(255,255,255,0.88);';
+  const activeClass = isActive ? 'collection-thumb-active' : '';
+  const padTop = isActive ? '0' : '12px';
+  const thumbScale = isActive ? '52' : '44';
+  const opacity = isActive ? '1' : '0.42';
+  const activeGlow = isActive
+    ? `box-shadow:0 0 18px ${FS_RED_SOFT},0 12px 28px rgba(0,0,0,0.12),inset 0 1px 0 rgba(255,255,255,0.95);border:1px solid ${FS_RED};`
+    : 'box-shadow:0 4px 12px rgba(0,0,0,0.05),inset 0 1px 0 rgba(255,255,255,0.85);border:1px solid rgba(0,0,0,0.08);';
 
-  return `<td align="center" valign="top" width="16.66%" style="padding:5px 3px;">
-    <a data-collection-thumb="${index}" href="${href}" class="${activeClass.trim()}" style="text-decoration:none;color:inherit;display:block;opacity:${inactiveOpacity};${activeBorder}border-radius:10px;padding:5px 4px 6px;background:rgba(255,255,255,0.78);">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;background-color:#f8f8f8;border-radius:7px;border:1px solid rgba(255,255,255,0.9);box-shadow:inset 0 1px 4px rgba(0,0,0,0.04);">
+  return `<td align="center" valign="bottom" width="16.66%" style="padding:0 2px;">
+    <a data-collection-thumb="${index}" href="${href}" class="${activeClass}" style="text-decoration:none;color:inherit;display:block;padding-top:${padTop};opacity:${opacity};${activeGlow}border-radius:11px;padding-left:3px;padding-right:3px;padding-bottom:5px;background:${ACRYLIC_FRAME};">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;border:1px solid rgba(255,255,255,0.75);border-radius:8px;background:${GLASS_FILL};box-shadow:inset 0 1px 6px rgba(255,255,255,0.5);">
         <tr>
-          <td align="center" style="padding:5px 3px 4px;">
-            <img src="${imgUrl}" width="48" height="62" alt="${name}" style="display:block;width:100%;max-width:48px;height:auto;margin:0 auto;border:0;border-radius:4px;background-color:#f0f0f0;"/>
+          <td align="center" style="padding:4px 2px 2px;line-height:0;overflow:hidden;">
+            <img src="${imgUrl}" width="${thumbScale}" height="58" alt="${name}" style="display:block;width:100%;max-width:${thumbScale}px;height:auto;margin:0 auto -10px;border:0;background:transparent;object-fit:cover;object-position:center top;"/>
           </td>
         </tr>
       </table>
-      <div style="margin-top:5px;font-size:6px;letter-spacing:0.12em;line-height:1.2;opacity:0.65;${labelCss}">${collectionNo}</div>
-      <div style="margin-top:2px;font-size:7px;letter-spacing:0.08em;line-height:1.2;${labelCss}">${name}</div>
+      <div style="margin-top:4px;font-size:5px;letter-spacing:0.14em;line-height:1.2;opacity:0.62;${labelCss}">${collectionNo}</div>
+      <div style="margin-top:1px;font-size:6px;letter-spacing:0.08em;line-height:1.2;${labelCss}">${name}</div>
     </a>
   </td>`;
 }
 
-function renderSignatureUnitsPanel(labelCss: string, ctaCss: string): string {
+function renderSignatureShowroom(labelCss: string, ctaCss: string): string {
   const slides = EMAIL_SIGNATURE_UNITS.map((unit, i) =>
-    renderSignatureHeroSlide(unit, i, labelCss, ctaCss)
+    renderExhibitInstallation(unit, i, labelCss, ctaCss)
   ).join('\n');
 
-  const thumbs = EMAIL_SIGNATURE_UNITS.map((unit, i) => renderSignatureThumb(unit, i, labelCss)).join('\n');
+  const thumbs = EMAIL_SIGNATURE_UNITS.map((unit, i) => renderCollectibleThumb(unit, i, labelCss)).join('\n');
 
-  const carouselControls = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;border-collapse:collapse;">
+  const carouselControls = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;border-collapse:collapse;">
     <tr>
       <td width="36" align="left" valign="middle">
         <button type="button" data-collection-prev="signature-units" aria-label="Previous unit" style="display:none;width:34px;height:34px;border:1px solid ${FS_RED_GLOW};border-radius:50%;background:rgba(255,255,255,0.94);color:${FS_RED};font-size:17px;line-height:1;cursor:pointer;box-shadow:0 0 10px ${FS_RED_SOFT},inset 0 1px 0 rgba(255,255,255,1);">&lsaquo;</button>
       </td>
-      <td align="center" valign="middle" style="font-size:8px;letter-spacing:0.18em;opacity:0.55;${labelCss}">
+      <td align="center" valign="middle" style="font-size:7px;letter-spacing:0.2em;opacity:0.5;${labelCss}">
         <span data-collection-indicator="signature-units">1 / ${EMAIL_SIGNATURE_UNITS.length}</span>
       </td>
       <td width="36" align="right" valign="middle">
@@ -290,51 +308,50 @@ function renderSignatureUnitsPanel(labelCss: string, ctaCss: string): string {
     </tr>
   </table>`;
 
-  const inner = `${renderPanelEyebrow('FLAGSHIP EXHIBITION', labelCss)}
-${carouselControls}
+  return `${carouselControls}
 <div data-email-collection="signature-units" data-collection-count="${EMAIL_SIGNATURE_UNITS.length}">
 ${slides}
 </div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;border-collapse:collapse;">
-  <tr>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:18px;border-collapse:collapse;">
+  <tr valign="bottom">
 ${thumbs}
   </tr>
 </table>`;
-
-  return acrylicExhibitionShell(inner);
 }
 
-function renderEssentialShowcase(tile: EmailEssentialTile, labelCss: string, ctaCss: string): string {
+/** Extensions — floating acrylic module on marble (complements, does not compete). */
+function renderEssentialExhibit(tile: EmailEssentialTile, labelCss: string, ctaCss: string): string {
   const href = escHtml(absoluteUrl(tile.href));
   const imgUrl = escHtml(tile.imageUrl);
   const name = escHtml(emailUpper(tile.label));
   const descriptor = escHtml(tile.descriptor);
+  const marbleUrl = escHtml(MARBLE_BG);
 
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px;border-collapse:separate;border-spacing:0;background:rgba(255,255,255,0.72);border:1px solid ${FS_RED_EDGE};border-radius:12px;box-shadow:0 0 16px ${FS_RED_SOFT},0 8px 24px rgba(0,0,0,0.04),inset 0 1px 0 rgba(255,255,255,0.94);">
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:14px;border-collapse:separate;border-spacing:0;background-color:#f8f8f8;background-image:url('${marbleUrl}');background-repeat:repeat;background-size:contain;border-radius:14px;box-shadow:0 14px 32px rgba(0,0,0,0.07),inset 0 1px 0 rgba(255,255,255,0.8);">
     <tr>
-      <td align="center" style="padding:14px 12px 16px;">
-        <table role="presentation" cellpadding="0" cellspacing="0" style="border-collapse:separate;border-spacing:0;background-color:#fafafa;border-radius:9px;border:1px solid rgba(255,255,255,0.92);box-shadow:inset 0 2px 8px rgba(0,0,0,0.03);">
+      <td align="center" style="padding:14px 10px 16px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;border-collapse:separate;border-spacing:0;border:1px solid ${FS_RED_EDGE};border-radius:12px;background:${ACRYLIC_FRAME};box-shadow:0 0 16px ${FS_RED_SOFT},0 10px 24px rgba(0,0,0,0.08),inset 0 1px 0 rgba(255,255,255,0.9);">
           <tr>
-            <td align="center" style="padding:10px 14px 8px;">
-              <img src="${imgUrl}" width="64" height="82" alt="${name}" style="display:block;width:64px;height:auto;border:0;border-radius:6px;background-color:#f4f4f4;"/>
+            <td align="center" style="padding:12px 16px 6px;line-height:0;">
+              <img src="${imgUrl}" width="58" height="74" alt="${name}" style="display:block;width:58px;height:auto;border:0;background:transparent;"/>
             </td>
           </tr>
         </table>
-        <div data-email-layer="productPromoLabel" style="margin:10px 0 4px;font-size:11px;letter-spacing:0.14em;font-weight:600;${labelCss}">${name}</div>
-        <div style="margin:0 0 2px;font-size:8px;letter-spacing:0.1em;opacity:0.68;${labelCss}">${descriptor}</div>
-        ${renderLuxuryCapsuleCta(href, 'SHOP', ctaCss, true)}
+        <table role="presentation" width="56%" cellpadding="0" cellspacing="0" style="margin:2px auto 0;opacity:0.24;"><tr><td style="height:5px;font-size:0;background:#bbb;border-radius:999px;">&nbsp;</td></tr></table>
+        <div data-email-layer="productPromoLabel" style="margin:10px 0 3px;font-size:10px;letter-spacing:0.14em;font-weight:600;${labelCss}">${name}</div>
+        <div style="margin:0 0 4px;font-size:7px;letter-spacing:0.12em;opacity:0.66;${labelCss}">${descriptor}</div>
+        ${renderFloatingCapsuleCta(href, 'SHOP', ctaCss, true)}
       </td>
     </tr>
   </table>`;
 }
 
-function renderEssentialsPanel(labelCss: string, ctaCss: string): string {
-  const cards = EMAIL_ESSENTIAL_TILES.map((tile) => renderEssentialShowcase(tile, labelCss, ctaCss)).join('\n');
-  const inner = `${renderPanelEyebrow('EXTENSIONS ESSENTIALS', labelCss)}
+function renderEssentialsGallery(labelCss: string, ctaCss: string): string {
+  const exhibits = EMAIL_ESSENTIAL_TILES.map((tile) => renderEssentialExhibit(tile, labelCss, ctaCss)).join('\n');
+  return `<p data-email-layer="productPromoLabel" style="margin:0 0 14px;text-align:center;letter-spacing:0.2em;font-size:8px;opacity:0.62;${labelCss}">EXTENSIONS ESSENTIALS</p>
 <div data-email-collection="essentials">
-${cards}
+${exhibits}
 </div>`;
-  return acrylicExhibitionShell(inner);
 }
 
 function renderCollectionShowcaseStyles(): string {
@@ -366,7 +383,7 @@ function renderCollectionShowcaseStyles(): string {
         padding-right: 0 !important;
       }
       .fs-collection-stack td.fs-collection-col-essentials {
-        padding-top: 16px !important;
+        padding-top: 20px !important;
       }
     }
   </style>`;
@@ -395,27 +412,27 @@ export function renderEmailProductPromo(input: {
   const ctaCss = emailTextStyleCss(ctaStyle);
   const containerTd = emailTdStyleCss(containerStyle);
 
-  const signaturePanel = renderSignatureUnitsPanel(labelCss, ctaCss);
-  const essentialsPanel = renderEssentialsPanel(labelCss, ctaCss);
+  const signatureShowroom = renderSignatureShowroom(labelCss, ctaCss);
+  const essentialsGallery = renderEssentialsGallery(labelCss, ctaCss);
 
   return `<tr>
-            <td style="border-top:1px solid rgba(0,0,0,0.06);padding:0;">
+            <td style="border-top:1px solid rgba(0,0,0,0.05);padding:0;">
               <div data-email-layer="productPromo" style="${containerTd}">
                 ${renderCollectionShowcaseStyles()}
-                <p data-email-copy="productPromoTitle" data-email-layer="productPromoTitle" style="margin:0 0 6px;text-align:center;letter-spacing:0.2em;${titleCss}">${title}</p>
-                <p data-email-layer="productPromoLabel" style="margin:0 0 24px;text-align:center;font-size:8px;letter-spacing:0.18em;opacity:0.55;${labelCss}">FRONTAL SLAYER FLAGSHIP UNITS</p>
+                <p data-email-copy="productPromoTitle" data-email-layer="productPromoTitle" style="margin:0 0 6px;text-align:center;letter-spacing:0.22em;${titleCss}">${title}</p>
+                <p data-email-layer="productPromoLabel" style="margin:0 0 28px;text-align:center;font-size:7px;letter-spacing:0.2em;opacity:0.52;${labelCss}">FRONTAL SLAYER FLAGSHIP SHOWROOM</p>
                 <table role="presentation" class="fs-collection-stack" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;max-width:540px;margin:0 auto;">
                   <tr>
                     <td class="fs-collection-col fs-collection-col-signature" valign="top" style="padding:0 6px 0 0;">
-                      ${signaturePanel}
+                      ${signatureShowroom}
                     </td>
                     <td class="fs-collection-col fs-collection-col-essentials" valign="top" style="padding:0 0 0 6px;">
-                      ${essentialsPanel}
+                      ${essentialsGallery}
                     </td>
                   </tr>
                 </table>
-                <p style="margin:28px 0 0;text-align:center;">
-                  <a data-email-copy="productPromoCtaLabel" data-email-layer="productPromoCta" href="${escHtml(ctaUrl)}" style="${ctaCss};display:inline-block;padding:13px 32px;letter-spacing:0.16em;text-decoration:none;color:${ctaStyle.color ?? FS_RED};background:rgba(255,255,255,0.96);border:1px solid ${FS_RED_GLOW};border-radius:999px;box-shadow:0 0 16px ${FS_RED_SOFT},0 8px 22px rgba(0,0,0,0.06),inset 0 1px 0 rgba(255,255,255,1);">${ctaLabel}</a>
+                <p style="margin:32px 0 0;text-align:center;">
+                  <a data-email-copy="productPromoCtaLabel" data-email-layer="productPromoCta" href="${escHtml(ctaUrl)}" style="${ctaCss};display:inline-block;padding:14px 34px;letter-spacing:0.16em;text-decoration:none;color:${ctaStyle.color ?? FS_RED};background:rgba(255,255,255,0.97);border:1px solid ${FS_RED_GLOW};border-radius:999px;box-shadow:0 14px 32px rgba(0,0,0,0.1),0 0 18px ${FS_RED_SOFT},inset 0 1px 0 rgba(255,255,255,1);">${ctaLabel}</a>
                 </p>
               </div>
             </td>

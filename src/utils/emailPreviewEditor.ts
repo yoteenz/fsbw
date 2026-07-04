@@ -163,13 +163,15 @@ function injectEditorStyles(doc: Document): void {
       display: inline-block !important;
     }
     [data-collection-thumb] {
-      opacity: 0.48 !important;
-      transition: opacity 0.2s ease, box-shadow 0.2s ease;
+      opacity: 0.42 !important;
+      padding-top: 12px !important;
+      transition: opacity 0.22s ease, box-shadow 0.22s ease, padding-top 0.22s ease;
     }
     [data-collection-thumb].collection-thumb-active {
       opacity: 1 !important;
+      padding-top: 0 !important;
       border-color: #EB1C24 !important;
-      box-shadow: 0 0 16px rgba(235, 28, 36, 0.28), 0 8px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+      box-shadow: 0 0 18px rgba(235, 28, 36, 0.28), 0 12px 28px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
     }
   `;
   doc.head.appendChild(style);
@@ -197,7 +199,8 @@ function attachCollectionCarousel(doc: Document): () => void {
         const idx = Number(thumb.getAttribute('data-collection-thumb'));
         const active = idx === activeIndex;
         thumb.classList.toggle('collection-thumb-active', active);
-        thumb.style.opacity = active ? '1' : '0.48';
+        thumb.style.opacity = active ? '1' : '0.42';
+        thumb.style.paddingTop = active ? '0' : '12px';
       });
     };
 
