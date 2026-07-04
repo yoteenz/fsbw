@@ -34810,3 +34810,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Dashboard card sequence is defined by `DASHBOARD_CARD_ORDER` — edit that array to reorder without moving card data blocks.
 
+---
+
+## 2026-07-04 — THE STUDIO Social Publishing Connectors
+
+**Context:** User requested official OAuth social publishing for THE STUDIO — no passwords, scraping, or browser automation. After Content Pack approval, schedule/publish to connected brand accounts. Admin approval required for every post; full audit log.
+
+**Topics covered (full chat arc):**
+- Prior: Legacy System, Executive Command Center, Distribution Network, dashboard reorder — unchanged structurally except Distribution extensions.
+- **Social Accounts** (`/admin/studio/social-accounts`): connect Instagram/Facebook (Meta Graph), TikTok Content Posting API, Pinterest API, X (when `X_API_AVAILABLE`); status cards — Connected, Needs Reauthorization, Token Expiring, Posting Disabled, Error, Disconnected, API Unavailable.
+- **Distribution Network pack SOCIAL tab:** channel preview, platform caption/hashtags/thumbnail/cover, scheduled time, save draft, submit/approve, schedule, publish now; gated on pack + post approval.
+- **Backend:** migration `20260704120000_studio_social_publishing.sql` (`studio_social_accounts`, `studio_social_posts`, `studio_social_publish_log`); AES-256-GCM token encryption (`SOCIAL_TOKEN_ENCRYPTION_SECRET`); API routes `social-accounts`, `social-accounts-oauth-callback`, `social-posts`, `social-publish-log`; `socialPublishingStudioService` in registry.
+- **Docs:** `docs/STUDIO_SOCIAL_PUBLISHING.md`, `.env.example` social env block.
+
+**Decisions / outcomes:** Tokens server-side only — never returned to frontend. Publish/schedule API returns 403 unless `approval_status=approved` and pack approved. No auto-publish of unapproved AI content. Build verified.
+
+**Changes:** migration, `api/_lib/social*.ts`, admin API routes, social accounts page, distribution SOCIAL tab + links, hooks, `apiSocialPublishing.ts`, `adminStudioSocialPublishing.ts`, `motherboard/CORE.md`.
+
+**Conventions:** OAuth callback `/api/admin/social-accounts-oauth-callback`; configure platform secrets on Vercel; run migration before connecting accounts.
+

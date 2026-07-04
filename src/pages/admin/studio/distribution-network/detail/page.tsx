@@ -21,6 +21,7 @@ import {
   type DistributionPackFieldKey,
   type DistributionChannelId,
 } from '../../../../../utils/adminStudioDistributionNetworkDemo';
+import { AdminStudioDistributionSocialPublishPanel } from '../../../../../components/admin/studio/AdminStudioDistributionSocialPublishPanel';
 import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
 
 export default function AdminStudioDistributionNetworkPackPage() {
@@ -187,7 +188,15 @@ export default function AdminStudioDistributionNetworkPackPage() {
         </div>
       ) : null}
 
-      <AdminStudioDisclaimerFooter>ONE MASTER CONTENT PACK · MULTI-CHANNEL ADAPTATION · NO AUTO-PUBLISH</AdminStudioDisclaimerFooter>
+      {activeTab === 'social-publish' ? (
+        <AdminStudioDistributionSocialPublishPanel
+          pack={p}
+          packApproved={p.approvalStatus === 'approved'}
+          onOpenSocialAccounts={() => navigate('/admin/studio/social-accounts')}
+        />
+      ) : null}
+
+      <AdminStudioDisclaimerFooter>ONE MASTER CONTENT PACK · MULTI-CHANNEL ADAPTATION · APPROVED POSTS ONLY</AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );
 }

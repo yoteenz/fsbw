@@ -139,7 +139,7 @@ export async function getAccessToken(): Promise<string | null> {
 /** Options for apiFetch; body can be any JSON-serializable value (not limited to RequestInit.body). */
 type ApiFetchOptions = Omit<RequestInit, 'body'> & { body?: unknown };
 
-async function apiFetch(path: string, options: ApiFetchOptions = {}): Promise<Response> {
+export async function apiFetch(path: string, options: ApiFetchOptions = {}): Promise<Response> {
   const token = await getAccessToken();
   const url = `${API_BASE.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
   const headers: Record<string, string> = {

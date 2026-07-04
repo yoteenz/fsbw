@@ -22,7 +22,13 @@ export type AuditAction =
   | 'pending_review_supplemental.decline'
   | 'reviews.publish'
   | 'reviews.reject'
-  | 'live_try_on.batch_step';
+  | 'live_try_on.batch_step'
+  | 'social.connect'
+  | 'social.disconnect'
+  | 'social.post.save'
+  | 'social.post.approve'
+  | 'social.post.schedule'
+  | 'social.post.publish';
 
 export async function writeAuditLog(params: {
   actorId: string | null;

@@ -224,7 +224,8 @@ export type DistributionPackTabId =
   | 'versioning'
   | 'approval'
   | 'delivery'
-  | 'analytics';
+  | 'analytics'
+  | 'social-publish';
 
 export const DISTRIBUTION_PACK_TABS: Array<{ id: DistributionPackTabId; label: string }> = [
   { id: 'routing', label: 'ROUTING' },
@@ -235,6 +236,7 @@ export const DISTRIBUTION_PACK_TABS: Array<{ id: DistributionPackTabId; label: s
   { id: 'approval', label: 'APPROVAL' },
   { id: 'delivery', label: 'DELIVERY' },
   { id: 'analytics', label: 'ANALYTICS' },
+  { id: 'social-publish', label: 'SOCIAL' },
 ];
 
 export type DistributionChannelTabId = 'profile' | 'rules' | 'scheduling' | 'health';

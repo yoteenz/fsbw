@@ -71,6 +71,9 @@ export type { ExecutiveCommandCenterSnapshot, ExecutiveSummary } from './executi
 export { legacySystemStudioService, LEGACY_CONTRIBUTION_CHAIN } from './legacySystem/service';
 export type { LegacySystemSnapshot, LegacyMuseumSummary } from './legacySystem/service';
 
+export { socialPublishingStudioService } from './socialPublishing/service';
+export type { SocialPublishingSnapshot } from './socialPublishing/service';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -92,6 +95,7 @@ import { distributionNetworkStudioService } from './distributionNetwork/service'
 import { audienceBrainStudioService } from './audienceBrain/service';
 import { executiveCommandCenterStudioService } from './executiveCommandCenter/service';
 import { legacySystemStudioService } from './legacySystem/service';
+import { socialPublishingStudioService } from './socialPublishing/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -108,6 +112,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   audienceBrainStudioService,
   executiveCommandCenterStudioService,
   legacySystemStudioService,
+  socialPublishingStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,

@@ -91,6 +91,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   audienceBrain: 'studio/audience-brain',
   audienceBrainIntelligence: 'studio/audience-brain/intelligence',
   executiveCommandCenter: 'studio/executive-command-center',
+  socialAccounts: 'studio/social-accounts',
   legacySystem: 'studio/legacy-system',
   legacySystemMuseum: 'studio/legacy-system/museum',
   sectionPlaceholder: 'studio/:sectionId',
@@ -150,6 +151,10 @@ export function adminStudioAudienceBrainPath(): string {
 
 export function adminStudioExecutiveCommandCenterPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/executive-command-center`;
+}
+
+export function adminStudioSocialAccountsPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/social-accounts`;
 }
 
 export function adminStudioLegacySystemPath(): string {

@@ -219,7 +219,16 @@ export default function AdminStudioDistributionNetworkPage() {
         <button type="button" onClick={() => navigate('/admin/studio/publishing-queue')} className="flex-1 py-2 text-[7px] font-futura uppercase border" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>PUBLISHING QUEUE →</button>
       </div>
 
-      <AdminStudioDisclaimerFooter>NO AUTO-PUBLISH · CHANNEL CONNECTORS NOT CONNECTED · SMART SCHEDULING PREP ONLY</AdminStudioDisclaimerFooter>
+      <button
+        type="button"
+        onClick={() => navigate('/admin/studio/social-accounts')}
+        className="w-full mt-2 py-2 text-[7px] font-futura uppercase border"
+        style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+      >
+        SOCIAL ACCOUNTS SETTINGS →
+      </button>
+
+      <AdminStudioDisclaimerFooter>OFFICIAL OAUTH SOCIAL CONNECTORS · ADMIN APPROVAL REQUIRED · NO AUTO-PUBLISH</AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );
 }
