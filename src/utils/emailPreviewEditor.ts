@@ -158,8 +158,86 @@ function injectEditorStyles(doc: Document): void {
       outline: 2px solid #EB1C24 !important;
       cursor: text !important;
     }
+    [data-collection-prev],
+    [data-collection-next] {
+      display: inline-block !important;
+    }
+    [data-collection-thumb].collection-thumb-active {
+      border-color: #EB1C24 !important;
+      box-shadow: 0 0 8px rgba(235, 28, 36, 0.16) !important;
+    }
   `;
   doc.head.appendChild(style);
+}
+
+function attachCollectionCarousel(doc: Document): () => void {
+  const cleanups: Array<() => void> = [];
+
+  doc.querySelectorAll('[data-email-collection="signature-units"]').forEach((root) => {
+    const container = root as HTMLElement;
+    const slides = Array.from(container.querySelectorAll('[data-collection-slide]')) as HTMLElement[];
+    if (!slides.length) return;
+
+    const count = slides.length;
+    let activeIndex = slides.findIndex((slide) => slide.style.display !== 'none');
+    if (activeIndex < 0) activeIndex = 0;
+
+    const indicator = doc.querySelector('[data-collection-indicator="signature-units"]');
+    const thumbs = Array.from(doc.querySelectorAll('[data-collection-thumb]')) as HTMLElement[];
+    const prevBtn = doc.querySelector('[data-collection-prev="signature-units"]') as HTMLButtonElement | null;
+    const nextBtn = doc.querySelector('[data-collection-next="signature-units"]') as HTMLButtonElement | null;
+
+    const syncThumbHighlight = () => {
+      thumbs.forEach((thumb) => {
+        const idx = Number(thumb.getAttribute('data-collection-thumb'));
+        thumb.classList.toggle('collection-thumb-active', idx === activeIndex);
+      });
+    };
+
+    const showSlide = (index: number) => {
+      activeIndex = ((index % count) + count) % count;
+      slides.forEach((slide, i) => {
+        slide.style.display = i === activeIndex ? 'block' : 'none';
+      });
+      if (indicator) indicator.textContent = `${activeIndex + 1} / ${count}`;
+      syncThumbHighlight();
+    };
+
+    const onPrev = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      showSlide(activeIndex - 1);
+    };
+
+    const onNext = (e: Event) => {
+      e.preventDefault();
+      e.stopPropagation();
+      showSlide(activeIndex + 1);
+    };
+
+    const onThumbClick = (e: Event) => {
+      const target = e.currentTarget as HTMLElement;
+      const idx = Number(target.getAttribute('data-collection-thumb'));
+      if (!Number.isFinite(idx)) return;
+      e.preventDefault();
+      e.stopPropagation();
+      showSlide(idx);
+    };
+
+    prevBtn?.addEventListener('click', onPrev);
+    nextBtn?.addEventListener('click', onNext);
+    thumbs.forEach((thumb) => thumb.addEventListener('click', onThumbClick));
+
+    showSlide(activeIndex);
+
+    cleanups.push(() => {
+      prevBtn?.removeEventListener('click', onPrev);
+      nextBtn?.removeEventListener('click', onNext);
+      thumbs.forEach((thumb) => thumb.removeEventListener('click', onThumbClick));
+    });
+  });
+
+  return () => cleanups.forEach((fn) => fn());
 }
 
 export function attachEmailPreviewEditor(
@@ -174,6 +252,8 @@ export function attachEmailPreviewEditor(
     node.classList.add('email-layer-hover');
   });
   applyActiveHighlight(doc, activeLayer);
+
+  const cleanupCarousel = attachCollectionCarousel(doc);
 
   let dragLayer: EmailLayoutLayerId | null = null;
   let dragEl: HTMLElement | null = null;
@@ -335,6 +415,7 @@ export function attachEmailPreviewEditor(
   doc.addEventListener('pointerdown', onPointerDown, true);
 
   return () => {
+    cleanupCarousel();
     endMouseDrag();
     doc.removeEventListener('click', onClick, true);
     doc.removeEventListener('dblclick', onDoubleClick, true);

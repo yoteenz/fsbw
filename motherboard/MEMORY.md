@@ -35425,3 +35425,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Master Studio must never include talent/mannequins/products/episode text; Reference Scene is example-only; Talent from Talent Agency; props in Set Dressing; graphics per Content Pack; final scene assembled in Production Builder + Director Mode.
 
+---
+
+## 2026-07-04 — Email template “Explore the Collection” holographic showcase
+
+**Context:** User requested redesign of the **Explore the Collection** block inside the Frontal Slayer email template builder only — replace plain 3×3 product grid with luxury holographic / acrylic product showcase inspired by reference imagery; preserve marble background, Save/Reset Copy controls, routes, product data, and save logic.
+
+**Topics covered (full chat arc):** Prior Milestone 20 Knowledge Hub and Studio Set Separation (committed); then email collection section exploration (`emailProductPromo.ts`, `layout.ts`, `emailPreviewEditor.ts`, `/tools/email-templates`); holographic two-panel showcase implementation.
+
+**Decisions / outcomes:**
+- **Scope:** Only `renderEmailProductPromo()` visual layout changed — no email routes, template settings, copy fields, or product hrefs/names touched.
+- **Structure:** Main title **EXPLORE THE COLLECTION**; **Panel 1 — SIGNATURE UNITS** (6 wig units: Noir, Blanco, Soft Wave, Beach Wave, Soft Curl, Ocean Curl) as hero acrylic card with length/density/lace specs + **VIEW UNIT** CTA; thumbnail row as email-safe fallback; **Panel 2 — EXTENSIONS ESSENTIALS** (Bundles, Closures, Frontals) as smaller holographic cards with descriptors + **SHOP** CTA; global **SHOP ALL** pill CTA retained.
+- **Visual:** Translucent white acrylic panels, soft red glow borders (`#EB1C24`), inner highlights, two-column desktop / stacked mobile via embedded `@media` styles; unit specs from codebase defaults (Blanco 250% density, others 200%, all 24" / 13X6 lace).
+- **Preview carousel:** `emailPreviewEditor.ts` attaches signature-units carousel (prev/next arrows, thumb selection, slide indicator) only inside admin iframe preview — sent email HTML stays script-free with static hero + linked thumbnails.
+
+**Changes:** `api/_lib/email/emailProductPromo.ts` (full collection showcase rewrite), `src/utils/emailPreviewEditor.ts` (preview-only carousel), `motherboard/MEMORY.md`.
+
+**Conventions:** Email product promo uses table-based inline styles for client compatibility; interactive carousel is preview-editor-only via `data-email-collection` / `data-collection-slide` attributes; essentials descriptors are display-only copy (RAW VIRGIN BUNDLES, LACE CLOSURES, HD LACE FRONTALS).
+
