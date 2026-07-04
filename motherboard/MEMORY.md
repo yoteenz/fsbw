@@ -36119,3 +36119,38 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `workspaces/frontal-slayer/guided-tour/*`, App.tsx, main.tsx, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Vision Engine™ architectural elevation (Guided Tour → Studio OS platform pillar)
+
+**Context (full chat):** After Milestone 27 Growth Network and Frontal Slayer Guided Tour shipped, user requested a **major architectural update**: rename Guided Tour to **Vision Engine™** as a **core Studio OS engine** (not Frontal Slayer–specific). Frontal Slayer becomes the first workspace consumer. Internal only — no customer menus, nav, footer, onboarding, or public routes. Build admin ecosystem: **Vision Engine Builder**, **Vision Recorder** (AI cinematographer), **Vision Share**, **Vision Analytics**, **Vision AI** (stub). Eleven **Vision Mode** templates (Creative Partner, Investor, Brand Story, Product Showcase, Product Launch, Employee Onboarding, Agency Presentation, Press Tour, Sales Demo, Franchise Demo, Self Guided).
+
+**Platform core (`src/studio-os-core/vision-engine/`):**
+- Types, constants, mode catalog, mode resolver (subset stops per Vision Mode kind)
+- localStorage store: manifests, custom modes, share links, analytics events, recorder jobs
+- Session/access: admin roles or Vision Share session only; `data-vision-engine="active"`
+- `launchVisionPresentation()`, `bootstrapVisionShareFromPath()` for `/vision/:slug`
+
+**Runtime (`src/components/vision-engine/runtime/`):**
+- `VisionEngineProvider` — auto-advance, tower elevator nav, cinematics, overlay, presenter panel, hotspots, ambient audio
+- No public launcher (removed Guided Tour bottom-right UI)
+- CSS: `vision-engine.css` with `html[data-vision-engine="active"]`
+
+**Frontal Slayer adapter (`src/workspaces/frontal-slayer/vision-engine/`):**
+- 28-stop tour script ported to `VisionStop[]` with chapters
+- Manifest registers 11 Vision Modes via `bootstrapFrontalSlayerVisionEngine()` in `workspaces/index.ts`
+
+**Admin (`/admin/studio/vision-engine`):** 6 tabs — Overview, Builder (chapters/stops/duplicate custom mode), Recorder (queue AI cinematography), Share (Vision Links), Analytics (demo dashboard), Launch (internal presentation start).
+
+**Vision Share:** `/vision/:slug` — activates share session + launches mode (not in public nav).
+
+**Removed:** entire `src/workspaces/frontal-slayer/guided-tour/` folder; `bootstrapGuidedTourMode()` and `?guidedTour=` public URL from `main.tsx`.
+
+**Wiring:** `modules.ts`, admin routes/nav/demo, App.tsx (`VisionEngineProvider`, admin + vision routes), services, Knowledge Graph nodes/edges/workflow, Memory Bible naming + decision entries.
+
+**Docs:** `docs/studio-os/vision-engine.md`; guided-tour doc marked deprecated.
+
+**Philosophy:** Reusable engine intelligently uses routes, layouts, navigation, branding, imagery, animations, metadata, motion, page hierarchy, user flows — architecture scales to AI Presentation Director tomorrow.
+
+**Changes:** vision-engine core + runtime + FS adapter + admin UI + wiring + docs; deleted guided-tour; `motherboard/MEMORY.md`.
+

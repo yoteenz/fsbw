@@ -1,23 +1,22 @@
 import { useState } from 'react';
-import type { GuidedTourStop } from './types';
+import type { VisionStop } from '../../../studio-os-core/vision-engine/types';
 
-type Props = { stop: GuidedTourStop };
+type Props = { stop: VisionStop };
 
-/** Presenter panel — only rendered when Creative Partner mode is on. */
-export function GuidedTourPresenterPanel({ stop }: Props) {
+export function VisionEnginePresenterPanel({ stop }: Props) {
   const [collapsed, setCollapsed] = useState(false);
   const p = stop.presenter;
 
   return (
-    <aside className={`guided-tour-presenter ${collapsed ? 'is-collapsed' : ''}`}>
-      <button type="button" className="guided-tour-presenter__toggle" onClick={() => setCollapsed((c) => !c)}>
+    <aside className={`vision-engine-presenter ${collapsed ? 'is-collapsed' : ''}`}>
+      <button type="button" className="vision-engine-presenter__toggle" onClick={() => setCollapsed((c) => !c)}>
         {collapsed ? 'Presenter Notes' : '−'}
       </button>
       {!collapsed ? (
-        <div className="guided-tour-presenter__body">
-          <p className="guided-tour-presenter__label">VOICEOVER · ~30 SEC</p>
-          <p className="guided-tour-presenter__voiceover">{p.voiceover}</p>
-          <dl className="guided-tour-presenter__meta">
+        <div className="vision-engine-presenter__body">
+          <p className="vision-engine-presenter__label">NARRATION · ~30 SEC</p>
+          <p className="vision-engine-presenter__voiceover">{p.voiceover}</p>
+          <dl className="vision-engine-presenter__meta">
             <div>
               <dt>Why this room exists</dt>
               <dd>{p.whyExists}</dd>

@@ -22,6 +22,7 @@ export type StudioOsCoreModuleId =
   | 'distribution-network'
   | 'audience-brain'
   | 'growth-network'
+  | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
   | 'memory-bible';
@@ -142,6 +143,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'GROWTH NETWORK',
     description: 'Intelligent business growth ecosystem — opportunities, partnerships, and revenue.',
     routeSegment: 'growth-network',
+  },
+  {
+    id: 'vision-engine',
+    label: 'VISION ENGINE',
+    description: 'Cinematic presentation operating system — Vision Modes, Builder, Recorder, Share, Analytics.',
+    routeSegment: 'vision-engine',
   },
   {
     id: 'legacy-system',

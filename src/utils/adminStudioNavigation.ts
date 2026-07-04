@@ -505,6 +505,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'vision-engine',
+    title: 'VISION ENGINE',
+    purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',
+    route: p('vision-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '11 MODES',
+    ctaLabel: 'OPEN VISION',
+    moduleKey: 'vision-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'analytics',
     title: 'ANALYTICS',
     purpose: 'Track views, completion, and content performance.',

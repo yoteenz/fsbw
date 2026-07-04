@@ -55,9 +55,9 @@ import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTower
 import { MobileMansionRoutes } from './routes/MobileMansionRoutes';
 import { BAW_TUTORIAL_ROUTE, normalizeBawViewPathname } from './constants/bawTutorialConfig';
 import { TutorialOsProvider, TutorialOsPsaGate } from './tutorial-os';
-import { GuidedTourProvider } from './workspaces/frontal-slayer/guided-tour';
-import { GuidedTourDebugGate } from './workspaces/frontal-slayer/guided-tour/GuidedTourDebugGate';
-import './workspaces/frontal-slayer/guided-tour/guided-tour.css';
+import { VisionEngineProvider } from './components/vision-engine/runtime';
+import { VisionEngineDebugGate } from './components/vision-engine/runtime/VisionEngineDebugGate';
+import './components/vision-engine/runtime/vision-engine.css';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -158,6 +158,8 @@ const AdminStudioDistributionNetworkChannel = lazyWithRetry(() => import('./page
 const AdminStudioAudienceBrain = lazyWithRetry(() => import('./pages/admin/studio/audience-brain/page'), 'AdminStudioAudienceBrain');
 const AdminStudioAudienceBrainIntelligence = lazyWithRetry(() => import('./pages/admin/studio/audience-brain/intelligence/page'), 'AdminStudioAudienceBrainIntelligence');
 const AdminStudioGrowthNetwork = lazyWithRetry(() => import('./pages/admin/studio/growth-network/page'), 'AdminStudioGrowthNetwork');
+const AdminStudioVisionEngine = lazyWithRetry(() => import('./pages/admin/studio/vision-engine/page'), 'AdminStudioVisionEngine');
+const VisionSharePage = lazyWithRetry(() => import('./pages/vision/page'), 'VisionSharePage');
 const AdminStudioExecutiveCommandCenter = lazyWithRetry(() => import('./pages/admin/studio/executive-command-center/page'), 'AdminStudioExecutiveCommandCenter');
 const AdminStudioOverview = lazyWithRetry(() => import('./pages/admin/studio/overview/page'), 'AdminStudioOverview');
 const AdminStudioLegacySystem = lazyWithRetry(() => import('./pages/admin/studio/legacy-system/page'), 'AdminStudioLegacySystem');
@@ -272,19 +274,19 @@ function DesktopRoutesLayout() {
             <DesktopRouteShell>
               <Outlet />
             </DesktopRouteShell>
-            <GuidedTourDebugGate>
+            <VisionEngineDebugGate>
               <DesktopRoomTitlePlacementEditorPanel />
               <DesktopLoungeTvFrameEditorPanel />
               <DesktopPsaSuiteFrameEditorPanel />
               <PerspectivePanelDebugToolbar />
-            </GuidedTourDebugGate>
+            </VisionEngineDebugGate>
           </DesktopPsaSuiteFrameEditorProvider>
         </DesktopLoungeTvFrameEditorProvider>
       </DesktopRoomTitlePlacementEditorProvider>
     </PerspectivePanelDebugProvider>
-    <GuidedTourDebugGate>
+    <VisionEngineDebugGate>
       <MansionDebugControlPanel />
-    </GuidedTourDebugGate>
+    </VisionEngineDebugGate>
     </MansionDebugProvider>
   );
 }
@@ -576,7 +578,7 @@ function App() {
   return (
     <ErrorBoundary>
       <DesktopTowerNavProvider>
-      <GuidedTourProvider>
+      <VisionEngineProvider>
       <TutorialOsProvider>
       {!hidePreviewChrome ? <CreativePreviewBanner /> : null}
       {!hidePreviewChrome ? <MembershipRouteSync /> : null}
@@ -990,6 +992,11 @@ function App() {
           <Route path="studio/growth-network" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioGrowthNetwork />
+            </Suspense>
+          } />
+          <Route path="studio/vision-engine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioVisionEngine />
             </Suspense>
           } />
           <Route path="studio/social-accounts" element={
@@ -1676,6 +1683,11 @@ function App() {
             </Suspense>
           </CommerceRouteGuard>
         } />
+        <Route path="/vision/:slug" element={
+          <Suspense fallback={<LoadingScreen />}>
+            <VisionSharePage />
+          </Suspense>
+        } />
         <Route path="/checkout/summary" element={
           <Suspense fallback={<LoadingScreen />}>
             <CheckoutConfirmPage />
@@ -1683,7 +1695,7 @@ function App() {
         } />
       </DebugModeShell>
       </TutorialOsProvider>
-      </GuidedTourProvider>
+      </VisionEngineProvider>
       </DesktopTowerNavProvider>
     </ErrorBoundary>
   );

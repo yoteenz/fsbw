@@ -2,8 +2,7 @@ import { useEffect, useRef } from 'react';
 
 type Props = { enabled: boolean; recordMode: boolean };
 
-/** Optional immersive ambient pad — muted by default · Web Audio gentle noise + tone. */
-export function GuidedTourLuxuryAudio({ enabled, recordMode }: Props) {
+export function VisionEngineLuxuryAudio({ enabled, recordMode }: Props) {
   const ctxRef = useRef<AudioContext | null>(null);
   const nodesRef = useRef<OscillatorNode[]>([]);
 
@@ -22,7 +21,8 @@ export function GuidedTourLuxuryAudio({ enabled, recordMode }: Props) {
       return;
     }
 
-    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const AudioCtx =
+      window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!AudioCtx) return;
 
     const ctx = new AudioCtx();

@@ -1,46 +1,46 @@
 /**
- * Frontal Slayer Guided Tour — presentation layer styles.
- * Active when html[data-guided-tour="active"]
+ * Frontal Slayer Vision Engine — presentation layer styles.
+ * Active when html[data-vision-engine="active"]
  */
 
-html[data-guided-tour='active'] {
+html[data-vision-engine='active'] {
   scroll-behavior: smooth;
 }
 
-html[data-guided-tour='active'] * {
+html[data-vision-engine='active'] * {
   -webkit-font-smoothing: antialiased;
 }
 
 /* Hide debug / dev utilities during presentation */
-html[data-guided-tour='active'] .mansion-debug-control-panel,
-html[data-guided-tour='active'] .perspective-panel-debug-toolbar,
-html[data-guided-tour='active'] .desktop-room-title-editor-panel,
-html[data-guided-tour='active'] .desktop-lounge-tv-frame-editor-panel,
-html[data-guided-tour='active'] .desktop-psa-suite-frame-editor-panel,
-html[data-guided-tour='active'] .scene-hit-layout-editor-panel,
-html[data-guided-tour='active'] .creative-preview-banner,
-html[data-guided-tour='active'] [data-tutorial-welcome],
-html[data-guided-tour='active'] .tutorial-os-overlay {
+html[data-vision-engine='active'] .mansion-debug-control-panel,
+html[data-vision-engine='active'] .perspective-panel-debug-toolbar,
+html[data-vision-engine='active'] .desktop-room-title-editor-panel,
+html[data-vision-engine='active'] .desktop-lounge-tv-frame-editor-panel,
+html[data-vision-engine='active'] .desktop-psa-suite-frame-editor-panel,
+html[data-vision-engine='active'] .scene-hit-layout-editor-panel,
+html[data-vision-engine='active'] .creative-preview-banner,
+html[data-vision-engine='active'] [data-tutorial-welcome],
+html[data-vision-engine='active'] .tutorial-os-overlay {
   display: none !important;
   pointer-events: none !important;
 }
 
-html[data-guided-tour='active'][data-guided-tour-record='1'] {
-  --guided-tour-motion-scale: 1.35;
+html[data-vision-engine='active'][data-vision-record='1'] {
+  --vision-engine-motion-scale: 1.35;
 }
 
-html[data-guided-tour='active'] .guided-tour-hide-in-presentation {
+html[data-vision-engine='active'] .vision-engine-hide-in-presentation {
   visibility: hidden !important;
   pointer-events: none !important;
 }
 
 /* Cinematic drift on page content */
-html[data-guided-tour='active'] #root {
-  animation: guided-tour-drift 24s ease-in-out infinite alternate;
+html[data-vision-engine='active'] #root {
+  animation: vision-engine-drift 24s ease-in-out infinite alternate;
   transform-origin: center center;
 }
 
-@keyframes guided-tour-drift {
+@keyframes vision-engine-drift {
   from {
     transform: scale(1) translate3d(0, 0, 0);
   }
@@ -49,41 +49,8 @@ html[data-guided-tour='active'] #root {
   }
 }
 
-/* Launcher */
-.guided-tour-launcher {
-  position: fixed;
-  bottom: 16px;
-  right: 16px;
-  z-index: 99960;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  align-items: stretch;
-  max-width: 160px;
-}
-
-.guided-tour-launcher__btn {
-  font-family: 'Futura PT', Futura, sans-serif;
-  font-size: 9px;
-  font-weight: 515;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 8px 10px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  background: rgba(255, 255, 255, 0.72);
-  backdrop-filter: blur(12px);
-  cursor: pointer;
-  color: #404040;
-}
-
-.guided-tour-launcher__btn--primary {
-  background: rgba(235, 28, 36, 0.92);
-  color: #fff;
-  border-color: rgba(235, 28, 36, 0.4);
-}
-
 /* Overlay panel */
-.guided-tour-overlay {
+.vision-engine-overlay {
   position: fixed;
   bottom: 20px;
   left: 50%;
@@ -93,7 +60,7 @@ html[data-guided-tour='active'] #root {
   width: min(420px, calc(100vw - 32px));
 }
 
-.guided-tour-overlay__panel {
+.vision-engine-overlay__panel {
   pointer-events: auto;
   padding: 14px 16px;
   border: 1px solid rgba(255, 255, 255, 0.45);
@@ -102,7 +69,7 @@ html[data-guided-tour='active'] #root {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
-.guided-tour-overlay__section {
+.vision-engine-overlay__section {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: 8px;
   font-weight: 515;
@@ -111,7 +78,7 @@ html[data-guided-tour='active'] #root {
   margin: 0 0 4px;
 }
 
-.guided-tour-overlay__title {
+.vision-engine-overlay__title {
   font-family: 'Covered By Your Grace', cursive;
   font-size: 22px;
   color: #1a1a1a;
@@ -119,27 +86,36 @@ html[data-guided-tour='active'] #root {
   line-height: 1.1;
 }
 
-.guided-tour-overlay__subtitle {
+.vision-engine-overlay__subtitle {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: 9px;
   color: #666;
   margin: 0 0 10px;
 }
 
-.guided-tour-overlay__progress {
+.vision-engine-overlay__mode {
+  font-family: 'Futura PT', Futura, sans-serif;
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6366f1;
+  margin: 0 0 8px;
+}
+
+.vision-engine-overlay__progress {
   height: 2px;
   background: rgba(0, 0, 0, 0.08);
   margin-bottom: 6px;
   overflow: hidden;
 }
 
-.guided-tour-overlay__progress-bar {
+.vision-engine-overlay__progress-bar {
   height: 100%;
   background: linear-gradient(90deg, #eb1c24, #c9a227);
   transition: width 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.guided-tour-overlay__step {
+.vision-engine-overlay__step {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: 7px;
   color: #888;
@@ -147,17 +123,17 @@ html[data-guided-tour='active'] #root {
   letter-spacing: 0.1em;
 }
 
-.guided-tour-overlay__controls,
-.guided-tour-overlay__secondary,
-.guided-tour-overlay__toggles {
+.vision-engine-overlay__controls,
+.vision-engine-overlay__secondary,
+.vision-engine-overlay__toggles {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
 }
 
-.guided-tour-overlay__controls button,
-.guided-tour-overlay__secondary button,
-.guided-tour-overlay__toggles button {
+.vision-engine-overlay__controls button,
+.vision-engine-overlay__secondary button,
+.vision-engine-overlay__toggles button {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: 8px;
   font-weight: 515;
@@ -169,21 +145,21 @@ html[data-guided-tour='active'] #root {
   cursor: pointer;
 }
 
-.guided-tour-overlay__toggles button.is-on {
+.vision-engine-overlay__toggles button.is-on {
   border-color: #6366f1;
   color: #6366f1;
 }
 
-.guided-tour-overlay__secondary {
+.vision-engine-overlay__secondary {
   margin-top: 8px;
 }
 
-.guided-tour-overlay__toggles {
+.vision-engine-overlay__toggles {
   margin-top: 8px;
 }
 
 /* Presenter panel */
-.guided-tour-presenter {
+.vision-engine-presenter {
   position: fixed;
   top: 16px;
   right: 16px;
@@ -196,13 +172,13 @@ html[data-guided-tour='active'] #root {
   backdrop-filter: blur(16px);
 }
 
-.guided-tour-presenter.is-collapsed {
+.vision-engine-presenter.is-collapsed {
   width: auto;
   max-height: none;
   overflow: visible;
 }
 
-.guided-tour-presenter__toggle {
+.vision-engine-presenter__toggle {
   width: 100%;
   text-align: left;
   font-family: 'Futura PT', Futura, sans-serif;
@@ -217,11 +193,11 @@ html[data-guided-tour='active'] #root {
   cursor: pointer;
 }
 
-.guided-tour-presenter__body {
+.vision-engine-presenter__body {
   padding: 10px 12px 14px;
 }
 
-.guided-tour-presenter__label {
+.vision-engine-presenter__label {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: 7px;
   color: #888;
@@ -229,20 +205,20 @@ html[data-guided-tour='active'] #root {
   margin: 0 0 8px;
 }
 
-.guided-tour-presenter__voiceover {
+.vision-engine-presenter__voiceover {
   font-size: 11px;
   line-height: 1.55;
   color: #333;
   margin: 0 0 12px;
 }
 
-.guided-tour-presenter__meta {
+.vision-engine-presenter__meta {
   margin: 0;
   font-size: 10px;
   line-height: 1.45;
 }
 
-.guided-tour-presenter__meta dt {
+.vision-engine-presenter__meta dt {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: 7px;
   font-weight: 600;
@@ -252,13 +228,13 @@ html[data-guided-tour='active'] #root {
   margin-top: 8px;
 }
 
-.guided-tour-presenter__meta dd {
+.vision-engine-presenter__meta dd {
   margin: 2px 0 0;
   color: #555;
 }
 
 /* Cinematics */
-.guided-tour-cinematic {
+.vision-engine-cinematic {
   position: fixed;
   inset: 0;
   z-index: 100000;
@@ -270,30 +246,30 @@ html[data-guided-tour='active'] #root {
   transition: opacity 1.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.guided-tour-cinematic.is-visible {
+.vision-engine-cinematic.is-visible {
   opacity: 1;
 }
 
-.guided-tour-cinematic__vignette {
+.vision-engine-cinematic__vignette {
   position: absolute;
   inset: 0;
   background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.65) 100%);
   pointer-events: none;
 }
 
-.guided-tour-cinematic__logo-wrap {
+.vision-engine-cinematic__logo-wrap {
   text-align: center;
   opacity: 0;
   transform: scale(0.96) translateY(8px);
   transition: opacity 2s cubic-bezier(0.22, 1, 0.36, 1), transform 2.4s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.guided-tour-cinematic__logo-wrap.is-visible {
+.vision-engine-cinematic__logo-wrap.is-visible {
   opacity: 1;
   transform: scale(1) translateY(0);
 }
 
-.guided-tour-cinematic__logo {
+.vision-engine-cinematic__logo {
   font-family: 'Covered By Your Grace', cursive;
   font-size: clamp(36px, 8vw, 64px);
   color: #fff;
@@ -301,8 +277,8 @@ html[data-guided-tour='active'] #root {
   letter-spacing: 0.04em;
 }
 
-.guided-tour-cinematic__tagline,
-.guided-tour-cinematic__finale {
+.vision-engine-cinematic__tagline,
+.vision-engine-cinematic__finale {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: 11px;
   letter-spacing: 0.35em;
@@ -310,15 +286,15 @@ html[data-guided-tour='active'] #root {
   margin: 16px 0 0;
 }
 
-.guided-tour-cinematic__drift {
+.vision-engine-cinematic__drift {
   position: absolute;
   inset: -5%;
   background: radial-gradient(circle at 30% 40%, rgba(201, 162, 39, 0.08), transparent 50%);
-  animation: guided-tour-cinematic-drift 12s ease-in-out infinite alternate;
+  animation: vision-engine-cinematic-drift 12s ease-in-out infinite alternate;
   pointer-events: none;
 }
 
-@keyframes guided-tour-cinematic-drift {
+@keyframes vision-engine-cinematic-drift {
   from {
     transform: translate3d(-1%, 0, 0);
   }
@@ -327,41 +303,41 @@ html[data-guided-tour='active'] #root {
   }
 }
 
-.guided-tour-cinematic--ending.phase-fade {
+.vision-engine-cinematic--ending.phase-fade {
   opacity: 0;
   transition: opacity 2s ease;
 }
 
 /* Transitions */
-.guided-tour-transition {
+.vision-engine-transition {
   position: fixed;
   inset: 0;
   z-index: 99988;
   pointer-events: none;
-  animation: guided-tour-transition-fade 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: vision-engine-transition-fade 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.guided-tour-transition--elevator {
+.vision-engine-transition--elevator {
   background: linear-gradient(180deg, rgba(20, 20, 22, 0.92), rgba(40, 38, 36, 0.88));
-  animation: guided-tour-elevator 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: vision-engine-elevator 2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-.guided-tour-transition--bloom {
+.vision-engine-transition--bloom {
   background: radial-gradient(circle at center, rgba(255, 255, 255, 0.85), transparent 70%);
-  animation: guided-tour-bloom 1.6s ease forwards;
+  animation: vision-engine-bloom 1.6s ease forwards;
 }
 
-.guided-tour-transition--glass-wipe {
+.vision-engine-transition--glass-wipe {
   background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.55) 50%, transparent 60%);
-  animation: guided-tour-glass-wipe 1.5s ease forwards;
+  animation: vision-engine-glass-wipe 1.5s ease forwards;
 }
 
-.guided-tour-transition--mobile-reveal {
+.vision-engine-transition--mobile-reveal {
   background: linear-gradient(135deg, rgba(235, 28, 36, 0.15), rgba(99, 102, 241, 0.2));
-  animation: guided-tour-mobile-reveal 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation: vision-engine-mobile-reveal 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
-@keyframes guided-tour-transition-fade {
+@keyframes vision-engine-transition-fade {
   0% {
     opacity: 0;
   }
@@ -373,7 +349,7 @@ html[data-guided-tour='active'] #root {
   }
 }
 
-@keyframes guided-tour-elevator {
+@keyframes vision-engine-elevator {
   0% {
     opacity: 0;
     transform: translateY(8%);
@@ -387,7 +363,7 @@ html[data-guided-tour='active'] #root {
   }
 }
 
-@keyframes guided-tour-bloom {
+@keyframes vision-engine-bloom {
   0% {
     opacity: 0;
     transform: scale(0.92);
@@ -401,7 +377,7 @@ html[data-guided-tour='active'] #root {
   }
 }
 
-@keyframes guided-tour-glass-wipe {
+@keyframes vision-engine-glass-wipe {
   0% {
     transform: translateX(-100%);
     opacity: 0.6;
@@ -412,7 +388,7 @@ html[data-guided-tour='active'] #root {
   }
 }
 
-@keyframes guided-tour-mobile-reveal {
+@keyframes vision-engine-mobile-reveal {
   0% {
     opacity: 1;
     clip-path: inset(0 50% 0 0);
@@ -424,14 +400,14 @@ html[data-guided-tour='active'] #root {
 }
 
 /* Hotspots */
-.guided-tour-hotspots {
+.vision-engine-hotspots {
   position: fixed;
   inset: 0;
   z-index: 99985;
   pointer-events: none;
 }
 
-.guided-tour-hotspot {
+.vision-engine-hotspot {
   position: absolute;
   transform: translate(-50%, -50%);
   display: flex;
@@ -440,16 +416,16 @@ html[data-guided-tour='active'] #root {
   gap: 4px;
 }
 
-.guided-tour-hotspot__pulse {
+.vision-engine-hotspot__pulse {
   width: 36px;
   height: 36px;
   border-radius: 50%;
   border: 1px solid rgba(201, 162, 39, 0.8);
-  animation: guided-tour-hotspot-pulse 2.4s ease-out 1;
+  animation: vision-engine-hotspot-pulse 2.4s ease-out 1;
   box-shadow: 0 0 24px rgba(201, 162, 39, 0.35);
 }
 
-.guided-tour-hotspot__label {
+.vision-engine-hotspot__label {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: 8px;
   letter-spacing: 0.06em;
@@ -457,7 +433,7 @@ html[data-guided-tour='active'] #root {
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 
-@keyframes guided-tour-hotspot-pulse {
+@keyframes vision-engine-hotspot-pulse {
   0% {
     transform: scale(0.6);
     opacity: 0;
@@ -472,7 +448,7 @@ html[data-guided-tour='active'] #root {
 }
 
 /* Nav shield — blocks accidental clicks during auto tour */
-.guided-tour-nav-shield {
+.vision-engine-nav-shield {
   position: fixed;
   inset: 0;
   z-index: 99980;

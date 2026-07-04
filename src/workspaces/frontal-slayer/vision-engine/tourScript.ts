@@ -1,20 +1,24 @@
-import type { GuidedTourStop } from './types';
-import { GUIDED_TOUR_DEFAULT_DWELL_MS, GUIDED_TOUR_OPENING_MS, GUIDED_TOUR_SLOW_DWELL_MS } from './constants';
+import type { VisionStop } from '../../../studio-os-core/vision-engine/types';
+import { VISION_DEFAULT_DWELL_MS, VISION_OPENING_MS, VISION_SLOW_DWELL_MS } from '../../../studio-os-core/vision-engine/constants';
 
-function notes(partial: GuidedTourStop['presenter']): GuidedTourStop['presenter'] {
+function notes(partial: VisionStop['presenter']): VisionStop['presenter'] {
   return partial;
 }
 
-const DWELL = GUIDED_TOUR_DEFAULT_DWELL_MS;
-const SLOW = GUIDED_TOUR_SLOW_DWELL_MS;
+const DWELL = VISION_DEFAULT_DWELL_MS;
+const SLOW = VISION_SLOW_DWELL_MS;
+
+function chapterIdFromSection(sectionLabel: string): string {
+  return sectionLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
 
 /** Canonical auto-tour script — desktop mansion → Build-A-Wig → mobile → finale. */
-export const GUIDED_TOUR_STOPS: GuidedTourStop[] = [
+const RAW_FRONTAL_SLAYER_VISION_STOPS: Omit<VisionStop, 'chapterId'>[] = [
   {
     id: 'opening',
     sectionLabel: 'WELCOME',
     title: 'Frontal Slayer',
-    durationMs: GUIDED_TOUR_OPENING_MS,
+    durationMs: VISION_OPENING_MS,
     transition: 'fade',
     presenter: notes({
       voiceover:
@@ -508,7 +512,7 @@ export const GUIDED_TOUR_STOPS: GuidedTourStop[] = [
     id: 'ending',
     sectionLabel: 'FINALE',
     title: 'Luxury Without Limits',
-    durationMs: GUIDED_TOUR_OPENING_MS,
+    durationMs: VISION_OPENING_MS,
     transition: 'fade',
     presenter: notes({
       voiceover:
@@ -523,10 +527,15 @@ export const GUIDED_TOUR_STOPS: GuidedTourStop[] = [
   },
 ];
 
-export function getGuidedTourStopById(id: string): GuidedTourStop | undefined {
-  return GUIDED_TOUR_STOPS.find((s) => s.id === id);
+export const FRONTAL_SLAYER_VISION_STOPS: VisionStop[] = RAW_FRONTAL_SLAYER_VISION_STOPS.map((stop) => ({
+  ...stop,
+  chapterId: chapterIdFromSection(stop.sectionLabel),
+}));
+
+export function getVisionStopById(id: string): VisionStop | undefined {
+  return FRONTAL_SLAYER_VISION_STOPS.find((s) => s.id === id);
 }
 
-export function getGuidedTourStopIndex(id: string): number {
-  return GUIDED_TOUR_STOPS.findIndex((s) => s.id === id);
+export function getVisionStopIndex(id: string): number {
+  return FRONTAL_SLAYER_VISION_STOPS.findIndex((s) => s.id === id);
 }

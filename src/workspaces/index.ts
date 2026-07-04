@@ -13,6 +13,7 @@ import {
 } from '../studio-os-core/growth-network';
 import { buildDemoGrowthStorePatch, OPPORTUNITY_CATALOG } from '../utils/adminStudioGrowthNetworkDemo';
 import { readGrowthNetworkStore, writeGrowthNetworkStore } from '../studio-os-core/growth-network/store';
+import { bootstrapFrontalSlayerVisionEngine } from './frontal-slayer/vision-engine';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
 import { SANDBOX_WORKSPACE } from './sandbox/config';
@@ -31,6 +32,7 @@ function bootstrapGrowthNetworkPlatform(): void {
 }
 
 bootstrapGrowthNetworkPlatform();
+bootstrapFrontalSlayerVisionEngine();
 
 const STATIC_WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {
   'frontal-slayer': FRONTAL_SLAYER_WORKSPACE,

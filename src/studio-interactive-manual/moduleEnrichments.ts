@@ -336,6 +336,21 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
     ],
     relatedModuleIds: ['memory-bible', 'audience-brain', 'knowledge-hub', 'executive-command-center'],
   },
+  'vision-engine': {
+    architecture:
+      'Workspace manifest → Vision Modes (11 templates) → Vision Engine Builder → Vision Recorder (AI cinematographer) → Vision Share links → Vision Analytics → Vision AI (future). Internal-only — not customer-facing.',
+    versionIntroduced: 'Milestone 28',
+    workflowNodes: [
+      'WORKSPACE MANIFEST',
+      'VISION MODES',
+      'BUILDER',
+      'RECORDER',
+      'SHARE',
+      'ANALYTICS',
+      'VISION AI',
+    ],
+    relatedModuleIds: ['memory-bible', 'knowledge-hub', 'growth-network', 'mission-control'],
+  },
   'content-packs': {
     relatedModuleIds: ['production-builder', 'publishing-queue', 'lounge-tv'],
   },

@@ -69,6 +69,9 @@ export type { AudienceBrainSnapshot, AudienceBrainFeed } from './audienceBrain/s
 export { growthNetworkStudioService, GROWTH_INHERITANCE_CHAIN, getGrowthExecutivesForWorkspace } from './growthNetwork/service';
 export type { GrowthNetworkSnapshot, GrowthNetworkStudioService } from './growthNetwork/service';
 
+export { visionEngineStudioService, VISION_ENGINE_INHERITANCE_CHAIN } from './visionEngine/service';
+export type { VisionEngineSnapshot } from './visionEngine/service';
+
 export { executiveCommandCenterStudioService, EXECUTIVE_REPORTING_CHAIN } from './executiveCommandCenter/service';
 export type { ExecutiveCommandCenterSnapshot, ExecutiveSummary } from './executiveCommandCenter/service';
 

@@ -188,6 +188,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-growth-network', 'node-opportunity-engine', 'node-deal-pipeline', 'node-revenue-center'],
     },
     {
+      id: 'name-vision-engine',
+      officialName: 'Vision Engine',
+      deprecatedNames: ['Guided Tour', 'guided tour', 'Frontal Slayer Guided Tour'],
+      usageNotes:
+        'Studio OS cinematic presentation operating system. Experiences are Vision Modes. Subsystems: Builder, Recorder, Share, Analytics, Vision AI. Internal/admin only — never customer-facing nav.',
+      relatedModules: ['vision-engine'],
+      relatedGraphNodeIds: ['node-vision-engine', 'node-vision-share'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -330,6 +339,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-growth-network', 'node-opportunity-engine', 'node-deal-pipeline', 'node-revenue-center'],
       relatedManualChapter: 'CHAPTER · GROWTH NETWORK · BUSINESS GROWTH ECOSYSTEM',
+    },
+    {
+      id: 'dec-vision-engine-v1',
+      title: 'Elevate Guided Tour to Vision Engine™ platform pillar',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'vision-engine',
+      decision:
+        'Vision Engine is a reusable Studio OS engine — not Frontal Slayer-specific. Frontal Slayer is the first workspace consumer. Internal only: Builder, Recorder, Share, Analytics; 11 Vision Mode templates. No public launcher or URL token.',
+      reason:
+        'Every Studio OS workspace should generate cinematic presentations without decks, Loom, or screen recordings. Architecture must scale to Vision AI generation.',
+      alternativesConsidered: ['Keep Frontal Slayer Guided Tour as workspace feature', 'Public customer-facing tour launcher'],
+      outcome: 'Vision Engine at /admin/studio/vision-engine; runtime in src/components/vision-engine/runtime; FS adapter in workspaces/frontal-slayer/vision-engine.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-vision-engine', 'node-vision-share'],
+      relatedManualChapter: 'CHAPTER · VISION ENGINE · CINEMATIC PRESENTATIONS',
     },
   ],
   aiPreferences: {

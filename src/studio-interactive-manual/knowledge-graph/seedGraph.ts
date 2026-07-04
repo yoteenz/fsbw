@@ -2,6 +2,7 @@ import type { KnowledgeGraphEdge, KnowledgeGraphNode, KnowledgeGraphWorkflowMap 
 import {
   adminStudioBrandAssetsAssetFactoryPath,
   adminStudioGrowthNetworkPath,
+  adminStudioVisionEnginePath,
   adminStudioMemoryBiblePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
@@ -221,6 +222,38 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     status: 'live',
     searchKeywords: ['revenue center', 'revenue diversification', 'monthly revenue'],
   },
+  {
+    id: 'node-vision-engine',
+    name: 'VISION ENGINE',
+    type: 'module',
+    description:
+      'Studio OS cinematic presentation operating system — Vision Modes, Builder, Recorder, Share, Analytics. Internal only.',
+    purpose: 'Generate immersive presentations from any workspace without separate decks or screen recordings.',
+    route: adminStudioVisionEnginePath(),
+    moduleId: 'vision-engine',
+    relatedManualChapter: 'CHAPTER · VISION ENGINE · CINEMATIC PRESENTATIONS',
+    versionIntroduced: 'Milestone 28',
+    status: 'live',
+    searchKeywords: [
+      'vision engine',
+      'vision mode',
+      'presentation builder',
+      'vision share',
+      'vision recorder',
+      'vision analytics',
+    ],
+  },
+  {
+    id: 'node-vision-share',
+    name: 'VISION SHARE',
+    type: 'feature',
+    description: 'Secure interactive Vision Links — autoplay, narration, presenter mode, password protection.',
+    purpose: 'Share cinematic presentations without exporting static videos.',
+    moduleId: 'vision-engine',
+    versionIntroduced: 'Milestone 28',
+    status: 'live',
+    searchKeywords: ['vision link', 'vision share', 'interactive presentation'],
+  },
 ];
 
 export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
@@ -261,6 +294,10 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-growth-knowledge', fromId: 'node-growth-network', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
   { id: 'e-ai-media-growth', fromId: 'node-ai-media-pilot', toId: 'node-growth-network', type: 'feeds', label: 'PILOT VALIDATION' },
   { id: 'e-audience-growth', fromId: 'audience-brain', toId: 'node-growth-network', type: 'feeds', label: 'AUDIENCE SIGNALS' },
+  { id: 'e-vision-memory', fromId: 'node-vision-engine', toId: 'node-memory-bible', type: 'inherits-from', label: 'BRAND STORY' },
+  { id: 'e-vision-contains-share', fromId: 'node-vision-engine', toId: 'node-vision-share', type: 'contains' },
+  { id: 'e-vision-knowledge', fromId: 'node-vision-engine', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
+  { id: 'e-growth-vision', fromId: 'node-growth-network', toId: 'node-vision-engine', type: 'related-to', label: 'INVESTOR DEMOS' },
 ];
 
 export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
@@ -338,6 +375,18 @@ export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
       'node-interactive-manual',
     ],
     moduleIds: ['growth-network', 'memory-bible', 'knowledge-hub', 'audience-brain'],
+  },
+  {
+    id: 'wf-vision-engine',
+    title: 'VISION ENGINE LIFECYCLE',
+    subtitle: 'Workspace Manifest → Vision Modes → Builder → Recorder → Share → Analytics',
+    nodeIds: [
+      'node-vision-engine',
+      'node-vision-share',
+      'node-memory-bible',
+      'node-interactive-manual',
+    ],
+    moduleIds: ['vision-engine', 'memory-bible', 'knowledge-hub'],
   },
 ];
 

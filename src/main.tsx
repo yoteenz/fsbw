@@ -5,7 +5,7 @@ import App from './App.tsx'
 import './index.css'
 import { ensureAuthRestoredFromBackup, persistAuthBackup, isSignedIn } from './utils/adminAuth'
 import { bootstrapCreativePreviewMode, isCreativePreviewMode } from './utils/creativePreviewMode'
-import { bootstrapGuidedTourMode } from './workspaces/frontal-slayer/guided-tour'
+import { bootstrapVisionShareFromPath } from './studio-os-core/vision-engine/shareBootstrap'
 import { bootstrapDesktopPreviewModes } from './utils/desktopPreview'
 import { sanitizeStoredAuthPasswords } from './utils/authPasswordSanitize'
 import { restoreSupabaseSessionFromCookie, getSupabase, signOutIfSessionEmailUnconfirmed } from './utils/supabase'
@@ -24,8 +24,8 @@ sanitizeStoredAuthPasswords()
 // Designer creative preview (preview deployments only) — before auth backup restore.
 bootstrapCreativePreviewMode()
 
-// Frontal Slayer guided tour presentation layer (?guidedTour=token)
-bootstrapGuidedTourMode()
+// Vision Share™ bootstrap for /vision/:slug links (internal presentation layer — not public nav)
+bootstrapVisionShareFromPath(window.location.pathname)
 
 // Staging: `?mobileDesktop=1` on `/desktop/*` — 1920px viewport before first paint.
 bootstrapDesktopPreviewModes()
