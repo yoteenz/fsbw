@@ -168,6 +168,8 @@ const AdminStudioProductionBuilder = lazyWithRetry(() => import('./pages/admin/s
 const AdminStudioDirectorMode = lazyWithRetry(() => import('./pages/admin/studio/director-mode/page'), 'AdminStudioDirectorMode');
 const AdminStudioExecutiveAiDirector = lazyWithRetry(() => import('./pages/admin/studio/executive-ai-director/page'), 'AdminStudioExecutiveAiDirector');
 const AdminStudioCampaignOrchestrator = lazyWithRetry(() => import('./pages/admin/studio/campaign-orchestrator/page'), 'AdminStudioCampaignOrchestrator');
+const AdminStudioBlueprintManager = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/page'), 'AdminStudioBlueprintManager');
+const AdminStudioBlueprintDetail = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/detail/page'), 'AdminStudioBlueprintDetail');
 const AdminStudioMissionControl = lazyWithRetry(() => import('./pages/admin/studio/mission-control/page'), 'AdminStudioMissionControl');
 const AdminStudioOs = lazyWithRetry(() => import('./pages/admin/studio-os/page'), 'AdminStudioOs');
 const AdminStudioOsWorkspaceShell = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/page'), 'AdminStudioOsWorkspaceShell');
@@ -971,6 +973,16 @@ function App() {
           <Route path="studio/production-builder" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioProductionBuilder />
+            </Suspense>
+          } />
+          <Route path="studio/blueprint-manager/:blueprintId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioBlueprintDetail />
+            </Suspense>
+          } />
+          <Route path="studio/blueprint-manager" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioBlueprintManager />
             </Suspense>
           } />
           <Route path="studio/asset-director/studios/:studioId" element={

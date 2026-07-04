@@ -56,6 +56,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'asset-director') {
       return <Navigate to="/admin/studio/asset-director" replace />;
     }
+    if (sectionId === 'blueprint-manager') {
+      return <Navigate to="/admin/studio/blueprint-manager" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

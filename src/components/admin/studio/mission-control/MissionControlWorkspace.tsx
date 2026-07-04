@@ -16,6 +16,7 @@ import {
   MISSION_OVERVIEW,
   MISSION_PHASES,
   MISSION_QUICK_ACTIONS,
+  MISSION_CONTROL_BLUEPRINT_STATS,
   SMART_NOTIFICATIONS,
   WORKSPACE_MEMORY,
   missionStatusColor,
@@ -233,6 +234,28 @@ export function MissionControlWorkspace() {
             );
           })}
         </div>
+      </section>
+
+      {/* BLUEPRINT FACTORY FOUNDATION */}
+      <section style={{ ...mcPanelStyle, padding: '12px', marginBottom: '12px' }}>
+        <p style={mcSectionTitle}>BLUEPRINT MANAGER · ASSET FACTORY FOUNDATION</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-5 mb-3">
+          {[
+            { label: 'READY', value: MISSION_CONTROL_BLUEPRINT_STATS.ready },
+            { label: 'MISSING ASSETS', value: MISSION_CONTROL_BLUEPRINT_STATS.missingAssets },
+            { label: 'AWAITING APPROVAL', value: MISSION_CONTROL_BLUEPRINT_STATS.awaitingApproval },
+            { label: 'BLUEPRINT HEALTH', value: `${MISSION_CONTROL_BLUEPRINT_STATS.health}%` },
+            { label: 'FACTORY READINESS', value: `${MISSION_CONTROL_BLUEPRINT_STATS.factoryReadiness}%` },
+          ].map((s) => (
+            <div key={s.label} className="text-center py-2" style={{ background: 'rgba(0,0,0,0.03)' }}>
+              <p style={{ ...mcGrace, fontSize: '14px', color: MC_VISUAL.red }}>{s.value}</p>
+              <p style={{ ...mcCaption, fontSize: '7px' }}>{s.label}</p>
+            </div>
+          ))}
+        </div>
+        <button type="button" onClick={() => navigate('/admin/studio/blueprint-manager')} style={mcActionBtn}>
+          OPEN BLUEPRINT MANAGER
+        </button>
       </section>
 
       {/* DEPARTMENT GRID */}

@@ -313,6 +313,7 @@ export const MISSION_QUICK_ACTIONS: QuickAction[] = [
   { id: 'assets', label: 'GENERATE ASSETS', route: '/admin/studio/ai-studio' },
   { id: 'builder', label: 'PRODUCTION BUILDER', route: '/admin/studio/production-builder' },
   { id: 'asset-dir', label: 'ASSET DIRECTOR', route: '/admin/studio/asset-director' },
+  { id: 'blueprints', label: 'BLUEPRINT MANAGER', route: '/admin/studio/blueprint-manager' },
   { id: 'publish', label: 'PUBLISH CONTENT', route: '/admin/studio/publishing-queue' },
   { id: 'approvals', label: 'REVIEW APPROVALS', route: '/admin/studio/mission-control#approvals' },
 ];
@@ -350,7 +351,7 @@ export const WORKSPACE_MEMORY: {
   oneYearAgo: 'FIRST LOUNGE TV LEARN SERIES LAUNCHED',
   biggestWins: ['HAIR ANALYSIS 3.2× CONVERSION', 'MEMBERSHIP +14% NET NEW', 'SLAY CAM 340 SUBMISSIONS'],
   hallOfFame: 'EP 11 — HIGHEST COMPLETION THIS QUARTER',
-  recentMilestones: ['CAMPAIGN ORCHESTRATOR LIVE', 'DIRECTOR MODE REHEARSAL', 'ASSET DIRECTOR GALLERY'],
+  recentMilestones: ['CAMPAIGN ORCHESTRATOR LIVE', 'DIRECTOR MODE REHEARSAL', 'BLUEPRINT MANAGER LIVE'],
   founderNotes: 'TRUST OVER SALES · EVERY LAUNCH EARNS THE RED CARPET',
 };
 
@@ -373,7 +374,16 @@ export const MISSION_SEARCH_INDEX: MissionSearchEntry[] = [
   { id: 'ms-analytics', label: 'PERFORMANCE ANALYTICS', category: 'ANALYTICS', route: '/admin/studio/analytics', keywords: ['analytics', 'views', 'completion'] },
   { id: 'ms-builder', label: 'PRODUCTION BUILDER', category: 'PRODUCTION', route: '/admin/studio/production-builder', keywords: ['production', 'builder', 'scene'] },
   { id: 'ms-orchestrator', label: 'CAMPAIGN ORCHESTRATOR', category: 'CAMPAIGNS', route: '/admin/studio/campaign-orchestrator', keywords: ['orchestrator', 'campaign', 'plan'] },
+  { id: 'ms-blueprint', label: 'WEATHER STUDIO BLUEPRINT', category: 'BLUEPRINT', route: '/admin/studio/blueprint-manager/bp-weather-studio', keywords: ['blueprint', 'weather', 'studio', 'factory'] },
 ];
+
+export const MISSION_CONTROL_BLUEPRINT_STATS = {
+  ready: 4,
+  missingAssets: 11,
+  awaitingApproval: 6,
+  health: 62,
+  factoryReadiness: 28,
+} as const;
 
 export function searchMissionIndex(query: string): MissionSearchEntry[] {
   const q = query.trim().toLowerCase();

@@ -43,6 +43,7 @@ export type AdminStudioSectionId =
   | 'mission-control'
   | 'legacy-system'
   | 'asset-director'
+  | 'blueprint-manager'
   | 'production-builder'
   | 'director-mode'
   | 'executive-ai-director'

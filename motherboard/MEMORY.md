@@ -35203,3 +35203,26 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Mission Control is additive HQ layer — does not replace Executive Command Center, Campaign Orchestrator, or other modules; department cards deep-link to existing routes; AI insights tag WORKSPACE HISTORY / CURRENT CONFIGURATION / PREDICTIVE ESTIMATE.
 
+---
+
+## 2026-07-04 — Blueprint Manager Asset Factory foundation (Milestone 18.5)
+
+**Context:** User milestone for **Blueprint Manager** — foundational specification system for future Asset Factory; define creative DNA before any generation. Must not redesign UI, remove Asset Director, or generate assets. Prior thread: Milestones 14–18 (Asset Director through Mission Control).
+
+**Topics covered (full chat arc):** StudioOS visual pipeline; user requested Blueprint Manager as architectural department — subtitle "Define once. Generate forever."; blueprint library cards (studios, talent, wardrobe, products, props, materials, shows, campaigns, scenes, videos, thumbnails, voice, music, brand kits); full blueprint structure (identity, relationships, required assets, generation rules, prompt stack, dependencies, output rules, validation, version history, metadata); Weather Studio flagship example; visual dependency graph; validation rules; collapsible visual editor; relationships/used-by links; asset checklist with completion status; factory readiness score; template system; global vs workspace blueprints; version history with restore; approval workflow (draft/review/approved/deprecated/archived); Mission Control blueprint stats; Executive AI Director pre-generation blueprint review.
+
+**Decisions / outcomes:**
+- New routes **`/admin/studio/blueprint-manager`** + **`/admin/studio/blueprint-manager/:blueprintId`** — VISUALS group, featured overview.
+- **`adminStudioBlueprintManagerDemo.ts`** — 16 library blueprints, Weather Studio full spec, templates, global/workspace scopes, factory stats helper.
+- **`adminStudioBlueprintManagerCompute.ts`** — factory readiness dimensions + eligibility gate.
+- **`adminStudioBlueprintManagerAnalysis.ts`** — Executive AI Director blueprint review suggestions.
+- **`useAdminStudioBlueprintManagerState.ts`** — localStorage **`adminStudioBlueprintManager_v1`**; status, checklist, version restore.
+- UI: library hub, detail editor with collapsible sections, dependency graph, readiness panel.
+- Mission Control: blueprint stats strip + quick action; EAD production tab: blueprint review panel.
+- **`blueprintManagerStudioService`** Phase 2 stub; Asset Director unchanged; no generation.
+- Build verified.
+
+**Changes:** blueprint-manager utils/hooks/components/pages/service, storage/routes/nav/App, mission-control + EAD integration, `studio-os/core/modules.ts`, `motherboard/CORE.md`.
+
+**Conventions:** Blueprint Manager is specification-only — Asset Factory not connected; only approved blueprints eligible for future factory; global templates inherit into workspace blueprints.
+

@@ -1,4 +1,8 @@
 import { AdminHubTabBar } from '../../AdminHubTabBar';
+import { useNavigate } from 'react-router-dom';
+import { WEATHER_STUDIO_BLUEPRINT, BLUEPRINT_REVIEW_SUGGESTIONS } from '../../../../utils/adminStudioBlueprintManagerDemo';
+import { reviewBlueprintForGeneration } from '../../../../utils/adminStudioBlueprintManagerAnalysis';
+import { adminStudioBlueprintDetailPath } from '../../../../utils/adminStudioRoutes';
 import { useAdminStudioExecutiveAiDirector } from '../../../../hooks/useAdminStudioExecutiveAiDirectorState';
 import {
   AB_STRATEGY_SEED,
@@ -75,7 +79,12 @@ export function ExecutiveAiDirectorWorkspace() {
           </section>
         )}
         {activeTab === 'insights' && <InsightsPanel query={intelQuery} onQuery={setIntelQuery} results={intelResults} />}
-        {activeTab === 'production' && <ProductionPanel notes={productionNotes} />}
+        {activeTab === 'production' && (
+          <>
+            <ProductionPanel notes={productionNotes} />
+            <BlueprintReviewPanel />
+          </>
+        )}
         {activeTab === 'brand' && <BrandPanel items={brandCompliance} />}
         {activeTab === 'prompt' && <PromptPanel score={promptReview.score} findings={promptReview.findings} />}
         {activeTab === 'forecast' && <ForecastPanel />}
@@ -154,7 +163,7 @@ function InsightsPanel({
 
 function ProductionPanel({ notes }: { notes: ProductionCoachingNote[] }) {
   return (
-    <section style={{ ...eadPanelStyle, padding: '12px' }}>
+    <section style={{ ...eadPanelStyle, padding: '12px', marginBottom: '12px' }}>
       <p style={eadSectionTitle}>PRODUCTION ANALYSIS · PRE-GENERATION COACHING</p>
       <div className="space-y-3">
         {notes.map((n) => (
@@ -165,6 +174,27 @@ function ProductionPanel({ notes }: { notes: ProductionCoachingNote[] }) {
           </div>
         ))}
       </div>
+    </section>
+  );
+}
+
+function BlueprintReviewPanel() {
+  const navigate = useNavigate();
+  const reviews = reviewBlueprintForGeneration(WEATHER_STUDIO_BLUEPRINT);
+
+  return (
+    <section style={{ ...eadPanelStyle, padding: '12px' }}>
+      <p style={eadSectionTitle}>BLUEPRINT REVIEW · PRE-GENERATION</p>
+      <p style={{ ...eadCaption, marginBottom: '8px' }}>WEATHER STUDIO · IMPROVE SPEC BEFORE ASSET FACTORY · NO AI CREDITS</p>
+      {(reviews.length ? reviews : BLUEPRINT_REVIEW_SUGGESTIONS).slice(0, 4).map((r) => (
+        <div key={r.id} className="mb-2" style={{ borderLeft: `3px solid ${r.severity === 'critical' ? EAD_VISUAL.red : r.severity === 'warn' ? EAD_VISUAL.warn : EAD_VISUAL.gray}`, paddingLeft: '8px' }}>
+          <p style={{ ...eadCaption, color: EAD_VISUAL.black, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>{r.title}</p>
+          <p style={eadCaption}>{r.detail}</p>
+        </div>
+      ))}
+      <button type="button" onClick={() => navigate(adminStudioBlueprintDetailPath('bp-weather-studio'))} style={{ ...eadActionBtn, marginTop: '8px' }}>
+        REVIEW WEATHER STUDIO BLUEPRINT
+      </button>
     </section>
   );
 }

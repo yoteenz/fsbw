@@ -60,6 +60,9 @@ export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
     'asset-director': {
       subtitle: 'THE VISUAL SOURCE OF TRUTH — HOW FRONTAL SLAYER LOOKS ACROSS EVERY CHANNEL.',
     },
+    'blueprint-manager': {
+      subtitle: 'DEFINE ONCE. GENERATE FOREVER. — ARCHITECTURAL DNA FOR ASSET FACTORY.',
+    },
     'studio-lot': {
       subtitle: 'EVERY STORY STARTS ON SET — THE PRODUCTION CAMPUS OF FRONTAL SLAYER.',
     },

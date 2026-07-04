@@ -5,6 +5,7 @@
 
 export type StudioOsCoreModuleId =
   | 'mission-control'
+  | 'blueprint-manager'
   | 'executive-command-center'
   | 'studio-dashboard'
   | 'content-brain'
@@ -30,6 +31,12 @@ export type StudioOsCoreModule = {
 
 /** Canonical registry of StudioOS platform modules. */
 export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
+  {
+    id: 'blueprint-manager',
+    label: 'BLUEPRINT MANAGER',
+    description: 'Creative asset specifications for Asset Factory.',
+    routeSegment: 'blueprint-manager',
+  },
   {
     id: 'mission-control',
     label: 'MISSION CONTROL',

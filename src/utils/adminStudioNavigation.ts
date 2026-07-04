@@ -209,6 +209,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'blueprint-manager',
+    title: 'BLUEPRINT MANAGER',
+    purpose: 'Define creative DNA before generation — studios, talent, campaigns, and every asset spec.',
+    route: p('blueprint-manager'),
+    groupId: 'visuals',
+    status: 'demo',
+    metric: '16 TYPES',
+    ctaLabel: 'OPEN BLUEPRINTS',
+    featuredOnOverview: true,
+  },
+  {
     id: 'studio-lot',
     title: 'STUDIO LOT',
     purpose: 'Tour virtual sets and production environments before you shoot.',
