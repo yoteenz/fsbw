@@ -34782,3 +34782,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Route `legacy-system/museum` before `legacy-system`. Navigate `/admin/studio/legacy-system`; museum cards deep-link via `?tab=`. Legacy System is terminal milestone in studio stack after Executive Command Center.
 
+---
+
+## 2026-07-04 — Studio homepage back navigation fix
+
+**Context:** User opened THE STUDIO from admin dashboard and could not go back — stuck on Executive Command Center. `/admin/studio` redirects to `/admin/studio/executive-command-center`, but ECC back button navigated to `/admin/studio` (infinite loop). User also wanted nav breadcrumb **ADMIN > THE STUDIO**.
+
+**Topics covered:** Nav bug on Executive Command Center; breadcrumb label mismatch.
+
+**Decisions / outcomes:** Executive Command Center (Studio homepage) header now matches legacy hub: `title="THE STUDIO"`, `breadcrumbParentLabel="ADMIN"`, back → `/admin/dashboard`. Child Studio modules unchanged — still back to `/admin/studio` (ECC). Build verified.
+
+**Changes:** `src/pages/admin/studio/executive-command-center/page.tsx`.
+
+**Conventions:** Studio homepage (`/admin/studio` / ECC) back target is always `/admin/dashboard`; breadcrumb **ADMIN > THE STUDIO**.
+

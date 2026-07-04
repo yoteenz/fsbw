@@ -55,11 +55,11 @@ export default function AdminStudioExecutiveCommandCenterPage() {
 
   return (
     <AdminStudioStageShell
-      title="EXECUTIVE COMMAND CENTER"
+      title="THE STUDIO"
       subtitle={ADMIN_STUDIO_EXECUTIVE_COMMAND_CENTER_SUBTITLE}
-      breadcrumbParentLabel="THE STUDIO"
-      breadcrumbParentPath="/admin/studio"
-      onBack={() => navigate('/admin/studio')}
+      breadcrumbParentLabel="ADMIN"
+      breadcrumbParentPath="/admin/dashboard"
+      onBack={() => navigate('/admin/dashboard')}
     >
       <div className="p-3 mb-3 border" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%)', borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
         <p className="text-[8px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary }}>{briefing.greeting}</p>
