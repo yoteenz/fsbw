@@ -142,7 +142,7 @@ function renderHeroComposite(input: {
       <![endif]-->
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;min-height:${EMAIL_HERO_HEIGHT_PX}px;height:${EMAIL_HERO_HEIGHT_PX}px;">
         <tr>
-          <td style="background:linear-gradient(to bottom, rgba(255,255,255,0.78) 0%, rgba(255,255,255,0.42) 34%, rgba(255,255,255,0) 52%);">
+          <td style="background:linear-gradient(to bottom, rgba(255,255,255,0.52) 0%, rgba(255,255,255,0.22) 30%, rgba(255,255,255,0) 48%);">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
               <tr>
                 <td data-email-layer="scriptAccent" style="${emailTdStyleCss(input.scriptStyle)}">

@@ -13,7 +13,7 @@ Server-side automated emails using **Resend** and reusable **Frontal Slayer** HT
    - Run migration `supabase/migrations/20260703120000_email_assets_bucket.sql`
    - Upload base assets: `npm run email:upload-assets` (needs `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY`)
    - **Generate Fal hero scenes** (9:16 portrait, purpose-specific 3D art per template): `FAL_KEY=... FORCE=1 npm run email:generate-heroes` then `npm run email:upload-assets`
-   - Hero slot: **520×924px** (9:16) with script accent, headline, and CTA overlaid on the graphic
+   - Hero art direction: **VIP Members Vault** mood — clean minimal still-life on white marble, crimson roses + clear crystals as accents, one focal 3D subject, full-bleed 9:16 (see **`emailHeroPromptMeta.json`**)
    - Prompts: shared quality/composition in `api/_lib/email/emailHeroPromptMeta.json`; per-email purpose scenes in `emailHeroPrompts.data.json`
    - Fal edit reference: marble background only (logo is **composited in post** from **`public/assets/email/slayer-logo.png`** — never redrawn by Fal)
    - Regenerate after aspect-ratio changes: `FORCE=1 npm run email:generate-heroes:batch`

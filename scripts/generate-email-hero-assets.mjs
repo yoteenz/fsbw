@@ -63,6 +63,7 @@ function buildEmailHeroPrompt(templateType, purposeScenes, meta) {
     meta.composition,
     meta.quality,
     meta.brandRules,
+    meta.designDirection,
     `Email purpose & hero subject: ${scene}`,
     meta.logoAuthenticity,
   ].join('\n\n');

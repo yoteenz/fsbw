@@ -34918,3 +34918,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Studio tabs/buttons must use admin hub patterns — no gray tab chips; primary CTAs below card with white bg + black border + red Futura text.
 
+---
+
+## 2026-07-04 — Email hero VIP-minimal art direction (welcome preview only)
+
+**Context:** User shared **VIP Members Vault** concept-board reference — wants email heroes **clean, minimal, aesthetic, to the point**, still **3D immersive**, on-brand (white marble, crimson #EB1C24 roses, clear crystals). Asked **not** to regen all 41 yet — **welcome only** first to confirm direction.
+
+**Prompt/layout updates:**
+- **`emailHeroPromptMeta.json`** — **`designDirection`** block: VIP Members Vault vibe, max 3 elements, medium-wide camera, merged with existing no-embossing + logo-wipe rules.
+- **`emailHeroPrompts.data.json`** — all 41 scenes rewritten minimal (batch when approved); welcome scene emphasizes blank frosted plaque + roses/crystals.
+- **`layout.ts`** — lighter text-overlay gradient.
+
+**Regen (this turn):** Killed in-progress full batch. **`TEMPLATES=welcome FORCE=1 npm run email:generate-heroes`** only. Log: **`/tmp/email-hero-welcome-preview.log`**. Other templates unchanged until user approves welcome.
+
+**Next:** User confirms welcome at **`/tools/email-templates`** → then batch remaining templates.
+
+
