@@ -76,7 +76,7 @@ export function AssetFactoryWorkspace() {
 
       <div style={{ ...afPanelStyle, padding: '10px', marginBottom: '12px' }}>
         <p style={{ ...afGrace, fontSize: '18px' }}>ASSET FACTORY</p>
-        <p style={afCaption}>MANUFACTURING CREATIVE SYSTEMS FROM APPROVED BLUEPRINTS · DEMO SIMULATION</p>
+        <p style={afCaption}>MANUFACTURING CREATIVE SYSTEMS · LIVE FAL PIPELINE WHEN QUEUED FROM ASSET DIRECTOR</p>
         <div className="flex flex-wrap gap-2 mt-3">
           {VIEW_TABS.map((tab) => (
             <button

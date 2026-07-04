@@ -11,6 +11,7 @@ import { AD_VISUAL, adCaptionStyle } from './assetDirectorVisualTheme';
 
 type AssetDirectorStudioDetailViewProps = {
   bundle: StudioVisualBundle;
+  busyVariantKey?: string | null;
   onQuickPreview?: (item: { name: string; previewSrc: string; resolution?: string; version?: string }) => void;
   onGenerate?: (item: { name: string }) => void;
   onReplace?: (item: { name: string }) => void;
@@ -19,6 +20,7 @@ type AssetDirectorStudioDetailViewProps = {
 
 export function AssetDirectorStudioDetailView({
   bundle,
+  busyVariantKey,
   onQuickPreview,
   onGenerate,
   onReplace,
@@ -26,11 +28,15 @@ export function AssetDirectorStudioDetailView({
 }: AssetDirectorStudioDetailViewProps) {
   const preview = (item: { name: string; previewSrc: string; resolution: string; version: string }) =>
     onQuickPreview?.(item);
-  const tileActions = (item: { name: string; previewSrc: string; resolution: string; version: string }) => ({
-    onPreview: () => preview(item),
-    onGenerate: () => onGenerate?.(item),
-    onReplace: () => onReplace?.(item),
-  });
+  const tileActions = (item: { id: string; name: string; previewSrc: string; resolution: string; version: string }) => {
+    const isBusy = busyVariantKey === `${bundle.studio.id}:${item.id}`;
+    return {
+      onPreview: () => preview(item),
+      onGenerate: isBusy ? undefined : () => onGenerate?.(item),
+      onReplace: isBusy ? undefined : () => onReplace?.(item),
+      busy: isBusy,
+    };
+  };
 
   return (
     <div className="pb-4">

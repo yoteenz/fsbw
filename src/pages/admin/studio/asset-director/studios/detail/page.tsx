@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
@@ -8,6 +8,8 @@ import {
   AssetDirectorQuickPreviewModal,
 } from '../../../../../../components/admin/studio/asset-director/AssetDirectorVisualPrimitives';
 import { getStudioVisualBundle } from '../../../../../../utils/adminStudioAssetDirectorVisual';
+import { mergeStudioBundleWithGeneratedVersions } from '../../../../../../hooks/useAdminStudioAssetDirectorState';
+import { useAdminStudioAssetDirectorGeneration } from '../../../../../../hooks/useAdminStudioAssetDirectorGeneration';
 
 export default function AdminStudioAssetDirectorStudioDetailPage() {
   const { studioId } = useParams<{ studioId: string }>();
@@ -18,27 +20,39 @@ export default function AdminStudioAssetDirectorStudioDetailPage() {
     resolution?: string;
     version?: string;
   } | null>(null);
-  const [actionNotice, setActionNotice] = useState<string | null>(null);
 
-  const bundle = useMemo(() => (studioId ? getStudioVisualBundle(studioId) : undefined), [studioId]);
+  const {
+    notice,
+    dismissNotice,
+    busyKey,
+    refreshKey,
+    runGenerate,
+    runReplace,
+    fileInputRef,
+    onReplaceFile,
+  } = useAdminStudioAssetDirectorGeneration();
 
-  const dismissNotice = useCallback(() => setActionNotice(null), []);
-
-  const notifyAction = useCallback((verb: string, target: string) => {
-    setActionNotice(`${verb} · ${target}`);
-  }, []);
-
-  const handleHeaderAction = useCallback(
-    (action: string) => {
-      if (!bundle) return;
-      notifyAction(action, bundle.studio.name);
-    },
-    [bundle, notifyAction]
-  );
+  const bundle = useMemo(() => {
+    void refreshKey;
+    if (!studioId) return undefined;
+    const base = getStudioVisualBundle(studioId);
+    return base ? mergeStudioBundleWithGeneratedVersions(base, studioId) : undefined;
+  }, [studioId, refreshKey]);
 
   if (!studioId || !bundle) {
     return <Navigate to="/admin/studio/asset-director/studios" replace />;
   }
+
+  const variantTarget = (item: { name: string }) => {
+    const variant = bundle.versions.find((v) => v.name === item.name);
+    if (!variant) return null;
+    return {
+      studioId,
+      variantId: variant.id,
+      variantName: variant.name,
+      previewSrc: variant.previewSrc,
+    };
+  };
 
   return (
     <AdminStudioStageShell
@@ -50,16 +64,50 @@ export default function AdminStudioAssetDirectorStudioDetailPage() {
       navGroupId="visuals"
       hideNavTabs
     >
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          void onReplaceFile(file);
+          e.target.value = '';
+        }}
+      />
+
       <AssetDirectorStudioDetailView
         bundle={bundle}
+        busyVariantKey={busyKey}
         onQuickPreview={setQuickPreview}
-        onGenerate={(item) => notifyAction('GENERATE', item.name)}
-        onReplace={(item) => notifyAction('REPLACE', item.name)}
-        onHeaderAction={handleHeaderAction}
+        onGenerate={(item) => {
+          const target = variantTarget(item);
+          if (!target) return;
+          void runGenerate(target, { navigateToFactory: true });
+        }}
+        onReplace={(item) => {
+          const target = variantTarget(item);
+          if (!target) return;
+          runReplace(target);
+        }}
+        onHeaderAction={(action) => {
+          if (action === 'GENERATE' && bundle.versions[0]) {
+            const v = bundle.versions[0];
+            void runGenerate({
+              studioId,
+              variantId: v.id,
+              variantName: v.name,
+              previewSrc: v.previewSrc,
+            });
+          }
+        }}
       />
+
       <AssetDirectorQuickPreviewModal item={quickPreview} onClose={() => setQuickPreview(null)} />
-      <AssetDirectorActionNotice message={actionNotice} onDismiss={dismissNotice} />
-      <AdminStudioDisclaimerFooter />
+      <AssetDirectorActionNotice message={notice} onDismiss={dismissNotice} livePipeline />
+      <AdminStudioDisclaimerFooter>
+        LIVE PIPELINE · GENERATE → ASSET FACTORY → FAL → ASSET DIRECTOR
+      </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );
 }

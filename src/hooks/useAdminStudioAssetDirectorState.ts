@@ -7,14 +7,26 @@ import {
   assemblePromptFromAssets,
   searchAssetDirectorIndex,
 } from '../utils/adminStudioAssetDirectorDemo';
-import type { AssetDirectorFilterId, AssetDirectorViewMode, VisualAssetItem } from '../utils/adminStudioAssetDirectorVisual';
+import type { AssetDirectorFilterId, AssetDirectorViewMode, StudioVisualBundle, VisualAssetItem } from '../utils/adminStudioAssetDirectorVisual';
+import { versionStorageKey } from '../utils/adminStudioAssetGenerationPipeline';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
+
+export type GeneratedVersionRecord = {
+  previewSrc: string;
+  generatedAt: string;
+  variantName: string;
+  source: 'factory' | 'replace';
+  jobId?: string;
+  status: 'generating' | 'complete' | 'failed';
+  error?: string;
+};
 
 type AssetDirectorStore = {
   packAssetSelections?: Record<string, ContentPackAssetSelection>;
   statusOverrides?: Record<string, AssetDirectorStatus>;
   viewMode?: AssetDirectorViewMode;
   favorites?: string[];
+  generatedVersions?: Record<string, GeneratedVersionRecord>;
 };
 
 function readStore(): AssetDirectorStore {
@@ -35,7 +47,48 @@ export function exportAssetDirectorSnapshot() {
   return {
     packAssetSelections: store.packAssetSelections ?? {},
     statusOverrides: store.statusOverrides ?? {},
+    generatedVersions: store.generatedVersions ?? {},
     source: 'asset-director-local' as const,
+  };
+}
+
+export function getGeneratedVersionRecord(studioId: string, variantId: string): GeneratedVersionRecord | undefined {
+  const store = readStore();
+  return store.generatedVersions?.[versionStorageKey(studioId, variantId)];
+}
+
+export function setGeneratedVersionRecord(
+  studioId: string,
+  variantId: string,
+  record: GeneratedVersionRecord
+): void {
+  const store = readStore();
+  const key = versionStorageKey(studioId, variantId);
+  writeStore({
+    ...store,
+    generatedVersions: { ...(store.generatedVersions ?? {}), [key]: record },
+  });
+}
+
+export function mergeStudioBundleWithGeneratedVersions(bundle: StudioVisualBundle, studioId: string): StudioVisualBundle {
+  const store = readStore();
+  const generated = store.generatedVersions ?? {};
+  const versions = bundle.versions.map((v) => {
+    const key = versionStorageKey(studioId, v.id);
+    const gen = generated[key];
+    if (!gen) return v;
+    return {
+      ...v,
+      previewSrc: gen.previewSrc || v.previewSrc,
+      status: gen.status === 'generating' ? ('needs-review' as const) : gen.status === 'failed' ? ('draft' as const) : ('approved' as const),
+      subtitle: gen.status === 'generating' ? 'GENERATING…' : gen.status === 'failed' ? gen.error ?? 'GENERATION FAILED' : gen.source === 'replace' ? 'REPLACED' : 'FACTORY GENERATED',
+    };
+  });
+  const heroGen = versions.find((v) => v.name === 'DAY' && generated[versionStorageKey(studioId, v.id)]?.status === 'complete');
+  return {
+    ...bundle,
+    versions,
+    heroSrc: heroGen?.previewSrc ?? bundle.heroSrc,
   };
 }
 

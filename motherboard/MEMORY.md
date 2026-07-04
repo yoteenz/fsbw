@@ -35289,3 +35289,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Studio modals/overlays inside `AdminStudioLayout` must portal to `document.body` to avoid backdrop-filter clipping.
 
+---
+
+## 2026-07-04 — Asset Director live generation pipeline (Fal + Asset Factory)
+
+**Context:** User asked why GENERATE/REPLACE showed demo-only toasts instead of real AI; requested **full pipeline** hookup. Prior turn fixed preview modal + demo button feedback; user wanted real generation end-to-end.
+
+**Topics covered (full chat arc):** StudioOS core extraction; Asset Director VERSIONS bug (grey preview, dead buttons); demo notice stopgap; user challenge “why isn’t it hooked up — it should be”; user confirmed “yes i want the full pipeline.”
+
+**Decisions / outcomes:**
+- **Architecture:** Asset Director GENERATE → Asset Factory live job → `POST /api/admin/studio-generate-asset` (Fal `nano-banana-pro/edit` + marble/noir refs + blueprint prompt stack) → Supabase `live-preview/studio-assets/frontal-slayer/...` → persist in Asset Director `generatedVersions` localStorage → update version tile `previewSrc`.
+- **REPLACE:** `POST /api/admin/studio-replace-asset` — admin file upload to same storage prefix (no Fal).
+- **API:** `api/_lib/studioAssetGeneration.ts`, `api/admin/studio-generate-asset.ts`, `api/admin/studio-replace-asset.ts` (admin-only, `FAL_KEY` + Supabase service role).
+- **Client:** `adminStudioAssetGenerationPipeline.ts`, `services/studio/assetGeneration/api.ts`, `useAdminStudioAssetDirectorGeneration` hook, `queueLiveFactoryJob` / `completeLiveFactoryJob` in factory state.
+- **UI:** Studio detail GENERATE shows “GENERATING…”, navigates to Asset Factory on success; `mergeStudioBundleWithGeneratedVersions` applies stored outputs; `AssetDirectorActionNotice` `livePipeline` mode.
+- **Mapping:** `ad-studio-weather` → `bp-weather-studio` blueprint prompt stack.
+- Build verified.
+
+**Changes:** API routes + lib, factory pipeline types, asset director store `generatedVersions`, generation hook, studio/talent detail pages, visual tiles busy state, factory workspace caption, `services/studio/index.ts` exports.
+
+**Conventions:** Studio admin generation uses server Fal (not client); requires `FAL_KEY` + Supabase on Vercel; Asset Director is delivery layer — manufacturing runs through Asset Factory job records even for single-variant GENERATE from a tile.
+

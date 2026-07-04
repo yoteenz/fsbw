@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
@@ -8,20 +8,16 @@ import {
   AssetDirectorQuickPreviewModal,
 } from '../../../../../../components/admin/studio/asset-director/AssetDirectorVisualPrimitives';
 import { getTalentVisualBundle } from '../../../../../../utils/adminStudioAssetDirectorVisual';
+import { useAdminStudioAssetDirectorGeneration } from '../../../../../../hooks/useAdminStudioAssetDirectorGeneration';
 
 export default function AdminStudioAssetDirectorTalentDetailPage() {
   const { talentId } = useParams<{ talentId: string }>();
   const navigate = useNavigate();
   const [quickPreview, setQuickPreview] = useState<{ name: string; previewSrc: string } | null>(null);
-  const [actionNotice, setActionNotice] = useState<string | null>(null);
+  const { notice, dismissNotice, runGenerate, runReplace, fileInputRef, onReplaceFile } =
+    useAdminStudioAssetDirectorGeneration();
 
   const bundle = useMemo(() => (talentId ? getTalentVisualBundle(talentId) : undefined), [talentId]);
-
-  const dismissNotice = useCallback(() => setActionNotice(null), []);
-
-  const notifyAction = useCallback((verb: string, target: string) => {
-    setActionNotice(`${verb} · ${target}`);
-  }, []);
 
   if (!talentId || !bundle) {
     return <Navigate to="/admin/studio/asset-director/talent" replace />;
@@ -37,14 +33,40 @@ export default function AdminStudioAssetDirectorTalentDetailPage() {
       navGroupId="visuals"
       hideNavTabs
     >
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          void onReplaceFile(file);
+          e.target.value = '';
+        }}
+      />
+
       <AssetDirectorTalentDetailView
         bundle={bundle}
         onQuickPreview={setQuickPreview}
-        onGenerate={(item) => notifyAction('GENERATE', item.name)}
-        onReplace={(item) => notifyAction('REPLACE', item.name)}
+        onGenerate={(item) => {
+          void runGenerate({
+            studioId: talentId,
+            variantId: item.name,
+            variantName: item.name,
+            previewSrc: undefined,
+          });
+        }}
+        onReplace={(item) => {
+          runReplace({
+            studioId: talentId,
+            variantId: item.name,
+            variantName: item.name,
+          });
+        }}
       />
+
       <AssetDirectorQuickPreviewModal item={quickPreview} onClose={() => setQuickPreview(null)} />
-      <AssetDirectorActionNotice message={actionNotice} onDismiss={dismissNotice} />
+      <AssetDirectorActionNotice message={notice} onDismiss={dismissNotice} livePipeline />
       <AdminStudioDisclaimerFooter />
     </AdminStudioStageShell>
   );

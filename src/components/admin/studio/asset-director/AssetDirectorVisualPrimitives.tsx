@@ -79,6 +79,7 @@ type VisualTileProps = {
   onPreview?: () => void;
   onGenerate?: () => void;
   onReplace?: () => void;
+  busy?: boolean;
   aspect?: string;
   showPlay?: boolean;
 };
@@ -88,6 +89,7 @@ export function AssetDirectorVisualTile({
   onPreview,
   onGenerate,
   onReplace,
+  busy,
   aspect = '4 / 3',
   showPlay,
 }: VisualTileProps) {
@@ -113,8 +115,10 @@ export function AssetDirectorVisualTile({
         </p>
         <div className="flex flex-wrap gap-1 mt-2">
           <button type="button" onClick={onPreview} style={{ ...adActionBtnStyle, fontSize: '8px', padding: '4px 6px' }}>PREVIEW</button>
-          <button type="button" onClick={onGenerate} style={{ ...adActionBtnStyle, fontSize: '8px', padding: '4px 6px' }}>GENERATE</button>
-          <button type="button" onClick={onReplace} style={{ ...adActionBtnStyle, fontSize: '8px', padding: '4px 6px' }}>REPLACE</button>
+          <button type="button" onClick={onGenerate} disabled={busy} style={{ ...adActionBtnStyle, fontSize: '8px', padding: '4px 6px', opacity: busy ? 0.5 : 1 }}>
+            {busy ? 'GENERATING…' : 'GENERATE'}
+          </button>
+          <button type="button" onClick={onReplace} disabled={busy} style={{ ...adActionBtnStyle, fontSize: '8px', padding: '4px 6px', opacity: busy ? 0.5 : 1 }}>REPLACE</button>
         </div>
       </div>
     </div>
@@ -247,10 +251,11 @@ export function AssetDirectorQuickPreviewModal({ item, onClose }: AssetDirectorQ
 type AssetDirectorActionNoticeProps = {
   message: string | null;
   onDismiss: () => void;
+  livePipeline?: boolean;
 };
 
-/** Demo-mode feedback for GENERATE / REPLACE / bulk actions (portal — avoids layout clipping). */
-export function AssetDirectorActionNotice({ message, onDismiss }: AssetDirectorActionNoticeProps) {
+/** Pipeline feedback for GENERATE / REPLACE / bulk actions (portal — avoids layout clipping). */
+export function AssetDirectorActionNotice({ message, onDismiss, livePipeline }: AssetDirectorActionNoticeProps) {
   useEffect(() => {
     if (!message) return;
     const timer = window.setTimeout(onDismiss, 5000);
@@ -270,7 +275,9 @@ export function AssetDirectorActionNotice({ message, onDismiss }: AssetDirectorA
       >
         <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: AD_VISUAL.red, margin: 0 }}>{message}</p>
         <p style={{ ...adCaptionStyle, marginTop: '6px', marginBottom: 0 }}>
-          DEMO MODE · AI GENERATION NOT CONNECTED · ACTION LOGGED FOR FUTURE PIPELINE
+          {livePipeline
+            ? 'ASSET FACTORY LIVE PIPELINE · FAL → SUPABASE → ASSET DIRECTOR'
+            : 'DEMO MODE · AI GENERATION NOT CONNECTED · ACTION LOGGED FOR FUTURE PIPELINE'}
         </p>
         <button type="button" onClick={onDismiss} className="mt-2 w-full" style={adActionBtnStyle}>
           DISMISS

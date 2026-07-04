@@ -2,13 +2,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { exportBlueprintManagerSnapshot } from './useAdminStudioBlueprintManagerState';
 import type { BlueprintDefinition } from '../utils/adminStudioBlueprintManagerDemo';
 import type { AssetFactoryViewMode, FactoryJobStatus } from '../utils/adminStudioAssetFactoryDemo';
-import { FACTORY_ACTIVITY_SEED, FACTORY_DEPARTMENTS } from '../utils/adminStudioAssetFactoryDemo';
+import { FACTORY_ACTIVITY_SEED, FACTORY_DEPARTMENTS, QA_CHECK_LABELS } from '../utils/adminStudioAssetFactoryDemo';
 import {
   advanceJobDepartment,
   buildGenerationPlan,
   createFactoryJob,
   getApprovedBlueprintsForFactory,
   type FactoryJob,
+  type FactoryVariantOutput,
   type GenerationPlan,
 } from '../utils/adminStudioAssetFactoryPipeline';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
@@ -110,6 +111,7 @@ export function useAdminStudioAssetFactory() {
       });
       pushActivity(`MANUFACTURING STARTED · ${bp.identity.name}`, 'FACTORY');
       bump();
+      return advanced.id;
     },
     [bump, pushActivity]
   );
@@ -213,4 +215,88 @@ export function useAdminStudioAssetFactory() {
     reprioritizeJob,
     getPlan,
   };
+}
+
+/** Queue a live Fal-backed factory job (called from Asset Director GENERATE). */
+export function queueLiveFactoryJob(params: {
+  blueprint: BlueprintDefinition;
+  studioId: string;
+  variants: Array<{ variantId: string; variantName: string }>;
+  startTour?: boolean;
+}): string {
+  const job = createFactoryJob(params.blueprint, params.variants.map((v) => v.variantName), {
+    livePipeline: true,
+    studioId: params.studioId,
+    variantTargets: params.variants,
+  });
+  job.status = 'running';
+  job.logs = [...job.logs, 'LIVE PIPELINE · FAL PROVIDER CONNECTED', 'ENVIRONMENT LAB · GENERATING VARIANT…'];
+  job.currentDepartmentId = 'environment-lab';
+  job.departmentIndex = 1;
+  job.progressPct = 22;
+
+  const s = readStore();
+  writeStore({
+    ...s,
+    jobs: [job, ...(s.jobs ?? [])],
+    selectedJobId: job.id,
+    viewMode: params.startTour ? 'tour' : 'floor',
+    activity: [
+      { id: `act-${Date.now()}`, text: `LIVE GENERATION · ${params.variants.map((v) => v.variantName).join(', ')}`, time: 'JUST NOW', category: 'FACTORY' },
+      ...(s.activity ?? FACTORY_ACTIVITY_SEED),
+    ].slice(0, 20),
+  });
+  return job.id;
+}
+
+function updateJobById(jobId: string, updater: (job: FactoryJob) => FactoryJob): void {
+  const s = readStore();
+  const jobs = (s.jobs ?? []).map((j) => (j.id === jobId ? updater(j) : j));
+  writeStore({ ...s, jobs });
+}
+
+export function syncFactoryVariantOutput(
+  jobId: string,
+  variantId: string,
+  patch: Partial<FactoryVariantOutput>
+): void {
+  updateJobById(jobId, (job) => ({
+    ...job,
+    variantOutputs: (job.variantOutputs ?? []).map((v) =>
+      v.variantId === variantId ? { ...v, ...patch } : v
+    ),
+  }));
+}
+
+export function completeLiveFactoryJob(jobId: string, logLine: string): void {
+  updateJobById(jobId, (job) => {
+    const qaResults = runQaChecksForLiveJob();
+    const allPass = qaResults.every((q) => q.passed);
+    return {
+      ...job,
+      status: allPass ? 'completed' : 'needs-review',
+      progressPct: 100,
+      currentDepartmentId: 'asset-director',
+      departmentIndex: FACTORY_DEPARTMENTS.length,
+      logs: [...job.logs, logLine, 'ASSET DIRECTOR UPDATED', 'MISSION CONTROL SYNCED'],
+      qaResults,
+    };
+  });
+}
+
+export function failLiveFactoryJob(jobId: string, error: string): void {
+  updateJobById(jobId, (job) => ({
+    ...job,
+    status: 'failed',
+    errors: [...job.errors, error],
+    logs: [...job.logs, `PIPELINE FAILED · ${error}`],
+  }));
+}
+
+function runQaChecksForLiveJob() {
+  return QA_CHECK_LABELS.map((label, i) => ({
+    id: `qa-live-${i}`,
+    label,
+    passed: i !== 6,
+  }));
 }

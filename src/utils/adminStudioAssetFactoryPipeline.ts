@@ -20,6 +20,14 @@ export type GenerationPlan = {
   eligibilityNote: string;
 };
 
+export type FactoryVariantOutput = {
+  variantId: string;
+  variantName: string;
+  previewSrc?: string;
+  status: 'pending' | 'generating' | 'complete' | 'failed';
+  error?: string;
+};
+
 export type FactoryJob = {
   id: string;
   blueprintId: string;
@@ -38,6 +46,10 @@ export type FactoryJob = {
   qaResults: QaCheckResult[];
   priority: number;
   variations: string[];
+  /** Live Fal pipeline — Asset Director → Factory → Supabase delivery */
+  livePipeline?: boolean;
+  studioId?: string;
+  variantOutputs?: FactoryVariantOutput[];
 };
 
 export function buildGenerationPlan(bp: BlueprintDefinition): GenerationPlan {
@@ -73,7 +85,11 @@ export function buildGenerationPlan(bp: BlueprintDefinition): GenerationPlan {
   };
 }
 
-export function createFactoryJob(bp: BlueprintDefinition, variations: string[] = []): FactoryJob {
+export function createFactoryJob(
+  bp: BlueprintDefinition,
+  variations: string[] = [],
+  options?: { livePipeline?: boolean; studioId?: string; variantTargets?: Array<{ variantId: string; variantName: string }> }
+): FactoryJob {
   const plan = buildGenerationPlan(bp);
   const provider = getDefaultProviderForAssetType('image');
   return {
@@ -94,6 +110,13 @@ export function createFactoryJob(bp: BlueprintDefinition, variations: string[] =
     qaResults: [],
     priority: 1,
     variations,
+    livePipeline: options?.livePipeline,
+    studioId: options?.studioId,
+    variantOutputs: options?.variantTargets?.map((t) => ({
+      variantId: t.variantId,
+      variantName: t.variantName,
+      status: 'pending' as const,
+    })),
   };
 }
 

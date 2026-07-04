@@ -1,4 +1,5 @@
-export type { StudioServicePhase, StudioServiceResult, StudioServiceStub, StudioServiceFailureReason } from './types';
+export { requestStudioAssetGeneration, requestStudioAssetReplace } from './assetGeneration/api';
+export type { StudioGenerateAssetResponse, StudioReplaceAssetResponse } from './assetGeneration/api';
 export { studioServiceNotConnected, studioServicePhase2 } from './types';
 
 export { openaiStudioService } from './openai';
