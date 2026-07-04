@@ -71,6 +71,20 @@ export {
   markDerivativeReplaced,
 } from './DerivativeAssetReplacement';
 export type { DerivativeSiteBinding, DerivativeAssetUri, WebsiteAssetSurface } from './DerivativeAssetReplacement';
+export {
+  PRODUCT_ASSET_FACTORY_POC_UNIT,
+  PRODUCT_ASSET_FACTORY_STAGES,
+  PRODUCT_ASSET_FACTORY_STAGE_LABELS,
+  productAssetSupabasePath,
+} from './ProductAssetFactory';
+export type {
+  ProductAssetFactoryStage,
+  ProductAssetRegistryRecord,
+  ProductAssetFactoryJobRecord,
+  ProductAssetFactoryLogRecord,
+} from './ProductAssetFactory';
+export { FACTORY_CROP_TEMPLATES, FACTORY_POC_DERIVATIVE_OUTPUTS } from './FactoryCropTemplates';
+export type { FactoryCropTemplate, FactoryCropAnchor } from './FactoryCropTemplates';
 
 /** Inheritance payload for future StudioOS product creation. */
 export function inheritPhotographyBibleForProduct(productSlug: string) {

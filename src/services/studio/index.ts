@@ -115,6 +115,12 @@ export {
 } from './photographyDerivativeEngine/service';
 export type { PhotographyDerivativeEngineSnapshot } from './photographyDerivativeEngine/service';
 
+export {
+  brandAssetsProductAssetFactoryStudioService,
+  getBrandAssetsProductAssetFactorySnapshot,
+} from './brandAssetsProductAssetFactory/service';
+export type { BrandAssetsProductAssetFactorySnapshot } from './brandAssetsProductAssetFactory/service';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -148,6 +154,7 @@ import { socialPublishingStudioService } from './socialPublishing/service';
 import { knowledgeHubStudioService } from './knowledgeHub/service';
 import { productPhotographyBibleStudioService } from './productPhotographyBible/service';
 import { photographyDerivativeEngineStudioService } from './photographyDerivativeEngine/service';
+import { brandAssetsProductAssetFactoryStudioService } from './brandAssetsProductAssetFactory/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -176,6 +183,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   knowledgeHubStudioService,
   productPhotographyBibleStudioService,
   photographyDerivativeEngineStudioService,
+  brandAssetsProductAssetFactoryStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,

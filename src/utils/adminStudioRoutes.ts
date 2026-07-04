@@ -135,6 +135,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   knowledgeHubWorkflow: 'studio/knowledge-hub/workflow/:workflowId',
   brandAssets: 'studio/brand-assets',
   photographyBible: 'studio/brand-assets/photography-bible',
+  brandAssetsAssetFactory: 'studio/brand-assets/asset-factory',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -275,4 +276,8 @@ export function adminStudioBrandAssetsPath(): string {
 
 export function adminStudioPhotographyBiblePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/brand-assets/photography-bible`;
+}
+
+export function adminStudioBrandAssetsAssetFactoryPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/brand-assets/asset-factory`;
 }

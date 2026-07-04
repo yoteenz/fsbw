@@ -4,7 +4,7 @@ import { AdminStudioExecutiveCard } from '../../../../components/admin/studio/Ad
 import { AdminStudioSectionHeading } from '../../../../components/admin/studio/AdminStudioSectionHeading';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { BRAND_ASSETS_HUB_SUBTITLE } from '../../../../utils/adminStudioProductPhotographyBibleDemo';
-import { adminStudioPhotographyBiblePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioPhotographyBiblePath, adminStudioBrandAssetsAssetFactoryPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 const BRAND_ASSETS_CARDS = [
@@ -14,6 +14,13 @@ const BRAND_ASSETS_CARDS = [
     metric: 'V1.0',
     description: 'OFFICIAL PRODUCT PHOTOGRAPHY SOURCE OF TRUTH · SIGNATURE COLLECTION · MEDIA KITS.',
     route: adminStudioPhotographyBiblePath(),
+  },
+  {
+    id: 'asset-factory',
+    title: 'ASSET FACTORY',
+    metric: 'POC',
+    description: 'MASTER HERO → IDEogram CUTOUT → DERIVATIVES → SUPABASE · SOFT WAVE PROOF OF CONCEPT.',
+    route: adminStudioBrandAssetsAssetFactoryPath(),
   },
 ] as const;
 
@@ -34,7 +41,7 @@ export default function AdminStudioBrandAssetsPage() {
         className="text-[8px] font-futura uppercase mb-4"
         style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.5 }}
       >
-        BRAND ASSETS COMMAND · PHOTOGRAPHY BIBLE · MEDIA KIT ARCHITECTURE · NO GENERATION IN THIS MILESTONE.
+        BRAND ASSETS COMMAND · PHOTOGRAPHY BIBLE · ASSET FACTORY · MEDIA KIT ARCHITECTURE.
       </p>
 
       <div className="space-y-2">
@@ -51,7 +58,7 @@ export default function AdminStudioBrandAssetsPage() {
       </div>
 
       <AdminStudioDisclaimerFooter>
-        MILESTONE 20.5 · INFRASTRUCTURE ONLY · DOCS AT docs/frontal-slayer/product-photography-bible/
+        MILESTONE · PHOTOGRAPHY BIBLE + ASSET FACTORY · DOCS AT docs/frontal-slayer/
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

@@ -35615,3 +35615,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `src/utils/bawVisualSnapshot/*`, cart/order/checkout/BAW/admin/wishlist wiring, docs, placeholder folders, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Brand Assets Asset Factory (Photography Bible production pipeline)
+
+**Context (full chat):** Milestones 20.5–21.5 established Photography Bible, Derivative Engine, and BAW Visual Snapshots. User requested Brand Assets **Asset Factory** foundation — centralized pipeline from approved master hero to production-ready website assets. No admin/website redesign, no route breaks, no customer-facing changes, no AI product generation / OpenArt / BAW variant manufacturing yet.
+
+**Goal:** Photography Bible → approved master → Asset Factory → Ideogram background removal → transparent master → crop derivatives → Supabase upload → asset registry → ready for review. **SOFT WAVE POC only.**
+
+**Deliverables:**
+- **Server pipeline:** `api/_lib/productAssetFactory/` — Ideogram cutout (reuses `fal-ai/ideogram/remove-background`), Sharp crop engine, factory crop templates (anchor/padding/scale/transparency/format), Supabase upload (`products/signature-collection/soft-wave/v1/…`), registry types, `runProductAssetFactoryPipeline`.
+- **API:** `POST /api/admin/product-asset-factory-run` (run + retry from failed stage).
+- **Admin UI:** `/admin/studio/brand-assets/asset-factory` — 8 tabs (Overview, Processing Queue, Derivative Engine, Crop Templates, Asset Registry, Production Log, Settings, Documentation); SOFT WAVE card on Brand Assets hub; RUN PIPELINE / RETRY / MARK PUBLISHED / preview transparent master.
+- **Client:** `FactoryCropTemplates.ts`, `ProductAssetFactory.ts`, `useAdminStudioBrandAssetsProductAssetFactoryState`, `brandAssetsProductAssetFactoryStudioService` in registry.
+- **Derivatives (12):** wishlist, cart, checkout, product-card, product-page, collection-grid, search-result, email, desktop, mobile, studio-preview, thumbnail + master-white + master-transparent.
+- **Docs:** `docs/frontal-slayer/asset-factory/` (9 chapters).
+
+**Processing stages:** Waiting → Removing Background → Generating Transparent Master → Generating Derivatives → Uploading To Supabase → Registering Assets → Ready For Review → Published (failed + retry supported).
+
+**Conventions:** Photography Bible remains source of truth; existing manufacturing Asset Factory at `/admin/studio/asset-factory` unchanged; Brand Assets factory is separate route under Brand Assets. Requires FAL_KEY + Supabase for live runs.
+
+**Changes:** api pipeline, admin pages/components/hooks/routes, studio-os modules, docs, `motherboard/MEMORY.md`.
+
