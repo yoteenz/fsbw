@@ -36,6 +36,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'executive-ai-director'
   | 'campaign-orchestrator'
   | 'knowledge-hub'
+  | 'brand-assets'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -69,6 +70,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'executive-ai-director',
   'campaign-orchestrator',
   'knowledge-hub',
+  'brand-assets',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -131,6 +133,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   knowledgeHub: 'studio/knowledge-hub',
   knowledgeHubProfile: 'studio/knowledge-hub/profile/:profileId',
   knowledgeHubWorkflow: 'studio/knowledge-hub/workflow/:workflowId',
+  brandAssets: 'studio/brand-assets',
+  photographyBible: 'studio/brand-assets/photography-bible',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -263,4 +267,12 @@ export function adminStudioKnowledgeHubProfilePath(profileId: string): string {
 
 export function adminStudioKnowledgeHubWorkflowPath(workflowId: string): string {
   return `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub/workflow/${encodeURIComponent(workflowId)}`;
+}
+
+export function adminStudioBrandAssetsPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/brand-assets`;
+}
+
+export function adminStudioPhotographyBiblePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/brand-assets/photography-bible`;
 }

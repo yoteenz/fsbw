@@ -62,6 +62,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'asset-factory') {
       return <Navigate to="/admin/studio/asset-factory" replace />;
     }
+    if (sectionId === 'brand-assets') {
+      return <Navigate to="/admin/studio/brand-assets" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

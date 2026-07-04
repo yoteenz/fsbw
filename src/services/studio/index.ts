@@ -99,6 +99,14 @@ export type { AssetFactorySnapshot, AssetFactorySummary } from './assetFactory/s
 export { knowledgeHubStudioService } from './knowledgeHub/service';
 export type { KnowledgeHubQueryInput, KnowledgeHubQueryOutput } from './knowledgeHub/service';
 
+export {
+  productPhotographyBibleStudioService,
+  getPhotographyBibleSnapshot,
+  inheritPhotographyForNewProduct,
+  PHOTOGRAPHY_BIBLE_INHERITANCE_CHAIN_EXPORT,
+} from './productPhotographyBible/service';
+export type { ProductPhotographyBibleSnapshot, ProductPhotographyInheritance } from './productPhotographyBible/service';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -130,6 +138,7 @@ import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
 import { knowledgeHubStudioService } from './knowledgeHub/service';
+import { productPhotographyBibleStudioService } from './productPhotographyBible/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -156,6 +165,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   assetFactoryStudioService,
   socialPublishingStudioService,
   knowledgeHubStudioService,
+  productPhotographyBibleStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,

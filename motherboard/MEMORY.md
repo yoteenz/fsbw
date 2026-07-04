@@ -35552,3 +35552,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Signature Collection email block = multi-layer showroom installation; avoid single-plane card grids; orbit layout uses tables not absolute positioning for email compatibility.
 
+---
+
+## 2026-07-04 — Milestone 20.5: Product Photography Bible (infrastructure)
+
+**Context (full chat):** Email Signature Collection luxury gallery iterations; user Milestone 20.5 — permanent **Product Photography Bible** as docs + StudioOS infrastructure only (no APIs, AI generation, or customer-facing changes).
+
+**Deliverables:**
+- **Docs:** `docs/frontal-slayer/product-photography-bible/` — 12 chapters (philosophy → version history) + README index.
+- **StudioOS modules:** `src/studio-os/product-photography/` — `PhotographyBibleProvider`, `PhotographySystemContext`, `PhotographySpecifications`, `MediaKitRegistry`, `SignatureCollectionRegistry`, `PhotographyTemplates`, `PhotographyVersionManager`, `inheritPhotographyBibleForProduct()`.
+- **Media kit folders:** `studio-os/product-photography/media-kits/signature-collection/{unit}/{12 asset types}/` — empty `.gitkeep` per Signature unit (no assets generated).
+- **Admin:** **Brand Assets** hub `/admin/studio/brand-assets` → **Photography Bible** `/admin/studio/brand-assets/photography-bible` — 11 dashboard tabs, locked specs grid, Signature Collection cards (001–006) with Approve/Replace/View/Generate Variants (demo only).
+- **Versioning:** Photography System **V1.0** immutable (stores approved Product Photography System V2.0 spec); future V1.1/V1.2/V2.0 append-only via `PhotographyVersionManager`.
+- **Service stub:** `productPhotographyBibleStudioService` in `STUDIO_SERVICE_REGISTRY` for future product inheritance.
+
+**Changes:** docs (13 files), `studio-os/product-photography/` (72 media folders), admin pages/components/hooks/demo, routes/nav/storage wiring, `motherboard/MEMORY.md`.
+
+**Conventions:** All future StudioOS products inherit camera, composition, lighting, background, display bust, logo placement, exports, and media kit structure from Photography Bible V1.0. Do not overwrite V1.0 — append versions only.
+

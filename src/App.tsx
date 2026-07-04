@@ -176,6 +176,8 @@ const AdminStudioMissionControl = lazyWithRetry(() => import('./pages/admin/stud
 const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
 const AdminStudioKnowledgeHubProfile = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/profile/page'), 'AdminStudioKnowledgeHubProfile');
 const AdminStudioKnowledgeHubWorkflow = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/workflow/page'), 'AdminStudioKnowledgeHubWorkflow');
+const AdminStudioBrandAssets = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/page'), 'AdminStudioBrandAssets');
+const AdminStudioPhotographyBible = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/photography-bible/page'), 'AdminStudioPhotographyBible');
 const AdminStudioOs = lazyWithRetry(() => import('./pages/admin/studio-os/page'), 'AdminStudioOs');
 const AdminStudioOsWorkspaceShell = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/page'), 'AdminStudioOsWorkspaceShell');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
@@ -1046,6 +1048,16 @@ function App() {
           <Route path="studio/knowledge-hub" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioKnowledgeHub />
+            </Suspense>
+          } />
+          <Route path="studio/brand-assets/photography-bible" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPhotographyBible />
+            </Suspense>
+          } />
+          <Route path="studio/brand-assets" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioBrandAssets />
             </Suspense>
           } />
           <Route path="studio/executive-command-center" element={

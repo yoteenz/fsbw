@@ -267,6 +267,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'brand-assets',
+    title: 'BRAND ASSETS',
+    purpose: 'Official brand visual standards — Photography Bible, media kits, and locked product photography specs.',
+    route: p('brand-assets'),
+    groupId: 'visuals',
+    status: 'demo',
+    metric: 'V1.0',
+    ctaLabel: 'OPEN BRAND ASSETS',
+    featuredOnOverview: true,
+  },
+  {
     id: 'asset-library',
     title: 'ASSET LIBRARY',
     purpose: 'Browse thumbnails, heroes, B-roll, and brand films.',
