@@ -35009,4 +35009,14 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Regen:** **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-surgical.log`**. Other templates unchanged.
 
+---
+
+## 2026-07-04 — Welcome hero: white mannequin + polished hair (same drape)
+
+**Context:** After surgical gray-NOIR pass, user asked to **change back to the white mannequin**, keep hair **more polished** but **same length** and the way it **naturally falls/lays on the marble floor** — still preserve approved composition; no full regen.
+
+**Fix:** **`emailHeroEditRefs.json`** — removed NOIR mannequin ref; surgical edit from **`welcome-scene-master.webp`** only: keep **matte-white salon mannequin**, polish wig sheen/gloss only (identical length + floor drape), still add floor diamonds + keep rose petals.
+
+**Regen:** **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-white-polish.log`**. Welcome only.
+
 
