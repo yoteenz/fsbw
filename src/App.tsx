@@ -154,6 +154,8 @@ const AdminStudioDistributionNetworkChannel = lazyWithRetry(() => import('./page
 const AdminStudioAudienceBrain = lazyWithRetry(() => import('./pages/admin/studio/audience-brain/page'), 'AdminStudioAudienceBrain');
 const AdminStudioAudienceBrainIntelligence = lazyWithRetry(() => import('./pages/admin/studio/audience-brain/intelligence/page'), 'AdminStudioAudienceBrainIntelligence');
 const AdminStudioExecutiveCommandCenter = lazyWithRetry(() => import('./pages/admin/studio/executive-command-center/page'), 'AdminStudioExecutiveCommandCenter');
+const AdminStudioLegacySystem = lazyWithRetry(() => import('./pages/admin/studio/legacy-system/page'), 'AdminStudioLegacySystem');
+const AdminStudioLegacySystemMuseum = lazyWithRetry(() => import('./pages/admin/studio/legacy-system/museum/page'), 'AdminStudioLegacySystemMuseum');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -909,6 +911,16 @@ function App() {
           <Route path="studio/audience-brain" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioAudienceBrain />
+            </Suspense>
+          } />
+          <Route path="studio/legacy-system/museum" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioLegacySystemMuseum />
+            </Suspense>
+          } />
+          <Route path="studio/legacy-system" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioLegacySystem />
             </Suspense>
           } />
           <Route path="studio/executive-command-center" element={

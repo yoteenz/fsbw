@@ -43,6 +43,7 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   distributionNetworkChannels: 'adminStudioDistributionNetworkChannels_v1',
   audienceBrain: 'adminStudioAudienceBrain_v1',
   executiveCommandCenter: 'adminStudioExecutiveCommandCenter_v1',
+  legacySystem: 'adminStudioLegacySystem_v1',
 } as const;
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];

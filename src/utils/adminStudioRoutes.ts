@@ -26,6 +26,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'distribution-network'
   | 'audience-brain'
   | 'executive-command-center'
+  | 'legacy-system'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -49,6 +50,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'distribution-network',
   'audience-brain',
   'executive-command-center',
+  'legacy-system',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -89,6 +91,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   audienceBrain: 'studio/audience-brain',
   audienceBrainIntelligence: 'studio/audience-brain/intelligence',
   executiveCommandCenter: 'studio/executive-command-center',
+  legacySystem: 'studio/legacy-system',
+  legacySystemMuseum: 'studio/legacy-system/museum',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -146,4 +150,12 @@ export function adminStudioAudienceBrainPath(): string {
 
 export function adminStudioExecutiveCommandCenterPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/executive-command-center`;
+}
+
+export function adminStudioLegacySystemPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/legacy-system`;
+}
+
+export function adminStudioLegacySystemMuseumPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/legacy-system/museum`;
 }

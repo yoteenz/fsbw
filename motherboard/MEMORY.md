@@ -34764,3 +34764,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** `/admin/studio` → Executive Command Center; `/admin/studio/hub` → legacy module grid; aggregates milestones without modifying them.
 
+---
+
+## 2026-07-04 — THE STUDIO Legacy System milestone
+
+**Context:** Continuation of THE STUDIO — all prior milestones frozen. User requested **THE LEGACY SYSTEM** — subtitle *"Every story deserves to be remembered."* Permanent memory & living museum of Frontal Slayer Studios (Disney Archives × Marvel Studios × Academy Museum aesthetic). Not storage/archive software — museum-quality editorial presentation. Every milestone should eventually auto-contribute; references original records without duplication.
+
+**Topics covered (full chat arc):**
+- Prior: Executive Command Center (`82ec71cf`), Audience Brain, Distribution Network, AI Production Engine, Production, etc. — unchanged.
+- **Legacy System** (`/admin/studio/legacy-system`): 17 editorial landing cards (Archives, Hall of Fame, Studio Awards, Talent Careers, Show/Studio/Campaign History, Community Legacy, Vault of Firsts, Time Capsules, Legacy Timeline, Anniversary Collections, Founder Journal/Predictions/Letters, Annual Reviews, Documentary Mode); global archive search; contribution chain footer; cross-links ← Executive Command, Creative Director →.
+- **The Museum** (`/admin/studio/legacy-system/museum`): 20 scrollable tabs — Archives (master record + source refs), Hall of Fame (luxury plaques), Studio Awards (nominees/winners), Talent Careers (auto career cards), Show/Studio/Campaign history, Community Legacy, Vault of Firsts (permanently locked), Time Capsules (sealed/anniversary reopen), Legacy Timeline, Anniversary Collections (2026–2028), Founder Journal (founder-only editable notes), Founder Predictions (status persisted), Legacy Letters (sealed), Annual Reviews, Documentary Mode, Behind the Scenes, Legacy Keys.
+- **Data model** `adminStudioLegacySystemDemo.ts`; **state** `useAdminStudioLegacySystemState.ts` (search, founder journal notes, prediction status); **service** `legacySystemStudioService` in `STUDIO_SERVICE_REGISTRY`.
+
+**Decisions / outcomes:** Did not redesign existing Studio pages or modify prior milestones. Founder-only sections gated via `isAdminFounderAccount`. Vault of Firsts and time capsules demo-locked (never editable in UI). Demo aggregation with traceability refs to source modules. Build verified.
+
+**Changes:** `adminStudioLegacySystemDemo.ts`, `useAdminStudioLegacySystemState.ts`, `services/studio/legacySystem/service.ts`, legacy UI components (card, plaque, award, career, vault, capsule), `legacy-system/page.tsx`, `legacy-system/museum/page.tsx`, routes, storage, `App.tsx`, `STUDIO_SERVICE_REGISTRY`, `motherboard/CORE.md`.
+
+**Conventions:** Route `legacy-system/museum` before `legacy-system`. Navigate `/admin/studio/legacy-system`; museum cards deep-link via `?tab=`. Legacy System is terminal milestone in studio stack after Executive Command Center.
+
