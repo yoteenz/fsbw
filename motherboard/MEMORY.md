@@ -36569,3 +36569,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Simulation Engine core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Blank white page root cause: AdminGuard sync `workspaces` bootstrap
+
+**Context:** User reported the site still shows a blank/white page (all routes including `/home/shop` on fsbw.vercel.app).
+
+**Diagnosis:**
+- Live HTML + JS assets return HTTP 200, but Playwright showed `#root` empty indefinitely and `domcontentloaded` never fired within 40–120s — main thread blocked during module init, not a network 404.
+- Minimal `App` (76KB bundle) loaded in ~8s; full app (~1.3MB index) hung forever until bisected.
+- Blocking `index*.js` allowed `domcontentloaded` in ~155ms — hang is inside the main bundle evaluation.
+- **Cause:** `src/components/AdminGuard.tsx` had top-level `import '../workspaces'`. `App.tsx` imports `AdminGuard` synchronously on every route, so **every page load** (shop, bag, lobby, etc.) ran the full `src/workspaces/index.ts` side-effect chain: `bootstrapWorkspaceCreationEngine`, Growth Network, Labs, AI Media Network, Talent Network, Marketplace seeds, `configureWorkspaceRegistry`, etc. Recent Milestone 30–36 bootstraps expanded that synchronous init path until it hung the main thread before `ReactDOM.createRoot().render()` — permanent white `#root`. Prior fixes (auth-after-render, vision session purge) were necessary but did not address this import.
+
+**Fix:** Lazy-load workspaces only when admin routes mount — `ensureWorkspacesBootstrapped()` + `void import('../workspaces')` inside `AdminGuard` `useEffect` (not at module top level). Public routes no longer pay Studio OS platform bootstrap cost on cold load.
+
+**Verify:** After fix, `npm run build` passes; preview `/` and `/home/shop` paint shop UI (~48KB+ in `#root` within ~10s). Deploy to fsbw.vercel.app required for production.
+
+**Related prior issues (still valid):** vendor↔vendor-react chunk cycle (June 2026, `vite.config.ts` scheduler in `vendor-react`); auth bootstrap blocking first paint (fixed `main.tsx` 2026-07-04); stale Vision sessionStorage (`purgeStaleVisionSessionOnBoot`).
+
+**Changes:** `src/components/AdminGuard.tsx`, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

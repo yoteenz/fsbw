@@ -1,8 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
-import '../workspaces';
 import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
 import { isSignedIn, canAccessAdminPages } from '../utils/adminAuth';
+
+let workspacesBootstrapped = false;
+function ensureWorkspacesBootstrapped(): void {
+  if (workspacesBootstrapped) return;
+  workspacesBootstrapped = true;
+  void import('../workspaces');
+}
 
 /**
  * Protects all /admin/* routes. Only emails in VITE_ADMIN_EMAILS / defaults (e.g. kateenaarmstrong@gmail.com) may access.
@@ -16,6 +22,7 @@ export default function AdminGuard() {
   const [checked, setChecked] = useState(false);
 
   useEffect(() => {
+    ensureWorkspacesBootstrapped();
     const signedIn = isSignedIn();
     if (!signedIn) {
       const returnTo = encodeURIComponent(location.pathname + location.search);

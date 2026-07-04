@@ -116,8 +116,6 @@ export default defineConfig(({ mode, command }) => {
         entryFileNames: 'assets/[name].[hash].js',
         chunkFileNames: 'assets/[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
-        // Keep the full React runtime (incl. scheduler) in one chunk so Rollup never
-        // creates a vendor <-> vendor-react circular import (blank page on production).
         manualChunks: (id) => {
           if (!id.includes('node_modules')) return;
           if (
