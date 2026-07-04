@@ -5,6 +5,7 @@ import {
   EMAIL_HERO_LOGO_REF_RELATIVE,
   emailHeroPromptFor,
 } from './emailHeroPrompts.js';
+import { emailHeroEditRefImageUrls } from './emailHeroEditRefs.js';
 import { emailHeroStoragePath } from './heroImages.js';
 import type { EmailTemplateType } from './types.js';
 
@@ -31,6 +32,12 @@ function logoRefPath(): string {
 async function falUpload(fal: { storage: { upload: (f: File) => Promise<string> } }, filePath: string) {
   const bytes = readFileSync(filePath);
   const name = filePath.split('/').pop() || 'ref.png';
+  return fal.storage.upload(new File([bytes], name, { type: 'image/png' }));
+}
+
+async function falUploadFromUrl(fal: { storage: { upload: (f: File) => Promise<string> } }, url: string) {
+  const bytes = await downloadUrlToBuffer(url);
+  const name = url.split('/').pop()?.split('?')[0] || 'ref.png';
   return fal.storage.upload(new File([bytes], name, { type: 'image/png' }));
 }
 
@@ -87,6 +94,10 @@ export async function generateAndUploadEmailHero(
     if (existsSync(abs)) {
       imageUrls.push(await falUpload(fal, abs));
     }
+  }
+
+  for (const refUrl of emailHeroEditRefImageUrls(templateType)) {
+    imageUrls.push(await falUploadFromUrl(fal, refUrl));
   }
 
   const result = await fal.subscribe(EMAIL_HERO_FAL_MODEL, {

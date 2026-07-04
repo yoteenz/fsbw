@@ -34967,4 +34967,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Regen:** **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-refresh.log`**.
 
+---
+
+## 2026-07-04 — Welcome hero: NOIR gray mannequin + floor diamonds (finalize pass)
+
+**Context:** User approved the editorial VIP-minimal welcome direction (“exactly like that — realistic like a photographer took the photo”) but asked for three refinements before rolling style to other templates: (1) add **diamond elements from the original cube hero** scattered on the marble floor, (2) replace **white salon mannequin** with the site’s **gray textured NOIR plaster bust**, (3) **polished bone-straight center middle-part NOIR unit** on the mannequin. User explicitly said **do not batch-regen other heroes yet** — finalize welcome first.
+
+**Decisions / outcomes:**
+- **`welcome`** scene: vase + crimson roses + quartz crystals + **3–5 scattered brilliant-cut diamonds** on marble; **NOIR gray textured mannequin** (not white plastic) with **bone-straight middle-part NOIR lace-front unit**.
+- **`emailHeroEditRefs.json`** + **`emailHeroEditRefs.ts`**: welcome attaches **Fal gray-brick front mannequin** as **IMAGE 2** with prompt block to match bust texture/logo and discard brick background.
+- **`emailHeroPromptMeta.json`**: design direction updated for diamonds + NOIR mannequin on welcome only; global anti-cube rules unchanged.
+- **`generate-email-hero-assets.mjs`** + **`generateHeroAsset.ts`**: per-template edit refs after marble; script downloads Supabase mannequin ref and uploads to Fal.
+- **Regen:** **`TEMPLATES=welcome FORCE=1`** only — log **`/tmp/email-hero-welcome-noir-diamonds.log`**. Other 40 templates unchanged until user approves welcome.
+
+**Next:** User reviews Welcome at **`/tools/email-templates`** → click **Refresh preview** after deploy → then batch editorial direction to remaining templates.
+
 

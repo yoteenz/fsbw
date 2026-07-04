@@ -56,17 +56,69 @@ function loadEmailHeroPromptPack() {
   return { purposeScenes: scenes.purposeScenes ?? scenes.prompts ?? {}, meta };
 }
 
-function buildEmailHeroPrompt(templateType, purposeScenes, meta) {
+function loadEmailHeroEditRefs() {
+  const path = join(ROOT, 'api/_lib/email/emailHeroEditRefs.json');
+  if (!existsSync(path)) return {};
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+function noirMannequinPublicUrl(angle) {
+  const envByAngle = {
+    front:
+      process.env.WIG_PREVIEW_NOIR_FAL_MANNEQUIN_FRONT_URL?.trim() ||
+      process.env.WIG_PREVIEW_NOIR_MANNEQUIN_FRONT_URL?.trim(),
+    left:
+      process.env.WIG_PREVIEW_NOIR_FAL_MANNEQUIN_LEFT_URL?.trim() ||
+      process.env.WIG_PREVIEW_NOIR_MANNEQUIN_LEFT_URL?.trim(),
+    right:
+      process.env.WIG_PREVIEW_NOIR_FAL_MANNEQUIN_RIGHT_URL?.trim() ||
+      process.env.WIG_PREVIEW_NOIR_MANNEQUIN_RIGHT_URL?.trim(),
+  };
+  if (envByAngle[angle]) return envByAngle[angle];
+  const base = supabaseUrl.replace(/\/$/, '');
+  if (!base) return null;
+  const fileByAngle = {
+    front: 'fal-gray-brick-front.png',
+    left: 'fal-gray-brick-left.png',
+    right: 'fal-gray-brick-right.png',
+  };
+  return `${base}/storage/v1/object/public/live-preview/Noir/${fileByAngle[angle]}`;
+}
+
+function resolveTemplateEditRefUrls(templateType, editRefs) {
+  const entry = editRefs[templateType];
+  if (!entry) return [];
+
+  if (entry.imageUrl?.trim()) return [entry.imageUrl.trim()];
+
+  const angle = entry.noirMannequinAngle;
+  if (angle) {
+    const url = noirMannequinPublicUrl(angle);
+    return url ? [url] : [];
+  }
+
+  return [];
+}
+
+function buildEmailHeroPrompt(templateType, purposeScenes, meta, editRefs) {
   const scene = purposeScenes[templateType] || purposeScenes.welcome;
   if (!scene) return null;
+  const editRefAddon = editRefs[templateType]?.promptAddon?.trim();
   return [
     meta.composition,
     meta.quality,
     meta.brandRules,
     meta.designDirection,
     `Email purpose & hero subject: ${scene}`,
+    editRefAddon,
     meta.logoAuthenticity,
-  ].join('\n\n');
+  ]
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 const OUT_DIR = join(ROOT, 'public/assets/email/heroes');
@@ -131,6 +183,12 @@ async function falUpload(fal, filePath) {
   return fal.storage.upload(new File([blob], name, { type: 'image/png' }));
 }
 
+async function falUploadFromUrl(fal, url) {
+  const bytes = await downloadUrlToBuffer(url);
+  const name = url.split('/').pop()?.split('?')[0] || 'ref.png';
+  return fal.storage.upload(new File([bytes], name, { type: 'image/png' }));
+}
+
 async function downloadUrlToBuffer(url) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`Download failed ${res.status} ${url}`);
@@ -183,6 +241,7 @@ function writeManifest(ready) {
 
 async function main() {
   const { purposeScenes, meta } = loadEmailHeroPromptPack();
+  const editRefs = loadEmailHeroEditRefs();
   const allTypes = Object.keys(purposeScenes);
   const types = resolveTemplates(allTypes, process.env.TEMPLATES, process.env.CATEGORY);
 
@@ -199,8 +258,9 @@ async function main() {
   if (dryRun) {
     console.log(`DRY_RUN — ${types.length} templates, model ${FAL_MODEL}`);
     for (const t of types) {
-      const full = buildEmailHeroPrompt(t, purposeScenes, meta);
-      console.log('\n---', t, '---\n', full?.slice(0, 320), '…');
+      const full = buildEmailHeroPrompt(t, purposeScenes, meta, editRefs);
+      const refs = resolveTemplateEditRefUrls(t, editRefs);
+      console.log('\n---', t, refs.length ? `(+${refs.length} edit ref)` : '', '---\n', full?.slice(0, 420), '…');
     }
     return;
   }
@@ -217,13 +277,28 @@ async function main() {
 
   console.log('Uploading marble reference to Fal storage…');
   const marbleUrl = await falUpload(fal, marbleRef);
-  let extraUrl = null;
+  let globalExtraUrl = null;
   if (extraRef && existsSync(extraRef)) {
     console.log('Uploading extra reference', extraRef);
-    extraUrl = await falUpload(fal, extraRef);
+    globalExtraUrl = await falUpload(fal, extraRef);
   }
 
-  const imageUrls = extraUrl ? [marbleUrl, extraUrl] : [marbleUrl];
+  const templateEditRefUrlCache = new Map();
+  async function resolveFalImageUrls(templateType) {
+    const urls = [marbleUrl];
+    if (globalExtraUrl) urls.push(globalExtraUrl);
+
+    const editRefUrls = resolveTemplateEditRefUrls(templateType, editRefs);
+    for (const refUrl of editRefUrls) {
+      if (!templateEditRefUrlCache.has(refUrl)) {
+        console.log(`Uploading edit ref for ${templateType}:`, refUrl);
+        templateEditRefUrlCache.set(refUrl, await falUploadFromUrl(fal, refUrl));
+      }
+      urls.push(templateEditRefUrlCache.get(refUrl));
+    }
+
+    return urls;
+  }
 
   let supabase = null;
   if (uploadEnabled && supabaseUrl && supabaseKey) {
@@ -243,7 +318,7 @@ async function main() {
       continue;
     }
 
-    const fullPrompt = buildEmailHeroPrompt(templateType, purposeScenes, meta);
+    const fullPrompt = buildEmailHeroPrompt(templateType, purposeScenes, meta, editRefs);
     if (!fullPrompt) {
       console.warn('No purpose scene for', templateType);
       continue;
@@ -251,6 +326,7 @@ async function main() {
 
     console.log(`Generating ${templateType}…`);
     try {
+      const imageUrls = await resolveFalImageUrls(templateType);
       const imageUrl = await generateHero(fal, fullPrompt, imageUrls);
       let bytes = await downloadUrlToBuffer(imageUrl);
       bytes = await compositeEmailHeroLogo(bytes, templateType, logoRef);

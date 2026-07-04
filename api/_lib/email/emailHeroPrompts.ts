@@ -1,5 +1,6 @@
 import heroData from './emailHeroPrompts.data.json' with { type: 'json' };
 import meta from './emailHeroPromptMeta.json' with { type: 'json' };
+import { emailHeroEditRefPromptAddon } from './emailHeroEditRefs.js';
 import type { EmailTemplateType } from './types.js';
 
 /** Official Frontal Slayer SLAYER wordmark PNG — composited onto heroes in post (`public/assets/email/slayer-logo.png`). */
@@ -23,14 +24,18 @@ export const EMAIL_HERO_PROMPTS = EMAIL_HERO_PURPOSE_SCENES;
 export function buildEmailHeroPrompt(templateType: EmailTemplateType): string {
   const scene =
     EMAIL_HERO_PURPOSE_SCENES[templateType] || EMAIL_HERO_PURPOSE_SCENES.welcome;
+  const editRefAddon = emailHeroEditRefPromptAddon(templateType);
   return [
     meta.composition,
     meta.quality,
     meta.brandRules,
     meta.designDirection,
     `Email purpose & hero subject: ${scene}`,
+    editRefAddon,
     meta.logoAuthenticity,
-  ].join('\n\n');
+  ]
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 export function emailHeroPromptFor(templateType: EmailTemplateType): string {
