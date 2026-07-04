@@ -34796,3 +34796,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Studio homepage (`/admin/studio` / ECC) back target is always `/admin/dashboard`; breadcrumb **ADMIN > THE STUDIO**.
 
+---
+
+## 2026-07-04 — Admin dashboard card layout reorder
+
+**Context:** User requested rearrangement of admin dashboard StatsCard grid pairs.
+
+**Topics covered:** Dashboard card order only — no card content or navigation changes.
+
+**Decisions / outcomes:** Added `DASHBOARD_CARD_ORDER` in `dashboard/page.tsx` and render via `orderedStatsData`. New layout (2-col grid rows): Studio + Revenue, Clients + Meetings, Pending + Reviews, Referrals + Marketing, Workers + Brand, Backend (solo last row). Build verified.
+
+**Changes:** `src/pages/admin/dashboard/page.tsx`.
+
+**Conventions:** Dashboard card sequence is defined by `DASHBOARD_CARD_ORDER` — edit that array to reorder without moving card data blocks.
+

@@ -1140,6 +1140,26 @@ export default function AdminDashboard() {
     }
   ];
 
+  const DASHBOARD_CARD_ORDER = [
+    'STUDIO',
+    'REVENUE',
+    'CLIENTS',
+    'MEETINGS',
+    'PENDING',
+    'REVIEWS',
+    'REFERRALS',
+    'MARKETING',
+    'WORKERS',
+    'BRAND',
+    'BACKEND',
+  ] as const;
+
+  const orderedStatsData = DASHBOARD_CARD_ORDER.map((title) => {
+    const card = statsData.find((s) => s.title === title);
+    if (!card) throw new Error(`Missing dashboard card: ${title}`);
+    return card;
+  });
+
   // Handle card click navigation
   const handleCardClick = (cardTitle: string) => {
     switch (cardTitle) {
@@ -1205,7 +1225,7 @@ export default function AdminDashboard() {
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto" style={{ minHeight: 'calc(100dvh - 160px)' }}>
             <div className="grid grid-cols-2 gap-4 items-start">
-              {statsData.map((stat, index) => (
+              {orderedStatsData.map((stat, index) => (
                 <StatsCard
                   key={index}
                   data={stat}
