@@ -48,6 +48,7 @@ import { resetBawCustomizeStylingAndAddOnsStorage } from '../../../utils/bawCros
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay, WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
+import { BAW_TUTORIAL_ROUTE } from '../../../constants/bawTutorialConfig';
 import NoirProductDetailsTab from '../../../components/shop/NoirProductDetailsTab';
 import NoirProductShippingTab from '../../../components/shop/NoirProductShippingTab';
 import NoirProductPolicyTab from '../../../components/shop/NoirProductPolicyTab';
@@ -2987,7 +2988,7 @@ function NoirSelection() {
           addToBagState={addToBagState}
           isSignedIn={isSignedIn}
           onAddToBag={handleAddToBag}
-          onTryFree={() => navigate('/build-a-wig/try')}
+          onTryFree={() => navigate(BAW_TUTORIAL_ROUTE)}
           onCustomize={() => {
                 if (!isSignedIn) {
                   setBawSignInReturnTo({ pathname: location.pathname, search: location.search || '' });

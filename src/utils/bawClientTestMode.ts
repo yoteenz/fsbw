@@ -48,7 +48,7 @@ export function isBawClientTestOnlyMode(pathname: string): boolean {
 
 /**
  * Footer shows VIEW SUBSCRIPTIONS (+ SAVE SLAY CARD on view-mode hub) only on
- * `/build-a-wig/try/…` routes — for signed-out users and signed-in standard/premium members.
+ * `/build-a-wig/view/…` routes — for signed-out users and signed-in standard/premium members.
  */
 export function isBawViewSubscriptionsFooterMode(pathname: string): boolean {
   if (!isBawTutorialPath(pathname)) return false;

@@ -16,6 +16,7 @@ import { bcfPdpPriceRangeUsd } from '../../utils/bcfProductOptions';
 import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { ShopSearchResultsGrid, type ShopSearchResultProduct } from '../../components/shop/ShopSearchResultsGrid';
 import { UNIT_PDP_GUEST_TRY_LABEL } from '../../components/shop/UnitPdpCartActions';
+import { BAW_TUTORIAL_ROUTE } from '../../constants/bawTutorialConfig';
 import { useProductInventorySnapshot } from '../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay } from '../../components/shop/WigStockPrice';
 import {
@@ -1065,7 +1066,7 @@ function ProductsPage() {
                 </p>
                 <button
                   type="button"
-                  onClick={() => navigate('/build-a-wig/try')}
+                  onClick={() => navigate(BAW_TUTORIAL_ROUTE)}
                   style={{
                     fontFamily: '"Futura PT Medium"',
                     fontSize: '11px',

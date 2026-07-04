@@ -36,6 +36,7 @@ import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay, WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
+import { getBawTryRouteForUnitSlug } from '../../../constants/bawTutorialConfig';
 import { UnitPdpWigPreviewImages } from '../../../components/shop/UnitPdpWigPreviewImages';
 import {
   UNIT_PDP_CAP_CHART_IMG_STYLE,
@@ -1619,7 +1620,7 @@ function BlancoSelection() {
             addToBagState={addToBagState}
             isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
-            onTryFree={() => navigate('/build-a-wig/try/blanco')}
+            onTryFree={() => navigate(getBawTryRouteForUnitSlug('blanco'))}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {

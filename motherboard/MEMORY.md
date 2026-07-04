@@ -35495,3 +35495,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Email cross-promo images must use **`emailAssetUrl` / site `/assets/`** (or Supabase **`email-assets`** bucket via brandAssets) — never hardcoded Supabase project hosts in source. BCF shop thumbs resolve from **`VITE_SUPABASE_URL`** at runtime.
 
+---
+
+## 2026-07-04 — Guest BAW view route rename (`/build-a-wig/try` → `/build-a-wig/view`)
+
+**Context (full chat):** BAW view-mode footer scope + invalid **`/build-a-wig`** redirect; email header logo −25% + white nav on gray panel; email BCF promo broken thumbs fix; then user confirmed guest view-mode URL should be **`/build-a-wig/view`** (UI already renamed try → view; routes still used **`/try`**).
+
+**Topics covered:** View-mode footers (**VIEW SUBSCRIPTIONS**, **SAVE SLAY CARD**, **SAVE SELECTION** on sub-pages); legacy hub redirect; email layout + BCF asset URLs; canonical guest route rename with legacy redirects.
+
+**Decisions / outcomes:**
+- **`BAW_TUTORIAL_ROUTE`** = **`/build-a-wig/view`**; **`BAW_VIEW_LEGACY_TRY_ROUTE`** = **`/build-a-wig/try`** with **`normalizeBawViewPathname()`** mapping legacy try URLs to view equivalents.
+- **`App.tsx`**: all guest view routes under **`/build-a-wig/view/…`** (hub + option sub-pages); **`BuildAWigTryLegacyRedirect`** for **`/build-a-wig/try`** and **`/build-a-wig/try/*`**; **`BuildAWigLegacyHubRedirect`** guests → **`/build-a-wig/view`**.
+- PDP **TRY BUILD-A-WIG** CTAs and shop promo use **`BAW_TUTORIAL_ROUTE`** / **`getBawTryRouteForUnitSlug()`** instead of hardcoded **`/try`** paths.
+- **`isBawTutorialPath()`** and route helpers recognize both legacy try and canonical view paths via normalization.
+
+**Changes:** `src/constants/bawTutorialConfig.ts`, `src/App.tsx`, `src/utils/buildAWigRoutes.ts`, `src/utils/bawClientTestMode.ts`, `src/utils/activity.ts`, unit PDP pages (`noir`, `blanco`, `soft-wave`, `beach-wave`, `soft-curl`, `ocean-curl`), `src/pages/products/page.tsx`, `src/pages/build-a-wig/view/page.tsx`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+**Conventions:** Guest view mode lives at **`/build-a-wig/view/…` only** (legacy **`/build-a-wig/try/…`** redirects). Menu + NOIR default → **`/build-a-wig/view`**; unit PDPs → **`/build-a-wig/view/{unit}`**. Legacy **`/build-a-wig`** → guests **`/build-a-wig/view`**, signed-in **`/build-a-wig/noir`**.
+

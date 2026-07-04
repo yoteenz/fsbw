@@ -107,7 +107,7 @@ export type ActivityEventType =
   | 'remove_saved_item'
   /** Founder admin: product checkout completed using dummy test card */
   | 'founder_test_checkout_order'
-  /** Guest Build-A-Wig tutorial (`/build-a-wig/try`) */
+  /** Guest Build-A-Wig view mode (`/build-a-wig/view`) */
   | 'baw_tutorial_reached_card'
   | 'baw_tutorial_share_card'
   | 'baw_tutorial_sign_in_for_builder';

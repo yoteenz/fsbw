@@ -36,6 +36,7 @@ import { bcfOptionSelectedChrome } from '../../../utils/bcfProductOptions';
 import { useProductInventorySnapshot } from '../../../hooks/useProductInventorySnapshot';
 import { WigProductPriceDisplay, WigStripPrice } from '../../../components/shop/WigStockPrice';
 import { UnitPdpCartActions } from '../../../components/shop/UnitPdpCartActions';
+import { getBawTryRouteForUnitSlug } from '../../../constants/bawTutorialConfig';
 import { UnitPdpWigPreviewImages } from '../../../components/shop/UnitPdpWigPreviewImages';
 import {
   UNIT_PDP_CAP_CHART_IMG_STYLE,
@@ -1621,7 +1622,7 @@ function OceanCurlSelection() {
             addToBagState={addToBagState}
             isSignedIn={isSignedIn}
             onAddToBag={handleAddToBag}
-            onTryFree={() => navigate('/build-a-wig/try/ocean-curl')}
+            onTryFree={() => navigate(getBawTryRouteForUnitSlug('ocean-curl'))}
             buttonFontFamily='"Futura PT Medium"'
             onCustomize={() => {
                 if (!isSignedIn) {

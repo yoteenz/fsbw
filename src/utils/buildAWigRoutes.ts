@@ -9,6 +9,7 @@ import {
   isBawTutorialPath,
   isBawTryStepSegment,
   isBawTryUnitSlug,
+  normalizeBawViewPathname,
 } from '../constants/bawTutorialConfig';
 
 /** URL segments for premium membership option steps (lace → add-ons). */
@@ -121,7 +122,7 @@ export function resolveBuildAWigTryPathToHubPath(pathname: string): string {
   return '/build-a-wig/noir';
 }
 
-/** Guest SHOP menu target — try flow (NOIR default at `/build-a-wig/try`). */
+/** Guest SHOP menu target — view flow (NOIR default at `/build-a-wig/view`). */
 export function getBuildAWigGuestMenuTargetPath(): string {
   return BAW_TUTORIAL_ROUTE;
 }
@@ -156,8 +157,8 @@ const BAW_PRODUCT_HUB_UNITS = [
 ] as const;
 
 /**
- * Main BAW product hub routes for hero/thumb framing — includes guest try hub URLs
- * (`/build-a-wig/try/blanco` → `/build-a-wig/blanco`).
+ * Main BAW product hub routes for hero/thumb framing — includes guest view hub URLs
+ * (`/build-a-wig/view/blanco` → `/build-a-wig/blanco`).
  */
 export function isBawProductHubThumbPathname(pathname: string): boolean {
   const p = resolveBuildAWigTryPathToHubPath(pathname).replace(/\/$/, '') || '/';
@@ -168,11 +169,12 @@ export function isBawProductHubThumbPathname(pathname: string): boolean {
   return false;
 }
 
-/** True for customize, edit, try hub, or try option routes for a product slug. */
+/** True for customize, edit, view hub, or view option routes for a product slug. */
 export function pathnameIncludesBawProductSlug(pathname: string, unitSlug: string): boolean {
-  if (pathname.includes(`/build-a-wig/${unitSlug}/`)) return true;
-  if (pathname.includes(`/build-a-wig/try/${unitSlug}`)) return true;
-  if (unitSlug === 'noir' && (pathname.replace(/\/$/, '') === BAW_TUTORIAL_ROUTE || pathname.replace(/\/$/, '') === '/build-a-wig/noir')) {
+  const normalized = normalizeBawViewPathname(pathname);
+  if (normalized.includes(`/build-a-wig/${unitSlug}/`)) return true;
+  if (normalized.includes(`${BAW_TUTORIAL_ROUTE}/${unitSlug}`)) return true;
+  if (unitSlug === 'noir' && (normalized.replace(/\/$/, '') === BAW_TUTORIAL_ROUTE || normalized.replace(/\/$/, '') === '/build-a-wig/noir')) {
     return true;
   }
   return false;

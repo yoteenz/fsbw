@@ -54,6 +54,7 @@ import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/c
 import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
 import { MobileMansionRoutes } from './routes/MobileMansionRoutes';
+import { BAW_TUTORIAL_ROUTE, normalizeBawViewPathname } from './constants/bawTutorialConfig';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -406,8 +407,17 @@ const ClientsAccountRedirect = () => {
 
 /** Legacy `/build-a-wig` hub — redirect to view mode (guest) or NOIR product hub (signed-in). */
 const BuildAWigLegacyHubRedirect = () => {
-  const target = isSignedIn() ? '/build-a-wig/noir' : '/build-a-wig/try';
+  const target = isSignedIn() ? '/build-a-wig/noir' : BAW_TUTORIAL_ROUTE;
   return <Navigate to={target} replace />;
+};
+
+/** Legacy `/build-a-wig/try/…` URLs → `/build-a-wig/view/…`. */
+const BuildAWigTryLegacyRedirect = () => {
+  const location = useLocation();
+  const target = normalizeBawViewPathname(location.pathname);
+  return (
+    <Navigate to={{ pathname: target, search: location.search, hash: location.hash }} replace />
+  );
 };
 
 function App() {
@@ -1121,18 +1131,22 @@ function App() {
         <Route path="/curly/closures" element={<Navigate to="/shop/closures" replace />} />
         <Route path="/curly/frontals" element={<Navigate to="/shop/frontals" replace />} />
         {/* Build-a-wig routes - specific routes must come before general /build-a-wig route */}
-        {/* Guest try flow — hub + option sub-pages stay on /build-a-wig/try/… */}
-        <Route path="/build-a-wig/try/:unitSlug/color" element={<ColorPage />} />
-        <Route path="/build-a-wig/try/:unitSlug/length" element={<LengthPage />} />
-        <Route path="/build-a-wig/try/:unitSlug/density" element={<DensityPage />} />
-        <Route path="/build-a-wig/try/:unitSlug/lace" element={<LacePage />} />
-        <Route path="/build-a-wig/try/:unitSlug/texture" element={<TexturePage />} />
-        <Route path="/build-a-wig/try/:unitSlug/hairline" element={<HairlinePage />} />
-        <Route path="/build-a-wig/try/:unitSlug/cap" element={<CapSizePage />} />
-        <Route path="/build-a-wig/try/:unitSlug/styling" element={<StylingPage />} />
-        <Route path="/build-a-wig/try/:unitSlug/addons" element={<AddOnsPage />} />
-        <Route path="/build-a-wig/try/:unitSlug" element={<BuildAWigPage />} />
-        <Route path="/build-a-wig/try" element={<BuildAWigPage />} />
+        {/* Guest view flow — hub + option sub-pages stay on /build-a-wig/view/… */}
+        <Route path="/build-a-wig/view/:unitSlug/color" element={<ColorPage />} />
+        <Route path="/build-a-wig/view/:unitSlug/length" element={<LengthPage />} />
+        <Route path="/build-a-wig/view/:unitSlug/density" element={<DensityPage />} />
+        <Route path="/build-a-wig/view/:unitSlug/lace" element={<LacePage />} />
+        <Route path="/build-a-wig/view/:unitSlug/texture" element={<TexturePage />} />
+        <Route path="/build-a-wig/view/:unitSlug/hairline" element={<HairlinePage />} />
+        <Route path="/build-a-wig/view/:unitSlug/cap" element={<CapSizePage />} />
+        <Route path="/build-a-wig/view/:unitSlug/styling" element={<StylingPage />} />
+        <Route path="/build-a-wig/view/:unitSlug/addons" element={<AddOnsPage />} />
+        <Route path="/build-a-wig/view/:unitSlug" element={<BuildAWigPage />} />
+        <Route path="/build-a-wig/view" element={<BuildAWigPage />} />
+        {/* Legacy try URLs → view */}
+        <Route path="/build-a-wig/try/:unitSlug/*" element={<BuildAWigTryLegacyRedirect />} />
+        <Route path="/build-a-wig/try/:unitSlug" element={<BuildAWigTryLegacyRedirect />} />
+        <Route path="/build-a-wig/try" element={<BuildAWigTryLegacyRedirect />} />
 
         {/* Noir routes */}
         <Route path="/build-a-wig/noir/edit/color" element={<ColorPage />} />

@@ -64,9 +64,21 @@ export const BAW_TUTORIAL_GUIDE_COPY: Record<BawTutorialStepId, { title: string;
   },
 };
 
-export const BAW_TUTORIAL_ROUTE = '/build-a-wig/try';
+export const BAW_TUTORIAL_ROUTE = '/build-a-wig/view';
 
-/** URL slugs for product-specific guest try routes (`/build-a-wig/try/{slug}`). */
+/** Legacy guest route before try → view rename; redirects in `App.tsx`. */
+export const BAW_VIEW_LEGACY_TRY_ROUTE = '/build-a-wig/try';
+
+/** Map legacy `/build-a-wig/try/…` URLs to `/build-a-wig/view/…`. */
+export function normalizeBawViewPathname(pathname: string): string {
+  const p = pathname.replace(/\/$/, '') || '/';
+  if (p === BAW_VIEW_LEGACY_TRY_ROUTE || p.startsWith(`${BAW_VIEW_LEGACY_TRY_ROUTE}/`)) {
+    return `${BAW_TUTORIAL_ROUTE}${p.slice(BAW_VIEW_LEGACY_TRY_ROUTE.length)}`;
+  }
+  return p;
+}
+
+/** URL slugs for product-specific guest view routes (`/build-a-wig/view/{slug}`). */
 export const BAW_TRY_UNIT_SLUGS = [
   'noir',
   'blanco',
@@ -91,14 +103,14 @@ export function isBawTryUnitSlug(value: string): value is BawTryUnitSlug {
   return (BAW_TRY_UNIT_SLUGS as readonly string[]).includes(value);
 }
 
-/** Menu + default try route is `/build-a-wig/try` (NOIR). Product PDPs use unit slugs. */
+/** Menu + default view route is `/build-a-wig/view` (NOIR). Product PDPs use unit slugs. */
 export function getBawTryRouteForUnitSlug(slug: BawTryUnitSlug | 'noir'): string {
   if (slug === 'noir') return BAW_TUTORIAL_ROUTE;
   return `${BAW_TUTORIAL_ROUTE}/${slug}`;
 }
 
 export function resolveBawTutorialUnitLabelFromPathname(pathname: string): string {
-  const normalized = pathname.replace(/\/$/, '') || '/';
+  const normalized = normalizeBawViewPathname(pathname);
   if (normalized === BAW_TUTORIAL_ROUTE) return BAW_TRY_SLUG_TO_UNIT_LABEL.noir;
   const prefix = `${BAW_TUTORIAL_ROUTE}/`;
   if (!normalized.startsWith(prefix)) return BAW_TUTORIAL_DEFAULT_SELECTIONS.unit;
@@ -126,13 +138,13 @@ export function getBawCustomizePathForTutorialUnit(unitLabel: string): string {
 }
 
 export function isBawTutorialPath(pathname: string): boolean {
-  const p = pathname.replace(/\/$/, '') || '/';
+  const p = normalizeBawViewPathname(pathname);
   return p === BAW_TUTORIAL_ROUTE || p.startsWith(`${BAW_TUTORIAL_ROUTE}/`);
 }
 
-/** View-mode option sub-page — `/build-a-wig/try/{unit}/{step}`, not hub landing. */
+/** View-mode option sub-page — `/build-a-wig/view/{unit}/{step}`, not hub landing. */
 export function isBawTryOptionSubPagePath(pathname: string): boolean {
-  const p = pathname.replace(/\/$/, '') || '/';
+  const p = normalizeBawViewPathname(pathname);
   if (!isBawTutorialPath(p) || isBawTryHubLandingPath(p)) return false;
   const prefix = `${BAW_TUTORIAL_ROUTE}/`;
   if (!p.startsWith(prefix)) return false;
@@ -141,9 +153,9 @@ export function isBawTryOptionSubPagePath(pathname: string): boolean {
   return isBawTryUnitSlug(segments[0]) && isBawTryStepSegment(segments[1]);
 }
 
-/** View-mode hub only — `/build-a-wig/try` or `/build-a-wig/try/{unit}`, not option sub-pages. */
+/** View-mode hub only — `/build-a-wig/view` or `/build-a-wig/view/{unit}`, not option sub-pages. */
 export function isBawTryHubLandingPath(pathname: string): boolean {
-  const p = pathname.replace(/\/$/, '') || '/';
+  const p = normalizeBawViewPathname(pathname);
   if (!isBawTutorialPath(p)) return false;
   if (p === BAW_TUTORIAL_ROUTE) return true;
   const prefix = `${BAW_TUTORIAL_ROUTE}/`;
@@ -152,7 +164,7 @@ export function isBawTryHubLandingPath(pathname: string): boolean {
   return segments.length === 1 && isBawTryUnitSlug(segments[0]);
 }
 
-/** Option step URL segments under `/build-a-wig/try/{unit}/…`. */
+/** Option step URL segments under `/build-a-wig/view/{unit}/…`. */
 export const BAW_TRY_STEP_SEGMENTS = [
   'cap',
   'cap-size',
@@ -171,7 +183,7 @@ export function isBawTryStepSegment(segment: string): boolean {
 }
 
 export function resolveBawTryUnitSlugFromPathname(pathname: string): BawTryUnitSlug {
-  const normalized = pathname.replace(/\/$/, '') || '/';
+  const normalized = normalizeBawViewPathname(pathname);
   if (normalized === BAW_TUTORIAL_ROUTE) return 'noir';
   const prefix = `${BAW_TUTORIAL_ROUTE}/`;
   if (!normalized.startsWith(prefix)) return 'noir';
@@ -180,7 +192,7 @@ export function resolveBawTryUnitSlugFromPathname(pathname: string): BawTryUnitS
   return 'noir';
 }
 
-/** e.g. `/build-a-wig/try/noir/color` */
+/** e.g. `/build-a-wig/view/noir/color` */
 export function getBawTryOptionSubPagePath(pathname: string, stepSegment: string): string {
   const slug = resolveBawTryUnitSlugFromPathname(pathname);
   const step = stepSegment === 'cap-size' ? 'cap' : stepSegment;
@@ -189,7 +201,7 @@ export function getBawTryOptionSubPagePath(pathname: string, stepSegment: string
 
 /** Try hub for BACK navigation from a try option sub-page. */
 export function getBawTryFlowBasePath(pathname: string): string {
-  const p = pathname.replace(/\/$/, '') || '/';
+  const p = normalizeBawViewPathname(pathname);
   if (!isBawTutorialPath(p)) return BAW_TUTORIAL_ROUTE;
   if (p === BAW_TUTORIAL_ROUTE) return p;
   const prefix = `${BAW_TUTORIAL_ROUTE}/`;
