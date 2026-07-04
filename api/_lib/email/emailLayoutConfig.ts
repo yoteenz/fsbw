@@ -119,7 +119,7 @@ export const DEFAULT_EMAIL_LAYER_STYLES: Record<EmailLayoutLayerId, EmailLayerSt
     textTransform: 'uppercase',
     textAlign: 'center',
     fontWeight: 600,
-    paddingTop: 8,
+    paddingTop: 76,
     paddingRight: 28,
     paddingBottom: 12,
     paddingLeft: 28,
@@ -169,7 +169,7 @@ export const DEFAULT_EMAIL_LAYER_STYLES: Record<EmailLayoutLayerId, EmailLayerSt
     textTransform: 'uppercase',
     textAlign: 'center',
     fontWeight: 700,
-    paddingTop: 0,
+    paddingTop: 118,
     paddingRight: 28,
     paddingBottom: 28,
     paddingLeft: 28,
@@ -306,6 +306,23 @@ export function emailTdStyleCss(style: EmailLayerStyle): string {
   const text = emailTextStyleCss(style);
   const pad = emailLayerPaddingCss(style);
   return text ? `${text};padding:${pad}` : `padding:${pad}`;
+}
+
+/** Hero overlay text (scriptAccent, headline, cta) — padding maps to absolute top/left/right so layers move independently. */
+export function emailHeroOverlayLayerCss(style: EmailLayerStyle): string {
+  const top = style.paddingTop ?? 0;
+  const left = style.paddingLeft ?? 0;
+  const right = style.paddingRight ?? 0;
+  const text = emailTextStyleCss(style);
+  return `${text};position:absolute;top:${top}px;left:${left}px;right:${right}px;z-index:2;box-sizing:border-box;margin:0;`;
+}
+
+export const EMAIL_HERO_OVERLAY_LAYER_IDS = ['scriptAccent', 'headline', 'cta'] as const;
+
+export type EmailHeroOverlayLayerId = (typeof EMAIL_HERO_OVERLAY_LAYER_IDS)[number];
+
+export function isEmailHeroOverlayLayer(layerId: string): layerId is EmailHeroOverlayLayerId {
+  return (EMAIL_HERO_OVERLAY_LAYER_IDS as readonly string[]).includes(layerId);
 }
 
 export function createDefaultEmailLayoutDebugStore(): EmailLayoutDebugStore {

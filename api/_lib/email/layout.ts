@@ -11,6 +11,7 @@ import {
   type EmailLayoutDebugStore,
   type EmailLayerStyle,
   type EmailTemplateCopyOverrides,
+  emailHeroOverlayLayerCss,
 } from './emailLayoutConfig.js';
 import { EMAIL_SOCIAL_LINKS, resolveEmailSocialIconUrl } from './emailSocialLinks.js';
 import { EMAIL_HEADER_NAV_LINKS, resolveEmailHeaderNavUrl } from './emailHeaderNavLinks.js';
@@ -95,11 +96,9 @@ function renderHeroOverlayCta(
 ): string {
   if (!ctaUrl || ctaUrl === '#') return '';
   const ctaText = emailTextStyleCss(ctaStyle);
-  return `<tr>
-          <td data-email-layer="cta" align="center" style="${emailTdStyleCss(ctaStyle)}">
+  return `<div data-email-layer="cta" style="${emailHeroOverlayLayerCss(ctaStyle)}">
             <a data-email-copy="ctaLabel" href="${ctaUrl}" style="display:inline-block;background-color:${EMAIL_BRAND.red};text-decoration:none;padding:16px 40px;border-radius:0;box-shadow:0 4px 16px rgba(235,28,36,0.35);${ctaText}">${ctaLabel}</a>
-          </td>
-        </tr>`;
+          </div>`;
 }
 
 /** Tall hero graphic with script accent, headline, and CTA overlaid on the image (reference-style). */
@@ -124,14 +123,12 @@ function renderHeroComposite(input: {
   const scriptText = `${emailTextStyleCss(input.scriptStyle)};${heroOverlayTextShadow(input.scriptStyle)}`;
   const headlineText = `${emailTextStyleCss(input.headlineStyle)};${heroOverlayTextShadow(input.headlineStyle)}`;
   const productScene = heroReady ? '' : renderFallbackHeroProductScene(input.heroIcon);
-  const ctaRow = renderHeroOverlayCta(input.ctaLabel, input.ctaUrl, input.ctaStyle);
-  const sceneSpacerRow = heroReady
+  const ctaHtml = renderHeroOverlayCta(input.ctaLabel, input.ctaUrl, input.ctaStyle);
+  const fallbackSceneHtml = heroReady
     ? ''
-    : `<tr>
-          <td align="center" valign="bottom" style="height:${EMAIL_HERO_PRODUCT_ZONE_PX}px;vertical-align:bottom;padding:0;">
+    : `<div style="position:absolute;left:0;right:0;bottom:0;height:${EMAIL_HERO_PRODUCT_ZONE_PX}px;display:flex;align-items:flex-end;justify-content:center;padding:0 12px 8px;box-sizing:border-box;z-index:1;">
             ${productScene}
-          </td>
-        </tr>`;
+          </div>`;
 
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:${EMAIL_HERO_WIDTH_PX}px;margin:0 auto;border-collapse:collapse;border-radius:12px;overflow:hidden;box-shadow:0 12px 36px rgba(0,0,0,0.1);">
   <tr>
@@ -141,26 +138,17 @@ function renderHeroComposite(input: {
         ${vmlFill}
         <v:textbox inset="0,0,0,0" style="mso-fit-shape-to-text:true">
       <![endif]-->
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;min-height:${EMAIL_HERO_HEIGHT_PX}px;height:${EMAIL_HERO_HEIGHT_PX}px;">
-        <tr>
-          <td style="background:linear-gradient(to bottom, rgba(255,255,255,0.52) 0%, rgba(255,255,255,0.22) 30%, rgba(255,255,255,0) 48%);">
-            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
-              <tr>
-                <td data-email-layer="scriptAccent" style="${emailTdStyleCss(input.scriptStyle)}">
-                  <div data-email-copy="scriptAccent" style="${scriptText}">${input.scriptAccent}</div>
-                </td>
-              </tr>
-              <tr>
-                <td data-email-layer="headline" style="${emailTdStyleCss(input.headlineStyle)}">
-                  <div data-email-copy="headline" style="${headlineText}">${input.headline}</div>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        ${sceneSpacerRow}
-        ${ctaRow}
-      </table>
+      <div style="position:relative;width:100%;height:${EMAIL_HERO_HEIGHT_PX}px;min-height:${EMAIL_HERO_HEIGHT_PX}px;">
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(255,255,255,0.52) 0%, rgba(255,255,255,0.22) 30%, rgba(255,255,255,0) 48%);pointer-events:none;z-index:1;"></div>
+        <div data-email-layer="scriptAccent" style="${emailHeroOverlayLayerCss(input.scriptStyle)}${heroOverlayTextShadow(input.scriptStyle)}">
+          <div data-email-copy="scriptAccent" style="${scriptText}">${input.scriptAccent}</div>
+        </div>
+        <div data-email-layer="headline" style="${emailHeroOverlayLayerCss(input.headlineStyle)}${heroOverlayTextShadow(input.headlineStyle)}">
+          <div data-email-copy="headline" style="${headlineText}">${input.headline}</div>
+        </div>
+        ${ctaHtml}
+        ${fallbackSceneHtml}
+      </div>
       <!--[if gte mso 9]></v:textbox></v:rect><![endif]-->
     </td>
   </tr>

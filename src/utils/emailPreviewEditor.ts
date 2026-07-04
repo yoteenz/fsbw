@@ -1,5 +1,11 @@
 import type { EmailLayoutLayerId, EmailLayerStyle, EmailTemplateCopyOverrides } from './emailLayoutDebug';
 
+const HERO_OVERLAY_LAYERS: EmailLayoutLayerId[] = ['scriptAccent', 'headline', 'cta'];
+
+function isHeroOverlayLayer(layerId: EmailLayoutLayerId): boolean {
+  return HERO_OVERLAY_LAYERS.includes(layerId);
+}
+
 export type EmailPreviewEditorCallbacks = {
   onSelectLayer: (layerId: EmailLayoutLayerId) => void;
   onPaddingChange: (layerId: EmailLayoutLayerId, patch: Partial<EmailLayerStyle>) => void;
@@ -37,6 +43,31 @@ function readPadding(el: HTMLElement): { top: number; right: number; bottom: num
   const computed = el.ownerDocument.defaultView?.getComputedStyle(el).padding;
   if (computed) return parsePaddingPx(computed);
   return { top: 0, right: 0, bottom: 0, left: 0 };
+}
+
+function readOverlayPosition(el: HTMLElement): { top: number; left: number; right: number } {
+  const top = parseFloat(el.style.top);
+  const left = parseFloat(el.style.left);
+  const right = parseFloat(el.style.right);
+  if (Number.isFinite(top) || Number.isFinite(left) || Number.isFinite(right)) {
+    return {
+      top: Number.isFinite(top) ? top : 0,
+      left: Number.isFinite(left) ? left : 0,
+      right: Number.isFinite(right) ? right : 0,
+    };
+  }
+  const pad = readPadding(el);
+  return { top: pad.top, left: pad.left, right: pad.right };
+}
+
+function applyOverlayPosition(el: HTMLElement, pos: { top: number; left: number; right: number }): void {
+  el.style.position = 'absolute';
+  el.style.top = `${pos.top}px`;
+  el.style.left = `${pos.left}px`;
+  el.style.right = `${pos.right}px`;
+  el.style.zIndex = '2';
+  el.style.boxSizing = 'border-box';
+  el.style.margin = '0';
 }
 
 function applyActiveHighlight(doc: Document, activeLayer: EmailLayoutLayerId | null): void {
@@ -117,6 +148,7 @@ export function attachEmailPreviewEditor(
   let dragStartX = 0;
   let dragStartY = 0;
   let dragStartPadding = { top: 0, right: 0, bottom: 0, left: 0 };
+  let dragStartOverlay = { top: 0, left: 0, right: 0 };
   let dragMoved = false;
 
   const onClick = (e: MouseEvent) => {
@@ -186,7 +218,11 @@ export function attachEmailPreviewEditor(
     dragEl = layerEl;
     dragStartX = e.clientX;
     dragStartY = e.clientY;
-    dragStartPadding = readPadding(layerEl);
+    if (isHeroOverlayLayer(layerId)) {
+      dragStartOverlay = readOverlayPosition(layerEl);
+    } else {
+      dragStartPadding = readPadding(layerEl);
+    }
     dragMoved = false;
     layerEl.setPointerCapture?.(e.pointerId);
   };
@@ -198,6 +234,15 @@ export function attachEmailPreviewEditor(
     if (Math.abs(dx) < 2 && Math.abs(dy) < 2) return;
     dragMoved = true;
     e.preventDefault();
+    if (dragLayer && isHeroOverlayLayer(dragLayer)) {
+      const nextOverlay = {
+        top: Math.max(0, Math.round(dragStartOverlay.top + dy)),
+        left: Math.max(0, Math.round(dragStartOverlay.left + dx)),
+        right: dragStartOverlay.right,
+      };
+      applyOverlayPosition(dragEl, nextOverlay);
+      return;
+    }
     const next = {
       top: Math.max(0, Math.round(dragStartPadding.top + dy)),
       right: Math.max(0, Math.round(dragStartPadding.right + dx / 2)),
@@ -217,13 +262,22 @@ export function attachEmailPreviewEditor(
       dragMoved = false;
       return;
     }
-    const pad = readPadding(dragEl);
-    callbacks.onPaddingChange(dragLayer, {
-      paddingTop: pad.top,
-      paddingRight: pad.right,
-      paddingBottom: pad.bottom,
-      paddingLeft: pad.left,
-    });
+    if (isHeroOverlayLayer(dragLayer)) {
+      const pos = readOverlayPosition(dragEl);
+      callbacks.onPaddingChange(dragLayer, {
+        paddingTop: pos.top,
+        paddingLeft: pos.left,
+        paddingRight: pos.right,
+      });
+    } else {
+      const pad = readPadding(dragEl);
+      callbacks.onPaddingChange(dragLayer, {
+        paddingTop: pad.top,
+        paddingRight: pad.right,
+        paddingBottom: pad.bottom,
+        paddingLeft: pad.left,
+      });
+    }
     dragEl = null;
     dragLayer = null;
     dragMoved = false;

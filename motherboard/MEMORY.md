@@ -35019,4 +35019,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Regen:** **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-white-polish.log`**. Welcome only.
 
+---
+
+## 2026-07-04 — Email hero overlay: separate scriptAccent + headline drag layers
+
+**Context:** User said **“Welcome to”** (script accent / Grace) and **“The Slay Society”** (headline / Futura red) were **grouped and moved in tandem** in the email preview editor — they should be **separate assets** with independent positioning (two text styles).
+
+**Cause:** Hero overlay used stacked **table rows** with padding on `<td>` — dragging scriptAccent padding pushed headline in document flow.
+
+**Fix:**
+- **`layout.ts`**: hero overlay text (**scriptAccent**, **headline**, **cta**) now **absolutely positioned** inside a fixed-height hero canvas; padding maps to **top/left/right** offsets via **`emailHeroOverlayLayerCss()`**.
+- **`emailLayoutConfig.ts`**: new overlay helper + adjusted default **headline**/**cta** top offsets for same visual stack.
+- **`emailPreviewEditor.ts`**: drag on overlay layers updates **top/left only** — siblings no longer shift.
+
+**Changes:** **`api/_lib/email/layout.ts`**, **`emailLayoutConfig.ts`**, **`src/utils/emailLayoutDebug.ts`**, **`src/utils/emailPreviewEditor.ts`**.
+
 
