@@ -35770,3 +35770,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `tutorial-os/constants.ts`, welcome/preview/FAB components, mansion + placeholder tours, admin page, `adminStudioNavigation.ts`, `adminStudioTutorialOsDemo.ts`, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Onboarding Tutorial in Tools menu (remove floating FAB)
+
+**Context:** User asked to remove the floating FS/OT concierge button and add **ONBOARDING TUTORIAL** to the mobile menu toggle **Tools** tab below **Order Authorization Form** — tap reopens the Mansion Tour wizard.
+
+**Shipped:** Removed `TutorialConciergeFab` + FAB CSS. `ShopMobileMenuToolsTab` adds **ONBOARDING TUTORIAL** row after order authorization; calls `startTour(mansion-tour)` and closes menu. Docs updated.
+
+**Changes:** `ShopMobileMenuToolsTab.tsx`, `TutorialOsContext.tsx`, deleted `TutorialConciergeFab.tsx`, `tutorial-os.css`, docs, `motherboard/MEMORY.md`.
+

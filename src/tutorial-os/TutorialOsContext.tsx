@@ -30,7 +30,6 @@ import { waitForTarget, type ResolvedTarget } from './targetResolver';
 import { TutorialWelcomePrompt } from './components/TutorialWelcomePrompt';
 import { TutorialWizardPanel } from './components/TutorialWizardPanel';
 import { TutorialSpotlightOverlay } from './components/TutorialSpotlightOverlay';
-import { TutorialConciergeFab } from './components/TutorialConciergeFab';
 import { setTutorialOsConciergeBypassActive } from './conciergeBypass';
 
 export type TutorialOsContextValue = {
@@ -317,7 +316,6 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
   );
 
   const featured = getFeaturedTour();
-  const showFab = !hideChrome && !isTourActive && !showWelcome;
 
   const overlay =
     typeof document !== 'undefined'
@@ -351,7 +349,6 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
                 tourLabel={activeTour.optionalLabel ?? activeTour.customerName}
               />
             ) : null}
-            <TutorialConciergeFab hidden={!showFab} onClick={() => startTour(MANSION_TOUR_ID)} />
           </>,
           document.body
         )

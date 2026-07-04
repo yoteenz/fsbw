@@ -13,7 +13,7 @@ Optional welcome prompt on first visit (~3 min). Not forced — **Start Tour**, 
 Access points:
 
 - First-visit welcome modal
-- Floating **OT** onboarding FAB (bottom-right)
+- Menu toggle → **Tools** → **ONBOARDING TUTORIAL** (reopens the wizard)
 - Account dashboard — **Take The Mansion Tour**
 
 ## Architecture
