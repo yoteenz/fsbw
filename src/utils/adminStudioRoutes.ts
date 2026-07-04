@@ -35,6 +35,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'director-mode'
   | 'executive-ai-director'
   | 'campaign-orchestrator'
+  | 'knowledge-hub'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -67,6 +68,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'director-mode',
   'executive-ai-director',
   'campaign-orchestrator',
+  'knowledge-hub',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -126,6 +128,9 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   directorMode: 'studio/director-mode',
   executiveAiDirector: 'studio/executive-ai-director',
   campaignOrchestrator: 'studio/campaign-orchestrator',
+  knowledgeHub: 'studio/knowledge-hub',
+  knowledgeHubProfile: 'studio/knowledge-hub/profile/:profileId',
+  knowledgeHubWorkflow: 'studio/knowledge-hub/workflow/:workflowId',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -246,4 +251,16 @@ export function adminStudioExecutiveAiDirectorPath(): string {
 
 export function adminStudioCampaignOrchestratorPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/campaign-orchestrator`;
+}
+
+export function adminStudioKnowledgeHubPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub`;
+}
+
+export function adminStudioKnowledgeHubProfilePath(profileId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub/profile/${encodeURIComponent(profileId)}`;
+}
+
+export function adminStudioKnowledgeHubWorkflowPath(workflowId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub/workflow/${encodeURIComponent(workflowId)}`;
 }

@@ -2,6 +2,9 @@ import { useNavigate } from 'react-router-dom';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useAdminStudioMissionControl } from '../../../../hooks/useAdminStudioMissionControlState';
+import { useAdminStudioKnowledgeHub } from '../../../../hooks/useAdminStudioKnowledgeHubState';
+import { adminStudioKnowledgeHubPath, adminStudioKnowledgeHubProfilePath } from '../../../../utils/adminStudioRoutes';
+import { KNOWLEDGE_MISSION_STATS } from '../../../../utils/adminStudioKnowledgeHubDemo';
 import { AdminStudioExecutiveCard } from '../AdminStudioExecutiveCard';
 import {
   ACTIVE_MISSIONS,
@@ -47,6 +50,7 @@ export function MissionControlWorkspace() {
     dismissedNotifications,
     dismissNotification,
   } = useAdminStudioMissionControl();
+  const { unreadGuides, markGuideRead } = useAdminStudioKnowledgeHub();
 
   const header = MISSION_CONTROL_HEADER;
   const visibleNotifications = SMART_NOTIFICATIONS.filter((n) => !dismissedNotifications.includes(n.id));
@@ -146,6 +150,49 @@ export function MissionControlWorkspace() {
               <p style={mcCaption}>{stat.label}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* KNOWLEDGE HUB — LEARNING LAYER */}
+      <section style={{ ...mcPanelStyle, padding: '12px', marginBottom: '12px' }}>
+        <p style={mcSectionTitle}>KNOWLEDGE HUB · DOCUMENTATION HEALTH</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 mb-3">
+          {[
+            { label: 'KNOWLEDGE HEALTH', value: `${KNOWLEDGE_MISSION_STATS.knowledgeHealthPct}%` },
+            { label: 'UNREAD GUIDES', value: String(KNOWLEDGE_MISSION_STATS.unreadGuides) },
+            { label: 'NEW FEATURES', value: String(KNOWLEDGE_MISSION_STATS.newFeatures) },
+            { label: 'DOC UPDATES', value: String(KNOWLEDGE_MISSION_STATS.documentationUpdates.length) },
+          ].map((s) => (
+            <div key={s.label} className="text-center py-2" style={{ background: 'rgba(0,0,0,0.03)' }}>
+              <p style={{ ...mcGrace, fontSize: '14px', color: MC_VISUAL.red }}>{s.value}</p>
+              <p style={{ ...mcCaption, fontSize: '7px' }}>{s.label}</p>
+            </div>
+          ))}
+        </div>
+        <p style={{ ...mcSectionTitle, marginTop: 4 }}>RECOMMENDED LEARNING</p>
+        {KNOWLEDGE_MISSION_STATS.recommendedLearning.map((item) => (
+          <p key={item} style={{ ...mcCaption, color: MC_VISUAL.black }}>• {item}</p>
+        ))}
+        <p style={{ ...mcSectionTitle, marginTop: 10 }}>UNREAD GUIDES</p>
+        {unreadGuides.length === 0 ? (
+          <p style={mcCaption}>ALL GUIDES READ — KNOWLEDGE HUB CURRENT</p>
+        ) : (
+          unreadGuides.slice(0, 4).map((guide) => (
+            <div key={guide.id} className="flex items-center justify-between gap-2 py-1" style={{ borderBottom: '1px solid #eee' }}>
+              <p style={{ ...mcCaption, color: MC_VISUAL.black, flex: 1 }}>{guide.title}</p>
+              <button type="button" onClick={() => markGuideRead(guide.id)} style={mcActionBtn}>
+                MARK READ
+              </button>
+            </div>
+          ))
+        )}
+        <div className="flex flex-wrap gap-2 mt-3">
+          <button type="button" onClick={() => navigate(adminStudioKnowledgeHubPath())} style={mcActionBtn}>
+            OPEN KNOWLEDGE HUB
+          </button>
+          <button type="button" onClick={() => navigate(adminStudioKnowledgeHubProfilePath('weather-studio'))} style={mcActionBtn}>
+            WEATHER STUDIO PROFILE
+          </button>
         </div>
       </section>
 

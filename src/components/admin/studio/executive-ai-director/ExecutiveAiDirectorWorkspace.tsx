@@ -1,7 +1,8 @@
 import { AdminHubTabBar } from '../../AdminHubTabBar';
 import { useNavigate } from 'react-router-dom';
 import { FACTORY_EAD_SUGGESTIONS } from '../../../../utils/adminStudioAssetFactoryDemo';
-import { adminStudioAssetFactoryPath, adminStudioBlueprintDetailPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioAssetFactoryPath, adminStudioBlueprintDetailPath, adminStudioKnowledgeHubPath } from '../../../../utils/adminStudioRoutes';
+import { KNOWLEDGE_EAD_TIPS } from '../../../../utils/adminStudioKnowledgeHubDemo';
 import { WEATHER_STUDIO_BLUEPRINT, BLUEPRINT_REVIEW_SUGGESTIONS } from '../../../../utils/adminStudioBlueprintManagerDemo';
 import { reviewBlueprintForGeneration } from '../../../../utils/adminStudioBlueprintManagerAnalysis';
 import { useAdminStudioExecutiveAiDirector } from '../../../../hooks/useAdminStudioExecutiveAiDirectorState';
@@ -51,6 +52,8 @@ export function ExecutiveAiDirectorWorkspace() {
   return (
     <div>
       <ExecutiveAiDirectorHubCards onSelectTab={setActiveTab} />
+
+      <KnowledgeHubEadPanel />
 
       <div className="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {scorecard.slice(0, 4).map((d) => (
@@ -107,6 +110,34 @@ export function ExecutiveAiDirectorWorkspace() {
         )}
       </div>
     </div>
+  );
+}
+
+function KnowledgeHubEadPanel() {
+  const navigate = useNavigate();
+
+  return (
+    <section style={{ ...eadPanelStyle, padding: '12px', marginBottom: '12px' }}>
+      <p style={eadSectionTitle}>KNOWLEDGE HUB · EXECUTIVE TIPS</p>
+      <p style={eadCaption}>TIPS · SUGGESTIONS · WARNINGS · WORKFLOW IMPROVEMENTS FROM WORKSPACE HISTORY</p>
+      <div className="space-y-2 mt-2">
+        {KNOWLEDGE_EAD_TIPS.map((tip) => (
+          <div key={tip.id} style={{ borderLeft: `3px solid ${tip.tone === 'warning' ? EAD_VISUAL.red : tip.tone === 'insight' ? EAD_VISUAL.pass : EAD_VISUAL.gray}`, paddingLeft: 8 }}>
+            <p style={{ ...eadCaption, color: EAD_VISUAL.black, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>
+              {tip.tone.toUpperCase()} · {tip.text}
+            </p>
+            {tip.relatedRoute ? (
+              <button type="button" onClick={() => navigate(tip.relatedRoute!)} style={{ ...eadActionBtn, marginTop: 4 }}>
+                OPEN RELATED
+              </button>
+            ) : null}
+          </div>
+        ))}
+      </div>
+      <button type="button" onClick={() => navigate(adminStudioKnowledgeHubPath())} style={{ ...eadActionBtn, marginTop: 10 }}>
+        OPEN KNOWLEDGE HUB
+      </button>
+    </section>
   );
 }
 

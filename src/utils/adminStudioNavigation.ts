@@ -423,6 +423,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'knowledge-hub',
+    title: 'KNOWLEDGE HUB',
+    purpose: 'Living documentation — every StudioOS object explains itself; searchable wiki and workflow guides.',
+    route: p('knowledge-hub'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'WIKI',
+    ctaLabel: 'OPEN KNOWLEDGE HUB',
+    moduleKey: 'knowledge-hub',
+    featuredOnOverview: true,
+  },
+  {
     id: 'intelligence-engine',
     title: 'INTELLIGENCE ENGINE',
     purpose: 'Turn connected data into evidence-based recommendations.',

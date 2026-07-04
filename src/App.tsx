@@ -172,6 +172,9 @@ const AdminStudioAssetFactory = lazyWithRetry(() => import('./pages/admin/studio
 const AdminStudioBlueprintManager = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/page'), 'AdminStudioBlueprintManager');
 const AdminStudioBlueprintDetail = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/detail/page'), 'AdminStudioBlueprintDetail');
 const AdminStudioMissionControl = lazyWithRetry(() => import('./pages/admin/studio/mission-control/page'), 'AdminStudioMissionControl');
+const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
+const AdminStudioKnowledgeHubProfile = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/profile/page'), 'AdminStudioKnowledgeHubProfile');
+const AdminStudioKnowledgeHubWorkflow = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/workflow/page'), 'AdminStudioKnowledgeHubWorkflow');
 const AdminStudioOs = lazyWithRetry(() => import('./pages/admin/studio-os/page'), 'AdminStudioOs');
 const AdminStudioOsWorkspaceShell = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/page'), 'AdminStudioOsWorkspaceShell');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
@@ -1024,6 +1027,21 @@ function App() {
           <Route path="studio/mission-control" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioMissionControl />
+            </Suspense>
+          } />
+          <Route path="studio/knowledge-hub/profile/:profileId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioKnowledgeHubProfile />
+            </Suspense>
+          } />
+          <Route path="studio/knowledge-hub/workflow/:workflowId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioKnowledgeHubWorkflow />
+            </Suspense>
+          } />
+          <Route path="studio/knowledge-hub" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioKnowledgeHub />
             </Suspense>
           } />
           <Route path="studio/executive-command-center" element={

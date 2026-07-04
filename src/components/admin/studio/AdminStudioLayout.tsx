@@ -4,8 +4,12 @@ import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { StudioKnowledgeProvider } from '../../../contexts/StudioKnowledgeContext';
 import { AdminStudioBreadcrumbTrail } from './AdminStudioBreadcrumbTrail';
 import { AdminStudioNavTabs } from './AdminStudioNavTabs';
+import { KnowledgeHubButton } from './knowledge-hub/KnowledgeHubButton';
+import { KnowledgePanel } from './knowledge-hub/KnowledgePanel';
+import { KnowledgeContextualHint } from './knowledge-hub/KnowledgeContextualHint';
 import {
   buildStudioBreadcrumbs,
   getStudioNavGroup,
@@ -77,6 +81,7 @@ export function AdminStudioLayout({
   const headerCrumbPath = hideOverviewLink ? breadcrumbParentPath : STUDIO_OVERVIEW_PATH;
 
   return (
+    <StudioKnowledgeProvider>
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <div
         className="fixed inset-0 -z-10"
@@ -137,6 +142,7 @@ export function AdminStudioLayout({
                       {resolvedModule.metric}
                     </span>
                   ) : null}
+                  {workspace.studioEnabled ? <KnowledgeHubButton compact /> : null}
                 </div>
 
                 {helperText ? (
@@ -179,6 +185,7 @@ export function AdminStudioLayout({
                 className="flex-1 min-h-0"
                 style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}
               >
+                <KnowledgeContextualHint />
                 <div style={{ paddingTop: '8px', boxSizing: 'border-box' }}>{children}</div>
               </div>
             </div>
@@ -200,6 +207,8 @@ export function AdminStudioLayout({
           </div>
         </div>
       </div>
+      <KnowledgePanel />
     </div>
+    </StudioKnowledgeProvider>
   );
 }

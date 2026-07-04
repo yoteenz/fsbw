@@ -21,7 +21,8 @@ export type StudioOsCoreModuleId =
   | 'ai-production-engine'
   | 'distribution-network'
   | 'audience-brain'
-  | 'legacy-system';
+  | 'legacy-system'
+  | 'knowledge-hub';
 
 export type StudioOsCoreModule = {
   id: StudioOsCoreModuleId;
@@ -139,5 +140,11 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'LEGACY SYSTEM',
     description: 'Permanent memory and institutional archive.',
     routeSegment: 'legacy-system',
+  },
+  {
+    id: 'knowledge-hub',
+    label: 'KNOWLEDGE HUB',
+    description: 'Living documentation — every object explains itself.',
+    routeSegment: 'knowledge-hub',
   },
 ] as const;

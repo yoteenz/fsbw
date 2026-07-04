@@ -96,8 +96,8 @@ export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './bluepr
 export { assetFactoryStudioService, ASSET_FACTORY_INHERITANCE_CHAIN } from './assetFactory/service';
 export type { AssetFactorySnapshot, AssetFactorySummary } from './assetFactory/service';
 
-export { socialPublishingStudioService } from './socialPublishing/service';
-export type { SocialPublishingSnapshot } from './socialPublishing/service';
+export { knowledgeHubStudioService } from './knowledgeHub/service';
+export type { KnowledgeHubQueryInput, KnowledgeHubQueryOutput } from './knowledgeHub/service';
 
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
@@ -129,6 +129,7 @@ import { missionControlStudioService } from './missionControl/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
+import { knowledgeHubStudioService } from './knowledgeHub/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -154,6 +155,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,
+  knowledgeHubStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,

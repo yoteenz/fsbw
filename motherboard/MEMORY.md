@@ -35381,3 +35381,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Old **FAILED** queue rows are historical (Forbidden, marble, wave-thumb) — ignore or RETRY; live GENERATE success = Asset Director tile update, not factory NEEDS-REVIEW.
 
+---
+
+## 2026-07-04 — Milestone 20 Knowledge Hub (StudioOS living documentation)
+
+**Context:** User requested **Milestone 20 — Knowledge Hub**: self-documenting StudioOS where every object explains itself; no redesign of existing pages; no Frontal Slayer customer-facing changes; keep Asset Director.
+
+**Topics covered (full chat arc):** Prior Asset Director live GENERATE fixes (403 auth, marble ref on Vercel, wave-thumb Fal refs, NEEDS-REVIEW UX); then Knowledge Hub module — global ⓘ button, Knowledge Panel, object profiles (Weather Studio, Slay Report, PSA examples), workflow guides, example gallery/relationship chains, executive notes, searchable wiki, tours, contextual help, Mission Control + Executive AI Director integration, Owner's Manual links.
+
+**Decisions / outcomes:**
+- **Knowledge Hub module** at **`/admin/studio/knowledge-hub`** (intelligence nav group, status live); subtitle **Learn your Workspace. Understand your production.**
+- **Global UX:** **`KnowledgeHubButton`** (ⓘ) + **`KnowledgePanel`** slide-over + **`KnowledgeContextualHint`** on every StudioOS page via **`StudioKnowledgeProvider`** wrapping **`AdminStudioLayout`**.
+- **Demo data layer:** **`adminStudioKnowledgeHubDemo.ts`** — page guides from **`ADMIN_STUDIO_MODULES`**, rich profiles (Weather Studio, Slay Report, PSA, blueprints), workflow guides, **`searchKnowledgeHub()`**, **`KNOWLEDGE_MISSION_STATS`**, **`KNOWLEDGE_EAD_TIPS`**.
+- **State:** **`useAdminStudioKnowledgeHubState`** — read guides, tours, executive notes, dismissed hints in localStorage key **`knowledgeHub`** (`adminStudioKnowledgeHub_v1`).
+- **Sub-routes:** **`/knowledge-hub/profile/:profileId`**, **`/knowledge-hub/workflow/:workflowId`**.
+- **Integrations:** Mission Control section (knowledge health, unread guides, recommended learning); Executive AI Director **`KnowledgeHubEadPanel`** tips strip.
+- **Core/registry:** **`knowledge-hub`** added to **`StudioOsCoreModuleId`**, **`STUDIO_OS_CORE_MODULES`**, frontal-slayer **`moduleCopy`**, **`STUDIO_SERVICE_REGISTRY`** (`knowledgeHubStudioService`).
+- **Constraints honored:** No Frontal Slayer customer page edits; Asset Director unchanged; existing page layouts not redesigned — knowledge is additive overlay + new module page.
+
+**Changes:** `src/utils/adminStudioKnowledgeHubDemo.ts`, `src/hooks/useAdminStudioKnowledgeHubState.ts`, `src/contexts/StudioKnowledgeContext.tsx`, `src/components/admin/studio/knowledge-hub/*`, `src/pages/admin/studio/knowledge-hub/*`, `src/services/studio/knowledgeHub/service.ts`, `AdminStudioLayout.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts`, `adminStudioDemo.ts`, `adminStudioStorage.ts`, `App.tsx`, `studio-os-core/core/modules.ts`, `workspaces/frontal-slayer/config.ts`, `services/studio/index.ts`, `MissionControlWorkspace.tsx`, `ExecutiveAiDirectorWorkspace.tsx`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+**Conventions:** Knowledge Hub is demo/placeholder like other Studio modules — no external wiki backend yet; Owner's Manual chapter links point into Knowledge Hub; tap ⓘ on any StudioOS page for contextual panel; profiles and workflows are deep-linkable from search and Mission Control.
+

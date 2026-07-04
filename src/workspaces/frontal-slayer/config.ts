@@ -87,6 +87,9 @@ export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
     'legacy-system': {
       subtitle: 'EVERY STORY DESERVES TO BE REMEMBERED — THE LIVING MUSEUM OF FRONTAL SLAYER STUDIOS.',
     },
+    'knowledge-hub': {
+      subtitle: 'LEARN YOUR WORKSPACE. UNDERSTAND YOUR PRODUCTION.',
+    },
     studioHub: {
       title: 'THE STUDIO',
       subtitle: 'WHERE EVERY FRONTAL SLAYER STORY BEGINS.',
