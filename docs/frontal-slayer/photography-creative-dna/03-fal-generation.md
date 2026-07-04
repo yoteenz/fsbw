@@ -44,8 +44,11 @@ Other units show disabled buttons until POC expands beyond SOFT WAVE.
 ## Requirements
 
 - `FAL_KEY`
-- `SUPABASE_URL` + service role storage credentials
-- Admin auth session
+- `SUPABASE_URL` + storage creds, admin auth
+
+## Ideogram 422 / large masters
+
+Fal-generated 4K PNG masters may exceed Ideogram's **10MB** limit. Asset Factory **normalizes** images before Ideogram and **falls back** to pure-white studio keying (Creative DNA locked background) if Ideogram still rejects the input.
 
 ## Code
 

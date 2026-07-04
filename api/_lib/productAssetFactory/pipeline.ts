@@ -2,7 +2,7 @@ import { resolveSiteOrigin } from '../email/brandAssets.js';
 import { resolveServerCreativeDnaForAssetFactory } from './creativeDna.js';
 import { FACTORY_POC_DERIVATIVE_OUTPUTS, getFactoryCropTemplate } from './factoryCropTemplates.js';
 import { renderFactoryDerivative } from './cropEngine.js';
-import { runProductAssetIdeogramCutout, uploadBufferToFalStorage } from './ideogramCutout.js';
+import { runProductAssetBackgroundRemoval } from './ideogramCutout.js';
 import {
   productAssetPublicUrl,
   productAssetStoragePath,
@@ -142,9 +142,18 @@ export async function runProductAssetFactoryPipeline(opts: {
       job = { ...job, stage: 'removing-background', lastUpdated: new Date().toISOString() };
       logs.push(logEntry('removing-background', 'Fetching approved master hero portrait'));
       masterWhiteBuf = await fetchMasterBuffer(masterUrl);
-      logs.push(logEntry('removing-background', 'Running Ideogram background removal (fal-ai/ideogram/remove-background)'));
-      const falInputUrl = await uploadBufferToFalStorage(falKey, masterWhiteBuf, 'master-hero-white.png');
-      transparentBuf = await runProductAssetIdeogramCutout(falKey, falInputUrl);
+      logs.push(logEntry('removing-background', `Normalizing master for Ideogram (${masterWhiteBuf.length} bytes)`));
+      const cutout = await runProductAssetBackgroundRemoval(falKey, masterWhiteBuf);
+      transparentBuf = cutout.buffer;
+      logs.push(
+        logEntry(
+          'removing-background',
+          cutout.method === 'ideogram'
+            ? 'Ideogram background removal complete (fal-ai/ideogram/remove-background)'
+            : 'Ideogram unavailable for this master — used pure-white studio fallback (Creative DNA)',
+          cutout.method === 'ideogram' ? 'info' : 'warn'
+        )
+      );
       job = { ...job, stage: 'generating-transparent-master', lastUpdated: new Date().toISOString() };
       logs.push(logEntry('generating-transparent-master', 'Transparent master PNG generated'));
     }
@@ -167,8 +176,15 @@ export async function runProductAssetFactoryPipeline(opts: {
     if (minStage <= stageIndex('uploading-to-supabase')) {
       if (!masterWhiteBuf) masterWhiteBuf = await fetchMasterBuffer(masterUrl);
       if (!transparentBuf) {
-        const falInputUrl = await uploadBufferToFalStorage(falKey, masterWhiteBuf, 'master-hero-white.png');
-        transparentBuf = await runProductAssetIdeogramCutout(falKey, falInputUrl);
+        const cutout = await runProductAssetBackgroundRemoval(falKey, masterWhiteBuf);
+        transparentBuf = cutout.buffer;
+        logs.push(
+          logEntry(
+            'uploading-to-supabase',
+            cutout.method === 'ideogram' ? 'Transparent master via Ideogram' : 'Transparent master via white-studio fallback',
+            cutout.method === 'ideogram' ? 'info' : 'warn'
+          )
+        );
       }
       if (derivativeBuffers.length === 0) {
         for (const output of FACTORY_POC_DERIVATIVE_OUTPUTS) {

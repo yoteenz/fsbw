@@ -35711,3 +35711,15 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `AdminStudioImagePreviewModal.tsx`, `BrandAssetsAssetFactoryWorkspace.tsx`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Fix Ideogram 422 on Generate Variants (large Fal master)
+
+**Context:** User hit alert **"Ideogram background removal failed: Unprocessable Entity"** when clicking **Generate Variatives** on SOFT WAVE. Fal master generation succeeded but Asset Factory chain failed at Ideogram cutout.
+
+**Root cause:** Fal `nano-banana-pro/edit` 4K PNG masters often exceed Ideogram **10MB** limit → HTTP 422 Unprocessable Entity.
+
+**Fix:** `api/_lib/productAssetFactory/ideogramCutout.ts` — `prepareMasterForIdeogram()` downscales/compresses before upload; `runProductAssetBackgroundRemoval()` tries Ideogram then **pure-white studio fallback** (`whiteStudioBackgroundToAlpha`) matching Creative DNA locked background. Pipeline logs which method was used.
+
+**Changes:** ideogramCutout.ts, pipeline.ts, docs, `motherboard/MEMORY.md`.
+
