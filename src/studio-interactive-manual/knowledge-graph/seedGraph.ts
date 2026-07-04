@@ -4,6 +4,7 @@ import {
   adminStudioGrowthNetworkPath,
   adminStudioLabsPath,
   adminStudioAiMediaNetworkPath,
+  adminStudioTalentNetworkPath,
   adminStudioVisionEnginePath,
   adminStudioMemoryBiblePath,
   adminStudioPhotographyBiblePath,
@@ -330,6 +331,50 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     status: 'live',
     searchKeywords: ['programming network', 'money monday', 'truth tuesday', 'recurring shows'],
   },
+  {
+    id: 'node-talent-network',
+    name: 'TALENT NETWORK',
+    type: 'module',
+    description:
+      'Unified talent operating system — centralized registry for AI presenters and human creators. Casting, wardrobe, contracts, performance score, audience intelligence, character evolution.',
+    purpose: 'Manage every personality in a workspace through one architecture regardless of talent type.',
+    route: adminStudioTalentNetworkPath(),
+    moduleId: 'talent-network',
+    relatedManualChapter: 'CHAPTER · TALENT NETWORK · UNIFIED TALENT OS',
+    versionIntroduced: 'Milestone 30',
+    status: 'live',
+    searchKeywords: [
+      'talent network',
+      'ai presenter',
+      'human creator',
+      'casting',
+      'wardrobe manager',
+      'talent score',
+      'character evolution',
+    ],
+  },
+  {
+    id: 'node-talent-registry',
+    name: 'TALENT REGISTRY',
+    type: 'feature',
+    description: 'Centralized talent profiles — display name, type, status, portfolio, contracts, availability, verified and onboarding status.',
+    purpose: 'Single source of truth for AI and human talent in every workspace.',
+    moduleId: 'talent-network',
+    versionIntroduced: 'Milestone 30',
+    status: 'live',
+    searchKeywords: ['talent registry', 'talent profile', 'ai talent', 'human talent'],
+  },
+  {
+    id: 'node-talent-maya-chen',
+    name: 'MAYA CHEN',
+    type: 'feature',
+    description: 'AI presenter — Money Monday primary host. Finance credibility, business wardrobe, Voice A warm authority.',
+    purpose: 'Recurring network host talent node linked to shows, campaigns, and Creative DNA.',
+    moduleId: 'talent-network',
+    versionIntroduced: 'Milestone 30',
+    status: 'live',
+    searchKeywords: ['maya chen', 'money monday host', 'ai presenter'],
+  },
 ];
 
 export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
@@ -387,6 +432,14 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-network-programming', fromId: 'node-ai-media-network', toId: 'node-programming-network', type: 'contains' },
   { id: 'e-network-memory', fromId: 'node-ai-media-network', toId: 'node-memory-bible', type: 'inherits-from', label: 'COMPANY DNA' },
   { id: 'e-network-knowledge', fromId: 'node-ai-media-network', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
+  { id: 'e-talent-network-memory', fromId: 'node-talent-network', toId: 'node-memory-bible', type: 'inherits-from', label: 'TALENT CONTEXT' },
+  { id: 'e-talent-contains-registry', fromId: 'node-talent-network', toId: 'node-talent-registry', type: 'contains' },
+  { id: 'e-talent-knowledge', fromId: 'node-talent-network', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
+  { id: 'e-talent-growth', fromId: 'node-growth-network', toId: 'node-talent-network', type: 'feeds', label: 'TALENT RECOMMENDATIONS' },
+  { id: 'e-network-talent', fromId: 'node-ai-media-network', toId: 'node-talent-network', type: 'related-to', label: 'SHOW HOSTS' },
+  { id: 'e-talent-labs', fromId: 'node-talent-network', toId: 'node-studio-os-labs', type: 'feeds', label: 'PERFORMANCE SIGNALS' },
+  { id: 'e-talent-maya', fromId: 'node-talent-registry', toId: 'node-talent-maya-chen', type: 'contains' },
+  { id: 'e-maya-programming', fromId: 'node-talent-maya-chen', toId: 'node-programming-network', type: 'related-to', label: 'MONEY MONDAY HOST' },
 ];
 
 export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
@@ -504,6 +557,21 @@ export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
       'node-memory-bible',
     ],
     moduleIds: ['ai-media-network', 'labs', 'memory-bible', 'knowledge-hub', 'distribution-network'],
+  },
+  {
+    id: 'wf-talent-network',
+    title: 'TALENT NETWORK LIFECYCLE',
+    subtitle: 'Registry → Cast → Produce → Perform → Score → Evolve → Growth Recommendations → Memory',
+    nodeIds: [
+      'node-talent-network',
+      'node-talent-registry',
+      'node-talent-maya-chen',
+      'node-programming-network',
+      'node-growth-network',
+      'node-studio-os-labs',
+      'node-memory-bible',
+    ],
+    moduleIds: ['talent-network', 'growth-network', 'labs', 'memory-bible', 'knowledge-hub', 'ai-media-network'],
   },
 ];
 

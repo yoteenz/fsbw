@@ -529,6 +529,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'talent-network',
+    title: 'TALENT NETWORK',
+    purpose: 'Unified talent OS — AI + human registry, casting, wardrobe, contracts, performance score, character evolution.',
+    route: p('talent-network'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '14 TABS',
+    ctaLabel: 'OPEN TALENT NETWORK',
+    moduleKey: 'talent-network',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

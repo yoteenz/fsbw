@@ -42,6 +42,7 @@ export type AdminStudioSectionId =
   | 'growth-network'
   | 'labs'
   | 'ai-media-network'
+  | 'talent-network'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'

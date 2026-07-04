@@ -334,7 +334,7 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
       'AI RECOMMENDATIONS',
       'PRIVACY CONTROLS',
     ],
-    relatedModuleIds: ['memory-bible', 'audience-brain', 'knowledge-hub', 'executive-command-center'],
+    relatedModuleIds: ['memory-bible', 'audience-brain', 'knowledge-hub', 'executive-command-center', 'talent-network'],
   },
   'vision-engine': {
     architecture:
@@ -384,7 +384,26 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
       'MONETIZATION',
       'LABS INTEGRATION',
     ],
-    relatedModuleIds: ['labs', 'memory-bible', 'knowledge-hub', 'distribution-network', 'content-brain'],
+    relatedModuleIds: ['labs', 'memory-bible', 'knowledge-hub', 'distribution-network', 'content-brain', 'talent-network'],
+  },
+  'talent-network': {
+    architecture:
+      'Centralized talent registry (AI + human) → AI personality profiles → Wardrobe manager → Casting system → Series/campaign assignment → Performance analytics → Dynamic talent score → Audience intelligence → Character evolution (version history) → Growth Network recommendations → Contract management → Knowledge Graph nodes per talent.',
+    versionIntroduced: 'Milestone 30',
+    workflowNodes: [
+      'TALENT REGISTRY',
+      'AI & HUMAN PROFILES',
+      'WARDROBE MANAGER',
+      'CASTING',
+      'SERIES ASSIGNMENT',
+      'PERFORMANCE & SCORE',
+      'AUDIENCE INTEL',
+      'CHARACTER EVOLUTION',
+      'CONTRACTS',
+      'GROWTH BRIDGE',
+      'KNOWLEDGE GRAPH',
+    ],
+    relatedModuleIds: ['growth-network', 'memory-bible', 'knowledge-hub', 'labs', 'ai-media-network', 'audience-brain'],
   },
   'content-packs': {
     relatedModuleIds: ['production-builder', 'publishing-queue', 'lounge-tv'],

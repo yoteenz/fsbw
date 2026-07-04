@@ -136,6 +136,11 @@ export function WorkspaceDashboard({
                 OPEN AI MEDIA NETWORK
               </button>
             ) : null}
+            {activeTab === 'talent-network' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/talent-network')}>
+                OPEN TALENT NETWORK
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

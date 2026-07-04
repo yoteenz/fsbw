@@ -36281,3 +36281,40 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `main.tsx`, `visionSessionBootGuard.ts`, `VisionEngineContext.tsx`, `tutorial-os.css`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 30: Talent Network v1.0 platform pillar
+
+**Context:** User requested Milestone 30 — introduce **Talent Network** as a new core Studio OS pillar alongside Memory Bible, Knowledge Graph, Creative DNA, Company DNA, Growth Network, and Studio OS Labs. Unified registry for AI + human talent (same architecture, only `talentType` differs). Do not redesign platform; do not modify Frontal Slayer; do not remove existing Talent Agency.
+
+**Delivered — Talent Network v1.0:**
+
+**Core module** (`src/studio-os-core/talent-network/`):
+- Types: talent profiles, AI profiles, wardrobes, casting, series assignments, performance metrics, talent score, audience intel, character versions, contracts, growth recommendations, human onboarding drafts
+- `calculateTalentScore()` — dynamic overall score from retention, trust, engagement, brand fit, consistency, revenue, professionalism, availability, growth
+- `buildGrowthTalentRecommendations()` — Growth Network bridge (presenter match, finance expert, photographer need, series host fit)
+- localStorage store `studioOsTalentNetwork_v1`
+
+**AI Media demo seeds** (`src/workspaces/ai-media/talent-network/bootstrap.ts`):
+- 3 AI presenters: Maya Chen (Money Monday), Alex Rivera (Future Friday), Jordan Kim (Truth Tuesday)
+- Human talent: Sam Ortiz (photographer), Casey Lee (editor), Riley Park (human-creator onboarding)
+- Wardrobes, castings, series assignments, audience intel, character version history, contracts, onboarding drafts
+
+**Admin UI** (`/admin/studio/talent-network`):
+- 14 tabs: Overview, Active Productions, Performance, Analytics, Wardrobe, Contracts, Earnings, Campaigns, Availability, Growth, Auditions, Casting, History, Versioning
+- Hook: `useAdminStudioTalentNetworkState.ts`
+- Service stub: `talentNetworkStudioService`
+
+**Platform wiring:**
+- modules.ts, routes, nav, App.tsx lazy route, services registry, workspace bootstrap on load
+- KG: `node-talent-network`, `node-talent-registry`, `node-talent-maya-chen`, workflow `wf-talent-network`, edges to Growth Network, AI Media Network, Labs, Memory Bible
+- Memory Bible: naming `name-talent-network`, decision `dec-talent-network-v1`
+- moduleEnrichments, promotion `promo-talent-network-v1`, workspace creation engine/blueprints
+- Studio OS page + workspace dashboard link
+
+**Docs:** `docs/studio-os/talent-network.md`
+
+**Conventions:** Talent Agency (`/admin/studio/talent-agency`) remains Frontal Slayer casting dept — Talent Network is separate platform pillar. AI and human talent share one registry; character evolution preserves version history without overwrites.
+
+**Changes:** Talent Network core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
+

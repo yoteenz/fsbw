@@ -215,6 +215,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-ai-media-network', 'node-programming-network'],
     },
     {
+      id: 'name-talent-network',
+      officialName: 'Talent Network',
+      deprecatedNames: ['talent agency platform', 'ai talent system'],
+      usageNotes:
+        'Platform pillar — unified talent operating system for AI and human talent. Same registry architecture regardless of talent type. Distinct from legacy Talent Agency (Frontal Slayer casting dept). UI: TALENT NETWORK.',
+      relatedModules: ['talent-network'],
+      relatedGraphNodeIds: ['node-talent-network', 'node-talent-registry'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -405,6 +414,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-ai-media-network', 'node-programming-network', 'node-ai-media-pilot'],
       relatedManualChapter: 'CHAPTER · AI MEDIA NETWORK · DIGITAL MEDIA COMPANY',
+    },
+    {
+      id: 'dec-talent-network-v1',
+      title: 'Launch Talent Network v1.0 platform pillar',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'talent-network',
+      decision:
+        'Talent Network is a unified operating system for every personality in a workspace — AI presenters and human creators share the same registry, casting, wardrobe, contracts, performance score, and character evolution architecture. Only talent type differs.',
+      reason:
+        'Studio OS must eventually manage digital personalities, creators, contractors, and employees from one system — not separate AI vs human silos.',
+      alternativesConsidered: ['Separate AI talent vs human HR systems', 'Extend Talent Agency only', 'External talent CRM'],
+      outcome: 'Talent Network at /admin/studio/talent-network — core in src/studio-os-core/talent-network/, AI Media demo seeds in workspaces/ai-media/talent-network/.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-talent-network', 'node-talent-registry', 'node-growth-network'],
+      relatedManualChapter: 'CHAPTER · TALENT NETWORK · UNIFIED TALENT OS',
     },
   ],
   aiPreferences: {

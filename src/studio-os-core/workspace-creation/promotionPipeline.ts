@@ -82,6 +82,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
       updatedAt: now,
     },
+    {
+      id: 'promo-talent-network-v1',
+      featureName: 'Talent Network v1.0',
+      description: 'Unified talent OS — AI + human registry, casting, wardrobe, contracts, talent score, character evolution, Growth Network bridge.',
+      currentStage: 'develop',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
   ];
 }
 

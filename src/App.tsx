@@ -160,6 +160,7 @@ const AdminStudioAudienceBrainIntelligence = lazyWithRetry(() => import('./pages
 const AdminStudioGrowthNetwork = lazyWithRetry(() => import('./pages/admin/studio/growth-network/page'), 'AdminStudioGrowthNetwork');
 const AdminStudioLabs = lazyWithRetry(() => import('./pages/admin/studio/labs/page'), 'AdminStudioLabs');
 const AdminStudioAiMediaNetwork = lazyWithRetry(() => import('./pages/admin/studio/ai-media-network/page'), 'AdminStudioAiMediaNetwork');
+const AdminStudioTalentNetwork = lazyWithRetry(() => import('./pages/admin/studio/talent-network/page'), 'AdminStudioTalentNetwork');
 const AdminStudioVisionEngine = lazyWithRetry(() => import('./pages/admin/studio/vision-engine/page'), 'AdminStudioVisionEngine');
 const VisionSharePage = lazyWithRetry(() => import('./pages/vision/page'), 'VisionSharePage');
 const AdminStudioExecutiveCommandCenter = lazyWithRetry(() => import('./pages/admin/studio/executive-command-center/page'), 'AdminStudioExecutiveCommandCenter');
@@ -1004,6 +1005,11 @@ function App() {
           <Route path="studio/ai-media-network" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioAiMediaNetwork />
+            </Suspense>
+          } />
+          <Route path="studio/talent-network" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioTalentNetwork />
             </Suspense>
           } />
           <Route path="studio/vision-engine" element={

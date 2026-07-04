@@ -10,6 +10,7 @@ const CORE_PACKAGES = [
   'growth-network',
   'labs',
   'ai-media-network',
+  'talent-network',
   'interactive-manual',
   'onboarding-tutorial',
   'prompt-library',
