@@ -55,8 +55,22 @@ export function VisionEngineWorkspace() {
   const [shareSlug, setShareSlug] = useState('creative');
   const [shareLabel, setShareLabel] = useState('Creative Partner Vision Link');
 
-  const { workspaceId, manifest, modes, shareLinks, recorderJobs, saveCustomMode, createShareLink, queueRecorder } =
-    useAdminStudioVisionEngineState();
+  const [shareBusy, setShareBusy] = useState(false);
+  const [shareError, setShareError] = useState('');
+
+  const {
+    workspaceId,
+    manifest,
+    modes,
+    shareLinks,
+    shareLoading,
+    shareMigrationRequired,
+    recorderJobs,
+    saveCustomMode,
+    createShareLink,
+    removeShareLink,
+    queueRecorder,
+  } = useAdminStudioVisionEngineState();
 
   const activeModeId = selectedModeId || modes[0]?.id || '';
 
@@ -92,17 +106,25 @@ export function VisionEngineWorkspace() {
     saveCustomMode(copy);
   };
 
-  const createShare = () => {
+  const createShare = async () => {
     if (!activeModeId) return;
-    createShareLink({
-      slug: shareSlug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-'),
-      modeId: activeModeId,
-      workspaceId,
-      label: shareLabel,
-      autoplay: true,
-      presenterMode: false,
-      selfGuided: true,
-    });
+    setShareBusy(true);
+    setShareError('');
+    try {
+      await createShareLink({
+        slug: shareSlug.trim().toLowerCase().replace(/[^a-z0-9-]/g, '-'),
+        modeId: activeModeId,
+        workspaceId,
+        label: shareLabel,
+        autoplay: true,
+        presenterMode: false,
+        selfGuided: true,
+      });
+    } catch (e) {
+      setShareError(e instanceof Error ? e.message : 'Create failed');
+    } finally {
+      setShareBusy(false);
+    }
   };
 
   const modeSummary = useMemo(
@@ -280,7 +302,20 @@ export function VisionEngineWorkspace() {
       case 'share':
         return (
           <div className="space-y-3">
-            <SectionLabel>VISION SHARE™ — SECURE INTERACTIVE VISION LINKS</SectionLabel>
+            <SectionLabel>VISION SHARE™ — SERVER-PERSISTED · WORKS ON ANY DEVICE</SectionLabel>
+            <p className="text-[6px] font-futura uppercase" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+              PRODUCTION: https://fsbw.vercel.app/vision/creative · /vision/investor · /vision/agency (seeded in Supabase)
+            </p>
+            {shareMigrationRequired ? (
+              <p className="text-[6px] font-futura uppercase" style={{ color: ADMIN_STUDIO_THEME.accent }}>
+                RUN MIGRATION 20260704220000_vision_share_links ON SUPABASE
+              </p>
+            ) : null}
+            {shareError ? (
+              <p className="text-[6px] font-futura uppercase" style={{ color: ADMIN_STUDIO_THEME.accent }}>
+                {shareError}
+              </p>
+            ) : null}
             <input
               className="w-full p-2 text-[7px] font-futura uppercase border"
               style={panelStyle}
@@ -311,11 +346,17 @@ export function VisionEngineWorkspace() {
               type="button"
               className="w-full py-2 text-[7px] font-futura uppercase border"
               style={{ borderColor: ADMIN_STUDIO_THEME.accent, color: ADMIN_STUDIO_THEME.accent }}
-              onClick={createShare}
+              disabled={shareBusy}
+              onClick={() => void createShare()}
             >
-              Create Vision Link
+              {shareBusy ? 'Saving…' : 'Create Vision Link'}
             </button>
-            <SectionLabel>ACTIVE LINKS</SectionLabel>
+            <SectionLabel>ACTIVE LINKS {shareLoading ? '· LOADING…' : ''}</SectionLabel>
+            {shareLinks.length === 0 && !shareLoading ? (
+              <p className="text-[6px] font-futura uppercase" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+                NO LINKS YET — USE DEFAULT /vision/creative AFTER MIGRATION
+              </p>
+            ) : null}
             {shareLinks.map((link) => (
               <div key={link.id} className="p-2 border" style={panelStyle}>
                 <p className="text-[7px] font-futura uppercase">{link.label}</p>
@@ -325,6 +366,14 @@ export function VisionEngineWorkspace() {
                 <p className="text-[6px] font-futura uppercase mt-1" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
                   {link.views} VIEWS · AUTOPLAY {link.autoplay ? 'ON' : 'OFF'}
                 </p>
+                <button
+                  type="button"
+                  className="mt-2 text-[6px] font-futura uppercase underline"
+                  style={{ color: ADMIN_STUDIO_THEME.textSecondary }}
+                  onClick={() => void removeShareLink(link.slug)}
+                >
+                  Deactivate
+                </button>
               </div>
             ))}
           </div>

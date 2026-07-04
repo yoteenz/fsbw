@@ -50,6 +50,20 @@ Studio OS
 
 Active when `html[data-vision-engine="active"]`. Hides debug/editor chrome. Record mode: `data-vision-record="1"`.
 
+## Vision Share (server-persisted)
+
+Links live in **Supabase** (`vision_share_links`) and resolve via **`GET /api/vision/share?slug=`** — works on any device.
+
+**Default production URLs** (after migration `20260704220000_vision_share_links`):
+
+- `https://fsbw.vercel.app/vision/creative`
+- `https://fsbw.vercel.app/vision/investor`
+- `https://fsbw.vercel.app/vision/agency`
+
+**Admin:** `/admin/studio/vision-engine` → Share tab · `POST /api/admin/vision-share`
+
+Optional password on create. Stakeholders open the link — no admin login required.
+
 ## Deprecated
 
 **Guided Tour** (Frontal Slayer-specific) is replaced by Vision Engine. Do not reintroduce public `?guidedTour=` URL bootstrap or bottom-right launcher.

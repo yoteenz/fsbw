@@ -36154,3 +36154,30 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** vision-engine core + runtime + FS adapter + admin UI + wiring + docs; deleted guided-tour; `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Vision Share server persistence + fsbw.vercel.app stakeholder links
+
+**Context (full chat arc):** Milestone 27 Growth Network → Guided Tour → Vision Engine™ elevation → user asked how to enable old `VITE_GUIDED_TOUR_TOKEN` launcher (obsolete) → clarified Vision Engine admin launch + localStorage Vision Share limitation → user requested **server-persisted Vision Share** built next; production site is **fsbw.vercel.app** (not frontalslayer.com); user reported site not loading.
+
+**Vision Share server persistence (shipped):**
+- Supabase migration `20260704220000_vision_share_links` — `vision_share_links` + `vision_share_events` tables; RLS enabled; API uses service role
+- Seeded default links: `creative`, `investor`, `agency` → Frontal Slayer Vision Modes
+- **Public API:** `GET /api/vision/share?slug=` — resolve link, optional password, increment views
+- **Admin API:** `GET/POST/DELETE /api/admin/vision-share` — create/list/deactivate (admin auth)
+- Client: `src/utils/visionShareApi.ts`; async `/vision/:slug` page with password gate; admin Share tab uses server; localStorage fallback for dev offline
+- Removed sync `bootstrapVisionShareFromPath` from `main.tsx` (page handles async bootstrap)
+
+**Stakeholder demo URLs (production):**
+- `https://fsbw.vercel.app/vision/creative`
+- `https://fsbw.vercel.app/vision/investor`
+- `https://fsbw.vercel.app/vision/agency`
+
+**Admin create:** `/admin/studio/vision-engine` → Share tab (signed-in admin).
+
+**fsbw.vercel.app loading:** curl checks returned HTTP 200 + JS assets OK at time of fix — if blank screen, try hard refresh / clear cache / check browser console (stale chunk after deploy).
+
+**Obsolete:** `VITE_GUIDED_TOUR_TOKEN` — do not set; Guided Tour public launcher removed.
+
+**Changes:** supabase migration, api/vision/share, api/admin/vision-share, api/_lib/visionShareDb, visionShareApi, shareBootstrap, vision page, admin hook/workspace, docs, `motherboard/MEMORY.md`.
+
