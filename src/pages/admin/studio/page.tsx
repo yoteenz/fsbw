@@ -1,18 +1,25 @@
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { AdminStudioHubCard } from '../../../components/admin/studio/AdminStudioHubCard';
-import {
-  ADMIN_STUDIO_DASHBOARD_FOOTER,
-  ADMIN_STUDIO_DASHBOARD_ITEMS,
-  ADMIN_STUDIO_DASHBOARD_METRIC,
-  ADMIN_STUDIO_HUB_CARDS,
-  ADMIN_STUDIO_HUB_SUBTITLE,
-} from '../../../utils/adminStudioDemo';
+import { useWorkspace } from '../../../studio-os/context/WorkspaceProvider';
+import { STUDIO_OS_ROUTES } from '../../../studio-os/workspace/routes';
+import { getWorkspaceStudioHubFooter, getWorkspaceStudioHubSubtitle } from '../../../studio-os/workspace/loader';
 
 export default function AdminStudioPage() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
+  const { workspace, dataAdapter } = useWorkspace();
+
+  if (!workspace.studioEnabled) {
+    return <Navigate to={STUDIO_OS_ROUTES.workspaceShell(workspace.id)} replace />;
+  }
+
+  const hubSubtitle = getWorkspaceStudioHubSubtitle(workspace);
+  const hubFooter = getWorkspaceStudioHubFooter(workspace);
+  const hubCards = dataAdapter.studioHub.cards;
+  const dashboardItems = dataAdapter.studioHub.dashboardItems;
+  const dashboardMetric = dataAdapter.studioHub.dashboardMetric;
 
   return (
     <div className="min-h-screen relative">
@@ -55,17 +62,17 @@ export default function AdminStudioPage() {
                   className="text-black font-bold text-xl flex-shrink-0 ml-2"
                   style={{ fontFamily: '"Covered By Your Grace", "Covered By Your Grace Preload", sans-serif' }}
                 >
-                  {ADMIN_STUDIO_DASHBOARD_METRIC}
+                  {dashboardMetric}
                 </span>
               </div>
               <p
                 className="mt-2 text-[10px] font-futura uppercase"
                 style={{ fontWeight: 515, color: '#808080', lineHeight: 1.4 }}
               >
-                {ADMIN_STUDIO_HUB_SUBTITLE}
+                {hubSubtitle}
               </p>
               <div className="mt-3 space-y-2">
-                {ADMIN_STUDIO_DASHBOARD_ITEMS.map((item) => (
+                {dashboardItems.map((item) => (
                   <div key={item.label} className="text-[9px] text-left">
                     <span className="text-black font-medium font-futura uppercase" style={{ fontWeight: 500 }}>
                       {item.label}:{' '}
@@ -87,13 +94,13 @@ export default function AdminStudioPage() {
                   className="text-[8px] font-futura uppercase"
                   style={{ fontWeight: 515, color: '#EB1C24' }}
                 >
-                  {ADMIN_STUDIO_DASHBOARD_FOOTER}
+                  {hubFooter}
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 items-start">
-              {ADMIN_STUDIO_HUB_CARDS.map((card) => (
+              {hubCards.map((card) => (
                 <AdminStudioHubCard
                   key={card.id}
                   card={card}

@@ -11,7 +11,6 @@ import { AdminStudioExecutiveRiskCard } from '../../../../components/admin/studi
 import { AdminStudioCreativeScoreRing } from '../../../../components/admin/studio/AdminStudioCreativeWidget';
 import { useAdminStudioExecutiveCommandCenter } from '../../../../hooks/useAdminStudioExecutiveCommandCenterState';
 import {
-  ADMIN_STUDIO_EXECUTIVE_COMMAND_CENTER_SUBTITLE,
   EXECUTIVE_OVERVIEW_CARDS,
   EXECUTIVE_TABS,
   EXECUTIVE_REPORTING_CHAIN,
@@ -30,6 +29,7 @@ import {
   type ExecutiveTabId,
   type ExecutiveOverviewCardId,
 } from '../../../../utils/adminStudioExecutiveCommandCenterDemo';
+import { useWorkspace } from '../../../../studio-os/context/WorkspaceProvider';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 const CARD_TAB_MAP: Partial<Record<ExecutiveOverviewCardId, ExecutiveTabId>> = {
@@ -50,13 +50,15 @@ const CARD_TAB_MAP: Partial<Record<ExecutiveOverviewCardId, ExecutiveTabId>> = {
 export default function AdminStudioExecutiveCommandCenterPage() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<ExecutiveTabId>('command');
+  const { getModuleSubtitle } = useWorkspace();
   const { searchQuery, setSearchQuery, searchResults, decisions, setDecisionStatus, pendingDecisionCount } = useAdminStudioExecutiveCommandCenter();
   const briefing = EXECUTIVE_CREATIVE_BRIEFING;
+  const subtitle = getModuleSubtitle('executive-command-center') ?? 'ONE COMPANY. ONE VIEW.';
 
   return (
     <AdminStudioStageShell
       title="THE STUDIO"
-      subtitle={ADMIN_STUDIO_EXECUTIVE_COMMAND_CENTER_SUBTITLE}
+      subtitle={subtitle}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"
       onBack={() => navigate('/admin/dashboard')}

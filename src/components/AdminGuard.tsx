@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
+import { WorkspaceProvider } from '../studio-os/context/WorkspaceProvider';
 import { isSignedIn, canAccessAdminPages } from '../utils/adminAuth';
 
 /**
@@ -40,5 +41,9 @@ export default function AdminGuard() {
     return null;
   }
 
-  return <Outlet />;
+  return (
+    <WorkspaceProvider>
+      <Outlet />
+    </WorkspaceProvider>
+  );
 }

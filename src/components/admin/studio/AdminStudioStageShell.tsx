@@ -1,7 +1,10 @@
 import type { ReactNode } from 'react';
+import { Navigate } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
+import { useWorkspace } from '../../../studio-os/context/WorkspaceProvider';
+import { STUDIO_OS_ROUTES } from '../../../studio-os/workspace/routes';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 type AdminStudioStageShellProps = {
@@ -30,6 +33,11 @@ export function AdminStudioStageShell({
   void _accentHex;
   useRequireAdminPageAccess();
   const navigate = useNavigate();
+  const { workspace } = useWorkspace();
+
+  if (!workspace.studioEnabled) {
+    return <Navigate to={STUDIO_OS_ROUTES.workspaceShell(workspace.id)} replace />;
+  }
 
   const handleBack = onBack ?? (() => navigate(breadcrumbParentPath));
 

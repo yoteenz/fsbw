@@ -163,6 +163,8 @@ const AdminStudioAssetDirectorStudioDetail = lazyWithRetry(() => import('./pages
 const AdminStudioAssetDirectorTalent = lazyWithRetry(() => import('./pages/admin/studio/asset-director/talent/page'), 'AdminStudioAssetDirectorTalent');
 const AdminStudioAssetDirectorTalentDetail = lazyWithRetry(() => import('./pages/admin/studio/asset-director/talent/detail/page'), 'AdminStudioAssetDirectorTalentDetail');
 const AdminStudioAssetDirectorSection = lazyWithRetry(() => import('./pages/admin/studio/asset-director/section/page'), 'AdminStudioAssetDirectorSection');
+const AdminStudioOs = lazyWithRetry(() => import('./pages/admin/studio-os/page'), 'AdminStudioOs');
+const AdminStudioOsWorkspaceShell = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/page'), 'AdminStudioOsWorkspaceShell');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -758,6 +760,16 @@ function App() {
           <Route path="backend" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminBackend />
+            </Suspense>
+          } />
+          <Route path="studio-os/workspace/:workspaceId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOsWorkspaceShell />
+            </Suspense>
+          } />
+          <Route path="studio-os" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOs />
             </Suspense>
           } />
           <Route path="studio/shows/:showId" element={

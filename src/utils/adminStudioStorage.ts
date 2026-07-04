@@ -1,5 +1,7 @@
 /** Centralized Studio localStorage keys — single source for Phase 2 scaling. */
 
+import { scopeStorageKey, getRuntimeActiveWorkspaceId } from '../studio-os/workspace/storage';
+
 export const ADMIN_STUDIO_STORAGE_KEYS = {
   shows: 'adminStudioShowsEditable_v1',
   contentPacks: 'adminStudioContentPacksEditable_v1',
@@ -49,18 +51,29 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];
 
+function resolveScopedKey(key: AdminStudioStorageKey): string {
+  return scopeStorageKey(key, getRuntimeActiveWorkspaceId());
+}
+
 export function readStudioJson<T>(key: AdminStudioStorageKey): T | null {
   try {
-    const raw = localStorage.getItem(key);
-    if (!raw) return null;
-    return JSON.parse(raw) as T;
+    const scoped = localStorage.getItem(resolveScopedKey(key));
+    if (scoped) return JSON.parse(scoped) as T;
+    // Legacy migration: unscoped key → workspace-scoped
+    const legacy = localStorage.getItem(key);
+    if (legacy) {
+      const parsed = JSON.parse(legacy) as T;
+      writeStudioJson(key, parsed);
+      return parsed;
+    }
+    return null;
   } catch {
     return null;
   }
 }
 
 export function writeStudioJson(key: AdminStudioStorageKey, value: unknown): void {
-  localStorage.setItem(key, JSON.stringify(value));
+  localStorage.setItem(resolveScopedKey(key), JSON.stringify(value));
 }
 
 export function patchStudioRecord<T extends Record<string, unknown>>(

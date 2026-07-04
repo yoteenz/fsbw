@@ -1194,7 +1194,7 @@ export default function AdminDashboard() {
         navigate('/admin/backend');
         break;
       case 'STUDIO':
-        navigate('/admin/studio');
+        navigate('/admin/studio-os');
         break;
       default:
         break;

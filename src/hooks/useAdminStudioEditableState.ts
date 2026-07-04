@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { AdminStudioShow } from '../utils/adminStudioShowsDemo';
-import { getAdminStudioShowById, ADMIN_STUDIO_DEFAULT_SHOWS } from '../utils/adminStudioShowsDemo';
 import type {
   AdminStudioContentPack,
   AdminStudioContentPackTabId,
 } from '../utils/adminStudioContentPacksDemo';
-import { getAdminStudioContentPackById, ADMIN_STUDIO_DEFAULT_CONTENT_PACKS } from '../utils/adminStudioContentPacksDemo';
 import type { AdminStudioDistributionTarget, AdminStudioDistributionTargetId } from '../utils/adminStudioDistributionDemo';
 import { mergeDistributionTargets } from '../utils/adminStudioDistributionDemo';
+import { getActiveWorkspaceDataAdapter } from '../studio-os/context/WorkspaceProvider';
 import {
   ADMIN_STUDIO_STORAGE_KEYS,
   patchStudioRecord,
@@ -65,7 +64,8 @@ function mergePack(defaults: AdminStudioContentPack, patch?: Partial<AdminStudio
 }
 
 export function useAdminStudioShow(showId: string | undefined) {
-  const defaults = showId ? getAdminStudioShowById(showId) : undefined;
+  const { shows } = getActiveWorkspaceDataAdapter();
+  const defaults = showId ? shows.getById(showId) : undefined;
   const [show, setShow] = useState<AdminStudioShow | null>(() => {
     if (!defaults || !showId) return null;
     const store = readStudioJson<ShowsStore>(ADMIN_STUDIO_STORAGE_KEYS.shows);
@@ -98,7 +98,8 @@ export function useAdminStudioShow(showId: string | undefined) {
 }
 
 export function useAdminStudioContentPack(packId: string | undefined) {
-  const defaults = packId ? getAdminStudioContentPackById(packId) : undefined;
+  const { contentPacks } = getActiveWorkspaceDataAdapter();
+  const defaults = packId ? contentPacks.getById(packId) : undefined;
   const [pack, setPack] = useState<AdminStudioContentPack | null>(() => {
     if (!defaults || !packId) return null;
     const store = readStudioJson<PacksStore>(ADMIN_STUDIO_STORAGE_KEYS.contentPacks);
@@ -180,11 +181,13 @@ export function useAdminStudioContentPack(packId: string | undefined) {
 }
 
 export function listAdminStudioShows(): AdminStudioShow[] {
+  const { shows } = getActiveWorkspaceDataAdapter();
   const store = readStudioJson<ShowsStore>(ADMIN_STUDIO_STORAGE_KEYS.shows) ?? {};
-  return ADMIN_STUDIO_DEFAULT_SHOWS.map((defaults) => mergeShow(defaults, store[defaults.id]));
+  return shows.listDefaults().map((defaults) => mergeShow(defaults, store[defaults.id]));
 }
 
 export function listAdminStudioContentPacks(): AdminStudioContentPack[] {
+  const { contentPacks } = getActiveWorkspaceDataAdapter();
   const store = readStudioJson<PacksStore>(ADMIN_STUDIO_STORAGE_KEYS.contentPacks) ?? {};
-  return ADMIN_STUDIO_DEFAULT_CONTENT_PACKS.map((defaults) => mergePack(defaults, store[defaults.id]));
+  return contentPacks.listDefaults().map((defaults) => mergePack(defaults, store[defaults.id]));
 }

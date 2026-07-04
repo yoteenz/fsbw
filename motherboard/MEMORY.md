@@ -34851,3 +34851,27 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Route `/admin/studio/asset-director`; detail routes `studios/:studioId`, `talent/:talentId`, `section/:sectionId`; storage key `adminStudioAssetDirector_v1`; work on `master` only.
 
+---
+
+## 2026-07-04 — StudioOS platform refactor (multi-brand operating system)
+
+**Context:** User milestone to transform Frontal Slayer Studio admin into reusable multi-brand OS **StudioOS** — foundational architecture refactor only. Do NOT redesign Frontal Slayer admin, remove functionality, modify customer-facing pages, or change UX except workspace selection. No new APIs.
+
+**Topics covered:**
+- **Two layers:** StudioOS Core (`src/studio-os/`) — industry-agnostic modules, vocabulary, platform config; Workspace Layer (`src/workspaces/`) — brand config, data adapters, assets.
+- **Platform identity:** `STUDIO_OS_PLATFORM` in `src/studio-os/config/platform.ts` — name StudioOS, tagline *The Operating System for Modern Brands*, owner VXD Inc. (independent from any Workspace).
+- **Vocabulary:** Workspace, Studio, Project, Content Pack, Asset — `src/studio-os/core/vocabulary.ts`.
+- **Workspaces:** FRONTAL SLAYER (active, full studio), SANDBOX / FUTURE BRAND / FUTURE CLIENT (placeholders, no data).
+- **Workspace system:** schema, `WorkspaceProvider`, loader, storage scoping, routing helpers, permissions stubs, data adapters.
+- **Application flow:** `/admin/studio-os` — StudioOS + tagline + Select Workspace; FRONTAL SLAYER → existing `/admin/studio/executive-command-center` unchanged; dashboard STUDIO card → `/admin/studio-os`.
+- **Brand config:** all Frontal Slayer module subtitles + brand rules in `src/workspaces/frontal-slayer/config.ts`; demo seeds bridged via `dataAdapter.ts`.
+- **Module awareness:** `useAdminStudioEditableState` uses `getActiveWorkspaceDataAdapter()`; Executive Command Center + studio hub read workspace copy; `AdminStudioStageShell` guards non-studio workspaces.
+- **Storage:** `adminStudioStorage.ts` keys scoped `studioOs_ws_{workspaceId}_*` with legacy migration.
+- **Docs:** `docs/studio-os/` (8 platform docs), `docs/frontal-slayer/` (owner's manual, brand rules, shows, content packs).
+
+**Decisions / outcomes:** Frontal Slayer UX preserved after workspace selection; only new visible UX is workspace picker. Core contains no brand-specific knowledge. Build verified.
+
+**Changes:** `src/studio-os/**`, `src/workspaces/**`, `src/pages/admin/studio-os/**`, `AdminGuard` + `WorkspaceProvider`, `AdminStudioStageShell`, `useAdminStudioEditableState`, `adminStudioStorage`, executive-command-center + studio hub pages, `App.tsx` routes, dashboard STUDIO nav, `motherboard/CORE.md`.
+
+**Conventions:** Platform rename only in `platform.ts`; new workspaces register in `src/workspaces/index.ts`; platform docs never contain Frontal Slayer knowledge.
+
