@@ -1,6 +1,8 @@
 {
   "welcome": {
+    "sceneMasterImage": "public/assets/email/heroes/welcome-scene-master.webp",
     "noirMannequinAngle": "front",
-    "promptAddon": "**IMAGE 2 = NOIR mannequin reference:** Match this exact gray textured plaster mannequin bust — slate gray stone skin, sculpted shoulders, FRONTAL SLAYER chest logo. Discard the brick background from the reference; place the bust on the bright white marble salon floor beside the vase. Hair: polished bone-straight center middle-part NOIR lace-front unit — mirror-smooth strands, crisp center part, high healthy sheen (flat-iron salon styling). NOT a white plastic salon mannequin."
+    "surgicalScene": "Surgical inpaint edit of IMAGE 1 (approved welcome hero). Preserve the EXACT composition — same camera, framing, vase position, rose bouquet, quartz crystals, crimson rose petals scattered on the marble floor, lighting, and upper marble breathing room. DO NOT rearrange, recrop, zoom, or redesign the still-life. ONLY change: (1) replace the white salon mannequin with the NOIR gray textured plaster bust matching IMAGE 2 skin texture and FRONTAL SLAYER chest logo, (2) hair becomes polished bone-straight center middle-part NOIR lace-front unit with mirror-smooth sheen, (3) ADD 3–5 scattered brilliant-cut faceted diamonds on the marble near the vase — do not remove existing petals or crystals.",
+    "promptAddon": "**IMAGE 1 = OUTPUT CANVAS — preserve this photograph's composition pixel-for-pixel except the three edits below.** **IMAGE 2 = NOIR mannequin reference** — copy gray plaster bust texture and chest logo only; ignore brick background. Minimal edit pass only — no new layout, no missing rose petals."
   }
 }

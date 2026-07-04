@@ -1,6 +1,6 @@
 import heroData from './emailHeroPrompts.data.json' with { type: 'json' };
 import meta from './emailHeroPromptMeta.json' with { type: 'json' };
-import { emailHeroEditRefPromptAddon } from './emailHeroEditRefs.js';
+import { emailHeroEditRefPromptAddon, emailHeroSurgicalScene } from './emailHeroEditRefs.js';
 import type { EmailTemplateType } from './types.js';
 
 /** Official Frontal Slayer SLAYER wordmark PNG — composited onto heroes in post (`public/assets/email/slayer-logo.png`). */
@@ -22,8 +22,11 @@ export const EMAIL_HERO_PURPOSE_SCENES = heroData.purposeScenes as Record<EmailT
 export const EMAIL_HERO_PROMPTS = EMAIL_HERO_PURPOSE_SCENES;
 
 export function buildEmailHeroPrompt(templateType: EmailTemplateType): string {
+  const surgicalScene = emailHeroSurgicalScene(templateType);
   const scene =
-    EMAIL_HERO_PURPOSE_SCENES[templateType] || EMAIL_HERO_PURPOSE_SCENES.welcome;
+    surgicalScene ||
+    EMAIL_HERO_PURPOSE_SCENES[templateType] ||
+    EMAIL_HERO_PURPOSE_SCENES.welcome;
   const editRefAddon = emailHeroEditRefPromptAddon(templateType);
   return [
     meta.composition,

@@ -34995,4 +34995,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`api/_lib/email/emailHeaderNavLinks.ts`**, **`layout.ts`**, **`emailLayoutConfig.ts`**, **`src/utils/emailLayoutDebug.ts`**.
 
+---
+
+## 2026-07-04 — Welcome hero: surgical edit (preserve composition)
+
+**Context:** User said the prior welcome regen (**09db3365**) changed the **whole image** when they only wanted **diamonds added**, **NOIR gray mannequin + bone-straight middle-part hair**, and **rose petals kept on the floor** — same approved editorial composition (**a03386db**), not a new still-life.
+
+**Fix:**
+- Saved approved hero as **`public/assets/email/heroes/welcome-scene-master.webp`** (from **a03386db**).
+- **`emailHeroEditRefs.json`**: **`sceneMasterImage`** + **`surgicalScene`** — Fal edits IMAGE 1 in place (no marble regen); IMAGE 2 = gray-brick mannequin for bust/hair texture only.
+- **`emailHeroEditRefs.ts`**, **`emailHeroPrompts.ts`**, **`generate-email-hero-assets.mjs`**, **`generateHeroAsset.ts`**: scene-master path uses approved WebP as primary canvas; surgical scene replaces long purpose prompt for welcome.
+- Restored base **`welcome`** purpose scene wording + explicit **rose petals on floor**; diamonds/mannequin/hair handled only in surgical edit block.
+
+**Regen:** **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-surgical.log`**. Other templates unchanged.
+
 

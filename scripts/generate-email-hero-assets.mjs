@@ -104,8 +104,22 @@ function resolveTemplateEditRefUrls(templateType, editRefs) {
   return [];
 }
 
+function resolveSceneMasterPath(templateType, editRefs) {
+  const rel = editRefs[templateType]?.sceneMasterImage?.trim();
+  if (!rel) return null;
+  const abs = join(ROOT, rel.replace(/^\//, ''));
+  return existsSync(abs) ? abs : null;
+}
+
+function resolveSurgicalScene(templateType, editRefs) {
+  const entry = editRefs[templateType];
+  if (!entry?.surgicalScene?.trim() || !resolveSceneMasterPath(templateType, editRefs)) return null;
+  return entry.surgicalScene.trim();
+}
+
 function buildEmailHeroPrompt(templateType, purposeScenes, meta, editRefs) {
-  const scene = purposeScenes[templateType] || purposeScenes.welcome;
+  const surgicalScene = resolveSurgicalScene(templateType, editRefs);
+  const scene = surgicalScene || purposeScenes[templateType] || purposeScenes.welcome;
   if (!scene) return null;
   const editRefAddon = editRefs[templateType]?.promptAddon?.trim();
   return [
@@ -180,7 +194,9 @@ async function falUpload(fal, filePath) {
   const bytes = readFileSync(filePath);
   const blob = new Blob([bytes]);
   const name = filePath.split('/').pop() || 'ref.png';
-  return fal.storage.upload(new File([blob], name, { type: 'image/png' }));
+  const lower = name.toLowerCase();
+  const type = lower.endsWith('.webp') ? 'image/webp' : lower.endsWith('.jpg') || lower.endsWith('.jpeg') ? 'image/jpeg' : 'image/png';
+  return fal.storage.upload(new File([blob], name, { type }));
 }
 
 async function falUploadFromUrl(fal, url) {
@@ -284,7 +300,28 @@ async function main() {
   }
 
   const templateEditRefUrlCache = new Map();
+  const sceneMasterUrlCache = new Map();
   async function resolveFalImageUrls(templateType) {
+    const sceneMasterPath = resolveSceneMasterPath(templateType, editRefs);
+    if (sceneMasterPath) {
+      if (!sceneMasterUrlCache.has(sceneMasterPath)) {
+        console.log(`Uploading scene master for ${templateType}:`, sceneMasterPath);
+        sceneMasterUrlCache.set(sceneMasterPath, await falUpload(fal, sceneMasterPath));
+      }
+      const urls = [sceneMasterUrlCache.get(sceneMasterPath)];
+
+      const editRefUrls = resolveTemplateEditRefUrls(templateType, editRefs);
+      for (const refUrl of editRefUrls) {
+        if (!templateEditRefUrlCache.has(refUrl)) {
+          console.log(`Uploading edit ref for ${templateType}:`, refUrl);
+          templateEditRefUrlCache.set(refUrl, await falUploadFromUrl(fal, refUrl));
+        }
+        urls.push(templateEditRefUrlCache.get(refUrl));
+      }
+
+      return urls;
+    }
+
     const urls = [marbleUrl];
     if (globalExtraUrl) urls.push(globalExtraUrl);
 

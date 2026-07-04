@@ -5,7 +5,7 @@ import {
   EMAIL_HERO_LOGO_REF_RELATIVE,
   emailHeroPromptFor,
 } from './emailHeroPrompts.js';
-import { emailHeroEditRefImageUrls } from './emailHeroEditRefs.js';
+import { emailHeroEditRefImageUrls, emailHeroSceneMasterImagePath } from './emailHeroEditRefs.js';
 import { emailHeroStoragePath } from './heroImages.js';
 import type { EmailTemplateType } from './types.js';
 
@@ -32,7 +32,9 @@ function logoRefPath(): string {
 async function falUpload(fal: { storage: { upload: (f: File) => Promise<string> } }, filePath: string) {
   const bytes = readFileSync(filePath);
   const name = filePath.split('/').pop() || 'ref.png';
-  return fal.storage.upload(new File([bytes], name, { type: 'image/png' }));
+  const lower = name.toLowerCase();
+  const type = lower.endsWith('.webp') ? 'image/webp' : lower.endsWith('.jpg') || lower.endsWith('.jpeg') ? 'image/jpeg' : 'image/png';
+  return fal.storage.upload(new File([bytes], name, { type }));
 }
 
 async function falUploadFromUrl(fal: { storage: { upload: (f: File) => Promise<string> } }, url: string) {
@@ -86,10 +88,17 @@ export async function generateAndUploadEmailHero(
   fal.config({ credentials: falKey });
 
   const marbleUrl = await falUpload(fal, marbleRef);
-  const imageUrls = [marbleUrl];
+  const imageUrls: string[] = [];
+
+  const sceneMasterPath = emailHeroSceneMasterImagePath(templateType);
+  if (sceneMasterPath) {
+    imageUrls.push(await falUpload(fal, sceneMasterPath));
+  } else {
+    imageUrls.push(marbleUrl);
+  }
 
   const extraRef = process.env.REFERENCE_IMAGE?.trim();
-  if (extraRef) {
+  if (extraRef && !sceneMasterPath) {
     const abs = join(repoRoot(), extraRef.replace(/^\//, ''));
     if (existsSync(abs)) {
       imageUrls.push(await falUpload(fal, abs));
