@@ -109,6 +109,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
       updatedAt: now,
     },
+    {
+      id: 'promo-ecosystem-v1',
+      featureName: 'Studio OS Ecosystem v1.0',
+      description: 'Business operating ecosystem — publishing center, dependency/installation engines, creator/developer centers, asset marketplaces, enterprise libraries.',
+      currentStage: 'develop',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
   ];
 }
 

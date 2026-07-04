@@ -442,7 +442,27 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
       'ECONOMIC DASHBOARD',
       'ECOSYSTEM HEALTH',
     ],
-    relatedModuleIds: ['marketplace', 'growth-network', 'talent-network', 'memory-bible', 'knowledge-hub', 'labs', 'ai-media-network'],
+    relatedModuleIds: ['marketplace', 'growth-network', 'talent-network', 'memory-bible', 'knowledge-hub', 'labs', 'ai-media-network', 'ecosystem'],
+  },
+  ecosystem: {
+    architecture:
+      'Ecosystem hub → 21 categories → Publishing center (draft→retired) → Review checklist → Listing pages → Dependency engine → Installation engine (backup, deps, KG, Memory Bible) → Update manager → Developer + Creator centers → Recommendation engine → Analytics → Enterprise private libraries → Community (verified creators, badges) → Every asset = KG node.',
+    versionIntroduced: 'Milestone 33',
+    workflowNodes: [
+      'ECOSYSTEM HUB',
+      'PUBLISHING CENTER',
+      'ECOSYSTEM REVIEW',
+      'DEPENDENCY ENGINE',
+      'INSTALLATION ENGINE',
+      'UPDATE MANAGER',
+      'DEVELOPER CENTER',
+      'CREATOR CENTER',
+      'RECOMMENDATIONS',
+      'ENTERPRISE LIBRARY',
+      'COMMUNITY',
+      'KNOWLEDGE GRAPH',
+    ],
+    relatedModuleIds: ['business-model-engine', 'marketplace', 'memory-bible', 'knowledge-hub', 'labs', 'ai-media-network', 'growth-network'],
   },
   'content-packs': {
     relatedModuleIds: ['production-builder', 'publishing-queue', 'lounge-tv'],

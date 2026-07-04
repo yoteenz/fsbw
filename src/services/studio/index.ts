@@ -84,6 +84,9 @@ export type { MarketplaceSnapshot, MarketplaceStudioService } from './marketplac
 export { businessModelEngineStudioService, BME_INHERITANCE_CHAIN, ADMIN_STUDIO_BME_SUBTITLE } from './businessModelEngine/service';
 export type { BusinessModelEngineSnapshot, BusinessModelEngineStudioService } from './businessModelEngine/service';
 
+export { ecosystemStudioService, ECOSYSTEM_INHERITANCE_CHAIN, ADMIN_STUDIO_ECOSYSTEM_SUBTITLE } from './ecosystem/service';
+export type { EcosystemSnapshot, EcosystemStudioService } from './ecosystem/service';
+
 export { visionEngineStudioService, VISION_ENGINE_INHERITANCE_CHAIN } from './visionEngine/service';
 export type { VisionEngineSnapshot } from './visionEngine/service';
 
@@ -178,6 +181,7 @@ import { aiMediaNetworkStudioService } from './aiMediaNetwork/service';
 import { talentNetworkStudioService } from './talentNetwork/service';
 import { marketplaceStudioService } from './marketplace/service';
 import { businessModelEngineStudioService } from './businessModelEngine/service';
+import { ecosystemStudioService } from './ecosystem/service';
 import { executiveCommandCenterStudioService } from './executiveCommandCenter/service';
 import { legacySystemStudioService } from './legacySystem/service';
 import { assetDirectorStudioService } from './assetDirector/service';
@@ -216,6 +220,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   talentNetworkStudioService,
   marketplaceStudioService,
   businessModelEngineStudioService,
+  ecosystemStudioService,
   executiveCommandCenterStudioService,
   legacySystemStudioService,
   assetDirectorStudioService,

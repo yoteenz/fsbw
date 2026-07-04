@@ -565,6 +565,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'ecosystem',
+    title: 'STUDIO OS ECOSYSTEM',
+    purpose: 'Business operating ecosystem — blueprints, DNA, automations, executives. Install complete operating systems, not plugins.',
+    route: p('ecosystem'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '14 TABS',
+    ctaLabel: 'OPEN ECOSYSTEM',
+    moduleKey: 'ecosystem',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

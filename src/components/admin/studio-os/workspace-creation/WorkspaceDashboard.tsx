@@ -151,6 +151,11 @@ export function WorkspaceDashboard({
                 OPEN BUSINESS MODEL ENGINE
               </button>
             ) : null}
+            {activeTab === 'ecosystem' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/ecosystem')}>
+                OPEN STUDIO OS ECOSYSTEM
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

@@ -242,6 +242,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-business-model-engine', 'node-membership-engine', 'node-wallet-system'],
     },
     {
+      id: 'name-studio-os-ecosystem',
+      officialName: 'Studio OS Ecosystem',
+      deprecatedNames: ['app store', 'plugin marketplace', 'extension store'],
+      usageNotes:
+        'Platform pillar — business operating ecosystem for community-created blueprints, DNA, automations, executives. Install complete operating systems, not plugins. UI: STUDIO OS ECOSYSTEM.',
+      relatedModules: ['ecosystem'],
+      relatedGraphNodeIds: ['node-studio-os-ecosystem', 'node-publishing-center', 'node-installation-engine'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -480,6 +489,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-business-model-engine', 'node-membership-engine', 'node-wallet-system', 'node-marketplace'],
       relatedManualChapter: 'CHAPTER · BUSINESS MODEL ENGINE · ECONOMIC ENGINE',
+    },
+    {
+      id: 'dec-ecosystem-v1',
+      title: 'Launch Studio OS Ecosystem v1.0',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'ecosystem',
+      decision:
+        'Studio OS Ecosystem is the business operating ecosystem — community-created blueprints, DNA, automations, executives, and extensions. Publishing center with review workflow, dependency + installation engines, creator/developer centers, recommendation engine, enterprise private libraries, community profiles. Not an app store — install complete operating systems for specific business models.',
+      reason:
+        'Studio OS must become where businesses build tools that help other businesses succeed. Every contribution strengthens the platform; creators are rewarded for valuable operating systems and infrastructure.',
+      alternativesConsidered: ['Traditional app store model', 'Plugin-only extensions', 'External marketplace integration'],
+      outcome: 'Ecosystem at /admin/studio/ecosystem — core in src/studio-os-core/ecosystem/, AI Media seeds in workspaces/ai-media/ecosystem/.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-studio-os-ecosystem', 'node-publishing-center', 'node-installation-engine', 'node-business-model-engine'],
+      relatedManualChapter: 'CHAPTER · STUDIO OS ECOSYSTEM · BUSINESS OPERATING ECOSYSTEM',
     },
   ],
   aiPreferences: {

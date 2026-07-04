@@ -45,6 +45,7 @@ export type AdminStudioSectionId =
   | 'talent-network'
   | 'marketplace'
   | 'business-model-engine'
+  | 'ecosystem'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'

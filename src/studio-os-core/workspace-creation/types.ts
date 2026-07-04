@@ -42,6 +42,7 @@ export type BlueprintModuleId =
   | 'talent-network'
   | 'marketplace'
   | 'business-model-engine'
+  | 'ecosystem'
   | 'social-accounts'
   | 'system-health'
   | 'promotion-center'

@@ -18,6 +18,7 @@ import { bootstrapAiMediaNetwork } from './ai-media/network/bootstrap';
 import { bootstrapAiMediaTalentNetwork } from './ai-media/talent-network/bootstrap';
 import { bootstrapAiMediaMarketplace } from './ai-media/marketplace/bootstrap';
 import { bootstrapAiMediaBusinessModelEngine } from './ai-media/business-model-engine/bootstrap';
+import { bootstrapAiMediaEcosystem } from './ai-media/ecosystem/bootstrap';
 import { bootstrapFrontalSlayerVisionEngine } from './frontal-slayer/vision-engine';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
@@ -42,6 +43,7 @@ bootstrapAiMediaNetwork();
 bootstrapAiMediaTalentNetwork();
 bootstrapAiMediaMarketplace();
 bootstrapAiMediaBusinessModelEngine();
+bootstrapAiMediaEcosystem();
 bootstrapFrontalSlayerVisionEngine();
 
 const STATIC_WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {
