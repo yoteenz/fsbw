@@ -26,6 +26,7 @@ import {
   getTotalStartingInventoryUnits,
   STARTING_INVENTORY,
 } from '../../../utils/adminRevenueStats';
+import { resolveOrderLineThumbnail } from '../../../utils/bawVisualSnapshot';
 import {
   buildMembershipPaymentsList,
   membershipPaymentsTotalUsd,
@@ -327,9 +328,11 @@ function AdminRevenueOrdersTab({
       ? order.lineItems.map((line: any, i: number) => ({
           id: `${order.id}-product-${i}`,
           name: line.productName,
-          image: getProductImage(line.productName || ''),
+          image: resolveOrderLineThumbnail(line, 'admin-order'),
           price: line.subtotal ?? orderAmount / order.lineItems!.length,
           options: line.options,
+          visualSnapshotStatus: line.visualSnapshotStatus ?? line.options?.visualSnapshotStatus,
+          selectedColorHex: line.options?.colorHex,
         }))
       : Array.from({ length: order.items ?? 1 }, (_, i) => ({
           id: `${order.id}-product-${i}`,

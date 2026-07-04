@@ -65,6 +65,8 @@ import {
 import { slayTicketPackPdpPath } from '../../utils/slayTicketPacks';
 import { cartTotalQuantityUnits } from '../../utils/cartTotalQuantityUnits';
 import { CartLineProductTextStack, CartLineTextLayer } from '../../components/cart/CartLineProductTextStack';
+import { resolveCommerceLineThumbnailSrc, isSignatureUnitCommerceLine } from '../../utils/bawVisualSnapshot';
+import { BawVisualSnapshotConfigMeta } from '../../components/baw/BawVisualSnapshotConfigMeta';
 import {
   cartLineCapSizeTextStyle,
   cartLineLayerInnerStyle,
@@ -1536,7 +1538,6 @@ function ShoppingBagPage() {
                       
                       // Get the correct image based on product name and hairline (same logic as cart dropdown)
                       const getItemImage = () => {
-                        // Gift card uses specific thumbnail
                         if (item.name === 'GIFT CARD' || item.type === 'gift-card') {
                           return giftCardCartThumbnailSrc();
                         }
@@ -1548,24 +1549,18 @@ function ShoppingBagPage() {
                         const bcfThumb = shopBcfCartLineThumbnailSrc(item);
                         if (bcfThumb) return bcfThumb;
 
-                        // Determine thumbnail based on product name and hairline selection
-                        const hairline = item.hairline || 'NATURAL';
-                        const hairlineUpper = hairline.toUpperCase();
-                        const hasPeak = hairlineUpper.includes('PEAK');
-                        const hasLagos = hairlineUpper.includes('LAGOS');
-                        
-                        // For NOIR product: use peak/lagos thumbnails if selected
-                        if (item.name === 'NOIR') {
-                          if (hasPeak) {
-                            return '/assets/noir-peak-thumb.png';
-                          } else if (hasLagos) {
-                            return '/assets/noir-lagos-thumb.png';
+                        return resolveCommerceLineThumbnailSrc(item, 'cart-page', () => {
+                          const hairline = item.hairline || 'NATURAL';
+                          const hairlineUpper = hairline.toUpperCase();
+                          const hasPeak = hairlineUpper.includes('PEAK');
+                          const hasLagos = hairlineUpper.includes('LAGOS');
+                          if (item.name === 'NOIR') {
+                            if (hasPeak) return '/assets/noir-peak-thumb.png';
+                            if (hasLagos) return '/assets/noir-lagos-thumb.png';
+                            return item.image || '/assets/NOIR/noir-thumb.png';
                           }
                           return item.image || '/assets/NOIR/noir-thumb.png';
-                        }
-                        
-                        // Default: use the product's default thumbnail
-                        return item.image || '/assets/NOIR/noir-thumb.png';
+                        });
                       };
                       const itemImage = getItemImage();
 
@@ -1705,6 +1700,11 @@ function ShoppingBagPage() {
                                 </p>
                                 </CartLineTextLayer>
                               )}
+                              {isSignatureUnitCommerceLine(item) ? (
+                                <CartLineTextLayer slot="meta">
+                                  <BawVisualSnapshotConfigMeta item={item as Record<string, unknown>} compact />
+                                </CartLineTextLayer>
+                              ) : null}
                               <CartLineTextLayer
                                 slot="price"
                                 style={item.type === 'shop-texture-category' && !isBundleDealLine ? { paddingTop: 0 } : undefined}
@@ -2127,19 +2127,18 @@ function ShoppingBagPage() {
                     if (bookingThumb) return bookingThumb;
                     const bcfSaved = shopBcfCartLineThumbnailSrc(item);
                     if (bcfSaved) return bcfSaved;
-                    const hairline = item.hairline || 'NATURAL';
-                    const hairlineUpper = hairline.toUpperCase();
-                    const hasPeak = hairlineUpper.includes('PEAK');
-                    const hasLagos = hairlineUpper.includes('LAGOS');
-                    if (item.name === 'NOIR') {
-                      if (hasPeak) {
-                        return '/assets/noir-peak-thumb.png';
-                      } else if (hasLagos) {
-                        return '/assets/noir-lagos-thumb.png';
+                    return resolveCommerceLineThumbnailSrc(item, 'cart-page', () => {
+                      const hairline = item.hairline || 'NATURAL';
+                      const hairlineUpper = hairline.toUpperCase();
+                      const hasPeak = hairlineUpper.includes('PEAK');
+                      const hasLagos = hairlineUpper.includes('LAGOS');
+                      if (item.name === 'NOIR') {
+                        if (hasPeak) return '/assets/noir-peak-thumb.png';
+                        if (hasLagos) return '/assets/noir-lagos-thumb.png';
+                        return item.image || '/assets/NOIR/noir-thumb.png';
                       }
                       return item.image || '/assets/NOIR/noir-thumb.png';
-                    }
-                    return item.image || '/assets/NOIR/noir-thumb.png';
+                    });
                   };
                   const itemImage = getItemImage();
 

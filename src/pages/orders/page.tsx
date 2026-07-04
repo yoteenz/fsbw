@@ -56,6 +56,7 @@ import {
 import { orderNeedsClientAuthFormSignature } from '../../utils/orderAuthorizationForm';
 import { allOrderLineItemsReviewed } from '../../utils/orderReviewSubmissionPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
+import { resolveOrderLineThumbnail } from '../../utils/bawVisualSnapshot';
 import { getConsultQuote } from '../../utils/api';
 import { isSupabaseConfigured } from '../../utils/supabase';
 import type { ConsultOfferPersistedSnapshot } from '../../utils/consultOfferFromQuote';
@@ -70,6 +71,11 @@ interface OrderLineItem {
   options?: Record<string, string>; // e.g. { color: 'OFF BLACK', length: '24"', capSize: 'M' } for uniqueness
   /** Per-item pre-tax amount (when set, used for this line's price instead of splitting order total) */
   subtotal?: number;
+  image?: string;
+  visualSnapshot?: import('../../utils/bawVisualSnapshot/types').BawVisualSnapshot;
+  visualSnapshotUrl?: string;
+  visualSnapshotStatus?: import('../../utils/bawVisualSnapshot/types').BawVisualSnapshotStatus;
+  baseUnitId?: string;
 }
 
 interface Order {
@@ -2353,9 +2359,12 @@ const orderProducts = expandedOrder.lineItems && expandedOrder.lineItems.length 
                           ? expandedOrder.lineItems.map((line, i) => ({
                               id: `${expandedOrder.id}-product-${i}`,
                               name: line.productName,
-                              image: getProductImage(line.productName),
+                              image: resolveOrderLineThumbnail(line, 'order-history'),
                               price: line.subtotal != null ? line.subtotal : orderAmount / expandedOrder.lineItems!.length,
-                              options: line.options
+                              options: line.options,
+                              visualSnapshot: line.visualSnapshot,
+                              visualSnapshotStatus: line.visualSnapshotStatus ?? line.options?.visualSnapshotStatus,
+                              selectedColorHex: line.options?.colorHex,
                             }))
                            : Array.from({ length: expandedOrder.items }, (_, i) => ({
                                id: `${expandedOrder.id}-product-${i}`,

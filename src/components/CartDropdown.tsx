@@ -73,6 +73,8 @@ import {
   GLOBAL_OVERLAY_DEBUG_OPEN_CURRENCY_EVENT,
 } from './debug-mode/GlobalOverlayDebugContext';
 import { setCartDropdownOpenState } from '../utils/cartDropdownOpenState';
+import { resolveCommerceLineThumbnailSrc, isSignatureUnitCommerceLine } from '../utils/bawVisualSnapshot';
+import { BawVisualSnapshotConfigMeta } from './baw/BawVisualSnapshotConfigMeta';
 
 interface CartDropdownProps {
   isOpen: boolean;
@@ -1042,42 +1044,20 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                               if (bcf) return bcf;
                             }
 
-                            const hairline = item.hairline || 'NATURAL';
-                            const hairlineUpper = hairline.toUpperCase();
-                            const hasPeak = hairlineUpper.includes('PEAK');
-                            const hasLagos = hairlineUpper.includes('LAGOS');
+                            return resolveCommerceLineThumbnailSrc(item, 'cart-dropdown', () => {
+                              const hairline = item.hairline || 'NATURAL';
+                              const hairlineUpper = hairline.toUpperCase();
+                              const hasPeak = hairlineUpper.includes('PEAK');
+                              const hasLagos = hairlineUpper.includes('LAGOS');
 
-                            if (item.name === 'NOIR') {
-                              if (hasPeak) {
-                                return '/assets/noir-peak-thumb.png';
+                              if (item.name === 'NOIR') {
+                                if (hasPeak) return '/assets/noir-peak-thumb.png';
+                                if (hasLagos) return '/assets/noir-lagos-thumb.png';
+                                return item.image || '/assets/NOIR/noir-thumb.png';
                               }
-                              if (hasLagos) {
-                                return '/assets/noir-lagos-thumb.png';
-                              }
+
                               return item.image || '/assets/NOIR/noir-thumb.png';
-                            }
-
-                            if (item.name === 'BLANCO') {
-                              if (hasPeak) {
-                                // return '/assets/blanco peak front.png';
-                              } else if (hasLagos) {
-                                // return '/assets/blanco lagos front.png';
-                              }
-                            } else if (item.name === 'SOFT WAVE') {
-                              if (hasPeak) {
-                                // return '/assets/soft-wave peak front.png';
-                              } else if (hasLagos) {
-                                // return '/assets/soft-wave lagos front.png';
-                              }
-                            } else if (item.name === 'SOFT CURL') {
-                              if (hasPeak) {
-                                // return '/assets/soft-curl peak front.png';
-                              } else if (hasLagos) {
-                                // return '/assets/soft-curl lagos front.png';
-                              }
-                            }
-
-                            return item.image || '/assets/NOIR/noir-thumb.png';
+                            });
                           })();
 
                           if (isBcfShopItem) {
@@ -1374,6 +1354,11 @@ export default function CartDropdown({ isOpen, onClose, cartCount }: CartDropdow
                           </p>
                           </CartLineTextLayer>
                         )}
+                        {isSignatureUnitCommerceLine(item) && !hideMetaForDetails ? (
+                          <CartLineTextLayer slot="meta">
+                            <BawVisualSnapshotConfigMeta item={item as unknown as Record<string, unknown>} compact />
+                          </CartLineTextLayer>
+                        ) : null}
                         {!hideMetaForDetails && (
                         <CartLineTextLayer
                           slot="price"

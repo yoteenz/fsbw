@@ -24,6 +24,7 @@ import {
   isSlayTicketPackCartLine,
   slayTicketCartThumbnailSrc,
 } from './slayTicketCheckout';
+import { resolveCommerceLineThumbnailSrc } from './bawVisualSnapshot';
 
 export const ORDER_STRIP_UNIT_SLOT_PX = 88;
 /** Matches cart dropdown BCF thumb: 85% × 1.05 of unit slot. */
@@ -154,28 +155,31 @@ export function orderStripThumbnailSrc(item: any, isSubscriptionUpgrade: boolean
   }
 
   const productName = item.name || 'NOIR';
-  if (productName.toUpperCase() === 'NOIR') {
-    const hairline = item.hairline || 'NATURAL';
-    const hairlineUpper = hairline.toUpperCase();
-    const hasPeak = hairlineUpper.includes('PEAK');
-    const hasLagos = hairlineUpper.includes('LAGOS');
-    if (hasPeak) return '/assets/peak front.png';
-    if (hasLagos) return '/assets/lagos front.png';
-    return '/assets/natural front.png';
-  }
 
-  switch (productName.toUpperCase()) {
-    case 'BLANCO':
-      return '/assets/2D BLANCO FRONT.png';
-    case 'SOFT WAVE':
-    case 'BEACH WAVE':
-      return '/assets/2D WAVY FRONT.png';
-    case 'SOFT CURL':
-    case 'OCEAN CURL':
-      return '/assets/2D CURLY FRONT.png';
-    default:
+  return resolveCommerceLineThumbnailSrc(item, 'checkout', () => {
+    if (productName.toUpperCase() === 'NOIR') {
+      const hairline = item.hairline || 'NATURAL';
+      const hairlineUpper = hairline.toUpperCase();
+      const hasPeak = hairlineUpper.includes('PEAK');
+      const hasLagos = hairlineUpper.includes('LAGOS');
+      if (hasPeak) return '/assets/peak front.png';
+      if (hasLagos) return '/assets/lagos front.png';
       return '/assets/natural front.png';
-  }
+    }
+
+    switch (productName.toUpperCase()) {
+      case 'BLANCO':
+        return '/assets/2D BLANCO FRONT.png';
+      case 'SOFT WAVE':
+      case 'BEACH WAVE':
+        return '/assets/2D WAVY FRONT.png';
+      case 'SOFT CURL':
+      case 'OCEAN CURL':
+        return '/assets/2D CURLY FRONT.png';
+      default:
+        return '/assets/natural front.png';
+    }
+  });
 }
 
 export interface OrderStripThumbMetrics {

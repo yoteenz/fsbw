@@ -102,7 +102,7 @@ import { useShopNavSearchBar } from '../../components/shop/useShopNavSearchBar';
 import { saveLastSubmittedBookingConsultHeadMeasurements } from '../../utils/bookingConsultHeadMeasurementsPersist';
 import { bookingCartItemThumbnailSrc } from '../../utils/bookingBadges';
 import { cartRequiresOrderAuthorizationForm } from '../../utils/orderAuthorizationForm';
-import { buildPersistedLineItemsFromCart } from '../../utils/orderLineItemsPersist';
+import { buildPersistedLineItemsFromCart, primaryVisualSnapshotUrlFromCart } from '../../utils/orderLineItemsPersist';
 import {
   cartUsesBcfOnlyProcessingWindows,
   checkoutExpressProcessingAllowed,
@@ -2790,13 +2790,14 @@ function CheckoutPage() {
               : undefined;
           const persistedLineItems =
             digitalFulfillmentOnly ? undefined : buildPersistedLineItemsFromCart(cartItems as any[]);
+          const snapshotHeroUrl = primaryVisualSnapshotUrlFromCart(cartItems as any[]);
           const newOrder = {
             id: `order-${nextOrderNumber}`,
             orderNumber: `ORDER ${orderNumber}`,
             date: orderDate,
             status: useDigitalTimeline ? 'PLACED' : 'PREPARING',
             productName,
-            productImage: bookingOrderThumb ?? '/assets/natural front.png',
+            productImage: bookingOrderThumb ?? snapshotHeroUrl ?? '/assets/natural front.png',
             total: subtotal,
             subtotal: orderAmount,
             items: cartBillableQuantityUnits(cartItems),

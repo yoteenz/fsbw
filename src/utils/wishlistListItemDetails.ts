@@ -12,6 +12,7 @@ import {
 } from './shopTextureCategoryThumb';
 import { BAW_SALON_STYLING_IDS } from './bawUnitStylingOptions';
 import { getUnitDefaultTexture } from './unitCartViewDetails';
+import { resolveCommerceLineThumbnailSrc } from './bawVisualSnapshot';
 
 const DEFAULT_UNIT_PRICES: Record<string, number> = {
   NOIR: 740,
@@ -126,18 +127,21 @@ export function getWishlistUnitThumbImage(item: any): string {
   if (!item) return '/assets/natural front.png';
   const name = getWishlistItemProductName(item);
   if (name === 'GIFT CARD' || item.type === 'gift-card') return '/assets/gift-card asset.png';
-  const hairline = (item.hairline || 'NATURAL').toUpperCase();
-  const hasPeak = hairline.includes('PEAK');
-  const hasLagos = hairline.includes('LAGOS');
-  if (name === 'BLANCO') return '/assets/2D BLANCO FRONT.png';
-  if (name === 'SOFT WAVE' || name === 'BEACH WAVE') return '/assets/2D WAVY FRONT.png';
-  if (name === 'SOFT CURL' || name === 'OCEAN CURL') return '/assets/2D CURLY FRONT.png';
-  if (name === 'NOIR') {
-    if (hasPeak) return '/assets/peak front.png';
-    if (hasLagos) return '/assets/lagos front.png';
+
+  return resolveCommerceLineThumbnailSrc(item, 'wishlist', () => {
+    const hairline = (item.hairline || 'NATURAL').toUpperCase();
+    const hasPeak = hairline.includes('PEAK');
+    const hasLagos = hairline.includes('LAGOS');
+    if (name === 'BLANCO') return '/assets/2D BLANCO FRONT.png';
+    if (name === 'SOFT WAVE' || name === 'BEACH WAVE') return '/assets/2D WAVY FRONT.png';
+    if (name === 'SOFT CURL' || name === 'OCEAN CURL') return '/assets/2D CURLY FRONT.png';
+    if (name === 'NOIR') {
+      if (hasPeak) return '/assets/peak front.png';
+      if (hasLagos) return '/assets/lagos front.png';
+      return '/assets/natural front.png';
+    }
     return '/assets/natural front.png';
-  }
-  return '/assets/natural front.png';
+  });
 }
 
 /**

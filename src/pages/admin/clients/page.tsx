@@ -28,6 +28,8 @@ import { useSignedOrderFormPdf, signedOrderFormPdfFileName } from '../../../hook
 import { mergeSignedFormsWithMockApproval } from '../../../utils/mockSignedOrderFormForApproval';
 import { processingTimelineWeekRangeFromLabel } from '../../../utils/checkoutBcfProcessing';
 import { isNewsletterOptIn } from '../../../utils/newsletterOptIn';
+import { resolveOrderLineThumbnail } from '../../../utils/bawVisualSnapshot';
+import { BawVisualSnapshotConfigMeta } from '../../../components/baw/BawVisualSnapshotConfigMeta';
 import { schedulePushCartWishlistToCloud } from '../../../utils/pushCartWishlistToCloud';
 import { readLocalActivityForEmail, trackActivity } from '../../../utils/activity';
 import { socialStorageToHttpsUrl, type SocialPlatform } from '../../../utils/socialLinks';
@@ -2800,9 +2802,12 @@ export default function AdminClients() {
                                 ? expandedOrder.lineItems.map((line: any, i: number) => ({
                                     id: `${expandedOrder.id}-product-${i}`,
                                     name: line.productName,
-                                    image: getProductImage(line.productName),
+                                    image: resolveOrderLineThumbnail(line, 'admin-order'),
                                     price: line.subtotal != null ? line.subtotal : orderAmount / expandedOrder.lineItems.length,
-                                    options: line.options
+                                    options: line.options,
+                                    visualSnapshot: line.visualSnapshot,
+                                    visualSnapshotStatus: line.visualSnapshotStatus ?? line.options?.visualSnapshotStatus,
+                                    selectedColorHex: line.options?.colorHex,
                                   }))
                                 : Array.from({ length: expandedOrder.items ?? 1 }, (_, i) => ({
                                     id: `${expandedOrder.id}-product-${i}`,
@@ -2941,6 +2946,18 @@ export default function AdminClients() {
                                                 ))}
                                               </div>
                                             ) : null}
+                                            <div style={{ marginTop: '6px', textAlign: 'center' }}>
+                                              <BawVisualSnapshotConfigMeta
+                                                item={{
+                                                  name: product.name,
+                                                  productName: product.name,
+                                                  ...opts,
+                                                  visualSnapshotStatus: product.visualSnapshotStatus,
+                                                  selectedColorHex: product.selectedColorHex,
+                                                }}
+                                                showFallbackNotice
+                                              />
+                                            </div>
                                           </div>
                                         );
                                       })}

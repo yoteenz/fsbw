@@ -8,6 +8,7 @@ import { getPerUserKey, getCurrentUserEmailFromStorage, PER_USER_KEYS } from '..
 import { signOutAppAndSupabaseSession } from '../../utils/adminAuth';
 import { useSignedInFromStorage } from '../../hooks/useSignedInFromStorage';
 import { trackActivity } from '../../utils/activity';
+import { attachVisualSnapshotToCartLine } from '../../utils/bawVisualSnapshot';
 import { ShopMobileMenuShopTab } from '../../components/ShopMobileMenuShopTab';
 import { ShopMobileMenuToolsTab } from '../../components/ShopMobileMenuToolsTab';
 import BuildAWigFeatureSignInModal from '../../components/BuildAWigFeatureSignInModal';
@@ -4396,7 +4397,7 @@ export default function BuildAWigPage() {
         'SOFT CURL': 'VIETNAMESE',
         'OCEAN CURL': 'FILIPINO'
       };
-      const appointmentCartItem = {
+      const appointmentCartItemRaw = {
         id: `build-a-wig-appt-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
         name: productName,
         productName,
@@ -4415,6 +4416,19 @@ export default function BuildAWigPage() {
         partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
         addOns: customization.addOns
       };
+      const appointmentCartItem = await attachVisualSnapshotToCartLine(appointmentCartItemRaw, {
+        productName,
+        capSize: customization.capSize,
+        length: customization.length,
+        density: customization.density,
+        color: customization.color,
+        texture: customization.texture,
+        lace: customization.lace,
+        hairline: customization.hairline,
+        styling: validStyling,
+        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
+        addOns: customization.addOns,
+      });
 
       try {
         localStorage.setItem(BOOKING_NEW_INSTALL_ATTACHED_UNIT_KEY, JSON.stringify(appointmentCartItem));
@@ -4494,7 +4508,7 @@ export default function BuildAWigPage() {
         timestamp: new Date().toISOString()
       });
       
-      const updatedItem = {
+      const updatedItemRaw = {
         ...JSON.parse(editingCartItem),
         id: editingCartItemId, // Keep the same ID
         price: finalPrice, // Use recalculated price, not state
@@ -4510,6 +4524,19 @@ export default function BuildAWigPage() {
         partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
         addOns: customization.addOns
       };
+      const updatedItem = await attachVisualSnapshotToCartLine(updatedItemRaw, {
+        productName: updatedItemRaw.name || updatedItemRaw.productName || 'NOIR',
+        capSize: customization.capSize,
+        length: customization.length,
+        density: customization.density,
+        color: customization.color,
+        texture: customization.texture,
+        lace: customization.lace,
+        hairline: customization.hairline,
+        styling: validStyling,
+        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
+        addOns: customization.addOns,
+      });
       
       console.log('[EDIT MODE SAVE] Updated item (for cart, wishlist or saved for later):', updatedItem);
       
@@ -4733,7 +4760,7 @@ export default function BuildAWigPage() {
         'SOFT CURL': 'VIETNAMESE',
         'OCEAN CURL': 'FILIPINO'
       };
-      const cartItem = {
+      const cartItemRaw = {
         id: `build-a-wig-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
         name: productName,
         productName: productName,
@@ -4752,6 +4779,19 @@ export default function BuildAWigPage() {
         partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
         addOns: customization.addOns
       };
+      const cartItem = await attachVisualSnapshotToCartLine(cartItemRaw, {
+        productName,
+        capSize: customization.capSize,
+        length: customization.length,
+        density: customization.density,
+        color: customization.color,
+        texture: customization.texture,
+        lace: customization.lace,
+        hairline: customization.hairline,
+        styling: validStyling,
+        partSelection: localStorage.getItem('selectedPartSelection') || 'MIDDLE',
+        addOns: customization.addOns,
+      });
 
       // [CART PRICE TRIANGULATION] Mobile-friendly: so cart dropdown can show what was added when ?debug=1
       const isAddToBagDebug = typeof window !== 'undefined' && (

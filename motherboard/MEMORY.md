@@ -35592,3 +35592,26 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** docs (6 files), `studio-os/product-photography/derivatives/` (112 gitkeep), StudioOS derivative modules, admin tab/hooks/service wiring, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 21.5: Build-A-Wig Visual Snapshot System
+
+**Context (full chat):** After Milestone 21 Photography Derivative Engine, user Milestone 21.5 — configured unit visuals in cart/wishlist/checkout/orders/admin. No website redesign, no BAW functionality removal, no route changes, no breaking cart/wishlist/checkout/orders/admin.
+
+**Goal:** Cart, wishlist, checkout, order confirmation, account orders, and admin order detail show visual snapshot of exact configured unit (base unit + color priority) instead of generic static black product image. Text configuration labels always visible; never rely on image alone.
+
+**Deliverables:**
+- **`src/utils/bawVisualSnapshot/`** — types, approved color palette, unit slug map, asset naming (`{unitSlug}_{colorSlug}_{suffix}`), variant lookup, `buildBawVisualSnapshot` / `attachVisualSnapshotToCartLine`, context-aware `resolveCommerceLineThumbnailSrc`, configuration label helpers, Asset Factory queue hooks (`enqueueBawVisualVariantGeneration`).
+- **Statuses:** READY, MISSING, GENERATING, FALLBACK_USED, NEEDS_REVIEW.
+- **CartItem + order persist:** `visualSnapshot`, `visualSnapshotAssetId`, `visualSnapshotUrl`, `visualSnapshotStatus`, `baseUnitId`, `selectedColorHex`; `buildPersistedLineItemsFromCart` stores full options + snapshot; checkout `productImage` from `primaryVisualSnapshotUrlFromCart`.
+- **Build-A-Wig:** `handleAddToBag` / edit save / appointment attach call `attachVisualSnapshotToCartLine` (live preview when stored → READY; else FALLBACK_USED + generation queue).
+- **Commerce surfaces:** cart dropdown, shopping bag, checkout strip (`orderStripThumbnailSrc`), wishlist thumbs, account orders expanded lines, admin clients/revenue order detail — snapshot-aware thumbs + `BawVisualSnapshotConfigMeta` (color swatch + labels; admin fallback notice).
+- **Docs:** `docs/frontal-slayer/build-a-wig-visual-snapshot/` (4 chapters).
+- **Folders:** `studio-os/product-photography/visual-snapshots/signature-collection/{unit}/{color}/` placeholders; `public/assets/baw-visual-snapshots/.gitkeep`.
+
+**Resolution order:** approved variant URL → live Supabase color preview → base unit fallback (FALLBACK_USED) + Asset Factory queue placeholder.
+
+**Conventions:** Use approved palette only (`bawCatalogHairColors` + BLANCO GOLDEN/PLATINUM/ASH). Inherits Photography Bible / derivative crop contexts (cart, wishlist, checkout, order, admin). Does not block checkout when exact visual missing.
+
+**Changes:** `src/utils/bawVisualSnapshot/*`, cart/order/checkout/BAW/admin/wishlist wiring, docs, placeholder folders, `motherboard/MEMORY.md`.
+

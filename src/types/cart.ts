@@ -63,6 +63,13 @@ export interface CartItem {
   hairstyleAnalysisComparisonCount?: 1 | 4;
   hairstyleAnalysisNonRefundable?: boolean;
   bookingBagSubtitle?: string;
+  /** Build-A-Wig visual snapshot (Milestone 21.5). */
+  visualSnapshot?: import('./bawVisualSnapshotTypes').BawVisualSnapshot;
+  visualSnapshotAssetId?: string;
+  visualSnapshotUrl?: string;
+  visualSnapshotStatus?: import('./bawVisualSnapshotTypes').BawVisualSnapshotStatus;
+  baseUnitId?: string;
+  selectedColorHex?: string;
 }
 
 
