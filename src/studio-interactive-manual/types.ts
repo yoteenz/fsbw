@@ -78,7 +78,7 @@ export type ManualModuleProgress = {
 };
 
 export type ManualProgressStore = {
-  version: 1;
+  version: 2;
   modules: Record<string, ManualModuleProgress>;
   completedModuleIds: string[];
   completedFeatureIds: string[];
@@ -88,6 +88,9 @@ export type ManualProgressStore = {
   resumeModuleId?: string;
   resumeStepIndex?: number;
   overallKnowledgePct?: number;
+  visitedGraphNodeIds?: string[];
+  manualChaptersViewed?: string[];
+  workflowsLearned?: string[];
 };
 
 export type ManualWhatsNewEntry = {

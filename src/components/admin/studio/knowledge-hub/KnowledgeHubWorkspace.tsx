@@ -13,22 +13,40 @@ import {
   adminStudioKnowledgeHubWorkflowPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
-  buildManualSearchIndex,
+  buildKnowledgeGraph,
+  getAllGraphNodes,
+  getAllGraphWorkflows,
   getAllManualModules,
   getManualProgressSummary,
+  getMissingDocumentationNodes,
   getRecentWhatsNew,
+  readManualMissingTargetLogs,
+  searchKnowledgeGraph,
   useStudioInteractiveManual,
 } from '../../../../studio-interactive-manual';
+import type { KnowledgeGraphNode, KnowledgeGraphSearchHit, KnowledgeGraphWorkflowMap } from '../../../../studio-interactive-manual/knowledge-graph/schema';
 import { KnowledgeProfileView } from './KnowledgeProfileView';
 import { KH_VISUAL, khActionBtn, khCaption, khPanelStyle, khSectionTitle } from './knowledgeHubTheme';
 
-const HUB_TABS = ['WIKI', 'INTERACTIVE MANUAL', 'PROGRESS', "WHAT'S NEW"] as const;
+const HUB_TABS = [
+  'OVERVIEW',
+  'KNOWLEDGE GRAPH',
+  'WALKTHROUGHS',
+  'WORKFLOWS',
+  'SEARCH',
+  'WRITTEN LINKS',
+  "WHAT'S NEW",
+  'PROGRESS',
+  'MISSING DOCS',
+  'MISSING TARGETS',
+  'WIKI',
+] as const;
 type HubTab = (typeof HUB_TABS)[number];
 
 export function KnowledgeHubWorkspace() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
-  const [tab, setTab] = useState<HubTab>('INTERACTIVE MANUAL');
+  const [tab, setTab] = useState<HubTab>('OVERVIEW');
   const { executiveNotes, setExecutiveNotes, unreadGuideCount } = useAdminStudioKnowledgeHub();
   const { openModuleManual, openSearchModal } = useStudioInteractiveManual();
 
@@ -36,8 +54,16 @@ export function KnowledgeHubWorkspace() {
   const stats = KNOWLEDGE_MISSION_STATS;
   const manualModules = useMemo(() => getAllManualModules(), []);
   const manualProgress = useMemo(() => getManualProgressSummary(), [tab]);
-  const manualSearchCount = useMemo(() => buildManualSearchIndex().length, []);
   const whatsNew = useMemo(() => getRecentWhatsNew(), []);
+  const graph = useMemo(() => buildKnowledgeGraph(), []);
+  const graphNodes = useMemo((): KnowledgeGraphNode[] => getAllGraphNodes(), []);
+  const workflows = useMemo((): KnowledgeGraphWorkflowMap[] => getAllGraphWorkflows(), []);
+  const graphSearchHits = useMemo(
+    (): KnowledgeGraphSearchHit[] => (query.trim() ? searchKnowledgeGraph(query) : []),
+    [query]
+  );
+  const missingDocs = useMemo(() => getMissingDocumentationNodes(), []);
+  const missingTargets = useMemo(() => readManualMissingTargetLogs(), [tab]);
 
   return (
     <div className="knowledge-hub-root pb-6">
@@ -59,39 +85,143 @@ export function KnowledgeHubWorkspace() {
         ))}
       </div>
 
-      {tab === 'INTERACTIVE MANUAL' ? (
+      {tab === 'OVERVIEW' ? (
+        <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
+          <p style={{ ...khCaption, color: KH_VISUAL.red }}>STUDIOOS INTERACTIVE MANUAL</p>
+          <p style={khCaption}>
+            {manualModules.length} MODULE WALKTHROUGHS · {graph.nodes.length} GRAPH NODES · {graph.edges.length}{' '}
+            RELATIONSHIPS · TAP ⓘ ON ANY STUDIO PAGE
+          </p>
+          <p style={khCaption}>
+            CUSTOMER: ONBOARDING TUTORIAL (MANSION TOUR) · ADMIN: INTERACTIVE MANUAL · SHARED: KNOWLEDGE GRAPH
+          </p>
+          <div className="flex flex-wrap gap-2 mt-2">
+            <button type="button" onClick={openSearchModal} style={khActionBtn}>
+              SEARCH MANUAL
+            </button>
+          </div>
+        </section>
+      ) : null}
+
+      {tab === 'KNOWLEDGE GRAPH' ? (
+        <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
+          <p style={khSectionTitle}>KNOWLEDGE GRAPH ({graphNodes.length} NODES)</p>
+          {graphNodes
+            .filter((n) => n.type === 'module' || n.type === 'feature')
+            .slice(0, 20)
+            .map((n) => (
+              <button
+                key={n.id}
+                type="button"
+                onClick={() => openModuleManual(n.moduleId ?? n.id)}
+                style={{ ...khActionBtn, display: 'block', width: '100%', textAlign: 'left', marginBottom: '4px' }}
+              >
+                {n.name}
+                <span style={{ display: 'block', ...khCaption, fontSize: '8px' }}>
+                  {n.type.toUpperCase()} · {n.description.slice(0, 80)}
+                </span>
+              </button>
+            ))}
+        </section>
+      ) : null}
+
+      {tab === 'WALKTHROUGHS' ? (
         <>
           <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
-            <p style={{ ...khCaption, color: KH_VISUAL.red }}>STUDIOOS INTERACTIVE MANUAL</p>
-            <p style={khCaption}>
-              {manualModules.length} MODULE MANUALS · {manualSearchCount} SEARCH ENTRIES · TAP ⓘ ON ANY STUDIO PAGE
-            </p>
-            <div className="flex flex-wrap gap-2 mt-2">
-              <button type="button" onClick={openSearchModal} style={khActionBtn}>
-                SEARCH MANUAL
-              </button>
-            </div>
-          </section>
-          <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
-            <p style={khSectionTitle}>MODULE MANUALS</p>
-            {manualModules.slice(0, 12).map((m) => (
+            <p style={khSectionTitle}>MODULE WALKTHROUGHS ({manualModules.length})</p>
+            {manualModules.map((m) => (
               <button
                 key={m.id}
                 type="button"
                 onClick={() => openModuleManual(m.id)}
                 style={{ ...khActionBtn, display: 'block', width: '100%', textAlign: 'left', marginBottom: '4px' }}
               >
-                {m.customerName}
-                <span style={{ display: 'block', ...khCaption, fontSize: '8px' }}>
-                  {m.steps.length} STEPS · {m.estimatedMinutes} MIN
-                </span>
+                {m.customerName} · {m.steps.length} STEPS
               </button>
             ))}
-            {manualModules.length > 12 ? (
-              <p style={khCaption}>… AND {manualModules.length - 12} MORE MODULES</p>
-            ) : null}
           </section>
         </>
+      ) : null}
+
+      {tab === 'WORKFLOWS' ? (
+        <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
+          <p style={khSectionTitle}>WORKFLOW MAPS</p>
+          {workflows.map((wf) => (
+            <div key={wf.id} style={{ marginBottom: '12px', borderBottom: '1px solid #eee', paddingBottom: '8px' }}>
+              <p style={{ ...khCaption, color: KH_VISUAL.red }}>{wf.title}</p>
+              <p style={khCaption}>{wf.subtitle}</p>
+              <p style={{ ...khCaption, fontSize: '8px' }}>{wf.nodeIds.join(' → ')}</p>
+            </div>
+          ))}
+        </section>
+      ) : null}
+
+      {tab === 'SEARCH' ? (
+        <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
+          <p style={khSectionTitle}>MANUAL + GRAPH SEARCH</p>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="HOW DOES ASSET FACTORY WORK?"
+            className="w-full border border-black px-2 py-2 mt-2"
+            style={{ fontFamily: '"Futura PT Book"', fontSize: '11px', textTransform: 'uppercase' }}
+          />
+          {graphSearchHits.map((hit) => (
+            <button
+              key={hit.id}
+              type="button"
+              onClick={() => openModuleManual(hit.moduleId ?? hit.nodeId)}
+              style={{ ...khActionBtn, display: 'block', width: '100%', textAlign: 'left', marginTop: '6px' }}
+            >
+              {hit.label}
+            </button>
+          ))}
+        </section>
+      ) : null}
+
+      {tab === 'WRITTEN LINKS' ? (
+        <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
+          <p style={khSectionTitle}>WRITTEN MANUAL CHAPTERS (LINKED)</p>
+          {graphNodes
+            .filter((n) => n.relatedManualChapter)
+            .slice(0, 24)
+            .map((n) => (
+              <p key={n.id} style={{ ...khCaption, marginBottom: '4px' }}>
+                {n.name} → {n.relatedManualChapter}
+              </p>
+            ))}
+        </section>
+      ) : null}
+
+      {tab === 'MISSING DOCS' ? (
+        <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
+          <p style={khSectionTitle}>MISSING DOCUMENTATION</p>
+          {missingDocs.length === 0 ? (
+            <p style={khCaption}>ALL MODULE NODES HAVE STEPS AND EDGES</p>
+          ) : (
+            missingDocs.map((n) => (
+              <p key={n.id} style={khCaption}>
+                {n.name} — NEEDS STEPS OR GRAPH EDGES
+              </p>
+            ))
+          )}
+        </section>
+      ) : null}
+
+      {tab === 'MISSING TARGETS' ? (
+        <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
+          <p style={khSectionTitle}>MISSING TARGETS (DEV SESSION)</p>
+          {missingTargets.length === 0 ? (
+            <p style={khCaption}>NONE LOGGED</p>
+          ) : (
+            missingTargets.map((m, i) => (
+              <p key={`${m.stepId}-${i}`} style={khCaption}>
+                {m.moduleId}/{m.stepId}: {m.selector}
+              </p>
+            ))
+          )}
+        </section>
       ) : null}
 
       {tab === 'PROGRESS' ? (
@@ -99,8 +229,8 @@ export function KnowledgeHubWorkspace() {
           <p style={khSectionTitle}>STUDIOOS KNOWLEDGE</p>
           <p style={{ ...khCaption, color: KH_VISUAL.black }}>
             {manualProgress.overallKnowledgePct}% OVERALL · {manualProgress.modulesLearned} MODULES ·{' '}
-            {manualProgress.featuresLearned} FEATURES · {manualProgress.widgetsLearned} WIDGETS ·{' '}
-            {manualProgress.workflowsCompleted} WORKFLOWS
+            {manualProgress.featuresLearned} FEATURES · {manualProgress.graphNodesVisited} GRAPH NODES ·{' '}
+            {manualProgress.manualChaptersViewed} CHAPTERS
           </p>
           {manualProgress.resumeModuleId ? (
             <button

@@ -1,6 +1,7 @@
 import type { ManualSearchEntry } from './types';
 import { getAllManualModules } from './registry';
 import { STUDIO_MANUAL_WHATS_NEW } from './whatsNew';
+import { searchKnowledgeGraph } from './knowledge-graph/queries';
 
 export function buildManualSearchIndex(): ManualSearchEntry[] {
   const entries: ManualSearchEntry[] = [];
@@ -70,7 +71,49 @@ export function buildManualSearchIndex(): ManualSearchEntry[] {
       stepId: 'overview',
       label: 'BLUEPRINT MANAGER',
       snippet: 'Edit specs in Blueprint Manager — factory reads APPROVED blueprints only.',
-    }
+    },
+    {
+      id: 'search-creative-dna',
+      query: 'What is Creative DNA?',
+      keywords: ['creative dna', 'what is creative dna', 'approved prompt'],
+      moduleId: 'photography-bible',
+      stepId: 'overview',
+      label: 'CREATIVE DNA',
+      snippet: 'Locked photography rules — prompt, bust, editorial reference.',
+    },
+    {
+      id: 'search-cart-images',
+      query: 'Where do cart images come from?',
+      keywords: ['cart images', 'where do cart images come from', 'smart asset'],
+      moduleId: 'brand-assets-asset-factory',
+      stepId: 'overview',
+      label: 'SMART ASSET REGISTRY',
+      snippet: 'Context-aware images from approved masters via Asset Factory.',
+    },
+    {
+      id: 'search-fallback',
+      query: 'What does FALLBACK_USED mean?',
+      keywords: ['fallback_used', 'what does fallback_used mean'],
+      moduleId: 'brand-assets-asset-factory',
+      label: 'FALLBACK_USED',
+      snippet: 'Variant missing — registry shows safe fallback; check pipeline.',
+    },
+    {
+      id: 'search-baw-orders',
+      query: 'How does Build-A-Wig connect to orders?',
+      keywords: ['build-a-wig connect to orders', 'baw snapshot', 'variant lookup'],
+      moduleId: 'brand-assets-asset-factory',
+      label: 'BAW VISUAL SNAPSHOT',
+      snippet: 'Configuration → Smart Asset Registry → cart → checkout → order.',
+    },
+    {
+      id: 'search-vouchers-admin',
+      query: 'How do vouchers work?',
+      keywords: ['how do vouchers work', 'voucher history'],
+      moduleId: 'tutorial-os',
+      label: 'CUSTOMER VOUCHERS (ONBOARDING TUTORIAL)',
+      snippet: 'Customer-facing — see Onboarding Tutorial Mansion Tour.',
+    },
   );
 
   for (const w of STUDIO_MANUAL_WHATS_NEW) {
@@ -92,7 +135,7 @@ export function searchManualIndex(query: string, limit = 10): ManualSearchEntry[
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const index = buildManualSearchIndex();
-  return index
+  const stepScored = index
     .map((entry) => {
       let score = 0;
       if (entry.query.toLowerCase().includes(q)) score += 10;
@@ -103,7 +146,22 @@ export function searchManualIndex(query: string, limit = 10): ManualSearchEntry[
       }
       return { entry, score };
     })
-    .filter((x) => x.score > 0)
+    .filter((x) => x.score > 0);
+
+  const graphScored = searchKnowledgeGraph(q, limit).map((g) => ({
+    entry: {
+      id: g.id,
+      query: g.label,
+      keywords: [],
+      moduleId: g.moduleId ?? g.nodeId,
+      stepId: undefined,
+      label: g.label,
+      snippet: g.snippet,
+    } satisfies ManualSearchEntry,
+    score: g.score,
+  }));
+
+  return [...stepScored, ...graphScored]
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((x) => x.entry);

@@ -4,13 +4,16 @@ import { getAllManualModules, getManualSteps } from './registry';
 
 function emptyStore(): ManualProgressStore {
   return {
-    version: 1,
+    version: 2,
     modules: {},
     completedModuleIds: [],
     completedFeatureIds: [],
     completedWidgetIds: [],
     completedWorkflowIds: [],
     recentlyLearned: [],
+    visitedGraphNodeIds: [],
+    manualChaptersViewed: [],
+    workflowsLearned: [],
   };
 }
 
@@ -19,9 +22,9 @@ export function readManualProgressStore(): ManualProgressStore {
   try {
     const raw = localStorage.getItem(STUDIO_MANUAL_PROGRESS_KEY);
     if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as Partial<ManualProgressStore>;
+    const parsed = JSON.parse(raw) as Partial<ManualProgressStore> & { version?: number };
     return {
-      version: 1,
+      version: 2,
       modules: parsed.modules ?? {},
       completedModuleIds: parsed.completedModuleIds ?? [],
       completedFeatureIds: parsed.completedFeatureIds ?? [],
@@ -31,6 +34,9 @@ export function readManualProgressStore(): ManualProgressStore {
       resumeModuleId: parsed.resumeModuleId,
       resumeStepIndex: parsed.resumeStepIndex,
       overallKnowledgePct: parsed.overallKnowledgePct,
+      visitedGraphNodeIds: parsed.visitedGraphNodeIds ?? [],
+      manualChaptersViewed: parsed.manualChaptersViewed ?? [],
+      workflowsLearned: parsed.workflowsLearned ?? parsed.completedWorkflowIds ?? [],
     };
   } catch {
     return emptyStore();
@@ -151,13 +157,41 @@ export function clearManualResume(): void {
   writeManualProgressStore(store);
 }
 
+export function markGraphNodeVisited(nodeId: string): void {
+  const store = readManualProgressStore();
+  const ids = new Set(store.visitedGraphNodeIds ?? []);
+  ids.add(nodeId);
+  store.visitedGraphNodeIds = [...ids];
+  recomputeOverallKnowledge(store);
+  writeManualProgressStore(store);
+}
+
+export function markManualChapterViewed(chapter: string): void {
+  const store = readManualProgressStore();
+  const ids = new Set(store.manualChaptersViewed ?? []);
+  ids.add(chapter);
+  store.manualChaptersViewed = [...ids];
+  writeManualProgressStore(store);
+}
+
+export function markWorkflowLearned(workflowId: string): void {
+  const store = readManualProgressStore();
+  const ids = new Set(store.workflowsLearned ?? store.completedWorkflowIds ?? []);
+  ids.add(workflowId);
+  store.workflowsLearned = [...ids];
+  store.completedWorkflowIds = [...new Set([...store.completedWorkflowIds, workflowId])];
+  writeManualProgressStore(store);
+}
+
 export function getManualProgressSummary() {
   const store = readManualProgressStore();
   return {
     modulesLearned: store.completedModuleIds.length,
     featuresLearned: store.completedFeatureIds.length,
     widgetsLearned: store.completedWidgetIds.length,
-    workflowsCompleted: store.completedWorkflowIds.length,
+    workflowsCompleted: store.workflowsLearned?.length ?? store.completedWorkflowIds.length,
+    graphNodesVisited: store.visitedGraphNodeIds?.length ?? 0,
+    manualChaptersViewed: store.manualChaptersViewed?.length ?? 0,
     overallKnowledgePct: store.overallKnowledgePct ?? 0,
     recentlyLearned: store.recentlyLearned,
     resumeModuleId: store.resumeModuleId,

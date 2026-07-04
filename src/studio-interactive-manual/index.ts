@@ -11,3 +11,4 @@ export { getManualProgressSummary, readManualProgressStore } from './progressSto
 export { readManualMissingTargetLogs } from './targetResolver';
 export { STUDIO_MANUAL_WHATS_NEW, getRecentWhatsNew } from './whatsNew';
 export { resolveManualModuleIdForPath } from './buildFromKnowledge';
+export * from './knowledge-graph';

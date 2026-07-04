@@ -3,11 +3,11 @@ import type { ManualWhatsNewEntry } from './types';
 /** Living changelog — new features auto-surface walkthrough prompts. */
 export const STUDIO_MANUAL_WHATS_NEW: ManualWhatsNewEntry[] = [
   {
-    id: 'whats-new-interactive-manual',
+    id: 'whats-new-knowledge-graph',
     moduleId: 'knowledge-hub',
-    version: '24.0',
-    title: 'INTERACTIVE MANUAL',
-    summary: 'Tap ⓘ on any Studio module for live walkthroughs, workflow diagrams, and written doc links.',
+    version: '24.1',
+    title: 'KNOWLEDGE GRAPH',
+    summary: 'ⓘ now opens Knowledge Graph entry — connected modules, workflow maps, and written manual links.',
     highlightStepId: 'overview',
     releasedAt: '2026-07-04',
   },

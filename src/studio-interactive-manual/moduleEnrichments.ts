@@ -165,18 +165,116 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
     architecture: 'Executive HQ — missions, departments, approvals, and live activity.',
     relatedModuleIds: ['executive-ai-director', 'campaign-orchestrator', 'knowledge-hub'],
   },
-  'knowledge-hub': {
-    architecture: 'Interactive Manual + written wiki + object profiles + workflow guides.',
-    versionIntroduced: 'Milestone 20',
-    versionUpdated: 'Milestone 24',
-  },
   'campaign-orchestrator': {
     workflowNodes: ['OBJECTIVE', 'AUDIENCE', 'SCHEDULE', 'CREATIVE', 'GENERATE PLAN', 'APPROVALS'],
     relatedModuleIds: ['executive-ai-director', 'production-builder', 'asset-factory'],
   },
-  'production-builder': {
-    workflowNodes: ['ASSET LIBRARY', 'SCENE BUILDER', 'INSPECTOR', 'BUILD PRODUCTION', 'DIRECTOR MODE'],
-    relatedModuleIds: ['director-mode', 'asset-director', 'content-packs'],
+  'knowledge-hub': {
+    architecture:
+      'Knowledge Graph connects modules, workflows, written manual chapters, and customer Onboarding Tutorial.',
+    versionIntroduced: 'Milestone 20',
+    versionUpdated: 'Milestone 24',
+  },
+  'tutorial-os': {
+    architecture: 'Admin management for customer Onboarding Tutorial (Mansion Tour) — separate from StudioOS Interactive Manual.',
+    workflowNodes: ['Welcome', 'Mansion Tour steps', 'Feature cards', 'Nested tours', 'Progress analytics'],
+    relatedModuleIds: ['knowledge-hub'],
+    featureSteps: [
+      {
+        id: 'tutorial-customer-separation',
+        kind: 'section',
+        title: 'CUSTOMER VS ADMIN',
+        body: 'Onboarding Tutorial teaches the storefront. StudioOS Interactive Manual teaches admin tools. Both share layered walkthrough architecture.',
+        benefit: 'Never confuse customer onboarding with operator training.',
+        position: 'center',
+        animationType: 'transition',
+        spotlight: false,
+      },
+    ],
+  },
+  'photography-bible': {
+    architecture: 'Creative DNA → Master Hero → Asset Factory → Smart Asset Registry → Website surfaces.',
+    workflowNodes: [
+      'CREATIVE DNA',
+      'MASTER HERO',
+      'ASSET FACTORY',
+      'TRANSPARENT MASTER',
+      'SMART ASSETS',
+      'WEBSITE',
+    ],
+    relatedModuleIds: ['brand-assets-asset-factory', 'asset-factory', 'brand-assets'],
+    featureSteps: [
+      {
+        id: 'photo-creative-dna-tab',
+        kind: 'widget',
+        title: 'CREATIVE DNA TAB',
+        body: 'Approved prompt v2.0, display bust, editorial reference — locked before any Fal generation.',
+        benefit: 'One source of truth for every signature unit.',
+        targetSelector: CONTENT,
+        animationType: 'pulse',
+        position: 'bottom',
+        spotlight: true,
+      },
+      {
+        id: 'photo-master-hero',
+        kind: 'section',
+        title: 'MASTER HERO GENERATION',
+        body: 'Generate via Fal using Creative DNA package — SOFT WAVE POC, expanding to full catalog.',
+        benefit: 'Approved masters feed Asset Factory automatically.',
+        targetSelector: CONTENT,
+        animationType: 'glow',
+        position: 'bottom',
+        spotlight: true,
+      },
+    ],
+  },
+  'brand-assets-asset-factory': {
+    architecture: 'Receives masters → background removal → smart crops → Supabase → registry by context.',
+    workflowNodes: [
+      'MASTER INPUT',
+      'BACKGROUND REMOVAL',
+      'SMART CROPS',
+      'SUPABASE UPLOAD',
+      'REGISTRY',
+      'CART · CHECKOUT · EMAIL',
+    ],
+    relatedModuleIds: ['photography-bible', 'asset-factory'],
+    featureSteps: [
+      {
+        id: 'smart-registry-contexts',
+        kind: 'section',
+        title: 'CONTEXT-AWARE DELIVERY',
+        body: 'Wishlist, cart, checkout, email, and Build-A-Wig snapshots each resolve the correct variant.',
+        benefit: 'One registry — many surfaces.',
+        targetSelector: CONTENT,
+        animationType: 'spotlight',
+        position: 'bottom',
+        spotlight: true,
+      },
+      {
+        id: 'fallback-status',
+        kind: 'widget',
+        title: 'FALLBACK_USED',
+        body: 'When variant lookup fails, a safe fallback displays — investigate Photography Bible + Factory pipeline.',
+        benefit: 'Catch missing assets before customers see broken images.',
+        targetSelector: CONTENT,
+        animationType: 'blur',
+        position: 'bottom',
+        spotlight: false,
+      },
+    ],
+  },
+  analytics: {
+    relatedModuleIds: ['executive-command-center', 'audience-brain'],
+  },
+  'content-packs': {
+    relatedModuleIds: ['production-builder', 'publishing-queue', 'lounge-tv'],
+  },
+  'executive-ai-director': {
+    relatedModuleIds: ['mission-control', 'campaign-orchestrator', 'knowledge-hub'],
+  },
+  'director-mode': {
+    relatedModuleIds: ['production-builder', 'asset-director'],
   },
 };
 

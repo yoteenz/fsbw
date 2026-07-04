@@ -9,7 +9,7 @@ import { StudioManualBridge } from './StudioManualBridge';
 import { AdminStudioBreadcrumbTrail } from './AdminStudioBreadcrumbTrail';
 import { AdminStudioNavTabs } from './AdminStudioNavTabs';
 import { KnowledgeHubButton } from './knowledge-hub/KnowledgeHubButton';
-import { KnowledgePanel } from './knowledge-hub/KnowledgePanel';
+import { KnowledgeGraphEntryPanel } from './knowledge-hub/KnowledgeGraphEntryPanel';
 import { KnowledgeContextualHint } from './knowledge-hub/KnowledgeContextualHint';
 import {
   buildStudioBreadcrumbs,
@@ -216,7 +216,7 @@ export function AdminStudioLayout({
           </div>
         </div>
       </div>
-      <KnowledgePanel />
+      <KnowledgeGraphEntryPanel />
     </div>
     </StudioManualBridge>
     </StudioKnowledgeProvider>

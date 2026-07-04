@@ -33,6 +33,8 @@ import { ManualSearchModal } from './components/ManualSearchModal';
 import { ManualWorkspaceHelpButton } from './components/ManualWorkspaceHelpButton';
 import type { ManualSearchEntry } from './types';
 import { getWhatsNewForModule } from './whatsNew';
+import { getModuleGraphEntry } from './knowledge-graph/queries';
+import { markGraphNodeVisited } from './progressStorage';
 
 export type StudioInteractiveManualContextValue = {
   activeModule: ManualModule | null;
@@ -112,6 +114,7 @@ export function StudioInteractiveManualProvider({ children, onOpenWrittenDoc }: 
       setSearchModalOpen(false);
       setActiveModuleId(moduleId);
       setStepIndex(idx);
+      markGraphNodeVisited(moduleId);
       upsertModuleProgress(moduleId, {
         status: 'started',
         lastStepIndex: idx,
@@ -232,6 +235,16 @@ export function StudioInteractiveManualProvider({ children, onOpenWrittenDoc }: 
 
   void storeVersion;
 
+  const connectedForStep = useMemo(() => {
+    if (!activeModule) return [];
+    const entry = getModuleGraphEntry(activeModule.id);
+    if (!entry) return [];
+    return entry.connected
+      .filter((c) => c.node.type === 'module' || c.node.moduleId)
+      .slice(0, 6)
+      .map((c) => ({ node: c.node, relation: c.relation }));
+  }, [activeModule]);
+
   const overlay =
     typeof document !== 'undefined'
       ? createPortal(
@@ -257,6 +270,8 @@ export function StudioInteractiveManualProvider({ children, onOpenWrittenDoc }: 
                 actionLabel={activeStep.actionLabel}
                 onAction={activeStep.actionLabel ? handleStepAction : undefined}
                 onOpenWrittenDoc={openWrittenDocumentation}
+                onOpenConnectedModule={(id) => startModule(id)}
+                connectedModules={connectedForStep}
                 onBack={goBack}
                 onNext={goNext}
                 onSkip={skipManual}

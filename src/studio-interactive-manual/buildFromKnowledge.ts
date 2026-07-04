@@ -9,6 +9,8 @@ import {
   NAV,
   type ModuleManualEnrichment,
 } from './moduleEnrichments';
+import { getSubModulePageGuides } from './knowledge-graph/buildGraph';
+import { resolveGraphModuleIdForPath } from './knowledge-graph/queries';
 import { getWhatsNewForModule } from './whatsNew';
 
 function baseNode(
@@ -309,9 +311,12 @@ function buildDefinition(guide: KnowledgePageGuide, enrichment?: ModuleManualEnr
 }
 
 export function buildAllManualDefinitions(): ManualModuleDefinitionV2[] {
-  return KNOWLEDGE_PAGE_GUIDES.map((guide) =>
-    buildDefinition(guide, MODULE_MANUAL_ENRICHMENTS[guide.moduleId])
-  );
+  const subGuides = getSubModulePageGuides() as KnowledgePageGuide[];
+  const allGuides = [
+    ...KNOWLEDGE_PAGE_GUIDES,
+    ...subGuides.filter((sg) => !KNOWLEDGE_PAGE_GUIDES.some((g) => g.moduleId === sg.moduleId)),
+  ];
+  return allGuides.map((guide) => buildDefinition(guide, MODULE_MANUAL_ENRICHMENTS[guide.moduleId]));
 }
 
 export function getManualDefinitionForModule(moduleId: string): ManualModuleDefinitionV2 | undefined {
@@ -321,11 +326,19 @@ export function getManualDefinitionForModule(moduleId: string): ManualModuleDefi
 }
 
 export function resolveManualModuleIdForPath(pathname: string): string | undefined {
+  return resolveGraphModuleIdForPath(pathname) ?? resolveManualModuleIdFromGuides(pathname);
+}
+
+function resolveManualModuleIdFromGuides(pathname: string): string | undefined {
   const normalized = pathname.split('?')[0];
-  const exact = KNOWLEDGE_PAGE_GUIDES.find((g) => g.route.split('?')[0] === normalized);
+  const subGuides = getSubModulePageGuides() as KnowledgePageGuide[];
+  const allGuides = [...KNOWLEDGE_PAGE_GUIDES, ...subGuides];
+  const exact = allGuides.find((g) => g.route.split('?')[0] === normalized);
   if (exact) return exact.moduleId;
-  const prefix = KNOWLEDGE_PAGE_GUIDES.filter(
-    (g) => normalized === g.route.split('?')[0] || normalized.startsWith(`${g.route.split('?')[0]}/`)
-  ).sort((a, b) => b.route.length - a.route.length);
+  const prefix = allGuides
+    .filter(
+      (g) => normalized === g.route.split('?')[0] || normalized.startsWith(`${g.route.split('?')[0]}/`)
+    )
+    .sort((a, b) => b.route.length - a.route.length);
   return prefix[0]?.moduleId;
 }

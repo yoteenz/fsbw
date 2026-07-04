@@ -35816,3 +35816,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** studio-interactive-manual module, `AdminStudioLayout`, `KnowledgeHubButton`, `KnowledgePanel`, `KnowledgeHubWorkspace`, knowledge-hub page, `adminStudioKnowledgeHubDemo.ts`, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — StudioOS Knowledge Graph + Interactive Manual v2 (Milestone 24.1)
+
+**Context:** User asked to continue Milestone 24 — unify StudioOS help, ⓘ info panels, module walkthroughs, workflow maps, written manual structure, and search into one **Knowledge Graph**-backed **Interactive Manual** (admin). Keep Onboarding Tutorial (customer), keep ⓘ icons, do not redesign admin dashboard or break routes.
+
+**Topics covered:** Data-driven graph (nodes/edges/workflows); ⓘ opens layered Knowledge Graph entry (overview, Start Walkthrough, Related Workflows, Written Chapter, Connected Modules, Search); hub expansion (Overview, Graph, Walkthroughs, Workflows, Search, Written Links, What's New, Progress, Missing Docs/Targets, Wiki); admin progress v2 (graph nodes visited, chapters viewed, workflows learned); photography/BAW/rewards/tutorial pipeline seeds; sub-module manuals (Photography Bible, Brand Asset Factory).
+
+**Shipped:**
+- **`src/studio-interactive-manual/knowledge-graph/`** — `schema.ts`, `seedGraph.ts` (Creative DNA → Asset Factory → Smart Registry → BAW snapshot pipelines), `buildGraph.ts` (merges `ADMIN_STUDIO_MODULES` + manuals + seed), `queries.ts` (search, connected modules, missing docs).
+- **`KnowledgeGraphEntryPanel.tsx`** — ⓘ entry point; `KnowledgePanel` re-exports; `KnowledgeHubButton` opens graph panel (not direct walkthrough).
+- **Manual enhancements:** `buildFromKnowledge` sub-module guides + graph path resolution; enrichments for tutorial-os, photography-bible, brand-assets-asset-factory, analytics, content-packs, EAD, director-mode; `ManualWizardPanel` connected-modules strip; context marks graph nodes visited.
+- **Progress v2** (`adminStudioInteractiveManual_v2`): visitedGraphNodeIds, manualChaptersViewed, workflowsLearned.
+- **Search** merges graph hits + curated queries (Creative DNA, cart images, FALLBACK_USED, BAW→orders).
+- **Knowledge Hub workspace** — 11 tabs; graph node browser; workflow maps; missing docs/targets.
+- **Docs:** `docs/studio-os/interactive-manual.md` updated for Knowledge Graph architecture.
+
+**Conventions:** Customer **Onboarding Tutorial** (Tutorial OS) unchanged and separate; admin **Interactive Manual** + **Knowledge Graph** shared layer; every new module should add graph node + manual entry + optional What's New item.
+
+**Changes:** knowledge-graph module, KnowledgeGraphEntryPanel, KnowledgeHubWorkspace/Button/Panel, AdminStudioLayout, StudioInteractiveManualContext, buildFromKnowledge, moduleEnrichments, progressStorage, searchIndex, whatsNew, ManualWizardPanel, docs, `motherboard/MEMORY.md`.
+

@@ -1,6 +1,9 @@
+import { useState } from 'react';
 import type { ManualStep } from '../types';
 import { KH_VISUAL, khActionBtn, khCaption } from '../../components/admin/studio/knowledge-hub/knowledgeHubTheme';
 import { ManualWorkflowStrip } from './ManualWorkflowStrip';
+import type { KnowledgeGraphNode, KnowledgeGraphRelationType } from '../knowledge-graph/schema';
+import { relationLabel } from '../knowledge-graph/queries';
 
 type Props = {
   stepIndex: number;
@@ -17,9 +20,11 @@ type Props = {
   onNext: () => void;
   onSkip: () => void;
   onOpenWrittenDoc: () => void;
+  onOpenConnectedModule?: (moduleId: string) => void;
   canBack: boolean;
   isLast: boolean;
   step: ManualStep;
+  connectedModules?: Array<{ node: KnowledgeGraphNode; relation: KnowledgeGraphRelationType }>;
 };
 
 export function ManualWizardPanel({
@@ -37,10 +42,13 @@ export function ManualWizardPanel({
   onNext,
   onSkip,
   onOpenWrittenDoc,
+  onOpenConnectedModule,
   canBack,
   isLast,
   step,
+  connectedModules,
 }: Props) {
+  const [showConnected, setShowConnected] = useState(false);
   const progressPct = stepCount > 0 ? Math.round(((stepIndex + 1) / stepCount) * 100) : 0;
   const positionStyle =
     position === 'center'
@@ -92,6 +100,25 @@ export function ManualWizardPanel({
         {body}
       </p>
       <p style={{ ...khCaption, marginBottom: '14px' }}>{benefit}</p>
+      {connectedModules && connectedModules.length > 0 ? (
+        <div style={{ marginBottom: '10px' }}>
+          <button type="button" onClick={() => setShowConnected((v) => !v)} style={{ ...khActionBtn, marginBottom: '6px' }}>
+            {showConnected ? 'HIDE' : 'SHOW'} CONNECTED MODULES
+          </button>
+          {showConnected
+            ? connectedModules.slice(0, 5).map(({ node, relation }) => (
+                <button
+                  key={node.id}
+                  type="button"
+                  onClick={() => onOpenConnectedModule?.(node.moduleId ?? node.id)}
+                  style={{ ...khActionBtn, display: 'block', width: '100%', textAlign: 'left', marginBottom: '4px', fontSize: '8px' }}
+                >
+                  {node.name} · {relationLabel(relation)}
+                </button>
+              ))
+            : null}
+        </div>
+      ) : null}
       <div className="flex flex-wrap gap-2 justify-between items-center">
         <div className="flex gap-2">
           {canBack ? (
