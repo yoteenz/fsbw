@@ -127,6 +127,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
       updatedAt: now,
     },
+    {
+      id: 'promo-studio-intelligence-v1',
+      featureName: 'Studio Intelligence v1.0',
+      description: 'Operating intelligence — executive briefings, opportunity/risk engines, business health, decision journal, learning engine, confidence scoring.',
+      currentStage: 'develop',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
   ];
 }
 

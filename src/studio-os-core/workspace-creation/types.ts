@@ -44,6 +44,7 @@ export type BlueprintModuleId =
   | 'business-model-engine'
   | 'ecosystem'
   | 'governance'
+  | 'studio-intelligence'
   | 'social-accounts'
   | 'system-health'
   | 'promotion-center'

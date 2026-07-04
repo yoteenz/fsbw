@@ -260,6 +260,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-studio-os-governance', 'node-trust-engine', 'node-verification-center', 'node-audit-center'],
     },
     {
+      id: 'name-studio-intelligence',
+      officialName: 'Studio Intelligence',
+      deprecatedNames: ['ai assistant', 'chat bot', 'copilot'],
+      usageNotes:
+        'Platform pillar — operating intelligence layer. Executive briefings, opportunity/risk engines, business health, decision journal. Not another AI assistant — CIO for every workspace. UI: STUDIO INTELLIGENCE.',
+      relatedModules: ['studio-intelligence'],
+      relatedGraphNodeIds: ['node-studio-intelligence', 'node-executive-briefing', 'node-opportunity-engine', 'node-business-health'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -530,6 +539,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-studio-os-governance', 'node-trust-engine', 'node-verification-center', 'node-audit-center', 'node-studio-os-ecosystem', 'node-marketplace'],
       relatedManualChapter: 'CHAPTER · STUDIO OS GOVERNANCE · PLATFORM CONSTITUTION',
+    },
+    {
+      id: 'dec-studio-intelligence-v1',
+      title: 'Launch Studio Intelligence v1.0',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'studio-intelligence',
+      decision:
+        'Studio Intelligence is the strategic operating intelligence layer — not another AI assistant. Executive briefings (morning/weekly/monthly/quarterly), workspace intelligence, opportunity and risk engines, executive synthesis, cross-workspace intelligence, institutional learnings, recommendation center with historical evidence, business health score, decision journal, learning engine, confidence engine. Every major system reports in. Never acts autonomously on high-impact decisions.',
+      reason:
+        'Founders should receive meaningful recommendations before they ask. Augment judgment with context, historical learning, and operational intelligence — founder remains CEO, Studio Intelligence is CIO.',
+      alternativesConsidered: ['Generic AI chat assistant', 'Passive analytics dashboards only', 'Autonomous agent executing decisions'],
+      outcome: 'Studio Intelligence at /admin/studio/studio-intelligence — core in src/studio-os-core/studio-intelligence/, AI Media seeds in workspaces/ai-media/studio-intelligence/.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-studio-intelligence', 'node-executive-briefing', 'node-opportunity-engine', 'node-business-health', 'node-memory-bible', 'node-growth-network'],
+      relatedManualChapter: 'CHAPTER · STUDIO INTELLIGENCE · OPERATING INTELLIGENCE',
     },
   ],
   aiPreferences: {

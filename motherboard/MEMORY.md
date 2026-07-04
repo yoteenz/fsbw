@@ -36484,3 +36484,46 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Governance core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 35: Studio Intelligence v1.0
+
+**Context:** User requested Milestone 35 — introduce **Studio Intelligence** as the strategic operating intelligence layer for Studio OS. Not another AI assistant — the CIO for every workspace. Continuously analyzes workspaces, workflows, experiments, marketplace interactions, and business signals to proactively help founders decide. Recommend, explain, simulate, learn — never act autonomously on high-impact decisions. Founder remains CEO.
+
+**Delivered — Studio Intelligence v1.0:**
+
+**Core module** (`src/studio-os-core/studio-intelligence/`):
+- Executive briefing — personalized morning/weekly/monthly/quarterly (opportunities, risks, performance, actions, deadlines, marketplace, revenue, experiments, executive AI summaries)
+- Workspace intelligence — continuous analysis of traffic, sales, conversion, content, engagement, automation, campaigns, revenue, marketplace, contracts, team — trends before problems
+- Opportunity engine — proactive opportunities with why, expected impact, confidence, supporting evidence
+- Risk engine — revenue concentration, churn, bottlenecks, cash flow, dependencies — severity, confidence, recommended action
+- Executive synthesis — unified summary from all AI executives (not twenty dashboards)
+- Cross-workspace intelligence — shared audiences, assets, cross-sell, vendors, duplicate workflows, knowledge reuse across portfolio
+- Institutional intelligence — founder-approved learnings linked to Memory Bible
+- Recommendation center — next campaign/experiment/hire/partnership/product/automation/platform/revenue stream with historical evidence
+- Business health score — 10 categories (financial, growth, operations, automation, satisfaction, brand, marketplace, team, risk, knowledge) with trend and priority improvements
+- Decision journal — decision, reason, expected/actual outcome, lessons — linked to Memory Bible and KG
+- Learning engine — durable patterns vs temporary trends from experiments, campaigns, partnerships, launches
+- Confidence engine — confidence score, supporting data, related experiments, similar outcomes, risks, alternatives — never certainty
+- Connected systems: Company DNA, Creative DNA, Memory Bible, Writing Bible, KG, Growth Network, Talent Network, Marketplace, BME, Labs, Governance, Ecosystem
+- localStorage store key `studioOsIntelligence_v1`
+
+**AI Media demo seeds** (`src/workspaces/ai-media/studio-intelligence/bootstrap.ts`):
+- Morning + weekly briefings, 6 workspace signals, 3 opportunities, 3 risks, unified executive synthesis, 2 cross-workspace insights, 2 institutional learnings, 3 recommendations, business health score 78, decision journal, learning records, confidence breakdowns
+
+**Admin UI** (`/admin/studio/studio-intelligence`):
+- 14 tabs: Intelligence Dashboard, Executive Briefing, Workspace Intel, Opportunities, Risk Engine, Exec Synthesis, Cross-Workspace, Institutional, Recommendations, Business Health, Decision Journal, Learning Engine, Confidence, KG Integration
+- `StudioIntelligenceWorkspace.tsx`, `useAdminStudioIntelligenceState.ts`, `adminStudioStudioIntelligenceDemo.ts` (separate from Intelligence Engine `adminStudioIntelligenceDemo.ts`), `studioIntelligenceStudioService`
+
+**Platform wiring:**
+- modules.ts module id `studio-intelligence`, route `studio-intelligence`
+- adminStudioRoutes, navigation, App.tsx lazy route, services registry, workspace bootstrap
+- KG: `node-studio-intelligence`, `node-executive-briefing`, `node-opportunity-engine`, `node-business-health`, `node-studio-intelligence-learning`, `node-studio-intelligence-decision`, workflow `wf-studio-intelligence`
+- Memory Bible: naming `name-studio-intelligence`, decision `dec-studio-intelligence-v1`
+- moduleEnrichments, promotion `promo-studio-intelligence-v1`, workspace creation engine/blueprints
+- Docs: `docs/studio-os/studio-intelligence.md`
+
+**Conventions:** Distinct from **Intelligence Engine** (`/admin/studio/intelligence-engine`) — evidence-based recommendations from connected sources. **Studio Intelligence** synthesizes all platform systems for executive decision support. Never autonomous on high-impact decisions.
+
+**Changes:** Studio Intelligence core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
+

@@ -161,6 +161,11 @@ export function WorkspaceDashboard({
                 OPEN STUDIO OS GOVERNANCE
               </button>
             ) : null}
+            {activeTab === 'studio-intelligence' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/studio-intelligence')}>
+                OPEN STUDIO INTELLIGENCE
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

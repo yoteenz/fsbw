@@ -47,6 +47,7 @@ export type AdminStudioSectionId =
   | 'business-model-engine'
   | 'ecosystem'
   | 'governance'
+  | 'studio-intelligence'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'

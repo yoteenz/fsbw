@@ -589,6 +589,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'studio-intelligence',
+    title: 'STUDIO INTELLIGENCE',
+    purpose: 'Operating intelligence — executive briefings, opportunity/risk engines, business health, proactive recommendations.',
+    route: p('studio-intelligence'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '14 TABS',
+    ctaLabel: 'OPEN INTELLIGENCE',
+    moduleKey: 'studio-intelligence',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

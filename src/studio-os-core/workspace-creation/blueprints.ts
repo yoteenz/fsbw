@@ -15,6 +15,7 @@ const CORE_PACKAGES = [
   'business-model-engine',
   'ecosystem',
   'governance',
+  'studio-intelligence',
   'interactive-manual',
   'onboarding-tutorial',
   'prompt-library',

@@ -33,6 +33,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'business-model-engine'
   | 'ecosystem'
   | 'governance'
+  | 'studio-intelligence'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'
@@ -138,6 +139,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   businessModelEngine: 'studio/business-model-engine',
   ecosystem: 'studio/ecosystem',
   governance: 'studio/governance',
+  studioIntelligence: 'studio/studio-intelligence',
   visionEngine: 'studio/vision-engine',
   executiveCommandCenter: 'studio/executive-command-center',
   missionControl: 'studio/mission-control',
@@ -334,6 +336,10 @@ export function adminStudioEcosystemPath(): string {
 
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
+}
+
+export function adminStudioStudioIntelligencePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-intelligence`;
 }
 
 export function adminStudioVisionEnginePath(): string {

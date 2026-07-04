@@ -63,6 +63,7 @@ export function buildWorkspaceFromDraft(input: CreateWorkspaceInput): WorkspaceR
     'business-model-engine',
     'ecosystem',
     'governance',
+    'studio-intelligence',
   ];
 
   return {

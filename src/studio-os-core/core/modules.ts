@@ -29,6 +29,7 @@ export type StudioOsCoreModuleId =
   | 'business-model-engine'
   | 'ecosystem'
   | 'governance'
+  | 'studio-intelligence'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -192,6 +193,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO OS GOVERNANCE',
     description: 'Trust, quality, compliance, moderation, verification, certification, and ecosystem health — the platform constitution.',
     routeSegment: 'governance',
+  },
+  {
+    id: 'studio-intelligence',
+    label: 'STUDIO INTELLIGENCE',
+    description: 'Operating intelligence — executive briefings, opportunity/risk engines, business health, and proactive recommendations.',
+    routeSegment: 'studio-intelligence',
   },
   {
     id: 'vision-engine',
