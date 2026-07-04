@@ -50,6 +50,7 @@ export default function DynamicCartIcon({ count, size = 23, width, height, class
       <div 
         className={`relative cursor-pointer ${className}`} 
         data-cart-icon="true"
+        data-tutorial-target="nav-cart"
         style={{ 
           width: iconWidth, 
           height: iconHeight, 

@@ -37,6 +37,7 @@ import DigitalCashHistoryPopup from '../../components/account/DigitalCashHistory
 import SlayTicketHistoryPopup from '../../components/account/SlayTicketHistoryPopup';
 import { useSlayTickets } from '../../hooks/useSlayTickets';
 import { getSlayTicketBalanceFromUser } from '../../utils/slayTicketHistoryDisplay';
+import { TutorialOsAccountEntry } from '../../tutorial-os';
 
 function AccountPage() {
   const navigate = useNavigate();
@@ -2226,6 +2227,15 @@ function AccountPage() {
                   </div>
                   );
                 })}
+
+                {!showMobileMenu ? (
+                  <div
+                    className="border border-black bg-white/60 backdrop-blur-sm w-full"
+                    style={{ borderWidth: '1.3px', padding: '10px 20px', marginTop: '8px' }}
+                  >
+                    <TutorialOsAccountEntry />
+                  </div>
+                ) : null}
               </div>
             )}
 

@@ -35723,3 +35723,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** ideogramCutout.ts, pipeline.ts, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Tutorial OS / The Mansion Tour (interactive concierge walkthrough)
+
+**Context:** Milestone to build **Tutorial OS** (StudioOS admin) / **The Mansion Tour** (customer **FS Concierge**) — luxury interactive onboarding without forcing video; guided acrylic wizard panels, hotspots, route-aware steps, progress tracking, achievement placeholders, and admin management. Constraints: no site redesign, no route removal, no changes to checkout/cart/rewards/BAW/Lounge TV business logic (additive only).
+
+**Shipped:**
+- **`src/tutorial-os/`** — reusable schema (`TutorialStep`, `TutorialTour`), registry, **10-step Mansion Tour** (Welcome → Navigation → Build-A-Wig → Signature Collection → Hairstyle Analysis → Lounge TV → Rewards → Account → Cart/Checkout → Finish), placeholder tour shells (BAW, Rewards, Lounge TV, Hairstyle Analysis, Membership, Account, Checkout).
+- **Customer UI:** `TutorialOsProvider` in `App.tsx` — optional welcome prompt (Start / Maybe Later / Skip), glassmorphism wizard panel, spotlight overlay (pulse/glow/arrow/zoom), animated preview chips, floating **FS** concierge FAB, route navigation + scroll-to-target with graceful missing-target dev logging.
+- **Progress:** `localStorage` (`fsTutorialProgress_v1`); signed-in sync via **`GET/PUT /api/tutorial/progress`** + migration **`20260704180000_tutorial_progress.sql`**.
+- **Achievements (placeholders):** Explorer / Builder / Collector badges in `earnedAchievementIds` — no live reward issuance.
+- **Admin:** **StudioOS → Tutorial OS** at `/admin/studio/tutorial-os` — Tours, Steps, Hotspots, Completion Analytics, Missing Targets, Preview (`?tutorialPreview=mansion-tour`); nav entry in `adminStudioNavigation.ts`; `tutorialOsStudioService`.
+- **Access:** Account dashboard **Take The Mansion Tour** via `TutorialOsAccountEntry`; minimal `data-tutorial-target` on nav cart, menu toggle, units grid, rewards list.
+- **Docs:** `docs/frontal-slayer/tutorial-os/README.md`.
+
+**Changes:** tutorial-os module, admin workspace/page, API, migration, App wiring, account entry, hotspot attributes, services registry, docs, `motherboard/MEMORY.md`.
+

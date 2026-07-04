@@ -446,6 +446,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'tutorial-os',
+    title: 'TUTORIAL OS',
+    purpose: 'Manage concierge walkthroughs — The Mansion Tour, hotspots, progress analytics, and preview.',
+    route: p('tutorial-os'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'MANSION',
+    ctaLabel: 'OPEN TUTORIAL OS',
+    featuredOnOverview: true,
+  },
+  {
     id: 'intelligence-engine',
     title: 'INTELLIGENCE ENGINE',
     purpose: 'Turn connected data into evidence-based recommendations.',

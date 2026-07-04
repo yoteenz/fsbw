@@ -1582,7 +1582,7 @@ function MembershipPage() {
                         </div>
 
                         {/* Rewards list */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: 0, paddingBottom: '5px' }}>
+                        <div data-tutorial-target="rewards-chart" style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: 0, paddingBottom: '5px' }}>
                           {LOYALTY_REWARDS.map((reward, index) => {
                             const currentPoints = getDisplayLoyaltyPoints();
                             const canRedeem = currentPoints >= reward.points;

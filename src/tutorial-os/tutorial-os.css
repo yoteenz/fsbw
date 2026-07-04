@@ -1,0 +1,239 @@
+.tutorial-os-spotlight-root {
+  position: fixed;
+  inset: 0;
+  z-index: 99980;
+  pointer-events: none;
+}
+
+.tutorial-os-spotlight-dim {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 10, 12, 0.42);
+  backdrop-filter: blur(2px);
+  transition: opacity 0.35s ease;
+}
+
+.tutorial-os-spotlight-hole {
+  position: absolute;
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 9999px rgba(10, 10, 12, 0.48),
+    0 0 24px rgba(235, 28, 36, 0.35),
+    inset 0 0 0 1.3px rgba(235, 28, 36, 0.65);
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.tutorial-os-spotlight-hole--pulse {
+  animation: tutorial-os-pulse 2s ease-in-out infinite;
+}
+
+.tutorial-os-spotlight-hole--glow {
+  animation: tutorial-os-glow 2.4s ease-in-out infinite;
+}
+
+.tutorial-os-spotlight-hole--zoom {
+  animation: tutorial-os-zoom 2s ease-in-out infinite;
+}
+
+.tutorial-os-spotlight-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-bottom: 14px solid #eb1c24;
+  filter: drop-shadow(0 2px 6px rgba(235, 28, 36, 0.45));
+  animation: tutorial-os-bounce 1.2s ease-in-out infinite;
+}
+
+.tutorial-os-wizard-panel {
+  position: fixed;
+  z-index: 99990;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(calc(100vw - 24px), 420px);
+  border: 1.3px solid #0a0a0a;
+  border-radius: 10px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.78)),
+    url('/assets/marble-half.png') center / cover;
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 18px 48px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+    0 0 32px rgba(235, 28, 36, 0.08);
+  padding: 16px;
+  pointer-events: auto;
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tutorial-os-wizard-panel--bottom {
+  bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+.tutorial-os-wizard-panel--center {
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.tutorial-os-wizard-panel--top {
+  top: max(72px, env(safe-area-inset-top));
+}
+
+.tutorial-os-welcome-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99970;
+  background: rgba(8, 8, 10, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.tutorial-os-welcome-card {
+  width: min(calc(100vw - 32px), 380px);
+  border: 1.3px solid #0a0a0a;
+  border-radius: 12px;
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.82)),
+    url('/assets/marble-half.png') center / cover;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+  padding: 20px 18px;
+}
+
+.tutorial-os-preview-area {
+  margin: 12px 0;
+  min-height: 88px;
+  border: 1.3px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.tutorial-os-preview-chip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  padding: 8px;
+}
+
+.tutorial-os-preview-chip span {
+  font-family: 'Futura PT Medium', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 1px solid #0a0a0a;
+  border-radius: 4px;
+  color: #eb1c24;
+  background: rgba(255, 255, 255, 0.7);
+  animation: tutorial-os-fade-in 0.5s ease both;
+}
+
+.tutorial-os-concierge-fab {
+  position: fixed;
+  z-index: 99960;
+  right: 14px;
+  bottom: max(88px, calc(env(safe-area-inset-bottom) + 72px));
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1.3px solid #0a0a0a;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tutorial-os-concierge-fab:hover {
+  transform: scale(1.04);
+  box-shadow: 0 10px 28px rgba(235, 28, 36, 0.2);
+}
+
+.tutorial-os-progress-bar {
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.tutorial-os-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #eb1c24, #ff5a62);
+  transition: width 0.35s ease;
+}
+
+@keyframes tutorial-os-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 9999px rgba(10, 10, 12, 0.48),
+      0 0 16px rgba(235, 28, 36, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 9999px rgba(10, 10, 12, 0.48),
+      0 0 28px rgba(235, 28, 36, 0.55);
+  }
+}
+
+@keyframes tutorial-os-glow {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.08);
+  }
+}
+
+@keyframes tutorial-os-zoom {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes tutorial-os-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes tutorial-os-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (min-width: 768px) {
+  .tutorial-os-wizard-panel {
+    width: min(calc(100vw - 48px), 440px);
+  }
+}

@@ -55,6 +55,7 @@ import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
 import { MobileMansionRoutes } from './routes/MobileMansionRoutes';
 import { BAW_TUTORIAL_ROUTE, normalizeBawViewPathname } from './constants/bawTutorialConfig';
+import { TutorialOsProvider } from './tutorial-os';
 
 /** Lazy route imports with retries for chunk/network failures (common after deploys). */
 const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
@@ -176,6 +177,7 @@ const AdminStudioMissionControl = lazyWithRetry(() => import('./pages/admin/stud
 const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
 const AdminStudioKnowledgeHubProfile = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/profile/page'), 'AdminStudioKnowledgeHubProfile');
 const AdminStudioKnowledgeHubWorkflow = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/workflow/page'), 'AdminStudioKnowledgeHubWorkflow');
+const AdminStudioTutorialOs = lazyWithRetry(() => import('./pages/admin/studio/tutorial-os/page'), 'AdminStudioTutorialOs');
 const AdminStudioBrandAssets = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/page'), 'AdminStudioBrandAssets');
 const AdminStudioPhotographyBible = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/photography-bible/page'), 'AdminStudioPhotographyBible');
 const AdminStudioBrandAssetsAssetFactory = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/asset-factory/page'), 'AdminStudioBrandAssetsAssetFactory');
@@ -562,6 +564,7 @@ function App() {
   return (
     <ErrorBoundary>
       <DesktopTowerNavProvider>
+      <TutorialOsProvider>
       {!hidePreviewChrome ? <CreativePreviewBanner /> : null}
       {!hidePreviewChrome ? <MembershipRouteSync /> : null}
       {!hidePreviewChrome ? <AccountCommerceSync /> : null}
@@ -1049,6 +1052,11 @@ function App() {
           <Route path="studio/knowledge-hub" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioKnowledgeHub />
+            </Suspense>
+          } />
+          <Route path="studio/tutorial-os" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioTutorialOs />
             </Suspense>
           } />
           <Route path="studio/brand-assets/photography-bible" element={
@@ -1631,6 +1639,7 @@ function App() {
           </Suspense>
         } />
       </DebugModeShell>
+      </TutorialOsProvider>
       </DesktopTowerNavProvider>
     </ErrorBoundary>
   );

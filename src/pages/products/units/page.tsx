@@ -642,6 +642,7 @@ function ProductsUnitsPage() {
               {/* Strip: products row + bag overlay outside overflow-x clip (same pattern as home/shop UNITS) */}
               <div
                 ref={texture === 'straight' ? productStripViewportRef : undefined}
+                data-tutorial-target="shop-units-grid"
                 style={{
                   width: '100%',
                   position: 'relative',

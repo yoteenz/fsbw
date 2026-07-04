@@ -881,6 +881,7 @@ function ProductsPage() {
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                   className="cursor-pointer"
+                  data-tutorial-target="nav-menu-toggle"
                   onClick={handleMobileMenuToggle}
                   style={{ marginTop: '2px' }}
                 >
