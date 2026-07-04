@@ -34943,4 +34943,14 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Fix:** **`emailHeroPromptMeta.json`** — explicit **FORBIDDEN** list (glass cube, acrylic box, vitrine, etc.); canonical reference = **white fluted vase + crimson roses + quartz crystals**. **`welcome`** scene rewritten to match VIP mood board; removed **`welcome`** from **`emailHeroLogoPlacements.json`** (logo stays in email header wordmark only). Regen: **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-vase.log`**.
 
+---
+
+## 2026-07-04 — Welcome hero: vase greeting + virtual salon hair anchor
+
+**Context:** User approved vase/flowers as the right welcome gesture (like greeting someone at the door) but it must **tie into hair** — welcoming them to the **virtual salon** for the first time, aligned with the website brand.
+
+**Prompt:** **`welcome`** scene now pairs **white fluted vase + crimson roses + quartz crystals** with a **sleek matte-white salon mannequin head wearing a premium lace-front wig** beside the flowers — hospitality + hair in one minimal still-life on marble salon floor. Still **no glass cube**.
+
+**Regen:** **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-salon.log`**. Preview at **`/tools/email-templates`** → Welcome.
+
 
