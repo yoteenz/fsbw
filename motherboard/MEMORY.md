@@ -34647,3 +34647,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Navigate `/admin/studio/talent-agency`; cross-links to Studio Lot / AI Orchestrator at bottom only. Future generation calls `talentAgencyStudioService.inheritForGeneration(talentId)` — never duplicate character definitions.
 
+---
+
+## 2026-07-04 — THE STUDIO Casting & Talent Management milestone
+
+**Context:** Continuation of THE STUDIO — all prior milestones frozen. User requested **CASTING** module — subtitle *"Bringing every story to life."* Talent Agency defines WHO exists; Casting determines WHO appears in every piece of content. Luxury film-studio casting department aesthetic. Nothing proceeds without approved cast. Architecture: Talent Agency → **Casting** → Production Pipeline → AI Generation → Publishing.
+
+**Topics covered (full chat arc):**
+- Prior: Talent Agency (`ed15feff`), Studio Lot, Show Bible, etc. — all unchanged.
+- **Casting** (`/admin/studio/casting`): premium dashboard (9 sections: Active/Available Talent, Upcoming Castings, Current Productions, Guest/Community Talent, Requests, Schedule, Analytics); casting workflow diagram (9 steps ending in Production Pipeline); visual casting board (5 seeded productions); talent roster cards; community talent list; inactive casting calls (Guest Experts, Celebrity Guests, etc.).
+- **Production detail** (`/admin/studio/casting/:castingId`): 9 tabs — Board, Workflow (toggle checklist), Roles (role library), Talent (selected/backup), Wardrobe, Expressions, Schedule, Continuity, Licensing (architecture only). Cast blocked until Approve Cast + Lock Cast workflow steps complete.
+- **Talent casting profile** (`/admin/studio/casting/talent/:talentId`): 9 tabs — Profile, Shows, Studios, Wardrobe, Expressions, Community, Schedule, Analytics (demo), Licensing (architecture). Links to Talent Agency master profile. 9 casting talent profiles seeded with statuses (available, booked, filming, guest-appearance, inactive).
+- **Data model** `adminStudioCastingDemo.ts`: productions, talent profiles, community talent, casting calls, role/wardrobe/expression libraries, workflow steps.
+- **Service** `castingStudioService`: `getSnapshot`, `validateApproval`, `getCastingInheritance` — registered in `STUDIO_SERVICE_REGISTRY`.
+
+**Decisions / outcomes:** Casting references Talent Agency — never recreates talent; licensing/legal workflows architecture-only; casting calls inactive until enabled; community talent section for future members. Build verified.
+
+**Changes:** `adminStudioCastingDemo.ts`, `useAdminStudioCastingState.ts`, `services/studio/casting/service.ts`, Casting UI components, `casting/page.tsx`, `casting/detail/page.tsx`, `casting/talent/page.tsx`, routes, storage, `App.tsx`, `STUDIO_SERVICE_REGISTRY`.
+
+**Conventions:** Navigate `/admin/studio/casting`; cross-links to Talent Agency / AI Orchestrator only. Every content pack must pass `castingStudioService.validateApproval(productionId)` before production pipeline.
+

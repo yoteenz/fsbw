@@ -141,6 +141,9 @@ const AdminStudioLot = lazyWithRetry(() => import('./pages/admin/studio/studio-l
 const AdminStudioLotDetail = lazyWithRetry(() => import('./pages/admin/studio/studio-lot/detail/page'), 'AdminStudioLotDetail');
 const AdminStudioTalentAgency = lazyWithRetry(() => import('./pages/admin/studio/talent-agency/page'), 'AdminStudioTalentAgency');
 const AdminStudioTalentAgencyDetail = lazyWithRetry(() => import('./pages/admin/studio/talent-agency/detail/page'), 'AdminStudioTalentAgencyDetail');
+const AdminStudioCasting = lazyWithRetry(() => import('./pages/admin/studio/casting/page'), 'AdminStudioCasting');
+const AdminStudioCastingProduction = lazyWithRetry(() => import('./pages/admin/studio/casting/detail/page'), 'AdminStudioCastingProduction');
+const AdminStudioCastingTalent = lazyWithRetry(() => import('./pages/admin/studio/casting/talent/page'), 'AdminStudioCastingTalent');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -836,6 +839,21 @@ function App() {
           <Route path="studio/talent-agency" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioTalentAgency />
+            </Suspense>
+          } />
+          <Route path="studio/casting/talent/:talentId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCastingTalent />
+            </Suspense>
+          } />
+          <Route path="studio/casting/:castingId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCastingProduction />
+            </Suspense>
+          } />
+          <Route path="studio/casting" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCasting />
             </Suspense>
           } />
           <Route path="studio/:sectionId" element={

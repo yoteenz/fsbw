@@ -33,7 +33,8 @@ export type AdminStudioSectionId =
   | 'ai-orchestrator'
   | 'show-bible'
   | 'studio-lot'
-  | 'talent-agency';
+  | 'talent-agency'
+  | 'casting';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;
