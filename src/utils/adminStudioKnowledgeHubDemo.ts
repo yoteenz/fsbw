@@ -14,7 +14,8 @@ import {
   adminStudioKnowledgeHubWorkflowPath,
 } from './adminStudioRoutes';
 
-export const KNOWLEDGE_HUB_SUBTITLE = 'Learn your Workspace. Understand your production.';
+export const KNOWLEDGE_HUB_SUBTITLE =
+  'Interactive Manual + written Owner\'s Manual — learn StudioOS by using the live interface.';
 
 export type KnowledgeObjectType =
   | 'studio'

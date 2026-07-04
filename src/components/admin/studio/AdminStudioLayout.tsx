@@ -5,6 +5,7 @@ import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAcc
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { StudioKnowledgeProvider } from '../../../contexts/StudioKnowledgeContext';
+import { StudioManualBridge } from './StudioManualBridge';
 import { AdminStudioBreadcrumbTrail } from './AdminStudioBreadcrumbTrail';
 import { AdminStudioNavTabs } from './AdminStudioNavTabs';
 import { KnowledgeHubButton } from './knowledge-hub/KnowledgeHubButton';
@@ -82,6 +83,7 @@ export function AdminStudioLayout({
 
   return (
     <StudioKnowledgeProvider>
+    <StudioManualBridge>
     <div className="min-h-screen" style={{ position: 'relative' }}>
       <div
         className="fixed inset-0 -z-10"
@@ -113,7 +115,11 @@ export function AdminStudioLayout({
 
                 <AdminStudioBreadcrumbTrail segments={breadcrumbs} />
 
-                <div className="flex items-center justify-between" style={{ minWidth: 0 }}>
+                <div
+                  className="flex items-center justify-between"
+                  style={{ minWidth: 0 }}
+                  data-studio-manual="module-header"
+                >
                   <h2
                     style={{
                       fontFamily: '"Futura PT Medium"',
@@ -178,11 +184,14 @@ export function AdminStudioLayout({
               </div>
 
               {!hideNavTabs && workspace.studioEnabled ? (
-                <AdminStudioNavTabs activeGroupId={activeGroupId} />
+                <div data-studio-manual="nav-tabs">
+                  <AdminStudioNavTabs activeGroupId={activeGroupId} />
+                </div>
               ) : null}
 
               <div
                 className="flex-1 min-h-0"
+                data-studio-manual="workspace-content"
                 style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}
               >
                 <KnowledgeContextualHint />
@@ -209,6 +218,7 @@ export function AdminStudioLayout({
       </div>
       <KnowledgePanel />
     </div>
+    </StudioManualBridge>
     </StudioKnowledgeProvider>
   );
 }

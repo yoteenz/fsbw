@@ -9,7 +9,7 @@ export default function AdminStudioKnowledgeHubPage() {
 
   return (
     <AdminStudioStageShell
-      title="KNOWLEDGE HUB"
+      title="INTERACTIVE MANUAL"
       subtitle={KNOWLEDGE_HUB_SUBTITLE}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"
@@ -18,7 +18,7 @@ export default function AdminStudioKnowledgeHubPage() {
     >
       <KnowledgeHubWorkspace />
       <AdminStudioDisclaimerFooter>
-        SELF-DOCUMENTING STUDIOOS · TAP ⓘ ON ANY PAGE · OWNER&apos;S MANUAL SYNCED WITH SOFTWARE
+        INTERACTIVE MANUAL · TAP ⓘ ON ANY MODULE · WRITTEN OWNER&apos;S MANUAL SYNCED WITH SOFTWARE
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

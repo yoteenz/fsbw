@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useStudioKnowledge } from '../../../../contexts/StudioKnowledgeContext';
+import { useStudioInteractiveManual } from '../../../../studio-interactive-manual';
 import { adminStudioKnowledgeHubPath } from '../../../../utils/adminStudioRoutes';
 import { KH_VISUAL, khActionBtn, khCaption, khPanelStyle, khSectionTitle } from './knowledgeHubTheme';
 
@@ -24,12 +25,9 @@ export function KnowledgePanel() {
     panelOpen,
     closePanel,
     pageGuide,
-    tourStepIndex,
-    startTour,
-    nextTourStep,
-    endTour,
     markCurrentPageRead,
   } = useStudioKnowledge();
+  const { openModuleManual, openSearchModal } = useStudioInteractiveManual();
 
   useEffect(() => {
     if (!panelOpen) return;
@@ -77,7 +75,7 @@ export function KnowledgePanel() {
         <div style={{ padding: '16px' }}>
           <div className="flex items-start justify-between gap-2 mb-3">
             <div>
-              <p style={{ ...khCaption, color: KH_VISUAL.red }}>KNOWLEDGE HUB</p>
+              <p style={{ ...khCaption, color: KH_VISUAL.red }}>INTERACTIVE MANUAL · WRITTEN DOC</p>
               <p style={{ ...khSectionTitle, fontSize: '12px' }}>
                 {guide?.title ?? 'STUDIOOS PAGE'}
               </p>
@@ -86,23 +84,6 @@ export function KnowledgePanel() {
               CLOSE
             </button>
           </div>
-
-          {tourStepIndex >= 0 && guide ? (
-            <div style={{ ...khPanelStyle, padding: '10px', marginBottom: '12px', borderColor: KH_VISUAL.red }}>
-              <p style={{ ...khCaption, color: KH_VISUAL.red }}>TAKE TOUR · STEP {tourStepIndex + 1}</p>
-              <p style={{ ...khCaption, color: KH_VISUAL.black, fontFamily: '"Futura PT Medium"' }}>
-                {guide.tourSteps[tourStepIndex]}
-              </p>
-              <div className="flex gap-2 mt-2">
-                <button type="button" onClick={nextTourStep} style={khActionBtn}>
-                  NEXT STEP
-                </button>
-                <button type="button" onClick={endTour} style={khActionBtn}>
-                  END TOUR
-                </button>
-              </div>
-            </div>
-          ) : null}
 
           {guide ? (
             <>
@@ -159,8 +140,18 @@ export function KnowledgePanel() {
                 </button>
               </section>
               <div className="flex flex-wrap gap-2 mt-4">
-                <button type="button" onClick={startTour} style={khActionBtn}>
-                  TAKE TOUR
+                <button
+                  type="button"
+                  onClick={() => {
+                    closePanel();
+                    openModuleManual(pageGuide?.moduleId);
+                  }}
+                  style={khActionBtn}
+                >
+                  INTERACTIVE WALKTHROUGH
+                </button>
+                <button type="button" onClick={openSearchModal} style={khActionBtn}>
+                  SEARCH MANUAL
                 </button>
                 <button
                   type="button"

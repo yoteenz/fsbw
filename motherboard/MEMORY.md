@@ -35799,3 +35799,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** tutorial-os v2 module + components, `TutorialOsContext`, `TutorialWizardPanel`, `ShopMobileMenuToolsTab`, `account/page.tsx`, admin workspace + demo utils + hook, `progressStorage` v2 migration, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — StudioOS Interactive Manual (Milestone 24)
+
+**Context:** User asked to consolidate every StudioOS help system into one unified **Interactive Manual** — internal operating manual (not customer onboarding). Tap ⓘ launches live walkthroughs; keep written info panels; data-driven Module → Section → Widget → Action; search, progress, What's New, workflow visualization, written manual cross-links. Do not redesign dashboard.
+
+**Shipped:**
+- **`src/studio-interactive-manual/`** — schema, compiler, `buildFromKnowledge` (auto-manuals for every `KNOWLEDGE_PAGE_GUIDES` module), enrichments (Asset Factory, Asset Director, Brand Assets/Photography Bible, Blueprint Manager, etc.), progress, search, What's New registry.
+- **Interactive UI:** wizard panel, spotlight overlay (reuses tutorial-os CSS), animated workflow strip, search modal, **LEARN THIS WORKSPACE** button.
+- **ⓘ button** (`KnowledgeHubButton`) now opens Interactive Manual; written slide-over (`KnowledgePanel`) kept — **OPEN WRITTEN DOC** / **INTERACTIVE WALKTHROUGH** / **SEARCH MANUAL**.
+- **`StudioManualBridge`** wraps `AdminStudioLayout` — links manual ↔ Knowledge Hub panel.
+- **Hotspots:** `data-studio-manual` on module header, ⓘ, nav tabs, workspace content.
+- **Knowledge Hub page** retitled **INTERACTIVE MANUAL** with tabs: Interactive Manual · Progress · What's New · Wiki.
+- **Docs:** `docs/studio-os/interactive-manual.md`.
+
+**Changes:** studio-interactive-manual module, `AdminStudioLayout`, `KnowledgeHubButton`, `KnowledgePanel`, `KnowledgeHubWorkspace`, knowledge-hub page, `adminStudioKnowledgeHubDemo.ts`, docs, `motherboard/MEMORY.md`.
+

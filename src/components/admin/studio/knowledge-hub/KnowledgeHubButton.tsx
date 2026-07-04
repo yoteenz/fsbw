@@ -1,35 +1,39 @@
 import { useStudioKnowledge } from '../../../../contexts/StudioKnowledgeContext';
+import { useStudioInteractiveManual } from '../../../../studio-interactive-manual';
 import { KH_VISUAL, khActionBtn } from './knowledgeHubTheme';
 
 type KnowledgeHubButtonProps = {
   compact?: boolean;
 };
 
-/** Universal ⓘ — opens Learn This Page knowledge panel. */
+/** Universal ⓘ — launches Interactive Manual walkthrough for this module. */
 export function KnowledgeHubButton({ compact }: KnowledgeHubButtonProps) {
-  const { togglePanel, panelOpen } = useStudioKnowledge();
+  const { pageGuide } = useStudioKnowledge();
+  const { openModuleManual, isManualActive } = useStudioInteractiveManual();
 
   return (
-    <button
-      type="button"
-      onClick={togglePanel}
-      aria-label="Learn this page"
-      aria-pressed={panelOpen}
-      title="Learn this page"
-      style={{
-        ...khActionBtn,
-        flexShrink: 0,
-        width: compact ? 28 : 32,
-        height: compact ? 28 : 32,
-        padding: 0,
-        display: 'inline-flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: panelOpen ? KH_VISUAL.red : KH_VISUAL.black,
-        borderColor: panelOpen ? KH_VISUAL.red : '#000',
-      }}
-    >
-      <span style={{ fontSize: compact ? '14px' : '16px', lineHeight: 1 }}>ⓘ</span>
-    </button>
+    <span data-studio-manual="info-button" style={{ display: 'inline-flex' }}>
+      <button
+        type="button"
+        onClick={() => openModuleManual(pageGuide?.moduleId)}
+        aria-label="Open Interactive Manual"
+        aria-pressed={isManualActive}
+        title="Interactive Manual"
+        style={{
+          ...khActionBtn,
+          flexShrink: 0,
+          width: compact ? 28 : 32,
+          height: compact ? 28 : 32,
+          padding: 0,
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: isManualActive ? KH_VISUAL.red : KH_VISUAL.black,
+          borderColor: isManualActive ? KH_VISUAL.red : '#000',
+        }}
+      >
+        <span style={{ fontSize: compact ? '14px' : '16px', lineHeight: 1 }}>ⓘ</span>
+      </button>
+    </span>
   );
 }
