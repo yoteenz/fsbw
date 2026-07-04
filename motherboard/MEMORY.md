@@ -35329,3 +35329,21 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** If GENERATE still fails with **ADMIN ACCESS DENIED**, verify the signed-in Supabase email is in both **`ADMIN_EMAILS`** (Vercel API) and **`VITE_ADMIN_EMAILS`** (frontend build). If **SESSION EXPIRED**, sign out/in on the device so Bearer JWT is sent. After auth works, Fal/Supabase failures return 500/503 not 403.
 
+---
+
+## 2026-07-04 — Asset Director GENERATE marble reference missing on Vercel
+
+**Context:** After auth fix, user tapped GENERATE on DAY and got **`GENERATION FAILED · DAY · Marble reference missing: /var/task/public/assets/marble-half.png`** (live pipeline toast). Asset Factory queue also showed prior **FAILED** jobs from earlier Forbidden attempts.
+
+**Topics covered (full chat arc):** StudioOS core extraction; Asset Director preview + live Fal pipeline; Forbidden 403 auth fix; user asked what FAILED status means in Asset Factory queue; new error marble reference missing on Vercel serverless.
+
+**Decisions / outcomes:**
+- **Root cause:** Vercel API functions do not bundle `public/` by default. `studioAssetGeneration.ts` used `existsSync` + `readFileSync` on `public/assets/marble-half.png` and `NOIR/noir-thumb.png` — files exist in repo and are served at `/assets/...` on the site, but **`/var/task/public/...` is absent** in the lambda filesystem.
+- **Fix:** `uploadLocalOrSiteRefToFal` — try local path (dev), else fetch from **`resolveSiteOrigin()`** + `/assets/marble-half.png` and `/assets/NOIR/noir-thumb.png` and upload to Fal. **`vercel.json`** `includeFiles` for those two PNGs on `studio-generate-asset` as backup.
+- **UX:** Tile subtitle maps marble/studio reference errors to **REFERENCE ASSETS UNAVAILABLE** (truncate long server paths).
+- **FAILED queue rows:** Historical jobs from failed API calls (Forbidden, marble missing) — not demo simulation; footer “PROVIDERS NOT CONNECTED” on Asset Factory page is stale static copy.
+
+**Changes:** `api/_lib/studioAssetGeneration.ts`, `vercel.json`, `src/hooks/useAdminStudioAssetDirectorState.ts`, `motherboard/MEMORY.md`.
+
+**Conventions:** Server Fal refs that live in `public/assets/` must use site-URL fallback or `includeFiles` on the API route — never assume `public/` is on disk in `/var/task`.
+

@@ -77,7 +77,8 @@ function formatGeneratedVersionSubtitle(error?: string): string {
     return 'SIGN IN REQUIRED';
   }
   if (/admin access denied|not_admin/i.test(error)) return 'ADMIN ACCESS DENIED';
-  return error;
+  if (/marble reference missing|studio reference missing/i.test(error)) return 'REFERENCE ASSETS UNAVAILABLE';
+  return error.length > 48 ? `${error.slice(0, 45)}…` : error;
 }
 
 export function mergeStudioBundleWithGeneratedVersions(bundle: StudioVisualBundle, studioId: string): StudioVisualBundle {

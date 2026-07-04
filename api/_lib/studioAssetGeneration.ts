@@ -44,6 +44,28 @@ function defaultStudioRefPath(): string {
   return join(repoRoot(), 'public/assets/NOIR/noir-thumb.png');
 }
 
+async function uploadLocalOrSiteRefToFal(
+  fal: { storage: { upload: (f: File) => Promise<string> } },
+  localPath: string,
+  siteRelativePath: string,
+  label: string
+): Promise<string> {
+  if (existsSync(localPath)) {
+    return falUpload(fal, localPath);
+  }
+
+  const { resolveSiteOrigin } = await import('./email/brandAssets.js');
+  const assetPath = siteRelativePath.replace(/^\//, '');
+  const url = `${resolveSiteOrigin()}/${assetPath.startsWith('assets/') ? assetPath : `assets/${assetPath}`}`;
+  try {
+    return await falUploadFromUrl(fal, url);
+  } catch {
+    throw new Error(
+      `${label} reference missing locally (${localPath}) and could not fetch ${url}`
+    );
+  }
+}
+
 async function falUpload(
   fal: { storage: { upload: (f: File) => Promise<string> } },
   filePath: string
@@ -114,20 +136,16 @@ export async function generateStudioAssetImage(
   }
 
   const marbleRef = marbleRefPath();
-  if (!existsSync(marbleRef)) {
-    return { ok: false, error: `Marble reference missing: ${marbleRef}` };
-  }
-
   const studioRef = defaultStudioRefPath();
-  if (!existsSync(studioRef)) {
-    return { ok: false, error: `Studio reference missing: ${studioRef}` };
-  }
 
   try {
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
 
-    const imageUrls: string[] = [await falUpload(fal, marbleRef), await falUpload(fal, studioRef)];
+    const imageUrls: string[] = [
+      await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png', 'Marble'),
+      await uploadLocalOrSiteRefToFal(fal, studioRef, 'assets/NOIR/noir-thumb.png', 'Studio'),
+    ];
     if (input.referenceImageUrl?.trim()) {
       imageUrls.push(await falUploadFromUrl(fal, input.referenceImageUrl.trim()));
     }

@@ -41,7 +41,8 @@
       "maxDuration": 120
     },
     "api/admin/studio-generate-asset.ts": {
-      "maxDuration": 120
+      "maxDuration": 120,
+      "includeFiles": "public/assets/marble-half.png,public/assets/NOIR/noir-thumb.png"
     }
   },
   "crons": [
