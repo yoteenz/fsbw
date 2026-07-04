@@ -83,7 +83,7 @@ export default function AdminStudioAssetDirectorStudioDetailPage() {
         onGenerate={(item) => {
           const target = variantTarget(item);
           if (!target) return;
-          void runGenerate(target, { navigateToFactory: true });
+          void runGenerate(target);
         }}
         onReplace={(item) => {
           const target = variantTarget(item);

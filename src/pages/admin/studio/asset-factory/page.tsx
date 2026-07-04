@@ -18,7 +18,7 @@ export default function AdminStudioAssetFactoryPage() {
     >
       <AssetFactoryWorkspace />
       <AdminStudioDisclaimerFooter>
-        MANUFACTURING SIMULATION · PROVIDERS NOT CONNECTED · DEMO PLACEHOLDER
+        LIVE PIPELINE · ASSET DIRECTOR GENERATE USES FAL → SUPABASE · BLUEPRINT MANUFACTURING REMAINS DEMO SIMULATION
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

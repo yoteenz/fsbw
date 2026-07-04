@@ -35364,3 +35364,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Asset Director version tile thumbnails ≠ generation references until they are real Supabase studio-asset URLs from a prior GENERATE/REPLACE.
 
+---
+
+## 2026-07-04 — Asset Factory NEEDS-REVIEW after successful live GENERATE (UX)
+
+**Context:** User reported being routed to Asset Factory after GENERATE with confusing status — job showed **NEEDS-REVIEW** at 100% with QA **TRANSPARENCY ✗**, footer “PROVIDERS NOT CONNECTED”, queue full of older **FAILED** rows.
+
+**Topics covered (full chat arc):** Full live pipeline arc through Forbidden, marble missing, wave-thumb bug; user landed on Asset Factory thinking generation failed.
+
+**Decisions / outcomes:**
+- **Generation actually succeeded** — logs showed `DELIVERED TO ASSET DIRECTOR · DAY`, `ASSET DIRECTOR UPDATED`; Asset Director `generatedVersions` should have Supabase URL on DAY tile.
+- **NEEDS-REVIEW was misleading:** `completeLiveFactoryJob` ran demo `runQaChecksForLiveJob()` with hardcoded **TRANSPARENCY fail** (`i !== 6`) → yellow needs-review despite live Fal delivery.
+- **Fix:** Live pipeline completions → **`completed`** status, all QA pass (skip demo transparency fail for single-variant Fal runs). Stay on **Asset Director** after GENERATE (no auto-navigate to factory unless `navigateToFactory: true`). Success toast: **CHECK VERSION TILE FOR NEW PREVIEW**. Asset Factory footer updated to **LIVE PIPELINE · FAL → SUPABASE**. Job inspector notes live runs skip demo QA.
+
+**Changes:** `useAdminStudioAssetFactoryState.ts`, `useAdminStudioAssetDirectorGeneration.ts`, studio detail page, `asset-factory/page.tsx`, `AssetFactoryShared.tsx`, `motherboard/MEMORY.md`.
+
+**Conventions:** Old **FAILED** queue rows are historical (Forbidden, marble, wave-thumb) — ignore or RETRY; live GENERATE success = Asset Director tile update, not factory NEEDS-REVIEW.
+

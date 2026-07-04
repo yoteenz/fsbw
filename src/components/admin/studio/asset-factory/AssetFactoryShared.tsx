@@ -75,6 +75,11 @@ export function AssetFactoryJobInspector({ job, onPause, onResume, onRetry, onCa
       {job.qaResults.length > 0 ? (
         <>
           <p style={{ ...afSectionTitle, fontSize: '8px' }}>QA</p>
+          {job.livePipeline ? (
+            <p style={{ ...afCaption, fontSize: '7px', color: AF_VISUAL.pass, marginBottom: '6px' }}>
+              LIVE FAL DELIVERY — QA CHECKS SKIPPED FOR SINGLE-VARIANT RUNS
+            </p>
+          ) : null}
           {job.qaResults.map((q) => (
             <p key={q.id} style={{ ...afCaption, color: q.passed ? AF_VISUAL.pass : AF_VISUAL.red, fontSize: '7px' }}>
               {q.passed ? '✓' : '✗'} {q.label}

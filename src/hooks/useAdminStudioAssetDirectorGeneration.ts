@@ -93,11 +93,11 @@ export function useAdminStudioAssetDirectorGeneration() {
       });
       completeLiveFactoryJob(jobId, `DELIVERED TO ASSET DIRECTOR · ${target.variantName}`);
 
-      setNotice(`GENERATED · ${target.variantName} · DELIVERED TO ASSET DIRECTOR`);
+      setNotice(`GENERATED · ${target.variantName} · CHECK VERSION TILE FOR NEW PREVIEW`);
       setBusyKey(null);
       setRefreshKey((v) => v + 1);
 
-      if (options?.navigateToFactory !== false) {
+      if (options?.navigateToFactory === true) {
         navigate(adminStudioAssetFactoryPath());
       }
     },
