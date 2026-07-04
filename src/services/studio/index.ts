@@ -83,6 +83,9 @@ export type { DirectorModeSnapshot, DirectorModeSummary } from './directorMode/s
 export { executiveAiDirectorStudioService, EXECUTIVE_AI_DIRECTOR_INHERITANCE_CHAIN } from './executiveAiDirector/service';
 export type { ExecutiveAiDirectorSnapshot, ExecutiveAiDirectorSummary } from './executiveAiDirector/service';
 
+export { campaignOrchestratorStudioService, CAMPAIGN_ORCHESTRATOR_INHERITANCE_CHAIN } from './campaignOrchestrator/service';
+export type { CampaignOrchestratorSnapshot, CampaignOrchestratorSummary } from './campaignOrchestrator/service';
+
 export { socialPublishingStudioService } from './socialPublishing/service';
 export type { SocialPublishingSnapshot } from './socialPublishing/service';
 
@@ -111,6 +114,7 @@ import { assetDirectorStudioService } from './assetDirector/service';
 import { productionBuilderStudioService } from './productionBuilder/service';
 import { directorModeStudioService } from './directorMode/service';
 import { executiveAiDirectorStudioService } from './executiveAiDirector/service';
+import { campaignOrchestratorStudioService } from './campaignOrchestrator/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
 import type { StudioServiceStub } from './types';
 
@@ -132,6 +136,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   productionBuilderStudioService,
   directorModeStudioService,
   executiveAiDirectorStudioService,
+  campaignOrchestratorStudioService,
   socialPublishingStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,

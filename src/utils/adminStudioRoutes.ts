@@ -31,6 +31,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'production-builder'
   | 'director-mode'
   | 'executive-ai-director'
+  | 'campaign-orchestrator'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -59,6 +60,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'production-builder',
   'director-mode',
   'executive-ai-director',
+  'campaign-orchestrator',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -113,6 +115,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   productionBuilder: 'studio/production-builder',
   directorMode: 'studio/director-mode',
   executiveAiDirector: 'studio/executive-ai-director',
+  campaignOrchestrator: 'studio/campaign-orchestrator',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -213,4 +216,8 @@ export function adminStudioDirectorModePath(draftId: string, packId?: string): s
 
 export function adminStudioExecutiveAiDirectorPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/executive-ai-director`;
+}
+
+export function adminStudioCampaignOrchestratorPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/campaign-orchestrator`;
 }

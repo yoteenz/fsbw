@@ -35161,3 +35161,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Recommendations tag source (history/config/estimate); external trend plugins shown as disconnected; no fabricated social/trend data.
 
+---
+
+## 2026-07-04 — Campaign Orchestrator operational planner (Milestone 17)
+
+**Context:** User milestone for **Campaign Orchestrator** — operational brain of StudioOS that turns one business objective into a complete launch plan (not content generation). Must not redesign existing pages or replace Production Builder, Director Mode, or Executive AI Director. Prior thread: Milestones 14–16 (Asset Director, Production Builder, Director Mode, Executive AI Director).
+
+**Topics covered (full chat arc):** StudioOS production pipeline; user requested Campaign Orchestrator as operational planner — subtitle "One goal. One plan. Every deliverable."; 16 campaign types with recommended deliverables; 5-step create wizard (identity/goals, products/collections/audience/regions, schedule/budget/theme/recurrence, creative direction, generate plan); automatic planning for content packs, episodes, journal, emails, push, social, Lounge TV, landing pages, heroes, graphics, pins, TikTok/Reels/stories, BTS, FAQ; visual week-by-week timeline; task generation with department assignment and dependency chains; Executive AI Director pre-production review; campaign dashboard (progress, tasks, deliverables, readiness/risk scores, budget placeholder); smart recommendations with reasoning; recurring campaigns; reusable blueprints; resource view; what-if scenario comparison; approval gates (production/generation/publishing/scheduling/distribution); optional automation rules stopping at checkpoints; campaign memory spec; Frontal Slayer marble/glass timeline-first design.
+
+**Decisions / outcomes:**
+- New route **`/admin/studio/campaign-orchestrator`** — DISTRIBUTION group, featured on Studio Overview.
+- **`adminStudioCampaignOrchestratorDemo.ts`** — 16 campaign types, wizard draft types, deliverable catalog, departments, blueprints, inheritance chain.
+- **`adminStudioCampaignOrchestratorPlan.ts`** — `generateCampaignPlan()` builds timeline, tasks w/ dependencies, deliverables, approvals, automation, executive review, recommendations, what-if scenarios, resource allocation, campaign memory stub.
+- **`useAdminStudioCampaignOrchestratorState.ts`** — localStorage **`adminStudioCampaignOrchestrator_v1`**; hub/wizard/dashboard views; approval + automation toggles; task advance.
+- UI under **`src/components/admin/studio/campaign-orchestrator/`** — hub (types + blueprints + active campaigns), 5-step wizard, dashboard (timeline-first, tasks, deliverables, executive review, recommendations, gates, automation, what-if, resources).
+- **`campaignOrchestratorStudioService`** Phase 2 stub in service registry.
+- Build verified; wired in App.tsx, routes, nav, storage.
+
+**Changes:** campaign-orchestrator utils/plan/hooks/components/page/service, `adminStudioStorage.ts`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts`, `adminStudioDemo.ts`, `App.tsx`, `services/studio/index.ts`, `motherboard/CORE.md`.
+
+**Conventions:** Campaign Orchestrator is additive operational layer — plans campaigns, assigns tasks, requires human approval at every gate; does not auto-execute production or publishing; integrates conceptually with Executive AI Director review, Production Builder, Content Packs, Distribution; recommendations label reasoning and source tags where applicable.
+

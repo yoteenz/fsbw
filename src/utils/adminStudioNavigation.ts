@@ -325,6 +325,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'campaign-orchestrator',
+    title: 'CAMPAIGN ORCHESTRATOR',
+    purpose: 'Turn one business objective into a complete launch plan with timeline, tasks, and approvals.',
+    route: p('campaign-orchestrator'),
+    groupId: 'distribution',
+    status: 'demo',
+    metric: '16 TYPES',
+    ctaLabel: 'OPEN ORCHESTRATOR',
+    featuredOnOverview: true,
+  },
+  {
     id: 'publishing-queue',
     title: 'PUBLISHING QUEUE',
     purpose: 'Ship approved content to Lounge, email, and social.',

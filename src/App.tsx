@@ -167,6 +167,7 @@ const AdminStudioAssetDirectorSection = lazyWithRetry(() => import('./pages/admi
 const AdminStudioProductionBuilder = lazyWithRetry(() => import('./pages/admin/studio/production-builder/page'), 'AdminStudioProductionBuilder');
 const AdminStudioDirectorMode = lazyWithRetry(() => import('./pages/admin/studio/director-mode/page'), 'AdminStudioDirectorMode');
 const AdminStudioExecutiveAiDirector = lazyWithRetry(() => import('./pages/admin/studio/executive-ai-director/page'), 'AdminStudioExecutiveAiDirector');
+const AdminStudioCampaignOrchestrator = lazyWithRetry(() => import('./pages/admin/studio/campaign-orchestrator/page'), 'AdminStudioCampaignOrchestrator');
 const AdminStudioOs = lazyWithRetry(() => import('./pages/admin/studio-os/page'), 'AdminStudioOs');
 const AdminStudioOsWorkspaceShell = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/page'), 'AdminStudioOsWorkspaceShell');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
@@ -954,6 +955,11 @@ function App() {
           <Route path="studio/executive-ai-director" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioExecutiveAiDirector />
+            </Suspense>
+          } />
+          <Route path="studio/campaign-orchestrator" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCampaignOrchestrator />
             </Suspense>
           } />
           <Route path="studio/director-mode" element={

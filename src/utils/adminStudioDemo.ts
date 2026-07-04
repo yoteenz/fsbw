@@ -44,7 +44,8 @@ export type AdminStudioSectionId =
   | 'asset-director'
   | 'production-builder'
   | 'director-mode'
-  | 'executive-ai-director';
+  | 'executive-ai-director'
+  | 'campaign-orchestrator';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;
