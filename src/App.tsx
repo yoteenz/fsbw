@@ -148,6 +148,9 @@ const AdminStudioProduction = lazyWithRetry(() => import('./pages/admin/studio/p
 const AdminStudioProductionDetail = lazyWithRetry(() => import('./pages/admin/studio/production/detail/page'), 'AdminStudioProductionDetail');
 const AdminStudioAiProductionEngine = lazyWithRetry(() => import('./pages/admin/studio/ai-production-engine/page'), 'AdminStudioAiProductionEngine');
 const AdminStudioAiProductionEngineDetail = lazyWithRetry(() => import('./pages/admin/studio/ai-production-engine/detail/page'), 'AdminStudioAiProductionEngineDetail');
+const AdminStudioDistributionNetwork = lazyWithRetry(() => import('./pages/admin/studio/distribution-network/page'), 'AdminStudioDistributionNetwork');
+const AdminStudioDistributionNetworkDetail = lazyWithRetry(() => import('./pages/admin/studio/distribution-network/detail/page'), 'AdminStudioDistributionNetworkDetail');
+const AdminStudioDistributionNetworkChannel = lazyWithRetry(() => import('./pages/admin/studio/distribution-network/channel/page'), 'AdminStudioDistributionNetworkChannel');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -878,6 +881,21 @@ function App() {
           <Route path="studio/ai-production-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioAiProductionEngine />
+            </Suspense>
+          } />
+          <Route path="studio/distribution-network/channel/:channelId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioDistributionNetworkChannel />
+            </Suspense>
+          } />
+          <Route path="studio/distribution-network/:distributionId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioDistributionNetworkDetail />
+            </Suspense>
+          } />
+          <Route path="studio/distribution-network" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioDistributionNetwork />
             </Suspense>
           } />
           <Route path="studio/:sectionId" element={

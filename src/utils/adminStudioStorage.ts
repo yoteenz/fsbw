@@ -38,6 +38,9 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   productionQa: 'adminStudioProductionQa_v1',
   aiProductionEngine: 'adminStudioAiProductionEngine_v1',
   aiProductionEngineCustom: 'adminStudioAiProductionEngineCustom_v1',
+  distributionNetwork: 'adminStudioDistributionNetwork_v1',
+  distributionNetworkCustom: 'adminStudioDistributionNetworkCustom_v1',
+  distributionNetworkChannels: 'adminStudioDistributionNetworkChannels_v1',
 } as const;
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];

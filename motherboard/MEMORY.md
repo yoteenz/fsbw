@@ -34709,3 +34709,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Navigate `/admin/studio/ai-production-engine`; route `studio/ai-production-engine/:runId` before `studio/:sectionId`. AI Production Engine executes strategy — never overrides Creative Director or upstream milestones.
 
+---
+
+## 2026-07-04 — THE STUDIO Distribution Network milestone
+
+**Context:** Continuation of THE STUDIO — all prior milestones frozen. User requested **DISTRIBUTION NETWORK** module — subtitle *"One story. Every destination."* Centralized broadcasting system routing approved Content Packs to every Frontal Slayer destination. Luxury media company broadcasting department aesthetic — not generic social scheduler. No auto-publish; channel connectors not connected.
+
+**Topics covered (full chat arc):**
+- Prior: AI Production Engine (`f13a8b3f`), Production Pipeline, Casting, etc. — unchanged.
+- **Distribution Network** (`/admin/studio/distribution-network`): 8 dashboard cards (Queue, Calendar, Channel Status, Scheduled, Recently Published, Failed, Approval, Analytics); inheritance chain; 10 active channels + 4 coming soon channel library; campaign distribution (Launch Week, Summer Slay); future channel architecture; drag-and-drop publishing calendar (12 slots); 6 seeded distribution packs.
+- **Channel profile** (`/admin/studio/distribution-network/channel/:channelId`): 4 tabs — Profile, Rules (asset types, ratios, CTA/thumbnail/SEO), Smart Scheduling (prep only), Health (demo metrics).
+- **Pack routing** (`/admin/studio/distribution-network/:distributionId`): 8 tabs — Routing (auto + manual override), Calendar, Requirements validation, Multi-channel Previews, Channel Versioning, Approval pipeline (8 statuses), Delivery status (6 statuses), Analytics.
+- **Data model** `adminStudioDistributionNetworkDemo.ts`; **state** `useAdminStudioDistributionNetworkState.ts`; **service** `distributionNetworkStudioService` in `STUDIO_SERVICE_REGISTRY`.
+
+**Decisions / outcomes:** One master Content Pack with per-channel caption/CTA/thumbnail/metadata; inferRoutingForShow() for auto routing; validateDistributionPack() for requirements; manual publishing only. Cross-links: ← AI Production Engine, Publishing Queue →. Build verified.
+
+**Changes:** `adminStudioDistributionNetworkDemo.ts`, hook, `services/studio/distributionNetwork/service.ts`, UI components, landing + channel + pack pages, routes, storage, `App.tsx`, `STUDIO_SERVICE_REGISTRY`, `motherboard/CORE.md`.
+
+**Conventions:** Routes: `channel/:channelId` before `:distributionId`. Separate from legacy `adminStudioDistributionDemo.ts` (content-pack targets) and `distributionStudioService` stub.
+

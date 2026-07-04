@@ -23,6 +23,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'casting'
   | 'production'
   | 'ai-production-engine'
+  | 'distribution-network'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -43,6 +44,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'casting',
   'production',
   'ai-production-engine',
+  'distribution-network',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -77,6 +79,9 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   productionDetail: 'studio/production/:packId',
   aiProductionEngine: 'studio/ai-production-engine',
   aiProductionEngineDetail: 'studio/ai-production-engine/:runId',
+  distributionNetwork: 'studio/distribution-network',
+  distributionNetworkChannel: 'studio/distribution-network/channel/:channelId',
+  distributionNetworkDetail: 'studio/distribution-network/:distributionId',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -118,4 +123,12 @@ export function adminStudioProductionPath(packId: string): string {
 
 export function adminStudioAiProductionEnginePath(runId: string): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ai-production-engine/${runId}`;
+}
+
+export function adminStudioDistributionNetworkPath(distributionId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/distribution-network/${distributionId}`;
+}
+
+export function adminStudioDistributionChannelPath(channelId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/distribution-network/channel/${channelId}`;
 }

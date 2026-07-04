@@ -59,6 +59,9 @@ export type { ProductionSnapshot, ProductionReadiness, ProductionPackContext } f
 export { aiProductionEngineStudioService, AI_PRODUCTION_INHERITANCE_CHAIN, AI_PRODUCTION_QUALITY_THRESHOLD } from './aiProductionEngine/service';
 export type { AiProductionEngineSnapshot, AiProductionRunReadiness } from './aiProductionEngine/service';
 
+export { distributionNetworkStudioService, DISTRIBUTION_INHERITANCE_CHAIN } from './distributionNetwork/service';
+export type { DistributionNetworkSnapshot, DistributionPackValidation } from './distributionNetwork/service';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -76,6 +79,7 @@ import { talentAgencyStudioService } from './talentAgency/service';
 import { castingStudioService } from './casting/service';
 import { productionStudioService } from './production/service';
 import { aiProductionEngineStudioService } from './aiProductionEngine/service';
+import { distributionNetworkStudioService } from './distributionNetwork/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -88,6 +92,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   castingStudioService,
   productionStudioService,
   aiProductionEngineStudioService,
+  distributionNetworkStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,
