@@ -34875,3 +34875,26 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Platform rename only in `platform.ts`; new workspaces register in `src/workspaces/index.ts`; platform docs never contain Frontal Slayer knowledge.
 
+---
+
+## 2026-07-04 — Studio UI alignment (shared layout + grouped navigation)
+
+**Context:** User requested StudioOS / Studio pages visually align with Frontal Slayer admin design system — UI/spacing/navigation only. Do NOT delete/rename routes, remove modules, rewrite business logic, or touch customer-facing pages.
+
+**Topics covered (full chat arc):**
+- Prior completed milestones in this project thread: **Asset Director** (`/admin/studio/asset-director`), **StudioOS** platform refactor (`/admin/studio-os`, workspace picker, scoped storage), user could not find Asset Director on Studio hub.
+- **Current task:** Refine all Studio admin UI to match admin marble/white-card/luxury language; add grouped nav (OVERVIEW, CREATE, VISUALS, PRODUCTION, DISTRIBUTION, INTELLIGENCE, LEGACY, SETTINGS); breadcrumbs; back-to-overview; module cards with purpose/status/metric/CTA; preserve every existing route.
+
+**Decisions / outcomes:**
+- **`adminStudioNavigation.ts`** — canonical module registry with group mapping per user spec; path resolver + breadcrumb builder; `STUDIO_OVERVIEW_PATH` = `/admin/studio/overview`.
+- **`AdminStudioLayout`** — shared wrapper (marble, `max-w-md`, white card, nav tabs, breadcrumb trail, handwritten heading, helper text, back-to-overview link). **`AdminStudioStageShell`** delegates to layout so ~40 studio pages get nav without per-page rewrites.
+- **Components:** `AdminStudioNavTabs`, `AdminStudioBreadcrumbTrail`, `AdminStudioModuleCard`.
+- **Studio Overview** page at `/admin/studio/overview` — pulse metrics + grouped module cards (3–6 featured per section); `?group=` filter via nav tabs.
+- **Legacy hub** `/admin/studio/hub` preserved — original `ADMIN_STUDIO_HUB_CARDS` grid now inside shared layout + link to overview.
+- **`AdminStudioPlaceholderShell`** migrated to `AdminStudioLayout`.
+- **`/admin/studio`** redirect to Executive Command Center unchanged; no routes removed.
+
+**Changes:** `src/utils/adminStudioNavigation.ts`, `AdminStudioLayout.tsx`, `AdminStudioNavTabs.tsx`, `AdminStudioBreadcrumbTrail.tsx`, `AdminStudioModuleCard.tsx`, `AdminStudioStageShell.tsx`, `AdminStudioPlaceholderShell.tsx`, `pages/admin/studio/overview/page.tsx`, `pages/admin/studio/page.tsx` (hub), `App.tsx`, `adminStudioRoutes.ts`, `motherboard/CORE.md`.
+
+**Conventions:** Studio subpages show breadcrumb `Admin / StudioOS / {Group} / {Module}`; subpage back arrow defaults to overview unless page passes custom `onBack`; nav tabs on subpages link to overview with `?group=`; UI-only — no service/data model changes.
+

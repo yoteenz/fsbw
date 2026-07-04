@@ -93,6 +93,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   audienceBrain: 'studio/audience-brain',
   audienceBrainIntelligence: 'studio/audience-brain/intelligence',
   executiveCommandCenter: 'studio/executive-command-center',
+  studioOverview: 'studio/overview',
+  studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
   legacySystem: 'studio/legacy-system',
   legacySystemMuseum: 'studio/legacy-system/museum',
