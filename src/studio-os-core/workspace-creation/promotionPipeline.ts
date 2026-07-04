@@ -100,6 +100,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
       updatedAt: now,
     },
+    {
+      id: 'promo-business-model-engine-v1',
+      featureName: 'Business Model Engine v1.0',
+      description: 'Economic engine — membership, workspace billing, usage, platform fees, wallets, royalties, asset marketplaces, enterprise, pricing simulator.',
+      currentStage: 'develop',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
   ];
 }
 

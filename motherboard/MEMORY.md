@@ -36357,3 +36357,38 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Marketplace core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 32: Business Model Engine v1.0
+
+**Context:** User requested Milestone 32 — complete **economic engine** for Studio OS (not a billing page). Subscriptions, marketplace revenue, licensing, commissions, royalties, payouts, enterprise, asset marketplaces, aligned incentives. Payment processors not connected — architecture only.
+
+**Delivered — Business Model Engine v1.0:**
+
+**Core module** (`src/studio-os-core/business-model-engine/`):
+- Membership engine: 7 tiers (free → enterprise-plus) with capability matrix (workspaces, AI, automation, storage, marketplace, analytics, exec AI team, seats, API, branding, enterprise permissions)
+- Workspace billing, usage metrics, configurable platform fees (not hardcoded), payment architecture records
+- Participant wallets, affiliate programs, royalty records, asset marketplace listings (blueprint, creative, writing, automation, ai-executive)
+- App ecosystem entries, certifications, enterprise licenses
+- Economic snapshot (MRR, ARR, ARPU, revenue breakdown), pricing simulator scenarios, ecosystem health metrics
+
+**AI Media demo seeds** (`src/workspaces/ai-media/business-model-engine/bootstrap.ts`):
+- Business tier workspace billing, 6 usage metrics, 6 platform fee configs, 5 payment records, 3 wallets
+- Affiliate program, 4 royalty records, 7 asset listings, 3 app ecosystem entries, 4 certifications, enterprise license demo
+
+**Admin UI** (`/admin/studio/business-model-engine`):
+- 14 tabs: Overview, Membership, Billing, Usage, Platform Fees, Payments, Wallets, Affiliates, Royalties, Asset Markets, Enterprise, Certifications, Economics, Ecosystem Health
+- Hook: `useAdminStudioBusinessModelEngineState.ts`
+- Service stub: `businessModelEngineStudioService`
+
+**Platform wiring:**
+- modules.ts, routes, nav, App.tsx, services registry, workspace bootstrap
+- KG: `node-business-model-engine`, `node-membership-engine`, `node-wallet-system`, workflow `wf-business-model-engine`
+- Memory Bible: naming + decision `dec-business-model-engine-v1`
+- promotion `promo-business-model-engine-v1`
+- Docs: `docs/studio-os/business-model-engine.md`
+
+**Conventions:** Aligned incentives — platform succeeds when users succeed. Diversified revenue streams. Configurable fees stored in platform fee config, not hardcoded in logic. Payment processors not connected in v1.
+
+**Changes:** Business Model Engine core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
+

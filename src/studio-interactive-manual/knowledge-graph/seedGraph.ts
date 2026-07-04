@@ -6,6 +6,7 @@ import {
   adminStudioAiMediaNetworkPath,
   adminStudioTalentNetworkPath,
   adminStudioMarketplacePath,
+  adminStudioBusinessModelEnginePath,
   adminStudioVisionEnginePath,
   adminStudioMemoryBiblePath,
   adminStudioPhotographyBiblePath,
@@ -418,6 +419,50 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     status: 'live',
     searchKeywords: ['collaboration hub', 'deal workspace', 'deliverables', 'activity feed'],
   },
+  {
+    id: 'node-business-model-engine',
+    name: 'BUSINESS MODEL ENGINE',
+    type: 'module',
+    description:
+      'Economic engine — membership tiers, workspace billing, usage, platform fees, wallets, royalties, asset marketplaces, affiliate engine, enterprise licensing, economic dashboard.',
+    purpose: 'Diversified monetization aligned with ecosystem success — not a billing page alone.',
+    route: adminStudioBusinessModelEnginePath(),
+    moduleId: 'business-model-engine',
+    relatedManualChapter: 'CHAPTER · BUSINESS MODEL ENGINE · ECONOMIC ENGINE',
+    versionIntroduced: 'Milestone 32',
+    status: 'live',
+    searchKeywords: [
+      'business model engine',
+      'membership',
+      'subscriptions',
+      'royalties',
+      'wallets',
+      'platform fees',
+      'enterprise licensing',
+    ],
+  },
+  {
+    id: 'node-membership-engine',
+    name: 'MEMBERSHIP ENGINE',
+    type: 'feature',
+    description: 'Centralized membership — Free through Enterprise Plus. Unlocks capabilities across ecosystem, not just pages.',
+    purpose: 'Tier-based capability gates for workspaces, AI, automation, marketplace, analytics, team seats.',
+    moduleId: 'business-model-engine',
+    versionIntroduced: 'Milestone 32',
+    status: 'live',
+    searchKeywords: ['membership', 'creator tier', 'enterprise plus', 'capabilities'],
+  },
+  {
+    id: 'node-wallet-system',
+    name: 'WALLET SYSTEM',
+    type: 'feature',
+    description: 'Participant wallets — earnings, pending payouts, credits, affiliate earnings, royalties, commissions.',
+    purpose: 'Every participant tracks economic activity inside Studio OS.',
+    moduleId: 'business-model-engine',
+    versionIntroduced: 'Milestone 32',
+    status: 'live',
+    searchKeywords: ['wallet', 'payouts', 'earnings', 'credits'],
+  },
 ];
 
 export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
@@ -490,6 +535,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-talent-marketplace', fromId: 'node-talent-network', toId: 'node-marketplace', type: 'feeds', label: 'TALENT → PARTICIPANTS' },
   { id: 'e-growth-marketplace', fromId: 'node-growth-network', toId: 'node-marketplace', type: 'feeds', label: 'OPPORTUNITY → DEAL' },
   { id: 'e-deal-collab', fromId: 'node-deal-center', toId: 'node-collaboration-hub', type: 'contains', label: 'DEAL WORKSPACE' },
+  { id: 'e-bme-memory', fromId: 'node-business-model-engine', toId: 'node-memory-bible', type: 'inherits-from', label: 'PRICING DECISIONS' },
+  { id: 'e-bme-contains-membership', fromId: 'node-business-model-engine', toId: 'node-membership-engine', type: 'contains' },
+  { id: 'e-bme-contains-wallet', fromId: 'node-business-model-engine', toId: 'node-wallet-system', type: 'contains' },
+  { id: 'e-bme-knowledge', fromId: 'node-business-model-engine', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
+  { id: 'e-marketplace-bme', fromId: 'node-marketplace', toId: 'node-business-model-engine', type: 'feeds', label: 'MARKETPLACE REVENUE' },
+  { id: 'e-growth-bme', fromId: 'node-growth-network', toId: 'node-business-model-engine', type: 'feeds', label: 'REVENUE SIGNALS' },
+  { id: 'e-wallet-marketplace', fromId: 'node-wallet-system', toId: 'node-marketplace', type: 'related-to', label: 'DEAL PAYOUTS' },
 ];
 
 export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
@@ -637,6 +689,21 @@ export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
       'node-interactive-manual',
     ],
     moduleIds: ['marketplace', 'talent-network', 'growth-network', 'memory-bible', 'knowledge-hub'],
+  },
+  {
+    id: 'wf-business-model-engine',
+    title: 'BUSINESS MODEL ENGINE LIFECYCLE',
+    subtitle: 'Membership → Billing → Usage → Fees → Wallets → Royalties → Enterprise → Ecosystem Health',
+    nodeIds: [
+      'node-business-model-engine',
+      'node-membership-engine',
+      'node-wallet-system',
+      'node-marketplace',
+      'node-growth-network',
+      'node-memory-bible',
+      'node-interactive-manual',
+    ],
+    moduleIds: ['business-model-engine', 'marketplace', 'growth-network', 'memory-bible', 'knowledge-hub', 'talent-network'],
   },
 ];
 

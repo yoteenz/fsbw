@@ -60,6 +60,7 @@ export function buildWorkspaceFromDraft(input: CreateWorkspaceInput): WorkspaceR
     'ai-media-network',
     'talent-network',
     'marketplace',
+    'business-model-engine',
   ];
 
   return {

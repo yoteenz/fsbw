@@ -233,6 +233,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-marketplace', 'node-deal-center', 'node-collaboration-hub'],
     },
     {
+      id: 'name-business-model-engine',
+      officialName: 'Business Model Engine',
+      deprecatedNames: ['billing page', 'subscription page', 'payments tab'],
+      usageNotes:
+        'Platform pillar — complete economic engine for Studio OS. Membership, billing, usage, fees, wallets, royalties, asset marketplaces, enterprise. Not a billing page alone. UI: BUSINESS MODEL ENGINE.',
+      relatedModules: ['business-model-engine'],
+      relatedGraphNodeIds: ['node-business-model-engine', 'node-membership-engine', 'node-wallet-system'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -455,6 +464,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-marketplace', 'node-deal-center', 'node-collaboration-hub', 'node-talent-network', 'node-growth-network'],
       relatedManualChapter: 'CHAPTER · MARKETPLACE · BUSINESS ECOSYSTEM',
+    },
+    {
+      id: 'dec-business-model-engine-v1',
+      title: 'Launch Business Model Engine v1.0',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'business-model-engine',
+      decision:
+        'Business Model Engine is the complete economic engine — membership tiers that unlock ecosystem capabilities, workspace-level billing, usage engine, configurable platform fees (not hardcoded), payment architecture, wallets, affiliate + royalty engines, asset marketplaces (blueprint, creative, writing, automation, AI executive), app ecosystem readiness, certifications, enterprise licensing, economic dashboard, and pricing simulator. Aligned incentives — platform succeeds when users succeed.',
+      reason:
+        'Studio OS must not rely on one revenue source — diversified ecosystem monetization through software, services, licensing, marketplaces, and partnerships. Not a billing page alone.',
+      alternativesConsidered: ['Stripe billing page only', 'Single subscription tier', 'Hardcoded platform fees'],
+      outcome: 'Business Model Engine at /admin/studio/business-model-engine — core in src/studio-os-core/business-model-engine/, AI Media seeds in workspaces/ai-media/business-model-engine/. Payment processors not connected in v1.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-business-model-engine', 'node-membership-engine', 'node-wallet-system', 'node-marketplace'],
+      relatedManualChapter: 'CHAPTER · BUSINESS MODEL ENGINE · ECONOMIC ENGINE',
     },
   ],
   aiPreferences: {

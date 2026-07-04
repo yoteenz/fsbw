@@ -41,6 +41,7 @@ export type BlueprintModuleId =
   | 'ai-media-network'
   | 'talent-network'
   | 'marketplace'
+  | 'business-model-engine'
   | 'social-accounts'
   | 'system-health'
   | 'promotion-center'

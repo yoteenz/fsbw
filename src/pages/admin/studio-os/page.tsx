@@ -143,6 +143,14 @@ export default function AdminStudioOsPage() {
               >
                 MARKETPLACE · BUSINESS ECOSYSTEM
               </button>
+              <button
+                type="button"
+                onClick={() => navigate('/admin/studio/business-model-engine')}
+                className="w-full py-2 text-[7px] font-futura border"
+                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
+              >
+                BUSINESS MODEL ENGINE · ECONOMIC ENGINE
+              </button>
             </div>
 
             <div className="grid grid-cols-1 gap-3">

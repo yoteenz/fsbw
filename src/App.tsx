@@ -162,6 +162,7 @@ const AdminStudioLabs = lazyWithRetry(() => import('./pages/admin/studio/labs/pa
 const AdminStudioAiMediaNetwork = lazyWithRetry(() => import('./pages/admin/studio/ai-media-network/page'), 'AdminStudioAiMediaNetwork');
 const AdminStudioTalentNetwork = lazyWithRetry(() => import('./pages/admin/studio/talent-network/page'), 'AdminStudioTalentNetwork');
 const AdminStudioMarketplace = lazyWithRetry(() => import('./pages/admin/studio/marketplace/page'), 'AdminStudioMarketplace');
+const AdminStudioBusinessModelEngine = lazyWithRetry(() => import('./pages/admin/studio/business-model-engine/page'), 'AdminStudioBusinessModelEngine');
 const AdminStudioVisionEngine = lazyWithRetry(() => import('./pages/admin/studio/vision-engine/page'), 'AdminStudioVisionEngine');
 const VisionSharePage = lazyWithRetry(() => import('./pages/vision/page'), 'VisionSharePage');
 const AdminStudioExecutiveCommandCenter = lazyWithRetry(() => import('./pages/admin/studio/executive-command-center/page'), 'AdminStudioExecutiveCommandCenter');
@@ -1016,6 +1017,11 @@ function App() {
           <Route path="studio/marketplace" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioMarketplace />
+            </Suspense>
+          } />
+          <Route path="studio/business-model-engine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioBusinessModelEngine />
             </Suspense>
           } />
           <Route path="studio/vision-engine" element={

@@ -422,7 +422,27 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
       'RELATIONSHIPS',
       'KNOWLEDGE GRAPH',
     ],
-    relatedModuleIds: ['talent-network', 'growth-network', 'memory-bible', 'knowledge-hub', 'ai-media-network', 'labs'],
+    relatedModuleIds: ['talent-network', 'growth-network', 'memory-bible', 'knowledge-hub', 'ai-media-network', 'labs', 'business-model-engine'],
+  },
+  'business-model-engine': {
+    architecture:
+      'Membership engine (7 tiers) → Workspace billing → Usage engine → Configurable platform fees → Payment architecture → Wallets → Affiliate + royalty engines → Asset marketplaces (blueprint, creative, writing, automation, AI executive) → App ecosystem → Certifications → Enterprise licensing → Economic dashboard + pricing simulator → Ecosystem health metrics.',
+    versionIntroduced: 'Milestone 32',
+    workflowNodes: [
+      'MEMBERSHIP ENGINE',
+      'WORKSPACE BILLING',
+      'USAGE ENGINE',
+      'PLATFORM FEES',
+      'PAYMENT ARCHITECTURE',
+      'WALLET SYSTEM',
+      'AFFILIATE ENGINE',
+      'ROYALTY ENGINE',
+      'ASSET MARKETPLACES',
+      'ENTERPRISE LICENSING',
+      'ECONOMIC DASHBOARD',
+      'ECOSYSTEM HEALTH',
+    ],
+    relatedModuleIds: ['marketplace', 'growth-network', 'talent-network', 'memory-bible', 'knowledge-hub', 'labs', 'ai-media-network'],
   },
   'content-packs': {
     relatedModuleIds: ['production-builder', 'publishing-queue', 'lounge-tv'],

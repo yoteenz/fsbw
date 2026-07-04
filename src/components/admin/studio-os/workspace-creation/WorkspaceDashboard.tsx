@@ -146,6 +146,11 @@ export function WorkspaceDashboard({
                 OPEN MARKETPLACE
               </button>
             ) : null}
+            {activeTab === 'business-model-engine' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/business-model-engine')}>
+                OPEN BUSINESS MODEL ENGINE
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

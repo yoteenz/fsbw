@@ -553,6 +553,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'business-model-engine',
+    title: 'BUSINESS MODEL ENGINE',
+    purpose: 'Economic engine — membership, billing, usage, fees, wallets, royalties, asset marketplaces, enterprise, aligned incentives.',
+    route: p('business-model-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '14 TABS',
+    ctaLabel: 'OPEN BME',
+    moduleKey: 'business-model-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

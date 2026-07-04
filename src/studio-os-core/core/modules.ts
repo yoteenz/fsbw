@@ -26,6 +26,7 @@ export type StudioOsCoreModuleId =
   | 'ai-media-network'
   | 'talent-network'
   | 'marketplace'
+  | 'business-model-engine'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -171,6 +172,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'MARKETPLACE',
     description: 'Professional operating network — discover, collaborate, hire, and grow through lasting business relationships.',
     routeSegment: 'marketplace',
+  },
+  {
+    id: 'business-model-engine',
+    label: 'BUSINESS MODEL ENGINE',
+    description: 'Economic engine — subscriptions, marketplace revenue, royalties, wallets, enterprise, and diversified monetization.',
+    routeSegment: 'business-model-engine',
   },
   {
     id: 'vision-engine',

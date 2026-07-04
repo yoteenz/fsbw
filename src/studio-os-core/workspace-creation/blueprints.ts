@@ -12,6 +12,7 @@ const CORE_PACKAGES = [
   'ai-media-network',
   'talent-network',
   'marketplace',
+  'business-model-engine',
   'interactive-manual',
   'onboarding-tutorial',
   'prompt-library',
