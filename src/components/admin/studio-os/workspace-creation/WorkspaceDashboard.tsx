@@ -141,6 +141,11 @@ export function WorkspaceDashboard({
                 OPEN TALENT NETWORK
               </button>
             ) : null}
+            {activeTab === 'marketplace' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/marketplace')}>
+                OPEN MARKETPLACE
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

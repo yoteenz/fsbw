@@ -5,6 +5,7 @@ import {
   adminStudioLabsPath,
   adminStudioAiMediaNetworkPath,
   adminStudioTalentNetworkPath,
+  adminStudioMarketplacePath,
   adminStudioVisionEnginePath,
   adminStudioMemoryBiblePath,
   adminStudioPhotographyBiblePath,
@@ -375,6 +376,48 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     status: 'live',
     searchKeywords: ['maya chen', 'money monday host', 'ai presenter'],
   },
+  {
+    id: 'node-marketplace',
+    name: 'MARKETPLACE',
+    type: 'module',
+    description:
+      'Professional operating network — brands, creators, agencies, and service providers discover, collaborate, hire, and grow through lasting partnerships. Not a freelancer marketplace.',
+    purpose: 'Connect businesses intelligently — relationship-first deal center, collaboration hubs, trust engine.',
+    route: adminStudioMarketplacePath(),
+    moduleId: 'marketplace',
+    relatedManualChapter: 'CHAPTER · MARKETPLACE · BUSINESS ECOSYSTEM',
+    versionIntroduced: 'Milestone 31',
+    status: 'live',
+    searchKeywords: [
+      'marketplace',
+      'deal center',
+      'collaboration hub',
+      'professional network',
+      'business ecosystem',
+    ],
+  },
+  {
+    id: 'node-deal-center',
+    name: 'DEAL CENTER',
+    type: 'feature',
+    description: 'Structured deal workflow — discovery through renewal with relationship history.',
+    purpose: 'Every opportunity becomes a long-term partnership pipeline, not a one-off gig.',
+    moduleId: 'marketplace',
+    versionIntroduced: 'Milestone 31',
+    status: 'live',
+    searchKeywords: ['deal center', 'deal workflow', 'negotiation', 'contract', 'renewal'],
+  },
+  {
+    id: 'node-collaboration-hub',
+    name: 'COLLABORATION HUB',
+    type: 'feature',
+    description: 'Per-deal workspace — messages, files, deliverables, timelines, approvals, contracts, payments, AI recommendations.',
+    purpose: 'Shared operating room for every business relationship.',
+    moduleId: 'marketplace',
+    versionIntroduced: 'Milestone 31',
+    status: 'live',
+    searchKeywords: ['collaboration hub', 'deal workspace', 'deliverables', 'activity feed'],
+  },
 ];
 
 export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
@@ -440,6 +483,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-talent-labs', fromId: 'node-talent-network', toId: 'node-studio-os-labs', type: 'feeds', label: 'PERFORMANCE SIGNALS' },
   { id: 'e-talent-maya', fromId: 'node-talent-registry', toId: 'node-talent-maya-chen', type: 'contains' },
   { id: 'e-maya-programming', fromId: 'node-talent-maya-chen', toId: 'node-programming-network', type: 'related-to', label: 'MONEY MONDAY HOST' },
+  { id: 'e-marketplace-memory', fromId: 'node-marketplace', toId: 'node-memory-bible', type: 'inherits-from', label: 'PARTNERSHIP CONTEXT' },
+  { id: 'e-marketplace-contains-deal', fromId: 'node-marketplace', toId: 'node-deal-center', type: 'contains' },
+  { id: 'e-marketplace-contains-collab', fromId: 'node-marketplace', toId: 'node-collaboration-hub', type: 'contains' },
+  { id: 'e-marketplace-knowledge', fromId: 'node-marketplace', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
+  { id: 'e-talent-marketplace', fromId: 'node-talent-network', toId: 'node-marketplace', type: 'feeds', label: 'TALENT → PARTICIPANTS' },
+  { id: 'e-growth-marketplace', fromId: 'node-growth-network', toId: 'node-marketplace', type: 'feeds', label: 'OPPORTUNITY → DEAL' },
+  { id: 'e-deal-collab', fromId: 'node-deal-center', toId: 'node-collaboration-hub', type: 'contains', label: 'DEAL WORKSPACE' },
 ];
 
 export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
@@ -572,6 +622,21 @@ export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
       'node-memory-bible',
     ],
     moduleIds: ['talent-network', 'growth-network', 'labs', 'memory-bible', 'knowledge-hub', 'ai-media-network'],
+  },
+  {
+    id: 'wf-marketplace',
+    title: 'MARKETPLACE LIFECYCLE',
+    subtitle: 'Discover → Match → Deal → Collaborate → Trust → Pay → Renew → Ecosystem Growth',
+    nodeIds: [
+      'node-marketplace',
+      'node-deal-center',
+      'node-collaboration-hub',
+      'node-talent-network',
+      'node-growth-network',
+      'node-memory-bible',
+      'node-interactive-manual',
+    ],
+    moduleIds: ['marketplace', 'talent-network', 'growth-network', 'memory-bible', 'knowledge-hub'],
   },
 ];
 

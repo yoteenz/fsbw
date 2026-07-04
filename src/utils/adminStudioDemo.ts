@@ -43,6 +43,7 @@ export type AdminStudioSectionId =
   | 'labs'
   | 'ai-media-network'
   | 'talent-network'
+  | 'marketplace'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'

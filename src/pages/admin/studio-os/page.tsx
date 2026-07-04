@@ -135,6 +135,14 @@ export default function AdminStudioOsPage() {
               >
                 TALENT NETWORK · UNIFIED TALENT OS
               </button>
+              <button
+                type="button"
+                onClick={() => navigate('/admin/studio/marketplace')}
+                className="w-full py-2 text-[7px] font-futura border"
+                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
+              >
+                MARKETPLACE · BUSINESS ECOSYSTEM
+              </button>
             </div>
 
             <div className="grid grid-cols-1 gap-3">

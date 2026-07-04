@@ -36318,3 +36318,42 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Talent Network core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 31: Marketplace + Business Ecosystem v1.0
+
+**Context:** User requested Milestone 31 — transform Talent Network into a complete **business ecosystem** via new platform **Marketplace**. Not a freelancer marketplace — professional operating network prioritizing long-term partnerships. Support brands, creators, agencies, professionals, service providers; intelligent matching, deal center, collaboration hubs, trust, verification, pricing, payment architecture (no live processing).
+
+**Delivered — Marketplace v1.0:**
+
+**Core module** (`src/studio-os-core/marketplace/`):
+- Participant profiles (19 types: brand, creator, agency, photographer, editor, developer, lawyer, manufacturer, fulfillment, etc.)
+- Intelligent matching with compatibility score + explanation (Company DNA, Creative DNA, Memory Bible, KG, Growth Network, performance, audience fit, budget, goals)
+- Deal Center workflow (discovery → renewal + relationship history)
+- Collaboration hubs per deal (messages, files, deliverables, timelines, approvals, AI recommendations)
+- Trust score engine (responsiveness, completion, quality, timeliness, satisfaction, repeat business)
+- Verification badges (identity, business, brand, portfolio, workspace)
+- Pricing models (hourly, fixed, retainer, commission, royalty, licensing, revenue share, custom)
+- Payment architecture records (milestone, escrow, invoice, partial, payout — connectors not connected)
+- Business ecosystem recommendations (creator→editor→photographer→brand chains)
+
+**AI Media demo seeds** (`src/workspaces/ai-media/marketplace/bootstrap.ts`):
+- 8 participants: AI Media Network, Maya Chen, Casey Lee, Sam Ortiz, LearnFlow EdTech, Pulse Agency, Jordan Reyes, ShipRight Fulfillment
+- 4 deals at various stages, 2 collaboration hubs, payment architecture demo records
+
+**Admin UI** (`/admin/studio/marketplace`):
+- 14 tabs: Overview, Participants, Matching, Deal Center, Collaboration, Trust, Verification, Pricing, Payments, Ecosystem, Relationships, Reviews, Active Deals, History
+- Hook: `useAdminStudioMarketplaceState.ts`
+- Service stub: `marketplaceStudioService`
+
+**Platform wiring:**
+- modules.ts, routes, nav, App.tsx, services registry, workspace bootstrap
+- KG: `node-marketplace`, `node-deal-center`, `node-collaboration-hub`, workflow `wf-marketplace`, edges to Talent Network + Growth Network
+- Memory Bible: naming `name-marketplace`, decision `dec-marketplace-v1`
+- moduleEnrichments, promotion `promo-marketplace-v1`, workspace creation engine
+- Docs: `docs/studio-os/marketplace.md`
+
+**Conventions:** Relationship-first — renewal-eligible deals, ecosystem recommendations before search. Payment rails architecture only in v1. Distinct from Growth Network marketplaces (service/brand listings) — this is the unified professional operating network pillar.
+
+**Changes:** Marketplace core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
+

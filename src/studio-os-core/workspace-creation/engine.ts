@@ -59,6 +59,7 @@ export function buildWorkspaceFromDraft(input: CreateWorkspaceInput): WorkspaceR
     'labs',
     'ai-media-network',
     'talent-network',
+    'marketplace',
   ];
 
   return {

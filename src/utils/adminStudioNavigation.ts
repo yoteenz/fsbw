@@ -541,6 +541,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'marketplace',
+    title: 'MARKETPLACE',
+    purpose: 'Professional operating network — intelligent matching, deal center, collaboration hubs, trust, lasting partnerships.',
+    route: p('marketplace'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '14 TABS',
+    ctaLabel: 'OPEN MARKETPLACE',
+    moduleKey: 'marketplace',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

@@ -403,7 +403,26 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
       'GROWTH BRIDGE',
       'KNOWLEDGE GRAPH',
     ],
-    relatedModuleIds: ['growth-network', 'memory-bible', 'knowledge-hub', 'labs', 'ai-media-network', 'audience-brain'],
+    relatedModuleIds: ['growth-network', 'memory-bible', 'knowledge-hub', 'labs', 'ai-media-network', 'audience-brain', 'marketplace'],
+  },
+  marketplace: {
+    architecture:
+      'Participant profiles (brands, creators, agencies, professionals) → Intelligent matching (Company DNA, Creative DNA, Memory Bible, KG, Growth Network, performance, audience fit) → Deal Center workflow → Collaboration hub per deal → Trust & verification → Pricing models → Payment architecture (no live processing v1) → Business ecosystem recommendations → Relationship history & renewals.',
+    versionIntroduced: 'Milestone 31',
+    workflowNodes: [
+      'PARTICIPANT PROFILES',
+      'INTELLIGENT MATCHING',
+      'DEAL CENTER',
+      'COLLABORATION HUB',
+      'TRUST ENGINE',
+      'VERIFICATION',
+      'PRICING',
+      'PAYMENT ARCHITECTURE',
+      'ECOSYSTEM',
+      'RELATIONSHIPS',
+      'KNOWLEDGE GRAPH',
+    ],
+    relatedModuleIds: ['talent-network', 'growth-network', 'memory-bible', 'knowledge-hub', 'ai-media-network', 'labs'],
   },
   'content-packs': {
     relatedModuleIds: ['production-builder', 'publishing-queue', 'lounge-tv'],

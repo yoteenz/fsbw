@@ -25,6 +25,7 @@ export type StudioOsCoreModuleId =
   | 'labs'
   | 'ai-media-network'
   | 'talent-network'
+  | 'marketplace'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -164,6 +165,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'TALENT NETWORK',
     description: 'Unified talent operating system — AI + human registry, casting, wardrobe, contracts, and character evolution.',
     routeSegment: 'talent-network',
+  },
+  {
+    id: 'marketplace',
+    label: 'MARKETPLACE',
+    description: 'Professional operating network — discover, collaborate, hire, and grow through lasting business relationships.',
+    routeSegment: 'marketplace',
   },
   {
     id: 'vision-engine',

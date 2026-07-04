@@ -40,6 +40,7 @@ export type BlueprintModuleId =
   | 'labs'
   | 'ai-media-network'
   | 'talent-network'
+  | 'marketplace'
   | 'social-accounts'
   | 'system-health'
   | 'promotion-center'

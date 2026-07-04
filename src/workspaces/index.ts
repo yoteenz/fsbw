@@ -16,6 +16,7 @@ import { readGrowthNetworkStore, writeGrowthNetworkStore } from '../studio-os-co
 import { bootstrapAiMediaLabs } from './ai-media/labs/bootstrap';
 import { bootstrapAiMediaNetwork } from './ai-media/network/bootstrap';
 import { bootstrapAiMediaTalentNetwork } from './ai-media/talent-network/bootstrap';
+import { bootstrapAiMediaMarketplace } from './ai-media/marketplace/bootstrap';
 import { bootstrapFrontalSlayerVisionEngine } from './frontal-slayer/vision-engine';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
@@ -38,6 +39,7 @@ bootstrapGrowthNetworkPlatform();
 bootstrapAiMediaLabs();
 bootstrapAiMediaNetwork();
 bootstrapAiMediaTalentNetwork();
+bootstrapAiMediaMarketplace();
 bootstrapFrontalSlayerVisionEngine();
 
 const STATIC_WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {

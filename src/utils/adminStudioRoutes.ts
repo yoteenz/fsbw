@@ -29,6 +29,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'labs'
   | 'ai-media-network'
   | 'talent-network'
+  | 'marketplace'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'
@@ -69,6 +70,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'labs',
   'ai-media-network',
   'talent-network',
+  'marketplace',
   'vision-engine',
   'executive-command-center',
   'mission-control',
@@ -126,6 +128,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   labs: 'studio/labs',
   aiMediaNetwork: 'studio/ai-media-network',
   talentNetwork: 'studio/talent-network',
+  marketplace: 'studio/marketplace',
   visionEngine: 'studio/vision-engine',
   executiveCommandCenter: 'studio/executive-command-center',
   missionControl: 'studio/mission-control',
@@ -306,6 +309,10 @@ export function adminStudioAiMediaNetworkPath(): string {
 
 export function adminStudioTalentNetworkPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/talent-network`;
+}
+
+export function adminStudioMarketplacePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/marketplace`;
 }
 
 export function adminStudioVisionEnginePath(): string {

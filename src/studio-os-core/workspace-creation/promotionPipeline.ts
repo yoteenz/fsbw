@@ -91,6 +91,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
       updatedAt: now,
     },
+    {
+      id: 'promo-marketplace-v1',
+      featureName: 'Marketplace + Business Ecosystem v1.0',
+      description: 'Professional operating network — intelligent matching, deal center, collaboration hubs, trust, payment architecture, relationship-first ecosystem.',
+      currentStage: 'develop',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
   ];
 }
 

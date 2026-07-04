@@ -224,6 +224,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-talent-network', 'node-talent-registry'],
     },
     {
+      id: 'name-marketplace',
+      officialName: 'Marketplace',
+      deprecatedNames: ['freelancer marketplace', 'gig platform', 'Fiverr clone'],
+      usageNotes:
+        'Platform pillar — professional operating network for modern businesses. Relationship-first deal center, not a one-off freelance marketplace. UI: MARKETPLACE.',
+      relatedModules: ['marketplace'],
+      relatedGraphNodeIds: ['node-marketplace', 'node-deal-center', 'node-collaboration-hub'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -430,6 +439,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-talent-network', 'node-talent-registry', 'node-growth-network'],
       relatedManualChapter: 'CHAPTER · TALENT NETWORK · UNIFIED TALENT OS',
+    },
+    {
+      id: 'dec-marketplace-v1',
+      title: 'Launch Marketplace + Business Ecosystem v1.0',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'marketplace',
+      decision:
+        'Marketplace is the professional operating network — brands, creators, agencies, and service providers discover, collaborate, hire, and grow through intelligent matching, structured deal workflows, collaboration hubs, trust engine, and payment architecture. Not a freelancer marketplace — relationship-first, renewal-eligible deals.',
+      reason:
+        'Studio OS must connect businesses and strengthen the ecosystem for everyone — recommend relationships before users search, prioritize long-term partnerships over one-off transactions.',
+      alternativesConsidered: ['External freelance marketplace integration', 'Keyword search only', 'Transactional gig model'],
+      outcome: 'Marketplace at /admin/studio/marketplace — core in src/studio-os-core/marketplace/, AI Media demo seeds in workspaces/ai-media/marketplace/. Payment rails architecture only — no live processing in v1.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-marketplace', 'node-deal-center', 'node-collaboration-hub', 'node-talent-network', 'node-growth-network'],
+      relatedManualChapter: 'CHAPTER · MARKETPLACE · BUSINESS ECOSYSTEM',
     },
   ],
   aiPreferences: {
