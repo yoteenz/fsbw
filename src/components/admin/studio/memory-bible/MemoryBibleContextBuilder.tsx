@@ -266,7 +266,6 @@ export function MemoryBibleContextBuilder({ buildPackage, onSavePackage, onRecor
             <pre
               style={{
                 ...mbCaption,
-                textTransform: 'none',
                 fontSize: '7px',
                 whiteSpace: 'pre-wrap',
                 marginTop: 8,

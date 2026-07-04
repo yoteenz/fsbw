@@ -15,3 +15,6 @@ export const ADMIN_STUDIO_THEME = {
   selectedBg: 'rgba(235,28,36,0.08)',
   cardShadow: 'shadow-lg',
 } as const;
+
+/** Applied on studio os layout + portaled modals — forces uppercase UI copy site-wide in /admin/studio. */
+export const STUDIO_OS_UPPERCASE_CLASS = 'studio-os-uppercase';

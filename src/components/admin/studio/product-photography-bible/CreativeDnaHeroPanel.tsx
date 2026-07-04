@@ -54,7 +54,7 @@ export function CreativeDnaHeroPanel({ onNavigateTab }: CreativeDnaHeroPanelProp
       <p style={{ ...ppCaption, color: PP_VISUAL.red, fontSize: '7px', marginBottom: 8 }}>
         STATUS · {CREATIVE_DNA_HERO.status.toUpperCase()}
       </p>
-      <p style={{ ...ppCaption, color: PP_VISUAL.black, textTransform: 'none', letterSpacing: '0.02em', lineHeight: 1.55, maxWidth: 720 }}>
+      <p style={{ ...ppCaption, color: PP_VISUAL.black, letterSpacing: '0.02em', lineHeight: 1.55, maxWidth: 720 }}>
         {CREATIVE_DNA_HERO.description}
       </p>
       <p style={{ ...ppCaption, marginTop: 8, fontSize: '7px' }}>{CREATIVE_DNA_HERO.subtitle.toUpperCase()}</p>

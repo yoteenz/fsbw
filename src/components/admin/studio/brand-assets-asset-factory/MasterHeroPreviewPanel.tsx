@@ -12,6 +12,7 @@ type MasterHeroPreviewPanelProps = {
   running?: boolean;
   onExpand: (item: AdminStudioImagePreviewItem) => void;
   onRegenerate: () => void;
+  onViewFinalPrompt?: () => void;
 };
 
 function formatTimestamp(iso: string | undefined): string {
@@ -32,6 +33,7 @@ export function MasterHeroPreviewPanel({
   running = false,
   onExpand,
   onRegenerate,
+  onViewFinalPrompt,
 }: MasterHeroPreviewPanelProps) {
   const falOriginal = generation?.falOriginalImageUrl;
 
@@ -80,9 +82,18 @@ export function MasterHeroPreviewPanel({
             ) : null}
           </div>
 
-          <PhotographyBiblePromptValidationPanel validation={generation?.promptValidation} />
+          <PhotographyBiblePromptValidationPanel
+            validation={generation?.promptValidation}
+            compact
+            onViewFinalPrompt={onViewFinalPrompt}
+          />
 
           <div className="flex flex-wrap gap-2 mt-3">
+            {onViewFinalPrompt ? (
+              <button type="button" style={ppActionBtn} onClick={onViewFinalPrompt}>
+                VIEW FINAL PROMPT
+              </button>
+            ) : null}
             <button
               type="button"
               style={{ ...ppActionBtn, color: PP_VISUAL.red, opacity: running ? 0.6 : 1 }}

@@ -4761,3 +4761,9 @@ html[data-loading-screen='true'] #root {
     opacity: 0.15;
   }
 }
+
+/* studio os — all visible text uppercase across /admin/studio pages and portaled panels */
+.studio-os-uppercase,
+.studio-os-uppercase * {
+  text-transform: uppercase !important;
+}

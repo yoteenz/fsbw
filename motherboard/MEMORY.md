@@ -35979,3 +35979,28 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** promptCompiler (client+server), CreativeDnaApprovedPrompt, creativeDnaV1, generateMasterHero, types, MasterHeroPreviewPanel, PhotographyBibleWorkspace, CreativeDnaRegistry perUnitVariableFields, pipeline log, index exports, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Creative DNA validator fix, View Final Prompt, studio os uppercase UI
+
+**Context:** User reported Creative DNA validator rejecting valid generations because it compared fully assembled prompt against Photography Bible via global string split/join (variable values like `24"` could corrupt reconstruction). Also requested View Final Prompt modal in Asset Factory. Separate request: ALL studio os admin page text should display uppercase only (was showing lowercase due to `textTransform: 'none'` overrides and portaled modals outside layout wrapper).
+
+**Validator fix (segment-based):**
+- Placeholders renamed to lowercase: `{{unit_name}}`, `{{collection_number}}`, `{{texture}}`, `{{length}}`, `{{density}}`, `{{lace}}`.
+- Validation walks locked template **segments** between placeholders — never compares injected variable values against template literals as violations.
+- `lockedTemplateHash` computed from locked template only (not assembled prompt).
+- New validation fields: `validatorStatus`, `approvedPlaceholders`, `lockedSectionsVerified`, `finalPromptStatus`, `injectedVariables`, `lockedSectionViolation`.
+- Abort shows which locked section changed.
+
+**View Final Prompt modal (`FinalPromptModal.tsx`):**
+- Read-only modal: locked template, injected variables, final assembled prompt, validation result, template hash, versions.
+- Actions: copy final prompt, copy template, copy variables, close.
+- Wired in Asset Factory workspace + Master Hero panel.
+
+**Studio os uppercase:**
+- CSS class `studio-os-uppercase` in `index.css` — `text-transform: uppercase !important` on all descendants.
+- Applied on `AdminStudioLayout` root (includes Knowledge Graph panel) and all studio portaled modals (Final Prompt, image preview, Knowledge Graph entry, derivative gallery, Asset Director previews).
+- Removed `textTransform: 'none'` overrides from Memory Bible, Creative DNA hero, context builder, prompt validation panel.
+
+**Changes:** promptCompiler (client+server), CreativeDnaApprovedPrompt, creativeDnaV1, FinalPromptModal, PhotographyBiblePromptValidationPanel, BrandAssetsAssetFactoryWorkspace, AdminStudioLayout, adminStudioTheme, index.css, studio portaled modals, memory-bible/photography UI, `motherboard/MEMORY.md`.
+

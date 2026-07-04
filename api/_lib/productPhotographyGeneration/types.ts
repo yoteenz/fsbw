@@ -10,14 +10,25 @@ export type ProductPhotographyGenerateLogEntry = {
 
 export type PhotographyBiblePromptValidation = {
   promptLocked: true;
-  promptHash: string;
-  masterTemplateHash: string;
+  lockedTemplateHash: string;
   photographyBibleVersion: string;
   creativeDnaVersion: string;
+  validatorStatus: 'passed' | 'failed';
+  validatorMessage?: string;
+  approvedPlaceholders: string[];
   variableInjectionSummary: string;
-  variablesChanged: string[];
-  variablesRemainingLocked: string[];
+  injectedVariables: {
+    unitName: string;
+    collectionNumber: string;
+    texture: string;
+    length: string;
+    density: string;
+    lace: string;
+  };
+  lockedSectionsVerified: string[];
+  finalPromptStatus: string;
   compiledPromptLength: number;
+  lockedSectionViolation?: string;
 };
 
 export type MasterHeroGenerationDebugLog = {

@@ -5,6 +5,7 @@ import { ASSET_DIRECTOR_STATUS_LABELS } from '../../../../utils/adminStudioAsset
 import type { StudioSetLayerId } from '../../../../utils/adminStudioSetSeparation';
 import { STUDIO_SET_LAYER_DESCRIPTIONS, STUDIO_SET_LAYER_LABELS } from '../../../../utils/adminStudioSetSeparation';
 import type { StudioVisualBundle } from '../../../../utils/adminStudioAssetDirectorVisual';
+import { STUDIO_OS_UPPERCASE_CLASS } from '../../../../utils/adminStudioTheme';
 import { AD_VISUAL, adActionBtnStyle, adCaptionStyle, adSectionTitleStyle } from './assetDirectorVisualTheme';
 
 type AssetDirectorPageHeaderProps = {
@@ -206,7 +207,7 @@ export function AssetDirectorQuickPreviewModal({ item, onClose }: AssetDirectorQ
 
   return createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center p-4"
+      className={`fixed inset-0 flex items-center justify-center p-4 ${STUDIO_OS_UPPERCASE_CLASS}`}
       style={{ zIndex: 10000, background: 'rgba(0,0,0,0.55)' }}
       onClick={onClose}
       role="dialog"

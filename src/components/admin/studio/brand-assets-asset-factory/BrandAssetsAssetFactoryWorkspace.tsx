@@ -27,7 +27,13 @@ import {
   derivativeItemToPreview,
 } from './AssetFactoryDerivativeGallery';
 import { MasterHeroPreviewPanel } from './MasterHeroPreviewPanel';
+import { PhotographyBiblePromptValidationPanel } from './PhotographyBiblePromptValidationPanel';
+import { FinalPromptModal } from './FinalPromptModal';
 import { resolveCanonicalGeneratedMasterSrc } from '../../../../studio-os/product-photography/ProductAssetFactory';
+import {
+  CREATIVE_DNA_BENCHMARK_OUTPUT,
+  compileAndValidatePhotographyBiblePrompt,
+} from '../../../../studio-os/product-photography';
 import { PP_VISUAL, ppActionBtn, ppCaption, ppPanelStyle, ppSectionTitle, statusColor } from '../product-photography-bible/photographyBibleTheme';
 
 function stageLabel(stage: string): string {
@@ -49,6 +55,7 @@ export function BrandAssetsAssetFactoryWorkspace() {
   const [activeTab, setActiveTab] = useState<BrandAssetsAssetFactoryTabId>('overview');
   const [previewItem, setPreviewItem] = useState<AdminStudioImagePreviewItem | null>(null);
   const [previewAllOpen, setPreviewAllOpen] = useState(false);
+  const [finalPromptOpen, setFinalPromptOpen] = useState(false);
   const {
     store,
     latestJob,
@@ -70,6 +77,31 @@ export function BrandAssetsAssetFactoryWorkspace() {
     bibleUnit?.referenceImageSrc ?? PRODUCT_ASSET_FACTORY_POC_UNIT.productReferenceSrc;
   const generatedMasterSrc = resolveCanonicalGeneratedMasterSrc(latestJob);
   const masterHeroGeneration = latestJob?.masterHeroGeneration;
+
+  const pocUnitVariables = useMemo(
+    () => ({
+      unitName: PRODUCT_ASSET_FACTORY_POC_UNIT.label,
+      collectionNumber: PRODUCT_ASSET_FACTORY_POC_UNIT.collectionNumber,
+      texture: CREATIVE_DNA_BENCHMARK_OUTPUT.texture,
+      length: CREATIVE_DNA_BENCHMARK_OUTPUT.length,
+      density: CREATIVE_DNA_BENCHMARK_OUTPUT.density,
+      lace: CREATIVE_DNA_BENCHMARK_OUTPUT.lace,
+    }),
+    []
+  );
+
+  const promptCompilePreview = useMemo(() => {
+    try {
+      return compileAndValidatePhotographyBiblePrompt(pocUnitVariables);
+    } catch {
+      return null;
+    }
+  }, [pocUnitVariables]);
+
+  const activePromptValidation =
+    masterHeroGeneration?.promptValidation ?? promptCompilePreview?.validation;
+  const activeFinalPrompt =
+    masterHeroGeneration?.debugLog?.promptSent ?? promptCompilePreview?.compiledPrompt ?? '';
 
   const showDerivativeBlocked =
     !latestJob?.heroApproved &&
@@ -161,6 +193,11 @@ export function BrandAssetsAssetFactoryWorkspace() {
         ) : null}
         {lastError ? <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 8 }}>{lastError}</p> : null}
         {latestJob?.error ? <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 4 }}>{latestJob.error}</p> : null}
+
+        <PhotographyBiblePromptValidationPanel
+          validation={activePromptValidation}
+          onViewFinalPrompt={() => setFinalPromptOpen(true)}
+        />
       </section>
 
       {activeTab === 'overview' && (
@@ -348,6 +385,7 @@ export function BrandAssetsAssetFactoryWorkspace() {
           running={running}
           onExpand={setPreviewItem}
           onRegenerate={() => generateMasterHero(productReferenceSrc)}
+          onViewFinalPrompt={() => setFinalPromptOpen(true)}
         />
       </section>
 
@@ -362,6 +400,13 @@ export function BrandAssetsAssetFactoryWorkspace() {
       />
 
       <AdminStudioImagePreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
+      <FinalPromptModal
+        open={finalPromptOpen}
+        onClose={() => setFinalPromptOpen(false)}
+        variables={masterHeroGeneration?.promptValidation?.injectedVariables ?? pocUnitVariables}
+        finalPrompt={activeFinalPrompt}
+        validation={activePromptValidation}
+      />
       {previewAllOpen ? (
         <AssetFactoryPreviewAllCropsModal
           items={galleryItems}

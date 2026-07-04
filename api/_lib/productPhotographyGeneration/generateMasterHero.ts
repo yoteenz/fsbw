@@ -165,7 +165,7 @@ export async function generateMasterHeroFromCreativeDna(
     promptValidation = compiled.validation;
     logs.push(
       log(
-        `Prompt locked · hash ${promptValidation.promptHash} · Photography Bible ${promptValidation.photographyBibleVersion} · ${promptValidation.variableInjectionSummary}`
+        `Template hash verified · ${promptValidation.lockedTemplateHash} · Photography Bible ${promptValidation.photographyBibleVersion} · ${promptValidation.finalPromptStatus}`
       )
     );
   } catch (compileErr) {
@@ -212,7 +212,8 @@ export async function generateMasterHeroFromCreativeDna(
       model: PRODUCT_PHOTOGRAPHY_FAL_MODEL,
       promptVersion: CREATIVE_DNA_PROMPT_VERSION,
       promptLocked: promptValidation.promptLocked,
-      promptHash: promptValidation.promptHash,
+      lockedTemplateHash: promptValidation.lockedTemplateHash,
+      validatorStatus: promptValidation.validatorStatus,
       photographyBibleVersion: promptValidation.photographyBibleVersion,
       variableInjectionSummary: promptValidation.variableInjectionSummary,
       promptSent: prompt.slice(0, 2000),

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
+import { ADMIN_STUDIO_THEME, STUDIO_OS_UPPERCASE_CLASS } from '../../../utils/adminStudioTheme';
 
 export type AdminStudioImagePreviewItem = {
   name: string;
@@ -68,7 +68,7 @@ export function AdminStudioImagePreviewModal({ item, onClose }: AdminStudioImage
 
   return createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center p-4"
+      className={`fixed inset-0 flex items-center justify-center p-4 ${STUDIO_OS_UPPERCASE_CLASS}`}
       style={{ zIndex: 10000, background: 'rgba(0,0,0,0.55)' }}
       onClick={onClose}
       role="dialog"

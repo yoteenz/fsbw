@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import type { AdminStudioImagePreviewItem } from '../AdminStudioImagePreviewModal';
 import type { DerivativeGalleryFilter, DerivativeGalleryItem } from '../../../../studio-os/product-photography/DerivativeGalleryCatalog';
+import { STUDIO_OS_UPPERCASE_CLASS } from '../../../../utils/adminStudioTheme';
 import {
   derivativeGallerySummary,
   derivativeStatusColor,
@@ -38,7 +39,7 @@ export function AssetFactoryPreviewAllCropsModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 flex items-center justify-center p-4"
+      className={`fixed inset-0 flex items-center justify-center p-4 ${STUDIO_OS_UPPERCASE_CLASS}`}
       style={{ zIndex: 10003, background: 'rgba(0,0,0,0.45)' }}
       role="dialog"
       aria-modal="true"

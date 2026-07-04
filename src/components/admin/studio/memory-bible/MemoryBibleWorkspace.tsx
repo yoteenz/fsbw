@@ -17,7 +17,7 @@ function RuleList({ rules }: { rules: string[] }) {
   return (
     <ul style={{ margin: 0, paddingLeft: 16 }}>
       {rules.map((r) => (
-        <li key={r} style={{ ...mbCaption, fontSize: '8px', marginBottom: 4, textTransform: 'none' }}>
+        <li key={r} style={{ ...mbCaption, fontSize: '8px', marginBottom: 4 }}>
           {r}
         </li>
       ))}
@@ -55,7 +55,7 @@ export function MemoryBibleWorkspace() {
               value={snapshot.founderProfile.founderNotes}
               onChange={(e) => updateFounderNotes(e.target.value)}
               rows={4}
-              style={{ ...mbCaption, width: '100%', padding: 8, border: MB_VISUAL.border, textTransform: 'none', fontSize: '8px' }}
+              style={{ ...mbCaption, width: '100%', padding: 8, border: MB_VISUAL.border, fontSize: '8px' }}
             />
           </div>
         );
@@ -111,7 +111,7 @@ export function MemoryBibleWorkspace() {
                 {n.deprecatedNames.length ? (
                   <p style={{ ...mbCaption, fontSize: '7px' }}>DEPRECATED · {n.deprecatedNames.join(' · ')}</p>
                 ) : null}
-                <p style={{ ...mbCaption, fontSize: '7px', textTransform: 'none' }}>{n.usageNotes}</p>
+                <p style={{ ...mbCaption, fontSize: '7px' }}>{n.usageNotes}</p>
                 <p style={{ ...mbCaption, fontSize: '6px' }}>MODULES · {n.relatedModules.join(' · ')}</p>
               </div>
             ))}
@@ -126,10 +126,10 @@ export function MemoryBibleWorkspace() {
                 <p style={mbCaption}>
                   {d.date} · {d.workspace.toUpperCase()} · {d.relatedModule} · {d.status.toUpperCase()}
                 </p>
-                <p style={{ ...mbCaption, fontSize: '7px', textTransform: 'none' }}>
+                <p style={{ ...mbCaption, fontSize: '7px' }}>
                   <strong>Decision:</strong> {d.decision}
                 </p>
-                <p style={{ ...mbCaption, fontSize: '7px', textTransform: 'none' }}>
+                <p style={{ ...mbCaption, fontSize: '7px' }}>
                   <strong>Reason:</strong> {d.reason}
                 </p>
                 {d.alternativesConsidered.length ? (
@@ -180,7 +180,7 @@ export function MemoryBibleWorkspace() {
             {snapshot.workspaceMemory.map((w) => (
               <div key={w.workspaceId} style={{ ...mbPanelStyle, padding: '10px', marginBottom: 8 }}>
                 <p style={{ ...mbCaption, color: MB_VISUAL.red }}>{w.workspaceLabel.toUpperCase()}</p>
-                <p style={{ ...mbCaption, fontSize: '7px', textTransform: 'none' }}>{w.summary}</p>
+                <p style={{ ...mbCaption, fontSize: '7px' }}>{w.summary}</p>
                 <RuleList rules={w.pillars} />
                 <p style={{ ...mbCaption, fontSize: '6px', marginTop: 6 }}>MODULES · {w.relatedModules.join(' · ')}</p>
               </div>
@@ -232,7 +232,7 @@ export function MemoryBibleWorkspace() {
                 <p style={mbCaption}>
                   {v.effectiveDate} · {v.updatedBy}
                 </p>
-                <p style={{ ...mbCaption, fontSize: '7px', textTransform: 'none' }}>{v.notes}</p>
+                <p style={{ ...mbCaption, fontSize: '7px' }}>{v.notes}</p>
                 <RuleList rules={v.changeSummary} />
               </div>
             ))}

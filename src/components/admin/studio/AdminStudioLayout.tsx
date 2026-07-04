@@ -18,6 +18,7 @@ import {
   STUDIO_OVERVIEW_PATH,
   type StudioNavGroupId,
 } from '../../../utils/adminStudioNavigation';
+import { STUDIO_OS_UPPERCASE_CLASS } from '../../../utils/adminStudioTheme';
 
 type AdminStudioLayoutProps = {
   title: string;
@@ -84,7 +85,7 @@ export function AdminStudioLayout({
   return (
     <StudioKnowledgeProvider>
     <StudioManualBridge>
-    <div className="min-h-screen" style={{ position: 'relative' }}>
+    <div className={`min-h-screen ${STUDIO_OS_UPPERCASE_CLASS}`} style={{ position: 'relative' }}>
       <div
         className="fixed inset-0 -z-10"
         style={{
@@ -95,7 +96,7 @@ export function AdminStudioLayout({
           backgroundAttachment: 'fixed',
         }}
       />
-      <div className="relative z-10" style={{ textTransform: 'uppercase' }}>
+      <div className="relative z-10">
         <AdminHeader
           title={title}
           showBack={showBack}

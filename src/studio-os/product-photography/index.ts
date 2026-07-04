@@ -104,8 +104,10 @@ export {
   compilePhotographyBiblePrompt,
   compileAndValidatePhotographyBiblePrompt,
   validateCreativeDnaBeforeGeneration,
-  hashPhotographyBiblePrompt,
-  buildPhotographyBiblePromptValidation,
+  validateAssembledPromptLockedSections,
+  validateTemplatePlaceholdersOnly,
+  hashLockedPhotographyBibleTemplate,
+  splitTemplateByPlaceholders,
 } from './promptCompiler';
 export type {
   PhotographyBibleUnitVariables,

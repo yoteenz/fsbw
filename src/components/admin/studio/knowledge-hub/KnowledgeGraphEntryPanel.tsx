@@ -9,6 +9,7 @@ import {
 } from '../../../../studio-interactive-manual/knowledge-graph/queries';
 import { markGraphNodeVisited, markManualChapterViewed } from '../../../../studio-interactive-manual/progressStorage';
 import { adminStudioKnowledgeHubPath } from '../../../../utils/adminStudioRoutes';
+import { STUDIO_OS_UPPERCASE_CLASS } from '../../../../utils/adminStudioTheme';
 import { ManualWorkflowStrip } from '../../../../studio-interactive-manual/components/ManualWorkflowStrip';
 import { KH_VISUAL, khActionBtn, khCaption, khPanelStyle, khSectionTitle } from './knowledgeHubTheme';
 
@@ -62,7 +63,7 @@ export function KnowledgeGraphEntryPanel() {
 
   return createPortal(
     <div
-      className="fixed inset-0 flex justify-end"
+      className={`fixed inset-0 flex justify-end ${STUDIO_OS_UPPERCASE_CLASS}`}
       style={{ zIndex: 10002 }}
       role="dialog"
       aria-modal="true"

@@ -76,12 +76,12 @@ Apply the provided product reference image as the hair identity lock:
 UNIT SPECIFICATION — APPROVED VARIABLE INJECTION ONLY
 The following six placeholders are the ONLY permitted per-unit substitutions. Do not rewrite, summarize, compress, optimize, or reinterpret any other prompt text.
 
-UNIT NAME: {{UNIT_NAME}}
-COLLECTION NUMBER: {{COLLECTION_NUMBER}}
-TEXTURE: {{TEXTURE}}
-LENGTH: {{LENGTH}}
-DENSITY: {{DENSITY}}
-LACE: {{LACE}}
+UNIT NAME: {{unit_name}}
+COLLECTION NUMBER: {{collection_number}}
+TEXTURE: {{texture}}
+LENGTH: {{length}}
+DENSITY: {{density}}
+LACE: {{lace}}
 
 These values specify product identity for the generation package. They must not appear as visible text overlays in the output image.
 
