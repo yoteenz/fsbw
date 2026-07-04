@@ -15,6 +15,7 @@ import {
   createDirectorSession,
   evaluateChecklist,
 } from '../utils/adminStudioDirectorModeDemo';
+import { DEFAULT_DIRECTOR_LAYER_TOGGLES } from '../utils/adminStudioSetSeparation';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 import {
   getProductionDraftById,
@@ -40,7 +41,10 @@ function getOrCreateSession(draftId: string, scenes: ProductionScene[]): Directo
   const store = readDirectorStore();
   const existing = store.sessions?.[draftId];
   if (existing) {
-    const merged = { ...existing };
+    const merged = {
+      ...existing,
+      layerToggles: { ...DEFAULT_DIRECTOR_LAYER_TOGGLES, ...existing.layerToggles },
+    };
     scenes.forEach((s) => {
       if (!merged.sceneMeta[s.id]) merged.sceneMeta[s.id] = createDirectorSession(draftId, [s]).sceneMeta[s.id];
     });
@@ -178,6 +182,17 @@ export function useAdminStudioDirectorMode(draftId: string | undefined) {
     [session, persistSession]
   );
 
+  const toggleLayer = useCallback(
+    (key: string) => {
+      if (!session) return;
+      persistSession({
+        ...session,
+        layerToggles: { ...session.layerToggles, [key]: !session.layerToggles[key] },
+      });
+    },
+    [session, persistSession]
+  );
+
   const updateVoice = useCallback(
     (patch: Partial<DirectorVoiceSettings>) => {
       if (!session) return;
@@ -274,6 +289,7 @@ export function useAdminStudioDirectorMode(draftId: string | undefined) {
     setLightingOverride,
     setMusic,
     toggleGraphics,
+    toggleLayer,
     updateVoice,
     updateSceneMeta,
     reorderTimeline,

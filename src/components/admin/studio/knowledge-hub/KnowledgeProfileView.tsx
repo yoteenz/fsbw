@@ -63,6 +63,26 @@ export function KnowledgeProfileView({ profile }: KnowledgeProfileViewProps) {
         </section>
       ) : null}
 
+      {profile.setSeparationRule ? (
+        <section className="mb-3" style={{ ...khPanelStyle, padding: '8px' }}>
+          <p style={khSectionTitle}>SET SEPARATION RULE</p>
+          <p style={{ ...khCaption, color: KH_VISUAL.black }}>{profile.setSeparationRule}</p>
+        </section>
+      ) : null}
+
+      <TagList title="MASTER STUDIO · BELONGS HERE" items={profile.masterStudioItems} />
+      <TagList title="REFERENCE SCENE · EXAMPLE ONLY" items={profile.referenceSceneItems} />
+      <TagList title="SET DRESSING" items={profile.setDressingItems} />
+      <TagList title="TALENT LAYERS · NOT IN MASTER" items={profile.talentLayerItems} />
+      <TagList title="EPISODE GRAPHICS" items={profile.episodeGraphicsItems} />
+
+      {profile.productionBuilderNote ? (
+        <section className="mb-3">
+          <p style={khSectionTitle}>PRODUCTION BUILDER</p>
+          <p style={{ ...khCaption, color: KH_VISUAL.black }}>{profile.productionBuilderNote}</p>
+        </section>
+      ) : null}
+
       <TagList title="TYPICAL USES" items={profile.typicalUses} />
       <TagList title="BEST FOR" items={profile.bestFor} />
       <TagList title="AVOID" items={profile.avoid} />

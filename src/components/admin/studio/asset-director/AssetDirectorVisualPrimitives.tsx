@@ -2,6 +2,8 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import type { AssetDirectorStudioProfile } from '../../../../utils/adminStudioAssetDirectorDemo';
 import { ASSET_DIRECTOR_STATUS_LABELS } from '../../../../utils/adminStudioAssetDirectorDemo';
+import type { StudioSetLayerId } from '../../../../utils/adminStudioSetSeparation';
+import { STUDIO_SET_LAYER_DESCRIPTIONS, STUDIO_SET_LAYER_LABELS } from '../../../../utils/adminStudioSetSeparation';
 import type { StudioVisualBundle } from '../../../../utils/adminStudioAssetDirectorVisual';
 import { AD_VISUAL, adActionBtnStyle, adCaptionStyle, adSectionTitleStyle } from './assetDirectorVisualTheme';
 
@@ -171,7 +173,7 @@ export function AssetDirectorMetadataPanel({ metadata }: AssetDirectorMetadataPa
 }
 
 type AssetDirectorQuickPreviewModalProps = {
-  item: { name: string; previewSrc: string; resolution?: string; version?: string } | null;
+  item: { name: string; previewSrc: string; resolution?: string; version?: string; setLayer?: StudioSetLayerId | string; subtitle?: string } | null;
   onClose: () => void;
 };
 
@@ -233,7 +235,18 @@ export function AssetDirectorQuickPreviewModal({ item, onClose }: AssetDirectorQ
           />
         )}
         <div className="p-3">
+          {item.setLayer && STUDIO_SET_LAYER_LABELS[item.setLayer as StudioSetLayerId] ? (
+            <>
+              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '9px', color: AD_VISUAL.red }}>
+                {STUDIO_SET_LAYER_LABELS[item.setLayer as StudioSetLayerId]}
+              </p>
+              <p style={{ ...adCaptionStyle, fontSize: '8px', marginBottom: '4px' }}>
+                {STUDIO_SET_LAYER_DESCRIPTIONS[item.setLayer as StudioSetLayerId]}
+              </p>
+            </>
+          ) : null}
           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: AD_VISUAL.red }}>{item.name}</p>
+          {item.subtitle ? <p style={{ ...adCaptionStyle, fontSize: '8px' }}>{item.subtitle}</p> : null}
           <p style={adCaptionStyle}>
             {item.resolution}
             {item.version ? ` · ${item.version}` : ''}

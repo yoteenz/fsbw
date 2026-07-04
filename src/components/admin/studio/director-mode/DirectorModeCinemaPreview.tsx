@@ -1,6 +1,7 @@
 import type { ProductionScene } from '../../../../utils/adminStudioProductionBuilderDemo';
 import type { DirectorGraphicsToggles, DirectorModeSession } from '../../../../utils/adminStudioDirectorModeDemo';
 import { getCinemaPreviewSrc, resolveAssetLabel } from '../../../../utils/adminStudioDirectorModeDemo';
+import type { DirectorLayerToggles } from '../../../../utils/adminStudioSetSeparation';
 import { DM_VISUAL, dmCaptionStyle } from './directorModeTheme';
 
 type DirectorModeCinemaPreviewProps = {
@@ -8,6 +9,7 @@ type DirectorModeCinemaPreviewProps = {
   session: DirectorModeSession;
   cta: string;
   graphics: DirectorGraphicsToggles;
+  layerToggles: DirectorLayerToggles;
 };
 
 const OVERLAY_SLOTS: Array<{ key: string; label: string; resolve: (s: ProductionScene['selection'], cta: string) => string | null }> = [
@@ -21,9 +23,11 @@ const OVERLAY_SLOTS: Array<{ key: string; label: string; resolve: (s: Production
   { key: 'cta', label: 'CTA', resolve: (_s, cta) => cta || null },
 ];
 
-export function DirectorModeCinemaPreview({ scene, session, cta, graphics }: DirectorModeCinemaPreviewProps) {
+export function DirectorModeCinemaPreview({ scene, session, cta, graphics, layerToggles }: DirectorModeCinemaPreviewProps) {
   const selection = scene?.selection ?? {};
   const preview = getCinemaPreviewSrc(selection, session.activeCameraOverride, session.activeLightingOverride);
+  const showGraphics = layerToggles.graphics !== false;
+  const showTalent = layerToggles.talent !== false;
 
   return (
     <section className="flex flex-col min-h-0 h-full" style={{ minWidth: 0 }}>
@@ -40,7 +44,7 @@ export function DirectorModeCinemaPreview({ scene, session, cta, graphics }: Dir
           src={preview.src}
           alt=""
           className="absolute inset-0 w-full h-full object-cover transition-all duration-500"
-          style={{ filter: preview.filter }}
+          style={{ filter: preview.filter, opacity: layerToggles.baseStudio === false ? 0.15 : 1 }}
         />
         <div
           className="absolute inset-0 pointer-events-none"
@@ -52,7 +56,7 @@ export function DirectorModeCinemaPreview({ scene, session, cta, graphics }: Dir
         >
           CINEMA PREVIEW · {preview.cameraLabel} · {preview.lightingLabel}
         </div>
-        {graphics.lowerThirds ? (
+        {showGraphics && graphics.lowerThirds && showTalent ? (
           <div
             className="absolute bottom-12 left-4 right-4 px-3 py-2"
             style={{ background: 'rgba(255,255,255,0.88)', borderLeft: `3px solid ${DM_VISUAL.red}`, fontFamily: '"Futura PT Medium"', fontSize: '9px' }}
@@ -60,17 +64,17 @@ export function DirectorModeCinemaPreview({ scene, session, cta, graphics }: Dir
             {resolveAssetLabel(selection.talentId)} · LUXURY FORECAST
           </div>
         ) : null}
-        {graphics.luxuryTitles ? (
+        {showGraphics && graphics.luxuryTitles ? (
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2" style={{ fontFamily: '"Covered By Your Grace"', fontSize: '22px', color: '#FFFFFF', textShadow: '0 2px 12px rgba(0,0,0,0.5)' }}>
             FRONTAL SLAYER
           </div>
         ) : null}
-        {graphics.forecastGraphics ? (
+        {showGraphics && graphics.forecastGraphics ? (
           <div className="absolute right-4 top-1/4 w-24 h-16 opacity-90" style={{ background: 'rgba(255,255,255,0.75)', border: DM_VISUAL.border, fontSize: '7px', padding: '4px', fontFamily: '"Futura PT Medium"' }}>
             FORECAST MAP · PLACEHOLDER
           </div>
         ) : null}
-        {graphics.captions ? (
+        {showGraphics && graphics.captions ? (
           <div className="absolute bottom-3 left-0 right-0 text-center" style={{ fontFamily: '"Futura PT Book"', fontSize: '8px', color: '#FFFFFF', textShadow: '0 1px 4px #000' }}>
             [CAPTIONS ENABLED]
           </div>
@@ -84,6 +88,8 @@ export function DirectorModeCinemaPreview({ scene, session, cta, graphics }: Dir
         {OVERLAY_SLOTS.map((slot) => {
           const val = scene ? slot.resolve(selection, cta) : null;
           if (!val) return null;
+          const layerKey = slot.key === 'studio' ? 'baseStudio' : slot.key;
+          if (layerToggles[layerKey] === false) return null;
           return (
             <div key={slot.key} className="px-2 py-1" style={{ background: DM_VISUAL.glass, border: DM_VISUAL.border }}>
               <p style={{ ...dmCaptionStyle, fontSize: '6px' }}>{slot.label}</p>

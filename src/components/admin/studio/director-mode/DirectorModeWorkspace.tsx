@@ -35,6 +35,7 @@ export function DirectorModeWorkspace() {
     setLightingOverride,
     setMusic,
     toggleGraphics,
+    toggleLayer,
     updateVoice,
     updateSceneMeta,
     reorderTimeline,
@@ -86,6 +87,7 @@ export function DirectorModeWorkspace() {
           session={session}
           cta={draft.cta}
           graphics={session.graphics}
+          layerToggles={session.layerToggles}
         />
         <DirectorModeControls
           scene={activeScene}
@@ -93,11 +95,13 @@ export function DirectorModeWorkspace() {
           session={session}
           voice={session.voice}
           graphics={session.graphics}
+          layerToggles={session.layerToggles}
           onSwapAsset={swapAsset}
           onCamera={setCameraOverride}
           onLighting={setLightingOverride}
           onMusic={setMusic}
           onToggleGraphics={toggleGraphics}
+          onToggleLayer={toggleLayer}
           onVoiceChange={updateVoice}
           onDirectorNotes={(notes) => updateSceneMeta({ directorNotes: notes })}
         />

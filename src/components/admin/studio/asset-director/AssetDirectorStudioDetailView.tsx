@@ -1,4 +1,5 @@
 import type { StudioVisualBundle } from '../../../../utils/adminStudioAssetDirectorVisual';
+import { STUDIO_SET_LAYER_SECTION_SUBTITLES } from '../../../../utils/adminStudioSetSeparation';
 import { ASSET_HEALTH_LABELS } from '../../../../utils/adminStudioAssetDirectorDemo';
 import {
   AssetDirectorHeroPreview,
@@ -12,7 +13,7 @@ import { AD_VISUAL, adCaptionStyle } from './assetDirectorVisualTheme';
 type AssetDirectorStudioDetailViewProps = {
   bundle: StudioVisualBundle;
   busyVariantKey?: string | null;
-  onQuickPreview?: (item: { name: string; previewSrc: string; resolution?: string; version?: string }) => void;
+  onQuickPreview?: (item: { name: string; previewSrc: string; resolution?: string; version?: string; setLayer?: string; subtitle?: string }) => void;
   onGenerate?: (item: { name: string }) => void;
   onReplace?: (item: { name: string }) => void;
   onHeaderAction?: (action: string) => void;
@@ -26,9 +27,9 @@ export function AssetDirectorStudioDetailView({
   onReplace,
   onHeaderAction,
 }: AssetDirectorStudioDetailViewProps) {
-  const preview = (item: { name: string; previewSrc: string; resolution: string; version: string }) =>
+  const preview = (item: { name: string; previewSrc: string; resolution: string; version: string; setLayer?: string; subtitle?: string }) =>
     onQuickPreview?.(item);
-  const tileActions = (item: { id: string; name: string; previewSrc: string; resolution: string; version: string }) => {
+  const tileActions = (item: { id: string; name: string; previewSrc: string; resolution: string; version: string; setLayer?: string; subtitle?: string }) => {
     const isBusy = busyVariantKey === `${bundle.studio.id}:${item.id}`;
     return {
       onPreview: () => preview(item),
@@ -47,9 +48,67 @@ export function AssetDirectorStudioDetailView({
         onAction={onHeaderAction}
       />
 
-      <AssetDirectorHeroPreview src={bundle.heroSrc} type={bundle.heroType} />
+      <AssetDirectorHeroPreview src={bundle.heroSrc} label="MASTER STUDIO PREVIEW" type={bundle.heroType} />
 
-      <AssetDirectorSectionBlock title="VERSIONS" subtitle="DAY · NIGHT · SEASONAL · CAMPAIGN VARIANTS">
+      <div className="mb-3 px-1 py-2 border border-black bg-white/70" style={{ borderWidth: '1.3px' }}>
+        <p style={{ ...adCaptionStyle, color: AD_VISUAL.black, fontFamily: '"Futura PT Medium"', fontSize: '9px' }}>
+          {bundle.separationRule}
+        </p>
+        <p style={{ ...adCaptionStyle, fontSize: '8px', marginTop: '4px' }}>
+          MASTER STUDIO = REUSABLE EMPTY SET · REFERENCE SCENE = STAGED EXAMPLE ONLY
+        </p>
+      </div>
+
+      <AssetDirectorSectionBlock title="MASTER STUDIO" subtitle={STUDIO_SET_LAYER_SECTION_SUBTITLES['master-studio']}>
+        <div className="grid grid-cols-2 gap-2">
+          {bundle.masterStudio.map((v) => (
+            <AssetDirectorVisualTile key={v.id} item={v} {...tileActions(v)} />
+          ))}
+        </div>
+      </AssetDirectorSectionBlock>
+
+      <AssetDirectorSectionBlock title="REFERENCE SCENE" subtitle={STUDIO_SET_LAYER_SECTION_SUBTITLES['reference-scene']}>
+        <div className="grid grid-cols-2 gap-2">
+          {bundle.referenceScene.map((v) => (
+            <AssetDirectorVisualTile key={v.id} item={v} {...tileActions(v)} />
+          ))}
+        </div>
+      </AssetDirectorSectionBlock>
+
+      <AssetDirectorSectionBlock title="SET DRESSING" subtitle={STUDIO_SET_LAYER_SECTION_SUBTITLES['set-dressing']}>
+        <div className="grid grid-cols-2 gap-2">
+          {bundle.setDressing.map((p) => (
+            <AssetDirectorVisualTile key={p.id} item={p} {...tileActions(p)} />
+          ))}
+        </div>
+      </AssetDirectorSectionBlock>
+
+      <AssetDirectorSectionBlock title="TALENT LAYERS" subtitle={STUDIO_SET_LAYER_SECTION_SUBTITLES['talent-layer']}>
+        <div className="grid grid-cols-2 gap-2">
+          {bundle.talent.map((t) => (
+            <div key={t.id} className="border border-black overflow-hidden bg-white" style={{ borderWidth: '1.3px' }}>
+              <button type="button" onClick={() => preview(t)} className="block w-full" style={{ aspectRatio: '3 / 4' }}>
+                <img src={t.previewSrc} alt="" className="w-full h-full object-cover" />
+              </button>
+              <div className="p-2">
+                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: AD_VISUAL.red }}>{t.name}</p>
+                <p style={adCaptionStyle}>{t.role}</p>
+                <p style={{ ...adCaptionStyle, fontSize: '8px' }}>TALENT LAYER · {t.subtitle ?? 'TALENT AGENCY'}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </AssetDirectorSectionBlock>
+
+      <AssetDirectorSectionBlock title="EPISODE GRAPHICS" subtitle={STUDIO_SET_LAYER_SECTION_SUBTITLES['episode-graphics']}>
+        <div className="grid grid-cols-2 gap-2">
+          {bundle.episodeGraphics.map((g) => (
+            <AssetDirectorVisualTile key={g.id} item={g} {...tileActions(g)} />
+          ))}
+        </div>
+      </AssetDirectorSectionBlock>
+
+      <AssetDirectorSectionBlock title="VERSIONS" subtitle="DAY · NIGHT · SEASONAL · CAMPAIGN VARIANTS · EMPTY SET">
         <div className="grid grid-cols-2 gap-2">
           {bundle.versions.map((v) => (
             <AssetDirectorVisualTile key={v.id} item={v} {...tileActions(v)} />
@@ -81,27 +140,10 @@ export function AssetDirectorStudioDetailView({
         </div>
       </AssetDirectorSectionBlock>
 
-      <AssetDirectorSectionBlock title="PROPS">
+      <AssetDirectorSectionBlock title="PROPS" subtitle="LEGACY PROPS INDEX · ALSO IN SET DRESSING">
         <div className="grid grid-cols-2 gap-2">
           {bundle.props.map((p) => (
             <AssetDirectorVisualTile key={p.id} item={p} {...tileActions(p)} />
-          ))}
-        </div>
-      </AssetDirectorSectionBlock>
-
-      <AssetDirectorSectionBlock title="TALENT" subtitle="PORTRAITS · WARDROBE · ROLE">
-        <div className="grid grid-cols-2 gap-2">
-          {bundle.talent.map((t) => (
-            <div key={t.id} className="border border-black overflow-hidden bg-white" style={{ borderWidth: '1.3px' }}>
-              <button type="button" onClick={() => preview(t)} className="block w-full" style={{ aspectRatio: '3 / 4' }}>
-                <img src={t.previewSrc} alt="" className="w-full h-full object-cover" />
-              </button>
-              <div className="p-2">
-                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '10px', color: AD_VISUAL.red }}>{t.name}</p>
-                <p style={adCaptionStyle}>{t.role}</p>
-                <p style={{ ...adCaptionStyle, fontSize: '9px' }}>{t.wardrobe} · {t.hairstyle}</p>
-              </div>
-            </div>
           ))}
         </div>
       </AssetDirectorSectionBlock>

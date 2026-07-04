@@ -122,6 +122,9 @@ export function AssetFactoryWorkspace() {
             <p style={afCaption}>IMAGES: {plan.requiredImages.length} · VIDEOS: {plan.requiredVideos.length} · VARIANTS: {plan.requiredVariants.join(', ')}</p>
             <p style={afCaption}>EST. {plan.estimatedTimeMin} MIN · {plan.estimatedCredits} CREDITS · {plan.estimatedStorageMb} MB · {plan.estimatedCost}</p>
             <p style={afCaption}>DEPENDENCIES: {plan.dependencies.join(' → ')}</p>
+            {plan.studioGenerationOrder ? (
+              <p style={afCaption}>STUDIO ORDER: {plan.studioGenerationOrder.join(' → ')}</p>
+            ) : null}
             <p style={{ ...afCaption, color: plan.eligible ? AF_VISUAL.pass : AF_VISUAL.red, marginTop: 6 }}>{plan.eligibilityNote}</p>
             <div className="flex flex-wrap gap-1 mt-2 mb-2">
               {VARIATION_PRESETS.map((v) => (

@@ -4,6 +4,12 @@ import type { BlueprintDefinition } from '../utils/adminStudioBlueprintManagerDe
 import type { AssetFactoryViewMode, FactoryJobStatus } from '../utils/adminStudioAssetFactoryDemo';
 import { FACTORY_ACTIVITY_SEED, FACTORY_DEPARTMENTS, QA_CHECK_LABELS } from '../utils/adminStudioAssetFactoryDemo';
 import {
+  MASTER_STUDIO_QA_FAIL_LABEL,
+  MASTER_STUDIO_QA_LABELS,
+  shouldReclassifyGeneratedAsReferenceScene,
+  runMasterStudioSeparationQa,
+} from '../utils/adminStudioSetSeparation';
+import {
   advanceJobDepartment,
   buildGenerationPlan,
   createFactoryJob,
@@ -268,20 +274,23 @@ export function syncFactoryVariantOutput(
   }));
 }
 
-export function completeLiveFactoryJob(jobId: string, logLine: string): void {
+export function completeLiveFactoryJob(jobId: string, logLine: string, variantName?: string): void {
   updateJobById(jobId, (job) => {
-    const qaResults = runQaChecksForLiveJob();
+    const qaResults = runQaChecksForLiveJob(variantName ?? job.variantOutputs?.[0]?.variantName);
+    const referenceDelivery = shouldReclassifyGeneratedAsReferenceScene(variantName ?? 'DAY', true);
+    const masterFailed = qaResults.some((q) => q.label === MASTER_STUDIO_QA_FAIL_LABEL && q.passed === false);
+    const status = referenceDelivery ? 'completed' : masterFailed ? 'needs-review' : 'completed';
     return {
       ...job,
-      status: 'completed',
+      status,
       progressPct: 100,
       currentDepartmentId: 'asset-director',
       departmentIndex: FACTORY_DEPARTMENTS.length,
       logs: [
         ...job.logs,
         logLine,
-        'ASSET DIRECTOR UPDATED',
-        'MISSION CONTROL SYNCED',
+        referenceDelivery ? 'DELIVERED AS REFERENCE SCENE · NOT MASTER STUDIO' : 'ASSET DIRECTOR UPDATED',
+        masterFailed ? MASTER_STUDIO_QA_FAIL_LABEL : 'MISSION CONTROL SYNCED',
         'LIVE DELIVERY COMPLETE — OPEN ASSET DIRECTOR TO PREVIEW',
       ],
       qaResults,
@@ -298,10 +307,22 @@ export function failLiveFactoryJob(jobId: string, error: string): void {
   }));
 }
 
-function runQaChecksForLiveJob() {
-  return QA_CHECK_LABELS.map((label, i) => ({
+function runQaChecksForLiveJob(variantName?: string): Array<{ id: string; label: string; passed: boolean }> {
+  const name = variantName ?? 'DAY';
+  const asReference = shouldReclassifyGeneratedAsReferenceScene(name, true);
+  const masterChecks = runMasterStudioSeparationQa(name, asReference ? 'reference-scene' : 'master-studio');
+  const layerQa: Array<{ id: string; label: string; passed: boolean }> = MASTER_STUDIO_QA_LABELS.map((label, i) => ({
+    id: `qa-live-master-${i}`,
+    label,
+    passed: asReference ? true : (masterChecks[i]?.passed ?? true),
+  }));
+  if (!asReference && masterChecks.some((c) => !c.passed)) {
+    layerQa.push({ id: 'qa-live-master-fail', label: MASTER_STUDIO_QA_FAIL_LABEL, passed: false });
+  }
+  const base = QA_CHECK_LABELS.map((label, i) => ({
     id: `qa-live-${i}`,
     label,
     passed: true,
   }));
+  return [...layerQa, ...base];
 }

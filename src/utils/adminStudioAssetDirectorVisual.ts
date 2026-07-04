@@ -5,6 +5,11 @@
 
 import type { AssetDirectorCard, AssetDirectorStatus, AssetDirectorStudioProfile, AssetHealthIndicator } from './adminStudioAssetDirectorDemo';
 import {
+  inferSetLayerFromAssetName,
+  STUDIO_SET_SEPARATION_RULE,
+  type StudioSetLayerId,
+} from './adminStudioSetSeparation';
+import {
   ASSET_DIRECTOR_CAMERA,
   ASSET_DIRECTOR_EXPRESSIONS,
   ASSET_DIRECTOR_HEALTH_QUEUE,
@@ -61,6 +66,8 @@ export type VisualAssetItem = {
   duration?: string;
   accentHex: string;
   subtitle?: string;
+  /** Studio set separation layer — drives preview modal labels. */
+  setLayer?: StudioSetLayerId;
 };
 
 export type WardrobeVisualItem = VisualAssetItem & {
@@ -115,6 +122,15 @@ export type StudioVisualBundle = {
   heroSrc: string;
   heroType: 'image' | 'video' | 'interactive';
   productionCount: number;
+  /** Set separation — primary clean environment. */
+  masterStudio: VisualAssetItem[];
+  /** Staged example — may include talent/graphics; not reusable base. */
+  referenceScene: VisualAssetItem[];
+  /** Reusable props and environment add-ons. */
+  setDressing: VisualAssetItem[];
+  /** Episode overlays — per content pack. */
+  episodeGraphics: VisualAssetItem[];
+  separationRule: string;
   versions: VisualAssetItem[];
   videos: VisualAssetItem[];
   cameras: VisualAssetItem[];
@@ -139,7 +155,7 @@ function thumb(idx: number): string {
   return ARTWORK[idx % ARTWORK.length];
 }
 
-function visualFromCard(card: AssetDirectorCard, idx: number, subtitle?: string): VisualAssetItem {
+function visualFromCard(card: AssetDirectorCard, idx: number, subtitle?: string, setLayer?: StudioSetLayerId): VisualAssetItem {
   return {
     id: card.id,
     name: card.name,
@@ -150,6 +166,29 @@ function visualFromCard(card: AssetDirectorCard, idx: number, subtitle?: string)
     duration: undefined,
     accentHex: card.accentHex,
     subtitle,
+    setLayer: setLayer ?? inferSetLayerFromAssetName(card.name),
+  };
+}
+
+function layerItem(
+  studio: AssetDirectorStudioProfile,
+  id: string,
+  name: string,
+  idx: number,
+  setLayer: StudioSetLayerId,
+  status: AssetDirectorStatus = 'approved',
+  subtitle?: string
+): VisualAssetItem {
+  return {
+    id,
+    name,
+    previewSrc: thumb(idx),
+    status,
+    resolution: '3840×1600',
+    version: 'v1.0',
+    accentHex: studio.accentHex,
+    subtitle,
+    setLayer,
   };
 }
 
@@ -174,14 +213,39 @@ function buildWeatherStudioBundle(studio: AssetDirectorStudioProfile): StudioVis
     heroSrc: hero,
     heroType: 'interactive',
     productionCount: 12,
+    separationRule: STUDIO_SET_SEPARATION_RULE,
+    masterStudio: [
+      layerItem(studio, `${studio.id}-master-base`, 'MASTER BASE', 0, 'master-studio', 'needs-review', 'NEEDS GENERATION · EMPTY SET'),
+      layerItem(studio, `${studio.id}-master-day`, 'DAY', 1, 'master-studio', 'needs-review', 'CLEAN ENVIRONMENT VARIANT'),
+      layerItem(studio, `${studio.id}-master-night`, 'NIGHT', 2, 'master-studio', 'needs-review', 'CLEAN ENVIRONMENT VARIANT'),
+    ],
+    referenceScene: [
+      layerItem(studio, `${studio.id}-ref-day`, 'DAY · STAGED REFERENCE', 3, 'reference-scene', 'approved', 'EXAMPLE ONLY · MAY INCLUDE TALENT'),
+      layerItem(studio, `${studio.id}-ref-broadcast`, 'FINISHED BROADCAST LOOK', 4, 'reference-scene', 'approved', 'VISUAL GUIDANCE'),
+    ],
+    setDressing: propLabels.map((name, i) =>
+      layerItem(studio, `${studio.id}-dress-${i}`, name, i + 1, 'set-dressing', i < 5 ? 'in-use' : 'draft', 'REUSABLE PROP')
+    ),
+    episodeGraphics: [
+      'FORECAST TITLE',
+      'TREND MAP',
+      'LOWER THIRD',
+      'COUNTDOWN',
+      'CTA CALLOUT',
+      'PRODUCT SPOTLIGHT',
+    ].map((name, i) =>
+      layerItem(studio, `${studio.id}-gfx-${i}`, name, i, 'episode-graphics', 'approved', 'PER CONTENT PACK')
+    ),
     versions: versionLabels.map((name, i) => ({
       id: `${studio.id}-ver-${i}`,
       name,
       previewSrc: thumb(i),
-      status: i < 5 ? 'approved' : 'needs-review',
+      status: i < 5 ? ('needs-review' as const) : ('needs-review' as const),
       resolution: '3840×1600',
       version: `v1.${i}`,
       accentHex: studio.accentHex,
+      setLayer: 'master-studio' as const,
+      subtitle: 'ENVIRONMENT VARIANT · EMPTY SET',
     })),
     videos: videoLabels.map((name, i) => ({
       id: `${studio.id}-vid-${i}`,
@@ -220,6 +284,8 @@ function buildWeatherStudioBundle(studio: AssetDirectorStudioProfile): StudioVis
       resolution: 'PNG · ALPHA',
       version: `v1.${i}`,
       accentHex: '#9333EA',
+      setLayer: 'set-dressing' as const,
+      subtitle: 'SET DRESSING',
     })),
     talent: ASSET_DIRECTOR_TALENT.slice(0, 4).map((t, i) => ({
       id: t.id,
@@ -232,6 +298,8 @@ function buildWeatherStudioBundle(studio: AssetDirectorStudioProfile): StudioVis
       wardrobe: t.wardrobe[0] ?? 'EDITORIAL',
       hairstyle: t.hairstyle,
       role: ['PSA HOST', 'LUXURY STYLIST', 'REPORTER', 'GUEST'][i] ?? 'ON CAMERA',
+      setLayer: 'talent-layer' as const,
+      subtitle: 'TALENT AGENCY · LAYER IN PRODUCTION',
     })),
     wardrobe: ASSET_DIRECTOR_WARDROBE.slice(0, 7).map((w, i) => ({
       id: w.id,
@@ -309,6 +377,19 @@ export function getStudioVisualBundle(studioId: string): StudioVisualBundle | un
     heroSrc: studio.previewSrc,
     heroType: 'image',
     productionCount: 4 + (idx % 8),
+    separationRule: STUDIO_SET_SEPARATION_RULE,
+    masterStudio: [
+      layerItem(studio, `${studio.id}-master-base`, 'MASTER BASE', idx, 'master-studio', 'needs-review', 'NEEDS GENERATION'),
+    ],
+    referenceScene: [
+      layerItem(studio, `${studio.id}-ref-example`, 'STAGED REFERENCE', idx + 1, 'reference-scene', 'approved', 'EXAMPLE ONLY'),
+    ],
+    setDressing: ASSET_DIRECTOR_PROPS.slice(0, 4).map((p, i) =>
+      layerItem(studio, `${studio.id}-dress-${i}`, p.name, i, 'set-dressing', 'approved')
+    ),
+    episodeGraphics: [
+      layerItem(studio, `${studio.id}-gfx-title`, 'TITLE OVERLAY', 0, 'episode-graphics', 'approved'),
+    ],
     versions: versionNames.map((name, i) => ({
       id: `${studio.id}-ver-${i}`,
       name,
@@ -317,6 +398,8 @@ export function getStudioVisualBundle(studioId: string): StudioVisualBundle | un
       resolution: '3840×1600',
       version: `v1.${i}`,
       accentHex: studio.accentHex,
+      setLayer: 'master-studio' as const,
+      subtitle: 'ENVIRONMENT VARIANT',
     })),
     videos: ASSET_DIRECTOR_ANIMATIONS.slice(0, 5).map((a, i) => ({
       ...visualFromCard(a, i),

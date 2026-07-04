@@ -6,6 +6,10 @@
 import type { ProductionDraft, ProductionScene } from './adminStudioProductionBuilderDemo';
 import { findProductionAsset, getScenePreviewSrc } from './adminStudioProductionBuilderDemo';
 import { ASSET_DIRECTOR_CAMERA, ASSET_DIRECTOR_LIGHTING } from './adminStudioAssetDirectorDemo';
+import {
+  DEFAULT_DIRECTOR_LAYER_TOGGLES,
+  type DirectorLayerToggles,
+} from './adminStudioSetSeparation';
 
 export const DIRECTOR_MODE_SUBTITLE =
   'REHEARSE YOUR PRODUCTION IN THE LUXURY CONTROL ROOM BEFORE AI GENERATES ASSETS.';
@@ -92,6 +96,7 @@ export type DirectorModeSession = {
   activeLightingOverride?: string;
   activeMusicId?: string;
   graphics: DirectorGraphicsToggles;
+  layerToggles: DirectorLayerToggles;
   voice: DirectorVoiceSettings;
   clientPreviewMode: boolean;
   rehearsalActive: boolean;
@@ -236,6 +241,7 @@ export function createDirectorSession(draftId: string, scenes: ProductionScene[]
     draftId,
     sceneMeta,
     graphics: { ...DEFAULT_GRAPHICS_TOGGLES },
+    layerToggles: { ...DEFAULT_DIRECTOR_LAYER_TOGGLES },
     voice: { ...DEFAULT_VOICE_SETTINGS },
     clientPreviewMode: false,
     rehearsalActive: false,

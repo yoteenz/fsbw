@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { ProductionDraft, ProductionScene } from '../../../../utils/adminStudioProductionBuilderDemo';
 import {
   getScenePreviewSrc,
+  PRODUCTION_LAYER_FORMULA,
   resolveSceneStackLabel,
   SCENE_STACK_SLOTS,
 } from '../../../../utils/adminStudioProductionBuilderDemo';
@@ -102,7 +103,8 @@ export function ProductionBuilderSceneCanvas({
         onDrop={handleDrop}
       >
         <p style={pbSectionTitleStyle}>SCENE BUILDER</p>
-        <p style={{ ...pbCaptionStyle, marginBottom: '10px' }}>CREATIVE STORYBOARD · DROP ASSETS TO ASSEMBLE</p>
+        <p style={{ ...pbCaptionStyle, marginBottom: '6px' }}>CREATIVE STORYBOARD · DROP ASSETS TO ASSEMBLE</p>
+        <p style={{ ...pbCaptionStyle, marginBottom: '10px', fontSize: '7px', color: PB_VISUAL.red }}>{PRODUCTION_LAYER_FORMULA}</p>
 
         <div
           className="relative w-full overflow-hidden mb-4 flex-shrink-0"

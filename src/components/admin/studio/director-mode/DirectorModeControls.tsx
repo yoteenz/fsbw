@@ -6,6 +6,7 @@ import {
   DIRECTOR_MUSIC_TRACKS,
   resolveAssetLabel,
 } from '../../../../utils/adminStudioDirectorModeDemo';
+import { DIRECTOR_LAYER_TOGGLE_SLOTS, type DirectorLayerToggles } from '../../../../utils/adminStudioSetSeparation';
 import { getProductionAssetLibrary } from '../../../../utils/adminStudioProductionBuilderDemo';
 import { DM_VISUAL, dmActionBtnStyle, dmCaptionStyle, dmPanelStyle, dmSectionTitleStyle } from './directorModeTheme';
 
@@ -15,11 +16,13 @@ type DirectorModeControlsProps = {
   session: DirectorModeSession;
   voice: DirectorVoiceSettings;
   graphics: DirectorGraphicsToggles;
+  layerToggles: DirectorLayerToggles;
   onSwapAsset: (category: string, assetId: string) => void;
   onCamera: (id: string) => void;
   onLighting: (id: string) => void;
   onMusic: (id: string) => void;
   onToggleGraphics: (key: keyof DirectorGraphicsToggles) => void;
+  onToggleLayer: (key: string) => void;
   onVoiceChange: (patch: Partial<DirectorVoiceSettings>) => void;
   onDirectorNotes: (notes: string) => void;
 };
@@ -42,11 +45,13 @@ export function DirectorModeControls({
   session,
   voice,
   graphics,
+  layerToggles,
   onSwapAsset,
   onCamera,
   onLighting,
   onMusic,
   onToggleGraphics,
+  onToggleLayer,
   onVoiceChange,
   onDirectorNotes,
 }: DirectorModeControlsProps) {
@@ -57,6 +62,31 @@ export function DirectorModeControls({
   return (
     <aside className="flex flex-col min-h-0 h-full overflow-y-auto" style={{ ...dmPanelStyle, padding: '10px' }}>
       <p style={dmSectionTitleStyle}>DIRECTOR CONTROLS</p>
+
+      <ControlSection title="LAYER TOGGLES · SET VS EPISODE">
+        <p style={{ ...dmCaptionStyle, fontSize: '7px', marginBottom: '6px' }}>
+          TOGGLE LAYERS TO SEE WHAT BELONGS TO THE SET VS THE EPISODE
+        </p>
+        <div className="flex flex-wrap gap-1">
+          {DIRECTOR_LAYER_TOGGLE_SLOTS.map((slot) => (
+            <button
+              key={slot.key}
+              type="button"
+              onClick={() => onToggleLayer(slot.key)}
+              style={{
+                ...dmActionBtnStyle,
+                fontSize: '7px',
+                padding: '3px 6px',
+                borderColor: layerToggles[slot.key] ? DM_VISUAL.red : DM_VISUAL.border,
+                background: layerToggles[slot.key] ? '#FFF5F5' : '#fff',
+              }}
+            >
+              {layerToggles[slot.key] ? '● ' : '○ '}
+              {slot.label}
+            </button>
+          ))}
+        </div>
+      </ControlSection>
 
       <ControlSection title="CURRENT SELECTION">
         {SWAP_CATEGORIES.map(({ cat, field, label }) => {

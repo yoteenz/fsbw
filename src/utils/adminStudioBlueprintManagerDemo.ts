@@ -3,6 +3,9 @@
  * Specification only — no asset generation.
  */
 
+import type { StudioBlueprintLayerSpec } from './adminStudioSetSeparation';
+import { GENERIC_STUDIO_LAYER_SPECS, WEATHER_STUDIO_LAYER_SPECS } from './adminStudioSetSeparation';
+
 export const BLUEPRINT_MANAGER_SUBTITLE = 'DEFINE ONCE. GENERATE FOREVER.';
 
 export const BLUEPRINT_MANAGER_INHERITANCE_CHAIN = [
@@ -102,6 +105,8 @@ export type BlueprintDefinition = {
   validationRules: BlueprintValidationRule[];
   usedBy: BlueprintRelationship[];
   checklist: BlueprintChecklistItem[];
+  /** Studio blueprints — five-layer set separation spec. */
+  studioSetLayers?: StudioBlueprintLayerSpec[];
   metadata: Record<string, string>;
   versionHistory: BlueprintVersion[];
   templateId?: string;
@@ -139,11 +144,15 @@ export const BLUEPRINT_TEMPLATES: Array<{
 ];
 
 const WEATHER_STUDIO_CHECKLIST: BlueprintChecklistItem[] = [
-  { id: 'ck-master', label: 'MASTER ENVIRONMENT', status: 'waiting', category: 'IMAGES' },
-  { id: 'ck-day', label: 'DAY', status: 'waiting', category: 'IMAGES' },
-  { id: 'ck-night', label: 'NIGHT', status: 'waiting', category: 'IMAGES' },
-  { id: 'ck-lighting', label: 'LIGHTING', status: 'waiting', category: 'LIGHTING' },
-  { id: 'ck-video', label: 'VIDEO', status: 'waiting', category: 'VIDEOS' },
+  { id: 'ck-master', label: 'MASTER STUDIO · EMPTY SET', status: 'waiting', category: 'MASTER STUDIO' },
+  { id: 'ck-reference', label: 'REFERENCE SCENE · STAGED EXAMPLE', status: 'waiting', category: 'REFERENCE SCENE' },
+  { id: 'ck-dressing', label: 'SET DRESSING', status: 'waiting', category: 'SET DRESSING' },
+  { id: 'ck-talent', label: 'TALENT LAYERS · LINKED', status: 'ready', category: 'TALENT LAYERS' },
+  { id: 'ck-graphics', label: 'EPISODE GRAPHICS', status: 'waiting', category: 'EPISODE GRAPHICS' },
+  { id: 'ck-day', label: 'DAY VARIANT', status: 'waiting', category: 'VERSIONS' },
+  { id: 'ck-night', label: 'NIGHT VARIANT', status: 'waiting', category: 'VERSIONS' },
+  { id: 'ck-lighting', label: 'LIGHTING PRESETS', status: 'waiting', category: 'LIGHTING' },
+  { id: 'ck-video', label: 'VIDEO LOOPS', status: 'waiting', category: 'VIDEOS' },
   { id: 'ck-prompt', label: 'PROMPT', status: 'ready', category: 'PROMPT' },
   { id: 'ck-meta', label: 'METADATA', status: 'ready', category: 'METADATA' },
 ];
@@ -160,7 +169,8 @@ export const WEATHER_STUDIO_BLUEPRINT: BlueprintDefinition = {
     description: 'LUXURY BROADCAST WEATHER-INSPIRED PRODUCTION STUDIO.',
   },
   requiredImages: [
-    'MASTER ENVIRONMENT',
+    'MASTER STUDIO · EMPTY BASE',
+    'REFERENCE SCENE · STAGED EXAMPLE',
     'DAY',
     'NIGHT',
     'HOLIDAY',
@@ -170,6 +180,7 @@ export const WEATHER_STUDIO_BLUEPRINT: BlueprintDefinition = {
     'LAUNCH',
     'EDITORIAL',
   ],
+  studioSetLayers: WEATHER_STUDIO_LAYER_SPECS,
   requiredVideos: ['INTRO', 'IDLE', 'LOOP', 'TRANSITION', 'OUTRO'],
   requiredCameraPresets: ['WIDE', 'MEDIUM', 'CLOSE', 'HERO', 'PRODUCT', 'POV', 'TOP DOWN'],
   requiredLighting: ['LUXURY DAY', 'LUXURY NIGHT', 'BROADCAST', 'EDITORIAL', 'GOLDEN HOUR', 'CLOUDY'],
@@ -249,7 +260,8 @@ function cardBlueprint(
     scope,
     status,
     identity: { name, category, workspace: scope === 'workspace' ? 'FRONTAL SLAYER' : 'STUDIOOS GLOBAL', description },
-    requiredImages: category === 'studio' ? ['MASTER'] : ['HERO'],
+    requiredImages: category === 'studio' ? ['MASTER STUDIO · EMPTY BASE', 'REFERENCE SCENE · STAGED EXAMPLE', 'DAY', 'NIGHT'] : ['HERO'],
+    studioSetLayers: category === 'studio' ? GENERIC_STUDIO_LAYER_SPECS : undefined,
     requiredVideos: ['LOOP'],
     requiredCameraPresets: ['WIDE', 'HERO'],
     requiredLighting: ['EDITORIAL'],

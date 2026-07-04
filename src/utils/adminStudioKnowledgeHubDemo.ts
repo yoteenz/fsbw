@@ -3,6 +3,7 @@
  * Demo/placeholder profiles and page guides; searchable wiki index.
  */
 
+import { STUDIO_SET_SEPARATION_RULE, WEATHER_STUDIO_LAYER_SPECS } from './adminStudioSetSeparation';
 import { ADMIN_STUDIO_MODULES, type AdminStudioModule } from './adminStudioNavigation';
 import { ADMIN_STUDIO_BASE_PATH } from './adminStudioRoutes';
 import {
@@ -95,6 +96,14 @@ export type KnowledgeObjectProfile = {
   relatedProducts?: string[];
   relationshipChain?: KnowledgeRelatedLink[];
   searchableText: string;
+  /** Studio profiles — five-layer set separation. */
+  setSeparationRule?: string;
+  masterStudioItems?: string[];
+  referenceSceneItems?: string[];
+  setDressingItems?: string[];
+  talentLayerItems?: string[];
+  episodeGraphicsItems?: string[];
+  productionBuilderNote?: string;
 };
 
 export type KnowledgeWorkflowGuide = {
@@ -264,7 +273,15 @@ export const KNOWLEDGE_OBJECT_PROFILES: KnowledgeObjectProfile[] = [
       label: 'WEATHER STUDIO BLUEPRINT',
       route: adminStudioBlueprintDetailPath('bp-weather-studio'),
     },
-    factoryStatus: 'PRODUCTION READY',
+    factoryStatus: 'MASTER NEEDS GENERATION · REFERENCE SCENE AVAILABLE',
+    setSeparationRule: STUDIO_SET_SEPARATION_RULE,
+    masterStudioItems: WEATHER_STUDIO_LAYER_SPECS.find((l) => l.layerId === 'master-studio')?.items,
+    referenceSceneItems: WEATHER_STUDIO_LAYER_SPECS.find((l) => l.layerId === 'reference-scene')?.items,
+    setDressingItems: WEATHER_STUDIO_LAYER_SPECS.find((l) => l.layerId === 'set-dressing')?.items,
+    talentLayerItems: WEATHER_STUDIO_LAYER_SPECS.find((l) => l.layerId === 'talent-layer')?.items,
+    episodeGraphicsItems: WEATHER_STUDIO_LAYER_SPECS.find((l) => l.layerId === 'episode-graphics')?.items,
+    productionBuilderNote:
+      'ASSEMBLE IN PRODUCTION BUILDER: Master Studio + Set Dressing + Talent + Wardrobe + Lighting + Camera + Episode Graphics + CTA',
     relationshipChain: [
       { label: 'THE SLAY REPORT', route: `${ADMIN_STUDIO_BASE_PATH}/shows`, kind: 'USED BY' },
       { label: 'FORECAST DESK', route: adminStudioAssetDirectorStudioPath('ad-studio-weather'), kind: 'USES' },
@@ -348,15 +365,28 @@ export const KNOWLEDGE_WORKFLOW_GUIDES: KnowledgeWorkflowGuide[] = [
   {
     id: 'creating-a-studio',
     title: 'CREATING A STUDIO',
-    subtitle: 'From blueprint to approved master environment',
+    subtitle: 'Master Studio vs Reference Scene — five-layer separation',
     steps: [
-      { title: 'DEFINE BLUEPRINT', detail: 'Blueprint Manager → Weather Studio spec', route: adminStudioBlueprintDetailPath('bp-weather-studio') },
-      { title: 'APPROVE SPEC', detail: 'Set status APPROVED when readiness score passes' },
-      { title: 'OPEN ASSET DIRECTOR', detail: 'Studios → Weather Studio → VERSIONS', route: adminStudioAssetDirectorStudioPath('ad-studio-weather') },
-      { title: 'GENERATE VARIANT', detail: 'Tap GENERATE on DAY — live Fal → Supabase → tile update' },
-      { title: 'PREVIEW & APPROVE', detail: 'PREVIEW 21:9 master · mark approved in Asset Director' },
+      { title: 'DEFINE BLUEPRINT', detail: 'Blueprint Manager → five layers: Master · Reference · Dressing · Talent · Graphics', route: adminStudioBlueprintDetailPath('bp-weather-studio') },
+      { title: 'GENERATE MASTER STUDIO', detail: 'Empty reusable set — no talent, products, or episode text' },
+      { title: 'GENERATE REFERENCE SCENE', detail: 'Staged example with PSA, graphics, products — guidance only' },
+      { title: 'OPEN ASSET DIRECTOR', detail: 'Studios → Weather Studio → verify layer sections', route: adminStudioAssetDirectorStudioPath('ad-studio-weather') },
+      { title: 'ASSEMBLE IN PRODUCTION BUILDER', detail: 'Layer Master + Dressing + Talent + Graphics per scene' },
     ],
-    relatedModules: ['blueprint-manager', 'asset-director', 'asset-factory'],
+    relatedModules: ['blueprint-manager', 'asset-director', 'asset-factory', 'production-builder'],
+  },
+  {
+    id: 'studio-set-separation',
+    title: 'STUDIO SET SEPARATION',
+    subtitle: 'Permanent sets vs temporary production elements',
+    steps: [
+      { title: 'MASTER STUDIO', detail: 'Clean empty filming environment — reusable across episodes' },
+      { title: 'REFERENCE SCENE', detail: 'Finished mockup — never replaces Master Studio' },
+      { title: 'SET DRESSING', detail: 'Reusable props attached in Production Builder' },
+      { title: 'TALENT LAYERS', detail: 'From Talent Agency — layered, never baked into Master' },
+      { title: 'EPISODE GRAPHICS', detail: 'Per Content Pack overlays — toggled in Director Mode' },
+    ],
+    relatedModules: ['asset-director', 'production-builder', 'director-mode', 'talent-agency'],
   },
   {
     id: 'generating-assets',

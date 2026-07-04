@@ -4,6 +4,7 @@
  */
 
 import type { ContentPackAssetSelection } from './adminStudioAssetDirectorDemo';
+import { PRODUCTION_SCENE_LAYER_STACK } from './adminStudioSetSeparation';
 import {
   ASSET_DIRECTOR_ANIMATIONS,
   ASSET_DIRECTOR_AUDIO,
@@ -502,27 +503,47 @@ export function createDraftFromContentPack(packId: string, packTitle: string): P
 
 /** Stack labels for live scene preview (storyboard order). */
 export const SCENE_STACK_SLOTS: Array<{
-  key: keyof ProductionSceneAssetSelection | 'cta';
+  key: keyof ProductionSceneAssetSelection | 'cta' | 'masterStudio' | 'setDressing' | 'episodeGraphics';
   label: string;
 }> = [
-  { key: 'studioId', label: 'STUDIO' },
-  { key: 'talentId', label: 'TALENT' },
+  { key: 'masterStudio', label: 'MASTER STUDIO' },
+  { key: 'setDressing', label: 'SET DRESSING' },
+  { key: 'studioId', label: 'STUDIO PROFILE' },
+  { key: 'talentId', label: 'TALENT LAYER' },
   { key: 'wardrobeId', label: 'WARDROBE' },
   { key: 'poseId', label: 'POSE' },
   { key: 'lightingId', label: 'LIGHTING' },
   { key: 'cameraId', label: 'CAMERA' },
-  { key: 'propIds', label: 'PROPS' },
-  { key: 'graphicsId', label: 'GRAPHICS' },
+  { key: 'propIds', label: 'SET DRESSING PROPS' },
+  { key: 'graphicsId', label: 'EPISODE GRAPHICS' },
+  { key: 'episodeGraphics', label: 'GRAPHICS PACK' },
   { key: 'brandElementIds', label: 'BRAND' },
   { key: 'cta', label: 'CTA' },
 ];
 
+/** Visual layer formula for scene builder education. */
+export const PRODUCTION_LAYER_FORMULA = PRODUCTION_SCENE_LAYER_STACK.map((l) => l.label).join(' + ') + ' = FINAL PRODUCTION SCENE';
+
 export function resolveSceneStackLabel(
-  key: keyof ProductionSceneAssetSelection | 'cta',
+  key: keyof ProductionSceneAssetSelection | 'cta' | 'masterStudio' | 'setDressing' | 'episodeGraphics',
   selection: ProductionSceneAssetSelection,
   ctaText: string
 ): string | null {
   if (key === 'cta') return ctaText || null;
+  if (key === 'masterStudio') {
+    if (selection.studioId) {
+      const studio = ASSET_DIRECTOR_STUDIOS.find((s) => s.id === selection.studioId);
+      return studio ? `${studio.name} · MASTER BASE` : null;
+    }
+    return null;
+  }
+  if (key === 'setDressing') {
+    const props = selection.propIds?.map((id) => findProductionAsset(id)?.name).filter(Boolean);
+    return props?.length ? props.join(' · ') : '—';
+  }
+  if (key === 'episodeGraphics') {
+    return selection.graphicsId ? findProductionAsset(selection.graphicsId)?.name ?? selection.graphicsId : null;
+  }
   const val = selection[key];
   if (!val) return null;
   if (Array.isArray(val)) {

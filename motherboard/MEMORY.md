@@ -35403,3 +35403,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Knowledge Hub is demo/placeholder like other Studio modules — no external wiki backend yet; Owner's Manual chapter links point into Knowledge Hub; tap ⓘ on any StudioOS page for contextual panel; profiles and workflows are deep-linkable from search and Mission Control.
 
+---
+
+## 2026-07-04 — Studio set separation logic (Master Studio vs layered production)
+
+**Context:** User requested **Studio Set Separation** milestone: every Studio/Set must split into Master Studio, Reference Scene, Set Dressing, Talent Layers, Episode Graphics — globally for all sets; no UI redesign; keep Asset Director, Blueprint Manager, Factory, Studio Lot, Production Builder; no Frontal Slayer customer changes; migrate existing Weather Studio generates without deletion.
+
+**Topics covered (full chat arc):** Prior Asset Director GENERATE fixes (403, marble, wave-thumb, NEEDS-REVIEW UX); Milestone 20 Knowledge Hub (living docs, ⓘ panel, profiles, Mission Control/EAD integration); then Studio Set Separation across blueprints, Asset Director, Factory QA, Production Builder, Director Mode, Knowledge Hub.
+
+**Decisions / outcomes:**
+- **Core rule:** `STUDIO_SET_SEPARATION_RULE` — studios are reusable **empty** environments; talent/graphics/products layered in Production Builder / Director Mode.
+- **Shared module:** `adminStudioSetSeparation.ts` — layer IDs, labels, preview copy, factory generation order, Master Studio QA labels, Weather Studio layer specs, production/director layer stacks.
+- **Blueprint Manager:** `studioSetLayers` on `BlueprintDefinition`; Weather Studio checklist + `requiredImages` updated; generic studio blueprints get `GENERIC_STUDIO_LAYER_SPECS`.
+- **Asset Director:** `StudioVisualBundle` gains `masterStudio`, `referenceScene`, `setDressing`, `episodeGraphics`; studio detail view sections reordered with separation callout; preview modal shows layer type + description; `mergeStudioBundleWithGeneratedVersions` **reclassifies** live DAY generates → Reference Scene, Master marked **Needs Generation** (no delete).
+- **Asset Factory:** `studioGenerationOrder` on generation plan; Master Studio QA in `runQaChecks`; live jobs deliver DAY as Reference Scene with QA pass; contaminated master → `needs-review` + fail label.
+- **Production Builder:** `SCENE_STACK_SLOTS` + `PRODUCTION_LAYER_FORMULA` show layering formula in scene canvas.
+- **Director Mode:** `layerToggles` on session; toggle buttons in controls; cinema preview respects toggles.
+- **Knowledge Hub:** Weather Studio profile documents five layers + Production Builder note; new **Studio Set Separation** workflow guide.
+
+**Changes:** `adminStudioSetSeparation.ts`, `adminStudioBlueprintManagerDemo.ts`, `adminStudioAssetDirectorVisual.ts`, `AssetDirectorStudioDetailView.tsx`, `AssetDirectorVisualPrimitives.tsx`, `useAdminStudioAssetDirectorState.ts`, `adminStudioAssetFactoryPipeline.ts`, `useAdminStudioAssetFactoryState.ts`, `useAdminStudioAssetDirectorGeneration.ts`, `adminStudioProductionBuilderDemo.ts`, `ProductionBuilderSceneCanvas.tsx`, `adminStudioDirectorModeDemo.ts`, `useAdminStudioDirectorModeState.ts`, `DirectorModeControls.tsx`, `DirectorModeCinemaPreview.tsx`, `DirectorModeWorkspace.tsx`, `adminStudioKnowledgeHubDemo.ts`, `KnowledgeProfileView.tsx`, `AssetFactoryWorkspace.tsx`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+**Conventions:** Master Studio must never include talent/mannequins/products/episode text; Reference Scene is example-only; Talent from Talent Agency; props in Set Dressing; graphics per Content Pack; final scene assembled in Production Builder + Director Mode.
+

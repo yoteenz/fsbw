@@ -91,7 +91,7 @@ export function useAdminStudioAssetDirectorGeneration() {
         status: 'complete',
         previewSrc: result.publicUrl,
       });
-      completeLiveFactoryJob(jobId, `DELIVERED TO ASSET DIRECTOR · ${target.variantName}`);
+      completeLiveFactoryJob(jobId, `DELIVERED TO ASSET DIRECTOR · ${target.variantName}`, target.variantName);
 
       setNotice(`GENERATED · ${target.variantName} · CHECK VERSION TILE FOR NEW PREVIEW`);
       setBusyKey(null);

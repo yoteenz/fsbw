@@ -9,6 +9,7 @@ import {
 } from '../utils/adminStudioAssetDirectorDemo';
 import type { AssetDirectorFilterId, AssetDirectorViewMode, StudioVisualBundle, VisualAssetItem } from '../utils/adminStudioAssetDirectorVisual';
 import { versionStorageKey } from '../utils/adminStudioAssetGenerationPipeline';
+import { shouldReclassifyGeneratedAsReferenceScene } from '../utils/adminStudioSetSeparation';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 
 export type GeneratedVersionRecord = {
@@ -85,10 +86,52 @@ function formatGeneratedVersionSubtitle(error?: string): string {
 export function mergeStudioBundleWithGeneratedVersions(bundle: StudioVisualBundle, studioId: string): StudioVisualBundle {
   const store = readStore();
   const generated = store.generatedVersions ?? {};
+
+  let referenceScene = [...bundle.referenceScene];
+  let masterStudio = [...bundle.masterStudio];
+
   const versions = bundle.versions.map((v) => {
     const key = versionStorageKey(studioId, v.id);
     const gen = generated[key];
     if (!gen) return v;
+
+    if (gen.status === 'complete' && shouldReclassifyGeneratedAsReferenceScene(v.name, true)) {
+      const refId = `${studioId}-ref-migrated-${v.id}`;
+      const existingRefIdx = referenceScene.findIndex((r) => r.id === refId || r.name.includes(v.name));
+      const refItem: VisualAssetItem = {
+        id: refId,
+        name: `${v.name} · STAGED REFERENCE`,
+        previewSrc: gen.previewSrc || v.previewSrc,
+        status: 'approved',
+        resolution: v.resolution,
+        version: v.version,
+        accentHex: v.accentHex,
+        setLayer: 'reference-scene',
+        subtitle: 'RECLASSIFIED · EXAMPLE ONLY · NOT MASTER STUDIO',
+      };
+      if (existingRefIdx >= 0) {
+        referenceScene[existingRefIdx] = refItem;
+      } else {
+        referenceScene = [refItem, ...referenceScene];
+      }
+      const masterIdx = masterStudio.findIndex((m) => m.name === v.name || m.name === 'MASTER BASE');
+      if (masterIdx >= 0) {
+        masterStudio[masterIdx] = {
+          ...masterStudio[masterIdx],
+          status: 'needs-review',
+          subtitle: 'NEEDS GENERATION · CLEAN EMPTY SET',
+          previewSrc: masterStudio[masterIdx].previewSrc,
+        };
+      }
+      return {
+        ...v,
+        previewSrc: v.previewSrc,
+        status: 'needs-review' as const,
+        subtitle: 'MIGRATED TO REFERENCE SCENE · GENERATE CLEAN MASTER',
+        setLayer: 'master-studio' as const,
+      };
+    }
+
     return {
       ...v,
       previewSrc: gen.previewSrc || v.previewSrc,
@@ -101,13 +144,20 @@ export function mergeStudioBundleWithGeneratedVersions(bundle: StudioVisualBundl
             : gen.source === 'replace'
               ? 'REPLACED'
               : 'FACTORY GENERATED',
+      setLayer: v.setLayer ?? 'master-studio',
     };
   });
+
+  const heroRef = referenceScene.find((r) => r.previewSrc && !r.previewSrc.includes('wave-thumb') && r.subtitle?.includes('RECLASSIFIED'));
   const heroGen = versions.find((v) => v.name === 'DAY' && generated[versionStorageKey(studioId, v.id)]?.status === 'complete');
+  const heroMaster = masterStudio.find((m) => m.status === 'approved' && m.previewSrc);
+
   return {
     ...bundle,
     versions,
-    heroSrc: heroGen?.previewSrc ?? bundle.heroSrc,
+    masterStudio,
+    referenceScene,
+    heroSrc: heroRef?.previewSrc ?? heroMaster?.previewSrc ?? heroGen?.previewSrc ?? bundle.heroSrc,
   };
 }
 

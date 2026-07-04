@@ -3,6 +3,12 @@ import { computeFactoryReadiness } from './adminStudioBlueprintManagerCompute';
 import type { FactoryDepartmentId, FactoryJobStatus, QaCheckResult } from './adminStudioAssetFactoryDemo';
 import { FACTORY_DEPARTMENTS, QA_CHECK_LABELS } from './adminStudioAssetFactoryDemo';
 import { getDefaultProviderForAssetType } from './adminStudioAssetFactoryProviders';
+import {
+  MASTER_STUDIO_QA_FAIL_LABEL,
+  MASTER_STUDIO_QA_LABELS,
+  STUDIO_FACTORY_GENERATION_ORDER,
+  runMasterStudioSeparationQa,
+} from './adminStudioSetSeparation';
 
 export type GenerationPlan = {
   blueprintId: string;
@@ -10,6 +16,8 @@ export type GenerationPlan = {
   requiredImages: string[];
   requiredVideos: string[];
   requiredVariants: string[];
+  /** Studio blueprints — ordered manufacturing steps. */
+  studioGenerationOrder?: readonly string[];
   estimatedTimeMin: number;
   estimatedCredits: number;
   estimatedStorageMb: number;
@@ -74,6 +82,7 @@ export function buildGenerationPlan(bp: BlueprintDefinition): GenerationPlan {
     requiredImages: bp.requiredImages,
     requiredVideos: bp.requiredVideos,
     requiredVariants: bp.requiredImages.slice(0, variantCount),
+    studioGenerationOrder: bp.identity.category === 'studio' ? STUDIO_FACTORY_GENERATION_ORDER : undefined,
     estimatedTimeMin,
     estimatedCredits,
     estimatedStorageMb: imageCount * 8 + videoCount * 120,
@@ -123,7 +132,10 @@ export function createFactoryJob(
 export function advanceJobDepartment(job: FactoryJob): FactoryJob {
   const nextIndex = job.departmentIndex + 1;
   if (nextIndex >= FACTORY_DEPARTMENTS.length) {
-    const qaResults = runQaChecks();
+    const qaResults = runQaChecks(
+      job.blueprintId.includes('studio') || job.blueprintName.toUpperCase().includes('STUDIO') ? 'studio' : undefined,
+      job.variantOutputs?.[0]?.variantName
+    );
     const allPass = qaResults.every((q) => q.passed);
     return {
       ...job,
@@ -156,12 +168,32 @@ export function advanceJobDepartment(job: FactoryJob): FactoryJob {
   };
 }
 
-function runQaChecks(): QaCheckResult[] {
-  return QA_CHECK_LABELS.map((label, i) => ({
+function runQaChecks(bpCategory?: string, variantName?: string): QaCheckResult[] {
+  const base = QA_CHECK_LABELS.map((label, i) => ({
     id: `qa-${i}`,
     label,
     passed: i !== 6,
   }));
+
+  if (bpCategory !== 'studio') return base;
+
+  const masterChecks = runMasterStudioSeparationQa(variantName ?? 'MASTER BASE', 'master-studio');
+  const masterFailed = masterChecks.some((c) => !c.passed);
+  const layerQa: QaCheckResult[] = MASTER_STUDIO_QA_LABELS.map((label, i) => ({
+    id: `qa-master-${i}`,
+    label,
+    passed: masterChecks[i]?.passed ?? true,
+  }));
+
+  if (masterFailed) {
+    layerQa.push({
+      id: 'qa-master-fail',
+      label: MASTER_STUDIO_QA_FAIL_LABEL,
+      passed: false,
+    });
+  }
+
+  return [...layerQa, ...base];
 }
 
 export function getApprovedBlueprintsForFactory(
