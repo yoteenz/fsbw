@@ -121,6 +121,11 @@ export function WorkspaceDashboard({
                 OPEN PLATFORM MEMORY BIBLE (REFERENCE)
               </button>
             ) : null}
+            {activeTab === 'growth-network' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/growth-network')}>
+                OPEN GROWTH NETWORK (PLATFORM)
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

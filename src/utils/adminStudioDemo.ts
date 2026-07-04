@@ -39,6 +39,7 @@ export type AdminStudioSectionId =
   | 'ai-production-engine'
   | 'distribution-network'
   | 'audience-brain'
+  | 'growth-network'
   | 'executive-command-center'
   | 'mission-control'
   | 'legacy-system'

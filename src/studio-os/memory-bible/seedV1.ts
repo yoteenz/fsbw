@@ -179,6 +179,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-memory-bible'],
     },
     {
+      id: 'name-growth-network',
+      officialName: 'Growth Network',
+      deprecatedNames: ['talent agency', 'growth agency'],
+      usageNotes:
+        'Platform pillar — intelligent business growth ecosystem. Not a traditional talent agency. UI: GROWTH NETWORK.',
+      relatedModules: ['growth-network'],
+      relatedGraphNodeIds: ['node-growth-network', 'node-opportunity-engine', 'node-deal-pipeline', 'node-revenue-center'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -306,6 +315,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-memory-bible', 'node-interactive-manual'],
     },
+    {
+      id: 'dec-growth-network-v1',
+      title: 'Launch Growth Network v1.0 platform pillar',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'growth-network',
+      decision:
+        'Growth Network is a platform-wide capability — growth profiles, opportunity engine, deal pipeline CRM, revenue center, and marketplaces. Not a talent agency. Nothing public by default.',
+      reason:
+        'studio os evolves from launch & operate to help businesses grow — discover opportunities, manage partnerships, and scale revenue from one unified platform.',
+      alternativesConsidered: ['External CRM only', 'Workspace-specific growth tools', 'Traditional talent agency model'],
+      outcome: 'Growth Network module at /admin/studio/growth-network — auto-provisioned per workspace via bootstrap.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-growth-network', 'node-opportunity-engine', 'node-deal-pipeline', 'node-revenue-center'],
+      relatedManualChapter: 'CHAPTER · GROWTH NETWORK · BUSINESS GROWTH ECOSYSTEM',
+    },
   ],
   aiPreferences: {
     defaultTone: 'Direct, implementation-focused, luxury-aware but not verbose.',
@@ -339,8 +364,9 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
         'Workspace picker at /admin/studio-os',
         'Knowledge Graph + Interactive Manual',
         'Memory Bible + AI Context Builder',
+        'Growth Network — opportunities, partnerships, revenue',
       ],
-      relatedModules: ['memory-bible', 'knowledge-hub', 'platform-settings'],
+      relatedModules: ['memory-bible', 'knowledge-hub', 'platform-settings', 'growth-network'],
     },
     {
       workspaceId: 'frontal-slayer',

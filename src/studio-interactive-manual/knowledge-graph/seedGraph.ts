@@ -1,6 +1,7 @@
 import type { KnowledgeGraphEdge, KnowledgeGraphNode, KnowledgeGraphWorkflowMap } from './schema';
 import {
   adminStudioBrandAssetsAssetFactoryPath,
+  adminStudioGrowthNetworkPath,
   adminStudioMemoryBiblePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
@@ -166,6 +167,60 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     status: 'live',
     searchKeywords: ['promotion center', 'pilot to production', 'frontal slayer promotion'],
   },
+  {
+    id: 'node-growth-network',
+    name: 'GROWTH NETWORK',
+    type: 'module',
+    description:
+      'Intelligent business growth ecosystem — growth profiles, opportunity engine, deal pipeline CRM, revenue center, and marketplaces.',
+    purpose: 'Operating layer between businesses and opportunities — not a traditional talent agency.',
+    route: adminStudioGrowthNetworkPath(),
+    moduleId: 'growth-network',
+    relatedManualChapter: 'CHAPTER · GROWTH NETWORK · BUSINESS GROWTH ECOSYSTEM',
+    versionIntroduced: 'Milestone 27',
+    status: 'live',
+    searchKeywords: [
+      'growth network',
+      'partnerships',
+      'opportunity engine',
+      'deal pipeline',
+      'revenue center',
+      'growth score',
+    ],
+  },
+  {
+    id: 'node-opportunity-engine',
+    name: 'OPPORTUNITY ENGINE',
+    type: 'feature',
+    description: 'Matches brand partnerships, affiliates, sponsorships, and collaborations to workspace growth profiles.',
+    purpose: 'Continuous opportunity matching based on Memory Bible growth strategy and company DNA.',
+    moduleId: 'growth-network',
+    versionIntroduced: 'Milestone 27',
+    status: 'live',
+    searchKeywords: ['opportunity engine', 'brand partnership match', 'sponsorship opportunities'],
+  },
+  {
+    id: 'node-deal-pipeline',
+    name: 'DEAL PIPELINE CRM',
+    type: 'workflow',
+    description: 'Lead → qualified → meeting → proposal → negotiation → contract → campaign → deliverables → invoice → payment → renewal → completed.',
+    purpose: 'Full partnership lifecycle for every opportunity in Growth Network.',
+    moduleId: 'growth-network',
+    versionIntroduced: 'Milestone 27',
+    status: 'live',
+    searchKeywords: ['deal pipeline', 'partnership crm', 'partnership lifecycle'],
+  },
+  {
+    id: 'node-revenue-center',
+    name: 'REVENUE CENTER',
+    type: 'feature',
+    description: 'Centralized revenue dashboard — brand deals, affiliates, platform payouts, products, and diversification score.',
+    purpose: 'Track and forecast revenue across all channels for growth intelligence.',
+    moduleId: 'growth-network',
+    versionIntroduced: 'Milestone 27',
+    status: 'live',
+    searchKeywords: ['revenue center', 'revenue diversification', 'monthly revenue'],
+  },
 ];
 
 export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
@@ -197,6 +252,15 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-promotion-frontal', fromId: 'node-promotion-pipeline', toId: 'mission-control', type: 'related-to', label: 'PROMOTE TO FRONTAL SLAYER' },
   { id: 'e-executive-collab', fromId: 'node-ai-executive-team', toId: 'node-ai-media-pilot', type: 'related-to', label: 'CCO → CREATIVE → DISTRIBUTION' },
   { id: 'e-executive-memory', fromId: 'node-ai-executive-team', toId: 'node-memory-bible', type: 'inherits-from', label: 'MEMORY BIBLE' },
+  { id: 'e-growth-profile-memory', fromId: 'node-growth-network', toId: 'node-memory-bible', type: 'inherits-from', label: 'GROWTH STRATEGY' },
+  { id: 'e-growth-contains-opportunity', fromId: 'node-growth-network', toId: 'node-opportunity-engine', type: 'contains' },
+  { id: 'e-growth-contains-pipeline', fromId: 'node-growth-network', toId: 'node-deal-pipeline', type: 'contains' },
+  { id: 'e-growth-contains-revenue', fromId: 'node-growth-network', toId: 'node-revenue-center', type: 'contains' },
+  { id: 'e-opportunity-pipeline', fromId: 'node-opportunity-engine', toId: 'node-deal-pipeline', type: 'feeds', label: 'QUALIFIED LEADS' },
+  { id: 'e-pipeline-revenue', fromId: 'node-deal-pipeline', toId: 'node-revenue-center', type: 'feeds', label: 'CLOSED DEALS' },
+  { id: 'e-growth-knowledge', fromId: 'node-growth-network', toId: 'node-interactive-manual', type: 'related-to', label: 'KNOWLEDGE GRAPH' },
+  { id: 'e-ai-media-growth', fromId: 'node-ai-media-pilot', toId: 'node-growth-network', type: 'feeds', label: 'PILOT VALIDATION' },
+  { id: 'e-audience-growth', fromId: 'audience-brain', toId: 'node-growth-network', type: 'feeds', label: 'AUDIENCE SIGNALS' },
 ];
 
 export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
@@ -260,6 +324,20 @@ export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
       'mission-control',
     ],
     moduleIds: ['studio-os'],
+  },
+  {
+    id: 'wf-growth-network',
+    title: 'GROWTH NETWORK LIFECYCLE',
+    subtitle: 'Memory Bible → Growth Profile → Opportunities → Deal Pipeline → Revenue → Knowledge Graph',
+    nodeIds: [
+      'node-memory-bible',
+      'node-growth-network',
+      'node-opportunity-engine',
+      'node-deal-pipeline',
+      'node-revenue-center',
+      'node-interactive-manual',
+    ],
+    moduleIds: ['growth-network', 'memory-bible', 'knowledge-hub', 'audience-brain'],
   },
 ];
 

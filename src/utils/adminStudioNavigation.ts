@@ -493,6 +493,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'growth-network',
+    title: 'GROWTH NETWORK',
+    purpose: 'Discover opportunities, manage partnerships, and scale revenue intelligently.',
+    route: p('growth-network'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '14 TABS',
+    ctaLabel: 'OPEN GROWTH',
+    moduleKey: 'growth-network',
+    featuredOnOverview: true,
+  },
+  {
     id: 'analytics',
     title: 'ANALYTICS',
     purpose: 'Track views, completion, and content performance.',

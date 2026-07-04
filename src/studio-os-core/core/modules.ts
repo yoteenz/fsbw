@@ -21,6 +21,7 @@ export type StudioOsCoreModuleId =
   | 'ai-production-engine'
   | 'distribution-network'
   | 'audience-brain'
+  | 'growth-network'
   | 'legacy-system'
   | 'knowledge-hub'
   | 'memory-bible';
@@ -135,6 +136,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'AUDIENCE BRAIN',
     description: 'Audience intelligence and feedback loops.',
     routeSegment: 'audience-brain',
+  },
+  {
+    id: 'growth-network',
+    label: 'GROWTH NETWORK',
+    description: 'Intelligent business growth ecosystem — opportunities, partnerships, and revenue.',
+    routeSegment: 'growth-network',
   },
   {
     id: 'legacy-system',

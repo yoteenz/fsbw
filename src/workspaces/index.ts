@@ -7,6 +7,12 @@ import {
   listRegistryWorkspaces,
   registryRecordToWorkspaceSchema,
 } from '../studio-os-core/workspace-creation';
+import {
+  bootstrapGrowthProfiles,
+  registerOpportunityCatalog,
+} from '../studio-os-core/growth-network';
+import { buildDemoGrowthStorePatch, OPPORTUNITY_CATALOG } from '../utils/adminStudioGrowthNetworkDemo';
+import { readGrowthNetworkStore, writeGrowthNetworkStore } from '../studio-os-core/growth-network/store';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
 import { SANDBOX_WORKSPACE } from './sandbox/config';
@@ -14,6 +20,17 @@ import { FUTURE_BRAND_WORKSPACE } from './future-brand/config';
 import { FUTURE_CLIENT_WORKSPACE } from './future-client/config';
 
 bootstrapWorkspaceCreationEngine();
+
+function bootstrapGrowthNetworkPlatform(): void {
+  registerOpportunityCatalog(OPPORTUNITY_CATALOG);
+  bootstrapGrowthProfiles();
+  const store = readGrowthNetworkStore();
+  if (store.registry.length === 0) {
+    writeGrowthNetworkStore({ ...store, ...buildDemoGrowthStorePatch() });
+  }
+}
+
+bootstrapGrowthNetworkPlatform();
 
 const STATIC_WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {
   'frontal-slayer': FRONTAL_SLAYER_WORKSPACE,

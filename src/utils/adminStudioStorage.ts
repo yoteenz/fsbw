@@ -44,6 +44,7 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   distributionNetworkCustom: 'adminStudioDistributionNetworkCustom_v1',
   distributionNetworkChannels: 'adminStudioDistributionNetworkChannels_v1',
   audienceBrain: 'adminStudioAudienceBrain_v1',
+  growthNetwork: 'adminStudioGrowthNetwork_v1',
   executiveCommandCenter: 'adminStudioExecutiveCommandCenter_v1',
   legacySystem: 'adminStudioLegacySystem_v1',
   assetDirector: 'adminStudioAssetDirector_v1',

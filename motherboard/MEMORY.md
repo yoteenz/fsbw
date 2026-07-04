@@ -36065,3 +36065,32 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** workspace-creation/*, useWorkspaceCreationEngine, studio-os pages/components, workspaces/index.ts, routes.ts, App.tsx, seedGraph.ts, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 27: Growth Network v1.0 platform pillar
+
+**Context (full chat):** After Milestone 26 Workspace Creation Engine + AI Media pilot, user requested Milestone 27 — introduce **Growth Network** as a first-class studio os platform pillar. Intelligent business growth ecosystem (not a talent agency). Platform-wide for every workspace. Do not redesign platform, do not modify Frontal Slayer, do not remove existing systems.
+
+**Growth Network core (`src/studio-os-core/growth-network/`):**
+- Types: growth profiles, company registry, opportunities, deal pipeline stages, partnerships, contract insights (educational disclaimer), revenue streams, recommendations, service marketplace, privacy settings, growth roadmap stages.
+- **`profileFactory.ts`** — auto-provisioned growth profile per workspace; AI Media pilot seed profile.
+- **`growthEngine.ts`** — growth score, opportunity matching, AI recommendations with rationale, roadmap priorities.
+- **`growthExecutives.ts`** — 8 growth executives (CGO, Partnership Director, BD, Revenue Strategist, Affiliate Director, Contract Analyst, Community Manager, Market Intelligence) — Knowledge Graph collaboration.
+- **`store.ts`** — localStorage `studioOs_growthNetwork_v1`, bootstrap profiles for all registry workspaces.
+
+**UI:** `/admin/studio/growth-network` — 14-tab workspace: overview, growth profile, registry, opportunities, deal pipeline, partnerships, contract intel, revenue center, analytics, recommendations, service marketplace, brand marketplace, privacy, growth executives. Inheritance chain banner. Privacy toggles (nothing public by default).
+
+**Platform registration:** `growth-network` in `studio-os-core/core/modules.ts`, nav (INTELLIGENCE group), routes, App.tsx lazy route, `growthNetworkStudioService` in service registry, admin storage key.
+
+**Integrations:**
+- **`workspaces/index.ts`** — `bootstrapGrowthNetworkPlatform()` on load (catalog + profiles + demo seed).
+- **Workspace Creation Engine** — `growth-network` in `BlueprintModuleId`; auto-enabled on every provisioned workspace; AI Media dashboard tab; promotion item `promo-growth-network-v1`.
+- **Knowledge Graph** — nodes: Growth Network, Opportunity Engine, Deal Pipeline CRM, Revenue Center; workflow `wf-growth-network`; edges to Memory Bible, Audience Brain, AI Media pilot.
+- **Memory Bible** — naming entry, decision log `dec-growth-network-v1`, global workspace memory pillar; profile stores `memoryBibleGrowth` (goals, strategy, partnership types, pricing, restrictions, history).
+
+**Docs:** `docs/studio-os/growth-network.md`.
+
+**Constraints honored:** Frontal Slayer folder untouched; existing admin shell pattern; contract insights educational only (not legal advice).
+
+**Changes:** growth-network/*, GrowthNetworkWorkspace, page, hook, demo utils, service, modules/nav/routes/App, workspaces bootstrap, seedGraph, moduleEnrichments, seedV1, promotion pipeline, workspace dashboard link, studio-os registry entry, `motherboard/MEMORY.md`.
+

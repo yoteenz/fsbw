@@ -25,6 +25,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'ai-production-engine'
   | 'distribution-network'
   | 'audience-brain'
+  | 'growth-network'
   | 'executive-command-center'
   | 'mission-control'
   | 'legacy-system'
@@ -60,6 +61,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'ai-production-engine',
   'distribution-network',
   'audience-brain',
+  'growth-network',
   'executive-command-center',
   'mission-control',
   'legacy-system',
@@ -112,6 +114,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   distributionNetworkDetail: 'studio/distribution-network/:distributionId',
   audienceBrain: 'studio/audience-brain',
   audienceBrainIntelligence: 'studio/audience-brain/intelligence',
+  growthNetwork: 'studio/growth-network',
   executiveCommandCenter: 'studio/executive-command-center',
   missionControl: 'studio/mission-control',
   studioOverview: 'studio/overview',
@@ -275,6 +278,10 @@ export function adminStudioKnowledgeHubWorkflowPath(workflowId: string): string 
 
 export function adminStudioMemoryBiblePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/memory-bible`;
+}
+
+export function adminStudioGrowthNetworkPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/growth-network`;
 }
 
 export function adminStudioBrandAssetsPath(): string {

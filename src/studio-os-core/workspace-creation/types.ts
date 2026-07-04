@@ -36,6 +36,7 @@ export type BlueprintModuleId =
   | 'asset-factory'
   | 'distribution'
   | 'revenue'
+  | 'growth-network'
   | 'social-accounts'
   | 'system-health'
   | 'promotion-center'

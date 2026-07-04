@@ -7,6 +7,7 @@ const CORE_PACKAGES = [
   'creative-dna',
   'writing-bible',
   'knowledge-graph',
+  'growth-network',
   'interactive-manual',
   'onboarding-tutorial',
   'prompt-library',

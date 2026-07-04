@@ -55,6 +55,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
       updatedAt: now,
     },
+    {
+      id: 'promo-growth-network-v1',
+      featureName: 'Growth Network v1.0',
+      description: 'Growth profiles, opportunity engine, deal pipeline CRM, revenue center, and marketplaces.',
+      currentStage: 'develop',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
   ];
 }
 

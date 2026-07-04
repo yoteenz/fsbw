@@ -316,7 +316,25 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
     ],
   },
   analytics: {
-    relatedModuleIds: ['executive-command-center', 'audience-brain'],
+    relatedModuleIds: ['executive-command-center', 'audience-brain', 'growth-network'],
+  },
+  'growth-network': {
+    architecture:
+      'Auto-provisioned growth profile per workspace → Opportunity Engine matches deals → Deal Pipeline CRM → Contract intelligence (educational) → Revenue Center → Service & Brand marketplaces → Growth executives collaborate via Knowledge Graph.',
+    versionIntroduced: 'Milestone 27',
+    workflowNodes: [
+      'GROWTH PROFILE',
+      'COMPANY REGISTRY',
+      'OPPORTUNITY ENGINE',
+      'DEAL PIPELINE',
+      'PARTNERSHIP CRM',
+      'CONTRACT INTEL',
+      'REVENUE CENTER',
+      'GROWTH ANALYTICS',
+      'AI RECOMMENDATIONS',
+      'PRIVACY CONTROLS',
+    ],
+    relatedModuleIds: ['memory-bible', 'audience-brain', 'knowledge-hub', 'executive-command-center'],
   },
   'content-packs': {
     relatedModuleIds: ['production-builder', 'publishing-queue', 'lounge-tv'],

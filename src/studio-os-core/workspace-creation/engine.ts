@@ -9,6 +9,7 @@ import type {
   WorkspaceCreationDraft,
   WorkspaceRegistryRecord,
   WorkspaceType,
+  BlueprintModuleId,
 } from './types';
 
 export const STUDIO_OS_PLACEHOLDER_LOGO = '/assets/marble-half.png';
@@ -51,9 +52,10 @@ export function buildWorkspaceFromDraft(input: CreateWorkspaceInput): WorkspaceR
   const slug = input.slugOverride ?? slugify(input.name);
   const id = slug;
   const accent = input.accentColor || blueprint.defaultAccentColor;
-  const enabledModules = [
+  const enabledModules: BlueprintModuleId[] = [
     ...blueprint.requiredModules,
     ...input.enabledOptionalModules.filter((m) => blueprint.optionalModules.includes(m)),
+    'growth-network',
   ];
 
   return {
