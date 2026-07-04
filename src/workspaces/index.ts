@@ -1,12 +1,12 @@
+import { configureWorkspaceRegistry } from '../studio-os-core/workspace/registry';
+import { emptyWorkspaceDataAdapter } from '../studio-os-core/workspace/empty-data-adapter';
+import type { WorkspaceDataAdapter } from '../studio-os-core/workspace/data-adapter';
+import type { WorkspaceId, WorkspaceListItem, WorkspaceSchema } from '../studio-os-core/workspace/types';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
-import { frontalSlayerDataAdapter, emptyWorkspaceDataAdapter } from './frontal-slayer/dataAdapter';
-import type { WorkspaceDataAdapter } from './frontal-slayer/dataAdapter';
-import {
-  FUTURE_BRAND_WORKSPACE,
-  FUTURE_CLIENT_WORKSPACE,
-  SANDBOX_WORKSPACE,
-} from './placeholders/config';
-import type { WorkspaceId, WorkspaceListItem, WorkspaceSchema } from '../studio-os/workspace/types';
+import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
+import { SANDBOX_WORKSPACE } from './sandbox/config';
+import { FUTURE_BRAND_WORKSPACE } from './future-brand/config';
+import { FUTURE_CLIENT_WORKSPACE } from './future-client/config';
 
 const WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {
   'frontal-slayer': FRONTAL_SLAYER_WORKSPACE,
@@ -50,3 +50,10 @@ export function getWorkspaceDataAdapter(workspaceId: WorkspaceId): WorkspaceData
 export function isKnownWorkspaceId(id: string): id is WorkspaceId {
   return id in WORKSPACE_REGISTRY;
 }
+
+configureWorkspaceRegistry({
+  getWorkspaceById,
+  getWorkspaceDataAdapter,
+  isKnownWorkspaceId,
+  listWorkspaces,
+});

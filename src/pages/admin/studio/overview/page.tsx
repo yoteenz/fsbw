@@ -3,8 +3,8 @@ import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { AdminStudioLayout } from '../../../../components/admin/studio/AdminStudioLayout';
 import { AdminStudioModuleCard } from '../../../../components/admin/studio/AdminStudioModuleCard';
 import { AdminStudioNavTabs } from '../../../../components/admin/studio/AdminStudioNavTabs';
-import { useWorkspace } from '../../../../studio-os/context/WorkspaceProvider';
-import { STUDIO_OS_ROUTES } from '../../../../studio-os/workspace/routes';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
+import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import {
   getModulesForGroup,
   getStudioNavGroup,
@@ -15,7 +15,7 @@ import {
   ADMIN_STUDIO_DASHBOARD_FOOTER,
   ADMIN_STUDIO_DASHBOARD_METRIC,
 } from '../../../../utils/adminStudioDemo';
-import { getWorkspaceStudioHubFooter, getWorkspaceStudioHubSubtitle } from '../../../../studio-os/workspace/loader';
+import { getWorkspaceStudioHubFooter, getWorkspaceStudioHubSubtitle } from '../../../../studio-os-core/workspace/loader';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 
 const DEFAULT_GROUP: StudioNavGroupId = 'overview';

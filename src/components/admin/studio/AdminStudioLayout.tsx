@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
-import { useWorkspace } from '../../../studio-os/context/WorkspaceProvider';
+import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { AdminStudioBreadcrumbTrail } from './AdminStudioBreadcrumbTrail';
 import { AdminStudioNavTabs } from './AdminStudioNavTabs';

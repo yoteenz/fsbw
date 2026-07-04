@@ -3,10 +3,11 @@ import { AdminStudioLayout } from '../../../components/admin/studio/AdminStudioL
 import { AdminStudioHubCard } from '../../../components/admin/studio/AdminStudioHubCard';
 import { pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
-import { useWorkspace } from '../../../studio-os/context/WorkspaceProvider';
-import { STUDIO_OS_ROUTES } from '../../../studio-os/workspace/routes';
-import { getWorkspaceStudioHubFooter, getWorkspaceStudioHubSubtitle } from '../../../studio-os/workspace/loader';
+import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
+import { STUDIO_OS_ROUTES } from '../../../studio-os-core/workspace/routes';
+import { getWorkspaceStudioHubFooter, getWorkspaceStudioHubSubtitle } from '../../../studio-os-core/workspace/loader';
 import { STUDIO_OVERVIEW_PATH } from '../../../utils/adminStudioNavigation';
+import type { AdminStudioHubCard as AdminStudioHubCardData } from '../../../utils/adminStudioDemo';
 
 /** Legacy Studio hub — original card grid; preserved at /admin/studio/hub. */
 export default function AdminStudioPage() {
@@ -108,7 +109,7 @@ export default function AdminStudioPage() {
 
       <div className="grid grid-cols-2 gap-4 items-start">
         {hubCards.map((card) => (
-          <AdminStudioHubCard key={card.id} card={card} onClick={() => navigate(card.route)} />
+          <AdminStudioHubCard key={card.id} card={card as AdminStudioHubCardData} onClick={() => navigate(card.route)} />
         ))}
       </div>
     </AdminStudioLayout>

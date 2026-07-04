@@ -1,2 +1,2 @@
 export { WorkspaceProvider, useWorkspace, getActiveWorkspaceDataAdapter } from './WorkspaceProvider';
-export type { WorkspaceContextValue } from './WorkspaceProvider';
+export type { WorkspaceContextValue, LoadedWorkspace } from './WorkspaceProvider';

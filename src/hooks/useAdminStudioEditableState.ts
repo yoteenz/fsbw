@@ -6,7 +6,7 @@ import type {
 } from '../utils/adminStudioContentPacksDemo';
 import type { AdminStudioDistributionTarget, AdminStudioDistributionTargetId } from '../utils/adminStudioDistributionDemo';
 import { mergeDistributionTargets } from '../utils/adminStudioDistributionDemo';
-import { getActiveWorkspaceDataAdapter } from '../studio-os/context/WorkspaceProvider';
+import { getActiveWorkspaceDataAdapter } from '../studio-os-core/context/WorkspaceProvider';
 import {
   ADMIN_STUDIO_STORAGE_KEYS,
   patchStudioRecord,
@@ -99,7 +99,7 @@ export function useAdminStudioShow(showId: string | undefined) {
 
 export function useAdminStudioContentPack(packId: string | undefined) {
   const { contentPacks } = getActiveWorkspaceDataAdapter();
-  const defaults = packId ? contentPacks.getById(packId) : undefined;
+  const defaults = packId ? (contentPacks.getById(packId) as AdminStudioContentPack | undefined) : undefined;
   const [pack, setPack] = useState<AdminStudioContentPack | null>(() => {
     if (!defaults || !packId) return null;
     const store = readStudioJson<PacksStore>(ADMIN_STUDIO_STORAGE_KEYS.contentPacks);
@@ -183,11 +183,11 @@ export function useAdminStudioContentPack(packId: string | undefined) {
 export function listAdminStudioShows(): AdminStudioShow[] {
   const { shows } = getActiveWorkspaceDataAdapter();
   const store = readStudioJson<ShowsStore>(ADMIN_STUDIO_STORAGE_KEYS.shows) ?? {};
-  return shows.listDefaults().map((defaults) => mergeShow(defaults, store[defaults.id]));
+  return shows.listDefaults().map((defaults) => mergeShow(defaults as AdminStudioShow, store[defaults.id]));
 }
 
 export function listAdminStudioContentPacks(): AdminStudioContentPack[] {
   const { contentPacks } = getActiveWorkspaceDataAdapter();
   const store = readStudioJson<PacksStore>(ADMIN_STUDIO_STORAGE_KEYS.contentPacks) ?? {};
-  return contentPacks.listDefaults().map((defaults) => mergePack(defaults, store[defaults.id]));
+  return contentPacks.listDefaults().map((defaults) => mergePack(defaults as AdminStudioContentPack, store[defaults.id]));
 }

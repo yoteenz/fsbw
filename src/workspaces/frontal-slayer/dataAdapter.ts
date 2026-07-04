@@ -4,6 +4,7 @@
  * StudioOS Core never imports these directly — only via workspace loader.
  */
 
+import type { WorkspaceDataAdapter } from '../../studio-os-core/workspace/data-adapter';
 import {
   ADMIN_STUDIO_DEFAULT_SHOWS,
   getAdminStudioShowById,
@@ -34,20 +35,8 @@ export const frontalSlayerStudioHub = {
   dashboardMetric: ADMIN_STUDIO_DASHBOARD_METRIC,
 };
 
-/** Empty adapter for placeholder workspaces — no brand data. */
-export const emptyWorkspaceDataAdapter = {
-  shows: { listDefaults: () => [] as ReturnType<typeof frontalSlayerShows.listDefaults>, getById: () => undefined },
-  contentPacks: {
-    listDefaults: () => [] as ReturnType<typeof frontalSlayerContentPacks.listDefaults>,
-    getById: () => undefined,
-  },
-  studioHub: { cards: [] as typeof ADMIN_STUDIO_HUB_CARDS, dashboardItems: [] as typeof ADMIN_STUDIO_DASHBOARD_ITEMS, dashboardMetric: 0 },
-};
-
-export const frontalSlayerDataAdapter = {
+export const frontalSlayerDataAdapter: WorkspaceDataAdapter = {
   shows: frontalSlayerShows,
   contentPacks: frontalSlayerContentPacks,
   studioHub: frontalSlayerStudioHub,
 };
-
-export type WorkspaceDataAdapter = typeof frontalSlayerDataAdapter;

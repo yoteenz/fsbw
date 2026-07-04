@@ -1,6 +1,6 @@
-import { getWorkspaceById, getWorkspaceDataAdapter, isKnownWorkspaceId } from '../../workspaces';
+import { getWorkspaceRegistry } from './registry';
 import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from './storage';
-import type { WorkspaceDataAdapter } from '../../workspaces/frontal-slayer/dataAdapter';
+import type { WorkspaceDataAdapter } from './data-adapter';
 import type { WorkspaceSchema } from './types';
 
 export type LoadedWorkspace = {
@@ -9,16 +9,17 @@ export type LoadedWorkspace = {
 };
 
 export function loadWorkspace(workspaceId: string): LoadedWorkspace | null {
-  const id = isKnownWorkspaceId(workspaceId) ? workspaceId : STUDIO_OS_DEFAULT_WORKSPACE_ID;
-  const schema = getWorkspaceById(id);
+  const registry = getWorkspaceRegistry();
+  const id = registry.isKnownWorkspaceId(workspaceId) ? workspaceId : STUDIO_OS_DEFAULT_WORKSPACE_ID;
+  const schema = registry.getWorkspaceById(id);
   if (!schema) return null;
   return {
     schema,
-    dataAdapter: getWorkspaceDataAdapter(id),
+    dataAdapter: registry.getWorkspaceDataAdapter(id),
   };
 }
 
-/** Resolve module subtitle from active workspace config (Core-safe accessor). */
+/** Resolve module subtitle from active workspace config (core-safe accessor). */
 export function getWorkspaceModuleSubtitle(
   workspace: WorkspaceSchema,
   moduleId: keyof WorkspaceSchema['moduleCopy']

@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
-import { STUDIO_OS_PLATFORM } from '../../../studio-os/config/platform';
-import { STUDIO_OS_VOCABULARY } from '../../../studio-os/core/vocabulary';
-import { useWorkspace } from '../../../studio-os/context/WorkspaceProvider';
-import { workspaceStudioEntryPath } from '../../../studio-os/workspace/routes';
+import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
+import { STUDIO_OS_VOCABULARY } from '../../../studio-os-core/core/vocabulary';
+import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
+import { workspaceStudioEntryPath } from '../../../studio-os-core/workspace/routes';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
-import type { WorkspaceListItem } from '../../../studio-os/workspace/types';
+import type { WorkspaceListItem } from '../../../studio-os-core/workspace/types';
 
 export default function AdminStudioOsPage() {
   useRequireAdminPageAccess();

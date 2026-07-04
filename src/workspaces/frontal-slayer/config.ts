@@ -1,6 +1,6 @@
-import { STUDIO_OS_PLATFORM_ASSETS } from '../../studio-os/core/assets';
-import { DEFAULT_WORKSPACE_PERMISSIONS } from '../../studio-os/workspace/permissions';
-import type { WorkspaceSchema } from '../../studio-os/workspace/types';
+import { STUDIO_OS_PLATFORM_ASSETS } from '../../studio-os-core/core/assets';
+import { DEFAULT_WORKSPACE_PERMISSIONS } from '../../studio-os-core/workspace/permissions';
+import type { WorkspaceSchema } from '../../studio-os-core/workspace/types';
 
 /**
  * Frontal Slayer Workspace configuration.

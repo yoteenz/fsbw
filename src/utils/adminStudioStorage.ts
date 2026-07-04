@@ -1,6 +1,6 @@
 /** Centralized Studio localStorage keys — single source for Phase 2 scaling. */
 
-import { scopeStorageKey, getRuntimeActiveWorkspaceId } from '../studio-os/workspace/storage';
+import { scopeStorageKey, getRuntimeActiveWorkspaceId } from '../studio-os-core/workspace/storage';
 
 export const ADMIN_STUDIO_STORAGE_KEYS = {
   shows: 'adminStudioShowsEditable_v1',

@@ -35249,3 +35249,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Asset Factory simulates manufacturing for demo; human approves generation plan before run; QA failures → needs-review not auto-publish; Asset Director unchanged as delivery destination.
 
+---
+
+## 2026-07-04 — Extract StudioOS core package (architecture refactor)
+
+**Context:** User milestone to separate reusable StudioOS platform logic from Frontal Slayer workspace implementation — create internal **`studio-os-core`** package; no UI redesign, no customer-facing page changes, no route/module removal; Frontal Slayer admin must look and function exactly the same.
+
+**Topics covered (full chat arc):** Prior milestones 17–19 (Campaign Orchestrator, Mission Control, Blueprint Manager, Asset Factory) completed; user requested architecture refactor so StudioOS can become a reusable product separate from Frontal Slayer; target layers: studio-os-core → workspace layer → frontal-slayer → admin UI; placeholder workspaces to prove multi-brand architecture.
+
+**Decisions / outcomes:**
+- New package **`src/studio-os-core/`** — platform config, core modules, vocabulary, workspace schema/routes/storage/permissions, registry injection (`configureWorkspaceRegistry`), loader, `WorkspaceProvider`/`useWorkspace`, shared types (asset, blueprint, content-pack, mission-control, production, distribution, legacy), service interfaces, provider adapters.
+- **`src/workspaces/`** — registry in `index.ts`; Frontal Slayer in `frontal-slayer/config.ts` + `dataAdapter.ts`; placeholders split into **`sandbox/`**, **`future-brand/`**, **`future-client/`** via `_shared/placeholder.ts`; removed `placeholders/config.ts`.
+- **`src/studio-os/index.ts`** — deprecated re-export shim to `studio-os-core`.
+- All admin imports updated to `studio-os-core`; `AdminGuard` imports `workspaces` before provider.
+- Docs: **`docs/studio-os/architecture.md`**, **`workspace-system.md`**, **`core-vs-workspace.md`**, **`docs/frontal-slayer/workspace-implementation.md`**.
+- Frontal Slayer routes `/admin/studio/*` unchanged; demo seeds stay in `adminStudio*Demo.ts` via workspace data adapter.
+- Build verified (`npm run build`).
+
+**Changes:** `src/studio-os-core/**`, `src/workspaces/**`, import updates across admin studio pages/components/hooks, deleted duplicate `src/studio-os/{config,core,workspace,context}/**`, docs, `motherboard/CORE.md`.
+
+**Conventions:** Core never imports workspace implementations or brand demo data; workspace layer registers via `configureWorkspaceRegistry()`; new code imports from `studio-os-core` not `studio-os/` subpaths; type casts at workspace boundary acceptable for Frontal Slayer demo types.
+

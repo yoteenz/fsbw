@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Outlet } from 'react-router-dom';
-import { WorkspaceProvider } from '../studio-os/context/WorkspaceProvider';
+import '../workspaces';
+import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
 import { isSignedIn, canAccessAdminPages } from '../utils/adminAuth';
 
 /**

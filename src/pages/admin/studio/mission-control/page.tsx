@@ -3,7 +3,7 @@ import { AdminStudioStageShell } from '../../../../components/admin/studio/Admin
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { MissionControlWorkspace } from '../../../../components/admin/studio/mission-control/MissionControlWorkspace';
 import { MISSION_CONTROL_SUBTITLE } from '../../../../utils/adminStudioMissionControlDemo';
-import { useWorkspace } from '../../../../studio-os/context/WorkspaceProvider';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 
 export default function AdminStudioMissionControlPage() {
   const navigate = useNavigate();

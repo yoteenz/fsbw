@@ -29,7 +29,7 @@ import {
   type ExecutiveTabId,
   type ExecutiveOverviewCardId,
 } from '../../../../utils/adminStudioExecutiveCommandCenterDemo';
-import { useWorkspace } from '../../../../studio-os/context/WorkspaceProvider';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 const CARD_TAB_MAP: Partial<Record<ExecutiveOverviewCardId, ExecutiveTabId>> = {

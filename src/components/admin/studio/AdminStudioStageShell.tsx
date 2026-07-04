@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { AdminStudioLayout } from './AdminStudioLayout';
-import { useWorkspace } from '../../../studio-os/context/WorkspaceProvider';
-import { STUDIO_OS_ROUTES } from '../../../studio-os/workspace/routes';
+import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
+import { STUDIO_OS_ROUTES } from '../../../studio-os-core/workspace/routes';
 import type { StudioNavGroupId } from '../../../utils/adminStudioNavigation';
 
 type AdminStudioStageShellProps = {

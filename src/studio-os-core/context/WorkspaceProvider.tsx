@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react';
 import { loadWorkspace, type LoadedWorkspace } from '../workspace/loader';
-import { listWorkspaces, getWorkspaceDataAdapter } from '../../workspaces';
-import type { WorkspaceDataAdapter } from '../../workspaces/frontal-slayer/dataAdapter';
+import { getWorkspaceRegistry } from '../workspace/registry';
+import type { WorkspaceDataAdapter } from '../workspace/data-adapter';
 import type { WorkspaceListItem, WorkspaceSchema } from '../workspace/types';
 import { workspaceStudioEntryPath } from '../workspace/routes';
 import {
@@ -52,7 +52,7 @@ export function WorkspaceProvider({ children, initialWorkspaceId }: WorkspacePro
       workspaceId,
       workspace,
       dataAdapter,
-      workspaces: listWorkspaces(),
+      workspaces: getWorkspaceRegistry().listWorkspaces(),
       setActiveWorkspace,
       getModuleSubtitle: (moduleKey) => {
         const copy = workspace.moduleCopy[moduleKey];
@@ -78,7 +78,7 @@ export function useWorkspace(): WorkspaceContextValue {
 /** Safe accessor for non-React modules (storage, loaders). */
 export function getActiveWorkspaceDataAdapter(): WorkspaceDataAdapter {
   const id = readActiveWorkspaceIdFromStorage();
-  return getWorkspaceDataAdapter(id);
+  return getWorkspaceRegistry().getWorkspaceDataAdapter(id);
 }
 
 export type { LoadedWorkspace };

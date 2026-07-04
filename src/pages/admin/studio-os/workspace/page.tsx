@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import AdminHeader from '../../components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
-import { STUDIO_OS_PLATFORM } from '../../../../studio-os/config/platform';
-import { STUDIO_OS_VOCABULARY } from '../../../../studio-os/core/vocabulary';
-import { useWorkspace } from '../../../../studio-os/context/WorkspaceProvider';
+import { STUDIO_OS_PLATFORM } from '../../../../studio-os-core/config/platform';
+import { STUDIO_OS_VOCABULARY } from '../../../../studio-os-core/core/vocabulary';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { getWorkspaceById, isKnownWorkspaceId } from '../../../../workspaces';
-import { STUDIO_OS_ROUTES } from '../../../../studio-os/workspace/routes';
+import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 /** Placeholder workspace shell — architecture testing only. */

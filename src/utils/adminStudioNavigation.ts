@@ -4,7 +4,7 @@
  */
 
 import { ADMIN_STUDIO_BASE_PATH } from './adminStudioRoutes';
-import type { StudioOsCoreModuleId } from '../studio-os/core/modules';
+import type { StudioOsCoreModuleId } from '../studio-os-core/core/modules';
 
 export type StudioNavGroupId =
   | 'overview'

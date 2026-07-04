@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { useWorkspace } from '../../../../studio-os/context/WorkspaceProvider';
-import { STUDIO_OS_ROUTES } from '../../../../studio-os/workspace/routes';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
+import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useAdminStudioMissionControl } from '../../../../hooks/useAdminStudioMissionControlState';
 import { AdminStudioExecutiveCard } from '../AdminStudioExecutiveCard';
 import {

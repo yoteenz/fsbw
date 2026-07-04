@@ -1,8 +1,9 @@
-import { STUDIO_OS_PLATFORM_ASSETS } from '../../studio-os/core/assets';
-import { DEFAULT_WORKSPACE_PERMISSIONS } from '../../studio-os/workspace/permissions';
-import type { WorkspaceSchema } from '../../studio-os/workspace/types';
+import { STUDIO_OS_PLATFORM_ASSETS } from '../../studio-os-core/core/assets';
+import { DEFAULT_WORKSPACE_PERMISSIONS } from '../../studio-os-core/workspace/permissions';
+import type { WorkspaceSchema } from '../../studio-os-core/workspace/types';
 
-function placeholderWorkspace(id: string, displayName: string): WorkspaceSchema {
+/** Shared placeholder workspace factory — architecture testing only. */
+export function createPlaceholderWorkspace(id: string, displayName: string): WorkspaceSchema {
   return {
     id,
     slug: id,
@@ -24,7 +25,3 @@ function placeholderWorkspace(id: string, displayName: string): WorkspaceSchema 
     },
   };
 }
-
-export const SANDBOX_WORKSPACE = placeholderWorkspace('sandbox', 'SANDBOX');
-export const FUTURE_BRAND_WORKSPACE = placeholderWorkspace('future-brand', 'FUTURE BRAND');
-export const FUTURE_CLIENT_WORKSPACE = placeholderWorkspace('future-client', 'FUTURE CLIENT');
