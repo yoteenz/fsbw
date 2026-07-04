@@ -34829,3 +34829,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** OAuth callback `/api/admin/social-accounts-oauth-callback`; configure platform secrets on Vercel; run migration before connecting accounts.
 
+---
+
+## 2026-07-04 — THE STUDIO Asset Director (visual source of truth)
+
+**Context:** User milestone to build **Asset Director** — the visual control center for how Frontal Slayer looks across every image, video, email, show, campaign, Lounge TV episode, social post, website hero, and future app experience. Not a file manager or generic media library; the visual identity system. Do not redesign existing Studio pages or modify previous modules. No AI generation — placeholder/demo assets; frontend architecture first.
+
+**Topics covered (full chat arc):**
+- Prior handoff: Executive Command Center, Studio nav fix, dashboard card reorder, Social Publishing Connectors — all completed and pushed.
+- **Asset Director landing** (`/admin/studio/asset-director`): subtitle *The visual source of truth*; 16 premium section cards (Studios, Talent, Wardrobe, Expressions, Poses, Camera, Lighting, Materials, Props, Animations, Audio, Moodboards, Brand Materials, Asset Relationships, Version History, Asset Health); visual inheritance chain; search; health alert preview cards.
+- **Asset cards:** preview, name, category, status (Approved/Needs Review/Outdated/In Use/Archived/Draft), last updated, used by, version, health indicators.
+- **Studios view:** 12 virtual studios (Weather, Lab, Build, Vault, Academy, Lounge, Newsroom, Runway, Product, Campaign, PSA, Future Mansion) with full visual profiles (environment, day/night/seasonal, camera/lighting presets, animations, graphics, prompt versions, usage/impact maps).
+- **Talent view:** 8 talents (PSA, Founder Avatar, Luxury Stylist, Hair Scientist, Beauty Reporter, Build Specialist, Guest Expert, Community Spotlight) with portrait, video/voice placeholders, wardrobe/expressions/poses, appearances, usage/impact maps.
+- **Libraries:** Wardrobe (8), Expressions (8), Poses (8), Camera (8), Lighting (7), Materials (10 with usage rules/do-not-use notes), Props, Animations, Audio, Brand Materials, Moodboards (10 living boards).
+- **Relationships, Version History, Asset Health** dedicated section views.
+- **Content Pack integration:** `AdminStudioContentPackAssetPicker` on pack detail — select Studio/Talent/Wardrobe/Pose/Expression/Camera/Lighting/Materials/Props/Music/Animation; `assemblePromptFromAssets` demo prompt assembly; selections persisted in localStorage per pack.
+
+**Decisions / outcomes:** Asset Director is single visual source of truth architecture (references from shows, packs, campaigns, etc. — demo wiring only). Prior milestone modules untouched. Build verified.
+
+**Changes:** `adminStudioAssetDirectorDemo.ts`, `useAdminStudioAssetDirectorState.ts`, `assetDirector/service.ts`, `AdminStudioAssetDirectorCard.tsx`, `AdminStudioAssetDirectorSectionCard.tsx`, `AdminStudioContentPackAssetPicker.tsx`, pages under `asset-director/`, routes in `App.tsx` + `adminStudioRoutes.ts`, `adminStudioStorage.ts`, `adminStudioDemo.ts`, `section/page.tsx`, Content Pack detail additive picker, `services/studio/index.ts`, `motherboard/CORE.md`.
+
+**Conventions:** Route `/admin/studio/asset-director`; detail routes `studios/:studioId`, `talent/:talentId`, `section/:sectionId`; storage key `adminStudioAssetDirector_v1`; work on `master` only.
+

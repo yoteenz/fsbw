@@ -157,6 +157,12 @@ const AdminStudioExecutiveCommandCenter = lazyWithRetry(() => import('./pages/ad
 const AdminStudioLegacySystem = lazyWithRetry(() => import('./pages/admin/studio/legacy-system/page'), 'AdminStudioLegacySystem');
 const AdminStudioLegacySystemMuseum = lazyWithRetry(() => import('./pages/admin/studio/legacy-system/museum/page'), 'AdminStudioLegacySystemMuseum');
 const AdminStudioSocialAccounts = lazyWithRetry(() => import('./pages/admin/studio/social-accounts/page'), 'AdminStudioSocialAccounts');
+const AdminStudioAssetDirector = lazyWithRetry(() => import('./pages/admin/studio/asset-director/page'), 'AdminStudioAssetDirector');
+const AdminStudioAssetDirectorStudios = lazyWithRetry(() => import('./pages/admin/studio/asset-director/studios/page'), 'AdminStudioAssetDirectorStudios');
+const AdminStudioAssetDirectorStudioDetail = lazyWithRetry(() => import('./pages/admin/studio/asset-director/studios/detail/page'), 'AdminStudioAssetDirectorStudioDetail');
+const AdminStudioAssetDirectorTalent = lazyWithRetry(() => import('./pages/admin/studio/asset-director/talent/page'), 'AdminStudioAssetDirectorTalent');
+const AdminStudioAssetDirectorTalentDetail = lazyWithRetry(() => import('./pages/admin/studio/asset-director/talent/detail/page'), 'AdminStudioAssetDirectorTalentDetail');
+const AdminStudioAssetDirectorSection = lazyWithRetry(() => import('./pages/admin/studio/asset-director/section/page'), 'AdminStudioAssetDirectorSection');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -927,6 +933,36 @@ function App() {
           <Route path="studio/legacy-system" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioLegacySystem />
+            </Suspense>
+          } />
+          <Route path="studio/asset-director/studios/:studioId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAssetDirectorStudioDetail />
+            </Suspense>
+          } />
+          <Route path="studio/asset-director/studios" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAssetDirectorStudios />
+            </Suspense>
+          } />
+          <Route path="studio/asset-director/talent/:talentId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAssetDirectorTalentDetail />
+            </Suspense>
+          } />
+          <Route path="studio/asset-director/talent" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAssetDirectorTalent />
+            </Suspense>
+          } />
+          <Route path="studio/asset-director/section/:sectionId" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAssetDirectorSection />
+            </Suspense>
+          } />
+          <Route path="studio/asset-director" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAssetDirector />
             </Suspense>
           } />
           <Route path="studio/executive-command-center" element={

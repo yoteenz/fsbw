@@ -4,6 +4,7 @@ import { AdminStudioStageShell } from '../../../../../components/admin/studio/Ad
 import { AdminStudioEditableField } from '../../../../../components/admin/studio/AdminStudioEditableField';
 import { AdminStudioTabBar } from '../../../../../components/admin/studio/AdminStudioTabBar';
 import { AdminStudioDistributionTargets } from '../../../../../components/admin/studio/AdminStudioDistributionTargets';
+import { AdminStudioContentPackAssetPicker } from '../../../../../components/admin/studio/AdminStudioContentPackAssetPicker';
 import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { useAdminStudioContentPack } from '../../../../../hooks/useAdminStudioEditableState';
 import {
@@ -74,6 +75,10 @@ export default function AdminStudioContentPackDetailPage() {
           onToggle={updateDistributionTarget}
           accentHex={pack.accentHex}
         />
+      </div>
+
+      <div className="mb-4">
+        <AdminStudioContentPackAssetPicker packId={packId} accentHex={pack.accentHex} />
       </div>
 
       <AdminStudioTabBar

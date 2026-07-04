@@ -50,6 +50,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'legacy-system') {
       return <Navigate to="/admin/studio/legacy-system" replace />;
     }
+    if (sectionId === 'asset-director') {
+      return <Navigate to="/admin/studio/asset-director" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

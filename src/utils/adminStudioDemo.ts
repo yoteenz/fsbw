@@ -40,7 +40,8 @@ export type AdminStudioSectionId =
   | 'distribution-network'
   | 'audience-brain'
   | 'executive-command-center'
-  | 'legacy-system';
+  | 'legacy-system'
+  | 'asset-director';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;

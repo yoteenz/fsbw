@@ -27,6 +27,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'audience-brain'
   | 'executive-command-center'
   | 'legacy-system'
+  | 'asset-director'
 >;
 
 export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] = [
@@ -51,6 +52,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'audience-brain',
   'executive-command-center',
   'legacy-system',
+  'asset-director',
 ] as const;
 
 export const ADMIN_STUDIO_BUILT_SECTION_SET = new Set<string>(ADMIN_STUDIO_BUILT_SECTIONS);
@@ -94,6 +96,12 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   socialAccounts: 'studio/social-accounts',
   legacySystem: 'studio/legacy-system',
   legacySystemMuseum: 'studio/legacy-system/museum',
+  assetDirector: 'studio/asset-director',
+  assetDirectorStudios: 'studio/asset-director/studios',
+  assetDirectorStudioDetail: 'studio/asset-director/studios/:studioId',
+  assetDirectorTalent: 'studio/asset-director/talent',
+  assetDirectorTalentDetail: 'studio/asset-director/talent/:talentId',
+  assetDirectorSection: 'studio/asset-director/section/:sectionId',
   sectionPlaceholder: 'studio/:sectionId',
 } as const;
 
@@ -163,4 +171,20 @@ export function adminStudioLegacySystemPath(): string {
 
 export function adminStudioLegacySystemMuseumPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/legacy-system/museum`;
+}
+
+export function adminStudioAssetDirectorPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/asset-director`;
+}
+
+export function adminStudioAssetDirectorStudioPath(studioId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/asset-director/studios/${studioId}`;
+}
+
+export function adminStudioAssetDirectorTalentPath(talentId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/asset-director/talent/${talentId}`;
+}
+
+export function adminStudioAssetDirectorSectionPath(sectionId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/asset-director/section/${sectionId}`;
 }
