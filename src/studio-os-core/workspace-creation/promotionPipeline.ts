@@ -136,6 +136,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
       updatedAt: now,
     },
+    {
+      id: 'promo-simulation-engine-v1',
+      featureName: 'Simulation Engine v1.0',
+      description: 'Model decisions before committing — scenario comparison, risk/financial/marketing/content sims, decision support, learning loop. Not predictions.',
+      currentStage: 'develop',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
   ];
 }
 

@@ -36527,3 +36527,45 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Studio Intelligence core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 36: Simulation Engine v1.0
+
+**Context:** User requested Milestone 36 — introduce **Simulation Engine** so founders model decisions before committing real time, money, resources, or risk. Not predict future with certainty — explore possibilities and tradeoffs. Studio OS becomes safest place to experiment virtually. Founder remains responsible; Studio OS provides intelligence, context, simulation — not guarantees.
+
+**Delivered — Simulation Engine v1.0:**
+
+**Core module** (`src/studio-os-core/simulation-engine/`):
+- Simulation center dashboard — active/completed/saved scenarios, highest confidence, history, intelligence-recommended sims
+- 24+ simulation types — launches, pricing, campaigns, hires, marketplace, expansion, acquisitions, licensing, custom
+- 5-step builder — scenario, workspace, assumptions (budget, timeline, team, pricing, traffic, conversion, risk tolerance), depth (quick/standard/deep/strategic), run
+- Data sources — workspace history, Company/Creative DNA, Memory Bible, KG, Studio Intelligence, Labs, ecosystem benchmarks, approved assumptions
+- Scenario comparison — multiple variants with revenue, conversion, retention, profit, growth, CAC, confidence, recommended option
+- Risk analysis — best/expected/worst case, confidence, assumptions, risks, mitigation
+- Financial/marketing/content/organization/marketplace/timeline simulators
+- Decision support — executive summary, confidence, evidence, assumptions, opportunities, risks, actions, alternatives
+- Executive AI integration — CFO, CMO, COO, CGO contributions
+- Simulation library — duplicate, fork, compare, template, archive
+- Learning loop — predicted vs actual outcomes, accuracy, wrong assumptions, confidence improvements
+- Studio Intelligence auto-recommends simulations before pricing, hires, campaigns, partnerships
+- localStorage store key `studioOsSimulationEngine_v1`
+
+**AI Media demo seeds** (`src/workspaces/ai-media/simulation-engine/bootstrap.ts`):
+- Q3 pricing sim ($29 vs $39 vs $49 — recommend $39 at 76%), LearnFlow partnership, finance series (running), BD hire (draft), 3 intelligence recommendations, learning loop from Q1 pricing, library templates
+
+**Admin UI** (`/admin/studio/simulation-engine`):
+- 14 tabs: Simulation Center, Builder, Sim Types, Scenarios, Risk Analysis, Financial, Marketing, Content, Organization, Marketplace, Timeline, Decision Support, Library, Learning Loop
+- `SimulationEngineWorkspace.tsx`, `useAdminStudioSimulationEngineState.ts`, `adminStudioSimulationEngineDemo.ts`, `simulationEngineStudioService`
+
+**Platform wiring:**
+- modules.ts module id `simulation-engine`, route `simulation-engine`
+- adminStudioRoutes, navigation, App.tsx lazy route, services registry, workspace bootstrap
+- KG: `node-simulation-engine`, `node-simulation-center`, `node-scenario-comparison`, `node-simulation-learning`, `node-simulation-pricing-q3`, workflow `wf-simulation-engine`
+- Memory Bible: naming `name-simulation-engine`, decision `dec-simulation-engine-v1`
+- moduleEnrichments, promotion `promo-simulation-engine-v1`, workspace creation engine/blueprints
+- Docs: `docs/studio-os/simulation-engine.md`
+
+**Conventions:** Never present simulated outcomes as guaranteed predictions. Studio Intelligence recommends simulations; Simulation Engine executes modeling; founder decides. Distinct from Labs (real experiments) — Simulation is virtual what-if before commitment.
+
+**Changes:** Simulation Engine core + admin UI + bootstrap + platform wiring + docs + `motherboard/MEMORY.md`.
+

@@ -269,6 +269,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-studio-intelligence', 'node-executive-briefing', 'node-opportunity-engine', 'node-business-health'],
     },
     {
+      id: 'name-simulation-engine',
+      officialName: 'Simulation Engine',
+      deprecatedNames: ['prediction engine', 'forecast guarantee', 'crystal ball'],
+      usageNotes:
+        'Platform pillar — model business decisions before committing real resources. Scenario comparison, risk/financial/marketing sims, decision support, learning loop. Not predictions or guarantees. UI: SIMULATION ENGINE.',
+      relatedModules: ['simulation-engine'],
+      relatedGraphNodeIds: ['node-simulation-engine', 'node-simulation-center', 'node-scenario-comparison', 'node-simulation-learning'],
+    },
+    {
       id: 'name-writing-bible',
       officialName: 'Writing Bible',
       deprecatedNames: [],
@@ -555,6 +564,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-studio-intelligence', 'node-executive-briefing', 'node-opportunity-engine', 'node-business-health', 'node-memory-bible', 'node-growth-network'],
       relatedManualChapter: 'CHAPTER · STUDIO INTELLIGENCE · OPERATING INTELLIGENCE',
+    },
+    {
+      id: 'dec-simulation-engine-v1',
+      title: 'Launch Simulation Engine v1.0',
+      date: '2026-07-04',
+      workspace: 'global',
+      relatedModule: 'simulation-engine',
+      decision:
+        'Simulation Engine allows founders to model decisions before committing real time, money, resources, or risk. Simulation center, 24+ types, 5-step builder, scenario comparison, risk/financial/marketing/content/organization/marketplace/timeline simulators, decision support with executive AI contributions, simulation library, learning loop (predicted vs actual). Built from workspace history, DNA, Memory Bible, KG, Studio Intelligence, Labs, ecosystem benchmarks. Never present outcomes as guaranteed predictions.',
+      reason:
+        'Studio OS should be the safest place to experiment with business decisions virtually. Explore possibilities, reveal tradeoffs, improve decision quality — founder remains responsible for final decisions.',
+      alternativesConsidered: ['Prediction-as-certainty forecasting', 'External spreadsheet-only modeling', 'Autonomous execution from simulation results'],
+      outcome: 'Simulation Engine at /admin/studio/simulation-engine — core in src/studio-os-core/simulation-engine/, AI Media seeds in workspaces/ai-media/simulation-engine/.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-simulation-engine', 'node-simulation-center', 'node-scenario-comparison', 'node-studio-intelligence', 'node-studio-os-labs'],
+      relatedManualChapter: 'CHAPTER · SIMULATION ENGINE · MODEL BEFORE COMMITTING',
     },
   ],
   aiPreferences: {

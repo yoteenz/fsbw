@@ -166,6 +166,11 @@ export function WorkspaceDashboard({
                 OPEN STUDIO INTELLIGENCE
               </button>
             ) : null}
+            {activeTab === 'simulation-engine' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/simulation-engine')}>
+                OPEN SIMULATION ENGINE
+              </button>
+            ) : null}
           </div>
         ) : null}
       </div>

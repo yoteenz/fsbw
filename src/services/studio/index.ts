@@ -93,6 +93,9 @@ export type { GovernanceSnapshot, GovernanceStudioService } from './governance/s
 export { studioIntelligenceStudioService, STUDIO_INTELLIGENCE_INHERITANCE_CHAIN, ADMIN_STUDIO_STUDIO_INTELLIGENCE_SUBTITLE } from './studio-intelligence/service';
 export type { StudioIntelligenceSnapshot, StudioIntelligenceStudioService } from './studio-intelligence/service';
 
+export { simulationEngineStudioService, SIMULATION_ENGINE_INHERITANCE_CHAIN, ADMIN_STUDIO_SIMULATION_ENGINE_SUBTITLE } from './simulation-engine/service';
+export type { SimulationEngineSnapshot, SimulationEngineStudioService } from './simulation-engine/service';
+
 export { visionEngineStudioService, VISION_ENGINE_INHERITANCE_CHAIN } from './visionEngine/service';
 export type { VisionEngineSnapshot } from './visionEngine/service';
 
@@ -190,6 +193,7 @@ import { businessModelEngineStudioService } from './businessModelEngine/service'
 import { ecosystemStudioService } from './ecosystem/service';
 import { governanceStudioService } from './governance/service';
 import { studioIntelligenceStudioService } from './studio-intelligence/service';
+import { simulationEngineStudioService } from './simulation-engine/service';
 import { executiveCommandCenterStudioService } from './executiveCommandCenter/service';
 import { legacySystemStudioService } from './legacySystem/service';
 import { assetDirectorStudioService } from './assetDirector/service';
@@ -231,6 +235,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   ecosystemStudioService,
   governanceStudioService,
   studioIntelligenceStudioService,
+  simulationEngineStudioService,
   executiveCommandCenterStudioService,
   legacySystemStudioService,
   assetDirectorStudioService,

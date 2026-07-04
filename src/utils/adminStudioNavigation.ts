@@ -601,6 +601,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'simulation-engine',
+    title: 'SIMULATION ENGINE',
+    purpose: 'Model decisions before committing — scenarios, risk, financial/marketing/content sims. Not predictions.',
+    route: p('simulation-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '14 TABS',
+    ctaLabel: 'OPEN SIMULATION',
+    moduleKey: 'simulation-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

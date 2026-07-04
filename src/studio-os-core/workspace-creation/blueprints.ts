@@ -16,6 +16,7 @@ const CORE_PACKAGES = [
   'ecosystem',
   'governance',
   'studio-intelligence',
+  'simulation-engine',
   'interactive-manual',
   'onboarding-tutorial',
   'prompt-library',

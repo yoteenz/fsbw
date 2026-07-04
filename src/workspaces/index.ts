@@ -21,6 +21,7 @@ import { bootstrapAiMediaBusinessModelEngine } from './ai-media/business-model-e
 import { bootstrapAiMediaEcosystem } from './ai-media/ecosystem/bootstrap';
 import { bootstrapAiMediaGovernance } from './ai-media/governance/bootstrap';
 import { bootstrapAiMediaStudioIntelligence } from './ai-media/studio-intelligence/bootstrap';
+import { bootstrapAiMediaSimulationEngine } from './ai-media/simulation-engine/bootstrap';
 import { bootstrapFrontalSlayerVisionEngine } from './frontal-slayer/vision-engine';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
@@ -48,6 +49,7 @@ bootstrapAiMediaBusinessModelEngine();
 bootstrapAiMediaEcosystem();
 bootstrapAiMediaGovernance();
 bootstrapAiMediaStudioIntelligence();
+bootstrapAiMediaSimulationEngine();
 bootstrapFrontalSlayerVisionEngine();
 
 const STATIC_WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {

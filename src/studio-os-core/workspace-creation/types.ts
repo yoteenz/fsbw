@@ -45,6 +45,7 @@ export type BlueprintModuleId =
   | 'ecosystem'
   | 'governance'
   | 'studio-intelligence'
+  | 'simulation-engine'
   | 'social-accounts'
   | 'system-health'
   | 'promotion-center'

@@ -30,6 +30,7 @@ export type StudioOsCoreModuleId =
   | 'ecosystem'
   | 'governance'
   | 'studio-intelligence'
+  | 'simulation-engine'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -199,6 +200,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO INTELLIGENCE',
     description: 'Operating intelligence — executive briefings, opportunity/risk engines, business health, and proactive recommendations.',
     routeSegment: 'studio-intelligence',
+  },
+  {
+    id: 'simulation-engine',
+    label: 'SIMULATION ENGINE',
+    description: 'Model business decisions before committing — scenario comparison, risk analysis, and decision support. Not predictions.',
+    routeSegment: 'simulation-engine',
   },
   {
     id: 'vision-engine',
