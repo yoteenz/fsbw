@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { getAccessToken } from '../utils/api';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 import type {
+  ProductAssetFactoryAction,
   ProductAssetFactoryJobRecord,
   ProductAssetFactoryLogRecord,
   ProductAssetFactoryStage,
@@ -35,10 +36,12 @@ export function getLatestProductAssetFactoryJob(unitSlug: string): ProductAssetF
 }
 
 export async function runProductAssetFactoryApi(opts: {
-  action?: 'run' | 'retry';
+  action?: ProductAssetFactoryAction | 'run';
   unitSlug?: string;
-  fromStage?: ProductAssetFactoryStage;
-  masterHeroSrc?: string;
+  fromStage?: ProductAssetFactoryStage | string;
+  productReferenceSrc?: string;
+  generatedMasterHeroSrc?: string;
+  heroApproved?: boolean;
 }): Promise<{ ok: boolean; job?: ProductAssetFactoryJobRecord; registry?: ProductAssetRegistryRecord[]; logs?: ProductAssetFactoryLogRecord[]; error?: string }> {
   const token = await getAccessToken();
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -92,41 +95,73 @@ export function useAdminStudioBrandAssetsProductAssetFactory() {
     [store.jobs]
   );
 
-  const runPipeline = useCallback(async (opts?: { retryFrom?: ProductAssetFactoryStage; masterHeroSrc?: string }) => {
-    setRunning(true);
-    setLastError(null);
-    try {
-      const result = await runProductAssetFactoryApi({
-        action: opts?.retryFrom ? 'retry' : 'run',
-        unitSlug: 'soft-wave',
-        fromStage: opts?.retryFrom,
-        masterHeroSrc: opts?.masterHeroSrc,
-      });
-      if (result.job && result.registry && result.logs) {
-        const next = persistProductAssetFactoryResult({
-          job: result.job,
-          registry: result.registry,
-          logs: result.logs,
-        });
-        setStore(next);
+  const callApi = useCallback(
+    async (opts: Parameters<typeof runProductAssetFactoryApi>[0]) => {
+      setRunning(true);
+      setLastError(null);
+      try {
+        const result = await runProductAssetFactoryApi(opts);
+        if (result.job && result.logs) {
+          const next = persistProductAssetFactoryResult({
+            job: result.job,
+            registry: result.registry ?? [],
+            logs: result.logs,
+          });
+          setStore(next);
+        }
+        if (!result.ok) setLastError(result.error ?? 'Pipeline failed');
+        return result;
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        setLastError(msg);
+        return { ok: false, error: msg };
+      } finally {
+        setRunning(false);
       }
-      if (!result.ok) setLastError(result.error ?? 'Pipeline failed');
-      return result;
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : String(e);
-      setLastError(msg);
-      return { ok: false, error: msg };
-    } finally {
-      setRunning(false);
-    }
-  }, []);
+    },
+    []
+  );
+
+  const generateMasterHero = useCallback(
+    (productReferenceSrc?: string) =>
+      callApi({ action: 'generate-hero', unitSlug: 'soft-wave', productReferenceSrc }),
+    [callApi]
+  );
+
+  const approveHeroAndRunDerivatives = useCallback(async () => {
+    const approve = await callApi({
+      action: 'approve-hero',
+      unitSlug: 'soft-wave',
+      generatedMasterHeroSrc: latestJob?.generatedMasterHeroUrl ?? latestJob?.masterHeroUrl,
+    });
+    if (!approve.ok || !approve.job) return approve;
+
+    return callApi({
+      action: 'run-derivatives',
+      unitSlug: 'soft-wave',
+      generatedMasterHeroSrc: approve.job.generatedMasterHeroUrl ?? approve.job.masterHeroUrl,
+      heroApproved: true,
+    });
+  }, [callApi, latestJob?.generatedMasterHeroUrl, latestJob?.masterHeroUrl]);
+
+  const retryFromFailed = useCallback(
+    (fromStage: ProductAssetFactoryStage | string) =>
+      callApi({
+        action: 'retry',
+        unitSlug: 'soft-wave',
+        fromStage,
+        generatedMasterHeroSrc: latestJob?.generatedMasterHeroUrl ?? latestJob?.masterHeroUrl,
+        heroApproved: true,
+      }),
+    [callApi, latestJob?.generatedMasterHeroUrl, latestJob?.masterHeroUrl]
+  );
 
   const publishJob = useCallback((jobId: string) => {
     setStore((prev) => {
       const next = {
         ...prev,
         jobs: prev.jobs.map((j) =>
-          j.id === jobId ? { ...j, stage: 'published' as ProductAssetFactoryStage, lastUpdated: new Date().toISOString() } : j
+          j.id === jobId ? { ...j, stage: 'published' as const, lastUpdated: new Date().toISOString() } : j
         ),
         registry: prev.registry.map((r) =>
           prev.jobs.find((j) => j.id === jobId)?.registryEntryIds.includes(r.id)
@@ -139,5 +174,14 @@ export function useAdminStudioBrandAssetsProductAssetFactory() {
     });
   }, []);
 
-  return { store, latestJob, running, lastError, runPipeline, publishJob };
+  return {
+    store,
+    latestJob,
+    running,
+    lastError,
+    generateMasterHero,
+    approveHeroAndRunDerivatives,
+    retryFromFailed,
+    publishJob,
+  };
 }

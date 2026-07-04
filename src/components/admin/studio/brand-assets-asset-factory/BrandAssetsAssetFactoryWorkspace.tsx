@@ -10,31 +10,64 @@ import { getPhotographyBibleUnit } from '../../../../hooks/useAdminStudioProduct
 import {
   ASSET_FACTORY_WORKFLOW,
   BRAND_ASSETS_ASSET_FACTORY_TABS,
+  DERIVATIVE_BLOCKED_MESSAGE,
   FACTORY_CROP_TEMPLATES,
   FACTORY_POC_DERIVATIVE_OUTPUTS,
   getAssetFactoryTabBody,
   PRODUCT_ASSET_FACTORY_POC_UNIT,
   PRODUCT_ASSET_FACTORY_STAGES,
-  PRODUCT_ASSET_FACTORY_STAGE_LABELS,
+  productAssetFactoryStageLabel,
   productAssetSupabasePath,
   type BrandAssetsAssetFactoryTabId,
 } from '../../../../utils/adminStudioBrandAssetsAssetFactoryDemo';
 import { PP_VISUAL, ppActionBtn, ppCaption, ppPanelStyle, ppSectionTitle, statusColor } from '../product-photography-bible/photographyBibleTheme';
 
 function stageLabel(stage: string): string {
-  return PRODUCT_ASSET_FACTORY_STAGE_LABELS[stage as keyof typeof PRODUCT_ASSET_FACTORY_STAGE_LABELS] ?? stage;
+  return productAssetFactoryStageLabel(stage);
+}
+
+function isAwaitingHeroApproval(stage: string | undefined): boolean {
+  return stage === 'awaiting-hero-approval' || stage === 'hero-generated';
+}
+
+function canApproveHero(job: { generatedMasterHeroUrl?: string; heroApproved?: boolean; stage?: string } | undefined): boolean {
+  if (!job?.generatedMasterHeroUrl) return false;
+  if (job.heroApproved) return false;
+  if (job.stage === 'ready-for-review' || job.stage === 'published') return false;
+  return isAwaitingHeroApproval(job.stage) || job.stage === 'failed';
 }
 
 export function BrandAssetsAssetFactoryWorkspace() {
   const [activeTab, setActiveTab] = useState<BrandAssetsAssetFactoryTabId>('overview');
   const [previewItem, setPreviewItem] = useState<AdminStudioImagePreviewItem | null>(null);
-  const { store, latestJob, running, lastError, runPipeline, publishJob } =
-    useAdminStudioBrandAssetsProductAssetFactory();
+  const {
+    store,
+    latestJob,
+    running,
+    lastError,
+    generateMasterHero,
+    approveHeroAndRunDerivatives,
+    retryFromFailed,
+    publishJob,
+  } = useAdminStudioBrandAssetsProductAssetFactory();
 
   const bibleUnit = getPhotographyBibleUnit(PRODUCT_ASSET_FACTORY_POC_UNIT.slug);
   const tabBody = getAssetFactoryTabBody(activeTab);
   const pocRegistry = store.registry.filter((r) => r.productSlug === PRODUCT_ASSET_FACTORY_POC_UNIT.slug);
-  const masterHeroSrc = bibleUnit?.heroPortraitSrc ?? PRODUCT_ASSET_FACTORY_POC_UNIT.masterHeroSrc;
+
+  const productReferenceSrc =
+    bibleUnit?.referenceImageSrc ?? PRODUCT_ASSET_FACTORY_POC_UNIT.productReferenceSrc;
+  const generatedMasterSrc =
+    latestJob?.generatedMasterHeroUrl ??
+    (bibleUnit?.photographyStatus === 'pending-review' || bibleUnit?.photographyStatus === 'approved'
+      ? bibleUnit?.heroPortraitSrc
+      : undefined);
+
+  const showDerivativeBlocked =
+    !latestJob?.heroApproved &&
+    !latestJob?.transparentMasterUrl &&
+    latestJob?.stage !== 'ready-for-review' &&
+    latestJob?.stage !== 'published';
 
   return (
     <div className="pb-6">
@@ -49,39 +82,51 @@ export function BrandAssetsAssetFactoryWorkspace() {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 mt-2">
           <div className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
             <p style={{ ...ppCaption, fontSize: '6px' }}>PROCESSING STATUS</p>
-            <p style={{ ...ppCaption, color: statusColor(latestJob?.stage ?? 'waiting'), fontFamily: '"Futura PT Medium"' }}>
-              {stageLabel(latestJob?.stage ?? 'waiting').toUpperCase()}
+            <p style={{ ...ppCaption, color: statusColor(latestJob?.stage ?? 'reference-ready'), fontFamily: '"Futura PT Medium"' }}>
+              {stageLabel(latestJob?.stage ?? 'reference-ready').toUpperCase()}
             </p>
           </div>
           <div className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
-            <p style={{ ...ppCaption, fontSize: '6px' }}>DERIVATIVE COUNT</p>
+            <p style={{ ...ppCaption, fontSize: '6px' }}>HERO APPROVED</p>
+            <p style={{ ...ppCaption, color: latestJob?.heroApproved ? '#16a34a' : PP_VISUAL.muted, fontFamily: '"Futura PT Medium"' }}>
+              {latestJob?.heroApproved ? 'YES' : 'NO'}
+            </p>
+          </div>
+          <div className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
+            <p style={{ ...ppCaption, fontSize: '6px' }}>SMART ASSETS</p>
             <p style={{ ...ppCaption, color: PP_VISUAL.black, fontFamily: '"Futura PT Medium"' }}>{latestJob?.derivativeCount ?? 0}</p>
           </div>
           <div className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
-            <p style={{ ...ppCaption, fontSize: '6px' }}>REGISTRY ASSETS</p>
+            <p style={{ ...ppCaption, fontSize: '6px' }}>REGISTRY</p>
             <p style={{ ...ppCaption, color: PP_VISUAL.black, fontFamily: '"Futura PT Medium"' }}>{pocRegistry.length}</p>
-          </div>
-          <div className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
-            <p style={{ ...ppCaption, fontSize: '6px' }}>IDEOGRAM</p>
-            <p style={{ ...ppCaption, fontSize: '7px' }}>fal-ai/ideogram/remove-background</p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2 mt-3">
           <button
             type="button"
-            style={{ ...ppActionBtn, opacity: running ? 0.6 : 1 }}
+            style={{ ...ppActionBtn, opacity: running ? 0.6 : 1, color: PP_VISUAL.red }}
             disabled={running}
-            onClick={() => runPipeline()}
+            onClick={() => generateMasterHero(productReferenceSrc)}
           >
-            {running ? 'PROCESSING…' : 'RUN PIPELINE'}
+            {running ? 'PROCESSING…' : 'GENERATE MASTER HERO PORTRAIT'}
           </button>
+          {canApproveHero(latestJob) || isAwaitingHeroApproval(latestJob?.stage) ? (
+            <button
+              type="button"
+              style={ppActionBtn}
+              disabled={running || !generatedMasterSrc}
+              onClick={() => approveHeroAndRunDerivatives()}
+            >
+              APPROVE HERO & RUN DERIVATIVES
+            </button>
+          ) : null}
           {latestJob?.stage === 'failed' && latestJob.failedStage ? (
             <button
               type="button"
               style={ppActionBtn}
-              disabled={running}
-              onClick={() => runPipeline({ retryFrom: latestJob.failedStage })}
+              disabled={running || !latestJob.heroApproved}
+              onClick={() => retryFromFailed(latestJob.failedStage!)}
             >
               RETRY FROM {stageLabel(latestJob.failedStage).toUpperCase()}
             </button>
@@ -91,12 +136,10 @@ export function BrandAssetsAssetFactoryWorkspace() {
               MARK PUBLISHED
             </button>
           ) : null}
-          {latestJob?.transparentMasterUrl ? (
-            <a href={latestJob.transparentMasterUrl} target="_blank" rel="noopener noreferrer" style={{ ...ppActionBtn, textDecoration: 'none' }}>
-              PREVIEW TRANSPARENT
-            </a>
-          ) : null}
         </div>
+        {showDerivativeBlocked && !generatedMasterSrc ? (
+          <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 8 }}>{DERIVATIVE_BLOCKED_MESSAGE}</p>
+        ) : null}
         {lastError ? <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 8 }}>{lastError}</p> : null}
         {latestJob?.error ? <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 4 }}>{latestJob.error}</p> : null}
       </section>
@@ -116,7 +159,7 @@ export function BrandAssetsAssetFactoryWorkspace() {
             ))}
           </div>
           <p style={{ ...ppCaption, marginTop: 10 }}>
-            MASTER INPUT · {bibleUnit?.heroPortraitSrc ?? PRODUCT_ASSET_FACTORY_POC_UNIT.masterHeroSrc}
+            PRODUCT REFERENCE (INPUT ONLY) · {productReferenceSrc}
           </p>
         </section>
       )}
@@ -126,13 +169,14 @@ export function BrandAssetsAssetFactoryWorkspace() {
           <p style={ppSectionTitle}>PROCESSING QUEUE</p>
           <p style={ppCaption}>{tabBody}</p>
           {store.jobs.length === 0 ? (
-            <p style={{ ...ppCaption, marginTop: 8 }}>NO JOBS — RUN PIPELINE TO PROCESS SOFT WAVE</p>
+            <p style={{ ...ppCaption, marginTop: 8 }}>NO JOBS — GENERATE MASTER HERO PORTRAIT TO BEGIN</p>
           ) : (
             store.jobs.map((job) => (
               <div key={job.id} className="mb-2 p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
                 <p style={{ ...ppCaption, color: PP_VISUAL.red }}>{job.productLabel} · {job.id.slice(0, 20)}…</p>
                 <p style={ppCaption}>STAGE · {stageLabel(job.stage).toUpperCase()}</p>
-                <p style={{ ...ppCaption, fontSize: '7px' }}>{job.startedAt} · DERIVATIVES {job.derivativeCount}</p>
+                <p style={ppCaption}>HERO APPROVED · {job.heroApproved ? 'YES' : 'NO'}</p>
+                <p style={{ ...ppCaption, fontSize: '7px' }}>{job.startedAt} · SMART ASSETS {job.derivativeCount}</p>
               </div>
             ))
           )}
@@ -141,8 +185,11 @@ export function BrandAssetsAssetFactoryWorkspace() {
 
       {activeTab === 'derivative-engine' && (
         <section style={{ ...ppPanelStyle, padding: '12px' }}>
-          <p style={ppSectionTitle}>DERIVATIVE OUTPUTS</p>
+          <p style={ppSectionTitle}>SMART ASSET OUTPUTS</p>
           <p style={ppCaption}>{tabBody}</p>
+          {!latestJob?.heroApproved ? (
+            <p style={{ ...ppCaption, color: PP_VISUAL.red, marginTop: 8 }}>{DERIVATIVE_BLOCKED_MESSAGE}</p>
+          ) : null}
           <ul style={{ margin: '8px 0 0', paddingLeft: '16px' }}>
             {FACTORY_POC_DERIVATIVE_OUTPUTS.map((d) => (
               <li key={d.assetType} style={{ ...ppCaption, marginBottom: 4 }}>
@@ -178,7 +225,7 @@ export function BrandAssetsAssetFactoryWorkspace() {
           <p style={ppSectionTitle}>ASSET REGISTRY</p>
           <p style={ppCaption}>{tabBody}</p>
           {pocRegistry.length === 0 ? (
-            <p style={{ ...ppCaption, marginTop: 8 }}>EMPTY — RUN PIPELINE TO REGISTER ASSETS</p>
+            <p style={{ ...ppCaption, marginTop: 8 }}>EMPTY — APPROVE HERO & RUN DERIVATIVES TO REGISTER ASSETS</p>
           ) : (
             pocRegistry.map((r) => (
               <div key={r.id} className="mb-2 p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}` }}>
@@ -234,24 +281,46 @@ export function BrandAssetsAssetFactoryWorkspace() {
 
       <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px' }}>
         <p style={ppSectionTitle}>MASTER PREVIEW</p>
+        <p style={{ ...ppCaption, marginBottom: 8 }}>
+          1 · PRODUCT REFERENCE (WEBSITE INPUT) · 2 · GENERATED MASTER HERO · 3 · TRANSPARENT MASTER (POST-APPROVAL)
+        </p>
         <div className="flex gap-3 flex-wrap items-start">
           <AdminStudioExpandableImage
-            src={masterHeroSrc}
-            alt="Master hero"
-            label="MASTER HERO"
-            subtitle={`${PRODUCT_ASSET_FACTORY_POC_UNIT.label} · CREATIVE DNA v1.0`}
+            src={productReferenceSrc}
+            alt="Product reference"
+            label="PRODUCT REFERENCE"
+            subtitle={`${PRODUCT_ASSET_FACTORY_POC_UNIT.label} · WEBSITE INPUT ONLY`}
             onExpand={setPreviewItem}
           />
+          {generatedMasterSrc ? (
+            <AdminStudioExpandableImage
+              src={generatedMasterSrc}
+              alt="Generated master hero"
+              label="GENERATED MASTER HERO"
+              subtitle="CREATIVE DNA v1.0 · FAL OUTPUT"
+              onExpand={setPreviewItem}
+            />
+          ) : (
+            <div className="p-2" style={{ border: `1px dashed ${PP_VISUAL.panelBorder}`, minWidth: 120 }}>
+              <p style={{ ...ppCaption, fontSize: '7px' }}>GENERATED MASTER HERO</p>
+              <p style={{ ...ppCaption, color: PP_VISUAL.muted, fontSize: '6px' }}>NOT YET GENERATED</p>
+            </div>
+          )}
           {latestJob?.transparentMasterUrl ? (
             <AdminStudioExpandableImage
               src={latestJob.transparentMasterUrl}
               alt="Transparent master"
               label="TRANSPARENT MASTER"
-              subtitle="IDEOGRAM CUTOUT · ASSET FACTORY"
+              subtitle="FROM APPROVED GENERATED HERO · IDEOGRAM"
               checkerboard
               onExpand={setPreviewItem}
             />
-          ) : null}
+          ) : (
+            <div className="p-2" style={{ border: `1px dashed ${PP_VISUAL.panelBorder}`, minWidth: 120 }}>
+              <p style={{ ...ppCaption, fontSize: '7px' }}>TRANSPARENT MASTER</p>
+              <p style={{ ...ppCaption, color: PP_VISUAL.muted, fontSize: '6px' }}>REQUIRES HERO APPROVAL</p>
+            </div>
+          )}
         </div>
       </section>
 

@@ -4,7 +4,9 @@ export const config = {
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
-import { runProductAssetFactoryPipeline } from '../_lib/productAssetFactory/pipeline.js';
+import {
+  buildHeroAwaitingApprovalJob,
+} from '../_lib/productAssetFactory/pipeline.js';
 import { generateMasterHeroFromCreativeDna } from '../_lib/productPhotographyGeneration/generateMasterHero.js';
 import { PRODUCT_PHOTOGRAPHY_POC_UNIT } from '../_lib/productPhotographyGeneration/creativeDnaV1.js';
 import type {
@@ -29,7 +31,8 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
 
 /**
  * POST /api/admin/product-photography-generate
- * Creative DNA v1.0 → Fal Master Hero generation → optional Asset Factory chain (SOFT WAVE POC).
+ * Creative DNA v1.0 → Fal Master Hero generation (SOFT WAVE POC).
+ * Derivative processing is blocked until the generated master is approved in Asset Factory.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -49,7 +52,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const unitSlug = String(body?.unitSlug || PRODUCT_PHOTOGRAPHY_POC_UNIT.slug).trim();
   const productReferenceImageSrc =
     typeof body?.productReferenceImageSrc === 'string' ? body.productReferenceImageSrc.trim() : undefined;
-  const runAssetFactory = body?.runAssetFactory !== false;
 
   if (action !== 'generate-variants' && action !== 'replace-reference') {
     return res.status(400).json({ error: 'Invalid action — use generate-variants or replace-reference' });
@@ -83,24 +85,31 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(500).json(result);
   }
 
-  if (runAssetFactory) {
-    result.logs.push({
-      timestamp: new Date().toISOString(),
-      message: 'Chaining Asset Factory pipeline on generated master',
-      level: 'info',
-    });
-    const factory = await runProductAssetFactoryPipeline({
-      masterHeroSrc: generation.generatedMasterUrl,
-    });
-    result.assetFactory = factory;
-    result.logs.push({
-      timestamp: new Date().toISOString(),
-      message: factory.ok ? 'Asset Factory pipeline complete' : `Asset Factory failed: ${factory.error ?? 'unknown'}`,
-      level: factory.ok ? 'info' : 'error',
-    });
-    result.ok = factory.ok;
-    if (!factory.ok) result.error = factory.error ?? 'Asset Factory pipeline failed after generation';
-  }
+  result.logs.push({
+    timestamp: new Date().toISOString(),
+    message: 'Master Hero generated — awaiting approval before Asset Factory derivative processing',
+    level: 'info',
+  });
 
-  return res.status(result.ok ? 200 : 500).json(result);
+  const heroJob = buildHeroAwaitingApprovalJob({
+    productReferenceSrc: generation.productReferenceImageSrc,
+    generatedMasterHeroUrl: generation.generatedMasterUrl,
+  });
+
+  result.assetFactory = {
+    ok: true,
+    job: heroJob,
+    registry: [],
+    logs: [
+      {
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+        stage: 'awaiting-hero-approval',
+        message: 'Generated master queued for approval — background removal blocked',
+        level: 'info',
+      },
+    ],
+  };
+
+  return res.status(200).json(result);
 }

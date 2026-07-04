@@ -35851,3 +35851,19 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `menuToggleOpenState.ts`, `PsaAssistantWidget.tsx`, `TutorialOsPsaGate.tsx`, 50 page files, `BookingFlowLayout.tsx`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Asset Factory: generate Master Hero before derivatives (Milestone 24.2)
+
+**Context:** User corrected Asset Factory workflow — existing website product images are **reference inputs only**, not masters. Pipeline must: Creative DNA v1.0 + prompts + display bust + product reference → **Generate NEW Master Hero Portrait (Fal)** → preview → approval → background removal on **generated** hero → transparent master → smart assets → Supabase → registry. Block derivatives until generated master approved.
+
+**Shipped:**
+- **New pipeline stages:** Reference Ready, Generating Master Hero, Hero Generated, Awaiting Hero Approval, Hero Approved, Removing Background, Transparent Master Generated, Generating Smart Assets, Uploading To Supabase, Ready For Review, Published.
+- **`api/_lib/productAssetFactory/pipeline.ts`** — split `generate-hero`, `approve-hero`, `run-derivatives` actions; never BG-remove website reference image; `DERIVATIVE_BLOCKED_MESSAGE` gate.
+- **APIs:** `product-asset-factory-run` actions; `product-photography-generate` stops auto-chaining derivatives — queues job at awaiting-hero-approval.
+- **Asset Factory UI:** GENERATE MASTER HERO PORTRAIT + APPROVE HERO & RUN DERIVATIVES buttons; Master Preview shows Product Reference / Generated Master Hero / Transparent Master separately.
+- **Photography Bible:** GENERATE MASTER HERO button; generation sets pending-review (not auto-approved); no immediate derivative prep.
+- **Defaults:** SOFT WAVE starts as reference-only (not pre-approved master).
+
+**Changes:** productAssetFactory pipeline/types/creativeDna, product-asset-factory-run, product-photography-generate, ProductAssetFactory.ts, BrandAssetsAssetFactoryWorkspace, PhotographyBibleWorkspace, SignatureUnitCard, signatureUnitPipelineStatus, hooks, demo configs, CreativeDnaRegistry/GenerationPackage, `motherboard/MEMORY.md`.
+

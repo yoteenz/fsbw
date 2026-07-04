@@ -80,6 +80,7 @@ export const CREATIVE_DNA_BENCHMARK_OUTPUT: CreativeDnaBenchmarkOutput = {
   aspectRatio: '1:1',
   resolution: '4096×4096',
   background: 'Pure white seamless studio',
+  /** Fal benchmark attachment reference — not the approved processing master. */
   heroPortraitSrc: '/assets/2D WAVY FRONT.png',
   status: 'approved',
 };

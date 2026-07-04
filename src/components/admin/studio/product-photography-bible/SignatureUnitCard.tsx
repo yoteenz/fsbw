@@ -129,7 +129,7 @@ export function SignatureUnitCard({
           disabled={generating || !generateEnabled}
           title={generateEnabled ? 'Generate via Creative DNA v1.0 + Fal' : 'Fal generation POC — SOFT WAVE only'}
         >
-          {generating ? 'GENERATING…' : 'GENERATE VARIANTS'}
+          {generating ? 'GENERATING…' : 'GENERATE MASTER HERO'}
         </button>
       </div>
     </article>

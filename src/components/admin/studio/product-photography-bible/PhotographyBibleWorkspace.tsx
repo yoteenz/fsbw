@@ -10,7 +10,7 @@ import {
   CREATIVE_DNA_FUTURE_UNIT_SLOTS,
 } from '../../../../studio-os/product-photography';
 import { useAdminStudioProductPhotographyBible } from '../../../../hooks/useAdminStudioProductPhotographyBibleState';
-import { useAdminStudioPhotographyDerivatives, prepareAndPersistDerivatives } from '../../../../hooks/useAdminStudioPhotographyDerivativesState';
+import { useAdminStudioPhotographyDerivatives } from '../../../../hooks/useAdminStudioPhotographyDerivativesState';
 import { useAdminStudioPhotographyCreativeDna } from '../../../../hooks/useAdminStudioPhotographyCreativeDnaState';
 import { getLatestProductAssetFactoryJob } from '../../../../hooks/useAdminStudioBrandAssetsProductAssetFactoryState';
 import {
@@ -76,10 +76,9 @@ function PhotographyBibleDashboardInner() {
     patchUnit(slug, {
       heroPortraitSrc: result.generatedMasterUrl,
       referenceImageSrc: result.productReferenceImageSrc ?? undefined,
-      photographyStatus: 'approved',
-      mediaKitStatus: 'partial',
+      photographyStatus: 'pending-review',
+      mediaKitStatus: 'empty',
     });
-    prepareAndPersistDerivatives('signature-collection', slug);
   };
 
   const handleGenerateVariants = async (slug: string) => {
@@ -87,7 +86,7 @@ function PhotographyBibleDashboardInner() {
       window.alert('Fal generation POC is enabled for SOFT WAVE (Unit 003) only.');
       return;
     }
-    const result = await generate({ action: 'generate-variants', unitSlug: slug, runAssetFactory: true });
+    const result = await generate({ action: 'generate-variants', unitSlug: slug });
     if (result.ok) {
       applyGenerationResult(slug, result);
     } else {
@@ -109,7 +108,6 @@ function PhotographyBibleDashboardInner() {
       action: 'replace-reference',
       unitSlug: slug,
       productReferenceImageSrc: nextRef.trim(),
-      runAssetFactory: true,
     });
     if (result.ok) {
       applyGenerationResult(slug, result);

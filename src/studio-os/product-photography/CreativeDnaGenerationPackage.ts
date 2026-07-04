@@ -120,7 +120,8 @@ export function resolveCreativeDnaForAssetFactory(unitSlug: string = CREATIVE_DN
   return {
     dna,
     package: pkg,
-    masterHeroSrc: unitSlug === dna.benchmarkOutput.unitSlug ? dna.benchmarkOutput.heroPortraitSrc : pkg.productReferenceImageSrc,
+    productReferenceSrc: pkg.productReferenceImageSrc,
     mustNotInventRules: true as const,
+    requiresGeneratedMasterHero: true as const,
   };
 }

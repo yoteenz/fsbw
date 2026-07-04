@@ -8,7 +8,10 @@ import {
   runProductAssetFactoryPipeline,
   PRODUCT_ASSET_FACTORY_POC_UNIT,
 } from '../_lib/productAssetFactory/pipeline.js';
-import type { ProductAssetFactoryStage } from '../_lib/productAssetFactory/types.js';
+import type {
+  ProductAssetFactoryAction,
+  ProductAssetFactoryStage,
+} from '../_lib/productAssetFactory/types.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {
@@ -25,9 +28,11 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
   return null;
 }
 
+const VALID_ACTIONS: ProductAssetFactoryAction[] = ['generate-hero', 'approve-hero', 'run-derivatives', 'retry'];
+
 /**
  * POST /api/admin/product-asset-factory-run
- * Photography Bible → Asset Factory pipeline (SOFT WAVE POC).
+ * Creative DNA → Generate Master Hero → Approval → Derivatives (SOFT WAVE POC).
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -43,11 +48,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const body = parseBody(req);
-  const action = String(body?.action || 'run').trim();
+  const actionRaw = String(body?.action || 'generate-hero').trim();
+  const action = (actionRaw === 'run' ? 'generate-hero' : actionRaw) as ProductAssetFactoryAction;
   const unitSlug = String(body?.unitSlug || PRODUCT_ASSET_FACTORY_POC_UNIT.slug).trim();
   const fromStage = body?.fromStage ? (String(body.fromStage) as ProductAssetFactoryStage) : undefined;
-  const masterHeroSrc =
-    typeof body?.masterHeroSrc === 'string' ? body.masterHeroSrc.trim() : undefined;
+  const productReferenceSrc =
+    typeof body?.productReferenceSrc === 'string' ? body.productReferenceSrc.trim() : undefined;
+  const generatedMasterHeroSrc =
+    typeof body?.generatedMasterHeroSrc === 'string' ? body.generatedMasterHeroSrc.trim() : undefined;
+  const heroApproved = body?.heroApproved === true;
 
   if (unitSlug !== PRODUCT_ASSET_FACTORY_POC_UNIT.slug) {
     return res.status(400).json({
@@ -56,13 +65,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
+  if (!VALID_ACTIONS.includes(action)) {
+    return res.status(400).json({
+      error: 'Invalid action — use generate-hero, approve-hero, run-derivatives, or retry',
+    });
+  }
+
   if (action === 'retry' && !fromStage) {
     return res.status(400).json({ error: 'Retry requires fromStage (failed step to restart from)' });
   }
 
   const result = await runProductAssetFactoryPipeline({
+    action,
     fromStage: action === 'retry' ? fromStage : undefined,
-    masterHeroSrc,
+    productReferenceSrc,
+    generatedMasterHeroSrc,
+    heroApproved,
   });
 
   return res.status(result.ok ? 200 : 500).json(result);

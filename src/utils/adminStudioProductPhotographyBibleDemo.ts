@@ -75,15 +75,14 @@ export const PHOTOGRAPHY_BIBLE_INHERITANCE_CHAIN = [
 function defaultUnitRecord(
   unit: (typeof SIGNATURE_COLLECTION_UNITS)[number]
 ): SignatureUnitPhotographyRecord {
-  const isBenchmark = unit.slug === 'soft-wave';
   return {
     slug: unit.slug,
     collectionNo: unit.collectionNo,
     label: unit.label,
-    heroPortraitSrc: unit.referenceImageSrc,
+    heroPortraitSrc: '',
     referenceImageSrc: unit.referenceImageSrc,
-    photographyStatus: isBenchmark ? 'approved' : 'reference',
-    mediaKitStatus: isBenchmark ? 'partial' : 'empty',
+    photographyStatus: 'reference',
+    mediaKitStatus: 'empty',
     version: '1.0',
     lastUpdated: '2026-07-04',
   };

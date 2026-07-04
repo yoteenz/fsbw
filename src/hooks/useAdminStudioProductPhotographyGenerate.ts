@@ -52,15 +52,15 @@ export async function runProductPhotographyGenerateApi(opts: {
       action: opts.action,
       unitSlug: opts.unitSlug,
       productReferenceImageSrc: opts.productReferenceImageSrc,
-      runAssetFactory: opts.runAssetFactory !== false,
+      runAssetFactory: opts.runAssetFactory === true,
     }),
   });
 
   const data = (await res.json()) as ProductPhotographyGenerateApiResult;
-  if (data.assetFactory?.job && data.assetFactory.registry && data.assetFactory.logs) {
+  if (data.assetFactory?.job && data.assetFactory.logs) {
     persistProductAssetFactoryResult({
       job: data.assetFactory.job,
-      registry: data.assetFactory.registry,
+      registry: data.assetFactory.registry ?? [],
       logs: data.assetFactory.logs,
     });
   }

@@ -1,15 +1,21 @@
 /** Product Asset Factory — pipeline types (Brand Assets / Photography Bible). */
 
 export type ProductAssetFactoryStage =
-  | 'waiting'
+  | 'reference-ready'
+  | 'generating-master-hero'
+  | 'hero-generated'
+  | 'awaiting-hero-approval'
+  | 'hero-approved'
   | 'removing-background'
-  | 'generating-transparent-master'
-  | 'generating-derivatives'
+  | 'transparent-master-generated'
+  | 'generating-smart-assets'
   | 'uploading-to-supabase'
   | 'registering-assets'
   | 'ready-for-review'
   | 'published'
   | 'failed';
+
+export type ProductAssetFactoryAction = 'generate-hero' | 'approve-hero' | 'run-derivatives' | 'retry';
 
 export type ProductAssetFactoryAssetType =
   | 'master-white'
@@ -62,6 +68,12 @@ export type ProductAssetFactoryJob = {
   stage: ProductAssetFactoryStage;
   failedStage?: ProductAssetFactoryStage;
   error?: string;
+  /** Existing website product image — reference input only, never processed as master. */
+  productReferenceUrl: string;
+  /** Fal-generated Master Hero Portrait from Creative DNA v1.0. */
+  generatedMasterHeroUrl?: string;
+  heroApproved: boolean;
+  /** Approved generated master used for derivative processing. */
   masterHeroUrl: string;
   transparentMasterUrl?: string;
   derivativeCount: number;
@@ -69,3 +81,6 @@ export type ProductAssetFactoryJob = {
   startedAt: string;
   lastUpdated: string;
 };
+
+export const DERIVATIVE_BLOCKED_MESSAGE =
+  'Generated Master Hero required before derivative processing.';

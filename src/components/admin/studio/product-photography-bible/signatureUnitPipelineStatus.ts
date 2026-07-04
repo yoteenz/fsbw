@@ -15,21 +15,29 @@ export function deriveSignatureUnitPipelineStatus(
   factoryJob: ProductAssetFactoryJobRecord | undefined,
   derivativeCount: number
 ): SignatureUnitPipelineStatus {
-  const masterHero =
-    unit.photographyStatus === 'approved'
+  const masterHero = factoryJob?.generatedMasterHeroUrl
+    ? factoryJob.heroApproved
       ? 'Approved'
-      : unit.photographyStatus === 'reference'
-        ? 'Pending'
-        : unit.photographyStatus === 'pending-review'
-          ? 'Pending'
-          : 'Missing';
+      : factoryJob.stage === 'awaiting-hero-approval' || factoryJob.stage === 'hero-generated'
+        ? 'Awaiting Approval'
+        : 'Generated'
+    : unit.photographyStatus === 'pending-review'
+      ? 'Awaiting Approval'
+      : unit.photographyStatus === 'approved'
+        ? 'Approved'
+        : unit.photographyStatus === 'reference'
+          ? 'Reference Only'
+          : 'Not Generated';
 
   const transparentMaster =
-    factoryJob?.transparentMasterUrl || factoryJob?.stage === 'ready-for-review' || factoryJob?.stage === 'published'
+    factoryJob?.transparentMasterUrl ||
+    factoryJob?.stage === 'transparent-master-generated' ||
+    factoryJob?.stage === 'ready-for-review' ||
+    factoryJob?.stage === 'published'
       ? 'Generated'
-      : factoryJob && factoryJob.stage !== 'failed'
+      : factoryJob?.heroApproved
         ? 'Pending'
-        : 'Pending';
+        : 'Blocked';
 
   const mediaKit =
     unit.mediaKitStatus === 'complete'
@@ -38,14 +46,16 @@ export function deriveSignatureUnitPipelineStatus(
         ? 'Prepared'
         : 'Empty';
 
-  const smartAssets = derivativeCount > 0 ? 'Generated' : 'Pending';
+  const smartAssets = derivativeCount > 0 ? 'Generated' : factoryJob?.heroApproved ? 'Pending' : 'Blocked';
 
   const assetFactory =
     factoryJob?.stage === 'ready-for-review' || factoryJob?.stage === 'published'
       ? 'Ready'
-      : factoryJob && factoryJob.stage !== 'failed' && factoryJob.stage !== 'waiting'
-        ? 'Processing'
-        : 'Needs Processing';
+      : factoryJob?.stage === 'awaiting-hero-approval' || factoryJob?.stage === 'hero-generated'
+        ? 'Awaiting Hero Approval'
+        : factoryJob && factoryJob.stage !== 'failed' && factoryJob.stage !== 'reference-ready'
+          ? 'Processing'
+          : 'Needs Master Hero';
 
   return {
     creativeDna: 'Inherited v1.0',
