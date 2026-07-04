@@ -47,15 +47,13 @@ export function isBawClientTestOnlyMode(pathname: string): boolean {
 }
 
 /**
- * Footer shows VIEW SUBSCRIPTIONS instead of ADD TO BAG / CONFIRM SELECTION when:
- * - Signed out (all BAW pages), or
- * - Signed-in standard member on premium option sub-pages only.
+ * Footer shows VIEW SUBSCRIPTIONS (+ SAVE SLAY CARD on view-mode hub) only on
+ * `/build-a-wig/try/…` routes — for signed-out users and signed-in standard/premium members.
  */
 export function isBawViewSubscriptionsFooterMode(pathname: string): boolean {
-  if (!pathname.startsWith('/build-a-wig') && !isBawTutorialPath(pathname)) return false;
-  if (!isSignedInFromStorage()) return true;
-  if (isPremiumMemberForGatedFeatures()) return false;
-  return pathnameIsBuildWigPremiumMembershipStep(pathname);
+  if (!isBawTutorialPath(pathname)) return false;
+  if (isActiveBuildWigAppointmentMode()) return false;
+  return true;
 }
 
 /** Signed-in standard members on hub landing — CUSTOMIZE IN BUILD-A-WIG footer. */

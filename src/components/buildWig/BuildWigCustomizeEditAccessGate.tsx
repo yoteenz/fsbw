@@ -16,7 +16,7 @@ function isSignedInFromStorage(): boolean {
 
 /**
  * Guests may browse customize sub-pages (try flow) without sign-in.
- * Signed-in non-premium: customize browse freely (premium steps use VIEW SUBSCRIPTIONS footer);
+ * Signed-in non-premium: customize browse freely (premium steps show upgrade modal);
  * edit flows still require premium.
  */
 export function BuildWigCustomizeEditAccessGate() {

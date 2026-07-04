@@ -9,7 +9,7 @@ export { pathnameIsBuildWigPremiumMembershipStep };
 
 /**
  * On lace/texture/color/hairline/styling/addons routes: if the user is not premium, show the upgrade modal
- * (edit/customize flows only). Guests and standard members on premium steps browse freely; footer uses VIEW SUBSCRIPTIONS.
+ * (edit/customize member flows). View-mode try routes browse freely; footer uses VIEW SUBSCRIPTIONS.
  */
 export function useBuildWigPremiumMembershipStepGate(): JSX.Element | null {
   const location = useLocation();
@@ -58,9 +58,9 @@ export function useBuildWigPremiumMembershipStepGate(): JSX.Element | null {
     setShowUpgradeModal(false);
     try {
       const base = getBuildAWigFlowBasePath(location.pathname);
-      navigate(base || '/build-a-wig');
+      navigate(base || '/build-a-wig/noir');
     } catch {
-      navigate('/build-a-wig');
+      navigate('/build-a-wig/noir');
     }
   }, [navigate, location.pathname]);
 

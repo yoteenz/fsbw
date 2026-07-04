@@ -58,17 +58,6 @@ import {
 } from '../../utils/bawTryUnitSelection';
 import { BAW_TUTORIAL_ROUTE, getBawTryFlowBasePath, getBawTryOptionSubPagePath, isBawTryHubLandingPath, isBawTryStepSegment, isBawTryUnitSlug, isBawTutorialPath } from '../../constants/bawTutorialConfig';
 import { isPremiumMemberForGatedFeatures, prepareMembershipUpgradeNavigation } from '../../utils/premiumMemberAccess';
-import { NOIR_NATURAL_MANNEQUIN_TRIPLE } from '../../utils/bawStaticMannequinReferencePaths';
-
-/**
- * Default NOIR mannequin (OFF BLACK / natural) on **hub landing** routes — no committed fal color on these pages.
- * Sub-steps (`/build-a-wig/noir/customize/length`, etc.) use live composite from storage when available; exact **`/build-a-wig/noir`** stays static mannequins.
- */
-const DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS: [string, string, string] = [...NOIR_NATURAL_MANNEQUIN_TRIPLE];
-
-function isNoirBawHubLandingPathname(pathname: string): boolean {
-  return pathname === '/build-a-wig';
-}
 
 /**
  * Exact product hub routes (`/build-a-wig/noir`, `/build-a-wig/blanco`, …) — not `/…/customize` or `/…/edit`.
@@ -142,7 +131,7 @@ export default function BuildAWigPage() {
   /** Live NOIR WebPs on NOIR **step** routes only (`/noir/customize/<step>`, `/noir/edit/<step>`) — not product/customize/edit hubs. */
   const [liveNoirHubWigViews, setLiveNoirHubWigViews] = useState<[string, string, string] | null>(() => {
     const pathname = bawPathname;
-    if (pathname === '/build-a-wig' || !pathname.startsWith('/build-a-wig/noir')) return null;
+    if (!pathname.startsWith('/build-a-wig/noir')) return null;
     if (isNoirBawProductHubPathname(pathname)) return null;
     if (!isNoirBawLivePreviewStepPathname(pathname)) return null;
     return resolveAdminNoirHubLiveWigViewsFromStorage(pathname);
@@ -750,8 +739,7 @@ export default function BuildAWigPage() {
     // Check if we're on the build-a-wig page, edit page or customize page (not a sub-page)
     // NOTE: Removed check for '/' since root path now goes to lobby page
     // CRITICAL: Include product-specific main routes (blanco, soft-wave, soft-curl, noir)
-    const isMainPage = bawPathname === '/build-a-wig' ||
-                       bawPathname === '/build-a-wig/noir' ||
+    const isMainPage = bawPathname === '/build-a-wig/noir' ||
                        bawPathname === '/build-a-wig/blanco' ||
                        bawPathname === '/build-a-wig/soft-wave' ||
                        bawPathname === '/build-a-wig/soft-curl' ||
@@ -2255,7 +2243,7 @@ export default function BuildAWigPage() {
       // and their price are reflected on the main page as soon as we receive the event (after add-ons Back or persist).
 
       // Skip for main mode - main mode handles loading in the route change effect
-      const isMainPage = bawPathname === '/build-a-wig';
+      const isMainPage = bawPathname === '/build-a-wig/noir';
       if (isMainPage) {
         return; // Don't handle storage changes for main mode - let route change effect handle it
       }
@@ -2824,14 +2812,13 @@ export default function BuildAWigPage() {
   const [showBawMenuSignInModal, setShowBawMenuSignInModal] = useState(false);
 
   useEffect(() => {
-    const hub = bawPathname === '/build-a-wig' || bawPathname === '/build-a-wig/noir';
+    const hub = bawPathname === '/build-a-wig/noir';
     if (!hub) return;
     const params = new URLSearchParams(location.search);
     if (params.get('bawMenu') !== '1') return;
     params.delete('bawMenu');
     const q = params.toString();
-    const base = bawPathname === '/build-a-wig/noir' ? '/build-a-wig/noir' : '/build-a-wig';
-    navigate(q ? `${base}?${q}` : base, { replace: true });
+    navigate(q ? `/build-a-wig/noir?${q}` : '/build-a-wig/noir', { replace: true });
     setShowMobileMenu(true);
   }, [bawPathname, location.search, navigate]);
 
@@ -3181,21 +3168,17 @@ export default function BuildAWigPage() {
 
   const hubLiveNoirWigViews = useMemo(() => {
     const pathname = bawPathname;
-    if (isNoirBawHubLandingPathname(pathname)) return null;
     if (!pathname.startsWith('/build-a-wig/noir')) return null;
     if (isNoirBawProductHubPathname(pathname)) return null;
     if (!isNoirBawLivePreviewStepPathname(pathname)) return null;
     return liveNoirHubWigViews;
   }, [bawPathname, liveNoirHubWigViews]);
 
-  const wigViews = isNoirBawHubLandingPathname(bawPathname)
-    ? DEFAULT_NOIR_BAW_HUB_LANDING_WIG_VIEWS
-    : hubLiveNoirWigViews ?? baseWigViewsForHub;
+  const wigViews = hubLiveNoirWigViews ?? baseWigViewsForHub;
 
   useEffect(() => {
     const path = bawPathname;
     if (
-      isNoirBawHubLandingPathname(path) ||
       isNoirBawProductHubPathname(path) ||
       path.replace(/\/$/, '') === '/build-a-wig/noir/customize' ||
       path.replace(/\/$/, '') === '/build-a-wig/noir/edit'
@@ -3224,7 +3207,7 @@ export default function BuildAWigPage() {
   useEffect(() => {
     const refresh = () => {
       const path = typeof window !== 'undefined' ? window.location.pathname : '';
-      if (path && (isNoirBawHubLandingPathname(path) || isNoirBawProductHubPathname(path))) {
+      if (path && isNoirBawProductHubPathname(path)) {
         setLiveNoirHubWigViews(null);
         return;
       }
@@ -4034,7 +4017,7 @@ export default function BuildAWigPage() {
     
     // Determine base route based on current pathname
     // CRITICAL: Check for customize/edit modes FIRST before checking product routes
-    let baseRoute = '/build-a-wig'; // Default
+    let baseRoute = '/build-a-wig/noir'; // Default
     if (isEditMode) {
       if (pathname.startsWith('/build-a-wig/blanco/edit')) baseRoute = '/build-a-wig/blanco/edit';
       else if (pathname.startsWith('/build-a-wig/soft-wave/edit')) baseRoute = '/build-a-wig/soft-wave/edit';
@@ -5892,7 +5875,7 @@ export default function BuildAWigPage() {
       <BuildAWigFeatureSignInModal
         isOpen={showBawMenuSignInModal}
         onClose={() => setShowBawMenuSignInModal(false)}
-        returnTo={{ pathname: '/build-a-wig', search: '?bawMenu=1' }}
+        returnTo={{ pathname: '/build-a-wig/noir', search: '?bawMenu=1' }}
       />
 
       <ConfirmationModal

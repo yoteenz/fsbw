@@ -35,7 +35,6 @@ export function resolveBawBuildMode(pathname: string): BawBuildMode | null {
   if (p.includes('/edit')) return 'EDIT';
   if (p.includes('/customize')) return 'CUSTOMIZE';
   if (
-    p === '/build-a-wig' ||
     p === '/build-a-wig/noir' ||
     p === '/build-a-wig/blanco' ||
     p === '/build-a-wig/soft-wave' ||

@@ -35443,3 +35443,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Email product promo uses table-based inline styles for client compatibility; interactive carousel is preview-editor-only via `data-email-collection` / `data-collection-slide` attributes; essentials descriptors are display-only copy (RAW VIRGIN BUNDLES, LACE CLOSURES, HD LACE FRONTALS).
 
+---
+
+## 2026-07-04 — BAW view-mode footer scope + invalid `/build-a-wig` redirect
+
+**Context:** User asked that **VIEW SUBSCRIPTIONS** and **SAVE SLAY CARD** appear only on **view-mode routes** (`/build-a-wig/try/…`) for signed-out users and signed-in standard/premium members — not on member customize/edit/product hubs. Also reported legacy **`/build-a-wig`** still rendered when it should be invalid.
+
+**Topics covered:** Prior BAW view-mode work (try routes, slay card hub button, SAVE SELECTION on try sub-pages, footer rules by membership); this turn scopes subscription/slay-card footers to view mode only and removes the generic hub route.
+
+**Decisions / outcomes:**
+- **`isBawViewSubscriptionsFooterMode`** now returns true **only** when **`isBawTutorialPath(pathname)`** (view mode) — all membership tiers on try routes get **VIEW SUBSCRIPTIONS** (+ **SAVE SLAY CARD** on try hub via existing hub footer branch). Member routes (`/build-a-wig/noir`, customize, edit) use commerce footers again (standard hub → **CUSTOMIZE IN BUILD-A-WIG**; premium → **ADD TO BAG**; standard premium steps → upgrade modal + **CONFIRM SELECTION**).
+- **`/build-a-wig`** replaced with **`BuildAWigLegacyHubRedirect`**: guests → **`/build-a-wig/try`**, signed-in → **`/build-a-wig/noir`**. Removed from hub landing path sets and default flow-base fallbacks (**`/build-a-wig/noir`**).
+- Cleaned dead **`/build-a-wig`** hub mannequin override and **`?bawMenu=1`** target on main page.
+
+**Changes:** `src/utils/bawClientTestMode.ts`, `src/utils/buildAWigRoutes.ts`, `src/App.tsx`, `src/pages/build-a-wig/page.tsx`, `src/utils/bawModeChrome.ts`, premium gate/access comments, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+**Conventions:** View-mode subscription/slay-card CTAs are **`/build-a-wig/try/…` only**; never on member BAW URLs. Do not re-enable exact **`/build-a-wig`** as a hub — redirect instead.
+

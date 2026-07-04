@@ -404,16 +404,10 @@ const ClientsAccountRedirect = () => {
   return <Navigate to={{ pathname: '/admin/clients/overview', search: location.search }} replace />;
 };
 
-// Wrapper component to ensure BuildAWigPage only renders on correct route
-const BuildAWigPageWrapper = () => {
-  const location = useLocation();
-  
-  // Only render BuildAWigPage if we're on the exact /build-a-wig route
-  if (location.pathname !== '/build-a-wig') {
-    return null;
-  }
-  
-  return <BuildAWigPage />;
+/** Legacy `/build-a-wig` hub — redirect to view mode (guest) or NOIR product hub (signed-in). */
+const BuildAWigLegacyHubRedirect = () => {
+  const target = isSignedIn() ? '/build-a-wig/noir' : '/build-a-wig/try';
+  return <Navigate to={target} replace />;
 };
 
 function App() {
@@ -1292,7 +1286,7 @@ function App() {
         
         {/* Main build-a-wig routes */}
         <Route path="/build-a-wig/length" element={<LengthPage />} />
-        <Route path="/build-a-wig" element={<BuildAWigPageWrapper />} />
+        <Route path="/build-a-wig" element={<BuildAWigLegacyHubRedirect />} />
         <Route path="/build-a-wig/color" element={<ColorPage />} />
         <Route path="/build-a-wig/density" element={<DensityPage />} />
         <Route path="/build-a-wig/lace" element={<LacePage />} />

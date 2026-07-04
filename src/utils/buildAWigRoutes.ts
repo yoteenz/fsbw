@@ -19,7 +19,6 @@ export function pathnameIsBuildWigPremiumMembershipStep(pathname: string): boole
 }
 
 const BAW_HUB_LANDING_PATHS = new Set([
-  '/build-a-wig',
   '/build-a-wig/noir',
   '/build-a-wig/blanco',
   '/build-a-wig/soft-wave',
@@ -54,7 +53,6 @@ const FLOW_BASES_ORDERED: string[] = [
   '/build-a-wig/noir/edit',
   '/build-a-wig/noir',
   '/build-a-wig/edit',
-  '/build-a-wig',
 ];
 
 /** True when pathname is a product customize sub-route (any unit). */
@@ -80,7 +78,7 @@ export function isBuildAWigCustomizeHubPathname(pathname: string): boolean {
  */
 export function getBuildAWigFlowBasePath(pathname: string): string {
   if (!pathname.startsWith('/build-a-wig')) {
-    return '/build-a-wig';
+    return '/build-a-wig/noir';
   }
   if (isBawTutorialPath(pathname)) {
     return getBawTryFlowBasePath(pathname);
@@ -90,7 +88,7 @@ export function getBuildAWigFlowBasePath(pathname: string): string {
       return base;
     }
   }
-  return '/build-a-wig';
+  return '/build-a-wig/noir';
 }
 
 /** Member SHOP menu target — product customize hub (default NOIR). */
@@ -137,7 +135,7 @@ export function getBuildAWigShopMenuTargetPath(isSignedIn: boolean, buildAWigPat
 export function getBuildAWigCustomizePathForMenu(buildAWigPath: string): string {
   const p = buildAWigPath.replace(/\/$/, '') || '/';
   if (p.includes('/customize')) return p;
-  if (p === '/build-a-wig' || isBawTutorialPath(p)) return '/build-a-wig/noir/customize';
+  if (isBawTutorialPath(p)) return '/build-a-wig/noir/customize';
   if (p.startsWith('/build-a-wig/')) return `${p}/customize`;
   return '/build-a-wig/noir/customize';
 }
@@ -163,7 +161,6 @@ const BAW_PRODUCT_HUB_UNITS = [
  */
 export function isBawProductHubThumbPathname(pathname: string): boolean {
   const p = resolveBuildAWigTryPathToHubPath(pathname).replace(/\/$/, '') || '/';
-  if (p === '/build-a-wig') return true;
   for (const u of BAW_PRODUCT_HUB_UNITS) {
     const base = `/build-a-wig/${u}`;
     if (p === base || p === `${base}/customize` || p === `${base}/edit`) return true;
