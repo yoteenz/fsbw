@@ -4,6 +4,7 @@ import {
   type PhotographyStatus,
   type SignatureUnitPhotographyRecord,
 } from '../utils/adminStudioProductPhotographyBibleDemo';
+import { prepareAndPersistDerivatives } from './useAdminStudioPhotographyDerivativesState';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 
 type UnitPatchStore = Record<string, Partial<SignatureUnitPhotographyRecord>>;
@@ -42,7 +43,10 @@ export function useAdminStudioProductPhotographyBible() {
   }, []);
 
   const approveUnit = useCallback(
-    (slug: string) => patchUnit(slug, { photographyStatus: 'approved' as PhotographyStatus }),
+    (slug: string) => {
+      patchUnit(slug, { photographyStatus: 'approved' as PhotographyStatus, mediaKitStatus: 'partial' });
+      prepareAndPersistDerivatives('signature-collection', slug);
+    },
     [patchUnit]
   );
 

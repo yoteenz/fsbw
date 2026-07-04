@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { AdminStudioTabBar } from '../AdminStudioTabBar';
-import { PhotographyBibleProvider, usePhotographySystem } from '../../../../studio-os/product-photography';
+import {
+  PhotographyBibleProvider,
+  usePhotographySystem,
+  DERIVATIVE_CROP_TEMPLATES,
+  DERIVATIVE_SITE_BINDINGS,
+  DERIVATIVE_SLOT_DEFINITIONS,
+} from '../../../../studio-os/product-photography';
 import { useAdminStudioProductPhotographyBible } from '../../../../hooks/useAdminStudioProductPhotographyBibleState';
+import { useAdminStudioPhotographyDerivatives } from '../../../../hooks/useAdminStudioPhotographyDerivativesState';
 import {
   getPhotographyTabBody,
   PHOTOGRAPHY_BIBLE_INHERITANCE_CHAIN,
@@ -21,8 +28,10 @@ function PhotographyBibleDashboardInner() {
   const [activeTab, setActiveTab] = useState<PhotographyBibleTabId>('overview');
   const { lockedSpecifications, currentVersion } = usePhotographySystem();
   const { units, approveUnit } = useAdminStudioProductPhotographyBible();
+  const { getForUnit, results } = useAdminStudioPhotographyDerivatives();
 
   const tabBody = getPhotographyTabBody(activeTab);
+  const preparedUnitCount = results.length;
 
   return (
     <div className="pb-6">
@@ -137,6 +146,72 @@ function PhotographyBibleDashboardInner() {
             </div>
           ))}
           <p style={{ ...ppCaption, marginTop: 8 }}>FUTURE SLOTS · V1.1 · V1.2 · V2.0 (append-only)</p>
+        </section>
+      )}
+
+      {activeTab === 'derivatives' && (
+        <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px' }}>
+          <p style={ppSectionTitle}>PHOTOGRAPHY DERIVATIVE ENGINE</p>
+          <p style={ppCaption}>{tabBody}</p>
+          <p style={{ ...ppCaption, marginTop: 8 }}>
+            {DERIVATIVE_SLOT_DEFINITIONS.length} SLOTS · {DERIVATIVE_CROP_TEMPLATES.length} CROP TEMPLATES ·{' '}
+            {DERIVATIVE_SITE_BINDINGS.length} SITE BINDINGS · {preparedUnitCount} UNITS PREPARED
+          </p>
+          <p style={{ ...ppCaption, marginTop: 6, fontSize: '7px' }}>
+            DOCS · docs/frontal-slayer/photography-derivative-engine/
+          </p>
+
+          <p style={{ ...ppSectionTitle, marginTop: 14 }}>CROP TEMPLATE CATEGORIES</p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 mt-2">
+            {(['wishlist', 'cart', 'search', 'collection', 'product', 'desktop', 'mobile', 'studio', 'email', 'social', 'thumbnail'] as const).map(
+              (category) => {
+                const templates = DERIVATIVE_CROP_TEMPLATES.filter((t) => t.category === category);
+                return (
+                  <div key={category} className="p-2" style={{ background: 'rgba(0,0,0,0.03)', border: `1px solid ${PP_VISUAL.panelBorder}` }}>
+                    <p style={{ ...ppCaption, color: PP_VISUAL.black, fontFamily: '"Futura PT Medium"', textTransform: 'uppercase' }}>
+                      {category}
+                    </p>
+                    <p style={{ ...ppCaption, fontSize: '7px' }}>{templates.map((t) => t.label).join(' · ') || '—'}</p>
+                  </div>
+                );
+              }
+            )}
+          </div>
+
+          <p style={{ ...ppSectionTitle, marginTop: 14 }}>DERIVATIVE SLOTS (ALL UNITS)</p>
+          <ul style={{ margin: '8px 0 0', paddingLeft: '16px', maxHeight: 220, overflowY: 'auto' }}>
+            {DERIVATIVE_SLOT_DEFINITIONS.map((slot) => (
+              <li key={slot.id} style={{ ...ppCaption, marginBottom: 4 }}>
+                {slot.name} — {slot.purpose}
+              </li>
+            ))}
+          </ul>
+
+          <p style={{ ...ppSectionTitle, marginTop: 14 }}>PREPARED DERIVATIVES BY UNIT</p>
+          <p style={{ ...ppCaption, marginBottom: 8 }}>
+            Approve a Signature unit below to auto-prepare {DERIVATIVE_SLOT_DEFINITIONS.length} derivative slots.
+          </p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {units.map((unit) => {
+              const derivatives = getForUnit('signature-collection', unit.slug);
+              const prepared = derivatives.length;
+              return (
+                <div key={unit.slug} className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
+                  <p style={{ ...ppCaption, color: PP_VISUAL.red }}>
+                    {unit.collectionNo} · {unit.label}
+                  </p>
+                  <p style={ppCaption}>
+                    {prepared > 0
+                      ? `${prepared} SLOTS PREPARED · STATUS ${derivatives[0]?.status?.toUpperCase() ?? '—'}`
+                      : 'NOT PREPARED — APPROVE HERO TO PREPARE'}
+                  </p>
+                  {prepared > 0 ? (
+                    <p style={{ ...ppCaption, fontSize: '7px' }}>{derivatives[0]?.folderPath.replace(/\/[^/]+$/, '/…')}</p>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
         </section>
       )}
 

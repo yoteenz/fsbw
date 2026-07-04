@@ -35570,3 +35570,25 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** All future StudioOS products inherit camera, composition, lighting, background, display bust, logo placement, exports, and media kit structure from Photography Bible V1.0. Do not overwrite V1.0 — append versions only.
 
+---
+
+## 2026-07-04 — Milestone 21: Photography Derivative Engine (infrastructure)
+
+**Context (full chat):** After Milestone 20.5 Product Photography Bible, user Milestone 21 — automatic derivative asset pipeline for every approved Product Hero Portrait. No website/StudioOS redesign, no AI generation, no image processing, no customer-facing UI changes. Photography Bible remains single source of truth.
+
+**Goal:** Approved master hero becomes ecosystem source of truth; all website imagery eventually inherits via derivative slots and assetKey resolver — never manually managed separate product images.
+
+**Deliverables:**
+- **StudioOS modules:** `DerivativeCropTemplates.ts` (11 reusable categories: wishlist, cart, search, collection, product, desktop, mobile, studio, email, social, thumbnail + master/marketing), `DerivativeAssetRegistry.ts` (18 slot definitions), `PhotographyDerivativeEngine.ts` (`prepareDerivativesOnHeroApproval`), `DerivativeAssetReplacement.ts` (`DERIVATIVE_SITE_BINDINGS`, `resolveDerivativeForSiteAsset`).
+- **Admin hook:** `useAdminStudioPhotographyDerivativesState.ts` — persists to `adminStudioProductPhotographyDerivatives_v1`; `approveUnit()` in Photography Bible triggers derivative preparation + `mediaKitStatus: partial`.
+- **Admin UI:** Photography Bible **DERIVATIVES** tab — crop categories, slot list, prepared units grid (approve hero to prepare 18 slots).
+- **Service:** `photographyDerivativeEngineStudioService` registered in `STUDIO_SERVICE_REGISTRY`.
+- **Docs:** `docs/frontal-slayer/photography-derivative-engine/` (overview, crop templates, derivative slots, asset replacement, future product lines).
+- **Folders:** `studio-os/product-photography/derivatives/signature-collection/{6 units}/{18 derivatives}/` (108 `.gitkeep`) + future-ready roots for bundles, closures, frontals, accessories.
+
+**Derivative record fields:** name, purpose, dimensions, aspect ratio, crop coordinates (normalized 0–1), version, status (`slot-prepared` default), generated date, last updated, folderPath.
+
+**Conventions:** Crop coordinates live in reusable templates only — never hardcoded per product. Future storefront resolves stable `assetKey` → derivative folder without page code changes. Same engine applies to bundles, closures, frontals, accessories, future brands.
+
+**Changes:** docs (6 files), `studio-os/product-photography/derivatives/` (112 gitkeep), StudioOS derivative modules, admin tab/hooks/service wiring, `motherboard/MEMORY.md`.
+

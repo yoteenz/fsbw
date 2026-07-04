@@ -28,7 +28,8 @@ export type PhotographyBibleTabId =
   | 'media-kits'
   | 'exports'
   | 'templates'
-  | 'version-history';
+  | 'version-history'
+  | 'derivatives';
 
 export const PHOTOGRAPHY_BIBLE_TABS: Array<{ id: PhotographyBibleTabId; label: string }> = [
   { id: 'overview', label: 'OVERVIEW' },
@@ -41,6 +42,7 @@ export const PHOTOGRAPHY_BIBLE_TABS: Array<{ id: PhotographyBibleTabId; label: s
   { id: 'media-kits', label: 'MEDIA KITS' },
   { id: 'exports', label: 'EXPORTS' },
   { id: 'templates', label: 'TEMPLATES' },
+  { id: 'derivatives', label: 'DERIVATIVES' },
   { id: 'version-history', label: 'VERSION HISTORY' },
 ];
 
@@ -121,6 +123,8 @@ export function getPhotographyTabBody(tabId: PhotographyBibleTabId): string {
       return PHOTOGRAPHY_SYSTEM_V1_DETAIL.exports;
     case 'templates':
       return `${PHOTOGRAPHY_EXPORT_TEMPLATES.length} export templates locked to V1.0.`;
+    case 'derivatives':
+      return 'Photography Derivative Engine — 18 derivative slots per approved hero · reusable crop templates · site asset bindings · no image processing in Milestone 21.';
     case 'version-history':
       return PHOTOGRAPHY_VERSION_HISTORY.map((v: PhotographyVersionRecord) => `${v.label} (${v.status})`).join(' · ');
     default:

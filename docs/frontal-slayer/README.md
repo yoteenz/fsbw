@@ -9,6 +9,7 @@ Workspace-specific documentation for the first StudioOS production tenant.
 | [SHOWS_AND_STUDIOS.md](./SHOWS_AND_STUDIOS.md) | Programming and virtual environments |
 | [CONTENT_PACKS.md](./CONTENT_PACKS.md) | Weekly production bundles |
 | [product-photography-bible/](./product-photography-bible/) | Product Photography Bible (Milestone 20.5) |
+| [photography-derivative-engine/](./photography-derivative-engine/) | Photography Derivative Engine (Milestone 21) |
 
 ## Products
 
