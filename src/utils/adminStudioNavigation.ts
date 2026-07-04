@@ -1,5 +1,5 @@
 /**
- * StudioOS navigation registry — grouped nav, breadcrumbs, and module metadata.
+ * studio os navigation registry — grouped nav, breadcrumbs, and module metadata.
  * UI-only; does not change routes or business logic.
  */
 
@@ -436,7 +436,7 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   {
     id: 'knowledge-hub',
     title: 'KNOWLEDGE HUB',
-    purpose: 'Living documentation — every StudioOS object explains itself; searchable wiki and workflow guides.',
+    purpose: 'Living documentation — every studio os object explains itself; searchable wiki and workflow guides.',
     route: p('knowledge-hub'),
     groupId: 'intelligence',
     status: 'live',
@@ -563,11 +563,11 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   {
     id: 'platform-settings',
     title: 'PLATFORM SETTINGS',
-    purpose: 'StudioOS platform identity and workspace registry (VXD Inc.).',
+    purpose: 'studio os platform identity and workspace registry (VXD Inc.).',
     route: '/admin/studio-os',
     groupId: 'settings',
     status: 'live',
-    metric: 'STUDIOOS',
+    metric: 'STUDIO OS',
     ctaLabel: 'PLATFORM',
     featuredOnOverview: true,
   },
@@ -628,7 +628,7 @@ export function buildStudioBreadcrumbs(pathname: string, pageTitle?: string): St
   const mod = resolveStudioModuleFromPath(pathname);
   const segments: StudioBreadcrumbSegment[] = [
     { label: 'ADMIN', path: '/admin/dashboard' },
-    { label: 'STUDIOOS', path: STUDIO_OVERVIEW_PATH },
+    { label: 'STUDIO OS', path: STUDIO_OVERVIEW_PATH },
   ];
 
   if (mod) {

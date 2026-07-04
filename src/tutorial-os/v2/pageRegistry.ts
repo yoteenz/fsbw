@@ -1,6 +1,6 @@
 import type { TutorialPageRegistryEntry } from './schema';
 
-/** Supported pages — every future StudioOS page can register here. */
+/** Supported pages — every future studio os page can register here. */
 export const TUTORIAL_PAGE_REGISTRY: readonly TutorialPageRegistryEntry[] = [
   { id: 'home', title: 'Home', route: '/home/shop', routeMatch: /^\/home\/shop/, helpTourId: 'mansion-tour', searchKeywords: ['home', 'shop', 'landing'] },
   { id: 'shop', title: 'Shop', route: '/home/shop', helpTourId: 'mansion-tour', searchKeywords: ['shop', 'catalog', 'products'] },

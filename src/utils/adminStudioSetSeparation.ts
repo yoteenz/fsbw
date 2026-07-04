@@ -1,6 +1,6 @@
 /**
  * Studio / Set separation — reusable master environment vs layered production elements.
- * Applies globally to all StudioOS sets (Milestone: Studio Set Separation).
+ * Applies globally to all studio os sets (Milestone: Studio Set Separation).
  */
 
 export type StudioSetLayerId =
@@ -188,7 +188,7 @@ export const WEATHER_STUDIO_LAYER_SPECS: StudioBlueprintLayerSpec[] = [
   },
 ];
 
-/** Generic studio blueprint layers — all StudioOS sets. */
+/** Generic studio blueprint layers — all studio os sets. */
 export const GENERIC_STUDIO_LAYER_SPECS: StudioBlueprintLayerSpec[] = WEATHER_STUDIO_LAYER_SPECS.map((layer) => ({
   ...layer,
   items: layer.items.slice(0, 4),

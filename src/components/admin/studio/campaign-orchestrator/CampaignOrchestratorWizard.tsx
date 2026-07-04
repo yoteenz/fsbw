@@ -126,7 +126,7 @@ export function CampaignOrchestratorWizard({ wizard, onUpdate, onStep, onGenerat
         <div>
           <p style={coSectionTitle}>GENERATE EXECUTION PLAN</p>
           <p style={{ ...coCaption, marginBottom: '12px' }}>
-            STUDIOOS WILL BUILD TIMELINE · TASKS · DELIVERABLES · DEPENDENCIES · EXECUTIVE REVIEW
+            STUDIO OS WILL BUILD TIMELINE · TASKS · DELIVERABLES · DEPENDENCIES · EXECUTIVE REVIEW
           </p>
           <div style={{ ...coPanelStyle, padding: '10px', marginBottom: '12px', background: '#fff' }}>
             <p style={{ ...coCaption, color: CO_VISUAL.black, fontFamily: '"Futura PT Medium"' }}>{wizard.name || 'UNTITLED'} · {CAMPAIGN_TYPES.find((t) => t.id === wizard.typeId)?.label}</p>

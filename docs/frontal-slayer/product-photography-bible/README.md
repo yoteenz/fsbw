@@ -1,6 +1,6 @@
 # Frontal Slayer Product Photography Bible
 
-Official source of truth for all Frontal Slayer product photography — Signature Collection units and every future StudioOS product.
+Official source of truth for all Frontal Slayer product photography — Signature Collection units and every future studio os product.
 
 | Document | Topic |
 |----------|-------|

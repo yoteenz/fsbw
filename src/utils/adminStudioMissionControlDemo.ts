@@ -1,5 +1,5 @@
 /**
- * Mission Control — executive operating room for StudioOS (Milestone 18).
+ * Mission Control — executive operating room for studio os (Milestone 18).
  * Demo/placeholder; workspace HQ after selection.
  */
 

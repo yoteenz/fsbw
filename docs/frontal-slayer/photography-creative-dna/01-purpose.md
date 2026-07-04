@@ -2,7 +2,7 @@
 
 Creative DNA eliminates manual re-uploading and manual prompt copy/paste for Frontal Slayer product photography.
 
-StudioOS remembers the approved photography standard permanently. Asset Factory reads Creative DNA before processing any product asset and must not invent photography rules.
+studio os remembers the approved photography standard permanently. Asset Factory reads Creative DNA before processing any product asset and must not invent photography rules.
 
 ## Milestone 22.5 scope
 

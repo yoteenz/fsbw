@@ -22,7 +22,7 @@ export function configureWorkspaceRegistry(api: WorkspaceRegistryApi): void {
 export function getWorkspaceRegistry(): WorkspaceRegistryApi {
   if (!workspaceRegistry) {
     throw new Error(
-      'StudioOS workspace registry is not configured. Import src/workspaces/index.ts before using workspace APIs.'
+      'studio os workspace registry is not configured. Import src/workspaces/index.ts before using workspace APIs.'
     );
   }
   return workspaceRegistry;

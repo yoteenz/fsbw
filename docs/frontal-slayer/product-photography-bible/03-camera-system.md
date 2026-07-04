@@ -14,7 +14,7 @@
 
 - No handheld or casual angles for master portraits.
 - No lens changes between Signature units — texture differences only.
-- Camera metadata is recorded in StudioOS Photography Bible for audit.
+- Camera metadata is recorded in studio os Photography Bible for audit.
 
 ## Code reference
 

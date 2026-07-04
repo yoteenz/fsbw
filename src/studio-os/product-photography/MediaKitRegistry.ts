@@ -33,7 +33,7 @@ export const MEDIA_KIT_ASSET_SLOTS: readonly MediaKitAssetSlot[] = [
   { id: 'email-crop', label: 'Email Crop', description: 'Transactional & promo email' },
   { id: 'mobile-crop', label: 'Mobile Crop', description: 'Mobile PDP surfaces' },
   { id: 'desktop-crop', label: 'Desktop Crop', description: 'Desktop hero surfaces' },
-  { id: 'studioos-preview', label: 'StudioOS Preview', description: 'Admin card thumbnails' },
+  { id: 'studioos-preview', label: 'studio os Preview', description: 'Admin card thumbnails' },
   { id: 'advertising', label: 'Advertising', description: 'Campaign composites' },
   { id: 'video-turntable', label: 'Video Turntable', description: 'Future 360 / motion' },
   { id: 'future-assets', label: 'Future Assets', description: 'Reserved expansion slot' },

@@ -64,7 +64,7 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     id: 'node-onboarding-tutorial',
     name: 'ONBOARDING TUTORIAL',
     type: 'customer-feature',
-    description: 'Customer-facing Mansion Tour — teaches website features (not StudioOS).',
+    description: 'Customer-facing Mansion Tour — teaches website features (not studio os).',
     purpose: 'Separate from admin Interactive Manual; shares tutorial-os architecture.',
     route: '/home/shop',
     moduleId: 'tutorial-os',
@@ -81,11 +81,11 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
   },
   {
     id: 'node-interactive-manual',
-    name: 'STUDIOOS INTERACTIVE MANUAL',
+    name: 'STUDIO OS INTERACTIVE MANUAL',
     type: 'module',
     description: 'Admin live walkthroughs powered by the Knowledge Graph.',
     moduleId: 'knowledge-hub',
-    searchKeywords: ['interactive manual', 'studioos manual', 'knowledge graph'],
+    searchKeywords: ['interactive manual', 'studio os manual', 'knowledge graph'],
   },
   {
     id: 'node-fallback-used',

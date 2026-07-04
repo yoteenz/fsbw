@@ -1,5 +1,5 @@
 /**
- * studio-os-core — reusable StudioOS platform package.
+ * studio-os-core — reusable studio os platform package.
  * Industry-agnostic logic only; workspace implementations live in src/workspaces/.
  */
 

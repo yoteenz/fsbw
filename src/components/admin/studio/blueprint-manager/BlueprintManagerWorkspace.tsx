@@ -52,7 +52,7 @@ export function BlueprintManagerWorkspace() {
         ))}
       </div>
 
-      <p style={bpSectionTitle}>STUDIOOS GLOBAL</p>
+      <p style={bpSectionTitle}>STUDIO OS GLOBAL</p>
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 mb-4">
         {globalBlueprints.map((bp) => (
           <AdminStudioExecutiveCard

@@ -1,5 +1,5 @@
 /**
- * StudioOS platform assets — system UI, icons, placeholders.
+ * studio os platform assets — system UI, icons, placeholders.
  * Workspace assets (logos, products, brand materials) live in workspace configs.
  */
 

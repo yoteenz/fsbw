@@ -1,8 +1,8 @@
-# StudioOS Platform Concepts
+# studio os Platform Concepts
 
 ## Operating System Metaphor
 
-StudioOS is to brands what an OS is to applications:
+studio os is to brands what an OS is to applications:
 
 - **Kernel** — workspace context, routing, storage scoping, module registry
 - **Drivers** — service stubs (OpenAI, Fal, Resend, publishing) in `STUDIO_SERVICE_REGISTRY`
@@ -17,7 +17,7 @@ StudioOS is to brands what an OS is to applications:
 
 ## Scalability Targets
 
-StudioOS architecture supports unlimited Workspaces, brands, products, shows, studios, talent, projects, content packs, campaigns, and asset libraries — each isolated by Workspace ID.
+studio os architecture supports unlimited Workspaces, brands, products, shows, studios, talent, projects, content packs, campaigns, and asset libraries — each isolated by Workspace ID.
 
 ## Industry Agnostic Core
 

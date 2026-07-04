@@ -1,5 +1,5 @@
 /**
- * StudioOS Mission Control — executive operating room platform types.
+ * studio os Mission Control — executive operating room platform types.
  */
 
 export type MissionStatus = 'on-track' | 'attention' | 'critical' | 'complete';

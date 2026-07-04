@@ -1,6 +1,6 @@
 # Frontal Slayer Brand Rules
 
-Workspace-specific brand standards (not StudioOS platform rules).
+Workspace-specific brand standards (not studio os platform rules).
 
 ## Visual
 
@@ -22,6 +22,6 @@ Approved unit catalog: NOIR, BLANCO, SOFT WAVE, BEACH WAVE, SOFT CURL, OCEAN CUR
 
 ## Terminology
 
-Frontal Slayer uses StudioOS vocabulary externally, but retains show names internally: Slay Report, Slay Lab, Lounge TV, Build Studio, PSA, The Vault, etc.
+Frontal Slayer uses studio os vocabulary externally, but retains show names internally: Slay Report, Slay Lab, Lounge TV, Build Studio, PSA, The Vault, etc.
 
 Configuration source: `src/workspaces/frontal-slayer/config.ts` → `brandRules`, `brandVoice`.

@@ -1,6 +1,6 @@
-# StudioOS Architecture
+# studio os Architecture
 
-StudioOS is a reusable operating system for modern brands. This document describes the layered architecture introduced by the `studio-os-core` extraction.
+studio os is a reusable operating system for modern brands. This document describes the layered architecture introduced by the `studio-os-core` extraction.
 
 ## Layer Model
 
@@ -20,7 +20,7 @@ Platform logic only. No brand colors, logos, catalog, prompts, shows, talent, or
 
 | Area | Path | Responsibility |
 |------|------|----------------|
-| Platform identity | `config/platform.ts` | StudioOS name, tagline, owner |
+| Platform identity | `config/platform.ts` | studio os name, tagline, owner |
 | Core modules | `core/modules.ts` | Canonical module registry and IDs |
 | Vocabulary | `core/vocabulary.ts` | Industry-agnostic terms |
 | Platform assets | `core/assets.ts` | System UI placeholders (not brand assets) |

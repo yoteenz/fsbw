@@ -1,4 +1,4 @@
-/** Active workspace persistence — localStorage key for StudioOS. */
+/** Active workspace persistence — localStorage key for studio os. */
 
 export const STUDIO_OS_ACTIVE_WORKSPACE_KEY = 'studioOs_activeWorkspace_v1';
 

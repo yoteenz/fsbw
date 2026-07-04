@@ -1,4 +1,4 @@
-/** Tutorial OS — reusable guided walkthrough schema for Frontal Slayer / StudioOS. */
+/** Tutorial OS — reusable guided walkthrough schema for Frontal Slayer / studio os. */
 
 export type TutorialNodeKind = 'page' | 'section' | 'feature' | 'widget' | 'action';
 

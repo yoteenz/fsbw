@@ -1,13 +1,13 @@
-# StudioOS Interactive Manual
+# studio os Interactive Manual
 
-Internal operating manual for Frontal Slayer operators — learn by using the live StudioOS interface.
+Internal operating manual for Frontal Slayer operators — learn by using the live studio os interface.
 
 ## System names
 
 | Layer | Name | Audience |
 |-------|------|----------|
 | Customer onboarding | **Onboarding Tutorial** (The Mansion Tour) | Storefront customers |
-| Admin training | **StudioOS Interactive Manual** | Studio operators |
+| Admin training | **studio os Interactive Manual** | Studio operators |
 | Shared architecture | **Knowledge Graph** | Both (admin primary) |
 
 ## Access

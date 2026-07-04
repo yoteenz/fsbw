@@ -20,7 +20,7 @@ export function createPlaceholderWorkspace(id: string, displayName: string): Wor
     studioEnabled: false,
     studioEntryPath: `/admin/studio-os/workspace/${id}`,
     metadata: {
-      description: 'Placeholder workspace for StudioOS architecture testing.',
+      description: 'Placeholder workspace for studio os architecture testing.',
       tags: ['placeholder'],
     },
   };

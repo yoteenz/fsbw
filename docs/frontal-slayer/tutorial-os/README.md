@@ -1,6 +1,6 @@
 # Onboarding Tutorial — The Mansion Tour
 
-Interactive guided learning system for Frontal Slayer customers and StudioOS admins. The **Frontal Slayer Concierge** personality guides the experience; the product name is **Onboarding Tutorial**.
+Interactive guided learning system for Frontal Slayer customers and studio os admins. The **Frontal Slayer Concierge** personality guides the experience; the product name is **Onboarding Tutorial**.
 
 ## Customer experience
 
@@ -46,7 +46,7 @@ Nested tours: finishing a child walkthrough (e.g. Vouchers) returns to the paren
 
 ## Admin
 
-**StudioOS → Onboarding Tutorial** at `/admin/studio/tutorial-os`
+**studio os → Onboarding Tutorial** at `/admin/studio/tutorial-os`
 
 Sections: Tours, Pages, Features, Widgets, Animations, Hotspots, Search Index, Completion Analytics, User Progress, Missing Targets, Route Validation, Copy Library, Preview Tour.
 

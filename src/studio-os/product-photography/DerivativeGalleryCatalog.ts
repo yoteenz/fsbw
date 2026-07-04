@@ -25,7 +25,7 @@ export const DERIVATIVE_GALLERY_SLOTS: readonly DerivativeGallerySlotDef[] = [
   { assetType: 'email', label: 'Email', templateId: 'email-signature', fileName: 'email.png' },
   { assetType: 'desktop', label: 'Desktop', templateId: 'desktop-hero', fileName: 'desktop.png' },
   { assetType: 'mobile', label: 'Mobile', templateId: 'mobile-pdp', fileName: 'mobile.png' },
-  { assetType: 'studio-preview', label: 'StudioOS Preview', templateId: 'studioos-preview', fileName: 'studio-preview.png' },
+  { assetType: 'studio-preview', label: 'studio os Preview', templateId: 'studioos-preview', fileName: 'studio-preview.png' },
   { assetType: 'thumbnail', label: 'Thumbnail', templateId: 'thumbnail-standard', fileName: 'thumbnail.png' },
   {
     assetType: 'marketing-composite',

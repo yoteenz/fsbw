@@ -87,7 +87,7 @@ export function KnowledgeHubWorkspace() {
 
       {tab === 'OVERVIEW' ? (
         <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
-          <p style={{ ...khCaption, color: KH_VISUAL.red }}>STUDIOOS INTERACTIVE MANUAL</p>
+          <p style={{ ...khCaption, color: KH_VISUAL.red }}>STUDIO OS INTERACTIVE MANUAL</p>
           <p style={khCaption}>
             {manualModules.length} MODULE WALKTHROUGHS · {graph.nodes.length} GRAPH NODES · {graph.edges.length}{' '}
             RELATIONSHIPS · TAP ⓘ ON ANY STUDIO PAGE
@@ -226,7 +226,7 @@ export function KnowledgeHubWorkspace() {
 
       {tab === 'PROGRESS' ? (
         <section style={{ ...khPanelStyle, padding: '12px', marginBottom: '12px' }}>
-          <p style={khSectionTitle}>STUDIOOS KNOWLEDGE</p>
+          <p style={khSectionTitle}>STUDIO OS KNOWLEDGE</p>
           <p style={{ ...khCaption, color: KH_VISUAL.black }}>
             {manualProgress.overallKnowledgePct}% OVERALL · {manualProgress.modulesLearned} MODULES ·{' '}
             {manualProgress.featuresLearned} FEATURES · {manualProgress.graphNodesVisited} GRAPH NODES ·{' '}

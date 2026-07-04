@@ -1,5 +1,5 @@
 /**
- * StudioOS Legacy System — institutional memory platform types.
+ * studio os Legacy System — institutional memory platform types.
  */
 
 export type LegacyArchiveRecord = {

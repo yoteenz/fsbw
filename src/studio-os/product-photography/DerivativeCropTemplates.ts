@@ -172,8 +172,8 @@ export const DERIVATIVE_CROP_TEMPLATES: readonly DerivativeCropTemplate[] = [
   {
     id: 'studioos-preview',
     category: 'studio',
-    label: 'StudioOS Crop',
-    purpose: 'StudioOS admin cards and previews',
+    label: 'studio os Crop',
+    purpose: 'studio os admin cards and previews',
     outputWidth: 400,
     outputHeight: 400,
     aspectRatio: '1:1',

@@ -6,7 +6,7 @@ function stubNodes(prefix: string, titles: string[], route: string): TutorialTou
     kind: 'widget' as const,
     pageId: prefix,
     title: title.toUpperCase(),
-    body: `${title} — interactive walkthrough step (architecture seeded; copy editable in StudioOS).`,
+    body: `${title} — interactive walkthrough step (architecture seeded; copy editable in studio os).`,
     benefit: `Learn ${title.toLowerCase()} on the live interface.`,
     route,
     animationType: 'glow' as const,

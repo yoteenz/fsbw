@@ -16,7 +16,7 @@ After transparent master is created, the pipeline renders derivatives using crop
 | Email | email-signature | email.png |
 | Desktop | desktop-hero | desktop.png |
 | Mobile | mobile-pdp | mobile.png |
-| StudioOS Preview | studioos-preview | studio-preview.png |
+| studio os Preview | studioos-preview | studio-preview.png |
 | Thumbnail | thumbnail-standard | thumbnail.png |
 
 No manual cropping — all regions come from template registry.

@@ -1,5 +1,5 @@
 /**
- * StudioOS Content Pack — platform production bundle types.
+ * studio os Content Pack — platform production bundle types.
  */
 
 export type ContentPackTabId =

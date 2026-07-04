@@ -86,7 +86,7 @@ PROHIBITED ELEMENTS — LOCKED
 - No stock photography artifacts
 
 OUTPUT QUALITY
-Photoreal luxury commercial advertising quality. Crisp commercial detail. Soft diffused editorial lighting. Large negative space. Gentle realistic shadows where needed for dimension. Premium white studio presentation suitable for e-commerce hero, email Signature Collection modules, and StudioOS Product Photography Bible approval.
+Photoreal luxury commercial advertising quality. Crisp commercial detail. Soft diffused editorial lighting. Large negative space. Gentle realistic shadows where needed for dimension. Premium white studio presentation suitable for e-commerce hero, email Signature Collection modules, and studio os Product Photography Bible approval.
 
 ATTACHMENT ORDER (GENERATION PACKAGE)
 1. Official Frontal Slayer Display Bust v1.0 (mannequin identity lock)

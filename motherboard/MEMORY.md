@@ -35905,3 +35905,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** masterHeroValidation, generateMasterHero, types (server+client), pipeline, ideogramCutout, product-photography-generate, product-asset-factory-run, MasterHeroPreviewPanel, BrandAssetsAssetFactoryWorkspace, PhotographyBibleWorkspace, hooks, ProductAssetFactory.ts, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — studio os branding correction (platform name)
+
+**Context:** User requested rename across codebase: incorrect **StudioOS** / **STUDIOOS** / **studioOS** visible copy → official brand **studio os**. Do not break routes, imports, folder names, IDs, storage keys, or env vars. Branding-only — no redesign.
+
+**Shipped:**
+- **Canonical platform name:** `STUDIO_OS_PLATFORM.name = 'studio os'` in `studio-os-core/config/platform.ts` (workspace picker, page titles using platform constant).
+- **UI copy:** Breadcrumbs **STUDIO OS** (`AdminStudioLayout`, `adminStudioNavigation`); Knowledge Hub **STUDIO OS INTERACTIVE MANUAL**; Campaign Orchestrator / Blueprint Manager / Tutorial OS subtitles; crop template labels **studio os Preview** / **studio os Crop**.
+- **Knowledge Graph + Interactive Manual:** seed graph, enrichments, buildFromKnowledge, search keywords updated to **studio os**.
+- **Documentation:** All `docs/studio-os/` and relevant `docs/frontal-slayer/` references updated to **studio os**.
+- **Comments:** Safe file-header / purpose comments updated in `studio-os-core`, product-photography modules, utils.
+
+**Preserved (technical identifiers):** Routes `/admin/studio-os`, folders `studio-os/` / `studio-os-core/`, import paths, `studioos-preview` / `studioos-crop` template IDs, `studioOs_ws_*` storage keys, `StudioOsCoreModuleId` / `StudioOsPlatformConfig` type names, asset paths `studio-os/product-photography/...`.
+
+**Changes:** 93 files (platform config, admin UI, knowledge graph, interactive manual, navigation, docs, CORE.md), `motherboard/MEMORY.md`.
+

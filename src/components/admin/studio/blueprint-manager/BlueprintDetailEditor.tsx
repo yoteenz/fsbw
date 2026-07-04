@@ -62,7 +62,7 @@ export function BlueprintDetailEditor({
       <header style={{ ...bpPanelStyle, padding: '12px', marginBottom: '12px' }}>
         <p style={{ ...bpGrace, fontSize: '20px' }}>{bp.identity.name}</p>
         <p style={bpCaption}>
-          {bp.identity.category.toUpperCase()} · {bp.scope === 'global' ? 'STUDIOOS GLOBAL' : bp.identity.workspace}
+          {bp.identity.category.toUpperCase()} · {bp.scope === 'global' ? 'STUDIO OS GLOBAL' : bp.identity.workspace}
         </p>
         <p style={{ ...bpCaption, color: BP_VISUAL.black, marginTop: 6 }}>{bp.identity.description}</p>
         <div className="flex flex-wrap gap-2 mt-3 items-center">

@@ -4,7 +4,7 @@ import type { WorkspaceSchema } from '../../studio-os-core/workspace/types';
 
 /**
  * Frontal Slayer Workspace configuration.
- * All brand-specific knowledge for the first StudioOS workspace lives here.
+ * All brand-specific knowledge for the first studio os workspace lives here.
  */
 export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
   id: 'frontal-slayer',
@@ -100,7 +100,7 @@ export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
   studioEntryPath: '/admin/studio/mission-control',
   metadata: {
     industry: 'luxury-beauty',
-    description: 'First production Workspace on StudioOS — luxury wig house and media studio.',
+    description: 'First production Workspace on studio os — luxury wig house and media studio.',
     tags: ['beauty', 'e-commerce', 'media', 'membership'],
   },
 };

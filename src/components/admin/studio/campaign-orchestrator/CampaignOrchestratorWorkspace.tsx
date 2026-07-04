@@ -51,7 +51,7 @@ export function CampaignOrchestratorWorkspace() {
     <div>
       <div style={{ ...coPanelStyle, padding: '14px', marginBottom: '16px' }}>
         <p style={{ fontFamily: '"Covered By Your Grace"', fontSize: '20px', color: CO_VISUAL.black }}>ONE GOAL. ONE PLAN.</p>
-        <p style={coCaption}>ENTER THE PLANNING ROOM — STUDIOOS BUILDS THE ROADMAP. YOU REMAIN EXECUTIVE PRODUCER.</p>
+        <p style={coCaption}>ENTER THE PLANNING ROOM — STUDIO OS BUILDS THE ROADMAP. YOU REMAIN EXECUTIVE PRODUCER.</p>
         <button type="button" onClick={() => startWizard()} style={{ ...coActionBtn, marginTop: '10px' }}>
           + CREATE CAMPAIGN
         </button>

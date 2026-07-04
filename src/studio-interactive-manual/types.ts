@@ -1,4 +1,4 @@
-/** StudioOS Interactive Manual — runtime types (compiled from V2 defs). */
+/** studio os Interactive Manual — runtime types (compiled from V2 defs). */
 
 export type ManualNodeKind = 'module' | 'section' | 'page' | 'widget' | 'action' | 'workflow';
 

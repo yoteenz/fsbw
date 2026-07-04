@@ -176,7 +176,7 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
     versionUpdated: 'Milestone 24',
   },
   'tutorial-os': {
-    architecture: 'Admin management for customer Onboarding Tutorial (Mansion Tour) — separate from StudioOS Interactive Manual.',
+    architecture: 'Admin management for customer Onboarding Tutorial (Mansion Tour) — separate from studio os Interactive Manual.',
     workflowNodes: ['Welcome', 'Mansion Tour steps', 'Feature cards', 'Nested tours', 'Progress analytics'],
     relatedModuleIds: ['knowledge-hub'],
     featureSteps: [
@@ -184,7 +184,7 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
         id: 'tutorial-customer-separation',
         kind: 'section',
         title: 'CUSTOMER VS ADMIN',
-        body: 'Onboarding Tutorial teaches the storefront. StudioOS Interactive Manual teaches admin tools. Both share layered walkthrough architecture.',
+        body: 'Onboarding Tutorial teaches the storefront. studio os Interactive Manual teaches admin tools. Both share layered walkthrough architecture.',
         benefit: 'Never confuse customer onboarding with operator training.',
         position: 'center',
         animationType: 'transition',

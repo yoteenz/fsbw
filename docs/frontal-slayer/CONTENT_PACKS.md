@@ -1,6 +1,6 @@
 # Frontal Slayer Content Packs
 
-A **Content Pack** (StudioOS vocabulary) is the complete production package created from one idea — episode, journal, email, social, thumbnails, products, SEO, and metadata.
+A **Content Pack** (studio os vocabulary) is the complete production package created from one idea — episode, journal, email, social, thumbnails, products, SEO, and metadata.
 
 ## Location
 

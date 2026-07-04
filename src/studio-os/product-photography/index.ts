@@ -141,7 +141,7 @@ export {
 } from './CreativeDnaGenerationPackage';
 export type { CreativeDnaGenerationUnitInput, CreativeDnaGenerationPackage } from './CreativeDnaGenerationPackage';
 
-/** Inheritance payload for future StudioOS product creation. */
+/** Inheritance payload for future studio os product creation. */
 export function inheritPhotographyBibleForProduct(productSlug: string) {
   return {
     productSlug,

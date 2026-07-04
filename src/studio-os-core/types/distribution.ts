@@ -1,5 +1,5 @@
 /**
- * StudioOS Distribution Network — multi-channel publishing platform types.
+ * studio os Distribution Network — multi-channel publishing platform types.
  */
 
 export type DistributionChannelActivation = 'ACTIVE' | 'COMING_SOON' | 'FUTURE';

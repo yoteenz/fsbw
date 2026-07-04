@@ -1,4 +1,4 @@
-# StudioOS Workspace System
+# studio os Workspace System
 
 ## Registered Workspaces
 
@@ -16,7 +16,7 @@ Registry: `src/workspaces/index.ts`
 Each Workspace implements `WorkspaceSchema` (`src/studio-os/workspace/types.ts`):
 
 - Brand identity (name, logo, colors, typography, voice, rules)
-- Module copy (subtitles per StudioOS core module)
+- Module copy (subtitles per studio os core module)
 - Permissions
 - `studioEnabled` + `studioEntryPath`
 - Metadata (industry tags for documentation only — not used by Core logic)

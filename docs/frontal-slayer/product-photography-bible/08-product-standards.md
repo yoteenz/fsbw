@@ -18,7 +18,7 @@ Each unit must have:
 - Approved hero portrait (4096×4096 master)
 - Reference image on file
 - Complete media kit folder structure (empty slots OK until shoot)
-- Photography status + media kit status in StudioOS admin
+- Photography status + media kit status in studio os admin
 
 ## Inheritance
 

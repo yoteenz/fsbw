@@ -1,7 +1,7 @@
 /**
  * Frontal Slayer Workspace data adapter.
  * Bridges existing Studio demo seeds into the Workspace data layer.
- * StudioOS Core never imports these directly — only via workspace loader.
+ * studio os Core never imports these directly — only via workspace loader.
  */
 
 import type { WorkspaceDataAdapter } from '../../studio-os-core/workspace/data-adapter';

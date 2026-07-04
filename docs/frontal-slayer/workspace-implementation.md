@@ -1,6 +1,6 @@
 # Frontal Slayer — Workspace Implementation
 
-How the first production StudioOS workspace is wired without changing the existing admin experience.
+How the first production studio os workspace is wired without changing the existing admin experience.
 
 ## Overview
 
@@ -80,6 +80,6 @@ Workspace picker remains at `/admin/studio-os`.
 
 ## Related
 
-- [StudioOS Architecture](../studio-os/architecture.md)
+- [studio os Architecture](../studio-os/architecture.md)
 - [Workspace System](../studio-os/workspace-system.md)
 - [Core vs Workspace](../studio-os/core-vs-workspace.md)

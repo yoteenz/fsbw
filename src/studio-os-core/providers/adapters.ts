@@ -1,5 +1,5 @@
 /**
- * StudioOS provider adapters — platform-level provider registry contracts.
+ * studio os provider adapters — platform-level provider registry contracts.
  */
 
 import type { AiProductionProviderId } from '../types/production';

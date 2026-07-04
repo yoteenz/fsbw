@@ -22,7 +22,7 @@ Photography Bible V1.0 (immutable)
   → Approved Hero Portrait (4096×4096)
     → Derivative Engine (18 slots)
       → Site Asset Bindings (assetKey → derivative folder)
-        → Storefront / email / StudioOS surfaces (future resolver)
+        → Storefront / email / studio os surfaces (future resolver)
 ```
 
 ## Module map
@@ -34,7 +34,7 @@ Photography Bible V1.0 (immutable)
 | `PhotographyDerivativeEngine.ts` | Hero-approval pipeline |
 | `DerivativeAssetReplacement.ts` | Website assetKey bindings |
 | `useAdminStudioPhotographyDerivativesState.ts` | Admin persistence |
-| `photographyDerivativeEngine/service.ts` | StudioOS service stub |
+| `photographyDerivativeEngine/service.ts` | studio os service stub |
 
 ## Record fields
 

@@ -464,7 +464,7 @@ export function createProductionDraft(overrides: Partial<ProductionDraft> = {}):
     id: overrides.id ?? `pb-${Date.now()}`,
     productionName: overrides.productionName ?? template?.productionName ?? 'UNTITLED PRODUCTION',
     workspace: overrides.workspace ?? 'FRONTAL SLAYER',
-    project: overrides.project ?? 'STUDIOOS',
+    project: overrides.project ?? 'STUDIO OS',
     contentPackId: overrides.contentPackId,
     show: overrides.show ?? template?.show ?? 'THE SLAY REPORT',
     episode: overrides.episode ?? template?.episode ?? 'EP. 01',

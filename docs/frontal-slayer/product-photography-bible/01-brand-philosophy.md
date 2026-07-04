@@ -7,7 +7,7 @@ Frontal Slayer product photography is **luxury editorial**, not ecommerce catalo
 - **Museum exhibit, not product card** — each unit is a collectible Signature piece.
 - **Pure white studio** — marble and acrylic live in marketing; product masters are clinical white.
 - **Consistency over variety** — one locked system (Photography System V1.0) for every unit.
-- **Inheritance by default** — new StudioOS products receive camera, lighting, bust, exports, and media kit structure automatically.
+- **Inheritance by default** — new studio os products receive camera, lighting, bust, exports, and media kit structure automatically.
 
 ## Emotional target
 
@@ -15,4 +15,4 @@ Frontal Slayer product photography is **luxury editorial**, not ecommerce catalo
 
 ## Scope
 
-Applies to Signature Collection (001–006) and all future product lines created in StudioOS.
+Applies to Signature Collection (001–006) and all future product lines created in studio os.

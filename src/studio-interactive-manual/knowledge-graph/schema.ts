@@ -1,4 +1,4 @@
-/** Knowledge Graph — node and relationship schema (StudioOS Interactive Manual). */
+/** Knowledge Graph — node and relationship schema (studio os Interactive Manual). */
 
 export type KnowledgeGraphNodeType =
   | 'workspace'

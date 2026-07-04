@@ -1,6 +1,6 @@
-# StudioOS API Structure
+# studio os API Structure
 
-Phase 2 server integration follows the existing Vercel `api/` pattern. StudioOS introduces Workspace scoping concepts for future APIs:
+Phase 2 server integration follows the existing Vercel `api/` pattern. studio os introduces Workspace scoping concepts for future APIs:
 
 ## Planned Conventions (not connected in this refactor)
 

@@ -8,7 +8,7 @@
 
 ## Channel-specific backgrounds
 
-Marble, acrylic, and environmental treatments belong in **marketing crops** (email, advertising, StudioOS preview) — not in the locked 4096×4096 master.
+Marble, acrylic, and environmental treatments belong in **marketing crops** (email, advertising, studio os preview) — not in the locked 4096×4096 master.
 
 ## Media kit folders
 

@@ -1,6 +1,6 @@
 # Frontal Slayer Internal Documentation Index
 
-Workspace-specific documentation for the first StudioOS production tenant.
+Workspace-specific documentation for the first studio os production tenant.
 
 | Document | Topic |
 |----------|-------|
@@ -15,7 +15,7 @@ Workspace-specific documentation for the first StudioOS production tenant.
 
 ## Products
 
-Build-a-Wig catalog and shop flows are customer-facing (`src/pages/build-a-wig/`, unit PDPs) — unchanged by the StudioOS refactor.
+Build-a-Wig catalog and shop flows are customer-facing (`src/pages/build-a-wig/`, unit PDPs) — unchanged by the studio os refactor.
 
 ## Campaigns & Projects
 
@@ -25,4 +25,4 @@ Production pipeline: `/admin/studio/production`
 
 ## Platform Boundary
 
-For StudioOS architecture, module registry, and developer guides, see `docs/studio-os/`.
+For studio os architecture, module registry, and developer guides, see `docs/studio-os/`.

@@ -78,7 +78,7 @@ export function countPreparedDerivatives(records: DerivativeAssetRecord[]): numb
   return records.filter((d) => d.status === 'slot-prepared' || d.status === 'pending-generation').length;
 }
 
-/** Future-ready — same engine for any StudioOS product line. */
+/** Future-ready — same engine for any studio os product line. */
 export function prepareDerivativesForProduct(input: PrepareDerivativesInput): DerivativeEngineResult {
   return prepareDerivativesOnHeroApproval(input);
 }

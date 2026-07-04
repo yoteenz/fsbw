@@ -1,5 +1,5 @@
 /**
- * Knowledge Hub — living documentation layer for StudioOS (Milestone 20).
+ * Knowledge Hub — living documentation layer for studio os (Milestone 20).
  * Demo/placeholder profiles and page guides; searchable wiki index.
  */
 
@@ -15,7 +15,7 @@ import {
 } from './adminStudioRoutes';
 
 export const KNOWLEDGE_HUB_SUBTITLE =
-  'Interactive Manual + written Owner\'s Manual — learn StudioOS by using the live interface.';
+  'Interactive Manual + written Owner\'s Manual — learn studio os by using the live interface.';
 
 export type KnowledgeObjectType =
   | 'studio'
@@ -144,7 +144,7 @@ function modulePageGuide(mod: AdminStudioModule): KnowledgePageGuide {
     title: mod.title,
     route: mod.route.split('?')[0],
     purpose: mod.purpose,
-    whyItExists: `${mod.title} is a StudioOS module in the ${mod.groupId.toUpperCase()} department — ${mod.purpose}`,
+    whyItExists: `${mod.title} is a studio os module in the ${mod.groupId.toUpperCase()} department — ${mod.purpose}`,
     whenToUse: [
       `When you need to ${mod.purpose.toLowerCase().replace(/\.$/, '')}`,
       `During ${mod.groupId} planning and daily production`,
@@ -206,7 +206,7 @@ const PAGE_GUIDE_OVERRIDES: Partial<Record<string, Partial<KnowledgePageGuide>>>
     ],
   },
   'knowledge-hub': {
-    purpose: 'Living documentation — every StudioOS object explains itself.',
+    purpose: 'Living documentation — every studio os object explains itself.',
     whyItExists: 'Eliminate confusion about pages, assets, and workflows without leaving production.',
     whenToUse: ['Whenever you wonder what a page or object does', 'Onboarding new operators', 'Planning campaigns'],
   },
@@ -229,7 +229,7 @@ export const KNOWLEDGE_PAGE_GUIDES: KnowledgePageGuide[] = [
     title: 'KNOWLEDGE HUB',
     route: adminStudioKnowledgeHubPath(),
     purpose: 'Living documentation layer — every object explains itself.',
-    whyItExists: 'StudioOS should teach itself like Apple Tips × Notion Wiki × Figma Community.',
+    whyItExists: 'studio os should teach itself like Apple Tips × Notion Wiki × Figma Community.',
     whenToUse: ['Learn any module', 'Search wiki', 'Read object profiles', 'Take tours'],
     bestPractices: ['Tap ⓘ on any page for contextual help', 'Bookmark workflow guides'],
     commonMistakes: ['Skipping object profiles before first generate'],

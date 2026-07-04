@@ -34,7 +34,7 @@ Returns `DerivativeAssetUri | null`:
 - `folderPath` — derivative folder (always when prepared)
 - `fileUri` — `{folderPath}/asset.png` when status is `generated`, `approved`, or `replaced`; otherwise `null`
 
-## StudioOS service
+## studio os service
 
 ```typescript
 photographyDerivativeEngineStudioService.resolveSiteAsset(assetKey, productLine, unitSlug)

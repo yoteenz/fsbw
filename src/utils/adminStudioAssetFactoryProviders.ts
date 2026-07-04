@@ -1,5 +1,5 @@
 /**
- * Asset Factory provider abstraction — StudioOS orchestrates, providers execute.
+ * Asset Factory provider abstraction — studio os orchestrates, providers execute.
  */
 
 export type AssetFactoryProviderId =

@@ -1,11 +1,11 @@
-# StudioOS Platform Architecture
+# studio os Platform Architecture
 
-StudioOS is the reusable multi-brand operating system that powers creative and production workflows for modern brands. It is owned by VXD Inc. and is independent from any single Workspace.
+studio os is the reusable multi-brand operating system that powers creative and production workflows for modern brands. It is owned by VXD Inc. and is independent from any single Workspace.
 
 ## Layer Model
 
 ```
-StudioOS (platform)
+studio os (platform)
   └── Workspace (company / brand / client)
         └── Brand configuration
         └── Projects · Content Packs · Assets
@@ -14,7 +14,7 @@ StudioOS (platform)
 
 ## Core Principles
 
-1. **StudioOS Core** contains no Workspace-specific knowledge.
+1. **studio os Core** contains no Workspace-specific knowledge.
 2. **Workspace Layer** holds all brand data: voice, products, shows, talent, templates, campaigns.
 3. **Frontal Slayer** is the first production Workspace; it preserves legacy `/admin/studio/*` routes.
 4. Platform name and tagline live in `src/studio-os/config/platform.ts` only.
@@ -44,7 +44,7 @@ Studio editable state is scoped per Workspace: `studioOs_ws_{workspaceId}_{key}`
 
 | Route | Purpose |
 |-------|---------|
-| `/admin/studio-os` | StudioOS entry — select Workspace |
+| `/admin/studio-os` | studio os entry — select Workspace |
 | `/admin/studio-os/workspace/:id` | Placeholder workspace shell |
 | `/admin/studio/*` | Frontal Slayer Studio (legacy paths preserved) |
 

@@ -4,7 +4,7 @@ What belongs in `studio-os-core` versus the workspace layer.
 
 ## Principle
 
-**studio-os-core** = how StudioOS works (platform)  
+**studio-os-core** = how studio os works (platform)  
 **workspaces/** = who is using it (brand/client)
 
 Frontal Slayer-specific knowledge must never leak into core. Core must be deployable as a standalone product with different workspaces plugged in.
@@ -68,7 +68,7 @@ Core components call `useWorkspace()` for brand copy and `dataAdapter` for seed 
 
 ## Migration Checklist (for new modules)
 
-When adding a StudioOS module:
+When adding a studio os module:
 
 1. Add module ID to `studio-os-core/core/modules.ts` if platform-wide.
 2. Add platform types to `studio-os-core/types/` if the shape is reusable.

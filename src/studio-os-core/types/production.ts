@@ -1,5 +1,5 @@
 /**
- * StudioOS Production — pipeline and builder platform types.
+ * studio os Production — pipeline and builder platform types.
  */
 
 export type ProductionStageId =

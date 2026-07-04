@@ -18,7 +18,7 @@ export default function AdminStudioTutorialOsPage() {
     >
       <TutorialOsWorkspace />
       <AdminStudioDisclaimerFooter>
-        ONBOARDING TUTORIAL · THE MANSION TOUR · REUSABLE WALKTHROUGH SYSTEM FOR STUDIOOS WORKSPACES
+        ONBOARDING TUTORIAL · THE MANSION TOUR · REUSABLE WALKTHROUGH SYSTEM FOR STUDIO OS WORKSPACES
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

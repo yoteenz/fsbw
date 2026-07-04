@@ -154,8 +154,8 @@ export const DERIVATIVE_SLOT_DEFINITIONS: readonly DerivativeSlotDefinition[] = 
   },
   {
     id: 'studioos-crop',
-    name: 'StudioOS Crop',
-    purpose: 'StudioOS admin previews',
+    name: 'studio os Crop',
+    purpose: 'studio os admin previews',
     cropTemplateId: 'studioos-preview',
     siteBindingIds: ['studioos-admin-card'],
   },

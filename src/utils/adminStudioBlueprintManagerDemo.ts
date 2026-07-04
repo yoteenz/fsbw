@@ -259,7 +259,7 @@ function cardBlueprint(
     id,
     scope,
     status,
-    identity: { name, category, workspace: scope === 'workspace' ? 'FRONTAL SLAYER' : 'STUDIOOS GLOBAL', description },
+    identity: { name, category, workspace: scope === 'workspace' ? 'FRONTAL SLAYER' : 'STUDIO OS GLOBAL', description },
     requiredImages: category === 'studio' ? ['MASTER STUDIO · EMPTY BASE', 'REFERENCE SCENE · STAGED EXAMPLE', 'DAY', 'NIGHT'] : ['HERO'],
     studioSetLayers: category === 'studio' ? GENERIC_STUDIO_LAYER_SPECS : undefined,
     requiredVideos: ['LOOP'],

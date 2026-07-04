@@ -1,5 +1,5 @@
 /**
- * StudioOS platform asset types — industry-agnostic visual and media contracts.
+ * studio os platform asset types — industry-agnostic visual and media contracts.
  */
 
 export type PlatformAssetCategoryId =

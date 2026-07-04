@@ -1,5 +1,5 @@
 /**
- * StudioOS Workspace schema — industry-agnostic workspace model.
+ * studio os Workspace schema — industry-agnostic workspace model.
  */
 
 import type { StudioOsCoreModuleId } from '../core/modules';

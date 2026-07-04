@@ -78,7 +78,7 @@ export function AdminStudioLayout({
   const handleBack = onBack ?? (() => navigate(hideOverviewLink ? breadcrumbParentPath : STUDIO_OVERVIEW_PATH));
 
   const displayHeading = pageHeading ?? resolvedModule?.title ?? title;
-  const headerCrumbLabel = hideOverviewLink ? breadcrumbParentLabel : 'STUDIOOS';
+  const headerCrumbLabel = hideOverviewLink ? breadcrumbParentLabel : 'STUDIO OS';
   const headerCrumbPath = hideOverviewLink ? breadcrumbParentPath : STUDIO_OVERVIEW_PATH;
 
   return (

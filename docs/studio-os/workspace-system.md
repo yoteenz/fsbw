@@ -1,4 +1,4 @@
-# StudioOS Workspace System
+# studio os Workspace System
 
 How workspaces are defined, registered, switched, and loaded.
 
@@ -31,7 +31,7 @@ src/workspaces/
 Each workspace implements `WorkspaceSchema` from `studio-os-core/workspace/types.ts`:
 
 - Brand identity (name, logo, colors, typography, voice, rules)
-- Module copy (titles/subtitles per StudioOS core module)
+- Module copy (titles/subtitles per studio os core module)
 - Permissions (`canAccessStudioModules`, etc.)
 - `studioEnabled` + `studioEntryPath`
 - Metadata (industry tags for documentation)

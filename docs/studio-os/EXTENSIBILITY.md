@@ -1,4 +1,4 @@
-# StudioOS Extensibility Guide
+# studio os Extensibility Guide
 
 ## Workspace Extensibility
 

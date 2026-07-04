@@ -1,5 +1,5 @@
 /**
- * StudioOS Blueprint Manager — platform specification types.
+ * studio os Blueprint Manager — platform specification types.
  */
 
 export type BlueprintScope = 'global' | 'workspace';

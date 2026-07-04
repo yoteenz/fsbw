@@ -43,7 +43,7 @@ export const DERIVATIVE_SITE_BINDINGS: readonly DerivativeSiteBinding[] = [
   { id: 'email-holographic-exhibit', label: 'Email Holographic Exhibit', surface: 'email', derivativeId: 'holographic-display-crop', assetKey: 'email.holographic.exhibit', description: 'Email acrylic exhibit mannequin' },
   { id: 'desktop-hero-module', label: 'Desktop Hero', surface: 'desktop', derivativeId: 'desktop-crop', assetKey: 'marketing.desktop.hero', description: 'Desktop hero band' },
   { id: 'mobile-pdp-hero', label: 'Mobile PDP Hero', surface: 'mobile', derivativeId: 'mobile-crop', assetKey: 'unit.mobile.pdpHero', description: 'Mobile PDP hero' },
-  { id: 'studioos-admin-card', label: 'StudioOS Card', surface: 'studioos', derivativeId: 'studioos-crop', assetKey: 'studioos.admin.unitCard', description: 'StudioOS admin unit card' },
+  { id: 'studioos-admin-card', label: 'studio os Card', surface: 'studioos', derivativeId: 'studioos-crop', assetKey: 'studioos.admin.unitCard', description: 'studio os admin unit card' },
   { id: 'social-square-post', label: 'Social Square', surface: 'social', derivativeId: 'social-square', assetKey: 'social.square.post', description: 'Instagram square post' },
   { id: 'social-story-vertical', label: 'Story Portrait', surface: 'social', derivativeId: 'story-portrait', assetKey: 'social.story.vertical', description: 'Vertical story placement' },
   { id: 'global-thumb', label: 'Global Thumbnail', surface: 'marketing', derivativeId: 'thumbnail', assetKey: 'global.thumb.default', description: 'Default thumbnail surface' },

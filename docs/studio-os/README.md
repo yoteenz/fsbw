@@ -1,6 +1,6 @@
-# StudioOS Documentation
+# studio os Documentation
 
-Platform documentation for the StudioOS multi-brand operating system. **No Workspace-specific knowledge belongs here** — see `docs/frontal-slayer/` for Frontal Slayer.
+Platform documentation for the studio os multi-brand operating system. **No Workspace-specific knowledge belongs here** — see `docs/frontal-slayer/` for Frontal Slayer.
 
 | Document | Description |
 |----------|-------------|

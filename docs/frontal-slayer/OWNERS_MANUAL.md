@@ -1,6 +1,6 @@
 # Frontal Slayer — Owner's Manual (Workspace)
 
-Frontal Slayer is the **first Workspace** on StudioOS. This document contains Workspace-specific knowledge. Platform architecture lives in `docs/studio-os/`.
+Frontal Slayer is the **first Workspace** on studio os. This document contains Workspace-specific knowledge. Platform architecture lives in `docs/studio-os/`.
 
 ## Workspace Identity
 
@@ -20,7 +20,7 @@ Frontal Slayer is the **first Workspace** on StudioOS. This document contains Wo
 
 ## Studio Entry
 
-1. Admin Dashboard → **STUDIO** → StudioOS workspace picker
+1. Admin Dashboard → **STUDIO** → studio os workspace picker
 2. Select **FRONTAL SLAYER**
 3. Executive Command Center loads — same experience as before the platform refactor
 

@@ -78,7 +78,7 @@ export const PHOTOGRAPHY_EXPORT_TEMPLATES: readonly PhotographyExportTemplate[] 
   },
   {
     id: 'studioos-card',
-    label: 'StudioOS Preview',
+    label: 'studio os Preview',
     assetType: 'studioos-preview',
     width: 400,
     height: 400,

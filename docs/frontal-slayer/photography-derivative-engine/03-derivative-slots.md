@@ -18,7 +18,7 @@ Each approved hero prepares **18 derivative slots**. Slots map to a crop templat
 | `email-crop` | Email Crop | email-signature |
 | `desktop-crop` | Desktop Crop | desktop-hero |
 | `mobile-crop` | Mobile Crop | mobile-pdp |
-| `studioos-crop` | StudioOS Crop | studioos-preview |
+| `studioos-crop` | studio os Crop | studioos-preview |
 | `social-square` | Social Square | social-square |
 | `story-portrait` | Story Portrait | story-portrait |
 | `thumbnail` | Thumbnail | thumbnail-standard |

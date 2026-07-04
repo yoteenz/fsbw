@@ -22,7 +22,7 @@ function moduleToNode(mod: (typeof ADMIN_STUDIO_MODULES)[number]): KnowledgeGrap
     route: mod.route.split('?')[0],
     moduleId: mod.id,
     relatedManualChapter: guide?.ownersManualChapter,
-    versionIntroduced: mod.status === 'live' ? 'StudioOS' : undefined,
+    versionIntroduced: mod.status === 'live' ? 'studio os' : undefined,
     status: mod.status === 'coming-soon' ? 'coming-soon' : mod.status,
     searchKeywords: [
       mod.id,

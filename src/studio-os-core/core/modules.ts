@@ -1,5 +1,5 @@
 /**
- * StudioOS Core modules — reusable, industry-agnostic platform capabilities.
+ * studio os Core modules — reusable, industry-agnostic platform capabilities.
  * Core contains NO workspace-specific knowledge.
  */
 
@@ -31,7 +31,7 @@ export type StudioOsCoreModule = {
   routeSegment: string;
 };
 
-/** Canonical registry of StudioOS platform modules. */
+/** Canonical registry of studio os platform modules. */
 export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
   {
     id: 'asset-factory',

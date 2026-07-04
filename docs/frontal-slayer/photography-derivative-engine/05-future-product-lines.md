@@ -1,6 +1,6 @@
 # Future Product Lines
 
-The same derivative engine applies to every StudioOS product line — no forked logic.
+The same derivative engine applies to every studio os product line — no forked logic.
 
 ## Supported product lines
 
@@ -26,7 +26,7 @@ prepareDerivativesOnHeroApproval({
 
 ## Future brands
 
-Additional brands inside StudioOS inherit:
+Additional brands inside studio os inherit:
 
 - Photography Bible locked specifications
 - Crop template library
@@ -37,4 +37,4 @@ Register new product lines in `PhotographyProductLine` and create a placeholder 
 
 ## Inheritance on product create
 
-`inheritPhotographyBibleForProduct(productSlug)` includes `derivativeSlots: 18` so StudioOS product creation knows the derivative count upfront.
+`inheritPhotographyBibleForProduct(productSlug)` includes `derivativeSlots: 18` so studio os product creation knows the derivative count upfront.

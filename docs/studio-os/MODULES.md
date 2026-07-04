@@ -1,4 +1,4 @@
-# StudioOS Core Modules
+# studio os Core Modules
 
 Industry-agnostic platform modules registered in `src/studio-os/core/modules.ts`.
 

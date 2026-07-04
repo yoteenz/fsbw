@@ -69,7 +69,7 @@ function buildDefinition(guide: KnowledgePageGuide, enrichment?: ModuleManualEnr
       sectionId: 'why-exists',
       title: 'WHY IT EXISTS',
       body: guide.whyItExists,
-      benefit: 'Connect the module to the larger StudioOS operating model.',
+      benefit: 'Connect the module to the larger studio os operating model.',
       knowledgeLevel: 'intro',
     })
   );
@@ -95,7 +95,7 @@ function buildDefinition(guide: KnowledgePageGuide, enrichment?: ModuleManualEnr
       sectionId: 'workspace-tour',
       title: 'WORKSPACE TOUR',
       body: 'The next steps highlight the live interface — follow the spotlight on the actual controls.',
-      benefit: 'Learn by using StudioOS, not reading static screenshots.',
+      benefit: 'Learn by using studio os, not reading static screenshots.',
       position: 'center',
       animationType: 'transition',
     })
@@ -259,7 +259,7 @@ function buildDefinition(guide: KnowledgePageGuide, enrichment?: ModuleManualEnr
         sectionId: 'whats-new',
         title: `WHAT'S NEW · ${whatsNew.version}`,
         body: `${whatsNew.title}: ${whatsNew.summary}`,
-        benefit: 'Stay current when StudioOS ships updates.',
+        benefit: 'Stay current when studio os ships updates.',
         versionIntroduced: whatsNew.version,
         actionLabel: 'TRY IT',
         actionType: 'try-feature',

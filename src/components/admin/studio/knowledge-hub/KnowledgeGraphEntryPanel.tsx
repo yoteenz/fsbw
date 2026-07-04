@@ -57,7 +57,7 @@ export function KnowledgeGraphEntryPanel() {
   if (!panelOpen || typeof document === 'undefined') return null;
 
   const guide = pageGuide;
-  const overview = graphEntry?.moduleNode.description ?? guide?.purpose ?? 'StudioOS module';
+  const overview = graphEntry?.moduleNode.description ?? guide?.purpose ?? 'studio os module';
   const chapter = graphEntry?.manualChapter ?? guide?.ownersManualChapter;
 
   return createPortal(
@@ -88,7 +88,7 @@ export function KnowledgeGraphEntryPanel() {
           <div className="flex items-start justify-between gap-2 mb-3">
             <div>
               <p style={{ ...khCaption, color: KH_VISUAL.red }}>INTERACTIVE MANUAL · KNOWLEDGE GRAPH</p>
-              <p style={{ ...khSectionTitle, fontSize: '12px' }}>{guide?.title ?? graphEntry?.moduleNode.name ?? 'STUDIOOS'}</p>
+              <p style={{ ...khSectionTitle, fontSize: '12px' }}>{guide?.title ?? graphEntry?.moduleNode.name ?? 'STUDIO OS'}</p>
             </div>
             <button type="button" onClick={closePanel} style={khActionBtn}>
               CLOSE

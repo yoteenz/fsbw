@@ -19,4 +19,4 @@ Seeded in `src/utils/adminStudioStudioLotDemo.ts` and `src/utils/adminStudioAsse
 
 `src/utils/adminStudioTalentAgencyDemo.ts` — PSA, Founder Avatar, Luxury Stylist, Hair Scientist, Beauty Reporter, Build Specialist, Guest Expert, Community Spotlight.
 
-These are **Workspace Assets**, not StudioOS Core knowledge.
+These are **Workspace Assets**, not studio os Core knowledge.

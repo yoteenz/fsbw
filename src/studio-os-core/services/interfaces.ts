@@ -1,5 +1,5 @@
 /**
- * StudioOS service layer — shared platform service contracts.
+ * studio os service layer — shared platform service contracts.
  */
 
 export type StudioServicePhase = 1 | 2;

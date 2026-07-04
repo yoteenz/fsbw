@@ -13,7 +13,7 @@ Crop templates are **reusable definitions** — not per-product coordinates. All
 | **product** | Product Card Crop, Product Page Crop | Shop cards, unit PDP |
 | **desktop** | Desktop Crop | Desktop hero modules |
 | **mobile** | Mobile Crop | Mobile PDP and shop |
-| **studio** | StudioOS Crop | Admin previews |
+| **studio** | studio os Crop | Admin previews |
 | **email** | Email Crop | Signature Collection email |
 | **social** | Social Square, Story Portrait | Paid social, stories |
 | **thumbnail** | Thumbnail | Global thumb surfaces |

@@ -24,7 +24,7 @@ export type PhotographyLockedSpec = {
   locked: true;
 };
 
-/** Canonical locked fields displayed in StudioOS Photography Bible admin. */
+/** Canonical locked fields displayed in studio os Photography Bible admin. */
 export const PHOTOGRAPHY_LOCKED_SPECIFICATIONS: readonly PhotographyLockedSpec[] = [
   { id: 'aspectRatio', label: 'Aspect Ratio', value: '1:1', locked: true },
   { id: 'masterResolution', label: 'Resolution', value: '4096×4096', locked: true },
@@ -61,10 +61,10 @@ export const PHOTOGRAPHY_SYSTEM_V1_DETAIL: PhotographySystemSpecDetail = {
   background: 'Pure White Studio — RGB 255,255,255 target on master exports.',
   colorScience: 'Locked color profile and grade chain. Texture truth over saturation. sRGB web deliverables.',
   exports:
-    '4096×4096 PNG master plus website, email, mobile, desktop, transparent, and StudioOS preview derivatives.',
+    '4096×4096 PNG master plus website, email, mobile, desktop, transparent, and studio os preview derivatives.',
 };
 
-/** Future StudioOS products inherit these fields automatically. */
+/** Future studio os products inherit these fields automatically. */
 export const PHOTOGRAPHY_INHERITANCE_FIELDS = [
   'camera',
   'composition',

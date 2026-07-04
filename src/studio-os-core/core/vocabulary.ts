@@ -1,12 +1,12 @@
 /**
- * StudioOS platform vocabulary — industry-agnostic terms.
+ * studio os platform vocabulary — industry-agnostic terms.
  * Use consistently in naming, UI labels, docs, and code comments.
  */
 
 export const STUDIO_OS_VOCABULARY = {
   workspace: {
     term: 'Workspace',
-    definition: 'A company, brand, or client operating inside StudioOS.',
+    definition: 'A company, brand, or client operating inside studio os.',
     example: 'Frontal Slayer',
   },
   studio: {

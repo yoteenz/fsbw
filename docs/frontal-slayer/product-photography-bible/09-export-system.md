@@ -17,7 +17,7 @@
 | `mobile-crop` | Mobile PDP |
 | `desktop-crop` | Desktop hero |
 | `transparent-png` | Compositing |
-| `studioos-preview` | Admin / StudioOS cards |
+| `studioos-preview` | Admin / studio os cards |
 
 ## Logo placement
 
