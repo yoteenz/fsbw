@@ -325,7 +325,7 @@ async function runHeroGenerationPhase(ctx: {
   ctx.logs.push(
     logEntry(
       'generating-master-hero',
-      'Step 1: Generate Master Hero Portrait from Creative DNA v1.0 + Approved Prompt v2.0 + Display Bust v1.0'
+      'Step 1: Compile locked Photography Bible prompt (placeholder substitution only) + Generate Master Hero Portrait via Fal'
     )
   );
 

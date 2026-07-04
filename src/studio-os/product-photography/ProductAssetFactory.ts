@@ -83,6 +83,18 @@ export const PRODUCT_ASSET_FACTORY_POC_UNIT = {
 export const DERIVATIVE_BLOCKED_MESSAGE =
   'Generated Master Hero required before derivative processing.';
 
+export type PhotographyBiblePromptValidation = {
+  promptLocked: true;
+  promptHash: string;
+  masterTemplateHash: string;
+  photographyBibleVersion: string;
+  creativeDnaVersion: string;
+  variableInjectionSummary: string;
+  variablesChanged: string[];
+  variablesRemainingLocked: string[];
+  compiledPromptLength: number;
+};
+
 export type MasterHeroGenerationDebugLog = {
   promptSent: string;
   falRequestId?: string;
@@ -101,6 +113,7 @@ export type MasterHeroGenerationRecord = {
   falModel: string;
   productReferenceSrc: string;
   backgroundRemovalInputUrl?: string;
+  promptValidation?: PhotographyBiblePromptValidation;
   debugLog: MasterHeroGenerationDebugLog;
 };
 

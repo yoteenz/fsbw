@@ -4,6 +4,7 @@ import {
 } from '../AdminStudioImagePreviewModal';
 import type { MasterHeroGenerationRecord } from '../../../../studio-os/product-photography/ProductAssetFactory';
 import { PP_VISUAL, ppActionBtn, ppCaption, ppSectionTitle } from '../product-photography-bible/photographyBibleTheme';
+import { PhotographyBiblePromptValidationPanel } from './PhotographyBiblePromptValidationPanel';
 
 type MasterHeroPreviewPanelProps = {
   generatedMasterSrc?: string;
@@ -78,6 +79,8 @@ export function MasterHeroPreviewPanel({
               </p>
             ) : null}
           </div>
+
+          <PhotographyBiblePromptValidationPanel validation={generation?.promptValidation} />
 
           <div className="flex flex-wrap gap-2 mt-3">
             <button

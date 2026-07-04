@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioTabBar } from '../AdminStudioTabBar';
 import {
@@ -8,6 +8,8 @@ import {
   DERIVATIVE_SLOT_DEFINITIONS,
   CREATIVE_DNA_VERSION_HISTORY,
   CREATIVE_DNA_FUTURE_UNIT_SLOTS,
+  CREATIVE_DNA_BENCHMARK_OUTPUT,
+  compileAndValidatePhotographyBiblePrompt,
 } from '../../../../studio-os/product-photography';
 import { useAdminStudioProductPhotographyBible } from '../../../../hooks/useAdminStudioProductPhotographyBibleState';
 import { useAdminStudioPhotographyDerivatives } from '../../../../hooks/useAdminStudioPhotographyDerivativesState';
@@ -33,6 +35,7 @@ import { SignatureUnitCard } from './SignatureUnitCard';
 import { CreativeDnaHeroPanel } from './CreativeDnaHeroPanel';
 import { PhotographyPipelineChain } from './PhotographyPipelineChain';
 import { CreativeDnaDetailsNav } from './CreativeDnaDetailsNav';
+import { PhotographyBiblePromptValidationPanel } from '../brand-assets-asset-factory/PhotographyBiblePromptValidationPanel';
 import { PHOTOGRAPHY_BIBLE_OVERVIEW_LOCKED_SPECS } from './photographyBibleOverviewConfig';
 import { PP_VISUAL, ppCaption, ppPanelStyle, ppSectionTitle } from './photographyBibleTheme';
 import { buildMediaKitForUnit } from '../../../../studio-os/product-photography';
@@ -66,6 +69,22 @@ function PhotographyBibleDashboardInner() {
 
   const tabBody = getPhotographyTabBody(activeTab);
   const preparedUnitCount = results.length;
+
+  const benchmarkPromptValidation = useMemo(() => {
+    try {
+      const bench = CREATIVE_DNA_BENCHMARK_OUTPUT;
+      return compileAndValidatePhotographyBiblePrompt({
+        unitName: bench.unit,
+        collectionNumber: bench.collectionNumber,
+        texture: bench.texture,
+        length: bench.length,
+        density: bench.density,
+        lace: bench.lace,
+      }).validation;
+    } catch {
+      return undefined;
+    }
+  }, []);
 
   const navigateTab = (tabId: PhotographyBibleTabId) => {
     setActiveTab(tabId);
@@ -332,9 +351,13 @@ function PhotographyBibleDashboardInner() {
             >
               {dna.approvedPrompt.body}
             </pre>
+            <p style={{ ...ppCaption, marginTop: 8, fontSize: '6px', color: PP_VISUAL.red }}>
+              FAL RECEIVES THIS LOCKED PROMPT ONLY · PLACEHOLDER SUBSTITUTION · NO DYNAMIC REWRITE
+            </p>
+            <PhotographyBiblePromptValidationPanel validation={benchmarkPromptValidation} />
           </div>
 
-          <p style={ppSectionTitle}>EDITORIAL REFERENCE PROMPT</p>
+          <p style={ppSectionTitle}>EDITORIAL REFERENCE (ATTACHMENT SPEC — NOT SENT AS FAL PROMPT TEXT)</p>
           <pre
             className="p-2 mb-3"
             style={{

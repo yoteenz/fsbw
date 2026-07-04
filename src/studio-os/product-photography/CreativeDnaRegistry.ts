@@ -156,7 +156,15 @@ export const CREATIVE_DNA_V1_0: CreativeDnaRecord = {
   benchmarkOutput: CREATIVE_DNA_BENCHMARK_OUTPUT,
   lockedSpecifications: CREATIVE_DNA_LOCKED_SPECIFICATIONS,
   futureUnitSlots: CREATIVE_DNA_FUTURE_UNIT_SLOTS,
-  perUnitVariableFields: ['unitName', 'collectionNumber', 'texture', 'productReferenceImage'],
+  perUnitVariableFields: [
+    'unitName',
+    'collectionNumber',
+    'texture',
+    'length',
+    'density',
+    'lace',
+    'productReferenceImage',
+  ],
 };
 
 export function getCreativeDna(version: string = CREATIVE_DNA_VERSION): CreativeDnaRecord {

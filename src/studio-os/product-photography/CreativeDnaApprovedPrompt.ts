@@ -72,7 +72,18 @@ Apply the provided product reference image as the hair identity lock:
 - Natural hairline visible; lace edge clean and readable — not over-retouched
 - Lace specification must remain legible where applicable (e.g. 13×6 Ultra Thin HD Film Lace)
 - Texture truth over saturation — photoreal hair fiber detail, not plastic CGI
-- Unit metadata (collection number, texture origin, length, density, lace) informs spec accuracy but must not appear as text in the image
+
+UNIT SPECIFICATION — APPROVED VARIABLE INJECTION ONLY
+The following six placeholders are the ONLY permitted per-unit substitutions. Do not rewrite, summarize, compress, optimize, or reinterpret any other prompt text.
+
+UNIT NAME: {{UNIT_NAME}}
+COLLECTION NUMBER: {{COLLECTION_NUMBER}}
+TEXTURE: {{TEXTURE}}
+LENGTH: {{LENGTH}}
+DENSITY: {{DENSITY}}
+LACE: {{LACE}}
+
+These values specify product identity for the generation package. They must not appear as visible text overlays in the output image.
 
 PROHIBITED ELEMENTS — LOCKED
 - No props

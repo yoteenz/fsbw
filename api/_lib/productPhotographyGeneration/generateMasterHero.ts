@@ -1,6 +1,9 @@
 import { uploadBufferToFalStorage } from '../productAssetFactory/ideogramCutout.js';
 import { productAssetStoragePath, uploadProductAsset } from '../productAssetFactory/supabaseStorage.js';
-import { assembleProductPhotographyFalPrompt } from './assembleFalPrompt.js';
+import {
+  compileAndValidatePhotographyBiblePrompt,
+  validateCreativeDnaBeforeGeneration,
+} from './promptCompiler.js';
 import {
   PRODUCT_PHOTOGRAPHY_POC_UNIT,
   resolveDisplayBustFront,
@@ -131,8 +134,52 @@ export async function generateMasterHeroFromCreativeDna(
     (input.includeBenchmarkAttachment ?? input.action === 'generate-variants') &&
     shouldAttachBenchmark(unit.benchmarkHeroSrc, productRef, displayBust);
 
-  logs.push(log('Creative DNA v1.0 loaded — assembling generation package'));
+  logs.push(log('Creative DNA v1.0 validated — compiling locked Photography Bible prompt (placeholder substitution only)'));
   logs.push(log(`Action: ${input.action} · Unit: ${unit.label} · Generation ID: ${generationId}`));
+
+  const dnaValidation = validateCreativeDnaBeforeGeneration();
+  if (!dnaValidation.ok) {
+    logs.push(log(dnaValidation.error, 'error'));
+    return {
+      ok: false,
+      productReferenceImageSrc: input.productReferenceImageSrc ?? unit.defaultProductRef,
+      displayBustSrc: resolveDisplayBustFront(unit.slug),
+      falModel: PRODUCT_PHOTOGRAPHY_FAL_MODEL,
+      logs,
+      error: dnaValidation.error,
+    };
+  }
+
+  let compiledPrompt: string;
+  let promptValidation: import('./promptCompiler.js').PhotographyBiblePromptValidation;
+  try {
+    const compiled = compileAndValidatePhotographyBiblePrompt({
+      unitName: unit.label,
+      collectionNumber: unit.collectionNumber,
+      texture: unit.texture,
+      length: unit.length,
+      density: unit.density,
+      lace: unit.lace,
+    });
+    compiledPrompt = compiled.compiledPrompt;
+    promptValidation = compiled.validation;
+    logs.push(
+      log(
+        `Prompt locked · hash ${promptValidation.promptHash} · Photography Bible ${promptValidation.photographyBibleVersion} · ${promptValidation.variableInjectionSummary}`
+      )
+    );
+  } catch (compileErr) {
+    const msg = compileErr instanceof Error ? compileErr.message : String(compileErr);
+    logs.push(log(`Photography Bible prompt compiler aborted: ${msg}`, 'error'));
+    return {
+      ok: false,
+      productReferenceImageSrc: input.productReferenceImageSrc ?? unit.defaultProductRef,
+      displayBustSrc: resolveDisplayBustFront(unit.slug),
+      falModel: PRODUCT_PHOTOGRAPHY_FAL_MODEL,
+      logs,
+      error: msg,
+    };
+  }
 
   try {
     logs.push(log(`Uploading Display Bust v1.0 reference to FAL · ${displayBust}`));
@@ -158,20 +205,16 @@ export async function generateMasterHeroFromCreativeDna(
       logs.push(log('Benchmark attachment skipped — would duplicate product/display reference'));
     }
 
-    const prompt = assembleProductPhotographyFalPrompt({
-      unitLabel: unit.label,
-      collectionNumber: unit.collectionNumber,
-      texture: unit.texture,
-      length: unit.length,
-      density: unit.density,
-      lace: unit.lace,
-      includeBenchmarkAttachment: attachBenchmark,
-    });
+    const prompt = compiledPrompt;
 
     logMasterHeroDebug('FAL request starting', {
       generationId,
       model: PRODUCT_PHOTOGRAPHY_FAL_MODEL,
       promptVersion: CREATIVE_DNA_PROMPT_VERSION,
+      promptLocked: promptValidation.promptLocked,
+      promptHash: promptValidation.promptHash,
+      photographyBibleVersion: promptValidation.photographyBibleVersion,
+      variableInjectionSummary: promptValidation.variableInjectionSummary,
       promptSent: prompt.slice(0, 2000),
       imageUrlCount: imageUrls.length,
       productReferenceSrc: productRef,
@@ -236,6 +279,7 @@ export async function generateMasterHeroFromCreativeDna(
       promptVersion: CREATIVE_DNA_PROMPT_VERSION,
       falModel: PRODUCT_PHOTOGRAPHY_FAL_MODEL,
       productReferenceSrc: productRef,
+      promptValidation,
       debugLog: {
         promptSent: prompt,
         falRequestId,

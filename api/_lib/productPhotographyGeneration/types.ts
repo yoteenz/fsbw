@@ -8,6 +8,18 @@ export type ProductPhotographyGenerateLogEntry = {
   level: 'info' | 'warn' | 'error';
 };
 
+export type PhotographyBiblePromptValidation = {
+  promptLocked: true;
+  promptHash: string;
+  masterTemplateHash: string;
+  photographyBibleVersion: string;
+  creativeDnaVersion: string;
+  variableInjectionSummary: string;
+  variablesChanged: string[];
+  variablesRemainingLocked: string[];
+  compiledPromptLength: number;
+};
+
 export type MasterHeroGenerationDebugLog = {
   promptSent: string;
   falRequestId?: string;
@@ -26,6 +38,7 @@ export type MasterHeroGenerationRecord = {
   falModel: string;
   productReferenceSrc: string;
   backgroundRemovalInputUrl?: string;
+  promptValidation?: PhotographyBiblePromptValidation;
   debugLog: MasterHeroGenerationDebugLog;
 };
 

@@ -96,6 +96,22 @@ export {
   CREATIVE_DNA_APPROVED_PROMPT_VERSION,
   CREATIVE_DNA_APPROVED_PROMPT_BODY,
 } from './CreativeDnaApprovedPrompt';
+export {
+  PHOTOGRAPHY_BIBLE_LOCKED_MASTER_TEMPLATE,
+  PHOTOGRAPHY_BIBLE_PROMPT_VERSION,
+  PHOTOGRAPHY_BIBLE_PLACEHOLDERS,
+  PHOTOGRAPHY_BIBLE_LOCKED_SECTIONS,
+  compilePhotographyBiblePrompt,
+  compileAndValidatePhotographyBiblePrompt,
+  validateCreativeDnaBeforeGeneration,
+  hashPhotographyBiblePrompt,
+  buildPhotographyBiblePromptValidation,
+} from './promptCompiler';
+export type {
+  PhotographyBibleUnitVariables,
+  PhotographyBiblePromptValidation,
+  PhotographyBiblePlaceholderKey,
+} from './promptCompiler';
 export { CREATIVE_DNA_EDITORIAL_REFERENCE_PROMPT } from './CreativeDnaEditorialPrompt';
 export {
   OFFICIAL_DISPLAY_BUST_VERSION,

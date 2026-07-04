@@ -35959,3 +35959,23 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** `src/studio-os/memory-bible/*`, `src/components/admin/studio/memory-bible/*`, `src/pages/admin/studio/memory-bible/page.tsx`, hooks, utils, routes, nav, modules, services, seedGraph, moduleEnrichments, adminStudioKnowledgeHubDemo, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Photography Bible Prompt Compiler (immutable Creative DNA)
+
+**Context:** User reported Asset Factory was generating images using AI-assembled prompt text instead of the approved Photography Bible. Creative DNA must be an immutable specification — not a prompt generator. Refactor pipeline so Photography Bible prompt is single source of truth; only six approved placeholder substitutions (Unit Name, Collection Number, Texture, Length, Density, Lace); abort FAL if prompt differs outside placeholders.
+
+**Root cause:** `assembleProductPhotographyFalPrompt` appended dynamic blocks (ACTIVE GENERATION header, editorial reference prompt text, image attachment instructions, output rules, benchmark copy) to the locked approved body — effectively rewriting the prompt before FAL.
+
+**Shipped:**
+- **`src/studio-os/product-photography/promptCompiler.ts`** — `compileAndValidatePhotographyBiblePrompt()`, Creative DNA validation, placeholder-only substitution, integrity check (reconstruct template from compiled prompt), prompt hash, locked-section metadata.
+- **`api/_lib/productPhotographyGeneration/promptCompiler.ts`** — server mirror; `assembleFalPrompt.ts` deprecated to re-export compiler.
+- **Locked master template** — `CreativeDnaApprovedPrompt.ts` + `creativeDnaV1.ts` updated with `{{UNIT_NAME}}` … `{{LACE}}` placeholder section; removed dynamic unit metadata line.
+- **`generateMasterHero.ts`** — validates Creative DNA before compile; aborts on compiler failure; sends compiled prompt to FAL exactly; stores `promptValidation` on `MasterHeroGenerationRecord`.
+- **UI:** `PhotographyBiblePromptValidationPanel` — Prompt Locked, Prompt Hash, Photography Bible Version, Variable Injection Summary, Variables Changed, Variables Remaining Locked; shown in Asset Factory `MasterHeroPreviewPanel` and Photography Bible Creative DNA tab (SOFT WAVE benchmark preview).
+- Editorial reference prompt no longer injected into FAL prompt text (attachment spec only in UI label).
+
+**Conventions:** FAL prompt = locked Photography Bible + placeholder substitution only. Never summarize, compress, optimize, or reinterpret master prompt. Camera, lighting, composition, mannequin, etc. remain locked.
+
+**Changes:** promptCompiler (client+server), CreativeDnaApprovedPrompt, creativeDnaV1, generateMasterHero, types, MasterHeroPreviewPanel, PhotographyBibleWorkspace, CreativeDnaRegistry perUnitVariableFields, pipeline log, index exports, `motherboard/MEMORY.md`.
+
