@@ -36034,3 +36034,34 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** providerPreset.ts, PhotographyBibleProviderPreset.ts, generateMasterHero.ts, types (server+client), product-photography-generate.ts, pipeline.ts, BrandAssetsAssetFactoryWorkspace, MasterHeroPreviewPanel, PhotographyBibleProviderValidationPanel, GenerationPackageModal, index exports, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Milestone 26: Workspace Creation Engine v1.0 + AI Media pilot
+
+**Context (full chat):** After Asset Factory GPT Image 2 provider preset (Milestone ~24.3), user requested studio os become capable of launching entire companies from within the platform — not hardcoding AI Media as another static project. AI Media = permanent pilot workspace validating every feature before Frontal Slayer promotion.
+
+**Workspace Creation Engine (`src/studio-os-core/workspace-creation/`):**
+- Centralized registry (localStorage `studioOs_workspaceRegistry_v1`) — id, name, slug, blueprint, workspace type, deployment stage, branding, enabled modules, executive team, reference pilot flag.
+- **10 blueprints:** Ecommerce Brand, AI Media Company, SaaS, Agency, Creator Brand, Education, Local Service, Consulting, Startup, Blank Workspace.
+- Each blueprint provisions dashboard, Memory Bible, Creative DNA, Writing Bible, Knowledge Graph, Interactive Manual, onboarding, prompt library, automation, storage, analytics, approval workflows, asset folders, AI directors, documentation, workflow templates, reporting dashboards.
+- **`buildWorkspaceFromDraft()` + `finalizeProvisionedWorkspace()`** — same path for wizard and bootstrap seed.
+- **`ensureAiMediaPilotWorkspace()`** — AI Media created through engine on `workspaces/index.ts` bootstrap (not a hardcoded `src/workspaces/ai-media/` config folder).
+
+**6-step wizard** (`/admin/studio-os/create`): blueprint → info → type → modules → branding → launch. Immersive **provisioning sequence** (16 steps ending “Company Ready”).
+
+**UI routes:**
+- `/admin/studio-os` — enhanced registry + Launch New Company + Blueprint Library + Promotion Center
+- `/admin/studio-os/blueprints` — blueprint marketplace (duplicate/clone/export/version/compare stubs)
+- `/admin/studio-os/promotion-center` — develop → AI Media → test → approve → Frontal Slayer → all workspaces
+- `/admin/studio-os/workspace/{slug}/dashboard` — workspace dashboard (AI Media tabs: content pipeline, campaigns, creative dna, memory bible, etc.)
+
+**AI Executive Team:** Blueprint-provisioned specialized advisors (`executiveTeam.ts`) inheriting Memory Bible, Creative DNA, workflows; collaboration chain visualization (CCO → Creative → Distribution → Analytics).
+
+**Dynamic workspace merge:** `src/workspaces/index.ts` merges registry records into runtime `WorkspaceSchema` via `registryRecordToWorkspaceSchema()` — **Frontal Slayer unchanged**.
+
+**Knowledge Graph:** nodes for Workspace Creation Engine, AI Media pilot, AI Executive Team, Promotion Pipeline + workflow `wf-workspace-promotion`.
+
+**Docs:** `docs/studio-os/workspace-creation-engine.md`.
+
+**Changes:** workspace-creation/*, useWorkspaceCreationEngine, studio-os pages/components, workspaces/index.ts, routes.ts, App.tsx, seedGraph.ts, `motherboard/MEMORY.md`.
+

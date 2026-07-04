@@ -1,0 +1,68 @@
+import type { BlueprintModuleId } from '../studio-os-core/workspace-creation/types';
+
+export const WORKSPACE_DASHBOARD_MODULE_LABELS: Record<BlueprintModuleId, string> = {
+  dashboard: 'Overview',
+  'memory-bible': 'Memory Bible',
+  'creative-dna': 'Creative DNA',
+  'writing-bible': 'Writing Bible',
+  'knowledge-graph': 'Knowledge Graph',
+  'interactive-manual': 'Interactive Manual',
+  'onboarding-tutorial': 'Onboarding Tutorial',
+  'prompt-library': 'Prompt Library',
+  automation: 'Automation',
+  storage: 'Storage',
+  analytics: 'Analytics',
+  'approval-workflows': 'Approval Queue',
+  'asset-folders': 'Asset Folders',
+  'ai-directors': 'AI Directors',
+  documentation: 'Documentation',
+  'workflow-templates': 'Workflow Templates',
+  'reporting-dashboards': 'Reporting Dashboards',
+  'content-pipeline': 'Content Pipeline',
+  campaigns: 'Campaigns',
+  'asset-factory': 'Asset Factory',
+  distribution: 'Distribution',
+  revenue: 'Revenue',
+  'social-accounts': 'Social Accounts',
+  'system-health': 'System Health',
+  'promotion-center': 'Promotion Center',
+  'executive-ai-director': 'Executive AI Director',
+};
+
+export const AI_MEDIA_DASHBOARD_TABS: BlueprintModuleId[] = [
+  'dashboard',
+  'content-pipeline',
+  'campaigns',
+  'creative-dna',
+  'memory-bible',
+  'writing-bible',
+  'knowledge-graph',
+  'asset-factory',
+  'prompt-library',
+  'automation',
+  'approval-workflows',
+  'distribution',
+  'analytics',
+  'revenue',
+  'social-accounts',
+  'system-health',
+  'promotion-center',
+  'executive-ai-director',
+];
+
+export const DEPLOYMENT_STAGE_LABELS: Record<string, string> = {
+  planning: 'Planning',
+  provisioning: 'Provisioning',
+  'active-development': 'Active Development',
+  pilot: 'Pilot',
+  production: 'Production',
+  maintenance: 'Maintenance',
+  archived: 'Archived',
+};
+
+export const WORKSPACE_TYPE_LABELS: Record<string, string> = {
+  production: 'Production',
+  pilot: 'Pilot',
+  internal: 'Internal',
+  archived: 'Archived',
+};

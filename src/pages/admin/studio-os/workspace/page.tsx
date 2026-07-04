@@ -5,7 +5,7 @@ import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPage
 import { STUDIO_OS_PLATFORM } from '../../../../studio-os-core/config/platform';
 import { STUDIO_OS_VOCABULARY } from '../../../../studio-os-core/core/vocabulary';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
-import { getWorkspaceById, isKnownWorkspaceId } from '../../../../workspaces';
+import { getWorkspaceById, isDynamicWorkspaceId, isKnownWorkspaceId } from '../../../../workspaces';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
@@ -29,6 +29,10 @@ export default function AdminStudioOsWorkspaceShellPage() {
   const schema = getWorkspaceById(workspaceId);
   if (!schema) {
     return <Navigate to={STUDIO_OS_ROUTES.entry} replace />;
+  }
+
+  if (isDynamicWorkspaceId(workspaceId)) {
+    return <Navigate to={STUDIO_OS_ROUTES.workspaceDashboard(workspaceId)} replace />;
   }
 
   if (schema.studioEnabled) {

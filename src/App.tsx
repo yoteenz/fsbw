@@ -182,6 +182,10 @@ const AdminStudioBrandAssets = lazyWithRetry(() => import('./pages/admin/studio/
 const AdminStudioPhotographyBible = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/photography-bible/page'), 'AdminStudioPhotographyBible');
 const AdminStudioBrandAssetsAssetFactory = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/asset-factory/page'), 'AdminStudioBrandAssetsAssetFactory');
 const AdminStudioOs = lazyWithRetry(() => import('./pages/admin/studio-os/page'), 'AdminStudioOs');
+const AdminStudioOsCreate = lazyWithRetry(() => import('./pages/admin/studio-os/create/page'), 'AdminStudioOsCreate');
+const AdminStudioOsBlueprints = lazyWithRetry(() => import('./pages/admin/studio-os/blueprints/page'), 'AdminStudioOsBlueprints');
+const AdminStudioOsPromotionCenter = lazyWithRetry(() => import('./pages/admin/studio-os/promotion-center/page'), 'AdminStudioOsPromotionCenter');
+const AdminStudioOsWorkspaceDashboard = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/dashboard/page'), 'AdminStudioOsWorkspaceDashboard');
 const AdminStudioOsWorkspaceShell = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/page'), 'AdminStudioOsWorkspaceShell');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
@@ -784,9 +788,29 @@ function App() {
               <AdminBackend />
             </Suspense>
           } />
+          <Route path="studio-os/workspace/:workspaceId/dashboard" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOsWorkspaceDashboard />
+            </Suspense>
+          } />
           <Route path="studio-os/workspace/:workspaceId" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioOsWorkspaceShell />
+            </Suspense>
+          } />
+          <Route path="studio-os/promotion-center" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOsPromotionCenter />
+            </Suspense>
+          } />
+          <Route path="studio-os/blueprints" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOsBlueprints />
+            </Suspense>
+          } />
+          <Route path="studio-os/create" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOsCreate />
             </Suspense>
           } />
           <Route path="studio-os" element={

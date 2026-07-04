@@ -2,18 +2,38 @@ import { configureWorkspaceRegistry } from '../studio-os-core/workspace/registry
 import { emptyWorkspaceDataAdapter } from '../studio-os-core/workspace/empty-data-adapter';
 import type { WorkspaceDataAdapter } from '../studio-os-core/workspace/data-adapter';
 import type { WorkspaceId, WorkspaceListItem, WorkspaceSchema } from '../studio-os-core/workspace/types';
+import {
+  bootstrapWorkspaceCreationEngine,
+  listRegistryWorkspaces,
+  registryRecordToWorkspaceSchema,
+} from '../studio-os-core/workspace-creation';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
 import { SANDBOX_WORKSPACE } from './sandbox/config';
 import { FUTURE_BRAND_WORKSPACE } from './future-brand/config';
 import { FUTURE_CLIENT_WORKSPACE } from './future-client/config';
 
-const WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {
+bootstrapWorkspaceCreationEngine();
+
+const STATIC_WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {
   'frontal-slayer': FRONTAL_SLAYER_WORKSPACE,
   sandbox: SANDBOX_WORKSPACE,
   'future-brand': FUTURE_BRAND_WORKSPACE,
   'future-client': FUTURE_CLIENT_WORKSPACE,
 };
+
+function buildDynamicRegistry(): Record<WorkspaceId, WorkspaceSchema> {
+  const dynamic: Record<WorkspaceId, WorkspaceSchema> = {};
+  for (const record of listRegistryWorkspaces()) {
+    if (record.id in STATIC_WORKSPACE_REGISTRY) continue;
+    dynamic[record.id as WorkspaceId] = registryRecordToWorkspaceSchema(record);
+  }
+  return dynamic;
+}
+
+function getMergedRegistry(): Record<WorkspaceId, WorkspaceSchema> {
+  return { ...STATIC_WORKSPACE_REGISTRY, ...buildDynamicRegistry() };
+}
 
 const DATA_ADAPTERS: Record<WorkspaceId, WorkspaceDataAdapter> = {
   'frontal-slayer': frontalSlayerDataAdapter,
@@ -22,15 +42,16 @@ const DATA_ADAPTERS: Record<WorkspaceId, WorkspaceDataAdapter> = {
   'future-client': emptyWorkspaceDataAdapter,
 };
 
-export const WORKSPACE_IDS = Object.keys(WORKSPACE_REGISTRY) as WorkspaceId[];
+export const WORKSPACE_IDS = Object.keys(STATIC_WORKSPACE_REGISTRY) as WorkspaceId[];
 
 export function getWorkspaceById(id: WorkspaceId): WorkspaceSchema | undefined {
-  return WORKSPACE_REGISTRY[id];
+  return getMergedRegistry()[id];
 }
 
 export function listWorkspaces(): WorkspaceListItem[] {
-  return WORKSPACE_IDS.map((id) => {
-    const ws = WORKSPACE_REGISTRY[id];
+  const merged = getMergedRegistry();
+  return Object.keys(merged).map((id) => {
+    const ws = merged[id as WorkspaceId];
     return {
       id: ws.id,
       displayName: ws.displayName,
@@ -48,7 +69,11 @@ export function getWorkspaceDataAdapter(workspaceId: WorkspaceId): WorkspaceData
 }
 
 export function isKnownWorkspaceId(id: string): id is WorkspaceId {
-  return id in WORKSPACE_REGISTRY;
+  return id in getMergedRegistry();
+}
+
+export function isDynamicWorkspaceId(id: string): boolean {
+  return listRegistryWorkspaces().some((w) => w.id === id);
 }
 
 configureWorkspaceRegistry({

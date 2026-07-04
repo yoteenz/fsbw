@@ -118,6 +118,54 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     purpose: 'Signals missing approved asset; check Photography Bible + Factory pipeline.',
     searchKeywords: ['fallback_used', 'what does fallback_used mean', 'missing variant'],
   },
+  {
+    id: 'node-workspace-creation-engine',
+    name: 'WORKSPACE CREATION ENGINE',
+    type: 'module',
+    description: 'Blueprint-driven company provisioning — wizard, registry, executive teams, and promotion pipeline.',
+    purpose: 'Launch entire companies from studio os without hardcoding each workspace.',
+    route: '/admin/studio-os',
+    moduleId: 'studio-os',
+    relatedManualChapter: 'CHAPTER · WORKSPACE CREATION ENGINE',
+    versionIntroduced: 'Milestone 26',
+    status: 'live',
+    searchKeywords: ['workspace creation', 'launch new company', 'blueprint', 'provisioning'],
+  },
+  {
+    id: 'node-ai-media-pilot',
+    name: 'AI MEDIA PILOT WORKSPACE',
+    type: 'feature',
+    description: 'Permanent pilot workspace — validates every studio os feature before Frontal Slayer promotion.',
+    purpose: 'Reference environment for production testing and promotion pipeline.',
+    route: '/admin/studio-os/workspace/ai-media/dashboard',
+    moduleId: 'studio-os',
+    versionIntroduced: 'Milestone 26',
+    status: 'live',
+    searchKeywords: ['ai media', 'pilot workspace', 'reference workspace'],
+  },
+  {
+    id: 'node-ai-executive-team',
+    name: 'AI EXECUTIVE TEAM',
+    type: 'feature',
+    description: 'Blueprint-provisioned specialized AI advisors inheriting Memory Bible, Creative DNA, and workflows.',
+    purpose: 'Company-specific leadership — not generic chatbots.',
+    moduleId: 'studio-os',
+    versionIntroduced: 'Milestone 26',
+    status: 'live',
+    searchKeywords: ['executive team', 'chief content officer', 'ai executives', 'collaboration'],
+  },
+  {
+    id: 'node-promotion-pipeline',
+    name: 'PROMOTION PIPELINE',
+    type: 'workflow',
+    description: 'Develop → AI Media → test → approve → promote to Frontal Slayer → all workspaces.',
+    purpose: 'Built-in feature lifecycle for studio os capabilities.',
+    route: '/admin/studio-os/promotion-center',
+    moduleId: 'studio-os',
+    versionIntroduced: 'Milestone 26',
+    status: 'live',
+    searchKeywords: ['promotion center', 'pilot to production', 'frontal slayer promotion'],
+  },
 ];
 
 export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
@@ -143,6 +191,12 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-brand-assets-factory', fromId: 'brand-assets', toId: 'brand-assets-asset-factory', type: 'contains' },
   { id: 'e-asset-director-approval', fromId: 'asset-factory', toId: 'asset-director', type: 'requires-approval-from' },
   { id: 'e-director-publishes', fromId: 'asset-director', toId: 'publishing-queue', type: 'publishes-to' },
+  { id: 'e-wce-provisions-ai-media', fromId: 'node-workspace-creation-engine', toId: 'node-ai-media-pilot', type: 'creates', label: 'PROVISIONS' },
+  { id: 'e-wce-executive-team', fromId: 'node-workspace-creation-engine', toId: 'node-ai-executive-team', type: 'contains' },
+  { id: 'e-ai-media-promotion', fromId: 'node-ai-media-pilot', toId: 'node-promotion-pipeline', type: 'feeds', label: 'PILOT TESTING' },
+  { id: 'e-promotion-frontal', fromId: 'node-promotion-pipeline', toId: 'mission-control', type: 'related-to', label: 'PROMOTE TO FRONTAL SLAYER' },
+  { id: 'e-executive-collab', fromId: 'node-ai-executive-team', toId: 'node-ai-media-pilot', type: 'related-to', label: 'CCO → CREATIVE → DISTRIBUTION' },
+  { id: 'e-executive-memory', fromId: 'node-ai-executive-team', toId: 'node-memory-bible', type: 'inherits-from', label: 'MEMORY BIBLE' },
 ];
 
 export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
@@ -193,6 +247,19 @@ export const SEED_GRAPH_WORKFLOWS: KnowledgeGraphWorkflowMap[] = [
       'node-smart-asset-registry',
     ],
     moduleIds: ['memory-bible', 'knowledge-hub', 'photography-bible', 'brand-assets-asset-factory'],
+  },
+  {
+    id: 'wf-workspace-promotion',
+    title: 'WORKSPACE PROMOTION LIFECYCLE',
+    subtitle: 'Develop → AI Media Pilot → Test → Approve → Frontal Slayer → All Workspaces',
+    nodeIds: [
+      'node-workspace-creation-engine',
+      'node-ai-media-pilot',
+      'node-promotion-pipeline',
+      'node-ai-executive-team',
+      'mission-control',
+    ],
+    moduleIds: ['studio-os'],
   },
 ];
 

@@ -5,7 +5,11 @@ const ADMIN_BASE = '/admin';
 /** Workspace-aware route helpers — future workspaces inherit same patterns. */
 export const STUDIO_OS_ROUTES = {
   entry: `${ADMIN_BASE}/studio-os`,
+  create: `${ADMIN_BASE}/studio-os/create`,
+  blueprints: `${ADMIN_BASE}/studio-os/blueprints`,
+  promotionCenter: `${ADMIN_BASE}/studio-os/promotion-center`,
   workspaceShell: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}`,
+  workspaceDashboard: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/dashboard`,
   workspaceSettings: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/settings`,
   workspaceAssets: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/assets`,
   workspaceProjects: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/projects`,
@@ -29,5 +33,8 @@ export function workspaceStudioEntryPath(workspaceId: string, entryPath: string)
   if (workspaceId === STUDIO_OS_DEFAULT_WORKSPACE_ID) {
     return entryPath;
   }
-  return STUDIO_OS_ROUTES.workspaceShell(workspaceId);
+  if (entryPath.includes('/dashboard')) {
+    return entryPath;
+  }
+  return STUDIO_OS_ROUTES.workspaceDashboard(workspaceId);
 }
