@@ -35701,3 +35701,13 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** api generation pipeline, admin endpoint, hooks, Photography Bible workspace/cards, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Asset Factory master preview expand modal
+
+**Context:** User reported Asset Factory **Master Preview** hero thumbnail should expand like other admin photo popups (Asset Director quick preview pattern).
+
+**Shipped:** Shared `AdminStudioImagePreviewModal` + `AdminStudioExpandableImage` (portal overlay, Escape to close, tap backdrop to dismiss, 1:1 contain fit). Wired Asset Factory **MASTER HERO** and **TRANSPARENT MASTER** thumbnails with “TAP TO EXPAND”.
+
+**Changes:** `AdminStudioImagePreviewModal.tsx`, `BrandAssetsAssetFactoryWorkspace.tsx`, `motherboard/MEMORY.md`.
+

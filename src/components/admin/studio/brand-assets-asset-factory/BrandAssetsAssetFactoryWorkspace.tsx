@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import { AdminStudioTabBar } from '../AdminStudioTabBar';
+import {
+  AdminStudioExpandableImage,
+  AdminStudioImagePreviewModal,
+  type AdminStudioImagePreviewItem,
+} from '../AdminStudioImagePreviewModal';
 import { useAdminStudioBrandAssetsProductAssetFactory } from '../../../../hooks/useAdminStudioBrandAssetsProductAssetFactoryState';
 import { getPhotographyBibleUnit } from '../../../../hooks/useAdminStudioProductPhotographyBibleState';
 import {
@@ -22,12 +27,14 @@ function stageLabel(stage: string): string {
 
 export function BrandAssetsAssetFactoryWorkspace() {
   const [activeTab, setActiveTab] = useState<BrandAssetsAssetFactoryTabId>('overview');
+  const [previewItem, setPreviewItem] = useState<AdminStudioImagePreviewItem | null>(null);
   const { store, latestJob, running, lastError, runPipeline, publishJob } =
     useAdminStudioBrandAssetsProductAssetFactory();
 
   const bibleUnit = getPhotographyBibleUnit(PRODUCT_ASSET_FACTORY_POC_UNIT.slug);
   const tabBody = getAssetFactoryTabBody(activeTab);
   const pocRegistry = store.registry.filter((r) => r.productSlug === PRODUCT_ASSET_FACTORY_POC_UNIT.slug);
+  const masterHeroSrc = bibleUnit?.heroPortraitSrc ?? PRODUCT_ASSET_FACTORY_POC_UNIT.masterHeroSrc;
 
   return (
     <div className="pb-6">
@@ -228,26 +235,27 @@ export function BrandAssetsAssetFactoryWorkspace() {
       <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px' }}>
         <p style={ppSectionTitle}>MASTER PREVIEW</p>
         <div className="flex gap-3 flex-wrap items-start">
-          <div>
-            <p style={{ ...ppCaption, marginBottom: 4 }}>MASTER HERO</p>
-            <img
-              src={bibleUnit?.heroPortraitSrc ?? PRODUCT_ASSET_FACTORY_POC_UNIT.masterHeroSrc}
-              alt="Master hero"
-              style={{ width: 120, height: 120, objectFit: 'contain', border: `1px solid ${PP_VISUAL.panelBorder}` }}
-            />
-          </div>
+          <AdminStudioExpandableImage
+            src={masterHeroSrc}
+            alt="Master hero"
+            label="MASTER HERO"
+            subtitle={`${PRODUCT_ASSET_FACTORY_POC_UNIT.label} · CREATIVE DNA v1.0`}
+            onExpand={setPreviewItem}
+          />
           {latestJob?.transparentMasterUrl ? (
-            <div>
-              <p style={{ ...ppCaption, marginBottom: 4 }}>TRANSPARENT MASTER</p>
-              <img
-                src={latestJob.transparentMasterUrl}
-                alt="Transparent master"
-                style={{ width: 120, height: 120, objectFit: 'contain', border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 12px 12px' }}
-              />
-            </div>
+            <AdminStudioExpandableImage
+              src={latestJob.transparentMasterUrl}
+              alt="Transparent master"
+              label="TRANSPARENT MASTER"
+              subtitle="IDEOGRAM CUTOUT · ASSET FACTORY"
+              checkerboard
+              onExpand={setPreviewItem}
+            />
           ) : null}
         </div>
       </section>
+
+      <AdminStudioImagePreviewModal item={previewItem} onClose={() => setPreviewItem(null)} />
     </div>
   );
 }
