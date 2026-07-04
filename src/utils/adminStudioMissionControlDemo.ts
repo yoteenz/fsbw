@@ -314,6 +314,7 @@ export const MISSION_QUICK_ACTIONS: QuickAction[] = [
   { id: 'builder', label: 'PRODUCTION BUILDER', route: '/admin/studio/production-builder' },
   { id: 'asset-dir', label: 'ASSET DIRECTOR', route: '/admin/studio/asset-director' },
   { id: 'blueprints', label: 'BLUEPRINT MANAGER', route: '/admin/studio/blueprint-manager' },
+  { id: 'factory', label: 'ASSET FACTORY', route: '/admin/studio/asset-factory' },
   { id: 'publish', label: 'PUBLISH CONTENT', route: '/admin/studio/publishing-queue' },
   { id: 'approvals', label: 'REVIEW APPROVALS', route: '/admin/studio/mission-control#approvals' },
 ];
@@ -383,6 +384,15 @@ export const MISSION_CONTROL_BLUEPRINT_STATS = {
   awaitingApproval: 6,
   health: 62,
   factoryReadiness: 28,
+} as const;
+
+export const MISSION_CONTROL_FACTORY_STATS = {
+  factoryHealth: 94,
+  jobsRunning: 1,
+  jobsWaiting: 2,
+  jobsFailed: 0,
+  creditsRemaining: 7160,
+  factoryEfficiency: 88,
 } as const;
 
 export function searchMissionIndex(query: string): MissionSearchEntry[] {

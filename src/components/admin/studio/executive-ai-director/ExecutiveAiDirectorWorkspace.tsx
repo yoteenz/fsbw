@@ -1,8 +1,9 @@
 import { AdminHubTabBar } from '../../AdminHubTabBar';
 import { useNavigate } from 'react-router-dom';
+import { FACTORY_EAD_SUGGESTIONS } from '../../../../utils/adminStudioAssetFactoryDemo';
+import { adminStudioAssetFactoryPath, adminStudioBlueprintDetailPath } from '../../../../utils/adminStudioRoutes';
 import { WEATHER_STUDIO_BLUEPRINT, BLUEPRINT_REVIEW_SUGGESTIONS } from '../../../../utils/adminStudioBlueprintManagerDemo';
 import { reviewBlueprintForGeneration } from '../../../../utils/adminStudioBlueprintManagerAnalysis';
-import { adminStudioBlueprintDetailPath } from '../../../../utils/adminStudioRoutes';
 import { useAdminStudioExecutiveAiDirector } from '../../../../hooks/useAdminStudioExecutiveAiDirectorState';
 import {
   AB_STRATEGY_SEED,
@@ -88,7 +89,12 @@ export function ExecutiveAiDirectorWorkspace() {
         {activeTab === 'brand' && <BrandPanel items={brandCompliance} />}
         {activeTab === 'prompt' && <PromptPanel score={promptReview.score} findings={promptReview.findings} />}
         {activeTab === 'forecast' && <ForecastPanel />}
-        {activeTab === 'recommendations' && <RecommendationsPanel />}
+        {activeTab === 'recommendations' && (
+          <>
+            <RecommendationsPanel />
+            <FactoryMonitorPanel />
+          </>
+        )}
         {activeTab === 'timeline' && <TimelinePanel executive={executiveTimeline} production={productionTimeline} memory={workspaceMemory} />}
         {activeTab === 'chat' && (
           <ChatPanel
@@ -194,6 +200,25 @@ function BlueprintReviewPanel() {
       ))}
       <button type="button" onClick={() => navigate(adminStudioBlueprintDetailPath('bp-weather-studio'))} style={{ ...eadActionBtn, marginTop: '8px' }}>
         REVIEW WEATHER STUDIO BLUEPRINT
+      </button>
+    </section>
+  );
+}
+
+function FactoryMonitorPanel() {
+  const navigate = useNavigate();
+  return (
+    <section style={{ ...eadPanelStyle, padding: '12px', marginTop: '12px' }}>
+      <p style={eadSectionTitle}>ASSET FACTORY MONITOR</p>
+      {FACTORY_EAD_SUGGESTIONS.map((s) => (
+        <div key={s.id} className="mb-2" style={{ borderLeft: `2px solid ${EAD_VISUAL.red}`, paddingLeft: '8px' }}>
+          <p style={{ ...eadCaption, color: EAD_VISUAL.black, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>{s.title}</p>
+          <p style={eadCaption}>{s.detail}</p>
+          <p style={eadSourceTag(s.source)}>{SOURCE_LABELS[s.source]}</p>
+        </div>
+      ))}
+      <button type="button" onClick={() => navigate(adminStudioAssetFactoryPath())} style={{ ...eadActionBtn, marginTop: '8px' }}>
+        OPEN ASSET FACTORY
       </button>
     </section>
   );

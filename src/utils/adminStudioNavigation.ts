@@ -220,6 +220,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'asset-factory',
+    title: 'ASSET FACTORY',
+    purpose: 'Manufacture complete creative systems from approved blueprints — executive, floor, and tour views.',
+    route: p('asset-factory'),
+    groupId: 'visuals',
+    status: 'demo',
+    metric: '3 VIEWS',
+    ctaLabel: 'ENTER FACTORY',
+    featuredOnOverview: true,
+  },
+  {
     id: 'studio-lot',
     title: 'STUDIO LOT',
     purpose: 'Tour virtual sets and production environments before you shoot.',

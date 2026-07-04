@@ -35226,3 +35226,26 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Blueprint Manager is specification-only — Asset Factory not connected; only approved blueprints eligible for future factory; global templates inherit into workspace blueprints.
 
+---
+
+## 2026-07-04 — Asset Factory manufacturing department (Milestone 19)
+
+**Context:** User milestone for **Asset Factory** — complete manufacturing department manufacturing creative systems from approved Blueprints; flagship StudioOS experience with three view modes; must not redesign existing pages, remove Asset Director, modify customer pages, or break workspace architecture. Prior thread: Milestones 18–18.5 (Mission Control, Blueprint Manager).
+
+**Topics covered (full chat arc):** Blueprint Manager foundation; user requested Asset Factory as manufacturing department — subtitle "Manufacturing Creative Systems"; three synchronized views (Executive Dashboard NASA/Bloomberg-style metrics, Factory Floor operations with glowing departments, Factory Tour cinematic walkthrough without spinners); new workflow (select blueprint → generation plan → approve → auto-manufacture); reads approved blueprints; generation plan (images/videos/variants/credits/cost/dependencies); 9-department pipeline (prompt → environment → lighting → camera → animation → voice → QA → archive → asset director); provider abstraction (FAL, OpenArt, Runway, Flux, Imagen, Veo, GPT Image, internal); prompt stack assembly; dependency order; queue manager; AI department roles; job inspector; QA validation (needs-review never auto-publish); auto-populate placeholders; version history; variation engine; live factory map + activity; performance metrics; EAD factory monitor; Mission Control factory stats.
+
+**Decisions / outcomes:**
+- New route **`/admin/studio/asset-factory`** — VISUALS group, featured overview.
+- **`adminStudioAssetFactoryDemo.ts`** — departments, metrics, activity, EAD suggestions, variations, QA labels.
+- **`adminStudioAssetFactoryProviders.ts`** — provider abstraction layer (connected/standby/disconnected).
+- **`adminStudioAssetFactoryPipeline.ts`** — generation plan builder, job creation, department advance simulation, QA checks.
+- **`useAdminStudioAssetFactoryState.ts`** — jobs queue, 3 view modes, timed manufacturing simulation in **`adminStudioAssetFactory_v1`**.
+- UI: executive dashboard, factory floor with live map, factory tour cinematic progress, generation plan approval, job inspector, queue controls.
+- Integrations: Blueprint Manager link, Mission Control factory strip, EAD recommendations factory monitor; Asset Director delivery CTA on complete.
+- **`assetFactoryStudioService`** Phase 2 stub; demo simulation — providers not connected; no real generation.
+- Build verified.
+
+**Changes:** asset-factory utils/hooks/components/page/service, storage/routes/nav/App, mission-control + EAD + blueprint-manager integration, `studio-os/core/modules.ts`, `motherboard/CORE.md`.
+
+**Conventions:** Asset Factory simulates manufacturing for demo; human approves generation plan before run; QA failures → needs-review not auto-publish; Asset Director unchanged as delivery destination.
+

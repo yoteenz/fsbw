@@ -63,6 +63,9 @@ export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
     'blueprint-manager': {
       subtitle: 'DEFINE ONCE. GENERATE FOREVER. — ARCHITECTURAL DNA FOR ASSET FACTORY.',
     },
+    'asset-factory': {
+      subtitle: 'MANUFACTURING CREATIVE SYSTEMS — WATCH THE FACILITY BUILD YOUR PRODUCTION.',
+    },
     'studio-lot': {
       subtitle: 'EVERY STORY STARTS ON SET — THE PRODUCTION CAMPUS OF FRONTAL SLAYER.',
     },

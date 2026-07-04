@@ -95,6 +95,9 @@ export function BlueprintManagerWorkspace() {
       <button type="button" onClick={() => navigate(adminStudioBlueprintDetailPath('bp-weather-studio'))} style={{ ...bpActionBtn, marginTop: 8 }}>
         OPEN WEATHER STUDIO BLUEPRINT
       </button>
+      <button type="button" onClick={() => navigate('/admin/studio/asset-factory')} style={{ ...bpActionBtn, marginTop: 8, marginLeft: 8 }}>
+        OPEN ASSET FACTORY
+      </button>
     </div>
   );
 }

@@ -92,6 +92,9 @@ export type { MissionControlSnapshot, MissionControlSummary } from './missionCon
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
+export { assetFactoryStudioService, ASSET_FACTORY_INHERITANCE_CHAIN } from './assetFactory/service';
+export type { AssetFactorySnapshot, AssetFactorySummary } from './assetFactory/service';
+
 export { socialPublishingStudioService } from './socialPublishing/service';
 export type { SocialPublishingSnapshot } from './socialPublishing/service';
 
@@ -123,6 +126,7 @@ import { executiveAiDirectorStudioService } from './executiveAiDirector/service'
 import { campaignOrchestratorStudioService } from './campaignOrchestrator/service';
 import { missionControlStudioService } from './missionControl/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
+import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
 import type { StudioServiceStub } from './types';
 
@@ -147,6 +151,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   campaignOrchestratorStudioService,
   missionControlStudioService,
   blueprintManagerStudioService,
+  assetFactoryStudioService,
   socialPublishingStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,

@@ -30,6 +30,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
+  | 'asset-factory'
   | 'production-builder'
   | 'director-mode'
   | 'executive-ai-director'
@@ -61,6 +62,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'legacy-system',
   'asset-director',
   'blueprint-manager',
+  'asset-factory',
   'production-builder',
   'director-mode',
   'executive-ai-director',
@@ -114,6 +116,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   assetDirector: 'studio/asset-director',
   blueprintManager: 'studio/blueprint-manager',
   blueprintDetail: 'studio/blueprint-manager/:blueprintId',
+  assetFactory: 'studio/asset-factory',
   assetDirectorStudios: 'studio/asset-director/studios',
   assetDirectorStudioDetail: 'studio/asset-director/studios/:studioId',
   assetDirectorTalent: 'studio/asset-director/talent',
@@ -208,6 +211,10 @@ export function adminStudioBlueprintManagerPath(): string {
 
 export function adminStudioBlueprintDetailPath(blueprintId: string): string {
   return `${ADMIN_STUDIO_BASE_PATH}/blueprint-manager/${encodeURIComponent(blueprintId)}`;
+}
+
+export function adminStudioAssetFactoryPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/asset-factory`;
 }
 
 export function adminStudioAssetDirectorStudioPath(studioId: string): string {

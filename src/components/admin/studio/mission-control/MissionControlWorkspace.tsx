@@ -17,6 +17,7 @@ import {
   MISSION_PHASES,
   MISSION_QUICK_ACTIONS,
   MISSION_CONTROL_BLUEPRINT_STATS,
+  MISSION_CONTROL_FACTORY_STATS,
   SMART_NOTIFICATIONS,
   WORKSPACE_MEMORY,
   missionStatusColor,
@@ -256,6 +257,29 @@ export function MissionControlWorkspace() {
         <button type="button" onClick={() => navigate('/admin/studio/blueprint-manager')} style={mcActionBtn}>
           OPEN BLUEPRINT MANAGER
         </button>
+        <button type="button" onClick={() => navigate('/admin/studio/asset-factory')} style={{ ...mcActionBtn, marginLeft: 8 }}>
+          ENTER ASSET FACTORY
+        </button>
+      </section>
+
+      {/* ASSET FACTORY */}
+      <section style={{ ...mcPanelStyle, padding: '12px', marginBottom: '12px' }}>
+        <p style={mcSectionTitle}>ASSET FACTORY · MANUFACTURING</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 mb-3">
+          {[
+            { label: 'FACTORY HEALTH', value: `${MISSION_CONTROL_FACTORY_STATS.factoryHealth}%` },
+            { label: 'JOBS RUNNING', value: MISSION_CONTROL_FACTORY_STATS.jobsRunning },
+            { label: 'JOBS WAITING', value: MISSION_CONTROL_FACTORY_STATS.jobsWaiting },
+            { label: 'JOBS FAILED', value: MISSION_CONTROL_FACTORY_STATS.jobsFailed },
+            { label: 'CREDITS LEFT', value: MISSION_CONTROL_FACTORY_STATS.creditsRemaining },
+            { label: 'EFFICIENCY', value: `${MISSION_CONTROL_FACTORY_STATS.factoryEfficiency}%` },
+          ].map((s) => (
+            <div key={s.label} className="text-center py-2" style={{ background: 'rgba(0,0,0,0.03)' }}>
+              <p style={{ ...mcGrace, fontSize: '14px', color: MC_VISUAL.red }}>{s.value}</p>
+              <p style={{ ...mcCaption, fontSize: '7px' }}>{s.label}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* DEPARTMENT GRID */}
