@@ -46,6 +46,8 @@ Creative DNA v1.0 is **immutable**. Future updates append as v1.1, v1.2, v2.0 �
 
 Photography Bible → **CREATIVE DNA** tab at `/admin/studio/brand-assets/photography-bible`.
 
+**Generate Variants / Replace Reference** on SOFT WAVE (Unit 003) runs Fal generation + Asset Factory chain. See [03-fal-generation.md](./03-fal-generation.md).
+
 ## Future units (prepared, not generated)
 
 001 NOIR · 002 BLANCO · 003 SOFT WAVE (benchmark) · 004 BEACH WAVE · 005 SOFT CURL · 006 OCEAN CURL

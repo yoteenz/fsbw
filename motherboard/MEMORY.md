@@ -35680,3 +35680,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** Photography Bible workspace/components, demo config, specifications display values, page shell, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Creative DNA Fal generation + Asset Factory chain (Milestone 22.6)
+
+**Context (full chat):** After Creative DNA v1.0 init and Photography Bible UI refinement, user asked why Replace / Generate Variants did not generate from bible prompt via Fal. Confirmed those buttons were alert-only placeholders; Asset Factory only ran Ideogram cutout on existing PNGs. User requested full implementation: generation API, wire Photography Bible buttons, chain Asset Factory.
+
+**Goal:** Wire Generate Variants → Fal generation using Creative DNA v1.0 package (SOFT WAVE POC first), Replace Reference with new product ref, auto-chain Asset Factory on generated master.
+
+**Shipped:**
+- **API:** `POST /api/admin/product-photography-generate` — actions `generate-variants` | `replace-reference`; loads Creative DNA v1.0 approved prompt + editorial ref + Display Bust v1.0 + product ref (+ SOFT WAVE benchmark for variants); Fal `fal-ai/nano-banana-pro/edit` 1:1 4K PNG; uploads `generated-master-*.png` to Supabase; optional `runAssetFactory: true` (default) chains `runProductAssetFactoryPipeline`.
+- **Server modules:** `api/_lib/productPhotographyGeneration/` — `creativeDnaV1.ts`, `assembleFalPrompt.ts`, `generateMasterHero.ts`, types.
+- **Client hook:** `useAdminStudioProductPhotographyGenerate.ts` — `runProductPhotographyGenerateApi`, persists Asset Factory results when chained.
+- **Photography Bible UI:** SOFT WAVE (Unit 003) **Generate Variants** + **Replace Reference** call live API; loading state; patches unit hero/reference + derivatives on success; other units disabled with POC message.
+- **Docs:** `docs/frontal-slayer/photography-creative-dna/03-fal-generation.md`.
+
+**Requires:** `FAL_KEY`, `SUPABASE_URL` + storage creds, admin auth.
+
+**POC scope:** `soft-wave` only — same as Asset Factory POC.
+
+**Changes:** api generation pipeline, admin endpoint, hooks, Photography Bible workspace/cards, docs, `motherboard/MEMORY.md`.
+

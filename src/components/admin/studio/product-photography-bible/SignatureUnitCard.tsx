@@ -12,6 +12,8 @@ type SignatureUnitCardProps = {
   unit: SignatureUnitPhotographyRecord;
   factoryJob?: ProductAssetFactoryJobRecord;
   derivativeCount: number;
+  generating?: boolean;
+  generateEnabled?: boolean;
   onReplace: () => void;
   onView: () => void;
   onGenerateVariants: () => void;
@@ -52,6 +54,8 @@ export function SignatureUnitCard({
   unit,
   factoryJob,
   derivativeCount,
+  generating = false,
+  generateEnabled = false,
   onReplace,
   onView,
   onGenerateVariants,
@@ -98,21 +102,34 @@ export function SignatureUnitCard({
       </div>
 
       <div className="grid grid-cols-2 gap-1 mt-3">
-        <button type="button" style={ppActionBtn} onClick={onView}>
+        <button type="button" style={ppActionBtn} onClick={onView} disabled={generating}>
           VIEW
         </button>
         <button
           type="button"
           style={{ ...ppActionBtn, color: PP_VISUAL.red, fontFamily: '"Futura PT Medium"' }}
           onClick={() => navigate(adminStudioBrandAssetsAssetFactoryPath())}
+          disabled={generating}
         >
           OPEN IN ASSET FACTORY
         </button>
-        <button type="button" style={ppActionBtn} onClick={onReplace}>
-          REPLACE REFERENCE
+        <button
+          type="button"
+          style={ppActionBtn}
+          onClick={onReplace}
+          disabled={generating || !generateEnabled}
+          title={generateEnabled ? undefined : 'Fal generation POC — SOFT WAVE only'}
+        >
+          {generating ? 'GENERATING…' : 'REPLACE REFERENCE'}
         </button>
-        <button type="button" style={{ ...ppActionBtn, color: PP_VISUAL.muted }} onClick={onGenerateVariants}>
-          GENERATE VARIANTS
+        <button
+          type="button"
+          style={{ ...ppActionBtn, color: generateEnabled ? PP_VISUAL.red : PP_VISUAL.muted }}
+          onClick={onGenerateVariants}
+          disabled={generating || !generateEnabled}
+          title={generateEnabled ? 'Generate via Creative DNA v1.0 + Fal' : 'Fal generation POC — SOFT WAVE only'}
+        >
+          {generating ? 'GENERATING…' : 'GENERATE VARIANTS'}
         </button>
       </div>
     </article>

@@ -10,9 +10,13 @@ import {
   CREATIVE_DNA_FUTURE_UNIT_SLOTS,
 } from '../../../../studio-os/product-photography';
 import { useAdminStudioProductPhotographyBible } from '../../../../hooks/useAdminStudioProductPhotographyBibleState';
-import { useAdminStudioPhotographyDerivatives } from '../../../../hooks/useAdminStudioPhotographyDerivativesState';
+import { useAdminStudioPhotographyDerivatives, prepareAndPersistDerivatives } from '../../../../hooks/useAdminStudioPhotographyDerivativesState';
 import { useAdminStudioPhotographyCreativeDna } from '../../../../hooks/useAdminStudioPhotographyCreativeDnaState';
 import { getLatestProductAssetFactoryJob } from '../../../../hooks/useAdminStudioBrandAssetsProductAssetFactoryState';
+import {
+  isProductPhotographyGenerateEnabled,
+  useAdminStudioProductPhotographyGenerate,
+} from '../../../../hooks/useAdminStudioProductPhotographyGenerate';
 import {
   getPhotographyTabBody,
   PHOTOGRAPHY_BIBLE_TABS,
@@ -51,9 +55,10 @@ function LockedBadge() {
 function PhotographyBibleDashboardInner() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<PhotographyBibleTabId>('overview');
-  const { units } = useAdminStudioProductPhotographyBible();
+  const { units, patchUnit } = useAdminStudioProductPhotographyBible();
   const { getForUnit, results } = useAdminStudioPhotographyDerivatives();
   const { dna, generationPackagePreview } = useAdminStudioPhotographyCreativeDna();
+  const { generatingSlug, lastError, lastLogs, generate } = useAdminStudioProductPhotographyGenerate();
 
   const tabBody = getPhotographyTabBody(activeTab);
   const preparedUnitCount = results.length;
@@ -61,6 +66,56 @@ function PhotographyBibleDashboardInner() {
   const navigateTab = (tabId: PhotographyBibleTabId) => {
     setActiveTab(tabId);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const applyGenerationResult = (
+    slug: string,
+    result: { generatedMasterUrl?: string; productReferenceImageSrc?: string }
+  ) => {
+    if (!result.generatedMasterUrl) return;
+    patchUnit(slug, {
+      heroPortraitSrc: result.generatedMasterUrl,
+      referenceImageSrc: result.productReferenceImageSrc ?? undefined,
+      photographyStatus: 'approved',
+      mediaKitStatus: 'partial',
+    });
+    prepareAndPersistDerivatives('signature-collection', slug);
+  };
+
+  const handleGenerateVariants = async (slug: string) => {
+    if (!isProductPhotographyGenerateEnabled(slug)) {
+      window.alert('Fal generation POC is enabled for SOFT WAVE (Unit 003) only.');
+      return;
+    }
+    const result = await generate({ action: 'generate-variants', unitSlug: slug, runAssetFactory: true });
+    if (result.ok) {
+      applyGenerationResult(slug, result);
+    } else {
+      window.alert(result.error ?? 'Generation failed');
+    }
+  };
+
+  const handleReplaceReference = async (slug: string, currentRef: string) => {
+    if (!isProductPhotographyGenerateEnabled(slug)) {
+      window.alert('Fal generation POC is enabled for SOFT WAVE (Unit 003) only.');
+      return;
+    }
+    const nextRef = window.prompt(
+      'Product reference path or URL (Creative DNA v1.0 will regenerate Master Hero via Fal):',
+      currentRef
+    );
+    if (!nextRef?.trim()) return;
+    const result = await generate({
+      action: 'replace-reference',
+      unitSlug: slug,
+      productReferenceImageSrc: nextRef.trim(),
+      runAssetFactory: true,
+    });
+    if (result.ok) {
+      applyGenerationResult(slug, result);
+    } else {
+      window.alert(result.error ?? 'Replace + generation failed');
+    }
   };
 
   return (
@@ -383,23 +438,33 @@ function PhotographyBibleDashboardInner() {
       <section style={{ marginTop: '16px' }}>
         <p style={ppSectionTitle}>SIGNATURE COLLECTION</p>
         <p style={{ ...ppCaption, marginBottom: 10 }}>
-          6 FLAGSHIP UNITS · CREATIVE DNA INHERITED · ASSET FACTORY MANUFACTURES · SMART ASSETS DELIVER BY CONTEXT
+          6 FLAGSHIP UNITS · CREATIVE DNA INHERITED · GENERATE VARIANTS USES FAL + DNA v1.0 (SOFT WAVE POC) · ASSET FACTORY
+          CHAINS AUTOMATICALLY
         </p>
+        {lastError ? (
+          <p style={{ ...ppCaption, color: PP_VISUAL.red, marginBottom: 8 }}>{lastError.toUpperCase()}</p>
+        ) : null}
+        {lastLogs.length > 0 && generatingSlug === null ? (
+          <p style={{ ...ppCaption, fontSize: '7px', marginBottom: 8 }}>
+            LAST RUN · {lastLogs[lastLogs.length - 1]?.message}
+          </p>
+        ) : null}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {units.map((unit) => {
             const derivatives = getForUnit('signature-collection', unit.slug);
             const factoryJob = getLatestProductAssetFactoryJob(unit.slug);
+            const pocEnabled = isProductPhotographyGenerateEnabled(unit.slug);
             return (
               <SignatureUnitCard
                 key={unit.slug}
                 unit={unit}
                 factoryJob={factoryJob}
                 derivativeCount={derivatives.length}
-                onReplace={() => window.alert('REPLACE REFERENCE — infrastructure only. Upload via Asset Factory when enabled.')}
-                onView={() => window.open(unit.referenceImageSrc, '_blank', 'noopener,noreferrer')}
-                onGenerateVariants={() =>
-                  window.alert('GENERATE VARIANTS — run through Asset Factory using Creative DNA v1.0.')
-                }
+                generating={generatingSlug === unit.slug}
+                generateEnabled={pocEnabled}
+                onReplace={() => handleReplaceReference(unit.slug, unit.referenceImageSrc)}
+                onView={() => window.open(unit.heroPortraitSrc || unit.referenceImageSrc, '_blank', 'noopener,noreferrer')}
+                onGenerateVariants={() => handleGenerateVariants(unit.slug)}
               />
             );
           })}
