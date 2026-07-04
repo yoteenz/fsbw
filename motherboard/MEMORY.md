@@ -34953,4 +34953,18 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Regen:** **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-salon.log`**. Preview at **`/tools/email-templates`** → Welcome.
 
+---
+
+## 2026-07-04 — Welcome hero preview cache-bust (user saw stale cube)
+
+**Context:** User on **`/tools/email-templates`** with **Welcome** highlighted saw **no visible change** — still old glass cube with invented SLAY SOCIETY text. Asked what was being updated.
+
+**Clarification:** Changes target only the **hero background WebP** (`public/assets/email/heroes/welcome.webp`) — the large image behind script/headline/CTA — **not** COPY-tab text fields and **not** other templates until approved.
+
+**Cause:** Hero URL was **`/assets/email/heroes/welcome.webp`** with **no cache-bust query** — browsers kept serving the old cube after regen/deploy.
+
+**Fix:** **`heroImages.ts`** appends **`?v={manifest.updatedAt}`**; regen **`welcome`** + commit updated **`manifest.json`**. User must click **Refresh preview** after deploy.
+
+**Regen:** **`TEMPLATES=welcome FORCE=1`** — log **`/tmp/email-hero-welcome-refresh.log`**.
+
 
