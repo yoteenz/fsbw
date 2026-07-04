@@ -35513,3 +35513,22 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Guest view mode lives at **`/build-a-wig/view/…` only** (legacy **`/build-a-wig/try/…`** redirects). Menu + NOIR default → **`/build-a-wig/view`**; unit PDPs → **`/build-a-wig/view/{unit}`**. Legacy **`/build-a-wig`** → guests **`/build-a-wig/view`**, signed-in **`/build-a-wig/noir`**.
 
+---
+
+## 2026-07-04 — Email Signature Collection luxury gallery elevation
+
+**Context (full chat):** BAW view route rename; user revision to elevate the email **Collection** section from premium ecommerce grid to **flagship mansion gallery** experience — without redesigning the email builder or removing carousel/CTA functionality.
+
+**Topics covered:** Section rename **EXPLORE THE COLLECTION** → **THE SIGNATURE COLLECTION**; acrylic display-case hero; collection numbering **001–006**; luxury spec chips; capsule CTAs; Cover Flow–style thumb modules; Extensions Essentials as floating showcases; white marble / glass aesthetic; email-safe degradation.
+
+**Decisions / outcomes:**
+- **`EMAIL_PRODUCT_PROMO_TITLE`** default → **The Signature Collection**; subtitle **FRONTAL SLAYER FLAGSHIP UNITS**; panel eyebrow **FLAGSHIP EXHIBITION** / **EXTENSIONS ESSENTIALS**.
+- Hero unit: layered acrylic case, pedestal chamber, inner cradle, reflection strip; identity block (**THE SIGNATURE COLLECTION** + unit name + **COLLECTION NO. 00X**); specs as 2×2 acrylic chips (**24"**, **200%**, **13×6 HD**, **RAW CAMBODIAN**); **VIEW UNIT** luxury capsule CTA.
+- Thumbs: miniature display modules with collection number + name; active elevated/red glow; inactive faded (preview JS syncs opacity on carousel change).
+- Essentials: vertical floating acrylic showcases (centered image pedestal, descriptor, **SHOP** capsule).
+- Email builder unchanged; preview carousel **`data-collection-*`** attributes preserved; **`emailPreviewEditor.ts`** thumb highlight CSS + opacity sync updated.
+
+**Changes:** `api/_lib/email/emailProductPromo.ts`, `src/utils/emailPreviewEditor.ts`, `src/pages/tools/email-templates/page.tsx` (default copy), `motherboard/MEMORY.md`.
+
+**Conventions:** Collection section = luxury exhibition not product grid; table-based inline styles for email clients; interactive carousel remains preview-only. Default promo title **The Signature Collection**.
+

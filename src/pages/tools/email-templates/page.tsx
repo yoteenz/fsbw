@@ -301,7 +301,7 @@ export default function EmailTemplatesDebugPage() {
       closing: saved?.closing ?? 'Thank you for being part of the Slay Society.',
       supportFooterCopy: saved?.supportFooterCopy ?? '',
       supportCtaLabel: saved?.supportCtaLabel ?? '',
-      productPromoTitle: saved?.productPromoTitle ?? 'Explore the collection',
+      productPromoTitle: saved?.productPromoTitle ?? 'The Signature Collection',
       productPromoCtaLabel: saved?.productPromoCtaLabel ?? 'Shop all',
     });
   }, [selectedType, layoutStore.templates, registryDefaults]);
@@ -380,7 +380,7 @@ export default function EmailTemplatesDebugPage() {
     }
     if (patch.supportFooterCopy?.trim()) cleaned.supportFooterCopy = patch.supportFooterCopy.trim();
     if (patch.supportCtaLabel?.trim()) cleaned.supportCtaLabel = patch.supportCtaLabel.trim();
-    if (patch.productPromoTitle?.trim() && patch.productPromoTitle.trim() !== 'Explore the collection') {
+    if (patch.productPromoTitle?.trim() && patch.productPromoTitle.trim() !== 'The Signature Collection') {
       cleaned.productPromoTitle = patch.productPromoTitle.trim();
     }
     if (patch.productPromoCtaLabel?.trim() && patch.productPromoCtaLabel.trim() !== 'Shop all') {

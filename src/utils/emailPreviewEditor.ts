@@ -162,9 +162,14 @@ function injectEditorStyles(doc: Document): void {
     [data-collection-next] {
       display: inline-block !important;
     }
+    [data-collection-thumb] {
+      opacity: 0.48 !important;
+      transition: opacity 0.2s ease, box-shadow 0.2s ease;
+    }
     [data-collection-thumb].collection-thumb-active {
+      opacity: 1 !important;
       border-color: #EB1C24 !important;
-      box-shadow: 0 0 8px rgba(235, 28, 36, 0.16) !important;
+      box-shadow: 0 0 16px rgba(235, 28, 36, 0.28), 0 8px 24px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
     }
   `;
   doc.head.appendChild(style);
@@ -190,7 +195,9 @@ function attachCollectionCarousel(doc: Document): () => void {
     const syncThumbHighlight = () => {
       thumbs.forEach((thumb) => {
         const idx = Number(thumb.getAttribute('data-collection-thumb'));
-        thumb.classList.toggle('collection-thumb-active', idx === activeIndex);
+        const active = idx === activeIndex;
+        thumb.classList.toggle('collection-thumb-active', active);
+        thumb.style.opacity = active ? '1' : '0.48';
       });
     };
 
