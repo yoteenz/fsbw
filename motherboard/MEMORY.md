@@ -34982,4 +34982,17 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Next:** User reviews Welcome at **`/tools/email-templates`** → click **Refresh preview** after deploy → then batch editorial direction to remaining templates.
 
+---
+
+## 2026-07-04 — Email header nav strip (JLUX-style)
+
+**Context:** User shared JLUXLABEL reference email and asked for a **NAV bar strip at the top** below the FRONTAL SLAYER wordmark, routing to important site pages (Home, Shop, Build-a-Wig, etc.). Still finalizing welcome hero only — no batch hero regen.
+
+**Decisions / outcomes:**
+- Added **`emailHeaderNavLinks.ts`** with four links: **Home** (`/`), **Shop** (`/home/shop`), **Build-a-Wig** (`/build-a-wig`), **Rewards** (`/account/rewards`) — absolute URLs via **`resolveSiteOrigin()`**.
+- **`layout.ts`**: new **`renderEmailHeaderNav()`** row between **`brandHeader`** and **`hero`**; small uppercase Futura links, evenly spaced (reference-style editorial strip).
+- **`emailLayoutConfig.ts`** + **`src/utils/emailLayoutDebug.ts`**: new **`headerNav`** layer for debug editor styling.
+
+**Changes:** **`api/_lib/email/emailHeaderNavLinks.ts`**, **`layout.ts`**, **`emailLayoutConfig.ts`**, **`src/utils/emailLayoutDebug.ts`**.
+
 

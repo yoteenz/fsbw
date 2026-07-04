@@ -13,6 +13,7 @@ import {
   type EmailTemplateCopyOverrides,
 } from './emailLayoutConfig.js';
 import { EMAIL_SOCIAL_LINKS, resolveEmailSocialIconUrl } from './emailSocialLinks.js';
+import { EMAIL_HEADER_NAV_LINKS, resolveEmailHeaderNavUrl } from './emailHeaderNavLinks.js';
 import {
   EMAIL_SUPPORT_CTA_LABEL,
   EMAIL_SUPPORT_FOOTER_COPY,
@@ -200,6 +201,29 @@ function renderEmailWordmark(brandStyle: EmailLayerStyle): string {
 </table>`;
 }
 
+function renderEmailHeaderNav(navStyle: EmailLayerStyle): string {
+  const linkCss = emailTextStyleCss(navStyle);
+  const cells = EMAIL_HEADER_NAV_LINKS.map((link) => {
+    const href = escHtml(resolveEmailHeaderNavUrl(link.path));
+    const label = escHtml(link.label.toUpperCase());
+    return `    <td style="padding:0 12px;white-space:nowrap;">
+      <a href="${href}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:${EMAIL_BRAND.black};${linkCss}">${label}</a>
+    </td>`;
+  }).join('\n');
+
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+  <tr>
+    <td align="center" style="${emailTdStyleCss(navStyle)}">
+      <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto;border-collapse:collapse;">
+        <tr>
+${cells}
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>`;
+}
+
 function renderSocialFooterRow(): string {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 8px;border-collapse:collapse;">
                 <tr>
@@ -269,6 +293,7 @@ export function renderEmailLayout(input: RenderEmailLayoutInput): string {
   const copy = input.copyOverrides;
 
   const brandStyle = resolveEmailLayerStyle('brandHeader', layoutDebug?.globalLayers);
+  const headerNavStyle = resolveEmailLayerStyle('headerNav', layoutDebug?.globalLayers);
   const scriptStyle = resolveEmailLayerStyle('scriptAccent', layoutDebug?.globalLayers);
   const headlineStyle = resolveEmailLayerStyle('headline', layoutDebug?.globalLayers);
   const heroStyle = resolveEmailLayerStyle('hero', layoutDebug?.globalLayers);
@@ -369,6 +394,11 @@ ${input.dataRows
           <tr>
             <td data-email-layer="brandHeader" style="${emailTdStyleCss(brandStyle)}">
               ${renderEmailWordmark(brandStyle)}
+            </td>
+          </tr>
+          <tr>
+            <td data-email-layer="headerNav" style="padding:0;">
+              ${renderEmailHeaderNav(headerNavStyle)}
             </td>
           </tr>
           <tr>

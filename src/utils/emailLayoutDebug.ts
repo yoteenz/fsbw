@@ -23,6 +23,7 @@ export type EmailLayerStyle = {
 
 export type EmailLayoutLayerId =
   | 'brandHeader'
+  | 'headerNav'
   | 'scriptAccent'
   | 'headline'
   | 'hero'
@@ -73,6 +74,7 @@ export const EMAIL_FONT_OPTIONS: Array<{ value: EmailFontKey; label: string }> =
 
 export const EMAIL_LAYER_OPTIONS: Array<{ id: EmailLayoutLayerId; label: string; group: 'global' | 'copy' }> = [
   { id: 'brandHeader', label: 'Brand header', group: 'global' },
+  { id: 'headerNav', label: 'Header nav strip', group: 'global' },
   { id: 'scriptAccent', label: 'Script accent', group: 'global' },
   { id: 'headline', label: 'Headline', group: 'global' },
   { id: 'hero', label: 'Hero spacing', group: 'global' },
@@ -100,9 +102,22 @@ export const DEFAULT_EMAIL_LAYER_STYLES: Record<EmailLayoutLayerId, EmailLayerSt
     textAlign: 'center',
     paddingTop: 36,
     paddingRight: 32,
-    paddingBottom: 16,
+    paddingBottom: 8,
     paddingLeft: 32,
     fontWeight: 500,
+  },
+  headerNav: {
+    fontFamily: 'futura-book',
+    fontSize: 11,
+    color: '#111111',
+    letterSpacing: '0.14em',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    paddingTop: 0,
+    paddingRight: 24,
+    paddingBottom: 14,
+    paddingLeft: 24,
+    fontWeight: 400,
   },
   scriptAccent: {
     fontFamily: 'grace',
