@@ -35047,4 +35047,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** **`api/_lib/email/layout.ts`**, **`src/utils/emailPreviewEditor.ts`**, **`src/components/tools/EmailPreviewFrame.tsx`**.
 
+---
+
+## 2026-07-04 — Email preview scroll fix (scroll root + touch no-drag)
+
+**Context:** User reported **vertical scroll still not working** on **`/tools/email-templates`** preview after prior touch-action tweaks.
+
+**Cause:** Layer pointer handlers (`touch-action: none`, global capture listeners) fought iframe/body scroll; no dedicated overflow container inside the iframe.
+
+**Fix:**
+- **`emailPreviewEditor.ts`**: wrap iframe body in **`#email-preview-scroll-root`** (`overflow-y: auto`, `-webkit-overflow-scrolling: touch`); **`html/body` height 100% + overflow hidden** so scroll happens in that root only.
+- **Touch**: no layer drag on touch — tap selects only; reposition via Styles panel or **mouse** drag on active layer.
+- **Mouse**: drag listeners attached only while dragging (not on every pointermove).
+- **`EmailPreviewFrame`**: **`scrolling="yes"`** on iframe.
+
+**Changes:** **`src/utils/emailPreviewEditor.ts`**, **`src/components/tools/EmailPreviewFrame.tsx`**.
+
 

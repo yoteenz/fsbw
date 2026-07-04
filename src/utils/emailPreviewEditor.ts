@@ -1,16 +1,13 @@
 import type { EmailLayoutLayerId, EmailLayerStyle, EmailTemplateCopyOverrides } from './emailLayoutDebug';
 
 const HERO_OVERLAY_LAYERS: EmailLayoutLayerId[] = ['scriptAccent', 'headline', 'cta'];
+const PREVIEW_SCROLL_ROOT_ID = 'email-preview-scroll-root';
 
-/** Movement before a pointer gesture counts as drag/edit instead of scroll/tap. */
-const GESTURE_DRAG_THRESHOLD_PX = 12;
+/** Movement before a mouse drag reposition starts (touch never drags — scroll only). */
+const MOUSE_DRAG_THRESHOLD_PX = 10;
 
 function isHeroOverlayLayer(layerId: EmailLayoutLayerId): boolean {
   return HERO_OVERLAY_LAYERS.includes(layerId);
-}
-
-function isScrollGesture(dx: number, dy: number): boolean {
-  return Math.abs(dy) > GESTURE_DRAG_THRESHOLD_PX && Math.abs(dy) > Math.abs(dx) * 1.15;
 }
 
 export type EmailPreviewEditorCallbacks = {
@@ -114,20 +111,38 @@ function readCopyValue(layerId: EmailLayoutLayerId, el: HTMLElement): string | s
   return (copyEl.textContent ?? '').trim();
 }
 
+/** Single overflow container so touch/wheel scroll works reliably inside the preview iframe. */
+function ensurePreviewScrollRoot(doc: Document): HTMLElement {
+  const existing = doc.getElementById(PREVIEW_SCROLL_ROOT_ID);
+  if (existing) return existing;
+  const root = doc.createElement('div');
+  root.id = PREVIEW_SCROLL_ROOT_ID;
+  const body = doc.body;
+  while (body.firstChild) {
+    root.appendChild(body.firstChild);
+  }
+  body.appendChild(root);
+  return root;
+}
+
 function injectEditorStyles(doc: Document): void {
   if (doc.getElementById(EDITOR_STYLE_ID)) return;
   const style = doc.createElement('style');
   style.id = EDITOR_STYLE_ID;
   style.textContent = `
-    html { height: 100%; overflow: hidden; }
-    body {
-      min-height: 100%;
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+    #${PREVIEW_SCROLL_ROOT_ID} {
+      height: 100%;
+      overflow-x: hidden;
       overflow-y: auto;
-      touch-action: pan-y;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior: contain;
+      touch-action: pan-y;
     }
-    [data-email-layer], [data-email-layer] * { touch-action: pan-y; }
     [data-email-layer] { cursor: pointer; }
     [data-email-layer].email-layer-dragging { touch-action: none; cursor: grabbing; }
     [data-email-layer].email-layer-hover:hover:not(.email-layer-active) {
@@ -142,7 +157,6 @@ function injectEditorStyles(doc: Document): void {
     [data-email-editing="true"] {
       outline: 2px solid #EB1C24 !important;
       cursor: text !important;
-      touch-action: auto;
     }
   `;
   doc.head.appendChild(style);
@@ -153,6 +167,7 @@ export function attachEmailPreviewEditor(
   callbacks: EmailPreviewEditorCallbacks,
   activeLayer: EmailLayoutLayerId | null
 ): () => void {
+  ensurePreviewScrollRoot(doc);
   injectEditorStyles(doc);
 
   doc.querySelectorAll('[data-email-layer]').forEach((node) => {
@@ -167,24 +182,19 @@ export function attachEmailPreviewEditor(
   let dragStartPadding = { top: 0, right: 0, bottom: 0, left: 0 };
   let dragStartOverlay = { top: 0, left: 0, right: 0 };
   let dragMoved = false;
-  let suppressNextClick = false;
-  let gestureStartX = 0;
-  let gestureStartY = 0;
-  let gestureActive = false;
 
-  const resetDragState = () => {
+  const endMouseDrag = () => {
     dragEl?.classList.remove('email-layer-dragging');
     dragEl = null;
     dragLayer = null;
     dragMoved = false;
-    gestureActive = false;
+    doc.removeEventListener('pointermove', onPointerMove);
+    doc.removeEventListener('pointerup', onPointerUp);
+    doc.removeEventListener('pointercancel', onPointerUp);
   };
 
   const onClick = (e: MouseEvent) => {
-    if (suppressNextClick) {
-      suppressNextClick = false;
-      return;
-    }
+    if (dragMoved) return;
     if ((e.target as HTMLElement)?.getAttribute('data-email-editing') === 'true') return;
     const layerId = resolveLayerFromTarget(e.target);
     if (!layerId) return;
@@ -237,67 +247,21 @@ export function attachEmailPreviewEditor(
     editEl.addEventListener('blur', commit);
   };
 
-  const onPointerDown = (e: PointerEvent) => {
-    if (e.button !== 0 && e.pointerType === 'mouse') return;
-    if ((e.target as HTMLElement)?.getAttribute('data-email-editing') === 'true') return;
-    const layerId = resolveLayerFromTarget(e.target);
-    if (!layerId) return;
-    const layerEl = (e.target as HTMLElement).closest('[data-email-layer]') as HTMLElement | null;
-    if (!layerEl) return;
-
-    gestureStartX = e.clientX;
-    gestureStartY = e.clientY;
-    gestureActive = true;
-    suppressNextClick = false;
-
-    if (!layerEl.classList.contains('email-layer-active')) return;
-
-    dragLayer = layerId;
-    dragEl = layerEl;
-    dragStartX = e.clientX;
-    dragStartY = e.clientY;
-    if (isHeroOverlayLayer(layerId)) {
-      dragStartOverlay = readOverlayPosition(layerEl);
-    } else {
-      dragStartPadding = readPadding(layerEl);
-    }
-    dragMoved = false;
-  };
-
   const onPointerMove = (e: PointerEvent) => {
-    if (!gestureActive) return;
-
-    const dx = e.clientX - gestureStartX;
-    const dy = e.clientY - gestureStartY;
-
-    if (!dragEl || !dragLayer) {
-      if (Math.hypot(dx, dy) > GESTURE_DRAG_THRESHOLD_PX) {
-        suppressNextClick = true;
-      }
-      return;
-    }
-
-    const dragDx = e.clientX - dragStartX;
-    const dragDy = e.clientY - dragStartY;
-
+    if (!dragEl || !dragLayer) return;
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
     if (!dragMoved) {
-      if (Math.hypot(dragDx, dragDy) < GESTURE_DRAG_THRESHOLD_PX) return;
-      if (isScrollGesture(dragDx, dragDy)) {
-        suppressNextClick = true;
-        resetDragState();
-        return;
-      }
+      if (Math.hypot(dx, dy) < MOUSE_DRAG_THRESHOLD_PX) return;
       dragMoved = true;
       dragEl.classList.add('email-layer-dragging');
-      dragEl.setPointerCapture?.(e.pointerId);
     }
-
     e.preventDefault();
 
     if (isHeroOverlayLayer(dragLayer)) {
       const nextOverlay = {
-        top: Math.max(0, Math.round(dragStartOverlay.top + dragDy)),
-        left: Math.max(0, Math.round(dragStartOverlay.left + dragDx)),
+        top: Math.max(0, Math.round(dragStartOverlay.top + dy)),
+        left: Math.max(0, Math.round(dragStartOverlay.left + dx)),
         right: dragStartOverlay.right,
       };
       applyOverlayPosition(dragEl, nextOverlay);
@@ -305,65 +269,76 @@ export function attachEmailPreviewEditor(
     }
 
     const next = {
-      top: Math.max(0, Math.round(dragStartPadding.top + dragDy)),
-      right: Math.max(0, Math.round(dragStartPadding.right + dragDx / 2)),
-      bottom: Math.max(0, Math.round(dragStartPadding.bottom - dragDy / 2)),
-      left: Math.max(0, Math.round(dragStartPadding.left + dragDx)),
+      top: Math.max(0, Math.round(dragStartPadding.top + dy)),
+      right: Math.max(0, Math.round(dragStartPadding.right + dx / 2)),
+      bottom: Math.max(0, Math.round(dragStartPadding.bottom - dy / 2)),
+      left: Math.max(0, Math.round(dragStartPadding.left + dx)),
     };
     dragEl.style.padding = `${next.top}px ${next.right}px ${next.bottom}px ${next.left}px`;
   };
 
-  const onPointerUp = (e: PointerEvent) => {
-    if (dragEl?.hasPointerCapture?.(e.pointerId)) {
-      dragEl.releasePointerCapture(e.pointerId);
-    }
-
-    if (gestureActive) {
-      const dx = e.clientX - gestureStartX;
-      const dy = e.clientY - gestureStartY;
-      if (Math.hypot(dx, dy) > GESTURE_DRAG_THRESHOLD_PX) {
-        suppressNextClick = true;
-      }
-    }
-
-    if (!dragEl || !dragLayer || !dragMoved) {
-      resetDragState();
+  const onPointerUp = () => {
+    if (!dragEl || !dragLayer) {
+      endMouseDrag();
       return;
     }
 
-    if (isHeroOverlayLayer(dragLayer)) {
-      const pos = readOverlayPosition(dragEl);
-      callbacks.onPaddingChange(dragLayer, {
-        paddingTop: pos.top,
-        paddingLeft: pos.left,
-        paddingRight: pos.right,
-      });
-    } else {
-      const pad = readPadding(dragEl);
-      callbacks.onPaddingChange(dragLayer, {
-        paddingTop: pad.top,
-        paddingRight: pad.right,
-        paddingBottom: pad.bottom,
-        paddingLeft: pad.left,
-      });
+    if (dragMoved) {
+      if (isHeroOverlayLayer(dragLayer)) {
+        const pos = readOverlayPosition(dragEl);
+        callbacks.onPaddingChange(dragLayer, {
+          paddingTop: pos.top,
+          paddingLeft: pos.left,
+          paddingRight: pos.right,
+        });
+      } else {
+        const pad = readPadding(dragEl);
+        callbacks.onPaddingChange(dragLayer, {
+          paddingTop: pad.top,
+          paddingRight: pad.right,
+          paddingBottom: pad.bottom,
+          paddingLeft: pad.left,
+        });
+      }
     }
-    resetDragState();
+    endMouseDrag();
+  };
+
+  const onPointerDown = (e: PointerEvent) => {
+    if (e.pointerType === 'touch') return;
+    if (e.button !== 0) return;
+    if ((e.target as HTMLElement)?.getAttribute('data-email-editing') === 'true') return;
+
+    const layerId = resolveLayerFromTarget(e.target);
+    if (!layerId) return;
+    const layerEl = (e.target as HTMLElement).closest('[data-email-layer]') as HTMLElement | null;
+    if (!layerEl?.classList.contains('email-layer-active')) return;
+
+    dragLayer = layerId;
+    dragEl = layerEl;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    dragMoved = false;
+    if (isHeroOverlayLayer(layerId)) {
+      dragStartOverlay = readOverlayPosition(layerEl);
+    } else {
+      dragStartPadding = readPadding(layerEl);
+    }
+
+    doc.addEventListener('pointermove', onPointerMove);
+    doc.addEventListener('pointerup', onPointerUp);
+    doc.addEventListener('pointercancel', onPointerUp);
   };
 
   doc.addEventListener('click', onClick, true);
   doc.addEventListener('dblclick', onDoubleClick, true);
   doc.addEventListener('pointerdown', onPointerDown, true);
-  doc.addEventListener('pointermove', onPointerMove, true);
-  doc.addEventListener('pointerup', onPointerUp, true);
-  doc.addEventListener('pointercancel', onPointerUp, true);
 
   return () => {
+    endMouseDrag();
     doc.removeEventListener('click', onClick, true);
     doc.removeEventListener('dblclick', onDoubleClick, true);
     doc.removeEventListener('pointerdown', onPointerDown, true);
-    doc.removeEventListener('pointermove', onPointerMove, true);
-    doc.removeEventListener('pointerup', onPointerUp, true);
-    doc.removeEventListener('pointercancel', onPointerUp, true);
   };
 }
 

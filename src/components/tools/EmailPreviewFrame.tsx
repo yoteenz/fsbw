@@ -65,7 +65,8 @@ export function EmailPreviewFrame({
       ref={iframeRef}
       title="Email template preview"
       srcDoc={previewHtml}
-      className="w-full border-0"
+      scrolling="yes"
+      className="w-full border-0 block"
       style={{ height: '75vh', minHeight: '480px', background: '#ececec' }}
       onLoad={attach}
     />
