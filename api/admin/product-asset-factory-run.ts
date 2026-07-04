@@ -66,6 +66,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const assetType = typeof body?.assetType === 'string' ? body.assetType.trim() : undefined;
   const transparentMasterUrl =
     typeof body?.transparentMasterUrl === 'string' ? body.transparentMasterUrl.trim() : undefined;
+  const masterHeroGeneration =
+    body?.masterHeroGeneration && typeof body.masterHeroGeneration === 'object'
+      ? (body.masterHeroGeneration as import('../_lib/productPhotographyGeneration/types.js').MasterHeroGenerationRecord)
+      : undefined;
 
   if (unitSlug !== PRODUCT_ASSET_FACTORY_POC_UNIT.slug) {
     return res.status(400).json({
@@ -89,6 +93,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     fromStage: action === 'retry' ? fromStage : undefined,
     productReferenceSrc,
     generatedMasterHeroSrc,
+    masterHeroGeneration,
     heroApproved,
     assetType,
     transparentMasterUrl,

@@ -1,5 +1,9 @@
 /** Product Asset Factory — pipeline types (Brand Assets / Photography Bible). */
 
+import type { MasterHeroGenerationRecord } from '../productPhotographyGeneration/types.js';
+
+export type { MasterHeroGenerationRecord };
+
 export type ProductAssetFactoryStage =
   | 'reference-ready'
   | 'generating-master-hero'
@@ -77,6 +81,8 @@ export type ProductAssetFactoryJob = {
   productReferenceUrl: string;
   /** Fal-generated Master Hero Portrait from Creative DNA v1.0. */
   generatedMasterHeroUrl?: string;
+  /** FAL generation metadata — canonical source for preview/debug. */
+  masterHeroGeneration?: MasterHeroGenerationRecord;
   heroApproved: boolean;
   /** Approved generated master used for derivative processing. */
   masterHeroUrl: string;

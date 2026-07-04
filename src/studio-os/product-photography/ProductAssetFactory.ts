@@ -83,6 +83,58 @@ export const PRODUCT_ASSET_FACTORY_POC_UNIT = {
 export const DERIVATIVE_BLOCKED_MESSAGE =
   'Generated Master Hero required before derivative processing.';
 
+export type MasterHeroGenerationDebugLog = {
+  promptSent: string;
+  falRequestId?: string;
+  returnedImageUrl: string;
+  imagePassedToBackgroundRemoval?: string;
+  finalMasterHeroUrl: string;
+};
+
+export type MasterHeroGenerationRecord = {
+  generationId: string;
+  falRequestId?: string;
+  falOriginalImageUrl: string;
+  canonicalMasterHeroUrl: string;
+  generatedAt: string;
+  promptVersion: string;
+  falModel: string;
+  productReferenceSrc: string;
+  backgroundRemovalInputUrl?: string;
+  debugLog: MasterHeroGenerationDebugLog;
+};
+
+const PLACEHOLDER_MARKERS = ['/assets/2D WAVY FRONT.png', '/assets/natural front.png'];
+
+/** True when src is a local /assets placeholder — never valid as generated master hero. */
+export function isLocalPlaceholderMasterSrc(src: string | undefined): boolean {
+  if (!src?.trim()) return true;
+  const t = src.trim();
+  if (/^https?:\/\//i.test(t)) {
+    if (t.includes('generated-master') || t.includes('supabase')) return false;
+    try {
+      const path = new URL(t).pathname;
+      return path.startsWith('/assets/') && PLACEHOLDER_MARKERS.some((m) => path.includes(m));
+    } catch {
+      return false;
+    }
+  }
+  return t.startsWith('/assets/') && !t.includes('generated-master');
+}
+
+/** Canonical generated master must be HTTPS (Supabase/Fal) — not a website placeholder. */
+export function resolveCanonicalGeneratedMasterSrc(job: {
+  generatedMasterHeroUrl?: string;
+  masterHeroGeneration?: MasterHeroGenerationRecord;
+} | undefined): string | undefined {
+  const fromGeneration = job?.masterHeroGeneration?.canonicalMasterHeroUrl;
+  const fromJob = job?.generatedMasterHeroUrl;
+  const candidate = fromGeneration ?? fromJob;
+  if (!candidate || isLocalPlaceholderMasterSrc(candidate)) return undefined;
+  if (!/^https?:\/\//i.test(candidate)) return undefined;
+  return candidate;
+}
+
 export type ProductAssetRegistryRecord = {
   id: string;
   product: string;
@@ -112,6 +164,7 @@ export type ProductAssetFactoryJobRecord = {
   error?: string;
   productReferenceUrl?: string;
   generatedMasterHeroUrl?: string;
+  masterHeroGeneration?: MasterHeroGenerationRecord;
   heroApproved?: boolean;
   masterHeroUrl: string;
   transparentMasterUrl?: string;

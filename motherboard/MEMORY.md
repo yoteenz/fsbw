@@ -35884,3 +35884,24 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** DerivativeGalleryCatalog, FactoryCropTemplates (client+server), AssetFactoryDerivativeGallery, BrandAssetsAssetFactoryWorkspace, assetFactoryDerivativeGallery util, pipeline/API/hook, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Master Hero pipeline audit: FAL-only canonical asset + debug metadata
+
+**Context:** User reported Asset Factory “Generated Master Hero” preview showed existing placeholder/product image (`/assets/2D WAVY FRONT.png`) instead of fresh FAL output. Requested full pipeline audit: verify FAL endpoint called, await FAL URL before downstream steps, canonical master from FAL only, BG removal on generated image only, explicit errors on placeholder fallback, temporary debug logging (prompt, FAL request ID, returned URL, BG removal input, final master URL), UI metadata (timestamp, model, prompt version, generation ID, Regenerate, View Original FAL Output).
+
+**Root causes:**
+- **UI fallback bug** — `BrandAssetsAssetFactoryWorkspace` fell back to `bibleUnit.heroPortraitSrc` when job lacked `generatedMasterHeroUrl`, showing website placeholder.
+- **Duplicate FAL attachments** — product ref, display bust, and benchmark were all the same PNG; benchmark encouraged copy-through.
+- **Silent ideogram fallback** — white-studio keying could mask BG removal failures on master-hero path.
+
+**Shipped:**
+- **`masterHeroValidation.ts`** — `assertCanonicalGeneratedMasterUrl`, `isLocalPlaceholderAsset`, `logMasterHeroDebug`, `CREATIVE_DNA_PROMPT_VERSION = v2.0`.
+- **`generateMasterHero.ts`** — await FAL URL → download → Supabase upload; skip duplicate benchmark attachment; store `MasterHeroGenerationRecord` with debug log; throw on placeholder/local URLs.
+- **`pipeline.ts`** — store `masterHeroGeneration` on jobs; validate incoming master URLs; strict BG removal (`runProductAssetBackgroundRemoval({ strict: true })`); pass generation through approve/derivatives.
+- **`ideogramCutout.ts`** — `strict` mode throws instead of white-studio fallback.
+- **`MasterHeroPreviewPanel.tsx`** — generation timestamp, model, prompt version, generation ID, Regenerate, View Original FAL Output; no placeholder fallback.
+- **Client** — `resolveCanonicalGeneratedMasterSrc` / `isLocalPlaceholderMasterSrc`; hooks pass `masterHeroGeneration`; Photography Bible VIEW uses canonical HTTPS URL only.
+
+**Changes:** masterHeroValidation, generateMasterHero, types (server+client), pipeline, ideogramCutout, product-photography-generate, product-asset-factory-run, MasterHeroPreviewPanel, BrandAssetsAssetFactoryWorkspace, PhotographyBibleWorkspace, hooks, ProductAssetFactory.ts, `motherboard/MEMORY.md`.
+

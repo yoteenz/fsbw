@@ -26,6 +26,8 @@ import {
   AssetFactoryPreviewAllCropsModal,
   derivativeItemToPreview,
 } from './AssetFactoryDerivativeGallery';
+import { MasterHeroPreviewPanel } from './MasterHeroPreviewPanel';
+import { resolveCanonicalGeneratedMasterSrc } from '../../../../studio-os/product-photography/ProductAssetFactory';
 import { PP_VISUAL, ppActionBtn, ppCaption, ppPanelStyle, ppSectionTitle, statusColor } from '../product-photography-bible/photographyBibleTheme';
 
 function stageLabel(stage: string): string {
@@ -66,11 +68,8 @@ export function BrandAssetsAssetFactoryWorkspace() {
 
   const productReferenceSrc =
     bibleUnit?.referenceImageSrc ?? PRODUCT_ASSET_FACTORY_POC_UNIT.productReferenceSrc;
-  const generatedMasterSrc =
-    latestJob?.generatedMasterHeroUrl ??
-    (bibleUnit?.photographyStatus === 'pending-review' || bibleUnit?.photographyStatus === 'approved'
-      ? bibleUnit?.heroPortraitSrc
-      : undefined);
+  const generatedMasterSrc = resolveCanonicalGeneratedMasterSrc(latestJob);
+  const masterHeroGeneration = latestJob?.masterHeroGeneration;
 
   const showDerivativeBlocked =
     !latestJob?.heroApproved &&
@@ -342,6 +341,14 @@ export function BrandAssetsAssetFactoryWorkspace() {
             </div>
           )}
         </div>
+
+        <MasterHeroPreviewPanel
+          generatedMasterSrc={generatedMasterSrc}
+          generation={masterHeroGeneration}
+          running={running}
+          onExpand={setPreviewItem}
+          onRegenerate={() => generateMasterHero(productReferenceSrc)}
+        />
       </section>
 
       <AssetFactoryDerivativeGallery

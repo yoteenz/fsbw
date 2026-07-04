@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { getAccessToken } from '../utils/api';
 import type {
+  MasterHeroGenerationRecord,
   ProductAssetFactoryJobRecord,
   ProductAssetFactoryLogRecord,
   ProductAssetRegistryRecord,
@@ -24,6 +25,7 @@ export type ProductPhotographyGenerateApiResult = {
   storagePath?: string;
   productReferenceImageSrc?: string;
   displayBustSrc?: string;
+  generation?: MasterHeroGenerationRecord;
   assetFactory?: {
     ok: boolean;
     job?: ProductAssetFactoryJobRecord;

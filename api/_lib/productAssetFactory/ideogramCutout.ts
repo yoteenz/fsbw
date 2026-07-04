@@ -122,7 +122,8 @@ export async function runProductAssetIdeogramCutout(falKey: string, imageUrl: st
 /** Prepare master, try Ideogram, fall back to white-studio key for pure white Creative DNA masters. */
 export async function runProductAssetBackgroundRemoval(
   falKey: string,
-  masterWhiteBuf: Buffer
+  masterWhiteBuf: Buffer,
+  opts?: { strict?: boolean }
 ): Promise<BackgroundRemovalResult> {
   const prepared = await prepareMasterForIdeogram(masterWhiteBuf);
   const uploadName = prepared.length > IDEOGRAM_MAX_BYTES ? 'master-hero.jpg' : 'master-hero-white.png';
@@ -131,7 +132,13 @@ export async function runProductAssetBackgroundRemoval(
   try {
     const buffer = await runProductAssetIdeogramCutout(falKey, falInputUrl);
     return { buffer, method: 'ideogram' };
-  } catch {
+  } catch (e) {
+    if (opts?.strict) {
+      const msg = e instanceof Error ? e.message : String(e);
+      throw new Error(
+        `Master Hero background removal failed (strict mode — no placeholder fallback): ${msg}`
+      );
+    }
     const buffer = await whiteStudioBackgroundToAlpha(prepared);
     return { buffer, method: 'white-studio-fallback' };
   }

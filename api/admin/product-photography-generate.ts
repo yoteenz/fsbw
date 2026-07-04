@@ -65,7 +65,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     action,
     unitSlug,
     productReferenceImageSrc,
-    includeBenchmarkAttachment: action === 'generate-variants',
+    includeBenchmarkAttachment: false,
   });
 
   const result: ProductPhotographyGenerateResult = {
@@ -77,6 +77,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     storagePath: generation.storagePath,
     productReferenceImageSrc: generation.productReferenceImageSrc,
     displayBustSrc: generation.displayBustSrc,
+    generation: generation.generation,
     logs: generation.logs,
     error: generation.error,
   };
@@ -94,7 +95,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const heroJob = buildHeroAwaitingApprovalJob({
     productReferenceSrc: generation.productReferenceImageSrc,
     generatedMasterHeroUrl: generation.generatedMasterUrl,
+    generation: generation.generation,
   });
+
+  result.generation = generation.generation;
 
   result.assetFactory = {
     ok: true,

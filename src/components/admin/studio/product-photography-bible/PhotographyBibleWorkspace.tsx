@@ -18,6 +18,10 @@ import {
   useAdminStudioProductPhotographyGenerate,
 } from '../../../../hooks/useAdminStudioProductPhotographyGenerate';
 import {
+  isLocalPlaceholderMasterSrc,
+  resolveCanonicalGeneratedMasterSrc,
+} from '../../../../studio-os/product-photography/ProductAssetFactory';
+import {
   getPhotographyTabBody,
   PHOTOGRAPHY_BIBLE_TABS,
   PHOTOGRAPHY_EXPORT_TEMPLATES,
@@ -70,11 +74,18 @@ function PhotographyBibleDashboardInner() {
 
   const applyGenerationResult = (
     slug: string,
-    result: { generatedMasterUrl?: string; productReferenceImageSrc?: string }
+    result: {
+      generatedMasterUrl?: string;
+      productReferenceImageSrc?: string;
+      generation?: import('../../../../studio-os/product-photography/ProductAssetFactory').MasterHeroGenerationRecord;
+    }
   ) => {
-    if (!result.generatedMasterUrl) return;
+    const canonical =
+      result.generation?.canonicalMasterHeroUrl ?? result.generatedMasterUrl;
+    if (!canonical || isLocalPlaceholderMasterSrc(canonical)) return;
+    if (!/^https?:\/\//i.test(canonical)) return;
     patchUnit(slug, {
-      heroPortraitSrc: result.generatedMasterUrl,
+      heroPortraitSrc: canonical,
       referenceImageSrc: result.productReferenceImageSrc ?? undefined,
       photographyStatus: 'pending-review',
       mediaKitStatus: 'empty',
@@ -461,7 +472,16 @@ function PhotographyBibleDashboardInner() {
                 generating={generatingSlug === unit.slug}
                 generateEnabled={pocEnabled}
                 onReplace={() => handleReplaceReference(unit.slug, unit.referenceImageSrc)}
-                onView={() => window.open(unit.heroPortraitSrc || unit.referenceImageSrc, '_blank', 'noopener,noreferrer')}
+                onView={() => {
+                  const factoryJob = getLatestProductAssetFactoryJob(unit.slug);
+                  const canonical =
+                    resolveCanonicalGeneratedMasterSrc(factoryJob) ??
+                    (unit.heroPortraitSrc && !isLocalPlaceholderMasterSrc(unit.heroPortraitSrc)
+                      ? unit.heroPortraitSrc
+                      : undefined);
+                  const viewSrc = canonical ?? unit.referenceImageSrc;
+                  window.open(viewSrc, '_blank', 'noopener,noreferrer');
+                }}
                 onGenerateVariants={() => handleGenerateVariants(unit.slug)}
               />
             );

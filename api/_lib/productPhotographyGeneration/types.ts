@@ -8,6 +8,27 @@ export type ProductPhotographyGenerateLogEntry = {
   level: 'info' | 'warn' | 'error';
 };
 
+export type MasterHeroGenerationDebugLog = {
+  promptSent: string;
+  falRequestId?: string;
+  returnedImageUrl: string;
+  imagePassedToBackgroundRemoval?: string;
+  finalMasterHeroUrl: string;
+};
+
+export type MasterHeroGenerationRecord = {
+  generationId: string;
+  falRequestId?: string;
+  falOriginalImageUrl: string;
+  canonicalMasterHeroUrl: string;
+  generatedAt: string;
+  promptVersion: string;
+  falModel: string;
+  productReferenceSrc: string;
+  backgroundRemovalInputUrl?: string;
+  debugLog: MasterHeroGenerationDebugLog;
+};
+
 export type ProductPhotographyGenerateResult = {
   ok: boolean;
   action: ProductPhotographyGenerateAction;
@@ -17,6 +38,7 @@ export type ProductPhotographyGenerateResult = {
   storagePath?: string;
   productReferenceImageSrc?: string;
   displayBustSrc?: string;
+  generation?: MasterHeroGenerationRecord;
   assetFactory?: RunProductAssetFactoryResult;
   logs: ProductPhotographyGenerateLogEntry[];
   error?: string;

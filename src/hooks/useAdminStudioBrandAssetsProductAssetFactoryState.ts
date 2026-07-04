@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { getAccessToken } from '../utils/api';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 import type {
+  MasterHeroGenerationRecord,
   ProductAssetFactoryAction,
   ProductAssetFactoryJobRecord,
   ProductAssetFactoryLogRecord,
@@ -41,6 +42,7 @@ export async function runProductAssetFactoryApi(opts: {
   fromStage?: ProductAssetFactoryStage | string;
   productReferenceSrc?: string;
   generatedMasterHeroSrc?: string;
+  masterHeroGeneration?: MasterHeroGenerationRecord;
   heroApproved?: boolean;
   assetType?: string;
   transparentMasterUrl?: string;
@@ -131,20 +133,23 @@ export function useAdminStudioBrandAssetsProductAssetFactory() {
   );
 
   const approveHeroAndRunDerivatives = useCallback(async () => {
+    const masterSrc = latestJob?.generatedMasterHeroUrl;
     const approve = await callApi({
       action: 'approve-hero',
       unitSlug: 'soft-wave',
-      generatedMasterHeroSrc: latestJob?.generatedMasterHeroUrl ?? latestJob?.masterHeroUrl,
+      generatedMasterHeroSrc: masterSrc,
+      masterHeroGeneration: latestJob?.masterHeroGeneration,
     });
     if (!approve.ok || !approve.job) return approve;
 
     return callApi({
       action: 'run-derivatives',
       unitSlug: 'soft-wave',
-      generatedMasterHeroSrc: approve.job.generatedMasterHeroUrl ?? approve.job.masterHeroUrl,
+      generatedMasterHeroSrc: approve.job.generatedMasterHeroUrl ?? masterSrc,
+      masterHeroGeneration: approve.job.masterHeroGeneration ?? latestJob?.masterHeroGeneration,
       heroApproved: true,
     });
-  }, [callApi, latestJob?.generatedMasterHeroUrl, latestJob?.masterHeroUrl]);
+  }, [callApi, latestJob?.generatedMasterHeroUrl, latestJob?.masterHeroGeneration]);
 
   const retryFromFailed = useCallback(
     (fromStage: ProductAssetFactoryStage | string) =>
@@ -152,10 +157,11 @@ export function useAdminStudioBrandAssetsProductAssetFactory() {
         action: 'retry',
         unitSlug: 'soft-wave',
         fromStage,
-        generatedMasterHeroSrc: latestJob?.generatedMasterHeroUrl ?? latestJob?.masterHeroUrl,
+        generatedMasterHeroSrc: latestJob?.generatedMasterHeroUrl,
+        masterHeroGeneration: latestJob?.masterHeroGeneration,
         heroApproved: true,
       }),
-    [callApi, latestJob?.generatedMasterHeroUrl, latestJob?.masterHeroUrl]
+    [callApi, latestJob?.generatedMasterHeroUrl, latestJob?.masterHeroGeneration]
   );
 
   const publishJob = useCallback((jobId: string) => {
@@ -198,10 +204,11 @@ export function useAdminStudioBrandAssetsProductAssetFactory() {
         unitSlug: 'soft-wave',
         assetType,
         transparentMasterUrl: latestJob?.transparentMasterUrl,
-        generatedMasterHeroSrc: latestJob?.generatedMasterHeroUrl ?? latestJob?.masterHeroUrl,
+        generatedMasterHeroSrc: latestJob?.generatedMasterHeroUrl,
+        masterHeroGeneration: latestJob?.masterHeroGeneration,
         heroApproved: true,
       }),
-    [callApi, latestJob?.transparentMasterUrl, latestJob?.generatedMasterHeroUrl, latestJob?.masterHeroUrl]
+    [callApi, latestJob?.transparentMasterUrl, latestJob?.generatedMasterHeroUrl, latestJob?.masterHeroGeneration]
   );
 
   return {

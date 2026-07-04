@@ -1,6 +1,15 @@
 import { resolveSiteOrigin } from '../email/brandAssets.js';
-import { generateMasterHeroFromCreativeDna } from '../productPhotographyGeneration/generateMasterHero.js';
+import {
+  attachBackgroundRemovalToGeneration,
+  generateMasterHeroFromCreativeDna,
+} from '../productPhotographyGeneration/generateMasterHero.js';
 import { PRODUCT_PHOTOGRAPHY_POC_UNIT } from '../productPhotographyGeneration/creativeDnaV1.js';
+import {
+  assertCanonicalGeneratedMasterUrl,
+  isLocalPlaceholderAsset,
+  logMasterHeroDebug,
+} from '../productPhotographyGeneration/masterHeroValidation.js';
+import type { MasterHeroGenerationRecord } from '../productPhotographyGeneration/types.js';
 import { resolveServerCreativeDnaForAssetFactory } from './creativeDna.js';
 import { FACTORY_POC_DERIVATIVE_OUTPUTS, getFactoryCropTemplate } from './factoryCropTemplates.js';
 import { renderFactoryDerivative } from './cropEngine.js';
@@ -83,6 +92,7 @@ export type RunProductAssetFactoryOpts = {
   fromStage?: ProductAssetFactoryStage;
   productReferenceSrc?: string;
   generatedMasterHeroSrc?: string;
+  masterHeroGeneration?: MasterHeroGenerationRecord;
   heroApproved?: boolean;
   existingJob?: ProductAssetFactoryJob;
   assetType?: string;
@@ -125,17 +135,45 @@ function buildFailedJob(
   };
 }
 
+function assertIncomingMasterHeroUrl(url: string, productReferenceUrl: string, context: string): void {
+  if (isLocalPlaceholderAsset(url)) {
+    throw new Error(`${context}: refusing local placeholder as Master Hero (${url})`);
+  }
+  if (!/^https?:\/\//i.test(url)) {
+    throw new Error(`${context}: Master Hero must be an HTTPS URL from FAL generation, got ${url}`);
+  }
+  if (url === productReferenceUrl || normalizePath(url) === normalizePath(productReferenceUrl)) {
+    throw new Error(`${context}: Master Hero URL matches product reference — not a fresh FAL generation`);
+  }
+}
+
+function normalizePath(pathOrUrl: string): string {
+  const t = pathOrUrl.trim();
+  if (/^https?:\/\//i.test(t)) {
+    try {
+      return new URL(t).pathname;
+    } catch {
+      return t;
+    }
+  }
+  return t.startsWith('/') ? t : `/${t}`;
+}
+
 /** Build job after Fal generation (Photography Bible path — hero already generated). */
 export function buildHeroAwaitingApprovalJob(opts: {
   productReferenceSrc: string;
   generatedMasterHeroUrl: string;
+  generation?: MasterHeroGenerationRecord;
 }): ProductAssetFactoryJob {
-  const job = buildBaseJob(resolveAbsoluteUrl(opts.productReferenceSrc));
+  const productReferenceUrl = resolveAbsoluteUrl(opts.productReferenceSrc);
+  assertIncomingMasterHeroUrl(opts.generatedMasterHeroUrl, productReferenceUrl, 'buildHeroAwaitingApprovalJob');
+  const job = buildBaseJob(productReferenceUrl);
   return {
     ...job,
     stage: 'awaiting-hero-approval',
     generatedMasterHeroUrl: opts.generatedMasterHeroUrl,
     masterHeroUrl: opts.generatedMasterHeroUrl,
+    masterHeroGeneration: opts.generation,
     lastUpdated: new Date().toISOString(),
   };
 }
@@ -174,7 +212,15 @@ export async function runProductAssetFactoryPipeline(
 
   if (action === 'approve-hero') {
     let job = opts.existingJob ?? buildBaseJob(productReferenceUrl);
+    if (opts.masterHeroGeneration) {
+      job = { ...job, masterHeroGeneration: opts.masterHeroGeneration };
+    }
     if (opts.generatedMasterHeroSrc) {
+      assertIncomingMasterHeroUrl(
+        opts.generatedMasterHeroSrc,
+        job.productReferenceUrl || productReferenceUrl,
+        'approve-hero'
+      );
       job = {
         ...job,
         generatedMasterHeroUrl: opts.generatedMasterHeroSrc,
@@ -207,7 +253,16 @@ export async function runProductAssetFactoryPipeline(
       opts.existingJob ??
       buildBaseJob(productReferenceUrl);
 
+    if (opts.masterHeroGeneration) {
+      job = { ...job, masterHeroGeneration: opts.masterHeroGeneration };
+    }
+
     if (opts.generatedMasterHeroSrc) {
+      assertIncomingMasterHeroUrl(
+        opts.generatedMasterHeroSrc,
+        job.productReferenceUrl || productReferenceUrl,
+        'run-derivatives'
+      );
       job = {
         ...job,
         generatedMasterHeroUrl: opts.generatedMasterHeroSrc,
@@ -278,7 +333,7 @@ async function runHeroGenerationPhase(ctx: {
     action: 'generate-variants',
     unitSlug: unit.slug,
     productReferenceImageSrc: ctx.productRef,
-    includeBenchmarkAttachment: true,
+    includeBenchmarkAttachment: false,
   });
 
   for (const entry of generation.logs) {
@@ -308,6 +363,7 @@ async function runHeroGenerationPhase(ctx: {
     stage: 'hero-generated',
     generatedMasterHeroUrl: generation.generatedMasterUrl,
     masterHeroUrl: generation.generatedMasterUrl,
+    masterHeroGeneration: generation.generation,
     lastUpdated: new Date().toISOString(),
   };
   ctx.logs.push(logEntry('hero-generated', 'New Master Hero Portrait generated via Fal — preview before approval'));
@@ -354,7 +410,35 @@ async function runDerivativePhase(ctx: {
   }
 
   const masterUrl = ctx.job.generatedMasterHeroUrl!;
-  let job = { ...ctx.job, stage: 'hero-approved' as ProductAssetFactoryStage, lastUpdated: new Date().toISOString() };
+  const productRef = ctx.job.productReferenceUrl;
+  const falOriginal = ctx.job.masterHeroGeneration?.falOriginalImageUrl;
+
+  assertCanonicalGeneratedMasterUrl({
+    canonicalUrl: masterUrl,
+    productReferenceSrc: productRef,
+    falOriginalUrl: falOriginal ?? masterUrl,
+    context: 'runDerivativePhase',
+  });
+
+  if (
+    ctx.job.masterHeroGeneration &&
+    ctx.job.masterHeroGeneration.canonicalMasterHeroUrl !== masterUrl
+  ) {
+    throw new Error(
+      'runDerivativePhase: job.generatedMasterHeroUrl does not match stored generation canonical URL'
+    );
+  }
+
+  let masterHeroGeneration = ctx.job.masterHeroGeneration
+    ? attachBackgroundRemovalToGeneration(ctx.job.masterHeroGeneration, masterUrl)
+    : undefined;
+
+  let job = {
+    ...ctx.job,
+    stage: 'hero-approved' as ProductAssetFactoryStage,
+    masterHeroGeneration,
+    lastUpdated: new Date().toISOString(),
+  };
   ctx.logs.push(logEntry('hero-approved', 'Processing approved generated master — not the website reference image'));
 
   const startFrom = ctx.fromStage && ctx.fromStage !== 'failed' ? ctx.fromStage : 'hero-approved';
@@ -369,18 +453,15 @@ async function runDerivativePhase(ctx: {
       job = { ...job, stage: 'removing-background', lastUpdated: new Date().toISOString() };
       ctx.logs.push(logEntry('removing-background', 'Fetching approved generated Master Hero Portrait'));
       masterWhiteBuf = await fetchMasterBuffer(masterUrl);
+      logMasterHeroDebug('Background removal starting', {
+        generationId: masterHeroGeneration?.generationId ?? null,
+        imagePassedToBackgroundRemoval: masterUrl,
+        finalMasterHeroUrl: masterUrl,
+      });
       ctx.logs.push(logEntry('removing-background', `Removing background from generated hero (${masterWhiteBuf.length} bytes)`));
-      const cutout = await runProductAssetBackgroundRemoval(falKey, masterWhiteBuf);
+      const cutout = await runProductAssetBackgroundRemoval(falKey, masterWhiteBuf, { strict: true });
       transparentBuf = cutout.buffer;
-      ctx.logs.push(
-        logEntry(
-          'removing-background',
-          cutout.method === 'ideogram'
-            ? 'Ideogram background removal complete (fal-ai/ideogram/remove-background)'
-            : 'Ideogram unavailable — used pure-white studio fallback on generated master',
-          cutout.method === 'ideogram' ? 'info' : 'warn'
-        )
-      );
+      ctx.logs.push(logEntry('removing-background', 'Ideogram background removal complete (fal-ai/ideogram/remove-background)'));
       job = { ...job, stage: 'transparent-master-generated', lastUpdated: new Date().toISOString() };
       ctx.logs.push(logEntry('transparent-master-generated', 'Transparent master PNG generated from approved generated hero'));
     }
@@ -402,7 +483,7 @@ async function runDerivativePhase(ctx: {
     if (minStage <= derivativeStageIndex('uploading-to-supabase')) {
       if (!masterWhiteBuf) masterWhiteBuf = await fetchMasterBuffer(masterUrl);
       if (!transparentBuf) {
-        const cutout = await runProductAssetBackgroundRemoval(falKey, masterWhiteBuf);
+        const cutout = await runProductAssetBackgroundRemoval(falKey, masterWhiteBuf, { strict: true });
         transparentBuf = cutout.buffer;
       }
       if (derivativeBuffers.length === 0 && transparentBuf) {
@@ -444,6 +525,7 @@ async function runDerivativePhase(ctx: {
       stage: 'ready-for-review',
       derivativeCount: ctx.registry.filter((r) => !r.assetType.startsWith('master')).length,
       registryEntryIds: ctx.registry.map((r) => r.id),
+      masterHeroGeneration,
       lastUpdated: new Date().toISOString(),
     };
     ctx.logs.push(logEntry('ready-for-review', 'Pipeline complete — ready for review'));
