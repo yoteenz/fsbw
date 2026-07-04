@@ -4,6 +4,7 @@ import {
   FACTORY_POC_DERIVATIVE_OUTPUTS,
   PRODUCT_ASSET_FACTORY_POC_UNIT,
   PRODUCT_ASSET_FACTORY_STAGES,
+  resolveCreativeDnaForAssetFactory,
 } from '../../../studio-os/product-photography';
 import {
   getLatestProductAssetFactoryJob,
@@ -18,6 +19,8 @@ export type BrandAssetsProductAssetFactorySnapshot = {
   derivativeOutputCount: number;
   latestJob: ReturnType<typeof getLatestProductAssetFactoryJob>;
   registryCount: number;
+  creativeDnaVersion: string;
+  creativeDnaLockStatus: string;
 };
 
 function readStore(): ProductAssetFactoryStore {
@@ -32,6 +35,7 @@ function readStore(): ProductAssetFactoryStore {
 
 export function getBrandAssetsProductAssetFactorySnapshot(): BrandAssetsProductAssetFactorySnapshot {
   const store = readStore();
+  const creativeDna = resolveCreativeDnaForAssetFactory(PRODUCT_ASSET_FACTORY_POC_UNIT.slug);
   return {
     pocUnit: PRODUCT_ASSET_FACTORY_POC_UNIT,
     stages: PRODUCT_ASSET_FACTORY_STAGES,
@@ -39,6 +43,8 @@ export function getBrandAssetsProductAssetFactorySnapshot(): BrandAssetsProductA
     derivativeOutputCount: FACTORY_POC_DERIVATIVE_OUTPUTS.length,
     latestJob: getLatestProductAssetFactoryJob(PRODUCT_ASSET_FACTORY_POC_UNIT.slug),
     registryCount: store.registry.filter((r: { productSlug: string }) => r.productSlug === PRODUCT_ASSET_FACTORY_POC_UNIT.slug).length,
+    creativeDnaVersion: creativeDna.dna.version,
+    creativeDnaLockStatus: creativeDna.dna.lockStatus,
   };
 }
 

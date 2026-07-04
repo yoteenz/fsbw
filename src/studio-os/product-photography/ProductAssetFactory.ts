@@ -2,6 +2,8 @@
  * Brand Assets Product Asset Factory — client registry mirror of server pipeline.
  */
 
+import { CREATIVE_DNA_BENCHMARK_OUTPUT } from './CreativeDnaRegistry';
+
 export type ProductAssetFactoryStage =
   | 'waiting'
   | 'removing-background'
@@ -42,7 +44,7 @@ export const PRODUCT_ASSET_FACTORY_POC_UNIT = {
   collectionNumber: '003',
   productLine: 'signature-collection',
   version: 'v1',
-  masterHeroSrc: '/assets/2D WAVY FRONT.png',
+  masterHeroSrc: CREATIVE_DNA_BENCHMARK_OUTPUT.heroPortraitSrc,
 };
 
 export type ProductAssetRegistryRecord = {

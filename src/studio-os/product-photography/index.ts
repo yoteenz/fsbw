@@ -85,6 +85,55 @@ export type {
 } from './ProductAssetFactory';
 export { FACTORY_CROP_TEMPLATES, FACTORY_POC_DERIVATIVE_OUTPUTS } from './FactoryCropTemplates';
 export type { FactoryCropTemplate, FactoryCropAnchor } from './FactoryCropTemplates';
+export {
+  CREATIVE_DNA_APPROVED_PROMPT_NAME,
+  CREATIVE_DNA_APPROVED_PROMPT_VERSION,
+  CREATIVE_DNA_APPROVED_PROMPT_BODY,
+} from './CreativeDnaApprovedPrompt';
+export { CREATIVE_DNA_EDITORIAL_REFERENCE_PROMPT } from './CreativeDnaEditorialPrompt';
+export {
+  OFFICIAL_DISPLAY_BUST_VERSION,
+  OFFICIAL_DISPLAY_BUST_LABEL,
+  OFFICIAL_DISPLAY_BUST_CANONICAL_FRONT,
+  OFFICIAL_DISPLAY_BUST_TEXTURE_FAMILIES,
+  OFFICIAL_DISPLAY_BUST_PRESERVE,
+  DISPLAY_BUST_FAMILY_BY_UNIT_SLUG,
+  resolveDisplayBustForUnitSlug,
+  resolveDisplayBustFrontForUnitSlug,
+} from './CreativeDnaDisplayBust';
+export type { DisplayBustTextureFamily, DisplayBustAngleSet } from './CreativeDnaDisplayBust';
+export {
+  CREATIVE_DNA_VERSION,
+  CREATIVE_DNA_V1_0,
+  CREATIVE_DNA_LOCKED_SPECIFICATIONS,
+  CREATIVE_DNA_BENCHMARK_OUTPUT,
+  CREATIVE_DNA_FUTURE_UNIT_SLOTS,
+  getCreativeDna,
+  resolveCreativeDnaMasterHeroSrc,
+} from './CreativeDnaRegistry';
+export type {
+  CreativeDnaRecord,
+  CreativeDnaLockStatus,
+  CreativeDnaLockedSpecification,
+  CreativeDnaBenchmarkOutput,
+  CreativeDnaFutureUnitSlot,
+  CreativeDnaApprovedPromptRecord,
+} from './CreativeDnaRegistry';
+export {
+  CREATIVE_DNA_VERSION_1_0,
+  CREATIVE_DNA_VERSION_HISTORY,
+  CREATIVE_DNA_FUTURE_VERSION_SLOTS,
+  getCurrentCreativeDnaVersion,
+  getCreativeDnaVersion,
+  isCreativeDnaVersionImmutable,
+  appendCreativeDnaVersionDraft,
+} from './CreativeDnaVersionManager';
+export type { CreativeDnaVersionRecord, CreativeDnaVersionStatus } from './CreativeDnaVersionManager';
+export {
+  buildCreativeDnaGenerationPackage,
+  resolveCreativeDnaForAssetFactory,
+} from './CreativeDnaGenerationPackage';
+export type { CreativeDnaGenerationUnitInput, CreativeDnaGenerationPackage } from './CreativeDnaGenerationPackage';
 
 /** Inheritance payload for future StudioOS product creation. */
 export function inheritPhotographyBibleForProduct(productSlug: string) {

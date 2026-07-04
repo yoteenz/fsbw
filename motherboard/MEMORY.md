@@ -35637,3 +35637,26 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Changes:** api pipeline, admin pages/components/hooks/routes, studio-os modules, docs, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-04 — Photography Bible Creative DNA v1.0 initialization (Milestone 22.5)
+
+**Context (full chat):** Continuation of Milestones 20.5–22 (Photography Bible, Derivative Engine, BAW Visual Snapshots, Brand Assets Asset Factory). User requested **Creative DNA v1.0** as permanent source of truth for Frontal Slayer product photography — no admin/website redesign, no removal of M22 functionality, no mannequin re-upload (use existing `/assets/` background-removed mannequins site-wide).
+
+**Goal:** Initialize Creative DNA under Brand Assets → Photography Bible → Creative DNA. Store approved photography prompt v2.0 (full body), editorial reference prompt, Official Display Bust v1.0, SOFT WAVE benchmark output, 20 locked specifications, generation package architecture for units 001–006 (prepare only — no new generation), append-only versioning, Asset Factory reads Creative DNA before processing.
+
+**Deliverables:**
+- **Core modules:** `CreativeDnaRegistry.ts`, `CreativeDnaApprovedPrompt.ts` (full prompt v2.0), `CreativeDnaEditorialPrompt.ts`, `CreativeDnaDisplayBust.ts` (existing assets: natural/2D BLANCO/2D WAVY/2D CURLY L/M/R triples), `CreativeDnaVersionManager.ts`, `CreativeDnaGenerationPackage.ts` (`buildCreativeDnaGenerationPackage`, `resolveCreativeDnaForAssetFactory`).
+- **Benchmark:** SOFT WAVE 003 · Raw Indian · 24" · 200% · 13×6 lace · 1:1 · 4096×4096 · `/assets/2D WAVY FRONT.png` · Approved/Locked.
+- **Admin UI:** Photography Bible **CREATIVE DNA** tab — approved prompt, editorial prompt, Display Bust v1.0 preview, benchmark output, locked specs, generation metadata, future unit slots, version history, lock status.
+- **Hook + service:** `useAdminStudioPhotographyCreativeDnaState.ts`, `photographyCreativeDnaStudioService` in `STUDIO_SERVICE_REGISTRY`; Asset Factory snapshot includes `creativeDnaVersion` + lock status.
+- **Asset Factory connection:** `api/_lib/productAssetFactory/creativeDna.ts`; pipeline logs Creative DNA rules at start and resolves master hero from DNA benchmark; must not invent photography rules.
+- **Inheritance chain updated:** Photography Bible → Creative DNA → Signature Collection → … → Asset Factory.
+- **Docs:** `docs/frontal-slayer/photography-creative-dna/`, `studio-os/product-photography/creative-dna/README.md`.
+
+**Per-unit variables only:** unit name, collection number, texture, product reference image — everything else inherits Creative DNA.
+
+**Versioning:** v1.0 immutable; future v1.1/v1.2/v2.0 append-only via `CreativeDnaVersionManager`.
+
+**Changes:** studio-os product-photography modules, Photography Bible workspace tab, Asset Factory pipeline/service, docs, `motherboard/MEMORY.md`.
+

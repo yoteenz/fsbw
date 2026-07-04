@@ -37,6 +37,7 @@ export const BRAND_ASSETS_ASSET_FACTORY_TABS: Array<{ id: BrandAssetsAssetFactor
 
 export const ASSET_FACTORY_WORKFLOW = [
   'Photography Bible',
+  'Creative DNA v1.0',
   'Approved Master Hero Portrait',
   'Asset Factory',
   'Background Removal (Ideogram)',
@@ -50,7 +51,7 @@ export const ASSET_FACTORY_WORKFLOW = [
 export function getAssetFactoryTabBody(tabId: BrandAssetsAssetFactoryTabId): string {
   switch (tabId) {
     case 'overview':
-      return 'Centralized production pipeline — approved master hero portraits become website-ready asset libraries. POC: SOFT WAVE only.';
+      return 'Centralized production pipeline — Creative DNA v1.0 rules loaded before processing. Approved master hero portraits become website-ready asset libraries. POC: SOFT WAVE only.';
     case 'processing-queue':
       return 'Jobs awaiting or running through pipeline stages. Retry from failed step without restarting completed work.';
     case 'derivative-engine':

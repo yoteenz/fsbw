@@ -6,9 +6,12 @@ import {
   DERIVATIVE_CROP_TEMPLATES,
   DERIVATIVE_SITE_BINDINGS,
   DERIVATIVE_SLOT_DEFINITIONS,
+  CREATIVE_DNA_VERSION_HISTORY,
+  CREATIVE_DNA_FUTURE_UNIT_SLOTS,
 } from '../../../../studio-os/product-photography';
 import { useAdminStudioProductPhotographyBible } from '../../../../hooks/useAdminStudioProductPhotographyBibleState';
 import { useAdminStudioPhotographyDerivatives } from '../../../../hooks/useAdminStudioPhotographyDerivativesState';
+import { useAdminStudioPhotographyCreativeDna } from '../../../../hooks/useAdminStudioPhotographyCreativeDnaState';
 import {
   getPhotographyTabBody,
   PHOTOGRAPHY_BIBLE_INHERITANCE_CHAIN,
@@ -29,6 +32,7 @@ function PhotographyBibleDashboardInner() {
   const { lockedSpecifications, currentVersion } = usePhotographySystem();
   const { units, approveUnit } = useAdminStudioProductPhotographyBible();
   const { getForUnit, results } = useAdminStudioPhotographyDerivatives();
+  const { dna, generationPackagePreview } = useAdminStudioPhotographyCreativeDna();
 
   const tabBody = getPhotographyTabBody(activeTab);
   const preparedUnitCount = results.length;
@@ -212,6 +216,152 @@ function PhotographyBibleDashboardInner() {
               );
             })}
           </div>
+        </section>
+      )}
+
+      {activeTab === 'creative-dna' && (
+        <section style={{ ...ppPanelStyle, padding: '12px', marginTop: '12px' }}>
+          <p style={{ ...ppSectionTitle, color: PP_VISUAL.red }}>CREATIVE DNA {dna.version.toUpperCase()}</p>
+          <p style={ppCaption}>{tabBody}</p>
+          <p style={{ ...ppCaption, marginTop: 6, fontSize: '7px', color: PP_VISUAL.red }}>
+            LOCK STATUS · {dna.lockStatus.toUpperCase()} · APPROVED / LOCKED
+          </p>
+
+          <p style={{ ...ppSectionTitle, marginTop: 14 }}>APPROVED PROMPT</p>
+          <div className="p-2 mb-3" style={{ background: 'rgba(0,0,0,0.03)', border: `1px solid ${PP_VISUAL.panelBorder}` }}>
+            <p style={{ ...ppCaption, color: PP_VISUAL.black, fontFamily: '"Futura PT Medium"' }}>{dna.approvedPrompt.name}</p>
+            <p style={ppCaption}>
+              PROMPT {dna.approvedPrompt.promptVersion.toUpperCase()} · CREATIVE DNA v{dna.approvedPrompt.creativeDnaVersion} ·{' '}
+              {dna.approvedPrompt.status.toUpperCase()}
+            </p>
+            <pre
+              style={{
+                ...ppCaption,
+                marginTop: 8,
+                whiteSpace: 'pre-wrap',
+                maxHeight: 220,
+                overflowY: 'auto',
+                fontSize: '7px',
+                lineHeight: 1.45,
+                color: PP_VISUAL.muted,
+              }}
+            >
+              {dna.approvedPrompt.body}
+            </pre>
+          </div>
+
+          <p style={ppSectionTitle}>EDITORIAL REFERENCE PROMPT</p>
+          <pre
+            className="p-2 mb-3"
+            style={{
+              ...ppCaption,
+              whiteSpace: 'pre-wrap',
+              background: 'rgba(255,255,255,0.7)',
+              border: `1px solid ${PP_VISUAL.panelBorder}`,
+              fontSize: '7px',
+              lineHeight: 1.45,
+            }}
+          >
+            {dna.editorialReferencePrompt}
+          </pre>
+
+          <p style={ppSectionTitle}>OFFICIAL DISPLAY BUST v{dna.displayBust.version}</p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 mb-3">
+            <div className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
+              <p style={{ ...ppCaption, color: PP_VISUAL.red }}>{dna.displayBust.label}</p>
+              <p style={ppCaption}>CANONICAL · {dna.displayBust.canonicalFrontSrc}</p>
+              <p style={{ ...ppCaption, fontSize: '7px' }}>PRESERVE · {dna.displayBust.preserve.join(' · ')}</p>
+              <img
+                src={dna.displayBust.canonicalFrontSrc}
+                alt="Official Display Bust v1.0"
+                className="mt-2 mx-auto"
+                style={{ maxHeight: 120, objectFit: 'contain' }}
+              />
+            </div>
+            <div className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(0,0,0,0.03)' }}>
+              <p style={ppCaption}>TEXTURE FAMILIES (EXISTING SITE ASSETS)</p>
+              {Object.entries(dna.displayBust.textureFamilies).map(([family, angles]) => (
+                <p key={family} style={{ ...ppCaption, fontSize: '7px', marginTop: 4 }}>
+                  {family.toUpperCase()} · {angles.front}
+                </p>
+              ))}
+            </div>
+          </div>
+
+          <p style={ppSectionTitle}>APPROVED BENCHMARK OUTPUT — SOFT WAVE</p>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 mb-3">
+            <div className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}` }}>
+              <p style={{ ...ppCaption, color: PP_VISUAL.red }}>
+                {dna.benchmarkOutput.collectionNumber} · {dna.benchmarkOutput.unit}
+              </p>
+              <p style={ppCaption}>
+                {dna.benchmarkOutput.texture} · {dna.benchmarkOutput.length} · {dna.benchmarkOutput.density}
+              </p>
+              <p style={ppCaption}>{dna.benchmarkOutput.lace}</p>
+              <p style={{ ...ppCaption, fontSize: '7px' }}>
+                {dna.benchmarkOutput.aspectRatio} · {dna.benchmarkOutput.resolution} · {dna.benchmarkOutput.background} ·{' '}
+                {dna.benchmarkOutput.status.toUpperCase()}
+              </p>
+            </div>
+            <div className="p-2 flex items-center justify-center" style={{ border: `1px solid ${PP_VISUAL.panelBorder}` }}>
+              <img
+                src={dna.benchmarkOutput.heroPortraitSrc}
+                alt="SOFT WAVE benchmark"
+                style={{ maxHeight: 140, objectFit: 'contain' }}
+              />
+            </div>
+          </div>
+
+          <p style={ppSectionTitle}>LOCKED SPECIFICATIONS</p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 mb-3">
+            {dna.lockedSpecifications.map((spec) => (
+              <div key={spec.id} className="p-2" style={{ background: 'rgba(0,0,0,0.03)', border: `1px solid ${PP_VISUAL.panelBorder}` }}>
+                <p style={{ ...ppCaption, fontSize: '7px' }}>{spec.rule}</p>
+                <p style={{ ...ppCaption, fontSize: '6px', color: PP_VISUAL.red }}>LOCKED</p>
+              </div>
+            ))}
+          </div>
+
+          <p style={ppSectionTitle}>GENERATION METADATA</p>
+          <div className="p-2 mb-3" style={{ background: 'rgba(255,255,255,0.7)', border: `1px solid ${PP_VISUAL.panelBorder}` }}>
+            <p style={ppCaption}>
+              PER-UNIT VARIABLES ONLY · {dna.perUnitVariableFields.join(' · ')}
+            </p>
+            <p style={{ ...ppCaption, marginTop: 6, fontSize: '7px' }}>
+              AUTO PACKAGE · Creative DNA + Approved Prompt + Display Bust + Editorial Reference + Product Reference + Unit Metadata
+            </p>
+            <p style={{ ...ppCaption, fontSize: '7px', marginTop: 4 }}>
+              PREVIEW (SOFT WAVE) · bust {generationPackagePreview.displayBustFrontSrc} · product{' '}
+              {generationPackagePreview.productReferenceImageSrc}
+            </p>
+          </div>
+
+          <p style={ppSectionTitle}>FUTURE UNITS (PREPARED — NO GENERATION)</p>
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 mb-3">
+            {CREATIVE_DNA_FUTURE_UNIT_SLOTS.map((slot) => (
+              <div key={slot.slug} className="p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}` }}>
+                <p style={{ ...ppCaption, color: slot.status === 'benchmark' ? PP_VISUAL.red : PP_VISUAL.muted }}>
+                  {slot.collectionNo} · {slot.label}
+                </p>
+                <p style={{ ...ppCaption, fontSize: '7px' }}>{slot.status.toUpperCase()} · {slot.inheritsFrom}</p>
+              </div>
+            ))}
+          </div>
+
+          <p style={ppSectionTitle}>VERSION HISTORY</p>
+          {CREATIVE_DNA_VERSION_HISTORY.map((v) => (
+            <div key={v.version} className="mb-2 p-2" style={{ border: `1px solid ${PP_VISUAL.panelBorder}`, background: 'rgba(255,255,255,0.7)' }}>
+              <p style={{ ...ppCaption, color: PP_VISUAL.red }}>{v.label}</p>
+              <p style={{ ...ppCaption, fontSize: '7px' }}>{v.summary}</p>
+              <p style={{ ...ppCaption, fontSize: '6px' }}>
+                {v.effectiveDate} · {v.status.toUpperCase()} {v.immutable ? '· IMMUTABLE' : ''}
+              </p>
+            </div>
+          ))}
+          <p style={{ ...ppCaption, marginTop: 6 }}>FUTURE SLOTS · v1.1 · v1.2 · v2.0 (append-only)</p>
+          <p style={{ ...ppCaption, marginTop: 8, fontSize: '7px' }}>
+            DOCS · docs/frontal-slayer/photography-creative-dna/
+          </p>
         </section>
       )}
 

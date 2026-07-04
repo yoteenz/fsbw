@@ -1,4 +1,5 @@
 import { resolveSiteOrigin } from '../email/brandAssets.js';
+import { resolveServerCreativeDnaForAssetFactory } from './creativeDna.js';
 import { FACTORY_POC_DERIVATIVE_OUTPUTS, getFactoryCropTemplate } from './factoryCropTemplates.js';
 import { renderFactoryDerivative } from './cropEngine.js';
 import { runProductAssetIdeogramCutout, uploadBufferToFalStorage } from './ideogramCutout.js';
@@ -101,7 +102,16 @@ export async function runProductAssetFactoryPipeline(opts: {
   const logs: ProductAssetFactoryLogEntry[] = [];
   const registry: ProductAssetRegistryEntry[] = [];
   const now = new Date().toISOString().slice(0, 10);
-  const masterSrc = opts.masterHeroSrc ?? unit.masterHeroSrc;
+
+  const creativeDna = resolveServerCreativeDnaForAssetFactory({
+    unitSlug: unit.slug,
+    masterHeroSrcOverride: opts.masterHeroSrc,
+  });
+  for (const rule of creativeDna.rulesApplied) {
+    logs.push(logEntry('waiting', rule));
+  }
+
+  const masterSrc = opts.masterHeroSrc ?? creativeDna.masterHeroSrc ?? unit.masterHeroSrc;
   const masterUrl = resolveAbsoluteUrl(masterSrc);
 
   let job: ProductAssetFactoryJob = {

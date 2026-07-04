@@ -29,7 +29,8 @@ export type PhotographyBibleTabId =
   | 'exports'
   | 'templates'
   | 'version-history'
-  | 'derivatives';
+  | 'derivatives'
+  | 'creative-dna';
 
 export const PHOTOGRAPHY_BIBLE_TABS: Array<{ id: PhotographyBibleTabId; label: string }> = [
   { id: 'overview', label: 'OVERVIEW' },
@@ -43,6 +44,7 @@ export const PHOTOGRAPHY_BIBLE_TABS: Array<{ id: PhotographyBibleTabId; label: s
   { id: 'exports', label: 'EXPORTS' },
   { id: 'templates', label: 'TEMPLATES' },
   { id: 'derivatives', label: 'DERIVATIVES' },
+  { id: 'creative-dna', label: 'CREATIVE DNA' },
   { id: 'version-history', label: 'VERSION HISTORY' },
 ];
 
@@ -63,9 +65,11 @@ export type SignatureUnitPhotographyRecord = {
 
 export const PHOTOGRAPHY_BIBLE_INHERITANCE_CHAIN = [
   'PHOTOGRAPHY BIBLE V1.0',
+  'CREATIVE DNA V1.0',
   'SIGNATURE COLLECTION',
   'MEDIA KIT',
   'EXPORT TEMPLATES',
+  'ASSET FACTORY',
   'STUDIOOS PRODUCT',
 ] as const;
 
@@ -125,6 +129,8 @@ export function getPhotographyTabBody(tabId: PhotographyBibleTabId): string {
       return `${PHOTOGRAPHY_EXPORT_TEMPLATES.length} export templates locked to V1.0.`;
     case 'derivatives':
       return 'Photography Derivative Engine — 18 derivative slots per approved hero · reusable crop templates · site asset bindings · no image processing in Milestone 21.';
+    case 'creative-dna':
+      return 'Creative DNA v1.0 — permanent Frontal Slayer product photography standard · approved prompt v2.0 · Display Bust v1.0 · SOFT WAVE benchmark · locked specs · generation package architecture.';
     case 'version-history':
       return PHOTOGRAPHY_VERSION_HISTORY.map((v: PhotographyVersionRecord) => `${v.label} (${v.status})`).join(' · ');
     default:
