@@ -38,7 +38,8 @@ export type AdminStudioSectionId =
   | 'production'
   | 'ai-production-engine'
   | 'distribution-network'
-  | 'audience-brain';
+  | 'audience-brain'
+  | 'executive-command-center';
 
 export type AdminStudioHubCard = {
   id: AdminStudioSectionId;

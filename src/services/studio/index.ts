@@ -65,6 +65,9 @@ export type { DistributionNetworkSnapshot, DistributionPackValidation } from './
 export { audienceBrainStudioService, AUDIENCE_FEEDBACK_LOOP_TARGETS, AUDIENCE_INHERITANCE_CHAIN, confidenceLabel } from './audienceBrain/service';
 export type { AudienceBrainSnapshot, AudienceBrainFeed } from './audienceBrain/service';
 
+export { executiveCommandCenterStudioService, EXECUTIVE_REPORTING_CHAIN } from './executiveCommandCenter/service';
+export type { ExecutiveCommandCenterSnapshot, ExecutiveSummary } from './executiveCommandCenter/service';
+
 import { openaiStudioService } from './openai';
 import { falStudioService } from './fal';
 import { resendStudioService } from './resend';
@@ -84,6 +87,7 @@ import { productionStudioService } from './production/service';
 import { aiProductionEngineStudioService } from './aiProductionEngine/service';
 import { distributionNetworkStudioService } from './distributionNetwork/service';
 import { audienceBrainStudioService } from './audienceBrain/service';
+import { executiveCommandCenterStudioService } from './executiveCommandCenter/service';
 import type { StudioServiceStub } from './types';
 
 /** Registry of all Studio service stubs — Phase 2 integration entry points. */
@@ -98,6 +102,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   aiProductionEngineStudioService,
   distributionNetworkStudioService,
   audienceBrainStudioService,
+  executiveCommandCenterStudioService,
   intelligenceEngineStudioService,
   aiOrchestratorStudioService,
   openaiStudioService,

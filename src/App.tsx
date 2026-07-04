@@ -153,6 +153,7 @@ const AdminStudioDistributionNetworkDetail = lazyWithRetry(() => import('./pages
 const AdminStudioDistributionNetworkChannel = lazyWithRetry(() => import('./pages/admin/studio/distribution-network/channel/page'), 'AdminStudioDistributionNetworkChannel');
 const AdminStudioAudienceBrain = lazyWithRetry(() => import('./pages/admin/studio/audience-brain/page'), 'AdminStudioAudienceBrain');
 const AdminStudioAudienceBrainIntelligence = lazyWithRetry(() => import('./pages/admin/studio/audience-brain/intelligence/page'), 'AdminStudioAudienceBrainIntelligence');
+const AdminStudioExecutiveCommandCenter = lazyWithRetry(() => import('./pages/admin/studio/executive-command-center/page'), 'AdminStudioExecutiveCommandCenter');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -910,16 +911,22 @@ function App() {
               <AdminStudioAudienceBrain />
             </Suspense>
           } />
+          <Route path="studio/executive-command-center" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExecutiveCommandCenter />
+            </Suspense>
+          } />
+          <Route path="studio/hub" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudio />
+            </Suspense>
+          } />
           <Route path="studio/:sectionId" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioSection />
             </Suspense>
           } />
-          <Route path="studio" element={
-            <Suspense fallback={<LoadingScreen />}>
-              <AdminStudio />
-            </Suspense>
-          } />
+          <Route path="studio" element={<Navigate to="/admin/studio/executive-command-center" replace />} />
           <Route path="analytics" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminAnalytics />

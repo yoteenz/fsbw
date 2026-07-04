@@ -44,6 +44,9 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'audience-brain') {
       return <Navigate to="/admin/studio/audience-brain" replace />;
     }
+    if (sectionId === 'executive-command-center') {
+      return <Navigate to="/admin/studio/executive-command-center" replace />;
+    }
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

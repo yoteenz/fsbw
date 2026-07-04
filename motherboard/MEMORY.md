@@ -34747,3 +34747,20 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 **Conventions:** Route `audience-brain/intelligence` before `audience-brain`. Audience Brain feeds future Content Packs via feedback loop — separate from Intelligence Engine (external signals) but complementary.
 
+---
+
+## 2026-07-04 — THE STUDIO Executive Command Center milestone
+
+**Context:** Continuation of THE STUDIO — all prior milestones frozen. User requested **EXECUTIVE COMMAND CENTER** — subtitle *"One company. One view."* Primary CEO headquarters; luxury media company control room (not generic BI). Every department reports in; live executive summary from prior milestones without duplicating module UIs.
+
+**Topics covered (full chat arc):**
+- Prior: Audience Brain (`ac18d49a`), Distribution Network, AI Production Engine, Production, etc. — unchanged.
+- **Executive Command Center** (`/admin/studio/executive-command-center`): 12 executive overview cards; Good Morning creative briefing (CD topic/show/confidence/products/trends/deadlines + quick actions); global executive search; 10 tabs — Command, Business, Studio, Audience, Product, Launch, Opportunities, Risks, Decisions, Timeline; health grids for business/studio/audience/product; launch campaigns with progress; 8 opportunities (confidence/evidence/impact); 5 risks by urgency; 6 executive decisions (approve/reject/persisted); company timeline; 11 quick actions to all modules; reporting chain footer.
+- **Data model** `adminStudioExecutiveCommandCenterDemo.ts`; **state** `useAdminStudioExecutiveCommandCenterState.ts` (search, decisions); **service** `executiveCommandCenterStudioService` in `STUDIO_SERVICE_REGISTRY`.
+
+**Decisions / outcomes:** Executive Command Center is primary Studio homepage — `/admin/studio` redirects to `/admin/studio/executive-command-center`; legacy hub preserved unchanged at `/admin/studio/hub`. Did not redesign existing hub page. Demo aggregation only — connectors not connected. Cross-links: ← Audience Brain, Creative Director →. Build verified.
+
+**Changes:** demo, hook, service, executive UI components, `executive-command-center/page.tsx`, routes, storage, `App.tsx` (homepage redirect + hub route), `STUDIO_SERVICE_REGISTRY`, `motherboard/CORE.md`.
+
+**Conventions:** `/admin/studio` → Executive Command Center; `/admin/studio/hub` → legacy module grid; aggregates milestones without modifying them.
+
