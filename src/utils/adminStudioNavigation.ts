@@ -130,6 +130,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'experience-architect',
+    title: 'EXPERIENCE ARCHITECT',
+    purpose: 'Emotional design for every touchpoint — journey maps, emotional architecture, memorability over usability.',
+    route: p('experience-architect'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN EXPERIENCE',
+    moduleKey: 'experience-architect',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

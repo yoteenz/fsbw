@@ -1,0 +1,131 @@
+import { bootstrapExperienceArchitectStore } from './store';
+import type { ExperienceArchitectStore } from './types';
+
+export function buildExperienceArchitectSeed(): Partial<ExperienceArchitectStore> {
+  return {
+    companyName: 'NDXBOOK',
+    dashboard: {
+      summary:
+        'EXPERIENCE ARCHITECT V1.0 — emotional design for every touchpoint · optimize for memorability · experiences people never forget.',
+      experienceHealthPct: 82,
+      journeyCompletenessPct: 0,
+      emotionalCoherencePct: 88,
+      relationshipImpactPct: 85,
+      crossChannelConsistencyPct: 0,
+      approvalStatus: 'in-review',
+    },
+    activeWorkspaceId: 'ndxbook',
+    blueprintStages: [
+      { id: 'first-impression', label: 'FIRST IMPRESSION', emotionalGoal: 'Curiosity · calm authority', identityReinforcement: 'Stat-forward hero · no hype · immediate clarity', status: 'approved' },
+      { id: 'brand-discovery', label: 'BRAND DISCOVERY', emotionalGoal: 'Confidence · trust building', identityReinforcement: 'Page strategy · consistent Writing Bible voice', status: 'approved' },
+      { id: 'customer-onboarding', label: 'CUSTOMER ONBOARDING', emotionalGoal: 'Simplicity · welcome without overwhelm', identityReinforcement: 'Membership tiers explained · stat cards · no pressure', status: 'approved' },
+      { id: 'education', label: 'EDUCATION', emotionalGoal: 'Confidence · feeling smarter', identityReinforcement: 'Knowledge Asset Engine pages · compound learning', status: 'approved' },
+      { id: 'purchase-journey', label: 'PURCHASE JOURNEY', emotionalGoal: 'Anticipation · informed decision', identityReinforcement: 'Build-a-Wig commerce · premium without pushiness', status: 'optimizing' },
+      { id: 'checkout', label: 'CHECKOUT EXPERIENCE', emotionalGoal: 'Trust · frictionless confidence', identityReinforcement: 'Stripe · clear pricing · no dark patterns', status: 'optimizing' },
+      { id: 'confirmation', label: 'CONFIRMATION', emotionalGoal: 'Delight · reassurance', identityReinforcement: 'Calm confirmation · next steps clear · brand voice', status: 'approved' },
+      { id: 'shipping', label: 'SHIPPING', emotionalGoal: 'Anticipation · transparency', identityReinforcement: 'Tracking clarity · brand packaging standards', status: 'defined' },
+      { id: 'product', label: 'PRODUCT EXPERIENCE', emotionalGoal: 'Delight · exceeds expectation', identityReinforcement: 'Photography Bible · unboxing · quality signals', status: 'approved' },
+      { id: 'support', label: 'SUPPORT', emotionalGoal: 'Trust · respected', identityReinforcement: 'Hospitality principles · stat-forward help · no scripts', status: 'optimizing' },
+      { id: 'membership', label: 'MEMBERSHIP', emotionalGoal: 'Belonging · insider status', identityReinforcement: 'Lounge TV · exclusive pages · community access', status: 'approved' },
+      { id: 'renewal', label: 'RENEWAL', emotionalGoal: 'Value recognition · loyalty', identityReinforcement: 'Anniversary moments · compounding value reminder', status: 'defined' },
+      { id: 'community', label: 'COMMUNITY', emotionalGoal: 'Belonging · shared identity', identityReinforcement: 'Reader graph · advocate pipeline · community clusters', status: 'approved' },
+      { id: 'referral', label: 'REFERRAL', emotionalGoal: 'Pride · advocacy', identityReinforcement: 'Share stat pages · advocate recognition', status: 'defined' },
+      { id: 'anniversary', label: 'ANNIVERSARY', emotionalGoal: 'Legacy · appreciation', identityReinforcement: 'Member milestones · celebration philosophy', status: 'defined' },
+      { id: 'win-back', label: 'WIN-BACK', emotionalGoal: 'Reconnection · no guilt', identityReinforcement: 'Relationship engine · respectful re-engagement', status: 'defined' },
+      { id: 'advocacy', label: 'ADVOCACY', emotionalGoal: 'Legacy · champion status', identityReinforcement: 'Creator marketplace pipeline · advocate tiers', status: 'optimizing' },
+      { id: 'long-term-relationship', label: 'LONG-TERM RELATIONSHIP', emotionalGoal: 'Legacy · institutional trust', identityReinforcement: 'Reader graph · years of compounding · portfolio relationship', status: 'approved' },
+    ],
+    journeyTouchpoints: [
+      { id: 'jt-1', stage: 'DISCOVERY', touchpoint: 'Homepage · first stat page', entryPoint: true, frictionScore: 12, delightScore: 88, trustBuilder: true, relationshipMilestone: false, dropOffRisk: 'low', relationshipEngineLink: 'Reader graph · new visitor profile' },
+      { id: 'jt-2', stage: 'EDUCATION', touchpoint: 'Page read · newsletter signup', entryPoint: false, frictionScore: 18, delightScore: 91, trustBuilder: true, relationshipMilestone: true, dropOffRisk: 'low', relationshipEngineLink: 'Journey stage: learning → trust' },
+      { id: 'jt-3', stage: 'COMMERCE', touchpoint: 'Build-a-Wig customize flow', entryPoint: false, frictionScore: 35, delightScore: 78, trustBuilder: true, relationshipMilestone: false, dropOffRisk: 'medium', relationshipEngineLink: 'Commerce CX split · experience optimization' },
+      { id: 'jt-4', stage: 'CHECKOUT', touchpoint: 'Stripe checkout · membership', entryPoint: false, frictionScore: 28, delightScore: 82, trustBuilder: true, relationshipMilestone: true, dropOffRisk: 'medium', relationshipEngineLink: 'Membership tier · loyalty signal' },
+      { id: 'jt-5', stage: 'COMMUNITY', touchpoint: 'Lounge TV · advocate program', entryPoint: false, frictionScore: 15, delightScore: 86, trustBuilder: true, relationshipMilestone: true, dropOffRisk: 'low', relationshipEngineLink: 'Community cluster · advocate pipeline' },
+      { id: 'jt-6', stage: 'SUPPORT', touchpoint: 'Help request · FAQ', entryPoint: false, frictionScore: 42, delightScore: 71, trustBuilder: false, relationshipMilestone: false, dropOffRisk: 'high', relationshipEngineLink: 'Support pattern · frustration signal' },
+    ],
+    emotionalArchitecture: [
+      { id: 'emo-1', emotion: 'CURIOSITY', sequence: 1, description: 'First discovery · stat hooks attention', designedOutcome: 'Reader clicks · wants to learn more' },
+      { id: 'emo-2', emotion: 'CONFIDENCE', sequence: 2, description: 'Education pages · numbers earn trust', designedOutcome: 'Reader feels smarter · not overwhelmed' },
+      { id: 'emo-3', emotion: 'ANTICIPATION', sequence: 3, description: 'Membership · commerce consideration', designedOutcome: 'Informed decision · no pressure' },
+      { id: 'emo-4', emotion: 'EXCITEMENT', sequence: 4, description: 'Purchase · unboxing · first premium access', designedOutcome: 'Delight exceeds expectation' },
+      { id: 'emo-5', emotion: 'DELIGHT', sequence: 5, description: 'Surprise moments · milestone celebrations', designedOutcome: 'Memorable · shareable' },
+      { id: 'emo-6', emotion: 'TRUST', sequence: 6, description: 'Consistent cadence · support hospitality', designedOutcome: 'Reliable · respected' },
+      { id: 'emo-7', emotion: 'BELONGING', sequence: 7, description: 'Community · Lounge · insider content', designedOutcome: 'Part of something · not alone' },
+      { id: 'emo-8', emotion: 'LOYALTY', sequence: 8, description: 'Renewal · anniversary · compounding value', designedOutcome: 'Returns by choice · not inertia' },
+      { id: 'emo-9', emotion: 'ADVOCACY', sequence: 9, description: 'Referral · creator pipeline · share stats', designedOutcome: 'Champions the brand' },
+      { id: 'emo-10', emotion: 'LEGACY', sequence: 10, description: 'Years of relationship · institutional trust', designedOutcome: 'Never forgets how ndxbook made them feel' },
+    ],
+    experienceSystems: [
+      { id: 'sys-1', system: 'CUSTOMER SERVICE PHILOSOPHY', philosophy: 'Hospitality over scripts · respect time · stat-forward clarity', status: 'active' },
+      { id: 'sys-2', system: 'SUPPORT STANDARDS', philosophy: 'Response time targets · tone from Writing Bible · escalation paths', status: 'active' },
+      { id: 'sys-3', system: 'MEMBERSHIP PHILOSOPHY', philosophy: 'Insider access · compounding value · no FOMO tactics', status: 'approved' },
+      { id: 'sys-4', system: 'COMMUNITY PHILOSOPHY', philosophy: 'Belonging · advocate recognition · reader graph integration', status: 'approved' },
+      { id: 'sys-5', system: 'NOTIFICATION PHILOSOPHY', philosophy: 'Respect attention · Money Monday · Truth Tuesday cadence only', status: 'active' },
+      { id: 'sys-6', system: 'CELEBRATION PHILOSOPHY', philosophy: 'Anniversary · milestone · achievement moments · surprise and delight', status: 'draft' },
+      { id: 'sys-7', system: 'TRUST FRAMEWORK', philosophy: 'Transparency · no dark patterns · stat-backed claims', status: 'approved' },
+      { id: 'sys-8', system: 'RETENTION FRAMEWORK', philosophy: 'Relationship engine · win-back · renewal · long-term nurturing', status: 'active' },
+    ],
+    microExperiences: [
+      { id: 'mx-1', category: 'Loading', label: 'LOADING STATES', identityReinforcement: 'Calm skeleton · stat card placeholder · no spinners', status: 'approved' },
+      { id: 'mx-2', category: 'Empty', label: 'EMPTY STATES', identityReinforcement: 'Helpful · stat-forward · next action clear', status: 'approved' },
+      { id: 'mx-3', category: 'Error', label: 'ERROR MESSAGES', identityReinforcement: 'Calm tone · no blame · clear recovery path', status: 'approved' },
+      { id: 'mx-4', category: 'Success', label: 'SUCCESS MESSAGES', identityReinforcement: 'Understated delight · confirmation clarity', status: 'approved' },
+      { id: 'mx-5', category: 'Email', label: 'WELCOME · CONFIRMATION EMAILS', identityReinforcement: 'Writing Bible voice · stat hook · no hype', status: 'approved' },
+      { id: 'mx-6', category: 'Milestone', label: 'MEMBER MILESTONES', identityReinforcement: 'Achievement moments · celebration philosophy', status: 'defined' },
+      { id: 'mx-7', category: 'Push', label: 'PUSH NOTIFICATIONS', identityReinforcement: 'Cadence-respecting · value-first · opt-in', status: 'defined' },
+    ],
+    simulations: [
+      { id: 'sim-1', persona: 'FIRST-TIME VISITOR', channel: 'Mobile · homepage', frictionPct: 15, clarityPct: 92, emotionScore: 85, trustPct: 88, confidencePct: 86, recommendations: ['Maintain stat-forward hero · reduce nav density on mobile'] },
+      { id: 'sim-2', persona: 'FIRST PURCHASE', channel: 'Desktop · Build-a-Wig', frictionPct: 32, clarityPct: 78, emotionScore: 74, trustPct: 82, confidencePct: 76, recommendations: ['Checkout friction · customize flow length · add progress indicator'] },
+      { id: 'sim-3', persona: 'MEMBERSHIP SIGNUP', channel: 'Mobile · membership tier', frictionPct: 22, clarityPct: 88, emotionScore: 86, trustPct: 90, confidencePct: 87, recommendations: ['Strong · expand anniversary celebration touchpoints'] },
+      { id: 'sim-4', persona: 'SUPPORT REQUEST', channel: 'Email · help', frictionPct: 45, clarityPct: 72, emotionScore: 68, trustPct: 75, confidencePct: 70, recommendations: ['Priority: support experience · hospitality standards · response time'] },
+      { id: 'sim-5', persona: 'COMMUNITY PARTICIPATION', channel: 'Lounge TV · advocate', frictionPct: 18, clarityPct: 85, emotionScore: 88, trustPct: 86, confidencePct: 84, recommendations: ['Expand advocate recognition · referral experience formalization'] },
+    ],
+    intelligenceAlerts: [
+      { id: 'intel-1', category: 'DROP-OFF', signal: 'Build-a-Wig customize step 3 · 28% abandon', recommendation: 'Reduce friction · progress indicator · save draft', priority: 'high' },
+      { id: 'intel-2', category: 'DELIGHT', signal: 'Page 042 share rate +14% · stat-forward resonance', recommendation: 'Replicate pattern · Labs experiment', priority: 'medium' },
+      { id: 'intel-3', category: 'FRUSTRATION', signal: 'Support FAQ bounce · 42% friction score', recommendation: 'Hospitality standards · human escalation path', priority: 'critical' },
+      { id: 'intel-4', category: 'RETENTION', signal: 'Membership renewal window · anniversary opportunity', recommendation: 'Activate celebration philosophy · relationship engine', priority: 'high' },
+      { id: 'intel-5', category: 'RELATIONSHIP', signal: 'Reader graph · advocate pipeline growing', recommendation: 'Formalize referral + advocacy experience stages', priority: 'medium' },
+    ],
+    crossChannel: [
+      { id: 'ch-1', channel: 'WEBSITE', consistencyPct: 91, status: 'unified', notes: 'Stat-forward · panel language · Writing Bible' },
+      { id: 'ch-2', channel: 'MOBILE APP', consistencyPct: 88, status: 'unified', notes: 'Mobile-first · same identity reinforcement' },
+      { id: 'ch-3', channel: 'EMAIL', consistencyPct: 86, status: 'unified', notes: 'Money Monday · Truth Tuesday cadence' },
+      { id: 'ch-4', channel: 'SOCIAL MEDIA', consistencyPct: 82, status: 'partial', notes: 'Stat cards · thumbnail system · attribution gaps' },
+      { id: 'ch-5', channel: 'CUSTOMER SUPPORT', consistencyPct: 68, status: 'gap', notes: 'Tone inconsistent · response time variable' },
+      { id: 'ch-6', channel: 'COMMUNITY', consistencyPct: 85, status: 'unified', notes: 'Lounge TV · advocate recognition' },
+      { id: 'ch-7', channel: 'PACKAGING', consistencyPct: 79, status: 'partial', notes: 'Build-a-Wig · Photography Bible aligned' },
+    ],
+    experienceStandards: [
+      { id: 'std-1', standard: 'RESPONSE TIME', metric: 'Support first response', target: '< 4 hours · priority < 1 hour', status: 'measured' },
+      { id: 'std-2', standard: 'TONE', metric: 'Writing Bible compliance', target: '100% customer-facing copy', status: 'active' },
+      { id: 'std-3', standard: 'ACCESSIBILITY', metric: 'WCAG 2.1 AA', target: 'Core flows compliant', status: 'defined' },
+      { id: 'std-4', standard: 'VISUAL CONSISTENCY', metric: 'Creative DNA adherence', target: 'Panel · stat card · typography', status: 'active' },
+      { id: 'std-5', standard: 'INTERACTION QUALITY', metric: 'Friction score threshold', target: '< 25 avg · delight > 80', status: 'measured' },
+      { id: 'std-6', standard: 'HOSPITALITY', metric: 'Support satisfaction', target: '> 85% · no script feel', status: 'defined' },
+    ],
+    frictionAnalysis: [
+      'Commerce customize flow · step 3 drop-off · progress unclear',
+      'Support FAQ · high bounce · human path buried',
+      'Checkout · mobile thumb zone · confirmation anxiety',
+      'Social → site handoff · attribution breaks continuity',
+    ],
+    retentionOpportunities: [
+      'Anniversary experience · membership renewal window',
+      'Win-back · relationship engine re-engagement',
+      'Advocacy formalization · referral experience stage',
+      'Community moments · celebrate reader milestones',
+    ],
+    digitalHandoff: {
+      status: 'ready',
+      transferredAt: null,
+      inheritedAssets: ['Brand identity from Brand Architect', 'Experience blueprint · 18 stages', 'Customer journeys · 6 touchpoints', 'Interaction standards · 6 metrics', 'Emotional architecture · 10-stage progression'],
+      downstreamTargets: ['Digital Architect', 'Website implementation', 'Mobile app flows', 'Email automation', 'Support tooling'],
+    },
+  };
+}
+
+export function bootstrapExperienceArchitectPlatform(): void {
+  bootstrapExperienceArchitectStore(buildExperienceArchitectSeed());
+}

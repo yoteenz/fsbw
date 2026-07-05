@@ -7,6 +7,7 @@ import {
   adminStudioLeadershipDnaPath,
   adminStudioOrganizationalInheritancePath,
   adminStudioBrandArchitectPath,
+  adminStudioExperienceArchitectPath,
   adminStudioSimulationEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -385,6 +386,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...cmeLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INHERITANCE</Link>
         <Link to={adminStudioKnowledgeAssetEnginePath()} style={{ ...cmeLabel, color: '#0D9488', fontSize: '6px' }}>→ KNOWLEDGE ASSET ENGINE</Link>
         <Link to={adminStudioBrandArchitectPath()} style={{ ...cmeLabel, color: '#BE185D', fontSize: '6px' }}>→ BRAND ARCHITECT</Link>
+        <Link to={adminStudioExperienceArchitectPath()} style={{ ...cmeLabel, color: '#0891B2', fontSize: '6px' }}>→ EXPERIENCE ARCHITECT</Link>
         <Link to={adminStudioSimulationEnginePath()} style={{ ...cmeLabel, color: CME.slate, fontSize: '6px' }}>→ SIMULATION ENGINE</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...cmeLabel, color: CME.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
       </div>

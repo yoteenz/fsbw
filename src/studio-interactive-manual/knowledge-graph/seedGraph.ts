@@ -29,6 +29,7 @@ import {
   adminStudioKnowledgeAssetEnginePath,
   adminStudioCompanyMaturityEnginePath,
   adminStudioBrandArchitectPath,
+  adminStudioExperienceArchitectPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -368,6 +369,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 53',
     status: 'demo',
     searchKeywords: ['brand architect', 'brand blueprint', 'verbal identity', 'visual identity', 'brand systems', 'brand simulation', 'experience architect handoff'],
+  },
+  {
+    id: 'node-experience-architect',
+    name: 'EXPERIENCE ARCHITECT',
+    type: 'module',
+    description:
+      'Emotional design for every touchpoint — journey maps, emotional architecture, micro-experiences, cross-channel consistency, memorability over usability.',
+    purpose: 'How people feel from discovery to legacy · every interaction reinforces identity · experiences people never forget.',
+    route: adminStudioExperienceArchitectPath(),
+    moduleId: 'experience-architect',
+    relatedManualChapter: 'CHAPTER · EXPERIENCE ARCHITECT · EMOTIONAL DESIGN',
+    versionIntroduced: 'Milestone 54',
+    status: 'demo',
+    searchKeywords: ['experience architect', 'customer journey', 'emotional architecture', 'touchpoint map', 'experience simulation', 'digital architect handoff'],
   },
   {
     id: 'node-fallback-used',
@@ -1096,6 +1111,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-brand-cos', fromId: 'node-chief-of-staff', toId: 'node-brand-architect', type: 'related-to', label: 'BRAND APPROVAL' },
   { id: 'e-brand-business', fromId: 'node-brand-architect', toId: 'node-business-model-engine', type: 'related-to', label: 'VALIDATED BUSINESS' },
   { id: 'e-brand-platform', fromId: 'node-brand-architect', toId: 'brand-architect', type: 'documented-by', label: 'COHESIVE IDENTITY' },
+  { id: 'e-brand-experience', fromId: 'node-brand-architect', toId: 'node-experience-architect', type: 'feeds', label: 'APPROVED IDENTITY HANDOFF' },
+  { id: 'e-experience-relationship', fromId: 'node-experience-architect', toId: 'node-relationship-engine', type: 'related-to', label: 'JOURNEY → RELATIONSHIP' },
+  { id: 'e-experience-reader', fromId: 'node-experience-architect', toId: 'node-reader-graph', type: 'related-to', label: 'TOUCHPOINT MAP' },
+  { id: 'e-experience-intelligence', fromId: 'node-studio-intelligence', toId: 'node-experience-architect', type: 'feeds', label: 'EXPERIENCE INTELLIGENCE' },
+  { id: 'e-experience-cos', fromId: 'node-chief-of-staff', toId: 'node-experience-architect', type: 'related-to', label: 'EXPERIENCE APPROVAL' },
+  { id: 'e-maturity-experience', fromId: 'node-company-maturity-engine', toId: 'node-experience-architect', type: 'related-to', label: 'CX ARCHITECT REC' },
+  { id: 'e-experience-platform', fromId: 'node-experience-architect', toId: 'experience-architect', type: 'documented-by', label: 'EMOTIONAL DESIGN' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

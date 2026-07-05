@@ -53,6 +53,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'knowledge-asset-engine'
   | 'company-maturity-engine'
   | 'brand-architect'
+  | 'experience-architect'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -192,6 +193,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   knowledgeAssetEngine: 'studio/knowledge-asset-engine',
   companyMaturityEngine: 'studio/company-maturity-engine',
   brandArchitect: 'studio/brand-architect',
+  experienceArchitect: 'studio/experience-architect',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -335,6 +337,10 @@ export function adminStudioCompanyMaturityEnginePath(): string {
 
 export function adminStudioBrandArchitectPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/brand-architect`;
+}
+
+export function adminStudioExperienceArchitectPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/experience-architect`;
 }
 
 export function adminStudioOsPath(): string {

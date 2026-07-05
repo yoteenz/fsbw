@@ -5,6 +5,7 @@ import {
   adminStudioBusinessModelEnginePath,
   adminStudioChiefOfStaffPath,
   adminStudioCompanyMaturityEnginePath,
+  adminStudioExperienceArchitectPath,
   adminStudioLeadershipDnaPath,
   adminStudioMemoryBiblePath,
   adminStudioStudioIntelligencePath,
@@ -304,6 +305,12 @@ export function ExperienceArchitectHandoffPanel({ store }: Pick<Props, 'store'>)
       <p style={{ ...baLabel, fontSize: '5px', marginTop: 8, color: BA.gray }}>
         Once approved · identity transfers to Experience Architect · no disconnected assets · one coherent identity compounds forever.
       </p>
+      <Link
+        to={adminStudioExperienceArchitectPath()}
+        style={{ ...baLabel, color: '#0891B2', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8, fontSize: '6px' }}
+      >
+        → OPEN EXPERIENCE ARCHITECT
+      </Link>
     </section>
   );
 }
@@ -349,6 +356,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioMemoryBiblePath()} style={{ ...baLabel, color: '#9333EA', fontSize: '6px' }}>→ CREATIVE DNA · MEMORY BIBLE</Link>
         <Link to={adminStudioLeadershipDnaPath()} style={{ ...baLabel, color: '#CA8A04', fontSize: '6px' }}>→ LEADERSHIP DNA</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...baLabel, color: BA.slate, fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
+        <Link to={adminStudioExperienceArchitectPath()} style={{ ...baLabel, color: '#0891B2', fontSize: '6px' }}>→ EXPERIENCE ARCHITECT</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...baLabel, color: BA.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
       </div>
     </section>
