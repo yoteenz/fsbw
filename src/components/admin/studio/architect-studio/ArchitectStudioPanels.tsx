@@ -15,6 +15,7 @@ import {
   adminStudioExperienceArchitectPath,
   adminStudioGrowthArchitectPath,
   adminStudioOrganizationalInheritancePath,
+  adminStudioCampusEvolutionEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   ARCHITECT_STUDIO_STYLES,
@@ -378,6 +379,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioGrowthArchitectPath()} style={{ ...asLabel, color: '#059669', fontSize: '6px' }}>→ GROWTH STUDIO</Link>
         <Link to={adminStudioCompanyGenomePath()} style={{ ...asLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...asLabel, color: AS.gold, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioCampusEvolutionEnginePath()} style={{ ...asLabel, color: '#0D9488', fontSize: '6px' }}>→ CAMPUS EVOLUTION</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...asLabel, color: '#4F46E5', fontSize: '6px' }}>→ INHERITANCE</Link>
       </div>
     </section>

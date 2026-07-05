@@ -24,6 +24,7 @@ export type StudioOsCoreModuleId =
   | 'growth-architect'
   | 'company-genome'
   | 'architect-studio'
+  | 'campus-evolution-engine'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -197,6 +198,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ARCHITECT STUDIO',
     description: 'Immersive innovation headquarters — five connected studios, collaboration forum, evolution wall.',
     routeSegment: 'architect-studio',
+  },
+  {
+    id: 'campus-evolution-engine',
+    label: 'CAMPUS EVOLUTION ENGINE',
+    description: 'Living architectural growth — earned spaces, organic evolution, company memory, portfolio campus.',
+    routeSegment: 'campus-evolution-engine',
   },
   {
     id: 'executive-command-center',

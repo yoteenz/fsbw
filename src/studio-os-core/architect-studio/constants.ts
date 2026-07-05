@@ -29,6 +29,7 @@ export const ARCHITECT_STUDIO_CONNECTED_SYSTEMS = [
   'Company Genome',
   'Knowledge Graph',
   'Organizational Inheritance',
+  'Campus Evolution Engine',
 ] as const;
 
 export const SPATIAL_NAV_MODES: { mode: SpatialNavMode; label: string; description: string }[] = [

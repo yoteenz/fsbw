@@ -233,6 +233,10 @@ export function bootstrapWorkspacesPlatform(): void {
     architectStudio.bootstrapArchitectStudioPlatform();
     await yieldToMain();
 
+    const campusEvolution = await import('../studio-os-core/campus-evolution-engine/bootstrap');
+    campusEvolution.bootstrapCampusEvolutionPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

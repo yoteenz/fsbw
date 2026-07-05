@@ -46,6 +46,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Growth Architect',
   'Company Genome',
   'Architect Studio',
+  'Campus Evolution Engine',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

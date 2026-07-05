@@ -190,6 +190,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'campus-evolution-engine',
+    title: 'CAMPUS EVOLUTION ENGINE',
+    purpose: 'Living architectural growth — walk through decades of organizational evolution earned through progress.',
+    route: p('campus-evolution-engine'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'WALK CAMPUS',
+    moduleKey: 'campus-evolution-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',
