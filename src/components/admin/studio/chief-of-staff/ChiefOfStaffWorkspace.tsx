@@ -35,6 +35,7 @@ import {
   FoundersPromiseLinkPanel,
   ExecutiveFrameworkLinkPanel,
   ChiefBrandOfficerLinkPanel,
+  ChiefExperienceOfficerLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -115,6 +116,7 @@ export function ChiefOfStaffWorkspace() {
             <FoundersPromiseLinkPanel />
             <ExecutiveFrameworkLinkPanel />
             <ChiefBrandOfficerLinkPanel />
+            <ChiefExperienceOfficerLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -163,6 +165,7 @@ export function ChiefOfStaffWorkspace() {
             <FoundersPromiseLinkPanel />
             <ExecutiveFrameworkLinkPanel />
             <ChiefBrandOfficerLinkPanel />
+            <ChiefExperienceOfficerLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

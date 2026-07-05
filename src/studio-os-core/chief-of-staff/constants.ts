@@ -52,6 +52,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Founder\'s Promise',
   'Executive Framework',
   'Chief Brand Officer',
+  'Chief Experience Officer',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

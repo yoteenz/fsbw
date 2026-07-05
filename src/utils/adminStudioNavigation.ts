@@ -262,6 +262,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'chief-experience-officer',
+    title: 'CHIEF EXPERIENCE OFFICER',
+    purpose: 'Lifelong guardian of customer experience — trust, delight, belonging across every touchpoint. V2.0.',
+    route: p('chief-experience-officer'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v2.0',
+    ctaLabel: 'OPEN CEO',
+    moduleKey: 'chief-experience-officer',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

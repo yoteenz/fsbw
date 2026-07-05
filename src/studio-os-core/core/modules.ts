@@ -30,6 +30,7 @@ export type StudioOsCoreModuleId =
   | 'founders-promise'
   | 'executive-framework'
   | 'chief-brand-officer'
+  | 'chief-experience-officer'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -239,6 +240,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CHIEF BRAND OFFICER',
     description: 'Lifelong guardian of brand identity — governance, alignment, intelligence, protection. V2.0.',
     routeSegment: 'chief-brand-officer',
+  },
+  {
+    id: 'chief-experience-officer',
+    label: 'CHIEF EXPERIENCE OFFICER',
+    description: 'Lifelong guardian of customer experience — journey, trust, hospitality, protection. V2.0.',
+    routeSegment: 'chief-experience-officer',
   },
   {
     id: 'executive-command-center',

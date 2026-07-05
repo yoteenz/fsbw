@@ -215,6 +215,7 @@ const AdminStudioRemembranceGarden = lazyWithRetry(() => import('./pages/admin/s
 const AdminStudioFoundersPromise = lazyWithRetry(() => import('./pages/admin/studio/founders-promise/page'), 'AdminStudioFoundersPromise');
 const AdminStudioExecutiveFramework = lazyWithRetry(() => import('./pages/admin/studio/executive-framework/page'), 'AdminStudioExecutiveFramework');
 const AdminStudioChiefBrandOfficer = lazyWithRetry(() => import('./pages/admin/studio/chief-brand-officer/page'), 'AdminStudioChiefBrandOfficer');
+const AdminStudioChiefExperienceOfficer = lazyWithRetry(() => import('./pages/admin/studio/chief-experience-officer/page'), 'AdminStudioChiefExperienceOfficer');
 const AdminStudioLeadershipDna = lazyWithRetry(() => import('./pages/admin/studio/leadership-dna/page'), 'AdminStudioLeadershipDna');
 const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
 const AdminStudioKnowledgeHubProfile = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/profile/page'), 'AdminStudioKnowledgeHubProfile');
@@ -1301,6 +1302,11 @@ function App() {
           <Route path="studio/chief-brand-officer" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioChiefBrandOfficer />
+            </Suspense>
+          } />
+          <Route path="studio/chief-experience-officer" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioChiefExperienceOfficer />
             </Suspense>
           } />
           <Route path="studio/leadership-dna" element={

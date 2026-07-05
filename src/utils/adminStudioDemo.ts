@@ -78,6 +78,7 @@ export type AdminStudioSectionId =
   | 'founders-promise'
   | 'executive-framework'
   | 'chief-brand-officer'
+  | 'chief-experience-officer'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

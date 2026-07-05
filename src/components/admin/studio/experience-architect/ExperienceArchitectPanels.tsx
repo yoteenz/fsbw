@@ -9,6 +9,7 @@ import {
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioStudioIntelligencePath,
+  adminStudioChiefExperienceOfficerPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   EA,
@@ -349,6 +350,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioDigitalArchitectPath()} style={{ ...eaLabel, color: '#6366F1', fontSize: '6px' }}>→ DIGITAL ARCHITECT</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...eaLabel, color: EA.slate, fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...eaLabel, color: EA.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioChiefExperienceOfficerPath()} style={{ ...eaLabel, color: '#0891B2', fontSize: '6px' }}>→ CHIEF EXPERIENCE OFFICER</Link>
       </div>
     </section>
   );

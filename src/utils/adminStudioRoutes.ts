@@ -64,6 +64,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'founders-promise'
   | 'executive-framework'
   | 'chief-brand-officer'
+  | 'chief-experience-officer'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -135,6 +136,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'founders-promise',
   'executive-framework',
   'chief-brand-officer',
+  'chief-experience-officer',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -225,6 +227,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   foundersPromise: 'studio/founders-promise',
   executiveFramework: 'studio/executive-framework',
   chiefBrandOfficer: 'studio/chief-brand-officer',
+  chiefExperienceOfficer: 'studio/chief-experience-officer',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -412,6 +415,10 @@ export function adminStudioExecutiveFrameworkPath(): string {
 
 export function adminStudioChiefBrandOfficerPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/chief-brand-officer`;
+}
+
+export function adminStudioChiefExperienceOfficerPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/chief-experience-officer`;
 }
 
 export function adminStudioOsPath(): string {
