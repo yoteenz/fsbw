@@ -68,6 +68,7 @@ export type AdminStudioSectionId =
   | 'company-maturity-engine'
   | 'brand-architect'
   | 'experience-architect'
+  | 'digital-architect'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

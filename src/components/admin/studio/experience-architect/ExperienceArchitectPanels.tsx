@@ -5,6 +5,7 @@ import {
   adminStudioBrandArchitectPath,
   adminStudioChiefOfStaffPath,
   adminStudioCompanyMaturityEnginePath,
+  adminStudioDigitalArchitectPath,
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioStudioIntelligencePath,
@@ -295,6 +296,12 @@ export function DigitalArchitectHandoffPanel({ store }: Pick<Props, 'store'>) {
       {h.downstreamTargets.map((t) => (
         <p key={t} style={{ ...eaLabel, fontSize: '5px', color: EA.slate }}>→ {t}</p>
       ))}
+      <Link
+        to={adminStudioDigitalArchitectPath()}
+        style={{ ...eaLabel, color: '#6366F1', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8, fontSize: '6px' }}
+      >
+        → OPEN DIGITAL ARCHITECT
+      </Link>
     </section>
   );
 }
@@ -339,6 +346,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCompanyMaturityEnginePath()} style={{ ...eaLabel, color: '#0369A1', fontSize: '6px' }}>→ COMPANY MATURITY ENGINE</Link>
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...eaLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioReaderGraphPath()} style={{ ...eaLabel, color: '#7C3AED', fontSize: '6px' }}>→ READER GRAPH</Link>
+        <Link to={adminStudioDigitalArchitectPath()} style={{ ...eaLabel, color: '#6366F1', fontSize: '6px' }}>→ DIGITAL ARCHITECT</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...eaLabel, color: EA.slate, fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...eaLabel, color: EA.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
       </div>

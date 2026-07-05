@@ -217,6 +217,10 @@ export function bootstrapWorkspacesPlatform(): void {
     experienceArchitect.bootstrapExperienceArchitectPlatform();
     await yieldToMain();
 
+    const digitalArchitect = await import('../studio-os-core/digital-architect/bootstrap');
+    digitalArchitect.bootstrapDigitalArchitectPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

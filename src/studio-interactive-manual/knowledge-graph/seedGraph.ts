@@ -30,6 +30,7 @@ import {
   adminStudioCompanyMaturityEnginePath,
   adminStudioBrandArchitectPath,
   adminStudioExperienceArchitectPath,
+  adminStudioDigitalArchitectPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -383,6 +384,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 54',
     status: 'demo',
     searchKeywords: ['experience architect', 'customer journey', 'emotional architecture', 'touchpoint map', 'experience simulation', 'digital architect handoff'],
+  },
+  {
+    id: 'node-digital-architect',
+    name: 'DIGITAL ARCHITECT',
+    type: 'module',
+    description:
+      'Digital solution architect V2.0 — experience gallery, hybrid modes, ecosystem builder, inheritance from brand + experience, simulation, developer handoff, launch architect transfer.',
+    purpose: 'Purpose before templates · unforgettable digital worlds · not a website builder · lasting competitive advantages.',
+    route: adminStudioDigitalArchitectPath(),
+    moduleId: 'digital-architect',
+    relatedManualChapter: 'CHAPTER · DIGITAL ARCHITECT · DIGITAL WORLDS',
+    versionIntroduced: 'Milestone 55',
+    status: 'demo',
+    searchKeywords: ['digital architect', 'experience gallery', 'hybrid architecture', 'digital ecosystem', 'design system generation', 'developer handoff', 'launch architect'],
   },
   {
     id: 'node-fallback-used',
@@ -1118,6 +1133,12 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-experience-cos', fromId: 'node-chief-of-staff', toId: 'node-experience-architect', type: 'related-to', label: 'EXPERIENCE APPROVAL' },
   { id: 'e-maturity-experience', fromId: 'node-company-maturity-engine', toId: 'node-experience-architect', type: 'related-to', label: 'CX ARCHITECT REC' },
   { id: 'e-experience-platform', fromId: 'node-experience-architect', toId: 'experience-architect', type: 'documented-by', label: 'EMOTIONAL DESIGN' },
+  { id: 'e-experience-digital', fromId: 'node-experience-architect', toId: 'node-digital-architect', type: 'feeds', label: 'APPROVED EXPERIENCE HANDOFF' },
+  { id: 'e-digital-brand', fromId: 'node-brand-architect', toId: 'node-digital-architect', type: 'feeds', label: 'BRAND INHERITANCE' },
+  { id: 'e-digital-intelligence', fromId: 'node-studio-intelligence', toId: 'node-digital-architect', type: 'feeds', label: 'MODE RECOMMENDATIONS' },
+  { id: 'e-digital-cos', fromId: 'node-chief-of-staff', toId: 'node-digital-architect', type: 'related-to', label: 'DIGITAL APPROVAL' },
+  { id: 'e-digital-maturity', fromId: 'node-company-maturity-engine', toId: 'node-digital-architect', type: 'related-to', label: 'DIGITAL MATURITY PATH' },
+  { id: 'e-digital-platform', fromId: 'node-digital-architect', toId: 'digital-architect', type: 'documented-by', label: 'DIGITAL WORLDS' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

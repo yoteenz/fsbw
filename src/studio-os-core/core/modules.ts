@@ -20,6 +20,7 @@ export type StudioOsCoreModuleId =
   | 'company-maturity-engine'
   | 'brand-architect'
   | 'experience-architect'
+  | 'digital-architect'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -169,6 +170,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXPERIENCE ARCHITECT',
     description: 'Emotional design — every touchpoint, journey maps, memorability, digital architect handoff.',
     routeSegment: 'experience-architect',
+  },
+  {
+    id: 'digital-architect',
+    label: 'DIGITAL ARCHITECT',
+    description: 'Digital solution architect — experience gallery, hybrid architecture, ecosystem builder, launch handoff. V2.0.',
+    routeSegment: 'digital-architect',
   },
   {
     id: 'executive-command-center',

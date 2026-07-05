@@ -25,6 +25,7 @@ import {
   CompanyMaturityEngineLinkPanel,
   BrandArchitectLinkPanel,
   ExperienceArchitectLinkPanel,
+  DigitalArchitectLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -95,6 +96,7 @@ export function ChiefOfStaffWorkspace() {
             <CompanyMaturityEngineLinkPanel />
             <BrandArchitectLinkPanel />
             <ExperienceArchitectLinkPanel />
+            <DigitalArchitectLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -133,6 +135,7 @@ export function ChiefOfStaffWorkspace() {
             <CompanyMaturityEngineLinkPanel />
             <BrandArchitectLinkPanel />
             <ExperienceArchitectLinkPanel />
+            <DigitalArchitectLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

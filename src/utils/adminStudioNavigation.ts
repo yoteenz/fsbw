@@ -142,6 +142,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'digital-architect',
+    title: 'DIGITAL ARCHITECT',
+    purpose: 'Digital solution architect — experience gallery, hybrid modes, ecosystem design, inheritance, launch handoff. V2.0.',
+    route: p('digital-architect'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v2.0',
+    ctaLabel: 'OPEN DIGITAL',
+    moduleKey: 'digital-architect',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',
