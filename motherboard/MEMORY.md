@@ -36654,3 +36654,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Change:** `TutorialWelcomePrompt.tsx` — replaced dynamic mansion tour string; removed `textTransform: uppercase` on that line so copy displays lowercase as written.
 - **Changes:** `TutorialWelcomePrompt.tsx`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Safari: isolate Creative Preview designer link from Vision Share
+
+**Context:** User reported **Vision creative link** (`/vision/creative`) and **Creative Preview designer link** (`?creativePreview=`) merging on **Safari** — designer link incorrectly launched Vision tour; Chrome OK.
+
+**Root cause:** Safari reuses **sessionStorage** in the same tab. Prior `/vision/creative` visit left `studioOs_visionSession_v1` + `studioOs_visionShareSession_v1` active; opening `?creativePreview=` did not clear them, so `VisionEngineProvider` resumed the tour.
+
+**Fix:** Separate entry paths — designer Creative Preview must not inherit Vision Share state.
+- `resetVisionPresentationSession()` in `launch.ts` — stops vision + clears share flag + DOM attrs.
+- `bootstrapCreativePreviewMode()` — reset when URL has valid token or when preview active without share session.
+- `purgeStaleVisionSessionOnBoot()` — early exit reset on designer URL or creative preview without share.
+- `VisionEngineContext` — mount guard: creative preview + no vision share → drop stale vision session.
+- Exported `urlHasValidCreativePreviewToken()` for boot checks.
+
+**Changes:** `launch.ts`, `creativePreviewMode.ts`, `visionSessionBootGuard.ts`, `VisionEngineContext.tsx`, `motherboard/MEMORY.md`.
+
