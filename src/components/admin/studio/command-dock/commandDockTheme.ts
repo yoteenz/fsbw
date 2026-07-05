@@ -65,7 +65,7 @@ export const DOCK_ANIMATION_CSS = `
 `;
 
 export const DOCK_HEIGHT: Record<'compact' | 'medium' | 'large', number> = {
-  compact: 72,
+  compact: 88,
   medium: 200,
   large: 340,
 };

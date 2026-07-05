@@ -380,6 +380,10 @@ export function bootstrapWorkspacesPlatform(): void {
     commandDock.bootstrapCommandDockPlatform();
     await yieldToMain();
 
+    const livingPresence = await import('../studio-os-core/living-headquarters-presence/bootstrap');
+    livingPresence.bootstrapLivingHeadquartersPresencePlatform();
+    await yieldToMain();
+
     const workspaceRegistry = await import('../studio-os-core/workspace-registry/store');
     workspaceRegistry.bootstrapWorkspaceRegistryPlatform();
     await yieldToMain();

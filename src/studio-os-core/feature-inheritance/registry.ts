@@ -28,6 +28,7 @@ export const INHERITED_PLATFORM_CAPABILITIES: readonly InheritedPlatformCapabili
   { id: 'executive-timeline', label: 'Executive Timeline', category: 'headquarters' },
   { id: 'concierge-routing', label: 'Concierge Routing', category: 'headquarters' },
   { id: 'command-dock', label: 'Command Dock', category: 'headquarters' },
+  { id: 'living-headquarters-presence', label: 'Living Presence', category: 'headquarters' },
   { id: 'concierge-layer', label: 'Concierge Team', category: 'headquarters' },
   { id: 'campaign-engine', label: 'Campaign Engine', category: 'automation' },
   { id: 'work-orchestration', label: 'Automation', category: 'automation' },

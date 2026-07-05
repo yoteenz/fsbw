@@ -57,6 +57,7 @@ export type StudioOsCoreModuleId =
   | 'executive-timeline'
   | 'concierge-routing'
   | 'command-dock'
+  | 'living-headquarters-presence'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -427,6 +428,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     id: 'command-dock',
     label: 'COMMAND DOCK',
     description: 'Executive command console — floating glass dock for natural-language organizational direction. V1.0.',
+    routeSegment: 'mission-control',
+  },
+  {
+    id: 'living-headquarters-presence',
+    label: 'LIVING HEADQUARTERS PRESENCE',
+    description: 'Quietly alive headquarters — organizational activity, time-based presence, morning arrival. V1.0.',
     routeSegment: 'mission-control',
   },
   {

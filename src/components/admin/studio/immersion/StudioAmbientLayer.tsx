@@ -2,13 +2,14 @@ import type { StudioRoomVariant } from '../../../../studio-os-core/studio-immers
 
 type Props = {
   variant: StudioRoomVariant;
+  timeClass?: string;
 };
 
-/** Subtle ambient life behind Studio OS — daylight shift · particles · room tone. */
-export function StudioAmbientLayer({ variant }: Props) {
+/** Subtle ambient life behind Studio OS — daylight shift · time-of-day tone. */
+export function StudioAmbientLayer({ variant, timeClass }: Props) {
   return (
     <div
-      className={`studio-ambient-layer fixed inset-0 -z-[5] studio-room-${variant.replace(/-/g, '-')}`}
+      className={`studio-ambient-layer fixed inset-0 -z-[5] studio-room-${variant.replace(/-/g, '-')} ${timeClass ?? ''}`}
       aria-hidden
     >
       <div className="absolute inset-0 studio-daylight-shift studio-ambient-warm" />

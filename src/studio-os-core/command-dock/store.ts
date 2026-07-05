@@ -14,8 +14,8 @@ import {
   COMMAND_DOCK_STORAGE_KEY,
   COMMAND_DOCK_VERSION,
   COMMAND_DOCK_PHILOSOPHY,
-  MICROINTERACTION_PHASES,
 } from './constants';
+import { MICRO_MOMENT_LABELS } from '../living-headquarters-presence/constants';
 import { resolveDockContext } from './context';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
@@ -144,8 +144,8 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
   writeCommandDockStore({
     ...store,
     processingActive: true,
-    activeMicrointeraction: MICROINTERACTION_PHASES[0],
-    microinteractionQueue: [...MICROINTERACTION_PHASES],
+    activeMicrointeraction: MICRO_MOMENT_LABELS[0],
+    microinteractionQueue: [...MICRO_MOMENT_LABELS],
     expansionSize: 'medium',
     askWhyAnswer: null,
     dockInput: trimmed,

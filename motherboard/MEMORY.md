@@ -38117,3 +38117,16 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Philosophy:** "You don't operate Studio OS. You lead it."
 
 **Changes:** command-dock core + UI + hook, AdminStudioLayout/studio-os pages, modules/bootstrap/feature-inheritance/knowledge-graph, router patterns, motherboard/CORE.md + MEMORY.md.
+
+---
+
+## 2026-07-05 — Milestone 82.5 Living Headquarters Presence V1.0
+
+**Context (full chat arc):** After M82 Command Dock, user requested **M82.5 Living Headquarters Presence** — headquarters should feel quietly alive, never frozen. Organizations continue operating in background. Subtle presence not decorative animation. Command Dock idle activity, organizational status moments, ambient time-based presence, concierge living statuses, morning arrival, micro moments instead of "Loading…". Do not redesign UI or add unnecessary animations.
+
+**Decisions / outcomes:**
+- **Core** `src/studio-os-core/living-headquarters-presence/` — time phases (morning/afternoon/evening/night), dock idle activity rotation, organizational moments (quiet, dismissible), morning arrival on return after 4h, concierge living status mapping, micro moment labels.
+- **Integration:** `useLivingHeadquartersPresence` hook; **`StudioImmersionShell`** shows morning arrival banner + organizational moment chips + living concierge status; **`CommandDock`** idle shows rotating activity line; command-dock processing uses shared **`MICRO_MOMENT_LABELS`**; **`StudioAmbientLayer`** time-of-day opacity (subtle, reduced-motion safe).
+- **Philosophy:** "Welcome back. We've been preparing for your arrival."
+
+**Changes:** living-headquarters-presence core + hook, immersion/command-dock integration, modules/bootstrap/feature-inheritance/knowledge-graph, motherboard/CORE.md + MEMORY.md.

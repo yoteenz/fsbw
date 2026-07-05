@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { FOUNDER_DISPLAY_NAME, DOCK_COMMAND_EXAMPLES } from '../../../../studio-os-core/command-dock/constants';
 import { greetingForFounder } from '../../../../studio-os-core/command-dock/context';
 import { useCommandDockState } from '../../../../hooks/useCommandDockState';
+import { useLivingHeadquartersPresence } from '../../../../hooks/useLivingHeadquartersPresence';
 import type { DockExpansionSize, CommandHistoryEntry, FavoriteCommand, RecurringCommand } from '../../../../studio-os-core/command-dock/types';
 import {
   DOCK_ANIMATION_CSS,
@@ -32,6 +33,11 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
     toggleHistory,
     runFavorite,
   } = useCommandDockState();
+
+  const { dockIdleActivity, getMicroMoment, tick } = useLivingHeadquartersPresence();
+  const processingLabel = store.processingActive
+    ? getMicroMoment(tick)
+    : store.activeMicrointeraction;
 
   const greeting = useMemo(() => greetingForFounder(FOUNDER_DISPLAY_NAME), []);
   const height = DOCK_HEIGHT[store.expansionSize as DockExpansionSize];
@@ -72,6 +78,9 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
                     <p style={{ ...dockGrace, fontSize: '13px', margin: 0 }}>{greeting}</p>
                     <p style={{ ...dockValue, fontSize: '7px', color: DOCK_VISUAL.textMuted, marginTop: 2 }}>
                       What would you like your organization to accomplish today?
+                    </p>
+                    <p style={{ ...dockLabel, fontSize: '5px', color: DOCK_VISUAL.portfolio, marginTop: 6, fontStyle: 'normal' }}>
+                      {dockIdleActivity}
                     </p>
                   </>
                 ) : (
@@ -116,9 +125,9 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
             {/* Scrollable body for expanded states */}
             {(store.expansionSize !== 'compact' || store.isFocused) && (
               <div className="flex-1 overflow-y-auto min-h-0 mb-2">
-                {store.processingActive && store.activeMicrointeraction && (
+                {store.processingActive && processingLabel && (
                   <p style={{ ...dockValue, fontSize: '7px', color: DOCK_VISUAL.portfolio, marginBottom: 8 }}>
-                    {store.activeMicrointeraction}
+                    {processingLabel}
                   </p>
                 )}
 

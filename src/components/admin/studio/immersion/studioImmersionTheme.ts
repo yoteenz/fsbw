@@ -143,6 +143,12 @@ export const STUDIO_IMMERSION_CSS = `
   border-left: 3px solid ${SI_VISUAL.champagne};
   background: ${SI_VISUAL.champagneSoft};
 }
+
+/* M82.5 — time-based ambient presence (subtle, no visual noise) */
+.studio-time-morning .studio-daylight-shift { opacity: 0.55; }
+.studio-time-afternoon .studio-daylight-shift { opacity: 0.5; }
+.studio-time-evening .studio-daylight-shift { opacity: 0.42; filter: sepia(0.08); }
+.studio-time-night .studio-daylight-shift { opacity: 0.32; filter: sepia(0.12); }
 `;
 
 export function presenceDotClass(state: string): string {
