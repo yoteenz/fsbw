@@ -201,6 +201,7 @@ const AdminStudioReaderGraph = lazyWithRetry(() => import('./pages/admin/studio/
 const AdminStudioRelationshipEngine = lazyWithRetry(() => import('./pages/admin/studio/relationship-engine/page'), 'AdminStudioRelationshipEngine');
 const AdminStudioCreatorMarketplace = lazyWithRetry(() => import('./pages/admin/studio/creator-marketplace/page'), 'AdminStudioCreatorMarketplace');
 const AdminStudioEcosystemMarketplace = lazyWithRetry(() => import('./pages/admin/studio/ecosystem-marketplace/page'), 'AdminStudioEcosystemMarketplace');
+const AdminStudioKnowledgeAssetEngine = lazyWithRetry(() => import('./pages/admin/studio/knowledge-asset-engine/page'), 'AdminStudioKnowledgeAssetEngine');
 const AdminStudioLeadershipDna = lazyWithRetry(() => import('./pages/admin/studio/leadership-dna/page'), 'AdminStudioLeadershipDna');
 const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
 const AdminStudioKnowledgeHubProfile = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/profile/page'), 'AdminStudioKnowledgeHubProfile');
@@ -1217,6 +1218,11 @@ function App() {
           <Route path="studio/ecosystem-marketplace" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioEcosystemMarketplace />
+            </Suspense>
+          } />
+          <Route path="studio/knowledge-asset-engine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioKnowledgeAssetEngine />
             </Suspense>
           } />
           <Route path="studio/leadership-dna" element={

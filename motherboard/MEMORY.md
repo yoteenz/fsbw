@@ -37104,3 +37104,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** ecosystem-marketplace core + UI + hook + page + service, CoS/organizational-inheritance/creator-marketplace/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 51: Knowledge Asset Engine V1.0
+
+**Context (full chat):** User requested Milestone 51 — introduce **Knowledge Asset Engine** as the foundational object model for Studio OS. Prior milestones in arc: M47 Reader Graph, M48 Relationship Engine, M49 Creator Marketplace, M50 Ecosystem Marketplace. Constraints: do not redesign overall Studio OS shell · do not modify Frontal Slayer · do not remove existing systems.
+
+**Goal:** Everything inside Studio OS becomes a knowledge asset — not isolated pages, videos, documents, prompts, or playbooks. Living organizational intelligence that evolves, distributes, teaches, generates revenue, trains executives, strengthens genetics, and compounds forever. Features: permanent asset profiles (ID, maturity, quality, lineage), single source of truth with derived formats, evolution tracking, lineage visualization, maturity stages (draft → timeless), relationships network, transformations, intelligence recommendations, monetization, academy paths, executive intelligence, inheritance packages, knowledge health dashboard. Institutional memory · knowledge as appreciating asset.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/knowledge-asset-engine/` — types (asset profiles, SSOT, evolution, lineage, maturity metrics, relationships, transformations, intelligence recs, revenue, academy paths, executive links, inheritance packages, health), constants (philosophy, 21 asset types, 5 maturity stages, connected systems), localStorage store (`studioOsKnowledgeAssetEngine_v1`), rich bootstrap seed linked to Distribution Engine IDs (`ka-page-042`, `ka-truth-sleep`, `ka-page-028`).
+- **Bootstrap:** 5 assets (Page 042 Money Habits, Truth Tuesday Sleep Debt, Page 028, Leadership DNA, Newsroom Playbook) · 2 SSOT chains with derived formats · 2 evolution records · 8 lineage nodes · 3 maturity metrics · 6 relationships · 6 transformations · 6 intelligence recs · 2 revenue records · 4 academy paths · 3 executive links · 3 inheritance packages · health metrics.
+- **Hook:** `useKnowledgeAssetEngineState` — workspace/asset selection, SSOT/evolution/maturity/lineage derived state.
+- **UI:** `/admin/studio/knowledge-asset-engine` — `KnowledgeAssetEngineWorkspace` with tabs (Dashboard · Library · Lineage · Intelligence · Academy · Health); panels for dashboard, philosophy, library, profiles, SSOT, evolution, lineage, maturity, relationships, transformations, intelligence, revenue, academy, executive intelligence, inheritance, health, CoS integration, connected systems. Teal accent theme (`#0D9488`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (intelligence group), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/knowledgeAssetEngine/service.ts`, `bootstrapKnowledgeAssetEnginePlatform()` after Ecosystem Marketplace.
+- **Chief of Staff integration:** `Knowledge Asset Engine` in `SOFT_APPROVAL_SOURCES`; `KnowledgeAssetEngineLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Distribution Engine integration:** connected systems link to Knowledge Asset Engine.
+- **Ecosystem Marketplace integration:** connected systems link to Knowledge Asset Engine.
+- **Knowledge graph:** `node-knowledge-asset-engine` + edges to Distribution Engine, Reader Graph, Organizational Inheritance, Ecosystem Marketplace, Chief of Staff, Studio Intelligence.
+
+**Route:** `/admin/studio/knowledge-asset-engine` · Intelligence nav group · teal accent theme.
+
+**Changes:** knowledge-asset-engine core + UI + hook + page + service, CoS/distribution/ecosystem-marketplace/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

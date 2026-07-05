@@ -19,6 +19,7 @@ import {
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioStrategyEnginePath,
+  adminStudioKnowledgeAssetEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   ECOSYSTEM_MARKETPLACE_STYLES,
@@ -463,6 +464,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioReaderGraphPath()} style={{ ...emLabel, color: '#E11D48', fontSize: '6px' }}>→ READER GRAPH</Link>
         <Link to={adminStudioStrategyEnginePath()} style={{ ...emLabel, color: '#334155', fontSize: '6px' }}>→ STRATEGY ENGINE</Link>
         <Link to={adminStudioCampaignEnginePath()} style={{ ...emLabel, color: '#D97706', fontSize: '6px' }}>→ CAMPAIGN ENGINE</Link>
+        <Link to={adminStudioKnowledgeAssetEnginePath()} style={{ ...emLabel, color: '#0D9488', fontSize: '6px' }}>→ KNOWLEDGE ASSET ENGINE</Link>
       </div>
     </section>
   );

@@ -26,6 +26,7 @@ import {
   adminStudioRelationshipEnginePath,
   adminStudioCreatorMarketplacePath,
   adminStudioEcosystemMarketplacePath,
+  adminStudioKnowledgeAssetEnginePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -323,6 +324,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 50',
     status: 'demo',
     searchKeywords: ['ecosystem marketplace', 'organizational asset', 'inheritance', 'playbook', 'organizational dna', 'licensing', 'verified organization'],
+  },
+  {
+    id: 'node-knowledge-asset-engine',
+    name: 'KNOWLEDGE ASSET ENGINE',
+    type: 'module',
+    description:
+      'Foundational object model for Studio OS — every content piece is a living knowledge asset with single source of truth, evolution, lineage, maturity, and compounding value.',
+    purpose: 'Not isolated files · institutional memory · knowledge compounds forever · teachable · inheritable · measurable.',
+    route: adminStudioKnowledgeAssetEnginePath(),
+    moduleId: 'knowledge-asset-engine',
+    relatedManualChapter: 'CHAPTER · KNOWLEDGE ASSET ENGINE · INSTITUTIONAL MEMORY',
+    versionIntroduced: 'Milestone 51',
+    status: 'demo',
+    searchKeywords: ['knowledge asset', 'single source of truth', 'knowledge lineage', 'knowledge maturity', 'knowledge academy', 'institutional memory'],
   },
   {
     id: 'node-fallback-used',
@@ -1029,6 +1044,14 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-ecosystem-marketplace-intelligence', fromId: 'node-studio-intelligence', toId: 'node-ecosystem-marketplace', type: 'feeds', label: 'ASSET RECOMMENDATIONS' },
   { id: 'e-ecosystem-marketplace-strategy', fromId: 'node-ecosystem-marketplace', toId: 'node-strategy-engine', type: 'related-to', label: 'ORGANIZATIONAL UPGRADES' },
   { id: 'e-ecosystem-marketplace-platform', fromId: 'node-ecosystem-marketplace', toId: 'ecosystem-marketplace', type: 'documented-by', label: 'ORGANIZATIONAL EXCHANGE' },
+  { id: 'e-knowledge-asset-distribution', fromId: 'node-knowledge-asset-engine', toId: 'node-distribution-engine', type: 'feeds', label: 'CANONICAL → DERIVED FORMATS' },
+  { id: 'e-distribution-knowledge-asset', fromId: 'node-distribution-engine', toId: 'node-knowledge-asset-engine', type: 'related-to', label: 'SSOT · ADAPTATIONS' },
+  { id: 'e-knowledge-asset-ecosystem', fromId: 'node-knowledge-asset-engine', toId: 'node-ecosystem-marketplace', type: 'feeds', label: 'LICENSE · MONETIZE' },
+  { id: 'e-knowledge-asset-inheritance', fromId: 'node-knowledge-asset-engine', toId: 'node-organizational-inheritance', type: 'feeds', label: 'KNOWLEDGE INHERITANCE' },
+  { id: 'e-knowledge-asset-reader-graph', fromId: 'node-reader-graph', toId: 'node-knowledge-asset-engine', type: 'feeds', label: 'READER INSIGHTS' },
+  { id: 'e-knowledge-asset-cos', fromId: 'node-chief-of-staff', toId: 'node-knowledge-asset-engine', type: 'related-to', label: 'KNOWLEDGE GOVERNANCE' },
+  { id: 'e-knowledge-asset-intelligence', fromId: 'node-studio-intelligence', toId: 'node-knowledge-asset-engine', type: 'feeds', label: 'EXPAND · REFRESH · TEACH' },
+  { id: 'e-knowledge-asset-platform', fromId: 'node-knowledge-asset-engine', toId: 'knowledge-asset-engine', type: 'documented-by', label: 'INSTITUTIONAL MEMORY' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

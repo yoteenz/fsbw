@@ -201,6 +201,10 @@ export function bootstrapWorkspacesPlatform(): void {
     ecosystemMarketplace.bootstrapEcosystemMarketplacePlatform();
     await yieldToMain();
 
+    const knowledgeAssetEngine = await import('../studio-os-core/knowledge-asset-engine/bootstrap');
+    knowledgeAssetEngine.bootstrapKnowledgeAssetEnginePlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

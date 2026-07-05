@@ -38,6 +38,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Relationship Engine',
   'Creator Marketplace',
   'Ecosystem Marketplace',
+  'Knowledge Asset Engine',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

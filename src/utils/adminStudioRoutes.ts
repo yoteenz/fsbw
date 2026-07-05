@@ -50,6 +50,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'relationship-engine'
   | 'creator-marketplace'
   | 'ecosystem-marketplace'
+  | 'knowledge-asset-engine'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -107,6 +108,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'relationship-engine',
   'creator-marketplace',
   'ecosystem-marketplace',
+  'knowledge-asset-engine',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -183,6 +185,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   relationshipEngine: 'studio/relationship-engine',
   creatorMarketplace: 'studio/creator-marketplace',
   ecosystemMarketplace: 'studio/ecosystem-marketplace',
+  knowledgeAssetEngine: 'studio/knowledge-asset-engine',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -314,6 +317,10 @@ export function adminStudioCreatorMarketplacePath(): string {
 
 export function adminStudioEcosystemMarketplacePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ecosystem-marketplace`;
+}
+
+export function adminStudioKnowledgeAssetEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/knowledge-asset-engine`;
 }
 
 export function adminStudioOsPath(): string {

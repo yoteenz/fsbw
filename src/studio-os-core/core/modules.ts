@@ -16,6 +16,7 @@ export type StudioOsCoreModuleId =
   | 'relationship-engine'
   | 'creator-marketplace'
   | 'ecosystem-marketplace'
+  | 'knowledge-asset-engine'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -141,6 +142,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ECOSYSTEM MARKETPLACE',
     description: 'Organizational intelligence exchange — assets, inheritance, licensing, capability over files.',
     routeSegment: 'ecosystem-marketplace',
+  },
+  {
+    id: 'knowledge-asset-engine',
+    label: 'KNOWLEDGE ASSET ENGINE',
+    description: 'Foundational knowledge model — SSOT, evolution, lineage, academy, institutional memory.',
+    routeSegment: 'knowledge-asset-engine',
   },
   {
     id: 'executive-command-center',

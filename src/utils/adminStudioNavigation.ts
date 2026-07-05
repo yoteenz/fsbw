@@ -166,6 +166,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'knowledge-asset-engine',
+    title: 'KNOWLEDGE ASSET ENGINE',
+    purpose: 'Foundational knowledge model — every content piece is a living asset with lineage, maturity, and SSOT.',
+    route: p('knowledge-asset-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN KNOWLEDGE',
+    moduleKey: 'knowledge-asset-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'campaign-engine',
     title: 'CAMPAIGN ENGINE',
     purpose: 'Transforms strategy into coordinated execution — campaigns bridge initiatives and production.',

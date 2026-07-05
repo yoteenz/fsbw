@@ -17,6 +17,7 @@ import {
   adminStudioStrategyEnginePath,
   adminStudioWorkOrchestrationPath,
   adminStudioReaderGraphPath,
+  adminStudioKnowledgeAssetEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   DISTRIBUTION_ENGINE_STYLES,
@@ -501,6 +502,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCampaignEnginePath()} style={{ ...deLabel, color: '#D97706', fontSize: '6px' }}>→ CAMPAIGN ENGINE</Link>
         <Link to={adminStudioWorkOrchestrationPath()} style={{ ...deLabel, color: '#0891B2', fontSize: '6px' }}>→ WORK ORCHESTRATION</Link>
         <Link to={adminStudioReaderGraphPath()} style={{ ...deLabel, color: '#E11D48', fontSize: '6px' }}>→ READER GRAPH</Link>
+        <Link to={adminStudioKnowledgeAssetEnginePath()} style={{ ...deLabel, color: '#0D9488', fontSize: '6px' }}>→ KNOWLEDGE ASSET ENGINE</Link>
       </div>
     </section>
   );

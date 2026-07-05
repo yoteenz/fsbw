@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -479,6 +479,23 @@ export function EcosystemMarketplaceLinkPanel() {
         style={{ ...cosLabel, color: '#4F46E5', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN ECOSYSTEM MARKETPLACE
+      </Link>
+    </section>
+  );
+}
+
+export function KnowledgeAssetEngineLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #0D9488' }}>
+      <p style={cosSectionTitle}>KNOWLEDGE ASSET ENGINE · INSTITUTIONAL MEMORY</p>
+      <p style={cosLabel}>
+        Canonical source integrity · knowledge governance · SSOT protection · institutional memory
+      </p>
+      <Link
+        to={adminStudioKnowledgeAssetEnginePath()}
+        style={{ ...cosLabel, color: '#0D9488', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN KNOWLEDGE ASSET ENGINE
       </Link>
     </section>
   );
