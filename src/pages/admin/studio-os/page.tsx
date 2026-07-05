@@ -1,14 +1,15 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
+import { useCampusTransition } from '../../../components/admin/studio-os/campus/CampusTransitionProvider';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
 import { STUDIO_OS_VOCABULARY } from '../../../studio-os-core/core/vocabulary';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
-import { STUDIO_OS_ROUTES, workspaceStudioModulePath } from '../../../studio-os-core/workspace/routes';
+import { STUDIO_OS_ROUTES } from '../../../studio-os-core/workspace/routes';
+import { readCampusTransitionSpeed } from '../../../studio-os-core/campus-transitions/preferences';
 import { readWorkspaceRegistryStore } from '../../../studio-os-core/workspace-registry/store';
 import { getRegistryWorkspaceById } from '../../../studio-os-core/workspace-creation/registry';
-import { isDynamicWorkspaceId } from '../../../workspaces';
 import { useWorkspaceCreationEngine } from '../../../hooks/useWorkspaceCreationEngine';
 import { WorkspaceRegistryCard } from '../../../components/admin/studio-os/WorkspaceRegistryCard';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
@@ -16,31 +17,27 @@ import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 export default function AdminStudioOsPage() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const { workspaces, enterWorkspace, workspaceId } = useWorkspace();
+  const { workspaces, workspaceId } = useWorkspace();
+  const { travelToWorkspace } = useCampusTransition();
   const { workspaces: registryWorkspaces } = useWorkspaceCreationEngine();
   const registryStore = readWorkspaceRegistryStore();
+  const transitionSpeed = readCampusTransitionSpeed();
 
   const registryById = useMemo(() => {
     const map = new Map<string, ReturnType<typeof getRegistryWorkspaceById>>();
-    for (const r of registryWorkspaces) map.set(r.id, r);
-    return map;
+    const ids = new Set<string>();
+    for (const r of registryWorkspaces) {
+      map.set(r.id, r);
+      ids.add(r.id);
+    }
+    return { map, ids };
   }, [registryWorkspaces]);
 
-  const enter = (wsId: string) => {
-    enterWorkspace(wsId);
-    if (wsId === 'frontal-slayer') {
-      navigate('/admin/studio/mission-control');
-      return;
-    }
-    if (wsId === 'ai-media') {
-      navigate(STUDIO_OS_ROUTES.workspaceDashboard(wsId));
-      return;
-    }
-    if (isDynamicWorkspaceId(wsId) || registryById.has(wsId)) {
-      navigate(STUDIO_OS_ROUTES.workspaceDashboard(wsId));
-      return;
-    }
-    navigate(STUDIO_OS_ROUTES.workspaceShell(wsId));
+  const enter = (wsId: string, options?: { missionControl?: boolean; showBriefing?: boolean }) => {
+    travelToWorkspace(wsId, {
+      ...options,
+      registryById: registryById.ids,
+    });
   };
 
   const selectWorkspace = (ws: (typeof workspaces)[number]) => enter(ws.id);
@@ -80,6 +77,9 @@ export default function AdminStudioOsPage() {
               </p>
               <p className="mt-2 text-[7px] font-futura" style={{ fontWeight: 515, color: '#333', lineHeight: 1.45 }}>
                 Studio OS is the operating system. Every company is a Workspace. Same capabilities · isolated data · unique personality.
+              </p>
+              <p className="mt-2 text-[6px] font-futura" style={{ fontWeight: 515, color: '#92704A' }}>
+                CAMPUS TRANSITION · {transitionSpeed.toUpperCase()} · ARRIVE AT HEADQUARTERS · NEVER INSTANT PAGE LOAD
               </p>
             </div>
 
@@ -213,17 +213,14 @@ export default function AdminStudioOsPage() {
 
             <div className="grid grid-cols-1 gap-3">
               {workspaces.map((ws) => {
-                const registry = registryById.get(ws.id);
+                const registry = registryById.map.get(ws.id);
                 return (
                   <WorkspaceRegistryCard
                     key={ws.id}
                     workspace={ws}
                     isActive={ws.id === workspaceId}
                     onEnter={() => selectWorkspace(ws)}
-                    onMorningBriefing={() => {
-                      enter(ws.id);
-                      navigate(workspaceStudioModulePath(ws.id, 'mission-control'));
-                    }}
+                    onMorningBriefing={() => enter(ws.id, { missionControl: true, showBriefing: true })}
                     registryMeta={
                       registry
                         ? {

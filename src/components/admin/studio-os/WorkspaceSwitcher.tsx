@@ -1,30 +1,21 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCampusTransition } from './campus/CampusTransitionProvider';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { getWorkspaceSnapshot } from '../../../studio-os-core/workspace-registry/store';
-import { STUDIO_OS_ROUTES } from '../../../studio-os-core/workspace/routes';
-import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from '../../../studio-os-core/workspace/storage';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 /** Premium workspace switcher — always know which organization you are inside. */
 export function WorkspaceSwitcher() {
   const navigate = useNavigate();
-  const { workspaceId, workspace, workspaces, enterWorkspace, resolveModulePath } = useWorkspace();
+  const { workspaceId, workspace, workspaces, resolveModulePath } = useWorkspace();
+  const { travelToWorkspace, returnToCampus } = useCampusTransition();
   const [open, setOpen] = useState(false);
   const snapshot = useMemo(() => getWorkspaceSnapshot(workspaceId), [workspaceId]);
 
   const switchTo = (id: string) => {
-    enterWorkspace(id);
     setOpen(false);
-    if (id === STUDIO_OS_DEFAULT_WORKSPACE_ID) {
-      navigate('/admin/studio/mission-control');
-      return;
-    }
-    if (id === 'ai-media') {
-      navigate(STUDIO_OS_ROUTES.workspaceDashboard(id));
-      return;
-    }
-    navigate(STUDIO_OS_ROUTES.workspaceDashboard(id));
+    travelToWorkspace(id, { showBriefing: id !== workspaceId });
   };
 
   return (
@@ -79,7 +70,7 @@ export function WorkspaceSwitcher() {
             type="button"
             onClick={() => {
               setOpen(false);
-              navigate(STUDIO_OS_ROUTES.entry);
+              returnToCampus();
             }}
             style={{
               fontFamily: '"Futura PT Medium"',

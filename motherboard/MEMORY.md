@@ -38006,3 +38006,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Targeted enhancements (no layout changes):** Mission Control — today's briefing label · headquarters active · live activity + concierge feed · `studio-wing-section` classes. Production Studio + Render Queue — living headers · glass sheen. Screening Room — cinema dim enter. Publishing Queue — today column living panel. Ndxbook Mission Control — Chief Concierge brief + Activity Wall entry animation. `AdminStudioModuleCard` + `ConciergeFounderBanner` — living card/panel classes + current activity when matched.
 
 **Changes:** studio-immersion core + immersion components + hook, AdminStudioLayout, MissionControlWorkspace, production/render/screening/concierge modules, publishing queue, ndxbook mission control, module cards, ConciergeFounderBanner, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — Milestone 76.5: Workspace Registry & multi-organization architecture
+
+**Context (full chat):** User requested foundational refactor (M76.5) — STOP company-specific features until complete. Transform Studio OS from single-company app into true multi-organization operating system. macOS metaphor: Studio OS = OS · each company = Workspace · same capabilities · isolated data · unique personality. Also completed M81 Concierge Approval Flow and M82 organizational immersion pass in same arc.
+
+**Goal:** Workspace Registry as landing after auth (campus front entrance). Workspace context switch isolates all data. Feature inheritance — every Workspace gets full Studio OS automatically. Two intelligence layers: Workspace Intelligence (current company) · Studio Intelligence (portfolio cross-learning with founder approval). Workspace Switcher · creation via existing WCE · per-workspace settings.
+
+**Implementation:**
+- **Identity map:** `tenant-ids.ts` — platform IDs (`frontal-slayer`, `ai-media`, `all-in-one-enterprise`, `vxd-inc`) ↔ module tenant IDs (`ndxbook`, `frontal-slayer`, `studio-os`, `portfolio`).
+- **Context bridge:** `context-bridge.ts` + enhanced `WorkspaceProvider` (`enterWorkspace`, `resolveModulePath`, `moduleTenantId`) — single `activateWorkspaceContext()` syncs platform storage + milestone module selectors + `studio-os-workspace-changed` event.
+- **Data isolation:** `scoped-store.ts` — `studioOs_ws_{workspaceId}_{key}` pattern; production arc stores migrated (production-studio · render-queue · screening-room · concierge-approval-flow); existing `adminStudioStorage` already scoped.
+- **Workspace Registry:** `workspace-registry/` store with org snapshots (briefing · health · approvals · autonomy · revenue · concierge status) + Studio Intelligence portfolio insights; rich `WorkspaceRegistryCard` UI; `/admin/studio` → `/admin/studio-os`.
+- **Static workspaces:** `ai-media/config.ts` (NDXBOOK) · `all-in-one-enterprise/config.ts` · `vxd-inc/config.ts` — all `studioEnabled: true`.
+- **Navigation:** `WorkspaceSwitcher` in `AdminStudioLayout`; workspace-scoped routes `/admin/studio-os/workspace/:id/studio/*` via `WorkspaceStudioModuleHost`; settings at `/workspace/:id/settings`; `schemaBridge` enables full studio for provisioned workspaces.
+- **Guards:** `StudioWorkspaceGuard` redirects non-FS workspaces from legacy `/admin/studio/*` to workspace-scoped paths.
+
+**Route:** `/admin/studio-os` (Registry) · enter workspace → Mission Control or workspace dashboard · leave → Registry.
+
+**Changes:** workspace core + registry + configs + switcher + host + provider + scoped production stores + App routes + registry page + CORE/MEMORY.

@@ -1,0 +1,359 @@
+.campus-transition-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  overflow: hidden;
+  pointer-events: auto;
+  font-family: 'Futura PT', Futura, sans-serif;
+  text-transform: uppercase;
+}
+
+.campus-transition-overlay--instant {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.campus-transition-sky {
+  position: absolute;
+  inset: 0;
+  transition: background 1.2s ease;
+}
+
+.campus-transition-campus-grid {
+  position: absolute;
+  inset: -20%;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  opacity: 0.35;
+  animation: campus-grid-drift 18s linear infinite;
+}
+
+@keyframes campus-grid-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-48px, -24px, 0);
+  }
+}
+
+.campus-transition-travel-layer {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+}
+
+.campus-transition-corridor {
+  position: relative;
+  width: min(92vw, 420px);
+  height: 72vh;
+  transform-style: preserve-3d;
+}
+
+.campus-transition-corridor--glass-hallway {
+  animation: campus-travel-glass 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.campus-transition-corridor--skybridge {
+  animation: campus-travel-skybridge 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.campus-transition-corridor--elevator {
+  animation: campus-travel-elevator 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.campus-transition-corridor--courtyard-walk {
+  animation: campus-travel-courtyard 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.campus-transition-corridor--soft-zoom {
+  animation: campus-travel-zoom 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.campus-transition-corridor--atrium {
+  animation: campus-travel-atrium 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.campus-transition-corridor--architectural-flythrough {
+  animation: campus-travel-flythrough 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes campus-travel-glass {
+  0% {
+    transform: translateZ(-800px) scale(0.6);
+    opacity: 0.2;
+  }
+  40% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateZ(120px) scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes campus-travel-skybridge {
+  0% {
+    transform: translate3d(-30%, 8%, -600px) rotateY(12deg);
+    opacity: 0.15;
+  }
+  100% {
+    transform: translate3d(0, 0, 80px) rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes campus-travel-elevator {
+  0% {
+    transform: translateY(40%) scale(0.85);
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(-4%) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes campus-travel-courtyard {
+  0% {
+    transform: translateX(-25%) scale(0.75);
+    opacity: 0.25;
+  }
+  100% {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes campus-travel-zoom {
+  0% {
+    transform: scale(1.35);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes campus-travel-atrium {
+  0% {
+    transform: rotateX(18deg) translateZ(-500px);
+    opacity: 0.2;
+  }
+  100% {
+    transform: rotateX(0deg) translateZ(60px);
+    opacity: 1;
+  }
+}
+
+@keyframes campus-travel-flythrough {
+  0% {
+    transform: perspective(900px) rotateY(-25deg) translateZ(-700px);
+    opacity: 0.15;
+  }
+  100% {
+    transform: perspective(900px) rotateY(0deg) translateZ(40px);
+    opacity: 1;
+  }
+}
+
+.campus-transition-glass-pane {
+  position: absolute;
+  inset: 8% 6%;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.04) 100%);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 60px rgba(255, 255, 255, 0.08);
+}
+
+.campus-transition-glass-reflection {
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: campus-glass-sweep 2.8s ease-in-out infinite;
+}
+
+@keyframes campus-glass-sweep {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(320%);
+    opacity: 0;
+  }
+}
+
+.campus-transition-hq-reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 24px 16px 32px;
+  animation: campus-hq-reveal 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes campus-hq-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(12%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.campus-transition-hq-silhouette {
+  width: min(88vw, 380px);
+  height: 42vh;
+  border-radius: 4px 4px 0 0;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 -20px 80px rgba(0, 0, 0, 0.12);
+}
+
+.campus-transition-hq-logo {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  object-fit: cover;
+}
+
+.campus-transition-ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.campus-transition-ambient-dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+  animation: campus-ambient-float 4s ease-in-out infinite;
+}
+
+@keyframes campus-ambient-float {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(-8px);
+    opacity: 0.9;
+  }
+}
+
+.campus-transition-briefing-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: min(92vw, 420px);
+  max-height: 72vh;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  border: 1.3px solid rgba(0, 0, 0, 0.85);
+  box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.15);
+  animation: campus-briefing-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes campus-briefing-rise {
+  0% {
+    transform: translateX(-50%) translateY(100%);
+  }
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.campus-transition-speed--standard .campus-transition-corridor--glass-hallway,
+.campus-transition-speed--standard .campus-transition-corridor--skybridge,
+.campus-transition-speed--standard .campus-transition-corridor--elevator,
+.campus-transition-speed--standard .campus-transition-corridor--courtyard-walk,
+.campus-transition-speed--standard .campus-transition-corridor--soft-zoom,
+.campus-transition-speed--standard .campus-transition-corridor--atrium,
+.campus-transition-speed--standard .campus-transition-corridor--architectural-flythrough {
+  animation-duration: 1.4s;
+}
+
+.campus-transition-speed--standard .campus-transition-hq-reveal {
+  animation-duration: 0.8s;
+}
+
+.campus-transition-exit {
+  animation: campus-exit-fade 0.9s ease forwards;
+}
+
+@keyframes campus-exit-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.4;
+    transform: scale(0.96);
+  }
+}
+
+.campus-transition-return {
+  animation: campus-return-campus 2.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes campus-return-campus {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.08);
+    opacity: 0;
+  }
+}
+
+.campus-transition-people {
+  position: absolute;
+  bottom: 18%;
+  width: 6px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 2px;
+  animation: campus-people-walk 6s linear infinite;
+}
+
+@keyframes campus-people-walk {
+  0% {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateX(120px);
+    opacity: 0;
+  }
+}

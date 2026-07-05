@@ -1,7 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import type { WorkspaceRegistryRecord } from '../../../../studio-os-core/workspace-creation/types';
-import type { ExecutiveTeamMember } from '../../../../studio-os-core/workspace-creation/types';
-import type { PromotionPipelineItem } from '../../../../studio-os-core/workspace-creation/types';
+import { useCampusTransition } from '../campus/CampusTransitionProvider';
+import {
+  ExecutiveTeamMember,
+  PromotionPipelineItem,
+  WorkspaceRegistryRecord,
+} from '../../../../studio-os-core/workspace-creation/types';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
@@ -26,6 +29,7 @@ export function WorkspaceDashboard({
   onAdvancePromotion,
 }: WorkspaceDashboardProps) {
   const navigate = useNavigate();
+  const { returnToCampus } = useCampusTransition();
   const isAiMedia = workspace.id === 'ai-media' || workspace.slug === 'ai-media';
 
   if (isAiMedia) {
@@ -80,7 +84,7 @@ export function WorkspaceDashboard({
           type="button"
           className="w-full py-2 text-[7px] font-futura border"
           style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
-          onClick={() => navigate(STUDIO_OS_ROUTES.entry)}
+          onClick={() => returnToCampus()}
         >
           BACK TO WORKSPACE REGISTRY
         </button>
@@ -124,7 +128,7 @@ export function WorkspaceDashboard({
         type="button"
         className="w-full py-2 text-[7px] font-futura border"
         style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
-        onClick={() => navigate(STUDIO_OS_ROUTES.entry)}
+        onClick={() => returnToCampus()}
       >
         BACK TO WORKSPACE REGISTRY
       </button>

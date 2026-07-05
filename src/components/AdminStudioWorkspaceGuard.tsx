@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
+import { CampusTransitionProvider } from './admin/studio-os/campus/CampusTransitionProvider';
 import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
 import { ensureWorkspacesBootstrapped } from '../utils/ensureWorkspacesBootstrapped';
 import LoadingScreen from './base/LoadingScreen';
@@ -81,7 +82,9 @@ export default function AdminStudioWorkspaceGuard() {
 
   return (
     <WorkspaceProvider>
-      <Outlet />
+      <CampusTransitionProvider>
+        <Outlet />
+      </CampusTransitionProvider>
     </WorkspaceProvider>
   );
 }

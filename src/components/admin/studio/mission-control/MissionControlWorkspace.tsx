@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
+import { useCampusTransition } from '../../studio-os/campus/CampusTransitionProvider';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
-import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useAdminStudioMissionControl } from '../../../../hooks/useAdminStudioMissionControlState';
 import { useAdminStudioKnowledgeHub } from '../../../../hooks/useAdminStudioKnowledgeHubState';
 import { adminStudioKnowledgeHubPath, adminStudioKnowledgeHubProfilePath, adminStudioChiefOfStaffPath } from '../../../../utils/adminStudioRoutes';
@@ -41,6 +41,7 @@ import {
 
 export function MissionControlWorkspace() {
   const navigate = useNavigate();
+  const { returnToCampus } = useCampusTransition();
   const { workspace } = useWorkspace();
   const {
     searchQuery,
@@ -126,7 +127,7 @@ export function MissionControlWorkspace() {
         ) : null}
 
         <div className="flex flex-wrap gap-2 mt-3">
-          <button type="button" onClick={() => navigate(STUDIO_OS_ROUTES.entry)} style={mcActionBtn}>
+          <button type="button" onClick={() => returnToCampus()} style={mcActionBtn}>
             SWITCH WORKSPACE
           </button>
           <button type="button" onClick={() => navigate(adminStudioChiefOfStaffPath())} style={mcActionBtn}>
