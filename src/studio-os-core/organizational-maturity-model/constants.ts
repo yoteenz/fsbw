@@ -34,4 +34,5 @@ export const OMM_CONNECTED_SYSTEMS = [
   'Founder\'s Promise',
   'Studio Intelligence',
   'Company Maturity Engine',
+  'Leadership Modes',
 ] as const;

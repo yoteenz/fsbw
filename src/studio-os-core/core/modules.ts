@@ -43,6 +43,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-self-improvement'
   | 'organizational-governance-safeguards'
   | 'organizational-maturity-model'
+  | 'leadership-modes'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -330,6 +331,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL MATURITY MODEL',
     description: 'Master progression system — maturity earned, not unlocked. V1.0.',
     routeSegment: 'organizational-maturity-model',
+  },
+  {
+    id: 'leadership-modes',
+    label: 'LEADERSHIP MODES',
+    description: 'Founder & executive mode — adaptive leadership perspective. V1.0.',
+    routeSegment: 'leadership-modes',
   },
   {
     id: 'executive-command-center',

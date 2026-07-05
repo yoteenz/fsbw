@@ -418,6 +418,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'leadership-modes',
+    title: 'LEADERSHIP MODES',
+    purpose: 'Founder & executive mode — Studio OS adapts to how you want to lead today. V1.0.',
+    route: p('leadership-modes'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN MODES',
+    moduleKey: 'leadership-modes',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

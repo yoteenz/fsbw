@@ -37685,4 +37685,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** organizational-maturity-model core + UI + hook + page + service, CoS/OGS/OSI/OWF/ODE/OAF/OI/executive-council/executive-framework/manifesto/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 73: Leadership Modes V1.0
+
+**Context (full chat):** User requested Milestone 73 — introduce **Leadership Modes** (Founder Mode & Executive Mode) so Studio OS adapts to the founder's current leadership mindset rather than presenting the same interface every day. Prior milestones: M72 OMM (master progression), M71 OGS, full organizational stack. Constraints: do not redesign overall Studio OS shell · same organization/knowledge/executives/campus in every mode · perspective changes not fragmentation · work on `master` only · one commit + one push.
+
+**Goal:** Leadership Modes let founders seamlessly move between creating, leading, operating, and envisioning. Features: leadership philosophy (different hats · adapt to founder · zero fragmentation) · founder mode (creation · vision · innovation · strategy · brand · architecture · minimize ops noise) · executive mode (leadership · briefings · health · council · approvals · governance) · creator mode (content · publishing · campaigns · NDXBOOK · reader graph · creator marketplace · media) · operator mode (execution · workflows · delegations · coordination · bottlenecks) · automatic mode detection (Studio Intelligence · product planning → founder · board meeting → executive · campaign → creator · operational week → operator · override anytime) · adaptive interface (navigation · dashboard · briefings · notifications · shortcuts · widgets · campus · familiar shell) · Chief of Staff mode-specific briefings (vision · leadership · creative · execution) · executive behavior adapts (possibilities · decisions · inspiration · execution) · OI continuous mode evaluation · campus ambient transformation (creative energy · council · media studios · workflow command center) · instant leadership transitions preserving workspace · initiatives · discussions · zero context lost.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/leadership-modes/` — types (4 modes, detection, adaptive interface, CoS briefings, executive behavior, OI integration, campus transformation, transitions), constants (philosophy, connected systems), localStorage store (`studioOsLeadershipModes_v1`), rich NDXBOOK bootstrap (founder mode active · 4 modes · 5 detections · 8 adaptive adjustments · 4 CoS briefings · 8 executive behaviors · 5 OI evaluations · 4 campus transformations · 4 transition paths).
+- **Hook:** `useLeadershipModesState` with `selectMode` for instant mode switching.
+- **UI:** `/admin/studio/leadership-modes` — `LeadershipModesWorkspace` with tabs (Modes/Philosophy · Detect/Adaptive · CoS/Executives · OI/Campus · Transition/Dashboard · Connect). Indigo accent (`#4F46E5`) · V1.0.
+- **Wiring:** route, nav (overview · after OMM), modules, services, bootstrap after Organizational Maturity Model.
+- **Chief of Staff integration:** `Leadership Modes` in `SOFT_APPROVAL_SOURCES`; `LeadershipModesLinkPanel` in CoS workspace.
+- **Cross-links:** OMM, OGS ConnectedSystemsPanel → Leadership Modes · back link from OMM page.
+- **Knowledge graph:** `node-leadership-modes` + ~28 edges to OMM, OGS, OSI, OWF, ODE, OAF, OI, Council, CoS, all C-suite, all architects, Genome, Campus Evolution, Promise, Studio Intelligence.
+
+**Route:** `/admin/studio/leadership-modes` · Overview nav group · indigo accent · back link from Organizational Maturity Model.
+
+**Changes:** leadership-modes core + UI + hook + page + service, CoS/OMM/OGS/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
 

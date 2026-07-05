@@ -23,6 +23,7 @@ import {
   adminStudioOrganizationalSelfImprovementPath,
   adminStudioOrganizationalWorkflowOrchestrationPath,
   adminStudioOrganizationalMaturityModelPath,
+  adminStudioLeadershipModesPath,
   adminStudioRelationshipEnginePath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
@@ -332,6 +333,7 @@ export function ConnectedSystemsPanel() {
       </div>
       <div className="mt-2 flex flex-wrap gap-2">
         <Link to={adminStudioOrganizationalMaturityModelPath()} style={{ ...ogsLabel, color: '#D97706', fontSize: '6px' }}>→ ORGANIZATIONAL MATURITY MODEL</Link>
+        <Link to={adminStudioLeadershipModesPath()} style={{ ...ogsLabel, color: '#4F46E5', fontSize: '6px' }}>→ LEADERSHIP MODES</Link>
         <Link to={adminStudioOrganizationalSelfImprovementPath()} style={{ ...ogsLabel, color: '#10B981', fontSize: '6px' }}>→ ORGANIZATIONAL SELF-IMPROVEMENT</Link>
         <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...ogsLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
         <Link to={adminStudioOrganizationalDelegationEnginePath()} style={{ ...ogsLabel, color: '#7C3AED', fontSize: '6px' }}>→ ORGANIZATIONAL DELEGATION ENGINE</Link>

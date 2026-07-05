@@ -77,6 +77,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'organizational-self-improvement'
   | 'organizational-governance-safeguards'
   | 'organizational-maturity-model'
+  | 'leadership-modes'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -161,6 +162,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'organizational-self-improvement',
   'organizational-governance-safeguards',
   'organizational-maturity-model',
+  'leadership-modes',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -264,6 +266,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   organizationalSelfImprovement: 'studio/organizational-self-improvement',
   organizationalGovernanceSafeguards: 'studio/organizational-governance-safeguards',
   organizationalMaturityModel: 'studio/organizational-maturity-model',
+  leadershipModes: 'studio/leadership-modes',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -503,6 +506,10 @@ export function adminStudioOrganizationalGovernanceSafeguardsPath(): string {
 
 export function adminStudioOrganizationalMaturityModelPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organizational-maturity-model`;
+}
+
+export function adminStudioLeadershipModesPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/leadership-modes`;
 }
 
 export function adminStudioOsPath(): string {

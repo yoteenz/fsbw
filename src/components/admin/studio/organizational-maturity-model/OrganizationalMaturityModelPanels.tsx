@@ -26,6 +26,7 @@ import {
   adminStudioOrganizationalIntelligencePath,
   adminStudioOrganizationalSelfImprovementPath,
   adminStudioOrganizationalWorkflowOrchestrationPath,
+  adminStudioLeadershipModesPath,
   adminStudioRelationshipEnginePath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
@@ -350,6 +351,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCompanyGenomePath()} style={{ ...ommLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>
         <Link to={adminStudioCampusEvolutionEnginePath()} style={{ ...ommLabel, color: '#CA8A04', fontSize: '6px' }}>→ CAMPUS EVOLUTION ENGINE</Link>
         <Link to={adminStudioCompanyMaturityEnginePath()} style={{ ...ommLabel, color: '#334155', fontSize: '6px' }}>→ COMPANY MATURITY ENGINE</Link>
+        <Link to={adminStudioLeadershipModesPath()} style={{ ...ommLabel, color: '#4F46E5', fontSize: '6px' }}>→ LEADERSHIP MODES</Link>
         <Link to={adminStudioFoundersPromisePath()} style={{ ...ommLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...ommLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...ommLabel, color: '#6366F1', fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>

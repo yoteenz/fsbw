@@ -48,6 +48,7 @@ import {
   OrganizationalSelfImprovementLinkPanel,
   OrganizationalGovernanceSafeguardsLinkPanel,
   OrganizationalMaturityModelLinkPanel,
+  LeadershipModesLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -141,6 +142,7 @@ export function ChiefOfStaffWorkspace() {
             <OrganizationalSelfImprovementLinkPanel />
             <OrganizationalGovernanceSafeguardsLinkPanel />
             <OrganizationalMaturityModelLinkPanel />
+            <LeadershipModesLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -202,6 +204,7 @@ export function ChiefOfStaffWorkspace() {
             <OrganizationalSelfImprovementLinkPanel />
             <OrganizationalGovernanceSafeguardsLinkPanel />
             <OrganizationalMaturityModelLinkPanel />
+            <LeadershipModesLinkPanel />
             <DecisionRoutingPanel />
           </>
         );
