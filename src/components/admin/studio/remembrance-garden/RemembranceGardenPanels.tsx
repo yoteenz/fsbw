@@ -7,6 +7,7 @@ import {
   adminStudioChiefOfStaffPath,
   adminStudioCompanyGenomePath,
   adminStudioFounderWalkPath,
+  adminStudioFoundersPromisePath,
   adminStudioLeadershipDnaPath,
   adminStudioOrganizationalInheritancePath,
   adminStudioRelationshipEnginePath,
@@ -315,6 +316,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...rgLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...rgLabel, color: '#4F46E5', fontSize: '6px' }}>→ INHERITANCE</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...rgLabel, color: RG.sage, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioFoundersPromisePath()} style={{ ...rgLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
       </div>
     </section>
   );

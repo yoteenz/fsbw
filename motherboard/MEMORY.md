@@ -37349,3 +37349,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** remembrance-garden core + UI + hook + page + service, CoS/founder-walk/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 59.7: Founder's Promise V1.0
+
+**Context (full chat):** User requested Milestone 59.7 — introduce **Founder's Promise** as the personal north star and emotional foundation of every organization in Studio OS. Prior milestones in arc: M59.5 Founder Walk, M59.6 Remembrance Garden. Constraints: do not redesign overall Studio OS shell · not mission/vision/marketing · optimized for truth · work on `master` only · one commit + one push.
+
+**Goal:** Deeply personal founder commitment defining the kind of company they intend to build, who they serve, values they refuse to compromise, and legacy they hope to leave. Features: guided reflective writing (Studio Intelligence questions — conversation not questionnaire) · the promise (write/edit/version/record/dictate · text/audio/video/handwritten · original always preserved) · living promise (evolution tracked · why changed · influencing events) · organizational alignment (decisions scored · conflicts · adjustments) · executive alignment (CoS, Brand/Experience/Digital/Growth architects each evaluate against promise) · promise reflection moments (invitation not obligation) · promise archive · legacy inheritance letters to future leadership/employees/customers/family/founders · privacy levels · campus installation at Founder Walk and Remembrance Garden entrance (architectural place not plaque). Quiet compass when companies evolve.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/founders-promise/` — types (reflective questions, promise versions, living evolution, organizational/executive alignment, reflection moments, archive, legacy inheritance, campus installation, privacy), constants (philosophy, connected systems, question seeds), localStorage store (`studioOsFoundersPromise_v1`), rich NDXBOOK bootstrap (8 reflective questions · v1 original + v2 current promise · 4 alignment checks · 5 executive alignments · 3 reflection moments · 6 archive entries · 5 legacy letters · 3 campus installations).
+- **Hook:** `useFoundersPromiseState` — workspace selection.
+- **UI:** `/admin/studio/founders-promise` — `FoundersPromiseWorkspace` with tabs (Promise/North Star · Reflect/Write · Living/Evolve · Align/Decide · Archive/Legacy · Connect/Campus). Amber accent theme (`#92400E`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (overview group · after remembrance garden), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/foundersPromise/service.ts`, `bootstrapFoundersPromisePlatform()` after Remembrance Garden.
+- **Chief of Staff integration:** `Founder's Promise` in `SOFT_APPROVAL_SOURCES`; `FoundersPromiseLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Cross-links:** Founder Walk and Remembrance Garden ConnectedSystemsPanel → Founder's Promise.
+- **Knowledge graph:** `node-founders-promise` + edges to Remembrance Garden, Founder Walk, Company Genome, Leadership DNA, Organizational Inheritance, Studio Intelligence, Chief of Staff.
+
+**Route:** `/admin/studio/founders-promise` · Overview nav group · amber accent · back link from Remembrance Garden.
+
+**Changes:** founders-promise core + UI + hook + page + service, CoS/founder-walk/remembrance-garden/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.

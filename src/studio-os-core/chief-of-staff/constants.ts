@@ -49,6 +49,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Campus Evolution Engine',
   'Founder Walk',
   'Remembrance Garden',
+  'Founder\'s Promise',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

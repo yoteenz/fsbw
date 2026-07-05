@@ -27,6 +27,7 @@ export type StudioOsCoreModuleId =
   | 'campus-evolution-engine'
   | 'founder-walk'
   | 'remembrance-garden'
+  | 'founders-promise'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -218,6 +219,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'REMEMBRANCE GARDEN',
     description: 'Most personal campus space — dedications, living memorials, legacy letters, preserve gratitude.',
     routeSegment: 'remembrance-garden',
+  },
+  {
+    id: 'founders-promise',
+    label: 'FOUNDER\'S PROMISE',
+    description: 'Personal north star — guided reflection, living promise, alignment, legacy inheritance.',
+    routeSegment: 'founders-promise',
   },
   {
     id: 'executive-command-center',
