@@ -36615,3 +36615,14 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Draggable controls:** Bottom overlay has a **drag handle** (grip button) + `useVisionEngineOverlayDrag` hook — pointer-drag repositions panel anywhere on screen, clamped to viewport; position persists in **sessionStorage** for the tab.
 - **Changes:** `manifest.ts` (tagline `bohemy`), `vision-engine.css` (logo/tagline fonts), `VisionEngineOverlay.tsx`, new `useVisionEngineOverlayDrag.ts`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Vision Engine controls polish (minimize icon, gray mode label, louder ambient)
+
+**Context:** Follow-up Vision Engine presentation UX — user wanted minimize instead of **HIDE CONTROLS** text, gray **VISION MODE — CREATIVE PARTNER** label (was purple), and louder ambient audio.
+
+- **Minimize icon:** Top-right corner of controls panel — horizontal line to minimize, plus icon to expand when collapsed; drag grip remains top-left.
+- **Mode label:** `.vision-engine-overlay__mode` color `#6366f1` → `#888` (gray, matches step counter).
+- **Ambient audio:** `VisionEngineLuxuryAudio` master gain ~6× louder (0.04→0.24 normal, 0.06→0.14 record); oscillator and noise layers boosted proportionally.
+- **Changes:** `VisionEngineOverlay.tsx`, `vision-engine.css`, `VisionEngineLuxuryAudio.tsx`, `motherboard/MEMORY.md`.
+
