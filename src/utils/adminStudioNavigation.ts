@@ -118,6 +118,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'brand-architect',
+    title: 'BRAND ARCHITECT',
+    purpose: 'Transform validated business into complete living brand — blueprint, verbal + visual identity, systems, handoff to Experience Architect.',
+    route: p('brand-architect'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN BRAND',
+    moduleKey: 'brand-architect',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

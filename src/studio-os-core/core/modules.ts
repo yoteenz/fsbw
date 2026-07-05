@@ -18,6 +18,7 @@ export type StudioOsCoreModuleId =
   | 'ecosystem-marketplace'
   | 'knowledge-asset-engine'
   | 'company-maturity-engine'
+  | 'brand-architect'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -155,6 +156,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'COMPANY MATURITY ENGINE',
     description: 'Universal onboarding — maturity assessment, asset inventory, architects, roadmap, organizational understanding.',
     routeSegment: 'company-maturity-engine',
+  },
+  {
+    id: 'brand-architect',
+    label: 'BRAND ARCHITECT',
+    description: 'Cohesive brand systems — blueprint, verbal + visual identity, competitive intelligence, experience architect handoff.',
+    routeSegment: 'brand-architect',
   },
   {
     id: 'executive-command-center',

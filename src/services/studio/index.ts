@@ -170,6 +170,9 @@ export type { KnowledgeAssetEngineSnapshot } from './knowledgeAssetEngine/servic
 export { companyMaturityEngineStudioService, COMPANY_MATURITY_ENGINE_CHAIN } from './companyMaturityEngine/service';
 export type { CompanyMaturityEngineSnapshot } from './companyMaturityEngine/service';
 
+export { brandArchitectStudioService, BRAND_ARCHITECT_CHAIN } from './brandArchitect/service';
+export type { BrandArchitectSnapshot } from './brandArchitect/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -265,6 +268,7 @@ import { creatorMarketplaceStudioService } from './creatorMarketplace/service';
 import { ecosystemMarketplaceStudioService } from './ecosystemMarketplace/service';
 import { knowledgeAssetEngineStudioService } from './knowledgeAssetEngine/service';
 import { companyMaturityEngineStudioService } from './companyMaturityEngine/service';
+import { brandArchitectStudioService } from './brandArchitect/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -323,6 +327,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   ecosystemMarketplaceStudioService,
   knowledgeAssetEngineStudioService,
   companyMaturityEngineStudioService,
+  brandArchitectStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

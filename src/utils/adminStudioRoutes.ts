@@ -52,6 +52,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'ecosystem-marketplace'
   | 'knowledge-asset-engine'
   | 'company-maturity-engine'
+  | 'brand-architect'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -111,6 +112,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'ecosystem-marketplace',
   'knowledge-asset-engine',
   'company-maturity-engine',
+  'brand-architect',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -189,6 +191,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   ecosystemMarketplace: 'studio/ecosystem-marketplace',
   knowledgeAssetEngine: 'studio/knowledge-asset-engine',
   companyMaturityEngine: 'studio/company-maturity-engine',
+  brandArchitect: 'studio/brand-architect',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -328,6 +331,10 @@ export function adminStudioKnowledgeAssetEnginePath(): string {
 
 export function adminStudioCompanyMaturityEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/company-maturity-engine`;
+}
+
+export function adminStudioBrandArchitectPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/brand-architect`;
 }
 
 export function adminStudioOsPath(): string {

@@ -209,6 +209,10 @@ export function bootstrapWorkspacesPlatform(): void {
     companyMaturityEngine.bootstrapCompanyMaturityEnginePlatform();
     await yieldToMain();
 
+    const brandArchitect = await import('../studio-os-core/brand-architect/bootstrap');
+    brandArchitect.bootstrapBrandArchitectPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

@@ -28,6 +28,7 @@ import {
   adminStudioEcosystemMarketplacePath,
   adminStudioKnowledgeAssetEnginePath,
   adminStudioCompanyMaturityEnginePath,
+  adminStudioBrandArchitectPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -353,6 +354,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 52',
     status: 'demo',
     searchKeywords: ['company maturity', 'onboarding', 'organizational assessment', 'maturity roadmap', 'architect recommendations', 'integration center'],
+  },
+  {
+    id: 'node-brand-architect',
+    name: 'BRAND ARCHITECT',
+    type: 'module',
+    description:
+      'Transform validated business into complete living brand — blueprint, verbal + visual identity, brand systems, competitive intelligence, simulation, experience architect handoff.',
+    purpose: 'Meaning before colors · cohesive brand systems · never disconnected creative assets · identity compounds over time.',
+    route: adminStudioBrandArchitectPath(),
+    moduleId: 'brand-architect',
+    relatedManualChapter: 'CHAPTER · BRAND ARCHITECT · COHESIVE IDENTITY',
+    versionIntroduced: 'Milestone 53',
+    status: 'demo',
+    searchKeywords: ['brand architect', 'brand blueprint', 'verbal identity', 'visual identity', 'brand systems', 'brand simulation', 'experience architect handoff'],
   },
   {
     id: 'node-fallback-used',
@@ -1074,6 +1089,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-maturity-intelligence', fromId: 'node-studio-intelligence', toId: 'node-company-maturity-engine', type: 'feeds', label: 'ARCHITECT RECOMMENDATIONS' },
   { id: 'e-maturity-knowledge', fromId: 'node-company-maturity-engine', toId: 'node-knowledge-asset-engine', type: 'related-to', label: 'KNOWLEDGE MATURITY DOMAIN' },
   { id: 'e-maturity-platform', fromId: 'node-company-maturity-engine', toId: 'company-maturity-engine', type: 'documented-by', label: 'UNIVERSAL ENTRY' },
+  { id: 'e-maturity-brand', fromId: 'node-company-maturity-engine', toId: 'node-brand-architect', type: 'related-to', label: 'ARCHITECT RECOMMENDATION' },
+  { id: 'e-brand-creative', fromId: 'node-brand-architect', toId: 'node-creative-dna', type: 'feeds', label: 'VISUAL IDENTITY' },
+  { id: 'e-brand-leadership', fromId: 'node-brand-architect', toId: 'node-leadership-dna', type: 'related-to', label: 'BRAND TASTE' },
+  { id: 'e-brand-intelligence', fromId: 'node-studio-intelligence', toId: 'node-brand-architect', type: 'feeds', label: 'COMPETITIVE INTELLIGENCE' },
+  { id: 'e-brand-cos', fromId: 'node-chief-of-staff', toId: 'node-brand-architect', type: 'related-to', label: 'BRAND APPROVAL' },
+  { id: 'e-brand-business', fromId: 'node-brand-architect', toId: 'node-business-model-engine', type: 'related-to', label: 'VALIDATED BUSINESS' },
+  { id: 'e-brand-platform', fromId: 'node-brand-architect', toId: 'brand-architect', type: 'documented-by', label: 'COHESIVE IDENTITY' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },
