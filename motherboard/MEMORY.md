@@ -36882,3 +36882,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** newsroom core + UI + hook + page + service, workspace dashboard/MC wiring, KG, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Milestone 41: Executive Organization V1.0
+
+**Context (full chat):** User requested Milestone 41 — transform the executive team from independent AI agents into a **living executive organization**. Prior milestones in arc: NDXBOOK freeze fix, M37 Mission Control, M38 Chief of Staff, M39 Leadership DNA, M40 Newsroom, social OAuth UX. Constraint: do not redesign overall Studio OS shell.
+
+**Goal:** Studio OS should feel like operating a real company — Founder → Chief of Staff → Executive Leadership → Departments → Teams → Workers → Projects → Tasks. Every executive becomes a department leader with mission, health, priorities, team workload, initiatives, approvals, metrics, Studio Intelligence recommendations, decisions, knowledge growth, personality, and scorecard. Departments have objectives, capacity, health, backlog, knowledge, initiatives, cross-functional partners, teams, playbooks. Workers (AI specialists, automation agents, future human/freelancer/agency) have role, skills, availability, performance, capacity, knowledge. Organizational memory, culture layer, recurring executive meetings (daily through annual), executive scorecards, org graph, succession inheritance, and automatic cross-department collaboration. Chief of Staff coordinates; Studio Intelligence advises; founder leads; executives operate as one leadership team.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/executive-organization/` — types (8-level hierarchy, 11 executive IDs, executive HQ, department HQ with teams, workers, collaborations, organizational memory, meetings, org graph nodes/edges, company culture, succession records, scorecards), constants (roster, DNA alignment layers), localStorage store (`studioOsExecutiveOrganization_v1`), rich bootstrap seed.
+- **Bootstrap:** 11 executives (CoS + CMO/CCO/COO/CFO/CTO/CPO/CCO-content/CBO/CLO/CGO), 6 seeded departments (Creative with 9 teams, Marketing, Content, Operations, Finance, Legal), workers, 6 cross-functional collaborations, organizational memory entries, 5 recurring meetings, culture layer (mission/vision/values/principles), org graph, succession packages.
+- **Hook:** `useExecutiveOrganizationState` — executive/department selection.
+- **UI:** `/admin/studio/executive-organization` — `ExecutiveOrganizationWorkspace` with tabs (Organization · Executive HQ · Departments · Culture · Meetings · Memory · Succession); panels for org dashboard, hierarchy, CoS coordination, executive roster/HQ/personality/scorecard, department HQ/playbooks, worker architecture, collaboration, meetings, organizational memory, culture, org graph, succession.
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (overview group), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/executiveOrganization/service.ts`, `bootstrapExecutiveOrganizationPlatform()` in platform seed chain after Leadership DNA.
+- **Chief of Staff integration:** `OrgHierarchyPanel` link **EXEC ORG →** in CoS workspace.
+- **Knowledge graph:** `node-executive-organization` + edges to Chief of Staff, Leadership DNA, Memory Bible.
+
+**Route:** `/admin/studio/executive-organization` · Overview nav group · teal accent theme.
+
+**Changes:** executive-organization core + UI + hook + page + service, CoS/KG/bootstrap wiring, `motherboard/MEMORY.md`.
+

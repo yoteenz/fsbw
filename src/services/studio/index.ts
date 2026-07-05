@@ -134,6 +134,9 @@ export type { LeadershipDnaSnapshot } from './leadershipDna/service';
 export { ndxbookNewsroomStudioService, NDXBOOK_NEWSROOM_INHERITANCE_CHAIN } from './ndxbookNewsroom/service';
 export type { NdxbookNewsroomSnapshot } from './ndxbookNewsroom/service';
 
+export { executiveOrganizationStudioService, EXECUTIVE_ORGANIZATION_INHERITANCE_CHAIN } from './executiveOrganization/service';
+export type { ExecutiveOrganizationSnapshot } from './executiveOrganization/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -217,6 +220,7 @@ import { missionControlStudioService } from './missionControl/service';
 import { chiefOfStaffStudioService } from './chiefOfStaff/service';
 import { leadershipDnaStudioService } from './leadershipDna/service';
 import { ndxbookNewsroomStudioService } from './ndxbookNewsroom/service';
+import { executiveOrganizationStudioService } from './executiveOrganization/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -263,6 +267,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   chiefOfStaffStudioService,
   leadershipDnaStudioService,
   ndxbookNewsroomStudioService,
+  executiveOrganizationStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

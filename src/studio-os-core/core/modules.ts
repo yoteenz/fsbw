@@ -6,6 +6,7 @@
 export type StudioOsCoreModuleId =
   | 'mission-control'
   | 'chief-of-staff'
+  | 'executive-organization'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -71,6 +72,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CHIEF OF STAFF',
     description: 'Founder primary executive — soft approvals and attention protection.',
     routeSegment: 'chief-of-staff',
+  },
+  {
+    id: 'executive-organization',
+    label: 'EXECUTIVE ORGANIZATION',
+    description: 'Living leadership team — executives, departments, teams, workers, and culture.',
+    routeSegment: 'executive-organization',
   },
   {
     id: 'executive-command-center',

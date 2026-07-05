@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioLeadershipDnaPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -180,7 +180,15 @@ export function ExecutiveInboxPanel({ store, escalatedItems, onApprove, onReject
 export function OrgHierarchyPanel({ store }: Pick<Props, 'store'>) {
   return (
     <section className="p-3 mb-3" style={cosPanel}>
-      <p style={cosSectionTitle}>ORGANIZATION · EXECUTIVE LEADERSHIP</p>
+      <div className="flex items-center justify-between mb-2">
+        <p style={cosSectionTitle}>ORGANIZATION · EXECUTIVE LEADERSHIP</p>
+        <Link
+          to={adminStudioExecutiveOrganizationPath()}
+          style={{ ...cosLabel, color: COS.gold, fontFamily: '"Futura PT Medium"', fontSize: '6px' }}
+        >
+          EXEC ORG →
+        </Link>
+      </div>
       <div className="flex flex-col items-center gap-0 mb-3">
         {['FOUNDER', 'CHIEF OF STAFF', 'EXECUTIVE LEADERSHIP'].map((level, i) => (
           <div key={level} className="w-full flex flex-col items-center">

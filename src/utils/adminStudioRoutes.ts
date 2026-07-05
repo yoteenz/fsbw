@@ -40,6 +40,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'executive-command-center'
   | 'mission-control'
   | 'chief-of-staff'
+  | 'executive-organization'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -87,6 +88,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'executive-command-center',
   'mission-control',
   'chief-of-staff',
+  'executive-organization',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -153,6 +155,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   executiveCommandCenter: 'studio/executive-command-center',
   missionControl: 'studio/mission-control',
   chiefOfStaff: 'studio/chief-of-staff',
+  executiveOrganization: 'studio/executive-organization',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -244,6 +247,10 @@ export function adminStudioMissionControlPath(): string {
 
 export function adminStudioChiefOfStaffPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/chief-of-staff`;
+}
+
+export function adminStudioExecutiveOrganizationPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/executive-organization`;
 }
 
 export function adminStudioSocialAccountsPath(): string {

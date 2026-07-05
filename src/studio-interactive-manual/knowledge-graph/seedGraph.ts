@@ -16,6 +16,7 @@ import {
   adminStudioMemoryBiblePath,
   adminStudioLeadershipDnaPath,
   adminStudioChiefOfStaffPath,
+  adminStudioExecutiveOrganizationPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -173,6 +174,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 40',
     status: 'demo',
     searchKeywords: ['newsroom', 'production board', 'page workspace', 'operational dna', 'editorial calendar', 'production orchestration'],
+  },
+  {
+    id: 'node-executive-organization',
+    name: 'EXECUTIVE ORGANIZATION',
+    type: 'module',
+    description:
+      'Living leadership team — executive HQ, department headquarters, teams, workers, collaboration, scorecards, culture, and organizational memory.',
+    purpose: 'Transform executives from independent agents into a real operating organization.',
+    route: adminStudioExecutiveOrganizationPath(),
+    moduleId: 'executive-organization',
+    relatedManualChapter: 'CHAPTER · EXECUTIVE ORGANIZATION · LIVING LEADERSHIP',
+    versionIntroduced: 'Milestone 41',
+    status: 'demo',
+    searchKeywords: ['executive organization', 'department hq', 'executive scorecard', 'company culture', 'organizational memory', 'executive succession'],
   },
   {
     id: 'node-fallback-used',
@@ -816,6 +831,10 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-leadership-trains-cos', fromId: 'node-leadership-dna', toId: 'node-chief-of-staff', type: 'feeds', label: 'PRIMARY CoS TRAINING' },
   { id: 'e-cos-evaluates-leadership', fromId: 'node-chief-of-staff', toId: 'node-leadership-dna', type: 'inherits-from', label: 'ALIGNMENT CHECK' },
   { id: 'e-cos-documents-platform', fromId: 'node-chief-of-staff', toId: 'chief-of-staff', type: 'documented-by', label: 'EXECUTIVE OFFICE' },
+  { id: 'e-cos-executive-org', fromId: 'node-chief-of-staff', toId: 'node-executive-organization', type: 'contains', label: 'COORDINATES LEADERSHIP' },
+  { id: 'e-exec-org-leadership', fromId: 'node-executive-organization', toId: 'node-leadership-dna', type: 'inherits-from', label: 'EXECUTIVE PERSONALITIES' },
+  { id: 'e-exec-org-memory', fromId: 'node-executive-organization', toId: 'node-memory-bible', type: 'feeds', label: 'ORG MEMORY' },
+  { id: 'e-exec-org-platform', fromId: 'node-executive-organization', toId: 'executive-organization', type: 'documented-by', label: 'LIVING ORG' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

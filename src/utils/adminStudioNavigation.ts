@@ -82,6 +82,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'executive-organization',
+    title: 'EXECUTIVE ORGANIZATION',
+    purpose: 'Living leadership team — executive HQ, departments, teams, workers, culture, and organizational memory.',
+    route: p('executive-organization'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN EXEC ORG',
+    moduleKey: 'executive-organization',
+    featuredOnOverview: true,
+  },
+  {
     id: 'executive-command-center',
     title: 'EXECUTIVE COMMAND CENTER',
     purpose: 'See company health, priorities, and decisions in one executive view.',
