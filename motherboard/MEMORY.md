@@ -36702,3 +36702,13 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** `AdminGuard.tsx` (conflict resolution), `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Admin dashboard Studio card → Studio OS label
+
+**Context (full chat):** User reported admin dashboard blank white screen (fixed in prior turns: await workspace registry, defer platform seeds). User then asked to rename the **Studio** stat card on **`/admin/dashboard`** to **Studio OS**.
+
+**Change:** `src/pages/admin/dashboard/page.tsx` — card **`title`**, **`DASHBOARD_CARD_ORDER`**, and **`handleCardClick`** case updated from **`STUDIO`** to **`STUDIO OS`** (displays uppercase via dashboard `textTransform`); navigation still goes to **`/admin/studio-os`**.
+
+**Changes:** `src/pages/admin/dashboard/page.tsx`, `motherboard/MEMORY.md`.
+

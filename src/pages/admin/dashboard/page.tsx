@@ -1129,7 +1129,7 @@ export default function AdminDashboard() {
     },
 
     {
-      title: 'STUDIO',
+      title: 'STUDIO OS',
       count: String(ADMIN_STUDIO_DASHBOARD_METRIC),
       items: ADMIN_STUDIO_DASHBOARD_ITEMS.map((item) => ({
         label: item.label,
@@ -1141,7 +1141,7 @@ export default function AdminDashboard() {
   ];
 
   const DASHBOARD_CARD_ORDER = [
-    'STUDIO',
+    'STUDIO OS',
     'REVENUE',
     'CLIENTS',
     'MEETINGS',
@@ -1193,7 +1193,7 @@ export default function AdminDashboard() {
       case 'BACKEND':
         navigate('/admin/backend');
         break;
-      case 'STUDIO':
+      case 'STUDIO OS':
         navigate('/admin/studio-os');
         break;
       default:
