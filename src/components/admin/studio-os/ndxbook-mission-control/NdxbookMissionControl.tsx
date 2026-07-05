@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { NDXBOOK_MISSION_CONTROL_NAV } from '../../../../studio-os-core/ndxbook/mission-control/constants';
 import type { MissionControlNavId } from '../../../../studio-os-core/ndxbook/mission-control/types';
+import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useNdxbookMissionControlState } from '../../../../hooks/useNdxbookMissionControlState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { NDXBOOK_MC_STYLES } from './ndxbookMissionControlTheme';
@@ -29,6 +31,7 @@ type NdxbookMissionControlProps = {
 };
 
 export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: NdxbookMissionControlProps) {
+  const navigate = useNavigate();
   const [activeNav, setActiveNav] = useState<MissionControlNavId>('mission-control');
   const {
     store,
@@ -107,7 +110,13 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
           <button
             key={item.id}
             type="button"
-            onClick={() => setActiveNav(item.id)}
+            onClick={() => {
+              if (item.id === 'newsroom') {
+                navigate(STUDIO_OS_ROUTES.workspaceNewsroom(workspaceId));
+                return;
+              }
+              setActiveNav(item.id);
+            }}
             className="whitespace-nowrap px-2 py-1 text-[6px] font-futura border"
             style={{
               fontWeight: 515,

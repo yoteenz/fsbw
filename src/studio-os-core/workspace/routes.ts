@@ -10,6 +10,7 @@ export const STUDIO_OS_ROUTES = {
   promotionCenter: `${ADMIN_BASE}/studio-os/promotion-center`,
   workspaceShell: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}`,
   workspaceDashboard: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/dashboard`,
+  workspaceNewsroom: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/newsroom`,
   workspaceSettings: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/settings`,
   workspaceAssets: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/assets`,
   workspaceProjects: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/projects`,

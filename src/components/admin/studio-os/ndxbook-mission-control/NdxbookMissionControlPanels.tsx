@@ -105,7 +105,17 @@ export function NewsroomPanel({ store }: PanelProps) {
   const navigate = useNavigate();
   return (
     <section className="p-3 mb-3 overflow-x-auto" style={mcPanel}>
-      <p style={mcSectionTitle}>NEWSROOM · PRODUCTION PIPELINE</p>
+      <div className="flex items-center justify-between mb-2">
+        <p style={mcSectionTitle}>NEWSROOM · PRODUCTION PIPELINE</p>
+        <button
+          type="button"
+          onClick={() => navigate('/admin/studio-os/workspace/ai-media/newsroom')}
+          className="px-2 py-1 text-[6px] font-futura border"
+          style={{ fontWeight: 515, color: MC.accent, borderColor: MC.accent }}
+        >
+          ENTER NEWSROOM →
+        </button>
+      </div>
       <div className="flex gap-1 min-w-max pb-1">
         {store.newsroomStages.map((stage, i) => (
           <div key={stage.id} className="flex items-center">

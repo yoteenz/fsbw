@@ -149,6 +149,10 @@ export function bootstrapWorkspacesPlatform(): void {
     missionControl.bootstrapAiMediaNdxbookMissionControl();
     await yieldToMain();
 
+    const newsroom = await import('./ai-media/ndxbook/newsroom-bootstrap');
+    newsroom.bootstrapAiMediaNdxbookNewsroom();
+    await yieldToMain();
+
     const chiefOfStaff = await import('../studio-os-core/chief-of-staff/bootstrap');
     chiefOfStaff.bootstrapChiefOfStaffPlatform();
     await yieldToMain();

@@ -46,6 +46,24 @@ export function WorkspaceDashboard({
           </div>
         </div>
 
+        <button
+          type="button"
+          className="w-full py-3 text-[8px] font-futura border mb-2"
+          style={{
+            fontWeight: 515,
+            color: '#DC2626',
+            borderColor: '#DC2626',
+            background: 'rgba(220,38,38,0.06)',
+          }}
+          onClick={() => navigate(STUDIO_OS_ROUTES.workspaceNewsroom(workspace.id))}
+        >
+          ENTER NEWSROOM · PRODUCTION FLOOR →
+        </button>
+
+        <p className="text-[6px] font-futura mb-1" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
+          MISSION CONTROL · EXECUTIVE LAYER · SUMMARIZES
+        </p>
+
         <NdxbookMissionControl workspaceId={workspace.id} accentColor={workspace.accentColor} />
 
         <details className="p-2 border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder }}>

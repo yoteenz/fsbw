@@ -36862,3 +36862,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** leadership-dna core + UI + hook + page + service, CoS/KG/executive wiring, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Milestone 40: Newsroom & Production Orchestration V1.0
+
+**Context (full chat):** User requested Milestone 40 — create the **Newsroom** as operational heartbeat for AI Media workspace. Prior milestones in arc: NDXBOOK freeze fix, M37 Mission Control, M38 Chief of Staff, M39 Leadership DNA, social OAuth UX.
+
+**Goal:** Newsroom = production floor (not dashboard). Mission Control summarizes (executive layer); Newsroom produces (operational layer). Visual production pipeline, page workspace as atomic unit, CoS orchestration, department lanes, talent routing, editorial calendar, activity wall, quality gates (DNA layers), production intelligence, experiments, asset lineage, **Operational DNA** (how company executes vs Leadership DNA = how founder leads).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/ndxbook/newsroom/` — 17-stage pipeline (idea → institutional knowledge), ProductionPage with full workspace fields, department lanes (12 departments), editorial calendar, activity wall, CoS orchestration queue, talent routing, experiments, asset lineage, operational DNA sections, knowledge production outputs; localStorage store (`studioOsNdxbookNewsroom_v1`) with `movePageToStage()` drag-drop support.
+- **Bootstrap:** 9 demo pages across pipeline, department capacity data, calendar entries, activity feed, intelligence signals, CoS orchestration actions, talent recommendations, experiments, asset lineage, operational DNA, knowledge outputs.
+- **Hook:** `useNdxbookNewsroomState` — page selection, stage moves, calendar reschedule.
+- **UI:** `/admin/studio-os/workspace/ai-media/newsroom` — `NdxbookNewsroom` with tabs (Production Floor · Page Workspace · Departments · Calendar · Intelligence · Operational DNA); production board with drag-and-drop, page workspace panel, department lanes, editorial calendar, activity wall, production intelligence, CoS orchestration, talent routing, quality gates, operational DNA, knowledge production, cross-company placeholder.
+- **Wiring:** route in `App.tsx`, `STUDIO_OS_ROUTES.workspaceNewsroom`, bootstrap in platform seed chain, `ndxbookNewsroomStudioService`, knowledge graph `node-ndxbook-newsroom` + edges to ndxbook, CoS, Leadership DNA, Memory Bible.
+- **Mission Control integration:** Workspace dashboard **ENTER NEWSROOM** CTA; MC newsroom tab navigates to full newsroom; MC newsroom panel link retained.
+
+**Route:** `/admin/studio-os/workspace/ai-media/newsroom`
+
+**Changes:** newsroom core + UI + hook + page + service, workspace dashboard/MC wiring, KG, `motherboard/MEMORY.md`.
+
