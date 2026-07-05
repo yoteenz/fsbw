@@ -11,6 +11,7 @@ import { KNOWLEDGE_ASSET_CONNECTED_SYSTEMS } from '../../../../studio-os-core/kn
 import {
   adminStudioCampaignEnginePath,
   adminStudioChiefOfStaffPath,
+  adminStudioCompanyMaturityEnginePath,
   adminStudioDistributionEnginePath,
   adminStudioEcosystemMarketplacePath,
   adminStudioOrganizationalInheritancePath,
@@ -472,6 +473,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCampaignEnginePath()} style={{ ...kaeLabel, color: '#D97706', fontSize: '6px' }}>→ CAMPAIGN ENGINE</Link>
         <Link to={adminStudioEcosystemMarketplacePath()} style={{ ...kaeLabel, color: '#4F46E5', fontSize: '6px' }}>→ ECOSYSTEM MARKETPLACE</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...kaeLabel, color: KAE.teal, fontSize: '6px' }}>→ ORGANIZATIONAL INHERITANCE</Link>
+        <Link to={adminStudioCompanyMaturityEnginePath()} style={{ ...kaeLabel, color: '#0369A1', fontSize: '6px' }}>→ COMPANY MATURITY ENGINE</Link>
       </div>
     </section>
   );

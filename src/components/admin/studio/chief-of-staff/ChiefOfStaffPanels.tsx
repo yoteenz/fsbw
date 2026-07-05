@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -496,6 +496,23 @@ export function KnowledgeAssetEngineLinkPanel() {
         style={{ ...cosLabel, color: '#0D9488', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN KNOWLEDGE ASSET ENGINE
+      </Link>
+    </section>
+  );
+}
+
+export function CompanyMaturityEngineLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #0369A1' }}>
+      <p style={cosSectionTitle}>COMPANY MATURITY ENGINE · ORGANIZATIONAL UNDERSTANDING</p>
+      <p style={cosLabel}>
+        Maturity monitoring · proactive improvements · universal entry · meet founders where they are
+      </p>
+      <Link
+        to={adminStudioCompanyMaturityEnginePath()}
+        style={{ ...cosLabel, color: '#0369A1', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN COMPANY MATURITY ENGINE
       </Link>
     </section>
   );

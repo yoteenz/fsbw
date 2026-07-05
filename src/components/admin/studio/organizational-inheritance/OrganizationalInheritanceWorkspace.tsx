@@ -3,6 +3,7 @@ import { useOrganizationalInheritanceState } from '../../../../hooks/useOrganiza
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   CrossCompanyLearningPanel,
+  CompanyMaturityEngineLinkPanel,
   DepartmentInheritancePanel,
   ExecutiveInheritancePanel,
   GeneticBlendingPanel,
@@ -88,6 +89,7 @@ export function OrganizationalInheritanceWorkspace() {
           <>
             <OrganizationalEvolutionPanel {...panelProps} />
             <CrossCompanyLearningPanel {...panelProps} />
+            <CompanyMaturityEngineLinkPanel />
             <MarketplacePreparedPanel {...panelProps} />
           </>
         );
@@ -96,6 +98,7 @@ export function OrganizationalInheritanceWorkspace() {
         return (
           <>
             <InheritanceDashboardPanel {...panelProps} />
+            <CompanyMaturityEngineLinkPanel />
             <InheritancePlatformChainPanel />
             <InheritanceWizardPanel {...panelProps} />
             <InheritanceRecommendationsPanel {...panelProps} />

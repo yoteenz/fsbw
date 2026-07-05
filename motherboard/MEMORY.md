@@ -37127,3 +37127,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** knowledge-asset-engine core + UI + hook + page + service, CoS/distribution/ecosystem-marketplace/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 52: Company Maturity Engine V1.0
+
+**Context (full chat):** User requested Milestone 52 — introduce **Company Maturity Engine** as the universal onboarding / organizational understanding system for Studio OS. Prior milestones in arc: M47 Reader Graph, M48 Relationship Engine, M49 Creator Marketplace, M50 Ecosystem Marketplace, M51 Knowledge Asset Engine. Constraints: do not redesign overall Studio OS shell · do not modify Frontal Slayer · do not remove existing systems · work on `master` only · one commit + one push per task.
+
+**Goal:** Replace traditional onboarding with organizational understanding. Two paths (build new company · import existing company) → same organizational blueprint. Features: company stages (idea → enterprise), existing asset inventory, integration center (architecture-ready for future imports), 21-domain maturity assessment (score · confidence · strengths · weaknesses · recommendations · growth opportunities), organizational scan/diagnostic (baseline health report), architect recommendations (skip/recommend/optimize), company roadmap (milestones · sequence · effort · impact · dependencies · priority · confidence), company timeline (permanent organizational history), simulation (compare implementation paths), Chief of Staff continuous maturity monitoring, knowledge graph integration. Universal entry point — meet founders where they are · preserve past · accelerate future.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/company-maturity-engine/` — types (domains, onboarding paths, stages, asset inventory, integrations, diagnostic, architect recs, roadmap, timeline, simulations, CoS alerts, historical progress), constants (philosophy, 7 company stages, 21 maturity domains, connected systems, integration platforms list), localStorage store (`studioOsCompanyMaturityEngine_v1`), rich NDXBOOK bootstrap seed (~78% overall maturity · 21 domain scores · 9 existing assets · 8 integrations · full diagnostic · 6 architect recs · 6 roadmap items · 8 timeline events · 3 simulations · 4 CoS alerts).
+- **Hook:** `useCompanyMaturityEngineState` — workspace selection, store read/refresh.
+- **UI:** `/admin/studio/company-maturity-engine` — `CompanyMaturityEngineWorkspace` with tabs (Dashboard · Assessment/Scan · Inventory/Integrations · Roadmap/Architects · Timeline/Progress · Simulation/CoS); panels for dashboard, philosophy, onboarding paths, company stage, maturity assessment, scorecard, organizational scan, existing asset inventory, integration center, architect recommendations, company roadmap, timeline, historical progress, simulations, CoS maturity monitoring, connected systems. Sky accent theme (`#0369A1`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (overview group · after organizational inheritance), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/companyMaturityEngine/service.ts`, `bootstrapCompanyMaturityEnginePlatform()` after Knowledge Asset Engine in `workspaces/index.ts`.
+- **Chief of Staff integration:** `Company Maturity Engine` in `SOFT_APPROVAL_SOURCES`; `CompanyMaturityEngineLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Knowledge Asset Engine integration:** connected systems link to Company Maturity Engine.
+- **Organizational Inheritance integration:** `CompanyMaturityEngineLinkPanel` in OI workspace (platform + evolution tabs).
+- **Knowledge graph:** `node-company-maturity-engine` + edges to Organizational Inheritance, Leadership DNA, Simulation Engine, Chief of Staff, Studio Intelligence, Knowledge Asset Engine.
+
+**Route:** `/admin/studio/company-maturity-engine` · Overview nav group · sky accent theme.
+
+**Changes:** company-maturity-engine core + UI + hook + page + service, CoS/knowledge-asset-engine/organizational-inheritance/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

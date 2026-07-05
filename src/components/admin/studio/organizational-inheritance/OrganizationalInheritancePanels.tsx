@@ -6,7 +6,7 @@ import type {
   OrganizationalInheritanceStore,
 } from '../../../../studio-os-core/organizational-inheritance/types';
 import { INHERITANCE_SOURCE_LABELS, WIZARD_PRESETS } from '../../../../studio-os-core/organizational-inheritance/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioOsCreatePath, adminStudioEcosystemMarketplacePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioOsCreatePath, adminStudioEcosystemMarketplacePath, adminStudioCompanyMaturityEnginePath } from '../../../../utils/adminStudioRoutes';
 import {
   ORGANIZATIONAL_INHERITANCE_STYLES,
   OI,
@@ -462,6 +462,21 @@ export function MarketplacePreparedPanel({ store }: Pick<Props, 'store'>) {
         style={{ ...oiLabel, color: OI.indigo, fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8, fontSize: '6px' }}
       >
         → OPEN ECOSYSTEM MARKETPLACE
+      </Link>
+    </section>
+  );
+}
+
+export function CompanyMaturityEngineLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={oiPanel}>
+      <p style={oiSectionTitle}>COMPANY MATURITY ENGINE · UNIVERSAL ENTRY</p>
+      <p style={{ ...oiLabel, color: '#0369A1' }}>Assess organizational maturity · import existing assets · generate roadmap before inheritance decisions.</p>
+      <Link
+        to={adminStudioCompanyMaturityEnginePath()}
+        style={{ ...oiLabel, color: '#0369A1', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8, fontSize: '6px' }}
+      >
+        → OPEN COMPANY MATURITY ENGINE
       </Link>
     </section>
   );

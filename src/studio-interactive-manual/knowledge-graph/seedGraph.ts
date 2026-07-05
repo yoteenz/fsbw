@@ -27,6 +27,7 @@ import {
   adminStudioCreatorMarketplacePath,
   adminStudioEcosystemMarketplacePath,
   adminStudioKnowledgeAssetEnginePath,
+  adminStudioCompanyMaturityEnginePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -338,6 +339,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 51',
     status: 'demo',
     searchKeywords: ['knowledge asset', 'single source of truth', 'knowledge lineage', 'knowledge maturity', 'knowledge academy', 'institutional memory'],
+  },
+  {
+    id: 'node-company-maturity-engine',
+    name: 'COMPANY MATURITY ENGINE',
+    type: 'module',
+    description:
+      'Universal onboarding system — assess organizational maturity across 21 domains, preserve existing assets, recommend architects, and generate personalized roadmaps.',
+    purpose: 'Organizational understanding before improvement · meet founders where they are · never force a restart.',
+    route: adminStudioCompanyMaturityEnginePath(),
+    moduleId: 'company-maturity-engine',
+    relatedManualChapter: 'CHAPTER · COMPANY MATURITY ENGINE · UNIVERSAL ONBOARDING',
+    versionIntroduced: 'Milestone 52',
+    status: 'demo',
+    searchKeywords: ['company maturity', 'onboarding', 'organizational assessment', 'maturity roadmap', 'architect recommendations', 'integration center'],
   },
   {
     id: 'node-fallback-used',
@@ -1052,6 +1067,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-knowledge-asset-cos', fromId: 'node-chief-of-staff', toId: 'node-knowledge-asset-engine', type: 'related-to', label: 'KNOWLEDGE GOVERNANCE' },
   { id: 'e-knowledge-asset-intelligence', fromId: 'node-studio-intelligence', toId: 'node-knowledge-asset-engine', type: 'feeds', label: 'EXPAND · REFRESH · TEACH' },
   { id: 'e-knowledge-asset-platform', fromId: 'node-knowledge-asset-engine', toId: 'knowledge-asset-engine', type: 'documented-by', label: 'INSTITUTIONAL MEMORY' },
+  { id: 'e-maturity-inheritance', fromId: 'node-company-maturity-engine', toId: 'node-organizational-inheritance', type: 'feeds', label: 'MATURITY → INHERITANCE PATH' },
+  { id: 'e-maturity-leadership', fromId: 'node-company-maturity-engine', toId: 'node-leadership-dna', type: 'related-to', label: 'LEADERSHIP ASSESSMENT' },
+  { id: 'e-maturity-simulation', fromId: 'node-company-maturity-engine', toId: 'node-simulation-engine', type: 'related-to', label: 'PATH SIMULATION' },
+  { id: 'e-maturity-cos', fromId: 'node-chief-of-staff', toId: 'node-company-maturity-engine', type: 'related-to', label: 'MATURITY MONITORING' },
+  { id: 'e-maturity-intelligence', fromId: 'node-studio-intelligence', toId: 'node-company-maturity-engine', type: 'feeds', label: 'ARCHITECT RECOMMENDATIONS' },
+  { id: 'e-maturity-knowledge', fromId: 'node-company-maturity-engine', toId: 'node-knowledge-asset-engine', type: 'related-to', label: 'KNOWLEDGE MATURITY DOMAIN' },
+  { id: 'e-maturity-platform', fromId: 'node-company-maturity-engine', toId: 'company-maturity-engine', type: 'documented-by', label: 'UNIVERSAL ENTRY' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

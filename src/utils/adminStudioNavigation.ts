@@ -106,6 +106,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'company-maturity-engine',
+    title: 'COMPANY MATURITY ENGINE',
+    purpose: 'Universal onboarding — assess maturity, preserve assets, recommend architects and roadmap. Meet founders where they are.',
+    route: p('company-maturity-engine'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN MATURITY',
+    moduleKey: 'company-maturity-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

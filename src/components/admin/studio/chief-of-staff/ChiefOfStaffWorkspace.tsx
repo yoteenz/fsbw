@@ -22,6 +22,7 @@ import {
   CreatorMarketplaceLinkPanel,
   EcosystemMarketplaceLinkPanel,
   KnowledgeAssetEngineLinkPanel,
+  CompanyMaturityEngineLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -89,6 +90,7 @@ export function ChiefOfStaffWorkspace() {
             <CreatorMarketplaceLinkPanel />
             <EcosystemMarketplaceLinkPanel />
             <KnowledgeAssetEngineLinkPanel />
+            <CompanyMaturityEngineLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -124,6 +126,7 @@ export function ChiefOfStaffWorkspace() {
             <CreatorMarketplaceLinkPanel />
             <EcosystemMarketplaceLinkPanel />
             <KnowledgeAssetEngineLinkPanel />
+            <CompanyMaturityEngineLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

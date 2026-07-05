@@ -17,6 +17,7 @@ export type StudioOsCoreModuleId =
   | 'creator-marketplace'
   | 'ecosystem-marketplace'
   | 'knowledge-asset-engine'
+  | 'company-maturity-engine'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -148,6 +149,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'KNOWLEDGE ASSET ENGINE',
     description: 'Foundational knowledge model — SSOT, evolution, lineage, academy, institutional memory.',
     routeSegment: 'knowledge-asset-engine',
+  },
+  {
+    id: 'company-maturity-engine',
+    label: 'COMPANY MATURITY ENGINE',
+    description: 'Universal onboarding — maturity assessment, asset inventory, architects, roadmap, organizational understanding.',
+    routeSegment: 'company-maturity-engine',
   },
   {
     id: 'executive-command-center',
