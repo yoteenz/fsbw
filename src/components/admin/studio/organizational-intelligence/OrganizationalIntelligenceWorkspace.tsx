@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useOrganizationalIntelligenceState } from '../../../../hooks/useOrganizationalIntelligenceState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
 import {
   ConnectedSystemsPanel,
   ContinuousLearningPanel,
@@ -103,6 +104,7 @@ export function OrganizationalIntelligenceWorkspace() {
   return (
     <div className="organizational-intelligence-root">
       <OrganizationalIntelligenceHeader />
+      <ConciergeFounderBanner conciergeId="knowledge-concierge" />
       <div className="flex gap-1 overflow-x-auto pb-2 mb-2">
         {TABS.map((t) => (
           <button

@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath, adminStudioOrganizationalWorkflowOrchestrationPath, adminStudioOrganizationalSelfImprovementPath, adminStudioOrganizationalGovernanceSafeguardsPath, adminStudioOrganizationalMaturityModelPath, adminStudioLeadershipModesPath, adminStudioCompanyOnboardingIntelligencePath, adminStudioArrivalExperiencePath, adminStudioExecutiveApprenticeshipFounderCalibrationPath, adminStudioStudioInstitutePath, adminStudioOrganizationalApprenticeshipPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath, adminStudioOrganizationalWorkflowOrchestrationPath, adminStudioOrganizationalSelfImprovementPath, adminStudioOrganizationalGovernanceSafeguardsPath, adminStudioOrganizationalMaturityModelPath, adminStudioLeadershipModesPath, adminStudioCompanyOnboardingIntelligencePath, adminStudioArrivalExperiencePath, adminStudioExecutiveApprenticeshipFounderCalibrationPath, adminStudioStudioInstitutePath, adminStudioOrganizationalApprenticeshipPath, adminStudioConciergeLayerPath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -43,14 +43,14 @@ export function ChiefOfStaffHeader() {
       <style>{CHIEF_OF_STAFF_STYLES}</style>
       <header className="p-3 mb-3" style={{ ...cosDarkHeader, borderTop: `3px solid ${COS.gold}` }}>
         <p style={{ fontFamily: '"Covered By Your Grace", sans-serif', fontSize: '22px', margin: 0 }}>
-          CHIEF OF STAFF
+          CHIEF CONCIERGE
         </p>
         <p style={{ ...cosLabel, color: '#94A3B8' }}>
           <span style={cosLiveDot} />
-          FOUNDER&apos;S PRIMARY EXECUTIVE · ALL DEPARTMENTS REPORT HERE FIRST
+          YOUR PRIMARY GUIDE THROUGHOUT STUDIO OS · WARM · INTELLIGENT · TRUSTWORTHY
         </p>
         <p style={{ ...cosLabel, color: '#CBD5E1', marginTop: 4 }}>
-          FOUNDER → CHIEF OF STAFF → EXECUTIVE LEADERSHIP → DEPARTMENTS → WORKERS → TASKS
+          FOUNDER-FACING CONCIERGE · GOVERNANCE: CHIEF OF STAFF · EXECUTIVE ORGANIZATION UNCHANGED
         </p>
       </header>
     </>
@@ -89,7 +89,7 @@ export function MorningBriefingPanel({ store }: Pick<Props, 'store'>) {
   const b = store.morningBriefing;
   return (
     <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: `4px solid ${COS.gold}` }}>
-      <p style={cosSectionTitle}>MORNING BRIEFING · UNIFIED</p>
+      <p style={cosSectionTitle}>CONCIERGE BRIEFING · UNIFIED · CHIEF CONCIERGE</p>
       <p style={{ ...cosLabel, color: COS.accent }}>{b.businessHealthSummary}</p>
       <p style={{ ...cosSectionTitle, marginTop: 8 }}>DEPARTMENTS</p>
       {b.departmentSummaries.map((s) => (
@@ -1042,6 +1042,23 @@ export function OrganizationalApprenticeshipLinkPanel() {
         style={{ ...cosLabel, color: '#155E75', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN ORGANIZATIONAL APPRENTICESHIP
+      </Link>
+    </section>
+  );
+}
+
+export function ConciergeLayerLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #92704A' }}>
+      <p style={cosSectionTitle}>CONCIERGE LAYER · MEET YOUR CONCIERGE TEAM V1.0</p>
+      <p style={cosLabel}>
+        Executives govern · concierges guide · hospitality-driven founder experience · you don&apos;t navigate Studio OS — Studio OS guides you
+      </p>
+      <Link
+        to={adminStudioConciergeLayerPath()}
+        style={{ ...cosLabel, color: '#92704A', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → MEET YOUR CONCIERGE TEAM
       </Link>
     </section>
   );

@@ -9,7 +9,7 @@ export function buildStudioInstituteSeed(): Partial<StudioInstituteStore> {
     instituteMotto: SI_INSTITUTE_MOTTO,
     dashboard: {
       summary:
-        'STUDIO INSTITUTE V1.0 — NDXBOOK · 9 schools active · 6 executive faculty · 847 knowledge contributions · wisdom compounding daily.',
+        'STUDIO INSTITUTE V1.0 — NDXBOOK · 9 schools active · 6 concierge mentors · 847 knowledge contributions · wisdom compounding daily.',
       activeLearners: 124,
       schoolsActive: 9,
       facultyMembers: 6,

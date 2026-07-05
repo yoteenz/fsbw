@@ -4,14 +4,14 @@ import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio
 import { ChiefOfStaffWorkspace } from '../../../../components/admin/studio/chief-of-staff/ChiefOfStaffWorkspace';
 
 const CHIEF_OF_STAFF_SUBTITLE =
-  'Your primary executive — soft approvals, attention protection, and unified briefings so you lead the organization, not every task.';
+  'Chief Concierge — your primary guide throughout Studio OS. Warm briefings, attention protection, and personal coordination. Governance role: Chief of Staff · executive organization unchanged.';
 
 export default function AdminStudioChiefOfStaffPage() {
   const navigate = useNavigate();
 
   return (
     <AdminStudioStageShell
-      title="CHIEF OF STAFF"
+      title="CHIEF CONCIERGE"
       subtitle={CHIEF_OF_STAFF_SUBTITLE}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"

@@ -49,6 +49,7 @@ export type StudioOsCoreModuleId =
   | 'executive-apprenticeship-founder-calibration'
   | 'studio-institute'
   | 'organizational-apprenticeship'
+  | 'concierge-layer'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -372,6 +373,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL APPRENTICESHIP',
     description: 'Permanent learning & trust-building — stewardship and earned trust. V1.0.',
     routeSegment: 'organizational-apprenticeship',
+  },
+  {
+    id: 'concierge-layer',
+    label: 'CONCIERGE LAYER',
+    description: 'Founder-facing guidance — hospitality-driven executive experience. V1.0.',
+    routeSegment: 'concierge-layer',
   },
   {
     id: 'executive-command-center',

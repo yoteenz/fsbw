@@ -83,6 +83,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'executive-apprenticeship-founder-calibration'
   | 'studio-institute'
   | 'organizational-apprenticeship'
+  | 'concierge-layer'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -173,6 +174,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'executive-apprenticeship-founder-calibration',
   'studio-institute',
   'organizational-apprenticeship',
+  'concierge-layer',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -282,6 +284,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   executiveApprenticeshipFounderCalibration: 'studio/executive-apprenticeship-founder-calibration',
   studioInstitute: 'studio/studio-institute',
   organizationalApprenticeship: 'studio/organizational-apprenticeship',
+  conciergeLayer: 'studio/concierge-layer',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -545,6 +548,10 @@ export function adminStudioStudioInstitutePath(): string {
 
 export function adminStudioOrganizationalApprenticeshipPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organizational-apprenticeship`;
+}
+
+export function adminStudioConciergeLayerPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/concierge-layer`;
 }
 
 export function adminStudioOsPath(): string {

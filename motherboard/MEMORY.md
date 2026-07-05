@@ -37833,3 +37833,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/organizational-apprenticeship` · back link from Studio Institute.
 
 **Changes:** organizational-apprenticeship core + UI + hook + page + service, CoS/SI/EAF/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
+---
+
+## 2026-07-05 — Milestone 77: Concierge Layer V1.0
+
+**Context (full chat):** User requested updating the entire Studio OS executive experience with a new **Concierge Layer** — founder-facing guidance built on top of the unchanged executive organization (CBO, CEO, CDO, CTO, CGO, CoS, Executive Framework, Council, OI, governance all remain). Prior work in this arc: M76 Organizational Apprenticeship (completed/pushed), M75 Studio Institute, M74 Executive Apprenticeship, M73.6 Arrival, M73.5 COI. Constraints: do not remove/rename underlying executives · maintain governance terminology internally · transform founder emotional experience from enterprise software to luxury headquarters hospitality · work on `master` · one commit + one push.
+
+**Goal:** Concierge Layer as defining Studio OS founder experience. Philosophy: executives think · concierges guide · executives govern · concierges create founder experience. Chief Concierge (founder-facing Chief of Staff) · Brand/Experience/Digital/Technology/Growth/Knowledge/Launch Concierges representing executive intelligence. Terminology: Meet Your Concierge Team · Concierge Directory · Concierge Briefing · Concierge Recommendations · Concierge Mentors (Studio Institute). Concierge behavior: guide · recommend · educate · coordinate · translate · prepare · surface opportunities · explain reasoning. Chief Concierge anchors arrival · founder walk · morning briefing · council prep · milestones.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/concierge-layer/` — types · constants · mapping (`CONCIERGE_ROSTER` + `executiveToConciergeTitle`) · store · bootstrap (8 identities · behavior · chief concierge moments · relationship examples · terminology map).
+- **Shared UI:** `ConciergeFounderBanner` (champagne `#92704A`) on CoS · all 5 C-suite · OI pages.
+- **Hub:** `/admin/studio/concierge-layer` — 4 tabs · Concierge Directory · philosophy · chief concierge experience.
+- **Founder-facing updates:** Arrival Experience (Chief Concierge welcome · Meet Your Concierge Team · Concierge Briefing) · Chief of Staff page/header (Chief Concierge primary · Concierge Briefing) · Studio Institute (Concierge Mentors panel · tab label) · strategy engine back → Concierge Layer.
+- **Wiring:** routes · nav · modules · App · services · workspaces bootstrap · KG `node-concierge-layer` + edges · CoS `ConciergeLayerLinkPanel` + SOFT_APPROVAL_SOURCES · cross-links.
+
+**Route:** `/admin/studio/concierge-layer` · back from Organizational Apprenticeship.
+
+**Changes:** concierge-layer core + UI + hook + page + service + cross-cutting founder-facing terminology, `motherboard/MEMORY.md`, `motherboard/CORE.md`.

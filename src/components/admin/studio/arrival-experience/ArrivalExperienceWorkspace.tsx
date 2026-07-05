@@ -7,12 +7,12 @@ import {
   ArrivalMemoryPanel,
   ArrivalPhilosophyPanel,
   ArrivalSequencePanel,
-  ChiefOfStaffArrivalWelcomePanel,
+  ChiefConciergeArrivalWelcomePanel,
+  ConciergeTeamIntroductionsPanel,
   ConnectedSystemsPanel,
   EnvironmentalStorytellingPanel,
-  ExecutiveIntroductionsPanel,
   FinalMessagePanel,
-  FirstExecutiveBriefingPanel,
+  FirstConciergeBriefingPanel,
   FutureOpportunitiesPanel,
   HeadquartersTourPanel,
   OrganizationalRevealPanel,
@@ -23,7 +23,7 @@ type AeTab = 'philosophy' | 'welcome' | 'tour' | 'briefing' | 'memory' | 'connec
 
 const TABS: { id: AeTab; label: string }[] = [
   { id: 'philosophy', label: 'PHILOSOPHY · SEQUENCE' },
-  { id: 'welcome', label: 'WELCOME · EXECUTIVES' },
+  { id: 'welcome', label: 'WELCOME · CONCIERGE TEAM' },
   { id: 'tour', label: 'TOUR · REVEAL' },
   { id: 'briefing', label: 'STORY · BRIEFING' },
   { id: 'memory', label: 'MEMORY · HOME' },
@@ -40,8 +40,8 @@ export function ArrivalExperienceWorkspace() {
       case 'welcome':
         return (
           <>
-            <ChiefOfStaffArrivalWelcomePanel {...panelProps} />
-            <ExecutiveIntroductionsPanel {...panelProps} />
+            <ChiefConciergeArrivalWelcomePanel {...panelProps} />
+            <ConciergeTeamIntroductionsPanel {...panelProps} />
           </>
         );
       case 'tour':
@@ -55,7 +55,7 @@ export function ArrivalExperienceWorkspace() {
         return (
           <>
             <EnvironmentalStorytellingPanel {...panelProps} />
-            <FirstExecutiveBriefingPanel {...panelProps} />
+            <FirstConciergeBriefingPanel {...panelProps} />
           </>
         );
       case 'memory':
@@ -81,12 +81,12 @@ export function ArrivalExperienceWorkspace() {
             <ArrivalPhilosophyPanel {...panelProps} />
             <ArrivalSequencePanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <ChiefOfStaffArrivalWelcomePanel {...panelProps} />
-            <ExecutiveIntroductionsPanel {...panelProps} />
+            <ChiefConciergeArrivalWelcomePanel {...panelProps} />
+            <ConciergeTeamIntroductionsPanel {...panelProps} />
             <HeadquartersTourPanel {...panelProps} />
             <OrganizationalRevealPanel {...panelProps} />
             <EnvironmentalStorytellingPanel {...panelProps} />
-            <FirstExecutiveBriefingPanel {...panelProps} />
+            <FirstConciergeBriefingPanel {...panelProps} />
             <ArrivalMemoryPanel {...panelProps} />
             <FinalMessagePanel {...panelProps} />
             <FutureOpportunitiesPanel {...panelProps} />

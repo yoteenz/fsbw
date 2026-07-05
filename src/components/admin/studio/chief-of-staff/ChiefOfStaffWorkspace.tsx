@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useChiefOfStaffState } from '../../../../hooks/useChiefOfStaffState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
 import {
   ChiefOfStaffHeader,
   CrossWorkspacePanel,
@@ -54,6 +55,7 @@ import {
   ExecutiveApprenticeshipLinkPanel,
   StudioInstituteLinkPanel,
   OrganizationalApprenticeshipLinkPanel,
+  ConciergeLayerLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -115,6 +117,7 @@ function ConnectedModuleLinkPanels() {
       <ExecutiveApprenticeshipLinkPanel />
       <StudioInstituteLinkPanel />
       <OrganizationalApprenticeshipLinkPanel />
+      <ConciergeLayerLinkPanel />
     </>
   );
 }
@@ -201,6 +204,7 @@ export function ChiefOfStaffWorkspace() {
   return (
     <div className="chief-of-staff-root">
       <ChiefOfStaffHeader />
+      <ConciergeFounderBanner conciergeId="chief-concierge" />
 
       <div className="flex gap-1 overflow-x-auto pb-2 mb-2">
         {TABS.map((t) => (

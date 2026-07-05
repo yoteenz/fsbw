@@ -25,6 +25,7 @@ import {
   adminStudioLeadershipManifestoFrameworkPath,
   adminStudioNdxbookPath,
   adminStudioOrganizationalApprenticeshipPath,
+  adminStudioConciergeLayerPath,
   adminStudioOrganizationalGovernanceSafeguardsPath,
   adminStudioOrganizationalIntelligencePath,
   adminStudioOrganizationalMaturityModelPath,
@@ -394,6 +395,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioExecutiveApprenticeshipFounderCalibrationPath()} style={{ ...oapLabel, color: '#7C3AED', fontSize: '6px' }}>→ EXECUTIVE APPRENTICESHIP</Link>
         <Link to={adminStudioArrivalExperiencePath()} style={{ ...oapLabel, color: '#0369A1', fontSize: '6px' }}>→ ARRIVAL EXPERIENCE</Link>
         <Link to={adminStudioNdxbookPath()} style={{ ...oapLabel, color: '#334155', fontSize: '6px' }}>→ NDXBOOK</Link>
+        <Link to={adminStudioConciergeLayerPath()} style={{ ...oapLabel, color: '#92704A', fontSize: '6px' }}>→ CONCIERGE LAYER</Link>
         <Link to={adminStudioOrganizationalApprenticeshipPath()} style={{ ...oapLabel, color: '#155E75', fontSize: '6px' }}>→ ORGANIZATIONAL APPRENTICESHIP</Link>
       </div>
     </section>

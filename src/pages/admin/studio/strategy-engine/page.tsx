@@ -15,7 +15,7 @@ export default function AdminStudioStrategyEnginePage() {
       subtitle={STRATEGY_ENGINE_SUBTITLE}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"
-      onBack={() => navigate('/admin/studio/organizational-apprenticeship')}
+      onBack={() => navigate('/admin/studio/concierge-layer')}
       navGroupId="intelligence"
     >
       <StrategyEngineWorkspace />

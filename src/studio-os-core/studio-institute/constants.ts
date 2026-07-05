@@ -35,5 +35,6 @@ export const SI_CONNECTED_SYSTEMS = [
   'Organizational Maturity Model',
   'Founder\'s Promise',
   'Studio Intelligence',
+  'Concierge Layer',
   'NDXBOOK',
 ] as const;

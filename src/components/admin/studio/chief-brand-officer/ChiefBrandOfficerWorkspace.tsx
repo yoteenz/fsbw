@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useChiefBrandOfficerState } from '../../../../hooks/useChiefBrandOfficerState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
 import {
   BrandAlignmentPanel,
   BrandCouncilPanel,
@@ -98,6 +99,7 @@ export function ChiefBrandOfficerWorkspace() {
   return (
     <div className="chief-brand-officer-root">
       <ChiefBrandOfficerHeader />
+      <ConciergeFounderBanner conciergeId="brand-concierge" />
       <div className="flex gap-1 overflow-x-auto pb-2 mb-2">
         {TABS.map((t) => (
           <button

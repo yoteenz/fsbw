@@ -490,6 +490,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'concierge-layer',
+    title: 'CONCIERGE LAYER',
+    purpose: 'Founder-facing guidance — executives govern · concierges guide · hospitality-driven Studio OS. V1.0.',
+    route: p('concierge-layer'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'MEET CONCIERGE TEAM',
+    moduleKey: 'concierge-layer',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useChiefTechnologyOfficerState } from '../../../../hooks/useChiefTechnologyOfficerState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
 import {
   ChiefTechnologyOfficerHeader,
   ConnectedSystemsPanel,
@@ -104,6 +105,7 @@ export function ChiefTechnologyOfficerWorkspace() {
   return (
     <div className="chief-technology-officer-root">
       <ChiefTechnologyOfficerHeader />
+      <ConciergeFounderBanner conciergeId="technology-concierge" />
       <div className="flex gap-1 overflow-x-auto pb-2 mb-2">
         {TABS.map((t) => (
           <button

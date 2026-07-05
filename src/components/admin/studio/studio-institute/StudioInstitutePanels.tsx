@@ -3,6 +3,7 @@ import type {
   StudioInstituteStore,
   StudioInstituteWorkspaceId,
 } from '../../../../studio-os-core/studio-institute/types';
+import { executiveToConciergeTitle } from '../../../../studio-os-core/concierge-layer/mapping';
 import { SI_CONNECTED_SYSTEMS } from '../../../../studio-os-core/studio-institute/constants';
 import {
   adminStudioArrivalExperiencePath,
@@ -28,6 +29,7 @@ import {
   adminStudioRelationshipEnginePath,
   adminStudioStudioInstitutePath,
   adminStudioOrganizationalApprenticeshipPath,
+  adminStudioConciergeLayerPath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -79,7 +81,7 @@ export function SiDashboardPanel({ store }: Pick<Props, 'store'>) {
         {[
           ['LEARNERS', `${d.activeLearners}`],
           ['SCHOOLS', `${d.schoolsActive}`],
-          ['FACULTY', `${d.facultyMembers}`],
+          ['CONCIERGE MENTORS', `${d.facultyMembers}`],
           ['CERTIFIED', `${d.certificationsEarned}`],
           ['CONTRIBUTIONS', `${d.knowledgeContributions}`],
         ].map(([label, val]) => (
@@ -138,15 +140,16 @@ export function SchoolsOfExcellencePanel({ store }: Pick<Props, 'store'>) {
   );
 }
 
-export function ExecutiveFacultyPanel({ store }: Pick<Props, 'store'>) {
+export function ConciergeMentorsPanel({ store }: Pick<Props, 'store'>) {
   return (
     <section className="p-3 mb-3" style={siPanel}>
-      <p style={siSectionTitle}>EXECUTIVE FACULTY · TEACH FROM EXPERIENCE</p>
+      <p style={siSectionTitle}>CONCIERGE MENTORS · PERSONAL MENTORSHIP · NOT CLASSES</p>
       {store.executiveFaculty.map((fac) => (
         <div key={fac.id} className="py-2 border-b" style={{ borderColor: SI.panelBorder }}>
           <p style={{ ...siLabel, fontSize: '6px', color: SI.bronze, fontFamily: '"Futura PT Medium"' }}>
-            {fac.executive.toUpperCase()}
+            {executiveToConciergeTitle(fac.executive).toUpperCase()} · MENTOR
           </p>
+          <p style={{ ...siLabel, fontSize: '5px', color: SI.slate }}>Represents {fac.executive}</p>
           <p style={siLabel}>Teaches: {fac.teaches.join(' · ')}</p>
           <p style={{ ...siLabel, color: SI.emerald }}>Source: {fac.source}</p>
         </div>
@@ -154,6 +157,9 @@ export function ExecutiveFacultyPanel({ store }: Pick<Props, 'store'>) {
     </section>
   );
 }
+
+/** @deprecated Use ConciergeMentorsPanel — executive faculty data unchanged */
+export const ExecutiveFacultyPanel = ConciergeMentorsPanel;
 
 export function OrganizationFirstEducationPanel({ store }: Pick<Props, 'store'>) {
   return (
@@ -359,6 +365,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioArrivalExperiencePath()} style={{ ...siLabel, color: '#0369A1', fontSize: '6px' }}>→ ARRIVAL EXPERIENCE</Link>
         <Link to={adminStudioNdxbookPath()} style={{ ...siLabel, color: '#334155', fontSize: '6px' }}>→ NDXBOOK</Link>
         <Link to={adminStudioStudioInstitutePath()} style={{ ...siLabel, color: '#854D0E', fontSize: '6px' }}>→ STUDIO INSTITUTE</Link>
+        <Link to={adminStudioConciergeLayerPath()} style={{ ...siLabel, color: '#92704A', fontSize: '6px' }}>→ CONCIERGE LAYER</Link>
         <Link to={adminStudioOrganizationalApprenticeshipPath()} style={{ ...siLabel, color: '#155E75', fontSize: '6px' }}>→ ORGANIZATIONAL APPRENTICESHIP</Link>
       </div>
     </section>

@@ -3,9 +3,11 @@ import type {
   ArrivalExperienceStore,
   ArrivalExperienceWorkspaceId,
 } from '../../../../studio-os-core/arrival-experience/types';
+import { executiveToConciergeTitle } from '../../../../studio-os-core/concierge-layer/mapping';
 import { AE_CONNECTED_SYSTEMS } from '../../../../studio-os-core/arrival-experience/constants';
 import {
   adminStudioArrivalExperiencePath,
+  adminStudioConciergeLayerPath,
   adminStudioCampusEvolutionEnginePath,
   adminStudioChiefOfStaffPath,
   adminStudioCompanyGenomePath,
@@ -66,7 +68,7 @@ export function AeDashboardPanel({ store }: Pick<Props, 'store'>) {
       </p>
       <div className="grid grid-cols-2 gap-2 mt-3 sm:grid-cols-4">
         {[
-          ['EXECUTIVES', `${d.executivesIntroduced}`],
+          ['CONCIERGE TEAM', `${d.executivesIntroduced}`],
           ['TOUR STOPS', `${d.tourStopsComplete}`],
           ['HEADQUARTERS', d.headquartersLive ? 'LIVE' : 'AWAKENING'],
           ['ARRIVAL', d.arrivalComplete ? 'HOME' : 'IN PROGRESS'],
@@ -108,11 +110,12 @@ export function ArrivalSequencePanel({ store }: Pick<Props, 'store'>) {
   );
 }
 
-export function ChiefOfStaffArrivalWelcomePanel({ store }: Pick<Props, 'store'>) {
+export function ChiefConciergeArrivalWelcomePanel({ store }: Pick<Props, 'store'>) {
   const w = store.chiefOfStaffWelcome;
   return (
     <section className="p-3 mb-3" style={{ ...aePanel, background: AE.missionBg }}>
-      <p style={aeSectionTitle}>CHIEF OF STAFF WELCOME · PERSONAL GREETING</p>
+      <p style={aeSectionTitle}>CHIEF CONCIERGE WELCOME · PERSONAL GREETING</p>
+      <p style={{ ...aeLabel, fontSize: '6px', color: AE.slate }}>Governance: Chief of Staff · Founder-facing: Chief Concierge</p>
       <p style={{ ...aeValue, fontSize: '14px', fontFamily: '"Covered By Your Grace", sans-serif', color: AE.sky }}>
         {w.headline}
       </p>
@@ -125,15 +128,16 @@ export function ChiefOfStaffArrivalWelcomePanel({ store }: Pick<Props, 'store'>)
   );
 }
 
-export function ExecutiveIntroductionsPanel({ store }: Pick<Props, 'store'>) {
+export function ConciergeTeamIntroductionsPanel({ store }: Pick<Props, 'store'>) {
   return (
     <section className="p-3 mb-3" style={aePanel}>
-      <p style={aeSectionTitle}>EXECUTIVE INTRODUCTIONS · MEET IN THEIR WORKSPACE</p>
+      <p style={aeSectionTitle}>MEET YOUR CONCIERGE TEAM · PERSONAL GUIDANCE IN THEIR STUDIO</p>
       {store.executiveIntroductions.map((exec) => (
         <div key={exec.id} className="py-2 border-b" style={{ borderColor: AE.panelBorder }}>
           <p style={{ ...aeLabel, fontSize: '6px', color: AE.sky, fontFamily: '"Futura PT Medium"' }}>
-            {exec.executive.toUpperCase()} · {exec.workspace.toUpperCase()}
+            {executiveToConciergeTitle(exec.executive).toUpperCase()} · {exec.workspace.toUpperCase()}
           </p>
+          <p style={{ ...aeLabel, fontSize: '5px', color: AE.slate }}>Represents {exec.executive}</p>
           <p style={aeLabel}><span style={{ color: AE.slate }}>Purpose:</span> {exec.purpose}</p>
           <p style={aeLabel}><span style={{ color: AE.slate }}>Responsibilities:</span> {exec.responsibilities}</p>
           <p style={aeLabel}><span style={{ color: AE.slate }}>Philosophy:</span> {exec.leadershipPhilosophy}</p>
@@ -193,18 +197,18 @@ export function EnvironmentalStorytellingPanel({ store }: Pick<Props, 'store'>) 
   );
 }
 
-export function FirstExecutiveBriefingPanel({ store }: Pick<Props, 'store'>) {
+export function FirstConciergeBriefingPanel({ store }: Pick<Props, 'store'>) {
   const b = store.firstExecutiveBriefing;
   return (
     <section className="p-3 mb-3" style={{ ...aePanel, background: AE.missionBg }}>
-      <p style={aeSectionTitle}>FIRST EXECUTIVE BRIEFING · WHERE THE ORGANIZATION STANDS</p>
+      <p style={aeSectionTitle}>FIRST CONCIERGE BRIEFING · WHERE THE ORGANIZATION STANDS</p>
       <p style={{ ...aeLabel, color: AE.sky, fontFamily: '"Futura PT Medium"' }}>MATURITY: {b.organizationalMaturity}</p>
       <p style={{ ...aeSectionTitle, marginTop: 8 }}>CURRENT PRIORITIES</p>
       {b.currentPriorities.map((p) => (
         <p key={p} style={aeLabel}>· {p}</p>
       ))}
-      <p style={{ ...aeSectionTitle, marginTop: 8 }}>RECOMMENDED EXECUTIVES</p>
-      <p style={aeLabel}>{b.recommendedExecutives.join(' · ')}</p>
+      <p style={{ ...aeSectionTitle, marginTop: 8 }}>YOUR CONCIERGE TEAM</p>
+      <p style={aeLabel}>{b.recommendedExecutives.map(executiveToConciergeTitle).join(' · ')}</p>
       <p style={{ ...aeSectionTitle, marginTop: 8 }}>RECOMMENDED ARCHITECTS</p>
       <p style={aeLabel}>{b.recommendedArchitects.join(' · ')}</p>
       <p style={{ ...aeSectionTitle, marginTop: 8 }}>IMMEDIATE OPPORTUNITIES</p>
@@ -231,7 +235,7 @@ export function ArrivalMemoryPanel({ store }: Pick<Props, 'store'>) {
       <p style={aeLabel}><span style={{ color: AE.slate }}>Arrival date:</span> {m.arrivalDate}</p>
       <p style={aeLabel}><span style={{ color: AE.slate }}>Organization&apos;s first day:</span> {m.organizationFirstDay}</p>
       <p style={aeLabel}><span style={{ color: AE.slate }}>Initial maturity:</span> {m.initialMaturity}</p>
-      <p style={aeLabel}><span style={{ color: AE.slate }}>First executive team:</span> {m.firstExecutiveTeam.join(' · ')}</p>
+      <p style={aeLabel}><span style={{ color: AE.slate }}>First concierge team:</span> {m.firstExecutiveTeam.map(executiveToConciergeTitle).join(' · ')}</p>
       <p style={aeLabel}><span style={{ color: AE.slate }}>First roadmap:</span> {m.firstRoadmap}</p>
       <p style={aeLabel}><span style={{ color: AE.slate }}>Founder&apos;s first vision:</span> {m.foundersFirstVision}</p>
       <p style={{ ...aeLabel, color: AE.sky, marginTop: 8, fontStyle: 'italic' }}>{m.preservedNote}</p>
@@ -301,7 +305,8 @@ export function ConnectedSystemsPanel() {
       </div>
       <div className="mt-2 flex flex-wrap gap-2">
         <Link to={adminStudioCompanyOnboardingIntelligencePath()} style={{ ...aeLabel, color: '#0D9488', fontSize: '6px' }}>→ COMPANY ONBOARDING INTELLIGENCE</Link>
-        <Link to={adminStudioChiefOfStaffPath()} style={{ ...aeLabel, color: '#334155', fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioConciergeLayerPath()} style={{ ...aeLabel, color: '#92704A', fontSize: '6px' }}>→ CONCIERGE LAYER</Link>
+        <Link to={adminStudioChiefOfStaffPath()} style={{ ...aeLabel, color: '#334155', fontSize: '6px' }}>→ CHIEF OF STAFF (GOVERNANCE)</Link>
         <Link to={adminStudioCompanyGenomePath()} style={{ ...aeLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>
         <Link to={adminStudioOrganizationalMaturityModelPath()} style={{ ...aeLabel, color: '#D97706', fontSize: '6px' }}>→ ORGANIZATIONAL MATURITY MODEL</Link>
         <Link to={adminStudioExecutiveFrameworkPath()} style={{ ...aeLabel, color: '#334155', fontSize: '6px' }}>→ EXECUTIVE FRAMEWORK</Link>

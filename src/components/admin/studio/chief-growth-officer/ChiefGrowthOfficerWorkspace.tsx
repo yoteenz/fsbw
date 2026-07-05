@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useChiefGrowthOfficerState } from '../../../../hooks/useChiefGrowthOfficerState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
 import {
   ChiefGrowthOfficerHeader,
   ConnectedSystemsPanel,
@@ -99,6 +100,7 @@ export function ChiefGrowthOfficerWorkspace() {
   return (
     <div className="chief-growth-officer-root">
       <ChiefGrowthOfficerHeader />
+      <ConciergeFounderBanner conciergeId="growth-concierge" />
       <div className="flex gap-1 overflow-x-auto pb-2 mb-2">
         {TABS.map((t) => (
           <button

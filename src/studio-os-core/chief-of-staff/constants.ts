@@ -71,6 +71,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Executive Apprenticeship & Founder Calibration',
   'Studio Institute',
   'Organizational Apprenticeship',
+  'Concierge Layer',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

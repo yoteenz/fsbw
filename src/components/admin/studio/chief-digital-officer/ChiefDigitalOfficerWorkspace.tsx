@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useChiefDigitalOfficerState } from '../../../../hooks/useChiefDigitalOfficerState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
 import {
   AiEcosystemPanel,
   CdoDashboardPanel,
@@ -111,6 +112,7 @@ export function ChiefDigitalOfficerWorkspace() {
   return (
     <div className="chief-digital-officer-root">
       <ChiefDigitalOfficerHeader />
+      <ConciergeFounderBanner conciergeId="digital-concierge" />
       <div className="flex gap-1 overflow-x-auto pb-2 mb-2">
         {TABS.map((t) => (
           <button

@@ -333,6 +333,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationalApprenticeship.bootstrapOrganizationalApprenticeshipPlatform();
     await yieldToMain();
 
+    const conciergeLayer = await import('../studio-os-core/concierge-layer/bootstrap');
+    conciergeLayer.bootstrapConciergeLayerPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

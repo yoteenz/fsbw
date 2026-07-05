@@ -5,7 +5,7 @@ import {
   AdaptiveCurriculumPanel,
   ConnectedSystemsPanel,
   DailyLearningPanel,
-  ExecutiveFacultyPanel,
+  ConciergeMentorsPanel,
   FutureOpportunitiesPanel,
   ImmersiveLearningPanel,
   InstituteCampusPanel,
@@ -25,7 +25,7 @@ type SiTab = 'philosophy' | 'schools' | 'curriculum' | 'certify' | 'campus' | 'c
 
 const TABS: { id: SiTab; label: string }[] = [
   { id: 'philosophy', label: 'PHILOSOPHY · COMMUNITIES' },
-  { id: 'schools', label: 'SCHOOLS · FACULTY' },
+  { id: 'schools', label: 'SCHOOLS · CONCIERGE MENTORS' },
   { id: 'curriculum', label: 'CURRICULUM · IMMERSIVE' },
   { id: 'certify', label: 'CERTIFY · COMPOUND' },
   { id: 'campus', label: 'CAMPUS · DAILY · NDXBOOK' },
@@ -43,7 +43,7 @@ export function StudioInstituteWorkspace() {
         return (
           <>
             <SchoolsOfExcellencePanel {...panelProps} />
-            <ExecutiveFacultyPanel {...panelProps} />
+            <ConciergeMentorsPanel {...panelProps} />
           </>
         );
       case 'curriculum':
@@ -85,7 +85,7 @@ export function StudioInstituteWorkspace() {
             <LearningCommunitiesPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
             <SchoolsOfExcellencePanel {...panelProps} />
-            <ExecutiveFacultyPanel {...panelProps} />
+            <ConciergeMentorsPanel {...panelProps} />
             <OrganizationFirstEducationPanel {...panelProps} />
             <AdaptiveCurriculumPanel {...panelProps} />
             <ImmersiveLearningPanel {...panelProps} />
