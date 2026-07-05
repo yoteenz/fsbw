@@ -161,6 +161,7 @@ const AdminStudioAudienceBrainIntelligence = lazyWithRetry(() => import('./pages
 const AdminStudioGrowthNetwork = lazyWithRetry(() => import('./pages/admin/studio/growth-network/page'), 'AdminStudioGrowthNetwork');
 const AdminStudioLabs = lazyWithRetry(() => import('./pages/admin/studio/labs/page'), 'AdminStudioLabs');
 const AdminStudioAiMediaNetwork = lazyWithRetry(() => import('./pages/admin/studio/ai-media-network/page'), 'AdminStudioAiMediaNetwork');
+const AdminStudioNdxbook = lazyWithRetry(() => import('./pages/admin/studio/ndxbook/page'), 'AdminStudioNdxbook');
 const AdminStudioTalentNetwork = lazyWithRetry(() => import('./pages/admin/studio/talent-network/page'), 'AdminStudioTalentNetwork');
 const AdminStudioMarketplace = lazyWithRetry(() => import('./pages/admin/studio/marketplace/page'), 'AdminStudioMarketplace');
 const AdminStudioBusinessModelEngine = lazyWithRetry(() => import('./pages/admin/studio/business-model-engine/page'), 'AdminStudioBusinessModelEngine');
@@ -1013,6 +1014,11 @@ function App() {
           <Route path="studio/ai-media-network" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioAiMediaNetwork />
+            </Suspense>
+          } />
+          <Route path="studio/ndxbook" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioNdxbook />
             </Suspense>
           } />
           <Route path="studio/talent-network" element={

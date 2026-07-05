@@ -384,7 +384,26 @@ export const MODULE_MANUAL_ENRICHMENTS: Record<string, ModuleManualEnrichment> =
       'MONETIZATION',
       'LABS INTEGRATION',
     ],
-    relatedModuleIds: ['labs', 'memory-bible', 'knowledge-hub', 'distribution-network', 'content-brain', 'talent-network'],
+    relatedModuleIds: ['labs', 'memory-bible', 'knowledge-hub', 'distribution-network', 'content-brain', 'talent-network', 'ndxbook'],
+  },
+  ndxbook: {
+    architecture:
+      'AI Media (internal) → ndxbook (public) → Brand identity → Taxonomy (pages/volumes/chapters/collections/readers) → 5 launch volumes → Programming schedule → Global page numbering → Brand voice + Creative DNA → Talent host placeholders → Social placeholders (not connected) → Every page = Labs experiment → Launch checklist.',
+    versionIntroduced: 'Milestone 29.5',
+    workflowNodes: [
+      'BRAND IDENTITY',
+      'CONTENT TAXONOMY',
+      'LAUNCH VOLUMES',
+      'PROGRAMMING SCHEDULE',
+      'PAGE REGISTRY',
+      'BRAND VOICE',
+      'CREATIVE DNA',
+      'TALENT HOSTS',
+      'SOCIAL PLACEHOLDERS',
+      'LABS INTEGRATION',
+      'LAUNCH CHECKLIST',
+    ],
+    relatedModuleIds: ['ai-media-network', 'labs', 'memory-bible', 'knowledge-hub', 'talent-network', 'distribution-network'],
   },
   'talent-network': {
     architecture:

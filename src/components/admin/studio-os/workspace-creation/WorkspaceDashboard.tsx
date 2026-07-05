@@ -11,6 +11,7 @@ import {
   WORKSPACE_DASHBOARD_MODULE_LABELS,
   WORKSPACE_TYPE_LABELS,
 } from '../../../../utils/adminStudioWorkspaceCreationDemo';
+import { useAdminStudioNdxbookState } from '../../../../hooks/useAdminStudioNdxbookState';
 import { ExecutiveTeamPanel } from './ExecutiveTeamPanel';
 import { PromotionCenterPanel } from './PromotionCenterPanel';
 
@@ -28,6 +29,8 @@ export function WorkspaceDashboard({
   onAdvancePromotion,
 }: WorkspaceDashboardProps) {
   const navigate = useNavigate();
+  const isAiMedia = workspace.id === 'ai-media' || workspace.slug === 'ai-media';
+  const { dashboard: ndxbookDashboard } = useAdminStudioNdxbookState();
   const tabs = useMemo(() => {
     const enabled = new Set(workspace.enabledModules);
     return AI_MEDIA_DASHBOARD_TABS.filter((t) => enabled.has(t) || t === 'dashboard');
@@ -90,6 +93,30 @@ export function WorkspaceDashboard({
       <div className="p-3 border min-h-[200px]" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}>
         {activeTab === 'dashboard' ? (
           <div className="space-y-2 text-[7px] font-futura" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
+            {isAiMedia ? (
+              <>
+                <p style={{ color: workspace.accentColor }}>ACTIVE PUBLIC BRAND</p>
+                <div className="p-2 border space-y-1" style={{ borderColor: workspace.accentColor, background: 'rgba(99,102,241,0.06)' }}>
+                  <p className="text-[10px]" style={{ fontFamily: '"Covered By Your Grace", sans-serif', color: workspace.accentColor }}>
+                    {ndxbookDashboard.brand.toUpperCase()}
+                  </p>
+                  <p className="normal-case" style={{ color: ADMIN_STUDIO_THEME.textPrimary }}>{ndxbookDashboard.positioning}</p>
+                  <div className="grid grid-cols-2 gap-1 mt-2">
+                    <p>LAUNCH VOLUMES · {ndxbookDashboard.launchVolumes}</p>
+                    <p>PAGES CREATED · {ndxbookDashboard.pagesCreated}</p>
+                    <p>PAGES SCHEDULED · {ndxbookDashboard.pagesScheduled}</p>
+                    <p>SOCIALS CONNECTED · {ndxbookDashboard.socialsConnected}</p>
+                    <p>LABS EXPERIMENTS · {ndxbookDashboard.labsExperiments}</p>
+                  </div>
+                  <p className="mt-2" style={{ color: workspace.accentColor }}>
+                    NEXT ACTION · {ndxbookDashboard.nextAction}
+                  </p>
+                  <button type="button" className="text-[6px] underline mt-1" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/ndxbook')}>
+                    OPEN NDXBOOK BRAND SETUP
+                  </button>
+                </div>
+              </>
+            ) : null}
             <p style={{ color: workspace.accentColor }}>WORKSPACE OVERVIEW</p>
             <p>BLUEPRINT · {workspace.blueprintId.toUpperCase()}</p>
             <p>OWNER · {workspace.owner.toUpperCase()}</p>
@@ -129,6 +156,11 @@ export function WorkspaceDashboard({
             {activeTab === 'labs' ? (
               <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/labs')}>
                 OPEN STUDIO OS LABS (PLATFORM)
+              </button>
+            ) : null}
+            {activeTab === 'ndxbook' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/ndxbook')}>
+                OPEN NDXBOOK BRAND
               </button>
             ) : null}
             {activeTab === 'ai-media-network' ? (

@@ -83,6 +83,15 @@ export function createDefaultPromotionPipeline(): PromotionPipelineItem[] {
       updatedAt: now,
     },
     {
+      id: 'promo-ndxbook-v1',
+      featureName: 'ndxbook Brand v1.0',
+      description: 'Public media brand for AI Media — indexed pages, volumes, programming, social placeholders, Labs tracking, launch checklist.',
+      currentStage: 'deploy-pilot',
+      pilotWorkspaceId: DEFAULT_PILOT_WORKSPACE_ID,
+      productionWorkspaceId: DEFAULT_PRODUCTION_WORKSPACE_ID,
+      updatedAt: now,
+    },
+    {
       id: 'promo-talent-network-v1',
       featureName: 'Talent Network v1.0',
       description: 'Unified talent OS — AI + human registry, casting, wardrobe, contracts, talent score, character evolution, Growth Network bridge.',

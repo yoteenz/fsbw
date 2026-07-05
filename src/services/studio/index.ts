@@ -74,6 +74,8 @@ export type { LabsSnapshot, LabsStudioService } from './labs/service';
 
 export { aiMediaNetworkStudioService, AI_MEDIA_NETWORK_INHERITANCE_CHAIN, ADMIN_STUDIO_AI_MEDIA_NETWORK_SUBTITLE } from './aiMediaNetwork/service';
 export type { AiMediaNetworkSnapshot, AiMediaNetworkStudioService } from './aiMediaNetwork/service';
+export { ndxbookStudioService, NDXBOOK_INHERITANCE_CHAIN, ADMIN_STUDIO_NDXBOOK_SUBTITLE } from './ndxbook/service';
+export type { NdxbookSnapshot, NdxbookStudioService } from './ndxbook/service';
 
 export { talentNetworkStudioService, TALENT_NETWORK_INHERITANCE_CHAIN, ADMIN_STUDIO_TALENT_NETWORK_SUBTITLE } from './talentNetwork/service';
 export type { TalentNetworkSnapshot, TalentNetworkStudioService } from './talentNetwork/service';
@@ -187,6 +189,7 @@ import { audienceBrainStudioService } from './audienceBrain/service';
 import { growthNetworkStudioService } from './growthNetwork/service';
 import { labsStudioService } from './labs/service';
 import { aiMediaNetworkStudioService } from './aiMediaNetwork/service';
+import { ndxbookStudioService } from './ndxbook/service';
 import { talentNetworkStudioService } from './talentNetwork/service';
 import { marketplaceStudioService } from './marketplace/service';
 import { businessModelEngineStudioService } from './businessModelEngine/service';
@@ -229,6 +232,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   growthNetworkStudioService,
   labsStudioService,
   aiMediaNetworkStudioService,
+  ndxbookStudioService,
   talentNetworkStudioService,
   marketplaceStudioService,
   businessModelEngineStudioService,

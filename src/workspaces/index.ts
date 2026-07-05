@@ -141,6 +141,10 @@ export function bootstrapWorkspacesPlatform(): void {
     simulation.bootstrapAiMediaSimulationEngine();
     await yieldToMain();
 
+    const ndxbook = await import('./ai-media/ndxbook/bootstrap');
+    ndxbook.bootstrapAiMediaNdxbook();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

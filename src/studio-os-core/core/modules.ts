@@ -24,6 +24,7 @@ export type StudioOsCoreModuleId =
   | 'growth-network'
   | 'labs'
   | 'ai-media-network'
+  | 'ndxbook'
   | 'talent-network'
   | 'marketplace'
   | 'business-model-engine'
@@ -164,6 +165,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'AI MEDIA NETWORK',
     description: 'Digital media network — programming, pillars, calendar, monetization; AI Media pilot.',
     routeSegment: 'ai-media-network',
+  },
+  {
+    id: 'ndxbook',
+    label: 'NDXBOOK',
+    description: 'Public media brand — indexed pages, volumes, chapters, programming; AI Media public layer.',
+    routeSegment: 'ndxbook',
   },
   {
     id: 'talent-network',

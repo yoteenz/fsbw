@@ -529,6 +529,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'ndxbook',
+    title: 'NDXBOOK',
+    purpose: 'Public media brand for AI Media — indexed pages, volumes, chapters, programming, social placeholders, Labs tracking.',
+    route: p('ndxbook'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '12 TABS',
+    ctaLabel: 'OPEN BRAND',
+    moduleKey: 'ndxbook',
+    featuredOnOverview: true,
+  },
+  {
     id: 'talent-network',
     title: 'TALENT NETWORK',
     purpose: 'Unified talent OS — AI + human registry, casting, wardrobe, contracts, performance score, character evolution.',

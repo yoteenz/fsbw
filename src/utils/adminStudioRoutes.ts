@@ -28,6 +28,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'growth-network'
   | 'labs'
   | 'ai-media-network'
+  | 'ndxbook'
   | 'talent-network'
   | 'marketplace'
   | 'business-model-engine'
@@ -74,6 +75,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'growth-network',
   'labs',
   'ai-media-network',
+  'ndxbook',
   'talent-network',
   'marketplace',
   'business-model-engine',
@@ -135,6 +137,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   growthNetwork: 'studio/growth-network',
   labs: 'studio/labs',
   aiMediaNetwork: 'studio/ai-media-network',
+  ndxbook: 'studio/ndxbook',
   talentNetwork: 'studio/talent-network',
   marketplace: 'studio/marketplace',
   businessModelEngine: 'studio/business-model-engine',
@@ -314,6 +317,10 @@ export function adminStudioGrowthNetworkPath(): string {
 
 export function adminStudioLabsPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/labs`;
+}
+
+export function adminStudioNdxbookPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/ndxbook`;
 }
 
 export function adminStudioAiMediaNetworkPath(): string {

@@ -36718,15 +36718,37 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Context (full chat):** User reported admin dashboard still blank white and won't load after prior workspace-registry fixes; user believed **Studio OS milestones (30–36)** were the cause.
 
-**Real root cause:** **`AdminGuard`** still **`await`ed `ensureWorkspacesBootstrapped()`** (dynamic import of **`src/workspaces/index.ts`**) and **`WorkspaceProvider`** for **every** `/admin/*` route including **`/admin/dashboard`**. During that await, **`checked` stayed false → `return null`** — pure white screen (LoadingScreen branch unreachable because `checked` and `workspacesReady` were set together after import). Dashboard **never uses `useWorkspace`**; only **`/admin/studio/*`** and **`/admin/studio-os/*`** need registry + provider. Milestone 30–36 demo seeds belong on Studio routes via **`bootstrapWorkspacesPlatform()`** in **`AdminStudioLayout`**, not on dashboard entry.
+**Real root cause:** **`AdminGuard`** still **`await`ed `ensureWorkspacesBootstrapped()`** (dynamic import of **`src/workspaces/index.ts`**) and **`WorkspaceProvider`** for **every** `/admin/*` route including **`/admin/dashboard`**. During that await, **`checked` stayed false → `return null`** — pure white screen. Dashboard **never uses `useWorkspace`**; only **`/admin/studio/*`** and **`/admin/studio-os/*`** need registry + provider.
 
 **Fix:**
-- **`AdminGuard`** — auth-only (redirect sign-in / non-admin); show **`LoadingScreen`** while checking; **no** workspace import, **no** **`WorkspaceProvider`**.
-- **`AdminStudioWorkspaceGuard`** (new) — wraps Studio OS routes in **`App.tsx`**; **`ensureWorkspacesBootstrapped()`** + **`WorkspaceProvider`** + error/retry UI.
-- **`workspaces/index.ts`** — import registry helpers from **`workspace-creation/registry`** + **`schemaBridge`** directly (avoid heavy barrel).
-- **`motherboard/CORE.md`** — document guard split.
-
-**Verify:** Preview **`/admin/dashboard`** paints without loading workspaces chunk; **`/admin/studio-os`** still loads workspace picker.
+- **`AdminGuard`** — auth-only; **no** workspace import, **no** **`WorkspaceProvider`**.
+- **`AdminStudioWorkspaceGuard`** — wraps Studio OS routes; **`ensureWorkspacesBootstrapped()`** + **`WorkspaceProvider`**.
+- **`workspaces/index.ts`** — lightweight sync registry; **`bootstrapWorkspacesPlatform()`** includes ndxbook seed among deferred imports.
 
 **Changes:** `AdminGuard.tsx`, `AdminStudioWorkspaceGuard.tsx`, `App.tsx`, `workspaces/index.ts`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — Milestone 29.5: ndxbook brand setup inside AI Media
+
+**Context:** User requested **Milestone 29.5** — public-facing brand layer **ndxbook** (index book) inside internal **AI Media** workspace at Studio OS → AI Media → **Brand**. No Frontal Slayer changes, no platform redesign, no live social connections, keep AI Media Network.
+
+**Decisions / architecture:**
+- **AI Media** = internal pilot workspace · **ndxbook** = public media brand · **Studio OS Labs** = experimentation layer.
+- Taxonomy: videos = **pages**, pillars = **volumes**, categories = **chapters**, series = **collections**, audience = **readers**.
+- Positioning: *the index for everyday knowledge* · Promise: *every page makes you smarter*.
+- Five launch volumes (money, body, mind, tech, consumer) with chapter topics per spec.
+- Programming: Money Monday, Truth Tuesday, Workflow Wednesday, Smart Living Thursday, Future Friday.
+- Global page numbering (`page 001`, `page 002`, …) — no reset per volume.
+- Brand voice rules, creative DNA placeholder, six talent host placeholders (not PSA), eight social placeholders (status not connected).
+- Every page → Labs experiment via `labsBridge.ts`; launch checklist (not auto-completed).
+
+**Implementation:**
+- Core: `src/studio-os-core/ndxbook/` (types, store, constants, pageNumbering, labsBridge).
+- Bootstrap: `src/workspaces/ai-media/ndxbook/bootstrap.ts` — seeds brand + patches ai-media registry with `ndxbook` module; called from `bootstrapWorkspacesPlatform()`.
+- Admin UI: `/admin/studio/ndxbook` — 12 tabs (overview, brand, taxonomy, volumes, programming, pages, voice, visual, talent, socials, labs, checklist).
+- AI Media workspace dashboard shows ndxbook metrics (brand, positioning, 5 volumes, 0 pages, next action).
+- Wired: routes, nav, modules, services, KG nodes/edges/workflow, Memory Bible, module enrichments, promotion pipeline.
+
+**Changes:** ndxbook core + bootstrap + admin UI; `WorkspaceDashboard.tsx`, `App.tsx`, `workspaces/index.ts`, studio wiring files, `motherboard/MEMORY.md`.
 

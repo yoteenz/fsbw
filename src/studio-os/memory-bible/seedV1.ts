@@ -215,6 +215,15 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       relatedGraphNodeIds: ['node-ai-media-network', 'node-programming-network'],
     },
     {
+      id: 'name-ndxbook',
+      officialName: 'ndxbook',
+      deprecatedNames: ['index book brand', 'ai media public brand'],
+      usageNotes:
+        'Public-facing media brand inside AI Media workspace. Short for index book internally — minimal public explanation. Positioning: the index for everyday knowledge. UI tab: Brand · route /admin/studio/ndxbook.',
+      relatedModules: ['ndxbook'],
+      relatedGraphNodeIds: ['node-ndxbook', 'node-ndxbook-volumes', 'node-ai-media-pilot'],
+    },
+    {
       id: 'name-talent-network',
       officialName: 'Talent Network',
       deprecatedNames: ['talent agency platform', 'ai talent system'],
@@ -468,6 +477,22 @@ export const MEMORY_BIBLE_V1_0: MemoryBibleSnapshot = {
       status: 'active',
       relatedGraphNodeIds: ['node-ai-media-network', 'node-programming-network', 'node-ai-media-pilot'],
       relatedManualChapter: 'CHAPTER · AI MEDIA NETWORK · DIGITAL MEDIA COMPANY',
+    },
+    {
+      id: 'dec-ndxbook-v1',
+      title: 'Launch ndxbook public brand (Milestone 29.5)',
+      date: '2026-07-05',
+      workspace: 'ai-media',
+      relatedModule: 'ndxbook',
+      decision:
+        'AI Media remains the internal pilot workspace; ndxbook is the public media brand. Indexed taxonomy: videos = pages, pillars = volumes, categories = chapters, series = collections, audience = readers. Five launch volumes, global page numbering, programming schedule, brand voice, creative DNA placeholder, talent host placeholders, social placeholders (not connected), Labs on every page, launch checklist.',
+      reason:
+        'Production-ready brand foundation before social handles are secured. ndxbook must feel like a real brand, not a demo — complementary to AI Media Network internal ops.',
+      alternativesConsidered: ['Replace AI Media Network with ndxbook', 'Merge into Content Brain only', 'Connect live socials in v1'],
+      outcome: 'NDXBook at /admin/studio/ndxbook — core in src/studio-os-core/ndxbook/, seeds in workspaces/ai-media/ndxbook/. AI Media dashboard shows active public brand metrics.',
+      status: 'active',
+      relatedGraphNodeIds: ['node-ndxbook', 'node-ndxbook-volumes', 'node-ai-media-pilot', 'node-studio-os-labs'],
+      relatedManualChapter: 'CHAPTER · NDXBOOK · PUBLIC MEDIA BRAND',
     },
     {
       id: 'dec-talent-network-v1',

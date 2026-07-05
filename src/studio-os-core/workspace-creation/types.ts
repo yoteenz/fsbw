@@ -39,6 +39,7 @@ export type BlueprintModuleId =
   | 'growth-network'
   | 'labs'
   | 'ai-media-network'
+  | 'ndxbook'
   | 'talent-network'
   | 'marketplace'
   | 'business-model-engine'
