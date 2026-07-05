@@ -26,6 +26,7 @@ export const INHERITED_PLATFORM_CAPABILITIES: readonly InheritedPlatformCapabili
   { id: 'studio-institute', label: 'Institute', category: 'institute' },
   { id: 'executive-council', label: 'Executive Council', category: 'headquarters' },
   { id: 'executive-timeline', label: 'Executive Timeline', category: 'headquarters' },
+  { id: 'concierge-routing', label: 'Concierge Routing', category: 'headquarters' },
   { id: 'concierge-layer', label: 'Concierge Team', category: 'headquarters' },
   { id: 'campaign-engine', label: 'Campaign Engine', category: 'automation' },
   { id: 'work-orchestration', label: 'Automation', category: 'automation' },

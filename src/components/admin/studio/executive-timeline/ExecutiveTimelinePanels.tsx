@@ -1,23 +1,25 @@
 import { Link } from 'react-router-dom';
 import {
+  UniversalStudioCommandInput,
+  RoutingImpactPreviewPanel,
+} from '../concierge-routing/UniversalStudioCommandInput';
+import {
   CONCIERGE_COMMAND_EXAMPLES,
-  CONVERSATIONAL_EXAMPLES,
   TIMELINE_CONNECTED_SYSTEMS,
   TIMELINE_LAYERS,
   TIMELINE_ORGANIZATIONS,
   TIMELINE_VIEWS,
 } from '../../../../studio-os-core/executive-timeline/constants';
 import type {
-  ConciergeTimelineCommand,
   ExecutiveTimelineStore,
   MorningBriefing,
   ProactiveRecommendation,
   TimelineEvent,
-  TimelineImpactAnalysis,
   TimelineLayerId,
   TimelineOrganizationId,
   TimelineViewId,
 } from '../../../../studio-os-core/executive-timeline/types';
+import type { ConciergeRoutingStore, FounderCommandRoute } from '../../../../studio-os-core/concierge-routing/types';
 import {
   adminStudioChiefOfStaffPath,
   adminStudioConciergeLayerPath,
@@ -39,6 +41,8 @@ import {
   priorityColor,
   statusColor,
 } from './executiveTimelineTheme';
+
+export { RoutingImpactPreviewPanel, UniversalStudioCommandInput };
 
 export function ExecutiveTimelineAnimationStyles() {
   return <style>{ET_ANIMATION_CSS}</style>;
@@ -319,12 +323,8 @@ export function EventDetailPanel({ event }: { event: TimelineEvent }) {
         {event.personalLifeTag && <DetailRow label="PERSONAL" value={event.personalLifeTag} color={ET_VISUAL.personal} />}
       </div>
 
-      {event.relatedProjects.length > 0 && (
-        <DetailList label="RELATED PROJECTS" items={event.relatedProjects} />
-      )}
-      {event.relatedContent.length > 0 && (
-        <DetailList label="RELATED CONTENT" items={event.relatedContent} />
-      )}
+      {event.relatedProjects.length > 0 && <DetailList label="RELATED PROJECTS" items={event.relatedProjects} />}
+      {event.relatedContent.length > 0 && <DetailList label="RELATED CONTENT" items={event.relatedContent} />}
       {event.dependencies.length > 0 && (
         <div className="mt-2">
           <p style={{ ...etLabel, marginBottom: 4 }}>LIVING DEPENDENCIES</p>
@@ -362,34 +362,6 @@ function DetailList({ label, items }: { label: string; items: string[] }) {
           · {item}
         </p>
       ))}
-    </div>
-  );
-}
-
-export function ImpactPreviewPanel({ impact }: { impact: TimelineImpactAnalysis }) {
-  return (
-    <div className="mb-4 p-3 rounded-sm max-w-2xl mx-auto" style={{ ...etPanelStyle, borderColor: 'rgba(217,119,6,0.3)' }}>
-      <p style={{ ...etLabel, color: ET_VISUAL.atRisk, textAlign: 'center', marginBottom: 4 }}>
-        IMPACT ANALYSIS · BEFORE APPLYING
-      </p>
-      <p style={{ ...etValue, fontSize: '7px', textAlign: 'center', marginBottom: 8 }}>{impact.summary}</p>
-      <p style={{ ...etValue, fontSize: '6px', color: ET_VISUAL.textMuted, textAlign: 'center' }}>
-        {impact.recommendation}
-      </p>
-      {impact.affectedCategories.length > 0 && (
-        <div className="flex flex-wrap gap-1 justify-center mt-3">
-          {impact.affectedCategories.map((cat) => (
-            <span key={cat} style={{ ...etLabel, border: ET_VISUAL.glassBorder, padding: '2px 4px' }}>
-              {cat.toUpperCase()}
-            </span>
-          ))}
-        </div>
-      )}
-      {impact.autoReorganizeAvailable && (
-        <p style={{ ...etLabel, textAlign: 'center', marginTop: 8, color: ET_VISUAL.portfolio }}>
-          AUTO-REORGANIZE AVAILABLE · {impact.requiresFounderApproval ? 'FOUNDER APPROVAL REQUIRED' : 'CONCIERGE CAN APPLY'}
-        </p>
-      )}
     </div>
   );
 }
@@ -432,86 +404,14 @@ export function ProactiveRecommendationsPanel({
   );
 }
 
-export function ConversationalTimelinePanel({
-  input,
-  onInputChange,
-  onSubmit,
-  lastResponse,
-  pendingCommand,
-  onApprove,
-}: {
-  input: string;
-  onInputChange: (text: string) => void;
-  onSubmit: () => void;
-  lastResponse?: string;
-  pendingCommand?: ConciergeTimelineCommand | null;
-  onApprove?: (commandId: string) => void;
-}) {
-  return (
-    <div className="mb-4 p-3 rounded-sm max-w-2xl mx-auto" style={etPanelStyle}>
-      <p style={{ ...etSectionTitle, textAlign: 'center' }}>CONVERSATIONAL TIMELINE</p>
-      <div className="flex gap-2 mb-2">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => onInputChange(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
-          placeholder="Tell the organization what you want..."
-          className="flex-1 px-2 py-1.5 bg-white/60 border rounded-sm"
-          style={{ ...etValue, fontSize: '7px', borderColor: 'rgba(0,0,0,0.08)' }}
-        />
-        <button
-          type="button"
-          onClick={onSubmit}
-          className="px-3 py-1.5"
-          style={{ ...etPanelStyle, background: ET_VISUAL.champagneSoft, cursor: 'pointer' }}
-        >
-          <span style={{ ...etLabel, color: ET_VISUAL.gold }}>SEND</span>
-        </button>
-      </div>
-      <div className="flex flex-wrap gap-1 justify-center mb-2">
-        {CONVERSATIONAL_EXAMPLES.slice(0, 4).map((ex) => (
-          <button
-            key={ex}
-            type="button"
-            onClick={() => onInputChange(ex)}
-            style={{ ...etLabel, fontSize: '5px', border: ET_VISUAL.glassBorder, padding: '2px 4px', cursor: 'pointer' }}
-          >
-            {ex}
-          </button>
-        ))}
-      </div>
-      {lastResponse && (
-        <p style={{ ...etValue, fontSize: '6px', color: ET_VISUAL.textMuted, textAlign: 'center', marginTop: 8 }}>
-          {lastResponse}
-        </p>
-      )}
-      {pendingCommand && pendingCommand.status === 'pending-approval' && onApprove && (
-        <div className="mt-3 text-center">
-          <p style={{ ...etLabel, color: ET_VISUAL.atRisk, marginBottom: 4 }}>
-            {pendingCommand.concierge} · {pendingCommand.proposedAction}
-          </p>
-          <button
-            type="button"
-            onClick={() => onApprove(pendingCommand.id)}
-            style={{ ...etLabel, color: ET_VISUAL.scheduled, cursor: 'pointer', border: ET_VISUAL.glassBorder, padding: '4px 12px' }}
-          >
-            APPROVE TIMELINE CHANGE
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
 export function ConciergeCommandExamples() {
   return (
     <div className="mb-4 max-w-2xl mx-auto text-center">
-      <p style={{ ...etSectionTitle, marginBottom: 8 }}>CONCIERGE COMMANDS</p>
+      <p style={{ ...etSectionTitle, marginBottom: 8 }}>INTELLIGENT ROUTING EXAMPLES</p>
       <div className="space-y-2">
         {CONCIERGE_COMMAND_EXAMPLES.map((ex) => (
           <p key={ex.command} style={{ ...etValue, fontSize: '6px', color: ET_VISUAL.textMuted }}>
-            <span style={{ ...etLabel, color: ET_VISUAL.gold }}>{ex.concierge}:</span> &ldquo;{ex.command}&rdquo;
+            &ldquo;{ex.command}&rdquo;
           </p>
         ))}
       </div>
@@ -521,12 +421,14 @@ export function ConciergeCommandExamples() {
 
 export function TimelineMemoryPanel({
   preferences,
+  routingPreferences,
 }: {
   preferences: ExecutiveTimelineStore['timelineMemory'];
+  routingPreferences?: ConciergeRoutingStore['routingPreferences'];
 }) {
   return (
     <div className="mb-4 p-3 rounded-sm max-w-2xl mx-auto" style={etPanelStyle}>
-      <p style={{ ...etSectionTitle, textAlign: 'center', marginBottom: 8 }}>TIMELINE MEMORY</p>
+      <p style={{ ...etSectionTitle, textAlign: 'center', marginBottom: 8 }}>TIMELINE & ROUTING MEMORY</p>
       {preferences.map((pref) => (
         <div key={pref.id} className="mb-2">
           <p style={{ ...etLabel, color: ET_VISUAL.gold }}>{pref.category.toUpperCase()}</p>
@@ -534,6 +436,13 @@ export function TimelineMemoryPanel({
           <p style={{ ...etLabel, fontSize: '5px' }}>
             Learned from {pref.learnedFrom} · {pref.confidencePct}% confidence
           </p>
+        </div>
+      ))}
+      {routingPreferences?.map((pref) => (
+        <div key={pref.id} className="mb-2">
+          <p style={{ ...etLabel, color: ET_VISUAL.portfolio }}>ROUTING · {pref.intent.replace(/-/g, ' ').toUpperCase()}</p>
+          <p style={{ ...etValue, fontSize: '6px' }}>Prefer {pref.preferredConciergeId.replace(/-/g, ' ')}</p>
+          <p style={{ ...etLabel, fontSize: '5px' }}>Learned: {pref.learnedFrom}</p>
         </div>
       ))}
     </div>
@@ -579,3 +488,21 @@ export function ExecutiveTimelineConnectedSystems() {
     </div>
   );
 }
+
+export function RoutingTrustPanel({ routingStore }: { routingStore: ConciergeRoutingStore }) {
+  const top = [...routingStore.conciergeTrust].sort((a, b) => b.trustPct - a.trustPct).slice(0, 4);
+  return (
+    <div className="mb-4 p-2 rounded-sm max-w-xl mx-auto text-center" style={etPanelStyle}>
+      <p style={{ ...etLabel, marginBottom: 6 }}>CONCIERGE ROUTING TRUST</p>
+      <div className="flex flex-wrap gap-2 justify-center">
+        {top.map((t) => (
+          <span key={t.conciergeId} style={{ ...etLabel, fontSize: '5px', border: ET_VISUAL.glassBorder, padding: '2px 6px' }}>
+            {t.conciergeId.replace(/-/g, ' ').toUpperCase()} · {t.trustPct}%
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export type { FounderCommandRoute };

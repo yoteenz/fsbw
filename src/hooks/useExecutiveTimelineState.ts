@@ -1,4 +1,15 @@
 import { useCallback, useState } from 'react';
+import { buildConciergeRoutingSeed } from '../studio-os-core/concierge-routing/bootstrap';
+import {
+  adjustPendingRoute,
+  approvePendingRoute,
+  bootstrapConciergeRoutingStore,
+  cancelPendingRoute,
+  explainPendingRoute,
+  readConciergeRoutingStore,
+  recordRoutingCorrection,
+  setUniversalCommandInput,
+} from '../studio-os-core/concierge-routing/store';
 import { buildExecutiveTimelineSeed } from '../studio-os-core/executive-timeline/bootstrap';
 import {
   approvePendingCommand,
@@ -17,11 +28,13 @@ import {
 import type { TimelineLayerId, TimelineOrganizationId, TimelineViewId } from '../studio-os-core/executive-timeline/types';
 
 function ensureBootstrap(): void {
+  bootstrapConciergeRoutingStore(buildConciergeRoutingSeed());
   bootstrapExecutiveTimelineStore(buildExecutiveTimelineSeed());
 }
 
 export function useExecutiveTimelineState() {
   const [, setTick] = useState(0);
+  const [askWhyAnswer, setAskWhyAnswer] = useState<string | undefined>();
   useState(() => {
     ensureBootstrap();
     return 0;
@@ -29,8 +42,12 @@ export function useExecutiveTimelineState() {
 
   const refresh = useCallback(() => setTick((t) => t + 1), []);
   const store = readExecutiveTimelineStore();
+  const routingStore = readConciergeRoutingStore();
   const visibleEvents = getVisibleEvents(store);
   const selectedEvent = getSelectedEvent(store);
+  const pendingRoute = routingStore.pendingRoute;
+
+  const commandInput = routingStore.universalCommandInput || store.conversationalInput;
 
   const selectOrganization = useCallback(
     (orgId: TimelineOrganizationId) => {
@@ -66,6 +83,7 @@ export function useExecutiveTimelineState() {
 
   const setInput = useCallback(
     (text: string) => {
+      setUniversalCommandInput(text);
       setConversationalInput(text);
       refresh();
     },
@@ -73,21 +91,43 @@ export function useExecutiveTimelineState() {
   );
 
   const submitCommand = useCallback(
-    (text: string, concierge?: string) => {
-      const cmd = submitConciergeCommand(text, concierge);
+    (text?: string) => {
+      const cmd = text ?? commandInput;
+      const correction = recordRoutingCorrection(cmd);
+      if (correction) {
+        refresh();
+        return;
+      }
+      submitConciergeCommand(cmd);
+      setAskWhyAnswer(undefined);
       refresh();
-      return cmd;
     },
-    [refresh]
+    [commandInput, refresh]
   );
 
-  const approveCommand = useCallback(
-    (commandId: string) => {
-      approvePendingCommand(commandId);
-      refresh();
-    },
-    [refresh]
-  );
+  const approveCommand = useCallback(() => {
+    const routeId = pendingRoute?.id;
+    if (routeId) approvePendingCommand(routeId);
+    else approvePendingRoute();
+    setAskWhyAnswer(undefined);
+    refresh();
+  }, [pendingRoute, refresh]);
+
+  const cancelCommand = useCallback(() => {
+    cancelPendingRoute();
+    setAskWhyAnswer(undefined);
+    refresh();
+  }, [refresh]);
+
+  const adjustCommand = useCallback(() => {
+    adjustPendingRoute('Founder requested adjustment — concierge team will revise proposal.');
+    refresh();
+  }, [refresh]);
+
+  const askWhy = useCallback(() => {
+    setAskWhyAnswer(explainPendingRoute());
+    refresh();
+  }, [refresh]);
 
   const dismissRecommendation = useCallback(
     (id: string) => {
@@ -99,8 +139,12 @@ export function useExecutiveTimelineState() {
 
   return {
     store,
+    routingStore,
     visibleEvents,
     selectedEvent,
+    pendingRoute,
+    commandInput,
+    askWhyAnswer,
     selectOrganization,
     selectView,
     toggleLayer,
@@ -108,6 +152,9 @@ export function useExecutiveTimelineState() {
     setInput,
     submitCommand,
     approveCommand,
+    cancelCommand,
+    adjustCommand,
+    askWhy,
     dismissRecommendation,
     refresh,
   };

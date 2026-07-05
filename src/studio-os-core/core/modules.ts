@@ -55,6 +55,7 @@ export type StudioOsCoreModuleId =
   | 'screening-room'
   | 'concierge-approval-flow'
   | 'executive-timeline'
+  | 'concierge-routing'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -413,6 +414,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     id: 'executive-timeline',
     label: 'EXECUTIVE TIMELINE',
     description: 'Temporal intelligence — living organizational timeline with dependencies, concierge commands, and portfolio view. V1.0.',
+    routeSegment: 'executive-timeline',
+  },
+  {
+    id: 'concierge-routing',
+    label: 'INTELLIGENT CONCIERGE ROUTING',
+    description: 'Universal command routing — founders speak naturally, organization assigns concierges automatically. V1.0.',
     routeSegment: 'executive-timeline',
   },
   {

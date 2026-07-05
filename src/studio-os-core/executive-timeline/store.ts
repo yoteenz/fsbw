@@ -4,7 +4,13 @@ import {
   TIMELINE_LAYERS,
   TIMELINE_PHILOSOPHY,
 } from './constants';
-import { analyzeEventMoveImpact, parseConciergeTimelineCommand } from './intelligence';
+import { analyzeEventMoveImpact } from './intelligence';
+import {
+  approvePendingRoute,
+  readConciergeRoutingStore,
+  submitUniversalCommand,
+} from '../concierge-routing/store';
+import type { FounderCommandRoute } from '../concierge-routing/types';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   ConciergeTimelineCommand,
@@ -94,36 +100,51 @@ export function setConversationalInput(text: string): void {
   writeExecutiveTimelineStore({ ...store, conversationalInput: text });
 }
 
-export function submitConciergeCommand(rawText: string, concierge?: string): ConciergeTimelineCommand {
+export function submitConciergeCommand(rawText: string): FounderCommandRoute {
   const store = readExecutiveTimelineStore();
-  const parsed = parseConciergeTimelineCommand(rawText, concierge);
-  const command: ConciergeTimelineCommand = {
-    ...parsed,
-    id: `cmd-${Date.now()}`,
-    status: 'pending-approval',
-    createdAt: new Date().toISOString(),
-  };
+  const route = submitUniversalCommand(rawText, {
+    activeOrganizationId: store.activeOrganizationId,
+    events: store.events,
+    selectedEventId: store.selectedEventId,
+  });
 
   const selected = store.selectedEventId
     ? store.events.find((e) => e.id === store.selectedEventId)
     : store.events[0];
-  if (selected) {
-    command.targetEventId = selected.id;
-    command.impact = analyzeEventMoveImpact(store, selected.id, parsed.proposedAction) ?? undefined;
-  }
+  const legacyImpact = selected
+    ? analyzeEventMoveImpact(store, selected.id, route.primaryAction)
+    : null;
+
+  const legacyCommand: ConciergeTimelineCommand = {
+    id: route.id,
+    concierge: route.primaryConcierge,
+    rawText: route.rawText,
+    parsedIntent: route.intent,
+    targetEventId: selected?.id,
+    proposedAction: route.primaryAction,
+    status: 'pending-approval',
+    impact: legacyImpact ?? undefined,
+    createdAt: route.createdAt,
+  };
 
   writeExecutiveTimelineStore({
     ...store,
-    conciergeCommands: [command, ...store.conciergeCommands].slice(0, 12),
-    pendingImpact: command.impact ?? null,
-    lastConciergeResponse: `${command.concierge} parsed: ${command.proposedAction}. Awaiting founder approval before applying.`,
+    conciergeCommands: [legacyCommand, ...store.conciergeCommands].slice(0, 12),
+    pendingImpact: legacyImpact,
+    lastConciergeResponse: route.clarificationQuestion ?? route.routingNote,
     conversationalInput: '',
   });
-  return command;
+
+  return route;
+}
+
+export function getPendingRouteFromRouting(): FounderCommandRoute | null {
+  return readConciergeRoutingStore().pendingRoute;
 }
 
 export function approvePendingCommand(commandId: string): void {
   const store = readExecutiveTimelineStore();
+  approvePendingRoute();
   writeExecutiveTimelineStore({
     ...store,
     conciergeCommands: store.conciergeCommands.map((c) =>

@@ -38084,3 +38084,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** executive-timeline core + UI + page + hook, App/navigation/routes/modules/bootstrap/feature-inheritance/knowledge-graph, motherboard/CORE.md + MEMORY.md.
 
 **Conventions:** Executive Timeline is headquarters/overview module — portfolio timeline combines all orgs; org-specific timelines filter events. Concierge commands parse natural language demo patterns; production intelligence layer will extend parsing. Work on `master` only; one deploy per task.
+
+---
+
+## 2026-07-05 — Milestone 81.5 Intelligent Concierge Routing V1.0
+
+**Context (full chat arc):** After M81 Executive Timeline V1.0 (temporal intelligence layer with layers, dependencies, morning briefing), user requested **M81.5 Intelligent Concierge Routing** — universal command entry where founders speak naturally without picking a concierge. Studio OS detects intent, assigns concierges, shows impact preview, learns from corrections. No UI redesign. Voice-ready but text-first.
+
+**Decisions / outcomes:**
+- **Core module** `src/studio-os-core/concierge-routing/` — `routeFounderCommand()` with 20+ NL patterns, intent→concierge assignment map, multi-org detection (explicit mention vs workspace default vs portfolio ambiguous), Chief Concierge fallback below 72% confidence, no hallucinated events (tentative windows ask first).
+- **Universal input** `UniversalStudioCommandInput` — rotating labels (Ask Studio OS / Tell Headquarters / Ask the Concierge Team), reusable for future command surfaces.
+- **Impact preview** — primary action, affected events/dependencies, concierges/executives, risks, founder options: approve · adjust · cancel · ask why.
+- **Learning** — `recordRoutingCorrection()` for "no, this should go to growth"; routing preferences + concierge trust scores persist in scoped store.
+- **Integration** — Executive Timeline command panel replaced with universal input; timeline store delegates to routing engine; bootstrap wired in workspaces.
+
+**Philosophy:** "The founder speaks to the organization — the organization decides who should handle it."
+
+**Changes:** concierge-routing core + UI, executive-timeline store/hook/workspace/panels integration, modules/bootstrap/feature-inheritance/knowledge-graph, motherboard/CORE.md + MEMORY.md.

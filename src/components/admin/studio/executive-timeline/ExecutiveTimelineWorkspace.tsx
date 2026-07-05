@@ -1,27 +1,32 @@
 import { useExecutiveTimelineState } from '../../../../hooks/useExecutiveTimelineState';
 import {
   ConciergeCommandExamples,
-  ConversationalTimelinePanel,
   EventDetailPanel,
   ExecutiveTimelineAnimationStyles,
   ExecutiveTimelineConnectedSystems,
   ExecutiveTimelineShell,
   ExecutiveTimelineTitleBar,
-  ImpactPreviewPanel,
   LayerToggleBar,
   MorningBriefingPanel,
   OrganizationSelector,
   ProactiveRecommendationsPanel,
+  RoutingImpactPreviewPanel,
+  RoutingTrustPanel,
   TimelineEventList,
   TimelineMemoryPanel,
+  UniversalStudioCommandInput,
   ViewSelector,
 } from './ExecutiveTimelinePanels';
 
 export function ExecutiveTimelineWorkspace() {
   const {
     store,
+    routingStore,
     visibleEvents,
     selectedEvent,
+    pendingRoute,
+    commandInput,
+    askWhyAnswer,
     selectOrganization,
     selectView,
     toggleLayer,
@@ -29,10 +34,11 @@ export function ExecutiveTimelineWorkspace() {
     setInput,
     submitCommand,
     approveCommand,
+    cancelCommand,
+    adjustCommand,
+    askWhy,
     dismissRecommendation,
   } = useExecutiveTimelineState();
-
-  const pendingCommand = store.conciergeCommands.find((c) => c.status === 'pending-approval') ?? null;
 
   return (
     <>
@@ -42,6 +48,19 @@ export function ExecutiveTimelineWorkspace() {
         <OrganizationSelector activeId={store.activeOrganizationId} onSelect={selectOrganization} />
         <ViewSelector activeView={store.activeView} onSelect={selectView} />
         <LayerToggleBar visibleLayerIds={store.visibleLayerIds} onToggle={toggleLayer} />
+
+        <UniversalStudioCommandInput
+          input={commandInput}
+          onInputChange={setInput}
+          onSubmit={() => submitCommand()}
+          pendingRoute={pendingRoute}
+          lastNote={routingStore.lastRoutingNote}
+          onApprove={pendingRoute ? approveCommand : undefined}
+          onCancel={pendingRoute ? cancelCommand : undefined}
+          onAdjust={pendingRoute ? adjustCommand : undefined}
+          onAskWhy={pendingRoute ? askWhy : undefined}
+          askWhyAnswer={askWhyAnswer}
+        />
 
         <MorningBriefingPanel briefing={store.morningBriefing} />
 
@@ -58,19 +77,14 @@ export function ExecutiveTimelineWorkspace() {
 
         {selectedEvent && <EventDetailPanel event={selectedEvent} />}
 
-        {store.pendingImpact && <ImpactPreviewPanel impact={store.pendingImpact} />}
+        {pendingRoute && <RoutingImpactPreviewPanel route={pendingRoute} />}
 
-        <ConversationalTimelinePanel
-          input={store.conversationalInput}
-          onInputChange={setInput}
-          onSubmit={() => submitCommand(store.conversationalInput, 'Chief Concierge')}
-          lastResponse={store.lastConciergeResponse}
-          pendingCommand={pendingCommand}
-          onApprove={approveCommand}
-        />
-
+        <RoutingTrustPanel routingStore={routingStore} />
         <ConciergeCommandExamples />
-        <TimelineMemoryPanel preferences={store.timelineMemory} />
+        <TimelineMemoryPanel
+          preferences={store.timelineMemory}
+          routingPreferences={routingStore.routingPreferences}
+        />
         <ExecutiveTimelineConnectedSystems />
       </ExecutiveTimelineShell>
     </>
