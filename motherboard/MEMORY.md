@@ -37789,3 +37789,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/studio-institute` · back link from Executive Apprenticeship.
 
 **Changes:** studio-institute core + UI + hook + page + service, CoS/EAF/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
+---
+
+## 2026-07-05 — Chief of Staff page freeze + NDXBOOK social connect guidance
+
+**Context (full chat):** User reported Chief of Staff page keeps freezing and asked where to connect social accounts to ndxbook.
+
+**Chief of Staff freeze — root cause:**
+- **Dashboard tab** mounted **50+ panels** at once (core briefing/inbox **plus** ~35 module link panels duplicated from LEARNING tab) — main-thread DOM/layout overload on mobile.
+- **`AdminStudioLayout`** ran **`bootstrapWorkspacesPlatform()`** (12+ heavy AI Media seeds) on CoS entry even though **`useChiefOfStaffState`** already self-seeds via localStorage.
+- **Executive inbox header** rendered full **`SOFT_APPROVAL_SOURCES`** list (~50 module names) as one giant text block.
+
+**Fix:**
+- **`ChiefOfStaffWorkspace`** — dashboard tab now shows **core ops only** (briefing · summary · inbox · org · delegation · routing); module link panels moved to **LEARNING tab only** via **`ConnectedModuleLinkPanels`**; dashboard hint points to LEARNING for memory/timeline/links.
+- **`AdminStudioLayout`** — skip **`bootstrapWorkspacesPlatform()`** on **`/studio/chief-of-staff`** (same pattern as ndxbook).
+- **`ExecutiveInboxPanel`** — compact module count line instead of full source list.
+- **`useChiefOfStaffState`** — remove redundant **`ensureSeeded()`** inside **`useMemo`**.
+
+**NDXBOOK social connect (user guidance):**
+- **In-app:** Admin → Studio → **NDXBOOK Brand Setup** → **SOCIALS** tab (`/admin/studio/ndxbook?tab=socials`) — OAuth cards for Instagram/Facebook/TikTok/Pinterest/X; or full page **`/admin/studio/social-accounts`** (Distribution → Social Accounts).
+- **Before Connect works:** one-time server setup — run Supabase migration **`20260704120000_studio_social_publishing.sql`**; set Vercel env vars from **`.env.example`** Social Publishing section (**`SOCIAL_TOKEN_ENCRYPTION_SECRET`**, **`SITE_URL`**, **`META_APP_*`**, **`TIKTOK_*`**, **`PINTEREST_*`**, optional **`X_API_AVAILABLE=true`**); redeploy. Until configured, buttons show **SETUP REQUIRED** and **`SocialOAuthSetupPanel`** checklist — not an app bug.
+
+**Changes:** `ChiefOfStaffWorkspace.tsx`, `AdminStudioLayout.tsx`, `ChiefOfStaffPanels.tsx`, `useChiefOfStaffState.ts`, `motherboard/MEMORY.md`.

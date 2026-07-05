@@ -156,7 +156,9 @@ export function ExecutiveInboxPanel({ store, escalatedItems, onApprove, onReject
   return (
     <section className="p-3 mb-3" style={cosPanel}>
       <p style={cosSectionTitle}>EXECUTIVE INBOX · SOFT APPROVAL ENGINE · THRESHOLD {store.softApprovalThresholdPct}%</p>
-      <p style={cosLabel}>EVALUATES · {SOFT_APPROVAL_SOURCES.join(' · ')}</p>
+      <p style={cosLabel}>
+        EVALUATES · {SOFT_APPROVAL_SOURCES.length} MODULES (LEADERSHIP DNA · STRATEGY · CAMPAIGNS · ORG SYSTEMS · DNA LAYERS · MORE)
+      </p>
 
       {escalatedItems.length > 0 ? (
         <>

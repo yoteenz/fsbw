@@ -68,6 +68,55 @@ const TABS: { id: CosTab; label: string }[] = [
   { id: 'portfolio', label: 'PORTFOLIO' },
 ];
 
+/** Module link panels — only mount on LEARNING tab to keep dashboard responsive on mobile. */
+function ConnectedModuleLinkPanels() {
+  return (
+    <>
+      <LeadershipDnaLinkPanel />
+      <StrategyEngineLinkPanel />
+      <CampaignEngineLinkPanel />
+      <WorkOrchestrationLinkPanel />
+      <DistributionEngineLinkPanel />
+      <ReaderGraphLinkPanel />
+      <RelationshipEngineLinkPanel />
+      <CreatorMarketplaceLinkPanel />
+      <EcosystemMarketplaceLinkPanel />
+      <KnowledgeAssetEngineLinkPanel />
+      <CompanyMaturityEngineLinkPanel />
+      <BrandArchitectLinkPanel />
+      <ExperienceArchitectLinkPanel />
+      <DigitalArchitectLinkPanel />
+      <GrowthArchitectLinkPanel />
+      <CompanyGenomeLinkPanel />
+      <ArchitectStudioLinkPanel />
+      <CampusEvolutionEngineLinkPanel />
+      <FounderWalkLinkPanel />
+      <RemembranceGardenLinkPanel />
+      <FoundersPromiseLinkPanel />
+      <ExecutiveFrameworkLinkPanel />
+      <LeadershipManifestoFrameworkLinkPanel />
+      <ChiefBrandOfficerLinkPanel />
+      <ChiefExperienceOfficerLinkPanel />
+      <ChiefDigitalOfficerLinkPanel />
+      <ChiefTechnologyOfficerLinkPanel />
+      <ChiefGrowthOfficerLinkPanel />
+      <ExecutiveCouncilLinkPanel />
+      <OrganizationalIntelligenceLinkPanel />
+      <OrganizationalAutonomyFrameworkLinkPanel />
+      <OrganizationalDelegationEngineLinkPanel />
+      <OrganizationalWorkflowOrchestrationLinkPanel />
+      <OrganizationalSelfImprovementLinkPanel />
+      <OrganizationalGovernanceSafeguardsLinkPanel />
+      <OrganizationalMaturityModelLinkPanel />
+      <LeadershipModesLinkPanel />
+      <CompanyOnboardingIntelligenceLinkPanel />
+      <ArrivalExperienceLinkPanel />
+      <ExecutiveApprenticeshipLinkPanel />
+      <StudioInstituteLinkPanel />
+    </>
+  );
+}
+
 export function ChiefOfStaffWorkspace() {
   const [tab, setTab] = useState<CosTab>('dashboard');
   const {
@@ -110,47 +159,7 @@ export function ChiefOfStaffWorkspace() {
           <>
             <DecisionLearningPanel store={store} />
             <ExecutiveMemoryPanel store={store} />
-            <LeadershipDnaLinkPanel />
-            <StrategyEngineLinkPanel />
-            <CampaignEngineLinkPanel />
-            <WorkOrchestrationLinkPanel />
-            <DistributionEngineLinkPanel />
-            <ReaderGraphLinkPanel />
-            <RelationshipEngineLinkPanel />
-            <CreatorMarketplaceLinkPanel />
-            <EcosystemMarketplaceLinkPanel />
-            <KnowledgeAssetEngineLinkPanel />
-            <CompanyMaturityEngineLinkPanel />
-            <BrandArchitectLinkPanel />
-            <ExperienceArchitectLinkPanel />
-            <DigitalArchitectLinkPanel />
-            <GrowthArchitectLinkPanel />
-            <CompanyGenomeLinkPanel />
-            <ArchitectStudioLinkPanel />
-            <CampusEvolutionEngineLinkPanel />
-            <FounderWalkLinkPanel />
-            <RemembranceGardenLinkPanel />
-            <FoundersPromiseLinkPanel />
-            <ExecutiveFrameworkLinkPanel />
-            <LeadershipManifestoFrameworkLinkPanel />
-            <ChiefBrandOfficerLinkPanel />
-            <ChiefExperienceOfficerLinkPanel />
-            <ChiefDigitalOfficerLinkPanel />
-            <ChiefTechnologyOfficerLinkPanel />
-            <ChiefGrowthOfficerLinkPanel />
-            <ExecutiveCouncilLinkPanel />
-            <OrganizationalIntelligenceLinkPanel />
-            <OrganizationalAutonomyFrameworkLinkPanel />
-            <OrganizationalDelegationEngineLinkPanel />
-            <OrganizationalWorkflowOrchestrationLinkPanel />
-            <OrganizationalSelfImprovementLinkPanel />
-            <OrganizationalGovernanceSafeguardsLinkPanel />
-            <OrganizationalMaturityModelLinkPanel />
-            <LeadershipModesLinkPanel />
-            <CompanyOnboardingIntelligenceLinkPanel />
-            <ArrivalExperienceLinkPanel />
-            <ExecutiveApprenticeshipLinkPanel />
-            <StudioInstituteLinkPanel />
+            <ConnectedModuleLinkPanels />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -170,54 +179,18 @@ export function ChiefOfStaffWorkspace() {
             <ExecutiveInboxPanel {...panelProps} />
             <OrgHierarchyPanel store={store} />
             <DepartmentStatusPanel store={store} onDelegationChange={updateDelegation} />
-            <DecisionLearningPanel store={store} />
-            <ExecutiveCoachingPanel store={store} />
-            <LeadershipTimelinePanel store={store} />
-            <CrossWorkspacePanel store={store} />
-            <StudioIntelligencePanel store={store} />
-            <ExecutiveMemoryPanel store={store} />
-            <LeadershipDnaLinkPanel />
-            <StrategyEngineLinkPanel />
-            <CampaignEngineLinkPanel />
-            <WorkOrchestrationLinkPanel />
-            <DistributionEngineLinkPanel />
-            <ReaderGraphLinkPanel />
-            <RelationshipEngineLinkPanel />
-            <CreatorMarketplaceLinkPanel />
-            <EcosystemMarketplaceLinkPanel />
-            <KnowledgeAssetEngineLinkPanel />
-            <CompanyMaturityEngineLinkPanel />
-            <BrandArchitectLinkPanel />
-            <ExperienceArchitectLinkPanel />
-            <DigitalArchitectLinkPanel />
-            <GrowthArchitectLinkPanel />
-            <CompanyGenomeLinkPanel />
-            <ArchitectStudioLinkPanel />
-            <CampusEvolutionEngineLinkPanel />
-            <FounderWalkLinkPanel />
-            <RemembranceGardenLinkPanel />
-            <FoundersPromiseLinkPanel />
-            <ExecutiveFrameworkLinkPanel />
-            <LeadershipManifestoFrameworkLinkPanel />
-            <ChiefBrandOfficerLinkPanel />
-            <ChiefExperienceOfficerLinkPanel />
-            <ChiefDigitalOfficerLinkPanel />
-            <ChiefTechnologyOfficerLinkPanel />
-            <ChiefGrowthOfficerLinkPanel />
-            <ExecutiveCouncilLinkPanel />
-            <OrganizationalIntelligenceLinkPanel />
-            <OrganizationalAutonomyFrameworkLinkPanel />
-            <OrganizationalDelegationEngineLinkPanel />
-            <OrganizationalWorkflowOrchestrationLinkPanel />
-            <OrganizationalSelfImprovementLinkPanel />
-            <OrganizationalGovernanceSafeguardsLinkPanel />
-            <OrganizationalMaturityModelLinkPanel />
-            <LeadershipModesLinkPanel />
-            <CompanyOnboardingIntelligenceLinkPanel />
-            <ArrivalExperienceLinkPanel />
-            <ExecutiveApprenticeshipLinkPanel />
-            <StudioInstituteLinkPanel />
             <DecisionRoutingPanel />
+            <p
+              className="text-[6px] font-futura uppercase p-2 border mb-3"
+              style={{
+                fontWeight: 515,
+                borderColor: ADMIN_STUDIO_THEME.panelBorder,
+                color: ADMIN_STUDIO_THEME.textSecondary,
+                background: 'rgba(15,23,42,0.04)',
+              }}
+            >
+              MORE MODULE LINKS · DECISION LEARNING · EXECUTIVE MEMORY · TIMELINE — OPEN THE LEARNING TAB
+            </p>
           </>
         );
     }

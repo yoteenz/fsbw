@@ -65,7 +65,8 @@ export function AdminStudioLayout({
   const { pathname } = useLocation();
   const { workspace, getModuleSubtitle } = useWorkspace();
 
-  const skipHeavyPlatformBootstrap = pathname.includes('/studio/ndxbook');
+  const skipHeavyPlatformBootstrap =
+    pathname.includes('/studio/ndxbook') || pathname.includes('/studio/chief-of-staff');
 
   useEffect(() => {
     if (skipHeavyPlatformBootstrap) return;

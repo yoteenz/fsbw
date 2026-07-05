@@ -28,7 +28,6 @@ export function useChiefOfStaffState() {
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readChiefOfStaffStore();
   }, [version]);
 
