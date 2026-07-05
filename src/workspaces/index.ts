@@ -153,6 +153,10 @@ export function bootstrapWorkspacesPlatform(): void {
     chiefOfStaff.bootstrapChiefOfStaffPlatform();
     await yieldToMain();
 
+    const leadershipDna = await import('../studio-os-core/leadership-dna/bootstrap');
+    leadershipDna.bootstrapLeadershipDnaPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

@@ -36,7 +36,8 @@ export type StudioOsCoreModuleId =
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
-  | 'memory-bible';
+  | 'memory-bible'
+  | 'leadership-dna';
 
 export type StudioOsCoreModule = {
   id: StudioOsCoreModuleId;
@@ -244,5 +245,11 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'MEMORY BIBLE',
     description: 'Curated institutional knowledge — naming, decisions, AI context packages.',
     routeSegment: 'memory-bible',
+  },
+  {
+    id: 'leadership-dna',
+    label: 'LEADERSHIP DNA',
+    description: 'Founder operating blueprint — decision framework, approval patterns, and Chief of Staff training.',
+    routeSegment: 'leadership-dna',
   },
 ] as const;

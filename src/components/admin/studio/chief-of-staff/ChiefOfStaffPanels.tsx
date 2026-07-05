@@ -1,9 +1,11 @@
+import { Link } from 'react-router-dom';
 import type { ChiefOfStaffStore, DelegationMode, ExecutiveInboxItem } from '../../../../studio-os-core/chief-of-staff/types';
 import {
   DECISION_LEVEL_LABELS,
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
+import { adminStudioLeadershipDnaPath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -351,6 +353,27 @@ export function DecisionRoutingPanel() {
           <p style={{ ...cosLabel, fontSize: '6px' }}>{l.examples}</p>
         </div>
       ))}
+    </section>
+  );
+}
+
+export function LeadershipDnaLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: `4px solid ${COS.gold}` }}>
+      <p style={cosSectionTitle}>LEADERSHIP DNA · PRIMARY TRAINING FRAMEWORK</p>
+      <p style={cosLabel}>
+        Before escalation · evaluate against founder operating blueprint · soft approve when alignment exceeds threshold · otherwise revise or escalate
+      </p>
+      <p style={{ ...cosSectionTitle, marginTop: 8 }}>EVALUATION SOURCES</p>
+      {SOFT_APPROVAL_SOURCES.map((src) => (
+        <p key={src} style={cosLabel}>· {src}</p>
+      ))}
+      <Link
+        to={adminStudioLeadershipDnaPath()}
+        style={{ ...cosLabel, color: COS.gold, fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN LEADERSHIP DNA
+      </Link>
     </section>
   );
 }

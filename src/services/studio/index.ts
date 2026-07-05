@@ -128,6 +128,9 @@ export type { MissionControlSnapshot, MissionControlSummary } from './missionCon
 export { chiefOfStaffStudioService, CHIEF_OF_STAFF_INHERITANCE_CHAIN } from './chiefOfStaff/service';
 export type { ChiefOfStaffSnapshot } from './chiefOfStaff/service';
 
+export { leadershipDnaStudioService, LEADERSHIP_DNA_INHERITANCE_CHAIN } from './leadershipDna/service';
+export type { LeadershipDnaSnapshot } from './leadershipDna/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -209,6 +212,7 @@ import { executiveAiDirectorStudioService } from './executiveAiDirector/service'
 import { campaignOrchestratorStudioService } from './campaignOrchestrator/service';
 import { missionControlStudioService } from './missionControl/service';
 import { chiefOfStaffStudioService } from './chiefOfStaff/service';
+import { leadershipDnaStudioService } from './leadershipDna/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -253,6 +257,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   campaignOrchestratorStudioService,
   missionControlStudioService,
   chiefOfStaffStudioService,
+  leadershipDnaStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

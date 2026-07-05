@@ -8,7 +8,7 @@ export const EXECUTIVE_ROLE_CATALOG: Record<string, ExecutiveRole> = {
     title: 'Chief of Staff',
     department: 'Executive Office',
     mandate: 'Primary executive beneath the founder — soft approvals, attention protection, unified briefings, and decision routing for all departments.',
-    inherits: ['memory-bible', 'creative-dna', 'writing-bible', 'knowledge-graph', 'company-objectives', 'operating-rules'],
+    inherits: ['leadership-dna', 'memory-bible', 'creative-dna', 'writing-bible', 'knowledge-graph', 'company-objectives', 'operating-rules'],
     collaboratesWith: ['chief-content-officer', 'chief-creative-officer', 'analytics-director'],
   },
   'chief-content-officer': {

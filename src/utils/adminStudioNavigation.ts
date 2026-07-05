@@ -469,6 +469,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'leadership-dna',
+    title: 'LEADERSHIP DNA',
+    purpose: 'Founder operating blueprint — decision framework, approval patterns, and primary Chief of Staff training system.',
+    route: p('leadership-dna'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN LEADERSHIP DNA',
+    moduleKey: 'leadership-dna',
+    featuredOnOverview: true,
+  },
+  {
     id: 'tutorial-os',
     title: 'TUTORIAL OS',
     purpose: 'Manage onboarding tutorial walkthroughs — The Mansion Tour, hotspots, progress analytics, and preview.',

@@ -64,6 +64,7 @@ export type AdminStudioSectionId =
   | 'campaign-orchestrator'
   | 'knowledge-hub'
   | 'memory-bible'
+  | 'leadership-dna'
   | 'brand-assets';
 
 export type AdminStudioHubCard = {

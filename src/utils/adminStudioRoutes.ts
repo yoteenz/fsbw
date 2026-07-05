@@ -50,6 +50,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'campaign-orchestrator'
   | 'knowledge-hub'
   | 'memory-bible'
+  | 'leadership-dna'
   | 'brand-assets'
 >;
 
@@ -96,6 +97,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'campaign-orchestrator',
   'knowledge-hub',
   'memory-bible',
+  'leadership-dna',
   'brand-assets',
 ] as const;
 
@@ -173,6 +175,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   knowledgeHubProfile: 'studio/knowledge-hub/profile/:profileId',
   knowledgeHubWorkflow: 'studio/knowledge-hub/workflow/:workflowId',
   memoryBible: 'studio/memory-bible',
+  leadershipDna: 'studio/leadership-dna',
   brandAssets: 'studio/brand-assets',
   photographyBible: 'studio/brand-assets/photography-bible',
   brandAssetsAssetFactory: 'studio/brand-assets/asset-factory',
@@ -316,6 +319,10 @@ export function adminStudioKnowledgeHubWorkflowPath(workflowId: string): string 
 
 export function adminStudioMemoryBiblePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/memory-bible`;
+}
+
+export function adminStudioLeadershipDnaPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/leadership-dna`;
 }
 
 export function adminStudioGrowthNetworkPath(): string {

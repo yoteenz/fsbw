@@ -36841,3 +36841,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** `SocialOAuthSetupPanel.tsx`, `socialOAuthSetupGuide.ts`, `AdminStudioSocialAccountCard.tsx`, `NdxbookSocialsPanel.tsx`, `social-accounts/page.tsx`, `apiSocialPublishing.ts`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Milestone 39: Leadership DNA V1.0
+
+**Context (full chat):** User requested Milestone 39 — introduce **Leadership DNA** as the founder's operating blueprint alongside Company DNA, Creative DNA, Writing DNA, Memory Bible, and Knowledge Graph. Prior milestones in this chat arc: NDXBOOK freeze fix, M37 NDXBOOK Mission Control, M38 Chief of Staff, NDXBOOK social OAuth setup UX.
+
+**Goal:** Leadership DNA captures how the founder leads — priorities, values, decision framework, approval patterns, creative taste, writing intelligence, delegation, risk, feedback, timeline, simulator, cross-company leadership, institutional lessons. Becomes **primary training system for Chief of Staff**. Never replaces founder judgment — amplifies it. Cross-company (Frontal Slayer, ndxbook, future companies).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/leadership-dna/` — types (11 founder profile sections, decision journal, approval/creative/writing intelligence, delegation/risk/feedback engines, timeline, simulator, institutional lessons), constants, localStorage store (`studioOsLeadershipDna_v1`), `evaluateChiefOfStaffAlignment()` for CoS integration, `recordDecisionOutcome()`.
+- **Bootstrap:** rich demo seed — 11 evolving profile sections, 8 enduring principles, 5 decision journal entries linked to KG nodes, 8 approval patterns, creative taste + writing intelligence signals, delegation recommendations, risk/feedback intelligence, leadership timeline, cross-company insights, 3 simulator scenarios, institutional lessons.
+- **Hook:** `useLeadershipDnaState` — profile section navigation, alignment evaluation.
+- **UI:** `/admin/studio/leadership-dna` — `LeadershipDnaWorkspace` with tabs (Overview · Founder Profile · Decisions · Intelligence · Simulator · CoS·KG); panels for dashboard, profile, principles, decision journal, approval intelligence, creative taste, writing intelligence, delegation/risk/feedback engines, timeline, CoS integration (sample alignment checks + link), cross-company, simulator, institutional leadership, knowledge graph links.
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (intelligence group, featured), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/leadershipDna/service.ts`, `bootstrapLeadershipDnaPlatform()` in platform seed chain after Chief of Staff.
+- **Chief of Staff integration:** `Leadership DNA` added first in `SOFT_APPROVAL_SOURCES`; `LeadershipDnaLinkPanel` in CoS workspace (dashboard + learning tabs); CoS executive memory sources include Leadership DNA; `executiveTeam.ts` chief-of-staff inherits `leadership-dna`.
+- **Knowledge graph:** `node-leadership-dna`, `node-chief-of-staff` nodes + edges (Leadership DNA ↔ Memory Bible, Creative DNA, Studio Intelligence, Chief of Staff).
+
+**Route:** `/admin/studio/leadership-dna` · Intelligence nav group · back link from Memory Bible context.
+
+**Changes:** leadership-dna core + UI + hook + page + service, CoS/KG/executive wiring, `motherboard/MEMORY.md`.
+

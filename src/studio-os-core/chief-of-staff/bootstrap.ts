@@ -311,7 +311,7 @@ export function buildChiefOfStaffSeed(): Partial<ChiefOfStaffStore> {
       brandPhilosophy: ['ndxbook = index for everyday knowledge', 'AI Media internal · ndxbook public', 'Quality over volume', 'Founder vision > operational noise'],
       communicationPreferences: ['One morning briefing · not dozens of pings', 'Escalate with confidence + evidence', '4-minute review budget respected'],
       longTermVision: ['Build media company operating system', 'ndxbook as flagship public brand', 'Automate operations · protect founder attention'],
-      sources: ['Creative DNA', 'Writing Bible', 'Memory Bible', 'Knowledge Graph', 'Founder decision history'],
+      sources: ['Leadership DNA', 'Creative DNA', 'Writing Bible', 'Memory Bible', 'Knowledge Graph', 'Founder decision history'],
     },
     delegationByDepartment: {
       marketing: 'soft-approval',
