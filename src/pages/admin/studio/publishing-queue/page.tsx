@@ -77,7 +77,7 @@ export default function AdminStudioPublishingQueuePage() {
                 key={day.id}
                 onDragOver={handleDragOver}
                 onDrop={handleDrop(day.id)}
-                className="flex-shrink-0 w-[88px] min-h-[200px] p-1.5 transition-colors border bg-white/60"
+                className={`flex-shrink-0 w-[88px] min-h-[200px] p-1.5 transition-colors border bg-white/60${isToday ? ' studio-living-panel studio-glass-sheen' : ''}`}
                 style={{
                   background: isToday ? ADMIN_STUDIO_THEME.selectedBg : ADMIN_STUDIO_THEME.panelBg,
                   borderColor: isToday ? `${ADMIN_STUDIO_THEME.accent}44` : ADMIN_STUDIO_THEME.panelBorder,

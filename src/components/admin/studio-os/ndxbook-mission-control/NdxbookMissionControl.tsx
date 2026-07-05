@@ -4,6 +4,9 @@ import { NDXBOOK_MISSION_CONTROL_NAV } from '../../../../studio-os-core/ndxbook/
 import type { MissionControlNavId } from '../../../../studio-os-core/ndxbook/mission-control/types';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useNdxbookMissionControlState } from '../../../../hooks/useNdxbookMissionControlState';
+import { StudioImmersionStyles } from '../../studio/immersion/StudioImmersionStyles';
+import { StudioChiefConciergeBrief } from '../../studio/immersion/StudioChiefConciergeBrief';
+import { useStudioImmersion } from '../../../../hooks/useStudioImmersion';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { NDXBOOK_MC_STYLES } from './ndxbookMissionControlTheme';
 import {
@@ -52,6 +55,8 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
     lastUpdatedAt,
     onReschedule: rescheduleItem,
   };
+
+  const { chiefBrief } = useStudioImmersion();
 
   const renderFocusedView = () => {
     switch (activeNav) {
@@ -102,8 +107,10 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
   return (
     <div className="ndxbook-mission-control">
       <style>{NDXBOOK_MC_STYLES}</style>
+      <StudioImmersionStyles />
 
       <MissionControlHeader lastUpdatedAt={lastUpdatedAt} />
+      <StudioChiefConciergeBrief brief={chiefBrief} compact />
 
       <div className="flex gap-1 overflow-x-auto pb-2 mb-2">
         {NDXBOOK_MISSION_CONTROL_NAV.map((item) => (

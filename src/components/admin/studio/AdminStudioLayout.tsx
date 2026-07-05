@@ -20,6 +20,7 @@ import {
   type StudioNavGroupId,
 } from '../../../utils/adminStudioNavigation';
 import { STUDIO_OS_UPPERCASE_CLASS } from '../../../utils/adminStudioTheme';
+import { StudioImmersionShell } from './immersion/StudioImmersionShell';
 
 type AdminStudioLayoutProps = {
   title: string;
@@ -220,6 +221,7 @@ export function AdminStudioLayout({
                 data-studio-manual="workspace-content"
                 style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}
               >
+                <StudioImmersionShell />
                 <KnowledgeContextualHint />
                 <div style={{ paddingTop: '8px', boxSizing: 'border-box' }}>{children}</div>
               </div>

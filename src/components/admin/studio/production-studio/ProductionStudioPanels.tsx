@@ -25,6 +25,7 @@ import {
   adminStudioStudioIntelligencePath,
   adminStudioTalentNetworkPath,
 } from '../../../../utils/adminStudioRoutes';
+import { StudioLivingIndicator } from '../immersion/StudioLivingIndicator';
 import {
   PS_VISUAL,
   psCanvasStyle,
@@ -57,14 +58,18 @@ function formatRuntime(sec: number): string {
 export function ProductionStudioHeader({ store }: { store: ProductionStudioStore }) {
   return (
     <header
-      className="p-3 mb-3 relative overflow-hidden"
+      className="p-3 mb-3 relative overflow-hidden studio-glass-sheen studio-living-panel"
       style={{
         ...psPanelStyle,
         backgroundImage: `${PS_VISUAL.cinematicGlow}, ${PS_VISUAL.marble}`,
         backgroundSize: 'cover, cover',
       }}
     >
-      <p style={psSectionTitle}>PRODUCTION STUDIO · CINEMATIC HEADQUARTERS · V1.0</p>
+      <p style={psSectionTitle}>
+        <StudioLivingIndicator label="PRODUCTION FLOOR LIVE" state="busy" />
+        {' · '}
+        PRODUCTION STUDIO · CINEMATIC HEADQUARTERS · V1.0
+      </p>
       <p style={{ ...psGraceAccent, fontSize: '18px', marginBottom: 4 }}>{store.companyName}</p>
       <p style={{ ...psValue, color: PS_VISUAL.gray, fontSize: '7px' }}>{store.dashboard.summary}</p>
       <div className="grid grid-cols-3 gap-2 mt-3 sm:grid-cols-6">

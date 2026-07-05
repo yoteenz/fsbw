@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { StudioLivingIndicator } from '../immersion/StudioLivingIndicator';
 import { RENDER_PIPELINE_STAGES, RENDER_QUEUE_CONNECTED_SYSTEMS } from '../../../../studio-os-core/render-queue/constants';
 import { getStageIndex } from '../../../../studio-os-core/render-queue/store';
 import type { RenderIntelligenceAlert, RenderJob, RenderQueueStore } from '../../../../studio-os-core/render-queue/types';
@@ -59,7 +60,7 @@ function ProgressBar({ job }: { job: RenderJob }) {
 export function RenderQueueHeader({ store }: { store: RenderQueueStore }) {
   return (
     <header
-      className="p-3 mb-3 relative overflow-hidden rq-ambient"
+      className="p-3 mb-3 relative overflow-hidden rq-ambient studio-glass-sheen studio-living-panel"
       style={{
         ...rqPanelStyle,
         backgroundImage: `${RQ_VISUAL.ambient}, ${RQ_VISUAL.marble}`,
@@ -68,7 +69,11 @@ export function RenderQueueHeader({ store }: { store: RenderQueueStore }) {
     >
       <div className="flex items-center gap-2 mb-2">
         <span className="rq-live-pulse inline-block w-2 h-2 rounded-full" style={{ background: RQ_VISUAL.pulse }} />
-        <p style={rqSectionTitle}>RENDER QUEUE · PRODUCTION FLOOR HEARTBEAT · V1.0</p>
+        <p style={rqSectionTitle}>
+          <StudioLivingIndicator label="PROCESSING" state="busy" />
+          {' · '}
+          RENDER QUEUE · PRODUCTION FLOOR HEARTBEAT · V1.0
+        </p>
       </div>
       <p style={{ ...rqGrace, fontSize: '18px' }}>{store.companyName}</p>
       <p style={{ ...rqValue, color: '#808080', fontSize: '7px' }}>{store.dashboard.summary}</p>

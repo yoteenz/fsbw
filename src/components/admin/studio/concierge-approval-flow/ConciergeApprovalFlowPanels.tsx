@@ -40,8 +40,7 @@ export function ConciergeApprovalFlowAnimationStyles() {
 
 export function ConciergeApprovalFlowShell({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="concierge-approval-flow relative overflow-hidden rounded-sm"
+    <div className="concierge-approval-flow relative overflow-hidden rounded-sm studio-glass-sheen"
       style={{
         background: `${CAF_VISUAL.marble} center/cover, linear-gradient(180deg, #faf8f5 0%, #f5f0ea 100%)`,
         minHeight: 'min(85vh, 820px)',

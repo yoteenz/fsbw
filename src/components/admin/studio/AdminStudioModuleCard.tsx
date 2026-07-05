@@ -21,7 +21,7 @@ export function AdminStudioModuleCard({ module, index }: AdminStudioModuleCardPr
     <button
       type="button"
       onClick={() => navigate(module.route)}
-      className="w-full text-left bg-white border border-gray-200 px-4 py-3 mb-2 hover:opacity-90 transition-opacity"
+      className="w-full text-left bg-white border border-gray-200 px-4 py-3 mb-2 hover:opacity-90 transition-opacity studio-living-card studio-glass-depth"
     >
       <div
         className="grid gap-2 items-start"

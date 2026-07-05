@@ -24,7 +24,7 @@ export function ProductionStudioWorkspace() {
 
   return (
     <div
-      className="production-studio-root"
+      className="production-studio-root studio-living-panel"
       style={{
         backgroundImage: PS_VISUAL.cinematicGlow,
         minHeight: 'min(80vh, 720px)',

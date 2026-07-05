@@ -49,7 +49,7 @@ export function ScreeningRoomAnimationStyles() {
 export function ScreeningRoomTheaterShell({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="screening-room-theater relative overflow-hidden rounded-sm"
+      className="screening-room-theater relative overflow-hidden rounded-sm studio-cinema-enter"
       style={{
         background: SR_VISUAL.bg,
         minHeight: 'min(85vh, 780px)',

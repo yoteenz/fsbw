@@ -480,8 +480,12 @@ export function ActivityWallPanel({ store, formatTime }: PanelProps) {
         ACTIVITY WALL · LIVE
       </p>
       <div className="space-y-1 max-h-48 overflow-y-auto">
-        {sorted.map((ev) => (
-          <div key={ev.id} className="flex gap-2 py-1 border-b" style={{ borderColor: '#eee' }}>
+        {sorted.map((ev, idx) => (
+          <div
+            key={ev.id}
+            className="studio-activity-entry flex gap-2 py-1 border-b"
+            style={{ borderColor: '#eee', animationDelay: `${Math.min(idx, 8) * 0.05}s` }}
+          >
             <span style={{ width: 4, flexShrink: 0, background: ACTIVITY_CATEGORY_COLORS[ev.category] ?? MC.gray }} />
             <div className="flex-1 min-w-0">
               <p style={{ ...mcLabel, color: MC.black, fontSize: '6px' }}>{ev.message}</p>

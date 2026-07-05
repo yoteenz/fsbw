@@ -25,6 +25,8 @@ import {
   WORKSPACE_MEMORY,
   missionStatusColor,
 } from '../../../../utils/adminStudioMissionControlDemo';
+import { StudioLivingIndicator } from '../immersion/StudioLivingIndicator';
+import { useStudioImmersion } from '../../../../hooks/useStudioImmersion';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -52,6 +54,7 @@ export function MissionControlWorkspace() {
   } = useAdminStudioMissionControl();
   const { unreadGuides, markGuideRead } = useAdminStudioKnowledgeHub();
 
+  const { presenceFeed } = useStudioImmersion();
   const header = MISSION_CONTROL_HEADER;
   const visibleNotifications = SMART_NOTIFICATIONS.filter((n) => !dismissedNotifications.includes(n.id));
   const currentPhaseIdx = MISSION_PHASES.findIndex((p) => p.id === MISSION_CURRENT_PHASE);
@@ -61,7 +64,7 @@ export function MissionControlWorkspace() {
       <style>{MISSION_CONTROL_STYLES}</style>
 
       {/* WORKSPACE HEADER */}
-      <header style={{ ...mcBreathingPanel, padding: '12px', marginBottom: '12px' }}>
+      <header className="studio-wing-section" style={{ ...mcBreathingPanel, padding: '12px', marginBottom: '12px' }}>
         <div className="flex items-start gap-3">
           <div className="flex-shrink-0 border overflow-hidden" style={{ width: 44, height: 44, borderColor: MC_VISUAL.black }}>
             <img src={workspace.logoSrc} alt="" className="w-full h-full object-cover" />
@@ -71,6 +74,11 @@ export function MissionControlWorkspace() {
             <p style={mcCaption}>
               <span style={mcLiveDot} />
               MISSION STATUS · {header.missionStatus.replace('-', ' ').toUpperCase()} · HEALTH {header.workspaceHealth}%
+            </p>
+            <p style={{ ...mcCaption, color: MC_VISUAL.black, marginTop: 4 }}>
+              <StudioLivingIndicator label="HEADQUARTERS ACTIVE" state="busy" />
+              {' · '}
+              TODAY&apos;S QUESTION · WHAT SHOULD THE FOUNDER KNOW RIGHT NOW?
             </p>
             <p style={mcCaption}>
               {header.quarter} · {header.season} · {header.currentCampaign}
@@ -132,7 +140,7 @@ export function MissionControlWorkspace() {
       </header>
 
       {/* MISSION OVERVIEW — CENTER HERO */}
-      <section style={{ ...mcPanelStyle, padding: '14px', marginBottom: '12px' }}>
+      <section className="studio-wing-section studio-living-panel" style={{ ...mcPanelStyle, padding: '14px', marginBottom: '12px' }}>
         <p style={{ ...mcGrace, fontSize: '22px' }}>{MISSION_OVERVIEW.title}</p>
         <p style={mcCaption}>CURRENT MISSION · PHASE {MISSION_OVERVIEW.phase}</p>
         <div className="mt-3 relative h-3 w-full overflow-hidden" style={{ background: 'rgba(0,0,0,0.06)', border: MC_VISUAL.border }}>
@@ -201,8 +209,8 @@ export function MissionControlWorkspace() {
 
       {/* LEFT BRIEF + RIGHT AI DIRECTOR */}
       <div className="grid grid-cols-1 gap-3 mb-3 lg:grid-cols-2">
-        <section style={{ ...mcBreathingPanel, padding: '12px' }}>
-          <p style={mcSectionTitle}>EXECUTIVE BRIEF</p>
+        <section className="studio-wing-section studio-living-panel" style={{ ...mcBreathingPanel, padding: '12px' }}>
+          <p style={mcSectionTitle}>TODAY&apos;S BRIEFING · EXECUTIVE BRIEF</p>
           <p style={{ ...mcGrace, fontSize: '16px' }}>{MISSION_EXECUTIVE_BRIEF.greeting}</p>
           <p style={{ ...mcCaption, color: MC_VISUAL.black, marginTop: 4 }}>{MISSION_EXECUTIVE_BRIEF.welcome}</p>
           <p style={{ ...mcCaption, marginTop: 8 }}>
@@ -453,10 +461,34 @@ export function MissionControlWorkspace() {
           LIVE ACTIVITY
         </p>
         <div className="flex gap-4 overflow-x-auto pb-1" style={{ scrollbarWidth: 'thin' }}>
-          {LIVE_ACTIVITY_SEED.slice(0, 8).map((act) => (
-            <div key={act.id} className="flex-shrink-0 min-w-[180px]" style={{ borderLeft: `2px solid ${MC_VISUAL.red}`, paddingLeft: 8 }}>
+          {LIVE_ACTIVITY_SEED.slice(0, 6).map((act, idx) => (
+            <div
+              key={act.id}
+              className="studio-activity-entry flex-shrink-0 min-w-[180px]"
+              style={{
+                borderLeft: `2px solid ${MC_VISUAL.red}`,
+                paddingLeft: 8,
+                animationDelay: `${idx * 0.06}s`,
+              }}
+            >
               <p style={{ ...mcCaption, color: MC_VISUAL.black, fontSize: '8px' }}>{act.text}</p>
               <p style={{ ...mcCaption, fontSize: '7px' }}>{act.time} · {act.category}</p>
+            </div>
+          ))}
+          {presenceFeed.slice(0, 2).map((p, idx) => (
+            <div
+              key={p.id}
+              className="studio-activity-entry flex-shrink-0 min-w-[160px]"
+              style={{
+                borderLeft: `2px solid #92704A`,
+                paddingLeft: 8,
+                animationDelay: `${(idx + 6) * 0.06}s`,
+              }}
+            >
+              <p style={{ ...mcCaption, color: MC_VISUAL.black, fontSize: '8px' }}>
+                {p.concierge} · {p.activity}
+              </p>
+              <p style={{ ...mcCaption, fontSize: '7px' }}>{p.location} · CONCIERGE</p>
             </div>
           ))}
         </div>

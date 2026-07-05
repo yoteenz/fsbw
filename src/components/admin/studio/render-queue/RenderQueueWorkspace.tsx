@@ -28,7 +28,7 @@ export function RenderQueueWorkspace() {
   } = useRenderQueueState();
 
   return (
-    <div className="render-queue-root">
+    <div className="render-queue-root studio-room-production-floor">
       <RenderQueueAnimationStyles />
       <RenderQueueHeader store={store} />
       <RenderQueueControls

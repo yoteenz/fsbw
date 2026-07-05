@@ -37970,3 +37970,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/screening-room` · back from Render Queue.
 
 **Changes:** screening-room core + UI + hook + page + service, App.tsx, routes/nav/demo/modules/workspaces/services/seedGraph, render-queue + production-studio links, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — Milestone 81: Concierge Approval Flow V1.0
+
+**Context (full chat):** User continued Studio OS production arc after M80 Screening Room (`89562a81`). Request: **Concierge Approval Flow** — every piece of content moves through intelligent concierge review before reaching the founder. Founder should never receive unfinished work. Luxury editorial board aesthetic — not a software approval workflow.
+
+**Goal:** Sequential review order: Brand → Experience → Digital → Technology → Growth → Chief Concierge → Founder. Each review displays verdict (Approved · Approved With Suggestions · Needs Revision · Critical Issue) · confidence · reasoning · historical comparison. Once all concierges approve, Chief Concierge prepares one unified Founder Brief (overall readiness · recommended changes · confidence · predicted outcome · remaining concerns). Founder actions: Approve · Publish · Schedule · Request Changes · Regenerate · Run Experiment · Save Draft. Future vision: trust thresholds for routine auto-approval; campaigns/launches/brand announcements always require founder unless delegated.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/concierge-approval-flow/` — types · constants (review order · criteria · verdicts · founder actions) · store (select item · complete review · build founder brief · record founder decision) · bootstrap (3 NDXBOOK items at different pipeline stages: awaiting founder · mid Growth review · Brand in-review high-impact).
+- **Hook:** `useConciergeApprovalFlowState`.
+- **UI:** `/admin/studio/concierge-approval-flow` — warm marble/champagne editorial board (`conciergeApprovalFlowTheme.ts`). Dashboard stats · item selector · review pipeline strip · completed review cards · active concierge card · unified Founder Brief panel · founder action bar · trust vision note.
+- **Service:** `conciergeApprovalFlowModuleService` (`id: concierge-approval-flow`).
+- **Wiring:** route · nav (PRODUCTION · ENTER EDITORIAL BOARD) · modules.ts · workspaces bootstrap · KG `node-concierge-approval-flow` + edges to screening room · concierge layer · publishing · founder's promise · Screening Room → Editorial Board link · back nav Screening Room ↔ Concierge Approval Flow · `motherboard/CORE.md`.
+
+**Route:** `/admin/studio/concierge-approval-flow` · back from Screening Room.
+
+**Changes:** concierge-approval-flow core + UI + hook + page + service, App.tsx, routes/nav/demo/modules/workspaces/services/seedGraph, ScreeningRoomPanels link, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
