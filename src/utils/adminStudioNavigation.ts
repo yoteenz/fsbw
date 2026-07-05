@@ -154,6 +154,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'growth-architect',
+    title: 'GROWTH ARCHITECT',
+    purpose: 'Sustainable growth OS — initiatives, GTM, orchestration, compound trust and revenue over decades.',
+    route: p('growth-architect'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN GROWTH',
+    moduleKey: 'growth-architect',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

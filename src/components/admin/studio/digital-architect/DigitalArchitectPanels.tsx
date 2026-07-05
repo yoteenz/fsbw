@@ -6,6 +6,7 @@ import {
   adminStudioChiefOfStaffPath,
   adminStudioCompanyMaturityEnginePath,
   adminStudioExperienceArchitectPath,
+  adminStudioGrowthArchitectPath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -392,6 +393,12 @@ export function LaunchArchitectHandoffPanel({ store }: Pick<Props, 'store'>) {
       {h.inheritedAssets.map((a) => <p key={a} style={{ ...daLabel, fontSize: '5px' }}>· {a}</p>)}
       <p style={{ ...daSectionTitle, fontSize: '7px', marginTop: 8 }}>DOWNSTREAM</p>
       {h.downstreamTargets.map((t) => <p key={t} style={{ ...daLabel, fontSize: '5px', color: DA.slate }}>→ {t}</p>)}
+      <Link
+        to={adminStudioGrowthArchitectPath()}
+        style={{ ...daLabel, color: '#059669', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8, fontSize: '6px' }}
+      >
+        → OPEN GROWTH ARCHITECT
+      </Link>
     </section>
   );
 }
@@ -436,6 +443,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioBrandArchitectPath()} style={{ ...daLabel, color: '#BE185D', fontSize: '6px' }}>→ BRAND ARCHITECT</Link>
         <Link to={adminStudioCompanyMaturityEnginePath()} style={{ ...daLabel, color: '#0369A1', fontSize: '6px' }}>→ COMPANY MATURITY ENGINE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...daLabel, color: DA.slate, fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
+        <Link to={adminStudioGrowthArchitectPath()} style={{ ...daLabel, color: '#059669', fontSize: '6px' }}>→ GROWTH ARCHITECT</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...daLabel, color: DA.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
       </div>
     </section>

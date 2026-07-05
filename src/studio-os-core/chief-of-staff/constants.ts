@@ -43,6 +43,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Brand Architect',
   'Experience Architect',
   'Digital Architect',
+  'Growth Architect',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

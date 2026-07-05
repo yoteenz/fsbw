@@ -221,6 +221,10 @@ export function bootstrapWorkspacesPlatform(): void {
     digitalArchitect.bootstrapDigitalArchitectPlatform();
     await yieldToMain();
 
+    const growthArchitect = await import('../studio-os-core/growth-architect/bootstrap');
+    growthArchitect.bootstrapGrowthArchitectPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

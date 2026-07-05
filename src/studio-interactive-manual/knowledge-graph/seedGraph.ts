@@ -31,6 +31,7 @@ import {
   adminStudioBrandArchitectPath,
   adminStudioExperienceArchitectPath,
   adminStudioDigitalArchitectPath,
+  adminStudioGrowthArchitectPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -398,6 +399,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 55',
     status: 'demo',
     searchKeywords: ['digital architect', 'experience gallery', 'hybrid architecture', 'digital ecosystem', 'design system generation', 'developer handoff', 'launch architect'],
+  },
+  {
+    id: 'node-growth-architect',
+    name: 'GROWTH ARCHITECT',
+    type: 'module',
+    description:
+      'Sustainable growth operating system — initiatives, GTM, orchestration, experiments, market intelligence, expansion architect. Compound trust · revenue · relationships over decades.',
+    purpose: 'Not growth at any cost · relationship-driven · strategy-origin growth · intentional OS.',
+    route: adminStudioGrowthArchitectPath(),
+    moduleId: 'growth-architect',
+    relatedManualChapter: 'CHAPTER · GROWTH ARCHITECT · SUSTAINABLE GROWTH OS',
+    versionIntroduced: 'Milestone 56',
+    status: 'demo',
+    searchKeywords: ['growth architect', 'go-to-market', 'growth lifecycle', 'growth simulation', 'expansion architect', 'growth orchestration'],
   },
   {
     id: 'node-fallback-used',
@@ -1139,6 +1154,14 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-digital-cos', fromId: 'node-chief-of-staff', toId: 'node-digital-architect', type: 'related-to', label: 'DIGITAL APPROVAL' },
   { id: 'e-digital-maturity', fromId: 'node-company-maturity-engine', toId: 'node-digital-architect', type: 'related-to', label: 'DIGITAL MATURITY PATH' },
   { id: 'e-digital-platform', fromId: 'node-digital-architect', toId: 'digital-architect', type: 'documented-by', label: 'DIGITAL WORLDS' },
+  { id: 'e-digital-growth', fromId: 'node-digital-architect', toId: 'node-growth-architect', type: 'feeds', label: 'ECOSYSTEM → GROWTH' },
+  { id: 'e-growth-strategy', fromId: 'node-growth-architect', toId: 'node-strategy-engine', type: 'related-to', label: 'INITIATIVE ALIGNMENT' },
+  { id: 'e-growth-campaign', fromId: 'node-growth-architect', toId: 'node-campaign-engine', type: 'related-to', label: 'CAMPAIGN ORCHESTRATION' },
+  { id: 'e-growth-distribution', fromId: 'node-growth-architect', toId: 'node-distribution-engine', type: 'related-to', label: 'CHANNEL GROWTH' },
+  { id: 'e-growth-relationship', fromId: 'node-growth-architect', toId: 'node-relationship-engine', type: 'related-to', label: 'RETENTION · NURTURE' },
+  { id: 'e-growth-intelligence', fromId: 'node-studio-intelligence', toId: 'node-growth-architect', type: 'feeds', label: 'GROWTH INTELLIGENCE' },
+  { id: 'e-growth-cos', fromId: 'node-chief-of-staff', toId: 'node-growth-architect', type: 'related-to', label: 'GROWTH APPROVAL' },
+  { id: 'e-growth-platform', fromId: 'node-growth-architect', toId: 'growth-architect', type: 'documented-by', label: 'SUSTAINABLE GROWTH' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

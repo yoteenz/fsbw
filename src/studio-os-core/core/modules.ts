@@ -21,6 +21,7 @@ export type StudioOsCoreModuleId =
   | 'brand-architect'
   | 'experience-architect'
   | 'digital-architect'
+  | 'growth-architect'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -176,6 +177,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'DIGITAL ARCHITECT',
     description: 'Digital solution architect — experience gallery, hybrid architecture, ecosystem builder, launch handoff. V2.0.',
     routeSegment: 'digital-architect',
+  },
+  {
+    id: 'growth-architect',
+    label: 'GROWTH ARCHITECT',
+    description: 'Sustainable growth OS — initiatives, GTM, orchestration, relationship-driven compound growth.',
+    routeSegment: 'growth-architect',
   },
   {
     id: 'executive-command-center',
