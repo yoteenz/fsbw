@@ -10,7 +10,8 @@ import {
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDesktopTowerTravelOptional } from '../../../components/desktop-tower/DesktopTowerNavProvider';
-import { seedCreativePreviewDemoSession } from '../../../utils/creativePreviewMode';
+import { isCreativePreviewMode, seedCreativePreviewDemoSession } from '../../../utils/creativePreviewMode';
+import { isVisionShareSessionActive } from '../../../studio-os-core/vision-engine/access';
 import {
   getActiveVisionMode,
   isVisionLuxuryAudioEnabled,
@@ -31,7 +32,7 @@ import {
   VISION_SLOW_DWELL_MS,
 } from '../../../studio-os-core/vision-engine/constants';
 import { getVisionModeById, recordVisionAnalyticsEvent } from '../../../studio-os-core/vision-engine/store';
-import { stopVisionPresentation } from '../../../studio-os-core/vision-engine/launch';
+import { resetVisionPresentationSession, stopVisionPresentation } from '../../../studio-os-core/vision-engine/launch';
 import { bootstrapFrontalSlayerVisionEngine } from '../../../workspaces/frontal-slayer/vision-engine';
 import type { VisionPhase, VisionStop, VisionTransitionKind, WorkspaceVisionManifest } from '../../../studio-os-core/vision-engine/types';
 
@@ -242,6 +243,16 @@ export function VisionEngineProvider({ children }: { children: ReactNode }) {
     },
     [applyStop, autoTourRunning, clearTimer, recordMode, stops]
   );
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!isCreativePreviewMode() || isVisionShareSessionActive()) return;
+    if (!isVisionSessionActive()) return;
+    resetVisionPresentationSession();
+    setPhase('idle');
+    setAutoTourRunning(false);
+    setPresentationActive(false);
+  }, []);
 
   useEffect(() => {
     if (isVisionSessionActive()) {

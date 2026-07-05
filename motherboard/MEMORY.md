@@ -36645,3 +36645,12 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Fix:** `manifest.ts` tagline restored to **IMMERSIVE LUXURY BEAUTY**. `.vision-engine-cinematic__tagline` → **`font-family: 'Bohemy', sans-serif`**, `font-weight: 400`, 13px, lowercase display (brand Bohemy convention). `.vision-engine-cinematic__logo` → **`font-weight: 400`** (removed 515).
 - **Changes:** `manifest.ts`, `vision-engine.css`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Onboarding welcome copy: guided tour with concierge
+
+**Context:** User asked to update onboarding tutorial welcome modal subhead from **TAKE THE MANSION TOUR?** to **take the guided tour with our concierge?**
+
+- **Change:** `TutorialWelcomePrompt.tsx` — replaced dynamic mansion tour string; removed `textTransform: uppercase` on that line so copy displays lowercase as written.
+- **Changes:** `TutorialWelcomePrompt.tsx`, `motherboard/MEMORY.md`.
+

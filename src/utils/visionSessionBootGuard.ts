@@ -4,11 +4,25 @@
  */
 import { getVisionModeById } from '../studio-os-core/vision-engine/store';
 import { getActiveVisionMode, isVisionSessionActive } from '../studio-os-core/vision-engine/session';
-import { stopVisionPresentation } from '../studio-os-core/vision-engine/launch';
+import { isVisionShareSessionActive } from '../studio-os-core/vision-engine/access';
+import { resetVisionPresentationSession, stopVisionPresentation } from '../studio-os-core/vision-engine/launch';
 import { bootstrapFrontalSlayerVisionEngine } from '../workspaces/frontal-slayer/vision-engine';
+import { isCreativePreviewMode, urlHasValidCreativePreviewToken } from './creativePreviewMode';
 
 export function purgeStaleVisionSessionOnBoot(): void {
   if (typeof window === 'undefined') return;
+
+  // Creative Preview designer link (`?creativePreview=`) must not inherit Vision Share (`/vision/creative`).
+  if (urlHasValidCreativePreviewToken()) {
+    resetVisionPresentationSession();
+    return;
+  }
+
+  if (isCreativePreviewMode() && !isVisionShareSessionActive() && isVisionSessionActive()) {
+    resetVisionPresentationSession();
+    return;
+  }
+
   if (!isVisionSessionActive()) return;
 
   bootstrapFrontalSlayerVisionEngine();

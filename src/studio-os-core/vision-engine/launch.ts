@@ -7,7 +7,7 @@ import {
   setVisionRecordMode,
   setVisionSessionActive,
 } from './session';
-import { canLaunchVisionPresentation } from './access';
+import { canLaunchVisionPresentation, setVisionShareSessionActive } from './access';
 import { bootstrapFrontalSlayerVisionEngine } from '../../workspaces/frontal-slayer/vision-engine';
 
 export type LaunchVisionOptions = {
@@ -36,4 +36,14 @@ export function launchVisionPresentation(options: LaunchVisionOptions): boolean 
 export function stopVisionPresentation(): void {
   setVisionSessionActive(false);
   clearActiveVisionMode();
+}
+
+/** Fully reset Vision Share / presentation flags (e.g. when entering Creative Preview designer link). */
+export function resetVisionPresentationSession(): void {
+  stopVisionPresentation();
+  setVisionShareSessionActive(false);
+  if (typeof document !== 'undefined') {
+    document.documentElement.removeAttribute('data-vision-engine');
+    document.documentElement.removeAttribute('data-vision-record');
+  }
 }

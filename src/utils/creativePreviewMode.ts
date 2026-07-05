@@ -5,6 +5,8 @@
  */
 
 import { isPreviewEnvironment, persistAuthBackup } from './adminAuth';
+import { resetVisionPresentationSession } from '../studio-os-core/vision-engine/launch';
+import { isVisionShareSessionActive } from '../studio-os-core/vision-engine/access';
 
 export const CREATIVE_PREVIEW_URL_PARAM = 'creativePreview';
 export const CREATIVE_PREVIEW_SESSION_KEY = 'baw_creative_preview_active';
@@ -147,15 +149,32 @@ function tryActivateFromUrlSearch(search: string): boolean {
   return true;
 }
 
+/** True when the current URL carries a valid Creative Preview unlock token (designer link). */
+export function urlHasValidCreativePreviewToken(): boolean {
+  if (typeof window === 'undefined') return false;
+  if (!isPreviewEnvironment() || !readEnvToken()) return false;
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get(CREATIVE_PREVIEW_URL_PARAM);
+  return Boolean(token && tokenMatches(token));
+}
+
 /**
  * Call once at app startup (before auth backup restore). Returns true when creative preview is active.
  */
 export function bootstrapCreativePreviewMode(): boolean {
   if (typeof window === 'undefined') return false;
 
+  if (urlHasValidCreativePreviewToken()) {
+    resetVisionPresentationSession();
+  }
+
   tryActivateFromUrlSearch(window.location.search);
 
   if (!isCreativePreviewMode()) return false;
+
+  if (!isVisionShareSessionActive()) {
+    resetVisionPresentationSession();
+  }
 
   seedCreativePreviewDemoSession();
   stripCreativePreviewParamFromUrl();
