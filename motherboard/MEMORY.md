@@ -36605,3 +36605,13 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
   - `VisionEnginePresenterPanel.tsx`, `VisionEngineContext.tsx`, `TutorialPageHelpButton.tsx` — uppercase labels / CSS class for page-help hide fallback.
 - **Conventions:** Vision Engine presentation = zero PSA/tutorial chrome; users can collapse bottom panel without exiting tour; all Vision Engine runtime UI text uppercase.
 
+---
+
+## 2026-07-05 — Vision Engine opening typography + draggable controls panel
+
+**Context:** Follow-up on creative vision / Vision Engine presentation UX — user wanted opening cinematic typography adjusted and the bottom controls panel repositionable.
+
+- **Typography:** Opening **FRONTAL SLAYER** logo now uses **Futura PT** (same sans as former tagline) instead of Covered By Your Grace. Tagline changed from **IMMERSIVE LUXURY BEAUTY** to lowercase **`bohemy`**; font size **11px → 13px** (+2px); `text-transform: none` on tagline so it stays lowercase under cinematic uppercase rule.
+- **Draggable controls:** Bottom overlay has a **drag handle** (grip button) + `useVisionEngineOverlayDrag` hook — pointer-drag repositions panel anywhere on screen, clamped to viewport; position persists in **sessionStorage** for the tab.
+- **Changes:** `manifest.ts` (tagline `bohemy`), `vision-engine.css` (logo/tagline fonts), `VisionEngineOverlay.tsx`, new `useVisionEngineOverlayDrag.ts`, `motherboard/MEMORY.md`.
+

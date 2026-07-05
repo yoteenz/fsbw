@@ -84,7 +84,9 @@ html[data-vision-engine='active'] #root {
 
 .vision-engine-overlay__panel {
   pointer-events: auto;
+  position: relative;
   padding: 14px 16px;
+  padding-top: 36px;
   border: 1px solid rgba(255, 255, 255, 0.45);
   background: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(18px) saturate(1.2);
@@ -100,6 +102,28 @@ html[data-vision-engine='active'] #root {
 
 .vision-engine-overlay.is-collapsed .vision-engine-overlay__header {
   margin-bottom: 0;
+}
+
+.vision-engine-overlay__minimize {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.82);
+  color: #555;
+  cursor: pointer;
+}
+
+.vision-engine-overlay__minimize:hover {
+  color: #1a1a1a;
+  border-color: rgba(0, 0, 0, 0.2);
 }
 
 .vision-engine-overlay__drag-handle {
@@ -128,24 +152,11 @@ html[data-vision-engine='active'] #root {
   flex-direction: column;
   gap: 8px;
   padding: 8px 12px;
+  padding-top: 36px;
 }
 
 .vision-engine-overlay.is-collapsed .vision-engine-overlay__header {
   width: 100%;
-}
-
-.vision-engine-overlay__toggle {
-  flex-shrink: 0;
-  font-family: 'Futura PT', Futura, sans-serif;
-  font-size: 8px;
-  font-weight: 515;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  padding: 6px 10px;
-  border: 1px solid rgba(99, 102, 241, 0.35);
-  background: rgba(99, 102, 241, 0.12);
-  color: #4338ca;
-  cursor: pointer;
 }
 
 .vision-engine-overlay__step-collapsed {
@@ -190,7 +201,7 @@ html[data-vision-engine='active'] #root {
   font-size: 7px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: #6366f1;
+  color: #888;
   margin: 0 0 8px;
 }
 

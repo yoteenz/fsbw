@@ -1,6 +1,22 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { useVisionEngine } from './VisionEngineContext';
 import { useVisionEngineOverlayDrag } from './useVisionEngineOverlayDrag';
+
+function MinimizeIcon(): ReactNode {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+      <path d="M2.5 8h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ExpandIcon(): ReactNode {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" aria-hidden="true">
+      <path d="M6 3.5v5M3.5 6h5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 type Props = {
   autoTourRunning: boolean;
@@ -44,6 +60,17 @@ export function VisionEngineOverlay({
       aria-label="VISION ENGINE PRESENTATION"
     >
       <div className="vision-engine-overlay__panel">
+        <button
+          type="button"
+          className="vision-engine-overlay__minimize"
+          onClick={() => setCollapsed((c) => !c)}
+          aria-expanded={!collapsed}
+          aria-label={collapsed ? 'EXPAND CONTROLS' : 'MINIMIZE CONTROLS'}
+          title={collapsed ? 'EXPAND CONTROLS' : 'MINIMIZE CONTROLS'}
+        >
+          {collapsed ? <ExpandIcon /> : <MinimizeIcon />}
+        </button>
+
         <div className="vision-engine-overlay__header">
           <button
             type="button"
@@ -52,14 +79,6 @@ export function VisionEngineOverlay({
             aria-label="DRAG CONTROLS PANEL"
             title="DRAG TO REPOSITION"
           />
-          <button
-            type="button"
-            className="vision-engine-overlay__toggle"
-            onClick={() => setCollapsed((c) => !c)}
-            aria-expanded={!collapsed}
-          >
-            {collapsed ? 'RESUME CONTROLS' : 'HIDE CONTROLS'}
-          </button>
         </div>
 
         {collapsed ? (

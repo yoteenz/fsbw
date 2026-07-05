@@ -29,14 +29,14 @@ export function VisionEngineLuxuryAudio({ enabled, recordMode }: Props) {
     ctxRef.current = ctx;
 
     const gain = ctx.createGain();
-    gain.gain.value = recordMode ? 0.06 : 0.04;
+    gain.gain.value = recordMode ? 0.14 : 0.24;
     gain.connect(ctx.destination);
 
     const osc = ctx.createOscillator();
     osc.type = 'sine';
     osc.frequency.value = 110;
     const oscGain = ctx.createGain();
-    oscGain.gain.value = 0.15;
+    oscGain.gain.value = 0.32;
     osc.connect(oscGain);
     oscGain.connect(gain);
     osc.start();
@@ -46,7 +46,7 @@ export function VisionEngineLuxuryAudio({ enabled, recordMode }: Props) {
     const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
     const data = noiseBuffer.getChannelData(0);
     for (let i = 0; i < bufferSize; i++) {
-      data[i] = (Math.random() * 2 - 1) * 0.02;
+      data[i] = (Math.random() * 2 - 1) * 0.055;
     }
     const noise = ctx.createBufferSource();
     noise.buffer = noiseBuffer;
