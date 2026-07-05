@@ -16,6 +16,7 @@ import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AdminStudioWorkspaceGuard from './components/AdminStudioWorkspaceGuard';
+import StudioAdministrationGuard from './components/admin/studio-os/StudioAdministrationGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import { AccountHubRedirect } from './components/AccountHubRedirect';
 import CommerceRouteGuard from './components/CommerceRouteGuard';
@@ -249,6 +250,8 @@ const AdminStudioBrandAssets = lazyWithRetry(() => import('./pages/admin/studio/
 const AdminStudioPhotographyBible = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/photography-bible/page'), 'AdminStudioPhotographyBible');
 const AdminStudioBrandAssetsAssetFactory = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/asset-factory/page'), 'AdminStudioBrandAssetsAssetFactory');
 const AdminStudioOs = lazyWithRetry(() => import('./pages/admin/studio-os/page'), 'AdminStudioOs');
+const AdminStudioAdministration = lazyWithRetry(() => import('./pages/admin/studio-os/administration/page'), 'AdminStudioAdministration');
+const AdminHeadquartersEntry = lazyWithRetry(() => import('./pages/admin/headquarters/page'), 'AdminHeadquartersEntry');
 const AdminStudioOsCreate = lazyWithRetry(() => import('./pages/admin/studio-os/create/page'), 'AdminStudioOsCreate');
 const AdminStudioOsBlueprints = lazyWithRetry(() => import('./pages/admin/studio-os/blueprints/page'), 'AdminStudioOsBlueprints');
 const AdminStudioOsPromotionCenter = lazyWithRetry(() => import('./pages/admin/studio-os/promotion-center/page'), 'AdminStudioOsPromotionCenter');
@@ -864,6 +867,17 @@ function App() {
             </Suspense>
           } />
           <Route element={<AdminStudioWorkspaceGuard />}>
+          <Route element={<StudioAdministrationGuard />}>
+          <Route path="headquarters" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminHeadquartersEntry />
+            </Suspense>
+          } />
+          <Route path="studio-os/administration" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAdministration />
+            </Suspense>
+          } />
           <Route path="studio-os/workspace/:workspaceId/settings" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioOsWorkspaceSettings />
@@ -1524,7 +1538,8 @@ function App() {
               <AdminStudioSection />
             </Suspense>
           } />
-          <Route path="studio" element={<Navigate to="/admin/studio-os" replace />} />
+          <Route path="studio" element={<Navigate to="/admin/studio/mission-control" replace />} />
+          </Route>
           </Route>
           <Route path="analytics" element={
             <Suspense fallback={<LoadingScreen />}>

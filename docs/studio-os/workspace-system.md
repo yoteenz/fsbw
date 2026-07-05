@@ -52,10 +52,11 @@ Each workspace implements `WorkspaceSchema` from `studio-os-core/workspace/types
 
 ## Switching Flow
 
-1. Admin Dashboard → **STUDIO** → `/admin/studio-os`
-2. Select a workspace card
-3. **Frontal Slayer** → `/admin/studio/mission-control` (unchanged admin experience)
-4. Placeholders → `/admin/studio-os/workspace/{id}` (shell only, no production data)
+1. **Organization operator:** Admin Dashboard → **HEADQUARTERS** → `/admin/headquarters` → Mission Control
+2. **Portfolio owner:** Admin Dashboard → **STUDIO ADMINISTRATION** → `/admin/studio-os/administration`
+3. Select a workspace card from Studio Administration or Workspace Registry
+4. **Frontal Slayer** → `/admin/studio/mission-control`
+5. Other organizations → `/admin/studio-os/workspace/{id}/…`
 
 ## Data Adapters
 

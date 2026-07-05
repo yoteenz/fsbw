@@ -28,11 +28,16 @@ import {
 } from '../../../utils/adminMeetingsMock';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { fetchAdminMeetingsApiNormalized, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
+import { canAccessStudioAdministration } from '../../../studio-os-core/application/portfolio-access';
+import { ORGANIZATION_ROUTES, STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import {
-  ADMIN_STUDIO_DASHBOARD_FOOTER,
-  ADMIN_STUDIO_DASHBOARD_ITEMS,
-  ADMIN_STUDIO_DASHBOARD_METRIC,
-} from '../../../utils/adminStudioDemo';
+  HEADQUARTERS_DASHBOARD_FOOTER,
+  HEADQUARTERS_DASHBOARD_ITEMS,
+  HEADQUARTERS_DASHBOARD_METRIC,
+  STUDIO_ADMIN_DASHBOARD_FOOTER,
+  STUDIO_ADMIN_DASHBOARD_ITEMS,
+  STUDIO_ADMIN_DASHBOARD_METRIC,
+} from '../../../workspaces/frontal-slayer/headquartersDashboard';
 
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
@@ -1129,19 +1134,35 @@ export default function AdminDashboard() {
     },
 
     {
-      title: 'STUDIO OS',
-      count: String(ADMIN_STUDIO_DASHBOARD_METRIC),
-      items: ADMIN_STUDIO_DASHBOARD_ITEMS.map((item) => ({
+      title: 'HEADQUARTERS',
+      count: String(HEADQUARTERS_DASHBOARD_METRIC),
+      items: HEADQUARTERS_DASHBOARD_ITEMS.map((item) => ({
         label: item.label,
         value: item.value,
         color: item.color,
       })),
-      activity: ADMIN_STUDIO_DASHBOARD_FOOTER,
-    }
+      activity: HEADQUARTERS_DASHBOARD_FOOTER,
+    },
+
+    ...(canAccessStudioAdministration()
+      ? [
+          {
+            title: 'STUDIO ADMINISTRATION',
+            count: String(STUDIO_ADMIN_DASHBOARD_METRIC),
+            items: STUDIO_ADMIN_DASHBOARD_ITEMS.map((item) => ({
+              label: item.label,
+              value: item.value,
+              color: item.color,
+            })),
+            activity: STUDIO_ADMIN_DASHBOARD_FOOTER,
+          },
+        ]
+      : []),
   ];
 
   const DASHBOARD_CARD_ORDER = [
-    'STUDIO OS',
+    ...(canAccessStudioAdministration() ? (['STUDIO ADMINISTRATION'] as const) : []),
+    'HEADQUARTERS',
     'REVENUE',
     'CLIENTS',
     'MEETINGS',
@@ -1193,8 +1214,11 @@ export default function AdminDashboard() {
       case 'BACKEND':
         navigate('/admin/backend');
         break;
-      case 'STUDIO OS':
-        navigate('/admin/studio-os');
+      case 'HEADQUARTERS':
+        navigate(ORGANIZATION_ROUTES.headquartersEntry);
+        break;
+      case 'STUDIO ADMINISTRATION':
+        navigate(STUDIO_ADMINISTRATION_ROUTES.root);
         break;
       default:
         break;

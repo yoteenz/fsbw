@@ -4,10 +4,13 @@ const ADMIN_BASE = '/admin';
 
 /** Workspace-aware route helpers — future workspaces inherit same patterns. */
 export const STUDIO_OS_ROUTES = {
-  entry: `${ADMIN_BASE}/studio-os`,
+  entry: `${ADMIN_BASE}/studio-os/administration`,
+  registry: `${ADMIN_BASE}/studio-os`,
   create: `${ADMIN_BASE}/studio-os/create`,
   blueprints: `${ADMIN_BASE}/studio-os/blueprints`,
   promotionCenter: `${ADMIN_BASE}/studio-os/promotion-center`,
+  administration: `${ADMIN_BASE}/studio-os/administration`,
+  headquartersEntry: `${ADMIN_BASE}/headquarters`,
   workspaceShell: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}`,
   workspaceDashboard: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/dashboard`,
   workspaceNewsroom: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/newsroom`,

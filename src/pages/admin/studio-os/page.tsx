@@ -58,9 +58,9 @@ export default function AdminStudioOsPage() {
         <AdminHeader
           title={STUDIO_OS_PLATFORM.name}
           showBack
-          onBack={() => navigate('/admin/dashboard')}
-          breadcrumbParentLabel="ADMIN"
-          breadcrumbParentPath="/admin/dashboard"
+          onBack={() => navigate(STUDIO_OS_ROUTES.administration)}
+          breadcrumbParentLabel="STUDIO ADMINISTRATION"
+          breadcrumbParentPath={STUDIO_OS_ROUTES.administration}
         />
 
         <div className="pb-8 px-4">

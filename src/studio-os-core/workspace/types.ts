@@ -24,6 +24,8 @@ export type WorkspacePermissions = {
   canEditBrand: boolean;
   canManageUsers: boolean;
   canAccessStudioModules: boolean;
+  /** Portfolio owners may access Studio Administration control plane. */
+  canAccessStudioAdministration?: boolean;
 };
 
 export type WorkspaceModuleCopy = Partial<

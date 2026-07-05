@@ -30,7 +30,7 @@ export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
     'PSA: TRUSTED FOUNDER PRESENCE — NEVER ROBOTIC',
     'REAL CATALOG UNITS ONLY IN PRODUCT REFERENCES',
   ],
-  permissions: DEFAULT_WORKSPACE_PERMISSIONS,
+  permissions: { ...DEFAULT_WORKSPACE_PERMISSIONS, canSwitchWorkspace: false },
   moduleCopy: {
     'mission-control': {
       title: 'MISSION CONTROL',
@@ -94,9 +94,9 @@ export const FRONTAL_SLAYER_WORKSPACE: WorkspaceSchema = {
       subtitle: 'CURATED INSTITUTIONAL KNOWLEDGE — FOUNDER CONTEXT, NAMING, DECISIONS, AI CONTEXT PACKAGES.',
     },
     studioHub: {
-      title: 'THE STUDIO',
-      subtitle: 'WHERE EVERY FRONTAL SLAYER STORY BEGINS.',
-      dashboardFooter: 'NEXT RELEASE — SLAY REPORT • FRIDAY • 7PM',
+      title: 'HEADQUARTERS',
+      subtitle: 'FRONTAL SLAYER EXECUTIVE HQ — PRODUCTION, PUBLISHING, AND INTELLIGENCE ON STUDIO OS.',
+      dashboardFooter: 'HEADQUARTERS · STUDIO OS · FRONTAL SLAYER',
     },
   },
   studioEnabled: true,

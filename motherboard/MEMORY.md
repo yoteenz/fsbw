@@ -38027,3 +38027,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio-os` (Registry) · enter workspace → Mission Control or workspace dashboard · leave → Registry.
 
 **Changes:** workspace core + registry + configs + switcher + host + provider + scoped production stores + App routes + registry page + CORE/MEMORY.
+
+---
+
+## 2026-07-05 — Studio OS application layer refactor (Frontal Slayer → organization on Studio OS)
+
+**Context (full chat):** User requested STOP adding company features until architectural refactor complete. Studio OS evolved beyond Frontal Slayer — FS is one organization running on Studio OS; Studio OS becoming standalone product. Separate without second codebase; one Vercel deployment. Hierarchy: Studio OS → Workspace Registry → Organizations (Frontal Slayer, NDXBOOK, VXD INC, All In One Enterprise). FS admin gets **Headquarters** entry (not Studio OS root). **Studio Administration** for portfolio owners only. Multi-tenant isolation + feature inheritance. Design for future extraction (routing remap only).
+
+**Decisions / outcomes:**
+- **Application layer** in `src/studio-os-core/application/` — product hierarchy (`layers.ts`), portfolio access (`portfolio-access.ts`, founder + `VITE_PORTFOLIO_OWNER_EMAILS`), app routes (`routes.ts`).
+- **Feature inheritance** — `feature-inheritance/registry.ts` lists platform capabilities every org receives dynamically.
+- **Tenant isolation** — `tenant/isolation.ts` formalizes scoped storage domains.
+- **Frontal Slayer admin dashboard:** **HEADQUARTERS** card → `/admin/headquarters` (campus transition → Mission Control). **STUDIO ADMINISTRATION** card portfolio owners only → `/admin/studio-os/administration`.
+- **Guards:** `StudioAdministrationGuard` blocks `/admin/studio-os/*` for org operators; `WorkspaceProvider` filters workspace list; `WorkspaceSwitcher` read-only for org users (no registry link).
+- **Routes:** `/admin/studio` → Mission Control (not registry). Studio Administration page at `/admin/studio-os/administration`. Registry remains at `/admin/studio-os` (portfolio only).
+- **Frontal Slayer workspace:** `canSwitchWorkspace: false`; hub copy → HEADQUARTERS.
+
+**Changes:** studio-os-core application/feature-inheritance/tenant modules, StudioAdministrationGuard, headquarters + administration pages, dashboard/App/AdminStudioLayout/WorkspaceSwitcher/WorkspaceProvider/routes, frontal-slayer config + headquartersDashboard, docs/studio-os/architecture.md + workspace-system.md, motherboard/CORE.md + MEMORY.md.
+
+**Conventions:** Org operators never see workspace registry, other organizations, or Studio Administration. Portfolio owners see both Headquarters and Studio Administration. Future standalone Studio OS deploy = change `application/routes.ts` prefixes only.

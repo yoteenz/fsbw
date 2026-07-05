@@ -11,6 +11,10 @@ import {
 import { activateWorkspaceContext } from '../workspace/context-bridge';
 import { resolveModuleTenantId, type ModuleTenantId } from '../workspace/tenant-ids';
 import { recordWorkspaceVisit } from '../workspace-registry/store';
+import {
+  canSwitchOrganizations,
+  getAssignedOrganizationWorkspaceId,
+} from '../application/portfolio-access';
 
 export type WorkspaceContextValue = {
   workspaceId: string;
@@ -63,12 +67,19 @@ export function WorkspaceProvider({ children, initialWorkspaceId }: WorkspacePro
     [workspaceId]
   );
 
+  const visibleWorkspaces = useMemo(() => {
+    const all = getWorkspaceRegistry().listWorkspaces();
+    if (canSwitchOrganizations()) return all;
+    const assignedId = getAssignedOrganizationWorkspaceId();
+    return all.filter((w) => w.id === assignedId);
+  }, [workspaceId]);
+
   const value = useMemo<WorkspaceContextValue>(
     () => ({
       workspaceId,
       workspace,
       dataAdapter,
-      workspaces: getWorkspaceRegistry().listWorkspaces(),
+      workspaces: visibleWorkspaces,
       moduleTenantId,
       setActiveWorkspace,
       enterWorkspace,
@@ -81,7 +92,7 @@ export function WorkspaceProvider({ children, initialWorkspaceId }: WorkspacePro
       studioEntryPath: workspaceStudioEntryPath(workspace.id, workspace.studioEntryPath),
       registryPath: STUDIO_OS_ROUTES.entry,
     }),
-    [workspaceId, workspace, dataAdapter, moduleTenantId, setActiveWorkspace, enterWorkspace, resolveModulePath]
+    [workspaceId, workspace, dataAdapter, visibleWorkspaces, moduleTenantId, setActiveWorkspace, enterWorkspace, resolveModulePath]
   );
 
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;

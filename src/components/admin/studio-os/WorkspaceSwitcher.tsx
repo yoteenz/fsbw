@@ -3,15 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { useCampusTransition } from './campus/CampusTransitionProvider';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { getWorkspaceSnapshot } from '../../../studio-os-core/workspace-registry/store';
+import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
-/** Premium workspace switcher — always know which organization you are inside. */
+/** Organization workspace indicator — portfolio owners may switch; org operators see current workspace only. */
 export function WorkspaceSwitcher() {
   const navigate = useNavigate();
   const { workspaceId, workspace, workspaces, resolveModulePath } = useWorkspace();
   const { travelToWorkspace, returnToCampus } = useCampusTransition();
   const [open, setOpen] = useState(false);
   const snapshot = useMemo(() => getWorkspaceSnapshot(workspaceId), [workspaceId]);
+  const portfolioMode = canSwitchOrganizations();
 
   const switchTo = (id: string) => {
     setOpen(false);
@@ -22,9 +24,11 @@ export function WorkspaceSwitcher() {
     <div className="relative mb-2">
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => portfolioMode && setOpen((v) => !v)}
         className="w-full text-left studio-living-card studio-glass-depth px-2 py-2 rounded-sm"
+        aria-disabled={!portfolioMode}
         style={{
+          cursor: portfolioMode ? 'pointer' : 'default',
           border: `1.3px solid ${workspace.colors.accent}44`,
           background: `linear-gradient(135deg, rgba(255,255,255,0.9) 0%, ${workspace.colors.accent}08 100%)`,
         }}
@@ -38,7 +42,7 @@ export function WorkspaceSwitcher() {
           </div>
           <div className="flex-1 min-w-0">
             <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '6px', color: '#808080', margin: 0 }}>
-              CURRENT WORKSPACE
+              {portfolioMode ? 'CURRENT WORKSPACE' : 'HEADQUARTERS'}
             </p>
             <p
               style={{
@@ -57,11 +61,13 @@ export function WorkspaceSwitcher() {
               </p>
             ) : null}
           </div>
-          <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080' }}>{open ? '▲' : '▼'}</span>
+          {portfolioMode ? (
+            <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080' }}>{open ? '▲' : '▼'}</span>
+          ) : null}
         </div>
       </button>
 
-      {open ? (
+      {portfolioMode && open ? (
         <div
           className="absolute left-0 right-0 z-30 mt-1 p-2 rounded-sm studio-glass-depth"
           style={{ border: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.95)' }}

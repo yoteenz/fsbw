@@ -6,6 +6,33 @@
 export { STUDIO_OS_PLATFORM } from './config/platform';
 export type { StudioOsPlatformConfig } from './config/platform';
 
+export { STUDIO_OS_PRODUCT_LAYERS, STUDIO_OS_KNOWN_ORGANIZATIONS } from './application/layers';
+export type { StudioOsKnownOrganizationId } from './application/layers';
+
+export {
+  isPortfolioOwner,
+  canAccessStudioAdministration,
+  canSwitchOrganizations,
+  getAssignedOrganizationWorkspaceId,
+} from './application/portfolio-access';
+
+export {
+  STUDIO_ADMINISTRATION_ROUTES,
+  ORGANIZATION_ROUTES,
+  isStudioAdministrationPath,
+  isOrganizationHeadquartersPath,
+} from './application/routes';
+
+export {
+  INHERITED_PLATFORM_CAPABILITIES,
+  buildInheritedFeatureManifest,
+  listCapabilitiesByCategory,
+} from './feature-inheritance/registry';
+export type { InheritedPlatformCapability, WorkspaceFeatureManifest } from './feature-inheritance/registry';
+
+export { tenantScopedKey, assertTenantAccess } from './tenant/isolation';
+export type { TenantIsolationDomain } from './tenant/isolation';
+
 export { STUDIO_OS_VOCABULARY } from './core/vocabulary';
 export type { StudioOsVocabularyKey } from './core/vocabulary';
 
