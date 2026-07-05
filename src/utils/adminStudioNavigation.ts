@@ -862,6 +862,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'screening-room',
+    title: 'SCREENING ROOM',
+    purpose: 'Luxury private cinema — experience every production before publication. Compare versions · concierge review · approve.',
+    route: p('screening-room'),
+    groupId: 'production',
+    status: 'demo',
+    metric: 'CINEMA',
+    ctaLabel: 'ENTER THEATER',
+    moduleKey: 'screening-room',
+    featuredOnOverview: true,
+  },
+  {
     id: 'content-packs',
     title: 'CONTENT PACKS',
     purpose: 'Bundle weekly video, article, and checklist releases.',

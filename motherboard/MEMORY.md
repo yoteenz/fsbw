@@ -37932,3 +37932,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/production-studio` · back from Production Builder.
 
 **Changes:** production-studio core + UI + hook + page + service, App.tsx, adminStudioRoutes/Navigation/Demo, modules.ts, workspaces bootstrap, services registry, seedGraph, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — Milestone 79: Render Queue V1.0
+
+**Context (full chat):** User continued Studio OS after M78 Production Studio (`26df3833`). Request: centralized **Render Queue** — every production moves through visible pipeline; founder never wonders what AI is doing; alive production floor with subtle animations.
+
+**Goal:** Centralized render queue as production floor heartbeat. Display 11 stages (Queued → Generating Script → Voice → Visuals → Motion Graphics → Captions → Thumbnail → Rendering → Optimizing → Exporting → Ready For Review). Each stage shows progress · elapsed · ETA · AI worker · confidence · warnings. Controls: pause · resume · cancel · duplicate · priority rendering · batch rendering. Studio Intelligence explains delays (voice slower, motion processing, thumbnail regen below confidence threshold).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/render-queue/` — types · constants · store (pause/resume/cancel/duplicate/priority/batch · live tick simulation) · bootstrap (8 NDXBOOK demo renders + 4 intelligence alerts).
+- **Hook:** `useRenderQueueState` — 2s interval tick for alive progress/elapsed updates.
+- **UI:** `/admin/studio/render-queue` — three-column layout (queue list · job detail + controls · intelligence delays). CSS animations: pulse · progress shimmer · ambient drift · activity dots. Glass/marble theme.
+- **Service:** `renderQueueModuleService` (`id: render-queue`).
+- **Wiring:** route · nav (PRODUCTION group) · modules.ts · workspaces bootstrap · KG `node-render-queue` + edges · Production Studio connected link · back nav Production Studio ↔ Render Queue · `motherboard/CORE.md`.
+
+**Route:** `/admin/studio/render-queue` · back from Production Studio.
+
+**Changes:** render-queue core + UI + hook + page + service, App.tsx, routes/nav/demo/modules/workspaces/services/seedGraph, ProductionStudioPanels link, `motherboard/CORE.md`, `motherboard/MEMORY.md`.

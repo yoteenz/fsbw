@@ -62,6 +62,7 @@ import {
   adminStudioConciergeLayerPath,
   adminStudioProductionStudioPath,
   adminStudioRenderQueuePath,
+  adminStudioScreeningRoomPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -863,6 +864,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 79',
     status: 'demo',
     searchKeywords: ['render queue', 'production pipeline', 'generating voice', 'rendering', 'batch rendering', 'production floor'],
+  },
+  {
+    id: 'node-screening-room',
+    name: 'SCREENING ROOM',
+    type: 'module',
+    description:
+      'Luxury review theater V1.0 — private cinema where every production is experienced before publication. Not a dashboard.',
+    purpose: 'Emotional moment before content enters the world — compare versions · concierge review · approve.',
+    route: adminStudioScreeningRoomPath(),
+    moduleId: 'screening-room',
+    relatedManualChapter: 'CHAPTER · PRODUCTION · SCREENING THEATER',
+    versionIntroduced: 'Milestone 80',
+    status: 'demo',
+    searchKeywords: ['screening room', 'private cinema', 'review theater', 'compare versions', 'approve production', 'pre-publication'],
   },
   {
     id: 'node-fallback-used',
@@ -2260,6 +2275,11 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-rq-si', fromId: 'node-render-queue', toId: 'node-studio-intelligence', type: 'feeds', label: 'DELAY EXPLANATIONS' },
   { id: 'e-rq-publishing', fromId: 'node-render-queue', toId: 'publishing-queue', type: 'feeds', label: 'EXPORT OUTPUT' },
   { id: 'e-rq-platform', fromId: 'node-render-queue', toId: 'render-queue', type: 'documented-by', label: 'PRODUCTION FLOOR' },
+  { id: 'e-rq-sr', fromId: 'node-render-queue', toId: 'node-screening-room', type: 'feeds', label: 'READY FOR REVIEW' },
+  { id: 'e-sr-rq', fromId: 'node-screening-room', toId: 'node-render-queue', type: 'related-to', label: 'SEND TO RENDER AGAIN' },
+  { id: 'e-sr-publishing', fromId: 'node-screening-room', toId: 'publishing-queue', type: 'feeds', label: 'APPROVE TO PUBLISH' },
+  { id: 'e-sr-cl', fromId: 'node-screening-room', toId: 'node-concierge-layer', type: 'related-to', label: 'CONCIERGE REVIEW' },
+  { id: 'e-sr-platform', fromId: 'node-screening-room', toId: 'screening-room', type: 'documented-by', label: 'PRIVATE CINEMA' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

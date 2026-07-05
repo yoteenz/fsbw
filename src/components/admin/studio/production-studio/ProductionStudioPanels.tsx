@@ -21,6 +21,7 @@ import {
   adminStudioProductionStudioPath,
   adminStudioPublishingQueuePath,
   adminStudioRenderQueuePath,
+  adminStudioScreeningRoomPath,
   adminStudioStudioIntelligencePath,
   adminStudioTalentNetworkPath,
 } from '../../../../utils/adminStudioRoutes';
@@ -396,6 +397,7 @@ export function ProductionStudioConnectedSystemsPanel() {
         <Link to={adminStudioProductionBuilderPath()} style={{ ...psLabel, color: PS_VISUAL.accent, fontSize: '6px' }}>→ PRODUCTION BUILDER</Link>
         <Link to={adminStudioProductionStudioPath()} style={{ ...psLabel, color: PS_VISUAL.accent, fontSize: '6px' }}>→ PRODUCTION STUDIO</Link>
         <Link to={adminStudioRenderQueuePath()} style={{ ...psLabel, color: '#0EA5E9', fontSize: '6px' }}>→ RENDER QUEUE</Link>
+        <Link to={adminStudioScreeningRoomPath()} style={{ ...psLabel, color: '#C9A962', fontSize: '6px' }}>→ SCREENING ROOM</Link>
       </div>
     </section>
   );

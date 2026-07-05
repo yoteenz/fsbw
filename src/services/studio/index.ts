@@ -266,6 +266,7 @@ export type { OrganizationalApprenticeshipSnapshot } from './organizationalAppre
 export { conciergeLayerStudioService, CONCIERGE_LAYER_CHAIN } from './conciergeLayer/service';
 export { productionStudioModuleService, PRODUCTION_STUDIO_CHAIN } from './productionStudioModule/service';
 export { renderQueueModuleService, RENDER_QUEUE_CHAIN } from './renderQueueModule/service';
+export { screeningRoomModuleService, SCREENING_ROOM_CHAIN } from './screeningRoomModule/service';
 export type { ConciergeLayerSnapshot } from './conciergeLayer/service';
 
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
@@ -397,6 +398,7 @@ import { organizationalApprenticeshipStudioService } from './organizationalAppre
 import { conciergeLayerStudioService } from './conciergeLayer/service';
 import { productionStudioModuleService } from './productionStudioModule/service';
 import { renderQueueModuleService } from './renderQueueModule/service';
+import { screeningRoomModuleService } from './screeningRoomModule/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -489,6 +491,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   conciergeLayerStudioService,
   productionStudioModuleService,
   renderQueueModuleService,
+  screeningRoomModuleService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

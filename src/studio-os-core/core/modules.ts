@@ -52,6 +52,7 @@ export type StudioOsCoreModuleId =
   | 'concierge-layer'
   | 'production-studio'
   | 'render-queue'
+  | 'screening-room'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -393,6 +394,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'RENDER QUEUE',
     description: 'Centralized production floor — visible pipeline, live progress, founder never wonders. V1.0.',
     routeSegment: 'render-queue',
+  },
+  {
+    id: 'screening-room',
+    label: 'SCREENING ROOM',
+    description: 'Luxury review theater — private cinema before publication. V1.0.',
+    routeSegment: 'screening-room',
   },
   {
     id: 'executive-command-center',

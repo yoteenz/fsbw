@@ -345,6 +345,10 @@ export function bootstrapWorkspacesPlatform(): void {
     renderQueue.bootstrapRenderQueuePlatform();
     await yieldToMain();
 
+    const screeningRoom = await import('../studio-os-core/screening-room/bootstrap');
+    screeningRoom.bootstrapScreeningRoomPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

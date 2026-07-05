@@ -86,6 +86,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'concierge-layer'
   | 'production-studio'
   | 'render-queue'
+  | 'screening-room'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -179,6 +180,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'concierge-layer',
   'production-studio',
   'render-queue',
+  'screening-room',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -291,6 +293,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   conciergeLayer: 'studio/concierge-layer',
   productionStudio: 'studio/production-studio',
   renderQueue: 'studio/render-queue',
+  screeningRoom: 'studio/screening-room',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -566,6 +569,10 @@ export function adminStudioProductionStudioPath(): string {
 
 export function adminStudioRenderQueuePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/render-queue`;
+}
+
+export function adminStudioScreeningRoomPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/screening-room`;
 }
 
 export function adminStudioPublishingQueuePath(): string {

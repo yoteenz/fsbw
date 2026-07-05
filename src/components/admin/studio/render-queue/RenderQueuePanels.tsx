@@ -9,6 +9,7 @@ import {
   adminStudioProductionStudioPath,
   adminStudioPublishingQueuePath,
   adminStudioRenderQueuePath,
+  adminStudioScreeningRoomPath,
   adminStudioStudioIntelligencePath,
   adminStudioTalentNetworkPath,
 } from '../../../../utils/adminStudioRoutes';
@@ -336,6 +337,7 @@ export function RenderQueueConnectedSystems() {
       <div className="flex flex-wrap gap-2">
         <Link to={adminStudioProductionStudioPath()} style={{ ...rqLabel, fontSize: '6px', color: '#B8860B' }}>→ PRODUCTION STUDIO</Link>
         <Link to={adminStudioRenderQueuePath()} style={{ ...rqLabel, fontSize: '6px', color: RQ_VISUAL.accent }}>→ RENDER QUEUE</Link>
+        <Link to={adminStudioScreeningRoomPath()} style={{ ...rqLabel, fontSize: '6px', color: '#C9A962' }}>→ SCREENING ROOM</Link>
         <Link to={adminStudioMissionControlPath()} style={{ ...rqLabel, fontSize: '6px' }}>→ MISSION CONTROL</Link>
         <Link to={adminStudioPublishingQueuePath()} style={{ ...rqLabel, fontSize: '6px', color: '#EB1C24' }}>→ PUBLISHING</Link>
         <Link to={adminStudioPath('ai-production-engine')} style={{ ...rqLabel, fontSize: '6px' }}>→ AI PRODUCTION ENGINE</Link>

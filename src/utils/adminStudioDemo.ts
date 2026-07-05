@@ -100,6 +100,7 @@ export type AdminStudioSectionId =
   | 'concierge-layer'
   | 'production-studio'
   | 'render-queue'
+  | 'screening-room'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
