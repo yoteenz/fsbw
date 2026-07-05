@@ -1,4 +1,4 @@
-/** Architect Studio V1.0 — immersive innovation headquarters (Milestone 58). */
+/** Architect Studio V1.5 — living headquarters (Milestone 58.5 extends M58). */
 
 export type ArchitectStudioWorkspaceId = 'ndxbook' | 'frontal-slayer' | 'studio-os' | 'portfolio-campus';
 
@@ -89,6 +89,99 @@ export type PortfolioCampusCompany = {
   activeArchitects: number;
 };
 
+export type MorningArrivalScene = {
+  id: string;
+  executive: string;
+  studioId: ArchitectStudioId | 'lobby' | 'forum';
+  activity: string;
+  status: 'preparing' | 'presenting' | 'reviewing' | 'processing';
+};
+
+export type HeadquartersBriefing = {
+  preparedBy: string;
+  organizationalHealthPct: number;
+  majorWins: string[];
+  majorRisks: string[];
+  pendingApprovals: string[];
+  todaysPriorities: string[];
+  recommendedFocus: string;
+  opportunities: string[];
+  overnightIntelligence: string[];
+  estimatedFounderWorkload: string;
+};
+
+export type ExecutivePresence = {
+  id: string;
+  name: string;
+  role: string;
+  currentLocation: ArchitectStudioId | 'lobby' | 'forum' | 'innovation-lab';
+  currentActivity: string;
+  movement: string;
+};
+
+export type AmbientActivity = {
+  id: string;
+  category: string;
+  label: string;
+  intensity: 'subtle' | 'moderate';
+};
+
+export type ExecutiveConversation = {
+  id: string;
+  speakers: string;
+  snippet: string;
+  context: string;
+};
+
+export type LivingArchitectureEntry = {
+  id: string;
+  change: string;
+  trigger: string;
+  visibleSince: string;
+};
+
+export type ExecutiveAvailability = {
+  id: string;
+  executive: string;
+  state: 'available' | 'researching' | 'collaborating' | 'awaiting-approval' | 'has-recommendations';
+  detail: string;
+};
+
+export type OrganizationalRhythm = {
+  currentPhase: 'early-morning' | 'afternoon' | 'major-launch' | 'reflection';
+  label: string;
+  description: string;
+  energyPct: number;
+};
+
+export type HeadquartersCulture = {
+  profile: string;
+  inheritedFrom: string[];
+  expression: string;
+};
+
+export type MemorySpace = {
+  id: string;
+  category: string;
+  title: string;
+  date: string;
+  significance: string;
+};
+
+export type LivingHeadquarters = {
+  philosophy: string[];
+  morningArrival: MorningArrivalScene[];
+  executiveBriefing: HeadquartersBriefing;
+  executivePresence: ExecutivePresence[];
+  ambientActivity: AmbientActivity[];
+  overheardConversations: ExecutiveConversation[];
+  livingArchitecture: LivingArchitectureEntry[];
+  executiveAvailability: ExecutiveAvailability[];
+  organizationalRhythm: OrganizationalRhythm;
+  headquartersCulture: HeadquartersCulture;
+  memorySpaces: MemorySpace[];
+};
+
 export type ArchitectStudioStore = {
   version: string;
   lastUpdatedAt: string;
@@ -116,4 +209,5 @@ export type ArchitectStudioStore = {
   portfolioCampus: PortfolioCampusCompany[];
   recommendedNextSteps: string[];
   futureOpportunities: string[];
+  livingHeadquarters: LivingHeadquarters;
 };

@@ -4,7 +4,7 @@ import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio
 import { ArchitectStudioWorkspace } from '../../../../components/admin/studio/architect-studio/ArchitectStudioWorkspace';
 
 const ARCHITECT_STUDIO_SUBTITLE =
-  'Enter the innovation headquarters — five connected architect studios, one immersive campus, not disconnected dashboards.';
+  'Living headquarters — arrive at work inside your company. Organization already in motion before you interact with anything.';
 
 export default function AdminStudioArchitectStudioPage() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function AdminStudioArchitectStudioPage() {
     >
       <ArchitectStudioWorkspace />
       <AdminStudioDisclaimerFooter>
-        ARCHITECT STUDIO V1.0 · IMMERSIVE INNOVATION HQ · DEMO PLACEHOLDER
+        LIVING HEADQUARTERS V1.5 · ARCHITECT STUDIO · DEMO PLACEHOLDER
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

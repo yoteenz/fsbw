@@ -606,9 +606,9 @@ export function CompanyGenomeLinkPanel() {
 export function ArchitectStudioLinkPanel() {
   return (
     <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #CA8A04' }}>
-      <p style={cosSectionTitle}>ARCHITECT STUDIO · INNOVATION HEADQUARTERS</p>
+      <p style={cosSectionTitle}>ARCHITECT STUDIO · LIVING HEADQUARTERS</p>
       <p style={cosLabel}>
-        Five connected studios · collaboration forum · evolution wall · immersive campus — the physical heart of Studio OS
+        Five connected studios · morning arrival · executive briefing · organization already in motion before you interact
       </p>
       <Link
         to={adminStudioArchitectStudioPath()}

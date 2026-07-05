@@ -37272,3 +37272,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** architect-studio core + UI + hook + page + service, CoS/company-genome/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 58.5: Living Headquarters V1.0
+
+**Context (full chat):** User requested Milestone 58.5 — transform Architect Studio into a **continuously living headquarters**. Prior: M58 Architect Studio V1.0. Constraints: do not redesign overall Studio OS shell · never simulate work for entertainment · every activity must represent meaningful intelligence · work on `master` only · one commit + one push.
+
+**Goal:** Founders arrive at work inside their company — not opening software. Organization never paused · executives already working before founder arrives. Features: headquarters philosophy, morning arrival through lobby (CoS briefing prep, architects already active, studio intelligence processing overnight), executive presence with natural movement between studios, ambient organizational activity (calm not noisy), overheard executive conversations, automatic headquarters briefing (health, wins, risks, approvals, priorities, focus, opportunities, overnight intel, workload estimate), living architecture evolution, executive availability states, organizational rhythm (early morning/afternoon/launch/reflection), headquarters culture inherited from brand/experience/DNA, portfolio headquarters, memory spaces for organizational history.
+
+**Implementation:**
+- **Extended core:** `src/studio-os-core/architect-studio/` v1.5 — new `LivingHeadquarters` types (morning arrival, briefing, presence, ambient activity, conversations, living architecture, availability, rhythm, culture, memory spaces). Storage key `studioOsArchitectStudio_v1_5` with legacy v1 migration. Bootstrap upgrade path for existing M58 stores.
+- **UI:** Default tab **Arrival · Briefing** — new panels: MorningArrival, HeadquartersBriefing, HeadquartersPhilosophy, ExecutivePresence, AmbientActivity, ExecutiveConversations, LivingArchitecture, ExecutiveAvailability, OrganizationalRhythm, HeadquartersCulture, MemorySpaces. New tabs: Presence · Activity, Evolution · Memory. Header updated to Living Headquarters V1.5.
+- **Nav:** Architect Studio metric → v1.5. CoS link panel + KG node description updated. Page subtitle/disclaimer updated.
+
+**Route:** `/admin/studio/architect-studio` (same route · v1.5 living layer).
+
+**Changes:** architect-studio v1.5 core + panels + workspace, CoS/KG/CORE updates, `motherboard/MEMORY.md`.
+

@@ -2,15 +2,26 @@ import { useState } from 'react';
 import { useArchitectStudioState } from '../../../../hooks/useArchitectStudioState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
+  AmbientActivityPanel,
   ArchitectCollaborationPanel,
   ArchitectStudioHeader,
   ArchitectStudiosPanel,
   CollaborationForumPanel,
   ConnectedSystemsPanel,
   EvolutionWallPanel,
+  ExecutiveAvailabilityPanel,
+  ExecutiveConversationsPanel,
+  ExecutivePresencePanel,
+  HeadquartersBriefingPanel,
+  HeadquartersCulturePanel,
+  HeadquartersPhilosophyPanel,
   ImmersiveCampusPanel,
   InnovationLabPanel,
+  LivingArchitecturePanel,
   LivingWorkspacesPanel,
+  MemorySpacesPanel,
+  MorningArrivalPanel,
+  OrganizationalRhythmPanel,
   PersonalizationPanel,
   PortfolioCampusPanel,
   RecommendedNextStepsPanel,
@@ -19,19 +30,21 @@ import {
   StudioPhilosophyPanel,
 } from './ArchitectStudioPanels';
 
-type AsTab = 'dashboard' | 'campus' | 'studios' | 'forum' | 'evolution' | 'innovation';
+type AsTab = 'arrival' | 'presence' | 'dashboard' | 'campus' | 'studios' | 'forum' | 'evolution' | 'innovation';
 
 const TABS: { id: AsTab; label: string }[] = [
+  { id: 'arrival', label: 'ARRIVAL · BRIEFING' },
+  { id: 'presence', label: 'PRESENCE · ACTIVITY' },
   { id: 'dashboard', label: 'DASHBOARD · OVERVIEW' },
   { id: 'campus', label: 'CAMPUS · SPATIAL NAV' },
   { id: 'studios', label: 'STUDIOS · LIVING' },
   { id: 'forum', label: 'FORUM · COLLABORATION' },
-  { id: 'evolution', label: 'EVOLUTION WALL' },
+  { id: 'evolution', label: 'EVOLUTION · MEMORY' },
   { id: 'innovation', label: 'INNOVATION · INTELLIGENCE' },
 ];
 
 export function ArchitectStudioWorkspace() {
-  const [tab, setTab] = useState<AsTab>('dashboard');
+  const [tab, setTab] = useState<AsTab>('arrival');
   const { store, selectWorkspace, setSpatialMode, focusStudio } = useArchitectStudioState();
   const panelProps = {
     store,
@@ -42,10 +55,30 @@ export function ArchitectStudioWorkspace() {
 
   const renderTab = () => {
     switch (tab) {
+      case 'arrival':
+        return (
+          <>
+            <MorningArrivalPanel {...panelProps} />
+            <HeadquartersBriefingPanel {...panelProps} />
+            <HeadquartersPhilosophyPanel {...panelProps} />
+            <OrganizationalRhythmPanel {...panelProps} />
+          </>
+        );
+      case 'presence':
+        return (
+          <>
+            <ExecutivePresencePanel {...panelProps} />
+            <ExecutiveAvailabilityPanel {...panelProps} />
+            <AmbientActivityPanel {...panelProps} />
+            <ExecutiveConversationsPanel {...panelProps} />
+            <HeadquartersCulturePanel {...panelProps} />
+          </>
+        );
       case 'campus':
         return (
           <>
             <ImmersiveCampusPanel {...panelProps} />
+            <LivingArchitecturePanel {...panelProps} />
             <PortfolioCampusPanel {...panelProps} />
             <PersonalizationPanel {...panelProps} />
           </>
@@ -68,6 +101,7 @@ export function ArchitectStudioWorkspace() {
         return (
           <>
             <EvolutionWallPanel {...panelProps} />
+            <MemorySpacesPanel {...panelProps} />
             <RecommendedNextStepsPanel {...panelProps} />
           </>
         );
@@ -82,14 +116,19 @@ export function ArchitectStudioWorkspace() {
       default:
         return (
           <>
+            <MorningArrivalPanel {...panelProps} />
+            <HeadquartersBriefingPanel {...panelProps} />
             <StudioDashboardPanel {...panelProps} />
             <StudioPhilosophyPanel {...panelProps} />
+            <ExecutivePresencePanel {...panelProps} />
             <ImmersiveCampusPanel {...panelProps} />
             <ArchitectStudiosPanel {...panelProps} />
             <CollaborationForumPanel {...panelProps} />
             <LivingWorkspacesPanel {...panelProps} />
+            <AmbientActivityPanel {...panelProps} />
             <ArchitectCollaborationPanel {...panelProps} />
             <EvolutionWallPanel {...panelProps} />
+            <MemorySpacesPanel {...panelProps} />
             <InnovationLabPanel {...panelProps} />
             <StudioIntelligencePanel {...panelProps} />
             <PortfolioCampusPanel {...panelProps} />

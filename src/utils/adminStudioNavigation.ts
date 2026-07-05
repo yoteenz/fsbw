@@ -184,7 +184,7 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     route: p('architect-studio'),
     groupId: 'overview',
     status: 'demo',
-    metric: 'v1.0',
+    metric: 'v1.5',
     ctaLabel: 'ENTER STUDIO',
     moduleKey: 'architect-studio',
     featuredOnOverview: true,

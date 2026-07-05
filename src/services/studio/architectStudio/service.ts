@@ -21,7 +21,7 @@ export const architectStudioStudioService: StudioServiceStub & {
   label: 'ARCHITECT STUDIO',
   phase: 2,
   enabled: false,
-  description: 'IMMERSIVE INNOVATION HEADQUARTERS — FIVE STUDIOS · ONE CAMPUS',
+  description: 'LIVING HEADQUARTERS V1.5 — immersive innovation campus · always in motion · arrive at work not open software',
   async getSnapshot() {
     if (typeof window === 'undefined') {
       return studioServiceNotConnected('Architect Studio requires browser context.');

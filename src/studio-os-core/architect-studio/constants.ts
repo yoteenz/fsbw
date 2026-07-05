@@ -1,7 +1,7 @@
 import type { ArchitectStudioId, SpatialNavMode } from './types';
 
-export const ARCHITECT_STUDIO_STORAGE_KEY = 'studioOsArchitectStudio_v1';
-export const ARCHITECT_STUDIO_VERSION = '1.0.0';
+export const ARCHITECT_STUDIO_STORAGE_KEY = 'studioOsArchitectStudio_v1_5';
+export const ARCHITECT_STUDIO_VERSION = '1.5.0';
 export const ARCHITECT_STUDIO_ID = 'architect-studio';
 
 export const STUDIO_PHILOSOPHY = [
@@ -9,6 +9,13 @@ export const STUDIO_PHILOSOPHY = [
   'One immersive innovation atelier where every discipline works together',
   'Spatial navigation · walk · zoom · focus · explore — not disconnected dashboards',
   'The physical heart of Studio OS — where founders step inside their company',
+] as const;
+
+export const HEADQUARTERS_PHILOSOPHY = [
+  'Organizations never stop working — Studio OS should never feel paused',
+  'Arrive at work inside your headquarters · not opening software',
+  'Every executive already working before the founder arrives · join an org in motion',
+  'Every visible activity represents meaningful intelligence · collaboration · execution',
 ] as const;
 
 export const ARCHITECT_STUDIO_CONNECTED_SYSTEMS = [

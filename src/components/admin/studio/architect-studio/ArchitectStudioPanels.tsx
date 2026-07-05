@@ -27,6 +27,7 @@ import {
   asValue,
   priorityColor,
   scoreColor,
+  availabilityColor,
 } from './architectStudioTheme';
 
 type Props = {
@@ -62,10 +63,10 @@ export function ArchitectStudioHeader() {
         </p>
         <p style={{ ...asLabel, color: '#94A3B8' }}>
           <span style={asLiveDot} />
-          IMMERSIVE INNOVATION HEADQUARTERS · THE PHYSICAL HEART OF STUDIO OS
+          LIVING HEADQUARTERS V1.5 · ARRIVE AT WORK · NOT OPEN SOFTWARE
         </p>
         <p style={{ ...asLabel, color: '#CBD5E1', marginTop: 4 }}>
-          LUXURY · MODERN · MINIMAL · BRIGHT · CALM · INTENTIONAL
+          ORGANIZATION ALREADY IN MOTION · CALM INTELLIGENCE · PRESENCE
         </p>
       </header>
     </>
@@ -76,7 +77,7 @@ export function StudioDashboardPanel({ store }: Pick<Props, 'store'>) {
   const d = store.dashboard;
   return (
     <section className="p-3 mb-3" style={asPanel}>
-      <p style={asSectionTitle}>ARCHITECT STUDIO · INNOVATION HQ</p>
+      <p style={asSectionTitle}>LIVING HEADQUARTERS · INNOVATION HQ</p>
       <p style={{ ...asLabel, color: AS.gold, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>{d.summary}</p>
       <p style={{ ...asLabel, color: AS.gold, marginTop: 4 }}>
         {store.companyName} · MODE: {d.activeSpatialMode.replace(/-/g, ' ').toUpperCase()}
@@ -379,6 +380,188 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...asLabel, color: AS.gold, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...asLabel, color: '#4F46E5', fontSize: '6px' }}>→ INHERITANCE</Link>
       </div>
+    </section>
+  );
+}
+
+export function HeadquartersPhilosophyPanel({ store }: Pick<Props, 'store'>) {
+  const hq = store.livingHeadquarters;
+  return (
+    <section className="p-3 mb-3" style={asPanel}>
+      <p style={asSectionTitle}>HEADQUARTERS PHILOSOPHY · NEVER PAUSED</p>
+      {hq.philosophy.map((line) => (
+        <p key={line} style={{ ...asLabel, color: AS.gold }}>· {line}</p>
+      ))}
+    </section>
+  );
+}
+
+export function MorningArrivalPanel({ store }: Pick<Props, 'store'>) {
+  const hq = store.livingHeadquarters;
+  return (
+    <section className="p-3 mb-3 as-lobby-panel" style={asPanel}>
+      <p style={asSectionTitle}>MORNING ARRIVAL · HEADQUARTERS LOBBY</p>
+      <p style={{ ...asLabel, fontSize: '5px', color: AS.gold, marginBottom: 8 }}>
+        You arrive through the lobby · the company is already alive before you interact
+      </p>
+      {hq.morningArrival.map((scene) => (
+        <div key={scene.id} className="py-1 border-b as-ambient-line" style={{ borderColor: AS.panelBorder }}>
+          <p style={{ ...asLabel, fontSize: '5px', color: AS.gold, fontFamily: '"Futura PT Medium"' }}>
+            {scene.executive} · {scene.studioId.replace(/-/g, ' ').toUpperCase()}
+          </p>
+          <p style={{ ...asLabel, fontSize: '5px' }}>{scene.activity}</p>
+          <p style={{ ...asLabel, fontSize: '5px', color: scoreColor(80) }}>{scene.status.toUpperCase()}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function HeadquartersBriefingPanel({ store }: Pick<Props, 'store'>) {
+  const b = store.livingHeadquarters.executiveBriefing;
+  return (
+    <section className="p-3 mb-3" style={{ ...asPanel, borderLeft: `4px solid ${AS.gold}` }}>
+      <p style={asSectionTitle}>HEADQUARTERS BRIEFING · {b.preparedBy.toUpperCase()}</p>
+      <p style={{ ...asValue, fontSize: '18px' }}>{b.organizationalHealthPct}% ORGANIZATIONAL HEALTH</p>
+      <p style={{ ...asLabel, color: AS.gold, marginTop: 4 }}>RECOMMENDED FOCUS: {b.recommendedFocus}</p>
+      <p style={{ ...asLabel, marginTop: 4 }}>FOUNDER WORKLOAD: {b.estimatedFounderWorkload}</p>
+      {[
+        ['MAJOR WINS', b.majorWins],
+        ['MAJOR RISKS', b.majorRisks],
+        ['PENDING APPROVALS', b.pendingApprovals],
+        ['TODAY\'S PRIORITIES', b.todaysPriorities],
+        ['OPPORTUNITIES', b.opportunities],
+        ['OVERNIGHT INTELLIGENCE', b.overnightIntelligence],
+      ].map(([title, items]) => (
+        <div key={title as string} className="mt-2">
+          <p style={{ ...asSectionTitle, fontSize: '7px' }}>{title}</p>
+          {(items as string[]).map((item) => (
+            <p key={item} style={asLabel}>· {item}</p>
+          ))}
+        </div>
+      ))}
+      <Link to={adminStudioChiefOfStaffPath()} style={{ ...asLabel, color: AS.gold, fontSize: '6px', display: 'inline-block', marginTop: 8 }}>
+        → OPEN CHIEF OF STAFF
+      </Link>
+    </section>
+  );
+}
+
+export function ExecutivePresencePanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={asPanel}>
+      <p style={asSectionTitle}>EXECUTIVE PRESENCE · NO IDLE CHARACTERS</p>
+      {store.livingHeadquarters.executivePresence.map((exec) => (
+        <div key={exec.id} className="py-1 border-b" style={{ borderColor: AS.panelBorder }}>
+          <p style={{ ...asLabel, fontSize: '5px', color: AS.gold, fontFamily: '"Futura PT Medium"' }}>
+            {exec.name} · {exec.role}
+          </p>
+          <p style={{ ...asLabel, fontSize: '5px' }}>
+            {exec.currentLocation.replace(/-/g, ' ').toUpperCase()} · {exec.currentActivity}
+          </p>
+          <p style={{ ...asLabel, fontSize: '5px', color: AS.slate }}>→ {exec.movement}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function AmbientActivityPanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={asPanel}>
+      <p style={asSectionTitle}>AMBIENT ORGANIZATIONAL ACTIVITY · CALM INTELLIGENCE</p>
+      {store.livingHeadquarters.ambientActivity.map((a) => (
+        <div key={a.id} className="py-1 border-b as-ambient-line" style={{ borderColor: AS.panelBorder }}>
+          <p style={{ ...asLabel, fontSize: '5px', color: AS.gold }}>{a.category}</p>
+          <p style={{ ...asLabel, fontSize: '5px' }}>{a.label}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function ExecutiveConversationsPanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={{ ...asPanel, background: 'rgba(254,243,199,0.15)' }}>
+      <p style={asSectionTitle}>OVERHEARD CONVERSATIONS · PURPOSEFUL INTELLIGENCE</p>
+      {store.livingHeadquarters.overheardConversations.map((c) => (
+        <div key={c.id} className="py-2 border-b" style={{ borderColor: AS.panelBorder }}>
+          <p style={{ ...asLabel, fontSize: '5px', color: AS.slate }}>{c.speakers}</p>
+          <p style={{ ...asLabel, fontSize: '6px', color: AS.accent, fontStyle: 'italic' }}>{c.snippet}</p>
+          <p style={{ ...asLabel, fontSize: '5px' }}>{c.context}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function LivingArchitecturePanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={asPanel}>
+      <p style={asSectionTitle}>LIVING ARCHITECTURE · EVOLVING HQ</p>
+      {store.livingHeadquarters.livingArchitecture.map((entry) => (
+        <div key={entry.id} className="py-1 border-b" style={{ borderColor: AS.panelBorder }}>
+          <p style={{ ...asLabel, fontSize: '5px', color: AS.gold }}>{entry.visibleSince} · {entry.trigger}</p>
+          <p style={{ ...asLabel, fontSize: '5px' }}>{entry.change}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function ExecutiveAvailabilityPanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={asPanel}>
+      <p style={asSectionTitle}>EXECUTIVE AVAILABILITY · NATURAL ACTIVITY</p>
+      {store.livingHeadquarters.executiveAvailability.map((a) => (
+        <div key={a.id} className="py-1 border-b flex justify-between gap-2" style={{ borderColor: AS.panelBorder }}>
+          <p style={{ ...asLabel, fontSize: '5px', fontFamily: '"Futura PT Medium"' }}>{a.executive}</p>
+          <p style={{ ...asLabel, fontSize: '5px', color: availabilityColor(a.state) }}>{a.state.replace(/-/g, ' ').toUpperCase()}</p>
+          <p style={{ ...asLabel, fontSize: '5px', flex: 1, textAlign: 'right' }}>{a.detail}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function OrganizationalRhythmPanel({ store }: Pick<Props, 'store'>) {
+  const r = store.livingHeadquarters.organizationalRhythm;
+  return (
+    <section className="p-3 mb-3" style={asPanel}>
+      <p style={asSectionTitle}>ORGANIZATIONAL RHYTHM · TEMPO</p>
+      <p style={{ ...asValue, fontSize: '16px' }}>{r.label}</p>
+      <p style={{ ...asLabel, color: AS.gold, marginTop: 4 }}>{r.description}</p>
+      <p style={{ ...asLabel, marginTop: 4 }}>ENERGY: {r.energyPct}%</p>
+    </section>
+  );
+}
+
+export function HeadquartersCulturePanel({ store }: Pick<Props, 'store'>) {
+  const c = store.livingHeadquarters.headquartersCulture;
+  return (
+    <section className="p-3 mb-3" style={asPanel}>
+      <p style={asSectionTitle}>HEADQUARTERS CULTURE · COMPANY IDENTITY</p>
+      <p style={{ ...asLabel, color: AS.gold, fontFamily: '"Futura PT Medium"' }}>{c.profile}</p>
+      <p style={{ ...asLabel, marginTop: 4 }}>{c.expression}</p>
+      <p style={{ ...asSectionTitle, fontSize: '7px', marginTop: 8 }}>INHERITED FROM</p>
+      {c.inheritedFrom.map((src) => (
+        <p key={src} style={asLabel}>· {src}</p>
+      ))}
+    </section>
+  );
+}
+
+export function MemorySpacesPanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={{ ...asPanel, background: 'linear-gradient(90deg, rgba(254,243,199,0.25) 0%, white 100%)' }}>
+      <p style={asSectionTitle}>MEMORY SPACES · ORGANIZATIONAL HISTORY</p>
+      {store.livingHeadquarters.memorySpaces.map((m) => (
+        <div key={m.id} className="py-1 border-b" style={{ borderColor: AS.panelBorder }}>
+          <p style={{ ...asLabel, fontSize: '5px', color: AS.gold }}>{m.date} · {m.category}</p>
+          <p style={{ ...asLabel, fontSize: '6px', fontFamily: '"Futura PT Medium"', color: AS.accent }}>{m.title}</p>
+          <p style={{ ...asLabel, fontSize: '5px' }}>{m.significance}</p>
+        </div>
+      ))}
     </section>
   );
 }

@@ -71,6 +71,14 @@ export function priorityColor(priority: string): string {
   return AS.gray;
 }
 
+export function availabilityColor(state: string): string {
+  if (state === 'available') return AS.green;
+  if (state === 'has-recommendations') return AS.gold;
+  if (state === 'awaiting-approval') return AS.red;
+  if (state === 'collaborating') return '#6366F1';
+  return AS.slate;
+}
+
 export const ARCHITECT_STUDIO_STYLES = `
   .architect-studio-root { font-family: "Futura PT Book", sans-serif; }
   @keyframes as-pulse {
@@ -96,5 +104,16 @@ export const ARCHITECT_STUDIO_STYLES = `
     text-align: center;
     border: 2px solid #CA8A04;
     background: rgba(254,243,199,0.35);
+  }
+  @keyframes as-ambient {
+    0%, 100% { opacity: 0.85; }
+    50% { opacity: 1; }
+  }
+  .as-lobby-panel {
+    background: linear-gradient(135deg, rgba(254,243,199,0.35) 0%, rgba(255,255,255,0.94) 60%);
+    border-left: 3px solid #CA8A04;
+  }
+  .as-ambient-line {
+    animation: as-ambient 3s ease-in-out infinite;
   }
 `;
