@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -394,6 +394,23 @@ export function WorkOrchestrationLinkPanel() {
         style={{ ...cosLabel, color: '#0891B2', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN WORK ORCHESTRATION
+      </Link>
+    </section>
+  );
+}
+
+export function DistributionEngineLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #7C3AED' }}>
+      <p style={cosSectionTitle}>DISTRIBUTION ENGINE · KNOWLEDGE REACH</p>
+      <p style={cosLabel}>
+        Approve distribution strategy · channel optimization · evergreen republishing · protect unified source of truth
+      </p>
+      <Link
+        to={adminStudioDistributionEnginePath()}
+        style={{ ...cosLabel, color: '#7C3AED', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN DISTRIBUTION ENGINE
       </Link>
     </section>
   );

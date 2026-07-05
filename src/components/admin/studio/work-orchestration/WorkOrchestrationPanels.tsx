@@ -6,6 +6,7 @@ import {
   adminStudioCampaignEnginePath,
   adminStudioChiefOfStaffPath,
   adminStudioStrategyEnginePath,
+  adminStudioDistributionEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   WORK_ORCHESTRATION_STYLES,
@@ -389,6 +390,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...woLabel, color: '#0F172A', fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
         <Link to={adminStudioStrategyEnginePath()} style={{ ...woLabel, color: '#334155', fontSize: '6px' }}>→ STRATEGY ENGINE</Link>
         <Link to={adminStudioCampaignEnginePath()} style={{ ...woLabel, color: '#D97706', fontSize: '6px' }}>→ CAMPAIGN ENGINE</Link>
+        <Link to={adminStudioDistributionEnginePath()} style={{ ...woLabel, color: '#7C3AED', fontSize: '6px' }}>→ DISTRIBUTION ENGINE</Link>
       </div>
     </section>
   );

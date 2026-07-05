@@ -428,6 +428,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   },
   // DISTRIBUTION
   {
+    id: 'distribution-engine',
+    title: 'DISTRIBUTION ENGINE',
+    purpose: 'Global distribution for knowledge assets — channel optimization, evergreen, and institutional learning.',
+    route: p('distribution-engine'),
+    groupId: 'distribution',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN DISTRIBUTION',
+    moduleKey: 'distribution-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'distribution-network',
     title: 'DISTRIBUTION NETWORK',
     purpose: 'Route one story to Lounge, email, social, and partner channels.',

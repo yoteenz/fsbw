@@ -149,6 +149,9 @@ export type { CampaignEngineSnapshot } from './campaignEngine/service';
 export { workOrchestrationStudioService, WORK_ORCHESTRATION_CHAIN } from './workOrchestration/service';
 export type { WorkOrchestrationSnapshot } from './workOrchestration/service';
 
+export { distributionEngineStudioService, DISTRIBUTION_ENGINE_CHAIN } from './distributionEngine/service';
+export type { DistributionEngineSnapshot } from './distributionEngine/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -237,6 +240,7 @@ import { organizationalInheritanceStudioService } from './organizationalInherita
 import { strategyEngineStudioService } from './strategyEngine/service';
 import { campaignEngineStudioService } from './campaignEngine/service';
 import { workOrchestrationStudioService } from './workOrchestration/service';
+import { distributionEngineStudioService } from './distributionEngine/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -288,6 +292,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   strategyEngineStudioService,
   campaignEngineStudioService,
   workOrchestrationStudioService,
+  distributionEngineStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

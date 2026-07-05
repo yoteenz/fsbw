@@ -6,7 +6,7 @@ import type {
   CampaignWorkspaceId,
 } from '../../../../studio-os-core/campaign-engine/types';
 import { CAMPAIGN_BUILDER_STEPS, CAMPAIGN_CONNECTED_SYSTEMS, CAMPAIGN_TYPES } from '../../../../studio-os-core/campaign-engine/constants';
-import { adminStudioStrategyEnginePath, adminStudioWorkOrchestrationPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioStrategyEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath } from '../../../../utils/adminStudioRoutes';
 import {
   CAMPAIGN_ENGINE_STYLES,
   CE,
@@ -424,6 +424,7 @@ export function ConnectedSystemsPanel() {
       <div className="mt-2 flex flex-wrap gap-2">
         <Link to={adminStudioStrategyEnginePath()} style={{ ...ceLabel, color: '#334155', fontSize: '6px' }}>→ STRATEGY ENGINE</Link>
         <Link to={adminStudioWorkOrchestrationPath()} style={{ ...ceLabel, color: '#0891B2', fontSize: '6px' }}>→ WORK ORCHESTRATION</Link>
+        <Link to={adminStudioDistributionEnginePath()} style={{ ...ceLabel, color: '#7C3AED', fontSize: '6px' }}>→ DISTRIBUTION ENGINE</Link>
       </div>
     </section>
   );
@@ -439,6 +440,21 @@ export function WorkOrchestrationLinkPanel() {
         style={{ ...ceLabel, color: '#0891B2', fontFamily: '"Futura PT Medium"', fontSize: '6px', display: 'inline-block', marginTop: 6 }}
       >
         → OPEN WORK ORCHESTRATION
+      </Link>
+    </section>
+  );
+}
+
+export function DistributionEngineLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cePanel, borderLeft: '4px solid #7C3AED' }}>
+      <p style={ceSectionTitle}>DISTRIBUTION ENGINE · KNOWLEDGE REACH</p>
+      <p style={ceLabel}>Deliverables become knowledge assets · multi-platform adaptation · evergreen · institutional learning</p>
+      <Link
+        to={adminStudioDistributionEnginePath()}
+        style={{ ...ceLabel, color: '#7C3AED', fontFamily: '"Futura PT Medium"', fontSize: '6px', display: 'inline-block', marginTop: 6 }}
+      >
+        → OPEN DISTRIBUTION ENGINE
       </Link>
     </section>
   );

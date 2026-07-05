@@ -59,6 +59,7 @@ export type AdminStudioSectionId =
   | 'strategy-engine'
   | 'campaign-engine'
   | 'work-orchestration'
+  | 'distribution-engine'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

@@ -17,6 +17,7 @@ import {
   CampaignWorkspacePanel,
   ConnectedSystemsPanel,
   WorkOrchestrationLinkPanel,
+  DistributionEngineLinkPanel,
   CreatorRecommendationsPanel,
   DeliverablesPanel,
   DepartmentCoordinationPanel,
@@ -105,6 +106,7 @@ export function CampaignEngineWorkspace() {
             <DepartmentCoordinationPanel {...panelProps} />
             <CampaignLineagePanel {...panelProps} />
             <WorkOrchestrationLinkPanel />
+            <DistributionEngineLinkPanel />
             <ConnectedSystemsPanel />
           </>
         );

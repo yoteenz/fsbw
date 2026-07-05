@@ -181,6 +181,10 @@ export function bootstrapWorkspacesPlatform(): void {
     workOrchestration.bootstrapWorkOrchestrationPlatform();
     await yieldToMain();
 
+    const distributionEngine = await import('../studio-os-core/distribution-engine/bootstrap');
+    distributionEngine.bootstrapDistributionEnginePlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

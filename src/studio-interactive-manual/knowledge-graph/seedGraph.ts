@@ -21,6 +21,7 @@ import {
   adminStudioStrategyEnginePath,
   adminStudioCampaignEnginePath,
   adminStudioWorkOrchestrationPath,
+  adminStudioDistributionEnginePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -248,6 +249,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 45',
     status: 'demo',
     searchKeywords: ['work orchestration', 'work packages', 'dependencies', 'founder workspace', 'capacity intelligence', 'CoS orchestration'],
+  },
+  {
+    id: 'node-distribution-engine',
+    name: 'DISTRIBUTION ENGINE',
+    type: 'module',
+    description:
+      'Global distribution system for knowledge assets — channel optimization, platform adaptation, evergreen republishing, performance intelligence, and institutional learning.',
+    purpose: 'Maximize impact, lifespan, reach, and value of every knowledge asset · one source of truth.',
+    route: adminStudioDistributionEnginePath(),
+    moduleId: 'distribution-engine',
+    relatedManualChapter: 'CHAPTER · DISTRIBUTION ENGINE · KNOWLEDGE REACH',
+    versionIntroduced: 'Milestone 46',
+    status: 'demo',
+    searchKeywords: ['distribution engine', 'knowledge assets', 'channel optimization', 'evergreen', 'distribution calendar', 'lineage'],
   },
   {
     id: 'node-fallback-used',
@@ -918,6 +933,14 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-work-orchestration-exec-org', fromId: 'node-work-orchestration', toId: 'node-executive-organization', type: 'related-to', label: 'DEPARTMENT CAPACITY' },
   { id: 'e-work-orchestration-intelligence', fromId: 'node-studio-intelligence', toId: 'node-work-orchestration', type: 'feeds', label: 'PRIORITY SIGNALS' },
   { id: 'e-work-orchestration-platform', fromId: 'node-work-orchestration', toId: 'work-orchestration', type: 'documented-by', label: 'ORCHESTRATION ENGINE' },
+  { id: 'e-work-orchestration-distribution', fromId: 'node-work-orchestration', toId: 'node-distribution-engine', type: 'feeds', label: 'COMPLETED WORK → DISTRIBUTION' },
+  { id: 'e-campaign-distribution', fromId: 'node-campaign-engine', toId: 'node-distribution-engine', type: 'feeds', label: 'DELIVERABLES → KNOWLEDGE ASSETS' },
+  { id: 'e-distribution-newsroom', fromId: 'node-distribution-engine', toId: 'node-ndxbook-newsroom', type: 'related-to', label: 'PAGE SOURCE OF TRUTH' },
+  { id: 'e-distribution-cos', fromId: 'node-chief-of-staff', toId: 'node-distribution-engine', type: 'related-to', label: 'STRATEGY APPROVALS' },
+  { id: 'e-distribution-intelligence', fromId: 'node-studio-intelligence', toId: 'node-distribution-engine', type: 'feeds', label: 'PERFORMANCE SIGNALS' },
+  { id: 'e-distribution-labs', fromId: 'node-distribution-engine', toId: 'node-studio-os-labs', type: 'feeds', label: 'FORMAT EXPERIMENTS' },
+  { id: 'e-distribution-growth', fromId: 'node-distribution-engine', toId: 'node-growth-network', type: 'feeds', label: 'REACH · REVENUE' },
+  { id: 'e-distribution-platform', fromId: 'node-distribution-engine', toId: 'distribution-engine', type: 'documented-by', label: 'GLOBAL DISTRIBUTION' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },
