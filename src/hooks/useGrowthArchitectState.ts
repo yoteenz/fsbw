@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildGrowthArchitectSeed } from '../studio-os-core/growth-architect/bootstrap';
 import {
   bootstrapGrowthArchitectStore,
@@ -12,15 +12,13 @@ function ensureSeeded(): void {
 }
 
 export function useGrowthArchitectState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readGrowthArchitectStore();
   }, [version]);
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import {useCallback, useState} from 'react';
 import { buildStudioInstituteSeed } from '../studio-os-core/studio-institute/bootstrap';
 import {
   bootstrapStudioInstituteStore,
@@ -16,11 +16,6 @@ export function useStudioInstituteState() {
     ensureBootstrap();
     return readStudioInstituteStore();
   });
-
-  useEffect(() => {
-    ensureBootstrap();
-    setStore(readStudioInstituteStore());
-  }, []);
 
   const selectWorkspace = useCallback((id: StudioInstituteWorkspaceId) => {
     selectStudioInstituteWorkspace(id);

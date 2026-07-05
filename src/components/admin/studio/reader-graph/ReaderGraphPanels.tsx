@@ -130,11 +130,17 @@ export function WorkspaceReaderSelector({ store, onSelectWorkspace }: Pick<Props
   );
 }
 
-export function ReaderListPanel({ workspaceReaders, store, onSelectReader }: Pick<Props, 'workspaceReaders' | 'store' | 'onSelectReader'>) {
+export function ReaderListPanel({
+  workspaceReaders,
+  store,
+  onSelectReader,
+  previewLimit,
+}: Pick<Props, 'workspaceReaders' | 'store' | 'onSelectReader'> & { previewLimit?: number }) {
+  const readers = previewLimit ? workspaceReaders.slice(0, previewLimit) : workspaceReaders;
   return (
     <section className="p-3 mb-3" style={rgPanel}>
       <p style={rgSectionTitle}>READER PROFILES · LIVING RELATIONSHIPS</p>
-      {workspaceReaders.map((reader) => (
+      {readers.map((reader) => (
         <button
           key={reader.id}
           type="button"

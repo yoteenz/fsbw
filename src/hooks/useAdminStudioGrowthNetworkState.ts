@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { scopeStorageKey, getRuntimeActiveWorkspaceId } from '../studio-os-core/workspace/storage';
 import {
   bootstrapGrowthProfiles,
@@ -45,7 +45,6 @@ export function useAdminStudioGrowthNetworkState(workspaceIdOverride?: string) {
 
   const store = useMemo(() => {
     void version;
-    ensureDemoSeeded();
     return readGrowthNetworkStore();
   }, [version]);
 

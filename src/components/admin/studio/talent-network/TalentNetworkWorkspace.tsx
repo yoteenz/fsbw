@@ -99,13 +99,7 @@ export function TalentNetworkWorkspace() {
     setSearchParams({ tab: id }, { replace: true });
   };
 
-  if (talents.length === 0) {
-    return (
-      <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-        TALENT NETWORK LOADING — BOOTSTRAP IN PROGRESS
-      </p>
-    );
-  }
+  const topTalents = [...talents].sort((a, b) => b.talentScore.overall - a.talentScore.overall);
 
   const renderTab = () => {
     switch (tab) {
@@ -118,18 +112,26 @@ export function TalentNetworkWorkspace() {
               <MetricCard label="AI PRESENTERS" value={`${aiTalents.length}`} />
               <MetricCard label="HUMAN TALENT" value={`${humanTalents.length}`} />
             </div>
-            <SectionLabel>UNIFIED REGISTRY · AI + HUMAN · SAME ARCHITECTURE</SectionLabel>
-            {[...talents]
-              .sort((a, b) => b.talentScore.overall - a.talentScore.overall)
-              .map((t) => (
-                <TalentRow
-                  key={t.id}
-                  name={t.displayName}
-                  type={TALENT_TYPE_LABELS[t.talentType]}
-                  score={t.talentScore.overall}
-                  status={t.status.toUpperCase()}
-                />
-              ))}
+            <SectionLabel>TOP TALENT · OPEN PERFORMANCE TAB FOR FULL REGISTRY</SectionLabel>
+            {topTalents.slice(0, 8).map((t) => (
+              <TalentRow
+                key={t.id}
+                name={t.displayName}
+                type={TALENT_TYPE_LABELS[t.talentType]}
+                score={t.talentScore.overall}
+                status={t.status.toUpperCase()}
+              />
+            ))}
+            {topTalents.length > 8 ? (
+              <button
+                type="button"
+                onClick={() => selectTab('performance')}
+                className="w-full py-2 text-[6px] font-futura uppercase border"
+                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+              >
+                VIEW ALL {topTalents.length} TALENT → PERFORMANCE
+              </button>
+            ) : null}
             <SectionLabel>TOP GROWTH RECOMMENDATIONS</SectionLabel>
             {growthRecommendations.slice(0, 2).map((r) => (
               <p key={r.id} className="text-[6px] font-futura px-2 py-1 border normal-case" style={{ ...panelStyle, fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.4 }}>

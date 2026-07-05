@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRemembranceGardenState } from '../../../../hooks/useRemembranceGardenState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CampusIntegrationPanel,
   ConnectedSystemsPanel,
@@ -14,7 +15,6 @@ import {
   LivingSeasonsPanel,
   MemoryPreservationPanel,
   PortfolioRemembrancePanel,
-  RecommendedNextStepsPanel,
   ReflectionSpacesPanel,
   RemembranceGardenHeader,
   WorkspaceSelectorPanel,
@@ -77,22 +77,15 @@ export function RemembranceGardenWorkspace() {
           </>
         );
       case 'garden':
-      default:
         return (
           <>
             <GardenDashboardPanel {...panelProps} />
             <GardenPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <DedicationSpacesPanel {...panelProps} />
-            <MemoryPreservationPanel {...panelProps} />
-            <ReflectionSpacesPanel {...panelProps} />
-            <LivingSeasonsPanel {...panelProps} />
-            <LegacyLettersPanel {...panelProps} />
-            <FamilyHeritagePanel {...panelProps} />
-            <FutureGenerationsPanel {...panelProps} />
-            <GratitudeMomentsPanel {...panelProps} />
-            <CampusIntegrationPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

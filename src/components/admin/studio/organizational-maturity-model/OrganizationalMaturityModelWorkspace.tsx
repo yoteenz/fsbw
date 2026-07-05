@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useOrganizationalMaturityModelState } from '../../../../hooks/useOrganizationalMaturityModelState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AdaptiveExperiencePanel,
   AutonomyProgressionPanel,
@@ -9,13 +10,11 @@ import {
   ConnectedSystemsPanel,
   ExecutiveReadinessPanel,
   GrowthRoadmapPanel,
-  MaturityDimensionsPanel,
   MaturityPhilosophyPanel,
   OiMaturityIntegrationPanel,
   OmmDashboardPanel,
   OrganizationalAssessmentsPanel,
   OrganizationalMaturityModelHeader,
-  OrganizationalStagesPanel,
   RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './OrganizationalMaturityModelPanels';
@@ -75,23 +74,15 @@ export function OrganizationalMaturityModelWorkspace() {
           </>
         );
       case 'stages':
-      default:
         return (
           <>
             <OmmDashboardPanel {...panelProps} />
             <MaturityPhilosophyPanel {...panelProps} />
-            <OrganizationalStagesPanel {...panelProps} />
-            <MaturityDimensionsPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <AdaptiveExperiencePanel {...panelProps} />
-            <ExecutiveReadinessPanel {...panelProps} />
-            <AutonomyProgressionPanel {...panelProps} />
-            <CampusProgressionPanel {...panelProps} />
-            <OrganizationalAssessmentsPanel {...panelProps} />
-            <GrowthRoadmapPanel {...panelProps} />
-            <CompanyOnboardingPanel {...panelProps} />
-            <OiMaturityIntegrationPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useStrategyEngineState } from '../../../../hooks/useStrategyEngineState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ActiveStrategiesPanel,
   AlignmentPanel,
   CampaignEngineLinkPanel,
-  WorkOrchestrationLinkPanel,
   ConnectedSystemsPanel,
   CosIntegrationPanel,
   DecisionJournalPanel,
@@ -22,6 +22,7 @@ import {
   StrategyLineagePanel,
   StrategyProfilePanel,
   StrategyReviewPanel,
+  WorkOrchestrationLinkPanel,
   WorkspaceSelectorPanel,
 } from './StrategyEnginePanels';
 
@@ -112,24 +113,15 @@ export function StrategyEngineWorkspace() {
           </>
         );
       case 'board':
-      default:
         return (
           <>
             <WorkspaceSelectorPanel {...panelProps} />
             <StrategyBoardPanel {...panelProps} />
             <StrategyProfilePanel {...panelProps} />
-            <ActiveStrategiesPanel {...panelProps} />
-            <InitiativesPanel {...panelProps} />
-            <StrategicBetsPanel {...panelProps} />
-            <StrategyHealthPanel {...panelProps} />
-            <AlignmentPanel {...panelProps} />
-            <IntelligenceSignalsPanel {...panelProps} />
-            <CosIntegrationPanel {...panelProps} />
-            <CampaignEngineLinkPanel />
-            <WorkOrchestrationLinkPanel />
-            <DecisionJournalPanel {...panelProps} />
-            <StrategyReviewPanel {...panelProps} />
-            <StrategyLineagePanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

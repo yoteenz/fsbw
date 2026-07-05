@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildExperienceArchitectSeed } from '../studio-os-core/experience-architect/bootstrap';
 import {
   bootstrapExperienceArchitectStore,
@@ -12,15 +12,13 @@ function ensureSeeded(): void {
 }
 
 export function useExperienceArchitectState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readExperienceArchitectStore();
   }, [version]);
 

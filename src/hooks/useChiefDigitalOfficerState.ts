@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildChiefDigitalOfficerSeed } from '../studio-os-core/chief-digital-officer/bootstrap';
 import {
   bootstrapChiefDigitalOfficerStore,
@@ -12,15 +12,13 @@ function ensureSeeded(): void {
 }
 
 export function useChiefDigitalOfficerState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readChiefDigitalOfficerStore();
   }, [version]);
 

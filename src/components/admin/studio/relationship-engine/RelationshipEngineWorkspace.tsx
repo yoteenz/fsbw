@@ -105,7 +105,6 @@ export function RelationshipEngineWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <RelationshipDashboardPanel {...panelProps} />

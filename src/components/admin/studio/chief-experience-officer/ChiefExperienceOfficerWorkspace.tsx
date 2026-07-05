@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useChiefExperienceOfficerState } from '../../../../hooks/useChiefExperienceOfficerState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CeoDashboardPanel,
   ChiefExperienceOfficerHeader,
@@ -19,7 +20,6 @@ import {
   JourneyIntelligencePanel,
   LeadershipPhilosophyPanel,
   RecommendationsPanel,
-  RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './ChiefExperienceOfficerPanels';
 
@@ -75,24 +75,16 @@ export function ChiefExperienceOfficerWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'experience':
-      default:
         return (
           <>
             <CeoDashboardPanel {...panelProps} />
             <ExecutiveCompassPanel {...panelProps} />
             <LeadershipPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <DailyBriefingPanel {...panelProps} />
-            <ExperienceGovernancePanel {...panelProps} />
-            <ExperienceAlignmentPanel {...panelProps} />
-            <JourneyIntelligencePanel {...panelProps} />
-            <ExperienceIntelligencePanel {...panelProps} />
-            <ExperienceStudioPanel {...panelProps} />
-            <ExperienceCouncilPanel {...panelProps} />
-            <ExperienceProtectionPanel {...panelProps} />
-            <ExperienceMemoryPanel {...panelProps} />
-            <RecommendationsPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

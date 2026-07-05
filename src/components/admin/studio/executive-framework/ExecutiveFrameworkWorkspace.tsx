@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useExecutiveFrameworkState } from '../../../../hooks/useExecutiveFrameworkState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AccountabilityPanel,
   ConnectedSystemsPanel,
@@ -17,7 +18,6 @@ import {
   LeadershipMapPanel,
   OrganizationalPrioritiesPanel,
   RecommendationPipelinePanel,
-  RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './ExecutiveFrameworkPanels';
 
@@ -74,23 +74,15 @@ export function ExecutiveFrameworkWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'org':
-      default:
         return (
           <>
             <FrameworkDashboardPanel {...panelProps} />
             <ExecutivePhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <LeadershipMapPanel {...panelProps} />
-            <ExecutiveCollaborationPanel {...panelProps} />
-            <IdentityInheritancePanel {...panelProps} />
-            <DecisionFrameworkPanel {...panelProps} />
-            <RecommendationPipelinePanel {...panelProps} />
-            <ExecutiveWorkspacesPanel {...panelProps} />
-            <InstitutionalMemoryPanel {...panelProps} />
-            <AccountabilityPanel {...panelProps} />
-            <FutureExecutivesPanel {...panelProps} />
-            <OrganizationalPrioritiesPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

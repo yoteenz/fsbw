@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildOrganizationalInheritanceSeed } from '../studio-os-core/organizational-inheritance/bootstrap';
 import {
   bootstrapOrganizationalInheritanceStore,
@@ -15,20 +15,19 @@ function ensureSeeded(): void {
 }
 
 export function useOrganizationalInheritanceState() {
-  const [version, setVersion] = useState(0);
+  const [version, setVersion] = useState(() => {
+    ensureSeeded();
+    return 0;
+  });
 
   const refresh = useCallback(() => {
     ensureSeeded();
     setVersion((v) => v + 1);
   }, []);
 
-  useEffect(() => {
-    ensureSeeded();
-  }, []);
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readOrganizationalInheritanceStore();
   }, [version]);
 

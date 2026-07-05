@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useOrganizationalInheritanceState } from '../../../../hooks/useOrganizationalInheritanceState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CrossCompanyLearningPanel,
   CompanyMaturityEngineLinkPanel,
@@ -94,20 +95,15 @@ export function OrganizationalInheritanceWorkspace() {
           </>
         );
       case 'platform':
-      default:
         return (
           <>
             <InheritanceDashboardPanel {...panelProps} />
             <CompanyMaturityEngineLinkPanel />
             <InheritancePlatformChainPanel />
-            <InheritanceWizardPanel {...panelProps} />
-            <InheritanceRecommendationsPanel {...panelProps} />
-            <InheritanceSimulatorPanel {...panelProps} />
-            <GeneticBlendingPanel {...panelProps} />
-            <InstitutionalLibraryPanel {...panelProps} />
-            <KnowledgeAncestryPanel {...panelProps} />
-            <OrgTimelinePanel {...panelProps} />
-            <OrganizationalEvolutionPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
           </>
         );
     }

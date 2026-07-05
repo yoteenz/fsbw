@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useChiefTechnologyOfficerState } from '../../../../hooks/useChiefTechnologyOfficerState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ChiefTechnologyOfficerHeader,
   ConnectedSystemsPanel,
@@ -16,7 +17,6 @@ import {
   LeadershipPhilosophyPanel,
   PlatformArchitecturePanel,
   RecommendationsPanel,
-  RecommendedNextStepsPanel,
   TechnologyGovernancePanel,
   TechnologyOpsCenterPanel,
   TechnologyProtectionPanel,
@@ -77,25 +77,16 @@ export function ChiefTechnologyOfficerWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'engineering':
-      default:
         return (
           <>
             <CtoDashboardPanel {...panelProps} />
             <ExecutiveCompassPanel {...panelProps} />
             <LeadershipPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <DailyBriefingPanel {...panelProps} />
-            <TechnologyGovernancePanel {...panelProps} />
-            <EngineeringAlignmentPanel {...panelProps} />
-            <EngineeringIntelligencePanel {...panelProps} />
-            <EngineeringEvolutionPanel {...panelProps} />
-            <PlatformArchitecturePanel {...panelProps} />
-            <TechnologyOpsCenterPanel {...panelProps} />
-            <EngineeringCouncilPanel {...panelProps} />
-            <TechnologyProtectionPanel {...panelProps} />
-            <EngineeringMemoryPanel {...panelProps} />
-            <RecommendationsPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

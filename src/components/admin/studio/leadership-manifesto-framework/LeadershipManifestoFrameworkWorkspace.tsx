@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useLeadershipManifestoFrameworkState } from '../../../../hooks/useLeadershipManifestoFrameworkState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CollaborationPhilosophyPanel,
   CommunicationStandardsPanel,
+  RecommendedNextStepsPanel,
   ConnectedSystemsPanel,
   CoreBeliefsPanel,
   DecisionFrameworkPanel,
@@ -16,11 +18,9 @@ import {
   LearningPhilosophyPanel,
   LegacyCommitmentPanel,
   ManifestoDashboardPanel,
-  ManifestoHealthPanel,
   ManifestoInheritancePanel,
   ManifestoPhilosophyPanel,
   NonNegotiablesPanel,
-  RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './LeadershipManifestoFrameworkPanels';
 
@@ -85,27 +85,16 @@ export function LeadershipManifestoFrameworkWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'manifesto':
-      default:
         return (
           <>
             <ManifestoDashboardPanel {...panelProps} />
-            <ManifestoHealthPanel {...panelProps} />
             <ManifestoPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <ExecutiveIdentityPanel {...panelProps} />
             <LeadershipPhilosophyPanel {...panelProps} />
-            <CoreBeliefsPanel {...panelProps} />
-            <NonNegotiablesPanel {...panelProps} />
-            <DecisionFrameworkPanel {...panelProps} />
-            <ExecutiveCompassPanel {...panelProps} />
-            <ExcellencePanel {...panelProps} />
-            <CommunicationStandardsPanel {...panelProps} />
-            <CollaborationPhilosophyPanel {...panelProps} />
-            <LearningPhilosophyPanel {...panelProps} />
-            <FounderRelationshipPanel {...panelProps} />
-            <LegacyCommitmentPanel {...panelProps} />
-            <ManifestoInheritancePanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

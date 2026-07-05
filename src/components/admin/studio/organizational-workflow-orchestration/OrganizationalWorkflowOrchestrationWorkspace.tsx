@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useOrganizationalWorkflowOrchestrationState } from '../../../../hooks/useOrganizationalWorkflowOrchestrationState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
-  ActiveWorkflowsPanel,
   ChiefOfStaffCoordinationPanel,
   ConnectedSystemsPanel,
   CrossFunctionalCoordinationPanel,
@@ -17,7 +17,6 @@ import {
   WorkflowPhilosophyPanel,
   WorkflowSimulationPanel,
   WorkflowTransparencyPanel,
-  WorkflowTypesPanel,
   WorkspaceSelectorPanel,
 } from './OrganizationalWorkflowOrchestrationPanels';
 
@@ -77,24 +76,15 @@ export function OrganizationalWorkflowOrchestrationWorkspace() {
           </>
         );
       case 'orchestrate':
-      default:
         return (
           <>
             <OwfDashboardPanel {...panelProps} />
             <WorkflowPhilosophyPanel {...panelProps} />
-            <WorkflowTypesPanel {...panelProps} />
-            <ActiveWorkflowsPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <CrossFunctionalCoordinationPanel {...panelProps} />
-            <WorkflowIntelligencePanel {...panelProps} />
-            <LivingWorkflowPanel {...panelProps} />
-            <ChiefOfStaffCoordinationPanel {...panelProps} />
-            <WorkflowTransparencyPanel {...panelProps} />
-            <OrganizationalAdaptationPanel {...panelProps} />
-            <WorkflowMemoryPanel {...panelProps} />
-            <WorkflowSimulationPanel {...panelProps} />
-            <RecommendedOptimizationsPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

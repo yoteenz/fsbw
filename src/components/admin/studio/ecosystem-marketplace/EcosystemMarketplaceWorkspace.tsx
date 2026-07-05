@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useEcosystemMarketplaceState } from '../../../../hooks/useEcosystemMarketplaceState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AssetDiscoveryPanel,
   AssetEvolutionPanel,
@@ -9,8 +10,8 @@ import {
   CollaborationPanel,
   CommunityContributionsPanel,
   CompatibilityCenterPanel,
-  ConnectedSystemsPanel,
   CosIntegrationPanel,
+  ConnectedSystemsPanel,
   CrossCompanyLearningPanel,
   EcosystemMarketplaceHeader,
   FeaturedAssetsPanel,
@@ -106,22 +107,15 @@ export function EcosystemMarketplaceWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <MarketplaceDashboardPanel {...panelProps} />
             <MarketplacePhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <FeaturedAssetsPanel {...panelProps} />
-            <AssetProfilePanel {...panelProps} />
-            <InheritanceIntegrationPanel {...panelProps} />
-            <CompatibilityCenterPanel {...panelProps} />
-            <MarketplaceIntelligencePanel {...panelProps} />
-            <IndustryCollectionsPanel {...panelProps} />
-            <InstalledAssetsPanel {...panelProps} />
-            <VerifiedMarketplacePanel {...panelProps} />
-            <CrossCompanyLearningPanel {...panelProps} />
-            <CosIntegrationPanel />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

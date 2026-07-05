@@ -126,11 +126,17 @@ export function WorkspaceSelectorPanel({ store, onSelectWorkspace }: Pick<Props,
   );
 }
 
-export function CreatorDiscoveryPanel({ workspaceCreators, store, onSelectCreator }: Pick<Props, 'workspaceCreators' | 'store' | 'onSelectCreator'>) {
+export function CreatorDiscoveryPanel({
+  workspaceCreators,
+  store,
+  onSelectCreator,
+  previewLimit,
+}: Pick<Props, 'workspaceCreators' | 'store' | 'onSelectCreator'> & { previewLimit?: number }) {
+  const creators = previewLimit ? workspaceCreators.slice(0, previewLimit) : workspaceCreators;
   return (
     <section className="p-3 mb-3" style={cmPanel}>
       <p style={cmSectionTitle}>CREATOR DISCOVERY · DYNAMIC PROFILES</p>
-      {workspaceCreators.map((c) => (
+      {creators.map((c) => (
         <button
           key={c.id}
           type="button"
@@ -228,14 +234,19 @@ export function BrandProfilePanel({ selectedBrand }: Pick<Props, 'selectedBrand'
   );
 }
 
-export function IntelligentMatchingPanel({ creatorMatches, store }: Pick<Props, 'creatorMatches' | 'store'>) {
+export function IntelligentMatchingPanel({
+  creatorMatches,
+  store,
+  previewLimit,
+}: Pick<Props, 'creatorMatches' | 'store'> & { previewLimit?: number }) {
+  const matches = previewLimit ? creatorMatches.slice(0, previewLimit) : creatorMatches;
   return (
     <section className="p-3 mb-3" style={cmPanel}>
       <p style={cmSectionTitle}>INTELLIGENT MATCHING · STUDIO INTELLIGENCE</p>
       <p style={{ ...cmLabel, fontSize: '6px', marginBottom: 8 }}>
         Replace manual searching · alignment · audience overlap · long-term partnership potential
       </p>
-      {creatorMatches.map((m) => {
+      {matches.map((m) => {
         const creator = store.creators.find((c) => c.id === m.creatorId);
         const brand = store.brands.find((b) => b.id === m.brandId);
         return (

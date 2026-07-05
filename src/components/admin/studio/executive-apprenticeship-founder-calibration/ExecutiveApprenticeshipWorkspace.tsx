@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useExecutiveApprenticeshipState } from '../../../../hooks/useExecutiveApprenticeshipState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ApprenticeshipPhilosophyPanel,
   CalibrationEnginePanel,
@@ -9,9 +10,7 @@ import {
   EafDashboardPanel,
   ExecutiveApprenticeshipHeader,
   ExecutiveGraduationPanel,
-  FounderCalibrationPanel,
   FounderDashboardHighlightsPanel,
-  FutureOpportunitiesPanel,
   LearningConversationsPanel,
   LearningLibraryPanel,
   PracticeModePanel,
@@ -77,24 +76,15 @@ export function ExecutiveApprenticeshipWorkspace() {
           </>
         );
       case 'philosophy':
-      default:
         return (
           <>
             <EafDashboardPanel {...panelProps} />
             <ApprenticeshipPhilosophyPanel {...panelProps} />
-            <FounderCalibrationPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <ShadowingObservationsPanel {...panelProps} />
-            <LearningConversationsPanel {...panelProps} />
-            <CalibrationEnginePanel {...panelProps} />
-            <PracticeModePanel {...panelProps} />
-            <TrustProgressionPanel {...panelProps} />
-            <SoftApprovalPanel {...panelProps} />
-            <ChiefOfStaffMentorshipPanel {...panelProps} />
-            <LearningLibraryPanel {...panelProps} />
-            <ExecutiveGraduationPanel {...panelProps} />
-            <FounderDashboardHighlightsPanel {...panelProps} />
-            <FutureOpportunitiesPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

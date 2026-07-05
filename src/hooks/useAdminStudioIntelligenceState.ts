@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { AI_MEDIA_WORKSPACE_ID } from '../studio-os-core/ai-media-network/constants';
 import {
   bootstrapStudioIntelligenceStore,
@@ -19,7 +19,10 @@ function ensureDemoSeeded(): void {
 }
 
 export function useAdminStudioIntelligenceState() {
-  const [version, setVersion] = useState(0);
+  const [version, setVersion] = useState(() => {
+    ensureDemoSeeded();
+    return 0;
+  });
   const refresh = useCallback(() => {
     ensureDemoSeeded();
     setVersion((v) => v + 1);
@@ -27,7 +30,6 @@ export function useAdminStudioIntelligenceState() {
 
   const store = useMemo(() => {
     void version;
-    ensureDemoSeeded();
     return readStudioIntelligenceStore();
   }, [version]);
 

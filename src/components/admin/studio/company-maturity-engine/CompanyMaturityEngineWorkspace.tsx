@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCompanyMaturityEngineState } from '../../../../hooks/useCompanyMaturityEngineState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ArchitectRecommendationsPanel,
   CompanyMaturityEngineHeader,
@@ -79,20 +80,15 @@ export function CompanyMaturityEngineWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <MaturityDashboardPanel {...panelProps} />
             <MaturityPhilosophyPanel {...panelProps} />
-            <OnboardingPathsPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <MaturityScorecardPanel {...panelProps} />
-            <MaturityAssessmentPanel {...panelProps} />
-            <OrganizationalScanPanel {...panelProps} />
-            <ArchitectRecommendationsPanel {...panelProps} />
-            <CompanyRoadmapPanel {...panelProps} />
-            <CompanyTimelinePanel {...panelProps} />
-            <CosMaturityPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

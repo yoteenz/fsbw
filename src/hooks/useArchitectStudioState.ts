@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildArchitectStudioSeed } from '../studio-os-core/architect-studio/bootstrap';
 import {
   bootstrapArchitectStudioStore,
@@ -14,15 +14,13 @@ function ensureSeeded(): void {
 }
 
 export function useArchitectStudioState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readArchitectStudioStore();
   }, [version]);
 

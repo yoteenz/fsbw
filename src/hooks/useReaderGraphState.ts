@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildReaderGraphSeed } from '../studio-os-core/reader-graph/bootstrap';
 import {
   bootstrapReaderGraphStore,
@@ -14,15 +14,13 @@ function ensureSeeded(): void {
 }
 
 export function useReaderGraphState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readReaderGraphStore();
   }, [version]);
 

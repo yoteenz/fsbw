@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { useLeadershipModesState } from '../../../../hooks/useLeadershipModesState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AdaptiveInterfacePanel,
   CampusTransformationPanel,
   ChiefOfStaffBriefingsPanel,
+  RecommendedNextStepsPanel,
   ConnectedSystemsPanel,
   ExecutiveBehaviorPanel,
   LeadershipModesHeader,
-  LeadershipModesPanel,
   LeadershipPhilosophyPanel,
   LeadershipTransitionsPanel,
   LmDashboardPanel,
   ModeDetectionPanel,
   OiModeIntegrationPanel,
-  RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './LeadershipModesPanels';
 
@@ -74,21 +74,15 @@ export function LeadershipModesWorkspace() {
           </>
         );
       case 'modes':
-      default:
         return (
           <>
             <LmDashboardPanel {...panelProps} />
             <LeadershipPhilosophyPanel {...panelProps} />
-            <LeadershipModesPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <ModeDetectionPanel {...panelProps} />
-            <AdaptiveInterfacePanel {...panelProps} />
-            <ChiefOfStaffBriefingsPanel {...panelProps} />
-            <ExecutiveBehaviorPanel {...panelProps} />
-            <OiModeIntegrationPanel {...panelProps} />
-            <CampusTransformationPanel {...panelProps} />
-            <LeadershipTransitionsPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

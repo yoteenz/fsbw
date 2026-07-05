@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCampaignEngineState } from '../../../../hooks/useCampaignEngineState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CampaignAnalyticsPanel,
   CampaignBuilderPanel,
@@ -16,12 +17,9 @@ import {
   CampaignSimulationPanel,
   CampaignWorkspacePanel,
   ConnectedSystemsPanel,
-  WorkOrchestrationLinkPanel,
-  DistributionEngineLinkPanel,
   CreatorRecommendationsPanel,
   DeliverablesPanel,
   DepartmentCoordinationPanel,
-  WorkspaceCampaignSelector,
 } from './CampaignEnginePanels';
 
 type CeTab = 'dashboard' | 'campaign' | 'calendar' | 'intelligence' | 'learning';
@@ -93,20 +91,15 @@ export function CampaignEngineWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <CampaignDashboardPanel {...panelProps} />
-            <WorkspaceCampaignSelector {...panelProps} />
             <CampaignListPanel {...panelProps} />
             <CampaignWorkspacePanel {...panelProps} />
-            <DeliverablesPanel {...panelProps} />
-            <CampaignAnalyticsPanel {...panelProps} />
-            <CampaignExperimentsPanel {...panelProps} />
-            <DepartmentCoordinationPanel {...panelProps} />
-            <CampaignLineagePanel {...panelProps} />
-            <WorkOrchestrationLinkPanel />
-            <DistributionEngineLinkPanel />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

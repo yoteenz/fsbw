@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildLeadershipManifestoFrameworkSeed } from '../studio-os-core/leadership-manifesto-framework/bootstrap';
 import {
   bootstrapLeadershipManifestoFrameworkStore,
@@ -12,15 +12,13 @@ function ensureSeeded(): void {
 }
 
 export function useLeadershipManifestoFrameworkState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readLeadershipManifestoFrameworkStore();
   }, [version]);
 

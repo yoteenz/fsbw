@@ -8,8 +8,8 @@ import {
   BrandProfilePanel,
   CareerGraphPanel,
   CareerIntelligencePanel,
-  ConnectedSystemsPanel,
   CosIntegrationPanel,
+  ConnectedSystemsPanel,
   CreatorAcademyPanel,
   CreatorDiscoveryPanel,
   CreatorMarketplaceHeader,
@@ -120,21 +120,25 @@ export function CreatorMarketplaceWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <MarketplaceDashboardPanel {...panelProps} />
             <CreatorPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <CreatorDiscoveryPanel {...panelProps} />
-            <CreatorProfilePanel {...panelProps} />
-            <IntelligentMatchingPanel {...panelProps} />
-            <BrandDealEnginePanel {...panelProps} />
-            <CreatorOsPanel {...panelProps} />
-            <MarketplaceIntelligencePanel {...panelProps} />
-            <RelationshipManagementPanel {...panelProps} />
-            <CareerGraphPanel {...panelProps} />
+            <CreatorDiscoveryPanel {...panelProps} previewLimit={6} />
+            <IntelligentMatchingPanel {...panelProps} previewLimit={4} />
             <CosIntegrationPanel />
+            <p
+              className="text-[6px] font-futura uppercase p-2 border mb-3"
+              style={{
+                fontWeight: 515,
+                borderColor: ADMIN_STUDIO_THEME.panelBorder,
+                color: ADMIN_STUDIO_THEME.textSecondary,
+                background: 'rgba(37,99,235,0.04)',
+              }}
+            >
+              PROFILES · DEALS · CAREER · INTELLIGENCE — USE THE TABS ABOVE
+            </p>
             <ConnectedSystemsPanel />
           </>
         );

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useBrandArchitectState } from '../../../../hooks/useBrandArchitectState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   BrandArchitectHeader,
   BrandBlueprintPanel,
@@ -64,21 +65,15 @@ export function BrandArchitectWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <BrandDashboardPanel {...panelProps} />
             <BrandPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <BrandBlueprintPanel {...panelProps} />
-            <VerbalIdentityPanel {...panelProps} />
-            <VisualIdentityPanel {...panelProps} />
-            <BrandSystemsPanel {...panelProps} />
-            <BrandHealthPanel {...panelProps} />
-            <CompetitiveIntelligencePanel {...panelProps} />
-            <BrandSimulationPanel {...panelProps} />
-            <BrandEvolutionPanel {...panelProps} />
-            <ExperienceArchitectHandoffPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

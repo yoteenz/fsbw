@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useFoundersPromiseState } from '../../../../hooks/useFoundersPromiseState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CampusInstallationPanel,
   ConnectedSystemsPanel,
@@ -15,7 +16,6 @@ import {
   PromiseDashboardPanel,
   PromisePhilosophyPanel,
   PromiseVersionsPanel,
-  RecommendedNextStepsPanel,
   ReflectionMomentsPanel,
   ReflectiveQuestionsPanel,
   WorkspaceSelectorPanel,
@@ -77,23 +77,16 @@ export function FoundersPromiseWorkspace() {
           </>
         );
       case 'promise':
-      default:
         return (
           <>
             <PromiseDashboardPanel {...panelProps} />
             <PromisePhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <ReflectiveQuestionsPanel {...panelProps} />
             <CurrentPromisePanel {...panelProps} />
-            <OriginalPromisePanel {...panelProps} />
-            <LivingEvolutionPanel {...panelProps} />
-            <OrganizationalAlignmentPanel {...panelProps} />
-            <ExecutiveAlignmentPanel {...panelProps} />
-            <ReflectionMomentsPanel {...panelProps} />
-            <PromiseArchivePanel {...panelProps} />
-            <LegacyInheritancePanel {...panelProps} />
-            <CampusInstallationPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

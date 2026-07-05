@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDigitalArchitectState } from '../../../../hooks/useDigitalArchitectState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AiFeatureArchitectPanel,
   ApplicationArchitecturePanel,
@@ -84,22 +85,15 @@ export function DigitalArchitectWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <DigitalDashboardPanel {...panelProps} />
             <DigitalPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <RecommendationEnginePanel {...panelProps} />
-            <ExperienceGalleryPanel {...panelProps} />
-            <ImmersivePreviewPanel {...panelProps} />
-            <ExperienceInheritancePanel {...panelProps} />
-            <SolutionArchitecturePanel {...panelProps} />
-            <DesignSystemPanel {...panelProps} />
-            <ApplicationArchitecturePanel {...panelProps} />
-            <DigitalSimulationPanel {...panelProps} />
-            <ImplementationRoadmapPanel {...panelProps} />
-            <LaunchArchitectHandoffPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

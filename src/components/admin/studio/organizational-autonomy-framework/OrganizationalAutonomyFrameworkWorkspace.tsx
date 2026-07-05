@@ -1,20 +1,20 @@
 import { useState } from 'react';
 import { useOrganizationalAutonomyState } from '../../../../hooks/useOrganizationalAutonomyState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AutonomousActionsPanel,
   AutonomousWorkflowsPanel,
   AutonomyGovernancePanel,
-  AutonomyLevelsPanel,
   AutonomyPhilosophyPanel,
   AutonomyUpgradesPanel,
+  RecommendedNextStepsPanel,
   ConnectedSystemsPanel,
   ExecutiveCoordinationPanel,
   FounderPermissionsPanel,
   LearningLoopPanel,
   OafDashboardPanel,
   OrganizationalAutonomyHeader,
-  RecommendedNextStepsPanel,
   TrustEnginePanel,
   WorkspaceSelectorPanel,
 } from './OrganizationalAutonomyFrameworkPanels';
@@ -31,7 +31,7 @@ const TABS: { id: OafTab; label: string }[] = [
 ];
 
 export function OrganizationalAutonomyFrameworkWorkspace() {
-  const [tab, setTab] = useState<OafTab>('autonomy');
+  const [tab, setTab] = useState<OafTab>('dashboard');
   const { store, selectWorkspace } = useOrganizationalAutonomyState();
   const panelProps = { store, onSelectWorkspace: selectWorkspace };
 
@@ -70,22 +70,16 @@ export function OrganizationalAutonomyFrameworkWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'autonomy':
-      default:
         return (
           <>
             <OafDashboardPanel {...panelProps} />
             <AutonomyPhilosophyPanel {...panelProps} />
-            <AutonomyLevelsPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
             <AutonomyGovernancePanel {...panelProps} />
-            <FounderPermissionsPanel {...panelProps} />
-            <TrustEnginePanel {...panelProps} />
-            <ExecutiveCoordinationPanel {...panelProps} />
-            <AutonomousWorkflowsPanel {...panelProps} />
-            <AutonomousActionsPanel {...panelProps} />
-            <LearningLoopPanel {...panelProps} />
-            <AutonomyUpgradesPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

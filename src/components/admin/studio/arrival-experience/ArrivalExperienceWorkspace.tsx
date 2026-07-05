@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useArrivalExperienceState } from '../../../../hooks/useArrivalExperienceState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AeDashboardPanel,
   ArrivalExperienceHeader,
@@ -74,22 +75,16 @@ export function ArrivalExperienceWorkspace() {
           </>
         );
       case 'philosophy':
-      default:
         return (
           <>
             <AeDashboardPanel {...panelProps} />
             <ArrivalPhilosophyPanel {...panelProps} />
             <ArrivalSequencePanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <ChiefConciergeArrivalWelcomePanel {...panelProps} />
-            <ConciergeTeamIntroductionsPanel {...panelProps} />
-            <HeadquartersTourPanel {...panelProps} />
-            <OrganizationalRevealPanel {...panelProps} />
-            <EnvironmentalStorytellingPanel {...panelProps} />
-            <FirstConciergeBriefingPanel {...panelProps} />
-            <ArrivalMemoryPanel {...panelProps} />
-            <FinalMessagePanel {...panelProps} />
-            <FutureOpportunitiesPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(3,105,161,0.04)">
+              WELCOME · TOUR · BRIEFING · MEMORY — USE THE TABS ABOVE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

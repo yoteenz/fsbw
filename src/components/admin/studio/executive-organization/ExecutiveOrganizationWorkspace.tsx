@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useExecutiveOrganizationState } from '../../../../hooks/useExecutiveOrganizationState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ChiefOfStaffCoordinationPanel,
   CollaborationPanel,
@@ -79,23 +80,15 @@ export function ExecutiveOrganizationWorkspace() {
           </>
         );
       case 'organization':
-      default:
         return (
           <>
             <OrganizationDashboardPanel store={store} />
             <OrgHierarchyPanel store={store} />
             <ChiefOfStaffCoordinationPanel />
-            <ExecutiveRosterPanel store={store} selectedExecutive={selectedExecutive} onSelectExecutive={selectExecutive} />
-            <ExecutiveHeadquartersPanel selectedExecutive={selectedExecutive} />
-            <ExecutiveScorecardPanel selectedExecutive={selectedExecutive} />
-            <DepartmentHeadquartersPanel store={store} selectedDepartment={selectedDepartment} onSelectDepartment={selectDepartment} />
-            <CollaborationPanel store={store} />
-            <WorkerArchitecturePanel store={store} selectedDepartment={selectedDepartment} />
-            <ExecutiveMeetingsPanel store={store} />
-            <OrganizationalMemoryPanel store={store} />
-            <CompanyCulturePanel store={store} />
-            <OrgGraphPanel store={store} />
-            <ExecutiveSuccessionPanel store={store} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
           </>
         );
     }

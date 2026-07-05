@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildExecutiveOrganizationSeed } from '../studio-os-core/executive-organization/bootstrap';
 import {
   bootstrapExecutiveOrganizationStore,
@@ -13,20 +13,19 @@ function ensureSeeded(): void {
 }
 
 export function useExecutiveOrganizationState() {
-  const [version, setVersion] = useState(0);
+  const [version, setVersion] = useState(() => {
+    ensureSeeded();
+    return 0;
+  });
 
   const refresh = useCallback(() => {
     ensureSeeded();
     setVersion((v) => v + 1);
   }, []);
 
-  useEffect(() => {
-    ensureSeeded();
-  }, []);
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readExecutiveOrganizationStore();
   }, [version]);
 

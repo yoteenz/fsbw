@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import {
   bootstrapAiMediaNetworkStore,
   readAiMediaNetworkStore,
@@ -19,7 +19,10 @@ function ensureDemoSeeded(): void {
 }
 
 export function useAdminStudioAiMediaNetworkState() {
-  const [version, setVersion] = useState(0);
+  const [version, setVersion] = useState(() => {
+    ensureDemoSeeded();
+    return 0;
+  });
   const refresh = useCallback(() => {
     ensureDemoSeeded();
     setVersion((v) => v + 1);
@@ -27,7 +30,6 @@ export function useAdminStudioAiMediaNetworkState() {
 
   const store = useMemo(() => {
     void version;
-    ensureDemoSeeded();
     return readAiMediaNetworkStore();
   }, [version]);
 

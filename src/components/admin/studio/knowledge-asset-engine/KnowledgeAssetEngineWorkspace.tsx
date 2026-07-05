@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useKnowledgeAssetEngineState } from '../../../../hooks/useKnowledgeAssetEngineState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AssetProfilePanel,
   AssetTypesPanel,
   ConnectedSystemsPanel,
-  CosIntegrationPanel,
   ExecutiveIntelligencePanel,
   KnowledgeAcademyPanel,
   KnowledgeDashboardPanel,
@@ -116,22 +116,15 @@ export function KnowledgeAssetEngineWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <KnowledgeDashboardPanel {...panelProps} />
             <KnowledgePhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <KnowledgeLibraryPanel {...panelProps} />
-            <AssetProfilePanel {...panelProps} />
-            <SingleSourceOfTruthPanel {...panelProps} />
-            <KnowledgeEvolutionPanel {...panelProps} />
-            <KnowledgeLineagePanel {...panelProps} />
-            <KnowledgeMaturityPanel {...panelProps} />
-            <KnowledgeIntelligencePanel {...panelProps} />
-            <KnowledgeAcademyPanel {...panelProps} />
-            <KnowledgeHealthPanel {...panelProps} />
-            <CosIntegrationPanel />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

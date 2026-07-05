@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useOrganizationalGovernanceSafeguardsState } from '../../../../hooks/useOrganizationalGovernanceSafeguardsState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ApprovalFrameworkPanel,
+  RecommendedNextStepsPanel,
   ConnectedSystemsPanel,
-  ConstitutionalElementsPanel,
   ContinuousGovernancePanel,
   DecisionSafeguardsPanel,
   EthicalPrinciplesPanel,
@@ -15,7 +16,6 @@ import {
   GovernanceTransparencyPanel,
   OrganizationalGovernanceSafeguardsHeader,
   OgsDashboardPanel,
-  RecommendedNextStepsPanel,
   RiskIntelligencePanel,
   WorkspaceSelectorPanel,
 } from './OrganizationalGovernanceSafeguardsPanels';
@@ -76,23 +76,16 @@ export function OrganizationalGovernanceSafeguardsWorkspace() {
           </>
         );
       case 'constitution':
-      default:
         return (
           <>
             <OgsDashboardPanel {...panelProps} />
             <GovernancePhilosophyPanel {...panelProps} />
-            <ConstitutionalElementsPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <GovernancePoliciesPanel {...panelProps} />
-            <EthicalPrinciplesPanel {...panelProps} />
-            <DecisionSafeguardsPanel {...panelProps} />
-            <ExecutiveSafeguardsPanel {...panelProps} />
-            <RiskIntelligencePanel {...panelProps} />
-            <GovernanceSimulationsPanel {...panelProps} />
-            <ApprovalFrameworkPanel {...panelProps} />
-            <GovernanceTransparencyPanel {...panelProps} />
             <ContinuousGovernancePanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

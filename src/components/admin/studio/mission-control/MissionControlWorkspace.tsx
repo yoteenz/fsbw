@@ -244,7 +244,7 @@ export function MissionControlWorkspace() {
       <section style={{ marginBottom: '12px' }}>
         <p style={mcSectionTitle}>ACTIVE MISSIONS</p>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          {ACTIVE_MISSIONS.map((m) => (
+          {ACTIVE_MISSIONS.slice(0, 4).map((m) => (
             <AdminStudioExecutiveCard
               key={m.id}
               title={m.title}
@@ -336,7 +336,7 @@ export function MissionControlWorkspace() {
       <section style={{ marginBottom: '12px' }}>
         <p style={mcSectionTitle}>DEPARTMENT GRID</p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-          {DEPARTMENT_GRID.map((dept) => (
+          {DEPARTMENT_GRID.slice(0, 8).map((dept) => (
             <button
               key={dept.id}
               type="button"
@@ -373,7 +373,7 @@ export function MissionControlWorkspace() {
       <section id="approvals" style={{ ...mcPanelStyle, padding: '12px', marginBottom: '12px' }}>
         <p style={mcSectionTitle}>APPROVAL CENTER · {pendingApprovalCount} PENDING</p>
         <div className="space-y-2">
-          {approvals.map((a) => (
+          {approvals.slice(0, 6).map((a) => (
             <div key={a.id} className="flex items-center gap-2 py-1" style={{ borderBottom: '1px solid #eee' }}>
               <div className="flex-1 min-w-0">
                 <p style={{ ...mcCaption, color: MC_VISUAL.black, fontFamily: '"Futura PT Medium"' }}>{a.title}</p>
@@ -453,7 +453,7 @@ export function MissionControlWorkspace() {
           LIVE ACTIVITY
         </p>
         <div className="flex gap-4 overflow-x-auto pb-1" style={{ scrollbarWidth: 'thin' }}>
-          {LIVE_ACTIVITY_SEED.map((act) => (
+          {LIVE_ACTIVITY_SEED.slice(0, 8).map((act) => (
             <div key={act.id} className="flex-shrink-0 min-w-[180px]" style={{ borderLeft: `2px solid ${MC_VISUAL.red}`, paddingLeft: 8 }}>
               <p style={{ ...mcCaption, color: MC_VISUAL.black, fontSize: '8px' }}>{act.text}</p>
               <p style={{ ...mcCaption, fontSize: '7px' }}>{act.time} · {act.category}</p>

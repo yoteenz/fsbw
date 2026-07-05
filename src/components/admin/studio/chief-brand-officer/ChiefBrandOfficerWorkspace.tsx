@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useChiefBrandOfficerState } from '../../../../hooks/useChiefBrandOfficerState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   BrandAlignmentPanel,
   BrandCouncilPanel,
@@ -18,7 +19,6 @@ import {
   ExecutiveCompassPanel,
   LeadershipPhilosophyPanel,
   RecommendationsPanel,
-  RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './ChiefBrandOfficerPanels';
 
@@ -73,23 +73,16 @@ export function ChiefBrandOfficerWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'brand':
-      default:
         return (
           <>
             <CboDashboardPanel {...panelProps} />
             <ExecutiveCompassPanel {...panelProps} />
             <LeadershipPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <DailyBriefingPanel {...panelProps} />
-            <BrandGovernancePanel {...panelProps} />
-            <BrandAlignmentPanel {...panelProps} />
-            <BrandIntelligencePanel {...panelProps} />
-            <CreativeReviewStudioPanel {...panelProps} />
-            <BrandCouncilPanel {...panelProps} />
-            <BrandProtectionPanel {...panelProps} />
-            <BrandMemoryPanel {...panelProps} />
-            <RecommendationsPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

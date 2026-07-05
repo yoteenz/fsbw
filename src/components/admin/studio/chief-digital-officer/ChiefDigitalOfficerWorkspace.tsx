@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useChiefDigitalOfficerState } from '../../../../hooks/useChiefDigitalOfficerState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AiEcosystemPanel,
   CdoDashboardPanel,
@@ -18,7 +19,6 @@ import {
   ExecutiveCompassPanel,
   LeadershipPhilosophyPanel,
   RecommendationsPanel,
-  RecommendedNextStepsPanel,
   SolutionArchitecturePanel,
   TechnologyCouncilPanel,
   WorkspaceSelectorPanel,
@@ -83,26 +83,16 @@ export function ChiefDigitalOfficerWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'digital':
-      default:
         return (
           <>
             <CdoDashboardPanel {...panelProps} />
             <ExecutiveCompassPanel {...panelProps} />
             <LeadershipPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <DailyBriefingPanel {...panelProps} />
-            <DigitalGovernancePanel {...panelProps} />
-            <DigitalAlignmentPanel {...panelProps} />
-            <DigitalIntelligencePanel {...panelProps} />
-            <DigitalEvolutionPanel {...panelProps} />
-            <SolutionArchitecturePanel {...panelProps} />
-            <AiEcosystemPanel {...panelProps} />
-            <DigitalStudioPanel {...panelProps} />
-            <TechnologyCouncilPanel {...panelProps} />
-            <DigitalProtectionPanel {...panelProps} />
-            <DigitalMemoryPanel {...panelProps} />
-            <RecommendationsPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

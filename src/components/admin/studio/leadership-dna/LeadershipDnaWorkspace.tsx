@@ -86,25 +86,24 @@ export function LeadershipDnaWorkspace() {
           </>
         );
       case 'overview':
-      default:
         return (
           <>
             <DashboardPanel store={store} />
             <FounderProfilePanel {...panelProps} />
             <LeadershipPrinciplesPanel store={store} />
             <DecisionJournalPanel store={store} />
-            <ApprovalIntelligencePanel store={store} />
-            <CreativeTastePanel store={store} />
-            <WritingIntelligencePanel store={store} />
-            <DelegationEnginePanel store={store} />
-            <RiskIntelligencePanel store={store} />
-            <FeedbackIntelligencePanel store={store} />
-            <LeadershipTimelinePanel store={store} />
             <ChiefOfStaffIntegrationPanel store={store} evaluateAlignment={evaluateAlignment} />
-            <CrossCompanyPanel store={store} />
-            <LeadershipSimulatorPanel store={store} />
-            <InstitutionalLeadershipPanel store={store} />
-            <KnowledgeGraphPanel store={store} />
+            <p
+              className="text-[6px] font-futura uppercase p-2 border mb-3"
+              style={{
+                fontWeight: 515,
+                borderColor: ADMIN_STUDIO_THEME.panelBorder,
+                color: ADMIN_STUDIO_THEME.textSecondary,
+                background: 'rgba(124,58,237,0.04)',
+              }}
+            >
+              INTELLIGENCE · SIMULATOR · KG · FULL PROFILE — USE THE TABS ABOVE
+            </p>
           </>
         );
     }

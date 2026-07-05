@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useOrganizationalSelfImprovementState } from '../../../../hooks/useOrganizationalSelfImprovementState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ChiefOfStaffImprovementPanel,
   ConnectedSystemsPanel,
   ContinuousLearningPanel,
-  ContinuousReflectionPanel,
   CrossFunctionalImprovementPanel,
   ImprovementGovernancePanel,
   ImprovementOpportunitiesPanel,
@@ -15,7 +15,6 @@ import {
   OrganizationalSelfImprovementHeader,
   OsiDashboardPanel,
   RecommendedNextStepsPanel,
-  ReflectionDomainsPanel,
   WorkspaceSelectorPanel,
 } from './OrganizationalSelfImprovementPanels';
 
@@ -69,22 +68,16 @@ export function OrganizationalSelfImprovementWorkspace() {
           </>
         );
       case 'reflect':
-      default:
         return (
           <>
             <OsiDashboardPanel {...panelProps} />
             <ImprovementPhilosophyPanel {...panelProps} />
-            <ReflectionDomainsPanel {...panelProps} />
-            <ContinuousReflectionPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <CrossFunctionalImprovementPanel {...panelProps} />
-            <ImprovementOpportunitiesPanel {...panelProps} />
-            <OrganizationalExperimentsPanel {...panelProps} />
             <ImprovementGovernancePanel {...panelProps} />
-            <ContinuousLearningPanel {...panelProps} />
-            <MaturityDimensionsPanel {...panelProps} />
-            <ChiefOfStaffImprovementPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

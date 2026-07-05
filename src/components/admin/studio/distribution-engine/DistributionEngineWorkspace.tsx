@@ -103,7 +103,6 @@ export function DistributionEngineWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <DistributionDashboardPanel {...panelProps} />

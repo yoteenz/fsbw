@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildWorkOrchestrationSeed } from '../studio-os-core/work-orchestration/bootstrap';
 import {
   bootstrapWorkOrchestrationStore,
@@ -14,15 +14,13 @@ function ensureSeeded(): void {
 }
 
 export function useWorkOrchestrationState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readWorkOrchestrationStore();
   }, [version]);
 

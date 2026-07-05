@@ -65,14 +65,28 @@ export function AdminStudioLayout({
   const { pathname } = useLocation();
   const { workspace, getModuleSubtitle } = useWorkspace();
 
+  /** Routes that self-seed via module hooks — never block paint with full platform bootstrap. */
   const skipHeavyPlatformBootstrap =
     pathname.includes('/studio/ndxbook') || pathname.includes('/studio/chief-of-staff');
 
   useEffect(() => {
     if (skipHeavyPlatformBootstrap) return;
-    void import('../../../workspaces').then(({ bootstrapWorkspacesPlatform }) => {
-      bootstrapWorkspacesPlatform();
-    });
+    if (typeof sessionStorage !== 'undefined' && sessionStorage.getItem('studioOsPlatformBootstrapped_v1') === '1') {
+      return;
+    }
+
+    const runBootstrap = () => {
+      void import('../../../workspaces').then(({ bootstrapWorkspacesPlatform }) => {
+        bootstrapWorkspacesPlatform();
+        sessionStorage.setItem('studioOsPlatformBootstrapped_v1', '1');
+      });
+    };
+
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(runBootstrap, { timeout: 2500 });
+    } else {
+      setTimeout(runBootstrap, 0);
+    }
   }, [skipHeavyPlatformBootstrap]);
 
   const resolvedModule = resolveStudioModuleFromPath(pathname);

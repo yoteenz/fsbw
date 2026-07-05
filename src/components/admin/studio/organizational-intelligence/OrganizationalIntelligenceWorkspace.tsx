@@ -3,6 +3,7 @@ import { useOrganizationalIntelligenceState } from '../../../../hooks/useOrganiz
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
 import {
+  RecommendedNextStepsPanel,
   ConnectedSystemsPanel,
   ContinuousLearningPanel,
   CrossSystemIntelligencePanel,
@@ -19,7 +20,6 @@ import {
   OrganizationalReasoningPanel,
   OrganizationalReflectionPanel,
   OrganizationalWisdomPanel,
-  RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './OrganizationalIntelligencePanels';
 
@@ -76,25 +76,24 @@ export function OrganizationalIntelligenceWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'mind':
-      default:
         return (
           <>
             <OiDashboardPanel {...panelProps} />
             <IntelligencePhilosophyPanel {...panelProps} />
             <ContinuousLearningPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <OrganizationalReasoningPanel {...panelProps} />
-            <CrossSystemIntelligencePanel {...panelProps} />
-            <OrganizationalCuriosityPanel {...panelProps} />
-            <DecisionIntelligencePanel {...panelProps} />
-            <OrganizationalReflectionPanel {...panelProps} />
-            <OrganizationalWisdomPanel {...panelProps} />
-            <InstitutionalMemoryPanel {...panelProps} />
-            <OrganizationalForecastingPanel {...panelProps} />
-            <IntelligenceCenterPanel {...panelProps} />
-            <ExecutiveIntegrationPanel {...panelProps} />
-            <FounderIntelligencePanel {...panelProps} />
             <RecommendedNextStepsPanel {...panelProps} />
+            <p
+              className="text-[6px] font-futura uppercase p-2 border mb-3"
+              style={{
+                fontWeight: 515,
+                borderColor: ADMIN_STUDIO_THEME.panelBorder,
+                color: ADMIN_STUDIO_THEME.textSecondary,
+                background: 'rgba(79,70,229,0.04)',
+              }}
+            >
+              REASONING · WISDOM · FORECASTING · EXECUTIVE INTEGRATION — USE THE TABS ABOVE
+            </p>
             <ConnectedSystemsPanel />
           </>
         );

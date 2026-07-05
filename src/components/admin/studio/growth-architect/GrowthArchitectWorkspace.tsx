@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useGrowthArchitectState } from '../../../../hooks/useGrowthArchitectState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ConnectedSystemsPanel,
   ExpansionArchitectPanel,
@@ -76,21 +77,15 @@ export function GrowthArchitectWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <GrowthDashboardPanel {...panelProps} />
             <GrowthPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <GrowthBlueprintPanel {...panelProps} />
-            <GrowthLifecyclePanel {...panelProps} />
-            <GrowthInitiativesPanel {...panelProps} />
-            <LaunchCalendarPanel {...panelProps} />
-            <GrowthIntelligencePanel {...panelProps} />
-            <GrowthSimulationPanel {...panelProps} />
-            <GrowthOrchestrationPanel {...panelProps} />
-            <GrowthExperimentsPanel {...panelProps} />
-            <ExpansionArchitectPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

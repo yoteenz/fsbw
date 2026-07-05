@@ -176,7 +176,6 @@ export function ChiefOfStaffWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <MorningBriefingPanel store={store} />

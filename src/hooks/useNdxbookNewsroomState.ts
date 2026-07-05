@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildNdxbookNewsroomSeed } from '../studio-os-core/ndxbook/newsroom/bootstrap';
 import {
   bootstrapNdxbookNewsroomStore,
@@ -14,20 +14,19 @@ function ensureSeeded(): void {
 }
 
 export function useNdxbookNewsroomState() {
-  const [version, setVersion] = useState(0);
+  const [version, setVersion] = useState(() => {
+    ensureSeeded();
+    return 0;
+  });
 
   const refresh = useCallback(() => {
     ensureSeeded();
     setVersion((v) => v + 1);
   }, []);
 
-  useEffect(() => {
-    ensureSeeded();
-  }, []);
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readNdxbookNewsroomStore();
   }, [version]);
 

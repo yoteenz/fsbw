@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildRemembranceGardenSeed } from '../studio-os-core/remembrance-garden/bootstrap';
 import {
   bootstrapRemembranceGardenStore,
@@ -13,15 +13,13 @@ function ensureSeeded(): void {
 }
 
 export function useRemembranceGardenState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readRemembranceGardenStore();
   }, [version]);
 

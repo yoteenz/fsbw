@@ -96,7 +96,6 @@ export function WorkOrchestrationWorkspace() {
           </>
         );
       case 'orchestration':
-      default:
         return (
           <>
             <OrchestrationDashboardPanel {...panelProps} />

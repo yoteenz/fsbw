@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCompanyGenomeState } from '../../../../hooks/useCompanyGenomeState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CompanyGenomeHeader,
   ConnectedSystemsPanel,
@@ -75,23 +76,15 @@ export function CompanyGenomeWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <GenomeDashboardPanel {...panelProps} />
             <GenomePhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <GenomeVisualizationPanel {...panelProps} />
-            <GeneticLayersPanel {...panelProps} />
-            <OrganizationalHealthPanel {...panelProps} />
-            <GeneticRelationshipsPanel {...panelProps} />
-            <KnowledgeFlowPanel {...panelProps} />
-            <GeneticEvolutionPanel {...panelProps} />
-            <OrganizationalFingerprintPanel {...panelProps} />
-            <ResiliencePanel {...panelProps} />
-            <GenomeIntelligencePanel {...panelProps} />
-            <GenomeSimulationPanel {...panelProps} />
-            <CrossCompanyGeneticsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

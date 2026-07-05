@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useChiefGrowthOfficerState } from '../../../../hooks/useChiefGrowthOfficerState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { ConciergeFounderBanner } from '../concierge-layer/ConciergeFounderBanner';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ChiefGrowthOfficerHeader,
   ConnectedSystemsPanel,
@@ -18,7 +19,6 @@ import {
   GrowthProtectionPanel,
   LeadershipPhilosophyPanel,
   RecommendationsPanel,
-  RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './ChiefGrowthOfficerPanels';
 
@@ -73,24 +73,16 @@ export function ChiefGrowthOfficerWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'growth':
-      default:
         return (
           <>
             <CgoDashboardPanel {...panelProps} />
             <ExecutiveCompassPanel {...panelProps} />
             <LeadershipPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <DailyBriefingPanel {...panelProps} />
-            <GrowthGovernancePanel {...panelProps} />
-            <GrowthAlignmentPanel {...panelProps} />
-            <GrowthIntelligencePanel {...panelProps} />
-            <GrowthEvolutionPanel {...panelProps} />
-            <GrowthLaboratoryPanel {...panelProps} />
-            <GrowthCouncilPanel {...panelProps} />
-            <GrowthProtectionPanel {...panelProps} />
-            <GrowthMemoryPanel {...panelProps} />
-            <RecommendationsPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

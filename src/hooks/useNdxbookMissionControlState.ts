@@ -13,7 +13,10 @@ function ensureSeeded(): void {
 }
 
 export function useNdxbookMissionControlState() {
-  const [version, setVersion] = useState(0);
+  const [version, setVersion] = useState(() => {
+    ensureSeeded();
+    return 0;
+  });
   const [now, setNow] = useState(() => new Date());
 
   const refresh = useCallback(() => {
@@ -36,7 +39,6 @@ export function useNdxbookMissionControlState() {
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readNdxbookMissionControlStore();
   }, [version]);
 

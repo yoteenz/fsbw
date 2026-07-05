@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { useStudioInstituteState } from '../../../../hooks/useStudioInstituteState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   AdaptiveCurriculumPanel,
   ConnectedSystemsPanel,
-  DailyLearningPanel,
   ConciergeMentorsPanel,
+  DailyLearningPanel,
   FutureOpportunitiesPanel,
   ImmersiveLearningPanel,
   InstituteCampusPanel,
@@ -67,6 +68,7 @@ export function StudioInstituteWorkspace() {
             <InstituteCampusPanel {...panelProps} />
             <DailyLearningPanel {...panelProps} />
             <NdxbookIntegrationPanel {...panelProps} />
+            <FutureOpportunitiesPanel {...panelProps} />
           </>
         );
       case 'connect':
@@ -77,24 +79,16 @@ export function StudioInstituteWorkspace() {
           </>
         );
       case 'philosophy':
-      default:
         return (
           <>
             <SiDashboardPanel {...panelProps} />
             <InstitutePhilosophyPanel {...panelProps} />
             <LearningCommunitiesPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <SchoolsOfExcellencePanel {...panelProps} />
-            <ConciergeMentorsPanel {...panelProps} />
-            <OrganizationFirstEducationPanel {...panelProps} />
-            <AdaptiveCurriculumPanel {...panelProps} />
-            <ImmersiveLearningPanel {...panelProps} />
-            <OrganizationalCertificationPanel {...panelProps} />
-            <KnowledgeCompoundingPanel {...panelProps} />
-            <InstituteCampusPanel {...panelProps} />
-            <DailyLearningPanel {...panelProps} />
-            <NdxbookIntegrationPanel {...panelProps} />
-            <FutureOpportunitiesPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(133,77,14,0.04)">
+              SCHOOLS · CURRICULUM · CERTIFICATION · CAMPUS · NDXBOOK — USE THE TABS ABOVE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

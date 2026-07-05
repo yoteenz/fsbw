@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildLeadershipDnaSeed } from '../studio-os-core/leadership-dna/bootstrap';
 import {
   bootstrapLeadershipDnaStore,
@@ -15,7 +15,10 @@ function ensureSeeded(): void {
 }
 
 export function useLeadershipDnaState() {
-  const [version, setVersion] = useState(0);
+  const [version, setVersion] = useState(() => {
+    ensureSeeded();
+    return 0;
+  });
   const [activeSection, setActiveSection] = useState<LeadershipProfileSectionId>('leadership-philosophy');
 
   const refresh = useCallback(() => {
@@ -23,13 +26,9 @@ export function useLeadershipDnaState() {
     setVersion((v) => v + 1);
   }, []);
 
-  useEffect(() => {
-    ensureSeeded();
-  }, []);
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readLeadershipDnaStore();
   }, [version]);
 

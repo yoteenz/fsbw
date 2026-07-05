@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { scopeStorageKey, getRuntimeActiveWorkspaceId } from '../studio-os-core/workspace/storage';
 import {
   bootstrapLabsStore,
@@ -38,7 +38,6 @@ export function useAdminStudioLabsState(workspaceIdOverride?: string) {
 
   const store = useMemo(() => {
     void version;
-    ensureDemoSeeded();
     return readLabsStore();
   }, [version]);
 

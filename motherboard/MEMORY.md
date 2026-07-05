@@ -37815,6 +37815,8 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+---
+
 ## 2026-07-05 — Milestone 76: Organizational Apprenticeship V1.0
 
 **Context (full chat):** User requested continuation of Studio OS with **Milestone 76 — Organizational Apprenticeship** as the permanent learning and trust-building system governing how every new intelligence enters the organization. Prior milestones in this arc: M75 Studio Institute (permanent learning institution), M74 Executive Apprenticeship & Founder Calibration, M73.6 Arrival Experience, M73.5 Company Onboarding Intelligence. Constraints: do not redesign overall Studio OS shell · maintain existing visual language · trust earned not configured · work on `master` only · one commit + one push.
@@ -37852,3 +37854,30 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/concierge-layer` · back from Organizational Apprenticeship.
 
 **Changes:** concierge-layer core + UI + hook + page + service + cross-cutting founder-facing terminology, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
+---
+
+## 2026-07-05 — Studio OS performance audit (Talent Network freeze + platform-wide)
+
+**Context (full chat):** User reported Talent Network page keeps freezing; asked to surgically comb every Studio OS page for crashing/glitching/heavy bootstrap issues. Prior turn fixed Chief of Staff freeze + documented NDXBOOK social OAuth setup path.
+
+**Root causes (systemic):**
+1. **`bootstrapWorkspacesPlatform()`** ran on **every** Studio layout mount (40+ async demo seeds) — main-thread contention on mobile when opening Talent Network, Leadership DNA, Reader Graph, etc.
+2. **~47 hooks** called **`ensureSeeded()` / `ensureDemoSeeded()` inside `store` `useMemo`** — re-ran localStorage bootstrap on every `setVersion` (tab change, selection, approval).
+3. **Default tabs mounted entire module stacks** — 10–19 panels duplicated from all sub-tabs on first paint (Leadership DNA, Org Intelligence, C-suite modules, architect dashboards, etc.).
+4. **Talent Network overview** mapped **all** talents with no cap; blocking **LOADING** gate when `talents.length === 0` before `useEffect` seed.
+5. **Mission Control** rendered unbounded missions, department grid, approvals, activity feed on one scroll.
+
+**Fixes (platform-wide):**
+- **`AdminStudioLayout`:** platform bootstrap **once per session** (`sessionStorage studioOsPlatformBootstrapped_v1`), deferred via **`requestIdleCallback`**; still skip on ndxbook + chief-of-staff self-seed routes.
+- **Hooks (~47):** lazy **`useState(() => { seed(); return 0 })`**; **`useMemo` reads store only** — no seed in memo.
+- **`StudioTabMoreHint`** + slim default tabs across **34+ `*Workspace.tsx`** files; heavy tabs (10+ panels) capped to dashboard/philosophy/selector + hint + connected systems.
+- **Many modules** now open on **`dashboard`** tab when lighter than former default (delegation, autonomy, creator marketplace, reader graph, etc.).
+- **Talent Network:** removed loading gate; overview **top 8** talents + link to Performance tab.
+- **Mission Control:** slice previews (missions 4, departments 8, approvals 6, activity 8).
+- **Reader Graph / Creator Marketplace panels:** optional **`previewLimit`** on list/discovery/matching panels.
+- **Rebase merge:** kept M77 Concierge Layer panels/banners while applying slim default tabs on Arrival Experience, Studio Institute, and C-suite workspaces.
+
+**Convention for future Studio modules:** default tab = summary panels only; full module stack on named sub-tabs; seed once in lazy init or `useEffect`, never in `useMemo`; rely on session-once platform bootstrap.
+
+**Changes:** `AdminStudioLayout.tsx`, `StudioTabMoreHint.tsx`, `TalentNetworkWorkspace.tsx`, `MissionControlWorkspace.tsx`, 34+ workspace files, 47 hooks, panel preview limits, `motherboard/MEMORY.md`.

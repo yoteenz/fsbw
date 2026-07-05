@@ -111,18 +111,23 @@ export function ReaderGraphWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <ReaderGraphDashboardPanel {...panelProps} />
             <WorkspaceReaderSelector {...panelProps} />
-            <ReaderListPanel {...panelProps} />
-            <ReaderProfilePanel {...panelProps} />
+            <ReaderListPanel {...panelProps} previewLimit={8} />
             <RelationshipHealthPanel {...panelProps} />
-            <GraphVisualizationPanel {...panelProps} />
-            <CommunityClustersPanel {...panelProps} />
-            <ReaderIntelligencePanel {...panelProps} />
-            <RelationshipRecommendationsPanel {...panelProps} />
+            <p
+              className="text-[6px] font-futura uppercase p-2 border mb-3"
+              style={{
+                fontWeight: 515,
+                borderColor: ADMIN_STUDIO_THEME.panelBorder,
+                color: ADMIN_STUDIO_THEME.textSecondary,
+                background: 'rgba(225,29,72,0.04)',
+              }}
+            >
+              FULL GRAPH · COMMUNITIES · INTELLIGENCE · TIMELINE — USE THE TABS ABOVE
+            </p>
             <ConnectedSystemsPanel />
           </>
         );

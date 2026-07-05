@@ -1,22 +1,21 @@
 import { useState } from 'react';
 import { useOrganizationalDelegationState } from '../../../../hooks/useOrganizationalDelegationState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CollaborativeExecutionPanel,
+  RecommendedNextStepsPanel,
   ConnectedSystemsPanel,
   DelegationGovernancePanel,
   DelegationLearningPanel,
   DelegationPhilosophyPanel,
   DelegationPlanningPanel,
-  DelegationTypesPanel,
   DelegationVisibilityPanel,
   ExecutiveAccountabilityPanel,
   ExecutiveAssignmentPanel,
   OdeDashboardPanel,
   OrganizationalDelegationHeader,
-  OutcomeDelegationsPanel,
   RecommendedDelegationsPanel,
-  RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './OrganizationalDelegationEnginePanels';
 
@@ -32,7 +31,7 @@ const TABS: { id: OdeTab; label: string }[] = [
 ];
 
 export function OrganizationalDelegationEngineWorkspace() {
-  const [tab, setTab] = useState<OdeTab>('delegate');
+  const [tab, setTab] = useState<OdeTab>('dashboard');
   const { store, selectWorkspace } = useOrganizationalDelegationState();
   const panelProps = { store, onSelectWorkspace: selectWorkspace };
 
@@ -71,23 +70,16 @@ export function OrganizationalDelegationEngineWorkspace() {
       case 'connect':
         return <ConnectedSystemsPanel />;
       case 'delegate':
-      default:
         return (
           <>
             <OdeDashboardPanel {...panelProps} />
             <DelegationPhilosophyPanel {...panelProps} />
-            <DelegationTypesPanel {...panelProps} />
-            <OutcomeDelegationsPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <ExecutiveAssignmentPanel {...panelProps} />
-            <DelegationPlanningPanel {...panelProps} />
-            <CollaborativeExecutionPanel {...panelProps} />
             <DelegationGovernancePanel {...panelProps} />
-            <DelegationVisibilityPanel {...panelProps} />
-            <DelegationLearningPanel {...panelProps} />
-            <ExecutiveAccountabilityPanel {...panelProps} />
-            <RecommendedDelegationsPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

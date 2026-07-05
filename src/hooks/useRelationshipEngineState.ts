@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildRelationshipEngineSeed } from '../studio-os-core/relationship-engine/bootstrap';
 import {
   bootstrapRelationshipEngineStore,
@@ -13,15 +13,13 @@ function ensureSeeded(): void {
 }
 
 export function useRelationshipEngineState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readRelationshipEngineStore();
   }, [version]);
 

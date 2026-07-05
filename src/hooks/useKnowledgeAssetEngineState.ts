@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildKnowledgeAssetEngineSeed } from '../studio-os-core/knowledge-asset-engine/bootstrap';
 import {
   bootstrapKnowledgeAssetEngineStore,
@@ -13,15 +13,13 @@ function ensureSeeded(): void {
 }
 
 export function useKnowledgeAssetEngineState() {
-  const [version, setVersion] = useState(0);
-
-  useEffect(() => {
+  const [version, setVersion] = useState(() => {
     ensureSeeded();
-  }, []);
+    return 0;
+  });
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readKnowledgeAssetEngineStore();
   }, [version]);
 

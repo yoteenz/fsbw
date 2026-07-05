@@ -7,6 +7,7 @@ import {
   ArchitectStudioHeader,
   ArchitectStudiosPanel,
   CollaborationForumPanel,
+  RecommendedNextStepsPanel,
   ConnectedSystemsPanel,
   EvolutionWallPanel,
   ExecutiveAvailabilityPanel,
@@ -24,7 +25,6 @@ import {
   OrganizationalRhythmPanel,
   PersonalizationPanel,
   PortfolioCampusPanel,
-  RecommendedNextStepsPanel,
   StudioDashboardPanel,
   StudioIntelligencePanel,
   StudioPhilosophyPanel,
@@ -113,27 +113,22 @@ export function ArchitectStudioWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
-            <MorningArrivalPanel {...panelProps} />
-            <HeadquartersBriefingPanel {...panelProps} />
             <StudioDashboardPanel {...panelProps} />
             <StudioPhilosophyPanel {...panelProps} />
-            <ExecutivePresencePanel {...panelProps} />
-            <ImmersiveCampusPanel {...panelProps} />
-            <ArchitectStudiosPanel {...panelProps} />
-            <CollaborationForumPanel {...panelProps} />
-            <LivingWorkspacesPanel {...panelProps} />
-            <AmbientActivityPanel {...panelProps} />
-            <ArchitectCollaborationPanel {...panelProps} />
-            <EvolutionWallPanel {...panelProps} />
-            <MemorySpacesPanel {...panelProps} />
-            <InnovationLabPanel {...panelProps} />
-            <StudioIntelligencePanel {...panelProps} />
-            <PortfolioCampusPanel {...panelProps} />
-            <PersonalizationPanel {...panelProps} />
             <RecommendedNextStepsPanel {...panelProps} />
+            <p
+              className="text-[6px] font-futura uppercase p-2 border mb-3"
+              style={{
+                fontWeight: 515,
+                borderColor: ADMIN_STUDIO_THEME.panelBorder,
+                color: ADMIN_STUDIO_THEME.textSecondary,
+                background: 'rgba(202,138,4,0.04)',
+              }}
+            >
+              ARRIVAL · PRESENCE · CAMPUS · STUDIOS · FORUM · EVOLUTION · INNOVATION — USE THE TABS ABOVE
+            </p>
             <ConnectedSystemsPanel />
           </>
         );

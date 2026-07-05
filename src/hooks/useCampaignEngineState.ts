@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import { buildCampaignEngineSeed } from '../studio-os-core/campaign-engine/bootstrap';
 import {
   bootstrapCampaignEngineStore,
@@ -14,20 +14,19 @@ function ensureSeeded(): void {
 }
 
 export function useCampaignEngineState() {
-  const [version, setVersion] = useState(0);
+  const [version, setVersion] = useState(() => {
+    ensureSeeded();
+    return 0;
+  });
 
   const refresh = useCallback(() => {
     ensureSeeded();
     setVersion((v) => v + 1);
   }, []);
 
-  useEffect(() => {
-    ensureSeeded();
-  }, []);
 
   const store = useMemo(() => {
     void version;
-    ensureSeeded();
     return readCampaignEngineStore();
   }, [version]);
 

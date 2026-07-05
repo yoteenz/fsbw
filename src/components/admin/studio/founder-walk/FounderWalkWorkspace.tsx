@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useFounderWalkState } from '../../../../hooks/useFounderWalkState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CampusIntegrationPanel,
   ConnectedSystemsPanel,
@@ -10,12 +11,10 @@ import {
   FounderWalkHeader,
   FutureGenerationsPanel,
   LivingLandscapePanel,
-  LivingPathwayPanel,
   MemoryIntelligencePanel,
   MemoryMarkersPanel,
   OrganizationalConnectionsPanel,
   PortfolioLegacyPanel,
-  RecommendedNextStepsPanel,
   ReflectionSpacesPanel,
   WalkDashboardPanel,
   WalkPhilosophyPanel,
@@ -78,22 +77,15 @@ export function FounderWalkWorkspace() {
           </>
         );
       case 'walk':
-      default:
         return (
           <>
             <WalkDashboardPanel {...panelProps} />
             <WalkPhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <DayOnePathPanel {...panelProps} />
-            <LivingPathwayPanel {...panelProps} />
-            <MemoryMarkersPanel {...panelProps} />
-            <ReflectionSpacesPanel {...panelProps} />
-            <LivingLandscapePanel {...panelProps} />
-            <FutureGenerationsPanel {...panelProps} />
-            <FounderTimelinePanel {...panelProps} />
-            <CampusIntegrationPanel {...panelProps} />
-            <MemoryIntelligencePanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

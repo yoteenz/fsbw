@@ -1,21 +1,21 @@
 import { useState } from 'react';
 import { useCompanyOnboardingIntelligenceState } from '../../../../hooks/useCompanyOnboardingIntelligenceState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   CampusGenerationPanel,
   ChiefOfStaffWelcomePanel,
   CoiDashboardPanel,
   CompanyOnboardingIntelligenceHeader,
+  RecommendedNextStepsPanel,
   ConnectedSystemsPanel,
   FounderWalkPanel,
-  OnboardingJourneysPanel,
   OnboardingPhilosophyPanel,
   OnboardingRecommendationsPanel,
   OrganizationBlueprintPanel,
   OrganizationalConfidencePanel,
   OrganizationalDiscoveryPanel,
   OrganizationalInterviewPanel,
-  RecommendedNextStepsPanel,
   WorkspaceSelectorPanel,
 } from './CompanyOnboardingIntelligencePanels';
 
@@ -74,22 +74,15 @@ export function CompanyOnboardingIntelligenceWorkspace() {
           </>
         );
       case 'journeys':
-      default:
         return (
           <>
             <CoiDashboardPanel {...panelProps} />
             <OnboardingPhilosophyPanel {...panelProps} />
-            <OnboardingJourneysPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <OrganizationalInterviewPanel {...panelProps} />
-            <OrganizationalDiscoveryPanel {...panelProps} />
-            <OnboardingRecommendationsPanel {...panelProps} />
-            <OrganizationBlueprintPanel {...panelProps} />
-            <CampusGenerationPanel {...panelProps} />
-            <OrganizationalConfidencePanel {...panelProps} />
-            <ChiefOfStaffWelcomePanel {...panelProps} />
-            <FounderWalkPanel {...panelProps} />
-            <RecommendedNextStepsPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              ADDITIONAL SECTIONS ON OTHER TABS — OPEN TABS FOR FULL DETAIL
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

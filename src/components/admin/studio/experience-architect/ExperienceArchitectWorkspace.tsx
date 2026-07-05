@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useExperienceArchitectState } from '../../../../hooks/useExperienceArchitectState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { StudioTabMoreHint } from '../StudioTabMoreHint';
 import {
   ConnectedSystemsPanel,
   CrossChannelPanel,
@@ -78,23 +79,15 @@ export function ExperienceArchitectWorkspace() {
           </>
         );
       case 'dashboard':
-      default:
         return (
           <>
             <ExperienceDashboardPanel {...panelProps} />
             <ExperiencePhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-            <ExperienceBlueprintPanel {...panelProps} />
-            <JourneyMapPanel {...panelProps} />
-            <EmotionalArchitecturePanel {...panelProps} />
-            <ExperienceSystemsPanel {...panelProps} />
-            <MicroExperienceLibraryPanel {...panelProps} />
-            <ExperienceSimulationPanel {...panelProps} />
-            <ExperienceIntelligencePanel {...panelProps} />
-            <CrossChannelPanel {...panelProps} />
-            <ExperienceStandardsPanel {...panelProps} />
-            <FrictionAnalysisPanel {...panelProps} />
-            <DigitalArchitectHandoffPanel {...panelProps} />
+
+            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+            </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>
         );

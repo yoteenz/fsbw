@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import {
   bootstrapNdxbookStore,
   readNdxbookStore,
@@ -20,7 +20,10 @@ function ensureDemoSeeded(): void {
 }
 
 export function useAdminStudioNdxbookState() {
-  const [version, setVersion] = useState(0);
+  const [version, setVersion] = useState(() => {
+    ensureDemoSeeded();
+    return 0;
+  });
   const refresh = useCallback(() => {
     ensureDemoSeeded();
     refreshNdxbookDashboardMetrics();
@@ -29,7 +32,6 @@ export function useAdminStudioNdxbookState() {
 
   const store = useMemo(() => {
     void version;
-    ensureDemoSeeded();
     return readNdxbookStore();
   }, [version]);
 
