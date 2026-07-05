@@ -376,6 +376,10 @@ export function bootstrapWorkspacesPlatform(): void {
     conciergeRouting.bootstrapConciergeRoutingPlatform();
     await yieldToMain();
 
+    const commandDock = await import('../studio-os-core/command-dock/bootstrap');
+    commandDock.bootstrapCommandDockPlatform();
+    await yieldToMain();
+
     const workspaceRegistry = await import('../studio-os-core/workspace-registry/store');
     workspaceRegistry.bootstrapWorkspaceRegistryPlatform();
     await yieldToMain();

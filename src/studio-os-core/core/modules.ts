@@ -56,6 +56,7 @@ export type StudioOsCoreModuleId =
   | 'concierge-approval-flow'
   | 'executive-timeline'
   | 'concierge-routing'
+  | 'command-dock'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -421,6 +422,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'INTELLIGENT CONCIERGE ROUTING',
     description: 'Universal command routing — founders speak naturally, organization assigns concierges automatically. V1.0.',
     routeSegment: 'executive-timeline',
+  },
+  {
+    id: 'command-dock',
+    label: 'COMMAND DOCK',
+    description: 'Executive command console — floating glass dock for natural-language organizational direction. V1.0.',
+    routeSegment: 'mission-control',
   },
   {
     id: 'executive-command-center',

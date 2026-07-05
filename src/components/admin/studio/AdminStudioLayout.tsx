@@ -23,6 +23,7 @@ import { StudioImmersionShell } from './immersion/StudioImmersionShell';
 import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
 import { ORGANIZATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { WorkspaceSwitcher } from '../studio-os/WorkspaceSwitcher';
+import { CommandDock, shouldShowCommandDock } from './command-dock/CommandDock';
 
 type AdminStudioLayoutProps = {
   title: string;
@@ -136,7 +137,7 @@ export function AdminStudioLayout({
           breadcrumbParentPath={headerCrumbPath}
         />
 
-        <div className="pb-6 px-4">
+        <div className="pb-6 px-4" style={{ paddingBottom: shouldShowCommandDock(pathname) ? '100px' : undefined }}>
           <div className="max-w-md mx-auto">
             <div
               className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
@@ -252,6 +253,7 @@ export function AdminStudioLayout({
         </div>
       </div>
       <KnowledgeGraphEntryPanel />
+      {workspace.studioEnabled && shouldShowCommandDock(pathname) ? <CommandDock bottomOffset={20} /> : null}
     </div>
     </StudioManualBridge>
     </StudioKnowledgeProvider>

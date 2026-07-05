@@ -38101,3 +38101,19 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Philosophy:** "The founder speaks to the organization — the organization decides who should handle it."
 
 **Changes:** concierge-routing core + UI, executive-timeline store/hook/workspace/panels integration, modules/bootstrap/feature-inheritance/knowledge-graph, motherboard/CORE.md + MEMORY.md.
+
+---
+
+## 2026-07-05 — Milestone 82 Command Dock V1.0 (executive command console)
+
+**Context (full chat arc):** After M81 Executive Timeline and M81.5 Intelligent Concierge Routing, user requested **M82 Command Dock** — primary interaction layer for Studio OS. Floating glass dock bottom-center on every headquarters. Not chatbot/search/palette — executive command console. Natural language, intelligent routing (reuse M81.5), context-aware by route, expansion compact→medium→large, proactive suggestions, command preview, history/favorites/recurring, microinteractions, voice-ready, Command Dock API for future modules. Do not redesign existing headquarters.
+
+**Decisions / outcomes:**
+- **Core** `src/studio-os-core/command-dock/` — store, context resolver (`resolveDockContext`), capability registry API, orchestrator delegating to concierge-routing + executive timeline events.
+- **UI** `CommandDock.tsx` — fixed bottom-center glass/acrylic dock, idle greeting for Kateena, proactive Brand Concierge suggestion, routing summary with concierge lines, impact preview, founder actions, history panel.
+- **Mount points:** `AdminStudioLayout` (all `/admin/studio/*` when studioEnabled) + studio-os registry + Studio Administration pages. Extra bottom padding so dock never obscures content.
+- **Extended routing patterns** in concierge-routing for Dock examples (photoshoot, launch assets, review content, publishing schedule, portfolio launch delay, etc.).
+
+**Philosophy:** "You don't operate Studio OS. You lead it."
+
+**Changes:** command-dock core + UI + hook, AdminStudioLayout/studio-os pages, modules/bootstrap/feature-inheritance/knowledge-graph, router patterns, motherboard/CORE.md + MEMORY.md.

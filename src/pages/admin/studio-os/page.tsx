@@ -13,6 +13,7 @@ import { getRegistryWorkspaceById } from '../../../studio-os-core/workspace-crea
 import { useWorkspaceCreationEngine } from '../../../hooks/useWorkspaceCreationEngine';
 import { WorkspaceRegistryCard } from '../../../components/admin/studio-os/WorkspaceRegistryCard';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
+import { CommandDock } from '../../../components/admin/studio/command-dock/CommandDock';
 
 export default function AdminStudioOsPage() {
   useRequireAdminPageAccess();
@@ -241,6 +242,7 @@ export default function AdminStudioOsPage() {
           </div>
         </div>
       </div>
+      <CommandDock bottomOffset={20} />
     </div>
   );
 }

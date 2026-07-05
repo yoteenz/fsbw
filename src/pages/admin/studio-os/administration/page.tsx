@@ -15,6 +15,7 @@ import { WorkspaceRegistryCard } from '../../../../components/admin/studio-os/Wo
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { Navigate } from 'react-router-dom';
 import { ORGANIZATION_ROUTES } from '../../../../studio-os-core/application/routes';
+import { CommandDock } from '../../../../components/admin/studio/command-dock/CommandDock';
 
 /**
  * Studio Administration — master control center for Studio OS.
@@ -193,6 +194,7 @@ export default function StudioAdministrationPage() {
           </div>
         </div>
       </div>
+      <CommandDock bottomOffset={20} />
     </div>
   );
 }
