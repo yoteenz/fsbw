@@ -101,7 +101,7 @@ export function VisionEngineProvider({ children }: { children: ReactNode }) {
     id: 'idle',
     chapterId: 'idle',
     sectionLabel: 'VISION',
-    title: 'Vision Engine',
+    title: 'VISION ENGINE',
     durationMs: VISION_DEFAULT_DWELL_MS,
     transition: 'none',
     presenter: {
@@ -409,7 +409,7 @@ export function VisionEngineProvider({ children }: { children: ReactNode }) {
       showOpening,
       showEnding,
       manifest: manifest ?? null,
-      modeLabel: mode?.name ?? 'Vision Mode',
+      modeLabel: mode?.name ?? 'VISION MODE',
       stopCount: stops.length,
       startVision,
       exitVision,

@@ -38,6 +38,8 @@ import { markTutorialNodeCompleted } from './v2/progressHelpers';
 import { resolveTutorialPageForPathname } from './v2/pageRegistry';
 import type { TutorialSearchEntry } from './v2/schema';
 import { getSuggestedNextTutorial } from './v2/searchIndex';
+import { isVisionPresentationActive } from '../studio-os-core/vision-engine/session';
+import { VISION_CHANGED_EVENT } from '../studio-os-core/vision-engine/constants';
 
 type TourStackEntry = {
   tourId: string;
@@ -131,7 +133,15 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [target, setTarget] = useState<ResolvedTarget | null>(null);
   const [previewMode, setPreviewMode] = useState(false);
+  const [visionPresentationActive, setVisionPresentationActive] = useState(() => isVisionPresentationActive());
   const navigatingRef = useRef(false);
+
+  useEffect(() => {
+    const sync = () => setVisionPresentationActive(isVisionPresentationActive());
+    sync();
+    window.addEventListener(VISION_CHANGED_EVENT, sync);
+    return () => window.removeEventListener(VISION_CHANGED_EVENT, sync);
+  }, []);
 
   const activeTour = useMemo(() => (activeTourId ? getTourById(activeTourId) ?? null : null), [activeTourId]);
   const steps = useMemo(() => (activeTour ? getTourSteps(activeTour.id) : []), [activeTour]);
@@ -147,7 +157,8 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
   const hideChrome =
     isAdminPath(location.pathname) ||
     location.pathname.startsWith('/desktop-preview') ||
-    location.pathname.startsWith('/debug-mode');
+    location.pathname.startsWith('/debug-mode') ||
+    visionPresentationActive;
 
   const isTourActive = Boolean(activeTour && activeStep && !showWelcome);
 
@@ -436,7 +447,7 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
     typeof document !== 'undefined'
       ? createPortal(
           <>
-            {showWelcome && featured ? (
+            {showWelcome && featured && !hideChrome ? (
               <TutorialWelcomePrompt
                 estimatedMinutes={featured.estimatedMinutes}
                 onStart={handleWelcomeStart}
@@ -444,10 +455,10 @@ export function TutorialOsProvider({ children }: { children: ReactNode }) {
                 onSkip={handleWelcomeSkip}
               />
             ) : null}
-            <TutorialSearchModal open={searchModalOpen} onClose={closeSearchModal} onSelect={handleSearchSelect} />
+            <TutorialSearchModal open={searchModalOpen && !hideChrome} onClose={closeSearchModal} onSelect={handleSearchSelect} />
             {!hideChrome ? <TutorialPageHelpButton pathname={location.pathname} /> : null}
-            <TutorialSpotlightOverlay step={activeStep} target={target} visible={isTourActive} />
-            {isTourActive && activeTour && activeStep ? (
+            <TutorialSpotlightOverlay step={activeStep} target={target} visible={isTourActive && !hideChrome} />
+            {isTourActive && activeTour && activeStep && !hideChrome ? (
               <TutorialWizardPanel
                 previewKey={activeStep.previewKey}
                 stepIndex={stepIndex}

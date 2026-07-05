@@ -10,7 +10,7 @@ export function VisionEnginePresenterPanel({ stop }: Props) {
   return (
     <aside className={`vision-engine-presenter ${collapsed ? 'is-collapsed' : ''}`}>
       <button type="button" className="vision-engine-presenter__toggle" onClick={() => setCollapsed((c) => !c)}>
-        {collapsed ? 'Presenter Notes' : '−'}
+        {collapsed ? 'PRESENTER NOTES' : '−'}
       </button>
       {!collapsed ? (
         <div className="vision-engine-presenter__body">
@@ -18,27 +18,27 @@ export function VisionEnginePresenterPanel({ stop }: Props) {
           <p className="vision-engine-presenter__voiceover">{p.voiceover}</p>
           <dl className="vision-engine-presenter__meta">
             <div>
-              <dt>Why this room exists</dt>
+              <dt>WHY THIS ROOM EXISTS</dt>
               <dd>{p.whyExists}</dd>
             </div>
             <div>
-              <dt>Problem solved</dt>
+              <dt>PROBLEM SOLVED</dt>
               <dd>{p.problemSolved}</dd>
             </div>
             <div>
-              <dt>Emotional response</dt>
+              <dt>EMOTIONAL RESPONSE</dt>
               <dd>{p.emotionalResponse}</dd>
             </div>
             <div>
-              <dt>Design philosophy</dt>
+              <dt>DESIGN PHILOSOPHY</dt>
               <dd>{p.designPhilosophy}</dd>
             </div>
             <div>
-              <dt>Customer journey</dt>
+              <dt>CUSTOMER JOURNEY</dt>
               <dd>{p.customerJourney}</dd>
             </div>
             <div>
-              <dt>Future expansion</dt>
+              <dt>FUTURE EXPANSION</dt>
               <dd>{p.futureExpansion}</dd>
             </div>
           </dl>

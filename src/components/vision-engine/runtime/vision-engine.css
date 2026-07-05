@@ -20,7 +20,13 @@ html[data-vision-engine='active'] .desktop-psa-suite-frame-editor-panel,
 html[data-vision-engine='active'] .scene-hit-layout-editor-panel,
 html[data-vision-engine='active'] .creative-preview-banner,
 html[data-vision-engine='active'] [data-tutorial-welcome],
-html[data-vision-engine='active'] .tutorial-os-overlay {
+html[data-vision-engine='active'] .tutorial-os-overlay,
+html[data-vision-engine='active'] .tutorial-os-welcome-backdrop,
+html[data-vision-engine='active'] .tutorial-os-wizard-panel,
+html[data-vision-engine='active'] .tutorial-os-spotlight-root,
+html[data-vision-engine='active'] .tutorial-os-page-help,
+html[data-vision-engine='active'] .psa-widget-root,
+html[data-vision-engine='active'] .psa-suite-root {
   display: none !important;
   pointer-events: none !important;
 }
@@ -58,6 +64,12 @@ html[data-vision-engine='active'] #root {
   z-index: 99995;
   pointer-events: none;
   width: min(420px, calc(100vw - 32px));
+  text-transform: uppercase;
+}
+
+.vision-engine-overlay.is-collapsed {
+  width: auto;
+  max-width: min(420px, calc(100vw - 32px));
 }
 
 .vision-engine-overlay__panel {
@@ -67,6 +79,40 @@ html[data-vision-engine='active'] #root {
   background: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(18px) saturate(1.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.vision-engine-overlay.is-collapsed .vision-engine-overlay__panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+}
+
+.vision-engine-overlay__toggle {
+  flex-shrink: 0;
+  font-family: 'Futura PT', Futura, sans-serif;
+  font-size: 8px;
+  font-weight: 515;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  background: rgba(99, 102, 241, 0.12);
+  color: #4338ca;
+  cursor: pointer;
+}
+
+.vision-engine-overlay__step-collapsed {
+  font-family: 'Futura PT', Futura, sans-serif;
+  font-size: 8px;
+  font-weight: 515;
+  letter-spacing: 0.08em;
+  color: #555;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: min(280px, calc(100vw - 160px));
 }
 
 .vision-engine-overlay__section {
@@ -170,6 +216,7 @@ html[data-vision-engine='active'] #root {
   border: 1px solid rgba(99, 102, 241, 0.35);
   background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(16px);
+  text-transform: uppercase;
 }
 
 .vision-engine-presenter.is-collapsed {
@@ -244,6 +291,7 @@ html[data-vision-engine='active'] #root {
   justify-content: center;
   opacity: 0;
   transition: opacity 1.8s cubic-bezier(0.22, 1, 0.36, 1);
+  text-transform: uppercase;
 }
 
 .vision-engine-cinematic.is-visible {
@@ -405,6 +453,7 @@ html[data-vision-engine='active'] #root {
   inset: 0;
   z-index: 99985;
   pointer-events: none;
+  text-transform: uppercase;
 }
 
 .vision-engine-hotspot {

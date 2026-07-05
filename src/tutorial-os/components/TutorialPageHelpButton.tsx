@@ -15,6 +15,7 @@ export function TutorialPageHelpButton({ pathname }: Props) {
   return (
     <button
       type="button"
+      className="tutorial-os-page-help"
       onClick={() => openPageHelp(pathname)}
       aria-label="Learn this page"
       title="Learn this page"
