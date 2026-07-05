@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -361,6 +361,28 @@ export function DecisionRoutingPanel() {
           <p style={{ ...cosLabel, fontSize: '6px' }}>{l.examples}</p>
         </div>
       ))}
+    </section>
+  );
+}
+
+export function StrategyEngineLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #334155' }}>
+      <p style={cosSectionTitle}>STRATEGY ENGINE · PRIORITIZATION FRAMEWORK</p>
+      <p style={cosLabel}>
+        When multiple items need attention · prioritize by strategic impact · ask what moves the company closer to its objective
+      </p>
+      <p style={{ ...cosSectionTitle, marginTop: 8 }}>CoS STRATEGY QUESTIONS</p>
+      <p style={cosLabel}>· What moves the company closer to its objective?</p>
+      <p style={cosLabel}>· What can be delegated?</p>
+      <p style={cosLabel}>· What requires founder judgment?</p>
+      <p style={cosLabel}>· What should be paused?</p>
+      <Link
+        to={adminStudioStrategyEnginePath()}
+        style={{ ...cosLabel, color: '#334155', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN STRATEGY ENGINE
+      </Link>
     </section>
   );
 }

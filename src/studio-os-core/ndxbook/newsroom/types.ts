@@ -47,6 +47,19 @@ export type QualityGateLayer =
   | 'legal'
   | 'chief-of-staff';
 
+export type PageStrategyConnection = {
+  strategyId: string;
+  strategyLabel: string;
+  initiativeId: string;
+  initiativeLabel: string;
+  campaignId: string;
+  volumeId: string;
+  chapter: string;
+  experimentId: string;
+  expectedOutcome: string;
+  aligned: boolean;
+};
+
 export type ProductionPage = {
   id: string;
   pageNumber: number;
@@ -81,6 +94,8 @@ export type ProductionPage = {
   knowledgeGraphNodeIds: string[];
   memoryReferences: string[];
   institutionalLearnings: string[];
+  /** Strategy Engine linkage — every page connects to strategy (Milestone 43) */
+  strategyConnection?: PageStrategyConnection;
 };
 
 export type PipelineStageColumn = {

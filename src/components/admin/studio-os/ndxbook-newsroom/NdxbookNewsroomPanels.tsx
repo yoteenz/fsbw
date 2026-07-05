@@ -4,7 +4,7 @@ import type { NewsroomStore, ProductionPage } from '../../../../studio-os-core/n
 import type { NewsroomPipelineStageId } from '../../../../studio-os-core/ndxbook/newsroom/types';
 import { QUALITY_GATE_LAYERS } from '../../../../studio-os-core/ndxbook/newsroom/constants';
 import { VOLUME_LABELS } from '../../../../studio-os-core/ndxbook/constants';
-import { adminStudioChiefOfStaffPath, adminStudioLeadershipDnaPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioChiefOfStaffPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath } from '../../../../utils/adminStudioRoutes';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import {
   NDXBOOK_NEWSROOM_STYLES,
@@ -406,6 +406,34 @@ export function KnowledgeProductionPanel({ store }: Pick<Props, 'store'>) {
           <p style={{ ...nrLabel, fontSize: '6px' }}>TEMPLATES · {ko.templatesGenerated.join(' · ')}</p>
         </div>
       ))}
+    </section>
+  );
+}
+
+export function StrategyAlignmentPanel({ selectedPage }: Pick<Props, 'selectedPage'>) {
+  const conn = selectedPage?.strategyConnection;
+  return (
+    <section className="p-3 mb-3" style={{ ...nrPanel, borderLeft: `4px solid #334155` }}>
+      <p style={nrSectionTitle}>STRATEGY ENGINE · PAGE ALIGNMENT</p>
+      <p style={nrLabel}>Every page connects to strategy · initiative · campaign · volume · chapter · expected outcome</p>
+      {conn ? (
+        <>
+          <div className="flex justify-between mt-2">
+            <p className="text-[7px] font-futura" style={{ fontWeight: 515 }}>{conn.strategyLabel}</p>
+            <span className="text-[5px] font-futura px-1 border" style={{ borderColor: conn.aligned ? NR.green : NR.red, color: conn.aligned ? NR.green : NR.red }}>
+              {conn.aligned ? 'ALIGNED' : 'REVIEW'}
+            </span>
+          </div>
+          <p style={{ ...nrLabel, fontSize: '5px' }}>INITIATIVE: {conn.initiativeLabel} · CAMPAIGN: {conn.campaignId}</p>
+          <p style={{ ...nrLabel, fontSize: '5px' }}>VOLUME: {conn.volumeId} · CHAPTER: {conn.chapter}</p>
+          <p style={{ ...nrLabel, fontSize: '5px', color: NR.accent }}>EXPECTED: {conn.expectedOutcome}</p>
+        </>
+      ) : (
+        <p style={{ ...nrLabel, color: NR.red, marginTop: 4 }}>NO STRATEGY CONNECTION — FLAG FOR CoS REVIEW BEFORE PRODUCTION</p>
+      )}
+      <Link to={adminStudioStrategyEnginePath()} style={{ ...nrLabel, color: '#334155', fontSize: '6px', display: 'inline-block', marginTop: 6 }}>
+        → OPEN STRATEGY ENGINE
+      </Link>
     </section>
   );
 }

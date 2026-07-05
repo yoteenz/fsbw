@@ -3,6 +3,7 @@ import { useNdxbookNewsroomState } from '../../../../hooks/useNdxbookNewsroomSta
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ActivityWallPanel,
+  StrategyAlignmentPanel,
   CrossCompanyNewsroomPanel,
   DepartmentLanesPanel,
   EditorialCalendarPanel,
@@ -54,6 +55,7 @@ export function NdxbookNewsroom({ workspaceId }: NdxbookNewsroomProps) {
           <>
             <ProductionBoardPanel {...panelProps} />
             <PageWorkspacePanel {...panelProps} />
+            <StrategyAlignmentPanel selectedPage={selectedPage} />
             <QualityGatesPanel />
           </>
         );
@@ -71,6 +73,7 @@ export function NdxbookNewsroom({ workspaceId }: NdxbookNewsroomProps) {
         return (
           <>
             <ProductionIntelligencePanel store={store} />
+            <StrategyAlignmentPanel selectedPage={selectedPage} />
             <ActivityWallPanel store={store} formatTime={formatTime} />
             <KnowledgeProductionPanel store={store} />
           </>

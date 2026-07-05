@@ -18,6 +18,7 @@ import {
   adminStudioChiefOfStaffPath,
   adminStudioExecutiveOrganizationPath,
   adminStudioOrganizationalInheritancePath,
+  adminStudioStrategyEnginePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -203,6 +204,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 42',
     status: 'demo',
     searchKeywords: ['organizational inheritance', 'inheritance wizard', 'genetic blending', 'institutional library', 'knowledge ancestry', 'company creation'],
+  },
+  {
+    id: 'node-strategy-engine',
+    name: 'STRATEGY ENGINE',
+    type: 'module',
+    description:
+      'Defines the game each company is playing — strategy board, initiatives, alignment, strategic bets, and direction before execution.',
+    purpose: 'Every major action connects back to strategy · prevents work without direction.',
+    route: adminStudioStrategyEnginePath(),
+    moduleId: 'strategy-engine',
+    relatedManualChapter: 'CHAPTER · STRATEGY ENGINE · STRATEGIC COMMAND',
+    versionIntroduced: 'Milestone 43',
+    status: 'demo',
+    searchKeywords: ['strategy engine', 'strategy board', 'initiatives', 'north star metric', 'strategic alignment', 'strategic bets'],
   },
   {
     id: 'node-fallback-used',
@@ -855,6 +870,12 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-inheritance-leadership', fromId: 'node-organizational-inheritance', toId: 'node-leadership-dna', type: 'inherits-from', label: 'LEADERSHIP DNA' },
   { id: 'e-inheritance-memory', fromId: 'node-organizational-inheritance', toId: 'node-memory-bible', type: 'feeds', label: 'INSTITUTIONAL LIBRARY' },
   { id: 'e-inheritance-platform', fromId: 'node-organizational-inheritance', toId: 'organizational-inheritance', type: 'documented-by', label: 'GENETIC TRANSFER' },
+  { id: 'e-cos-strategy', fromId: 'node-chief-of-staff', toId: 'node-strategy-engine', type: 'related-to', label: 'STRATEGIC IMPACT' },
+  { id: 'e-strategy-leadership', fromId: 'node-strategy-engine', toId: 'node-leadership-dna', type: 'inherits-from', label: 'DECISION FRAMEWORK' },
+  { id: 'e-strategy-memory', fromId: 'node-strategy-engine', toId: 'node-memory-bible', type: 'feeds', label: 'DECISION JOURNAL' },
+  { id: 'e-strategy-newsroom', fromId: 'node-strategy-engine', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PAGE ALIGNMENT' },
+  { id: 'e-strategy-inheritance', fromId: 'node-organizational-inheritance', toId: 'node-strategy-engine', type: 'feeds', label: 'STRATEGY FRAMEWORKS' },
+  { id: 'e-strategy-platform', fromId: 'node-strategy-engine', toId: 'strategy-engine', type: 'documented-by', label: 'STRATEGIC COMMAND' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

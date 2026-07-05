@@ -53,6 +53,18 @@ export function buildNdxbookNewsroomSeed(): Partial<NewsroomStore> {
       knowledgeGraphNodeIds: ['node-ndxbook'],
       memoryReferences: ['Money volume template v3'],
       institutionalLearnings: [],
+      strategyConnection: {
+        strategyId: 'str-ndx-content',
+        strategyLabel: 'AUTHORITY THROUGH CONSISTENCY',
+        initiativeId: 'init-daily-pages',
+        initiativeLabel: 'DAILY PAGES',
+        campaignId: 'money-monday',
+        volumeId: 'money',
+        chapter: 'investing',
+        experimentId: 'labs-38-stat-overlay',
+        expectedOutcome: 'Returning reader signal · Money Monday CTR lift',
+        aligned: true,
+      },
     }),
     page({
       id: 'pg-041',

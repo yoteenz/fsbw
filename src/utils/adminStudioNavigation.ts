@@ -106,6 +106,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'strategy-engine',
+    title: 'STRATEGY ENGINE',
+    purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',
+    route: p('strategy-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN STRATEGY',
+    moduleKey: 'strategy-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'executive-command-center',
     title: 'EXECUTIVE COMMAND CENTER',
     purpose: 'See company health, priorities, and decisions in one executive view.',

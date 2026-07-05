@@ -36923,3 +36923,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** organizational-inheritance core + UI + hook + page + service, workspace creation/exec org links, KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 43: Strategy Engine V1.0
+
+**Context (full chat):** User requested Milestone 43 — introduce **Strategy Engine** as core Studio OS platform defining the game each company is playing. Prior milestones in arc: M39 Leadership DNA, M40 Newsroom, M41 Executive Organization, M42 Organizational Inheritance. Constraints: do not redesign overall Studio OS shell · do not modify Frontal Slayer · do not remove existing systems.
+
+**Goal:** Before Studio OS produces content, launches campaigns, builds products, hires talent, recommends partnerships, or distributes assets — understand strategic direction. Studio Intelligence recommends · Chief of Staff prioritizes · Newsroom produces · Strategy Engine defines why work matters. Strategy profile per workspace (objective, north star, KPIs, time horizon, growth stage, audience, strategies, constraints). Strategic hierarchy: Vision → Mission → Objective → Strategy → Initiatives → Campaigns → Projects → Tasks → Outcomes. Strategy board (command center, not project board). 13 strategy types. Guided 10-step builder. NDXBOOK + Frontal Slayer workspace examples (seed data only). Strategic alignment gate before major work. Initiatives bridge strategy→execution. Strategic bets with tracking. Strategy health score (10 dimensions). CoS prioritization integration. Studio Intelligence monitoring signals. Newsroom page strategy linkage. Simulation before major strategy approval. Decision journal. Recurring reviews (weekly through annual). Strategy inheritance from Organizational Inheritance.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/strategy-engine/` — types (strategy profile, hierarchy, strategies, initiatives, bets, health score, decisions, reviews, alignment checks, intelligence signals, CoS prompts, simulations, inheritance options, board snapshot), constants (13 strategy types, builder steps, connected systems), localStorage store (`studioOsStrategyEngine_v1`), rich bootstrap with NDXBOOK + Frontal Slayer profiles.
+- **Bootstrap:** NDXBOOK (100K readers · returning readers north star · authority through consistency · 5 initiatives including Money Monday/daily pages/newsletter) + Frontal Slayer (luxury raw hair · LTV north star · community-first luxury · BAW/membership/lounge TV/concierge initiatives) · 3 strategic bets · 82% health score · alignment checks · intelligence signals · decision journal · 4 review cadences · simulation preview · strategy inheritance options.
+- **Hook:** `useStrategyEngineState` — workspace/strategy/initiative selection, builder step.
+- **UI:** `/admin/studio/strategy-engine` — `StrategyEngineWorkspace` with tabs (Strategy Board · Builder · Initiatives · Bets · Health · Alignment · Decisions · Reviews · Lineage · Inheritance); panels for board, profile, hierarchy, builder, initiatives, bets, health, alignment, intelligence signals, CoS integration, decision journal, reviews, simulation, lineage, connected systems.
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (intelligence group), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/strategyEngine/service.ts`, `bootstrapStrategyEnginePlatform()` after Organizational Inheritance.
+- **Chief of Staff integration:** `Strategy Engine` first in `SOFT_APPROVAL_SOURCES`; `StrategyEngineLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Newsroom integration:** `PageStrategyConnection` on `ProductionPage`; page 042 seeded with strategy linkage; `StrategyAlignmentPanel` in newsroom page + intelligence tabs.
+- **Knowledge graph:** `node-strategy-engine` + edges to Chief of Staff, Leadership DNA, Memory Bible, Newsroom, Organizational Inheritance.
+
+**Route:** `/admin/studio/organizational-inheritance` · Intelligence nav group · slate accent theme.
+
+**Changes:** strategy-engine core + UI + hook + page + service, CoS/newsroom/KG/bootstrap wiring, newsroom types/bootstrap, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

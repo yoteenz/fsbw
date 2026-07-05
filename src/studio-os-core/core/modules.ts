@@ -8,6 +8,7 @@ export type StudioOsCoreModuleId =
   | 'chief-of-staff'
   | 'executive-organization'
   | 'organizational-inheritance'
+  | 'strategy-engine'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -85,6 +86,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL INHERITANCE',
     description: 'Inherit organizational genetics — DNA, playbooks, executives, knowledge across companies.',
     routeSegment: 'organizational-inheritance',
+  },
+  {
+    id: 'strategy-engine',
+    label: 'STRATEGY ENGINE',
+    description: 'Defines why work matters — strategy board, initiatives, alignment, and strategic command center.',
+    routeSegment: 'strategy-engine',
   },
   {
     id: 'executive-command-center',

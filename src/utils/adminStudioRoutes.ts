@@ -42,6 +42,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'chief-of-staff'
   | 'executive-organization'
   | 'organizational-inheritance'
+  | 'strategy-engine'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -91,6 +92,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'chief-of-staff',
   'executive-organization',
   'organizational-inheritance',
+  'strategy-engine',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -159,6 +161,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   chiefOfStaff: 'studio/chief-of-staff',
   executiveOrganization: 'studio/executive-organization',
   organizationalInheritance: 'studio/organizational-inheritance',
+  strategyEngine: 'studio/strategy-engine',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -258,6 +261,10 @@ export function adminStudioExecutiveOrganizationPath(): string {
 
 export function adminStudioOrganizationalInheritancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organizational-inheritance`;
+}
+
+export function adminStudioStrategyEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/strategy-engine`;
 }
 
 export function adminStudioOsPath(): string {

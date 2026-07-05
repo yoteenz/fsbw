@@ -30,6 +30,7 @@ export const DELEGATION_LABELS: Record<string, string> = {
 };
 
 export const SOFT_APPROVAL_SOURCES = [
+  'Strategy Engine',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

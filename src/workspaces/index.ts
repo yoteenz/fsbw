@@ -169,6 +169,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationalInheritance.bootstrapOrganizationalInheritancePlatform();
     await yieldToMain();
 
+    const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
+    strategyEngine.bootstrapStrategyEnginePlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();
