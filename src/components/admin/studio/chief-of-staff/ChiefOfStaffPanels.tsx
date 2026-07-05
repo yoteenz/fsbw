@@ -1,0 +1,356 @@
+import type { ChiefOfStaffStore, DelegationMode, ExecutiveInboxItem } from '../../../../studio-os-core/chief-of-staff/types';
+import {
+  DECISION_LEVEL_LABELS,
+  DELEGATION_LABELS,
+  SOFT_APPROVAL_SOURCES,
+} from '../../../../studio-os-core/chief-of-staff/constants';
+import {
+  CHIEF_OF_STAFF_STYLES,
+  COS,
+  cosDarkHeader,
+  cosLabel,
+  cosLiveDot,
+  cosPanel,
+  cosSectionTitle,
+  cosValue,
+  riskColor,
+  statusColor,
+} from './chiefOfStaffTheme';
+
+type Props = {
+  store: ChiefOfStaffStore;
+  escalatedItems: ExecutiveInboxItem[];
+  onApprove: (id: string) => void;
+  onReject: (id: string) => void;
+  onReturn: (id: string) => void;
+  onDelegationChange: (deptId: string, mode: DelegationMode) => void;
+};
+
+function Metric({ label, value, accent }: { label: string; value: string | number; accent?: boolean }) {
+  return (
+    <div className="p-2 border text-center" style={{ borderColor: COS.panelBorder }}>
+      <p style={{ ...cosValue, fontSize: accent ? '16px' : '14px', color: accent ? COS.red : COS.indigo }}>{value}</p>
+      <p style={cosLabel}>{label}</p>
+    </div>
+  );
+}
+
+export function ChiefOfStaffHeader() {
+  return (
+    <>
+      <style>{CHIEF_OF_STAFF_STYLES}</style>
+      <header className="p-3 mb-3" style={{ ...cosDarkHeader, borderTop: `3px solid ${COS.gold}` }}>
+        <p style={{ fontFamily: '"Covered By Your Grace", sans-serif', fontSize: '22px', margin: 0 }}>
+          CHIEF OF STAFF
+        </p>
+        <p style={{ ...cosLabel, color: '#94A3B8' }}>
+          <span style={cosLiveDot} />
+          FOUNDER&apos;S PRIMARY EXECUTIVE · ALL DEPARTMENTS REPORT HERE FIRST
+        </p>
+        <p style={{ ...cosLabel, color: '#CBD5E1', marginTop: 4 }}>
+          FOUNDER → CHIEF OF STAFF → EXECUTIVE LEADERSHIP → DEPARTMENTS → WORKERS → TASKS
+        </p>
+      </header>
+    </>
+  );
+}
+
+export function DashboardSummaryPanel({ store }: Pick<Props, 'store'>) {
+  const d = store.dashboard;
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>EXECUTIVE SUMMARY</p>
+      <p style={{ ...cosLabel, color: COS.accent, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>{d.executiveSummary}</p>
+      <div className="grid grid-cols-2 gap-2 mt-3 sm:grid-cols-4">
+        <Metric label="REQUIRE FOUNDER" value={d.itemsRequiringApproval} accent />
+        <Metric label="AUTO APPROVED" value={d.itemsAutoApproved} />
+        <Metric label="RETURNED" value={d.itemsReturnedRevision} />
+        <Metric label="REJECTED" value={d.itemsRejected} />
+        <Metric label="RISKS" value={d.pendingRisks} accent />
+        <Metric label="OPPORTUNITIES" value={d.pendingOpportunities} />
+        <Metric label="CONFIDENCE" value={`${d.overallConfidencePct}%`} />
+        <Metric label="EST. REVIEW" value={`${d.estimatedFounderReviewMins} MIN`} accent />
+      </div>
+      <div className="mt-3 p-2" style={{ background: 'rgba(22,163,74,0.08)', border: `1px solid ${COS.green}` }}>
+        <p style={{ ...cosSectionTitle, color: COS.green, fontSize: '8px' }}>FOUNDER ATTENTION PROTECTION</p>
+        <p style={{ ...cosLabel, color: COS.accent }}>{d.attentionProtectionNote}</p>
+      </div>
+      <p style={{ ...cosSectionTitle, marginTop: 10 }}>TODAY&apos;S PRIORITIES</p>
+      {d.todayPriorities.map((p) => (
+        <p key={p} style={{ ...cosLabel, color: COS.accent }}>· {p}</p>
+      ))}
+    </section>
+  );
+}
+
+export function MorningBriefingPanel({ store }: Pick<Props, 'store'>) {
+  const b = store.morningBriefing;
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: `4px solid ${COS.gold}` }}>
+      <p style={cosSectionTitle}>MORNING BRIEFING · UNIFIED</p>
+      <p style={{ ...cosLabel, color: COS.accent }}>{b.businessHealthSummary}</p>
+      <p style={{ ...cosSectionTitle, marginTop: 8 }}>DEPARTMENTS</p>
+      {b.departmentSummaries.map((s) => (
+        <p key={s} style={cosLabel}>· {s}</p>
+      ))}
+      <p style={{ ...cosSectionTitle, marginTop: 8 }}>OPPORTUNITIES</p>
+      {b.majorOpportunities.map((o) => (
+        <p key={o} style={{ ...cosLabel, color: COS.green }}>· {o}</p>
+      ))}
+      <p style={{ ...cosSectionTitle, marginTop: 8 }}>RISKS</p>
+      {b.majorRisks.map((r) => (
+        <p key={r} style={{ ...cosLabel, color: COS.red }}>· {r}</p>
+      ))}
+      <p style={{ ...cosSectionTitle, marginTop: 8 }}>STUDIO INTELLIGENCE</p>
+      <p style={cosLabel}>{b.studioIntelligenceSummary}</p>
+      <p style={{ ...cosLabel, color: COS.indigo, marginTop: 6 }}>
+        EST. FOUNDER WORKLOAD · {b.estimatedFounderWorkloadMins} MINUTES
+      </p>
+    </section>
+  );
+}
+
+function InboxCard({
+  item,
+  showActions,
+  onApprove,
+  onReject,
+  onReturn,
+}: {
+  item: ExecutiveInboxItem;
+  showActions?: boolean;
+  onApprove?: (id: string) => void;
+  onReject?: (id: string) => void;
+  onReturn?: (id: string) => void;
+}) {
+  return (
+    <div className="p-2 mb-2 border" style={{ borderColor: item.status === 'escalated' ? COS.red : COS.panelBorder }}>
+      <div className="flex justify-between gap-2">
+        <p style={{ ...cosLabel, color: COS.indigo, fontFamily: '"Futura PT Medium"', fontSize: '7px' }}>
+          {item.executiveTitle.toUpperCase()} · {item.category.toUpperCase()}
+        </p>
+        <span style={{ ...cosLabel, color: statusColor(item.status), fontSize: '6px' }}>{item.status.replace(/-/g, ' ').toUpperCase()}</span>
+      </div>
+      <p style={{ ...cosLabel, color: COS.accent, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>{item.title}</p>
+      <p style={cosLabel}>{item.summary}</p>
+      <p style={cosLabel}>{DECISION_LEVEL_LABELS[item.decisionLevel]} · CONFIDENCE {item.confidencePct}% · RISK <span style={{ color: riskColor(item.riskLevel) }}>{item.riskLevel.toUpperCase()}</span></p>
+      <p style={{ ...cosLabel, fontSize: '6px' }}>WHY · {item.reasoning}</p>
+      <p style={{ ...cosLabel, fontSize: '6px' }}>EVIDENCE · {item.supportingEvidence.join(' · ')}</p>
+      <p style={{ ...cosLabel, fontSize: '6px' }}>HISTORY · {item.similarHistoricalApprovals.join(' · ')}</p>
+      <p style={{ ...cosLabel, color: COS.indigo, fontSize: '6px' }}>ACTION · {item.recommendedAction}</p>
+      {showActions ? (
+        <div className="flex gap-1 mt-2">
+          <button type="button" className="flex-1 py-1 text-[6px] font-futura border" style={{ borderColor: COS.green, color: COS.green, fontWeight: 515 }} onClick={() => onApprove?.(item.id)}>APPROVE</button>
+          <button type="button" className="flex-1 py-1 text-[6px] font-futura border" style={{ borderColor: COS.gold, color: COS.gold, fontWeight: 515 }} onClick={() => onReturn?.(item.id)}>REVISE</button>
+          <button type="button" className="flex-1 py-1 text-[6px] font-futura border" style={{ borderColor: COS.red, color: COS.red, fontWeight: 515 }} onClick={() => onReject?.(item.id)}>REJECT</button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+export function ExecutiveInboxPanel({ store, escalatedItems, onApprove, onReject, onReturn }: Props) {
+  const recent = store.executiveInbox.filter((i) => i.status !== 'escalated').slice(0, 5);
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>EXECUTIVE INBOX · SOFT APPROVAL ENGINE · THRESHOLD {store.softApprovalThresholdPct}%</p>
+      <p style={cosLabel}>EVALUATES · {SOFT_APPROVAL_SOURCES.join(' · ')}</p>
+
+      {escalatedItems.length > 0 ? (
+        <>
+          <p style={{ ...cosSectionTitle, marginTop: 10, color: COS.red }}>FOUNDER REVIEW REQUIRED ({escalatedItems.length})</p>
+          {escalatedItems.map((item) => (
+            <InboxCard key={item.id} item={item} showActions onApprove={onApprove} onReject={onReject} onReturn={onReturn} />
+          ))}
+        </>
+      ) : (
+        <p style={{ ...cosLabel, color: COS.green, marginTop: 8 }}>NO ESCALATIONS — CHIEF OF STAFF HANDLING OPERATIONS</p>
+      )}
+
+      <p style={{ ...cosSectionTitle, marginTop: 10 }}>RECENTLY PROCESSED</p>
+      {recent.map((item) => (
+        <InboxCard key={item.id} item={item} />
+      ))}
+    </section>
+  );
+}
+
+export function OrgHierarchyPanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>ORGANIZATION · EXECUTIVE LEADERSHIP</p>
+      <div className="flex flex-col items-center gap-0 mb-3">
+        {['FOUNDER', 'CHIEF OF STAFF', 'EXECUTIVE LEADERSHIP'].map((level, i) => (
+          <div key={level} className="w-full flex flex-col items-center">
+            {i > 0 ? <div className="w-px h-2" style={{ background: COS.indigo }} /> : null}
+            <div className="w-full px-2 py-1 text-[7px] font-futura text-center border" style={{ borderColor: COS.indigo, background: i === 1 ? 'rgba(99,102,241,0.1)' : 'white', fontWeight: 515 }}>
+              {level}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+        {store.executiveLeadership.map((exec) => (
+          <div key={exec.id} className="p-2 border" style={{ borderColor: exec.status === 'coaching' ? COS.gold : COS.panelBorder }}>
+            <p style={{ ...cosLabel, color: COS.indigo, fontFamily: '"Futura PT Medium"' }}>{exec.title.toUpperCase()}</p>
+            <p style={cosLabel}>{exec.department.toUpperCase()} · {exec.status.toUpperCase()}</p>
+            <p style={cosLabel}>PENDING · {exec.pendingSubmissions} · AUTO-RATE · {exec.autoApprovalRatePct}%</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+export function DepartmentStatusPanel({ store, onDelegationChange }: Pick<Props, 'store' | 'onDelegationChange'>) {
+  const modes: DelegationMode[] = ['fully-autonomous', 'chief-of-staff-only', 'soft-approval', 'founder-review', 'manual-approval'];
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>DEPARTMENT STATUS · DELEGATION</p>
+      {store.departments.map((dept) => (
+        <div key={dept.id} className="p-2 mb-2 border" style={{ borderColor: COS.panelBorder }}>
+          <div className="flex justify-between">
+            <p style={{ ...cosLabel, color: COS.accent, fontFamily: '"Futura PT Medium"' }}>{dept.name.toUpperCase()} · HEALTH {dept.healthPct}%</p>
+            <p style={cosLabel}>AUTO {dept.autoApprovedToday} · ESC {dept.escalatedToday}</p>
+          </div>
+          <select
+            value={dept.autonomy}
+            onChange={(e) => onDelegationChange(dept.id, e.target.value as DelegationMode)}
+            className="w-full mt-1 text-[6px] font-futura border py-1"
+            style={{ borderColor: COS.indigo, color: COS.accent }}
+          >
+            {modes.map((m) => (
+              <option key={m} value={m}>{DELEGATION_LABELS[m]}</option>
+            ))}
+          </select>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function DecisionLearningPanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>DECISION LEARNING · FOUNDER PATTERNS</p>
+      {store.founderDecisions.map((d) => (
+        <div key={d.id} className="p-2 mb-1 border" style={{ borderColor: COS.panelBorder }}>
+          <p style={{ ...cosLabel, color: d.action === 'approved' ? COS.green : COS.red, fontFamily: '"Futura PT Medium"' }}>
+            {d.action.toUpperCase()} · {new Date(d.timestamp).toLocaleDateString()}
+          </p>
+          {d.reason ? <p style={cosLabel}>REASON · {d.reason}</p> : null}
+          <p style={{ ...cosLabel, fontSize: '6px' }}>LEARNED · {d.patternsLearned.join(' · ')}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function ExecutiveCoachingPanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>EXECUTIVE COACHING</p>
+      {store.coachingNotes.map((note) => (
+        <div key={note.id} className="p-2 mb-2 border" style={{ borderColor: note.recurring ? COS.gold : COS.panelBorder }}>
+          <p style={{ ...cosLabel, color: COS.indigo, fontFamily: '"Futura PT Medium"' }}>{note.executiveTitle.toUpperCase()}</p>
+          <p style={cosLabel}>ISSUE · {note.issue}</p>
+          <p style={cosLabel}>FEEDBACK · {note.feedback}</p>
+          <p style={cosLabel}>TRAINING · {note.trainingRecommended}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function LeadershipTimelinePanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>LEADERSHIP TIMELINE · TRUST EVOLUTION</p>
+      {store.leadershipTimeline.map((ev) => (
+        <div key={ev.id} className="py-1 border-b" style={{ borderColor: '#eee' }}>
+          <p style={{ ...cosLabel, color: COS.accent, fontFamily: '"Futura PT Medium"', fontSize: '7px' }}>
+            {ev.type.toUpperCase()} · {ev.title}
+          </p>
+          <p style={{ ...cosLabel, fontSize: '6px' }}>{ev.detail}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function CrossWorkspacePanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>CROSS-WORKSPACE LEADERSHIP</p>
+      {store.crossWorkspaceInsights.map((ins) => (
+        <div key={ins.id} className="p-2 mb-1 border" style={{ borderColor: ins.founderAttentionImpact === 'high' ? COS.red : COS.panelBorder }}>
+          <p style={{ ...cosLabel, color: COS.indigo, fontFamily: '"Futura PT Medium"' }}>{ins.workspaceName.toUpperCase()}</p>
+          <p style={cosLabel}>{ins.insight}</p>
+          <p style={{ ...cosLabel, fontSize: '6px' }}>ATTENTION IMPACT · {ins.founderAttentionImpact.toUpperCase()}</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function StudioIntelligencePanel({ store }: Pick<Props, 'store'>) {
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>STUDIO INTELLIGENCE → CHIEF OF STAFF</p>
+      {store.studioIntelligenceAdvisories.map((adv) => (
+        <div key={adv.id} className="p-2 mb-1 border" style={{ borderColor: COS.panelBorder }}>
+          <p style={{ ...cosLabel, color: COS.accent, fontFamily: '"Futura PT Medium"' }}>{adv.signal}</p>
+          <p style={cosLabel}>REC · {adv.recommendation}</p>
+          <p style={cosLabel}>{adv.confidencePct}% CONFIDENCE</p>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function ExecutiveMemoryPanel({ store }: Pick<Props, 'store'>) {
+  const m = store.executiveMemory;
+  const sections = [
+    ['VISUAL TASTE', m.visualTaste],
+    ['WRITING STYLE', m.writingStyle],
+    ['DECISION PATTERNS', m.decisionPatterns],
+    ['QUALITY EXPECTATIONS', m.qualityExpectations],
+    ['BRAND PHILOSOPHY', m.brandPhilosophy],
+    ['COMMUNICATION', m.communicationPreferences],
+    ['LONG-TERM VISION', m.longTermVision],
+  ] as const;
+
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>EXECUTIVE MEMORY · FOUNDER MODEL</p>
+      <p style={cosLabel}>SOURCES · {m.sources.join(' · ')}</p>
+      {sections.map(([label, items]) => (
+        <div key={label} className="mt-2">
+          <p style={{ ...cosSectionTitle, fontSize: '8px' }}>{label}</p>
+          {items.map((item) => (
+            <p key={item} style={cosLabel}>· {item}</p>
+          ))}
+        </div>
+      ))}
+    </section>
+  );
+}
+
+export function DecisionRoutingPanel() {
+  const levels = [
+    { level: 1, label: 'AUTOMATIC', examples: 'Minor copy · thumbnail selection · caption optimization · scheduling · internal organization' },
+    { level: 2, label: 'CHIEF OF STAFF', examples: 'Creative direction · campaign sequencing · workflow optimization · content prioritization · talent assignments' },
+    { level: 3, label: 'FOUNDER', examples: 'Company strategy · pricing · contracts · major hiring · brand positioning · legal · high-value spending' },
+  ];
+  return (
+    <section className="p-3 mb-3" style={cosPanel}>
+      <p style={cosSectionTitle}>DECISION ROUTING</p>
+      {levels.map((l) => (
+        <div key={l.level} className="p-2 mb-1 border" style={{ borderColor: COS.panelBorder }}>
+          <p style={{ ...cosLabel, color: COS.indigo, fontFamily: '"Futura PT Medium"' }}>LEVEL {l.level} · {l.label}</p>
+          <p style={{ ...cosLabel, fontSize: '6px' }}>{l.examples}</p>
+        </div>
+      ))}
+    </section>
+  );
+}

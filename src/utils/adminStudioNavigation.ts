@@ -71,6 +71,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'chief-of-staff',
+    title: 'CHIEF OF STAFF',
+    purpose: 'Founder primary executive — soft approvals, unified briefings, and attention protection before escalations.',
+    route: p('chief-of-staff'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: '2 REVIEWS',
+    ctaLabel: 'OPEN CHIEF OF STAFF',
+    featuredOnOverview: true,
+  },
+  {
     id: 'executive-command-center',
     title: 'EXECUTIVE COMMAND CENTER',
     purpose: 'See company health, priorities, and decisions in one executive view.',

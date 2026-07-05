@@ -53,6 +53,7 @@ export type AdminStudioSectionId =
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'
+  | 'chief-of-staff'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

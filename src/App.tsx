@@ -190,6 +190,7 @@ const AdminStudioAssetFactory = lazyWithRetry(() => import('./pages/admin/studio
 const AdminStudioBlueprintManager = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/page'), 'AdminStudioBlueprintManager');
 const AdminStudioBlueprintDetail = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/detail/page'), 'AdminStudioBlueprintDetail');
 const AdminStudioMissionControl = lazyWithRetry(() => import('./pages/admin/studio/mission-control/page'), 'AdminStudioMissionControl');
+const AdminStudioChiefOfStaff = lazyWithRetry(() => import('./pages/admin/studio/chief-of-staff/page'), 'AdminStudioChiefOfStaff');
 const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
 const AdminStudioKnowledgeHubProfile = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/profile/page'), 'AdminStudioKnowledgeHubProfile');
 const AdminStudioKnowledgeHubWorkflow = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/workflow/page'), 'AdminStudioKnowledgeHubWorkflow');
@@ -1144,6 +1145,11 @@ function App() {
           <Route path="studio/mission-control" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioMissionControl />
+            </Suspense>
+          } />
+          <Route path="studio/chief-of-staff" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioChiefOfStaff />
             </Suspense>
           } />
           <Route path="studio/knowledge-hub/profile/:profileId" element={

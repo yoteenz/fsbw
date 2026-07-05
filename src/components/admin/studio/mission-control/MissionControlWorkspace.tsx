@@ -3,7 +3,7 @@ import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvid
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useAdminStudioMissionControl } from '../../../../hooks/useAdminStudioMissionControlState';
 import { useAdminStudioKnowledgeHub } from '../../../../hooks/useAdminStudioKnowledgeHubState';
-import { adminStudioKnowledgeHubPath, adminStudioKnowledgeHubProfilePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioKnowledgeHubPath, adminStudioKnowledgeHubProfilePath, adminStudioChiefOfStaffPath } from '../../../../utils/adminStudioRoutes';
 import { KNOWLEDGE_MISSION_STATS } from '../../../../utils/adminStudioKnowledgeHubDemo';
 import { AdminStudioExecutiveCard } from '../AdminStudioExecutiveCard';
 import {
@@ -120,6 +120,9 @@ export function MissionControlWorkspace() {
         <div className="flex flex-wrap gap-2 mt-3">
           <button type="button" onClick={() => navigate(STUDIO_OS_ROUTES.entry)} style={mcActionBtn}>
             SWITCH WORKSPACE
+          </button>
+          <button type="button" onClick={() => navigate(adminStudioChiefOfStaffPath())} style={mcActionBtn}>
+            CHIEF OF STAFF
           </button>
           <button type="button" onClick={() => navigate('/admin/studio/executive-ai-director')} style={mcActionBtn}>
             AI DIRECTOR

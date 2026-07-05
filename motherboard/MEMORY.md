@@ -36809,3 +36809,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** mission-control core + UI + hook, `WorkspaceDashboard.tsx`, `workspaces/index.ts`, `adminStudioWorkspaceCreationDemo.ts`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Milestone 38: Chief of Staff V1.0
+
+**Context (full chat):** User requested Milestone 38 — introduce **Chief of Staff** as founder's primary executive beneath the founder. All departments report through CoS before founder approval. Prior milestones: admin dashboard fix, NDXBOOK brand setup + freeze fix, Milestone 37 NDXBOOK Mission Control V1.0 for AI Media workspace HQ.
+
+**Goal:** Protect founder attention — soft approval engine, unified morning briefing, executive inbox, decision routing (L1 auto / L2 CoS / L3 founder), decision learning, executive coaching, cross-workspace leadership, delegation levels, Studio Intelligence advisories. CoS never replaces founder — escalates strategic decisions.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/chief-of-staff/` — types, constants, localStorage store (`studioOsChiefOfStaff_v1`), soft approval threshold (82%), `recordFounderDecision()` for learning, delegation by department.
+- **Bootstrap:** demo seed — 27 inbox items (25 auto/soft-approved, 2 escalated), 9 executive leaders, 7 departments, morning briefing, coaching notes, leadership timeline, cross-workspace insights, executive memory profile.
+- **Hook:** `useChiefOfStaffState` — founder approve/reject/revise actions persist decisions + timeline.
+- **UI:** `/admin/studio/chief-of-staff` — `ChiefOfStaffWorkspace` with tabs (Dashboard · Inbox · Organization · Learning · Portfolio); panels for summary, briefing, inbox w/ confidence/evidence, org hierarchy, department delegation dropdowns, decision learning, coaching, timeline, portfolio insights, Studio Intelligence, executive memory, decision routing.
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (overview group, featured), `core/modules.ts`, `services/studio/chiefOfStaff/service.ts`, `bootstrapChiefOfStaffPlatform()` in platform seed chain.
+- **Executive team:** `chief-of-staff` role in `executiveTeam.ts` catalog; CMO added; Mission Control + NDXBOOK Mission Control link to CoS.
+
+**Changes:** chief-of-staff core + UI + hook + page + service, executive/nav/routes wiring, `MissionControlWorkspace.tsx`, `mission-control/bootstrap.ts`, `motherboard/MEMORY.md`.
+

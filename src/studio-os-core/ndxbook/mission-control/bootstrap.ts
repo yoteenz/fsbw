@@ -268,6 +268,7 @@ export function buildNdxbookMissionControlSeed(): Partial<NdxbookMissionControlS
       { id: 'host-future', displayName: 'Pending — Future Host', role: 'future host', volumeId: 'tech', status: 'rendering', currentPage: 'page 026 B-roll', nextSlot: 'Future Friday' },
     ],
     missionActions: [
+      { id: 'chief-of-staff', label: 'CHIEF OF STAFF', route: '/admin/studio/chief-of-staff', priority: 2, frequencyScore: 92 },
       { id: 'create-page', label: 'CREATE PAGE', route: '/admin/studio/ndxbook?tab=pages', priority: 1, frequencyScore: 95 },
       { id: 'approve', label: 'APPROVE PRODUCTION', route: '/admin/studio/ndxbook?tab=checklist', priority: 2, frequencyScore: 88 },
       { id: 'publish', label: 'PUBLISH', route: '/admin/studio/ndxbook?tab=socials', priority: 3, frequencyScore: 82 },

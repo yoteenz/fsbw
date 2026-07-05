@@ -3,13 +3,29 @@ import { getBlueprintById } from './blueprints';
 
 /** Platform executive role catalog — blueprint selects subsets per company. */
 export const EXECUTIVE_ROLE_CATALOG: Record<string, ExecutiveRole> = {
+  'chief-of-staff': {
+    id: 'chief-of-staff',
+    title: 'Chief of Staff',
+    department: 'Executive Office',
+    mandate: 'Primary executive beneath the founder — soft approvals, attention protection, unified briefings, and decision routing for all departments.',
+    inherits: ['memory-bible', 'creative-dna', 'writing-bible', 'knowledge-graph', 'company-objectives', 'operating-rules'],
+    collaboratesWith: ['chief-content-officer', 'chief-creative-officer', 'analytics-director'],
+  },
   'chief-content-officer': {
     id: 'chief-content-officer',
     title: 'Chief Content Officer',
     department: 'Content',
     mandate: 'Own editorial strategy, content calendar, and cross-platform narrative coherence.',
     inherits: ['memory-bible', 'writing-bible', 'creative-dna', 'company-objectives'],
-    collaboratesWith: ['creative-director-media', 'head-of-distribution', 'analytics-director'],
+    collaboratesWith: ['creative-director-media', 'head-of-distribution', 'analytics-director', 'chief-of-staff'],
+  },
+  'chief-marketing-officer': {
+    id: 'chief-marketing-officer',
+    title: 'Chief Marketing Officer',
+    department: 'Marketing',
+    mandate: 'Own brand campaigns, cross-channel messaging, and growth marketing strategy.',
+    inherits: ['campaigns', 'memory-bible', 'creative-dna'],
+    collaboratesWith: ['chief-of-staff', 'head-of-distribution', 'audience-growth-strategist'],
   },
   'creative-director-media': {
     id: 'creative-director-media',
