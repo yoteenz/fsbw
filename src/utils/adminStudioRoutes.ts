@@ -63,6 +63,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'remembrance-garden'
   | 'founders-promise'
   | 'executive-framework'
+  | 'leadership-manifesto-framework'
   | 'chief-brand-officer'
   | 'chief-experience-officer'
   | 'legacy-system'
@@ -135,6 +136,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'remembrance-garden',
   'founders-promise',
   'executive-framework',
+  'leadership-manifesto-framework',
   'chief-brand-officer',
   'chief-experience-officer',
   'legacy-system',
@@ -226,6 +228,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   remembranceGarden: 'studio/remembrance-garden',
   foundersPromise: 'studio/founders-promise',
   executiveFramework: 'studio/executive-framework',
+  leadershipManifestoFramework: 'studio/leadership-manifesto-framework',
   chiefBrandOfficer: 'studio/chief-brand-officer',
   chiefExperienceOfficer: 'studio/chief-experience-officer',
   studioOverview: 'studio/overview',
@@ -411,6 +414,10 @@ export function adminStudioFoundersPromisePath(): string {
 
 export function adminStudioExecutiveFrameworkPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/executive-framework`;
+}
+
+export function adminStudioLeadershipManifestoFrameworkPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/leadership-manifesto-framework`;
 }
 
 export function adminStudioChiefBrandOfficerPath(): string {

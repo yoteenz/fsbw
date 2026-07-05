@@ -203,6 +203,9 @@ export type { FoundersPromiseSnapshot } from './foundersPromise/service';
 export { executiveFrameworkStudioService, EXECUTIVE_FRAMEWORK_CHAIN } from './executiveFramework/service';
 export type { ExecutiveFrameworkSnapshot } from './executiveFramework/service';
 
+export { leadershipManifestoFrameworkStudioService, LEADERSHIP_MANIFESTO_FRAMEWORK_CHAIN } from './leadershipManifestoFramework/service';
+export type { LeadershipManifestoFrameworkSnapshot } from './leadershipManifestoFramework/service';
+
 export { chiefBrandOfficerStudioService, CHIEF_BRAND_OFFICER_CHAIN } from './chiefBrandOfficer/service';
 export type { ChiefBrandOfficerSnapshot } from './chiefBrandOfficer/service';
 
@@ -315,6 +318,7 @@ import { founderWalkStudioService } from './founderWalk/service';
 import { remembranceGardenStudioService } from './remembranceGarden/service';
 import { foundersPromiseStudioService } from './foundersPromise/service';
 import { executiveFrameworkStudioService } from './executiveFramework/service';
+import { leadershipManifestoFrameworkStudioService } from './leadershipManifestoFramework/service';
 import { chiefBrandOfficerStudioService } from './chiefBrandOfficer/service';
 import { chiefExperienceOfficerStudioService } from './chiefExperienceOfficer/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
@@ -386,6 +390,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   remembranceGardenStudioService,
   foundersPromiseStudioService,
   executiveFrameworkStudioService,
+  leadershipManifestoFrameworkStudioService,
   chiefBrandOfficerStudioService,
   chiefExperienceOfficerStudioService,
   blueprintManagerStudioService,

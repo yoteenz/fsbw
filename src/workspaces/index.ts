@@ -253,6 +253,10 @@ export function bootstrapWorkspacesPlatform(): void {
     executiveFramework.bootstrapExecutiveFrameworkPlatform();
     await yieldToMain();
 
+    const leadershipManifestoFramework = await import('../studio-os-core/leadership-manifesto-framework/bootstrap');
+    leadershipManifestoFramework.bootstrapLeadershipManifestoFrameworkPlatform();
+    await yieldToMain();
+
     const chiefBrandOfficer = await import('../studio-os-core/chief-brand-officer/bootstrap');
     chiefBrandOfficer.bootstrapChiefBrandOfficerPlatform();
     await yieldToMain();

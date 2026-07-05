@@ -15,7 +15,7 @@ export default function AdminStudioChiefBrandOfficerPage() {
       subtitle={CHIEF_BRAND_OFFICER_SUBTITLE}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"
-      onBack={() => navigate('/admin/studio/executive-framework')}
+      onBack={() => navigate('/admin/studio/leadership-manifesto-framework')}
       navGroupId="overview"
     >
       <ChiefBrandOfficerWorkspace />

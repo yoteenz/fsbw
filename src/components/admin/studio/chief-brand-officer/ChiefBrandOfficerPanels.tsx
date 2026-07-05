@@ -7,6 +7,7 @@ import {
   adminStudioCompanyGenomePath,
   adminStudioDigitalArchitectPath,
   adminStudioExecutiveFrameworkPath,
+  adminStudioLeadershipManifestoFrameworkPath,
   adminStudioExperienceArchitectPath,
   adminStudioFoundersPromisePath,
   adminStudioGrowthArchitectPath,
@@ -310,6 +311,7 @@ export function ConnectedSystemsPanel() {
       </div>
       <div className="mt-2 flex flex-wrap gap-2">
         <Link to={adminStudioExecutiveFrameworkPath()} style={{ ...cboLabel, color: '#334155', fontSize: '6px' }}>→ EXECUTIVE FRAMEWORK</Link>
+        <Link to={adminStudioLeadershipManifestoFrameworkPath()} style={{ ...cboLabel, color: '#4338CA', fontSize: '6px' }}>→ LEADERSHIP MANIFESTO</Link>
         <Link to={adminStudioBrandArchitectPath()} style={{ ...cboLabel, color: '#9333EA', fontSize: '6px' }}>→ BRAND ARCHITECT</Link>
         <Link to={adminStudioExperienceArchitectPath()} style={{ ...cboLabel, color: '#0891B2', fontSize: '6px' }}>→ EXPERIENCE ARCHITECT</Link>
         <Link to={adminStudioDigitalArchitectPath()} style={{ ...cboLabel, color: '#6366F1', fontSize: '6px' }}>→ DIGITAL ARCHITECT</Link>

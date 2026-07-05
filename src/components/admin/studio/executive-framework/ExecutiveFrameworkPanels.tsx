@@ -14,6 +14,7 @@ import {
   adminStudioOrganizationalInheritancePath,
   adminStudioChiefBrandOfficerPath,
   adminStudioChiefExperienceOfficerPath,
+  adminStudioLeadershipManifestoFrameworkPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   EXECUTIVE_FRAMEWORK_STYLES,
@@ -312,6 +313,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...efLabel, color: EF.slate, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
         <Link to={adminStudioBrandArchitectPath()} style={{ ...efLabel, color: '#9333EA', fontSize: '6px' }}>→ BRAND ARCHITECT</Link>
         <Link to={adminStudioChiefBrandOfficerPath()} style={{ ...efLabel, color: '#7C3AED', fontSize: '6px' }}>→ CHIEF BRAND OFFICER</Link>
+        <Link to={adminStudioLeadershipManifestoFrameworkPath()} style={{ ...efLabel, color: '#4338CA', fontSize: '6px' }}>→ LEADERSHIP MANIFESTO</Link>
         <Link to={adminStudioChiefExperienceOfficerPath()} style={{ ...efLabel, color: '#0891B2', fontSize: '6px' }}>→ CHIEF EXPERIENCE OFFICER</Link>
         <Link to={adminStudioExperienceArchitectPath()} style={{ ...efLabel, color: '#0891B2', fontSize: '6px' }}>→ EXPERIENCE ARCHITECT</Link>
         <Link to={adminStudioDigitalArchitectPath()} style={{ ...efLabel, color: '#6366F1', fontSize: '6px' }}>→ DIGITAL ARCHITECT</Link>

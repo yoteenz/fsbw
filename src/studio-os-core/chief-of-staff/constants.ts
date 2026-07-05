@@ -51,6 +51,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Remembrance Garden',
   'Founder\'s Promise',
   'Executive Framework',
+  'Leadership Manifesto Framework',
   'Chief Brand Officer',
   'Chief Experience Officer',
   'Leadership DNA',

@@ -250,6 +250,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'leadership-manifesto-framework',
+    title: 'LEADERSHIP MANIFESTO FRAMEWORK',
+    purpose: 'Constitutional foundation inherited by every executive — shared principles, discipline expertise, living organizational DNA.',
+    route: p('leadership-manifesto-framework'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN MANIFESTO',
+    moduleKey: 'leadership-manifesto-framework',
+    featuredOnOverview: true,
+  },
+  {
     id: 'chief-brand-officer',
     title: 'CHIEF BRAND OFFICER',
     purpose: 'Lifelong guardian of organizational identity — protect meaning, evolve thoughtfully, strengthen trust. V2.0.',

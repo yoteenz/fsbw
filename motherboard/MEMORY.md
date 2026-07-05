@@ -37433,4 +37433,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** chief-experience-officer core + UI + hook + page + service, import fix in ExperienceArchitectPanels, CoS/CBO/executive-framework/experience-architect/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 60.5: Leadership Manifesto Framework V1.0
+
+**Context (full chat):** User requested Milestone 60.5 — introduce **Leadership Manifesto Framework** as the constitutional foundation inherited by every executive inside Studio OS. Prior milestones in arc: M60 Executive Framework, M61 CBO, M62 CEO (completed earlier in session). Constraints: do not redesign overall Studio OS shell · executives think like stewards not controllers · manifesto becomes permanent organizational DNA · work on `master` only · one commit + one push.
+
+**Goal:** Unified constitutional document so every executive possesses clearly defined leadership identity, philosophy, decision framework, communication style, ethical standards, and organizational purpose — not isolated AI roles. Features: manifesto philosophy (shared principles · unique discipline expertise) · executive identity (title, purpose, mission, responsibilities, stakeholders, stewardship, influence, relationships) · leadership philosophy (wisdom over authority · stewardship · trust · decisions · culture · founder service) · core beliefs · non-negotiables (integrity, truth, clarity, respect, transparency, customer trust, authenticity, long-term thinking, knowledge preservation, founder intent) · decision framework (promise · DNA · values · impact · alternatives · confidence) · executive compass (unique question per executive/discipline) · definition of excellence (exceptional/average/warning/failure) · communication standards · collaboration philosophy · learning philosophy · founder relationship · legacy commitment · manifesto inheritance (CBO, CEO, CDO, CGO, CFO, COO, CLO, CPO, CTO, CRO, future executives). Living philosophy — wisdom deepens · stewardship commitment constant.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/leadership-manifesto-framework/` — types (executive identity, philosophy, beliefs, non-negotiables, decision evaluations, executive compasses, excellence, communication, collaboration, learning, founder relationship, legacy, inheritance), constants (philosophy, connected systems, decision dimensions), localStorage store (`studioOsLeadershipManifestoFramework_v1`), rich NDXBOOK bootstrap (92% manifesto health · 8 executive identities · 10 non-negotiables · 8 unique compasses · 10 future executive inheritances).
+- **Hook:** `useLeadershipManifestoFrameworkState`.
+- **UI:** `/admin/studio/leadership-manifesto-framework` — `LeadershipManifestoFrameworkWorkspace` with tabs (Manifesto/Health · Identity/Philosophy · Beliefs/Non-Negotiables · Decide/Compass · Communicate/Collaborate · Inherit/Legacy · Connect/Systems). Indigo accent (`#4338CA`) · V1.0.
+- **Wiring:** route, nav (overview · after executive framework · before CBO), modules, services, bootstrap after Executive Framework · before CBO.
+- **Chief of Staff integration:** `Leadership Manifesto Framework` in `SOFT_APPROVAL_SOURCES`; `LeadershipManifestoFrameworkLinkPanel` in CoS workspace.
+- **Cross-links:** Executive Framework and CBO ConnectedSystemsPanel → LMF · CBO back link updated to LMF.
+- **Knowledge graph:** `node-leadership-manifesto-framework` + ~15 edges to Executive Framework, Leadership DNA, Founder's Promise, Company Genome, Organizational Inheritance, CoS, Studio Intelligence, CBO, CEO, architects.
+
+**Route:** `/admin/studio/leadership-manifesto-framework` · Overview nav group · indigo accent · back link from Executive Framework.
+
+**Changes:** leadership-manifesto-framework core + UI + hook + page + service, CoS/executive-framework/CBO/KG/bootstrap wiring, CBO back-link update, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
 

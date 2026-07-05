@@ -214,6 +214,7 @@ const AdminStudioFounderWalk = lazyWithRetry(() => import('./pages/admin/studio/
 const AdminStudioRemembranceGarden = lazyWithRetry(() => import('./pages/admin/studio/remembrance-garden/page'), 'AdminStudioRemembranceGarden');
 const AdminStudioFoundersPromise = lazyWithRetry(() => import('./pages/admin/studio/founders-promise/page'), 'AdminStudioFoundersPromise');
 const AdminStudioExecutiveFramework = lazyWithRetry(() => import('./pages/admin/studio/executive-framework/page'), 'AdminStudioExecutiveFramework');
+const AdminStudioLeadershipManifestoFramework = lazyWithRetry(() => import('./pages/admin/studio/leadership-manifesto-framework/page'), 'AdminStudioLeadershipManifestoFramework');
 const AdminStudioChiefBrandOfficer = lazyWithRetry(() => import('./pages/admin/studio/chief-brand-officer/page'), 'AdminStudioChiefBrandOfficer');
 const AdminStudioChiefExperienceOfficer = lazyWithRetry(() => import('./pages/admin/studio/chief-experience-officer/page'), 'AdminStudioChiefExperienceOfficer');
 const AdminStudioLeadershipDna = lazyWithRetry(() => import('./pages/admin/studio/leadership-dna/page'), 'AdminStudioLeadershipDna');
@@ -1297,6 +1298,11 @@ function App() {
           <Route path="studio/executive-framework" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioExecutiveFramework />
+            </Suspense>
+          } />
+          <Route path="studio/leadership-manifesto-framework" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioLeadershipManifestoFramework />
             </Suspense>
           } />
           <Route path="studio/chief-brand-officer" element={
