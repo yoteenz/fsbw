@@ -182,6 +182,9 @@ export type { DigitalArchitectSnapshot } from './digitalArchitect/service';
 export { growthArchitectStudioService, GROWTH_ARCHITECT_CHAIN } from './growthArchitect/service';
 export type { GrowthArchitectSnapshot } from './growthArchitect/service';
 
+export { companyGenomeStudioService, COMPANY_GENOME_CHAIN } from './companyGenome/service';
+export type { CompanyGenomeSnapshot } from './companyGenome/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -281,6 +284,7 @@ import { brandArchitectStudioService } from './brandArchitect/service';
 import { experienceArchitectStudioService } from './experienceArchitect/service';
 import { digitalArchitectStudioService } from './digitalArchitect/service';
 import { growthArchitectStudioService } from './growthArchitect/service';
+import { companyGenomeStudioService } from './companyGenome/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -343,6 +347,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   experienceArchitectStudioService,
   digitalArchitectStudioService,
   growthArchitectStudioService,
+  companyGenomeStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

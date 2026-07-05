@@ -11,6 +11,7 @@ import {
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioStrategyEnginePath,
+  adminStudioCompanyGenomePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   GA,
@@ -342,6 +343,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioReaderGraphPath()} style={{ ...gaLabel, color: '#7C3AED', fontSize: '6px' }}>→ READER GRAPH</Link>
         <Link to={adminStudioCreatorMarketplacePath()} style={{ ...gaLabel, color: '#2563EB', fontSize: '6px' }}>→ CREATOR MARKETPLACE</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...gaLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INHERITANCE</Link>
+        <Link to={adminStudioCompanyGenomePath()} style={{ ...gaLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...gaLabel, color: GA.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
       </div>
     </section>

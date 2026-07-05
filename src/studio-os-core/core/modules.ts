@@ -22,6 +22,7 @@ export type StudioOsCoreModuleId =
   | 'experience-architect'
   | 'digital-architect'
   | 'growth-architect'
+  | 'company-genome'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -183,6 +184,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'GROWTH ARCHITECT',
     description: 'Sustainable growth OS — initiatives, GTM, orchestration, relationship-driven compound growth.',
     routeSegment: 'growth-architect',
+  },
+  {
+    id: 'company-genome',
+    label: 'COMPANY GENOME',
+    description: 'Living organizational genetics — DNA layers, health, evolution, relationships, and portfolio intelligence.',
+    routeSegment: 'company-genome',
   },
   {
     id: 'executive-command-center',

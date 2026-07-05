@@ -26,6 +26,7 @@ export const GROWTH_ARCHITECT_CONNECTED_SYSTEMS = [
   'Studio Intelligence',
   'Knowledge Graph',
   'Organizational Inheritance',
+  'Company Genome',
 ] as const;
 
 export const LIFECYCLE_STAGE_DEFS: { id: GrowthLifecycleStageId; label: string }[] = [

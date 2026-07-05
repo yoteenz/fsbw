@@ -166,6 +166,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'company-genome',
+    title: 'COMPANY GENOME',
+    purpose: 'Living organizational genetics — identity, intelligence, evolution, and the heartbeat of every company.',
+    route: p('company-genome'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN GENOME',
+    moduleKey: 'company-genome',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

@@ -56,6 +56,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'experience-architect'
   | 'digital-architect'
   | 'growth-architect'
+  | 'company-genome'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -119,6 +120,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'experience-architect',
   'digital-architect',
   'growth-architect',
+  'company-genome',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -201,6 +203,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   experienceArchitect: 'studio/experience-architect',
   digitalArchitect: 'studio/digital-architect',
   growthArchitect: 'studio/growth-architect',
+  companyGenome: 'studio/company-genome',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -356,6 +359,10 @@ export function adminStudioDigitalArchitectPath(): string {
 
 export function adminStudioGrowthArchitectPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/growth-architect`;
+}
+
+export function adminStudioCompanyGenomePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/company-genome`;
 }
 
 export function adminStudioOsPath(): string {

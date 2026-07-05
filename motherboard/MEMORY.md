@@ -37230,3 +37230,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** growth-architect core + UI + hook + page + service, CoS/digital-architect/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 57: Company Genome V1.0
+
+**Context (full chat):** User requested Milestone 57 — introduce **Company Genome** as the living representation of every organization's identity, intelligence, evolution, and organizational genetics. Prior milestones in arc: M52 Company Maturity Engine, M53 Brand Architect, M54 Experience Architect, M55 Digital Architect, M56 Growth Architect. Constraints: do not redesign overall Studio OS shell · genome should feel like observing a living organism not analytics · work on `master` only · one commit + one push per task.
+
+**Goal:** Company Genome becomes the visual identity and heartbeat of every organization inside Studio OS. Features: genome philosophy (companies are living systems), living interactive visualization with zoom levels (portfolio → company → department → executive → system → knowledge asset → decision), genetic layers (company/creative/writing/leadership/operational DNA with health/maturity/confidence/growth/inheritance/impact), genetic relationships map, evolution timeline, unified organizational health score (11 dimensions), genome intelligence alerts, organizational resilience trends, organizational fingerprint (uniqueness/differentiation), future simulation (executives, pivots, acquisitions, expansion), cross-company genetics for holding companies, knowledge flow, genome dashboard tabs. Connect to Company DNA, Creative DNA, Writing DNA, Leadership DNA, Operational DNA, Knowledge Graph, Reader Graph, Relationship Engine, Chief of Staff, Studio Intelligence, all architects M52–M56, Organizational Inheritance.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/company-genome/` — types (genetic layers, zoom levels, relationships, evolution, health dimensions, resilience, fingerprint, simulations, cross-company genetics, knowledge flow), constants (philosophy, connected systems, zoom levels, genetic layer IDs), localStorage store (`studioOsCompanyGenome_v1`), rich NDXBOOK bootstrap seed (~83% unified health · 5 DNA layers · 9 genetic relationships · evolution timeline · 11 health dimensions · intelligence alerts · resilience metrics · fingerprint · 3 simulations · cross-company genetics · knowledge flow).
+- **Hook:** `useCompanyGenomeState` — workspace selection, zoom level, store read/refresh.
+- **UI:** `/admin/studio/company-genome` — `CompanyGenomeWorkspace` with tabs (Dashboard · Genetic Map/Layers · Health/Resilience · Evolution/Timeline · Relationships/Flow · Intelligence/Simulation); panels for dashboard, philosophy, living visualization/zoom, genetic layers, relationships, evolution, health, intelligence, resilience, fingerprint, simulation, cross-company, knowledge flow, connected systems. Violet accent theme (`#9333EA`) with pulsing live dot.
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (overview group · after growth architect), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/companyGenome/service.ts`, `bootstrapCompanyGenomePlatform()` after Growth Architect.
+- **Chief of Staff integration:** `Company Genome` in `SOFT_APPROVAL_SOURCES`; `CompanyGenomeLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Growth Architect integration:** connected systems + link to Company Genome.
+- **Knowledge graph:** `node-company-genome` + edges to Leadership/Creative/Memory DNA, Company Maturity Engine, Brand/Experience/Digital/Growth architects, Reader Graph, Relationship Engine, Knowledge Asset Engine, Organizational Inheritance, Studio Intelligence, Chief of Staff.
+
+**Route:** `/admin/studio/company-genome` · Overview nav group · violet accent theme · back link from Growth Architect.
+
+**Changes:** company-genome core + UI + hook + page + service, CoS/growth-architect/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
