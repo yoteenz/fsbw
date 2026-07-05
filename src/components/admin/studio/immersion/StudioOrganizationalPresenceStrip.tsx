@@ -13,6 +13,8 @@ type Props = {
   livingStatus?: ConciergeLivingStatus;
   morningArrival?: { headline: string; items: string[] } | null;
   onDismissMoment?: (id: string) => void;
+  presencePaused?: boolean;
+  onTogglePresencePause?: () => void;
 };
 
 /** Rotating organizational activity — headquarters already working. */
@@ -24,6 +26,8 @@ export function StudioOrganizationalPresenceStrip({
   livingStatus,
   morningArrival,
   onDismissMoment,
+  presencePaused = false,
+  onTogglePresencePause,
 }: Props) {
   return (
     <div className="mb-2 space-y-1">
@@ -58,9 +62,33 @@ export function StudioOrganizationalPresenceStrip({
         className="studio-glass-depth px-2 py-1.5 rounded-sm studio-activity-entry"
         style={{ border: '1px solid rgba(0,0,0,0.06)', background: SI_VISUAL.glass }}
       >
-        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '5px', color: '#999', margin: '0 0 4px' }}>
-          ORGANIZATIONAL PRESENCE · LIVE
-        </p>
+        <div className="flex items-center justify-between gap-2" style={{ marginBottom: 4 }}>
+          <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '5px', color: presencePaused ? '#bbb' : '#999', margin: 0 }}>
+            ORGANIZATIONAL PRESENCE · {presencePaused ? 'PAUSED' : 'LIVE'}
+          </p>
+          {onTogglePresencePause ? (
+            <button
+              type="button"
+              onClick={onTogglePresencePause}
+              aria-label={presencePaused ? 'Resume presence rotation' : 'Pause presence rotation'}
+              className="flex-shrink-0 flex items-center justify-center rounded-sm"
+              style={{
+                width: 14,
+                height: 14,
+                padding: 0,
+                border: '1px solid rgba(0,0,0,0.08)',
+                background: presencePaused ? 'rgba(146,112,74,0.1)' : 'rgba(255,255,255,0.6)',
+                cursor: 'pointer',
+                color: SI_VISUAL.champagne,
+                fontFamily: '"Futura PT Medium"',
+                fontSize: '6px',
+                lineHeight: 1,
+              }}
+            >
+              {presencePaused ? '▶' : '||'}
+            </button>
+          ) : null}
+        </div>
         <p style={{ fontFamily: '"Futura PT Book"', fontSize: '7px', color: '#000', margin: 0 }}>
           <span className={presenceDotClass(primary.state)} />
           <span style={{ fontFamily: '"Futura PT Medium"', color: SI_VISUAL.champagne }}>{primary.concierge}</span>

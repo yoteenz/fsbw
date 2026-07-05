@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
   buildChiefConciergeBrief,
@@ -11,11 +11,15 @@ import {
 export function useStudioImmersion() {
   const { pathname } = useLocation();
   const [tick, setTick] = useState(0);
+  const [presencePaused, setPresencePaused] = useState(false);
 
   useEffect(() => {
+    if (presencePaused) return;
     const id = window.setInterval(() => setTick((t) => t + 1), 7000);
     return () => window.clearInterval(id);
-  }, []);
+  }, [presencePaused]);
+
+  const togglePresencePause = useCallback(() => setPresencePaused((p) => !p), []);
 
   const roomVariant = useMemo(() => resolveStudioRoomVariant(pathname), [pathname]);
   const chiefBrief = useMemo(() => buildChiefConciergeBrief(pathname), [pathname]);
@@ -31,5 +35,7 @@ export function useStudioImmersion() {
     primaryPresence,
     presenceFeed,
     tick,
+    presencePaused,
+    togglePresencePause,
   };
 }

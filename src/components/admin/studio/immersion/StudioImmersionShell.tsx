@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { useStudioImmersion } from '../../../../hooks/useStudioImmersion';
 import { useLivingHeadquartersPresence } from '../../../../hooks/useLivingHeadquartersPresence';
+import { enrichPresenceActivity } from '../../../../studio-os-core/living-headquarters-presence/engine';
 import { StudioAmbientLayer } from './StudioAmbientLayer';
 import { StudioChiefConciergeBrief } from './StudioChiefConciergeBrief';
 import { StudioImmersionStyles } from './StudioImmersionStyles';
@@ -16,10 +18,23 @@ type Props = {
  * M82.5: living headquarters presence — quietly alive, never frozen.
  */
 export function StudioImmersionShell({ hideBrief = false, hidePresence = false }: Props) {
-  const { roomVariant, chiefBrief, primaryPresence, presenceFeed, screenMoment, pathname } =
-    useStudioImmersion();
-  const { organizationalMoments, presence, ambientTimeClass, dismissMoment, morningArrival } =
+  const {
+    roomVariant,
+    chiefBrief,
+    primaryPresence,
+    presenceFeed,
+    screenMoment,
+    pathname,
+    presencePaused,
+    togglePresencePause,
+  } = useStudioImmersion();
+  const { organizationalMoments, ambientTimeClass, dismissMoment, morningArrival } =
     useLivingHeadquartersPresence();
+
+  const livingStatus = useMemo(
+    () => enrichPresenceActivity(primaryPresence).livingStatus,
+    [primaryPresence]
+  );
 
   const isInnerImmersiveRoom =
     pathname.includes('/screening-room') ||
@@ -37,9 +52,11 @@ export function StudioImmersionShell({ hideBrief = false, hidePresence = false }
           feed={presenceFeed}
           screenMoment={screenMoment}
           organizationalMoments={organizationalMoments}
-          livingStatus={presence.livingStatus}
+          livingStatus={livingStatus}
           morningArrival={morningArrival}
           onDismissMoment={dismissMoment}
+          presencePaused={presencePaused}
+          onTogglePresencePause={togglePresencePause}
         />
       ) : null}
     </>

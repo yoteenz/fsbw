@@ -38130,3 +38130,18 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Philosophy:** "Welcome back. We've been preparing for your arrival."
 
 **Changes:** living-headquarters-presence core + hook, immersion/command-dock integration, modules/bootstrap/feature-inheritance/knowledge-graph, motherboard/CORE.md + MEMORY.md.
+
+---
+
+## 2026-07-05 — Organizational Presence pause control (M82.5 follow-up)
+
+**Context (full chat arc):** After M82.5 Living Headquarters Presence (rotating organizational activity strip, Command Dock idle, morning arrival), user shared a mockup of the **Organizational Presence · LIVE** panel with a pause icon on the far right. Goal: stop automatic message rotation so the founder can read the current concierge activity without it advancing to the next item.
+
+**Decisions / outcomes:**
+- **`useStudioImmersion`** — added `presencePaused` state + `togglePresencePause()`; 7s rotation interval only runs when not paused; freezing `tick` freezes both `primaryPresence` and `presenceFeed`.
+- **`StudioImmersionShell`** — derives `livingStatus` from `enrichPresenceActivity(primaryPresence)` so sub-status line stays in sync with frozen primary message (avoids desync from separate `useLivingHeadquartersPresence` tick).
+- **`StudioOrganizationalPresenceStrip`** — header row flex with label on left, minimal pause/resume button on right (`||` / `▶`); label switches to **ORGANIZATIONAL PRESENCE · PAUSED** when paused; `aria-label` for accessibility. Command Dock idle rotation unchanged (separate concern).
+
+**Changes:** `useStudioImmersion.ts`, `StudioImmersionShell.tsx`, `StudioOrganizationalPresenceStrip.tsx`, motherboard/MEMORY.md.
+
+**Conventions:** Pause is local session state (not persisted). Minimal UI extension only — no headquarters redesign.
