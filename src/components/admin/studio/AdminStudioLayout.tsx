@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
@@ -24,6 +24,8 @@ import { canSwitchOrganizations } from '../../../studio-os-core/application/port
 import { ORGANIZATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { WorkspaceSwitcher } from '../studio-os/WorkspaceSwitcher';
 import { CommandDock, shouldShowCommandDock } from './command-dock/CommandDock';
+import { AdminStudioSearchResultsPanel } from './AdminStudioSearchResultsPanel';
+import { searchStudioModules } from '../../../utils/adminStudioSearch';
 
 type AdminStudioLayoutProps = {
   title: string;
@@ -67,7 +69,30 @@ export function AdminStudioLayout({
   useRequireAdminPageAccess();
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const [searchParams] = useSearchParams();
   const { workspace, getModuleSubtitle } = useWorkspace();
+
+  const globalSearchQuery = (searchParams.get('q') || '').trim();
+  const [studioSearchQuery, setStudioSearchQuery] = useState(globalSearchQuery);
+
+  useEffect(() => {
+    setStudioSearchQuery(globalSearchQuery);
+  }, [globalSearchQuery]);
+
+  const studioSearchResults = useMemo(
+    () => searchStudioModules(studioSearchQuery),
+    [studioSearchQuery]
+  );
+
+  const clearStudioSearch = () => {
+    setStudioSearchQuery('');
+    if (searchParams.has('q')) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('q');
+      const qs = next.toString();
+      navigate(qs ? `${pathname}?${qs}` : pathname, { replace: true });
+    }
+  };
 
   /** Routes that self-seed via module hooks — never block paint with full platform bootstrap. */
   const skipHeavyPlatformBootstrap =
@@ -135,10 +160,21 @@ export function AdminStudioLayout({
           onBack={handleBack}
           breadcrumbParentLabel={headerCrumbLabel}
           breadcrumbParentPath={headerCrumbPath}
+          externalSearchValue={studioSearchQuery}
+          onExternalSearchChange={setStudioSearchQuery}
+          externalSearchPlaceholder="SEARCH STUDIO MODULES..."
+          globalSearchTargetPath={pathname}
         />
 
         <div className="pb-6 px-4" style={{ paddingBottom: shouldShowCommandDock(pathname) ? '100px' : undefined }}>
           <div className="max-w-md mx-auto">
+            {studioSearchQuery.trim() ? (
+              <AdminStudioSearchResultsPanel
+                query={studioSearchQuery}
+                results={studioSearchResults}
+                onClear={clearStudioSearch}
+              />
+            ) : null}
             <div
               className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
               style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}

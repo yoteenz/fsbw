@@ -38145,3 +38145,18 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** `useStudioImmersion.ts`, `StudioImmersionShell.tsx`, `StudioOrganizationalPresenceStrip.tsx`, motherboard/MEMORY.md.
 
 **Conventions:** Pause is local session state (not persisted). Minimal UI extension only — no headquarters redesign.
+
+---
+
+## 2026-07-05 — Studio-scoped header search (module navigation)
+
+**Context (full chat arc):** After M82.5 Living Headquarters Presence and organizational presence pause button, user requested the **header search bar on studio pages** filter **studio modules only** — e.g. searching "socials" should surface Social Accounts and related distribution pages, not generic admin content.
+
+**Decisions / outcomes:**
+- **`adminStudioSearch.ts`** — indexes all `ADMIN_STUDIO_MODULES` plus sub-route hits (e.g. ndxbook `?tab=socials`); synonym keywords for natural queries (`socials` → social-accounts, oauth platforms, distribution).
+- **`AdminStudioSearchResultsPanel`** — live results dropdown above main card; click navigates to module route; CLEAR resets query.
+- **`AdminStudioLayout`** — wires `AdminHeader` external search with placeholder "SEARCH STUDIO MODULES..."; results panel shows on any `/admin/studio/*` page using layout/stage shell. Does not search clients/products/global admin.
+
+**Changes:** `adminStudioSearch.ts`, `AdminStudioSearchResultsPanel.tsx`, `AdminStudioLayout.tsx`, motherboard/MEMORY.md.
+
+**Conventions:** Studio header search is module navigation only; page-local search inputs (prompt library, asset library) unchanged.
