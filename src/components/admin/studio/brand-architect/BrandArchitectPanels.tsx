@@ -9,6 +9,7 @@ import {
   adminStudioLeadershipDnaPath,
   adminStudioMemoryBiblePath,
   adminStudioStudioIntelligencePath,
+  adminStudioChiefBrandOfficerPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   BA,
@@ -358,6 +359,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...baLabel, color: BA.slate, fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
         <Link to={adminStudioExperienceArchitectPath()} style={{ ...baLabel, color: '#0891B2', fontSize: '6px' }}>→ EXPERIENCE ARCHITECT</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...baLabel, color: BA.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioChiefBrandOfficerPath()} style={{ ...baLabel, color: '#7C3AED', fontSize: '6px' }}>→ CHIEF BRAND OFFICER</Link>
       </div>
     </section>
   );

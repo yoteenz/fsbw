@@ -253,6 +253,10 @@ export function bootstrapWorkspacesPlatform(): void {
     executiveFramework.bootstrapExecutiveFrameworkPlatform();
     await yieldToMain();
 
+    const chiefBrandOfficer = await import('../studio-os-core/chief-brand-officer/bootstrap');
+    chiefBrandOfficer.bootstrapChiefBrandOfficerPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

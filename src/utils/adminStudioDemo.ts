@@ -77,6 +77,7 @@ export type AdminStudioSectionId =
   | 'remembrance-garden'
   | 'founders-promise'
   | 'executive-framework'
+  | 'chief-brand-officer'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

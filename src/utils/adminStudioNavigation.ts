@@ -250,6 +250,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'chief-brand-officer',
+    title: 'CHIEF BRAND OFFICER',
+    purpose: 'Lifelong guardian of organizational identity — protect meaning, evolve thoughtfully, strengthen trust. V2.0.',
+    route: p('chief-brand-officer'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v2.0',
+    ctaLabel: 'OPEN CBO',
+    moduleKey: 'chief-brand-officer',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

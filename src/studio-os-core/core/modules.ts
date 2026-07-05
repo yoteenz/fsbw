@@ -29,6 +29,7 @@ export type StudioOsCoreModuleId =
   | 'remembrance-garden'
   | 'founders-promise'
   | 'executive-framework'
+  | 'chief-brand-officer'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -232,6 +233,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXECUTIVE FRAMEWORK',
     description: 'Constitutional foundation for AI executives — identity, standards, collaboration, accountability.',
     routeSegment: 'executive-framework',
+  },
+  {
+    id: 'chief-brand-officer',
+    label: 'CHIEF BRAND OFFICER',
+    description: 'Lifelong guardian of brand identity — governance, alignment, intelligence, protection. V2.0.',
+    routeSegment: 'chief-brand-officer',
   },
   {
     id: 'executive-command-center',
