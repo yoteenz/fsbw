@@ -17,6 +17,7 @@ import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AdminStudioWorkspaceGuard from './components/AdminStudioWorkspaceGuard';
 import StudioAdministrationGuard from './components/admin/studio-os/StudioAdministrationGuard';
+import StudioWorkspaceGuard from './components/admin/studio-os/StudioWorkspaceGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import { AccountHubRedirect } from './components/AccountHubRedirect';
 import CommerceRouteGuard from './components/CommerceRouteGuard';
@@ -868,6 +869,7 @@ function App() {
           } />
           <Route element={<AdminStudioWorkspaceGuard />}>
           <Route element={<StudioAdministrationGuard />}>
+          <Route element={<StudioWorkspaceGuard />}>
           <Route path="headquarters" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminHeadquartersEntry />
@@ -1539,6 +1541,7 @@ function App() {
             </Suspense>
           } />
           <Route path="studio" element={<Navigate to="/admin/studio/mission-control" replace />} />
+          </Route>
           </Route>
           </Route>
           <Route path="analytics" element={

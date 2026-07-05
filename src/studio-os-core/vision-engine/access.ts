@@ -1,12 +1,13 @@
-import { getCurrentUser, isAdminEmail } from '../../utils/adminAuth';
+import { tryGetStudioOsAuthProvider } from '../auth/provider';
 import { VISION_SHARE_SESSION_KEY } from './constants';
 
 /** Vision Engine is internal-only — Studio OS authenticated roles. */
 export function canAccessVisionEngineAdmin(): boolean {
   if (typeof window === 'undefined') return false;
-  const user = getCurrentUser();
+  const provider = tryGetStudioOsAuthProvider();
+  const user = provider?.getCurrentUser() ?? null;
   if (!user?.email) return false;
-  return isAdminEmail(user.email);
+  return provider?.isAdminEmail(user.email) ?? false;
 }
 
 export function isVisionShareSessionActive(): boolean {

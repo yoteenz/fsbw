@@ -1,41 +1,49 @@
 /**
  * Portfolio owner access — Studio Administration layer.
- * Only portfolio owners may access workspace registry, cross-org intelligence, and platform settings.
+ * Organization scope resolved via Supabase membership (env fallback during migration).
  */
 
-import { getCurrentUser, isAdminFounderAccount } from '../../utils/adminAuth';
+import { getCachedOrgMembership } from '../auth/membership';
+import { tryGetStudioOsAuthProvider } from '../auth/provider';
 import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from '../workspace/storage';
 
 function readPortfolioOwnerEmails(): string[] {
   const raw =
-    (typeof import.meta !== 'undefined' && (import.meta as { env?: { VITE_PORTFOLIO_OWNER_EMAILS?: string } }).env?.VITE_PORTFOLIO_OWNER_EMAILS) ||
+    (typeof import.meta !== 'undefined' &&
+      (import.meta as { env?: { VITE_PORTFOLIO_OWNER_EMAILS?: string } }).env?.VITE_PORTFOLIO_OWNER_EMAILS) ||
     '';
-  const parsed = String(raw)
+  return String(raw)
     .split(',')
     .map((e) => e.trim().toLowerCase())
     .filter(Boolean);
-  return parsed;
+}
+
+function resolvePortfolioOwnerFromEnv(email: string): boolean {
+  const envOwners = readPortfolioOwnerEmails();
+  return envOwners.length > 0 && envOwners.includes(email);
 }
 
 /** True when the signed-in user may access Studio Administration (portfolio control plane). */
-export function isPortfolioOwner(user: { email?: string } | null = getCurrentUser()): boolean {
-  if (!user?.email) return false;
-  if (isAdminFounderAccount(user)) return true;
-  const email = user.email.trim().toLowerCase();
-  const envOwners = readPortfolioOwnerEmails();
-  return envOwners.length > 0 && envOwners.includes(email);
+export function isPortfolioOwner(user?: { email?: string } | null): boolean {
+  const membership = getCachedOrgMembership();
+  if (membership.isPortfolioOwner) return true;
+
+  const provider = tryGetStudioOsAuthProvider();
+  const resolvedUser = user ?? provider?.getCurrentUser() ?? null;
+  if (!resolvedUser?.email) return false;
+
+  const email = resolvedUser.email.trim().toLowerCase();
+  if (provider?.isPortfolioOwnerEmail(email)) return true;
+  return resolvePortfolioOwnerFromEnv(email);
 }
 
 export function canAccessStudioAdministration(): boolean {
   return isPortfolioOwner();
 }
 
-/**
- * Organization workspace assigned to the current admin session.
- * Non-portfolio operators are scoped to a single organization (Frontal Slayer on this deployment).
- */
+/** Organization workspace assigned to the current admin session. */
 export function getAssignedOrganizationWorkspaceId(): string {
-  return STUDIO_OS_DEFAULT_WORKSPACE_ID;
+  return getCachedOrgMembership().workspaceId || STUDIO_OS_DEFAULT_WORKSPACE_ID;
 }
 
 /** Whether the user may switch between organizations in the workspace registry. */

@@ -3,11 +3,14 @@ import { Outlet } from 'react-router-dom';
 import { CampusTransitionProvider } from './admin/studio-os/campus/CampusTransitionProvider';
 import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
 import { ensureWorkspacesBootstrapped } from '../utils/ensureWorkspacesBootstrapped';
+import { ensureOrgMembershipResolved } from '../studio-os-core/auth/membership';
+import { activateWorkspaceContext } from '../studio-os-core/workspace/context-bridge';
+import { getAccessToken } from '../utils/api';
 import LoadingScreen from './base/LoadingScreen';
 
 /**
  * Studio OS routes only (/admin/studio/*, /admin/studio-os/*).
- * Loads workspace registry + WorkspaceProvider — never on /admin/dashboard or other admin hubs.
+ * Loads workspace registry + org membership + WorkspaceProvider — never on /admin/dashboard.
  */
 export default function AdminStudioWorkspaceGuard() {
   const [workspacesReady, setWorkspacesReady] = useState(false);
@@ -16,18 +19,24 @@ export default function AdminStudioWorkspaceGuard() {
   useEffect(() => {
     let cancelled = false;
 
-    void ensureWorkspacesBootstrapped()
-      .then(() => {
+    void (async () => {
+      try {
+        await ensureWorkspacesBootstrapped();
+        const token = await getAccessToken();
+        const membership = await ensureOrgMembershipResolved(token ?? undefined);
+        if (!membership.isPortfolioOwner) {
+          activateWorkspaceContext(membership.workspaceId);
+        }
         if (!cancelled) {
           setBootstrapError(null);
           setWorkspacesReady(true);
         }
-      })
-      .catch((error: unknown) => {
+      } catch (error: unknown) {
         if (!cancelled) {
           setBootstrapError(error instanceof Error ? error.message : 'Failed to load Studio OS workspaces');
         }
-      });
+      }
+    })();
 
     return () => {
       cancelled = true;

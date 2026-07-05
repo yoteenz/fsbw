@@ -11,6 +11,10 @@ export type WorkspaceRegistryApi = {
   getWorkspaceDataAdapter: (id: WorkspaceId) => WorkspaceDataAdapter;
   isKnownWorkspaceId: (id: string) => id is WorkspaceId;
   listWorkspaces: () => WorkspaceListItem[];
+  /** True when workspace was provisioned via Workspace Creation Engine (not static registry). */
+  isDynamicWorkspaceId?: (id: string) => boolean;
+  /** Organization-specific vision engine bootstrap — core never imports workspace folders. */
+  bootstrapVisionEngine?: (workspaceId: string) => void;
 };
 
 let workspaceRegistry: WorkspaceRegistryApi | null = null;

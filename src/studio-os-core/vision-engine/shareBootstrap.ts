@@ -4,15 +4,15 @@ import { launchVisionPresentation } from './launch';
 import { clearActiveVisionMode, setActiveVisionMode } from './session';
 import { getVisionShareBySlug } from './store';
 import { resolveVisionShareFromApi } from '../../utils/visionShareApi';
-import { bootstrapFrontalSlayerVisionEngine } from '../../workspaces/frontal-slayer/vision-engine';
+import { getWorkspaceRegistry } from '../workspace/registry';
 
-function ensureVisionManifestReady(): void {
-  bootstrapFrontalSlayerVisionEngine();
+function ensureVisionManifestReady(workspaceId: string): void {
+  getWorkspaceRegistry().bootstrapVisionEngine?.(workspaceId);
 }
 
 /** Activate Vision Share from a resolved link record. */
 export function activateVisionShareLink(link: VisionShareLink): boolean {
-  ensureVisionManifestReady();
+  ensureVisionManifestReady(link.workspaceId);
   setVisionShareSessionActive(true);
   setActiveVisionMode(link.modeId, link.workspaceId);
   const ok = launchVisionPresentation({
@@ -52,7 +52,7 @@ export type VisionShareResolveState =
   | { status: 'error'; message: string };
 
 export async function bootstrapVisionShareSlug(slug: string, password?: string): Promise<VisionShareResolveState> {
-  ensureVisionManifestReady();
+  ensureVisionManifestReady('frontal-slayer');
 
   const api = await resolveVisionShareFromApi(slug, password);
   if (api.ok) {

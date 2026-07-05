@@ -1,4 +1,4 @@
-import { isDynamicWorkspaceId } from '../../workspaces';
+import { getWorkspaceRegistry } from '../workspace/registry';
 import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from '../workspace/storage';
 import { STUDIO_OS_ROUTES, workspaceStudioModulePath } from '../workspace/routes';
 
@@ -21,7 +21,8 @@ export function resolveWorkspaceDestinationPath(
   if (workspaceId === 'ai-media') {
     return STUDIO_OS_ROUTES.workspaceDashboard(workspaceId);
   }
-  if (isDynamicWorkspaceId(workspaceId) || options.registryById?.has(workspaceId)) {
+  const registry = getWorkspaceRegistry();
+  if (registry.isDynamicWorkspaceId?.(workspaceId) || options.registryById?.has(workspaceId)) {
     return STUDIO_OS_ROUTES.workspaceDashboard(workspaceId);
   }
   return STUDIO_OS_ROUTES.workspaceShell(workspaceId);

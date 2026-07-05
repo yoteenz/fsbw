@@ -38046,3 +38046,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** studio-os-core application/feature-inheritance/tenant modules, StudioAdministrationGuard, headquarters + administration pages, dashboard/App/AdminStudioLayout/WorkspaceSwitcher/WorkspaceProvider/routes, frontal-slayer config + headquartersDashboard, docs/studio-os/architecture.md + workspace-system.md, motherboard/CORE.md + MEMORY.md.
 
 **Conventions:** Org operators never see workspace registry, other organizations, or Studio Administration. Portfolio owners see both Headquarters and Studio Administration. Future standalone Studio OS deploy = change `application/routes.ts` prefixes only.
+
+---
+
+## 2026-07-05 — Phase 1 architectural boundaries (approved plan implementation)
+
+**Context (full chat arc):** User approved refactor plan after architectural analysis. Phase 0 accepted as baseline. Phase 1 approved: boundaries + module host only, no UX change. Phase 2 storage migration deferred. Folder rename deferred to Phase 3. Supabase table for org membership (env fallback during migration). Legacy `/admin/studio/*` permanent FS aliases. Stop rule: no new Studio OS features until Phase 1 stable. One deploy per phase.
+
+**Phase 1 delivered:**
+- **`StudioWorkspaceGuard`** wired in App.tsx — legacy `/admin/studio/*` locks Frontal Slayer HQ context; non-FS assigned operators redirect to workspace-scoped routes.
+- **`headquarters-module-resolver.ts`** — Vite glob resolves all ~123 HQ page modules for `/admin/studio-os/workspace/:id/studio/*` (no duplicate implementations).
+- **`WorkspaceStudioModuleHost`** expanded to use resolver; FS scoped paths redirect to legacy aliases.
+- **Registry injection extended:** `bootstrapVisionEngine`, `isDynamicWorkspaceId` — removed `studio-os-core` → `workspaces/` imports from vision-engine + campus-transitions.
+- **`studio-os-core/auth/`** — auth provider injection, org membership cache, `registerStudioOsAuthBridge()` in bootstrap.
+- **Supabase:** migration `20260705120000_studio_os_org_memberships.sql` + `GET /api/admin/studio-os-membership`.
+- **`portfolio-access.ts`** uses membership cache + auth provider (no direct `adminAuth` import).
+- **`AdminStudioWorkspaceGuard`** resolves org membership on Studio route entry; locks non-portfolio users to assigned workspace.
+
+**Not in Phase 1 (deferred):** storage scoping migration, folder renames, dataAdapter enforcement, new features.
+
+**Changes:** studio-os-core auth + headquarters-module-resolver, registry/guards/host/API/migration, App.tsx guard nesting, ensureWorkspacesBootstrapped auth bridge, docs + MEMORY.

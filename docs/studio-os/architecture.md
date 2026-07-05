@@ -95,6 +95,8 @@ Registry: `src/workspaces/index.ts` — calls `configureWorkspaceRegistry()` on 
 
 Guard: `StudioAdministrationGuard` — non-portfolio users redirect to `/admin/headquarters`.
 
+**Phase 1 boundaries (2026-07-05):** `StudioWorkspaceGuard` locks legacy `/admin/studio/*` to Frontal Slayer HQ context. `headquarters-module-resolver.ts` glob-loads all HQ page modules for workspace-scoped routes. Platform auth via `studio-os-core/auth/` + `registerStudioOsAuthBridge()`. Org membership via Supabase `studio_os_org_memberships` + `GET /api/admin/studio-os-membership`. Registry callbacks: `bootstrapVisionEngine`, `isDynamicWorkspaceId` — core no longer imports `workspaces/`.
+
 ## Multi-tenant isolation
 
 Every workspace is isolated via `tenantScopedKey()` and `scopeStorageKey()`. Separate knowledge, executives, concierges, customers, media, campaigns, analytics, permissions, branding, voice, AI memory, and organization genome per workspace.

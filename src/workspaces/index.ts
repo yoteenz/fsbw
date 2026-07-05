@@ -85,6 +85,12 @@ configureWorkspaceRegistry({
   getWorkspaceDataAdapter,
   isKnownWorkspaceId,
   listWorkspaces,
+  isDynamicWorkspaceId,
+  bootstrapVisionEngine: (workspaceId: string) => {
+    if (workspaceId === 'frontal-slayer') {
+      void import('./frontal-slayer/vision-engine').then((m) => m.bootstrapFrontalSlayerVisionEngine());
+    }
+  },
 });
 
 /** Yield so admin UI can paint before the next heavy seed runs. */

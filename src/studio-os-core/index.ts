@@ -3,6 +3,27 @@
  * Industry-agnostic logic only; workspace implementations live in src/workspaces/.
  */
 
+export {
+  configureStudioOsAuth,
+  getStudioOsAuthProvider,
+  tryGetStudioOsAuthProvider,
+} from './auth/provider';
+
+export type { StudioOsAuthUser, StudioOsAuthProvider, StudioOsOrgMembership } from './auth/types';
+
+export {
+  resolveOrgMembership,
+  ensureOrgMembershipResolved,
+  getCachedOrgMembership,
+  clearOrgMembershipCache,
+} from './auth/membership';
+
+export {
+  resolveHeadquartersPageModule,
+  isLegacyFrontalSlayerStudioPath,
+  headquartersModuleCount,
+} from './workspace/headquarters-module-resolver';
+
 export { STUDIO_OS_PLATFORM } from './config/platform';
 export type { StudioOsPlatformConfig } from './config/platform';
 
