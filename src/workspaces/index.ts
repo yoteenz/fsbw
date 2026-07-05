@@ -368,6 +368,10 @@ export function bootstrapWorkspacesPlatform(): void {
     conciergeApprovalFlow.bootstrapConciergeApprovalFlowPlatform();
     await yieldToMain();
 
+    const executiveTimeline = await import('../studio-os-core/executive-timeline/bootstrap');
+    executiveTimeline.bootstrapExecutiveTimelinePlatform();
+    await yieldToMain();
+
     const workspaceRegistry = await import('../studio-os-core/workspace-registry/store');
     workspaceRegistry.bootstrapWorkspaceRegistryPlatform();
     await yieldToMain();

@@ -82,6 +82,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'executive-timeline',
+    title: 'EXECUTIVE TIMELINE',
+    purpose: 'Temporal intelligence — living organizational timeline with layers, dependencies, concierge commands, and portfolio view. Not a calendar.',
+    route: p('executive-timeline'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN TIMELINE',
+    moduleKey: 'executive-timeline',
+    featuredOnOverview: true,
+  },
+  {
     id: 'executive-organization',
     title: 'EXECUTIVE ORGANIZATION',
     purpose: 'Living leadership team — executive HQ, departments, teams, workers, culture, and organizational memory.',

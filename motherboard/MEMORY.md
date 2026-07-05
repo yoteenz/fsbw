@@ -38066,3 +38066,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Not in Phase 1 (deferred):** storage scoping migration, folder renames, dataAdapter enforcement, new features.
 
 **Changes:** studio-os-core auth + headquarters-module-resolver, registry/guards/host/API/migration, App.tsx guard nesting, ensureWorkspacesBootstrapped auth bridge, docs + MEMORY.
+
+---
+
+## 2026-07-05 — Milestone 81 Executive Timeline V1.0 (temporal intelligence layer)
+
+**Context (full chat arc):** After Phase 0 application layer refactor and Phase 1 architectural boundaries (StudioWorkspaceGuard, module host, auth/membership), user requested **Milestone 81 — Executive Timeline V1.0**. Build temporal operating system for Studio OS — NOT a traditional calendar. Connect to Mission Control, orgs, production, publishing, concierges, executives. Support layers, multi-org + portfolio timeline, living dependencies, concierge commands, intelligent rescheduling, personal assistant mode, views, timeline cards, morning briefing, conversational timeline, proactive intelligence, timeline memory. **Do not redesign existing UI.**
+
+**Decisions / outcomes:**
+- **Core module** `src/studio-os-core/executive-timeline/` — constants (17 layers, 13 views, 5 org timelines including portfolio), types, intelligence (impact analysis + NL command parsing), scoped store, bootstrap seed (Noir launch chain with dependencies, NDXBOOK publish, founder vacation/deep work, morning briefing, proactive recommendations, timeline memory).
+- **UI** `src/components/admin/studio/executive-timeline/` — workspace + panels matching existing Admin Studio marble/glass aesthetic (no layout redesign). Organization selector · view/layer toggles · morning briefing · event cards with dependency counts · event detail · impact preview · conversational input · concierge command examples · timeline memory · connected systems footer.
+- **Route** `/admin/studio/executive-timeline` — overview nav group, featured on Mission Control directory.
+- **Wiring:** `core/modules.ts`, `adminStudioNavigation.ts`, `adminStudioRoutes.ts`, `App.tsx`, `workspaces/index.ts` bootstrap, `feature-inheritance/registry.ts`, knowledge graph node + edges.
+
+**Philosophy embedded:** "Don't manage your calendar. Lead your organization. We'll manage the time." Impact analysis always shown before applying timeline changes; founder approval required for high-impact moves.
+
+**Changes:** executive-timeline core + UI + page + hook, App/navigation/routes/modules/bootstrap/feature-inheritance/knowledge-graph, motherboard/CORE.md + MEMORY.md.
+
+**Conventions:** Executive Timeline is headquarters/overview module — portfolio timeline combines all orgs; org-specific timelines filter events. Concierge commands parse natural language demo patterns; production intelligence layer will extend parsing. Work on `master` only; one deploy per task.

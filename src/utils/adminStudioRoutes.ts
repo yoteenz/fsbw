@@ -297,6 +297,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   renderQueue: 'studio/render-queue',
   screeningRoom: 'studio/screening-room',
   conciergeApprovalFlow: 'studio/concierge-approval-flow',
+  executiveTimeline: 'studio/executive-timeline',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -580,6 +581,10 @@ export function adminStudioScreeningRoomPath(): string {
 
 export function adminStudioConciergeApprovalFlowPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/concierge-approval-flow`;
+}
+
+export function adminStudioExecutiveTimelinePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/executive-timeline`;
 }
 
 export function adminStudioPublishingQueuePath(): string {
