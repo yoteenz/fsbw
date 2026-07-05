@@ -528,20 +528,29 @@ html[data-vision-engine='active'] #root {
 .vision-engine-cinematic__logo {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: clamp(36px, 8vw, 64px);
-  font-weight: 515;
+  font-weight: 400;
   color: #fff;
   margin: 0;
   letter-spacing: 0.12em;
 }
 
-.vision-engine-cinematic__tagline,
+.vision-engine-cinematic__tagline {
+  font-family: 'Bohemy', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.35em;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 16px 0 0;
+  text-transform: lowercase;
+}
+
 .vision-engine-cinematic__finale {
   font-family: 'Futura PT', Futura, sans-serif;
   font-size: 13px;
   letter-spacing: 0.35em;
   color: rgba(255, 255, 255, 0.72);
   margin: 16px 0 0;
-  text-transform: none;
+  text-transform: uppercase;
 }
 
 .vision-engine-cinematic__drift {

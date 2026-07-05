@@ -36626,3 +36626,13 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Ambient audio:** `VisionEngineLuxuryAudio` master gain ~6× louder (0.04→0.24 normal, 0.06→0.14 record); oscillator and noise layers boosted proportionally.
 - **Changes:** `VisionEngineOverlay.tsx`, `vision-engine.css`, `VisionEngineLuxuryAudio.tsx`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Vision Engine opening cinematic (luxury backdrop)
+
+**Context:** User wanted the plain black Vision Engine intro replaced with a short, luxurious brand-themed precursor — diamond/acrylic light reflections dancing across screen and soft rose petals falling out of focus in the background.
+
+- **Delivered:** New `VisionEngineOpeningBackdrop` layered behind opening logo — deep rose-noir gradient base, blurred falling rose petals (18), three animated acrylic light sweeps + soft-light band, diamond facet shards with gold/white catchlights, subtle sparkle field. Logo reveal delayed to **2.4s** so the atmosphere establishes first. Opening-only styles on `.vision-engine-cinematic--opening`.
+- **Brand alignment:** Reuses Frontal Slayer palette — `#eb1c24` rose, gold `#c9a228`, acrylic refraction patterns consistent with `acrylicGlass.css`.
+- **Changes:** `VisionEngineOpeningBackdrop.tsx`, `VisionEngineOpeningCinematic.tsx`, `vision-engine.css`, `motherboard/MEMORY.md`.
+
