@@ -1,5 +1,3 @@
-import { MANSION_TOUR_CUSTOMER_NAME } from '../constants';
-
 type Props = {
   estimatedMinutes: number;
   onStart: () => void;
@@ -40,12 +38,11 @@ export function TutorialWelcomePrompt({ estimatedMinutes, onStart, onMaybeLater,
             fontFamily: '"Futura PT Book"',
             fontSize: '11px',
             lineHeight: 1.5,
-            textTransform: 'uppercase',
             color: '#1A1A1A',
             marginBottom: '6px',
           }}
         >
-          TAKE {MANSION_TOUR_CUSTOMER_NAME.toUpperCase()}?
+          take the guided tour with our concierge?
         </p>
         <p
           style={{
