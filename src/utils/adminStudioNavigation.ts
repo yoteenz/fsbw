@@ -838,6 +838,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'production-studio',
+    title: 'PRODUCTION STUDIO',
+    purpose: 'Cinematic production headquarters — every approved page becomes production-ready media. AI teams already working.',
+    route: p('production-studio'),
+    groupId: 'production',
+    status: 'demo',
+    metric: 'V1.0',
+    ctaLabel: 'ENTER STUDIO',
+    moduleKey: 'production-studio',
+    featuredOnOverview: true,
+  },
+  {
     id: 'content-packs',
     title: 'CONTENT PACKS',
     purpose: 'Bundle weekly video, article, and checklist releases.',

@@ -37884,6 +37884,8 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+---
+
 ## 2026-07-05 — NDXBOOK social OAuth setup panel toggle broken + Meta walkthrough
 
 **Context (full chat):** User setting up ndxbook social OAuth connectors — asked where to find API keys/secrets per platform; clarified YouTube is not an OAuth connector yet (brand registry / distribution format only). User requested comprehensive Meta walkthrough (Instagram Graph API + Facebook Login, Vercel env vars, redirect URL). User reported **SHOW SETUP STEPS** on NDXBOOK SOCIALS tab does nothing when tapped/clicked.
@@ -37892,7 +37894,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Fix:** `SocialOAuthSetupPanel` — add `onOpenChange`; `toggleOpen` calls it in controlled mode. `NdxbookSocialsPanel` — manage `setupPanelOpen` with `onOpenChange`; auto-open when accounts load and all platforms unconfigured; render panel only after OAuth accounts fetch completes.
 
-**Meta setup (documented for user):** Create Meta Business app → add Facebook Login + Instagram Graph API → Valid OAuth Redirect URI = `https://fsbw.vercel.app/api/admin/social-accounts-oauth-callback` (production `SITE_URL` + `/api/admin/social-accounts-oauth-callback`) → copy App ID/Secret to Vercel `META_APP_ID` / `META_APP_SECRET` plus `SOCIAL_TOKEN_ENCRYPTION_SECRET` and `SITE_URL` → redeploy → Connect on SOCIALS tab. Instagram must be Business/Creator linked to a Facebook Page.
+**Meta setup (documented for user):** Create Meta Business app → add Facebook Login + Instagram Graph API → Valid OAuth Redirect URI = `https://fsbw.vercel.app/api/admin/social-accounts-oauth-callback` (production `SITE_URL` + `/api/admin/social-accounts-oauth-callback`) → copy App ID/Secret to Vercel `META_APP_ID` / `META_APP_APP_SECRET` plus `SOCIAL_TOKEN_ENCRYPTION_SECRET` and `SITE_URL` → redeploy → Connect on SOCIALS tab. Instagram must be Business/Creator linked to a Facebook Page.
 
 **Changes:** `SocialOAuthSetupPanel.tsx`, `NdxbookSocialsPanel.tsx`, `motherboard/MEMORY.md`.
 
@@ -37907,3 +37909,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **User local GitHub Desktop:** lock file error on commit — advised delete `.git/index.lock` or pull from origin after cloud push.
 
 **Changes:** `public/tiktokVJ3VhwVlwJ5LoVKpDyY4WnyC7neVhhR2.txt`, `vercel.json`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — Milestone 78: Production Studio V1.0
+
+**Context (full chat):** User continued Studio OS after Talent Network freeze / platform-wide perf audit (session-once bootstrap, slim default tabs, hook seed fixes — rebased and pushed `959bd64e`). New request: create **Production Studio** — cinematic production headquarters where every approved page becomes production-ready media. Not a traditional video editor — luxury creative studio where AI production teams are already working (Pixar meets Apple Pro Studio). Do not redesign existing UI.
+
+**Goal:** Production Studio as the cinematic content transformation layer — auto-generate production assets from every approved page; full pipeline; three-column workspace; founder override on any AI decision; connect to Mission Control, Newsroom, Publishing, Library, Studio Intelligence, Knowledge Graph, Talent Network, and all Concierges.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/production-studio/` — types · constants (pipeline stages · asset types · queue statuses · connected systems) · store (localStorage · job selection · queue filter · asset overrides · pipeline advance) · bootstrap (5 NDXBOOK demo jobs across all queue states).
+- **Hook:** `useProductionStudioState` — lazy seed · select job · filter queue · override/reset assets · advance pipeline.
+- **UI:** `/admin/studio/production-studio` — three-column layout: **left** Production Queue (Ready · In Production · Rendering · Needs Review · Completed) · **center** cinematic canvas (pipeline timeline · scene cards · voice waveform · thumbnail preview · runtime · platform versions · notes · advance stage) · **right** Studio Intelligence (hook/thumbnail/voice recommendations · retention · confidence · predicted performance · founder asset overrides). Glass/marble theme (`productionStudioTheme.ts`). Asset grid · philosophy · connected systems links.
+- **Service:** `productionStudioModuleService` (`id: production-studio`) — distinct from existing **`productionStudioService`** (Production Pipeline pack lifecycle).
+- **Wiring:** route · nav (PRODUCTION group, featured) · `modules.ts` · `workspaces/index.ts` bootstrap · KG `node-production-studio` + edges to newsroom · mission control · publishing · talent · studio intelligence · concierge · `motherboard/CORE.md`.
+
+**Pipeline:** Page Ready → Production Brief → Voice Generation → Host Assignment → Visual Generation → Motion Graphics → Captions → Thumbnail → Platform Optimization → Preview → Render Queue.
+
+**Auto assets:** script · voice · host · b-roll · motion graphics · charts · captions · thumbnail · title · description · hashtags · SEO metadata · platform variations.
+
+**Route:** `/admin/studio/production-studio` · back from Production Builder.
+
+**Changes:** production-studio core + UI + hook + page + service, App.tsx, adminStudioRoutes/Navigation/Demo, modules.ts, workspaces bootstrap, services registry, seedGraph, `motherboard/CORE.md`, `motherboard/MEMORY.md`.

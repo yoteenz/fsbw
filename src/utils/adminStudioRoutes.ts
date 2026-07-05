@@ -84,6 +84,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'studio-institute'
   | 'organizational-apprenticeship'
   | 'concierge-layer'
+  | 'production-studio'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -175,6 +176,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'studio-institute',
   'organizational-apprenticeship',
   'concierge-layer',
+  'production-studio',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -285,6 +287,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   studioInstitute: 'studio/studio-institute',
   organizationalApprenticeship: 'studio/organizational-apprenticeship',
   conciergeLayer: 'studio/concierge-layer',
+  productionStudio: 'studio/production-studio',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -552,6 +555,18 @@ export function adminStudioOrganizationalApprenticeshipPath(): string {
 
 export function adminStudioConciergeLayerPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/concierge-layer`;
+}
+
+export function adminStudioProductionStudioPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/production-studio`;
+}
+
+export function adminStudioPublishingQueuePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/publishing-queue`;
+}
+
+export function adminStudioNdxbookNewsroomPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/ndxbook?tab=pages`;
 }
 
 export function adminStudioOsPath(): string {

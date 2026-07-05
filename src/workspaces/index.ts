@@ -337,6 +337,10 @@ export function bootstrapWorkspacesPlatform(): void {
     conciergeLayer.bootstrapConciergeLayerPlatform();
     await yieldToMain();
 
+    const productionStudio = await import('../studio-os-core/production-studio/bootstrap');
+    productionStudio.bootstrapProductionStudioPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

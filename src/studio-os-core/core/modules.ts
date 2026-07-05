@@ -50,6 +50,7 @@ export type StudioOsCoreModuleId =
   | 'studio-institute'
   | 'organizational-apprenticeship'
   | 'concierge-layer'
+  | 'production-studio'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -379,6 +380,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CONCIERGE LAYER',
     description: 'Founder-facing guidance — hospitality-driven executive experience. V1.0.',
     routeSegment: 'concierge-layer',
+  },
+  {
+    id: 'production-studio',
+    label: 'PRODUCTION STUDIO',
+    description: 'Cinematic production headquarters — approved pages become production-ready media. V1.0.',
+    routeSegment: 'production-studio',
   },
   {
     id: 'executive-command-center',

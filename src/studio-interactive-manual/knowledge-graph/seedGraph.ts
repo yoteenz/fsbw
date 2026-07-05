@@ -60,6 +60,7 @@ import {
   adminStudioStudioInstitutePath,
   adminStudioOrganizationalApprenticeshipPath,
   adminStudioConciergeLayerPath,
+  adminStudioProductionStudioPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -833,6 +834,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 77',
     status: 'demo',
     searchKeywords: ['concierge layer', 'chief concierge', 'meet your concierge team', 'concierge directory', 'concierge briefing', 'hospitality'],
+  },
+  {
+    id: 'node-production-studio',
+    name: 'PRODUCTION STUDIO',
+    type: 'module',
+    description:
+      'Cinematic production headquarters V1.0 — every approved page becomes production-ready media. AI production teams already working when you enter.',
+    purpose: 'Not a traditional video editor — Pixar craft meets Apple Pro Studio · founder override on any AI decision.',
+    route: adminStudioProductionStudioPath(),
+    moduleId: 'production-studio',
+    relatedManualChapter: 'CHAPTER · PRODUCTION · CINEMATIC HEADQUARTERS',
+    versionIntroduced: 'Milestone 78',
+    status: 'demo',
+    searchKeywords: ['production studio', 'production queue', 'render queue', 'voice generation', 'platform variations', 'cinematic production'],
   },
   {
     id: 'node-fallback-used',
@@ -2218,6 +2233,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-oi-cl', fromId: 'node-organizational-intelligence', toId: 'node-concierge-layer', type: 'feeds', label: 'KNOWLEDGE CONCIERGE' },
   { id: 'e-cl-oi', fromId: 'node-concierge-layer', toId: 'node-organizational-intelligence', type: 'related-to', label: 'ORGANIZATIONAL KNOWLEDGE' },
   { id: 'e-cl-platform', fromId: 'node-concierge-layer', toId: 'concierge-layer', type: 'documented-by', label: 'FOUNDER GUIDANCE' },
+  { id: 'e-ps-newsroom', fromId: 'node-ndxbook-newsroom', toId: 'node-production-studio', type: 'feeds', label: 'APPROVED PAGES' },
+  { id: 'e-ps-mc', fromId: 'node-production-studio', toId: 'mission-control', type: 'related-to', label: 'PRODUCTION QUEUE' },
+  { id: 'e-ps-publishing', fromId: 'node-production-studio', toId: 'publishing-queue', type: 'feeds', label: 'RENDER OUTPUT' },
+  { id: 'e-ps-talent', fromId: 'node-production-studio', toId: 'node-talent-network', type: 'related-to', label: 'HOST ASSIGNMENT' },
+  { id: 'e-ps-si', fromId: 'node-production-studio', toId: 'node-studio-intelligence', type: 'feeds', label: 'PRODUCTION RECOMMENDATIONS' },
+  { id: 'e-ps-cl', fromId: 'node-production-studio', toId: 'node-concierge-layer', type: 'related-to', label: 'CONCIERGE PRODUCTION GUIDANCE' },
+  { id: 'e-ps-platform', fromId: 'node-production-studio', toId: 'production-studio', type: 'documented-by', label: 'CINEMATIC HEADQUARTERS' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },
