@@ -346,6 +346,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-autonomy-framework',
+    title: 'ORGANIZATIONAL AUTONOMY FRAMEWORK',
+    purpose: 'Constitutional autonomy governance — execute with judgment, transparency, founder alignment. V1.0.',
+    route: p('organizational-autonomy-framework'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN OAF',
+    moduleKey: 'organizational-autonomy-framework',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

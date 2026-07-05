@@ -25,6 +25,7 @@ import {
   adminStudioRelationshipEnginePath,
   adminStudioStrategyEnginePath,
   adminStudioStudioIntelligencePath,
+  adminStudioOrganizationalAutonomyFrameworkPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   OI,
@@ -374,6 +375,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCompanyGenomePath()} style={{ ...oiLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...oiLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INHERITANCE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...oiLabel, color: '#6366F1', fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
+        <Link to={adminStudioOrganizationalAutonomyFrameworkPath()} style={{ ...oiLabel, color: '#0D9488', fontSize: '6px' }}>→ ORGANIZATIONAL AUTONOMY FRAMEWORK</Link>
       </div>
     </section>
   );

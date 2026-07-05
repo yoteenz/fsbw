@@ -17,6 +17,7 @@ import {
   adminStudioRelationshipEnginePath,
   adminStudioStudioIntelligencePath,
   adminStudioOrganizationalIntelligencePath,
+  adminStudioOrganizationalAutonomyFrameworkPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   EC,
@@ -385,6 +386,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...ecLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...ecLabel, color: '#6366F1', fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
         <Link to={adminStudioOrganizationalIntelligencePath()} style={{ ...ecLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INTELLIGENCE</Link>
+        <Link to={adminStudioOrganizationalAutonomyFrameworkPath()} style={{ ...ecLabel, color: '#0D9488', fontSize: '6px' }}>→ ORGANIZATIONAL AUTONOMY FRAMEWORK</Link>
       </div>
     </section>
   );

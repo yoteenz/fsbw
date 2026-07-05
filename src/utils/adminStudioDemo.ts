@@ -85,6 +85,7 @@ export type AdminStudioSectionId =
   | 'chief-growth-officer'
   | 'executive-council'
   | 'organizational-intelligence'
+  | 'organizational-autonomy-framework'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

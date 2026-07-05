@@ -285,6 +285,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationalIntelligence.bootstrapOrganizationalIntelligencePlatform();
     await yieldToMain();
 
+    const organizationalAutonomy = await import('../studio-os-core/organizational-autonomy-framework/bootstrap');
+    organizationalAutonomy.bootstrapOrganizationalAutonomyPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

@@ -19,6 +19,7 @@ import {
   adminStudioChiefGrowthOfficerPath,
   adminStudioExecutiveCouncilPath,
   adminStudioOrganizationalIntelligencePath,
+  adminStudioOrganizationalAutonomyFrameworkPath,
   adminStudioLeadershipManifestoFrameworkPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -325,6 +326,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioChiefGrowthOfficerPath()} style={{ ...efLabel, color: '#059669', fontSize: '6px' }}>→ CHIEF GROWTH OFFICER</Link>
         <Link to={adminStudioExecutiveCouncilPath()} style={{ ...efLabel, color: '#B45309', fontSize: '6px' }}>→ EXECUTIVE COUNCIL</Link>
         <Link to={adminStudioOrganizationalIntelligencePath()} style={{ ...efLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INTELLIGENCE</Link>
+        <Link to={adminStudioOrganizationalAutonomyFrameworkPath()} style={{ ...efLabel, color: '#0D9488', fontSize: '6px' }}>→ ORGANIZATIONAL AUTONOMY FRAMEWORK</Link>
         <Link to={adminStudioExperienceArchitectPath()} style={{ ...efLabel, color: '#0891B2', fontSize: '6px' }}>→ EXPERIENCE ARCHITECT</Link>
         <Link to={adminStudioDigitalArchitectPath()} style={{ ...efLabel, color: '#6366F1', fontSize: '6px' }}>→ DIGITAL ARCHITECT</Link>
         <Link to={adminStudioGrowthArchitectPath()} style={{ ...efLabel, color: '#059669', fontSize: '6px' }}>→ GROWTH ARCHITECT</Link>

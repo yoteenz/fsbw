@@ -59,6 +59,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Chief Growth Officer',
   'Executive Council',
   'Organizational Intelligence',
+  'Organizational Autonomy Framework',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

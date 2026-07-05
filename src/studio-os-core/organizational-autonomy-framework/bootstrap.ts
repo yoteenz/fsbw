@@ -1,0 +1,165 @@
+import { bootstrapOrganizationalAutonomyStore } from './store';
+import type { OrganizationalAutonomyStore } from './types';
+
+export function buildOrganizationalAutonomySeed(): Partial<OrganizationalAutonomyStore> {
+  return {
+    companyName: 'NDXBOOK',
+    activeWorkspaceId: 'ndxbook',
+    dashboard: {
+      summary:
+        'ORGANIZATIONAL AUTONOMY FRAMEWORK V1.0 — constitutional system governing how organizations safely execute work with judgment and founder alignment.',
+      organizationalAutonomyLevel: 3,
+      trustScorePct: 86,
+      activeWorkflows: 12,
+      recentAutonomousDecisions: 8,
+      pendingApprovals: 3,
+      executiveConfidencePct: 88,
+      workflowHealthPct: 91,
+    },
+    autonomyLevels: [
+      { level: 0, name: 'Observe only', description: 'No actions · monitoring and learning only', requirements: 'Default for new organizations' },
+      { level: 1, name: 'Recommend', description: 'Human approval required for all recommendations', requirements: 'Demonstrated organizational understanding' },
+      { level: 2, name: 'Prepare', description: 'Drafts · plans · simulations · human approval required', requirements: 'Reliable recommendation accuracy > 80%' },
+      { level: 3, name: 'Execute approved workflows', description: 'Automatic execution of pre-approved workflows · founder notified', requirements: 'Workflow reliability > 85% · trust score > 80%' },
+      { level: 4, name: 'Cross-functional execution', description: 'Executives collaborate autonomously · founder informed', requirements: 'Executive coordination success · council alignment' },
+      { level: 5, name: 'Organizational stewardship', description: 'Routine operational work independent · major strategic decisions remain with founder', requirements: 'Sustained trust · institutional memory · founder confidence' },
+    ],
+    autonomyGovernance: [
+      { id: 'ag-1', capability: 'Observe', currentLevel: 5, governance: 'Always permitted · feeds organizational intelligence' },
+      { id: 'ag-2', capability: 'Recommend', currentLevel: 4, governance: 'All executives · CoS coordination · founder optional review' },
+      { id: 'ag-3', capability: 'Prepare', currentLevel: 3, governance: 'Drafts and plans · approval before execution' },
+      { id: 'ag-4', capability: 'Schedule', currentLevel: 3, governance: 'Pre-approved campaign and content calendars only' },
+      { id: 'ag-5', capability: 'Publish', currentLevel: 2, governance: 'Editorial content above threshold requires founder · routine below threshold automatic' },
+      { id: 'ag-6', capability: 'Communicate', currentLevel: 2, governance: 'Customer follow-up automatic · partnership outreach always ask' },
+      { id: 'ag-7', capability: 'Delegate', currentLevel: 3, governance: 'CoS delegation within approved autonomy boundaries' },
+      { id: 'ag-8', capability: 'Purchase', currentLevel: 1, governance: 'Always ask · never automatic' },
+      { id: 'ag-9', capability: 'Approve', currentLevel: 2, governance: 'Soft approvals within CoS threshold · escalate above' },
+      { id: 'ag-10', capability: 'Escalate', currentLevel: 5, governance: 'Always permitted · mandatory for high-risk detection' },
+      { id: 'ag-11', capability: 'Pause / Cancel', currentLevel: 4, governance: 'Executives may pause autonomous workflows · founder override always available' },
+    ],
+    founderPermissions: [
+      { id: 'fp-1', domain: 'Executive authority', mode: 'ask-above-threshold', threshold: 'Level 3+ cross-functional coordination', detail: 'Routine executive coordination automatic · major appointments always ask' },
+      { id: 'fp-2', domain: 'Financial authority', mode: 'always-ask', detail: 'All purchases and financial commitments require founder approval' },
+      { id: 'fp-3', domain: 'Communication authority', mode: 'ask-above-threshold', threshold: 'Partnership · public statements', detail: 'Customer follow-up automatic · partnership outreach always ask' },
+      { id: 'fp-4', domain: 'Publishing authority', mode: 'ask-above-threshold', threshold: 'New editorial formats · GTM campaigns', detail: 'Routine newsletter automatic · major campaigns require approval' },
+      { id: 'fp-5', domain: 'Customer authority', mode: 'automatic', detail: 'Relationship nurturing · onboarding reminders · retention workflows' },
+      { id: 'fp-6', domain: 'Partnership authority', mode: 'never', detail: 'Partnerships always require founder approval' },
+      { id: 'fp-7', domain: 'Technology authority', mode: 'ask-above-threshold', threshold: 'Production deployments · schema changes', detail: 'Routine monitoring automatic · infrastructure changes require approval' },
+      { id: 'fp-8', domain: 'Organizational authority', mode: 'always-ask', detail: 'Mission · values · identity · executive appointments · legacy systems' },
+    ],
+    trustEngine: [
+      { id: 'te-1', dimension: 'Executive reliability', score: 88, trend: 'up', recommendation: 'CBO and CGO coordination accuracy strong · maintain Level 3' },
+      { id: 'te-2', dimension: 'Workflow reliability', score: 91, trend: 'stable', recommendation: 'Newsletter and briefing workflows exceed 90% success · eligible for Level 4 pilot' },
+      { id: 'te-3', dimension: 'Decision accuracy', score: 87, trend: 'up', recommendation: 'Council decisions aligned with outcomes · trust compounding' },
+      { id: 'te-4', dimension: 'Approval accuracy', score: 85, trend: 'stable', recommendation: 'CoS soft approval threshold calibrated correctly' },
+      { id: 'te-5', dimension: 'Organizational confidence', score: 86, trend: 'up', recommendation: 'Trust-before-scale precedent strengthens confidence model' },
+      { id: 'te-6', dimension: 'Historical outcomes', score: 89, trend: 'up', recommendation: 'Organic growth decisions validated · paid acquisition block confirmed wise' },
+    ],
+    executiveCoordination: [
+      {
+        id: 'ec-1',
+        trigger: 'CGO identifies declining acquisition on stat-forward hooks',
+        executives: ['Chief Growth Officer', 'Chief Brand Officer', 'Chief Experience Officer', 'Chief Digital Officer', 'Chief Technology Officer', 'Chief of Staff'],
+        actions: 'CBO recommends messaging improvements · CEO updates onboarding · CDO schedules implementation · CTO validates deployment · CoS prepares briefing',
+        governanceStatus: 'permitted',
+      },
+      {
+        id: 'ec-2',
+        trigger: 'Reader Graph signals retention drop on onboarding step 3',
+        executives: ['Chief Experience Officer', 'Chief Digital Officer', 'Chief Technology Officer'],
+        actions: 'CEO proposes simplification · CDO drafts UX changes · CTO assesses auth refactor scope',
+        governanceStatus: 'pending-approval',
+      },
+      {
+        id: 'ec-3',
+        trigger: 'Creator marketplace pilot outreach sequence',
+        executives: ['Chief Growth Officer', 'Chief Brand Officer'],
+        actions: 'CGO identifies creators · CBO validates Writing DNA alignment · automated nurture below threshold',
+        governanceStatus: 'permitted',
+      },
+    ],
+    autonomousWorkflows: [
+      { id: 'aw-1', workflow: 'Newsletter distribution scheduling', category: 'Marketing campaigns', autonomyLevel: 3, status: 'active', risk: 'low' },
+      { id: 'aw-2', workflow: 'Customer follow-up sequences', category: 'Relationship nurturing', autonomyLevel: 3, status: 'active', risk: 'low' },
+      { id: 'aw-3', workflow: 'Executive daily briefing preparation', category: 'Executive briefings', autonomyLevel: 3, status: 'active', risk: 'low' },
+      { id: 'aw-4', workflow: 'Reader engagement analytics reports', category: 'Analytics', autonomyLevel: 3, status: 'active', risk: 'low' },
+      { id: 'aw-5', workflow: 'Knowledge asset documentation updates', category: 'Documentation', autonomyLevel: 2, status: 'active', risk: 'low' },
+      { id: 'aw-6', workflow: 'Creator outreach nurture (curated pilot)', category: 'Creator outreach', autonomyLevel: 2, status: 'pending', risk: 'medium' },
+      { id: 'aw-7', workflow: '100K GTM campaign launch', category: 'Marketing campaigns', autonomyLevel: 1, status: 'paused', risk: 'high' },
+      { id: 'aw-8', workflow: 'Paid acquisition channel test', category: 'Marketing campaigns', autonomyLevel: 0, status: 'paused', risk: 'high' },
+    ],
+    autonomousActions: [
+      {
+        id: 'aa-1',
+        action: 'Scheduled newsletter distribution for stat-forward editorial hook A/B test',
+        reasoning: 'Pre-approved workflow · Reader Graph signals support hook variant B · brand alignment validated by CBO',
+        executives: 'CGO · CBO · CoS',
+        expectedOutcome: 'Engagement lift 8-12% · no brand dilution',
+        confidence: 87,
+        rollbackPlan: 'Pause workflow · revert to control variant · notify founder',
+        executedAt: '2026-07-05',
+      },
+      {
+        id: 'aa-2',
+        action: 'Automated retention follow-up for onboarding step 3 drop-off cohort',
+        reasoning: 'Customer authority automatic · relationship nurturing workflow · CEO-approved template',
+        executives: 'CEO · CoS',
+        expectedOutcome: 'Reduce step 3 drop-off 5% · strengthen trust',
+        confidence: 82,
+        rollbackPlan: 'Pause sequence · manual review of messaging',
+        executedAt: '2026-07-04',
+      },
+      {
+        id: 'aa-3',
+        action: 'Blocked paid acquisition workflow — escalated to founder',
+        reasoning: 'High-risk action · governance requires founder approval · CGO and council precedent',
+        executives: 'CGO · CoS',
+        expectedOutcome: 'Founder informed · workflow remains paused',
+        confidence: 95,
+        rollbackPlan: 'N/A — action blocked',
+        executedAt: '2026-07-03',
+      },
+    ],
+    learningLoop: [
+      {
+        id: 'll-1',
+        action: 'Newsletter hook A/B test auto-scheduled',
+        outcome: 'Variant B outperformed 11% · brand integrity preserved',
+        accuracy: 'Prediction within 3% of actual',
+        organizationalImpact: 'Trust engine workflow reliability +2%',
+        customerImpact: 'Positive engagement · no churn increase',
+        improvement: 'Expand auto-scheduling to creator spotlight sequences',
+      },
+      {
+        id: 'll-2',
+        action: 'Paid acquisition block escalation',
+        outcome: 'Founder confirmed block · council precedent validated',
+        accuracy: 'Correct risk identification',
+        organizationalImpact: 'Institutional memory strengthened in OI',
+        customerImpact: 'Protected from wrong-audience acquisition',
+        improvement: 'Encode block precedent in autonomy governance defaults',
+      },
+    ],
+    autonomyUpgrades: [
+      { id: 'au-1', domain: 'Executive briefings', currentLevel: 3, recommendedLevel: 4, rationale: '91% workflow reliability · CoS facilitation accuracy 88%', confidence: 84 },
+      { id: 'au-2', domain: 'Cross-functional onboarding fix', currentLevel: 2, recommendedLevel: 3, rationale: 'Pending founder approval on coordination plan', confidence: 72 },
+      { id: 'au-3', domain: 'Creator nurture outreach', currentLevel: 2, recommendedLevel: 3, rationale: 'Pilot quality gates active · CBO validation complete', confidence: 79 },
+    ],
+    recommendedNextSteps: [
+      'Founder review pending onboarding coordination approval',
+      'Pilot Level 4 cross-functional execution on executive briefings',
+      'Feed learning loop outcomes to Organizational Intelligence',
+      'Calibrate trust engine thresholds after Q2 reflection',
+    ],
+    futureOpportunities: [
+      'Dynamic autonomy level adjustment based on trust engine signals',
+      'Live autonomy dashboard with rollback controls for every workflow',
+      'Autonomous action audit trail synced to Knowledge Graph',
+      'Per-workflow governance templates for new organizations',
+    ],
+  };
+}
+
+export function bootstrapOrganizationalAutonomyPlatform(): void {
+  bootstrapOrganizationalAutonomyStore(buildOrganizationalAutonomySeed());
+}

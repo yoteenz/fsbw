@@ -37,6 +37,7 @@ export type StudioOsCoreModuleId =
   | 'chief-growth-officer'
   | 'executive-council'
   | 'organizational-intelligence'
+  | 'organizational-autonomy-framework'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -288,6 +289,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL INTELLIGENCE',
     description: 'Collective mind — observe, learn, reflect, predict, compound wisdom. V1.0.',
     routeSegment: 'organizational-intelligence',
+  },
+  {
+    id: 'organizational-autonomy-framework',
+    label: 'ORGANIZATIONAL AUTONOMY FRAMEWORK',
+    description: 'Constitutional autonomy governance — trusted stewardship, earned through trust. V1.0.',
+    routeSegment: 'organizational-autonomy-framework',
   },
   {
     id: 'executive-command-center',

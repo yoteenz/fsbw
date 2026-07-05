@@ -37559,4 +37559,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** organizational-intelligence core + UI + hook + page + service, CoS/executive-council/executive-framework/manifesto/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 67: Organizational Autonomy Framework V1.0
+
+**Context (full chat):** User requested Milestone 67 — introduce **Organizational Autonomy Framework** as the constitutional system governing how Studio OS organizations safely execute work. Prior milestones: M66 OI, M65 Executive Council, M64 CGO, full executive pipeline. Constraints: do not redesign overall Studio OS shell · autonomy earned through trust · never automate indiscriminately · never speed over stewardship · founder-reserved decisions always under founder · work on `master` only · one commit + one push.
+
+**Goal:** OAF empowers organizations to act with judgment, transparency, accountability, founder alignment. Features: autonomy philosophy (autonomy is trusted stewardship not independence · strengthen trust not reduce visibility) · progressive levels 0–5 (observe · recommend · prepare · execute approved · cross-functional · organizational stewardship) · autonomy governance (observe/recommend/prepare/schedule/publish/communicate/delegate/purchase/approve/escalate/pause/cancel · configurable) · founder permissions (executive/financial/communication/publishing/customer/partnership/technology/organizational authority · always ask · threshold · automatic · never) · trust engine (executive/workflow/decision/approval reliability · organizational confidence · historical outcomes · recommend increase/decrease based on trust not time) · executive coordination (CGO/CBO/CEO/CDO/CTO/CoS autonomous coordination when governance permits) · autonomous workflows (marketing · publishing · follow-up · nurturing · creator outreach · reporting · briefings · analytics · orchestration · documentation · routine ops · high-risk always founder) · organizational transparency (reasoning · evidence · executives · outcome · confidence · rollback · precedent) · autonomy dashboard (level · trust · workflows · decisions · pending · confidence · health · upgrades) · learning loop (outcome · accuracy · impact · improvements · feeds OI) · founder-reserved (strategy · identity · values · promise · appointments · mission · legacy). Ask "should the organization be trusted?" not "can AI do this?"
+
+**Implementation:**
+- **Core:** `src/studio-os-core/organizational-autonomy-framework/` — types (levels, governance, permissions, trust engine, coordination, workflows, actions, learning loop, upgrades), constants (philosophy, founder-reserved, connected systems), localStorage store (`studioOsOrganizationalAutonomyFramework_v1`), rich NDXBOOK bootstrap (Level 3 · 86% trust · 12 active workflows · paid acquisition blocked · executive coordination on onboarding).
+- **Hook:** `useOrganizationalAutonomyState`.
+- **UI:** `/admin/studio/organizational-autonomy-framework` — `OrganizationalAutonomyFrameworkWorkspace` with tabs (Autonomy/Trust · Govern/Permissions · Execute/Workflows · Transparency/Learn · Dashboard/Upgrade · Connect/Systems). Teal accent (`#0D9488`) · V1.0.
+- **Wiring:** route, nav (overview · after OI), modules, services, bootstrap after Organizational Intelligence.
+- **Chief of Staff integration:** `Organizational Autonomy Framework` in `SOFT_APPROVAL_SOURCES`; `OrganizationalAutonomyFrameworkLinkPanel` in CoS workspace.
+- **Cross-links:** OI, Executive Council, Executive Framework, Leadership Manifesto ConnectedSystemsPanel → OAF · back link from OI page.
+- **Knowledge graph:** `node-organizational-autonomy-framework` + ~20 edges to OI, Executive Council, Framework, Manifesto, CoS, all C-suite, Genome, Promise, Relationship Engine, Inheritance, Studio Intelligence.
+
+**Route:** `/admin/studio/organizational-autonomy-framework` · Overview nav group · teal accent · back link from Organizational Intelligence.
+
+**Changes:** organizational-autonomy-framework core + UI + hook + page + service, CoS/OI/executive-council/executive-framework/manifesto/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
 
