@@ -3,54 +3,14 @@ import { emptyWorkspaceDataAdapter } from '../studio-os-core/workspace/empty-dat
 import type { WorkspaceDataAdapter } from '../studio-os-core/workspace/data-adapter';
 import type { WorkspaceId, WorkspaceListItem, WorkspaceSchema } from '../studio-os-core/workspace/types';
 import {
-  bootstrapWorkspaceCreationEngine,
   listRegistryWorkspaces,
   registryRecordToWorkspaceSchema,
 } from '../studio-os-core/workspace-creation';
-import {
-  bootstrapGrowthProfiles,
-  registerOpportunityCatalog,
-} from '../studio-os-core/growth-network';
-import { buildDemoGrowthStorePatch, OPPORTUNITY_CATALOG } from '../utils/adminStudioGrowthNetworkDemo';
-import { readGrowthNetworkStore, writeGrowthNetworkStore } from '../studio-os-core/growth-network/store';
-import { bootstrapAiMediaLabs } from './ai-media/labs/bootstrap';
-import { bootstrapAiMediaNetwork } from './ai-media/network/bootstrap';
-import { bootstrapAiMediaTalentNetwork } from './ai-media/talent-network/bootstrap';
-import { bootstrapAiMediaMarketplace } from './ai-media/marketplace/bootstrap';
-import { bootstrapAiMediaBusinessModelEngine } from './ai-media/business-model-engine/bootstrap';
-import { bootstrapAiMediaEcosystem } from './ai-media/ecosystem/bootstrap';
-import { bootstrapAiMediaGovernance } from './ai-media/governance/bootstrap';
-import { bootstrapAiMediaStudioIntelligence } from './ai-media/studio-intelligence/bootstrap';
-import { bootstrapAiMediaSimulationEngine } from './ai-media/simulation-engine/bootstrap';
-import { bootstrapFrontalSlayerVisionEngine } from './frontal-slayer/vision-engine';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
 import { SANDBOX_WORKSPACE } from './sandbox/config';
 import { FUTURE_BRAND_WORKSPACE } from './future-brand/config';
 import { FUTURE_CLIENT_WORKSPACE } from './future-client/config';
-
-bootstrapWorkspaceCreationEngine();
-
-function bootstrapGrowthNetworkPlatform(): void {
-  registerOpportunityCatalog(OPPORTUNITY_CATALOG);
-  bootstrapGrowthProfiles();
-  const store = readGrowthNetworkStore();
-  if (store.registry.length === 0) {
-    writeGrowthNetworkStore({ ...store, ...buildDemoGrowthStorePatch() });
-  }
-}
-
-bootstrapGrowthNetworkPlatform();
-bootstrapAiMediaLabs();
-bootstrapAiMediaNetwork();
-bootstrapAiMediaTalentNetwork();
-bootstrapAiMediaMarketplace();
-bootstrapAiMediaBusinessModelEngine();
-bootstrapAiMediaEcosystem();
-bootstrapAiMediaGovernance();
-bootstrapAiMediaStudioIntelligence();
-bootstrapAiMediaSimulationEngine();
-bootstrapFrontalSlayerVisionEngine();
 
 const STATIC_WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {
   'frontal-slayer': FRONTAL_SLAYER_WORKSPACE,
@@ -119,3 +79,71 @@ configureWorkspaceRegistry({
   isKnownWorkspaceId,
   listWorkspaces,
 });
+
+/** Yield so admin UI can paint before the next heavy seed runs. */
+function yieldToMain(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, 0);
+  });
+}
+
+/** Heavy demo seeds — call from Studio OS routes only (not on /admin/dashboard). */
+export function bootstrapWorkspacesPlatform(): void {
+  void (async () => {
+    await yieldToMain();
+
+    const { bootstrapWorkspaceCreationEngine } = await import('../studio-os-core/workspace-creation');
+    bootstrapWorkspaceCreationEngine();
+    await yieldToMain();
+
+    const growthNetwork = await import('../studio-os-core/growth-network');
+    const growthDemo = await import('../utils/adminStudioGrowthNetworkDemo');
+    const growthStore = await import('../studio-os-core/growth-network/store');
+    growthNetwork.registerOpportunityCatalog(growthDemo.OPPORTUNITY_CATALOG);
+    growthNetwork.bootstrapGrowthProfiles();
+    const store = growthStore.readGrowthNetworkStore();
+    if (store.registry.length === 0) {
+      growthStore.writeGrowthNetworkStore({ ...store, ...growthDemo.buildDemoGrowthStorePatch() });
+    }
+    await yieldToMain();
+
+    const labs = await import('./ai-media/labs/bootstrap');
+    labs.bootstrapAiMediaLabs();
+    await yieldToMain();
+
+    const network = await import('./ai-media/network/bootstrap');
+    network.bootstrapAiMediaNetwork();
+    await yieldToMain();
+
+    const talent = await import('./ai-media/talent-network/bootstrap');
+    talent.bootstrapAiMediaTalentNetwork();
+    await yieldToMain();
+
+    const marketplace = await import('./ai-media/marketplace/bootstrap');
+    marketplace.bootstrapAiMediaMarketplace();
+    await yieldToMain();
+
+    const bme = await import('./ai-media/business-model-engine/bootstrap');
+    bme.bootstrapAiMediaBusinessModelEngine();
+    await yieldToMain();
+
+    const ecosystem = await import('./ai-media/ecosystem/bootstrap');
+    ecosystem.bootstrapAiMediaEcosystem();
+    await yieldToMain();
+
+    const governance = await import('./ai-media/governance/bootstrap');
+    governance.bootstrapAiMediaGovernance();
+    await yieldToMain();
+
+    const studioIntel = await import('./ai-media/studio-intelligence/bootstrap');
+    studioIntel.bootstrapAiMediaStudioIntelligence();
+    await yieldToMain();
+
+    const simulation = await import('./ai-media/simulation-engine/bootstrap');
+    simulation.bootstrapAiMediaSimulationEngine();
+    await yieldToMain();
+
+    const vision = await import('./frontal-slayer/vision-engine');
+    vision.bootstrapFrontalSlayerVisionEngine();
+  })();
+}

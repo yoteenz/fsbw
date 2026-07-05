@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
@@ -63,6 +64,12 @@ export function AdminStudioLayout({
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { workspace, getModuleSubtitle } = useWorkspace();
+
+  useEffect(() => {
+    void import('../../../workspaces').then(({ bootstrapWorkspacesPlatform }) => {
+      bootstrapWorkspacesPlatform();
+    });
+  }, []);
 
   const resolvedModule = resolveStudioModuleFromPath(pathname);
   const activeGroupId: StudioNavGroupId = navGroupId ?? resolvedModule?.groupId ?? 'overview';

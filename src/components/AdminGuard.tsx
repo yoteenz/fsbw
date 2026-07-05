@@ -3,6 +3,7 @@ import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
 import { isSignedIn, canAccessAdminPages } from '../utils/adminAuth';
 import { ensureWorkspacesBootstrapped } from '../utils/ensureWorkspacesBootstrapped';
+import LoadingScreen from './base/LoadingScreen';
 
 /**
  * Protects all /admin/* routes. Only emails in VITE_ADMIN_EMAILS / defaults (e.g. kateenaarmstrong@gmail.com) may access.
@@ -107,7 +108,7 @@ export default function AdminGuard() {
   }
 
   if (!workspacesReady) {
-    return null;
+    return <LoadingScreen />;
   }
 
   return (

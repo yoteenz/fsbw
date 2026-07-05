@@ -36671,3 +36671,34 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** `launch.ts`, `creativePreviewMode.ts`, `visionSessionBootGuard.ts`, `VisionEngineContext.tsx`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Admin dashboard blank after public-route workspaces lazy-load fix
+
+**Context (full chat):** User reported site-wide blank white page → fixed by lazy-loading `workspaces` in `AdminGuard` (commit `154cf7ca`) so shop/lobby no longer sync-import Studio OS seeds. User then reported **admin dashboard** blank white and won't load.
+
+**Admin dashboard root cause:** Follow-on regression from the public-route fix. **`AdminGuard`** used **`void import('../workspaces')`** (fire-and-forget) but immediately rendered **`WorkspaceProvider`**, which calls **`getWorkspaceRegistry()`** / **`loadWorkspace()`** before **`configureWorkspaceRegistry()`** ran → React error *"studio os workspace registry is not configured"* → error boundary / blank admin. Separately, running all Milestone 30–36 **`bootstrap*`** demo seeds on every admin load (even after async import) **blocked the main thread** and prevented the dashboard from painting.
+
+**Fix shipped:**
+- **`AdminGuard`:** **`await import('../workspaces')`** before rendering admin children; show **`LoadingScreen`** while registry chunk loads; only for signed-in admins.
+- **`workspaces/index.ts`:** Registry + **`configureWorkspaceRegistry`** stay synchronous (lightweight); heavy seeds moved to exported **`bootstrapWorkspacesPlatform()`** with dynamic imports + **`yieldToMain()`** between steps — **not** auto-run on module load.
+- **`AdminStudioLayout`:** calls **`bootstrapWorkspacesPlatform()`** on mount (Studio OS routes only) — **`/admin/dashboard`** does not run full platform seeds on entry.
+
+**Verify:** Preview **`/admin/dashboard`** with mock admin session paints dashboard (~62KB `#root`, "ADMIN > DASHBOARD" visible); **`/home/shop`** still works.
+
+**Changes:** `AdminGuard.tsx`, `workspaces/index.ts`, `AdminStudioLayout.tsx`, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
+---
+
+## 2026-07-05 — Admin dashboard blank: rebase merge + explain root cause
+
+**Context (full chat):** User asked why **admin dashboard** shows blank white screen and won't load. Prior chat fixed site-wide blank by lazy-loading `workspaces` in `AdminGuard`; that fix caused admin regression.
+
+**Why admin blank:**
+1. **Race:** `void import('../workspaces')` (fire-and-forget) rendered **`WorkspaceProvider`** before **`configureWorkspaceRegistry()`** ran → React error *"studio os workspace registry is not configured"* → error boundary / white screen.
+2. **Main-thread block:** Even with async import, auto-running all Milestone 30–36 **`bootstrap*`** demo seeds on workspaces module load blocked paint on admin entry.
+
+**Fix (merged rebase):** **`AdminGuard`** awaits **`ensureWorkspacesBootstrapped()`** before **`WorkspaceProvider`**; shows **`LoadingScreen`** while loading and retry UI on failure. **`workspaces/index.ts`** keeps lightweight sync registry only; heavy seeds in **`bootstrapWorkspacesPlatform()`** deferred to **`AdminStudioLayout`** (Studio OS routes, not `/admin/dashboard`).
+
+**Changes:** `AdminGuard.tsx` (conflict resolution), `motherboard/MEMORY.md`.
+
