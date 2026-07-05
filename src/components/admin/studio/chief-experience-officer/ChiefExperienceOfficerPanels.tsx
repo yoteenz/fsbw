@@ -15,6 +15,7 @@ import {
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioChiefDigitalOfficerPath,
+  adminStudioExecutiveCouncilPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_EXPERIENCE_OFFICER_STYLES,
@@ -341,6 +342,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCompanyGenomePath()} style={{ ...ceoLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>
         <Link to={adminStudioLeadershipDnaPath()} style={{ ...ceoLabel, color: '#CA8A04', fontSize: '6px' }}>→ LEADERSHIP DNA</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...ceoLabel, color: CEO.cyan, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioExecutiveCouncilPath()} style={{ ...ceoLabel, color: '#B45309', fontSize: '6px' }}>→ EXECUTIVE COUNCIL</Link>
       </div>
     </section>
   );

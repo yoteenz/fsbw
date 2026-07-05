@@ -277,6 +277,10 @@ export function bootstrapWorkspacesPlatform(): void {
     chiefGrowthOfficer.bootstrapChiefGrowthOfficerPlatform();
     await yieldToMain();
 
+    const executiveCouncil = await import('../studio-os-core/executive-council/bootstrap');
+    executiveCouncil.bootstrapExecutiveCouncilPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

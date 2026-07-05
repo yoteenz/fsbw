@@ -17,6 +17,7 @@ import {
   adminStudioChiefExperienceOfficerPath,
   adminStudioChiefDigitalOfficerPath,
   adminStudioChiefGrowthOfficerPath,
+  adminStudioExecutiveCouncilPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_BRAND_OFFICER_STYLES,
@@ -327,6 +328,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioChiefExperienceOfficerPath()} style={{ ...cboLabel, color: '#0891B2', fontSize: '6px' }}>→ CHIEF EXPERIENCE OFFICER</Link>
         <Link to={adminStudioChiefDigitalOfficerPath()} style={{ ...cboLabel, color: '#6366F1', fontSize: '6px' }}>→ CHIEF DIGITAL OFFICER</Link>
         <Link to={adminStudioChiefGrowthOfficerPath()} style={{ ...cboLabel, color: '#059669', fontSize: '6px' }}>→ CHIEF GROWTH OFFICER</Link>
+        <Link to={adminStudioExecutiveCouncilPath()} style={{ ...cboLabel, color: '#B45309', fontSize: '6px' }}>→ EXECUTIVE COUNCIL</Link>
       </div>
     </section>
   );

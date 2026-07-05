@@ -15,6 +15,7 @@ import {
   adminStudioLeadershipDnaPath,
   adminStudioLeadershipManifestoFrameworkPath,
   adminStudioChiefTechnologyOfficerPath,
+  adminStudioExecutiveCouncilPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_DIGITAL_OFFICER_STYLES,
@@ -360,6 +361,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioLeadershipDnaPath()} style={{ ...cdoLabel, color: '#CA8A04', fontSize: '6px' }}>→ LEADERSHIP DNA</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...cdoLabel, color: CDO.indigo, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
         <Link to={adminStudioChiefTechnologyOfficerPath()} style={{ ...cdoLabel, color: '#2563EB', fontSize: '6px' }}>→ CHIEF TECHNOLOGY OFFICER</Link>
+        <Link to={adminStudioExecutiveCouncilPath()} style={{ ...cdoLabel, color: '#B45309', fontSize: '6px' }}>→ EXECUTIVE COUNCIL</Link>
       </div>
     </section>
   );

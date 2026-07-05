@@ -20,6 +20,7 @@ import {
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioStrategyEnginePath,
+  adminStudioExecutiveCouncilPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_GROWTH_OFFICER_STYLES,
@@ -339,6 +340,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCompanyGenomePath()} style={{ ...cgoLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>
         <Link to={adminStudioLeadershipDnaPath()} style={{ ...cgoLabel, color: '#CA8A04', fontSize: '6px' }}>→ LEADERSHIP DNA</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...cgoLabel, color: CGO.emerald, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioExecutiveCouncilPath()} style={{ ...cgoLabel, color: '#B45309', fontSize: '6px' }}>→ EXECUTIVE COUNCIL</Link>
       </div>
     </section>
   );

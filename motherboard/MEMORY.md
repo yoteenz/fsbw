@@ -37517,4 +37517,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** chief-growth-officer core + UI + hook + page + service, CoS/executive-framework/manifesto/CBO/growth-architect/CTO/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 65: Executive Council V2.0
+
+**Context (full chat):** User requested Milestone 65 — introduce **Executive Council** as the highest collaborative leadership body inside Studio OS. Prior milestones: M64 CGO, M63.5 CTO, M63 CDO, M62 CEO, M61 CBO, M60.5 Leadership Manifesto, M60 Executive Framework. Constraints: do not redesign overall Studio OS shell · every major decision through collaborative executive reasoning · healthy disagreement not manufactured debate · founder remains final decision maker · work on `master` only · one commit + one push.
+
+**Goal:** Executive Council functions like the leadership team of one of the world's greatest organizations. Features: council philosophy (healthy disagreement · respectful challenge · cross-functional collaboration · evidence-based reasoning · organizational stewardship) · executive council chamber in Architect Studio (modern · minimal · premium · warm boardroom with holographic strategy table projections) · council responsibilities (strategy · investments · launches · pricing · brand · marketing · technology · structure · hiring · partnerships · expansion · acquisitions · legal · community · creator economy) · executive debate (each executive contributes perspective · evidence · concerns · opportunities · risks · alternatives · confidence) · healthy disagreement (CBO identity · CEO trust · CDO product · CTO engineering · CGO sustainable growth) · Chief of Staff facilitation (agenda · summarize · surface disagreements · clarify tradeoffs · track follow-ups · moderates not dominates) · decision synthesis (summary · agreements · disagreements · tradeoffs · risks · opportunities · alternatives · recommended decision · confidence · reasoning) · executive transparency (inspect individual reasoning · discussion history · evidence · historical comparisons) · meeting modes (daily briefing · strategy · creative · product · technology · growth · financial · crisis · innovation · annual · portfolio · future simulation · adaptive participants) · executive simulations (pricing · acquisitions · expansion · launches · restructuring · migrations · revenue models) · organizational learning (KG · genome · org intelligence · leadership DNA · decision history · institutional memory) · founder participation (observe · participate · challenge · request analysis · pause · approve/decline/defer) · council intelligence (Studio Intelligence recommends topics · conflicts · risks · opportunities · blind spots) · leadership culture · executive council oath (constitutional principle governing every discussion).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/executive-council/` — types (chamber, responsibilities, debate, disagreement, CoS facilitation, synthesis, transparency, meeting modes, simulations, learning, founder participation, intelligence), constants (philosophy, oath, culture, connected systems), localStorage store (`studioOsExecutiveCouncil_v2`), rich NDXBOOK bootstrap (91% council health · 100K GTM in-session · 5 executive debate contributions · 4 healthy disagreements · decision synthesis with 89% confidence).
+- **Hook:** `useExecutiveCouncilState`.
+- **UI:** `/admin/studio/executive-council` — `ExecutiveCouncilWorkspace` with tabs (Council/Chamber · Debate/Disagree · Synthesis/Transparency · Modes/Simulation · Learning/Intelligence · Connect/Systems). Gold accent (`#B45309`) · V2.0.
+- **Wiring:** route, nav (overview · after CGO), modules, services, bootstrap after Chief Growth Officer.
+- **Chief of Staff integration:** `Executive Council` in `SOFT_APPROVAL_SOURCES`; `ExecutiveCouncilLinkPanel` in CoS workspace.
+- **Cross-links:** Executive Framework, Leadership Manifesto, CGO, all C-suite ConnectedSystemsPanel → Executive Council · back link from CGO page.
+- **Knowledge graph:** `node-executive-council` + ~25 edges to Executive Framework, Manifesto, CoS, all C-suite, Genome, Promise, Reader Graph, Relationship Engine, Studio Intelligence, Knowledge Asset Engine, Architect Studio.
+
+**Route:** `/admin/studio/executive-council` · Overview nav group · gold accent · back link from Chief Growth Officer.
+
+**Changes:** executive-council core + UI + hook + page + service, CoS/executive-framework/manifesto/C-suite/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
 

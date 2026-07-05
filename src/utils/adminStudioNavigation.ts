@@ -322,6 +322,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'executive-council',
+    title: 'EXECUTIVE COUNCIL',
+    purpose: 'Highest collaborative leadership body — executive debate, synthesis, organizational wisdom. V2.0.',
+    route: p('executive-council'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v2.0',
+    ctaLabel: 'ENTER COUNCIL',
+    moduleKey: 'executive-council',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

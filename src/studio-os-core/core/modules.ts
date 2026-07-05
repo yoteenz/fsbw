@@ -35,6 +35,7 @@ export type StudioOsCoreModuleId =
   | 'chief-digital-officer'
   | 'chief-technology-officer'
   | 'chief-growth-officer'
+  | 'executive-council'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -274,6 +275,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CHIEF GROWTH OFFICER',
     description: 'Lifelong guardian of sustainable growth — governance, alignment, laboratory, protection. V1.0.',
     routeSegment: 'chief-growth-officer',
+  },
+  {
+    id: 'executive-council',
+    label: 'EXECUTIVE COUNCIL',
+    description: 'Highest collaborative leadership body — executive debate, synthesis, simulations. V2.0.',
+    routeSegment: 'executive-council',
   },
   {
     id: 'executive-command-center',
