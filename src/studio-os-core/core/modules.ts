@@ -45,6 +45,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-maturity-model'
   | 'leadership-modes'
   | 'company-onboarding-intelligence'
+  | 'arrival-experience'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -344,6 +345,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'COMPANY ONBOARDING INTELLIGENCE',
     description: 'Intelligent onboarding — organizational welcome and discovery. V1.0.',
     routeSegment: 'company-onboarding-intelligence',
+  },
+  {
+    id: 'arrival-experience',
+    label: 'ARRIVAL EXPERIENCE',
+    description: 'Ceremonial headquarters welcome — organizational arrival. V1.0.',
+    routeSegment: 'arrival-experience',
   },
   {
     id: 'executive-command-center',

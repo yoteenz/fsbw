@@ -26,6 +26,7 @@ import {
   adminStudioOrganizationalMaturityModelPath,
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
+  adminStudioArrivalExperiencePath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -330,6 +331,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCampusEvolutionEnginePath()} style={{ ...coiLabel, color: '#CA8A04', fontSize: '6px' }}>→ CAMPUS EVOLUTION ENGINE</Link>
         <Link to={adminStudioFoundersPromisePath()} style={{ ...coiLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
         <Link to={adminStudioFounderWalkPath()} style={{ ...coiLabel, color: '#CA8A04', fontSize: '6px' }}>→ FOUNDER WALK</Link>
+        <Link to={adminStudioArrivalExperiencePath()} style={{ ...coiLabel, color: '#0369A1', fontSize: '6px' }}>→ ARRIVAL EXPERIENCE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...coiLabel, color: '#6366F1', fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
       </div>
     </section>

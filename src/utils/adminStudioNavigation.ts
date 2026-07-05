@@ -442,6 +442,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'arrival-experience',
+    title: 'ARRIVAL EXPERIENCE',
+    purpose: 'Ceremonial headquarters welcome — arrive at your living organization, feel at home. V1.0.',
+    route: p('arrival-experience'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN ARRIVAL',
+    moduleKey: 'arrival-experience',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

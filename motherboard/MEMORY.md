@@ -37727,3 +37727,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** company-onboarding-intelligence core + UI + hook + page + service, CoS/OMM/LM/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 73.6: Arrival Experience V1.0
+
+**Context (full chat):** User requested continuation of Studio OS with **Milestone 73.6 — Arrival Experience** as the ceremonial conclusion of every company onboarding. Prior milestone in this arc: M73.5 Company Onboarding Intelligence (intelligent organizational welcome · two journeys · discovery · blueprint · campus · CoS welcome · founder walk). Constraints: do not redesign overall Studio OS shell · arrival never theatrical — meaningful · quiet confidence · wonder not novelty · never "setup complete" · work on `master` only · one commit + one push.
+
+**Goal:** Arrival Experience becomes one of the defining emotional moments of Studio OS — founders remember the day they first walked into their headquarters. Features: arrival philosophy (memorable beginnings · celebrate organizational intelligence · welcome into future · not confirming setup) · arrival sequence (fade from setup · HQ reveal · ambient lighting · campus awakening · subtle activity · executives prepare · calm · cinematic · premium · hopeful) · Chief of Staff welcome (warm · confident · personal · "I'll show you around") · executive introductions (meet in workspace not profile cards · CBO brand studio · CEO experience studio · CDO digital studio · CTO tech ops · CGO growth lab · CoS executive office · purpose · responsibilities · philosophy · compass · founder support) · headquarters tour (campus · architect studio · council chamber · OI center · KG · genome · future expansion · next milestone · living HQ exploration) · organizational reveal (gradual genome · KG · maturity · executives · roadmap · strengths · opportunities · intentional discovery) · environmental storytelling (industry · brand · maturity · ambition · identity via architecture · lighting · materials · activity · atmosphere) · first executive briefing (maturity · priorities · executives · architects · opportunities · strengths · next milestone · today's focus) · arrival memory (arrival date · first day · initial maturity · first team · first roadmap · founder vision · preserved for future generations) · final CoS message ("Welcome home · let's build something that outlives us") · emotional truth: your organization has a home now.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/arrival-experience/` — types (sequence, CoS welcome, executive introductions, tour, reveal, environmental storytelling, first briefing, arrival memory, final message), constants (philosophy, connected systems), localStorage store (`studioOsArrivalExperience_v1`), rich NDXBOOK bootstrap (100% sequence · 6 executives · 8 tour stops · 7 reveals · 6 environmental signals · full briefing · arrival memory · welcome home).
+- **Hook:** `useArrivalExperienceState`.
+- **UI:** `/admin/studio/arrival-experience` — `ArrivalExperienceWorkspace` with tabs (Philosophy/Sequence · Welcome/Executives · Tour/Reveal · Story/Briefing · Memory/Home · Dashboard/Connect). Sky accent (`#0369A1`) · V1.0.
+- **Wiring:** route, nav (overview · after COI), modules, services, bootstrap after Company Onboarding Intelligence · Strategy Engine back link updated to Arrival Experience.
+- **Chief of Staff integration:** `Arrival Experience` in `SOFT_APPROVAL_SOURCES`; `ArrivalExperienceLinkPanel` in CoS workspace.
+- **Cross-links:** COI ConnectedSystemsPanel → Arrival Experience · COI constants updated.
+- **Knowledge graph:** `node-arrival-experience` + ~28 edges to COI, CoS, Genome, Interactive Manual (KG), OMM, Executive Framework, Council, OI, Campus Evolution, Founder's Promise, Studio Intelligence, all C-suite intros.
+
+**Route:** `/admin/studio/arrival-experience` · Overview nav group · sky accent · back link from Company Onboarding Intelligence.
+
+**Changes:** arrival-experience core + UI + hook + page + service, CoS/COI/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.

@@ -33,4 +33,5 @@ export const COI_CONNECTED_SYSTEMS = [
   'Founder\'s Promise',
   'Founder Walk',
   'Studio Intelligence',
+  'Arrival Experience',
 ] as const;

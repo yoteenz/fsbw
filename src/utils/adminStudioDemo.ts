@@ -93,6 +93,7 @@ export type AdminStudioSectionId =
   | 'organizational-maturity-model'
   | 'leadership-modes'
   | 'company-onboarding-intelligence'
+  | 'arrival-experience'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

@@ -317,6 +317,10 @@ export function bootstrapWorkspacesPlatform(): void {
     companyOnboardingIntelligence.bootstrapCompanyOnboardingIntelligencePlatform();
     await yieldToMain();
 
+    const arrivalExperience = await import('../studio-os-core/arrival-experience/bootstrap');
+    arrivalExperience.bootstrapArrivalExperiencePlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();
