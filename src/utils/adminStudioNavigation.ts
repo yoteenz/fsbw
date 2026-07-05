@@ -874,6 +874,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'concierge-approval-flow',
+    title: 'CONCIERGE APPROVAL FLOW',
+    purpose: 'Editorial board before founder — six concierges review by discipline · Chief Concierge unified brief · founder decides last.',
+    route: p('concierge-approval-flow'),
+    groupId: 'production',
+    status: 'demo',
+    metric: 'BOARD',
+    ctaLabel: 'ENTER EDITORIAL BOARD',
+    moduleKey: 'concierge-approval-flow',
+    featuredOnOverview: true,
+  },
+  {
     id: 'content-packs',
     title: 'CONTENT PACKS',
     purpose: 'Bundle weekly video, article, and checklist releases.',

@@ -37951,3 +37951,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/render-queue` · back from Production Studio.
 
 **Changes:** render-queue core + UI + hook + page + service, App.tsx, routes/nav/demo/modules/workspaces/services/seedGraph, ProductionStudioPanels link, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — Milestone 80: Screening Room V1.0
+
+**Context (full chat):** User continued Studio OS production arc after M79 Render Queue (`15122527`). Request: **Screening Room** — luxury review theater where every production is experienced before publication. Not a dashboard — private cinema: darkened environment · soft ambient lighting · glass controls · luxury seating · minimal UI.
+
+**Goal:** Emotional pre-publication moment — intentional · quiet · cinematic · premium. Large cinematic player · current + alternate versions · compare thumbnail/voice/hook/caption/title · description · performance prediction · confidence. Right: Brand · Experience · Growth · Technology · Chief Concierge review panels. Below player: Approve · Request Changes · Regenerate · Compare Versions · Run Experiment · Publish Later · Send To Render Again. Compare multiple versions simultaneously.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/screening-room/` — types · store (select production/version · compare mode · multi-version compare · player state · review actions) · bootstrap (3 NDXBOOK productions with 2–3 versions each · 5 concierge reviews).
+- **Hook:** `useScreeningRoomState`.
+- **UI:** `/admin/studio/screening-room` — full dark theater shell (`screeningRoomTheme.ts`) with vignette · ambient breathe · screen glow · seating glow animations. Cinematic player · version strip · simultaneous compare grid · metadata · concierge column · glass action bar.
+- **Service:** `screeningRoomModuleService` (`id: screening-room`).
+- **Wiring:** route · nav (PRODUCTION · ENTER THEATER) · modules.ts · workspaces bootstrap · KG `node-screening-room` + edges to render queue · publishing · concierge · links from Render Queue + Production Studio · back nav Render Queue ↔ Screening Room · `motherboard/CORE.md`.
+
+**Route:** `/admin/studio/screening-room` · back from Render Queue.
+
+**Changes:** screening-room core + UI + hook + page + service, App.tsx, routes/nav/demo/modules/workspaces/services/seedGraph, render-queue + production-studio links, `motherboard/CORE.md`, `motherboard/MEMORY.md`.

@@ -63,6 +63,7 @@ import {
   adminStudioProductionStudioPath,
   adminStudioRenderQueuePath,
   adminStudioScreeningRoomPath,
+  adminStudioConciergeApprovalFlowPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -878,6 +879,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 80',
     status: 'demo',
     searchKeywords: ['screening room', 'private cinema', 'review theater', 'compare versions', 'approve production', 'pre-publication'],
+  },
+  {
+    id: 'node-concierge-approval-flow',
+    name: 'CONCIERGE APPROVAL FLOW',
+    type: 'module',
+    description:
+      'Editorial board V1.0 — intelligent concierge review before founder decision. Six disciplines · unified Chief Concierge brief · founder never receives unfinished work.',
+    purpose: 'Luxury editorial board preparing tomorrow\'s front page — concierges review first, founders review last.',
+    route: adminStudioConciergeApprovalFlowPath(),
+    moduleId: 'concierge-approval-flow',
+    relatedManualChapter: 'CHAPTER · PRODUCTION · EDITORIAL BOARD',
+    versionIntroduced: 'Milestone 81',
+    status: 'demo',
+    searchKeywords: ['concierge approval', 'editorial board', 'founder brief', 'chief concierge', 'approval flow', 'founder decision'],
   },
   {
     id: 'node-fallback-used',
@@ -2279,7 +2294,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-sr-rq', fromId: 'node-screening-room', toId: 'node-render-queue', type: 'related-to', label: 'SEND TO RENDER AGAIN' },
   { id: 'e-sr-publishing', fromId: 'node-screening-room', toId: 'publishing-queue', type: 'feeds', label: 'APPROVE TO PUBLISH' },
   { id: 'e-sr-cl', fromId: 'node-screening-room', toId: 'node-concierge-layer', type: 'related-to', label: 'CONCIERGE REVIEW' },
+  { id: 'e-sr-caf', fromId: 'node-screening-room', toId: 'node-concierge-approval-flow', type: 'feeds', label: 'EDITORIAL BOARD' },
   { id: 'e-sr-platform', fromId: 'node-screening-room', toId: 'screening-room', type: 'documented-by', label: 'PRIVATE CINEMA' },
+  { id: 'e-caf-sr', fromId: 'node-concierge-approval-flow', toId: 'node-screening-room', type: 'related-to', label: 'FROM SCREENING' },
+  { id: 'e-caf-cl', fromId: 'node-concierge-approval-flow', toId: 'node-concierge-layer', type: 'related-to', label: 'CONCIERGE DISCIPLINES' },
+  { id: 'e-caf-publishing', fromId: 'node-concierge-approval-flow', toId: 'publishing-queue', type: 'feeds', label: 'FOUNDER APPROVED' },
+  { id: 'e-caf-fp', fromId: 'node-concierge-approval-flow', toId: 'node-founders-promise', type: 'related-to', label: 'FOUNDER PROMISE' },
+  { id: 'e-caf-platform', fromId: 'node-concierge-approval-flow', toId: 'concierge-approval-flow', type: 'documented-by', label: 'EDITORIAL BOARD' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

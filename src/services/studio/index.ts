@@ -267,6 +267,7 @@ export { conciergeLayerStudioService, CONCIERGE_LAYER_CHAIN } from './conciergeL
 export { productionStudioModuleService, PRODUCTION_STUDIO_CHAIN } from './productionStudioModule/service';
 export { renderQueueModuleService, RENDER_QUEUE_CHAIN } from './renderQueueModule/service';
 export { screeningRoomModuleService, SCREENING_ROOM_CHAIN } from './screeningRoomModule/service';
+export { conciergeApprovalFlowModuleService, CONCIERGE_APPROVAL_FLOW_CHAIN } from './conciergeApprovalFlowModule/service';
 export type { ConciergeLayerSnapshot } from './conciergeLayer/service';
 
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
@@ -399,6 +400,7 @@ import { conciergeLayerStudioService } from './conciergeLayer/service';
 import { productionStudioModuleService } from './productionStudioModule/service';
 import { renderQueueModuleService } from './renderQueueModule/service';
 import { screeningRoomModuleService } from './screeningRoomModule/service';
+import { conciergeApprovalFlowModuleService } from './conciergeApprovalFlowModule/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -492,6 +494,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   productionStudioModuleService,
   renderQueueModuleService,
   screeningRoomModuleService,
+  conciergeApprovalFlowModuleService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

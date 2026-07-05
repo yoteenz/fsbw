@@ -238,6 +238,7 @@ const AdminStudioConciergeLayer = lazyWithRetry(() => import('./pages/admin/stud
 const AdminStudioProductionStudio = lazyWithRetry(() => import('./pages/admin/studio/production-studio/page'), 'AdminStudioProductionStudio');
 const AdminStudioRenderQueue = lazyWithRetry(() => import('./pages/admin/studio/render-queue/page'), 'AdminStudioRenderQueue');
 const AdminStudioScreeningRoom = lazyWithRetry(() => import('./pages/admin/studio/screening-room/page'), 'AdminStudioScreeningRoom');
+const AdminStudioConciergeApprovalFlow = lazyWithRetry(() => import('./pages/admin/studio/concierge-approval-flow/page'), 'AdminStudioConciergeApprovalFlow');
 const AdminStudioLeadershipDna = lazyWithRetry(() => import('./pages/admin/studio/leadership-dna/page'), 'AdminStudioLeadershipDna');
 const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
 const AdminStudioKnowledgeHubProfile = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/profile/page'), 'AdminStudioKnowledgeHubProfile');
@@ -1439,6 +1440,11 @@ function App() {
           <Route path="studio/screening-room" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioScreeningRoom />
+            </Suspense>
+          } />
+          <Route path="studio/concierge-approval-flow" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioConciergeApprovalFlow />
             </Suspense>
           } />
           <Route path="studio/leadership-dna" element={

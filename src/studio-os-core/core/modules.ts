@@ -53,6 +53,7 @@ export type StudioOsCoreModuleId =
   | 'production-studio'
   | 'render-queue'
   | 'screening-room'
+  | 'concierge-approval-flow'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -400,6 +401,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'SCREENING ROOM',
     description: 'Luxury review theater — private cinema before publication. V1.0.',
     routeSegment: 'screening-room',
+  },
+  {
+    id: 'concierge-approval-flow',
+    label: 'CONCIERGE APPROVAL FLOW',
+    description: 'Editorial board — concierge review before founder decision. Unified brief. V1.0.',
+    routeSegment: 'concierge-approval-flow',
   },
   {
     id: 'executive-command-center',

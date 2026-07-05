@@ -13,6 +13,7 @@ import {
   adminStudioPublishingQueuePath,
   adminStudioRenderQueuePath,
   adminStudioScreeningRoomPath,
+  adminStudioConciergeApprovalFlowPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   SR_CINEMA_CSS,
@@ -382,6 +383,7 @@ export function ScreeningRoomConnectedSystems() {
       </div>
       <div className="flex flex-wrap gap-3 justify-center">
         <Link to={adminStudioRenderQueuePath()} style={{ ...srLabel, fontSize: '6px', color: SR_VISUAL.textMuted }}>→ RENDER QUEUE</Link>
+        <Link to={adminStudioConciergeApprovalFlowPath()} style={{ ...srLabel, fontSize: '6px', color: SR_VISUAL.champagne }}>→ EDITORIAL BOARD</Link>
         <Link to={adminStudioProductionStudioPath()} style={{ ...srLabel, fontSize: '6px', color: SR_VISUAL.champagne }}>→ PRODUCTION STUDIO</Link>
         <Link to={adminStudioPublishingQueuePath()} style={{ ...srLabel, fontSize: '6px', color: '#EB1C24' }}>→ PUBLISHING</Link>
         <Link to={adminStudioScreeningRoomPath()} style={{ ...srLabel, fontSize: '6px' }}>→ SCREENING ROOM</Link>

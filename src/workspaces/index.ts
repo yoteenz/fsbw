@@ -349,6 +349,10 @@ export function bootstrapWorkspacesPlatform(): void {
     screeningRoom.bootstrapScreeningRoomPlatform();
     await yieldToMain();
 
+    const conciergeApprovalFlow = await import('../studio-os-core/concierge-approval-flow/bootstrap');
+    conciergeApprovalFlow.bootstrapConciergeApprovalFlowPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();
