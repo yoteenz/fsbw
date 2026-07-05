@@ -310,6 +310,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'chief-growth-officer',
+    title: 'CHIEF GROWTH OFFICER',
+    purpose: 'Lifelong guardian of sustainable growth — stronger not simply bigger. V1.0.',
+    route: p('chief-growth-officer'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN CGO',
+    moduleKey: 'chief-growth-officer',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

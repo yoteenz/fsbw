@@ -12,6 +12,7 @@ import {
   adminStudioRelationshipEnginePath,
   adminStudioStrategyEnginePath,
   adminStudioCompanyGenomePath,
+  adminStudioChiefGrowthOfficerPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   GA,
@@ -345,6 +346,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...gaLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INHERITANCE</Link>
         <Link to={adminStudioCompanyGenomePath()} style={{ ...gaLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...gaLabel, color: GA.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioChiefGrowthOfficerPath()} style={{ ...gaLabel, color: '#059669', fontSize: '6px' }}>→ CHIEF GROWTH OFFICER</Link>
       </div>
     </section>
   );

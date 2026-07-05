@@ -82,6 +82,7 @@ export type AdminStudioSectionId =
   | 'chief-experience-officer'
   | 'chief-digital-officer'
   | 'chief-technology-officer'
+  | 'chief-growth-officer'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

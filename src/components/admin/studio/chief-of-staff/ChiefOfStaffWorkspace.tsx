@@ -39,6 +39,7 @@ import {
   ChiefExperienceOfficerLinkPanel,
   ChiefDigitalOfficerLinkPanel,
   ChiefTechnologyOfficerLinkPanel,
+  ChiefGrowthOfficerLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -123,6 +124,7 @@ export function ChiefOfStaffWorkspace() {
             <ChiefExperienceOfficerLinkPanel />
             <ChiefDigitalOfficerLinkPanel />
             <ChiefTechnologyOfficerLinkPanel />
+            <ChiefGrowthOfficerLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -175,6 +177,7 @@ export function ChiefOfStaffWorkspace() {
             <ChiefExperienceOfficerLinkPanel />
             <ChiefDigitalOfficerLinkPanel />
             <ChiefTechnologyOfficerLinkPanel />
+            <ChiefGrowthOfficerLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

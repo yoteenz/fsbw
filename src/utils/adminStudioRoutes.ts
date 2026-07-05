@@ -68,6 +68,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'chief-experience-officer'
   | 'chief-digital-officer'
   | 'chief-technology-officer'
+  | 'chief-growth-officer'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -143,6 +144,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'chief-experience-officer',
   'chief-digital-officer',
   'chief-technology-officer',
+  'chief-growth-officer',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -237,6 +239,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   chiefExperienceOfficer: 'studio/chief-experience-officer',
   chiefDigitalOfficer: 'studio/chief-digital-officer',
   chiefTechnologyOfficer: 'studio/chief-technology-officer',
+  chiefGrowthOfficer: 'studio/chief-growth-officer',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -440,6 +443,10 @@ export function adminStudioChiefDigitalOfficerPath(): string {
 
 export function adminStudioChiefTechnologyOfficerPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/chief-technology-officer`;
+}
+
+export function adminStudioChiefGrowthOfficerPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/chief-growth-officer`;
 }
 
 export function adminStudioOsPath(): string {

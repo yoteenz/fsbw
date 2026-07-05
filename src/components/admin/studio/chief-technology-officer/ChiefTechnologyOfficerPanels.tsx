@@ -10,6 +10,7 @@ import {
   adminStudioFoundersPromisePath,
   adminStudioLeadershipDnaPath,
   adminStudioLeadershipManifestoFrameworkPath,
+  adminStudioChiefGrowthOfficerPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_TECHNOLOGY_OFFICER_STYLES,
@@ -336,6 +337,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCompanyGenomePath()} style={{ ...ctoLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>
         <Link to={adminStudioLeadershipDnaPath()} style={{ ...ctoLabel, color: '#CA8A04', fontSize: '6px' }}>→ LEADERSHIP DNA</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...ctoLabel, color: CTO.blue, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioChiefGrowthOfficerPath()} style={{ ...ctoLabel, color: '#059669', fontSize: '6px' }}>→ CHIEF GROWTH OFFICER</Link>
       </div>
     </section>
   );
