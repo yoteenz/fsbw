@@ -9,6 +9,7 @@ import {
   adminStudioLeadershipDnaPath,
   adminStudioOrganizationalInheritancePath,
   adminStudioRelationshipEnginePath,
+  adminStudioRemembranceGardenPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   FOUNDER_WALK_STYLES,
@@ -333,6 +334,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...fwLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...fwLabel, color: '#4F46E5', fontSize: '6px' }}>→ INHERITANCE</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...fwLabel, color: FW.stone, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioRemembranceGardenPath()} style={{ ...fwLabel, color: '#6B9080', fontSize: '6px' }}>→ REMEMBRANCE GARDEN</Link>
       </div>
     </section>
   );

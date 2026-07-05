@@ -214,6 +214,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'remembrance-garden',
+    title: 'REMEMBRANCE GARDEN',
+    purpose: 'Most personal campus space — honor people, moments, and sacrifices that shaped the organization. Preserve gratitude.',
+    route: p('remembrance-garden'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'ENTER GARDEN',
+    moduleKey: 'remembrance-garden',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

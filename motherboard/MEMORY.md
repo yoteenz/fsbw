@@ -37327,3 +37327,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/founder-walk` · Overview nav group · stone accent · back link from Campus Evolution Engine.
 
 **Changes:** founder-walk core + UI + hook + page + service, CoS/campus-evolution/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
+---
+
+## 2026-07-05 — Milestone 59.6: Remembrance Garden V1.0
+
+**Context (full chat):** User requested Milestone 59.6 — introduce **Remembrance Garden** as the most personal and reflective space within every company's campus. Prior milestones in arc: M59 Campus Evolution Engine, M59.5 Founder Walk. Constraints: do not redesign overall Studio OS shell · never feel sad — peaceful, hopeful, grateful, alive · honor not mourning · work on `master` only · one commit + one push.
+
+**Goal:** Preserve gratitude for people, moments, sacrifices, and experiences that shaped the organization but may never appear on a balance sheet. Features: dedication spaces (parents, mentors, first employees, supporters, remembered) · living memorials (flower gardens, cherry blossoms, oak trees, reflection pools, pavilions — meaning not status) · memory preservation (reflections, lessons, quotes, optional media) · reflection spaces (bench, pavilion, overlook, sanctuary) · living seasons (blooms, maturity, light, weather) · gratitude moments (Studio Intelligence recommendations) · legacy letters (private/scheduled/legacy unlock to mentors, family, future leadership) · family heritage (traditions, values, cultural influences) · future generations culture-through-stories · portfolio remembrance · privacy levels (private/family/executive/organization/public). Gratitude becomes part of the company's architecture.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/remembrance-garden/` — types (dedications, memory preservation, reflection spaces, living seasons, gratitude moments, legacy letters, family heritage, future generations, portfolio remembrance, campus integration, privacy levels), constants (philosophy, connected systems), localStorage store (`studioOsRemembranceGarden_v1`), rich NDXBOOK bootstrap (12 dedications · 5 memory preservations · 6 reflection spaces · 6 living season changes · 4 gratitude moments · 4 legacy letters · 5 family heritage entries · 5 future generation insights · 4 portfolio links · campus integration).
+- **Hook:** `useRemembranceGardenState` — workspace selection, season focus.
+- **UI:** `/admin/studio/remembrance-garden` — `RemembranceGardenWorkspace` with tabs (Garden/Overview · Dedicate/Memorials · Reflect/Spaces · Legacy/Letters · Seasons/Alive · Connect/Campus). Sage accent theme (`#6B9080`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (overview group · after founder walk), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/remembranceGarden/service.ts`, `bootstrapRemembranceGardenPlatform()` after Founder Walk.
+- **Chief of Staff integration:** `Remembrance Garden` in `SOFT_APPROVAL_SOURCES`; `RemembranceGardenLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Founder Walk integration:** cross-link to Remembrance Garden in ConnectedSystemsPanel.
+- **Knowledge graph:** `node-remembrance-garden` + edges to Founder Walk, Campus Evolution Engine, Company Genome, Leadership DNA, Relationship Engine, Organizational Inheritance, Studio Intelligence, Chief of Staff.
+
+**Route:** `/admin/studio/remembrance-garden` · Overview nav group · sage accent · back link from Founder Walk.
+
+**Changes:** remembrance-garden core + UI + hook + page + service, CoS/founder-walk/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

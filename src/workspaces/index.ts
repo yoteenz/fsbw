@@ -241,6 +241,10 @@ export function bootstrapWorkspacesPlatform(): void {
     founderWalk.bootstrapFounderWalkPlatform();
     await yieldToMain();
 
+    const remembranceGarden = await import('../studio-os-core/remembrance-garden/bootstrap');
+    remembranceGarden.bootstrapRemembranceGardenPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();
