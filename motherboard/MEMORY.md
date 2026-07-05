@@ -37747,3 +37747,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/arrival-experience` · Overview nav group · sky accent · back link from Company Onboarding Intelligence.
 
 **Changes:** arrival-experience core + UI + hook + page + service, CoS/COI/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
+---
+
+## 2026-07-05 — Milestone 74: Executive Apprenticeship & Founder Calibration V1.0
+
+**Context (full chat):** User requested continuation of Studio OS with **Milestone 74 — Executive Apprenticeship & Founder Calibration** so executives apprentice under the founder before earning meaningful autonomy. Prior milestones in arc: M73.5 COI (intelligent onboarding), M73.6 Arrival Experience (ceremonial headquarters welcome). Constraints: do not redesign overall Studio OS shell · trust never assumed · always earned · apprenticeship never ends · never replace founder · amplify leadership · work on `master` only · one commit + one push.
+
+**Goal:** Executives observe, learn, practice, calibrate, and earn trust through demonstrated alignment — not configuration. Features: apprenticeship philosophy · founder calibration (12 dimensions) · executive shadowing · learning conversations · calibration engine (9 domains) · practice mode · trust progression (6 levels) · soft approval · Chief of Staff mentorship · executive learning library · executive graduation · founder dashboard (91% org confidence · 94% avg alignment).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/executive-apprenticeship-founder-calibration/` — full types/store/bootstrap with NDXBOOK seed (6 executives · 12 calibration dimensions · 6 shadowing · 5 conversations · 9 measurements · 5 practice reviews · 6 trust progressions · 3 soft approvals · 6 mentorship recs · 8 library items · 4 graduations).
+- **Hook:** `useExecutiveApprenticeshipState`.
+- **UI:** `/admin/studio/executive-apprenticeship-founder-calibration` — 6 tabs · violet accent (`#7C3AED`) · V1.0.
+- **Wiring:** route, nav (after Arrival Experience), modules, services, bootstrap · Strategy Engine back → Executive Apprenticeship.
+- **Chief of Staff:** `ExecutiveApprenticeshipLinkPanel` + `SOFT_APPROVAL_SOURCES`.
+- **Cross-links:** Arrival Experience → Executive Apprenticeship.
+- **Knowledge graph:** `node-executive-apprenticeship-founder-calibration` + ~32 edges.
+
+**Route:** `/admin/studio/executive-apprenticeship-founder-calibration` · back link from Arrival Experience.
+
+**Changes:** executive-apprenticeship-founder-calibration core + UI + hook + page + service, CoS/AE/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.

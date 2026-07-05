@@ -321,6 +321,10 @@ export function bootstrapWorkspacesPlatform(): void {
     arrivalExperience.bootstrapArrivalExperiencePlatform();
     await yieldToMain();
 
+    const executiveApprenticeship = await import('../studio-os-core/executive-apprenticeship-founder-calibration/bootstrap');
+    executiveApprenticeship.bootstrapExecutiveApprenticeshipPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

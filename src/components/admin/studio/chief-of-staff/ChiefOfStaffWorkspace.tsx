@@ -51,6 +51,7 @@ import {
   LeadershipModesLinkPanel,
   CompanyOnboardingIntelligenceLinkPanel,
   ArrivalExperienceLinkPanel,
+  ExecutiveApprenticeshipLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -147,6 +148,7 @@ export function ChiefOfStaffWorkspace() {
             <LeadershipModesLinkPanel />
             <CompanyOnboardingIntelligenceLinkPanel />
             <ArrivalExperienceLinkPanel />
+            <ExecutiveApprenticeshipLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -211,6 +213,7 @@ export function ChiefOfStaffWorkspace() {
             <LeadershipModesLinkPanel />
             <CompanyOnboardingIntelligenceLinkPanel />
             <ArrivalExperienceLinkPanel />
+            <ExecutiveApprenticeshipLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

@@ -231,6 +231,7 @@ const AdminStudioOrganizationalMaturityModel = lazyWithRetry(() => import('./pag
 const AdminStudioLeadershipModes = lazyWithRetry(() => import('./pages/admin/studio/leadership-modes/page'), 'AdminStudioLeadershipModes');
 const AdminStudioCompanyOnboardingIntelligence = lazyWithRetry(() => import('./pages/admin/studio/company-onboarding-intelligence/page'), 'AdminStudioCompanyOnboardingIntelligence');
 const AdminStudioArrivalExperience = lazyWithRetry(() => import('./pages/admin/studio/arrival-experience/page'), 'AdminStudioArrivalExperience');
+const AdminStudioExecutiveApprenticeshipFounderCalibration = lazyWithRetry(() => import('./pages/admin/studio/executive-apprenticeship-founder-calibration/page'), 'AdminStudioExecutiveApprenticeshipFounderCalibration');
 const AdminStudioLeadershipDna = lazyWithRetry(() => import('./pages/admin/studio/leadership-dna/page'), 'AdminStudioLeadershipDna');
 const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
 const AdminStudioKnowledgeHubProfile = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/profile/page'), 'AdminStudioKnowledgeHubProfile');
@@ -1397,6 +1398,11 @@ function App() {
           <Route path="studio/arrival-experience" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioArrivalExperience />
+            </Suspense>
+          } />
+          <Route path="studio/executive-apprenticeship-founder-calibration" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExecutiveApprenticeshipFounderCalibration />
             </Suspense>
           } />
           <Route path="studio/leadership-dna" element={

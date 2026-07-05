@@ -68,6 +68,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Leadership Modes',
   'Company Onboarding Intelligence',
   'Arrival Experience',
+  'Executive Apprenticeship & Founder Calibration',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

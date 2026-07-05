@@ -21,4 +21,5 @@ export const AE_CONNECTED_SYSTEMS = [
   'Campus Evolution Engine',
   'Founder\'s Promise',
   'Studio Intelligence',
+  'Executive Apprenticeship & Founder Calibration',
 ] as const;

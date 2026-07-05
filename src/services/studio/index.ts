@@ -254,6 +254,9 @@ export type { CompanyOnboardingIntelligenceSnapshot } from './companyOnboardingI
 export { arrivalExperienceStudioService, ARRIVAL_EXPERIENCE_CHAIN } from './arrivalExperience/service';
 export type { ArrivalExperienceSnapshot } from './arrivalExperience/service';
 
+export { executiveApprenticeshipStudioService, EXECUTIVE_APPRENTICESHIP_CHAIN } from './executiveApprenticeship/service';
+export type { ExecutiveApprenticeshipSnapshot } from './executiveApprenticeship/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -377,6 +380,7 @@ import { organizationalMaturityModelStudioService } from './organizationalMaturi
 import { leadershipModesStudioService } from './leadershipModes/service';
 import { companyOnboardingIntelligenceStudioService } from './companyOnboardingIntelligence/service';
 import { arrivalExperienceStudioService } from './arrivalExperience/service';
+import { executiveApprenticeshipStudioService } from './executiveApprenticeship/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -463,6 +467,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   leadershipModesStudioService,
   companyOnboardingIntelligenceStudioService,
   arrivalExperienceStudioService,
+  executiveApprenticeshipStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

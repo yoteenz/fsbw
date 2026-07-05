@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath, adminStudioOrganizationalWorkflowOrchestrationPath, adminStudioOrganizationalSelfImprovementPath, adminStudioOrganizationalGovernanceSafeguardsPath, adminStudioOrganizationalMaturityModelPath, adminStudioLeadershipModesPath, adminStudioCompanyOnboardingIntelligencePath, adminStudioArrivalExperiencePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath, adminStudioOrganizationalWorkflowOrchestrationPath, adminStudioOrganizationalSelfImprovementPath, adminStudioOrganizationalGovernanceSafeguardsPath, adminStudioOrganizationalMaturityModelPath, adminStudioLeadershipModesPath, adminStudioCompanyOnboardingIntelligencePath, adminStudioArrivalExperiencePath, adminStudioExecutiveApprenticeshipFounderCalibrationPath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -989,6 +989,23 @@ export function ArrivalExperienceLinkPanel() {
         style={{ ...cosLabel, color: '#0369A1', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN ARRIVAL EXPERIENCE
+      </Link>
+    </section>
+  );
+}
+
+export function ExecutiveApprenticeshipLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #7C3AED' }}>
+      <p style={cosSectionTitle}>EXECUTIVE APPRENTICESHIP & FOUNDER CALIBRATION V1.0</p>
+      <p style={cosLabel}>
+        Observe · learn · practice · calibrate · trust earned never assumed · amplify founder leadership
+      </p>
+      <Link
+        to={adminStudioExecutiveApprenticeshipFounderCalibrationPath()}
+        style={{ ...cosLabel, color: '#7C3AED', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN EXECUTIVE APPRENTICESHIP
       </Link>
     </section>
   );

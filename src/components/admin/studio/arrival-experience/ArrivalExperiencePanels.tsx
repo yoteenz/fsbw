@@ -10,6 +10,7 @@ import {
   adminStudioChiefOfStaffPath,
   adminStudioCompanyGenomePath,
   adminStudioCompanyOnboardingIntelligencePath,
+  adminStudioExecutiveApprenticeshipFounderCalibrationPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExecutiveFrameworkPath,
   adminStudioFoundersPromisePath,
@@ -309,6 +310,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCampusEvolutionEnginePath()} style={{ ...aeLabel, color: '#CA8A04', fontSize: '6px' }}>→ CAMPUS EVOLUTION ENGINE</Link>
         <Link to={adminStudioFoundersPromisePath()} style={{ ...aeLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...aeLabel, color: '#6366F1', fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
+        <Link to={adminStudioExecutiveApprenticeshipFounderCalibrationPath()} style={{ ...aeLabel, color: '#7C3AED', fontSize: '6px' }}>→ EXECUTIVE APPRENTICESHIP</Link>
         <Link to={adminStudioArrivalExperiencePath()} style={{ ...aeLabel, color: '#0369A1', fontSize: '6px' }}>→ ARRIVAL EXPERIENCE</Link>
       </div>
     </section>

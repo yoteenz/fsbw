@@ -46,6 +46,7 @@ export type StudioOsCoreModuleId =
   | 'leadership-modes'
   | 'company-onboarding-intelligence'
   | 'arrival-experience'
+  | 'executive-apprenticeship-founder-calibration'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -351,6 +352,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ARRIVAL EXPERIENCE',
     description: 'Ceremonial headquarters welcome — organizational arrival. V1.0.',
     routeSegment: 'arrival-experience',
+  },
+  {
+    id: 'executive-apprenticeship-founder-calibration',
+    label: 'EXECUTIVE APPRENTICESHIP & FOUNDER CALIBRATION',
+    description: 'Executive development — observe, calibrate, earn trust. V1.0.',
+    routeSegment: 'executive-apprenticeship-founder-calibration',
   },
   {
     id: 'executive-command-center',
