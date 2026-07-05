@@ -36,4 +36,5 @@ export const OWF_CONNECTED_SYSTEMS = [
   'Studio Intelligence',
   'Organizational Self-Improvement',
   'Organizational Governance & Safeguards',
+  'Organizational Maturity Model',
 ] as const;

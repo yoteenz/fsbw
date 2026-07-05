@@ -48,6 +48,7 @@ export const EC_CONNECTED_SYSTEMS = [
   'Organizational Workflow Orchestration',
   'Organizational Self-Improvement',
   'Organizational Governance & Safeguards',
+  'Organizational Maturity Model',
   'Studio Intelligence',
   'Founder\'s Promise',
 ] as const;

@@ -22,6 +22,7 @@ import {
   adminStudioOrganizationalWorkflowOrchestrationPath,
   adminStudioOrganizationalSelfImprovementPath,
   adminStudioOrganizationalGovernanceSafeguardsPath,
+  adminStudioOrganizationalMaturityModelPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   EC,
@@ -395,6 +396,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...ecLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
         <Link to={adminStudioOrganizationalSelfImprovementPath()} style={{ ...ecLabel, color: '#10B981', fontSize: '6px' }}>→ ORGANIZATIONAL SELF-IMPROVEMENT</Link>
         <Link to={adminStudioOrganizationalGovernanceSafeguardsPath()} style={{ ...ecLabel, color: '#475569', fontSize: '6px' }}>→ ORGANIZATIONAL GOVERNANCE & SAFEGUARDS</Link>
+        <Link to={adminStudioOrganizationalMaturityModelPath()} style={{ ...ecLabel, color: '#D97706', fontSize: '6px' }}>→ ORGANIZATIONAL MATURITY MODEL</Link>
       </div>
     </section>
   );

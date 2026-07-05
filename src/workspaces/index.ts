@@ -305,6 +305,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationalGovernanceSafeguards.bootstrapOrganizationalGovernanceSafeguardsPlatform();
     await yieldToMain();
 
+    const organizationalMaturityModel = await import('../studio-os-core/organizational-maturity-model/bootstrap');
+    organizationalMaturityModel.bootstrapOrganizationalMaturityModelPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

@@ -19,6 +19,7 @@ import {
   adminStudioOrganizationalWorkflowOrchestrationPath,
   adminStudioOrganizationalSelfImprovementPath,
   adminStudioOrganizationalGovernanceSafeguardsPath,
+  adminStudioOrganizationalMaturityModelPath,
   adminStudioRelationshipEnginePath,
   adminStudioStrategyEnginePath,
   adminStudioStudioIntelligencePath,
@@ -324,6 +325,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...odeLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
         <Link to={adminStudioOrganizationalSelfImprovementPath()} style={{ ...odeLabel, color: '#10B981', fontSize: '6px' }}>→ ORGANIZATIONAL SELF-IMPROVEMENT</Link>
         <Link to={adminStudioOrganizationalGovernanceSafeguardsPath()} style={{ ...odeLabel, color: '#475569', fontSize: '6px' }}>→ ORGANIZATIONAL GOVERNANCE & SAFEGUARDS</Link>
+        <Link to={adminStudioOrganizationalMaturityModelPath()} style={{ ...odeLabel, color: '#D97706', fontSize: '6px' }}>→ ORGANIZATIONAL MATURITY MODEL</Link>
         <Link to={adminStudioOrganizationalIntelligencePath()} style={{ ...odeLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INTELLIGENCE</Link>
         <Link to={adminStudioExecutiveCouncilPath()} style={{ ...odeLabel, color: '#B45309', fontSize: '6px' }}>→ EXECUTIVE COUNCIL</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...odeLabel, color: '#334155', fontSize: '6px' }}>→ CHIEF OF STAFF</Link>

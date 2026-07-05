@@ -40,4 +40,5 @@ export const OAF_CONNECTED_SYSTEMS = [
   'Organizational Workflow Orchestration',
   'Organizational Self-Improvement',
   'Organizational Governance & Safeguards',
+  'Organizational Maturity Model',
 ] as const;

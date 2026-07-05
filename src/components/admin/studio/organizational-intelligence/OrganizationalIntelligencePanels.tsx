@@ -30,6 +30,7 @@ import {
   adminStudioOrganizationalWorkflowOrchestrationPath,
   adminStudioOrganizationalSelfImprovementPath,
   adminStudioOrganizationalGovernanceSafeguardsPath,
+  adminStudioOrganizationalMaturityModelPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   OI,
@@ -384,6 +385,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...oiLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
         <Link to={adminStudioOrganizationalSelfImprovementPath()} style={{ ...oiLabel, color: '#10B981', fontSize: '6px' }}>→ ORGANIZATIONAL SELF-IMPROVEMENT</Link>
         <Link to={adminStudioOrganizationalGovernanceSafeguardsPath()} style={{ ...oiLabel, color: '#475569', fontSize: '6px' }}>→ ORGANIZATIONAL GOVERNANCE & SAFEGUARDS</Link>
+        <Link to={adminStudioOrganizationalMaturityModelPath()} style={{ ...oiLabel, color: '#D97706', fontSize: '6px' }}>→ ORGANIZATIONAL MATURITY MODEL</Link>
       </div>
     </section>
   );

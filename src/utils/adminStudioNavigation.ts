@@ -406,6 +406,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-maturity-model',
+    title: 'ORGANIZATIONAL MATURITY MODEL',
+    purpose: 'Master progression system — right systems at the right time. Maturity earned, not unlocked. V1.0.',
+    route: p('organizational-maturity-model'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN OMM',
+    moduleKey: 'organizational-maturity-model',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

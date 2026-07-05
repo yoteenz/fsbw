@@ -36,4 +36,5 @@ export const OSI_CONNECTED_SYSTEMS = [
   'Founder\'s Promise',
   'Studio Intelligence',
   'Organizational Governance & Safeguards',
+  'Organizational Maturity Model',
 ] as const;

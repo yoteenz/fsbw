@@ -30,4 +30,5 @@ export const OGS_CONNECTED_SYSTEMS = [
   'Founder\'s Promise',
   'Organizational Inheritance',
   'Studio Intelligence',
+  'Organizational Maturity Model',
 ] as const;

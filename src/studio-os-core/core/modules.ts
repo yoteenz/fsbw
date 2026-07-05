@@ -42,6 +42,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-workflow-orchestration'
   | 'organizational-self-improvement'
   | 'organizational-governance-safeguards'
+  | 'organizational-maturity-model'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -323,6 +324,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL GOVERNANCE & SAFEGUARDS',
     description: 'Constitutional stewardship — invisible safeguards preserving trust. V1.0.',
     routeSegment: 'organizational-governance-safeguards',
+  },
+  {
+    id: 'organizational-maturity-model',
+    label: 'ORGANIZATIONAL MATURITY MODEL',
+    description: 'Master progression system — maturity earned, not unlocked. V1.0.',
+    routeSegment: 'organizational-maturity-model',
   },
   {
     id: 'executive-command-center',

@@ -29,6 +29,7 @@ export const LEADERSHIP_MANIFESTO_CONNECTED_SYSTEMS = [
   'Organizational Workflow Orchestration',
   'Organizational Self-Improvement',
   'Organizational Governance & Safeguards',
+  'Organizational Maturity Model',
 ] as const;
 
 export const DECISION_EVALUATION_DIMENSIONS = [

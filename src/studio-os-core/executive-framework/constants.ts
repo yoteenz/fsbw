@@ -35,6 +35,7 @@ export const EXECUTIVE_FRAMEWORK_CONNECTED_SYSTEMS = [
   'Organizational Workflow Orchestration',
   'Organizational Self-Improvement',
   'Organizational Governance & Safeguards',
+  'Organizational Maturity Model',
 ] as const;
 
 export const DECISION_DIMENSIONS = [

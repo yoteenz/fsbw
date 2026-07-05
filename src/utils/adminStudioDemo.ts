@@ -90,6 +90,7 @@ export type AdminStudioSectionId =
   | 'organizational-workflow-orchestration'
   | 'organizational-self-improvement'
   | 'organizational-governance-safeguards'
+  | 'organizational-maturity-model'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

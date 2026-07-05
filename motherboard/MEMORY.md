@@ -37664,4 +37664,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** organizational-governance-safeguards core + UI + hook + page + service, CoS/OSI/OWF/ODE/OAF/OI/executive-council/executive-framework/manifesto/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 72: Organizational Maturity Model V1.0
+
+**Context (full chat):** User requested Milestone 72 — introduce **Organizational Maturity Model** as the master progression system governing every company inside Studio OS. Prior milestones: M71 OGS (constitutional governance), M70 OSI, M69 OWF, full organizational stack. Constraints: do not redesign overall Studio OS shell · maturity earned not unlocked · never revenue alone · right systems at the right time · work on `master` only · one commit + one push.
+
+**Goal:** OMM becomes the master operating framework — every executive, workflow, autonomy decision, campus expansion, and improvement begins with "is the organization ready?" Features: maturity philosophy (mature not scale · recognize maturity not size · 10 readiness dimensions · earned through leadership/knowledge/relationships/trust/health/excellence/governance/wisdom) · organizational stages (idea · validation · launch · growth · scale · enterprise · holding company · legacy) · adaptive experience (UI · executives · workflows · autonomy · governance · reporting · dashboards · architect studios · campus · OI adapt to stage) · executive readiness (stage-gated recommendations · CoS/Business Architect at idea through portfolio leadership at holding company) · autonomy progression (6 levels · observation through organizational stewardship · display why levels change) · campus progression (8 campus stages from founder studio through legacy campus) · organizational assessments (10 domains · score · confidence · strengths · opportunities) · growth roadmap (current/next stage · requirements · priorities · readiness · dependencies · future executives) · company onboarding (assess website/products/customers/team/brand/ops/tech/knowledge/community · generate genome · KG · maturity · executives · campus) · OI integration (evaluate evolution · slow down/accelerate/strengthen before advancing).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/organizational-maturity-model/` — types (stages, dimensions, adaptive experience, executive readiness, autonomy/campus progression, assessments, roadmap, onboarding, OI integration), constants (philosophy, connected systems), localStorage store (`studioOsOrganizationalMaturityModel_v1`), rich NDXBOOK bootstrap (NDXBOOK at SCALE stage · 74% maturity · 68% enterprise readiness · 8 stages · 10 dimensions · 9 adaptive areas · 12 executive readiness · 6 autonomy levels · 8 campus stages · 10 assessments · growth roadmap · 6 onboarding signals · 5 OI evaluations).
+- **Hook:** `useOrganizationalMaturityModelState`.
+- **UI:** `/admin/studio/organizational-maturity-model` — `OrganizationalMaturityModelWorkspace` with tabs (Stages/Philosophy · Adaptive/Executives · Autonomy/Campus · Assess/Roadmap · Onboard/Intelligence · Dashboard/Connect). Amber accent (`#D97706`) · V1.0.
+- **Wiring:** route, nav (overview · after OGS), modules, services, bootstrap after Organizational Governance & Safeguards.
+- **Chief of Staff integration:** `Organizational Maturity Model` in `SOFT_APPROVAL_SOURCES`; `OrganizationalMaturityModelLinkPanel` in CoS workspace.
+- **Cross-links:** OGS, OSI, OWF, ODE, OAF, OI, Executive Council, Executive Framework, Leadership Manifesto ConnectedSystemsPanel → OMM · back link from OGS page.
+- **Knowledge graph:** `node-organizational-maturity-model` + ~34 edges to OGS, OSI, OWF, ODE, OAF, OI, Council, CoS, all C-suite, all architects, Genome, Campus Evolution, Company Maturity Engine, Promise, Relationship Engine, Studio Intelligence.
+
+**Route:** `/admin/studio/organizational-maturity-model` · Overview nav group · amber accent · back link from Organizational Governance & Safeguards.
+
+**Changes:** organizational-maturity-model core + UI + hook + page + service, CoS/OGS/OSI/OWF/ODE/OAF/OI/executive-council/executive-framework/manifesto/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
 

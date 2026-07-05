@@ -227,6 +227,7 @@ const AdminStudioOrganizationalDelegationEngine = lazyWithRetry(() => import('./
 const AdminStudioOrganizationalWorkflowOrchestration = lazyWithRetry(() => import('./pages/admin/studio/organizational-workflow-orchestration/page'), 'AdminStudioOrganizationalWorkflowOrchestration');
 const AdminStudioOrganizationalSelfImprovement = lazyWithRetry(() => import('./pages/admin/studio/organizational-self-improvement/page'), 'AdminStudioOrganizationalSelfImprovement');
 const AdminStudioOrganizationalGovernanceSafeguards = lazyWithRetry(() => import('./pages/admin/studio/organizational-governance-safeguards/page'), 'AdminStudioOrganizationalGovernanceSafeguards');
+const AdminStudioOrganizationalMaturityModel = lazyWithRetry(() => import('./pages/admin/studio/organizational-maturity-model/page'), 'AdminStudioOrganizationalMaturityModel');
 const AdminStudioLeadershipDna = lazyWithRetry(() => import('./pages/admin/studio/leadership-dna/page'), 'AdminStudioLeadershipDna');
 const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
 const AdminStudioKnowledgeHubProfile = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/profile/page'), 'AdminStudioKnowledgeHubProfile');
@@ -1373,6 +1374,11 @@ function App() {
           <Route path="studio/organizational-governance-safeguards" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioOrganizationalGovernanceSafeguards />
+            </Suspense>
+          } />
+          <Route path="studio/organizational-maturity-model" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOrganizationalMaturityModel />
             </Suspense>
           } />
           <Route path="studio/leadership-dna" element={

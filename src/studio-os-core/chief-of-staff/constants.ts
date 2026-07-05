@@ -64,6 +64,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Organizational Workflow Orchestration',
   'Organizational Self-Improvement',
   'Organizational Governance & Safeguards',
+  'Organizational Maturity Model',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',
