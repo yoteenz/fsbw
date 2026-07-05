@@ -37894,7 +37894,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Fix:** `SocialOAuthSetupPanel` — add `onOpenChange`; `toggleOpen` calls it in controlled mode. `NdxbookSocialsPanel` — manage `setupPanelOpen` with `onOpenChange`; auto-open when accounts load and all platforms unconfigured; render panel only after OAuth accounts fetch completes.
 
-**Meta setup (documented for user):** Create Meta Business app → add Facebook Login + Instagram Graph API → Valid OAuth Redirect URI = `https://fsbw.vercel.app/api/admin/social-accounts-oauth-callback` (production `SITE_URL` + `/api/admin/social-accounts-oauth-callback`) → copy App ID/Secret to Vercel `META_APP_ID` / `META_APP_APP_SECRET` plus `SOCIAL_TOKEN_ENCRYPTION_SECRET` and `SITE_URL` → redeploy → Connect on SOCIALS tab. Instagram must be Business/Creator linked to a Facebook Page.
+**Meta setup (documented for user):** Create Meta Business app → add Facebook Login + Instagram Graph API → Valid OAuth Redirect URI = `https://fsbw.vercel.app/api/admin/social-accounts-oauth-callback` (production `SITE_URL` + `/api/admin/social-accounts-oauth-callback`) → copy App ID/Secret to Vercel `META_APP_ID` / `META_APP_SECRET` plus `SOCIAL_TOKEN_ENCRYPTION_SECRET` and `SITE_URL` → redeploy → Connect on SOCIALS tab. Instagram must be Business/Creator linked to a Facebook Page.
 
 **Changes:** `SocialOAuthSetupPanel.tsx`, `NdxbookSocialsPanel.tsx`, `motherboard/MEMORY.md`.
 

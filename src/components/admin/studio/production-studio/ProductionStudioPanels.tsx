@@ -20,6 +20,7 @@ import {
   adminStudioProductionBuilderPath,
   adminStudioProductionStudioPath,
   adminStudioPublishingQueuePath,
+  adminStudioRenderQueuePath,
   adminStudioStudioIntelligencePath,
   adminStudioTalentNetworkPath,
 } from '../../../../utils/adminStudioRoutes';
@@ -394,6 +395,7 @@ export function ProductionStudioConnectedSystemsPanel() {
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...psLabel, color: '#0F172A', fontSize: '6px' }}>→ CHIEF CONCIERGE</Link>
         <Link to={adminStudioProductionBuilderPath()} style={{ ...psLabel, color: PS_VISUAL.accent, fontSize: '6px' }}>→ PRODUCTION BUILDER</Link>
         <Link to={adminStudioProductionStudioPath()} style={{ ...psLabel, color: PS_VISUAL.accent, fontSize: '6px' }}>→ PRODUCTION STUDIO</Link>
+        <Link to={adminStudioRenderQueuePath()} style={{ ...psLabel, color: '#0EA5E9', fontSize: '6px' }}>→ RENDER QUEUE</Link>
       </div>
     </section>
   );

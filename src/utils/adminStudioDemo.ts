@@ -99,6 +99,7 @@ export type AdminStudioSectionId =
   | 'organizational-apprenticeship'
   | 'concierge-layer'
   | 'production-studio'
+  | 'render-queue'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

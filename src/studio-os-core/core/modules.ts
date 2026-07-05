@@ -51,6 +51,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-apprenticeship'
   | 'concierge-layer'
   | 'production-studio'
+  | 'render-queue'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -386,6 +387,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PRODUCTION STUDIO',
     description: 'Cinematic production headquarters — approved pages become production-ready media. V1.0.',
     routeSegment: 'production-studio',
+  },
+  {
+    id: 'render-queue',
+    label: 'RENDER QUEUE',
+    description: 'Centralized production floor — visible pipeline, live progress, founder never wonders. V1.0.',
+    routeSegment: 'render-queue',
   },
   {
     id: 'executive-command-center',

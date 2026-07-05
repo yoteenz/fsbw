@@ -85,6 +85,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'organizational-apprenticeship'
   | 'concierge-layer'
   | 'production-studio'
+  | 'render-queue'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -177,6 +178,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'organizational-apprenticeship',
   'concierge-layer',
   'production-studio',
+  'render-queue',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -288,6 +290,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   organizationalApprenticeship: 'studio/organizational-apprenticeship',
   conciergeLayer: 'studio/concierge-layer',
   productionStudio: 'studio/production-studio',
+  renderQueue: 'studio/render-queue',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -559,6 +562,10 @@ export function adminStudioConciergeLayerPath(): string {
 
 export function adminStudioProductionStudioPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/production-studio`;
+}
+
+export function adminStudioRenderQueuePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/render-queue`;
 }
 
 export function adminStudioPublishingQueuePath(): string {

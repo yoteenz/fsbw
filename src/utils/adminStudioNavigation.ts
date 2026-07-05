@@ -850,6 +850,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'render-queue',
+    title: 'RENDER QUEUE',
+    purpose: 'Centralized production floor — visible pipeline, live progress, pause/resume/batch. The founder never wonders what AI is doing.',
+    route: p('render-queue'),
+    groupId: 'production',
+    status: 'demo',
+    metric: 'LIVE',
+    ctaLabel: 'OPEN QUEUE',
+    moduleKey: 'render-queue',
+    featuredOnOverview: true,
+  },
+  {
     id: 'content-packs',
     title: 'CONTENT PACKS',
     purpose: 'Bundle weekly video, article, and checklist releases.',

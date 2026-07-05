@@ -61,6 +61,7 @@ import {
   adminStudioOrganizationalApprenticeshipPath,
   adminStudioConciergeLayerPath,
   adminStudioProductionStudioPath,
+  adminStudioRenderQueuePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -848,6 +849,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 78',
     status: 'demo',
     searchKeywords: ['production studio', 'production queue', 'render queue', 'voice generation', 'platform variations', 'cinematic production'],
+  },
+  {
+    id: 'node-render-queue',
+    name: 'RENDER QUEUE',
+    type: 'module',
+    description:
+      'Centralized production floor V1.0 — every production moves through a visible pipeline. Live progress, AI workers, delay explanations. The heartbeat of production.',
+    purpose: 'The founder never wonders what AI is doing — pause, resume, batch, priority rendering.',
+    route: adminStudioRenderQueuePath(),
+    moduleId: 'render-queue',
+    relatedManualChapter: 'CHAPTER · PRODUCTION · RENDER FLOOR',
+    versionIntroduced: 'Milestone 79',
+    status: 'demo',
+    searchKeywords: ['render queue', 'production pipeline', 'generating voice', 'rendering', 'batch rendering', 'production floor'],
   },
   {
     id: 'node-fallback-used',
@@ -2240,6 +2255,11 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-ps-si', fromId: 'node-production-studio', toId: 'node-studio-intelligence', type: 'feeds', label: 'PRODUCTION RECOMMENDATIONS' },
   { id: 'e-ps-cl', fromId: 'node-production-studio', toId: 'node-concierge-layer', type: 'related-to', label: 'CONCIERGE PRODUCTION GUIDANCE' },
   { id: 'e-ps-platform', fromId: 'node-production-studio', toId: 'production-studio', type: 'documented-by', label: 'CINEMATIC HEADQUARTERS' },
+  { id: 'e-ps-rq', fromId: 'node-production-studio', toId: 'node-render-queue', type: 'feeds', label: 'RENDER PIPELINE' },
+  { id: 'e-rq-ps', fromId: 'node-render-queue', toId: 'node-production-studio', type: 'related-to', label: 'PRODUCTION JOBS' },
+  { id: 'e-rq-si', fromId: 'node-render-queue', toId: 'node-studio-intelligence', type: 'feeds', label: 'DELAY EXPLANATIONS' },
+  { id: 'e-rq-publishing', fromId: 'node-render-queue', toId: 'publishing-queue', type: 'feeds', label: 'EXPORT OUTPUT' },
+  { id: 'e-rq-platform', fromId: 'node-render-queue', toId: 'render-queue', type: 'documented-by', label: 'PRODUCTION FLOOR' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },
