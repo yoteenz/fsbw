@@ -26,6 +26,7 @@ export const CAMPUS_EVOLUTION_CONNECTED_SYSTEMS = [
   'Chief of Staff',
   'Studio Intelligence',
   'Organizational Inheritance',
+  'Founder Walk',
 ] as const;
 
 export const CAMPUS_STAGE_DEFS: { id: CampusStageId; label: string; description: string }[] = [

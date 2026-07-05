@@ -30,6 +30,7 @@ import {
   CompanyGenomeLinkPanel,
   ArchitectStudioLinkPanel,
   CampusEvolutionEngineLinkPanel,
+  FounderWalkLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -105,6 +106,7 @@ export function ChiefOfStaffWorkspace() {
             <CompanyGenomeLinkPanel />
             <ArchitectStudioLinkPanel />
             <CampusEvolutionEngineLinkPanel />
+            <FounderWalkLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -148,6 +150,7 @@ export function ChiefOfStaffWorkspace() {
             <CompanyGenomeLinkPanel />
             <ArchitectStudioLinkPanel />
             <CampusEvolutionEngineLinkPanel />
+            <FounderWalkLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

@@ -202,6 +202,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'founder-walk',
+    title: 'FOUNDER WALK',
+    purpose: 'Emotional spine of the campus — preserve the founder journey as a living marble pathway and legacy system.',
+    route: p('founder-walk'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'BEGIN WALK',
+    moduleKey: 'founder-walk',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

@@ -191,6 +191,9 @@ export type { ArchitectStudioSnapshot } from './architectStudio/service';
 export { campusEvolutionEngineStudioService, CAMPUS_EVOLUTION_CHAIN } from './campusEvolutionEngine/service';
 export type { CampusEvolutionSnapshot } from './campusEvolutionEngine/service';
 
+export { founderWalkStudioService, FOUNDER_WALK_CHAIN } from './founderWalk/service';
+export type { FounderWalkSnapshot } from './founderWalk/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -293,6 +296,7 @@ import { growthArchitectStudioService } from './growthArchitect/service';
 import { companyGenomeStudioService } from './companyGenome/service';
 import { architectStudioStudioService } from './architectStudio/service';
 import { campusEvolutionEngineStudioService } from './campusEvolutionEngine/service';
+import { founderWalkStudioService } from './founderWalk/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -358,6 +362,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   companyGenomeStudioService,
   architectStudioStudioService,
   campusEvolutionEngineStudioService,
+  founderWalkStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

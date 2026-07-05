@@ -237,6 +237,10 @@ export function bootstrapWorkspacesPlatform(): void {
     campusEvolution.bootstrapCampusEvolutionPlatform();
     await yieldToMain();
 
+    const founderWalk = await import('../studio-os-core/founder-walk/bootstrap');
+    founderWalk.bootstrapFounderWalkPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

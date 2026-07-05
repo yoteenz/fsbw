@@ -17,6 +17,7 @@ import {
   adminStudioOrganizationalInheritancePath,
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
+  adminStudioFounderWalkPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CAMPUS_EVOLUTION_STYLES,
@@ -374,6 +375,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...ceLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...ceLabel, color: CE.teal, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...ceLabel, color: '#4F46E5', fontSize: '6px' }}>→ INHERITANCE</Link>
+        <Link to={adminStudioFounderWalkPath()} style={{ ...ceLabel, color: '#78716C', fontSize: '6px' }}>→ FOUNDER WALK</Link>
       </div>
     </section>
   );

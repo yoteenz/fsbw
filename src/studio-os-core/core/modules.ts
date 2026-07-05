@@ -25,6 +25,7 @@ export type StudioOsCoreModuleId =
   | 'company-genome'
   | 'architect-studio'
   | 'campus-evolution-engine'
+  | 'founder-walk'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -204,6 +205,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CAMPUS EVOLUTION ENGINE',
     description: 'Living architectural growth — earned spaces, organic evolution, company memory, portfolio campus.',
     routeSegment: 'campus-evolution-engine',
+  },
+  {
+    id: 'founder-walk',
+    label: 'FOUNDER WALK',
+    description: 'Emotional spine of the campus — marble pathway, memory markers, legacy for future generations.',
+    routeSegment: 'founder-walk',
   },
   {
     id: 'executive-command-center',
