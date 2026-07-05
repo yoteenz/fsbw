@@ -17,6 +17,7 @@ import {
   CampaignEngineLinkPanel,
   WorkOrchestrationLinkPanel,
   DistributionEngineLinkPanel,
+  ReaderGraphLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -79,6 +80,7 @@ export function ChiefOfStaffWorkspace() {
             <CampaignEngineLinkPanel />
             <WorkOrchestrationLinkPanel />
             <DistributionEngineLinkPanel />
+            <ReaderGraphLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -109,6 +111,7 @@ export function ChiefOfStaffWorkspace() {
             <CampaignEngineLinkPanel />
             <WorkOrchestrationLinkPanel />
             <DistributionEngineLinkPanel />
+            <ReaderGraphLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

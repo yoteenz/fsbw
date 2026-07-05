@@ -46,6 +46,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'campaign-engine'
   | 'work-orchestration'
   | 'distribution-engine'
+  | 'reader-graph'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -99,6 +100,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'campaign-engine',
   'work-orchestration',
   'distribution-engine',
+  'reader-graph',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -171,6 +173,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   campaignEngine: 'studio/campaign-engine',
   workOrchestration: 'studio/work-orchestration',
   distributionEngine: 'studio/distribution-engine',
+  readerGraph: 'studio/reader-graph',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -286,6 +289,10 @@ export function adminStudioWorkOrchestrationPath(): string {
 
 export function adminStudioDistributionEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/distribution-engine`;
+}
+
+export function adminStudioReaderGraphPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/reader-graph`;
 }
 
 export function adminStudioOsPath(): string {

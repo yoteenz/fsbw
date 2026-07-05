@@ -118,6 +118,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'reader-graph',
+    title: 'READER GRAPH',
+    purpose: 'Living relationship map — every person evolves through trust, learning, loyalty, and advocacy over years.',
+    route: p('reader-graph'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN READER GRAPH',
+    moduleKey: 'reader-graph',
+    featuredOnOverview: true,
+  },
+  {
     id: 'campaign-engine',
     title: 'CAMPAIGN ENGINE',
     purpose: 'Transforms strategy into coordinated execution — campaigns bridge initiatives and production.',

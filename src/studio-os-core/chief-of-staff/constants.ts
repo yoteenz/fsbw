@@ -34,6 +34,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Campaign Engine',
   'Work Orchestration',
   'Distribution Engine',
+  'Reader Graph',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

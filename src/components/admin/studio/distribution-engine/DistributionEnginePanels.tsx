@@ -16,6 +16,7 @@ import {
   adminStudioCampaignEnginePath,
   adminStudioStrategyEnginePath,
   adminStudioWorkOrchestrationPath,
+  adminStudioReaderGraphPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   DISTRIBUTION_ENGINE_STYLES,
@@ -499,6 +500,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioStrategyEnginePath()} style={{ ...deLabel, color: '#334155', fontSize: '6px' }}>→ STRATEGY ENGINE</Link>
         <Link to={adminStudioCampaignEnginePath()} style={{ ...deLabel, color: '#D97706', fontSize: '6px' }}>→ CAMPAIGN ENGINE</Link>
         <Link to={adminStudioWorkOrchestrationPath()} style={{ ...deLabel, color: '#0891B2', fontSize: '6px' }}>→ WORK ORCHESTRATION</Link>
+        <Link to={adminStudioReaderGraphPath()} style={{ ...deLabel, color: '#E11D48', fontSize: '6px' }}>→ READER GRAPH</Link>
       </div>
     </section>
   );

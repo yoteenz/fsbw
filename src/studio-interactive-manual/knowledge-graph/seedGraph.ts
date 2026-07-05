@@ -22,6 +22,7 @@ import {
   adminStudioCampaignEnginePath,
   adminStudioWorkOrchestrationPath,
   adminStudioDistributionEnginePath,
+  adminStudioReaderGraphPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -263,6 +264,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 46',
     status: 'demo',
     searchKeywords: ['distribution engine', 'knowledge assets', 'channel optimization', 'evergreen', 'distribution calendar', 'lineage'],
+  },
+  {
+    id: 'node-reader-graph',
+    name: 'READER GRAPH',
+    type: 'module',
+    description:
+      'Living relationship map between every company and every person it serves — interests, engagement, trust, advocacy, and long-term growth.',
+    purpose: 'Cultivate relationships that deepen over years · not followers · not vanity metrics.',
+    route: adminStudioReaderGraphPath(),
+    moduleId: 'reader-graph',
+    relatedManualChapter: 'CHAPTER · READER GRAPH · LIVING RELATIONSHIPS',
+    versionIntroduced: 'Milestone 47',
+    status: 'demo',
+    searchKeywords: ['reader graph', 'relationship map', 'reader journey', 'community clusters', 'advocacy', 'trust score'],
   },
   {
     id: 'node-fallback-used',
@@ -941,6 +956,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-distribution-labs', fromId: 'node-distribution-engine', toId: 'node-studio-os-labs', type: 'feeds', label: 'FORMAT EXPERIMENTS' },
   { id: 'e-distribution-growth', fromId: 'node-distribution-engine', toId: 'node-growth-network', type: 'feeds', label: 'REACH · REVENUE' },
   { id: 'e-distribution-platform', fromId: 'node-distribution-engine', toId: 'distribution-engine', type: 'documented-by', label: 'GLOBAL DISTRIBUTION' },
+  { id: 'e-distribution-reader-graph', fromId: 'node-distribution-engine', toId: 'node-reader-graph', type: 'feeds', label: 'ENGAGEMENT → RELATIONSHIPS' },
+  { id: 'e-reader-graph-strategy', fromId: 'node-reader-graph', toId: 'node-strategy-engine', type: 'feeds', label: 'BEHAVIOR → STRATEGY' },
+  { id: 'e-reader-graph-campaign', fromId: 'node-reader-graph', toId: 'node-campaign-engine', type: 'related-to', label: 'CAMPAIGN SIMULATION' },
+  { id: 'e-reader-graph-cos', fromId: 'node-chief-of-staff', toId: 'node-reader-graph', type: 'related-to', label: 'RELATIONSHIP APPROVALS' },
+  { id: 'e-reader-graph-intelligence', fromId: 'node-studio-intelligence', toId: 'node-reader-graph', type: 'feeds', label: 'READER SIGNALS' },
+  { id: 'e-reader-graph-newsroom', fromId: 'node-ndxbook-newsroom', toId: 'node-reader-graph', type: 'feeds', label: 'READER BEHAVIOR' },
+  { id: 'e-reader-graph-platform', fromId: 'node-reader-graph', toId: 'reader-graph', type: 'documented-by', label: 'LIVING RELATIONSHIPS' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

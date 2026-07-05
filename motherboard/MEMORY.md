@@ -36991,3 +36991,48 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** work-orchestration core + UI + hook + page + service, CoS/campaign/strategy/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 46: Distribution Engine V1.0
+
+**Context (full chat):** User requested Milestone 46 — introduce **Distribution Engine** as the global distribution system for every knowledge asset created inside Studio OS. Prior milestones in arc: M40 Newsroom, M43 Strategy Engine, M44 Campaign Engine, M45 Work Orchestration. Constraints: do not redesign overall Studio OS shell · do not modify Frontal Slayer · do not remove existing systems.
+
+**Goal:** Distribution Engine determines the highest-value expression of every knowledge asset, selects best channels, optimizes each version, measures results, and continuously improves future distribution decisions. Knowledge never exists in only one format. Hierarchy: Knowledge Asset → Campaign → Distribution Strategy → Channel Selection → Platform Adaptation → Publishing → Audience Engagement → Performance → Institutional Learning. Founder approves strategy · Studio OS executes. Features: knowledge adaptation (20 formats), distribution intelligence, channel optimization, unified calendar, evergreen engine, knowledge collections, audience adaptation, creator marketplace integration, distribution simulation, performance intelligence, feedback loop, distribution lineage, cross-company distribution, distribution health dashboard. Think in knowledge assets not posts · optimize for knowledge longevity.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/distribution-engine/` — types (knowledge assets, strategies, platform adaptations, intelligence recs, calendar, evergreen, collections, audience segments, creator recs, simulations, performance, feedback, lineage, cross-company, health), constants (20 formats, hierarchy chain, connected systems, channel optimization fields), localStorage store (`studioOsDistributionEngine_v1`), rich bootstrap seed.
+- **Bootstrap:** 3 knowledge assets (Page 042 Money habits, Page 028 cross-platform, Truth Tuesday sleep evergreen) · distribution strategies · platform adaptations (Instagram, TikTok, newsletter, YouTube Shorts) · intelligence recommendations · calendar entries · evergreen recommendations · collections · audience segments · creator marketplace recs · 3 simulations · performance records · feedback insights · lineage nodes · cross-company options · 79% distribution health.
+- **Hook:** `useDistributionEngineState` — workspace/asset selection.
+- **UI:** `/admin/studio/distribution-engine` — `DistributionEngineWorkspace` with tabs (Dashboard · Assets · Channels · Calendar · Evergreen · Intelligence · Simulation · Performance · Learning · Lineage · Collections); panels for dashboard, hierarchy, knowledge assets, adaptation, strategies, intelligence, channel optimization, calendar, evergreen, collections, audience, creator marketplace, simulation, performance, feedback, lineage, cross-company, health, connected systems. Violet accent theme (`#7C3AED`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (distribution group), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/distributionEngine/service.ts`, `bootstrapDistributionEnginePlatform()` after Work Orchestration.
+- **Chief of Staff integration:** `Distribution Engine` in `SOFT_APPROVAL_SOURCES`; `DistributionEngineLinkPanel` in CoS workspace.
+- **Campaign Engine integration:** `DistributionEngineLinkPanel` + connected systems link.
+- **Work Orchestration integration:** connected systems link to Distribution Engine.
+- **Knowledge graph:** `node-distribution-engine` + edges to Work Orchestration, Campaign Engine, Newsroom, Chief of Staff, Studio Intelligence, Labs, Growth Network.
+
+**Route:** `/admin/studio/distribution-engine` · Distribution nav group · violet accent theme.
+
+**Changes:** distribution-engine core + UI + hook + page + service, CoS/campaign/work-orchestration/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
+---
+
+## 2026-07-05 — Milestone 47: Reader Graph V1.0
+
+**Context (full chat):** User requested Milestone 47 — introduce **Reader Graph** as the living relationship map between every company and every person it serves. Prior milestones in arc: M43 Strategy Engine, M44 Campaign Engine, M45 Work Orchestration, M46 Distribution Engine. Constraints: do not redesign overall Studio OS shell · do not modify Frontal Slayer · do not remove existing systems.
+
+**Goal:** Replace isolated follower/subscriber/customer/contact metrics with a continuously evolving relationship graph capturing interests, engagement, learning, trust, purchasing, community participation, and long-term growth. Reader profiles with scores (reader, trust, engagement, knowledge, community, advocacy, LTV). Journey: Discover → Engage → Return → Bookmark → Share → Subscribe → Member → Customer → Advocate → Ambassador → Partner → Mentor. Interactive graph visualization with zoom levels. Knowledge interests (13 topics) with evolution. Behavior intelligence connected to strategy. Relationship health (not vanity metrics). Reader timeline, community clusters, Studio Intelligence signals, relationship recommendations, cross-company portfolio relationships, creator marketplace pipeline, relationship simulation before campaigns, privacy controls with founder consent.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/reader-graph/` — types (reader profiles, journey stages, graph nodes, interests, behavior intel, health, timelines, communities, intelligence signals, recommendations, cross-company, creator opportunities, simulations, privacy), constants (philosophy, journey, 13 interests, connected systems, zoom levels), localStorage store (`studioOsReaderGraph_v1`), rich bootstrap seed.
+- **Bootstrap:** 4 readers (Maya K returning, Jordan T advocate, Sam L member, Alex R cross-company FS+ndxbook customer) · relationship health scores · 10 timeline events · 8 interest records · behavior intel · 4 community clusters · 6 intelligence signals · 6 recommendations · cross-company portfolio · 4 creator opportunities · 2 relationship simulations · graph nodes · 5 privacy controls.
+- **Hook:** `useReaderGraphState` — workspace/reader selection, graph zoom.
+- **UI:** `/admin/studio/reader-graph` — `ReaderGraphWorkspace` with tabs (Dashboard · Readers · Journey · Graph · Communities · Interests · Behavior · Intelligence · Recs · Timeline · Privacy); panels for dashboard, philosophy, reader list/profile, journey, graph visualization, interests, behavior, health, timeline, communities, intelligence, recommendations, cross-company, creator marketplace, simulation, privacy, connected systems. Rose accent theme (`#E11D48`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (intelligence group), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/readerGraph/service.ts`, `bootstrapReaderGraphPlatform()` after Distribution Engine.
+- **Chief of Staff integration:** `Reader Graph` in `SOFT_APPROVAL_SOURCES`; `ReaderGraphLinkPanel` in CoS workspace.
+- **Distribution Engine integration:** connected systems link to Reader Graph.
+- **Knowledge graph:** `node-reader-graph` + edges to Distribution Engine, Strategy Engine, Campaign Engine, Chief of Staff, Studio Intelligence, Newsroom.
+
+**Route:** `/admin/studio/reader-graph` · Intelligence nav group · rose accent theme.
+
+**Changes:** reader-graph core + UI + hook + page + service, CoS/distribution/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

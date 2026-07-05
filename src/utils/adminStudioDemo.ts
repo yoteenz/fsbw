@@ -60,6 +60,7 @@ export type AdminStudioSectionId =
   | 'campaign-engine'
   | 'work-orchestration'
   | 'distribution-engine'
+  | 'reader-graph'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

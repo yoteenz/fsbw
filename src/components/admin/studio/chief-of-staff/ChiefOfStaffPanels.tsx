@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -411,6 +411,23 @@ export function DistributionEngineLinkPanel() {
         style={{ ...cosLabel, color: '#7C3AED', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN DISTRIBUTION ENGINE
+      </Link>
+    </section>
+  );
+}
+
+export function ReaderGraphLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #E11D48' }}>
+      <p style={cosSectionTitle}>READER GRAPH · LIVING RELATIONSHIPS</p>
+      <p style={cosLabel}>
+        Relationship health · advocate pipeline · membership recommendations · protect reader privacy
+      </p>
+      <Link
+        to={adminStudioReaderGraphPath()}
+        style={{ ...cosLabel, color: '#E11D48', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN READER GRAPH
       </Link>
     </section>
   );

@@ -12,6 +12,7 @@ export type StudioOsCoreModuleId =
   | 'campaign-engine'
   | 'work-orchestration'
   | 'distribution-engine'
+  | 'reader-graph'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -113,6 +114,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'DISTRIBUTION ENGINE',
     description: 'Global distribution for knowledge assets — channel optimization, evergreen, lineage, performance.',
     routeSegment: 'distribution-engine',
+  },
+  {
+    id: 'reader-graph',
+    label: 'READER GRAPH',
+    description: 'Living relationship map — readers, journey, communities, trust, advocacy, portfolio relationships.',
+    routeSegment: 'reader-graph',
   },
   {
     id: 'executive-command-center',
