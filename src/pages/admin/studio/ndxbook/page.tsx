@@ -66,7 +66,7 @@ export default function AdminStudioNdxbookPage() {
       </div>
 
       <AdminStudioDisclaimerFooter>
-        NDXBOOK V1.0 · BRAND FOUNDATION · SOCIAL PLACEHOLDERS ONLY · NO LIVE CONNECTIONS
+        NDXBOOK V1.0 · BRAND FOUNDATION · OAUTH VIA STUDIO SOCIAL ACCOUNTS CONNECTORS
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

@@ -1,5 +1,6 @@
+import type { PublicSocialAccount, SocialPlatformId } from '../../utils/adminStudioSocialPublishing';
 import { NDXBOOK_STORAGE_KEY, NDXBOOK_VERSION } from './constants';
-import type { NdxbookDashboardSnapshot, NdxbookStore } from './types';
+import type { NdxbookDashboardSnapshot, NdxbookPlatformId, NdxbookStore } from './types';
 
 function defaultDashboard(): NdxbookDashboardSnapshot {
   return {
@@ -90,6 +91,44 @@ export function refreshNdxbookDashboardMetrics(): NdxbookDashboardSnapshot {
   };
   mergeNdxbookPatch({ dashboard });
   return dashboard;
+}
+
+const OAUTH_TO_NDXBOOK_PLATFORM: Partial<Record<SocialPlatformId, NdxbookPlatformId>> = {
+  instagram: 'instagram',
+  facebook: 'facebook',
+  tiktok: 'tiktok',
+  pinterest: 'pinterest',
+  x: 'x',
+};
+
+/** Merge official OAuth connector status into ndxbook placeholder social rows. */
+export function syncNdxbookSocialAccountsFromPublishing(accounts: PublicSocialAccount[]): void {
+  const store = readNdxbookStore();
+  if (store.socialAccounts.length === 0) return;
+
+  const updated = store.socialAccounts.map((acct) => {
+    const oauth = accounts.find((a) => OAUTH_TO_NDXBOOK_PLATFORM[a.platform] === acct.platform);
+    if (!oauth) return acct;
+
+    const connected =
+      oauth.status === 'connected' ||
+      oauth.status === 'token_expiring' ||
+      oauth.status === 'posting_disabled';
+
+    return {
+      ...acct,
+      status: connected ? ('connected' as const) : ('not-connected' as const),
+      handle: oauth.accountLabel?.trim() || acct.handle,
+      notes: connected
+        ? `OAuth connected · ${oauth.label}`
+        : oauth.oauthConfigured
+          ? 'Use CONNECT below to authorize this channel.'
+          : acct.notes,
+    };
+  });
+
+  mergeNdxbookPatch({ socialAccounts: updated });
+  refreshNdxbookDashboardMetrics();
 }
 
 export function countPagesByStatus(status: NdxbookStore['pages'][0]['status']): number {

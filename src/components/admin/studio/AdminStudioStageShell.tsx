@@ -3,7 +3,19 @@ import { Navigate } from 'react-router-dom';
 import { AdminStudioLayout } from './AdminStudioLayout';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { STUDIO_OS_ROUTES } from '../../../studio-os-core/workspace/routes';
+import type { WorkspaceSchema } from '../../../studio-os-core/workspace/types';
 import type { StudioNavGroupId } from '../../../utils/adminStudioNavigation';
+
+/** Platform modules (ndxbook, labs, etc.) must work from the AI Media reference pilot workspace. */
+function canAccessStudioStageShell(workspace: WorkspaceSchema): boolean {
+  if (workspace.studioEnabled) return true;
+  if (workspace.id === 'ai-media' || workspace.slug === 'ai-media') return true;
+  const tags = workspace.metadata?.tags;
+  if (Array.isArray(tags) && tags.some((tag) => tag === 'reference' || tag === 'pilot')) {
+    return true;
+  }
+  return false;
+}
 
 type AdminStudioStageShellProps = {
   title: string;
@@ -38,7 +50,7 @@ export function AdminStudioStageShell({
   void _accentHex;
   const { workspace } = useWorkspace();
 
-  if (!workspace.studioEnabled) {
+  if (!canAccessStudioStageShell(workspace)) {
     return <Navigate to={STUDIO_OS_ROUTES.workspaceShell(workspace.id)} replace />;
   }
 

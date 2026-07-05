@@ -11,6 +11,7 @@ import {
   WORKSPACE_DASHBOARD_MODULE_LABELS,
   WORKSPACE_TYPE_LABELS,
 } from '../../../../utils/adminStudioWorkspaceCreationDemo';
+import { adminStudioNdxbookPath } from '../../../../utils/adminStudioRoutes';
 import { useAdminStudioNdxbookState } from '../../../../hooks/useAdminStudioNdxbookState';
 import { ExecutiveTeamPanel } from './ExecutiveTeamPanel';
 import { PromotionCenterPanel } from './PromotionCenterPanel';
@@ -111,7 +112,12 @@ export function WorkspaceDashboard({
                   <p className="mt-2" style={{ color: workspace.accentColor }}>
                     NEXT ACTION · {ndxbookDashboard.nextAction}
                   </p>
-                  <button type="button" className="text-[6px] underline mt-1" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/ndxbook')}>
+                  <button
+                    type="button"
+                    className="text-[6px] underline mt-1"
+                    style={{ color: '#6366F1' }}
+                    onClick={() => navigate(`${adminStudioNdxbookPath()}?tab=overview`)}
+                  >
                     OPEN NDXBOOK BRAND SETUP
                   </button>
                 </div>
@@ -159,8 +165,13 @@ export function WorkspaceDashboard({
               </button>
             ) : null}
             {activeTab === 'ndxbook' ? (
-              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate('/admin/studio/ndxbook')}>
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate(`${adminStudioNdxbookPath()}?tab=overview`)}>
                 OPEN NDXBOOK BRAND
+              </button>
+            ) : null}
+            {activeTab === 'social-accounts' ? (
+              <button type="button" className="text-[6px] underline" style={{ color: '#6366F1' }} onClick={() => navigate(`${adminStudioNdxbookPath()}?tab=socials`)}>
+                OPEN NDXBOOK SOCIAL SETUP
               </button>
             ) : null}
             {activeTab === 'ai-media-network' ? (

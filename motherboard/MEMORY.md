@@ -36752,3 +36752,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** ndxbook core + bootstrap + admin UI; `WorkspaceDashboard.tsx`, `App.tsx`, `workspaces/index.ts`, studio wiring files, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — NDXBOOK brand setup link dead + social OAuth not wired
+
+**Context (full chat):** User on **Studio OS → AI Media** workspace dashboard saw **OPEN NDXBOOK BRAND SETUP** but tap did nothing; could not add/link social accounts (**SOCIALS CONNECTED: 0**). Prior turns fixed admin dashboard blank (decouple AdminGuard from Studio OS bootstrap).
+
+**Root cause — link appears dead:**
+- **`AdminStudioStageShell`** gated all studio module pages on **`workspace.studioEnabled`**. AI Media registry workspace has **`studioEnabled: false`** (reference pilot via `schemaBridge`).
+- Navigating to **`/admin/studio/ndxbook`** immediately **`Navigate`**d back to **`/admin/studio-os/workspace/ai-media`** — same URL flash, felt like a broken link.
+
+**Root cause — socials not connectable:**
+- NDXBOOK **SOCIALS** tab was placeholder copy only (“do not connect live accounts”) with no OAuth UI and no bridge to **`/admin/studio/social-accounts`**.
+
+**Fix:**
+- **`AdminStudioStageShell`:** allow **reference pilot** workspaces (`ai-media`, metadata tags `pilot`/`reference`) — not just **`frontal-slayer`**.
+- **`NdxbookWorkspace` SOCIALS tab:** wire **`useAdminStudioSocialAccounts`** + **`AdminStudioSocialAccountCard`** (CONNECT/DISCONNECT OAuth); link to full social accounts page; **`syncNdxbookSocialAccountsFromPublishing()`** updates ndxbook registry + dashboard **SOCIALS CONNECTED** count.
+- **`WorkspaceDashboard`:** brand setup CTA uses **`adminStudioNdxbookPath()`** with **`?tab=overview`**.
+
+**Changes:** `AdminStudioStageShell.tsx`, `NdxbookWorkspace.tsx`, `ndxbook/store.ts`, `WorkspaceDashboard.tsx`, `ndxbook/page.tsx`, `motherboard/MEMORY.md`.
+
