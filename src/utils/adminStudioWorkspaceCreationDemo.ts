@@ -1,7 +1,7 @@
 import type { BlueprintModuleId } from '../studio-os-core/workspace-creation/types';
 
 export const WORKSPACE_DASHBOARD_MODULE_LABELS: Record<BlueprintModuleId, string> = {
-  dashboard: 'Overview',
+  dashboard: 'Mission Control',
   'memory-bible': 'Memory Bible',
   'creative-dna': 'Creative DNA',
   'writing-bible': 'Writing Bible',

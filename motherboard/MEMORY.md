@@ -36789,3 +36789,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** `NdxbookSocialsPanel.tsx` (new), `NdxbookWorkspace.tsx`, `AdminStudioLayout.tsx`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Milestone 37: NDXBOOK Mission Control V1.0
+
+**Context (full chat):** User requested Milestone 37 — transform AI Media workspace into a real-time NDXBOOK operating center (Mission Control HQ). Prior chat: admin dashboard fix, NDXBOOK brand setup link/OAuth, page freeze fix (lazy OAuth + skip heavy bootstrap on ndxbook route).
+
+**Goal:** Bloomberg-terminal-meets-newsroom HQ for ndxbook — founder sees live briefing, company health, newsroom pipeline, publishing timeline, page of the day, library, volumes/chapters, reader intelligence, studio intelligence, revenue, Labs experiments, talent board, mission actions, activity wall. No overall Studio OS UI redesign.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/ndxbook/mission-control/` — types, constants, localStorage store (`studioOsNdxbookMissionControl_v1`), demo bootstrap seed with operational demo data.
+- **Hook:** `useNdxbookMissionControlState` — 1s clock tick, 45s live metric jitter, drag-reschedule publishing items.
+- **UI:** `src/components/admin/studio-os/ndxbook-mission-control/` — `NdxbookMissionControl` + panels (briefing, health, newsroom, timeline w/ DnD, page of day + countdown, library, volume/chapter explorer, reader intel, studio intel, revenue, Labs, talent, actions, activity wall). Live dots, progress bars, pulsing countdown CSS.
+- **AI Media landing:** `WorkspaceDashboard` for **`ai-media`** replaces old Overview tab/hero with **Mission Control** as default; nav tabs: Mission Control · Newsroom · Library · Publishing · Analytics · Experiments · Studio Intelligence · Creative DNA · Knowledge · Settings (external modules link out).
+- **Bootstrap:** `bootstrapAiMediaNdxbookMissionControl()` in platform seed chain via `workspaces/ai-media/ndxbook/mission-control-bootstrap.ts`.
+- **Label:** `WORKSPACE_DASHBOARD_MODULE_LABELS.dashboard` → **Mission Control**.
+
+**Future integration hooks (placeholder data, routes wired):** studio intelligence, simulation engine, talent network, marketplace, governance, knowledge graph, memory bible, business model engine.
+
+**Changes:** mission-control core + UI + hook, `WorkspaceDashboard.tsx`, `workspaces/index.ts`, `adminStudioWorkspaceCreationDemo.ts`, `motherboard/MEMORY.md`.
+
