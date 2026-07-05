@@ -10,6 +10,7 @@ type AdminStudioSocialAccountCardProps = {
   onConnect: () => void;
   onDisconnect: () => void;
   onTogglePosting: (disabled: boolean) => void;
+  onSetupRequired?: () => void;
   busy?: boolean;
 };
 
@@ -18,6 +19,7 @@ export function AdminStudioSocialAccountCard({
   onConnect,
   onDisconnect,
   onTogglePosting,
+  onSetupRequired,
   busy,
 }: AdminStudioSocialAccountCardProps) {
   const statusColor = SOCIAL_ACCOUNT_STATUS_COLORS[account.status];
@@ -59,12 +61,24 @@ export function AdminStudioSocialAccountCard({
         {!connected ? (
           <button
             type="button"
-            disabled={busy || !account.oauthConfigured || account.status === 'unavailable'}
-            onClick={onConnect}
+            disabled={busy || account.status === 'unavailable'}
+            onClick={() => {
+              if (!account.oauthConfigured) {
+                onSetupRequired?.();
+                return;
+              }
+              onConnect();
+            }}
             className="px-2 py-1 text-[6px] font-futura uppercase border"
-            style={{ fontWeight: 515, color: '#FFF', background: ADMIN_STUDIO_THEME.accent, borderColor: ADMIN_STUDIO_THEME.panelBorder, opacity: busy ? 0.6 : 1 }}
+            style={{
+              fontWeight: 515,
+              color: account.oauthConfigured ? '#FFF' : '#CA8A04',
+              background: account.oauthConfigured ? ADMIN_STUDIO_THEME.accent : 'white',
+              borderColor: account.oauthConfigured ? ADMIN_STUDIO_THEME.panelBorder : '#CA8A04',
+              opacity: busy ? 0.6 : 1,
+            }}
           >
-            CONNECT
+            {account.oauthConfigured ? 'CONNECT' : 'SETUP REQUIRED'}
           </button>
         ) : (
           <>

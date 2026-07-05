@@ -1,10 +1,13 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdminStudioSocialAccounts } from '../../../../hooks/useAdminStudioSocialAccounts';
 import { AdminStudioSocialAccountCard } from '../AdminStudioSocialAccountCard';
+import { SocialOAuthSetupPanel } from '../SocialOAuthSetupPanel';
 import { PLATFORM_LABELS } from '../../../../studio-os-core/ndxbook/constants';
 import { syncNdxbookSocialAccountsFromPublishing } from '../../../../studio-os-core/ndxbook/store';
 import type { NdxbookSocialAccount } from '../../../../studio-os-core/ndxbook/types';
+import type { PublicSocialAccount } from '../../../../utils/adminStudioSocialPublishing';
+import { allOAuthPlatformsUnconfigured } from '../../../../utils/socialOAuthSetupGuide';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { adminStudioSocialAccountsPath } from '../../../../utils/adminStudioRoutes';
 
@@ -21,8 +24,6 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-import type { PublicSocialAccount } from '../../../../utils/adminStudioSocialPublishing';
-
 function oauthAccountsSignature(accounts: PublicSocialAccount[]): string {
   return accounts.map((a) => `${a.platform}:${a.status}:${a.accountLabel ?? ''}`).join('|');
 }
@@ -36,6 +37,8 @@ type NdxbookSocialsPanelProps = {
 export function NdxbookSocialsPanel({ socialAccounts, onRegistryUpdated }: NdxbookSocialsPanelProps) {
   const navigate = useNavigate();
   const syncedSignatureRef = useRef<string | null>(null);
+  const setupPanelRef = useRef<HTMLDivElement>(null);
+  const [setupPanelOpen, setSetupPanelOpen] = useState(false);
 
   const {
     accounts: oauthAccounts,
@@ -59,11 +62,32 @@ export function NdxbookSocialsPanel({ socialAccounts, onRegistryUpdated }: Ndxbo
     onRegistryUpdated();
   }, [oauthAccounts, oauthLoading, onRegistryUpdated]);
 
+  const scrollToSetup = () => {
+    setSetupPanelOpen(true);
+    requestAnimationFrame(() => {
+      setupPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
   return (
     <div className="space-y-3">
       <p className="text-[6px] font-futura normal-case" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.5 }}>
         Connect official OAuth channels for ndxbook publishing. Tokens stay encrypted server-side — same connectors as Distribution → Social Accounts.
       </p>
+
+      {!oauthLoading && allOAuthPlatformsUnconfigured(oauthAccounts) ? (
+        <p className="text-[6px] font-futura uppercase p-2 border" style={{ fontWeight: 515, color: '#CA8A04', borderColor: '#CA8A04', background: 'rgba(202,138,4,0.06)' }}>
+          TAP SETUP REQUIRED ON ANY PLATFORM BELOW — CONNECT UNLOCKS AFTER VERCEL OAUTH ENV VARS ARE SET
+        </p>
+      ) : null}
+
+      <div ref={setupPanelRef}>
+        <SocialOAuthSetupPanel
+          id="ndxbook-social-oauth-setup"
+          accounts={oauthAccounts}
+          open={setupPanelOpen || allOAuthPlatformsUnconfigured(oauthAccounts)}
+        />
+      </div>
 
       {oauthError ? (
         <p className="text-[6px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.accent }}>
@@ -86,6 +110,7 @@ export function NdxbookSocialsPanel({ socialAccounts, onRegistryUpdated }: Ndxbo
               onConnect={() => void connect(account.platform)}
               onDisconnect={() => void disconnect(account.platform)}
               onTogglePosting={(disabled) => void togglePosting(account.platform, disabled)}
+              onSetupRequired={scrollToSetup}
             />
           ))}
         </div>

@@ -19,7 +19,15 @@ export async function startSocialOAuth(platform: SocialPlatformId): Promise<stri
     body: { action: 'oauth_start', platform },
   });
   const json = (await res.json()) as { authorizeUrl?: string; error?: string };
-  if (!res.ok || !json.authorizeUrl) throw new Error(json.error || 'OAuth start failed');
+  if (!res.ok || !json.authorizeUrl) {
+    if (res.status === 503) {
+      throw new Error(
+        json.error ||
+          'OAuth credentials not configured on the server. Add platform env vars in Vercel, redeploy, then try again.'
+      );
+    }
+    throw new Error(json.error || 'OAuth start failed');
+  }
   return json.authorizeUrl;
 }
 

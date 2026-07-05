@@ -36827,3 +36827,17 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** chief-of-staff core + UI + hook + page + service, executive/nav/routes wiring, `MissionControlWorkspace.tsx`, `mission-control/bootstrap.ts`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — NDXBOOK Connect socials blocked (OAuth not configured on server)
+
+**Context (full chat):** User on NDXBOOK Brand → SOCIALS tab — Connect buttons not working; screenshot shows **OAUTH NOT CONFIGURED ON SERVER** on Instagram, Facebook, TikTok, Pinterest, X. Prior work: M37 Mission Control, M38 Chief of Staff, NDXBOOK freeze fix.
+
+**Root cause:** Connect was **intentionally disabled** when `oauthConfigured === false`. Server checks Vercel env vars via `isPlatformConfigured()` in `api/_lib/socialPlatforms.ts` — production (`fsbw.vercel.app`) missing **META_APP_ID/SECRET**, **TIKTOK_***, **PINTEREST_***, **SOCIAL_TOKEN_ENCRYPTION_SECRET**, **SITE_URL**, etc. X also requires **X_API_AVAILABLE=true**. Not an app bug — one-time server OAuth setup required before any platform can connect.
+
+**Fix (UX):** `SocialOAuthSetupPanel` — expandable setup guide on NDXBOOK SOCIALS + `/admin/studio/social-accounts` with migration step, Vercel env checklist per platform, OAuth redirect URL to copy, redeploy reminder. Connect button → **SETUP REQUIRED** (tappable, scrolls to guide) instead of dead disabled state. Clearer 503 error from `startSocialOAuth`.
+
+**To enable live connect:** Vercel → Environment Variables → set credentials per `.env.example` Social Publishing section → run Supabase migration `20260704120000_studio_social_publishing.sql` → redeploy → Connect opens official OAuth.
+
+**Changes:** `SocialOAuthSetupPanel.tsx`, `socialOAuthSetupGuide.ts`, `AdminStudioSocialAccountCard.tsx`, `NdxbookSocialsPanel.tsx`, `social-accounts/page.tsx`, `apiSocialPublishing.ts`, `motherboard/MEMORY.md`.
+

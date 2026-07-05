@@ -4,8 +4,10 @@ import { AdminStudioStageShell } from '../../../../components/admin/studio/Admin
 import { AdminStudioSectionHeading } from '../../../../components/admin/studio/AdminStudioSectionHeading';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { AdminStudioSocialAccountCard } from '../../../../components/admin/studio/AdminStudioSocialAccountCard';
+import { SocialOAuthSetupPanel } from '../../../../components/admin/studio/SocialOAuthSetupPanel';
 import { useAdminStudioSocialAccounts } from '../../../../hooks/useAdminStudioSocialAccounts';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { allOAuthPlatformsUnconfigured } from '../../../../utils/socialOAuthSetupGuide';
 
 export default function AdminStudioSocialAccountsPage() {
   const navigate = useNavigate();
@@ -50,6 +52,10 @@ export default function AdminStudioSocialAccountsPage() {
         <p className="text-[6px] font-futura uppercase mb-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.accent }}>{error}</p>
       ) : null}
 
+      {!loading ? (
+        <SocialOAuthSetupPanel id="social-oauth-setup-panel" accounts={accounts} defaultOpen={allOAuthPlatformsUnconfigured(accounts)} />
+      ) : null}
+
       <AdminStudioSectionHeading>CHANNEL STATUS</AdminStudioSectionHeading>
       {loading ? (
         <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>LOADING…</p>
@@ -63,6 +69,9 @@ export default function AdminStudioSocialAccountsPage() {
               onConnect={() => void connect(account.platform)}
               onDisconnect={() => void disconnect(account.platform)}
               onTogglePosting={(disabled) => void togglePosting(account.platform, disabled)}
+              onSetupRequired={() => {
+                document.getElementById('social-oauth-setup-panel')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             />
           ))}
         </div>
