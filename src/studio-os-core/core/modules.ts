@@ -44,6 +44,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-governance-safeguards'
   | 'organizational-maturity-model'
   | 'leadership-modes'
+  | 'company-onboarding-intelligence'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -337,6 +338,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'LEADERSHIP MODES',
     description: 'Founder & executive mode — adaptive leadership perspective. V1.0.',
     routeSegment: 'leadership-modes',
+  },
+  {
+    id: 'company-onboarding-intelligence',
+    label: 'COMPANY ONBOARDING INTELLIGENCE',
+    description: 'Intelligent onboarding — organizational welcome and discovery. V1.0.',
+    routeSegment: 'company-onboarding-intelligence',
   },
   {
     id: 'executive-command-center',

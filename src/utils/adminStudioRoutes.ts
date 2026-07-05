@@ -78,6 +78,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'organizational-governance-safeguards'
   | 'organizational-maturity-model'
   | 'leadership-modes'
+  | 'company-onboarding-intelligence'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -163,6 +164,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'organizational-governance-safeguards',
   'organizational-maturity-model',
   'leadership-modes',
+  'company-onboarding-intelligence',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -267,6 +269,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   organizationalGovernanceSafeguards: 'studio/organizational-governance-safeguards',
   organizationalMaturityModel: 'studio/organizational-maturity-model',
   leadershipModes: 'studio/leadership-modes',
+  companyOnboardingIntelligence: 'studio/company-onboarding-intelligence',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -510,6 +513,10 @@ export function adminStudioOrganizationalMaturityModelPath(): string {
 
 export function adminStudioLeadershipModesPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/leadership-modes`;
+}
+
+export function adminStudioCompanyOnboardingIntelligencePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/company-onboarding-intelligence`;
 }
 
 export function adminStudioOsPath(): string {

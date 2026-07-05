@@ -248,6 +248,9 @@ export type { OrganizationalMaturityModelSnapshot } from './organizationalMaturi
 export { leadershipModesStudioService, LEADERSHIP_MODES_CHAIN } from './leadershipModes/service';
 export type { LeadershipModesSnapshot } from './leadershipModes/service';
 
+export { companyOnboardingIntelligenceStudioService, COMPANY_ONBOARDING_INTELLIGENCE_CHAIN } from './companyOnboardingIntelligence/service';
+export type { CompanyOnboardingIntelligenceSnapshot } from './companyOnboardingIntelligence/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -369,6 +372,7 @@ import { organizationalSelfImprovementStudioService } from './organizationalSelf
 import { organizationalGovernanceSafeguardsStudioService } from './organizationalGovernanceSafeguards/service';
 import { organizationalMaturityModelStudioService } from './organizationalMaturityModel/service';
 import { leadershipModesStudioService } from './leadershipModes/service';
+import { companyOnboardingIntelligenceStudioService } from './companyOnboardingIntelligence/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -453,6 +457,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   organizationalGovernanceSafeguardsStudioService,
   organizationalMaturityModelStudioService,
   leadershipModesStudioService,
+  companyOnboardingIntelligenceStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

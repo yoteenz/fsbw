@@ -66,6 +66,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Organizational Governance & Safeguards',
   'Organizational Maturity Model',
   'Leadership Modes',
+  'Company Onboarding Intelligence',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

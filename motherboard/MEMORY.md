@@ -37706,4 +37706,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** leadership-modes core + UI + hook + page + service, CoS/OMM/OGS/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 73.5: Company Onboarding Intelligence V1.0
+
+**Context (full chat):** User requested continuation of Studio OS with **Milestone 73.5 — Company Onboarding Intelligence** as the intelligent onboarding experience for every organization entering Studio OS. Prior milestones in this arc: M71 OGS (constitutional governance), M72 OMM (master progression), M73 Leadership Modes (adaptive founder/executive/creator/operator perspectives). Constraints: do not redesign overall Studio OS shell · onboarding should progressively discover the organization · objective is building understanding not completing setup · arrival at headquarters not "setup complete" · work on `master` only · one commit + one push.
+
+**Goal:** Company Onboarding Intelligence becomes the defining welcome experience — founders feel understood within minutes · existing companies feel recognized not recreated · new companies born with organizational intelligence from day one. Features: onboarding philosophy (every org has a story · discover don't rebuild · understanding before management · progressive discovery · extraordinary not merely managed) · two converging journeys (create new company · bring existing company) · new company path (vision · mission · promise · name · industry · model · products · services · customers · values · culture · ambitions → auto genome · DNA · KG · maturity · architects · executives · campus · roadmap · milestones) · existing company path (connect website · domain · social · CRM · commerce · analytics · knowledge · PM · design · docs · email · customer DB · financial · media · content → analyze brand · products · CX · tech · ops · knowledge · community · leadership · maturity · relationships · market · content · workflows → generate genome · KG · maturity · executives · strengths · gaps · roadmap · campus · confidence score) · organizational interview (thoughtful founder questions) · organizational discovery (transparent findings across systems · knowledge · customers · content · tech · team · community · partners · IP · strengths · blind spots · maturity) · executive recommendations (architects · executives · leadership mode · maturity · autonomy · governance · knowledge · relationships · workflows · campus · milestones · why · value · outcome) · organization blueprint (living foundation across ecosystems) · campus generation (headquarters feels like home) · organizational confidence (score · completeness · recommended interviews · uploads · integrations · training · continuous improvement) · Chief of Staff cinematic welcome · founder walk (guided headquarters tour not software tutorial) · arrival experience (executives waiting · doors open · organization alive).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/company-onboarding-intelligence/` — types (journeys, interview, discovery, recommendations, blueprint, campus, confidence, CoS welcome, founder walk), constants (philosophy, connected systems), localStorage store (`studioOsCompanyOnboardingIntelligence_v1`), rich NDXBOOK bootstrap (existing-company journey · 87% confidence · 14 discoveries · 12 recommendations · arrival ready · 8 interview responses · campus · blueprint · CoS welcome · founder walk).
+- **Hook:** `useCompanyOnboardingIntelligenceState`.
+- **UI:** `/admin/studio/company-onboarding-intelligence` — `CompanyOnboardingIntelligenceWorkspace` with tabs (Philosophy/Journeys · Interview/Discovery · Recommend/Blueprint · Campus/Confidence · Welcome/Walk · Dashboard/Connect). Teal accent (`#0D9488`) · V1.0.
+- **Wiring:** route, nav (overview · after Leadership Modes), modules, services, bootstrap after Leadership Modes · Strategy Engine back link updated to COI.
+- **Chief of Staff integration:** `Company Onboarding Intelligence` in `SOFT_APPROVAL_SOURCES`; `CompanyOnboardingIntelligenceLinkPanel` in CoS workspace.
+- **Cross-links:** OMM + Leadership Modes ConnectedSystemsPanel → COI · back link from Leadership Modes page.
+- **Knowledge graph:** `node-company-onboarding-intelligence` + ~38 edges to OMM, LM, OI, Genome, Interactive Manual (KG), Relationship Engine, Reader Graph, Executive Framework, Council, CoS, all C-suite, all architects, Campus Evolution, Founder's Promise, Founder Walk, Studio Intelligence.
+
+**Route:** `/admin/studio/company-onboarding-intelligence` · Overview nav group · teal accent · back link from Leadership Modes.
+
+**Changes:** company-onboarding-intelligence core + UI + hook + page + service, CoS/OMM/LM/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 

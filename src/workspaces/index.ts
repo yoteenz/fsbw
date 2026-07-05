@@ -313,6 +313,10 @@ export function bootstrapWorkspacesPlatform(): void {
     leadershipModes.bootstrapLeadershipModesPlatform();
     await yieldToMain();
 
+    const companyOnboardingIntelligence = await import('../studio-os-core/company-onboarding-intelligence/bootstrap');
+    companyOnboardingIntelligence.bootstrapCompanyOnboardingIntelligencePlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

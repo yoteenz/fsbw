@@ -32,4 +32,5 @@ export const LM_CONNECTED_SYSTEMS = [
   'Campus Evolution Engine',
   'Founder\'s Promise',
   'Studio Intelligence',
+  'Company Onboarding Intelligence',
 ] as const;

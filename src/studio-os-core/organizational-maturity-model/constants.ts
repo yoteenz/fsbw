@@ -35,4 +35,5 @@ export const OMM_CONNECTED_SYSTEMS = [
   'Studio Intelligence',
   'Company Maturity Engine',
   'Leadership Modes',
+  'Company Onboarding Intelligence',
 ] as const;

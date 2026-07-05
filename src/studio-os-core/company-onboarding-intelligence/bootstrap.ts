@@ -1,0 +1,150 @@
+import { bootstrapCompanyOnboardingIntelligenceStore } from './store';
+import type { CompanyOnboardingIntelligenceStore } from './types';
+
+export function buildCompanyOnboardingIntelligenceSeed(): Partial<CompanyOnboardingIntelligenceStore> {
+  return {
+    companyName: 'NDXBOOK',
+    activeWorkspaceId: 'ndxbook',
+    journeyType: 'existing-company',
+    onboardingPhase: 'arrival',
+    dashboard: {
+      summary:
+        'COMPANY ONBOARDING INTELLIGENCE V1.0 — NDXBOOK recognized · 87% confidence · headquarters ready · executive team waiting.',
+      confidenceScorePct: 87,
+      journeyLabel: 'EXISTING COMPANY · CONVERGED',
+      discoveriesCount: 14,
+      recommendationsCount: 12,
+      campusReady: true,
+      arrivalReady: true,
+    },
+    onboardingJourneys: [
+      {
+        id: 'new-company',
+        label: 'CREATE A NEW COMPANY',
+        description: 'Guide founders through vision · mission · promise · values · automatically generate genome · DNA · KG · maturity · campus',
+        steps: [
+          'Vision · mission · founder\'s promise · company name · industry · business model',
+          'Products · services · customers · values · culture · future ambitions',
+          'Auto-generate: genome · DNA · KG · maturity · architects · executives · campus · roadmap · milestones',
+        ],
+        active: false,
+      },
+      {
+        id: 'existing-company',
+        label: 'BRING AN EXISTING COMPANY',
+        description: 'Connect website · domain · social · CRM · commerce · analytics · intelligently analyze and recognize the organization',
+        steps: [
+          'Connect: website · domain · social · CRM · commerce · analytics · knowledge base · PM tools · design systems · docs',
+          'Analyze: brand · products · CX · tech stack · operations · knowledge · community · leadership · maturity · relationships · content · workflows',
+          'Generate: genome · KG · maturity · executives · strengths · gaps · roadmap · campus · confidence score',
+        ],
+        active: true,
+      },
+    ],
+    organizationalInterviews: [
+      { id: 'oi-1', question: 'Why does this company exist?', response: 'To build lasting reader relationships through stat-forward editorial — trust before scale.', status: 'answered' },
+      { id: 'oi-2', question: 'What problem are you solving?', response: 'Information overload without editorial integrity · readers deserve curated wisdom not engagement bait.', status: 'answered' },
+      { id: 'oi-3', question: 'What should never change?', response: 'Writing DNA quality gates · founder promise · stat-forward editorial identity · trust-before-scale.', status: 'answered' },
+      { id: 'oi-4', question: 'What values define this organization?', response: 'Trust · relationships · wisdom · belonging · editorial integrity · long-term stewardship.', status: 'answered' },
+      { id: 'oi-5', question: 'How do you make important decisions?', response: 'Evidence-based · founder final authority · executive council synthesis · constitutional governance.', status: 'answered' },
+      { id: 'oi-6', question: 'What kind of culture are you building?', response: 'Master craftsman refinement · continuous learning · healthy disagreement · institutional wisdom.', status: 'answered' },
+      { id: 'oi-7', question: 'What legacy do you hope this organization leaves?', response: 'Institutional wisdom preserved across generations · readers trust NDXBOOK for decades.', status: 'answered' },
+      { id: 'oi-8', question: 'What would disappoint you if the company became successful but lost?', response: 'Editorial integrity · reader trust · stat-forward identity · relationship over transaction metrics.', status: 'answered' },
+    ],
+    organizationalDiscoveries: [
+      { id: 'od-1', category: 'Brand', finding: 'Stat-forward editorial · Writing DNA evident · trust-first positioning · zero generic templates', confidence: 91 },
+      { id: 'od-2', category: 'Products', finding: 'Reader platform · onboarding funnel · live preview pipeline · NDXBOOK newsroom active', confidence: 88 },
+      { id: 'od-3', category: 'Customer journey', finding: 'Engaged reader base · relationship-driven growth · onboarding Step 3 friction identified', confidence: 82 },
+      { id: 'od-4', category: 'Technology', finding: 'Vite/React · Supabase · Vercel · Fal live preview · auth refactor needed', confidence: 79 },
+      { id: 'od-5', category: 'Knowledge', finding: 'Memory Bible · Writing DNA · institutional learning · motherboard active', confidence: 94 },
+      { id: 'od-6', category: 'Community', finding: 'Spotlight program · belonging over volume · advocacy +15% in pilot', confidence: 85 },
+      { id: 'od-7', category: 'Leadership', finding: 'Full C-suite · executive council · SCALE maturity · OAF Level 3', confidence: 86 },
+      { id: 'od-8', category: 'Relationships', finding: 'Reader graph · relationship engine · creator marketplace emerging', confidence: 80 },
+      { id: 'od-9', category: 'Operations', finding: '5 active workflows · cross-functional orchestration · onboarding sprint', confidence: 78 },
+      { id: 'od-10', category: 'Intellectual property', finding: 'Writing DNA · editorial genome · stat-forward brand assets', confidence: 90 },
+      { id: 'od-11', category: 'Blind spots', finding: 'Premature GTM pressure · paid acquisition temptation · auth technical debt', confidence: 84 },
+      { id: 'od-12', category: 'Organizational maturity', finding: 'SCALE stage · 74% maturity · enterprise readiness 68%', confidence: 87 },
+      { id: 'od-13', category: 'Market position', finding: 'Relationship-driven reader platform · differentiated editorial identity', confidence: 83 },
+      { id: 'od-14', category: 'Content systems', finding: 'NDXBOOK newsroom · distribution engine · campaign engine connected', confidence: 86 },
+    ],
+    onboardingRecommendations: [
+      { id: 'or-1', category: 'Executive', recommendation: 'Maintain full C-suite · Executive Council active', why: 'SCALE maturity supports full executive participation', value: 'Cross-functional wisdom · healthy disagreement', outcome: 'Organizational decisions strengthened by council synthesis' },
+      { id: 'or-2', category: 'Architect', recommendation: 'All four architects active', why: 'Brand · experience · digital · growth maturity earned', value: 'Discipline-specific architectural guidance', outcome: 'Company architecture matures toward enterprise' },
+      { id: 'or-3', category: 'Leadership mode', recommendation: 'Default founder mode · executive mode for board prep', why: 'Product planning sprint dominates calendar', value: 'Creation prioritized · ops noise minimized', outcome: 'Founder focuses on vision while executives handle routine' },
+      { id: 'or-4', category: 'Maturity', recommendation: 'SCALE stage · enterprise readiness building', why: 'Onboarding gates must clear before advancement', value: 'Right systems at right time', outcome: 'Trust-before-scale enforced · no premature GTM' },
+      { id: 'or-5', category: 'Autonomy', recommendation: 'OAF Level 3 · trusted execution', why: 'Trust score 86% · governance active', value: 'Confident execution within boundaries', outcome: 'Organization acts with judgment · founder visibility preserved' },
+      { id: 'or-6', category: 'Governance', recommendation: 'OGS constitutional safeguards active', why: 'SCALE stage requires invisible stewardship', value: 'Trust preserved · progress enabled', outcome: 'Every decision aligned with founder promise' },
+      { id: 'or-7', category: 'Knowledge', recommendation: 'Accelerate institutional knowledge capture via OSI', why: 'Learning compounding · blind spots documented', value: 'Wisdom preserved across generations', outcome: 'Organization becomes wiser every day' },
+      { id: 'or-8', category: 'Relationships', recommendation: 'Deepen reader graph · spotlight program scale', why: 'Relationship maturity developing · advocacy emerging', value: 'Long-term reader trust', outcome: 'Sustainable growth through belonging not vanity' },
+      { id: 'or-9', category: 'Workflow', recommendation: 'Onboarding simplification sprint · CEO-led', why: 'Step 3 friction blocking enterprise readiness', value: 'Customer trust gates cleared', outcome: 'GTM Phase 1 unlocked when score > 85' },
+      { id: 'or-10', category: 'Campus', recommendation: 'Creative headquarters · progressing to executive HQ', why: 'SCALE maturity · 68% campus progression', value: 'Environment reflects organizational stage', outcome: 'Headquarters feels like home immediately' },
+      { id: 'or-11', category: 'Milestone', recommendation: 'Complete onboarding gate before enterprise advancement', why: 'Trust-before-scale prerequisite', value: 'Maturity earned not unlocked', outcome: 'Organization ready for next evolution stage' },
+      { id: 'or-12', category: 'Integration', recommendation: 'Connect analytics · CRM · email platform for deeper discovery', why: 'Knowledge completeness at 82%', value: 'Continuous organizational understanding', outcome: 'Confidence score improves over time' },
+    ],
+    organizationBlueprint: [
+      { id: 'bp-1', section: 'Company Genome', content: 'Stat-forward editorial DNA · trust-before-scale · relationship-driven reader platform', status: 'foundational' },
+      { id: 'bp-2', section: 'Company DNA', content: 'Writing DNA · editorial integrity · belonging over engagement · institutional wisdom', status: 'foundational' },
+      { id: 'bp-3', section: 'Organizational Maturity', content: 'SCALE stage · 74% maturity · enterprise readiness 68% · growth roadmap active', status: 'generated' },
+      { id: 'bp-4', section: 'Leadership Structure', content: 'Full C-suite · Executive Council · Chief of Staff coordination · founder final authority', status: 'generated' },
+      { id: 'bp-5', section: 'Knowledge Ecosystem', content: 'Memory Bible · Writing DNA · motherboard · KG · institutional learning via OSI', status: 'generated' },
+      { id: 'bp-6', section: 'Technology Ecosystem', content: 'Vite/React · Supabase · Vercel · Fal pipeline · auth refactor critical path', status: 'evolving' },
+      { id: 'bp-7', section: 'Customer Ecosystem', content: 'Reader graph · onboarding funnel · spotlight program · relationship engine', status: 'generated' },
+      { id: 'bp-8', section: 'Relationship Ecosystem', content: 'Reader advocacy · creator marketplace · community belonging · long-term trust', status: 'generated' },
+      { id: 'bp-9', section: 'Organizational Strengths', content: 'Editorial identity · institutional knowledge · executive systems · governance culture', status: 'generated' },
+      { id: 'bp-10', section: 'Organizational Opportunities', content: 'Onboarding simplification · auth infrastructure · creator marketplace quality gates', status: 'evolving' },
+      { id: 'bp-11', section: 'Future Roadmap', content: 'Enterprise readiness · executive HQ campus · 100K engaged readers · trust gates cleared', status: 'evolving' },
+    ],
+    campusGeneration: [
+      { id: 'cg-1', element: 'Industry adaptation', adaptation: 'Media · publishing · reader platform headquarters', feeling: 'Editorial atelier · newsroom energy' },
+      { id: 'cg-2', element: 'Brand identity', adaptation: 'Stat-forward aesthetic · trust-first spaces · Writing DNA walls', feeling: 'Editorial integrity visible everywhere' },
+      { id: 'cg-3', element: 'Organizational maturity', adaptation: 'Creative headquarters · executive HQ progression at 68%', feeling: 'SCALE stage · growing into leadership spaces' },
+      { id: 'cg-4', element: 'Leadership model', adaptation: 'Founder studio · executive council chamber · CoS briefing room', feeling: 'Creation and stewardship coexist' },
+      { id: 'cg-5', element: 'Future ambitions', adaptation: 'Innovation loft · reader relationship center · legacy hall preview', feeling: 'Future the founder always hoped to build' },
+      { id: 'cg-6', element: 'Company personality', adaptation: 'Thoughtful · stat-forward · relationship-driven · master craftsman', feeling: 'Immediately feels like home' },
+    ],
+    organizationalConfidence: {
+      overallScorePct: 87,
+      knowledgeCompletenessPct: 82,
+      recommendedInterviews: ['Deep dive on creator marketplace vision', 'International expansion timeline'],
+      recommendedUploads: ['Brand style guide PDF', 'Customer persona documents', 'Financial model'],
+      recommendedIntegrations: ['Google Analytics', 'Mailchimp/ConvertKit', 'Stripe revenue data'],
+      recommendedTraining: ['Executive Council onboarding for new C-suite', 'Writing DNA workshop for creators'],
+    },
+    chiefOfStaffWelcome: {
+      headline: 'Welcome.',
+      message: [
+        'We\'ve spent the last few minutes getting to know your organization.',
+        'Your headquarters is ready.',
+        'Your executive team has already begun preparing their first observations.',
+        'Whenever you\'re ready, I\'ll introduce you to your organization.',
+      ],
+      arrivalNote: 'Not "setup complete" — you have arrived. The organization is alive. The executive team is waiting. The Chief of Staff opens the doors.',
+    },
+    founderWalk: [
+      { id: 'fw-1', stop: 'The Campus', introduction: 'Your creative headquarters — editorial atelier · newsroom · innovation loft. Built for SCALE maturity, evolving toward executive headquarters.', order: 1 },
+      { id: 'fw-2', stop: 'Recommended Executives', introduction: 'Full C-suite active · Executive Council operational. Each executive has prepared first observations aligned with your founder promise.', order: 2 },
+      { id: 'fw-3', stop: 'Recommended Architects', introduction: 'Brand · Experience · Digital · Growth architects ready. Your company architecture reflects stat-forward editorial identity.', order: 3 },
+      { id: 'fw-4', stop: 'Organizational Maturity', introduction: 'SCALE stage · 74% maturity · enterprise readiness building. Trust gates enforced before advancement.', order: 4 },
+      { id: 'fw-5', stop: 'Organization Blueprint', introduction: 'Living foundation generated — genome · DNA · ecosystems · strengths · opportunities · roadmap.', order: 5 },
+      { id: 'fw-6', stop: 'Company Genome', introduction: 'Stat-forward editorial DNA captured. Writing DNA · trust-before-scale · relationship-driven growth.', order: 6 },
+      { id: 'fw-7', stop: 'Knowledge Graph', introduction: 'Institutional connections mapped — executives · workflows · governance · maturity · campus · relationships.', order: 7 },
+      { id: 'fw-8', stop: 'Current Priorities', introduction: 'Onboarding simplification sprint · auth refactor · trust-before-scale GTM gates · spotlight program scale.', order: 8 },
+      { id: 'fw-9', stop: 'Next Milestone', introduction: 'Complete onboarding gate · advance to executive headquarters campus · enterprise readiness when earned.', order: 9 },
+    ],
+    recommendedNextSteps: [
+      'Take the founder walk through your headquarters',
+      'Review organization blueprint with executive team',
+      'Connect recommended integrations to improve confidence score',
+      'Switch leadership mode as Studio Intelligence recommends',
+    ],
+    futureOpportunities: [
+      'Guided conversational onboarding for new companies from day one',
+      'Automatic re-onboarding when organizational identity evolves significantly',
+      'Portfolio-wide onboarding intelligence across holding company stage',
+    ],
+  };
+}
+
+export function bootstrapCompanyOnboardingIntelligencePlatform(): void {
+  bootstrapCompanyOnboardingIntelligenceStore(buildCompanyOnboardingIntelligenceSeed());
+}

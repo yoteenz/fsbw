@@ -23,6 +23,7 @@ import {
   adminStudioOrganizationalMaturityModelPath,
   adminStudioOrganizationalSelfImprovementPath,
   adminStudioOrganizationalWorkflowOrchestrationPath,
+  adminStudioCompanyOnboardingIntelligencePath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -321,6 +322,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCampusEvolutionEnginePath()} style={{ ...lmLabel, color: '#CA8A04', fontSize: '6px' }}>→ CAMPUS EVOLUTION ENGINE</Link>
         <Link to={adminStudioFoundersPromisePath()} style={{ ...lmLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...lmLabel, color: '#6366F1', fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
+        <Link to={adminStudioCompanyOnboardingIntelligencePath()} style={{ ...lmLabel, color: '#0D9488', fontSize: '6px' }}>→ COMPANY ONBOARDING INTELLIGENCE</Link>
       </div>
     </section>
   );
