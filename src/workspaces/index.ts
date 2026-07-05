@@ -293,6 +293,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationalDelegation.bootstrapOrganizationalDelegationPlatform();
     await yieldToMain();
 
+    const organizationalWorkflowOrchestration = await import('../studio-os-core/organizational-workflow-orchestration/bootstrap');
+    organizationalWorkflowOrchestration.bootstrapOrganizationalWorkflowOrchestrationPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

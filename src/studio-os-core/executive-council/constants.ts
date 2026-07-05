@@ -45,6 +45,7 @@ export const EC_CONNECTED_SYSTEMS = [
   'Organizational Intelligence',
   'Organizational Autonomy Framework',
   'Organizational Delegation Engine',
+  'Organizational Workflow Orchestration',
   'Studio Intelligence',
   'Founder\'s Promise',
 ] as const;

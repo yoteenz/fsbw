@@ -37,4 +37,5 @@ export const OI_CONNECTED_SYSTEMS = [
   'Studio Intelligence',
   'Organizational Autonomy Framework',
   'Organizational Delegation Engine',
+  'Organizational Workflow Orchestration',
 ] as const;

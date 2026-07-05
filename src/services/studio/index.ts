@@ -233,6 +233,9 @@ export type { OrganizationalAutonomySnapshot } from './organizationalAutonomyFra
 export { organizationalDelegationEngineStudioService, ORGANIZATIONAL_DELEGATION_ENGINE_CHAIN } from './organizationalDelegationEngine/service';
 export type { OrganizationalDelegationSnapshot } from './organizationalDelegationEngine/service';
 
+export { organizationalWorkflowOrchestrationStudioService, ORGANIZATIONAL_WORKFLOW_ORCHESTRATION_CHAIN } from './organizationalWorkflowOrchestration/service';
+export type { OrganizationalWorkflowOrchestrationSnapshot } from './organizationalWorkflowOrchestration/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -349,6 +352,7 @@ import { executiveCouncilStudioService } from './executiveCouncil/service';
 import { organizationalIntelligenceStudioService } from './organizationalIntelligence/service';
 import { organizationalAutonomyFrameworkStudioService } from './organizationalAutonomyFramework/service';
 import { organizationalDelegationEngineStudioService } from './organizationalDelegationEngine/service';
+import { organizationalWorkflowOrchestrationStudioService } from './organizationalWorkflowOrchestration/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -428,6 +432,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   organizationalIntelligenceStudioService,
   organizationalAutonomyFrameworkStudioService,
   organizationalDelegationEngineStudioService,
+  organizationalWorkflowOrchestrationStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

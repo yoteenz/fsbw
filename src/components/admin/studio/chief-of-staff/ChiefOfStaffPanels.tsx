@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath, adminStudioOrganizationalWorkflowOrchestrationPath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -870,6 +870,23 @@ export function OrganizationalDelegationEngineLinkPanel() {
         style={{ ...cosLabel, color: '#7C3AED', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN ORGANIZATIONAL DELEGATION ENGINE
+      </Link>
+    </section>
+  );
+}
+
+export function OrganizationalWorkflowOrchestrationLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #0EA5E9' }}>
+      <p style={cosSectionTitle}>ORGANIZATIONAL WORKFLOW ORCHESTRATION · CROSS-FUNCTIONAL CHOREOGRAPHY V1.0</p>
+      <p style={cosLabel}>
+        Coordinated teams · not disconnected automations · Chief of Staff conducts organizational execution
+      </p>
+      <Link
+        to={adminStudioOrganizationalWorkflowOrchestrationPath()}
+        style={{ ...cosLabel, color: '#0EA5E9', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN ORGANIZATIONAL WORKFLOW ORCHESTRATION
       </Link>
     </section>
   );

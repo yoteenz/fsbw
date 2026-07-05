@@ -32,6 +32,7 @@ export const EXECUTIVE_FRAMEWORK_CONNECTED_SYSTEMS = [
   'Organizational Intelligence',
   'Organizational Autonomy Framework',
   'Organizational Delegation Engine',
+  'Organizational Workflow Orchestration',
 ] as const;
 
 export const DECISION_DIMENSIONS = [

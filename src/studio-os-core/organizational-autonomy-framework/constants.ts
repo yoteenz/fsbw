@@ -37,4 +37,5 @@ export const OAF_CONNECTED_SYSTEMS = [
   'Studio Intelligence',
   'Founder\'s Promise',
   'Organizational Delegation Engine',
+  'Organizational Workflow Orchestration',
 ] as const;

@@ -19,6 +19,7 @@ import {
   adminStudioOrganizationalIntelligencePath,
   adminStudioOrganizationalAutonomyFrameworkPath,
   adminStudioOrganizationalDelegationEnginePath,
+  adminStudioOrganizationalWorkflowOrchestrationPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   EC,
@@ -389,6 +390,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalIntelligencePath()} style={{ ...ecLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INTELLIGENCE</Link>
         <Link to={adminStudioOrganizationalAutonomyFrameworkPath()} style={{ ...ecLabel, color: '#0D9488', fontSize: '6px' }}>→ ORGANIZATIONAL AUTONOMY FRAMEWORK</Link>
         <Link to={adminStudioOrganizationalDelegationEnginePath()} style={{ ...ecLabel, color: '#7C3AED', fontSize: '6px' }}>→ ORGANIZATIONAL DELEGATION ENGINE</Link>
+        <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...ecLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
       </div>
     </section>
   );

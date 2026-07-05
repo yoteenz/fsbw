@@ -26,6 +26,7 @@ export const LEADERSHIP_MANIFESTO_CONNECTED_SYSTEMS = [
   'Organizational Intelligence',
   'Organizational Autonomy Framework',
   'Organizational Delegation Engine',
+  'Organizational Workflow Orchestration',
 ] as const;
 
 export const DECISION_EVALUATION_DIMENSIONS = [

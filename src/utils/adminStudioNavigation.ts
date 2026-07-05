@@ -370,6 +370,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-workflow-orchestration',
+    title: 'ORGANIZATIONAL WORKFLOW ORCHESTRATION',
+    purpose: 'Cross-functional workflow choreography — coordinated teams accomplish shared outcomes. V1.0.',
+    route: p('organizational-workflow-orchestration'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN OWF',
+    moduleKey: 'organizational-workflow-orchestration',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

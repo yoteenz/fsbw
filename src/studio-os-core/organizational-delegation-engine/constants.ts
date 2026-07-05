@@ -28,4 +28,5 @@ export const ODE_CONNECTED_SYSTEMS = [
   'Creator Marketplace',
   'Founder\'s Promise',
   'Studio Intelligence',
+  'Organizational Workflow Orchestration',
 ] as const;

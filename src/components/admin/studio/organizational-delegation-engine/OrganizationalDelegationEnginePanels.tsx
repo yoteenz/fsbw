@@ -16,6 +16,7 @@ import {
   adminStudioFoundersPromisePath,
   adminStudioOrganizationalAutonomyFrameworkPath,
   adminStudioOrganizationalIntelligencePath,
+  adminStudioOrganizationalWorkflowOrchestrationPath,
   adminStudioRelationshipEnginePath,
   adminStudioStrategyEnginePath,
   adminStudioStudioIntelligencePath,
@@ -318,6 +319,7 @@ export function ConnectedSystemsPanel() {
       </div>
       <div className="mt-2 flex flex-wrap gap-2">
         <Link to={adminStudioOrganizationalAutonomyFrameworkPath()} style={{ ...odeLabel, color: '#0D9488', fontSize: '6px' }}>→ ORGANIZATIONAL AUTONOMY FRAMEWORK</Link>
+        <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...odeLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
         <Link to={adminStudioOrganizationalIntelligencePath()} style={{ ...odeLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INTELLIGENCE</Link>
         <Link to={adminStudioExecutiveCouncilPath()} style={{ ...odeLabel, color: '#B45309', fontSize: '6px' }}>→ EXECUTIVE COUNCIL</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...odeLabel, color: '#334155', fontSize: '6px' }}>→ CHIEF OF STAFF</Link>

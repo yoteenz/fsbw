@@ -39,6 +39,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-intelligence'
   | 'organizational-autonomy-framework'
   | 'organizational-delegation-engine'
+  | 'organizational-workflow-orchestration'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -302,6 +303,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL DELEGATION ENGINE',
     description: 'Outcome-based delegation — founders define outcomes, executives collaborate to achieve them. V1.0.',
     routeSegment: 'organizational-delegation-engine',
+  },
+  {
+    id: 'organizational-workflow-orchestration',
+    label: 'ORGANIZATIONAL WORKFLOW ORCHESTRATION',
+    description: 'Cross-functional workflow choreography — coordinated teams, not disconnected automations. V1.0.',
+    routeSegment: 'organizational-workflow-orchestration',
   },
   {
     id: 'executive-command-center',

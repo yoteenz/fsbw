@@ -44,6 +44,7 @@ import {
   OrganizationalIntelligenceLinkPanel,
   OrganizationalAutonomyFrameworkLinkPanel,
   OrganizationalDelegationEngineLinkPanel,
+  OrganizationalWorkflowOrchestrationLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -133,6 +134,7 @@ export function ChiefOfStaffWorkspace() {
             <OrganizationalIntelligenceLinkPanel />
             <OrganizationalAutonomyFrameworkLinkPanel />
             <OrganizationalDelegationEngineLinkPanel />
+            <OrganizationalWorkflowOrchestrationLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -190,6 +192,7 @@ export function ChiefOfStaffWorkspace() {
             <OrganizationalIntelligenceLinkPanel />
             <OrganizationalAutonomyFrameworkLinkPanel />
             <OrganizationalDelegationEngineLinkPanel />
+            <OrganizationalWorkflowOrchestrationLinkPanel />
             <DecisionRoutingPanel />
           </>
         );
