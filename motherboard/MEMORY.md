@@ -36772,3 +36772,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** `AdminStudioStageShell.tsx`, `NdxbookWorkspace.tsx`, `ndxbook/store.ts`, `WorkspaceDashboard.tsx`, `ndxbook/page.tsx`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — NDXBOOK brand setup page freeze / unresponsive
+
+**Context (full chat):** User reported NDXBOOK brand setup page loads then glitches and freezes — cannot interact. Follows prior fixes: admin dashboard blank (AdminGuard split), NDXBOOK link dead (pilot workspace gate), social OAuth wiring on SOCIALS tab.
+
+**Root cause — page hang:**
+- **`NdxbookWorkspace`** mounted **`useAdminStudioSocialAccounts()`** on every tab (OAuth API fetch on load) plus a **`useEffect`** that called **`syncNdxbookSocialAccountsFromPublishing()`** + **`refresh()`** whenever OAuth accounts resolved — redundant re-renders and localStorage churn on initial paint.
+- **`AdminStudioLayout`** always ran **`bootstrapWorkspacesPlatform()`** (12+ heavy AI Media seeds) on NDXBOOK entry even though **`useAdminStudioNdxbookState`** already seeds via **`ensureDemoSeeded()`** — main-thread contention made page feel stuck after first paint.
+
+**Fix:**
+- Extract **`NdxbookSocialsPanel`** — OAuth hook + sync only when **SOCIALS** tab is active; sync guarded by account signature ref (no repeat **`refresh()`** loops).
+- **`NdxbookWorkspace`** — remove global OAuth hook/effect; overview/other tabs stay lightweight.
+- **`AdminStudioLayout`** — skip **`bootstrapWorkspacesPlatform()`** on **`/studio/ndxbook`** route (ndxbook self-seeds).
+
+**Changes:** `NdxbookSocialsPanel.tsx` (new), `NdxbookWorkspace.tsx`, `AdminStudioLayout.tsx`, `motherboard/MEMORY.md`.
+

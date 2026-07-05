@@ -65,11 +65,14 @@ export function AdminStudioLayout({
   const { pathname } = useLocation();
   const { workspace, getModuleSubtitle } = useWorkspace();
 
+  const skipHeavyPlatformBootstrap = pathname.includes('/studio/ndxbook');
+
   useEffect(() => {
+    if (skipHeavyPlatformBootstrap) return;
     void import('../../../workspaces').then(({ bootstrapWorkspacesPlatform }) => {
       bootstrapWorkspacesPlatform();
     });
-  }, []);
+  }, [skipHeavyPlatformBootstrap]);
 
   const resolvedModule = resolveStudioModuleFromPath(pathname);
   const activeGroupId: StudioNavGroupId = navGroupId ?? resolvedModule?.groupId ?? 'overview';
