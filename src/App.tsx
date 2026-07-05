@@ -15,6 +15,7 @@ import { BuildWigCustomizeEditAccessGate } from './components/buildWig/BuildWigC
 import { lazy, Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
+import AdminStudioWorkspaceGuard from './components/AdminStudioWorkspaceGuard';
 import AccountRouteGuard from './components/AccountRouteGuard';
 import { AccountHubRedirect } from './components/AccountHubRedirect';
 import CommerceRouteGuard from './components/CommerceRouteGuard';
@@ -808,6 +809,7 @@ function App() {
               <AdminBackend />
             </Suspense>
           } />
+          <Route element={<AdminStudioWorkspaceGuard />}>
           <Route path="studio-os/workspace/:workspaceId/dashboard" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioOsWorkspaceDashboard />
@@ -1199,6 +1201,7 @@ function App() {
             </Suspense>
           } />
           <Route path="studio" element={<Navigate to="/admin/studio/mission-control" replace />} />
+          </Route>
           <Route path="analytics" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminAnalytics />

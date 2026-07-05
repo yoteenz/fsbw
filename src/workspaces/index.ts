@@ -2,10 +2,8 @@ import { configureWorkspaceRegistry } from '../studio-os-core/workspace/registry
 import { emptyWorkspaceDataAdapter } from '../studio-os-core/workspace/empty-data-adapter';
 import type { WorkspaceDataAdapter } from '../studio-os-core/workspace/data-adapter';
 import type { WorkspaceId, WorkspaceListItem, WorkspaceSchema } from '../studio-os-core/workspace/types';
-import {
-  listRegistryWorkspaces,
-  registryRecordToWorkspaceSchema,
-} from '../studio-os-core/workspace-creation';
+import { listRegistryWorkspaces } from '../studio-os-core/workspace-creation/registry';
+import { registryRecordToWorkspaceSchema } from '../studio-os-core/workspace-creation/schemaBridge';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
 import { SANDBOX_WORKSPACE } from './sandbox/config';

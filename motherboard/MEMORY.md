@@ -36712,3 +36712,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** `src/pages/admin/dashboard/page.tsx`, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Admin dashboard blank: decouple from Studio OS milestones (real root cause)
+
+**Context (full chat):** User reported admin dashboard still blank white and won't load after prior workspace-registry fixes; user believed **Studio OS milestones (30–36)** were the cause.
+
+**Real root cause:** **`AdminGuard`** still **`await`ed `ensureWorkspacesBootstrapped()`** (dynamic import of **`src/workspaces/index.ts`**) and **`WorkspaceProvider`** for **every** `/admin/*` route including **`/admin/dashboard`**. During that await, **`checked` stayed false → `return null`** — pure white screen (LoadingScreen branch unreachable because `checked` and `workspacesReady` were set together after import). Dashboard **never uses `useWorkspace`**; only **`/admin/studio/*`** and **`/admin/studio-os/*`** need registry + provider. Milestone 30–36 demo seeds belong on Studio routes via **`bootstrapWorkspacesPlatform()`** in **`AdminStudioLayout`**, not on dashboard entry.
+
+**Fix:**
+- **`AdminGuard`** — auth-only (redirect sign-in / non-admin); show **`LoadingScreen`** while checking; **no** workspace import, **no** **`WorkspaceProvider`**.
+- **`AdminStudioWorkspaceGuard`** (new) — wraps Studio OS routes in **`App.tsx`**; **`ensureWorkspacesBootstrapped()`** + **`WorkspaceProvider`** + error/retry UI.
+- **`workspaces/index.ts`** — import registry helpers from **`workspace-creation/registry`** + **`schemaBridge`** directly (avoid heavy barrel).
+- **`motherboard/CORE.md`** — document guard split.
+
+**Verify:** Preview **`/admin/dashboard`** paints without loading workspaces chunk; **`/admin/studio-os`** still loads workspace picker.
+
+**Changes:** `AdminGuard.tsx`, `AdminStudioWorkspaceGuard.tsx`, `App.tsx`, `workspaces/index.ts`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
