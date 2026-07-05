@@ -36571,7 +36571,6 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-04 — Blank white page root cause: AdminGuard sync `workspaces` bootstrap
 
 **Context:** User reported the site still shows a blank/white page (all routes including `/home/shop` on fsbw.vercel.app).
@@ -36589,7 +36588,9 @@ User clarified **all desktop/tablet website pages** need the shopping-bag treatm
 **Related prior issues (still valid):** vendor↔vendor-react chunk cycle (June 2026, `vite.config.ts` scheduler in `vendor-react`); auth bootstrap blocking first paint (fixed `main.tsx` 2026-07-04); stale Vision sessionStorage (`purgeStaleVisionSessionOnBoot`).
 
 **Changes:** `src/components/AdminGuard.tsx`, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
-=======
+
+---
+
 ## 2026-07-05 — Vision Engine immersion UX (PSA/tutorial hide, collapsible controls, uppercase)
 
 Summary of the **whole conversation so far** in this chat: user reported **creative vision view** (Vision Engine presentation / creative preview tour) working again but needed three UX fixes — hide distracting **PSA** and **onboarding tutorial** chrome during the experience; allow **collapsing the bottom control panel** for full site immersion with ability to resume; and enforce **all-uppercase text** in the Vision Engine presentation UI.
@@ -36603,5 +36604,4 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
   - `TutorialOsContext.tsx` — `visionPresentationActive` in `hideChrome`; gate welcome, wizard, spotlight, search modal, page help during vision.
   - `VisionEnginePresenterPanel.tsx`, `VisionEngineContext.tsx`, `TutorialPageHelpButton.tsx` — uppercase labels / CSS class for page-help hide fallback.
 - **Conventions:** Vision Engine presentation = zero PSA/tutorial chrome; users can collapse bottom panel without exiting tour; all Vision Engine runtime UI text uppercase.
->>>>>>> 654c4c9e (Vision Engine: hide PSA/tutorial, collapsible overlay, uppercase UI)
 

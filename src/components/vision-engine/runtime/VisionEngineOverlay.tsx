@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useVisionEngine } from './VisionEngineContext';
+import { useVisionEngineOverlayDrag } from './useVisionEngineOverlayDrag';
 
 type Props = {
   autoTourRunning: boolean;
@@ -16,7 +17,10 @@ export function VisionEngineOverlay({
   onToggleLuxuryAudio,
   onTogglePresenterMode,
 }: Props) {
+  const overlayRef = useRef<HTMLDivElement>(null);
   const [collapsed, setCollapsed] = useState(false);
+  const { positionStyle, isDragging, isPositioned, onDragHandlePointerDown } =
+    useVisionEngineOverlayDrag(overlayRef);
   const {
     currentStop,
     progress,
@@ -33,19 +37,30 @@ export function VisionEngineOverlay({
 
   return (
     <div
-      className={`vision-engine-overlay${collapsed ? ' is-collapsed' : ''}`}
+      ref={overlayRef}
+      className={`vision-engine-overlay${collapsed ? ' is-collapsed' : ''}${isPositioned ? ' is-positioned' : ''}${isDragging ? ' is-dragging' : ''}`}
+      style={positionStyle}
       role="dialog"
       aria-label="VISION ENGINE PRESENTATION"
     >
       <div className="vision-engine-overlay__panel">
-        <button
-          type="button"
-          className="vision-engine-overlay__toggle"
-          onClick={() => setCollapsed((c) => !c)}
-          aria-expanded={!collapsed}
-        >
-          {collapsed ? 'RESUME CONTROLS' : 'HIDE CONTROLS'}
-        </button>
+        <div className="vision-engine-overlay__header">
+          <button
+            type="button"
+            className="vision-engine-overlay__drag-handle"
+            onPointerDown={onDragHandlePointerDown}
+            aria-label="DRAG CONTROLS PANEL"
+            title="DRAG TO REPOSITION"
+          />
+          <button
+            type="button"
+            className="vision-engine-overlay__toggle"
+            onClick={() => setCollapsed((c) => !c)}
+            aria-expanded={!collapsed}
+          >
+            {collapsed ? 'RESUME CONTROLS' : 'HIDE CONTROLS'}
+          </button>
+        </div>
 
         {collapsed ? (
           <p className="vision-engine-overlay__step-collapsed">
