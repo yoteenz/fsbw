@@ -62,6 +62,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Organizational Autonomy Framework',
   'Organizational Delegation Engine',
   'Organizational Workflow Orchestration',
+  'Organizational Self-Improvement',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

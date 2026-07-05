@@ -38,4 +38,5 @@ export const OAF_CONNECTED_SYSTEMS = [
   'Founder\'s Promise',
   'Organizational Delegation Engine',
   'Organizational Workflow Orchestration',
+  'Organizational Self-Improvement',
 ] as const;

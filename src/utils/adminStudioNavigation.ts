@@ -382,6 +382,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-self-improvement',
+    title: 'ORGANIZATIONAL SELF-IMPROVEMENT',
+    purpose: 'Continuous organizational evolution — reflect, learn, and strengthen every day. V1.0.',
+    route: p('organizational-self-improvement'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN OSI',
+    moduleKey: 'organizational-self-improvement',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

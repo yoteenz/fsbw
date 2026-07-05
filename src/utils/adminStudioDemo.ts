@@ -88,6 +88,7 @@ export type AdminStudioSectionId =
   | 'organizational-autonomy-framework'
   | 'organizational-delegation-engine'
   | 'organizational-workflow-orchestration'
+  | 'organizational-self-improvement'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

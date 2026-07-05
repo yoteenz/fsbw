@@ -297,6 +297,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationalWorkflowOrchestration.bootstrapOrganizationalWorkflowOrchestrationPlatform();
     await yieldToMain();
 
+    const organizationalSelfImprovement = await import('../studio-os-core/organizational-self-improvement/bootstrap');
+    organizationalSelfImprovement.bootstrapOrganizationalSelfImprovementPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

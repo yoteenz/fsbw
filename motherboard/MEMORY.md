@@ -37622,4 +37622,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** organizational-workflow-orchestration core + UI + hook + page + service, CoS/ODE/OAF/OI/executive-council/executive-framework/manifesto/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 70: Organizational Self-Improvement V1.0
+
+**Context (full chat):** User requested Milestone 70 — introduce **Organizational Self-Improvement** as the continuous evolution system for every company in Studio OS. Prior milestones: M69 OWF, M68 ODE, M67 OAF, M66 OI, full executive pipeline. Constraints: do not redesign overall Studio OS shell · organization reflects and improves proactively · learning compounds · never optimize for change alone · master craftsman refinement · work on `master` only · one commit + one push.
+
+**Goal:** OSI makes organizations better every day through compounding learning. Features: improvement philosophy (every event strengthens org · culture not project · continuous refinement · clarity/trust/relationships/knowledge/resilience) · continuous reflection across 11 domains (leadership · CX · brand · digital · tech · growth · relationships · knowledge · community · creator · maturity) · strengths/weaknesses/opportunities/risks/blind spots · cross-functional improvements (executives recommend outside discipline) · improvement opportunities (why now · why it matters · impact · confidence) · organizational experiments (pilots · A/B · safe proposals · lessons · institutional knowledge) · improvement governance (automatic · thresholds · experimentation · structural founder-only) · continuous learning capture after every initiative · organizational maturity over years (8 dimensions) · Chief of Staff coordinates all improvement initiatives · improvement dashboard (health · recommendations · active · maturity · learning velocity · completed · future).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/organizational-self-improvement/` — types (reflection domains, continuous reflection, cross-functional improvements, opportunities, experiments, governance, learning, maturity, CoS coordination), constants (philosophy, connected systems), localStorage store (`studioOsOrganizationalSelfImprovement_v1`), rich NDXBOOK bootstrap (11 reflection domains · 5 improvement opportunities · 3 experiments · 8 maturity dimensions · cross-functional executive recommendations).
+- **Hook:** `useOrganizationalSelfImprovementState`.
+- **UI:** `/admin/studio/organizational-self-improvement` — `OrganizationalSelfImprovementWorkspace` with tabs (Reflect/Domains · Improve/Cross · Experiment/Govern · Learn/Capture · Maturity/CoS · Dashboard/Connect). Emerald accent (`#10B981`) · V1.0.
+- **Wiring:** route, nav (overview · after OWF), modules, services, bootstrap after Organizational Workflow Orchestration.
+- **Chief of Staff integration:** `Organizational Self-Improvement` in `SOFT_APPROVAL_SOURCES`; `OrganizationalSelfImprovementLinkPanel` in CoS workspace.
+- **Cross-links:** OWF, ODE, OAF, OI, Executive Council, Executive Framework, Leadership Manifesto ConnectedSystemsPanel → OSI · back link from OWF page.
+- **Knowledge graph:** `node-organizational-self-improvement` + ~34 edges to OWF, ODE, OAF, OI, Executive Council, Framework, Manifesto, CoS, all C-suite, all architects, Strategy/Campaign/Distribution engines, Reader Graph, Relationship Engine, Creator Marketplace, Genome, Promise, Studio Intelligence.
+
+**Route:** `/admin/studio/organizational-self-improvement` · Overview nav group · emerald accent · back link from Organizational Workflow Orchestration.
+
+**Changes:** organizational-self-improvement core + UI + hook + page + service, CoS/OWF/ODE/OAF/OI/executive-council/executive-framework/manifesto/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
 

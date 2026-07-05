@@ -34,4 +34,5 @@ export const OWF_CONNECTED_SYSTEMS = [
   'Creator Marketplace',
   'Founder\'s Promise',
   'Studio Intelligence',
+  'Organizational Self-Improvement',
 ] as const;

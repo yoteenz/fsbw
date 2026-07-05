@@ -40,6 +40,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-autonomy-framework'
   | 'organizational-delegation-engine'
   | 'organizational-workflow-orchestration'
+  | 'organizational-self-improvement'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -309,6 +310,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL WORKFLOW ORCHESTRATION',
     description: 'Cross-functional workflow choreography — coordinated teams, not disconnected automations. V1.0.',
     routeSegment: 'organizational-workflow-orchestration',
+  },
+  {
+    id: 'organizational-self-improvement',
+    label: 'ORGANIZATIONAL SELF-IMPROVEMENT',
+    description: 'Continuous organizational evolution — learning compounds every day. V1.0.',
+    routeSegment: 'organizational-self-improvement',
   },
   {
     id: 'executive-command-center',
