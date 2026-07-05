@@ -5,22 +5,20 @@ import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAcc
 import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
 import { STUDIO_OS_VOCABULARY } from '../../../studio-os-core/core/vocabulary';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
-import { STUDIO_OS_ROUTES } from '../../../studio-os-core/workspace/routes';
+import { STUDIO_OS_ROUTES, workspaceStudioModulePath } from '../../../studio-os-core/workspace/routes';
+import { readWorkspaceRegistryStore } from '../../../studio-os-core/workspace-registry/store';
 import { getRegistryWorkspaceById } from '../../../studio-os-core/workspace-creation/registry';
 import { isDynamicWorkspaceId } from '../../../workspaces';
 import { useWorkspaceCreationEngine } from '../../../hooks/useWorkspaceCreationEngine';
+import { WorkspaceRegistryCard } from '../../../components/admin/studio-os/WorkspaceRegistryCard';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
-import type { WorkspaceListItem } from '../../../studio-os-core/workspace/types';
-import {
-  DEPLOYMENT_STAGE_LABELS,
-  WORKSPACE_TYPE_LABELS,
-} from '../../../utils/adminStudioWorkspaceCreationDemo';
 
 export default function AdminStudioOsPage() {
   useRequireAdminPageAccess();
   const navigate = useNavigate();
-  const { workspaces, setActiveWorkspace, workspaceId } = useWorkspace();
+  const { workspaces, enterWorkspace, workspaceId } = useWorkspace();
   const { workspaces: registryWorkspaces } = useWorkspaceCreationEngine();
+  const registryStore = readWorkspaceRegistryStore();
 
   const registryById = useMemo(() => {
     const map = new Map<string, ReturnType<typeof getRegistryWorkspaceById>>();
@@ -28,18 +26,24 @@ export default function AdminStudioOsPage() {
     return map;
   }, [registryWorkspaces]);
 
-  const selectWorkspace = (ws: WorkspaceListItem) => {
-    setActiveWorkspace(ws.id);
-    if (ws.id === 'frontal-slayer') {
+  const enter = (wsId: string) => {
+    enterWorkspace(wsId);
+    if (wsId === 'frontal-slayer') {
       navigate('/admin/studio/mission-control');
       return;
     }
-    if (isDynamicWorkspaceId(ws.id) || registryById.has(ws.id)) {
-      navigate(STUDIO_OS_ROUTES.workspaceDashboard(ws.id));
+    if (wsId === 'ai-media') {
+      navigate(STUDIO_OS_ROUTES.workspaceDashboard(wsId));
       return;
     }
-    navigate(STUDIO_OS_ROUTES.workspaceShell(ws.id));
+    if (isDynamicWorkspaceId(wsId) || registryById.has(wsId)) {
+      navigate(STUDIO_OS_ROUTES.workspaceDashboard(wsId));
+      return;
+    }
+    navigate(STUDIO_OS_ROUTES.workspaceShell(wsId));
   };
+
+  const selectWorkspace = (ws: (typeof workspaces)[number]) => enter(ws.id);
 
   return (
     <div className="min-h-screen relative">
@@ -72,9 +76,23 @@ export default function AdminStudioOsPage() {
                 {STUDIO_OS_PLATFORM.tagline}
               </p>
               <p className="mt-3 text-[8px] font-futura" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-                WORKSPACE REGISTRY · {STUDIO_OS_VOCABULARY.workspace.term.toUpperCase()} CREATION ENGINE V1.0
+                WORKSPACE REGISTRY · CAMPUS FRONT ENTRANCE · {STUDIO_OS_VOCABULARY.workspace.term.toUpperCase()} CREATION ENGINE V1.0
+              </p>
+              <p className="mt-2 text-[7px] font-futura" style={{ fontWeight: 515, color: '#333', lineHeight: 1.45 }}>
+                Studio OS is the operating system. Every company is a Workspace. Same capabilities · isolated data · unique personality.
               </p>
             </div>
+
+            {registryStore.studioPortfolioInsights.length > 0 ? (
+              <div className="p-3 studio-living-panel" style={{ border: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(146,112,74,0.06)' }}>
+                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '6px', color: '#92704A' }}>STUDIO INTELLIGENCE · PORTFOLIO</p>
+                {registryStore.studioPortfolioInsights.slice(0, 2).map((ins) => (
+                  <p key={ins.id} style={{ fontFamily: '"Futura PT Book"', fontSize: '6px', color: '#444', margin: '4px 0 0' }}>
+                    {ins.insight} {ins.metric ? `· ${ins.metric}` : ''} · requires founder approval
+                  </p>
+                ))}
+              </div>
+            ) : null}
 
             <div className="grid grid-cols-1 gap-2">
               <button
@@ -194,56 +212,28 @@ export default function AdminStudioOsPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-3">
-              {workspaces.map((ws: WorkspaceListItem) => {
-                const isActive = ws.id === workspaceId;
-                const isPlaceholder = ws.status === 'placeholder';
+              {workspaces.map((ws) => {
                 const registry = registryById.get(ws.id);
                 return (
-                  <button
+                  <WorkspaceRegistryCard
                     key={ws.id}
-                    type="button"
-                    onClick={() => selectWorkspace(ws)}
-                    className="w-full text-left border bg-white/80 shadow-md transition-transform active:scale-[0.98] overflow-hidden"
-                    style={{
-                      borderWidth: '1.3px',
-                      borderColor: isActive ? '#EB1C24' : ADMIN_STUDIO_THEME.panelBorder,
-                      borderTop: `2px solid ${isActive ? '#EB1C24' : registry?.isReferencePilot ? '#6366F1' : isPlaceholder ? '#9CA3AF' : '#2563EB'}`,
+                    workspace={ws}
+                    isActive={ws.id === workspaceId}
+                    onEnter={() => selectWorkspace(ws)}
+                    onMorningBriefing={() => {
+                      enter(ws.id);
+                      navigate(workspaceStudioModulePath(ws.id, 'mission-control'));
                     }}
-                  >
-                    <div className="flex items-center gap-3 p-3">
-                      <div className="flex-shrink-0 overflow-hidden border flex items-center justify-center" style={{ width: 48, height: 48, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
-                        {registry?.icon ? (
-                          <span className="text-xl">{registry.icon}</span>
-                        ) : (
-                          <img src={ws.logoSrc} alt="" className="w-full h-full object-cover" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[12px] leading-tight" style={{ fontFamily: '"Covered By Your Grace", sans-serif', color: ADMIN_STUDIO_THEME.textPrimary }}>
-                          {ws.displayName}
-                        </p>
-                        <p className="text-[7px] font-futura mt-1 line-clamp-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.4 }}>
-                          {ws.metadata.description}
-                        </p>
-                        {registry ? (
-                          <p className="text-[6px] font-futura mt-1" style={{ fontWeight: 515, color: '#6366F1' }}>
-                            {WORKSPACE_TYPE_LABELS[registry.workspaceType]?.toUpperCase()} · {DEPLOYMENT_STAGE_LABELS[registry.deploymentStage]?.toUpperCase()}
-                            {registry.isReferencePilot ? ' · REFERENCE PILOT' : ''}
-                          </p>
-                        ) : null}
-                        {isPlaceholder ? (
-                          <p className="text-[6px] font-futura mt-1" style={{ fontWeight: 515, color: '#9CA3AF' }}>
-                            PLACEHOLDER · ARCHITECTURE TEST
-                          </p>
-                        ) : null}
-                      </div>
-                      {isActive ? (
-                        <span className="text-[6px] font-futura" style={{ fontWeight: 515, color: '#EB1C24' }}>
-                          ACTIVE
-                        </span>
-                      ) : null}
-                    </div>
-                  </button>
+                    registryMeta={
+                      registry
+                        ? {
+                            workspaceType: registry.workspaceType,
+                            deploymentStage: registry.deploymentStage,
+                            isReferencePilot: registry.isReferencePilot,
+                          }
+                        : undefined
+                    }
+                  />
                 );
               })}
             </div>

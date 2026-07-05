@@ -5,6 +5,7 @@ import {
   CONCIERGE_CRITERIA,
   REVIEW_ORDER,
 } from './constants';
+import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   ApprovalContentItem,
   ConciergeApprovalFlowStore,
@@ -164,19 +165,12 @@ function refreshDashboard(store: ConciergeApprovalFlowStore): ConciergeApprovalF
 
 export function readConciergeApprovalFlowStore(): ConciergeApprovalFlowStore {
   if (typeof window === 'undefined') return emptyStore();
-  try {
-    const raw = localStorage.getItem(CONCIERGE_APPROVAL_FLOW_STORAGE_KEY);
-    if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as ConciergeApprovalFlowStore;
-    const merged = {
-      ...emptyStore(),
-      ...parsed,
-      items: (parsed.items ?? []).map(syncItemReviews),
-    };
-    return { ...merged, dashboard: refreshDashboard(merged) };
-  } catch {
-    return emptyStore();
-  }
+  const parsed = readScopedStore(CONCIERGE_APPROVAL_FLOW_STORAGE_KEY, emptyStore);
+  const merged = {
+    ...parsed,
+    items: (parsed.items ?? []).map(syncItemReviews),
+  };
+  return { ...merged, dashboard: refreshDashboard(merged) };
 }
 
 export function writeConciergeApprovalFlowStore(store: ConciergeApprovalFlowStore): void {
@@ -186,7 +180,7 @@ export function writeConciergeApprovalFlowStore(store: ConciergeApprovalFlowStor
     dashboard: refreshDashboard(store),
     lastUpdatedAt: new Date().toISOString(),
   };
-  localStorage.setItem(CONCIERGE_APPROVAL_FLOW_STORAGE_KEY, JSON.stringify(next));
+  writeScopedStore(CONCIERGE_APPROVAL_FLOW_STORAGE_KEY, next);
 }
 
 export function bootstrapConciergeApprovalFlowStore(seed?: Partial<ConciergeApprovalFlowStore>): void {

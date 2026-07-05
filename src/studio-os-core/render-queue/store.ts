@@ -4,6 +4,7 @@ import {
   RENDER_QUEUE_STORAGE_KEY,
   RENDER_QUEUE_VERSION,
 } from './constants';
+import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type { RenderJob, RenderPipelineStageId, RenderQueueStore } from './types';
 
 function emptyStore(): RenderQueueStore {
@@ -51,21 +52,14 @@ function refreshDashboard(store: RenderQueueStore): RenderQueueStore['dashboard'
 
 export function readRenderQueueStore(): RenderQueueStore {
   if (typeof window === 'undefined') return emptyStore();
-  try {
-    const raw = localStorage.getItem(RENDER_QUEUE_STORAGE_KEY);
-    if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as RenderQueueStore;
-    const merged = { ...emptyStore(), ...parsed };
-    return { ...merged, dashboard: refreshDashboard(merged) };
-  } catch {
-    return emptyStore();
-  }
+  const merged = readScopedStore(RENDER_QUEUE_STORAGE_KEY, emptyStore);
+  return { ...merged, dashboard: refreshDashboard(merged) };
 }
 
 export function writeRenderQueueStore(store: RenderQueueStore): void {
   if (typeof window === 'undefined') return;
   const next = { ...store, dashboard: refreshDashboard(store), lastUpdatedAt: new Date().toISOString() };
-  localStorage.setItem(RENDER_QUEUE_STORAGE_KEY, JSON.stringify(next));
+  writeScopedStore(RENDER_QUEUE_STORAGE_KEY, next);
 }
 
 export function bootstrapRenderQueueStore(seed?: Partial<RenderQueueStore>): void {

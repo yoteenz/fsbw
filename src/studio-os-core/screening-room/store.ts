@@ -3,6 +3,7 @@ import {
   SCREENING_ROOM_STORAGE_KEY,
   SCREENING_ROOM_VERSION,
 } from './constants';
+import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   ComparisonFieldId,
   ConciergeReview,
@@ -49,21 +50,14 @@ function refreshDashboard(store: ScreeningRoomStore): ScreeningRoomStore['dashbo
 
 export function readScreeningRoomStore(): ScreeningRoomStore {
   if (typeof window === 'undefined') return emptyStore();
-  try {
-    const raw = localStorage.getItem(SCREENING_ROOM_STORAGE_KEY);
-    if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as ScreeningRoomStore;
-    const merged = { ...emptyStore(), ...parsed };
-    return { ...merged, dashboard: refreshDashboard(merged) };
-  } catch {
-    return emptyStore();
-  }
+  const merged = readScopedStore(SCREENING_ROOM_STORAGE_KEY, emptyStore);
+  return { ...merged, dashboard: refreshDashboard(merged) };
 }
 
 export function writeScreeningRoomStore(store: ScreeningRoomStore): void {
   if (typeof window === 'undefined') return;
   const next = { ...store, dashboard: refreshDashboard(store), lastUpdatedAt: new Date().toISOString() };
-  localStorage.setItem(SCREENING_ROOM_STORAGE_KEY, JSON.stringify(next));
+  writeScopedStore(SCREENING_ROOM_STORAGE_KEY, next);
 }
 
 export function bootstrapScreeningRoomStore(seed?: Partial<ScreeningRoomStore>): void {

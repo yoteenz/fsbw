@@ -21,6 +21,7 @@ import {
 } from '../../../utils/adminStudioNavigation';
 import { STUDIO_OS_UPPERCASE_CLASS } from '../../../utils/adminStudioTheme';
 import { StudioImmersionShell } from './immersion/StudioImmersionShell';
+import { WorkspaceSwitcher } from '../studio-os/WorkspaceSwitcher';
 
 type AdminStudioLayoutProps = {
   title: string;
@@ -210,11 +211,13 @@ export function AdminStudioLayout({
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginTop: '10px' }} />
               </div>
 
-              {!hideNavTabs && workspace.studioEnabled ? (
+                {!hideNavTabs && workspace.studioEnabled ? (
                 <div data-studio-manual="nav-tabs">
                   <AdminStudioNavTabs activeGroupId={activeGroupId} />
                 </div>
               ) : null}
+
+              <WorkspaceSwitcher />
 
               <div
                 className="flex-1 min-h-0"

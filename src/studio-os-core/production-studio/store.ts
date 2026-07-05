@@ -4,6 +4,7 @@ import {
   PRODUCTION_STUDIO_STORAGE_KEY,
   PRODUCTION_STUDIO_VERSION,
 } from './constants';
+import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   ProductionAssetTypeId,
   ProductionJob,
@@ -58,21 +59,14 @@ function refreshDashboard(store: ProductionStudioStore): ProductionStudioStore['
 
 export function readProductionStudioStore(): ProductionStudioStore {
   if (typeof window === 'undefined') return emptyStore();
-  try {
-    const raw = localStorage.getItem(PRODUCTION_STUDIO_STORAGE_KEY);
-    if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as ProductionStudioStore;
-    const merged = { ...emptyStore(), ...parsed };
-    return { ...merged, dashboard: refreshDashboard(merged) };
-  } catch {
-    return emptyStore();
-  }
+  const merged = readScopedStore(PRODUCTION_STUDIO_STORAGE_KEY, emptyStore);
+  return { ...merged, dashboard: refreshDashboard(merged) };
 }
 
 export function writeProductionStudioStore(store: ProductionStudioStore): void {
   if (typeof window === 'undefined') return;
   const next = { ...store, dashboard: refreshDashboard(store), lastUpdatedAt: new Date().toISOString() };
-  localStorage.setItem(PRODUCTION_STUDIO_STORAGE_KEY, JSON.stringify(next));
+  writeScopedStore(PRODUCTION_STUDIO_STORAGE_KEY, next);
 }
 
 export function bootstrapProductionStudioStore(seed?: Partial<ProductionStudioStore>): void {

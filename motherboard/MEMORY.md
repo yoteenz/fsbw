@@ -37989,3 +37989,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/concierge-approval-flow` · back from Screening Room.
 
 **Changes:** concierge-approval-flow core + UI + hook + page + service, App.tsx, routes/nav/demo/modules/workspaces/services/seedGraph, ScreeningRoomPanels link, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — Studio OS organizational immersion pass (M82)
+
+**Context (full chat):** After M81 Concierge Approval Flow (`2c188936`), user requested **organizational immersion pass** — evolve Studio OS from static dashboard into living organizational headquarters. Explicit constraints: **do not** redesign layouts · move panels · remove functionality · add gimmicks · make UI busy. Goal: headquarters feels alive before founder arrives.
+
+**Philosophy:** Studio OS should never feel like software — walking through headquarters where work is already happening. Presence · ambient life · Chief Concierge as proactive guide · AI work visible · quiet organizational moments (no popups/confetti).
+
+**Implementation:**
+- **Core engine:** `src/studio-os-core/studio-immersion/` — `resolveStudioRoomVariant(pathname)` · `buildChiefConciergeBrief(pathname)` · rotating `OrganizationalPresenceActivity` feed · `getActiveScreenMoment` for quiet milestones.
+- **Hook:** `useStudioImmersion` — 7s tick for presence rotation.
+- **Shared UI:** `src/components/admin/studio/immersion/` — `StudioImmersionStyles` (shared CSS: panel breathe · glass sheen · presence dots · cinema dim · activity fade-rise · reduced-motion) · `StudioAmbientLayer` (daylight · particles · room tone) · `StudioChiefConciergeBrief` (proactive contextual guidance) · `StudioOrganizationalPresenceStrip` (live concierge activity) · `StudioLivingIndicator` · `StudioImmersionShell` (layout mount).
+- **Layout integration:** `AdminStudioLayout` mounts `StudioImmersionShell` above workspace content — all `/admin/studio/*` modules inherit ambient + brief + presence without panel moves.
+- **Targeted enhancements (no layout changes):** Mission Control — today's briefing label · headquarters active · live activity + concierge feed · `studio-wing-section` classes. Production Studio + Render Queue — living headers · glass sheen. Screening Room — cinema dim enter. Publishing Queue — today column living panel. Ndxbook Mission Control — Chief Concierge brief + Activity Wall entry animation. `AdminStudioModuleCard` + `ConciergeFounderBanner` — living card/panel classes + current activity when matched.
+
+**Changes:** studio-immersion core + immersion components + hook, AdminStudioLayout, MissionControlWorkspace, production/render/screening/concierge modules, publishing queue, ndxbook mission control, module cards, ConciergeFounderBanner, `motherboard/CORE.md`, `motherboard/MEMORY.md`.

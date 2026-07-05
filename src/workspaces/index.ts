@@ -4,6 +4,9 @@ import type { WorkspaceDataAdapter } from '../studio-os-core/workspace/data-adap
 import type { WorkspaceId, WorkspaceListItem, WorkspaceSchema } from '../studio-os-core/workspace/types';
 import { listRegistryWorkspaces } from '../studio-os-core/workspace-creation/registry';
 import { registryRecordToWorkspaceSchema } from '../studio-os-core/workspace-creation/schemaBridge';
+import { AI_MEDIA_NDXBOOK_WORKSPACE } from './ai-media/config';
+import { ALL_IN_ONE_ENTERPRISE_WORKSPACE } from './all-in-one-enterprise/config';
+import { VXD_INC_WORKSPACE } from './vxd-inc/config';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
 import { SANDBOX_WORKSPACE } from './sandbox/config';
@@ -12,6 +15,9 @@ import { FUTURE_CLIENT_WORKSPACE } from './future-client/config';
 
 const STATIC_WORKSPACE_REGISTRY: Record<WorkspaceId, WorkspaceSchema> = {
   'frontal-slayer': FRONTAL_SLAYER_WORKSPACE,
+  'ai-media': AI_MEDIA_NDXBOOK_WORKSPACE,
+  'all-in-one-enterprise': ALL_IN_ONE_ENTERPRISE_WORKSPACE,
+  'vxd-inc': VXD_INC_WORKSPACE,
   sandbox: SANDBOX_WORKSPACE,
   'future-brand': FUTURE_BRAND_WORKSPACE,
   'future-client': FUTURE_CLIENT_WORKSPACE,
@@ -32,6 +38,9 @@ function getMergedRegistry(): Record<WorkspaceId, WorkspaceSchema> {
 
 const DATA_ADAPTERS: Record<WorkspaceId, WorkspaceDataAdapter> = {
   'frontal-slayer': frontalSlayerDataAdapter,
+  'ai-media': emptyWorkspaceDataAdapter,
+  'all-in-one-enterprise': emptyWorkspaceDataAdapter,
+  'vxd-inc': emptyWorkspaceDataAdapter,
   sandbox: emptyWorkspaceDataAdapter,
   'future-brand': emptyWorkspaceDataAdapter,
   'future-client': emptyWorkspaceDataAdapter,
@@ -351,6 +360,10 @@ export function bootstrapWorkspacesPlatform(): void {
 
     const conciergeApprovalFlow = await import('../studio-os-core/concierge-approval-flow/bootstrap');
     conciergeApprovalFlow.bootstrapConciergeApprovalFlowPlatform();
+    await yieldToMain();
+
+    const workspaceRegistry = await import('../studio-os-core/workspace-registry/store');
+    workspaceRegistry.bootstrapWorkspaceRegistryPlatform();
     await yieldToMain();
 
     const vision = await import('./frontal-slayer/vision-engine');

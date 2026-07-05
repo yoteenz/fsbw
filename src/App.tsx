@@ -255,6 +255,8 @@ const AdminStudioOsPromotionCenter = lazyWithRetry(() => import('./pages/admin/s
 const AdminStudioOsWorkspaceDashboard = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/dashboard/page'), 'AdminStudioOsWorkspaceDashboard');
 const AdminStudioOsWorkspaceNewsroom = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/newsroom/page'), 'AdminStudioOsWorkspaceNewsroom');
 const AdminStudioOsWorkspaceShell = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/page'), 'AdminStudioOsWorkspaceShell');
+const AdminStudioOsWorkspaceSettings = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/settings/page'), 'AdminStudioOsWorkspaceSettings');
+const AdminStudioOsWorkspaceStudioModule = lazyWithRetry(() => import('./pages/admin/studio-os/workspace/studio/WorkspaceStudioModuleHost'), 'AdminStudioOsWorkspaceStudioModule');
 const AdminMarketing = lazyWithRetry(() => import('./pages/admin/marketing/page'), 'AdminMarketing');
 const NoirUnitPage = lazyWithRetry(() => import('./pages/straight/noir/page'), 'NoirUnitPage');
 const BlancoUnitPage = lazyWithRetry(() => import('./pages/straight/blanco/page'), 'BlancoUnitPage');
@@ -862,6 +864,16 @@ function App() {
             </Suspense>
           } />
           <Route element={<AdminStudioWorkspaceGuard />}>
+          <Route path="studio-os/workspace/:workspaceId/settings" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOsWorkspaceSettings />
+            </Suspense>
+          } />
+          <Route path="studio-os/workspace/:workspaceId/studio/*" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOsWorkspaceStudioModule />
+            </Suspense>
+          } />
           <Route path="studio-os/workspace/:workspaceId/dashboard" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioOsWorkspaceDashboard />
@@ -1512,7 +1524,7 @@ function App() {
               <AdminStudioSection />
             </Suspense>
           } />
-          <Route path="studio" element={<Navigate to="/admin/studio/mission-control" replace />} />
+          <Route path="studio" element={<Navigate to="/admin/studio-os" replace />} />
           </Route>
           <Route path="analytics" element={
             <Suspense fallback={<LoadingScreen />}>

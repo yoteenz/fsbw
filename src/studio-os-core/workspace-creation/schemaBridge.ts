@@ -28,7 +28,7 @@ export function registryRecordToWorkspaceSchema(record: WorkspaceRegistryRecord)
     ].filter(Boolean),
     permissions: {
       ...DEFAULT_WORKSPACE_PERMISSIONS,
-      canAccessStudioModules: false,
+      canAccessStudioModules: true,
     },
     moduleCopy: {
       'mission-control': {
@@ -36,7 +36,7 @@ export function registryRecordToWorkspaceSchema(record: WorkspaceRegistryRecord)
         subtitle: record.description,
       },
     },
-    studioEnabled: false,
+    studioEnabled: true,
     studioEntryPath: `/admin/studio-os/workspace/${record.slug}/dashboard`,
     metadata: {
       industry: record.blueprintId,

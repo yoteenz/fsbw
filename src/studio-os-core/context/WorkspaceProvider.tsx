@@ -3,36 +3,40 @@ import { loadWorkspace, type LoadedWorkspace } from '../workspace/loader';
 import { getWorkspaceRegistry } from '../workspace/registry';
 import type { WorkspaceDataAdapter } from '../workspace/data-adapter';
 import type { WorkspaceListItem, WorkspaceSchema } from '../workspace/types';
-import { workspaceStudioEntryPath } from '../workspace/routes';
+import { workspaceStudioEntryPath, workspaceStudioModulePath, STUDIO_OS_ROUTES } from '../workspace/routes';
 import {
   readActiveWorkspaceIdFromStorage,
-  writeActiveWorkspaceIdToStorage,
-  setRuntimeActiveWorkspaceId,
   STUDIO_OS_DEFAULT_WORKSPACE_ID,
 } from '../workspace/storage';
+import { activateWorkspaceContext } from '../workspace/context-bridge';
+import { resolveModuleTenantId, type ModuleTenantId } from '../workspace/tenant-ids';
+import { recordWorkspaceVisit } from '../workspace-registry/store';
 
 export type WorkspaceContextValue = {
   workspaceId: string;
   workspace: WorkspaceSchema;
   dataAdapter: WorkspaceDataAdapter;
   workspaces: WorkspaceListItem[];
+  moduleTenantId: ModuleTenantId;
   setActiveWorkspace: (workspaceId: string) => void;
+  enterWorkspace: (workspaceId: string) => void;
+  resolveModulePath: (segment: string) => string;
   getModuleSubtitle: (moduleKey: keyof WorkspaceSchema['moduleCopy']) => string | undefined;
   studioEntryPath: string;
+  registryPath: string;
 };
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
 type WorkspaceProviderProps = {
   children: ReactNode;
-  /** Optional override for tests; defaults to localStorage active workspace. */
   initialWorkspaceId?: string;
 };
 
 export function WorkspaceProvider({ children, initialWorkspaceId }: WorkspaceProviderProps) {
   const [workspaceId, setWorkspaceId] = useState(() => {
     const id = initialWorkspaceId ?? readActiveWorkspaceIdFromStorage();
-    setRuntimeActiveWorkspaceId(id);
+    activateWorkspaceContext(id);
     return id;
   });
 
@@ -41,11 +45,23 @@ export function WorkspaceProvider({ children, initialWorkspaceId }: WorkspacePro
 
   const workspace = loaded?.schema ?? fallback.schema;
   const dataAdapter = loaded?.dataAdapter ?? fallback.dataAdapter;
+  const moduleTenantId = useMemo(() => resolveModuleTenantId(workspaceId), [workspaceId]);
 
   const setActiveWorkspace = useCallback((id: string) => {
-    writeActiveWorkspaceIdToStorage(id);
+    activateWorkspaceContext(id);
     setWorkspaceId(id);
   }, []);
+
+  const enterWorkspace = useCallback((id: string) => {
+    activateWorkspaceContext(id);
+    setWorkspaceId(id);
+    recordWorkspaceVisit(id);
+  }, []);
+
+  const resolveModulePath = useCallback(
+    (segment: string) => workspaceStudioModulePath(workspaceId, segment),
+    [workspaceId]
+  );
 
   const value = useMemo<WorkspaceContextValue>(
     () => ({
@@ -53,15 +69,19 @@ export function WorkspaceProvider({ children, initialWorkspaceId }: WorkspacePro
       workspace,
       dataAdapter,
       workspaces: getWorkspaceRegistry().listWorkspaces(),
+      moduleTenantId,
       setActiveWorkspace,
+      enterWorkspace,
+      resolveModulePath,
       getModuleSubtitle: (moduleKey) => {
         const copy = workspace.moduleCopy[moduleKey];
         if (!copy || typeof copy !== 'object' || !('subtitle' in copy)) return undefined;
         return copy.subtitle;
       },
       studioEntryPath: workspaceStudioEntryPath(workspace.id, workspace.studioEntryPath),
+      registryPath: STUDIO_OS_ROUTES.entry,
     }),
-    [workspaceId, workspace, dataAdapter, setActiveWorkspace]
+    [workspaceId, workspace, dataAdapter, moduleTenantId, setActiveWorkspace, enterWorkspace, resolveModulePath]
   );
 
   return <WorkspaceContext.Provider value={value}>{children}</WorkspaceContext.Provider>;
@@ -75,7 +95,6 @@ export function useWorkspace(): WorkspaceContextValue {
   return ctx;
 }
 
-/** Safe accessor for non-React modules (storage, loaders). */
 export function getActiveWorkspaceDataAdapter(): WorkspaceDataAdapter {
   const id = readActiveWorkspaceIdFromStorage();
   return getWorkspaceRegistry().getWorkspaceDataAdapter(id);
