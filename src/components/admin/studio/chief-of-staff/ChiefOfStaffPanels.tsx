@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -445,6 +445,23 @@ export function RelationshipEngineLinkPanel() {
         style={{ ...cosLabel, color: '#059669', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN RELATIONSHIP ENGINE
+      </Link>
+    </section>
+  );
+}
+
+export function CreatorMarketplaceLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #2563EB' }}>
+      <p style={cosSectionTitle}>CREATOR MARKETPLACE · PARTNERSHIP INTELLIGENCE</p>
+      <p style={cosLabel}>
+        Creator-brand alignment · deal approvals · career growth · long-term partnerships over one-time posts
+      </p>
+      <Link
+        to={adminStudioCreatorMarketplacePath()}
+        style={{ ...cosLabel, color: '#2563EB', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN CREATOR MARKETPLACE
       </Link>
     </section>
   );

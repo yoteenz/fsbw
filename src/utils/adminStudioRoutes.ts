@@ -48,6 +48,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'distribution-engine'
   | 'reader-graph'
   | 'relationship-engine'
+  | 'creator-marketplace'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -103,6 +104,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'distribution-engine',
   'reader-graph',
   'relationship-engine',
+  'creator-marketplace',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -177,6 +179,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   distributionEngine: 'studio/distribution-engine',
   readerGraph: 'studio/reader-graph',
   relationshipEngine: 'studio/relationship-engine',
+  creatorMarketplace: 'studio/creator-marketplace',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -300,6 +303,10 @@ export function adminStudioReaderGraphPath(): string {
 
 export function adminStudioRelationshipEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/relationship-engine`;
+}
+
+export function adminStudioCreatorMarketplacePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/creator-marketplace`;
 }
 
 export function adminStudioOsPath(): string {

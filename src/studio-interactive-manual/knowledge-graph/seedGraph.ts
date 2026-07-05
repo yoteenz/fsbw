@@ -24,6 +24,7 @@ import {
   adminStudioDistributionEnginePath,
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
+  adminStudioCreatorMarketplacePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -293,6 +294,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 48',
     status: 'demo',
     searchKeywords: ['relationship engine', 'next best action', 'recognition', 'loyalty intelligence', 'relationship health', 'community engine'],
+  },
+  {
+    id: 'node-creator-marketplace',
+    name: 'CREATOR MARKETPLACE',
+    type: 'module',
+    description:
+      'Intelligent creator business ecosystem — connects creators, brands, and long-term partnerships through alignment, career growth, and deal intelligence.',
+    purpose: 'Not buying posts · every creator is a business · alignment over follower counts · institutional partnerships.',
+    route: adminStudioCreatorMarketplacePath(),
+    moduleId: 'creator-marketplace',
+    relatedManualChapter: 'CHAPTER · CREATOR MARKETPLACE · CREATOR BUSINESS ECOSYSTEM',
+    versionIntroduced: 'Milestone 49',
+    status: 'demo',
+    searchKeywords: ['creator marketplace', 'creator profile', 'brand deal', 'intelligent matching', 'career graph', 'creator academy', 'agency mode'],
   },
   {
     id: 'node-fallback-used',
@@ -985,6 +1000,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-relationship-engine-intelligence', fromId: 'node-studio-intelligence', toId: 'node-relationship-engine', type: 'feeds', label: 'NEXT BEST ACTION' },
   { id: 'e-relationship-engine-learning', fromId: 'node-relationship-engine', toId: 'node-memory-bible', type: 'feeds', label: 'INSTITUTIONAL LEARNING' },
   { id: 'e-relationship-engine-platform', fromId: 'node-relationship-engine', toId: 'relationship-engine', type: 'documented-by', label: 'RELATIONSHIP OS' },
+  { id: 'e-relationship-engine-creator-marketplace', fromId: 'node-relationship-engine', toId: 'node-creator-marketplace', type: 'feeds', label: 'ADVOCATES → CREATOR PIPELINE' },
+  { id: 'e-reader-graph-creator-marketplace', fromId: 'node-reader-graph', toId: 'node-creator-marketplace', type: 'feeds', label: 'TALENT DISCOVERY' },
+  { id: 'e-creator-marketplace-campaign', fromId: 'node-creator-marketplace', toId: 'node-campaign-engine', type: 'related-to', label: 'DEAL · CAMPAIGN EXECUTION' },
+  { id: 'e-creator-marketplace-cos', fromId: 'node-chief-of-staff', toId: 'node-creator-marketplace', type: 'related-to', label: 'PARTNERSHIP APPROVALS' },
+  { id: 'e-creator-marketplace-intelligence', fromId: 'node-studio-intelligence', toId: 'node-creator-marketplace', type: 'feeds', label: 'MATCHING · OPPORTUNITY SIGNALS' },
+  { id: 'e-creator-marketplace-talent', fromId: 'node-creator-marketplace', toId: 'node-talent-network', type: 'related-to', label: 'TALENT BEYOND INFLUENCERS' },
+  { id: 'e-creator-marketplace-platform', fromId: 'node-creator-marketplace', toId: 'creator-marketplace', type: 'documented-by', label: 'CREATOR BUSINESS OS' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

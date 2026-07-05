@@ -14,6 +14,7 @@ export type StudioOsCoreModuleId =
   | 'distribution-engine'
   | 'reader-graph'
   | 'relationship-engine'
+  | 'creator-marketplace'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -127,6 +128,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'RELATIONSHIP ENGINE',
     description: 'Active relationship OS — nurture, next best action, recognition, loyalty, institutional learning.',
     routeSegment: 'relationship-engine',
+  },
+  {
+    id: 'creator-marketplace',
+    label: 'CREATOR MARKETPLACE',
+    description: 'Intelligent creator business ecosystem — matching, deals, career graph, alignment over followers.',
+    routeSegment: 'creator-marketplace',
   },
   {
     id: 'executive-command-center',

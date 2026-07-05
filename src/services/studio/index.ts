@@ -158,6 +158,9 @@ export type { ReaderGraphSnapshot } from './readerGraph/service';
 export { relationshipEngineStudioService, RELATIONSHIP_ENGINE_CHAIN } from './relationshipEngine/service';
 export type { RelationshipEngineSnapshot } from './relationshipEngine/service';
 
+export { creatorMarketplaceStudioService, CREATOR_MARKETPLACE_CHAIN } from './creatorMarketplace/service';
+export type { CreatorMarketplaceSnapshot } from './creatorMarketplace/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -249,6 +252,7 @@ import { workOrchestrationStudioService } from './workOrchestration/service';
 import { distributionEngineStudioService } from './distributionEngine/service';
 import { readerGraphStudioService } from './readerGraph/service';
 import { relationshipEngineStudioService } from './relationshipEngine/service';
+import { creatorMarketplaceStudioService } from './creatorMarketplace/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -303,6 +307,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   distributionEngineStudioService,
   readerGraphStudioService,
   relationshipEngineStudioService,
+  creatorMarketplaceStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

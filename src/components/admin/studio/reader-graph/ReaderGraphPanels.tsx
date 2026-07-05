@@ -18,6 +18,7 @@ import {
   adminStudioDistributionEnginePath,
   adminStudioStrategyEnginePath,
   adminStudioRelationshipEnginePath,
+  adminStudioCreatorMarketplacePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   READER_GRAPH_STYLES,
@@ -397,6 +398,12 @@ export function CreatorMarketplacePanel({ store, selectedReader }: Pick<Props, '
           <p style={{ ...rgLabel, fontSize: '5px' }}>{opp.rationale}</p>
         </div>
       ))}
+      <Link
+        to={adminStudioCreatorMarketplacePath()}
+        style={{ ...rgLabel, color: '#2563EB', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8, fontSize: '6px' }}
+      >
+        → OPEN CREATOR MARKETPLACE
+      </Link>
     </section>
   );
 }
@@ -454,6 +461,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCampaignEnginePath()} style={{ ...rgLabel, color: '#D97706', fontSize: '6px' }}>→ CAMPAIGN ENGINE</Link>
         <Link to={adminStudioStrategyEnginePath()} style={{ ...rgLabel, color: '#334155', fontSize: '6px' }}>→ STRATEGY ENGINE</Link>
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...rgLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
+        <Link to={adminStudioCreatorMarketplacePath()} style={{ ...rgLabel, color: '#2563EB', fontSize: '6px' }}>→ CREATOR MARKETPLACE</Link>
       </div>
     </section>
   );

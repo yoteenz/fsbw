@@ -37058,3 +37058,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** relationship-engine core + UI + hook + page + service, CoS/reader-graph/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 49: Creator Marketplace V1.0
+
+**Context (full chat):** User requested Milestone 49 — introduce **Creator Marketplace** as the intelligence layer connecting creators, brands, agencies, campaigns, opportunities, and long-term career growth. Prior milestones in arc: M45 Work Orchestration, M46 Distribution Engine, M47 Reader Graph, M48 Relationship Engine. Constraints: do not redesign overall Studio OS shell · do not modify Frontal Slayer · do not remove existing systems.
+
+**Goal:** Not a marketplace for buying posts — an ecosystem for building creator businesses. Every creator is a business. Optimize for career growth, business growth, long-term partnerships, education, trust, brand alignment, relationship quality, financial sustainability — not one-time sponsorships. Features: dynamic creator profiles (scores, demographics, portfolio, pricing, career timeline), brand profiles (company/creative DNA, partnership philosophy), intelligent matching with confidence/reasoning/impact, creator career graph (reader → company owner), brand deal engine, creator OS dashboard, agency mode, marketplace intelligence signals, relationship management, marketplace simulation, creator academy, talent network integration, career/payment intelligence. Alignment over follower counts.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/creator-marketplace/` — types (creator/brand profiles, matches, deals, creator OS, agency teams, intelligence signals, relationships, simulations, education, talent discoveries, career/payment recommendations), constants (philosophy, 11 career stages, connected systems, education categories), localStorage store (`studioOsCreatorMarketplace_v1`), rich bootstrap seed linked to Relationship Engine (Jordan T `rel-jordan-t`).
+- **Bootstrap:** 3 creators (Jordan T ambassador, Finance Educator Tier A, Mind Volume Host) · 2 brands (ndxbook, Frontal Slayer) · 3 intelligent matches · 2 brand deals · creator OS dashboards · agency team plans · 3 intelligence signals · 2 marketplace relationships · 1 simulation · 6 education modules · 3 talent discoveries · 3 career recommendations · payment intel.
+- **Hook:** `useCreatorMarketplaceState` — workspace/creator/brand selection.
+- **UI:** `/admin/studio/creator-marketplace` — `CreatorMarketplaceWorkspace` with tabs (Dashboard · Creators · Brands · Deals · Career · Intelligence · Education); panels for dashboard, philosophy, creator/brand discovery and profiles, intelligent matching, career graph, brand deal engine, creator OS, agency mode, marketplace intelligence, relationship management, simulation, creator academy, talent network, career/payment intelligence, CoS integration, connected systems. Blue accent theme (`#2563EB`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (intelligence group), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/creatorMarketplace/service.ts`, `bootstrapCreatorMarketplacePlatform()` after Relationship Engine.
+- **Chief of Staff integration:** `Creator Marketplace` in `SOFT_APPROVAL_SOURCES`; `CreatorMarketplaceLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Relationship Engine integration:** connected systems link to Creator Marketplace.
+- **Reader Graph integration:** creator marketplace panel link + connected systems cross-link.
+- **Knowledge graph:** `node-creator-marketplace` + edges to Relationship Engine, Reader Graph, Campaign Engine, Chief of Staff, Studio Intelligence, Talent Network.
+
+**Route:** `/admin/studio/creator-marketplace` · Intelligence nav group · blue accent theme.
+
+**Changes:** creator-marketplace core + UI + hook + page + service, CoS/relationship-engine/reader-graph/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

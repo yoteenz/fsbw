@@ -142,6 +142,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'creator-marketplace',
+    title: 'CREATOR MARKETPLACE',
+    purpose: 'Intelligent creator business ecosystem — alignment, career growth, deals, and long-term partnerships.',
+    route: p('creator-marketplace'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN MARKETPLACE',
+    moduleKey: 'creator-marketplace',
+    featuredOnOverview: true,
+  },
+  {
     id: 'campaign-engine',
     title: 'CAMPAIGN ENGINE',
     purpose: 'Transforms strategy into coordinated execution — campaigns bridge initiatives and production.',

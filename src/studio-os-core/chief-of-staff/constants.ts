@@ -36,6 +36,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Distribution Engine',
   'Reader Graph',
   'Relationship Engine',
+  'Creator Marketplace',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

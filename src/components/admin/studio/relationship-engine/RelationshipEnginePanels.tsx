@@ -17,6 +17,7 @@ import {
   adminStudioDistributionEnginePath,
   adminStudioReaderGraphPath,
   adminStudioStrategyEnginePath,
+  adminStudioCreatorMarketplacePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   RELATIONSHIP_ENGINE_STYLES,
@@ -422,6 +423,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioDistributionEnginePath()} style={{ ...reLabel, color: '#7C3AED', fontSize: '6px' }}>→ DISTRIBUTION ENGINE</Link>
         <Link to={adminStudioCampaignEnginePath()} style={{ ...reLabel, color: '#D97706', fontSize: '6px' }}>→ CAMPAIGN ENGINE</Link>
         <Link to={adminStudioStrategyEnginePath()} style={{ ...reLabel, color: '#334155', fontSize: '6px' }}>→ STRATEGY ENGINE</Link>
+        <Link to={adminStudioCreatorMarketplacePath()} style={{ ...reLabel, color: '#2563EB', fontSize: '6px' }}>→ CREATOR MARKETPLACE</Link>
       </div>
     </section>
   );

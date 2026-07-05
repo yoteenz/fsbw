@@ -193,6 +193,10 @@ export function bootstrapWorkspacesPlatform(): void {
     relationshipEngine.bootstrapRelationshipEnginePlatform();
     await yieldToMain();
 
+    const creatorMarketplace = await import('../studio-os-core/creator-marketplace/bootstrap');
+    creatorMarketplace.bootstrapCreatorMarketplacePlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();
