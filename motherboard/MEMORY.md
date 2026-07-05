@@ -37895,3 +37895,15 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Meta setup (documented for user):** Create Meta Business app → add Facebook Login + Instagram Graph API → Valid OAuth Redirect URI = `https://fsbw.vercel.app/api/admin/social-accounts-oauth-callback` (production `SITE_URL` + `/api/admin/social-accounts-oauth-callback`) → copy App ID/Secret to Vercel `META_APP_ID` / `META_APP_SECRET` plus `SOCIAL_TOKEN_ENCRYPTION_SECRET` and `SITE_URL` → redeploy → Connect on SOCIALS tab. Instagram must be Business/Creator linked to a Facebook Page.
 
 **Changes:** `SocialOAuthSetupPanel.tsx`, `NdxbookSocialsPanel.tsx`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — NDXBOOK social OAuth live setup (Meta/TikTok/Vercel + TikTok URL verify file)
+
+**Context (full chat):** User setting up ndxbook Studio social OAuth end-to-end: Meta developer registration loop (meta.com redirect), Accounts Center phone verify, NDXB STUDIO app + Facebook Login, Vercel env vars (`META_*`, `TIKTOK_*`, `SITE_URL`, `SOCIAL_TOKEN_ENCRYPTION_SECRET`), Connect unlocked but Meta error (App domains), TikTok client_key error + URL prefix verification file. Clarified YouTube not on OAuth connector list. Setup panel toggle fix deployed earlier.
+
+**TikTok verify file:** User placed file in `public/assets/` with Windows `-1` suffix — wrong for TikTok prefix verify (needs site root). Added `public/tiktokVJ3VhwVlwJ5LoVKpDyY4WnyC7neVhhR2.txt` with verification string; `vercel.json` rewrite excludes `tiktok*.txt` at root so SPA rewrite does not swallow it. Live URL: `https://fsbw.vercel.app/tiktokVJ3VhwVlwJ5LoVKpDyY4WnyC7neVhhR2.txt`.
+
+**User local GitHub Desktop:** lock file error on commit — advised delete `.git/index.lock` or pull from origin after cloud push.
+
+**Changes:** `public/tiktokVJ3VhwVlwJ5LoVKpDyY4WnyC7neVhhR2.txt`, `vercel.json`, `motherboard/MEMORY.md`.
