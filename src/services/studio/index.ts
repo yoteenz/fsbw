@@ -137,6 +137,9 @@ export type { NdxbookNewsroomSnapshot } from './ndxbookNewsroom/service';
 export { executiveOrganizationStudioService, EXECUTIVE_ORGANIZATION_INHERITANCE_CHAIN } from './executiveOrganization/service';
 export type { ExecutiveOrganizationSnapshot } from './executiveOrganization/service';
 
+export { organizationalInheritanceStudioService, ORGANIZATIONAL_INHERITANCE_CHAIN } from './organizationalInheritance/service';
+export type { OrganizationalInheritanceSnapshot } from './organizationalInheritance/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -221,6 +224,7 @@ import { chiefOfStaffStudioService } from './chiefOfStaff/service';
 import { leadershipDnaStudioService } from './leadershipDna/service';
 import { ndxbookNewsroomStudioService } from './ndxbookNewsroom/service';
 import { executiveOrganizationStudioService } from './executiveOrganization/service';
+import { organizationalInheritanceStudioService } from './organizationalInheritance/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -268,6 +272,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   leadershipDnaStudioService,
   ndxbookNewsroomStudioService,
   executiveOrganizationStudioService,
+  organizationalInheritanceStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

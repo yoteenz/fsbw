@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import type { BlueprintDefinition, WorkspaceCreationDraft, WorkspaceType } from '../../../../studio-os-core/workspace-creation/types';
 import { getBlueprintById } from '../../../../studio-os-core/workspace-creation/blueprints';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
+import { adminStudioOrganizationalInheritancePath } from '../../../../utils/adminStudioRoutes';
 import { WORKSPACE_DASHBOARD_MODULE_LABELS } from '../../../../utils/adminStudioWorkspaceCreationDemo';
 
 const STEPS = [
@@ -105,7 +107,23 @@ export function WorkspaceCreationWizard({
       </p>
 
       {step === 0 ? (
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        <>
+          <div className="p-2 mb-2 border" style={{ borderColor: '#6366F1', background: 'rgba(99,102,241,0.06)' }}>
+            <p className="text-[7px] font-futura mb-1" style={{ fontWeight: 515, color: '#6366F1' }}>
+              ORGANIZATIONAL INHERITANCE · BEFORE BLANK SETUP
+            </p>
+            <p className="text-[6px] font-futura mb-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
+              NEW COMPANIES CAN INHERIT DNA · PLAYBOOKS · EXECUTIVES · KNOWLEDGE FROM EXISTING ORGANIZATIONS
+            </p>
+            <Link
+              to={adminStudioOrganizationalInheritancePath()}
+              className="inline-block text-[6px] font-futura border px-2 py-1"
+              style={{ fontWeight: 515, color: '#6366F1', borderColor: '#6366F1' }}
+            >
+              OPEN INHERITANCE WIZARD →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {blueprints.map((bp) => (
             <button
               key={bp.id}
@@ -127,6 +145,7 @@ export function WorkspaceCreationWizard({
             </button>
           ))}
         </div>
+        </>
       ) : null}
 
       {step === 1 ? (

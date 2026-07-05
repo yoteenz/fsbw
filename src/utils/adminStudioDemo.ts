@@ -55,6 +55,7 @@ export type AdminStudioSectionId =
   | 'mission-control'
   | 'chief-of-staff'
   | 'executive-organization'
+  | 'organizational-inheritance'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

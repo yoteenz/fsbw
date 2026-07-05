@@ -94,6 +94,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-inheritance',
+    title: 'ORGANIZATIONAL INHERITANCE',
+    purpose: 'Inherit proven organizational genetics — DNA, playbooks, executives, and institutional knowledge across companies.',
+    route: p('organizational-inheritance'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN INHERITANCE',
+    moduleKey: 'organizational-inheritance',
+    featuredOnOverview: true,
+  },
+  {
     id: 'executive-command-center',
     title: 'EXECUTIVE COMMAND CENTER',
     purpose: 'See company health, priorities, and decisions in one executive view.',

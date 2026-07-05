@@ -36903,3 +36903,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** executive-organization core + UI + hook + page + service, CoS/KG/bootstrap wiring, `motherboard/MEMORY.md`.
 
+---
+
+## 2026-07-05 — Milestone 42: Organizational Inheritance V1.0
+
+**Context (full chat):** User requested Milestone 42 — introduce **Organizational Inheritance** as a foundational Studio OS platform. Prior milestones in arc: M37 Mission Control, M38 Chief of Staff, M39 Leadership DNA, M40 Newsroom, M41 Executive Organization. Constraint: do not redesign overall Studio OS shell.
+
+**Goal:** Every new company inherits proven organizational genetics instead of starting from zero — company/creative/writing/leadership/operational DNA, department playbooks, approval workflows, executive structures, automation, knowledge graph, memory bible, Studio Intelligence models, simulation history, talent structures. Founders control exactly what is inherited (inherit · skip · customize · combine). Support multi-source genetic blending with conflict detection. Pre-launch inheritance simulator. Institutional library with search/version/compare. Department and executive inheritance packages. Knowledge ancestry lineage. Organizational timeline. Post-inheritance evolution tracking. Cross-company learning (private vs reusable). Marketplace architecture prepared (not implemented). Inheritance provides genetics — execution creates unique identity.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/organizational-inheritance/` — types (16 inheritable genetics, 13 inheritance categories, sources, blend plans, conflicts, simulator, library, department/executive packages, ancestry, timeline, recommendations, evolution, cross-company learning, marketplace-prepared capabilities, wizard draft), constants (wizard presets, platform chain), localStorage store (`studioOsOrganizationalInheritance_v1`), rich bootstrap seed.
+- **Bootstrap:** 4 source companies (Frontal Slayer, NDXBOOK, VXD, AI Media), multi-source blend demo (Leadership DNA from VXD + Creative from FS + Operational from NDXBOOK), simulator with 87% confidence, 8 library items, 3 department packages, 2 executive packages, 5 ancestry records, 5 timeline events, 3 Studio Intelligence recommendations, evolution + cross-company learning entries, marketplace architecture-only stubs.
+- **Hook:** `useOrganizationalInheritanceState` — library/blend selection, category actions, wizard source.
+- **UI:** `/admin/studio/organizational-inheritance` — `OrganizationalInheritanceWorkspace` with tabs (Platform · Builder · Blend · Simulator · Library · Ancestry · Timeline · Evolution · Marketplace); panels for dashboard, platform chain, inheritance wizard, builder categories, genetic blending, simulator, institutional library, department/executive inheritance, knowledge ancestry, org timeline, recommendations, evolution, cross-company learning, marketplace prepared.
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts` (+ `adminStudioOsPath`, `adminStudioOsCreatePath`), `adminStudioNavigation.ts` (overview group), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/organizationalInheritance/service.ts`, `bootstrapOrganizationalInheritancePlatform()` after Executive Organization.
+- **Integrations:** Workspace Creation Wizard step 0 — **OPEN INHERITANCE WIZARD →** banner; Executive Organization CoS panel links to Organizational Inheritance; Knowledge Graph `node-organizational-inheritance` + edges to Workspace Creation Engine, Executive Organization, Leadership DNA, Memory Bible.
+
+**Route:** `/admin/studio/organizational-inheritance` · Overview nav group · indigo accent theme.
+
+**Changes:** organizational-inheritance core + UI + hook + page + service, workspace creation/exec org links, KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

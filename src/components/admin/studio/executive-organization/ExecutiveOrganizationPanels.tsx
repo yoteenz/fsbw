@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import type { ExecutiveOrganizationStore, ExecutiveHeadquarters, DepartmentHeadquarters } from '../../../../studio-os-core/executive-organization/types';
 import type { ExecutiveId } from '../../../../studio-os-core/executive-organization/types';
-import { adminStudioChiefOfStaffPath, adminStudioLeadershipDnaPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioChiefOfStaffPath, adminStudioLeadershipDnaPath, adminStudioOrganizationalInheritancePath } from '../../../../utils/adminStudioRoutes';
 import {
   EXECUTIVE_ORGANIZATION_STYLES,
   EO,
@@ -431,8 +431,11 @@ export function ChiefOfStaffCoordinationPanel() {
     <section className="p-3 mb-3" style={{ ...eoPanel, borderLeft: `4px solid ${EO.gold}` }}>
       <p style={eoSectionTitle}>LEADERSHIP TEAM COORDINATION</p>
       <p style={eoLabel}>Executives never operate independently · one leadership team · CoS coordinates · founder leads</p>
-      <Link to={adminStudioChiefOfStaffPath()} style={{ ...eoLabel, color: EO.gold, fontFamily: '"Futura PT Medium"' }}>
+      <Link to={adminStudioChiefOfStaffPath()} style={{ ...eoLabel, color: EO.gold, fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 6 }}>
         → OPEN CHIEF OF STAFF
+      </Link>
+      <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...eoLabel, color: EO.indigo, fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 6, marginLeft: 12 }}>
+        → ORGANIZATIONAL INHERITANCE
       </Link>
     </section>
   );

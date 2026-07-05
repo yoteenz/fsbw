@@ -17,6 +17,7 @@ import {
   adminStudioLeadershipDnaPath,
   adminStudioChiefOfStaffPath,
   adminStudioExecutiveOrganizationPath,
+  adminStudioOrganizationalInheritancePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -188,6 +189,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 41',
     status: 'demo',
     searchKeywords: ['executive organization', 'department hq', 'executive scorecard', 'company culture', 'organizational memory', 'executive succession'],
+  },
+  {
+    id: 'node-organizational-inheritance',
+    name: 'ORGANIZATIONAL INHERITANCE',
+    type: 'module',
+    description:
+      'Foundational platform — inherit organizational genetics, playbooks, executives, and institutional knowledge when creating new companies.',
+    purpose: 'Companies never begin from zero — launch with accumulated organizational wisdom and evolve independently.',
+    route: adminStudioOrganizationalInheritancePath(),
+    moduleId: 'organizational-inheritance',
+    relatedManualChapter: 'CHAPTER · ORGANIZATIONAL INHERITANCE · GENETIC TRANSFER',
+    versionIntroduced: 'Milestone 42',
+    status: 'demo',
+    searchKeywords: ['organizational inheritance', 'inheritance wizard', 'genetic blending', 'institutional library', 'knowledge ancestry', 'company creation'],
   },
   {
     id: 'node-fallback-used',
@@ -835,6 +850,11 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-exec-org-leadership', fromId: 'node-executive-organization', toId: 'node-leadership-dna', type: 'inherits-from', label: 'EXECUTIVE PERSONALITIES' },
   { id: 'e-exec-org-memory', fromId: 'node-executive-organization', toId: 'node-memory-bible', type: 'feeds', label: 'ORG MEMORY' },
   { id: 'e-exec-org-platform', fromId: 'node-executive-organization', toId: 'executive-organization', type: 'documented-by', label: 'LIVING ORG' },
+  { id: 'e-wce-inheritance', fromId: 'node-workspace-creation-engine', toId: 'node-organizational-inheritance', type: 'feeds', label: 'INHERITANCE WIZARD' },
+  { id: 'e-inheritance-exec-org', fromId: 'node-organizational-inheritance', toId: 'node-executive-organization', type: 'inherits-from', label: 'EXEC STRUCTURES' },
+  { id: 'e-inheritance-leadership', fromId: 'node-organizational-inheritance', toId: 'node-leadership-dna', type: 'inherits-from', label: 'LEADERSHIP DNA' },
+  { id: 'e-inheritance-memory', fromId: 'node-organizational-inheritance', toId: 'node-memory-bible', type: 'feeds', label: 'INSTITUTIONAL LIBRARY' },
+  { id: 'e-inheritance-platform', fromId: 'node-organizational-inheritance', toId: 'organizational-inheritance', type: 'documented-by', label: 'GENETIC TRANSFER' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },
