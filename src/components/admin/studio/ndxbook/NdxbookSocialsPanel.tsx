@@ -62,6 +62,13 @@ export function NdxbookSocialsPanel({ socialAccounts, onRegistryUpdated }: Ndxbo
     onRegistryUpdated();
   }, [oauthAccounts, oauthLoading, onRegistryUpdated]);
 
+  useEffect(() => {
+    if (oauthLoading) return;
+    if (allOAuthPlatformsUnconfigured(oauthAccounts)) {
+      setSetupPanelOpen(true);
+    }
+  }, [oauthLoading, oauthAccounts]);
+
   const scrollToSetup = () => {
     setSetupPanelOpen(true);
     requestAnimationFrame(() => {
@@ -82,11 +89,15 @@ export function NdxbookSocialsPanel({ socialAccounts, onRegistryUpdated }: Ndxbo
       ) : null}
 
       <div ref={setupPanelRef}>
-        <SocialOAuthSetupPanel
-          id="ndxbook-social-oauth-setup"
-          accounts={oauthAccounts}
-          open={setupPanelOpen || allOAuthPlatformsUnconfigured(oauthAccounts)}
-        />
+        {!oauthLoading ? (
+          <SocialOAuthSetupPanel
+            id="ndxbook-social-oauth-setup"
+            accounts={oauthAccounts}
+            open={setupPanelOpen}
+            onOpenChange={setSetupPanelOpen}
+            defaultOpen={allOAuthPlatformsUnconfigured(oauthAccounts)}
+          />
+        ) : null}
       </div>
 
       {oauthError ? (

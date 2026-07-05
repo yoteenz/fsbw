@@ -37881,3 +37881,17 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Convention for future Studio modules:** default tab = summary panels only; full module stack on named sub-tabs; seed once in lazy init or `useEffect`, never in `useMemo`; rely on session-once platform bootstrap.
 
 **Changes:** `AdminStudioLayout.tsx`, `StudioTabMoreHint.tsx`, `TalentNetworkWorkspace.tsx`, `MissionControlWorkspace.tsx`, 34+ workspace files, 47 hooks, panel preview limits, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — NDXBOOK social OAuth setup panel toggle broken + Meta walkthrough
+
+**Context (full chat):** User setting up ndxbook social OAuth connectors — asked where to find API keys/secrets per platform; clarified YouTube is not an OAuth connector yet (brand registry / distribution format only). User requested comprehensive Meta walkthrough (Instagram Graph API + Facebook Login, Vercel env vars, redirect URL). User reported **SHOW SETUP STEPS** on NDXBOOK SOCIALS tab does nothing when tapped/clicked.
+
+**Root cause:** `NdxbookSocialsPanel` passed controlled `open={setupPanelOpen || allOAuthPlatformsUnconfigured(...)}` to `SocialOAuthSetupPanel` without `onOpenChange`. When `open` was forced `true`, label showed HIDE but toggle could not collapse; when `open` was `false` (e.g. empty accounts during load), click did nothing. `SocialOAuthSetupPanel.toggleOpen` only updated internal state when `controlledOpen === undefined`.
+
+**Fix:** `SocialOAuthSetupPanel` — add `onOpenChange`; `toggleOpen` calls it in controlled mode. `NdxbookSocialsPanel` — manage `setupPanelOpen` with `onOpenChange`; auto-open when accounts load and all platforms unconfigured; render panel only after OAuth accounts fetch completes.
+
+**Meta setup (documented for user):** Create Meta Business app → add Facebook Login + Instagram Graph API → Valid OAuth Redirect URI = `https://fsbw.vercel.app/api/admin/social-accounts-oauth-callback` (production `SITE_URL` + `/api/admin/social-accounts-oauth-callback`) → copy App ID/Secret to Vercel `META_APP_ID` / `META_APP_SECRET` plus `SOCIAL_TOKEN_ENCRYPTION_SECRET` and `SITE_URL` → redeploy → Connect on SOCIALS tab. Instagram must be Business/Creator linked to a Facebook Page.
+
+**Changes:** `SocialOAuthSetupPanel.tsx`, `NdxbookSocialsPanel.tsx`, `motherboard/MEMORY.md`.

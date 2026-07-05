@@ -11,14 +11,25 @@ type SocialOAuthSetupPanelProps = {
   accounts: PublicSocialAccount[];
   defaultOpen?: boolean;
   open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   id?: string;
 };
 
-export function SocialOAuthSetupPanel({ accounts, defaultOpen = false, open: controlledOpen, id }: SocialOAuthSetupPanelProps) {
+export function SocialOAuthSetupPanel({
+  accounts,
+  defaultOpen = false,
+  open: controlledOpen,
+  onOpenChange,
+  id,
+}: SocialOAuthSetupPanelProps) {
   const [internalOpen, setInternalOpen] = useState(defaultOpen);
   const open = controlledOpen ?? internalOpen;
   const toggleOpen = () => {
-    if (controlledOpen === undefined) setInternalOpen((v) => !v);
+    const next = !open;
+    if (controlledOpen === undefined) {
+      setInternalOpen(next);
+    }
+    onOpenChange?.(next);
   };
   const platforms = buildPlatformSetupStatus(accounts);
   const unconfigured = platforms.filter((p) => !p.configured);
