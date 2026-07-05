@@ -37768,3 +37768,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/executive-apprenticeship-founder-calibration` · back link from Arrival Experience.
 
 **Changes:** executive-apprenticeship-founder-calibration core + UI + hook + page + service, CoS/AE/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
+---
+
+## 2026-07-05 — Milestone 75: Studio Institute V1.0
+
+**Context (full chat):** User requested continuation of Studio OS with **Milestone 75 — Studio Institute** as the permanent learning institution inside Studio OS. Prior milestones: M74 Executive Apprenticeship (trust earned through calibration), M73.6 Arrival Experience, M73.5 COI. Constraints: do not redesign overall Studio OS shell · never teach software · teach leadership · systems · craftsmanship · stewardship · legacy · work on `master` only · one commit + one push.
+
+**Goal:** Studio Institute becomes the world's greatest institution for learning how extraordinary organizations are built — organizations mature because of Studio OS. Features: institute philosophy · motto ("help every generation leave the next one wiser") · learning communities (founders · executives · employees · future leaders · creators · partners · community · customers when appropriate) · 9 schools of excellence · executive faculty (all C-suite teach from experience) · organization-first education (org is the textbook · teach why) · adaptive curriculum · immersive learning (simulations · workshops · case studies · experiential) · organizational certification (demonstrated wisdom) · knowledge compounding (→ KG · OI · memory · genome) · institute campus (9 spaces · architectural · scholarly · inspiring) · daily learning (OI recommendations) · NDXBOOK integration (publishing engine → curriculum).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/studio-institute/` — full types/store/bootstrap with NDXBOOK seed (124 learners · 9 schools · 6 faculty · 34 certifications · 847 contributions · 8 communities · 8 org-first lessons · 4 adaptive paths · 8 immersive modules · 5 certifications · 5 compounding contributions · 9 campus spaces · 7 daily recommendations · 6 NDXBOOK flows).
+- **Hook:** `useStudioInstituteState`.
+- **UI:** `/admin/studio/studio-institute` — 6 tabs · bronze accent (`#854D0E`) · V1.0.
+- **Wiring:** route, nav (after Executive Apprenticeship), modules, services, bootstrap · Strategy Engine back → Studio Institute.
+- **Chief of Staff:** `StudioInstituteLinkPanel` + `SOFT_APPROVAL_SOURCES`.
+- **Cross-links:** Executive Apprenticeship → Studio Institute.
+- **Knowledge graph:** `node-studio-institute` + ~36 edges including NDXBOOK.
+
+**Route:** `/admin/studio/studio-institute` · back link from Executive Apprenticeship.
+
+**Changes:** studio-institute core + UI + hook + page + service, CoS/EAF/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.

@@ -69,6 +69,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Company Onboarding Intelligence',
   'Arrival Experience',
   'Executive Apprenticeship & Founder Calibration',
+  'Studio Institute',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

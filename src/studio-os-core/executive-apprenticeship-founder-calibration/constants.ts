@@ -30,6 +30,7 @@ export const EAF_CONNECTED_SYSTEMS = [
   'Relationship Engine',
   'Founder\'s Promise',
   'Studio Intelligence',
+  'Studio Institute',
 ] as const;
 
 export const EAF_TRUST_LEVELS = [

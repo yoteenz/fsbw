@@ -466,6 +466,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'studio-institute',
+    title: 'STUDIO INSTITUTE',
+    purpose: 'Permanent learning institution — immersive organizational education for every role. V1.0.',
+    route: p('studio-institute'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN INSTITUTE',
+    moduleKey: 'studio-institute',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

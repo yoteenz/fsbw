@@ -47,6 +47,7 @@ export type StudioOsCoreModuleId =
   | 'company-onboarding-intelligence'
   | 'arrival-experience'
   | 'executive-apprenticeship-founder-calibration'
+  | 'studio-institute'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -358,6 +359,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXECUTIVE APPRENTICESHIP & FOUNDER CALIBRATION',
     description: 'Executive development — observe, calibrate, earn trust. V1.0.',
     routeSegment: 'executive-apprenticeship-founder-calibration',
+  },
+  {
+    id: 'studio-institute',
+    label: 'STUDIO INSTITUTE',
+    description: 'Permanent learning institution — organizational education. V1.0.',
+    routeSegment: 'studio-institute',
   },
   {
     id: 'executive-command-center',

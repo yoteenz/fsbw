@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath, adminStudioOrganizationalWorkflowOrchestrationPath, adminStudioOrganizationalSelfImprovementPath, adminStudioOrganizationalGovernanceSafeguardsPath, adminStudioOrganizationalMaturityModelPath, adminStudioLeadershipModesPath, adminStudioCompanyOnboardingIntelligencePath, adminStudioArrivalExperiencePath, adminStudioExecutiveApprenticeshipFounderCalibrationPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath, adminStudioOrganizationalWorkflowOrchestrationPath, adminStudioOrganizationalSelfImprovementPath, adminStudioOrganizationalGovernanceSafeguardsPath, adminStudioOrganizationalMaturityModelPath, adminStudioLeadershipModesPath, adminStudioCompanyOnboardingIntelligencePath, adminStudioArrivalExperiencePath, adminStudioExecutiveApprenticeshipFounderCalibrationPath, adminStudioStudioInstitutePath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -1006,6 +1006,23 @@ export function ExecutiveApprenticeshipLinkPanel() {
         style={{ ...cosLabel, color: '#7C3AED', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN EXECUTIVE APPRENTICESHIP
+      </Link>
+    </section>
+  );
+}
+
+export function StudioInstituteLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #854D0E' }}>
+      <p style={cosSectionTitle}>STUDIO INSTITUTE · PERMANENT LEARNING INSTITUTION V1.0</p>
+      <p style={cosLabel}>
+        Organizational education · schools of excellence · executive faculty · wisdom compounding daily
+      </p>
+      <Link
+        to={adminStudioStudioInstitutePath()}
+        style={{ ...cosLabel, color: '#854D0E', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN STUDIO INSTITUTE
       </Link>
     </section>
   );
