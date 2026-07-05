@@ -1,0 +1,168 @@
+import { bootstrapOrganizationalGovernanceSafeguardsStore } from './store';
+import type { OrganizationalGovernanceSafeguardsStore } from './types';
+
+export function buildOrganizationalGovernanceSafeguardsSeed(): Partial<OrganizationalGovernanceSafeguardsStore> {
+  return {
+    companyName: 'NDXBOOK',
+    activeWorkspaceId: 'ndxbook',
+    dashboard: {
+      summary:
+        'ORGANIZATIONAL GOVERNANCE & SAFEGUARDS V1.0 — invisible stewardship · trust preserved · progress enabled confidently.',
+      organizationalTrustPct: 88,
+      policyHealthPct: 91,
+      activeSafeguards: 24,
+      pendingApprovals: 3,
+      riskAlerts: 2,
+      organizationalResiliencePct: 85,
+    },
+    constitutionalElements: [
+      { id: 'ce-1', element: 'Founder\'s Promise', source: 'Founder\'s Promise', status: 'foundational' },
+      { id: 'ce-2', element: 'Company DNA', source: 'Company Genome', status: 'foundational' },
+      { id: 'ce-3', element: 'Leadership DNA', source: 'Leadership DNA', status: 'foundational' },
+      { id: 'ce-4', element: 'Organizational Values', source: 'Company Genome', status: 'foundational' },
+      { id: 'ce-5', element: 'Executive Manifesto', source: 'Leadership Manifesto Framework', status: 'active' },
+      { id: 'ce-6', element: 'Decision Principles', source: 'Executive Framework', status: 'active' },
+      { id: 'ce-7', element: 'Governance Rules', source: 'Organizational Autonomy Framework', status: 'active' },
+      { id: 'ce-8', element: 'Ethical Standards', source: 'Organizational Governance', status: 'evolving' },
+      { id: 'ce-9', element: 'Institutional Memory', source: 'Organizational Intelligence', status: 'active' },
+    ],
+    governancePolicies: [
+      { id: 'gp-1', domain: 'Communication standards', policy: 'Writing DNA quality gates · stat-forward editorial · no generic templates', status: 'active' },
+      { id: 'gp-2', domain: 'Customer policies', policy: 'Trust-before-scale · onboarding gates · privacy-first data handling', status: 'active' },
+      { id: 'gp-3', domain: 'Privacy & security', policy: 'Minimal data collection · encrypted storage · auth refactor priority', status: 'active' },
+      { id: 'gp-4', domain: 'Financial approvals', policy: 'Paid acquisition blocked below OAF Level 4 · founder approval above $10K', status: 'active' },
+      { id: 'gp-5', domain: 'Brand protection', policy: 'CBO approval on all GTM creative · stat-forward consistency required', status: 'active' },
+      { id: 'gp-6', domain: 'Publishing', policy: 'Writing DNA gates · editorial review · distribution alignment', status: 'active' },
+      { id: 'gp-7', domain: 'Creator policies', policy: 'Writing DNA enforcement · curated marketplace · revenue share transparency', status: 'active' },
+      { id: 'gp-8', domain: 'Community moderation', policy: 'Belonging-first · spotlight over volume · relationship intelligence', status: 'active' },
+      { id: 'gp-9', domain: 'AI usage', policy: 'Human judgment preserved · OI wisdom elevation · never replace founder decisions', status: 'draft' },
+    ],
+    decisionSafeguards: [
+      {
+        id: 'ds-1',
+        decision: '100K reader GTM Phase 1 launch',
+        approvalStatus: 'pending',
+        riskLevel: 'medium',
+        confidence: 82,
+        recommendedAction: 'Founder review after onboarding score > 85 · council synthesis required',
+        evaluations: ['Founder\'s Promise aligned', 'Trust-before-scale gate pending', 'Brand integrity preserved', 'Relationship metrics over vanity'],
+      },
+      {
+        id: 'ds-2',
+        decision: 'Reader spotlight program scale',
+        approvalStatus: 'approved',
+        riskLevel: 'low',
+        confidence: 91,
+        recommendedAction: 'Automatic execution · OAF Level 3 permits · CoS monitoring',
+        evaluations: ['Constitution aligned', 'Community policy compliant', 'Brand CBO approved', 'Low customer risk'],
+      },
+      {
+        id: 'ds-3',
+        decision: 'Creator marketplace Writing DNA automation',
+        approvalStatus: 'escalated',
+        riskLevel: 'high',
+        confidence: 76,
+        recommendedAction: 'Executive council review · brand and editorial safeguards required',
+        evaluations: ['Quality gate automation risk', 'Brand dilution potential', 'Creator policy review needed'],
+      },
+    ],
+    executiveSafeguards: [
+      { id: 'es-1', executive: 'Chief Brand Officer', discipline: 'Brand', protects: 'Brand integrity · stat-forward consistency · editorial identity', currentStatus: 'Active · zero generic template usage this quarter' },
+      { id: 'es-2', executive: 'Chief Experience Officer', discipline: 'Customer experience', protects: 'Customer trust · onboarding gates · journey quality', currentStatus: 'Active · Step 3 friction audit in progress' },
+      { id: 'es-3', executive: 'Chief Digital Officer', discipline: 'Digital', protects: 'Digital quality · UX standards · platform reliability', currentStatus: 'Active · onboarding simplification sprint' },
+      { id: 'es-4', executive: 'Chief Technology Officer', discipline: 'Technology', protects: 'Engineering resilience · security · auth infrastructure', currentStatus: 'Active · auth refactor critical path' },
+      { id: 'es-5', executive: 'Chief Growth Officer', discipline: 'Growth', protects: 'Sustainable growth · relationship metrics · no vanity chase', currentStatus: 'Active · paid acquisition blocked by OAF' },
+      { id: 'es-6', executive: 'Chief of Staff', discipline: 'Organizational alignment', protects: 'Organizational alignment · founder visibility · governance routing', currentStatus: 'Active · 3 pending approvals coordinated' },
+    ],
+    ethicalPrinciples: [
+      { id: 'ep-1', category: 'Organizational values', principle: 'Trust before scale · relationship over transaction · wisdom over speed' },
+      { id: 'ep-2', category: 'Customer commitments', principle: 'Privacy-first · transparent onboarding · belonging over engagement metrics' },
+      { id: 'ep-3', category: 'Community commitments', principle: 'Quality spotlight over volume · long-term reader relationships' },
+      { id: 'ep-4', category: 'Creator commitments', principle: 'Writing DNA quality · fair revenue share · curated not commoditized' },
+      { id: 'ep-5', category: 'Partner commitments', principle: 'Alignment with founder promise · ethical growth partnerships only' },
+      { id: 'ep-6', category: 'Decision boundaries', principle: 'Never compromise editorial integrity · never chase vanity metrics · never bypass trust gates' },
+    ],
+    riskIntelligence: [
+      { id: 'ri-1', riskType: 'Organizational drift', description: 'Premature GTM pressure before onboarding gates cleared', severity: 'high', preventativeAction: 'Block Phase 1 until onboarding score > 85 · founder gate enforced' },
+      { id: 'ri-2', riskType: 'Brand risk', description: 'Creator marketplace quality dilution if automation bypasses Writing DNA', severity: 'medium', preventativeAction: 'Executive council review before automation · manual gates until Level 4' },
+      { id: 'ri-3', riskType: 'Customer risk', description: 'Step 3 onboarding confusion causing drop-off', severity: 'medium', preventativeAction: 'CEO simplification sprint · A/B experiment in progress' },
+      { id: 'ri-4', riskType: 'Security risk', description: 'Auth technical debt blocking trust infrastructure', severity: 'medium', preventativeAction: 'CTO auth refactor prioritized · CoS monitoring timeline' },
+      { id: 'ri-5', riskType: 'Reputation risk', description: 'Volume engagement tactics could damage community trust', severity: 'low', preventativeAction: 'Spotlight program replacing volume tactics · relationship intelligence active' },
+    ],
+    governanceSimulations: [
+      {
+        id: 'gs-1',
+        decision: '100K reader GTM Phase 1',
+        legalImplications: 'Privacy compliance verified · data handling policy aligned',
+        ethicalImplications: 'Trust-before-scale maintained · no paid acquisition vanity',
+        organizationalImpact: 'Full C-suite coordination · onboarding prerequisite enforced',
+        customerImpact: 'Positive if gates cleared · risk if onboarding overwhelmed',
+        brandImplications: 'Brand integrity preserved · stat-forward GTM only',
+        futureScenarios: 'Best: sustainable growth · Worst: trust erosion from premature scale',
+        confidence: 82,
+      },
+      {
+        id: 'gs-2',
+        decision: 'Creator marketplace automation',
+        legalImplications: 'Creator contract templates require legal review',
+        ethicalImplications: 'Quality over quantity · fair revenue share maintained',
+        organizationalImpact: 'Brand and editorial safeguards critical',
+        customerImpact: 'Reader trust depends on editorial quality maintained',
+        brandImplications: 'High risk if Writing DNA gates bypassed',
+        futureScenarios: 'Best: scaled quality curation · Worst: brand dilution',
+        confidence: 76,
+      },
+    ],
+    approvalLevels: [
+      { id: 'al-1', action: 'Workflow optimizations below threshold', level: 'Automatic', autoEscalate: false },
+      { id: 'al-2', action: 'Community spotlight scale', level: 'Executive approval · CoS routing', autoEscalate: false },
+      { id: 'al-3', action: 'Customer-facing onboarding changes', level: 'Founder approval', autoEscalate: true },
+      { id: 'al-4', action: 'GTM Phase 1 launch', level: 'Founder approval · Council synthesis', autoEscalate: true },
+      { id: 'al-5', action: 'Creator marketplace automation', level: 'Executive council approval', autoEscalate: true },
+      { id: 'al-6', action: 'Paid acquisition campaigns', level: 'Founder approval · blocked below OAF Level 4', autoEscalate: true },
+      { id: 'al-7', action: 'Major structural changes', level: 'Founder approval · multiple review', autoEscalate: true },
+    ],
+    governanceTransparency: [
+      {
+        id: 'gt-1',
+        action: 'Reader spotlight program approval',
+        reasoning: 'Pilot showed +15% advocacy · brand aligned · community policy compliant',
+        executives: ['Chief Growth Officer', 'Chief Brand Officer', 'Chief of Staff'],
+        approvalPathway: 'CoS review → OAF Level 3 automatic → founder notified',
+        policiesReferenced: ['Community moderation', 'Brand protection', 'Communication standards'],
+        expectedOutcome: 'Sustainable engagement · belonging preserved',
+        actualOutcome: 'Advocacy +15% · pilot successful',
+      },
+      {
+        id: 'gt-2',
+        action: 'GTM Phase 1 pending review',
+        reasoning: 'Relationship-driven acquisition · trust gates prerequisite',
+        executives: ['Chief Growth Officer', 'Full C-suite', 'Executive Council'],
+        approvalPathway: 'Pending onboarding score → founder gate → council synthesis',
+        policiesReferenced: ['Customer policies', 'Financial approvals', 'Founder\'s Promise'],
+        expectedOutcome: '100K engaged readers · retention stable',
+      },
+    ],
+    continuousGovernance: [
+      { id: 'cg-1', learningSource: 'Organizational maturity growth', evolution: 'OAF Level 3 earned · trust score 86% · autonomy boundaries refined', principlesPreserved: true },
+      { id: 'cg-2', learningSource: 'Customer expectations', evolution: 'Trust-before-scale gates strengthened · onboarding policy updated', principlesPreserved: true },
+      { id: 'cg-3', learningSource: 'Executive discussions', evolution: 'Cross-functional safeguard culture emerging · executives as guardians', principlesPreserved: true },
+      { id: 'cg-4', learningSource: 'Organizational self-improvement', evolution: 'Blind spot documented: paid acquisition temptation · policy reinforced', principlesPreserved: true },
+    ],
+    recommendedNextSteps: [
+      'Complete onboarding gate before GTM Phase 1 founder review',
+      'Executive council review for creator marketplace automation',
+      'Finalize AI usage policy draft with ethical principles alignment',
+      'Document reader spotlight as reusable governance precedent',
+    ],
+    futureOpportunities: [
+      'Constitutional maturity visualization across portfolio companies',
+      'Autonomous governance evolution when OAF trust exceeds Level 5',
+      'Institutional trust as competitive advantage metric',
+    ],
+  };
+}
+
+export function bootstrapOrganizationalGovernanceSafeguardsPlatform(): void {
+  bootstrapOrganizationalGovernanceSafeguardsStore(buildOrganizationalGovernanceSafeguardsSeed());
+}

@@ -23,6 +23,7 @@ import {
   adminStudioOrganizationalDelegationEnginePath,
   adminStudioOrganizationalWorkflowOrchestrationPath,
   adminStudioOrganizationalSelfImprovementPath,
+  adminStudioOrganizationalGovernanceSafeguardsPath,
   adminStudioLeadershipManifestoFrameworkPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -333,6 +334,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalDelegationEnginePath()} style={{ ...efLabel, color: '#7C3AED', fontSize: '6px' }}>→ ORGANIZATIONAL DELEGATION ENGINE</Link>
         <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...efLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
         <Link to={adminStudioOrganizationalSelfImprovementPath()} style={{ ...efLabel, color: '#10B981', fontSize: '6px' }}>→ ORGANIZATIONAL SELF-IMPROVEMENT</Link>
+        <Link to={adminStudioOrganizationalGovernanceSafeguardsPath()} style={{ ...efLabel, color: '#475569', fontSize: '6px' }}>→ ORGANIZATIONAL GOVERNANCE & SAFEGUARDS</Link>
         <Link to={adminStudioExperienceArchitectPath()} style={{ ...efLabel, color: '#0891B2', fontSize: '6px' }}>→ EXPERIENCE ARCHITECT</Link>
         <Link to={adminStudioDigitalArchitectPath()} style={{ ...efLabel, color: '#6366F1', fontSize: '6px' }}>→ DIGITAL ARCHITECT</Link>
         <Link to={adminStudioGrowthArchitectPath()} style={{ ...efLabel, color: '#059669', fontSize: '6px' }}>→ GROWTH ARCHITECT</Link>

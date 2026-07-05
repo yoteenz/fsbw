@@ -18,6 +18,7 @@ import {
   adminStudioOrganizationalDelegationEnginePath,
   adminStudioOrganizationalWorkflowOrchestrationPath,
   adminStudioOrganizationalSelfImprovementPath,
+  adminStudioOrganizationalGovernanceSafeguardsPath,
   adminStudioRelationshipEnginePath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
@@ -322,6 +323,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalDelegationEnginePath()} style={{ ...oafLabel, color: '#7C3AED', fontSize: '6px' }}>→ ORGANIZATIONAL DELEGATION ENGINE</Link>
         <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...oafLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
         <Link to={adminStudioOrganizationalSelfImprovementPath()} style={{ ...oafLabel, color: '#10B981', fontSize: '6px' }}>→ ORGANIZATIONAL SELF-IMPROVEMENT</Link>
+        <Link to={adminStudioOrganizationalGovernanceSafeguardsPath()} style={{ ...oafLabel, color: '#475569', fontSize: '6px' }}>→ ORGANIZATIONAL GOVERNANCE & SAFEGUARDS</Link>
       </div>
     </section>
   );

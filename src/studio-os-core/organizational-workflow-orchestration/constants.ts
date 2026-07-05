@@ -35,4 +35,5 @@ export const OWF_CONNECTED_SYSTEMS = [
   'Founder\'s Promise',
   'Studio Intelligence',
   'Organizational Self-Improvement',
+  'Organizational Governance & Safeguards',
 ] as const;

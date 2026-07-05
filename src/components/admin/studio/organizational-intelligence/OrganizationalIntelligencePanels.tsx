@@ -29,6 +29,7 @@ import {
   adminStudioOrganizationalDelegationEnginePath,
   adminStudioOrganizationalWorkflowOrchestrationPath,
   adminStudioOrganizationalSelfImprovementPath,
+  adminStudioOrganizationalGovernanceSafeguardsPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   OI,
@@ -382,6 +383,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalDelegationEnginePath()} style={{ ...oiLabel, color: '#7C3AED', fontSize: '6px' }}>→ ORGANIZATIONAL DELEGATION ENGINE</Link>
         <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...oiLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
         <Link to={adminStudioOrganizationalSelfImprovementPath()} style={{ ...oiLabel, color: '#10B981', fontSize: '6px' }}>→ ORGANIZATIONAL SELF-IMPROVEMENT</Link>
+        <Link to={adminStudioOrganizationalGovernanceSafeguardsPath()} style={{ ...oiLabel, color: '#475569', fontSize: '6px' }}>→ ORGANIZATIONAL GOVERNANCE & SAFEGUARDS</Link>
       </div>
     </section>
   );

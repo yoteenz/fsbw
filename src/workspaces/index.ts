@@ -301,6 +301,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationalSelfImprovement.bootstrapOrganizationalSelfImprovementPlatform();
     await yieldToMain();
 
+    const organizationalGovernanceSafeguards = await import('../studio-os-core/organizational-governance-safeguards/bootstrap');
+    organizationalGovernanceSafeguards.bootstrapOrganizationalGovernanceSafeguardsPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

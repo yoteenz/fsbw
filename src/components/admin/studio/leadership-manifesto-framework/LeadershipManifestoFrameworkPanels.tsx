@@ -13,6 +13,7 @@ import {
   adminStudioOrganizationalDelegationEnginePath,
   adminStudioOrganizationalWorkflowOrchestrationPath,
   adminStudioOrganizationalSelfImprovementPath,
+  adminStudioOrganizationalGovernanceSafeguardsPath,
   adminStudioChiefOfStaffPath,
   adminStudioCompanyGenomePath,
   adminStudioExecutiveFrameworkPath,
@@ -350,6 +351,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioOrganizationalDelegationEnginePath()} style={{ ...lmfLabel, color: '#7C3AED', fontSize: '6px' }}>→ ORGANIZATIONAL DELEGATION ENGINE</Link>
         <Link to={adminStudioOrganizationalWorkflowOrchestrationPath()} style={{ ...lmfLabel, color: '#0EA5E9', fontSize: '6px' }}>→ ORGANIZATIONAL WORKFLOW ORCHESTRATION</Link>
         <Link to={adminStudioOrganizationalSelfImprovementPath()} style={{ ...lmfLabel, color: '#10B981', fontSize: '6px' }}>→ ORGANIZATIONAL SELF-IMPROVEMENT</Link>
+        <Link to={adminStudioOrganizationalGovernanceSafeguardsPath()} style={{ ...lmfLabel, color: '#475569', fontSize: '6px' }}>→ ORGANIZATIONAL GOVERNANCE & SAFEGUARDS</Link>
         <Link to={adminStudioLeadershipDnaPath()} style={{ ...lmfLabel, color: '#CA8A04', fontSize: '6px' }}>→ LEADERSHIP DNA</Link>
         <Link to={adminStudioFoundersPromisePath()} style={{ ...lmfLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
         <Link to={adminStudioCompanyGenomePath()} style={{ ...lmfLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>

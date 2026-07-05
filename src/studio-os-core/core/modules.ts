@@ -41,6 +41,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-delegation-engine'
   | 'organizational-workflow-orchestration'
   | 'organizational-self-improvement'
+  | 'organizational-governance-safeguards'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -316,6 +317,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL SELF-IMPROVEMENT',
     description: 'Continuous organizational evolution — learning compounds every day. V1.0.',
     routeSegment: 'organizational-self-improvement',
+  },
+  {
+    id: 'organizational-governance-safeguards',
+    label: 'ORGANIZATIONAL GOVERNANCE & SAFEGUARDS',
+    description: 'Constitutional stewardship — invisible safeguards preserving trust. V1.0.',
+    routeSegment: 'organizational-governance-safeguards',
   },
   {
     id: 'executive-command-center',

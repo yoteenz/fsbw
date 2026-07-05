@@ -35,4 +35,5 @@ export const OSI_CONNECTED_SYSTEMS = [
   'Creator Marketplace',
   'Founder\'s Promise',
   'Studio Intelligence',
+  'Organizational Governance & Safeguards',
 ] as const;

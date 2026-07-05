@@ -394,6 +394,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-governance-safeguards',
+    title: 'ORGANIZATIONAL GOVERNANCE & SAFEGUARDS',
+    purpose: 'Constitutional stewardship — invisible safeguards that preserve trust and enable progress. V1.0.',
+    route: p('organizational-governance-safeguards'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN OGS',
+    moduleKey: 'organizational-governance-safeguards',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

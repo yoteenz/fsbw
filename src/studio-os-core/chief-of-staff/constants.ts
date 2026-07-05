@@ -63,6 +63,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Organizational Delegation Engine',
   'Organizational Workflow Orchestration',
   'Organizational Self-Improvement',
+  'Organizational Governance & Safeguards',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

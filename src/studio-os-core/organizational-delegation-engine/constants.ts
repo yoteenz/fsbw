@@ -30,4 +30,5 @@ export const ODE_CONNECTED_SYSTEMS = [
   'Studio Intelligence',
   'Organizational Workflow Orchestration',
   'Organizational Self-Improvement',
+  'Organizational Governance & Safeguards',
 ] as const;

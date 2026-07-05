@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath, adminStudioOrganizationalWorkflowOrchestrationPath, adminStudioOrganizationalSelfImprovementPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath, adminStudioKnowledgeAssetEnginePath, adminStudioCompanyMaturityEnginePath, adminStudioBrandArchitectPath, adminStudioExperienceArchitectPath, adminStudioDigitalArchitectPath, adminStudioGrowthArchitectPath, adminStudioCompanyGenomePath, adminStudioArchitectStudioPath, adminStudioCampusEvolutionEnginePath, adminStudioFounderWalkPath, adminStudioRemembranceGardenPath, adminStudioFoundersPromisePath, adminStudioExecutiveFrameworkPath, adminStudioLeadershipManifestoFrameworkPath, adminStudioChiefBrandOfficerPath, adminStudioChiefExperienceOfficerPath, adminStudioChiefDigitalOfficerPath, adminStudioChiefTechnologyOfficerPath, adminStudioChiefGrowthOfficerPath, adminStudioExecutiveCouncilPath, adminStudioOrganizationalIntelligencePath, adminStudioOrganizationalAutonomyFrameworkPath, adminStudioOrganizationalDelegationEnginePath, adminStudioOrganizationalWorkflowOrchestrationPath, adminStudioOrganizationalSelfImprovementPath, adminStudioOrganizationalGovernanceSafeguardsPath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -904,6 +904,23 @@ export function OrganizationalSelfImprovementLinkPanel() {
         style={{ ...cosLabel, color: '#10B981', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN ORGANIZATIONAL SELF-IMPROVEMENT
+      </Link>
+    </section>
+  );
+}
+
+export function OrganizationalGovernanceSafeguardsLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #475569' }}>
+      <p style={cosSectionTitle}>ORGANIZATIONAL GOVERNANCE & SAFEGUARDS · CONSTITUTIONAL STEWARDSHIP V1.0</p>
+      <p style={cosLabel}>
+        Invisible safeguards · trust preserved · every decision aligned with founder promise and values
+      </p>
+      <Link
+        to={adminStudioOrganizationalGovernanceSafeguardsPath()}
+        style={{ ...cosLabel, color: '#475569', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN ORGANIZATIONAL GOVERNANCE & SAFEGUARDS
       </Link>
     </section>
   );
