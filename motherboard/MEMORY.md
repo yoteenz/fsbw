@@ -36941,7 +36941,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Newsroom integration:** `PageStrategyConnection` on `ProductionPage`; page 042 seeded with strategy linkage; `StrategyAlignmentPanel` in newsroom page + intelligence tabs.
 - **Knowledge graph:** `node-strategy-engine` + edges to Chief of Staff, Leadership DNA, Memory Bible, Newsroom, Organizational Inheritance.
 
-**Route:** `/admin/studio/organizational-inheritance` · Intelligence nav group · slate accent theme.
+**Route:** `/admin/studio/strategy-engine` · Intelligence nav group · slate accent theme.
 
 **Changes:** strategy-engine core + UI + hook + page + service, CoS/newsroom/KG/bootstrap wiring, newsroom types/bootstrap, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 

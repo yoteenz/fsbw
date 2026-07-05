@@ -9,6 +9,7 @@ export type StudioOsCoreModuleId =
   | 'executive-organization'
   | 'organizational-inheritance'
   | 'strategy-engine'
+  | 'campaign-engine'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -92,6 +93,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STRATEGY ENGINE',
     description: 'Defines why work matters — strategy board, initiatives, alignment, and strategic command center.',
     routeSegment: 'strategy-engine',
+  },
+  {
+    id: 'campaign-engine',
+    label: 'CAMPAIGN ENGINE',
+    description: 'Transforms strategy into coordinated execution — campaigns, deliverables, analytics, playbooks.',
+    routeSegment: 'campaign-engine',
   },
   {
     id: 'executive-command-center',

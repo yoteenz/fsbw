@@ -143,6 +143,9 @@ export type { OrganizationalInheritanceSnapshot } from './organizationalInherita
 export { strategyEngineStudioService, STRATEGY_ENGINE_INHERITANCE_CHAIN } from './strategyEngine/service';
 export type { StrategyEngineSnapshot } from './strategyEngine/service';
 
+export { campaignEngineStudioService, CAMPAIGN_ENGINE_CHAIN } from './campaignEngine/service';
+export type { CampaignEngineSnapshot } from './campaignEngine/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -229,6 +232,7 @@ import { ndxbookNewsroomStudioService } from './ndxbookNewsroom/service';
 import { executiveOrganizationStudioService } from './executiveOrganization/service';
 import { organizationalInheritanceStudioService } from './organizationalInheritance/service';
 import { strategyEngineStudioService } from './strategyEngine/service';
+import { campaignEngineStudioService } from './campaignEngine/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -278,6 +282,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   executiveOrganizationStudioService,
   organizationalInheritanceStudioService,
   strategyEngineStudioService,
+  campaignEngineStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

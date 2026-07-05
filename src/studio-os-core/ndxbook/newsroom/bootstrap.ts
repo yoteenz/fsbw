@@ -58,7 +58,7 @@ export function buildNdxbookNewsroomSeed(): Partial<NewsroomStore> {
         strategyLabel: 'AUTHORITY THROUGH CONSISTENCY',
         initiativeId: 'init-daily-pages',
         initiativeLabel: 'DAILY PAGES',
-        campaignId: 'money-monday',
+        campaignId: 'camp-money-monday-mar',
         volumeId: 'money',
         chapter: 'investing',
         experimentId: 'labs-38-stat-overlay',

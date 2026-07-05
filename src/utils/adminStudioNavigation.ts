@@ -118,6 +118,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'campaign-engine',
+    title: 'CAMPAIGN ENGINE',
+    purpose: 'Transforms strategy into coordinated execution — campaigns bridge initiatives and production.',
+    route: p('campaign-engine'),
+    groupId: 'production',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN CAMPAIGNS',
+    moduleKey: 'campaign-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'executive-command-center',
     title: 'EXECUTIVE COMMAND CENTER',
     purpose: 'See company health, priorities, and decisions in one executive view.',

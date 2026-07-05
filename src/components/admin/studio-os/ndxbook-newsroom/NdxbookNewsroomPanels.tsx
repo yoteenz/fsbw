@@ -4,7 +4,7 @@ import type { NewsroomStore, ProductionPage } from '../../../../studio-os-core/n
 import type { NewsroomPipelineStageId } from '../../../../studio-os-core/ndxbook/newsroom/types';
 import { QUALITY_GATE_LAYERS } from '../../../../studio-os-core/ndxbook/newsroom/constants';
 import { VOLUME_LABELS } from '../../../../studio-os-core/ndxbook/constants';
-import { adminStudioChiefOfStaffPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioChiefOfStaffPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath } from '../../../../utils/adminStudioRoutes';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import {
   NDXBOOK_NEWSROOM_STYLES,
@@ -434,6 +434,11 @@ export function StrategyAlignmentPanel({ selectedPage }: Pick<Props, 'selectedPa
       <Link to={adminStudioStrategyEnginePath()} style={{ ...nrLabel, color: '#334155', fontSize: '6px', display: 'inline-block', marginTop: 6 }}>
         → OPEN STRATEGY ENGINE
       </Link>
+      {conn?.campaignId ? (
+        <Link to={adminStudioCampaignEnginePath()} style={{ ...nrLabel, color: '#D97706', fontSize: '6px', display: 'inline-block', marginTop: 4, marginLeft: 8 }}>
+          → CAMPAIGN · {conn.campaignId.replace(/-/g, ' ').toUpperCase()}
+        </Link>
+      ) : null}
     </section>
   );
 }

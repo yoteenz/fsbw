@@ -14,6 +14,7 @@ import {
   LeadershipTimelinePanel,
   LeadershipDnaLinkPanel,
   StrategyEngineLinkPanel,
+  CampaignEngineLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -73,6 +74,7 @@ export function ChiefOfStaffWorkspace() {
             <ExecutiveMemoryPanel store={store} />
             <LeadershipDnaLinkPanel />
             <StrategyEngineLinkPanel />
+            <CampaignEngineLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -100,6 +102,7 @@ export function ChiefOfStaffWorkspace() {
             <ExecutiveMemoryPanel store={store} />
             <LeadershipDnaLinkPanel />
             <StrategyEngineLinkPanel />
+            <CampaignEngineLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

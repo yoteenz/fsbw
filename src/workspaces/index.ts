@@ -173,6 +173,10 @@ export function bootstrapWorkspacesPlatform(): void {
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();
 
+    const campaignEngine = await import('../studio-os-core/campaign-engine/bootstrap');
+    campaignEngine.bootstrapCampaignEnginePlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

@@ -5,6 +5,7 @@ import {
   adminStudioChiefOfStaffPath,
   adminStudioLeadershipDnaPath,
   adminStudioOrganizationalInheritancePath,
+  adminStudioCampaignEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   STRATEGY_ENGINE_STYLES,
@@ -418,6 +419,18 @@ export function StrategyInheritancePanel({ store }: Pick<Props, 'store'>) {
       ))}
       <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...seLabel, color: SE.slate, fontSize: '6px' }}>
         → ORGANIZATIONAL INHERITANCE
+      </Link>
+    </section>
+  );
+}
+
+export function CampaignEngineLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...sePanel, borderLeft: '4px solid #D97706' }}>
+      <p style={seSectionTitle}>CAMPAIGN ENGINE · EXECUTION BRIDGE</p>
+      <p style={seLabel}>Initiatives become campaigns · campaigns produce deliverables · newsroom executes · analytics learns</p>
+      <Link to={adminStudioCampaignEnginePath()} style={{ ...seLabel, color: '#D97706', fontFamily: '"Futura PT Medium"', fontSize: '6px', display: 'inline-block', marginTop: 6 }}>
+        → OPEN CAMPAIGN ENGINE
       </Link>
     </section>
   );

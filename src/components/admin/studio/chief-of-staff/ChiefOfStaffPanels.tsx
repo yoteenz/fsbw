@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -361,6 +361,23 @@ export function DecisionRoutingPanel() {
           <p style={{ ...cosLabel, fontSize: '6px' }}>{l.examples}</p>
         </div>
       ))}
+    </section>
+  );
+}
+
+export function CampaignEngineLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #D97706' }}>
+      <p style={cosSectionTitle}>CAMPAIGN ENGINE · EXECUTION PRIORITIZATION</p>
+      <p style={cosLabel}>
+        Prioritize campaign deliverables by strategic impact · approve launches · flag misaligned production
+      </p>
+      <Link
+        to={adminStudioCampaignEnginePath()}
+        style={{ ...cosLabel, color: '#D97706', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN CAMPAIGN ENGINE
+      </Link>
     </section>
   );
 }

@@ -19,6 +19,7 @@ import {
   adminStudioExecutiveOrganizationPath,
   adminStudioOrganizationalInheritancePath,
   adminStudioStrategyEnginePath,
+  adminStudioCampaignEnginePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -218,6 +219,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 43',
     status: 'demo',
     searchKeywords: ['strategy engine', 'strategy board', 'initiatives', 'north star metric', 'strategic alignment', 'strategic bets'],
+  },
+  {
+    id: 'node-campaign-engine',
+    name: 'CAMPAIGN ENGINE',
+    type: 'module',
+    description:
+      'Transforms strategy into coordinated execution — campaigns bridge initiatives and operational production with deliverables, analytics, and playbooks.',
+    purpose: 'Primary execution framework — every asset belongs to a campaign supporting a business objective.',
+    route: adminStudioCampaignEnginePath(),
+    moduleId: 'campaign-engine',
+    relatedManualChapter: 'CHAPTER · CAMPAIGN ENGINE · COORDINATED EXECUTION',
+    versionIntroduced: 'Milestone 44',
+    status: 'demo',
+    searchKeywords: ['campaign engine', 'campaign builder', 'deliverables', 'campaign calendar', 'campaign analytics', 'campaign playbook'],
   },
   {
     id: 'node-fallback-used',
@@ -876,6 +891,11 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-strategy-newsroom', fromId: 'node-strategy-engine', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PAGE ALIGNMENT' },
   { id: 'e-strategy-inheritance', fromId: 'node-organizational-inheritance', toId: 'node-strategy-engine', type: 'feeds', label: 'STRATEGY FRAMEWORKS' },
   { id: 'e-strategy-platform', fromId: 'node-strategy-engine', toId: 'strategy-engine', type: 'documented-by', label: 'STRATEGIC COMMAND' },
+  { id: 'e-strategy-campaign', fromId: 'node-strategy-engine', toId: 'node-campaign-engine', type: 'feeds', label: 'INITIATIVES → CAMPAIGNS' },
+  { id: 'e-campaign-newsroom', fromId: 'node-campaign-engine', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'DELIVERABLES' },
+  { id: 'e-campaign-cos', fromId: 'node-chief-of-staff', toId: 'node-campaign-engine', type: 'related-to', label: 'CAMPAIGN APPROVALS' },
+  { id: 'e-campaign-labs', fromId: 'node-campaign-engine', toId: 'node-studio-os-labs', type: 'feeds', label: 'EXPERIMENTS' },
+  { id: 'e-campaign-platform', fromId: 'node-campaign-engine', toId: 'campaign-engine', type: 'documented-by', label: 'EXECUTION FRAMEWORK' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

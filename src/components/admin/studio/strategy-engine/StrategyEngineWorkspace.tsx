@@ -4,6 +4,7 @@ import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ActiveStrategiesPanel,
   AlignmentPanel,
+  CampaignEngineLinkPanel,
   ConnectedSystemsPanel,
   CosIntegrationPanel,
   DecisionJournalPanel,
@@ -79,6 +80,7 @@ export function StrategyEngineWorkspace() {
         return (
           <>
             <InitiativesPanel {...panelProps} />
+            <CampaignEngineLinkPanel />
             <StrategicBetsPanel {...panelProps} />
             <CosIntegrationPanel {...panelProps} />
           </>
@@ -121,6 +123,7 @@ export function StrategyEngineWorkspace() {
             <AlignmentPanel {...panelProps} />
             <IntelligenceSignalsPanel {...panelProps} />
             <CosIntegrationPanel {...panelProps} />
+            <CampaignEngineLinkPanel />
             <DecisionJournalPanel {...panelProps} />
             <StrategyReviewPanel {...panelProps} />
             <StrategyLineagePanel {...panelProps} />
