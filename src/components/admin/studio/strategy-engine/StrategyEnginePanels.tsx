@@ -6,6 +6,7 @@ import {
   adminStudioLeadershipDnaPath,
   adminStudioOrganizationalInheritancePath,
   adminStudioCampaignEnginePath,
+  adminStudioWorkOrchestrationPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   STRATEGY_ENGINE_STYLES,
@@ -431,6 +432,18 @@ export function CampaignEngineLinkPanel() {
       <p style={seLabel}>Initiatives become campaigns · campaigns produce deliverables · newsroom executes · analytics learns</p>
       <Link to={adminStudioCampaignEnginePath()} style={{ ...seLabel, color: '#D97706', fontFamily: '"Futura PT Medium"', fontSize: '6px', display: 'inline-block', marginTop: 6 }}>
         → OPEN CAMPAIGN ENGINE
+      </Link>
+    </section>
+  );
+}
+
+export function WorkOrchestrationLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...sePanel, borderLeft: '4px solid #0891B2' }}>
+      <p style={seSectionTitle}>WORK ORCHESTRATION · AUTOMATIC EXECUTION</p>
+      <p style={seLabel}>Objectives generate work packages · CoS orchestrates · founders lead outcomes · tasks stay invisible</p>
+      <Link to={adminStudioWorkOrchestrationPath()} style={{ ...seLabel, color: '#0891B2', fontFamily: '"Futura PT Medium"', fontSize: '6px', display: 'inline-block', marginTop: 6 }}>
+        → OPEN WORK ORCHESTRATION
       </Link>
     </section>
   );

@@ -44,6 +44,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'organizational-inheritance'
   | 'strategy-engine'
   | 'campaign-engine'
+  | 'work-orchestration'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -95,6 +96,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'organizational-inheritance',
   'strategy-engine',
   'campaign-engine',
+  'work-orchestration',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -165,6 +167,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   organizationalInheritance: 'studio/organizational-inheritance',
   strategyEngine: 'studio/strategy-engine',
   campaignEngine: 'studio/campaign-engine',
+  workOrchestration: 'studio/work-orchestration',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -272,6 +275,10 @@ export function adminStudioStrategyEnginePath(): string {
 
 export function adminStudioCampaignEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/campaign-engine`;
+}
+
+export function adminStudioWorkOrchestrationPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/work-orchestration`;
 }
 
 export function adminStudioOsPath(): string {

@@ -6,7 +6,7 @@ import type {
   CampaignWorkspaceId,
 } from '../../../../studio-os-core/campaign-engine/types';
 import { CAMPAIGN_BUILDER_STEPS, CAMPAIGN_CONNECTED_SYSTEMS, CAMPAIGN_TYPES } from '../../../../studio-os-core/campaign-engine/constants';
-import { adminStudioStrategyEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioStrategyEnginePath, adminStudioWorkOrchestrationPath } from '../../../../utils/adminStudioRoutes';
 import {
   CAMPAIGN_ENGINE_STYLES,
   CE,
@@ -421,6 +421,25 @@ export function ConnectedSystemsPanel() {
           </span>
         ))}
       </div>
+      <div className="mt-2 flex flex-wrap gap-2">
+        <Link to={adminStudioStrategyEnginePath()} style={{ ...ceLabel, color: '#334155', fontSize: '6px' }}>→ STRATEGY ENGINE</Link>
+        <Link to={adminStudioWorkOrchestrationPath()} style={{ ...ceLabel, color: '#0891B2', fontSize: '6px' }}>→ WORK ORCHESTRATION</Link>
+      </div>
+    </section>
+  );
+}
+
+export function WorkOrchestrationLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cePanel, borderLeft: '4px solid #0891B2' }}>
+      <p style={ceSectionTitle}>WORK ORCHESTRATION · INTELLIGENT EXECUTION</p>
+      <p style={ceLabel}>Campaigns generate work packages · CoS orchestrates activities · founders lead outcomes not tasks</p>
+      <Link
+        to={adminStudioWorkOrchestrationPath()}
+        style={{ ...ceLabel, color: '#0891B2', fontFamily: '"Futura PT Medium"', fontSize: '6px', display: 'inline-block', marginTop: 6 }}
+      >
+        → OPEN WORK ORCHESTRATION
+      </Link>
     </section>
   );
 }

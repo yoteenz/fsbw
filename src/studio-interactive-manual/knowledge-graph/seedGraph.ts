@@ -20,6 +20,7 @@ import {
   adminStudioOrganizationalInheritancePath,
   adminStudioStrategyEnginePath,
   adminStudioCampaignEnginePath,
+  adminStudioWorkOrchestrationPath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -233,6 +234,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 44',
     status: 'demo',
     searchKeywords: ['campaign engine', 'campaign builder', 'deliverables', 'campaign calendar', 'campaign analytics', 'campaign playbook'],
+  },
+  {
+    id: 'node-work-orchestration',
+    name: 'WORK ORCHESTRATION',
+    type: 'module',
+    description:
+      'Intelligent execution engine — transforms organizational objectives into coordinated work packages, activities, and dependencies without manual task management.',
+    purpose: 'Founders lead outcomes · the organization orchestrates work · Chief of Staff owns execution.',
+    route: adminStudioWorkOrchestrationPath(),
+    moduleId: 'work-orchestration',
+    relatedManualChapter: 'CHAPTER · WORK ORCHESTRATION · INTELLIGENT EXECUTION',
+    versionIntroduced: 'Milestone 45',
+    status: 'demo',
+    searchKeywords: ['work orchestration', 'work packages', 'dependencies', 'founder workspace', 'capacity intelligence', 'CoS orchestration'],
   },
   {
     id: 'node-fallback-used',
@@ -896,6 +911,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-campaign-cos', fromId: 'node-chief-of-staff', toId: 'node-campaign-engine', type: 'related-to', label: 'CAMPAIGN APPROVALS' },
   { id: 'e-campaign-labs', fromId: 'node-campaign-engine', toId: 'node-studio-os-labs', type: 'feeds', label: 'EXPERIMENTS' },
   { id: 'e-campaign-platform', fromId: 'node-campaign-engine', toId: 'campaign-engine', type: 'documented-by', label: 'EXECUTION FRAMEWORK' },
+  { id: 'e-campaign-work-orchestration', fromId: 'node-campaign-engine', toId: 'node-work-orchestration', type: 'feeds', label: 'GENERATES WORK PACKAGES' },
+  { id: 'e-cos-work-orchestration', fromId: 'node-chief-of-staff', toId: 'node-work-orchestration', type: 'contains', label: 'OWNS EXECUTION' },
+  { id: 'e-strategy-work-orchestration', fromId: 'node-strategy-engine', toId: 'node-work-orchestration', type: 'feeds', label: 'OBJECTIVES → WORK' },
+  { id: 'e-work-orchestration-newsroom', fromId: 'node-work-orchestration', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ACTIVITIES' },
+  { id: 'e-work-orchestration-exec-org', fromId: 'node-work-orchestration', toId: 'node-executive-organization', type: 'related-to', label: 'DEPARTMENT CAPACITY' },
+  { id: 'e-work-orchestration-intelligence', fromId: 'node-studio-intelligence', toId: 'node-work-orchestration', type: 'feeds', label: 'PRIORITY SIGNALS' },
+  { id: 'e-work-orchestration-platform', fromId: 'node-work-orchestration', toId: 'work-orchestration', type: 'documented-by', label: 'ORCHESTRATION ENGINE' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

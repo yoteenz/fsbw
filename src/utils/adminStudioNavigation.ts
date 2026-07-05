@@ -130,6 +130,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'work-orchestration',
+    title: 'WORK ORCHESTRATION',
+    purpose: 'Transforms objectives into coordinated execution — work packages, dependencies, and CoS orchestration.',
+    route: p('work-orchestration'),
+    groupId: 'production',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN ORCHESTRATION',
+    moduleKey: 'work-orchestration',
+    featuredOnOverview: true,
+  },
+  {
     id: 'executive-command-center',
     title: 'EXECUTIVE COMMAND CENTER',
     purpose: 'See company health, priorities, and decisions in one executive view.',

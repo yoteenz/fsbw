@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -377,6 +377,23 @@ export function CampaignEngineLinkPanel() {
         style={{ ...cosLabel, color: '#D97706', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN CAMPAIGN ENGINE
+      </Link>
+    </section>
+  );
+}
+
+export function WorkOrchestrationLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #0891B2' }}>
+      <p style={cosSectionTitle}>WORK ORCHESTRATION · ORGANIZATIONAL EXECUTION</p>
+      <p style={cosLabel}>
+        Prioritize work packages · assign departments · balance workloads · resequence activities · protect founder attention
+      </p>
+      <Link
+        to={adminStudioWorkOrchestrationPath()}
+        style={{ ...cosLabel, color: '#0891B2', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN WORK ORCHESTRATION
       </Link>
     </section>
   );

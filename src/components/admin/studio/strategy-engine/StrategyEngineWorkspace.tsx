@@ -5,6 +5,7 @@ import {
   ActiveStrategiesPanel,
   AlignmentPanel,
   CampaignEngineLinkPanel,
+  WorkOrchestrationLinkPanel,
   ConnectedSystemsPanel,
   CosIntegrationPanel,
   DecisionJournalPanel,
@@ -81,6 +82,7 @@ export function StrategyEngineWorkspace() {
           <>
             <InitiativesPanel {...panelProps} />
             <CampaignEngineLinkPanel />
+            <WorkOrchestrationLinkPanel />
             <StrategicBetsPanel {...panelProps} />
             <CosIntegrationPanel {...panelProps} />
           </>
@@ -124,6 +126,7 @@ export function StrategyEngineWorkspace() {
             <IntelligenceSignalsPanel {...panelProps} />
             <CosIntegrationPanel {...panelProps} />
             <CampaignEngineLinkPanel />
+            <WorkOrchestrationLinkPanel />
             <DecisionJournalPanel {...panelProps} />
             <StrategyReviewPanel {...panelProps} />
             <StrategyLineagePanel {...panelProps} />
