@@ -37538,4 +37538,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** executive-council core + UI + hook + page + service, CoS/executive-framework/manifesto/C-suite/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 66: Organizational Intelligence V1.0
+
+**Context (full chat):** User requested Milestone 66 — introduce **Organizational Intelligence** as the collective mind of every company built inside Studio OS. Prior milestones: M65 Executive Council, M64 CGO, M63.5 CTO, full C-suite pipeline. Constraints: do not redesign overall Studio OS shell · not another AI assistant · continuously observe/learn/connect/reflect/predict · never replace founder judgment · expand human judgment · work on `master` only · one commit + one push.
+
+**Goal:** OI becomes accumulated wisdom — every lesson compounds · every decision contributes · every executive wiser · future generations inherit smarter organizations. Features: intelligence philosophy (organizations learn like people · experience · reflection · patterns · relationships · experimentation · success · failure · discussion · curiosity) · continuous organizational learning (council discussions · campaigns · customer interactions · knowledge assets · reader behavior · relationships · creator ecosystem · partnerships · meetings · approvals · launches · creative/technology/financial decisions · community · automation · support) · organizational reasoning (what/why/patterns/preserve/change/never-again/opportunities/next · transparent display) · cross-system intelligence (reader→campaigns→CX→retention→growth→hiring→leadership→DNA→brand · no system alone) · organizational curiosity (proactive thoughtful questions · encourage better thinking) · decision intelligence (historical context · memory · evidence · alternatives · tradeoffs · confidence · cross-functional · long-term impact) · organizational reflection (weekly/monthly/quarterly/annual · lessons · breakthroughs · mistakes · growth · priorities) · organizational wisdom (information → knowledge → understanding → wisdom elevation) · institutional memory (decisions · debates · campaigns · relationships · breakthroughs · founder philosophies · traditions) · organizational forecasting (customer behavior · market · growth · knowledge maturity · relationships · workload · risks · opportunities · honest uncertainty) · intelligence center in Architect Studio (calm intelligence · knowledge connections · reasoning · learning velocity · executive intelligence · relationship networks · predictions · memory · wisdom evolution) · executive integration (historical context · lessons · cross-functional insights · decision support for every C-suite) · founder intelligence (what learned · missing · revisit · assumptions · strengths · vulnerabilities · attention next).
+
+**Implementation:**
+- **Core:** `src/studio-os-core/organizational-intelligence/` — types (observed events, reasoning, cross-system insights, curiosity, decision intelligence, reflections, wisdom elevation, institutional memory, forecasts, intelligence center, executive integration, founder intelligence), constants (philosophy, connected systems), localStorage store (`studioOsOrganizationalIntelligence_v1`), rich NDXBOOK bootstrap (84% wisdom · 1247 events · 342 memory entries · trust-before-scale wisdom elevation · 100K GTM decision intelligence).
+- **Hook:** `useOrganizationalIntelligenceState`.
+- **UI:** `/admin/studio/organizational-intelligence` — `OrganizationalIntelligenceWorkspace` with tabs (Mind/Learn · Reason/Connect · Decide/Reflect · Wisdom/Memory · Forecast/Center · Connect/Systems). Indigo accent (`#4F46E5`) · V1.0.
+- **Wiring:** route, nav (overview · after Executive Council), modules, services, bootstrap after Executive Council.
+- **Chief of Staff integration:** `Organizational Intelligence` in `SOFT_APPROVAL_SOURCES`; `OrganizationalIntelligenceLinkPanel` in CoS workspace.
+- **Cross-links:** Executive Council, Executive Framework, Leadership Manifesto ConnectedSystemsPanel → OI · back link from Executive Council page.
+- **Knowledge graph:** `node-organizational-intelligence` + ~30 edges to Executive Council, Framework, CoS, all C-suite, architects, Genome, Knowledge Asset Engine, Reader Graph, Relationship Engine, Strategy/Campaign/Distribution engines, Creator Marketplace, Promise, Inheritance, Studio Intelligence, Architect Studio.
+
+**Route:** `/admin/studio/organizational-intelligence` · Overview nav group · indigo accent · back link from Executive Council.
+
+**Changes:** organizational-intelligence core + UI + hook + page + service, CoS/executive-council/executive-framework/manifesto/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
 

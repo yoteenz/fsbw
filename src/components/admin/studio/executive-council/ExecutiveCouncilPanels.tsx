@@ -16,6 +16,7 @@ import {
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioStudioIntelligencePath,
+  adminStudioOrganizationalIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   EC,
@@ -383,6 +384,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioReaderGraphPath()} style={{ ...ecLabel, color: '#059669', fontSize: '6px' }}>→ READER GRAPH</Link>
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...ecLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...ecLabel, color: '#6366F1', fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
+        <Link to={adminStudioOrganizationalIntelligencePath()} style={{ ...ecLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INTELLIGENCE</Link>
       </div>
     </section>
   );

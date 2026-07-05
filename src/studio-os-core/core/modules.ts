@@ -36,6 +36,7 @@ export type StudioOsCoreModuleId =
   | 'chief-technology-officer'
   | 'chief-growth-officer'
   | 'executive-council'
+  | 'organizational-intelligence'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -281,6 +282,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXECUTIVE COUNCIL',
     description: 'Highest collaborative leadership body — executive debate, synthesis, simulations. V2.0.',
     routeSegment: 'executive-council',
+  },
+  {
+    id: 'organizational-intelligence',
+    label: 'ORGANIZATIONAL INTELLIGENCE',
+    description: 'Collective mind — observe, learn, reflect, predict, compound wisdom. V1.0.',
+    routeSegment: 'organizational-intelligence',
   },
   {
     id: 'executive-command-center',

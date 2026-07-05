@@ -224,6 +224,9 @@ export type { ChiefGrowthOfficerSnapshot } from './chiefGrowthOfficer/service';
 export { executiveCouncilStudioService, EXECUTIVE_COUNCIL_CHAIN } from './executiveCouncil/service';
 export type { ExecutiveCouncilSnapshot } from './executiveCouncil/service';
 
+export { organizationalIntelligenceStudioService, ORGANIZATIONAL_INTELLIGENCE_CHAIN } from './organizationalIntelligence/service';
+export type { OrganizationalIntelligenceSnapshot } from './organizationalIntelligence/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -337,6 +340,7 @@ import { chiefDigitalOfficerStudioService } from './chiefDigitalOfficer/service'
 import { chiefTechnologyOfficerStudioService } from './chiefTechnologyOfficer/service';
 import { chiefGrowthOfficerStudioService } from './chiefGrowthOfficer/service';
 import { executiveCouncilStudioService } from './executiveCouncil/service';
+import { organizationalIntelligenceStudioService } from './organizationalIntelligence/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -413,6 +417,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   chiefTechnologyOfficerStudioService,
   chiefGrowthOfficerStudioService,
   executiveCouncilStudioService,
+  organizationalIntelligenceStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

@@ -334,6 +334,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-intelligence',
+    title: 'ORGANIZATIONAL INTELLIGENCE',
+    purpose: 'Collective mind of the company — accumulated wisdom that compounds every day. V1.0.',
+    route: p('organizational-intelligence'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN OI',
+    moduleKey: 'organizational-intelligence',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',
