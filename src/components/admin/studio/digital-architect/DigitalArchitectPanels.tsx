@@ -8,6 +8,7 @@ import {
   adminStudioExperienceArchitectPath,
   adminStudioGrowthArchitectPath,
   adminStudioChiefDigitalOfficerPath,
+  adminStudioChiefTechnologyOfficerPath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -446,6 +447,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...daLabel, color: DA.slate, fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
         <Link to={adminStudioGrowthArchitectPath()} style={{ ...daLabel, color: '#059669', fontSize: '6px' }}>→ GROWTH ARCHITECT</Link>
         <Link to={adminStudioChiefDigitalOfficerPath()} style={{ ...daLabel, color: '#6366F1', fontSize: '6px' }}>→ CHIEF DIGITAL OFFICER</Link>
+        <Link to={adminStudioChiefTechnologyOfficerPath()} style={{ ...daLabel, color: '#2563EB', fontSize: '6px' }}>→ CHIEF TECHNOLOGY OFFICER</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...daLabel, color: DA.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
       </div>
     </section>

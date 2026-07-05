@@ -298,6 +298,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'chief-technology-officer',
+    title: 'CHIEF TECHNOLOGY OFFICER',
+    purpose: 'Lifelong guardian of engineering & infrastructure — resilient, secure, built to last. V1.0.',
+    route: p('chief-technology-officer'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN CTO',
+    moduleKey: 'chief-technology-officer',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',
