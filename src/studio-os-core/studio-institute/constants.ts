@@ -14,6 +14,7 @@ export const SI_INSTITUTE_PHILOSOPHY = [
 
 export const SI_CONNECTED_SYSTEMS = [
   'Executive Apprenticeship & Founder Calibration',
+  'Organizational Apprenticeship',
   'Organizational Intelligence',
   'Executive Council',
   'Chief of Staff',

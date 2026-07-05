@@ -82,6 +82,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'arrival-experience'
   | 'executive-apprenticeship-founder-calibration'
   | 'studio-institute'
+  | 'organizational-apprenticeship'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -171,6 +172,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'arrival-experience',
   'executive-apprenticeship-founder-calibration',
   'studio-institute',
+  'organizational-apprenticeship',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -279,6 +281,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   arrivalExperience: 'studio/arrival-experience',
   executiveApprenticeshipFounderCalibration: 'studio/executive-apprenticeship-founder-calibration',
   studioInstitute: 'studio/studio-institute',
+  organizationalApprenticeship: 'studio/organizational-apprenticeship',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -538,6 +541,10 @@ export function adminStudioExecutiveApprenticeshipFounderCalibrationPath(): stri
 
 export function adminStudioStudioInstitutePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/studio-institute`;
+}
+
+export function adminStudioOrganizationalApprenticeshipPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/organizational-apprenticeship`;
 }
 
 export function adminStudioOsPath(): string {

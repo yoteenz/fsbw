@@ -96,6 +96,7 @@ export type AdminStudioSectionId =
   | 'arrival-experience'
   | 'executive-apprenticeship-founder-calibration'
   | 'studio-institute'
+  | 'organizational-apprenticeship'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

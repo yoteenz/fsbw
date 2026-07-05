@@ -27,6 +27,7 @@ import {
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioStudioInstitutePath,
+  adminStudioOrganizationalApprenticeshipPath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -358,6 +359,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioArrivalExperiencePath()} style={{ ...siLabel, color: '#0369A1', fontSize: '6px' }}>→ ARRIVAL EXPERIENCE</Link>
         <Link to={adminStudioNdxbookPath()} style={{ ...siLabel, color: '#334155', fontSize: '6px' }}>→ NDXBOOK</Link>
         <Link to={adminStudioStudioInstitutePath()} style={{ ...siLabel, color: '#854D0E', fontSize: '6px' }}>→ STUDIO INSTITUTE</Link>
+        <Link to={adminStudioOrganizationalApprenticeshipPath()} style={{ ...siLabel, color: '#155E75', fontSize: '6px' }}>→ ORGANIZATIONAL APPRENTICESHIP</Link>
       </div>
     </section>
   );

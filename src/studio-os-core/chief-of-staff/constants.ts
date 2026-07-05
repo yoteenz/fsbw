@@ -70,6 +70,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Arrival Experience',
   'Executive Apprenticeship & Founder Calibration',
   'Studio Institute',
+  'Organizational Apprenticeship',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

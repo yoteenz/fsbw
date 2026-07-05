@@ -24,6 +24,7 @@ import {
   adminStudioRelationshipEnginePath,
   adminStudioStudioIntelligencePath,
   adminStudioStudioInstitutePath,
+  adminStudioOrganizationalApprenticeshipPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   EXECUTIVE_APPRENTICESHIP_STYLES,
@@ -358,6 +359,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioFoundersPromisePath()} style={{ ...eafLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...eafLabel, color: '#6366F1', fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
         <Link to={adminStudioStudioInstitutePath()} style={{ ...eafLabel, color: '#854D0E', fontSize: '6px' }}>→ STUDIO INSTITUTE</Link>
+        <Link to={adminStudioOrganizationalApprenticeshipPath()} style={{ ...eafLabel, color: '#155E75', fontSize: '6px' }}>→ ORGANIZATIONAL APPRENTICESHIP</Link>
         <Link to={adminStudioExecutiveApprenticeshipFounderCalibrationPath()} style={{ ...eafLabel, color: '#7C3AED', fontSize: '6px' }}>→ EXECUTIVE APPRENTICESHIP</Link>
       </div>
     </section>

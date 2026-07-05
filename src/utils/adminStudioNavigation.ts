@@ -478,6 +478,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-apprenticeship',
+    title: 'ORGANIZATIONAL APPRENTICESHIP',
+    purpose: 'Permanent learning & trust-building — every new intelligence apprentices before earning authority. V1.0.',
+    route: p('organizational-apprenticeship'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN APPRENTICESHIP',
+    moduleKey: 'organizational-apprenticeship',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

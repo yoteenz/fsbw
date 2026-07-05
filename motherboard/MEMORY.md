@@ -37812,3 +37812,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Before Connect works:** one-time server setup — run Supabase migration **`20260704120000_studio_social_publishing.sql`**; set Vercel env vars from **`.env.example`** Social Publishing section (**`SOCIAL_TOKEN_ENCRYPTION_SECRET`**, **`SITE_URL`**, **`META_APP_*`**, **`TIKTOK_*`**, **`PINTEREST_*`**, optional **`X_API_AVAILABLE=true`**); redeploy. Until configured, buttons show **SETUP REQUIRED** and **`SocialOAuthSetupPanel`** checklist — not an app bug.
 
 **Changes:** `ChiefOfStaffWorkspace.tsx`, `AdminStudioLayout.tsx`, `ChiefOfStaffPanels.tsx`, `useChiefOfStaffState.ts`, `motherboard/MEMORY.md`.
+
+---
+
+## 2026-07-05 — Milestone 76: Organizational Apprenticeship V1.0
+
+**Context (full chat):** User requested continuation of Studio OS with **Milestone 76 — Organizational Apprenticeship** as the permanent learning and trust-building system governing how every new intelligence enters the organization. Prior milestones in this arc: M75 Studio Institute (permanent learning institution), M74 Executive Apprenticeship & Founder Calibration, M73.6 Arrival Experience, M73.5 Company Onboarding Intelligence. Constraints: do not redesign overall Studio OS shell · maintain existing visual language · trust earned not configured · work on `master` only · one commit + one push.
+
+**Goal:** Organizational Apprenticeship becomes the defining philosophy for how executives, employees, AI systems, automation agents, partners, and future organizational intelligence earn authority through stewardship. Features: apprenticeship philosophy · organizational oath (first promise of every future leader) · organizational apprentices (executives · future executives · employees · department leaders · new AI · automation agents · future OI · partners · acquired orgs) · founder calibration (understanding not imitation) · organizational shadowing · guided learning questions · practice environment (compare apprentice reasoning with historical decisions) · organizational calibration (9 domains · alignment · confidence · learning velocity · mentorship) · 7-stage trust progression (observe → understand → recommend → co-create → co-review → trusted contributor → organizational steward) · Chief of Staff mentorship stewardship · organizational learning library · graduation (founder approve · delay · expand · reduce) · organizational dashboard (apprentices · trust · alignment · velocity · mentorship · graduation readiness · org confidence · future leaders) · lifelong apprentice-mentor cycle.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/organizational-apprenticeship/` — full types/store/constants/bootstrap with NDXBOOK seed (18 apprentices · 92% avg alignment · 93% org confidence · 4 graduation-ready · 6 future leaders · oath · 10 founder calibration areas · 6 shadowing observations · 4 guided questions · 5 practice exercises · 9 calibration domains · 6 trust progressions · 6 CoS mentorship items · 8 library entries · 4 graduation recommendations).
+- **Hook:** `useOrganizationalApprenticeshipState`.
+- **UI:** `/admin/studio/organizational-apprenticeship` — 6 tabs · deep cyan accent (`#155E75`) · V1.0.
+- **Wiring:** route, nav (after Studio Institute, before Strategy Engine), modules, services, App lazy route, workspaces bootstrap · Strategy Engine back → Organizational Apprenticeship · Studio Institute page back unchanged (→ Executive Apprenticeship).
+- **Chief of Staff:** `OrganizationalApprenticeshipLinkPanel` in **`ConnectedModuleLinkPanels`** + `SOFT_APPROVAL_SOURCES`.
+- **Cross-links:** Studio Institute · Executive Apprenticeship · ConnectedSystems panels.
+- **Knowledge graph:** `node-organizational-apprenticeship` + ~40 edges (SI, COI, OI, OMM, OGS, Executive Framework, Leadership Manifesto, Council, CoS, C-suite, architects, Genome, KG, Relationship Engine, Founder's Promise, Studio Intelligence, EAF).
+
+**Route:** `/admin/studio/organizational-apprenticeship` · back link from Studio Institute.
+
+**Changes:** organizational-apprenticeship core + UI + hook + page + service, CoS/SI/EAF/strategy-engine/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.

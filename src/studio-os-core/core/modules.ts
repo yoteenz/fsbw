@@ -48,6 +48,7 @@ export type StudioOsCoreModuleId =
   | 'arrival-experience'
   | 'executive-apprenticeship-founder-calibration'
   | 'studio-institute'
+  | 'organizational-apprenticeship'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -365,6 +366,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO INSTITUTE',
     description: 'Permanent learning institution — organizational education. V1.0.',
     routeSegment: 'studio-institute',
+  },
+  {
+    id: 'organizational-apprenticeship',
+    label: 'ORGANIZATIONAL APPRENTICESHIP',
+    description: 'Permanent learning & trust-building — stewardship and earned trust. V1.0.',
+    routeSegment: 'organizational-apprenticeship',
   },
   {
     id: 'executive-command-center',

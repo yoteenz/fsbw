@@ -53,6 +53,7 @@ import {
   ArrivalExperienceLinkPanel,
   ExecutiveApprenticeshipLinkPanel,
   StudioInstituteLinkPanel,
+  OrganizationalApprenticeshipLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -113,6 +114,7 @@ function ConnectedModuleLinkPanels() {
       <ArrivalExperienceLinkPanel />
       <ExecutiveApprenticeshipLinkPanel />
       <StudioInstituteLinkPanel />
+      <OrganizationalApprenticeshipLinkPanel />
     </>
   );
 }

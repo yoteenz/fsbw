@@ -329,6 +329,10 @@ export function bootstrapWorkspacesPlatform(): void {
     studioInstitute.bootstrapStudioInstitutePlatform();
     await yieldToMain();
 
+    const organizationalApprenticeship = await import('../studio-os-core/organizational-apprenticeship/bootstrap');
+    organizationalApprenticeship.bootstrapOrganizationalApprenticeshipPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();
