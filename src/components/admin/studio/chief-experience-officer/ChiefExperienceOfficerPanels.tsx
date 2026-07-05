@@ -14,6 +14,7 @@ import {
   adminStudioLeadershipDnaPath,
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
+  adminStudioChiefDigitalOfficerPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_EXPERIENCE_OFFICER_STYLES,
@@ -332,6 +333,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioBrandArchitectPath()} style={{ ...ceoLabel, color: '#9333EA', fontSize: '6px' }}>→ BRAND ARCHITECT</Link>
         <Link to={adminStudioChiefBrandOfficerPath()} style={{ ...ceoLabel, color: '#7C3AED', fontSize: '6px' }}>→ CHIEF BRAND OFFICER</Link>
         <Link to={adminStudioDigitalArchitectPath()} style={{ ...ceoLabel, color: '#6366F1', fontSize: '6px' }}>→ DIGITAL ARCHITECT</Link>
+        <Link to={adminStudioChiefDigitalOfficerPath()} style={{ ...ceoLabel, color: '#6366F1', fontSize: '6px' }}>→ CHIEF DIGITAL OFFICER</Link>
         <Link to={adminStudioGrowthArchitectPath()} style={{ ...ceoLabel, color: '#059669', fontSize: '6px' }}>→ GROWTH ARCHITECT</Link>
         <Link to={adminStudioFoundersPromisePath()} style={{ ...ceoLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
         <Link to={adminStudioReaderGraphPath()} style={{ ...ceoLabel, color: '#059669', fontSize: '6px' }}>→ READER GRAPH</Link>

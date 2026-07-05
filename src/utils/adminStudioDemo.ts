@@ -80,6 +80,7 @@ export type AdminStudioSectionId =
   | 'leadership-manifesto-framework'
   | 'chief-brand-officer'
   | 'chief-experience-officer'
+  | 'chief-digital-officer'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

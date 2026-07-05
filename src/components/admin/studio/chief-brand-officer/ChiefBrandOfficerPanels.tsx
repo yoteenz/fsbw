@@ -15,6 +15,7 @@ import {
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioChiefExperienceOfficerPath,
+  adminStudioChiefDigitalOfficerPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_BRAND_OFFICER_STYLES,
@@ -323,6 +324,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...cboLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...cboLabel, color: CBO.violet, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
         <Link to={adminStudioChiefExperienceOfficerPath()} style={{ ...cboLabel, color: '#0891B2', fontSize: '6px' }}>→ CHIEF EXPERIENCE OFFICER</Link>
+        <Link to={adminStudioChiefDigitalOfficerPath()} style={{ ...cboLabel, color: '#6366F1', fontSize: '6px' }}>→ CHIEF DIGITAL OFFICER</Link>
       </div>
     </section>
   );

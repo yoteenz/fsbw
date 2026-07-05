@@ -54,6 +54,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Leadership Manifesto Framework',
   'Chief Brand Officer',
   'Chief Experience Officer',
+  'Chief Digital Officer',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

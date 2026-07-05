@@ -4,6 +4,7 @@ import { LEADERSHIP_MANIFESTO_CONNECTED_SYSTEMS } from '../../../../studio-os-co
 import {
   adminStudioChiefBrandOfficerPath,
   adminStudioChiefExperienceOfficerPath,
+  adminStudioChiefDigitalOfficerPath,
   adminStudioChiefOfStaffPath,
   adminStudioCompanyGenomePath,
   adminStudioExecutiveFrameworkPath,
@@ -332,6 +333,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...lmfLabel, color: '#334155', fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
         <Link to={adminStudioChiefBrandOfficerPath()} style={{ ...lmfLabel, color: '#7C3AED', fontSize: '6px' }}>→ CHIEF BRAND OFFICER</Link>
         <Link to={adminStudioChiefExperienceOfficerPath()} style={{ ...lmfLabel, color: '#0891B2', fontSize: '6px' }}>→ CHIEF EXPERIENCE OFFICER</Link>
+        <Link to={adminStudioChiefDigitalOfficerPath()} style={{ ...lmfLabel, color: '#6366F1', fontSize: '6px' }}>→ CHIEF DIGITAL OFFICER</Link>
         <Link to={adminStudioLeadershipDnaPath()} style={{ ...lmfLabel, color: '#CA8A04', fontSize: '6px' }}>→ LEADERSHIP DNA</Link>
         <Link to={adminStudioFoundersPromisePath()} style={{ ...lmfLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
         <Link to={adminStudioCompanyGenomePath()} style={{ ...lmfLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>

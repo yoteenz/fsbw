@@ -32,6 +32,7 @@ export type StudioOsCoreModuleId =
   | 'leadership-manifesto-framework'
   | 'chief-brand-officer'
   | 'chief-experience-officer'
+  | 'chief-digital-officer'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -253,6 +254,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CHIEF EXPERIENCE OFFICER',
     description: 'Lifelong guardian of customer experience — journey, trust, hospitality, protection. V2.0.',
     routeSegment: 'chief-experience-officer',
+  },
+  {
+    id: 'chief-digital-officer',
+    label: 'CHIEF DIGITAL OFFICER',
+    description: 'Lifelong guardian of digital ecosystem — governance, alignment, architecture, protection. V1.0.',
+    routeSegment: 'chief-digital-officer',
   },
   {
     id: 'executive-command-center',

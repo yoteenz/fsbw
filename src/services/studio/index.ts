@@ -212,6 +212,9 @@ export type { ChiefBrandOfficerSnapshot } from './chiefBrandOfficer/service';
 export { chiefExperienceOfficerStudioService, CHIEF_EXPERIENCE_OFFICER_CHAIN } from './chiefExperienceOfficer/service';
 export type { ChiefExperienceOfficerSnapshot } from './chiefExperienceOfficer/service';
 
+export { chiefDigitalOfficerStudioService, CHIEF_DIGITAL_OFFICER_CHAIN } from './chiefDigitalOfficer/service';
+export type { ChiefDigitalOfficerSnapshot } from './chiefDigitalOfficer/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -321,6 +324,7 @@ import { executiveFrameworkStudioService } from './executiveFramework/service';
 import { leadershipManifestoFrameworkStudioService } from './leadershipManifestoFramework/service';
 import { chiefBrandOfficerStudioService } from './chiefBrandOfficer/service';
 import { chiefExperienceOfficerStudioService } from './chiefExperienceOfficer/service';
+import { chiefDigitalOfficerStudioService } from './chiefDigitalOfficer/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -393,6 +397,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   leadershipManifestoFrameworkStudioService,
   chiefBrandOfficerStudioService,
   chiefExperienceOfficerStudioService,
+  chiefDigitalOfficerStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,
