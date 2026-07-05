@@ -33,6 +33,7 @@ import {
   FounderWalkLinkPanel,
   RemembranceGardenLinkPanel,
   FoundersPromiseLinkPanel,
+  ExecutiveFrameworkLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -111,6 +112,7 @@ export function ChiefOfStaffWorkspace() {
             <FounderWalkLinkPanel />
             <RemembranceGardenLinkPanel />
             <FoundersPromiseLinkPanel />
+            <ExecutiveFrameworkLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -157,6 +159,7 @@ export function ChiefOfStaffWorkspace() {
             <FounderWalkLinkPanel />
             <RemembranceGardenLinkPanel />
             <FoundersPromiseLinkPanel />
+            <ExecutiveFrameworkLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

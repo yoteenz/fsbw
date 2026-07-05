@@ -249,6 +249,10 @@ export function bootstrapWorkspacesPlatform(): void {
     foundersPromise.bootstrapFoundersPromisePlatform();
     await yieldToMain();
 
+    const executiveFramework = await import('../studio-os-core/executive-framework/bootstrap');
+    executiveFramework.bootstrapExecutiveFrameworkPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

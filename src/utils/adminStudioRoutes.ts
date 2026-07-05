@@ -62,6 +62,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'founder-walk'
   | 'remembrance-garden'
   | 'founders-promise'
+  | 'executive-framework'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -130,6 +131,8 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'campus-evolution-engine',
   'founder-walk',
   'remembrance-garden',
+  'founders-promise',
+  'executive-framework',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -218,6 +221,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   founderWalk: 'studio/founder-walk',
   remembranceGarden: 'studio/remembrance-garden',
   foundersPromise: 'studio/founders-promise',
+  executiveFramework: 'studio/executive-framework',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -397,6 +401,10 @@ export function adminStudioRemembranceGardenPath(): string {
 
 export function adminStudioFoundersPromisePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/founders-promise`;
+}
+
+export function adminStudioExecutiveFrameworkPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/executive-framework`;
 }
 
 export function adminStudioOsPath(): string {

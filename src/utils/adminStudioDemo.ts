@@ -76,6 +76,7 @@ export type AdminStudioSectionId =
   | 'founder-walk'
   | 'remembrance-garden'
   | 'founders-promise'
+  | 'executive-framework'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

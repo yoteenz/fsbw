@@ -37369,3 +37369,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Route:** `/admin/studio/founders-promise` · Overview nav group · amber accent · back link from Remembrance Garden.
 
 **Changes:** founders-promise core + UI + hook + page + service, CoS/founder-walk/remembrance-garden/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+
+---
+
+## 2026-07-05 — Milestone 60: Executive Framework V1.0
+
+**Context (full chat):** User requested Milestone 60 — introduce **Executive Framework** as the constitutional foundation for every AI executive inside Studio OS. Prior milestones in arc: M59.5 Founder Walk, M59.6 Remembrance Garden, M59.7 Founder's Promise. Constraints: do not redesign overall Studio OS shell · executives expand capacity not replace founders · leadership is stewardship · work on `master` only · one commit + one push.
+
+**Goal:** Unified executive organization where every executive understands responsibilities, authority, collaboration, communication standards, and relationship to founder. Features: executive philosophy (founder remains final decision maker) · identity inheritance (Company/Leadership/Creative/Writing/Operational DNA · Founder's Promise · history · values · relationship/knowledge philosophy) · executive standards (judgment, humility, evidence-based reasoning, explain reasoning) · decision framework (11 impact dimensions · tradeoffs · alternatives) · executive collaboration (architects seek alignment · CoS coordinates) · institutional memory · executive workspaces in Architect Studio · accountability metrics · recommendation pipeline format · leadership map · future executive roles (CBO/CEO/CDO/CGO/CFO/COO/CLO/CPO/CTO/CRO) · organizational priorities. Premium · calm · collaborative interface.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/executive-framework/` — types (identity inheritance, decision criteria, collaborations, memory, workspaces, accountability, recommendation pipeline, leadership map, future executives), constants (philosophy, standards, connected systems, decision dimensions), localStorage store (`studioOsExecutiveFramework_v1`), rich NDXBOOK bootstrap (6 executives · 9 identity sources · 5 collaborations · 6 memory entries · 5 pipeline recs · 10 future roles · 88% executive health).
+- **Hook:** `useExecutiveFrameworkState` — workspace selection.
+- **UI:** `/admin/studio/executive-framework` — `ExecutiveFrameworkWorkspace` with tabs (Org/Dashboard · Identity/Standards · Decide/Pipeline · Collaborate/Memory · Workspace/Future · Connect/Systems). Slate accent theme (`#334155`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (overview group · after founder's promise), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/executiveFramework/service.ts`, `bootstrapExecutiveFrameworkPlatform()` after Founder's Promise.
+- **Chief of Staff integration:** `Executive Framework` in `SOFT_APPROVAL_SOURCES`; `ExecutiveFrameworkLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Cross-links:** Founder's Promise ConnectedSystemsPanel → Executive Framework.
+- **Knowledge graph:** `node-executive-framework` + edges to Chief of Staff, Brand/Experience/Digital/Growth architects, Leadership DNA, Company Genome, Founder's Promise, Studio Intelligence, Organizational Inheritance.
+
+**Route:** `/admin/studio/executive-framework` · Overview nav group · slate accent · back link from Founder's Promise.
+
+**Changes:** executive-framework core + UI + hook + page + service, CoS/founders-promise/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

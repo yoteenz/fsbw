@@ -200,6 +200,9 @@ export type { RemembranceGardenSnapshot } from './remembranceGarden/service';
 export { foundersPromiseStudioService, FOUNDERS_PROMISE_CHAIN } from './foundersPromise/service';
 export type { FoundersPromiseSnapshot } from './foundersPromise/service';
 
+export { executiveFrameworkStudioService, EXECUTIVE_FRAMEWORK_CHAIN } from './executiveFramework/service';
+export type { ExecutiveFrameworkSnapshot } from './executiveFramework/service';
+
 export { blueprintManagerStudioService, BLUEPRINT_MANAGER_INHERITANCE_CHAIN } from './blueprintManager/service';
 export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './blueprintManager/service';
 
@@ -305,6 +308,7 @@ import { campusEvolutionEngineStudioService } from './campusEvolutionEngine/serv
 import { founderWalkStudioService } from './founderWalk/service';
 import { remembranceGardenStudioService } from './remembranceGarden/service';
 import { foundersPromiseStudioService } from './foundersPromise/service';
+import { executiveFrameworkStudioService } from './executiveFramework/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
@@ -373,6 +377,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   founderWalkStudioService,
   remembranceGardenStudioService,
   foundersPromiseStudioService,
+  executiveFrameworkStudioService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
   socialPublishingStudioService,

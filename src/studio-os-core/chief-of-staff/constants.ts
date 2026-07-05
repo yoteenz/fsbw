@@ -50,6 +50,7 @@ export const SOFT_APPROVAL_SOURCES = [
   'Founder Walk',
   'Remembrance Garden',
   'Founder\'s Promise',
+  'Executive Framework',
   'Leadership DNA',
   'Company DNA',
   'Creative DNA',

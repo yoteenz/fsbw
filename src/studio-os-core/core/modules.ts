@@ -28,6 +28,7 @@ export type StudioOsCoreModuleId =
   | 'founder-walk'
   | 'remembrance-garden'
   | 'founders-promise'
+  | 'executive-framework'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -225,6 +226,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'FOUNDER\'S PROMISE',
     description: 'Personal north star — guided reflection, living promise, alignment, legacy inheritance.',
     routeSegment: 'founders-promise',
+  },
+  {
+    id: 'executive-framework',
+    label: 'EXECUTIVE FRAMEWORK',
+    description: 'Constitutional foundation for AI executives — identity, standards, collaboration, accountability.',
+    routeSegment: 'executive-framework',
   },
   {
     id: 'executive-command-center',

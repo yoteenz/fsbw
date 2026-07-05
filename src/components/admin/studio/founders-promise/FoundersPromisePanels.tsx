@@ -10,6 +10,7 @@ import {
   adminStudioLeadershipDnaPath,
   adminStudioOrganizationalInheritancePath,
   adminStudioRemembranceGardenPath,
+  adminStudioExecutiveFrameworkPath,
   adminStudioRelationshipEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
@@ -317,6 +318,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...fpLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...fpLabel, color: '#4F46E5', fontSize: '6px' }}>→ INHERITANCE</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...fpLabel, color: FP.amber, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioExecutiveFrameworkPath()} style={{ ...fpLabel, color: '#334155', fontSize: '6px' }}>→ EXECUTIVE FRAMEWORK</Link>
         <Link to={adminStudioArchitectStudioPath()} style={{ ...fpLabel, color: '#CA8A04', fontSize: '6px' }}>→ ARCHITECT STUDIO</Link>
       </div>
     </section>

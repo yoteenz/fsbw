@@ -238,6 +238,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'executive-framework',
+    title: 'EXECUTIVE FRAMEWORK',
+    purpose: 'Constitutional foundation for every AI executive — coordinated leadership organization, not isolated assistants.',
+    route: p('executive-framework'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN FRAMEWORK',
+    moduleKey: 'executive-framework',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',
