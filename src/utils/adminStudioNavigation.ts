@@ -130,6 +130,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'relationship-engine',
+    title: 'RELATIONSHIP ENGINE',
+    purpose: 'Active relationship OS — nurture trust, next best actions, recognition, and long-term value.',
+    route: p('relationship-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN RELATIONSHIPS',
+    moduleKey: 'relationship-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'campaign-engine',
     title: 'CAMPAIGN ENGINE',
     purpose: 'Transforms strategy into coordinated execution — campaigns bridge initiatives and production.',

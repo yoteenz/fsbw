@@ -17,6 +17,7 @@ import {
   adminStudioCampaignEnginePath,
   adminStudioDistributionEnginePath,
   adminStudioStrategyEnginePath,
+  adminStudioRelationshipEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   READER_GRAPH_STYLES,
@@ -452,6 +453,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioDistributionEnginePath()} style={{ ...rgLabel, color: '#7C3AED', fontSize: '6px' }}>→ DISTRIBUTION ENGINE</Link>
         <Link to={adminStudioCampaignEnginePath()} style={{ ...rgLabel, color: '#D97706', fontSize: '6px' }}>→ CAMPAIGN ENGINE</Link>
         <Link to={adminStudioStrategyEnginePath()} style={{ ...rgLabel, color: '#334155', fontSize: '6px' }}>→ STRATEGY ENGINE</Link>
+        <Link to={adminStudioRelationshipEnginePath()} style={{ ...rgLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
       </div>
     </section>
   );

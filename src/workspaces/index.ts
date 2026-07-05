@@ -189,6 +189,10 @@ export function bootstrapWorkspacesPlatform(): void {
     readerGraph.bootstrapReaderGraphPlatform();
     await yieldToMain();
 
+    const relationshipEngine = await import('../studio-os-core/relationship-engine/bootstrap');
+    relationshipEngine.bootstrapRelationshipEnginePlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

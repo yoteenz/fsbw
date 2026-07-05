@@ -13,6 +13,7 @@ export type StudioOsCoreModuleId =
   | 'work-orchestration'
   | 'distribution-engine'
   | 'reader-graph'
+  | 'relationship-engine'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -120,6 +121,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'READER GRAPH',
     description: 'Living relationship map — readers, journey, communities, trust, advocacy, portfolio relationships.',
     routeSegment: 'reader-graph',
+  },
+  {
+    id: 'relationship-engine',
+    label: 'RELATIONSHIP ENGINE',
+    description: 'Active relationship OS — nurture, next best action, recognition, loyalty, institutional learning.',
+    routeSegment: 'relationship-engine',
   },
   {
     id: 'executive-command-center',

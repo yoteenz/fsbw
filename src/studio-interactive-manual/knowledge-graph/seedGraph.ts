@@ -23,6 +23,7 @@ import {
   adminStudioWorkOrchestrationPath,
   adminStudioDistributionEnginePath,
   adminStudioReaderGraphPath,
+  adminStudioRelationshipEnginePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -278,6 +279,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 47',
     status: 'demo',
     searchKeywords: ['reader graph', 'relationship map', 'reader journey', 'community clusters', 'advocacy', 'trust score'],
+  },
+  {
+    id: 'node-relationship-engine',
+    name: 'RELATIONSHIP ENGINE',
+    type: 'module',
+    description:
+      'Active relationship operating system — transforms reader graph intelligence into proactive nurturing, next best actions, recognition, and institutional learning.',
+    purpose: 'Not a CRM · understand people · strengthen trust · celebrate loyalty · evolve relationships.',
+    route: adminStudioRelationshipEnginePath(),
+    moduleId: 'relationship-engine',
+    relatedManualChapter: 'CHAPTER · RELATIONSHIP ENGINE · ACTIVE NURTURING',
+    versionIntroduced: 'Milestone 48',
+    status: 'demo',
+    searchKeywords: ['relationship engine', 'next best action', 'recognition', 'loyalty intelligence', 'relationship health', 'community engine'],
   },
   {
     id: 'node-fallback-used',
@@ -963,6 +978,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-reader-graph-intelligence', fromId: 'node-studio-intelligence', toId: 'node-reader-graph', type: 'feeds', label: 'READER SIGNALS' },
   { id: 'e-reader-graph-newsroom', fromId: 'node-ndxbook-newsroom', toId: 'node-reader-graph', type: 'feeds', label: 'READER BEHAVIOR' },
   { id: 'e-reader-graph-platform', fromId: 'node-reader-graph', toId: 'reader-graph', type: 'documented-by', label: 'LIVING RELATIONSHIPS' },
+  { id: 'e-reader-graph-relationship-engine', fromId: 'node-reader-graph', toId: 'node-relationship-engine', type: 'feeds', label: 'INTELLIGENCE → ACTIVE NURTURING' },
+  { id: 'e-relationship-engine-cos', fromId: 'node-chief-of-staff', toId: 'node-relationship-engine', type: 'related-to', label: 'RELATIONSHIP MONITORING' },
+  { id: 'e-relationship-engine-campaign', fromId: 'node-relationship-engine', toId: 'node-campaign-engine', type: 'related-to', label: 'SIMULATION · IMPACT' },
+  { id: 'e-relationship-engine-distribution', fromId: 'node-distribution-engine', toId: 'node-relationship-engine', type: 'feeds', label: 'ENGAGEMENT → NURTURING' },
+  { id: 'e-relationship-engine-intelligence', fromId: 'node-studio-intelligence', toId: 'node-relationship-engine', type: 'feeds', label: 'NEXT BEST ACTION' },
+  { id: 'e-relationship-engine-learning', fromId: 'node-relationship-engine', toId: 'node-memory-bible', type: 'feeds', label: 'INSTITUTIONAL LEARNING' },
+  { id: 'e-relationship-engine-platform', fromId: 'node-relationship-engine', toId: 'relationship-engine', type: 'documented-by', label: 'RELATIONSHIP OS' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

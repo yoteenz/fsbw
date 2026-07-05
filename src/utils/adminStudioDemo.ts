@@ -61,6 +61,7 @@ export type AdminStudioSectionId =
   | 'work-orchestration'
   | 'distribution-engine'
   | 'reader-graph'
+  | 'relationship-engine'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -428,6 +428,23 @@ export function ReaderGraphLinkPanel() {
         style={{ ...cosLabel, color: '#E11D48', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN READER GRAPH
+      </Link>
+    </section>
+  );
+}
+
+export function RelationshipEngineLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #059669' }}>
+      <p style={cosSectionTitle}>RELATIONSHIP ENGINE · ACTIVE NURTURING</p>
+      <p style={cosLabel}>
+        Next best actions · recognition · relationship health alerts · protect long-term trust
+      </p>
+      <Link
+        to={adminStudioRelationshipEnginePath()}
+        style={{ ...cosLabel, color: '#059669', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN RELATIONSHIP ENGINE
       </Link>
     </section>
   );
