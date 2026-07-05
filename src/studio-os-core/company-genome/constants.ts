@@ -28,6 +28,7 @@ export const COMPANY_GENOME_CONNECTED_SYSTEMS = [
   'Digital Architect',
   'Growth Architect',
   'Organizational Inheritance',
+  'Architect Studio',
 ] as const;
 
 export const ZOOM_LEVELS: { level: GenomeZoomLevel; label: string; description: string }[] = [

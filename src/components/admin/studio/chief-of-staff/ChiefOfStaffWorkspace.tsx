@@ -28,6 +28,7 @@ import {
   DigitalArchitectLinkPanel,
   GrowthArchitectLinkPanel,
   CompanyGenomeLinkPanel,
+  ArchitectStudioLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -101,6 +102,7 @@ export function ChiefOfStaffWorkspace() {
             <DigitalArchitectLinkPanel />
             <GrowthArchitectLinkPanel />
             <CompanyGenomeLinkPanel />
+            <ArchitectStudioLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -142,6 +144,7 @@ export function ChiefOfStaffWorkspace() {
             <DigitalArchitectLinkPanel />
             <GrowthArchitectLinkPanel />
             <CompanyGenomeLinkPanel />
+            <ArchitectStudioLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

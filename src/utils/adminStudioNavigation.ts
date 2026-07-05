@@ -178,6 +178,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'architect-studio',
+    title: 'ARCHITECT STUDIO',
+    purpose: 'Immersive innovation headquarters — five connected architect studios in one living campus.',
+    route: p('architect-studio'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'ENTER STUDIO',
+    moduleKey: 'architect-studio',
+    featuredOnOverview: true,
+  },
+  {
     id: 'strategy-engine',
     title: 'STRATEGY ENGINE',
     purpose: 'Defines the game each company is playing — strategy board, initiatives, alignment, and direction before execution.',

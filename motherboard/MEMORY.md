@@ -37251,3 +37251,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** company-genome core + UI + hook + page + service, CoS/growth-architect/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 58: Architect Studio V1.0
+
+**Context (full chat):** User requested Milestone 58 — introduce **Architect Studio** as the physical heart of Studio OS. Prior milestones in arc: M52 Company Maturity Engine, M53 Brand Architect, M54 Experience Architect, M55 Digital Architect, M56 Growth Architect, M57 Company Genome. Constraints: do not redesign overall Studio OS shell · immersive environment not visual gimmick · work on `master` only · one commit + one push.
+
+**Goal:** Architect Studio becomes the immersive innovation headquarters where founders enter one connected environment instead of disconnected dashboards. Features: studio philosophy (companies designed in creative environments), immersive campus with spatial navigation (walk · zoom · focus · explore), five primary studios (business · brand · experience · digital · growth), central circular collaboration forum (founder · CoS · studio intelligence · architects), living workspaces (active projects · discussions · knowledge flow · simulations), architect collaboration threads, company evolution wall, innovation lab (prototype · simulate · experiment), portfolio campus mode, environment personalization, studio intelligence natural guidance, contextual dashboard (not widget-based). Connect to Business/Brand/Experience/Digital/Growth architects, Chief of Staff, Studio Intelligence, Company Genome, Knowledge Graph, Organizational Inheritance.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/architect-studio/` — types (five studios, spatial nav modes, forum, living activities, collaborations, evolution wall, innovation lab, intelligence guides, personalization, portfolio campus), constants (philosophy, connected systems, studio room defs), localStorage store (`studioOsArchitectStudio_v1`), rich NDXBOOK bootstrap seed (87% studio health · 5 studios · forum · 6 living activities · 6 collaborations · 7 evolution wall entries · 4 innovation lab experiments · 5 intelligence guides · portfolio campus · personalization).
+- **Hook:** `useArchitectStudioState` — workspace selection, spatial mode, studio focus.
+- **UI:** `/admin/studio/architect-studio` — `ArchitectStudioWorkspace` with tabs (Dashboard · Campus/Spatial Nav · Studios/Living · Forum/Collaboration · Evolution Wall · Innovation/Intelligence); panels for dashboard, philosophy, immersive campus grid with central forum, five studios, collaboration forum, living workspaces, architect collaboration, evolution wall, innovation lab, studio intelligence, portfolio campus, personalization, recommended next steps, connected systems. Gold accent theme (`#CA8A04`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (overview group · after company genome), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/architectStudio/service.ts`, `bootstrapArchitectStudioPlatform()` after Company Genome.
+- **Chief of Staff integration:** `Architect Studio` in `SOFT_APPROVAL_SOURCES`; `ArchitectStudioLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Company Genome integration:** connected systems + link to Architect Studio.
+- **Knowledge graph:** `node-architect-studio` + edges to Company Genome, all five architect nodes, CoS, Studio Intelligence, Organizational Inheritance.
+
+**Route:** `/admin/studio/architect-studio` · Overview nav group · gold accent theme · back link from Company Genome.
+
+**Changes:** architect-studio core + UI + hook + page + service, CoS/company-genome/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

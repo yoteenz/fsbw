@@ -229,6 +229,10 @@ export function bootstrapWorkspacesPlatform(): void {
     companyGenome.bootstrapCompanyGenomePlatform();
     await yieldToMain();
 
+    const architectStudio = await import('../studio-os-core/architect-studio/bootstrap');
+    architectStudio.bootstrapArchitectStudioPlatform();
+    await yieldToMain();
+
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
   })();

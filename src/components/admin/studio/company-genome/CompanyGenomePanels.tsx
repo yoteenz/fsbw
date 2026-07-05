@@ -13,6 +13,7 @@ import {
   adminStudioOrganizationalInheritancePath,
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
+  adminStudioArchitectStudioPath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CG,
@@ -342,6 +343,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...cgLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...cgLabel, color: '#4F46E5', fontSize: '6px' }}>→ INHERITANCE</Link>
         <Link to={adminStudioChiefOfStaffPath()} style={{ ...cgLabel, color: CG.accent, fontSize: '6px' }}>→ CHIEF OF STAFF</Link>
+        <Link to={adminStudioArchitectStudioPath()} style={{ ...cgLabel, color: '#CA8A04', fontSize: '6px' }}>→ ARCHITECT STUDIO</Link>
       </div>
     </section>
   );

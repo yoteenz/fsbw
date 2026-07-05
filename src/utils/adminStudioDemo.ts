@@ -71,6 +71,7 @@ export type AdminStudioSectionId =
   | 'digital-architect'
   | 'growth-architect'
   | 'company-genome'
+  | 'architect-studio'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
