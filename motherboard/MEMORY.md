@@ -37081,3 +37081,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Changes:** creator-marketplace core + UI + hook + page + service, CoS/relationship-engine/reader-graph/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
 
+---
+
+## 2026-07-05 — Milestone 50: Ecosystem Marketplace V1.0
+
+**Context (full chat):** User requested Milestone 50 — introduce **Ecosystem Marketplace** as the central exchange where organizations publish, license, purchase, inherit, collaborate on, and continuously improve organizational intelligence. Prior milestones in arc: M46 Distribution Engine, M47 Reader Graph, M48 Relationship Engine, M49 Creator Marketplace. Constraints: do not redesign overall Studio OS shell · do not modify Frontal Slayer · do not remove existing systems.
+
+**Goal:** Not an app marketplace — an organizational marketplace. Everything inside Studio OS becomes reusable organizational assets. Features: marketplace categories (organizational DNA, playbooks, automation, knowledge assets, creative/brand/marketing systems, creator programs, courses, etc.), asset profiles (creator, org, version, rating, compatibility, knowledge maturity), inheritance integration (preview, simulation, partial/full/custom inherit), organizational compatibility simulation, licensing models, asset evolution, community contributions, verified marketplace, collaboration, marketplace intelligence, organizational reputation, dashboard (featured, recommended, industry collections, installed assets), cross-company anonymous learning. Purchase outcomes · not templates · organizational capability.
+
+**Implementation:**
+- **Core:** `src/studio-os-core/ecosystem-marketplace/` — types (asset profiles, categories, licensing, verification, inheritance modes, compatibility simulations, asset evolution, contributions, collaborations, intelligence recs, reputations, installed assets, industry collections, cross-company learning), constants (philosophy, 19 categories, connected systems, licensing labels), localStorage store (`studioOsEcosystemMarketplace_v1`), rich bootstrap seed.
+- **Bootstrap:** 6 assets (ndxbook newsroom playbook, VXD leadership DNA, FS creative DNA, campaign framework, creator program template, relationship engine automation) · inheritance integrations · 2 compatibility simulations · asset evolution · 3 contributions · 2 collaborations · 4 intelligence recs · 3 org reputations · 2 installed assets · 3 industry collections · 4 cross-company learnings.
+- **Hook:** `useEcosystemMarketplaceState` — workspace/asset selection, inheritance/simulation/evolution derived state.
+- **UI:** `/admin/studio/ecosystem-marketplace` — `EcosystemMarketplaceWorkspace` with tabs (Dashboard · Assets · Inheritance · Intelligence · Community · Installed); panels for dashboard, philosophy, featured/discovery assets, profiles, categories, inheritance integration, compatibility center, evolution, contributions, verified orgs, collaboration, intelligence, reputation, installed library, industry collections, cross-company learning, CoS integration, connected systems. Indigo accent theme (`#4F46E5`).
+- **Wiring:** route in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts` (intelligence group), `adminStudioDemo.ts`, `core/modules.ts`, `services/studio/ecosystemMarketplace/service.ts`, `bootstrapEcosystemMarketplacePlatform()` after Creator Marketplace.
+- **Chief of Staff integration:** `Ecosystem Marketplace` in `SOFT_APPROVAL_SOURCES`; `EcosystemMarketplaceLinkPanel` in CoS workspace (dashboard + learning tabs).
+- **Organizational Inheritance integration:** `MarketplacePreparedPanel` updated with link to Ecosystem Marketplace (replaces "architecture only" placeholder text).
+- **Creator Marketplace integration:** connected systems link to Ecosystem Marketplace.
+- **Knowledge graph:** `node-ecosystem-marketplace` + edges to Organizational Inheritance, Creator Marketplace, Chief of Staff, Studio Intelligence, Strategy Engine.
+
+**Route:** `/admin/studio/ecosystem-marketplace` · Intelligence nav group · indigo accent theme.
+
+**Changes:** ecosystem-marketplace core + UI + hook + page + service, CoS/organizational-inheritance/creator-marketplace/KG/bootstrap wiring, `motherboard/MEMORY.md`, `motherboard/CORE.md`.
+

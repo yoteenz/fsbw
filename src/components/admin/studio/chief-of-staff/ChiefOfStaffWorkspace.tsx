@@ -20,6 +20,7 @@ import {
   ReaderGraphLinkPanel,
   RelationshipEngineLinkPanel,
   CreatorMarketplaceLinkPanel,
+  EcosystemMarketplaceLinkPanel,
   MorningBriefingPanel,
   OrgHierarchyPanel,
   StudioIntelligencePanel,
@@ -85,6 +86,7 @@ export function ChiefOfStaffWorkspace() {
             <ReaderGraphLinkPanel />
             <RelationshipEngineLinkPanel />
             <CreatorMarketplaceLinkPanel />
+            <EcosystemMarketplaceLinkPanel />
             <LeadershipTimelinePanel store={store} />
           </>
         );
@@ -118,6 +120,7 @@ export function ChiefOfStaffWorkspace() {
             <ReaderGraphLinkPanel />
             <RelationshipEngineLinkPanel />
             <CreatorMarketplaceLinkPanel />
+            <EcosystemMarketplaceLinkPanel />
             <DecisionRoutingPanel />
           </>
         );

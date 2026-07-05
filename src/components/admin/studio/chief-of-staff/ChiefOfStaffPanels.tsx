@@ -5,7 +5,7 @@ import {
   DELEGATION_LABELS,
   SOFT_APPROVAL_SOURCES,
 } from '../../../../studio-os-core/chief-of-staff/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioLeadershipDnaPath, adminStudioStrategyEnginePath, adminStudioCampaignEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath, adminStudioReaderGraphPath, adminStudioRelationshipEnginePath, adminStudioCreatorMarketplacePath, adminStudioEcosystemMarketplacePath } from '../../../../utils/adminStudioRoutes';
 import {
   CHIEF_OF_STAFF_STYLES,
   COS,
@@ -462,6 +462,23 @@ export function CreatorMarketplaceLinkPanel() {
         style={{ ...cosLabel, color: '#2563EB', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
       >
         → OPEN CREATOR MARKETPLACE
+      </Link>
+    </section>
+  );
+}
+
+export function EcosystemMarketplaceLinkPanel() {
+  return (
+    <section className="p-3 mb-3" style={{ ...cosPanel, borderLeft: '4px solid #4F46E5' }}>
+      <p style={cosSectionTitle}>ECOSYSTEM MARKETPLACE · ORGANIZATIONAL ASSETS</p>
+      <p style={cosLabel}>
+        Asset activation approvals · inheritance compatibility · organizational capability over file downloads
+      </p>
+      <Link
+        to={adminStudioEcosystemMarketplacePath()}
+        style={{ ...cosLabel, color: '#4F46E5', fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8 }}
+      >
+        → OPEN ECOSYSTEM MARKETPLACE
       </Link>
     </section>
   );

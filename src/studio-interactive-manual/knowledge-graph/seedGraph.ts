@@ -25,6 +25,7 @@ import {
   adminStudioReaderGraphPath,
   adminStudioRelationshipEnginePath,
   adminStudioCreatorMarketplacePath,
+  adminStudioEcosystemMarketplacePath,
   adminStudioPhotographyBiblePath,
 } from '../../utils/adminStudioRoutes';
 
@@ -308,6 +309,20 @@ export const SEED_GRAPH_NODES: KnowledgeGraphNode[] = [
     versionIntroduced: 'Milestone 49',
     status: 'demo',
     searchKeywords: ['creator marketplace', 'creator profile', 'brand deal', 'intelligent matching', 'career graph', 'creator academy', 'agency mode'],
+  },
+  {
+    id: 'node-ecosystem-marketplace',
+    name: 'ECOSYSTEM MARKETPLACE',
+    type: 'module',
+    description:
+      'Central exchange for organizational intelligence — publish, license, inherit, collaborate on, and continuously improve organizational assets and capability.',
+    purpose: 'Not an app store · organizational capability · outcomes over templates · wisdom compounds across companies.',
+    route: adminStudioEcosystemMarketplacePath(),
+    moduleId: 'ecosystem-marketplace',
+    relatedManualChapter: 'CHAPTER · ECOSYSTEM MARKETPLACE · ORGANIZATIONAL INTELLIGENCE',
+    versionIntroduced: 'Milestone 50',
+    status: 'demo',
+    searchKeywords: ['ecosystem marketplace', 'organizational asset', 'inheritance', 'playbook', 'organizational dna', 'licensing', 'verified organization'],
   },
   {
     id: 'node-fallback-used',
@@ -1007,6 +1022,13 @@ export const SEED_GRAPH_EDGES: KnowledgeGraphEdge[] = [
   { id: 'e-creator-marketplace-intelligence', fromId: 'node-studio-intelligence', toId: 'node-creator-marketplace', type: 'feeds', label: 'MATCHING · OPPORTUNITY SIGNALS' },
   { id: 'e-creator-marketplace-talent', fromId: 'node-creator-marketplace', toId: 'node-talent-network', type: 'related-to', label: 'TALENT BEYOND INFLUENCERS' },
   { id: 'e-creator-marketplace-platform', fromId: 'node-creator-marketplace', toId: 'creator-marketplace', type: 'documented-by', label: 'CREATOR BUSINESS OS' },
+  { id: 'e-ecosystem-marketplace-inheritance', fromId: 'node-ecosystem-marketplace', toId: 'node-organizational-inheritance', type: 'feeds', label: 'ASSET INHERITANCE' },
+  { id: 'e-inheritance-ecosystem-marketplace', fromId: 'node-organizational-inheritance', toId: 'node-ecosystem-marketplace', type: 'related-to', label: 'MARKETPLACE ASSETS' },
+  { id: 'e-creator-ecosystem-marketplace', fromId: 'node-creator-marketplace', toId: 'node-ecosystem-marketplace', type: 'related-to', label: 'CREATOR PROGRAMS' },
+  { id: 'e-ecosystem-marketplace-cos', fromId: 'node-chief-of-staff', toId: 'node-ecosystem-marketplace', type: 'related-to', label: 'ASSET ACTIVATION APPROVALS' },
+  { id: 'e-ecosystem-marketplace-intelligence', fromId: 'node-studio-intelligence', toId: 'node-ecosystem-marketplace', type: 'feeds', label: 'ASSET RECOMMENDATIONS' },
+  { id: 'e-ecosystem-marketplace-strategy', fromId: 'node-ecosystem-marketplace', toId: 'node-strategy-engine', type: 'related-to', label: 'ORGANIZATIONAL UPGRADES' },
+  { id: 'e-ecosystem-marketplace-platform', fromId: 'node-ecosystem-marketplace', toId: 'ecosystem-marketplace', type: 'documented-by', label: 'ORGANIZATIONAL EXCHANGE' },
   { id: 'e-ai-media-newsroom', fromId: 'node-ai-media-pilot', toId: 'node-ndxbook-newsroom', type: 'contains', label: 'PRODUCTION FLOOR' },
   { id: 'e-newsroom-ndxbook', fromId: 'node-ndxbook-newsroom', toId: 'node-ndxbook', type: 'feeds', label: 'PAGE PRODUCTION' },
   { id: 'e-cos-orchestrates-newsroom', fromId: 'node-chief-of-staff', toId: 'node-ndxbook-newsroom', type: 'feeds', label: 'PRODUCTION ORCHESTRATION' },

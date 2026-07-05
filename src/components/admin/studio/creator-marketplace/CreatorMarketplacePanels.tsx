@@ -13,6 +13,7 @@ import {
   adminStudioRelationshipEnginePath,
   adminStudioStrategyEnginePath,
   adminStudioTalentNetworkPath,
+  adminStudioEcosystemMarketplacePath,
 } from '../../../../utils/adminStudioRoutes';
 import {
   CREATOR_MARKETPLACE_STYLES,
@@ -542,6 +543,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioCampaignEnginePath()} style={{ ...cmLabel, color: '#D97706', fontSize: '6px' }}>→ CAMPAIGN ENGINE</Link>
         <Link to={adminStudioStrategyEnginePath()} style={{ ...cmLabel, color: '#334155', fontSize: '6px' }}>→ STRATEGY ENGINE</Link>
         <Link to={adminStudioTalentNetworkPath()} style={{ ...cmLabel, color: CM.blue, fontSize: '6px' }}>→ TALENT NETWORK</Link>
+        <Link to={adminStudioEcosystemMarketplacePath()} style={{ ...cmLabel, color: '#4F46E5', fontSize: '6px' }}>→ ECOSYSTEM MARKETPLACE</Link>
       </div>
     </section>
   );

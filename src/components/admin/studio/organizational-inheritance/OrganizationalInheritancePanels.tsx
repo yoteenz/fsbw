@@ -6,7 +6,7 @@ import type {
   OrganizationalInheritanceStore,
 } from '../../../../studio-os-core/organizational-inheritance/types';
 import { INHERITANCE_SOURCE_LABELS, WIZARD_PRESETS } from '../../../../studio-os-core/organizational-inheritance/constants';
-import { adminStudioExecutiveOrganizationPath, adminStudioOsCreatePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioExecutiveOrganizationPath, adminStudioOsCreatePath, adminStudioEcosystemMarketplacePath } from '../../../../utils/adminStudioRoutes';
 import {
   ORGANIZATIONAL_INHERITANCE_STYLES,
   OI,
@@ -448,8 +448,8 @@ export function CrossCompanyLearningPanel({ store }: Pick<Props, 'store'>) {
 export function MarketplacePreparedPanel({ store }: Pick<Props, 'store'>) {
   return (
     <section className="p-3 mb-3" style={oiPanel}>
-      <p style={oiSectionTitle}>FUTURE MARKETPLACE · ARCHITECTURE ONLY</p>
-      <p style={{ ...oiLabel, color: OI.gold }}>Marketplace not implemented in V1.0 — architecture prepared for future share · license · sell · purchase.</p>
+      <p style={oiSectionTitle}>ECOSYSTEM MARKETPLACE · ORGANIZATIONAL ASSETS</p>
+      <p style={{ ...oiLabel, color: OI.indigo }}>Share · license · inherit · purchase organizational intelligence via Ecosystem Marketplace V1.0.</p>
       {store.marketplacePrepared.map((cap) => (
         <div key={cap.id} className="p-2 mb-1 border" style={{ borderColor: OI.panelBorder, opacity: 0.85 }}>
           <p className="text-[7px] font-futura" style={{ fontWeight: 515 }}>{cap.assetType.toUpperCase()}</p>
@@ -457,6 +457,12 @@ export function MarketplacePreparedPanel({ store }: Pick<Props, 'store'>) {
           <p style={{ ...oiLabel, fontSize: '5px', color: OI.indigo }}>FUTURE: {cap.futureActions.join(' · ').toUpperCase()}</p>
         </div>
       ))}
+      <Link
+        to={adminStudioEcosystemMarketplacePath()}
+        style={{ ...oiLabel, color: OI.indigo, fontFamily: '"Futura PT Medium"', display: 'inline-block', marginTop: 8, fontSize: '6px' }}
+      >
+        → OPEN ECOSYSTEM MARKETPLACE
+      </Link>
     </section>
   );
 }

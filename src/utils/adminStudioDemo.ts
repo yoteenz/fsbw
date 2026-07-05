@@ -63,6 +63,7 @@ export type AdminStudioSectionId =
   | 'reader-graph'
   | 'relationship-engine'
   | 'creator-marketplace'
+  | 'ecosystem-marketplace'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

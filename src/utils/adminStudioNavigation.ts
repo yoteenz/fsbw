@@ -154,6 +154,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'ecosystem-marketplace',
+    title: 'ECOSYSTEM MARKETPLACE',
+    purpose: 'Organizational intelligence exchange — publish, license, inherit, and compound proven systems.',
+    route: p('ecosystem-marketplace'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'v1.0',
+    ctaLabel: 'OPEN ECOSYSTEM',
+    moduleKey: 'ecosystem-marketplace',
+    featuredOnOverview: true,
+  },
+  {
     id: 'campaign-engine',
     title: 'CAMPAIGN ENGINE',
     purpose: 'Transforms strategy into coordinated execution — campaigns bridge initiatives and production.',

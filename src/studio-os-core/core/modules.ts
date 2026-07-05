@@ -15,6 +15,7 @@ export type StudioOsCoreModuleId =
   | 'reader-graph'
   | 'relationship-engine'
   | 'creator-marketplace'
+  | 'ecosystem-marketplace'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -134,6 +135,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CREATOR MARKETPLACE',
     description: 'Intelligent creator business ecosystem — matching, deals, career graph, alignment over followers.',
     routeSegment: 'creator-marketplace',
+  },
+  {
+    id: 'ecosystem-marketplace',
+    label: 'ECOSYSTEM MARKETPLACE',
+    description: 'Organizational intelligence exchange — assets, inheritance, licensing, capability over files.',
+    routeSegment: 'ecosystem-marketplace',
   },
   {
     id: 'executive-command-center',
