@@ -86,6 +86,7 @@ export type AdminStudioSectionId =
   | 'executive-council'
   | 'organizational-intelligence'
   | 'organizational-autonomy-framework'
+  | 'organizational-delegation-engine'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'

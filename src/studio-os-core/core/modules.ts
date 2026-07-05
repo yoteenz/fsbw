@@ -38,6 +38,7 @@ export type StudioOsCoreModuleId =
   | 'executive-council'
   | 'organizational-intelligence'
   | 'organizational-autonomy-framework'
+  | 'organizational-delegation-engine'
   | 'blueprint-manager'
   | 'asset-factory'
   | 'executive-command-center'
@@ -295,6 +296,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL AUTONOMY FRAMEWORK',
     description: 'Constitutional autonomy governance — trusted stewardship, earned through trust. V1.0.',
     routeSegment: 'organizational-autonomy-framework',
+  },
+  {
+    id: 'organizational-delegation-engine',
+    label: 'ORGANIZATIONAL DELEGATION ENGINE',
+    description: 'Outcome-based delegation — founders define outcomes, executives collaborate to achieve them. V1.0.',
+    routeSegment: 'organizational-delegation-engine',
   },
   {
     id: 'executive-command-center',

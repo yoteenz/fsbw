@@ -23,6 +23,9 @@ export const LEADERSHIP_MANIFESTO_CONNECTED_SYSTEMS = [
   'Chief Brand Officer',
   'Chief Experience Officer',
   'All Current & Future Executives',
+  'Organizational Intelligence',
+  'Organizational Autonomy Framework',
+  'Organizational Delegation Engine',
 ] as const;
 
 export const DECISION_EVALUATION_DIMENSIONS = [

@@ -35,4 +35,6 @@ export const OI_CONNECTED_SYSTEMS = [
   'Founder\'s Promise',
   'Organizational Inheritance',
   'Studio Intelligence',
+  'Organizational Autonomy Framework',
+  'Organizational Delegation Engine',
 ] as const;

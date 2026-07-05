@@ -72,6 +72,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'executive-council'
   | 'organizational-intelligence'
   | 'organizational-autonomy-framework'
+  | 'organizational-delegation-engine'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -151,6 +152,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'executive-council',
   'organizational-intelligence',
   'organizational-autonomy-framework',
+  'organizational-delegation-engine',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -249,6 +251,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   executiveCouncil: 'studio/executive-council',
   organizationalIntelligence: 'studio/organizational-intelligence',
   organizationalAutonomyFramework: 'studio/organizational-autonomy-framework',
+  organizationalDelegationEngine: 'studio/organizational-delegation-engine',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
   socialAccounts: 'studio/social-accounts',
@@ -468,6 +471,10 @@ export function adminStudioOrganizationalIntelligencePath(): string {
 
 export function adminStudioOrganizationalAutonomyFrameworkPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organizational-autonomy-framework`;
+}
+
+export function adminStudioOrganizationalDelegationEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/organizational-delegation-engine`;
 }
 
 export function adminStudioOsPath(): string {

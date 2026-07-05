@@ -15,6 +15,7 @@ import {
   adminStudioLeadershipManifestoFrameworkPath,
   adminStudioOrganizationalInheritancePath,
   adminStudioOrganizationalIntelligencePath,
+  adminStudioOrganizationalDelegationEnginePath,
   adminStudioRelationshipEnginePath,
   adminStudioStudioIntelligencePath,
 } from '../../../../utils/adminStudioRoutes';
@@ -316,6 +317,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioRelationshipEnginePath()} style={{ ...oafLabel, color: '#059669', fontSize: '6px' }}>→ RELATIONSHIP ENGINE</Link>
         <Link to={adminStudioOrganizationalInheritancePath()} style={{ ...oafLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INHERITANCE</Link>
         <Link to={adminStudioStudioIntelligencePath()} style={{ ...oafLabel, color: '#6366F1', fontSize: '6px' }}>→ STUDIO INTELLIGENCE</Link>
+        <Link to={adminStudioOrganizationalDelegationEnginePath()} style={{ ...oafLabel, color: '#7C3AED', fontSize: '6px' }}>→ ORGANIZATIONAL DELEGATION ENGINE</Link>
       </div>
     </section>
   );

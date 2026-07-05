@@ -29,6 +29,9 @@ export const EXECUTIVE_FRAMEWORK_CONNECTED_SYSTEMS = [
   'Company Genome',
   'Studio Intelligence',
   'Organizational Inheritance',
+  'Organizational Intelligence',
+  'Organizational Autonomy Framework',
+  'Organizational Delegation Engine',
 ] as const;
 
 export const DECISION_DIMENSIONS = [

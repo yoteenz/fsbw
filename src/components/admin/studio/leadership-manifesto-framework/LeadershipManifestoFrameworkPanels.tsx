@@ -10,6 +10,7 @@ import {
   adminStudioExecutiveCouncilPath,
   adminStudioOrganizationalIntelligencePath,
   adminStudioOrganizationalAutonomyFrameworkPath,
+  adminStudioOrganizationalDelegationEnginePath,
   adminStudioChiefOfStaffPath,
   adminStudioCompanyGenomePath,
   adminStudioExecutiveFrameworkPath,
@@ -344,6 +345,7 @@ export function ConnectedSystemsPanel() {
         <Link to={adminStudioExecutiveCouncilPath()} style={{ ...lmfLabel, color: '#B45309', fontSize: '6px' }}>→ EXECUTIVE COUNCIL</Link>
         <Link to={adminStudioOrganizationalIntelligencePath()} style={{ ...lmfLabel, color: '#4F46E5', fontSize: '6px' }}>→ ORGANIZATIONAL INTELLIGENCE</Link>
         <Link to={adminStudioOrganizationalAutonomyFrameworkPath()} style={{ ...lmfLabel, color: '#0D9488', fontSize: '6px' }}>→ ORGANIZATIONAL AUTONOMY FRAMEWORK</Link>
+        <Link to={adminStudioOrganizationalDelegationEnginePath()} style={{ ...lmfLabel, color: '#7C3AED', fontSize: '6px' }}>→ ORGANIZATIONAL DELEGATION ENGINE</Link>
         <Link to={adminStudioLeadershipDnaPath()} style={{ ...lmfLabel, color: '#CA8A04', fontSize: '6px' }}>→ LEADERSHIP DNA</Link>
         <Link to={adminStudioFoundersPromisePath()} style={{ ...lmfLabel, color: '#92400E', fontSize: '6px' }}>→ FOUNDER&apos;S PROMISE</Link>
         <Link to={adminStudioCompanyGenomePath()} style={{ ...lmfLabel, color: '#9333EA', fontSize: '6px' }}>→ COMPANY GENOME</Link>

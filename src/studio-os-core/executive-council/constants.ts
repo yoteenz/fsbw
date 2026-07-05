@@ -43,6 +43,8 @@ export const EC_CONNECTED_SYSTEMS = [
   'Relationship Engine',
   'Reader Graph',
   'Organizational Intelligence',
+  'Organizational Autonomy Framework',
+  'Organizational Delegation Engine',
   'Studio Intelligence',
   'Founder\'s Promise',
 ] as const;

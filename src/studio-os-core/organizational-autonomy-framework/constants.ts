@@ -36,4 +36,5 @@ export const OAF_CONNECTED_SYSTEMS = [
   'Organizational Inheritance',
   'Studio Intelligence',
   'Founder\'s Promise',
+  'Organizational Delegation Engine',
 ] as const;
