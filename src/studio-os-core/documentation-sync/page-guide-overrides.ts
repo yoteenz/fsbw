@@ -103,6 +103,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'workflow-engine': fromSystem('workflow-engine'),
   'state-engine': fromSystem('state-engine'),
   'asset-registry': fromSystem('asset-registry'),
+  'experience-engine': fromSystem('experience-engine'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

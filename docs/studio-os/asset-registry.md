@@ -58,9 +58,9 @@ Broken Links · Unused Assets · Duplicate Assets · Missing Alt Text · Brand C
 
 ## Sync chain
 
-… → Plugin SDK → Workflow Engine → State Engine → **Asset Registry**
+… → Plugin SDK → Workflow Engine → State Engine → Asset Registry → **Experience Engine**
 
-**`state-engine/store`** triggers **`syncAssetRegistryFromSources`** · **boundary-sync**
+**`asset-registry/store`** triggers **`syncExperienceEngineFromSources`** · **boundary-sync**
 
 ## UI
 

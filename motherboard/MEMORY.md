@@ -39739,3 +39739,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/asset-registry.md`** · **CORE.md** M140 entry
 
 **Conventions:** Assets never scattered — managed platform resources only. Never overwrite — version on change. Sync chain: … → Workflow Engine → State Engine → **Asset Registry**. Demo localStorage via `studioOsAssetRegistry_v1`. Brand voice: *"Assets managed. Knowledge preserved. Never scattered."* Accent `#B45309`.
+
+---
+
+## 2026-07-06 — Milestone 141: Experience Engine™ V1.0 · Infrastructure Chapter complete
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine through M140 Asset Registry (`71a9abcb`). User requested **Experience Engine™**: emotional and environmental layer of Studio OS — adapts atmosphere to organizational moments without changing functionality; 15 experience modes; 12 adaptive environment controls; 11 context signals; subtle transitions; Command Dock focus/presentation/launch/congratulations queries; **completes Studio OS Infrastructure Chapter**.
+
+**Requirements delivered:**
+- **Experience modes (15)** — Normal, Founder Mode, Focus Mode, Presentation Mode, Launch Mode, Celebration Mode, Learning Mode, Emergency Mode, Maintenance Mode, Night Mode, Executive Review Mode, Creative Mode, Training Mode, Conference Mode, Future Experience Packs
+- **Adaptive environment (12 controls)** — lighting, accent colors, glass intensity, animations, panel density, notification behavior, sound, motion, background atmosphere, dashboard focus, Command Dock personality, celebration effects — tasteful and professional
+- **Context awareness (11 signals)** — calendar, Organization Pulse™, Founder Cognitive Load™, meeting status, presentation status, launch day, milestones, workload, time of day, active workspace, current department
+- **Experience transitions (6)** — launch→celebration, meeting→presentation, deep work→focus, critical issue→emergency, training→learning, review→executive review — subtle, never distracting
+- **Command Dock** — *"I've entered Focus Mode."* · *"Presentation Mode is ready."* · *"Congratulations on today's launch."* · *"I've reduced distractions while you work."*
+
+**Delivered:**
+- **`src/studio-os-core/experience-engine/`** — `mode-catalog.ts` · `environment-engine.ts` · `context-engine.ts` · `transition-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncExperienceEngineFromSources` · `setExperienceMode`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`ExperienceEngineWorkspace`** (7 tabs: Overview · Experience Modes · Adaptive Environment · Context Awareness · Transitions · Governance · Discovery) · **`/admin/studio/experience-engine`** · **`MissionControlExperienceEnginePanel`** · **`useExperienceEngineState`**
+- **Wiring** — nav M141 · sync chain Asset Registry → Experience Engine (Infrastructure terminal) · Command Dock experience-engine-first · boundary-sync · documentation system registry + page-guide entry · Asset Registry workspace link · Mission Control panel · Infrastructure Chapter complete flag in profile/governance
+- **Docs** — **`docs/studio-os/experience-engine.md`** · **CORE.md** M141 entry · updated asset-registry sync chain
+
+**Conventions:** Experience changes feel, not function. Transitions subtle only. Sync chain: … → State Engine → Asset Registry → **Experience Engine** (M125–M141 Infrastructure Chapter complete). Demo localStorage via `studioOsExperienceEngine_v1`. Brand voice: *"Technology adapts to people. Not the other way around."* Accent `#8B5CF6`.

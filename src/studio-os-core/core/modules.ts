@@ -134,6 +134,7 @@ export type StudioOsCoreModuleId =
   | 'workflow-engine'
   | 'state-engine'
   | 'asset-registry'
+  | 'experience-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -933,6 +934,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ASSET REGISTRY™',
     description: 'Asset Registry V1.0 — permanent home for every organizational asset; searchable, versioned, connected.',
     routeSegment: 'asset-registry',
+  },
+  {
+    id: 'experience-engine',
+    label: 'EXPERIENCE ENGINE™',
+    description: 'Experience Engine V1.0 — emotional and environmental layer; context-aware atmosphere, subtle transitions, Infrastructure Chapter completion.',
+    routeSegment: 'experience-engine',
   },
   {
     id: 'succession-mode',

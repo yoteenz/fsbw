@@ -1812,6 +1812,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'experience-engine',
+    title: 'EXPERIENCE ENGINE™',
+    purpose: 'Emotional and environmental layer — adaptive atmosphere, context-aware modes, subtle transitions.',
+    route: p('experience-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M141',
+    ctaLabel: 'OPEN EXPERIENCE ENGINE',
+    moduleKey: 'experience-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

@@ -60,6 +60,7 @@ export type StudioOsBrandSystemId =
   | 'workflow-engine'
   | 'state-engine'
   | 'asset-registry'
+  | 'experience-engine'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -119,6 +120,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'workflow-engine': 'Design visually. Evolve continuously. Choreograph work.',
   'state-engine': 'Defined states. Intentional transitions. Complete trust.',
   'asset-registry': 'Assets managed. Knowledge preserved. Never scattered.',
+  'experience-engine': 'Technology adapts to people. Not the other way around.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

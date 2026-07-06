@@ -249,6 +249,11 @@ import {
   buildProactiveAssetRegistrySuggestion,
   buildAssetRegistryOpeningLine,
 } from '../asset-registry/dock-advisor';
+import {
+  resolveExperienceEngineAdvice,
+  buildProactiveExperienceEngineSuggestion,
+  buildExperienceEngineOpeningLine,
+} from '../experience-engine/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -381,6 +386,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const stateEngineOpeningLine = buildStateEngineOpeningLine(workspaceId);
   const assetRegistry = buildProactiveAssetRegistrySuggestion(workspaceId);
   const assetRegistryOpeningLine = buildAssetRegistryOpeningLine(workspaceId);
+  const experienceEngine = buildProactiveExperienceEngineSuggestion(workspaceId);
+  const experienceEngineOpeningLine = buildExperienceEngineOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -812,6 +819,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'Find our latest logo.',
       }
     : null;
+  const experienceEngineProactive = experienceEngine
+    ? {
+        response: experienceEngine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: "I've entered Focus Mode.",
+      }
+    : null;
+  const experienceEngineOpeningProactive = experienceEngineOpeningLine
+    ? {
+        response: experienceEngineOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Presentation Mode is ready.',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -886,6 +907,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? modelOrchestratorProactive
       : pathname.includes('/studio-foundation-models') && studioFoundationModelsProactive
       ? studioFoundationModelsProactive
+      : pathname.includes('/experience-engine') && experienceEngineProactive
+      ? experienceEngineProactive
       : pathname.includes('/asset-registry') && assetRegistryProactive
       ? assetRegistryProactive
       : pathname.includes('/state-engine') && stateEngineProactive
@@ -923,7 +946,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? assetRegistryOpeningProactive ?? stateEngineOpeningProactive ?? workflowEngineOpeningProactive ?? pluginSdkOpeningProactive ?? workspaceRuntimeOpeningProactive ?? permissionEngineOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? experienceEngineOpeningProactive ?? assetRegistryOpeningProactive ?? stateEngineOpeningProactive ?? workflowEngineOpeningProactive ?? pluginSdkOpeningProactive ?? workspaceRuntimeOpeningProactive ?? permissionEngineOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -1317,6 +1340,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${studioFoundationModelsAdvice.concierge}\n${studioFoundationModelsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const experienceEngineAdvice = resolveExperienceEngineAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (experienceEngineAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${experienceEngineAdvice.concierge}\n${experienceEngineAdvice.response}`,
     });
     return null;
   }

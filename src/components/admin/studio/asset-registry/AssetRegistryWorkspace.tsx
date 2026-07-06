@@ -7,7 +7,7 @@ import {
   queryAssetRegistry,
   buildVersioningCapabilities,
 } from '../../../../studio-os-core/asset-registry';
-import { adminStudioMissionControlPath, adminStudioStateEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioMissionControlPath, adminStudioStateEnginePath, adminStudioExperienceEnginePath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -76,7 +76,10 @@ export function AssetRegistryWorkspace() {
           {profile.dockRegistryLine}
         </p>
       </ExecutiveSecondaryCard>
-      <button type="button" onClick={() => navigate(adminStudioStateEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ASSET_REGISTRY_ACCENT, color: ASSET_REGISTRY_ACCENT }}>
+      <button type="button" onClick={() => navigate(adminStudioExperienceEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ASSET_REGISTRY_ACCENT, color: ASSET_REGISTRY_ACCENT }}>
+        EXPERIENCE ENGINE →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioStateEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         STATE ENGINE →
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>

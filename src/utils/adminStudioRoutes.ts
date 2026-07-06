@@ -945,6 +945,10 @@ export function adminStudioAssetRegistryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/asset-registry`;
 }
 
+export function adminStudioExperienceEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/experience-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

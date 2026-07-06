@@ -49,7 +49,11 @@ function upsertProfile(profile: OrganizationAssetRegistryProfile): OrganizationA
 
 /** Rebuild asset catalog, metadata, versioning, and health from State Engine + platform sources */
 export function syncAssetRegistryFromSources(organizationId: string): OrganizationAssetRegistryProfile {
-  return upsertProfile(buildOrganizationAssetRegistryProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationAssetRegistryProfile(organizationId));
+  void import('../experience-engine/store').then((m) => {
+    m.syncExperienceEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationAssetRegistryProfile(
