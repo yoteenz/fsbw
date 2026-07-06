@@ -46,11 +46,14 @@ import {
   HqExperienceStyles,
   HqWingZone,
   LegacyTimelineStory,
+  LegacyWallFeature,
+  LivingHeadquartersShell,
   PriorityMissionHero,
   hqGrace,
   resolveHeadquartersEnvironment,
   resolveHeadquartersMaturity,
 } from '../headquarters-experience';
+import { useLivingHeadquartersState } from '../../../../hooks/useLivingHeadquartersState';
 import { FrontalSlayerExecutiveLobby } from './FrontalSlayerExecutiveLobby';
 import { MissionControlExecutiveHealthPanel } from './MissionControlExecutiveHealthPanel';
 import { MissionControlOrganizationPulsePanel } from './MissionControlOrganizationPulsePanel';
@@ -114,6 +117,10 @@ export function MissionControlWorkspace() {
   const header = MISSION_CONTROL_HEADER;
   const env = resolveHeadquartersEnvironment(workspace.id);
   const maturity = resolveHeadquartersMaturity(0, healthProfile?.executiveHealthScore ?? header.workspaceHealth);
+  const living = useLivingHeadquartersState({
+    organizationId: workspace.id,
+    healthScore: healthProfile?.executiveHealthScore ?? header.workspaceHealth,
+  });
   const currentPhaseIdx = MISSION_PHASES.findIndex((p) => p.id === MISSION_CURRENT_PHASE);
   const activeDeptMeta = DEPARTMENT_GRID.find((d) => d.id === activeDepartment);
 
@@ -128,6 +135,7 @@ export function MissionControlWorkspace() {
       <style>{MISSION_CONTROL_STYLES}</style>
       <HqExperienceStyles />
 
+      <LivingHeadquartersShell living={living}>
       <ExecutivePageShell>
         <FrontalSlayerExecutiveLobby />
 
@@ -496,6 +504,11 @@ export function MissionControlWorkspace() {
 
         {maturity.showLegacy ? (
         <HqWingZone wing="LEGACY WING™" title="Permanent organizational history" accentHex={env.accentHex}>
+          <LegacyWallFeature
+            entries={living.legacyWall}
+            accentHex={env.accentHex}
+            atmosphereLabel={living.atmosphereLabel}
+          />
           <MissionControlExecutiveTimelinePanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
@@ -549,6 +562,7 @@ export function MissionControlWorkspace() {
         </HqWingZone>
         ) : null}
       </ExecutivePageShell>
+      </LivingHeadquartersShell>
     </div>
   );
 }

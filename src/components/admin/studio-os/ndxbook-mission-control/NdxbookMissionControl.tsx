@@ -13,9 +13,12 @@ import { NdxbookExecutiveLobby } from './NdxbookExecutiveLobby';
 import {
   HqExperienceStyles,
   HqWingZone,
+  LegacyWallFeature,
+  LivingHeadquartersShell,
   resolveHeadquartersEnvironment,
   resolveHeadquartersMaturity,
 } from '../../studio/headquarters-experience';
+import { useLivingHeadquartersState } from '../../../../hooks/useLivingHeadquartersState';
 import {
   ActivityWallPanel,
   CompanyHealthPanel,
@@ -57,6 +60,12 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
   const pilot = readFounderPilotModeStore(org.organizationId);
   const overallHealth = store.companyHealth.find((m) => m.id === 'overall')?.score ?? 0;
   const maturity = resolveHeadquartersMaturity(pilot.pagesPublished, overallHealth);
+  const living = useLivingHeadquartersState({
+    organizationId: org.organizationId,
+    pagesPublished: pilot.pagesPublished,
+    knowledgeAssets: pilot.knowledgeAssets,
+    healthScore: overallHealth,
+  });
 
   const panelProps = {
     store,
@@ -94,7 +103,7 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
       case 'mission-control':
       default:
         return (
-          <div className="ndxbook-hq-flow pb-36">
+          <LivingHeadquartersShell living={living} className="ndxbook-hq-flow pb-36">
             <NdxbookExecutiveLobby store={store} formatDate={formatDate} formatClock={formatClock} />
 
             <HqWingZone wing="COMPANY PULSE™" title="How the organization feels today" accentHex={env.accentHex}>
@@ -131,11 +140,16 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
 
             {maturity.showLegacy ? (
               <HqWingZone wing="LEGACY WING™" title="Permanent organizational history" accentHex={env.accentHex}>
+                <LegacyWallFeature
+                  entries={living.legacyWall}
+                  accentHex={env.accentHex}
+                  atmosphereLabel={living.atmosphereLabel}
+                />
                 <FounderTimelinePanel />
                 <ActivityWallPanel {...panelProps} />
               </HqWingZone>
             ) : null}
-          </div>
+          </LivingHeadquartersShell>
         );
     }
   };

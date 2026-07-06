@@ -29,6 +29,7 @@ import {
   StudioIntelligenceNarrative,
   StudioLabsGrid,
 } from '../../studio/headquarters-experience';
+import { useLivingHeadquartersState } from '../../../../hooks/useLivingHeadquartersState';
 import {
   MC,
   formatCurrency,
@@ -607,12 +608,24 @@ export function StudioIntelligencePanel({ store }: PanelProps) {
   const org = useOrganizationContext();
   const [showOthers, setShowOthers] = useState(false);
   const [best, ...others] = store.intelligence;
-  const publishedCount = readFounderPilotModeStore(org.organizationId).pagesPublished;
+  const pilot = readFounderPilotModeStore(org.organizationId);
+  const publishedCount = pilot.pagesPublished;
+  const overallHealth = store.companyHealth.find((m) => m.id === 'overall')?.score;
+  const living = useLivingHeadquartersState({
+    organizationId: org.organizationId,
+    pagesPublished: pilot.pagesPublished,
+    knowledgeAssets: pilot.knowledgeAssets,
+    healthScore: overallHealth,
+  });
 
   if (!best) {
     return (
       <div className="space-y-3">
-        <StudioIntelligenceNarrative publishedCount={publishedCount} accentHex={MC.accent} />
+        <StudioIntelligenceNarrative
+          publishedCount={publishedCount}
+          accentHex={MC.accent}
+          livingMemory={living.livingMemory}
+        />
         <HqGlassSurface>
           <p style={{ ...mcSectionTitle, fontSize: '8px' }}>PUBLISHING MILESTONES</p>
           <div className="space-y-2 mt-2">
@@ -647,6 +660,7 @@ export function StudioIntelligencePanel({ store }: PanelProps) {
         primaryInsight={best.why}
         secondaryInsights={[best.recommendedAction, best.expectedImpact]}
         accentHex={MC.accent}
+        livingMemory={living.livingMemory}
       />
       <section className="p-4 mb-4" style={{ ...mcPanel, background: 'rgba(255,255,255,0.72)' }}>
       <div

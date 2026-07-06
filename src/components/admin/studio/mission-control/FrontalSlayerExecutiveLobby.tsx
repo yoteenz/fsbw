@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useCompanyHealthIndexState } from '../../../../hooks/useCompanyHealthIndexState';
+import { useLivingHeadquartersState } from '../../../../hooks/useLivingHeadquartersState';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import {
   MISSION_CONTROL_HEADER,
@@ -7,6 +8,7 @@ import {
   MISSION_OVERVIEW,
 } from '../../../../utils/adminStudioMissionControlDemo';
 import {
+  ExecutiveCollectionGallery,
   ExecutiveLobbyHero,
   HqExperienceStyles,
   resolveHeadquartersEnvironment,
@@ -34,6 +36,11 @@ export function FrontalSlayerExecutiveLobby() {
     return `MISSION ${header.missionStatus.replace('-', ' ').toUpperCase()} · EXECUTIVE HEALTH ${health}%`;
   }, [healthProfile, header]);
 
+  const living = useLivingHeadquartersState({
+    organizationId: workspace.id,
+    healthScore: healthProfile?.executiveHealthScore ?? header.workspaceHealth,
+  });
+
   return (
     <>
       <HqExperienceStyles />
@@ -50,6 +57,13 @@ export function FrontalSlayerExecutiveLobby() {
         mission={MISSION_EXECUTIVE_BRIEF.todayFocus}
         topPriority={MISSION_OVERVIEW.title}
         accentHex={env.accentHex}
+        celebrationMessage={living.celebrationMessage}
+        livingMemory={living.livingMemory}
+        collectionSlot={
+          living.executiveCollection.length > 0 ? (
+            <ExecutiveCollectionGallery artifacts={living.executiveCollection} accentHex={env.accentHex} />
+          ) : null
+        }
         metrics={[
           { label: 'PROGRESS', value: `${MISSION_OVERVIEW.progressPct}%` },
           { label: 'DAYS LEFT', value: String(MISSION_OVERVIEW.daysRemaining) },

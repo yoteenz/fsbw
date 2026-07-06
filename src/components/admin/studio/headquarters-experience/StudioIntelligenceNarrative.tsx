@@ -6,6 +6,7 @@ type Props = {
   primaryInsight?: string;
   secondaryInsights?: string[];
   accentHex?: string;
+  livingMemory?: string | null;
 };
 
 /** Conversational Studio Intelligence — educates naturally, not via docs. */
@@ -14,12 +15,18 @@ export function StudioIntelligenceNarrative({
   primaryInsight,
   secondaryInsights = [],
   accentHex = HQ.red,
+  livingMemory,
 }: Props) {
   const narrative = buildIntelligenceNarrative(publishedCount, primaryInsight);
 
   return (
     <HqGlassSurface>
       <p style={{ ...hqLabel, color: accentHex, margin: 0 }}>STUDIO INTELLIGENCE</p>
+      {livingMemory ? (
+        <p style={{ ...hqBody, fontSize: '8px', color: HQ.gold, marginTop: 10, lineHeight: 1.5, fontStyle: 'italic' }}>
+          {livingMemory}
+        </p>
+      ) : null}
       <p style={{ ...hqBody, fontSize: '9px', color: HQ.black, marginTop: 12, lineHeight: 1.55, fontStyle: 'normal' }}>
         {narrative}
       </p>

@@ -19,6 +19,10 @@ export type ExecutiveLobbyProps = {
   briefingExpanded?: boolean;
   briefingDetail?: ReactNode;
   accentHex?: string;
+  /** Living Headquarters™ — quiet celebration or anniversary acknowledgment. */
+  celebrationMessage?: string | null;
+  livingMemory?: string | null;
+  collectionSlot?: ReactNode;
 };
 
 /** Executive Lobby™ — immersive hero environment replacing dark briefing cards. */
@@ -39,9 +43,13 @@ export function ExecutiveLobbyHero({
   briefingExpanded = false,
   briefingDetail,
   accentHex = HQ.red,
+  celebrationMessage,
+  livingMemory,
+  collectionSlot,
 }: ExecutiveLobbyProps) {
   return (
     <HqGlassSurface className="hq-lobby-hero">
+      <div className="living-hq-atmosphere" aria-hidden />
       <div className="hq-lobby-ambient" aria-hidden />
       <span className="hq-floating-particle" style={{ top: '18%', left: '12%', animationDelay: '0s' }} aria-hidden />
       <span className="hq-floating-particle" style={{ top: '32%', right: '18%', animationDelay: '2s' }} aria-hidden />
@@ -72,6 +80,17 @@ export function ExecutiveLobbyHero({
         >
           <p style={{ ...hqLabel, margin: 0 }}>EXECUTIVE BRIEFING</p>
           <p style={{ ...hqGrace, fontSize: '16px', margin: '8px 0 0' }}>{greeting}</p>
+
+          {celebrationMessage ? (
+            <p className="living-hq-commemorative" style={{ ...hqGrace, fontSize: '12px', margin: '10px 0 0' }}>
+              {celebrationMessage}
+            </p>
+          ) : null}
+          {livingMemory ? (
+            <p className="living-hq-memory" style={{ ...hqBody, fontSize: '8px', margin: '8px 0 0', fontStyle: 'italic' }}>
+              {livingMemory}
+            </p>
+          ) : null}
 
           <div className="grid grid-cols-1 gap-2 mt-4">
             {overnight ? (
@@ -111,6 +130,8 @@ export function ExecutiveLobbyHero({
             ))}
           </div>
         ) : null}
+
+        {collectionSlot}
       </div>
     </HqGlassSurface>
   );

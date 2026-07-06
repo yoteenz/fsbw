@@ -39166,6 +39166,10 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+**Conventions:** Innovation Lab (M119) transforms innovation from occasional event into permanent capability — demo localStorage via `studioOsInnovationLab_v1`.
+
+---
+
 ## 2026-07-06 — Milestone 119: Innovation Lab™ V1.0
 
 **Context (full chat arc):** Same session delivered M90–M118 (Blueprint through Founder Operating System `73ef6ca6`, completing Studio OS V1). User requested **Milestone 119 — Innovation Lab™ V1.0**: permanent research, invention, and strategic ideation center — purpose is to continuously create ideas, not collect them · innovation as permanent organizational capability · 12 innovation sources · 20 idea categories · Idea Workbench per idea · collaborative Digital Concierge innovation · 9-stage pipeline (archived searchable) · Command Dock revenue/workflow/customer/prototype lines.
@@ -39190,22 +39194,29 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-## 2026-07-06 — Milestone 120: Organization Operating Manual™ V1.0
+**Conventions:** Organization Operating Manual (M120) is the single source of operational truth — every employee, department, Digital Concierge, and future leader learns from the same evolving handbook. Demo localStorage via `studioOsOrganizationOperatingManual_v1`.
 
-**Context (full chat arc):** Same session delivered M90–M119 (Blueprint through Innovation Lab `948e7d0c`). User requested **Milestone 120 — Organization Operating Manual™ V1.0**: living operating manual for every organization — auto-generate · organize · continuously update documentation · never manually maintain · one organization one handbook always current · 21 automatic sections · searchable natural-language Q&A · live sync when departments/policies/brains/automation/training/knowledge change · Command Dock approval/regulation/handbook lines · single source of operational truth.
+---
 
-**Requirements delivered:**
-- **21 automatic documentation sections** — Charter · Mission · Vision · Values · Blueprint · Genome · Profession Brain summaries · Department guides · Employee handbook · Leadership · CX standards · Approvals · SOPs · Automation docs · Knowledge articles · Training paths · Command Dock reference · Council procedures · Emergency · Glossary · Policy library
-- **Searchable organization** — natural-language Q&A (*"How do we onboard clients?"* · refund policy · approvals · customer service philosophy)
-- **Live synchronization** — 6 triggers (departments · policies · profession brain · automation · training · knowledge) — no duplicate · no outdated information
-- **Command Dock** — **`resolveOrganizationOperatingManualAdvice()`** · **`buildProactiveOrganizationOperatingManualSuggestion()`** · **`buildOperatingManualOpeningLine()`**
+## 2026-07-06 — Living Headquarters™ environmental storytelling (HQ V2 follow-up)
+
+**Context (full chat arc):** Same session delivered Headquarters Experience™ V2.0 (`6724a61d`) — executive lobby, wing zones, crystal health UI. User requested **Living Headquarters™** follow-up design revision: **do NOT redesign page layout**; teach Headquarters to **evolve emotionally over time** via environmental storytelling — seasons, milestone moments, Legacy Wall™, Executive Collection™, living memories, adaptive atmospheres.
+
+**Design requirements:**
+- Headquarters never static — environment responds to earned milestones (anniversary, first revenue, 100 assets, marketplace, brain complete, etc.)
+- Seasonal atmospheres (winter/spring/summer/autumn) — tasteful, not gimmicky
+- Milestone moments — quiet pride (warm light, crystal glow, commemorative display) not fireworks
+- **Legacy Wall™** — permanent engraved organizational history inside Legacy wing
+- **Executive Collection™** — crystal trophies, monuments, sculptures unlocked by milestones (history, not gamification)
+- **Living memories** — Studio Intelligence acknowledges anniversaries ("one year since first customer")
+- Adaptive modes: celebration, anniversary, launch-day, holiday, executive-review, emergency — lighting/atmosphere only
 
 **Delivered:**
-- **`src/studio-os-core/organization-operating-manual/`** — **`documentation-generator.ts`** · **`searchable-organization.ts`** · **`live-synchronization.ts`** · **`operating-manual-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
-- **`OrganizationOperatingManualWorkspace`** + **`/admin/studio/organization-operating-manual`** — 4 tabs: Manual Overview · Documentation Library · Searchable Organization · Live Synchronization · blue accent `#2563EB`
-- **`MissionControlOrganizationOperatingManualPanel`** in Knowledge Wing · **`useOrganizationOperatingManualState`** hook
-- **Brand voice **`organization-operating-manual`**: *"One handbook. Always current."*
-- **Sync chain** — Inauguration · Genome · Blueprint · Profession Brain · Architecture · Trust · Shadow · Institute · Council · **`innovation-lab/store`** resync triggers **`syncOrganizationOperatingManualFromSources`** · **boundary-sync**
-- **Docs** — **`docs/studio-os/organization-operating-manual.md`** · **CORE.md** M120 entry · nav metric **M120**
+- **`src/studio-os-core/living-headquarters/`** — **`resolveLivingHeadquarters()`** pulls Founder Pilot milestones + org age · season resolver · atmosphere modes · legacy wall builder · executive collection · living memory + celebration messages
+- **`useLivingHeadquartersState`** hook
+- **UI (no wing reorder):** **`LivingHeadquartersShell`** (data-attribute CSS) · **`LegacyWallFeature`** in Legacy wing · **`ExecutiveCollectionGallery`** in Executive Lobby · lobby celebration/memory lines · **`StudioIntelligenceNarrative`** living memory prop
+- Integrated into **`MissionControlWorkspace`**, **`NdxbookMissionControl`**, both executive lobbies, **`StudioIntelligencePanel`**
 
-**Conventions:** Organization Operating Manual (M120) is the single source of operational truth — every employee, department, Digital Concierge, and future leader learns from the same evolving handbook. Demo localStorage via `studioOsOrganizationOperatingManual_v1`.
+**Conventions:** Environmental changes only — no business logic or layout restructure. Milestones must be earned (Founder Pilot store / demo engravings for mature Frontal Slayer). Distinct from M82.5 **`living-headquarters-presence`** (concierge presence) — Living Headquarters is **visual/emotional storytelling**.
+
+**Changes:** living-headquarters/*, headquarters-experience/LivingHeadquartersShell.tsx, LegacyWallFeature.tsx, ExecutiveCollectionGallery.tsx, livingHeadquartersTheme.ts, ExecutiveLobbyHero.tsx, StudioIntelligenceNarrative.tsx, useLivingHeadquartersState.ts, MissionControlWorkspace.tsx, NdxbookMissionControl.tsx, NdxbookExecutiveLobby.tsx, FrontalSlayerExecutiveLobby.tsx, NdxbookMissionControlPanels.tsx, CORE.md, MEMORY.md.

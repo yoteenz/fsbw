@@ -8,3 +8,7 @@ export { KnowledgeLibraryCollections } from './KnowledgeLibraryCollections';
 export { StudioIntelligenceNarrative } from './StudioIntelligenceNarrative';
 export { LegacyTimelineStory } from './LegacyTimelineStory';
 export { StudioLabsGrid } from './StudioLabsGrid';
+export { LivingHeadquartersShell, LivingHeadquartersStyles } from './LivingHeadquartersShell';
+export { LegacyWallFeature } from './LegacyWallFeature';
+export { ExecutiveCollectionGallery } from './ExecutiveCollectionGallery';
+export { LIVING_HQ_STYLES, ARTIFACT_ICONS } from './livingHeadquartersTheme';

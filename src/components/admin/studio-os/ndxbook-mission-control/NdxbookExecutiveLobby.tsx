@@ -4,8 +4,11 @@ import type { NdxbookMissionControlStore } from '../../../../studio-os-core/ndxb
 import { FOUNDER_DISPLAY_NAME } from '../../../../studio-os-core/command-dock/constants';
 import { buildChiefConciergeBrief } from '../../../../studio-os-core/studio-immersion/engine';
 import { useOrganizationContext } from '../../../../studio-os-core/organization-context';
+import { readFounderPilotModeStore } from '../../../../studio-os-core/founder-pilot-mode';
+import { useLivingHeadquartersState } from '../../../../hooks/useLivingHeadquartersState';
 import { formatNumber, formatCurrency } from './ndxbookMissionControlTheme';
 import {
+  ExecutiveCollectionGallery,
   ExecutiveLobbyHero,
   HqExperienceStyles,
   resolveHeadquartersEnvironment,
@@ -24,6 +27,15 @@ export function NdxbookExecutiveLobby({ store, formatDate, formatClock }: Props)
   const env = resolveHeadquartersEnvironment(org.organizationId);
   const [expanded, setExpanded] = useState(false);
   const b = store.briefing;
+  const pilot = readFounderPilotModeStore(org.organizationId);
+  const overallHealth = store.companyHealth.find((m) => m.id === 'overall')?.score;
+
+  const living = useLivingHeadquartersState({
+    organizationId: org.organizationId,
+    pagesPublished: pilot.pagesPublished,
+    knowledgeAssets: pilot.knowledgeAssets,
+    healthScore: overallHealth,
+  });
 
   const brief = useMemo(
     () =>
@@ -51,6 +63,13 @@ export function NdxbookExecutiveLobby({ store, formatDate, formatClock }: Props)
         mission={b.nextSuggestedAction}
         topPriority={brief.lines[0]}
         accentHex={env.accentHex}
+        celebrationMessage={living.celebrationMessage}
+        livingMemory={living.livingMemory}
+        collectionSlot={
+          living.executiveCollection.length > 0 ? (
+            <ExecutiveCollectionGallery artifacts={living.executiveCollection} accentHex={env.accentHex} />
+          ) : null
+        }
         metrics={[
           { label: 'IN PRODUCTION', value: String(b.pagesInProduction) },
           { label: 'APPROVALS', value: String(b.pendingApprovals) },
