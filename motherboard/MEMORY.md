@@ -38345,3 +38345,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Never fabricate revenue/analytics/history when Founder Pilot Mode is active. Page numbering starts at 001. Instagram is the only active publishing destination during NDXBOOK pilot. Record earned milestones in Founder Timeline — permanent org history.
 
+---
+
+## 2026-07-06 — NDXBOOK Mission Control quick links routing fix
+
+**Context (full chat arc):** After M86/M87 NDXBOOK HQ work, user reported **purple Primary Actions buttons** (CREATE PAGE, APPROVE PRODUCTION, PUBLISH, etc.) and top **REVIEW & POST CONTENT →** / **SOCIAL CONNECTORS →** quick links **did not navigate anywhere** on mobile — defeating the purpose of command-style quick links.
+
+**Root cause:** NDXBOOK runs on **`ai-media`** workspace, not Frontal Slayer default. **`StudioWorkspaceGuard`** redirected legacy **`/admin/studio/*`** clicks to workspace-scoped paths but **dropped query strings** (`?tab=pages`, `?brand=ndxbook`) and **truncated subpaths** (`ndxbook/mission-control` → `ndxbook`). Clicks appeared to do nothing or landed on the wrong tab/page. Hardcoded legacy paths in **`MissionActionsPanel`** compounded the issue.
+
+**Fix:**
+- **`StudioWorkspaceGuard`** — preserve full path remainder + **`location.search`** on legacy → workspace redirect.
+- **`headquarters-module-resolver`** — resolve **`ndxbook/mission-control`** to correct page module.
+- **`ndxbookMissionActionRoutes.ts`** — org-scoped targets via **`useStudioModuleNav().toModule()`**.
+- **`MissionActionsPanel`** + mission-control page top buttons — **`Link`** components (not `button` + `navigate`) with workspace-aware routes.
+- **`NdxbookWorkspace`** — sync active tab when URL search params change.
+- **Command Dock** — medium height during founder pilot brief; extra bottom padding on HQ flow so dock does not cover Primary Actions on mobile.
+
+**Changes:** `StudioWorkspaceGuard.tsx`, `headquarters-module-resolver.ts`, `ndxbookMissionActionRoutes.ts`, `NdxbookMissionControlPanels.tsx`, `ndxbook/mission-control/page.tsx`, `NdxbookWorkspace.tsx`, `CommandDock.tsx`, `NdxbookMissionControl.tsx`, `useSyncWorkspaceFromRoute.ts`, `motherboard/MEMORY.md`.
+
+**Conventions:** NDXBOOK Mission Control quick links must use **`toModule()`** + **`Link`**, never bare **`/admin/studio/*`** strings. Guard redirects must preserve query params and full module subpaths.
+

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAdminStudioNdxbookState } from '../../../../hooks/useAdminStudioNdxbookState';
 import { NdxbookSocialsPanel } from './NdxbookSocialsPanel';
@@ -53,10 +53,16 @@ function MetricCard({ label, value, accent }: { label: string; value: string; ac
 export function NdxbookWorkspace() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = (searchParams.get('tab') as NdxbookTabId | null) ?? 'overview';
+  const tabParam = (searchParams.get('tab') as NdxbookTabId | null) ?? 'overview';
   const [tab, setTab] = useState<NdxbookTabId>(
-    NDXBOOK_TABS.some((t) => t.id === initialTab) ? initialTab : 'overview'
+    NDXBOOK_TABS.some((t) => t.id === tabParam) ? tabParam : 'overview'
   );
+
+  useEffect(() => {
+    const nextTab = (searchParams.get('tab') as NdxbookTabId | null) ?? 'overview';
+    const resolved = NDXBOOK_TABS.some((t) => t.id === nextTab) ? nextTab : 'overview';
+    setTab(resolved);
+  }, [searchParams]);
 
   const {
     brand,

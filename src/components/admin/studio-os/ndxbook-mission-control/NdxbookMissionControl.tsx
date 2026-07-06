@@ -81,7 +81,7 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
       case 'mission-control':
       default:
         return (
-          <div className="ndxbook-hq-flow space-y-1 pb-4">
+          <div className="ndxbook-hq-flow space-y-1 pb-36">
             <ChiefConciergeBriefingPanel />
             <CompanyHealthPanel {...panelProps} />
             <PublishingTimelinePanel {...panelProps} />

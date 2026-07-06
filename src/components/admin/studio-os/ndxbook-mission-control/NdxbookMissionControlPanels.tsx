@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import type { NdxbookMissionControlStore } from '../../../../studio-os-core/ndxbook/mission-control/types';
 import type { NdxbookVolumeId } from '../../../../studio-os-core/ndxbook/types';
 import { VOLUME_LABELS, PLATFORM_LABELS } from '../../../../studio-os-core/ndxbook/constants';
@@ -7,11 +7,16 @@ import { ACTIVITY_CATEGORY_COLORS, PLATFORM_ICONS, TALENT_STATUS_COLORS } from '
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { FOUNDER_DISPLAY_NAME } from '../../../../studio-os-core/command-dock/constants';
 import { buildChiefConciergeBrief } from '../../../../studio-os-core/studio-immersion/engine';
-import { useOrganizationContext } from '../../../../studio-os-core/organization-context';
+import { useOrganizationContext, useStudioModuleNav } from '../../../../studio-os-core/organization-context';
 import {
   INTELLIGENCE_MATURITY_TIERS,
   readFounderPilotModeStore,
 } from '../../../../studio-os-core/founder-pilot-mode';
+import {
+  buildNdxbookMissionActionLinks,
+  ndxbookPagesQuickLink,
+  type NdxbookMissionActionId,
+} from './ndxbookMissionActionRoutes';
 import {
   MC,
   formatCurrency,
@@ -249,7 +254,8 @@ export function CompanyHealthPanel({ store }: PanelProps) {
 }
 
 export function NewsroomPanel({ store }: PanelProps) {
-  const navigate = useNavigate();
+  const org = useOrganizationContext();
+  const { toModule } = useStudioModuleNav();
   const activePages = store.newsroomStages.reduce((sum, s) => sum + s.activeItems, 0);
   return (
     <CollapsibleSection
@@ -265,33 +271,33 @@ export function NewsroomPanel({ store }: PanelProps) {
         <div className="flex gap-1 min-w-max pb-1">
           {store.newsroomStages.map((stage, i) => (
             <div key={stage.id} className="flex items-center">
-              <button
-                type="button"
-                onClick={() => navigate(`/admin/studio/ndxbook?tab=pages&stage=${stage.id}`)}
+              <Link
+                to={ndxbookPagesQuickLink(toModule, stage.id)}
                 className="p-2 text-left min-w-[72px] border transition-opacity hover:opacity-90"
                 style={{
                   borderColor: stage.activeItems > 0 ? MC.accent : MC.panelBorder,
                   background: stage.activeItems > 0 ? 'rgba(99,102,241,0.08)' : 'white',
+                  textDecoration: 'none',
+                  display: 'block',
                 }}
               >
                 <p style={{ ...mcLabel, color: MC.accent, fontSize: '6px' }}>{stage.label}</p>
                 <p style={{ ...mcValue, fontSize: '16px' }}>{stage.pageCount}</p>
                 <p style={mcLabel}>{stage.activeItems} ACTIVE</p>
-              </button>
+              </Link>
               {i < store.newsroomStages.length - 1 ? (
                 <span style={{ color: MC.gray, fontSize: '10px', padding: '0 2px' }}>→</span>
               ) : null}
             </div>
           ))}
         </div>
-        <button
-          type="button"
-          onClick={() => navigate('/admin/studio-os/workspace/ai-media/newsroom')}
-          className="mt-2 px-2 py-1 text-[6px] font-futura border"
-          style={{ fontWeight: 515, color: MC.accent, borderColor: MC.accent }}
+        <Link
+          to={STUDIO_OS_ROUTES.workspaceNewsroom(org.organizationId)}
+          className="mt-2 px-2 py-1 text-[6px] font-futura border inline-block"
+          style={{ fontWeight: 515, color: MC.accent, borderColor: MC.accent, textDecoration: 'none' }}
         >
           ENTER NEWSROOM →
-        </button>
+        </Link>
       </div>
     </CollapsibleSection>
   );
@@ -463,7 +469,7 @@ function LibraryPageList({ pages, emptyLabel }: { pages: NdxbookMissionControlSt
 }
 
 export function NdxbookLibraryPanel({ store }: PanelProps) {
-  const navigate = useNavigate();
+  const { toModule } = useStudioModuleNav();
   const lib = store.library;
   const topPages = lib.latestPages.slice(0, 3);
   const isEmpty = lib.latestPages.length === 0;
@@ -474,14 +480,13 @@ export function NdxbookLibraryPanel({ store }: PanelProps) {
         <p style={mcSectionTitle}>{SECTION_ICONS.library} KNOWLEDGE LIBRARY</p>
         <p style={{ ...mcValue, fontSize: '14px', color: MC.gray }}>No published pages yet.</p>
         <p style={{ ...mcLabel, marginTop: 8 }}>Create your first knowledge asset.</p>
-        <button
-          type="button"
-          onClick={() => navigate('/admin/studio/ndxbook?tab=pages')}
-          className="mt-3 px-4 py-2 text-[7px] font-futura border"
-          style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent, background: 'rgba(99,102,241,0.06)' }}
+        <Link
+          to={ndxbookPagesQuickLink(toModule)}
+          className="mt-3 px-4 py-2 text-[7px] font-futura border inline-block"
+          style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent, background: 'rgba(99,102,241,0.06)', textDecoration: 'none' }}
         >
           CREATE PAGE 001 →
-        </button>
+        </Link>
       </section>
     );
   }
@@ -754,7 +759,7 @@ export function RevenueCenterPanel({ store }: PanelProps) {
 }
 
 export function LabsExperimentsPanel({ store }: PanelProps) {
-  const navigate = useNavigate();
+  const { toModule } = useStudioModuleNav();
   const active = store.experiments.filter((e) => e.status === 'active');
 
   if (store.experiments.length === 0) {
@@ -765,9 +770,9 @@ export function LabsExperimentsPanel({ store }: PanelProps) {
         <p style={{ ...mcLabel, marginTop: 8 }}>
           Publish at least five pieces of content to unlock experimentation.
         </p>
-        <button type="button" className="text-[6px] underline mt-2" style={{ color: MC.accent }} onClick={() => navigate('/admin/studio/labs')}>
+        <Link to={toModule('labs')} className="text-[6px] underline mt-2 inline-block" style={{ color: MC.accent, textDecoration: 'underline' }}>
           OPEN STUDIO OS LABS →
-        </button>
+        </Link>
       </section>
     );
   }
@@ -789,15 +794,15 @@ export function LabsExperimentsPanel({ store }: PanelProps) {
           <p style={mcLabel}>LEADER · {exp.currentLeader}</p>
         </div>
       ))}
-      <button type="button" className="text-[6px] underline mt-2" style={{ color: MC.accent }} onClick={() => navigate('/admin/studio/labs')}>
+      <Link to={toModule('labs')} className="text-[6px] underline mt-2 inline-block" style={{ color: MC.accent, textDecoration: 'underline' }}>
         OPEN STUDIO OS LABS →
-      </button>
+      </Link>
     </CollapsibleSection>
   );
 }
 
 export function TalentBoardPanel({ store }: PanelProps) {
-  const navigate = useNavigate();
+  const { toModule } = useStudioModuleNav();
   const activeHosts = store.talentBoard.filter((h) => h.status !== 'available');
 
   return (
@@ -826,14 +831,14 @@ export function TalentBoardPanel({ store }: PanelProps) {
           </span>
         </div>
       ))}
-      <button type="button" className="text-[6px] underline mt-2" style={{ color: MC.accent }} onClick={() => navigate('/admin/studio/talent-network')}>
+      <Link to={toModule('talent-network')} className="text-[6px] underline mt-2 inline-block" style={{ color: MC.accent, textDecoration: 'underline' }}>
         OPEN TALENT NETWORK →
-      </button>
+      </Link>
     </CollapsibleSection>
   );
 }
 
-const ACTION_ICONS: Record<string, string> = {
+const ACTION_ICONS: Record<NdxbookMissionActionId, string> = {
   'create-page': '＋',
   approve: '✓',
   publish: '▶',
@@ -842,56 +847,58 @@ const ACTION_ICONS: Record<string, string> = {
   'knowledge-graph': '◈',
   talent: '◉',
   marketplace: '◆',
+  'connect-instagram': '◎',
 };
 
-export function MissionActionsPanel({ store }: PanelProps) {
-  const navigate = useNavigate();
-  const commandActions = [
-    { id: 'create-page', label: 'CREATE PAGE', route: '/admin/studio/ndxbook?tab=pages' },
-    { id: 'approve', label: 'APPROVE PRODUCTION', route: '/admin/studio/ndxbook?tab=checklist' },
-    { id: 'publish', label: 'PUBLISH', route: '/admin/studio/distribution-network?brand=ndxbook' },
-    { id: 'intelligence', label: 'OPEN STUDIO INTELLIGENCE', route: '/admin/studio/studio-intelligence' },
-    { id: 'experiment', label: 'LAUNCH EXPERIMENT', route: '/admin/studio/labs' },
-    { id: 'knowledge-graph', label: 'OPEN KNOWLEDGE GRAPH', route: '/admin/studio/knowledge-hub' },
-    { id: 'talent', label: 'OPEN TALENT NETWORK', route: '/admin/studio/talent-network' },
-    { id: 'marketplace', label: 'OPEN MARKETPLACE', route: '/admin/studio/marketplace' },
-  ];
+const missionActionButtonStyle = {
+  borderColor: MC.accent,
+  background: 'linear-gradient(135deg, rgba(99,102,241,0.06) 0%, white 100%)',
+  cursor: 'pointer',
+  textDecoration: 'none',
+  display: 'block',
+} as const;
 
-  const extra = store.missionActions.filter(
-    (a) => !commandActions.some((c) => c.route === a.route)
+export function MissionActionsPanel({ store }: PanelProps) {
+  const { toModule } = useStudioModuleNav();
+  const commandActions = buildNdxbookMissionActionLinks(toModule).filter(
+    (action) => action.id !== 'connect-instagram'
   );
+
+  const coveredIds = new Set(commandActions.map((action) => action.id));
+  const extra = store.missionActions.filter((action) => !coveredIds.has(action.id as NdxbookMissionActionId));
 
   return (
     <section className="p-4 mb-4" style={mcPanel}>
       <p style={mcSectionTitle}>{SECTION_ICONS.actions} PRIMARY ACTIONS</p>
       <div className="grid grid-cols-1 gap-2">
         {commandActions.map((action) => (
-          <button
+          <Link
             key={action.id}
-            type="button"
-            onClick={() => navigate(action.route)}
+            to={action.route}
             className="p-3 text-left border transition-opacity hover:opacity-90"
-            style={{
-              borderColor: MC.accent,
-              background: 'linear-gradient(135deg, rgba(99,102,241,0.06) 0%, white 100%)',
-            }}
+            style={missionActionButtonStyle}
           >
             <span style={{ fontSize: '14px', marginRight: 8 }}>{ACTION_ICONS[action.id] ?? '•'}</span>
             <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: MC.black, letterSpacing: '0.06em' }}>
               {action.label}
             </span>
-          </button>
+          </Link>
         ))}
         {extra.slice(0, 2).map((action) => (
-          <button
+          <Link
             key={action.id}
-            type="button"
-            onClick={() => navigate(action.route)}
+            to={action.route}
             className="p-2 text-left border"
-            style={{ borderColor: MC.panelBorder, background: 'white' }}
+            style={{
+              borderColor: MC.panelBorder,
+              background: 'white',
+              cursor: 'pointer',
+              textDecoration: 'none',
+              display: 'block',
+            }}
           >
             <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '7px', color: MC.gray }}>{action.label}</span>
-          </button>
+          </Link>
         ))}
       </div>
     </section>
@@ -970,10 +977,10 @@ export function FounderTimelinePanel() {
 }
 
 export function ExternalNavPanel({ tab, workspaceId }: { tab: string; workspaceId: string }) {
-  const navigate = useNavigate();
+  const { toModule } = useStudioModuleNav();
   const routes: Record<string, { label: string; path: string }> = {
-    'creative-dna': { label: 'CREATIVE DNA', path: '/admin/studio/memory-bible' },
-    knowledge: { label: 'KNOWLEDGE', path: '/admin/studio/knowledge-hub' },
+    'creative-dna': { label: 'CREATIVE DNA', path: toModule('memory-bible') },
+    knowledge: { label: 'KNOWLEDGE', path: toModule('knowledge-hub') },
     settings: { label: 'SETTINGS', path: STUDIO_OS_ROUTES.workspaceSettings(workspaceId) },
   };
   const r = routes[tab];
@@ -983,14 +990,13 @@ export function ExternalNavPanel({ tab, workspaceId }: { tab: string; workspaceI
     <section className="p-6 mb-3 text-center" style={mcPanel}>
       <p style={mcSectionTitle}>{r.label}</p>
       <p style={mcLabel}>FULL MODULE AVAILABLE IN STUDIO OS</p>
-      <button
-        type="button"
-        className="mt-3 px-4 py-2 text-[7px] font-futura border"
-        style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent }}
-        onClick={() => navigate(r.path)}
+      <Link
+        to={r.path}
+        className="mt-3 px-4 py-2 text-[7px] font-futura border inline-block"
+        style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent, textDecoration: 'none' }}
       >
         OPEN {r.label}
-      </button>
+      </Link>
     </section>
   );
 }

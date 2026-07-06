@@ -1,20 +1,23 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { NdxbookMissionControl } from '../../../../../components/admin/studio-os/ndxbook-mission-control/NdxbookMissionControl';
-import { useEnsureNdxbookWorkspaceOnMount } from '../../../../../hooks/useEnsureNdxbookWorkspace';
 import {
-  adminStudioNdxbookDistributionPath,
-  adminStudioNdxbookPath,
-} from '../../../../../utils/adminStudioRoutes';
+  ndxbookDistributionQuickLink,
+  ndxbookSocialsQuickLink,
+} from '../../../../../components/admin/studio-os/ndxbook-mission-control/ndxbookMissionActionRoutes';
+import { useEnsureNdxbookWorkspaceOnMount } from '../../../../../hooks/useEnsureNdxbookWorkspace';
+import { adminStudioNdxbookPath } from '../../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
 import { NDXBOOK_WORKSPACE_ID } from '../../../../../studio-os-core/ndxbook/constants';
 import { ensureFounderPilotForOrganization } from '../../../../../studio-os-core/founder-pilot-mode';
+import { useStudioModuleNav } from '../../../../../studio-os-core/organization-context';
 
 export default function AdminStudioNdxbookMissionControlPage() {
   useEnsureNdxbookWorkspaceOnMount();
   ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
   const navigate = useNavigate();
+  const { toModule } = useStudioModuleNav();
 
   return (
     <AdminStudioStageShell
@@ -26,22 +29,33 @@ export default function AdminStudioNdxbookMissionControlPage() {
       navGroupId="intelligence"
     >
       <div className="flex flex-wrap gap-1 mb-3">
-        <button
-          type="button"
-          onClick={() => navigate(adminStudioNdxbookDistributionPath())}
-          className="flex-1 py-2 text-[7px] font-futura uppercase border"
-          style={{ fontWeight: 515, color: '#FFF', background: '#6366F1', borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+        <Link
+          to={ndxbookDistributionQuickLink(toModule)}
+          className="flex-1 py-2 text-[7px] font-futura uppercase border text-center"
+          style={{
+            fontWeight: 515,
+            color: '#FFF',
+            background: '#6366F1',
+            borderColor: ADMIN_STUDIO_THEME.panelBorder,
+            textDecoration: 'none',
+            display: 'block',
+          }}
         >
           REVIEW & POST CONTENT →
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate(`${adminStudioNdxbookPath()}?tab=socials`)}
-          className="flex-1 py-2 text-[7px] font-futura uppercase border"
-          style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+        </Link>
+        <Link
+          to={ndxbookSocialsQuickLink(toModule)}
+          className="flex-1 py-2 text-[7px] font-futura uppercase border text-center"
+          style={{
+            fontWeight: 515,
+            color: ADMIN_STUDIO_THEME.textSecondary,
+            borderColor: ADMIN_STUDIO_THEME.panelBorder,
+            textDecoration: 'none',
+            display: 'block',
+          }}
         >
           SOCIAL CONNECTORS →
-        </button>
+        </Link>
       </div>
 
       <NdxbookMissionControl workspaceId={NDXBOOK_WORKSPACE_ID} accentColor="#6366F1" />

@@ -47,8 +47,11 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
     : store.activeMicrointeraction;
 
   const greeting = useMemo(() => greetingForFounder(FOUNDER_DISPLAY_NAME), []);
-  const height = DOCK_HEIGHT[store.expansionSize as DockExpansionSize];
   const idle = !store.pendingRoute && !store.processingActive && !store.isFocused && store.expansionSize === 'compact';
+  const height =
+    pilotBrief && idle
+      ? DOCK_HEIGHT.medium
+      : DOCK_HEIGHT[store.expansionSize as DockExpansionSize];
   const suggested = store.contextProfile?.suggestedCommands ?? [...DOCK_COMMAND_EXAMPLES].slice(0, 3);
 
   return (

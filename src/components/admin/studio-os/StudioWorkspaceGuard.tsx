@@ -17,7 +17,7 @@ import { isPlatformAdministrationPath } from '../../../studio-os-core/applicatio
  */
 export default function StudioWorkspaceGuard() {
   const { workspaceId, workspace, enterWorkspace } = useWorkspace();
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const legacyFsPath = isLegacyFrontalSlayerStudioPath(pathname);
   const platformPath = isPlatformAdministrationPath(pathname);
 
@@ -50,8 +50,9 @@ export default function StudioWorkspaceGuard() {
       assigned.workspaceId === STUDIO_OS_DEFAULT_WORKSPACE_ID || canSwitchOrganizations();
 
     if (!mayUseLegacyFs && assigned.workspaceId) {
-      const segment = pathname.replace('/admin/studio/', '').split('/')[0] ?? 'mission-control';
-      return <Navigate to={workspaceStudioModulePath(assigned.workspaceId, segment)} replace />;
+      const rest = pathname.replace('/admin/studio/', '') || 'mission-control';
+      const target = `${workspaceStudioModulePath(assigned.workspaceId, rest)}${search}`;
+      return <Navigate to={target} replace />;
     }
 
     return <Outlet />;
@@ -62,8 +63,9 @@ export default function StudioWorkspaceGuard() {
     pathname.startsWith('/admin/studio/') &&
     !pathname.startsWith('/admin/studio-os')
   ) {
-    const segment = pathname.replace('/admin/studio/', '').split('/')[0] ?? 'mission-control';
-    return <Navigate to={workspaceStudioModulePath(workspaceId, segment)} replace />;
+    const rest = pathname.replace('/admin/studio/', '') || 'mission-control';
+    const target = `${workspaceStudioModulePath(workspaceId, rest)}${search}`;
+    return <Navigate to={target} replace />;
   }
 
   return <Outlet />;

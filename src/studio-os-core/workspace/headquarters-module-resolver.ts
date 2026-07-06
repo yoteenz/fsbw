@@ -80,6 +80,11 @@ export function resolveHeadquartersPageModule(rest: string): PageModule | null {
     return loadModule('audience-brain/intelligence');
   }
 
+  if (head === 'ndxbook') {
+    if (second === 'mission-control') return loadModule('ndxbook/mission-control');
+    return loadModule('ndxbook');
+  }
+
   if (head === 'distribution-network') {
     if (second === 'channel') return loadModule('distribution-network/channel');
     if (second) return loadModule('distribution-network');
