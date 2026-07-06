@@ -1272,6 +1272,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'knowledge-commerce',
+    title: 'KNOWLEDGE COMMERCE™',
+    purpose: 'Monetize expertise — product builder, licensing, AI Expert Experiences, revenue intelligence. Not ecommerce — expertise economy.',
+    route: p('knowledge-commerce'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M92.5',
+    ctaLabel: 'MONETIZE KNOWLEDGE',
+    moduleKey: 'knowledge-commerce',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',

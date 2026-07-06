@@ -91,6 +91,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../studio-institute/org-store').then((m) => {
     m.syncStudioInstituteFromProfessionBrain(profile.organizationId);
   });
+  void import('../knowledge-commerce/store').then((m) => {
+    m.syncKnowledgeCommerceFromProfessionBrain(profile.organizationId);
+  });
 }
 
 export function syncProfessionBrainFromSources(

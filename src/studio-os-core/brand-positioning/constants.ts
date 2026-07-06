@@ -15,6 +15,7 @@ export type StudioOsBrandSystemId =
   | 'profession-brain'
   | 'studio-institute'
   | 'expert-marketplace'
+  | 'knowledge-commerce'
   | 'expansion-center'
   | 'command-dock'
   | 'organization-inauguration';
@@ -26,6 +27,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'profession-brain': 'Your expertise is becoming legacy.',
   'studio-institute': 'Learn from expertise. Carry the legacy forward.',
   'expert-marketplace': 'Share expertise. Expand your legacy.',
+  'knowledge-commerce': 'Monetize knowledge. Expand your legacy.',
   'expansion-center': 'Grow your organization. Expand your legacy.',
   'command-dock': "Building today's decisions into tomorrow's legacy.",
   'organization-inauguration': 'Your Headquarters is ready. Your legacy begins now.',

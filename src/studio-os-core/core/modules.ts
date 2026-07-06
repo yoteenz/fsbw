@@ -89,6 +89,7 @@ export type StudioOsCoreModuleId =
   | 'organization-inauguration'
   | 'profession-brain'
   | 'expert-marketplace'
+  | 'knowledge-commerce'
   | 'brand-positioning'
   | 'governance'
   | 'studio-intelligence'
@@ -617,6 +618,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXPERT MARKETPLACE™',
     description: 'Public expertise ecosystem V1.0 — publish Profession Brain surfaces. Trusted experts, not AI bots. Share expertise. Expand your legacy.',
     routeSegment: 'expert-marketplace',
+  },
+  {
+    id: 'knowledge-commerce',
+    label: 'KNOWLEDGE COMMERCE™',
+    description: 'Expertise economy V1.0 — monetize Profession Brain knowledge. Product builder, licensing, AI Expert Experiences, revenue intelligence. MONETIZE KNOWLEDGE.',
+    routeSegment: 'knowledge-commerce',
   },
   {
     id: 'brand-positioning',

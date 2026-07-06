@@ -26,6 +26,10 @@ import {
   resolveStudioInstituteAdvice,
   buildProactiveInstituteSuggestion,
 } from '../studio-institute/dock-advisor';
+import {
+  resolveKnowledgeCommerceAdvice,
+  buildProactiveCommerceSuggestion,
+} from '../knowledge-commerce/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -83,18 +87,24 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const discovery = buildProactiveDiscoverySuggestion(workspaceId);
   const brain = buildProactiveBrainSuggestion(workspaceId);
   const institute = buildProactiveInstituteSuggestion(workspaceId);
+  const commerce = buildProactiveCommerceSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
     : null;
+  const commerceProactive = commerce
+    ? { response: commerce, concierge: 'Chief Concierge', suggestedCommand: 'Open Knowledge Commerce product builder.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/studio-institute') && instituteProactive
-      ? instituteProactive
-      : brain && blueprintPct >= 40
-        ? brain
-        : discovery && blueprintPct < 50
-          ? discovery
-          : growth;
+    pathname.includes('/knowledge-commerce') && commerceProactive
+      ? commerceProactive
+      : pathname.includes('/studio-institute') && instituteProactive
+        ? instituteProactive
+        : brain && blueprintPct >= 40
+          ? brain
+          : discovery && blueprintPct < 50
+            ? discovery
+            : growth;
   const proactiveSuggestion = proactiveSource
     ? {
         id: `proactive-${Date.now()}`,
@@ -198,6 +208,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${instituteAdvice.concierge}\n${instituteAdvice.response}`,
+    });
+    return null;
+  }
+
+  const commerceAdvice = resolveKnowledgeCommerceAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (commerceAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${commerceAdvice.concierge}\n${commerceAdvice.response}`,
     });
     return null;
   }

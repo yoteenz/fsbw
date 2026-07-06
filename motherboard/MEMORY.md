@@ -38567,3 +38567,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Studio Institute ≠ LMS — educational expression of Profession Brain. One source powers employee training and customer education. Demo persistence localStorage per org via `studioOsStudioInstituteOrg_v1`.
 
+---
+
+## 2026-07-06 — Milestone 92.5: Knowledge Commerce™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M93 (Blueprint, Inauguration, Profession Brain, Expert Marketplace + Brand V2.0, Studio Institute). User requested **Milestone 92.5 — Knowledge Commerce™ V1.0**: expand Expert Marketplace by introducing monetization layer — expertise economy, not ecommerce.
+
+**Core philosophy delivered:** Organizations monetize knowledge · experience · judgment · processes · wisdom — not only products and hours. One Profession Brain → multiple revenue streams. Third brand promise **MONETIZE KNOWLEDGE.** (extends Preserve Expertise · Build Legacy). Private ops intelligence protected until published.
+
+**Delivered:**
+- **`src/studio-os-core/knowledge-commerce/`** — product-builder (25 product types), ai-expert-experiences, commerce-dashboard (per-brain MRR/lifetime/utilization), customer-journey (8 stages), revenue-intelligence, store, dock-advisor, bootstrap.
+- **`KnowledgeCommerceWorkspace`** + **`/admin/studio/knowledge-commerce`** — 8 tabs: Commerce Dashboard · Product Builder · Licensing · AI Experts · Customer Journey · Revenue Intel · Knowledge Assets · Opportunities.
+- **`useKnowledgeCommerceState`** hook · brand voice **`knowledge-commerce`** in brand-positioning.
+- **Integration** — sync from **`profession-brain/store`** on upsert · **`boundary-sync`** ensure profile · Command Dock **`resolveKnowledgeCommerceAdvice()`** + proactive commerce on route · Expert Marketplace page links to Knowledge Commerce.
+- **Docs** — **`docs/studio-os/knowledge-commerce.md`** · **CORE.md** M92.5 entry.
+
+**Conventions:** Knowledge Commerce ≠ ecommerce — expertise economy. Expert Marketplace = discovery · Knowledge Commerce = monetization. Demo revenue figures are localStorage-derived from Brain maturity.
+

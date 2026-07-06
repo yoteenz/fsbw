@@ -765,6 +765,10 @@ export function adminStudioExpertMarketplacePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/expert-marketplace`;
 }
 
+export function adminStudioKnowledgeCommercePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/knowledge-commerce`;
+}
+
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }

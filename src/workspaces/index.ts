@@ -208,6 +208,10 @@ export function bootstrapWorkspacesPlatform(): void {
     expertMarketplace.bootstrapExpertMarketplacePlatform();
     await yieldToMain();
 
+    const knowledgeCommerce = await import('../studio-os-core/knowledge-commerce/bootstrap');
+    knowledgeCommerce.bootstrapKnowledgeCommercePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

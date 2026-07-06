@@ -14,6 +14,7 @@ import { listDiscoveryDockSuggestions } from '../business-discovery-blueprint';
 import { listProfessionBrainDockSuggestions } from '../profession-brain';
 import { listExpertMarketplaceDockSuggestions } from '../expert-marketplace';
 import { listStudioInstituteDockSuggestions } from '../studio-institute';
+import { listKnowledgeCommerceDockSuggestions } from '../knowledge-commerce';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -156,6 +157,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/knowledge-commerce')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'knowledge-commerce',
+      label: 'KNOWLEDGE COMMERCE™ · MONETIZE KNOWLEDGE',
+      portfolioMode: false,
+      suggestedCommands: listKnowledgeCommerceDockSuggestions(workspaceId),
+      commandTypes: ['revenue', 'organization-settings', 'strategy', 'executive-requests'],
     };
   }
 
