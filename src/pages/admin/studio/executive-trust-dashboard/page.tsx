@@ -15,7 +15,7 @@ export default function AdminStudioExecutiveTrustDashboardPage() {
       subtitle={SUBTITLE}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"
-      onBack={() => navigate('/admin/studio/ai-red-team')}
+      onBack={() => navigate('/admin/studio/time-machine')}
       navGroupId="intelligence"
     >
       <ExecutiveTrustDashboardWorkspace />

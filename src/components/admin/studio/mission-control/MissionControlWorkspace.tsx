@@ -99,6 +99,7 @@ import { MissionControlQaInspectorPanel } from './MissionControlQaInspectorPanel
 import { MissionControlQaSimulationEnginePanel } from './MissionControlQaSimulationEnginePanel';
 import { MissionControlAiRedTeamPanel } from './MissionControlAiRedTeamPanel';
 import { MissionControlExecutiveTrustDashboardPanel } from './MissionControlExecutiveTrustDashboardPanel';
+import { MissionControlTimeMachinePanel } from './MissionControlTimeMachinePanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -172,6 +173,7 @@ export function MissionControlWorkspace() {
             <MissionControlOrganizationPulsePanel />
             <MissionControlDigitalTwinPanel />
             <MissionControlExecutiveTrustDashboardPanel />
+            <MissionControlTimeMachinePanel />
             <MissionControlKnowledgeConfidencePanel />
             <MissionControlAmbientBriefingPanel />
           </div>
@@ -565,6 +567,7 @@ export function MissionControlWorkspace() {
           <MissionControlQaSimulationEnginePanel />
           <MissionControlAiRedTeamPanel />
           <MissionControlExecutiveTrustDashboardPanel />
+          <MissionControlTimeMachinePanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

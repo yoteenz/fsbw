@@ -53,7 +53,11 @@ function upsertProfile(
 export function syncExecutiveTrustDashboardFromSources(
   organizationId: string
 ): OrganizationExecutiveTrustDashboardProfile {
-  return upsertProfile(buildOrganizationExecutiveTrustDashboardProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationExecutiveTrustDashboardProfile(organizationId));
+  void import('../time-machine/store').then((m) => {
+    m.syncTimeMachineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationExecutiveTrustDashboardProfile(

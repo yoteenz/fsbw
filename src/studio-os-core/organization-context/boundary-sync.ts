@@ -285,6 +285,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationExecutiveTrustDashboardProfile(context.organizationId);
   });
 
+  void import('../time-machine/store').then((m) => {
+    m.ensureOrganizationTimeMachineProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

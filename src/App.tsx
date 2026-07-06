@@ -302,6 +302,10 @@ const AdminStudioExecutiveTrustDashboard = lazyWithRetry(
   () => import('./pages/admin/studio/executive-trust-dashboard/page'),
   'AdminStudioExecutiveTrustDashboard'
 );
+const AdminStudioTimeMachine = lazyWithRetry(
+  () => import('./pages/admin/studio/time-machine/page'),
+  'AdminStudioTimeMachine'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1658,6 +1662,11 @@ function App() {
           <Route path="studio/executive-trust-dashboard" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioExecutiveTrustDashboard />
+            </Suspense>
+          } />
+          <Route path="studio/time-machine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioTimeMachine />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

@@ -140,6 +140,7 @@ export type StudioOsCoreModuleId =
   | 'qa-simulation-engine'
   | 'ai-red-team'
   | 'executive-trust-dashboard'
+  | 'time-machine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -975,6 +976,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXECUTIVE TRUST DASHBOARD™',
     description: 'Executive Trust Dashboard V1.0 — centralized trust metrics; health, confidence, risk, and history for every major system.',
     routeSegment: 'executive-trust-dashboard',
+  },
+  {
+    id: 'time-machine',
+    label: 'TIME MACHINE™',
+    description: 'Time Machine V1.0 — organizational replay engine; experience any event exactly as it occurred to understand WHY.',
+    routeSegment: 'time-machine',
   },
   {
     id: 'succession-mode',

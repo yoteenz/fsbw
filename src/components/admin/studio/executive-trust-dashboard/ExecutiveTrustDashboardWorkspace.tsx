@@ -9,11 +9,7 @@ import {
   refreshTrustDashboard,
 } from '../../../../studio-os-core/executive-trust-dashboard';
 import type { TrustHistoryPeriod } from '../../../../studio-os-core/executive-trust-dashboard';
-import {
-  adminStudioAiRedTeamPath,
-  adminStudioQaHeadquartersPath,
-  adminStudioMissionControlPath,
-} from '../../../../utils/adminStudioRoutes';
+import { adminStudioAiRedTeamPath, adminStudioQaHeadquartersPath, adminStudioTimeMachinePath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -119,6 +115,9 @@ export function ExecutiveTrustDashboardWorkspace() {
       </ExecutiveFocusPanel>
       <button type="button" onClick={() => navigate(adminStudioQaHeadquartersPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: EXECUTIVE_TRUST_DASHBOARD_ACCENT, color: EXECUTIVE_TRUST_DASHBOARD_ACCENT }}>
         QA HEADQUARTERS →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioTimeMachinePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: EXECUTIVE_TRUST_DASHBOARD_ACCENT, color: EXECUTIVE_TRUST_DASHBOARD_ACCENT }}>
+        TIME MACHINE →
       </button>
       <button type="button" onClick={() => navigate(adminStudioAiRedTeamPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         AI RED TEAM →

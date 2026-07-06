@@ -22,6 +22,7 @@ import {
   adminStudioQaSimulationEnginePath,
   adminStudioAiRedTeamPath,
   adminStudioExecutiveTrustDashboardPath,
+  adminStudioTimeMachinePath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -992,6 +993,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['MEASURE → REVIEW → PRIORITIZE → STRENGTHEN'],
     aliases: ['trust dashboard', 'executive trust', 'organizational trust', 'confidence dashboard'],
     searchKeywords: ['trust', 'confidence', 'executive', 'dashboard', 'health', 'risk', 'historical'],
+  }),
+  entry({
+    id: 'time-machine',
+    label: 'Time Machine™',
+    moduleId: 'time-machine',
+    milestone: 'M148',
+    route: adminStudioTimeMachinePath(),
+    purpose: 'Organizational replay engine — experience any event exactly as it occurred to understand WHY.',
+    overview:
+      '10 replay event types · 11 reconstruction layers · timeline controls · Studio Intelligence commentary · compare moments.',
+    capabilities: ['Event replay', 'Step-through playback', 'Full reconstruction', 'Intelligence commentary', 'Moment comparison'],
+    howItWorks: 'Select event → reconstruct all layers → step through timeline → Studio Intelligence explains what, why, alternatives, improvements.',
+    whenUsed: ['Incident investigation', 'Automation failure analysis', 'Customer journey review', 'Compliance audit', 'Training'],
+    relatedSystems: ['executive-timeline', 'event-bus', 'executive-trust-dashboard', 'studio-intelligence', 'organization-digital-twin'],
+    exampleWorkflows: ['SELECT → REPLAY → UNDERSTAND WHY → IMPROVE'],
+    aliases: ['time machine', 'organizational replay', 'event replay', 'why did it happen'],
+    searchKeywords: ['replay', 'time machine', 'what happened', 'why', 'reconstruct', 'playback'],
   }),
 ];
 

@@ -1884,6 +1884,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'time-machine',
+    title: 'TIME MACHINE™',
+    purpose: 'Organizational replay — experience any event exactly as it occurred. Understand WHY, not just what happened.',
+    route: p('time-machine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M148',
+    ctaLabel: 'OPEN TIME MACHINE',
+    moduleKey: 'time-machine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',
