@@ -1980,6 +1980,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'experience-qa',
+    title: 'EXPERIENCE QA™',
+    purpose: 'Evaluates emotional quality of every interaction — effortless, trustworthy, calm, intelligently designed. Optimizes for confidence, not clicks.',
+    route: p('experience-qa'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M156',
+    ctaLabel: 'OPEN EXPERIENCE QA',
+    moduleKey: 'experience-qa',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

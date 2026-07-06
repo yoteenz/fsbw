@@ -15,6 +15,7 @@ import {
 } from '../../../../studio-os-core/prompt-qa';
 import {
   adminStudioDesignComplianceEnginePath,
+  adminStudioExperienceQaPath,
   adminStudioPromptRegistryPath,
 } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
@@ -136,8 +137,11 @@ export function PromptQaWorkspace() {
       <button type="button" onClick={() => navigate(adminStudioPromptRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         PROMPT REGISTRY →
       </button>
-      <button type="button" onClick={() => navigate(adminStudioDesignComplianceEnginePath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+      <button type="button" onClick={() => navigate(adminStudioDesignComplianceEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         DESIGN COMPLIANCE →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioExperienceQaPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+        EXPERIENCE QA →
       </button>
     </ExecutivePageShell>
   );

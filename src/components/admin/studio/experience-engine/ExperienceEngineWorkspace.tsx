@@ -8,7 +8,7 @@ import {
   setExperienceMode,
 } from '../../../../studio-os-core/experience-engine';
 import type { ExperienceModeId } from '../../../../studio-os-core/experience-engine';
-import { adminStudioAssetRegistryPath, adminStudioMissionControlPath, adminStudioQaHeadquartersPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioAssetRegistryPath, adminStudioExperienceQaPath, adminStudioMissionControlPath, adminStudioQaHeadquartersPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -92,6 +92,9 @@ export function ExperienceEngineWorkspace() {
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: EXPERIENCE_ENGINE_ACCENT, color: EXPERIENCE_ENGINE_ACCENT }}>
         MISSION CONTROL →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioExperienceQaPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+        EXPERIENCE QA →
       </button>
       <button type="button" onClick={refresh} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         SYNC EXPERIENCE ENGINE

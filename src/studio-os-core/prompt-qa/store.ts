@@ -48,10 +48,14 @@ function upsertProfile(profile: OrganizationPromptQaProfile): OrganizationPrompt
 export function syncPromptQaFromSources(organizationId: string): OrganizationPromptQaProfile {
   const existing = getOrganizationPromptQaProfile(organizationId);
   const built = buildOrganizationPromptQaProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedPromptId: existing?.selectedPromptId ?? built.selectedPromptId,
   });
+  void import('../experience-qa/store').then((m) => {
+    m.syncExperienceQaFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationPromptQaProfile(organizationId: string): OrganizationPromptQaProfile {

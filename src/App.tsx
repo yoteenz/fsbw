@@ -334,6 +334,10 @@ const AdminStudioPromptQa = lazyWithRetry(
   () => import('./pages/admin/studio/prompt-qa/page'),
   'AdminStudioPromptQa'
 );
+const AdminStudioExperienceQa = lazyWithRetry(
+  () => import('./pages/admin/studio/experience-qa/page'),
+  'AdminStudioExperienceQa'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1730,6 +1734,11 @@ function App() {
           <Route path="studio/prompt-qa" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioPromptQa />
+            </Suspense>
+          } />
+          <Route path="studio/experience-qa" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExperienceQa />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

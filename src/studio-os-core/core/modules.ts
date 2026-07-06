@@ -148,6 +148,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-guardian'
   | 'design-compliance-engine'
   | 'prompt-qa'
+  | 'experience-qa'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1031,6 +1032,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PROMPT QA™',
     description: 'Prompt QA V1.0 — validates every prompt, Profession Brain, workflow instruction, and AI reasoning chain before production.',
     routeSegment: 'prompt-qa',
+  },
+  {
+    id: 'experience-qa',
+    label: 'EXPERIENCE QA™',
+    description: 'Experience QA V1.0 — evaluates emotional quality of every interaction; optimizes for confidence, not clicks.',
+    routeSegment: 'experience-qa',
   },
   {
     id: 'succession-mode',

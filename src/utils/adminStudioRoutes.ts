@@ -1001,6 +1001,10 @@ export function adminStudioPromptQaPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/prompt-qa`;
 }
 
+export function adminStudioExperienceQaPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/experience-qa`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }
