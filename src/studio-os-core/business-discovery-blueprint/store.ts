@@ -163,6 +163,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncSimulationLabFromSources(blueprint.organizationId);
   });
 
+  void import('../knowledge-confidence/store').then((m) => {
+    m.syncKnowledgeConfidenceFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

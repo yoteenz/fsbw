@@ -252,6 +252,10 @@ export function bootstrapWorkspacesPlatform(): void {
     businessSimulationLab.bootstrapBusinessSimulationLabPlatform();
     await yieldToMain();
 
+    const knowledgeConfidence = await import('../studio-os-core/knowledge-confidence/bootstrap');
+    knowledgeConfidence.bootstrapKnowledgeConfidencePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

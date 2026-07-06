@@ -38773,3 +38773,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Business Simulation Lab (M104) complements Organization Digital Twin (M103) — twin = org mirror + fast what-if; lab = strategic long-term simulations + Scenario Library + council review. Demo localStorage via `studioOsBusinessSimulationLab_v1`.
 
+---
+
+## 2026-07-06 — Milestone 105: Knowledge Confidence™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M104 (Blueprint through Business Simulation Lab `cbfbe07a`). User requested **Milestone 105 — Knowledge Confidence™ V1.0**: measure how complete · reliable · current · trustworthy every Profession Brain™ is. Not all knowledge same certainty · communicate confidence honestly · know where expertise strongest and where teaching needed. **10 confidence dimensions** · overall Knowledge Confidence Score per brain. **Mission Control fuel gauges** (Fuel Tax 98% · Hair Analysis 95% · Marketing 71% etc.). **Continuous improvement** when confidence drops (regulation · docs · workflows · guidance · services · policies) → recommend Profession Brain™ + Studio Institute™ updates. Trust through transparency — never pretend to know more than it does. QA system for institutional intelligence.
+
+**Core philosophy delivered:** Trust begins with transparency · honest confidence communication · learning recommendations for low-confidence areas.
+
+**Delivered:**
+- **`src/studio-os-core/knowledge-confidence/`** — **`confidence-scoring.ts`** (10 dimensions · per-brain scoring from Profession Brain data) · **`improvement-engine.ts`** (`buildLearningRecommendations()`) · **`confidence-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`KnowledgeConfidenceWorkspace`** + **`/admin/studio/knowledge-confidence`** — 4 tabs: Confidence Overview · Brain Scores · Confidence Dimensions · Learning Recommendations · amber accent `#CA8A04`.
+- **`MissionControlKnowledgeConfidencePanel`** — fuel-gauge visualization in Mission Control alongside Executive Health + Organization Pulse.
+- **`useKnowledgeConfidenceState`** hook · brand voice **`knowledge-confidence`**: *"Know what you know. Honestly."*
+- **Integration** — sync from profession-brain · blueprint · boundary-sync · profession-brain upsert triggers confidence resync · Command Dock **`resolveKnowledgeConfidenceAdvice()`** + proactive on `/knowledge-confidence` route · modules · nav · App route.
+- **Docs** — **`docs/studio-os/knowledge-confidence.md`** · **CORE.md** M105 entry.
+
+**Conventions:** Knowledge Confidence (M105) complements Profession Brain (M91) — brain stores knowledge; confidence measures and QA's it. Demo localStorage via `studioOsKnowledgeConfidence_v1`.
+

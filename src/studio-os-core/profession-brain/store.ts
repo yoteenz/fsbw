@@ -118,6 +118,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../business-simulation-lab/store').then((m) => {
     m.syncSimulationLabFromSources(profile.organizationId);
   });
+  void import('../knowledge-confidence/store').then((m) => {
+    m.syncKnowledgeConfidenceFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

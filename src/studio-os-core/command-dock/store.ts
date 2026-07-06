@@ -74,6 +74,10 @@ import {
   resolveSimulationLabAdvice,
   buildProactiveSimulationLabSuggestion,
 } from '../business-simulation-lab/dock-advisor';
+import {
+  resolveKnowledgeConfidenceAdvice,
+  buildProactiveKnowledgeConfidenceSuggestion,
+} from '../knowledge-confidence/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -143,6 +147,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const shadow = buildProactiveShadowSuggestion(workspaceId);
   const digitalTwin = buildProactiveDigitalTwinSuggestion(workspaceId);
   const simulationLab = buildProactiveSimulationLabSuggestion(workspaceId);
+  const knowledgeConfidence = buildProactiveKnowledgeConfidenceSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -183,8 +188,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const simulationLabProactive = simulationLab
     ? { response: simulationLab, concierge: 'Chief Concierge', suggestedCommand: 'Open Business Simulation Lab — test strategies before implementing.' }
     : null;
+  const knowledgeConfidenceProactive = knowledgeConfidence
+    ? { response: knowledgeConfidence, concierge: 'Chief Concierge', suggestedCommand: 'Open Knowledge Confidence — review Profession Brain quality.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/business-simulation-lab') && simulationLabProactive
+    pathname.includes('/knowledge-confidence') && knowledgeConfidenceProactive
+      ? knowledgeConfidenceProactive
+      : pathname.includes('/business-simulation-lab') && simulationLabProactive
       ? simulationLabProactive
       : pathname.includes('/organization-digital-twin') && digitalTwinProactive
       ? digitalTwinProactive
@@ -275,6 +285,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const knowledgeConfidenceAdvice = resolveKnowledgeConfidenceAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (knowledgeConfidenceAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${knowledgeConfidenceAdvice.concierge}\n${knowledgeConfidenceAdvice.response}`,
+    });
+    return null;
+  }
 
   const simulationLabAdvice = resolveSimulationLabAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (simulationLabAdvice) {

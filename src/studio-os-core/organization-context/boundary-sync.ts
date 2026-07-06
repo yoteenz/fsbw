@@ -113,6 +113,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationSimulationLabProfile(context.organizationId);
   });
 
+  void import('../knowledge-confidence/store').then((m) => {
+    m.ensureOrganizationKnowledgeConfidenceProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

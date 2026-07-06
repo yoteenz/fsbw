@@ -99,6 +99,7 @@ export type StudioOsCoreModuleId =
   | 'shadow-mode'
   | 'organization-digital-twin'
   | 'business-simulation-lab'
+  | 'knowledge-confidence'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -688,6 +689,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'BUSINESS SIMULATION LAB™',
     description: 'Strategic simulation V1.0 — test strategies, experiments, long-term decisions in sandbox. Executive Council review. Scenario Library.',
     routeSegment: 'business-simulation-lab',
+  },
+  {
+    id: 'knowledge-confidence',
+    label: 'KNOWLEDGE CONFIDENCE™',
+    description: 'Profession Brain quality assurance V1.0 — 10 confidence dimensions, fuel gauges, learning recommendations. Trust through transparency.',
+    routeSegment: 'knowledge-confidence',
   },
   {
     id: 'succession-mode',

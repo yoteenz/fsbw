@@ -805,6 +805,10 @@ export function adminStudioBusinessSimulationLabPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/business-simulation-lab`;
 }
 
+export function adminStudioKnowledgeConfidencePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/knowledge-confidence`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

@@ -1392,6 +1392,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'knowledge-confidence',
+    title: 'KNOWLEDGE CONFIDENCE™',
+    purpose: 'Profession Brain quality assurance — 10 confidence dimensions, fuel gauges in Mission Control, learning recommendations when confidence drops.',
+    route: p('knowledge-confidence'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M105',
+    ctaLabel: 'OPEN KNOWLEDGE CONFIDENCE',
+    moduleKey: 'knowledge-confidence',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

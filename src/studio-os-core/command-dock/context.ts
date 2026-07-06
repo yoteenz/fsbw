@@ -26,6 +26,7 @@ import { listWisdomCaptureDockSuggestions } from '../wisdom-capture';
 import { listShadowModeDockSuggestions } from '../shadow-mode';
 import { listDigitalTwinDockSuggestions } from '../organization-digital-twin';
 import { listSimulationLabDockSuggestions } from '../business-simulation-lab';
+import { listKnowledgeConfidenceDockSuggestions } from '../knowledge-confidence';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -168,6 +169,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/knowledge-confidence')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'knowledge-confidence',
+      label: 'KNOWLEDGE CONFIDENCE™ · TRUST THROUGH TRANSPARENCY',
+      portfolioMode: false,
+      suggestedCommands: listKnowledgeConfidenceDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 
