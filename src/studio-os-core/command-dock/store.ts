@@ -82,6 +82,11 @@ import {
   resolveLegacyVaultAdvice,
   buildProactiveLegacyVaultSuggestion,
 } from '../legacy-vault/dock-advisor';
+import {
+  resolveAmbientAwarenessAdvice,
+  buildProactiveAmbientAwarenessSuggestion,
+  buildHeadquartersOpeningBriefing,
+} from '../ambient-awareness/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -153,6 +158,25 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const simulationLab = buildProactiveSimulationLabSuggestion(workspaceId);
   const knowledgeConfidence = buildProactiveKnowledgeConfidenceSuggestion(workspaceId);
   const legacyVault = buildProactiveLegacyVaultSuggestion(workspaceId);
+  const ambientModule = buildProactiveAmbientAwarenessSuggestion(workspaceId);
+  const isHeadquartersOpening =
+    pathname.includes('/mission-control') ||
+    pathname.includes('/headquarters') ||
+    /\/studio\/?$/.test(pathname);
+  const ambientOpening = isHeadquartersOpening
+    ? {
+        response: buildHeadquartersOpeningBriefing(workspaceId),
+        concierge: 'Chief Concierge',
+        suggestedCommand: "Review today's executive briefing.",
+      }
+    : null;
+  const ambientModuleProactive = ambientModule
+    ? {
+        response: ambientModule,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Ambient Awareness — continuous organizational context.',
+      }
+    : null;
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -200,7 +224,11 @@ export function syncDockContext(pathname: string): DockContextProfile {
     ? { response: legacyVault, concierge: 'Chief Concierge', suggestedCommand: 'Open Legacy Vault — preserve this moment in organizational history.' }
     : null;
   const proactiveSource =
-    pathname.includes('/legacy-vault') && legacyVaultProactive
+    ambientOpening
+      ? ambientOpening
+      : pathname.includes('/ambient-awareness') && ambientModuleProactive
+      ? ambientModuleProactive
+      : pathname.includes('/legacy-vault') && legacyVaultProactive
       ? legacyVaultProactive
       : pathname.includes('/knowledge-confidence') && knowledgeConfidenceProactive
       ? knowledgeConfidenceProactive
@@ -213,8 +241,6 @@ export function syncDockContext(pathname: string): DockContextProfile {
       : pathname.includes('/wisdom-capture') && wisdomProactive
       ? wisdomProactive
       : pathname.includes('/organization-pulse') && pulseProactive
-      ? pulseProactive
-      : pathname.includes('/mission-control') && pulseProactive
       ? pulseProactive
       : pathname.includes('/executive-council') && councilProactive
       ? councilProactive
@@ -295,6 +321,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const ambientAwarenessAdvice = resolveAmbientAwarenessAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (ambientAwarenessAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: ambientAwarenessAdvice.briefing ? 'large' : 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${ambientAwarenessAdvice.concierge}\n${ambientAwarenessAdvice.response}`,
+    });
+    return null;
+  }
 
   const legacyVaultAdvice = resolveLegacyVaultAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (legacyVaultAdvice) {

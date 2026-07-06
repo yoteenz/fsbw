@@ -813,6 +813,10 @@ export function adminStudioLegacyVaultPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/legacy-vault`;
 }
 
+export function adminStudioAmbientAwarenessPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/ambient-awareness`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

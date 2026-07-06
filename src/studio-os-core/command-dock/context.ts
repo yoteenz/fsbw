@@ -28,6 +28,7 @@ import { listDigitalTwinDockSuggestions } from '../organization-digital-twin';
 import { listSimulationLabDockSuggestions } from '../business-simulation-lab';
 import { listKnowledgeConfidenceDockSuggestions } from '../knowledge-confidence';
 import { listLegacyVaultDockSuggestions } from '../legacy-vault';
+import { listAmbientAwarenessDockSuggestions } from '../ambient-awareness';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -181,6 +182,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listLegacyVaultDockSuggestions(workspaceId),
       commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
+    };
+  }
+
+  if (pathname.includes('/ambient-awareness')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'ambient-awareness',
+      label: 'AMBIENT AWARENESS™ · ALREADY AWARE',
+      portfolioMode: false,
+      suggestedCommands: listAmbientAwarenessDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }
 

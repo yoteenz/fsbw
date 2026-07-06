@@ -124,6 +124,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../legacy-vault/store').then((m) => {
     m.syncLegacyVaultFromSources(profile.organizationId);
   });
+  void import('../ambient-awareness/store').then((m) => {
+    m.syncAmbientAwarenessFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

@@ -38825,3 +38825,27 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Legacy Vault V2 (M106) complements Legacy System museum (Frontal Slayer demo) — vault is org-scoped intelligence-stack archive for all organizations. Demo localStorage via `studioOsLegacyVault_v2`.
 
+---
+
+## 2026-07-06 — Milestone 107: Ambient Awareness™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M106 (Blueprint through Legacy Vault `de1e75d7`). User requested **Milestone 107 — Ambient Awareness™ V1.0**: transform Studio OS from software that waits for instructions into an intelligent organization continuously aware of what is happening. Core philosophy: not surveillance — **context** (time · projects · departments · deadlines · meetings · customers · priorities · workload · momentum). Founder should never repeatedly explain what is happening — Studio OS already knows. **Present, not reactive** — Executive Chief of Staff behavior.
+
+**Requirements delivered:**
+- **10 awareness layers** — organization · department · workspace · project · campaign · calendar · priorities · workload · objectives · milestones
+- **Proactive daily executive briefing** when Headquarters opens — Command Dock, no prompt required
+- **Intelligent context** — active org · founder focus · recent conversations · waiting projects · unresolved decisions · never ask unnecessary questions
+- **Department awareness** — every Concierge understands what other departments are doing
+- Every Concierge receives awareness automatically
+
+**Delivered:**
+- **`src/studio-os-core/ambient-awareness/`** — **`awareness-builder.ts`** (`buildDailyExecutiveBriefing()` · `buildLayerSnapshots()` · `buildDepartmentSnapshots()` · `buildIntelligentContext()`) · **`store.ts`** (`syncAmbientAwarenessFromSources()`) · **`dock-advisor.ts`** (`resolveAmbientAwarenessAdvice()` · `buildHeadquartersOpeningBriefing()` · `buildProactiveAmbientAwarenessSuggestion()`) · **`bootstrap.ts`** · constants/types.
+- **`AmbientAwarenessWorkspace`** + **`/admin/studio/ambient-awareness`** — 4 tabs: Awareness Overview · Daily Briefing · Awareness Layers · Department Context · slate accent `#475569`.
+- **`MissionControlAmbientBriefingPanel`** — executive briefing preview in Mission Control.
+- **`useAmbientAwarenessState`** hook · brand voice **`ambient-awareness`**: *"Already aware. Never asking twice."*
+- **Command Dock integration** — **`buildHeadquartersOpeningBriefing()`** highest proactive priority on Mission Control · Headquarters · Studio entry (replaces pulse-only briefing on MC); **`resolveAmbientAwarenessAdvice()`** for briefing/context/department queries.
+- **Integration** — sync from profession-brain · blueprint · boundary-sync · workspaces bootstrap · modules · nav · App route · command-dock context.
+- **Docs** — **`docs/studio-os/ambient-awareness.md`** · **CORE.md** M107 entry.
+
+**Conventions:** Ambient Awareness (M107) is the executive context layer atop the intelligence stack — feeds Command Dock proactive briefings and Concierge context. Demo localStorage via `studioOsAmbientAwareness_v1`.
+

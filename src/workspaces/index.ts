@@ -260,6 +260,10 @@ export function bootstrapWorkspacesPlatform(): void {
     legacyVault.bootstrapLegacyVaultPlatform();
     await yieldToMain();
 
+    const ambientAwareness = await import('../studio-os-core/ambient-awareness/bootstrap');
+    ambientAwareness.bootstrapAmbientAwarenessPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

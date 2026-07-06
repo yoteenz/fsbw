@@ -1416,6 +1416,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'ambient-awareness',
+    title: 'AMBIENT AWARENESS™',
+    purpose: 'Continuous organizational context — 10 awareness layers, proactive executive briefings, department awareness. Present, not reactive.',
+    route: p('ambient-awareness'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M107',
+    ctaLabel: 'OPEN AMBIENT AWARENESS',
+    moduleKey: 'ambient-awareness',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

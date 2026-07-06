@@ -171,6 +171,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncLegacyVaultFromSources(blueprint.organizationId);
   });
 
+  void import('../ambient-awareness/store').then((m) => {
+    m.syncAmbientAwarenessFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

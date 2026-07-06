@@ -101,6 +101,7 @@ export type StudioOsCoreModuleId =
   | 'business-simulation-lab'
   | 'knowledge-confidence'
   | 'legacy-vault'
+  | 'ambient-awareness'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -702,6 +703,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'LEGACY VAULT™',
     description: 'Permanent organizational history V2.0 — archive milestones, version history, founder archive, time capsules. PRESERVE EXPERTISE. BUILD LEGACY.',
     routeSegment: 'legacy-vault',
+  },
+  {
+    id: 'ambient-awareness',
+    label: 'AMBIENT AWARENESS™',
+    description: 'Continuous organizational context V1.0 — 10 awareness layers, proactive executive briefings, department awareness. Present, not reactive.',
+    routeSegment: 'ambient-awareness',
   },
   {
     id: 'succession-mode',

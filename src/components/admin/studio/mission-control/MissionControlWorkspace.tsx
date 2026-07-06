@@ -51,6 +51,7 @@ import {
 import { MissionControlExecutiveHealthPanel } from './MissionControlExecutiveHealthPanel';
 import { MissionControlOrganizationPulsePanel } from './MissionControlOrganizationPulsePanel';
 import { MissionControlKnowledgeConfidencePanel } from './MissionControlKnowledgeConfidencePanel';
+import { MissionControlAmbientBriefingPanel } from './MissionControlAmbientBriefingPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -411,6 +412,7 @@ export function MissionControlWorkspace() {
             <MissionControlExecutiveHealthPanel />
             <MissionControlOrganizationPulsePanel />
             <MissionControlKnowledgeConfidencePanel />
+            <MissionControlAmbientBriefingPanel />
           </div>
         </ExecutiveSecondaryGrid>
 
