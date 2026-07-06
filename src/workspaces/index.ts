@@ -9,6 +9,7 @@ import { ALL_IN_ONE_ENTERPRISE_WORKSPACE } from './all-in-one-enterprise/config'
 import { VXD_INC_WORKSPACE } from './vxd-inc/config';
 import { FRONTAL_SLAYER_WORKSPACE } from './frontal-slayer/config';
 import { frontalSlayerDataAdapter } from './frontal-slayer/dataAdapter';
+import { runWithStudioStorageBulkWrite } from '../utils/studioOsBrowserStorage';
 import { SANDBOX_WORKSPACE } from './sandbox/config';
 import { FUTURE_BRAND_WORKSPACE } from './future-brand/config';
 import { FUTURE_CLIENT_WORKSPACE } from './future-client/config';
@@ -102,7 +103,8 @@ function yieldToMain(): Promise<void> {
 
 /** Heavy demo seeds — call from Studio OS routes only (not on /admin/dashboard). */
 export function bootstrapWorkspacesPlatform(): void {
-  void (async () => {
+  void runWithStudioStorageBulkWrite(() => {
+    void (async () => {
     try {
       await yieldToMain();
 
@@ -618,5 +620,6 @@ export function bootstrapWorkspacesPlatform(): void {
     } catch (error) {
       console.warn('[bootstrapWorkspacesPlatform] seed interrupted (storage quota or module error):', error);
     }
-  })();
+    })();
+  });
 }

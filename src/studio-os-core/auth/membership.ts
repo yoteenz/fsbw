@@ -90,7 +90,10 @@ export async function resolveOrgMembership(accessToken?: string): Promise<Studio
 }
 
 export function ensureOrgMembershipResolved(accessToken?: string): Promise<StudioOsOrgMembership> {
-  if (cachedMembership?.source === 'supabase') {
+  if (cachedMembership) {
+    if (cachedMembership.source !== 'supabase' && accessToken) {
+      void resolveOrgMembership(accessToken);
+    }
     return Promise.resolve(cachedMembership);
   }
   if (!resolvePromise) {

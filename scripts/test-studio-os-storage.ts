@@ -49,6 +49,8 @@ function assert(cond: boolean, msg: string) {
 
 installMockLocalStorage();
 bootstrapStudioOsBrowserStorage();
+// Purge is deferred on boot — run explicitly in tests
+purgeOversizedStudioLocalKeys();
 
 // Large demo payload must not throw
 const bigPayload = JSON.stringify({ demo: 'x'.repeat(100_000) });

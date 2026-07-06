@@ -23,6 +23,11 @@ export const STUDIO_OS_MAX_TOTAL_LOCAL_BYTES = 256 * 1024;
 const memoryCache = new Map<string, string>();
 let guardInstalled = false;
 let purgeRan = false;
+let purgeScheduled = false;
+/** Cached total bytes for studio keys in localStorage — avoids O(n) scan per write. */
+let cachedStudioLocalBytes: number | null = null;
+/** Skip per-write storage events during bulk bootstrap seeds. */
+let suppressStorageGuardEvents = false;
 
 export const STUDIO_OS_STORAGE_GUARD_EVENT = 'studio-os-storage-guard';
 
@@ -78,7 +83,19 @@ export function clearStudioOsMemoryCache(): void {
   memoryCache.clear();
 }
 
-function measureStudioLocalBytes(): number {
+function refreshStudioLocalBytesCache(): number {
+  cachedStudioLocalBytes = measureStudioLocalBytesUncached();
+  return cachedStudioLocalBytes;
+}
+
+function getStudioLocalBytesCached(): number {
+  if (cachedStudioLocalBytes === null) {
+    return refreshStudioLocalBytesCache();
+  }
+  return cachedStudioLocalBytes;
+}
+
+function measureStudioLocalBytesUncached(): number {
   if (typeof window === 'undefined') return 0;
   let total = 0;
   try {
@@ -98,7 +115,7 @@ function canPersistStudioKeyLocally(key: string, value: string): boolean {
   if (!isStudioOsStorageKey(key)) return true;
   if (value.length > STUDIO_OS_MAX_LOCAL_VALUE_BYTES) return false;
   if (isLightweightStudioKey(key)) {
-    if (measureStudioLocalBytes() + key.length + value.length > STUDIO_OS_MAX_TOTAL_LOCAL_BYTES) {
+    if (getStudioLocalBytesCached() + key.length + value.length > STUDIO_OS_MAX_TOTAL_LOCAL_BYTES) {
       return false;
     }
     return true;
@@ -107,9 +124,33 @@ function canPersistStudioKeyLocally(key: string, value: string): boolean {
   return false;
 }
 
+function noteLocalStudioWrite(key: string, value: string): void {
+  if (cachedStudioLocalBytes !== null && isStudioOsStorageKey(key)) {
+    cachedStudioLocalBytes += key.length + value.length;
+  }
+}
+
+function noteLocalStudioRemove(key: string, previousLength: number): void {
+  if (cachedStudioLocalBytes !== null && isStudioOsStorageKey(key)) {
+    cachedStudioLocalBytes = Math.max(0, cachedStudioLocalBytes - (key.length + previousLength));
+  }
+}
+
 function dispatchStorageGuardEvent(detail: { action: 'memory-fallback' | 'purge' | 'reset'; key?: string }): void {
+  if (suppressStorageGuardEvents) return;
   if (typeof window === 'undefined') return;
   window.dispatchEvent(new CustomEvent(STUDIO_OS_STORAGE_GUARD_EVENT, { detail }));
+}
+
+/** Suppress storage guard events during bulk platform bootstrap (avoids main-thread churn). */
+export function runWithStudioStorageBulkWrite<T>(fn: () => T): T {
+  const prev = suppressStorageGuardEvents;
+  suppressStorageGuardEvents = true;
+  try {
+    return fn();
+  } finally {
+    suppressStorageGuardEvents = prev;
+  }
 }
 
 /**
@@ -119,12 +160,16 @@ export function writeStudioOsStorageValue(key: string, value: string): boolean {
   writeStudioOsMemoryValue(key, value);
 
   if (!canPersistStudioKeyLocally(key, value)) {
-    dispatchStorageGuardEvent({ action: 'memory-fallback', key });
+    if (!suppressStorageGuardEvents) {
+      dispatchStorageGuardEvent({ action: 'memory-fallback', key });
+    }
     return false;
   }
 
   const ok = safeLocalStorageSetItem(key, value);
-  if (!ok) {
+  if (ok) {
+    noteLocalStudioWrite(key, value);
+  } else if (!suppressStorageGuardEvents) {
     dispatchStorageGuardEvent({ action: 'memory-fallback', key });
   }
   return ok;
@@ -138,6 +183,14 @@ export function readStudioOsStorageValue(key: string): string | null {
 }
 
 export function removeStudioOsStorageValue(key: string): void {
+  if (typeof window !== 'undefined') {
+    try {
+      const prev = safeLocalStorageGetItem(key);
+      if (prev) noteLocalStudioRemove(key, prev.length);
+    } catch {
+      /* ignore */
+    }
+  }
   removeStudioOsMemoryValue(key);
   safeLocalStorageRemoveItem(key);
 }
@@ -198,6 +251,7 @@ export function purgeOversizedStudioLocalKeys(): { removed: string[]; freedBytes
 
       if (drop) {
         writeStudioOsMemoryValue(key, raw);
+        noteLocalStudioRemove(key, raw.length);
         safeLocalStorageRemoveItem(key);
         removed.push(key);
         freedBytes += key.length + raw.length;
@@ -206,6 +260,8 @@ export function purgeOversizedStudioLocalKeys(): { removed: string[]; freedBytes
   } catch (error) {
     console.warn('[studioOsBrowserStorage] purge failed:', error);
   }
+
+  cachedStudioLocalBytes = null;
 
   if (removed.length > 0) {
     dispatchStorageGuardEvent({ action: 'purge' });
@@ -236,6 +292,7 @@ export function resetLocalStudioCache(): void {
     console.warn('[studioOsBrowserStorage] reset failed:', error);
   }
   dispatchStorageGuardEvent({ action: 'reset' });
+  cachedStudioLocalBytes = null;
 }
 
 /** Install localStorage guard — intercepts Studio OS keys before quota errors crash the app. */
@@ -264,11 +321,14 @@ export function installStudioOsStorageGuard(): void {
 
     writeStudioOsMemoryValue(key, value);
     if (!canPersistStudioKeyLocally(key, value)) {
-      dispatchStorageGuardEvent({ action: 'memory-fallback', key });
+      if (!suppressStorageGuardEvents) {
+        dispatchStorageGuardEvent({ action: 'memory-fallback', key });
+      }
       return;
     }
     try {
       originalSetItem.call(this, key, value);
+      noteLocalStudioWrite(key, value);
     } catch (error) {
       if (isQuotaExceededError(error)) {
         console.warn(`[studioOsBrowserStorage] quota exceeded — memory only: ${key}`);
@@ -303,12 +363,28 @@ export function installStudioOsStorageGuard(): void {
   };
 }
 
-/** Boot hook — install guard once and purge legacy oversized keys. */
+/** Boot hook — install guard sync; purge legacy keys on idle (never block first paint). */
 export function bootstrapStudioOsBrowserStorage(): void {
   installStudioOsStorageGuard();
-  if (purgeRan) return;
-  purgeRan = true;
-  purgeOversizedStudioLocalKeys();
+  schedulePurgeOversizedStudioLocalKeys();
+}
+
+function schedulePurgeOversizedStudioLocalKeys(): void {
+  if (purgeRan || purgeScheduled || typeof window === 'undefined') return;
+  purgeScheduled = true;
+
+  const run = () => {
+    purgeScheduled = false;
+    if (purgeRan) return;
+    purgeRan = true;
+    purgeOversizedStudioLocalKeys();
+  };
+
+  if (typeof requestIdleCallback !== 'undefined') {
+    requestIdleCallback(run, { timeout: 3000 });
+  } else {
+    setTimeout(run, 0);
+  }
 }
 
 export function getStudioLocalStorageAudit(): {
@@ -332,5 +408,5 @@ export function getStudioLocalStorageAudit(): {
       /* ignore */
     }
   }
-  return { localKeys, memoryKeys: memoryCache.size, totalLocalBytes };
+  return { localKeys, memoryKeys: memoryCache.size, totalLocalBytes: getStudioLocalBytesCached() };
 }

@@ -79,9 +79,15 @@ function resolveScopedKey(key: AdminStudioStorageKey): string {
   return scopeStorageKey(key, getRuntimeActiveWorkspaceId());
 }
 
-/** Request cloud hydration for workspace-scoped editable module state. */
+const hydratedCloudKeys = new Set<string>();
+
+/** Request cloud hydration once per workspace module key per session. */
 export function ensureStudioModuleCloudHydration(key: AdminStudioStorageKey): void {
-  hydrateStudioWorkspaceStateFromCloud(key, getRuntimeActiveWorkspaceId());
+  const ws = getRuntimeActiveWorkspaceId();
+  const hydrationId = `${ws}::${key}`;
+  if (hydratedCloudKeys.has(hydrationId)) return;
+  hydratedCloudKeys.add(hydrationId);
+  hydrateStudioWorkspaceStateFromCloud(key, ws);
 }
 
 export function readStudioJson<T>(key: AdminStudioStorageKey): T | null {

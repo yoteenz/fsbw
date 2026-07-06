@@ -31,6 +31,7 @@ import { fetchAdminMeetingsApiNormalized, useAdminMeetingsApiRefresh } from '../
 import { canAccessStudioAdministration } from '../../../studio-os-core/application/portfolio-access';
 import { ensureOrgMembershipResolved } from '../../../studio-os-core/auth/membership';
 import { registerStudioOsAuthBridge } from '../../../shared/auth/studioOsAuthBridge';
+import { ensureWorkspacesBootstrapped } from '../../../utils/ensureWorkspacesBootstrapped';
 import { getAccessToken } from '../../../utils/api';
 import { ORGANIZATION_ROUTES, STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import {
@@ -296,6 +297,7 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     registerStudioOsAuthBridge();
+    void ensureWorkspacesBootstrapped();
     void (async () => {
       try {
         const token = await getAccessToken();

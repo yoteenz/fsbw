@@ -39255,6 +39255,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Context (full chat arc):** Same session delivered M90–M120 plus Living Headquarters and browser storage architecture fix. User requested **Milestone 121 — Legacy Network™ V1.0**: permission-based global ecosystem — voluntary contribution with complete IP ownership · movement not marketplace · PRESERVE EXPERTISE. BUILD LEGACY.
 
+<<<<<<< HEAD
 **Delivered:** **`src/studio-os-core/legacy-network/`** · **`LegacyNetworkWorkspace`** + **`/admin/studio/legacy-network`** · **`MissionControlLegacyNetworkPanel`** · sync from Operating Manual · **`docs/studio-os/legacy-network.md`**
 
 **Conventions:** Legacy Network (M121) is not a marketplace — a movement. Demo localStorage via `studioOsLegacyNetwork_v1`.
@@ -39760,3 +39761,30 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/experience-engine.md`** · **CORE.md** M141 entry · updated asset-registry sync chain
 
 **Conventions:** Experience changes feel, not function. Transitions subtle only. Sync chain: … → State Engine → Asset Registry → **Experience Engine** (M125–M141 Infrastructure Chapter complete). Demo localStorage via `studioOsExperienceEngine_v1`. Brand voice: *"Technology adapts to people. Not the other way around."* Accent `#8B5CF6`.
+=======
+**Conventions:** Studio OS localStorage = lightweight prefs only (active org id, UI prefs, favorites/recent). Large module/demo state = session memory. User `adminStudio*` edits → cloud via `/api/admin/studio-workspace-state`. Recovery: **Reset local Studio cache** in error boundary or Workspace Settings. Run migration `20260706170000_studio_os_workspace_state.sql` in Supabase after deploy.
+
+---
+
+## 2026-07-06 — Studio OS HQ + Command Center loading screen lag (post-storage fix)
+
+**Context:** After browser storage architecture fix (`a655132c`), user reported **Headquarters** and **Studio Command Center** pages hang/lag on **LoadingScreen** before boot.
+
+**Root causes:**
+1. **Sync storage purge** on every app boot in `main.tsx` scanned/parsed all legacy `studioOs_*` localStorage keys on the main thread before React paint.
+2. **Storage guard** called `measureStudioLocalBytes()` (full localStorage scan) on every lightweight write — expensive during platform bootstrap.
+3. **`AdminStudioWorkspaceGuard`** awaited workspaces import, token, and membership **sequentially**; membership re-fetched API even when dashboard already resolved it (only `source === 'supabase'` was cached).
+4. **Cold workspaces import** on first HQ/CC navigation — no prefetch from admin dashboard.
+
+**Fix:**
+- **`studioOsBrowserStorage.ts`** — defer purge to `requestIdleCallback`; cached byte counter; suppress guard events during bulk bootstrap (`runWithStudioStorageBulkWrite`).
+- **`membership.ts`** — return any cached membership immediately; background refresh if not yet from Supabase.
+- **`AdminStudioWorkspaceGuard.tsx`** — parallel `Promise.all([ensureWorkspacesBootstrapped(), getAccessToken()])`; 2s membership timeout with cache fallback.
+- **`dashboard/page.tsx`** — prefetch `ensureWorkspacesBootstrapped()` on admin dashboard mount (warms module before HQ/CC tap).
+- **`workspaces/index.ts`** — wrap `bootstrapWorkspacesPlatform` seeds in bulk-write suppressor.
+- **`adminStudioStorage.ts`** — dedupe cloud hydration per key per session.
+
+**Changes:** studioOsBrowserStorage.ts, membership.ts, AdminStudioWorkspaceGuard.tsx, dashboard/page.tsx, workspaces/index.ts, adminStudioStorage.ts, test script, MEMORY.md.
+
+**Conventions:** Never sync-scan localStorage on critical path; prefetch Studio workspaces from admin dashboard; membership cache is session-stable after first resolve.
+>>>>>>> c9c67587 (Speed up Studio HQ and Command Center boot after storage guard regression)
