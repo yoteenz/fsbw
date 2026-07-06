@@ -34,6 +34,7 @@ export type StudioOsBrandSystemId =
   | 'cross-organization-intelligence'
   | 'relationship-memory'
   | 'predictive-organization'
+  | 'autonomous-preparation'
   | 'succession-mode'
   | 'executive-council'
   | 'expansion-center'
@@ -66,6 +67,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'cross-organization-intelligence': 'Connect wisely. Trust always.',
   'relationship-memory': 'Remember how you work. Naturally.',
   'predictive-organization': 'Prepare before tomorrow arrives.',
+  'autonomous-preparation': 'One step ahead. Always awaiting approval.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',
   'expansion-center': 'Grow your organization. Expand your legacy.',

@@ -289,6 +289,10 @@ export function bootstrapWorkspacesPlatform(): void {
     predictiveOrganization.bootstrapPredictiveOrganizationPlatform();
     await yieldToMain();
 
+    const autonomousPreparation = await import('../studio-os-core/autonomous-preparation/bootstrap');
+    autonomousPreparation.bootstrapAutonomousPreparationPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

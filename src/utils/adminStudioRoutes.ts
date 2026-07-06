@@ -841,6 +841,10 @@ export function adminStudioPredictiveOrganizationPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/predictive-organization`;
 }
 
+export function adminStudioAutonomousPreparationPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/autonomous-preparation`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

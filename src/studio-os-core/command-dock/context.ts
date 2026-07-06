@@ -35,6 +35,7 @@ import { listPresenceEngineDockSuggestions } from '../presence-engine';
 import { listCrossOrgIntelligenceDockSuggestions } from '../cross-organization-intelligence';
 import { listRelationshipMemoryDockSuggestions } from '../relationship-memory';
 import { listPredictiveOrganizationDockSuggestions } from '../predictive-organization';
+import { listAutonomousPreparationDockSuggestions } from '../autonomous-preparation';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -264,6 +265,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'PREDICTIVE ORGANIZATION™ · PREPARE AHEAD',
       portfolioMode: false,
       suggestedCommands: listPredictiveOrganizationDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/autonomous-preparation')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'autonomous-preparation',
+      label: 'AUTONOMOUS PREPARATION™ · AWAITING APPROVAL',
+      portfolioMode: false,
+      suggestedCommands: listAutonomousPreparationDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

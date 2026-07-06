@@ -199,6 +199,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncPredictiveOrganizationFromSources(blueprint.organizationId);
   });
 
+  void import('../autonomous-preparation/store').then((m) => {
+    m.syncAutonomousPreparationFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

@@ -108,6 +108,7 @@ export type StudioOsCoreModuleId =
   | 'cross-organization-intelligence'
   | 'relationship-memory'
   | 'predictive-organization'
+  | 'autonomous-preparation'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -751,6 +752,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PREDICTIVE ORGANIZATION™',
     description: 'Future intelligence V1.0 — anticipate opportunities, risks, bottlenecks, and trends before they occur.',
     routeSegment: 'predictive-organization',
+  },
+  {
+    id: 'autonomous-preparation',
+    label: 'AUTONOMOUS PREPARATION™',
+    description: 'Quiet preparation V1.0 — prepare work before founders ask. Nothing auto-executes; everything awaits approval.',
+    routeSegment: 'autonomous-preparation',
   },
   {
     id: 'succession-mode',

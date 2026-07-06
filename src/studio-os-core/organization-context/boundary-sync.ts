@@ -149,6 +149,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationPredictiveProfile(context.organizationId);
   });
 
+  void import('../autonomous-preparation/store').then((m) => {
+    m.ensureOrganizationAutonomousPreparationProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

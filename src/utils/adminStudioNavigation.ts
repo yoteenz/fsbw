@@ -1500,6 +1500,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'autonomous-preparation',
+    title: 'AUTONOMOUS PREPARATION™',
+    purpose: 'Quietly prepare work before founders ask — agendas, reports, launch assets. Nothing auto-executes.',
+    route: p('autonomous-preparation'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M114',
+    ctaLabel: 'OPEN AUTONOMOUS PREPARATION',
+    moduleKey: 'autonomous-preparation',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

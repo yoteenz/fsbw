@@ -46,7 +46,11 @@ function upsertProfile(profile: OrganizationPredictiveProfile): OrganizationPred
 }
 
 export function syncPredictiveOrganizationFromSources(organizationId: string): OrganizationPredictiveProfile {
-  return upsertProfile(buildOrganizationPredictiveProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationPredictiveProfile(organizationId));
+  void import('../autonomous-preparation/store').then((m) => {
+    m.syncAutonomousPreparationFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationPredictiveProfile(organizationId: string): OrganizationPredictiveProfile {
