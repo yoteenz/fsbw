@@ -1,6 +1,15 @@
 /** Centralized Studio localStorage keys — single source for Phase 2 scaling. */
 
 import { scopeStorageKey, getRuntimeActiveWorkspaceId } from '../studio-os-core/workspace/storage';
+import {
+  readStudioOsStorageValue,
+  removeStudioOsStorageValue,
+  writeStudioOsJson,
+} from './studioOsBrowserStorage';
+import {
+  hydrateStudioWorkspaceStateFromCloud,
+  scheduleStudioWorkspaceStateCloudSave,
+} from './studioWorkspaceCloudSync';
 
 export const ADMIN_STUDIO_STORAGE_KEYS = {
   shows: 'adminStudioShowsEditable_v1',
@@ -70,16 +79,26 @@ function resolveScopedKey(key: AdminStudioStorageKey): string {
   return scopeStorageKey(key, getRuntimeActiveWorkspaceId());
 }
 
+/** Request cloud hydration for workspace-scoped editable module state. */
+export function ensureStudioModuleCloudHydration(key: AdminStudioStorageKey): void {
+  hydrateStudioWorkspaceStateFromCloud(key, getRuntimeActiveWorkspaceId());
+}
+
 export function readStudioJson<T>(key: AdminStudioStorageKey): T | null {
+  ensureStudioModuleCloudHydration(key);
   try {
-    const scoped = localStorage.getItem(resolveScopedKey(key));
+    const scoped = readStudioOsStorageValue(resolveScopedKey(key));
     if (scoped) return JSON.parse(scoped) as T;
-    // Legacy migration: unscoped key → workspace-scoped
-    const legacy = localStorage.getItem(key);
+    const legacy = readStudioOsStorageValue(key);
     if (legacy) {
-      const parsed = JSON.parse(legacy) as T;
-      writeStudioJson(key, parsed);
-      return parsed;
+      try {
+        const parsed = JSON.parse(legacy) as T;
+        writeStudioJson(key, parsed);
+        return parsed;
+      } catch {
+        removeStudioOsStorageValue(key);
+        return null;
+      }
     }
     return null;
   } catch {
@@ -88,7 +107,8 @@ export function readStudioJson<T>(key: AdminStudioStorageKey): T | null {
 }
 
 export function writeStudioJson(key: AdminStudioStorageKey, value: unknown): void {
-  localStorage.setItem(resolveScopedKey(key), JSON.stringify(value));
+  writeStudioOsJson(resolveScopedKey(key), value);
+  scheduleStudioWorkspaceStateCloudSave(key, value, getRuntimeActiveWorkspaceId());
 }
 
 export function patchStudioRecord<T extends Record<string, unknown>>(

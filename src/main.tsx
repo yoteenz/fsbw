@@ -15,6 +15,10 @@ import { registerGlobalChunkLoadRecovery } from './utils/chunkLoadRecovery'
 import { preloadPsaNudgeAssets } from './utils/psaNudgeAssetPreload'
 import { bootstrapFrontalSlayerVisionEngine } from './workspaces/frontal-slayer/vision-engine'
 import { purgeStaleVisionSessionOnBoot } from './utils/visionSessionBootGuard'
+import { bootstrapStudioOsBrowserStorage } from './utils/studioOsBrowserStorage'
+
+// Studio OS storage guard — before any module seeds localStorage (prevents Safari quota crashes).
+bootstrapStudioOsBrowserStorage()
 
 const AUTH_BOOT_TIMEOUT_MS = 6000
 

@@ -1,29 +1,40 @@
 import { scopeStorageKey, getRuntimeActiveWorkspaceId } from './storage';
+import {
+  readStudioOsStorageValue,
+  removeStudioOsStorageValue,
+  writeStudioOsJson,
+} from '../../utils/studioOsBrowserStorage';
 
 /** Read JSON scoped to active workspace — isolated per organization. */
 export function readScopedStore<T>(baseKey: string, empty: () => T, workspaceId?: string): T {
   if (typeof window === 'undefined') return empty();
   const key = scopeStorageKey(baseKey, workspaceId);
   try {
-    const raw = localStorage.getItem(key);
+    const raw = readStudioOsStorageValue(key);
     if (!raw) {
-      const legacy = localStorage.getItem(baseKey);
+      const legacy = readStudioOsStorageValue(baseKey);
       if (legacy && !workspaceId) {
-        const parsed = JSON.parse(legacy) as T;
-        localStorage.setItem(key, legacy);
-        return parsed;
+        try {
+          const parsed = JSON.parse(legacy) as T;
+          writeStudioOsJson(key, parsed);
+          return parsed;
+        } catch {
+          removeStudioOsStorageValue(baseKey);
+          return empty();
+        }
       }
       return empty();
     }
     return { ...empty(), ...JSON.parse(raw) } as T;
   } catch {
+    removeStudioOsStorageValue(key);
     return empty();
   }
 }
 
 export function writeScopedStore<T>(baseKey: string, value: T, workspaceId?: string): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(scopeStorageKey(baseKey, workspaceId), JSON.stringify(value));
+  writeStudioOsJson(scopeStorageKey(baseKey, workspaceId), value);
 }
 
 export function getActiveScopedStorageKey(baseKey: string): string {

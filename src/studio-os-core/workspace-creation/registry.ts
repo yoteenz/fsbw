@@ -1,8 +1,8 @@
-/**
- * Platform-level workspace registry persistence (not scoped per active workspace).
- */
-
 import type { WorkspaceCreationEngineStore, WorkspaceRegistryRecord } from './types';
+import {
+  readStudioOsJson,
+  writeStudioOsJson,
+} from '../../utils/studioOsBrowserStorage';
 import { createDefaultPromotionPipeline } from './promotionPipeline';
 import {
   buildAiMediaPilotDraft,
@@ -22,11 +22,9 @@ function emptyStore(): WorkspaceCreationEngineStore {
 }
 
 export function readWorkspaceCreationStore(): WorkspaceCreationEngineStore {
-  if (typeof localStorage === 'undefined') return emptyStore();
+  if (typeof window === 'undefined') return emptyStore();
   try {
-    const raw = localStorage.getItem(WORKSPACE_REGISTRY_STORAGE_KEY);
-    if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as WorkspaceCreationEngineStore;
+    const parsed = readStudioOsJson(WORKSPACE_REGISTRY_STORAGE_KEY, emptyStore);
     return {
       ...emptyStore(),
       ...parsed,
@@ -41,8 +39,8 @@ export function readWorkspaceCreationStore(): WorkspaceCreationEngineStore {
 }
 
 export function writeWorkspaceCreationStore(store: WorkspaceCreationEngineStore): void {
-  if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(WORKSPACE_REGISTRY_STORAGE_KEY, JSON.stringify(store));
+  if (typeof window === 'undefined') return;
+  writeStudioOsJson(WORKSPACE_REGISTRY_STORAGE_KEY, store);
 }
 
 export function listRegistryWorkspaces(): WorkspaceRegistryRecord[] {

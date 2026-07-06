@@ -1,6 +1,25 @@
 import { WORKSPACE_REGISTRY_STORAGE_KEY, WORKSPACE_REGISTRY_VERSION } from './types';
 import type { WorkspaceRegistryStore } from './types';
-import { safeLocalStorageGetItem, safeLocalStorageSetItem } from '../../utils/safeLocalStorage';
+import {
+  readStudioOsJson,
+  readStudioOsStorageValue,
+  writeStudioOsJson,
+} from '../../utils/studioOsBrowserStorage';
+
+/** Lightweight subset persisted locally — full snapshots stay in memory only. */
+type WorkspaceRegistryPrefs = Pick<
+  WorkspaceRegistryStore,
+  'version' | 'favorites' | 'recentWorkspaceIds' | 'lastUpdatedAt'
+>;
+
+function prefsFromStore(store: WorkspaceRegistryStore): WorkspaceRegistryPrefs {
+  return {
+    version: store.version,
+    favorites: store.favorites,
+    recentWorkspaceIds: store.recentWorkspaceIds,
+    lastUpdatedAt: store.lastUpdatedAt,
+  };
+}
 
 export function buildWorkspaceRegistrySeed(): WorkspaceRegistryStore {
   const now = new Date().toISOString();
@@ -91,9 +110,29 @@ export function buildWorkspaceRegistrySeed(): WorkspaceRegistryStore {
 export function readWorkspaceRegistryStore(): WorkspaceRegistryStore {
   if (typeof window === 'undefined') return buildWorkspaceRegistrySeed();
   try {
-    const raw = safeLocalStorageGetItem(WORKSPACE_REGISTRY_STORAGE_KEY);
-    if (!raw) return buildWorkspaceRegistrySeed();
-    return { ...buildWorkspaceRegistrySeed(), ...JSON.parse(raw) };
+    const seed = buildWorkspaceRegistrySeed();
+    const fullRaw = readStudioOsStorageValue(`${WORKSPACE_REGISTRY_STORAGE_KEY}_full`);
+    if (fullRaw) {
+      try {
+        const full = { ...seed, ...JSON.parse(fullRaw) } as WorkspaceRegistryStore;
+        return { ...full, version: WORKSPACE_REGISTRY_VERSION };
+      } catch {
+        /* fall through */
+      }
+    }
+    const prefs = readStudioOsJson<WorkspaceRegistryPrefs>(WORKSPACE_REGISTRY_STORAGE_KEY, () => ({
+      version: WORKSPACE_REGISTRY_VERSION,
+      favorites: seed.favorites,
+      recentWorkspaceIds: seed.recentWorkspaceIds,
+      lastUpdatedAt: seed.lastUpdatedAt,
+    }));
+    return {
+      ...seed,
+      ...prefs,
+      version: WORKSPACE_REGISTRY_VERSION,
+      studioPortfolioInsights: seed.studioPortfolioInsights,
+      snapshots: seed.snapshots,
+    };
   } catch {
     return buildWorkspaceRegistrySeed();
   }
@@ -101,10 +140,12 @@ export function readWorkspaceRegistryStore(): WorkspaceRegistryStore {
 
 export function writeWorkspaceRegistryStore(store: WorkspaceRegistryStore): void {
   if (typeof window === 'undefined') return;
-  safeLocalStorageSetItem(
-    WORKSPACE_REGISTRY_STORAGE_KEY,
-    JSON.stringify({ ...store, lastUpdatedAt: new Date().toISOString() })
-  );
+  writeStudioOsJson(WORKSPACE_REGISTRY_STORAGE_KEY, {
+    ...prefsFromStore(store),
+    lastUpdatedAt: new Date().toISOString(),
+  });
+  // Full store (snapshots, insights) lives in memory via writeStudioOsJson guard — not localStorage.
+  writeStudioOsJson(`${WORKSPACE_REGISTRY_STORAGE_KEY}_full`, store);
 }
 
 export function getWorkspaceSnapshot(workspaceId: string): WorkspaceRegistryStore['snapshots'][number] | null {
@@ -127,7 +168,5 @@ export function toggleWorkspaceFavorite(workspaceId: string): void {
 }
 
 export function bootstrapWorkspaceRegistryPlatform(): void {
-  const existing = readWorkspaceRegistryStore();
-  if (existing.snapshots.length >= 4) return;
-  writeWorkspaceRegistryStore(buildWorkspaceRegistrySeed());
+  /* Snapshots are seeded in memory — no localStorage write required. */
 }

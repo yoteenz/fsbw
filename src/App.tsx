@@ -53,6 +53,7 @@ import {
   reloadForStaleChunks,
 } from './utils/chunkLoadRecovery';
 import { isQuotaExceededError } from './utils/safeLocalStorage';
+import { resetLocalStudioCache } from './utils/studioOsBrowserStorage';
 import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/creativePreviewMode';
 import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
@@ -453,7 +454,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
           textTransform: 'uppercase',
         }}>
           <h1 style={{ fontSize: '18px', textAlign: 'center', margin: 0, fontWeight: 600, letterSpacing: '0.12em' }}>
-            {isChunkError ? 'UPDATING THE APP' : 'ERROR: COMPONENT FAILED TO LOAD'}
+            {isChunkError ? 'UPDATING THE APP' : 'COMPONENT FAILED TO LOAD'}
           </h1>
           <p
             style={{
@@ -468,13 +469,13 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
                     fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                     color: '#1A1A1A',
                   }
-                : {}),
+                : { color: '#555', textTransform: 'none' }),
             }}
           >
             {isChunkError
               ? 'A new version was deployed while this tab was open. Tap reload to refresh — your data on this device is kept.'
               : isQuotaError
-                ? 'THIS DEVICE\'S BROWSER STORAGE IS FULL. STUDIO OS COULD NOT SAVE WORKSPACE DATA. TRY SAFARI SETTINGS → CLEAR WEBSITE DATA FOR THIS SITE, OR USE A PRIVATE TAB. YOUR ACCOUNT DATA IN THE CLOUD IS SAFE.'
+                ? 'This device\'s browser storage is full. Studio OS could not save workspace data locally. Your account data in the cloud is safe.'
                 : this.state.error?.message}
           </p>
           {isChunkError ? (
@@ -498,6 +499,48 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
             >
               RELOAD PAGE
             </button>
+          ) : isQuotaError ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+              <button
+                type="button"
+                onClick={() => {
+                  resetLocalStudioCache();
+                  this.setState({ hasError: false, error: null });
+                }}
+                style={{
+                  marginTop: '8px',
+                  padding: '10px 16px',
+                  fontSize: '11px',
+                  backgroundColor: '#fff',
+                  color: '#eb1c24',
+                  border: '1px solid #0a0a0a',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Reset local Studio cache
+              </button>
+              <button
+                type="button"
+                onClick={this.handleRetry}
+                style={{
+                  padding: 0,
+                  fontSize: '11px',
+                  backgroundColor: 'transparent',
+                  color: '#808080',
+                  border: 'none',
+                  cursor: 'pointer',
+                  letterSpacing: '0.1em',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '4px',
+                  textTransform: 'uppercase',
+                }}
+              >
+                Retry
+              </button>
+            </div>
           ) : (
             <button
               type="button"
