@@ -40,6 +40,7 @@ import { listOrganizationalConsciousnessDockSuggestions } from '../organizationa
 import { listExecutiveTimelineHistoryDockSuggestions } from '../executive-timeline/dock-advisor';
 import { listWorldKnowledgeEngineDockSuggestions } from '../world-knowledge-engine/dock-advisor';
 import { listFounderOperatingSystemDockSuggestions } from '../founder-operating-system/dock-advisor';
+import { listInnovationLabDockSuggestions } from '../innovation-lab/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -313,6 +314,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'FOUNDER OPERATING SYSTEM™ · OPERATES THE FOUNDER',
       portfolioMode: false,
       suggestedCommands: listFounderOperatingSystemDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/innovation-lab')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'innovation-lab',
+      label: 'INNOVATION LAB™ · INVENT WHAT COMES NEXT',
+      portfolioMode: false,
+      suggestedCommands: listInnovationLabDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

@@ -134,6 +134,11 @@ import {
   buildProactiveFounderOperatingSystemSuggestion,
   buildFounderOperatingOpeningLine,
 } from '../founder-operating-system/dock-advisor';
+import {
+  resolveInnovationLabAdvice,
+  buildProactiveInnovationLabSuggestion,
+  buildInnovationLabOpeningLine,
+} from '../innovation-lab/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -220,6 +225,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const morningWorldAlert = buildMorningWorldAlert(workspaceId);
   const founderOperatingSystem = buildProactiveFounderOperatingSystemSuggestion(workspaceId);
   const founderOpeningLine = buildFounderOperatingOpeningLine(workspaceId);
+  const innovationLab = buildProactiveInnovationLabSuggestion(workspaceId);
+  const innovationOpeningLine = buildInnovationLabOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -329,6 +336,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'How is my Founder Operating System supporting my leadership?',
       }
     : null;
+  const innovationLabProactive = innovationLab
+    ? {
+        response: innovationLab,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Innovation Lab — review discovered revenue opportunities.',
+      }
+    : null;
+  const innovationOpeningProactive = innovationOpeningLine
+    ? {
+        response: innovationOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'What new ideas has Innovation Lab generated?',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -391,10 +412,12 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? worldKnowledgeProactive
       : pathname.includes('/founder-operating-system') && founderOperatingProactive
       ? founderOperatingProactive
+      : pathname.includes('/innovation-lab') && innovationLabProactive
+      ? innovationLabProactive
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -686,6 +709,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${founderOperatingSystemAdvice.concierge}\n${founderOperatingSystemAdvice.response}`,
+    });
+    return null;
+  }
+
+  const innovationLabAdvice = resolveInnovationLabAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (innovationLabAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${innovationLabAdvice.concierge}\n${innovationLabAdvice.response}`,
     });
     return null;
   }

@@ -305,6 +305,10 @@ export function bootstrapWorkspacesPlatform(): void {
     founderOperatingSystem.bootstrapFounderOperatingSystemPlatform();
     await yieldToMain();
 
+    const innovationLab = await import('../studio-os-core/innovation-lab/bootstrap');
+    innovationLab.bootstrapInnovationLabPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

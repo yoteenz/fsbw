@@ -38,6 +38,7 @@ export type StudioOsBrandSystemId =
   | 'organizational-consciousness'
   | 'world-knowledge-engine'
   | 'founder-operating-system'
+  | 'innovation-lab'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -75,6 +76,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'organizational-consciousness': 'One intelligence. Preserve expertise. Build legacy.',
   'world-knowledge-engine': 'Information finds you. The outside world, filtered.',
   'founder-operating-system': 'Founders grow first. Organizations follow.',
+  'innovation-lab': 'Invent what comes next. Continuously.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

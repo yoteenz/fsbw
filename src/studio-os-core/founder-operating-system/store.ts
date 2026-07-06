@@ -50,7 +50,11 @@ function upsertProfile(profile: OrganizationFounderOperatingSystemProfile): Orga
 export function syncFounderOperatingSystemFromSources(
   organizationId: string
 ): OrganizationFounderOperatingSystemProfile {
-  return upsertProfile(buildOrganizationFounderOperatingSystemProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationFounderOperatingSystemProfile(organizationId));
+  void import('../innovation-lab/store').then((m) => {
+    m.syncInnovationLabFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationFounderOperatingSystemProfile(

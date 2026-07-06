@@ -1548,6 +1548,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'innovation-lab',
+    title: 'INNOVATION LAB™',
+    purpose: 'Permanent research, invention, and strategic ideation — continuously generate ideas from Profession Brain, Genome, Blueprint, Pulse, World Knowledge, and more.',
+    route: p('innovation-lab'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M119',
+    ctaLabel: 'OPEN INNOVATION LAB',
+    moduleKey: 'innovation-lab',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

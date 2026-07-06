@@ -169,6 +169,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationFounderOperatingSystemProfile(context.organizationId);
   });
 
+  void import('../innovation-lab/store').then((m) => {
+    m.ensureOrganizationInnovationLabProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

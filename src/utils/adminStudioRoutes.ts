@@ -857,6 +857,10 @@ export function adminStudioFounderOperatingSystemPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/founder-operating-system`;
 }
 
+export function adminStudioInnovationLabPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/innovation-lab`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

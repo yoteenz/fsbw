@@ -39163,3 +39163,27 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** HQ = destination/lobby, not dashboard cards. Dark UI reserved for Mission Control emergency/monitoring contexts only. **`HEADQUARTERS`** route unchanged (`/admin/headquarters` → Frontal Slayer Mission Control). All existing hooks, stores, and panel data paths preserved — visual/layout only.
 
 **Changes:** headquarters-experience/*, NdxbookExecutiveLobby.tsx, NdxbookMissionControl.tsx, NdxbookMissionControlPanels.tsx, FrontalSlayerExecutiveLobby.tsx, MissionControlWorkspace.tsx, CORE.md, MEMORY.md.
+
+---
+
+## 2026-07-06 — Milestone 119: Innovation Lab™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M118 (Blueprint through Founder Operating System `73ef6ca6`, completing Studio OS V1). User requested **Milestone 119 — Innovation Lab™ V1.0**: permanent research, invention, and strategic ideation center — purpose is to continuously create ideas, not collect them · innovation as permanent organizational capability · 12 innovation sources · 20 idea categories · Idea Workbench per idea · collaborative Digital Concierge innovation · 9-stage pipeline (archived searchable) · Command Dock revenue/workflow/customer/prototype lines.
+
+**Requirements delivered:**
+- **12 innovation sources** — Profession Brain · Organization Genome · Blueprint · Customer Feedback · Executive Council · Organization Pulse · Knowledge Commerce · Market Trends · Competitor Analysis · World Knowledge Engine · Historical Performance · Founder Vision
+- **20 idea categories** — products · services · memberships · subscriptions · digital products · courses · knowledge products · patents · automations · workflows · marketing campaigns · business models · pricing strategies · strategic partnerships · operational improvements · department packs · profession brains · expansion · community programs · revenue streams
+- **Idea Workbench** — executive summary · problem · opportunity · customers · revenue · difficulty · risk · departments · prototype · research · council feedback · founder notes · files · timeline
+- **Collaborative innovation** — Marketing · Finance · Operations · Research · Legal · Customer Experience · Chief Concierge executive recommendation
+- **Innovation pipeline** — Discovered → Researching → Validating → Prototype → Testing → Approved → Launching → Completed · Archived (never disappear)
+- **Command Dock** — **`resolveInnovationLabAdvice()`** · **`buildProactiveInnovationLabSuggestion()`** · **`buildInnovationLabOpeningLine()`**
+
+**Delivered:**
+- **`src/studio-os-core/innovation-lab/`** — **`innovation-sources.ts`** · **`idea-generator.ts`** · **`idea-workbench.ts`** · **`collaborative-innovation.ts`** · **`innovation-pipeline.ts`** · **`innovation-lab-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
+- **`InnovationLabWorkspace`** + **`/admin/studio/innovation-lab`** — 4 tabs: Innovation Overview · Idea Workbench · Collaborative Innovation · Innovation Pipeline · orange accent `#EA580C`
+- **`MissionControlInnovationLabPanel`** · **`useInnovationLabState`** hook
+- **Brand voice **`innovation-lab`**: *"Invent what comes next. Continuously."*
+- **Sync chain** — Profession Brain · Genome · Blueprint · Council · Pulse · Commerce · World Knowledge · Timeline · Founder OS · **`founder-operating-system/store`** resync triggers **`syncInnovationLabFromSources`** · **boundary-sync**
+- **Docs** — **`docs/studio-os/innovation-lab.md`** · **CORE.md** M119 entry · nav metric **M119**
+
+**Conventions:** Innovation Lab (M119) transforms innovation from occasional event into permanent capability — demo localStorage via `studioOsInnovationLab_v1`.

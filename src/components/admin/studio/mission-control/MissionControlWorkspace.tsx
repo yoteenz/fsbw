@@ -67,6 +67,7 @@ import { MissionControlOrganizationalConsciousnessPanel } from './MissionControl
 import { MissionControlExecutiveTimelinePanel } from './MissionControlExecutiveTimelinePanel';
 import { MissionControlWorldKnowledgeEnginePanel } from './MissionControlWorldKnowledgeEnginePanel';
 import { MissionControlFounderOperatingSystemPanel } from './MissionControlFounderOperatingSystemPanel';
+import { MissionControlInnovationLabPanel } from './MissionControlInnovationLabPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -400,6 +401,7 @@ export function MissionControlWorkspace() {
             <MissionControlOrganizationalConsciousnessPanel />
             <MissionControlWorldKnowledgeEnginePanel />
             <MissionControlFounderOperatingSystemPanel />
+            <MissionControlInnovationLabPanel />
           </div>
         </HqWingZone>
 

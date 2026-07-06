@@ -112,6 +112,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-consciousness'
   | 'world-knowledge-engine'
   | 'founder-operating-system'
+  | 'innovation-lab'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -779,6 +780,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'FOUNDER OPERATING SYSTEM™',
     description: 'Founder leadership V1.0 — operates the founder while Studio OS operates the organization. Coaching, focus, personal dashboard. Studio OS V1 culmination.',
     routeSegment: 'founder-operating-system',
+  },
+  {
+    id: 'innovation-lab',
+    label: 'INNOVATION LAB™',
+    description: 'Innovation Lab V1.0 — permanent research, invention, and strategic ideation. Continuously generate ideas from every intelligence source.',
+    routeSegment: 'innovation-lab',
   },
   {
     id: 'succession-mode',
