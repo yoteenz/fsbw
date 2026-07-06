@@ -115,6 +115,7 @@ export type StudioOsCoreModuleId =
   | 'innovation-lab'
   | 'organization-operating-manual'
   | 'legacy-network'
+  | 'studio-intelligence-architecture'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -800,6 +801,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'LEGACY NETWORK™',
     description: 'Legacy Network V1.0 — permission-based global ecosystem. Share expertise intentionally. Movement not marketplace.',
     routeSegment: 'legacy-network',
+  },
+  {
+    id: 'studio-intelligence-architecture',
+    label: 'STUDIO INTELLIGENCE™ ARCHITECTURE',
+    description: 'Studio Intelligence Architecture V1.0 — model-agnostic intelligence layer. Org owns knowledge; models reason.',
+    routeSegment: 'studio-intelligence-architecture',
   },
   {
     id: 'succession-mode',

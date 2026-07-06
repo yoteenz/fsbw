@@ -317,6 +317,10 @@ export function bootstrapWorkspacesPlatform(): void {
     legacyNetwork.bootstrapLegacyNetworkPlatform();
     await yieldToMain();
 
+    const studioIntelligenceArchitecture = await import('../studio-os-core/studio-intelligence-architecture/bootstrap');
+    studioIntelligenceArchitecture.bootstrapStudioIntelligenceArchitecturePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

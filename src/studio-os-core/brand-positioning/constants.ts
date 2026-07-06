@@ -41,6 +41,7 @@ export type StudioOsBrandSystemId =
   | 'innovation-lab'
   | 'organization-operating-manual'
   | 'legacy-network'
+  | 'studio-intelligence-architecture'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -81,6 +82,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'innovation-lab': 'Invent what comes next. Continuously.',
   'organization-operating-manual': 'One handbook. Always current.',
   'legacy-network': 'Preserve expertise. Share legacy.',
+  'studio-intelligence-architecture': 'The organization is the intelligence. Models assist.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

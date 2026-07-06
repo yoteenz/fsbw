@@ -39241,55 +39241,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-06 — Studio OS browser storage architecture fix (mobile Safari quota crash)
 
 **Context:** User reported urgent bug — admin Studio cards (Headquarters + Studio Command Center) failing on mobile Safari with **"Component failed to load. This device's browser storage is full. Studio OS could not save workspace data."** Prior partial fix (`7ec47f3f`) added `safeLocalStorage` for active workspace + registry but ~95 milestone stores still wrote large demo payloads to `localStorage`, filling Safari quota and crashing components.
 
-**Topics covered (entire conversation):**
-- User requested full storage architecture audit and fix: no large workspace payloads in browser storage; cloud source of truth; lightweight local prefs only; size guards; graceful quota fallback; no component crash; purge corrupted/oversized keys; **Reset local Studio cache** recovery; both admin Studio cards load independently without duplicating massive state.
+**Fix delivered:** **`src/utils/studioOsBrowserStorage.ts`** — central architecture: large payloads → in-memory session cache only; lightweight prefs → size-guarded localStorage; **`resetLocalStudioCache()`** recovery. Cloud persistence via **`studio_os_workspace_state`** + **`/api/admin/studio-workspace-state`**.
 
-**Root cause:** `bootstrapWorkspacesPlatform()` seeds dozens of milestone modules (executive org, NDXBOOK newsroom, strategy engine, etc.) each writing hundreds of KB to `localStorage` under `studioOs_*` keys. Mobile Safari ~5MB domain quota exceeded → uncaught `QuotaExceededError` during workspace activation or bootstrap → React error boundary.
-
-**Fix delivered:**
-- **`src/utils/studioOsBrowserStorage.ts`** — central architecture: `installStudioOsStorageGuard()` patches `Storage.prototype` for all `studioOs_*` / `adminStudio*` keys; large payloads → in-memory session cache only; lightweight prefs (active workspace, favorites, orb sound, etc.) → size-guarded localStorage (24KB/key, 256KB total); `purgeOversizedStudioLocalKeys()` on boot; `resetLocalStudioCache()` recovery; never throws on quota.
-- **`src/utils/studioWorkspaceCloudSync.ts`** + **`api/admin/studio-workspace-state.ts`** + migration **`20260706170000_studio_os_workspace_state.sql`** — cloud persistence for `adminStudio*` user edits (Supabase `studio_os_workspace_state` table).
-- **`scoped-store.ts`**, **`adminStudioStorage.ts`**, **`workspace-registry/store.ts`**, **`workspace-creation/registry.ts`** — use safe storage; registry persists only favorites/recent locally (snapshots in memory).
-- **`main.tsx`** — `bootstrapStudioOsBrowserStorage()` before any Studio seeds.
-- **`App.tsx`** error boundary — friendly quota message + **Reset local Studio cache** button.
-- **`studio-os/workspace/settings/page.tsx`** — device storage panel + reset action.
-- **`scripts/test-studio-os-storage.ts`** — smoke test (large payload memory-only, purge, reset).
-
-**Decisions / outcomes:** Demo/mock datasets never persist to localStorage; app loads even when storage full or unavailable; cloud remains source of truth for workspace edits; Headquarters and Command Center cards no longer depend on filling localStorage to bootstrap.
-
-**Changes:** studioOsBrowserStorage.ts, studioWorkspaceCloudSync.ts, adminStudioStorage.ts, scoped-store.ts, workspace-registry/store.ts, workspace-creation/registry.ts, main.tsx, App.tsx, workspace settings page, api/admin/studio-workspace-state.ts, supabase migration, test script, CORE.md, MEMORY.md.
-
-**Conventions:** Studio OS localStorage = lightweight prefs only (active org id, UI prefs, favorites/recent). Large module/demo state = session memory. User `adminStudio*` edits → cloud via `/api/admin/studio-workspace-state`. Recovery: **Reset local Studio cache** in error boundary or Workspace Settings. Run migration `20260706170000_studio_os_workspace_state.sql` in Supabase after deploy.
+**Conventions:** Studio OS localStorage = lightweight prefs only. Large module/demo state = session memory. Run migration `20260706170000_studio_os_workspace_state.sql` in Supabase after deploy.
 
 ---
 
 ## 2026-07-06 — Milestone 121: Legacy Network™ V1.0
 
-**Context (full chat arc):** Same session delivered M90–M120 (Blueprint through Organization Operating Manual `156ae891`) plus Living Headquarters environmental storytelling (`3916bd64`) and Studio OS browser storage architecture fix (`a655132c`). User requested **Milestone 121 — Legacy Network™ V1.0**: permission-based global ecosystem — voluntary contribution with complete IP ownership · 14 shareable asset types (all optional, nothing automatic) · 11 discovery filters · permanent attribution · 10 community features · 7 reputation dimensions · movement not marketplace · PRESERVE EXPERTISE. BUILD LEGACY.
+**Context (full chat arc):** Same session delivered M90–M120 plus Living Headquarters and browser storage architecture fix. User requested **Milestone 121 — Legacy Network™ V1.0**: permission-based global ecosystem — voluntary contribution with complete IP ownership · movement not marketplace · PRESERVE EXPERTISE. BUILD LEGACY.
 
-**Requirements delivered:**
-- **14 shareable asset types** — Profession Brain modules · department packs · automation blueprints · templates · playbooks · frameworks · Institute courses · knowledge products · innovation frameworks · genome components · Command Dock workflows · council models · approval systems · operating manual sections
-- **Discovery** — industry · business stage · org size · problem · department · profession · popularity · newest · verified · highest rated · knowledge category
-- **Attribution** — original org · founder · version · dates · license · usage rights · downloads · reviews · adoptions
-- **Community** — verified founders · org profiles · industry communities · forums · knowledge requests · improvement suggestions · collaborative research · partnership discovery · innovation challenges · community awards
-- **Reputation** — contribution · knowledge impact · community trust · adoption rate · innovation · teaching · legacy scores
-- **Command Dock** — **`resolveLegacyNetworkAdvice()`** · **`buildProactiveLegacyNetworkSuggestion()`** · **`buildLegacyNetworkOpeningLine()`**
+**Delivered:** **`src/studio-os-core/legacy-network/`** · **`LegacyNetworkWorkspace`** + **`/admin/studio/legacy-network`** · **`MissionControlLegacyNetworkPanel`** · sync from Operating Manual · **`docs/studio-os/legacy-network.md`**
 
-**Delivered:**
-- **`src/studio-os-core/legacy-network/`** — **`shareable-assets.ts`** · **`discovery-engine.ts`** · **`reputation-system.ts`** · **`community-engine.ts`** · **`legacy-network-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
-- **`LegacyNetworkWorkspace`** + **`/admin/studio/legacy-network`** — 4 tabs: Network Overview · Shareable Assets · Discovery · Attribution · Community · Reputation · amber accent `#B45309`
-- **`MissionControlLegacyNetworkPanel`** in Legacy Wing · **`useLegacyNetworkState`** hook
-- **Brand voice **`legacy-network`**: *"Preserve expertise. Share legacy."*
-- **Sync chain** — Profession Brain · Genome · Institute · Innovation Lab · Operating Manual · **`organization-operating-manual/store`** resync triggers **`syncLegacyNetworkFromSources`** · **boundary-sync**
-- **Docs** — **`docs/studio-os/legacy-network.md`** · **CORE.md** M121 entry · nav metric **M121**
+**Conventions:** Legacy Network (M121) is not a marketplace — a movement. Demo localStorage via `studioOsLegacyNetwork_v1`.
 
-**Conventions:** Legacy Network (M121) is not a marketplace — a movement. Organizations preserve knowledge; communities expand knowledge; future generations inherit knowledge. Demo localStorage via `studioOsLegacyNetwork_v1`.
-=======
+---
+
 ## 2026-07-06 — Emotional Intelligence™ & Life & Culture Preferences™ (Living HQ + Studio Orb follow-up)
 
 **Context (full chat arc):** Same session delivered Headquarters Experience V2.0 (`6724a61d`) and Living Headquarters™ environmental storytelling (`3916bd64`). User requested **Emotional Intelligence™ & Life & Culture Preferences™** — **do NOT redesign Headquarters layout**; teach Studio Intelligence™ to learn, ask, and respectfully personalize; Orb home for preferences; adaptive Living HQ gated by user choice; gentle discovery; privacy/export/delete.
@@ -39314,7 +39285,31 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Studio Intelligence** — **`adaptIntelligenceVoice()`** on narrative copy
 - **Command Dock** — gentle discovery prompt → opens Life & Culture panel
 
-**Conventions:** Distinct from M82.5 **`living-headquarters-presence`** (concierge activity). Defaults are **opt-in** — seasonal/holiday HQ effects off until user enables. Nothing inferred for sensitive personal data without explicit preference.
+**Conventions:** Distinct from M82.5 **`living-headquarters-presence`** (concierge presence). Defaults are **opt-in** — seasonal/holiday HQ effects off until user enables. Nothing inferred for sensitive personal data without explicit preference.
 
 **Changes:** life-culture-preferences/*, living-headquarters/resolver.ts, StudioOrbLifeCulturePanel.tsx, studio-orb/*, CommandDock.tsx, StudioIntelligenceNarrative.tsx, useLifeCulturePreferencesState.ts, NdxbookMissionControlPanels.tsx, CORE.md, MEMORY.md.
->>>>>>> 59721bd5 (Life & Culture Preferences: Orb settings, emotional intelligence, adaptive HQ)
+
+---
+
+## 2026-07-06 — Milestone 122: Studio Intelligence™ Architecture V1.0
+
+**Context (full chat arc):** Same session completed M121 Legacy Network™ (`02950cfa`) and integrated Life & Culture Preferences (`4ec2eed3`). User requested **Milestone 122 — Studio Intelligence™ Architecture V1.0**: permanent model-agnostic intelligence layer — org is the intelligence, models assist · separate knowledge from reasoning · Knowledge Fabric™ · Context Engine · durable Studio Intelligence Layer · Model Gateway · no feature calls third-party AI directly · moat is preserved expertise not vendors.
+
+**Requirements delivered:**
+- **Core philosophy** — model is not the intelligence; organization is; Studio Intelligence™ layer above AI models combining 10 stack systems
+- **Knowledge vs reasoning** — ask what org knows before what model thinks; knowledge in Studio OS, reasoning from multiple providers
+- **Knowledge Fabric™** — 18 interconnected node types (people · orgs · departments · customers · documents · projects · meetings · decisions · SOPs · policies · brains · genomes · memory · vault · institute · manual · world knowledge · commerce) · internal knowledge graph · external Knowledge Fabric™
+- **Context Engine** — 10 trusted sources assembled before AI (active org · brain · genome · memories · documents · policies · customer history · timeline · knowledge confidence · trust framework)
+- **Intelligence Layer** — 11-step pipeline (retrieve · rank · trust · scope · memory · prompt · receive · validate · store · update · route)
+- **Model Gateway** — OpenAI · Anthropic · Google · xAI · local fallback · **`routeStudioIntelligenceRequest()`** demo gateway
+- **Command Dock** — **`resolveStudioIntelligenceArchitectureAdvice()`** · **`buildProactiveStudioIntelligenceArchitectureSuggestion()`** · **`buildStudioIntelligenceArchitectureOpeningLine()`**
+
+**Delivered:**
+- **`src/studio-os-core/studio-intelligence-architecture/`** — **`knowledge-fabric.ts`** · **`context-engine.ts`** · **`intelligence-layer.ts`** · **`model-gateway.ts`** · **`architecture-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
+- **`StudioIntelligenceArchitectureWorkspace`** + **`/admin/studio/studio-intelligence-architecture`** — 5 tabs: Architecture Overview · Knowledge Fabric™ · Context Engine · Intelligence Layer · Model Gateway · indigo accent `#4338CA`
+- **`MissionControlStudioIntelligenceArchitecturePanel`** in Legacy Wing · **`useStudioIntelligenceArchitectureState`** hook
+- **Brand voice **`studio-intelligence-architecture`**: *"The organization is the intelligence. Models assist."*
+- **Sync chain** — Legacy Network · **`legacy-network/store`** resync triggers **`syncStudioIntelligenceArchitectureFromSources`** · **boundary-sync**
+- **Docs** — **`docs/studio-os/studio-intelligence-architecture.md`** · **CORE.md** M122 entry · nav metric **M122**
+
+**Conventions:** Studio Intelligence Architecture (M122) makes Studio OS valuable even if every AI vendor changes. All AI requests must pass through Studio Intelligence™. Demo localStorage via `studioOsStudioIntelligenceArchitecture_v1`.

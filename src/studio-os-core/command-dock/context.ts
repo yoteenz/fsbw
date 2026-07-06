@@ -43,6 +43,7 @@ import { listFounderOperatingSystemDockSuggestions } from '../founder-operating-
 import { listInnovationLabDockSuggestions } from '../innovation-lab/dock-advisor';
 import { listOrganizationOperatingManualDockSuggestions } from '../organization-operating-manual/dock-advisor';
 import { listLegacyNetworkDockSuggestions } from '../legacy-network/dock-advisor';
+import { listStudioIntelligenceArchitectureDockSuggestions } from '../studio-intelligence-architecture/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -349,6 +350,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'LEGACY NETWORK™ · MOVEMENT NOT MARKETPLACE',
       portfolioMode: false,
       suggestedCommands: listLegacyNetworkDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/studio-intelligence-architecture')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'studio-intelligence-architecture',
+      label: 'STUDIO INTELLIGENCE™ · MODEL-AGNOSTIC ARCHITECTURE',
+      portfolioMode: false,
+      suggestedCommands: listStudioIntelligenceArchitectureDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

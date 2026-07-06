@@ -1584,6 +1584,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'studio-intelligence-architecture',
+    title: 'STUDIO INTELLIGENCE™ ARCHITECTURE',
+    purpose: 'Model-agnostic intelligence layer — Knowledge Fabric, Context Engine, durable pipeline. Studio OS owns knowledge; models reason.',
+    route: p('studio-intelligence-architecture'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M122',
+    ctaLabel: 'OPEN INTELLIGENCE ARCHITECTURE',
+    moduleKey: 'studio-intelligence-architecture',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

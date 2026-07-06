@@ -48,7 +48,11 @@ function upsertProfile(profile: OrganizationLegacyNetworkProfile): OrganizationL
 }
 
 export function syncLegacyNetworkFromSources(organizationId: string): OrganizationLegacyNetworkProfile {
-  return upsertProfile(buildOrganizationLegacyNetworkProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationLegacyNetworkProfile(organizationId));
+  void import('../studio-intelligence-architecture/store').then((m) => {
+    m.syncStudioIntelligenceArchitectureFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationLegacyNetworkProfile(

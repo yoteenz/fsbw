@@ -149,6 +149,11 @@ import {
   buildProactiveLegacyNetworkSuggestion,
   buildLegacyNetworkOpeningLine,
 } from '../legacy-network/dock-advisor';
+import {
+  resolveStudioIntelligenceArchitectureAdvice,
+  buildProactiveStudioIntelligenceArchitectureSuggestion,
+  buildStudioIntelligenceArchitectureOpeningLine,
+} from '../studio-intelligence-architecture/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -241,6 +246,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const operatingManualOpeningLine = buildOperatingManualOpeningLine(workspaceId);
   const legacyNetwork = buildProactiveLegacyNetworkSuggestion(workspaceId);
   const legacyNetworkOpeningLine = buildLegacyNetworkOpeningLine(workspaceId);
+  const studioIntelligenceArchitecture = buildProactiveStudioIntelligenceArchitectureSuggestion(workspaceId);
+  const studioIntelligenceArchitectureOpeningLine = buildStudioIntelligenceArchitectureOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -392,6 +399,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'What can our organization publish to Legacy Network?',
       }
     : null;
+  const studioIntelligenceArchitectureProactive = studioIntelligenceArchitecture
+    ? {
+        response: studioIntelligenceArchitecture,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Studio Intelligence Architecture — model-agnostic layer.',
+      }
+    : null;
+  const studioIntelligenceArchitectureOpeningProactive = studioIntelligenceArchitectureOpeningLine
+    ? {
+        response: studioIntelligenceArchitectureOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Explain Knowledge Fabric and Context Engine.',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -460,10 +481,12 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? operatingManualProactive
       : pathname.includes('/legacy-network') && legacyNetworkProactive
       ? legacyNetworkProactive
+      : pathname.includes('/studio-intelligence-architecture') && studioIntelligenceArchitectureProactive
+      ? studioIntelligenceArchitectureProactive
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -806,6 +829,25 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${legacyNetworkAdvice.concierge}\n${legacyNetworkAdvice.response}`,
+    });
+    return null;
+  }
+
+  const studioIntelligenceArchitectureAdvice = resolveStudioIntelligenceArchitectureAdvice(
+    trimmed,
+    getRuntimeActiveWorkspaceId()
+  );
+  if (studioIntelligenceArchitectureAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${studioIntelligenceArchitectureAdvice.concierge}\n${studioIntelligenceArchitectureAdvice.response}`,
     });
     return null;
   }

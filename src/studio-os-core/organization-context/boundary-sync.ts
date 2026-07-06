@@ -181,6 +181,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationLegacyNetworkProfile(context.organizationId);
   });
 
+  void import('../studio-intelligence-architecture/store').then((m) => {
+    m.ensureOrganizationStudioIntelligenceArchitectureProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

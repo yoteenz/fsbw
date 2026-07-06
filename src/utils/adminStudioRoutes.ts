@@ -869,6 +869,10 @@ export function adminStudioLegacyNetworkPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/legacy-network`;
 }
 
+export function adminStudioStudioIntelligenceArchitecturePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-intelligence-architecture`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }
