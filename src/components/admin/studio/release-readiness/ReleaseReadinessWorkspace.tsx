@@ -20,6 +20,7 @@ import {
 import {
   adminStudioQaHeadquartersPath,
   adminStudioRegressionEnginePath,
+  adminStudioEngineeringExcellenceDashboardPath,
 } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
@@ -156,8 +157,11 @@ export function ReleaseReadinessWorkspace() {
       <button type="button" onClick={() => setTab('executive')} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: RELEASE_READINESS_ACCENT, color: RELEASE_READINESS_ACCENT }}>
         EXECUTIVE APPROVAL →
       </button>
-      <button type="button" onClick={() => navigate(adminStudioRegressionEnginePath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+      <button type="button" onClick={() => navigate(adminStudioRegressionEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         REGRESSION ENGINE →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioEngineeringExcellenceDashboardPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: RELEASE_READINESS_ACCENT, color: RELEASE_READINESS_ACCENT }}>
+        ENGINEERING EXCELLENCE →
       </button>
     </ExecutivePageShell>
   );

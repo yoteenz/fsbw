@@ -2052,6 +2052,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'engineering-excellence-dashboard',
+    title: 'ENGINEERING EXCELLENCE DASHBOARD™',
+    purpose: 'Executive command center for engineering health, quality, and readiness — excellence is a permanent mindset, not just current status.',
+    route: p('engineering-excellence-dashboard'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M162',
+    ctaLabel: 'OPEN ENGINEERING EXCELLENCE',
+    moduleKey: 'engineering-excellence-dashboard',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

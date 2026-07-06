@@ -1025,6 +1025,10 @@ export function adminStudioReleaseReadinessPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/release-readiness`;
 }
 
+export function adminStudioEngineeringExcellenceDashboardPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/engineering-excellence-dashboard`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

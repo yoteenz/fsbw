@@ -123,6 +123,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'performance-monitor': fromSystem('performance-monitor'),
   'regression-engine': fromSystem('regression-engine'),
   'release-readiness': fromSystem('release-readiness'),
+  'engineering-excellence-dashboard': fromSystem('engineering-excellence-dashboard'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

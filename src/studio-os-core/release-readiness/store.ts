@@ -52,10 +52,14 @@ export function syncReleaseReadinessFromSources(
 ): OrganizationReleaseReadinessProfile {
   const existing = getOrganizationReleaseReadinessProfile(organizationId);
   const built = buildOrganizationReleaseReadinessProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedReleaseId: existing?.selectedReleaseId ?? built.selectedReleaseId,
   });
+  void import('../engineering-excellence-dashboard/store').then((m) => {
+    m.syncEngineeringExcellenceFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationReleaseReadinessProfile(

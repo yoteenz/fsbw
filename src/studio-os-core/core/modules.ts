@@ -154,6 +154,7 @@ export type StudioOsCoreModuleId =
   | 'performance-monitor'
   | 'regression-engine'
   | 'release-readiness'
+  | 'engineering-excellence-dashboard'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1073,6 +1074,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'RELEASE READINESS™',
     description: 'Release Readiness V1.0 — final approval gate before production. Every release earns the right to reach users.',
     routeSegment: 'release-readiness',
+  },
+  {
+    id: 'engineering-excellence-dashboard',
+    label: 'ENGINEERING EXCELLENCE DASHBOARD™',
+    description: 'Engineering Excellence Dashboard V1.0 — executive command center for health, quality, readiness, and world-class engineering habits.',
+    routeSegment: 'engineering-excellence-dashboard',
   },
   {
     id: 'succession-mode',

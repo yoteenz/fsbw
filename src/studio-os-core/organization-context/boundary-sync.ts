@@ -341,6 +341,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationReleaseReadinessProfile(context.organizationId);
   });
 
+  void import('../engineering-excellence-dashboard/store').then((m) => {
+    m.ensureOrganizationEngineeringExcellenceProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

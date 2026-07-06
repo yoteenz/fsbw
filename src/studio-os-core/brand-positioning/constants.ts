@@ -80,6 +80,7 @@ export type StudioOsBrandSystemId =
   | 'performance-monitor'
   | 'regression-engine'
   | 'release-readiness'
+  | 'engineering-excellence-dashboard'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -159,6 +160,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'performance-monitor': 'Performance is a feature. Never slower because we\'re more capable.',
   'regression-engine': 'Never repeat the same mistake twice. Every regression becomes knowledge.',
   'release-readiness': 'Production is a privilege. Confident before deployment—not hopeful afterward.',
+  'engineering-excellence-dashboard': 'Excellence is a mindset. World-class habits—even for teams of one.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',
