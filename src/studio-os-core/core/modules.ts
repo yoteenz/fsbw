@@ -135,6 +135,9 @@ export type StudioOsCoreModuleId =
   | 'state-engine'
   | 'asset-registry'
   | 'experience-engine'
+  | 'qa-headquarters'
+  | 'qa-inspector'
+  | 'qa-simulation-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -940,6 +943,24 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXPERIENCE ENGINE™',
     description: 'Experience Engine V1.0 — emotional and environmental layer; context-aware atmosphere, subtle transitions, Infrastructure Chapter completion.',
     routeSegment: 'experience-engine',
+  },
+  {
+    id: 'qa-headquarters',
+    label: 'QA HEADQUARTERS™',
+    description: 'QA Headquarters V1.0 — permanent Quality Assurance & Trust Infrastructure; Trust Scores™, continuous validation, organizational integrity.',
+    routeSegment: 'qa-headquarters',
+  },
+  {
+    id: 'qa-inspector',
+    label: 'QA INSPECTOR™',
+    description: 'QA Inspector V1.0 — intelligent continuous audit; severity, confidence, root cause, recommended solution. Recommends only.',
+    routeSegment: 'qa-inspector',
+  },
+  {
+    id: 'qa-simulation-engine',
+    label: 'QA SIMULATION ENGINE™',
+    description: 'QA Simulation Engine V1.0 — pre-production practice field; simulate every persona journey before users encounter it.',
+    routeSegment: 'qa-simulation-engine',
   },
   {
     id: 'succession-mode',

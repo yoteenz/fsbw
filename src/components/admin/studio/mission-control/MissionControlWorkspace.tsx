@@ -93,6 +93,9 @@ import { MissionControlWorkflowEnginePanel } from './MissionControlWorkflowEngin
 import { MissionControlStateEnginePanel } from './MissionControlStateEnginePanel';
 import { MissionControlAssetRegistryPanel } from './MissionControlAssetRegistryPanel';
 import { MissionControlExperienceEnginePanel } from './MissionControlExperienceEnginePanel';
+import { MissionControlQaHeadquartersPanel } from './MissionControlQaHeadquartersPanel';
+import { MissionControlQaInspectorPanel } from './MissionControlQaInspectorPanel';
+import { MissionControlQaSimulationEnginePanel } from './MissionControlQaSimulationEnginePanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -552,6 +555,9 @@ export function MissionControlWorkspace() {
           <MissionControlStateEnginePanel />
           <MissionControlAssetRegistryPanel />
           <MissionControlExperienceEnginePanel />
+          <MissionControlQaHeadquartersPanel />
+          <MissionControlQaInspectorPanel />
+          <MissionControlQaSimulationEnginePanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

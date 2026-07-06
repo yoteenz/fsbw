@@ -265,6 +265,18 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationExperienceEngineProfile(context.organizationId);
   });
 
+  void import('../qa-headquarters/store').then((m) => {
+    m.ensureOrganizationQaHeadquartersProfile(context.organizationId);
+  });
+
+  void import('../qa-inspector/store').then((m) => {
+    m.ensureOrganizationQaInspectorProfile(context.organizationId);
+  });
+
+  void import('../qa-simulation-engine/store').then((m) => {
+    m.ensureOrganizationQaSimulationEngineProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

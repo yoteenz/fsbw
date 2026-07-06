@@ -949,6 +949,18 @@ export function adminStudioExperienceEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/experience-engine`;
 }
 
+export function adminStudioQaHeadquartersPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/qa-headquarters`;
+}
+
+export function adminStudioQaInspectorPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/qa-inspector`;
+}
+
+export function adminStudioQaSimulationEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/qa-simulation-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

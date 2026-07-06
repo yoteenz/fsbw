@@ -8,7 +8,7 @@ import {
   setExperienceMode,
 } from '../../../../studio-os-core/experience-engine';
 import type { ExperienceModeId } from '../../../../studio-os-core/experience-engine';
-import { adminStudioAssetRegistryPath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioAssetRegistryPath, adminStudioMissionControlPath, adminStudioQaHeadquartersPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,

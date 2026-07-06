@@ -282,6 +282,18 @@ const AdminStudioExperienceEngine = lazyWithRetry(
   () => import('./pages/admin/studio/experience-engine/page'),
   'AdminStudioExperienceEngine'
 );
+const AdminStudioQaHeadquarters = lazyWithRetry(
+  () => import('./pages/admin/studio/qa-headquarters/page'),
+  'AdminStudioQaHeadquarters'
+);
+const AdminStudioQaInspector = lazyWithRetry(
+  () => import('./pages/admin/studio/qa-inspector/page'),
+  'AdminStudioQaInspector'
+);
+const AdminStudioQaSimulationEngine = lazyWithRetry(
+  () => import('./pages/admin/studio/qa-simulation-engine/page'),
+  'AdminStudioQaSimulationEngine'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1613,6 +1625,21 @@ function App() {
           <Route path="studio/experience-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioExperienceEngine />
+            </Suspense>
+          } />
+          <Route path="studio/qa-headquarters" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioQaHeadquarters />
+            </Suspense>
+          } />
+          <Route path="studio/qa-inspector" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioQaInspector />
+            </Suspense>
+          } />
+          <Route path="studio/qa-simulation-engine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioQaSimulationEngine />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

@@ -61,6 +61,9 @@ export type StudioOsBrandSystemId =
   | 'state-engine'
   | 'asset-registry'
   | 'experience-engine'
+  | 'qa-headquarters'
+  | 'qa-inspector'
+  | 'qa-simulation-engine'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -121,6 +124,9 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'state-engine': 'Defined states. Intentional transitions. Complete trust.',
   'asset-registry': 'Assets managed. Knowledge preserved. Never scattered.',
   'experience-engine': 'Technology adapts to people. Not the other way around.',
+  'qa-headquarters': 'Trust earned continuously. Never assumed.',
+  'qa-inspector': 'Audit without intrusion. Recommend without overriding.',
+  'qa-simulation-engine': 'Rehearse before users encounter it.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',
