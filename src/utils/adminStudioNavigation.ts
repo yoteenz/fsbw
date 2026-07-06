@@ -1932,6 +1932,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'confidence-engine',
+    title: 'CONFIDENCE ENGINE™',
+    purpose: 'Visible intelligence confidence — every recommendation displays evidence, reasoning, knowledge sources, and what Studio Intelligence doesn\'t know.',
+    route: p('confidence-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M152',
+    ctaLabel: 'OPEN CONFIDENCE ENGINE',
+    moduleKey: 'confidence-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

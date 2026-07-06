@@ -985,6 +985,10 @@ export function adminStudioDecisionAuditPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/decision-audit`;
 }
 
+export function adminStudioConfidenceEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/confidence-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

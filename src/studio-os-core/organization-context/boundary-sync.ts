@@ -301,6 +301,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationDecisionAuditProfile(context.organizationId);
   });
 
+  void import('../confidence-engine/store').then((m) => {
+    m.ensureOrganizationConfidenceEngineProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

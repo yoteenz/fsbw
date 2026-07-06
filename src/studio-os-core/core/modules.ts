@@ -144,6 +144,7 @@ export type StudioOsCoreModuleId =
   | 'predictive-qa'
   | 'self-healing-engine'
   | 'decision-audit'
+  | 'confidence-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1003,6 +1004,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'DECISION AUDIT™',
     description: 'Decision Audit V1.0 — permanent accountability for every significant recommendation, approval, rejection, automation, and AI decision.',
     routeSegment: 'decision-audit',
+  },
+  {
+    id: 'confidence-engine',
+    label: 'CONFIDENCE ENGINE™',
+    description: 'Confidence Engine V1.0 — visible intelligence confidence; every recommendation explained with evidence, reasoning, and transparency.',
+    routeSegment: 'confidence-engine',
   },
   {
     id: 'succession-mode',

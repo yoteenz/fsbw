@@ -51,11 +51,15 @@ function upsertProfile(profile: OrganizationDecisionAuditProfile): OrganizationD
 export function syncDecisionAuditFromSources(organizationId: string): OrganizationDecisionAuditProfile {
   const existing = getOrganizationDecisionAuditProfile(organizationId);
   const built = buildOrganizationDecisionAuditProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     activeFilter: existing?.activeFilter ?? built.activeFilter,
     selectedDecisionId: existing?.selectedDecisionId ?? built.selectedDecisionId,
   });
+  void import('../confidence-engine/store').then((m) => {
+    m.syncConfidenceEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationDecisionAuditProfile(organizationId: string): OrganizationDecisionAuditProfile {

@@ -26,6 +26,7 @@ import {
   adminStudioPredictiveQaPath,
   adminStudioSelfHealingEnginePath,
   adminStudioDecisionAuditPath,
+  adminStudioConfidenceEnginePath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1064,6 +1065,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['RECORD → REPLAY → EXPLAIN → ACCOUNT'],
     aliases: ['decision audit', 'decision timeline', 'why did this happen', 'decision log', 'accountability'],
     searchKeywords: ['decision', 'audit', 'approval', 'explain', 'timeline', 'accountability', 'who approved'],
+  }),
+  entry({
+    id: 'confidence-engine',
+    label: 'Confidence Engine™',
+    moduleId: 'confidence-engine',
+    milestone: 'M152',
+    route: adminStudioConfidenceEnginePath(),
+    purpose: 'Visible intelligence confidence — measure, communicate, and explain Studio Intelligence confidence before every recommendation.',
+    overview:
+      '5 confidence levels · 10 recommendation categories · conversational explanations · Confidence Explorer™ · low-confidence transparency.',
+    capabilities: ['Confidence scoring', 'Evidence display', 'Conversational explanations', 'Confidence Explorer', 'Low-confidence transparency', 'What we know / don\'t know'],
+    howItWorks: 'Aggregate knowledge, simulation, validation, and historical data → score confidence → explain as conversation → track changes in Confidence Explorer.',
+    whenUsed: ['Before acting on recommendations', 'Publishing decisions', 'Pricing changes', 'Low-confidence review', 'Trust building'],
+    relatedSystems: ['studio-intelligence', 'knowledge-confidence', 'decision-audit', 'qa-simulation-engine', 'predictive-qa'],
+    exampleWorkflows: ['RECOMMEND → EXPLAIN → EXPLORE → DECIDE'],
+    aliases: ['confidence engine', 'confidence score', 'how confident', 'confidence explorer', 'why tuesday'],
+    searchKeywords: ['confidence', 'evidence', 'reasoning', 'explain', 'know', 'dont know', 'transparent'],
   }),
 ];
 

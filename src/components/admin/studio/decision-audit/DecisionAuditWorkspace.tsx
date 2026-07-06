@@ -15,7 +15,7 @@ import {
   getSelectedDecision,
 } from '../../../../studio-os-core/decision-audit';
 import type { TimelineFilter } from '../../../../studio-os-core/decision-audit';
-import { adminStudioSelfHealingEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioSelfHealingEnginePath, adminStudioConfidenceEnginePath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -129,8 +129,11 @@ export function DecisionAuditWorkspace() {
       <button type="button" onClick={() => setTab('timeline')} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: DECISION_AUDIT_ACCENT, color: DECISION_AUDIT_ACCENT }}>
         OPEN DECISION TIMELINE™ →
       </button>
-      <button type="button" onClick={() => navigate(adminStudioSelfHealingEnginePath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+      <button type="button" onClick={() => navigate(adminStudioSelfHealingEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         SELF-HEALING →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioConfidenceEnginePath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+        CONFIDENCE ENGINE →
       </button>
     </ExecutivePageShell>
   );
