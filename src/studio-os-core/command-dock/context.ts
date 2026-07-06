@@ -18,6 +18,7 @@ import { listKnowledgeCommerceDockSuggestions } from '../knowledge-commerce';
 import { listProfessionalTrustDockSuggestions } from '../professional-trust-framework';
 import { listOrganizationGenomeDockSuggestions } from '../organization-genome';
 import { listMemoryEngineDockSuggestions } from '../memory-engine';
+import { listCompanyHealthIndexDockSuggestions } from '../company-health-index';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -160,6 +161,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/company-health-index')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'company-health-index',
+      label: 'COMPANY HEALTH INDEX™ · ORGANIZATIONAL HEALTH',
+      portfolioMode: false,
+      suggestedCommands: listCompanyHealthIndexDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

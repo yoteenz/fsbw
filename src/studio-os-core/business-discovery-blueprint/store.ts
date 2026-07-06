@@ -139,6 +139,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncMemoryEngineFromSources(blueprint.organizationId);
   });
 
+  void import('../company-health-index/store').then((m) => {
+    m.syncCompanyHealthIndexFromSources(blueprint.organizationId);
+  });
+
   return finalized;
 }
 

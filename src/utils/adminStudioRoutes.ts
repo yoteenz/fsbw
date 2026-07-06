@@ -781,6 +781,10 @@ export function adminStudioMemoryEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/memory-engine`;
 }
 
+export function adminStudioCompanyHealthIndexPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/company-health-index`;
+}
+
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }

@@ -100,6 +100,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../memory-engine/store').then((m) => {
     m.syncMemoryEngineFromSources(profile.organizationId);
   });
+  void import('../company-health-index/store').then((m) => {
+    m.syncCompanyHealthIndexFromSources(profile.organizationId);
+  });
 }
 
 export function syncProfessionBrainFromSources(

@@ -89,6 +89,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationMemoryProfile(context.organizationId);
   });
 
+  void import('../company-health-index/store').then((m) => {
+    m.ensureOrganizationHealthIndexProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

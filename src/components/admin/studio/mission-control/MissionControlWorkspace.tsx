@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useCampusTransition } from '../../studio-os/campus/CampusTransitionProvider';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
+import { useCompanyHealthIndexState } from '../../../../hooks/useCompanyHealthIndexState';
 import { useAdminStudioMissionControl } from '../../../../hooks/useAdminStudioMissionControlState';
 import { useAdminStudioKnowledgeHub } from '../../../../hooks/useAdminStudioKnowledgeHubState';
 import { adminStudioKnowledgeHubPath, adminStudioChiefOfStaffPath } from '../../../../utils/adminStudioRoutes';
@@ -8,7 +9,6 @@ import { KNOWLEDGE_MISSION_STATS } from '../../../../utils/adminStudioKnowledgeH
 import {
   ACTIVE_MISSIONS,
   AI_DIRECTOR_DOCK,
-  BUSINESS_HEALTH_SCORECARDS,
   DEPARTMENT_GRID,
   EXECUTIVE_CALENDAR,
   LIVE_ACTIVITY_SEED,
@@ -48,6 +48,7 @@ import {
   useExecutiveDepartment,
   type PipelineStage,
 } from '../executive-ia';
+import { MissionControlExecutiveHealthPanel } from './MissionControlExecutiveHealthPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -92,6 +93,7 @@ export function MissionControlWorkspace() {
   const { unreadGuides, markGuideRead } = useAdminStudioKnowledgeHub();
 
   const { presenceFeed } = useStudioImmersion();
+  const { profile: healthProfile } = useCompanyHealthIndexState();
   const { activeDepartment, selectDepartment } = useExecutiveDepartment<MissionDepartmentId>('overview');
   const header = MISSION_CONTROL_HEADER;
   const visibleNotifications = SMART_NOTIFICATIONS.filter((n) => !dismissedNotifications.includes(n.id));
@@ -119,7 +121,8 @@ export function MissionControlWorkspace() {
               <p style={{ ...mcGrace, fontSize: '18px', lineHeight: 1.1 }}>{workspace.displayName}</p>
               <p style={mcCaption}>
                 <span style={mcLiveDot} />
-                MISSION STATUS · {header.missionStatus.replace('-', ' ').toUpperCase()} · HEALTH {header.workspaceHealth}%
+                MISSION STATUS · {header.missionStatus.replace('-', ' ').toUpperCase()} · EXECUTIVE HEALTH{' '}
+                {healthProfile?.executiveHealthScore ?? header.workspaceHealth}%
               </p>
               <p style={{ ...mcCaption, color: MC_VISUAL.black, marginTop: 4 }}>
                 <StudioLivingIndicator label="HEADQUARTERS ACTIVE" state="busy" />
@@ -181,7 +184,11 @@ export function MissionControlWorkspace() {
 
         {/* HERO — single visual anchor */}
         <ExecutiveHeroCard
-          eyebrow={`TODAY'S PRIORITY · PHASE ${MISSION_OVERVIEW.phase}`}
+          eyebrow={
+            healthProfile
+              ? `EXECUTIVE HEALTH ${healthProfile.executiveHealthScore}% · PHASE ${MISSION_OVERVIEW.phase}`
+              : `TODAY'S PRIORITY · PHASE ${MISSION_OVERVIEW.phase}`
+          }
           title={MISSION_OVERVIEW.title}
           subtitle={`${header.currentCampaign} · READINESS ${MISSION_OVERVIEW.readinessScore}% · ${MISSION_OVERVIEW.daysRemaining} DAYS LEFT`}
           progressPct={MISSION_OVERVIEW.progressPct}
@@ -399,16 +406,7 @@ export function MissionControlWorkspace() {
               </div>
             </ExecutiveSecondaryCard>
 
-            <ExecutiveSecondaryCard title="BUSINESS HEALTH">
-              <div className="grid grid-cols-2 gap-2">
-                {BUSINESS_HEALTH_SCORECARDS.slice(0, 4).map((h) => (
-                  <div key={h.id} className="text-center py-1">
-                    <p style={{ ...eiaGrace, fontSize: '16px', color: MC_VISUAL.red }}>{h.score}</p>
-                    <p style={{ ...eiaCaption, fontSize: '7px' }}>{h.label}</p>
-                  </div>
-                ))}
-              </div>
-            </ExecutiveSecondaryCard>
+            <MissionControlExecutiveHealthPanel />
           </div>
         </ExecutiveSecondaryGrid>
 

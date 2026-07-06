@@ -1320,6 +1320,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'company-health-index',
+    title: 'COMPANY HEALTH INDEX™',
+    purpose: 'Continuous organizational health — 12 categories, Executive Health Score, weak-area alerts. Healthier, not simply larger.',
+    route: p('company-health-index'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'M97',
+    ctaLabel: 'VIEW HEALTH INDEX',
+    moduleKey: 'company-health-index',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',

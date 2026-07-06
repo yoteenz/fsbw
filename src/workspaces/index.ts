@@ -224,6 +224,10 @@ export function bootstrapWorkspacesPlatform(): void {
     memoryEngine.bootstrapMemoryEnginePlatform();
     await yieldToMain();
 
+    const companyHealthIndex = await import('../studio-os-core/company-health-index/bootstrap');
+    companyHealthIndex.bootstrapCompanyHealthIndexPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

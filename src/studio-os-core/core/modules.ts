@@ -93,6 +93,7 @@ export type StudioOsCoreModuleId =
   | 'professional-trust-framework'
   | 'organization-genome'
   | 'memory-engine'
+  | 'company-health-index'
   | 'brand-positioning'
   | 'governance'
   | 'studio-intelligence'
@@ -645,6 +646,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'MEMORY ENGINE™',
     description: 'Permanent organizational memory V1.0 — projects, campaigns, decisions, lessons, customer history. Recall before repeating. Remember forever.',
     routeSegment: 'memory-engine',
+  },
+  {
+    id: 'company-health-index',
+    label: 'COMPANY HEALTH INDEX™',
+    description: 'Continuous organizational health V1.0 — 12 category scores, Executive Health Score, weak-area detection. Healthier, not simply larger.',
+    routeSegment: 'company-health-index',
   },
   {
     id: 'brand-positioning',

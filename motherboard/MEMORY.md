@@ -38635,3 +38635,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Memory Engine (M96) ≠ Memory Bible — M96 is operational recall + artifacts + compounding; Memory Bible is curated AI context packages. 12 memory record types · memory depth score · demo localStorage via `studioOsMemoryEngine_v1`.
 
+---
+
+## 2026-07-06 — Milestone 97: Company Health Index™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M96 (Blueprint through Memory Engine `63ba7aa2`). User requested **Company Health Index™** — revenue alone should never define success. Continuously measure health of every major organizational area. Each area receives a Health Score. Mission Control displays one **Executive Health Score** with drill-down. Identify weak areas before they become business problems — proactive leadership, not reactive management. Healthier, not simply larger.
+
+**Core philosophy delivered:** 12 health categories · Executive Health Score · weak-area alerts (< 60%) · proactive priorities · sync from intelligence stack (Brain · Genome · Memory · Blueprint · Trust).
+
+**Delivered:**
+- **`src/studio-os-core/company-health-index/`** — health scoring per category · executive score aggregation · weak-area detector · proactive priorities · org store · dock advisor · bootstrap.
+- **`CompanyHealthIndexWorkspace`** + **`/admin/studio/company-health-index`** — 4 tabs: Health Overview · All Categories · Weak Areas · Proactive Priorities.
+- **`MissionControlExecutiveHealthPanel`** — Executive Health Score in Mission Control with lowest 4 categories + drill-down link.
+- **`useCompanyHealthIndexState`** hook · brand voice **`company-health-index`**: *"Become healthier. Not simply larger."*
+- **Integration** — sync from profession-brain · blueprint upsert · boundary-sync · Mission Control header shows Executive Health % · Command Dock **`resolveCompanyHealthIndexAdvice()`** + proactive on route.
+- **Docs** — **`docs/studio-os/company-health-index.md`** · **CORE.md** M97 entry.
+
+**Conventions:** Company Health Index (M97) ≠ Company Maturity Engine (M49) — M97 is continuous health measurement for founders; maturity engine is assessment visualization. Demo localStorage via `studioOsCompanyHealthIndex_v1`.
+

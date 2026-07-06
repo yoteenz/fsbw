@@ -42,6 +42,10 @@ import {
   resolveMemoryEngineAdvice,
   buildProactiveMemorySuggestion,
 } from '../memory-engine/dock-advisor';
+import {
+  resolveCompanyHealthIndexAdvice,
+  buildProactiveHealthSuggestion,
+} from '../company-health-index/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -103,6 +107,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const trust = buildProactiveTrustSuggestion(workspaceId);
   const genome = buildProactiveGenomeSuggestion(workspaceId);
   const memory = buildProactiveMemorySuggestion(workspaceId);
+  const health = buildProactiveHealthSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -119,8 +124,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const memoryProactive = memory
     ? { response: memory, concierge: 'Chief Concierge', suggestedCommand: 'Recall organizational memory before repeating initiatives.' }
     : null;
+  const healthProactive = health
+    ? { response: health, concierge: 'Chief Concierge', suggestedCommand: 'Review Company Health Index weak areas.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/memory-engine') && memoryProactive
+    pathname.includes('/company-health-index') && healthProactive
+      ? healthProactive
+      : pathname.includes('/memory-engine') && memoryProactive
       ? memoryProactive
       : pathname.includes('/organization-genome') && genomeProactive
       ? genomeProactive
@@ -193,6 +203,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const healthAdvice = resolveCompanyHealthIndexAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (healthAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${healthAdvice.concierge}\n${healthAdvice.response}`,
+    });
+    return null;
+  }
 
   const memoryAdvice = resolveMemoryEngineAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (memoryAdvice) {
