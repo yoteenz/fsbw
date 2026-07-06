@@ -136,6 +136,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../presence-engine/store').then((m) => {
     m.syncPresenceEngineFromSources(profile.organizationId);
   });
+  void import('../cross-organization-intelligence/store').then((m) => {
+    m.syncCrossOrgIntelligenceFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

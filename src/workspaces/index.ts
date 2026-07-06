@@ -277,6 +277,10 @@ export function bootstrapWorkspacesPlatform(): void {
     presenceEngine.bootstrapPresenceEnginePlatform();
     await yieldToMain();
 
+    const crossOrgIntelligence = await import('../studio-os-core/cross-organization-intelligence/bootstrap');
+    crossOrgIntelligence.bootstrapCrossOrgIntelligencePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

@@ -829,6 +829,10 @@ export function adminStudioPresenceEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/presence-engine`;
 }
 
+export function adminStudioCrossOrgIntelligencePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/cross-organization-intelligence`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

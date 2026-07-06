@@ -105,6 +105,7 @@ export type StudioOsCoreModuleId =
   | 'anticipation-engine'
   | 'founder-cognitive-load'
   | 'presence-engine'
+  | 'cross-organization-intelligence'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -730,6 +731,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PRESENCE ENGINE™',
     description: 'Living executive presence V1.0 — calm, confident, continuous support. Never noisy, always reassuring.',
     routeSegment: 'presence-engine',
+  },
+  {
+    id: 'cross-organization-intelligence',
+    label: 'CROSS-ORGANIZATION INTELLIGENCE™',
+    description: 'Trusted cross-org collaboration V1.0 — intelligent connections, founder network, privacy-first resource sharing.',
+    routeSegment: 'cross-organization-intelligence',
   },
   {
     id: 'succession-mode',

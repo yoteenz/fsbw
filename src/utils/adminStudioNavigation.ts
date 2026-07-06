@@ -1464,6 +1464,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'cross-organization-intelligence',
+    title: 'CROSS-ORGANIZATION INTELLIGENCE™',
+    purpose: 'Trusted cross-org collaboration — intelligent connections, founder network, privacy-first resource sharing. Opportunities, not exposure.',
+    route: p('cross-organization-intelligence'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M111',
+    ctaLabel: 'OPEN CROSS-ORG INTELLIGENCE',
+    moduleKey: 'cross-organization-intelligence',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

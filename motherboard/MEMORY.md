@@ -38888,9 +38888,8 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **`App.tsx`** error boundary — friendly quota message for mobile.
 - **`dashboard/page.tsx`** — register auth bridge on mount, resolve membership, **`showStudioCommandCenter`** state with founder fallback via **`isAdminFounderAccount`**.
 
-<<<<<<< HEAD
 **Changes:** safeLocalStorage.ts, workspace/storage.ts, workspace-registry/store.ts, workspaces/index.ts, App.tsx, dashboard/page.tsx, AdminStudioLayout.tsx, MEMORY.md.
-=======
+
 ---
 
 ## 2026-07-06 — Milestone 110: Presence Engine™ V1.0
@@ -38914,4 +38913,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Presence Engine (M110) completes the executive experience stack (M107 awareness → M108 anticipation → M109 cognitive load → M110 presence) — the human layer that makes Studio OS feel like a partner, not software. Demo localStorage via `studioOsPresenceEngine_v1`.
 
->>>>>>> a6cb9e0c (Milestone 110: Presence Engine living executive presence V1.0)
+---
+
+## 2026-07-06 — Milestone 111: Cross-Organization Intelligence™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M110 (Blueprint through Presence Engine `e863f8d5`). User requested **Milestone 111 — Cross-Organization Intelligence™ V1.0**: organizations inside Studio OS intelligently collaborate while preserving privacy and ownership. Core philosophy: collaboration not surveillance; recognize opportunities when authorized; privacy first — private operational knowledge never shared automatically; creates opportunities not exposure.
+
+**Requirements delivered:**
+- **Intelligent connections** — design agency capacity ↔ branding need · bookkeeping ↔ trucking operations · permission-based only
+- **Resource awareness** — departments · digital staff · services · knowledge products · Profession Brains™ · marketplace offerings — discoverability founder-controlled
+- **Founder network** — preferred partners · internal companies · family businesses · agencies · clients · suppliers
+- **Privacy controls** — visibility · permissions · published expertise · shared resources · accessible departments · collaboration settings
+
+**Delivered:**
+- **`src/studio-os-core/cross-organization-intelligence/`** — **`resource-awareness.ts`** · **`connection-engine.ts`** · **`founder-network.ts`** · **`privacy-controls.ts`** · **`intelligence-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`CrossOrganizationIntelligenceWorkspace`** + **`/admin/studio/cross-organization-intelligence`** — 4 tabs: Intelligence Overview · Intelligent Connections · Resource Awareness · Founder Network & Privacy · sky accent `#0284C7`.
+- **`MissionControlCrossOrgIntelligencePanel`** — collaboration preview in Mission Control.
+- **`useCrossOrgIntelligenceState`** hook · brand voice **`cross-organization-intelligence`**: *"Connect wisely. Trust always."*
+- **Command Dock** — **`resolveCrossOrgIntelligenceAdvice()`** · **`buildProactiveCrossOrgSuggestion()`** on `/cross-organization-intelligence` route.
+- **Integration** — sync from presence-engine · anticipation-engine · profession-brain · knowledge-confidence · blueprint · presence resync triggers cross-org resync · workspaces bootstrap · modules · nav · App route.
+- **Docs** — **`docs/studio-os/cross-organization-intelligence.md`** · **CORE.md** M111 entry.
+
+**Conventions:** Cross-Organization Intelligence (M111) extends portfolio collaboration — all connections `permissionRequired: true`, default privacy network-only/private. Demo localStorage via `studioOsCrossOrgIntelligence_v1`.
+

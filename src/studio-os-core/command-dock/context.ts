@@ -32,6 +32,7 @@ import { listAmbientAwarenessDockSuggestions } from '../ambient-awareness';
 import { listAnticipationEngineDockSuggestions } from '../anticipation-engine';
 import { listFounderCognitiveLoadDockSuggestions } from '../founder-cognitive-load';
 import { listPresenceEngineDockSuggestions } from '../presence-engine';
+import { listCrossOrgIntelligenceDockSuggestions } from '../cross-organization-intelligence';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -228,6 +229,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'PRESENCE ENGINE™ · ALWAYS THERE',
       portfolioMode: false,
       suggestedCommands: listPresenceEngineDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/cross-organization-intelligence')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'cross-organization-intelligence',
+      label: 'CROSS-ORG INTELLIGENCE™ · TRUST ALWAYS',
+      portfolioMode: false,
+      suggestedCommands: listCrossOrgIntelligenceDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

@@ -99,6 +99,10 @@ import {
   resolvePresenceEngineAdvice,
   buildProactivePresenceSuggestion,
 } from '../presence-engine/dock-advisor';
+import {
+  resolveCrossOrgIntelligenceAdvice,
+  buildProactiveCrossOrgSuggestion,
+} from '../cross-organization-intelligence/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -174,6 +178,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const anticipation = buildProactiveAnticipationSuggestion(workspaceId);
   const cognitiveLoad = buildProactiveFounderCognitiveLoadSuggestion(workspaceId);
   const presence = buildProactivePresenceSuggestion(workspaceId);
+  const crossOrg = buildProactiveCrossOrgSuggestion(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -211,6 +216,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
         response: presence,
         concierge: 'Chief Concierge',
         suggestedCommand: 'Open Presence Engine — living executive presence status.',
+      }
+    : null;
+  const crossOrgProactive = crossOrg
+    ? {
+        response: crossOrg,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Cross-Organization Intelligence — review trusted collaboration opportunities.',
       }
     : null;
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
@@ -262,6 +274,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const proactiveSource =
     ambientOpening
       ? ambientOpening
+      : pathname.includes('/cross-organization-intelligence') && crossOrgProactive
+      ? crossOrgProactive
       : pathname.includes('/presence-engine') && presenceProactive
       ? presenceProactive
       : pathname.includes('/founder-cognitive-load') && cognitiveLoadProactive
@@ -424,6 +438,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${presenceAdvice.concierge}\n${presenceAdvice.response}`,
+    });
+    return null;
+  }
+
+  const crossOrgAdvice = resolveCrossOrgIntelligenceAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (crossOrgAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${crossOrgAdvice.concierge}\n${crossOrgAdvice.response}`,
     });
     return null;
   }

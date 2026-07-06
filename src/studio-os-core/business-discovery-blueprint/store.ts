@@ -187,6 +187,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncPresenceEngineFromSources(blueprint.organizationId);
   });
 
+  void import('../cross-organization-intelligence/store').then((m) => {
+    m.syncCrossOrgIntelligenceFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

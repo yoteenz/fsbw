@@ -46,7 +46,11 @@ function upsertProfile(profile: OrganizationPresenceProfile): OrganizationPresen
 }
 
 export function syncPresenceEngineFromSources(organizationId: string): OrganizationPresenceProfile {
-  return upsertProfile(buildOrganizationPresenceProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationPresenceProfile(organizationId));
+  void import('../cross-organization-intelligence/store').then((m) => {
+    m.syncCrossOrgIntelligenceFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationPresenceProfile(organizationId: string): OrganizationPresenceProfile {

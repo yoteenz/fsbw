@@ -137,6 +137,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationPresenceProfile(context.organizationId);
   });
 
+  void import('../cross-organization-intelligence/store').then((m) => {
+    m.ensureOrganizationCrossOrgIntelligenceProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });
