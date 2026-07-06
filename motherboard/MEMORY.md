@@ -38476,3 +38476,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Never “subscribe to features” / “buy software” / “marketplace” for org growth — use Expansion Center, permanent department ownership, Digital Payroll, executive recommendations. Demo commerce is localStorage-only in M89 (no Stripe yet).
 
+---
+
+## 2026-07-06 — Milestone 90: Business Discovery Blueprint™ (organizational archaeology)
+
+**Context (full chat arc):** Same session as campus transition removal (`f1bc3de4`), Studio Command Center + Headquarters entry fix (`bc192439`), and Milestone 89 Monetization Architecture (`459e5439`). User then requested **Milestone 90 — Business Discovery Blueprint™ V1.0**: permanent onboarding architecture for every organization — **not** a questionnaire or setup wizard. Founders teach Studio OS how the business thinks, operates, decides, serves customers, and grows; every answer becomes permanent organizational knowledge (birth certificate + living memory).
+
+**Core philosophy delivered:** Guided business consultation · conversational follow-ups · auto-save across sessions · industry-adaptive prompts · per-service deep dives · living discovery (“I forgot to mention…” → update Blueprint) · progress per chapter + recommended next chapter · milestone celebration · 17 auto-generated output categories (HQ, Mission Control, Department Packs, SOPs, Academy, KPIs, etc.).
+
+**Nine chapters:** (1) Organization Identity · (2) Founder Brain · (3) Services (independent sessions per service) · (4) Decision Intelligence · (5) Knowledge & Wisdom · (6) Resources (upload metadata) · (7) People · (8) Customers · (9) Growth.
+
+**Delivered:**
+- **`src/studio-os-core/business-discovery-blueprint/`** — constants, types, chapters/prompts, conversational-engine, progress, outputs-generator, store (auto-save), bootstrap, dock-advisor, index.
+- **`useBusinessDiscoveryBlueprintState`** — org-scoped hook synced with industry architecture.
+- **`BusinessDiscoveryBlueprintWorkspace.tsx`** + **`/admin/studio/business-discovery-blueprint`** — tabs: Guided Consultation, Chapters/Progress, Generated Outputs, Living Discovery; Executive IA layout.
+- **Wiring** — `modules.ts`, `adminStudioNavigation.ts`, `App.tsx`, `boundary-sync.ts`, `workspaces/index.ts` bootstrap, Command Dock (`resolveLivingDiscoveryAdvice()`, proactive discovery when progress &lt; 50%, Blueprint route context + Mission Control suggestions).
+- **Docs** — **`docs/studio-os/business-discovery-blueprint.md`**; **CORE.md** M90 entry. Complements M73.5 Company Onboarding Intelligence (welcome) — Blueprint is the permanent organizational memory layer.
+
+**Conventions:** Never frame as “setup wizard” or “onboarding form” — use Business Discovery Blueprint™, organizational archaeology, living organizational memory. Demo persistence is localStorage per org; resource uploads record metadata only in M90.
+

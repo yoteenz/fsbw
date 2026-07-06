@@ -10,6 +10,7 @@ import {
   listDockExpansionSuggestions,
 } from '../industry-architecture';
 import { listExecutiveGrowthSuggestions } from '../monetization-architecture';
+import { listDiscoveryDockSuggestions } from '../business-discovery-blueprint';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -157,6 +158,18 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     };
   }
 
+  if (pathname.includes('/business-discovery-blueprint')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    const discoverySuggestions = listDiscoveryDockSuggestions(workspaceId);
+    return {
+      contextId: 'business-discovery-blueprint',
+      label: 'BUSINESS DISCOVERY BLUEPRINT™ · ORGANIZATIONAL ARCHAEOLOGY',
+      portfolioMode: false,
+      suggestedCommands: discoverySuggestions,
+      commandTypes: ['organization-settings', 'strategy', 'executive-requests'],
+    };
+  }
+
   if (pathname.includes('/expansion-center')) {
     const workspaceId = getRuntimeActiveWorkspaceId();
     const growthSuggestions = listExecutiveGrowthSuggestions(workspaceId);
@@ -196,15 +209,18 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     const archProfile = ensureOrganizationArchitectureProfile(workspaceId);
     const industrySuggestions = listDockExpansionSuggestions(archProfile.industryId);
     const growthSuggestions = listExecutiveGrowthSuggestions(workspaceId);
+    const discoverySuggestions = listDiscoveryDockSuggestions(workspaceId);
     const suggestions =
       activeOrg.tenantId === 'ndxbook'
         ? [
             'Help me connect Instagram.',
             'Create Page 001 for NDXBOOK.',
+            ...discoverySuggestions.slice(0, 1),
             ...growthSuggestions.slice(0, 1),
             ...industrySuggestions.slice(0, 1),
           ]
         : [
+            ...discoverySuggestions.slice(0, 1),
             ...growthSuggestions.slice(0, 2),
             ...industrySuggestions.slice(0, 1),
             'What are today\'s priorities?',

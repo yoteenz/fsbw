@@ -1224,6 +1224,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'business-discovery-blueprint',
+    title: 'BUSINESS DISCOVERY BLUEPRINT™',
+    purpose: 'Permanent onboarding architecture — guided chapters, conversational discovery, organizational archaeology. The birth certificate of every organization.',
+    route: p('business-discovery-blueprint'),
+    groupId: 'settings',
+    status: 'demo',
+    metric: 'M90',
+    ctaLabel: 'BEGIN DISCOVERY',
+    moduleKey: 'business-discovery-blueprint',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',

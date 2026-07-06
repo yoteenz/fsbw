@@ -749,6 +749,10 @@ export function adminStudioExpansionCenterPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/expansion-center`;
 }
 
+export function adminStudioBusinessDiscoveryBlueprintPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/business-discovery-blueprint`;
+}
+
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }

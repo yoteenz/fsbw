@@ -192,6 +192,10 @@ export function bootstrapWorkspacesPlatform(): void {
     monetizationArchitecture.bootstrapMonetizationArchitecturePlatform();
     await yieldToMain();
 
+    const businessDiscoveryBlueprint = await import('../studio-os-core/business-discovery-blueprint/bootstrap');
+    businessDiscoveryBlueprint.bootstrapBusinessDiscoveryBlueprintPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

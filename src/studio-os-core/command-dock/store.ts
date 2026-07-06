@@ -18,6 +18,8 @@ import {
 import { MICRO_MOMENT_LABELS } from '../living-headquarters-presence/constants';
 import { resolveDockContext } from './context';
 import { resolveExecutiveGrowthAdvice, buildProactiveGrowthSuggestion } from '../monetization-architecture/dock-advisor';
+import { resolveLivingDiscoveryAdvice, buildProactiveDiscoverySuggestion } from '../business-discovery-blueprint/dock-advisor';
+import { ensureOrganizationDiscoveryBlueprint } from '../business-discovery-blueprint/store';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -71,12 +73,17 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const profile = resolveDockContext(pathname);
   const store = readCommandDockStore();
   const growth = buildProactiveGrowthSuggestion(getRuntimeActiveWorkspaceId());
-  const proactiveSuggestion = growth
+  const discovery = buildProactiveDiscoverySuggestion(getRuntimeActiveWorkspaceId());
+  const proactiveSource =
+    discovery && (ensureOrganizationDiscoveryBlueprint(getRuntimeActiveWorkspaceId()).overallProgressPct < 50)
+      ? discovery
+      : growth;
+  const proactiveSuggestion = proactiveSource
     ? {
-        id: `growth-${Date.now()}`,
-        insight: growth.response,
-        concierge: growth.concierge,
-        suggestedCommand: growth.suggestedCommand,
+        id: `proactive-${Date.now()}`,
+        insight: proactiveSource.response,
+        concierge: proactiveSource.concierge,
+        suggestedCommand: proactiveSource.suggestedCommand,
       }
     : store.proactiveSuggestion;
   writeCommandDockStore({ ...store, contextProfile: profile, proactiveSuggestion });
@@ -129,6 +136,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const discoveryAdvice = resolveLivingDiscoveryAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (discoveryAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${discoveryAdvice.concierge}\n${discoveryAdvice.response}`,
+    });
+    return null;
+  }
 
   const growthAdvice = resolveExecutiveGrowthAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (growthAdvice) {

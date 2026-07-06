@@ -85,6 +85,7 @@ export type StudioOsCoreModuleId =
   | 'business-model-engine'
   | 'ecosystem'
   | 'expansion-center'
+  | 'business-discovery-blueprint'
   | 'governance'
   | 'studio-intelligence'
   | 'simulation-engine'
@@ -588,6 +589,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXPANSION CENTER',
     description: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',
     routeSegment: 'expansion-center',
+  },
+  {
+    id: 'business-discovery-blueprint',
+    label: 'BUSINESS DISCOVERY BLUEPRINT™',
+    description: 'Permanent onboarding architecture — guided chapters, conversational discovery, organizational archaeology. The birth certificate of every organization.',
+    routeSegment: 'business-discovery-blueprint',
   },
   {
     id: 'governance',
