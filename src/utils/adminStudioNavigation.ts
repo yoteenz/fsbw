@@ -1728,6 +1728,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'policy-engine',
+    title: 'POLICY ENGINE™',
+    purpose: 'Centralized rulebook — define policies once; every Concierge, automation, workflow, and department follows automatically.',
+    route: p('policy-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M134',
+    ctaLabel: 'OPEN POLICY ENGINE',
+    moduleKey: 'policy-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

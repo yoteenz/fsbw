@@ -233,6 +233,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationPromptRegistryProfile(context.organizationId);
   });
 
+  void import('../policy-engine/store').then((m) => {
+    m.ensureOrganizationPolicyEngineProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

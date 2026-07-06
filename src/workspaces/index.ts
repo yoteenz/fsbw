@@ -369,6 +369,10 @@ export function bootstrapWorkspacesPlatform(): void {
     promptRegistry.bootstrapPromptRegistryPlatform();
     await yieldToMain();
 
+    const policyEngine = await import('../studio-os-core/policy-engine/bootstrap');
+    policyEngine.bootstrapPolicyEnginePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

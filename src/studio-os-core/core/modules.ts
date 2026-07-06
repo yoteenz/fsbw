@@ -127,6 +127,7 @@ export type StudioOsCoreModuleId =
   | 'event-bus'
   | 'automation-registry'
   | 'prompt-registry'
+  | 'policy-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -884,6 +885,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PROMPT REGISTRY™',
     description: 'Prompt Registry V1.0 — every AI prompt versioned, searchable, testable; prompts are code, never hidden text.',
     routeSegment: 'prompt-registry',
+  },
+  {
+    id: 'policy-engine',
+    label: 'POLICY ENGINE™',
+    description: 'Policy Engine V1.0 — centralized rulebook; define policies once; every system follows automatically.',
+    routeSegment: 'policy-engine',
   },
   {
     id: 'succession-mode',

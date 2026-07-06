@@ -85,6 +85,7 @@ import { MissionControlInteractionEnginePanel } from './MissionControlInteractio
 import { MissionControlEventBusPanel } from './MissionControlEventBusPanel';
 import { MissionControlAutomationRegistryPanel } from './MissionControlAutomationRegistryPanel';
 import { MissionControlPromptRegistryPanel } from './MissionControlPromptRegistryPanel';
+import { MissionControlPolicyEnginePanel } from './MissionControlPolicyEnginePanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -536,6 +537,7 @@ export function MissionControlWorkspace() {
           <MissionControlEventBusPanel />
           <MissionControlAutomationRegistryPanel />
           <MissionControlPromptRegistryPanel />
+          <MissionControlPolicyEnginePanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

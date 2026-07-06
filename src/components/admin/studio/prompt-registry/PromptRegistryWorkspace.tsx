@@ -6,7 +6,7 @@ import {
   PROMPT_REGISTRY_PHILOSOPHY,
   queryPromptRegistry,
 } from '../../../../studio-os-core/prompt-registry';
-import { adminStudioAutomationRegistryPath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioAutomationRegistryPath, adminStudioMissionControlPath, adminStudioPolicyEnginePath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -75,6 +75,9 @@ export function PromptRegistryWorkspace() {
       </ExecutiveSecondaryCard>
       <button type="button" onClick={() => navigate(adminStudioAutomationRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: PROMPT_REGISTRY_ACCENT, color: PROMPT_REGISTRY_ACCENT }}>
         AUTOMATION REGISTRY →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioPolicyEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: PROMPT_REGISTRY_ACCENT, color: PROMPT_REGISTRY_ACCENT }}>
+        POLICY ENGINE →
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         MISSION CONTROL →

@@ -917,6 +917,10 @@ export function adminStudioPromptRegistryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/prompt-registry`;
 }
 
+export function adminStudioPolicyEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/policy-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

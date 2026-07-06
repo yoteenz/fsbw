@@ -57,7 +57,11 @@ export function syncPromptRegistryFromSources(organizationId: string): Organizat
   if (existing?.testResults?.length) {
     rebuilt.testResults = existing.testResults;
   }
-  return upsertProfile(rebuilt);
+  const profile = upsertProfile(rebuilt);
+  void import('../policy-engine/store').then((m) => {
+    m.syncPolicyEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationPromptRegistryProfile(

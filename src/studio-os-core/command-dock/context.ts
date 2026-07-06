@@ -55,6 +55,7 @@ import { listInteractionEngineDockSuggestions } from '../interaction-engine/dock
 import { listEventBusDockSuggestions } from '../event-bus/dock-advisor';
 import { listAutomationRegistryDockSuggestions } from '../automation-registry/dock-advisor';
 import { listPromptRegistryDockSuggestions } from '../prompt-registry/dock-advisor';
+import { listPolicyEngineDockSuggestions } from '../policy-engine/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -395,6 +396,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/policy-engine')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'policy-engine',
+      label: 'POLICY ENGINE™ · ORGANIZATIONAL LAW',
+      portfolioMode: false,
+      suggestedCommands: listPolicyEngineDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 

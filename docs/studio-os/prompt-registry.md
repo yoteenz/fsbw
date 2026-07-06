@@ -80,7 +80,7 @@ Measures:
 
 ## Sync chain
 
-… → Interaction Engine → Event Bus → Automation Registry → **Prompt Registry**
+… → Interaction Engine → Event Bus → Automation Registry → Prompt Registry → **Policy Engine**
 
 **`automation-registry/store`** triggers **`syncPromptRegistryFromSources`** · **boundary-sync**
 

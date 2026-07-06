@@ -39588,3 +39588,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/prompt-registry.md`** · **CORE.md** M133 entry
 
 **Conventions:** Prompts must register before AI execution — no inline hidden prompt strings in features. Optional `registerPrompt()` for new platform prompts. Maintain version history; test before deployment. Sync chain: … → Event Bus → Automation Registry → **Prompt Registry**. Demo localStorage via `studioOsPromptRegistry_v1`. Brand voice: *"Prompts are code. AI behavior stays transparent, maintainable, and continuously improving."* Accent `#6366F1`.
+
+---
+
+## 2026-07-06 — Milestone 134: Policy Engine™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine through M133 Prompt Registry (`3b27f8ff`). User requested **Policy Engine™**: centralized rulebook governing how Studio OS behaves — organizations define policies once; every Concierge, automation, workflow, and department follows automatically; rules never duplicated; layered hierarchy; enforcement before execution; simulation before publishing.
+
+**Requirements delivered:**
+- **Centralize policies** — approval, AI usage, Professional Trust, marketplace, privacy, automation limits, knowledge sharing, content publishing, employee permissions, department standards, security, brand guidelines, organization preferences, notification, compliance (~19 seeded)
+- **Policy hierarchy** — platform → organization → department → team → individual; lower levels extend but never violate higher rules
+- **Policy enforcement** — `verifyWorkflowCompliance()` before workflow execution; pause/block/require-approval with explanation and recommendations
+- **Policy simulation** — `simulatePolicyChange()` previews affected departments, automations, employees, customers, risks before publishing
+- **Registration gate** — `canWorkflowExecute()` / `registerPolicy()`; governance audit flags unregistered/duplicated rules
+- **Command Dock** — policy Q&A (*"Why was this automation blocked?"*, *"Show all publishing policies"*, *"Simulate this approval rule"*, *"What policy controls this workflow?"*)
+
+**Delivered:**
+- **`src/studio-os-core/policy-engine/`** — `policy-catalog.ts` · `hierarchy-engine.ts` · `enforcement-engine.ts` · `simulation-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncPolicyEngineFromSources` · `appendPolicySimulationResult`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`PolicyEngineWorkspace`** (6 tabs: Overview · Catalog · Hierarchy · Enforcement · Simulation · Discovery) · **`/admin/studio/policy-engine`** · **`MissionControlPolicyEnginePanel`** · **`usePolicyEngineState`**
+- **Wiring** — nav M134 · sync chain Prompt Registry → Policy Engine · Command Dock policy-engine-first · boundary-sync · documentation system registry + page-guide entry · Prompt Registry workspace link
+- **Docs** — **`docs/studio-os/policy-engine.md`** · **CORE.md** M134 entry
+
+**Conventions:** Policies defined once — never duplicate rules across features. Call `verifyWorkflowCompliance()` before workflow execution. Simulate policy changes before publishing. Sync chain: … → Automation Registry → Prompt Registry → **Policy Engine**. Demo localStorage via `studioOsPolicyEngine_v1`. Brand voice: *"Define policies once. Every system follows organizational law automatically."* Accent `#0D9488`.
