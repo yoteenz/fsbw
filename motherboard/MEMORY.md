@@ -38653,3 +38653,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Company Health Index (M97) ≠ Company Maturity Engine (M49) — M97 is continuous health measurement for founders; maturity engine is assessment visualization. Demo localStorage via `studioOsCompanyHealthIndex_v1`.
 
+---
+
+## 2026-07-06 — Milestone 98: Succession Mode™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M97 (Blueprint through Company Health Index `dc743eab`). User requested **Milestone 98 — Succession Mode™ V1.0**: determine whether organization can continue if founder becomes unavailable. Not about replacing founders — preserving everything they built. Succession Readiness Score · Knowledge Dependency Map · recommendations · Legacy Continuity. Greatest business risk is irreplaceable knowledge. Strengthens PRESERVE EXPERTISE. BUILD LEGACY.
+
+**Core philosophy delivered:** Healthy org never depends entirely on one person's memory · continuously measure leadership transition preparedness · protect from loss of institutional knowledge · expertise continues serving future generations.
+
+**Delivered:**
+- **`src/studio-os-core/succession-mode/`** — 9 readiness dimensions + overall score · founder dependency estimate · knowledge dependency map (founder/manager/employee/vendor/uncaptured) · succession recommendations · legacy continuity assessment · org store · dock advisor · bootstrap.
+- **`SuccessionModeWorkspace`** + **`/admin/studio/succession-mode`** — 5 tabs: Succession Overview · Readiness Scores · Dependency Map · Recommendations · Legacy Continuity.
+- **`useSuccessionModeState`** hook · brand voice **`succession-mode`**: *"Preserve expertise. Survive transitions."*
+- **Integration** — sync from profession-brain · blueprint upsert · boundary-sync · Command Dock **`resolveSuccessionModeAdvice()`** + proactive on route · Profession Brain footer links to Succession Mode + Health Index.
+- **Docs** — **`docs/studio-os/succession-mode.md`** · **CORE.md** M98 entry.
+
+**Conventions:** Succession Mode feeds Company Health Index succession-readiness category. Recommend preserving founder-only knowledge in Profession Brain. Demo localStorage via `studioOsSuccessionMode_v1`.
+

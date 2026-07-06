@@ -228,6 +228,10 @@ export function bootstrapWorkspacesPlatform(): void {
     companyHealthIndex.bootstrapCompanyHealthIndexPlatform();
     await yieldToMain();
 
+    const successionMode = await import('../studio-os-core/succession-mode/bootstrap');
+    successionMode.bootstrapSuccessionModePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

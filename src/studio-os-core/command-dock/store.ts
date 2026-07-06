@@ -46,6 +46,10 @@ import {
   resolveCompanyHealthIndexAdvice,
   buildProactiveHealthSuggestion,
 } from '../company-health-index/dock-advisor';
+import {
+  resolveSuccessionModeAdvice,
+  buildProactiveSuccessionSuggestion,
+} from '../succession-mode/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -108,6 +112,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const genome = buildProactiveGenomeSuggestion(workspaceId);
   const memory = buildProactiveMemorySuggestion(workspaceId);
   const health = buildProactiveHealthSuggestion(workspaceId);
+  const succession = buildProactiveSuccessionSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -127,8 +132,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const healthProactive = health
     ? { response: health, concierge: 'Chief Concierge', suggestedCommand: 'Review Company Health Index weak areas.' }
     : null;
+  const successionProactive = succession
+    ? { response: succession, concierge: 'Chief Concierge', suggestedCommand: 'Open Succession Mode — preserve irreplaceable knowledge.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/company-health-index') && healthProactive
+    pathname.includes('/succession-mode') && successionProactive
+      ? successionProactive
+      : pathname.includes('/company-health-index') && healthProactive
       ? healthProactive
       : pathname.includes('/memory-engine') && memoryProactive
       ? memoryProactive
@@ -203,6 +213,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const successionAdvice = resolveSuccessionModeAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (successionAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${successionAdvice.concierge}\n${successionAdvice.response}`,
+    });
+    return null;
+  }
 
   const healthAdvice = resolveCompanyHealthIndexAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (healthAdvice) {

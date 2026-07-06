@@ -19,6 +19,7 @@ import { listProfessionalTrustDockSuggestions } from '../professional-trust-fram
 import { listOrganizationGenomeDockSuggestions } from '../organization-genome';
 import { listMemoryEngineDockSuggestions } from '../memory-engine';
 import { listCompanyHealthIndexDockSuggestions } from '../company-health-index';
+import { listSuccessionModeDockSuggestions } from '../succession-mode';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -161,6 +162,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/succession-mode')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'succession-mode',
+      label: 'SUCCESSION MODE™ · PRESERVE LEGACY',
+      portfolioMode: false,
+      suggestedCommands: listSuccessionModeDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

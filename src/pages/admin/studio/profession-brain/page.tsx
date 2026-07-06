@@ -12,6 +12,7 @@ import {
   adminStudioBusinessDiscoveryBlueprintPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
+  adminStudioSuccessionModePath,
   adminStudioMemoryEnginePath,
   adminStudioOrganizationGenomePath,
   adminStudioProfessionalTrustFrameworkPath,
@@ -59,6 +60,14 @@ export default function AdminStudioProfessionBrainPage() {
           </button>
         </div>
         <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => navigate(adminStudioSuccessionModePath())}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            SUCCESSION MODE →
+          </button>
           <button
             type="button"
             onClick={() => navigate(adminStudioMemoryEnginePath())}

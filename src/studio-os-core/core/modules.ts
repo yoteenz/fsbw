@@ -94,6 +94,7 @@ export type StudioOsCoreModuleId =
   | 'organization-genome'
   | 'memory-engine'
   | 'company-health-index'
+  | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
   | 'studio-intelligence'
@@ -652,6 +653,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'COMPANY HEALTH INDEX™',
     description: 'Continuous organizational health V1.0 — 12 category scores, Executive Health Score, weak-area detection. Healthier, not simply larger.',
     routeSegment: 'company-health-index',
+  },
+  {
+    id: 'succession-mode',
+    label: 'SUCCESSION MODE™',
+    description: 'Succession readiness V1.0 — measure survival without founder. Knowledge dependency map, recommendations, legacy continuity. Preserve expertise. Build legacy.',
+    routeSegment: 'succession-mode',
   },
   {
     id: 'brand-positioning',

@@ -1332,6 +1332,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'succession-mode',
+    title: 'SUCCESSION MODE™',
+    purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',
+    route: p('succession-mode'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M98',
+    ctaLabel: 'OPEN SUCCESSION MODE',
+    moduleKey: 'succession-mode',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',
