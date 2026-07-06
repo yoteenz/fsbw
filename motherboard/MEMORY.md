@@ -39053,6 +39053,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-06 — Milestone 116: Executive Timeline™ V1.0 (permanent organizational history)
 
 **Context (full chat arc):** Same session delivered M90–M115 (Blueprint through Organizational Consciousness `b93f20eb`). User requested **Milestone 116 — Executive Timeline™ V1.0**: permanent visual history of every organization — immersive timeline founders explore; history as learning tool; auto-record 22+ event types; scroll years · filter department/project/org · jump milestones · replay history · archived HQ · historical dashboards · growth comparison · intelligent insights · Command Dock anniversary context. Philosophy: understand not only where you are, but **how you arrived there**.
@@ -39075,3 +39076,19 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Executive Timeline history (M116) preserves organizational journey atop M115 consciousness — demo localStorage via `studioOsExecutiveTimelineHistory_v1`.
 
+=======
+## 2026-07-06 — Studio Orb™ design revision (Command Dock reimagined)
+
+**Context (full chat arc):** Same session fixed Headquarters vs Command Center routing (`660300df`). User requested **design revision** (NOT new milestone/feature) — elevate Studio OS from web app to premium OS feel via **Studio Orb™**, **Conversation Mode™**, radial menu, Awakening Sequence, Page Guide, intelligent positioning, optional luxury sound architecture, voice foundation.
+
+**Delivered:**
+- **`src/components/admin/studio/studio-orb/`** — crystal orb (58px, bottom-right) · presence states (idle/thinking/opportunity/etc.) · **`StudioOrbRadialMenu`** (Command Dock + Page Guide) · **`StudioOrbConversationBackdrop`** (blur + 98% scale) · **`StudioOrbAwakeningOverlay`** (once per org) · **`StudioOrbPageGuide`** (Knowledge Graph) · **`studioOrbSounds.ts`** (optional, off by default) · **`StudioOrbProvider`** context.
+- **`CommandDockConversationPanel`** — centered acrylic conversation panel; greetings/proactive insights inside dock only; placeholder "Ask the Orb…".
+- **Clutter removed** — permanent bottom dock bar gone; **`StudioChiefConciergeBrief`** removed from layout immersion; morning arrival hidden via **`hideGreetingPanels`**.
+- **Layouts** — **`AdminStudioLayout`** + **`StudioPlatformLayout`** wrap **`StudioOrbProvider`** · **`StudioOrbMount`**; page padding reduced to ~88px for orb safe area.
+- **Docs** — **`docs/studio-os/studio-orb.md`** · **CORE.md** Command Dock entry updated.
+
+**Conventions:** Tap Orb → radial menu (not immediate dock). Ambient insights glow orb only — no notification badge. Future radial slots (voice, search, presentation) stubbed disabled. Core command-dock store/routing unchanged.
+
+**Changes:** studio-orb/*, CommandDock.tsx, AdminStudioLayout.tsx, StudioPlatformLayout.tsx, StudioImmersionShell.tsx, StudioOrganizationalPresenceStrip.tsx, docs/studio-os/studio-orb.md, CORE.md, MEMORY.md.
+>>>>>>> 28839f11 (Studio Orb redesign: replace persistent Command Dock with crystal orb and Conversation Mode)

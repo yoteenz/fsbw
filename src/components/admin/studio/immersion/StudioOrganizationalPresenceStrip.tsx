@@ -15,6 +15,8 @@ type Props = {
   onDismissMoment?: (id: string) => void;
   presencePaused?: boolean;
   onTogglePresencePause?: () => void;
+  /** Hide morning arrival and other greeting-style panels — Studio Orb handles those. */
+  hideGreetingPanels?: boolean;
 };
 
 /** Rotating organizational activity — headquarters already working. */
@@ -28,10 +30,11 @@ export function StudioOrganizationalPresenceStrip({
   onDismissMoment,
   presencePaused = false,
   onTogglePresencePause,
+  hideGreetingPanels = false,
 }: Props) {
   return (
     <div className="mb-2 space-y-1">
-      {morningArrival ? (
+      {!hideGreetingPanels && morningArrival ? (
         <div className="studio-moment-strip px-2 py-1.5 rounded-sm studio-activity-entry">
           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '6px', color: SI_VISUAL.champagne, margin: 0 }}>
             MORNING ARRIVAL

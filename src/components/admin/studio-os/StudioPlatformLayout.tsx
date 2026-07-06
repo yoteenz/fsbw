@@ -6,8 +6,18 @@ import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAcc
 import { STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { STUDIO_PLATFORM_NAV, resolvePlatformNavFromPath } from '../../../studio-os-core/platform/navigation';
 import { STUDIO_OS_UPPERCASE_CLASS, ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
-import { CommandDock, shouldShowCommandDock } from '../studio/command-dock/CommandDock';
+import { shouldShowCommandDock } from '../studio/command-dock/CommandDock';
+import { StudioOrbMount, StudioOrbProvider, useStudioOrbEnvironmentActive } from '../studio/studio-orb/StudioOrbShell';
 import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
+
+function StudioOrbEnvironment({ children }: { children: ReactNode }) {
+  const active = useStudioOrbEnvironmentActive();
+  return (
+    <div className={`studio-conversation-environment${active ? ' studio-conversation-environment-active' : ''}`}>
+      {children}
+    </div>
+  );
+}
 
 type StudioPlatformLayoutProps = {
   title: string;
@@ -47,6 +57,7 @@ export function StudioPlatformLayout({
   const handleBack = onBack ?? (() => navigate(STUDIO_ADMINISTRATION_ROUTES.commandCenter));
 
   return (
+    <StudioOrbProvider>
     <div className={`min-h-screen ${STUDIO_OS_UPPERCASE_CLASS}`} style={{ position: 'relative' }}>
       <div
         className="fixed inset-0 -z-10"
@@ -58,6 +69,7 @@ export function StudioPlatformLayout({
           backgroundAttachment: 'fixed',
         }}
       />
+      <StudioOrbEnvironment>
       <div className="relative z-10">
         <AdminHeader
           title={title}
@@ -67,7 +79,7 @@ export function StudioPlatformLayout({
           breadcrumbParentPath="/admin/dashboard"
         />
 
-        <div className="pb-6 px-4" style={{ paddingBottom: shouldShowCommandDock(pathname) ? '100px' : undefined }}>
+        <div className="pb-6 px-4" style={{ paddingBottom: shouldShowCommandDock(pathname) ? '88px' : undefined }}>
           <div className="max-w-md mx-auto">
             <div
               className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
@@ -144,7 +156,9 @@ export function StudioPlatformLayout({
           </div>
         </div>
       </div>
-      {shouldShowCommandDock(pathname) ? <CommandDock bottomOffset={20} /> : null}
+      </StudioOrbEnvironment>
+      {shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
     </div>
+    </StudioOrbProvider>
   );
 }

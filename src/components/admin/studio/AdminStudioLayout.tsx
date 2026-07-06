@@ -24,10 +24,20 @@ import { canSwitchOrganizations } from '../../../studio-os-core/application/port
 import { STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { resolveOrganizationMissionControlPath } from '../../../studio-os-core/workspace/routes';
 import { WorkspaceSwitcher } from '../studio-os/WorkspaceSwitcher';
-import { CommandDock, shouldShowCommandDock } from './command-dock/CommandDock';
+import { shouldShowCommandDock } from './command-dock/CommandDock';
+import { StudioOrbMount, StudioOrbProvider, useStudioOrbEnvironmentActive } from './studio-orb/StudioOrbShell';
 import { useSyncWorkspaceFromRoute } from '../../../hooks/useSyncWorkspaceFromRoute';
 import { AdminStudioSearchResultsPanel } from './AdminStudioSearchResultsPanel';
 import { searchStudioModules } from '../../../utils/adminStudioSearch';
+
+function StudioOrbEnvironment({ children }: { children: ReactNode }) {
+  const active = useStudioOrbEnvironmentActive();
+  return (
+    <div className={`studio-conversation-environment${active ? ' studio-conversation-environment-active' : ''}`}>
+      {children}
+    </div>
+  );
+}
 
 type AdminStudioLayoutProps = {
   title: string;
@@ -155,8 +165,10 @@ export function AdminStudioLayout({
   const headerCrumbPath = hideOverviewLink ? breadcrumbParentPath : portfolioMode ? platformHomePath : headquartersOverviewPath;
 
   return (
+    <StudioOrbProvider>
     <StudioKnowledgeProvider>
     <StudioManualBridge>
+    <StudioOrbEnvironment>
     <div className={`min-h-screen ${STUDIO_OS_UPPERCASE_CLASS}`} style={{ position: 'relative' }}>
       <div
         className="fixed inset-0 -z-10"
@@ -181,7 +193,7 @@ export function AdminStudioLayout({
           globalSearchTargetPath={pathname}
         />
 
-        <div className="pb-6 px-4" style={{ paddingBottom: shouldShowCommandDock(pathname) ? '220px' : undefined }}>
+        <div className="pb-6 px-4" style={{ paddingBottom: shouldShowCommandDock(pathname) ? '88px' : undefined }}>
           <div className="max-w-md mx-auto">
             {studioSearchQuery.trim() ? (
               <AdminStudioSearchResultsPanel
@@ -304,9 +316,11 @@ export function AdminStudioLayout({
         </div>
       </div>
       <KnowledgeGraphEntryPanel />
-      {workspace.studioEnabled && shouldShowCommandDock(pathname) ? <CommandDock bottomOffset={20} /> : null}
+      {workspace.studioEnabled && shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
     </div>
+    </StudioOrbEnvironment>
     </StudioManualBridge>
     </StudioKnowledgeProvider>
+    </StudioOrbProvider>
   );
 }
