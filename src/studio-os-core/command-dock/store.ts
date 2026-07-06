@@ -229,6 +229,11 @@ import {
   buildProactiveWorkspaceRuntimeSuggestion,
   buildWorkspaceRuntimeOpeningLine,
 } from '../workspace-runtime/dock-advisor';
+import {
+  resolvePluginSdkAdvice,
+  buildProactivePluginSdkSuggestion,
+  buildPluginSdkOpeningLine,
+} from '../plugin-sdk/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -353,6 +358,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const permissionEngineOpeningLine = buildPermissionEngineOpeningLine(workspaceId);
   const workspaceRuntime = buildProactiveWorkspaceRuntimeSuggestion(workspaceId);
   const workspaceRuntimeOpeningLine = buildWorkspaceRuntimeOpeningLine(workspaceId);
+  const pluginSdk = buildProactivePluginSdkSuggestion(workspaceId);
+  const pluginSdkOpeningLine = buildPluginSdkOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -728,6 +735,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'Testing environment is healthy.',
       }
     : null;
+  const pluginSdkProactive = pluginSdk
+    ? {
+        response: pluginSdk,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Install the Contractor Pack.',
+      }
+    : null;
+  const pluginSdkOpeningProactive = pluginSdkOpeningLine
+    ? {
+        response: pluginSdkOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Show plugin compatibility.',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -802,6 +823,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? modelOrchestratorProactive
       : pathname.includes('/studio-foundation-models') && studioFoundationModelsProactive
       ? studioFoundationModelsProactive
+      : pathname.includes('/plugin-sdk') && pluginSdkProactive
+      ? pluginSdkProactive
       : pathname.includes('/workspace-runtime') && workspaceRuntimeProactive
       ? workspaceRuntimeProactive
       : pathname.includes('/permission-engine') && permissionEngineProactive
@@ -831,7 +854,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? workspaceRuntimeOpeningProactive ?? permissionEngineOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? pluginSdkOpeningProactive ?? workspaceRuntimeOpeningProactive ?? permissionEngineOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -1225,6 +1248,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${studioFoundationModelsAdvice.concierge}\n${studioFoundationModelsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const pluginSdkAdvice = resolvePluginSdkAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (pluginSdkAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${pluginSdkAdvice.concierge}\n${pluginSdkAdvice.response}`,
     });
     return null;
   }

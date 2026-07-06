@@ -130,6 +130,7 @@ export type StudioOsCoreModuleId =
   | 'policy-engine'
   | 'permission-engine'
   | 'workspace-runtime'
+  | 'plugin-sdk'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -905,6 +906,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'WORKSPACE RUNTIME™',
     description: 'Workspace Runtime V1.0 — isolated execution environment per organization; independent digital headquarters.',
     routeSegment: 'workspace-runtime',
+  },
+  {
+    id: 'plugin-sdk',
+    label: 'PLUGIN SDK™',
+    description: 'Plugin SDK V1.0 — extensible platform; organizations, developers, and partners build custom capabilities.',
+    routeSegment: 'plugin-sdk',
   },
   {
     id: 'succession-mode',

@@ -54,7 +54,11 @@ export function syncWorkspaceRuntimeFromSources(organizationId: string): Organiz
   if (existing?.activeSandbox) {
     rebuilt.activeSandbox = existing.activeSandbox;
   }
-  return upsertProfile(rebuilt);
+  const profile = upsertProfile(rebuilt);
+  void import('../plugin-sdk/store').then((m) => {
+    m.syncPluginSdkFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationWorkspaceRuntimeProfile(

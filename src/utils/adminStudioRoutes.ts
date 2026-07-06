@@ -929,6 +929,10 @@ export function adminStudioWorkspaceRuntimePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/workspace-runtime`;
 }
 
+export function adminStudioPluginSdkPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/plugin-sdk`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

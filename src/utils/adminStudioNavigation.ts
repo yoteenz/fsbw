@@ -1764,6 +1764,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'plugin-sdk',
+    title: 'PLUGIN SDK™',
+    purpose: 'Extensible platform — plugin types, SDK registration, sandbox execution, marketplace infrastructure.',
+    route: p('plugin-sdk'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M137',
+    ctaLabel: 'OPEN PLUGIN SDK',
+    moduleKey: 'plugin-sdk',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

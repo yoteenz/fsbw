@@ -58,6 +58,7 @@ import { listPromptRegistryDockSuggestions } from '../prompt-registry/dock-advis
 import { listPolicyEngineDockSuggestions } from '../policy-engine/dock-advisor';
 import { listPermissionEngineDockSuggestions } from '../permission-engine/dock-advisor';
 import { listWorkspaceRuntimeDockSuggestions } from '../workspace-runtime/dock-advisor';
+import { listPluginSdkDockSuggestions } from '../plugin-sdk/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -398,6 +399,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/plugin-sdk')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'plugin-sdk',
+      label: 'PLUGIN SDK™ · EXTENSIBLE PLATFORM',
+      portfolioMode: false,
+      suggestedCommands: listPluginSdkDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 

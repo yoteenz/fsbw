@@ -6,7 +6,7 @@ import {
   WORKSPACE_RUNTIME_PHILOSOPHY,
   queryWorkspaceRuntime,
 } from '../../../../studio-os-core/workspace-runtime';
-import { adminStudioMissionControlPath, adminStudioPermissionEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioMissionControlPath, adminStudioPermissionEnginePath, adminStudioPluginSdkPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -74,7 +74,10 @@ export function WorkspaceRuntimeWorkspace() {
           {profile.dockRuntimeLine}
         </p>
       </ExecutiveSecondaryCard>
-      <button type="button" onClick={() => navigate(adminStudioPermissionEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: WORKSPACE_RUNTIME_ACCENT, color: WORKSPACE_RUNTIME_ACCENT }}>
+      <button type="button" onClick={() => navigate(adminStudioPluginSdkPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: WORKSPACE_RUNTIME_ACCENT, color: WORKSPACE_RUNTIME_ACCENT }}>
+        PLUGIN SDK →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioPermissionEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         PERMISSION ENGINE →
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>

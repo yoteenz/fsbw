@@ -65,7 +65,7 @@ Performance · Memory Usage · Automation Load · AI Requests · Storage · Know
 
 ## Sync chain
 
-… → Prompt Registry → Policy Engine → Permission Engine → **Workspace Runtime**
+… → Prompt Registry → Policy Engine → Permission Engine → **Workspace Runtime** → **Plugin SDK**
 
 **`permission-engine/store`** triggers **`syncWorkspaceRuntimeFromSources`** · **boundary-sync**
 

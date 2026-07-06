@@ -39655,3 +39655,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/workspace-runtime.md`** · **CORE.md** M136 entry
 
 **Conventions:** All organization data scoped to Workspace Runtime boundary. Test in sandboxes before production. Permission Engine = who may act; Workspace Runtime = where they act. Sync chain: … → Policy Engine → Permission Engine → **Workspace Runtime**. Demo localStorage via `studioOsWorkspaceRuntime_v1`. Brand voice: *"Organizations share the platform. Never the runtime."* Accent `#1E40AF`.
+
+---
+
+## 2026-07-06 — Milestone 137: Plugin SDK™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine through M136 Workspace Runtime (`7f45ab81`). User requested **Plugin SDK™**: extensible platform where organizations, developers, and partners build custom capabilities; Studio OS should not build every feature — become a platform others extend; plugin types; SDK registration capabilities; plugin sandbox; marketplace infrastructure; Command Dock install/update/disable/compatibility queries.
+
+**Requirements delivered:**
+- **Plugin types (17)** — organization modules, department/profession packs, marketplace extensions, dashboard widgets, Command Dock skills, automation actions, workflow nodes, integrations, reports, analytics, custom pages/panels/commands, AI tools, developer utilities, future plugins
+- **SDK capabilities (12)** — register pages, components, commands, automations, events, permissions, policies, assets, documentation, academy lessons, search entries, tooltips — every plugin a first-class citizen
+- **Plugin sandbox** — isolated execution; blocks unauthorized org access, protected system modification, private data reads, permission bypass, policy violations; Policy Engine™ + Permission Engine™ enforced
+- **Plugin marketplace** — verified, official, community, paid, free, internal organization plugins — orgs choose installs
+- **Command Dock** — *"Install the Contractor Pack."* · *"Update the Marketing Plugin."* · *"Disable this plugin."* · *"Show plugin compatibility."*
+
+**Delivered:**
+- **`src/studio-os-core/plugin-sdk/`** — `plugin-type-catalog.ts` · `sdk-capabilities-engine.ts` · `marketplace-engine.ts` · `sandbox-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncPluginSdkFromSources` · `setPluginDisabled`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`PluginSdkWorkspace`** (7 tabs: Overview · Plugin Types · SDK Capabilities · Sandbox · Marketplace · Governance · Discovery) · **`/admin/studio/plugin-sdk`** · **`MissionControlPluginSdkPanel`** · **`usePluginSdkState`**
+- **Wiring** — nav M137 · sync chain Workspace Runtime → Plugin SDK · Command Dock plugin-sdk-first · boundary-sync · documentation system registry + page-guide entry · Workspace Runtime workspace link
+- **Docs** — **`docs/studio-os/plugin-sdk.md`** · **CORE.md** M137 entry
+
+**Conventions:** Plugins execute in Workspace Runtime sandbox. Permission Engine = who may install/act; Policy Engine = what plugins may do. Sync chain: … → Permission Engine → Workspace Runtime → **Plugin SDK**. Demo localStorage via `studioOsPluginSdk_v1`. Brand voice: *"Extend the platform. Innovate beyond Studio."* Accent `#7C3AED`.

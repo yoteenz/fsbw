@@ -26,6 +26,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [policy-engine.md](./policy-engine.md) | Policy Engine™ — centralized rulebook, hierarchy, enforcement, M134 |
 | [permission-engine.md](./permission-engine.md) | Permission Engine™ — capability-based authorization, roles, audit, M135 |
 | [workspace-runtime.md](./workspace-runtime.md) | Workspace Runtime™ — isolated org execution, sandboxes, health, M136 |
+| [plugin-sdk.md](./plugin-sdk.md) | Plugin SDK™ — extensible platform, sandbox, marketplace, M137 |
 | [memory-bible.md](./memory-bible.md) | Institutional knowledge, naming, decisions, AI Context Builder |
 
 Platform config: `src/studio-os/config/platform.ts`

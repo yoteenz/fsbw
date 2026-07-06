@@ -99,6 +99,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'policy-engine': fromSystem('policy-engine'),
   'permission-engine': fromSystem('permission-engine'),
   'workspace-runtime': fromSystem('workspace-runtime'),
+  'plugin-sdk': fromSystem('plugin-sdk'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },
