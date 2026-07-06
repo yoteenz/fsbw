@@ -51,11 +51,13 @@ After every new page, evaluate ten criteria with a confidence score:
 
 **Final test:** *If this page were shown beside every existing Frontal Slayer page, would it feel like it has always lived here?*
 
-## Related docs
+## Related governance
 
-- [BRAND_RULES.md](../BRAND_RULES.md) — visual identity and voice
-- [photography-creative-dna/](../photography-creative-dna/) — product photography DNA
-- `docs/studio-os/` — platform architecture
+| System | Applies to |
+|--------|------------|
+| **Design DNA & Canon (this module)** | Customer-facing Headquarters rooms |
+| **Admin Alignment Protocol** | Frontal Slayer Admin Dashboard — `docs/frontal-slayer/ADMIN_ALIGNMENT_PROTOCOL.md` |
+| **Executive Information Architecture (M83)** | Studio OS Headquarters modules (`/admin/studio/*`) |
 
 ## Code paths
 

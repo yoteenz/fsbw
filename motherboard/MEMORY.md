@@ -38256,3 +38256,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Future Frontal Slayer pages must pass Headquarters Design Review before considered complete. Canon pages are read-only references — extend design language naturally · never normalize spacing or redesign canon. Design DNA (page rooms) is separate from Photography Creative DNA (product shots). Use **`/admin/studio/design-dna-canon`** as creative compass for new page work.
 
+---
+
+## 2026-07-06 — Frontal Slayer Admin Alignment Protocol
+
+**Context (full chat arc):** After Milestone 84 Design DNA & Canon System (customer-facing Headquarters creative compass), user provided **Frontal Slayer Admin Alignment Protocol** — governance for the **Admin Dashboard only** (`/admin/dashboard`, clients, marketing, meetings, etc.). Explicit: **not** a redesign initiative · controlled alignment · existing approved admin pages protected · only modify pages/sections the founder explicitly names · canon reference pages never altered · visual coherence not uniformity · ask before implementing if scope unclear · preserve custom spacing/typography/compositions unless requested.
+
+**Topics covered (this chat):**
+- **M84 shipped:** Design DNA & Canon module at `/admin/studio/design-dna-canon` · 8 protected customer canon pages · HQ Design Review scorecard · no customer page changes.
+- **Merge cleanup:** Removed leftover conflict markers in `motherboard/MEMORY.md` from rebase.
+- **Admin Alignment Protocol:** User mandate for all future admin dashboard alignment work — nothing changes unless founder asks · section-level surgical changes only.
+
+**Decisions / outcomes:**
+- Documented full protocol in **`docs/frontal-slayer/ADMIN_ALIGNMENT_PROTOCOL.md`**.
+- Added always-on Cursor rule **`.cursor/rules/frontal-slayer-admin-alignment.mdc`** so agents enforce founder-approved-only admin changes.
+- **`motherboard/CORE.md`** conventions bullet distinguishes three governance layers: Admin Alignment Protocol (commerce admin) · M84 Design DNA (customer pages) · M83 EIA (Studio OS HQ).
+- Cross-linked in **`docs/frontal-slayer/README.md`** and **`design-dna-canon/README.md`**.
+
+**Changes:** `docs/frontal-slayer/ADMIN_ALIGNMENT_PROTOCOL.md`, `.cursor/rules/frontal-slayer-admin-alignment.mdc`, `docs/frontal-slayer/README.md`, `docs/frontal-slayer/design-dna-canon/README.md`, `motherboard/CORE.md`, `motherboard/MEMORY.md`. No admin page code changes.
+
+**Conventions:** Admin dashboard alignment requires explicit page name + section scope from founder. Canon reference admin pages are read-only inspiration. When uncertain, ask — never assume differences are mistakes.
+

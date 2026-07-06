@@ -1,0 +1,22 @@
+---
+description: Frontal Slayer Admin Dashboard alignment — controlled, founder-approved changes only
+alwaysApply: true
+---
+
+# Frontal Slayer Admin Alignment Protocol
+
+Applies to **Frontal Slayer Admin Dashboard** only (`/admin/dashboard`, `/admin/clients`, `/admin/marketing`, `/admin/meetings`, `/admin/pending`, etc.).
+
+**Not** customer-facing pages (see `docs/frontal-slayer/design-dna-canon/`). **Not** Studio OS Headquarters (`/admin/studio/*` — see M83 Executive IA).
+
+Full protocol: **`docs/frontal-slayer/ADMIN_ALIGNMENT_PROTOCOL.md`**
+
+## Mandatory rules
+
+1. **Protected by default** — Assume every existing admin page is finalized. Do not redesign, modernize, standardize, normalize, or "improve" unless the user **explicitly names** the page.
+2. **Explicit authorization only** — No page changes without a named page (e.g. "Align the Orders page").
+3. **Section-level only** — When a page is approved, change **only** the sections the user identifies. Leave everything else untouched.
+4. **Canon references are read-only** — Pages the user loves are inspiration only; never alter them.
+5. **Before implementing** — State: page · sections to change · what stays untouched · proposed improvements. Ask if scope is unclear.
+6. **Never assume** — Differences between pages may be intentional. Preserve custom spacing, typography, compositions, layouts, interactions, animations, and hierarchy unless explicitly requested.
+7. **Goal:** Visual coherence, not uniformity. Surgical, founder-approved alignment only.
