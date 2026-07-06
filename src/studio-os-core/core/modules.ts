@@ -104,6 +104,7 @@ export type StudioOsCoreModuleId =
   | 'ambient-awareness'
   | 'anticipation-engine'
   | 'founder-cognitive-load'
+  | 'presence-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -723,6 +724,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'FOUNDER COGNITIVE LOAD™',
     description: 'Protect founder attention V1.0 — cognitive analysis, intelligent filtering, attention modes. Prioritize, don\'t overwhelm.',
     routeSegment: 'founder-cognitive-load',
+  },
+  {
+    id: 'presence-engine',
+    label: 'PRESENCE ENGINE™',
+    description: 'Living executive presence V1.0 — calm, confident, continuous support. Never noisy, always reassuring.',
+    routeSegment: 'presence-engine',
   },
   {
     id: 'succession-mode',

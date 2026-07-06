@@ -183,6 +183,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncFounderCognitiveLoadFromSources(blueprint.organizationId);
   });
 
+  void import('../presence-engine/store').then((m) => {
+    m.syncPresenceEngineFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

@@ -133,6 +133,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../founder-cognitive-load/store').then((m) => {
     m.syncFounderCognitiveLoadFromSources(profile.organizationId);
   });
+  void import('../presence-engine/store').then((m) => {
+    m.syncPresenceEngineFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

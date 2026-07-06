@@ -133,6 +133,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationFounderCognitiveLoadProfile(context.organizationId);
   });
 
+  void import('../presence-engine/store').then((m) => {
+    m.ensureOrganizationPresenceProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

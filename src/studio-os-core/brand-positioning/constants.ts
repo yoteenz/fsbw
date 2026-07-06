@@ -30,6 +30,7 @@ export type StudioOsBrandSystemId =
   | 'ambient-awareness'
   | 'anticipation-engine'
   | 'founder-cognitive-load'
+  | 'presence-engine'
   | 'succession-mode'
   | 'executive-council'
   | 'expansion-center'
@@ -58,6 +59,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'ambient-awareness': 'Already aware. Never asking twice.',
   'anticipation-engine': 'Prepare tomorrow. Before it\'s asked.',
   'founder-cognitive-load': 'Protect focus. Prioritize what matters.',
+  'presence-engine': 'Always there. Never noisy.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',
   'expansion-center': 'Grow your organization. Expand your legacy.',

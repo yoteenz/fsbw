@@ -273,6 +273,10 @@ export function bootstrapWorkspacesPlatform(): void {
     founderCognitiveLoad.bootstrapFounderCognitiveLoadPlatform();
     await yieldToMain();
 
+    const presenceEngine = await import('../studio-os-core/presence-engine/bootstrap');
+    presenceEngine.bootstrapPresenceEnginePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

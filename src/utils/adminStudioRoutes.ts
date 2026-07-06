@@ -825,6 +825,10 @@ export function adminStudioFounderCognitiveLoadPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/founder-cognitive-load`;
 }
 
+export function adminStudioPresenceEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/presence-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

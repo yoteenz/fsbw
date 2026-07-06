@@ -1452,6 +1452,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'presence-engine',
+    title: 'PRESENCE ENGINE™',
+    purpose: 'Living executive presence — calm, confident, continuous. Acknowledges milestones, adjusts communication, reflects Headquarters atmosphere.',
+    route: p('presence-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M110',
+    ctaLabel: 'OPEN PRESENCE ENGINE',
+    moduleKey: 'presence-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

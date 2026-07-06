@@ -95,6 +95,10 @@ import {
   resolveFounderCognitiveLoadAdvice,
   buildProactiveFounderCognitiveLoadSuggestion,
 } from '../founder-cognitive-load/dock-advisor';
+import {
+  resolvePresenceEngineAdvice,
+  buildProactivePresenceSuggestion,
+} from '../presence-engine/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -169,6 +173,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const ambientModule = buildProactiveAmbientAwarenessSuggestion(workspaceId);
   const anticipation = buildProactiveAnticipationSuggestion(workspaceId);
   const cognitiveLoad = buildProactiveFounderCognitiveLoadSuggestion(workspaceId);
+  const presence = buildProactivePresenceSuggestion(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -199,6 +204,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
         response: cognitiveLoad,
         concierge: 'Chief Concierge',
         suggestedCommand: 'Open Founder Cognitive Load — review attention protection status.',
+      }
+    : null;
+  const presenceProactive = presence
+    ? {
+        response: presence,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Presence Engine — living executive presence status.',
       }
     : null;
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
@@ -250,6 +262,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const proactiveSource =
     ambientOpening
       ? ambientOpening
+      : pathname.includes('/presence-engine') && presenceProactive
+      ? presenceProactive
       : pathname.includes('/founder-cognitive-load') && cognitiveLoadProactive
       ? cognitiveLoadProactive
       : pathname.includes('/anticipation-engine') && anticipationProactive
@@ -394,6 +408,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${cognitiveLoadAdvice.concierge}\n${cognitiveLoadAdvice.response}`,
+    });
+    return null;
+  }
+
+  const presenceAdvice = resolvePresenceEngineAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (presenceAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${presenceAdvice.concierge}\n${presenceAdvice.response}`,
     });
     return null;
   }

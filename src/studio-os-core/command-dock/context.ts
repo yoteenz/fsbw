@@ -31,6 +31,7 @@ import { listLegacyVaultDockSuggestions } from '../legacy-vault';
 import { listAmbientAwarenessDockSuggestions } from '../ambient-awareness';
 import { listAnticipationEngineDockSuggestions } from '../anticipation-engine';
 import { listFounderCognitiveLoadDockSuggestions } from '../founder-cognitive-load';
+import { listPresenceEngineDockSuggestions } from '../presence-engine';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -216,6 +217,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'FOUNDER COGNITIVE LOAD™ · PROTECT FOCUS',
       portfolioMode: false,
       suggestedCommands: listFounderCognitiveLoadDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/presence-engine')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'presence-engine',
+      label: 'PRESENCE ENGINE™ · ALWAYS THERE',
+      portfolioMode: false,
+      suggestedCommands: listPresenceEngineDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

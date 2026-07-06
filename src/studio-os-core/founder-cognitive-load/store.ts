@@ -48,7 +48,11 @@ function upsertProfile(profile: OrganizationFounderCognitiveLoadProfile): Organi
 }
 
 export function syncFounderCognitiveLoadFromSources(organizationId: string): OrganizationFounderCognitiveLoadProfile {
-  return upsertProfile(buildOrganizationFounderCognitiveLoadProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationFounderCognitiveLoadProfile(organizationId));
+  void import('../presence-engine/store').then((m) => {
+    m.syncPresenceEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationFounderCognitiveLoadProfile(
