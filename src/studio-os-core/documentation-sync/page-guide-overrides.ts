@@ -108,6 +108,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'qa-inspector': fromSystem('qa-inspector'),
   'qa-simulation-engine': fromSystem('qa-simulation-engine'),
   'ai-red-team': fromSystem('ai-red-team'),
+  'executive-trust-dashboard': fromSystem('executive-trust-dashboard'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

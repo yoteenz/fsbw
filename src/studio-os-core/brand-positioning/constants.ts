@@ -65,6 +65,7 @@ export type StudioOsBrandSystemId =
   | 'qa-inspector'
   | 'qa-simulation-engine'
   | 'ai-red-team'
+  | 'executive-trust-dashboard'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -129,6 +130,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'qa-inspector': 'Audit without intrusion. Recommend without overriding.',
   'qa-simulation-engine': 'Rehearse before users encounter it.',
   'ai-red-team': 'Assume wrong until proven. Strengthen before users discover.',
+  'executive-trust-dashboard': 'Trust measurable. Confidence before you ask.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

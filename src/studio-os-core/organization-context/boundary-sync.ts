@@ -281,6 +281,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationAiRedTeamProfile(context.organizationId);
   });
 
+  void import('../executive-trust-dashboard/store').then((m) => {
+    m.ensureOrganizationExecutiveTrustDashboardProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

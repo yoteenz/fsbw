@@ -139,6 +139,7 @@ export type StudioOsCoreModuleId =
   | 'qa-inspector'
   | 'qa-simulation-engine'
   | 'ai-red-team'
+  | 'executive-trust-dashboard'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -968,6 +969,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'AI RED TEAM™',
     description: 'AI Red Team V1.0 — adversarial stress testing; assume wrong until proven, expose weaknesses before users discover them.',
     routeSegment: 'ai-red-team',
+  },
+  {
+    id: 'executive-trust-dashboard',
+    label: 'EXECUTIVE TRUST DASHBOARD™',
+    description: 'Executive Trust Dashboard V1.0 — centralized trust metrics; health, confidence, risk, and history for every major system.',
+    routeSegment: 'executive-trust-dashboard',
   },
   {
     id: 'succession-mode',

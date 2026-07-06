@@ -15,7 +15,7 @@ export default function AdminStudioAiRedTeamPage() {
       subtitle={SUBTITLE}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"
-      onBack={() => navigate('/admin/studio/qa-simulation-engine')}
+      onBack={() => navigate('/admin/studio/executive-trust-dashboard')}
       navGroupId="intelligence"
     >
       <AiRedTeamWorkspace />

@@ -21,6 +21,7 @@ import {
   adminStudioQaInspectorPath,
   adminStudioQaSimulationEnginePath,
   adminStudioAiRedTeamPath,
+  adminStudioExecutiveTrustDashboardPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -974,6 +975,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['CHALLENGE → EXPOSE → RESOLVE → STRENGTHEN'],
     aliases: ['red team', 'adversarial testing', 'stress test', 'assume wrong'],
     searchKeywords: ['red team', 'adversarial', 'stress test', 'weakness', 'break', 'exploit', 'challenge'],
+  }),
+  entry({
+    id: 'executive-trust-dashboard',
+    label: 'Executive Trust Dashboard™',
+    moduleId: 'executive-trust-dashboard',
+    milestone: 'M147',
+    route: adminStudioExecutiveTrustDashboardPath(),
+    purpose: 'Centralized trust metrics — founders instantly understand health, confidence, and reliability of entire organization.',
+    overview:
+      '13 system trust indicators · executive summary · historical trust · daily through lifetime · Studio Intelligence briefing.',
+    capabilities: ['Trust scores', 'Health metrics', 'Risk levels', 'Historical tracking', 'Executive briefing', 'Priorities'],
+    howItWorks: 'Aggregate QA layer data → compute trust per system → Studio Intelligence summarizes → founders see confidence at a glance.',
+    whenUsed: ['Daily executive review', 'Board reporting', 'Pre-launch confidence check', 'Trust trend analysis'],
+    relatedSystems: ['qa-headquarters', 'qa-inspector', 'ai-red-team', 'studio-intelligence', 'organization-digital-twin'],
+    exampleWorkflows: ['MEASURE → REVIEW → PRIORITIZE → STRENGTHEN'],
+    aliases: ['trust dashboard', 'executive trust', 'organizational trust', 'confidence dashboard'],
+    searchKeywords: ['trust', 'confidence', 'executive', 'dashboard', 'health', 'risk', 'historical'],
   }),
 ];
 

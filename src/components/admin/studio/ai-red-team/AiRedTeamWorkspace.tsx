@@ -11,11 +11,7 @@ import {
   updateRedTeamFindingStatus,
 } from '../../../../studio-os-core/ai-red-team';
 import type { RedTeamFindingStatus } from '../../../../studio-os-core/ai-red-team';
-import {
-  adminStudioOrganizationDigitalTwinPath,
-  adminStudioQaSimulationEnginePath,
-  adminStudioMissionControlPath,
-} from '../../../../utils/adminStudioRoutes';
+import { adminStudioOrganizationDigitalTwinPath, adminStudioExecutiveTrustDashboardPath, adminStudioQaSimulationEnginePath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -110,6 +106,9 @@ export function AiRedTeamWorkspace() {
       </ExecutiveSecondaryCard>
       <button type="button" onClick={handleStressTest} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: AI_RED_TEAM_ACCENT, color: AI_RED_TEAM_ACCENT }}>
         RUN FULL STRESS TEST
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioExecutiveTrustDashboardPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: AI_RED_TEAM_ACCENT, color: AI_RED_TEAM_ACCENT }}>
+        TRUST DASHBOARD →
       </button>
       <button type="button" onClick={() => navigate(adminStudioOrganizationDigitalTwinPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         DIGITAL TWIN →

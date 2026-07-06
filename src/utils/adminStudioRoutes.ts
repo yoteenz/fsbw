@@ -965,6 +965,10 @@ export function adminStudioAiRedTeamPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ai-red-team`;
 }
 
+export function adminStudioExecutiveTrustDashboardPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/executive-trust-dashboard`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

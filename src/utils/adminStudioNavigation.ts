@@ -1872,6 +1872,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'executive-trust-dashboard',
+    title: 'EXECUTIVE TRUST DASHBOARD™',
+    purpose: 'Centralized trust metrics — health, confidence, risk, and history for every major system. Trust measurable, not assumed.',
+    route: p('executive-trust-dashboard'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M147',
+    ctaLabel: 'OPEN TRUST DASHBOARD',
+    moduleKey: 'executive-trust-dashboard',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

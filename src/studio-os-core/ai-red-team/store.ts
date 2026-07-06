@@ -43,7 +43,11 @@ function upsertProfile(profile: OrganizationAiRedTeamProfile): OrganizationAiRed
 
 /** Rebuild red team findings and challenges from QA layer + platform sources */
 export function syncAiRedTeamFromSources(organizationId: string): OrganizationAiRedTeamProfile {
-  return upsertProfile(buildOrganizationAiRedTeamProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationAiRedTeamProfile(organizationId));
+  void import('../executive-trust-dashboard/store').then((m) => {
+    m.syncExecutiveTrustDashboardFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationAiRedTeamProfile(organizationId: string): OrganizationAiRedTeamProfile {
