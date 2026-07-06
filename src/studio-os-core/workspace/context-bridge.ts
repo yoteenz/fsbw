@@ -1,5 +1,6 @@
 import { asModuleTenantId, resolveModuleTenantId, type ModuleTenantId } from './tenant-ids';
 import { writeActiveWorkspaceIdToStorage, setRuntimeActiveWorkspaceId } from './storage';
+import { syncOrganizationBoundaryForPlatformWorkspace } from '../organization-context/boundary-sync';
 
 export const STUDIO_OS_WORKSPACE_CHANGED = 'studio-os-workspace-changed';
 
@@ -72,5 +73,6 @@ export function activateWorkspaceContext(platformWorkspaceId: string): ModuleTen
   );
 
   dispatchWorkspaceChanged({ platformWorkspaceId, moduleTenantId: tenantId });
+  syncOrganizationBoundaryForPlatformWorkspace(platformWorkspaceId);
   return tenantId;
 }

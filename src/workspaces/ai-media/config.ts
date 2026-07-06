@@ -39,6 +39,12 @@ export const AI_MEDIA_NDXBOOK_WORKSPACE: WorkspaceSchema = {
       title: 'NDXBOOK',
       subtitle: 'PUBLIC MEDIA BRAND · THE INDEX FOR EVERYDAY KNOWLEDGE.',
     },
+    'distribution-network': {
+      subtitle: 'ONE STORY · EVERY KNOWLEDGE PAGE — THE BROADCASTING DEPARTMENT OF NDXBOOK.',
+    },
+    'distribution-engine': {
+      subtitle: 'GLOBAL KNOWLEDGE ASSET DISTRIBUTION — CHANNEL OPTIMIZATION FOR NDXBOOK.',
+    },
     studioHub: {
       title: 'NDXBOOK STUDIO',
       subtitle: 'AI MEDIA · NEWSROOM · PRODUCTION · REVENUE.',

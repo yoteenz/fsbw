@@ -38177,28 +38177,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-## 2026-07-06 — Studio Administration architectural correction (platform vs org HQ)
+**Conventions:** Studio Administration never shows Mission Control or defaults to Frontal Slayer. Mission Control exists only inside Organization Headquarters. Portfolio owners enter orgs explicitly from Command Center or Registry.
 
-**Context (full chat arc):** User continued NDXBOOK social OAuth / review-post workflow work, then reported Distribution and Mission Control routing to **Frontal Slayer** instead of **NDXBOOK**. Shipped NDXBOOK-specific mission control + distribution routing (`ab2f5974`). User then mandated a **mandatory architectural separation**: Studio Administration must **never** inherit any organization's Mission Control or default to Frontal Slayer. Two application types: **Studio Administration** (platform above all orgs) and **Organization Headquarters** (org-scoped only).
+---
 
-**Topics covered:**
-- Meta OAuth setup for NDXBOOK (redirect URI, scopes, Page + IG Business link) — Instagram/Facebook connected successfully.
-- Review → approve → publish path: Distribution Network pack → APPROVAL → SOCIAL → Publish Now (Schedule stores time; no cron yet).
-- NDXBOOK routing fix: `useEnsureNdxbookWorkspace`, `/admin/studio/ndxbook/mission-control`, distribution `?brand=ndxbook`.
-- Audit: cannot confirm full workspace isolation while `STUDIO_OS_DEFAULT_WORKSPACE_ID = frontal-slayer` remained platform default.
-- **Architectural correction (this task):** absolute boundary between platform and org layers.
+## 2026-07-06 — Organization boundary V1.0 (active organization context)
+
+**Context (full chat arc):** After organizational presence pause button and studio-scoped header search, user reported **architectural bug — organization context leak**: Distribution Network inside NDXBOOK still showed Frontal Slayer data. User mandated **Organization Boundary**: every Studio OS module must operate **only** on active organization context — never infer from founder/default/Frontal Slayer.
 
 **Decisions / outcomes:**
-- **Studio Command Center** at **`/admin/studio-os/command-center`** — portfolio operating view (health, attention queue, cross-company insights, enter-org cards). Replaces Mission Control at platform layer.
-- **`StudioPlatformLayout`** — separate nav, Command Dock, no org tabs, no WorkspaceSwitcher, indigo platform chrome.
-- **Neutral platform tenant** `studio-os` — `readActiveWorkspaceIdFromStorage()` defaults here, not Frontal Slayer.
-- **Membership:** portfolio owners → `workspaceId: null` (API + client); org operators keep explicit assignment; legacy non-owner fallback still FS when no row.
-- **Guards:** `StudioWorkspaceGuard` pins platform context on `/admin/studio-os/*` (except workspace routes); `StudioAdministrationGuard` activates platform tenant for portfolio owners.
-- **`/admin/studio-os/administration`** redirects to Command Center; dashboard STUDIO ADMINISTRATION card → Command Center; portfolio breadcrumbs → Command Center not org overview.
-- **`returnToCampus()`** clears org context → Command Center.
-- Platform module placeholder routes under `/admin/studio-os/{licensing,marketplace,system-health,...}`.
-- Organization Registry (`/admin/studio-os`) moved under `StudioPlatformLayout`; removed links that incorrectly routed platform modules through `/admin/studio/*`.
+- **`studio-os-core/organization-context/`** — `ActiveOrganizationContext` + `OrganizationContextProvider` in **`AdminStudioWorkspaceGuard`**.
+- **`syncOrganizationBoundary()`** on workspace switch; executive timeline default org from active workspace.
+- **`adminStudioDistributionNetworkOrgDefaults.ts`** — per-org seeds (FS · NDXBOOK · VXD · AIO); hook + pages use **`useStudioModuleNav()`** and **`getActiveModuleTenantId()`**.
+- Merged with prior **Studio Administration vs org HQ** separation (Command Center, platform tenant).
 
-**Changes:** `studio-os-core/platform/*`, `application/routes.ts`, `platform-paths.ts`, `portfolio-access.ts`, `auth/membership.ts`, `workspace/storage.ts`, `workspace/loader.ts`, `command-dock/context.ts`, `StudioPlatformLayout.tsx`, `StudioWorkspaceGuard.tsx`, `StudioAdministrationGuard.tsx`, `AdminStudioWorkspaceGuard.tsx`, `WorkspaceProvider.tsx`, `command-center/page.tsx`, `platform-module/*`, `studio-os/page.tsx`, `administration/page.tsx`, `headquarters/page.tsx`, `AdminStudioLayout.tsx`, `CampusTransitionProvider.tsx`, `WorkspaceSwitcher.tsx`, `api/admin/studio-os-membership.ts`, `App.tsx`, `dashboard/page.tsx`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+**Changes:** organization-context module, distribution-network org defaults + pages, AdminStudioStageShell, workspace configs, motherboard/CORE.md + MEMORY.md.
 
-**Conventions:** Studio Administration never shows Mission Control or defaults to Frontal Slayer. Mission Control exists only inside Organization Headquarters. Portfolio owners enter orgs explicitly from Command Center or Registry.
+**Conventions:** All future modules use **`useOrganizationContext()`** / **`useStudioModuleNav()`** — no shared FS demo defaults.

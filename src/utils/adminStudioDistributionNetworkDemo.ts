@@ -364,7 +364,7 @@ const COMING_SOON_DEFS: Array<{ id: DistributionChannelId; name: string }> = [
   { id: 'future-integrations', name: 'FUTURE INTEGRATIONS' },
 ];
 
-function createChannel(
+export function createDistributionChannel(
   def: { id: DistributionChannelId; name: string; accentHex?: string },
   activation: DistributionChannelActivation,
   partial?: Partial<DistributionChannel>
@@ -407,8 +407,8 @@ function createChannel(
 }
 
 export const ADMIN_STUDIO_DISTRIBUTION_CHANNELS: DistributionChannel[] = [
-  ...ACTIVE_CHANNEL_DEFS.map((d) => createChannel(d, 'ACTIVE')),
-  ...COMING_SOON_DEFS.map((d) => createChannel(d, 'COMING_SOON', { status: 'ARCHITECTURE ONLY' })),
+  ...ACTIVE_CHANNEL_DEFS.map((d) => createDistributionChannel(d, 'ACTIVE')),
+  ...COMING_SOON_DEFS.map((d) => createDistributionChannel(d, 'COMING_SOON', { status: 'ARCHITECTURE ONLY' })),
 ];
 
 export const DEFAULT_SLAY_REPORT_ROUTING: DistributionChannelId[] = [
@@ -421,7 +421,7 @@ export const DEFAULT_SLAY_REPORT_ROUTING: DistributionChannelId[] = [
   'mobile-website',
 ];
 
-function createDistributionPack(partial: Partial<DistributionPack> & Pick<DistributionPack, 'id' | 'title'>): DistributionPack {
+export function createDistributionPack(partial: Partial<DistributionPack> & Pick<DistributionPack, 'id' | 'title'>): DistributionPack {
   const routing = partial.routingChannels ?? DEFAULT_SLAY_REPORT_ROUTING;
   return {
     accentHex: '#EB1C24',

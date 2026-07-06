@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { CampusTransitionProvider } from './admin/studio-os/campus/CampusTransitionProvider';
 import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
+import { OrganizationContextProvider } from '../studio-os-core/organization-context';
 import { ensureWorkspacesBootstrapped } from '../utils/ensureWorkspacesBootstrapped';
 import { ensureOrgMembershipResolved } from '../studio-os-core/auth/membership';
 import { activateWorkspaceContext } from '../studio-os-core/workspace/context-bridge';
@@ -94,9 +95,11 @@ export default function AdminStudioWorkspaceGuard() {
 
   return (
     <WorkspaceProvider>
-      <CampusTransitionProvider>
-        <Outlet />
-      </CampusTransitionProvider>
+      <OrganizationContextProvider>
+        <CampusTransitionProvider>
+          <Outlet />
+        </CampusTransitionProvider>
+      </OrganizationContextProvider>
     </WorkspaceProvider>
   );
 }

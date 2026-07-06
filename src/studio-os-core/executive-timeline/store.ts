@@ -12,6 +12,8 @@ import {
 } from '../concierge-routing/store';
 import type { FounderCommandRoute } from '../concierge-routing/types';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
+import { resolveTimelineOrganizationId } from '../organization-context/resolve';
+import { readActiveWorkspaceIdFromStorage } from '../workspace/storage';
 import type {
   ConciergeTimelineCommand,
   ExecutiveTimelineStore,
@@ -24,7 +26,7 @@ function emptyStore(): ExecutiveTimelineStore {
   return {
     version: EXECUTIVE_TIMELINE_VERSION,
     lastUpdatedAt: new Date().toISOString(),
-    activeOrganizationId: 'frontal-slayer',
+    activeOrganizationId: resolveTimelineOrganizationId(readActiveWorkspaceIdFromStorage()),
     activeView: 'agenda',
     visibleLayerIds: TIMELINE_LAYERS.map((l) => l.id),
     selectedEventId: null,

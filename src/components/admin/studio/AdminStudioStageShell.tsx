@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { AdminStudioLayout } from './AdminStudioLayout';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
+import { useStudioModuleNav } from '../../../studio-os-core/organization-context';
 import { STUDIO_OS_ROUTES } from '../../../studio-os-core/workspace/routes';
 import type { WorkspaceSchema } from '../../../studio-os-core/workspace/types';
 import type { StudioNavGroupId } from '../../../utils/adminStudioNavigation';
@@ -38,8 +39,8 @@ export function AdminStudioStageShell({
   subtitle,
   showBack = true,
   onBack,
-  breadcrumbParentLabel = 'ADMIN',
-  breadcrumbParentPath = '/admin/dashboard',
+  breadcrumbParentLabel,
+  breadcrumbParentPath,
   children,
   accentHex: _accentHex,
   navGroupId,
@@ -48,7 +49,9 @@ export function AdminStudioStageShell({
   pageHeading,
 }: AdminStudioStageShellProps) {
   void _accentHex;
+  const navigate = useNavigate();
   const { workspace } = useWorkspace();
+  const { studioEntry, organizationName } = useStudioModuleNav();
 
   if (!canAccessStudioStageShell(workspace)) {
     return <Navigate to={STUDIO_OS_ROUTES.workspaceShell(workspace.id)} replace />;
@@ -59,9 +62,9 @@ export function AdminStudioStageShell({
       title={title}
       subtitle={subtitle}
       showBack={showBack}
-      onBack={onBack}
-      breadcrumbParentLabel={breadcrumbParentLabel}
-      breadcrumbParentPath={breadcrumbParentPath}
+      onBack={onBack ?? (() => navigate(studioEntry))}
+      breadcrumbParentLabel={breadcrumbParentLabel ?? organizationName}
+      breadcrumbParentPath={breadcrumbParentPath ?? studioEntry}
       navGroupId={navGroupId}
       hideNavTabs={hideNavTabs}
       breadcrumbPageTitle={breadcrumbPageTitle}

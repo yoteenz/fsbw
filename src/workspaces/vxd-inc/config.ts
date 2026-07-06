@@ -16,6 +16,12 @@ export const VXD_INC_WORKSPACE: WorkspaceSchema = {
   brandRules: ['PLATFORM GOVERNANCE · STUDIO INTELLIGENCE LAYER'],
   permissions: { ...DEFAULT_WORKSPACE_PERMISSIONS, canAccessStudioModules: true },
   moduleCopy: {
+    'mission-control': {
+      subtitle: 'VXD HQ · PORTFOLIO INTELLIGENCE · PLATFORM GOVERNANCE.',
+    },
+    'distribution-network': {
+      subtitle: 'PORTFOLIO SIGNAL ROUTING — THE BROADCASTING LAYER OF VXD INC.',
+    },
     'studio-intelligence': {
       subtitle: 'PORTFOLIO INTELLIGENCE — CROSS-WORKSPACE INSIGHTS WITH FOUNDER APPROVAL.',
     },

@@ -10,15 +10,11 @@ import { AdminStudioCreativeWidget } from '../../../../components/admin/studio/A
 import { useEnsureNdxbookWorkspaceFromBrandParam } from '../../../../hooks/useEnsureNdxbookWorkspace';
 import { useAdminStudioDistributionNetwork } from '../../../../hooks/useAdminStudioDistributionNetworkState';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
-import { NDXBOOK_WORKSPACE_ID } from '../../../../studio-os-core/ndxbook/constants';
 import {
-  adminStudioNdxbookDistributionPackPath,
-  adminStudioNdxbookMissionControlPath,
-  adminStudioNdxbookSocialAccountsPath,
-} from '../../../../utils/adminStudioRoutes';
+  useOrganizationContext,
+  useStudioModuleNav,
+} from '../../../../studio-os-core/organization-context';
 import {
-  ADMIN_STUDIO_DISTRIBUTION_NETWORK_SUBTITLE,
-  ADMIN_STUDIO_DISTRIBUTION_CAMPAIGNS,
   DISTRIBUTION_CALENDAR_SLOTS,
   DISTRIBUTION_CALENDAR_VIEWS,
   DISTRIBUTION_DASHBOARD_SECTIONS,
@@ -27,14 +23,26 @@ import {
   type DistributionCalendarSlotId,
   type DistributionCalendarView,
 } from '../../../../utils/adminStudioDistributionNetworkDemo';
+import {
+  getDistributionCampaignDefaults,
+  getDistributionNetworkAccent,
+  getDistributionNetworkSubtitle,
+} from '../../../../utils/adminStudioDistributionNetworkOrgDefaults';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 export default function AdminStudioDistributionNetworkPage() {
   useEnsureNdxbookWorkspaceFromBrandParam();
   const navigate = useNavigate();
-  const { workspaceId } = useWorkspace();
-  const isNdxbook = workspaceId === NDXBOOK_WORKSPACE_ID;
-  const { packs, channels, packsBySlot, moveToSlot, addPack, draggedPackId, setDraggedPackId } = useAdminStudioDistributionNetwork();
+  const { getModuleSubtitle } = useWorkspace();
+  const { organizationId } = useOrganizationContext();
+  const { toModule, studioEntry, organizationName } = useStudioModuleNav();
+  const isNdxbook = organizationId === 'ai-media';
+  const accent = getDistributionNetworkAccent();
+  const subtitle =
+    getModuleSubtitle('distribution-network') ?? getDistributionNetworkSubtitle();
+  const campaigns = getDistributionCampaignDefaults();
+  const { packs, channels, packsBySlot, moveToSlot, addPack, draggedPackId, setDraggedPackId } =
+    useAdminStudioDistributionNetwork();
   const [adding, setAdding] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [calendarView, setCalendarView] = useState<DistributionCalendarView>('weekly');
@@ -48,7 +56,7 @@ export default function AdminStudioDistributionNetworkPage() {
     const id = addPack(trimmed);
     setNewTitle('');
     setAdding(false);
-    navigate(isNdxbook ? adminStudioNdxbookDistributionPackPath(id) : `/admin/studio/distribution-network/${id}`);
+    navigate(toModule(`distribution-network/${id}`));
   };
 
   const handleDragOver = (e: DragEvent) => {
@@ -71,16 +79,16 @@ export default function AdminStudioDistributionNetworkPage() {
   return (
     <AdminStudioStageShell
       title={isNdxbook ? 'NDXBOOK DISTRIBUTION' : 'DISTRIBUTION NETWORK'}
-      subtitle={isNdxbook ? 'NDXBOOK · REVIEW CAPTIONS · APPROVE · PUBLISH TO CONNECTED SOCIALS' : ADMIN_STUDIO_DISTRIBUTION_NETWORK_SUBTITLE}
-      breadcrumbParentLabel={isNdxbook ? 'MISSION CONTROL' : 'THE STUDIO'}
-      breadcrumbParentPath={isNdxbook ? adminStudioNdxbookMissionControlPath() : '/admin/studio'}
-      onBack={() => navigate(isNdxbook ? adminStudioNdxbookMissionControlPath() : '/admin/studio')}
+      subtitle={subtitle}
+      breadcrumbParentLabel={organizationName}
+      breadcrumbParentPath={studioEntry}
+      onBack={() => navigate(studioEntry)}
     >
       {isNdxbook ? (
         <div className="p-2 mb-3 border flex flex-wrap gap-1" style={{ background: 'rgba(99,102,241,0.06)', borderColor: '#6366F1' }}>
           <button
             type="button"
-            onClick={() => navigate(adminStudioNdxbookSocialAccountsPath())}
+            onClick={() => navigate(toModule('social-accounts'))}
             className="flex-1 py-1.5 text-[6px] font-futura uppercase border"
             style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
           >
@@ -90,7 +98,9 @@ export default function AdminStudioDistributionNetworkPage() {
       ) : null}
       <div className="p-3 mb-4 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
         <p className="text-[7px] font-futura uppercase mb-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-          {isNdxbook ? 'NDXBOOK PAGES · OPEN A PACK → SOCIAL TAB → APPROVE → PUBLISH' : 'BROADCASTING DEPARTMENT — ONE MASTER PACK · EVERY DESTINATION · MANUAL PUBLISHING ONLY'}
+          {isNdxbook
+            ? 'NDXBOOK PAGES · OPEN A PACK → SOCIAL TAB → APPROVE → PUBLISH'
+            : 'BROADCASTING DEPARTMENT — ONE MASTER PACK · EVERY DESTINATION · MANUAL PUBLISHING ONLY'}
         </p>
         <div className="flex flex-col items-center gap-0">
           {DISTRIBUTION_INHERITANCE_CHAIN.map((step, i) => (
@@ -100,7 +110,7 @@ export default function AdminStudioDistributionNetworkPage() {
                 className="w-full px-2 py-1 text-[7px] font-futura uppercase text-center border"
                 style={{
                   fontWeight: 515,
-                  color: step === 'DISTRIBUTION NETWORK' ? ADMIN_STUDIO_THEME.accent : ADMIN_STUDIO_THEME.textSecondary,
+                  color: step === 'DISTRIBUTION NETWORK' ? accent : ADMIN_STUDIO_THEME.textSecondary,
                   background: step === 'DISTRIBUTION NETWORK' ? ADMIN_STUDIO_THEME.selectedBg : 'rgba(255,255,255,0.6)',
                   borderColor: ADMIN_STUDIO_THEME.panelBorder,
                 }}
@@ -133,14 +143,14 @@ export default function AdminStudioDistributionNetworkPage() {
       <AdminStudioSectionHeading>CHANNEL LIBRARY — ACTIVE</AdminStudioSectionHeading>
       <div className="grid grid-cols-2 gap-2 mb-4">
         {activeChannels.map((ch) => (
-          <AdminStudioDistributionChannelCard key={ch.id} channel={ch} onClick={() => navigate(`/admin/studio/distribution-network/channel/${ch.id}`)} />
+          <AdminStudioDistributionChannelCard key={ch.id} channel={ch} onClick={() => navigate(toModule(`distribution-network/channel/${ch.id}`))} />
         ))}
       </div>
 
       <AdminStudioSectionHeading>COMING SOON</AdminStudioSectionHeading>
       <div className="grid grid-cols-2 gap-2 mb-4">
         {comingSoonChannels.map((ch) => (
-          <AdminStudioDistributionChannelCard key={ch.id} channel={ch} onClick={() => navigate(`/admin/studio/distribution-network/channel/${ch.id}`)} />
+          <AdminStudioDistributionChannelCard key={ch.id} channel={ch} onClick={() => navigate(toModule(`distribution-network/channel/${ch.id}`))} />
         ))}
       </div>
 
@@ -176,7 +186,7 @@ export default function AdminStudioDistributionNetworkPage() {
                       compact
                       draggable
                       onDragStart={() => setDraggedPackId(pack.id)}
-                      onClick={() => navigate(isNdxbook ? adminStudioNdxbookDistributionPackPath(pack.id) : `/admin/studio/distribution-network/${pack.id}`)}
+                      onClick={() => navigate(toModule(`distribution-network/${pack.id}`))}
                     />
                   ))}
                 </div>
@@ -188,7 +198,7 @@ export default function AdminStudioDistributionNetworkPage() {
 
       <AdminStudioSectionHeading>CAMPAIGN DISTRIBUTION</AdminStudioSectionHeading>
       <div className="space-y-2 mb-4">
-        {ADMIN_STUDIO_DISTRIBUTION_CAMPAIGNS.map((campaign) => (
+        {campaigns.map((campaign) => (
           <div key={campaign.id} className="p-3 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder, borderLeft: `3px solid ${campaign.accentHex}` }}>
             <p className="text-[8px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textPrimary }}>{campaign.title}</p>
             <p className="text-[6px] font-futura uppercase mt-1" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>{campaign.description}</p>
@@ -206,7 +216,7 @@ export default function AdminStudioDistributionNetworkPage() {
       </p>
       <div className="space-y-2 mb-4">
         {packs.map((pack) => (
-          <AdminStudioDistributionPackCard key={pack.id} pack={pack} draggable onDragStart={() => setDraggedPackId(pack.id)} onClick={() => navigate(isNdxbook ? adminStudioNdxbookDistributionPackPath(pack.id) : `/admin/studio/distribution-network/${pack.id}`)} />
+          <AdminStudioDistributionPackCard key={pack.id} pack={pack} draggable onDragStart={() => setDraggedPackId(pack.id)} onClick={() => navigate(toModule(`distribution-network/${pack.id}`))} />
         ))}
       </div>
 
@@ -238,13 +248,13 @@ export default function AdminStudioDistributionNetworkPage() {
       )}
 
       <div className="flex gap-2">
-        <button type="button" onClick={() => navigate('/admin/studio/ai-production-engine')} className="flex-1 py-2 text-[7px] font-futura uppercase border" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>← AI PRODUCTION</button>
-        <button type="button" onClick={() => navigate('/admin/studio/publishing-queue')} className="flex-1 py-2 text-[7px] font-futura uppercase border" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>PUBLISHING QUEUE →</button>
+        <button type="button" onClick={() => navigate(toModule('ai-production-engine'))} className="flex-1 py-2 text-[7px] font-futura uppercase border" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>← AI PRODUCTION</button>
+        <button type="button" onClick={() => navigate(toModule('publishing-queue'))} className="flex-1 py-2 text-[7px] font-futura uppercase border" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>PUBLISHING QUEUE →</button>
       </div>
 
       <button
         type="button"
-        onClick={() => navigate(isNdxbook ? adminStudioNdxbookSocialAccountsPath() : '/admin/studio/social-accounts')}
+        onClick={() => navigate(toModule('social-accounts'))}
         className="w-full mt-2 py-2 text-[7px] font-futura uppercase border"
         style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
       >

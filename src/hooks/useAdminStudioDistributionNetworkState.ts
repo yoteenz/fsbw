@@ -1,9 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  ADMIN_STUDIO_DISTRIBUTION_CHANNELS,
-  ADMIN_STUDIO_DISTRIBUTION_PACK_DEFAULTS,
   createBlankDistributionPack,
-  distributionPackDefaultsForWorkspace,
   validateDistributionPack,
   type DistributionApprovalStatus,
   type DistributionCalendarSlotId,
@@ -15,17 +12,24 @@ import {
   type DistributionPackFieldKey,
 } from '../utils/adminStudioDistributionNetworkDemo';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
-import { getRuntimeActiveWorkspaceId } from '../studio-os-core/workspace/storage';
+import { getActiveModuleTenantId } from '../studio-os-core/organization-context';
+import { STUDIO_OS_ORGANIZATION_BOUNDARY_CHANGED } from '../studio-os-core/organization-context';
+import {
+  getDistributionChannelDefaults,
+  getDistributionPackDefaults,
+} from '../utils/adminStudioDistributionNetworkOrgDefaults';
 
 type PackPatch = Partial<DistributionPack>;
 type PackPatchStore = Record<string, PackPatch>;
 type ChannelPatchStore = Record<string, Partial<DistributionChannel>>;
 
-const DEFAULT_PACK_IDS = new Set([
-  ...ADMIN_STUDIO_DISTRIBUTION_PACK_DEFAULTS.map((p) => p.id),
-  ...distributionPackDefaultsForWorkspace('ai-media').map((p) => p.id),
-]);
-const DEFAULT_CHANNEL_IDS = new Set(ADMIN_STUDIO_DISTRIBUTION_CHANNELS.map((c) => c.id));
+function defaultPackIds(): Set<string> {
+  return new Set(getDistributionPackDefaults(getActiveModuleTenantId()).map((p) => p.id));
+}
+
+function defaultChannelIds(): Set<string> {
+  return new Set(getDistributionChannelDefaults(getActiveModuleTenantId()).map((c) => c.id));
+}
 
 function readPackPatches(): PackPatchStore {
   return readStudioJson<PackPatchStore>(ADMIN_STUDIO_STORAGE_KEYS.distributionNetwork) ?? {};
@@ -52,7 +56,7 @@ function writeChannelPatches(store: ChannelPatchStore): void {
 }
 
 function mergePackDefaults(patches: PackPatchStore): DistributionPack[] {
-  const defaults = distributionPackDefaultsForWorkspace(getRuntimeActiveWorkspaceId());
+  const defaults = getDistributionPackDefaults(getActiveModuleTenantId());
   return defaults.map((d) => {
     const patch = patches[d.id] ?? {};
     const merged = { ...d, ...patch, routingChannels: patch.routingChannels ?? d.routingChannels, channelVersions: patch.channelVersions ?? d.channelVersions };
@@ -61,14 +65,14 @@ function mergePackDefaults(patches: PackPatchStore): DistributionPack[] {
 }
 
 function mergeChannels(patches: ChannelPatchStore): DistributionChannel[] {
-  return ADMIN_STUDIO_DISTRIBUTION_CHANNELS.map((d) => ({ ...d, ...(patches[d.id] ?? {}) }));
+  return getDistributionChannelDefaults(getActiveModuleTenantId()).map((d) => ({ ...d, ...(patches[d.id] ?? {}) }));
 }
 
 export function listDistributionPacks(): DistributionPack[] {
   const patches = readPackPatches();
   const custom = readCustomPacks();
   const merged = mergePackDefaults(patches);
-  const customOnly = custom.filter((c) => !DEFAULT_PACK_IDS.has(c.id));
+  const customOnly = custom.filter((c) => !defaultPackIds().has(c.id));
   return [...merged, ...customOnly.map((c) => ({ ...c, validationPassed: validateDistributionPack(c) }))];
 }
 
@@ -93,7 +97,7 @@ export function exportDistributionNetworkSnapshot() {
 }
 
 function patchPack(packId: string, patch: PackPatch): void {
-  if (DEFAULT_PACK_IDS.has(packId)) {
+  if (defaultPackIds().has(packId)) {
     const store = readPackPatches();
     store[packId] = { ...(store[packId] ?? {}), ...patch };
     writePackPatches(store);
@@ -116,6 +120,16 @@ function patchChannel(channelId: string, patch: Partial<DistributionChannel>): v
 export function useAdminStudioDistributionNetwork(packId?: string, channelId?: string) {
   const [version, setVersion] = useState(0);
   const bump = useCallback(() => setVersion((v) => v + 1), []);
+
+  useEffect(() => {
+    const onOrgChanged = () => setVersion((v) => v + 1);
+    window.addEventListener(STUDIO_OS_ORGANIZATION_BOUNDARY_CHANGED, onOrgChanged);
+    window.addEventListener('studio-os-workspace-changed', onOrgChanged);
+    return () => {
+      window.removeEventListener(STUDIO_OS_ORGANIZATION_BOUNDARY_CHANGED, onOrgChanged);
+      window.removeEventListener('studio-os-workspace-changed', onOrgChanged);
+    };
+  }, []);
 
   const packs = useMemo(() => {
     void version;
@@ -156,7 +170,7 @@ export function useAdminStudioDistributionNetwork(packId?: string, channelId?: s
 
   const updateChannelField = useCallback(
     (id: string, key: DistributionChannelFieldKey, value: string) => {
-      if (!DEFAULT_CHANNEL_IDS.has(id as DistributionChannelId)) return;
+      if (!defaultChannelIds().has(id as DistributionChannelId)) return;
       patchChannel(id, { [key]: value });
       bump();
     },

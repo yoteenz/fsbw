@@ -19,6 +19,9 @@ export const ALL_IN_ONE_ENTERPRISE_WORKSPACE: WorkspaceSchema = {
     'mission-control': {
       subtitle: 'ENTERPRISE HQ — PORTFOLIO MISSION OVERVIEW.',
     },
+    'distribution-network': {
+      subtitle: 'ENTERPRISE HOLDING DISTRIBUTION — ALL IN ONE ENTERPRISE.',
+    },
   },
   studioEnabled: true,
   studioEntryPath: STUDIO_OS_ROUTES.workspaceDashboard('all-in-one-enterprise'),

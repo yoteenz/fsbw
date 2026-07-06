@@ -14,16 +14,19 @@ import {
   type DistributionChannelTabId,
   type DistributionChannelFieldKey,
 } from '../../../../../utils/adminStudioDistributionNetworkDemo';
+import { useStudioModuleNav } from '../../../../../studio-os-core/organization-context';
 import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
 
 export default function AdminStudioDistributionNetworkChannelPage() {
   const { channelId } = useParams<{ channelId: string }>();
   const navigate = useNavigate();
+  const { toModule } = useStudioModuleNav();
+  const distributionListPath = toModule('distribution-network');
   const [activeTab, setActiveTab] = useState<DistributionChannelTabId>('profile');
   const { selectedChannel, updateChannelField } = useAdminStudioDistributionNetwork(undefined, channelId);
 
-  if (!channelId) return <Navigate to="/admin/studio/distribution-network" replace />;
-  if (!selectedChannel) return <Navigate to="/admin/studio/distribution-network" replace />;
+  if (!channelId) return <Navigate to={distributionListPath} replace />;
+  if (!selectedChannel) return <Navigate to={distributionListPath} replace />;
 
   const c = selectedChannel;
   const onUpdate = (key: DistributionChannelFieldKey, value: string) => updateChannelField(c.id, key, value);
@@ -33,8 +36,8 @@ export default function AdminStudioDistributionNetworkChannelPage() {
       title={c.name}
       subtitle={`CHANNEL · ${c.activation === 'ACTIVE' ? 'ACTIVE' : 'COMING SOON'}`}
       breadcrumbParentLabel="DISTRIBUTION NETWORK"
-      breadcrumbParentPath="/admin/studio/distribution-network"
-      onBack={() => navigate('/admin/studio/distribution-network')}
+      breadcrumbParentPath={distributionListPath}
+      onBack={() => navigate(distributionListPath)}
     >
       <div className="p-2.5 mb-3 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder, borderTop: `2px solid ${c.accentHex}` }}>
         <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>{c.audience}</p>
