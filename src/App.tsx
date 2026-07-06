@@ -294,6 +294,10 @@ const AdminStudioQaSimulationEngine = lazyWithRetry(
   () => import('./pages/admin/studio/qa-simulation-engine/page'),
   'AdminStudioQaSimulationEngine'
 );
+const AdminStudioAiRedTeam = lazyWithRetry(
+  () => import('./pages/admin/studio/ai-red-team/page'),
+  'AdminStudioAiRedTeam'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1640,6 +1644,11 @@ function App() {
           <Route path="studio/qa-simulation-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioQaSimulationEngine />
+            </Suspense>
+          } />
+          <Route path="studio/ai-red-team" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioAiRedTeam />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

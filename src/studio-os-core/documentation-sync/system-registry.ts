@@ -20,6 +20,7 @@ import {
   adminStudioQaHeadquartersPath,
   adminStudioQaInspectorPath,
   adminStudioQaSimulationEnginePath,
+  adminStudioAiRedTeamPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -956,6 +957,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['SIMULATE → REVIEW → IMPROVE → CLEAR GATE → PRODUCTION'],
     aliases: ['qa simulation', 'practice field', 'pre-production simulation', 'persona simulation'],
     searchKeywords: ['simulation', 'persona', 'customer simulation', 'production gate', 'practice field', 'drop-off'],
+  }),
+  entry({
+    id: 'ai-red-team',
+    label: 'AI Red Team™',
+    moduleId: 'ai-red-team',
+    milestone: 'M146',
+    route: adminStudioAiRedTeamPath(),
+    purpose: 'Internal adversarial layer — assume wrong until proven, stress test and expose weaknesses before users discover them.',
+    overview:
+      '15 exposure targets · 5 red team challenges · severity · confidence · root cause · affected systems · suggested resolution.',
+    capabilities: ['Adversarial probing', 'Stress testing', 'Challenge runs', 'Weakness exposure', 'Exposure metrics'],
+    howItWorks: 'Continuously attempt to break Studio OS → expose weaknesses → recommend resolution → organization strengthens before users discover issues.',
+    whenUsed: ['Pre-production hardening', 'Security review', 'Workflow edge cases', 'Brain contradiction detection', 'Automation race conditions'],
+    relatedSystems: ['qa-inspector', 'qa-simulation-engine', 'digital-twin', 'profession-brain', 'permission-engine'],
+    exampleWorkflows: ['CHALLENGE → EXPOSE → RESOLVE → STRENGTHEN'],
+    aliases: ['red team', 'adversarial testing', 'stress test', 'assume wrong'],
+    searchKeywords: ['red team', 'adversarial', 'stress test', 'weakness', 'break', 'exploit', 'challenge'],
   }),
 ];
 

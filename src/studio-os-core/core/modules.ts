@@ -138,6 +138,7 @@ export type StudioOsCoreModuleId =
   | 'qa-headquarters'
   | 'qa-inspector'
   | 'qa-simulation-engine'
+  | 'ai-red-team'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -961,6 +962,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'QA SIMULATION ENGINE™',
     description: 'QA Simulation Engine V1.0 — pre-production practice field; simulate every persona journey before users encounter it.',
     routeSegment: 'qa-simulation-engine',
+  },
+  {
+    id: 'ai-red-team',
+    label: 'AI RED TEAM™',
+    description: 'AI Red Team V1.0 — adversarial stress testing; assume wrong until proven, expose weaknesses before users discover them.',
+    routeSegment: 'ai-red-team',
   },
   {
     id: 'succession-mode',

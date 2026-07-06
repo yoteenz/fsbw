@@ -97,6 +97,7 @@ import { MissionControlExperienceEnginePanel } from './MissionControlExperienceE
 import { MissionControlQaHeadquartersPanel } from './MissionControlQaHeadquartersPanel';
 import { MissionControlQaInspectorPanel } from './MissionControlQaInspectorPanel';
 import { MissionControlQaSimulationEnginePanel } from './MissionControlQaSimulationEnginePanel';
+import { MissionControlAiRedTeamPanel } from './MissionControlAiRedTeamPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -560,6 +561,7 @@ export function MissionControlWorkspace() {
           <MissionControlQaHeadquartersPanel />
           <MissionControlQaInspectorPanel />
           <MissionControlQaSimulationEnginePanel />
+          <MissionControlAiRedTeamPanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

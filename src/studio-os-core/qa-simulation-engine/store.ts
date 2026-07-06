@@ -49,7 +49,11 @@ function upsertProfile(profile: OrganizationQaSimulationEngineProfile): Organiza
 
 /** Rebuild simulation runs and production gates from QA Inspector + platform sources */
 export function syncQaSimulationEngineFromSources(organizationId: string): OrganizationQaSimulationEngineProfile {
-  return upsertProfile(buildOrganizationQaSimulationEngineProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationQaSimulationEngineProfile(organizationId));
+  void import('../ai-red-team/store').then((m) => {
+    m.syncAiRedTeamFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationQaSimulationEngineProfile(

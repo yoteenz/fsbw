@@ -1,26 +1,26 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
-import { QaSimulationEngineWorkspace } from '../../../../components/admin/studio/qa-simulation-engine/QaSimulationEngineWorkspace';
+import { AiRedTeamWorkspace } from '../../../../components/admin/studio/ai-red-team/AiRedTeamWorkspace';
 
 const SUBTITLE =
-  'QA Simulation Engine™ — Studio OS\'s practice field. Simulate customer, employee, administrator, expert, and founder journeys before anything reaches production.';
+  'AI Red Team™ — internal adversarial layer that assumes everything is wrong until proven otherwise. Challenge, stress test, and expose weaknesses before users discover them.';
 
-export default function AdminStudioQaSimulationEnginePage() {
+export default function AdminStudioAiRedTeamPage() {
   const navigate = useNavigate();
 
   return (
     <AdminStudioStageShell
-      title="QA SIMULATION ENGINE™"
+      title="AI RED TEAM™"
       subtitle={SUBTITLE}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"
-      onBack={() => navigate('/admin/studio/ai-red-team')}
+      onBack={() => navigate('/admin/studio/qa-simulation-engine')}
       navGroupId="intelligence"
     >
-      <QaSimulationEngineWorkspace />
+      <AiRedTeamWorkspace />
       <AdminStudioDisclaimerFooter>
-        QA SIMULATION ENGINE™ V1.0 · M144 · PRACTICE FIELD · REHEARSE BEFORE USERS ENCOUNTER IT
+        AI RED TEAM™ V1.0 · M146 · ASSUME WRONG UNTIL PROVEN · QUESTION EVERYTHING · STRENGTHEN BEFORE USERS DISCOVER
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

@@ -961,6 +961,10 @@ export function adminStudioQaSimulationEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/qa-simulation-engine`;
 }
 
+export function adminStudioAiRedTeamPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/ai-red-team`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

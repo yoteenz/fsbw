@@ -1860,6 +1860,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'ai-red-team',
+    title: 'AI RED TEAM™',
+    purpose: 'Adversarial stress testing — assume wrong until proven, expose weaknesses before users discover them.',
+    route: p('ai-red-team'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M146',
+    ctaLabel: 'OPEN AI RED TEAM',
+    moduleKey: 'ai-red-team',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

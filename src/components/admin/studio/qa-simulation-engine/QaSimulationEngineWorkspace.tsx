@@ -8,7 +8,7 @@ import {
   runSimulation,
   canReachProduction,
 } from '../../../../studio-os-core/qa-simulation-engine';
-import { adminStudioQaInspectorPath, adminStudioQaHeadquartersPath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioQaInspectorPath, adminStudioQaHeadquartersPath, adminStudioAiRedTeamPath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -87,6 +87,9 @@ export function QaSimulationEngineWorkspace() {
       </ExecutiveSecondaryCard>
       <button type="button" onClick={handleRunSimulation} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: QA_SIMULATION_ENGINE_ACCENT, color: QA_SIMULATION_ENGINE_ACCENT }}>
         RUN CUSTOMER SIMULATION
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioAiRedTeamPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: QA_SIMULATION_ENGINE_ACCENT, color: QA_SIMULATION_ENGINE_ACCENT }}>
+        AI RED TEAM →
       </button>
       <button type="button" onClick={() => navigate(adminStudioQaInspectorPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         QA INSPECTOR →
