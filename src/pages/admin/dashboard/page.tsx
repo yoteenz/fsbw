@@ -28,7 +28,7 @@ import {
 } from '../../../utils/adminMeetingsMock';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { fetchAdminMeetingsApiNormalized, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
-import { canAccessStudioAdministration } from '../../../studio-os-core/application/portfolio-access';
+import { canAccessStudioAdministration, getAssignedOrganizationWorkspaceId } from '../../../studio-os-core/application/portfolio-access';
 import { ORGANIZATION_ROUTES, STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import {
   HEADQUARTERS_DASHBOARD_FOOTER,
@@ -1217,7 +1217,11 @@ export default function AdminDashboard() {
         navigate('/admin/backend');
         break;
       case 'HEADQUARTERS':
-        navigate(ORGANIZATION_ROUTES.headquartersEntry);
+        if (canAccessStudioAdministration() && !getAssignedOrganizationWorkspaceId()) {
+          navigate(STUDIO_ADMINISTRATION_ROUTES.commandCenter);
+        } else {
+          navigate(ORGANIZATION_ROUTES.headquartersEntry);
+        }
         break;
       case 'STUDIO COMMAND CENTER':
         navigate(STUDIO_ADMINISTRATION_ROUTES.root);

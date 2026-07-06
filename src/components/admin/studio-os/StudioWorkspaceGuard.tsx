@@ -8,6 +8,7 @@ import { activateWorkspaceContext } from '../../../studio-os-core/workspace/cont
 import { getCachedOrgMembership } from '../../../studio-os-core/auth/membership';
 import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
 import { isPlatformAdministrationPath } from '../../../studio-os-core/application/platform-paths';
+import { ORGANIZATION_ROUTES } from '../../../studio-os-core/application/routes';
 
 /**
  * Route boundary enforcement:
@@ -20,6 +21,7 @@ export default function StudioWorkspaceGuard() {
   const { pathname, search } = useLocation();
   const legacyFsPath = isLegacyFrontalSlayerStudioPath(pathname);
   const platformPath = isPlatformAdministrationPath(pathname);
+  const headquartersEntryPath = pathname === ORGANIZATION_ROUTES.headquartersEntry;
 
   useEffect(() => {
     if (platformPath && workspaceId !== STUDIO_PLATFORM_WORKSPACE_ID) {
@@ -45,7 +47,7 @@ export default function StudioWorkspaceGuard() {
     return <Outlet />;
   }
 
-  if (!workspace.studioEnabled && !legacyFsPath) {
+  if (!workspace.studioEnabled && !legacyFsPath && !headquartersEntryPath) {
     return <Navigate to={workspaceStudioModulePath(workspaceId, 'mission-control')} replace />;
   }
 

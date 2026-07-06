@@ -38237,6 +38237,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-06 — Milestone 84: Design DNA & Canon System V1.0
 
 **Context (full chat arc):** User requested **Milestone 84 — Design DNA & Canon System V1.0** to continue building Frontal Slayer Headquarters. Explicit constraints: **do not** redesign existing pages · standardize layouts · correct spacing · normalize typography · realign custom compositions. Goal: preserve Frontal Slayer's existing visual identity while teaching every future page how to naturally evolve from it — permanent Design DNA creative compass.
@@ -38791,3 +38792,17 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Knowledge Confidence (M105) complements Profession Brain (M91) — brain stores knowledge; confidence measures and QA's it. Demo localStorage via `studioOsKnowledgeConfidence_v1`.
 
+=======
+## 2026-07-06 — Admin dashboard Headquarters card not loading (route guard fix)
+
+**Context:** User reported Headquarters card on admin dashboard not loading.
+
+**Root cause:** Clicking HEADQUARTERS navigates to `/admin/headquarters`, wrapped in **`StudioWorkspaceGuard`**. For portfolio owners (and any session on platform tenant `studio-os`), **`studioEnabled: false`** triggered redirect to `/admin/studio-os/workspace/studio-os/studio/mission-control` before **`AdminHeadquartersEntryPage`** could render — looked like infinite loading or broken navigation. Headquarters entry page also showed a permanent **`LoadingScreen`** regardless of transition state.
+
+**Fix:**
+- **`StudioWorkspaceGuard`** — exempt **`ORGANIZATION_ROUTES.headquartersEntry`** from `studioEnabled` redirect.
+- **`dashboard/page.tsx`** — portfolio owners with no assigned org navigate to **Studio Command Center** instead of headquarters entry.
+- **`headquarters/page.tsx`** — show loading only during active campus transition; manual ENTER buttons when idle.
+
+**Changes:** StudioWorkspaceGuard.tsx, dashboard/page.tsx, headquarters/page.tsx, MEMORY.md.
+>>>>>>> d6b2b17b (Fix Headquarters card: exempt entry route from studioEnabled guard redirect)
