@@ -330,6 +330,10 @@ const AdminStudioDesignComplianceEngine = lazyWithRetry(
   () => import('./pages/admin/studio/design-compliance-engine/page'),
   'AdminStudioDesignComplianceEngine'
 );
+const AdminStudioPromptQa = lazyWithRetry(
+  () => import('./pages/admin/studio/prompt-qa/page'),
+  'AdminStudioPromptQa'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1721,6 +1725,11 @@ function App() {
           <Route path="studio/design-compliance-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioDesignComplianceEngine />
+            </Suspense>
+          } />
+          <Route path="studio/prompt-qa" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPromptQa />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

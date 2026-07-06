@@ -52,10 +52,14 @@ export function syncDesignComplianceEngineFromSources(
 ): OrganizationDesignComplianceEngineProfile {
   const existing = getOrganizationDesignComplianceEngineProfile(organizationId);
   const built = buildOrganizationDesignComplianceEngineProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedPageId: existing?.selectedPageId ?? built.selectedPageId,
   });
+  void import('../prompt-qa/store').then((m) => {
+    m.syncPromptQaFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationDesignComplianceEngineProfile(

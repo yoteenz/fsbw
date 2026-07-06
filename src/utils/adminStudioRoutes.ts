@@ -997,6 +997,10 @@ export function adminStudioDesignComplianceEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/design-compliance-engine`;
 }
 
+export function adminStudioPromptQaPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/prompt-qa`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

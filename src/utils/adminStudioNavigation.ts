@@ -1968,6 +1968,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'prompt-qa',
+    title: 'PROMPT QA™',
+    purpose: 'Validates every prompt, Profession Brain™, workflow instruction, and AI reasoning chain before production — prompts as mission-critical infrastructure.',
+    route: p('prompt-qa'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M155',
+    ctaLabel: 'OPEN PROMPT QA',
+    moduleKey: 'prompt-qa',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

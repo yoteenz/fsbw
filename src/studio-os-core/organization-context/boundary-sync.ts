@@ -313,6 +313,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationDesignComplianceEngineProfile(context.organizationId);
   });
 
+  void import('../prompt-qa/store').then((m) => {
+    m.ensureOrganizationPromptQaProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

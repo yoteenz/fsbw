@@ -6,7 +6,7 @@ import {
   PROMPT_REGISTRY_PHILOSOPHY,
   queryPromptRegistry,
 } from '../../../../studio-os-core/prompt-registry';
-import { adminStudioAutomationRegistryPath, adminStudioMissionControlPath, adminStudioPolicyEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioAutomationRegistryPath, adminStudioMissionControlPath, adminStudioPolicyEnginePath, adminStudioPromptQaPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -81,6 +81,9 @@ export function PromptRegistryWorkspace() {
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         MISSION CONTROL →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioPromptQaPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+        PROMPT QA →
       </button>
       <button type="button" onClick={refresh} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         SYNC REGISTRY

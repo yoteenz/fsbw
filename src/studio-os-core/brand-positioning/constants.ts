@@ -73,6 +73,7 @@ export type StudioOsBrandSystemId =
   | 'confidence-engine'
   | 'organizational-guardian'
   | 'design-compliance-engine'
+  | 'prompt-qa'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -145,6 +146,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'confidence-engine': 'Confidence is a conversation. Never a black box.',
   'organizational-guardian': 'Protect before reacting. The silent protector.',
   'design-compliance-engine': 'Does it feel like Studio OS? The Creative Director knows.',
+  'prompt-qa': 'Prompts are infrastructure. Profession Brains become assets.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

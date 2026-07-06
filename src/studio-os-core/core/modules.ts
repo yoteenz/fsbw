@@ -147,6 +147,7 @@ export type StudioOsCoreModuleId =
   | 'confidence-engine'
   | 'organizational-guardian'
   | 'design-compliance-engine'
+  | 'prompt-qa'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1024,6 +1025,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'DESIGN COMPLIANCE ENGINE™',
     description: 'Design Compliance Engine V1.0 — Studio OS Creative Director; continuously audits every interface for visual, structural, and experiential design language consistency.',
     routeSegment: 'design-compliance-engine',
+  },
+  {
+    id: 'prompt-qa',
+    label: 'PROMPT QA™',
+    description: 'Prompt QA V1.0 — validates every prompt, Profession Brain, workflow instruction, and AI reasoning chain before production.',
+    routeSegment: 'prompt-qa',
   },
   {
     id: 'succession-mode',
