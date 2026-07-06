@@ -117,6 +117,7 @@ export type StudioOsCoreModuleId =
   | 'legacy-network'
   | 'studio-intelligence-architecture'
   | 'model-orchestrator'
+  | 'studio-foundation-models'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -814,6 +815,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'MODEL ORCHESTRATOR™',
     description: 'Model Orchestrator & AI Swap Engine V1.0 — interchangeable providers, failover, multi-model routing.',
     routeSegment: 'model-orchestrator',
+  },
+  {
+    id: 'studio-foundation-models',
+    label: 'STUDIO FOUNDATION MODELS™',
+    description: 'Studio Foundation Models & Profession Models V1.0 — long-term Studio-owned intelligence roadmap.',
+    routeSegment: 'studio-foundation-models',
   },
   {
     id: 'succession-mode',

@@ -57,7 +57,11 @@ function upsertProfile(profile: OrganizationModelOrchestratorProfile): Organizat
 export function syncModelOrchestratorFromSources(
   organizationId: string
 ): OrganizationModelOrchestratorProfile {
-  return upsertProfile(buildOrganizationModelOrchestratorProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationModelOrchestratorProfile(organizationId));
+  void import('../studio-foundation-models/store').then((m) => {
+    m.syncStudioFoundationModelsFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationModelOrchestratorProfile(

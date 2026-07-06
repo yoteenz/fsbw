@@ -39339,3 +39339,29 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/model-orchestrator.md`** · **CORE.md** M123 entry · nav metric **M123**
 
 **Conventions:** Model Orchestrator (M123) ensures Studio OS is not fragile — AI providers interchangeable; founder never fears losing org because one AI company changes. Demo localStorage via `studioOsModelOrchestrator_v1`.
+
+---
+
+## 2026-07-06 — Milestone 124: Studio Foundation Models™ & Profession Models™ V1.0
+
+**Context (full chat arc):** Same session completed M121 Legacy Network™ (`02950cfa`), M122 Studio Intelligence Architecture (`1b4b447f`), M123 Model Orchestrator (`4c8d5cc2`), and integrated Life & Culture Preferences. User requested **Milestone 124 — Studio Foundation Models™ & Profession Models™ V1.0**: long-term roadmap for Studio-owned models — begin with third-party AI but not depend forever · Studio Foundation Models™ for organizational intelligence · 13 Profession Models™ · training sources with consent policy · hybrid intelligence · enterprise deployment · long-term moat.
+
+**Requirements delivered:**
+- **Core philosophy** — don't compete with general AI; build org-specialized intelligence; model-agnostic → resilient → independent; third-party bridge · Studio Models destination
+- **Studio Foundation Models™** — 8 capabilities (memory · workflows · expertise · departments · executive reasoning · CX · preservation · legacy)
+- **Profession Models™** — 13 specialized models (Studio Tax™ · Legal Intake™ · Medical Office™ · Hair™ · Construction™ · Contractor™ · Marketing™ · Finance™ · CX™ · Operations™ · Restaurant™ · Real Estate™ · Education™) tied to Profession Brain™ · Knowledge Fabric™ · Professional Trust Framework™
+- **Training sources** — 7 approved paths; **never train on private org data without explicit consent**
+- **Hybrid intelligence** — Studio profession model reasons · external model drafts · Knowledge Fabric contextualizes · Trust Framework validates
+- **Enterprise deployment** — private · industry-specific · offline · regulated · customer-owned · secure local inference
+- **Long-term moat** — Blueprint · Profession Brain · corrections · workflows · lessons · simulations · decisions · Legacy Vault compound Studio Intelligence™
+
+**Delivered:**
+- **`src/studio-os-core/studio-foundation-models/`** — **`roadmap-engine.ts`** · **`foundation-models.ts`** · **`profession-models.ts`** · **`training-source-engine.ts`** · **`hybrid-intelligence.ts`** · **`enterprise-deployment.ts`** · **`moat-engine.ts`** · **`models-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
+- **`StudioFoundationModelsWorkspace`** + **`/admin/studio/studio-foundation-models`** — 7 tabs: Foundation Overview · Long-Term Roadmap · Profession Models™ · Training Sources · Hybrid Intelligence · Enterprise Deployment · Studio Moat · violet accent `#7C3AED`
+- **`MissionControlStudioFoundationModelsPanel`** in Legacy Wing · **`useStudioFoundationModelsState`** hook
+- **Brand voice **`studio-foundation-models`**: *"General models know the world. Studio Models™ know organizations."*
+- **Sync chain** — Model Orchestrator · **`model-orchestrator/store`** resync triggers **`syncStudioFoundationModelsFromSources`** · **boundary-sync**
+- **Command Dock** — **`resolveStudioFoundationModelsAdvice()`** · **`buildProactiveStudioFoundationModelsSuggestion()`** · **`buildStudioFoundationModelsOpeningLine()`**
+- **Docs** — **`docs/studio-os/studio-foundation-models.md`** · **CORE.md** M124 entry · nav metric **M124**
+
+**Conventions:** Studio Foundation Models (M124) defines the destination — Studio OS remains alive, intelligent, and valuable no matter which AI companies exist. Preserve Expertise. Build Legacy. Own the Intelligence Layer. Demo localStorage via `studioOsStudioFoundationModels_v1`.

@@ -159,6 +159,11 @@ import {
   buildProactiveModelOrchestratorSuggestion,
   buildModelOrchestratorOpeningLine,
 } from '../model-orchestrator/dock-advisor';
+import {
+  resolveStudioFoundationModelsAdvice,
+  buildProactiveStudioFoundationModelsSuggestion,
+  buildStudioFoundationModelsOpeningLine,
+} from '../studio-foundation-models/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -255,6 +260,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const studioIntelligenceArchitectureOpeningLine = buildStudioIntelligenceArchitectureOpeningLine(workspaceId);
   const modelOrchestrator = buildProactiveModelOrchestratorSuggestion(workspaceId);
   const modelOrchestratorOpeningLine = buildModelOrchestratorOpeningLine(workspaceId);
+  const studioFoundationModels = buildProactiveStudioFoundationModelsSuggestion(workspaceId);
+  const studioFoundationModelsOpeningLine = buildStudioFoundationModelsOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -434,6 +441,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'What happens if our AI provider fails?',
       }
     : null;
+  const studioFoundationModelsProactive = studioFoundationModels
+    ? {
+        response: studioFoundationModels,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Explain Studio Foundation Models and the long-term roadmap.',
+      }
+    : null;
+  const studioFoundationModelsOpeningProactive = studioFoundationModelsOpeningLine
+    ? {
+        response: studioFoundationModelsOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Which Profession Models are available for our organization?',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -506,10 +527,12 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? studioIntelligenceArchitectureProactive
       : pathname.includes('/model-orchestrator') && modelOrchestratorProactive
       ? modelOrchestratorProactive
+      : pathname.includes('/studio-foundation-models') && studioFoundationModelsProactive
+      ? studioFoundationModelsProactive
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? modelOrchestratorProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -887,6 +910,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${modelOrchestratorAdvice.concierge}\n${modelOrchestratorAdvice.response}`,
+    });
+    return null;
+  }
+
+  const studioFoundationModelsAdvice = resolveStudioFoundationModelsAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (studioFoundationModelsAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${studioFoundationModelsAdvice.concierge}\n${studioFoundationModelsAdvice.response}`,
     });
     return null;
   }

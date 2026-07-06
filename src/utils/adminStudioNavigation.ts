@@ -1608,6 +1608,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'studio-foundation-models',
+    title: 'STUDIO FOUNDATION MODELS™',
+    purpose: 'Long-term Studio-owned intelligence roadmap — Foundation Models, Profession Models, hybrid intelligence, enterprise deployment.',
+    route: p('studio-foundation-models'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M124',
+    ctaLabel: 'OPEN FOUNDATION MODELS',
+    moduleKey: 'studio-foundation-models',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

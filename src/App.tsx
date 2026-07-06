@@ -210,6 +210,10 @@ const AdminStudioModelOrchestrator = lazyWithRetry(
   () => import('./pages/admin/studio/model-orchestrator/page'),
   'AdminStudioModelOrchestrator'
 );
+const AdminStudioStudioFoundationModels = lazyWithRetry(
+  () => import('./pages/admin/studio/studio-foundation-models/page'),
+  'AdminStudioStudioFoundationModels'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1451,6 +1455,11 @@ function App() {
           <Route path="studio/model-orchestrator" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioModelOrchestrator />
+            </Suspense>
+          } />
+          <Route path="studio/studio-foundation-models" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioStudioFoundationModels />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

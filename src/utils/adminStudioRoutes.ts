@@ -877,6 +877,10 @@ export function adminStudioModelOrchestratorPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/model-orchestrator`;
 }
 
+export function adminStudioStudioFoundationModelsPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-foundation-models`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }
