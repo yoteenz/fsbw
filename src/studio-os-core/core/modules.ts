@@ -111,6 +111,7 @@ export type StudioOsCoreModuleId =
   | 'autonomous-preparation'
   | 'organizational-consciousness'
   | 'world-knowledge-engine'
+  | 'founder-operating-system'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -772,6 +773,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'WORLD KNOWLEDGE ENGINE™',
     description: 'External intelligence V1.0 — monitors the outside world, filters by organization context, delivers executive briefings. Information finds you.',
     routeSegment: 'world-knowledge-engine',
+  },
+  {
+    id: 'founder-operating-system',
+    label: 'FOUNDER OPERATING SYSTEM™',
+    description: 'Founder leadership V1.0 — operates the founder while Studio OS operates the organization. Coaching, focus, personal dashboard. Studio OS V1 culmination.',
+    routeSegment: 'founder-operating-system',
   },
   {
     id: 'succession-mode',

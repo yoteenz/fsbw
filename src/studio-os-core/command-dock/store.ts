@@ -129,6 +129,11 @@ import {
   buildProactiveWorldKnowledgeSuggestion,
   buildMorningWorldAlert,
 } from '../world-knowledge-engine/dock-advisor';
+import {
+  resolveFounderOperatingSystemAdvice,
+  buildProactiveFounderOperatingSystemSuggestion,
+  buildFounderOperatingOpeningLine,
+} from '../founder-operating-system/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -213,6 +218,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const anniversaryContext = buildAnniversaryDockContext(workspaceId);
   const worldKnowledgeEngine = buildProactiveWorldKnowledgeSuggestion(workspaceId);
   const morningWorldAlert = buildMorningWorldAlert(workspaceId);
+  const founderOperatingSystem = buildProactiveFounderOperatingSystemSuggestion(workspaceId);
+  const founderOpeningLine = buildFounderOperatingOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -308,6 +315,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: "Summarize today's external developments for our organization.",
       }
     : null;
+  const founderOperatingProactive = founderOperatingSystem
+    ? {
+        response: founderOperatingSystem,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Founder Operating System — review leadership and focus coaching.',
+      }
+    : null;
+  const founderOpeningProactive = founderOpeningLine
+    ? {
+        response: founderOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'How is my Founder Operating System supporting my leadership?',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -368,10 +389,12 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? executiveTimelineHistoryProactive
       : pathname.includes('/world-knowledge-engine') && worldKnowledgeProactive
       ? worldKnowledgeProactive
+      : pathname.includes('/founder-operating-system') && founderOperatingProactive
+      ? founderOperatingProactive
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? morningWorldProactive ?? anniversaryProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -644,6 +667,25 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${worldKnowledgeEngineAdvice.concierge}\n${worldKnowledgeEngineAdvice.response}`,
+    });
+    return null;
+  }
+
+  const founderOperatingSystemAdvice = resolveFounderOperatingSystemAdvice(
+    trimmed,
+    getRuntimeActiveWorkspaceId()
+  );
+  if (founderOperatingSystemAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${founderOperatingSystemAdvice.concierge}\n${founderOperatingSystemAdvice.response}`,
     });
     return null;
   }

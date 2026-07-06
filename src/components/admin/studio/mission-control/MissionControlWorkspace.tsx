@@ -62,6 +62,7 @@ import { MissionControlAutonomousPreparationPanel } from './MissionControlAutono
 import { MissionControlOrganizationalConsciousnessPanel } from './MissionControlOrganizationalConsciousnessPanel';
 import { MissionControlExecutiveTimelinePanel } from './MissionControlExecutiveTimelinePanel';
 import { MissionControlWorldKnowledgeEnginePanel } from './MissionControlWorldKnowledgeEnginePanel';
+import { MissionControlFounderOperatingSystemPanel } from './MissionControlFounderOperatingSystemPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -433,6 +434,7 @@ export function MissionControlWorkspace() {
             <MissionControlOrganizationalConsciousnessPanel />
             <MissionControlExecutiveTimelinePanel />
             <MissionControlWorldKnowledgeEnginePanel />
+            <MissionControlFounderOperatingSystemPanel />
           </div>
         </ExecutiveSecondaryGrid>
 

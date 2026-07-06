@@ -301,6 +301,10 @@ export function bootstrapWorkspacesPlatform(): void {
     worldKnowledgeEngine.bootstrapWorldKnowledgeEnginePlatform();
     await yieldToMain();
 
+    const founderOperatingSystem = await import('../studio-os-core/founder-operating-system/bootstrap');
+    founderOperatingSystem.bootstrapFounderOperatingSystemPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

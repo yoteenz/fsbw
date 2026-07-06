@@ -50,7 +50,11 @@ function upsertProfile(profile: OrganizationWorldKnowledgeProfile): Organization
 export function syncWorldKnowledgeEngineFromSources(
   organizationId: string
 ): OrganizationWorldKnowledgeProfile {
-  return upsertProfile(buildOrganizationWorldKnowledgeProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationWorldKnowledgeProfile(organizationId));
+  void import('../founder-operating-system/store').then((m) => {
+    m.syncFounderOperatingSystemFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationWorldKnowledgeProfile(

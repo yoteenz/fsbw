@@ -1,12 +1,12 @@
 /** Milestone 92 — Official Studio OS Brand Positioning V2.0 */
 
-/** Permanent brand promise — treat with same importance as the Studio OS logo. */
-export const STUDIO_OS_OFFICIAL_TAGLINE = 'PRESERVE EXPERTISE. BUILD LEGACY.';
+/** Permanent brand promise — treat with same importance as the Studio OS logo. Studio OS V1 culmination (M118). */
+export const STUDIO_OS_OFFICIAL_TAGLINE = 'PRESERVE EXPERTISE. BUILD LEGACY. EMPOWER VISIONARIES.';
 
 export const STUDIO_OS_BRAND_PHILOSOPHY = [
   'Studio OS is not software. Studio OS is not another AI platform.',
   'Studio OS exists to preserve professional expertise before it is lost and transform that expertise into a lasting organizational legacy.',
-  'Before introducing any new feature, ask: Does this preserve expertise? Does this help build legacy?',
+  'Before introducing any new feature, ask: Does this preserve expertise? Does this help build legacy? Does this empower visionaries?',
 ] as const;
 
 export type StudioOsBrandSystemId =
@@ -37,6 +37,7 @@ export type StudioOsBrandSystemId =
   | 'autonomous-preparation'
   | 'organizational-consciousness'
   | 'world-knowledge-engine'
+  | 'founder-operating-system'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -73,6 +74,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'autonomous-preparation': 'One step ahead. Always awaiting approval.',
   'organizational-consciousness': 'One intelligence. Preserve expertise. Build legacy.',
   'world-knowledge-engine': 'Information finds you. The outside world, filtered.',
+  'founder-operating-system': 'Founders grow first. Organizations follow.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

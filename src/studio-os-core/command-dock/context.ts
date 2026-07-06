@@ -39,6 +39,7 @@ import { listAutonomousPreparationDockSuggestions } from '../autonomous-preparat
 import { listOrganizationalConsciousnessDockSuggestions } from '../organizational-consciousness';
 import { listExecutiveTimelineHistoryDockSuggestions } from '../executive-timeline/dock-advisor';
 import { listWorldKnowledgeEngineDockSuggestions } from '../world-knowledge-engine/dock-advisor';
+import { listFounderOperatingSystemDockSuggestions } from '../founder-operating-system/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -301,6 +302,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'WORLD KNOWLEDGE ENGINE™ · FILTERED EXTERNAL INTELLIGENCE',
       portfolioMode: false,
       suggestedCommands: listWorldKnowledgeEngineDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/founder-operating-system')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'founder-operating-system',
+      label: 'FOUNDER OPERATING SYSTEM™ · OPERATES THE FOUNDER',
+      portfolioMode: false,
+      suggestedCommands: listFounderOperatingSystemDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

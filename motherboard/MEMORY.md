@@ -39053,7 +39053,6 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-06 — Milestone 116: Executive Timeline™ V1.0 (permanent organizational history)
 
 **Context (full chat arc):** Same session delivered M90–M115 (Blueprint through Organizational Consciousness `b93f20eb`). User requested **Milestone 116 — Executive Timeline™ V1.0**: permanent visual history of every organization — immersive timeline founders explore; history as learning tool; auto-record 22+ event types; scroll years · filter department/project/org · jump milestones · replay history · archived HQ · historical dashboards · growth comparison · intelligent insights · Command Dock anniversary context. Philosophy: understand not only where you are, but **how you arrived there**.
@@ -39076,7 +39075,8 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Executive Timeline history (M116) preserves organizational journey atop M115 consciousness — demo localStorage via `studioOsExecutiveTimelineHistory_v1`.
 
-=======
+---
+
 ## 2026-07-06 — Studio Orb™ design revision (Command Dock reimagined)
 
 **Context (full chat arc):** Same session fixed Headquarters vs Command Center routing (`660300df`). User requested **design revision** (NOT new milestone/feature) — elevate Studio OS from web app to premium OS feel via **Studio Orb™**, **Conversation Mode™**, radial menu, Awakening Sequence, Page Guide, intelligent positioning, optional luxury sound architecture, voice foundation.
@@ -39091,4 +39091,49 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** Tap Orb → radial menu (not immediate dock). Ambient insights glow orb only — no notification badge. Future radial slots (voice, search, presentation) stubbed disabled. Core command-dock store/routing unchanged.
 
 **Changes:** studio-orb/*, CommandDock.tsx, AdminStudioLayout.tsx, StudioPlatformLayout.tsx, StudioImmersionShell.tsx, StudioOrganizationalPresenceStrip.tsx, docs/studio-os/studio-orb.md, CORE.md, MEMORY.md.
->>>>>>> 28839f11 (Studio Orb redesign: replace persistent Command Dock with crystal orb and Conversation Mode)
+
+---
+
+## 2026-07-06 — Milestone 117: World Knowledge Engine™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M116 (Blueprint through Executive Timeline permanent history `cc0f1527`). User requested **Milestone 117 — World Knowledge Engine™ V1.0**: continuously monitor outside world · filter only organization-relevant information · founders should not spend hours searching — information finds them · intelligent research partner · 14 monitoring categories · industry-specific filtering (law firm · painting · hair brand examples) · executive briefings (daily · weekly · monthly · quarterly · summaries · opportunity/risk alerts) · every report explains why it matters · Command Dock regulation/competitor/AI/summary lines.
+
+**Requirements delivered:**
+- **14 monitoring categories** — industry news · market trends · competitors · regulations · technology · AI · economics · social · platforms · legislation · consumer behavior · certifications · software · security
+- **Organization filtering** — Industry Architecture context drives relevance (law-firm · painting · contractor · beauty · creator · medical · etc.) · ≥65% relevance threshold
+- **Executive briefings** — daily · weekly · monthly · quarterly · executive summary · opportunity alert · risk alert — all with why-it-matters
+- **Command Dock** — **`resolveWorldKnowledgeEngineAdvice()`** · **`buildProactiveWorldKnowledgeSuggestion()`** · **`buildMorningWorldAlert()`** on Mission Control and `/world-knowledge-engine`
+
+**Delivered:**
+- **`src/studio-os-core/world-knowledge-engine/`** — **`org-filter.ts`** · **`monitoring-feed.ts`** · **`briefings-engine.ts`** · **`knowledge-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
+- **`WorldKnowledgeEngineWorkspace`** + **`/admin/studio/world-knowledge-engine`** — 4 tabs: World Overview · Continuous Monitoring · Executive Briefings · Organization Filter · teal accent `#0E7490`
+- **`MissionControlWorldKnowledgeEnginePanel`** · **`useWorldKnowledgeEngineState`** hook
+- **Brand voice **`world-knowledge-engine`**: *"Information finds you. The outside world, filtered."*
+- **Sync chain** — Industry Architecture · Profession Brain · Blueprint · Predictive · Executive Timeline history · **`executive-timeline/history-store`** resync triggers **`syncWorldKnowledgeEngineFromSources`** · **boundary-sync**
+- **Docs** — **`docs/studio-os/world-knowledge-engine.md`** · **CORE.md** M117 entry · nav metric **M117**
+
+**Conventions:** World Knowledge Engine (M117) is external intelligence complement to M116 internal history — demo localStorage via `studioOsWorldKnowledgeEngine_v1`.
+
+---
+
+## 2026-07-06 — Milestone 118: Founder Operating System™ V1.0 · Studio OS Version 1 culmination
+
+**Context (full chat arc):** Same session delivered M90–M117 (Blueprint through World Knowledge Engine `5eea1166`). User requested **Milestone 118 — Founder Operating System™ V1.0**: while Studio OS operates the organization, Founder OS operates the founder · healthy leaders · founder intelligence (focus · decision fatigue · creative cycles · energy · meetings · strategic time · deep work · learning · leadership · communication · stress · growth) · executive coaching · focus management · personal dashboard (10 metrics complementing Organization Dashboard) · Command Dock strategic/decision/creative lines · **completes Studio OS V1** · final promise **PRESERVE EXPERTISE. BUILD LEGACY. EMPOWER VISIONARIES.**
+
+**Requirements delivered:**
+- **12 founder intelligence dimensions** with adaptive insights from Founder Cognitive Load · Relationship Memory · Presence Engine
+- **Executive coaching** — 10 categories · proactive leadership · meeting · focus · delegation · communication · learning · reflection · habits · decision quality · founder development
+- **Focus management** — protect deep work · creative · strategic · learning · recovery · batch · delegate · optimize calendar
+- **Personal dashboard** — leadership growth · focus score · decision load · executive health · learning progress · delegation opportunities · meeting effectiveness · strategic time · burnout risk · creative momentum
+- **Command Dock** — **`resolveFounderOperatingSystemAdvice()`** · **`buildProactiveFounderOperatingSystemSuggestion()`** · **`buildFounderOperatingOpeningLine()`**
+- **Studio OS V1 brand culmination** — official tagline extended to **PRESERVE EXPERTISE. BUILD LEGACY. EMPOWER VISIONARIES.**
+
+**Delivered:**
+- **`src/studio-os-core/founder-operating-system/`** — **`founder-intelligence.ts`** · **`coaching-engine.ts`** · **`focus-management.ts`** · **`personal-dashboard.ts`** · **`founder-os-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
+- **`FounderOperatingSystemWorkspace`** + **`/admin/studio/founder-operating-system`** — 4 tabs: Personal Dashboard · Founder Intelligence · Executive Coaching · Focus Management · violet accent `#7C3AED`
+- **`MissionControlFounderOperatingSystemPanel`** · **`useFounderOperatingSystemState`** hook
+- **Brand voice **`founder-operating-system`**: *"Founders grow first. Organizations follow."*
+- **Sync chain** — Cognitive Load · Relationship Memory · Presence · Health · World Knowledge · **`world-knowledge-engine/store`** resync triggers **`syncFounderOperatingSystemFromSources`** · **boundary-sync**
+- **Docs** — **`docs/studio-os/founder-operating-system.md`** · **CORE.md** M118 entry · nav metric **M118**
+
+**Conventions:** Founder Operating System (M118) completes Studio OS V1 — organizations rarely outgrow their founders; founders grow first, organizations follow. Demo localStorage via `studioOsFounderOperatingSystem_v1`.

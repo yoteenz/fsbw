@@ -165,6 +165,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationWorldKnowledgeProfile(context.organizationId);
   });
 
+  void import('../founder-operating-system/store').then((m) => {
+    m.ensureOrganizationFounderOperatingSystemProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

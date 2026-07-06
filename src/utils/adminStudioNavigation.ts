@@ -1536,6 +1536,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'founder-operating-system',
+    title: 'FOUNDER OPERATING SYSTEM™',
+    purpose: 'Operates the founder — focus, coaching, leadership growth, decision load, burnout risk. Complements the Organization Dashboard. Studio OS V1 culmination.',
+    route: p('founder-operating-system'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M118',
+    ctaLabel: 'OPEN FOUNDER OPERATING SYSTEM',
+    moduleKey: 'founder-operating-system',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

@@ -853,6 +853,10 @@ export function adminStudioWorldKnowledgeEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/world-knowledge-engine`;
 }
 
+export function adminStudioFounderOperatingSystemPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/founder-operating-system`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }
