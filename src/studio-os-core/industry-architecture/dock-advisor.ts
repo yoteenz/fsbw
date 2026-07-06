@@ -11,33 +11,35 @@ const DOCK_EXPANSION_TRIGGERS: Array<{
     patterns: [/post(ing)?\s+(video|content|educational)/i, /start\s+(making|creating)\s+videos/i, /creator\s+studio/i],
     packId: 'creator-studio',
     response:
-      'I recommend installing Creator Studio. This will add Production, Publishing, Distribution, Media Library, and Creator Analytics to your organization. Would you like me to expand Headquarters?',
+      'I recommend expanding Headquarters with Creator Studio — Production Wing, Publishing Wing, Media Library, Distribution Center, and Research Lab. Nothing else in your organization changes.',
   },
   {
     patterns: [/sales\s+crm/i, /pipeline/i, /follow\s*up\s+leads/i],
     packId: 'sales-crm',
     response:
-      'Sales CRM adds Pipeline, Sequences, and Proposals — with automatic follow-up automations. Install from Expansion Center?',
+      'Your sales team is manually following up with leads. Sales CRM permanently adds Pipeline, Sequences, and Proposals — then you can activate Lead Concierge from Digital Payroll.',
   },
   {
     patterns: [/warehouse/i, /fulfillment/i, /inventory/i],
     packId: 'warehouse',
-    response: 'Warehouse adds Receiving, Pick/Pack, and Fulfillment SLA tracking to Headquarters.',
+    response:
+      'Warehouse permanently expands Headquarters with Receiving, Inventory Center, Shipping, Materials, and Storage wings.',
   },
   {
     patterns: [/accounting/i, /books/i, /month\s*end/i],
     packId: 'accounting',
-    response: 'Accounting adds AP, AR, and Month-End Close wings with reconciliation automations.',
+    response:
+      'Accounting adds Finance Wing, Payroll, Forecasting, and Reporting — a permanent department, not a software subscription.',
   },
   {
     patterns: [/hiring/i, /recruit/i, /onboarding/i],
     packId: 'hiring-suite',
-    response: 'Hiring Suite adds Recruiting and Onboarding wings with roster management.',
+    response: 'Hiring Suite adds Recruiting and Onboarding wings — your organization grows its HR department permanently.',
   },
   {
     patterns: [/automation/i, /workflow/i],
     packId: 'automation-engine',
-    response: 'Automation Engine connects departments with triggers and cross-department rules — no manual setup.',
+    response: 'Automation Engine connects departments with cross-department rules — Headquarters intelligence, not a feature toggle.',
   },
 ];
 

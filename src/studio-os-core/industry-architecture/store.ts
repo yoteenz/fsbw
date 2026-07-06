@@ -55,6 +55,9 @@ export function installDepartmentPack(organizationId: string, packId: string): O
   const profile = ensureOrganizationArchitectureProfile(organizationId);
   const next = installPackOnProfile(profile, packId);
   upsertOrganizationArchitectureProfile(next);
+  void import('../monetization-architecture/store').then((m) => {
+    m.recordDepartmentPackPurchase(organizationId, packId);
+  });
   if (typeof window !== 'undefined') {
     window.dispatchEvent(
       new CustomEvent('studio-os-headquarters-expanded', {

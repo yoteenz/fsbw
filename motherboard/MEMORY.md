@@ -38456,3 +38456,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Studio Command Center = portfolio card left of Headquarters in dashboard + studio layout switcher. HEADQUARTERS card/route always enters organization Mission Control — never substitute Command Center for that action.
 
+---
+
+## 2026-07-06 — Milestone 89: Monetization Architecture (three-layer economy)
+
+**Context (full chat arc):** Same session as campus transition removal (`f1bc3de4`), Studio Command Center card restore (`bc192439`), and prior M88 Expansion Center. User requested **permanent monetization architecture** — Studio OS must never feel like SaaS; founders **build Headquarters · expand Departments · hire Digital Staff**.
+
+**Three-layer economy:**
+1. **Headquarters License** (monthly) — OS lease: Mission Control, Command Dock, Registry, security, core intelligence ($299/mo demo).
+2. **Department Packs** (permanent) — Creator Studio, Accounting, Warehouse, CRM, etc. — permanent wings, never recurring unlock fees.
+3. **Digital Workforce** (monthly payroll) — Production/Publishing/Lead/Scheduling concierges etc.; hire/pause/active staff; **Digital Payroll** summary (not “AI subscriptions”).
+
+**Delivered:**
+- **`src/studio-os-core/monetization-architecture/`** — types, HQ license, pack pricing, digital staff catalog, payroll engine, growth recommendations, store, dock advisor, bootstrap.
+- **`useMonetizationArchitectureState`** — Expansion Center workforce/payroll state.
+- **Expansion Center UI** — tabs: Overview, Catalog, **Owned Departments**, **Digital Workforce**, **Digital Payroll**, HQ Layout; growth recommendations with executive tone; **EXPAND HEADQUARTERS** + permanent price labels (not INSTALL/marketplace).
+- **Command Dock** — `resolveExecutiveGrowthAdvice()` + proactive growth suggestions; **EXECUTIVE ADVICE** panel when no route; industry dock-advisor copy rewritten (no upsell SaaS language).
+- **Wiring** — `installDepartmentPack` → `recordDepartmentPackPurchase`; org boundary sync; platform bootstrap; docs **`docs/studio-os/monetization-architecture.md`**; **CORE.md** M89 entry.
+
+**Conventions:** Never “subscribe to features” / “buy software” / “marketplace” for org growth — use Expansion Center, permanent department ownership, Digital Payroll, executive recommendations. Demo commerce is localStorage-only in M89 (no Stripe yet).
+

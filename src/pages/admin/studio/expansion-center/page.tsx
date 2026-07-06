@@ -68,7 +68,7 @@ export default function AdminStudioExpansionCenterPage() {
       </div>
 
       <AdminStudioDisclaimerFooter>
-        EXPANSION CENTER V1.0 · INDUSTRY ARCHITECTURE · DEPARTMENT PACKS · DEMO PLACEHOLDER
+        EXPANSION CENTER · M89 MONETIZATION ARCHITECTURE · THREE-LAYER ECONOMY · DEMO PLACEHOLDER
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

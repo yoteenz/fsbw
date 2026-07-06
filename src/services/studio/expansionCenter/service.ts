@@ -23,7 +23,7 @@ export const expansionCenterStudioService: StudioServiceStub & {
   label: 'EXPANSION CENTER',
   phase: 2,
   enabled: false,
-  description: 'INDUSTRY ARCHITECTURE · DEPARTMENT PACKS · HEADQUARTERS EXPANSION · DEMO DATA',
+  description: 'MONETIZATION ARCHITECTURE · HQ LICENSE · PERMANENT DEPARTMENTS · DIGITAL PAYROLL · DEMO DATA',
   async getSnapshot() {
     if (typeof window === 'undefined') {
       return studioServiceNotConnected('Expansion Center requires browser localStorage context.');

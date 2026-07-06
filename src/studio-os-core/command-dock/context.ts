@@ -9,6 +9,7 @@ import {
   ensureOrganizationArchitectureProfile,
   listDockExpansionSuggestions,
 } from '../industry-architecture';
+import { listExecutiveGrowthSuggestions } from '../monetization-architecture';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -157,15 +158,16 @@ export function resolveDockContext(pathname: string): DockContextProfile {
   }
 
   if (pathname.includes('/expansion-center')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    const growthSuggestions = listExecutiveGrowthSuggestions(workspaceId);
     return {
       contextId: 'expansion-center',
       label: 'EXPANSION CENTER · GROW HEADQUARTERS',
       portfolioMode: false,
       suggestedCommands: [
-        'I want to start posting educational painting videos.',
-        'Recommend an expansion pack for my industry.',
-        'What departments can I add to Headquarters?',
-        'Install Creator Studio.',
+        ...growthSuggestions.slice(0, 2),
+        'What is our Digital Payroll this month?',
+        'Which Digital Staff should we activate next?',
       ],
       commandTypes: ['organization-settings', 'strategy', 'production', 'publishing'],
     };
@@ -193,18 +195,19 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     const workspaceId = getRuntimeActiveWorkspaceId();
     const archProfile = ensureOrganizationArchitectureProfile(workspaceId);
     const industrySuggestions = listDockExpansionSuggestions(archProfile.industryId);
+    const growthSuggestions = listExecutiveGrowthSuggestions(workspaceId);
     const suggestions =
       activeOrg.tenantId === 'ndxbook'
         ? [
             'Help me connect Instagram.',
             'Create Page 001 for NDXBOOK.',
-            'What is my next founder milestone?',
+            ...growthSuggestions.slice(0, 1),
             ...industrySuggestions.slice(0, 1),
           ]
         : [
-            ...industrySuggestions.slice(0, 2),
+            ...growthSuggestions.slice(0, 2),
+            ...industrySuggestions.slice(0, 1),
             'What are today\'s priorities?',
-            'Review today\'s content.',
           ];
     return {
       contextId: 'mission-control',

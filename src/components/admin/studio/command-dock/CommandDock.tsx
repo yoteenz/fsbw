@@ -163,9 +163,11 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
                   </p>
                 )}
 
-                {store.lastRoutingSummary && store.pendingRoute && (
+                {store.lastRoutingSummary && (
                   <div className="mb-2 px-2 py-1.5 rounded-sm" style={{ background: 'rgba(99,102,241,0.06)' }}>
-                    <p style={{ ...dockLabel, marginBottom: 4 }}>ROUTING</p>
+                    <p style={{ ...dockLabel, marginBottom: 4 }}>
+                      {store.pendingRoute ? 'ROUTING' : 'EXECUTIVE ADVICE'}
+                    </p>
                     {store.lastRoutingSummary.split('\n').map((line: string) => (
                       <p key={line} style={{ ...dockValue, fontSize: '6px', color: DOCK_VISUAL.textMuted }}>
                         {line}

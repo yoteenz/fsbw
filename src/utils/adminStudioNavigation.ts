@@ -1226,11 +1226,11 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
-    purpose: 'Industry architecture — install department packs, expand headquarters, add Creator Studio or CRM without migrations.',
+    purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',
     route: p('expansion-center'),
     groupId: 'settings',
     status: 'demo',
-    metric: 'M88',
+    metric: 'M89',
     ctaLabel: 'EXPAND HQ',
     moduleKey: 'expansion-center',
     featuredOnOverview: true,

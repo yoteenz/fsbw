@@ -586,7 +586,7 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
   {
     id: 'expansion-center',
     label: 'EXPANSION CENTER',
-    description: 'Industry architecture — install department packs, expand headquarters, evolve the organization without migrations.',
+    description: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',
     routeSegment: 'expansion-center',
   },
   {

@@ -49,6 +49,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationArchitectureProfile(context.organizationId);
   });
 
+  void import('../monetization-architecture/store').then((m) => {
+    m.ensureOrganizationMonetizationProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

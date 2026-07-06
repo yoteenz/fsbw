@@ -17,6 +17,7 @@ import {
 } from './constants';
 import { MICRO_MOMENT_LABELS } from '../living-headquarters-presence/constants';
 import { resolveDockContext } from './context';
+import { resolveExecutiveGrowthAdvice, buildProactiveGrowthSuggestion } from '../monetization-architecture/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -69,7 +70,16 @@ export function bootstrapCommandDockStore(seed: Partial<CommandDockStore>): void
 export function syncDockContext(pathname: string): DockContextProfile {
   const profile = resolveDockContext(pathname);
   const store = readCommandDockStore();
-  writeCommandDockStore({ ...store, contextProfile: profile });
+  const growth = buildProactiveGrowthSuggestion(getRuntimeActiveWorkspaceId());
+  const proactiveSuggestion = growth
+    ? {
+        id: `growth-${Date.now()}`,
+        insight: growth.response,
+        concierge: growth.concierge,
+        suggestedCommand: growth.suggestedCommand,
+      }
+    : store.proactiveSuggestion;
+  writeCommandDockStore({ ...store, contextProfile: profile, proactiveSuggestion });
   return profile;
 }
 
@@ -119,6 +129,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const growthAdvice = resolveExecutiveGrowthAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (growthAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${growthAdvice.concierge}\n${growthAdvice.response}`,
+    });
+    return null;
+  }
 
   const correction = recordRoutingCorrection(trimmed);
   if (correction) {

@@ -188,6 +188,10 @@ export function bootstrapWorkspacesPlatform(): void {
     industryArchitecture.bootstrapIndustryArchitecturePlatform();
     await yieldToMain();
 
+    const monetizationArchitecture = await import('../studio-os-core/monetization-architecture/bootstrap');
+    monetizationArchitecture.bootstrapMonetizationArchitecturePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();
