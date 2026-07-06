@@ -1,11 +1,11 @@
 import type { CSSProperties } from 'react';
 
-/** Spacing and rhythm tokens — executive IA layer (no visual rebrand). */
+/** Spacing and rhythm tokens — M83 Executive IA (no visual rebrand). */
 export const EIA = {
-  sectionGap: 20,
-  sectionGapLarge: 28,
-  cardPadding: 14,
-  cardPaddingLarge: 18,
+  sectionGap: 24,
+  sectionGapLarge: 32,
+  cardPadding: 16,
+  cardPaddingLarge: 20,
   border: '1.3px solid rgba(0,0,0,0.12)',
   borderStrong: '1.3px solid #000000',
   glass: 'rgba(255,255,255,0.82)',

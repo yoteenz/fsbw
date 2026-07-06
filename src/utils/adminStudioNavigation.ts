@@ -1363,6 +1363,11 @@ export function getModulesForGroup(groupId: StudioNavGroupId, options?: { overvi
   return list;
 }
 
+/** M83 — module count for department summarization cards. */
+export function countModulesForGroup(groupId: StudioNavGroupId): number {
+  return ADMIN_STUDIO_MODULES.filter((m) => m.groupId === groupId).length;
+}
+
 export function resolveStudioModuleFromPath(pathname: string): AdminStudioModule | undefined {
   const normalized = pathname.replace(/\/$/, '') || '/';
 

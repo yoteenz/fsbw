@@ -27,19 +27,26 @@ import { StudioLivingIndicator } from '../immersion/StudioLivingIndicator';
 import { useStudioImmersion } from '../../../../hooks/useStudioImmersion';
 import {
   ExecutiveCollapsibleSection,
+  ExecutiveDepartmentCard,
+  ExecutiveDepartmentCards,
   ExecutiveFocusList,
   ExecutiveFocusPanel,
   ExecutiveHeroCard,
-  ExecutiveIconNav,
   ExecutivePageShell,
+  ExecutivePipelineViz,
   ExecutiveSecondaryCard,
   ExecutiveSecondaryGrid,
+  ExecutiveTrendSparkline,
   ExecutiveVisualSummary,
+  ExecutiveWorkspaceZone,
   eiaActionBtn,
   eiaCaption,
   eiaGrace,
   eiaPanel,
   eiaSectionTitle,
+  healthToDepartmentStatus,
+  useExecutiveDepartment,
+  type PipelineStage,
 } from '../executive-ia';
 import {
   MC_VISUAL,
@@ -62,12 +69,11 @@ const DEPARTMENT_ICONS: Record<string, string> = {
   automation: '⚙️',
 };
 
-function departmentStatus(dept: (typeof DEPARTMENT_GRID)[number]): 'active' | 'attention' | 'idle' | 'blocked' {
-  if (dept.blocked > 0) return 'blocked';
-  if (dept.pendingApprovals > 0) return 'attention';
-  if (dept.health >= 90) return 'active';
-  return 'idle';
+function departmentStatus(dept: (typeof DEPARTMENT_GRID)[number]) {
+  return healthToDepartmentStatus(dept.health, dept.blocked > 0, dept.pendingApprovals > 0);
 }
+
+type MissionDepartmentId = 'overview' | (typeof DEPARTMENT_GRID)[number]['id'];
 
 export function MissionControlWorkspace() {
   const navigate = useNavigate();
@@ -86,27 +92,17 @@ export function MissionControlWorkspace() {
   const { unreadGuides, markGuideRead } = useAdminStudioKnowledgeHub();
 
   const { presenceFeed } = useStudioImmersion();
+  const { activeDepartment, selectDepartment } = useExecutiveDepartment<MissionDepartmentId>('overview');
   const header = MISSION_CONTROL_HEADER;
   const visibleNotifications = SMART_NOTIFICATIONS.filter((n) => !dismissedNotifications.includes(n.id));
   const currentPhaseIdx = MISSION_PHASES.findIndex((p) => p.id === MISSION_CURRENT_PHASE);
+  const activeDeptMeta = DEPARTMENT_GRID.find((d) => d.id === activeDepartment);
 
-  const departmentNavItems = [
-    {
-      id: 'overview',
-      icon: '📊',
-      title: 'OVERVIEW',
-      subtitle: 'MISSION CONTROL · HQ',
-      status: 'active' as const,
-    },
-    ...DEPARTMENT_GRID.slice(0, 7).map((dept) => ({
-    id: dept.id,
-    icon: DEPARTMENT_ICONS[dept.id] ?? '📁',
-    title: dept.title,
-    subtitle: `${dept.health}% · ${dept.currentTask}`,
-    status: departmentStatus(dept),
-    onSelect: () => navigate(dept.route),
-  })),
-  ];
+  const pipelineStages: PipelineStage[] = MISSION_PHASES.map((phase, idx) => ({
+    id: phase.id,
+    label: phase.label,
+    state: idx < currentPhaseIdx ? 'complete' : idx === currentPhaseIdx ? 'active' : 'pending',
+  }));
 
   return (
     <div className="mission-control-root">
@@ -197,63 +193,151 @@ export function MissionControlWorkspace() {
           ]}
         />
 
-        {/* ICON NAV — department destinations */}
-        <ExecutiveIconNav
-          label="WALK THE DEPARTMENTS"
-          items={departmentNavItems}
-          activeId="overview"
-        />
+        {/* DEPARTMENT CARDS — entering another wing of Headquarters */}
+        <ExecutiveDepartmentCards label="WALK THE DEPARTMENTS">
+          <ExecutiveDepartmentCard
+            id="overview"
+            icon="📊"
+            name="OVERVIEW"
+            description="TODAY'S MISSION · EXECUTIVE BRIEFING"
+            statusLabel={`WORKSPACE HEALTH ${header.workspaceHealth}%`}
+            healthPct={header.workspaceHealth}
+            status="active"
+            selected={activeDepartment === 'overview'}
+            onSelect={() => selectDepartment('overview')}
+          />
+          {DEPARTMENT_GRID.slice(0, 6).map((dept) => (
+            <ExecutiveDepartmentCard
+              key={dept.id}
+              id={dept.id}
+              icon={DEPARTMENT_ICONS[dept.id] ?? '📁'}
+              name={dept.title}
+              description={dept.currentTask}
+              statusLabel={`BLOCKED ${dept.blocked} · APPROVALS ${dept.pendingApprovals}`}
+              healthPct={dept.health}
+              status={departmentStatus(dept)}
+              selected={activeDepartment === dept.id}
+              onSelect={() => selectDepartment(dept.id as MissionDepartmentId)}
+              onEnter={() => navigate(dept.route)}
+              enterLabel="ENTER WING →"
+            />
+          ))}
+        </ExecutiveDepartmentCards>
 
-        {/* VISUAL SUMMARY — mission timeline at a glance */}
-        <ExecutiveVisualSummary title="MISSION TIMELINE · STATUS AT A GLANCE">
-          <div className="flex items-center gap-1 min-w-max pb-1 overflow-x-auto">
-            {MISSION_PHASES.map((phase, idx) => {
-              const active = idx === currentPhaseIdx;
-              const past = idx < currentPhaseIdx;
-              return (
-                <div key={phase.id} className="flex items-center">
-                  <div
-                    style={{
-                      padding: '8px 12px',
-                      border: active ? `2px solid ${MC_VISUAL.red}` : MC_VISUAL.border,
-                      background: active ? 'rgba(235,28,36,0.08)' : past ? 'rgba(22,163,74,0.08)' : MC_VISUAL.glass,
-                    }}
+        <ExecutiveWorkspaceZone departmentId={activeDepartment}>
+          {/* VISUAL SUMMARY — graphics before text */}
+          <ExecutiveVisualSummary
+            title={
+              activeDepartment === 'overview'
+                ? 'MISSION TIMELINE · STATUS AT A GLANCE'
+                : activeDepartment === 'production' || activeDepartment === 'automation'
+                  ? 'PRODUCTION PIPELINE · LIVE STATUS'
+                  : `${activeDeptMeta?.title ?? 'DEPARTMENT'} · PULSE`
+            }
+          >
+            {activeDepartment === 'production' || activeDepartment === 'automation' ? (
+              <ExecutivePipelineViz stages={pipelineStages} />
+            ) : activeDepartment === 'analytics' || activeDepartment === 'audience' ? (
+              <ExecutiveTrendSparkline
+                values={[62, 68, 71, 74, 78, 82, 88]}
+                label="30-DAY ENGAGEMENT TREND · ESTIMATE"
+              />
+            ) : (
+              <div className="flex items-center gap-1 min-w-max pb-1 overflow-x-auto">
+                {MISSION_PHASES.map((phase, idx) => {
+                  const active = idx === currentPhaseIdx;
+                  const past = idx < currentPhaseIdx;
+                  return (
+                    <div key={phase.id} className="flex items-center">
+                      <div
+                        style={{
+                          padding: '8px 12px',
+                          border: active ? `2px solid ${MC_VISUAL.red}` : MC_VISUAL.border,
+                          background: active ? 'rgba(235,28,36,0.08)' : past ? 'rgba(22,163,74,0.08)' : MC_VISUAL.glass,
+                        }}
+                      >
+                        <p
+                          style={{
+                            ...mcCaption,
+                            color: active ? MC_VISUAL.red : MC_VISUAL.black,
+                            fontFamily: '"Futura PT Medium"',
+                            fontSize: '8px',
+                          }}
+                        >
+                          {phase.label}
+                        </p>
+                      </div>
+                      {idx < MISSION_PHASES.length - 1 ? (
+                        <span style={{ color: MC_VISUAL.gray, margin: '0 6px', fontSize: '10px' }}>→</span>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </ExecutiveVisualSummary>
+
+          {/* PRIMARY FOCUS — one working area per department wing */}
+          {activeDepartment === 'overview' ? (
+            <ExecutiveFocusPanel
+              title="TODAY'S EXECUTIVE BRIEFING"
+              subtitle={MISSION_EXECUTIVE_BRIEF.greeting}
+              highlight={MISSION_EXECUTIVE_BRIEF.todayFocus}
+            >
+              <p style={{ ...eiaCaption, color: MC_VISUAL.black }}>{MISSION_EXECUTIVE_BRIEF.welcome}</p>
+              <p style={{ ...eiaCaption, marginTop: 8 }}>
+                CURRENT MISSION: <span style={{ color: MC_VISUAL.red }}>{MISSION_EXECUTIVE_BRIEF.currentMission}</span>
+              </p>
+              <p style={{ ...eiaSectionTitle, marginTop: 14 }}>TODAY&apos;S PRIORITIES</p>
+              <ExecutiveFocusList items={MISSION_EXECUTIVE_BRIEF.todayPriorities} />
+              <p style={{ ...eiaSectionTitle, marginTop: 14 }}>YESTERDAY</p>
+              <ExecutiveFocusList items={MISSION_EXECUTIVE_BRIEF.yesterday} />
+            </ExecutiveFocusPanel>
+          ) : activeDepartment === 'production' || activeDepartment === 'automation' ? (
+            <ExecutiveFocusPanel
+              title="CURRENT PRODUCTION BATCH"
+              subtitle={`${MISSION_CONTROL_FACTORY_STATS.jobsRunning} JOBS RUNNING · ${MISSION_CONTROL_FACTORY_STATS.jobsWaiting} WAITING`}
+              highlight={ACTIVE_MISSIONS[0]?.nextAction}
+            >
+              <div className="space-y-2">
+                {ACTIVE_MISSIONS.slice(0, 4).map((m) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => navigate(m.route)}
+                    className="w-full text-left py-2"
+                    style={{ border: 'none', background: 'rgba(0,0,0,0.03)', cursor: 'pointer', padding: '8px 10px' }}
                   >
-                    <p
-                      style={{
-                        ...mcCaption,
-                        color: active ? MC_VISUAL.red : MC_VISUAL.black,
-                        fontFamily: '"Futura PT Medium"',
-                        fontSize: '8px',
-                      }}
-                    >
-                      {phase.label}
+                    <p style={{ ...eiaCaption, color: MC_VISUAL.black, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>
+                      {m.title}
                     </p>
-                  </div>
-                  {idx < MISSION_PHASES.length - 1 ? (
-                    <span style={{ color: MC_VISUAL.gray, margin: '0 6px', fontSize: '10px' }}>→</span>
-                  ) : null}
-                </div>
-              );
-            })}
-          </div>
-        </ExecutiveVisualSummary>
-
-        {/* FOCUS PANEL — primary working area */}
-        <ExecutiveFocusPanel
-          title="TODAY'S EXECUTIVE BRIEFING"
-          subtitle={MISSION_EXECUTIVE_BRIEF.greeting}
-          highlight={MISSION_EXECUTIVE_BRIEF.todayFocus}
-        >
-          <p style={{ ...eiaCaption, color: MC_VISUAL.black }}>{MISSION_EXECUTIVE_BRIEF.welcome}</p>
-          <p style={{ ...eiaCaption, marginTop: 8 }}>
-            CURRENT MISSION: <span style={{ color: MC_VISUAL.red }}>{MISSION_EXECUTIVE_BRIEF.currentMission}</span>
-          </p>
-          <p style={{ ...eiaSectionTitle, marginTop: 14 }}>TODAY&apos;S PRIORITIES</p>
-          <ExecutiveFocusList items={MISSION_EXECUTIVE_BRIEF.todayPriorities} />
-          <p style={{ ...eiaSectionTitle, marginTop: 14 }}>YESTERDAY</p>
-          <ExecutiveFocusList items={MISSION_EXECUTIVE_BRIEF.yesterday} />
-        </ExecutiveFocusPanel>
+                    <p style={{ ...eiaCaption, fontSize: '7px' }}>
+                      {m.progressPct}% · {m.deadline} · {m.nextAction}
+                    </p>
+                  </button>
+                ))}
+              </div>
+              <button type="button" onClick={() => navigate('/admin/studio/asset-factory')} style={{ ...eiaActionBtn, marginTop: 12 }}>
+                ENTER ASSET FACTORY →
+              </button>
+            </ExecutiveFocusPanel>
+          ) : activeDeptMeta ? (
+            <ExecutiveFocusPanel
+              title={`${activeDeptMeta.title} WING`}
+              subtitle={activeDeptMeta.currentTask}
+              highlight={`${activeDeptMeta.health}% HEALTH · ${activeDeptMeta.recentActivity}`}
+            >
+              <p style={{ ...eiaCaption, color: MC_VISUAL.black }}>
+                READY {activeDeptMeta.ready} · BLOCKED {activeDeptMeta.blocked} · APPROVALS {activeDeptMeta.pendingApprovals}
+              </p>
+              <p style={{ ...eiaSectionTitle, marginTop: 12 }}>RECENT ACTIVITY</p>
+              <p style={{ ...eiaCaption, color: MC_VISUAL.black }}>{activeDeptMeta.recentActivity}</p>
+              <button type="button" onClick={() => navigate(activeDeptMeta.route)} style={{ ...eiaActionBtn, marginTop: 12 }}>
+                ENTER {activeDeptMeta.title} →
+              </button>
+            </ExecutiveFocusPanel>
+          ) : null}
+        </ExecutiveWorkspaceZone>
 
         {/* SECONDARY — grouped supporting information */}
         <ExecutiveSecondaryGrid title="ACTIVE MISSIONS & APPROVALS">

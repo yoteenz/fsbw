@@ -38215,3 +38215,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** `executive-ia/*`, `MissionControlWorkspace.tsx`, `distribution-network/page.tsx`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
 
 **Conventions:** New Studio module refactors should use executive-ia components; no visual rebrand; data-heavy areas collapsed by default; icon-supported department nav over equal-weight dashboard panels.
+
+---
+
+## 2026-07-06 — Milestone 83: Executive Information Architecture V1.0 (permanent Studio OS foundation)
+
+**Context (full chat arc):** User requested **Milestone 83 — Executive Information Architecture V1.0** as the permanent design language for every current and future Studio OS module. Not a visual redesign — reorganize how information is prioritized and experienced. Studio OS = Executive Headquarters; every screen answers one primary executive question; Command Dock remains primary console.
+
+**Decisions / outcomes:**
+- Expanded **`src/components/admin/studio/executive-ia/`** to M83 spec: **`ExecutiveDepartmentCard`** / **`ExecutiveDepartmentCards`** (icon, name, description, status, health ring, ENTER WING), **`ExecutiveModuleSummary`** (installed modules collapsed), **`ExecutiveHealthRing`**, **`ExecutivePipelineViz`**, **`ExecutiveTrendSparkline`**, **`ExecutiveWorkspaceZone`**, **`useExecutiveDepartment`**, **`executiveIaDepartments.ts`** (canonical icons), **`executiveIaStyles.ts`** (wing-enter, pipeline-flow microinteractions).
+- Official doc: **`docs/studio-os/executive-information-architecture.md`**
+- **`countModulesForGroup()`** in **`adminStudioNavigation.ts`**
+- **Mission Control:** department cards transform workspace beneath (briefing / production batch / department wing); pipeline + sparkline visuals.
+- **Distribution Network:** department cards + workspace zone; calendar visual + trend on overview.
+- **Studio Overview:** hero + department cards + module summarization (no wall of modules); focus panel for active wing.
+- **`motherboard/CORE.md`** updated to M83 V1.0 canonical reference.
+
+**Changes:** executive-ia/* (new M83 components), MissionControlWorkspace, distribution-network/page, overview/page, adminStudioNavigation, docs, CORE, MEMORY.
+
+**Conventions:** All future Studio OS pages must inherit M83 hierarchy (Hero → Department Cards → Visual → Focus → Secondary → Collapsible → History). No alternate layout philosophies. Department selection transforms workspace; modules summarized not exposed.

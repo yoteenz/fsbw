@@ -7,15 +7,19 @@ import { AdminStudioDistributionChannelCard } from '../../../../components/admin
 import { AdminStudioDistributionPackCard } from '../../../../components/admin/studio/AdminStudioDistributionPackCard';
 import {
   ExecutiveCollapsibleSection,
+  ExecutiveDepartmentCard,
+  ExecutiveDepartmentCards,
   ExecutiveFocusPanel,
   ExecutiveHeroCard,
-  ExecutiveIconNav,
   ExecutivePageShell,
   ExecutiveSecondaryCard,
   ExecutiveSecondaryGrid,
+  ExecutiveTrendSparkline,
   ExecutiveVisualSummary,
+  ExecutiveWorkspaceZone,
   eiaActionBtn,
   eiaCaption,
+  useExecutiveDepartment,
 } from '../../../../components/admin/studio/executive-ia';
 import { useEnsureNdxbookWorkspaceFromBrandParam } from '../../../../hooks/useEnsureNdxbookWorkspace';
 import { useAdminStudioDistributionNetwork } from '../../../../hooks/useAdminStudioDistributionNetworkState';
@@ -57,7 +61,7 @@ export default function AdminStudioDistributionNetworkPage() {
   const [adding, setAdding] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [calendarView, setCalendarView] = useState<DistributionCalendarView>('weekly');
-  const [activeView, setActiveView] = useState<DistributionView>('queue');
+  const { activeDepartment, selectDepartment } = useExecutiveDepartment<DistributionView>('queue');
 
   const activeChannels = channels.filter((c) => c.activation === 'ACTIVE');
   const comingSoonChannels = channels.filter((c) => c.activation !== 'ACTIVE');
@@ -90,46 +94,61 @@ export default function AdminStudioDistributionNetworkPage() {
   const publishedCount = packs.filter((p) => p.approvalStatus === 'published').length;
   const scheduledCount = packs.filter((p) => p.approvalStatus === 'scheduled').length;
 
-  const navItems = [
+  const navItems: Array<{
+    id: DistributionView;
+    icon: string;
+    name: string;
+    description: string;
+    statusLabel: string;
+    healthPct: number;
+    status: 'active' | 'attention' | 'idle';
+    onEnter?: () => void;
+  }> = [
     {
       id: 'overview',
       icon: '📊',
-      title: 'OVERVIEW',
-      subtitle: `${packs.length} PACKS · ${activeChannels.length} CHANNELS`,
-      status: failedCount > 0 ? ('attention' as const) : ('active' as const),
-      onSelect: () => setActiveView('overview'),
+      name: 'OVERVIEW',
+      description: 'DISTRIBUTION PULSE · ALL CHANNELS',
+      statusLabel: `${packs.length} PACKS · ${activeChannels.length} CHANNELS`,
+      healthPct: failedCount > 0 ? 72 : 91,
+      status: failedCount > 0 ? 'attention' : 'active',
     },
     {
       id: 'channels',
       icon: '🚀',
-      title: 'CHANNELS',
-      subtitle: `${activeChannels.length}/${channels.length} ACTIVE`,
-      status: 'active' as const,
-      onSelect: () => setActiveView('channels'),
+      name: 'CHANNELS',
+      description: 'ACTIVE DESTINATIONS · ROUTING',
+      statusLabel: `${activeChannels.length}/${channels.length} ACTIVE`,
+      healthPct: Math.round((activeChannels.length / Math.max(channels.length, 1)) * 100),
+      status: 'active',
     },
     {
       id: 'calendar',
       icon: '📅',
-      title: 'CALENDAR',
-      subtitle: `${scheduledCount} SCHEDULED`,
-      status: scheduledCount > 0 ? ('active' as const) : ('idle' as const),
-      onSelect: () => setActiveView('calendar'),
+      name: 'CALENDAR',
+      description: 'PUBLISHING SCHEDULE · DRAG TO RESCHEDULE',
+      statusLabel: `${scheduledCount} SCHEDULED`,
+      healthPct: scheduledCount > 0 ? 88 : 70,
+      status: scheduledCount > 0 ? 'active' : 'idle',
     },
     {
       id: 'queue',
       icon: '📤',
-      title: 'QUEUE',
-      subtitle: `${approvalCount} NEED REVIEW`,
-      status: approvalCount > 0 ? ('attention' as const) : ('idle' as const),
-      onSelect: () => setActiveView('queue'),
+      name: 'QUEUE',
+      description: 'TODAY\'S PUBLISHING QUEUE',
+      statusLabel: `${approvalCount} NEED REVIEW`,
+      healthPct: approvalCount > 0 ? 65 : 92,
+      status: approvalCount > 0 ? 'attention' : 'idle',
     },
     {
       id: 'social',
       icon: '🔗',
-      title: 'SOCIAL',
-      subtitle: 'OAUTH CONNECTORS',
-      status: 'idle' as const,
-      onSelect: () => navigate(toModule('social-accounts')),
+      name: 'SOCIAL',
+      description: 'OAUTH CONNECTORS · APPROVAL GATE',
+      statusLabel: 'MANUAL PUBLISH ONLY',
+      healthPct: 84,
+      status: 'idle',
+      onEnter: () => navigate(toModule('social-accounts')),
     },
   ];
 
@@ -171,9 +190,30 @@ export default function AdminStudioDistributionNetworkPage() {
           ]}
         />
 
-        <ExecutiveIconNav label="DISTRIBUTION DEPARTMENTS" items={navItems} activeId={activeView} />
+        <ExecutiveDepartmentCards label="DISTRIBUTION WING">
+          {navItems.map((item) => (
+            <ExecutiveDepartmentCard
+              key={item.id}
+              id={item.id}
+              icon={item.icon}
+              name={item.name}
+              description={item.description}
+              statusLabel={item.statusLabel}
+              healthPct={item.healthPct}
+              status={item.status}
+              selected={activeDepartment === item.id}
+              onSelect={() => selectDepartment(item.id)}
+              onEnter={item.onEnter}
+              enterLabel={item.onEnter ? 'OPEN SOCIAL →' : undefined}
+            />
+          ))}
+        </ExecutiveDepartmentCards>
 
+        <ExecutiveWorkspaceZone departmentId={activeDepartment}>
         <ExecutiveVisualSummary title="PUBLISHING CALENDAR · DRAG PACKS TO RESCHEDULE">
+          {activeDepartment === 'overview' ? (
+            <ExecutiveTrendSparkline values={[12, 14, 18, 16, 22, 24, 28]} label="30-DAY PUBLISH VOLUME · ESTIMATE" />
+          ) : null}
           <div className="flex gap-1 mb-3 overflow-x-auto pb-1">
             {DISTRIBUTION_CALENDAR_VIEWS.map((v) => (
               <button
@@ -229,7 +269,7 @@ export default function AdminStudioDistributionNetworkPage() {
           </div>
         </ExecutiveVisualSummary>
 
-        {(activeView === 'queue' || activeView === 'overview') && (
+        {(activeDepartment === 'queue' || activeDepartment === 'overview' || activeDepartment === 'calendar') && (
           <ExecutiveFocusPanel
             title="TODAY'S DISTRIBUTION QUEUE"
             subtitle={`${packs.length} PACKS AWAITING ROUTING`}
@@ -281,7 +321,7 @@ export default function AdminStudioDistributionNetworkPage() {
           </ExecutiveFocusPanel>
         )}
 
-        {(activeView === 'channels' || activeView === 'overview') && (
+        {(activeDepartment === 'channels' || activeDepartment === 'overview') && (
           <ExecutiveSecondaryGrid title="ACTIVE CHANNELS">
             {activeChannels.map((ch) => (
               <AdminStudioDistributionChannelCard
@@ -292,6 +332,8 @@ export default function AdminStudioDistributionNetworkPage() {
             ))}
           </ExecutiveSecondaryGrid>
         )}
+
+        </ExecutiveWorkspaceZone>
 
         <ExecutiveSecondaryGrid title="DELIVERY SNAPSHOT" columns={4}>
           <ExecutiveSecondaryCard title="PUBLISHED">
