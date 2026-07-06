@@ -1332,6 +1332,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organization-pulse',
+    title: 'ORGANIZATION PULSE™',
+    purpose: 'Real-time organizational well-being — 14 pulse indicators, proactive alerts. How is our organization really doing?',
+    route: p('organization-pulse'),
+    groupId: 'overview',
+    status: 'demo',
+    metric: 'M100',
+    ctaLabel: 'VIEW ORGANIZATION PULSE',
+    moduleKey: 'organization-pulse',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

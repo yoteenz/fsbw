@@ -103,6 +103,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../company-health-index/store').then((m) => {
     m.syncCompanyHealthIndexFromSources(profile.organizationId);
   });
+  void import('../organization-pulse/store').then((m) => {
+    m.syncOrganizationPulseFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

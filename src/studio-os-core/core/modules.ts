@@ -94,6 +94,7 @@ export type StudioOsCoreModuleId =
   | 'organization-genome'
   | 'memory-engine'
   | 'company-health-index'
+  | 'organization-pulse'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -653,6 +654,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'COMPANY HEALTH INDEX™',
     description: 'Continuous organizational health V1.0 — 12 category scores, Executive Health Score, weak-area detection. Healthier, not simply larger.',
     routeSegment: 'company-health-index',
+  },
+  {
+    id: 'organization-pulse',
+    label: 'ORGANIZATION PULSE™',
+    description: 'Real-time organizational well-being V1.0 — 14 pulse indicators, pulse states, proactive alerts. How is our organization really doing?',
+    routeSegment: 'organization-pulse',
   },
   {
     id: 'succession-mode',

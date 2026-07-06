@@ -93,6 +93,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationHealthIndexProfile(context.organizationId);
   });
 
+  void import('../organization-pulse/store').then((m) => {
+    m.ensureOrganizationPulseProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

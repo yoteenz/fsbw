@@ -49,6 +49,7 @@ import {
   type PipelineStage,
 } from '../executive-ia';
 import { MissionControlExecutiveHealthPanel } from './MissionControlExecutiveHealthPanel';
+import { MissionControlOrganizationPulsePanel } from './MissionControlOrganizationPulsePanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -407,6 +408,7 @@ export function MissionControlWorkspace() {
             </ExecutiveSecondaryCard>
 
             <MissionControlExecutiveHealthPanel />
+            <MissionControlOrganizationPulsePanel />
           </div>
         </ExecutiveSecondaryGrid>
 

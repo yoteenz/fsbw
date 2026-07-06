@@ -38687,3 +38687,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Org-scoped localStorage via `studioOsExecutiveCouncilOrg_v2`. Legacy M65 workspace store (`studioOsExecutiveCouncil_v2`) retained for bootstrap seed. Strategic Command Dock queries match collaborative council before single-module advisors.
 
+---
+
+## 2026-07-06 — Milestone 100: Organization Pulse™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M99 (Blueprint through Executive Council `8f4477e8`). User requested **Milestone 100 — Organization Pulse™ V1.0**: continuously monitor overall organizational well-being. Businesses are living systems · revenue alone cannot describe health · monitor pulse in real time · 14 pulse indicators · 7 pulse states · proactive alerts with recommended actions · Mission Control communicates how organization feels · Command Dock Chief of Staff proactive messages · daily question: *How is our organization really doing? Organizationally.*
+
+**Core philosophy delivered:** Feel the organization, not just the revenue · identify changes before they become problems · Mission Control + Command Dock behave like executive Chief of Staff.
+
+**Delivered:**
+- **`src/studio-os-core/organization-pulse/`** — **`pulse-scoring.ts`** (14 indicators from intelligence stack) · **`alert-engine.ts`** (proactive alerts + recommended actions) · **`pulse-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`OrganizationPulseWorkspace`** + **`/admin/studio/organization-pulse`** — 4 tabs: Pulse Overview · All Indicators · Proactive Alerts · Recommended Actions · cyan accent `#0891B2`.
+- **`MissionControlOrganizationPulsePanel`** — pulse score · state · feeling · top alerts in Mission Control alongside Executive Health panel.
+- **`useOrganizationPulseState`** hook · brand voice **`organization-pulse`**: *"Feel the organization. Not just the revenue."*
+- **Integration** — sync from profession-brain · blueprint · boundary-sync · Command Dock **`resolveOrganizationPulseAdvice()`** + **`buildProactivePulseSuggestion()`** (priority on Mission Control + Organization Pulse routes) · modules · nav · App route.
+- **Docs** — **`docs/studio-os/organization-pulse.md`** · **CORE.md** M100 entry.
+
+**Conventions:** Organization Pulse (M100) complements Company Health Index (M97) — M97 measures category health scores; M100 monitors real-time organizational pulse/feeling with trend-aware alerts. Demo localStorage via `studioOsOrganizationPulse_v1`.
+

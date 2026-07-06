@@ -143,6 +143,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncCompanyHealthIndexFromSources(blueprint.organizationId);
   });
 
+  void import('../organization-pulse/store').then((m) => {
+    m.syncOrganizationPulseFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

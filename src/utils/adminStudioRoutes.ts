@@ -785,6 +785,10 @@ export function adminStudioCompanyHealthIndexPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/company-health-index`;
 }
 
+export function adminStudioOrganizationPulsePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/organization-pulse`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

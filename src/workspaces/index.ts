@@ -232,6 +232,10 @@ export function bootstrapWorkspacesPlatform(): void {
     successionMode.bootstrapSuccessionModePlatform();
     await yieldToMain();
 
+    const organizationPulse = await import('../studio-os-core/organization-pulse/bootstrap');
+    organizationPulse.bootstrapOrganizationPulsePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

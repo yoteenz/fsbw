@@ -21,6 +21,7 @@ import { listMemoryEngineDockSuggestions } from '../memory-engine';
 import { listCompanyHealthIndexDockSuggestions } from '../company-health-index';
 import { listSuccessionModeDockSuggestions } from '../succession-mode';
 import { listExecutiveCouncilDockSuggestions } from '../executive-council';
+import { listOrganizationPulseDockSuggestions } from '../organization-pulse';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -163,6 +164,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/organization-pulse')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'organization-pulse',
+      label: 'ORGANIZATION PULSE™ · HOW WE FEEL',
+      portfolioMode: false,
+      suggestedCommands: listOrganizationPulseDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 
