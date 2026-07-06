@@ -345,6 +345,10 @@ export function bootstrapWorkspacesPlatform(): void {
     systemRegistry.bootstrapSystemRegistryPlatform();
     await yieldToMain();
 
+    const componentRegistry = await import('../studio-os-core/component-registry/bootstrap');
+    componentRegistry.bootstrapComponentRegistryPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

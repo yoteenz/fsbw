@@ -893,6 +893,10 @@ export function adminStudioSystemRegistryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/system-registry`;
 }
 
+export function adminStudioComponentRegistryPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/component-registry`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

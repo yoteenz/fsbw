@@ -39459,3 +39459,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/system-registry.md`** · **CORE.md** M127 entry
 
 **Conventions:** New modules auto-index from `core/modules.ts` + documentation sync registry. Optional `registerSystem()` for custom objects. Sync chain extends: … → Documentation Governance → **System Registry**. Demo localStorage via `studioOsSystemRegistry_v1`. Brand voice: *"Nothing exists anonymously. The operating system always knows what exists."* Accent `#0369A1`.
+
+---
+
+## 2026-07-06 — Milestone 128: Component Registry™ V1.0
+
+**Context (full chat arc):** Same session completed M126 Documentation Registry through M127 System Registry (`e5fb236a`). User requested **Component Registry™**: every reusable UI component inside Studio OS becomes a registered organizational asset — interfaces assembled not recreated; every visual component exists once and is reused everywhere.
+
+**Requirements delivered:**
+- **Register all UI categories** — buttons, cards, panels, charts, navigation, glass, timeline, Mission Control widgets, Command Dock, animations, loading, brand assets, inputs
+- **Full component metadata** — variants, dependencies, usage surfaces, version, owner, accessibility, responsive rules, design tokens, animation rules, interaction rules, documentation, reuse score
+- **Component discovery** — `queryComponentRegistry()` with semantic clusters (card, panel, chart, mission, glass, button)
+- **Reuse scoring** — platform adoption scores 82–100%; Executive IA primitives and Mission Control pattern highest
+- **Command Dock** — component Q&A (*"Which reusable cards?"*, *"Explain ExecutiveHeroCard"*, *"List Mission Control widgets"*)
+
+**Delivered:**
+- **`src/studio-os-core/component-registry/`** — seeds Executive IA (M83), PerspectivePanel glass, CommandDock, timeline, Mission Control panels, registry workspace patterns · `registration.ts` · `discovery-engine.ts` · `registry-profile-builder.ts` · `store.ts` · `dock-advisor.ts`
+- **UI** — **`ComponentRegistryWorkspace`** (6 tabs) · **`/admin/studio/component-registry`** · **`MissionControlComponentRegistryPanel`** · **`useComponentRegistryState`**
+- **Wiring** — nav M128 · sync chain System Registry → Component Registry · Command Dock component-first · boundary-sync · documentation system registry + page-guide entry
+- **Docs** — **`docs/studio-os/component-registry.md`** · **CORE.md** M128 entry
+
+**Conventions:** New Studio OS UI must search Component Registry before creating components. Compose from Executive IA (M83). Mission Control panels: ExecutiveSecondaryCard + ExecutiveHealthRing + eiaActionBtn. Optional `registerComponent()` for new reusable assets. Sync chain: … → System Registry → **Component Registry**. Demo localStorage via `studioOsComponentRegistry_v1`. Brand voice: *"Assemble interfaces. Never recreate. Every component exists once."* Accent `#7C2D12`.

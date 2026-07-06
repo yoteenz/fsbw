@@ -17,6 +17,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [documentation-registry.md](./documentation-registry.md) | Documentation Registry™ — single source of truth, auto-sync, M126 |
 | [documentation-governance.md](./documentation-governance.md) | Documentation Governance™ — continuous audits, coverage, pre-deploy, M126.5 |
 | [system-registry.md](./system-registry.md) | System Registry™ — master OS directory, discovery, dependencies, M127 |
+| [component-registry.md](./component-registry.md) | Component Registry™ — reusable UI assets, design system, M128 |
 | [memory-bible.md](./memory-bible.md) | Institutional knowledge, naming, decisions, AI Context Builder |
 
 Platform config: `src/studio-os/config/platform.ts`

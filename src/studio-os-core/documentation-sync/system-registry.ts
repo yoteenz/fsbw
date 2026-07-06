@@ -3,6 +3,7 @@ import {
   adminStudioDocumentationRegistryPath,
   adminStudioDocumentationGovernancePath,
   adminStudioSystemRegistryPath,
+  adminStudioComponentRegistryPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -650,6 +651,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['REGISTER SYSTEM → DISCOVER VIA SEARCH → TRACE DEPENDENCIES'],
     aliases: ['system registry', 'master directory', 'master index', 'platform registry', 'sr'],
     searchKeywords: ['system registry', 'master directory', 'what exists', 'platform index'],
+  }),
+  entry({
+    id: 'component-registry',
+    label: 'Component Registry™',
+    moduleId: 'component-registry',
+    milestone: 'M128',
+    route: adminStudioComponentRegistryPath(),
+    purpose: 'Every reusable UI component registered as a managed platform asset.',
+    overview:
+      'Buttons, cards, panels, charts, navigation, glass, Mission Control widgets, Command Dock — variants, dependencies, usage, design tokens, accessibility.',
+    capabilities: ['Component catalog', 'Reuse scores', 'Category index', 'Discovery search', 'Design token binding'],
+    howItWorks: 'Register component once → reuse across all Studio OS interfaces → assemble, never recreate.',
+    whenUsed: ['Building new modules', 'Design system review', 'Mission Control panels', 'Developer onboarding'],
+    relatedSystems: ['system-registry', 'documentation-registry', 'command-dock'],
+    exampleWorkflows: ['FIND ExecutiveHeroCard → REUSE IN NEW MODULE → REGISTER VARIANT'],
+    aliases: ['component registry', 'ui registry', 'design system', 'cr'],
+    searchKeywords: ['component registry', 'reusable ui', 'executive ia', 'design tokens'],
   }),
 ];
 

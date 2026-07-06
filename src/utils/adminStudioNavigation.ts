@@ -1656,6 +1656,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'component-registry',
+    title: 'COMPONENT REGISTRY™',
+    purpose: 'Every reusable UI component registered as a managed platform asset — assemble interfaces, never recreate.',
+    route: p('component-registry'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M128',
+    ctaLabel: 'OPEN COMPONENT REGISTRY',
+    moduleKey: 'component-registry',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

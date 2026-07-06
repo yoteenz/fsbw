@@ -49,6 +49,7 @@ import { listStudioFoundationModelsDockSuggestions } from '../studio-foundation-
 import { listDocumentationRegistryDockSuggestions } from '../documentation-registry/dock-advisor';
 import { listDocumentationGovernanceDockSuggestions } from '../documentation-governance/dock-advisor';
 import { listSystemRegistryDockSuggestions } from '../system-registry/dock-advisor';
+import { listComponentRegistryDockSuggestions } from '../component-registry/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -389,6 +390,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/component-registry')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'component-registry',
+      label: 'COMPONENT REGISTRY™ · REUSE FIRST',
+      portfolioMode: false,
+      suggestedCommands: listComponentRegistryDockSuggestions(workspaceId),
+      commandTypes: ['knowledge-search', 'creative-requests', 'organization-settings'],
     };
   }
 

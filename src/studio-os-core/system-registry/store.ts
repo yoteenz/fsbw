@@ -49,7 +49,11 @@ function upsertProfile(profile: OrganizationSystemRegistryProfile): Organization
 
 /** Rebuild master system index from all Studio OS sources */
 export function syncSystemRegistryFromSources(organizationId: string): OrganizationSystemRegistryProfile {
-  return upsertProfile(buildOrganizationSystemRegistryProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationSystemRegistryProfile(organizationId));
+  void import('../component-registry/store').then((m) => {
+    m.syncComponentRegistryFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationSystemRegistryProfile(

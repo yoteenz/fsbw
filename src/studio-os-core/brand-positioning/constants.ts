@@ -47,6 +47,7 @@ export type StudioOsBrandSystemId =
   | 'documentation-registry'
   | 'documentation-governance'
   | 'system-registry'
+  | 'component-registry'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -93,6 +94,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'documentation-registry': 'One source. Infinite knowledge. Always synchronized.',
   'documentation-governance': 'Documentation is living organizational knowledge — always accurate, always connected.',
   'system-registry': 'Nothing exists anonymously. The operating system always knows what exists.',
+  'component-registry': 'Assemble interfaces. Never recreate. Every component exists once.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

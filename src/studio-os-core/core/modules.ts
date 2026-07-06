@@ -121,6 +121,7 @@ export type StudioOsCoreModuleId =
   | 'documentation-registry'
   | 'documentation-governance'
   | 'system-registry'
+  | 'component-registry'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -842,6 +843,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'SYSTEM REGISTRY™',
     description: 'System Registry V1.0 — master directory of every object, module, feature, and system in Studio OS.',
     routeSegment: 'system-registry',
+  },
+  {
+    id: 'component-registry',
+    label: 'COMPONENT REGISTRY™',
+    description: 'Component Registry V1.0 — reusable UI components as managed platform assets.',
+    routeSegment: 'component-registry',
   },
   {
     id: 'succession-mode',
