@@ -993,6 +993,10 @@ export function adminStudioOrganizationalGuardianPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organizational-guardian`;
 }
 
+export function adminStudioDesignComplianceEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/design-compliance-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

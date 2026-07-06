@@ -1956,6 +1956,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'design-compliance-engine',
+    title: 'DESIGN COMPLIANCE ENGINE™',
+    purpose: 'Studio OS Creative Director — continuously audits every interface for visual, structural, and experiential consistency with the Studio OS Design Language.',
+    route: p('design-compliance-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M154',
+    ctaLabel: 'OPEN COMPLIANCE AUDIT',
+    moduleKey: 'design-compliance-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

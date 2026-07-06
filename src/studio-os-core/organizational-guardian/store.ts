@@ -68,10 +68,14 @@ function mergeAlertStatuses(
 export function syncOrganizationalGuardianFromSources(organizationId: string): OrganizationGuardianProfile {
   const existing = getOrganizationGuardianProfile(organizationId);
   const built = mergeAlertStatuses(buildOrganizationGuardianProfile(organizationId), existing);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedAlertId: existing?.selectedAlertId ?? built.selectedAlertId,
   });
+  void import('../design-compliance-engine/store').then((m) => {
+    m.syncDesignComplianceEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationGuardianProfile(organizationId: string): OrganizationGuardianProfile {

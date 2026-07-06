@@ -105,6 +105,7 @@ import { MissionControlSelfHealingEnginePanel } from './MissionControlSelfHealin
 import { MissionControlDecisionAuditPanel } from './MissionControlDecisionAuditPanel';
 import { MissionControlConfidenceEnginePanel } from './MissionControlConfidenceEnginePanel';
 import { MissionControlOrganizationalGuardianPanel } from './MissionControlOrganizationalGuardianPanel';
+import { MissionControlDesignComplianceEnginePanel } from './MissionControlDesignComplianceEnginePanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -184,6 +185,7 @@ export function MissionControlWorkspace() {
             <MissionControlDecisionAuditPanel />
             <MissionControlConfidenceEnginePanel />
             <MissionControlOrganizationalGuardianPanel />
+            <MissionControlDesignComplianceEnginePanel />
             <MissionControlKnowledgeConfidencePanel />
             <MissionControlAmbientBriefingPanel />
           </div>
@@ -583,6 +585,7 @@ export function MissionControlWorkspace() {
           <MissionControlDecisionAuditPanel />
           <MissionControlConfidenceEnginePanel />
           <MissionControlOrganizationalGuardianPanel />
+          <MissionControlDesignComplianceEnginePanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

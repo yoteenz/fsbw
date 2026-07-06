@@ -13,7 +13,7 @@ import {
   escalateGuardianAlert,
   getSelectedAlert,
 } from '../../../../studio-os-core/organizational-guardian';
-import { adminStudioConfidenceEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioConfidenceEnginePath, adminStudioDesignComplianceEnginePath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -126,8 +126,11 @@ export function OrganizationalGuardianWorkspace() {
       <button type="button" onClick={() => setTab('dashboard')} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ORGANIZATIONAL_GUARDIAN_ACCENT, color: ORGANIZATIONAL_GUARDIAN_ACCENT }}>
         GUARDIAN DASHBOARD™ →
       </button>
-      <button type="button" onClick={() => navigate(adminStudioConfidenceEnginePath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+      <button type="button" onClick={() => navigate(adminStudioConfidenceEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         CONFIDENCE ENGINE →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioDesignComplianceEnginePath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+        DESIGN COMPLIANCE →
       </button>
     </ExecutivePageShell>
   );

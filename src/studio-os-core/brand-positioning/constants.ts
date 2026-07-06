@@ -72,6 +72,7 @@ export type StudioOsBrandSystemId =
   | 'decision-audit'
   | 'confidence-engine'
   | 'organizational-guardian'
+  | 'design-compliance-engine'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -143,6 +144,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'decision-audit': 'Every decision explainable. Every action accountable.',
   'confidence-engine': 'Confidence is a conversation. Never a black box.',
   'organizational-guardian': 'Protect before reacting. The silent protector.',
+  'design-compliance-engine': 'Does it feel like Studio OS? The Creative Director knows.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

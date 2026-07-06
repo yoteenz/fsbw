@@ -146,6 +146,7 @@ export type StudioOsCoreModuleId =
   | 'decision-audit'
   | 'confidence-engine'
   | 'organizational-guardian'
+  | 'design-compliance-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1017,6 +1018,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL GUARDIAN™',
     description: 'Organizational Guardian V1.0 — highest oversight layer; trusted executive advisor protecting quality, trust, security, and operational excellence.',
     routeSegment: 'organizational-guardian',
+  },
+  {
+    id: 'design-compliance-engine',
+    label: 'DESIGN COMPLIANCE ENGINE™',
+    description: 'Design Compliance Engine V1.0 — Studio OS Creative Director; continuously audits every interface for visual, structural, and experiential design language consistency.',
+    routeSegment: 'design-compliance-engine',
   },
   {
     id: 'succession-mode',
