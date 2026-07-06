@@ -38421,3 +38421,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** New org capabilities = department/expansion packs in industry-architecture registry; installs must auto-add HQ departments + concierges + dock capabilities — no manual setup. Expansion Center is the org growth UX (replaces Marketplace for expansion); legacy Marketplace modules remain elsewhere.
 
+---
+
+## 2026-07-06 — Remove campus transition (instant workspace navigation)
+
+**Context (full chat):** Same session as NDXBOOK HQ dashboard card fix (`4db304d6`) and Milestone 88 Expansion Center (`8ec42798`). User asked to **remove the campus transition altogether** — no cinematic overlay, briefing panel, speed preferences, or multi-phase delays when switching organizations.
+
+**Removed:**
+- **UI:** `CampusTransitionOverlay.tsx`, `CampusMorningBriefing.tsx`, `HeadquartersAtmosphere.tsx`, `campusTransition.css`
+- **Core:** `campus-transitions/types.ts`, `preferences.ts`, `headquarters-profiles.ts`, `briefing.ts` — kept **`resolve-destination.ts`** only (path resolution for workspace entry)
+
+**Changed:**
+- **`CampusTransitionProvider`** — instant-only: `enterWorkspace()` + `navigate()` via `resolveWorkspaceDestinationPath()`; `returnToCampus()` → Studio Command Center; no overlay, state, speed, or `completeTransition` API
+- **`studio-os/page.tsx`** — removed “CAMPUS TRANSITION · {speed}” copy; morning briefing button still opens Mission Control directly
+- **`WorkspaceSwitcher`**, **`command-center/page.tsx`** — dropped `showBriefing` options
+
+**Conventions:** Organization switches are immediate navigation — do not reintroduce campus transition overlays or arrival briefing sequences without explicit product sign-off. Use `travelToWorkspace` / `returnToCampus` from the slim provider (or direct `navigate` + `enterWorkspace`) for org context changes.
+

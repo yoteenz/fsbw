@@ -6,7 +6,6 @@ import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
 import { STUDIO_OS_VOCABULARY } from '../../../studio-os-core/core/vocabulary';
 import { STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
-import { readCampusTransitionSpeed } from '../../../studio-os-core/campus-transitions/preferences';
 import { readWorkspaceRegistryStore } from '../../../studio-os-core/workspace-registry/store';
 import { getRegistryWorkspaceById } from '../../../studio-os-core/workspace-creation/registry';
 import { useWorkspaceCreationEngine } from '../../../hooks/useWorkspaceCreationEngine';
@@ -21,7 +20,6 @@ export default function AdminStudioOsPage() {
   const { travelToWorkspace } = useCampusTransition();
   const { workspaces: registryWorkspaces } = useWorkspaceCreationEngine();
   const registryStore = readWorkspaceRegistryStore();
-  const transitionSpeed = readCampusTransitionSpeed();
 
   const registryById = useMemo(() => {
     const map = new Map<string, ReturnType<typeof getRegistryWorkspaceById>>();
@@ -33,7 +31,7 @@ export default function AdminStudioOsPage() {
     return { map, ids };
   }, [registryWorkspaces]);
 
-  const enter = (wsId: string, options?: { missionControl?: boolean; showBriefing?: boolean }) => {
+  const enter = (wsId: string, options?: { missionControl?: boolean }) => {
     travelToWorkspace(wsId, {
       ...options,
       registryById: registryById.ids,
@@ -61,9 +59,6 @@ export default function AdminStudioOsPage() {
               </p>
               <p className="mt-2 text-[7px] font-futura" style={{ fontWeight: 515, color: '#333', lineHeight: 1.45 }}>
                 Studio OS is the operating system. Every company is a Workspace. Same capabilities · isolated data · unique personality.
-              </p>
-              <p className="mt-2 text-[6px] font-futura" style={{ fontWeight: 515, color: '#92704A' }}>
-                CAMPUS TRANSITION · {transitionSpeed.toUpperCase()} · ARRIVE AT HEADQUARTERS · NEVER INSTANT PAGE LOAD
               </p>
             </div>
 
@@ -132,7 +127,7 @@ export default function AdminStudioOsPage() {
                     workspace={ws}
                     isActive={ws.id === workspaceId}
                     onEnter={() => selectWorkspace(ws)}
-                    onMorningBriefing={() => enter(ws.id, { missionControl: true, showBriefing: true })}
+                    onMorningBriefing={() => enter(ws.id, { missionControl: true })}
                     registryMeta={
                       registry
                         ? {

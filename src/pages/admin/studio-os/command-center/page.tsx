@@ -124,7 +124,7 @@ export default function StudioCommandCenterPage() {
                   key={ws.id}
                   workspace={ws}
                   isActive={false}
-                  onEnter={() => travelToWorkspace(ws.id, { missionControl: true, showBriefing: false })}
+                  onEnter={() => travelToWorkspace(ws.id, { missionControl: true })}
                   registryMeta={
                     registry
                       ? {

@@ -7,7 +7,7 @@ type ResolveOptions = {
   registryById?: Set<string>;
 };
 
-/** Resolve destination path after campus arrival — preserves legacy Frontal Slayer routes. */
+/** Resolve destination path when entering a workspace — preserves legacy Frontal Slayer routes. */
 export function resolveWorkspaceDestinationPath(
   workspaceId: string,
   options: ResolveOptions = {}

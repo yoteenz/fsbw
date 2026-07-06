@@ -22,7 +22,7 @@ export function WorkspaceSwitcher() {
 
   const switchTo = (id: string) => {
     setOpen(false);
-    travelToWorkspace(id, { showBriefing: id !== workspaceId });
+    travelToWorkspace(id);
   };
 
   return (
