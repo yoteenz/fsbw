@@ -145,6 +145,7 @@ export type StudioOsCoreModuleId =
   | 'self-healing-engine'
   | 'decision-audit'
   | 'confidence-engine'
+  | 'organizational-guardian'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1010,6 +1011,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CONFIDENCE ENGINE™',
     description: 'Confidence Engine V1.0 — visible intelligence confidence; every recommendation explained with evidence, reasoning, and transparency.',
     routeSegment: 'confidence-engine',
+  },
+  {
+    id: 'organizational-guardian',
+    label: 'ORGANIZATIONAL GUARDIAN™',
+    description: 'Organizational Guardian V1.0 — highest oversight layer; trusted executive advisor protecting quality, trust, security, and operational excellence.',
+    routeSegment: 'organizational-guardian',
   },
   {
     id: 'succession-mode',

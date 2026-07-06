@@ -1944,6 +1944,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-guardian',
+    title: 'ORGANIZATIONAL GUARDIAN™',
+    purpose: 'Highest oversight layer — trusted executive advisor protecting quality, trust, security, compliance, and operational excellence across the entire organization.',
+    route: p('organizational-guardian'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M153',
+    ctaLabel: 'OPEN GUARDIAN',
+    moduleKey: 'organizational-guardian',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

@@ -114,6 +114,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'self-healing-engine': fromSystem('self-healing-engine'),
   'decision-audit': fromSystem('decision-audit'),
   'confidence-engine': fromSystem('confidence-engine'),
+  'organizational-guardian': fromSystem('organizational-guardian'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

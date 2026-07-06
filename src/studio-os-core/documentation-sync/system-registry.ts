@@ -27,6 +27,7 @@ import {
   adminStudioSelfHealingEnginePath,
   adminStudioDecisionAuditPath,
   adminStudioConfidenceEnginePath,
+  adminStudioOrganizationalGuardianPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1082,6 +1083,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['RECOMMEND → EXPLAIN → EXPLORE → DECIDE'],
     aliases: ['confidence engine', 'confidence score', 'how confident', 'confidence explorer', 'why tuesday'],
     searchKeywords: ['confidence', 'evidence', 'reasoning', 'explain', 'know', 'dont know', 'transparent'],
+  }),
+  entry({
+    id: 'organizational-guardian',
+    label: 'Organizational Guardian™',
+    moduleId: 'organizational-guardian',
+    milestone: 'M153',
+    route: adminStudioOrganizationalGuardianPath(),
+    purpose: 'Highest oversight layer — trusted executive advisor protecting the entire organization.',
+    overview:
+      '15 monitored domains · Guardian Dashboard™ · Guardian Alerts · QA system coordination · protect before reacting.',
+    capabilities: ['Domain monitoring', 'Guardian alerts', 'Executive dashboard', 'QA coordination', 'Risk escalation', 'Trust protection'],
+    howItWorks: 'Aggregate all QA and intelligence systems → monitor 15 domains → detect emerging risks → recommend before changing → coordinate QA layer.',
+    whenUsed: ['Executive oversight', 'Risk review', 'Trust protection', 'Operational excellence', 'Daily guardian briefing'],
+    relatedSystems: ['qa-headquarters', 'predictive-qa', 'self-healing-engine', 'confidence-engine', 'executive-trust-dashboard', 'ai-red-team'],
+    exampleWorkflows: ['MONITOR → ALERT → RECOMMEND → PROTECT'],
+    aliases: ['organizational guardian', 'guardian', 'guardian dashboard', 'silent protector', 'executive advisor'],
+    searchKeywords: ['guardian', 'protect', 'oversight', 'alert', 'trust', 'quality', 'security', 'advisor'],
   }),
 ];
 

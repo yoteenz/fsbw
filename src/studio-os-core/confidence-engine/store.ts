@@ -50,10 +50,14 @@ function upsertProfile(profile: OrganizationConfidenceEngineProfile): Organizati
 export function syncConfidenceEngineFromSources(organizationId: string): OrganizationConfidenceEngineProfile {
   const existing = getOrganizationConfidenceEngineProfile(organizationId);
   const built = buildOrganizationConfidenceEngineProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedRecommendationId: existing?.selectedRecommendationId ?? built.selectedRecommendationId,
   });
+  void import('../organizational-guardian/store').then((m) => {
+    m.syncOrganizationalGuardianFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationConfidenceEngineProfile(

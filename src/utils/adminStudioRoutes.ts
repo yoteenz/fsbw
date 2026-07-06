@@ -989,6 +989,10 @@ export function adminStudioConfidenceEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/confidence-engine`;
 }
 
+export function adminStudioOrganizationalGuardianPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/organizational-guardian`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

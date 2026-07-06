@@ -322,6 +322,10 @@ const AdminStudioConfidenceEngine = lazyWithRetry(
   () => import('./pages/admin/studio/confidence-engine/page'),
   'AdminStudioConfidenceEngine'
 );
+const AdminStudioOrganizationalGuardian = lazyWithRetry(
+  () => import('./pages/admin/studio/organizational-guardian/page'),
+  'AdminStudioOrganizationalGuardian'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1703,6 +1707,11 @@ function App() {
           <Route path="studio/confidence-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioConfidenceEngine />
+            </Suspense>
+          } />
+          <Route path="studio/organizational-guardian" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOrganizationalGuardian />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={
