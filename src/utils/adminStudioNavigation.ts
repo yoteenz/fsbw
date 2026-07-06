@@ -1992,6 +1992,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'visual-diff-engine',
+    title: 'VISUAL DIFF ENGINE™',
+    purpose: 'Studio OS visual memory — compares every interface against the approved Design System and detects unintended visual changes before deployment.',
+    route: p('visual-diff-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M157',
+    ctaLabel: 'OPEN VISUAL DIFF',
+    moduleKey: 'visual-diff-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

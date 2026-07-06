@@ -17,6 +17,7 @@ import {
   adminStudioDesignComplianceEnginePath,
   adminStudioExperienceQaPath,
   adminStudioPromptRegistryPath,
+  adminStudioVisualDiffEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
@@ -140,8 +141,11 @@ export function PromptQaWorkspace() {
       <button type="button" onClick={() => navigate(adminStudioDesignComplianceEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         DESIGN COMPLIANCE →
       </button>
-      <button type="button" onClick={() => navigate(adminStudioExperienceQaPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+      <button type="button" onClick={() => navigate(adminStudioExperienceQaPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         EXPERIENCE QA →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioVisualDiffEnginePath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+        VISUAL DIFF →
       </button>
     </ExecutivePageShell>
   );

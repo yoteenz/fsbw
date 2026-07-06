@@ -48,10 +48,14 @@ function upsertProfile(profile: OrganizationExperienceQaProfile): OrganizationEx
 export function syncExperienceQaFromSources(organizationId: string): OrganizationExperienceQaProfile {
   const existing = getOrganizationExperienceQaProfile(organizationId);
   const built = buildOrganizationExperienceQaProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedPageId: existing?.selectedPageId ?? built.selectedPageId,
   });
+  void import('../visual-diff-engine/store').then((m) => {
+    m.syncVisualDiffEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationExperienceQaProfile(organizationId: string): OrganizationExperienceQaProfile {

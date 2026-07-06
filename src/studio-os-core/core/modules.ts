@@ -149,6 +149,7 @@ export type StudioOsCoreModuleId =
   | 'design-compliance-engine'
   | 'prompt-qa'
   | 'experience-qa'
+  | 'visual-diff-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1038,6 +1039,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXPERIENCE QA™',
     description: 'Experience QA V1.0 — evaluates emotional quality of every interaction; optimizes for confidence, not clicks.',
     routeSegment: 'experience-qa',
+  },
+  {
+    id: 'visual-diff-engine',
+    label: 'VISUAL DIFF ENGINE™',
+    description: 'Visual Diff Engine V1.0 — Studio OS visual memory; detects unintended visual changes before users see them.',
+    routeSegment: 'visual-diff-engine',
   },
   {
     id: 'succession-mode',

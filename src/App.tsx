@@ -338,6 +338,10 @@ const AdminStudioExperienceQa = lazyWithRetry(
   () => import('./pages/admin/studio/experience-qa/page'),
   'AdminStudioExperienceQa'
 );
+const AdminStudioVisualDiffEngine = lazyWithRetry(
+  () => import('./pages/admin/studio/visual-diff-engine/page'),
+  'AdminStudioVisualDiffEngine'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1739,6 +1743,11 @@ function App() {
           <Route path="studio/experience-qa" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioExperienceQa />
+            </Suspense>
+          } />
+          <Route path="studio/visual-diff-engine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioVisualDiffEngine />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

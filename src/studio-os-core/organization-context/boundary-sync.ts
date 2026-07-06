@@ -321,6 +321,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationExperienceQaProfile(context.organizationId);
   });
 
+  void import('../visual-diff-engine/store').then((m) => {
+    m.ensureOrganizationVisualDiffEngineProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

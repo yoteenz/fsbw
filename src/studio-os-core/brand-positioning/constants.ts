@@ -75,6 +75,7 @@ export type StudioOsBrandSystemId =
   | 'design-compliance-engine'
   | 'prompt-qa'
   | 'experience-qa'
+  | 'visual-diff-engine'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -149,6 +150,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'design-compliance-engine': 'Does it feel like Studio OS? The Creative Director knows.',
   'prompt-qa': 'Prompts are infrastructure. Profession Brains become assets.',
   'experience-qa': 'Confidence, not clicks. Software that feels effortless.',
+  'visual-diff-engine': 'Visual memory. Regressions never surprise the team.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

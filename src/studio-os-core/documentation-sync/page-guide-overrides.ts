@@ -118,6 +118,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'design-compliance-engine': fromSystem('design-compliance-engine'),
   'prompt-qa': fromSystem('prompt-qa'),
   'experience-qa': fromSystem('experience-qa'),
+  'visual-diff-engine': fromSystem('visual-diff-engine'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },
