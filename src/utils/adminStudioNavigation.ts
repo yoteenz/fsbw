@@ -1716,6 +1716,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'prompt-registry',
+    title: 'PROMPT REGISTRY™',
+    purpose: 'Centralized management for every AI prompt — versioned, searchable, testable, reusable. Prompts are code.',
+    route: p('prompt-registry'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M133',
+    ctaLabel: 'OPEN PROMPT REGISTRY',
+    moduleKey: 'prompt-registry',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

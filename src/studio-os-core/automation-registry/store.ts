@@ -56,7 +56,9 @@ export function syncAutomationRegistryFromSources(
   if (existing?.executionHistory?.length) {
     rebuilt.executionHistory = existing.executionHistory;
   }
-  return upsertProfile(rebuilt);
+  const profile = upsertProfile(rebuilt);
+  chainPromptRegistrySync(organizationId);
+  return profile;
 }
 
 export function ensureOrganizationAutomationRegistryProfile(
@@ -79,5 +81,11 @@ export function pauseAutomationsMatching(
     activeCount: automations.filter((a) => a.status === 'active').length,
     pausedCount: automations.filter((a) => a.status === 'paused').length,
     updatedAt: new Date().toISOString(),
+  });
+}
+
+function chainPromptRegistrySync(organizationId: string): void {
+  void import('../prompt-registry/store').then((m) => {
+    m.syncPromptRegistryFromSources(organizationId);
   });
 }

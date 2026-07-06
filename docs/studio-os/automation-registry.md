@@ -68,7 +68,7 @@ Name · Description · Owner · Department · Trigger · Conditions · Actions �
 
 ## Sync chain
 
-… → Interaction Engine → Event Bus → **Automation Registry**
+… → Interaction Engine → Event Bus → Automation Registry → **Prompt Registry**
 
 **`event-bus/store`** triggers **`syncAutomationRegistryFromSources`** · **boundary-sync**
 

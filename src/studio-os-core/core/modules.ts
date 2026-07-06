@@ -126,6 +126,7 @@ export type StudioOsCoreModuleId =
   | 'interaction-engine'
   | 'event-bus'
   | 'automation-registry'
+  | 'prompt-registry'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -877,6 +878,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'AUTOMATION REGISTRY™',
     description: 'Automation Registry V1.0 — every automation registered, visible, auditable; nothing executes without registration.',
     routeSegment: 'automation-registry',
+  },
+  {
+    id: 'prompt-registry',
+    label: 'PROMPT REGISTRY™',
+    description: 'Prompt Registry V1.0 — every AI prompt versioned, searchable, testable; prompts are code, never hidden text.',
+    routeSegment: 'prompt-registry',
   },
   {
     id: 'succession-mode',

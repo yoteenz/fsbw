@@ -22,6 +22,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [interaction-engine.md](./interaction-engine.md) | Interaction Engine™ — behavioral source of truth, patterns, a11y, M130 |
 | [event-bus.md](./event-bus.md) | Event Bus™ — publish/subscribe backbone, Event Inspector, M131 |
 | [automation-registry.md](./automation-registry.md) | Automation Registry™ — transparent automations, dashboard, M132 |
+| [prompt-registry.md](./prompt-registry.md) | Prompt Registry™ — AI prompt catalog, version history, testing, M133 |
 | [memory-bible.md](./memory-bible.md) | Institutional knowledge, naming, decisions, AI Context Builder |
 
 Platform config: `src/studio-os/config/platform.ts`

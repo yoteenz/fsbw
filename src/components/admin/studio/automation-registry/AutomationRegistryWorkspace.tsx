@@ -6,7 +6,7 @@ import {
   AUTOMATION_REGISTRY_PHILOSOPHY,
   queryAutomationRegistry,
 } from '../../../../studio-os-core/automation-registry';
-import { adminStudioEventBusPath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioEventBusPath, adminStudioMissionControlPath, adminStudioPromptRegistryPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -75,7 +75,10 @@ export function AutomationRegistryWorkspace() {
           {profile.dockRegistryLine}
         </p>
       </ExecutiveSecondaryCard>
-      <button type="button" onClick={() => navigate(adminStudioEventBusPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: AUTOMATION_REGISTRY_ACCENT, color: AUTOMATION_REGISTRY_ACCENT }}>
+      <button type="button" onClick={() => navigate(adminStudioPromptRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: AUTOMATION_REGISTRY_ACCENT, color: AUTOMATION_REGISTRY_ACCENT }}>
+        PROMPT REGISTRY →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioEventBusPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         EVENT BUS →
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>

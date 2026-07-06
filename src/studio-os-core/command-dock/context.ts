@@ -54,6 +54,7 @@ import { listDesignTokenEngineDockSuggestions } from '../design-token-engine/doc
 import { listInteractionEngineDockSuggestions } from '../interaction-engine/dock-advisor';
 import { listEventBusDockSuggestions } from '../event-bus/dock-advisor';
 import { listAutomationRegistryDockSuggestions } from '../automation-registry/dock-advisor';
+import { listPromptRegistryDockSuggestions } from '../prompt-registry/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -394,6 +395,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/prompt-registry')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'prompt-registry',
+      label: 'PROMPT REGISTRY™ · PROMPTS ARE CODE',
+      portfolioMode: false,
+      suggestedCommands: listPromptRegistryDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 

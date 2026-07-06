@@ -52,6 +52,7 @@ export type StudioOsBrandSystemId =
   | 'interaction-engine'
   | 'event-bus'
   | 'automation-registry'
+  | 'prompt-registry'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -103,6 +104,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'interaction-engine': 'Every click feels intentional. Studio OS behaves like one cohesive operating system.',
   'event-bus': 'Systems publish events. Other systems decide whether to respond.',
   'automation-registry': 'Automation builds trust — not uncertainty. Nothing executes without registration.',
+  'prompt-registry': 'Prompts are code. AI behavior stays transparent, maintainable, and continuously improving.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

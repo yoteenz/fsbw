@@ -39566,3 +39566,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/automation-registry.md`** · **CORE.md** M132 entry
 
 **Conventions:** Automations must register before execution — no hidden logic. Optional `registerAutomation()` for new platform automations. Sync chain: … → Event Bus → **Automation Registry**. Demo localStorage via `studioOsAutomationRegistry_v1`. Brand voice: *"Automation builds trust — not uncertainty. Nothing executes without registration."* Accent `#16A34A`.
+
+---
+
+## 2026-07-06 — Milestone 133: Prompt Registry™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine (`adf5a16c`) through M132 Automation Registry (`6042c036`). User requested **Prompt Registry™**: centralized management for every AI prompt, instruction set, system prompt, workflow prompt, and reasoning template — prompts treated as code; no hidden prompt text; versioned, searchable, testable, reusable.
+
+**Requirements delivered:**
+- **Register every prompt** — Command Dock, Digital Concierges, Executive Council, Profession Brain, Studio Institute, Knowledge Commerce, automation workflows, marketplace, help center, search, summaries, content creation, research, decision support, developer tools (~21 seeded)
+- **Full prompt metadata** — unique ID, name, description, purpose, prompt type, owner, organization scope, department, associated feature, version, status, dependencies, supported models, variables, expected output, fallback prompt, documentation, last updated
+- **Version history** — compare, restore, test, approve; review evolution; nothing overwritten (Executive Council v5 vs v6 seeded)
+- **Prompt testing** — response quality, consistency, latency, cost, token usage, hallucination risk, professional trust compliance, knowledge coverage, output structure, prompt quality score via `runPromptTest()`
+- **Registration gate** — `canPromptExecute()` / `registerPrompt()`; governance audit flags hidden/unregistered prompts
+- **Command Dock** — prompt Q&A (*"Show prompts used by Executive Council"*, *"Compare Prompt Version 5 to Version 6"*, *"Which prompts changed this month?"*, *"Test this prompt before deployment"*)
+
+**Delivered:**
+- **`src/studio-os-core/prompt-registry/`** — `prompt-catalog.ts` · `version-history.ts` · `testing-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncPromptRegistryFromSources` · `appendPromptTestResult`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`PromptRegistryWorkspace`** (6 tabs: Overview · Catalog · Version History · Prompt Testing · Governance · Discovery) · **`/admin/studio/prompt-registry`** · **`MissionControlPromptRegistryPanel`** · **`usePromptRegistryState`**
+- **Wiring** — nav M133 · sync chain Automation Registry → Prompt Registry · Command Dock prompt-registry-first · boundary-sync · documentation system registry + page-guide entry · Automation Registry workspace link
+- **Docs** — **`docs/studio-os/prompt-registry.md`** · **CORE.md** M133 entry
+
+**Conventions:** Prompts must register before AI execution — no inline hidden prompt strings in features. Optional `registerPrompt()` for new platform prompts. Maintain version history; test before deployment. Sync chain: … → Event Bus → Automation Registry → **Prompt Registry**. Demo localStorage via `studioOsPromptRegistry_v1`. Brand voice: *"Prompts are code. AI behavior stays transparent, maintainable, and continuously improving."* Accent `#6366F1`.

@@ -913,6 +913,10 @@ export function adminStudioAutomationRegistryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/automation-registry`;
 }
 
+export function adminStudioPromptRegistryPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/prompt-registry`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }
