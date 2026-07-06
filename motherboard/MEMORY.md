@@ -39194,7 +39194,6 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-<<<<<<< HEAD
 **Conventions:** Organization Operating Manual (M120) is the single source of operational truth — every employee, department, Digital Concierge, and future leader learns from the same evolving handbook. Demo localStorage via `studioOsOrganizationOperatingManual_v1`.
 
 ---
@@ -39221,7 +39220,9 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** Environmental changes only — no business logic or layout restructure. Milestones must be earned (Founder Pilot store / demo engravings for mature Frontal Slayer). Distinct from M82.5 **`living-headquarters-presence`** (concierge presence) — Living Headquarters is **visual/emotional storytelling**.
 
 **Changes:** living-headquarters/*, headquarters-experience/LivingHeadquartersShell.tsx, LegacyWallFeature.tsx, ExecutiveCollectionGallery.tsx, livingHeadquartersTheme.ts, ExecutiveLobbyHero.tsx, StudioIntelligenceNarrative.tsx, useLivingHeadquartersState.ts, MissionControlWorkspace.tsx, NdxbookMissionControl.tsx, NdxbookExecutiveLobby.tsx, FrontalSlayerExecutiveLobby.tsx, NdxbookMissionControlPanels.tsx, CORE.md, MEMORY.md.
-=======
+
+---
+
 ## 2026-07-06 — Studio OS browser storage architecture fix (mobile Safari quota crash)
 
 **Context:** User reported urgent bug — admin Studio cards (Headquarters + Studio Command Center) failing on mobile Safari with **"Component failed to load. This device's browser storage is full. Studio OS could not save workspace data."** Prior partial fix (`7ec47f3f`) added `safeLocalStorage` for active workspace + registry but ~95 milestone stores still wrote large demo payloads to `localStorage`, filling Safari quota and crashing components.
@@ -39245,4 +39246,3 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** studioOsBrowserStorage.ts, studioWorkspaceCloudSync.ts, adminStudioStorage.ts, scoped-store.ts, workspace-registry/store.ts, workspace-creation/registry.ts, main.tsx, App.tsx, workspace settings page, api/admin/studio-workspace-state.ts, supabase migration, test script, CORE.md, MEMORY.md.
 
 **Conventions:** Studio OS localStorage = lightweight prefs only (active org id, UI prefs, favorites/recent). Large module/demo state = session memory. User `adminStudio*` edits → cloud via `/api/admin/studio-workspace-state`. Recovery: **Reset local Studio cache** in error boundary or Workspace Settings. Run migration `20260706170000_studio_os_workspace_state.sql` in Supabase after deploy.
->>>>>>> 7939414e (Fix Studio OS browser storage: memory cache for large payloads, cloud sync, Safari quota guards)
