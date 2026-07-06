@@ -1704,6 +1704,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'automation-registry',
+    title: 'AUTOMATION REGISTRY™',
+    purpose: 'Every automation registered as an organizational asset — visible, searchable, auditable, manageable.',
+    route: p('automation-registry'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M132',
+    ctaLabel: 'OPEN AUTOMATION REGISTRY',
+    moduleKey: 'automation-registry',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

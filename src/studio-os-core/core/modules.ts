@@ -125,6 +125,7 @@ export type StudioOsCoreModuleId =
   | 'design-token-engine'
   | 'interaction-engine'
   | 'event-bus'
+  | 'automation-registry'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -870,6 +871,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EVENT BUS™',
     description: 'Event Bus V1.0 — publish/subscribe communication backbone; loosely coupled event-driven architecture.',
     routeSegment: 'event-bus',
+  },
+  {
+    id: 'automation-registry',
+    label: 'AUTOMATION REGISTRY™',
+    description: 'Automation Registry V1.0 — every automation registered, visible, auditable; nothing executes without registration.',
+    routeSegment: 'automation-registry',
   },
   {
     id: 'succession-mode',

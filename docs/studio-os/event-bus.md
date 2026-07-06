@@ -70,9 +70,9 @@ Developers can:
 
 ## Sync chain
 
-… → Design Token Engine → Interaction Engine → **Event Bus**
+… → Interaction Engine → Event Bus → **Automation Registry**
 
-**`interaction-engine/store`** triggers **`syncEventBusFromSources`** · **boundary-sync**
+**`event-bus/store`** triggers **`syncAutomationRegistryFromSources`** · **boundary-sync**
 
 ## UI
 

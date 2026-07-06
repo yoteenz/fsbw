@@ -51,6 +51,7 @@ export type StudioOsBrandSystemId =
   | 'design-token-engine'
   | 'interaction-engine'
   | 'event-bus'
+  | 'automation-registry'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -101,6 +102,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'design-token-engine': 'Design consistency is automatic. Every surface speaks the same visual language.',
   'interaction-engine': 'Every click feels intentional. Studio OS behaves like one cohesive operating system.',
   'event-bus': 'Systems publish events. Other systems decide whether to respond.',
+  'automation-registry': 'Automation builds trust — not uncertainty. Nothing executes without registration.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

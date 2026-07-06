@@ -9,7 +9,7 @@ import {
   replayOrganizationEvent,
 } from '../../../../studio-os-core/event-bus';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
-import { adminStudioInteractionEnginePath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioAutomationRegistryPath, adminStudioInteractionEnginePath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -89,6 +89,9 @@ export function EventBusWorkspace() {
           {profile.dockBusLine}
         </p>
       </ExecutiveSecondaryCard>
+      <button type="button" onClick={() => navigate(adminStudioAutomationRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: EVENT_BUS_ACCENT, color: EVENT_BUS_ACCENT }}>
+        AUTOMATION REGISTRY →
+      </button>
       <button type="button" onClick={() => navigate(adminStudioInteractionEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: EVENT_BUS_ACCENT, color: EVENT_BUS_ACCENT }}>
         INTERACTION ENGINE →
       </button>

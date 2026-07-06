@@ -909,6 +909,10 @@ export function adminStudioEventBusPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/event-bus`;
 }
 
+export function adminStudioAutomationRegistryPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/automation-registry`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

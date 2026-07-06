@@ -59,7 +59,11 @@ export function syncEventBusFromSources(organizationId: string): OrganizationEve
         ? 0
         : Math.round(existing.eventHistory.reduce((s, e) => s + e.latencyMs, 0) / existing.eventHistory.length);
   }
-  return upsertProfile(rebuilt);
+  const profile = upsertProfile(rebuilt);
+  void import('../automation-registry/store').then((m) => {
+    m.syncAutomationRegistryFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationEventBusProfile(organizationId: string): OrganizationEventBusProfile {

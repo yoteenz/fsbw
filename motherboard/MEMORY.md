@@ -39545,3 +39545,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/event-bus.md`** · **CORE.md** M131 entry
 
 **Conventions:** Systems publish via `publishOrganizationEvent()` — never call another module directly. Optional `registerEventType()` for new standardized events. Sync chain: … → Interaction Engine → **Event Bus**. Demo localStorage via `studioOsEventBus_v1`. Brand voice: *"Systems publish events. Other systems decide whether to respond."* Accent `#EA580C`.
+
+---
+
+## 2026-07-06 — Milestone 132: Automation Registry™ V1.0
+
+**Context (full chat arc):** Same session completed M126 Documentation Registry through M131 Event Bus (`7deebf0b`). User requested **Automation Registry™**: every automation inside Studio OS registered as an organizational asset — visible, searchable, auditable, manageable; nothing executes without registration; Automation Dashboard; Command Dock queries for pause/show/failures/recommendations.
+
+**Requirements delivered:**
+- **Register every automation** — Command Dock, workflow, email, calendar, marketplace, Studio Institute, Knowledge Commerce, Organization Pulse, Executive Council, documentation updates, content scheduling, customer follow-ups, approval chains, notification rules, Legacy Vault, future automations (~22 seeded)
+- **Full automation metadata** — name, description, owner, department, trigger, conditions, actions, dependencies, permissions, organizations, status, confidence, risk level, approval required, execution history, success/failure rates, average duration, version, documentation
+- **Automation Dashboard** — active, paused, failed, pending approval, recently executed, most used, highest impact, lowest confidence, recommended improvements
+- **Registration gate** — `canAutomationExecute()` / `registerAutomation()`; governance audit flags unregistered execution
+- **Command Dock** — automation Q&A (*"Show my automations"*, *"Pause payroll automations"*, *"What executed this morning?"*, *"Which automations failed today?"*, *"What can be automated next?"*)
+
+**Delivered:**
+- **`src/studio-os-core/automation-registry/`** — `automation-catalog.ts` · `execution-history.ts` · `dashboard-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncAutomationRegistryFromSources` · `pauseAutomationsMatching`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`AutomationRegistryWorkspace`** (6 tabs: Overview · Catalog · Dashboard · Execution History · Governance · Discovery) · **`/admin/studio/automation-registry`** · **`MissionControlAutomationRegistryPanel`** · **`useAutomationRegistryState`**
+- **Wiring** — nav M132 · sync chain Event Bus → Automation Registry · Command Dock automation-registry-first · boundary-sync · documentation system registry + page-guide entry · Event Bus workspace link
+- **Docs** — **`docs/studio-os/automation-registry.md`** · **CORE.md** M132 entry
+
+**Conventions:** Automations must register before execution — no hidden logic. Optional `registerAutomation()` for new platform automations. Sync chain: … → Event Bus → **Automation Registry**. Demo localStorage via `studioOsAutomationRegistry_v1`. Brand voice: *"Automation builds trust — not uncertainty. Nothing executes without registration."* Accent `#16A34A`.

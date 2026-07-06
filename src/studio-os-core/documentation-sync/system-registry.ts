@@ -7,6 +7,7 @@ import {
   adminStudioDesignTokenEnginePath,
   adminStudioInteractionEnginePath,
   adminStudioEventBusPath,
+  adminStudioAutomationRegistryPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -722,6 +723,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['PUBLISH customer.created → CHAIN REACTIONS → INSPECT DELIVERY'],
     aliases: ['event bus', 'publish subscribe', 'event driven', 'nervous system', 'eb'],
     searchKeywords: ['events', 'publish', 'subscribe', 'event inspector', 'event history'],
+  }),
+  entry({
+    id: 'automation-registry',
+    label: 'Automation Registry™',
+    moduleId: 'automation-registry',
+    milestone: 'M132',
+    route: adminStudioAutomationRegistryPath(),
+    purpose: 'Every automation registered as a visible, searchable, auditable organizational asset.',
+    overview:
+      'Command Dock, workflows, email, calendar, marketplace, Institute, Knowledge Commerce, Pulse, Council, documentation, scheduling, follow-ups, approvals, notifications, Legacy Vault — full metadata and execution history.',
+    capabilities: ['Automation catalog', 'Dashboard visibility', 'Execution history', 'Registration gate', 'Pause/resume', 'Recommendations'],
+    howItWorks: 'Register automation → track metadata → monitor dashboard → audit execution history → nothing runs unregistered.',
+    whenUsed: ['Automation review', 'Compliance audit', 'Debugging failures', 'Founder transparency', 'Shadow Mode graduation'],
+    relatedSystems: ['event-bus', 'shadow-mode', 'command-dock', 'autonomous-preparation'],
+    exampleWorkflows: ['REGISTER AUTOMATION → MONITOR DASHBOARD → PAUSE ON FAILURE'],
+    aliases: ['automation registry', 'workflow registry', 'automation catalog', 'ar'],
+    searchKeywords: ['automations', 'workflows', 'transparent automation', 'execution history'],
   }),
 ];
 

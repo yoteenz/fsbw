@@ -53,6 +53,7 @@ import { listComponentRegistryDockSuggestions } from '../component-registry/dock
 import { listDesignTokenEngineDockSuggestions } from '../design-token-engine/dock-advisor';
 import { listInteractionEngineDockSuggestions } from '../interaction-engine/dock-advisor';
 import { listEventBusDockSuggestions } from '../event-bus/dock-advisor';
+import { listAutomationRegistryDockSuggestions } from '../automation-registry/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -393,6 +394,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/automation-registry')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'automation-registry',
+      label: 'AUTOMATION REGISTRY™ · TRANSPARENT',
+      portfolioMode: false,
+      suggestedCommands: listAutomationRegistryDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 
