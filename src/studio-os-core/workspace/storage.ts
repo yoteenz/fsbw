@@ -1,6 +1,7 @@
 /** Active workspace persistence — localStorage key for studio os. */
 
 import { STUDIO_PLATFORM_WORKSPACE_ID } from '../platform/schema';
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from '../../utils/safeLocalStorage';
 
 export const STUDIO_OS_ACTIVE_WORKSPACE_KEY = 'studioOs_activeWorkspace_v1';
 
@@ -21,12 +22,8 @@ export function setRuntimeActiveWorkspaceId(workspaceId: string): void {
 }
 
 export function readActiveWorkspaceIdFromStorage(): string {
-  try {
-    const raw = localStorage.getItem(STUDIO_OS_ACTIVE_WORKSPACE_KEY);
-    if (raw && raw.trim()) return raw.trim();
-  } catch {
-    /* ignore */
-  }
+  const raw = safeLocalStorageGetItem(STUDIO_OS_ACTIVE_WORKSPACE_KEY);
+  if (raw && raw.trim()) return raw.trim();
   return STUDIO_PLATFORM_WORKSPACE_ID;
 }
 
@@ -35,7 +32,7 @@ export function clearActiveOrganizationFromStorage(): void {
 }
 
 export function writeActiveWorkspaceIdToStorage(workspaceId: string): void {
-  localStorage.setItem(STUDIO_OS_ACTIVE_WORKSPACE_KEY, workspaceId);
+  safeLocalStorageSetItem(STUDIO_OS_ACTIVE_WORKSPACE_KEY, workspaceId);
   setRuntimeActiveWorkspaceId(workspaceId);
 }
 

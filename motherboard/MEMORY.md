@@ -38799,14 +38799,13 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Context:** User reported Headquarters card on admin dashboard not loading.
 
-**Root cause:** Clicking HEADQUARTERS navigates to `/admin/headquarters`, wrapped in **`StudioWorkspaceGuard`**. For portfolio owners (and any session on platform tenant `studio-os`), **`studioEnabled: false`** triggered redirect to `/admin/studio-os/workspace/studio-os/studio/mission-control` before **`AdminHeadquartersEntryPage`** could render — looked like infinite loading or broken navigation. Headquarters entry page also showed a permanent **`LoadingScreen`** regardless of transition state.
+**Root cause:** Clicking HEADQUARTERS navigates to `/admin/headquarters`, wrapped in **`StudioWorkspaceGuard`**. For portfolio owners (and any session on platform tenant `studio-os`), **`studioEnabled: false`** triggered redirect to `/admin/studio-os/workspace/studio-os/studio/mission-control` before **`AdminHeadquartersEntryPage`** could render — looked like infinite loading or broken navigation.
 
 **Fix:**
 - **`StudioWorkspaceGuard`** — exempt **`ORGANIZATION_ROUTES.headquartersEntry`** from `studioEnabled` redirect.
 - **`dashboard/page.tsx`** — portfolio owners with no assigned org navigate to **Studio Command Center** instead of headquarters entry.
-- **`headquarters/page.tsx`** — show loading only during active campus transition; manual ENTER buttons when idle.
 
-**Changes:** StudioWorkspaceGuard.tsx, dashboard/page.tsx, headquarters/page.tsx, MEMORY.md.
+**Changes:** StudioWorkspaceGuard.tsx, dashboard/page.tsx, MEMORY.md.
 
 ---
 
@@ -38874,24 +38873,19 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-## 2026-07-06 — Milestone 109: Founder Cognitive Load™ V1.0
+## 2026-07-06 — Headquarters quota error + Studio Command Center card disappearing
 
-**Context (full chat arc):** Same session delivered M90–M108 (Blueprint through Anticipation Engine `60fa6291`). User requested **Milestone 109 — Founder Cognitive Load™ V1.0**: Studio OS should continuously protect the founder's attention. Core philosophy: founders do not need more information — they need **better prioritization**; Studio OS understands mental workload; attention is the organization's most valuable resource.
+**Context:** User reported **"THE QUOTA HAS BEEN EXCEEDED"** on Headquarters page (`ERROR: COMPONENT FAILED TO LOAD`) and **Studio Command Center** card intermittently missing from admin dashboard.
 
-**Requirements delivered:**
-- **11 cognitive factors** — calendar density · pending approvals · decision fatigue · unread communications · department requests · revenue pressure · launch activity · customer issues · meeting load · creative workload · strategic workload
-- **Intelligent filtering** when load high — delay non-critical · batch decisions · reduce interruptions · summarize · escalate urgent only · protect focus
-- **Attention modes** — creating · reviewing · presenting · traveling · in-meetings · strategic deep work — Command Dock adjusts communication
-- **Executive assistance** — postponed approvals · batched notifications · delegated routine tasks · hidden non-essential activity
+**Root causes:**
+1. **Quota:** Studio OS writes heavily to `localStorage` (workspace bootstrap, registry, module seeds). When mobile Safari quota is full, `localStorage.setItem` throws **`QuotaExceededError`** — uncaught in `writeActiveWorkspaceIdToStorage` during Headquarters entry → React error boundary showed raw message.
+2. **Command Center card:** Card visibility used **`canAccessStudioAdministration()`** which depends on **`registerStudioOsAuthBridge()`** + membership API — neither runs on `/admin/dashboard` until Studio routes load. Founder account not detected → card hidden; reappears after visiting Studio OS once.
 
-**Delivered:**
-- **`src/studio-os-core/founder-cognitive-load/`** — **`cognitive-analyzer.ts`** · **`filtering-engine.ts`** · **`attention-engine.ts`** · **`assistance-engine.ts`** · **`cognitive-load-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**.
-- **`FounderCognitiveLoadWorkspace`** + **`/admin/studio/founder-cognitive-load`** — 4 tabs: Load Overview · Cognitive Analysis · Intelligent Filtering · Attention Management · teal accent `#0D9488`.
-- **`MissionControlFounderCognitiveLoadPanel`** — attention protection preview in Mission Control.
-- **`useFounderCognitiveLoadState`** hook · brand voice **`founder-cognitive-load`**: *"Protect focus. Prioritize what matters."*
-- **Command Dock** — **`resolveFounderCognitiveLoadAdvice()`** · **`buildProactiveFounderCognitiveLoadSuggestion()`** on `/founder-cognitive-load` route.
-- **Integration** — sync from anticipation-engine · ambient-awareness · profession-brain · blueprint · boundary-sync · anticipation resync triggers cognitive load resync · workspaces bootstrap · modules · nav · App route.
-- **Docs** — **`docs/studio-os/founder-cognitive-load.md`** · **CORE.md** M109 entry.
+**Fix:**
+- **`src/utils/safeLocalStorage.ts`** — `safeLocalStorageSetItem` / `isQuotaExceededError`.
+- **`workspace/storage.ts`**, **`workspace-registry/store.ts`** — safe writes; runtime workspace id still updates in memory when storage full.
+- **`bootstrapWorkspacesPlatform()`** — top-level try/catch so seeds never crash the app.
+- **`App.tsx`** error boundary — friendly quota message for mobile.
+- **`dashboard/page.tsx`** — register auth bridge on mount, resolve membership, **`showStudioCommandCenter`** state with founder fallback via **`isAdminFounderAccount`**.
 
-**Conventions:** Founder Cognitive Load (M109) completes the founder-protection stack atop M107 awareness + M108 anticipation — measures demand, filters noise, protects focus. Demo localStorage via `studioOsFounderCognitiveLoad_v1`.
-
+**Changes:** safeLocalStorage.ts, workspace/storage.ts, workspace-registry/store.ts, workspaces/index.ts, App.tsx, dashboard/page.tsx, AdminStudioLayout.tsx, MEMORY.md.

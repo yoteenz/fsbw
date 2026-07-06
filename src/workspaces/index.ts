@@ -103,7 +103,8 @@ function yieldToMain(): Promise<void> {
 /** Heavy demo seeds — call from Studio OS routes only (not on /admin/dashboard). */
 export function bootstrapWorkspacesPlatform(): void {
   void (async () => {
-    await yieldToMain();
+    try {
+      await yieldToMain();
 
     const { bootstrapWorkspaceCreationEngine } = await import('../studio-os-core/workspace-creation');
     bootstrapWorkspaceCreationEngine();
@@ -486,5 +487,8 @@ export function bootstrapWorkspacesPlatform(): void {
 
     const vision = await import('./frontal-slayer/vision-engine');
     vision.bootstrapFrontalSlayerVisionEngine();
+    } catch (error) {
+      console.warn('[bootstrapWorkspacesPlatform] seed interrupted (storage quota or module error):', error);
+    }
   })();
 }

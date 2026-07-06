@@ -12,7 +12,7 @@ import {
   percentVisibleReviewsPositive,
 } from '../../../utils/adminReviewAggregates';
 import { isSupabaseConfigured } from '../../../utils/supabase';
-import { isAdminEmail, getEffectiveTierName, isAyoteenzAdminAccount } from '../../../utils/adminAuth';
+import { isAdminEmail, getEffectiveTierName, isAyoteenzAdminAccount, getCurrentUser, isAdminFounderAccount } from '../../../utils/adminAuth';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { getMockClientsForAyoteenz, getMockOrdersForClient, isClientNewsletterSubscribed } from '../clients/page';
 import { isClientBlocked } from '../../../utils/blockedClients';
@@ -29,6 +29,9 @@ import {
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { fetchAdminMeetingsApiNormalized, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
 import { canAccessStudioAdministration, getAssignedOrganizationWorkspaceId } from '../../../studio-os-core/application/portfolio-access';
+import { ensureOrgMembershipResolved } from '../../../studio-os-core/auth/membership';
+import { registerStudioOsAuthBridge } from '../../../shared/auth/studioOsAuthBridge';
+import { getAccessToken } from '../../../utils/api';
 import { ORGANIZATION_ROUTES, STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import {
   HEADQUARTERS_DASHBOARD_FOOTER,
@@ -43,6 +46,13 @@ import {
 
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;
+
+function resolveShowStudioCommandCenter(): boolean {
+  registerStudioOsAuthBridge();
+  if (canAccessStudioAdministration()) return true;
+  const user = getCurrentUser();
+  return Boolean(user?.email && isAdminFounderAccount(user));
+}
 
 type WorkersDashboardStatItem = { label: string; value: string; color?: string };
 
@@ -280,8 +290,22 @@ export default function AdminDashboard() {
   const [apiMeetings, setApiMeetings] = useState<AdminMeeting[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showStudioCommandCenter, setShowStudioCommandCenter] = useState(resolveShowStudioCommandCenter);
 
   useAdminMeetingsApiRefresh(setApiMeetings, true);
+
+  useEffect(() => {
+    registerStudioOsAuthBridge();
+    void (async () => {
+      try {
+        const token = await getAccessToken();
+        await ensureOrgMembershipResolved(token ?? undefined);
+      } catch {
+        /* membership optional on dashboard */
+      }
+      setShowStudioCommandCenter(resolveShowStudioCommandCenter());
+    })();
+  }, []);
 
   // Load data: from Supabase admin API when configured and admin, else mock
   useEffect(() => {
@@ -1146,7 +1170,7 @@ export default function AdminDashboard() {
       activity: HEADQUARTERS_DASHBOARD_FOOTER,
     },
 
-    ...(canAccessStudioAdministration()
+    ...(showStudioCommandCenter
       ? [
           {
             title: 'STUDIO COMMAND CENTER',
@@ -1163,7 +1187,7 @@ export default function AdminDashboard() {
   ];
 
   const DASHBOARD_CARD_ORDER = [
-    ...(canAccessStudioAdministration() ? (['STUDIO COMMAND CENTER'] as const) : []),
+    ...(showStudioCommandCenter ? (['STUDIO COMMAND CENTER'] as const) : []),
     'HEADQUARTERS',
     'REVENUE',
     'CLIENTS',

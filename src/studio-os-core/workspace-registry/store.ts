@@ -1,5 +1,6 @@
 import { WORKSPACE_REGISTRY_STORAGE_KEY, WORKSPACE_REGISTRY_VERSION } from './types';
 import type { WorkspaceRegistryStore } from './types';
+import { safeLocalStorageGetItem, safeLocalStorageSetItem } from '../../utils/safeLocalStorage';
 
 export function buildWorkspaceRegistrySeed(): WorkspaceRegistryStore {
   const now = new Date().toISOString();
@@ -90,7 +91,7 @@ export function buildWorkspaceRegistrySeed(): WorkspaceRegistryStore {
 export function readWorkspaceRegistryStore(): WorkspaceRegistryStore {
   if (typeof window === 'undefined') return buildWorkspaceRegistrySeed();
   try {
-    const raw = localStorage.getItem(WORKSPACE_REGISTRY_STORAGE_KEY);
+    const raw = safeLocalStorageGetItem(WORKSPACE_REGISTRY_STORAGE_KEY);
     if (!raw) return buildWorkspaceRegistrySeed();
     return { ...buildWorkspaceRegistrySeed(), ...JSON.parse(raw) };
   } catch {
@@ -100,7 +101,7 @@ export function readWorkspaceRegistryStore(): WorkspaceRegistryStore {
 
 export function writeWorkspaceRegistryStore(store: WorkspaceRegistryStore): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(
+  safeLocalStorageSetItem(
     WORKSPACE_REGISTRY_STORAGE_KEY,
     JSON.stringify({ ...store, lastUpdatedAt: new Date().toISOString() })
   );

@@ -108,10 +108,18 @@ export function AdminStudioLayout({
     }
 
     const runBootstrap = () => {
-      void import('../../../workspaces').then(({ bootstrapWorkspacesPlatform }) => {
-        bootstrapWorkspacesPlatform();
-        sessionStorage.setItem('studioOsPlatformBootstrapped_v1', '1');
-      });
+      void import('../../../workspaces')
+        .then(({ bootstrapWorkspacesPlatform }) => {
+          bootstrapWorkspacesPlatform();
+          try {
+            sessionStorage.setItem('studioOsPlatformBootstrapped_v1', '1');
+          } catch {
+            /* quota */
+          }
+        })
+        .catch((error) => {
+          console.warn('[AdminStudioLayout] platform bootstrap failed:', error);
+        });
     };
 
     if (typeof requestIdleCallback !== 'undefined') {

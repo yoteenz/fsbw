@@ -52,6 +52,7 @@ import {
   isDynamicImportChunkFailure,
   reloadForStaleChunks,
 } from './utils/chunkLoadRecovery';
+import { isQuotaExceededError } from './utils/safeLocalStorage';
 import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/creativePreviewMode';
 import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
@@ -420,6 +421,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   render() {
     if (this.state.hasError) {
       const isChunkError = this.state.error ? isDynamicImportChunkFailure(this.state.error) : false;
+      const isQuotaError = this.state.error ? isQuotaExceededError(this.state.error) : false;
       
       return (
         <div style={{
@@ -461,7 +463,9 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
           >
             {isChunkError
               ? 'A new version was deployed while this tab was open. Tap reload to refresh — your data on this device is kept.'
-              : this.state.error?.message}
+              : isQuotaError
+                ? 'THIS DEVICE\'S BROWSER STORAGE IS FULL. STUDIO OS COULD NOT SAVE WORKSPACE DATA. TRY SAFARI SETTINGS → CLEAR WEBSITE DATA FOR THIS SITE, OR USE A PRIVATE TAB. YOUR ACCOUNT DATA IN THE CLOUD IS SAFE.'
+                : this.state.error?.message}
           </p>
           {isChunkError ? (
             <button
