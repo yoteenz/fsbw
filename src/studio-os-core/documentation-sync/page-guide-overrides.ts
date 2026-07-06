@@ -119,6 +119,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'prompt-qa': fromSystem('prompt-qa'),
   'experience-qa': fromSystem('experience-qa'),
   'visual-diff-engine': fromSystem('visual-diff-engine'),
+  'accessibility-auditor': fromSystem('accessibility-auditor'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

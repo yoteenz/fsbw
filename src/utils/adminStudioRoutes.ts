@@ -1009,6 +1009,10 @@ export function adminStudioVisualDiffEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/visual-diff-engine`;
 }
 
+export function adminStudioAccessibilityAuditorPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/accessibility-auditor`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

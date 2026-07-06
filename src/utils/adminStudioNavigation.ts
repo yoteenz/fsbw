@@ -2004,6 +2004,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'accessibility-auditor',
+    title: 'ACCESSIBILITY AUDITOR™',
+    purpose: 'Continuously evaluates inclusive, understandable, usable experiences — accessibility feels invisible. Inclusive design is premium design.',
+    route: p('accessibility-auditor'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M158',
+    ctaLabel: 'OPEN ACCESSIBILITY AUDIT',
+    moduleKey: 'accessibility-auditor',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

@@ -150,6 +150,7 @@ export type StudioOsCoreModuleId =
   | 'prompt-qa'
   | 'experience-qa'
   | 'visual-diff-engine'
+  | 'accessibility-auditor'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1045,6 +1046,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'VISUAL DIFF ENGINE™',
     description: 'Visual Diff Engine V1.0 — Studio OS visual memory; detects unintended visual changes before users see them.',
     routeSegment: 'visual-diff-engine',
+  },
+  {
+    id: 'accessibility-auditor',
+    label: 'ACCESSIBILITY AUDITOR™',
+    description: 'Accessibility Auditor V1.0 — continuously evaluates inclusive, understandable, usable experiences for all abilities.',
+    routeSegment: 'accessibility-auditor',
   },
   {
     id: 'succession-mode',

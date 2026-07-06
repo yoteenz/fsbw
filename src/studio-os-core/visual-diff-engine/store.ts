@@ -52,10 +52,14 @@ export function syncVisualDiffEngineFromSources(
 ): OrganizationVisualDiffEngineProfile {
   const existing = getOrganizationVisualDiffEngineProfile(organizationId);
   const built = buildOrganizationVisualDiffEngineProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedScreenId: existing?.selectedScreenId ?? built.selectedScreenId,
   });
+  void import('../accessibility-auditor/store').then((m) => {
+    m.syncAccessibilityAuditorFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationVisualDiffEngineProfile(
