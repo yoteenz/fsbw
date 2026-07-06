@@ -191,6 +191,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncCrossOrgIntelligenceFromSources(blueprint.organizationId);
   });
 
+  void import('../relationship-memory/store').then((m) => {
+    m.syncRelationshipMemoryFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

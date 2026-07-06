@@ -48,7 +48,11 @@ function upsertProfile(profile: OrganizationCrossOrgIntelligenceProfile): Organi
 }
 
 export function syncCrossOrgIntelligenceFromSources(organizationId: string): OrganizationCrossOrgIntelligenceProfile {
-  return upsertProfile(buildOrganizationCrossOrgIntelligenceProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationCrossOrgIntelligenceProfile(organizationId));
+  void import('../relationship-memory/store').then((m) => {
+    m.syncRelationshipMemoryFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationCrossOrgIntelligenceProfile(

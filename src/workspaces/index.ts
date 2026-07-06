@@ -281,6 +281,10 @@ export function bootstrapWorkspacesPlatform(): void {
     crossOrgIntelligence.bootstrapCrossOrgIntelligencePlatform();
     await yieldToMain();
 
+    const relationshipMemory = await import('../studio-os-core/relationship-memory/bootstrap');
+    relationshipMemory.bootstrapRelationshipMemoryPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

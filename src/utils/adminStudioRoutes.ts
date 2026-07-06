@@ -833,6 +833,10 @@ export function adminStudioCrossOrgIntelligencePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/cross-organization-intelligence`;
 }
 
+export function adminStudioRelationshipMemoryPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/relationship-memory`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

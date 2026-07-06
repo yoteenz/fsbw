@@ -56,6 +56,7 @@ import { MissionControlAnticipationPanel } from './MissionControlAnticipationPan
 import { MissionControlFounderCognitiveLoadPanel } from './MissionControlFounderCognitiveLoadPanel';
 import { MissionControlPresencePanel } from './MissionControlPresencePanel';
 import { MissionControlCrossOrgIntelligencePanel } from './MissionControlCrossOrgIntelligencePanel';
+import { MissionControlRelationshipMemoryPanel } from './MissionControlRelationshipMemoryPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -421,6 +422,7 @@ export function MissionControlWorkspace() {
             <MissionControlFounderCognitiveLoadPanel />
             <MissionControlPresencePanel />
             <MissionControlCrossOrgIntelligencePanel />
+            <MissionControlRelationshipMemoryPanel />
           </div>
         </ExecutiveSecondaryGrid>
 

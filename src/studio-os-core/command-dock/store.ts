@@ -103,6 +103,10 @@ import {
   resolveCrossOrgIntelligenceAdvice,
   buildProactiveCrossOrgSuggestion,
 } from '../cross-organization-intelligence/dock-advisor';
+import {
+  resolveRelationshipMemoryAdvice,
+  buildProactiveRelationshipMemorySuggestion,
+} from '../relationship-memory/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -179,6 +183,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const cognitiveLoad = buildProactiveFounderCognitiveLoadSuggestion(workspaceId);
   const presence = buildProactivePresenceSuggestion(workspaceId);
   const crossOrg = buildProactiveCrossOrgSuggestion(workspaceId);
+  const relationshipMemory = buildProactiveRelationshipMemorySuggestion(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -223,6 +228,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
         response: crossOrg,
         concierge: 'Chief Concierge',
         suggestedCommand: 'Open Cross-Organization Intelligence — review trusted collaboration opportunities.',
+      }
+    : null;
+  const relationshipMemoryProactive = relationshipMemory
+    ? {
+        response: relationshipMemory,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Relationship Memory — review how Studio OS has learned your working preferences.',
       }
     : null;
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
@@ -274,6 +286,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const proactiveSource =
     ambientOpening
       ? ambientOpening
+      : pathname.includes('/relationship-memory') && relationshipMemoryProactive
+      ? relationshipMemoryProactive
       : pathname.includes('/cross-organization-intelligence') && crossOrgProactive
       ? crossOrgProactive
       : pathname.includes('/presence-engine') && presenceProactive
@@ -454,6 +468,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${crossOrgAdvice.concierge}\n${crossOrgAdvice.response}`,
+    });
+    return null;
+  }
+
+  const relationshipMemoryAdvice = resolveRelationshipMemoryAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (relationshipMemoryAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${relationshipMemoryAdvice.concierge}\n${relationshipMemoryAdvice.response}`,
     });
     return null;
   }

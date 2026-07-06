@@ -33,6 +33,7 @@ import { listAnticipationEngineDockSuggestions } from '../anticipation-engine';
 import { listFounderCognitiveLoadDockSuggestions } from '../founder-cognitive-load';
 import { listPresenceEngineDockSuggestions } from '../presence-engine';
 import { listCrossOrgIntelligenceDockSuggestions } from '../cross-organization-intelligence';
+import { listRelationshipMemoryDockSuggestions } from '../relationship-memory';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -240,6 +241,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'CROSS-ORG INTELLIGENCE™ · TRUST ALWAYS',
       portfolioMode: false,
       suggestedCommands: listCrossOrgIntelligenceDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/relationship-memory')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'relationship-memory',
+      label: 'RELATIONSHIP MEMORY™ · REMEMBER HOW YOU WORK',
+      portfolioMode: false,
+      suggestedCommands: listRelationshipMemoryDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

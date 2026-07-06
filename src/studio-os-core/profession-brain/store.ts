@@ -139,6 +139,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../cross-organization-intelligence/store').then((m) => {
     m.syncCrossOrgIntelligenceFromSources(profile.organizationId);
   });
+  void import('../relationship-memory/store').then((m) => {
+    m.syncRelationshipMemoryFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

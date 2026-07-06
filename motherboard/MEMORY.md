@@ -38936,3 +38936,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Cross-Organization Intelligence (M111) extends portfolio collaboration — all connections `permissionRequired: true`, default privacy network-only/private. Demo localStorage via `studioOsCrossOrgIntelligence_v1`.
 
+---
+
+## 2026-07-06 — Milestone 112: Relationship Memory™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M111 (Blueprint through Cross-Organization Intelligence `46e9e994`). User requested **Milestone 112 — Relationship Memory™ V1.0**: Studio OS continuously learns how every founder, executive, employee, customer, and organization prefers to work. Core philosophy: relationships improve through memory — familiarity, not intrusive personalization; never require extensive manual setup; best executive assistants remember how leaders work.
+
+**Requirements delivered:**
+- **Founder memory** — 10 preference areas (communication style · approval habits · creative workflow · decision-making · meeting preferences · review preferences · working hours · leadership philosophy · reporting formats · presentation style) learned through observation
+- **Organizational relationships** — clients · partners · suppliers · employees · departments — preferred communication · meeting cadence · approval workflows · recurring requests · historical interactions
+- **Intelligent adaptation** — natural pattern observations with Command Dock applications (visual mockups · executive summaries · meeting timing · cross-department approval order)
+- **Command Dock** — proactive familiarity (*"I prepared visual mockups because I know that's your preferred review method"* · *"I scheduled this meeting later because you reserve mornings for strategic work"*)
+
+**Delivered:**
+- **`src/studio-os-core/relationship-memory/`** — **`founder-memory.ts`** · **`organizational-relationships.ts`** · **`adaptation-engine.ts`** · **`memory-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`RelationshipMemoryWorkspace`** + **`/admin/studio/relationship-memory`** — 4 tabs: Memory Overview · Founder Memory · Organizational Relationships · Intelligent Adaptation · rose accent `#DB2777`.
+- **`MissionControlRelationshipMemoryPanel`** — familiarity preview in Mission Control.
+- **`useRelationshipMemoryState`** hook · brand voice **`relationship-memory`**: *"Remember how you work. Naturally."*
+- **Command Dock** — **`resolveRelationshipMemoryAdvice()`** · **`buildProactiveRelationshipMemorySuggestion()`** · **`buildFamiliarityOpeningLine()`** on `/relationship-memory` route.
+- **Integration** — sync from founder-cognitive-load · presence-engine · cross-organization-intelligence · executive-council · ambient-awareness · profession-brain · organization-pulse · anticipation-engine · blueprint · cross-org resync triggers relationship memory resync · workspaces bootstrap · modules · nav · App route.
+- **Docs** — **`docs/studio-os/relationship-memory.md`** · **CORE.md** M112 entry.
+
+**Conventions:** Relationship Memory (M112) completes the familiarity layer atop M107–M111 intelligence stack — learns through observation, never intrusive forms. Demo localStorage via `studioOsRelationshipMemory_v1`.
+

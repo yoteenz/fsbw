@@ -1476,6 +1476,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'relationship-memory',
+    title: 'RELATIONSHIP MEMORY™',
+    purpose: 'Professional familiarity — learn how founders, executives, and organizations prefer to work. Familiar, never intrusive.',
+    route: p('relationship-memory'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M112',
+    ctaLabel: 'OPEN RELATIONSHIP MEMORY',
+    moduleKey: 'relationship-memory',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

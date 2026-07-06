@@ -106,6 +106,7 @@ export type StudioOsCoreModuleId =
   | 'founder-cognitive-load'
   | 'presence-engine'
   | 'cross-organization-intelligence'
+  | 'relationship-memory'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -737,6 +738,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CROSS-ORGANIZATION INTELLIGENCE™',
     description: 'Trusted cross-org collaboration V1.0 — intelligent connections, founder network, privacy-first resource sharing.',
     routeSegment: 'cross-organization-intelligence',
+  },
+  {
+    id: 'relationship-memory',
+    label: 'RELATIONSHIP MEMORY™',
+    description: 'Professional familiarity V1.0 — learn how founders and organizations prefer to work. Familiar, never intrusive.',
+    routeSegment: 'relationship-memory',
   },
   {
     id: 'succession-mode',
