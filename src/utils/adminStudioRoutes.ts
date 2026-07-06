@@ -757,6 +757,10 @@ export function adminStudioOrganizationInaugurationPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organization-inauguration`;
 }
 
+export function adminStudioProfessionBrainPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/profession-brain`;
+}
+
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }

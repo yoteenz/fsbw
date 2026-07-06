@@ -200,6 +200,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationInauguration.bootstrapOrganizationInaugurationPlatform();
     await yieldToMain();
 
+    const professionBrain = await import('../studio-os-core/profession-brain/bootstrap');
+    professionBrain.bootstrapProfessionBrainPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

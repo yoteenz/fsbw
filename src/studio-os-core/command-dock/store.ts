@@ -20,6 +20,7 @@ import { resolveDockContext } from './context';
 import { resolveExecutiveGrowthAdvice, buildProactiveGrowthSuggestion } from '../monetization-architecture/dock-advisor';
 import { resolveLivingDiscoveryAdvice, buildProactiveDiscoverySuggestion } from '../business-discovery-blueprint/dock-advisor';
 import { ensureOrganizationDiscoveryBlueprint } from '../business-discovery-blueprint/store';
+import { resolveProfessionBrainAdvice, buildProactiveBrainSuggestion } from '../profession-brain/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -74,10 +75,14 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const store = readCommandDockStore();
   const growth = buildProactiveGrowthSuggestion(getRuntimeActiveWorkspaceId());
   const discovery = buildProactiveDiscoverySuggestion(getRuntimeActiveWorkspaceId());
+  const brain = buildProactiveBrainSuggestion(getRuntimeActiveWorkspaceId());
+  const blueprintPct = ensureOrganizationDiscoveryBlueprint(getRuntimeActiveWorkspaceId()).overallProgressPct;
   const proactiveSource =
-    discovery && (ensureOrganizationDiscoveryBlueprint(getRuntimeActiveWorkspaceId()).overallProgressPct < 50)
-      ? discovery
-      : growth;
+    brain && blueprintPct >= 40
+      ? brain
+      : discovery && blueprintPct < 50
+        ? discovery
+        : growth;
   const proactiveSuggestion = proactiveSource
     ? {
         id: `proactive-${Date.now()}`,
@@ -136,6 +141,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const professionAdvice = resolveProfessionBrainAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (professionAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${professionAdvice.concierge}\n${professionAdvice.response}`,
+    });
+    return null;
+  }
 
   const discoveryAdvice = resolveLivingDiscoveryAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (discoveryAdvice) {

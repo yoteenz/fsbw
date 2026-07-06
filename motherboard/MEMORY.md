@@ -38515,3 +38515,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Inauguration requires Blueprint completion. Founding Blueprint snapshot is read-only forever. Ceremony language must preserve illusion — product feeling is “my company has a home, a memory, and a future.”
 
+---
+
+## 2026-07-06 — Milestone 91: Profession Brain™ (institutional intelligence)
+
+**Context (full chat arc):** Same session as M89 monetization, M90 Business Discovery Blueprint (`df0f84a6`), M90.5 Organization Inauguration (`0d9fd249`). User requested **Milestone 91 — Profession Brain™ V1.0**: permanent intelligence architecture — not an AI chatbot; living institutional memory preserving expertise, reasoning, judgment across generations.
+
+**Core philosophy delivered:** Businesses built on knowledge · Brain thinks like founder (WHAT + WHY) · unique Profession Brains per org · living knowledge updates · memory graph · concierge intelligence (never invent policy) · Command Dock routing · human knowledge artifacts · Academy foundation · optional public customer surfaces · knowledge ownership (export/backup) · Legacy Mode.
+
+**Delivered:**
+- **`src/studio-os-core/profession-brain/`** — brain catalog (Fuel Tax, Permit, Bookkeeping, Hair Color, Dispatch, Marketing, etc.), knowledge seeds from Blueprint/Inauguration/services, memory graph, decision intelligence, human knowledge, academy bridge, customer experience, ownership, legacy, living knowledge, concierge bridge, dock advisor, store, bootstrap.
+- **`ProfessionBrainWorkspace.tsx`** + **`/admin/studio/profession-brain`** — 9 tabs: Overview, Brains, Memory Graph, Decision Intelligence, Human Knowledge, Academy, Customer Experience, Ownership, Legacy.
+- **`useProfessionBrainState`** hook.
+- **Integration** — Blueprint completion syncs brains; boundary-sync bootstrap; Command Dock `resolveProfessionBrainAdvice()` (e.g. quarterly filing) + proactive suggestions; Mission Control brain commands.
+- **Docs** — **`docs/studio-os/profession-brain.md`**; **CORE.md** M91 entry.
+
+**Conventions:** Profession Brain ≠ chatbot — institutional memory. Concierges reference Brain. Demo export copies JSON to clipboard. Seeded from industry + Blueprint services on first init.
+

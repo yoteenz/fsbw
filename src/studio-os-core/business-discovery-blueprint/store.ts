@@ -123,6 +123,9 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     void import('../organization-inauguration/store').then((m) => {
       m.ensureInaugurationFromBlueprint(blueprint.organizationId);
     });
+    void import('../profession-brain/store').then((m) => {
+      m.syncProfessionBrainFromSources(blueprint.organizationId, blueprint.industryId, blueprint.companyName);
+    });
   }
 
   return finalized;

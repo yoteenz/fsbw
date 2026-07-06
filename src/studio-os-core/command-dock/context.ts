@@ -11,6 +11,7 @@ import {
 } from '../industry-architecture';
 import { listExecutiveGrowthSuggestions } from '../monetization-architecture';
 import { listDiscoveryDockSuggestions } from '../business-discovery-blueprint';
+import { listProfessionBrainDockSuggestions } from '../profession-brain';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -158,6 +159,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     };
   }
 
+  if (pathname.includes('/profession-brain')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'profession-brain',
+      label: 'PROFESSION BRAIN™ · INSTITUTIONAL INTELLIGENCE',
+      portfolioMode: false,
+      suggestedCommands: listProfessionBrainDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'strategy', 'executive-requests'],
+    };
+  }
+
   if (pathname.includes('/organization-inauguration')) {
     return {
       contextId: 'organization-inauguration',
@@ -224,20 +236,21 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     const industrySuggestions = listDockExpansionSuggestions(archProfile.industryId);
     const growthSuggestions = listExecutiveGrowthSuggestions(workspaceId);
     const discoverySuggestions = listDiscoveryDockSuggestions(workspaceId);
+    const brainSuggestions = listProfessionBrainDockSuggestions(workspaceId);
     const suggestions =
       activeOrg.tenantId === 'ndxbook'
         ? [
             'Help me connect Instagram.',
             'Create Page 001 for NDXBOOK.',
+            ...brainSuggestions.slice(0, 1),
+            ...discoverySuggestions.slice(0, 1),
+            ...growthSuggestions.slice(0, 1),
+          ]
+        : [
+            ...brainSuggestions.slice(0, 1),
             ...discoverySuggestions.slice(0, 1),
             ...growthSuggestions.slice(0, 1),
             ...industrySuggestions.slice(0, 1),
-          ]
-        : [
-            ...discoverySuggestions.slice(0, 1),
-            ...growthSuggestions.slice(0, 2),
-            ...industrySuggestions.slice(0, 1),
-            'What are today\'s priorities?',
           ];
     return {
       contextId: 'mission-control',

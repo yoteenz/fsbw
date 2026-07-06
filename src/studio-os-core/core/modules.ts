@@ -87,6 +87,7 @@ export type StudioOsCoreModuleId =
   | 'expansion-center'
   | 'business-discovery-blueprint'
   | 'organization-inauguration'
+  | 'profession-brain'
   | 'governance'
   | 'studio-intelligence'
   | 'simulation-engine'
@@ -602,6 +603,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATION INAUGURATION',
     description: 'Founder Ceremony V1.0 — immersive inauguration after Blueprint completion. Organization Charter, HQ activation, founding timeline, ENTER HEADQUARTERS.',
     routeSegment: 'organization-inauguration',
+  },
+  {
+    id: 'profession-brain',
+    label: 'PROFESSION BRAIN™',
+    description: 'Living institutional intelligence V1.0 — preserves expertise, judgment, and organizational memory. Powers every concierge, Academy lesson, and automation.',
+    routeSegment: 'profession-brain',
   },
   {
     id: 'governance',

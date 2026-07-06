@@ -61,6 +61,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationInaugurationProfile(context.organizationId);
   });
 
+  void import('../profession-brain/store').then((m) => {
+    m.ensureOrganizationProfessionBrainProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

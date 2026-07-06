@@ -1248,6 +1248,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'profession-brain',
+    title: 'PROFESSION BRAIN™',
+    purpose: 'Living institutional intelligence — preserves expertise, judgment, and memory. Powers concierges, Academy, and automations.',
+    route: p('profession-brain'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M91',
+    ctaLabel: 'OPEN PROFESSION BRAIN',
+    moduleKey: 'profession-brain',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',
