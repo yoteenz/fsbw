@@ -357,6 +357,10 @@ export function bootstrapWorkspacesPlatform(): void {
     interactionEngine.bootstrapInteractionEnginePlatform();
     await yieldToMain();
 
+    const eventBus = await import('../studio-os-core/event-bus/bootstrap');
+    eventBus.bootstrapEventBusPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

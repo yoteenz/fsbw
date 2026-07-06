@@ -6,6 +6,7 @@ import {
   adminStudioComponentRegistryPath,
   adminStudioDesignTokenEnginePath,
   adminStudioInteractionEnginePath,
+  adminStudioEventBusPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -704,6 +705,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['FIND hover pattern → BIND TO COMPONENT → AUDIT GOVERNANCE'],
     aliases: ['interaction engine', 'behavior patterns', 'interaction patterns', 'platform behavior', 'ie'],
     searchKeywords: ['interactions', 'hover', 'focus', 'modal', 'accessibility', 'motion'],
+  }),
+  entry({
+    id: 'event-bus',
+    label: 'Event Bus™',
+    moduleId: 'event-bus',
+    milestone: 'M131',
+    route: adminStudioEventBusPath(),
+    purpose: 'Communication backbone — publish/subscribe event-driven architecture for loosely coupled systems.',
+    overview:
+      'Standard event types (created, updated, approved, published, failed, etc.), subscription registry, Event Inspector (monitor, replay, filter, debug), permanent event history, and reaction chains.',
+    capabilities: ['Event catalog', 'Publish/subscribe', 'Event Inspector', 'Event history', 'Chain visualization', 'Latency metrics'],
+    howItWorks: 'Systems publish events → subscribers react independently → Event Inspector audits delivery → no direct feature coupling.',
+    whenUsed: ['Module integration', 'Automation triggers', 'Debugging', 'Compliance auditing', 'Analytics pipelines'],
+    relatedSystems: ['interaction-engine', 'system-registry', 'command-dock', 'automation-registry'],
+    exampleWorkflows: ['PUBLISH customer.created → CHAIN REACTIONS → INSPECT DELIVERY'],
+    aliases: ['event bus', 'publish subscribe', 'event driven', 'nervous system', 'eb'],
+    searchKeywords: ['events', 'publish', 'subscribe', 'event inspector', 'event history'],
   }),
 ];
 

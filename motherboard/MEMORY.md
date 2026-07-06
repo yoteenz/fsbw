@@ -39523,3 +39523,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/interaction-engine.md`** · **CORE.md** M130 entry
 
 **Conventions:** Components declare interactionRules referencing Interaction Engine™ patterns — never page-specific hover/click/modal logic. Optional `registerInteractionPattern()` for platform extensions. Sync chain: … → Design Token Engine → **Interaction Engine**. Demo localStorage via `studioOsInteractionEngine_v1`. Brand voice: *"Every click feels intentional. Studio OS behaves like one cohesive operating system."* Accent `#0891B2`.
+
+---
+
+## 2026-07-06 — Milestone 131: Event Bus™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine (`adf5a16c`) and M130 Interaction Engine (`bf9f5496`). User requested **Event Bus™**: communication backbone of Studio OS — systems publish events, other systems decide whether to respond; loosely coupled event-driven architecture; Event Inspector; permanent event history; no direct feature dependencies.
+
+**Requirements delivered:**
+- **Event-driven architecture** — publish/subscribe; example chain Customer Created → Executive Timeline → Memory Engine → Organization Pulse → Documentation Registry → Command Dock → Notifications → Automation → Analytics → Search
+- **Standard event verbs** — created, updated, deleted, approved, rejected, published, archived, completed, started, stopped, assigned, transferred, scheduled, cancelled, paid, failed, succeeded, imported, exported, connected, disconnected (~35 event types seeded)
+- **Event Inspector** — monitor, replay, filter, inspect payloads, debug failures, measure latency, visualize chains
+- **Event history** — permanent audit trail for auditing, debugging, analytics, compliance, historical replay
+- **Subscription registry** — documents which systems react to which events
+- **Command Dock** — event bus Q&A (*"Show Event Bus status"*, *"What happens when a customer is created?"*, *"Show Event Inspector metrics"*, *"Are systems communicating via events?"*)
+
+**Delivered:**
+- **`src/studio-os-core/event-bus/`** — `event-catalog.ts` · `subscription-registry.ts` · `chain-builder.ts` · `event-history.ts` · `inspector-engine.ts` · `bus-runtime.ts` (`publishEvent` · `subscribeToEvent` · `replayEvent`) · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`EventBusWorkspace`** (8 tabs: Overview · Event Catalog · Subscriptions · Event Inspector · Event History · Event Chains · Governance · Discovery) · **`/admin/studio/event-bus`** · **`MissionControlEventBusPanel`** · **`useEventBusState`**
+- **Wiring** — nav M131 · sync chain Interaction Engine → Event Bus · Command Dock event-bus-first · boundary-sync · documentation system registry + page-guide entry · Interaction Engine workspace link
+- **Docs** — **`docs/studio-os/event-bus.md`** · **CORE.md** M131 entry
+
+**Conventions:** Systems publish via `publishOrganizationEvent()` — never call another module directly. Optional `registerEventType()` for new standardized events. Sync chain: … → Interaction Engine → **Event Bus**. Demo localStorage via `studioOsEventBus_v1`. Brand voice: *"Systems publish events. Other systems decide whether to respond."* Accent `#EA580C`.

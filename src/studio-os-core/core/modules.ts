@@ -124,6 +124,7 @@ export type StudioOsCoreModuleId =
   | 'component-registry'
   | 'design-token-engine'
   | 'interaction-engine'
+  | 'event-bus'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -863,6 +864,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'INTERACTION ENGINE™',
     description: 'Interaction Engine V1.0 — behavioral source of truth for hover, focus, feedback, navigation, and accessibility.',
     routeSegment: 'interaction-engine',
+  },
+  {
+    id: 'event-bus',
+    label: 'EVENT BUS™',
+    description: 'Event Bus V1.0 — publish/subscribe communication backbone; loosely coupled event-driven architecture.',
+    routeSegment: 'event-bus',
   },
   {
     id: 'succession-mode',

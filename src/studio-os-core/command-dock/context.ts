@@ -52,6 +52,7 @@ import { listSystemRegistryDockSuggestions } from '../system-registry/dock-advis
 import { listComponentRegistryDockSuggestions } from '../component-registry/dock-advisor';
 import { listDesignTokenEngineDockSuggestions } from '../design-token-engine/dock-advisor';
 import { listInteractionEngineDockSuggestions } from '../interaction-engine/dock-advisor';
+import { listEventBusDockSuggestions } from '../event-bus/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -392,6 +393,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/event-bus')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'event-bus',
+      label: 'EVENT BUS™ · NERVOUS SYSTEM',
+      portfolioMode: false,
+      suggestedCommands: listEventBusDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 

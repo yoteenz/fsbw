@@ -6,7 +6,7 @@ import {
   INTERACTION_ENGINE_PHILOSOPHY,
   queryInteractionPatterns,
 } from '../../../../studio-os-core/interaction-engine';
-import { adminStudioDesignTokenEnginePath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioDesignTokenEnginePath, adminStudioEventBusPath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -74,6 +74,9 @@ export function InteractionEngineWorkspace() {
           {profile.dockEngineLine}
         </p>
       </ExecutiveSecondaryCard>
+      <button type="button" onClick={() => navigate(adminStudioEventBusPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: INTERACTION_ENGINE_ACCENT, color: INTERACTION_ENGINE_ACCENT }}>
+        EVENT BUS →
+      </button>
       <button type="button" onClick={() => navigate(adminStudioDesignTokenEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: INTERACTION_ENGINE_ACCENT, color: INTERACTION_ENGINE_ACCENT }}>
         DESIGN TOKEN ENGINE →
       </button>

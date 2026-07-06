@@ -51,7 +51,11 @@ function upsertProfile(profile: OrganizationInteractionEngineProfile): Organizat
 export function syncInteractionEngineFromSources(
   organizationId: string
 ): OrganizationInteractionEngineProfile {
-  return upsertProfile(buildOrganizationInteractionEngineProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationInteractionEngineProfile(organizationId));
+  void import('../event-bus/store').then((m) => {
+    m.syncEventBusFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationInteractionEngineProfile(

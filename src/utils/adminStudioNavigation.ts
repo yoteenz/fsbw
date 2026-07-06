@@ -1692,6 +1692,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'event-bus',
+    title: 'EVENT BUS™',
+    purpose: 'Communication backbone — publish/subscribe event-driven architecture. One event, many intelligent reactions.',
+    route: p('event-bus'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M131',
+    ctaLabel: 'OPEN EVENT BUS',
+    moduleKey: 'event-bus',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

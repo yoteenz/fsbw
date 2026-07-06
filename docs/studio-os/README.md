@@ -20,6 +20,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [component-registry.md](./component-registry.md) | Component Registry™ — reusable UI assets, design system, M128 |
 | [design-token-engine.md](./design-token-engine.md) | Design Token Engine™ — visual source of truth, tokens, themes, M129 |
 | [interaction-engine.md](./interaction-engine.md) | Interaction Engine™ — behavioral source of truth, patterns, a11y, M130 |
+| [event-bus.md](./event-bus.md) | Event Bus™ — publish/subscribe backbone, Event Inspector, M131 |
 | [memory-bible.md](./memory-bible.md) | Institutional knowledge, naming, decisions, AI Context Builder |
 
 Platform config: `src/studio-os/config/platform.ts`

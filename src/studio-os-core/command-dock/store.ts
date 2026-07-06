@@ -199,6 +199,11 @@ import {
   buildProactiveInteractionEngineSuggestion,
   buildInteractionEngineOpeningLine,
 } from '../interaction-engine/dock-advisor';
+import {
+  resolveEventBusAdvice,
+  buildProactiveEventBusSuggestion,
+  buildEventBusOpeningLine,
+} from '../event-bus/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -311,6 +316,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const designTokenEngineOpeningLine = buildDesignTokenEngineOpeningLine(workspaceId);
   const interactionEngine = buildProactiveInteractionEngineSuggestion(workspaceId);
   const interactionEngineOpeningLine = buildInteractionEngineOpeningLine(workspaceId);
+  const eventBus = buildProactiveEventBusSuggestion(workspaceId);
+  const eventBusOpeningLine = buildEventBusOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -602,6 +609,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'How does modal opening behave?',
       }
     : null;
+  const eventBusProactive = eventBus
+    ? {
+        response: eventBus,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Show Event Bus status.',
+      }
+    : null;
+  const eventBusOpeningProactive = eventBusOpeningLine
+    ? {
+        response: eventBusOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'What happens when a customer is created?',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -676,6 +697,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? modelOrchestratorProactive
       : pathname.includes('/studio-foundation-models') && studioFoundationModelsProactive
       ? studioFoundationModelsProactive
+      : pathname.includes('/event-bus') && eventBusProactive
+      ? eventBusProactive
       : pathname.includes('/interaction-engine') && interactionEngineProactive
       ? interactionEngineProactive
       : pathname.includes('/design-token-engine') && designTokenEngineProactive
@@ -693,7 +716,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -1087,6 +1110,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${studioFoundationModelsAdvice.concierge}\n${studioFoundationModelsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const eventBusAdvice = resolveEventBusAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (eventBusAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${eventBusAdvice.concierge}\n${eventBusAdvice.response}`,
     });
     return null;
   }

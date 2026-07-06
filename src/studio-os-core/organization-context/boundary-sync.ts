@@ -221,6 +221,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationInteractionEngineProfile(context.organizationId);
   });
 
+  void import('../event-bus/store').then((m) => {
+    m.ensureOrganizationEventBusProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

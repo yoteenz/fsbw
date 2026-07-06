@@ -905,6 +905,10 @@ export function adminStudioInteractionEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/interaction-engine`;
 }
 
+export function adminStudioEventBusPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/event-bus`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

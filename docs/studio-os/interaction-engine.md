@@ -68,9 +68,9 @@ Aligned with Design Token Engine™ timing tokens — respects `prefers-reduced-
 
 ## Sync chain
 
-Documentation Governance → System Registry → Component Registry → Design Token Engine → **Interaction Engine**
+Documentation Governance → System Registry → Component Registry → Design Token Engine → Interaction Engine → **Event Bus**
 
-**`design-token-engine/store`** triggers **`syncInteractionEngineFromSources`** · **boundary-sync**
+**`design-token-engine/store`** triggers **`syncInteractionEngineFromSources`** · chains to **Event Bus™**
 
 ## UI
 

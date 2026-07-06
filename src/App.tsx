@@ -238,6 +238,10 @@ const AdminStudioInteractionEngine = lazyWithRetry(
   () => import('./pages/admin/studio/interaction-engine/page'),
   'AdminStudioInteractionEngine'
 );
+const AdminStudioEventBus = lazyWithRetry(
+  () => import('./pages/admin/studio/event-bus/page'),
+  'AdminStudioEventBus'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1514,6 +1518,11 @@ function App() {
           <Route path="studio/interaction-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioInteractionEngine />
+            </Suspense>
+          } />
+          <Route path="studio/event-bus" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioEventBus />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={
