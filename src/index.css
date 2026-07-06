@@ -4475,6 +4475,64 @@ html[data-loading-screen='true'] #root {
   background-color: #ffffff !important;
 }
 
+/* Workspace module lazy-load fallback — centered label + indeterminate bar */
+.workspace-module-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 24px;
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(4px);
+}
+
+.workspace-module-loading__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: min(280px, 88vw);
+}
+
+.workspace-module-loading__label {
+  margin: 0;
+  font-family: 'Futura PT Medium', futuristic-pt, Futura, Inter, sans-serif;
+  font-size: 8px;
+  font-weight: 515;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #808080;
+  text-align: center;
+}
+
+.workspace-module-loading__bar {
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.workspace-module-loading__bar-fill {
+  width: 42%;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #eb1c24, #ff5a62);
+  animation: workspace-module-loading-slide 1.35s ease-in-out infinite;
+}
+
+@keyframes workspace-module-loading-slide {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
 /* Lounge salon chairs: position via inline styles in loungeSceneLayout.ts (not here — !important blocked updates) */
 
 /* Lounge TV overlay — CRT static before menu content loads */

@@ -39784,3 +39784,11 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** studioOsBrowserStorage.ts, membership.ts, AdminStudioWorkspaceGuard.tsx, dashboard/page.tsx, workspaces/index.ts, adminStudioStorage.ts, test script, MEMORY.md.
 
 **Conventions:** Never sync-scan localStorage on critical path; prefetch Studio workspaces from admin dashboard; membership cache is session-stable after first resolve.
+
+---
+
+## 2026-07-06 — Workspace module loading UI centered with progress bar
+
+**User request:** Center the "LOADING WORKSPACE MODULE…" text on screen when lazy-loading Studio OS workspace modules, with a loading bar below for visual feedback.
+
+**Change:** Added **`src/components/base/WorkspaceModuleLoadingFallback.tsx`** — full-viewport fixed overlay (`position: fixed; inset: 0`) flex-centered label + indeterminate brand-red progress bar. CSS in **`index.css`** (`.workspace-module-loading*` + `workspace-module-loading-slide` keyframes). **`WorkspaceStudioModuleHost.tsx`** Suspense fallback now uses this component instead of a top-left `p-4` div.

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { useParams, Navigate, useLocation } from 'react-router-dom';
+import WorkspaceModuleLoadingFallback from '../../../../../components/base/WorkspaceModuleLoadingFallback';
 import { useWorkspace } from '../../../../../studio-os-core/context/WorkspaceProvider';
 import { STUDIO_OS_ROUTES } from '../../../../../studio-os-core/workspace/routes';
 import { getWorkspaceRegistry } from '../../../../../studio-os-core/workspace/registry';
@@ -11,7 +12,7 @@ function wrapLazy(loader: () => Promise<{ default: React.ComponentType }>) {
   const Comp = lazy(loader);
   return function WrappedModulePage() {
     return (
-      <Suspense fallback={<div className="p-4 text-[8px] font-futura uppercase">LOADING WORKSPACE MODULE…</div>}>
+      <Suspense fallback={<WorkspaceModuleLoadingFallback />}>
         <Comp />
       </Suspense>
     );
