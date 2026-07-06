@@ -1,5 +1,5 @@
-/** Milestone 103 — Organization Digital Twin™ bootstrap (org-scoped profiles created on first access). */
+/** Milestone 145 — Digital Twin™ V2.0 bootstrap (complete sandbox replica per organization). */
 
 export function bootstrapOrganizationDigitalTwinPlatform(): void {
-  /* Profiles sync on ensureOrganizationDigitalTwinProfile — no global seed required. */
+  /* Profiles sync on ensureOrganizationDigitalTwinProfile — practice before perform. */
 }

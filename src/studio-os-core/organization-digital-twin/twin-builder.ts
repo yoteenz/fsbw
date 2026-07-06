@@ -6,6 +6,7 @@ import { getOrganizationPulseProfile } from '../organization-pulse/store';
 import { getOrganizationShadowModeProfile } from '../shadow-mode/store';
 import { getOrganizationWisdomProfile } from '../wisdom-capture/store';
 import { resolveDigitalExecutiveRoster } from '../executive-council/digital-executives';
+import { buildDockTwinLine, buildSandboxReplicas } from './sandbox-builder';
 import type { OrganizationDigitalTwinProfile, TwinDepartmentSnapshot, TwinOrganizationSnapshot } from './types';
 
 const DEFAULT_DEPARTMENTS = [
@@ -92,16 +93,21 @@ export function buildOrganizationDigitalTwinProfile(
 ): OrganizationDigitalTwinProfile {
   const brain = getOrganizationProfessionBrainProfile(organizationId);
   const snapshot = buildTwinOrganizationSnapshot(organizationId);
+  const twinFidelityScore = computeTwinFidelityScore(organizationId, snapshot);
+  const now = new Date().toISOString();
+  const sandboxReplicas = buildSandboxReplicas(organizationId, twinFidelityScore, now);
 
-  return {
+  const profile: OrganizationDigitalTwinProfile = {
     organizationId,
     companyName: brain?.companyName ?? organizationId.replace(/-/g, ' ').toUpperCase(),
     industryId: brain?.industryId ?? resolveIndustryForWorkspace(organizationId),
-    updatedAt: new Date().toISOString(),
-    twinFidelityScore: computeTwinFidelityScore(organizationId, snapshot),
+    updatedAt: now,
+    twinFidelityScore,
     snapshot,
+    sandboxReplicas,
     simulationHistory: existing?.simulationHistory ?? [],
     sandboxActive: true,
+    practiceBeforePerform: true,
     syncedSources: [
       'profession-brain',
       'memory-engine',
@@ -111,6 +117,14 @@ export function buildOrganizationDigitalTwinProfile(
       'executive-council',
       'shadow-mode',
       'business-discovery-blueprint',
+      'studio-intelligence',
+      'qa-simulation-engine',
+      'workflow-engine',
+      'automation-registry',
     ],
+    dockTwinLine: '',
   };
+
+  profile.dockTwinLine = buildDockTwinLine(profile);
+  return profile;
 }

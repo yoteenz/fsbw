@@ -86,7 +86,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'organization-pulse': 'Feel the organization. Not just the revenue.',
   'wisdom-capture': 'Capture why. Not just what.',
   'shadow-mode': 'Observe first. Automate later.',
-  'organization-digital-twin': 'Explore the future. Before acting.',
+  'organization-digital-twin': 'Practice before perform. Test in the twin first.',
   'business-simulation-lab': 'Practice tomorrow. Before living it.',
   'knowledge-confidence': 'Know what you know. Honestly.',
   'legacy-vault': 'Preserve the story. Build legacy.',

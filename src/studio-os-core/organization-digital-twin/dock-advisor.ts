@@ -29,10 +29,19 @@ export function resolveDigitalTwinAdvice(
     };
   }
 
-  if (/digital twin|organization mirror|living simulation|twin fidelity|sandbox mode/i.test(trimmed)) {
+  if (/digital twin|organization mirror|living simulation|twin fidelity|sandbox mode|sandbox replica/i.test(trimmed)) {
     const snap = profile.snapshot;
+    const replicas = profile.sandboxReplicas.length;
     return {
-      response: `Digital Twin™ mirrors ${profile.companyName} in real time — ${snap.departmentCount} departments · ${snap.totalHeadcount} headcount · ${snap.digitalStaffCount} digital staff · health ${snap.executiveHealthScore}% · pulse ${snap.pulseScore}%. Twin fidelity ${profile.twinFidelityScore}%. All simulations run in sandbox — no real changes.`,
+      response: `Digital Twin™ — ${replicas} sandbox replicas active · ${snap.departmentCount} departments · ${snap.totalHeadcount} headcount · fidelity ${profile.twinFidelityScore}%. Studio Intelligence tests safely before recommending. Practice before perform.`,
+      concierge: 'Chief Concierge',
+      twinFidelityScore: profile.twinFidelityScore,
+    };
+  }
+
+  if (/practice before|production gate|twin test|test before production/i.test(trimmed)) {
+    return {
+      response: profile.dockTwinLine,
       concierge: 'Chief Concierge',
       twinFidelityScore: profile.twinFidelityScore,
     };
@@ -42,8 +51,8 @@ export function resolveDigitalTwinAdvice(
     const latest = profile.simulationHistory[0];
     return {
       response: latest
-        ? `Latest sandbox: ${latest.scenarioLabel} — ${latest.predictedImpact.slice(0, 120)} Confidence ${latest.confidenceLevel}%.`
-        : 'No simulations yet — ask "What happens if we hire two dispatchers?" to explore safely.',
+        ? `Latest sandbox: ${latest.scenarioLabel} — Risk ${latest.riskLevel.toUpperCase()} · ${latest.confidenceLevel}% confidence. ${latest.expectedOutcome.slice(0, 80)}… Rollback: ${latest.rollbackPlan.slice(0, 60)}…`
+        : 'No simulations yet — ask "What happens if we remove this approval step?" to explore safely.',
       concierge: 'Chief Concierge',
       briefing: latest,
       twinFidelityScore: profile.twinFidelityScore,
@@ -68,7 +77,7 @@ export function buildProactiveDigitalTwinSuggestion(organizationId: string): str
   if (!profile) return null;
 
   if (profile.twinFidelityScore >= 80) {
-    return `Digital Twin™ fidelity ${profile.twinFidelityScore}% — strong organizational mirror. Ask "What happens if…" to explore decisions safely before acting.`;
+    return profile.dockTwinLine;
   }
 
   if (profile.simulationHistory.length === 0) {

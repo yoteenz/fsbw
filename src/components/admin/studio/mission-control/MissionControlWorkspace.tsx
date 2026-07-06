@@ -57,6 +57,7 @@ import { useLivingHeadquartersState } from '../../../../hooks/useLivingHeadquart
 import { FrontalSlayerExecutiveLobby } from './FrontalSlayerExecutiveLobby';
 import { MissionControlExecutiveHealthPanel } from './MissionControlExecutiveHealthPanel';
 import { MissionControlOrganizationPulsePanel } from './MissionControlOrganizationPulsePanel';
+import { MissionControlDigitalTwinPanel } from './MissionControlDigitalTwinPanel';
 import { MissionControlKnowledgeConfidencePanel } from './MissionControlKnowledgeConfidencePanel';
 import { MissionControlAmbientBriefingPanel } from './MissionControlAmbientBriefingPanel';
 import { MissionControlAnticipationPanel } from './MissionControlAnticipationPanel';
@@ -167,6 +168,7 @@ export function MissionControlWorkspace() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <MissionControlExecutiveHealthPanel />
             <MissionControlOrganizationPulsePanel />
+            <MissionControlDigitalTwinPanel />
             <MissionControlKnowledgeConfidencePanel />
             <MissionControlAmbientBriefingPanel />
           </div>

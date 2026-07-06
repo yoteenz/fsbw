@@ -84,6 +84,9 @@ export function ExperienceEngineWorkspace() {
           Technology adapts to people. Not the other way around.
         </p>
       </ExecutiveSecondaryCard>
+      <button type="button" onClick={() => navigate(adminStudioQaHeadquartersPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: '#10B981', color: '#10B981' }}>
+        QA HEADQUARTERS →
+      </button>
       <button type="button" onClick={() => navigate(adminStudioAssetRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         ASSET REGISTRY →
       </button>
