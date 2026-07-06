@@ -52,10 +52,14 @@ export function syncAccessibilityAuditorFromSources(
 ): OrganizationAccessibilityAuditorProfile {
   const existing = getOrganizationAccessibilityAuditorProfile(organizationId);
   const built = buildOrganizationAccessibilityAuditorProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedPageId: existing?.selectedPageId ?? built.selectedPageId,
   });
+  void import('../performance-monitor/store').then((m) => {
+    m.syncPerformanceMonitorFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationAccessibilityAuditorProfile(

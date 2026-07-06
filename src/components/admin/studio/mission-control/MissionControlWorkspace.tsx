@@ -110,6 +110,7 @@ import { MissionControlPromptQaPanel } from './MissionControlPromptQaPanel';
 import { MissionControlExperienceQaPanel } from './MissionControlExperienceQaPanel';
 import { MissionControlVisualDiffEnginePanel } from './MissionControlVisualDiffEnginePanel';
 import { MissionControlAccessibilityAuditorPanel } from './MissionControlAccessibilityAuditorPanel';
+import { MissionControlPerformanceMonitorPanel } from './MissionControlPerformanceMonitorPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -194,6 +195,7 @@ export function MissionControlWorkspace() {
             <MissionControlExperienceQaPanel />
             <MissionControlVisualDiffEnginePanel />
             <MissionControlAccessibilityAuditorPanel />
+            <MissionControlPerformanceMonitorPanel />
             <MissionControlKnowledgeConfidencePanel />
             <MissionControlAmbientBriefingPanel />
           </div>
@@ -598,6 +600,7 @@ export function MissionControlWorkspace() {
           <MissionControlExperienceQaPanel />
           <MissionControlVisualDiffEnginePanel />
           <MissionControlAccessibilityAuditorPanel />
+          <MissionControlPerformanceMonitorPanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

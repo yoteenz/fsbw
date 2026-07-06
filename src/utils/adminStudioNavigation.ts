@@ -2016,6 +2016,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'performance-monitor',
+    title: 'PERFORMANCE MONITOR™',
+    purpose: 'Continuously measures speed, responsiveness, efficiency, and operational performance — performance is a living metric, not an afterthought.',
+    route: p('performance-monitor'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M159',
+    ctaLabel: 'OPEN PERFORMANCE MONITOR',
+    moduleKey: 'performance-monitor',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

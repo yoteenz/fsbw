@@ -17,6 +17,7 @@ import {
 import {
   adminStudioExperienceQaPath,
   adminStudioInteractionEnginePath,
+  adminStudioPerformanceMonitorPath,
   adminStudioVisualDiffEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
@@ -145,8 +146,11 @@ export function AccessibilityAuditorWorkspace() {
       <button type="button" onClick={() => navigate(adminStudioInteractionEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         INTERACTION ENGINE →
       </button>
-      <button type="button" onClick={() => navigate(adminStudioVisualDiffEnginePath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+      <button type="button" onClick={() => navigate(adminStudioVisualDiffEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         VISUAL DIFF →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioPerformanceMonitorPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ACCESSIBILITY_AUDITOR_ACCENT, color: ACCESSIBILITY_AUDITOR_ACCENT }}>
+        PERFORMANCE MONITOR →
       </button>
     </ExecutivePageShell>
   );

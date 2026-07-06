@@ -77,6 +77,7 @@ export type StudioOsBrandSystemId =
   | 'experience-qa'
   | 'visual-diff-engine'
   | 'accessibility-auditor'
+  | 'performance-monitor'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -153,6 +154,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'experience-qa': 'Confidence, not clicks. Software that feels effortless.',
   'visual-diff-engine': 'Visual memory. Regressions never surprise the team.',
   'accessibility-auditor': 'Inclusive design is premium design. Accessibility feels invisible.',
+  'performance-monitor': 'Performance is a feature. Never slower because we\'re more capable.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

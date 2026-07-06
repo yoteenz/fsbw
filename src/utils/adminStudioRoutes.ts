@@ -1013,6 +1013,10 @@ export function adminStudioAccessibilityAuditorPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/accessibility-auditor`;
 }
 
+export function adminStudioPerformanceMonitorPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/performance-monitor`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

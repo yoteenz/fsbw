@@ -151,6 +151,7 @@ export type StudioOsCoreModuleId =
   | 'experience-qa'
   | 'visual-diff-engine'
   | 'accessibility-auditor'
+  | 'performance-monitor'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1052,6 +1053,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ACCESSIBILITY AUDITOR™',
     description: 'Accessibility Auditor V1.0 — continuously evaluates inclusive, understandable, usable experiences for all abilities.',
     routeSegment: 'accessibility-auditor',
+  },
+  {
+    id: 'performance-monitor',
+    label: 'PERFORMANCE MONITOR™',
+    description: 'Performance Monitor V1.0 — continuously measures speed, responsiveness, efficiency, and operational performance across Studio OS.',
+    routeSegment: 'performance-monitor',
   },
   {
     id: 'succession-mode',

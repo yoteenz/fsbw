@@ -329,6 +329,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationAccessibilityAuditorProfile(context.organizationId);
   });
 
+  void import('../performance-monitor/store').then((m) => {
+    m.ensureOrganizationPerformanceMonitorProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });
