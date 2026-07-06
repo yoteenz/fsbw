@@ -1344,6 +1344,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'wisdom-capture',
+    title: 'WISDOM CAPTURE™',
+    purpose: 'Preserve small lessons before they fade — wisdom detection, permanent library, organizational learning sync.',
+    route: p('wisdom-capture'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M101',
+    ctaLabel: 'OPEN WISDOM CAPTURE',
+    moduleKey: 'wisdom-capture',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

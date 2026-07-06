@@ -95,6 +95,7 @@ export type StudioOsCoreModuleId =
   | 'memory-engine'
   | 'company-health-index'
   | 'organization-pulse'
+  | 'wisdom-capture'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -660,6 +661,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATION PULSE™',
     description: 'Real-time organizational well-being V1.0 — 14 pulse indicators, pulse states, proactive alerts. How is our organization really doing?',
     routeSegment: 'organization-pulse',
+  },
+  {
+    id: 'wisdom-capture',
+    label: 'WISDOM CAPTURE™',
+    description: 'Continuous wisdom preservation V1.0 — detect lessons from conversation, permanent Wisdom Library, organizational learning sync.',
+    routeSegment: 'wisdom-capture',
   },
   {
     id: 'succession-mode',

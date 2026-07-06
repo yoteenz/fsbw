@@ -789,6 +789,10 @@ export function adminStudioOrganizationPulsePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organization-pulse`;
 }
 
+export function adminStudioWisdomCapturePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/wisdom-capture`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

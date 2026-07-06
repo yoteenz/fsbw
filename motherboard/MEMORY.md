@@ -38705,3 +38705,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Organization Pulse (M100) complements Company Health Index (M97) — M97 measures category health scores; M100 monitors real-time organizational pulse/feeling with trend-aware alerts. Demo localStorage via `studioOsOrganizationPulse_v1`.
 
+---
+
+## 2026-07-06 — Milestone 101: Wisdom Capture™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M100 (Blueprint through Organization Pulse `e911fd3a`). User requested **Milestone 101 — Wisdom Capture™ V1.0**: continuously preserve small lessons, observations, decisions, discoveries before forgotten. Processes explain what · wisdom explains why · wisdom detection from natural language phrases · gentle "Would you like to preserve this as Organizational Wisdom?" · permanent Wisdom Library (department · brain · projects · customers · industry · lessons · leadership · operations · marketing · CX · growth) · organizational learning improves Brain · Concierges · Institute · Automation · Council · future recommendations · no important lesson ever forgotten.
+
+**Core philosophy delivered:** Capture why, not just what · non-interrupting detection · searchable forever · sync to Memory Engine as lessons.
+
+**Delivered:**
+- **`src/studio-os-core/wisdom-capture/`** — **`wisdom-detector.ts`** (12 trigger patterns + category inference) · **`learning-sync.ts`** (Memory Engine sync + 6 learning targets) · **`wisdom-builder.ts`** · **`store.ts`** (`queueWisdomDetection()` · `preserveWisdomEntry()` · `dismissWisdomDetection()`) · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`WisdomCaptureWorkspace`** + **`/admin/studio/wisdom-capture`** — 4 tabs: Wisdom Overview · Wisdom Library · Wisdom Detection · Organizational Learning · amber accent `#D97706`.
+- **`useWisdomCaptureState`** hook · brand voice **`wisdom-capture`**: *"Capture why. Not just what."*
+- **Integration** — sync from profession-brain · blueprint · boundary-sync · Command Dock **`resolveWisdomCaptureAdvice()`** first in submit flow (detects "I learned…" etc.) · **`preserve wisdom`** command · proactive on `/wisdom-capture` route · modules · nav · App route.
+- **Docs** — **`docs/studio-os/wisdom-capture.md`** · **CORE.md** M101 entry.
+
+**Conventions:** Wisdom Capture (M101) complements Memory Engine (M96) — Memory proves what worked; Wisdom Capture preserves why and small insights from daily conversation. Demo localStorage via `studioOsWisdomCapture_v1`.
+

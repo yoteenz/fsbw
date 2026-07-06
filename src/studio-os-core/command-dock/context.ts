@@ -22,6 +22,7 @@ import { listCompanyHealthIndexDockSuggestions } from '../company-health-index';
 import { listSuccessionModeDockSuggestions } from '../succession-mode';
 import { listExecutiveCouncilDockSuggestions } from '../executive-council';
 import { listOrganizationPulseDockSuggestions } from '../organization-pulse';
+import { listWisdomCaptureDockSuggestions } from '../wisdom-capture';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -164,6 +165,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/wisdom-capture')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'wisdom-capture',
+      label: 'WISDOM CAPTURE™ · PRESERVE INSIGHTS',
+      portfolioMode: false,
+      suggestedCommands: listWisdomCaptureDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

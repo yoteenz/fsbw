@@ -97,6 +97,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationPulseProfile(context.organizationId);
   });
 
+  void import('../wisdom-capture/store').then((m) => {
+    m.ensureOrganizationWisdomProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

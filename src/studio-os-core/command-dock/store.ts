@@ -58,6 +58,10 @@ import {
   resolveOrganizationPulseAdvice,
   buildProactivePulseSuggestion,
 } from '../organization-pulse/dock-advisor';
+import {
+  resolveWisdomCaptureAdvice,
+  buildProactiveWisdomSuggestion,
+} from '../wisdom-capture/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -123,6 +127,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const succession = buildProactiveSuccessionSuggestion(workspaceId);
   const council = buildProactiveCouncilSuggestion(workspaceId);
   const pulse = buildProactivePulseSuggestion(workspaceId);
+  const wisdom = buildProactiveWisdomSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -151,8 +156,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const pulseProactive = pulse
     ? { response: pulse, concierge: 'Chief Concierge', suggestedCommand: 'Open Organization Pulse — how is our organization really doing?' }
     : null;
+  const wisdomProactive = wisdom
+    ? { response: wisdom, concierge: 'Chief Concierge', suggestedCommand: 'Open Wisdom Capture — preserve this lesson forever.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/organization-pulse') && pulseProactive
+    pathname.includes('/wisdom-capture') && wisdomProactive
+      ? wisdomProactive
+      : pathname.includes('/organization-pulse') && pulseProactive
       ? pulseProactive
       : pathname.includes('/mission-control') && pulseProactive
       ? pulseProactive
@@ -235,6 +245,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const wisdomAdvice = resolveWisdomCaptureAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (wisdomAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: wisdomAdvice.detection ? 'medium' : 'compact',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${wisdomAdvice.concierge}\n${wisdomAdvice.response}`,
+    });
+    return null;
+  }
 
   const councilAdvice = resolveExecutiveCouncilAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (councilAdvice) {

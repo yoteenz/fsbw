@@ -236,6 +236,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationPulse.bootstrapOrganizationPulsePlatform();
     await yieldToMain();
 
+    const wisdomCapture = await import('../studio-os-core/wisdom-capture/bootstrap');
+    wisdomCapture.bootstrapWisdomCapturePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();
