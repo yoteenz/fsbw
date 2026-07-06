@@ -222,6 +222,10 @@ const AdminStudioDocumentationGovernance = lazyWithRetry(
   () => import('./pages/admin/studio/documentation-governance/page'),
   'AdminStudioDocumentationGovernance'
 );
+const AdminStudioSystemRegistry = lazyWithRetry(
+  () => import('./pages/admin/studio/system-registry/page'),
+  'AdminStudioSystemRegistry'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1478,6 +1482,11 @@ function App() {
           <Route path="studio/documentation-governance" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioDocumentationGovernance />
+            </Suspense>
+          } />
+          <Route path="studio/system-registry" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioSystemRegistry />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

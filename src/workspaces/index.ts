@@ -341,6 +341,10 @@ export function bootstrapWorkspacesPlatform(): void {
     documentationGovernance.bootstrapDocumentationGovernancePlatform();
     await yieldToMain();
 
+    const systemRegistry = await import('../studio-os-core/system-registry/bootstrap');
+    systemRegistry.bootstrapSystemRegistryPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

@@ -48,6 +48,7 @@ import { listModelOrchestratorDockSuggestions } from '../model-orchestrator/dock
 import { listStudioFoundationModelsDockSuggestions } from '../studio-foundation-models/dock-advisor';
 import { listDocumentationRegistryDockSuggestions } from '../documentation-registry/dock-advisor';
 import { listDocumentationGovernanceDockSuggestions } from '../documentation-governance/dock-advisor';
+import { listSystemRegistryDockSuggestions } from '../system-registry/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -388,6 +389,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/system-registry')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'system-registry',
+      label: 'SYSTEM REGISTRY™ · MASTER DIRECTORY',
+      portfolioMode: false,
+      suggestedCommands: listSystemRegistryDockSuggestions(workspaceId),
+      commandTypes: ['knowledge-search', 'executive-requests', 'organization-settings'],
     };
   }
 

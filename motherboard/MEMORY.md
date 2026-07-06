@@ -39437,3 +39437,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/documentation-governance.md`** · **CORE.md** M126.5 entry
 
 **Conventions:** Governance auto-runs on registry sync — review dashboard before releases. Pre-deploy validator flags blocking failures (coverage, broken refs). Demo localStorage via `studioOsDocumentationGovernance_v1`. Brand voice: *"Documentation is living organizational knowledge — always accurate, always connected."* Accent `#0E7490`.
+
+---
+
+## 2026-07-06 — Milestone 127: System Registry™ V1.0
+
+**Context (full chat arc):** Same session completed M126 Documentation Registry (`b204f738`) and M126.5 Documentation Governance (`5da592a2`). User requested **System Registry™**: master registry of every object, service, module, feature, organization, component, automation, workflow, and system inside Studio OS — nothing exists anonymously; everything registers itself; master index for search, documentation, architecture, developers, Command Dock, dependencies, Studio Intelligence™.
+
+**Requirements delivered:**
+- **Register everything** — organizations, departments, modules, pages, routes, panels, services, APIs, automations, concierges, workflows, policies, permissions, knowledge products, marketplace assets, SDK plugins, events, prompt templates
+- **Full system metadata** — unique ID, official name, description, category, owner, dependencies, status, version, dates, permissions, organizations, related systems, documentation, health, lifecycle
+- **System discovery** — `querySystemRegistry()` with semantic clusters (memory, AI, documentation, executive, registry)
+- **Dependency graph** — upstream/downstream impact radius per system
+- **Registry health** — indexed count, documentation linked, dependency graph, integrity, live systems
+- **Command Dock** — master directory Q&A (*"What exists in Studio OS?"*, *"What depends on Command Dock?"*, *"List all modules"*)
+
+**Delivered:**
+- **`src/studio-os-core/system-registry/`** — `registry-builder.ts` (seeds from Core modules, doc registry, navigation, infrastructure) · `registration.ts` · `discovery-engine.ts` · `dependency-graph.ts` · `registry-profile-builder.ts` · `store.ts` · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`SystemRegistryWorkspace`** (6 tabs) · **`/admin/studio/system-registry`** · **`MissionControlSystemRegistryPanel`** · **`useSystemRegistryState`**
+- **Wiring** — nav M127 · sync chain Documentation Governance → System Registry · Command Dock system-registry-first · boundary-sync · documentation system registry + page-guide entry
+- **Docs** — **`docs/studio-os/system-registry.md`** · **CORE.md** M127 entry
+
+**Conventions:** New modules auto-index from `core/modules.ts` + documentation sync registry. Optional `registerSystem()` for custom objects. Sync chain extends: … → Documentation Governance → **System Registry**. Demo localStorage via `studioOsSystemRegistry_v1`. Brand voice: *"Nothing exists anonymously. The operating system always knows what exists."* Accent `#0369A1`.

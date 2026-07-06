@@ -1644,6 +1644,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'system-registry',
+    title: 'SYSTEM REGISTRY™',
+    purpose: 'Master registry of every object, service, module, feature, and system inside Studio OS — nothing exists anonymously.',
+    route: p('system-registry'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M127',
+    ctaLabel: 'OPEN SYSTEM REGISTRY',
+    moduleKey: 'system-registry',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

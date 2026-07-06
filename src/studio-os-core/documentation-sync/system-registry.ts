@@ -2,6 +2,7 @@ import {
   adminStudioBusinessDiscoveryBlueprintPath,
   adminStudioDocumentationRegistryPath,
   adminStudioDocumentationGovernancePath,
+  adminStudioSystemRegistryPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -625,6 +626,30 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['RUN AUDITS → FIX GAPS → VALIDATE PRE-DEPLOY → RELEASE'],
     aliases: ['documentation governance', 'doc governance', 'living docs', 'dg'],
     searchKeywords: ['documentation governance', 'audit documentation', 'coverage validation', 'pre-deploy docs'],
+  }),
+  entry({
+    id: 'system-registry',
+    label: 'System Registry™',
+    moduleId: 'system-registry',
+    milestone: 'M127',
+    route: adminStudioSystemRegistryPath(),
+    purpose: 'Master registry of every object, service, module, feature, and system inside Studio OS.',
+    overview:
+      'Nothing exists anonymously — organizations, modules, pages, routes, panels, services, APIs, automations, concierges, workflows, and assets all register once.',
+    capabilities: [
+      'Master directory',
+      'System metadata',
+      'Dependency graph',
+      'System discovery',
+      'Registry health',
+      'Command Dock integration',
+    ],
+    howItWorks: 'Everything registers with metadata → master index powers search, docs, architecture, dependencies, Studio Intelligence.',
+    whenUsed: ['Architecture review', 'Developer onboarding', 'Dependency analysis', 'Platform discovery'],
+    relatedSystems: ['documentation-registry', 'documentation-governance', 'command-dock', 'studio-intelligence'],
+    exampleWorkflows: ['REGISTER SYSTEM → DISCOVER VIA SEARCH → TRACE DEPENDENCIES'],
+    aliases: ['system registry', 'master directory', 'master index', 'platform registry', 'sr'],
+    searchKeywords: ['system registry', 'master directory', 'what exists', 'platform index'],
   }),
 ];
 

@@ -51,7 +51,11 @@ function upsertProfile(profile: OrganizationDocumentationGovernanceProfile): Org
 export function syncDocumentationGovernanceFromSources(
   organizationId: string
 ): OrganizationDocumentationGovernanceProfile {
-  return upsertProfile(buildOrganizationDocumentationGovernanceProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationDocumentationGovernanceProfile(organizationId));
+  void import('../system-registry/store').then((m) => {
+    m.syncSystemRegistryFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationDocumentationGovernanceProfile(

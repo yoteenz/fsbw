@@ -89,6 +89,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'documentation-sync': fromSystem('documentation-sync'),
   'documentation-registry': fromSystem('documentation-registry'),
   'documentation-governance': fromSystem('documentation-governance'),
+  'system-registry': fromSystem('system-registry'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },
