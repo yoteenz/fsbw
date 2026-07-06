@@ -2028,6 +2028,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'regression-engine',
+    title: 'REGRESSION ENGINE™',
+    purpose: 'Continuously verifies that every change does not break existing functionality — Studio OS remembers everything that has ever worked.',
+    route: p('regression-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M160',
+    ctaLabel: 'OPEN REGRESSION ENGINE',
+    moduleKey: 'regression-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

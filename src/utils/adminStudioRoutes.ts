@@ -1017,6 +1017,10 @@ export function adminStudioPerformanceMonitorPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/performance-monitor`;
 }
 
+export function adminStudioRegressionEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/regression-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

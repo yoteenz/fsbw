@@ -350,6 +350,10 @@ const AdminStudioPerformanceMonitor = lazyWithRetry(
   () => import('./pages/admin/studio/performance-monitor/page'),
   'AdminStudioPerformanceMonitor'
 );
+const AdminStudioRegressionEngine = lazyWithRetry(
+  () => import('./pages/admin/studio/regression-engine/page'),
+  'AdminStudioRegressionEngine'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1766,6 +1770,11 @@ function App() {
           <Route path="studio/performance-monitor" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioPerformanceMonitor />
+            </Suspense>
+          } />
+          <Route path="studio/regression-engine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioRegressionEngine />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

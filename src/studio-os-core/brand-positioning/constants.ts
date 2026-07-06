@@ -78,6 +78,7 @@ export type StudioOsBrandSystemId =
   | 'visual-diff-engine'
   | 'accessibility-auditor'
   | 'performance-monitor'
+  | 'regression-engine'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -155,6 +156,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'visual-diff-engine': 'Visual memory. Regressions never surprise the team.',
   'accessibility-auditor': 'Inclusive design is premium design. Accessibility feels invisible.',
   'performance-monitor': 'Performance is a feature. Never slower because we\'re more capable.',
+  'regression-engine': 'Never repeat the same mistake twice. Every regression becomes knowledge.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

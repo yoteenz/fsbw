@@ -152,6 +152,7 @@ export type StudioOsCoreModuleId =
   | 'visual-diff-engine'
   | 'accessibility-auditor'
   | 'performance-monitor'
+  | 'regression-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1059,6 +1060,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PERFORMANCE MONITOR™',
     description: 'Performance Monitor V1.0 — continuously measures speed, responsiveness, efficiency, and operational performance across Studio OS.',
     routeSegment: 'performance-monitor',
+  },
+  {
+    id: 'regression-engine',
+    label: 'REGRESSION ENGINE™',
+    description: 'Regression Engine V1.0 — continuously verifies that every change does not break existing functionality. Studio OS remembers everything that worked.',
+    routeSegment: 'regression-engine',
   },
   {
     id: 'succession-mode',

@@ -17,6 +17,7 @@ import {
 import {
   adminStudioAccessibilityAuditorPath,
   adminStudioInteractionEnginePath,
+  adminStudioRegressionEnginePath,
 } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
@@ -341,8 +342,11 @@ export function PerformanceMonitorWorkspace() {
           {MONITOR_METRICS.map((m) => MONITOR_METRIC_LABELS[m]).join(' · ')}
         </p>
       </ExecutiveSecondaryCard>
-      <button type="button" onClick={() => navigate(adminStudioAccessibilityAuditorPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: PERFORMANCE_MONITOR_ACCENT, color: PERFORMANCE_MONITOR_ACCENT }}>
+      <button type="button" onClick={() => navigate(adminStudioAccessibilityAuditorPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: PERFORMANCE_MONITOR_ACCENT, color: PERFORMANCE_MONITOR_ACCENT }}>
         ACCESSIBILITY AUDITOR →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioRegressionEnginePath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: PERFORMANCE_MONITOR_ACCENT, color: PERFORMANCE_MONITOR_ACCENT }}>
+        REGRESSION ENGINE →
       </button>
     </ExecutivePageShell>
   );

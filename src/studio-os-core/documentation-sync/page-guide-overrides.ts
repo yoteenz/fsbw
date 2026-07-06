@@ -121,6 +121,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'visual-diff-engine': fromSystem('visual-diff-engine'),
   'accessibility-auditor': fromSystem('accessibility-auditor'),
   'performance-monitor': fromSystem('performance-monitor'),
+  'regression-engine': fromSystem('regression-engine'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

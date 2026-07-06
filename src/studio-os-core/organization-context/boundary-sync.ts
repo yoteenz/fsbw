@@ -333,6 +333,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationPerformanceMonitorProfile(context.organizationId);
   });
 
+  void import('../regression-engine/store').then((m) => {
+    m.ensureOrganizationRegressionEngineProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

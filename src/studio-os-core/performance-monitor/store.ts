@@ -52,10 +52,14 @@ export function syncPerformanceMonitorFromSources(
 ): OrganizationPerformanceMonitorProfile {
   const existing = getOrganizationPerformanceMonitorProfile(organizationId);
   const built = buildOrganizationPerformanceMonitorProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedModuleId: existing?.selectedModuleId ?? built.selectedModuleId,
   });
+  void import('../regression-engine/store').then((m) => {
+    m.syncRegressionEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationPerformanceMonitorProfile(
