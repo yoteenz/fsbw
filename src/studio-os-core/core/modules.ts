@@ -97,6 +97,7 @@ export type StudioOsCoreModuleId =
   | 'organization-pulse'
   | 'wisdom-capture'
   | 'shadow-mode'
+  | 'organization-digital-twin'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -674,6 +675,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'SHADOW MODE™',
     description: 'Concierge observation V1.0 — learn before automate. Four phases: Observe · Recommend · Assist · Automate. Confidence engine + transparency.',
     routeSegment: 'shadow-mode',
+  },
+  {
+    id: 'organization-digital-twin',
+    label: 'ORGANIZATION DIGITAL TWIN™',
+    description: 'Living org simulation V1.0 — mirror the business in real time. What-if sandbox before acting. No real data changes.',
+    routeSegment: 'organization-digital-twin',
   },
   {
     id: 'succession-mode',

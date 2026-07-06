@@ -24,6 +24,7 @@ import { listExecutiveCouncilDockSuggestions } from '../executive-council';
 import { listOrganizationPulseDockSuggestions } from '../organization-pulse';
 import { listWisdomCaptureDockSuggestions } from '../wisdom-capture';
 import { listShadowModeDockSuggestions } from '../shadow-mode';
+import { listDigitalTwinDockSuggestions } from '../organization-digital-twin';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -166,6 +167,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/organization-digital-twin')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'organization-digital-twin',
+      label: 'DIGITAL TWIN™ · EXPLORE BEFORE ACTING',
+      portfolioMode: false,
+      suggestedCommands: listDigitalTwinDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

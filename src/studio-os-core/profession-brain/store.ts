@@ -112,6 +112,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../shadow-mode/store').then((m) => {
     m.syncShadowModeFromSources(profile.organizationId);
   });
+  void import('../organization-digital-twin/store').then((m) => {
+    m.syncDigitalTwinFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

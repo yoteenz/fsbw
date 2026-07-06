@@ -66,6 +66,10 @@ import {
   resolveShadowModeAdvice,
   buildProactiveShadowSuggestion,
 } from '../shadow-mode/dock-advisor';
+import {
+  resolveDigitalTwinAdvice,
+  buildProactiveDigitalTwinSuggestion,
+} from '../organization-digital-twin/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -133,6 +137,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const pulse = buildProactivePulseSuggestion(workspaceId);
   const wisdom = buildProactiveWisdomSuggestion(workspaceId);
   const shadow = buildProactiveShadowSuggestion(workspaceId);
+  const digitalTwin = buildProactiveDigitalTwinSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -167,8 +172,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const shadowProactive = shadow
     ? { response: shadow, concierge: 'Chief Concierge', suggestedCommand: 'Open Shadow Mode — review concierge learning phases.' }
     : null;
+  const digitalTwinProactive = digitalTwin
+    ? { response: digitalTwin, concierge: 'Chief Concierge', suggestedCommand: 'Open Digital Twin — explore what-if scenarios in sandbox.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/shadow-mode') && shadowProactive
+    pathname.includes('/organization-digital-twin') && digitalTwinProactive
+      ? digitalTwinProactive
+      : pathname.includes('/shadow-mode') && shadowProactive
       ? shadowProactive
       : pathname.includes('/wisdom-capture') && wisdomProactive
       ? wisdomProactive
@@ -255,6 +265,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const digitalTwinAdvice = resolveDigitalTwinAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (digitalTwinAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: digitalTwinAdvice.briefing ? 'large' : 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${digitalTwinAdvice.concierge}\n${digitalTwinAdvice.response}`,
+    });
+    return null;
+  }
 
   const shadowAdvice = resolveShadowModeAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (shadowAdvice) {

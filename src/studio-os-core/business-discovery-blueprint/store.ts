@@ -155,6 +155,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncShadowModeFromSources(blueprint.organizationId);
   });
 
+  void import('../organization-digital-twin/store').then((m) => {
+    m.syncDigitalTwinFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

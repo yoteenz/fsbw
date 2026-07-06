@@ -38739,3 +38739,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Shadow Mode (M102) gates Concierge automation — complements Trust Framework and Wisdom Capture. Concierges start in Observe phase; phase advances only as confidence dimensions rise. Demo localStorage via `studioOsShadowMode_v1`.
 
+---
+
+## 2026-07-06 — Milestone 103: Organization Digital Twin™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M102 (Blueprint through Shadow Mode `87049928`). User requested **Milestone 103 — Organization Digital Twin™ V1.0**: living simulation mirroring organization in real time. Founders explore future decisions safely before acting. Twin simulates — does not replace. **11 scenario types** (hiring · departments · packs · products · markets · pricing · digital staff · campaigns · operations). **What-If Mode** with predicted impact · departments · revenue · operational impact · risks · confidence · next steps · executive briefing. **Safe sandbox** — no real data · no workflows · no customers affected. Command Dock natural simulation requests.
+
+**Core philosophy delivered:** Test ideas before testing reality · explore the future safely before acting · twin fidelity from organizational intelligence.
+
+**Delivered:**
+- **`src/studio-os-core/organization-digital-twin/`** — **`twin-builder.ts`** (real-time org mirror from intelligence stack) · **`scenario-engine.ts`** (`parseWhatIfQuery()` · `runWhatIfSimulation()`) · **`store.ts`** (`syncDigitalTwinFromSources()` · `runSandboxWhatIfSimulation()`) · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`OrganizationDigitalTwinWorkspace`** + **`/admin/studio/organization-digital-twin`** — 4 tabs: Twin Overview · What-If Mode · Simulation Library · Safe Sandbox · purple accent `#9333EA`.
+- **`useOrganizationDigitalTwinState`** hook · brand voice **`organization-digital-twin`**: *"Explore the future. Before acting."*
+- **Integration** — sync from profession-brain · blueprint · boundary-sync · Command Dock **`resolveDigitalTwinAdvice()`** first for what-if queries + **`buildProactiveDigitalTwinSuggestion()`** on `/organization-digital-twin` route · modules · nav · App route.
+- **Docs** — **`docs/studio-os/organization-digital-twin.md`** · **CORE.md** M103 entry.
+
+**Conventions:** Organization Digital Twin (M103) complements Simulation Engine (M36) — twin mirrors live org + fast sandbox what-if; Simulation Engine for deep financial/marketing modeling. Demo localStorage via `studioOsOrganizationDigitalTwin_v1`.
+

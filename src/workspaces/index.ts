@@ -244,6 +244,10 @@ export function bootstrapWorkspacesPlatform(): void {
     shadowMode.bootstrapShadowModePlatform();
     await yieldToMain();
 
+    const organizationDigitalTwin = await import('../studio-os-core/organization-digital-twin/bootstrap');
+    organizationDigitalTwin.bootstrapOrganizationDigitalTwinPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

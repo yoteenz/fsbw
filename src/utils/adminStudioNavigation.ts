@@ -1368,6 +1368,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organization-digital-twin',
+    title: 'ORGANIZATION DIGITAL TWIN™',
+    purpose: 'Living simulation of the organization — what-if sandbox, executive briefings, no real data changes before acting.',
+    route: p('organization-digital-twin'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M103',
+    ctaLabel: 'OPEN DIGITAL TWIN',
+    moduleKey: 'organization-digital-twin',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

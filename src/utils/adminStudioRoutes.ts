@@ -797,6 +797,10 @@ export function adminStudioShadowModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/shadow-mode`;
 }
 
+export function adminStudioOrganizationDigitalTwinPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/organization-digital-twin`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

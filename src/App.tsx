@@ -182,6 +182,7 @@ const AdminStudioCompanyHealthIndex = lazyWithRetry(() => import('./pages/admin/
 const AdminStudioOrganizationPulse = lazyWithRetry(() => import('./pages/admin/studio/organization-pulse/page'), 'AdminStudioOrganizationPulse');
 const AdminStudioWisdomCapture = lazyWithRetry(() => import('./pages/admin/studio/wisdom-capture/page'), 'AdminStudioWisdomCapture');
 const AdminStudioShadowMode = lazyWithRetry(() => import('./pages/admin/studio/shadow-mode/page'), 'AdminStudioShadowMode');
+const AdminStudioOrganizationDigitalTwin = lazyWithRetry(() => import('./pages/admin/studio/organization-digital-twin/page'), 'AdminStudioOrganizationDigitalTwin');
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1278,6 +1279,11 @@ function App() {
           <Route path="studio/shadow-mode" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioShadowMode />
+            </Suspense>
+          } />
+          <Route path="studio/organization-digital-twin" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOrganizationDigitalTwin />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={
