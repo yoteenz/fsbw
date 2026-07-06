@@ -38384,3 +38384,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** NDXBOOK HQ quick links use **`MissionQuickLink`** + fixed **ai-media** workspace paths. Command Dock must not use full-panel pointer capture — interactive subregions only.
 
+---
+
+## 2026-07-06 — Restore NDXBOOK HQ dashboard cards + fix headquarters entry loading
+
+**Context (full chat arc):** User asked why the **other studio dashboard card was removed** and reported the **headquarters card isn’t loading**. Same chat thread also covered NDXBOOK Mission Control **Primary Actions / purple quick-link routing** (two prior fixes: org-scoped routes + Command Dock tap-through).
+
+**Why cards disappeared (M86, not routing fixes):** Milestone 86 replaced the layout **WorkspaceSwitcher** button (“CURRENT WORKSPACE / HEADQUARTERS” with health + approvals) with **`OrganizationIdentityCard`** (non-clickable, “CURRENT ORGANIZATION” label). NDXBOOK HQ default flow dropped the dark **`TodaysBriefingPanel`** in favor of **`ChiefConciergeBriefingPanel`** + minimal **`HeadquartersIntro`**; **`StudioImmersionShell`** also hides layout-level **`StudioChiefConciergeBrief`** on mission-control routes — so two familiar cards vanished even though components still exist.
+
+**Why headquarters “wasn’t loading”:**
+- Admin **HEADQUARTERS** card → **`/admin/headquarters`** used campus transition + inline **`LoadingScreen`**; portfolio owners with no assigned org redirected to Command Center; **`resolveModulePath('mission-control')`** for ai-media hit generic mission-control (redirect churn) instead of **`/admin/studio/ndxbook/mission-control`**.
+- **`OrganizationIdentityCard`** could throw if **`organizationSettings.description`** was undefined (`.slice` without optional chaining).
+
+**Fix:**
+- **Restored `TodaysBriefingPanel`** at top of NDXBOOK HQ default scroll (above Chief Concierge).
+- **`OrganizationIdentityCard`** — “HEADQUARTERS” label for org operators; whole card navigates to org Mission Control; optional chaining on description; portfolio chevron still toggles switcher (`stopPropagation`).
+- **`resolveOrganizationMissionControlPath()`** + **`resolveHeadquartersLaunchWorkspaceId()`** in **`studio-os-core/workspace/routes.ts`** — ai-media → ndxbook mission control; portfolio owners reuse **last active org** from storage when no assigned org.
+- **`/admin/headquarters`** — direct **`navigate(missionControlPath, { replace: true })`** after **`enterWorkspace`** (no stuck loading card); portfolio-without-org still → Command Center.
+- **`WorkspaceSwitcher` → HEADQUARTERS** and **`AdminStudioLayout` “BACK TO HEADQUARTERS OVERVIEW”** use org-aware mission control path.
+
+**Changes:** `routes.ts`, `OrganizationIdentityCard.tsx`, `WorkspaceSwitcher.tsx`, `NdxbookMissionControl.tsx`, `AdminStudioLayout.tsx`, `headquarters/page.tsx`, `motherboard/MEMORY.md`.
+
+**Conventions:** Org HQ home for ai-media is always **`/admin/studio/ndxbook/mission-control`**, not generic **`mission-control`** or workspace dashboard. Do not remove **`TodaysBriefingPanel`** from default NDXBOOK HQ flow without explicit product sign-off.
+

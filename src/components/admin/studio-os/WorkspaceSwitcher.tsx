@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCampusTransition } from './campus/CampusTransitionProvider';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
+import { resolveOrganizationMissionControlPath } from '../../../studio-os-core/workspace/routes';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 import { OrganizationIdentityCard } from './OrganizationIdentityCard';
 import { useMemo, useState } from 'react';
@@ -9,7 +10,7 @@ import { useMemo, useState } from 'react';
 /** Organization identity passport — portfolio owners may switch; org operators see active org only. */
 export function WorkspaceSwitcher() {
   const navigate = useNavigate();
-  const { workspaceId, workspaces, resolveModulePath } = useWorkspace();
+  const { workspaceId, workspaces } = useWorkspace();
   const { travelToWorkspace, returnToCampus } = useCampusTransition();
   const [open, setOpen] = useState(false);
   const portfolioMode = canSwitchOrganizations();
@@ -68,7 +69,7 @@ export function WorkspaceSwitcher() {
             >
               <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7px', margin: 0 }}>{ws.displayName}</p>
               <p style={{ fontFamily: '"Futura PT Book"', fontSize: '5px', color: '#888', margin: '2px 0 0' }}>
-                {ws.metadata.industry ?? ws.metadata.description.slice(0, 40)}
+                {ws.metadata.industry ?? ws.metadata.description?.slice(0, 40) ?? ws.displayName}
               </p>
             </button>
           ))}
@@ -76,7 +77,7 @@ export function WorkspaceSwitcher() {
             type="button"
             onClick={() => {
               setOpen(false);
-              navigate(resolveModulePath('mission-control'));
+              navigate(resolveOrganizationMissionControlPath(workspaceId));
             }}
             style={{
               fontFamily: '"Futura PT Medium"',

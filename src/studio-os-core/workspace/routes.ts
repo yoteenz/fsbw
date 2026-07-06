@@ -1,4 +1,4 @@
-import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from './storage';
+import { STUDIO_OS_DEFAULT_WORKSPACE_ID, STUDIO_PLATFORM_WORKSPACE_ID } from './storage';
 import { STUDIO_ADMINISTRATION_ROUTES } from '../application/routes';
 
 const ADMIN_BASE = '/admin';
@@ -43,4 +43,27 @@ export function workspaceStudioEntryPath(workspaceId: string, entryPath: string)
     return entryPath;
   }
   return STUDIO_OS_ROUTES.workspaceDashboard(workspaceId);
+}
+
+/** Canonical Mission Control / headquarters home for an organization workspace. */
+export function resolveOrganizationMissionControlPath(workspaceId: string): string {
+  if (workspaceId === 'ai-media') {
+    return `${ADMIN_BASE}/studio/ndxbook/mission-control`;
+  }
+  if (workspaceId === STUDIO_OS_DEFAULT_WORKSPACE_ID) {
+    return `${ADMIN_BASE}/studio/mission-control`;
+  }
+  return workspaceStudioModulePath(workspaceId, 'mission-control');
+}
+
+/** Resolve which organization to launch from admin HEADQUARTERS card / entry route. */
+export function resolveHeadquartersLaunchWorkspaceId(
+  assignedWorkspaceId: string | null,
+  lastActiveWorkspaceId: string
+): string {
+  if (assignedWorkspaceId) return assignedWorkspaceId;
+  if (lastActiveWorkspaceId && lastActiveWorkspaceId !== STUDIO_PLATFORM_WORKSPACE_ID) {
+    return lastActiveWorkspaceId;
+  }
+  return STUDIO_OS_DEFAULT_WORKSPACE_ID;
 }

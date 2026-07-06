@@ -21,7 +21,8 @@ import {
 import { STUDIO_OS_UPPERCASE_CLASS } from '../../../utils/adminStudioTheme';
 import { StudioImmersionShell } from './immersion/StudioImmersionShell';
 import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
-import { ORGANIZATION_ROUTES, STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
+import { STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
+import { resolveOrganizationMissionControlPath } from '../../../studio-os-core/workspace/routes';
 import { WorkspaceSwitcher } from '../studio-os/WorkspaceSwitcher';
 import { CommandDock, shouldShowCommandDock } from './command-dock/CommandDock';
 import { useSyncWorkspaceFromRoute } from '../../../hooks/useSyncWorkspaceFromRoute';
@@ -72,7 +73,7 @@ export function AdminStudioLayout({
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();
-  const { workspace, getModuleSubtitle } = useWorkspace();
+  const { workspace, getModuleSubtitle, workspaceId } = useWorkspace();
 
   const globalSearchQuery = (searchParams.get('q') || '').trim();
   const [studioSearchQuery, setStudioSearchQuery] = useState(globalSearchQuery);
@@ -133,7 +134,10 @@ export function AdminStudioLayout({
     resolvedModule?.purpose;
 
   const portfolioMode = canSwitchOrganizations();
-  const headquartersOverviewPath = ORGANIZATION_ROUTES.studioOverview;
+  const headquartersOverviewPath = useMemo(
+    () => resolveOrganizationMissionControlPath(workspaceId),
+    [workspaceId]
+  );
   const platformHomePath = STUDIO_ADMINISTRATION_ROUTES.commandCenter;
 
   const handleBack = onBack ?? (() => navigate(hideOverviewLink ? breadcrumbParentPath : headquartersOverviewPath));

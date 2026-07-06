@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useOrganizationContext } from '../../../studio-os-core/organization-context';
 import { readFounderPilotModeStore, isFounderPilotModeActive } from '../../../studio-os-core/founder-pilot-mode';
 import { readNdxbookMissionControlStore } from '../../../studio-os-core/ndxbook/mission-control/store';
 import { getWorkspaceSnapshot } from '../../../studio-os-core/workspace-registry/store';
+import { resolveOrganizationMissionControlPath } from '../../../studio-os-core/workspace/routes';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
 
 const ORG_TAGLINES: Record<string, string> = {
@@ -29,8 +31,13 @@ export function OrganizationIdentityCard({
   switcherOpen = false,
   onToggleSwitcher,
 }: OrganizationIdentityCardProps) {
+  const navigate = useNavigate();
   const org = useOrganizationContext();
   const snapshot = useMemo(() => getWorkspaceSnapshot(org.organizationId), [org.organizationId]);
+  const headquartersPath = useMemo(
+    () => resolveOrganizationMissionControlPath(org.organizationId),
+    [org.organizationId]
+  );
 
   const liveMetrics = useMemo(() => {
     if (org.moduleTenantId !== 'ndxbook') {
@@ -70,16 +77,25 @@ export function OrganizationIdentityCard({
   const tagline =
     ORG_TAGLINES[org.moduleTenantId] ??
     org.organizationSettings.industry?.replace(/-/g, ' ') ??
-    org.organizationSettings.description.slice(0, 48);
+    org.organizationSettings.description?.slice(0, 48) ??
+    'Organization headquarters';
 
   const accent = org.organizationBrand.colors.accent;
+  const identityLabel = portfolioMode ? 'CURRENT ORGANIZATION · PORTFOLIO' : 'HEADQUARTERS';
+
+  const openHeadquarters = () => {
+    navigate(headquartersPath);
+  };
 
   return (
-    <div
+    <button
+      type="button"
+      onClick={openHeadquarters}
       className="w-full text-left studio-living-card studio-glass-depth px-3 py-3 rounded-sm mb-2"
       style={{
         border: `1.3px solid ${accent}44`,
         background: `linear-gradient(135deg, rgba(255,255,255,0.94) 0%, ${accent}0A 55%, rgba(255,255,255,0.88) 100%)`,
+        cursor: 'pointer',
       }}
     >
       <div className="flex items-start gap-3">
@@ -92,7 +108,7 @@ export function OrganizationIdentityCard({
 
         <div className="flex-1 min-w-0">
           <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '6px', color: '#808080', margin: 0, letterSpacing: '0.08em' }}>
-            {portfolioMode ? 'CURRENT ORGANIZATION · PORTFOLIO' : 'CURRENT ORGANIZATION'}
+            {identityLabel}
           </p>
           <p
             style={{
@@ -152,7 +168,10 @@ export function OrganizationIdentityCard({
         {portfolioMode && onToggleSwitcher ? (
           <button
             type="button"
-            onClick={onToggleSwitcher}
+            onClick={(event) => {
+              event.stopPropagation();
+              onToggleSwitcher();
+            }}
             aria-expanded={switcherOpen}
             style={{
               fontFamily: '"Futura PT Medium"',
@@ -169,7 +188,7 @@ export function OrganizationIdentityCard({
           </button>
         ) : null}
       </div>
-    </div>
+    </button>
   );
 }
 

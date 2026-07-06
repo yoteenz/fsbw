@@ -24,6 +24,7 @@ import {
   RevenueCenterPanel,
   StudioIntelligencePanel,
   TalentBoardPanel,
+  TodaysBriefingPanel,
   VolumeExplorerPanel,
 } from './NdxbookMissionControlPanels';
 
@@ -82,6 +83,7 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
       default:
         return (
           <div className="ndxbook-hq-flow space-y-1 pb-36">
+            <TodaysBriefingPanel {...panelProps} />
             <ChiefConciergeBriefingPanel />
             <CompanyHealthPanel {...panelProps} />
             <PublishingTimelinePanel {...panelProps} />
