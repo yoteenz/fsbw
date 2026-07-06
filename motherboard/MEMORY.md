@@ -39718,3 +39718,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/state-engine.md`** · **CORE.md** M139 entry
 
 **Conventions:** Nothing undefined — every object has defined state. Transitions policy-enforced. History append-only. Sync chain: … → Plugin SDK → Workflow Engine → **State Engine**. Demo localStorage via `studioOsStateEngine_v1`. Brand voice: *"Defined states. Intentional transitions. Complete trust."* Accent `#0369A1`.
+
+---
+
+## 2026-07-06 — Milestone 140: Asset Registry™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine through M139 State Engine (`ba807243`). User requested **Asset Registry™**: permanent home for every organizational asset; never scattered across folders; register assets (images, videos, logos, brand kits, docs, academy, marketplace, etc.); asset metadata; never-overwrite versioning; asset health monitoring; Command Dock unused/logo/archive/academy queries.
+
+**Requirements delivered:**
+- **Register assets (19 categories)** — images, videos, audio, logos, brand kits, documents, PDFs, templates, presentations, icons, illustrations, 3D models, animations, marketing, training, knowledge, academy, marketplace, documentation — everything searchable
+- **Asset metadata (18 fields)** — unique ID, name, category, owner, organization, department, version, tags, keywords, description, usage, related systems, workflows, brand guidelines, license, storage, last modified, usage history
+- **Versioning (7 capabilities)** — current version, previous versions, approval history, change log, archive, restore, comparison — never overwrite
+- **Asset health (9 checks)** — broken links, unused assets, duplicates, missing alt text, brand compliance, resolution, performance, accessibility, recommended updates
+- **Command Dock** — *"Show unused assets."* · *"Find our latest logo."* · *"Archive outdated brand assets."* · *"Which videos are used in Academy?"*
+
+**Delivered:**
+- **`src/studio-os-core/asset-registry/`** — `category-catalog.ts` · `metadata-engine.ts` · `asset-catalog.ts` · `versioning-engine.ts` · `health-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncAssetRegistryFromSources`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`AssetRegistryWorkspace`** (7 tabs: Overview · Asset Categories · Metadata · Versioning · Asset Health · Governance · Discovery) · **`/admin/studio/asset-registry`** · **`MissionControlAssetRegistryPanel`** · **`useAssetRegistryState`**
+- **Wiring** — nav M140 · sync chain State Engine → Asset Registry · Command Dock asset-registry-first · boundary-sync · documentation system registry + page-guide entry · State Engine workspace link
+- **Docs** — **`docs/studio-os/asset-registry.md`** · **CORE.md** M140 entry
+
+**Conventions:** Assets never scattered — managed platform resources only. Never overwrite — version on change. Sync chain: … → Workflow Engine → State Engine → **Asset Registry**. Demo localStorage via `studioOsAssetRegistry_v1`. Brand voice: *"Assets managed. Knowledge preserved. Never scattered."* Accent `#B45309`.

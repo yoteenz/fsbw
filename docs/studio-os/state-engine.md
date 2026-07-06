@@ -70,7 +70,7 @@ Append-only — history is never deleted.
 
 ## Sync chain
 
-… → Workspace Runtime → Plugin SDK → Workflow Engine → **State Engine**
+… → Workspace Runtime → Plugin SDK → Workflow Engine → **State Engine** → **Asset Registry**
 
 **`workflow-engine/store`** triggers **`syncStateEngineFromSources`** · **boundary-sync**
 

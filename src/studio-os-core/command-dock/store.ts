@@ -244,6 +244,11 @@ import {
   buildProactiveStateEngineSuggestion,
   buildStateEngineOpeningLine,
 } from '../state-engine/dock-advisor';
+import {
+  resolveAssetRegistryAdvice,
+  buildProactiveAssetRegistrySuggestion,
+  buildAssetRegistryOpeningLine,
+} from '../asset-registry/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -374,6 +379,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const workflowEngineOpeningLine = buildWorkflowEngineOpeningLine(workspaceId);
   const stateEngine = buildProactiveStateEngineSuggestion(workspaceId);
   const stateEngineOpeningLine = buildStateEngineOpeningLine(workspaceId);
+  const assetRegistry = buildProactiveAssetRegistrySuggestion(workspaceId);
+  const assetRegistryOpeningLine = buildAssetRegistryOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -791,6 +798,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'Which workflows failed today?',
       }
     : null;
+  const assetRegistryProactive = assetRegistry
+    ? {
+        response: assetRegistry,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Show unused assets.',
+      }
+    : null;
+  const assetRegistryOpeningProactive = assetRegistryOpeningLine
+    ? {
+        response: assetRegistryOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Find our latest logo.',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -865,6 +886,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? modelOrchestratorProactive
       : pathname.includes('/studio-foundation-models') && studioFoundationModelsProactive
       ? studioFoundationModelsProactive
+      : pathname.includes('/asset-registry') && assetRegistryProactive
+      ? assetRegistryProactive
       : pathname.includes('/state-engine') && stateEngineProactive
       ? stateEngineProactive
       : pathname.includes('/workflow-engine') && workflowEngineProactive
@@ -900,7 +923,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? stateEngineOpeningProactive ?? workflowEngineOpeningProactive ?? pluginSdkOpeningProactive ?? workspaceRuntimeOpeningProactive ?? permissionEngineOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? assetRegistryOpeningProactive ?? stateEngineOpeningProactive ?? workflowEngineOpeningProactive ?? pluginSdkOpeningProactive ?? workspaceRuntimeOpeningProactive ?? permissionEngineOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -1294,6 +1317,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${studioFoundationModelsAdvice.concierge}\n${studioFoundationModelsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const assetRegistryAdvice = resolveAssetRegistryAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (assetRegistryAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${assetRegistryAdvice.concierge}\n${assetRegistryAdvice.response}`,
     });
     return null;
   }

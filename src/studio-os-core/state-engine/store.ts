@@ -49,7 +49,11 @@ function upsertProfile(profile: OrganizationStateEngineProfile): OrganizationSta
 
 /** Rebuild lifecycle states, transitions, objects, and history from Workflow Engine + platform sources */
 export function syncStateEngineFromSources(organizationId: string): OrganizationStateEngineProfile {
-  return upsertProfile(buildOrganizationStateEngineProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationStateEngineProfile(organizationId));
+  void import('../asset-registry/store').then((m) => {
+    m.syncAssetRegistryFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationStateEngineProfile(

@@ -1800,6 +1800,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'asset-registry',
+    title: 'ASSET REGISTRY™',
+    purpose: 'Permanent asset home — images, videos, docs, brand kits; metadata, versioning, health monitoring.',
+    route: p('asset-registry'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M140',
+    ctaLabel: 'OPEN ASSET REGISTRY',
+    moduleKey: 'asset-registry',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

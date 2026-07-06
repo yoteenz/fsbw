@@ -393,6 +393,10 @@ export function bootstrapWorkspacesPlatform(): void {
     stateEngine.bootstrapStateEnginePlatform();
     await yieldToMain();
 
+    const assetRegistry = await import('../studio-os-core/asset-registry/bootstrap');
+    assetRegistry.bootstrapAssetRegistryPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

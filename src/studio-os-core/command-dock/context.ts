@@ -61,6 +61,7 @@ import { listWorkspaceRuntimeDockSuggestions } from '../workspace-runtime/dock-a
 import { listPluginSdkDockSuggestions } from '../plugin-sdk/dock-advisor';
 import { listWorkflowEngineDockSuggestions } from '../workflow-engine/dock-advisor';
 import { listStateEngineDockSuggestions } from '../state-engine/dock-advisor';
+import { listAssetRegistryDockSuggestions } from '../asset-registry/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -401,6 +402,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/asset-registry')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'asset-registry',
+      label: 'ASSET REGISTRY™ · MANAGED RESOURCES',
+      portfolioMode: false,
+      suggestedCommands: listAssetRegistryDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 

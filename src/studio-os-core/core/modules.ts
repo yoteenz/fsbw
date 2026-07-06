@@ -133,6 +133,7 @@ export type StudioOsCoreModuleId =
   | 'plugin-sdk'
   | 'workflow-engine'
   | 'state-engine'
+  | 'asset-registry'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -926,6 +927,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STATE ENGINE™',
     description: 'State Engine V1.0 — centralized lifecycle management; defined states, intentional transitions, complete history.',
     routeSegment: 'state-engine',
+  },
+  {
+    id: 'asset-registry',
+    label: 'ASSET REGISTRY™',
+    description: 'Asset Registry V1.0 — permanent home for every organizational asset; searchable, versioned, connected.',
+    routeSegment: 'asset-registry',
   },
   {
     id: 'succession-mode',
