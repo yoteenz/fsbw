@@ -7,16 +7,19 @@ import { ACTIVITY_CATEGORY_COLORS, PLATFORM_ICONS, TALENT_STATUS_COLORS } from '
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { FOUNDER_DISPLAY_NAME } from '../../../../studio-os-core/command-dock/constants';
 import { buildChiefConciergeBrief } from '../../../../studio-os-core/studio-immersion/engine';
-import { useOrganizationContext, useStudioModuleNav } from '../../../../studio-os-core/organization-context';
+import { useOrganizationContext } from '../../../../studio-os-core/organization-context';
 import {
   INTELLIGENCE_MATURITY_TIERS,
   readFounderPilotModeStore,
 } from '../../../../studio-os-core/founder-pilot-mode';
 import {
   buildNdxbookMissionActionLinks,
+  migrateLegacyNdxbookActionRoute,
+  ndxbookModulePath,
   ndxbookPagesQuickLink,
   type NdxbookMissionActionId,
 } from './ndxbookMissionActionRoutes';
+import { MissionQuickLink } from './MissionQuickLink';
 import {
   MC,
   formatCurrency,
@@ -255,7 +258,6 @@ export function CompanyHealthPanel({ store }: PanelProps) {
 
 export function NewsroomPanel({ store }: PanelProps) {
   const org = useOrganizationContext();
-  const { toModule } = useStudioModuleNav();
   const activePages = store.newsroomStages.reduce((sum, s) => sum + s.activeItems, 0);
   return (
     <CollapsibleSection
@@ -271,8 +273,8 @@ export function NewsroomPanel({ store }: PanelProps) {
         <div className="flex gap-1 min-w-max pb-1">
           {store.newsroomStages.map((stage, i) => (
             <div key={stage.id} className="flex items-center">
-              <Link
-                to={ndxbookPagesQuickLink(toModule, stage.id)}
+              <MissionQuickLink
+                to={ndxbookPagesQuickLink(stage.id)}
                 className="p-2 text-left min-w-[72px] border transition-opacity hover:opacity-90"
                 style={{
                   borderColor: stage.activeItems > 0 ? MC.accent : MC.panelBorder,
@@ -284,20 +286,20 @@ export function NewsroomPanel({ store }: PanelProps) {
                 <p style={{ ...mcLabel, color: MC.accent, fontSize: '6px' }}>{stage.label}</p>
                 <p style={{ ...mcValue, fontSize: '16px' }}>{stage.pageCount}</p>
                 <p style={mcLabel}>{stage.activeItems} ACTIVE</p>
-              </Link>
+              </MissionQuickLink>
               {i < store.newsroomStages.length - 1 ? (
                 <span style={{ color: MC.gray, fontSize: '10px', padding: '0 2px' }}>→</span>
               ) : null}
             </div>
           ))}
         </div>
-        <Link
+        <MissionQuickLink
           to={STUDIO_OS_ROUTES.workspaceNewsroom(org.organizationId)}
           className="mt-2 px-2 py-1 text-[6px] font-futura border inline-block"
           style={{ fontWeight: 515, color: MC.accent, borderColor: MC.accent, textDecoration: 'none' }}
         >
           ENTER NEWSROOM →
-        </Link>
+        </MissionQuickLink>
       </div>
     </CollapsibleSection>
   );
@@ -469,7 +471,6 @@ function LibraryPageList({ pages, emptyLabel }: { pages: NdxbookMissionControlSt
 }
 
 export function NdxbookLibraryPanel({ store }: PanelProps) {
-  const { toModule } = useStudioModuleNav();
   const lib = store.library;
   const topPages = lib.latestPages.slice(0, 3);
   const isEmpty = lib.latestPages.length === 0;
@@ -480,13 +481,13 @@ export function NdxbookLibraryPanel({ store }: PanelProps) {
         <p style={mcSectionTitle}>{SECTION_ICONS.library} KNOWLEDGE LIBRARY</p>
         <p style={{ ...mcValue, fontSize: '14px', color: MC.gray }}>No published pages yet.</p>
         <p style={{ ...mcLabel, marginTop: 8 }}>Create your first knowledge asset.</p>
-        <Link
-          to={ndxbookPagesQuickLink(toModule)}
+        <MissionQuickLink
+          to={ndxbookPagesQuickLink()}
           className="mt-3 px-4 py-2 text-[7px] font-futura border inline-block"
           style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent, background: 'rgba(99,102,241,0.06)', textDecoration: 'none' }}
         >
           CREATE PAGE 001 →
-        </Link>
+        </MissionQuickLink>
       </section>
     );
   }
@@ -759,7 +760,6 @@ export function RevenueCenterPanel({ store }: PanelProps) {
 }
 
 export function LabsExperimentsPanel({ store }: PanelProps) {
-  const { toModule } = useStudioModuleNav();
   const active = store.experiments.filter((e) => e.status === 'active');
 
   if (store.experiments.length === 0) {
@@ -770,9 +770,13 @@ export function LabsExperimentsPanel({ store }: PanelProps) {
         <p style={{ ...mcLabel, marginTop: 8 }}>
           Publish at least five pieces of content to unlock experimentation.
         </p>
-        <Link to={toModule('labs')} className="text-[6px] underline mt-2 inline-block" style={{ color: MC.accent, textDecoration: 'underline' }}>
+        <MissionQuickLink
+          to={buildNdxbookMissionActionLinks().find((a) => a.id === 'experiment')!.route}
+          className="text-[6px] underline mt-2 inline-block"
+          style={{ color: MC.accent, textDecoration: 'underline' }}
+        >
           OPEN STUDIO OS LABS →
-        </Link>
+        </MissionQuickLink>
       </section>
     );
   }
@@ -794,15 +798,18 @@ export function LabsExperimentsPanel({ store }: PanelProps) {
           <p style={mcLabel}>LEADER · {exp.currentLeader}</p>
         </div>
       ))}
-      <Link to={toModule('labs')} className="text-[6px] underline mt-2 inline-block" style={{ color: MC.accent, textDecoration: 'underline' }}>
+      <MissionQuickLink
+        to={buildNdxbookMissionActionLinks().find((a) => a.id === 'experiment')!.route}
+        className="text-[6px] underline mt-2 inline-block"
+        style={{ color: MC.accent, textDecoration: 'underline' }}
+      >
         OPEN STUDIO OS LABS →
-      </Link>
+      </MissionQuickLink>
     </CollapsibleSection>
   );
 }
 
 export function TalentBoardPanel({ store }: PanelProps) {
-  const { toModule } = useStudioModuleNav();
   const activeHosts = store.talentBoard.filter((h) => h.status !== 'available');
 
   return (
@@ -831,9 +838,13 @@ export function TalentBoardPanel({ store }: PanelProps) {
           </span>
         </div>
       ))}
-      <Link to={toModule('talent-network')} className="text-[6px] underline mt-2 inline-block" style={{ color: MC.accent, textDecoration: 'underline' }}>
+      <MissionQuickLink
+        to={buildNdxbookMissionActionLinks().find((a) => a.id === 'talent')!.route}
+        className="text-[6px] underline mt-2 inline-block"
+        style={{ color: MC.accent, textDecoration: 'underline' }}
+      >
         OPEN TALENT NETWORK →
-      </Link>
+      </MissionQuickLink>
     </CollapsibleSection>
   );
 }
@@ -859,8 +870,7 @@ const missionActionButtonStyle = {
 } as const;
 
 export function MissionActionsPanel({ store }: PanelProps) {
-  const { toModule } = useStudioModuleNav();
-  const commandActions = buildNdxbookMissionActionLinks(toModule).filter(
+  const commandActions = buildNdxbookMissionActionLinks().filter(
     (action) => action.id !== 'connect-instagram'
   );
 
@@ -872,7 +882,7 @@ export function MissionActionsPanel({ store }: PanelProps) {
       <p style={mcSectionTitle}>{SECTION_ICONS.actions} PRIMARY ACTIONS</p>
       <div className="grid grid-cols-1 gap-2">
         {commandActions.map((action) => (
-          <Link
+          <MissionQuickLink
             key={action.id}
             to={action.route}
             className="p-3 text-left border transition-opacity hover:opacity-90"
@@ -882,12 +892,12 @@ export function MissionActionsPanel({ store }: PanelProps) {
             <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: MC.black, letterSpacing: '0.06em' }}>
               {action.label}
             </span>
-          </Link>
+          </MissionQuickLink>
         ))}
         {extra.slice(0, 2).map((action) => (
-          <Link
+          <MissionQuickLink
             key={action.id}
-            to={action.route}
+            to={migrateLegacyNdxbookActionRoute(action.route)}
             className="p-2 text-left border"
             style={{
               borderColor: MC.panelBorder,
@@ -898,7 +908,7 @@ export function MissionActionsPanel({ store }: PanelProps) {
             }}
           >
             <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '7px', color: MC.gray }}>{action.label}</span>
-          </Link>
+          </MissionQuickLink>
         ))}
       </div>
     </section>
@@ -977,10 +987,10 @@ export function FounderTimelinePanel() {
 }
 
 export function ExternalNavPanel({ tab, workspaceId }: { tab: string; workspaceId: string }) {
-  const { toModule } = useStudioModuleNav();
+  const links = buildNdxbookMissionActionLinks();
   const routes: Record<string, { label: string; path: string }> = {
-    'creative-dna': { label: 'CREATIVE DNA', path: toModule('memory-bible') },
-    knowledge: { label: 'KNOWLEDGE', path: toModule('knowledge-hub') },
+    'creative-dna': { label: 'CREATIVE DNA', path: ndxbookModulePath('memory-bible') },
+    knowledge: { label: 'KNOWLEDGE', path: links.find((a) => a.id === 'knowledge-graph')!.route },
     settings: { label: 'SETTINGS', path: STUDIO_OS_ROUTES.workspaceSettings(workspaceId) },
   };
   const r = routes[tab];
@@ -990,13 +1000,13 @@ export function ExternalNavPanel({ tab, workspaceId }: { tab: string; workspaceI
     <section className="p-6 mb-3 text-center" style={mcPanel}>
       <p style={mcSectionTitle}>{r.label}</p>
       <p style={mcLabel}>FULL MODULE AVAILABLE IN STUDIO OS</p>
-      <Link
+      <MissionQuickLink
         to={r.path}
         className="mt-3 px-4 py-2 text-[7px] font-futura border inline-block"
         style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent, textDecoration: 'none' }}
       >
         OPEN {r.label}
-      </Link>
+      </MissionQuickLink>
     </section>
   );
 }

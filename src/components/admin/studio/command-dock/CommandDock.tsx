@@ -67,7 +67,7 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
         aria-label="Studio OS Command Dock"
       >
         <div
-          className={`command-dock-panel relative overflow-hidden rounded-md transition-all duration-500 ease-out pointer-events-auto ${store.processingActive ? 'command-dock-processing' : ''}`}
+          className={`command-dock-panel relative overflow-hidden rounded-md transition-all duration-500 ease-out pointer-events-none ${store.processingActive ? 'command-dock-processing' : ''}`}
           style={{
             ...dockPanelStyle,
             height,
@@ -79,7 +79,7 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
             style={{ background: DOCK_VISUAL.ambient }}
           />
 
-          <div className="relative z-10 h-full flex flex-col px-4 py-3">
+          <div className="relative z-10 h-full flex flex-col px-4 py-3 pointer-events-none">
             {/* Header row */}
             <div className="flex items-start justify-between gap-2 mb-1 shrink-0">
               <div className="min-w-0">
@@ -121,7 +121,7 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
                   </p>
                 )}
               </div>
-              <div className="flex gap-2 shrink-0">
+              <div className="flex gap-2 shrink-0 pointer-events-auto">
                 <button type="button" onClick={toggleHistory} style={{ ...dockLabel, cursor: 'pointer', fontSize: '5px' }}>
                   HISTORY
                 </button>
@@ -142,7 +142,7 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
                     runFavorite(store.proactiveSuggestion.suggestedCommand);
                   }
                 }}
-                className="text-left mb-2 px-2 py-1.5 rounded-sm shrink-0"
+                className="text-left mb-2 px-2 py-1.5 rounded-sm shrink-0 pointer-events-auto"
                 style={{ background: 'rgba(201,169,98,0.1)', border: '1px solid rgba(201,169,98,0.2)' }}
               >
                 <p style={{ ...dockLabel, color: DOCK_VISUAL.gold, fontSize: '5px' }}>
@@ -156,7 +156,7 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
 
             {/* Scrollable body for expanded states */}
             {(store.expansionSize !== 'compact' || store.isFocused) && (
-              <div className="flex-1 overflow-y-auto min-h-0 mb-2">
+              <div className="flex-1 overflow-y-auto min-h-0 mb-2 pointer-events-auto">
                 {store.processingActive && processingLabel && (
                   <p style={{ ...dockValue, fontSize: '7px', color: DOCK_VISUAL.portfolio, marginBottom: 8 }}>
                     {processingLabel}
@@ -245,7 +245,7 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
             )}
 
             {/* Input row — always visible */}
-            <div className="shrink-0 mt-auto">
+            <div className="shrink-0 mt-auto pointer-events-auto">
               <div className="flex gap-2">
                 <input
                   type="text"

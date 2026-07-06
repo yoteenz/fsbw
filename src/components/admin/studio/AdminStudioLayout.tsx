@@ -169,7 +169,7 @@ export function AdminStudioLayout({
           globalSearchTargetPath={pathname}
         />
 
-        <div className="pb-6 px-4" style={{ paddingBottom: shouldShowCommandDock(pathname) ? '100px' : undefined }}>
+        <div className="pb-6 px-4" style={{ paddingBottom: shouldShowCommandDock(pathname) ? '220px' : undefined }}>
           <div className="max-w-md mx-auto">
             {studioSearchQuery.trim() ? (
               <AdminStudioSearchResultsPanel

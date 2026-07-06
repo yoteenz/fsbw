@@ -30,11 +30,16 @@ export default function StudioWorkspaceGuard() {
 
   useEffect(() => {
     if (platformPath || !legacyFsPath) return;
+    const ndxbookRoute =
+      pathname.includes('/studio/ndxbook') ||
+      pathname.includes('/studio-os/workspace/ai-media/studio/ndxbook') ||
+      search.includes('brand=ndxbook');
+    if (ndxbookRoute) return;
     if (workspaceId !== STUDIO_OS_DEFAULT_WORKSPACE_ID) {
       activateWorkspaceContext(STUDIO_OS_DEFAULT_WORKSPACE_ID);
       enterWorkspace(STUDIO_OS_DEFAULT_WORKSPACE_ID);
     }
-  }, [platformPath, legacyFsPath, workspaceId, enterWorkspace]);
+  }, [platformPath, legacyFsPath, workspaceId, enterWorkspace, pathname, search]);
 
   if (platformPath) {
     return <Outlet />;

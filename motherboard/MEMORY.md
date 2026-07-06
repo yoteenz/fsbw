@@ -38365,3 +38365,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** NDXBOOK Mission Control quick links must use **`toModule()`** + **`Link`**, never bare **`/admin/studio/*`** strings. Guard redirects must preserve query params and full module subpaths.
 
+---
+
+## 2026-07-06 — NDXBOOK quick links follow-up (Command Dock tap-through + stable ai-media paths)
+
+**Context:** User reported first routing fix (`5eeb12db`) **“nothing changed”** on mobile — Primary Actions and purple top buttons still did not navigate.
+
+**Root cause (deeper):** (1) **Command Dock panel** used `pointer-events-auto` on the full fixed bottom panel (~200px during founder pilot brief), **intercepting taps** meant for Primary Actions scrolling behind it on mobile. (2) **`StudioWorkspaceGuard`** still forced **Frontal Slayer** workspace on legacy `/admin/studio/*` routes, fighting **`useEnsureNdxbookWorkspaceOnMount`** and making `toModule()` targets unstable. (3) React Router **`Link`** alone was insufficient on mobile — needed explicit **`navigate()` + scroll reset** with native **`href`** fallback.
+
+**Fix:**
+- **`MissionQuickLink`** — `<a href>` + `preventDefault` + `navigate(to)` + `window.scrollTo(0,0)`.
+- **`ndxbookMissionActionRoutes.ts`** — always resolve via **`workspaceStudioModulePath('ai-media', …)`** (not dynamic `toModule`); **`migrateLegacyNdxbookActionRoute()`** for seed extras.
+- **Command Dock** — panel + inner column `pointer-events-none`; only input/button rows `pointer-events-auto` so content below receives taps.
+- **`AdminStudioLayout`** — bottom padding **220px** when Command Dock visible.
+- **`StudioWorkspaceGuard`** — skip Frontal Slayer reset on NDXBOOK / `brand=ndxbook` routes.
+
+**Changes:** `MissionQuickLink.tsx`, `ndxbookMissionActionRoutes.ts`, `NdxbookMissionControlPanels.tsx`, `mission-control/page.tsx`, `CommandDock.tsx`, `AdminStudioLayout.tsx`, `StudioWorkspaceGuard.tsx`, `useSyncWorkspaceFromRoute.ts`, `motherboard/MEMORY.md`.
+
+**Conventions:** NDXBOOK HQ quick links use **`MissionQuickLink`** + fixed **ai-media** workspace paths. Command Dock must not use full-panel pointer capture — interactive subregions only.
+

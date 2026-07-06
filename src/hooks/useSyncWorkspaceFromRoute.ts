@@ -7,7 +7,7 @@ import { NDXBOOK_WORKSPACE_ID } from '../studio-os-core/ndxbook/constants';
 function resolveWorkspaceIdFromPath(pathname: string): string | null {
   if (
     pathname.includes('/studio/ndxbook') ||
-    pathname.includes('/studio-os/workspace/ai-media/studio/ndxbook') ||
+    pathname.includes('/studio-os/workspace/ai-media/') ||
     pathname.includes('/workspace/ai-media') ||
     pathname.includes('brand=ndxbook')
   ) {

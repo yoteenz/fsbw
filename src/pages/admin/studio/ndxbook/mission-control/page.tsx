@@ -1,36 +1,35 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { NdxbookMissionControl } from '../../../../../components/admin/studio-os/ndxbook-mission-control/NdxbookMissionControl';
+import { MissionQuickLink } from '../../../../../components/admin/studio-os/ndxbook-mission-control/MissionQuickLink';
 import {
   ndxbookDistributionQuickLink,
+  ndxbookModulePath,
   ndxbookSocialsQuickLink,
 } from '../../../../../components/admin/studio-os/ndxbook-mission-control/ndxbookMissionActionRoutes';
 import { useEnsureNdxbookWorkspaceOnMount } from '../../../../../hooks/useEnsureNdxbookWorkspace';
-import { adminStudioNdxbookPath } from '../../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
 import { NDXBOOK_WORKSPACE_ID } from '../../../../../studio-os-core/ndxbook/constants';
 import { ensureFounderPilotForOrganization } from '../../../../../studio-os-core/founder-pilot-mode';
-import { useStudioModuleNav } from '../../../../../studio-os-core/organization-context';
 
 export default function AdminStudioNdxbookMissionControlPage() {
   useEnsureNdxbookWorkspaceOnMount();
   ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
   const navigate = useNavigate();
-  const { toModule } = useStudioModuleNav();
 
   return (
     <AdminStudioStageShell
       title="NDXBOOK HEADQUARTERS"
       subtitle="AI MEDIA OPERATING CENTER · REVIEW · APPROVE · PUBLISH"
       breadcrumbParentLabel="NDXBOOK"
-      breadcrumbParentPath={adminStudioNdxbookPath()}
-      onBack={() => navigate(adminStudioNdxbookPath())}
+      breadcrumbParentPath={ndxbookModulePath('ndxbook')}
+      onBack={() => navigate(ndxbookModulePath('ndxbook'))}
       navGroupId="intelligence"
     >
       <div className="flex flex-wrap gap-1 mb-3">
-        <Link
-          to={ndxbookDistributionQuickLink(toModule)}
+        <MissionQuickLink
+          to={ndxbookDistributionQuickLink()}
           className="flex-1 py-2 text-[7px] font-futura uppercase border text-center"
           style={{
             fontWeight: 515,
@@ -42,9 +41,9 @@ export default function AdminStudioNdxbookMissionControlPage() {
           }}
         >
           REVIEW & POST CONTENT →
-        </Link>
-        <Link
-          to={ndxbookSocialsQuickLink(toModule)}
+        </MissionQuickLink>
+        <MissionQuickLink
+          to={ndxbookSocialsQuickLink()}
           className="flex-1 py-2 text-[7px] font-futura uppercase border text-center"
           style={{
             fontWeight: 515,
@@ -55,7 +54,7 @@ export default function AdminStudioNdxbookMissionControlPage() {
           }}
         >
           SOCIAL CONNECTORS →
-        </Link>
+        </MissionQuickLink>
       </div>
 
       <NdxbookMissionControl workspaceId={NDXBOOK_WORKSPACE_ID} accentColor="#6366F1" />
