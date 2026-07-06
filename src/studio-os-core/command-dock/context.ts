@@ -38,6 +38,7 @@ import { listPredictiveOrganizationDockSuggestions } from '../predictive-organiz
 import { listAutonomousPreparationDockSuggestions } from '../autonomous-preparation';
 import { listOrganizationalConsciousnessDockSuggestions } from '../organizational-consciousness';
 import { listExecutiveTimelineHistoryDockSuggestions } from '../executive-timeline/dock-advisor';
+import { listWorldKnowledgeEngineDockSuggestions } from '../world-knowledge-engine/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -289,6 +290,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'ORGANIZATIONAL CONSCIOUSNESS™ · ONE INTELLIGENCE',
       portfolioMode: false,
       suggestedCommands: listOrganizationalConsciousnessDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/world-knowledge-engine')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'world-knowledge-engine',
+      label: 'WORLD KNOWLEDGE ENGINE™ · FILTERED EXTERNAL INTELLIGENCE',
+      portfolioMode: false,
+      suggestedCommands: listWorldKnowledgeEngineDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

@@ -52,7 +52,11 @@ function upsertProfile(profile: OrganizationExecutiveHistoryProfile): Organizati
 export function syncExecutiveTimelineHistoryFromSources(
   organizationId: string
 ): OrganizationExecutiveHistoryProfile {
-  return upsertProfile(buildOrganizationExecutiveHistoryProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationExecutiveHistoryProfile(organizationId));
+  void import('../world-knowledge-engine/store').then((m) => {
+    m.syncWorldKnowledgeEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationExecutiveHistoryProfile(

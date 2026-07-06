@@ -1524,6 +1524,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'world-knowledge-engine',
+    title: 'WORLD KNOWLEDGE ENGINE™',
+    purpose: 'Monitors the outside world — industry news, regulations, competitors, AI, trends. Filtered intelligence and executive briefings for your organization.',
+    route: p('world-knowledge-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M117',
+    ctaLabel: 'OPEN WORLD KNOWLEDGE ENGINE',
+    moduleKey: 'world-knowledge-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

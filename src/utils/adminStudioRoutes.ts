@@ -849,6 +849,10 @@ export function adminStudioOrganizationalConsciousnessPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organizational-consciousness`;
 }
 
+export function adminStudioWorldKnowledgeEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/world-knowledge-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

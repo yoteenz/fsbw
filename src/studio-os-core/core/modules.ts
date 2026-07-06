@@ -110,6 +110,7 @@ export type StudioOsCoreModuleId =
   | 'predictive-organization'
   | 'autonomous-preparation'
   | 'organizational-consciousness'
+  | 'world-knowledge-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -765,6 +766,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL CONSCIOUSNESS™',
     description: 'Master intelligence V1.0 — unifies every intelligent system into one continuously learning organizational consciousness.',
     routeSegment: 'organizational-consciousness',
+  },
+  {
+    id: 'world-knowledge-engine',
+    label: 'WORLD KNOWLEDGE ENGINE™',
+    description: 'External intelligence V1.0 — monitors the outside world, filters by organization context, delivers executive briefings. Information finds you.',
+    routeSegment: 'world-knowledge-engine',
   },
   {
     id: 'succession-mode',

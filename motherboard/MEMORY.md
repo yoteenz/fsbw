@@ -39030,7 +39030,6 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-06 — Headquarters vs Studio Command Center routing separation
 
 **Context (full chat arc):** User reported Headquarters quota error + Studio Command Center card disappearing (fixed in `7ec47f3f`). Follow-up: **Headquarters was routing to Studio Command Center** instead of Frontal Slayer HQ. User clarified intended model — **Studio Command Center** = founder/owner of Studio OS software only; **Headquarters** = the company running on the website (Frontal Slayer on fsbw), until Command Center moves to its own routes/site.
@@ -39051,7 +39050,9 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 | HEADQUARTERS | All admins | `/admin/headquarters` → `/admin/studio/mission-control` | Frontal Slayer org HQ |
 
 **Changes:** dashboard/page.tsx, headquarters/page.tsx, workspace/routes.ts, application/routes.ts, portfolio-access.ts, CORE.md, MEMORY.md.
-=======
+
+---
+
 ## 2026-07-06 — Milestone 116: Executive Timeline™ V1.0 (permanent organizational history)
 
 **Context (full chat arc):** Same session delivered M90–M115 (Blueprint through Organizational Consciousness `b93f20eb`). User requested **Milestone 116 — Executive Timeline™ V1.0**: permanent visual history of every organization — immersive timeline founders explore; history as learning tool; auto-record 22+ event types; scroll years · filter department/project/org · jump milestones · replay history · archived HQ · historical dashboards · growth comparison · intelligent insights · Command Dock anniversary context. Philosophy: understand not only where you are, but **how you arrived there**.
@@ -39074,4 +39075,3 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Executive Timeline history (M116) preserves organizational journey atop M115 consciousness — demo localStorage via `studioOsExecutiveTimelineHistory_v1`.
 
->>>>>>> 31bd84e8 (Milestone 116: Executive Timeline permanent organizational history V1.0)

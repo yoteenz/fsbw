@@ -297,6 +297,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationalConsciousness.bootstrapOrganizationalConsciousnessPlatform();
     await yieldToMain();
 
+    const worldKnowledgeEngine = await import('../studio-os-core/world-knowledge-engine/bootstrap');
+    worldKnowledgeEngine.bootstrapWorldKnowledgeEnginePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

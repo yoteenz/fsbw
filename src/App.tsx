@@ -196,6 +196,7 @@ const AdminStudioRelationshipMemory = lazyWithRetry(() => import('./pages/admin/
 const AdminStudioPredictiveOrganization = lazyWithRetry(() => import('./pages/admin/studio/predictive-organization/page'), 'AdminStudioPredictiveOrganization');
 const AdminStudioAutonomousPreparation = lazyWithRetry(() => import('./pages/admin/studio/autonomous-preparation/page'), 'AdminStudioAutonomousPreparation');
 const AdminStudioOrganizationalConsciousness = lazyWithRetry(() => import('./pages/admin/studio/organizational-consciousness/page'), 'AdminStudioOrganizationalConsciousness');
+const AdminStudioWorldKnowledgeEngine = lazyWithRetry(() => import('./pages/admin/studio/world-knowledge-engine/page'), 'AdminStudioWorldKnowledgeEngine');
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1360,6 +1361,11 @@ function App() {
           <Route path="studio/organizational-consciousness" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioOrganizationalConsciousness />
+            </Suspense>
+          } />
+          <Route path="studio/world-knowledge-engine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioWorldKnowledgeEngine />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={
