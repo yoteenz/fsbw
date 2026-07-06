@@ -1512,6 +1512,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-consciousness',
+    title: 'ORGANIZATIONAL CONSCIOUSNESS™',
+    purpose: 'Master intelligence layer — unifies every system into one continuously learning organizational consciousness.',
+    route: p('organizational-consciousness'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M115',
+    ctaLabel: 'OPEN ORGANIZATIONAL CONSCIOUSNESS',
+    moduleKey: 'organizational-consciousness',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

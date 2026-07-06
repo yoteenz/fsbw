@@ -148,6 +148,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../autonomous-preparation/store').then((m) => {
     m.syncAutonomousPreparationFromSources(profile.organizationId);
   });
+  void import('../organizational-consciousness/store').then((m) => {
+    m.syncOrganizationalConsciousnessFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

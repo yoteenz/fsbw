@@ -203,6 +203,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncAutonomousPreparationFromSources(blueprint.organizationId);
   });
 
+  void import('../organizational-consciousness/store').then((m) => {
+    m.syncOrganizationalConsciousnessFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

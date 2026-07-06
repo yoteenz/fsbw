@@ -109,6 +109,7 @@ export type StudioOsCoreModuleId =
   | 'relationship-memory'
   | 'predictive-organization'
   | 'autonomous-preparation'
+  | 'organizational-consciousness'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -758,6 +759,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'AUTONOMOUS PREPARATION™',
     description: 'Quiet preparation V1.0 — prepare work before founders ask. Nothing auto-executes; everything awaits approval.',
     routeSegment: 'autonomous-preparation',
+  },
+  {
+    id: 'organizational-consciousness',
+    label: 'ORGANIZATIONAL CONSCIOUSNESS™',
+    description: 'Master intelligence V1.0 — unifies every intelligent system into one continuously learning organizational consciousness.',
+    routeSegment: 'organizational-consciousness',
   },
   {
     id: 'succession-mode',

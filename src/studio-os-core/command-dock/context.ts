@@ -36,6 +36,7 @@ import { listCrossOrgIntelligenceDockSuggestions } from '../cross-organization-i
 import { listRelationshipMemoryDockSuggestions } from '../relationship-memory';
 import { listPredictiveOrganizationDockSuggestions } from '../predictive-organization';
 import { listAutonomousPreparationDockSuggestions } from '../autonomous-preparation';
+import { listOrganizationalConsciousnessDockSuggestions } from '../organizational-consciousness';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -276,6 +277,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'AUTONOMOUS PREPARATION™ · AWAITING APPROVAL',
       portfolioMode: false,
       suggestedCommands: listAutonomousPreparationDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/organizational-consciousness')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'organizational-consciousness',
+      label: 'ORGANIZATIONAL CONSCIOUSNESS™ · ONE INTELLIGENCE',
+      portfolioMode: false,
+      suggestedCommands: listOrganizationalConsciousnessDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

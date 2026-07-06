@@ -845,6 +845,10 @@ export function adminStudioAutonomousPreparationPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/autonomous-preparation`;
 }
 
+export function adminStudioOrganizationalConsciousnessPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/organizational-consciousness`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

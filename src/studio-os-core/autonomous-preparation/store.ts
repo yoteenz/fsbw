@@ -60,9 +60,13 @@ export function syncAutonomousPreparationFromSources(
   organizationId: string
 ): OrganizationAutonomousPreparationProfile {
   const existing = getOrganizationAutonomousPreparationProfile(organizationId);
-  return upsertProfile(
+  const profile = upsertProfile(
     buildOrganizationAutonomousPreparationProfile(organizationId, existing?.pendingPreparations)
   );
+  void import('../organizational-consciousness/store').then((m) => {
+    m.syncOrganizationalConsciousnessFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationAutonomousPreparationProfile(

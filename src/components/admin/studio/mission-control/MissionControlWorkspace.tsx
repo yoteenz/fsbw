@@ -59,6 +59,7 @@ import { MissionControlCrossOrgIntelligencePanel } from './MissionControlCrossOr
 import { MissionControlRelationshipMemoryPanel } from './MissionControlRelationshipMemoryPanel';
 import { MissionControlPredictiveOrganizationPanel } from './MissionControlPredictiveOrganizationPanel';
 import { MissionControlAutonomousPreparationPanel } from './MissionControlAutonomousPreparationPanel';
+import { MissionControlOrganizationalConsciousnessPanel } from './MissionControlOrganizationalConsciousnessPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -427,6 +428,7 @@ export function MissionControlWorkspace() {
             <MissionControlRelationshipMemoryPanel />
             <MissionControlPredictiveOrganizationPanel />
             <MissionControlAutonomousPreparationPanel />
+            <MissionControlOrganizationalConsciousnessPanel />
           </div>
         </ExecutiveSecondaryGrid>
 

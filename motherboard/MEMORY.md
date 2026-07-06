@@ -39005,3 +39005,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Autonomous Preparation (M114) closes the prepare-ahead loop after M113 prediction — always one step ahead, never auto-executing. Demo localStorage via `studioOsAutonomousPreparation_v1`.
 
+---
+
+## 2026-07-06 — Milestone 115: Organizational Consciousness™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M114 (Blueprint through Autonomous Preparation `b2f321e2`). User requested **Milestone 115 — Organizational Consciousness™ V1.0**: master intelligence layer connecting every intelligent system — organizations experience one continuously learning intelligence, not dozens of independent features. Culmination of all prior milestones. Ultimate philosophy: **PRESERVE EXPERTISE. BUILD LEGACY.** — organizations defined by intelligence, not software.
+
+**Requirements delivered:**
+- **Connected systems (15)** — Blueprint · Profession Brain · Genome · Memory Engine · Presence · Ambient Awareness · Relationship Memory · Executive Council · Pulse · Health Index · Predictive Organization · Autonomous Preparation · Knowledge Confidence · Command Dock · Legacy Vault — continuous context sharing
+- **Organizational reasoning** — 10 factors before recommendations (history · priorities · founder preferences · brain · genome · relationships · council · confidence · workload · long-term goals) — holistic, not isolated
+- **Continuous learning** — projects · meetings · lessons · approvals · customers · campaigns · training · knowledge updates · brain improvements strengthen consciousness
+- **Executive identity** — remembers · learns · predicts · prepares · collaborates · preserves · adapts · protects · teaches · grows — feels like executive consciousness, not software
+
+**Delivered:**
+- **`src/studio-os-core/organizational-consciousness/`** — **`system-integration.ts`** · **`reasoning-engine.ts`** · **`learning-engine.ts`** · **`consciousness-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`OrganizationalConsciousnessWorkspace`** + **`/admin/studio/organizational-consciousness`** — 4 tabs: Consciousness Overview · Connected Systems · Organizational Reasoning · Continuous Learning · indigo accent `#6366F1`.
+- **`MissionControlOrganizationalConsciousnessPanel`** — unified intelligence preview in Mission Control.
+- **`useOrganizationalConsciousnessState`** hook · brand voice **`organizational-consciousness`**: *"One intelligence. Preserve expertise. Build legacy."*
+- **Command Dock** — **`resolveOrganizationalConsciousnessAdvice()`** · **`buildProactiveOrganizationalConsciousnessSuggestion()`** · **`buildConsciousnessOpeningLine()`** on `/organizational-consciousness` route.
+- **Integration** — probes all 15 system stores · autonomous preparation resync triggers consciousness resync · boundary-sync · profession-brain · blueprint · workspaces bootstrap · modules · nav · App route.
+- **Docs** — **`docs/studio-os/organizational-consciousness.md`** · **CORE.md** M115 entry.
+
+**Conventions:** Organizational Consciousness (M115) is the master layer atop M107–M114 intelligence stack — Studio OS becomes the living consciousness of the organization. Demo localStorage via `studioOsOrganizationalConsciousness_v1`.
+
