@@ -39480,3 +39480,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/component-registry.md`** · **CORE.md** M128 entry
 
 **Conventions:** New Studio OS UI must search Component Registry before creating components. Compose from Executive IA (M83). Mission Control panels: ExecutiveSecondaryCard + ExecutiveHealthRing + eiaActionBtn. Optional `registerComponent()` for new reusable assets. Sync chain: … → System Registry → **Component Registry**. Demo localStorage via `studioOsComponentRegistry_v1`. Brand voice: *"Assemble interfaces. Never recreate. Every component exists once."* Accent `#7C2D12`.
+
+---
+
+## 2026-07-06 — Milestone 129: Design Token Engine™ V1.0
+
+**Context (full chat arc):** Same session completed M126 Documentation Registry through M128 Component Registry (`7cebdba2`). User requested **Design Token Engine™**: visual source of truth for Studio OS — design consistency automatic; centralize spacing, typography, border radius, glass, blur, shadows, elevation, animation timing, transitions, opacity, brand/accent colors, gradients, icon sizes, panel heights, margins, padding, responsive breakpoints, dark/light/future themes; design governance so components inherit tokens and pages never redefine core design values; protects Studio OS Design Bible.
+
+**Requirements delivered:**
+- **Centralize all visual tokens** — 19 categories seeded from `adminStudioTheme.ts`, `executiveIaTheme.ts`, responsive breakpoints (~45 tokens)
+- **Theme engine** — Light active · Dark & Future prepared
+- **Design governance** — audits Component Registry™ bindings; flags missing token inheritance
+- **Token discovery** — `queryDesignTokens()` with semantic search
+- **Command Dock** — design token Q&A (*"Show Design Token Engine status"*, *"What is the Studio accent color?"*, *"List spacing tokens"*, *"Are components inheriting design tokens?"*)
+
+**Delivered:**
+- **`src/studio-os-core/design-token-engine/`** — `token-catalog.ts` · `theme-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`DesignTokenEngineWorkspace`** (6 tabs: Overview · Token Catalog · Categories · Themes · Design Governance · Discovery) · **`/admin/studio/design-token-engine`** · **`MissionControlDesignTokenEnginePanel`** · **`useDesignTokenEngineState`**
+- **Wiring** — nav M129 · sync chain Component Registry → Design Token Engine · Command Dock design-token-first · boundary-sync · documentation system registry + page-guide entry · Component Registry workspace link
+- **Docs** — **`docs/studio-os/design-token-engine.md`** · **CORE.md** M129 entry
+
+**Conventions:** Components inherit visual language from Design Token Engine™ — never hardcode spacing, typography, or brand colors on pages. Optional `registerDesignToken()` for Design Bible extensions. Sync chain: … → Component Registry → **Design Token Engine**. Demo localStorage via `studioOsDesignTokenEngine_v1`. Brand voice: *"Design consistency is automatic. Every surface speaks the same visual language."* Accent `#9333EA`.

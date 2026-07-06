@@ -51,7 +51,11 @@ function upsertProfile(profile: OrganizationComponentRegistryProfile): Organizat
 export function syncComponentRegistryFromSources(
   organizationId: string
 ): OrganizationComponentRegistryProfile {
-  return upsertProfile(buildOrganizationComponentRegistryProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationComponentRegistryProfile(organizationId));
+  void import('../design-token-engine/store').then((m) => {
+    m.syncDesignTokenEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationComponentRegistryProfile(

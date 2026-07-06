@@ -897,6 +897,10 @@ export function adminStudioComponentRegistryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/component-registry`;
 }
 
+export function adminStudioDesignTokenEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/design-token-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

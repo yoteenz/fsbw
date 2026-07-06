@@ -1668,6 +1668,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'design-token-engine',
+    title: 'DESIGN TOKEN ENGINE™',
+    purpose: 'Visual source of truth — spacing, typography, colors, motion, elevation, and themes centralized for every Studio OS surface.',
+    route: p('design-token-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M129',
+    ctaLabel: 'OPEN DESIGN TOKEN ENGINE',
+    moduleKey: 'design-token-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

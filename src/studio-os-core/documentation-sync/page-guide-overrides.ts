@@ -91,6 +91,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'documentation-governance': fromSystem('documentation-governance'),
   'system-registry': fromSystem('system-registry'),
   'component-registry': fromSystem('component-registry'),
+  'design-token-engine': fromSystem('design-token-engine'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

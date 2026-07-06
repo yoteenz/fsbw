@@ -6,7 +6,7 @@ import {
   COMPONENT_REGISTRY_PHILOSOPHY,
   queryComponentRegistry,
 } from '../../../../studio-os-core/component-registry';
-import { adminStudioMissionControlPath, adminStudioSystemRegistryPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioDesignTokenEnginePath, adminStudioMissionControlPath, adminStudioSystemRegistryPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -73,6 +73,9 @@ export function ComponentRegistryWorkspace() {
           {profile.dockRegistryLine}
         </p>
       </ExecutiveSecondaryCard>
+      <button type="button" onClick={() => navigate(adminStudioDesignTokenEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: COMPONENT_REGISTRY_ACCENT, color: COMPONENT_REGISTRY_ACCENT }}>
+        DESIGN TOKEN ENGINE →
+      </button>
       <button type="button" onClick={() => navigate(adminStudioSystemRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: COMPONENT_REGISTRY_ACCENT, color: COMPONENT_REGISTRY_ACCENT }}>
         SYSTEM REGISTRY →
       </button>

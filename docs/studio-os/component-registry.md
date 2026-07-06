@@ -65,7 +65,7 @@ Components score 82–100% based on platform adoption. ExecutivePageShell, Execu
 
 Documentation Governance → System Registry → **Component Registry**
 
-**`system-registry/store`** triggers **`syncComponentRegistryFromSources`** · **boundary-sync**
+**`system-registry/store`** triggers **`syncComponentRegistryFromSources`** · **boundary-sync** · chains to **Design Token Engine™**
 
 ## UI
 

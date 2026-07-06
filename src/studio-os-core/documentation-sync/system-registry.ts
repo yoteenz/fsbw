@@ -4,6 +4,7 @@ import {
   adminStudioDocumentationGovernancePath,
   adminStudioSystemRegistryPath,
   adminStudioComponentRegistryPath,
+  adminStudioDesignTokenEnginePath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -668,6 +669,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['FIND ExecutiveHeroCard → REUSE IN NEW MODULE → REGISTER VARIANT'],
     aliases: ['component registry', 'ui registry', 'design system', 'cr'],
     searchKeywords: ['component registry', 'reusable ui', 'executive ia', 'design tokens'],
+  }),
+  entry({
+    id: 'design-token-engine',
+    label: 'Design Token Engine™',
+    moduleId: 'design-token-engine',
+    milestone: 'M129',
+    route: adminStudioDesignTokenEnginePath(),
+    purpose: 'Visual source of truth — spacing, typography, colors, motion, elevation, and themes centralized.',
+    overview:
+      'Centralizes spacing, typography, border radius, glass, blur, shadows, elevation, animation, opacity, brand/accent colors, gradients, icon sizes, panel heights, margins, padding, breakpoints, and light/dark/future themes.',
+    capabilities: ['Token catalog', 'Theme engine', 'Design governance', 'Component inheritance audit', 'Discovery search'],
+    howItWorks: 'Seed tokens from Design Bible → components inherit → governance flags overrides → every future screen speaks the same visual language.',
+    whenUsed: ['Building new modules', 'Design system review', 'Theme planning', 'Component token binding'],
+    relatedSystems: ['component-registry', 'system-registry', 'command-dock'],
+    exampleWorkflows: ['FIND spacing token → INHERIT IN COMPONENT → AUDIT GOVERNANCE'],
+    aliases: ['design token engine', 'design tokens', 'visual source of truth', 'design bible', 'dte'],
+    searchKeywords: ['design tokens', 'spacing', 'typography', 'themes', 'design governance'],
   }),
 ];
 
