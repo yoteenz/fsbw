@@ -79,6 +79,7 @@ export type StudioOsBrandSystemId =
   | 'accessibility-auditor'
   | 'performance-monitor'
   | 'regression-engine'
+  | 'release-readiness'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -157,6 +158,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'accessibility-auditor': 'Inclusive design is premium design. Accessibility feels invisible.',
   'performance-monitor': 'Performance is a feature. Never slower because we\'re more capable.',
   'regression-engine': 'Never repeat the same mistake twice. Every regression becomes knowledge.',
+  'release-readiness': 'Production is a privilege. Confident before deployment—not hopeful afterward.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

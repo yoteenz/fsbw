@@ -17,6 +17,7 @@ import {
 import {
   adminStudioPerformanceMonitorPath,
   adminStudioQaHeadquartersPath,
+  adminStudioReleaseReadinessPath,
 } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
@@ -150,8 +151,11 @@ export function RegressionEngineWorkspace() {
       <button type="button" onClick={() => setTab('memory')} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: REGRESSION_ENGINE_ACCENT, color: REGRESSION_ENGINE_ACCENT }}>
         HISTORICAL MEMORY™ →
       </button>
-      <button type="button" onClick={() => navigate(adminStudioQaHeadquartersPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+      <button type="button" onClick={() => navigate(adminStudioQaHeadquartersPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         QA HEADQUARTERS →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioReleaseReadinessPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: REGRESSION_ENGINE_ACCENT, color: REGRESSION_ENGINE_ACCENT }}>
+        RELEASE READINESS →
       </button>
     </ExecutivePageShell>
   );

@@ -153,6 +153,7 @@ export type StudioOsCoreModuleId =
   | 'accessibility-auditor'
   | 'performance-monitor'
   | 'regression-engine'
+  | 'release-readiness'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1066,6 +1067,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'REGRESSION ENGINE™',
     description: 'Regression Engine V1.0 — continuously verifies that every change does not break existing functionality. Studio OS remembers everything that worked.',
     routeSegment: 'regression-engine',
+  },
+  {
+    id: 'release-readiness',
+    label: 'RELEASE READINESS™',
+    description: 'Release Readiness V1.0 — final approval gate before production. Every release earns the right to reach users.',
+    routeSegment: 'release-readiness',
   },
   {
     id: 'succession-mode',

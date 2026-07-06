@@ -2040,6 +2040,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'release-readiness',
+    title: 'RELEASE READINESS™',
+    purpose: 'Final approval gate before production — every discipline must approve. Production is a privilege, not a destination.',
+    route: p('release-readiness'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M161',
+    ctaLabel: 'OPEN RELEASE READINESS',
+    moduleKey: 'release-readiness',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

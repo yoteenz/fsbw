@@ -1021,6 +1021,10 @@ export function adminStudioRegressionEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/regression-engine`;
 }
 
+export function adminStudioReleaseReadinessPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/release-readiness`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

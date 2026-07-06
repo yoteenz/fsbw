@@ -52,10 +52,14 @@ export function syncRegressionEngineFromSources(
 ): OrganizationRegressionEngineProfile {
   const existing = getOrganizationRegressionEngineProfile(organizationId);
   const built = buildOrganizationRegressionEngineProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     selectedBuildId: existing?.selectedBuildId ?? built.selectedBuildId,
   });
+  void import('../release-readiness/store').then((m) => {
+    m.syncReleaseReadinessFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationRegressionEngineProfile(
