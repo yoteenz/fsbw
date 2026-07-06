@@ -1284,6 +1284,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'professional-trust-framework',
+    title: 'PROFESSIONAL TRUST FRAMEWORK™',
+    purpose: 'Permanent governance — professional scope, confidence system, natural guidance, regulated industries, escalation. Trust through responsible judgment.',
+    route: p('professional-trust-framework'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M94',
+    ctaLabel: 'OPEN TRUST FRAMEWORK',
+    moduleKey: 'professional-trust-framework',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',

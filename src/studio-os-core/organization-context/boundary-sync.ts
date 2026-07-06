@@ -77,6 +77,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationKnowledgeCommerceProfile(context.organizationId);
   });
 
+  void import('../professional-trust-framework/store').then((m) => {
+    m.ensureOrganizationTrustFrameworkProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

@@ -11,6 +11,8 @@ import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   adminStudioBusinessDiscoveryBlueprintPath,
   adminStudioExpertMarketplacePath,
+  adminStudioKnowledgeCommercePath,
+  adminStudioProfessionalTrustFrameworkPath,
   adminStudioStudioInstitutePath,
 } from '../../../../utils/adminStudioRoutes';
 
@@ -52,6 +54,24 @@ export default function AdminStudioProfessionBrainPage() {
             style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
           >
             STUDIO INSTITUTE →
+          </button>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => navigate(adminStudioProfessionalTrustFrameworkPath())}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            TRUST FRAMEWORK →
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(adminStudioKnowledgeCommercePath())}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            KNOWLEDGE COMMERCE →
           </button>
         </div>
         <button

@@ -90,6 +90,7 @@ export type StudioOsCoreModuleId =
   | 'profession-brain'
   | 'expert-marketplace'
   | 'knowledge-commerce'
+  | 'professional-trust-framework'
   | 'brand-positioning'
   | 'governance'
   | 'studio-intelligence'
@@ -624,6 +625,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'KNOWLEDGE COMMERCE™',
     description: 'Expertise economy V1.0 — monetize Profession Brain knowledge. Product builder, licensing, AI Expert Experiences, revenue intelligence. MONETIZE KNOWLEDGE.',
     routeSegment: 'knowledge-commerce',
+  },
+  {
+    id: 'professional-trust-framework',
+    label: 'PROFESSIONAL TRUST FRAMEWORK™',
+    description: 'Permanent governance V1.0 — professional scope, confidence system, natural guidance, regulated industries, Command Dock escalation. Trust through responsible judgment.',
+    routeSegment: 'professional-trust-framework',
   },
   {
     id: 'brand-positioning',

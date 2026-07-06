@@ -769,6 +769,10 @@ export function adminStudioKnowledgeCommercePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/knowledge-commerce`;
 }
 
+export function adminStudioProfessionalTrustFrameworkPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/professional-trust-framework`;
+}
+
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }

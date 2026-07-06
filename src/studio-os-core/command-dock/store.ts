@@ -30,6 +30,10 @@ import {
   resolveKnowledgeCommerceAdvice,
   buildProactiveCommerceSuggestion,
 } from '../knowledge-commerce/dock-advisor';
+import {
+  resolveProfessionalTrustAdvice,
+  buildProactiveTrustSuggestion,
+} from '../professional-trust-framework/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -88,6 +92,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const brain = buildProactiveBrainSuggestion(workspaceId);
   const institute = buildProactiveInstituteSuggestion(workspaceId);
   const commerce = buildProactiveCommerceSuggestion(workspaceId);
+  const trust = buildProactiveTrustSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -95,16 +100,21 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const commerceProactive = commerce
     ? { response: commerce, concierge: 'Chief Concierge', suggestedCommand: 'Open Knowledge Commerce product builder.' }
     : null;
+  const trustProactive = trust
+    ? { response: trust, concierge: 'Chief Concierge', suggestedCommand: 'Review professional scope before proceeding.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/knowledge-commerce') && commerceProactive
-      ? commerceProactive
-      : pathname.includes('/studio-institute') && instituteProactive
-        ? instituteProactive
-        : brain && blueprintPct >= 40
-          ? brain
-          : discovery && blueprintPct < 50
-            ? discovery
-            : growth;
+    pathname.includes('/professional-trust-framework') && trustProactive
+      ? trustProactive
+      : pathname.includes('/knowledge-commerce') && commerceProactive
+        ? commerceProactive
+        : pathname.includes('/studio-institute') && instituteProactive
+          ? instituteProactive
+          : brain && blueprintPct >= 40
+            ? brain
+            : discovery && blueprintPct < 50
+              ? discovery
+              : growth;
   const proactiveSuggestion = proactiveSource
     ? {
         id: `proactive-${Date.now()}`,
@@ -224,6 +234,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${commerceAdvice.concierge}\n${commerceAdvice.response}`,
+    });
+    return null;
+  }
+
+  const trustAdvice = resolveProfessionalTrustAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (trustAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${trustAdvice.concierge}\n${trustAdvice.response}`,
     });
     return null;
   }

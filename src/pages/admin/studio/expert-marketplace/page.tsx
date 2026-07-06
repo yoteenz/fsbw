@@ -11,6 +11,7 @@ import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   adminStudioKnowledgeCommercePath,
   adminStudioMarketplacePath,
+  adminStudioProfessionalTrustFrameworkPath,
   adminStudioProfessionBrainPath,
 } from '../../../../utils/adminStudioRoutes';
 
@@ -54,14 +55,24 @@ export default function AdminStudioExpertMarketplacePage() {
             KNOWLEDGE COMMERCE →
           </button>
         </div>
-        <button
-          type="button"
-          onClick={() => navigate(adminStudioMarketplacePath())}
-          className="w-full py-2 text-[7px] font-futura uppercase border"
-          style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
-        >
-          LEGACY MARKETPLACE →
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => navigate(adminStudioProfessionalTrustFrameworkPath())}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            TRUST FRAMEWORK →
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate(adminStudioMarketplacePath())}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            LEGACY MARKETPLACE →
+          </button>
+        </div>
       </div>
 
       <AdminStudioDisclaimerFooter>

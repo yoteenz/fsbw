@@ -15,6 +15,7 @@ import { listProfessionBrainDockSuggestions } from '../profession-brain';
 import { listExpertMarketplaceDockSuggestions } from '../expert-marketplace';
 import { listStudioInstituteDockSuggestions } from '../studio-institute';
 import { listKnowledgeCommerceDockSuggestions } from '../knowledge-commerce';
+import { listProfessionalTrustDockSuggestions } from '../professional-trust-framework';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -157,6 +158,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/professional-trust-framework')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'professional-trust-framework',
+      label: 'PROFESSIONAL TRUST FRAMEWORK™ · RESPONSIBLE GUIDANCE',
+      portfolioMode: false,
+      suggestedCommands: listProfessionalTrustDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

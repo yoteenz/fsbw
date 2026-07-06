@@ -94,6 +94,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../knowledge-commerce/store').then((m) => {
     m.syncKnowledgeCommerceFromProfessionBrain(profile.organizationId);
   });
+  void import('../professional-trust-framework/store').then((m) => {
+    m.syncProfessionalTrustFromProfessionBrain(profile.organizationId);
+  });
 }
 
 export function syncProfessionBrainFromSources(

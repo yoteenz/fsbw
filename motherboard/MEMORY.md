@@ -38584,3 +38584,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Knowledge Commerce ≠ ecommerce — expertise economy. Expert Marketplace = discovery · Knowledge Commerce = monetization. Demo revenue figures are localStorage-derived from Brain maturity.
 
+---
+
+## 2026-07-06 — Milestone 94: Professional Trust Framework™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M93 and M92.5 (Business Discovery Blueprint, Organization Inauguration, Profession Brain, Expert Marketplace + Brand Positioning V2.0, Studio Institute, Knowledge Commerce). User requested **Professional Trust Framework™** — permanent governance for every Profession Brain™, Digital Concierge, customer interaction, and regulated industry. Purpose is **trust**, not legal protection alone. Studio OS should behave like an exceptional professional employee who knows limits of authority, communicates responsibly, and knows when human expertise must remain in the decision.
+
+**Core philosophy delivered:** Preserve and amplify professional expertise — never replace licensed professionals. Concierges educate · prepare · organize · recommend · assist — never misrepresent authority. Every Brain understands what it knows and what requires professional review. Avoid generic warning banners and fear-based disclaimers; use natural guidance (e.g. quarterly filing prepared, recommend licensed tax professional review before submission).
+
+**Delivered:**
+- **`src/studio-os-core/professional-trust-framework/`** — philosophy constants · regulated industries · scope declarations (can/cannot/review recommended/required per brain) · confidence system (knowledge coverage · confidence level · review status) · natural guidance messages · escalation engine (schedule consultation · request review · assign licensed professional · book appointment · prepare documents) · org store · dock advisor · bootstrap.
+- **`ProfessionalTrustFrameworkWorkspace`** + **`/admin/studio/professional-trust-framework`** — 6 tabs: Trust Overview · Professional Scope · Confidence System · Natural Guidance · Regulated Industries · Escalation.
+- **`useProfessionalTrustState`** hook · brand voice **`professional-trust-framework`**: *"Guide responsibly. Preserve professional trust."*
+- **Integration** — sync from **`profession-brain/store`** on upsert · **`boundary-sync`** ensure profile · Command Dock **`resolveProfessionalTrustAdvice()`** + proactive trust suggestions on route · Profession Brain page footer links to Trust Framework · Expert Marketplace page links to Trust Framework.
+- **Docs** — **`docs/studio-os/professional-trust-framework.md`** · **CORE.md** M94 entry.
+
+**Conventions:** Trust Framework ≠ legal disclaimer wall — responsible judgment and natural escalation. Every Brain maintains scope + confidence visible internally and externally. Command Dock recommends escalation when actions exceed Concierge scope. Regulated industries may define additional review requirements.
+

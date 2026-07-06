@@ -212,6 +212,10 @@ export function bootstrapWorkspacesPlatform(): void {
     knowledgeCommerce.bootstrapKnowledgeCommercePlatform();
     await yieldToMain();
 
+    const professionalTrust = await import('../studio-os-core/professional-trust-framework/bootstrap');
+    professionalTrust.bootstrapProfessionalTrustPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();
