@@ -39313,3 +39313,29 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/studio-intelligence-architecture.md`** · **CORE.md** M122 entry · nav metric **M122**
 
 **Conventions:** Studio Intelligence Architecture (M122) makes Studio OS valuable even if every AI vendor changes. All AI requests must pass through Studio Intelligence™. Demo localStorage via `studioOsStudioIntelligenceArchitecture_v1`.
+
+---
+
+## 2026-07-06 — Milestone 123: Model Orchestrator™ & AI Swap Engine™ V1.0
+
+**Context (full chat arc):** Same session completed M121 Legacy Network™ (`02950cfa`), M122 Studio Intelligence Architecture (`1b4b447f`), and integrated Life & Culture Preferences. User requested **Milestone 123 — Model Orchestrator™ & AI Swap Engine™ V1.0**: AI abstraction layer — no feature depends on one provider · models replaceable · Studio Intelligence™ permanent · AI Swap Engine switches providers without breaking features · multi-model routing · failover · local/offline · model benchmarking.
+
+**Requirements delivered:**
+- **Model Orchestrator™** — all AI requests flow through orchestrator (best model · cost · speed · quality · privacy · org settings · data sensitivity · trust · fallback · local availability)
+- **AI Swap Engine™** — 13 protected features continue after provider switch (Command Dock · Concierges · Profession Brain · Institute · Council · content · research · analysis · summaries · automations · Knowledge Commerce · Screening Room · Production Studio)
+- **Multi-model routing** — 11 task types · founder never needs to know which model answered
+- **Failover** — retry · switch provider · backup · local · graceful degrade · explain when needed
+- **Local + offline** — 7 capabilities for limited functionality when cloud unavailable
+- **Model benchmarking** — 9 dimensions · learns best model per org and task
+- **Command Dock** — **`resolveModelOrchestratorAdvice()`** · **`buildProactiveModelOrchestratorSuggestion()`** · **`buildModelOrchestratorOpeningLine()`**
+
+**Delivered:**
+- **`src/studio-os-core/model-orchestrator/`** — **`multi-model-router.ts`** · **`ai-swap-engine.ts`** · **`failover-engine.ts`** · **`local-offline-engine.ts`** · **`model-benchmarking.ts`** · **`orchestrator-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
+- **`ModelOrchestratorWorkspace`** + **`/admin/studio/model-orchestrator`** — 5 tabs: Orchestrator Overview · Multi-Model Routing · AI Swap Engine™ · Failover · Benchmarking · teal accent `#0D9488`
+- **`MissionControlModelOrchestratorPanel`** in Legacy Wing · **`useModelOrchestratorState`** hook
+- **Brand voice **`model-orchestrator`**: *"Models change. Studio Intelligence™ remains."*
+- **Sync chain** — Studio Intelligence Architecture · **`studio-intelligence-architecture/store`** resync triggers **`syncModelOrchestratorFromSources`** · **boundary-sync**
+- **API** — **`routeThroughModelOrchestrator()`** · **`swapModelProvider()`**
+- **Docs** — **`docs/studio-os/model-orchestrator.md`** · **CORE.md** M123 entry · nav metric **M123**
+
+**Conventions:** Model Orchestrator (M123) ensures Studio OS is not fragile — AI providers interchangeable; founder never fears losing org because one AI company changes. Demo localStorage via `studioOsModelOrchestrator_v1`.

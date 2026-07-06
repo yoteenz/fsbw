@@ -1596,6 +1596,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'model-orchestrator',
+    title: 'MODEL ORCHESTRATOR™',
+    purpose: 'AI abstraction layer & AI Swap Engine — interchangeable providers, multi-model routing, failover, benchmarking.',
+    route: p('model-orchestrator'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M123',
+    ctaLabel: 'OPEN MODEL ORCHESTRATOR',
+    moduleKey: 'model-orchestrator',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

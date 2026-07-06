@@ -58,7 +58,11 @@ function upsertProfile(
 export function syncStudioIntelligenceArchitectureFromSources(
   organizationId: string
 ): OrganizationStudioIntelligenceArchitectureProfile {
-  return upsertProfile(buildOrganizationStudioIntelligenceArchitectureProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationStudioIntelligenceArchitectureProfile(organizationId));
+  void import('../model-orchestrator/store').then((m) => {
+    m.syncModelOrchestratorFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationStudioIntelligenceArchitectureProfile(

@@ -873,6 +873,10 @@ export function adminStudioStudioIntelligenceArchitecturePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/studio-intelligence-architecture`;
 }
 
+export function adminStudioModelOrchestratorPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/model-orchestrator`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

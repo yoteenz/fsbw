@@ -321,6 +321,10 @@ export function bootstrapWorkspacesPlatform(): void {
     studioIntelligenceArchitecture.bootstrapStudioIntelligenceArchitecturePlatform();
     await yieldToMain();
 
+    const modelOrchestrator = await import('../studio-os-core/model-orchestrator/bootstrap');
+    modelOrchestrator.bootstrapModelOrchestratorPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();
