@@ -38438,3 +38438,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Organization switches are immediate navigation — do not reintroduce campus transition overlays or arrival briefing sequences without explicit product sign-off. Use `travelToWorkspace` / `returnToCampus` from the slim provider (or direct `navigate` + `enterWorkspace`) for org context changes.
 
+---
+
+## 2026-07-06 — Restore Studio Command Center card + fix headquarters entry loading (follow-up)
+
+**Context (full chat):** After campus transition removal (`f1bc3de4`), user reported **Studio Command Center wasn't restored** — it should sit **to the left of the Headquarters card** — and **Headquarters still isn't loading**.
+
+**Root causes:**
+- **Admin dashboard** card was labeled **STUDIO ADMINISTRATION** (not **STUDIO COMMAND CENTER**) — portfolio card existed in order but wrong name/identity.
+- **WorkspaceSwitcher** showed only **`OrganizationIdentityCard`** full width — Command Center was hidden inside the portfolio dropdown, not as a visible card beside Headquarters.
+- **`/admin/headquarters`** returned **`null`** during redirect (blank screen); portfolio owners with platform tenant were redirected to Command Center instead of launching org HQ from the **HEADQUARTERS** dashboard card.
+
+**Fix:**
+- **`StudioCommandCenterCard.tsx`** — compact portfolio card; **`WorkspaceSwitcher`** uses **`grid-cols-2`**: Command Center left, Headquarters right (portfolio owners only).
+- **Admin dashboard** — renamed card to **STUDIO COMMAND CENTER** (still first in grid, left of HEADQUARTERS); footer copy updated in **`command-center-demo.ts`**.
+- **`/admin/headquarters`** — always launches resolved org via **`resolveHeadquartersLaunchWorkspaceId`** + **`resolveOrganizationMissionControlPath`**; restored visible loading card + **ENTER MISSION CONTROL** fallback (no blank **`null`** screen, no erroneous Command Center redirect).
+
+**Conventions:** Studio Command Center = portfolio card left of Headquarters in dashboard + studio layout switcher. HEADQUARTERS card/route always enters organization Mission Control — never substitute Command Center for that action.
+

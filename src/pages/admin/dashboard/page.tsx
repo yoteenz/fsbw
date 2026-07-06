@@ -1149,7 +1149,7 @@ export default function AdminDashboard() {
     ...(canAccessStudioAdministration()
       ? [
           {
-            title: 'STUDIO ADMINISTRATION',
+            title: 'STUDIO COMMAND CENTER',
             count: String(STUDIO_ADMIN_DASHBOARD_METRIC),
             items: STUDIO_ADMIN_DASHBOARD_ITEMS.map((item) => ({
               label: item.label,
@@ -1163,7 +1163,7 @@ export default function AdminDashboard() {
   ];
 
   const DASHBOARD_CARD_ORDER = [
-    ...(canAccessStudioAdministration() ? (['STUDIO ADMINISTRATION'] as const) : []),
+    ...(canAccessStudioAdministration() ? (['STUDIO COMMAND CENTER'] as const) : []),
     'HEADQUARTERS',
     'REVENUE',
     'CLIENTS',
@@ -1219,7 +1219,7 @@ export default function AdminDashboard() {
       case 'HEADQUARTERS':
         navigate(ORGANIZATION_ROUTES.headquartersEntry);
         break;
-      case 'STUDIO ADMINISTRATION':
+      case 'STUDIO COMMAND CENTER':
         navigate(STUDIO_ADMINISTRATION_ROUTES.root);
         break;
       default:
