@@ -297,6 +297,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationSelfHealingEngineProfile(context.organizationId);
   });
 
+  void import('../decision-audit/store').then((m) => {
+    m.ensureOrganizationDecisionAuditProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

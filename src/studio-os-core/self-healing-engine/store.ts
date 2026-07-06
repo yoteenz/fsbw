@@ -87,7 +87,11 @@ export function syncSelfHealingEngineFromSources(organizationId: string): Organi
     }),
     existing
   );
-  return upsertProfile(built);
+  const profile = upsertProfile(built);
+  void import('../decision-audit/store').then((m) => {
+    m.syncDecisionAuditFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationSelfHealingEngineProfile(

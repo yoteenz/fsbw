@@ -1920,6 +1920,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'decision-audit',
+    title: 'DECISION AUDIT™',
+    purpose: 'Permanent accountability — record every recommendation, approval, rejection, automation, and AI decision with full explanation.',
+    route: p('decision-audit'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M151',
+    ctaLabel: 'OPEN DECISION AUDIT',
+    moduleKey: 'decision-audit',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

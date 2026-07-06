@@ -981,6 +981,10 @@ export function adminStudioSelfHealingEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/self-healing-engine`;
 }
 
+export function adminStudioDecisionAuditPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/decision-audit`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

@@ -25,6 +25,7 @@ import {
   adminStudioTimeMachinePath,
   adminStudioPredictiveQaPath,
   adminStudioSelfHealingEnginePath,
+  adminStudioDecisionAuditPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1046,6 +1047,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['DETECT → CLASSIFY → REPAIR OR RECOVER → AUDIT'],
     aliases: ['self healing', 'auto repair', 'recovery center', 'resilience engine', 'healing engine'],
     searchKeywords: ['heal', 'repair', 'resilience', 'recovery', 'rollback', 'audit', 'auto fix'],
+  }),
+  entry({
+    id: 'decision-audit',
+    label: 'Decision Audit™',
+    moduleId: 'decision-audit',
+    milestone: 'M151',
+    route: adminStudioDecisionAuditPath(),
+    purpose: 'Permanent decision accountability — record every recommendation, approval, rejection, automation, and AI decision.',
+    overview:
+      '9 audit sources · 10 decision types · full explanation per decision · Decision Timeline™ chronological replay · never a black box.',
+    capabilities: ['Decision recording', 'Timeline replay', 'Evidence tracking', 'Approval audit', 'Related document linking', 'Search and explain'],
+    howItWorks: 'Aggregate decisions from all Studio OS sources → record with evidence and confidence → replay chronologically → click any decision for full explanation.',
+    whenUsed: ['Compliance audit', 'Incident investigation', 'Approval review', 'AI accountability', 'Executive reporting'],
+    relatedSystems: ['self-healing-engine', 'time-machine', 'executive-trust-dashboard', 'studio-intelligence', 'qa-inspector'],
+    exampleWorkflows: ['RECORD → REPLAY → EXPLAIN → ACCOUNT'],
+    aliases: ['decision audit', 'decision timeline', 'why did this happen', 'decision log', 'accountability'],
+    searchKeywords: ['decision', 'audit', 'approval', 'explain', 'timeline', 'accountability', 'who approved'],
   }),
 ];
 

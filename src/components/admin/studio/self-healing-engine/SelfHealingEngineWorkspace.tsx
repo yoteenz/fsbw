@@ -16,7 +16,7 @@ import {
   updateHealingThresholds,
 } from '../../../../studio-os-core/self-healing-engine';
 import type { HealingMode } from '../../../../studio-os-core/self-healing-engine';
-import { adminStudioPredictiveQaPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioPredictiveQaPath, adminStudioDecisionAuditPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -137,8 +137,11 @@ export function SelfHealingEngineWorkspace() {
       <button type="button" onClick={() => setTab('healing')} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: SELF_HEALING_ENGINE_ACCENT, color: SELF_HEALING_ENGINE_ACCENT }}>
         OPEN HEALING CENTER →
       </button>
-      <button type="button" onClick={() => navigate(adminStudioPredictiveQaPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+      <button type="button" onClick={() => navigate(adminStudioPredictiveQaPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         PREDICTIVE QA →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioDecisionAuditPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+        DECISION AUDIT →
       </button>
     </ExecutivePageShell>
   );

@@ -102,6 +102,7 @@ import { MissionControlExecutiveTrustDashboardPanel } from './MissionControlExec
 import { MissionControlTimeMachinePanel } from './MissionControlTimeMachinePanel';
 import { MissionControlPredictiveQaPanel } from './MissionControlPredictiveQaPanel';
 import { MissionControlSelfHealingEnginePanel } from './MissionControlSelfHealingEnginePanel';
+import { MissionControlDecisionAuditPanel } from './MissionControlDecisionAuditPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -178,6 +179,7 @@ export function MissionControlWorkspace() {
             <MissionControlTimeMachinePanel />
             <MissionControlPredictiveQaPanel />
             <MissionControlSelfHealingEnginePanel />
+            <MissionControlDecisionAuditPanel />
             <MissionControlKnowledgeConfidencePanel />
             <MissionControlAmbientBriefingPanel />
           </div>
@@ -574,6 +576,7 @@ export function MissionControlWorkspace() {
           <MissionControlTimeMachinePanel />
           <MissionControlPredictiveQaPanel />
           <MissionControlSelfHealingEnginePanel />
+          <MissionControlDecisionAuditPanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

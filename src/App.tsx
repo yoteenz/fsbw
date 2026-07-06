@@ -314,6 +314,10 @@ const AdminStudioSelfHealingEngine = lazyWithRetry(
   () => import('./pages/admin/studio/self-healing-engine/page'),
   'AdminStudioSelfHealingEngine'
 );
+const AdminStudioDecisionAudit = lazyWithRetry(
+  () => import('./pages/admin/studio/decision-audit/page'),
+  'AdminStudioDecisionAudit'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1685,6 +1689,11 @@ function App() {
           <Route path="studio/self-healing-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioSelfHealingEngine />
+            </Suspense>
+          } />
+          <Route path="studio/decision-audit" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioDecisionAudit />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

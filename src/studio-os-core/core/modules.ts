@@ -143,6 +143,7 @@ export type StudioOsCoreModuleId =
   | 'time-machine'
   | 'predictive-qa'
   | 'self-healing-engine'
+  | 'decision-audit'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -996,6 +997,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'SELF-HEALING™ ENGINE',
     description: 'Self-Healing Engine V1.0 — intelligent resilience; safely correct low-risk issues and prepare Recovery Plans for higher-risk situations.',
     routeSegment: 'self-healing-engine',
+  },
+  {
+    id: 'decision-audit',
+    label: 'DECISION AUDIT™',
+    description: 'Decision Audit V1.0 — permanent accountability for every significant recommendation, approval, rejection, automation, and AI decision.',
+    routeSegment: 'decision-audit',
   },
   {
     id: 'succession-mode',
