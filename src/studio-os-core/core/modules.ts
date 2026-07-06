@@ -96,6 +96,7 @@ export type StudioOsCoreModuleId =
   | 'company-health-index'
   | 'organization-pulse'
   | 'wisdom-capture'
+  | 'shadow-mode'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -667,6 +668,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'WISDOM CAPTURE™',
     description: 'Continuous wisdom preservation V1.0 — detect lessons from conversation, permanent Wisdom Library, organizational learning sync.',
     routeSegment: 'wisdom-capture',
+  },
+  {
+    id: 'shadow-mode',
+    label: 'SHADOW MODE™',
+    description: 'Concierge observation V1.0 — learn before automate. Four phases: Observe · Recommend · Assist · Automate. Confidence engine + transparency.',
+    routeSegment: 'shadow-mode',
   },
   {
     id: 'succession-mode',

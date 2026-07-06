@@ -109,6 +109,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../wisdom-capture/store').then((m) => {
     m.syncWisdomCaptureFromSources(profile.organizationId);
   });
+  void import('../shadow-mode/store').then((m) => {
+    m.syncShadowModeFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

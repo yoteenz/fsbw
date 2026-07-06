@@ -23,6 +23,7 @@ import { listSuccessionModeDockSuggestions } from '../succession-mode';
 import { listExecutiveCouncilDockSuggestions } from '../executive-council';
 import { listOrganizationPulseDockSuggestions } from '../organization-pulse';
 import { listWisdomCaptureDockSuggestions } from '../wisdom-capture';
+import { listShadowModeDockSuggestions } from '../shadow-mode';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -165,6 +166,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/shadow-mode')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'shadow-mode',
+      label: 'SHADOW MODE™ · OBSERVE BEFORE ACTING',
+      portfolioMode: false,
+      suggestedCommands: listShadowModeDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

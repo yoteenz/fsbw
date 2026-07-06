@@ -1356,6 +1356,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'shadow-mode',
+    title: 'SHADOW MODE™',
+    purpose: 'Concierges observe before acting — 4 learning phases, confidence engine, full transparency before automation.',
+    route: p('shadow-mode'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M102',
+    ctaLabel: 'OPEN SHADOW MODE',
+    moduleKey: 'shadow-mode',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

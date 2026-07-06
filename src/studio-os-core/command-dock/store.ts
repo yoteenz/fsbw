@@ -62,6 +62,10 @@ import {
   resolveWisdomCaptureAdvice,
   buildProactiveWisdomSuggestion,
 } from '../wisdom-capture/dock-advisor';
+import {
+  resolveShadowModeAdvice,
+  buildProactiveShadowSuggestion,
+} from '../shadow-mode/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -128,6 +132,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const council = buildProactiveCouncilSuggestion(workspaceId);
   const pulse = buildProactivePulseSuggestion(workspaceId);
   const wisdom = buildProactiveWisdomSuggestion(workspaceId);
+  const shadow = buildProactiveShadowSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -159,8 +164,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const wisdomProactive = wisdom
     ? { response: wisdom, concierge: 'Chief Concierge', suggestedCommand: 'Open Wisdom Capture — preserve this lesson forever.' }
     : null;
+  const shadowProactive = shadow
+    ? { response: shadow, concierge: 'Chief Concierge', suggestedCommand: 'Open Shadow Mode — review concierge learning phases.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/wisdom-capture') && wisdomProactive
+    pathname.includes('/shadow-mode') && shadowProactive
+      ? shadowProactive
+      : pathname.includes('/wisdom-capture') && wisdomProactive
       ? wisdomProactive
       : pathname.includes('/organization-pulse') && pulseProactive
       ? pulseProactive
@@ -245,6 +255,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const shadowAdvice = resolveShadowModeAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (shadowAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${shadowAdvice.concierge}\n${shadowAdvice.response}`,
+    });
+    return null;
+  }
 
   const wisdomAdvice = resolveWisdomCaptureAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (wisdomAdvice) {

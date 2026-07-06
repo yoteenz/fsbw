@@ -240,6 +240,10 @@ export function bootstrapWorkspacesPlatform(): void {
     wisdomCapture.bootstrapWisdomCapturePlatform();
     await yieldToMain();
 
+    const shadowMode = await import('../studio-os-core/shadow-mode/bootstrap');
+    shadowMode.bootstrapShadowModePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

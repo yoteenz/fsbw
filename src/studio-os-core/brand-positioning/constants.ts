@@ -22,6 +22,7 @@ export type StudioOsBrandSystemId =
   | 'company-health-index'
   | 'organization-pulse'
   | 'wisdom-capture'
+  | 'shadow-mode'
   | 'succession-mode'
   | 'executive-council'
   | 'expansion-center'
@@ -42,6 +43,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'company-health-index': 'Become healthier. Not simply larger.',
   'organization-pulse': 'Feel the organization. Not just the revenue.',
   'wisdom-capture': 'Capture why. Not just what.',
+  'shadow-mode': 'Observe first. Automate later.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',
   'expansion-center': 'Grow your organization. Expand your legacy.',

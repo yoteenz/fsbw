@@ -151,6 +151,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncWisdomCaptureFromSources(blueprint.organizationId);
   });
 
+  void import('../shadow-mode/store').then((m) => {
+    m.syncShadowModeFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

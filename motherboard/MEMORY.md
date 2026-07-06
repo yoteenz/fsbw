@@ -38722,3 +38722,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Wisdom Capture (M101) complements Memory Engine (M96) — Memory proves what worked; Wisdom Capture preserves why and small insights from daily conversation. Demo localStorage via `studioOsWisdomCapture_v1`.
 
+---
+
+## 2026-07-06 — Milestone 102: Shadow Mode™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M101 (Blueprint through Wisdom Capture `9d5a2b87`). User requested **Milestone 102 — Shadow Mode™ V1.0**: Digital Concierges observe organizations before actively participating. Trust earned · learn before automate · observation before execution. **4 learning phases** (Observe · Recommend · Assist · Automate). **Confidence Engine** (Knowledge · Workflow · Decision · Automation Readiness). Founder-defined automation thresholds (default 85%). **Transparency** — founders always know what was observed, learned, can automate, why confidence increased. Nothing invisible. Studio OS earns trust through observation before automation — exceptional new employee behavior.
+
+**Core philosophy delivered:** Trust should be earned · Digital Staff learn before they automate · observation comes before execution · never automate until confidence reaches thresholds.
+
+**Delivered:**
+- **`src/studio-os-core/shadow-mode/`** — **`constants.ts`** (phases · dimensions · thresholds) · **`types.ts`** · **`confidence-engine.ts`** (`computeConciergeConfidence()` · `resolvePhaseFromConfidence()`) · **`shadow-builder.ts`** · **`store.ts`** (`syncShadowModeFromSources()` · `setConciergeAutomationThreshold()`) · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`ShadowModeWorkspace`** + **`/admin/studio/shadow-mode`** — 4 tabs: Shadow Overview · Learning Phases · Confidence Engine · Transparency Log · indigo accent `#4F46E5`.
+- **`useShadowModeState`** hook · brand voice **`shadow-mode`**: *"Observe first. Automate later."*
+- **Integration** — sync from profession-brain · blueprint · boundary-sync · Command Dock **`resolveShadowModeAdvice()`** + **`buildProactiveShadowSuggestion()`** on `/shadow-mode` route · modules · nav · App route.
+- **Docs** — **`docs/studio-os/shadow-mode.md`** · **CORE.md** M102 entry.
+
+**Conventions:** Shadow Mode (M102) gates Concierge automation — complements Trust Framework and Wisdom Capture. Concierges start in Observe phase; phase advances only as confidence dimensions rise. Demo localStorage via `studioOsShadowMode_v1`.
+
