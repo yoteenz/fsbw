@@ -1,7 +1,8 @@
 /** Demo copy for Business Discovery Blueprint™ workspace (Milestone 90). */
 
-export const BUSINESS_DISCOVERY_BLUEPRINT_SUBTITLE =
-  'ORGANIZATIONAL ARCHAEOLOGY · THE BIRTH CERTIFICATE OF EVERY ORGANIZATION';
+import { STUDIO_OS_OFFICIAL_TAGLINE } from '../studio-os-core/brand-positioning';
+
+export const BUSINESS_DISCOVERY_BLUEPRINT_SUBTITLE = STUDIO_OS_OFFICIAL_TAGLINE;
 
 export const BUSINESS_DISCOVERY_BLUEPRINT_PHILOSOPHY =
   'Do not ask founders to configure software. Help founders teach Studio OS how their business works. Every answer becomes permanent organizational knowledge.';

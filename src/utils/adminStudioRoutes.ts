@@ -761,6 +761,10 @@ export function adminStudioProfessionBrainPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/profession-brain`;
 }
 
+export function adminStudioExpertMarketplacePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/expert-marketplace`;
+}
+
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }

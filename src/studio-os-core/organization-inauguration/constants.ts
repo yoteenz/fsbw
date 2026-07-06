@@ -9,8 +9,11 @@ export const INAUGURATION_PHILOSOPHY = [
   'This is the official birth of an organization — not software setup.',
 ];
 
-export const INAUGURATION_TAGLINE =
-  'THE OFFICIAL BIRTH OF AN ORGANIZATION · ENTER HEADQUARTERS FOR THE FIRST TIME';
+import { getBrandVoice, STUDIO_OS_OFFICIAL_TAGLINE } from '../brand-positioning';
+
+export const INAUGURATION_TAGLINE = getBrandVoice('organization-inauguration');
+
+export const INAUGURATION_MASTER_TAGLINE = STUDIO_OS_OFFICIAL_TAGLINE;
 
 export const CEREMONIAL_LINES = [
   'Your Headquarters has been established.',

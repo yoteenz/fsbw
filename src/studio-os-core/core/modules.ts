@@ -88,6 +88,8 @@ export type StudioOsCoreModuleId =
   | 'business-discovery-blueprint'
   | 'organization-inauguration'
   | 'profession-brain'
+  | 'expert-marketplace'
+  | 'brand-positioning'
   | 'governance'
   | 'studio-intelligence'
   | 'simulation-engine'
@@ -609,6 +611,18 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PROFESSION BRAIN™',
     description: 'Living institutional intelligence V1.0 — preserves expertise, judgment, and organizational memory. Powers every concierge, Academy lesson, and automation.',
     routeSegment: 'profession-brain',
+  },
+  {
+    id: 'expert-marketplace',
+    label: 'EXPERT MARKETPLACE™',
+    description: 'Public expertise ecosystem V1.0 — publish Profession Brain surfaces. Trusted experts, not AI bots. Share expertise. Expand your legacy.',
+    routeSegment: 'expert-marketplace',
+  },
+  {
+    id: 'brand-positioning',
+    label: 'STUDIO OS BRAND',
+    description: 'Official brand positioning V2.0 — PRESERVE EXPERTISE. BUILD LEGACY. Permanent tagline and contextual voice architecture.',
+    routeSegment: 'brand-positioning',
   },
   {
     id: 'governance',

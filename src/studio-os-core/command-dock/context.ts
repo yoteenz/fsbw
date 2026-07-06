@@ -12,6 +12,7 @@ import {
 import { listExecutiveGrowthSuggestions } from '../monetization-architecture';
 import { listDiscoveryDockSuggestions } from '../business-discovery-blueprint';
 import { listProfessionBrainDockSuggestions } from '../profession-brain';
+import { listExpertMarketplaceDockSuggestions } from '../expert-marketplace';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -156,6 +157,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/expert-marketplace')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'expert-marketplace',
+      label: 'EXPERT MARKETPLACE™ · SHARE EXPERTISE',
+      portfolioMode: false,
+      suggestedCommands: listExpertMarketplaceDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'strategy', 'executive-requests'],
     };
   }
 

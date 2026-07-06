@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
+import { StudioOsBrandTagline } from '../../../../components/admin/studio/brand/StudioOsBrandTagline';
 import { StudioInstituteWorkspace } from '../../../../components/admin/studio/studio-institute/StudioInstituteWorkspace';
 
 const STUDIO_INSTITUTE_SUBTITLE =
@@ -18,6 +19,7 @@ export default function AdminStudioStudioInstitutePage() {
       onBack={() => navigate('/admin/studio/executive-apprenticeship-founder-calibration')}
       navGroupId="overview"
     >
+      <StudioOsBrandTagline systemId="studio-institute" />
       <StudioInstituteWorkspace />
       <AdminStudioDisclaimerFooter>
         STUDIO INSTITUTE V1.0 · PERMANENT LEARNING INSTITUTION · DEMO PLACEHOLDER

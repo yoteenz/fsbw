@@ -21,6 +21,7 @@ import { resolveExecutiveGrowthAdvice, buildProactiveGrowthSuggestion } from '..
 import { resolveLivingDiscoveryAdvice, buildProactiveDiscoverySuggestion } from '../business-discovery-blueprint/dock-advisor';
 import { ensureOrganizationDiscoveryBlueprint } from '../business-discovery-blueprint/store';
 import { resolveProfessionBrainAdvice, buildProactiveBrainSuggestion } from '../profession-brain/dock-advisor';
+import { resolveExpertMarketplaceAdvice } from '../expert-marketplace/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -154,6 +155,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${professionAdvice.concierge}\n${professionAdvice.response}`,
+    });
+    return null;
+  }
+
+  const marketplaceAdvice = resolveExpertMarketplaceAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (marketplaceAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${marketplaceAdvice.concierge}\n${marketplaceAdvice.response}`,
     });
     return null;
   }

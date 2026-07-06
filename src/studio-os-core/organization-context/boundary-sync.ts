@@ -65,6 +65,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationProfessionBrainProfile(context.organizationId);
   });
 
+  void import('../expert-marketplace/store').then((m) => {
+    m.ensureOrganizationExpertMarketplaceProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

@@ -76,7 +76,7 @@ export function ensureOrganizationProfessionBrainProfile(
   const name = companyName ?? organizationId.replace(/-/g, ' ').toUpperCase();
   const profile = finalizeProfile(buildInitialProfile(organizationId, resolvedIndustry, name));
   upsertOrganizationProfessionBrainProfile(profile);
-  return profile;
+  return getOrganizationProfessionBrainProfile(organizationId);
 }
 
 export function upsertOrganizationProfessionBrainProfile(
@@ -85,6 +85,9 @@ export function upsertOrganizationProfessionBrainProfile(
   const store = readProfessionBrainStore();
   const next = store.profiles.filter((p) => p.organizationId !== profile.organizationId);
   writeProfessionBrainStore({ ...store, profiles: [...next, finalizeProfile(profile)] });
+  void import('../expert-marketplace/store').then((m) => {
+    m.syncExpertMarketplaceFromProfessionBrain(profile.organizationId);
+  });
 }
 
 export function syncProfessionBrainFromSources(

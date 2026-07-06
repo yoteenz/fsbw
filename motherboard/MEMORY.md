@@ -38532,3 +38532,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Profession Brain ≠ chatbot — institutional memory. Concierges reference Brain. Demo export copies JSON to clipboard. Seeded from industry + Blueprint services on first init.
 
+---
+
+## 2026-07-06 — Milestone 92: Expert Marketplace™ & Official Brand Positioning V2.0
+
+**Context (full chat arc):** Same session delivered Milestone 90 Business Discovery Blueprint™ (`df0f84a6`), Milestone 90.5 Organization Inauguration & Founder Ceremony (`0d9fd249`), and Milestone 91 Profession Brain™ (`fcca86e2`). User then requested **Milestone 92 — Expert Marketplace™ & Official Brand Positioning V2.0**: permanent brand promise **PRESERVE EXPERTISE. BUILD LEGACY.** across Studio OS plus public ecosystem for publishing approved Profession Brain expertise.
+
+**Brand positioning delivered:** Official tagline treated as permanent asset (same importance as logo). Brand philosophy — Studio OS preserves expertise and builds legacy, not “another AI platform.” **Brand voice architecture** with contextual statements per system (Blueprint · Profession Brain · Studio Institute · Expert Marketplace · Expansion Center · Command Dock · Inauguration) that complement but never replace master tagline. Core: **`src/studio-os-core/brand-positioning/`** · reusable **`StudioOsBrandTagline`** on Blueprint, Inauguration, Profession Brain, Expansion Center, Expert Marketplace, Studio Institute pages · demo subtitles updated to reference official tagline.
+
+**Expert Marketplace delivered:** Organizations publish approved Profession Brain **public surfaces** as **Expert Profiles** (name, org, creator, experience, industries, specialties, services, knowledge areas, certifications, languages, availability, version, ratings, trust level). Private ops knowledge never exposed without approval. Consumer capabilities: learn · ask · workflows · templates · consultations · estimates · scheduling · digital products · memberships · academy · upgrade. **Multi-audience** experiences · **trust tiers** (educational → licensed) with regulated-industry disclaimers · **Academy connection** (courses, lessons, paths, playbooks, checklists, certifications) · **revenue channels** · **discovery** by industry/profession/location/problem/specialty/etc. Core: **`src/studio-os-core/expert-marketplace/`** (profile-generator, discovery-engine, trust-transparency, academy-connection, monetization, multi-audience, store, bootstrap, dock-advisor). UI: **`ExpertMarketplaceWorkspace`** + **`/admin/studio/expert-marketplace`** (7 tabs) · **`useExpertMarketplaceState`**.
+
+**Integration:** **`profession-brain/store.ts`** syncs marketplace on upsert (fixed broken `ensureOrganizationProfessionBrainProfile` spread bug). **`boundary-sync.ts`** + **`workspaces/index.ts`** bootstrap. **`command-dock/store.ts`** + **`context.ts`** — `resolveExpertMarketplaceAdvice()` + route context. Profession Brain page footer links to Expert Marketplace. Legacy M49 marketplace at **`/admin/studio/marketplace`** remains separate.
+
+**Build fixes:** Import paths in **`StudioOsBrandTagline.tsx`**; **`resolveFounderName`** from **`organization-inauguration/charter-generator`**; removed unused imports/vars.
+
+**Docs:** **`docs/studio-os/brand-positioning.md`** · **`docs/studio-os/expert-marketplace.md`** · **CORE.md** M92 entry.
+
+**Conventions:** Master tagline is permanent — do not replace without founder instruction. Expert Marketplace = trusted human expertise products, not AI bots. Publishing is always org-controlled opt-in from Profession Brain public surfaces.
+

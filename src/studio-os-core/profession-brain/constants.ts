@@ -10,8 +10,11 @@ export const PROFESSION_BRAIN_PHILOSOPHY = [
   'Knowledge should never die with one person.',
 ];
 
-export const PROFESSION_BRAIN_TAGLINE =
-  'LIVING INSTITUTIONAL INTELLIGENCE · THE ORGANIZATION\'S PERMANENT MEMORY';
+import { getBrandVoice, STUDIO_OS_OFFICIAL_TAGLINE } from '../brand-positioning';
+
+export const PROFESSION_BRAIN_TAGLINE = getBrandVoice('profession-brain');
+
+export const PROFESSION_BRAIN_MASTER_TAGLINE = STUDIO_OS_OFFICIAL_TAGLINE;
 
 export const LIVING_BRAIN_PROMPT = 'Would you like to update the Profession Brain?';
 

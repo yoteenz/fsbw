@@ -10,8 +10,12 @@ export const DISCOVERY_BLUEPRINT_PHILOSOPHY = [
   'Every answer becomes part of the organization\'s permanent knowledge.',
 ];
 
-export const DISCOVERY_BLUEPRINT_TAGLINE =
-  'ORGANIZATIONAL ARCHAEOLOGY · THE BIRTH CERTIFICATE OF EVERY ORGANIZATION';
+import { getBrandVoice, STUDIO_OS_OFFICIAL_TAGLINE } from '../brand-positioning';
+
+export const DISCOVERY_BLUEPRINT_TAGLINE = getBrandVoice('business-discovery-blueprint');
+
+/** Master brand promise — always present alongside contextual voice. */
+export const DISCOVERY_BLUEPRINT_MASTER_TAGLINE = STUDIO_OS_OFFICIAL_TAGLINE;
 
 export const LIVING_DISCOVERY_PROMPT =
   'Would you like to update your Business Discovery Blueprint?';

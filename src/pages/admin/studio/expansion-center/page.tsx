@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
+import { StudioOsBrandTagline } from '../../../../components/admin/studio/brand/StudioOsBrandTagline';
 import { ExpansionCenterWorkspace } from '../../../../components/admin/studio/expansion-center/ExpansionCenterWorkspace';
 import {
   EXPANSION_CENTER_CHAIN,
@@ -23,6 +24,7 @@ export default function AdminStudioExpansionCenterPage() {
       navGroupId="settings"
     >
       <div className="p-3 mb-4 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
+        <StudioOsBrandTagline systemId="expansion-center" />
         <p className="text-[7px] font-futura uppercase mb-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
           {EXPANSION_CENTER_PHILOSOPHY}
         </p>

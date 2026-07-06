@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
+import { StudioOsBrandTagline } from '../../../../components/admin/studio/brand/StudioOsBrandTagline';
 import { BusinessDiscoveryBlueprintWorkspace } from '../../../../components/admin/studio/business-discovery-blueprint/BusinessDiscoveryBlueprintWorkspace';
 import {
   BUSINESS_DISCOVERY_BLUEPRINT_CHAIN,
@@ -24,6 +25,7 @@ export default function AdminStudioBusinessDiscoveryBlueprintPage() {
       navGroupId="settings"
     >
       <div className="p-3 mb-4 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
+        <StudioOsBrandTagline systemId="business-discovery-blueprint" />
         <p className="text-[7px] font-futura uppercase mb-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
           {BUSINESS_DISCOVERY_BLUEPRINT_PHILOSOPHY}
         </p>

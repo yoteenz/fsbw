@@ -1,7 +1,6 @@
-/** Demo copy for Profession Brain™ workspace (Milestone 91). */
+import { STUDIO_OS_OFFICIAL_TAGLINE } from '../studio-os-core/brand-positioning';
 
-export const PROFESSION_BRAIN_WORKSPACE_SUBTITLE =
-  'LIVING INSTITUTIONAL INTELLIGENCE · THE ORGANIZATION\'S PERMANENT MEMORY';
+export const PROFESSION_BRAIN_WORKSPACE_SUBTITLE = STUDIO_OS_OFFICIAL_TAGLINE;
 
 export const PROFESSION_BRAIN_WORKSPACE_PHILOSOPHY =
   'Businesses are built on knowledge. The Profession Brain preserves expertise, reasoning, and judgment so knowledge never disappears when people leave.';

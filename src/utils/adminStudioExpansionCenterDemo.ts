@@ -1,7 +1,8 @@
 /** Expansion Center V1.0 — grow the organization, never buy software. */
 
-export const EXPANSION_CENTER_SUBTITLE =
-  'EXPAND DEPARTMENTS · HIRE DIGITAL STAFF · GROW HEADQUARTERS · NO SOFTWARE SUBSCRIPTIONS';
+import { STUDIO_OS_OFFICIAL_TAGLINE } from '../studio-os-core/brand-positioning';
+
+export const EXPANSION_CENTER_SUBTITLE = STUDIO_OS_OFFICIAL_TAGLINE;
 
 export const EXPANSION_CENTER_CHAIN = [
   'HEADQUARTERS LICENSE',

@@ -2,59 +2,59 @@ import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { StudioOsBrandTagline } from '../../../../components/admin/studio/brand/StudioOsBrandTagline';
-import { ProfessionBrainWorkspace } from '../../../../components/admin/studio/profession-brain/ProfessionBrainWorkspace';
+import { ExpertMarketplaceWorkspace } from '../../../../components/admin/studio/expert-marketplace/ExpertMarketplaceWorkspace';
 import {
-  PROFESSION_BRAIN_WORKSPACE_PHILOSOPHY,
-  PROFESSION_BRAIN_WORKSPACE_SUBTITLE,
-} from '../../../../utils/adminStudioProfessionBrainDemo';
+  EXPERT_MARKETPLACE_PAGE_PHILOSOPHY,
+  EXPERT_MARKETPLACE_PAGE_SUBTITLE,
+} from '../../../../utils/adminStudioExpertMarketplaceDemo';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
-  adminStudioBusinessDiscoveryBlueprintPath,
-  adminStudioExpertMarketplacePath,
+  adminStudioMarketplacePath,
+  adminStudioProfessionBrainPath,
 } from '../../../../utils/adminStudioRoutes';
 
-export default function AdminStudioProfessionBrainPage() {
+export default function AdminStudioExpertMarketplacePage() {
   const navigate = useNavigate();
 
   return (
     <AdminStudioStageShell
-      title="PROFESSION BRAIN™"
-      subtitle={PROFESSION_BRAIN_WORKSPACE_SUBTITLE}
-      breadcrumbParentLabel="HEADQUARTERS"
-      breadcrumbParentPath="/admin/studio/mission-control"
-      onBack={() => navigate('/admin/studio/mission-control')}
+      title="EXPERT MARKETPLACE™"
+      subtitle={EXPERT_MARKETPLACE_PAGE_SUBTITLE}
+      breadcrumbParentLabel="PROFESSION BRAIN"
+      breadcrumbParentPath={adminStudioProfessionBrainPath()}
+      onBack={() => navigate(adminStudioProfessionBrainPath())}
       navGroupId="intelligence"
     >
       <div className="p-3 mb-4 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
-        <StudioOsBrandTagline systemId="profession-brain" />
+        <StudioOsBrandTagline systemId="expert-marketplace" />
         <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-          {PROFESSION_BRAIN_WORKSPACE_PHILOSOPHY}
+          {EXPERT_MARKETPLACE_PAGE_PHILOSOPHY}
         </p>
       </div>
 
-      <ProfessionBrainWorkspace />
+      <ExpertMarketplaceWorkspace />
 
       <div className="flex gap-2 mt-4">
         <button
           type="button"
-          onClick={() => navigate(adminStudioBusinessDiscoveryBlueprintPath())}
+          onClick={() => navigate(adminStudioProfessionBrainPath())}
           className="flex-1 py-2 text-[7px] font-futura uppercase border"
           style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
         >
-          ← DISCOVERY BLUEPRINT
+          ← PROFESSION BRAIN
         </button>
         <button
           type="button"
-          onClick={() => navigate(adminStudioExpertMarketplacePath())}
+          onClick={() => navigate(adminStudioMarketplacePath())}
           className="flex-1 py-2 text-[7px] font-futura uppercase border"
           style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
         >
-          EXPERT MARKETPLACE →
+          LEGACY MARKETPLACE →
         </button>
       </div>
 
       <AdminStudioDisclaimerFooter>
-        PROFESSION BRAIN™ · M91 · INSTITUTIONAL INTELLIGENCE · DEMO PLACEHOLDER
+        EXPERT MARKETPLACE™ · M92 · PRESERVE EXPERTISE · BUILD LEGACY · DEMO PLACEHOLDER
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

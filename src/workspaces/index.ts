@@ -204,6 +204,10 @@ export function bootstrapWorkspacesPlatform(): void {
     professionBrain.bootstrapProfessionBrainPlatform();
     await yieldToMain();
 
+    const expertMarketplace = await import('../studio-os-core/expert-marketplace/bootstrap');
+    expertMarketplace.bootstrapExpertMarketplacePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

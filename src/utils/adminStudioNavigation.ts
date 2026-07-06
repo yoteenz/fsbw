@@ -1260,6 +1260,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'expert-marketplace',
+    title: 'EXPERT MARKETPLACE™',
+    purpose: 'Publish Profession Brain expertise — trusted experts, not AI bots. Share expertise. Expand your legacy.',
+    route: p('expert-marketplace'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M92',
+    ctaLabel: 'OPEN MARKETPLACE',
+    moduleKey: 'expert-marketplace',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',

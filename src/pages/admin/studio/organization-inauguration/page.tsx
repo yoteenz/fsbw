@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
+import { StudioOsBrandTagline } from '../../../../components/admin/studio/brand/StudioOsBrandTagline';
 import { OrganizationInaugurationWorkspace } from '../../../../components/admin/studio/organization-inauguration/OrganizationInaugurationWorkspace';
 import {
   ORGANIZATION_INAUGURATION_PHILOSOPHY,
@@ -25,6 +26,7 @@ export default function AdminStudioOrganizationInaugurationPage() {
       navGroupId="settings"
     >
       <div className="p-3 mb-4 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
+        <StudioOsBrandTagline systemId="organization-inauguration" />
         <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
           {ORGANIZATION_INAUGURATION_PHILOSOPHY}
         </p>
