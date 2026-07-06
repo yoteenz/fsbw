@@ -1,15 +1,20 @@
 export const STUDIO_INSTITUTE_STORAGE_KEY = 'studioOsStudioInstitute_v1';
+export const STUDIO_INSTITUTE_ORG_STORAGE_KEY = 'studioOsStudioInstituteOrg_v1';
 export const STUDIO_INSTITUTE_VERSION = '1.0.0';
+export const STUDIO_INSTITUTE_ORG_VERSION = '1.1.0';
 export const STUDIO_INSTITUTE_ID = 'studio-institute';
 
+export const STUDIO_OS_STUDIO_INSTITUTE_UPDATED = 'studio-os-studio-institute-updated';
+
 export const SI_INSTITUTE_MOTTO =
-  'To help every generation leave the next one wiser than they found it.';
+  'Learn from expertise. Carry the legacy forward.';
 
 export const SI_INSTITUTE_PHILOSOPHY = [
-  'Great organizations never stop learning — learning becomes culture, not training',
-  'The Studio Institute elevates leadership · knowledge · craftsmanship · stewardship across the entire organization',
-  'Never teach software — teach leadership · organizational thinking · systems · relationships · craftsmanship · decision making · stewardship · legacy',
-  'Extraordinary organizations are learned before they are built · every lesson strengthens the organization',
+  'The Studio Institute™ is not an online course platform — it is the educational engine that transforms organizational expertise into structured learning.',
+  'Knowledge should be teachable · repeatable · searchable · transferable — never trapped in one person\'s head.',
+  'Profession Brain™ is the single source of truth — the Institute never asks organizations to recreate knowledge.',
+  'When the Profession Brain changes, courses · lessons · checklists · playbooks · certifications stay synchronized automatically.',
+  'Every lesson · certification · checklist · playbook exists to fulfill: PRESERVE EXPERTISE. BUILD LEGACY.',
 ] as const;
 
 export const SI_CONNECTED_SYSTEMS = [

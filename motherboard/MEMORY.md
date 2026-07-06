@@ -38550,3 +38550,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Master tagline is permanent — do not replace without founder instruction. Expert Marketplace = trusted human expertise products, not AI bots. Publishing is always org-controlled opt-in from Profession Brain public surfaces.
 
+---
+
+## 2026-07-06 — Milestone 93: Studio Institute™ V1.0 (Profession Brain-driven learning)
+
+**Context (full chat arc):** Same session delivered M90 Business Discovery Blueprint (`df0f84a6`), M90.5 Organization Inauguration (`0d9fd249`), M91 Profession Brain (`fcca86e2`), M92 Expert Marketplace + Brand Positioning V2.0 (`90111390`). User requested **Milestone 93 — Studio Institute™ V1.0**: permanent learning engine — not an LMS — where **Profession Brain™ is the single source of truth** and all learning auto-generates and stays synchronized.
+
+**Core philosophy delivered:** Knowledge teachable · repeatable · searchable · transferable. Institute never asks orgs to recreate knowledge. When Profession Brain changes, lessons · courses · checklists · playbooks · certifications update automatically. Teaches employees · managers · customers · Digital Staff from one memory. Fulfills **PRESERVE EXPERTISE. BUILD LEGACY.**
+
+**Delivered:**
+- **`src/studio-os-core/studio-institute/`** expanded — `learning-types.ts`, `course-generator.ts`, `scenario-engine.ts`, `role-paths.ts`, `audience-adaptation.ts`, `certification-engine.ts`, `dashboard-engine.ts`, `knowledge-evolution.ts`, `org-store.ts`, `dock-advisor.ts`. Auto-generates 13 artifact types · scenarios · role paths · certifications · customer courses · dashboard · knowledge updates from Profession Brain profile.
+- **`StudioInstituteLearningWorkspace.tsx`** + updated **`/admin/studio/studio-institute`** page — 8 tabs (Dashboard · Courses · Role Paths · Scenarios · Certifications · Customer Education · Living Sync · Audiences). Executive IA layout. Breadcrumb from Profession Brain · links to Expert Marketplace.
+- **`useStudioInstituteOrgState`** hook — org-scoped sync with Profession Brain update events.
+- **Integration** — `profession-brain/store.ts` syncs Institute on upsert; `boundary-sync.ts` ensures org profile; Command Dock `resolveStudioInstituteAdvice()` + proactive institute suggestions + route context `listStudioInstituteDockSuggestions()`. Profession Brain page footer adds Studio Institute link.
+- **Docs** — **`docs/studio-os/studio-institute.md`**; **CORE.md** M93 entry. Legacy M75 `StudioInstituteWorkspace` / demo seed preserved.
+
+**Conventions:** Studio Institute ≠ LMS — educational expression of Profession Brain. One source powers employee training and customer education. Demo persistence localStorage per org via `studioOsStudioInstituteOrg_v1`.
+

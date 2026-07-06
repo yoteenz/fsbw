@@ -88,6 +88,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../expert-marketplace/store').then((m) => {
     m.syncExpertMarketplaceFromProfessionBrain(profile.organizationId);
   });
+  void import('../studio-institute/org-store').then((m) => {
+    m.syncStudioInstituteFromProfessionBrain(profile.organizationId);
+  });
 }
 
 export function syncProfessionBrainFromSources(

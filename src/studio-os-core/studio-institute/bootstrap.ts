@@ -124,3 +124,11 @@ export function buildStudioInstituteSeed(): Partial<StudioInstituteStore> {
 export function bootstrapStudioInstitutePlatform(): void {
   bootstrapStudioInstituteStore(buildStudioInstituteSeed());
 }
+
+/** Milestone 93 — org profiles sync from Profession Brain on boundary activation. */
+export function bootstrapStudioInstituteOrgPlatform(organizationId?: string): void {
+  if (!organizationId || typeof window === 'undefined') return;
+  void import('./org-store').then((m) => {
+    m.ensureOrganizationStudioInstituteProfile(organizationId);
+  });
+}

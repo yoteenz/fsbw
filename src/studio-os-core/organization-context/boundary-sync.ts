@@ -69,6 +69,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationExpertMarketplaceProfile(context.organizationId);
   });
 
+  void import('../studio-institute/org-store').then((m) => {
+    m.ensureOrganizationStudioInstituteProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

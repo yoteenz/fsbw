@@ -13,6 +13,7 @@ import { listExecutiveGrowthSuggestions } from '../monetization-architecture';
 import { listDiscoveryDockSuggestions } from '../business-discovery-blueprint';
 import { listProfessionBrainDockSuggestions } from '../profession-brain';
 import { listExpertMarketplaceDockSuggestions } from '../expert-marketplace';
+import { listStudioInstituteDockSuggestions } from '../studio-institute';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -121,15 +122,13 @@ export function resolveDockContext(pathname: string): DockContextProfile {
   }
 
   if (pathname.includes('/studio-institute') || pathname.includes('/organizational-apprenticeship')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
     return {
       contextId: 'institute',
-      label: 'STUDIO INSTITUTE',
+      label: 'STUDIO INSTITUTE™ · LEARN FROM EXPERTISE',
       portfolioMode: false,
-      suggestedCommands: [
-        'Schedule executive learning session.',
-        'Find mentorship time next week.',
-      ],
-      commandTypes: ['knowledge-search', 'meetings', 'strategy'],
+      suggestedCommands: listStudioInstituteDockSuggestions(workspaceId),
+      commandTypes: ['knowledge-search', 'meetings', 'strategy', 'executive-requests'],
     };
   }
 
