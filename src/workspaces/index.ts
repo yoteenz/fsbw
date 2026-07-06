@@ -196,6 +196,10 @@ export function bootstrapWorkspacesPlatform(): void {
     businessDiscoveryBlueprint.bootstrapBusinessDiscoveryBlueprintPlatform();
     await yieldToMain();
 
+    const organizationInauguration = await import('../studio-os-core/organization-inauguration/bootstrap');
+    organizationInauguration.bootstrapOrganizationInaugurationPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

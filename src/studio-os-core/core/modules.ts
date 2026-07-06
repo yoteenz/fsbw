@@ -86,6 +86,7 @@ export type StudioOsCoreModuleId =
   | 'ecosystem'
   | 'expansion-center'
   | 'business-discovery-blueprint'
+  | 'organization-inauguration'
   | 'governance'
   | 'studio-intelligence'
   | 'simulation-engine'
@@ -595,6 +596,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'BUSINESS DISCOVERY BLUEPRINT™',
     description: 'Permanent onboarding architecture — guided chapters, conversational discovery, organizational archaeology. The birth certificate of every organization.',
     routeSegment: 'business-discovery-blueprint',
+  },
+  {
+    id: 'organization-inauguration',
+    label: 'ORGANIZATION INAUGURATION',
+    description: 'Founder Ceremony V1.0 — immersive inauguration after Blueprint completion. Organization Charter, HQ activation, founding timeline, ENTER HEADQUARTERS.',
+    routeSegment: 'organization-inauguration',
   },
   {
     id: 'governance',

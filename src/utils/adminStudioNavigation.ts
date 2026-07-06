@@ -1236,6 +1236,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organization-inauguration',
+    title: 'ORGANIZATION INAUGURATION',
+    purpose: 'Founder Ceremony after Blueprint completion — Organization Charter, HQ activation, founding timeline, ENTER HEADQUARTERS.',
+    route: p('organization-inauguration'),
+    groupId: 'settings',
+    status: 'demo',
+    metric: 'M90.5',
+    ctaLabel: 'BEGIN CEREMONY',
+    moduleKey: 'organization-inauguration',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',

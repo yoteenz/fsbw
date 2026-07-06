@@ -158,6 +158,20 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     };
   }
 
+  if (pathname.includes('/organization-inauguration')) {
+    return {
+      contextId: 'organization-inauguration',
+      label: 'ORGANIZATION INAUGURATION · FOUNDER CEREMONY',
+      portfolioMode: false,
+      suggestedCommands: [
+        'What is in our Organization Charter?',
+        'Show me the founding timeline.',
+        'What are our first recommendations?',
+      ],
+      commandTypes: ['organization-settings', 'strategy', 'executive-requests'],
+    };
+  }
+
   if (pathname.includes('/business-discovery-blueprint')) {
     const workspaceId = getRuntimeActiveWorkspaceId();
     const discoverySuggestions = listDiscoveryDockSuggestions(workspaceId);

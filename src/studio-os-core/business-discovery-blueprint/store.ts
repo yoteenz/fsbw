@@ -5,6 +5,7 @@ import {
   recommendNextChapter,
   resolveBlueprintStatus,
   detectMilestoneToCelebrate,
+  computeAllChapterProgress,
 } from './progress';
 import { detectLivingDiscoveryPhrase } from './conversational-engine';
 import type {
@@ -97,7 +98,15 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     ? [...blueprint.milestonesCelebrated, milestone]
     : blueprint.milestonesCelebrated;
 
-  return {
+  const chapters = computeAllChapterProgress({ ...blueprint, overallProgressPct });
+  const blueprintFullyComplete =
+    chapters.every((c) => c.status === 'complete') || overallProgressPct >= 100;
+  const inaugurationEligibleAt =
+    blueprintFullyComplete && !blueprint.inaugurationEligibleAt
+      ? new Date().toISOString()
+      : blueprint.inaugurationEligibleAt;
+
+  const finalized = {
     ...blueprint,
     overallProgressPct,
     recommendedNextChapterId,
@@ -106,7 +115,17 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     status: resolveBlueprintStatus({ ...blueprint, overallProgressPct }),
     updatedAt: new Date().toISOString(),
     lastSessionAt: new Date().toISOString(),
+    blueprintFullyComplete,
+    inaugurationEligibleAt,
   };
+
+  if (blueprintFullyComplete) {
+    void import('../organization-inauguration/store').then((m) => {
+      m.ensureInaugurationFromBlueprint(blueprint.organizationId);
+    });
+  }
+
+  return finalized;
 }
 
 export function upsertOrganizationDiscoveryBlueprint(blueprint: OrganizationDiscoveryBlueprint): void {

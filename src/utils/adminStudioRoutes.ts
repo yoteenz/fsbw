@@ -753,6 +753,10 @@ export function adminStudioBusinessDiscoveryBlueprintPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/business-discovery-blueprint`;
 }
 
+export function adminStudioOrganizationInaugurationPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/organization-inauguration`;
+}
+
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }

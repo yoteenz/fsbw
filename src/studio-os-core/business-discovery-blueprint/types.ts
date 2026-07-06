@@ -99,6 +99,10 @@ export type OrganizationDiscoveryBlueprint = {
   milestonesCelebrated: string[];
   /** Blueprint never finishes — always living. */
   status: 'discovering' | 'foundational' | 'living';
+  /** Set when all chapters complete — triggers inauguration eligibility. */
+  blueprintFullyComplete?: boolean;
+  /** When inauguration ceremony was first generated. */
+  inaugurationEligibleAt?: string;
 };
 
 export type BusinessDiscoveryBlueprintStore = {

@@ -57,6 +57,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationDiscoveryBlueprint(context.organizationId);
   });
 
+  void import('../organization-inauguration/store').then((m) => {
+    m.ensureOrganizationInaugurationProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBusinessDiscoveryBlueprintState } from '../../../../hooks/useBusinessDiscoveryBlueprintState';
 import {
   DISCOVERY_BLUEPRINT_PHILOSOPHY,
@@ -8,6 +9,8 @@ import {
   getChapterDefinition,
   LIVING_DISCOVERY_PROMPT,
 } from '../../../../studio-os-core/business-discovery-blueprint';
+import { CEREMONIAL_LINES } from '../../../../studio-os-core/organization-inauguration';
+import { adminStudioOrganizationInaugurationPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveCollapsibleSection,
@@ -34,6 +37,7 @@ const TABS: { id: BlueprintTab; label: string }[] = [
 ];
 
 export function BusinessDiscoveryBlueprintWorkspace() {
+  const navigate = useNavigate();
   const [tab, setTab] = useState<BlueprintTab>('consultation');
   const [draftAnswer, setDraftAnswer] = useState('');
   const [resourceName, setResourceName] = useState('');
@@ -79,8 +83,26 @@ export function BusinessDiscoveryBlueprintWorkspace() {
     setResourceName('');
   };
 
+  const renderInaugurationBanner = () =>
+    blueprint.blueprintFullyComplete ? (
+      <ExecutiveFocusPanel title="ORGANIZATION FOUNDATION DOCUMENTED">
+        <p className="text-[6px] font-futura normal-case mb-2" style={{ color: '#555', lineHeight: 1.5 }}>
+          {CEREMONIAL_LINES[1]} Studio OS is ready to inaugurate your Headquarters.
+        </p>
+        <button
+          type="button"
+          onClick={() => navigate(adminStudioOrganizationInaugurationPath())}
+          className="w-full py-2 text-[7px] font-futura uppercase border"
+          style={{ fontWeight: 515, borderColor: '#0D9488', color: '#0D9488', background: 'rgba(13,148,136,0.06)' }}
+        >
+          BEGIN FOUNDER CEREMONY
+        </button>
+      </ExecutiveFocusPanel>
+    ) : null;
+
   const renderConsultation = () => (
     <>
+      {renderInaugurationBanner()}
       <ExecutiveHeroCard
         eyebrow="MILESTONE 90 · BUSINESS DISCOVERY BLUEPRINT™"
         title={currentChapter.title.toUpperCase()}
