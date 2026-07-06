@@ -40,6 +40,7 @@ export type StudioOsBrandSystemId =
   | 'founder-operating-system'
   | 'innovation-lab'
   | 'organization-operating-manual'
+  | 'legacy-network'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -79,6 +80,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'founder-operating-system': 'Founders grow first. Organizations follow.',
   'innovation-lab': 'Invent what comes next. Continuously.',
   'organization-operating-manual': 'One handbook. Always current.',
+  'legacy-network': 'Preserve expertise. Share legacy.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

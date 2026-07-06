@@ -865,6 +865,10 @@ export function adminStudioOrganizationOperatingManualPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organization-operating-manual`;
 }
 
+export function adminStudioLegacyNetworkPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/legacy-network`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

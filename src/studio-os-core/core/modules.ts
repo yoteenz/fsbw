@@ -114,6 +114,7 @@ export type StudioOsCoreModuleId =
   | 'founder-operating-system'
   | 'innovation-lab'
   | 'organization-operating-manual'
+  | 'legacy-network'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -793,6 +794,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATION OPERATING MANUAL™',
     description: 'Living operating manual V1.0 — auto-generated handbook, searchable organization, live sync. Single source of operational truth.',
     routeSegment: 'organization-operating-manual',
+  },
+  {
+    id: 'legacy-network',
+    label: 'LEGACY NETWORK™',
+    description: 'Legacy Network V1.0 — permission-based global ecosystem. Share expertise intentionally. Movement not marketplace.',
+    routeSegment: 'legacy-network',
   },
   {
     id: 'succession-mode',

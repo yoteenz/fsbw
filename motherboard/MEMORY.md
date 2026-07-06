@@ -39246,3 +39246,27 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** studioOsBrowserStorage.ts, studioWorkspaceCloudSync.ts, adminStudioStorage.ts, scoped-store.ts, workspace-registry/store.ts, workspace-creation/registry.ts, main.tsx, App.tsx, workspace settings page, api/admin/studio-workspace-state.ts, supabase migration, test script, CORE.md, MEMORY.md.
 
 **Conventions:** Studio OS localStorage = lightweight prefs only (active org id, UI prefs, favorites/recent). Large module/demo state = session memory. User `adminStudio*` edits → cloud via `/api/admin/studio-workspace-state`. Recovery: **Reset local Studio cache** in error boundary or Workspace Settings. Run migration `20260706170000_studio_os_workspace_state.sql` in Supabase after deploy.
+
+---
+
+## 2026-07-06 — Milestone 121: Legacy Network™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M120 (Blueprint through Organization Operating Manual `156ae891`) plus Living Headquarters environmental storytelling (`3916bd64`) and Studio OS browser storage architecture fix (`a655132c`). User requested **Milestone 121 — Legacy Network™ V1.0**: permission-based global ecosystem — voluntary contribution with complete IP ownership · 14 shareable asset types (all optional, nothing automatic) · 11 discovery filters · permanent attribution · 10 community features · 7 reputation dimensions · movement not marketplace · PRESERVE EXPERTISE. BUILD LEGACY.
+
+**Requirements delivered:**
+- **14 shareable asset types** — Profession Brain modules · department packs · automation blueprints · templates · playbooks · frameworks · Institute courses · knowledge products · innovation frameworks · genome components · Command Dock workflows · council models · approval systems · operating manual sections
+- **Discovery** — industry · business stage · org size · problem · department · profession · popularity · newest · verified · highest rated · knowledge category
+- **Attribution** — original org · founder · version · dates · license · usage rights · downloads · reviews · adoptions
+- **Community** — verified founders · org profiles · industry communities · forums · knowledge requests · improvement suggestions · collaborative research · partnership discovery · innovation challenges · community awards
+- **Reputation** — contribution · knowledge impact · community trust · adoption rate · innovation · teaching · legacy scores
+- **Command Dock** — **`resolveLegacyNetworkAdvice()`** · **`buildProactiveLegacyNetworkSuggestion()`** · **`buildLegacyNetworkOpeningLine()`**
+
+**Delivered:**
+- **`src/studio-os-core/legacy-network/`** — **`shareable-assets.ts`** · **`discovery-engine.ts`** · **`reputation-system.ts`** · **`community-engine.ts`** · **`legacy-network-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
+- **`LegacyNetworkWorkspace`** + **`/admin/studio/legacy-network`** — 4 tabs: Network Overview · Shareable Assets · Discovery · Attribution · Community · Reputation · amber accent `#B45309`
+- **`MissionControlLegacyNetworkPanel`** in Legacy Wing · **`useLegacyNetworkState`** hook
+- **Brand voice **`legacy-network`**: *"Preserve expertise. Share legacy."*
+- **Sync chain** — Profession Brain · Genome · Institute · Innovation Lab · Operating Manual · **`organization-operating-manual/store`** resync triggers **`syncLegacyNetworkFromSources`** · **boundary-sync**
+- **Docs** — **`docs/studio-os/legacy-network.md`** · **CORE.md** M121 entry · nav metric **M121**
+
+**Conventions:** Legacy Network (M121) is not a marketplace — a movement. Organizations preserve knowledge; communities expand knowledge; future generations inherit knowledge. Demo localStorage via `studioOsLegacyNetwork_v1`.

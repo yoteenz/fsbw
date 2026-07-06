@@ -42,6 +42,7 @@ import { listWorldKnowledgeEngineDockSuggestions } from '../world-knowledge-engi
 import { listFounderOperatingSystemDockSuggestions } from '../founder-operating-system/dock-advisor';
 import { listInnovationLabDockSuggestions } from '../innovation-lab/dock-advisor';
 import { listOrganizationOperatingManualDockSuggestions } from '../organization-operating-manual/dock-advisor';
+import { listLegacyNetworkDockSuggestions } from '../legacy-network/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -338,6 +339,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listOrganizationOperatingManualDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'organization-settings', 'strategy'],
+    };
+  }
+
+  if (pathname.includes('/legacy-network')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'legacy-network',
+      label: 'LEGACY NETWORK™ · MOVEMENT NOT MARKETPLACE',
+      portfolioMode: false,
+      suggestedCommands: listLegacyNetworkDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }
 

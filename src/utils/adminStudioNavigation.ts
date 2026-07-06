@@ -1572,6 +1572,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'legacy-network',
+    title: 'LEGACY NETWORK™',
+    purpose: 'Permission-based global ecosystem — voluntarily share expertise, frameworks, and knowledge while retaining IP. Movement not marketplace.',
+    route: p('legacy-network'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M121',
+    ctaLabel: 'OPEN LEGACY NETWORK',
+    moduleKey: 'legacy-network',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

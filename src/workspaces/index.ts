@@ -313,6 +313,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationOperatingManual.bootstrapOrganizationOperatingManualPlatform();
     await yieldToMain();
 
+    const legacyNetwork = await import('../studio-os-core/legacy-network/bootstrap');
+    legacyNetwork.bootstrapLegacyNetworkPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

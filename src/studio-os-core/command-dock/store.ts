@@ -144,6 +144,11 @@ import {
   buildProactiveOrganizationOperatingManualSuggestion,
   buildOperatingManualOpeningLine,
 } from '../organization-operating-manual/dock-advisor';
+import {
+  resolveLegacyNetworkAdvice,
+  buildProactiveLegacyNetworkSuggestion,
+  buildLegacyNetworkOpeningLine,
+} from '../legacy-network/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -234,6 +239,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const innovationOpeningLine = buildInnovationLabOpeningLine(workspaceId);
   const operatingManual = buildProactiveOrganizationOperatingManualSuggestion(workspaceId);
   const operatingManualOpeningLine = buildOperatingManualOpeningLine(workspaceId);
+  const legacyNetwork = buildProactiveLegacyNetworkSuggestion(workspaceId);
+  const legacyNetworkOpeningLine = buildLegacyNetworkOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -371,6 +378,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'How do we onboard clients?',
       }
     : null;
+  const legacyNetworkProactive = legacyNetwork
+    ? {
+        response: legacyNetwork,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Legacy Network — explore shared organizational expertise.',
+      }
+    : null;
+  const legacyNetworkOpeningProactive = legacyNetworkOpeningLine
+    ? {
+        response: legacyNetworkOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'What can our organization publish to Legacy Network?',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -437,10 +458,12 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? innovationLabProactive
       : pathname.includes('/organization-operating-manual') && operatingManualProactive
       ? operatingManualProactive
+      : pathname.includes('/legacy-network') && legacyNetworkProactive
+      ? legacyNetworkProactive
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -767,6 +790,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${operatingManualAdvice.concierge}\n${operatingManualAdvice.response}`,
+    });
+    return null;
+  }
+
+  const legacyNetworkAdvice = resolveLegacyNetworkAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (legacyNetworkAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${legacyNetworkAdvice.concierge}\n${legacyNetworkAdvice.response}`,
     });
     return null;
   }

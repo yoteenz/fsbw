@@ -50,7 +50,11 @@ function upsertProfile(profile: OrganizationOperatingManualProfile): Organizatio
 export function syncOrganizationOperatingManualFromSources(
   organizationId: string
 ): OrganizationOperatingManualProfile {
-  return upsertProfile(buildOrganizationOperatingManualProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationOperatingManualProfile(organizationId));
+  void import('../legacy-network/store').then((m) => {
+    m.syncLegacyNetworkFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationOperatingManualProfile(
