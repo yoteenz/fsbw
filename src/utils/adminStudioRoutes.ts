@@ -745,6 +745,10 @@ export function adminStudioEcosystemPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ecosystem`;
 }
 
+export function adminStudioExpansionCenterPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/expansion-center`;
+}
+
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }

@@ -89,6 +89,9 @@ export type { BusinessModelEngineSnapshot, BusinessModelEngineStudioService } fr
 export { ecosystemStudioService, ECOSYSTEM_INHERITANCE_CHAIN, ADMIN_STUDIO_ECOSYSTEM_SUBTITLE } from './ecosystem/service';
 export type { EcosystemSnapshot, EcosystemStudioService } from './ecosystem/service';
 
+export { expansionCenterStudioService, EXPANSION_CENTER_CHAIN, EXPANSION_CENTER_SUBTITLE } from './expansionCenter/service';
+export type { ExpansionCenterSnapshot, ExpansionCenterStudioService } from './expansionCenter/service';
+
 export { governanceStudioService, GOVERNANCE_INHERITANCE_CHAIN, ADMIN_STUDIO_GOVERNANCE_SUBTITLE } from './governance/service';
 export type { GovernanceSnapshot, GovernanceStudioService } from './governance/service';
 
@@ -341,6 +344,7 @@ import { talentNetworkStudioService } from './talentNetwork/service';
 import { marketplaceStudioService } from './marketplace/service';
 import { businessModelEngineStudioService } from './businessModelEngine/service';
 import { ecosystemStudioService } from './ecosystem/service';
+import { expansionCenterStudioService } from './expansionCenter/service';
 import { governanceStudioService } from './governance/service';
 import { studioIntelligenceStudioService } from './studio-intelligence/service';
 import { simulationEngineStudioService } from './simulation-engine/service';
@@ -437,6 +441,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   marketplaceStudioService,
   businessModelEngineStudioService,
   ecosystemStudioService,
+  expansionCenterStudioService,
   governanceStudioService,
   studioIntelligenceStudioService,
   simulationEngineStudioService,

@@ -84,6 +84,7 @@ export type StudioOsCoreModuleId =
   | 'marketplace'
   | 'business-model-engine'
   | 'ecosystem'
+  | 'expansion-center'
   | 'governance'
   | 'studio-intelligence'
   | 'simulation-engine'
@@ -581,6 +582,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO OS ECOSYSTEM',
     description: 'Business operating ecosystem — community blueprints, DNA, automations, executives, and complete operating system packages.',
     routeSegment: 'ecosystem',
+  },
+  {
+    id: 'expansion-center',
+    label: 'EXPANSION CENTER',
+    description: 'Industry architecture — install department packs, expand headquarters, evolve the organization without migrations.',
+    routeSegment: 'expansion-center',
   },
   {
     id: 'governance',

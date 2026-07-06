@@ -38407,3 +38407,17 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Org HQ home for ai-media is always **`/admin/studio/ndxbook/mission-control`**, not generic **`mission-control`** or workspace dashboard. Do not remove **`TodaysBriefingPanel`** from default NDXBOOK HQ flow without explicit product sign-off.
 
+---
+
+## 2026-07-06 — Milestone 88: Industry Architecture, Department Packs & Expansion Center V1.0
+
+**Context (full chat):** User requested **Milestone 88** — permanent Studio OS architecture for how every organization is created, expanded, and evolves. Philosophy: Studio OS is a **Business Operating System** (not content/website/industry-specific software); organizations never adapt to the platform — the platform adapts to them. Prior chat in same session also restored NDXBOOK HQ dashboard cards and fixed headquarters entry loading (`4db304d6`).
+
+**Delivered:**
+- **`src/studio-os-core/industry-architecture/`** — 21 industries; department packs (Creator, Beauty, Contractor, Restaurant, Medical, Agency); universal Marketing Department; expansion packs (Creator Studio, Sales CRM, Warehouse, Accounting, Hiring Suite, Business Intelligence, Automation Engine, AI Research Lab); **`installDepartmentPack()`** merges departments, concierges, KPIs, Command Dock capabilities; per-org localStorage profile; **`buildHeadquartersLayout()`** for custom HQ; **`dock-advisor.ts`** for Command Dock expansion prompts (e.g. educational videos → Creator Studio).
+- **Expansion Center UI** — `/admin/studio/expansion-center` · M83 Executive IA shell · tabs: Overview (industry selector), Expansion Catalog, Installed, HQ Layout · one-click install with preview · Creator Studio example for non-creator businesses.
+- **Wiring** — nav (`adminStudioNavigation`), routes (`App.tsx`), service registry, platform bootstrap (`workspaces/index.ts`), Command Dock context, org boundary sync (`ensureOrganizationArchitectureProfile` on switch). Seeded defaults: **ai-media** → Creator, **frontal-slayer** → Beauty.
+- **Docs** — `docs/studio-os/industry-architecture.md` · **CORE.md** M88 entry.
+
+**Conventions:** New org capabilities = department/expansion packs in industry-architecture registry; installs must auto-add HQ departments + concierges + dock capabilities — no manual setup. Expansion Center is the org growth UX (replaces Marketplace for expansion); legacy Marketplace modules remain elsewhere.
+

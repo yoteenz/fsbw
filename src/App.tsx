@@ -169,6 +169,7 @@ const AdminStudioTalentNetwork = lazyWithRetry(() => import('./pages/admin/studi
 const AdminStudioMarketplace = lazyWithRetry(() => import('./pages/admin/studio/marketplace/page'), 'AdminStudioMarketplace');
 const AdminStudioBusinessModelEngine = lazyWithRetry(() => import('./pages/admin/studio/business-model-engine/page'), 'AdminStudioBusinessModelEngine');
 const AdminStudioEcosystem = lazyWithRetry(() => import('./pages/admin/studio/ecosystem/page'), 'AdminStudioEcosystem');
+const AdminStudioExpansionCenter = lazyWithRetry(() => import('./pages/admin/studio/expansion-center/page'), 'AdminStudioExpansionCenter');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
 const AdminStudioSimulationEngine = lazyWithRetry(() => import('./pages/admin/studio/simulation-engine/page'), 'AdminStudioSimulationEngine');
@@ -1199,6 +1200,11 @@ function App() {
           <Route path="studio/ecosystem" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioEcosystem />
+            </Suspense>
+          } />
+          <Route path="studio/expansion-center" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExpansionCenter />
             </Suspense>
           } />
           <Route path="studio/governance" element={

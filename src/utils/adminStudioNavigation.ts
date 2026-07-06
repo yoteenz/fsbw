@@ -1224,6 +1224,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'expansion-center',
+    title: 'EXPANSION CENTER',
+    purpose: 'Industry architecture — install department packs, expand headquarters, add Creator Studio or CRM without migrations.',
+    route: p('expansion-center'),
+    groupId: 'settings',
+    status: 'demo',
+    metric: 'M88',
+    ctaLabel: 'EXPAND HQ',
+    moduleKey: 'expansion-center',
+    featuredOnOverview: true,
+  },
+  {
     id: 'governance',
     title: 'STUDIO OS GOVERNANCE',
     purpose: 'Trust, quality, compliance, moderation, verification, certification — platform constitution for responsible growth.',

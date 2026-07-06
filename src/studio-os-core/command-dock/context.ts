@@ -5,6 +5,10 @@ import { STUDIO_ADMINISTRATION_ROUTES } from '../application/routes';
 import { loadWorkspace } from '../workspace/loader';
 import { getRuntimeActiveWorkspaceId } from '../workspace/storage';
 import { resolveModuleTenantId } from '../workspace/tenant-ids';
+import {
+  ensureOrganizationArchitectureProfile,
+  listDockExpansionSuggestions,
+} from '../industry-architecture';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -152,6 +156,21 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     };
   }
 
+  if (pathname.includes('/expansion-center')) {
+    return {
+      contextId: 'expansion-center',
+      label: 'EXPANSION CENTER · GROW HEADQUARTERS',
+      portfolioMode: false,
+      suggestedCommands: [
+        'I want to start posting educational painting videos.',
+        'Recommend an expansion pack for my industry.',
+        'What departments can I add to Headquarters?',
+        'Install Creator Studio.',
+      ],
+      commandTypes: ['organization-settings', 'strategy', 'production', 'publishing'],
+    };
+  }
+
   if (pathname.includes('/executive-timeline')) {
     return {
       contextId: 'timeline',
@@ -171,17 +190,21 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       activeOrg.tenantId === 'ndxbook'
         ? 'NDXBOOK HEADQUARTERS'
         : `${activeOrg.name.toUpperCase()} HEADQUARTERS`;
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    const archProfile = ensureOrganizationArchitectureProfile(workspaceId);
+    const industrySuggestions = listDockExpansionSuggestions(archProfile.industryId);
     const suggestions =
       activeOrg.tenantId === 'ndxbook'
         ? [
             'Help me connect Instagram.',
             'Create Page 001 for NDXBOOK.',
             'What is my next founder milestone?',
+            ...industrySuggestions.slice(0, 1),
           ]
         : [
+            ...industrySuggestions.slice(0, 2),
             'What are today\'s priorities?',
             'Review today\'s content.',
-            'Clear my afternoon.',
           ];
     return {
       contextId: 'mission-control',

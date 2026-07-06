@@ -45,6 +45,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     );
   });
 
+  void import('../industry-architecture/store').then((m) => {
+    m.ensureOrganizationArchitectureProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

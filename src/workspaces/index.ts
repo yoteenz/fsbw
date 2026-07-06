@@ -184,6 +184,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationalInheritance.bootstrapOrganizationalInheritancePlatform();
     await yieldToMain();
 
+    const industryArchitecture = await import('../studio-os-core/industry-architecture/bootstrap');
+    industryArchitecture.bootstrapIndustryArchitecturePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

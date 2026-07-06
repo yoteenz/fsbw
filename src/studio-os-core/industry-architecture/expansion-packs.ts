@@ -1,0 +1,222 @@
+import type { DepartmentPackDefinition } from './types';
+
+function dept(
+  id: string,
+  label: string,
+  description: string,
+  opts?: { moduleId?: string; wingLabel?: string; icon?: string }
+) {
+  return { id, label, description, ...opts };
+}
+
+function concierge(id: string, name: string, role: string, departmentId: string, focus: string) {
+  return { id, name, role, departmentId, focus };
+}
+
+/** Expansion packs — install new business capabilities after Day One. */
+export const EXPANSION_PACKS: DepartmentPackDefinition[] = [
+  {
+    id: 'creator-studio',
+    kind: 'expansion-pack',
+    name: 'CREATOR STUDIO',
+    tagline: 'Add a full creative department without switching software',
+    description:
+      'A painting company, restaurant, or law firm can install Creator Studio and instantly gain production, publishing, distribution, and creator analytics — nothing else changes.',
+    defaultForIndustries: [],
+    recommendedForIndustries: ['painting', 'contractor', 'restaurant', 'beauty', 'agency', 'fitness', 'automotive'],
+    featured: true,
+    installPreview:
+      'Expands Headquarters with Production Wing, Publishing Wing, Media Library, Distribution Center, Screening Room, and Creator Intelligence.',
+    outcome: {
+      departmentsAdded: [
+        dept('production-studio', 'PRODUCTION STUDIO', 'Cinematic production headquarters', { wingLabel: 'PRODUCTION WING', moduleId: 'production-studio', icon: '🎬' }),
+        dept('screening-room', 'SCREENING ROOM', 'Review cuts · approvals · notes', { moduleId: 'screening-room', icon: '🎞️' }),
+        dept('render-queue', 'RENDER QUEUE', 'Render pipeline · status · retries', { moduleId: 'render-queue', icon: '⚡' }),
+        dept('approval-flow', 'APPROVAL FLOW', 'Production sign-off · brand compliance', { icon: '✅' }),
+        dept('publishing-wing', 'PUBLISHING', 'Schedule · queue · multi-platform', { wingLabel: 'PUBLISHING WING', moduleId: 'publishing-queue', icon: '📅' }),
+        dept('distribution-center', 'DISTRIBUTION CENTER', 'Network · channels · syndication', { moduleId: 'distribution-network', icon: '🚀' }),
+        dept('media-library', 'MEDIA LIBRARY', 'Assets · versions · reuse', { moduleId: 'asset-library', icon: '📚' }),
+        dept('creator-analytics', 'CREATOR ANALYTICS', 'Performance · retention · experiments', { moduleId: 'analytics', icon: '📊' }),
+        dept('content-calendar', 'CONTENT CALENDAR', 'Editorial rhythm · seasonal planning', { icon: '🗓️' }),
+        dept('creator-intelligence', 'CREATOR INTELLIGENCE', 'Recommendations · gaps · trends', { moduleId: 'studio-intelligence', icon: '🧠' }),
+        dept('thumbnail-workflow', 'THUMBNAIL WORKFLOW', 'Variants · tests · approvals', { icon: '🖼️' }),
+        dept('script-writing', 'SCRIPT WRITING', 'Hooks · captions · voice', { moduleId: 'writing-bible', icon: '✍️' }),
+      ],
+      conciergesAdded: [
+        concierge('cs-production', 'Production Concierge', 'PRODUCTION CONCIERGE', 'production-studio', 'Scene assembly · render readiness'),
+        concierge('cs-creative', 'Creative Concierge', 'CREATIVE CONCIERGE', 'approval-flow', 'Brand compliance · revision routing'),
+        concierge('cs-research', 'Research Concierge', 'RESEARCH CONCIERGE', 'creator-intelligence', 'Topic gaps · educational angles'),
+        concierge('cs-publishing', 'Publishing Concierge', 'PUBLISHING CONCIERGE', 'publishing-wing', 'Schedule optimization'),
+        concierge('cs-distribution', 'Distribution Concierge', 'DISTRIBUTION CONCIERGE', 'distribution-center', 'Platform packaging'),
+        concierge('cs-audience', 'Audience Concierge', 'AUDIENCE CONCIERGE', 'creator-analytics', 'Retention · hook performance'),
+        concierge('cs-thumbnail', 'Thumbnail Concierge', 'THUMBNAIL CONCIERGE', 'thumbnail-workflow', 'CTR experiments'),
+        concierge('cs-screening', 'Screening Concierge', 'SCREENING CONCIERGE', 'screening-room', 'Review sessions · notes'),
+      ],
+      navModuleIds: [
+        'production-studio',
+        'screening-room',
+        'render-queue',
+        'publishing-queue',
+        'distribution-network',
+        'asset-library',
+        'analytics',
+        'studio-intelligence',
+        'writing-bible',
+        'labs',
+      ],
+      kpiLabels: ['VIDEOS IN PRODUCTION', 'PUBLISHING THIS WEEK', 'DISTRIBUTION REACH', 'CREATOR ROI'],
+      commandDockCapabilities: ['production', 'publishing', 'distribution', 'experiments'],
+      automationRules: ['Route approved cuts to publishing queue', 'Recommend Creator Studio topics from industry FAQs'],
+    },
+  },
+  {
+    id: 'sales-crm',
+    kind: 'expansion-pack',
+    name: 'SALES CRM',
+    tagline: 'Pipeline · outreach · follow-up automation',
+    description: 'Full sales CRM with pipeline stages, sequences, and revenue forecasting.',
+    defaultForIndustries: [],
+    recommendedForIndustries: ['contractor', 'painting', 'agency', 'real-estate', 'automotive'],
+    installPreview: 'Adds Pipeline, Sequences, Proposals, and Sales Intelligence wings.',
+    outcome: {
+      departmentsAdded: [
+        dept('sales-pipeline', 'SALES PIPELINE', 'Stages · velocity · forecast', { icon: '📈' }),
+        dept('sequences', 'OUTREACH SEQUENCES', 'Email · SMS · call tasks', { icon: '📨' }),
+        dept('proposals', 'PROPOSALS', 'Quotes · e-sign · win tracking', { icon: '📝' }),
+      ],
+      conciergesAdded: [concierge('crm-sales', 'Sales Concierge', 'SALES CONCIERGE', 'sales-pipeline', 'Follow-up timing · deal risk')],
+      navModuleIds: ['relationship-engine', 'campaign-engine'],
+      kpiLabels: ['PIPELINE VALUE', 'WIN RATE', 'AVG DEAL CYCLE'],
+      commandDockCapabilities: ['strategy', 'campaigns', 'revenue'],
+      automationRules: ['Nudge stale deals after 5 days'],
+    },
+  },
+  {
+    id: 'warehouse',
+    kind: 'expansion-pack',
+    name: 'WAREHOUSE',
+    tagline: 'Inventory · fulfillment · receiving',
+    description: 'Warehouse operations for SKUs, bins, pick/pack, and fulfillment SLAs.',
+    defaultForIndustries: [],
+    recommendedForIndustries: ['ecommerce', 'beauty', 'manufacturing', 'automotive'],
+    installPreview: 'Adds Receiving, Pick/Pack, and Fulfillment SLA wings.',
+    outcome: {
+      departmentsAdded: [
+        dept('receiving', 'RECEIVING', 'POs · ASN · putaway', { icon: '📥' }),
+        dept('pick-pack', 'PICK / PACK', 'Wave planning · accuracy', { icon: '📦' }),
+        dept('fulfillment-sla', 'FULFILLMENT SLA', 'On-time · exceptions', { icon: '⏱️' }),
+      ],
+      conciergesAdded: [concierge('wh-ops', 'Warehouse Concierge', 'WAREHOUSE CONCIERGE', 'pick-pack', 'SLA risk · stockouts')],
+      navModuleIds: ['work-orchestration'],
+      kpiLabels: ['PICK ACCURACY', 'SHIP ON-TIME', 'STOCKOUTS'],
+      commandDockCapabilities: ['scheduling', 'analytics'],
+      automationRules: ['Alert low stock on hero SKUs'],
+    },
+  },
+  {
+    id: 'accounting',
+    kind: 'expansion-pack',
+    name: 'ACCOUNTING',
+    tagline: 'Books · AP/AR · close',
+    description: 'Accounting department with AP, AR, reconciliation, and month-end close.',
+    defaultForIndustries: [],
+    recommendedForIndustries: ['contractor', 'restaurant', 'agency', 'medical', 'ecommerce'],
+    installPreview: 'Adds AP, AR, Reconciliation, and Close wings.',
+    outcome: {
+      departmentsAdded: [
+        dept('accounts-payable', 'ACCOUNTS PAYABLE', 'Bills · vendors · approvals', { icon: '💸' }),
+        dept('accounts-receivable', 'ACCOUNTS RECEIVABLE', 'Invoices · collections', { icon: '💰' }),
+        dept('month-end-close', 'MONTH-END CLOSE', 'Reconciliation · journals', { icon: '📒' }),
+      ],
+      conciergesAdded: [concierge('acct-close', 'Accounting Concierge', 'ACCOUNTING CONCIERGE', 'month-end-close', 'Close checklist · anomalies')],
+      navModuleIds: ['revenue', 'business-model-engine'],
+      kpiLabels: ['CASH ON HAND', 'DSO', 'CLOSE STATUS'],
+      commandDockCapabilities: ['revenue', 'analytics'],
+      automationRules: ['Flag overdue receivables > 30 days'],
+    },
+  },
+  {
+    id: 'hiring-suite',
+    kind: 'expansion-pack',
+    name: 'HIRING SUITE',
+    tagline: 'Recruiting · onboarding · roster',
+    description: 'Hiring pipeline from job posts through onboarding and roster management.',
+    defaultForIndustries: [],
+    recommendedForIndustries: ['restaurant', 'contractor', 'medical', 'hospitality'],
+    installPreview: 'Adds Recruiting, Onboarding, and Roster wings.',
+    outcome: {
+      departmentsAdded: [
+        dept('recruiting', 'RECRUITING', 'Posts · applicants · interviews', { icon: '🎯' }),
+        dept('onboarding', 'ONBOARDING', 'Checklists · training · compliance', { icon: '📋' }),
+      ],
+      conciergesAdded: [concierge('hire-concierge', 'Hiring Concierge', 'HIRING CONCIERGE', 'recruiting', 'Pipeline · offer timing')],
+      navModuleIds: ['executive-organization', 'onboarding-tutorial'],
+      kpiLabels: ['OPEN ROLES', 'TIME TO HIRE', 'ONBOARDING COMPLETE'],
+      commandDockCapabilities: ['scheduling', 'strategy'],
+      automationRules: ['Escalate roles open > 21 days'],
+    },
+  },
+  {
+    id: 'business-intelligence',
+    kind: 'expansion-pack',
+    name: 'BUSINESS INTELLIGENCE',
+    tagline: 'Dashboards · forecasts · executive scorecards',
+    description: 'Executive BI layer with cross-department KPIs and forecasting.',
+    defaultForIndustries: [],
+    recommendedForIndustries: ['manufacturing', 'financial-services', 'ecommerce', 'agency'],
+    installPreview: 'Adds Executive Dashboards, Forecasting, and Scorecard wings.',
+    outcome: {
+      departmentsAdded: [
+        dept('executive-dashboards', 'EXECUTIVE DASHBOARDS', 'Cross-dept KPIs · drill-down', { moduleId: 'executive-command-center', icon: '📊' }),
+        dept('forecasting', 'FORECASTING', 'Revenue · demand · scenarios', { icon: '🔮' }),
+      ],
+      conciergesAdded: [concierge('bi-concierge', 'BI Concierge', 'BI CONCIERGE', 'executive-dashboards', 'Anomaly detection · briefings')],
+      navModuleIds: ['executive-command-center', 'studio-intelligence', 'analytics'],
+      kpiLabels: ['FORECAST ACCURACY', 'KPI HEALTH', 'RISK FLAGS'],
+      commandDockCapabilities: ['analytics', 'strategy', 'revenue'],
+      automationRules: ['Weekly executive scorecard auto-generation'],
+    },
+  },
+  {
+    id: 'automation-engine',
+    kind: 'expansion-pack',
+    name: 'AUTOMATION ENGINE',
+    tagline: 'Workflows · triggers · cross-department rules',
+    description: 'Automation engine connecting departments without manual setup.',
+    defaultForIndustries: [],
+    recommendedForIndustries: ['agency', 'ecommerce', 'medical', 'contractor'],
+    installPreview: 'Adds Workflow Builder, Triggers, and Automation Monitor wings.',
+    outcome: {
+      departmentsAdded: [
+        dept('workflow-builder', 'WORKFLOW BUILDER', 'Visual flows · approvals', { moduleId: 'work-orchestration', icon: '⚙️' }),
+        dept('automation-monitor', 'AUTOMATION MONITOR', 'Runs · failures · SLAs', { icon: '📡' }),
+      ],
+      conciergesAdded: [concierge('auto-concierge', 'Automation Concierge', 'AUTOMATION CONCIERGE', 'workflow-builder', 'Rule design · failure recovery')],
+      navModuleIds: ['work-orchestration', 'campaign-engine'],
+      kpiLabels: ['AUTOMATIONS LIVE', 'HOURS SAVED / WK', 'FAILURE RATE'],
+      commandDockCapabilities: ['scheduling', 'campaigns'],
+      automationRules: ['Self-heal failed automations with retry policy'],
+    },
+  },
+  {
+    id: 'ai-research-lab',
+    kind: 'expansion-pack',
+    name: 'AI RESEARCH LAB',
+    tagline: 'Experiments · models · intelligence prototypes',
+    description: 'Internal research lab for AI experiments and prototype intelligence.',
+    defaultForIndustries: [],
+    recommendedForIndustries: ['creator', 'agency', 'education', 'manufacturing'],
+    installPreview: 'Adds Research Lab, Model Registry, and Experiment Tracker wings.',
+    outcome: {
+      departmentsAdded: [
+        dept('research-lab', 'AI RESEARCH LAB', 'Experiments · benchmarks', { moduleId: 'labs', icon: '🧪' }),
+        dept('model-registry', 'MODEL REGISTRY', 'Versions · evals · rollout', { icon: '🤖' }),
+      ],
+      conciergesAdded: [concierge('lab-concierge', 'Research Concierge', 'RESEARCH CONCIERGE', 'research-lab', 'Experiment design · safety review')],
+      navModuleIds: ['labs', 'simulation-engine', 'studio-intelligence'],
+      kpiLabels: ['ACTIVE EXPERIMENTS', 'MODEL ACCURACY', 'PROTOTYPES'],
+      commandDockCapabilities: ['experiments', 'strategy'],
+      automationRules: ['Archive experiments idle > 30 days'],
+    },
+  },
+];
