@@ -1560,6 +1560,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organization-operating-manual',
+    title: 'ORGANIZATION OPERATING MANUAL™',
+    purpose: 'Living operating manual — auto-generated documentation, searchable Q&A, live sync. One handbook, always current, single source of truth.',
+    route: p('organization-operating-manual'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M120',
+    ctaLabel: 'OPEN OPERATING MANUAL',
+    moduleKey: 'organization-operating-manual',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

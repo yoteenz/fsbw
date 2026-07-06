@@ -39187,3 +39187,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/innovation-lab.md`** · **CORE.md** M119 entry · nav metric **M119**
 
 **Conventions:** Innovation Lab (M119) transforms innovation from occasional event into permanent capability — demo localStorage via `studioOsInnovationLab_v1`.
+
+---
+
+## 2026-07-06 — Milestone 120: Organization Operating Manual™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M119 (Blueprint through Innovation Lab `948e7d0c`). User requested **Milestone 120 — Organization Operating Manual™ V1.0**: living operating manual for every organization — auto-generate · organize · continuously update documentation · never manually maintain · one organization one handbook always current · 21 automatic sections · searchable natural-language Q&A · live sync when departments/policies/brains/automation/training/knowledge change · Command Dock approval/regulation/handbook lines · single source of operational truth.
+
+**Requirements delivered:**
+- **21 automatic documentation sections** — Charter · Mission · Vision · Values · Blueprint · Genome · Profession Brain summaries · Department guides · Employee handbook · Leadership · CX standards · Approvals · SOPs · Automation docs · Knowledge articles · Training paths · Command Dock reference · Council procedures · Emergency · Glossary · Policy library
+- **Searchable organization** — natural-language Q&A (*"How do we onboard clients?"* · refund policy · approvals · customer service philosophy)
+- **Live synchronization** — 6 triggers (departments · policies · profession brain · automation · training · knowledge) — no duplicate · no outdated information
+- **Command Dock** — **`resolveOrganizationOperatingManualAdvice()`** · **`buildProactiveOrganizationOperatingManualSuggestion()`** · **`buildOperatingManualOpeningLine()`**
+
+**Delivered:**
+- **`src/studio-os-core/organization-operating-manual/`** — **`documentation-generator.ts`** · **`searchable-organization.ts`** · **`live-synchronization.ts`** · **`operating-manual-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
+- **`OrganizationOperatingManualWorkspace`** + **`/admin/studio/organization-operating-manual`** — 4 tabs: Manual Overview · Documentation Library · Searchable Organization · Live Synchronization · blue accent `#2563EB`
+- **`MissionControlOrganizationOperatingManualPanel`** in Knowledge Wing · **`useOrganizationOperatingManualState`** hook
+- **Brand voice **`organization-operating-manual`**: *"One handbook. Always current."*
+- **Sync chain** — Inauguration · Genome · Blueprint · Profession Brain · Architecture · Trust · Shadow · Institute · Council · **`innovation-lab/store`** resync triggers **`syncOrganizationOperatingManualFromSources`** · **boundary-sync**
+- **Docs** — **`docs/studio-os/organization-operating-manual.md`** · **CORE.md** M120 entry · nav metric **M120**
+
+**Conventions:** Organization Operating Manual (M120) is the single source of operational truth — every employee, department, Digital Concierge, and future leader learns from the same evolving handbook. Demo localStorage via `studioOsOrganizationOperatingManual_v1`.

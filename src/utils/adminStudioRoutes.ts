@@ -861,6 +861,10 @@ export function adminStudioInnovationLabPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/innovation-lab`;
 }
 
+export function adminStudioOrganizationOperatingManualPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/organization-operating-manual`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

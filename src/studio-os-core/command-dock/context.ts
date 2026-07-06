@@ -41,6 +41,7 @@ import { listExecutiveTimelineHistoryDockSuggestions } from '../executive-timeli
 import { listWorldKnowledgeEngineDockSuggestions } from '../world-knowledge-engine/dock-advisor';
 import { listFounderOperatingSystemDockSuggestions } from '../founder-operating-system/dock-advisor';
 import { listInnovationLabDockSuggestions } from '../innovation-lab/dock-advisor';
+import { listOrganizationOperatingManualDockSuggestions } from '../organization-operating-manual/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -326,6 +327,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listInnovationLabDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/organization-operating-manual')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'organization-operating-manual',
+      label: 'ORGANIZATION OPERATING MANUAL™ · ONE HANDBOOK',
+      portfolioMode: false,
+      suggestedCommands: listOrganizationOperatingManualDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'strategy'],
     };
   }
 

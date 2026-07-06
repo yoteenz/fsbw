@@ -113,6 +113,7 @@ export type StudioOsCoreModuleId =
   | 'world-knowledge-engine'
   | 'founder-operating-system'
   | 'innovation-lab'
+  | 'organization-operating-manual'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -786,6 +787,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'INNOVATION LAB™',
     description: 'Innovation Lab V1.0 — permanent research, invention, and strategic ideation. Continuously generate ideas from every intelligence source.',
     routeSegment: 'innovation-lab',
+  },
+  {
+    id: 'organization-operating-manual',
+    label: 'ORGANIZATION OPERATING MANUAL™',
+    description: 'Living operating manual V1.0 — auto-generated handbook, searchable organization, live sync. Single source of operational truth.',
+    routeSegment: 'organization-operating-manual',
   },
   {
     id: 'succession-mode',

@@ -48,7 +48,11 @@ function upsertProfile(profile: OrganizationInnovationLabProfile): OrganizationI
 }
 
 export function syncInnovationLabFromSources(organizationId: string): OrganizationInnovationLabProfile {
-  return upsertProfile(buildOrganizationInnovationLabProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationInnovationLabProfile(organizationId));
+  void import('../organization-operating-manual/store').then((m) => {
+    m.syncOrganizationOperatingManualFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationInnovationLabProfile(

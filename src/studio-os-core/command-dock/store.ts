@@ -139,6 +139,11 @@ import {
   buildProactiveInnovationLabSuggestion,
   buildInnovationLabOpeningLine,
 } from '../innovation-lab/dock-advisor';
+import {
+  resolveOrganizationOperatingManualAdvice,
+  buildProactiveOrganizationOperatingManualSuggestion,
+  buildOperatingManualOpeningLine,
+} from '../organization-operating-manual/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -227,6 +232,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const founderOpeningLine = buildFounderOperatingOpeningLine(workspaceId);
   const innovationLab = buildProactiveInnovationLabSuggestion(workspaceId);
   const innovationOpeningLine = buildInnovationLabOpeningLine(workspaceId);
+  const operatingManual = buildProactiveOrganizationOperatingManualSuggestion(workspaceId);
+  const operatingManualOpeningLine = buildOperatingManualOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -350,6 +357,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'What new ideas has Innovation Lab generated?',
       }
     : null;
+  const operatingManualProactive = operatingManual
+    ? {
+        response: operatingManual,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Organization Operating Manual — review synchronized documentation.',
+      }
+    : null;
+  const operatingManualOpeningProactive = operatingManualOpeningLine
+    ? {
+        response: operatingManualOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'How do we onboard clients?',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -414,10 +435,12 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? founderOperatingProactive
       : pathname.includes('/innovation-lab') && innovationLabProactive
       ? innovationLabProactive
+      : pathname.includes('/organization-operating-manual') && operatingManualProactive
+      ? operatingManualProactive
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -725,6 +748,25 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${innovationLabAdvice.concierge}\n${innovationLabAdvice.response}`,
+    });
+    return null;
+  }
+
+  const operatingManualAdvice = resolveOrganizationOperatingManualAdvice(
+    trimmed,
+    getRuntimeActiveWorkspaceId()
+  );
+  if (operatingManualAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${operatingManualAdvice.concierge}\n${operatingManualAdvice.response}`,
     });
     return null;
   }

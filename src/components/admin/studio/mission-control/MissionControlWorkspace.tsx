@@ -68,6 +68,7 @@ import { MissionControlExecutiveTimelinePanel } from './MissionControlExecutiveT
 import { MissionControlWorldKnowledgeEnginePanel } from './MissionControlWorldKnowledgeEnginePanel';
 import { MissionControlFounderOperatingSystemPanel } from './MissionControlFounderOperatingSystemPanel';
 import { MissionControlInnovationLabPanel } from './MissionControlInnovationLabPanel';
+import { MissionControlOrganizationOperatingManualPanel } from './MissionControlOrganizationOperatingManualPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -438,6 +439,8 @@ export function MissionControlWorkspace() {
             </button>
           </div>
         </ExecutiveCollapsibleSection>
+
+        <MissionControlOrganizationOperatingManualPanel />
 
         <ExecutiveCollapsibleSection
           title="EXECUTIVE AI DIRECTOR"
