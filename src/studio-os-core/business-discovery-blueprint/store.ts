@@ -159,6 +159,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncDigitalTwinFromSources(blueprint.organizationId);
   });
 
+  void import('../business-simulation-lab/store').then((m) => {
+    m.syncSimulationLabFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

@@ -109,6 +109,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationDigitalTwinProfile(context.organizationId);
   });
 
+  void import('../business-simulation-lab/store').then((m) => {
+    m.ensureOrganizationSimulationLabProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

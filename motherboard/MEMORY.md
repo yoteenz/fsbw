@@ -38756,3 +38756,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Organization Digital Twin (M103) complements Simulation Engine (M36) — twin mirrors live org + fast sandbox what-if; Simulation Engine for deep financial/marketing modeling. Demo localStorage via `studioOsOrganizationDigitalTwin_v1`.
 
+---
+
+## 2026-07-06 — Milestone 104: Business Simulation Lab™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M103 (Blueprint through Organization Digital Twin `90e7d00a`). User requested **Milestone 104 — Business Simulation Lab™ V1.0**: while Digital Twin simulates the organization itself, Business Simulation Lab allows founders to safely test strategies · ideas · experiments · long-term decisions before implementing. Learn from simulation not just mistakes. **14 simulation types** (marketing · pricing · hiring · departments · products · geography · inventory · membership · automation · subscription · revenue forecast · digital workforce · knowledge products · operations). **Full simulation reports** — executive summary · predicted outcomes · revenue · customer · operational · department impact · risks · confidence · resources · improvements · alternatives. **Executive Council™ auto-review** every major simulation. **Scenario Library** — scenario · date · decision · outcome · actual results · lessons learned. Practice tomorrow before living it.
+
+**Core philosophy delivered:** Strategic laboratory not just operational platform · better decisions from better preparation · sandbox experimentation without risking real business.
+
+**Delivered:**
+- **`src/studio-os-core/business-simulation-lab/`** — **`lab-builder.ts`** · **`simulation-engine.ts`** (`parseLabSimulationQuery()` · `runBusinessSimulation()`) · **`council-review.ts`** (Executive Council auto-review) · **`store.ts`** (`runLabSimulation()` · `resolveScenarioDecision()`) · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`BusinessSimulationLabWorkspace`** + **`/admin/studio/business-simulation-lab`** — 4 tabs: Lab Overview · Run Simulation · Simulation Reports · Scenario Library · sky blue accent `#0284C7`.
+- **`useBusinessSimulationLabState`** hook · brand voice **`business-simulation-lab`**: *"Practice tomorrow. Before living it."*
+- **Integration** — sync from profession-brain · blueprint · boundary-sync · Command Dock **`resolveSimulationLabAdvice()`** first for strategic simulate queries + **`buildProactiveSimulationLabSuggestion()`** on `/business-simulation-lab` route · Digital Twin dock pattern narrowed (removed simulate/model from twin matcher) · modules · nav · App route.
+- **Docs** — **`docs/studio-os/business-simulation-lab.md`** · **CORE.md** M104 entry.
+
+**Conventions:** Business Simulation Lab (M104) complements Organization Digital Twin (M103) — twin = org mirror + fast what-if; lab = strategic long-term simulations + Scenario Library + council review. Demo localStorage via `studioOsBusinessSimulationLab_v1`.
+

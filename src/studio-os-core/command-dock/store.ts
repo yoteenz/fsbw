@@ -70,6 +70,10 @@ import {
   resolveDigitalTwinAdvice,
   buildProactiveDigitalTwinSuggestion,
 } from '../organization-digital-twin/dock-advisor';
+import {
+  resolveSimulationLabAdvice,
+  buildProactiveSimulationLabSuggestion,
+} from '../business-simulation-lab/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -138,6 +142,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const wisdom = buildProactiveWisdomSuggestion(workspaceId);
   const shadow = buildProactiveShadowSuggestion(workspaceId);
   const digitalTwin = buildProactiveDigitalTwinSuggestion(workspaceId);
+  const simulationLab = buildProactiveSimulationLabSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -175,8 +180,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const digitalTwinProactive = digitalTwin
     ? { response: digitalTwin, concierge: 'Chief Concierge', suggestedCommand: 'Open Digital Twin — explore what-if scenarios in sandbox.' }
     : null;
+  const simulationLabProactive = simulationLab
+    ? { response: simulationLab, concierge: 'Chief Concierge', suggestedCommand: 'Open Business Simulation Lab — test strategies before implementing.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/organization-digital-twin') && digitalTwinProactive
+    pathname.includes('/business-simulation-lab') && simulationLabProactive
+      ? simulationLabProactive
+      : pathname.includes('/organization-digital-twin') && digitalTwinProactive
       ? digitalTwinProactive
       : pathname.includes('/shadow-mode') && shadowProactive
       ? shadowProactive
@@ -265,6 +275,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const simulationLabAdvice = resolveSimulationLabAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (simulationLabAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: simulationLabAdvice.report ? 'large' : 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${simulationLabAdvice.concierge}\n${simulationLabAdvice.response}`,
+    });
+    return null;
+  }
 
   const digitalTwinAdvice = resolveDigitalTwinAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (digitalTwinAdvice) {

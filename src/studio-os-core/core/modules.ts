@@ -98,6 +98,7 @@ export type StudioOsCoreModuleId =
   | 'wisdom-capture'
   | 'shadow-mode'
   | 'organization-digital-twin'
+  | 'business-simulation-lab'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -681,6 +682,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATION DIGITAL TWIN™',
     description: 'Living org simulation V1.0 — mirror the business in real time. What-if sandbox before acting. No real data changes.',
     routeSegment: 'organization-digital-twin',
+  },
+  {
+    id: 'business-simulation-lab',
+    label: 'BUSINESS SIMULATION LAB™',
+    description: 'Strategic simulation V1.0 — test strategies, experiments, long-term decisions in sandbox. Executive Council review. Scenario Library.',
+    routeSegment: 'business-simulation-lab',
   },
   {
     id: 'succession-mode',

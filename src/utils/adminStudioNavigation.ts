@@ -1380,6 +1380,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'business-simulation-lab',
+    title: 'BUSINESS SIMULATION LAB™',
+    purpose: 'Strategic sandbox — test campaigns, pricing, hiring, launches, forecasts. Full reports, Executive Council review, Scenario Library.',
+    route: p('business-simulation-lab'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M104',
+    ctaLabel: 'OPEN SIMULATION LAB',
+    moduleKey: 'business-simulation-lab',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

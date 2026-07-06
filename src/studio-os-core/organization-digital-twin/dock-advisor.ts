@@ -7,7 +7,7 @@ import {
 import type { DigitalTwinDockAdvice } from './types';
 
 const WHAT_IF_PATTERN =
-  /what happens if|what if|show me what|simulate|model|sandbox|digital twin|what would happen|what our organization looks like if/i;
+  /what happens if|what if we|show me what our organization|digital twin|what would happen|what our organization looks like if/i;
 
 export function resolveDigitalTwinAdvice(
   input: string,

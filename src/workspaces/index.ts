@@ -248,6 +248,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationDigitalTwin.bootstrapOrganizationDigitalTwinPlatform();
     await yieldToMain();
 
+    const businessSimulationLab = await import('../studio-os-core/business-simulation-lab/bootstrap');
+    businessSimulationLab.bootstrapBusinessSimulationLabPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();
