@@ -67,6 +67,7 @@ export type StudioOsBrandSystemId =
   | 'ai-red-team'
   | 'executive-trust-dashboard'
   | 'time-machine'
+  | 'predictive-qa'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -133,6 +134,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'ai-red-team': 'Assume wrong until proven. Strengthen before users discover.',
   'executive-trust-dashboard': 'Trust measurable. Confidence before you ask.',
   'time-machine': 'Experience it again. Understand WHY.',
+  'predictive-qa': 'Protect the future. Prevent tomorrow\'s problems today.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

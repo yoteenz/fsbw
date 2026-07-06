@@ -306,6 +306,10 @@ const AdminStudioTimeMachine = lazyWithRetry(
   () => import('./pages/admin/studio/time-machine/page'),
   'AdminStudioTimeMachine'
 );
+const AdminStudioPredictiveQa = lazyWithRetry(
+  () => import('./pages/admin/studio/predictive-qa/page'),
+  'AdminStudioPredictiveQa'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1667,6 +1671,11 @@ function App() {
           <Route path="studio/time-machine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioTimeMachine />
+            </Suspense>
+          } />
+          <Route path="studio/predictive-qa" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPredictiveQa />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

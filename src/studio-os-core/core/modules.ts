@@ -141,6 +141,7 @@ export type StudioOsCoreModuleId =
   | 'ai-red-team'
   | 'executive-trust-dashboard'
   | 'time-machine'
+  | 'predictive-qa'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -982,6 +983,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'TIME MACHINE™',
     description: 'Time Machine V1.0 — organizational replay engine; experience any event exactly as it occurred to understand WHY.',
     routeSegment: 'time-machine',
+  },
+  {
+    id: 'predictive-qa',
+    label: 'PREDICTIVE QA™',
+    description: 'Predictive QA V1.0 — future risk protection engine; identify tomorrow\'s operational problems while there is still time to prevent them.',
+    routeSegment: 'predictive-qa',
   },
   {
     id: 'succession-mode',

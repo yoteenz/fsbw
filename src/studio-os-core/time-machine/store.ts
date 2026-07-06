@@ -49,13 +49,17 @@ function upsertProfile(profile: OrganizationTimeMachineProfile): OrganizationTim
 export function syncTimeMachineFromSources(organizationId: string): OrganizationTimeMachineProfile {
   const existing = getOrganizationTimeMachineProfile(organizationId);
   const built = buildOrganizationTimeMachineProfile(organizationId);
-  return upsertProfile({
+  const profile = upsertProfile({
     ...built,
     playbackState: existing?.playbackState ?? 'idle',
     currentReplayId: existing?.currentReplayId ?? built.currentReplayId,
     currentStepIndex: existing?.currentStepIndex ?? 0,
     activeFilter: existing?.activeFilter ?? built.activeFilter,
   });
+  void import('../predictive-qa/store').then((m) => {
+    m.syncPredictiveQaFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationTimeMachineProfile(organizationId: string): OrganizationTimeMachineProfile {

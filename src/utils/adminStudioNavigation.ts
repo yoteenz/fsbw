@@ -1896,6 +1896,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'predictive-qa',
+    title: 'PREDICTIVE QA™',
+    purpose: 'Future risk protection — identify tomorrow\'s operational problems before they occur. Confidence, evidence, timeline, and preventative action.',
+    route: p('predictive-qa'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M149',
+    ctaLabel: 'OPEN PREDICTIVE QA',
+    moduleKey: 'predictive-qa',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

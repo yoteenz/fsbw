@@ -23,6 +23,7 @@ import {
   adminStudioAiRedTeamPath,
   adminStudioExecutiveTrustDashboardPath,
   adminStudioTimeMachinePath,
+  adminStudioPredictiveQaPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1010,6 +1011,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['SELECT → REPLAY → UNDERSTAND WHY → IMPROVE'],
     aliases: ['time machine', 'organizational replay', 'event replay', 'why did it happen'],
     searchKeywords: ['replay', 'time machine', 'what happened', 'why', 'reconstruct', 'playback'],
+  }),
+  entry({
+    id: 'predictive-qa',
+    label: 'Predictive QA™',
+    moduleId: 'predictive-qa',
+    milestone: 'M149',
+    route: adminStudioPredictiveQaPath(),
+    purpose: 'Future risk protection engine — identify tomorrow\'s operational problems before they occur.',
+    overview:
+      '10 analysis sources · 10 pattern types · confidence + evidence + timeline + impact + preventative action per prediction.',
+    capabilities: ['Future risk prediction', 'Pattern detection', 'Preventative action planning', 'Continuous analysis', 'Cross-system signal aggregation'],
+    howItWorks: 'Aggregate QA layer + platform signals → detect emerging patterns → predict risks with confidence → recommend preventative action before failure.',
+    whenUsed: ['Capacity planning', 'Pre-launch risk review', 'Trust decline prevention', 'Staffing forecasts', 'Workflow scaling'],
+    relatedSystems: ['time-machine', 'executive-trust-dashboard', 'qa-headquarters', 'qa-inspector', 'profession-brain', 'knowledge-confidence'],
+    exampleWorkflows: ['ANALYZE → PREDICT → PREVENT → VERIFY'],
+    aliases: ['predictive qa', 'future risk', 'risk prediction', 'preventive qa', 'tomorrow problems'],
+    searchKeywords: ['predict', 'future', 'risk', 'prevent', 'bottleneck', 'forecast', 'pattern'],
   }),
 ];
 

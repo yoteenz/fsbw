@@ -20,6 +20,7 @@ import type { ReplayEventType } from '../../../../studio-os-core/time-machine';
 import {
   adminStudioExecutiveTrustDashboardPath,
   adminStudioExecutiveTimelinePath,
+  adminStudioPredictiveQaPath,
 } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
@@ -109,8 +110,11 @@ export function TimeMachineWorkspace() {
       <button type="button" onClick={() => navigate(adminStudioExecutiveTimelinePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         EXECUTIVE TIMELINE →
       </button>
-      <button type="button" onClick={() => navigate(adminStudioExecutiveTrustDashboardPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+      <button type="button" onClick={() => navigate(adminStudioExecutiveTrustDashboardPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         TRUST DASHBOARD →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioPredictiveQaPath())} className="mt-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
+        PREDICTIVE QA →
       </button>
     </ExecutivePageShell>
   );

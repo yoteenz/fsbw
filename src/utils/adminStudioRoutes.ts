@@ -973,6 +973,10 @@ export function adminStudioTimeMachinePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/time-machine`;
 }
 
+export function adminStudioPredictiveQaPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/predictive-qa`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }
