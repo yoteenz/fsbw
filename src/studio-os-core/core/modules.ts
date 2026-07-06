@@ -132,6 +132,7 @@ export type StudioOsCoreModuleId =
   | 'workspace-runtime'
   | 'plugin-sdk'
   | 'workflow-engine'
+  | 'state-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -919,6 +920,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'WORKFLOW ENGINE™',
     description: 'Workflow Engine V1.0 — visual orchestration for every business process; design, test, evolve without code.',
     routeSegment: 'workflow-engine',
+  },
+  {
+    id: 'state-engine',
+    label: 'STATE ENGINE™',
+    description: 'State Engine V1.0 — centralized lifecycle management; defined states, intentional transitions, complete history.',
+    routeSegment: 'state-engine',
   },
   {
     id: 'succession-mode',

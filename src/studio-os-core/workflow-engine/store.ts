@@ -49,7 +49,11 @@ function upsertProfile(profile: OrganizationWorkflowEngineProfile): Organization
 
 /** Rebuild visual builder, process templates, testing, and analytics from Plugin SDK + platform sources */
 export function syncWorkflowEngineFromSources(organizationId: string): OrganizationWorkflowEngineProfile {
-  return upsertProfile(buildOrganizationWorkflowEngineProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationWorkflowEngineProfile(organizationId));
+  void import('../state-engine/store').then((m) => {
+    m.syncStateEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationWorkflowEngineProfile(

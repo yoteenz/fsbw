@@ -270,6 +270,10 @@ const AdminStudioWorkflowEngine = lazyWithRetry(
   () => import('./pages/admin/studio/workflow-engine/page'),
   'AdminStudioWorkflowEngine'
 );
+const AdminStudioStateEngine = lazyWithRetry(
+  () => import('./pages/admin/studio/state-engine/page'),
+  'AdminStudioStateEngine'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1586,6 +1590,11 @@ function App() {
           <Route path="studio/workflow-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioWorkflowEngine />
+            </Suspense>
+          } />
+          <Route path="studio/state-engine" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioStateEngine />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

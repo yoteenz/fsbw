@@ -39697,3 +39697,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/workflow-engine.md`** · **CORE.md** M138 entry
 
 **Conventions:** Workflows are living systems — visualize, improve, automate, evolve. Test before publish mandatory. Sync chain: … → Workspace Runtime → Plugin SDK → **Workflow Engine**. Demo localStorage via `studioOsWorkflowEngine_v1`. Brand voice: *"Design visually. Evolve continuously. Choreograph work."* Accent `#0D9488`.
+
+---
+
+## 2026-07-06 — Milestone 139: State Engine™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine through M138 Workflow Engine (`6a8a3cbc`). User requested **State Engine™**: centralized lifecycle management for every object; clearly defined states; intentional traceable transitions; supported objects; complete state history; Command Dock approval/paused/archive/failed queries.
+
+**Requirements delivered:**
+- **Supported states (19)** — draft, pending, scheduled, waiting, review, approved, rejected, published, active, paused, completed, archived, deleted, failed, cancelled, expired, hidden, locked, deprecated — extensible for future systems
+- **State transitions** — allowed transitions, required approvals, permissions, policies, automation triggers, notifications, audit history, dependencies — canonical Draft → Review → Approved → Published → Archived — never bypass policies
+- **Managed objects (15 types)** — documents, knowledge products, profession brains, departments, projects, customers, employees, marketplace listings, academy courses, automation workflows, command dock tasks, assets, announcements, policies, plugins
+- **State history** — previous/current state, reason, user, date, approval chain, automation trigger, comments — append-only, nothing loses history
+- **Command Dock** — *"Show everything waiting for approval."* · *"What projects are currently paused?"* · *"Archive completed campaigns."* · *"Which workflows failed today?"*
+
+**Delivered:**
+- **`src/studio-os-core/state-engine/`** — `state-catalog.ts` · `object-catalog.ts` · `transition-engine.ts` · `history-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncStateEngineFromSources`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`StateEngineWorkspace`** (7 tabs: Overview · Supported States · Transitions · Managed Objects · State History · Governance · Discovery) · **`/admin/studio/state-engine`** · **`MissionControlStateEnginePanel`** · **`useStateEngineState`**
+- **Wiring** — nav M139 · sync chain Workflow Engine → State Engine · Command Dock state-engine-first · boundary-sync · documentation system registry + page-guide entry · Workflow Engine workspace link
+- **Docs** — **`docs/studio-os/state-engine.md`** · **CORE.md** M139 entry
+
+**Conventions:** Nothing undefined — every object has defined state. Transitions policy-enforced. History append-only. Sync chain: … → Plugin SDK → Workflow Engine → **State Engine**. Demo localStorage via `studioOsStateEngine_v1`. Brand voice: *"Defined states. Intentional transitions. Complete trust."* Accent `#0369A1`.

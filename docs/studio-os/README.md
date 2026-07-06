@@ -28,6 +28,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [workspace-runtime.md](./workspace-runtime.md) | Workspace Runtime™ — isolated org execution, sandboxes, health, M136 |
 | [plugin-sdk.md](./plugin-sdk.md) | Plugin SDK™ — extensible platform, sandbox, marketplace, M137 |
 | [workflow-engine.md](./workflow-engine.md) | Workflow Engine™ — visual orchestration, testing, analytics, M138 |
+| [state-engine.md](./state-engine.md) | State Engine™ — lifecycle management, transitions, history, M139 |
 | [memory-bible.md](./memory-bible.md) | Institutional knowledge, naming, decisions, AI Context Builder |
 
 Platform config: `src/studio-os/config/platform.ts`

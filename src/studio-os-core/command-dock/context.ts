@@ -60,6 +60,7 @@ import { listPermissionEngineDockSuggestions } from '../permission-engine/dock-a
 import { listWorkspaceRuntimeDockSuggestions } from '../workspace-runtime/dock-advisor';
 import { listPluginSdkDockSuggestions } from '../plugin-sdk/dock-advisor';
 import { listWorkflowEngineDockSuggestions } from '../workflow-engine/dock-advisor';
+import { listStateEngineDockSuggestions } from '../state-engine/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -400,6 +401,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/state-engine')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'state-engine',
+      label: 'STATE ENGINE™ · LIFECYCLE MANAGEMENT',
+      portfolioMode: false,
+      suggestedCommands: listStateEngineDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 

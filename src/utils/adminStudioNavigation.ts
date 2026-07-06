@@ -1788,6 +1788,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'state-engine',
+    title: 'STATE ENGINE™',
+    purpose: 'Centralized lifecycle management — defined states, policy-enforced transitions, complete history.',
+    route: p('state-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M139',
+    ctaLabel: 'OPEN STATE ENGINE',
+    moduleKey: 'state-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

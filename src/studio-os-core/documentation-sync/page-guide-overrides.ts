@@ -101,6 +101,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'workspace-runtime': fromSystem('workspace-runtime'),
   'plugin-sdk': fromSystem('plugin-sdk'),
   'workflow-engine': fromSystem('workflow-engine'),
+  'state-engine': fromSystem('state-engine'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

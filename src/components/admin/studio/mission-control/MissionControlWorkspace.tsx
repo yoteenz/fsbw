@@ -90,6 +90,7 @@ import { MissionControlPermissionEnginePanel } from './MissionControlPermissionE
 import { MissionControlWorkspaceRuntimePanel } from './MissionControlWorkspaceRuntimePanel';
 import { MissionControlPluginSdkPanel } from './MissionControlPluginSdkPanel';
 import { MissionControlWorkflowEnginePanel } from './MissionControlWorkflowEnginePanel';
+import { MissionControlStateEnginePanel } from './MissionControlStateEnginePanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -546,6 +547,7 @@ export function MissionControlWorkspace() {
           <MissionControlWorkspaceRuntimePanel />
           <MissionControlPluginSdkPanel />
           <MissionControlWorkflowEnginePanel />
+          <MissionControlStateEnginePanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

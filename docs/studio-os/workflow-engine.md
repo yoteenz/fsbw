@@ -63,7 +63,7 @@ Execution Count · Completion Rate · Average Duration · Bottlenecks · Failure
 
 ## Sync chain
 
-… → Permission Engine → Workspace Runtime → Plugin SDK → **Workflow Engine**
+… → Permission Engine → Workspace Runtime → Plugin SDK → **Workflow Engine** → **State Engine**
 
 **`plugin-sdk/store`** triggers **`syncWorkflowEngineFromSources`** · **boundary-sync**
 

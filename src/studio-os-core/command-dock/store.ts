@@ -239,6 +239,11 @@ import {
   buildProactiveWorkflowEngineSuggestion,
   buildWorkflowEngineOpeningLine,
 } from '../workflow-engine/dock-advisor';
+import {
+  resolveStateEngineAdvice,
+  buildProactiveStateEngineSuggestion,
+  buildStateEngineOpeningLine,
+} from '../state-engine/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -367,6 +372,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const pluginSdkOpeningLine = buildPluginSdkOpeningLine(workspaceId);
   const workflowEngine = buildProactiveWorkflowEngineSuggestion(workspaceId);
   const workflowEngineOpeningLine = buildWorkflowEngineOpeningLine(workspaceId);
+  const stateEngine = buildProactiveStateEngineSuggestion(workspaceId);
+  const stateEngineOpeningLine = buildStateEngineOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -770,6 +777,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'Recommend workflow improvements.',
       }
     : null;
+  const stateEngineProactive = stateEngine
+    ? {
+        response: stateEngine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Show everything waiting for approval.',
+      }
+    : null;
+  const stateEngineOpeningProactive = stateEngineOpeningLine
+    ? {
+        response: stateEngineOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Which workflows failed today?',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -844,6 +865,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? modelOrchestratorProactive
       : pathname.includes('/studio-foundation-models') && studioFoundationModelsProactive
       ? studioFoundationModelsProactive
+      : pathname.includes('/state-engine') && stateEngineProactive
+      ? stateEngineProactive
       : pathname.includes('/workflow-engine') && workflowEngineProactive
       ? workflowEngineProactive
       : pathname.includes('/plugin-sdk') && pluginSdkProactive
@@ -877,7 +900,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? workflowEngineOpeningProactive ?? pluginSdkOpeningProactive ?? workspaceRuntimeOpeningProactive ?? permissionEngineOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? stateEngineOpeningProactive ?? workflowEngineOpeningProactive ?? pluginSdkOpeningProactive ?? workspaceRuntimeOpeningProactive ?? permissionEngineOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -1271,6 +1294,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${studioFoundationModelsAdvice.concierge}\n${studioFoundationModelsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const stateEngineAdvice = resolveStateEngineAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (stateEngineAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${stateEngineAdvice.concierge}\n${stateEngineAdvice.response}`,
     });
     return null;
   }

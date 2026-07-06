@@ -937,6 +937,10 @@ export function adminStudioWorkflowEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/workflow-engine`;
 }
 
+export function adminStudioStateEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/state-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }
