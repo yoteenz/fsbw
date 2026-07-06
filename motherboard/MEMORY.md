@@ -38218,7 +38218,6 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-06 — Milestone 83: Executive Information Architecture V1.0 (permanent Studio OS foundation)
 
 **Context (full chat arc):** User requested **Milestone 83 — Executive Information Architecture V1.0** as the permanent design language for every current and future Studio OS module. Not a visual redesign — reorganize how information is prioritized and experienced. Studio OS = Executive Headquarters; every screen answers one primary executive question; Command Dock remains primary console.
@@ -38235,7 +38234,9 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** executive-ia/* (new M83 components), MissionControlWorkspace, distribution-network/page, overview/page, adminStudioNavigation, docs, CORE, MEMORY.
 
 **Conventions:** All future Studio OS pages must inherit M83 hierarchy (Hero → Department Cards → Visual → Focus → Secondary → Collapsible → History). No alternate layout philosophies. Department selection transforms workspace; modules summarized not exposed.
-=======
+
+---
+
 ## 2026-07-06 — Milestone 84: Design DNA & Canon System V1.0
 
 **Context (full chat arc):** User requested **Milestone 84 — Design DNA & Canon System V1.0** to continue building Frontal Slayer Headquarters. Explicit constraints: **do not** redesign existing pages · standardize layouts · correct spacing · normalize typography · realign custom compositions. Goal: preserve Frontal Slayer's existing visual identity while teaching every future page how to naturally evolve from it — permanent Design DNA creative compass.
@@ -38255,4 +38256,3 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Future Frontal Slayer pages must pass Headquarters Design Review before considered complete. Canon pages are read-only references — extend design language naturally · never normalize spacing or redesign canon. Design DNA (page rooms) is separate from Photography Creative DNA (product shots). Use **`/admin/studio/design-dna-canon`** as creative compass for new page work.
 
->>>>>>> 0cbceb5c (Milestone 84: Design DNA & Canon System V1.0 for Frontal Slayer HQ)
