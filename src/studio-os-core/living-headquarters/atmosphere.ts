@@ -22,11 +22,12 @@ export function resolveAtmosphereMode(
   milestones: MilestoneLike[],
   organizationFoundedAt: string | null | undefined,
   healthScore: number,
-  now = new Date()
+  now = new Date(),
+  options?: { allowHolidayAtmosphere?: boolean }
 ): LivingAtmosphereMode {
   if (healthScore > 0 && healthScore < 35) return 'emergency';
 
-  if (isHolidaySeason(now)) return 'holiday';
+  if (options?.allowHolidayAtmosphere !== false && isHolidaySeason(now)) return 'holiday';
 
   if (isOrganizationAnniversary(organizationFoundedAt, now)) return 'anniversary';
 

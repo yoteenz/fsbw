@@ -31,6 +31,7 @@ type StudioOrbContextValue = {
   closeRadial: () => void;
   openCommandDock: () => void;
   openPageGuide: () => void;
+  openLifeCulture: () => void;
   closeSurface: () => void;
   completeAwakening: () => void;
 };
@@ -110,6 +111,12 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
     playStudioOrbSound('conversation-open');
   }, []);
 
+  const openLifeCulture = useCallback(() => {
+    setRadialOpen(false);
+    setActiveSurface('life-culture');
+    playStudioOrbSound('conversation-open');
+  }, []);
+
   const closeSurface = useCallback(() => {
     if (activeSurface === 'command-dock') {
       dock.dismiss();
@@ -150,6 +157,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       closeRadial,
       openCommandDock,
       openPageGuide,
+      openLifeCulture,
       closeSurface,
       completeAwakening,
     }),
@@ -165,6 +173,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       closeRadial,
       openCommandDock,
       openPageGuide,
+      openLifeCulture,
       closeSurface,
       completeAwakening,
     ]
@@ -188,5 +197,5 @@ export function useStudioOrbOptional(): StudioOrbContextValue | null {
 /** True when conversation or guide mode should dim the page environment. */
 export function useStudioOrbEnvironmentActive(): boolean {
   const ctx = useStudioOrbOptional();
-  return Boolean(ctx?.conversationMode || ctx?.activeSurface === 'page-guide');
+  return Boolean(ctx?.conversationMode || ctx?.activeSurface === 'page-guide' || ctx?.activeSurface === 'life-culture');
 }

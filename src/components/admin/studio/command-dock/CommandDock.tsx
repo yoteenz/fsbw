@@ -2,8 +2,10 @@ import { useMemo } from 'react';
 import { FOUNDER_DISPLAY_NAME, DOCK_COMMAND_EXAMPLES } from '../../../../studio-os-core/command-dock/constants';
 import { greetingForFounder } from '../../../../studio-os-core/command-dock/context';
 import { buildFounderPilotDockBrief } from '../../../../studio-os-core/founder-pilot-mode';
+import { dismissDiscoveryPrompt } from '../../../../studio-os-core/life-culture-preferences';
 import { useOrganizationContextOptional } from '../../../../studio-os-core/organization-context';
 import { useCommandDockState } from '../../../../hooks/useCommandDockState';
+import { useLifeCulturePreferencesState } from '../../../../hooks/useLifeCulturePreferencesState';
 import { useLivingHeadquartersPresence } from '../../../../hooks/useLivingHeadquartersPresence';
 import type { DockExpansionSize, CommandHistoryEntry, FavoriteCommand, RecurringCommand } from '../../../../studio-os-core/command-dock/types';
 import { useStudioOrbOptional } from '../studio-orb/StudioOrbProvider';
@@ -49,6 +51,9 @@ export function CommandDockConversationPanel() {
 
   const { getMicroMoment, tick } = useLivingHeadquartersPresence();
   const org = useOrganizationContextOptional();
+  const organizationId = org?.organizationId ?? 'frontal-slayer';
+  const { discoveryPrompts } = useLifeCulturePreferencesState(organizationId);
+  const gentlePrompt = discoveryPrompts.find((p) => p.id === 'intro-life-culture');
   const pilotBrief = useMemo(
     () => (org ? buildFounderPilotDockBrief(org.organizationId, org.organizationName) : null),
     [org]
@@ -147,6 +152,27 @@ export function CommandDockConversationPanel() {
                 </p>
               </button>
             )}
+
+            {gentlePrompt ? (
+              <div
+                className="text-left mb-2 px-2 py-1.5 rounded-sm shrink-0 pointer-events-auto"
+                style={{ background: 'rgba(146,112,74,0.08)', border: '1px solid rgba(146,112,74,0.18)' }}
+              >
+                <p style={{ ...dockValue, fontSize: '7px', color: DOCK_VISUAL.textMuted, lineHeight: 1.45 }}>
+                  {gentlePrompt.message}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    dismissDiscoveryPrompt(organizationId, gentlePrompt.id);
+                    orb?.openLifeCulture();
+                  }}
+                  style={{ ...dockLabel, color: ORB_VISUAL.brandRed, marginTop: 8, cursor: 'pointer', background: 'none', border: 'none' }}
+                >
+                  {gentlePrompt.ctaLabel} →
+                </button>
+              </div>
+            ) : null}
 
             <div className="flex-1 overflow-y-auto min-h-0 mb-2 pointer-events-auto">
               {store.processingActive && processingLabel && (

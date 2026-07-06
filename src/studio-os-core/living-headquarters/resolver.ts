@@ -1,4 +1,10 @@
 import { readFounderPilotModeStore } from '../founder-pilot-mode/store';
+import {
+  applyPreferencesToCelebrationMessage,
+  applyPreferencesToLivingMemory,
+  buildLifeCultureContext,
+  filterLivingHeadquartersEffects,
+} from '../life-culture-preferences';
 import { applySeasonEffects, atmosphereModeLabel, resolveAtmosphereMode } from './atmosphere';
 import { buildExecutiveCollection } from './executive-collection';
 import { buildLegacyWall } from './legacy-wall';
@@ -34,18 +40,39 @@ export function resolveLivingHeadquarters(input: LivingHeadquartersInput, now = 
   const pagesPublished = input.pagesPublished ?? pilot.pagesPublished;
   const knowledgeAssets = input.knowledgeAssets ?? pilot.knowledgeAssets;
   const healthScore = input.healthScore ?? 70;
+  const lifeCulture = buildLifeCultureContext(input.organizationId);
+  const allowHoliday =
+    input.allowHolidayAtmosphere ?? lifeCulture.allowHolidayEnvironment;
+  const allowSeasonal =
+    input.allowSeasonalEnvironment ?? lifeCulture.allowSeasonalEnvironment;
 
   const season = resolveLivingSeason(now);
-  const atmosphereMode = resolveAtmosphereMode(milestoneRecords, organizationFoundedAt, healthScore, now);
-  const effects = applySeasonEffects(season, atmosphereMode);
+  const atmosphereMode = resolveAtmosphereMode(
+    milestoneRecords,
+    organizationFoundedAt,
+    healthScore,
+    now,
+    { allowHolidayAtmosphere: allowHoliday }
+  );
+  let effects = applySeasonEffects(season, atmosphereMode);
+  if (!allowSeasonal) {
+    effects = { ...effects, floralAccent: false, goldenHour: false };
+  }
+  effects = filterLivingHeadquartersEffects(lifeCulture, effects, atmosphereMode);
 
   const legacyWall = buildLegacyWall(
     { ...input, pagesPublished, knowledgeAssets },
     milestoneRecords
   );
   const executiveCollection = buildExecutiveCollection(milestoneRecords);
-  const livingMemory = resolveLivingMemory(milestoneRecords, organizationFoundedAt, now);
-  const celebrationMessage = resolveCelebrationMessage(milestoneRecords, now);
+  const rawLivingMemory = resolveLivingMemory(milestoneRecords, organizationFoundedAt, now);
+  const livingMemory = applyPreferencesToLivingMemory(
+    lifeCulture,
+    rawLivingMemory,
+    Boolean(rawLivingMemory?.toLowerCase().includes('founded'))
+  );
+  const rawCelebration = resolveCelebrationMessage(milestoneRecords, now);
+  const celebrationMessage = applyPreferencesToCelebrationMessage(lifeCulture, rawCelebration);
 
   const atmosphereLabel =
     atmosphereMode === 'default'
@@ -61,6 +88,7 @@ export function resolveLivingHeadquarters(input: LivingHeadquartersInput, now = 
     legacyWall,
     executiveCollection,
     organizationAgeYears: yearsSinceFounding(organizationFoundedAt, now),
+    communicationStyle: lifeCulture.communicationStyle,
     ...effects,
   };
 }

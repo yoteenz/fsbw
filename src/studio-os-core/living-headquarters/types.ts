@@ -42,8 +42,11 @@ export type LivingHeadquartersInput = {
   pagesPublished?: number;
   knowledgeAssets?: number;
   healthScore?: number;
-  /** Optional demo / workspace memory lines for mature orgs without pilot mode. */
   supplementalWallEntries?: LegacyWallEntry[];
+  /** When false, holiday atmosphere mode is suppressed (Life & Culture Preferences). */
+  allowHolidayAtmosphere?: boolean;
+  /** When false, seasonal floral/golden effects are suppressed. */
+  allowSeasonalEnvironment?: boolean;
 };
 
 export type LivingHeadquartersState = {
@@ -60,4 +63,5 @@ export type LivingHeadquartersState = {
   goldenHour: boolean;
   commemorativeDisplay: boolean;
   organizationAgeYears: number;
+  communicationStyle: import('../life-culture-preferences').CommunicationStyle;
 };

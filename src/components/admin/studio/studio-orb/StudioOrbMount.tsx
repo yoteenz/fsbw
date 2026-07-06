@@ -4,6 +4,7 @@ import { StudioOrb } from './StudioOrb';
 import { StudioOrbRadialMenu } from './StudioOrbRadialMenu';
 import { StudioOrbConversationBackdrop } from './StudioOrbConversationBackdrop';
 import { StudioOrbPageGuide } from './StudioOrbPageGuide';
+import { StudioOrbLifeCulturePanel } from './StudioOrbLifeCulturePanel';
 import { StudioOrbAwakeningOverlay } from './StudioOrbAwakeningOverlay';
 import { CommandDockConversationPanel } from '../command-dock/CommandDock';
 import { ORB_SIZE_PX } from './studioOrbTheme';
@@ -27,6 +28,7 @@ export function StudioOrbMount() {
       <StudioOrbAwakeningOverlay />
       <StudioOrbConversationBackdrop />
       <StudioOrbPageGuide />
+      <StudioOrbLifeCulturePanel />
       <CommandDockConversationPanel />
       {radialOpen ? (
         <StudioOrbRadialMenu orbCenterX={menuAnchor.x} orbCenterY={menuAnchor.y - ORB_SIZE_PX * 0.35} />

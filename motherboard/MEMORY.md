@@ -39194,6 +39194,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+## 2026-07-06 — Milestone 120: Organization Operating Manual™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M119 (Blueprint through Innovation Lab `948e7d0c`). User requested **Milestone 120 — Organization Operating Manual™ V1.0**: living operating manual for every organization — auto-generate · organize · continuously update documentation · never manually maintain · one organization one handbook always current · 21 automatic sections · searchable natural-language Q&A · live sync when departments/policies/brains/automation/training/knowledge change · Command Dock approval/regulation/handbook lines · single source of operational truth.
+
+**Requirements delivered:**
+- **21 automatic documentation sections** — Charter · Mission · Vision · Values · Blueprint · Genome · Profession Brain summaries · Department guides · Employee handbook · Leadership · CX standards · Approvals · SOPs · Automation docs · Knowledge articles · Training paths · Command Dock reference · Council procedures · Emergency · Glossary · Policy library
+- **Searchable organization** — natural-language Q&A (*"How do we onboard clients?"* · refund policy · approvals · customer service philosophy)
+- **Live synchronization** — 6 triggers (departments · policies · profession brain · automation · training · knowledge) — no duplicate · no outdated information
+- **Command Dock** — **`resolveOrganizationOperatingManualAdvice()`** · **`buildProactiveOrganizationOperatingManualSuggestion()`** · **`buildOperatingManualOpeningLine()`**
+
+**Delivered:**
+- **`src/studio-os-core/organization-operating-manual/`** — **`documentation-generator.ts`** · **`searchable-organization.ts`** · **`live-synchronization.ts`** · **`operating-manual-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**
+- **`OrganizationOperatingManualWorkspace`** + **`/admin/studio/organization-operating-manual`** — 4 tabs: Manual Overview · Documentation Library · Searchable Organization · Live Synchronization · blue accent `#2563EB`
+- **`MissionControlOrganizationOperatingManualPanel`** in Knowledge Wing · **`useOrganizationOperatingManualState`** hook
+- **Brand voice **`organization-operating-manual`**: *"One handbook. Always current."*
+- **Sync chain** — Inauguration · Genome · Blueprint · Profession Brain · Architecture · Trust · Shadow · Institute · Council · **`innovation-lab/store`** resync triggers **`syncOrganizationOperatingManualFromSources`** · **boundary-sync**
+- **Docs** — **`docs/studio-os/organization-operating-manual.md`** · **CORE.md** M120 entry · nav metric **M120**
+
 **Conventions:** Organization Operating Manual (M120) is the single source of operational truth — every employee, department, Digital Concierge, and future leader learns from the same evolving handbook. Demo localStorage via `studioOsOrganizationOperatingManual_v1`.
 
 ---
@@ -39223,6 +39241,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-06 — Studio OS browser storage architecture fix (mobile Safari quota crash)
 
 **Context:** User reported urgent bug — admin Studio cards (Headquarters + Studio Command Center) failing on mobile Safari with **"Component failed to load. This device's browser storage is full. Studio OS could not save workspace data."** Prior partial fix (`7ec47f3f`) added `safeLocalStorage` for active workspace + registry but ~95 milestone stores still wrote large demo payloads to `localStorage`, filling Safari quota and crashing components.
@@ -39270,3 +39289,32 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/legacy-network.md`** · **CORE.md** M121 entry · nav metric **M121**
 
 **Conventions:** Legacy Network (M121) is not a marketplace — a movement. Organizations preserve knowledge; communities expand knowledge; future generations inherit knowledge. Demo localStorage via `studioOsLegacyNetwork_v1`.
+=======
+## 2026-07-06 — Emotional Intelligence™ & Life & Culture Preferences™ (Living HQ + Studio Orb follow-up)
+
+**Context (full chat arc):** Same session delivered Headquarters Experience V2.0 (`6724a61d`) and Living Headquarters™ environmental storytelling (`3916bd64`). User requested **Emotional Intelligence™ & Life & Culture Preferences™** — **do NOT redesign Headquarters layout**; teach Studio Intelligence™ to learn, ask, and respectfully personalize; Orb home for preferences; adaptive Living HQ gated by user choice; gentle discovery; privacy/export/delete.
+
+**Design requirements:**
+- Life & Culture Preferences™ in **Studio Orb™** (never leave Orb for personalization)
+- Optional categories: holidays, cultural/spiritual/family traditions, sensitive life events, communication style, seasonal HQ atmosphere, etc.
+- Per-event responses: celebrate · acknowledge quietly · ignore · ask each time
+- Sensitive events: celebrate · quiet acknowledge · silent · ask before · supportive resources
+- Five layers: personal · household · organization · department · workspace — respected simultaneously
+- Living Headquarters adapts only when preferences allow — **never assume** holidays/seasons
+- Gentle discovery via Command Dock conversation (not long onboarding forms)
+- Privacy: why/how/where/who + export + permanent delete
+- Required footer message in preferences experience
+
+**Delivered:**
+- **`src/studio-os-core/life-culture-preferences/`** — scoped user store · event resolver · communication style adapter · discovery prompts · Living HQ bridge via **`buildLifeCultureContext()`**
+- **`useLifeCulturePreferencesState`** hook
+- **`StudioOrbLifeCulturePanel`** — conversational Orb panel · layer tabs · communication chips · holiday/sensitive selectors · seasonal toggle · privacy controls · intro footer
+- **Studio Orb radial** — new **Life & Culture** action (`life-culture` surface)
+- **Living HQ resolver** — filters atmosphere, memories, celebrations by preferences; exposes **`communicationStyle`**
+- **Studio Intelligence** — **`adaptIntelligenceVoice()`** on narrative copy
+- **Command Dock** — gentle discovery prompt → opens Life & Culture panel
+
+**Conventions:** Distinct from M82.5 **`living-headquarters-presence`** (concierge activity). Defaults are **opt-in** — seasonal/holiday HQ effects off until user enables. Nothing inferred for sensitive personal data without explicit preference.
+
+**Changes:** life-culture-preferences/*, living-headquarters/resolver.ts, StudioOrbLifeCulturePanel.tsx, studio-orb/*, CommandDock.tsx, StudioIntelligenceNarrative.tsx, useLifeCulturePreferencesState.ts, NdxbookMissionControlPanels.tsx, CORE.md, MEMORY.md.
+>>>>>>> 59721bd5 (Life & Culture Preferences: Orb settings, emotional intelligence, adaptive HQ)

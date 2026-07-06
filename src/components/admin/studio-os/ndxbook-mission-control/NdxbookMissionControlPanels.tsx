@@ -625,6 +625,7 @@ export function StudioIntelligencePanel({ store }: PanelProps) {
           publishedCount={publishedCount}
           accentHex={MC.accent}
           livingMemory={living.livingMemory}
+          communicationStyle={living.communicationStyle}
         />
         <HqGlassSurface>
           <p style={{ ...mcSectionTitle, fontSize: '8px' }}>PUBLISHING MILESTONES</p>
@@ -661,6 +662,7 @@ export function StudioIntelligencePanel({ store }: PanelProps) {
         secondaryInsights={[best.recommendedAction, best.expectedImpact]}
         accentHex={MC.accent}
         livingMemory={living.livingMemory}
+        communicationStyle={living.communicationStyle}
       />
       <section className="p-4 mb-4" style={{ ...mcPanel, background: 'rgba(255,255,255,0.72)' }}>
       <div

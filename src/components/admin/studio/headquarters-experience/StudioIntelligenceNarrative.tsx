@@ -1,3 +1,4 @@
+import { adaptIntelligenceVoice } from '../../../../studio-os-core/life-culture-preferences';
 import { HQ, hqBody, hqLabel } from './hqExperienceTheme';
 import { HqGlassSurface } from './HqWingZone';
 
@@ -7,6 +8,7 @@ type Props = {
   secondaryInsights?: string[];
   accentHex?: string;
   livingMemory?: string | null;
+  communicationStyle?: import('../../../../studio-os-core/life-culture-preferences').CommunicationStyle;
 };
 
 /** Conversational Studio Intelligence — educates naturally, not via docs. */
@@ -16,8 +18,12 @@ export function StudioIntelligenceNarrative({
   secondaryInsights = [],
   accentHex = HQ.red,
   livingMemory,
+  communicationStyle = 'professional',
 }: Props) {
-  const narrative = buildIntelligenceNarrative(publishedCount, primaryInsight);
+  const narrative = adaptIntelligenceVoice(
+    buildIntelligenceNarrative(publishedCount, primaryInsight),
+    communicationStyle
+  );
 
   return (
     <HqGlassSurface>

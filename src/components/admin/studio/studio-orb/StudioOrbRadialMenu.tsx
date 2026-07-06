@@ -2,7 +2,7 @@ import { STUDIO_ORB_RADIAL_ACTIONS, type StudioOrbRadialActionId } from './studi
 import { orbLabel, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 
-const PRIMARY_ACTIONS: StudioOrbRadialActionId[] = ['command-dock', 'page-guide'];
+const PRIMARY_ACTIONS: StudioOrbRadialActionId[] = ['command-dock', 'page-guide', 'life-culture'];
 
 type Props = {
   orbCenterX: number;
@@ -11,7 +11,7 @@ type Props = {
 
 /** AssistiveTouch-inspired radial menu — tap Orb to expand, not immediate dock. */
 export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
-  const { radialOpen, closeRadial, openCommandDock, openPageGuide } = useStudioOrb();
+  const { radialOpen, closeRadial, openCommandDock, openPageGuide, openLifeCulture } = useStudioOrb();
   if (!radialOpen) return null;
 
   const enabledActions = STUDIO_ORB_RADIAL_ACTIONS.filter((a) => a.enabled && PRIMARY_ACTIONS.includes(a.id));
@@ -20,6 +20,7 @@ export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
   const handleAction = (id: StudioOrbRadialActionId) => {
     if (id === 'command-dock') openCommandDock();
     else if (id === 'page-guide') openPageGuide();
+    else if (id === 'life-culture') openLifeCulture();
     else closeRadial();
   };
 
