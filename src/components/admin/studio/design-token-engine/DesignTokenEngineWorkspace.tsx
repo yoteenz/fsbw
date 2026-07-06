@@ -6,7 +6,7 @@ import {
   DESIGN_TOKEN_ENGINE_PHILOSOPHY,
   queryDesignTokens,
 } from '../../../../studio-os-core/design-token-engine';
-import { adminStudioComponentRegistryPath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioComponentRegistryPath, adminStudioInteractionEnginePath, adminStudioMissionControlPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -73,6 +73,9 @@ export function DesignTokenEngineWorkspace() {
           {profile.dockEngineLine}
         </p>
       </ExecutiveSecondaryCard>
+      <button type="button" onClick={() => navigate(adminStudioInteractionEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: DESIGN_TOKEN_ENGINE_ACCENT, color: DESIGN_TOKEN_ENGINE_ACCENT }}>
+        INTERACTION ENGINE →
+      </button>
       <button type="button" onClick={() => navigate(adminStudioComponentRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: DESIGN_TOKEN_ENGINE_ACCENT, color: DESIGN_TOKEN_ENGINE_ACCENT }}>
         COMPONENT REGISTRY →
       </button>

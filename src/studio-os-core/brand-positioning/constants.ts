@@ -49,6 +49,7 @@ export type StudioOsBrandSystemId =
   | 'system-registry'
   | 'component-registry'
   | 'design-token-engine'
+  | 'interaction-engine'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -97,6 +98,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'system-registry': 'Nothing exists anonymously. The operating system always knows what exists.',
   'component-registry': 'Assemble interfaces. Never recreate. Every component exists once.',
   'design-token-engine': 'Design consistency is automatic. Every surface speaks the same visual language.',
+  'interaction-engine': 'Every click feels intentional. Studio OS behaves like one cohesive operating system.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

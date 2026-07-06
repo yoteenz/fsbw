@@ -51,6 +51,7 @@ import { listDocumentationGovernanceDockSuggestions } from '../documentation-gov
 import { listSystemRegistryDockSuggestions } from '../system-registry/dock-advisor';
 import { listComponentRegistryDockSuggestions } from '../component-registry/dock-advisor';
 import { listDesignTokenEngineDockSuggestions } from '../design-token-engine/dock-advisor';
+import { listInteractionEngineDockSuggestions } from '../interaction-engine/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -391,6 +392,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/interaction-engine')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'interaction-engine',
+      label: 'INTERACTION ENGINE™ · BEHAVIORAL TRUTH',
+      portfolioMode: false,
+      suggestedCommands: listInteractionEngineDockSuggestions(workspaceId),
+      commandTypes: ['creative-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 

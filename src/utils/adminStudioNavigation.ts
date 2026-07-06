@@ -1680,6 +1680,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'interaction-engine',
+    title: 'INTERACTION ENGINE™',
+    purpose: 'Behavioral source of truth — hover, focus, click, feedback, navigation, motion, and accessibility standardized platform-wide.',
+    route: p('interaction-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M130',
+    ctaLabel: 'OPEN INTERACTION ENGINE',
+    moduleKey: 'interaction-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

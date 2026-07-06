@@ -5,6 +5,7 @@ import {
   adminStudioSystemRegistryPath,
   adminStudioComponentRegistryPath,
   adminStudioDesignTokenEnginePath,
+  adminStudioInteractionEnginePath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -686,6 +687,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['FIND spacing token → INHERIT IN COMPONENT → AUDIT GOVERNANCE'],
     aliases: ['design token engine', 'design tokens', 'visual source of truth', 'design bible', 'dte'],
     searchKeywords: ['design tokens', 'spacing', 'typography', 'themes', 'design governance'],
+  }),
+  entry({
+    id: 'interaction-engine',
+    label: 'Interaction Engine™',
+    moduleId: 'interaction-engine',
+    milestone: 'M130',
+    route: adminStudioInteractionEnginePath(),
+    purpose: 'Behavioral source of truth — standardized hover, focus, click, feedback, navigation, motion, and accessibility.',
+    overview:
+      'Centralizes interaction patterns (hover, focus, click, drag, expand, approve, modal, drawer), interaction states, motion standards, and accessibility requirements so Studio OS behaves like one cohesive OS.',
+    capabilities: ['Pattern catalog', 'State specs', 'Motion standards', 'Accessibility requirements', 'Behavior governance', 'Discovery search'],
+    howItWorks: 'Seed patterns from platform behavior → components declare interactionRules → governance flags custom behavior → every click feels intentional.',
+    whenUsed: ['Building new modules', 'UX review', 'Accessibility audit', 'Component interaction binding'],
+    relatedSystems: ['design-token-engine', 'component-registry', 'command-dock'],
+    exampleWorkflows: ['FIND hover pattern → BIND TO COMPONENT → AUDIT GOVERNANCE'],
+    aliases: ['interaction engine', 'behavior patterns', 'interaction patterns', 'platform behavior', 'ie'],
+    searchKeywords: ['interactions', 'hover', 'focus', 'modal', 'accessibility', 'motion'],
   }),
 ];
 

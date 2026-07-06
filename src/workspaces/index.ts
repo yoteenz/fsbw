@@ -353,6 +353,10 @@ export function bootstrapWorkspacesPlatform(): void {
     designTokenEngine.bootstrapDesignTokenEnginePlatform();
     await yieldToMain();
 
+    const interactionEngine = await import('../studio-os-core/interaction-engine/bootstrap');
+    interactionEngine.bootstrapInteractionEnginePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

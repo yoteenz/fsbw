@@ -901,6 +901,10 @@ export function adminStudioDesignTokenEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/design-token-engine`;
 }
 
+export function adminStudioInteractionEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/interaction-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

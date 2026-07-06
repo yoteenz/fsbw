@@ -123,6 +123,7 @@ export type StudioOsCoreModuleId =
   | 'system-registry'
   | 'component-registry'
   | 'design-token-engine'
+  | 'interaction-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -856,6 +857,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'DESIGN TOKEN ENGINE™',
     description: 'Design Token Engine V1.0 — visual source of truth for spacing, typography, colors, motion, and themes.',
     routeSegment: 'design-token-engine',
+  },
+  {
+    id: 'interaction-engine',
+    label: 'INTERACTION ENGINE™',
+    description: 'Interaction Engine V1.0 — behavioral source of truth for hover, focus, feedback, navigation, and accessibility.',
+    routeSegment: 'interaction-engine',
   },
   {
     id: 'succession-mode',

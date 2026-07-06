@@ -39501,3 +39501,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/design-token-engine.md`** · **CORE.md** M129 entry
 
 **Conventions:** Components inherit visual language from Design Token Engine™ — never hardcode spacing, typography, or brand colors on pages. Optional `registerDesignToken()` for Design Bible extensions. Sync chain: … → Component Registry → **Design Token Engine**. Demo localStorage via `studioOsDesignTokenEngine_v1`. Brand voice: *"Design consistency is automatic. Every surface speaks the same visual language."* Accent `#9333EA`.
+
+---
+
+## 2026-07-06 — Milestone 130: Interaction Engine™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine (`adf5a16c`). User requested **Interaction Engine™**: behavioral source of truth for every interaction across Studio OS — users never relearn behavior; every interaction familiar, intentional, consistent; behavior as platform asset not page-specific code.
+
+**Requirements delivered:**
+- **Standardize interactions** — hover, focus, click, press, long press, double click, drag, drop, expand, collapse, swipe, pin, favorite, approve, reject, archive, delete, upload, download, search, filter, sort, loading, saving, success, warning, error, celebration, confirmation, navigation, modal, drawer, context menus, keyboard shortcuts, gesture support (~40 patterns)
+- **Interaction states** — idle, hover, focused, pressed, loading, disabled, selected, expanded, collapsed, success, warning, error, pending, archived, hidden (15 states)
+- **Motion standards** — timing, easing, transitions, spring, panel expansion, drawer movement, glass reflections, micro-interactions, celebration, notification animations
+- **Accessibility** — keyboard, touch, mouse, screen readers, reduced motion, high contrast, accessible focus indicators (7 mandatory)
+- **Behavior governance** — audits Component Registry™ interactionRules; flags missing/custom behavior
+- **Command Dock** — interaction Q&A (*"Show Interaction Engine status"*, *"How does modal opening behave?"*, *"List feedback patterns"*, *"Are components using standard interactions?"*)
+
+**Delivered:**
+- **`src/studio-os-core/interaction-engine/`** — `pattern-catalog.ts` · `state-engine.ts` · `motion-engine.ts` · `accessibility-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`InteractionEngineWorkspace`** (7 tabs: Overview · Pattern Catalog · States · Motion · Accessibility · Governance · Discovery) · **`/admin/studio/interaction-engine`** · **`MissionControlInteractionEnginePanel`** · **`useInteractionEngineState`**
+- **Wiring** — nav M130 · sync chain Design Token Engine → Interaction Engine · Command Dock interaction-first · boundary-sync · documentation system registry + page-guide entry · Design Token Engine workspace link
+- **Docs** — **`docs/studio-os/interaction-engine.md`** · **CORE.md** M130 entry
+
+**Conventions:** Components declare interactionRules referencing Interaction Engine™ patterns — never page-specific hover/click/modal logic. Optional `registerInteractionPattern()` for platform extensions. Sync chain: … → Design Token Engine → **Interaction Engine**. Demo localStorage via `studioOsInteractionEngine_v1`. Brand voice: *"Every click feels intentional. Studio OS behaves like one cohesive operating system."* Accent `#0891B2`.

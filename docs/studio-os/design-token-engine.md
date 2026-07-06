@@ -64,7 +64,7 @@ Token ID · Name · Value · Category · Description · Immutable flag · Theme 
 
 ## Sync chain
 
-Documentation Governance → System Registry → Component Registry → **Design Token Engine**
+Documentation Governance → System Registry → Component Registry → **Design Token Engine** → **Interaction Engine**
 
 **`component-registry/store`** triggers **`syncDesignTokenEngineFromSources`** · **boundary-sync**
 
