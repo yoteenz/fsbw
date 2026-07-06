@@ -534,6 +534,78 @@ export const ADMIN_STUDIO_DISTRIBUTION_PACK_DEFAULTS: DistributionPack[] = [
   }),
 ];
 
+const NDXBOOK_DEFAULT_ROUTING: DistributionChannelId[] = ['instagram', 'tiktok', 'facebook', 'mobile-website'];
+
+function createNdxbookDistributionPack(partial: Partial<DistributionPack> & Pick<DistributionPack, 'id' | 'title'>): DistributionPack {
+  return createDistributionPack({
+    accentHex: '#6366F1',
+    showName: 'NDXBOOK',
+    campaignName: 'INDEX FOR EVERYDAY KNOWLEDGE',
+    approvalStatus: 'approved',
+    routingChannels: NDXBOOK_DEFAULT_ROUTING,
+    channelVersions: {
+      instagram: {
+        caption: partial.title,
+        cta: 'READ PAGE',
+        thumbnail: 'ndx-thumb-v1',
+        metadata: partial.id,
+      },
+      tiktok: {
+        caption: partial.title,
+        cta: 'FOLLOW',
+        thumbnail: 'ndx-thumb-v1',
+        metadata: partial.id,
+      },
+      facebook: {
+        caption: partial.title,
+        cta: 'READ PAGE',
+        thumbnail: 'ndx-thumb-v1',
+        metadata: partial.id,
+      },
+    },
+    ...partial,
+  });
+}
+
+/** NDXBOOK (ai-media workspace) distribution queue — separate from Frontal Slayer demo packs. */
+export const NDXBOOK_DISTRIBUTION_PACK_DEFAULTS: DistributionPack[] = [
+  createNdxbookDistributionPack({
+    id: 'dist-ndx-page-028',
+    title: 'PAGE 028 — 3 CREDIT SCORE MYTHS',
+    contentPackRef: 'pack-ndx-page-028',
+    campaignName: 'MONEY MONDAY',
+    approvalStatus: 'approved',
+    deliveryStatus: 'queued',
+    calendarSlot: 'mon-pm',
+    scheduledDate: '2026-07-07',
+    scheduledTime: '2:00 PM ET',
+  }),
+  createNdxbookDistributionPack({
+    id: 'dist-ndx-page-029',
+    title: 'PAGE 029 — PROTEIN PER MEAL GUIDE',
+    contentPackRef: 'pack-ndx-page-029',
+    campaignName: 'TRUTH TUESDAY',
+    approvalStatus: 'needs-review',
+    deliveryStatus: 'queued',
+    calendarSlot: 'tue-am',
+    validationPassed: false,
+    validationThumbnail: 'PENDING',
+  }),
+  createNdxbookDistributionPack({
+    id: 'dist-ndx-page-030',
+    title: 'PAGE 030 — AI TOOLS FOR DAILY WORK',
+    contentPackRef: 'pack-ndx-page-030',
+    campaignName: 'WORKFLOW WEDNESDAY',
+    approvalStatus: 'pending',
+    deliveryStatus: 'queued',
+    calendarSlot: 'wed-am',
+  }),
+];
+
+export function distributionPackDefaultsForWorkspace(workspaceId: string): DistributionPack[] {
+  return workspaceId === 'ai-media' ? NDXBOOK_DISTRIBUTION_PACK_DEFAULTS : ADMIN_STUDIO_DISTRIBUTION_PACK_DEFAULTS;
+}
+
 export const ADMIN_STUDIO_DISTRIBUTION_CAMPAIGNS: DistributionCampaign[] = [
   {
     id: 'campaign-launch-week',

@@ -6,12 +6,21 @@ import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio
 import { AdminStudioSocialAccountCard } from '../../../../components/admin/studio/AdminStudioSocialAccountCard';
 import { SocialOAuthSetupPanel } from '../../../../components/admin/studio/SocialOAuthSetupPanel';
 import { useAdminStudioSocialAccounts } from '../../../../hooks/useAdminStudioSocialAccounts';
+import { useEnsureNdxbookWorkspaceFromBrandParam } from '../../../../hooks/useEnsureNdxbookWorkspace';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
+import { NDXBOOK_WORKSPACE_ID } from '../../../../studio-os-core/ndxbook/constants';
+import {
+  adminStudioNdxbookDistributionPath,
+} from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { allOAuthPlatformsUnconfigured } from '../../../../utils/socialOAuthSetupGuide';
 
 export default function AdminStudioSocialAccountsPage() {
+  useEnsureNdxbookWorkspaceFromBrandParam();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { workspaceId } = useWorkspace();
+  const isNdxbook = workspaceId === NDXBOOK_WORKSPACE_ID || searchParams.get('brand') === 'ndxbook';
   const { accounts, loading, error, busyPlatform, refresh, connect, disconnect, togglePosting } = useAdminStudioSocialAccounts();
 
   const connected = searchParams.get('connected');
@@ -27,10 +36,10 @@ export default function AdminStudioSocialAccountsPage() {
   return (
     <AdminStudioStageShell
       title="SOCIAL ACCOUNTS"
-      subtitle="OFFICIAL OAUTH CONNECTORS — TOKENS ENCRYPTED SERVER-SIDE ONLY"
-      breadcrumbParentLabel="DISTRIBUTION NETWORK"
-      breadcrumbParentPath="/admin/studio/distribution-network"
-      onBack={() => navigate('/admin/studio/distribution-network')}
+      subtitle={isNdxbook ? 'NDXBOOK · OFFICIAL OAUTH CONNECTORS — TOKENS ENCRYPTED SERVER-SIDE ONLY' : 'OFFICIAL OAUTH CONNECTORS — TOKENS ENCRYPTED SERVER-SIDE ONLY'}
+      breadcrumbParentLabel={isNdxbook ? 'NDXBOOK DISTRIBUTION' : 'DISTRIBUTION NETWORK'}
+      breadcrumbParentPath={isNdxbook ? adminStudioNdxbookDistributionPath() : '/admin/studio/distribution-network'}
+      onBack={() => navigate(isNdxbook ? adminStudioNdxbookDistributionPath() : '/admin/studio/distribution-network')}
     >
       <div className="p-2.5 mb-3 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder, borderTop: `2px solid ${ADMIN_STUDIO_THEME.accent}` }}>
         <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>

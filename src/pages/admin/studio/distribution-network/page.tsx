@@ -7,7 +7,15 @@ import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio
 import { AdminStudioDistributionChannelCard } from '../../../../components/admin/studio/AdminStudioDistributionChannelCard';
 import { AdminStudioDistributionPackCard } from '../../../../components/admin/studio/AdminStudioDistributionPackCard';
 import { AdminStudioCreativeWidget } from '../../../../components/admin/studio/AdminStudioCreativeWidget';
+import { useEnsureNdxbookWorkspaceFromBrandParam } from '../../../../hooks/useEnsureNdxbookWorkspace';
 import { useAdminStudioDistributionNetwork } from '../../../../hooks/useAdminStudioDistributionNetworkState';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
+import { NDXBOOK_WORKSPACE_ID } from '../../../../studio-os-core/ndxbook/constants';
+import {
+  adminStudioNdxbookDistributionPackPath,
+  adminStudioNdxbookMissionControlPath,
+  adminStudioNdxbookSocialAccountsPath,
+} from '../../../../utils/adminStudioRoutes';
 import {
   ADMIN_STUDIO_DISTRIBUTION_NETWORK_SUBTITLE,
   ADMIN_STUDIO_DISTRIBUTION_CAMPAIGNS,
@@ -22,7 +30,10 @@ import {
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 export default function AdminStudioDistributionNetworkPage() {
+  useEnsureNdxbookWorkspaceFromBrandParam();
   const navigate = useNavigate();
+  const { workspaceId } = useWorkspace();
+  const isNdxbook = workspaceId === NDXBOOK_WORKSPACE_ID;
   const { packs, channels, packsBySlot, moveToSlot, addPack, draggedPackId, setDraggedPackId } = useAdminStudioDistributionNetwork();
   const [adding, setAdding] = useState(false);
   const [newTitle, setNewTitle] = useState('');
@@ -37,7 +48,7 @@ export default function AdminStudioDistributionNetworkPage() {
     const id = addPack(trimmed);
     setNewTitle('');
     setAdding(false);
-    navigate(`/admin/studio/distribution-network/${id}`);
+    navigate(isNdxbook ? adminStudioNdxbookDistributionPackPath(id) : `/admin/studio/distribution-network/${id}`);
   };
 
   const handleDragOver = (e: DragEvent) => {
@@ -59,15 +70,27 @@ export default function AdminStudioDistributionNetworkPage() {
 
   return (
     <AdminStudioStageShell
-      title="DISTRIBUTION NETWORK"
-      subtitle={ADMIN_STUDIO_DISTRIBUTION_NETWORK_SUBTITLE}
-      breadcrumbParentLabel="THE STUDIO"
-      breadcrumbParentPath="/admin/studio"
-      onBack={() => navigate('/admin/studio')}
+      title={isNdxbook ? 'NDXBOOK DISTRIBUTION' : 'DISTRIBUTION NETWORK'}
+      subtitle={isNdxbook ? 'NDXBOOK · REVIEW CAPTIONS · APPROVE · PUBLISH TO CONNECTED SOCIALS' : ADMIN_STUDIO_DISTRIBUTION_NETWORK_SUBTITLE}
+      breadcrumbParentLabel={isNdxbook ? 'MISSION CONTROL' : 'THE STUDIO'}
+      breadcrumbParentPath={isNdxbook ? adminStudioNdxbookMissionControlPath() : '/admin/studio'}
+      onBack={() => navigate(isNdxbook ? adminStudioNdxbookMissionControlPath() : '/admin/studio')}
     >
+      {isNdxbook ? (
+        <div className="p-2 mb-3 border flex flex-wrap gap-1" style={{ background: 'rgba(99,102,241,0.06)', borderColor: '#6366F1' }}>
+          <button
+            type="button"
+            onClick={() => navigate(adminStudioNdxbookSocialAccountsPath())}
+            className="flex-1 py-1.5 text-[6px] font-futura uppercase border"
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            SOCIAL CONNECTORS →
+          </button>
+        </div>
+      ) : null}
       <div className="p-3 mb-4 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
         <p className="text-[7px] font-futura uppercase mb-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-          BROADCASTING DEPARTMENT — ONE MASTER PACK · EVERY DESTINATION · MANUAL PUBLISHING ONLY
+          {isNdxbook ? 'NDXBOOK PAGES · OPEN A PACK → SOCIAL TAB → APPROVE → PUBLISH' : 'BROADCASTING DEPARTMENT — ONE MASTER PACK · EVERY DESTINATION · MANUAL PUBLISHING ONLY'}
         </p>
         <div className="flex flex-col items-center gap-0">
           {DISTRIBUTION_INHERITANCE_CHAIN.map((step, i) => (
@@ -153,7 +176,7 @@ export default function AdminStudioDistributionNetworkPage() {
                       compact
                       draggable
                       onDragStart={() => setDraggedPackId(pack.id)}
-                      onClick={() => navigate(`/admin/studio/distribution-network/${pack.id}`)}
+                      onClick={() => navigate(isNdxbook ? adminStudioNdxbookDistributionPackPath(pack.id) : `/admin/studio/distribution-network/${pack.id}`)}
                     />
                   ))}
                 </div>
@@ -183,7 +206,7 @@ export default function AdminStudioDistributionNetworkPage() {
       </p>
       <div className="space-y-2 mb-4">
         {packs.map((pack) => (
-          <AdminStudioDistributionPackCard key={pack.id} pack={pack} draggable onDragStart={() => setDraggedPackId(pack.id)} onClick={() => navigate(`/admin/studio/distribution-network/${pack.id}`)} />
+          <AdminStudioDistributionPackCard key={pack.id} pack={pack} draggable onDragStart={() => setDraggedPackId(pack.id)} onClick={() => navigate(isNdxbook ? adminStudioNdxbookDistributionPackPath(pack.id) : `/admin/studio/distribution-network/${pack.id}`)} />
         ))}
       </div>
 
@@ -221,7 +244,7 @@ export default function AdminStudioDistributionNetworkPage() {
 
       <button
         type="button"
-        onClick={() => navigate('/admin/studio/social-accounts')}
+        onClick={() => navigate(isNdxbook ? adminStudioNdxbookSocialAccountsPath() : '/admin/studio/social-accounts')}
         className="w-full mt-2 py-2 text-[7px] font-futura uppercase border"
         style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
       >

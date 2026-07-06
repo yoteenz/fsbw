@@ -694,6 +694,23 @@ export function adminStudioNdxbookPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ndxbook`;
 }
 
+export function adminStudioNdxbookMissionControlPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/ndxbook/mission-control`;
+}
+
+/** Distribution network scoped to NDXBOOK (sets ai-media workspace via ?brand=ndxbook). */
+export function adminStudioNdxbookDistributionPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/distribution-network?brand=ndxbook`;
+}
+
+export function adminStudioNdxbookSocialAccountsPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/social-accounts?brand=ndxbook`;
+}
+
+export function adminStudioNdxbookDistributionPackPath(packId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/distribution-network/${packId}?brand=ndxbook`;
+}
+
 export function adminStudioAiMediaNetworkPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ai-media-network`;
 }

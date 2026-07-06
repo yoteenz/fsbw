@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioTabBar } from '../../../../../components/admin/studio/AdminStudioTabBar';
 import { AdminStudioSectionHeading } from '../../../../../components/admin/studio/AdminStudioSectionHeading';
@@ -7,7 +7,14 @@ import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/stu
 import { AdminStudioEditableField } from '../../../../../components/admin/studio/AdminStudioEditableField';
 import { AdminStudioDistributionFieldGroups } from '../../../../../components/admin/studio/AdminStudioDistributionFieldGroups';
 import { AdminStudioCreativeWidget } from '../../../../../components/admin/studio/AdminStudioCreativeWidget';
+import { useEnsureNdxbookWorkspaceFromBrandParam } from '../../../../../hooks/useEnsureNdxbookWorkspace';
 import { useAdminStudioDistributionNetwork } from '../../../../../hooks/useAdminStudioDistributionNetworkState';
+import { useWorkspace } from '../../../../../studio-os-core/context/WorkspaceProvider';
+import { NDXBOOK_WORKSPACE_ID } from '../../../../../studio-os-core/ndxbook/constants';
+import {
+  adminStudioNdxbookDistributionPath,
+  adminStudioNdxbookSocialAccountsPath,
+} from '../../../../../utils/adminStudioRoutes';
 import {
   DISTRIBUTION_PACK_TABS,
   DISTRIBUTION_PACK_REQUIREMENTS_GROUPS,
@@ -27,6 +34,10 @@ import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
 export default function AdminStudioDistributionNetworkPackPage() {
   const { distributionId } = useParams<{ distributionId: string }>();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  useEnsureNdxbookWorkspaceFromBrandParam();
+  const { workspaceId } = useWorkspace();
+  const isNdxbook = workspaceId === NDXBOOK_WORKSPACE_ID || searchParams.get('brand') === 'ndxbook';
   const [activeTab, setActiveTab] = useState<DistributionPackTabId>('routing');
   const {
     selectedPack,
@@ -39,8 +50,8 @@ export default function AdminStudioDistributionNetworkPackPage() {
     updateChannelVersion,
   } = useAdminStudioDistributionNetwork(distributionId);
 
-  if (!distributionId) return <Navigate to="/admin/studio/distribution-network" replace />;
-  if (!selectedPack) return <Navigate to="/admin/studio/distribution-network" replace />;
+  if (!distributionId) return <Navigate to={isNdxbook ? adminStudioNdxbookDistributionPath() : '/admin/studio/distribution-network'} replace />;
+  if (!selectedPack) return <Navigate to={isNdxbook ? adminStudioNdxbookDistributionPath() : '/admin/studio/distribution-network'} replace />;
 
   const p = selectedPack;
   const onUpdate = (key: DistributionPackFieldKey, value: string) => updatePackField(p.id, key, value);
@@ -50,10 +61,10 @@ export default function AdminStudioDistributionNetworkPackPage() {
   return (
     <AdminStudioStageShell
       title={p.title}
-      subtitle={`DISTRIBUTION · ${p.approvalStatus.replace('-', ' ').toUpperCase()}`}
-      breadcrumbParentLabel="DISTRIBUTION NETWORK"
-      breadcrumbParentPath="/admin/studio/distribution-network"
-      onBack={() => navigate('/admin/studio/distribution-network')}
+      subtitle={`${isNdxbook ? 'NDXBOOK · ' : 'DISTRIBUTION · '}${p.approvalStatus.replace('-', ' ').toUpperCase()}`}
+      breadcrumbParentLabel={isNdxbook ? 'NDXBOOK DISTRIBUTION' : 'DISTRIBUTION NETWORK'}
+      breadcrumbParentPath={isNdxbook ? adminStudioNdxbookDistributionPath() : '/admin/studio/distribution-network'}
+      onBack={() => navigate(isNdxbook ? adminStudioNdxbookDistributionPath() : '/admin/studio/distribution-network')}
     >
       <div className="p-2.5 mb-3 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder, borderTop: `2px solid ${p.accentHex}` }}>
         <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>{p.showName} · {p.campaignName}</p>
@@ -192,7 +203,7 @@ export default function AdminStudioDistributionNetworkPackPage() {
         <AdminStudioDistributionSocialPublishPanel
           pack={p}
           packApproved={p.approvalStatus === 'approved'}
-          onOpenSocialAccounts={() => navigate('/admin/studio/social-accounts')}
+          onOpenSocialAccounts={() => navigate(isNdxbook ? adminStudioNdxbookSocialAccountsPath() : '/admin/studio/social-accounts')}
         />
       ) : null}
 

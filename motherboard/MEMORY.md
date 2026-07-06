@@ -37912,6 +37912,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+## 2026-07-05 — NDXBOOK mission control routing + distribution (not Frontal Slayer)
+
+**Context (full chat):** User completed Meta OAuth (Instagram + Facebook via Ndxbook Page link). Asked how to review/post content; Distribution Network was Frontal Slayer–branded and default Studio routes sent users to `/admin/studio/mission-control` (FS HQ) instead of NDXBOOK mission control at `ai-media` workspace. User: “ndx is missing its own mission control, keeps routing to frontal slayer.”
+
+**Meta OAuth journey (same chat):** Redirect URI validator fixed (add to Valid OAuth Redirect URIs list); Invalid Scopes → customize use cases Permissions; Reconnect screen for IG; IG requires Facebook **Page** link (not Accounts Center alone); user created Ndxbook Page and linked ndxbook IG — connected successfully.
+
+**Routing fix:** New `/admin/studio/ndxbook/mission-control` page with `NdxbookMissionControl`; `useEnsureNdxbookWorkspaceOnMount` / `?brand=ndxbook` sets workspace `ai-media`. FS `/admin/studio/mission-control` redirects to NDXBOOK MC when active workspace is `ai-media`. NDXBOOK overview + socials link to mission control and `?brand=ndxbook` distribution/social paths. NDXBOOK-specific distribution pack defaults (PAGE 028/029/030). Mission action **REVIEW & POST** → distribution network.
+
+**Posting workflow (unchanged rules):** Distribution pack → **APPROVAL** tab → **SOCIAL** tab → Save Draft → Submit → Approve → Publish Now (no auto-publish; schedule stores time only).
+
+**Changes:** `useEnsureNdxbookWorkspace.ts`, `ndxbook/mission-control/page.tsx`, `App.tsx`, `adminStudioRoutes.ts`, `NdxbookWorkspace.tsx`, `NdxbookSocialsPanel.tsx`, distribution-network + detail + social-accounts pages, `mission-control/page.tsx`, `adminStudioDistributionNetworkDemo.ts`, `useAdminStudioDistributionNetworkState.ts`, `ndxbook/mission-control/bootstrap.ts`, `motherboard/MEMORY.md`.
+
+---
+
 ## 2026-07-05 — Milestone 78: Production Studio V1.0
 
 **Context (full chat):** User continued Studio OS after Talent Network freeze / platform-wide perf audit (session-once bootstrap, slim default tabs, hook seed fixes — rebased and pushed `959bd64e`). New request: create **Production Studio** — cinematic production headquarters where every approved page becomes production-ready media. Not a traditional video editor — luxury creative studio where AI production teams are already working (Pixar meets Apple Pro Studio). Do not redesign existing UI.

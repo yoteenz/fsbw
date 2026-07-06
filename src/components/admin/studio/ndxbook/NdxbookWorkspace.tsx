@@ -13,6 +13,8 @@ import {
 import {
   adminStudioLabsPath,
   adminStudioMemoryBiblePath,
+  adminStudioNdxbookDistributionPath,
+  adminStudioNdxbookMissionControlPath,
   adminStudioTalentNetworkPath,
 } from '../../../../utils/adminStudioRoutes';
 
@@ -115,16 +117,34 @@ export function NdxbookWorkspace() {
               <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.accent }}>
                 {dashboard.nextAction}
               </p>
-              {dashboard.socialsConnected === 0 ? (
+              <div className="flex flex-wrap gap-1 mt-2">
                 <button
                   type="button"
-                  className="text-[6px] underline mt-2"
-                  style={{ color: '#6366F1' }}
-                  onClick={() => selectTab('socials')}
+                  className="px-2 py-1 text-[6px] font-futura uppercase border"
+                  style={{ fontWeight: 515, color: '#FFF', background: '#6366F1', borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+                  onClick={() => navigate(adminStudioNdxbookMissionControlPath())}
                 >
-                  CONNECT SOCIAL ACCOUNTS
+                  OPEN MISSION CONTROL
                 </button>
-              ) : null}
+                <button
+                  type="button"
+                  className="px-2 py-1 text-[6px] font-futura uppercase border"
+                  style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+                  onClick={() => navigate(adminStudioNdxbookDistributionPath())}
+                >
+                  REVIEW & POST
+                </button>
+                {dashboard.socialsConnected === 0 ? (
+                  <button
+                    type="button"
+                    className="text-[6px] underline"
+                    style={{ color: '#6366F1' }}
+                    onClick={() => selectTab('socials')}
+                  >
+                    CONNECT SOCIAL ACCOUNTS
+                  </button>
+                ) : null}
+              </div>
             </div>
             <SectionLabel>BRAND ARCHITECTURE</SectionLabel>
             <p className="text-[6px] font-futura px-2 py-1 border normal-case" style={{ ...panelStyle, fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.5 }}>

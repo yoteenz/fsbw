@@ -269,9 +269,10 @@ export function buildNdxbookMissionControlSeed(): Partial<NdxbookMissionControlS
     ],
     missionActions: [
       { id: 'chief-of-staff', label: 'CHIEF OF STAFF', route: '/admin/studio/chief-of-staff', priority: 2, frequencyScore: 92 },
-      { id: 'create-page', label: 'CREATE PAGE', route: '/admin/studio/ndxbook?tab=pages', priority: 1, frequencyScore: 95 },
-      { id: 'approve', label: 'APPROVE PRODUCTION', route: '/admin/studio/ndxbook?tab=checklist', priority: 2, frequencyScore: 88 },
-      { id: 'publish', label: 'PUBLISH', route: '/admin/studio/ndxbook?tab=socials', priority: 3, frequencyScore: 82 },
+      { id: 'publish', label: 'REVIEW & POST', route: '/admin/studio/distribution-network?brand=ndxbook', priority: 1, frequencyScore: 95 },
+      { id: 'create-page', label: 'CREATE PAGE', route: '/admin/studio/ndxbook?tab=pages', priority: 2, frequencyScore: 90 },
+      { id: 'approve', label: 'APPROVE PRODUCTION', route: '/admin/studio/ndxbook?tab=checklist', priority: 3, frequencyScore: 88 },
+      { id: 'socials', label: 'SOCIAL CONNECTORS', route: '/admin/studio/ndxbook?tab=socials', priority: 4, frequencyScore: 82 },
       { id: 'experiment', label: 'LAUNCH EXPERIMENT', route: '/admin/studio/labs', priority: 4, frequencyScore: 74 },
       { id: 'simulation', label: 'RUN SIMULATION', route: '/admin/studio/simulation-engine', priority: 5, frequencyScore: 62 },
       { id: 'intelligence', label: 'VIEW INTELLIGENCE', route: '/admin/studio/studio-intelligence', priority: 6, frequencyScore: 78 },

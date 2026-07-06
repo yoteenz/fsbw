@@ -2,22 +2,27 @@ import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
 import { NdxbookWorkspace } from '../../../../components/admin/studio/ndxbook/NdxbookWorkspace';
+import { useEnsureNdxbookWorkspaceOnMount } from '../../../../hooks/useEnsureNdxbookWorkspace';
 import {
   ADMIN_STUDIO_NDXBOOK_SUBTITLE,
   NDXBOOK_INHERITANCE_CHAIN,
 } from '../../../../utils/adminStudioNdxbookDemo';
+import {
+  adminStudioNdxbookMissionControlPath,
+} from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 
 export default function AdminStudioNdxbookPage() {
+  useEnsureNdxbookWorkspaceOnMount();
   const navigate = useNavigate();
 
   return (
     <AdminStudioStageShell
       title="NDXBOOK"
       subtitle={ADMIN_STUDIO_NDXBOOK_SUBTITLE}
-      breadcrumbParentLabel="THE STUDIO"
-      breadcrumbParentPath="/admin/studio"
-      onBack={() => navigate('/admin/studio-os/workspace/ai-media/dashboard')}
+      breadcrumbParentLabel="MISSION CONTROL"
+      breadcrumbParentPath={adminStudioNdxbookMissionControlPath()}
+      onBack={() => navigate(adminStudioNdxbookMissionControlPath())}
       navGroupId="intelligence"
     >
       <div className="p-3 mb-4 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder }}>

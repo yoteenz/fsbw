@@ -3,6 +3,7 @@ import {
   ADMIN_STUDIO_DISTRIBUTION_CHANNELS,
   ADMIN_STUDIO_DISTRIBUTION_PACK_DEFAULTS,
   createBlankDistributionPack,
+  distributionPackDefaultsForWorkspace,
   validateDistributionPack,
   type DistributionApprovalStatus,
   type DistributionCalendarSlotId,
@@ -14,12 +15,16 @@ import {
   type DistributionPackFieldKey,
 } from '../utils/adminStudioDistributionNetworkDemo';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
+import { getRuntimeActiveWorkspaceId } from '../studio-os-core/workspace/storage';
 
 type PackPatch = Partial<DistributionPack>;
 type PackPatchStore = Record<string, PackPatch>;
 type ChannelPatchStore = Record<string, Partial<DistributionChannel>>;
 
-const DEFAULT_PACK_IDS = new Set(ADMIN_STUDIO_DISTRIBUTION_PACK_DEFAULTS.map((p) => p.id));
+const DEFAULT_PACK_IDS = new Set([
+  ...ADMIN_STUDIO_DISTRIBUTION_PACK_DEFAULTS.map((p) => p.id),
+  ...distributionPackDefaultsForWorkspace('ai-media').map((p) => p.id),
+]);
 const DEFAULT_CHANNEL_IDS = new Set(ADMIN_STUDIO_DISTRIBUTION_CHANNELS.map((c) => c.id));
 
 function readPackPatches(): PackPatchStore {
@@ -47,7 +52,8 @@ function writeChannelPatches(store: ChannelPatchStore): void {
 }
 
 function mergePackDefaults(patches: PackPatchStore): DistributionPack[] {
-  return ADMIN_STUDIO_DISTRIBUTION_PACK_DEFAULTS.map((d) => {
+  const defaults = distributionPackDefaultsForWorkspace(getRuntimeActiveWorkspaceId());
+  return defaults.map((d) => {
     const patch = patches[d.id] ?? {};
     const merged = { ...d, ...patch, routingChannels: patch.routingChannels ?? d.routingChannels, channelVersions: patch.channelVersions ?? d.channelVersions };
     return { ...merged, validationPassed: validateDistributionPack(merged) };

@@ -9,7 +9,7 @@ import type { NdxbookSocialAccount } from '../../../../studio-os-core/ndxbook/ty
 import type { PublicSocialAccount } from '../../../../utils/adminStudioSocialPublishing';
 import { allOAuthPlatformsUnconfigured } from '../../../../utils/socialOAuthSetupGuide';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
-import { adminStudioSocialAccountsPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioNdxbookDistributionPath, adminStudioNdxbookSocialAccountsPath } from '../../../../utils/adminStudioRoutes';
 
 const panelStyle = {
   background: ADMIN_STUDIO_THEME.panelBg,
@@ -127,14 +127,24 @@ export function NdxbookSocialsPanel({ socialAccounts, onRegistryUpdated }: Ndxbo
         </div>
       )}
 
-      <button
-        type="button"
-        className="text-[6px] underline"
-        style={{ color: '#6366F1' }}
-        onClick={() => navigate(adminStudioSocialAccountsPath())}
-      >
-        OPEN FULL SOCIAL ACCOUNTS PAGE
-      </button>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          className="text-[6px] underline"
+          style={{ color: '#6366F1' }}
+          onClick={() => navigate(adminStudioNdxbookDistributionPath())}
+        >
+          REVIEW & POST CONTENT →
+        </button>
+        <button
+          type="button"
+          className="text-[6px] underline"
+          style={{ color: '#6366F1' }}
+          onClick={() => navigate(adminStudioNdxbookSocialAccountsPath())}
+        >
+          OPEN FULL SOCIAL ACCOUNTS PAGE
+        </button>
+      </div>
 
       <SectionLabel>NDXBOOK BRAND REGISTRY (ALL PLATFORMS)</SectionLabel>
       {socialAccounts.map((acct) => (
