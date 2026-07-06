@@ -155,6 +155,7 @@ export type StudioOsCoreModuleId =
   | 'regression-engine'
   | 'release-readiness'
   | 'engineering-excellence-dashboard'
+  | 'identity-graph'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1080,6 +1081,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ENGINEERING EXCELLENCE DASHBOARD™',
     description: 'Engineering Excellence Dashboard V1.0 — executive command center for health, quality, readiness, and world-class engineering habits.',
     routeSegment: 'engineering-excellence-dashboard',
+  },
+  {
+    id: 'identity-graph',
+    label: 'IDENTITY GRAPH™',
+    description: 'Identity Graph V1.0 — foundational people intelligence. Every person becomes a living profile with relationships, expertise, and organizational context.',
+    routeSegment: 'identity-graph',
   },
   {
     id: 'succession-mode',

@@ -81,6 +81,7 @@ export type StudioOsBrandSystemId =
   | 'regression-engine'
   | 'release-readiness'
   | 'engineering-excellence-dashboard'
+  | 'identity-graph'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -161,6 +162,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'regression-engine': 'Never repeat the same mistake twice. Every regression becomes knowledge.',
   'release-readiness': 'Production is a privilege. Confident before deployment—not hopeful afterward.',
   'engineering-excellence-dashboard': 'Excellence is a mindset. World-class habits—even for teams of one.',
+  'identity-graph': 'People are first-class citizens. Organizations are built from people.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

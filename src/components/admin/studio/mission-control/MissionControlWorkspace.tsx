@@ -114,6 +114,7 @@ import { MissionControlPerformanceMonitorPanel } from './MissionControlPerforman
 import { MissionControlRegressionEnginePanel } from './MissionControlRegressionEnginePanel';
 import { MissionControlReleaseReadinessPanel } from './MissionControlReleaseReadinessPanel';
 import { MissionControlEngineeringExcellencePanel } from './MissionControlEngineeringExcellencePanel';
+import { MissionControlIdentityGraphPanel } from './MissionControlIdentityGraphPanel';
 import { MissionControlDeferredPanel } from './MissionControlDeferredPanel';
 import {
   MC_VISUAL,
@@ -205,6 +206,7 @@ export function MissionControlWorkspace() {
                 <MissionControlRegressionEnginePanel />
                 <MissionControlReleaseReadinessPanel />
                 <MissionControlEngineeringExcellencePanel />
+                <MissionControlIdentityGraphPanel />
                 <MissionControlKnowledgeConfidencePanel />
                 <MissionControlAmbientBriefingPanel />
               </div>

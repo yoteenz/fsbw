@@ -1029,6 +1029,10 @@ export function adminStudioEngineeringExcellenceDashboardPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/engineering-excellence-dashboard`;
 }
 
+export function adminStudioIdentityGraphPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/identity-graph`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

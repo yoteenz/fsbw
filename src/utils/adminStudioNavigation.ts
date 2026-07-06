@@ -2064,6 +2064,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'identity-graph',
+    title: 'IDENTITY GRAPH™',
+    purpose: 'Foundational people intelligence — every person connected to the organization becomes a living profile with relationships, expertise, history, and context.',
+    route: p('identity-graph'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M163',
+    ctaLabel: 'OPEN IDENTITY GRAPH',
+    moduleKey: 'identity-graph',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

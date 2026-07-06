@@ -37,6 +37,7 @@ import {
   adminStudioRegressionEnginePath,
   adminStudioReleaseReadinessPath,
   adminStudioEngineeringExcellenceDashboardPath,
+  adminStudioIdentityGraphPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1262,6 +1263,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['MONITOR → BRIEF → INVEST → CELEBRATE'],
     aliases: ['engineering excellence', 'engineering dashboard', 'engineering health', 'engineering KPIs', 'historical excellence', 'engineering culture'],
     searchKeywords: ['engineering', 'excellence', 'health', 'KPI', 'briefing', 'culture', 'historical', 'stability', 'confidence', 'craftsmanship'],
+  }),
+  entry({
+    id: 'identity-graph',
+    label: 'Identity Graph™',
+    moduleId: 'identity-graph',
+    milestone: 'M163',
+    route: adminStudioIdentityGraphPath(),
+    purpose: 'Foundational people intelligence — every person connected to the organization becomes a living profile with relationships, expertise, and organizational context.',
+    overview:
+      '10 identity types · Living person profiles · Relationship edges · Department mapping · Skills & expertise · Life & Culture Preferences™ · Knowledge contributions · Permissions · Graph domain health.',
+    capabilities: ['Living person profiles', 'Relationship graph mapping', 'Identity type clusters', 'Expertise & skills indexing', 'Communication preferences', 'Life & Culture Preferences™', 'Permission governance', 'People search & discovery'],
+    howItWorks: 'Sync Relationship Memory™, Cross-Org Intelligence™, Profession Brain™, Expert Marketplace™, and Wisdom Capture™ → build living identity nodes → map relationship edges → compute graph domain health → expose people-first intelligence across Studio OS.',
+    whenUsed: ['People discovery', 'Organizational relationship mapping', 'Hiring & team planning', 'Expert engagement', 'Permission review', 'Founder network context'],
+    relatedSystems: ['relationship-memory', 'cross-organization-intelligence', 'profession-brain', 'expert-marketplace', 'wisdom-capture', 'business-discovery-blueprint', 'mission-control'],
+    exampleWorkflows: ['DISCOVER → CONNECT → UNDERSTAND → RESPECT'],
+    aliases: ['identity graph', 'people graph', 'person profiles', 'living profiles', 'organizational people', 'first class citizens'],
+    searchKeywords: ['identity', 'people', 'person', 'relationship', 'founder', 'employee', 'customer', 'expert', 'vendor', 'partner', 'graph', 'profile', 'department', 'role'],
   }),
 ];
 
