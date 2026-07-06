@@ -16,7 +16,7 @@ export default function AdminStudioNdxbookMissionControlPage() {
 
   return (
     <AdminStudioStageShell
-      title="NDXBOOK MISSION CONTROL"
+      title="NDXBOOK HEADQUARTERS"
       subtitle="AI MEDIA OPERATING CENTER · REVIEW · APPROVE · PUBLISH"
       breadcrumbParentLabel="NDXBOOK"
       breadcrumbParentPath={adminStudioNdxbookPath()}
@@ -45,7 +45,7 @@ export default function AdminStudioNdxbookMissionControlPage() {
       <NdxbookMissionControl workspaceId={NDXBOOK_WORKSPACE_ID} accentColor="#6366F1" />
 
       <AdminStudioDisclaimerFooter>
-        NDXBOOK MISSION CONTROL · ADMIN APPROVAL REQUIRED · NO AUTO-PUBLISH
+        NDXBOOK HEADQUARTERS · ADMIN APPROVAL REQUIRED · NO AUTO-PUBLISH
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

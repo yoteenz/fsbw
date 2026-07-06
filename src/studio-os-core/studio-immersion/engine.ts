@@ -1,14 +1,22 @@
 import {
   adminStudioConciergeApprovalFlowPath,
+  adminStudioNdxbookMissionControlPath,
   adminStudioRenderQueuePath,
   adminStudioScreeningRoomPath,
 } from '../../utils/adminStudioRoutes';
+import type { ModuleTenantId } from '../workspace/tenant-ids';
 import type {
   ChiefConciergeBrief,
   OrganizationalPresenceActivity,
   ScreenMoment,
   StudioRoomVariant,
 } from './types';
+
+export type ChiefConciergeOrgContext = {
+  moduleTenantId: ModuleTenantId;
+  organizationName: string;
+  founderName?: string;
+};
 
 const PRESENCE_ROTATION: OrganizationalPresenceActivity[] = [
   { id: 'p1', concierge: 'Brand Concierge', activity: 'reviewing Page 028 typography…', location: 'Editorial Board', state: 'busy' },
@@ -52,26 +60,69 @@ export function resolveStudioRoomVariant(pathname: string): StudioRoomVariant {
   return 'headquarters';
 }
 
-function timeGreeting(): string {
+function timeGreeting(founderName = 'Kateena'): string {
   const h = new Date().getHours();
-  if (h < 12) return 'Good morning.';
-  if (h < 17) return 'Good afternoon.';
-  return 'Good evening.';
+  const period = h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+  return `Good ${period}, ${founderName}.`;
 }
 
-export function buildChiefConciergeBrief(pathname: string): ChiefConciergeBrief {
-  const greeting = timeGreeting();
-  if (pathname.includes('/mission-control') || pathname.endsWith('/studio')) {
+function missionControlBrief(pathname: string, org?: ChiefConciergeOrgContext): ChiefConciergeBrief {
+  const greeting = timeGreeting(org?.founderName);
+  const tenant = org?.moduleTenantId ?? 'frontal-slayer';
+  const orgName = org?.organizationName ?? 'Headquarters';
+
+  if (tenant === 'ndxbook' || pathname.includes('/ndxbook')) {
     return {
       greeting,
       lines: [
-        'Brand Concierge has completed creative review on Lace Mastery.',
-        'Growth Concierge recommends publishing at 2:00 PM for peak retention.',
-        'Technology Concierge completed rendering — Screening Room is ready.',
-        'Would you like to review today\'s production?',
+        `${orgName} completed overnight optimization.`,
+        '3 recommendations require approval.',
+        '2 publishing opportunities were detected.',
+        '1 risk requires attention.',
       ],
-      cta: { label: 'REVIEW PRODUCTION', route: adminStudioScreeningRoomPath() },
+      cta: { label: 'OPEN BRIEFING', route: adminStudioNdxbookMissionControlPath() },
     };
+  }
+
+  if (tenant === 'portfolio') {
+    return {
+      greeting,
+      lines: [
+        `${orgName} visual pipeline is synchronized for the week.`,
+        'Experience Concierge flagged two deliverables for founder review.',
+        'Production queue is clear until Thursday\'s client milestone.',
+      ],
+      cta: { label: 'REVIEW DELIVERABLES', route: adminStudioScreeningRoomPath() },
+    };
+  }
+
+  if (tenant === 'studio-os') {
+    return {
+      greeting,
+      lines: [
+        `${orgName} enterprise operations ran overnight without escalation.`,
+        'Portfolio Concierge summarized cross-brand publishing load.',
+        'Two approvals waiting in the executive queue.',
+      ],
+    };
+  }
+
+  return {
+    greeting,
+    lines: [
+      'Brand Concierge has completed creative review on Lace Mastery.',
+      'Growth Concierge recommends publishing at 2:00 PM for peak retention.',
+      'Technology Concierge completed rendering — Screening Room is ready.',
+      'Would you like to review today\'s production?',
+    ],
+    cta: { label: 'REVIEW PRODUCTION', route: adminStudioScreeningRoomPath() },
+  };
+}
+
+export function buildChiefConciergeBrief(pathname: string, org?: ChiefConciergeOrgContext): ChiefConciergeBrief {
+  const greeting = timeGreeting(org?.founderName);
+  if (pathname.includes('/mission-control') || pathname.endsWith('/studio')) {
+    return missionControlBrief(pathname, org);
   }
   if (pathname.includes('/production-studio') || pathname.includes('/render-queue')) {
     return {

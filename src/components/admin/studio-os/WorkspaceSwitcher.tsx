@@ -1,19 +1,23 @@
-import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCampusTransition } from './campus/CampusTransitionProvider';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
-import { getWorkspaceSnapshot } from '../../../studio-os-core/workspace-registry/store';
 import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
+import { OrganizationIdentityCard } from './OrganizationIdentityCard';
+import { useMemo, useState } from 'react';
 
-/** Organization workspace indicator — portfolio owners may switch; org operators see current workspace only. */
+/** Organization identity passport — portfolio owners may switch; org operators see active org only. */
 export function WorkspaceSwitcher() {
   const navigate = useNavigate();
-  const { workspaceId, workspace, workspaces, resolveModulePath } = useWorkspace();
+  const { workspaceId, workspaces, resolveModulePath } = useWorkspace();
   const { travelToWorkspace, returnToCampus } = useCampusTransition();
   const [open, setOpen] = useState(false);
-  const snapshot = useMemo(() => getWorkspaceSnapshot(workspaceId), [workspaceId]);
   const portfolioMode = canSwitchOrganizations();
+
+  const activeWorkspaces = useMemo(
+    () => workspaces.filter((w) => w.status !== 'archived'),
+    [workspaces]
+  );
 
   const switchTo = (id: string) => {
     setOpen(false);
@@ -22,50 +26,11 @@ export function WorkspaceSwitcher() {
 
   return (
     <div className="relative mb-2">
-      <button
-        type="button"
-        onClick={() => portfolioMode && setOpen((v) => !v)}
-        className="w-full text-left studio-living-card studio-glass-depth px-2 py-2 rounded-sm"
-        aria-disabled={!portfolioMode}
-        style={{
-          cursor: portfolioMode ? 'pointer' : 'default',
-          border: `1.3px solid ${workspace.colors.accent}44`,
-          background: `linear-gradient(135deg, rgba(255,255,255,0.9) 0%, ${workspace.colors.accent}08 100%)`,
-        }}
-      >
-        <div className="flex items-center gap-2">
-          <div
-            className="flex-shrink-0 overflow-hidden border flex items-center justify-center"
-            style={{ width: 28, height: 28, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
-          >
-            <img src={workspace.logoSrc} alt="" className="w-full h-full object-cover" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '6px', color: '#808080', margin: 0 }}>
-              {portfolioMode ? 'CURRENT WORKSPACE' : 'HEADQUARTERS'}
-            </p>
-            <p
-              style={{
-                fontFamily: '"Covered By Your Grace", sans-serif',
-                fontSize: '14px',
-                color: workspace.colors.primary,
-                margin: 0,
-                lineHeight: 1.1,
-              }}
-            >
-              {workspace.displayName}
-            </p>
-            {snapshot ? (
-              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '6px', color: '#666', margin: '2px 0 0' }}>
-                HEALTH {snapshot.organizationalHealthPct}% · {snapshot.pendingApprovals} APPROVALS
-              </p>
-            ) : null}
-          </div>
-          {portfolioMode ? (
-            <span style={{ fontFamily: '"Futura PT Medium"', fontSize: '8px', color: '#808080' }}>{open ? '▲' : '▼'}</span>
-          ) : null}
-        </div>
-      </button>
+      <OrganizationIdentityCard
+        portfolioMode={portfolioMode}
+        switcherOpen={open}
+        onToggleSwitcher={portfolioMode ? () => setOpen((v) => !v) : undefined}
+      />
 
       {portfolioMode && open ? (
         <div
@@ -90,25 +55,23 @@ export function WorkspaceSwitcher() {
           >
             → STUDIO COMMAND CENTER
           </button>
-          {workspaces
-            .filter((w) => w.status !== 'archived')
-            .map((ws) => (
-              <button
-                key={ws.id}
-                type="button"
-                onClick={() => switchTo(ws.id)}
-                className="w-full text-left px-2 py-1.5 mb-1 studio-living-card"
-                style={{
-                  border: ws.id === workspaceId ? `1px solid ${ADMIN_STUDIO_THEME.accent}` : '1px solid #eee',
-                  background: ws.id === workspaceId ? 'rgba(235,28,36,0.04)' : 'white',
-                }}
-              >
-                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7px', margin: 0 }}>{ws.displayName}</p>
-                <p style={{ fontFamily: '"Futura PT Book"', fontSize: '5px', color: '#888', margin: '2px 0 0' }}>
-                  {ws.metadata.industry ?? ws.metadata.description.slice(0, 40)}
-                </p>
-              </button>
-            ))}
+          {activeWorkspaces.map((ws) => (
+            <button
+              key={ws.id}
+              type="button"
+              onClick={() => switchTo(ws.id)}
+              className="w-full text-left px-2 py-1.5 mb-1 studio-living-card"
+              style={{
+                border: ws.id === workspaceId ? `1px solid ${ADMIN_STUDIO_THEME.accent}` : '1px solid #eee',
+                background: ws.id === workspaceId ? 'rgba(235,28,36,0.04)' : 'white',
+              }}
+            >
+              <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '7px', margin: 0 }}>{ws.displayName}</p>
+              <p style={{ fontFamily: '"Futura PT Book"', fontSize: '5px', color: '#888', margin: '2px 0 0' }}>
+                {ws.metadata.industry ?? ws.metadata.description.slice(0, 40)}
+              </p>
+            </button>
+          ))}
           <button
             type="button"
             onClick={() => {
@@ -125,7 +88,7 @@ export function WorkspaceSwitcher() {
               marginTop: 4,
             }}
           >
-            → MISSION CONTROL
+            → HEADQUARTERS
           </button>
         </div>
       ) : null}

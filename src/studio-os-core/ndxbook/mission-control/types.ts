@@ -170,6 +170,10 @@ export type RevenueBreakdown = {
 
 export type RevenueCenter = {
   today: number;
+  yesterday: number;
+  changeVsYesterdayPct: number;
+  topChannel: keyof RevenueBreakdown;
+  projectedEndOfDay: number;
   thisWeek: number;
   thisMonth: number;
   thisYear: number;

@@ -38300,3 +38300,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Design Genome ≠ design system — preserves identity. Consult genome before new UI (`PRE_BUILD_QUESTION`). Promotions are org-scoped. M84 = customer canon · M85 = org visual memory · Admin Alignment Protocol = commerce admin surgical changes.
 
+---
+
+## 2026-07-06 — Milestone 86: Organization Mission Control Refinement V1.0
+
+**Context (full chat arc):** User requested **Milestone 86** to refine each organization's Mission Control so it feels org-specific, calm, and executive — **do not redesign the full platform**. Core bug: NDXBOOK breadcrumb showed NDXBOOK but **Current Workspace** card still displayed Frontal Slayer. **Active Organization Law:** everything inside an org uses **`activeOrganizationContext` only** — never infer from founder defaults or previous HQ.
+
+**Topics covered (this chat):**
+- **Prior in chat:** M84 Design DNA & Canon · Admin Alignment Protocol · M85 Design Genome · MEMORY conflict fix.
+- **M86 scope:** Replace Current Workspace card with **Organization Identity Card** · reorganize NDXBOOK HQ into 13-section executive flow · progressive disclosure · Today's Best Move intelligence · visual publishing timeline · story-first revenue · command-style primary actions · org-specific Chief Concierge · Command Dock org context · reduce "Mission Control" repetition.
+
+**Decisions / outcomes:**
+- **`OrganizationIdentityCard`** + refactored **`WorkspaceSwitcher`** — passport-style org identity from **`useOrganizationContext()`** · live NDXBOOK metrics from mission control store · switcher dropdown **portfolio/admin only**.
+- **`useSyncWorkspaceFromRoute`** in **`AdminStudioLayout`** — URL → workspace sync (`/studio/ndxbook` → `ai-media`) before paint; fixes Frontal Slayer leak on NDXBOOK routes.
+- **Org-aware immersion:** **`buildChiefConciergeBrief(pathname, org)`** · **`useStudioImmersion`** passes org context · hide layout Chief Concierge on mission-control pages (page has org briefing) · Command Dock label **`NDXBOOK HEADQUARTERS`** when on NDXBOOK MC.
+- **NDXBOOK HQ panels:** Chief Concierge → Health → Timeline (visual blocks) → Priority of Day → Operations → Library → Intelligence (best move + collapsed others) → Revenue (story + channel breakdown secondary) → Labs → Talent → Primary Actions (large cards) → Activity Wall · nav first tab **HEADQUARTERS** · page title **NDXBOOK HEADQUARTERS**.
+- Revenue seed extended: yesterday · change vs yesterday · top channel · projected EOD · health 94%.
+
+**Changes:** `OrganizationIdentityCard.tsx`, `WorkspaceSwitcher.tsx`, `useSyncWorkspaceFromRoute.ts`, `AdminStudioLayout.tsx`, `NdxbookMissionControl*.tsx`, `studio-immersion/engine.ts`, `useStudioImmersion.ts`, `StudioImmersionShell.tsx`, `command-dock/context.ts`, `ndxbook/mission-control/*`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+**Conventions:** Inside an organization page, all visible identity/briefings/metrics use active org context only. Organization Identity Card has no dropdown unless portfolio mode. Do not stack redundant "Mission Control" headers — use distinct section names.
+

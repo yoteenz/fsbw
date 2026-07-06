@@ -80,6 +80,7 @@ export const NDXBOOK_MC_STYLES = `
 }
 .ndxbook-mc-live { animation: mcPulse 2.5s ease-in-out infinite; }
 .ndxbook-mc-countdown { animation: mcCountdown 2s ease-in-out infinite; font-family: "Covered By Your Grace", sans-serif; font-size: 18px; }
+.ndxbook-hq-flow > section { margin-bottom: 16px; }
 `;
 
 export function trendArrow(trend: 'up' | 'down' | 'flat'): string {

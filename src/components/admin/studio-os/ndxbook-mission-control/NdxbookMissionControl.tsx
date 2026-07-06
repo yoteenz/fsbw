@@ -5,17 +5,16 @@ import type { MissionControlNavId } from '../../../../studio-os-core/ndxbook/mis
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useNdxbookMissionControlState } from '../../../../hooks/useNdxbookMissionControlState';
 import { StudioImmersionStyles } from '../../studio/immersion/StudioImmersionStyles';
-import { StudioChiefConciergeBrief } from '../../studio/immersion/StudioChiefConciergeBrief';
-import { useStudioImmersion } from '../../../../hooks/useStudioImmersion';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { NDXBOOK_MC_STYLES } from './ndxbookMissionControlTheme';
 import {
   ActivityWallPanel,
+  ChiefConciergeBriefingPanel,
   CompanyHealthPanel,
   ExternalNavPanel,
+  HeadquartersIntro,
   LabsExperimentsPanel,
   MissionActionsPanel,
-  MissionControlHeader,
   NdxbookLibraryPanel,
   NewsroomPanel,
   PageOfTheDayPanel,
@@ -24,7 +23,6 @@ import {
   RevenueCenterPanel,
   StudioIntelligencePanel,
   TalentBoardPanel,
-  TodaysBriefingPanel,
   VolumeExplorerPanel,
 } from './NdxbookMissionControlPanels';
 
@@ -56,8 +54,6 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
     onReschedule: rescheduleItem,
   };
 
-  const { chiefBrief } = useStudioImmersion();
-
   const renderFocusedView = () => {
     switch (activeNav) {
       case 'newsroom':
@@ -84,22 +80,20 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
       case 'mission-control':
       default:
         return (
-          <>
-            <TodaysBriefingPanel {...panelProps} />
+          <div className="ndxbook-hq-flow space-y-1 pb-4">
+            <ChiefConciergeBriefingPanel />
             <CompanyHealthPanel {...panelProps} />
-            <NewsroomPanel {...panelProps} />
             <PublishingTimelinePanel {...panelProps} />
             <PageOfTheDayPanel {...panelProps} />
+            <NewsroomPanel {...panelProps} />
             <NdxbookLibraryPanel {...panelProps} />
-            <VolumeExplorerPanel {...panelProps} />
-            <ReaderIntelligencePanel {...panelProps} />
             <StudioIntelligencePanel {...panelProps} />
             <RevenueCenterPanel {...panelProps} />
             <LabsExperimentsPanel {...panelProps} />
             <TalentBoardPanel {...panelProps} />
             <MissionActionsPanel {...panelProps} />
             <ActivityWallPanel {...panelProps} />
-          </>
+          </div>
         );
     }
   };
@@ -109,14 +103,15 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
       <style>{NDXBOOK_MC_STYLES}</style>
       <StudioImmersionStyles />
 
-      <MissionControlHeader lastUpdatedAt={lastUpdatedAt} />
-      <StudioChiefConciergeBrief brief={chiefBrief} compact />
+      <HeadquartersIntro lastUpdatedAt={lastUpdatedAt} formatDate={formatDate} />
 
-      <div className="flex gap-1 overflow-x-auto pb-2 mb-2">
+      <div className="flex gap-1 overflow-x-auto pb-2 mb-3" role="tablist" aria-label="Department navigation">
         {NDXBOOK_MISSION_CONTROL_NAV.map((item) => (
           <button
             key={item.id}
             type="button"
+            role="tab"
+            aria-selected={activeNav === item.id}
             onClick={() => {
               if (item.id === 'newsroom') {
                 navigate(STUDIO_OS_ROUTES.workspaceNewsroom(workspaceId));

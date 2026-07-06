@@ -24,6 +24,7 @@ import { canSwitchOrganizations } from '../../../studio-os-core/application/port
 import { ORGANIZATION_ROUTES, STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { WorkspaceSwitcher } from '../studio-os/WorkspaceSwitcher';
 import { CommandDock, shouldShowCommandDock } from './command-dock/CommandDock';
+import { useSyncWorkspaceFromRoute } from '../../../hooks/useSyncWorkspaceFromRoute';
 import { AdminStudioSearchResultsPanel } from './AdminStudioSearchResultsPanel';
 import { searchStudioModules } from '../../../utils/adminStudioSearch';
 
@@ -67,6 +68,7 @@ export function AdminStudioLayout({
   belowCardActions,
 }: AdminStudioLayoutProps) {
   useRequireAdminPageAccess();
+  useSyncWorkspaceFromRoute();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const [searchParams] = useSearchParams();

@@ -66,6 +66,10 @@ function emptyStore(): NdxbookMissionControlStore {
     intelligence: [],
     revenue: {
       today: 0,
+      yesterday: 0,
+      changeVsYesterdayPct: 0,
+      topChannel: 'youtube',
+      projectedEndOfDay: 0,
       thisWeek: 0,
       thisMonth: 0,
       thisYear: 0,

@@ -2,6 +2,9 @@ import type { DockContextProfile } from './types';
 import { canAccessStudioAdministration } from '../application/portfolio-access';
 import { isStudioAdministrationPath } from '../application/routes';
 import { STUDIO_ADMINISTRATION_ROUTES } from '../application/routes';
+import { loadWorkspace } from '../workspace/loader';
+import { getRuntimeActiveWorkspaceId } from '../workspace/storage';
+import { resolveModuleTenantId } from '../workspace/tenant-ids';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -11,9 +14,19 @@ function isPortfolioPath(pathname: string): boolean {
   );
 }
 
+function activeOrganizationLabel(): { name: string; tenantId: ReturnType<typeof resolveModuleTenantId> } {
+  const workspaceId = getRuntimeActiveWorkspaceId();
+  const loaded = loadWorkspace(workspaceId);
+  return {
+    name: loaded?.schema.displayName ?? 'HEADQUARTERS',
+    tenantId: resolveModuleTenantId(workspaceId),
+  };
+}
+
 /** Context-aware command suggestions based on founder location in headquarters. */
 export function resolveDockContext(pathname: string): DockContextProfile {
   const portfolioMode = isPortfolioPath(pathname) && canAccessStudioAdministration();
+  const activeOrg = activeOrganizationLabel();
 
   if (pathname === STUDIO_ADMINISTRATION_ROUTES.commandCenter || pathname.endsWith('/command-center')) {
     return {
@@ -154,22 +167,34 @@ export function resolveDockContext(pathname: string): DockContextProfile {
   }
 
   if (pathname.includes('/mission-control') || pathname.endsWith('/studio')) {
+    const hqLabel =
+      activeOrg.tenantId === 'ndxbook'
+        ? 'NDXBOOK HEADQUARTERS'
+        : `${activeOrg.name.toUpperCase()} HEADQUARTERS`;
+    const suggestions =
+      activeOrg.tenantId === 'ndxbook'
+        ? [
+            'What pages need approval today?',
+            'Summarize NDXBOOK publishing for this week.',
+            'Show today\'s best move from Studio Intelligence.',
+          ]
+        : [
+            'What are today\'s priorities?',
+            'Review today\'s content.',
+            'Clear my afternoon.',
+          ];
     return {
       contextId: 'mission-control',
-      label: 'MISSION CONTROL',
+      label: hqLabel,
       portfolioMode: false,
-      suggestedCommands: [
-        'What are today\'s priorities?',
-        'Review today\'s content.',
-        'Clear my afternoon.',
-      ],
+      suggestedCommands: suggestions,
       commandTypes: ['executive-requests', 'scheduling', 'approvals', 'strategy'],
     };
   }
 
   return {
     contextId: 'headquarters',
-    label: 'HEADQUARTERS',
+    label: `${activeOrg.name.toUpperCase()} HEADQUARTERS`,
     portfolioMode: false,
     suggestedCommands: [
       'Move tomorrow\'s meeting.',

@@ -41,11 +41,16 @@ export function StudioImmersionShell({ hideBrief = false, hidePresence = false }
     pathname.includes('/render-queue') ||
     pathname.includes('/production-studio');
 
+  const isMissionControl =
+    pathname.includes('/mission-control') || pathname.endsWith('/studio');
+
   return (
     <>
       <StudioImmersionStyles />
       <StudioAmbientLayer variant={roomVariant} timeClass={ambientTimeClass} />
-      {!hideBrief && !isInnerImmersiveRoom ? <StudioChiefConciergeBrief brief={chiefBrief} compact /> : null}
+      {!hideBrief && !isInnerImmersiveRoom && !isMissionControl ? (
+        <StudioChiefConciergeBrief brief={chiefBrief} compact />
+      ) : null}
       {!hidePresence ? (
         <StudioOrganizationalPresenceStrip
           primary={primaryPresence}

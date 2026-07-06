@@ -18,7 +18,7 @@ export const PRODUCTION_STAGES: { id: ProductionStageId; label: string }[] = [
 ];
 
 export const NDXBOOK_MISSION_CONTROL_NAV: { id: MissionControlNavId; label: string }[] = [
-  { id: 'mission-control', label: 'MISSION CONTROL' },
+  { id: 'mission-control', label: 'HEADQUARTERS' },
   { id: 'newsroom', label: 'NEWSROOM' },
   { id: 'library', label: 'LIBRARY' },
   { id: 'publishing', label: 'PUBLISHING' },
