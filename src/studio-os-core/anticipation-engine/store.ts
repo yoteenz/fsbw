@@ -48,7 +48,11 @@ function upsertProfile(profile: OrganizationAnticipationProfile): OrganizationAn
 }
 
 export function syncAnticipationEngineFromSources(organizationId: string): OrganizationAnticipationProfile {
-  return upsertProfile(buildOrganizationAnticipationProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationAnticipationProfile(organizationId));
+  void import('../founder-cognitive-load/store').then((m) => {
+    m.syncFounderCognitiveLoadFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationAnticipationProfile(organizationId: string): OrganizationAnticipationProfile {

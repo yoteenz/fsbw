@@ -30,6 +30,7 @@ import { listKnowledgeConfidenceDockSuggestions } from '../knowledge-confidence'
 import { listLegacyVaultDockSuggestions } from '../legacy-vault';
 import { listAmbientAwarenessDockSuggestions } from '../ambient-awareness';
 import { listAnticipationEngineDockSuggestions } from '../anticipation-engine';
+import { listFounderCognitiveLoadDockSuggestions } from '../founder-cognitive-load';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -204,6 +205,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'ANTICIPATION ENGINE™ · PREPARE TOMORROW',
       portfolioMode: false,
       suggestedCommands: listAnticipationEngineDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/founder-cognitive-load')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'founder-cognitive-load',
+      label: 'FOUNDER COGNITIVE LOAD™ · PROTECT FOCUS',
+      portfolioMode: false,
+      suggestedCommands: listFounderCognitiveLoadDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

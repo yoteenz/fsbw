@@ -91,6 +91,10 @@ import {
   resolveAnticipationEngineAdvice,
   buildProactiveAnticipationSuggestion,
 } from '../anticipation-engine/dock-advisor';
+import {
+  resolveFounderCognitiveLoadAdvice,
+  buildProactiveFounderCognitiveLoadSuggestion,
+} from '../founder-cognitive-load/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -164,6 +168,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const legacyVault = buildProactiveLegacyVaultSuggestion(workspaceId);
   const ambientModule = buildProactiveAmbientAwarenessSuggestion(workspaceId);
   const anticipation = buildProactiveAnticipationSuggestion(workspaceId);
+  const cognitiveLoad = buildProactiveFounderCognitiveLoadSuggestion(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -187,6 +192,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
         response: anticipation,
         concierge: 'Chief Concierge',
         suggestedCommand: 'Open Anticipation Engine — review prepared work awaiting approval.',
+      }
+    : null;
+  const cognitiveLoadProactive = cognitiveLoad
+    ? {
+        response: cognitiveLoad,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Founder Cognitive Load — review attention protection status.',
       }
     : null;
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
@@ -238,6 +250,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const proactiveSource =
     ambientOpening
       ? ambientOpening
+      : pathname.includes('/founder-cognitive-load') && cognitiveLoadProactive
+      ? cognitiveLoadProactive
       : pathname.includes('/anticipation-engine') && anticipationProactive
       ? anticipationProactive
       : pathname.includes('/ambient-awareness') && ambientModuleProactive
@@ -364,6 +378,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${anticipationAdvice.concierge}\n${anticipationAdvice.response}`,
+    });
+    return null;
+  }
+
+  const cognitiveLoadAdvice = resolveFounderCognitiveLoadAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (cognitiveLoadAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${cognitiveLoadAdvice.concierge}\n${cognitiveLoadAdvice.response}`,
     });
     return null;
   }

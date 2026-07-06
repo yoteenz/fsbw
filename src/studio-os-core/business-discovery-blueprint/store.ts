@@ -179,6 +179,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncAnticipationEngineFromSources(blueprint.organizationId);
   });
 
+  void import('../founder-cognitive-load/store').then((m) => {
+    m.syncFounderCognitiveLoadFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

@@ -129,6 +129,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationAnticipationProfile(context.organizationId);
   });
 
+  void import('../founder-cognitive-load/store').then((m) => {
+    m.ensureOrganizationFounderCognitiveLoadProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

@@ -1440,6 +1440,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'founder-cognitive-load',
+    title: 'FOUNDER COGNITIVE LOAD™',
+    purpose: 'Protect founder attention — cognitive analysis, intelligent filtering, attention modes. Better prioritization, not more information.',
+    route: p('founder-cognitive-load'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M109',
+    ctaLabel: 'OPEN COGNITIVE LOAD',
+    moduleKey: 'founder-cognitive-load',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

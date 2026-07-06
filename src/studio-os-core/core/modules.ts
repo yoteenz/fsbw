@@ -103,6 +103,7 @@ export type StudioOsCoreModuleId =
   | 'legacy-vault'
   | 'ambient-awareness'
   | 'anticipation-engine'
+  | 'founder-cognitive-load'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -716,6 +717,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ANTICIPATION ENGINE™',
     description: 'Predict organizational needs V1.0 — proactive preparation, pattern recognition, everything awaits approval. Prepare tomorrow.',
     routeSegment: 'anticipation-engine',
+  },
+  {
+    id: 'founder-cognitive-load',
+    label: 'FOUNDER COGNITIVE LOAD™',
+    description: 'Protect founder attention V1.0 — cognitive analysis, intelligent filtering, attention modes. Prioritize, don\'t overwhelm.',
+    routeSegment: 'founder-cognitive-load',
   },
   {
     id: 'succession-mode',

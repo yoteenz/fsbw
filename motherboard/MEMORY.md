@@ -38872,3 +38872,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Anticipation Engine (M108) builds on Ambient Awareness (M107) — awareness knows context; anticipation prepares action. Demo localStorage via `studioOsAnticipationEngine_v1`.
 
+---
+
+## 2026-07-06 — Milestone 109: Founder Cognitive Load™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M108 (Blueprint through Anticipation Engine `60fa6291`). User requested **Milestone 109 — Founder Cognitive Load™ V1.0**: Studio OS should continuously protect the founder's attention. Core philosophy: founders do not need more information — they need **better prioritization**; Studio OS understands mental workload; attention is the organization's most valuable resource.
+
+**Requirements delivered:**
+- **11 cognitive factors** — calendar density · pending approvals · decision fatigue · unread communications · department requests · revenue pressure · launch activity · customer issues · meeting load · creative workload · strategic workload
+- **Intelligent filtering** when load high — delay non-critical · batch decisions · reduce interruptions · summarize · escalate urgent only · protect focus
+- **Attention modes** — creating · reviewing · presenting · traveling · in-meetings · strategic deep work — Command Dock adjusts communication
+- **Executive assistance** — postponed approvals · batched notifications · delegated routine tasks · hidden non-essential activity
+
+**Delivered:**
+- **`src/studio-os-core/founder-cognitive-load/`** — **`cognitive-analyzer.ts`** · **`filtering-engine.ts`** · **`attention-engine.ts`** · **`assistance-engine.ts`** · **`cognitive-load-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`FounderCognitiveLoadWorkspace`** + **`/admin/studio/founder-cognitive-load`** — 4 tabs: Load Overview · Cognitive Analysis · Intelligent Filtering · Attention Management · teal accent `#0D9488`.
+- **`MissionControlFounderCognitiveLoadPanel`** — attention protection preview in Mission Control.
+- **`useFounderCognitiveLoadState`** hook · brand voice **`founder-cognitive-load`**: *"Protect focus. Prioritize what matters."*
+- **Command Dock** — **`resolveFounderCognitiveLoadAdvice()`** · **`buildProactiveFounderCognitiveLoadSuggestion()`** on `/founder-cognitive-load` route.
+- **Integration** — sync from anticipation-engine · ambient-awareness · profession-brain · blueprint · boundary-sync · anticipation resync triggers cognitive load resync · workspaces bootstrap · modules · nav · App route.
+- **Docs** — **`docs/studio-os/founder-cognitive-load.md`** · **CORE.md** M109 entry.
+
+**Conventions:** Founder Cognitive Load (M109) completes the founder-protection stack atop M107 awareness + M108 anticipation — measures demand, filters noise, protects focus. Demo localStorage via `studioOsFounderCognitiveLoad_v1`.
+

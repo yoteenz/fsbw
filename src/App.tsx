@@ -188,6 +188,7 @@ const AdminStudioKnowledgeConfidence = lazyWithRetry(() => import('./pages/admin
 const AdminStudioLegacyVault = lazyWithRetry(() => import('./pages/admin/studio/legacy-vault/page'), 'AdminStudioLegacyVault');
 const AdminStudioAmbientAwareness = lazyWithRetry(() => import('./pages/admin/studio/ambient-awareness/page'), 'AdminStudioAmbientAwareness');
 const AdminStudioAnticipationEngine = lazyWithRetry(() => import('./pages/admin/studio/anticipation-engine/page'), 'AdminStudioAnticipationEngine');
+const AdminStudioFounderCognitiveLoad = lazyWithRetry(() => import('./pages/admin/studio/founder-cognitive-load/page'), 'AdminStudioFounderCognitiveLoad');
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1314,6 +1315,11 @@ function App() {
           <Route path="studio/anticipation-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioAnticipationEngine />
+            </Suspense>
+          } />
+          <Route path="studio/founder-cognitive-load" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioFounderCognitiveLoad />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={
