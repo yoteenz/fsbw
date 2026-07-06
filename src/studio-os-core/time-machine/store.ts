@@ -1,4 +1,5 @@
 import { TIME_MACHINE_STORAGE_KEY, TIME_MACHINE_VERSION, STUDIO_OS_TIME_MACHINE_UPDATED } from './constants';
+import { readFirstEnsure } from '../sync/profile-cache';
 import { buildOrganizationTimeMachineProfile } from './engine-profile-builder';
 import { filterReplayEvents } from './playback-engine';
 import type {
@@ -56,14 +57,11 @@ export function syncTimeMachineFromSources(organizationId: string): Organization
     currentStepIndex: existing?.currentStepIndex ?? 0,
     activeFilter: existing?.activeFilter ?? built.activeFilter,
   });
-  void import('../predictive-qa/store').then((m) => {
-    m.syncPredictiveQaFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationTimeMachineProfile(organizationId: string): OrganizationTimeMachineProfile {
-  return syncTimeMachineFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationTimeMachineProfile, syncTimeMachineFromSources);
 }
 
 function withPlayback(

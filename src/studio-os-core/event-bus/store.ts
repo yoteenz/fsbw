@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   EVENT_BUS_STORAGE_KEY,
   EVENT_BUS_VERSION,
@@ -60,14 +61,11 @@ export function syncEventBusFromSources(organizationId: string): OrganizationEve
         : Math.round(existing.eventHistory.reduce((s, e) => s + e.latencyMs, 0) / existing.eventHistory.length);
   }
   const profile = upsertProfile(rebuilt);
-  void import('../automation-registry/store').then((m) => {
-    m.syncAutomationRegistryFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationEventBusProfile(organizationId: string): OrganizationEventBusProfile {
-  return syncEventBusFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationEventBusProfile, syncEventBusFromSources);
 }
 
 export function publishOrganizationEvent(

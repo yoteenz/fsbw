@@ -3,6 +3,7 @@ import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import {
   addFounderArchiveEntry,
   createTimeCapsule,
+  getOrganizationLegacyVaultProfile,
   preserveLegacyMoment,
   syncLegacyVaultFromSources,
   type OrganizationLegacyVaultProfile,
@@ -14,7 +15,7 @@ export function useLegacyVaultState() {
   const [profile, setProfile] = useState<OrganizationLegacyVaultProfile | null>(null);
 
   const refresh = useCallback(() => {
-    const next = syncLegacyVaultFromSources(workspaceId);
+    const next = getOrganizationLegacyVaultProfile(workspaceId) ?? syncLegacyVaultFromSources(workspaceId);
     setProfile(next);
   }, [workspaceId]);
 

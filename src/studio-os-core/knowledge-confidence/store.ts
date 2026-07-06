@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   KNOWLEDGE_CONFIDENCE_STORAGE_KEY,
   KNOWLEDGE_CONFIDENCE_VERSION,
@@ -52,10 +53,8 @@ export function syncKnowledgeConfidenceFromSources(organizationId: string): Orga
   return upsertProfile(profile);
 }
 
-export function ensureOrganizationKnowledgeConfidenceProfile(
-  organizationId: string
-): OrganizationKnowledgeConfidenceProfile {
-  return syncKnowledgeConfidenceFromSources(organizationId);
+export function ensureOrganizationKnowledgeConfidenceProfile(organizationId: string): OrganizationKnowledgeConfidenceProfile {
+  return readFirstEnsure(organizationId, getOrganizationKnowledgeConfidenceProfile, syncKnowledgeConfidenceFromSources);
 }
 
 export function getBrainConfidenceScore(organizationId: string, brainId: string) {

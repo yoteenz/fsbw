@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   WORKSPACE_RUNTIME_STORAGE_KEY,
   WORKSPACE_RUNTIME_VERSION,
@@ -55,16 +56,11 @@ export function syncWorkspaceRuntimeFromSources(organizationId: string): Organiz
     rebuilt.activeSandbox = existing.activeSandbox;
   }
   const profile = upsertProfile(rebuilt);
-  void import('../plugin-sdk/store').then((m) => {
-    m.syncPluginSdkFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationWorkspaceRuntimeProfile(
-  organizationId: string
-): OrganizationWorkspaceRuntimeProfile {
-  return syncWorkspaceRuntimeFromSources(organizationId);
+export function ensureOrganizationWorkspaceRuntimeProfile(organizationId: string): OrganizationWorkspaceRuntimeProfile {
+  return readFirstEnsure(organizationId, getOrganizationWorkspaceRuntimeProfile, syncWorkspaceRuntimeFromSources);
 }
 
 export function setActiveSandbox(

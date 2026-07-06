@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   QA_HEADQUARTERS_STORAGE_KEY,
   QA_HEADQUARTERS_VERSION,
@@ -50,16 +51,11 @@ function upsertProfile(profile: OrganizationQaHeadquartersProfile): Organization
 /** Rebuild trust scores, responsibilities, and continuous validation from platform sources */
 export function syncQaHeadquartersFromSources(organizationId: string): OrganizationQaHeadquartersProfile {
   const profile = upsertProfile(buildOrganizationQaHeadquartersProfile(organizationId));
-  void import('../qa-inspector/store').then((m) => {
-    m.syncQaInspectorFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationQaHeadquartersProfile(
-  organizationId: string
-): OrganizationQaHeadquartersProfile {
-  return syncQaHeadquartersFromSources(organizationId);
+export function ensureOrganizationQaHeadquartersProfile(organizationId: string): OrganizationQaHeadquartersProfile {
+  return readFirstEnsure(organizationId, getOrganizationQaHeadquartersProfile, syncQaHeadquartersFromSources);
 }
 
 export function triggerContinuousValidation(

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import {
   dismissWisdomDetection,
+  getOrganizationWisdomProfile,
   preserveWisdomEntry,
   queueWisdomDetection,
   syncWisdomCaptureFromSources,
@@ -15,7 +16,7 @@ export function useWisdomCaptureState() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const refresh = useCallback(() => {
-    const next = syncWisdomCaptureFromSources(workspaceId);
+    const next = getOrganizationWisdomProfile(workspaceId) ?? syncWisdomCaptureFromSources(workspaceId);
     setProfile(next);
   }, [workspaceId]);
 

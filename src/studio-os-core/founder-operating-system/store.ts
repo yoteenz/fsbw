@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   FOUNDER_OPERATING_SYSTEM_STORAGE_KEY,
   FOUNDER_OPERATING_SYSTEM_VERSION,
@@ -51,16 +52,11 @@ export function syncFounderOperatingSystemFromSources(
   organizationId: string
 ): OrganizationFounderOperatingSystemProfile {
   const profile = upsertProfile(buildOrganizationFounderOperatingSystemProfile(organizationId));
-  void import('../innovation-lab/store').then((m) => {
-    m.syncInnovationLabFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationFounderOperatingSystemProfile(
-  organizationId: string
-): OrganizationFounderOperatingSystemProfile {
-  return syncFounderOperatingSystemFromSources(organizationId);
+export function ensureOrganizationFounderOperatingSystemProfile(organizationId: string): OrganizationFounderOperatingSystemProfile {
+  return readFirstEnsure(organizationId, getOrganizationFounderOperatingSystemProfile, syncFounderOperatingSystemFromSources);
 }
 
 export function refreshOrganizationFounderOperatingSystemProfile(

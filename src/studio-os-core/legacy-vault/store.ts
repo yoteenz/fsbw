@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   LEGACY_VAULT_STORAGE_KEY,
   LEGACY_VAULT_VERSION,
@@ -68,7 +69,7 @@ export function syncLegacyVaultFromSources(organizationId: string): Organization
 }
 
 export function ensureOrganizationLegacyVaultProfile(organizationId: string): OrganizationLegacyVaultProfile {
-  return syncLegacyVaultFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationLegacyVaultProfile, syncLegacyVaultFromSources);
 }
 
 export function preserveLegacyMoment(

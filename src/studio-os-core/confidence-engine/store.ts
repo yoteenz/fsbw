@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   CONFIDENCE_ENGINE_STORAGE_KEY,
   CONFIDENCE_ENGINE_VERSION,
@@ -54,16 +55,11 @@ export function syncConfidenceEngineFromSources(organizationId: string): Organiz
     ...built,
     selectedRecommendationId: existing?.selectedRecommendationId ?? built.selectedRecommendationId,
   });
-  void import('../organizational-guardian/store').then((m) => {
-    m.syncOrganizationalGuardianFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationConfidenceEngineProfile(
-  organizationId: string
-): OrganizationConfidenceEngineProfile {
-  return syncConfidenceEngineFromSources(organizationId);
+export function ensureOrganizationConfidenceEngineProfile(organizationId: string): OrganizationConfidenceEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationConfidenceEngineProfile, syncConfidenceEngineFromSources);
 }
 
 export function refreshConfidenceEngine(organizationId: string): OrganizationConfidenceEngineProfile {

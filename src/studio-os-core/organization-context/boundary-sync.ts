@@ -3,6 +3,7 @@ import { buildActiveOrganizationContext } from './resolve';
 import { resolveModuleTenantId } from '../workspace/tenant-ids';
 import { loadWorkspace } from '../workspace/loader';
 import { workspaceStudioEntryPath, workspaceStudioModulePath } from '../workspace/routes';
+import { scheduleQaIntelligenceChainSync } from '../sync/qa-intelligence-chain';
 
 export const STUDIO_OS_ORGANIZATION_BOUNDARY_CHANGED = 'studio-os-organization-boundary-changed';
 
@@ -11,6 +12,11 @@ export type OrganizationBoundaryChangedDetail = {
   moduleTenantId: string;
   timelineOrganizationId: string;
 };
+
+let boundaryDebounceTimer: ReturnType<typeof setTimeout> | null = null;
+let pendingBoundaryContext: ActiveOrganizationContext | null = null;
+let lastBoundaryOrganizationId: string | null = null;
+const BOUNDARY_DEBOUNCE_MS = 350;
 
 function dispatchOrganizationBoundaryChanged(detail: OrganizationBoundaryChangedDetail): void {
   if (typeof window === 'undefined') return;
@@ -27,9 +33,24 @@ function trySelect<T extends string>(fn: ((id: T) => void) | undefined, id: T): 
 
 /**
  * Rebuild organization-scoped module stores when the active organization changes.
- * Called from activateWorkspaceContext — modules must not inherit another org's state.
+ * Debounced to avoid sync storms when multiple modules mount simultaneously.
  */
 export function syncOrganizationBoundary(context: ActiveOrganizationContext): void {
+  pendingBoundaryContext = context;
+  if (boundaryDebounceTimer) clearTimeout(boundaryDebounceTimer);
+  boundaryDebounceTimer = setTimeout(() => {
+    boundaryDebounceTimer = null;
+    const ctx = pendingBoundaryContext;
+    pendingBoundaryContext = null;
+    if (ctx) flushOrganizationBoundarySync(ctx);
+  }, BOUNDARY_DEBOUNCE_MS);
+}
+
+function flushOrganizationBoundarySync(context: ActiveOrganizationContext): void {
+  const organizationChanged =
+    lastBoundaryOrganizationId !== null && lastBoundaryOrganizationId !== context.organizationId;
+  lastBoundaryOrganizationId = context.organizationId;
+
   void import('../executive-timeline/store').then((m) => {
     trySelect(m.selectTimelineOrganization, context.timelineOrganizationId);
   });
@@ -45,313 +66,9 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     );
   });
 
-  void import('../industry-architecture/store').then((m) => {
-    m.ensureOrganizationArchitectureProfile(context.organizationId);
-  });
-
-  void import('../monetization-architecture/store').then((m) => {
-    m.ensureOrganizationMonetizationProfile(context.organizationId);
-  });
-
-  void import('../business-discovery-blueprint/store').then((m) => {
-    m.ensureOrganizationDiscoveryBlueprint(context.organizationId);
-  });
-
-  void import('../organization-inauguration/store').then((m) => {
-    m.ensureOrganizationInaugurationProfile(context.organizationId);
-  });
-
-  void import('../profession-brain/store').then((m) => {
-    m.ensureOrganizationProfessionBrainProfile(context.organizationId);
-  });
-
-  void import('../expert-marketplace/store').then((m) => {
-    m.ensureOrganizationExpertMarketplaceProfile(context.organizationId);
-  });
-
-  void import('../studio-institute/org-store').then((m) => {
-    m.ensureOrganizationStudioInstituteProfile(context.organizationId);
-  });
-
-  void import('../knowledge-commerce/store').then((m) => {
-    m.ensureOrganizationKnowledgeCommerceProfile(context.organizationId);
-  });
-
-  void import('../professional-trust-framework/store').then((m) => {
-    m.ensureOrganizationTrustFrameworkProfile(context.organizationId);
-  });
-
-  void import('../organization-genome/store').then((m) => {
-    m.ensureOrganizationGenomeProfile(context.organizationId);
-  });
-
-  void import('../memory-engine/store').then((m) => {
-    m.ensureOrganizationMemoryProfile(context.organizationId);
-  });
-
-  void import('../company-health-index/store').then((m) => {
-    m.ensureOrganizationHealthIndexProfile(context.organizationId);
-  });
-
-  void import('../organization-pulse/store').then((m) => {
-    m.ensureOrganizationPulseProfile(context.organizationId);
-  });
-
-  void import('../wisdom-capture/store').then((m) => {
-    m.ensureOrganizationWisdomProfile(context.organizationId);
-  });
-
-  void import('../shadow-mode/store').then((m) => {
-    m.ensureOrganizationShadowModeProfile(context.organizationId);
-  });
-
-  void import('../organization-digital-twin/store').then((m) => {
-    m.ensureOrganizationDigitalTwinProfile(context.organizationId);
-  });
-
-  void import('../business-simulation-lab/store').then((m) => {
-    m.ensureOrganizationSimulationLabProfile(context.organizationId);
-  });
-
-  void import('../knowledge-confidence/store').then((m) => {
-    m.ensureOrganizationKnowledgeConfidenceProfile(context.organizationId);
-  });
-
-  void import('../legacy-vault/store').then((m) => {
-    m.ensureOrganizationLegacyVaultProfile(context.organizationId);
-  });
-
-  void import('../ambient-awareness/store').then((m) => {
-    m.ensureOrganizationAmbientAwarenessProfile(context.organizationId);
-  });
-
-  void import('../anticipation-engine/store').then((m) => {
-    m.ensureOrganizationAnticipationProfile(context.organizationId);
-  });
-
-  void import('../founder-cognitive-load/store').then((m) => {
-    m.ensureOrganizationFounderCognitiveLoadProfile(context.organizationId);
-  });
-
-  void import('../presence-engine/store').then((m) => {
-    m.ensureOrganizationPresenceProfile(context.organizationId);
-  });
-
-  void import('../cross-organization-intelligence/store').then((m) => {
-    m.ensureOrganizationCrossOrgIntelligenceProfile(context.organizationId);
-  });
-
-  void import('../relationship-memory/store').then((m) => {
-    m.ensureOrganizationRelationshipMemoryProfile(context.organizationId);
-  });
-
-  void import('../predictive-organization/store').then((m) => {
-    m.ensureOrganizationPredictiveProfile(context.organizationId);
-  });
-
-  void import('../autonomous-preparation/store').then((m) => {
-    m.ensureOrganizationAutonomousPreparationProfile(context.organizationId);
-  });
-
-  void import('../organizational-consciousness/store').then((m) => {
-    m.ensureOrganizationConsciousnessProfile(context.organizationId);
-  });
-
-  void import('../executive-timeline/history-store').then((m) => {
-    m.ensureOrganizationExecutiveHistoryProfile(context.organizationId);
-  });
-
-  void import('../world-knowledge-engine/store').then((m) => {
-    m.ensureOrganizationWorldKnowledgeProfile(context.organizationId);
-  });
-
-  void import('../founder-operating-system/store').then((m) => {
-    m.ensureOrganizationFounderOperatingSystemProfile(context.organizationId);
-  });
-
-  void import('../innovation-lab/store').then((m) => {
-    m.ensureOrganizationInnovationLabProfile(context.organizationId);
-  });
-
-  void import('../organization-operating-manual/store').then((m) => {
-    m.ensureOrganizationOperatingManualProfile(context.organizationId);
-  });
-
-  void import('../legacy-network/store').then((m) => {
-    m.ensureOrganizationLegacyNetworkProfile(context.organizationId);
-  });
-
-  void import('../studio-intelligence-architecture/store').then((m) => {
-    m.ensureOrganizationStudioIntelligenceArchitectureProfile(context.organizationId);
-  });
-
-  void import('../model-orchestrator/store').then((m) => {
-    m.ensureOrganizationModelOrchestratorProfile(context.organizationId);
-  });
-
-  void import('../studio-foundation-models/store').then((m) => {
-    m.ensureOrganizationStudioFoundationModelsProfile(context.organizationId);
-  });
-
-  void import('../documentation-sync/store').then((m) => {
-    m.ensureOrganizationDocumentationSyncProfile(context.organizationId);
-  });
-
-  void import('../documentation-registry/store').then((m) => {
-    m.ensureOrganizationDocumentationRegistryProfile(context.organizationId);
-  });
-
-  void import('../documentation-governance/store').then((m) => {
-    m.ensureOrganizationDocumentationGovernanceProfile(context.organizationId);
-  });
-
-  void import('../system-registry/store').then((m) => {
-    m.ensureOrganizationSystemRegistryProfile(context.organizationId);
-  });
-
-  void import('../component-registry/store').then((m) => {
-    m.ensureOrganizationComponentRegistryProfile(context.organizationId);
-  });
-
-  void import('../design-token-engine/store').then((m) => {
-    m.ensureOrganizationDesignTokenEngineProfile(context.organizationId);
-  });
-
-  void import('../interaction-engine/store').then((m) => {
-    m.ensureOrganizationInteractionEngineProfile(context.organizationId);
-  });
-
-  void import('../event-bus/store').then((m) => {
-    m.ensureOrganizationEventBusProfile(context.organizationId);
-  });
-
-  void import('../automation-registry/store').then((m) => {
-    m.ensureOrganizationAutomationRegistryProfile(context.organizationId);
-  });
-
-  void import('../prompt-registry/store').then((m) => {
-    m.ensureOrganizationPromptRegistryProfile(context.organizationId);
-  });
-
-  void import('../policy-engine/store').then((m) => {
-    m.ensureOrganizationPolicyEngineProfile(context.organizationId);
-  });
-
-  void import('../permission-engine/store').then((m) => {
-    m.ensureOrganizationPermissionEngineProfile(context.organizationId);
-  });
-
-  void import('../workspace-runtime/store').then((m) => {
-    m.ensureOrganizationWorkspaceRuntimeProfile(context.organizationId);
-  });
-
-  void import('../plugin-sdk/store').then((m) => {
-    m.ensureOrganizationPluginSdkProfile(context.organizationId);
-  });
-
-  void import('../workflow-engine/store').then((m) => {
-    m.ensureOrganizationWorkflowEngineProfile(context.organizationId);
-  });
-
-  void import('../state-engine/store').then((m) => {
-    m.ensureOrganizationStateEngineProfile(context.organizationId);
-  });
-
-  void import('../asset-registry/store').then((m) => {
-    m.ensureOrganizationAssetRegistryProfile(context.organizationId);
-  });
-
-  void import('../experience-engine/store').then((m) => {
-    m.ensureOrganizationExperienceEngineProfile(context.organizationId);
-  });
-
-  void import('../qa-headquarters/store').then((m) => {
-    m.ensureOrganizationQaHeadquartersProfile(context.organizationId);
-  });
-
-  void import('../qa-inspector/store').then((m) => {
-    m.ensureOrganizationQaInspectorProfile(context.organizationId);
-  });
-
-  void import('../qa-simulation-engine/store').then((m) => {
-    m.ensureOrganizationQaSimulationEngineProfile(context.organizationId);
-  });
-
-  void import('../ai-red-team/store').then((m) => {
-    m.ensureOrganizationAiRedTeamProfile(context.organizationId);
-  });
-
-  void import('../executive-trust-dashboard/store').then((m) => {
-    m.ensureOrganizationExecutiveTrustDashboardProfile(context.organizationId);
-  });
-
-  void import('../time-machine/store').then((m) => {
-    m.ensureOrganizationTimeMachineProfile(context.organizationId);
-  });
-
-  void import('../predictive-qa/store').then((m) => {
-    m.ensureOrganizationPredictiveQaProfile(context.organizationId);
-  });
-
-  void import('../self-healing-engine/store').then((m) => {
-    m.ensureOrganizationSelfHealingEngineProfile(context.organizationId);
-  });
-
-  void import('../decision-audit/store').then((m) => {
-    m.ensureOrganizationDecisionAuditProfile(context.organizationId);
-  });
-
-  void import('../confidence-engine/store').then((m) => {
-    m.ensureOrganizationConfidenceEngineProfile(context.organizationId);
-  });
-
-  void import('../organizational-guardian/store').then((m) => {
-    m.ensureOrganizationGuardianProfile(context.organizationId);
-  });
-
-  void import('../design-compliance-engine/store').then((m) => {
-    m.ensureOrganizationDesignComplianceEngineProfile(context.organizationId);
-  });
-
-  void import('../prompt-qa/store').then((m) => {
-    m.ensureOrganizationPromptQaProfile(context.organizationId);
-  });
-
-  void import('../experience-qa/store').then((m) => {
-    m.ensureOrganizationExperienceQaProfile(context.organizationId);
-  });
-
-  void import('../visual-diff-engine/store').then((m) => {
-    m.ensureOrganizationVisualDiffEngineProfile(context.organizationId);
-  });
-
-  void import('../accessibility-auditor/store').then((m) => {
-    m.ensureOrganizationAccessibilityAuditorProfile(context.organizationId);
-  });
-
-  void import('../performance-monitor/store').then((m) => {
-    m.ensureOrganizationPerformanceMonitorProfile(context.organizationId);
-  });
-
-  void import('../regression-engine/store').then((m) => {
-    m.ensureOrganizationRegressionEngineProfile(context.organizationId);
-  });
-
-  void import('../release-readiness/store').then((m) => {
-    m.ensureOrganizationReleaseReadinessProfile(context.organizationId);
-  });
-
-  void import('../engineering-excellence-dashboard/store').then((m) => {
-    m.ensureOrganizationEngineeringExcellenceProfile(context.organizationId);
-  });
-
-  void import('../succession-mode/store').then((m) => {
-    m.ensureOrganizationSuccessionProfile(context.organizationId);
-  });
-
-  void import('../executive-council/org-store').then((m) => {
-    m.ensureOrganizationExecutiveCouncilProfile(context.organizationId);
-  });
+  if (organizationChanged) {
+    scheduleQaIntelligenceChainSync(context.organizationId);
+  }
 
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,

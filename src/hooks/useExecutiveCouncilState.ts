@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import {
   conductExecutiveCouncilMeeting,
+  getOrganizationExecutiveCouncilProfile,
   syncExecutiveCouncilFromSources,
   updateCouncilDecisionOutcome,
   type OrganizationExecutiveCouncilProfile,
@@ -14,7 +15,7 @@ export function useExecutiveCouncilState() {
   const [meetingLoading, setMeetingLoading] = useState(false);
 
   const refresh = useCallback(() => {
-    const next = syncExecutiveCouncilFromSources(workspaceId);
+    const next = getOrganizationExecutiveCouncilProfile(workspaceId) ?? syncExecutiveCouncilFromSources(workspaceId);
     setProfile(next);
   }, [workspaceId]);
 

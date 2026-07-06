@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   RELEASE_READINESS_STORAGE_KEY,
   RELEASE_READINESS_VERSION,
@@ -56,16 +57,11 @@ export function syncReleaseReadinessFromSources(
     ...built,
     selectedReleaseId: existing?.selectedReleaseId ?? built.selectedReleaseId,
   });
-  void import('../engineering-excellence-dashboard/store').then((m) => {
-    m.syncEngineeringExcellenceFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationReleaseReadinessProfile(
-  organizationId: string
-): OrganizationReleaseReadinessProfile {
-  return syncReleaseReadinessFromSources(organizationId);
+export function ensureOrganizationReleaseReadinessProfile(organizationId: string): OrganizationReleaseReadinessProfile {
+  return readFirstEnsure(organizationId, getOrganizationReleaseReadinessProfile, syncReleaseReadinessFromSources);
 }
 
 export function refreshReleaseReadiness(organizationId: string): OrganizationReleaseReadinessProfile {

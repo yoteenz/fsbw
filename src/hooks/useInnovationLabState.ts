@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import {
   STUDIO_OS_INNOVATION_LAB_UPDATED,
+  getOrganizationInnovationLabProfile,
   syncInnovationLabFromSources,
   type OrganizationInnovationLabProfile,
 } from '../studio-os-core/innovation-lab';
@@ -12,7 +13,8 @@ export function useInnovationLabState() {
   const [selectedIdeaId, setSelectedIdeaId] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
-    const next = syncInnovationLabFromSources(workspaceId);
+    const next =
+      getOrganizationInnovationLabProfile(workspaceId) ?? syncInnovationLabFromSources(workspaceId);
     setProfile(next);
     if (!selectedIdeaId && next.ideas[0]) {
       setSelectedIdeaId(next.ideas[0].id);

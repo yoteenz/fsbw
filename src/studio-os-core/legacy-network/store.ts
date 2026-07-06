@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   LEGACY_NETWORK_STORAGE_KEY,
   LEGACY_NETWORK_VERSION,
@@ -49,16 +50,11 @@ function upsertProfile(profile: OrganizationLegacyNetworkProfile): OrganizationL
 
 export function syncLegacyNetworkFromSources(organizationId: string): OrganizationLegacyNetworkProfile {
   const profile = upsertProfile(buildOrganizationLegacyNetworkProfile(organizationId));
-  void import('../studio-intelligence-architecture/store').then((m) => {
-    m.syncStudioIntelligenceArchitectureFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationLegacyNetworkProfile(
-  organizationId: string
-): OrganizationLegacyNetworkProfile {
-  return syncLegacyNetworkFromSources(organizationId);
+export function ensureOrganizationLegacyNetworkProfile(organizationId: string): OrganizationLegacyNetworkProfile {
+  return readFirstEnsure(organizationId, getOrganizationLegacyNetworkProfile, syncLegacyNetworkFromSources);
 }
 
 export function refreshOrganizationLegacyNetworkProfile(

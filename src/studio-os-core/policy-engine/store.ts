@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   POLICY_ENGINE_STORAGE_KEY,
   POLICY_ENGINE_VERSION,
@@ -47,12 +48,6 @@ function upsertProfile(profile: OrganizationPolicyEngineProfile): OrganizationPo
   return profile;
 }
 
-function chainPermissionEngineSync(organizationId: string): void {
-  void import('../permission-engine/store').then((m) => {
-    m.syncPermissionEngineFromSources(organizationId);
-  });
-}
-
 /** Rebuild policy catalog, hierarchy, enforcement, and simulation from Prompt Registry + platform sources */
 export function syncPolicyEngineFromSources(organizationId: string): OrganizationPolicyEngineProfile {
   const existing = getOrganizationPolicyEngineProfile(organizationId);
@@ -63,15 +58,11 @@ export function syncPolicyEngineFromSources(organizationId: string): Organizatio
   if (existing?.simulationResults?.length) {
     rebuilt.simulationResults = existing.simulationResults;
   }
-  const profile = upsertProfile(rebuilt);
-  chainPermissionEngineSync(organizationId);
-  return profile;
+  return upsertProfile(rebuilt);
 }
 
-export function ensureOrganizationPolicyEngineProfile(
-  organizationId: string
-): OrganizationPolicyEngineProfile {
-  return syncPolicyEngineFromSources(organizationId);
+export function ensureOrganizationPolicyEngineProfile(organizationId: string): OrganizationPolicyEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationPolicyEngineProfile, syncPolicyEngineFromSources);
 }
 
 export function appendPolicySimulationResult(

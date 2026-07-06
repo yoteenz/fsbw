@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   QA_SIMULATION_ENGINE_STORAGE_KEY,
   QA_SIMULATION_ENGINE_VERSION,
@@ -50,16 +51,11 @@ function upsertProfile(profile: OrganizationQaSimulationEngineProfile): Organiza
 /** Rebuild simulation runs and production gates from QA Inspector + platform sources */
 export function syncQaSimulationEngineFromSources(organizationId: string): OrganizationQaSimulationEngineProfile {
   const profile = upsertProfile(buildOrganizationQaSimulationEngineProfile(organizationId));
-  void import('../ai-red-team/store').then((m) => {
-    m.syncAiRedTeamFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationQaSimulationEngineProfile(
-  organizationId: string
-): OrganizationQaSimulationEngineProfile {
-  return syncQaSimulationEngineFromSources(organizationId);
+export function ensureOrganizationQaSimulationEngineProfile(organizationId: string): OrganizationQaSimulationEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationQaSimulationEngineProfile, syncQaSimulationEngineFromSources);
 }
 
 export function runSimulation(

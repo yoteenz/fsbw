@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import {
   STUDIO_OS_ORGANIZATION_OPERATING_MANUAL_UPDATED,
+  getOrganizationOperatingManualProfile,
   syncOrganizationOperatingManualFromSources,
   type OrganizationOperatingManualProfile,
 } from '../studio-os-core/organization-operating-manual';
@@ -12,7 +13,9 @@ export function useOrganizationOperatingManualState() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const refresh = useCallback(() => {
-    const next = syncOrganizationOperatingManualFromSources(workspaceId);
+    const next =
+      getOrganizationOperatingManualProfile(workspaceId) ??
+      syncOrganizationOperatingManualFromSources(workspaceId);
     setProfile(next);
   }, [workspaceId]);
 

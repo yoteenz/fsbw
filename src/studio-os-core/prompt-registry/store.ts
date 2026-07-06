@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   PROMPT_REGISTRY_STORAGE_KEY,
   PROMPT_REGISTRY_VERSION,
@@ -58,16 +59,11 @@ export function syncPromptRegistryFromSources(organizationId: string): Organizat
     rebuilt.testResults = existing.testResults;
   }
   const profile = upsertProfile(rebuilt);
-  void import('../policy-engine/store').then((m) => {
-    m.syncPolicyEngineFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationPromptRegistryProfile(
-  organizationId: string
-): OrganizationPromptRegistryProfile {
-  return syncPromptRegistryFromSources(organizationId);
+export function ensureOrganizationPromptRegistryProfile(organizationId: string): OrganizationPromptRegistryProfile {
+  return readFirstEnsure(organizationId, getOrganizationPromptRegistryProfile, syncPromptRegistryFromSources);
 }
 
 export function appendPromptTestResult(

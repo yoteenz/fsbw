@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   AUTOMATION_REGISTRY_STORAGE_KEY,
   AUTOMATION_REGISTRY_VERSION,
@@ -56,15 +57,11 @@ export function syncAutomationRegistryFromSources(
   if (existing?.executionHistory?.length) {
     rebuilt.executionHistory = existing.executionHistory;
   }
-  const profile = upsertProfile(rebuilt);
-  chainPromptRegistrySync(organizationId);
-  return profile;
+  return upsertProfile(rebuilt);
 }
 
-export function ensureOrganizationAutomationRegistryProfile(
-  organizationId: string
-): OrganizationAutomationRegistryProfile {
-  return syncAutomationRegistryFromSources(organizationId);
+export function ensureOrganizationAutomationRegistryProfile(organizationId: string): OrganizationAutomationRegistryProfile {
+  return readFirstEnsure(organizationId, getOrganizationAutomationRegistryProfile, syncAutomationRegistryFromSources);
 }
 
 export function pauseAutomationsMatching(
@@ -81,11 +78,5 @@ export function pauseAutomationsMatching(
     activeCount: automations.filter((a) => a.status === 'active').length,
     pausedCount: automations.filter((a) => a.status === 'paused').length,
     updatedAt: new Date().toISOString(),
-  });
-}
-
-function chainPromptRegistrySync(organizationId: string): void {
-  void import('../prompt-registry/store').then((m) => {
-    m.syncPromptRegistryFromSources(organizationId);
   });
 }

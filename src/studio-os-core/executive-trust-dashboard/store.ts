@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   EXECUTIVE_TRUST_DASHBOARD_STORAGE_KEY,
   EXECUTIVE_TRUST_DASHBOARD_VERSION,
@@ -54,16 +55,11 @@ export function syncExecutiveTrustDashboardFromSources(
   organizationId: string
 ): OrganizationExecutiveTrustDashboardProfile {
   const profile = upsertProfile(buildOrganizationExecutiveTrustDashboardProfile(organizationId));
-  void import('../time-machine/store').then((m) => {
-    m.syncTimeMachineFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationExecutiveTrustDashboardProfile(
-  organizationId: string
-): OrganizationExecutiveTrustDashboardProfile {
-  return syncExecutiveTrustDashboardFromSources(organizationId);
+export function ensureOrganizationExecutiveTrustDashboardProfile(organizationId: string): OrganizationExecutiveTrustDashboardProfile {
+  return readFirstEnsure(organizationId, getOrganizationExecutiveTrustDashboardProfile, syncExecutiveTrustDashboardFromSources);
 }
 
 export function refreshTrustDashboard(organizationId: string): OrganizationExecutiveTrustDashboardProfile {

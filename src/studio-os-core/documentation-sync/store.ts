@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   DOCUMENTATION_SYNC_STORAGE_KEY,
   DOCUMENTATION_SYNC_VERSION,
@@ -53,14 +54,9 @@ function upsertProfile(profile: OrganizationDocumentationSyncProfile): Organizat
 export function syncDocumentationFromSources(organizationId: string): OrganizationDocumentationSyncProfile {
   invalidateDocumentationCaches();
   const profile = upsertProfile(buildOrganizationDocumentationSyncProfile(organizationId));
-  void import('../documentation-registry/store').then((m) => {
-    m.syncDocumentationRegistryFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationDocumentationSyncProfile(
-  organizationId: string
-): OrganizationDocumentationSyncProfile {
-  return syncDocumentationFromSources(organizationId);
+export function ensureOrganizationDocumentationSyncProfile(organizationId: string): OrganizationDocumentationSyncProfile {
+  return readFirstEnsure(organizationId, getOrganizationDocumentationSyncProfile, syncDocumentationFromSources);
 }

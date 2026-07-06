@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   EXPERIENCE_QA_STORAGE_KEY,
   EXPERIENCE_QA_VERSION,
@@ -52,14 +53,11 @@ export function syncExperienceQaFromSources(organizationId: string): Organizatio
     ...built,
     selectedPageId: existing?.selectedPageId ?? built.selectedPageId,
   });
-  void import('../visual-diff-engine/store').then((m) => {
-    m.syncVisualDiffEngineFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationExperienceQaProfile(organizationId: string): OrganizationExperienceQaProfile {
-  return syncExperienceQaFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationExperienceQaProfile, syncExperienceQaFromSources);
 }
 
 export function refreshExperienceQa(organizationId: string): OrganizationExperienceQaProfile {

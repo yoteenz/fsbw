@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   RELATIONSHIP_MEMORY_STORAGE_KEY,
   RELATIONSHIP_MEMORY_VERSION,
@@ -51,16 +52,11 @@ export function syncRelationshipMemoryFromSources(
   organizationId: string
 ): OrganizationRelationshipMemoryProfile {
   const profile = upsertProfile(buildOrganizationRelationshipMemoryProfile(organizationId));
-  void import('../predictive-organization/store').then((m) => {
-    m.syncPredictiveOrganizationFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationRelationshipMemoryProfile(
-  organizationId: string
-): OrganizationRelationshipMemoryProfile {
-  return syncRelationshipMemoryFromSources(organizationId);
+export function ensureOrganizationRelationshipMemoryProfile(organizationId: string): OrganizationRelationshipMemoryProfile {
+  return readFirstEnsure(organizationId, getOrganizationRelationshipMemoryProfile, syncRelationshipMemoryFromSources);
 }
 
 export function refreshRelationshipMemoryProfile(

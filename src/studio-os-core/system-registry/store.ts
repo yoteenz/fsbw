@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   SYSTEM_REGISTRY_STORAGE_KEY,
   SYSTEM_REGISTRY_VERSION,
@@ -50,14 +51,9 @@ function upsertProfile(profile: OrganizationSystemRegistryProfile): Organization
 /** Rebuild master system index from all Studio OS sources */
 export function syncSystemRegistryFromSources(organizationId: string): OrganizationSystemRegistryProfile {
   const profile = upsertProfile(buildOrganizationSystemRegistryProfile(organizationId));
-  void import('../component-registry/store').then((m) => {
-    m.syncComponentRegistryFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationSystemRegistryProfile(
-  organizationId: string
-): OrganizationSystemRegistryProfile {
-  return syncSystemRegistryFromSources(organizationId);
+export function ensureOrganizationSystemRegistryProfile(organizationId: string): OrganizationSystemRegistryProfile {
+  return readFirstEnsure(organizationId, getOrganizationSystemRegistryProfile, syncSystemRegistryFromSources);
 }

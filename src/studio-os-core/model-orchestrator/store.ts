@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   MODEL_ORCHESTRATOR_STORAGE_KEY,
   MODEL_ORCHESTRATOR_VERSION,
@@ -58,16 +59,11 @@ export function syncModelOrchestratorFromSources(
   organizationId: string
 ): OrganizationModelOrchestratorProfile {
   const profile = upsertProfile(buildOrganizationModelOrchestratorProfile(organizationId));
-  void import('../studio-foundation-models/store').then((m) => {
-    m.syncStudioFoundationModelsFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationModelOrchestratorProfile(
-  organizationId: string
-): OrganizationModelOrchestratorProfile {
-  return syncModelOrchestratorFromSources(organizationId);
+export function ensureOrganizationModelOrchestratorProfile(organizationId: string): OrganizationModelOrchestratorProfile {
+  return readFirstEnsure(organizationId, getOrganizationModelOrchestratorProfile, syncModelOrchestratorFromSources);
 }
 
 /** All AI requests flow through Model Orchestrator™ after Studio Intelligence™ */

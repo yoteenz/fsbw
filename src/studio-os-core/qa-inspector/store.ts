@@ -1,4 +1,5 @@
 import { QA_INSPECTOR_STORAGE_KEY, QA_INSPECTOR_VERSION, STUDIO_OS_QA_INSPECTOR_UPDATED } from './constants';
+import { readFirstEnsure } from '../sync/profile-cache';
 import { buildOrganizationQaInspectorProfile } from './engine-profile-builder';
 import type { InspectorFindingStatus, OrganizationQaInspectorProfile, QaInspectorStore } from './types';
 
@@ -44,14 +45,11 @@ function upsertProfile(profile: OrganizationQaInspectorProfile): OrganizationQaI
 /** Rebuild inspector findings and audit runs from QA Headquarters + platform sources */
 export function syncQaInspectorFromSources(organizationId: string): OrganizationQaInspectorProfile {
   const profile = upsertProfile(buildOrganizationQaInspectorProfile(organizationId));
-  void import('../qa-simulation-engine/store').then((m) => {
-    m.syncQaSimulationEngineFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationQaInspectorProfile(organizationId: string): OrganizationQaInspectorProfile {
-  return syncQaInspectorFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationQaInspectorProfile, syncQaInspectorFromSources);
 }
 
 export function updateFindingStatus(

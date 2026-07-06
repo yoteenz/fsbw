@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   EXPERIENCE_ENGINE_STORAGE_KEY,
   EXPERIENCE_ENGINE_VERSION,
@@ -53,10 +54,8 @@ export function syncExperienceEngineFromSources(organizationId: string): Organiz
   return upsertProfile(buildOrganizationExperienceEngineProfile(organizationId));
 }
 
-export function ensureOrganizationExperienceEngineProfile(
-  organizationId: string
-): OrganizationExperienceEngineProfile {
-  return syncExperienceEngineFromSources(organizationId);
+export function ensureOrganizationExperienceEngineProfile(organizationId: string): OrganizationExperienceEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationExperienceEngineProfile, syncExperienceEngineFromSources);
 }
 
 export function setExperienceMode(

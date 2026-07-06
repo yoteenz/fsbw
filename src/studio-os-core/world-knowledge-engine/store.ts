@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   STUDIO_OS_WORLD_KNOWLEDGE_ENGINE_UPDATED,
   WORLD_KNOWLEDGE_ENGINE_STORAGE_KEY,
@@ -51,16 +52,11 @@ export function syncWorldKnowledgeEngineFromSources(
   organizationId: string
 ): OrganizationWorldKnowledgeProfile {
   const profile = upsertProfile(buildOrganizationWorldKnowledgeProfile(organizationId));
-  void import('../founder-operating-system/store').then((m) => {
-    m.syncFounderOperatingSystemFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationWorldKnowledgeProfile(
-  organizationId: string
-): OrganizationWorldKnowledgeProfile {
-  return syncWorldKnowledgeEngineFromSources(organizationId);
+export function ensureOrganizationWorldKnowledgeProfile(organizationId: string): OrganizationWorldKnowledgeProfile {
+  return readFirstEnsure(organizationId, getOrganizationWorldKnowledgeProfile, syncWorldKnowledgeEngineFromSources);
 }
 
 export function refreshOrganizationWorldKnowledgeProfile(

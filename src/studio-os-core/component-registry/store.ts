@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   COMPONENT_REGISTRY_STORAGE_KEY,
   COMPONENT_REGISTRY_VERSION,
@@ -52,14 +53,9 @@ export function syncComponentRegistryFromSources(
   organizationId: string
 ): OrganizationComponentRegistryProfile {
   const profile = upsertProfile(buildOrganizationComponentRegistryProfile(organizationId));
-  void import('../design-token-engine/store').then((m) => {
-    m.syncDesignTokenEngineFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationComponentRegistryProfile(
-  organizationId: string
-): OrganizationComponentRegistryProfile {
-  return syncComponentRegistryFromSources(organizationId);
+export function ensureOrganizationComponentRegistryProfile(organizationId: string): OrganizationComponentRegistryProfile {
+  return readFirstEnsure(organizationId, getOrganizationComponentRegistryProfile, syncComponentRegistryFromSources);
 }

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import {
   STUDIO_OS_EXECUTIVE_TIMELINE_HISTORY_UPDATED,
+  getOrganizationExecutiveHistoryProfile,
   syncExecutiveTimelineHistoryFromSources,
   type HistoryFilterState,
   type OrganizationExecutiveHistoryProfile,
@@ -25,7 +26,7 @@ export function useExecutiveTimelineHistoryState() {
   const [replayActive, setReplayActive] = useState(false);
 
   const refresh = useCallback(() => {
-    const next = syncExecutiveTimelineHistoryFromSources(workspaceId);
+    const next = getOrganizationExecutiveHistoryProfile(workspaceId) ?? syncExecutiveTimelineHistoryFromSources(workspaceId);
     setProfile(next);
     if (selectedYear == null && next.yearSnapshots.length > 0) {
       setSelectedYear(next.yearSnapshots[next.yearSnapshots.length - 1]?.year ?? null);

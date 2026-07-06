@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   DOCUMENTATION_REGISTRY_STORAGE_KEY,
   DOCUMENTATION_REGISTRY_VERSION,
@@ -54,14 +55,9 @@ export function syncDocumentationRegistryFromSources(
 ): OrganizationDocumentationRegistryProfile {
   syncAllDocumentationConsumers();
   const profile = upsertProfile(buildOrganizationDocumentationRegistryProfile(organizationId));
-  void import('../documentation-governance/store').then((m) => {
-    m.syncDocumentationGovernanceFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationDocumentationRegistryProfile(
-  organizationId: string
-): OrganizationDocumentationRegistryProfile {
-  return syncDocumentationRegistryFromSources(organizationId);
+export function ensureOrganizationDocumentationRegistryProfile(organizationId: string): OrganizationDocumentationRegistryProfile {
+  return readFirstEnsure(organizationId, getOrganizationDocumentationRegistryProfile, syncDocumentationRegistryFromSources);
 }

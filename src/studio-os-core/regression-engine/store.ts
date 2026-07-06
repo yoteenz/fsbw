@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   REGRESSION_ENGINE_STORAGE_KEY,
   REGRESSION_ENGINE_VERSION,
@@ -56,16 +57,11 @@ export function syncRegressionEngineFromSources(
     ...built,
     selectedBuildId: existing?.selectedBuildId ?? built.selectedBuildId,
   });
-  void import('../release-readiness/store').then((m) => {
-    m.syncReleaseReadinessFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationRegressionEngineProfile(
-  organizationId: string
-): OrganizationRegressionEngineProfile {
-  return syncRegressionEngineFromSources(organizationId);
+export function ensureOrganizationRegressionEngineProfile(organizationId: string): OrganizationRegressionEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationRegressionEngineProfile, syncRegressionEngineFromSources);
 }
 
 export function refreshRegressionEngine(organizationId: string): OrganizationRegressionEngineProfile {

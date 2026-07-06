@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   EXECUTIVE_TIMELINE_HISTORY_STORAGE_KEY,
   EXECUTIVE_TIMELINE_HISTORY_VERSION,
@@ -53,16 +54,11 @@ export function syncExecutiveTimelineHistoryFromSources(
   organizationId: string
 ): OrganizationExecutiveHistoryProfile {
   const profile = upsertProfile(buildOrganizationExecutiveHistoryProfile(organizationId));
-  void import('../world-knowledge-engine/store').then((m) => {
-    m.syncWorldKnowledgeEngineFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationExecutiveHistoryProfile(
-  organizationId: string
-): OrganizationExecutiveHistoryProfile {
-  return syncExecutiveTimelineHistoryFromSources(organizationId);
+export function ensureOrganizationExecutiveHistoryProfile(organizationId: string): OrganizationExecutiveHistoryProfile {
+  return readFirstEnsure(organizationId, getOrganizationExecutiveHistoryProfile, syncExecutiveTimelineHistoryFromSources);
 }
 
 export function refreshOrganizationExecutiveHistoryProfile(

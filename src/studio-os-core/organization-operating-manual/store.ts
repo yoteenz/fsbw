@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   ORGANIZATION_OPERATING_MANUAL_STORAGE_KEY,
   ORGANIZATION_OPERATING_MANUAL_VERSION,
@@ -51,16 +52,11 @@ export function syncOrganizationOperatingManualFromSources(
   organizationId: string
 ): OrganizationOperatingManualProfile {
   const profile = upsertProfile(buildOrganizationOperatingManualProfile(organizationId));
-  void import('../legacy-network/store').then((m) => {
-    m.syncLegacyNetworkFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationOperatingManualProfile(
-  organizationId: string
-): OrganizationOperatingManualProfile {
-  return syncOrganizationOperatingManualFromSources(organizationId);
+export function ensureOrganizationOperatingManualProfile(organizationId: string): OrganizationOperatingManualProfile {
+  return readFirstEnsure(organizationId, getOrganizationOperatingManualProfile, syncOrganizationOperatingManualFromSources);
 }
 
 export function refreshOrganizationOperatingManualProfile(

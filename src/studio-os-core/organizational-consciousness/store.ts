@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   ORGANIZATIONAL_CONSCIOUSNESS_STORAGE_KEY,
   ORGANIZATIONAL_CONSCIOUSNESS_VERSION,
@@ -51,16 +52,11 @@ export function syncOrganizationalConsciousnessFromSources(
   organizationId: string
 ): OrganizationConsciousnessProfile {
   const profile = upsertProfile(buildOrganizationConsciousnessProfile(organizationId));
-  void import('../executive-timeline/history-store').then((m) => {
-    m.syncExecutiveTimelineHistoryFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationConsciousnessProfile(
-  organizationId: string
-): OrganizationConsciousnessProfile {
-  return syncOrganizationalConsciousnessFromSources(organizationId);
+export function ensureOrganizationConsciousnessProfile(organizationId: string): OrganizationConsciousnessProfile {
+  return readFirstEnsure(organizationId, getOrganizationConsciousnessProfile, syncOrganizationalConsciousnessFromSources);
 }
 
 export function refreshOrganizationalConsciousnessProfile(

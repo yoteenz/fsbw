@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   SELF_HEALING_ENGINE_STORAGE_KEY,
   SELF_HEALING_ENGINE_VERSION,
@@ -88,16 +89,11 @@ export function syncSelfHealingEngineFromSources(organizationId: string): Organi
     existing
   );
   const profile = upsertProfile(built);
-  void import('../decision-audit/store').then((m) => {
-    m.syncDecisionAuditFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationSelfHealingEngineProfile(
-  organizationId: string
-): OrganizationSelfHealingEngineProfile {
-  return syncSelfHealingEngineFromSources(organizationId);
+export function ensureOrganizationSelfHealingEngineProfile(organizationId: string): OrganizationSelfHealingEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationSelfHealingEngineProfile, syncSelfHealingEngineFromSources);
 }
 
 export function refreshSelfHealingEngine(organizationId: string): OrganizationSelfHealingEngineProfile {

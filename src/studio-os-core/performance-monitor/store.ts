@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   PERFORMANCE_MONITOR_STORAGE_KEY,
   PERFORMANCE_MONITOR_VERSION,
@@ -56,16 +57,11 @@ export function syncPerformanceMonitorFromSources(
     ...built,
     selectedModuleId: existing?.selectedModuleId ?? built.selectedModuleId,
   });
-  void import('../regression-engine/store').then((m) => {
-    m.syncRegressionEngineFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationPerformanceMonitorProfile(
-  organizationId: string
-): OrganizationPerformanceMonitorProfile {
-  return syncPerformanceMonitorFromSources(organizationId);
+export function ensureOrganizationPerformanceMonitorProfile(organizationId: string): OrganizationPerformanceMonitorProfile {
+  return readFirstEnsure(organizationId, getOrganizationPerformanceMonitorProfile, syncPerformanceMonitorFromSources);
 }
 
 export function refreshPerformanceMonitor(organizationId: string): OrganizationPerformanceMonitorProfile {

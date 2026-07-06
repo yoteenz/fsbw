@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   ORGANIZATIONAL_GUARDIAN_STORAGE_KEY,
   ORGANIZATIONAL_GUARDIAN_VERSION,
@@ -72,14 +73,11 @@ export function syncOrganizationalGuardianFromSources(organizationId: string): O
     ...built,
     selectedAlertId: existing?.selectedAlertId ?? built.selectedAlertId,
   });
-  void import('../design-compliance-engine/store').then((m) => {
-    m.syncDesignComplianceEngineFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationGuardianProfile(organizationId: string): OrganizationGuardianProfile {
-  return syncOrganizationalGuardianFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationGuardianProfile, syncOrganizationalGuardianFromSources);
 }
 
 export function refreshOrganizationalGuardian(organizationId: string): OrganizationGuardianProfile {

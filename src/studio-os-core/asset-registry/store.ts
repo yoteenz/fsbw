@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   ASSET_REGISTRY_STORAGE_KEY,
   ASSET_REGISTRY_VERSION,
@@ -50,14 +51,9 @@ function upsertProfile(profile: OrganizationAssetRegistryProfile): OrganizationA
 /** Rebuild asset catalog, metadata, versioning, and health from State Engine + platform sources */
 export function syncAssetRegistryFromSources(organizationId: string): OrganizationAssetRegistryProfile {
   const profile = upsertProfile(buildOrganizationAssetRegistryProfile(organizationId));
-  void import('../experience-engine/store').then((m) => {
-    m.syncExperienceEngineFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationAssetRegistryProfile(
-  organizationId: string
-): OrganizationAssetRegistryProfile {
-  return syncAssetRegistryFromSources(organizationId);
+export function ensureOrganizationAssetRegistryProfile(organizationId: string): OrganizationAssetRegistryProfile {
+  return readFirstEnsure(organizationId, getOrganizationAssetRegistryProfile, syncAssetRegistryFromSources);
 }

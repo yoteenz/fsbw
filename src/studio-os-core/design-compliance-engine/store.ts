@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   DESIGN_COMPLIANCE_ENGINE_STORAGE_KEY,
   DESIGN_COMPLIANCE_ENGINE_VERSION,
@@ -56,16 +57,11 @@ export function syncDesignComplianceEngineFromSources(
     ...built,
     selectedPageId: existing?.selectedPageId ?? built.selectedPageId,
   });
-  void import('../prompt-qa/store').then((m) => {
-    m.syncPromptQaFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationDesignComplianceEngineProfile(
-  organizationId: string
-): OrganizationDesignComplianceEngineProfile {
-  return syncDesignComplianceEngineFromSources(organizationId);
+export function ensureOrganizationDesignComplianceEngineProfile(organizationId: string): OrganizationDesignComplianceEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationDesignComplianceEngineProfile, syncDesignComplianceEngineFromSources);
 }
 
 export function refreshDesignComplianceEngine(organizationId: string): OrganizationDesignComplianceEngineProfile {

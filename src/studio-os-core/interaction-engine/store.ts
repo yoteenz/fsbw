@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   INTERACTION_ENGINE_STORAGE_KEY,
   INTERACTION_ENGINE_VERSION,
@@ -52,14 +53,9 @@ export function syncInteractionEngineFromSources(
   organizationId: string
 ): OrganizationInteractionEngineProfile {
   const profile = upsertProfile(buildOrganizationInteractionEngineProfile(organizationId));
-  void import('../event-bus/store').then((m) => {
-    m.syncEventBusFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationInteractionEngineProfile(
-  organizationId: string
-): OrganizationInteractionEngineProfile {
-  return syncInteractionEngineFromSources(organizationId);
+export function ensureOrganizationInteractionEngineProfile(organizationId: string): OrganizationInteractionEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationInteractionEngineProfile, syncInteractionEngineFromSources);
 }

@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   DECISION_AUDIT_STORAGE_KEY,
   DECISION_AUDIT_VERSION,
@@ -56,14 +57,11 @@ export function syncDecisionAuditFromSources(organizationId: string): Organizati
     activeFilter: existing?.activeFilter ?? built.activeFilter,
     selectedDecisionId: existing?.selectedDecisionId ?? built.selectedDecisionId,
   });
-  void import('../confidence-engine/store').then((m) => {
-    m.syncConfidenceEngineFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationDecisionAuditProfile(organizationId: string): OrganizationDecisionAuditProfile {
-  return syncDecisionAuditFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationDecisionAuditProfile, syncDecisionAuditFromSources);
 }
 
 export function refreshDecisionAudit(organizationId: string): OrganizationDecisionAuditProfile {

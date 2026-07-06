@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   ANTICIPATION_ENGINE_STORAGE_KEY,
   ANTICIPATION_ENGINE_VERSION,
@@ -49,14 +50,11 @@ function upsertProfile(profile: OrganizationAnticipationProfile): OrganizationAn
 
 export function syncAnticipationEngineFromSources(organizationId: string): OrganizationAnticipationProfile {
   const profile = upsertProfile(buildOrganizationAnticipationProfile(organizationId));
-  void import('../founder-cognitive-load/store').then((m) => {
-    m.syncFounderCognitiveLoadFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationAnticipationProfile(organizationId: string): OrganizationAnticipationProfile {
-  return syncAnticipationEngineFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationAnticipationProfile, syncAnticipationEngineFromSources);
 }
 
 export function refreshAnticipationPreparations(organizationId: string): OrganizationAnticipationProfile {

@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   PROMPT_QA_STORAGE_KEY,
   PROMPT_QA_VERSION,
@@ -52,14 +53,11 @@ export function syncPromptQaFromSources(organizationId: string): OrganizationPro
     ...built,
     selectedPromptId: existing?.selectedPromptId ?? built.selectedPromptId,
   });
-  void import('../experience-qa/store').then((m) => {
-    m.syncExperienceQaFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationPromptQaProfile(organizationId: string): OrganizationPromptQaProfile {
-  return syncPromptQaFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationPromptQaProfile, syncPromptQaFromSources);
 }
 
 export function refreshPromptQa(organizationId: string): OrganizationPromptQaProfile {

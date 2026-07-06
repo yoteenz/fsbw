@@ -1,4 +1,5 @@
 import { AI_RED_TEAM_STORAGE_KEY, AI_RED_TEAM_VERSION, STUDIO_OS_AI_RED_TEAM_UPDATED } from './constants';
+import { readFirstEnsure } from '../sync/profile-cache';
 import { buildOrganizationAiRedTeamProfile } from './engine-profile-builder';
 import type { OrganizationAiRedTeamProfile, AiRedTeamStore, RedTeamFindingStatus } from './types';
 
@@ -44,14 +45,11 @@ function upsertProfile(profile: OrganizationAiRedTeamProfile): OrganizationAiRed
 /** Rebuild red team findings and challenges from QA layer + platform sources */
 export function syncAiRedTeamFromSources(organizationId: string): OrganizationAiRedTeamProfile {
   const profile = upsertProfile(buildOrganizationAiRedTeamProfile(organizationId));
-  void import('../executive-trust-dashboard/store').then((m) => {
-    m.syncExecutiveTrustDashboardFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationAiRedTeamProfile(organizationId: string): OrganizationAiRedTeamProfile {
-  return syncAiRedTeamFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationAiRedTeamProfile, syncAiRedTeamFromSources);
 }
 
 export function updateRedTeamFindingStatus(

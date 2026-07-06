@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   STUDIO_INTELLIGENCE_ARCHITECTURE_STORAGE_KEY,
   STUDIO_INTELLIGENCE_ARCHITECTURE_VERSION,
@@ -59,16 +60,11 @@ export function syncStudioIntelligenceArchitectureFromSources(
   organizationId: string
 ): OrganizationStudioIntelligenceArchitectureProfile {
   const profile = upsertProfile(buildOrganizationStudioIntelligenceArchitectureProfile(organizationId));
-  void import('../model-orchestrator/store').then((m) => {
-    m.syncModelOrchestratorFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationStudioIntelligenceArchitectureProfile(
-  organizationId: string
-): OrganizationStudioIntelligenceArchitectureProfile {
-  return syncStudioIntelligenceArchitectureFromSources(organizationId);
+export function ensureOrganizationStudioIntelligenceArchitectureProfile(organizationId: string): OrganizationStudioIntelligenceArchitectureProfile {
+  return readFirstEnsure(organizationId, getOrganizationStudioIntelligenceArchitectureProfile, syncStudioIntelligenceArchitectureFromSources);
 }
 
 export function refreshOrganizationStudioIntelligenceArchitectureProfile(

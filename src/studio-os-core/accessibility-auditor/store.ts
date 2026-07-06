@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   ACCESSIBILITY_AUDITOR_STORAGE_KEY,
   ACCESSIBILITY_AUDITOR_VERSION,
@@ -56,16 +57,11 @@ export function syncAccessibilityAuditorFromSources(
     ...built,
     selectedPageId: existing?.selectedPageId ?? built.selectedPageId,
   });
-  void import('../performance-monitor/store').then((m) => {
-    m.syncPerformanceMonitorFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationAccessibilityAuditorProfile(
-  organizationId: string
-): OrganizationAccessibilityAuditorProfile {
-  return syncAccessibilityAuditorFromSources(organizationId);
+export function ensureOrganizationAccessibilityAuditorProfile(organizationId: string): OrganizationAccessibilityAuditorProfile {
+  return readFirstEnsure(organizationId, getOrganizationAccessibilityAuditorProfile, syncAccessibilityAuditorFromSources);
 }
 
 export function refreshAccessibilityAuditor(organizationId: string): OrganizationAccessibilityAuditorProfile {

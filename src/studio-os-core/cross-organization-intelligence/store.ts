@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   CROSS_ORG_INTELLIGENCE_STORAGE_KEY,
   CROSS_ORG_INTELLIGENCE_VERSION,
@@ -49,16 +50,11 @@ function upsertProfile(profile: OrganizationCrossOrgIntelligenceProfile): Organi
 
 export function syncCrossOrgIntelligenceFromSources(organizationId: string): OrganizationCrossOrgIntelligenceProfile {
   const profile = upsertProfile(buildOrganizationCrossOrgIntelligenceProfile(organizationId));
-  void import('../relationship-memory/store').then((m) => {
-    m.syncRelationshipMemoryFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationCrossOrgIntelligenceProfile(
-  organizationId: string
-): OrganizationCrossOrgIntelligenceProfile {
-  return syncCrossOrgIntelligenceFromSources(organizationId);
+export function ensureOrganizationCrossOrgIntelligenceProfile(organizationId: string): OrganizationCrossOrgIntelligenceProfile {
+  return readFirstEnsure(organizationId, getOrganizationCrossOrgIntelligenceProfile, syncCrossOrgIntelligenceFromSources);
 }
 
 export function refreshCrossOrgIntelligence(organizationId: string): OrganizationCrossOrgIntelligenceProfile {

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import {
   runSandboxWhatIfSimulation,
+  getOrganizationDigitalTwinProfile,
   syncDigitalTwinFromSources,
   type OrganizationDigitalTwinProfile,
   type WhatIfSimulationResult,
@@ -13,7 +14,7 @@ export function useOrganizationDigitalTwinState() {
   const [lastSimulation, setLastSimulation] = useState<WhatIfSimulationResult | null>(null);
 
   const refresh = useCallback(() => {
-    const next = syncDigitalTwinFromSources(workspaceId);
+    const next = getOrganizationDigitalTwinProfile(workspaceId) ?? syncDigitalTwinFromSources(workspaceId);
     setProfile(next);
   }, [workspaceId]);
 

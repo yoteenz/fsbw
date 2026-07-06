@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   VISUAL_DIFF_ENGINE_STORAGE_KEY,
   VISUAL_DIFF_ENGINE_VERSION,
@@ -56,16 +57,11 @@ export function syncVisualDiffEngineFromSources(
     ...built,
     selectedScreenId: existing?.selectedScreenId ?? built.selectedScreenId,
   });
-  void import('../accessibility-auditor/store').then((m) => {
-    m.syncAccessibilityAuditorFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationVisualDiffEngineProfile(
-  organizationId: string
-): OrganizationVisualDiffEngineProfile {
-  return syncVisualDiffEngineFromSources(organizationId);
+export function ensureOrganizationVisualDiffEngineProfile(organizationId: string): OrganizationVisualDiffEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationVisualDiffEngineProfile, syncVisualDiffEngineFromSources);
 }
 
 export function refreshVisualDiffEngine(organizationId: string): OrganizationVisualDiffEngineProfile {

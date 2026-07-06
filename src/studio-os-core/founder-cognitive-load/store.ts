@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   FOUNDER_COGNITIVE_LOAD_STORAGE_KEY,
   FOUNDER_COGNITIVE_LOAD_VERSION,
@@ -49,16 +50,11 @@ function upsertProfile(profile: OrganizationFounderCognitiveLoadProfile): Organi
 
 export function syncFounderCognitiveLoadFromSources(organizationId: string): OrganizationFounderCognitiveLoadProfile {
   const profile = upsertProfile(buildOrganizationFounderCognitiveLoadProfile(organizationId));
-  void import('../presence-engine/store').then((m) => {
-    m.syncPresenceEngineFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationFounderCognitiveLoadProfile(
-  organizationId: string
-): OrganizationFounderCognitiveLoadProfile {
-  return syncFounderCognitiveLoadFromSources(organizationId);
+export function ensureOrganizationFounderCognitiveLoadProfile(organizationId: string): OrganizationFounderCognitiveLoadProfile {
+  return readFirstEnsure(organizationId, getOrganizationFounderCognitiveLoadProfile, syncFounderCognitiveLoadFromSources);
 }
 
 export function refreshFounderCognitiveLoad(organizationId: string): OrganizationFounderCognitiveLoadProfile {

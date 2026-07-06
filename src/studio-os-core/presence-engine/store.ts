@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   PRESENCE_ENGINE_STORAGE_KEY,
   PRESENCE_ENGINE_VERSION,
@@ -47,14 +48,11 @@ function upsertProfile(profile: OrganizationPresenceProfile): OrganizationPresen
 
 export function syncPresenceEngineFromSources(organizationId: string): OrganizationPresenceProfile {
   const profile = upsertProfile(buildOrganizationPresenceProfile(organizationId));
-  void import('../cross-organization-intelligence/store').then((m) => {
-    m.syncCrossOrgIntelligenceFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationPresenceProfile(organizationId: string): OrganizationPresenceProfile {
-  return syncPresenceEngineFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationPresenceProfile, syncPresenceEngineFromSources);
 }
 
 export function refreshPresenceProfile(organizationId: string): OrganizationPresenceProfile {

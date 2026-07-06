@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   STATE_ENGINE_STORAGE_KEY,
   STATE_ENGINE_VERSION,
@@ -50,14 +51,9 @@ function upsertProfile(profile: OrganizationStateEngineProfile): OrganizationSta
 /** Rebuild lifecycle states, transitions, objects, and history from Workflow Engine + platform sources */
 export function syncStateEngineFromSources(organizationId: string): OrganizationStateEngineProfile {
   const profile = upsertProfile(buildOrganizationStateEngineProfile(organizationId));
-  void import('../asset-registry/store').then((m) => {
-    m.syncAssetRegistryFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationStateEngineProfile(
-  organizationId: string
-): OrganizationStateEngineProfile {
-  return syncStateEngineFromSources(organizationId);
+export function ensureOrganizationStateEngineProfile(organizationId: string): OrganizationStateEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationStateEngineProfile, syncStateEngineFromSources);
 }

@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   PLUGIN_SDK_STORAGE_KEY,
   PLUGIN_SDK_VERSION,
@@ -48,14 +49,11 @@ function upsertProfile(profile: OrganizationPluginSdkProfile): OrganizationPlugi
 /** Rebuild plugin catalog, SDK capabilities, marketplace, and sandbox from Workspace Runtime + platform sources */
 export function syncPluginSdkFromSources(organizationId: string): OrganizationPluginSdkProfile {
   const profile = upsertProfile(buildOrganizationPluginSdkProfile(organizationId));
-  void import('../workflow-engine/store').then((m) => {
-    m.syncWorkflowEngineFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationPluginSdkProfile(organizationId: string): OrganizationPluginSdkProfile {
-  return syncPluginSdkFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationPluginSdkProfile, syncPluginSdkFromSources);
 }
 
 export function setPluginDisabled(

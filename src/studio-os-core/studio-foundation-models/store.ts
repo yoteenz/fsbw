@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   STUDIO_FOUNDATION_MODELS_STORAGE_KEY,
   STUDIO_FOUNDATION_MODELS_VERSION,
@@ -56,16 +57,11 @@ export function syncStudioFoundationModelsFromSources(
   organizationId: string
 ): OrganizationStudioFoundationModelsProfile {
   const profile = upsertProfile(buildOrganizationStudioFoundationModelsProfile(organizationId));
-  void import('../documentation-sync/store').then((m) => {
-    m.syncDocumentationFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationStudioFoundationModelsProfile(
-  organizationId: string
-): OrganizationStudioFoundationModelsProfile {
-  return syncStudioFoundationModelsFromSources(organizationId);
+export function ensureOrganizationStudioFoundationModelsProfile(organizationId: string): OrganizationStudioFoundationModelsProfile {
+  return readFirstEnsure(organizationId, getOrganizationStudioFoundationModelsProfile, syncStudioFoundationModelsFromSources);
 }
 
 export function refreshOrganizationStudioFoundationModelsProfile(

@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   PERMISSION_ENGINE_STORAGE_KEY,
   PERMISSION_ENGINE_VERSION,
@@ -58,16 +59,11 @@ export function syncPermissionEngineFromSources(organizationId: string): Organiz
     rebuilt.approvalChains = existing.approvalChains;
   }
   const profile = upsertProfile(rebuilt);
-  void import('../workspace-runtime/store').then((m) => {
-    m.syncWorkspaceRuntimeFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationPermissionEngineProfile(
-  organizationId: string
-): OrganizationPermissionEngineProfile {
-  return syncPermissionEngineFromSources(organizationId);
+export function ensureOrganizationPermissionEngineProfile(organizationId: string): OrganizationPermissionEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationPermissionEngineProfile, syncPermissionEngineFromSources);
 }
 
 export function appendPermissionAuditRecord(

@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   AUTONOMOUS_PREPARATION_STORAGE_KEY,
   AUTONOMOUS_PREPARATION_VERSION,
@@ -63,16 +64,11 @@ export function syncAutonomousPreparationFromSources(
   const profile = upsertProfile(
     buildOrganizationAutonomousPreparationProfile(organizationId, existing?.pendingPreparations)
   );
-  void import('../organizational-consciousness/store').then((m) => {
-    m.syncOrganizationalConsciousnessFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationAutonomousPreparationProfile(
-  organizationId: string
-): OrganizationAutonomousPreparationProfile {
-  return syncAutonomousPreparationFromSources(organizationId);
+export function ensureOrganizationAutonomousPreparationProfile(organizationId: string): OrganizationAutonomousPreparationProfile {
+  return readFirstEnsure(organizationId, getOrganizationAutonomousPreparationProfile, syncAutonomousPreparationFromSources);
 }
 
 export function refreshAutonomousPreparationProfile(

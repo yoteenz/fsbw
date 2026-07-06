@@ -114,6 +114,7 @@ import { MissionControlPerformanceMonitorPanel } from './MissionControlPerforman
 import { MissionControlRegressionEnginePanel } from './MissionControlRegressionEnginePanel';
 import { MissionControlReleaseReadinessPanel } from './MissionControlReleaseReadinessPanel';
 import { MissionControlEngineeringExcellencePanel } from './MissionControlEngineeringExcellencePanel';
+import { MissionControlDeferredPanel } from './MissionControlDeferredPanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -185,25 +186,29 @@ export function MissionControlWorkspace() {
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <MissionControlExecutiveHealthPanel />
             <MissionControlOrganizationPulsePanel />
-            <MissionControlDigitalTwinPanel />
-            <MissionControlExecutiveTrustDashboardPanel />
-            <MissionControlTimeMachinePanel />
-            <MissionControlPredictiveQaPanel />
-            <MissionControlSelfHealingEnginePanel />
-            <MissionControlDecisionAuditPanel />
-            <MissionControlConfidenceEnginePanel />
-            <MissionControlOrganizationalGuardianPanel />
-            <MissionControlDesignComplianceEnginePanel />
-            <MissionControlPromptQaPanel />
-            <MissionControlExperienceQaPanel />
-            <MissionControlVisualDiffEnginePanel />
-            <MissionControlAccessibilityAuditorPanel />
-            <MissionControlPerformanceMonitorPanel />
-            <MissionControlRegressionEnginePanel />
-            <MissionControlReleaseReadinessPanel />
-            <MissionControlEngineeringExcellencePanel />
-            <MissionControlKnowledgeConfidencePanel />
-            <MissionControlAmbientBriefingPanel />
+            <MissionControlDeferredPanel>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <MissionControlDigitalTwinPanel />
+                <MissionControlExecutiveTrustDashboardPanel />
+                <MissionControlTimeMachinePanel />
+                <MissionControlPredictiveQaPanel />
+                <MissionControlSelfHealingEnginePanel />
+                <MissionControlDecisionAuditPanel />
+                <MissionControlConfidenceEnginePanel />
+                <MissionControlOrganizationalGuardianPanel />
+                <MissionControlDesignComplianceEnginePanel />
+                <MissionControlPromptQaPanel />
+                <MissionControlExperienceQaPanel />
+                <MissionControlVisualDiffEnginePanel />
+                <MissionControlAccessibilityAuditorPanel />
+                <MissionControlPerformanceMonitorPanel />
+                <MissionControlRegressionEnginePanel />
+                <MissionControlReleaseReadinessPanel />
+                <MissionControlEngineeringExcellencePanel />
+                <MissionControlKnowledgeConfidencePanel />
+                <MissionControlAmbientBriefingPanel />
+              </div>
+            </MissionControlDeferredPanel>
           </div>
         </HqWingZone>
 
@@ -460,16 +465,20 @@ export function MissionControlWorkspace() {
               </div>
             </ExecutiveSecondaryCard>
             <MissionControlAnticipationPanel />
-            <MissionControlFounderCognitiveLoadPanel />
-            <MissionControlPresencePanel />
-            <MissionControlCrossOrgIntelligencePanel />
-            <MissionControlRelationshipMemoryPanel />
-            <MissionControlPredictiveOrganizationPanel />
-            <MissionControlAutonomousPreparationPanel />
-            <MissionControlOrganizationalConsciousnessPanel />
-            <MissionControlWorldKnowledgeEnginePanel />
-            <MissionControlFounderOperatingSystemPanel />
-            <MissionControlInnovationLabPanel />
+            <MissionControlDeferredPanel>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:col-span-2">
+                <MissionControlFounderCognitiveLoadPanel />
+                <MissionControlPresencePanel />
+                <MissionControlCrossOrgIntelligencePanel />
+                <MissionControlRelationshipMemoryPanel />
+                <MissionControlPredictiveOrganizationPanel />
+                <MissionControlAutonomousPreparationPanel />
+                <MissionControlOrganizationalConsciousnessPanel />
+                <MissionControlWorldKnowledgeEnginePanel />
+                <MissionControlFounderOperatingSystemPanel />
+                <MissionControlInnovationLabPanel />
+              </div>
+            </MissionControlDeferredPanel>
           </div>
         </HqWingZone>
 
@@ -569,47 +578,35 @@ export function MissionControlWorkspace() {
             atmosphereLabel={living.atmosphereLabel}
           />
           <MissionControlExecutiveTimelinePanel />
-          <MissionControlLegacyNetworkPanel />
-          <MissionControlStudioIntelligenceArchitecturePanel />
-          <MissionControlModelOrchestratorPanel />
-          <MissionControlStudioFoundationModelsPanel />
-          <MissionControlDocumentationRegistryPanel />
-          <MissionControlDocumentationGovernancePanel />
-          <MissionControlSystemRegistryPanel />
-          <MissionControlComponentRegistryPanel />
-          <MissionControlDesignTokenEnginePanel />
-          <MissionControlInteractionEnginePanel />
-          <MissionControlEventBusPanel />
-          <MissionControlAutomationRegistryPanel />
-          <MissionControlPromptRegistryPanel />
-          <MissionControlPolicyEnginePanel />
-          <MissionControlPermissionEnginePanel />
-          <MissionControlWorkspaceRuntimePanel />
-          <MissionControlPluginSdkPanel />
-          <MissionControlWorkflowEnginePanel />
-          <MissionControlStateEnginePanel />
-          <MissionControlAssetRegistryPanel />
-          <MissionControlExperienceEnginePanel />
-          <MissionControlQaHeadquartersPanel />
-          <MissionControlQaInspectorPanel />
-          <MissionControlQaSimulationEnginePanel />
-          <MissionControlAiRedTeamPanel />
-          <MissionControlExecutiveTrustDashboardPanel />
-          <MissionControlTimeMachinePanel />
-          <MissionControlPredictiveQaPanel />
-          <MissionControlSelfHealingEnginePanel />
-          <MissionControlDecisionAuditPanel />
-          <MissionControlConfidenceEnginePanel />
-          <MissionControlOrganizationalGuardianPanel />
-          <MissionControlDesignComplianceEnginePanel />
-          <MissionControlPromptQaPanel />
-          <MissionControlExperienceQaPanel />
-          <MissionControlVisualDiffEnginePanel />
-          <MissionControlAccessibilityAuditorPanel />
-          <MissionControlPerformanceMonitorPanel />
-          <MissionControlRegressionEnginePanel />
-          <MissionControlReleaseReadinessPanel />
-          <MissionControlEngineeringExcellencePanel />
+          <MissionControlDeferredPanel rootMargin="600px">
+            <>
+              <MissionControlLegacyNetworkPanel />
+              <MissionControlStudioIntelligenceArchitecturePanel />
+              <MissionControlModelOrchestratorPanel />
+              <MissionControlStudioFoundationModelsPanel />
+              <MissionControlDocumentationRegistryPanel />
+              <MissionControlDocumentationGovernancePanel />
+              <MissionControlSystemRegistryPanel />
+              <MissionControlComponentRegistryPanel />
+              <MissionControlDesignTokenEnginePanel />
+              <MissionControlInteractionEnginePanel />
+              <MissionControlEventBusPanel />
+              <MissionControlAutomationRegistryPanel />
+              <MissionControlPromptRegistryPanel />
+              <MissionControlPolicyEnginePanel />
+              <MissionControlPermissionEnginePanel />
+              <MissionControlWorkspaceRuntimePanel />
+              <MissionControlPluginSdkPanel />
+              <MissionControlWorkflowEnginePanel />
+              <MissionControlStateEnginePanel />
+              <MissionControlAssetRegistryPanel />
+              <MissionControlExperienceEnginePanel />
+              <MissionControlQaHeadquartersPanel />
+              <MissionControlQaInspectorPanel />
+              <MissionControlQaSimulationEnginePanel />
+              <MissionControlAiRedTeamPanel />
+            </>
+          </MissionControlDeferredPanel>
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

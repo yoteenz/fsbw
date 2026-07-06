@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   DESIGN_TOKEN_ENGINE_STORAGE_KEY,
   DESIGN_TOKEN_ENGINE_VERSION,
@@ -52,14 +53,9 @@ export function syncDesignTokenEngineFromSources(
   organizationId: string
 ): OrganizationDesignTokenEngineProfile {
   const profile = upsertProfile(buildOrganizationDesignTokenEngineProfile(organizationId));
-  void import('../interaction-engine/store').then((m) => {
-    m.syncInteractionEngineFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationDesignTokenEngineProfile(
-  organizationId: string
-): OrganizationDesignTokenEngineProfile {
-  return syncDesignTokenEngineFromSources(organizationId);
+export function ensureOrganizationDesignTokenEngineProfile(organizationId: string): OrganizationDesignTokenEngineProfile {
+  return readFirstEnsure(organizationId, getOrganizationDesignTokenEngineProfile, syncDesignTokenEngineFromSources);
 }

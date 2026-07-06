@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   PREDICTIVE_QA_STORAGE_KEY,
   PREDICTIVE_QA_VERSION,
@@ -66,14 +67,11 @@ export function syncPredictiveQaFromSources(organizationId: string): Organizatio
   const existing = getOrganizationPredictiveQaProfile(organizationId);
   const built = mergePredictionStatuses(buildOrganizationPredictiveQaProfile(organizationId), existing);
   const profile = upsertProfile(built);
-  void import('../self-healing-engine/store').then((m) => {
-    m.syncSelfHealingEngineFromSources(organizationId);
-  });
   return profile;
 }
 
 export function ensureOrganizationPredictiveQaProfile(organizationId: string): OrganizationPredictiveQaProfile {
-  return syncPredictiveQaFromSources(organizationId);
+  return readFirstEnsure(organizationId, getOrganizationPredictiveQaProfile, syncPredictiveQaFromSources);
 }
 
 export function refreshPredictiveQa(organizationId: string): OrganizationPredictiveQaProfile {

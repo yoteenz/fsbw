@@ -3,6 +3,7 @@ import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import {
   resolveScenarioDecision,
   runLabSimulation,
+  getOrganizationSimulationLabProfile,
   syncSimulationLabFromSources,
   type BusinessSimulationReport,
   type OrganizationSimulationLabProfile,
@@ -15,7 +16,7 @@ export function useBusinessSimulationLabState() {
   const [lastReport, setLastReport] = useState<BusinessSimulationReport | null>(null);
 
   const refresh = useCallback(() => {
-    const next = syncSimulationLabFromSources(workspaceId);
+    const next = getOrganizationSimulationLabProfile(workspaceId) ?? syncSimulationLabFromSources(workspaceId);
     setProfile(next);
   }, [workspaceId]);
 

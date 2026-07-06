@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   ENGINEERING_EXCELLENCE_STORAGE_KEY,
   ENGINEERING_EXCELLENCE_VERSION,
@@ -58,10 +59,8 @@ export function syncEngineeringExcellenceFromSources(
   });
 }
 
-export function ensureOrganizationEngineeringExcellenceProfile(
-  organizationId: string
-): OrganizationEngineeringExcellenceProfile {
-  return syncEngineeringExcellenceFromSources(organizationId);
+export function ensureOrganizationEngineeringExcellenceProfile(organizationId: string): OrganizationEngineeringExcellenceProfile {
+  return readFirstEnsure(organizationId, getOrganizationEngineeringExcellenceProfile, syncEngineeringExcellenceFromSources);
 }
 
 export function refreshEngineeringExcellence(organizationId: string): OrganizationEngineeringExcellenceProfile {

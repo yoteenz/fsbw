@@ -1,3 +1,4 @@
+import { readFirstEnsure } from '../sync/profile-cache';
 import {
   AMBIENT_AWARENESS_STORAGE_KEY,
   AMBIENT_AWARENESS_VERSION,
@@ -49,16 +50,11 @@ function upsertProfile(profile: OrganizationAmbientAwarenessProfile): Organizati
 
 export function syncAmbientAwarenessFromSources(organizationId: string): OrganizationAmbientAwarenessProfile {
   const profile = upsertProfile(buildOrganizationAmbientAwarenessProfile(organizationId));
-  void import('../anticipation-engine/store').then((m) => {
-    m.syncAnticipationEngineFromSources(organizationId);
-  });
   return profile;
 }
 
-export function ensureOrganizationAmbientAwarenessProfile(
-  organizationId: string
-): OrganizationAmbientAwarenessProfile {
-  return syncAmbientAwarenessFromSources(organizationId);
+export function ensureOrganizationAmbientAwarenessProfile(organizationId: string): OrganizationAmbientAwarenessProfile {
+  return readFirstEnsure(organizationId, getOrganizationAmbientAwarenessProfile, syncAmbientAwarenessFromSources);
 }
 
 export function refreshDailyBriefing(organizationId: string): OrganizationAmbientAwarenessProfile {
