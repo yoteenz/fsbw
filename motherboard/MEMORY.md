@@ -38177,7 +38177,11 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-**Conventions:** Studio Administration never shows Mission Control or defaults to Frontal Slayer. Mission Control exists only inside Organization Headquarters. Portfolio owners enter orgs explicitly from Command Center or Registry.
+## 2026-07-06 — Studio Administration architectural correction (platform vs org HQ)
+
+**Context:** Prior work separated **Studio Administration** (platform) from **Organization Headquarters** (org-scoped). Studio Command Center at `/admin/studio-os/command-center`, neutral platform tenant `studio-os`, portfolio owners with `workspaceId: null`. Mission Control only inside org HQ.
+
+**Conventions:** Studio Administration never shows Mission Control or defaults to Frontal Slayer. Portfolio owners enter orgs explicitly from Command Center or Registry.
 
 ---
 
@@ -38194,3 +38198,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** organization-context module, distribution-network org defaults + pages, AdminStudioStageShell, workspace configs, motherboard/CORE.md + MEMORY.md.
 
 **Conventions:** All future modules use **`useOrganizationContext()`** / **`useStudioModuleNav()`** — no shared FS demo defaults.
+
+---
+
+## 2026-07-06 — Executive Information Architecture UI/UX refinement pass
+
+**Context (full chat arc):** User requested a **UI/UX refinement pass** for Studio OS — redesign **how information is presented**, not visual identity. Keep marble background, white headquarters aesthetic, black borders, red accents, handwritten annotations, Command Dock, luxury executive feeling. Problem: pages felt overwhelming because every section competed equally; founder should feel guided through Headquarters, not buried in dashboards.
+
+**Design philosophy:** Every page = **Hero → Icon Nav → Visual Summary → Focus Panel → Secondary (grouped) → Collapsible deep details**. Progressive disclosure, whitespace, visual rhythm, calm executive atmosphere. One primary question per page; everything else supports it.
+
+**Decisions / outcomes:**
+- Created **`src/components/admin/studio/executive-ia/`** — reusable layout primitives (`ExecutivePageShell`, `ExecutiveHeroCard`, `ExecutiveIconNav`, `ExecutiveVisualSummary`, `ExecutiveFocusPanel`, `ExecutiveSecondaryGrid`, `ExecutiveCollapsibleSection`, `executiveIaTheme.ts`).
+- **Mission Control** refactored as reference: hero = today's priority/mission status; icon nav = department destinations; visual summary = mission timeline; focus = executive briefing; secondary = active missions + approvals + calendar/health; collapsible = AI Director, Knowledge Hub, Blueprint/Factory, full department grid, workspace memory, live activity.
+- **Distribution Network** refactored as second example: hero = campaign/distribution status; icon nav = overview/channels/calendar/queue/social; visual summary = publishing calendar; focus = distribution queue; secondary = delivery snapshot; collapsible = coming soon, campaigns, full queue, inheritance chain, future channels.
+
+**Changes:** `executive-ia/*`, `MissionControlWorkspace.tsx`, `distribution-network/page.tsx`, `motherboard/CORE.md`, `motherboard/MEMORY.md`.
+
+**Conventions:** New Studio module refactors should use executive-ia components; no visual rebrand; data-heavy areas collapsed by default; icon-supported department nav over equal-weight dashboard panels.
