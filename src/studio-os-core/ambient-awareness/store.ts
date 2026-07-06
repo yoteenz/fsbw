@@ -48,7 +48,11 @@ function upsertProfile(profile: OrganizationAmbientAwarenessProfile): Organizati
 }
 
 export function syncAmbientAwarenessFromSources(organizationId: string): OrganizationAmbientAwarenessProfile {
-  return upsertProfile(buildOrganizationAmbientAwarenessProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationAmbientAwarenessProfile(organizationId));
+  void import('../anticipation-engine/store').then((m) => {
+    m.syncAnticipationEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationAmbientAwarenessProfile(

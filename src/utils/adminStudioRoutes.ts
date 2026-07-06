@@ -817,6 +817,10 @@ export function adminStudioAmbientAwarenessPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ambient-awareness`;
 }
 
+export function adminStudioAnticipationEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/anticipation-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

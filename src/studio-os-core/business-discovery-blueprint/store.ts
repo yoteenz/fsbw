@@ -175,6 +175,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncAmbientAwarenessFromSources(blueprint.organizationId);
   });
 
+  void import('../anticipation-engine/store').then((m) => {
+    m.syncAnticipationEngineFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

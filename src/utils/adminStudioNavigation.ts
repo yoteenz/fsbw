@@ -1428,6 +1428,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'anticipation-engine',
+    title: 'ANTICIPATION ENGINE™',
+    purpose: 'Predict organizational needs — proactive preparation, pattern recognition, everything awaits founder approval.',
+    route: p('anticipation-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M108',
+    ctaLabel: 'OPEN ANTICIPATION ENGINE',
+    moduleKey: 'anticipation-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

@@ -28,6 +28,7 @@ export type StudioOsBrandSystemId =
   | 'knowledge-confidence'
   | 'legacy-vault'
   | 'ambient-awareness'
+  | 'anticipation-engine'
   | 'succession-mode'
   | 'executive-council'
   | 'expansion-center'
@@ -54,6 +55,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'knowledge-confidence': 'Know what you know. Honestly.',
   'legacy-vault': 'Preserve the story. Build legacy.',
   'ambient-awareness': 'Already aware. Never asking twice.',
+  'anticipation-engine': 'Prepare tomorrow. Before it\'s asked.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',
   'expansion-center': 'Grow your organization. Expand your legacy.',

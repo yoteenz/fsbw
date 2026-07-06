@@ -264,6 +264,10 @@ export function bootstrapWorkspacesPlatform(): void {
     ambientAwareness.bootstrapAmbientAwarenessPlatform();
     await yieldToMain();
 
+    const anticipationEngine = await import('../studio-os-core/anticipation-engine/bootstrap');
+    anticipationEngine.bootstrapAnticipationEnginePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

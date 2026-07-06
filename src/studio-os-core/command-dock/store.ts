@@ -87,6 +87,10 @@ import {
   buildProactiveAmbientAwarenessSuggestion,
   buildHeadquartersOpeningBriefing,
 } from '../ambient-awareness/dock-advisor';
+import {
+  resolveAnticipationEngineAdvice,
+  buildProactiveAnticipationSuggestion,
+} from '../anticipation-engine/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -159,6 +163,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const knowledgeConfidence = buildProactiveKnowledgeConfidenceSuggestion(workspaceId);
   const legacyVault = buildProactiveLegacyVaultSuggestion(workspaceId);
   const ambientModule = buildProactiveAmbientAwarenessSuggestion(workspaceId);
+  const anticipation = buildProactiveAnticipationSuggestion(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -175,6 +180,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
         response: ambientModule,
         concierge: 'Chief Concierge',
         suggestedCommand: 'Open Ambient Awareness — continuous organizational context.',
+      }
+    : null;
+  const anticipationProactive = anticipation
+    ? {
+        response: anticipation,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Anticipation Engine — review prepared work awaiting approval.',
       }
     : null;
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
@@ -226,6 +238,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const proactiveSource =
     ambientOpening
       ? ambientOpening
+      : pathname.includes('/anticipation-engine') && anticipationProactive
+      ? anticipationProactive
       : pathname.includes('/ambient-awareness') && ambientModuleProactive
       ? ambientModuleProactive
       : pathname.includes('/legacy-vault') && legacyVaultProactive
@@ -334,6 +348,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${ambientAwarenessAdvice.concierge}\n${ambientAwarenessAdvice.response}`,
+    });
+    return null;
+  }
+
+  const anticipationAdvice = resolveAnticipationEngineAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (anticipationAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${anticipationAdvice.concierge}\n${anticipationAdvice.response}`,
     });
     return null;
   }

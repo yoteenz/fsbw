@@ -125,6 +125,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationAmbientAwarenessProfile(context.organizationId);
   });
 
+  void import('../anticipation-engine/store').then((m) => {
+    m.ensureOrganizationAnticipationProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

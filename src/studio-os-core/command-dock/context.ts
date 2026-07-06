@@ -29,6 +29,7 @@ import { listSimulationLabDockSuggestions } from '../business-simulation-lab';
 import { listKnowledgeConfidenceDockSuggestions } from '../knowledge-confidence';
 import { listLegacyVaultDockSuggestions } from '../legacy-vault';
 import { listAmbientAwarenessDockSuggestions } from '../ambient-awareness';
+import { listAnticipationEngineDockSuggestions } from '../anticipation-engine';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -192,6 +193,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       label: 'AMBIENT AWARENESS™ · ALREADY AWARE',
       portfolioMode: false,
       suggestedCommands: listAmbientAwarenessDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/anticipation-engine')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'anticipation-engine',
+      label: 'ANTICIPATION ENGINE™ · PREPARE TOMORROW',
+      portfolioMode: false,
+      suggestedCommands: listAnticipationEngineDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
     };
   }

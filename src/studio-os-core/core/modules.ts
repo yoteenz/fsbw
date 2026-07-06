@@ -102,6 +102,7 @@ export type StudioOsCoreModuleId =
   | 'knowledge-confidence'
   | 'legacy-vault'
   | 'ambient-awareness'
+  | 'anticipation-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -709,6 +710,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'AMBIENT AWARENESS™',
     description: 'Continuous organizational context V1.0 — 10 awareness layers, proactive executive briefings, department awareness. Present, not reactive.',
     routeSegment: 'ambient-awareness',
+  },
+  {
+    id: 'anticipation-engine',
+    label: 'ANTICIPATION ENGINE™',
+    description: 'Predict organizational needs V1.0 — proactive preparation, pattern recognition, everything awaits approval. Prepare tomorrow.',
+    routeSegment: 'anticipation-engine',
   },
   {
     id: 'succession-mode',

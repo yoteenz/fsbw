@@ -127,6 +127,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../ambient-awareness/store').then((m) => {
     m.syncAmbientAwarenessFromSources(profile.organizationId);
   });
+  void import('../anticipation-engine/store').then((m) => {
+    m.syncAnticipationEngineFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });
