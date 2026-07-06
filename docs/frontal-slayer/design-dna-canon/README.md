@@ -56,6 +56,7 @@ After every new page, evaluate ten criteria with a confidence score:
 | System | Applies to |
 |--------|------------|
 | **Design DNA & Canon (this module)** | Customer-facing Headquarters rooms |
+| **Design Genome (M85)** | Organization visual memory — `/admin/studio/design-genome` |
 | **Admin Alignment Protocol** | Frontal Slayer Admin Dashboard — `docs/frontal-slayer/ADMIN_ALIGNMENT_PROTOCOL.md` |
 | **Executive Information Architecture (M83)** | Studio OS Headquarters modules (`/admin/studio/*`) |
 

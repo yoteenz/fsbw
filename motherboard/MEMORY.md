@@ -38277,3 +38277,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Admin dashboard alignment requires explicit page name + section scope from founder. Canon reference admin pages are read-only inspiration. When uncertain, ask — never assume differences are mistakes.
 
+---
+
+## 2026-07-06 — Milestone 85: Design Genome V1.0
+
+**Context (full chat arc):** User requested **Milestone 85 — Design Genome V1.0** to continue building Studio OS. Explicit: **do not** redesign existing pages. Create new intelligence system — **Design Genome** — Studio OS permanent visual memory. Learn design thinking · not layouts · not screenshots · understand WHY approved · organization-specific genomes · promotion system · automatic capture · design analysis with reasoning · section-level intelligence · tagging · design memory · inheritance · version history · pre-build review · founder natural approval workflow · future living creative director capability.
+
+**Topics covered (this chat):**
+- **Prior in chat:** M84 Design DNA & Canon (customer pages) · Admin Alignment Protocol (commerce admin) · MEMORY conflict marker fix.
+- **Design Genome scope:** Independent genome per org (Studio OS · FS Website · FS Admin · NDXBOOK · VXD) · never leak between orgs.
+- **Promotion:** Founder phrases parsed (`parseFounderPromotionPhrase`) · auto-capture structure/analysis/reasoning/tags · queue + capture flow · deprecate on "don't reuse".
+- **Pre-build review:** `runPreBuildReview(problem)` · searchDesignMemory · inherit/evolve/create-new recommendation.
+- **Demo seeds:** FS Admin (Client Profile Hero v3 · Orders Row Card lineage) · FS Website (Concierge Canon) · NDXBOOK article hero · Studio OS Mission Control department cards.
+
+**Decisions / outcomes:**
+- New module **`design-genome`** at `/admin/studio/design-genome` (INTELLIGENCE nav) · Executive IA layout.
+- Core **`src/studio-os-core/design-genome/`** (analysis · store · bootstrap org-aware) · UI **`src/components/admin/studio/design-genome/`** · hook **`useDesignGenomeState`** · service **`designGenomeModuleService`** · docs **`docs/studio-os/design-genome/`**.
+- Wired: navigation · routes · App.tsx · modules · bootstrap · feature inheritance · Command Dock · knowledge graph · FRONTAL_SLAYER moduleCopy · CORE.md.
+- **No existing page redesigns.**
+
+**Changes:** `src/studio-os-core/design-genome/*`, `src/components/admin/studio/design-genome/*`, `src/hooks/useDesignGenomeState.ts`, `src/pages/admin/studio/design-genome/page.tsx`, `src/services/studio/designGenomeModule/service.ts`, `docs/studio-os/design-genome/README.md`, plus integration files and motherboard/CORE.md + MEMORY.md.
+
+**Conventions:** Design Genome ≠ design system — preserves identity. Consult genome before new UI (`PRE_BUILD_QUESTION`). Promotions are org-scoped. M84 = customer canon · M85 = org visual memory · Admin Alignment Protocol = commerce admin surgical changes.
+

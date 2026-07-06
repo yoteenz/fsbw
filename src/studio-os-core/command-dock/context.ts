@@ -85,6 +85,20 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     };
   }
 
+  if (pathname.includes('/design-genome')) {
+    return {
+      contextId: 'design-genome',
+      label: 'DESIGN GENOME',
+      portfolioMode: false,
+      suggestedCommands: [
+        'Does the genome contain an approved hero for this page?',
+        'Promote this timeline into the Design Genome.',
+        'Show inheritance lineage for client profile patterns.',
+      ],
+      commandTypes: ['creative-requests', 'knowledge-search', 'strategy'],
+    };
+  }
+
   if (pathname.includes('/studio-institute') || pathname.includes('/organizational-apprenticeship')) {
     return {
       contextId: 'institute',

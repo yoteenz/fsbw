@@ -55,6 +55,7 @@ export type StudioOsCoreModuleId =
   | 'screening-room'
   | 'concierge-approval-flow'
   | 'design-dna-canon'
+  | 'design-genome'
   | 'executive-timeline'
   | 'concierge-routing'
   | 'command-dock'
@@ -418,6 +419,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'DESIGN DNA & CANON SYSTEM',
     description: 'Permanent creative compass — canon pages · design DNA · headquarters review. V1.0.',
     routeSegment: 'design-dna-canon',
+  },
+  {
+    id: 'design-genome',
+    label: 'DESIGN GENOME',
+    description: 'Organizational visual memory — promotion · inheritance · pre-build review. V1.0.',
+    routeSegment: 'design-genome',
   },
   {
     id: 'executive-timeline',

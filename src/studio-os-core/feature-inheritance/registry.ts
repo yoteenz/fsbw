@@ -30,6 +30,7 @@ export const INHERITED_PLATFORM_CAPABILITIES: readonly InheritedPlatformCapabili
   { id: 'command-dock', label: 'Command Dock', category: 'headquarters' },
   { id: 'living-headquarters-presence', label: 'Living Presence', category: 'headquarters' },
   { id: 'design-dna-canon', label: 'Design DNA & Canon', category: 'headquarters' },
+  { id: 'design-genome', label: 'Design Genome', category: 'intelligence' },
   { id: 'concierge-layer', label: 'Concierge Team', category: 'headquarters' },
   { id: 'campaign-engine', label: 'Campaign Engine', category: 'automation' },
   { id: 'work-orchestration', label: 'Automation', category: 'automation' },

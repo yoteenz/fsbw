@@ -243,6 +243,7 @@ const AdminStudioRenderQueue = lazyWithRetry(() => import('./pages/admin/studio/
 const AdminStudioScreeningRoom = lazyWithRetry(() => import('./pages/admin/studio/screening-room/page'), 'AdminStudioScreeningRoom');
 const AdminStudioConciergeApprovalFlow = lazyWithRetry(() => import('./pages/admin/studio/concierge-approval-flow/page'), 'AdminStudioConciergeApprovalFlow');
 const AdminStudioDesignDnaCanon = lazyWithRetry(() => import('./pages/admin/studio/design-dna-canon/page'), 'AdminStudioDesignDnaCanon');
+const AdminStudioDesignGenome = lazyWithRetry(() => import('./pages/admin/studio/design-genome/page'), 'AdminStudioDesignGenome');
 const AdminStudioExecutiveTimeline = lazyWithRetry(() => import('./pages/admin/studio/executive-timeline/page'), 'AdminStudioExecutiveTimeline');
 const AdminStudioLeadershipDna = lazyWithRetry(() => import('./pages/admin/studio/leadership-dna/page'), 'AdminStudioLeadershipDna');
 const AdminStudioKnowledgeHub = lazyWithRetry(() => import('./pages/admin/studio/knowledge-hub/page'), 'AdminStudioKnowledgeHub');
@@ -1553,6 +1554,11 @@ function App() {
           <Route path="studio/design-dna-canon" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioDesignDnaCanon />
+            </Suspense>
+          } />
+          <Route path="studio/design-genome" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioDesignGenome />
             </Suspense>
           } />
           <Route path="studio/executive-timeline" element={

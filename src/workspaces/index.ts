@@ -388,6 +388,10 @@ export function bootstrapWorkspacesPlatform(): void {
     designDnaCanon.bootstrapDesignDnaCanonPlatform();
     await yieldToMain();
 
+    const designGenome = await import('../studio-os-core/design-genome/bootstrap');
+    designGenome.bootstrapDesignGenomePlatform();
+    await yieldToMain();
+
     const workspaceRegistry = await import('../studio-os-core/workspace-registry/store');
     workspaceRegistry.bootstrapWorkspaceRegistryPlatform();
     await yieldToMain();

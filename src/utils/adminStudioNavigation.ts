@@ -1104,6 +1104,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'design-genome',
+    title: 'DESIGN GENOME',
+    purpose: 'Organizational visual memory — promote approved designs · inherit before building · independent genome per organization.',
+    route: p('design-genome'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'GENOME',
+    ctaLabel: 'OPEN GENOME',
+    moduleKey: 'design-genome',
+    featuredOnOverview: true,
+  },
+  {
     id: 'audience-brain',
     title: 'AUDIENCE BRAIN',
     purpose: 'Learn from every interaction and refine audience journeys.',

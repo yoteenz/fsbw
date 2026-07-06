@@ -103,6 +103,7 @@ export type AdminStudioSectionId =
   | 'screening-room'
   | 'concierge-approval-flow'
   | 'design-dna-canon'
+  | 'design-genome'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
