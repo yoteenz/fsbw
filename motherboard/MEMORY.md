@@ -39413,3 +39413,27 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/documentation-registry.md`** · **`docs/studio-os/README.md`** · **CORE.md** M126 entry
 
 **Conventions:** Register each new milestone once in `documentation-sync/system-registry.ts` — registry builder expands full metadata; optional `registerDocumentationFeature()` for overrides. Sync chain: Studio Foundation Models → Documentation Sync → Documentation Registry. Avoid circular resync (registry auto-sync invalidates caches only). Demo localStorage via `studioOsDocumentationRegistry_v1`. Brand voice: *"One source. Infinite knowledge. Always synchronized."* Accent `#0891B2`.
+
+---
+
+## 2026-07-06 — Milestone 126.5: Documentation Governance™ V1.0
+
+**Context (full chat arc):** Same session completed M126 Documentation Registry (`b204f738`). User requested **Milestone 126.5 — Documentation Governance™ V1.0**: continuously monitor, validate, audit, and improve every piece of documentation across Studio OS — ensure documentation never becomes outdated, incomplete, duplicated, inconsistent, or disconnected from the platform. Philosophy: documentation is a living organizational system, not a deliverable; as Studio OS evolves, documentation should evolve automatically.
+
+**Requirements delivered:**
+- **Continuous documentation audits** — scan for outdated, missing, broken references, duplicate, unused, orphaned, deprecated terminology, missing tutorials/walkthrough/academy/search keywords, incomplete descriptions; every issue generates actionable recommendations
+- **Coverage validation** — 95% organizational standard across 14 surfaces (manual, academy, walkthrough, help, search, Command Dock, tooltips, dev/arch docs, release notes, FAQ, examples, screenshots, video future)
+- **Consistency engine** — enforce official terminology (Profession Brain™, Executive Council™, etc.) across Knowledge Hub, system registry, FAQ
+- **Dependency validation** — when feature changes, identify walkthrough, academy, search, FAQ, architecture, developer docs, tooltips, release notes, registry surfaces requiring update
+- **Documentation Health Score** — 11 dimensions (coverage, freshness, completeness, consistency, search quality, walkthrough, academy, tooltips, broken refs, duplicates, version alignment)
+- **Pre-deployment validation** — gate releases when documentation incomplete; flag for review
+- **Self-improvement** — recommend fixes for academy gaps, walkthrough gaps, search gaps, terminology, coverage below standard
+- **Command Dock** — active documentation quality monitoring (*"no Academy lesson"*, *"coverage below 95%"*, *"ready for deployment?"*)
+
+**Delivered:**
+- **`src/studio-os-core/documentation-governance/`** — `audit-engine.ts` · `coverage-validator.ts` · `consistency-engine.ts` · `dependency-validator.ts` · `health-score.ts` · `pre-deploy-validator.ts` · `self-improvement.ts` · `governance-profile-builder.ts` · `store.ts` · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`DocumentationGovernanceWorkspace`** (7 tabs) · **`/admin/studio/documentation-governance`** · **`MissionControlDocumentationGovernancePanel`** · **`useDocumentationGovernanceState`**
+- **Wiring** — nav M126.5 · sync chain Documentation Registry → Governance · Command Dock governance-first on Knowledge Hub · boundary-sync · system registry + page-guide entry
+- **Docs** — **`docs/studio-os/documentation-governance.md`** · **CORE.md** M126.5 entry
+
+**Conventions:** Governance auto-runs on registry sync — review dashboard before releases. Pre-deploy validator flags blocking failures (coverage, broken refs). Demo localStorage via `studioOsDocumentationGovernance_v1`. Brand voice: *"Documentation is living organizational knowledge — always accurate, always connected."* Accent `#0E7490`.

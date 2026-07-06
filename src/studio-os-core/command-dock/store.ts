@@ -174,6 +174,11 @@ import {
   buildProactiveDocumentationRegistrySuggestion,
   buildDocumentationRegistryOpeningLine,
 } from '../documentation-registry/dock-advisor';
+import {
+  resolveDocumentationGovernanceAdvice,
+  buildProactiveDocumentationGovernanceSuggestion,
+  buildDocumentationGovernanceOpeningLine,
+} from '../documentation-governance/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -276,6 +281,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const documentationSyncOpeningLine = buildDocumentationSyncOpeningLine(workspaceId);
   const documentationRegistry = buildProactiveDocumentationRegistrySuggestion(workspaceId);
   const documentationRegistryOpeningLine = buildDocumentationRegistryOpeningLine(workspaceId);
+  const documentationGovernance = buildProactiveDocumentationGovernanceSuggestion(workspaceId);
+  const documentationGovernanceOpeningLine = buildDocumentationGovernanceOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -497,6 +504,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'Show Documentation Registry health.',
       }
     : null;
+  const documentationGovernanceProactive = documentationGovernance
+    ? {
+        response: documentationGovernance,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Show Documentation Governance health.',
+      }
+    : null;
+  const documentationGovernanceOpeningProactive = documentationGovernanceOpeningLine
+    ? {
+        response: documentationGovernanceOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Is documentation ready for deployment?',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -571,14 +592,16 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? modelOrchestratorProactive
       : pathname.includes('/studio-foundation-models') && studioFoundationModelsProactive
       ? studioFoundationModelsProactive
+      : pathname.includes('/documentation-governance') && documentationGovernanceProactive
+      ? documentationGovernanceProactive
       : pathname.includes('/documentation-registry') && documentationRegistryProactive
       ? documentationRegistryProactive
-      : pathname.includes('/knowledge-hub') && documentationRegistryProactive
-      ? documentationRegistryProactive
+      : pathname.includes('/knowledge-hub') && documentationGovernanceProactive
+      ? documentationGovernanceProactive
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -972,6 +995,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${studioFoundationModelsAdvice.concierge}\n${studioFoundationModelsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const documentationGovernanceAdvice = resolveDocumentationGovernanceAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (documentationGovernanceAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${documentationGovernanceAdvice.concierge}\n${documentationGovernanceAdvice.response}`,
     });
     return null;
   }

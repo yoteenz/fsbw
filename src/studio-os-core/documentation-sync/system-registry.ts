@@ -1,6 +1,7 @@
 import {
   adminStudioBusinessDiscoveryBlueprintPath,
   adminStudioDocumentationRegistryPath,
+  adminStudioDocumentationGovernancePath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -599,6 +600,31 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['REGISTER FEATURE → AUTO-SYNC SURFACES → QUERY VIA COMMAND DOCK'],
     aliases: ['documentation registry', 'doc registry', 'feature registry', 'dr'],
     searchKeywords: ['documentation registry', 'one source', 'register once', 'documentation health'],
+  }),
+  entry({
+    id: 'documentation-governance',
+    label: 'Documentation Governance™',
+    moduleId: 'documentation-governance',
+    milestone: 'M126.5',
+    route: adminStudioDocumentationGovernancePath(),
+    purpose: 'Continuously monitor, validate, audit, and improve every piece of documentation.',
+    overview:
+      'Automated audits, coverage validation, consistency engine, dependency tracking, pre-deployment checks, and self-improvement recommendations.',
+    capabilities: [
+      'Continuous audits',
+      'Coverage validation',
+      'Consistency engine',
+      'Dependency validation',
+      'Health score',
+      'Pre-deploy validation',
+      'Self-improvement',
+    ],
+    howItWorks: 'Registry changes → governance audits all surfaces → actionable recommendations → pre-deploy gate.',
+    whenUsed: ['Before releases', 'Documentation health review', 'Terminology audits', 'Coverage gaps'],
+    relatedSystems: ['documentation-registry', 'documentation-sync', 'command-dock', 'studio-institute'],
+    exampleWorkflows: ['RUN AUDITS → FIX GAPS → VALIDATE PRE-DEPLOY → RELEASE'],
+    aliases: ['documentation governance', 'doc governance', 'living docs', 'dg'],
+    searchKeywords: ['documentation governance', 'audit documentation', 'coverage validation', 'pre-deploy docs'],
   }),
 ];
 

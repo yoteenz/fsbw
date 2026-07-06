@@ -119,6 +119,7 @@ export type StudioOsCoreModuleId =
   | 'model-orchestrator'
   | 'studio-foundation-models'
   | 'documentation-registry'
+  | 'documentation-governance'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -828,6 +829,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'DOCUMENTATION REGISTRY™',
     description: 'Documentation Registry V1.0 — single source of truth; register once, sync all documentation surfaces.',
     routeSegment: 'documentation-registry',
+  },
+  {
+    id: 'documentation-governance',
+    label: 'DOCUMENTATION GOVERNANCE™',
+    description: 'Documentation Governance V1.0 — continuous audits, coverage validation, consistency, pre-deploy checks.',
+    routeSegment: 'documentation-governance',
   },
   {
     id: 'succession-mode',

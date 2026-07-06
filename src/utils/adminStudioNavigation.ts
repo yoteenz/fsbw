@@ -1632,6 +1632,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'documentation-governance',
+    title: 'DOCUMENTATION GOVERNANCE™',
+    purpose: 'Continuously monitor, validate, audit, and improve every piece of documentation across Studio OS.',
+    route: p('documentation-governance'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M126.5',
+    ctaLabel: 'OPEN DOCUMENTATION GOVERNANCE',
+    moduleKey: 'documentation-governance',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

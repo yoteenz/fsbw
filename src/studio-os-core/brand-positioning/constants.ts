@@ -45,6 +45,7 @@ export type StudioOsBrandSystemId =
   | 'model-orchestrator'
   | 'studio-foundation-models'
   | 'documentation-registry'
+  | 'documentation-governance'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -89,6 +90,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'model-orchestrator': 'Models change. Studio Intelligence™ remains.',
   'studio-foundation-models': 'General models know the world. Studio Models™ know organizations.',
   'documentation-registry': 'One source. Infinite knowledge. Always synchronized.',
+  'documentation-governance': 'Documentation is living organizational knowledge — always accurate, always connected.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

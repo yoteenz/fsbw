@@ -15,6 +15,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [interactive-manual.md](./interactive-manual.md) | Knowledge Hub, Knowledge Graph, walkthroughs |
 | [documentation-sync.md](./documentation-sync.md) | Documentation Synchronization™ — living registry, semantic search, M125 |
 | [documentation-registry.md](./documentation-registry.md) | Documentation Registry™ — single source of truth, auto-sync, M126 |
+| [documentation-governance.md](./documentation-governance.md) | Documentation Governance™ — continuous audits, coverage, pre-deploy, M126.5 |
 | [memory-bible.md](./memory-bible.md) | Institutional knowledge, naming, decisions, AI Context Builder |
 
 Platform config: `src/studio-os/config/platform.ts`

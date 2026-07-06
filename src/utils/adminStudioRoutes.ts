@@ -885,6 +885,10 @@ export function adminStudioDocumentationRegistryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/documentation-registry`;
 }
 
+export function adminStudioDocumentationGovernancePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/documentation-governance`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

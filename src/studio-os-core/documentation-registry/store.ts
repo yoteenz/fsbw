@@ -53,7 +53,11 @@ export function syncDocumentationRegistryFromSources(
   organizationId: string
 ): OrganizationDocumentationRegistryProfile {
   syncAllDocumentationConsumers();
-  return upsertProfile(buildOrganizationDocumentationRegistryProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationDocumentationRegistryProfile(organizationId));
+  void import('../documentation-governance/store').then((m) => {
+    m.syncDocumentationGovernanceFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationDocumentationRegistryProfile(

@@ -77,6 +77,7 @@ import { MissionControlStudioIntelligenceArchitecturePanel } from './MissionCont
 import { MissionControlModelOrchestratorPanel } from './MissionControlModelOrchestratorPanel';
 import { MissionControlStudioFoundationModelsPanel } from './MissionControlStudioFoundationModelsPanel';
 import { MissionControlDocumentationRegistryPanel } from './MissionControlDocumentationRegistryPanel';
+import { MissionControlDocumentationGovernancePanel } from './MissionControlDocumentationGovernancePanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -520,6 +521,7 @@ export function MissionControlWorkspace() {
           <MissionControlModelOrchestratorPanel />
           <MissionControlStudioFoundationModelsPanel />
           <MissionControlDocumentationRegistryPanel />
+          <MissionControlDocumentationGovernancePanel />
           <LegacyTimelineStory
             accentHex={env.accentHex}
             milestones={[

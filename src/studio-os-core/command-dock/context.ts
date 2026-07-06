@@ -47,6 +47,7 @@ import { listStudioIntelligenceArchitectureDockSuggestions } from '../studio-int
 import { listModelOrchestratorDockSuggestions } from '../model-orchestrator/dock-advisor';
 import { listStudioFoundationModelsDockSuggestions } from '../studio-foundation-models/dock-advisor';
 import { listDocumentationRegistryDockSuggestions } from '../documentation-registry/dock-advisor';
+import { listDocumentationGovernanceDockSuggestions } from '../documentation-governance/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -390,6 +391,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     };
   }
 
+  if (pathname.includes('/documentation-governance')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'documentation-governance',
+      label: 'DOCUMENTATION GOVERNANCE™ · LIVING DOCS',
+      portfolioMode: false,
+      suggestedCommands: listDocumentationGovernanceDockSuggestions(workspaceId),
+      commandTypes: ['knowledge-search', 'executive-requests', 'organization-settings'],
+    };
+  }
+
   if (pathname.includes('/documentation-registry')) {
     const workspaceId = getRuntimeActiveWorkspaceId();
     return {
@@ -405,9 +417,9 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     const workspaceId = getRuntimeActiveWorkspaceId();
     return {
       contextId: 'knowledge-hub',
-      label: 'KNOWLEDGE HUB · DOCUMENTATION REGISTRY™',
+      label: 'KNOWLEDGE HUB · DOCUMENTATION GOVERNANCE™',
       portfolioMode: false,
-      suggestedCommands: listDocumentationRegistryDockSuggestions(workspaceId),
+      suggestedCommands: listDocumentationGovernanceDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'organization-settings', 'strategy'],
     };
   }
