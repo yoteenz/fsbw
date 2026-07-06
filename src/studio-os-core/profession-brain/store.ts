@@ -121,6 +121,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../knowledge-confidence/store').then((m) => {
     m.syncKnowledgeConfidenceFromSources(profile.organizationId);
   });
+  void import('../legacy-vault/store').then((m) => {
+    m.syncLegacyVaultFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

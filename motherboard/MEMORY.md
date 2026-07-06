@@ -38237,7 +38237,8 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-07-06 — Milestone 84: Design DNA & Canon System V1.0
 
 **Context (full chat arc):** User requested **Milestone 84 — Design DNA & Canon System V1.0** to continue building Frontal Slayer Headquarters. Explicit constraints: **do not** redesign existing pages · standardize layouts · correct spacing · normalize typography · realign custom compositions. Goal: preserve Frontal Slayer's existing visual identity while teaching every future page how to naturally evolve from it — permanent Design DNA creative compass.
@@ -38792,7 +38793,8 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Knowledge Confidence (M105) complements Profession Brain (M91) — brain stores knowledge; confidence measures and QA's it. Demo localStorage via `studioOsKnowledgeConfidence_v1`.
 
-=======
+---
+
 ## 2026-07-06 — Admin dashboard Headquarters card not loading (route guard fix)
 
 **Context:** User reported Headquarters card on admin dashboard not loading.
@@ -38805,4 +38807,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **`headquarters/page.tsx`** — show loading only during active campus transition; manual ENTER buttons when idle.
 
 **Changes:** StudioWorkspaceGuard.tsx, dashboard/page.tsx, headquarters/page.tsx, MEMORY.md.
->>>>>>> d6b2b17b (Fix Headquarters card: exempt entry route from studioEnabled guard redirect)
+
+---
+
+## 2026-07-06 — Milestone 106: Legacy Vault™ V2.0
+
+**Context (full chat arc):** Same session delivered M90–M105 (Blueprint through Knowledge Confidence `c6227c43`). User requested **Milestone 106 — Legacy Vault™ V2.0**: permanent historical archive of every organization — preserve moments · documents · milestones · decisions · memories · stories defining legacy. Preserve more than files — preserve history. **18 auto-archive categories** (blueprint · charter · founder letters · mission/vision/values · milestones · decisions · awards · branding · media · campaigns · timelines · HQ evolution · brain/institute/commerce milestones). **Version history** — never overwrite mission · vision · HQ · brains · genome · SOPs · branding · structures · packs · products. **Legacy experiences** (founding/growth timelines · gallery · HQ · evolution maps · anniversaries · interactive history). **Founder archive** (reflections · recordings · letters · lessons · interviews). **Family & succession** legacy. **Organizational time capsules** (5yr · 10th anniversary · retirement · succession · sale). Command Dock intelligently recommends preserving meaningful moments ("first employee" · "100th customer" · "first million" · launches). Final Studio OS philosophy: PRESERVE EXPERTISE. BUILD LEGACY.
+
+**Core philosophy delivered:** Businesses preserve history not just files · never overwrite — preserve versions · future generations inherit the story · legacy measured by what future generations carry forward.
+
+**Delivered:**
+- **`src/studio-os-core/legacy-vault/`** — **`vault-builder.ts`** (auto-archive from blueprint · council · brain · wisdom · memory) · **`moment-detector.ts`** (`detectPreserveMoments()`) · **`store.ts`** (`preserveLegacyMoment()` · `createTimeCapsule()` · `addFounderArchiveEntry()`) · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`LegacyVaultWorkspace`** + **`/admin/studio/legacy-vault`** — 4 tabs: Vault Overview · Permanent Archive · Legacy Experiences · Founder & Capsules · crimson accent `#8B0000`.
+- **`useLegacyVaultState`** hook · brand voice **`legacy-vault`**: *"Preserve the story. Build legacy."*
+- **Integration** — sync from profession-brain · blueprint · boundary-sync · Command Dock **`resolveLegacyVaultAdvice()`** + **`buildProactiveLegacyVaultSuggestion()`** on `/legacy-vault` route · "preserve legacy" command · modules · nav · App route · renamed legacy-system nav **`legacy-vault-of-firsts`** to avoid id collision.
+- **Docs** — **`docs/studio-os/legacy-vault.md`** · **CORE.md** M106 entry.
+
+**Conventions:** Legacy Vault V2 (M106) complements Legacy System museum (Frontal Slayer demo) — vault is org-scoped intelligence-stack archive for all organizations. Demo localStorage via `studioOsLegacyVault_v2`.
+

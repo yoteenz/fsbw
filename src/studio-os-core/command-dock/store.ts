@@ -78,6 +78,10 @@ import {
   resolveKnowledgeConfidenceAdvice,
   buildProactiveKnowledgeConfidenceSuggestion,
 } from '../knowledge-confidence/dock-advisor';
+import {
+  resolveLegacyVaultAdvice,
+  buildProactiveLegacyVaultSuggestion,
+} from '../legacy-vault/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -148,6 +152,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const digitalTwin = buildProactiveDigitalTwinSuggestion(workspaceId);
   const simulationLab = buildProactiveSimulationLabSuggestion(workspaceId);
   const knowledgeConfidence = buildProactiveKnowledgeConfidenceSuggestion(workspaceId);
+  const legacyVault = buildProactiveLegacyVaultSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -191,8 +196,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const knowledgeConfidenceProactive = knowledgeConfidence
     ? { response: knowledgeConfidence, concierge: 'Chief Concierge', suggestedCommand: 'Open Knowledge Confidence — review Profession Brain quality.' }
     : null;
+  const legacyVaultProactive = legacyVault
+    ? { response: legacyVault, concierge: 'Chief Concierge', suggestedCommand: 'Open Legacy Vault — preserve this moment in organizational history.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/knowledge-confidence') && knowledgeConfidenceProactive
+    pathname.includes('/legacy-vault') && legacyVaultProactive
+      ? legacyVaultProactive
+      : pathname.includes('/knowledge-confidence') && knowledgeConfidenceProactive
       ? knowledgeConfidenceProactive
       : pathname.includes('/business-simulation-lab') && simulationLabProactive
       ? simulationLabProactive
@@ -285,6 +295,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const legacyVaultAdvice = resolveLegacyVaultAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (legacyVaultAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: legacyVaultAdvice.preserveSuggestion ? 'medium' : 'compact',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${legacyVaultAdvice.concierge}\n${legacyVaultAdvice.response}`,
+    });
+    return null;
+  }
 
   const knowledgeConfidenceAdvice = resolveKnowledgeConfidenceAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (knowledgeConfidenceAdvice) {

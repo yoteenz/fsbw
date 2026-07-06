@@ -117,6 +117,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationKnowledgeConfidenceProfile(context.organizationId);
   });
 
+  void import('../legacy-vault/store').then((m) => {
+    m.ensureOrganizationLegacyVaultProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

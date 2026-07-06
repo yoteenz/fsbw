@@ -26,6 +26,7 @@ export type StudioOsBrandSystemId =
   | 'organization-digital-twin'
   | 'business-simulation-lab'
   | 'knowledge-confidence'
+  | 'legacy-vault'
   | 'succession-mode'
   | 'executive-council'
   | 'expansion-center'
@@ -50,6 +51,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'organization-digital-twin': 'Explore the future. Before acting.',
   'business-simulation-lab': 'Practice tomorrow. Before living it.',
   'knowledge-confidence': 'Know what you know. Honestly.',
+  'legacy-vault': 'Preserve the story. Build legacy.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',
   'expansion-center': 'Grow your organization. Expand your legacy.',

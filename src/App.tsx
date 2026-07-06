@@ -185,6 +185,7 @@ const AdminStudioShadowMode = lazyWithRetry(() => import('./pages/admin/studio/s
 const AdminStudioOrganizationDigitalTwin = lazyWithRetry(() => import('./pages/admin/studio/organization-digital-twin/page'), 'AdminStudioOrganizationDigitalTwin');
 const AdminStudioBusinessSimulationLab = lazyWithRetry(() => import('./pages/admin/studio/business-simulation-lab/page'), 'AdminStudioBusinessSimulationLab');
 const AdminStudioKnowledgeConfidence = lazyWithRetry(() => import('./pages/admin/studio/knowledge-confidence/page'), 'AdminStudioKnowledgeConfidence');
+const AdminStudioLegacyVault = lazyWithRetry(() => import('./pages/admin/studio/legacy-vault/page'), 'AdminStudioLegacyVault');
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1296,6 +1297,11 @@ function App() {
           <Route path="studio/knowledge-confidence" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioKnowledgeConfidence />
+            </Suspense>
+          } />
+          <Route path="studio/legacy-vault" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioLegacyVault />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

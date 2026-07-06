@@ -167,6 +167,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncKnowledgeConfidenceFromSources(blueprint.organizationId);
   });
 
+  void import('../legacy-vault/store').then((m) => {
+    m.syncLegacyVaultFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

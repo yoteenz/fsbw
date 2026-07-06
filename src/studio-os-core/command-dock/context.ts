@@ -27,6 +27,7 @@ import { listShadowModeDockSuggestions } from '../shadow-mode';
 import { listDigitalTwinDockSuggestions } from '../organization-digital-twin';
 import { listSimulationLabDockSuggestions } from '../business-simulation-lab';
 import { listKnowledgeConfidenceDockSuggestions } from '../knowledge-confidence';
+import { listLegacyVaultDockSuggestions } from '../legacy-vault';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -169,6 +170,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/legacy-vault')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'legacy-vault',
+      label: 'LEGACY VAULT™ · PRESERVE THE STORY',
+      portfolioMode: false,
+      suggestedCommands: listLegacyVaultDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

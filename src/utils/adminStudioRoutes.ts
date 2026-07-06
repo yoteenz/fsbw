@@ -809,6 +809,10 @@ export function adminStudioKnowledgeConfidencePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/knowledge-confidence`;
 }
 
+export function adminStudioLegacyVaultPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/legacy-vault`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

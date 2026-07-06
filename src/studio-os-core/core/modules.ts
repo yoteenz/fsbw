@@ -100,6 +100,7 @@ export type StudioOsCoreModuleId =
   | 'organization-digital-twin'
   | 'business-simulation-lab'
   | 'knowledge-confidence'
+  | 'legacy-vault'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -695,6 +696,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'KNOWLEDGE CONFIDENCE™',
     description: 'Profession Brain quality assurance V1.0 — 10 confidence dimensions, fuel gauges, learning recommendations. Trust through transparency.',
     routeSegment: 'knowledge-confidence',
+  },
+  {
+    id: 'legacy-vault',
+    label: 'LEGACY VAULT™',
+    description: 'Permanent organizational history V2.0 — archive milestones, version history, founder archive, time capsules. PRESERVE EXPERTISE. BUILD LEGACY.',
+    routeSegment: 'legacy-vault',
   },
   {
     id: 'succession-mode',

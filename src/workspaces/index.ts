@@ -256,6 +256,10 @@ export function bootstrapWorkspacesPlatform(): void {
     knowledgeConfidence.bootstrapKnowledgeConfidencePlatform();
     await yieldToMain();
 
+    const legacyVault = await import('../studio-os-core/legacy-vault/bootstrap');
+    legacyVault.bootstrapLegacyVaultPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();
