@@ -12,6 +12,7 @@ import {
   ChiefConciergeBriefingPanel,
   CompanyHealthPanel,
   ExternalNavPanel,
+  FounderTimelinePanel,
   HeadquartersIntro,
   LabsExperimentsPanel,
   MissionActionsPanel,
@@ -92,6 +93,7 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
             <LabsExperimentsPanel {...panelProps} />
             <TalentBoardPanel {...panelProps} />
             <MissionActionsPanel {...panelProps} />
+            <FounderTimelinePanel />
             <ActivityWallPanel {...panelProps} />
           </div>
         );

@@ -107,6 +107,7 @@ export function syncNdxbookSocialAccountsFromPublishing(accounts: PublicSocialAc
   if (store.socialAccounts.length === 0) return;
 
   const updated = store.socialAccounts.map((acct) => {
+    if (acct.status === 'locked') return acct;
     const oauth = accounts.find((a) => OAUTH_TO_NDXBOOK_PLATFORM[a.platform] === acct.platform);
     if (!oauth) return acct;
 

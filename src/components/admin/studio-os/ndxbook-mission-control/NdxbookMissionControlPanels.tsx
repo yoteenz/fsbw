@@ -9,6 +9,10 @@ import { FOUNDER_DISPLAY_NAME } from '../../../../studio-os-core/command-dock/co
 import { buildChiefConciergeBrief } from '../../../../studio-os-core/studio-immersion/engine';
 import { useOrganizationContext } from '../../../../studio-os-core/organization-context';
 import {
+  INTELLIGENCE_MATURITY_TIERS,
+  readFounderPilotModeStore,
+} from '../../../../studio-os-core/founder-pilot-mode';
+import {
   MC,
   formatCurrency,
   formatNumber,
@@ -314,6 +318,22 @@ export function PublishingTimelinePanel({ store, formatTime, onReschedule }: Pan
   };
 
   const publishedCount = store.publishingSchedule.filter((i) => i.status === 'published').length;
+  const isEmpty = store.publishingSchedule.length === 0;
+
+  if (isEmpty) {
+    return (
+      <section className="p-4 mb-4" style={{ ...mcPanel, borderTop: `3px solid ${MC.accent}` }}>
+        <p style={mcSectionTitle}>{SECTION_ICONS.timeline} PUBLISHING TIMELINE</p>
+        <p style={{ ...mcValue, fontSize: '14px', color: MC.gray }}>No scheduled content.</p>
+        <p style={{ ...mcSectionTitle, fontSize: '8px', marginTop: 12 }}>NEXT STEP</p>
+        <ul style={{ margin: 0, paddingLeft: 14 }}>
+          {['Connect Instagram', 'Create Page 001', 'Schedule your first post'].map((step) => (
+            <li key={step} style={{ ...mcLabel, color: MC.black, marginBottom: 4 }}>{step}</li>
+          ))}
+        </ul>
+      </section>
+    );
+  }
 
   return (
     <section className="p-4 mb-4" style={{ ...mcPanel, borderTop: `3px solid ${MC.accent}` }}>
@@ -443,8 +463,28 @@ function LibraryPageList({ pages, emptyLabel }: { pages: NdxbookMissionControlSt
 }
 
 export function NdxbookLibraryPanel({ store }: PanelProps) {
+  const navigate = useNavigate();
   const lib = store.library;
   const topPages = lib.latestPages.slice(0, 3);
+  const isEmpty = lib.latestPages.length === 0;
+
+  if (isEmpty) {
+    return (
+      <section className="p-4 mb-4 text-center" style={{ ...mcPanel, borderTop: `3px solid ${MC.accent}` }}>
+        <p style={mcSectionTitle}>{SECTION_ICONS.library} KNOWLEDGE LIBRARY</p>
+        <p style={{ ...mcValue, fontSize: '14px', color: MC.gray }}>No published pages yet.</p>
+        <p style={{ ...mcLabel, marginTop: 8 }}>Create your first knowledge asset.</p>
+        <button
+          type="button"
+          onClick={() => navigate('/admin/studio/ndxbook?tab=pages')}
+          className="mt-3 px-4 py-2 text-[7px] font-futura border"
+          style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent, background: 'rgba(99,102,241,0.06)' }}
+        >
+          CREATE PAGE 001 →
+        </button>
+      </section>
+    );
+  }
 
   return (
     <CollapsibleSection
@@ -554,11 +594,44 @@ export function ReaderIntelligencePanel({ store }: PanelProps) {
 }
 
 export function StudioIntelligencePanel({ store }: PanelProps) {
+  const org = useOrganizationContext();
   const [showOthers, setShowOthers] = useState(false);
   const [best, ...others] = store.intelligence;
+  const publishedCount = readFounderPilotModeStore(org.organizationId).pagesPublished;
 
   if (!best) {
-    return null;
+    return (
+      <section className="p-4 mb-4" style={mcPanel}>
+        <p style={mcSectionTitle}>{SECTION_ICONS.intelligence} STUDIO INTELLIGENCE</p>
+        <p style={{ ...mcValue, fontSize: '16px', color: MC.black }}>Welcome to Studio Intelligence.</p>
+        <p style={{ ...mcLabel, marginTop: 8, color: '#333' }}>
+          You haven&apos;t published enough content yet for meaningful recommendations.
+        </p>
+        <p style={{ ...mcSectionTitle, marginTop: 14, fontSize: '8px' }}>PUBLISHING MILESTONES</p>
+        <div className="space-y-2 mt-2">
+          {INTELLIGENCE_MATURITY_TIERS.map((tier) => {
+            const unlocked = publishedCount >= tier.postsRequired;
+            return (
+              <div
+                key={tier.postsRequired}
+                className="p-2 border"
+                style={{
+                  borderColor: unlocked ? MC.green : MC.panelBorder,
+                  background: unlocked ? 'rgba(22,163,74,0.06)' : 'white',
+                  opacity: unlocked ? 1 : 0.85,
+                }}
+              >
+                <p style={{ ...mcLabel, color: unlocked ? MC.green : MC.gray, fontFamily: '"Futura PT Medium"' }}>
+                  {tier.label} {unlocked ? '✓' : '—'}
+                </p>
+                <p style={mcLabel}>{tier.unlocks}</p>
+              </div>
+            );
+          })}
+        </div>
+        <p style={{ ...mcLabel, marginTop: 10, color: MC.accent }}>STATUS · LEARNING</p>
+      </section>
+    );
   }
 
   return (
@@ -616,6 +689,18 @@ export function RevenueCenterPanel({ store }: PanelProps) {
   const [showChannels, setShowChannels] = useState(false);
   const channels = Object.entries(r.breakdown) as [string, number][];
   const topChannelLabel = channelLabel(r.topChannel);
+  const isPilotEmpty = r.today === 0 && r.thisWeek === 0;
+
+  if (isPilotEmpty) {
+    return (
+      <section className="p-4 mb-4" style={mcPanel}>
+        <p style={mcSectionTitle}>{SECTION_ICONS.revenue} REVENUE SNAPSHOT</p>
+        <MetricRow label="REVENUE TODAY" value="$0.00" />
+        <MetricRow label="FORECAST" value="Unavailable" accent />
+        <p style={{ ...mcLabel, marginTop: 8 }}>Publishing history required. Analytics unlock naturally as you publish.</p>
+      </section>
+    );
+  }
 
   return (
     <CollapsibleSection
@@ -671,6 +756,21 @@ export function RevenueCenterPanel({ store }: PanelProps) {
 export function LabsExperimentsPanel({ store }: PanelProps) {
   const navigate = useNavigate();
   const active = store.experiments.filter((e) => e.status === 'active');
+
+  if (store.experiments.length === 0) {
+    return (
+      <section className="p-4 mb-4" style={mcPanel}>
+        <p style={mcSectionTitle}>{SECTION_ICONS.labs} STUDIO LABS</p>
+        <p style={{ ...mcValue, fontSize: '14px', color: MC.gray }}>No active experiments.</p>
+        <p style={{ ...mcLabel, marginTop: 8 }}>
+          Publish at least five pieces of content to unlock experimentation.
+        </p>
+        <button type="button" className="text-[6px] underline mt-2" style={{ color: MC.accent }} onClick={() => navigate('/admin/studio/labs')}>
+          OPEN STUDIO OS LABS →
+        </button>
+      </section>
+    );
+  }
 
   return (
     <CollapsibleSection
@@ -832,6 +932,41 @@ export function ActivityWallPanel({ store, formatTime }: PanelProps) {
 /** @deprecated Use HeadquartersIntro — kept for focused tab views if needed */
 export function MissionControlHeader({ lastUpdatedAt }: { lastUpdatedAt: string }) {
   return <HeadquartersIntro lastUpdatedAt={lastUpdatedAt} formatDate={() => new Date().toLocaleDateString()} />;
+}
+
+export function FounderTimelinePanel() {
+  const org = useOrganizationContext();
+  const pilot = readFounderPilotModeStore(org.organizationId);
+
+  if (!pilot.enabled) return null;
+
+  return (
+    <section className="p-4 mb-4" style={{ ...mcPanel, borderTop: `3px solid ${MC.accent}` }}>
+      <p style={mcSectionTitle}>FOUNDER TIMELINE · PERMANENT HISTORY</p>
+      <p style={{ ...mcLabel, marginBottom: 10 }}>
+        Every milestone is earned — Studio OS remembers this organization&apos;s real story.
+      </p>
+      {pilot.milestones.length === 0 ? (
+        <p style={mcLabel}>Your timeline begins now.</p>
+      ) : (
+        <div className="space-y-2">
+          {pilot.milestones.map((m) => (
+            <div key={`${m.id}-${m.recordedAt}`} className="p-2 border flex gap-2" style={{ borderColor: MC.panelBorder }}>
+              <span style={{ fontSize: '10px', color: MC.accent }}>◆</span>
+              <div>
+                <p style={{ ...mcLabel, color: MC.black, fontFamily: '"Futura PT Medium"' }}>{m.label.toUpperCase()}</p>
+                <p style={mcLabel}>{m.description}</p>
+                <p style={{ ...mcLabel, fontSize: '5px' }}>
+                  {new Date(m.recordedAt).toLocaleString()}
+                  {m.pageNumber ? ` · PAGE ${String(m.pageNumber).padStart(3, '0')}` : ''}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
 }
 
 export function ExternalNavPanel({ tab, workspaceId }: { tab: string; workspaceId: string }) {

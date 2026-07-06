@@ -21,6 +21,11 @@ import {
   refreshNdxbookDashboardMetrics,
 } from '../../../studio-os-core/ndxbook/store';
 import {
+  buildPilotNdxbookStorePatch,
+  ensureFounderPilotForOrganization,
+  shouldUseFounderPilotSeed,
+} from '../../../studio-os-core/founder-pilot-mode';
+import {
   readWorkspaceCreationStore,
   writeWorkspaceCreationStore,
 } from '../../../studio-os-core/workspace-creation/registry';
@@ -29,6 +34,9 @@ import type { NdxbookStore } from '../../../studio-os-core/ndxbook/types';
 const WS = NDXBOOK_WORKSPACE_ID;
 
 export function buildNdxbookStorePatch(): Partial<NdxbookStore> {
+  if (shouldUseFounderPilotSeed(NDXBOOK_WORKSPACE_ID)) {
+    return buildPilotNdxbookStorePatch();
+  }
   return {
     brand: DEFAULT_BRAND,
     taxonomy: DEFAULT_TAXONOMY,
@@ -57,9 +65,10 @@ export function buildNdxbookStorePatch(): Partial<NdxbookStore> {
 
 export function bootstrapAiMediaNdxbook(): void {
   ensureAiMediaNdxbookModuleEnabled();
+  ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
   bootstrapNdxbookStore();
   const store = readNdxbookStore();
-  if (store.brand?.id !== 'ndxbook') {
+  if (store.brand?.id !== 'ndxbook' || shouldUseFounderPilotSeed(NDXBOOK_WORKSPACE_ID)) {
     mergeNdxbookPatch(buildNdxbookStorePatch());
   }
   refreshNdxbookDashboardMetrics();

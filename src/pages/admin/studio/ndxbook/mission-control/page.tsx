@@ -9,9 +9,11 @@ import {
 } from '../../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../../utils/adminStudioTheme';
 import { NDXBOOK_WORKSPACE_ID } from '../../../../../studio-os-core/ndxbook/constants';
+import { ensureFounderPilotForOrganization } from '../../../../../studio-os-core/founder-pilot-mode';
 
 export default function AdminStudioNdxbookMissionControlPage() {
   useEnsureNdxbookWorkspaceOnMount();
+  ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
   const navigate = useNavigate();
 
   return (

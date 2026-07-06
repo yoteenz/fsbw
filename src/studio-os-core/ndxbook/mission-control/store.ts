@@ -119,9 +119,12 @@ export function mergeNdxbookMissionControlPatch(patch: Partial<NdxbookMissionCon
   writeNdxbookMissionControlStore({ ...store, ...patch });
 }
 
-export function bootstrapNdxbookMissionControlStore(seed?: Partial<NdxbookMissionControlStore>): void {
+export function bootstrapNdxbookMissionControlStore(
+  seed?: Partial<NdxbookMissionControlStore>,
+  options?: { force?: boolean }
+): void {
   const existing = readNdxbookMissionControlStore();
-  if (existing.companyHealth.length > 0 && existing.newsroomStages.length > 0) return;
+  if (!options?.force && existing.companyHealth.length > 0 && existing.newsroomStages.length > 0) return;
   writeNdxbookMissionControlStore({ ...emptyStore(), ...seed });
 }
 
@@ -137,6 +140,7 @@ export function reschedulePublishingItem(itemId: string, newScheduledAt: string)
 export function touchMissionControlLiveMetrics(): void {
   const store = readNdxbookMissionControlStore();
   if (store.companyHealth.length === 0) return;
+  if (store.publishingSchedule.length === 0 && store.briefing.pagesPublishingToday === 0) return;
 
   const jitter = (n: number, pct: number) => Math.max(0, Math.round(n + n * pct * (Math.random() - 0.5)));
 

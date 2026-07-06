@@ -1,5 +1,7 @@
 import type { ModuleTenantId } from '../studio-os-core/workspace/tenant-ids';
 import { getActiveModuleTenantId } from '../studio-os-core/organization-context';
+import { getRuntimeActiveWorkspaceId } from '../studio-os-core/workspace/storage';
+import { buildPilotDistributionProfile, shouldUseFounderPilotSeed } from '../studio-os-core/founder-pilot-mode';
 import type {
   DistributionCampaign,
   DistributionChannel,
@@ -235,7 +237,12 @@ const PROFILES: Record<ModuleTenantId, DistributionNetworkOrgProfile> = {
 
 export function getDistributionNetworkOrgProfile(moduleTenantId?: ModuleTenantId): DistributionNetworkOrgProfile {
   const tenant = moduleTenantId ?? getActiveModuleTenantId();
-  return PROFILES[tenant] ?? FRONTAL_SLAYER_PROFILE;
+  const base = PROFILES[tenant] ?? FRONTAL_SLAYER_PROFILE;
+  const orgId = getRuntimeActiveWorkspaceId();
+  if (tenant === 'ndxbook' && shouldUseFounderPilotSeed(orgId)) {
+    return buildPilotDistributionProfile(base);
+  }
+  return base;
 }
 
 export function getDistributionNetworkSubtitle(moduleTenantId?: ModuleTenantId): string {

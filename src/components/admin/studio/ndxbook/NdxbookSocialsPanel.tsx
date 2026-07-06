@@ -5,6 +5,8 @@ import { AdminStudioSocialAccountCard } from '../AdminStudioSocialAccountCard';
 import { SocialOAuthSetupPanel } from '../SocialOAuthSetupPanel';
 import { PLATFORM_LABELS } from '../../../../studio-os-core/ndxbook/constants';
 import { syncNdxbookSocialAccountsFromPublishing } from '../../../../studio-os-core/ndxbook/store';
+import { recordFounderMilestone } from '../../../../studio-os-core/founder-pilot-mode';
+import { NDXBOOK_WORKSPACE_ID } from '../../../../studio-os-core/ndxbook/constants';
 import type { NdxbookSocialAccount } from '../../../../studio-os-core/ndxbook/types';
 import type { PublicSocialAccount } from '../../../../utils/adminStudioSocialPublishing';
 import { allOAuthPlatformsUnconfigured } from '../../../../utils/socialOAuthSetupGuide';
@@ -59,6 +61,12 @@ export function NdxbookSocialsPanel({ socialAccounts, onRegistryUpdated }: Ndxbo
 
     syncedSignatureRef.current = signature;
     syncNdxbookSocialAccountsFromPublishing(oauthAccounts);
+    const ig = oauthAccounts.find((a) => a.platform === 'instagram');
+    if (ig && (ig.status === 'connected' || ig.status === 'token_expiring')) {
+      recordFounderMilestone(NDXBOOK_WORKSPACE_ID, 'instagram-connected', {
+        description: 'Instagram OAuth connected — first publishing destination active.',
+      });
+    }
     onRegistryUpdated();
   }, [oauthAccounts, oauthLoading, onRegistryUpdated]);
 
@@ -153,7 +161,7 @@ export function NdxbookSocialsPanel({ socialAccounts, onRegistryUpdated }: Ndxbo
             {PLATFORM_LABELS[acct.platform]}
           </p>
           <p className="text-[6px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-            STATUS · {acct.status.replace('-', ' ')}
+            STATUS · {acct.status === 'locked' ? 'LOCKED' : acct.status.replace('-', ' ').toUpperCase()}
           </p>
           <p className="text-[6px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
             HANDLE · {acct.handle}

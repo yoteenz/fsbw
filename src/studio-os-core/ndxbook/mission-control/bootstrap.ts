@@ -1,11 +1,18 @@
 /**
- * NDXBOOK Mission Control V1.0 — demo operational seed (Milestone 37).
+ * NDXBOOK Mission Control — operational seed.
+ * Demo history (M37) · Founder Pilot clean seed (M87) when pilot mode active.
  */
 
 import { LAUNCH_VOLUMES, VOLUME_LABELS } from '../constants';
 import { PRODUCTION_STAGES } from './constants';
 import { bootstrapNdxbookMissionControlStore } from './store';
 import type { NdxbookMissionControlStore } from './types';
+import {
+  buildPilotMissionControlSeed,
+  ensureFounderPilotForOrganization,
+  shouldUseFounderPilotSeed,
+} from '../../founder-pilot-mode';
+import { NDXBOOK_WORKSPACE_ID } from '../constants';
 
 function todayAt(hour: number, minute: number): string {
   const d = new Date();
@@ -21,7 +28,14 @@ function minsFromNow(m: number): string {
   return new Date(Date.now() + m * 60_000).toISOString();
 }
 
-export function buildNdxbookMissionControlSeed(): Partial<NdxbookMissionControlStore> {
+export function buildNdxbookMissionControlSeed(organizationId = NDXBOOK_WORKSPACE_ID): Partial<NdxbookMissionControlStore> {
+  if (shouldUseFounderPilotSeed(organizationId)) {
+    return buildPilotMissionControlSeed();
+  }
+  return buildDemoNdxbookMissionControlSeed();
+}
+
+function buildDemoNdxbookMissionControlSeed(): Partial<NdxbookMissionControlStore> {
   const launchAt = minsFromNow(47);
 
   return {
@@ -301,5 +315,8 @@ export function buildNdxbookMissionControlSeed(): Partial<NdxbookMissionControlS
 }
 
 export function bootstrapAiMediaNdxbookMissionControl(): void {
-  bootstrapNdxbookMissionControlStore(buildNdxbookMissionControlSeed());
+  ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
+  bootstrapNdxbookMissionControlStore(buildNdxbookMissionControlSeed(NDXBOOK_WORKSPACE_ID), {
+    force: shouldUseFounderPilotSeed(NDXBOOK_WORKSPACE_ID),
+  });
 }

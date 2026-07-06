@@ -16,7 +16,7 @@ export type NdxbookPlatformId =
 
 export type NdxbookPageStatus = 'idea' | 'draft' | 'review' | 'scheduled' | 'published' | 'archived';
 
-export type NdxbookSocialStatus = 'not-connected' | 'pending' | 'connected';
+export type NdxbookSocialStatus = 'not-connected' | 'pending' | 'connected' | 'locked';
 
 export type NdxbookBrandArchitecture = {
   internalWorkspace: string;

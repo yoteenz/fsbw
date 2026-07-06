@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useOrganizationContext } from '../../../studio-os-core/organization-context';
+import { readFounderPilotModeStore, isFounderPilotModeActive } from '../../../studio-os-core/founder-pilot-mode';
 import { readNdxbookMissionControlStore } from '../../../studio-os-core/ndxbook/mission-control/store';
 import { getWorkspaceSnapshot } from '../../../studio-os-core/workspace-registry/store';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
@@ -34,6 +35,19 @@ export function OrganizationIdentityCard({
   const liveMetrics = useMemo(() => {
     if (org.moduleTenantId !== 'ndxbook') {
       return null;
+    }
+    if (isFounderPilotModeActive(org.organizationId)) {
+      const pilot = readFounderPilotModeStore(org.organizationId);
+      const mc = readNdxbookMissionControlStore();
+      return {
+        healthPct: pilot.pagesPublished > 0 ? Math.min(100, pilot.pagesPublished * 2) : 0,
+        conciergesOnline: org.organizationConcierges.length,
+        departments: mc.newsroomStages.length || 12,
+        publishingToday: mc.briefing.pagesPublishingToday,
+        revenueToday: mc.briefing.estimatedRevenueToday,
+        missionActive: true,
+        pilotMode: true,
+      };
     }
     try {
       const store = readNdxbookMissionControlStore();
@@ -108,7 +122,7 @@ export function OrganizationIdentityCard({
                   verticalAlign: 'middle',
                 }}
               />
-              HEADQUARTERS ACTIVE
+              {liveMetrics.pilotMode ? 'FOUNDER PILOT · DAY ONE' : 'HEADQUARTERS ACTIVE'}
             </p>
           ) : null}
 

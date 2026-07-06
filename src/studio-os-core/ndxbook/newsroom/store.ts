@@ -124,9 +124,9 @@ export function writeNdxbookNewsroomStore(store: NewsroomStore): void {
   );
 }
 
-export function bootstrapNdxbookNewsroomStore(seed?: Partial<NewsroomStore>): void {
+export function bootstrapNdxbookNewsroomStore(seed?: Partial<NewsroomStore>, options?: { force?: boolean }): void {
   const existing = readNdxbookNewsroomStore();
-  if (existing.pages.length > 0) return;
+  if (!options?.force && existing.pages.length > 0) return;
   const merged = { ...emptyStore(), ...seed };
   const pipelineStages = rebuildPipelineColumns(merged.pages);
   writeNdxbookNewsroomStore({ ...merged, pipelineStages, dashboard: refreshDashboard({ ...merged, pipelineStages }) });

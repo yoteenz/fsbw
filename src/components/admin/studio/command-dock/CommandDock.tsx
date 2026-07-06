@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { FOUNDER_DISPLAY_NAME, DOCK_COMMAND_EXAMPLES } from '../../../../studio-os-core/command-dock/constants';
 import { greetingForFounder } from '../../../../studio-os-core/command-dock/context';
+import { buildFounderPilotDockBrief } from '../../../../studio-os-core/founder-pilot-mode';
+import { useOrganizationContextOptional } from '../../../../studio-os-core/organization-context';
 import { useCommandDockState } from '../../../../hooks/useCommandDockState';
 import { useLivingHeadquartersPresence } from '../../../../hooks/useLivingHeadquartersPresence';
 import type { DockExpansionSize, CommandHistoryEntry, FavoriteCommand, RecurringCommand } from '../../../../studio-os-core/command-dock/types';
@@ -35,6 +37,11 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
   } = useCommandDockState();
 
   const { dockIdleActivity, getMicroMoment, tick } = useLivingHeadquartersPresence();
+  const org = useOrganizationContextOptional();
+  const pilotBrief = useMemo(
+    () => (org ? buildFounderPilotDockBrief(org.organizationId, org.organizationName) : null),
+    [org]
+  );
   const processingLabel = store.processingActive
     ? getMicroMoment(tick)
     : store.activeMicrointeraction;
@@ -74,15 +81,37 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
             <div className="flex items-start justify-between gap-2 mb-1 shrink-0">
               <div className="min-w-0">
                 {idle ? (
-                  <>
-                    <p style={{ ...dockGrace, fontSize: '13px', margin: 0 }}>{greeting}</p>
-                    <p style={{ ...dockValue, fontSize: '7px', color: DOCK_VISUAL.textMuted, marginTop: 2 }}>
-                      What would you like your organization to accomplish today?
-                    </p>
-                    <p style={{ ...dockLabel, fontSize: '5px', color: DOCK_VISUAL.portfolio, marginTop: 6, fontStyle: 'normal' }}>
-                      {dockIdleActivity}
-                    </p>
-                  </>
+                  pilotBrief ? (
+                    <>
+                      <p style={{ ...dockGrace, fontSize: '13px', margin: 0 }}>{pilotBrief.greeting}</p>
+                      <p style={{ ...dockValue, fontSize: '8px', color: DOCK_VISUAL.textMuted, marginTop: 4 }}>
+                        {pilotBrief.missionTitle}
+                      </p>
+                      <p style={{ ...dockLabel, fontSize: '6px', color: DOCK_VISUAL.gold, marginTop: 6 }}>
+                        TODAY&apos;S MISSION
+                      </p>
+                      <ul style={{ margin: '4px 0 0', paddingLeft: 12 }}>
+                        {pilotBrief.missionSteps.map((step) => (
+                          <li key={step} style={{ ...dockLabel, fontSize: '6px', color: DOCK_VISUAL.textMuted, lineHeight: 1.5 }}>
+                            {step}
+                          </li>
+                        ))}
+                      </ul>
+                      <p style={{ ...dockLabel, fontSize: '5px', color: DOCK_VISUAL.portfolio, marginTop: 6 }}>
+                        {pilotBrief.footer}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p style={{ ...dockGrace, fontSize: '13px', margin: 0 }}>{greeting}</p>
+                      <p style={{ ...dockValue, fontSize: '7px', color: DOCK_VISUAL.textMuted, marginTop: 2 }}>
+                        What would you like your organization to accomplish today?
+                      </p>
+                      <p style={{ ...dockLabel, fontSize: '5px', color: DOCK_VISUAL.portfolio, marginTop: 6, fontStyle: 'normal' }}>
+                        {dockIdleActivity}
+                      </p>
+                    </>
+                  )
                 ) : (
                   <p style={{ ...dockLabel, color: DOCK_VISUAL.portfolio }}>
                     {store.contextProfile?.label ?? 'HEADQUARTERS'} · COMMAND DOCK
@@ -101,8 +130,8 @@ export function CommandDock({ bottomOffset = 16 }: CommandDockProps) {
               </div>
             </div>
 
-            {/* Proactive suggestion — idle only */}
-            {idle && store.proactiveSuggestion && (
+            {/* Proactive suggestion — idle only (skip during founder pilot) */}
+            {idle && !pilotBrief && store.proactiveSuggestion && (
               <button
                 type="button"
                 onClick={() => {

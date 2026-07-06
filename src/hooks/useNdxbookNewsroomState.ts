@@ -7,9 +7,16 @@ import {
   rescheduleEditorialEntry,
   selectNewsroomPage,
 } from '../studio-os-core/ndxbook/newsroom/store';
+import { NDXBOOK_WORKSPACE_ID } from '../studio-os-core/ndxbook/constants';
+import { ensureFounderPilotForOrganization, shouldUseFounderPilotSeed } from '../studio-os-core/founder-pilot-mode';
 import type { NewsroomPipelineStageId } from '../studio-os-core/ndxbook/newsroom/types';
 
 function ensureSeeded(): void {
+  ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
+  if (shouldUseFounderPilotSeed(NDXBOOK_WORKSPACE_ID)) {
+    bootstrapNdxbookNewsroomStore(undefined, { force: false });
+    return;
+  }
   bootstrapNdxbookNewsroomStore(buildNdxbookNewsroomSeed());
 }
 

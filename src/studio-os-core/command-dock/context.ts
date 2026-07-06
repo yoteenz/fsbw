@@ -174,9 +174,9 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     const suggestions =
       activeOrg.tenantId === 'ndxbook'
         ? [
-            'What pages need approval today?',
-            'Summarize NDXBOOK publishing for this week.',
-            'Show today\'s best move from Studio Intelligence.',
+            'Help me connect Instagram.',
+            'Create Page 001 for NDXBOOK.',
+            'What is my next founder milestone?',
           ]
         : [
             'What are today\'s priorities?',

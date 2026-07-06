@@ -6,10 +6,13 @@ import {
   touchMissionControlLiveMetrics,
 } from '../studio-os-core/ndxbook/mission-control/store';
 import { buildNdxbookMissionControlSeed } from '../studio-os-core/ndxbook/mission-control/bootstrap';
+import { NDXBOOK_WORKSPACE_ID } from '../studio-os-core/ndxbook/constants';
+import { ensureFounderPilotForOrganization } from '../studio-os-core/founder-pilot-mode';
 import type { MissionControlNavId } from '../studio-os-core/ndxbook/mission-control/types';
 
 function ensureSeeded(): void {
-  bootstrapNdxbookMissionControlStore(buildNdxbookMissionControlSeed());
+  ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
+  bootstrapNdxbookMissionControlStore(buildNdxbookMissionControlSeed(NDXBOOK_WORKSPACE_ID));
 }
 
 export function useNdxbookMissionControlState() {

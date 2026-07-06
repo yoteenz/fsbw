@@ -38321,3 +38321,27 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Inside an organization page, all visible identity/briefings/metrics use active org context only. Organization Identity Card has no dropdown unless portfolio mode. Do not stack redundant "Mission Control" headers — use distinct section names.
 
+---
+
+## 2026-07-06 — Milestone 87: Founder Pilot Mode (Real-World Organization Bootstrap)
+
+**Context (full chat arc):** User requested **Milestone 87** to change how organizations are born in Studio OS — **do not redesign the platform**. NDXBOOK had months of fake demo data (Page 043, fake revenue, analytics, experiments, schedules). Goal: **Founder Pilot Mode** — every organization starts at zero; NDXBOOK is the first real company; metrics are earned through real usage; Instagram-only publishing pipeline for pilot phase.
+
+**Topics covered (this chat):**
+- **Prior in chat:** M84 Design DNA & Canon · M85 Design Genome · M86 Organization Mission Control refinement (org identity card, NDXBOOK HQ flow, active org context).
+- **M87 scope:** Founder Pilot Mode flag · clean bootstrap · Page 001 numbering · empty library/timeline/revenue/labs/intelligence · Instagram-only distribution · Command Dock onboarding · Founder Timeline permanent history · Mission Control empty states · intelligence maturity tiers.
+
+**Decisions / outcomes:**
+- New module **`src/studio-os-core/founder-pilot-mode/`** — scoped store · **`ensureFounderPilotForOrganization()`** · **`recordFounderMilestone()`** · pilot seeds for mission control · ndxbook store · distribution profile.
+- **NDXBOOK (`ai-media`) defaults to pilot ON** — legacy demo seeds cleared on first activation; **`buildNdxbookMissionControlSeed(orgId)`** returns pilot seed when pilot active.
+- **Empty states:** Library (Create Page 001) · Timeline (connect IG → create → schedule) · Revenue ($0 / forecast unavailable) · Labs (5 posts to unlock) · Intelligence (5/25/100/500 milestone tiers · LEARNING status).
+- **Distribution:** **`buildPilotDistributionProfile()`** — empty packs · Instagram NOT CONNECTED · other channels LOCKED.
+- **Social accounts:** **`locked`** status on NdxbookSocialAccount · pilot **`PILOT_SOCIAL_ACCOUNTS`** (Instagram active, others locked).
+- **Command Dock:** **`buildFounderPilotDockBrief()`** — today's mission steps when pilot active.
+- **Founder Timeline panel** in NDXBOOK HQ · records org-created · instagram-connected milestones.
+- **Organization Identity Card** shows **FOUNDER PILOT · DAY ONE** when pilot active.
+
+**Changes:** `founder-pilot-mode/*`, mission-control/ndxbook/newsroom bootstrap + hooks, distribution org defaults, Command Dock, NdxbookMissionControl panels, OrganizationIdentityCard, NdxbookSocialsPanel, ndxbook types/store, motherboard/CORE.md + MEMORY.md.
+
+**Conventions:** Never fabricate revenue/analytics/history when Founder Pilot Mode is active. Page numbering starts at 001. Instagram is the only active publishing destination during NDXBOOK pilot. Record earned milestones in Founder Timeline — permanent org history.
+
