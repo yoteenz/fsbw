@@ -33,7 +33,7 @@ export const STUDIO_ADMINISTRATION_ROUTES = {
 
 /** Organization headquarters entry — launches workspace HQ inside Studio OS. */
 export const ORGANIZATION_ROUTES = {
-  /** Organization admin entry — resolves assigned organization, never defaults to Frontal Slayer for portfolio owners. */
+  /** Organization admin entry — launches host company HQ (Frontal Slayer on fsbw). */
   headquartersEntry: `${ADMIN_BASE}/headquarters`,
   /** Default landing after headquarters launch — organization Mission Control only. */
   missionControl: `${ADMIN_BASE}/studio/mission-control`,

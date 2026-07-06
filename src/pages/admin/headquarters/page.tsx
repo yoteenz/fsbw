@@ -8,7 +8,6 @@ import { ORGANIZATION_ROUTES } from '../../../studio-os-core/application/routes'
 import { getAssignedOrganizationWorkspaceId } from '../../../studio-os-core/application/portfolio-access';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { loadWorkspace } from '../../../studio-os-core/workspace/loader';
-import { readActiveWorkspaceIdFromStorage } from '../../../studio-os-core/workspace/storage';
 import {
   resolveHeadquartersLaunchWorkspaceId,
   resolveOrganizationMissionControlPath,
@@ -22,8 +21,7 @@ export default function AdminHeadquartersEntryPage() {
   const navigate = useNavigate();
   const { enterWorkspace } = useWorkspace();
   const assignedId = getAssignedOrganizationWorkspaceId();
-  const lastActiveId = readActiveWorkspaceIdFromStorage();
-  const resolvedOrgId = resolveHeadquartersLaunchWorkspaceId(assignedId, lastActiveId);
+  const resolvedOrgId = resolveHeadquartersLaunchWorkspaceId(assignedId);
   const missionControlPath = resolveOrganizationMissionControlPath(resolvedOrgId);
   const orgWorkspace = loadWorkspace(resolvedOrgId)?.schema;
 

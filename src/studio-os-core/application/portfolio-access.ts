@@ -47,8 +47,8 @@ export function getAssignedOrganizationWorkspaceId(): string | null {
 }
 
 /**
- * Resolved organization for headquarters routes.
- * Portfolio owners must explicitly enter an organization — never inherit Frontal Slayer.
+ * Resolved organization for headquarters routes on the host deployment (e.g. fsbw → Frontal Slayer).
+ * Studio Command Center stays platform-scoped; headquarters is always a company workspace.
  */
 export function requireOrganizationWorkspaceId(): string {
   const assigned = getAssignedOrganizationWorkspaceId();

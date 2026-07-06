@@ -1,4 +1,4 @@
-import { STUDIO_OS_DEFAULT_WORKSPACE_ID, STUDIO_PLATFORM_WORKSPACE_ID } from './storage';
+import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from './storage';
 import { STUDIO_ADMINISTRATION_ROUTES } from '../application/routes';
 
 const ADMIN_BASE = '/admin';
@@ -56,14 +56,15 @@ export function resolveOrganizationMissionControlPath(workspaceId: string): stri
   return workspaceStudioModulePath(workspaceId, 'mission-control');
 }
 
-/** Resolve which organization to launch from admin HEADQUARTERS card / entry route. */
+/**
+ * Resolve which organization to launch from admin HEADQUARTERS card / entry route.
+ * Headquarters is the host company's executive HQ — not the Studio OS platform tenant
+ * and not "resume last portfolio workspace" (that belongs in Command Center / registry).
+ */
 export function resolveHeadquartersLaunchWorkspaceId(
   assignedWorkspaceId: string | null,
-  lastActiveWorkspaceId: string
+  _lastActiveWorkspaceId?: string | null
 ): string {
   if (assignedWorkspaceId) return assignedWorkspaceId;
-  if (lastActiveWorkspaceId && lastActiveWorkspaceId !== STUDIO_PLATFORM_WORKSPACE_ID) {
-    return lastActiveWorkspaceId;
-  }
   return STUDIO_OS_DEFAULT_WORKSPACE_ID;
 }

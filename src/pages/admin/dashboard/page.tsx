@@ -28,7 +28,7 @@ import {
 } from '../../../utils/adminMeetingsMock';
 import { usePersistentQueryState } from '../../../hooks/usePersistentQueryState';
 import { fetchAdminMeetingsApiNormalized, useAdminMeetingsApiRefresh } from '../../../hooks/useAdminMeetingsApiRefresh';
-import { canAccessStudioAdministration, getAssignedOrganizationWorkspaceId } from '../../../studio-os-core/application/portfolio-access';
+import { canAccessStudioAdministration } from '../../../studio-os-core/application/portfolio-access';
 import { ensureOrgMembershipResolved } from '../../../studio-os-core/auth/membership';
 import { registerStudioOsAuthBridge } from '../../../shared/auth/studioOsAuthBridge';
 import { getAccessToken } from '../../../utils/api';
@@ -1241,11 +1241,8 @@ export default function AdminDashboard() {
         navigate('/admin/backend');
         break;
       case 'HEADQUARTERS':
-        if (canAccessStudioAdministration() && !getAssignedOrganizationWorkspaceId()) {
-          navigate(STUDIO_ADMINISTRATION_ROUTES.commandCenter);
-        } else {
-          navigate(ORGANIZATION_ROUTES.headquartersEntry);
-        }
+        // Organization HQ (Frontal Slayer on fsbw) — never the Studio OS platform layer.
+        navigate(ORGANIZATION_ROUTES.headquartersEntry);
         break;
       case 'STUDIO COMMAND CENTER':
         navigate(STUDIO_ADMINISTRATION_ROUTES.root);

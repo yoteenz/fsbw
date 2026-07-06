@@ -39028,3 +39028,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Organizational Consciousness (M115) is the master layer atop M107–M114 intelligence stack — Studio OS becomes the living consciousness of the organization. Demo localStorage via `studioOsOrganizationalConsciousness_v1`.
 
+---
+
+## 2026-07-06 — Headquarters vs Studio Command Center routing separation
+
+**Context (full chat arc):** User reported Headquarters quota error + Studio Command Center card disappearing (fixed in `7ec47f3f`). Follow-up: **Headquarters was routing to Studio Command Center** instead of Frontal Slayer HQ. User clarified intended model — **Studio Command Center** = founder/owner of Studio OS software only; **Headquarters** = the company running on the website (Frontal Slayer on fsbw), until Command Center moves to its own routes/site.
+
+**Root cause:** A prior guard fix (`4e93c0d7`) redirected portfolio owners with no assigned org from the **HEADQUARTERS** dashboard card to **`/admin/studio-os/command-center`**. Routes were already separate in `application/routes.ts`; the dashboard click handler merged them. **`resolveHeadquartersLaunchWorkspaceId`** also reused last-active portfolio workspace from storage, which could launch the wrong org after browsing the registry.
+
+**Fix:**
+- **`dashboard/page.tsx`** — **HEADQUARTERS** always → **`ORGANIZATION_ROUTES.headquartersEntry`**; **STUDIO COMMAND CENTER** → **`STUDIO_ADMINISTRATION_ROUTES.commandCenter`** (unchanged).
+- **`resolveHeadquartersLaunchWorkspaceId`** — assigned org or host default **`frontal-slayer`** only; no last-active portfolio resume.
+- **`portfolio-access.ts`**, **`application/routes.ts`** — comments updated to match host-site headquarters semantics.
+- **CORE.md** — mandatory boundary: Command Center never substitutes for Headquarters on the admin dashboard.
+
+**Route map (fsbw):**
+
+| Card | Who | Route | Lands on |
+|------|-----|-------|----------|
+| STUDIO COMMAND CENTER | Portfolio owner (founder) | `/admin/studio-os/command-center` | Platform portfolio view |
+| HEADQUARTERS | All admins | `/admin/headquarters` → `/admin/studio/mission-control` | Frontal Slayer org HQ |
+
+**Changes:** dashboard/page.tsx, headquarters/page.tsx, workspace/routes.ts, application/routes.ts, portfolio-access.ts, CORE.md, MEMORY.md.
