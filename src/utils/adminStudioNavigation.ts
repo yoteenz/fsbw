@@ -1752,6 +1752,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'workspace-runtime',
+    title: 'WORKSPACE RUNTIME™',
+    purpose: 'Isolated execution environment per organization — independent digital headquarters, sandboxes, runtime health.',
+    route: p('workspace-runtime'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M136',
+    ctaLabel: 'OPEN WORKSPACE RUNTIME',
+    moduleKey: 'workspace-runtime',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

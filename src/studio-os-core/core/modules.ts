@@ -129,6 +129,7 @@ export type StudioOsCoreModuleId =
   | 'prompt-registry'
   | 'policy-engine'
   | 'permission-engine'
+  | 'workspace-runtime'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -898,6 +899,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PERMISSION ENGINE™',
     description: 'Permission Engine V1.0 — capability-based enterprise authorization; secure, intuitive, intentional.',
     routeSegment: 'permission-engine',
+  },
+  {
+    id: 'workspace-runtime',
+    label: 'WORKSPACE RUNTIME™',
+    description: 'Workspace Runtime V1.0 — isolated execution environment per organization; independent digital headquarters.',
+    routeSegment: 'workspace-runtime',
   },
   {
     id: 'succession-mode',

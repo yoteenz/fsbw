@@ -241,6 +241,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationPermissionEngineProfile(context.organizationId);
   });
 
+  void import('../workspace-runtime/store').then((m) => {
+    m.ensureOrganizationWorkspaceRuntimeProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

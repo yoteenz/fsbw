@@ -925,6 +925,10 @@ export function adminStudioPermissionEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/permission-engine`;
 }
 
+export function adminStudioWorkspaceRuntimePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/workspace-runtime`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

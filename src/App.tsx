@@ -258,6 +258,10 @@ const AdminStudioPermissionEngine = lazyWithRetry(
   () => import('./pages/admin/studio/permission-engine/page'),
   'AdminStudioPermissionEngine'
 );
+const AdminStudioWorkspaceRuntime = lazyWithRetry(
+  () => import('./pages/admin/studio/workspace-runtime/page'),
+  'AdminStudioWorkspaceRuntime'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1559,6 +1563,11 @@ function App() {
           <Route path="studio/permission-engine" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioPermissionEngine />
+            </Suspense>
+          } />
+          <Route path="studio/workspace-runtime" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioWorkspaceRuntime />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

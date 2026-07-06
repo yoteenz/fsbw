@@ -54,7 +54,7 @@ Organization · Department · Project · Workspace · Feature · Approval State 
 
 ## Sync chain
 
-… → Automation Registry → Prompt Registry → Policy Engine → **Permission Engine**
+… → Automation Registry → Prompt Registry → Policy Engine → Permission Engine → **Workspace Runtime**
 
 **`policy-engine/store`** triggers **`syncPermissionEngineFromSources`** · **boundary-sync**
 

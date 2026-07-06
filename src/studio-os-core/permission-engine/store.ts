@@ -57,7 +57,11 @@ export function syncPermissionEngineFromSources(organizationId: string): Organiz
   if (existing?.approvalChains?.length) {
     rebuilt.approvalChains = existing.approvalChains;
   }
-  return upsertProfile(rebuilt);
+  const profile = upsertProfile(rebuilt);
+  void import('../workspace-runtime/store').then((m) => {
+    m.syncWorkspaceRuntimeFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationPermissionEngineProfile(

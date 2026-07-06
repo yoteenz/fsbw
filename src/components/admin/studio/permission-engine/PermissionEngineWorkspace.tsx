@@ -6,7 +6,7 @@ import {
   PERMISSION_ENGINE_PHILOSOPHY,
   queryPermissionEngine,
 } from '../../../../studio-os-core/permission-engine';
-import { adminStudioMissionControlPath, adminStudioPolicyEnginePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioMissionControlPath, adminStudioPolicyEnginePath, adminStudioWorkspaceRuntimePath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -74,7 +74,10 @@ export function PermissionEngineWorkspace() {
           {profile.dockPermissionLine}
         </p>
       </ExecutiveSecondaryCard>
-      <button type="button" onClick={() => navigate(adminStudioPolicyEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: PERMISSION_ENGINE_ACCENT, color: PERMISSION_ENGINE_ACCENT }}>
+      <button type="button" onClick={() => navigate(adminStudioWorkspaceRuntimePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: PERMISSION_ENGINE_ACCENT, color: PERMISSION_ENGINE_ACCENT }}>
+        WORKSPACE RUNTIME →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioPolicyEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         POLICY ENGINE →
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>

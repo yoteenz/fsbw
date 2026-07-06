@@ -39633,3 +39633,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/permission-engine.md`** · **CORE.md** M135 entry
 
 **Conventions:** Permissions describe capabilities — never hardcode by job title. Compose roles from capability modules. Log all grants/revokes to audit trail. Policy Engine = what is allowed; Permission Engine = who may act. Sync chain: … → Prompt Registry → Policy Engine → **Permission Engine**. Demo localStorage via `studioOsPermissionEngine_v1`. Brand voice: *"Capabilities, not titles. Power intentional. Trust earned."* Accent `#BE123C`.
+
+---
+
+## 2026-07-06 — Milestone 136: Workspace Runtime™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine through M135 Permission Engine (`28dca60b`). User requested **Workspace Runtime™**: isolated execution environment for every organization — independent digital headquarters; Studio OS provides platform, runtime provides organization; nothing leaks unless authorized; runtime configuration; sandbox environments; runtime health dashboard.
+
+**Requirements delivered:**
+- **Isolated organization runtimes** — Headquarters, departments, concierges, Profession Brain, Genome, Knowledge Fabric, Memory Engine, Command Dock, Council, policies, permissions, automation, assets, marketplace, Institute, Legacy Vault, timeline, pulse (18 components)
+- **Runtime configuration** — installed modules, department/profession/industry packs, brand identity, themes, custom policies, org preferences, feature flags, regional settings, AI provider preferences — org-scoped only
+- **Sandbox environments** — production, development, testing, preview, training — safe testing before publish
+- **Runtime health dashboard** — performance, memory, automation load, AI requests, storage, knowledge growth, errors, security events, integration health
+- **Isolation audit** — organizations never interfere; platform shared, runtime never
+- **Command Dock** — runtime Q&A (*"Your development workspace is ready"*, *"Three modules require updates"*, *"Testing environment is healthy"*, *"I've detected increased runtime activity"*)
+
+**Delivered:**
+- **`src/studio-os-core/workspace-runtime/`** — `runtime-catalog.ts` · `configuration-engine.ts` · `sandbox-engine.ts` · `health-engine.ts` · `isolation-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncWorkspaceRuntimeFromSources` · `setActiveSandbox`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`WorkspaceRuntimeWorkspace`** (7 tabs: Overview · Org Runtime · Configuration · Sandboxes · Health · Isolation · Discovery) · **`/admin/studio/workspace-runtime`** · **`MissionControlWorkspaceRuntimePanel`** · **`useWorkspaceRuntimeState`**
+- **Wiring** — nav M136 · sync chain Permission Engine → Workspace Runtime · Command Dock workspace-runtime-first · boundary-sync · documentation system registry + page-guide entry · Permission Engine workspace link
+- **Docs** — **`docs/studio-os/workspace-runtime.md`** · **CORE.md** M136 entry
+
+**Conventions:** All organization data scoped to Workspace Runtime boundary. Test in sandboxes before production. Permission Engine = who may act; Workspace Runtime = where they act. Sync chain: … → Policy Engine → Permission Engine → **Workspace Runtime**. Demo localStorage via `studioOsWorkspaceRuntime_v1`. Brand voice: *"Organizations share the platform. Never the runtime."* Accent `#1E40AF`.

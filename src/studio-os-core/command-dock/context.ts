@@ -57,6 +57,7 @@ import { listAutomationRegistryDockSuggestions } from '../automation-registry/do
 import { listPromptRegistryDockSuggestions } from '../prompt-registry/dock-advisor';
 import { listPolicyEngineDockSuggestions } from '../policy-engine/dock-advisor';
 import { listPermissionEngineDockSuggestions } from '../permission-engine/dock-advisor';
+import { listWorkspaceRuntimeDockSuggestions } from '../workspace-runtime/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -397,6 +398,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/workspace-runtime')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'workspace-runtime',
+      label: 'WORKSPACE RUNTIME™ · INDEPENDENT HQ',
+      portfolioMode: false,
+      suggestedCommands: listWorkspaceRuntimeDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 

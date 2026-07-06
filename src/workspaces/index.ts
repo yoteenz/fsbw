@@ -377,6 +377,10 @@ export function bootstrapWorkspacesPlatform(): void {
     permissionEngine.bootstrapPermissionEnginePlatform();
     await yieldToMain();
 
+    const workspaceRuntime = await import('../studio-os-core/workspace-runtime/bootstrap');
+    workspaceRuntime.bootstrapWorkspaceRuntimePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

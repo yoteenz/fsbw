@@ -55,6 +55,7 @@ export type StudioOsBrandSystemId =
   | 'prompt-registry'
   | 'policy-engine'
   | 'permission-engine'
+  | 'workspace-runtime'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -109,6 +110,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'prompt-registry': 'Prompts are code. AI behavior stays transparent, maintainable, and continuously improving.',
   'policy-engine': 'Define policies once. Every system follows organizational law automatically.',
   'permission-engine': 'Capabilities, not titles. Power intentional. Trust earned.',
+  'workspace-runtime': 'Organizations share the platform. Never the runtime.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',
