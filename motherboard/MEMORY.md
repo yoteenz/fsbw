@@ -39030,6 +39030,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-06 — Headquarters vs Studio Command Center routing separation
 
 **Context (full chat arc):** User reported Headquarters quota error + Studio Command Center card disappearing (fixed in `7ec47f3f`). Follow-up: **Headquarters was routing to Studio Command Center** instead of Frontal Slayer HQ. User clarified intended model — **Studio Command Center** = founder/owner of Studio OS software only; **Headquarters** = the company running on the website (Frontal Slayer on fsbw), until Command Center moves to its own routes/site.
@@ -39050,3 +39051,27 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 | HEADQUARTERS | All admins | `/admin/headquarters` → `/admin/studio/mission-control` | Frontal Slayer org HQ |
 
 **Changes:** dashboard/page.tsx, headquarters/page.tsx, workspace/routes.ts, application/routes.ts, portfolio-access.ts, CORE.md, MEMORY.md.
+=======
+## 2026-07-06 — Milestone 116: Executive Timeline™ V1.0 (permanent organizational history)
+
+**Context (full chat arc):** Same session delivered M90–M115 (Blueprint through Organizational Consciousness `b93f20eb`). User requested **Milestone 116 — Executive Timeline™ V1.0**: permanent visual history of every organization — immersive timeline founders explore; history as learning tool; auto-record 22+ event types; scroll years · filter department/project/org · jump milestones · replay history · archived HQ · historical dashboards · growth comparison · intelligent insights · Command Dock anniversary context. Philosophy: understand not only where you are, but **how you arrived there**.
+
+**Note:** Executive Timeline route existed from **M81** as scheduling/temporal intelligence — M116 **extends** (does not replace) with history layer; workspace toggles **EXECUTIVE HISTORY · M116** vs **SCHEDULE · M81**.
+
+**Requirements delivered:**
+- **22+ auto-recorded event types** — founded · blueprint · HQ activation · brain updates · commerce launches · campaigns · products · hiring · promotions · customers · revenue · decisions · innovation · awards · brand · partnerships · automation · knowledge growth · health · legacy · consciousness · predictive
+- **Visual experience** — year scroll · department/event filters · milestone jump · year-by-year replay · growth comparison (knowledge · health · revenue indices) · archived HQ / historical dashboard flags on events
+- **Intelligent insights** — fastest growth period · campaign impact · brain expansion · decision outcomes · health turnaround · knowledge compounding · anniversaries
+- **Command Dock** — **`buildAnniversaryDockContext()`** on Mission Control · **`resolveExecutiveTimelineHistoryAdvice()`** · proactive history on `/executive-timeline`
+
+**Delivered:**
+- **`src/studio-os-core/executive-timeline/`** history layer — **`history-constants.ts`** · **`history-types.ts`** · **`history-events.ts`** · **`history-insights.ts`** · **`history-builder.ts`** · **`history-store.ts`** · **`dock-advisor.ts`**
+- **`ExecutiveTimelineHistoryWorkspace`** + mode toggle in **`ExecutiveTimelineWorkspace`** — 4 tabs: History Overview · Executive Timeline · Intelligent Insights · Explore & Replay · amber accent `#B45309`
+- **`MissionControlExecutiveTimelinePanel`** · **`useExecutiveTimelineHistoryState`** hook
+- **Brand voice **`executive-timeline`**: *"See how you arrived. Preserve the journey forever."*
+- **Sync chain** — pulls from Blueprint · Inauguration · Brain · Commerce · Memory · Legacy · Health · Consciousness · Predictive · **`organizational-consciousness/store`** resync triggers **`syncExecutiveTimelineHistoryFromSources`** · **boundary-sync**
+- **Docs** — **`docs/studio-os/executive-timeline.md`** · **CORE.md** M116 extension on Executive Timeline entry · nav metric **M116**
+
+**Conventions:** Executive Timeline history (M116) preserves organizational journey atop M115 consciousness — demo localStorage via `studioOsExecutiveTimelineHistory_v1`.
+
+>>>>>>> 31bd84e8 (Milestone 116: Executive Timeline permanent organizational history V1.0)

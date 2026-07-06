@@ -50,7 +50,11 @@ function upsertProfile(profile: OrganizationConsciousnessProfile): OrganizationC
 export function syncOrganizationalConsciousnessFromSources(
   organizationId: string
 ): OrganizationConsciousnessProfile {
-  return upsertProfile(buildOrganizationConsciousnessProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationConsciousnessProfile(organizationId));
+  void import('../executive-timeline/history-store').then((m) => {
+    m.syncExecutiveTimelineHistoryFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationConsciousnessProfile(

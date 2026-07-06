@@ -457,7 +457,7 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
   {
     id: 'executive-timeline',
     label: 'EXECUTIVE TIMELINE',
-    description: 'Temporal intelligence — living organizational timeline with dependencies, concierge commands, and portfolio view. V1.0.',
+    description: 'Permanent organizational history — immersive executive timeline, intelligent insights, replay, and growth comparison. V1.0 (M116).',
     routeSegment: 'executive-timeline',
   },
   {

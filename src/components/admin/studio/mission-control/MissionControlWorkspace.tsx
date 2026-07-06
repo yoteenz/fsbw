@@ -60,6 +60,7 @@ import { MissionControlRelationshipMemoryPanel } from './MissionControlRelations
 import { MissionControlPredictiveOrganizationPanel } from './MissionControlPredictiveOrganizationPanel';
 import { MissionControlAutonomousPreparationPanel } from './MissionControlAutonomousPreparationPanel';
 import { MissionControlOrganizationalConsciousnessPanel } from './MissionControlOrganizationalConsciousnessPanel';
+import { MissionControlExecutiveTimelinePanel } from './MissionControlExecutiveTimelinePanel';
 import {
   MC_VISUAL,
   MISSION_CONTROL_STYLES,
@@ -429,6 +430,7 @@ export function MissionControlWorkspace() {
             <MissionControlPredictiveOrganizationPanel />
             <MissionControlAutonomousPreparationPanel />
             <MissionControlOrganizationalConsciousnessPanel />
+            <MissionControlExecutiveTimelinePanel />
           </div>
         </ExecutiveSecondaryGrid>
 

@@ -36,6 +36,7 @@ export type StudioOsBrandSystemId =
   | 'predictive-organization'
   | 'autonomous-preparation'
   | 'organizational-consciousness'
+  | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
   | 'expansion-center'
@@ -70,6 +71,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'predictive-organization': 'Prepare before tomorrow arrives.',
   'autonomous-preparation': 'One step ahead. Always awaiting approval.',
   'organizational-consciousness': 'One intelligence. Preserve expertise. Build legacy.',
+  'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',
   'expansion-center': 'Grow your organization. Expand your legacy.',

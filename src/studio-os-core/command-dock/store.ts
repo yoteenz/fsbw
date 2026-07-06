@@ -119,6 +119,11 @@ import {
   resolveOrganizationalConsciousnessAdvice,
   buildProactiveOrganizationalConsciousnessSuggestion,
 } from '../organizational-consciousness/dock-advisor';
+import {
+  resolveExecutiveTimelineHistoryAdvice,
+  buildProactiveExecutiveTimelineHistorySuggestion,
+  buildAnniversaryDockContext,
+} from '../executive-timeline/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -199,6 +204,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const predictiveOrganization = buildProactivePredictiveOrganizationSuggestion(workspaceId);
   const autonomousPreparation = buildProactiveAutonomousPreparationSuggestion(workspaceId);
   const organizationalConsciousness = buildProactiveOrganizationalConsciousnessSuggestion(workspaceId);
+  const executiveTimelineHistory = buildProactiveExecutiveTimelineHistorySuggestion(workspaceId);
+  const anniversaryContext = buildAnniversaryDockContext(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -273,6 +280,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'Open Organizational Consciousness — unified intelligence across all systems.',
       }
     : null;
+  const executiveTimelineHistoryProactive = executiveTimelineHistory
+    ? {
+        response: executiveTimelineHistory,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Executive Timeline — explore how your organization arrived here.',
+      }
+    : null;
+  const anniversaryProactive = anniversaryContext
+    ? {
+        response: anniversaryContext,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Executive Timeline — replay organizational history.',
+      }
+    : null;
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -322,8 +343,12 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const proactiveSource =
     ambientOpening
       ? ambientOpening
+      : pathname.includes('/executive-timeline') && executiveTimelineHistoryProactive
+      ? executiveTimelineHistoryProactive
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
+      : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
+      ? anniversaryProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -558,6 +583,25 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${autonomousPreparationAdvice.concierge}\n${autonomousPreparationAdvice.response}`,
+    });
+    return null;
+  }
+
+  const executiveTimelineHistoryAdvice = resolveExecutiveTimelineHistoryAdvice(
+    trimmed,
+    getRuntimeActiveWorkspaceId()
+  );
+  if (executiveTimelineHistoryAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${executiveTimelineHistoryAdvice.concierge}\n${executiveTimelineHistoryAdvice.response}`,
     });
     return null;
   }

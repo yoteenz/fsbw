@@ -37,6 +37,7 @@ import { listRelationshipMemoryDockSuggestions } from '../relationship-memory';
 import { listPredictiveOrganizationDockSuggestions } from '../predictive-organization';
 import { listAutonomousPreparationDockSuggestions } from '../autonomous-preparation';
 import { listOrganizationalConsciousnessDockSuggestions } from '../organizational-consciousness';
+import { listExecutiveTimelineHistoryDockSuggestions } from '../executive-timeline/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -500,16 +501,16 @@ export function resolveDockContext(pathname: string): DockContextProfile {
   }
 
   if (pathname.includes('/executive-timeline')) {
+    const historySuggestions = listExecutiveTimelineHistoryDockSuggestions(getRuntimeActiveWorkspaceId());
     return {
       contextId: 'timeline',
-      label: 'EXECUTIVE TIMELINE',
+      label: 'EXECUTIVE TIMELINE™ · PERMANENT HISTORY',
       portfolioMode: false,
       suggestedCommands: [
+        ...historySuggestions.slice(0, 3),
         'Move tomorrow\'s meeting.',
-        'Block Friday morning for strategy.',
-        'Move everything affected.',
       ],
-      commandTypes: ['scheduling', 'meetings', 'personal-life', 'travel'],
+      commandTypes: ['scheduling', 'meetings', 'strategy', 'executive-requests'],
     };
   }
 

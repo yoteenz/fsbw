@@ -4,7 +4,7 @@ import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio
 import { ExecutiveTimelineWorkspace } from '../../../../components/admin/studio/executive-timeline/ExecutiveTimelineWorkspace';
 
 const SUBTITLE =
-  'Temporal intelligence layer for Studio OS — not a calendar. Living organizational timeline with dependencies, concierge commands, and founder personal life integration.';
+  'Executive Timeline™ — permanent visual history of your organization. Explore how you arrived here, replay milestones, and turn history into actionable intelligence.';
 
 export default function AdminStudioExecutiveTimelinePage() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function AdminStudioExecutiveTimelinePage() {
     >
       <ExecutiveTimelineWorkspace />
       <AdminStudioDisclaimerFooter>
-        EXECUTIVE TIMELINE V1.0 · TEMPORAL INTELLIGENCE · DEMO PLACEHOLDER · DON&apos;T MANAGE YOUR CALENDAR — LEAD YOUR ORGANIZATION
+        EXECUTIVE TIMELINE™ V1.0 · PERMANENT ORGANIZATIONAL HISTORY · M116 · PRESERVE THE JOURNEY FOREVER
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );
