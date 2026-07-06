@@ -12,7 +12,7 @@ export type StudioOsAuthProvider = {
 };
 
 export type StudioOsOrgMembership = {
-  workspaceId: string;
+  workspaceId: string | null;
   isPortfolioOwner: boolean;
   source: 'supabase' | 'env-fallback' | 'default';
 };

@@ -7,7 +7,7 @@ import { resolveAdminAuth } from '../_lib/adminAuth.js';
 import { getSupabaseAdminServiceRole } from '../_lib/supabase.js';
 
 const FOUNDER_EMAIL = 'kateenaarmstrong@gmail.com';
-const DEFAULT_WORKSPACE_ID = 'frontal-slayer';
+const LEGACY_DEFAULT_WORKSPACE_ID = 'frontal-slayer';
 
 function readEnvPortfolioOwners(): string[] {
   const raw = process.env.ADMIN_PORTFOLIO_OWNER_EMAILS || process.env.PORTFOLIO_OWNER_EMAILS || '';
@@ -43,29 +43,30 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (error) {
       console.error('[studio-os-membership]', error.message);
       return res.status(200).json({
-        workspaceId: DEFAULT_WORKSPACE_ID,
+        workspaceId: isEnvPortfolioOwner ? null : LEGACY_DEFAULT_WORKSPACE_ID,
         isPortfolioOwner: isEnvPortfolioOwner,
         source: 'env-fallback',
       });
     }
 
     if (data) {
+      const isPortfolioOwner = Boolean(data.is_portfolio_owner) || isEnvPortfolioOwner;
       return res.status(200).json({
-        workspaceId: data.workspace_id,
-        isPortfolioOwner: Boolean(data.is_portfolio_owner) || isEnvPortfolioOwner,
+        workspaceId: isPortfolioOwner ? null : data.workspace_id,
+        isPortfolioOwner,
         source: 'supabase',
       });
     }
 
     return res.status(200).json({
-      workspaceId: DEFAULT_WORKSPACE_ID,
+      workspaceId: isEnvPortfolioOwner ? null : LEGACY_DEFAULT_WORKSPACE_ID,
       isPortfolioOwner: isEnvPortfolioOwner,
       source: 'default',
     });
   } catch (err) {
     console.error('[studio-os-membership]', err);
     return res.status(200).json({
-      workspaceId: DEFAULT_WORKSPACE_ID,
+      workspaceId: isEnvPortfolioOwner ? null : LEGACY_DEFAULT_WORKSPACE_ID,
       isPortfolioOwner: isEnvPortfolioOwner,
       source: 'env-fallback',
     });

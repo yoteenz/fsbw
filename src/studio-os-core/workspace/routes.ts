@@ -1,15 +1,17 @@
 import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from './storage';
+import { STUDIO_ADMINISTRATION_ROUTES } from '../application/routes';
 
 const ADMIN_BASE = '/admin';
 
 /** Workspace-aware route helpers — future workspaces inherit same patterns. */
 export const STUDIO_OS_ROUTES = {
-  entry: `${ADMIN_BASE}/studio-os/administration`,
-  registry: `${ADMIN_BASE}/studio-os`,
-  create: `${ADMIN_BASE}/studio-os/create`,
-  blueprints: `${ADMIN_BASE}/studio-os/blueprints`,
-  promotionCenter: `${ADMIN_BASE}/studio-os/promotion-center`,
-  administration: `${ADMIN_BASE}/studio-os/administration`,
+  entry: STUDIO_ADMINISTRATION_ROUTES.commandCenter,
+  commandCenter: STUDIO_ADMINISTRATION_ROUTES.commandCenter,
+  registry: STUDIO_ADMINISTRATION_ROUTES.registry,
+  create: STUDIO_ADMINISTRATION_ROUTES.create,
+  blueprints: STUDIO_ADMINISTRATION_ROUTES.blueprints,
+  promotionCenter: STUDIO_ADMINISTRATION_ROUTES.promotionCenter,
+  administration: STUDIO_ADMINISTRATION_ROUTES.administration,
   headquartersEntry: `${ADMIN_BASE}/headquarters`,
   workspaceShell: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}`,
   workspaceDashboard: (workspaceId: string) => `${ADMIN_BASE}/studio-os/workspace/${workspaceId}/dashboard`,

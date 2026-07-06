@@ -13,6 +13,9 @@ export function resolveWorkspaceDestinationPath(
   options: ResolveOptions = {}
 ): string {
   if (options.missionControl) {
+    if (workspaceId === 'ai-media') {
+      return '/admin/studio/ndxbook/mission-control';
+    }
     return workspaceStudioModulePath(workspaceId, 'mission-control');
   }
   if (workspaceId === STUDIO_OS_DEFAULT_WORKSPACE_ID) {

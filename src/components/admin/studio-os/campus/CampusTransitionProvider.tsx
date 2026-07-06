@@ -20,6 +20,7 @@ import {
   type CampusTransitionState,
 } from '../../../../studio-os-core/campus-transitions';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
+import { STUDIO_PLATFORM_WORKSPACE_ID } from '../../../../studio-os-core/workspace/storage';
 import { CampusTransitionOverlay } from './CampusTransitionOverlay';
 
 export type TravelToWorkspaceOptions = {
@@ -94,6 +95,7 @@ export function CampusTransitionProvider({ children }: Props) {
     }
     if (request.kind === 'departure') {
       clearTimers();
+      enterWorkspace(STUDIO_PLATFORM_WORKSPACE_ID);
       navigate(STUDIO_OS_ROUTES.entry);
       resetState();
       return;
@@ -156,6 +158,7 @@ export function CampusTransitionProvider({ children }: Props) {
       const profile = resolveHeadquartersProfile(currentWorkspaceId);
 
       if (activeSpeed === 'instant') {
+        enterWorkspace(STUDIO_PLATFORM_WORKSPACE_ID);
         navigate(STUDIO_OS_ROUTES.entry);
         return;
       }
@@ -183,6 +186,7 @@ export function CampusTransitionProvider({ children }: Props) {
       await sleep(durations.returning);
       if (runId !== runIdRef.current) return;
 
+      enterWorkspace(STUDIO_PLATFORM_WORKSPACE_ID);
       navigate(STUDIO_OS_ROUTES.entry);
       resetState();
     },

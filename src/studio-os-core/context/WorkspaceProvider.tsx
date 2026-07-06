@@ -6,7 +6,6 @@ import type { WorkspaceListItem, WorkspaceSchema } from '../workspace/types';
 import { workspaceStudioEntryPath, workspaceStudioModulePath, STUDIO_OS_ROUTES } from '../workspace/routes';
 import {
   readActiveWorkspaceIdFromStorage,
-  STUDIO_OS_DEFAULT_WORKSPACE_ID,
 } from '../workspace/storage';
 import { activateWorkspaceContext } from '../workspace/context-bridge';
 import { resolveModuleTenantId, type ModuleTenantId } from '../workspace/tenant-ids';
@@ -15,6 +14,8 @@ import {
   canSwitchOrganizations,
   getAssignedOrganizationWorkspaceId,
 } from '../application/portfolio-access';
+import { STUDIO_PLATFORM_WORKSPACE } from '../platform/schema';
+import { emptyWorkspaceDataAdapter } from '../workspace/empty-data-adapter';
 
 export type WorkspaceContextValue = {
   workspaceId: string;
@@ -45,10 +46,16 @@ export function WorkspaceProvider({ children, initialWorkspaceId }: WorkspacePro
   });
 
   const loaded = useMemo(() => loadWorkspace(workspaceId), [workspaceId]);
-  const fallback = useMemo(() => loadWorkspace(STUDIO_OS_DEFAULT_WORKSPACE_ID)!, []);
+  const platformFallback = useMemo(
+    () => ({
+      schema: STUDIO_PLATFORM_WORKSPACE,
+      dataAdapter: emptyWorkspaceDataAdapter,
+    }),
+    []
+  );
 
-  const workspace = loaded?.schema ?? fallback.schema;
-  const dataAdapter = loaded?.dataAdapter ?? fallback.dataAdapter;
+  const workspace = loaded?.schema ?? platformFallback.schema;
+  const dataAdapter = loaded?.dataAdapter ?? platformFallback.dataAdapter;
   const moduleTenantId = useMemo(() => resolveModuleTenantId(workspaceId), [workspaceId]);
 
   const setActiveWorkspace = useCallback((id: string) => {
@@ -71,6 +78,7 @@ export function WorkspaceProvider({ children, initialWorkspaceId }: WorkspacePro
     const all = getWorkspaceRegistry().listWorkspaces();
     if (canSwitchOrganizations()) return all;
     const assignedId = getAssignedOrganizationWorkspaceId();
+    if (!assignedId) return [];
     return all.filter((w) => w.id === assignedId);
   }, [workspaceId]);
 

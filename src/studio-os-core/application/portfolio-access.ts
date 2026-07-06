@@ -41,9 +41,19 @@ export function canAccessStudioAdministration(): boolean {
   return isPortfolioOwner();
 }
 
-/** Organization workspace assigned to the current admin session. */
-export function getAssignedOrganizationWorkspaceId(): string {
-  return getCachedOrgMembership().workspaceId || STUDIO_OS_DEFAULT_WORKSPACE_ID;
+/** Organization workspace assigned to the current admin session — null means no default company. */
+export function getAssignedOrganizationWorkspaceId(): string | null {
+  return getCachedOrgMembership().workspaceId;
+}
+
+/**
+ * Resolved organization for headquarters routes.
+ * Portfolio owners must explicitly enter an organization — never inherit Frontal Slayer.
+ */
+export function requireOrganizationWorkspaceId(): string {
+  const assigned = getAssignedOrganizationWorkspaceId();
+  if (assigned) return assigned;
+  return STUDIO_OS_DEFAULT_WORKSPACE_ID;
 }
 
 /** Whether the user may switch between organizations in the workspace registry. */

@@ -253,6 +253,8 @@ const AdminStudioBrandAssets = lazyWithRetry(() => import('./pages/admin/studio/
 const AdminStudioPhotographyBible = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/photography-bible/page'), 'AdminStudioPhotographyBible');
 const AdminStudioBrandAssetsAssetFactory = lazyWithRetry(() => import('./pages/admin/studio/brand-assets/asset-factory/page'), 'AdminStudioBrandAssetsAssetFactory');
 const AdminStudioOs = lazyWithRetry(() => import('./pages/admin/studio-os/page'), 'AdminStudioOs');
+const AdminStudioCommandCenter = lazyWithRetry(() => import('./pages/admin/studio-os/command-center/page'), 'AdminStudioCommandCenter');
+const AdminStudioPlatformModuleHost = lazyWithRetry(() => import('./pages/admin/studio-os/platform-module/host'), 'AdminStudioPlatformModuleHost');
 const AdminStudioAdministration = lazyWithRetry(() => import('./pages/admin/studio-os/administration/page'), 'AdminStudioAdministration');
 const AdminHeadquartersEntry = lazyWithRetry(() => import('./pages/admin/headquarters/page'), 'AdminHeadquartersEntry');
 const AdminStudioOsCreate = lazyWithRetry(() => import('./pages/admin/studio-os/create/page'), 'AdminStudioOsCreate');
@@ -877,9 +879,74 @@ function App() {
               <AdminHeadquartersEntry />
             </Suspense>
           } />
+          <Route path="studio-os/command-center" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCommandCenter />
+            </Suspense>
+          } />
           <Route path="studio-os/administration" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioAdministration />
+            </Suspense>
+          } />
+          <Route path="studio-os/licensing" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/marketplace" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/system-health" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/global-ai" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/cross-org-intelligence" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/plugins" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/developer-center" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/portfolio-analytics" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/portfolio-revenue" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/studio-settings" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/studio-updates" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
+            </Suspense>
+          } />
+          <Route path="studio-os/studio-intelligence" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPlatformModuleHost />
             </Suspense>
           } />
           <Route path="studio-os/workspace/:workspaceId/settings" element={

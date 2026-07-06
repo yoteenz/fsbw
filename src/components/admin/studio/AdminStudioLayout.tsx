@@ -21,7 +21,7 @@ import {
 import { STUDIO_OS_UPPERCASE_CLASS } from '../../../utils/adminStudioTheme';
 import { StudioImmersionShell } from './immersion/StudioImmersionShell';
 import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
-import { ORGANIZATION_ROUTES } from '../../../studio-os-core/application/routes';
+import { ORGANIZATION_ROUTES, STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { WorkspaceSwitcher } from '../studio-os/WorkspaceSwitcher';
 import { CommandDock, shouldShowCommandDock } from './command-dock/CommandDock';
 import { AdminStudioSearchResultsPanel } from './AdminStudioSearchResultsPanel';
@@ -132,12 +132,13 @@ export function AdminStudioLayout({
 
   const portfolioMode = canSwitchOrganizations();
   const headquartersOverviewPath = ORGANIZATION_ROUTES.studioOverview;
+  const platformHomePath = STUDIO_ADMINISTRATION_ROUTES.commandCenter;
 
   const handleBack = onBack ?? (() => navigate(hideOverviewLink ? breadcrumbParentPath : headquartersOverviewPath));
 
   const displayHeading = pageHeading ?? resolvedModule?.title ?? title;
-  const headerCrumbLabel = hideOverviewLink ? breadcrumbParentLabel : portfolioMode ? 'STUDIO OS' : 'HEADQUARTERS';
-  const headerCrumbPath = hideOverviewLink ? breadcrumbParentPath : headquartersOverviewPath;
+  const headerCrumbLabel = hideOverviewLink ? breadcrumbParentLabel : portfolioMode ? 'STUDIO ADMINISTRATION' : 'HEADQUARTERS';
+  const headerCrumbPath = hideOverviewLink ? breadcrumbParentPath : portfolioMode ? platformHomePath : headquartersOverviewPath;
 
   return (
     <StudioKnowledgeProvider>
@@ -275,11 +276,11 @@ export function AdminStudioLayout({
               <PageActionsBelowCard adminHub>
                 <button
                   type="button"
-                  onClick={() => navigate(headquartersOverviewPath)}
+                  onClick={() => navigate(portfolioMode ? platformHomePath : headquartersOverviewPath)}
                   className="w-full py-2 border border-black font-medium cursor-pointer hover:bg-gray-50"
                   style={pageActionButtonStyle}
                 >
-                  {portfolioMode ? 'BACK TO STUDIO OVERVIEW' : 'BACK TO HEADQUARTERS OVERVIEW'}
+                  {portfolioMode ? 'BACK TO STUDIO COMMAND CENTER' : 'BACK TO HEADQUARTERS OVERVIEW'}
                 </button>
               </PageActionsBelowCard>
             ) : null}

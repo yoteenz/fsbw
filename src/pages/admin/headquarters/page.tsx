@@ -1,18 +1,23 @@
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import AdminHeader from '../components/AdminHeader';
 import { useCampusTransition } from '../../../components/admin/studio-os/campus/CampusTransitionProvider';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
-import { ORGANIZATION_ROUTES } from '../../../studio-os-core/application/routes';
-import { getAssignedOrganizationWorkspaceId } from '../../../studio-os-core/application/portfolio-access';
+import { ORGANIZATION_ROUTES, STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
+import {
+  canAccessStudioAdministration,
+  getAssignedOrganizationWorkspaceId,
+  requireOrganizationWorkspaceId,
+} from '../../../studio-os-core/application/portfolio-access';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
-import { FRONTAL_SLAYER_WORKSPACE } from '../../../workspaces/frontal-slayer/config';
+import { loadWorkspace } from '../../../studio-os-core/workspace/loader';
+import { workspaceStudioModulePath } from '../../../studio-os-core/workspace/routes';
 import LoadingScreen from '../../../components/base/LoadingScreen';
 
 /**
- * Frontal Slayer admin entry — launches Headquarters inside Studio OS.
- * Regular organization users never see workspace registry or other organizations.
+ * Organization headquarters entry — launches assigned organization inside Studio OS.
+ * Portfolio owners must enter organizations from Studio Command Center, not here.
  */
 export default function AdminHeadquartersEntryPage() {
   useRequireAdminPageAccess();
@@ -20,16 +25,27 @@ export default function AdminHeadquartersEntryPage() {
   const { travelToWorkspace } = useCampusTransition();
   const { workspaceId, enterWorkspace } = useWorkspace();
   const assignedId = getAssignedOrganizationWorkspaceId();
+  const portfolioWithoutOrg = canAccessStudioAdministration() && !assignedId;
+  const resolvedOrgId = assignedId ?? requireOrganizationWorkspaceId();
+  const orgWorkspace = loadWorkspace(resolvedOrgId)?.schema;
 
   useEffect(() => {
-    if (workspaceId !== assignedId) {
-      enterWorkspace(assignedId);
+    if (portfolioWithoutOrg) return;
+    if (workspaceId !== resolvedOrgId) {
+      enterWorkspace(resolvedOrgId);
     }
-  }, [assignedId, enterWorkspace, workspaceId]);
+  }, [portfolioWithoutOrg, resolvedOrgId, enterWorkspace, workspaceId]);
 
   useEffect(() => {
-    travelToWorkspace(assignedId, { missionControl: true, showBriefing: false });
-  }, [assignedId, travelToWorkspace]);
+    if (portfolioWithoutOrg) return;
+    travelToWorkspace(resolvedOrgId, { missionControl: true, showBriefing: false });
+  }, [portfolioWithoutOrg, resolvedOrgId, travelToWorkspace]);
+
+  if (portfolioWithoutOrg) {
+    return <Navigate to={STUDIO_ADMINISTRATION_ROUTES.commandCenter} replace />;
+  }
+
+  const missionControlPath = workspaceStudioModulePath(resolvedOrgId, 'mission-control');
 
   return (
     <div className="min-h-screen relative">
@@ -58,19 +74,27 @@ export default function AdminHeadquartersEntryPage() {
                 HEADQUARTERS
               </p>
               <p className="mt-2 text-[10px] font-futura" style={{ fontWeight: 515, color: '#808080', lineHeight: 1.4 }}>
-                {FRONTAL_SLAYER_WORKSPACE.displayName} · ENTERING {STUDIO_OS_PLATFORM.name.toUpperCase()}
+                {orgWorkspace?.displayName ?? resolvedOrgId.toUpperCase()} · ENTERING {STUDIO_OS_PLATFORM.name.toUpperCase()}
               </p>
               <p className="mt-3 text-[8px] font-futura" style={{ fontWeight: 515, color: '#333', lineHeight: 1.45 }}>
-                Launching your organization headquarters — mission control, production, publishing, and intelligence run on Studio OS.
+                Launching organization headquarters — Mission Control, production, publishing, and intelligence scoped to this company only.
               </p>
               <LoadingScreen />
               <button
                 type="button"
-                onClick={() => navigate(ORGANIZATION_ROUTES.missionControl)}
+                onClick={() => navigate(missionControlPath)}
                 className="mt-4 w-full py-2 text-[8px] font-futura border border-black"
                 style={{ fontWeight: 515, background: '#fff' }}
               >
-                ENTER HEADQUARTERS DIRECTLY
+                ENTER MISSION CONTROL
+              </button>
+              <button
+                type="button"
+                onClick={() => navigate(ORGANIZATION_ROUTES.studioOverview)}
+                className="mt-2 w-full py-2 text-[8px] font-futura border border-black"
+                style={{ fontWeight: 515, background: '#fff' }}
+              >
+                OPEN HEADQUARTERS OVERVIEW
               </button>
             </div>
           </div>

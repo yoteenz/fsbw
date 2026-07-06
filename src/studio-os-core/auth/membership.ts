@@ -20,7 +20,7 @@ function buildEnvFallbackMembership(email: string): StudioOsOrgMembership {
   const envOwners = readEnvPortfolioOwnerEmails();
   const isPortfolioOwner = envOwners.includes(email);
   return {
-    workspaceId: STUDIO_OS_DEFAULT_WORKSPACE_ID,
+    workspaceId: isPortfolioOwner ? null : STUDIO_OS_DEFAULT_WORKSPACE_ID,
     isPortfolioOwner,
     source: 'env-fallback',
   };
@@ -28,7 +28,7 @@ function buildEnvFallbackMembership(email: string): StudioOsOrgMembership {
 
 function buildDefaultMembership(): StudioOsOrgMembership {
   return {
-    workspaceId: STUDIO_OS_DEFAULT_WORKSPACE_ID,
+    workspaceId: null,
     isPortfolioOwner: false,
     source: 'default',
   };
@@ -45,12 +45,11 @@ async function fetchMembershipFromApi(accessToken: string): Promise<StudioOsOrgM
     });
     if (!res.ok) return null;
     const data = (await res.json()) as {
-      workspaceId?: string;
+      workspaceId?: string | null;
       isPortfolioOwner?: boolean;
     };
-    if (!data.workspaceId) return null;
     return {
-      workspaceId: data.workspaceId,
+      workspaceId: data.workspaceId ?? null,
       isPortfolioOwner: Boolean(data.isPortfolioOwner),
       source: 'supabase',
     };
@@ -76,7 +75,7 @@ export async function resolveOrgMembership(accessToken?: string): Promise<Studio
   if (email && provider) {
     if (provider.isPortfolioOwnerEmail(email)) {
       cachedMembership = {
-        workspaceId: STUDIO_OS_DEFAULT_WORKSPACE_ID,
+        workspaceId: null,
         isPortfolioOwner: true,
         source: 'env-fallback',
       };

@@ -1,6 +1,7 @@
 import type { DockContextProfile } from './types';
 import { canAccessStudioAdministration } from '../application/portfolio-access';
 import { isStudioAdministrationPath } from '../application/routes';
+import { STUDIO_ADMINISTRATION_ROUTES } from '../application/routes';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -13,6 +14,20 @@ function isPortfolioPath(pathname: string): boolean {
 /** Context-aware command suggestions based on founder location in headquarters. */
 export function resolveDockContext(pathname: string): DockContextProfile {
   const portfolioMode = isPortfolioPath(pathname) && canAccessStudioAdministration();
+
+  if (pathname === STUDIO_ADMINISTRATION_ROUTES.commandCenter || pathname.endsWith('/command-center')) {
+    return {
+      contextId: 'studio-command-center',
+      label: 'STUDIO COMMAND CENTER · PORTFOLIO',
+      portfolioMode: true,
+      suggestedCommands: [
+        'Which organizations need attention today?',
+        'Summarize portfolio revenue this month.',
+        'Show global AI activity across all companies.',
+      ],
+      commandTypes: ['strategy', 'analytics', 'revenue', 'organization-settings'],
+    };
+  }
 
   if (portfolioMode) {
     return {

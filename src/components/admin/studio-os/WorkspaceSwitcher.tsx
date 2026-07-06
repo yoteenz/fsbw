@@ -88,7 +88,7 @@ export function WorkspaceSwitcher() {
               marginBottom: 6,
             }}
           >
-            → WORKSPACE REGISTRY (CAMPUS)
+            → STUDIO COMMAND CENTER
           </button>
           {workspaces
             .filter((w) => w.status !== 'archived')

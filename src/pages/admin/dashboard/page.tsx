@@ -34,10 +34,12 @@ import {
   HEADQUARTERS_DASHBOARD_FOOTER,
   HEADQUARTERS_DASHBOARD_ITEMS,
   HEADQUARTERS_DASHBOARD_METRIC,
+} from '../../../workspaces/frontal-slayer/headquartersDashboard';
+import {
   STUDIO_ADMIN_DASHBOARD_FOOTER,
   STUDIO_ADMIN_DASHBOARD_ITEMS,
   STUDIO_ADMIN_DASHBOARD_METRIC,
-} from '../../../workspaces/frontal-slayer/headquartersDashboard';
+} from '../../../studio-os-core/platform/command-center-demo';
 
 /** Items list fixed height (px) for all dashboard stat cards (scroll when content overflows). */
 const DASHBOARD_CAPPED_STAT_ITEMS_MAX_PX = 103;

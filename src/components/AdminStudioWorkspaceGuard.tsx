@@ -5,6 +5,7 @@ import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
 import { ensureWorkspacesBootstrapped } from '../utils/ensureWorkspacesBootstrapped';
 import { ensureOrgMembershipResolved } from '../studio-os-core/auth/membership';
 import { activateWorkspaceContext } from '../studio-os-core/workspace/context-bridge';
+import { STUDIO_PLATFORM_WORKSPACE_ID } from '../studio-os-core/workspace/storage';
 import { getAccessToken } from '../utils/api';
 import LoadingScreen from './base/LoadingScreen';
 
@@ -24,7 +25,9 @@ export default function AdminStudioWorkspaceGuard() {
         await ensureWorkspacesBootstrapped();
         const token = await getAccessToken();
         const membership = await ensureOrgMembershipResolved(token ?? undefined);
-        if (!membership.isPortfolioOwner) {
+        if (membership.isPortfolioOwner || !membership.workspaceId) {
+          activateWorkspaceContext(STUDIO_PLATFORM_WORKSPACE_ID);
+        } else {
           activateWorkspaceContext(membership.workspaceId);
         }
         if (!cancelled) {

@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { canAccessStudioAdministration, getAssignedOrganizationWorkspaceId } from '../../../studio-os-core/application/portfolio-access';
 import { ORGANIZATION_ROUTES, isStudioAdministrationPath } from '../../../studio-os-core/application/routes';
 import { activateWorkspaceContext } from '../../../studio-os-core/workspace/context-bridge';
+import { STUDIO_PLATFORM_WORKSPACE_ID } from '../../../studio-os-core/platform/schema';
 
 /**
  * Restricts Studio Administration routes to portfolio owners.
@@ -15,10 +16,13 @@ export default function StudioAdministrationGuard() {
   }
 
   if (canAccessStudioAdministration()) {
+    activateWorkspaceContext(STUDIO_PLATFORM_WORKSPACE_ID);
     return <Outlet />;
   }
 
   const assignedId = getAssignedOrganizationWorkspaceId();
-  activateWorkspaceContext(assignedId);
+  if (assignedId) {
+    activateWorkspaceContext(assignedId);
+  }
   return <Navigate to={ORGANIZATION_ROUTES.headquartersEntry} replace />;
 }

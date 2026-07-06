@@ -1,19 +1,18 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminHeader from '../components/AdminHeader';
 import { useCampusTransition } from '../../../components/admin/studio-os/campus/CampusTransitionProvider';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
 import { STUDIO_OS_VOCABULARY } from '../../../studio-os-core/core/vocabulary';
+import { STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
-import { STUDIO_OS_ROUTES } from '../../../studio-os-core/workspace/routes';
 import { readCampusTransitionSpeed } from '../../../studio-os-core/campus-transitions/preferences';
 import { readWorkspaceRegistryStore } from '../../../studio-os-core/workspace-registry/store';
 import { getRegistryWorkspaceById } from '../../../studio-os-core/workspace-creation/registry';
 import { useWorkspaceCreationEngine } from '../../../hooks/useWorkspaceCreationEngine';
 import { WorkspaceRegistryCard } from '../../../components/admin/studio-os/WorkspaceRegistryCard';
+import { StudioPlatformLayout } from '../../../components/admin/studio-os/StudioPlatformLayout';
 import { ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
-import { CommandDock } from '../../../components/admin/studio/command-dock/CommandDock';
 
 export default function AdminStudioOsPage() {
   useRequireAdminPageAccess();
@@ -44,28 +43,12 @@ export default function AdminStudioOsPage() {
   const selectWorkspace = (ws: (typeof workspaces)[number]) => enter(ws.id);
 
   return (
-    <div className="min-h-screen relative">
-      <div
-        className="fixed inset-0 -z-10"
-        style={{
-          backgroundImage: `url('/assets/marble-half.png')`,
-          backgroundSize: 'contain',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'repeat',
-          backgroundAttachment: 'fixed',
-        }}
-      />
-      <div className="relative z-10 uppercase" style={{ textTransform: 'uppercase' }}>
-        <AdminHeader
-          title={STUDIO_OS_PLATFORM.name}
-          showBack
-          onBack={() => navigate(STUDIO_OS_ROUTES.administration)}
-          breadcrumbParentLabel="STUDIO ADMINISTRATION"
-          breadcrumbParentPath={STUDIO_OS_ROUTES.administration}
-        />
-
-        <div className="pb-8 px-4">
-          <div className="max-w-md mx-auto space-y-4">
+    <StudioPlatformLayout
+      title="ORGANIZATION REGISTRY"
+      subtitle={`${STUDIO_OS_PLATFORM.tagline} · ${STUDIO_OS_VOCABULARY.workspace.term.toUpperCase()} CREATION ENGINE V1.0`}
+      onBack={() => navigate(STUDIO_ADMINISTRATION_ROUTES.commandCenter)}
+    >
+      <div className="space-y-4">
             <div className="bg-white/60 backdrop-blur-sm border border-black p-4 shadow-lg" style={{ borderWidth: '1.3px' }}>
               <p className="text-red-500 font-bold text-xl tracking-wider" style={{ fontFamily: '"Covered By Your Grace", sans-serif', color: '#EB1C24' }}>
                 {STUDIO_OS_PLATFORM.name}
@@ -98,7 +81,7 @@ export default function AdminStudioOsPage() {
             <div className="grid grid-cols-1 gap-2">
               <button
                 type="button"
-                onClick={() => navigate(STUDIO_OS_ROUTES.create)}
+                onClick={() => navigate(STUDIO_ADMINISTRATION_ROUTES.create)}
                 className="w-full py-3 text-[8px] font-futura border"
                 style={{ fontWeight: 515, color: '#FFF', background: '#6366F1', borderColor: ADMIN_STUDIO_THEME.panelBorder }}
               >
@@ -107,7 +90,7 @@ export default function AdminStudioOsPage() {
               <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
-                  onClick={() => navigate(STUDIO_OS_ROUTES.blueprints)}
+                  onClick={() => navigate(STUDIO_ADMINISTRATION_ROUTES.blueprints)}
                   className="py-2 text-[7px] font-futura border"
                   style={{ fontWeight: 515, color: '#6366F1', borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
                 >
@@ -115,7 +98,7 @@ export default function AdminStudioOsPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate(STUDIO_OS_ROUTES.promotionCenter)}
+                  onClick={() => navigate(STUDIO_ADMINISTRATION_ROUTES.promotionCenter)}
                   className="py-2 text-[7px] font-futura border"
                   style={{ fontWeight: 515, color: '#6366F1', borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
                 >
@@ -124,91 +107,19 @@ export default function AdminStudioOsPage() {
               </div>
               <button
                 type="button"
-                onClick={() => navigate('/admin/studio/growth-network')}
+                onClick={() => navigate(STUDIO_ADMINISTRATION_ROUTES.marketplace)}
                 className="w-full py-2 text-[7px] font-futura border"
                 style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
               >
-                GROWTH NETWORK · PLATFORM PILLAR
+                MARKETPLACE · PLATFORM PILLAR
               </button>
               <button
                 type="button"
-                onClick={() => navigate('/admin/studio/labs')}
-                className="w-full py-2 text-[7px] font-futura border"
-                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
-              >
-                STUDIO OS LABS · EXPERIMENT ENGINE
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin/studio/ai-media-network')}
-                className="w-full py-2 text-[7px] font-futura border"
-                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
-              >
-                AI MEDIA NETWORK · DIGITAL MEDIA COMPANY
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin/studio/ndxbook')}
-                className="w-full py-2 text-[7px] font-futura border"
-                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
-              >
-                NDXBOOK · PUBLIC MEDIA BRAND
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin/studio/talent-network')}
-                className="w-full py-2 text-[7px] font-futura border"
-                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
-              >
-                TALENT NETWORK · UNIFIED TALENT OS
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin/studio/marketplace')}
-                className="w-full py-2 text-[7px] font-futura border"
-                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
-              >
-                MARKETPLACE · BUSINESS ECOSYSTEM
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin/studio/business-model-engine')}
-                className="w-full py-2 text-[7px] font-futura border"
-                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
-              >
-                BUSINESS MODEL ENGINE · ECONOMIC ENGINE
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin/studio/ecosystem')}
-                className="w-full py-2 text-[7px] font-futura border"
-                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
-              >
-                STUDIO OS ECOSYSTEM · BUSINESS OPERATING ECOSYSTEM
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin/studio/governance')}
-                className="w-full py-2 text-[7px] font-futura border"
-                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
-              >
-                STUDIO OS GOVERNANCE · PLATFORM CONSTITUTION
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin/studio/studio-intelligence')}
+                onClick={() => navigate(STUDIO_ADMINISTRATION_ROUTES.studioIntelligence)}
                 className="w-full py-2 text-[7px] font-futura border"
                 style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
               >
                 STUDIO INTELLIGENCE · OPERATING INTELLIGENCE
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('/admin/studio/simulation-engine')}
-                className="w-full py-2 text-[7px] font-futura border"
-                style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}
-              >
-                SIMULATION ENGINE · MODEL BEFORE COMMITTING
               </button>
             </div>
 
@@ -237,12 +148,9 @@ export default function AdminStudioOsPage() {
             </div>
 
             <p className="text-[6px] font-futura uppercase text-center px-2" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.6 }}>
-              {STUDIO_OS_PLATFORM.owner} · INCORPORATE NEW COMPANIES FROM BLUEPRINTS · AI MEDIA = PERMANENT PILOT
+              {STUDIO_OS_PLATFORM.owner} · SELECT AN ORGANIZATION TO ENTER HEADQUARTERS · MISSION CONTROL IS ORG-SCOPED ONLY
             </p>
-          </div>
-        </div>
       </div>
-      <CommandDock bottomOffset={20} />
-    </div>
+    </StudioPlatformLayout>
   );
 }
