@@ -216,6 +216,10 @@ export function bootstrapWorkspacesPlatform(): void {
     professionalTrust.bootstrapProfessionalTrustPlatform();
     await yieldToMain();
 
+    const organizationGenome = await import('../studio-os-core/organization-genome/bootstrap');
+    organizationGenome.bootstrapOrganizationGenomePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

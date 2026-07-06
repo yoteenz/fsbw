@@ -81,6 +81,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationTrustFrameworkProfile(context.organizationId);
   });
 
+  void import('../organization-genome/store').then((m) => {
+    m.ensureOrganizationGenomeProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

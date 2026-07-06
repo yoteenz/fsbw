@@ -85,6 +85,9 @@ export function upsertOrganizationInaugurationProfile(profile: OrganizationInaug
   const store = readOrganizationInaugurationStore();
   const next = store.profiles.filter((p) => p.organizationId !== profile.organizationId);
   writeOrganizationInaugurationStore({ ...store, profiles: [...next, profile] });
+  void import('../organization-genome/store').then((m) => {
+    m.syncOrganizationGenomeFromSources(profile.organizationId);
+  });
 }
 
 export function advanceInaugurationPhase(organizationId: string): OrganizationInaugurationProfile | null {

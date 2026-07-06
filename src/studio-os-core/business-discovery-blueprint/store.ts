@@ -1,4 +1,4 @@
-import { BUSINESS_DISCOVERY_BLUEPRINT_STORAGE_KEY, BUSINESS_DISCOVERY_BLUEPRINT_VERSION } from './constants';
+import { BUSINESS_DISCOVERY_BLUEPRINT_STORAGE_KEY, BUSINESS_DISCOVERY_BLUEPRINT_VERSION, STUDIO_OS_BLUEPRINT_UPDATED } from './constants';
 import { regenerateBlueprintOutputs } from './outputs-generator';
 import {
   computeOverallProgress,
@@ -37,6 +37,9 @@ export function readBusinessDiscoveryBlueprintStore(): BusinessDiscoveryBlueprin
 export function writeBusinessDiscoveryBlueprintStore(store: BusinessDiscoveryBlueprintStore): void {
   if (typeof localStorage === 'undefined') return;
   localStorage.setItem(BUSINESS_DISCOVERY_BLUEPRINT_STORAGE_KEY, JSON.stringify(store));
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(STUDIO_OS_BLUEPRINT_UPDATED));
+  }
 }
 
 export function getOrganizationDiscoveryBlueprint(
@@ -127,6 +130,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
       m.syncProfessionBrainFromSources(blueprint.organizationId, blueprint.industryId, blueprint.companyName);
     });
   }
+
+  void import('../organization-genome/store').then((m) => {
+    m.syncOrganizationGenomeFromSources(blueprint.organizationId);
+  });
 
   return finalized;
 }

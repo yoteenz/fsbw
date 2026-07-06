@@ -91,6 +91,7 @@ export type StudioOsCoreModuleId =
   | 'expert-marketplace'
   | 'knowledge-commerce'
   | 'professional-trust-framework'
+  | 'organization-genome'
   | 'brand-positioning'
   | 'governance'
   | 'studio-intelligence'
@@ -631,6 +632,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PROFESSIONAL TRUST FRAMEWORK™',
     description: 'Permanent governance V1.0 — professional scope, confidence system, natural guidance, regulated industries, Command Dock escalation. Trust through responsible judgment.',
     routeSegment: 'professional-trust-framework',
+  },
+  {
+    id: 'organization-genome',
+    label: 'ORGANIZATION GENOME™',
+    description: 'Permanent identity layer V1.0 — brand personality, tone, values, decision DNA, customer standards. Every AI interaction consults Genome before generating work.',
+    routeSegment: 'organization-genome',
   },
   {
     id: 'brand-positioning',

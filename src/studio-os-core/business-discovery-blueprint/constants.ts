@@ -2,6 +2,7 @@
 
 export const BUSINESS_DISCOVERY_BLUEPRINT_STORAGE_KEY = 'studioOs_businessDiscoveryBlueprint_v1';
 export const BUSINESS_DISCOVERY_BLUEPRINT_VERSION = '1.0.0';
+export const STUDIO_OS_BLUEPRINT_UPDATED = 'studio-os-blueprint-updated';
 
 export const DISCOVERY_BLUEPRINT_PHILOSOPHY = [
   'Do not ask founders to configure software.',

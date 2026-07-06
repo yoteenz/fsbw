@@ -16,6 +16,7 @@ import { listExpertMarketplaceDockSuggestions } from '../expert-marketplace';
 import { listStudioInstituteDockSuggestions } from '../studio-institute';
 import { listKnowledgeCommerceDockSuggestions } from '../knowledge-commerce';
 import { listProfessionalTrustDockSuggestions } from '../professional-trust-framework';
+import { listOrganizationGenomeDockSuggestions } from '../organization-genome';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -158,6 +159,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/organization-genome')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'organization-genome',
+      label: 'ORGANIZATION GENOME™ · IDENTITY LAYER',
+      portfolioMode: false,
+      suggestedCommands: listOrganizationGenomeDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

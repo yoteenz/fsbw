@@ -12,6 +12,7 @@ import {
   adminStudioBusinessDiscoveryBlueprintPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
+  adminStudioOrganizationGenomePath,
   adminStudioProfessionalTrustFrameworkPath,
   adminStudioStudioInstitutePath,
 } from '../../../../utils/adminStudioRoutes';
@@ -59,12 +60,22 @@ export default function AdminStudioProfessionBrainPage() {
         <div className="flex gap-2">
           <button
             type="button"
+            onClick={() => navigate(adminStudioOrganizationGenomePath())}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            ORGANIZATION GENOME →
+          </button>
+          <button
+            type="button"
             onClick={() => navigate(adminStudioProfessionalTrustFrameworkPath())}
             className="flex-1 py-2 text-[7px] font-futura uppercase border"
             style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
           >
             TRUST FRAMEWORK →
           </button>
+        </div>
+        <div className="flex gap-2">
           <button
             type="button"
             onClick={() => navigate(adminStudioKnowledgeCommercePath())}
@@ -73,15 +84,15 @@ export default function AdminStudioProfessionBrainPage() {
           >
             KNOWLEDGE COMMERCE →
           </button>
+          <button
+            type="button"
+            onClick={() => navigate(adminStudioExpertMarketplacePath())}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            EXPERT MARKETPLACE →
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => navigate(adminStudioExpertMarketplacePath())}
-          className="w-full py-2 text-[7px] font-futura uppercase border"
-          style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
-        >
-          EXPERT MARKETPLACE →
-        </button>
       </div>
 
       <AdminStudioDisclaimerFooter>

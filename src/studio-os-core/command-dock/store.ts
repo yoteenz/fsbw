@@ -34,6 +34,10 @@ import {
   resolveProfessionalTrustAdvice,
   buildProactiveTrustSuggestion,
 } from '../professional-trust-framework/dock-advisor';
+import {
+  resolveOrganizationGenomeAdvice,
+  buildProactiveGenomeSuggestion,
+} from '../organization-genome/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -93,6 +97,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const institute = buildProactiveInstituteSuggestion(workspaceId);
   const commerce = buildProactiveCommerceSuggestion(workspaceId);
   const trust = buildProactiveTrustSuggestion(workspaceId);
+  const genome = buildProactiveGenomeSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -103,8 +108,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const trustProactive = trust
     ? { response: trust, concierge: 'Chief Concierge', suggestedCommand: 'Review professional scope before proceeding.' }
     : null;
+  const genomeProactive = genome
+    ? { response: genome, concierge: 'Chief Concierge', suggestedCommand: 'Open Organization Genome — consult identity before generating.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/professional-trust-framework') && trustProactive
+    pathname.includes('/organization-genome') && genomeProactive
+      ? genomeProactive
+      : pathname.includes('/professional-trust-framework') && trustProactive
       ? trustProactive
       : pathname.includes('/knowledge-commerce') && commerceProactive
         ? commerceProactive
@@ -173,6 +183,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const genomeAdvice = resolveOrganizationGenomeAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (genomeAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${genomeAdvice.concierge}\n${genomeAdvice.response}`,
+    });
+    return null;
+  }
 
   const professionAdvice = resolveProfessionBrainAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (professionAdvice) {

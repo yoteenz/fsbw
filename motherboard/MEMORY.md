@@ -38601,3 +38601,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Trust Framework ≠ legal disclaimer wall — responsible judgment and natural escalation. Every Brain maintains scope + confidence visible internally and externally. Command Dock recommends escalation when actions exceed Concierge scope. Regulated industries may define additional review requirements.
 
+---
+
+## 2026-07-06 — Milestone 95: Organization Genome™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M94 (Blueprint, Inauguration, Profession Brain, Expert Marketplace + Brand V2.0, Studio Institute, Knowledge Commerce, Professional Trust Framework `bd87c8cf`). User requested **Organization Genome™** — the DNA of every organization. While Profession Brain™ preserves expertise, Organization Genome™ preserves **identity**. Answers: Who are we? How do we communicate? How do we decide? What standards define us? Every AI interaction should consult Genome before generating work.
+
+**Core philosophy delivered:** Profession Brain teaches what the organization **knows** · Organization Genome teaches who the organization **is** · both required for Studio OS to behave as true extension of the business. Genome evolves with the organization — permanent identity layer for emails · workflows · proposals · presentations · automations · Concierge responses · marketing · customer interactions.
+
+**Delivered:**
+- **`src/studio-os-core/organization-genome/`** — identity seeds from Blueprint + Charter + workspace brand · genome builder · AI consultation engine (`consultOrganizationGenome()` · `formatGenomeConsultationBrief()`) · 10 consultation contexts · org store · dock advisor · bootstrap.
+- **`OrganizationGenomeWorkspace`** + **`/admin/studio/organization-genome`** — 6 tabs: Genome Overview · Identity Core · Brand Voice · Decision DNA · Customer Standards · AI Consultation.
+- **`useOrganizationGenomeState`** hook · brand voice **`organization-genome`**: *"Know who you are. Reflect it everywhere."*
+- **Integration** — sync on Blueprint upsert (`STUDIO_OS_BLUEPRINT_UPDATED` event) · Inauguration upsert · **`boundary-sync`** ensure profile · Command Dock **`resolveOrganizationGenomeAdvice()`** (identity queries first) + proactive genome on route · Profession Brain footer links to Organization Genome.
+- **Docs** — **`docs/studio-os/organization-genome.md`** · **CORE.md** M95 entry.
+
+**Conventions:** Organization Genome (M95) ≠ Company Genome (M57) — M95 is identity governance for AI; M57 is living genetics visualization. Genome completeness % derived from Blueprint identity chapter depth. Demo persistence localStorage via `studioOsOrganizationGenome_v1`.
+

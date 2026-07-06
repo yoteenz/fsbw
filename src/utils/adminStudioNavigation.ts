@@ -1296,6 +1296,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organization-genome',
+    title: 'ORGANIZATION GENOME™',
+    purpose: 'Permanent identity layer — brand personality, tone, values, decision DNA, customer standards. Every AI interaction consults Genome first.',
+    route: p('organization-genome'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M95',
+    ctaLabel: 'OPEN GENOME',
+    moduleKey: 'organization-genome',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',
