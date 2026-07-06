@@ -21,14 +21,21 @@ import {
 } from './ndxbookMissionActionRoutes';
 import { MissionQuickLink } from './MissionQuickLink';
 import {
+  CrystalHealthGrid,
+  HqGlassSurface,
+  KnowledgeLibraryCollections,
+  LegacyTimelineStory,
+  PriorityMissionHero,
+  StudioIntelligenceNarrative,
+  StudioLabsGrid,
+} from '../../studio/headquarters-experience';
+import {
   MC,
   formatCurrency,
   formatNumber,
-  mcDarkPanel,
   mcLabel,
   mcLiveDot,
   mcPanel,
-  mcProgressBar,
   mcSectionTitle,
   mcValue,
   trendArrow,
@@ -187,17 +194,17 @@ function MetricRow({ label, value, accent }: { label: string; value: string; acc
 export function TodaysBriefingPanel({ store, formatDate, formatClock }: PanelProps) {
   const b = store.briefing;
   return (
-    <section className="p-3 mb-3" style={{ ...mcDarkPanel, borderTop: `3px solid ${MC.accent}` }}>
+    <HqGlassSurface>
       <div className="flex items-start justify-between gap-2 mb-2">
         <div>
-          <p style={{ ...mcLabel, color: '#94A3B8', fontSize: '8px' }}>
+          <p style={{ ...mcLabel, color: MC.gray, fontSize: '8px' }}>
             <span style={mcLiveDot} />
             TODAY&apos;S BRIEFING · LIVE
           </p>
-          <p style={{ fontFamily: '"Covered By Your Grace", sans-serif', fontSize: '20px', color: '#F8FAFC', margin: '4px 0 0' }}>
+          <p style={{ fontFamily: '"Covered By Your Grace", sans-serif', fontSize: '20px', color: MC.black, margin: '4px 0 0' }}>
             {b.greeting.toUpperCase()}
           </p>
-          <p style={{ ...mcLabel, color: '#CBD5E1' }}>{formatDate()}</p>
+          <p style={{ ...mcLabel, color: MC.gray }}>{formatDate()}</p>
         </div>
         <p className="ndxbook-mc-countdown" style={{ color: MC.accent, fontSize: '16px', textAlign: 'right' }}>
           {formatClock()}
@@ -213,46 +220,41 @@ export function TodaysBriefingPanel({ store, formatDate, formatClock }: PanelPro
         <MetricRow label="TOP VOLUME" value={b.highestPerformingVolume} />
         <MetricRow label="TOP HOST" value={b.highestPerformingHost} />
       </div>
-      <div className="mt-3 pt-2 space-y-1" style={{ borderTop: '1px solid rgba(99,102,241,0.25)' }}>
-        <p style={{ ...mcLabel, color: '#A5B4FC' }}>STUDIO INTELLIGENCE · {b.studioRecommendation}</p>
+      <div className="mt-3 pt-2 space-y-1" style={{ borderTop: '1px solid rgba(99,102,241,0.15)' }}>
+        <p style={{ ...mcLabel, color: MC.accent }}>STUDIO INTELLIGENCE · {b.studioRecommendation}</p>
         <p style={{ ...mcLabel, color: MC.green }}>OPPORTUNITY · {b.topOpportunity}</p>
         <p style={{ ...mcLabel, color: MC.red }}>RISK · {b.topRisk}</p>
-        <p style={{ ...mcLabel, color: '#F8FAFC', fontFamily: '"Futura PT Medium"' }}>NEXT · {b.nextSuggestedAction}</p>
+        <p style={{ ...mcLabel, color: MC.black, fontFamily: '"Futura PT Medium"' }}>NEXT · {b.nextSuggestedAction}</p>
       </div>
-    </section>
+    </HqGlassSurface>
   );
 }
 
 export function CompanyHealthPanel({ store }: PanelProps) {
   const overall = store.companyHealth.find((m) => m.id === 'overall');
-  const summary = overall
-    ? `${overall.score}% overall · ${store.companyHealth.length - 1} departments tracked`
-    : `${store.companyHealth.length} departments tracked`;
+  const metrics = store.companyHealth
+    .filter((m) => m.id !== 'overall')
+    .map((m) => ({
+      id: m.id,
+      label: m.label,
+      score: m.score,
+      trend: m.trend,
+    }));
 
   return (
-    <CollapsibleSection
-      title="COMPANY HEALTH"
-      icon={SECTION_ICONS.health}
-      defaultOpen
-      summary={<p style={mcLabel}>{summary}</p>}
-      accentBorder={MC.red}
-    >
-      <div className="space-y-2">
-        {store.companyHealth.map((m) => (
-          <div key={m.id}>
-            <div className="flex justify-between mb-0.5">
-              <span style={mcLabel}>{m.label}</span>
-              <span style={{ ...mcLabel, color: trendColor(m.trend) }}>
-                {m.score}% {trendArrow(m.trend)} {m.trendLabel}
-              </span>
-            </div>
-            <div className="w-full h-1 overflow-hidden" style={{ background: 'rgba(0,0,0,0.06)' }}>
-              <div style={mcProgressBar(m.score, m.id === 'overall' ? MC.red : MC.accent)} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </CollapsibleSection>
+    <HqGlassSurface>
+      <CrystalHealthGrid
+        metrics={metrics}
+        overallScore={overall?.score}
+        overallLabel="COMPANY PULSE"
+        accentHex={MC.accent}
+      />
+      {overall ? (
+        <p style={{ ...mcLabel, fontSize: '7px', marginTop: 12 }}>
+          {overall.trendLabel} {trendArrow(overall.trend)}
+        </p>
+      ) : null}
+    </HqGlassSurface>
   );
 }
 
@@ -432,24 +434,20 @@ export function PublishingTimelinePanel({ store, formatTime, onReschedule }: Pan
 export function PageOfTheDayPanel({ store, countdownToLaunch }: PanelProps) {
   const p = store.pageOfTheDay;
   return (
-    <section className="p-4 mb-4 relative overflow-hidden" style={{ ...mcPanel, borderColor: MC.accent, borderWidth: 2 }}>
-      <div className="absolute top-2 right-2 ndxbook-mc-live" style={mcLiveDot} />
-      <p style={mcSectionTitle}>{SECTION_ICONS.page} PRIORITY OF THE DAY</p>
-      <p style={{ ...mcValue, fontSize: '18px', color: MC.red }}>{p.pageLabel.toUpperCase()}</p>
-      <p style={{ ...mcLabel, color: MC.black, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>{p.title}</p>
-      <div className="grid grid-cols-2 gap-2 mt-2">
-        <MetricRow label="VOLUME" value={VOLUME_LABELS[p.volumeId]} />
-        <MetricRow label="CHAPTER" value={p.chapter.toUpperCase()} />
-        <MetricRow label="HOST" value={p.hostName} />
-        <MetricRow label="STATUS" value={p.status.toUpperCase()} accent />
-      </div>
-      <p style={{ ...mcLabel, marginTop: 6 }}>THUMBNAIL · {p.thumbnailNote}</p>
-      <p style={mcLabel}>PLATFORMS · {p.platforms.map((pl) => PLATFORM_LABELS[pl]).join(' · ')}</p>
-      <p style={{ ...mcLabel, color: MC.accent }}>PREDICTED · {p.predictedPerformance}</p>
-      <p className="ndxbook-mc-countdown mt-2" style={{ color: MC.red }}>
-        LAUNCH IN {countdownToLaunch}
-      </p>
-    </section>
+    <PriorityMissionHero
+      title={p.title}
+      headline={p.pageLabel.toUpperCase()}
+      subtitle={p.title}
+      countdown={`LAUNCH IN ${countdownToLaunch}`}
+      predictedImpact={p.predictedPerformance}
+      recommendedAction={`HOST · ${p.hostName} · ${VOLUME_LABELS[p.volumeId]} · ${p.chapter.toUpperCase()}`}
+      details={[
+        { label: 'STATUS', value: p.status.toUpperCase() },
+        { label: 'PLATFORMS', value: p.platforms.map((pl) => PLATFORM_LABELS[pl]).join(' · ') },
+        { label: 'THUMBNAIL', value: p.thumbnailNote },
+      ]}
+      accentHex={MC.red}
+    />
   );
 }
 
@@ -472,61 +470,67 @@ function LibraryPageList({ pages, emptyLabel }: { pages: NdxbookMissionControlSt
 
 export function NdxbookLibraryPanel({ store }: PanelProps) {
   const lib = store.library;
-  const topPages = lib.latestPages.slice(0, 3);
-  const isEmpty = lib.latestPages.length === 0;
+  const collectionItems = [
+    ...lib.latestPages,
+    ...lib.recentlyUpdated,
+    ...lib.mostBookmarked,
+  ].map((p) => ({
+    id: p.id,
+    title: p.pageLabel.toUpperCase(),
+    subtitle: p.title,
+    status: p.status,
+    meta: p.performanceSnapshot,
+  }));
 
-  if (isEmpty) {
+  if (collectionItems.length === 0) {
     return (
-      <section className="p-4 mb-4 text-center" style={{ ...mcPanel, borderTop: `3px solid ${MC.accent}` }}>
-        <p style={mcSectionTitle}>{SECTION_ICONS.library} KNOWLEDGE LIBRARY</p>
-        <p style={{ ...mcValue, fontSize: '14px', color: MC.gray }}>No published pages yet.</p>
-        <p style={{ ...mcLabel, marginTop: 8 }}>Create your first knowledge asset.</p>
+      <div>
+        <KnowledgeLibraryCollections
+          items={[]}
+          emptyMessage="Create your first knowledge asset — knowledge should feel collected, not stored."
+          accentHex={MC.accent}
+        />
         <MissionQuickLink
           to={ndxbookPagesQuickLink()}
           className="mt-3 px-4 py-2 text-[7px] font-futura border inline-block"
-          style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent, background: 'rgba(99,102,241,0.06)', textDecoration: 'none' }}
+          style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent, background: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}
         >
           CREATE PAGE 001 →
         </MissionQuickLink>
-      </section>
+      </div>
     );
   }
 
   return (
-    <CollapsibleSection
-      title="LIBRARY SNAPSHOT"
-      icon={SECTION_ICONS.library}
-      summary={
-        <div className="space-y-1">
-          {topPages.map((p) => (
-            <p key={p.id} style={{ ...mcLabel, margin: 0 }}>
-              {p.pageLabel.toUpperCase()} · {p.title.slice(0, 42)}{p.title.length > 42 ? '…' : ''}
-            </p>
+    <>
+      <KnowledgeLibraryCollections items={collectionItems} accentHex={MC.accent} />
+      <CollapsibleSection
+        title="FULL LIBRARY ARCHIVE"
+        icon={SECTION_ICONS.library}
+        summary={<p style={mcLabel}>{lib.latestPages.length} pages · {lib.recentCollections.length} collections</p>}
+      >
+        {(
+          [
+            ['LATEST PAGES', lib.latestPages],
+            ['RECENTLY UPDATED', lib.recentlyUpdated],
+            ['MOST BOOKMARKED', lib.mostBookmarked],
+            ['HIGHEST SHARED', lib.highestShared],
+            ['HIGHEST RETENTION', lib.highestRetention],
+          ] as const
+        ).map(([label, pages]) => (
+          <div key={label} className="mb-3">
+            <p style={{ ...mcSectionTitle, fontSize: '8px' }}>{label}</p>
+            <LibraryPageList pages={pages} emptyLabel="NO PAGES YET" />
+          </div>
+        ))}
+        <div>
+          <p style={{ ...mcSectionTitle, fontSize: '8px' }}>RECENT COLLECTIONS</p>
+          {lib.recentCollections.map((c) => (
+            <p key={c.id} style={mcLabel}>· {c.title} · {c.pageCount} PAGES</p>
           ))}
         </div>
-      }
-    >
-      {(
-        [
-          ['LATEST PAGES', lib.latestPages],
-          ['RECENTLY UPDATED', lib.recentlyUpdated],
-          ['MOST BOOKMARKED', lib.mostBookmarked],
-          ['HIGHEST SHARED', lib.highestShared],
-          ['HIGHEST RETENTION', lib.highestRetention],
-        ] as const
-      ).map(([label, pages]) => (
-        <div key={label} className="mb-3">
-          <p style={{ ...mcSectionTitle, fontSize: '8px' }}>{label}</p>
-          <LibraryPageList pages={pages} emptyLabel="NO PAGES YET" />
-        </div>
-      ))}
-      <div>
-        <p style={{ ...mcSectionTitle, fontSize: '8px' }}>RECENT COLLECTIONS</p>
-        {lib.recentCollections.map((c) => (
-          <p key={c.id} style={mcLabel}>· {c.title} · {c.pageCount} PAGES</p>
-        ))}
-      </div>
-    </CollapsibleSection>
+      </CollapsibleSection>
+    </>
   );
 }
 
@@ -607,52 +611,53 @@ export function StudioIntelligencePanel({ store }: PanelProps) {
 
   if (!best) {
     return (
-      <section className="p-4 mb-4" style={mcPanel}>
-        <p style={mcSectionTitle}>{SECTION_ICONS.intelligence} STUDIO INTELLIGENCE</p>
-        <p style={{ ...mcValue, fontSize: '16px', color: MC.black }}>Welcome to Studio Intelligence.</p>
-        <p style={{ ...mcLabel, marginTop: 8, color: '#333' }}>
-          You haven&apos;t published enough content yet for meaningful recommendations.
-        </p>
-        <p style={{ ...mcSectionTitle, marginTop: 14, fontSize: '8px' }}>PUBLISHING MILESTONES</p>
-        <div className="space-y-2 mt-2">
-          {INTELLIGENCE_MATURITY_TIERS.map((tier) => {
-            const unlocked = publishedCount >= tier.postsRequired;
-            return (
-              <div
-                key={tier.postsRequired}
-                className="p-2 border"
-                style={{
-                  borderColor: unlocked ? MC.green : MC.panelBorder,
-                  background: unlocked ? 'rgba(22,163,74,0.06)' : 'white',
-                  opacity: unlocked ? 1 : 0.85,
-                }}
-              >
-                <p style={{ ...mcLabel, color: unlocked ? MC.green : MC.gray, fontFamily: '"Futura PT Medium"' }}>
-                  {tier.label} {unlocked ? '✓' : '—'}
-                </p>
-                <p style={mcLabel}>{tier.unlocks}</p>
-              </div>
-            );
-          })}
-        </div>
-        <p style={{ ...mcLabel, marginTop: 10, color: MC.accent }}>STATUS · LEARNING</p>
-      </section>
+      <div className="space-y-3">
+        <StudioIntelligenceNarrative publishedCount={publishedCount} accentHex={MC.accent} />
+        <HqGlassSurface>
+          <p style={{ ...mcSectionTitle, fontSize: '8px' }}>PUBLISHING MILESTONES</p>
+          <div className="space-y-2 mt-2">
+            {INTELLIGENCE_MATURITY_TIERS.map((tier) => {
+              const unlocked = publishedCount >= tier.postsRequired;
+              return (
+                <div
+                  key={tier.postsRequired}
+                  className="p-2 rounded-md"
+                  style={{
+                    border: unlocked ? `1px solid ${MC.green}44` : '1px solid rgba(0,0,0,0.06)',
+                    background: unlocked ? 'rgba(22,163,74,0.06)' : 'rgba(255,255,255,0.45)',
+                  }}
+                >
+                  <p style={{ ...mcLabel, color: unlocked ? MC.green : MC.gray, fontFamily: '"Futura PT Medium"' }}>
+                    {tier.label} {unlocked ? '✓' : '—'}
+                  </p>
+                  <p style={mcLabel}>{tier.unlocks}</p>
+                </div>
+              );
+            })}
+          </div>
+        </HqGlassSurface>
+      </div>
     );
   }
 
   return (
-    <section className="p-4 mb-4" style={mcPanel}>
-      <p style={mcSectionTitle}>{SECTION_ICONS.intelligence} STUDIO INTELLIGENCE</p>
-
+    <div className="space-y-3">
+      <StudioIntelligenceNarrative
+        publishedCount={publishedCount}
+        primaryInsight={best.why}
+        secondaryInsights={[best.recommendedAction, best.expectedImpact]}
+        accentHex={MC.accent}
+      />
+      <section className="p-4 mb-4" style={{ ...mcPanel, background: 'rgba(255,255,255,0.72)' }}>
       <div
-        className="p-3 mb-3"
+        className="p-3 mb-3 rounded-lg"
         style={{
-          border: `2px solid ${MC.accent}`,
-          background: 'linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(255,255,255,0.95) 100%)',
+          border: `1px solid ${MC.accent}44`,
+          background: 'linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(255,255,255,0.95) 100%)',
         }}
       >
         <p style={{ ...mcLabel, color: MC.accent, letterSpacing: '0.1em' }}>TODAY&apos;S BEST MOVE</p>
-        <p style={{ ...mcValue, fontSize: '18px', color: MC.black, margin: '6px 0' }}>
+        <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '11px', color: MC.black, margin: '6px 0' }}>
           {best.title.replace(/^Publish /i, 'Approve ').replace(/ at .+$/i, '')}
         </p>
         <MetricRow label="EXPECTED IMPACT" value={best.expectedImpact} accent />
@@ -683,6 +688,7 @@ export function StudioIntelligencePanel({ store }: PanelProps) {
         </div>
       ) : null}
     </section>
+    </div>
   );
 }
 
@@ -760,52 +766,31 @@ export function RevenueCenterPanel({ store }: PanelProps) {
 }
 
 export function LabsExperimentsPanel({ store }: PanelProps) {
-  const active = store.experiments.filter((e) => e.status === 'active');
+  const experiments = store.experiments.map((exp) => ({
+    id: exp.id,
+    name: exp.name.toUpperCase(),
+    status: exp.status,
+    leader: exp.currentLeader,
+    confidencePct: exp.confidencePct,
+  }));
 
-  if (store.experiments.length === 0) {
-    return (
-      <section className="p-4 mb-4" style={mcPanel}>
-        <p style={mcSectionTitle}>{SECTION_ICONS.labs} STUDIO LABS</p>
-        <p style={{ ...mcValue, fontSize: '14px', color: MC.gray }}>No active experiments.</p>
-        <p style={{ ...mcLabel, marginTop: 8 }}>
-          Publish at least five pieces of content to unlock experimentation.
-        </p>
-        <MissionQuickLink
-          to={buildNdxbookMissionActionLinks().find((a) => a.id === 'experiment')!.route}
-          className="text-[6px] underline mt-2 inline-block"
-          style={{ color: MC.accent, textDecoration: 'underline' }}
-        >
-          OPEN STUDIO OS LABS →
-        </MissionQuickLink>
-      </section>
-    );
-  }
+  const footer = (
+    <MissionQuickLink
+      to={buildNdxbookMissionActionLinks().find((a) => a.id === 'experiment')!.route}
+      className="text-[6px] underline inline-block"
+      style={{ color: MC.accent, textDecoration: 'underline' }}
+    >
+      OPEN STUDIO OS LABS →
+    </MissionQuickLink>
+  );
 
   return (
-    <CollapsibleSection
-      title="LABS SNAPSHOT"
-      icon={SECTION_ICONS.labs}
-      summary={
-        <p style={mcLabel}>
-          {active.length} active experiments · leader {active[0]?.currentLeader ?? '—'} · tap for full board
-        </p>
-      }
-    >
-      {store.experiments.map((exp) => (
-        <div key={exp.id} className="p-2 mb-1 border" style={{ borderColor: exp.status === 'active' ? MC.accent : MC.panelBorder }}>
-          <p style={{ ...mcLabel, color: MC.accent, fontFamily: '"Futura PT Medium"' }}>{exp.name.toUpperCase()}</p>
-          <p style={mcLabel}>WINNER · {exp.winner} · {exp.confidencePct}% CONF</p>
-          <p style={mcLabel}>LEADER · {exp.currentLeader}</p>
-        </div>
-      ))}
-      <MissionQuickLink
-        to={buildNdxbookMissionActionLinks().find((a) => a.id === 'experiment')!.route}
-        className="text-[6px] underline mt-2 inline-block"
-        style={{ color: MC.accent, textDecoration: 'underline' }}
-      >
-        OPEN STUDIO OS LABS →
-      </MissionQuickLink>
-    </CollapsibleSection>
+    <StudioLabsGrid
+      experiments={experiments}
+      accentHex={MC.accent}
+      emptyMessage="Publish at least five pieces of content to unlock experimentation."
+      footer={footer}
+    />
   );
 }
 
@@ -958,31 +943,16 @@ export function FounderTimelinePanel() {
   if (!pilot.enabled) return null;
 
   return (
-    <section className="p-4 mb-4" style={{ ...mcPanel, borderTop: `3px solid ${MC.accent}` }}>
-      <p style={mcSectionTitle}>FOUNDER TIMELINE · PERMANENT HISTORY</p>
-      <p style={{ ...mcLabel, marginBottom: 10 }}>
-        Every milestone is earned — Studio OS remembers this organization&apos;s real story.
-      </p>
-      {pilot.milestones.length === 0 ? (
-        <p style={mcLabel}>Your timeline begins now.</p>
-      ) : (
-        <div className="space-y-2">
-          {pilot.milestones.map((m) => (
-            <div key={`${m.id}-${m.recordedAt}`} className="p-2 border flex gap-2" style={{ borderColor: MC.panelBorder }}>
-              <span style={{ fontSize: '10px', color: MC.accent }}>◆</span>
-              <div>
-                <p style={{ ...mcLabel, color: MC.black, fontFamily: '"Futura PT Medium"' }}>{m.label.toUpperCase()}</p>
-                <p style={mcLabel}>{m.description}</p>
-                <p style={{ ...mcLabel, fontSize: '5px' }}>
-                  {new Date(m.recordedAt).toLocaleString()}
-                  {m.pageNumber ? ` · PAGE ${String(m.pageNumber).padStart(3, '0')}` : ''}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
+    <LegacyTimelineStory
+      accentHex={MC.accent}
+      milestones={pilot.milestones.map((m) => ({
+        id: m.id,
+        label: m.label,
+        description: m.description,
+        recordedAt: m.recordedAt,
+        detail: m.pageNumber ? `PAGE ${String(m.pageNumber).padStart(3, '0')}` : undefined,
+      }))}
+    />
   );
 }
 

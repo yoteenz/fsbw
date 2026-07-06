@@ -4,16 +4,23 @@ import { NDXBOOK_MISSION_CONTROL_NAV } from '../../../../studio-os-core/ndxbook/
 import type { MissionControlNavId } from '../../../../studio-os-core/ndxbook/mission-control/types';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useNdxbookMissionControlState } from '../../../../hooks/useNdxbookMissionControlState';
+import { useOrganizationContext } from '../../../../studio-os-core/organization-context';
+import { readFounderPilotModeStore } from '../../../../studio-os-core/founder-pilot-mode';
 import { StudioImmersionStyles } from '../../studio/immersion/StudioImmersionStyles';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { NDXBOOK_MC_STYLES } from './ndxbookMissionControlTheme';
+import { NdxbookExecutiveLobby } from './NdxbookExecutiveLobby';
+import {
+  HqExperienceStyles,
+  HqWingZone,
+  resolveHeadquartersEnvironment,
+  resolveHeadquartersMaturity,
+} from '../../studio/headquarters-experience';
 import {
   ActivityWallPanel,
-  ChiefConciergeBriefingPanel,
   CompanyHealthPanel,
   ExternalNavPanel,
   FounderTimelinePanel,
-  HeadquartersIntro,
   LabsExperimentsPanel,
   MissionActionsPanel,
   NdxbookLibraryPanel,
@@ -24,7 +31,6 @@ import {
   RevenueCenterPanel,
   StudioIntelligencePanel,
   TalentBoardPanel,
-  TodaysBriefingPanel,
   VolumeExplorerPanel,
 } from './NdxbookMissionControlPanels';
 
@@ -35,6 +41,8 @@ type NdxbookMissionControlProps = {
 
 export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: NdxbookMissionControlProps) {
   const navigate = useNavigate();
+  const org = useOrganizationContext();
+  const env = resolveHeadquartersEnvironment(org.organizationId);
   const [activeNav, setActiveNav] = useState<MissionControlNavId>('mission-control');
   const {
     store,
@@ -45,6 +53,10 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
     lastUpdatedAt,
     rescheduleItem,
   } = useNdxbookMissionControlState();
+
+  const pilot = readFounderPilotModeStore(org.organizationId);
+  const overallHealth = store.companyHealth.find((m) => m.id === 'overall')?.score ?? 0;
+  const maturity = resolveHeadquartersMaturity(pilot.pagesPublished, overallHealth);
 
   const panelProps = {
     store,
@@ -82,21 +94,47 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
       case 'mission-control':
       default:
         return (
-          <div className="ndxbook-hq-flow space-y-1 pb-36">
-            <TodaysBriefingPanel {...panelProps} />
-            <ChiefConciergeBriefingPanel />
-            <CompanyHealthPanel {...panelProps} />
-            <PublishingTimelinePanel {...panelProps} />
-            <PageOfTheDayPanel {...panelProps} />
-            <NewsroomPanel {...panelProps} />
-            <NdxbookLibraryPanel {...panelProps} />
-            <StudioIntelligencePanel {...panelProps} />
-            <RevenueCenterPanel {...panelProps} />
-            <LabsExperimentsPanel {...panelProps} />
-            <TalentBoardPanel {...panelProps} />
-            <MissionActionsPanel {...panelProps} />
-            <FounderTimelinePanel />
-            <ActivityWallPanel {...panelProps} />
+          <div className="ndxbook-hq-flow pb-36">
+            <NdxbookExecutiveLobby store={store} formatDate={formatDate} formatClock={formatClock} />
+
+            <HqWingZone wing="COMPANY PULSE™" title="How the organization feels today" accentHex={env.accentHex}>
+              <CompanyHealthPanel {...panelProps} />
+            </HqWingZone>
+
+            <HqWingZone wing="PRIORITY OF THE DAY" title="Today's mission" accentHex={env.accentHex}>
+              <PageOfTheDayPanel {...panelProps} />
+            </HqWingZone>
+
+            <HqWingZone wing="OPERATIONS WING™" title="Production & publishing" subtitle="Pipeline in motion" accentHex={env.accentHex}>
+              <PublishingTimelinePanel {...panelProps} />
+              <NewsroomPanel {...panelProps} />
+            </HqWingZone>
+
+            <HqWingZone wing="KNOWLEDGE WING™" title="Library & intelligence" accentHex={env.accentHex}>
+              <NdxbookLibraryPanel {...panelProps} />
+              <StudioIntelligencePanel {...panelProps} />
+            </HqWingZone>
+
+            {maturity.showFinancial ? (
+              <HqWingZone wing="FINANCIAL WING™" title="Revenue snapshot" accentHex={env.accentHex}>
+                <RevenueCenterPanel {...panelProps} />
+              </HqWingZone>
+            ) : null}
+
+            {maturity.showInnovation ? (
+              <HqWingZone wing="INNOVATION WING™" title="Labs & talent" accentHex={env.accentHex}>
+                <LabsExperimentsPanel {...panelProps} />
+                <TalentBoardPanel {...panelProps} />
+                <MissionActionsPanel {...panelProps} />
+              </HqWingZone>
+            ) : null}
+
+            {maturity.showLegacy ? (
+              <HqWingZone wing="LEGACY WING™" title="Permanent organizational history" accentHex={env.accentHex}>
+                <FounderTimelinePanel />
+                <ActivityWallPanel {...panelProps} />
+              </HqWingZone>
+            ) : null}
           </div>
         );
     }
@@ -105,9 +143,8 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
   return (
     <div className="ndxbook-mission-control">
       <style>{NDXBOOK_MC_STYLES}</style>
+      <HqExperienceStyles />
       <StudioImmersionStyles />
-
-      <HeadquartersIntro lastUpdatedAt={lastUpdatedAt} formatDate={formatDate} />
 
       <div className="flex gap-1 overflow-x-auto pb-2 mb-3" role="tablist" aria-label="Department navigation">
         {NDXBOOK_MISSION_CONTROL_NAV.map((item) => (

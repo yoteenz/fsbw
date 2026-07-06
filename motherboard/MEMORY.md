@@ -39137,3 +39137,29 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/founder-operating-system.md`** · **CORE.md** M118 entry · nav metric **M118**
 
 **Conventions:** Founder Operating System (M118) completes Studio OS V1 — organizations rarely outgrow their founders; founders grow first, organizations follow. Demo localStorage via `studioOsFounderOperatingSystem_v1`.
+
+---
+
+## 2026-07-06 — Headquarters Experience™ V2.0 design revision
+
+**Context (full chat arc):** Same session fixed Headquarters quota errors + routing (`7ec47f3f`, `660300df`) and delivered **Studio Orb™** design revision (`dcde5593`). User requested **Headquarters Experience™ V2.0** — redesign Headquarters/Mission Control to feel like entering a real executive headquarters (bright marble, crystal acrylic, frosted glass) rather than a traditional SaaS dashboard. **Do NOT rebuild functionality, change business logic, or remove existing systems.**
+
+**Design requirements:**
+- Remove dark **Today's Briefing** panel from HQ default flow; embrace Studio OS bright visual language
+- **Executive Lobby™** hero: org name, date/time, status, concise briefing (overnight · opportunity · risk · mission), open briefing expand
+- Architectural **wing zones** with breathing spacing: Company Pulse → Priority of the Day → Operations → Knowledge → Financial → Innovation → Legacy
+- **Crystal health indicators** (not flat progress bars) · **Priority Mission hero** · **Knowledge Library collections** (Recent/Pinned/Collections/etc.) · conversational **Studio Intelligence** · experimental **Studio Labs** · **Legacy Timeline™** (permanent story, not changelog)
+- Handwriting font (**Covered By Your Grace**) only for greetings, mission, priority, milestones
+- **Adaptive HQ** — sections unlock via **`resolveHeadquartersMaturity()`**
+- **Profession-specific environments** via **`resolveHeadquartersEnvironment()`** (Frontal Slayer **The Mansion™**, NDXBOOK **Media Command™**, etc.)
+
+**Delivered:**
+- **`src/components/admin/studio/headquarters-experience/`** — theme, environment resolver, **`ExecutiveLobbyHero`**, **`HqWingZone`**, **`CrystalHealthGrid`**, **`PriorityMissionHero`**, **`KnowledgeLibraryCollections`**, **`StudioIntelligenceNarrative`**, **`StudioLabsGrid`**, **`LegacyTimelineStory`**
+- **NDXBOOK HQ** — **`NdxbookExecutiveLobby`** · **`NdxbookMissionControl`** restructured into wings; panels refactored (`CompanyHealthPanel`, `PageOfTheDayPanel`, `NdxbookLibraryPanel`, `StudioIntelligencePanel`, `LabsExperimentsPanel`, `FounderTimelinePanel`); dark briefing removed from main scroll
+- **Frontal Slayer HQ** — **`FrontalSlayerExecutiveLobby`** · **`MissionControlWorkspace`** wing layout + **`LegacyTimelineStory`** + adaptive Innovation/Legacy wings
+- **`TodaysBriefingPanel`** retained export but brightened (**`HqGlassSurface`**) if referenced elsewhere
+- **CORE.md** — Headquarters Experience V2 entry
+
+**Conventions:** HQ = destination/lobby, not dashboard cards. Dark UI reserved for Mission Control emergency/monitoring contexts only. **`HEADQUARTERS`** route unchanged (`/admin/headquarters` → Frontal Slayer Mission Control). All existing hooks, stores, and panel data paths preserved — visual/layout only.
+
+**Changes:** headquarters-experience/*, NdxbookExecutiveLobby.tsx, NdxbookMissionControl.tsx, NdxbookMissionControlPanels.tsx, FrontalSlayerExecutiveLobby.tsx, MissionControlWorkspace.tsx, CORE.md, MEMORY.md.

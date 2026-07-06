@@ -17,13 +17,10 @@ import {
   MISSION_EXECUTIVE_BRIEF,
   MISSION_OVERVIEW,
   MISSION_PHASES,
-  MISSION_QUICK_ACTIONS,
   MISSION_CONTROL_BLUEPRINT_STATS,
   MISSION_CONTROL_FACTORY_STATS,
-  SMART_NOTIFICATIONS,
   WORKSPACE_MEMORY,
 } from '../../../../utils/adminStudioMissionControlDemo';
-import { StudioLivingIndicator } from '../immersion/StudioLivingIndicator';
 import { useStudioImmersion } from '../../../../hooks/useStudioImmersion';
 import {
   ExecutiveCollapsibleSection,
@@ -31,7 +28,6 @@ import {
   ExecutiveDepartmentCards,
   ExecutiveFocusList,
   ExecutiveFocusPanel,
-  ExecutiveHeroCard,
   ExecutivePageShell,
   ExecutivePipelineViz,
   ExecutiveSecondaryCard,
@@ -41,13 +37,21 @@ import {
   ExecutiveWorkspaceZone,
   eiaActionBtn,
   eiaCaption,
-  eiaGrace,
-  eiaPanel,
   eiaSectionTitle,
   healthToDepartmentStatus,
   useExecutiveDepartment,
   type PipelineStage,
 } from '../executive-ia';
+import {
+  HqExperienceStyles,
+  HqWingZone,
+  LegacyTimelineStory,
+  PriorityMissionHero,
+  hqGrace,
+  resolveHeadquartersEnvironment,
+  resolveHeadquartersMaturity,
+} from '../headquarters-experience';
+import { FrontalSlayerExecutiveLobby } from './FrontalSlayerExecutiveLobby';
 import { MissionControlExecutiveHealthPanel } from './MissionControlExecutiveHealthPanel';
 import { MissionControlOrganizationPulsePanel } from './MissionControlOrganizationPulsePanel';
 import { MissionControlKnowledgeConfidencePanel } from './MissionControlKnowledgeConfidencePanel';
@@ -69,8 +73,6 @@ import {
   mcActionBtn,
   mcBreathingPanel,
   mcCaption,
-  mcGrace,
-  mcLiveDot,
 } from './missionControlTheme';
 
 const DEPARTMENT_ICONS: Record<string, string> = {
@@ -101,8 +103,6 @@ export function MissionControlWorkspace() {
     approvals,
     pendingApprovalCount,
     approveItem,
-    dismissedNotifications,
-    dismissNotification,
   } = useAdminStudioMissionControl();
   const { unreadGuides, markGuideRead } = useAdminStudioKnowledgeHub();
 
@@ -110,7 +110,8 @@ export function MissionControlWorkspace() {
   const { profile: healthProfile } = useCompanyHealthIndexState();
   const { activeDepartment, selectDepartment } = useExecutiveDepartment<MissionDepartmentId>('overview');
   const header = MISSION_CONTROL_HEADER;
-  const visibleNotifications = SMART_NOTIFICATIONS.filter((n) => !dismissedNotifications.includes(n.id));
+  const env = resolveHeadquartersEnvironment(workspace.id);
+  const maturity = resolveHeadquartersMaturity(0, healthProfile?.executiveHealthScore ?? header.workspaceHealth);
   const currentPhaseIdx = MISSION_PHASES.findIndex((p) => p.id === MISSION_CURRENT_PHASE);
   const activeDeptMeta = DEPARTMENT_GRID.find((d) => d.id === activeDepartment);
 
@@ -123,99 +124,35 @@ export function MissionControlWorkspace() {
   return (
     <div className="mission-control-root">
       <style>{MISSION_CONTROL_STYLES}</style>
+      <HqExperienceStyles />
 
       <ExecutivePageShell>
-        {/* HEADER — workspace context, search, notifications */}
-        <header className="studio-wing-section" style={{ ...mcBreathingPanel, padding: '12px 14px' }}>
-          <div className="flex items-start gap-3">
-            <div className="flex-shrink-0 border overflow-hidden" style={{ width: 44, height: 44, borderColor: MC_VISUAL.black }}>
-              <img src={workspace.logoSrc} alt="" className="w-full h-full object-cover" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p style={{ ...mcGrace, fontSize: '18px', lineHeight: 1.1 }}>{workspace.displayName}</p>
-              <p style={mcCaption}>
-                <span style={mcLiveDot} />
-                MISSION STATUS · {header.missionStatus.replace('-', ' ').toUpperCase()} · EXECUTIVE HEALTH{' '}
-                {healthProfile?.executiveHealthScore ?? header.workspaceHealth}%
-              </p>
-              <p style={{ ...mcCaption, color: MC_VISUAL.black, marginTop: 4 }}>
-                <StudioLivingIndicator label="HEADQUARTERS ACTIVE" state="busy" />
-                {' · '}
-                {header.quarter} · {header.season}
-              </p>
-            </div>
-          </div>
+        <FrontalSlayerExecutiveLobby />
 
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="MISSION SEARCH — PACKS · CAMPAIGNS · ASSETS · TALENT…"
-            className="w-full mt-3 bg-white/90 border text-black text-[8px] font-futura uppercase px-3 py-2 outline-none"
-            style={{ fontWeight: 515, borderColor: MC_VISUAL.black, borderWidth: '1.3px' }}
+        <HqWingZone wing="COMPANY PULSE™" title="Organization health" accentHex={env.accentHex}>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <MissionControlExecutiveHealthPanel />
+            <MissionControlOrganizationPulsePanel />
+            <MissionControlKnowledgeConfidencePanel />
+            <MissionControlAmbientBriefingPanel />
+          </div>
+        </HqWingZone>
+
+        <HqWingZone wing="PRIORITY OF THE DAY" title="Today's mission" accentHex={env.accentHex}>
+          <PriorityMissionHero
+            title={MISSION_OVERVIEW.title}
+            headline={MISSION_OVERVIEW.title}
+            subtitle={`${header.currentCampaign} · READINESS ${MISSION_OVERVIEW.readinessScore}%`}
+            countdown={`${MISSION_OVERVIEW.daysRemaining} DAYS REMAINING`}
+            confidencePct={MISSION_OVERVIEW.readinessScore}
+            predictedImpact={`${MISSION_OVERVIEW.progressPct}% COMPLETE · NEXT · ${MISSION_OVERVIEW.upcomingMilestone}`}
+            recommendedAction={MISSION_EXECUTIVE_BRIEF.todayFocus}
+            accentHex={env.accentHex}
           />
-          {searchResults.length > 0 ? (
-            <div className="mt-2 border max-h-32 overflow-y-auto" style={{ borderColor: MC_VISUAL.border, background: '#fff' }}>
-              {searchResults.map((r) => (
-                <button
-                  key={r.id}
-                  type="button"
-                  onClick={() => navigate(r.route)}
-                  className="w-full text-left px-2 py-1.5 border-b"
-                  style={{ ...mcCaption, color: MC_VISUAL.black, borderColor: '#eee', cursor: 'pointer' }}
-                >
-                  {r.label} · <span style={{ color: MC_VISUAL.red }}>{r.category}</span>
-                </button>
-              ))}
-            </div>
-          ) : null}
+        </HqWingZone>
 
-          {visibleNotifications.length > 0 ? (
-            <div className="mt-2 space-y-1">
-              {visibleNotifications.slice(0, 2).map((n) => (
-                <div key={n.id} className="flex items-start gap-2 px-2 py-1" style={{ background: 'rgba(235,28,36,0.06)', border: MC_VISUAL.border }}>
-                  <p style={{ ...mcCaption, flex: 1, color: MC_VISUAL.black, fontSize: '8px' }}>
-                    <span style={{ color: MC_VISUAL.red, fontFamily: '"Futura PT Medium"' }}>{n.title}</span> — {n.text}
-                  </p>
-                  <button type="button" onClick={() => dismissNotification(n.id)} style={{ ...mcCaption, color: MC_VISUAL.gray, fontSize: '7px', border: 'none', background: 'none', cursor: 'pointer' }}>
-                    DISMISS
-                  </button>
-                </div>
-              ))}
-            </div>
-          ) : null}
-
-          <div className="flex flex-wrap gap-2 mt-3">
-            <button type="button" onClick={() => returnToCampus()} style={mcActionBtn}>
-              SWITCH WORKSPACE
-            </button>
-            <button type="button" onClick={() => navigate(adminStudioChiefOfStaffPath())} style={mcActionBtn}>
-              CHIEF OF STAFF
-            </button>
-            <span style={{ ...mcCaption, alignSelf: 'center' }}>{pendingApprovalCount} APPROVALS</span>
-          </div>
-        </header>
-
-        {/* HERO — single visual anchor */}
-        <ExecutiveHeroCard
-          eyebrow={
-            healthProfile
-              ? `EXECUTIVE HEALTH ${healthProfile.executiveHealthScore}% · PHASE ${MISSION_OVERVIEW.phase}`
-              : `TODAY'S PRIORITY · PHASE ${MISSION_OVERVIEW.phase}`
-          }
-          title={MISSION_OVERVIEW.title}
-          subtitle={`${header.currentCampaign} · READINESS ${MISSION_OVERVIEW.readinessScore}% · ${MISSION_OVERVIEW.daysRemaining} DAYS LEFT`}
-          progressPct={MISSION_OVERVIEW.progressPct}
-          stats={[
-            { label: 'PROGRESS', value: `${MISSION_OVERVIEW.progressPct}%` },
-            { label: 'DAYS LEFT', value: String(MISSION_OVERVIEW.daysRemaining) },
-            { label: 'READINESS', value: `${MISSION_OVERVIEW.readinessScore}%` },
-            { label: 'NEXT', value: MISSION_OVERVIEW.upcomingMilestone },
-          ]}
-        />
-
-        {/* DEPARTMENT CARDS — entering another wing of Headquarters */}
-        <ExecutiveDepartmentCards label="WALK THE DEPARTMENTS">
+        <HqWingZone wing="OPERATIONS WING™" title="Walk the departments" subtitle="Enter another part of headquarters" accentHex={env.accentHex}>
+        <ExecutiveDepartmentCards label="DEPARTMENT WINGS">
           <ExecutiveDepartmentCard
             id="overview"
             icon="📊"
@@ -360,7 +297,41 @@ export function MissionControlWorkspace() {
           ) : null}
         </ExecutiveWorkspaceZone>
 
-        {/* SECONDARY — grouped supporting information */}
+        <div style={{ ...mcBreathingPanel, padding: '12px 14px' }}>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="MISSION SEARCH — PACKS · CAMPAIGNS · ASSETS · TALENT…"
+            className="w-full bg-white/90 border text-black text-[8px] font-futura uppercase px-3 py-2 outline-none"
+            style={{ fontWeight: 515, borderColor: MC_VISUAL.black, borderWidth: '1.3px' }}
+          />
+          {searchResults.length > 0 ? (
+            <div className="mt-2 border max-h-32 overflow-y-auto" style={{ borderColor: MC_VISUAL.border, background: '#fff' }}>
+              {searchResults.map((r) => (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => navigate(r.route)}
+                  className="w-full text-left px-2 py-1.5 border-b"
+                  style={{ ...mcCaption, color: MC_VISUAL.black, borderColor: '#eee', cursor: 'pointer' }}
+                >
+                  {r.label} · <span style={{ color: MC_VISUAL.red }}>{r.category}</span>
+                </button>
+              ))}
+            </div>
+          ) : null}
+          <div className="flex flex-wrap gap-2 mt-3">
+            <button type="button" onClick={() => returnToCampus()} style={mcActionBtn}>
+              SWITCH WORKSPACE
+            </button>
+            <button type="button" onClick={() => navigate(adminStudioChiefOfStaffPath())} style={mcActionBtn}>
+              CHIEF OF STAFF
+            </button>
+            <span style={{ ...mcCaption, alignSelf: 'center' }}>{pendingApprovalCount} APPROVALS</span>
+          </div>
+        </div>
+
         <ExecutiveSecondaryGrid title="ACTIVE MISSIONS & APPROVALS">
           <ExecutiveSecondaryCard title="ACTIVE MISSIONS">
             <div className="space-y-2">
@@ -405,9 +376,9 @@ export function MissionControlWorkspace() {
             </div>
           </ExecutiveSecondaryCard>
         </ExecutiveSecondaryGrid>
+        </HqWingZone>
 
-        {/* SECONDARY — calendar + business health (lighter rhythm) */}
-        <ExecutiveSecondaryGrid title="UPCOMING & BUSINESS HEALTH" columns={1}>
+        <HqWingZone wing="INTELLIGENCE WING™" title="Executive systems" accentHex={env.accentHex}>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <ExecutiveSecondaryCard title="EXECUTIVE CALENDAR">
               <div className="space-y-1">
@@ -419,11 +390,6 @@ export function MissionControlWorkspace() {
                 ))}
               </div>
             </ExecutiveSecondaryCard>
-
-            <MissionControlExecutiveHealthPanel />
-            <MissionControlOrganizationPulsePanel />
-            <MissionControlKnowledgeConfidencePanel />
-            <MissionControlAmbientBriefingPanel />
             <MissionControlAnticipationPanel />
             <MissionControlFounderCognitiveLoadPanel />
             <MissionControlPresencePanel />
@@ -432,45 +398,12 @@ export function MissionControlWorkspace() {
             <MissionControlPredictiveOrganizationPanel />
             <MissionControlAutonomousPreparationPanel />
             <MissionControlOrganizationalConsciousnessPanel />
-            <MissionControlExecutiveTimelinePanel />
             <MissionControlWorldKnowledgeEnginePanel />
             <MissionControlFounderOperatingSystemPanel />
           </div>
-        </ExecutiveSecondaryGrid>
+        </HqWingZone>
 
-        {/* QUICK ACTIONS — compact strip */}
-        <section style={{ paddingTop: 4 }}>
-          <p style={eiaSectionTitle}>QUICK ACTIONS</p>
-          <div className="flex flex-wrap gap-2">
-            {MISSION_QUICK_ACTIONS.map((qa) => (
-              <button key={qa.id} type="button" onClick={() => navigate(qa.route)} style={eiaActionBtn}>
-                {qa.label}
-              </button>
-            ))}
-          </div>
-        </section>
-
-        {/* COLLAPSIBLE — progressive disclosure */}
-        <ExecutiveCollapsibleSection
-          title="EXECUTIVE AI DIRECTOR"
-          subtitle={AI_DIRECTOR_DOCK.recommendation.slice(0, 80)}
-          badge={`${AI_DIRECTOR_DOCK.insights.length} INSIGHTS`}
-        >
-          <div className="space-y-2">
-            {AI_DIRECTOR_DOCK.insights.map((ins) => (
-              <div key={ins.id} style={{ borderLeft: `3px solid ${ins.accentHex}`, paddingLeft: 8 }}>
-                <p style={{ ...eiaCaption, color: ins.accentHex, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>
-                  {ins.label}
-                </p>
-                <p style={{ ...eiaCaption, color: MC_VISUAL.black }}>{ins.text}</p>
-              </div>
-            ))}
-          </div>
-          <button type="button" onClick={() => navigate('/admin/studio/executive-ai-director')} style={{ ...eiaActionBtn, marginTop: 10 }}>
-            OPEN AI DIRECTOR
-          </button>
-        </ExecutiveCollapsibleSection>
-
+        <HqWingZone wing="KNOWLEDGE WING™" title="Documentation & guides" accentHex={env.accentHex}>
         <ExecutiveCollapsibleSection
           title="KNOWLEDGE HUB · DOCUMENTATION HEALTH"
           subtitle={`${KNOWLEDGE_MISSION_STATS.knowledgeHealthPct}% HEALTH · ${KNOWLEDGE_MISSION_STATS.unreadGuides} UNREAD`}
@@ -484,7 +417,7 @@ export function MissionControlWorkspace() {
               { label: 'DOC UPDATES', value: String(KNOWLEDGE_MISSION_STATS.documentationUpdates.length) },
             ].map((s) => (
               <div key={s.label} className="text-center py-2" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                <p style={{ ...eiaGrace, fontSize: '14px', color: MC_VISUAL.red }}>{s.value}</p>
+                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: MC_VISUAL.red }}>{s.value}</p>
                 <p style={{ ...eiaCaption, fontSize: '7px' }}>{s.label}</p>
               </div>
             ))}
@@ -505,6 +438,29 @@ export function MissionControlWorkspace() {
         </ExecutiveCollapsibleSection>
 
         <ExecutiveCollapsibleSection
+          title="EXECUTIVE AI DIRECTOR"
+          subtitle={AI_DIRECTOR_DOCK.recommendation.slice(0, 80)}
+          badge={`${AI_DIRECTOR_DOCK.insights.length} INSIGHTS`}
+        >
+          <div className="space-y-2">
+            {AI_DIRECTOR_DOCK.insights.map((ins) => (
+              <div key={ins.id} style={{ borderLeft: `3px solid ${ins.accentHex}`, paddingLeft: 8 }}>
+                <p style={{ ...eiaCaption, color: ins.accentHex, fontFamily: '"Futura PT Medium"', fontSize: '8px' }}>
+                  {ins.label}
+                </p>
+                <p style={{ ...eiaCaption, color: MC_VISUAL.black }}>{ins.text}</p>
+              </div>
+            ))}
+          </div>
+          <button type="button" onClick={() => navigate('/admin/studio/executive-ai-director')} style={{ ...eiaActionBtn, marginTop: 10 }}>
+            OPEN AI DIRECTOR
+          </button>
+        </ExecutiveCollapsibleSection>
+        </HqWingZone>
+
+        {maturity.showInnovation ? (
+        <HqWingZone wing="INNOVATION WING™" title="Blueprint & factory" accentHex={env.accentHex}>
+        <ExecutiveCollapsibleSection
           title="BLUEPRINT MANAGER · ASSET FACTORY"
           subtitle={`${MISSION_CONTROL_BLUEPRINT_STATS.ready} READY · ${MISSION_CONTROL_FACTORY_STATS.jobsRunning} JOBS RUNNING`}
         >
@@ -518,7 +474,7 @@ export function MissionControlWorkspace() {
               { label: 'EFFICIENCY', value: `${MISSION_CONTROL_FACTORY_STATS.factoryEfficiency}%` },
             ].map((s) => (
               <div key={s.label} className="text-center py-2" style={{ background: 'rgba(0,0,0,0.03)' }}>
-                <p style={{ ...eiaGrace, fontSize: '14px', color: MC_VISUAL.red }}>{s.value}</p>
+                <p style={{ fontFamily: '"Futura PT Medium"', fontSize: '12px', color: MC_VISUAL.red }}>{s.value}</p>
                 <p style={{ ...eiaCaption, fontSize: '7px' }}>{s.label}</p>
               </div>
             ))}
@@ -530,60 +486,63 @@ export function MissionControlWorkspace() {
             ENTER ASSET FACTORY
           </button>
         </ExecutiveCollapsibleSection>
+        </HqWingZone>
+        ) : null}
 
-        <ExecutiveCollapsibleSection
-          title="ALL DEPARTMENTS"
-          subtitle="FULL GRID · HEALTH · BLOCKERS"
-        >
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-            {DEPARTMENT_GRID.slice(0, 8).map((dept) => (
-              <button
-                key={dept.id}
-                type="button"
-                onClick={() => navigate(dept.route)}
-                className="text-left p-2 transition-transform active:scale-[0.98]"
-                style={{ ...eiaPanel, cursor: 'pointer' }}
-              >
-                <p style={{ ...eiaCaption, color: MC_VISUAL.black, fontFamily: '"Futura PT Medium"' }}>{dept.title}</p>
-                <p style={{ ...eiaGrace, fontSize: '14px', color: MC_VISUAL.red }}>{dept.health}%</p>
-                <p style={{ ...eiaCaption, fontSize: '7px' }}>{dept.currentTask}</p>
-              </button>
-            ))}
-          </div>
-        </ExecutiveCollapsibleSection>
-
-        <ExecutiveCollapsibleSection title="WORKSPACE MEMORY · LEGACY" subtitle={WORKSPACE_MEMORY.thisDayInHistory.slice(0, 60)}>
-          <p style={eiaCaption}>THIS DAY IN HISTORY · {WORKSPACE_MEMORY.thisDayInHistory}</p>
-          <p style={eiaCaption}>ONE YEAR AGO · {WORKSPACE_MEMORY.oneYearAgo}</p>
-          <p style={{ ...eiaSectionTitle, marginTop: 8 }}>BIGGEST WINS</p>
-          <ExecutiveFocusList items={WORKSPACE_MEMORY.biggestWins} />
-          <p style={{ ...eiaGrace, fontSize: '12px', marginTop: 8 }}>{WORKSPACE_MEMORY.founderNotes}</p>
+        {maturity.showLegacy ? (
+        <HqWingZone wing="LEGACY WING™" title="Permanent organizational history" accentHex={env.accentHex}>
+          <MissionControlExecutiveTimelinePanel />
+          <LegacyTimelineStory
+            accentHex={env.accentHex}
+            milestones={[
+              {
+                id: 'today',
+                label: 'This day in history',
+                description: WORKSPACE_MEMORY.thisDayInHistory,
+                recordedAt: new Date().toISOString(),
+              },
+              {
+                id: 'year-ago',
+                label: 'One year ago',
+                description: WORKSPACE_MEMORY.oneYearAgo,
+                recordedAt: new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString(),
+              },
+              ...WORKSPACE_MEMORY.recentMilestones.map((label, idx) => ({
+                id: `milestone-${idx}`,
+                label,
+                description: WORKSPACE_MEMORY.biggestWins[idx] ?? 'Organization milestone recorded',
+                recordedAt: new Date(Date.now() - (idx + 2) * 30 * 24 * 60 * 60 * 1000).toISOString(),
+              })),
+            ]}
+          />
+          <p style={{ ...hqGrace, fontSize: '12px', marginTop: 12 }}>{WORKSPACE_MEMORY.founderNotes}</p>
           <button type="button" onClick={() => navigate('/admin/studio/legacy-system')} style={{ ...eiaActionBtn, marginTop: 8 }}>
             OPEN LEGACY
           </button>
-        </ExecutiveCollapsibleSection>
 
-        <ExecutiveCollapsibleSection
-          title="LIVE ACTIVITY FEED"
-          subtitle={`${LIVE_ACTIVITY_SEED.length + presenceFeed.length} RECENT EVENTS`}
-        >
-          <div className="space-y-2">
-            {LIVE_ACTIVITY_SEED.slice(0, 6).map((act) => (
-              <div key={act.id} style={{ borderLeft: `2px solid ${MC_VISUAL.red}`, paddingLeft: 8 }}>
-                <p style={{ ...eiaCaption, color: MC_VISUAL.black, fontSize: '8px' }}>{act.text}</p>
-                <p style={{ ...eiaCaption, fontSize: '7px' }}>{act.time} · {act.category}</p>
-              </div>
-            ))}
-            {presenceFeed.slice(0, 3).map((p) => (
-              <div key={p.id} style={{ borderLeft: '2px solid #92704A', paddingLeft: 8 }}>
-                <p style={{ ...eiaCaption, color: MC_VISUAL.black, fontSize: '8px' }}>
-                  {p.concierge} · {p.activity}
-                </p>
-                <p style={{ ...eiaCaption, fontSize: '7px' }}>{p.location} · CONCIERGE</p>
-              </div>
-            ))}
-          </div>
-        </ExecutiveCollapsibleSection>
+          <ExecutiveCollapsibleSection
+            title="LIVE ACTIVITY FEED"
+            subtitle={`${LIVE_ACTIVITY_SEED.length + presenceFeed.length} RECENT EVENTS`}
+          >
+            <div className="space-y-2">
+              {LIVE_ACTIVITY_SEED.slice(0, 6).map((act) => (
+                <div key={act.id} style={{ borderLeft: `2px solid ${MC_VISUAL.red}`, paddingLeft: 8 }}>
+                  <p style={{ ...eiaCaption, color: MC_VISUAL.black, fontSize: '8px' }}>{act.text}</p>
+                  <p style={{ ...eiaCaption, fontSize: '7px' }}>{act.time} · {act.category}</p>
+                </div>
+              ))}
+              {presenceFeed.slice(0, 3).map((p) => (
+                <div key={p.id} style={{ borderLeft: '2px solid #92704A', paddingLeft: 8 }}>
+                  <p style={{ ...eiaCaption, color: MC_VISUAL.black, fontSize: '8px' }}>
+                    {p.concierge} · {p.activity}
+                  </p>
+                  <p style={{ ...eiaCaption, fontSize: '7px' }}>{p.location} · CONCIERGE</p>
+                </div>
+              ))}
+            </div>
+          </ExecutiveCollapsibleSection>
+        </HqWingZone>
+        ) : null}
       </ExecutivePageShell>
     </div>
   );
