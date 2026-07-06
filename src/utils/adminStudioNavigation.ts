@@ -1047,11 +1047,11 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   {
     id: 'knowledge-hub',
     title: 'KNOWLEDGE HUB',
-    purpose: 'Living documentation — every studio os object explains itself; searchable wiki and workflow guides.',
+    purpose: 'Living documentation — Documentation Synchronization™ keeps every help surface aligned with current architecture.',
     route: p('knowledge-hub'),
     groupId: 'intelligence',
     status: 'live',
-    metric: 'WIKI',
+    metric: 'M125',
     ctaLabel: 'OPEN KNOWLEDGE HUB',
     moduleKey: 'knowledge-hub',
     featuredOnOverview: true,

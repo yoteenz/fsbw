@@ -8,27 +8,36 @@ import {
   SEED_GRAPH_WORKFLOWS,
   SUB_MODULE_GRAPH_NODES,
 } from './seedGraph';
+import {
+  DOCUMENTATION_SYNC_GRAPH_EDGES,
+  DOCUMENTATION_SYNC_GRAPH_NODES,
+  DOCUMENTATION_SYNC_GRAPH_WORKFLOWS,
+} from '../../studio-os-core/documentation-sync/graph-seed';
+import { getDocumentationSystem } from '../../studio-os-core/documentation-sync/system-registry';
 
 let cachedGraph: KnowledgeGraph | null = null;
 
 function moduleToNode(mod: (typeof ADMIN_STUDIO_MODULES)[number]): KnowledgeGraphNode {
   const guide = KNOWLEDGE_PAGE_GUIDES.find((g) => g.moduleId === mod.id);
+  const docSys = getDocumentationSystem(mod.id);
   return {
     id: mod.id,
     name: mod.title,
     type: 'module',
-    description: guide?.purpose ?? mod.purpose,
-    purpose: guide?.whyItExists ?? mod.purpose,
+    description: docSys?.overview ?? guide?.purpose ?? mod.purpose,
+    purpose: docSys?.purpose ?? guide?.whyItExists ?? mod.purpose,
     route: mod.route.split('?')[0],
     moduleId: mod.id,
-    relatedManualChapter: guide?.ownersManualChapter,
-    versionIntroduced: mod.status === 'live' ? 'studio os' : undefined,
+    relatedManualChapter: guide?.ownersManualChapter ?? (docSys ? `CHAPTER · ${docSys.label}` : undefined),
+    versionIntroduced: docSys?.milestone ?? (mod.status === 'live' ? 'studio os' : undefined),
     status: mod.status === 'coming-soon' ? 'coming-soon' : mod.status,
     searchKeywords: [
       mod.id,
       mod.title.toLowerCase(),
       mod.purpose.toLowerCase(),
       ...(guide?.whenToUse.map((w) => w.toLowerCase()) ?? []),
+      ...(docSys?.searchKeywords ?? []),
+      ...(docSys?.aliases ?? []),
     ],
   };
 }
@@ -75,10 +84,10 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
 
   const nodes = mergeNodes(
     mergeNodes(mergeNodes(moduleNodes, SUB_MODULE_GRAPH_NODES), SEED_GRAPH_NODES),
-    stepNodes
+    mergeNodes(DOCUMENTATION_SYNC_GRAPH_NODES, stepNodes)
   );
 
-  const edges: KnowledgeGraphEdge[] = [...SEED_GRAPH_EDGES];
+  const edges: KnowledgeGraphEdge[] = [...SEED_GRAPH_EDGES, ...DOCUMENTATION_SYNC_GRAPH_EDGES];
 
   for (const step of stepNodes) {
     if (step.parentNodeId) {
@@ -110,7 +119,7 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
   cachedGraph = {
     nodes,
     edges,
-    workflows: SEED_GRAPH_WORKFLOWS,
+    workflows: [...SEED_GRAPH_WORKFLOWS, ...DOCUMENTATION_SYNC_GRAPH_WORKFLOWS],
   };
   return cachedGraph;
 }

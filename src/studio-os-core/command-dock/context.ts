@@ -46,6 +46,7 @@ import { listLegacyNetworkDockSuggestions } from '../legacy-network/dock-advisor
 import { listStudioIntelligenceArchitectureDockSuggestions } from '../studio-intelligence-architecture/dock-advisor';
 import { listModelOrchestratorDockSuggestions } from '../model-orchestrator/dock-advisor';
 import { listStudioFoundationModelsDockSuggestions } from '../studio-foundation-models/dock-advisor';
+import { listDocumentationSyncDockSuggestions } from '../documentation-sync/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -386,6 +387,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/knowledge-hub')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'knowledge-hub',
+      label: 'KNOWLEDGE HUB · DOCUMENTATION SYNCHRONIZED',
+      portfolioMode: false,
+      suggestedCommands: listDocumentationSyncDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'strategy'],
     };
   }
 

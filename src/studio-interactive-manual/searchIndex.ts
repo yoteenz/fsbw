@@ -2,6 +2,8 @@ import type { ManualSearchEntry } from './types';
 import { getAllManualModules } from './registry';
 import { STUDIO_MANUAL_WHATS_NEW } from './whatsNew';
 import { searchKnowledgeGraph } from './knowledge-graph/queries';
+import { buildRegistrySearchEntries } from '../studio-os-core/documentation-sync/search-entries';
+import { expandSemanticQuery } from '../studio-os-core/documentation-sync/semantic-search';
 
 export function buildManualSearchIndex(): ManualSearchEntry[] {
   const entries: ManualSearchEntry[] = [];
@@ -128,6 +130,17 @@ export function buildManualSearchIndex(): ManualSearchEntry[] {
     });
   }
 
+  for (const reg of buildRegistrySearchEntries()) {
+    entries.push({
+      id: reg.id,
+      query: reg.query,
+      keywords: reg.keywords,
+      moduleId: reg.moduleId,
+      label: reg.label,
+      snippet: reg.snippet,
+    });
+  }
+
   return entries;
 }
 
@@ -135,15 +148,21 @@ export function searchManualIndex(query: string, limit = 10): ManualSearchEntry[
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const index = buildManualSearchIndex();
+  const { expandedTerms, relatedSystemIds } = expandSemanticQuery(q);
+  const terms = expandedTerms.length > 0 ? expandedTerms : [q];
+
   const stepScored = index
     .map((entry) => {
       let score = 0;
-      if (entry.query.toLowerCase().includes(q)) score += 10;
-      if (entry.label.toLowerCase().includes(q)) score += 8;
-      for (const kw of entry.keywords) {
-        if (kw.includes(q)) score += 4;
-        if (q.split(/\s+/).every((w) => kw.includes(w))) score += 6;
+      for (const term of terms) {
+        if (entry.query.toLowerCase().includes(term)) score += 10;
+        if (entry.label.toLowerCase().includes(term)) score += 8;
+        for (const kw of entry.keywords) {
+          if (kw.includes(term)) score += 4;
+          if (term.split(/\s+/).every((w) => kw.includes(w))) score += 6;
+        }
       }
+      if (relatedSystemIds.some((id) => entry.moduleId.includes(id) || entry.id.includes(id))) score += 12;
       return { entry, score };
     })
     .filter((x) => x.score > 0);
@@ -168,6 +187,15 @@ export function searchManualIndex(query: string, limit = 10): ManualSearchEntry[
 }
 
 export function getSuggestedNextModule(completedModuleIds: string[]): string | undefined {
-  const order = ['mission-control', 'asset-factory', 'asset-director', 'brand-assets', 'blueprint-manager'];
+  const order = [
+    'mission-control',
+    'business-discovery-blueprint',
+    'profession-brain',
+    'command-dock',
+    'studio-intelligence-architecture',
+    'model-orchestrator',
+    'studio-foundation-models',
+    'knowledge-hub',
+  ];
   return order.find((id) => !completedModuleIds.includes(id));
 }

@@ -55,7 +55,11 @@ function upsertProfile(
 export function syncStudioFoundationModelsFromSources(
   organizationId: string
 ): OrganizationStudioFoundationModelsProfile {
-  return upsertProfile(buildOrganizationStudioFoundationModelsProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationStudioFoundationModelsProfile(organizationId));
+  void import('../documentation-sync/store').then((m) => {
+    m.syncDocumentationFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationStudioFoundationModelsProfile(

@@ -3,6 +3,42 @@ import type { ManualWhatsNewEntry } from './types';
 /** Living changelog — new features auto-surface walkthrough prompts. */
 export const STUDIO_MANUAL_WHATS_NEW: ManualWhatsNewEntry[] = [
   {
+    id: 'whats-new-doc-sync',
+    moduleId: 'knowledge-hub',
+    version: '125.0',
+    title: 'DOCUMENTATION SYNCHRONIZATION™',
+    summary: 'M125 — 30+ systems registry, semantic search clusters, FAQ sync, Getting Started progression, contextual help.',
+    highlightStepId: 'overview',
+    releasedAt: '2026-07-06',
+  },
+  {
+    id: 'whats-new-foundation-models',
+    moduleId: 'studio-foundation-models',
+    version: '124.0',
+    title: 'STUDIO FOUNDATION MODELS™',
+    summary: 'Long-term Studio-owned intelligence roadmap — Profession Models, hybrid intelligence, enterprise deployment.',
+    highlightStepId: 'overview',
+    releasedAt: '2026-07-06',
+  },
+  {
+    id: 'whats-new-model-orchestrator',
+    moduleId: 'model-orchestrator',
+    version: '123.0',
+    title: 'MODEL ORCHESTRATOR™',
+    summary: 'AI Swap Engine — interchangeable providers, multi-model routing, failover, benchmarking.',
+    highlightStepId: 'overview',
+    releasedAt: '2026-07-06',
+  },
+  {
+    id: 'whats-new-intelligence-architecture',
+    moduleId: 'studio-intelligence-architecture',
+    version: '122.0',
+    title: 'STUDIO INTELLIGENCE™ ARCHITECTURE',
+    summary: 'Knowledge Fabric, Context Engine, model-agnostic intelligence layer — org owns knowledge.',
+    highlightStepId: 'overview',
+    releasedAt: '2026-07-06',
+  },
+  {
     id: 'whats-new-knowledge-graph',
     moduleId: 'knowledge-hub',
     version: '24.1',

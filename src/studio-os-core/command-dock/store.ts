@@ -164,6 +164,11 @@ import {
   buildProactiveStudioFoundationModelsSuggestion,
   buildStudioFoundationModelsOpeningLine,
 } from '../studio-foundation-models/dock-advisor';
+import {
+  resolveDocumentationSyncAdvice,
+  buildProactiveDocumentationSyncSuggestion,
+  buildDocumentationSyncOpeningLine,
+} from '../documentation-sync/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -262,6 +267,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const modelOrchestratorOpeningLine = buildModelOrchestratorOpeningLine(workspaceId);
   const studioFoundationModels = buildProactiveStudioFoundationModelsSuggestion(workspaceId);
   const studioFoundationModelsOpeningLine = buildStudioFoundationModelsOpeningLine(workspaceId);
+  const documentationSync = buildProactiveDocumentationSyncSuggestion(workspaceId);
+  const documentationSyncOpeningLine = buildDocumentationSyncOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -455,6 +462,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'Which Profession Models are available for our organization?',
       }
     : null;
+  const documentationSyncProactive = documentationSync
+    ? {
+        response: documentationSync,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'How do I get started with Studio OS?',
+      }
+    : null;
+  const documentationSyncOpeningProactive = documentationSyncOpeningLine
+    ? {
+        response: documentationSyncOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Explain Documentation Synchronization and the help system.',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -529,10 +550,12 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? modelOrchestratorProactive
       : pathname.includes('/studio-foundation-models') && studioFoundationModelsProactive
       ? studioFoundationModelsProactive
+      : pathname.includes('/knowledge-hub') && documentationSyncProactive
+      ? documentationSyncProactive
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -926,6 +949,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${studioFoundationModelsAdvice.concierge}\n${studioFoundationModelsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const documentationSyncAdvice = resolveDocumentationSyncAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (documentationSyncAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${documentationSyncAdvice.concierge}\n${documentationSyncAdvice.response}`,
     });
     return null;
   }

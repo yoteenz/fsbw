@@ -6,6 +6,10 @@
 import { STUDIO_SET_SEPARATION_RULE, WEATHER_STUDIO_LAYER_SPECS } from './adminStudioSetSeparation';
 import { ADMIN_STUDIO_MODULES, type AdminStudioModule } from './adminStudioNavigation';
 import { ADMIN_STUDIO_BASE_PATH } from './adminStudioRoutes';
+import { DOCUMENTATION_PAGE_GUIDE_OVERRIDES } from '../studio-os-core/documentation-sync/page-guide-overrides';
+import { expandSemanticQuery } from '../studio-os-core/documentation-sync/semantic-search';
+import { searchDocumentationFaq } from '../studio-os-core/documentation-sync/faq-registry';
+import { DOCUMENTATION_SYSTEM_REGISTRY } from '../studio-os-core/documentation-sync/system-registry';
 import {
   adminStudioAssetDirectorStudioPath,
   adminStudioBlueprintDetailPath,
@@ -178,6 +182,7 @@ function modulePageGuide(mod: AdminStudioModule): KnowledgePageGuide {
 }
 
 const PAGE_GUIDE_OVERRIDES: Partial<Record<string, Partial<KnowledgePageGuide>>> = {
+  ...DOCUMENTATION_PAGE_GUIDE_OVERRIDES,
   'asset-director': {
     whenToUse: [
       'Before publishing any studio, talent, or wardrobe asset',
@@ -207,12 +212,18 @@ const PAGE_GUIDE_OVERRIDES: Partial<Record<string, Partial<KnowledgePageGuide>>>
     ],
   },
   'knowledge-hub': {
-    purpose: 'Living documentation — every studio os object explains itself.',
-    whyItExists: 'Eliminate confusion about pages, assets, and workflows without leaving production.',
-    whenToUse: ['Whenever you wonder what a page or object does', 'Onboarding new operators', 'Planning campaigns'],
+    purpose: 'Living documentation — Interactive Manual, Knowledge Graph, search, and written Owner\'s Manual synchronized.',
+    whyItExists: 'Documentation Synchronization™ keeps every help surface aligned with current Studio OS architecture.',
+    whenToUse: ['Onboarding new operators', 'Searching for any Studio OS concept', 'Planning workflows', 'Reviewing What\'s New'],
+    bestPractices: [
+      'Use semantic search — try "memory" or "AI" to surface related systems',
+      'Complete Getting Started progression before advanced intelligence modules',
+      'Press ⓘ on any page for contextual help',
+    ],
     relatedPages: [
       { label: 'MEMORY BIBLE', route: adminStudioMemoryBiblePath() },
     ],
+    contextualHint: 'M125 · DOCUMENTATION SYNCHRONIZED — SEARCH UNDERSTANDS ALIASES AND RELATED CONCEPTS',
   },
   'memory-bible': {
     purpose: 'Curated institutional knowledge — founder context, naming, decisions, and AI context packages.',
@@ -465,18 +476,51 @@ export const KNOWLEDGE_WORKFLOW_GUIDES: KnowledgeWorkflowGuide[] = [
     ],
     relatedModules: ['production', 'production-builder', 'distribution-network'],
   },
+  {
+    id: 'getting-started-studio-os',
+    title: 'GETTING STARTED WITH STUDIO OS',
+    subtitle: 'Progressive onboarding — organization to consciousness (M125)',
+    steps: [
+      { title: 'ORGANIZATION', detail: 'Register workspace and organizational identity', route: `${ADMIN_STUDIO_BASE_PATH}/studio-os` },
+      { title: 'BUSINESS DISCOVERY BLUEPRINT™', detail: 'Capture how your business operates', route: `${ADMIN_STUDIO_BASE_PATH}/business-discovery-blueprint` },
+      { title: 'PROFESSION BRAIN™', detail: 'Activate living professional expertise', route: `${ADMIN_STUDIO_BASE_PATH}/profession-brain` },
+      { title: 'HEADQUARTERS', detail: 'Open Mission Control — executive nerve center', route: `${ADMIN_STUDIO_BASE_PATH}/mission-control` },
+      { title: 'COMMAND DOCK™', detail: 'Speak naturally — Studio OS routes intelligently', route: `${ADMIN_STUDIO_BASE_PATH}/command-dock` },
+      { title: 'EXECUTIVE COUNCIL™', detail: 'Many minds, one briefing', route: `${ADMIN_STUDIO_BASE_PATH}/executive-council` },
+      { title: 'STUDIO INSTITUTE™', detail: 'Learn from expertise — carry legacy forward', route: `${ADMIN_STUDIO_BASE_PATH}/studio-institute` },
+      { title: 'ADVANCED INTELLIGENCE', detail: 'Studio Intelligence Architecture → Model Orchestrator → Foundation Models', route: `${ADMIN_STUDIO_BASE_PATH}/studio-intelligence-architecture` },
+    ],
+    relatedModules: ['business-discovery-blueprint', 'profession-brain', 'mission-control', 'command-dock', 'studio-intelligence-architecture', 'model-orchestrator', 'studio-foundation-models'],
+  },
+  {
+    id: 'intelligence-stack-m120-m124',
+    title: 'STUDIO INTELLIGENCE STACK',
+    subtitle: 'M120–M124 sync chain — operating manual to foundation models',
+    steps: [
+      { title: 'OPERATING MANUAL™', detail: 'One handbook — always current (M120)', route: `${ADMIN_STUDIO_BASE_PATH}/organization-operating-manual` },
+      { title: 'LEGACY NETWORK™', detail: 'Share expertise globally with attribution (M121)', route: `${ADMIN_STUDIO_BASE_PATH}/legacy-network` },
+      { title: 'STUDIO INTELLIGENCE ARCHITECTURE', detail: 'Knowledge Fabric + Context Engine (M122)', route: `${ADMIN_STUDIO_BASE_PATH}/studio-intelligence-architecture` },
+      { title: 'MODEL ORCHESTRATOR™', detail: 'AI Swap Engine — providers interchangeable (M123)', route: `${ADMIN_STUDIO_BASE_PATH}/model-orchestrator` },
+      { title: 'STUDIO FOUNDATION MODELS™', detail: 'Long-term Studio-owned intelligence (M124)', route: `${ADMIN_STUDIO_BASE_PATH}/studio-foundation-models` },
+    ],
+    relatedModules: ['organization-operating-manual', 'legacy-network', 'studio-intelligence-architecture', 'model-orchestrator', 'studio-foundation-models'],
+  },
 ];
 
 export const KNOWLEDGE_MISSION_STATS: KnowledgeMissionStats = {
   unreadGuides: 3,
-  newFeatures: 2,
+  newFeatures: 5,
   recommendedLearning: [
-    'WEATHER STUDIO PROFILE',
-    'GENERATING ASSETS WORKFLOW',
-    'ASSET FACTORY QUEUE MEANINGS',
+    'GETTING STARTED WITH STUDIO OS',
+    'STUDIO INTELLIGENCE STACK M120–M124',
+    'SEMANTIC SEARCH — TRY "MEMORY" OR "AI"',
   ],
-  documentationUpdates: ['KNOWLEDGE HUB LAUNCHED', 'LIVE GENERATE PIPELINE DOCS'],
-  knowledgeHealthPct: 92,
+  documentationUpdates: [
+    'M125 DOCUMENTATION SYNCHRONIZATION™',
+    '30+ SYSTEMS REGISTRY SYNCED',
+    'SEMANTIC SEARCH CLUSTERS ACTIVE',
+  ],
+  knowledgeHealthPct: 97,
 };
 
 export const KNOWLEDGE_EAD_TIPS: KnowledgeEadTip[] = [
@@ -526,11 +570,15 @@ export function searchKnowledgeHub(query: string, limit = 24): KnowledgeSearchHi
   const q = query.trim().toLowerCase();
   if (!q) return [];
 
+  const { expandedTerms, relatedSystemIds } = expandSemanticQuery(q);
+  const terms = expandedTerms.length > 0 ? expandedTerms : [q];
   const hits: KnowledgeSearchHit[] = [];
+
+  const matchesBlob = (blob: string) => terms.some((t) => blob.includes(t));
 
   for (const guide of KNOWLEDGE_PAGE_GUIDES) {
     const blob = `${guide.title} ${guide.purpose} ${guide.whyItExists} ${guide.whenToUse.join(' ')}`.toLowerCase();
-    if (blob.includes(q)) {
+    if (matchesBlob(blob) || relatedSystemIds.includes(guide.moduleId)) {
       hits.push({
         id: `page-${guide.moduleId}`,
         title: guide.title,
@@ -541,8 +589,33 @@ export function searchKnowledgeHub(query: string, limit = 24): KnowledgeSearchHi
     }
   }
 
+  for (const sys of DOCUMENTATION_SYSTEM_REGISTRY) {
+    const blob = `${sys.label} ${sys.purpose} ${sys.overview} ${sys.aliases.join(' ')}`.toLowerCase();
+    if (matchesBlob(blob) || relatedSystemIds.includes(sys.id)) {
+      if (!hits.some((h) => h.id === `page-${sys.moduleId ?? sys.id}`)) {
+        hits.push({
+          id: `doc-${sys.id}`,
+          title: sys.label,
+          category: 'DOCUMENTATION',
+          snippet: sys.overview.slice(0, 120),
+          route: sys.route ?? adminStudioKnowledgeHubPath(),
+        });
+      }
+    }
+  }
+
+  for (const faq of searchDocumentationFaq(q, 6)) {
+    hits.push({
+      id: faq.id,
+      title: faq.question,
+      category: 'FAQ',
+      snippet: faq.answer.slice(0, 120),
+      route: adminStudioKnowledgeHubPath(),
+    });
+  }
+
   for (const profile of KNOWLEDGE_OBJECT_PROFILES) {
-    if (profile.searchableText.toLowerCase().includes(q) || profile.name.toLowerCase().includes(q)) {
+    if (matchesBlob(profile.searchableText.toLowerCase()) || matchesBlob(profile.name.toLowerCase())) {
       hits.push({
         id: profile.id,
         title: profile.name,
@@ -555,7 +628,7 @@ export function searchKnowledgeHub(query: string, limit = 24): KnowledgeSearchHi
 
   for (const wf of KNOWLEDGE_WORKFLOW_GUIDES) {
     const blob = `${wf.title} ${wf.subtitle} ${wf.steps.map((s) => s.title).join(' ')}`.toLowerCase();
-    if (blob.includes(q)) {
+    if (matchesBlob(blob)) {
       hits.push({
         id: `wf-${wf.id}`,
         title: wf.title,

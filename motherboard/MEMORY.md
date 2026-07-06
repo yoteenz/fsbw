@@ -39365,3 +39365,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/studio-foundation-models.md`** · **CORE.md** M124 entry · nav metric **M124**
 
 **Conventions:** Studio Foundation Models (M124) defines the destination — Studio OS remains alive, intelligent, and valuable no matter which AI companies exist. Preserve Expertise. Build Legacy. Own the Intelligence Layer. Demo localStorage via `studioOsStudioFoundationModels_v1`.
+
+---
+
+## 2026-07-06 — Milestone 125: Documentation Synchronization™ V1.0
+
+**Context (full chat arc):** Same session completed M121 Legacy Network (`02950cfa`), M122 Studio Intelligence Architecture (`1b4b447f`), M123 Model Orchestrator (`4c8d5cc2`), M124 Studio Foundation Models (`6dca5a1b`). User requested **Milestone 125 — Documentation Synchronization™ V1.0**: documentation migration pass (NOT redesign) — synchronize Studio Manual, Getting Started, walkthrough, onboarding, Help Center, Knowledge Base, search index, Command Dock help, tooltips, FAQ, Academy references, architecture docs with current platform after M120–M124 intelligence stack evolution.
+
+**Requirements delivered:**
+- **One canonical registry** — 30+ systems with purpose, overview, capabilities, workflows, aliases, search keywords, doc paths, milestones
+- **Semantic search** — 8 clusters; "memory" surfaces Memory Engine, Legacy Vault, Knowledge Fabric, etc.; "AI" surfaces Studio Intelligence, Model Orchestrator, Foundation Models, etc.
+- **Surfaces synchronized** — page guides, Knowledge Graph edges/workflows, manual enrichments, FAQ (12 entries), What's New (M122–M125), Getting Started progression, inauguration walkthrough
+- **Contextual help** — `resolveContextualHelp()` knows current page, related systems, FAQ matches, next Getting Started step
+- **Self-updating architecture** — sync chain: Studio Foundation Models → Documentation Sync; invalidates graph cache on resync
+- **Command Dock** — documentation Q&A, proactive lines on Knowledge Hub and Mission Control
+
+**Delivered:**
+- **`src/studio-os-core/documentation-sync/`** — `system-registry.ts` · `semantic-search.ts` · `faq-registry.ts` · `getting-started-progression.ts` · `page-guide-overrides.ts` · `graph-seed.ts` · `search-entries.ts` · `sync-engine.ts` · `contextual-help.ts` · `store.ts` · `dock-advisor.ts`
+- **Consumer updates** — `buildGraph.ts` (registry keywords + doc edges/workflows) · `searchIndex.ts` · `queries.ts` · `adminStudioKnowledgeHubDemo.ts` (semantic wiki search + 2 new workflows) · `moduleEnrichments.ts` (Profession Brain, SIA, Orchestrator, Foundation Models, Operating Manual) · `whatsNew.ts` · `organization-inauguration/walkthrough.ts`
+- **Knowledge Hub** — metric **M125** · contextual hint · updated mission stats
+- **Docs** — **`docs/studio-os/documentation-sync.md`** · **`docs/studio-os/README.md`** updated · **CORE.md** M125 entry
+
+**Conventions:** Future milestones add one registry entry + optional graph/FAQ/enrichment — documentation surfaces auto-sync. Demo localStorage via `studioOsDocumentationSync_v1`. Primary help hub remains **`/admin/studio/knowledge-hub`**.

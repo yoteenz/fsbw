@@ -6,6 +6,8 @@ import type {
   ModuleGraphEntry,
 } from './schema';
 import { buildKnowledgeGraph } from './buildGraph';
+import { expandSemanticQuery } from '../../studio-os-core/documentation-sync/semantic-search';
+import { getDocumentationSystem } from '../../studio-os-core/documentation-sync/system-registry';
 
 export function getGraphNode(nodeId: string): KnowledgeGraphNode | undefined {
   return buildKnowledgeGraph().nodes.find((n) => n.id === nodeId);
@@ -74,18 +76,23 @@ export function searchKnowledgeGraph(query: string, limit = 12): KnowledgeGraphS
   const q = query.trim().toLowerCase();
   if (!q) return [];
   const graph = buildKnowledgeGraph();
+  const { expandedTerms, relatedSystemIds } = expandSemanticQuery(q);
+  const terms = expandedTerms.length > 0 ? expandedTerms : [q];
 
   const scored: KnowledgeGraphSearchHit[] = [];
 
   for (const node of graph.nodes) {
     let score = 0;
-    if (node.name.toLowerCase().includes(q)) score += 10;
-    if (node.description.toLowerCase().includes(q)) score += 6;
-    if (node.purpose?.toLowerCase().includes(q)) score += 4;
-    for (const kw of node.searchKeywords ?? []) {
-      if (kw.includes(q)) score += 5;
-      if (q.split(/\s+/).every((w) => kw.includes(w))) score += 8;
+    for (const term of terms) {
+      if (node.name.toLowerCase().includes(term)) score += 10;
+      if (node.description.toLowerCase().includes(term)) score += 6;
+      if (node.purpose?.toLowerCase().includes(term)) score += 4;
+      for (const kw of node.searchKeywords ?? []) {
+        if (kw.includes(term)) score += 5;
+        if (term.split(/\s+/).every((w) => kw.includes(w))) score += 8;
+      }
     }
+    if (relatedSystemIds.some((id) => node.moduleId === id || node.id === id)) score += 14;
     if (score <= 0) continue;
     scored.push({
       id: `graph:${node.id}`,
@@ -101,7 +108,8 @@ export function searchKnowledgeGraph(query: string, limit = 12): KnowledgeGraphS
   }
 
   for (const wf of graph.workflows) {
-    if (wf.title.toLowerCase().includes(q) || wf.subtitle?.toLowerCase().includes(q)) {
+    const wfBlob = `${wf.title} ${wf.subtitle ?? ''}`.toLowerCase();
+    if (terms.some((t) => wfBlob.includes(t))) {
       scored.push({
         id: `graph-wf:${wf.id}`,
         nodeId: wf.id,
@@ -110,6 +118,25 @@ export function searchKnowledgeGraph(query: string, limit = 12): KnowledgeGraphS
         type: 'workflow',
         workflowId: wf.id,
         score: 12,
+      });
+    }
+  }
+
+  // Boost related systems from semantic clusters even if keyword match is weak
+  for (const sysId of relatedSystemIds) {
+    const sys = getDocumentationSystem(sysId);
+    const node = graph.nodes.find((n) => n.moduleId === sysId || n.id === sysId);
+    if (node && !scored.some((s) => s.nodeId === node.id)) {
+      scored.push({
+        id: `graph-sem:${node.id}`,
+        nodeId: node.id,
+        label: node.name,
+        snippet: sys?.overview.slice(0, 140) ?? node.description.slice(0, 140),
+        type: node.type,
+        moduleId: node.moduleId,
+        route: node.route,
+        manualChapter: node.relatedManualChapter,
+        score: 11,
       });
     }
   }
