@@ -12,6 +12,7 @@ import {
   adminStudioBusinessDiscoveryBlueprintPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
+  adminStudioMemoryEnginePath,
   adminStudioOrganizationGenomePath,
   adminStudioProfessionalTrustFrameworkPath,
   adminStudioStudioInstitutePath,
@@ -60,12 +61,22 @@ export default function AdminStudioProfessionBrainPage() {
         <div className="flex gap-2">
           <button
             type="button"
+            onClick={() => navigate(adminStudioMemoryEnginePath())}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+          >
+            MEMORY ENGINE →
+          </button>
+          <button
+            type="button"
             onClick={() => navigate(adminStudioOrganizationGenomePath())}
             className="flex-1 py-2 text-[7px] font-futura uppercase border"
             style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
           >
             ORGANIZATION GENOME →
           </button>
+        </div>
+        <div className="flex gap-2">
           <button
             type="button"
             onClick={() => navigate(adminStudioProfessionalTrustFrameworkPath())}

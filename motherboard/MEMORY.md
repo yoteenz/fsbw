@@ -38618,3 +38618,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Organization Genome (M95) ≠ Company Genome (M57) — M95 is identity governance for AI; M57 is living genetics visualization. Genome completeness % derived from Blueprint identity chapter depth. Demo persistence localStorage via `studioOsOrganizationGenome_v1`.
 
+---
+
+## 2026-07-06 — Milestone 96: Memory Engine™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M95 (Blueprint through Organization Genome `0cb667ef`). User requested **Memory Engine™** — transform Studio OS from assistant into organization that remembers. Preserve projects · campaigns · experiments · decisions · successes · failures · lessons · customer history · meeting outcomes · workflow improvements · historical metrics · professional insights. Continuously answer: Have we done this before? What happened? Would we recommend again? Auto-generate lessons · best practices · mistakes to avoid · recommendations · future improvements on completed projects.
+
+**Core philosophy delivered:** Knowledge explains **why** something works · Memory proves **whether** it actually worked · Studio OS remembers forever · compounding recommendations stop repeating mistakes.
+
+**Delivered:**
+- **`src/studio-os-core/memory-engine/`** — memory seeds from Blueprint + Profession Brain · recall engine (`recallOrganizationalMemory()` · `recallMemoryForQuery()`) · project retrospective artifacts · compounding recommendation engine · org store · dock advisor · bootstrap.
+- **`MemoryEngineWorkspace`** + **`/admin/studio/memory-engine`** — 6 tabs: Memory Overview · Organizational Memory · Project Archives · Recall Engine · Lessons & Patterns · Compounding.
+- **`useMemoryEngineState`** hook · brand voice **`memory-engine`**: *"Remember what worked. Prove it forever."*
+- **Integration** — sync from **`profession-brain/store`** on upsert · Blueprint upsert · **`boundary-sync`** ensure profile · Command Dock **`resolveMemoryEngineAdvice()`** + proactive memory on route · Profession Brain footer links to Memory Engine.
+- **Docs** — **`docs/studio-os/memory-engine.md`** · **CORE.md** M96 entry.
+
+**Conventions:** Memory Engine (M96) ≠ Memory Bible — M96 is operational recall + artifacts + compounding; Memory Bible is curated AI context packages. 12 memory record types · memory depth score · demo localStorage via `studioOsMemoryEngine_v1`.
+

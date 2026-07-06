@@ -777,6 +777,10 @@ export function adminStudioOrganizationGenomePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organization-genome`;
 }
 
+export function adminStudioMemoryEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/memory-engine`;
+}
+
 export function adminStudioGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/governance`;
 }

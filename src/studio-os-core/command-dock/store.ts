@@ -38,6 +38,10 @@ import {
   resolveOrganizationGenomeAdvice,
   buildProactiveGenomeSuggestion,
 } from '../organization-genome/dock-advisor';
+import {
+  resolveMemoryEngineAdvice,
+  buildProactiveMemorySuggestion,
+} from '../memory-engine/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -98,6 +102,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const commerce = buildProactiveCommerceSuggestion(workspaceId);
   const trust = buildProactiveTrustSuggestion(workspaceId);
   const genome = buildProactiveGenomeSuggestion(workspaceId);
+  const memory = buildProactiveMemorySuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -111,8 +116,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const genomeProactive = genome
     ? { response: genome, concierge: 'Chief Concierge', suggestedCommand: 'Open Organization Genome — consult identity before generating.' }
     : null;
+  const memoryProactive = memory
+    ? { response: memory, concierge: 'Chief Concierge', suggestedCommand: 'Recall organizational memory before repeating initiatives.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/organization-genome') && genomeProactive
+    pathname.includes('/memory-engine') && memoryProactive
+      ? memoryProactive
+      : pathname.includes('/organization-genome') && genomeProactive
       ? genomeProactive
       : pathname.includes('/professional-trust-framework') && trustProactive
       ? trustProactive
@@ -183,6 +193,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const memoryAdvice = resolveMemoryEngineAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (memoryAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${memoryAdvice.concierge}\n${memoryAdvice.response}`,
+    });
+    return null;
+  }
 
   const genomeAdvice = resolveOrganizationGenomeAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (genomeAdvice) {

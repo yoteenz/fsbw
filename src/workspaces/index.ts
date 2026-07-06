@@ -220,6 +220,10 @@ export function bootstrapWorkspacesPlatform(): void {
     organizationGenome.bootstrapOrganizationGenomePlatform();
     await yieldToMain();
 
+    const memoryEngine = await import('../studio-os-core/memory-engine/bootstrap');
+    memoryEngine.bootstrapMemoryEnginePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

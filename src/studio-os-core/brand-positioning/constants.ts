@@ -18,6 +18,7 @@ export type StudioOsBrandSystemId =
   | 'knowledge-commerce'
   | 'professional-trust-framework'
   | 'organization-genome'
+  | 'memory-engine'
   | 'expansion-center'
   | 'command-dock'
   | 'organization-inauguration';
@@ -32,6 +33,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'knowledge-commerce': 'Monetize knowledge. Expand your legacy.',
   'professional-trust-framework': 'Guide responsibly. Preserve professional trust.',
   'organization-genome': 'Know who you are. Reflect it everywhere.',
+  'memory-engine': 'Remember what worked. Prove it forever.',
   'expansion-center': 'Grow your organization. Expand your legacy.',
   'command-dock': "Building today's decisions into tomorrow's legacy.",
   'organization-inauguration': 'Your Headquarters is ready. Your legacy begins now.',

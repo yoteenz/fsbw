@@ -135,6 +135,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncOrganizationGenomeFromSources(blueprint.organizationId);
   });
 
+  void import('../memory-engine/store').then((m) => {
+    m.syncMemoryEngineFromSources(blueprint.organizationId);
+  });
+
   return finalized;
 }
 

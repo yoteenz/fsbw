@@ -92,6 +92,7 @@ export type StudioOsCoreModuleId =
   | 'knowledge-commerce'
   | 'professional-trust-framework'
   | 'organization-genome'
+  | 'memory-engine'
   | 'brand-positioning'
   | 'governance'
   | 'studio-intelligence'
@@ -638,6 +639,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATION GENOME™',
     description: 'Permanent identity layer V1.0 — brand personality, tone, values, decision DNA, customer standards. Every AI interaction consults Genome before generating work.',
     routeSegment: 'organization-genome',
+  },
+  {
+    id: 'memory-engine',
+    label: 'MEMORY ENGINE™',
+    description: 'Permanent organizational memory V1.0 — projects, campaigns, decisions, lessons, customer history. Recall before repeating. Remember forever.',
+    routeSegment: 'memory-engine',
   },
   {
     id: 'brand-positioning',

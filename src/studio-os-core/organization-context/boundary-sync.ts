@@ -85,6 +85,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationGenomeProfile(context.organizationId);
   });
 
+  void import('../memory-engine/store').then((m) => {
+    m.ensureOrganizationMemoryProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

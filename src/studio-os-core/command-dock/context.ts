@@ -17,6 +17,7 @@ import { listStudioInstituteDockSuggestions } from '../studio-institute';
 import { listKnowledgeCommerceDockSuggestions } from '../knowledge-commerce';
 import { listProfessionalTrustDockSuggestions } from '../professional-trust-framework';
 import { listOrganizationGenomeDockSuggestions } from '../organization-genome';
+import { listMemoryEngineDockSuggestions } from '../memory-engine';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -159,6 +160,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/memory-engine')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'memory-engine',
+      label: 'MEMORY ENGINE™ · REMEMBER FOREVER',
+      portfolioMode: false,
+      suggestedCommands: listMemoryEngineDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

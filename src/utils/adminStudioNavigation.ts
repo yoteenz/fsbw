@@ -1308,6 +1308,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'memory-engine',
+    title: 'MEMORY ENGINE™',
+    purpose: 'Organizational memory — projects, campaigns, decisions, lessons. Have we done this before? Remember forever. Compound knowledge.',
+    route: p('memory-engine'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M96',
+    ctaLabel: 'OPEN MEMORY ENGINE',
+    moduleKey: 'memory-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'expansion-center',
     title: 'EXPANSION CENTER',
     purpose: 'Three-layer economy — Headquarters License, permanent Department Packs, Digital Workforce payroll. Grow the organization, never buy software.',

@@ -97,6 +97,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../professional-trust-framework/store').then((m) => {
     m.syncProfessionalTrustFromProfessionBrain(profile.organizationId);
   });
+  void import('../memory-engine/store').then((m) => {
+    m.syncMemoryEngineFromSources(profile.organizationId);
+  });
 }
 
 export function syncProfessionBrainFromSources(
