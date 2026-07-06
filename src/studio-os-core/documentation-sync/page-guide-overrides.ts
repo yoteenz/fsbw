@@ -111,6 +111,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'executive-trust-dashboard': fromSystem('executive-trust-dashboard'),
   'time-machine': fromSystem('time-machine'),
   'predictive-qa': fromSystem('predictive-qa'),
+  'self-healing-engine': fromSystem('self-healing-engine'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

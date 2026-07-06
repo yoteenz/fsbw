@@ -142,6 +142,7 @@ export type StudioOsCoreModuleId =
   | 'executive-trust-dashboard'
   | 'time-machine'
   | 'predictive-qa'
+  | 'self-healing-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -989,6 +990,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PREDICTIVE QA™',
     description: 'Predictive QA V1.0 — future risk protection engine; identify tomorrow\'s operational problems while there is still time to prevent them.',
     routeSegment: 'predictive-qa',
+  },
+  {
+    id: 'self-healing-engine',
+    label: 'SELF-HEALING™ ENGINE',
+    description: 'Self-Healing Engine V1.0 — intelligent resilience; safely correct low-risk issues and prepare Recovery Plans for higher-risk situations.',
+    routeSegment: 'self-healing-engine',
   },
   {
     id: 'succession-mode',

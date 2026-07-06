@@ -977,6 +977,10 @@ export function adminStudioPredictiveQaPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/predictive-qa`;
 }
 
+export function adminStudioSelfHealingEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/self-healing-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

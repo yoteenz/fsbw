@@ -1908,6 +1908,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'self-healing-engine',
+    title: 'SELF-HEALING™ ENGINE',
+    purpose: 'Intelligent resilience — safely correct low-risk issues automatically. Prepare Recovery Plans for higher-risk situations with full audit trail.',
+    route: p('self-healing-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M150',
+    ctaLabel: 'OPEN SELF-HEALING',
+    moduleKey: 'self-healing-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

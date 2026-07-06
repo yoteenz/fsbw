@@ -24,6 +24,7 @@ import {
   adminStudioExecutiveTrustDashboardPath,
   adminStudioTimeMachinePath,
   adminStudioPredictiveQaPath,
+  adminStudioSelfHealingEnginePath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1028,6 +1029,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['ANALYZE → PREDICT → PREVENT → VERIFY'],
     aliases: ['predictive qa', 'future risk', 'risk prediction', 'preventive qa', 'tomorrow problems'],
     searchKeywords: ['predict', 'future', 'risk', 'prevent', 'bottleneck', 'forecast', 'pattern'],
+  }),
+  entry({
+    id: 'self-healing-engine',
+    label: 'Self-Healing™ Engine',
+    moduleId: 'self-healing-engine',
+    milestone: 'M150',
+    route: adminStudioSelfHealingEnginePath(),
+    purpose: 'Intelligent resilience engine — safely correct low-risk issues and prepare Recovery Plans for higher-risk situations.',
+    overview:
+      '10 healing categories · 4 healing modes · automatic low-risk repair · Recovery Center™ · permanent audit log · rollback on every repair.',
+    capabilities: ['Low-risk auto-repair', 'Recovery Plan generation', 'Approval workflows', 'Audit logging', 'Rollback support', 'Threshold customization'],
+    howItWorks: 'Detect issues from QA layer → classify risk → auto-repair low-risk · request approval for medium · prepare Recovery Plan for high/restricted → log everything.',
+    whenUsed: ['Broken link cleanup', 'Doc drift correction', 'Automation health', 'Permission drift', 'Dependency monitoring'],
+    relatedSystems: ['predictive-qa', 'qa-inspector', 'qa-headquarters', 'studio-intelligence', 'executive-trust-dashboard'],
+    exampleWorkflows: ['DETECT → CLASSIFY → REPAIR OR RECOVER → AUDIT'],
+    aliases: ['self healing', 'auto repair', 'recovery center', 'resilience engine', 'healing engine'],
+    searchKeywords: ['heal', 'repair', 'resilience', 'recovery', 'rollback', 'audit', 'auto fix'],
   }),
 ];
 

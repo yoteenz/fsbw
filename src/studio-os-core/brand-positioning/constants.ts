@@ -68,6 +68,7 @@ export type StudioOsBrandSystemId =
   | 'executive-trust-dashboard'
   | 'time-machine'
   | 'predictive-qa'
+  | 'self-healing-engine'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -135,6 +136,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'executive-trust-dashboard': 'Trust measurable. Confidence before you ask.',
   'time-machine': 'Experience it again. Understand WHY.',
   'predictive-qa': 'Protect the future. Prevent tomorrow\'s problems today.',
+  'self-healing-engine': 'Minor issues resolve quietly. Major issues arrive with a plan.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

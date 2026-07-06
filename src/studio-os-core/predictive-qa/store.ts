@@ -65,7 +65,11 @@ function mergePredictionStatuses(
 export function syncPredictiveQaFromSources(organizationId: string): OrganizationPredictiveQaProfile {
   const existing = getOrganizationPredictiveQaProfile(organizationId);
   const built = mergePredictionStatuses(buildOrganizationPredictiveQaProfile(organizationId), existing);
-  return upsertProfile(built);
+  const profile = upsertProfile(built);
+  void import('../self-healing-engine/store').then((m) => {
+    m.syncSelfHealingEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationPredictiveQaProfile(organizationId: string): OrganizationPredictiveQaProfile {
