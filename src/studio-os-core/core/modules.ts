@@ -107,6 +107,7 @@ export type StudioOsCoreModuleId =
   | 'presence-engine'
   | 'cross-organization-intelligence'
   | 'relationship-memory'
+  | 'predictive-organization'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -744,6 +745,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'RELATIONSHIP MEMORY™',
     description: 'Professional familiarity V1.0 — learn how founders and organizations prefer to work. Familiar, never intrusive.',
     routeSegment: 'relationship-memory',
+  },
+  {
+    id: 'predictive-organization',
+    label: 'PREDICTIVE ORGANIZATION™',
+    description: 'Future intelligence V1.0 — anticipate opportunities, risks, bottlenecks, and trends before they occur.',
+    routeSegment: 'predictive-organization',
   },
   {
     id: 'succession-mode',

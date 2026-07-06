@@ -107,6 +107,10 @@ import {
   resolveRelationshipMemoryAdvice,
   buildProactiveRelationshipMemorySuggestion,
 } from '../relationship-memory/dock-advisor';
+import {
+  resolvePredictiveOrganizationAdvice,
+  buildProactivePredictiveOrganizationSuggestion,
+} from '../predictive-organization/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -184,6 +188,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const presence = buildProactivePresenceSuggestion(workspaceId);
   const crossOrg = buildProactiveCrossOrgSuggestion(workspaceId);
   const relationshipMemory = buildProactiveRelationshipMemorySuggestion(workspaceId);
+  const predictiveOrganization = buildProactivePredictiveOrganizationSuggestion(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -237,6 +242,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'Open Relationship Memory — review how Studio OS has learned your working preferences.',
       }
     : null;
+  const predictiveOrganizationProactive = predictiveOrganization
+    ? {
+        response: predictiveOrganization,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Open Predictive Organization — review forecasts and recommended actions.',
+      }
+    : null;
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -286,6 +298,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const proactiveSource =
     ambientOpening
       ? ambientOpening
+      : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
+      ? predictiveOrganizationProactive
       : pathname.includes('/relationship-memory') && relationshipMemoryProactive
       ? relationshipMemoryProactive
       : pathname.includes('/cross-organization-intelligence') && crossOrgProactive
@@ -484,6 +498,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${relationshipMemoryAdvice.concierge}\n${relationshipMemoryAdvice.response}`,
+    });
+    return null;
+  }
+
+  const predictiveOrganizationAdvice = resolvePredictiveOrganizationAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (predictiveOrganizationAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${predictiveOrganizationAdvice.concierge}\n${predictiveOrganizationAdvice.response}`,
     });
     return null;
   }

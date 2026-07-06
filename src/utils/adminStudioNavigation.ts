@@ -1488,6 +1488,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'predictive-organization',
+    title: 'PREDICTIVE ORGANIZATION™',
+    purpose: 'Anticipate opportunities, risks, bottlenecks, and trends — prepare for tomorrow before it arrives.',
+    route: p('predictive-organization'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: 'M113',
+    ctaLabel: 'OPEN PREDICTIVE ORGANIZATION',
+    moduleKey: 'predictive-organization',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

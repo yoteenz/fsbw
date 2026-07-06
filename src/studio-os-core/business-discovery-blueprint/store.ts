@@ -195,6 +195,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncRelationshipMemoryFromSources(blueprint.organizationId);
   });
 
+  void import('../predictive-organization/store').then((m) => {
+    m.syncPredictiveOrganizationFromSources(blueprint.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });

@@ -145,6 +145,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationRelationshipMemoryProfile(context.organizationId);
   });
 
+  void import('../predictive-organization/store').then((m) => {
+    m.ensureOrganizationPredictiveProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

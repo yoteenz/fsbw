@@ -142,6 +142,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../relationship-memory/store').then((m) => {
     m.syncRelationshipMemoryFromSources(profile.organizationId);
   });
+  void import('../predictive-organization/store').then((m) => {
+    m.syncPredictiveOrganizationFromSources(profile.organizationId);
+  });
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });

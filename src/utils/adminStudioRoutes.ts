@@ -837,6 +837,10 @@ export function adminStudioRelationshipMemoryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/relationship-memory`;
 }
 
+export function adminStudioPredictiveOrganizationPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/predictive-organization`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

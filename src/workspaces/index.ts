@@ -285,6 +285,10 @@ export function bootstrapWorkspacesPlatform(): void {
     relationshipMemory.bootstrapRelationshipMemoryPlatform();
     await yieldToMain();
 
+    const predictiveOrganization = await import('../studio-os-core/predictive-organization/bootstrap');
+    predictiveOrganization.bootstrapPredictiveOrganizationPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

@@ -50,7 +50,11 @@ function upsertProfile(profile: OrganizationRelationshipMemoryProfile): Organiza
 export function syncRelationshipMemoryFromSources(
   organizationId: string
 ): OrganizationRelationshipMemoryProfile {
-  return upsertProfile(buildOrganizationRelationshipMemoryProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationRelationshipMemoryProfile(organizationId));
+  void import('../predictive-organization/store').then((m) => {
+    m.syncPredictiveOrganizationFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationRelationshipMemoryProfile(

@@ -38959,3 +38959,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Relationship Memory (M112) completes the familiarity layer atop M107–M111 intelligence stack — learns through observation, never intrusive forms. Demo localStorage via `studioOsRelationshipMemory_v1`.
 
+---
+
+## 2026-07-06 — Milestone 113: Predictive Organization™ V1.0
+
+**Context (full chat arc):** Same session delivered M90–M112 (Blueprint through Relationship Memory `90e313be`). User requested **Milestone 113 — Predictive Organization™ V1.0**: continuously analyze historical organizational intelligence to anticipate future opportunities, risks, bottlenecks, and trends before they occur. Core philosophy: organizations should not spend all their time reacting — prepare for tomorrow before it arrives; prediction as competitive advantage; every forecast includes reasoning and confidence.
+
+**Requirements delivered:**
+- **Predictive intelligence** — 12 domains continuously analyzed (revenue trends · customer behavior · employee activity · department performance · marketing results · project timelines · seasonality · knowledge growth · automation usage · founder workload · historical patterns · industry trends)
+- **Predictions** — busy season · hiring within 60 days · marketing slowdown · customer churn · inventory shortage · knowledge gaps · department capacity · founder burnout · cash flow tightening · launch preparation — each with reasoning, confidence, recommended action
+- **Executive forecasts** — 30-day · 90-day · annual outlook · growth probability · risk forecast · department readiness · automation readiness · knowledge expansion — Mission Control predictive dashboards
+- **Command Dock** — *"Based on historical patterns, I recommend beginning launch preparations next week"* · *"Our busiest quarter begins in approximately 30 days"* · *"I predict Operations will require additional support before Marketing does"* — always with reasoning and confidence
+
+**Delivered:**
+- **`src/studio-os-core/predictive-organization/`** — **`predictive-intelligence.ts`** · **`predictions-engine.ts`** · **`executive-forecasts.ts`** · **`predictive-builder.ts`** · **`store.ts`** · **`dock-advisor.ts`** · **`bootstrap.ts`**.
+- **`PredictiveOrganizationWorkspace`** + **`/admin/studio/predictive-organization`** — 4 tabs: Predictive Overview · Predictive Intelligence · Predictions · Executive Forecasts · orange accent `#EA580C`.
+- **`MissionControlPredictiveOrganizationPanel`** — forecast preview in Mission Control.
+- **`usePredictiveOrganizationState`** hook · brand voice **`predictive-organization`**: *"Prepare before tomorrow arrives."*
+- **Command Dock** — **`resolvePredictiveOrganizationAdvice()`** · **`buildProactivePredictiveOrganizationSuggestion()`** · **`buildPredictiveOpeningLine()`** on `/predictive-organization` route.
+- **Integration** — sync from relationship-memory · anticipation-engine · ambient-awareness · organization-pulse · company-health-index · founder-cognitive-load · knowledge-confidence · blueprint · profession-brain · executive-council · cross-org · relationship memory resync triggers predictive org resync · workspaces bootstrap · modules · nav · App route.
+- **Docs** — **`docs/studio-os/predictive-organization.md`** · **CORE.md** M113 entry.
+
+**Conventions:** Predictive Organization (M113) extends M112 familiarity with forward-looking intelligence — founders lead, Studio OS prepares. Demo localStorage via `studioOsPredictiveOrganization_v1`.
+
