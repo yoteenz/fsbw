@@ -659,6 +659,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'design-dna-canon',
+    title: 'DESIGN DNA & CANON SYSTEM',
+    purpose: 'Permanent creative compass — protected canon pages · design relationships · headquarters review before new pages ship.',
+    route: p('design-dna-canon'),
+    groupId: 'create',
+    status: 'demo',
+    metric: 'CANON',
+    ctaLabel: 'OPEN DESIGN DNA',
+    moduleKey: 'design-dna-canon',
+    featuredOnOverview: true,
+  },
+  {
     id: 'creative-director',
     title: 'CREATIVE DIRECTOR',
     purpose: 'Run the creative decision engine before any production or AI run.',

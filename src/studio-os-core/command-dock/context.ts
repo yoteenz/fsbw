@@ -71,6 +71,20 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     };
   }
 
+  if (pathname.includes('/design-dna-canon')) {
+    return {
+      contextId: 'design-dna',
+      label: 'DESIGN DNA & CANON',
+      portfolioMode: false,
+      suggestedCommands: [
+        'Review canon page relationships for Build-A-Wig.',
+        'Run headquarters design review on mobile showroom.',
+        'Which pages are protected canon references?',
+      ],
+      commandTypes: ['creative-requests', 'knowledge-search', 'strategy'],
+    };
+  }
+
   if (pathname.includes('/studio-institute') || pathname.includes('/organizational-apprenticeship')) {
     return {
       contextId: 'institute',

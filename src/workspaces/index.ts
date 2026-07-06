@@ -384,6 +384,10 @@ export function bootstrapWorkspacesPlatform(): void {
     livingPresence.bootstrapLivingHeadquartersPresencePlatform();
     await yieldToMain();
 
+    const designDnaCanon = await import('../studio-os-core/design-dna-canon/bootstrap');
+    designDnaCanon.bootstrapDesignDnaCanonPlatform();
+    await yieldToMain();
+
     const workspaceRegistry = await import('../studio-os-core/workspace-registry/store');
     workspaceRegistry.bootstrapWorkspaceRegistryPlatform();
     await yieldToMain();

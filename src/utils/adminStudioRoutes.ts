@@ -88,6 +88,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'render-queue'
   | 'screening-room'
   | 'concierge-approval-flow'
+  | 'design-dna-canon'
   | 'legacy-system'
   | 'asset-director'
   | 'blueprint-manager'
@@ -183,6 +184,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'render-queue',
   'screening-room',
   'concierge-approval-flow',
+  'design-dna-canon',
   'legacy-system',
   'asset-director',
   'blueprint-manager',
@@ -297,6 +299,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   renderQueue: 'studio/render-queue',
   screeningRoom: 'studio/screening-room',
   conciergeApprovalFlow: 'studio/concierge-approval-flow',
+  designDnaCanon: 'studio/design-dna-canon',
   executiveTimeline: 'studio/executive-timeline',
   studioOverview: 'studio/overview',
   studioHub: 'studio/hub',
@@ -581,6 +584,10 @@ export function adminStudioScreeningRoomPath(): string {
 
 export function adminStudioConciergeApprovalFlowPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/concierge-approval-flow`;
+}
+
+export function adminStudioDesignDnaCanonPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/design-dna-canon`;
 }
 
 export function adminStudioExecutiveTimelinePath(): string {

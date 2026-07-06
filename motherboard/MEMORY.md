@@ -38218,6 +38218,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-06 — Milestone 83: Executive Information Architecture V1.0 (permanent Studio OS foundation)
 
 **Context (full chat arc):** User requested **Milestone 83 — Executive Information Architecture V1.0** as the permanent design language for every current and future Studio OS module. Not a visual redesign — reorganize how information is prioritized and experienced. Studio OS = Executive Headquarters; every screen answers one primary executive question; Command Dock remains primary console.
@@ -38234,3 +38235,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Changes:** executive-ia/* (new M83 components), MissionControlWorkspace, distribution-network/page, overview/page, adminStudioNavigation, docs, CORE, MEMORY.
 
 **Conventions:** All future Studio OS pages must inherit M83 hierarchy (Hero → Department Cards → Visual → Focus → Secondary → Collapsible → History). No alternate layout philosophies. Department selection transforms workspace; modules summarized not exposed.
+=======
+## 2026-07-06 — Milestone 84: Design DNA & Canon System V1.0
+
+**Context (full chat arc):** User requested **Milestone 84 — Design DNA & Canon System V1.0** to continue building Frontal Slayer Headquarters. Explicit constraints: **do not** redesign existing pages · standardize layouts · correct spacing · normalize typography · realign custom compositions. Goal: preserve Frontal Slayer's existing visual identity while teaching every future page how to naturally evolve from it — permanent Design DNA creative compass.
+
+**Topics covered (this chat):**
+- **Core philosophy:** Frontal Slayer is a luxury digital headquarters · every page is a room · emotional consistency over visual uniformity · canon pages are architectural references (not templates) · never copy pixels or enforce universal spacing · optical alignment · intentional imperfection · spatial storytelling · one dominant emotion per page · editorial visual rhythm · elegant interactions · component evolution test · headquarters design review with confidence score · canon protection (canon does not evolve toward future pages).
+- **Canon pages seeded:** Concierge (`/account/concierge`) · Build-A-Wig (`/build-a-wig/view`) · Hair Analysis (`/tools/hairstyle-analysis`) · Orders · Rewards · Appointments · Client Profiles · Products/Shop — each with room metaphor · dominant emotion · visual relationships · rhythm · interaction notes · protected status.
+- **Headquarters Design Review:** Ten criteria (luxury · brand consistency · hierarchy · breathing room · editorial composition · interaction quality · emotional alignment · optical balance · immersion · design DNA alignment) · confidence score · final test question · demo reviews including mobile showroom refinement (78%) and passed canon audits.
+
+**Decisions / outcomes:**
+- New module **`design-dna-canon`** at `/admin/studio/design-dna-canon` (CREATE nav group) — Executive IA layout (hero · icon nav · focus · collapsible).
+- Core store workspace-scoped in **`src/studio-os-core/design-dna-canon/`** · UI **`src/components/admin/studio/design-dna-canon/`** · hook **`useDesignDnaCanonState`** · service stub **`designDnaCanonModuleService`** · docs **`docs/frontal-slayer/design-dna-canon/`**.
+- Wired: navigation · routes · App.tsx · modules registry · platform bootstrap · feature inheritance · Command Dock context · knowledge graph node · FRONTAL_SLAYER moduleCopy · CORE.md.
+- **No customer-facing page changes** — canon pages documented and protected only.
+
+**Changes:** `src/studio-os-core/design-dna-canon/*`, `src/components/admin/studio/design-dna-canon/*`, `src/hooks/useDesignDnaCanonState.ts`, `src/pages/admin/studio/design-dna-canon/page.tsx`, `src/services/studio/designDnaCanonModule/service.ts`, `docs/frontal-slayer/design-dna-canon/README.md`, plus integration files (App.tsx, adminStudioNavigation, adminStudioRoutes, core/modules, workspaces/index, services/index, seedGraph, command-dock/context, feature-inheritance, frontal-slayer/config, docs/frontal-slayer/README, motherboard/CORE.md, motherboard/MEMORY.md).
+
+**Conventions:** Future Frontal Slayer pages must pass Headquarters Design Review before considered complete. Canon pages are read-only references — extend design language naturally · never normalize spacing or redesign canon. Design DNA (page rooms) is separate from Photography Creative DNA (product shots). Use **`/admin/studio/design-dna-canon`** as creative compass for new page work.
+
+>>>>>>> 0cbceb5c (Milestone 84: Design DNA & Canon System V1.0 for Frontal Slayer HQ)

@@ -54,6 +54,7 @@ export type StudioOsCoreModuleId =
   | 'render-queue'
   | 'screening-room'
   | 'concierge-approval-flow'
+  | 'design-dna-canon'
   | 'executive-timeline'
   | 'concierge-routing'
   | 'command-dock'
@@ -411,6 +412,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CONCIERGE APPROVAL FLOW',
     description: 'Editorial board — concierge review before founder decision. Unified brief. V1.0.',
     routeSegment: 'concierge-approval-flow',
+  },
+  {
+    id: 'design-dna-canon',
+    label: 'DESIGN DNA & CANON SYSTEM',
+    description: 'Permanent creative compass — canon pages · design DNA · headquarters review. V1.0.',
+    routeSegment: 'design-dna-canon',
   },
   {
     id: 'executive-timeline',

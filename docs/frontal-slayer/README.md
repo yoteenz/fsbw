@@ -11,6 +11,7 @@ Workspace-specific documentation for the first studio os production tenant.
 | [product-photography-bible/](./product-photography-bible/) | Product Photography Bible (Milestone 20.5) |
 | [photography-derivative-engine/](./photography-derivative-engine/) | Photography Derivative Engine (Milestone 21) |
 | [build-a-wig-visual-snapshot/](./build-a-wig-visual-snapshot/) | Build-A-Wig Visual Snapshot System (Milestone 21.5) |
+| [design-dna-canon/](./design-dna-canon/) | Design DNA & Canon System (Milestone 84) |
 | [asset-factory/](./asset-factory/) | Brand Assets Asset Factory (Photography Bible production pipeline) |
 
 ## Products
