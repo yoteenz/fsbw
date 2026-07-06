@@ -219,6 +219,11 @@ import {
   buildProactivePolicyEngineSuggestion,
   buildPolicyEngineOpeningLine,
 } from '../policy-engine/dock-advisor';
+import {
+  resolvePermissionEngineAdvice,
+  buildProactivePermissionEngineSuggestion,
+  buildPermissionEngineOpeningLine,
+} from '../permission-engine/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -339,6 +344,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const promptRegistryOpeningLine = buildPromptRegistryOpeningLine(workspaceId);
   const policyEngine = buildProactivePolicyEngineSuggestion(workspaceId);
   const policyEngineOpeningLine = buildPolicyEngineOpeningLine(workspaceId);
+  const permissionEngine = buildProactivePermissionEngineSuggestion(workspaceId);
+  const permissionEngineOpeningLine = buildPermissionEngineOpeningLine(workspaceId);
   const isHeadquartersOpening =
     pathname.includes('/mission-control') ||
     pathname.includes('/headquarters') ||
@@ -686,6 +693,20 @@ export function syncDockContext(pathname: string): DockContextProfile {
         suggestedCommand: 'Show all publishing policies.',
       }
     : null;
+  const permissionEngineProactive = permissionEngine
+    ? {
+        response: permissionEngine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Who can publish marketing campaigns?',
+      }
+    : null;
+  const permissionEngineOpeningProactive = permissionEngineOpeningLine
+    ? {
+        response: permissionEngineOpeningLine,
+        concierge: 'Chief Concierge',
+        suggestedCommand: 'Show permission changes from this week.',
+      }
+    : null;
   const anniversaryProactive = anniversaryContext
     ? {
         response: anniversaryContext,
@@ -760,6 +781,8 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? modelOrchestratorProactive
       : pathname.includes('/studio-foundation-models') && studioFoundationModelsProactive
       ? studioFoundationModelsProactive
+      : pathname.includes('/permission-engine') && permissionEngineProactive
+      ? permissionEngineProactive
       : pathname.includes('/policy-engine') && policyEngineProactive
       ? policyEngineProactive
       : pathname.includes('/prompt-registry') && promptRegistryProactive
@@ -785,7 +808,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
       : pathname.includes('/organizational-consciousness') && organizationalConsciousnessProactive
       ? organizationalConsciousnessProactive
       : pathname.includes('/mission-control') || /\/studio\/?$/.test(pathname)
-      ? founderOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
+      ? founderOpeningProactive ?? permissionEngineOpeningProactive ?? policyEngineOpeningProactive ?? promptRegistryOpeningProactive ?? automationRegistryOpeningProactive ?? eventBusOpeningProactive ?? interactionEngineOpeningProactive ?? designTokenEngineOpeningProactive ?? componentRegistryOpeningProactive ?? systemRegistryOpeningProactive ?? documentationGovernanceOpeningProactive ?? documentationRegistryOpeningProactive ?? documentationSyncOpeningProactive ?? modelOrchestratorOpeningProactive ?? studioFoundationModelsOpeningProactive ?? studioIntelligenceArchitectureOpeningProactive ?? legacyNetworkOpeningProactive ?? operatingManualOpeningProactive ?? innovationOpeningProactive ?? morningWorldProactive ?? anniversaryProactive ?? documentationRegistryProactive ?? documentationSyncProactive ?? modelOrchestratorProactive ?? studioFoundationModelsProactive ?? studioIntelligenceArchitectureProactive ?? legacyNetworkProactive ?? operatingManualProactive ?? innovationLabProactive ?? founderOperatingProactive ?? worldKnowledgeProactive ?? organizationalConsciousnessProactive ?? executiveTimelineHistoryProactive
       : pathname.includes('/autonomous-preparation') && autonomousPreparationProactive
       ? autonomousPreparationProactive
       : pathname.includes('/predictive-organization') && predictiveOrganizationProactive
@@ -1179,6 +1202,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${studioFoundationModelsAdvice.concierge}\n${studioFoundationModelsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const permissionEngineAdvice = resolvePermissionEngineAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (permissionEngineAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${permissionEngineAdvice.concierge}\n${permissionEngineAdvice.response}`,
     });
     return null;
   }

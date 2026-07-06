@@ -91,7 +91,7 @@ Before publishing policy changes, simulate:
 
 ## Sync chain
 
-… → Event Bus → Automation Registry → Prompt Registry → **Policy Engine**
+… → Event Bus → Automation Registry → Prompt Registry → Policy Engine → **Permission Engine**
 
 **`prompt-registry/store`** triggers **`syncPolicyEngineFromSources`** · **boundary-sync**
 

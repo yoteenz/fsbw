@@ -47,8 +47,10 @@ function upsertProfile(profile: OrganizationPolicyEngineProfile): OrganizationPo
   return profile;
 }
 
-function chainPolicyEngineSync(_organizationId: string): void {
-  /* Policy Engine is terminal in current sync chain — no downstream sync yet. */
+function chainPermissionEngineSync(organizationId: string): void {
+  void import('../permission-engine/store').then((m) => {
+    m.syncPermissionEngineFromSources(organizationId);
+  });
 }
 
 /** Rebuild policy catalog, hierarchy, enforcement, and simulation from Prompt Registry + platform sources */
@@ -62,7 +64,7 @@ export function syncPolicyEngineFromSources(organizationId: string): Organizatio
     rebuilt.simulationResults = existing.simulationResults;
   }
   const profile = upsertProfile(rebuilt);
-  chainPolicyEngineSync(organizationId);
+  chainPermissionEngineSync(organizationId);
   return profile;
 }
 

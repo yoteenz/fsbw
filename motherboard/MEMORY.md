@@ -39610,3 +39610,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/policy-engine.md`** · **CORE.md** M134 entry
 
 **Conventions:** Policies defined once — never duplicate rules across features. Call `verifyWorkflowCompliance()` before workflow execution. Simulate policy changes before publishing. Sync chain: … → Automation Registry → Prompt Registry → **Policy Engine**. Demo localStorage via `studioOsPolicyEngine_v1`. Brand voice: *"Define policies once. Every system follows organizational law automatically."* Accent `#0D9488`.
+
+---
+
+## 2026-07-06 — Milestone 135: Permission Engine™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine through M134 Policy Engine (`62770ac6`). User requested **Permission Engine™**: enterprise authorization for Studio OS — permissions describe capabilities not job titles; modular access; composable roles; contextual permissions; approval chains; complete audit history; secure without complicated.
+
+**Requirements delivered:**
+- **Capability-based access** — modular capabilities (Can View, Create, Edit, Delete, Approve, Reject, Publish, Archive, Restore, Train Profession Brain, Manage Concierges, Configure Automations, Install Packs, Export Data, View Financials, Manage Users, Change Policies, Access Legacy Vault)
+- **Role composition** — reusable profiles (Founder, Executive, Manager, Marketing, Finance, Operations, Customer Support, HR, Developer, Contractor, Guest) fully customizable
+- **Contextual permissions** — organization, department, project, workspace, feature, approval state, business hours, location, temporary delegation, emergency mode
+- **Approval chain** — employee → manager → executive → founder; delegated authority; every action traceable
+- **Permission audit** — who granted/removed, when, why, affected systems, departments, security events
+- **Access gate** — `checkAccess()` · `canPerformCapability()` with contextual evaluation
+- **Command Dock** — authorization Q&A (*"Who can publish marketing campaigns?"*, *"Temporarily grant Finance access for two days"*, *"Why can't this employee approve invoices?"*, *"Show permission changes from this week"*)
+
+**Delivered:**
+- **`src/studio-os-core/permission-engine/`** — `capability-catalog.ts` · `role-composition.ts` · `contextual-engine.ts` · `approval-chain.ts` · `audit-history.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncPermissionEngineFromSources` · `appendPermissionAuditRecord`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`PermissionEngineWorkspace`** (7 tabs: Overview · Capabilities · Roles · Contextual · Approval Chain · Audit · Discovery) · **`/admin/studio/permission-engine`** · **`MissionControlPermissionEnginePanel`** · **`usePermissionEngineState`**
+- **Wiring** — nav M135 · sync chain Policy Engine → Permission Engine · Command Dock permission-engine-first · boundary-sync · documentation system registry + page-guide entry · Policy Engine workspace link
+- **Docs** — **`docs/studio-os/permission-engine.md`** · **CORE.md** M135 entry
+
+**Conventions:** Permissions describe capabilities — never hardcode by job title. Compose roles from capability modules. Log all grants/revokes to audit trail. Policy Engine = what is allowed; Permission Engine = who may act. Sync chain: … → Prompt Registry → Policy Engine → **Permission Engine**. Demo localStorage via `studioOsPermissionEngine_v1`. Brand voice: *"Capabilities, not titles. Power intentional. Trust earned."* Accent `#BE123C`.

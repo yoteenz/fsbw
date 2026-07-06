@@ -54,6 +54,7 @@ export type StudioOsBrandSystemId =
   | 'automation-registry'
   | 'prompt-registry'
   | 'policy-engine'
+  | 'permission-engine'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -107,6 +108,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'automation-registry': 'Automation builds trust — not uncertainty. Nothing executes without registration.',
   'prompt-registry': 'Prompts are code. AI behavior stays transparent, maintainable, and continuously improving.',
   'policy-engine': 'Define policies once. Every system follows organizational law automatically.',
+  'permission-engine': 'Capabilities, not titles. Power intentional. Trust earned.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

@@ -6,7 +6,7 @@ import {
   POLICY_ENGINE_PHILOSOPHY,
   queryPolicyEngine,
 } from '../../../../studio-os-core/policy-engine';
-import { adminStudioMissionControlPath, adminStudioPromptRegistryPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioMissionControlPath, adminStudioPermissionEnginePath, adminStudioPromptRegistryPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -73,7 +73,10 @@ export function PolicyEngineWorkspace() {
           {profile.dockPolicyLine}
         </p>
       </ExecutiveSecondaryCard>
-      <button type="button" onClick={() => navigate(adminStudioPromptRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: POLICY_ENGINE_ACCENT, color: POLICY_ENGINE_ACCENT }}>
+      <button type="button" onClick={() => navigate(adminStudioPermissionEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: POLICY_ENGINE_ACCENT, color: POLICY_ENGINE_ACCENT }}>
+        PERMISSION ENGINE →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioPromptRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         PROMPT REGISTRY →
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>

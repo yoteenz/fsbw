@@ -128,6 +128,7 @@ export type StudioOsCoreModuleId =
   | 'automation-registry'
   | 'prompt-registry'
   | 'policy-engine'
+  | 'permission-engine'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -891,6 +892,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'POLICY ENGINE™',
     description: 'Policy Engine V1.0 — centralized rulebook; define policies once; every system follows automatically.',
     routeSegment: 'policy-engine',
+  },
+  {
+    id: 'permission-engine',
+    label: 'PERMISSION ENGINE™',
+    description: 'Permission Engine V1.0 — capability-based enterprise authorization; secure, intuitive, intentional.',
+    routeSegment: 'permission-engine',
   },
   {
     id: 'succession-mode',

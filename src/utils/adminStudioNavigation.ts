@@ -1740,6 +1740,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'permission-engine',
+    title: 'PERMISSION ENGINE™',
+    purpose: 'Enterprise authorization — capability-based access, role composition, contextual permissions, approval chains, audit.',
+    route: p('permission-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M135',
+    ctaLabel: 'OPEN PERMISSION ENGINE',
+    moduleKey: 'permission-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',
