@@ -933,6 +933,10 @@ export function adminStudioPluginSdkPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/plugin-sdk`;
 }
 
+export function adminStudioWorkflowEnginePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/workflow-engine`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

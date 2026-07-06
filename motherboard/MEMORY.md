@@ -39676,3 +39676,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/plugin-sdk.md`** · **CORE.md** M137 entry
 
 **Conventions:** Plugins execute in Workspace Runtime sandbox. Permission Engine = who may install/act; Policy Engine = what plugins may do. Sync chain: … → Permission Engine → Workspace Runtime → **Plugin SDK**. Demo localStorage via `studioOsPluginSdk_v1`. Brand voice: *"Extend the platform. Innovate beyond Studio."* Accent `#7C3AED`.
+
+---
+
+## 2026-07-06 — Milestone 138: Workflow Engine™ V1.0
+
+**Context (full chat arc):** Same session completed M129 Design Token Engine through M137 Plugin SDK (`8386fd18`). User requested **Workflow Engine™**: visual orchestration for every business process; organizations design processes visually without code; drag-and-drop builder nodes; workflow types; testing before publish; workflow analytics; Command Dock build/bottleneck/simulate/improve queries.
+
+**Requirements delivered:**
+- **Visual workflow builder (21 nodes)** — Trigger, Decision, Condition, Approval, Delay, Notification, Command Dock, Executive Council, Digital Concierge, AI Reasoning, Profession Brain™, Memory Lookup, Document Creation, Calendar, Email, SMS, Marketplace, Studio Institute™, Automation, Custom Plugin, End
+- **Workflow types (12 templates)** — client onboarding, hiring, invoice approval, content publishing, fuel tax, permit processing, lead qualification, customer support, knowledge capture, sales pipeline, marketing campaigns, employee training
+- **Workflow testing (9 modes)** — preview, simulate, debug, step-through, validate, inspect variables, review decisions, estimate duration, measure confidence — nothing goes live without testing
+- **Workflow analytics (10 metrics)** — execution count, completion rate, average duration, bottlenecks, failure rate, approval delays, automation opportunities, AI usage, customer impact, optimization suggestions
+- **Command Dock** — *"Build a workflow for new client onboarding."* · *"Show bottlenecks in permit processing."* · *"Simulate this approval workflow."* · *"Recommend workflow improvements."*
+
+**Delivered:**
+- **`src/studio-os-core/workflow-engine/`** — `node-catalog.ts` · `process-catalog.ts` · `testing-engine.ts` · `analytics-engine.ts` · `governance-engine.ts` · `registration.ts` · `discovery-engine.ts` · `engine-profile-builder.ts` · `store.ts` (`syncWorkflowEngineFromSources`) · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`WorkflowEngineWorkspace`** (7 tabs: Overview · Visual Builder · Workflow Types · Testing · Analytics · Governance · Discovery) · **`/admin/studio/workflow-engine`** · **`MissionControlWorkflowEnginePanel`** · **`useWorkflowEngineState`**
+- **Wiring** — nav M138 · sync chain Plugin SDK → Workflow Engine · Command Dock workflow-engine-first · boundary-sync · documentation system registry + page-guide entry · Plugin SDK workspace link
+- **Docs** — **`docs/studio-os/workflow-engine.md`** · **CORE.md** M138 entry
+
+**Conventions:** Workflows are living systems — visualize, improve, automate, evolve. Test before publish mandatory. Sync chain: … → Workspace Runtime → Plugin SDK → **Workflow Engine**. Demo localStorage via `studioOsWorkflowEngine_v1`. Brand voice: *"Design visually. Evolve continuously. Choreograph work."* Accent `#0D9488`.

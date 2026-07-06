@@ -1776,6 +1776,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'workflow-engine',
+    title: 'WORKFLOW ENGINE™',
+    purpose: 'Visual orchestration — drag-and-drop builder, testing, analytics, living organizational processes.',
+    route: p('workflow-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M138',
+    ctaLabel: 'OPEN WORKFLOW ENGINE',
+    moduleKey: 'workflow-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

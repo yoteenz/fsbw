@@ -6,7 +6,7 @@ import {
   PLUGIN_SDK_PHILOSOPHY,
   queryPluginSdk,
 } from '../../../../studio-os-core/plugin-sdk';
-import { adminStudioMissionControlPath, adminStudioWorkspaceRuntimePath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioMissionControlPath, adminStudioWorkflowEnginePath, adminStudioWorkspaceRuntimePath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ExecutiveFocusPanel,
@@ -74,7 +74,10 @@ export function PluginSdkWorkspace() {
           {profile.dockPlatformLine}
         </p>
       </ExecutiveSecondaryCard>
-      <button type="button" onClick={() => navigate(adminStudioWorkspaceRuntimePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: PLUGIN_SDK_ACCENT, color: PLUGIN_SDK_ACCENT }}>
+      <button type="button" onClick={() => navigate(adminStudioWorkflowEnginePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: PLUGIN_SDK_ACCENT, color: PLUGIN_SDK_ACCENT }}>
+        WORKFLOW ENGINE →
+      </button>
+      <button type="button" onClick={() => navigate(adminStudioWorkspaceRuntimePath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         WORKSPACE RUNTIME →
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>

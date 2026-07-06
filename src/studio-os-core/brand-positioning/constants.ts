@@ -57,6 +57,7 @@ export type StudioOsBrandSystemId =
   | 'permission-engine'
   | 'workspace-runtime'
   | 'plugin-sdk'
+  | 'workflow-engine'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -113,6 +114,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'permission-engine': 'Capabilities, not titles. Power intentional. Trust earned.',
   'workspace-runtime': 'Organizations share the platform. Never the runtime.',
   'plugin-sdk': 'Extend the platform. Innovate beyond Studio.',
+  'workflow-engine': 'Design visually. Evolve continuously. Choreograph work.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

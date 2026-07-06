@@ -385,6 +385,10 @@ export function bootstrapWorkspacesPlatform(): void {
     pluginSdk.bootstrapPluginSdkPlatform();
     await yieldToMain();
 
+    const workflowEngine = await import('../studio-os-core/workflow-engine/bootstrap');
+    workflowEngine.bootstrapWorkflowEnginePlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

@@ -47,7 +47,11 @@ function upsertProfile(profile: OrganizationPluginSdkProfile): OrganizationPlugi
 
 /** Rebuild plugin catalog, SDK capabilities, marketplace, and sandbox from Workspace Runtime + platform sources */
 export function syncPluginSdkFromSources(organizationId: string): OrganizationPluginSdkProfile {
-  return upsertProfile(buildOrganizationPluginSdkProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationPluginSdkProfile(organizationId));
+  void import('../workflow-engine/store').then((m) => {
+    m.syncWorkflowEngineFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationPluginSdkProfile(organizationId: string): OrganizationPluginSdkProfile {

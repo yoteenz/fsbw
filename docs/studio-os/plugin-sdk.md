@@ -66,7 +66,7 @@ Plugins execute inside isolated environments. Prevented:
 
 ## Sync chain
 
-… → Policy Engine → Permission Engine → Workspace Runtime → **Plugin SDK**
+… → Policy Engine → Permission Engine → Workspace Runtime → **Plugin SDK** → **Workflow Engine**
 
 **`workspace-runtime/store`** triggers **`syncPluginSdkFromSources`** · **boundary-sync**
 

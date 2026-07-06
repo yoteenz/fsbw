@@ -59,6 +59,7 @@ import { listPolicyEngineDockSuggestions } from '../policy-engine/dock-advisor';
 import { listPermissionEngineDockSuggestions } from '../permission-engine/dock-advisor';
 import { listWorkspaceRuntimeDockSuggestions } from '../workspace-runtime/dock-advisor';
 import { listPluginSdkDockSuggestions } from '../plugin-sdk/dock-advisor';
+import { listWorkflowEngineDockSuggestions } from '../workflow-engine/dock-advisor';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -399,6 +400,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       portfolioMode: false,
       suggestedCommands: listStudioFoundationModelsDockSuggestions(workspaceId),
       commandTypes: ['executive-requests', 'strategy', 'organization-settings'],
+    };
+  }
+
+  if (pathname.includes('/workflow-engine')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'workflow-engine',
+      label: 'WORKFLOW ENGINE™ · ORGANIZATIONAL CHOREOGRAPHY',
+      portfolioMode: false,
+      suggestedCommands: listWorkflowEngineDockSuggestions(workspaceId),
+      commandTypes: ['executive-requests', 'organization-settings', 'knowledge-search'],
     };
   }
 
