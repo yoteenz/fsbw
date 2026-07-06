@@ -333,6 +333,10 @@ export function bootstrapWorkspacesPlatform(): void {
     documentationSync.bootstrapDocumentationSyncPlatform();
     await yieldToMain();
 
+    const documentationRegistry = await import('../studio-os-core/documentation-registry/bootstrap');
+    documentationRegistry.bootstrapDocumentationRegistryPlatform();
+    await yieldToMain();
+
     const strategyEngine = await import('../studio-os-core/strategy-engine/bootstrap');
     strategyEngine.bootstrapStrategyEnginePlatform();
     await yieldToMain();

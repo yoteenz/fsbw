@@ -881,6 +881,10 @@ export function adminStudioStudioFoundationModelsPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/studio-foundation-models`;
 }
 
+export function adminStudioDocumentationRegistryPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/documentation-registry`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

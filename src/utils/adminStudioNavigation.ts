@@ -1620,6 +1620,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'documentation-registry',
+    title: 'DOCUMENTATION REGISTRY™',
+    purpose: 'Single source of truth for all Studio OS documentation — register once, sync everywhere automatically.',
+    route: p('documentation-registry'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M126',
+    ctaLabel: 'OPEN DOCUMENTATION REGISTRY',
+    moduleKey: 'documentation-registry',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

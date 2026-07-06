@@ -52,7 +52,11 @@ function upsertProfile(profile: OrganizationDocumentationSyncProfile): Organizat
 /** Rebuild all documentation surfaces from canonical registry */
 export function syncDocumentationFromSources(organizationId: string): OrganizationDocumentationSyncProfile {
   invalidateDocumentationCaches();
-  return upsertProfile(buildOrganizationDocumentationSyncProfile(organizationId));
+  const profile = upsertProfile(buildOrganizationDocumentationSyncProfile(organizationId));
+  void import('../documentation-registry/store').then((m) => {
+    m.syncDocumentationRegistryFromSources(organizationId);
+  });
+  return profile;
 }
 
 export function ensureOrganizationDocumentationSyncProfile(

@@ -13,11 +13,12 @@ export const SEMANTIC_SEARCH_CLUSTERS: SemanticSearchCluster[] = [
       'organization-genome',
       'relationship-memory',
       'executive-timeline',
+      'organizational-consciousness',
     ],
     naturalLanguageQuestions: [
       'How does Studio OS remember things?',
       'Where is organizational memory stored?',
-      'What is the difference between Memory Engine and Legacy Vault?',
+      'What is organizational consciousness?',
     ],
   },
   {
@@ -30,7 +31,7 @@ export const SEMANTIC_SEARCH_CLUSTERS: SemanticSearchCluster[] = [
       'professional-trust-framework',
       'command-dock',
       'studio-foundation-models',
-      'knowledge-confidence',
+      'profession-brain',
     ],
     naturalLanguageQuestions: [
       'How does AI work in Studio OS?',

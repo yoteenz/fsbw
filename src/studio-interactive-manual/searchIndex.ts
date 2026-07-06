@@ -4,6 +4,7 @@ import { STUDIO_MANUAL_WHATS_NEW } from './whatsNew';
 import { searchKnowledgeGraph } from './knowledge-graph/queries';
 import { buildRegistrySearchEntries } from '../studio-os-core/documentation-sync/search-entries';
 import { expandSemanticQuery } from '../studio-os-core/documentation-sync/semantic-search';
+import { queryDocumentationRegistry } from '../studio-os-core/documentation-registry/smart-search';
 
 export function buildManualSearchIndex(): ManualSearchEntry[] {
   const entries: ManualSearchEntry[] = [];
@@ -144,6 +145,17 @@ export function buildManualSearchIndex(): ManualSearchEntry[] {
   return entries;
 }
 
+function registrySearchEntries(query: string): ManualSearchEntry[] {
+  return queryDocumentationRegistry(query, 8).map((hit) => ({
+    id: `registry-${hit.entry.internalId}`,
+    query: hit.entry.officialName,
+    keywords: [...hit.entry.keywords, ...hit.entry.aliases, ...hit.entry.searchSynonyms],
+    moduleId: hit.entry.moduleId ?? hit.entry.internalId,
+    label: `${hit.entry.officialName} (${hit.matchReason})`,
+    snippet: hit.entry.description.slice(0, 140),
+  }));
+}
+
 export function searchManualIndex(query: string, limit = 10): ManualSearchEntry[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
@@ -180,7 +192,12 @@ export function searchManualIndex(query: string, limit = 10): ManualSearchEntry[
     score: g.score,
   }));
 
-  return [...stepScored, ...graphScored]
+  const registryScored = registrySearchEntries(q).map((entry) => ({
+    entry,
+    score: 16,
+  }));
+
+  return [...stepScored, ...registryScored, ...graphScored]
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map((x) => x.entry);

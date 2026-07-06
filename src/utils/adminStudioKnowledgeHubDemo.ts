@@ -10,6 +10,7 @@ import { DOCUMENTATION_PAGE_GUIDE_OVERRIDES } from '../studio-os-core/documentat
 import { expandSemanticQuery } from '../studio-os-core/documentation-sync/semantic-search';
 import { searchDocumentationFaq } from '../studio-os-core/documentation-sync/faq-registry';
 import { DOCUMENTATION_SYSTEM_REGISTRY } from '../studio-os-core/documentation-sync/system-registry';
+import { queryDocumentationRegistry } from '../studio-os-core/documentation-registry/smart-search';
 import {
   adminStudioAssetDirectorStudioPath,
   adminStudioBlueprintDetailPath,
@@ -516,9 +517,9 @@ export const KNOWLEDGE_MISSION_STATS: KnowledgeMissionStats = {
     'SEMANTIC SEARCH — TRY "MEMORY" OR "AI"',
   ],
   documentationUpdates: [
-    'M125 DOCUMENTATION SYNCHRONIZATION™',
-    '30+ SYSTEMS REGISTRY SYNCED',
-    'SEMANTIC SEARCH CLUSTERS ACTIVE',
+    'M126 DOCUMENTATION REGISTRY™',
+    '32+ FEATURES REGISTERED ONCE',
+    'WALKTHROUGH + ACADEMY AUTO-SYNC',
   ],
   knowledgeHealthPct: 97,
 };
@@ -570,9 +571,17 @@ export function searchKnowledgeHub(query: string, limit = 24): KnowledgeSearchHi
   const q = query.trim().toLowerCase();
   if (!q) return [];
 
+  const registryHits = queryDocumentationRegistry(q, Math.min(limit, 8)).map((hit) => ({
+    id: `registry-${hit.entry.internalId}`,
+    title: hit.entry.officialName,
+    category: 'REGISTRY',
+    snippet: hit.entry.purpose.slice(0, 120),
+    route: hit.entry.route ?? adminStudioKnowledgeHubPath(),
+  }));
+
   const { expandedTerms, relatedSystemIds } = expandSemanticQuery(q);
   const terms = expandedTerms.length > 0 ? expandedTerms : [q];
-  const hits: KnowledgeSearchHit[] = [];
+  const hits: KnowledgeSearchHit[] = [...registryHits];
 
   const matchesBlob = (blob: string) => terms.some((t) => blob.includes(t));
 

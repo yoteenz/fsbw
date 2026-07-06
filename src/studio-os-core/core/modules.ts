@@ -118,6 +118,7 @@ export type StudioOsCoreModuleId =
   | 'studio-intelligence-architecture'
   | 'model-orchestrator'
   | 'studio-foundation-models'
+  | 'documentation-registry'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -821,6 +822,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO FOUNDATION MODELS™',
     description: 'Studio Foundation Models & Profession Models V1.0 — long-term Studio-owned intelligence roadmap.',
     routeSegment: 'studio-foundation-models',
+  },
+  {
+    id: 'documentation-registry',
+    label: 'DOCUMENTATION REGISTRY™',
+    description: 'Documentation Registry V1.0 — single source of truth; register once, sync all documentation surfaces.',
+    routeSegment: 'documentation-registry',
   },
   {
     id: 'succession-mode',

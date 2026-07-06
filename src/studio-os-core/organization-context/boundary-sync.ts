@@ -197,6 +197,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationDocumentationSyncProfile(context.organizationId);
   });
 
+  void import('../documentation-registry/store').then((m) => {
+    m.ensureOrganizationDocumentationRegistryProfile(context.organizationId);
+  });
+
   void import('../succession-mode/store').then((m) => {
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });

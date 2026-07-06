@@ -39387,3 +39387,29 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs** — **`docs/studio-os/documentation-sync.md`** · **`docs/studio-os/README.md`** updated · **CORE.md** M125 entry
 
 **Conventions:** Future milestones add one registry entry + optional graph/FAQ/enrichment — documentation surfaces auto-sync. Demo localStorage via `studioOsDocumentationSync_v1`. Primary help hub remains **`/admin/studio/knowledge-hub`**.
+
+---
+
+## 2026-07-06 — Milestone 126: Documentation Registry™ V1.0
+
+**Context (full chat arc):** Same session completed M121 Legacy Network through M125 Documentation Synchronization (`08b1036f`). User requested **Milestone 126 — Documentation Registry™ V1.0**: centralized Documentation Registry as single source of truth for all Studio OS documentation — every feature registers once with full structured metadata; every documentation system (manual, walkthrough, Academy, search, tooltips, FAQ, Command Dock, developer/architecture docs, health dashboard, version history) consumes automatically. Philosophy: documentation equivalent of Profession Brain™ — one source, many consumers, no duplicate maintenance.
+
+**Requirements delivered:**
+- **Centralized Documentation Registry™** — full metadata schema (official name, internal ID, category, purpose, capabilities, dependencies, aliases, search synonyms, academy/walkthrough/tooltip/FAQ/dock refs, dev/arch docs, version history, etc.)
+- **Automatic synchronization** — registry fans out to Studio Manual, Getting Started, walkthrough, Academy, Help Center, search index, tooltips, FAQ, Command Dock, release notes, feature registry
+- **Smart search** — `queryDocumentationRegistry()` with NL, aliases, abbreviations, misspellings, semantic clusters ("memory", "AI")
+- **Contextual documentation** — `resolveContextualDocumentation(pathname)` page-aware help
+- **Walkthrough sync** — `buildWalkthroughStopsFromRegistry()` replaces hardcoded inauguration walkthrough
+- **Academy sync** — `buildAcademyLessonsFromRegistry()` for Studio Institute™
+- **Command Dock integration** — `resolveDocumentationRegistryAdvice()` before Documentation Sync fallback; proactive lines on Knowledge Hub, Documentation Registry, Mission Control
+- **Documentation Health Dashboard** — coverage, outdated pages, broken refs, walkthrough/academy completeness metrics
+- **Version history** — per-feature snapshots, upcoming features
+
+**Delivered:**
+- **`src/studio-os-core/documentation-registry/`** — `constants.ts` · `types.ts` · `registry-builder.ts` · `registration.ts` · `version-history.ts` · `health-dashboard.ts` · `walkthrough-sync.ts` · `academy-sync.ts` · `smart-search.ts` · `contextual-docs.ts` · `auto-sync.ts` · `registry-profile-builder.ts` · `store.ts` · `dock-advisor.ts` · `bootstrap.ts`
+- **UI** — **`DocumentationRegistryWorkspace`** (5 tabs) · **`/admin/studio/documentation-registry`** · **`MissionControlDocumentationRegistryPanel`** · **`useDocumentationRegistryState`**
+- **Wiring** — nav M126 · `core/modules.ts` · brand tagline · sync chain Documentation Sync → Registry · `searchIndex.ts` + Knowledge Hub search registry-first · walkthrough registry-driven · boundary-sync bootstrap
+- **System registry** — added `documentation-sync` + `documentation-registry` entries to M125 canonical registry · page-guide overrides
+- **Docs** — **`docs/studio-os/documentation-registry.md`** · **`docs/studio-os/README.md`** · **CORE.md** M126 entry
+
+**Conventions:** Register each new milestone once in `documentation-sync/system-registry.ts` — registry builder expands full metadata; optional `registerDocumentationFeature()` for overrides. Sync chain: Studio Foundation Models → Documentation Sync → Documentation Registry. Avoid circular resync (registry auto-sync invalidates caches only). Demo localStorage via `studioOsDocumentationRegistry_v1`. Brand voice: *"One source. Infinite knowledge. Always synchronized."* Accent `#0891B2`.
