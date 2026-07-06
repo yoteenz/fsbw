@@ -147,6 +147,10 @@ function finalizeBlueprintUpdate(blueprint: OrganizationDiscoveryBlueprint): Org
     m.syncSuccessionModeFromSources(blueprint.organizationId);
   });
 
+  void import('../executive-council/org-store').then((m) => {
+    m.syncExecutiveCouncilFromSources(blueprint.organizationId);
+  });
+
   return finalized;
 }
 

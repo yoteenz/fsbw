@@ -106,6 +106,9 @@ export function upsertOrganizationProfessionBrainProfile(
   void import('../succession-mode/store').then((m) => {
     m.syncSuccessionModeFromSources(profile.organizationId);
   });
+  void import('../executive-council/org-store').then((m) => {
+    m.syncExecutiveCouncilFromSources(profile.organizationId);
+  });
 }
 
 export function syncProfessionBrainFromSources(

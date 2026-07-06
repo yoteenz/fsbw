@@ -21,6 +21,7 @@ export type StudioOsBrandSystemId =
   | 'memory-engine'
   | 'company-health-index'
   | 'succession-mode'
+  | 'executive-council'
   | 'expansion-center'
   | 'command-dock'
   | 'organization-inauguration';
@@ -38,6 +39,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'memory-engine': 'Remember what worked. Prove it forever.',
   'company-health-index': 'Become healthier. Not simply larger.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
+  'executive-council': 'Many minds. One briefing.',
   'expansion-center': 'Grow your organization. Expand your legacy.',
   'command-dock': "Building today's decisions into tomorrow's legacy.",
   'organization-inauguration': 'Your Headquarters is ready. Your legacy begins now.',

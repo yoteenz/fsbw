@@ -4,7 +4,7 @@ import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio
 import { ExecutiveCouncilWorkspace } from '../../../../components/admin/studio/executive-council/ExecutiveCouncilWorkspace';
 
 const EXECUTIVE_COUNCIL_SUBTITLE =
-  'Highest collaborative leadership body — every major decision evaluated through executive reasoning. Organizational wisdom over isolated recommendations.';
+  'Collaborative executive leadership — multiple Digital Executives evaluate major decisions. Chief Concierge delivers unified briefings. Many minds. One briefing.';
 
 export default function AdminStudioExecutiveCouncilPage() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function AdminStudioExecutiveCouncilPage() {
     >
       <ExecutiveCouncilWorkspace />
       <AdminStudioDisclaimerFooter>
-        EXECUTIVE COUNCIL V2.0 · COLLABORATIVE LEADERSHIP · DEMO PLACEHOLDER
+        EXECUTIVE COUNCIL V2.0 · COLLABORATIVE LEADERSHIP · MILESTONE 99
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

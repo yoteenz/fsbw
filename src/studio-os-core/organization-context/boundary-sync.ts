@@ -97,6 +97,10 @@ export function syncOrganizationBoundary(context: ActiveOrganizationContext): vo
     m.ensureOrganizationSuccessionProfile(context.organizationId);
   });
 
+  void import('../executive-council/org-store').then((m) => {
+    m.ensureOrganizationExecutiveCouncilProfile(context.organizationId);
+  });
+
   dispatchOrganizationBoundaryChanged({
     organizationId: context.organizationId,
     moduleTenantId: context.moduleTenantId,

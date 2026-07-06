@@ -38670,3 +38670,20 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Succession Mode feeds Company Health Index succession-readiness category. Recommend preserving founder-only knowledge in Profession Brain. Demo localStorage via `studioOsSuccessionMode_v1`.
 
+---
+
+## 2026-07-06 — Milestone 99: Executive Council™ V2.0
+
+**Context (full chat arc):** Same session delivered M90–M98 (Blueprint through Succession Mode `f3ffdc5e`). User requested **Milestone 99 — Executive Council™ V2.0**: expand Executive Council into collaborative executive leadership. Founders never receive isolated AI responses · major decisions evaluated by multiple Digital Executives · simulate real executive leadership meeting · executive briefings · decision history · Studio OS should feel like intelligent executive team collaborating.
+
+**Core philosophy delivered:** Many minds, one briefing · Chief Concierge synthesizes diverse executive perspectives · founder retains final authority · decision history feeds Memory Engine for compounding recommendations.
+
+**Delivered:**
+- **`src/studio-os-core/executive-council/`** extended (M65 base preserved) — **`org-types.ts`** · **`digital-executives.ts`** (core roster + Department Pack auto-expansion) · **`collaborative-meeting.ts`** · **`briefing-engine.ts`** · **`decision-history.ts`** (Memory Engine sync) · **`council-builder.ts`** · **`org-store.ts`** (`conductExecutiveCouncilMeeting()` · `updateCouncilDecisionOutcome()`) · **`dock-advisor.ts`**.
+- **`ExecutiveCouncilWorkspace`** refreshed — 5 tabs: Council Overview · Digital Executives · Collaborative Meeting · Executive Briefing · Decision History · gold accent `#B45309`.
+- **`useExecutiveCouncilState`** hook — org-scoped profile · convene meeting · resolve decisions · event listeners for boundary/brain/health/pack changes.
+- **Integration** — boundary-sync · profession-brain · blueprint upsert · Command Dock **`resolveExecutiveCouncilAdvice()`** (strategic questions → multi-executive briefing) + proactive on `/executive-council` route · brand voice **`executive-council`**: *"Many minds. One briefing."*
+- **Docs** — **`docs/studio-os/executive-council-v2.md`** · **CORE.md** M99 entry.
+
+**Conventions:** Org-scoped localStorage via `studioOsExecutiveCouncilOrg_v2`. Legacy M65 workspace store (`studioOsExecutiveCouncil_v2`) retained for bootstrap seed. Strategic Command Dock queries match collaborative council before single-module advisors.
+

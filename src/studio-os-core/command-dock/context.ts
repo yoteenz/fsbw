@@ -20,6 +20,7 @@ import { listOrganizationGenomeDockSuggestions } from '../organization-genome';
 import { listMemoryEngineDockSuggestions } from '../memory-engine';
 import { listCompanyHealthIndexDockSuggestions } from '../company-health-index';
 import { listSuccessionModeDockSuggestions } from '../succession-mode';
+import { listExecutiveCouncilDockSuggestions } from '../executive-council';
 
 function isPortfolioPath(pathname: string): boolean {
   return (
@@ -162,6 +163,17 @@ export function resolveDockContext(pathname: string): DockContextProfile {
         'Find the best day to post the first NDXBOOK video.',
       ],
       commandTypes: ['publishing', 'campaigns', 'scheduling'],
+    };
+  }
+
+  if (pathname.includes('/executive-council')) {
+    const workspaceId = getRuntimeActiveWorkspaceId();
+    return {
+      contextId: 'executive-council',
+      label: 'EXECUTIVE COUNCIL™ · COLLABORATIVE LEADERSHIP',
+      portfolioMode: false,
+      suggestedCommands: listExecutiveCouncilDockSuggestions(workspaceId),
+      commandTypes: ['organization-settings', 'executive-requests', 'strategy'],
     };
   }
 

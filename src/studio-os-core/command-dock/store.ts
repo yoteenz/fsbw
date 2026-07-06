@@ -50,6 +50,10 @@ import {
   resolveSuccessionModeAdvice,
   buildProactiveSuccessionSuggestion,
 } from '../succession-mode/dock-advisor';
+import {
+  resolveExecutiveCouncilAdvice,
+  buildProactiveCouncilSuggestion,
+} from '../executive-council/dock-advisor';
 import { readScopedStore, writeScopedStore } from '../workspace/scoped-store';
 import type {
   CommandDockStore,
@@ -113,6 +117,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const memory = buildProactiveMemorySuggestion(workspaceId);
   const health = buildProactiveHealthSuggestion(workspaceId);
   const succession = buildProactiveSuccessionSuggestion(workspaceId);
+  const council = buildProactiveCouncilSuggestion(workspaceId);
   const blueprintPct = ensureOrganizationDiscoveryBlueprint(workspaceId).overallProgressPct;
   const instituteProactive = institute
     ? { response: institute, concierge: 'Chief Concierge', suggestedCommand: 'Open Studio Institute dashboard.' }
@@ -135,8 +140,13 @@ export function syncDockContext(pathname: string): DockContextProfile {
   const successionProactive = succession
     ? { response: succession, concierge: 'Chief Concierge', suggestedCommand: 'Open Succession Mode — preserve irreplaceable knowledge.' }
     : null;
+  const councilProactive = council
+    ? { response: council, concierge: 'Chief Concierge', suggestedCommand: 'Convene Executive Council for collaborative strategic guidance.' }
+    : null;
   const proactiveSource =
-    pathname.includes('/succession-mode') && successionProactive
+    pathname.includes('/executive-council') && councilProactive
+      ? councilProactive
+      : pathname.includes('/succession-mode') && successionProactive
       ? successionProactive
       : pathname.includes('/company-health-index') && healthProactive
       ? healthProactive
@@ -213,6 +223,22 @@ function expansionForRoute(route: FounderCommandRoute): DockExpansionSize {
 export function submitDockCommand(rawText: string, pathname: string): FounderCommandRoute | null {
   const trimmed = rawText.trim();
   if (!trimmed) return null;
+
+  const councilAdvice = resolveExecutiveCouncilAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (councilAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: councilAdvice.briefing ? 'large' : 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${councilAdvice.concierge}\n${councilAdvice.response}`,
+    });
+    return null;
+  }
 
   const successionAdvice = resolveSuccessionModeAdvice(trimmed, getRuntimeActiveWorkspaceId());
   if (successionAdvice) {
