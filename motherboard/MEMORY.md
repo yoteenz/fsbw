@@ -40197,3 +40197,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Helpers:** `adminStudioNdxbookNewsroomDepartmentPath()`; storage allowlist `studioOsNdxbook_deptProgress_v1`; mission action routes + workspace newsroom redirect updated.
 
 **Conventions:** NDXBook Page 001 production = department navigation, not stacked Production Floor panel. Legacy `NdxbookNewsroom.tsx` / `NdxbookPagePipelinePanel` remain for registry pilot but canonical flow is department workspaces.
+
+---
+
+## 2026-07-07 — Founder Notes + Concierge Revision Requests (department production flow)
+
+**Context (full chat arc):** Page 001 fixes; Master Content Pipeline + ten gates; Studio Production Engine docs; **department UI shipped** (`09591de8`) with ten workspaces, pipeline strip, ceremonial routing, Master Content Asset workspace. User requested **Founder Notes + Concierge Revision Requests** so founders can direct Page 001 throughout production (Discover→Learning) before formal Review — notes tied to Master Content Asset, intelligent concierge routing, revision history, instinct flag, do-not-advance protection.
+
+**Decisions / outcomes:**
+- **Founder Notes panel** persistent in every department sidebar (below Master Content Asset passport) — notes tied to asset id (page id or pilot key), include department · timestamp · author · status · assigned concierge; persist in `studioOsNdxbook_founderNotes_v1`.
+- **Actions:** Ask Orb to Fix · Assign to Concierge (Brand · Editorial · Legal · Social Media · Visual Design · Strategy · Studio Orb triage) · quick prompt chips · Request Revision Before Review (routes to inferred department).
+- **Note statuses:** open · assigned · in-revision · resolved · needs-founder-review · deferred.
+- **Founder Instinct Flag** triggers Studio Intelligence triage (likely issues: tone, hook, legal claims, visual direction).
+- **Revision history:** concierge proposals show original · suggested · reason · Approve / Reject / Edit; approved/edited revisions patch hook/script/caption on master asset.
+- **Do Not Advance:** unresolved notes block Continue and Approve Production; warning in panel + Continue bar reason.
+- **Review Department:** `FounderNotesReviewBrief` surfaces all notes + instinct triage before Studio Intelligence scoring.
+
+**Changes:**
+- **Core:** `src/studio-os-core/ndxbook/founderNotes/` — types, conciergeRouting, instinctAnalysis, revisionEngine, store, advanceGuard.
+- **Hook:** `useFounderNotes.ts`.
+- **UI:** `FounderNotesPanel.tsx`, `FounderNotesReviewBrief`; wired in `NdxbookProductionEngine`, `MasterAssetPassport` (open note count), `NdxbookDepartmentWorkspace` Review body.
+- **Storage allowlist:** `studioOsNdxbook_founderNotes_v1`.
+
+**Conventions:** Founder direction is a luxury creative layer across all departments — not a cluttered comment board. Deferred/resolved notes do not block advancement.

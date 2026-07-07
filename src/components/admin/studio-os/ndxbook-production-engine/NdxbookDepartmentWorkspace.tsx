@@ -7,6 +7,7 @@ import type { InstagramConnectionStatus } from '../../../../studio-os-core/ndxbo
 import { ndxbookSocialAccountsQuickLink } from '../ndxbook-mission-control/ndxbookMissionActionRoutes';
 import { NR, nrLabel, nrPanel, nrSectionTitle } from '../ndxbook-newsroom/ndxbookNewsroomTheme';
 import { adminStudioNdxbookNewsroomDepartmentPath } from '../../../../utils/adminStudioRoutes';
+import { FounderNotesReviewBrief } from './FounderNotesPanel';
 
 type ReviewDim = {
   label: string;
@@ -327,6 +328,7 @@ function ReviewBody(p: DepartmentWorkspaceProps) {
         </p>
       ) : (
         <>
+          <FounderNotesReviewBrief page={p.page} departmentId="review" />
           <MasterAssetStudio page={p.page} />
           <div className="mt-3 flex flex-wrap gap-1">
             {!review ? (

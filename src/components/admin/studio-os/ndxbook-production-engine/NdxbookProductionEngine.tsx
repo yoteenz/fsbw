@@ -14,6 +14,7 @@ import {
 } from '../../../../studio-os-core/ndxbook/productionDepartmentProgress';
 import { createProductionPageFromRegistry } from '../../../../studio-os-core/ndxbook/newsroom/pageSync';
 import { useNdxbookPagePipeline } from '../../../../hooks/useNdxbookPagePipeline';
+import { useFounderNotes } from '../../../../hooks/useFounderNotes';
 import {
   adminStudioNdxbookNewsroomDepartmentPath,
   adminStudioNdxbookNewsroomPath,
@@ -24,6 +25,7 @@ import { nextProductionDepartment } from '../../../../studio-os-core/content-pip
 import { MasterAssetPassport } from './MasterAssetPassport';
 import { NdxbookDepartmentWorkspace } from './NdxbookDepartmentWorkspace';
 import { ProductionDepartmentStrip } from './ProductionDepartmentStrip';
+import { FounderNotesPanel } from './FounderNotesPanel';
 
 function defaultScheduleLaterToday(): string {
   const d = new Date();
@@ -73,6 +75,14 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
     [page001, activeDept]
   );
 
+  const founderNotes = useFounderNotes(page001, activeDept);
+
+  const mergedContinueCheck = useMemo(() => {
+    if (!continueCheck.ok) return continueCheck;
+    if (!founderNotes.advanceGuard.ok) return founderNotes.advanceGuard;
+    return { ok: true as const };
+  }, [continueCheck, founderNotes.advanceGuard]);
+
   const handOff = useCallback(
     (target: ProductionDepartmentId) => {
       acknowledgeProductionDepartment(activeDept);
@@ -84,9 +94,13 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
   );
 
   const onContinue = useCallback(() => {
-    const check = canContinueFromDepartment(page001, activeDept);
-    if (!check.ok) {
-      setError(check.reason ?? 'Complete this department before continuing.');
+    const deptCheck = canContinueFromDepartment(page001, activeDept);
+    if (!deptCheck.ok) {
+      setError(deptCheck.reason ?? 'Complete this department before continuing.');
+      return;
+    }
+    if (!founderNotes.advanceGuard.ok) {
+      setError(founderNotes.advanceGuard.reason ?? 'Resolve founder notes before advancing.');
       return;
     }
     acknowledgeProductionDepartment(activeDept);
@@ -98,7 +112,7 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
     }
     setError(null);
     setMessage(`Handed off to ${next ?? 'Discover'} Department.`);
-  }, [activeDept, navigate, page001]);
+  }, [activeDept, founderNotes.advanceGuard, navigate, page001]);
 
   const onCreateMasterAsset = useCallback(() => {
     setBusy('create');
@@ -129,6 +143,10 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
 
   const onApproveProduction = useCallback(() => {
     if (!page001) return;
+    if (!founderNotes.advanceGuard.ok) {
+      setError(founderNotes.advanceGuard.reason ?? 'Resolve founder notes before approving.');
+      return;
+    }
     setBusy('approve');
     setError(null);
     const result = approveProduction(page001.id);
@@ -139,7 +157,7 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
       navigate(adminStudioNdxbookNewsroomDepartmentPath('expansion'));
     }
     setBusy(null);
-  }, [approveProduction, navigate, page001]);
+  }, [approveProduction, founderNotes.advanceGuard, navigate, page001]);
 
   const onSchedule = useCallback(
     async (publishNow: boolean) => {
@@ -194,7 +212,17 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
 
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-4">
         <div className="lg:col-span-1 order-2 lg:order-1">
-          <MasterAssetPassport page={page001} department={department} />
+          <MasterAssetPassport
+            page={page001}
+            department={department}
+            openNotesCount={founderNotes.blockingCount}
+          />
+          <FounderNotesPanel
+            page={page001}
+            departmentId={activeDept}
+            onNavigateDepartment={(dept) => navigate(adminStudioNdxbookNewsroomDepartmentPath(dept))}
+            onPageRefresh={refresh}
+          />
         </div>
         <div className="lg:col-span-3 order-1 lg:order-2">
           <NdxbookDepartmentWorkspace
@@ -202,8 +230,8 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
             page={page001}
             instagramStatus={instagramStatus}
             accountsLoading={accountsLoading}
-            canContinue={continueCheck.ok}
-            continueBlockReason={continueCheck.ok ? undefined : continueCheck.reason}
+            canContinue={mergedContinueCheck.ok}
+            continueBlockReason={mergedContinueCheck.ok ? undefined : mergedContinueCheck.reason}
             onContinue={onContinue}
             onCreateMasterAsset={onCreateMasterAsset}
             onRunReview={onRunReview}

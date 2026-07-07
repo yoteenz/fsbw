@@ -6,9 +6,10 @@ import type { ProductionDepartmentDef } from '../../../../studio-os-core/content
 type Props = {
   page: NdxbookPage | null;
   department: ProductionDepartmentDef;
+  openNotesCount?: number;
 };
 
-export function MasterAssetPassport({ page, department }: Props) {
+export function MasterAssetPassport({ page, department, openNotesCount = 0 }: Props) {
   return (
     <aside className="p-3 mb-3 border-l-4" style={{ ...nrPanel, borderLeftColor: NR.indigo }}>
       <p style={nrSectionTitle}>MASTER CONTENT ASSET · PASSPORT</p>
@@ -27,6 +28,7 @@ export function MasterAssetPassport({ page, department }: Props) {
       )}
       <p style={{ ...nrLabel, fontSize: '6px', marginTop: 8, color: NR.indigo }}>
         CURRENT ROOM · {department.name}
+        {openNotesCount > 0 ? ` · ${openNotesCount} FOUNDER NOTE${openNotesCount === 1 ? '' : 'S'}` : ''}
       </p>
       <div className="mt-2 grid grid-cols-2 gap-1">
         {[
