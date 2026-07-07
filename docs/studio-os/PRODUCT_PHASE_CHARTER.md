@@ -43,6 +43,8 @@ Studio OS has sufficient architecture to build as a **real product**. We are off
 11. Governance registration
 ```
 
+**Developer onboarding:** [Studio OS Developer Handbook™](./developer-handbook/START_HERE.md)
+
 **Canonical reference:** [Studio Product Starter Pack™](./product-starter-pack/START_HERE.md) · [PRODUCT_CREATION_CHECKLIST.md](./product-starter-pack/PRODUCT_CREATION_CHECKLIST.md)
 
 Master Specification expansion occurs at **step 7** — only what the product needs.

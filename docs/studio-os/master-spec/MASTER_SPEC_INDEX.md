@@ -78,6 +78,16 @@ Runs automatically before `npm run build` via `prebuild`.
 - Global search · Studio Intelligence™ · Documentation Governance™
 - Engineering Excellence Dashboard™
 
+## Developer Handbook (Active — v1.0.0)
+
+| Document | Purpose |
+|----------|---------|
+| `docs/studio-os/developer-handbook/` | **Studio OS Developer Handbook™** — canonical contributor onboarding |
+| `docs/studio-os/developer-handbook/START_HERE.md` | Every engineer · designer · PM · QA · AI agent begins here |
+| `docs/studio-os/developer-handbook/PLATFORM_OVERVIEW.md` | Complete ecosystem map |
+| `docs/studio-os/developer-handbook/GOVERNANCE_MODEL.md` | CA · DR · VDR · product governance |
+| `docs/studio-os/developer-handbook/HANDBOOK_READINESS.md` | ✅ Ready for Platform Onboarding |
+
 ## Design Governance (Active)
 
 | Document | Purpose |
