@@ -91,25 +91,27 @@ volumes:
     number: VI
     title: Relationship Intelligence
     summary: Relationship graph across people, customers, vendors, partners, families, referrals, and organizations.
-    status: planned
+    status: roadmap
     dependsOn: [volume-v]
     milestoneRange: M165-M172
     completionPct: 0
+    notes: Governed roadmap — authoring when Priority 3 product activates.
 
   - id: volume-vii
     number: VII
     title: Memory Infrastructure
     summary: Searchable memory across conversations, decisions, workflows, projects, customers, and history.
-    status: planned
+    status: roadmap
     dependsOn: [volume-v, volume-ii]
     milestoneRange: M173-M180
-    completionPct: 12
+    completionPct: 0
+    notes: Governed roadmap — product-triggered authoring only.
 
   - id: volume-viii
     number: VIII
     title: Financial Intelligence
     summary: Forecasts, simulations, cash flow, pricing, hiring, profitability, and financial strategy.
-    status: planned
+    status: roadmap
     dependsOn: [volume-iii, volume-vii]
     milestoneRange: M181-M188
     completionPct: 0
@@ -118,7 +120,7 @@ volumes:
     number: IX
     title: Communication Infrastructure
     summary: Unified communications across email, SMS, voice, meetings, chat, video, notifications, and translation.
-    status: planned
+    status: roadmap
     dependsOn: [volume-i, volume-v]
     milestoneRange: M189-M196
     completionPct: 5
@@ -127,7 +129,7 @@ volumes:
     number: X
     title: Automation Marketplace
     summary: Build, test, certify, publish, license, install, and monetize automations.
-    status: planned
+    status: roadmap
     dependsOn: [volume-ii, volume-iv]
     milestoneRange: M197-M204
     completionPct: 8
@@ -145,7 +147,7 @@ volumes:
     number: XII
     title: Reputation Infrastructure
     summary: Trust and reputation for experts, organizations, Profession Brains™, automations, packs, and marketplace assets.
-    status: planned
+    status: roadmap
     dependsOn: [volume-ii, volume-x]
     milestoneRange: M213-M220
     completionPct: 0
@@ -154,7 +156,7 @@ volumes:
     number: XIII
     title: Studio Economy
     summary: Royalties, licensing, subscription economics, digital payroll, revenue sharing, affiliate, and partner economy.
-    status: planned
+    status: roadmap
     dependsOn: [volume-iii, volume-x]
     milestoneRange: M221-M228
     completionPct: 0
@@ -172,7 +174,7 @@ volumes:
     number: XV
     title: Intelligence Research
     summary: Continuous research into competitors, markets, trends, regulations, patents, and opportunities.
-    status: planned
+    status: roadmap
     dependsOn: [volume-ii, volume-i]
     milestoneRange: M237-M244
     completionPct: 10
@@ -181,7 +183,7 @@ volumes:
     number: XVI
     title: Studio Worlds
     summary: Immersive profession-specific environments and headquarters worlds.
-    status: planned
+    status: roadmap
     dependsOn: [volume-i, volume-ii]
     milestoneRange: M245-M252
     completionPct: 5
@@ -190,7 +192,7 @@ volumes:
     number: XVII
     title: Multi-Organization Network
     summary: Portfolio intelligence, holding companies, shared services, organization galaxy, and cross-company awareness.
-    status: planned
+    status: roadmap
     dependsOn: [volume-v, volume-xiv]
     milestoneRange: M253-M260
     completionPct: 8
@@ -199,7 +201,7 @@ volumes:
     number: XVIII
     title: Wisdom Engine
     summary: Judgment, ethics, strategic advice, long-term planning, founder coaching, and decision philosophy.
-    status: planned
+    status: roadmap
     dependsOn: [volume-ii, volume-v]
     milestoneRange: M261-M268
     completionPct: 0
@@ -208,7 +210,7 @@ volumes:
     number: XIX
     title: Studio DNA
     summary: Mission, vision, values, culture, brand voice, customer philosophy, leadership style, and operating principles.
-    status: planned
+    status: roadmap
     dependsOn: [volume-0, volume-ii]
     milestoneRange: M269-M276
     completionPct: 5

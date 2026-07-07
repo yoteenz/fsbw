@@ -32,6 +32,8 @@ export const MODULE_MINIMUM_RELEASE_CHANNELS: Partial<Record<string, ReleaseChan
   'studio-intelligence': 'stable',
   'qa-headquarters': 'stable',
   'studio-orb': 'preview',
+  'conversation-engine': 'preview',
+  'voice-mode': 'preview',
   'experience-engine': 'preview',
   marketplace: 'beta',
   'website-builder': 'preview',

@@ -359,15 +359,15 @@ milestones:
     purpose: >-
       Ambient intelligence presence — radial menu, luxury sound, intelligent positioning.
       Canonical interaction evolution of Command Dock™ (DR-001 merged).
-    implementationStatus: planned
+    implementationStatus: in-progress
     shippedMilestone: null
     moduleId: studio-orb
     dependsOn: [M82, M129, M130, M131, M89.5]
     enables: [M89.2, M89.3, M89.4]
-    relatedSystems: [command-dock, voice-mode, conversation-mode]
+    relatedSystems: [command-dock, voice-mode, conversation-mode, conversation-engine]
     alignedPhilosophies: [philosophy-studio-orb, philosophy-ambient-intelligence]
     implementationNotes: >-
-      Foundation spec complete — product UI intentionally deferred per Foundation Freeze v1.0.
+      Product Phase Priority 1 — Studio Orb UI shipped. Radial menu, awakening, voice slot active.
 
   - canonicalId: M89.2
     name: Voice Mode™
@@ -376,14 +376,15 @@ milestones:
     chapterId: chapter-i-8
     volumeId: volume-i
     purpose: Orb-based voice interaction with Studio Intelligence™.
-    implementationStatus: planned
+    implementationStatus: in-progress
     shippedMilestone: null
     moduleId: voice-mode
     dependsOn: [M89.1, M87.5]
     enables: []
-    relatedSystems: [studio-orb, command-dock, model-orchestrator]
+    relatedSystems: [studio-orb, command-dock, model-orchestrator, conversation-engine]
     alignedPhilosophies: [philosophy-conversational-ux]
-    implementationNotes: Foundation spec complete — voice implementation deferred.
+    implementationNotes: >-
+      Product Phase Priority 1 — Web Speech foundation + StudioOrbVoicePanel. Preview channel.
 
   - canonicalId: M89.3
     name: Conversation Mode™
@@ -392,14 +393,15 @@ milestones:
     chapterId: chapter-i-8
     volumeId: volume-i
     purpose: Full-screen conversational experience with Studio Intelligence™.
-    implementationStatus: planned
+    implementationStatus: in-progress
     shippedMilestone: null
     moduleId: conversation-mode
     dependsOn: [M89.1]
     enables: []
-    relatedSystems: [studio-orb, studio-intelligence]
+    relatedSystems: [studio-orb, studio-intelligence, conversation-engine]
     alignedPhilosophies: [philosophy-conversational-ux]
-    implementationNotes: DR-001 merged — spec frozen at Foundation v1.0.
+    implementationNotes: >-
+      Product Phase Priority 1 — Conversation Engine™ orchestrates Orb + Command Dock sessions.
 
   - canonicalId: M89.4
     name: Awakening Sequence™
@@ -408,14 +410,15 @@ milestones:
     chapterId: chapter-i-8
     volumeId: volume-i
     purpose: Ceremonial Orb activation sequence on Headquarters arrival.
-    implementationStatus: planned
+    implementationStatus: in-progress
     shippedMilestone: null
     moduleId: awakening-sequence
     dependsOn: [M89.1, M73.6]
     enables: []
     relatedSystems: [studio-orb, arrival-experience, living-headquarters-presence]
     alignedPhilosophies: [philosophy-environmental-storytelling, philosophy-progressive-disclosure]
-    implementationNotes: Emotional entry moment — spec frozen; product deferred.
+    implementationNotes: >-
+      Product Phase Priority 1 — Awakening overlay shipped; refinement continues in product phase.
 
   - canonicalId: M89.5
     name: Life & Culture Preferences™

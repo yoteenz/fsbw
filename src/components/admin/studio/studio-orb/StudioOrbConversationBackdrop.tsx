@@ -6,7 +6,8 @@ export function StudioOrbConversationBackdrop() {
   const active =
     activeSurface === 'command-dock' ||
     activeSurface === 'page-guide' ||
-    activeSurface === 'life-culture';
+    activeSurface === 'life-culture' ||
+    activeSurface === 'voice-mode';
   if (!active) return null;
 
   return (

@@ -18,7 +18,7 @@
 | `core-philosophies.yaml` | Core Studio OS Philosophy — **23 principles** — frozen |
 | `experience-architecture.yaml` | Experience Architecture™ — DR-001–004 merged — frozen |
 | `release-channel-system.yaml` | Release Channel System™ — CA-001 — frozen |
-| `constitutional-amendments.yaml` | Ratified amendments (CA-001) |
+| `product-roadmap.yaml` | Product Phase priorities · VI–XIX governed roadmaps |
 | `foundation-baseline.yaml` | Foundation Freeze registry — operationally complete |
 | `volumes.yaml` | Volumes 0–XIX containers |
 | `chapters/volume-i.yaml` | Volume I — **8 chapters complete** |
@@ -78,14 +78,20 @@ Runs automatically before `npm run build` via `prebuild`.
 - Global search · Studio Intelligence™ · Documentation Governance™
 - Engineering Excellence Dashboard™
 
+## Product Phase (Active)
+
+| Document | Purpose |
+|----------|---------|
+| `docs/studio-os/PRODUCT_PHASE_CHARTER.md` | Product lifecycle · priorities · roadmap policy |
+| `docs/studio-os/master-spec/product-roadmap.yaml` | P1–P3 products · governed volume roadmaps |
+
 ## Roadmap
 
 ```
-Phase 1 — Foundation Completion Sprint™  ✅
-Phase 2 — Foundation Freeze™ v1.0        ✅
-Phase 2b — Operational Completion CA-001 ✅
-Phase 3 — Volume V authoring            ✅ Complete
-Phase 3+ — Volume VI+ authoring         → NEXT
-Phase 4 — Product implementation         → AFTER Phase 3
-Phase 5 — Governed evolution only        → PERMANENT
+Architecture Phase                         ✅ Complete
+Product Phase                              → ACTIVE
+Priority 1 — Studio Orb / Voice / Conversation → IN PROGRESS
+Priority 2 — Website / Campaign / Publishing   → Queued
+Priority 3 — Relationship / Knowledge / HQ     → Queued
+Volumes VI–XIX                               → Governed roadmaps (not prerequisites)
 ```

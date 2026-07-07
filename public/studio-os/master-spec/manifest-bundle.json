@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "compiledAt": "2026-07-07T16:43:44.338Z",
+  "compiledAt": "2026-07-07T16:57:23.062Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
     "version": "1.1.0",
@@ -766,6 +766,208 @@
       }
     ]
   },
+  "productRoadmap": {
+    "version": "1.0.0",
+    "phase": "product",
+    "updatedAt": "2026-07-07",
+    "foundationVersion": "1.1.0",
+    "policy": "Volumes VI–XIX are governed roadmaps. Chapters are authored only when an active product requires Master Spec additions. Product development drives specification.",
+    "volumeRoadmapPolicy": {
+      "volumesVIThroughXIX": "governed-roadmap",
+      "sequentialAuthoring": "paused",
+      "chapterAuthoringTrigger": "active-product-requirement"
+    },
+    "productLifecycle": [
+      "product-vision",
+      "ux-ui-design",
+      "experience-prototype",
+      "technical-architecture",
+      "master-spec-additions",
+      "implementation",
+      "qa",
+      "launch",
+      "governance-registration"
+    ],
+    "priorities": [
+      {
+        "id": "priority-1",
+        "title": "Studio Intelligence Presence",
+        "status": "active",
+        "minimumReleaseChannel": "preview",
+        "products": [
+          {
+            "id": "studio-orb",
+            "title": "Studio Orb™",
+            "milestoneId": "M89.1",
+            "moduleId": "studio-orb",
+            "lifecycleStage": "implementation",
+            "releaseChannel": "preview"
+          },
+          {
+            "id": "conversation-engine",
+            "title": "Conversation Engine™",
+            "milestoneId": "M89.3",
+            "moduleId": "conversation-engine",
+            "lifecycleStage": "implementation",
+            "releaseChannel": "preview",
+            "note": "Orchestrates Orb surfaces, Command Dock sessions, and conversation turns."
+          },
+          {
+            "id": "voice-mode",
+            "title": "Voice Mode™",
+            "milestoneId": "M89.2",
+            "moduleId": "voice-mode",
+            "lifecycleStage": "implementation",
+            "releaseChannel": "preview"
+          },
+          {
+            "id": "awakening-experience",
+            "title": "Awakening Experience™",
+            "milestoneId": "M89.4",
+            "moduleId": "awakening-sequence",
+            "lifecycleStage": "implementation",
+            "releaseChannel": "preview"
+          }
+        ]
+      },
+      {
+        "id": "priority-2",
+        "title": "Creative & Publishing",
+        "status": "queued",
+        "minimumReleaseChannel": "preview",
+        "products": [
+          {
+            "id": "website-builder",
+            "title": "Website Builder / Experience Studio™",
+            "milestoneId": "M127.10",
+            "lifecycleStage": "product-vision"
+          },
+          {
+            "id": "campaign-engine",
+            "title": "Campaign Engine™",
+            "lifecycleStage": "experience-prototype"
+          },
+          {
+            "id": "publishing-studio",
+            "title": "Publishing Studio™",
+            "lifecycleStage": "product-vision"
+          }
+        ]
+      },
+      {
+        "id": "priority-3",
+        "title": "Intelligence Headquarters",
+        "status": "queued",
+        "minimumReleaseChannel": "beta",
+        "products": [
+          {
+            "id": "relationship-intelligence",
+            "title": "Relationship Intelligence™",
+            "volumeId": "volume-vi",
+            "milestoneRange": "M165-M172",
+            "lifecycleStage": "governed-roadmap"
+          },
+          {
+            "id": "knowledge-graph-ui",
+            "title": "Knowledge Graph UI™",
+            "lifecycleStage": "product-vision"
+          },
+          {
+            "id": "executive-headquarters",
+            "title": "Executive Headquarters™",
+            "milestoneId": "M127.13",
+            "lifecycleStage": "governed-roadmap"
+          }
+        ]
+      }
+    ],
+    "governedVolumeRoadmaps": [
+      {
+        "volumeId": "volume-vi",
+        "title": "Relationship Intelligence",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-vii",
+        "title": "Memory Infrastructure",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-viii",
+        "title": "Financial Intelligence",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-ix",
+        "title": "Communication Infrastructure",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-x",
+        "title": "Automation Marketplace",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-xi",
+        "title": "Studio OS Platform",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-xii",
+        "title": "Reputation Infrastructure",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-xiii",
+        "title": "Studio Economy",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-xiv",
+        "title": "Governance",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-xv",
+        "title": "Intelligence Research",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-xvi",
+        "title": "Studio Worlds",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-xvii",
+        "title": "Multi-Organization Network",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-xviii",
+        "title": "Wisdom Engine",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      },
+      {
+        "volumeId": "volume-xix",
+        "title": "Studio DNA",
+        "status": "roadmap",
+        "authoring": "paused-until-product"
+      }
+    ]
+  },
   "foundationBaseline": {
     "version": "1.1.0",
     "frozenAt": "2026-07-07",
@@ -981,32 +1183,34 @@
       "number": "VI",
       "title": "Relationship Intelligence",
       "summary": "Relationship graph across people, customers, vendors, partners, families, referrals, and organizations.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-v"
       ],
       "milestoneRange": "M165-M172",
-      "completionPct": 0
+      "completionPct": 0,
+      "notes": "Governed roadmap — authoring when Priority 3 product activates."
     },
     {
       "id": "volume-vii",
       "number": "VII",
       "title": "Memory Infrastructure",
       "summary": "Searchable memory across conversations, decisions, workflows, projects, customers, and history.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-v",
         "volume-ii"
       ],
       "milestoneRange": "M173-M180",
-      "completionPct": 12
+      "completionPct": 0,
+      "notes": "Governed roadmap — product-triggered authoring only."
     },
     {
       "id": "volume-viii",
       "number": "VIII",
       "title": "Financial Intelligence",
       "summary": "Forecasts, simulations, cash flow, pricing, hiring, profitability, and financial strategy.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-iii",
         "volume-vii"
@@ -1019,7 +1223,7 @@
       "number": "IX",
       "title": "Communication Infrastructure",
       "summary": "Unified communications across email, SMS, voice, meetings, chat, video, notifications, and translation.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-i",
         "volume-v"
@@ -1032,7 +1236,7 @@
       "number": "X",
       "title": "Automation Marketplace",
       "summary": "Build, test, certify, publish, license, install, and monetize automations.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-ii",
         "volume-iv"
@@ -1057,7 +1261,7 @@
       "number": "XII",
       "title": "Reputation Infrastructure",
       "summary": "Trust and reputation for experts, organizations, Profession Brains™, automations, packs, and marketplace assets.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-ii",
         "volume-x"
@@ -1070,7 +1274,7 @@
       "number": "XIII",
       "title": "Studio Economy",
       "summary": "Royalties, licensing, subscription economics, digital payroll, revenue sharing, affiliate, and partner economy.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-iii",
         "volume-x"
@@ -1096,7 +1300,7 @@
       "number": "XV",
       "title": "Intelligence Research",
       "summary": "Continuous research into competitors, markets, trends, regulations, patents, and opportunities.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-ii",
         "volume-i"
@@ -1109,7 +1313,7 @@
       "number": "XVI",
       "title": "Studio Worlds",
       "summary": "Immersive profession-specific environments and headquarters worlds.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-i",
         "volume-ii"
@@ -1122,7 +1326,7 @@
       "number": "XVII",
       "title": "Multi-Organization Network",
       "summary": "Portfolio intelligence, holding companies, shared services, organization galaxy, and cross-company awareness.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-v",
         "volume-xiv"
@@ -1135,7 +1339,7 @@
       "number": "XVIII",
       "title": "Wisdom Engine",
       "summary": "Judgment, ethics, strategic advice, long-term planning, founder coaching, and decision philosophy.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-ii",
         "volume-v"
@@ -1148,7 +1352,7 @@
       "number": "XIX",
       "title": "Studio DNA",
       "summary": "Mission, vision, values, culture, brand voice, customer philosophy, leadership style, and operating principles.",
-      "status": "planned",
+      "status": "roadmap",
       "dependsOn": [
         "volume-0",
         "volume-ii"
@@ -2453,7 +2657,7 @@
       "chapterId": "chapter-i-8",
       "volumeId": "volume-i",
       "purpose": "Ambient intelligence presence — radial menu, luxury sound, intelligent positioning. Canonical interaction evolution of Command Dock™ (DR-001 merged).",
-      "implementationStatus": "planned",
+      "implementationStatus": "in-progress",
       "shippedMilestone": null,
       "moduleId": "studio-orb",
       "dependsOn": [
@@ -2471,13 +2675,14 @@
       "relatedSystems": [
         "command-dock",
         "voice-mode",
-        "conversation-mode"
+        "conversation-mode",
+        "conversation-engine"
       ],
       "alignedPhilosophies": [
         "philosophy-studio-orb",
         "philosophy-ambient-intelligence"
       ],
-      "implementationNotes": "Foundation spec complete — product UI intentionally deferred per Foundation Freeze v1.0."
+      "implementationNotes": "Product Phase Priority 1 — Studio Orb UI shipped. Radial menu, awakening, voice slot active."
     },
     {
       "canonicalId": "M89.2",
@@ -2487,7 +2692,7 @@
       "chapterId": "chapter-i-8",
       "volumeId": "volume-i",
       "purpose": "Orb-based voice interaction with Studio Intelligence™.",
-      "implementationStatus": "planned",
+      "implementationStatus": "in-progress",
       "shippedMilestone": null,
       "moduleId": "voice-mode",
       "dependsOn": [
@@ -2498,12 +2703,13 @@
       "relatedSystems": [
         "studio-orb",
         "command-dock",
-        "model-orchestrator"
+        "model-orchestrator",
+        "conversation-engine"
       ],
       "alignedPhilosophies": [
         "philosophy-conversational-ux"
       ],
-      "implementationNotes": "Foundation spec complete — voice implementation deferred."
+      "implementationNotes": "Product Phase Priority 1 — Web Speech foundation + StudioOrbVoicePanel. Preview channel."
     },
     {
       "canonicalId": "M89.3",
@@ -2513,7 +2719,7 @@
       "chapterId": "chapter-i-8",
       "volumeId": "volume-i",
       "purpose": "Full-screen conversational experience with Studio Intelligence™.",
-      "implementationStatus": "planned",
+      "implementationStatus": "in-progress",
       "shippedMilestone": null,
       "moduleId": "conversation-mode",
       "dependsOn": [
@@ -2522,12 +2728,13 @@
       "enables": [],
       "relatedSystems": [
         "studio-orb",
-        "studio-intelligence"
+        "studio-intelligence",
+        "conversation-engine"
       ],
       "alignedPhilosophies": [
         "philosophy-conversational-ux"
       ],
-      "implementationNotes": "DR-001 merged — spec frozen at Foundation v1.0."
+      "implementationNotes": "Product Phase Priority 1 — Conversation Engine™ orchestrates Orb + Command Dock sessions."
     },
     {
       "canonicalId": "M89.4",
@@ -2537,7 +2744,7 @@
       "chapterId": "chapter-i-8",
       "volumeId": "volume-i",
       "purpose": "Ceremonial Orb activation sequence on Headquarters arrival.",
-      "implementationStatus": "planned",
+      "implementationStatus": "in-progress",
       "shippedMilestone": null,
       "moduleId": "awakening-sequence",
       "dependsOn": [
@@ -2554,7 +2761,7 @@
         "philosophy-environmental-storytelling",
         "philosophy-progressive-disclosure"
       ],
-      "implementationNotes": "Emotional entry moment — spec frozen; product deferred."
+      "implementationNotes": "Product Phase Priority 1 — Awakening overlay shipped; refinement continues in product phase."
     },
     {
       "canonicalId": "M89.5",
@@ -7281,8 +7488,8 @@
     "milestoneCount": 233,
     "designRevisionCount": 5,
     "completeCount": 102,
-    "inProgressCount": 8,
-    "plannedCount": 123,
+    "inProgressCount": 12,
+    "plannedCount": 119,
     "volumeIMilestoneCount": 26,
     "volumeIChapterCount": 8,
     "volumeICompleteCount": 21,

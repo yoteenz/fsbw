@@ -8,6 +8,11 @@ import {
   type ReactNode,
 } from 'react';
 import { useLocation } from 'react-router-dom';
+import {
+  endConversationSession,
+  startConversationSession,
+} from '../../../../studio-os-core/conversation-engine';
+import { stopVoiceListening } from '../../../../studio-os-core/voice-mode';
 import { readCommandDockStore } from '../../../../studio-os-core/command-dock/store';
 import { useCommandDockState } from '../../../../hooks/useCommandDockState';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
@@ -35,6 +40,7 @@ type StudioOrbContextValue = {
   openCommandDock: () => void;
   openPageGuide: () => void;
   openLifeCulture: () => void;
+  openVoiceMode: () => void;
   closeSurface: () => void;
   completeAwakening: () => void;
 };
@@ -64,7 +70,8 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
 
   const store = dock.store;
   const presenceState = useMemo(() => resolvePresenceState(store), [store]);
-  const conversationMode = activeSurface === 'command-dock';
+  const conversationMode =
+    activeSurface === 'command-dock' || activeSurface === 'voice-mode';
   const ambientInsight = store.proactiveSuggestion?.insight ?? null;
 
   useEffect(() => {
@@ -105,10 +112,11 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const openCommandDock = useCallback(() => {
     setRadialOpen(false);
     setActiveSurface('command-dock');
+    if (organizationId) startConversationSession(organizationId, 'command-dock');
     dock.setFocused(true);
     dock.expand('medium');
     playStudioOrbSound('conversation-open');
-  }, [dock]);
+  }, [dock, organizationId]);
 
   const openPageGuide = useCallback(() => {
     setRadialOpen(false);
@@ -122,16 +130,27 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
     playStudioOrbSound('conversation-open');
   }, []);
 
+  const openVoiceMode = useCallback(() => {
+    setRadialOpen(false);
+    setActiveSurface('voice-mode');
+    if (organizationId) startConversationSession(organizationId, 'voice-mode');
+    playStudioOrbSound('conversation-open');
+  }, [organizationId]);
+
   const closeSurface = useCallback(() => {
     if (activeSurface === 'command-dock') {
       dock.dismiss();
+    }
+    if (activeSurface === 'voice-mode') {
+      stopVoiceListening();
+      if (organizationId) endConversationSession(organizationId);
     }
     setActiveSurface(null);
     setRadialOpen(false);
     if (activeSurface) {
       playStudioOrbSound('conversation-close');
     }
-  }, [activeSurface, dock]);
+  }, [activeSurface, dock, organizationId]);
 
   const toggleRadial = useCallback(() => {
     if (activeSurface) {
@@ -167,6 +186,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       openCommandDock,
       openPageGuide,
       openLifeCulture,
+      openVoiceMode,
       closeSurface,
       completeAwakening,
     }),
@@ -184,6 +204,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       openCommandDock,
       openPageGuide,
       openLifeCulture,
+      openVoiceMode,
       closeSurface,
       completeAwakening,
     ]
@@ -212,5 +233,10 @@ export function useStudioOrbOptional(): StudioOrbContextValue | null {
 /** True when conversation or guide mode should dim the page environment. */
 export function useStudioOrbEnvironmentActive(): boolean {
   const ctx = useStudioOrbOptional();
-  return Boolean(ctx?.conversationMode || ctx?.activeSurface === 'page-guide' || ctx?.activeSurface === 'life-culture');
+  return Boolean(
+    ctx?.conversationMode ||
+      ctx?.activeSurface === 'page-guide' ||
+      ctx?.activeSurface === 'life-culture' ||
+      ctx?.activeSurface === 'voice-mode'
+  );
 }

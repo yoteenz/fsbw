@@ -66,6 +66,7 @@ function main() {
   const experienceArchitecture = readYaml(path.join(SPEC_DIR, 'experience-architecture.yaml'));
   const releaseChannelSystem = readYaml(path.join(SPEC_DIR, 'release-channel-system.yaml'));
   const constitutionalAmendments = readYaml(path.join(SPEC_DIR, 'constitutional-amendments.yaml'));
+  const productRoadmap = readYaml(path.join(SPEC_DIR, 'product-roadmap.yaml'));
   const foundationBaseline = readYaml(path.join(SPEC_DIR, 'foundation-baseline.yaml'));
   const volumes = readYaml(path.join(SPEC_DIR, 'volumes.yaml'));
   const designRevisions = readYaml(path.join(SPEC_DIR, 'design-revisions.yaml'));
@@ -96,6 +97,7 @@ function main() {
     experienceArchitecture,
     releaseChannelSystem,
     constitutionalAmendments,
+    productRoadmap,
     foundationBaseline,
     volumes: volumes?.volumes ?? [],
     chapters,

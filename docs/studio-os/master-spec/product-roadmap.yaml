@@ -1,0 +1,148 @@
+# Studio OS Product Roadmap — governed expansion (Product Phase)
+version: '1.0.0'
+phase: product
+updatedAt: '2026-07-07'
+foundationVersion: '1.1.0'
+policy: >-
+  Volumes VI–XIX are governed roadmaps. Chapters are authored only when an active
+  product requires Master Spec additions. Product development drives specification.
+
+volumeRoadmapPolicy:
+  volumesVIThroughXIX: governed-roadmap
+  sequentialAuthoring: paused
+  chapterAuthoringTrigger: active-product-requirement
+
+productLifecycle:
+  - product-vision
+  - ux-ui-design
+  - experience-prototype
+  - technical-architecture
+  - master-spec-additions
+  - implementation
+  - qa
+  - launch
+  - governance-registration
+
+priorities:
+  - id: priority-1
+    title: Studio Intelligence Presence
+    status: active
+    minimumReleaseChannel: preview
+    products:
+      - id: studio-orb
+        title: Studio Orb™
+        milestoneId: M89.1
+        moduleId: studio-orb
+        lifecycleStage: implementation
+        releaseChannel: preview
+      - id: conversation-engine
+        title: Conversation Engine™
+        milestoneId: M89.3
+        moduleId: conversation-engine
+        lifecycleStage: implementation
+        releaseChannel: preview
+        note: Orchestrates Orb surfaces, Command Dock sessions, and conversation turns.
+      - id: voice-mode
+        title: Voice Mode™
+        milestoneId: M89.2
+        moduleId: voice-mode
+        lifecycleStage: implementation
+        releaseChannel: preview
+      - id: awakening-experience
+        title: Awakening Experience™
+        milestoneId: M89.4
+        moduleId: awakening-sequence
+        lifecycleStage: implementation
+        releaseChannel: preview
+
+  - id: priority-2
+    title: Creative & Publishing
+    status: queued
+    minimumReleaseChannel: preview
+    products:
+      - id: website-builder
+        title: Website Builder / Experience Studio™
+        milestoneId: M127.10
+        lifecycleStage: product-vision
+      - id: campaign-engine
+        title: Campaign Engine™
+        lifecycleStage: experience-prototype
+      - id: publishing-studio
+        title: Publishing Studio™
+        lifecycleStage: product-vision
+
+  - id: priority-3
+    title: Intelligence Headquarters
+    status: queued
+    minimumReleaseChannel: beta
+    products:
+      - id: relationship-intelligence
+        title: Relationship Intelligence™
+        volumeId: volume-vi
+        milestoneRange: M165-M172
+        lifecycleStage: governed-roadmap
+      - id: knowledge-graph-ui
+        title: Knowledge Graph UI™
+        lifecycleStage: product-vision
+      - id: executive-headquarters
+        title: Executive Headquarters™
+        milestoneId: M127.13
+        lifecycleStage: governed-roadmap
+
+governedVolumeRoadmaps:
+  - volumeId: volume-vi
+    title: Relationship Intelligence
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-vii
+    title: Memory Infrastructure
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-viii
+    title: Financial Intelligence
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-ix
+    title: Communication Infrastructure
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-x
+    title: Automation Marketplace
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-xi
+    title: Studio OS Platform
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-xii
+    title: Reputation Infrastructure
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-xiii
+    title: Studio Economy
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-xiv
+    title: Governance
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-xv
+    title: Intelligence Research
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-xvi
+    title: Studio Worlds
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-xvii
+    title: Multi-Organization Network
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-xviii
+    title: Wisdom Engine
+    status: roadmap
+    authoring: paused-until-product
+  - volumeId: volume-xix
+    title: Studio DNA
+    status: roadmap
+    authoring: paused-until-product

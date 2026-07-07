@@ -29,7 +29,11 @@ Design revision (not a new milestone). Replaces the permanently visible bottom C
 ## Voice & sound
 
 - `studioOrbSounds.ts` — luxury sound hooks · **disabled by default**
-- Radial menu reserves Voice Mode slot for future permanent voice home
+- **Voice Mode™** — radial menu action · `StudioOrbVoicePanel` · routes through Conversation Engine™
+
+## Conversation Engine™
+
+Sessions orchestrate Command Dock, Voice Mode, and future surfaces — see `conversation-engine.md`.
 
 ## Philosophy
 

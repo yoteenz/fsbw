@@ -10,7 +10,7 @@ export type StudioOrbPresenceState =
   | 'launch'
   | 'emergency';
 
-export type StudioOrbSurface = 'command-dock' | 'page-guide' | 'life-culture' | null;
+export type StudioOrbSurface = 'command-dock' | 'page-guide' | 'life-culture' | 'voice-mode' | null;
 
 export type StudioOrbPosition = {
   bottom: number;
@@ -45,7 +45,7 @@ export const STUDIO_ORB_RADIAL_ACTIONS: StudioOrbRadialAction[] = [
   { id: 'page-guide', label: 'Page Guide', icon: '📖', enabled: true },
   { id: 'life-culture', label: 'Life & Culture', icon: '✦', enabled: true },
   { id: 'notifications', label: 'Notifications', icon: '🔔', enabled: false, hint: 'Soon' },
-  { id: 'voice', label: 'Voice Mode', icon: '🎙', enabled: false, hint: 'Soon' },
+  { id: 'voice', label: 'Voice Mode', icon: '🎙', enabled: true },
   { id: 'search', label: 'Search', icon: '🔍', enabled: false, hint: 'Soon' },
   { id: 'presentation', label: 'Presentation', icon: '◻', enabled: false, hint: 'Soon' },
   { id: 'founder-mode', label: 'Founder Mode', icon: '★', enabled: false, hint: 'Soon' },
