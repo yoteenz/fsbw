@@ -56,7 +56,7 @@ export function CreativeDirectionStrip({
     >
       <div>
         <p style={{ ...nrLabel, fontFamily: '"Futura PT Medium"', color: NR.indigo, fontSize: '6px' }}>
-          CREATIVE DIRECTION STUDIO™ · ABOVE PRODUCTION ENGINE
+          EXECUTIVE CREATIVE DIRECTOR · STUDIO ORB · CANONICAL CREATIVE INTENT
         </p>
         <p style={{ ...nrLabel, fontFamily: '"Futura PT Medium"', color: NR.black, fontSize: '7px' }}>
           {snapshot.branchName.toUpperCase()} · {snapshot.northStar.slice(0, compact ? 72 : 140)}

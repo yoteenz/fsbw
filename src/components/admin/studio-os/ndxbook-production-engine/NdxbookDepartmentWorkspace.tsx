@@ -7,6 +7,8 @@ import type { InstagramConnectionStatus } from '../../../../studio-os-core/ndxbo
 import { ndxbookSocialAccountsQuickLink } from '../ndxbook-mission-control/ndxbookMissionActionRoutes';
 import { NR, nrLabel, nrPanel, nrSectionTitle } from '../ndxbook-newsroom/ndxbookNewsroomTheme';
 import { adminStudioNdxbookNewsroomDepartmentPath } from '../../../../utils/adminStudioRoutes';
+import { DepartmentArrivalPanel } from '../experience-dna/HeadquartersExperiencePanels';
+import { getDepartmentDestination } from '../../../../studio-os-core/experience-dna';
 import { FounderNotesReviewBrief } from './FounderNotesPanel';
 
 type ReviewDim = {
@@ -37,7 +39,9 @@ function InstructionBlock({
   } | null;
 }) {
   return (
-    <div className="p-3 mb-3 border" style={{ ...nrPanel, borderLeft: `4px solid ${NR.accent}` }}>
+    <div>
+      <DepartmentArrivalPanel departmentId={department.id} />
+      <div className="p-3 mb-3 border" style={{ ...nrPanel, borderLeft: `4px solid ${NR.accent}` }}>
       <p style={nrSectionTitle}>{department.name}</p>
       {creativeSnapshot ? (
         <p style={{ ...nrLabel, fontSize: '6px', color: NR.indigo, marginBottom: 6 }}>
@@ -61,8 +65,9 @@ function InstructionBlock({
         {department.prerequisites}
       </p>
       <p style={{ ...nrLabel, marginTop: 4, color: NR.indigo }}>
-        Exit artifact · {department.exitArtifact}
+        Exit artifact · {department.exitArtifact} · Hand off to next building when ready
       </p>
+      </div>
     </div>
   );
 }
@@ -83,6 +88,11 @@ function ContinueBar({
   blockReason?: string;
 }) {
   const next = nextProductionDepartment(departmentId);
+  const nextDest = next ? getDepartmentDestination(next) : null;
+  const dispatchLabel =
+    continueLabel.startsWith('CONTINUE') && nextDest
+      ? `DISPATCH TO ${nextDest.buildingName.toUpperCase()} →`
+      : continueLabel;
   return (
     <div className="mt-4 p-3 border flex flex-wrap items-center gap-2" style={{ borderColor: NR.panelBorder }}>
       {blockReason ? (
@@ -100,11 +110,11 @@ function ContinueBar({
           background: canContinue ? 'rgba(15,23,42,0.06)' : 'transparent',
         }}
       >
-        {busy ? '…' : continueLabel}
+        {busy ? '…' : dispatchLabel}
       </button>
-      {next ? (
+      {nextDest ? (
         <p style={{ ...nrLabel, fontSize: '6px' }}>
-          Next room · {next.toUpperCase()} DEPARTMENT
+          Next building · {nextDest.buildingName} · {next?.toUpperCase()} DEPARTMENT
         </p>
       ) : null}
     </div>

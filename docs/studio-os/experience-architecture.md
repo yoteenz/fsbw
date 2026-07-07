@@ -48,5 +48,9 @@ DR-001 through DR-004 are **merged** into this document and canonical milestones
 
 M89.x Orb UI and M128 immersive Executive Strategy Floor UI are **intentionally deferred** — architecture is frozen; implementation resumes in Phase 4.
 
+## Experience amendment (2026-07-07)
+
+**Living Creative Headquarters Experience™** — canonical experiential philosophy: Studio OS is **not** productivity software, a dashboard, or pages. Founders run a **luxury creative headquarters** (The Movies · The Sims · Watch Dogs · Xbox principles). Full spec: **[living-creative-headquarters-experience.md](./living-creative-headquarters-experience.md)**. Code: **`src/studio-os-core/experience-dna/`**.
+
 ---
 _Foundation v1.0 — Foundation Completion Sprint™_

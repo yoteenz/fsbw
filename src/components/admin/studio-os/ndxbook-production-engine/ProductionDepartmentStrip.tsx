@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react';
 import { Link } from 'react-router-dom';
 import type { ProductionDepartmentId, ProductionDepartmentStatus } from '../../../../studio-os-core/content-pipeline/departments';
 import { PRODUCTION_DEPARTMENTS } from '../../../../studio-os-core/content-pipeline/departments';
+import { getDepartmentDestination } from '../../../../studio-os-core/experience-dna';
 import { adminStudioNdxbookNewsroomDepartmentPath } from '../../../../utils/adminStudioRoutes';
 import { NR, nrLabel } from '../ndxbook-newsroom/ndxbookNewsroomTheme';
 
@@ -44,19 +45,26 @@ function stripStyle(status: ProductionDepartmentStatus, isCurrent: boolean): CSS
 }
 
 export function ProductionDepartmentStrip({ statuses, currentId }: Props) {
+  const currentDest = getDepartmentDestination(currentId);
+  const completed = Object.values(statuses).filter((s) => s === 'complete').length;
+
   return (
     <div className="mb-3 p-2 border" style={{ borderColor: NR.panelBorder, background: 'rgba(255,255,255,0.72)' }}>
-      <p style={{ ...nrLabel, fontFamily: '"Futura PT Medium"', color: NR.black, marginBottom: 8 }}>
-        STUDIO PRODUCTION ENGINE™ · PAGE 001
+      <p style={{ ...nrLabel, fontFamily: '"Futura PT Medium"', color: NR.black, marginBottom: 4 }}>
+        STUDIO LOT · PRODUCTION WING · PAGE 001 IN TRANSIT
+      </p>
+      <p style={{ ...nrLabel, fontSize: '5px', color: NR.gray, marginBottom: 8 }}>
+        {completed}/10 buildings cleared · now at {currentDest.buildingName} · {currentDest.lotZone}
       </p>
       <div className="flex gap-1 overflow-x-auto pb-1">
         {PRODUCTION_DEPARTMENTS.map((dept) => {
           const status = statuses[dept.id];
           const isCurrent = dept.id === currentId;
           const locked = status === 'locked';
+          const dest = getDepartmentDestination(dept.id);
           const inner = (
             <div
-              className="px-2 py-1.5 border text-center min-w-[72px]"
+              className="px-2 py-1.5 border text-center min-w-[80px]"
               style={{
                 ...stripStyle(status, isCurrent),
                 fontFamily: '"Futura PT Medium"',
@@ -67,6 +75,7 @@ export function ProductionDepartmentStrip({ statuses, currentId }: Props) {
             >
               <p>{String(dept.number).padStart(2, '0')}</p>
               <p className="mt-0.5">{dept.shortName}</p>
+              <p className="mt-0.5 text-[4px] opacity-80">{dest.buildingName}</p>
               {status === 'complete' ? <p className="mt-0.5 text-[4px]">✓</p> : null}
               {locked ? <p className="mt-0.5 text-[4px]">🔒</p> : null}
             </div>
@@ -84,7 +93,7 @@ export function ProductionDepartmentStrip({ statuses, currentId }: Props) {
             <Link
               key={dept.id}
               to={adminStudioNdxbookNewsroomDepartmentPath(dept.id)}
-              title={dept.tagline}
+              title={`${dest.buildingName} · ${dept.tagline}`}
               className="shrink-0"
             >
               {inner}
@@ -93,7 +102,7 @@ export function ProductionDepartmentStrip({ statuses, currentId }: Props) {
         })}
       </div>
       <p style={{ ...nrLabel, fontSize: '6px', marginTop: 6 }}>
-        {PRODUCTION_DEPARTMENTS.find((d) => d.id === currentId)?.tagline ?? ''}
+        {currentDest.arrivalLine}
       </p>
     </div>
   );

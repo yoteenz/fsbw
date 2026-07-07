@@ -29,6 +29,7 @@ import { FounderNotesPanel } from './FounderNotesPanel';
 import { CreativeDirectionStrip } from '../creative-direction-studio/CreativeDirectionStudioWorkspace';
 import { useCreativeDirectionStudio } from '../../../../hooks/useCreativeDirectionStudio';
 import { syncFounderNotesToCreativeDirection } from '../../../../studio-os-core/creative-direction-studio';
+import { StudioDirectorBanner } from '../experience-dna/HeadquartersExperiencePanels';
 
 function defaultScheduleLaterToday(): string {
   const d = new Date();
@@ -218,6 +219,8 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
       </nav>
 
       <ProductionDepartmentStrip statuses={statuses} currentId={activeDept} />
+
+      <StudioDirectorBanner projectLabel="PAGE 001" currentDepartment={activeDept} statuses={statuses} />
 
       <CreativeDirectionStrip currentDepartment={activeDept} />
 

@@ -4,9 +4,11 @@
 
 **Type:** Workflow + information architecture (not a Design Revision · not a new milestone · not implementation)
 
-**Status:** Governing standard before engineering begins
+**Status:** Governing standard — department UI shipped Page 001 pilot · [Living Creative Headquarters Experience™](./living-creative-headquarters-experience.md) defines experiential canon
 
-**Relationship:** Implements [Master Content Pipeline™](./master-content-pipeline.md) as **physical departments** inside Studio Headquarters — not stacked sections on one page.
+**Experience DNA:** Projects **travel the studio lot** — departments are **buildings**, not pages. Founder = Studio Director · Studio Orb = Executive Creative Director · Concierge = Department Head · Asset = protagonist in transit.
+
+**Relationship:** Implements [Master Content Pipeline™](./master-content-pipeline.md) as **physical departments** inside Studio Headquarters — not stacked sections on one page. Sits **below** [Creative Direction Studio™](./creative-direction-studio.md).
 
 ---
 

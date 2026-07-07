@@ -44,6 +44,8 @@ Creative direction is **continuous**, not locked at project creation.
 
 Studio OS **embraces evolution** instead of treating it as disruption.
 
+**Experience DNA:** Creative Direction Studio is the **Executive Creative Director layer** (Studio Orb) above the lot — not a form, not a settings page. See [Living Creative Headquarters Experience™](./living-creative-headquarters-experience.md).
+
 ---
 
 ## Workspace contents

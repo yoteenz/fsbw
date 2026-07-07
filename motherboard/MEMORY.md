@@ -40246,3 +40246,17 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Storage:** `studioOsCreativeDirection_v1`.
 
 **Conventions:** Creative direction is continuous — never locked after creation. All future Studio OS creative workflows inherit Creative Direction Studio as canonical intent layer.
+
+---
+
+## 2026-07-07 — Living Creative Headquarters Experience™ (Experience DNA amendment)
+
+**Context (full chat arc):** Page 001 pipeline evolution — department UI · Founder Notes · Creative Direction Studio (`37185b0d`). User issued **Architectural Experience Amendment** — core experiential inspiration evolved: Studio OS must **not** feel like productivity software, dashboard, or pages; instead **living creative headquarters** inspired by **The Movies** (projects travel departments · meaningful work), **The Sims** (ownership · alive · evolves), **Watch Dogs** (ambient intelligence · overlays in environment), **Xbox** (progress psychology · milestones · unlocks · mastery — executive tone). **Roles:** Founder = Studio Director · Studio Orb = Executive Creative Director · Concierge = Department Head · Project/Master Asset = protagonist. Philosophy permeates Experience DNA · Creative Direction Studio · Studio Production Engine · all future products.
+
+**Decisions / outcomes:**
+- **Canonical experience doc:** `docs/studio-os/living-creative-headquarters-experience.md` — anti-patterns · principles · role map · building destinations.
+- **Core module:** `src/studio-os-core/experience-dna/` — types, `departmentDestinations.ts` (10 buildings with atmosphere · arrival lines · ambient overlays · milestones), mastery tiers, studio roles.
+- **UI (Page 001 pilot):** `StudioDirectorBanner` · `DepartmentArrivalPanel` · lot strip shows building names + clearance count · Continue → **DISPATCH TO [building]** · Creative Direction strip frames Studio Orb as Executive Creative Director.
+- **Docs updated:** `studio-production-engine.md`, `creative-direction-studio.md`, `experience-architecture.md`, **`motherboard/CORE.md`**.
+
+**Conventions:** Departments are **destinations on a studio lot**, never pages. Movement · progression · ownership · momentum — not forms.
