@@ -1,15 +1,2 @@
-export * from './constants';
-export * from './types';
-export * from './registry-builder';
-export * from './registration';
-export * from './version-history';
-export * from './health-dashboard';
-export * from './walkthrough-sync';
-export * from './academy-sync';
-export * from './smart-search';
-export * from './contextual-docs';
-export * from './auto-sync';
-export * from './registry-profile-builder';
-export * from './store';
-export * from './dock-advisor';
-export * from './bootstrap';
+/** @deprecated Use studio-os-core/knowledge-registry — Studio OS Knowledge Registry™ */
+export * from '../knowledge-registry';

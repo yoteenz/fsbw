@@ -1,0 +1,44 @@
+# Design Revisions — merge into existing systems (not standalone products)
+version: '1.0.0'
+updatedAt: '2026-07-07'
+
+designRevisions:
+  - id: DR-001
+    canonicalId: DR-001
+    title: Studio Orb™, Conversation Mode™, Command Dock Reimagined
+    purpose: Replace persistent dock with Studio Orb™, Awakening Sequence™, ambient presence, radial menu, Conversation Mode™, intelligent positioning, luxury sound architecture, and Voice foundation.
+    implementationStatus: planned
+    volumeId: volume-i
+    mergeTargets: [studio-orb, command-dock, voice-mode]
+    dependsOn: [M129, M130, M131, DR-004]
+    enables: [DR-002]
+
+  - id: DR-002
+    canonicalId: DR-002
+    title: Headquarters Experience™ V2
+    purpose: Transform Headquarters from dashboard into immersive Executive Lobby™, Company Pulse™, Operations Wing™, Knowledge Wing™, Financial Wing™, Innovation Wing™, and Legacy Wing™.
+    implementationStatus: in-progress
+    volumeId: volume-i
+    mergeTargets: [mission-control, headquarters, executive-information-architecture]
+    dependsOn: [M129, M130, DR-001]
+    enables: [DR-003]
+
+  - id: DR-003
+    canonicalId: DR-003
+    title: Living Headquarters™ / Environmental Storytelling
+    purpose: Headquarters evolves with seasons, anniversaries, milestones, Legacy Wall™, Executive Collection™, and meaningful memories.
+    implementationStatus: planned
+    volumeId: volume-i
+    mergeTargets: [mission-control, living-headquarters, legacy-vault]
+    dependsOn: [DR-002, M106]
+    enables: []
+
+  - id: DR-004
+    canonicalId: DR-004
+    title: Emotional Intelligence™ + Life & Culture Preferences™
+    purpose: Orb settings for respectful cultural, holiday, sensitive date, celebration, communication, tone, accessibility, and privacy preferences.
+    implementationStatus: in-progress
+    volumeId: volume-i
+    mergeTargets: [studio-orb, identity-graph, command-dock]
+    dependsOn: [volume-0]
+    enables: [DR-001]

@@ -939,7 +939,7 @@ export function syncDockContext(pathname: string): DockContextProfile {
       ? systemRegistryProactive
       : pathname.includes('/documentation-governance') && documentationGovernanceProactive
       ? documentationGovernanceProactive
-      : pathname.includes('/documentation-registry') && documentationRegistryProactive
+      : pathname.includes('/knowledge-registry') || (pathname.includes('/documentation-registry') && documentationRegistryProactive)
       ? documentationRegistryProactive
       : pathname.includes('/knowledge-hub') && documentationGovernanceProactive
       ? documentationGovernanceProactive

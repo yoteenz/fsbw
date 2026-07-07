@@ -2,7 +2,7 @@ import { ADMIN_STUDIO_BASE_PATH } from '../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_MODULES } from '../../utils/adminStudioNavigation';
 import { STUDIO_OS_CORE_MODULES } from '../core/modules';
 import { DOCUMENTATION_SYSTEM_REGISTRY } from '../documentation-sync/system-registry';
-import { getAllRegistryEntries } from '../documentation-registry/registration';
+import { getAllRegistryEntries } from '../knowledge-registry/registration';
 import type { SystemRegistryCategory, SystemRegistryEntry, SystemLifecycleStatus } from './types';
 
 const PLATFORM_CREATED = '2026-01-01';
@@ -180,7 +180,7 @@ function buildInfrastructureEntries(): SystemRegistryEntry[] {
       officialName: 'Studio Institute Course',
       description: 'Learning product generated from Profession Brain™ and Documentation Registry™.',
       category: 'knowledge-product',
-      dependencies: ['module:studio-institute', 'module:documentation-registry'],
+      dependencies: ['module:studio-institute', 'module:knowledge-registry'],
       status: 'live',
       version: '1.0.0',
     }),
@@ -269,7 +269,7 @@ function buildInfrastructureEntries(): SystemRegistryEntry[] {
   }
 
   const panelModules = [
-    'documentation-registry',
+    'knowledge-registry',
     'documentation-governance',
     'studio-foundation-models',
     'model-orchestrator',
@@ -353,10 +353,10 @@ export function buildSystemRegistry(): SystemRegistryEntry[] {
       officialName: 'System Registry™',
       description: 'Master registry of every object, service, module, feature, and system inside Studio OS.',
       category: 'module',
-      dependencies: ['module:documentation-governance', 'module:documentation-registry'],
+      dependencies: ['module:documentation-governance', 'module:knowledge-registry'],
       status: 'live',
       version: 'M127',
-      relatedSystems: ['module:documentation-registry', 'module:command-dock', 'module:studio-intelligence'],
+      relatedSystems: ['module:knowledge-registry', 'module:command-dock', 'module:studio-intelligence'],
       documentation: ['docs/studio-os/system-registry.md'],
       route: `${ADMIN_STUDIO_BASE_PATH}/system-registry`,
       moduleId: 'system-registry',

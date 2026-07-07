@@ -1,0 +1,90 @@
+# Master Specification dependency graph (import order + hard deps)
+version: '1.0.0'
+updatedAt: '2026-07-07'
+
+edges:
+  - from: volume-0
+    to: M125
+    type: enables
+
+  - from: M125
+    to: M126
+    type: enables
+
+  - from: M126
+    to: M126.5
+    type: enables
+
+  - from: M126.5
+    to: M127
+    type: enables
+
+  - from: M127
+    to: M129
+    type: enables
+
+  - from: M129
+    to: M130
+    type: enables
+
+  - from: M130
+    to: M131
+    type: enables
+
+  - from: M131
+    to: DR-001
+    type: enables
+
+  - from: DR-004
+    to: DR-001
+    type: enables
+
+  - from: DR-001
+    to: DR-002
+    type: enables
+
+  - from: DR-002
+    to: DR-003
+    type: enables
+
+  - from: M154
+    to: M158
+    type: chain
+
+  - from: M158
+    to: M162-spec-qa
+    type: chain
+    note: Engineering Excellence gates production
+
+  - from: M90
+    to: M91
+    type: enables
+
+  - from: M91
+    to: M92
+    type: enables
+
+  - from: M122
+    to: M123
+    type: enables
+
+  - from: M159
+    to: M160
+    type: enables
+    note: canonical Volume V identity chain
+
+  - from: M160
+    to: M161
+    type: enables
+
+  - from: M161
+    to: M162
+    type: enables
+
+  - from: M162
+    to: M163
+    type: enables
+
+  - from: M163
+    to: M164
+    type: enables

@@ -44,6 +44,7 @@ export type StudioOsBrandSystemId =
   | 'studio-intelligence-architecture'
   | 'model-orchestrator'
   | 'studio-foundation-models'
+  | 'knowledge-registry'
   | 'documentation-registry'
   | 'documentation-governance'
   | 'system-registry'
@@ -130,6 +131,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'studio-intelligence-architecture': 'The organization is the intelligence. Models assist.',
   'model-orchestrator': 'Models change. Studio Intelligence™ remains.',
   'studio-foundation-models': 'General models know the world. Studio Models™ know organizations.',
+  'knowledge-registry': 'The architectural brain. One Master Specification — infinite consumers.',
   'documentation-registry': 'One source. Infinite knowledge. Always synchronized.',
   'documentation-governance': 'Documentation is living organizational knowledge — always accurate, always connected.',
   'system-registry': 'Nothing exists anonymously. The operating system always knows what exists.',

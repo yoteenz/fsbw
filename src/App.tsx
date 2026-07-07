@@ -214,6 +214,10 @@ const AdminStudioStudioFoundationModels = lazyWithRetry(
   () => import('./pages/admin/studio/studio-foundation-models/page'),
   'AdminStudioStudioFoundationModels'
 );
+const AdminStudioKnowledgeRegistry = lazyWithRetry(
+  () => import('./pages/admin/studio/knowledge-registry/page'),
+  'AdminStudioKnowledgeRegistry'
+);
 const AdminStudioDocumentationRegistry = lazyWithRetry(
   () => import('./pages/admin/studio/documentation-registry/page'),
   'AdminStudioDocumentationRegistry'
@@ -1632,6 +1636,11 @@ function App() {
           <Route path="studio/studio-foundation-models" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioStudioFoundationModels />
+            </Suspense>
+          } />
+          <Route path="studio/knowledge-registry" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioKnowledgeRegistry />
             </Suspense>
           } />
           <Route path="studio/documentation-registry" element={

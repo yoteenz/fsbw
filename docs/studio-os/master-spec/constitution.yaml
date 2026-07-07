@@ -1,0 +1,29 @@
+# Volume 0 — Studio OS Constitution™
+version: '1.0.0'
+updatedAt: '2026-07-07'
+
+principles:
+  - id: constitution-platform
+    title: Organizational Intelligence Platform
+    summary: Studio OS is an Organizational Intelligence Platform, not a generic SaaS dashboard.
+  - id: constitution-intelligence-layer
+    title: Studio Intelligence™ Owns the Layer
+    summary: AI models are replaceable reasoning engines; Studio Intelligence™ owns the intelligence layer.
+  - id: constitution-headquarters
+    title: Living Digital Headquarters
+    summary: Every organization receives a living, profession-specific digital headquarters.
+  - id: constitution-registry-driven
+    title: Registry-Driven Objects
+    summary: Every important object must be registry-driven, searchable, documented, auditable, and QA-gated.
+  - id: constitution-ux
+    title: Premium Immersive UX
+    summary: UX should feel immersive, calm, premium, white/light, glass/acrylic, architectural, and comprehensive.
+  - id: constitution-life-culture
+    title: Life & Culture Preferences™
+    summary: Personalization must be respectful — Life & Culture Preferences™ prevent assumptions around holidays, grief, culture, celebration, tone, and sensitivity.
+  - id: constitution-qa-gate
+    title: No Release Without Checks
+    summary: No production release ships without design, experience, accessibility, prompt, performance, regression, trust, and documentation checks.
+  - id: constitution-single-source
+    title: Single Source of Truth
+    summary: The Master Specification is the single source of truth — Volumes, milestones, and design revisions exist exactly once and are referenced everywhere.

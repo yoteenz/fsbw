@@ -1,0 +1,95 @@
+# Canonical (Master Spec) ↔ Shipped (codebase) milestone reconciliation
+version: '1.0.0'
+updatedAt: '2026-07-07'
+notes: >
+  Shipped badges remain visible in user-facing navigation.
+  Canonical IDs appear only in engineering-facing surfaces
+  (Knowledge Registry™, System Registry™, Engineering Dashboard™, Roadmap™, QA views).
+
+aliases:
+  # Volume V Identity — canonical vs shipped offset (+4 from QA chain insertion)
+  - canonicalId: M159
+    shippedId: M163
+    name: Identity Graph™
+    moduleId: identity-graph
+    reason: M159–M162 assigned to QA chain (Performance Monitor through Engineering Excellence)
+
+  - canonicalId: M160
+    shippedId: M164
+    name: Professional Profile™
+    moduleId: professional-profile
+
+  - canonicalId: M161
+    shippedId: M165
+    name: Skill Graph™
+    moduleId: skill-graph
+
+  - canonicalId: M162
+    shippedId: M166
+    name: Role Intelligence™
+    moduleId: role-intelligence
+
+  - canonicalId: M163
+    shippedId: M167
+    name: Organizational Hierarchy™
+    moduleId: organizational-hierarchy
+
+  - canonicalId: M164
+    shippedId: M168
+    name: Identity Timeline™
+    moduleId: identity-timeline
+
+  # QA / Trust chain — canonical M154–M158 maps to shipped M159–M162
+  - canonicalId: M154
+    shippedId: M154
+    name: Design Compliance Engine™
+    moduleId: design-compliance-engine
+
+  - canonicalId: M155
+    shippedId: M155
+    name: Prompt QA™
+    moduleId: prompt-qa
+
+  - canonicalId: M156
+    shippedId: M156
+    name: Experience QA™
+    moduleId: experience-qa
+
+  - canonicalId: M157
+    shippedId: M157
+    name: Visual Diff Engine™
+    moduleId: visual-diff-engine
+
+  - canonicalId: M158
+    shippedId: M158
+    name: Accessibility Auditor™
+    moduleId: accessibility-auditor
+
+  - canonicalId: M159-spec-qa
+    shippedId: M159
+    name: Performance Monitor™
+    moduleId: performance-monitor
+    reason: Shipped M159; canonical Volume V M159 is Identity Graph (see alias above)
+
+  - canonicalId: M160-spec-qa
+    shippedId: M160
+    name: Regression Engine™
+    moduleId: regression-engine
+
+  - canonicalId: M161-spec-qa
+    shippedId: M161
+    name: Release Readiness™
+    moduleId: release-readiness
+
+  - canonicalId: M162-spec-qa
+    shippedId: M162
+    name: Engineering Excellence Dashboard™
+    moduleId: engineering-excellence-dashboard
+
+  # Knowledge Registry rename
+  - canonicalId: M126
+    shippedId: M126
+    name: Studio OS Knowledge Registry™
+    moduleId: knowledge-registry
+    formerName: Documentation Registry™
+    formerModuleId: documentation-registry

@@ -7,7 +7,7 @@ import {
   querySystemRegistry,
 } from '../../../../studio-os-core/system-registry';
 import {
-  adminStudioDocumentationRegistryPath,
+  adminStudioKnowledgeRegistryPath,
   adminStudioMissionControlPath,
 } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
@@ -76,8 +76,8 @@ export function SystemRegistryWorkspace() {
           {profile.dockRegistryLine}
         </p>
       </ExecutiveSecondaryCard>
-      <button type="button" onClick={() => navigate(adminStudioDocumentationRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: SYSTEM_REGISTRY_ACCENT, color: SYSTEM_REGISTRY_ACCENT }}>
-        DOCUMENTATION REGISTRY →
+      <button type="button" onClick={() => navigate(adminStudioKnowledgeRegistryPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: SYSTEM_REGISTRY_ACCENT, color: SYSTEM_REGISTRY_ACCENT }}>
+        KNOWLEDGE REGISTRY™ →
       </button>
       <button type="button" onClick={() => navigate(adminStudioMissionControlPath())} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}>
         MISSION CONTROL →

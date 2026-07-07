@@ -77,7 +77,7 @@ import { MissionControlLegacyNetworkPanel } from './MissionControlLegacyNetworkP
 import { MissionControlStudioIntelligenceArchitecturePanel } from './MissionControlStudioIntelligenceArchitecturePanel';
 import { MissionControlModelOrchestratorPanel } from './MissionControlModelOrchestratorPanel';
 import { MissionControlStudioFoundationModelsPanel } from './MissionControlStudioFoundationModelsPanel';
-import { MissionControlDocumentationRegistryPanel } from './MissionControlDocumentationRegistryPanel';
+import { MissionControlKnowledgeRegistryPanel } from './MissionControlKnowledgeRegistryPanel';
 import { MissionControlDocumentationGovernancePanel } from './MissionControlDocumentationGovernancePanel';
 import { MissionControlSystemRegistryPanel } from './MissionControlSystemRegistryPanel';
 import { MissionControlComponentRegistryPanel } from './MissionControlComponentRegistryPanel';
@@ -596,7 +596,7 @@ export function MissionControlWorkspace() {
               <MissionControlStudioIntelligenceArchitecturePanel />
               <MissionControlModelOrchestratorPanel />
               <MissionControlStudioFoundationModelsPanel />
-              <MissionControlDocumentationRegistryPanel />
+              <MissionControlKnowledgeRegistryPanel />
               <MissionControlDocumentationGovernancePanel />
               <MissionControlSystemRegistryPanel />
               <MissionControlComponentRegistryPanel />

@@ -1,0 +1,1296 @@
+version: 1.0.0
+milestones:
+  - canonicalId: M165
+    name: Relationship Graph™
+    internalId: relationship-graph
+    registryKind: milestone
+    volumeId: volume-vi
+    purpose: >-
+      Maps relationships among people, organizations, customers, vendors, and
+      partners.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M166
+    name: Partner Network™
+    internalId: partner-network
+    registryKind: milestone
+    volumeId: volume-vi
+    purpose: >-
+      Manages trusted collaborators, agencies, service providers, and referral
+      partners.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M167
+    name: Vendor Network™
+    internalId: vendor-network
+    registryKind: milestone
+    volumeId: volume-vi
+    purpose: >-
+      Tracks suppliers, vendors, contracts, reliability, and relationship
+      health.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M168
+    name: Referral Intelligence™
+    internalId: referral-intelligence
+    registryKind: milestone
+    volumeId: volume-vi
+    purpose: >-
+      Identifies referral paths, introducers, influence, and warm-network
+      opportunities.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M169
+    name: Customer Relationship Map™
+    internalId: customer-relationship-map
+    registryKind: milestone
+    volumeId: volume-vi
+    purpose: >-
+      Maps customer journeys, touchpoints, preferences, sentiment, and
+      opportunities.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M170
+    name: Family Business Mapping™
+    internalId: family-business-mapping
+    registryKind: milestone
+    volumeId: volume-vi
+    purpose: >-
+      Supports ownership, family roles, succession, and sensitive relationship
+      context.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M171
+    name: Relationship Health™
+    internalId: relationship-health
+    registryKind: milestone
+    volumeId: volume-vi
+    purpose: >-
+      Measures relationship strength, risk, activity, trust, and follow-up
+      needs.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M172
+    name: Relationship Search™
+    internalId: relationship-search
+    registryKind: milestone
+    volumeId: volume-vi
+    purpose: >-
+      Natural-language search across people, organizations, expertise, and
+      connections.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M173
+    name: Memory Timeline™
+    internalId: memory-timeline
+    registryKind: milestone
+    volumeId: volume-vii
+    purpose: >-
+      Chronological memory across conversations, decisions, events, and
+      organizational moments.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M174
+    name: Memory Search™
+    internalId: memory-search
+    registryKind: milestone
+    volumeId: volume-vii
+    purpose: Semantic search across people, projects, documents, and history.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M175
+    name: Conversation Memory™
+    internalId: conversation-memory
+    registryKind: milestone
+    volumeId: volume-vii
+    purpose: >-
+      Preserves context from chats, meetings, calls, and Command Dock
+      conversations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M176
+    name: Decision Memory™
+    internalId: decision-memory
+    registryKind: milestone
+    volumeId: volume-vii
+    purpose: Stores why choices were made, outcomes, and future lessons.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M177
+    name: Workflow Memory™
+    internalId: workflow-memory
+    registryKind: milestone
+    volumeId: volume-vii
+    purpose: Remembers how workflows performed and where they improved or failed.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M178
+    name: Customer Memory™
+    internalId: customer-memory
+    registryKind: milestone
+    volumeId: volume-vii
+    purpose: >-
+      Remembers customer preferences, issues, purchases, and relationship
+      context.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M179
+    name: Department Memory™
+    internalId: department-memory
+    registryKind: milestone
+    volumeId: volume-vii
+    purpose: Each department retains its own operational memory.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M180
+    name: Memory Governance™
+    internalId: memory-governance
+    registryKind: milestone
+    volumeId: volume-vii
+    purpose: Controls retention, privacy, deletion, consent, and access to memory.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M181
+    name: Financial Command Center™
+    internalId: financial-command-center
+    registryKind: milestone
+    volumeId: volume-viii
+    purpose: >-
+      Executive financial overview for revenue, expenses, margin, cash flow, and
+      runway.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M182
+    name: Cash Flow Intelligence™
+    internalId: cash-flow-intelligence
+    registryKind: milestone
+    volumeId: volume-viii
+    purpose: Predicts short-term and long-term cash flow pressure and opportunity.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M183
+    name: Pricing Simulator™
+    internalId: pricing-simulator
+    registryKind: milestone
+    volumeId: volume-viii
+    purpose: Tests pricing changes, bundles, subscriptions, and discount strategies.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M184
+    name: Profitability Engine™
+    internalId: profitability-engine
+    registryKind: milestone
+    volumeId: volume-viii
+    purpose: >-
+      Analyzes margin, product profitability, labor, overhead, and recurring
+      revenue.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M185
+    name: Hiring Simulator™
+    internalId: hiring-simulator
+    registryKind: milestone
+    volumeId: volume-viii
+    purpose: Predicts financial and operational impact of hiring or replacing roles.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M186
+    name: Growth Forecast™
+    internalId: growth-forecast
+    registryKind: milestone
+    volumeId: volume-viii
+    purpose: Forecasts revenue, capacity, demand, staffing, and risks.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M187
+    name: Financial Twin™
+    internalId: financial-twin
+    registryKind: milestone
+    volumeId: volume-viii
+    purpose: Financial simulation model connected to the organization Digital Twin™.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M188
+    name: Financial Guardian™
+    internalId: financial-guardian
+    registryKind: milestone
+    volumeId: volume-viii
+    purpose: Flags financial risk, waste, underpricing, and unsustainable trends.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M189
+    name: Communication Hub™
+    internalId: communication-hub
+    registryKind: milestone
+    volumeId: volume-ix
+    purpose: >-
+      Unified inbox for email, SMS, chat, voice, meetings, and customer
+      messages.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M190
+    name: Voice Mode™
+    internalId: voice-mode
+    registryKind: milestone
+    volumeId: volume-ix
+    purpose: Orb-based voice interaction with Studio Intelligence™.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M191
+    name: Meeting Intelligence™
+    internalId: meeting-intelligence
+    registryKind: milestone
+    volumeId: volume-ix
+    purpose: Summaries, decisions, tasks, memories, and follow-ups from meetings.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M192
+    name: Customer Inbox™
+    internalId: customer-inbox
+    registryKind: milestone
+    volumeId: volume-ix
+    purpose: Central customer communication with history, sentiment, and routing.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M193
+    name: Internal Chat™
+    internalId: internal-chat
+    registryKind: milestone
+    volumeId: volume-ix
+    purpose: Team and Digital Staff communication across departments.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M194
+    name: Broadcast Center™
+    internalId: broadcast-center
+    registryKind: milestone
+    volumeId: volume-ix
+    purpose: Campaigns, announcements, updates, newsletters, alerts, and segmentation.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M195
+    name: Notification Intelligence™
+    internalId: notification-intelligence
+    registryKind: milestone
+    volumeId: volume-ix
+    purpose: Priority-based notifications that protect cognitive load.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M196
+    name: Translation & Localization™
+    internalId: translation-localization
+    registryKind: milestone
+    volumeId: volume-ix
+    purpose: Multilingual communication and localization across organizations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M197
+    name: Automation Store™
+    internalId: automation-store
+    registryKind: milestone
+    volumeId: volume-x
+    purpose: Marketplace for installing approved automations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M198
+    name: Automation Builder™
+    internalId: automation-builder
+    registryKind: milestone
+    volumeId: volume-x
+    purpose: No-code creation of reusable automations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M199
+    name: Automation Certification™
+    internalId: automation-certification
+    registryKind: milestone
+    volumeId: volume-x
+    purpose: QA, trust, security, and safety certification for automations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M200
+    name: Automation Licensing™
+    internalId: automation-licensing
+    registryKind: milestone
+    volumeId: volume-x
+    purpose: Subscription and one-time licensing for automations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M201
+    name: Automation Analytics™
+    internalId: automation-analytics
+    registryKind: milestone
+    volumeId: volume-x
+    purpose: Usage, success, ROI, failures, and improvement recommendations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M202
+    name: Automation Reviews™
+    internalId: automation-reviews
+    registryKind: milestone
+    volumeId: volume-x
+    purpose: Trust, reputation, ratings, and verified outcomes.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M203
+    name: Automation Templates™
+    internalId: automation-templates
+    registryKind: milestone
+    volumeId: volume-x
+    purpose: Reusable templates for common business workflows.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M204
+    name: Automation Revenue Center™
+    internalId: automation-revenue-center
+    registryKind: milestone
+    volumeId: volume-x
+    purpose: Payouts and economics for automation creators.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M205
+    name: Studio OS API™
+    internalId: studio-os-api
+    registryKind: milestone
+    volumeId: volume-xi
+    purpose: Programmable access to core Studio OS systems.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M206
+    name: Developer Console™
+    internalId: developer-console
+    registryKind: milestone
+    volumeId: volume-xi
+    purpose: Manage apps, keys, logs, test environments, and deployments.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M207
+    name: Extension Framework™
+    internalId: extension-framework
+    registryKind: milestone
+    volumeId: volume-xi
+    purpose: Custom pages, panels, commands, widgets, and modules.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M208
+    name: App Marketplace™
+    internalId: app-marketplace
+    registryKind: milestone
+    volumeId: volume-xi
+    purpose: Installable Studio OS apps and extensions.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M209
+    name: Integration Hub™
+    internalId: integration-hub
+    registryKind: milestone
+    volumeId: volume-xi
+    purpose: Third-party services, OAuth, data sync, and connection health.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M210
+    name: Custom Component SDK™
+    internalId: custom-component-sdk
+    registryKind: milestone
+    volumeId: volume-xi
+    purpose: Build reusable components following Studio OS design and QA rules.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M211
+    name: Developer Documentation™
+    internalId: developer-documentation
+    registryKind: milestone
+    volumeId: volume-xi
+    purpose: Self-updating docs for APIs, SDK, plugins, and best practices.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M212
+    name: Platform Governance™
+    internalId: platform-governance
+    registryKind: milestone
+    volumeId: volume-xi
+    purpose: Review, approval, policy, security, and monetization for extensions.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M213
+    name: Reputation Engine™
+    internalId: reputation-engine
+    registryKind: milestone
+    volumeId: volume-xii
+    purpose: Universal reputation layer for organizations, experts, packs, and assets.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M214
+    name: Expert Reputation™
+    internalId: expert-reputation
+    registryKind: milestone
+    volumeId: volume-xii
+    purpose: Tracks expert quality, outcomes, consistency, trust, and credentials.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M215
+    name: Profession Brain Reputation™
+    internalId: profession-brain-reputation
+    registryKind: milestone
+    volumeId: volume-xii
+    purpose: Measures knowledge quality, usefulness, trust, and adoption.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M216
+    name: Organization Reputation™
+    internalId: organization-reputation
+    registryKind: milestone
+    volumeId: volume-xii
+    purpose: Shows contribution quality, marketplace reliability, and legacy impact.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M217
+    name: Automation Reputation™
+    internalId: automation-reputation
+    registryKind: milestone
+    volumeId: volume-xii
+    purpose: Rates automations by reliability, safety, ROI, and completion success.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M218
+    name: Knowledge Product Reputation™
+    internalId: knowledge-product-reputation
+    registryKind: milestone
+    volumeId: volume-xii
+    purpose: Tracks usefulness, adoption, reviews, completion, and revenue.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M219
+    name: Trust Badges™
+    internalId: trust-badges
+    registryKind: milestone
+    volumeId: volume-xii
+    purpose: Verified signals for quality, expertise, compliance, and community trust.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M220
+    name: Reputation Governance™
+    internalId: reputation-governance
+    registryKind: milestone
+    volumeId: volume-xii
+    purpose: Prevents manipulation, spam, unfair reviews, and trust abuse.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M221
+    name: Studio Wallet™
+    internalId: studio-wallet
+    registryKind: milestone
+    volumeId: volume-xiii
+    purpose: Organization wallet for purchases, payouts, subscriptions, and credits.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M222
+    name: Royalty Engine™
+    internalId: royalty-engine
+    registryKind: milestone
+    volumeId: volume-xiii
+    purpose: >-
+      Calculates royalties for knowledge, packs, templates, and licensed
+      expertise.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M223
+    name: Revenue Sharing™
+    internalId: revenue-sharing
+    registryKind: milestone
+    volumeId: volume-xiii
+    purpose: >-
+      Revenue split controls for creators, organizations, partners, and Studio
+      OS.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M224
+    name: Subscription Billing™
+    internalId: subscription-billing
+    registryKind: milestone
+    volumeId: volume-xiii
+    purpose: >-
+      Memberships, pack subscriptions, expert subscriptions, and recurring
+      products.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M225
+    name: Creator Payouts™
+    internalId: creator-payouts
+    registryKind: milestone
+    volumeId: volume-xiii
+    purpose: >-
+      Payout system for experts, organizations, automation creators, and course
+      creators.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M226
+    name: Affiliate System™
+    internalId: affiliate-system
+    registryKind: milestone
+    volumeId: volume-xiii
+    purpose: Referral tracking, commissions, campaign codes, and performance.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M227
+    name: Partner Economy™
+    internalId: partner-economy
+    registryKind: milestone
+    volumeId: volume-xiii
+    purpose: Agency and partner revenue models, certifications, and distribution.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M228
+    name: Economy Dashboard™
+    internalId: economy-dashboard
+    registryKind: milestone
+    volumeId: volume-xiii
+    purpose: >-
+      Executive economy view across marketplace, licensing, royalties, and
+      subscriptions.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M229
+    name: Board Governance™
+    internalId: board-governance
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: Board-level approvals, meeting packs, resolutions, and governance records.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M230
+    name: Approval Chain Intelligence™
+    internalId: approval-chain-intelligence
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: Dynamic approval flows based on policy, risk, amount, and authority.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M231
+    name: Delegation Engine™
+    internalId: delegation-engine
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: Temporary and permanent delegation of authority.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M232
+    name: Compliance Center™
+    internalId: compliance-center
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: Compliance tasks, logs, regulated workflow controls, and evidence.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M233
+    name: Audit Trail™
+    internalId: audit-trail
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: Immutable records of decisions, changes, access, and actions.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M234
+    name: Risk Governance™
+    internalId: risk-governance
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: Risk categories, mitigation plans, owners, and escalation paths.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M235
+    name: Policy Lifecycle™
+    internalId: policy-lifecycle
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: >-
+      Draft, review, approve, publish, revise, and retire organizational
+      policies.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M236
+    name: Governance Dashboard™
+    internalId: governance-dashboard
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: >-
+      Executive view of governance health, approvals, risks, and compliance
+      readiness.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M237
+    name: Research Engine™
+    internalId: research-engine
+    registryKind: milestone
+    volumeId: volume-xv
+    purpose: Dedicated research workspace powered by World Knowledge Engine™.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M238
+    name: Competitor Intelligence™
+    internalId: competitor-intelligence
+    registryKind: milestone
+    volumeId: volume-xv
+    purpose: Tracks competitors, positioning, pricing, offers, launches, and threats.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M239
+    name: Market Trend Discovery™
+    internalId: market-trend-discovery
+    registryKind: milestone
+    volumeId: volume-xv
+    purpose: Identifies trends relevant to the organization and industry.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M240
+    name: Regulation Watch™
+    internalId: regulation-watch
+    registryKind: milestone
+    volumeId: volume-xv
+    purpose: Monitors legal, policy, compliance, and industry changes.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M241
+    name: Technology Watch™
+    internalId: technology-watch
+    registryKind: milestone
+    volumeId: volume-xv
+    purpose: Tracks tools, AI advances, platforms, and automation opportunities.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M242
+    name: Patent & IP Discovery™
+    internalId: patent-ip-discovery
+    registryKind: milestone
+    volumeId: volume-xv
+    purpose: Finds IP opportunities, prior art signals, and innovation spaces.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M243
+    name: Opportunity Discovery™
+    internalId: opportunity-discovery
+    registryKind: milestone
+    volumeId: volume-xv
+    purpose: Surfaces strategic opportunities based on research and organizational fit.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M244
+    name: Research Briefing Room™
+    internalId: research-briefing-room
+    registryKind: milestone
+    volumeId: volume-xv
+    purpose: Executive briefings, source review, research memory, and recommendations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M245
+    name: World Builder™
+    internalId: world-builder
+    registryKind: milestone
+    volumeId: volume-xvi
+    purpose: Creates profession-specific immersive environments and headquarters.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M246
+    name: Industry Environment Packs™
+    internalId: industry-environment-packs
+    registryKind: milestone
+    volumeId: volume-xvi
+    purpose: Mansion, Medical Command, Operations Tower, Kitchen Command, etc.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M247
+    name: Environment Registry™
+    internalId: environment-registry
+    registryKind: milestone
+    volumeId: volume-xvi
+    purpose: Registers rooms, zones, assets, lighting, animations, and transitions.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M248
+    name: World Navigation™
+    internalId: world-navigation
+    registryKind: milestone
+    volumeId: volume-xvi
+    purpose: >-
+      Spatial navigation across rooms, wings, floors, dashboards, and
+      experiences.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M249
+    name: Environmental Story Logic™
+    internalId: environmental-story-logic
+    registryKind: milestone
+    volumeId: volume-xvi
+    purpose: >-
+      Connects achievements, seasons, milestones, and Life & Culture
+      Preferences™.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M250
+    name: Interactive Rooms™
+    internalId: interactive-rooms
+    registryKind: milestone
+    volumeId: volume-xvi
+    purpose: Rooms become functional interfaces, not decorative backgrounds.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M251
+    name: World Asset Pipeline™
+    internalId: world-asset-pipeline
+    registryKind: milestone
+    volumeId: volume-xvi
+    purpose: Generates, stores, versions, and optimizes world assets.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M252
+    name: World QA™
+    internalId: world-qa
+    registryKind: milestone
+    volumeId: volume-xvi
+    purpose: >-
+      Audits immersive environments for consistency, performance, accessibility,
+      and brand fit.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M253
+    name: Organization Galaxy™
+    internalId: organization-galaxy
+    registryKind: milestone
+    volumeId: volume-xvii
+    purpose: >-
+      Visual network of related organizations, brands, subsidiaries, and
+      divisions.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M254
+    name: Holding Company Mode™
+    internalId: holding-company-mode
+    registryKind: milestone
+    volumeId: volume-xvii
+    purpose: Portfolio-level oversight without defaulting to one company.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M255
+    name: Shared Services™
+    internalId: shared-services
+    registryKind: milestone
+    volumeId: volume-xvii
+    purpose: Centralized teams serving multiple organizations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M256
+    name: Cross-Company Knowledge™
+    internalId: cross-company-knowledge
+    registryKind: milestone
+    volumeId: volume-xvii
+    purpose: Permissioned sharing of knowledge, templates, and capabilities.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M257
+    name: Portfolio Intelligence™
+    internalId: portfolio-intelligence
+    registryKind: milestone
+    volumeId: volume-xvii
+    purpose: Insights, risks, opportunities, and performance across a portfolio.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M258
+    name: Inter-Organization Workflows™
+    internalId: inter-organization-workflows
+    registryKind: milestone
+    volumeId: volume-xvii
+    purpose: Workflows that span multiple companies securely.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M259
+    name: Organization Transfers™
+    internalId: organization-transfers
+    registryKind: milestone
+    volumeId: volume-xvii
+    purpose: >-
+      Move assets, templates, workflows, staff, and knowledge between
+      organizations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M260
+    name: Portfolio Governance™
+    internalId: portfolio-governance
+    registryKind: milestone
+    volumeId: volume-xvii
+    purpose: >-
+      Policies, permissions, approvals, and reporting across multiple
+      organizations.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M261
+    name: Decision Philosophy™
+    internalId: decision-philosophy
+    registryKind: milestone
+    volumeId: volume-xviii
+    purpose: Captures how an organization should think about decisions.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M262
+    name: Strategic Advisor™
+    internalId: strategic-advisor
+    registryKind: milestone
+    volumeId: volume-xviii
+    purpose: Long-term advisor for growth, tradeoffs, timing, and restraint.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M263
+    name: Ethical Reasoning™
+    internalId: ethical-reasoning
+    registryKind: milestone
+    volumeId: volume-xviii
+    purpose: Evaluates impact, fairness, responsibility, and values alignment.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M264
+    name: Risk Wisdom™
+    internalId: risk-wisdom
+    registryKind: milestone
+    volumeId: volume-xviii
+    purpose: Balances opportunity with downside, timing, and organizational readiness.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M265
+    name: Historical Wisdom™
+    internalId: historical-wisdom
+    registryKind: milestone
+    volumeId: volume-xviii
+    purpose: Uses past outcomes and lessons to advise future action.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M266
+    name: Leadership Coach™
+    internalId: leadership-coach
+    registryKind: milestone
+    volumeId: volume-xviii
+    purpose: >-
+      Helps founders and leaders develop judgment, communication, and
+      resilience.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M267
+    name: Scenario Judgment™
+    internalId: scenario-judgment
+    registryKind: milestone
+    volumeId: volume-xviii
+    purpose: Evaluates not just what could happen, but what should be done.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M268
+    name: Wisdom Dashboard™
+    internalId: wisdom-dashboard
+    registryKind: milestone
+    volumeId: volume-xviii
+    purpose: >-
+      Executive view of strategic maturity, decision quality, and values
+      alignment.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M269
+    name: Mission & Vision Engine™
+    internalId: mission-vision-engine
+    registryKind: milestone
+    volumeId: volume-xix
+    purpose: Captures, refines, and preserves mission and vision.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M270
+    name: Values System™
+    internalId: values-system
+    registryKind: milestone
+    volumeId: volume-xix
+    purpose: Defines values and how they affect decisions and behavior.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M271
+    name: Culture Engine™
+    internalId: culture-engine
+    registryKind: milestone
+    volumeId: volume-xix
+    purpose: Maps culture, rituals, language, standards, and norms.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M272
+    name: Brand Voice DNA™
+    internalId: brand-voice-dna
+    registryKind: milestone
+    volumeId: volume-xix
+    purpose: Defines tone, language, vocabulary, personality, and communication rules.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M273
+    name: Leadership Style™
+    internalId: leadership-style
+    registryKind: milestone
+    volumeId: volume-xix
+    purpose: Preserves how leadership makes decisions, communicates, and guides people.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M274
+    name: Customer Philosophy™
+    internalId: customer-philosophy
+    registryKind: milestone
+    volumeId: volume-xix
+    purpose: >-
+      Defines how the organization treats, serves, supports, and respects
+      customers.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M275
+    name: Risk Tolerance™
+    internalId: risk-tolerance
+    registryKind: milestone
+    volumeId: volume-xix
+    purpose: >-
+      Defines risk appetite across finance, legal, operations, innovation, and
+      automation.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []
+  - canonicalId: M276
+    name: Studio DNA Dashboard™
+    internalId: studio-dna-dashboard
+    registryKind: milestone
+    volumeId: volume-xix
+    purpose: Unified view of identity, principles, culture, and operating philosophy.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: []
+    enables: []

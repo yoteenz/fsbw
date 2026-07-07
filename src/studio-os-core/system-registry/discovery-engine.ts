@@ -4,9 +4,9 @@ import type { SystemDiscoveryHit } from './types';
 const SEMANTIC_CLUSTERS: Record<string, string[]> = {
   memory: ['module:memory-engine', 'module:legacy-vault', 'module:profession-brain', 'feature:organizational-consciousness'],
   ai: ['module:studio-intelligence', 'module:model-orchestrator', 'module:studio-foundation-models', 'module:profession-brain'],
-  documentation: ['module:documentation-registry', 'module:documentation-governance', 'module:documentation-sync', 'module:knowledge-hub'],
+  documentation: ['module:knowledge-registry', 'module:documentation-governance', 'module:documentation-sync', 'module:knowledge-hub'],
   executive: ['module:executive-council', 'module:mission-control', 'module:organization-pulse', 'concierge:chief-of-staff'],
-  registry: ['module:system-registry', 'module:documentation-registry'],
+  registry: ['module:system-registry', 'module:knowledge-registry'],
 };
 
 function scoreEntry(entry: ReturnType<typeof getAllRegisteredSystems>[number], terms: string[]): { score: number; reason: string } {

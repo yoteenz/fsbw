@@ -15,7 +15,7 @@ export default function AdminStudioSystemRegistryPage() {
       subtitle={SUBTITLE}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"
-      onBack={() => navigate('/admin/studio/documentation-governance')}
+      onBack={() => navigate('/admin/studio/knowledge-registry')}
       navGroupId="intelligence"
     >
       <SystemRegistryWorkspace />

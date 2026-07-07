@@ -881,8 +881,13 @@ export function adminStudioStudioFoundationModelsPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/studio-foundation-models`;
 }
 
+export function adminStudioKnowledgeRegistryPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/knowledge-registry`;
+}
+
+/** @deprecated Use adminStudioKnowledgeRegistryPath */
 export function adminStudioDocumentationRegistryPath(): string {
-  return `${ADMIN_STUDIO_BASE_PATH}/documentation-registry`;
+  return adminStudioKnowledgeRegistryPath();
 }
 
 export function adminStudioDocumentationGovernancePath(): string {

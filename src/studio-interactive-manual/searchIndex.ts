@@ -4,7 +4,7 @@ import { STUDIO_MANUAL_WHATS_NEW } from './whatsNew';
 import { searchKnowledgeGraph } from './knowledge-graph/queries';
 import { buildRegistrySearchEntries } from '../studio-os-core/documentation-sync/search-entries';
 import { expandSemanticQuery } from '../studio-os-core/documentation-sync/semantic-search';
-import { queryDocumentationRegistry } from '../studio-os-core/documentation-registry/smart-search';
+import { queryKnowledgeRegistry } from '../studio-os-core/knowledge-registry/smart-search';
 
 export function buildManualSearchIndex(): ManualSearchEntry[] {
   const entries: ManualSearchEntry[] = [];
@@ -146,13 +146,13 @@ export function buildManualSearchIndex(): ManualSearchEntry[] {
 }
 
 function registrySearchEntries(query: string): ManualSearchEntry[] {
-  return queryDocumentationRegistry(query, 8).map((hit) => ({
+  return queryKnowledgeRegistry(query, 8).map((hit) => ({
     id: `registry-${hit.entry.internalId}`,
     query: hit.entry.officialName,
-    keywords: [...hit.entry.keywords, ...hit.entry.aliases, ...hit.entry.searchSynonyms],
+    keywords: [...hit.entry.keywords, ...hit.entry.aliases, ...hit.entry.searchSynonyms, hit.statusLabel.toLowerCase()],
     moduleId: hit.entry.moduleId ?? hit.entry.internalId,
-    label: `${hit.entry.officialName} (${hit.matchReason})`,
-    snippet: hit.entry.description.slice(0, 140),
+    label: `${hit.entry.officialName} · ${hit.statusLabel}`,
+    snippet: `${hit.entry.description.slice(0, 120)} (${hit.matchReason})`,
   }));
 }
 

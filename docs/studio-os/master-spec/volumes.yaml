@@ -1,0 +1,185 @@
+# Studio OS Master Specification — Volumes (0–XIX)
+version: '1.0.0'
+updatedAt: '2026-07-07'
+
+volumes:
+  - id: volume-0
+    number: 0
+    title: Studio OS Constitution™
+    summary: Foundational principles governing platform architecture, UX, intelligence, registry-driven design, and release discipline.
+    status: complete
+    dependsOn: []
+    milestoneRange: null
+    completionPct: 100
+
+  - id: volume-i
+    number: I
+    title: Core Operating System
+    summary: User-facing operating layer — Studio Intelligence™, Studio Orb™, Command Dock™, Headquarters™, Living Headquarters™, and environmental experiences.
+    status: in-progress
+    dependsOn: [volume-0]
+    milestoneRange: null
+    completionPct: 45
+    notes: Volume container registered; milestone breakdown in progress.
+
+  - id: volume-ii
+    number: II
+    title: Knowledge Infrastructure
+    summary: Captures, preserves, teaches, searches, monetizes, and passes down organizational expertise.
+    status: in-progress
+    dependsOn: [volume-i, volume-0]
+    milestoneRange: M90-M124
+    completionPct: 72
+
+  - id: volume-iii
+    number: III
+    title: Business Infrastructure
+    summary: Turns organizations into expandable business systems with packs, marketplace, licensing, templates, and digital workforces.
+    status: planned
+    dependsOn: [volume-ii]
+    milestoneRange: null
+    completionPct: 15
+
+  - id: volume-iv
+    number: IV
+    title: Trust Infrastructure
+    summary: Professional trust, QA, decision accountability, confidence, safety, and engineering excellence.
+    status: in-progress
+    dependsOn: [volume-ii, volume-i]
+    milestoneRange: M94-M158
+    completionPct: 68
+
+  - id: volume-v
+    number: V
+    title: Identity Infrastructure
+    summary: People as first-class citizens — identities, profiles, skills, roles, hierarchy, and timelines.
+    status: in-progress
+    dependsOn: [volume-ii, volume-iv]
+    milestoneRange: M159-M164
+    completionPct: 85
+
+  - id: volume-vi
+    number: VI
+    title: Relationship Intelligence
+    summary: Relationship graph across people, customers, vendors, partners, families, referrals, and organizations.
+    status: planned
+    dependsOn: [volume-v]
+    milestoneRange: M165-M172
+    completionPct: 0
+
+  - id: volume-vii
+    number: VII
+    title: Memory Infrastructure
+    summary: Searchable memory across conversations, decisions, workflows, projects, customers, and history.
+    status: planned
+    dependsOn: [volume-v, volume-ii]
+    milestoneRange: M173-M180
+    completionPct: 12
+
+  - id: volume-viii
+    number: VIII
+    title: Financial Intelligence
+    summary: Forecasts, simulations, cash flow, pricing, hiring, profitability, and financial strategy.
+    status: planned
+    dependsOn: [volume-iii, volume-vii]
+    milestoneRange: M181-M188
+    completionPct: 0
+
+  - id: volume-ix
+    number: IX
+    title: Communication Infrastructure
+    summary: Unified communications across email, SMS, voice, meetings, chat, video, notifications, and translation.
+    status: planned
+    dependsOn: [volume-i, volume-v]
+    milestoneRange: M189-M196
+    completionPct: 5
+
+  - id: volume-x
+    number: X
+    title: Automation Marketplace
+    summary: Build, test, certify, publish, license, install, and monetize automations.
+    status: planned
+    dependsOn: [volume-ii, volume-iv]
+    milestoneRange: M197-M204
+    completionPct: 8
+
+  - id: volume-xi
+    number: XI
+    title: Studio OS Platform
+    summary: API, SDK, plugins, apps, developer console, custom components, and extensibility.
+    status: in-progress
+    dependsOn: [volume-ii]
+    milestoneRange: M205-M212
+    completionPct: 35
+
+  - id: volume-xii
+    number: XII
+    title: Reputation Infrastructure
+    summary: Trust and reputation for experts, organizations, Profession Brains™, automations, packs, and marketplace assets.
+    status: planned
+    dependsOn: [volume-ii, volume-x]
+    milestoneRange: M213-M220
+    completionPct: 0
+
+  - id: volume-xiii
+    number: XIII
+    title: Studio Economy
+    summary: Royalties, licensing, subscription economics, digital payroll, revenue sharing, affiliate, and partner economy.
+    status: planned
+    dependsOn: [volume-iii, volume-x]
+    milestoneRange: M221-M228
+    completionPct: 0
+
+  - id: volume-xiv
+    number: XIV
+    title: Governance
+    summary: Policy, permissions, approvals, compliance, audit, delegation, board oversight, and risk governance.
+    status: in-progress
+    dependsOn: [volume-iv, volume-ii]
+    milestoneRange: M229-M236
+    completionPct: 25
+
+  - id: volume-xv
+    number: XV
+    title: Intelligence Research
+    summary: Continuous research into competitors, markets, trends, regulations, patents, and opportunities.
+    status: planned
+    dependsOn: [volume-ii, volume-i]
+    milestoneRange: M237-M244
+    completionPct: 10
+
+  - id: volume-xvi
+    number: XVI
+    title: Studio Worlds
+    summary: Immersive profession-specific environments and headquarters worlds.
+    status: planned
+    dependsOn: [volume-i, volume-ii]
+    milestoneRange: M245-M252
+    completionPct: 5
+
+  - id: volume-xvii
+    number: XVII
+    title: Multi-Organization Network
+    summary: Portfolio intelligence, holding companies, shared services, organization galaxy, and cross-company awareness.
+    status: planned
+    dependsOn: [volume-v, volume-xiv]
+    milestoneRange: M253-M260
+    completionPct: 8
+
+  - id: volume-xviii
+    number: XVIII
+    title: Wisdom Engine
+    summary: Judgment, ethics, strategic advice, long-term planning, founder coaching, and decision philosophy.
+    status: planned
+    dependsOn: [volume-ii, volume-v]
+    milestoneRange: M261-M268
+    completionPct: 0
+
+  - id: volume-xix
+    number: XIX
+    title: Studio DNA
+    summary: Mission, vision, values, culture, brand voice, customer philosophy, leadership style, and operating principles.
+    status: planned
+    dependsOn: [volume-0, volume-ii]
+    milestoneRange: M269-M276
+    completionPct: 5

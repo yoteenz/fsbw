@@ -118,6 +118,7 @@ export type StudioOsCoreModuleId =
   | 'studio-intelligence-architecture'
   | 'model-orchestrator'
   | 'studio-foundation-models'
+  | 'knowledge-registry'
   | 'documentation-registry'
   | 'documentation-governance'
   | 'system-registry'
@@ -866,10 +867,16 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     routeSegment: 'studio-foundation-models',
   },
   {
+    id: 'knowledge-registry',
+    label: 'STUDIO OS KNOWLEDGE REGISTRY™',
+    description: 'Knowledge Registry V2.0 — architectural brain; Master Specification single source of truth for all platform knowledge.',
+    routeSegment: 'knowledge-registry',
+  },
+  {
     id: 'documentation-registry',
     label: 'DOCUMENTATION REGISTRY™',
-    description: 'Documentation Registry V1.0 — single source of truth; register once, sync all documentation surfaces.',
-    routeSegment: 'documentation-registry',
+    description: 'Deprecated alias — redirects to Studio OS Knowledge Registry™.',
+    routeSegment: 'knowledge-registry',
   },
   {
     id: 'documentation-governance',

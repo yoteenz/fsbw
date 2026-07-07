@@ -570,11 +570,11 @@ export function resolveDockContext(pathname: string): DockContextProfile {
     };
   }
 
-  if (pathname.includes('/documentation-registry')) {
+  if (pathname.includes('/knowledge-registry') || pathname.includes('/documentation-registry')) {
     const workspaceId = getRuntimeActiveWorkspaceId();
     return {
-      contextId: 'documentation-registry',
-      label: 'DOCUMENTATION REGISTRY™ · ONE SOURCE',
+      contextId: 'knowledge-registry',
+      label: 'KNOWLEDGE REGISTRY™ · MASTER SPEC',
       portfolioMode: false,
       suggestedCommands: listDocumentationRegistryDockSuggestions(workspaceId),
       commandTypes: ['knowledge-search', 'executive-requests', 'organization-settings'],

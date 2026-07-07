@@ -1,0 +1,74 @@
+version: 1.0.0
+milestones:
+  - canonicalId: M159
+    name: Identity Graph™
+    internalId: identity-graph
+    registryKind: milestone
+    volumeId: volume-v
+    purpose: Living graph of every person connected to the organization.
+    implementationStatus: complete
+    shippedMilestone: M163
+    moduleId: identity-graph
+    dependsOn:
+      - M112
+    enables: []
+  - canonicalId: M160
+    name: Professional Profile™
+    internalId: professional-profile
+    registryKind: milestone
+    volumeId: volume-v
+    purpose: Dynamic career identity with skills, achievements, and contributions.
+    implementationStatus: complete
+    shippedMilestone: M164
+    moduleId: professional-profile
+    dependsOn:
+      - M159
+    enables: []
+  - canonicalId: M161
+    name: Skill Graph™
+    internalId: skill-graph
+    registryKind: milestone
+    volumeId: volume-v
+    purpose: Maps capabilities, mentors, gaps, and invisible knowledge.
+    implementationStatus: complete
+    shippedMilestone: M165
+    moduleId: skill-graph
+    dependsOn:
+      - M160
+    enables: []
+  - canonicalId: M162
+    name: Role Intelligence™
+    internalId: role-intelligence
+    registryKind: milestone
+    volumeId: volume-v
+    purpose: Understands responsibilities and workflows, not just titles.
+    implementationStatus: complete
+    shippedMilestone: M166
+    moduleId: role-intelligence
+    dependsOn:
+      - M161
+    enables: []
+  - canonicalId: M163
+    name: Organizational Hierarchy™
+    internalId: organizational-hierarchy
+    registryKind: milestone
+    volumeId: volume-v
+    purpose: Maps real-world reporting, matrix teams, and shared services.
+    implementationStatus: complete
+    shippedMilestone: M167
+    moduleId: organizational-hierarchy
+    dependsOn:
+      - M162
+    enables: []
+  - canonicalId: M164
+    name: Identity Timeline™
+    internalId: identity-timeline
+    registryKind: milestone
+    volumeId: volume-v
+    purpose: Preserves the professional journey of every individual.
+    implementationStatus: complete
+    shippedMilestone: M168
+    moduleId: identity-timeline
+    dependsOn:
+      - M163
+    enables: []
