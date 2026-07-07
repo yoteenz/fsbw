@@ -1,42 +1,68 @@
-# Volume 0 — Studio OS Constitution™
+# Volume 0 — Studio OS Constitution™ (Foundation v1.0 — Frozen)
 version: '1.0.0'
+foundationVersion: '1.0.0'
 updatedAt: '2026-07-07'
+status: frozen
 
 principles:
   - id: constitution-platform
     title: Organizational Intelligence Platform
     summary: Studio OS is an Organizational Intelligence Platform, not a generic SaaS dashboard.
+
   - id: constitution-intelligence-layer
     title: Studio Intelligence™ Owns the Layer
     summary: AI models are replaceable reasoning engines; Studio Intelligence™ owns the intelligence layer.
+
   - id: constitution-headquarters
     title: Living Digital Headquarters
     summary: Every organization receives a living, profession-specific digital headquarters.
+
   - id: constitution-registry-driven
     title: Registry-Driven Objects
     summary: Every important object must be registry-driven, searchable, documented, auditable, and QA-gated.
+
   - id: constitution-ux
     title: Premium Immersive UX
     summary: UX should feel immersive, calm, premium, white/light, glass/acrylic, architectural, and comprehensive.
+
   - id: constitution-life-culture
     title: Life & Culture Preferences™
-    summary: Personalization must be respectful — Life & Culture Preferences™ prevent assumptions around holidays, grief, culture, celebration, tone, and sensitivity.
+    summary: Personalization must be respectful — Life & Culture Preferences™ (M89.5) prevent assumptions around holidays, grief, culture, celebration, tone, and sensitivity.
+
   - id: constitution-qa-gate
     title: No Release Without Checks
     summary: No production release ships without design, experience, accessibility, prompt, performance, regression, trust, and documentation checks.
+
   - id: constitution-single-source
     title: Single Source of Truth
-    summary: The Master Specification is the single source of truth — Volumes, milestones, and design revisions exist exactly once and are referenced everywhere.
+    summary: The Master Specification is the single source of truth — Volumes, milestones, and architecture exist exactly once and are referenced everywhere.
+
   - id: constitution-executive-strategy-floor
     title: Studio OS Executive Strategy Floor™
     summary: >-
-      Studio OS maintains its own executive headquarters — the Executive Strategy Floor™ —
+      Studio OS maintains its own executive headquarters — the Executive Strategy Floor™ (M127.13) —
       where platform leaders oversee architecture, knowledge, quality, and evolution through
-      immersive departments inside Headquarters, not disconnected developer dashboards.
-      Registration only until implementation (DR-005).
+      immersive departments inside Headquarters. Canonical architecture frozen at Foundation v1.0;
+      immersive UI product implementation is intentionally deferred.
+
   - id: constitution-core-philosophies
     title: Core Studio OS Philosophy
     summary: >-
-      Constitutional design principles in core-philosophies.yaml govern every future
-      Volume, Chapter, Milestone, and Design Revision — experiential, not feature lists.
+      Twenty-two constitutional design principles in core-philosophies.yaml govern every Volume,
+      Chapter, Milestone, and architectural amendment — experiential, not feature lists.
       Architecture Before Implementation; Places Instead of Pages; Operating System, Not SaaS.
+
+  - id: constitution-experience-architecture
+    title: Experience Architecture™
+    summary: >-
+      The experiential layer — Studio Orb™, Living Headquarters™, Design DNA™, Experience DNA™,
+      Workspace DNA™, Personalization DNA™, Emotional Computing™, Ambient Intelligence™, and
+      context-aware personalization — is defined in experience-architecture.yaml as canonical
+      architecture, not isolated design overlays.
+
+  - id: constitution-foundation-governance
+    title: Foundation Governance™
+    summary: >-
+      Foundation Baseline v1.0 is frozen. All future architectural evolution requires governed
+      Design Revisions, Constitutional Amendments, Master Specification updates, or new Volume
+      additions — never silent modification of the baseline.

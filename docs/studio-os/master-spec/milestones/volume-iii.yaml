@@ -118,7 +118,7 @@ milestones:
     relatedSystems:
       - mission-control
       - expansion-center
-      - DR-002
+      - headquarters-experience-v2
     implementationNotes: buildHeadquartersLayout in install-engine — feeds Mission Control HQ Layout.
 
   - canonicalId: M127.6

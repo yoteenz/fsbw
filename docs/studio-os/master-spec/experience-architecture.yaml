@@ -1,0 +1,168 @@
+# Studio OS Experience Architecture™ — canonical experiential layer (Foundation v1.0)
+# Absorbs DR-001 through DR-004 into permanent architecture (not isolated overlays).
+version: '1.0.0'
+foundationVersion: '1.0.0'
+updatedAt: '2026-07-07'
+status: frozen
+
+summary: >-
+  The experiential layer defines how Studio OS feels, adapts, and communicates —
+  ambient intelligence, immersive Headquarters, design genomes, and respectful
+  personalization. Product implementation of individual surfaces may be deferred;
+  architectural definitions are canonical and frozen at Foundation v1.0.
+
+layers:
+  - id: presence-interaction
+    title: Presence & Interaction Layer
+    concepts:
+      - id: studio-orb
+        title: Studio Orb™
+        milestoneIds: [M89.1]
+        mergedFrom: [DR-001]
+        summary: Ambient intelligence presence — radial menu, luxury sound, intelligent positioning.
+        systems: [studio-orb, command-dock, voice-mode, conversation-mode]
+        philosophyIds: [philosophy-studio-orb, philosophy-conversational-ux]
+
+      - id: experience-studio
+        title: Experience Studio™
+        milestoneIds: [M131]
+        summary: Authored experience design — interviewed atmosphere, not settings panels.
+        systems: [experience-studio, design-genome, design-dna-canon]
+        philosophyIds: [philosophy-experience-studio]
+
+      - id: command-dock
+        title: Command Dock™
+        milestoneIds: [M82]
+        mergedFrom: [DR-001]
+        summary: Executive command console — evolves toward Orb-centric interaction per M89.1.
+        systems: [command-dock, concierge-routing, studio-intelligence]
+        philosophyIds: [philosophy-conversational-ux]
+
+      - id: conversation-voice
+        title: Conversation & Voice Layer
+        milestoneIds: [M89.2, M89.3, M89.4]
+        mergedFrom: [DR-001]
+        summary: Voice Mode™, Conversation Mode™, Awakening Sequence™ — ceremonial intelligence entry.
+        systems: [voice-mode, conversation-mode, awakening-sequence]
+        philosophyIds: [philosophy-conversational-ux, philosophy-progressive-disclosure]
+
+  - id: headquarters-environment
+    title: Headquarters & Environmental Layer
+    concepts:
+      - id: living-headquarters
+        title: Living Headquarters™
+        milestoneIds: [M82.5, M141]
+        mergedFrom: [DR-002, DR-003]
+        summary: Headquarters evolves with organizational life — quiet presence, environmental adaptation.
+        systems: [living-headquarters-presence, experience-engine, mission-control]
+        philosophyIds: [philosophy-living-headquarters, philosophy-places-not-pages]
+
+      - id: environmental-storytelling
+        title: Environmental Storytelling™
+        milestoneIds: [M141, M106]
+        mergedFrom: [DR-003]
+        summary: Seasons, milestones, memory, and legacy expressed through space — not dashboards.
+        systems: [legacy-vault, mission-control, experience-engine]
+        philosophyIds: [philosophy-environmental-storytelling]
+
+      - id: headquarters-experience-v2
+        title: Headquarters Experience™ V2
+        milestoneIds: [M83.5, M86]
+        mergedFrom: [DR-002]
+        summary: Immersive wings — Executive Lobby, Company Pulse, Operations, Knowledge, Financial, Innovation, Legacy.
+        wings:
+          - executive-lobby
+          - company-pulse
+          - operations-wing
+          - knowledge-wing
+          - financial-wing
+          - innovation-wing
+          - legacy-wing
+        systems: [mission-control, executive-information-architecture, industry-architecture]
+        philosophyIds: [philosophy-places-not-pages, philosophy-living-headquarters]
+
+  - id: design-genome-stack
+    title: Design & Genome Stack
+    concepts:
+      - id: design-dna
+        title: Design DNA™
+        milestoneIds: [M84]
+        summary: Customer-facing design canon — tokens, typography, glass, hierarchy.
+        systems: [design-dna-canon, design-token-engine, component-registry]
+        philosophyIds: [philosophy-design-dna]
+
+      - id: experience-dna
+        title: Experience DNA™
+        milestoneIds: [M85, M141]
+        summary: Inherited emotional rhythm, arrival, hospitality, environmental adaptation.
+        systems: [design-genome, experience-engine, arrival-experience]
+        philosophyIds: [philosophy-experience-dna]
+
+      - id: workspace-dna
+        title: Workspace DNA™
+        milestoneIds: [M76.5, M85]
+        summary: Per-organization experiential genome — multi-workspace isolation with shared OS canon.
+        systems: [workspace-runtime, design-genome, organization-genome]
+        philosophyIds: [philosophy-design-dna, philosophy-os-not-saas]
+
+      - id: personalization-dna
+        title: Personalization DNA™
+        milestoneIds: [M89.5]
+        mergedFrom: [DR-004]
+        summary: Respectful personalization — culture, tone, accessibility, privacy without assumptions.
+        systems: [identity-graph, studio-orb, command-dock]
+        philosophyIds: [philosophy-progressive-disclosure]
+
+  - id: intelligence-adaptation
+    title: Intelligence & Adaptation Layer
+    concepts:
+      - id: emotional-computing
+        title: Emotional Computing™
+        milestoneIds: [M89.5, M87.5]
+        mergedFrom: [DR-004]
+        summary: Intelligence respects emotional context — grief, celebration, sensitivity, tone.
+        systems: [studio-intelligence, studio-orb, experience-engine]
+        philosophyIds: [philosophy-ai-creative-director]
+
+      - id: ambient-intelligence
+        title: Ambient Intelligence™
+        milestoneIds: [M87.5, M107]
+        summary: Intelligence felt through environment — not trapped in persistent toolbars.
+        systems: [ambient-awareness, studio-intelligence, command-dock]
+        philosophyIds: [philosophy-studio-orb, philosophy-invisible-complexity]
+
+      - id: context-aware-experiences
+        title: Context-Aware Experiences™
+        milestoneIds: [M141, M82]
+        summary: Surfaces adapt to route, role, organization state, and executive context.
+        systems: [experience-engine, command-dock, mission-control]
+        philosophyIds: [philosophy-progressive-disclosure]
+
+      - id: dynamic-workspace-personalization
+        title: Dynamic Workspace Personalization™
+        milestoneIds: [M76.5, M89.5, M141]
+        summary: Each workspace personalizes atmosphere while preserving Studio OS canon integrity.
+        systems: [workspace-runtime, experience-engine, design-genome]
+        philosophyIds: [philosophy-places-not-pages, philosophy-personalization-dna]
+
+mergedDesignRevisions:
+  DR-001:
+    status: merged
+    canonicalTargets: [M89.1, M89.2, M89.3, M89.4, M82]
+    architectureLayer: presence-interaction
+  DR-002:
+    status: merged
+    canonicalTargets: [M83.5, M86, headquarters-experience-v2]
+    architectureLayer: headquarters-environment
+  DR-003:
+    status: merged
+    canonicalTargets: [M82.5, M141, M106, environmental-storytelling]
+    architectureLayer: headquarters-environment
+  DR-004:
+    status: merged
+    canonicalTargets: [M89.5, emotional-computing, personalization-dna]
+    architectureLayer: intelligence-adaptation
+  DR-005:
+    status: merged
+    canonicalTargets: [M127.13, executive-strategy-floor]
+    architectureLayer: platform-executive

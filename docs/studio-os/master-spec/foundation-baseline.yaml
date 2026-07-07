@@ -1,0 +1,84 @@
+# Studio OS Foundation Baseline™ — Version 1.0 (Frozen)
+# All future evolution requires governed change — never silent baseline mutation.
+version: '1.0.0'
+frozenAt: '2026-07-07'
+status: frozen
+sprint: Foundation Completion Sprint™
+
+baseline:
+  constitution:
+    version: '1.0.0'
+    path: constitution.yaml
+    status: frozen
+  corePhilosophy:
+    version: '1.0.0'
+    path: core-philosophies.yaml
+    principleCount: 22
+    status: frozen
+  masterSpecFoundation:
+    version: '1.0.0'
+    path: docs/studio-os/master-spec/
+    volumesFrozen: [volume-0, volume-i, volume-ii, volume-iii, volume-iv]
+    status: frozen
+  experienceArchitecture:
+    version: '1.0.0'
+    path: experience-architecture.yaml
+    status: frozen
+  knowledgeRegistry:
+    version: '1.0.0'
+    milestone: M126
+    moduleId: knowledge-registry
+    status: frozen
+  systemRegistry:
+    version: '1.0.0'
+    milestone: M127
+    moduleId: system-registry
+    status: frozen
+  canonicalArchitecture:
+    version: '1.0.0'
+    components:
+      - constitution.yaml
+      - core-philosophies.yaml
+      - experience-architecture.yaml
+      - foundation-baseline.yaml
+      - volumes.yaml
+      - chapters/
+      - milestones/
+      - dependency-graph.yaml
+      - milestone-aliases.yaml
+    status: frozen
+
+governance:
+  description: >-
+    Foundation v1.0 is the permanent source of truth. Future changes require one of:
+  allowedChangeMechanisms:
+    - design-revision
+    - constitutional-amendment
+    - master-spec-volume-addition
+    - master-spec-milestone-addition
+    - experience-architecture-amendment
+  prohibited:
+    - silent-baseline-mutation
+    - duplicate-milestone-definitions
+    - shadow-roadmaps-outside-master-spec
+
+mergedDesignRevisions:
+  - DR-001
+  - DR-002
+  - DR-003
+  - DR-004
+  - DR-005
+
+intentionallyDeferred:
+  productImplementation:
+    - M89.1 Studio Orb™ UI
+    - M89.2 Voice Mode™
+    - M89.3 Conversation Mode™
+    - M89.4 Awakening Sequence™
+    - M128 Executive Strategy Floor™ immersive UI
+    - M127.7–M127.11 Volume III planned packs
+    - M145 Digital Twin™ Sandbox
+    - Volumes V–XIX chapter authoring
+  note: >-
+    Deferred items are fully specified in Master Specification. Implementation resumes
+    in Phase 4 per governed roadmap — not through baseline modification.

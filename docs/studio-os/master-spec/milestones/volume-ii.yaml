@@ -707,11 +707,11 @@ milestones:
       - manifest-authoring
       - system-registry
       - documentation-sync
-      - DR-005
+      - M127.13
     implementationNotes: >-
       Studio OS Knowledge Registry™ — Master Spec single source of truth. Formal closure:
       per-volume manifests, Core Philosophy™, Constitution™, Architecture Validator™ gate,
-      and module documentation complete. Feeds Executive Strategy Floor™ (DR-005).
+      and module documentation complete. Feeds Executive Strategy Floor™ (M127.13).
   - canonicalId: M126.5
     name: Documentation Governance™
     internalId: documentation-governance
@@ -743,11 +743,37 @@ milestones:
     dependsOn:
       - M126.5
     enables:
-      - DR-005
+      - M127.13
     chapterId: chapter-ii-9
     relatedSystems:
       - knowledge-registry
       - documentation-governance
       - component-registry
-      - DR-005
-    implementationNotes: Master directory of every platform object — consumes Knowledge Registry entries. Enables Executive Strategy Floor™ (DR-005) registration.
+      - M127.13
+    implementationNotes: Master directory of every platform object — consumes Knowledge Registry entries. Enables Executive Strategy Floor™ (M128).
+  - canonicalId: M127.13
+    name: Executive Strategy Floor™
+    internalId: executive-strategy-floor
+    registryKind: milestone
+    volumeId: volume-ii
+    chapterId: chapter-ii-9
+    purpose: >-
+      Studio OS meta-headquarters — immersive departmental home for platform architecture,
+      knowledge, quality, and governed evolution (DR-005 merged).
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: executive-strategy-floor
+    dependsOn: [M127, volume-0]
+    enables: []
+    relatedSystems:
+      - knowledge-registry
+      - system-registry
+      - manifest-reconciliation
+      - engineering-excellence-dashboard
+      - qa-headquarters
+      - release-readiness
+      - experience-architecture
+    alignedPhilosophies: [philosophy-documentation-as-architecture, philosophy-places-not-pages]
+    implementationNotes: >-
+      Canonical architecture frozen at Foundation v1.0. Immersive UI product implementation
+      intentionally deferred — all merge targets registered in experience-architecture.yaml.

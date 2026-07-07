@@ -11,7 +11,7 @@ philosophies:
       The environment communicates before interfaces do. Seasons, milestones, memory,
       and organizational moments should be felt through space, light, motion, and
       presence — not explained through dashboards or copy blocks.
-    governs: [DR-003, living-headquarters, legacy-vault]
+    governs: [living-headquarters, legacy-vault, environmental-storytelling]
     alignsVolumes: [volume-i, volume-xvi]
 
   - id: philosophy-living-headquarters
@@ -21,7 +21,7 @@ philosophies:
       Headquarters is a living place that evolves with the organization — not a static
       admin home. Departments, wings, pulse, and memory should change as the company
       grows, celebrates, and learns.
-    governs: [DR-002, DR-003, mission-control]
+    governs: [mission-control, headquarters-experience-v2, living-headquarters]
     alignsVolumes: [volume-i]
 
   - id: philosophy-studio-orb
@@ -31,7 +31,7 @@ philosophies:
       Intelligence should feel ambient, respectful, and present — not trapped in a
       persistent toolbar. The Orb is a philosophy of presence: arrive, listen, guide,
       and disappear until needed again.
-    governs: [DR-001, studio-orb, command-dock]
+    governs: [studio-orb, command-dock, voice-mode]
     alignsVolumes: [volume-i]
 
   - id: philosophy-experience-studio
@@ -71,7 +71,7 @@ philosophies:
       The OS speaks naturally. Command, discovery, and guidance flow through conversation
       — voice, text, and concierge dialogue — before users hunt through menus or
       documentation indexes.
-    governs: [command-dock, studio-intelligence, DR-001]
+    governs: [command-dock, studio-intelligence, studio-orb]
     alignsVolumes: [volume-i, volume-ii]
 
   - id: philosophy-invisible-complexity
@@ -90,7 +90,7 @@ philosophies:
     summary: >-
       Founders and executives are the primary audience. Every surface should support
       judgment, oversight, and strategic clarity before operator or developer convenience.
-    governs: [mission-control, executive-council, DR-005]
+    governs: [mission-control, executive-council, executive-strategy-floor]
     alignsVolumes: [volume-i, volume-iv]
 
   - id: philosophy-documentation-as-architecture
@@ -100,7 +100,7 @@ philosophies:
       Documentation is not an afterthought — it is part of the architecture. Knowledge,
       dependencies, and implementation status live in registries and manifest artifacts
       that are as authoritative as code.
-    governs: [knowledge-registry, documentation-governance, DR-005]
+    governs: [knowledge-registry, documentation-governance, executive-strategy-floor]
     alignsVolumes: [volume-ii, volume-0]
 
   - id: philosophy-ai-creative-director
@@ -110,7 +110,7 @@ philosophies:
       Studio Intelligence™ does not replace human judgment — it collaborates as a
       creative director: proposing, critiquing, refining, and explaining — while
       founders retain authorship and final decisions.
-    governs: [studio-intelligence, experience-studio, DR-004]
+    governs: [studio-intelligence, experience-studio, emotional-computing]
     alignsVolumes: [volume-i, volume-ii]
 
   - id: philosophy-single-source-of-truth
@@ -140,7 +140,7 @@ philosophies:
       Specify, register, and validate before building product surfaces. Volumes,
       chapters, milestones, philosophies, and design revisions precede routes,
       components, and feature work.
-    governs: [manifest-authoring, manifest-reconciliation, DR-005]
+    governs: [manifest-authoring, manifest-reconciliation, executive-strategy-floor]
     alignsVolumes: [volume-0, volume-ii]
 
   - id: philosophy-os-not-saas
@@ -160,5 +160,61 @@ philosophies:
       Users walk through destinations — Headquarters wings, departments, floors,
       registries, and studios — not disconnected admin pages. Navigation is spatial
       and narrative, not a flat route tree.
-    governs: [DR-002, DR-005, mission-control]
+    governs: [mission-control, industry-architecture, headquarters-experience-v2]
     alignsVolumes: [volume-i, volume-iii]
+
+  - id: philosophy-workspace-dna
+    title: Workspace DNA™
+    category: design-canon
+    summary: >-
+      Each organization workspace carries an experiential genome — isolated identity,
+      atmosphere, and memory while inheriting Studio OS canon. Multi-organization
+      does not mean multi-product fragmentation.
+    governs: [workspace-runtime, design-genome, organization-genome]
+    alignsVolumes: [volume-i]
+
+  - id: philosophy-personalization-dna
+    title: Personalization DNA™
+    category: design-canon
+    summary: >-
+      Personalization is respectful and explicit — culture, tone, accessibility,
+      grief, celebration, and privacy preferences authored through Life & Culture
+      Preferences™, never inferred from assumptions.
+    governs: [M89.5, studio-orb, identity-graph, command-dock]
+    alignsVolumes: [volume-i]
+
+  - id: philosophy-emotional-computing
+    title: Emotional Computing™
+    category: intelligence
+    summary: >-
+      Intelligence systems account for emotional context — sensitivity, celebration,
+      grief, and tone — as first-class inputs, not afterthoughts in copy generation.
+    governs: [studio-intelligence, studio-orb, experience-engine]
+    alignsVolumes: [volume-i]
+
+  - id: philosophy-ambient-intelligence
+    title: Ambient Intelligence™
+    category: intelligence
+    summary: >-
+      Intelligence is felt through the environment — briefings, presence, and guidance
+      arrive when needed and recede when not. No persistent toolbar clutter.
+    governs: [ambient-awareness, studio-intelligence, living-headquarters-presence]
+    alignsVolumes: [volume-i, volume-ii]
+
+  - id: philosophy-context-aware-experiences
+    title: Context-Aware Experiences™
+    category: interaction
+    summary: >-
+      Every surface adapts to organizational context — role, route, mission state,
+      and executive priority — without requiring the user to reconfigure the OS.
+    governs: [experience-engine, command-dock, mission-control]
+    alignsVolumes: [volume-i]
+
+  - id: philosophy-dynamic-workspace-personalization
+    title: Dynamic Workspace Personalization™
+    category: interaction
+    summary: >-
+      Workspaces personalize atmosphere dynamically — seasons, milestones, and
+      organizational moments reshape Headquarters while preserving canonical integrity.
+    governs: [experience-engine, workspace-runtime, living-headquarters-presence]
+    alignsVolumes: [volume-i]

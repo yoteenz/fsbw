@@ -10,15 +10,15 @@ milestones:
     purpose: >-
       Transform Studio OS into a true multi-organization operating system — each
       company is an isolated workspace with shared platform capabilities.
-    implementationStatus: in-progress
+    implementationStatus: complete
     shippedMilestone: M76.5
     moduleId: ecosystem
     dependsOn: [volume-0]
     enables: [M73.5]
     relatedSystems: [workspace-runtime, mission-control, command-dock]
     implementationNotes: >-
-      Foundational refactor — Studio OS = OS, each company = Workspace. Sprint 2
-      registers spec only; workspace runtime hardening continues separately.
+      Foundational multi-organization architecture complete. Workspace runtime
+      hardening continues in product phases — spec frozen at Foundation v1.0.
 
   - canonicalId: M73.5
     name: Company Onboarding Intelligence™
@@ -160,11 +160,10 @@ milestones:
     shippedMilestone: M82
     moduleId: command-dock
     dependsOn: [M81, M81.5]
-    enables: [M82.5, DR-001]
-    relatedSystems: [concierge-routing, studio-intelligence, mission-control]
+    enables: [M82.5, M89.1]
+    relatedSystems: [command-dock, mission-control, concierge-layer]
     implementationNotes: >-
-      Not chatbot/search/palette. DR-001 will reimagine dock via Studio Orb™ — spec
-      registered, product work deferred.
+      DR-001 evolution path documented in M89.1. Current Command Dock shipped; Orb layer spec frozen.
 
   - canonicalId: M82.5
     name: Living Headquarters Presence™
@@ -177,9 +176,10 @@ milestones:
     shippedMilestone: M82.5
     moduleId: living-headquarters-presence
     dependsOn: [M82]
-    enables: [DR-003]
-    relatedSystems: [command-dock, mission-control, concierge-layer]
-    implementationNotes: Subtle presence — never decorative animation or busy UI.
+    enables: [M141]
+    relatedSystems: [command-dock, mission-control, concierge-layer, environmental-storytelling]
+    implementationNotes: >-
+      DR-003 merged — feeds Environmental Storytelling™ via M141 and Legacy Vault (M106).
 
   - canonicalId: M83
     name: Executive Information Architecture™
@@ -194,7 +194,7 @@ milestones:
     shippedMilestone: M83
     moduleId: executive-information-architecture
     dependsOn: [M82]
-    enables: [M83.5, M86, DR-002]
+    enables: [M86, M89.1]
     relatedSystems: [mission-control, component-registry, design-token-engine]
     implementationNotes: >-
       docs/studio-os/executive-information-architecture.md. All modules inherit M83 rhythm.
@@ -210,11 +210,10 @@ milestones:
     shippedMilestone: M83
     moduleId: mission-control
     dependsOn: [M83]
-    enables: [M86, DR-002]
-    relatedSystems: [command-dock, studio-intelligence, knowledge-registry, system-registry]
+    enables: [M86]
+    relatedSystems: [command-dock, studio-intelligence, knowledge-registry, system-registry, headquarters-experience-v2]
     implementationNotes: >-
-      Primary Headquarters route. Shipped badge M83 on nav; canonical M83.5 distinguishes
-      HQ module from EIA milestone.
+      Primary Headquarters route. DR-002 merged into M86 + experience-architecture.yaml wings.
 
   - canonicalId: M86
     name: Organization Mission Control Refinement™
@@ -225,13 +224,15 @@ milestones:
     purpose: >-
       Organization Identity Card, executive flow, progressive disclosure, and
       command-style primary actions per organization.
-    implementationStatus: in-progress
+    implementationStatus: complete
     shippedMilestone: M86
     moduleId: mission-control
     dependsOn: [M83.5]
-    enables: [DR-002]
-    relatedSystems: [concierge-layer, command-dock, design-genome]
-    implementationNotes: Merge target for DR-002 Headquarters Experience™ V2 overlays.
+    enables: [M141]
+    relatedSystems: [concierge-layer, command-dock, design-genome, headquarters-experience-v2]
+    implementationNotes: >-
+      DR-002 Headquarters Experience™ V2 merged — Executive Lobby, Company Pulse, and
+      immersive wings defined in experience-architecture.yaml.
 
   - canonicalId: M84
     name: Design DNA & Canon™
@@ -272,9 +273,9 @@ milestones:
     purpose: >-
       Clean bootstrap experience — empty states, Page 001 numbering, maturity tiers,
       and Founder Timeline for first organizations.
-    implementationStatus: in-progress
+    implementationStatus: complete
     shippedMilestone: M87
-    moduleId: null
+    moduleId: founder-pilot-mode
     dependsOn: [M85, M86]
     enables: [M88]
     relatedSystems: [mission-control, command-dock, executive-timeline]
@@ -310,11 +311,10 @@ milestones:
     shippedMilestone: M141
     moduleId: experience-engine
     dependsOn: [M129, M130, M87.5]
-    enables: [DR-003]
-    relatedSystems: [design-token-engine, interaction-engine, mission-control]
+    enables: [M141, M82.5]
+    relatedSystems: [design-token-engine, interaction-engine, mission-control, environmental-storytelling]
     implementationNotes: >-
-      Canonical home Volume I (moved from volume-ii-iv bundle). Depends on Volume XI
-      design foundations M129/M130.
+      Environmental adaptation + DR-003 Living Headquarters merged. Volume XI foundations M129/M130.
 
   - canonicalId: M88
     name: Expansion Center™
@@ -325,13 +325,13 @@ milestones:
     purpose: >-
       Industry packs and department expansion — founders install capabilities,
       never subscribe to features.
-    implementationStatus: in-progress
+    implementationStatus: complete
     shippedMilestone: M88
     moduleId: expansion-center
     dependsOn: [M87]
     enables: [M89]
     relatedSystems: [business-model-engine, mission-control, studio-institute, industry-architecture, pack-install-engine, headquarters-layout-engine]
-    implementationNotes: One-click department install with preview — Creator Studio example.
+    implementationNotes: One-click department install — Volume III infrastructure (M127.x) feeds this consumer.
 
   - canonicalId: M89
     name: Permanent Monetization Architecture™
@@ -342,11 +342,11 @@ milestones:
     purpose: >-
       Digital payroll, department ownership, royalties — Studio OS economic engine
       without SaaS framing.
-    implementationStatus: in-progress
+    implementationStatus: complete
     shippedMilestone: M89
     moduleId: business-model-engine
     dependsOn: [M88]
-    enables: []
+    enables: [M89.1]
     relatedSystems: [expansion-center, marketplace, knowledge-commerce, monetization-architecture, pack-licensing-infrastructure]
     implementationNotes: Never "subscribe to features" — Expansion Center + Digital Payroll language.
 
@@ -357,16 +357,17 @@ milestones:
     chapterId: chapter-i-8
     volumeId: volume-i
     purpose: >-
-      Ambient intelligence presence replacing persistent dock — radial menu, luxury
-      sound, intelligent positioning.
+      Ambient intelligence presence — radial menu, luxury sound, intelligent positioning.
+      Canonical interaction evolution of Command Dock™ (DR-001 merged).
     implementationStatus: planned
     shippedMilestone: null
-    moduleId: null
-    dependsOn: [M82, M129, M130, M131, DR-004]
-    enables: [DR-001]
+    moduleId: studio-orb
+    dependsOn: [M82, M129, M130, M131, M89.5]
+    enables: [M89.2, M89.3, M89.4]
     relatedSystems: [command-dock, voice-mode, conversation-mode]
+    alignedPhilosophies: [philosophy-studio-orb, philosophy-ambient-intelligence]
     implementationNotes: >-
-      DR-001 merge target. Sprint 2 registers only — no Orb product implementation.
+      Foundation spec complete — product UI intentionally deferred per Foundation Freeze v1.0.
 
   - canonicalId: M89.2
     name: Voice Mode™
@@ -377,11 +378,12 @@ milestones:
     purpose: Orb-based voice interaction with Studio Intelligence™.
     implementationStatus: planned
     shippedMilestone: null
-    moduleId: null
+    moduleId: voice-mode
     dependsOn: [M89.1, M87.5]
-    enables: [DR-001]
+    enables: []
     relatedSystems: [studio-orb, command-dock, model-orchestrator]
-    implementationNotes: Foundation registered; voice implementation deferred.
+    alignedPhilosophies: [philosophy-conversational-ux]
+    implementationNotes: Foundation spec complete — voice implementation deferred.
 
   - canonicalId: M89.3
     name: Conversation Mode™
@@ -392,11 +394,12 @@ milestones:
     purpose: Full-screen conversational experience with Studio Intelligence™.
     implementationStatus: planned
     shippedMilestone: null
-    moduleId: null
+    moduleId: conversation-mode
     dependsOn: [M89.1]
-    enables: [DR-001]
+    enables: []
     relatedSystems: [studio-orb, studio-intelligence]
-    implementationNotes: DR-001 merge target — spec only in Sprint 2.
+    alignedPhilosophies: [philosophy-conversational-ux]
+    implementationNotes: DR-001 merged — spec frozen at Foundation v1.0.
 
   - canonicalId: M89.4
     name: Awakening Sequence™
@@ -407,8 +410,28 @@ milestones:
     purpose: Ceremonial Orb activation sequence on Headquarters arrival.
     implementationStatus: planned
     shippedMilestone: null
-    moduleId: null
+    moduleId: awakening-sequence
     dependsOn: [M89.1, M73.6]
-    enables: [DR-001]
+    enables: []
     relatedSystems: [studio-orb, arrival-experience, living-headquarters-presence]
-    implementationNotes: Emotional entry moment — registered for roadmap search.
+    alignedPhilosophies: [philosophy-environmental-storytelling, philosophy-progressive-disclosure]
+    implementationNotes: Emotional entry moment — spec frozen; product deferred.
+
+  - canonicalId: M89.5
+    name: Life & Culture Preferences™
+    internalId: life-culture-preferences
+    registryKind: milestone
+    chapterId: chapter-i-8
+    volumeId: volume-i
+    purpose: >-
+      Respectful cultural, holiday, sensitive date, celebration, communication, tone,
+      accessibility, and privacy preferences (DR-004 merged).
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: life-culture-preferences
+    dependsOn: [volume-0, M87.5]
+    enables: [M89.1]
+    relatedSystems: [studio-orb, identity-graph, command-dock, experience-engine]
+    alignedPhilosophies: [philosophy-personalization-dna, philosophy-emotional-computing]
+    implementationNotes: >-
+      Emotional Computing™ and Personalization DNA™ canonical home. Settings UI deferred.

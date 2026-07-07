@@ -1,5 +1,7 @@
 # Master Specification dependency graph (import order + hard deps)
+# Foundation v1.0 — DR edges replaced with canonical milestone references
 version: '1.0.0'
+foundationVersion: '1.0.0'
 updatedAt: '2026-07-07'
 
 edges:
@@ -33,8 +35,19 @@ edges:
     type: enables
 
   - from: M83.5
-    to: DR-002
+    to: M86
     type: enables
+    note: Headquarters Experience V2 (DR-002 merged)
+
+  - from: M86
+    to: M141
+    type: enables
+    note: HQ refinement → Experience Engine environmental layer
+
+  - from: M82.5
+    to: M141
+    type: relates
+    note: Living presence → environmental storytelling (DR-003 merged)
 
   - from: M87.5
     to: M141
@@ -56,6 +69,11 @@ edges:
   - from: M126.5
     to: M127
     type: enables
+
+  - from: M127
+    to: M127.13
+    type: enables
+    note: Executive Strategy Floor (DR-005 merged)
 
   - from: M127
     to: M127.1
@@ -143,40 +161,36 @@ edges:
     type: enables
 
   - from: M131
-    to: DR-001
+    to: M89.1
     type: enables
+    note: Design foundations → Studio Orb (DR-001 merged)
 
-  - from: DR-004
-    to: DR-001
+  - from: M89.5
+    to: M89.1
     type: enables
+    note: Life & Culture Preferences → Orb (DR-004 merged)
 
-  - from: DR-001
-    to: DR-002
-    type: enables
+  - from: M89.1
+    to: M89.2
+    type: chain
 
-  - from: DR-002
-    to: DR-003
-    type: enables
+  - from: M89.1
+    to: M89.3
+    type: chain
 
-  - from: volume-0
-    to: DR-005
-    type: enables
-    note: Constitution governs Studio OS executive headquarters
+  - from: M89.1
+    to: M89.4
+    type: chain
 
-  - from: M126
-    to: DR-005
-    type: enables
-    note: Knowledge Registry anchors executive knowledge wing
-
-  - from: M127
-    to: DR-005
-    type: enables
-    note: System Registry completes registry spine; reserves executive home
-
-  - from: DR-005
-    to: DR-002
+  - from: M106
+    to: M141
     type: relates
-    note: Shared immersive Headquarters department philosophy — org HQ and Studio OS meta-HQ
+    note: Legacy Vault → environmental storytelling
+
+  - from: M127.13
+    to: M86
+    type: relates
+    note: Platform executive HQ shares immersive department philosophy with org HQ
 
   - from: M154
     to: M158

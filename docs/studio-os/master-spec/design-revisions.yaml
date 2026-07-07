@@ -1,5 +1,7 @@
-# Design Revisions — merge into existing systems (not standalone products)
+# Design Revisions — historical merge record (Foundation v1.0)
+# DR-001 through DR-005 merged into canonical architecture — see experience-architecture.yaml
 version: '1.0.0'
+foundationVersion: '1.0.0'
 updatedAt: '2026-07-07'
 
 designRevisions:
@@ -7,80 +9,73 @@ designRevisions:
     canonicalId: DR-001
     title: Studio Orb™, Conversation Mode™, Command Dock Reimagined
     purpose: Replace persistent dock with Studio Orb™, Awakening Sequence™, ambient presence, radial menu, Conversation Mode™, intelligent positioning, luxury sound architecture, and Voice foundation.
-    implementationStatus: planned
+    implementationStatus: merged
+    mergedAt: '2026-07-07'
+    mergedInto: [M89.1, M89.2, M89.3, M89.4, M82, presence-interaction]
     volumeId: volume-i
     mergeTargets: [studio-orb, command-dock, voice-mode]
-    dependsOn: [M129, M130, M131, DR-004]
-    enables: [DR-002]
+    dependsOn: [M129, M130, M131, M89.5]
+    enables: [M86]
+    mergeNote: Permanently absorbed into Experience Architecture™ presence-interaction layer.
 
   - id: DR-002
     canonicalId: DR-002
     title: Headquarters Experience™ V2
     purpose: Transform Headquarters from dashboard into immersive Executive Lobby™, Company Pulse™, Operations Wing™, Knowledge Wing™, Financial Wing™, Innovation Wing™, and Legacy Wing™.
-    implementationStatus: in-progress
+    implementationStatus: merged
+    mergedAt: '2026-07-07'
+    mergedInto: [M83.5, M86, headquarters-experience-v2]
     volumeId: volume-i
     mergeTargets: [mission-control, headquarters, executive-information-architecture]
     dependsOn: [M129, M130, M83.5]
-    enables: [DR-003]
+    enables: [M141]
+    mergeNote: Wings defined in experience-architecture.yaml headquarters-environment layer.
 
   - id: DR-003
     canonicalId: DR-003
     title: Living Headquarters™ / Environmental Storytelling
     purpose: Headquarters evolves with seasons, anniversaries, milestones, Legacy Wall™, Executive Collection™, and meaningful memories.
-    implementationStatus: planned
+    implementationStatus: merged
+    mergedAt: '2026-07-07'
+    mergedInto: [M82.5, M141, M106, environmental-storytelling]
     volumeId: volume-i
     mergeTargets: [mission-control, living-headquarters, legacy-vault]
-    dependsOn: [DR-002, M106]
+    dependsOn: [M86, M106]
     enables: []
+    mergeNote: Merged into Living Headquarters™ and Environmental Storytelling™ concepts.
 
   - id: DR-004
     canonicalId: DR-004
     title: Emotional Intelligence™ + Life & Culture Preferences™
     purpose: Orb settings for respectful cultural, holiday, sensitive date, celebration, communication, tone, accessibility, and privacy preferences.
-    implementationStatus: in-progress
+    implementationStatus: merged
+    mergedAt: '2026-07-07'
+    mergedInto: [M89.5, emotional-computing, personalization-dna]
     volumeId: volume-i
     mergeTargets: [studio-orb, identity-graph, command-dock]
     dependsOn: [volume-0]
-    enables: [DR-001]
+    enables: [M89.1]
+    mergeNote: Canonical milestone M89.5 Life & Culture Preferences™.
 
   - id: DR-005
     canonicalId: DR-005
     title: Executive Strategy Floor™
     purpose: >-
-      Executive headquarters for Studio OS itself — not a developer tool. Immersive
-      departmental environment where founders, executives, architects, designers,
-      engineers, and Studio Intelligence™ oversee the operating system: Constitution™,
-      Knowledge Registry™, System Registry™, Architecture Graph™, Dependency Graph™,
-      Engineering Excellence™, QA Center™, Release Readiness™, Roadmap™, Component
-      Library™, Design System™, Design Tokens™, Animation Language™, Version History™,
-      Changelog™, Studio Intelligence™ Architecture Advisor, Implementation Progress,
-      Future Research, Experimental Systems, Technical Debt, Architecture Decisions,
-      and Design Revisions. Documentation becomes environment; architecture becomes
-      explorable; knowledge has a physical home.
-    implementationStatus: planned
+      Executive headquarters for Studio OS itself — immersive departmental environment
+      where founders, executives, architects, and Studio Intelligence™ oversee the
+      operating system. Documentation becomes environment; architecture becomes explorable.
+    implementationStatus: merged
+    mergedAt: '2026-07-07'
+    mergedInto: [M127.13, executive-strategy-floor]
     volumeId: volume-0
     mergeTargets:
       - knowledge-registry
       - system-registry
       - manifest-reconciliation
-      - manifest-authoring
-      - documentation-governance
-      - documentation-sync
       - engineering-excellence-dashboard
       - qa-headquarters
       - release-readiness
-      - component-registry
-      - design-token-engine
-      - interaction-engine
-      - studio-intelligence-architecture
     dependsOn: [volume-0, M126, M126.5, M127]
     enables: []
     aliases: [Executive Strategy Floor, Studio OS Headquarters, Platform Executive HQ]
-    keywords:
-      - executive strategy floor
-      - studio os headquarters
-      - platform executive
-      - architecture advisor
-      - dependency graph
-      - design revisions
-      - technical debt
+    mergeNote: Canonical milestone M128 Executive Strategy Floor™ — UI deferred, architecture frozen.

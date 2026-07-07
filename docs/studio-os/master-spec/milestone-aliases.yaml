@@ -107,8 +107,14 @@ aliases:
     formerName: Documentation Registry™
     formerModuleId: documentation-registry
 
-  # Executive Strategy Floor — planned meta-headquarters (DR-005)
-  - canonicalId: DR-005
+  # Executive Strategy Floor — canonical M127.13 (DR-005 merged)
+  - canonicalId: M127.13
     name: Executive Strategy Floor™
     moduleId: executive-strategy-floor
-    reason: Planned executive headquarters for Studio OS platform architecture — registration only
+    reason: DR-005 merged into canonical milestone M127.13 — immersive UI deferred
+
+  # Life & Culture Preferences — canonical M89.5 (DR-004 merged)
+  - canonicalId: M89.5
+    name: Life & Culture Preferences™
+    moduleId: life-culture-preferences
+    reason: DR-004 merged — Emotional Computing™ and Personalization DNA™

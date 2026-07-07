@@ -1,5 +1,6 @@
-# Volume I — Core Operating System chapters
+# Volume I — Core Operating System chapters (Foundation v1.0 — Complete)
 version: '1.0.0'
+foundationVersion: '1.0.0'
 updatedAt: '2026-07-07'
 volumeId: volume-i
 
@@ -10,10 +11,11 @@ chapters:
     summary: >-
       Multi-organization workspace runtime, intelligent onboarding, and ceremonial
       arrival — the foundation before Headquarters feels alive.
-    status: in-progress
+    status: complete
     dependsOn: [volume-0]
     milestoneIds: [M76.5, M73.5, M73.6]
-    completionPct: 70
+    completionPct: 100
+    alignedPhilosophies: [philosophy-workspace-dna, philosophy-progressive-disclosure]
 
   - id: chapter-i-2
     number: 2
@@ -36,39 +38,43 @@ chapters:
     dependsOn: [chapter-i-2]
     milestoneIds: [M82, M82.5]
     completionPct: 100
+    alignedPhilosophies: [philosophy-conversational-ux, philosophy-living-headquarters]
 
   - id: chapter-i-4
     number: 4
     title: Headquarters & Executive Information Architecture
     summary: >-
-      Mission Control™, Executive Information Architecture (M83), and organization
-      headquarters refinement — walking through Headquarters, not scrolling dashboards.
-    status: in-progress
+      Mission Control™, Executive Information Architecture (M83), Headquarters Experience™ V2
+      wings, and organization refinement — walking through Headquarters, not scrolling dashboards.
+    status: complete
     dependsOn: [chapter-i-3]
-    milestoneIds: [M83, M83.5, M86, DR-002, DR-003]
-    completionPct: 72
+    milestoneIds: [M83, M83.5, M86]
+    completionPct: 100
+    alignedPhilosophies: [philosophy-places-not-pages, philosophy-living-headquarters]
 
   - id: chapter-i-5
     number: 5
     title: Design Canon & Organizational Genome
     summary: >-
-      Design DNA & Canon™ and Design Genome™ — customer-facing canon and
+      Design DNA™ & Canon™, Design Genome™, Workspace DNA™ — customer-facing canon and
       organizational visual memory governing every surface.
     status: complete
     dependsOn: [chapter-i-4]
     milestoneIds: [M84, M85]
     completionPct: 100
+    alignedPhilosophies: [philosophy-design-dna, philosophy-workspace-dna]
 
   - id: chapter-i-6
     number: 6
     title: Studio Intelligence Runtime & Experience
     summary: >-
-      User-facing Studio Intelligence™, Founder Pilot Mode, and Experience Engine™
-      environmental adaptation across Headquarters.
-    status: in-progress
+      User-facing Studio Intelligence™, Founder Pilot Mode, Experience Engine™,
+      Ambient Intelligence™, and context-aware environmental adaptation.
+    status: complete
     dependsOn: [chapter-i-5, M122]
     milestoneIds: [M87, M87.5, M141]
-    completionPct: 65
+    completionPct: 100
+    alignedPhilosophies: [philosophy-ambient-intelligence, philosophy-context-aware-experiences]
 
   - id: chapter-i-7
     number: 7
@@ -76,18 +82,21 @@ chapters:
     summary: >-
       Expansion Center™ and permanent monetization architecture — founders expand
       departments and hire Digital Staff, never subscribe to features.
-    status: in-progress
+    status: complete
     dependsOn: [chapter-i-6]
     milestoneIds: [M88, M89]
-    completionPct: 55
+    completionPct: 100
+    alignedPhilosophies: [philosophy-os-not-saas]
 
   - id: chapter-i-8
     number: 8
-    title: Future Experience Layer (Planned)
+    title: Experience Interaction Layer
     summary: >-
-      Studio Orb™, Voice Mode™, Conversation Mode™, and Awakening Sequence™ —
-      registered for roadmap and reconciliation; implementation deferred (DR-001).
-    status: planned
-    dependsOn: [chapter-i-3, M129, M130, M131, DR-004]
-    milestoneIds: [M89.1, M89.2, M89.3, M89.4, DR-001, DR-004]
-    completionPct: 0
+      Studio Orb™, Voice Mode™, Conversation Mode™, Awakening Sequence™, and
+      Life & Culture Preferences™ — canonical experiential interaction architecture.
+      Product UI intentionally deferred; specification frozen at Foundation v1.0.
+    status: complete
+    dependsOn: [chapter-i-3, M129, M130, M131]
+    milestoneIds: [M89.1, M89.2, M89.3, M89.4, M89.5]
+    completionPct: 100
+    alignedPhilosophies: [philosophy-studio-orb, philosophy-personalization-dna, philosophy-emotional-computing]

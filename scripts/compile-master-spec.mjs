@@ -63,6 +63,8 @@ function loadChapters() {
 
 function main() {
   const constitution = readYaml(path.join(SPEC_DIR, 'constitution.yaml'));
+  const experienceArchitecture = readYaml(path.join(SPEC_DIR, 'experience-architecture.yaml'));
+  const foundationBaseline = readYaml(path.join(SPEC_DIR, 'foundation-baseline.yaml'));
   const volumes = readYaml(path.join(SPEC_DIR, 'volumes.yaml'));
   const designRevisions = readYaml(path.join(SPEC_DIR, 'design-revisions.yaml'));
   const corePhilosophies = readYaml(path.join(SPEC_DIR, 'core-philosophies.yaml'));
@@ -87,6 +89,8 @@ function main() {
     compiledAt,
     sourceRoot: 'docs/studio-os/master-spec',
     constitution,
+    experienceArchitecture,
+    foundationBaseline,
     volumes: volumes?.volumes ?? [],
     chapters,
     milestones,
@@ -115,6 +119,9 @@ function main() {
       volumeIVChapterCount: volumeIVCoverage.length,
       volumeIVCompleteCount: volumeIVMilestones.filter((m) => m.implementationStatus === 'complete').length,
       philosophyCount: corePhilosophies?.philosophies?.length ?? 0,
+      foundationFrozen: foundationBaseline?.status === 'frozen',
+      experienceLayerCount: experienceArchitecture?.layers?.length ?? 0,
+      mergedDrCount: (designRevisions?.designRevisions ?? []).filter((d) => d.implementationStatus === 'merged').length,
     },
   };
 

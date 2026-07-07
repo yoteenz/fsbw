@@ -13,7 +13,7 @@ const SPEC_DIR = path.join(ROOT, 'docs/studio-os/master-spec');
 const DOCS_STUDIO = path.join(ROOT, 'docs/studio-os');
 const REPORT_FILE = path.join(SPEC_DIR, 'ARCHITECTURE_VALIDATION_REPORT.md');
 
-const IMPLEMENTATION_STATUSES = new Set(['planned', 'in-progress', 'complete', 'deprecated']);
+const IMPLEMENTATION_STATUSES = new Set(['planned', 'in-progress', 'complete', 'deprecated', 'merged']);
 
 /** @typedef {{ severity: 'error' | 'warning', code: string, message: string, entityId?: string }} ValidationIssue */
 
@@ -43,6 +43,9 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
   const internalIds = new Map();
   const shippedBadges = new Map();
 
+  const foundationBaseline = bundle.foundationBaseline ?? {};
+  const experienceArchitecture = bundle.experienceArchitecture ?? {};
+
   const philosophies = bundle.corePhilosophies ?? [];
   const philosophyIds = new Set(philosophies.map((p) => p.id));
 
@@ -55,7 +58,20 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
     ...aliases.map((a) => a.canonicalId),
     ...aliases.map((a) => a.shippedId).filter(Boolean),
     ...philosophyIds,
+    'executive-strategy-floor',
+    'headquarters-experience-v2',
+    'environmental-storytelling',
+    'emotional-computing',
+    'personalization-dna',
+    'presence-interaction',
+    'platform-executive',
   ]);
+
+  for (const layer of experienceArchitecture.layers ?? []) {
+    for (const concept of layer.concepts ?? []) {
+      resolvableIds.add(concept.id);
+    }
+  }
 
   // ── Manifest integrity ──────────────────────────────────────────────
   if (!constitution.principles?.length) {
@@ -128,13 +144,15 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
 
   // ── Design revisions ──────────────────────────────────────────────────
   for (const dr of designRevisions) {
-    if (!dr.mergeTargets?.length) {
+    if (!dr.mergeTargets?.length && dr.implementationStatus !== 'merged') {
       issue(issues, 'error', 'DR_NO_MERGE_TARGETS', `${dr.id} has no mergeTargets`, dr.id);
     }
-    if (dr.dependsOn?.includes('DR-001') && dr.implementationStatus === 'in-progress' && dr.id === 'DR-002') {
-      const dr001 = designRevisions.find((d) => d.id === 'DR-001');
-      if (dr001?.implementationStatus === 'planned' && !dr.dependsOn.includes('M83.5')) {
-        issue(issues, 'warning', 'DR_STATUS_PARADOX', 'DR-002 in-progress should gate via M83.5 when DR-001 is planned', dr.id);
+    if (dr.implementationStatus === 'merged' && !dr.mergedInto?.length) {
+      issue(issues, 'warning', 'DR_MERGED_WITHOUT_TARGETS', `${dr.id} merged but mergedInto empty`, dr.id);
+    }
+    if (dr.implementationStatus !== 'merged' && dr.implementationStatus !== 'planned' && dr.implementationStatus !== 'in-progress') {
+      if (!IMPLEMENTATION_STATUSES.has(dr.implementationStatus)) {
+        issue(issues, 'warning', 'DR_INVALID_STATUS', `${dr.id} has status ${dr.implementationStatus}`, dr.id);
       }
     }
   }
@@ -235,8 +253,8 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
 
   // ── Core Philosophy compliance ────────────────────────────────────────
   const corePhilosophies = bundle.corePhilosophies ?? [];
-  if (corePhilosophies.length < 15) {
-    issue(issues, 'error', 'LOW_PHILOSOPHY_COUNT', `Expected ≥15 core philosophies, found ${corePhilosophies.length}`);
+  if (corePhilosophies.length < 22) {
+    issue(issues, 'error', 'LOW_PHILOSOPHY_COUNT', `Expected ≥22 core philosophies (Foundation v1.0), found ${corePhilosophies.length}`);
   }
   const requiredPhilosophyCategories = ['experiential', 'governance', 'platform'];
   for (const cat of requiredPhilosophyCategories) {
@@ -258,7 +276,13 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
   }
 
   // ── Constitution compliance ───────────────────────────────────────────
-  const requiredPrinciples = ['constitution-single-source', 'constitution-registry-driven', 'constitution-core-philosophies'];
+  const requiredPrinciples = [
+    'constitution-single-source',
+    'constitution-registry-driven',
+    'constitution-core-philosophies',
+    'constitution-experience-architecture',
+    'constitution-foundation-governance',
+  ];
   for (const id of requiredPrinciples) {
     if (!constitution.principles?.some((p) => p.id === id)) {
       issue(issues, 'error', 'CONSTITUTION_PRINCIPLE_MISSING', `Missing required principle ${id}`, id);
@@ -278,7 +302,43 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
     issue(issues, 'error', 'MISSING_SYSTEM_REGISTRY', 'M127 System Registry milestone missing');
   }
 
-  // ── Missing documentation (live complete modules) ─────────────────────
+  const m127_13 = milestoneByCanonical.get('M127.13');
+  if (!m127_13) {
+    issue(issues, 'warning', 'MISSING_EXECUTIVE_STRATEGY_FLOOR', 'M127.13 Executive Strategy Floor milestone missing (DR-005 merge target)');
+  }
+
+  // ── Foundation baseline compliance ────────────────────────────────────
+  if (foundationBaseline.status === 'frozen') {
+    const frozenVolumes = foundationBaseline.baseline?.masterSpecFoundation?.volumesFrozen ?? [];
+    for (const vol of ['volume-0', 'volume-i', 'volume-ii', 'volume-iii', 'volume-iv']) {
+      if (!frozenVolumes.includes(vol)) {
+        issue(issues, 'warning', 'FOUNDATION_VOLUME_NOT_FROZEN', `Foundation baseline missing frozen volume ${vol}`, vol);
+      }
+    }
+  } else if (Object.keys(foundationBaseline).length > 0) {
+    issue(issues, 'warning', 'FOUNDATION_NOT_FROZEN', 'foundation-baseline.yaml exists but status is not frozen');
+  }
+
+  // ── DR merge integrity ────────────────────────────────────────────────
+  const unmerged = designRevisions.filter((d) => !['merged', 'deprecated'].includes(d.implementationStatus));
+  if (unmerged.length > 0) {
+    issue(issues, 'warning', 'DR_NOT_MERGED', `Design revisions not merged: ${unmerged.map((d) => d.id).join(', ')}`);
+  }
+
+  // ── Experience architecture compliance ────────────────────────────────
+  if (!experienceArchitecture.layers?.length) {
+    issue(issues, 'warning', 'MISSING_EXPERIENCE_ARCHITECTURE', 'experience-architecture.yaml has no layers');
+  }
+
+  // ── Search integrity (Knowledge Registry module doc) ────────────────
+  const krDoc = path.join(DOCS_STUDIO, 'knowledge-registry.md');
+  const expDoc = path.join(DOCS_STUDIO, 'experience-architecture.md');
+  if (!fs.existsSync(krDoc)) {
+    issue(issues, 'warning', 'SEARCH_INTEGRITY_KR', 'knowledge-registry.md missing for search/registry integrity');
+  }
+  if (!fs.existsSync(expDoc)) {
+    issue(issues, 'warning', 'SEARCH_INTEGRITY_EXP', 'experience-architecture.md missing for experiential search');
+  }
   for (const m of milestones.filter((x) => x.implementationStatus === 'complete' && x.moduleId)) {
     const docPath = path.join(DOCS_STUDIO, `${m.moduleId}.md`);
     if (!fs.existsSync(docPath)) {

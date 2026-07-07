@@ -1,10 +1,12 @@
 {
   "version": "1.0.0",
-  "compiledAt": "2026-07-07T06:38:31.921Z",
+  "compiledAt": "2026-07-07T15:07:24.081Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
     "version": "1.0.0",
+    "foundationVersion": "1.0.0",
     "updatedAt": "2026-07-07",
+    "status": "frozen",
     "principles": [
       {
         "id": "constitution-platform",
@@ -34,7 +36,7 @@
       {
         "id": "constitution-life-culture",
         "title": "Life & Culture Preferences™",
-        "summary": "Personalization must be respectful — Life & Culture Preferences™ prevent assumptions around holidays, grief, culture, celebration, tone, and sensitivity."
+        "summary": "Personalization must be respectful — Life & Culture Preferences™ (M89.5) prevent assumptions around holidays, grief, culture, celebration, tone, and sensitivity."
       },
       {
         "id": "constitution-qa-gate",
@@ -44,19 +46,503 @@
       {
         "id": "constitution-single-source",
         "title": "Single Source of Truth",
-        "summary": "The Master Specification is the single source of truth — Volumes, milestones, and design revisions exist exactly once and are referenced everywhere."
+        "summary": "The Master Specification is the single source of truth — Volumes, milestones, and architecture exist exactly once and are referenced everywhere."
       },
       {
         "id": "constitution-executive-strategy-floor",
         "title": "Studio OS Executive Strategy Floor™",
-        "summary": "Studio OS maintains its own executive headquarters — the Executive Strategy Floor™ — where platform leaders oversee architecture, knowledge, quality, and evolution through immersive departments inside Headquarters, not disconnected developer dashboards. Registration only until implementation (DR-005)."
+        "summary": "Studio OS maintains its own executive headquarters — the Executive Strategy Floor™ (M127.13) — where platform leaders oversee architecture, knowledge, quality, and evolution through immersive departments inside Headquarters. Canonical architecture frozen at Foundation v1.0; immersive UI product implementation is intentionally deferred."
       },
       {
         "id": "constitution-core-philosophies",
         "title": "Core Studio OS Philosophy",
-        "summary": "Constitutional design principles in core-philosophies.yaml govern every future Volume, Chapter, Milestone, and Design Revision — experiential, not feature lists. Architecture Before Implementation; Places Instead of Pages; Operating System, Not SaaS."
+        "summary": "Twenty-two constitutional design principles in core-philosophies.yaml govern every Volume, Chapter, Milestone, and architectural amendment — experiential, not feature lists. Architecture Before Implementation; Places Instead of Pages; Operating System, Not SaaS."
+      },
+      {
+        "id": "constitution-experience-architecture",
+        "title": "Experience Architecture™",
+        "summary": "The experiential layer — Studio Orb™, Living Headquarters™, Design DNA™, Experience DNA™, Workspace DNA™, Personalization DNA™, Emotional Computing™, Ambient Intelligence™, and context-aware personalization — is defined in experience-architecture.yaml as canonical architecture, not isolated design overlays."
+      },
+      {
+        "id": "constitution-foundation-governance",
+        "title": "Foundation Governance™",
+        "summary": "Foundation Baseline v1.0 is frozen. All future architectural evolution requires governed Design Revisions, Constitutional Amendments, Master Specification updates, or new Volume additions — never silent modification of the baseline."
       }
     ]
+  },
+  "experienceArchitecture": {
+    "version": "1.0.0",
+    "foundationVersion": "1.0.0",
+    "updatedAt": "2026-07-07",
+    "status": "frozen",
+    "summary": "The experiential layer defines how Studio OS feels, adapts, and communicates — ambient intelligence, immersive Headquarters, design genomes, and respectful personalization. Product implementation of individual surfaces may be deferred; architectural definitions are canonical and frozen at Foundation v1.0.",
+    "layers": [
+      {
+        "id": "presence-interaction",
+        "title": "Presence & Interaction Layer",
+        "concepts": [
+          {
+            "id": "studio-orb",
+            "title": "Studio Orb™",
+            "milestoneIds": [
+              "M89.1"
+            ],
+            "mergedFrom": [
+              "DR-001"
+            ],
+            "summary": "Ambient intelligence presence — radial menu, luxury sound, intelligent positioning.",
+            "systems": [
+              "studio-orb",
+              "command-dock",
+              "voice-mode",
+              "conversation-mode"
+            ],
+            "philosophyIds": [
+              "philosophy-studio-orb",
+              "philosophy-conversational-ux"
+            ]
+          },
+          {
+            "id": "experience-studio",
+            "title": "Experience Studio™",
+            "milestoneIds": [
+              "M131"
+            ],
+            "summary": "Authored experience design — interviewed atmosphere, not settings panels.",
+            "systems": [
+              "experience-studio",
+              "design-genome",
+              "design-dna-canon"
+            ],
+            "philosophyIds": [
+              "philosophy-experience-studio"
+            ]
+          },
+          {
+            "id": "command-dock",
+            "title": "Command Dock™",
+            "milestoneIds": [
+              "M82"
+            ],
+            "mergedFrom": [
+              "DR-001"
+            ],
+            "summary": "Executive command console — evolves toward Orb-centric interaction per M89.1.",
+            "systems": [
+              "command-dock",
+              "concierge-routing",
+              "studio-intelligence"
+            ],
+            "philosophyIds": [
+              "philosophy-conversational-ux"
+            ]
+          },
+          {
+            "id": "conversation-voice",
+            "title": "Conversation & Voice Layer",
+            "milestoneIds": [
+              "M89.2",
+              "M89.3",
+              "M89.4"
+            ],
+            "mergedFrom": [
+              "DR-001"
+            ],
+            "summary": "Voice Mode™, Conversation Mode™, Awakening Sequence™ — ceremonial intelligence entry.",
+            "systems": [
+              "voice-mode",
+              "conversation-mode",
+              "awakening-sequence"
+            ],
+            "philosophyIds": [
+              "philosophy-conversational-ux",
+              "philosophy-progressive-disclosure"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "headquarters-environment",
+        "title": "Headquarters & Environmental Layer",
+        "concepts": [
+          {
+            "id": "living-headquarters",
+            "title": "Living Headquarters™",
+            "milestoneIds": [
+              "M82.5",
+              "M141"
+            ],
+            "mergedFrom": [
+              "DR-002",
+              "DR-003"
+            ],
+            "summary": "Headquarters evolves with organizational life — quiet presence, environmental adaptation.",
+            "systems": [
+              "living-headquarters-presence",
+              "experience-engine",
+              "mission-control"
+            ],
+            "philosophyIds": [
+              "philosophy-living-headquarters",
+              "philosophy-places-not-pages"
+            ]
+          },
+          {
+            "id": "environmental-storytelling",
+            "title": "Environmental Storytelling™",
+            "milestoneIds": [
+              "M141",
+              "M106"
+            ],
+            "mergedFrom": [
+              "DR-003"
+            ],
+            "summary": "Seasons, milestones, memory, and legacy expressed through space — not dashboards.",
+            "systems": [
+              "legacy-vault",
+              "mission-control",
+              "experience-engine"
+            ],
+            "philosophyIds": [
+              "philosophy-environmental-storytelling"
+            ]
+          },
+          {
+            "id": "headquarters-experience-v2",
+            "title": "Headquarters Experience™ V2",
+            "milestoneIds": [
+              "M83.5",
+              "M86"
+            ],
+            "mergedFrom": [
+              "DR-002"
+            ],
+            "summary": "Immersive wings — Executive Lobby, Company Pulse, Operations, Knowledge, Financial, Innovation, Legacy.",
+            "wings": [
+              "executive-lobby",
+              "company-pulse",
+              "operations-wing",
+              "knowledge-wing",
+              "financial-wing",
+              "innovation-wing",
+              "legacy-wing"
+            ],
+            "systems": [
+              "mission-control",
+              "executive-information-architecture",
+              "industry-architecture"
+            ],
+            "philosophyIds": [
+              "philosophy-places-not-pages",
+              "philosophy-living-headquarters"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "design-genome-stack",
+        "title": "Design & Genome Stack",
+        "concepts": [
+          {
+            "id": "design-dna",
+            "title": "Design DNA™",
+            "milestoneIds": [
+              "M84"
+            ],
+            "summary": "Customer-facing design canon — tokens, typography, glass, hierarchy.",
+            "systems": [
+              "design-dna-canon",
+              "design-token-engine",
+              "component-registry"
+            ],
+            "philosophyIds": [
+              "philosophy-design-dna"
+            ]
+          },
+          {
+            "id": "experience-dna",
+            "title": "Experience DNA™",
+            "milestoneIds": [
+              "M85",
+              "M141"
+            ],
+            "summary": "Inherited emotional rhythm, arrival, hospitality, environmental adaptation.",
+            "systems": [
+              "design-genome",
+              "experience-engine",
+              "arrival-experience"
+            ],
+            "philosophyIds": [
+              "philosophy-experience-dna"
+            ]
+          },
+          {
+            "id": "workspace-dna",
+            "title": "Workspace DNA™",
+            "milestoneIds": [
+              "M76.5",
+              "M85"
+            ],
+            "summary": "Per-organization experiential genome — multi-workspace isolation with shared OS canon.",
+            "systems": [
+              "workspace-runtime",
+              "design-genome",
+              "organization-genome"
+            ],
+            "philosophyIds": [
+              "philosophy-design-dna",
+              "philosophy-os-not-saas"
+            ]
+          },
+          {
+            "id": "personalization-dna",
+            "title": "Personalization DNA™",
+            "milestoneIds": [
+              "M89.5"
+            ],
+            "mergedFrom": [
+              "DR-004"
+            ],
+            "summary": "Respectful personalization — culture, tone, accessibility, privacy without assumptions.",
+            "systems": [
+              "identity-graph",
+              "studio-orb",
+              "command-dock"
+            ],
+            "philosophyIds": [
+              "philosophy-progressive-disclosure"
+            ]
+          }
+        ]
+      },
+      {
+        "id": "intelligence-adaptation",
+        "title": "Intelligence & Adaptation Layer",
+        "concepts": [
+          {
+            "id": "emotional-computing",
+            "title": "Emotional Computing™",
+            "milestoneIds": [
+              "M89.5",
+              "M87.5"
+            ],
+            "mergedFrom": [
+              "DR-004"
+            ],
+            "summary": "Intelligence respects emotional context — grief, celebration, sensitivity, tone.",
+            "systems": [
+              "studio-intelligence",
+              "studio-orb",
+              "experience-engine"
+            ],
+            "philosophyIds": [
+              "philosophy-ai-creative-director"
+            ]
+          },
+          {
+            "id": "ambient-intelligence",
+            "title": "Ambient Intelligence™",
+            "milestoneIds": [
+              "M87.5",
+              "M107"
+            ],
+            "summary": "Intelligence felt through environment — not trapped in persistent toolbars.",
+            "systems": [
+              "ambient-awareness",
+              "studio-intelligence",
+              "command-dock"
+            ],
+            "philosophyIds": [
+              "philosophy-studio-orb",
+              "philosophy-invisible-complexity"
+            ]
+          },
+          {
+            "id": "context-aware-experiences",
+            "title": "Context-Aware Experiences™",
+            "milestoneIds": [
+              "M141",
+              "M82"
+            ],
+            "summary": "Surfaces adapt to route, role, organization state, and executive context.",
+            "systems": [
+              "experience-engine",
+              "command-dock",
+              "mission-control"
+            ],
+            "philosophyIds": [
+              "philosophy-progressive-disclosure"
+            ]
+          },
+          {
+            "id": "dynamic-workspace-personalization",
+            "title": "Dynamic Workspace Personalization™",
+            "milestoneIds": [
+              "M76.5",
+              "M89.5",
+              "M141"
+            ],
+            "summary": "Each workspace personalizes atmosphere while preserving Studio OS canon integrity.",
+            "systems": [
+              "workspace-runtime",
+              "experience-engine",
+              "design-genome"
+            ],
+            "philosophyIds": [
+              "philosophy-places-not-pages",
+              "philosophy-personalization-dna"
+            ]
+          }
+        ]
+      }
+    ],
+    "mergedDesignRevisions": {
+      "DR-001": {
+        "status": "merged",
+        "canonicalTargets": [
+          "M89.1",
+          "M89.2",
+          "M89.3",
+          "M89.4",
+          "M82"
+        ],
+        "architectureLayer": "presence-interaction"
+      },
+      "DR-002": {
+        "status": "merged",
+        "canonicalTargets": [
+          "M83.5",
+          "M86",
+          "headquarters-experience-v2"
+        ],
+        "architectureLayer": "headquarters-environment"
+      },
+      "DR-003": {
+        "status": "merged",
+        "canonicalTargets": [
+          "M82.5",
+          "M141",
+          "M106",
+          "environmental-storytelling"
+        ],
+        "architectureLayer": "headquarters-environment"
+      },
+      "DR-004": {
+        "status": "merged",
+        "canonicalTargets": [
+          "M89.5",
+          "emotional-computing",
+          "personalization-dna"
+        ],
+        "architectureLayer": "intelligence-adaptation"
+      },
+      "DR-005": {
+        "status": "merged",
+        "canonicalTargets": [
+          "M127.13",
+          "executive-strategy-floor"
+        ],
+        "architectureLayer": "platform-executive"
+      }
+    }
+  },
+  "foundationBaseline": {
+    "version": "1.0.0",
+    "frozenAt": "2026-07-07",
+    "status": "frozen",
+    "sprint": "Foundation Completion Sprint™",
+    "baseline": {
+      "constitution": {
+        "version": "1.0.0",
+        "path": "constitution.yaml",
+        "status": "frozen"
+      },
+      "corePhilosophy": {
+        "version": "1.0.0",
+        "path": "core-philosophies.yaml",
+        "principleCount": 22,
+        "status": "frozen"
+      },
+      "masterSpecFoundation": {
+        "version": "1.0.0",
+        "path": "docs/studio-os/master-spec/",
+        "volumesFrozen": [
+          "volume-0",
+          "volume-i",
+          "volume-ii",
+          "volume-iii",
+          "volume-iv"
+        ],
+        "status": "frozen"
+      },
+      "experienceArchitecture": {
+        "version": "1.0.0",
+        "path": "experience-architecture.yaml",
+        "status": "frozen"
+      },
+      "knowledgeRegistry": {
+        "version": "1.0.0",
+        "milestone": "M126",
+        "moduleId": "knowledge-registry",
+        "status": "frozen"
+      },
+      "systemRegistry": {
+        "version": "1.0.0",
+        "milestone": "M127",
+        "moduleId": "system-registry",
+        "status": "frozen"
+      },
+      "canonicalArchitecture": {
+        "version": "1.0.0",
+        "components": [
+          "constitution.yaml",
+          "core-philosophies.yaml",
+          "experience-architecture.yaml",
+          "foundation-baseline.yaml",
+          "volumes.yaml",
+          "chapters/",
+          "milestones/",
+          "dependency-graph.yaml",
+          "milestone-aliases.yaml"
+        ],
+        "status": "frozen"
+      }
+    },
+    "governance": {
+      "description": "Foundation v1.0 is the permanent source of truth. Future changes require one of:",
+      "allowedChangeMechanisms": [
+        "design-revision",
+        "constitutional-amendment",
+        "master-spec-volume-addition",
+        "master-spec-milestone-addition",
+        "experience-architecture-amendment"
+      ],
+      "prohibited": [
+        "silent-baseline-mutation",
+        "duplicate-milestone-definitions",
+        "shadow-roadmaps-outside-master-spec"
+      ]
+    },
+    "mergedDesignRevisions": [
+      "DR-001",
+      "DR-002",
+      "DR-003",
+      "DR-004",
+      "DR-005"
+    ],
+    "intentionallyDeferred": {
+      "productImplementation": [
+        "M89.1 Studio Orb™ UI",
+        "M89.2 Voice Mode™",
+        "M89.3 Conversation Mode™",
+        "M89.4 Awakening Sequence™",
+        "M128 Executive Strategy Floor™ immersive UI",
+        "M127.7–M127.11 Volume III planned packs",
+        "M145 Digital Twin™ Sandbox",
+        "Volumes V–XIX chapter authoring"
+      ],
+      "note": "Deferred items are fully specified in Master Specification. Implementation resumes in Phase 4 per governed roadmap — not through baseline modification."
+    }
   },
   "volumes": [
     {
@@ -66,23 +552,25 @@
       "summary": "Foundational principles governing platform architecture, UX, intelligence, registry-driven design, and release discipline.",
       "status": "complete",
       "dependsOn": [],
-      "milestoneRange": null,
+      "milestoneRange": "M127.13",
       "completionPct": 100,
-      "notes": "Executive Strategy Floor™ (DR-005) registered as planned meta-headquarters — immersive departmental home for platform architecture, knowledge, and quality. No UI or product implementation until approved."
+      "foundationVersion": "1.0.0",
+      "notes": "Constitution v1.0 frozen. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged. Experience Architecture™ and Foundation Governance principles added."
     },
     {
       "id": "volume-i",
       "number": "I",
       "title": "Core Operating System",
       "summary": "User-facing operating layer — Studio Intelligence™, Studio Orb™, Command Dock™, Headquarters™, Living Headquarters™, and environmental experiences.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "volume-0"
       ],
-      "milestoneRange": "M73.5-M89.4",
-      "completionPct": 58,
+      "milestoneRange": "M73.5-M89.5",
+      "completionPct": 100,
       "chaptersFile": "chapters/volume-i.yaml",
-      "notes": "Eight chapters in chapters/volume-i.yaml; milestones in milestones/volume-i.yaml. Closure boundary: Chapters 2, 3, 5 complete. Chapters 1, 4, 6, 7 in-progress. Chapter 8 (DR-001 Orb experience) planned — deferred. DR-002 gates via M83.5; DR-001 overlay merges when ready. Product implementation for planned milestones deferred."
+      "foundationVersion": "1.0.0",
+      "notes": "Eight chapters complete at Foundation v1.0. DR-001–DR-004 merged into Experience Architecture™ and canonical milestones M89.1–M89.5. M89.x product UI intentionally deferred. Volume I foundation closed — not a product completion claim."
     },
     {
       "id": "volume-ii",
@@ -97,7 +585,7 @@
       "milestoneRange": "M90-M127",
       "completionPct": 100,
       "chaptersFile": "chapters/volume-ii.yaml",
-      "notes": "Nine chapters complete. Knowledge Registry™ (M126) formally closed. System Registry™ (M127) complete. Executive Strategy Floor™ (DR-005) registered planned — no implementation."
+      "notes": "Nine chapters complete. Knowledge Registry™ (M126) formally closed. System Registry™ (M127) complete. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged."
     },
     {
       "id": "volume-iii",
@@ -328,7 +816,7 @@
       "number": 1,
       "title": "Workspace & Organizational Arrival",
       "summary": "Multi-organization workspace runtime, intelligent onboarding, and ceremonial arrival — the foundation before Headquarters feels alive.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "volume-0"
       ],
@@ -337,7 +825,11 @@
         "M73.5",
         "M73.6"
       ],
-      "completionPct": 70,
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-workspace-dna",
+        "philosophy-progressive-disclosure"
+      ],
       "volumeId": "volume-i"
     },
     {
@@ -374,32 +866,38 @@
         "M82.5"
       ],
       "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-conversational-ux",
+        "philosophy-living-headquarters"
+      ],
       "volumeId": "volume-i"
     },
     {
       "id": "chapter-i-4",
       "number": 4,
       "title": "Headquarters & Executive Information Architecture",
-      "summary": "Mission Control™, Executive Information Architecture (M83), and organization headquarters refinement — walking through Headquarters, not scrolling dashboards.",
-      "status": "in-progress",
+      "summary": "Mission Control™, Executive Information Architecture (M83), Headquarters Experience™ V2 wings, and organization refinement — walking through Headquarters, not scrolling dashboards.",
+      "status": "complete",
       "dependsOn": [
         "chapter-i-3"
       ],
       "milestoneIds": [
         "M83",
         "M83.5",
-        "M86",
-        "DR-002",
-        "DR-003"
+        "M86"
       ],
-      "completionPct": 72,
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-places-not-pages",
+        "philosophy-living-headquarters"
+      ],
       "volumeId": "volume-i"
     },
     {
       "id": "chapter-i-5",
       "number": 5,
       "title": "Design Canon & Organizational Genome",
-      "summary": "Design DNA & Canon™ and Design Genome™ — customer-facing canon and organizational visual memory governing every surface.",
+      "summary": "Design DNA™ & Canon™, Design Genome™, Workspace DNA™ — customer-facing canon and organizational visual memory governing every surface.",
       "status": "complete",
       "dependsOn": [
         "chapter-i-4"
@@ -409,14 +907,18 @@
         "M85"
       ],
       "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-design-dna",
+        "philosophy-workspace-dna"
+      ],
       "volumeId": "volume-i"
     },
     {
       "id": "chapter-i-6",
       "number": 6,
       "title": "Studio Intelligence Runtime & Experience",
-      "summary": "User-facing Studio Intelligence™, Founder Pilot Mode, and Experience Engine™ environmental adaptation across Headquarters.",
-      "status": "in-progress",
+      "summary": "User-facing Studio Intelligence™, Founder Pilot Mode, Experience Engine™, Ambient Intelligence™, and context-aware environmental adaptation.",
+      "status": "complete",
       "dependsOn": [
         "chapter-i-5",
         "M122"
@@ -426,7 +928,11 @@
         "M87.5",
         "M141"
       ],
-      "completionPct": 65,
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-ambient-intelligence",
+        "philosophy-context-aware-experiences"
+      ],
       "volumeId": "volume-i"
     },
     {
@@ -434,7 +940,7 @@
       "number": 7,
       "title": "Expansion & Platform Economics",
       "summary": "Expansion Center™ and permanent monetization architecture — founders expand departments and hire Digital Staff, never subscribe to features.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "chapter-i-6"
       ],
@@ -442,31 +948,37 @@
         "M88",
         "M89"
       ],
-      "completionPct": 55,
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas"
+      ],
       "volumeId": "volume-i"
     },
     {
       "id": "chapter-i-8",
       "number": 8,
-      "title": "Future Experience Layer (Planned)",
-      "summary": "Studio Orb™, Voice Mode™, Conversation Mode™, and Awakening Sequence™ — registered for roadmap and reconciliation; implementation deferred (DR-001).",
-      "status": "planned",
+      "title": "Experience Interaction Layer",
+      "summary": "Studio Orb™, Voice Mode™, Conversation Mode™, Awakening Sequence™, and Life & Culture Preferences™ — canonical experiential interaction architecture. Product UI intentionally deferred; specification frozen at Foundation v1.0.",
+      "status": "complete",
       "dependsOn": [
         "chapter-i-3",
         "M129",
         "M130",
-        "M131",
-        "DR-004"
+        "M131"
       ],
       "milestoneIds": [
         "M89.1",
         "M89.2",
         "M89.3",
         "M89.4",
-        "DR-001",
-        "DR-004"
+        "M89.5"
       ],
-      "completionPct": 0,
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-studio-orb",
+        "philosophy-personalization-dna",
+        "philosophy-emotional-computing"
+      ],
       "volumeId": "volume-i"
     },
     {
@@ -621,7 +1133,7 @@
       "id": "chapter-ii-9",
       "number": 9,
       "title": "Knowledge Registry & Platform Directory",
-      "summary": "Documentation Synchronization™, Studio OS Knowledge Registry™, Documentation Governance™, System Registry™, and Executive Strategy Floor™ (DR-005) — single source of truth for platform knowledge and reserved executive headquarters.",
+      "summary": "Documentation Synchronization™, Studio OS Knowledge Registry™, Documentation Governance™, System Registry™, and Executive Strategy Floor™ (M128) — single source of truth for platform knowledge and reserved executive headquarters.",
       "status": "complete",
       "dependsOn": [
         "chapter-ii-8"
@@ -631,7 +1143,7 @@
         "M126",
         "M126.5",
         "M127",
-        "DR-005"
+        "M127.13"
       ],
       "completionPct": 100,
       "volumeId": "volume-ii"
@@ -955,7 +1467,7 @@
       "chapterId": "chapter-i-1",
       "volumeId": "volume-i",
       "purpose": "Transform Studio OS into a true multi-organization operating system — each company is an isolated workspace with shared platform capabilities.",
-      "implementationStatus": "in-progress",
+      "implementationStatus": "complete",
       "shippedMilestone": "M76.5",
       "moduleId": "ecosystem",
       "dependsOn": [
@@ -969,7 +1481,7 @@
         "mission-control",
         "command-dock"
       ],
-      "implementationNotes": "Foundational refactor — Studio OS = OS, each company = Workspace. Sprint 2 registers spec only; workspace runtime hardening continues separately."
+      "implementationNotes": "Foundational multi-organization architecture complete. Workspace runtime hardening continues in product phases — spec frozen at Foundation v1.0."
     },
     {
       "canonicalId": "M73.5",
@@ -1180,14 +1692,14 @@
       ],
       "enables": [
         "M82.5",
-        "DR-001"
+        "M89.1"
       ],
       "relatedSystems": [
-        "concierge-routing",
-        "studio-intelligence",
-        "mission-control"
+        "command-dock",
+        "mission-control",
+        "concierge-layer"
       ],
-      "implementationNotes": "Not chatbot/search/palette. DR-001 will reimagine dock via Studio Orb™ — spec registered, product work deferred."
+      "implementationNotes": "DR-001 evolution path documented in M89.1. Current Command Dock shipped; Orb layer spec frozen."
     },
     {
       "canonicalId": "M82.5",
@@ -1204,14 +1716,15 @@
         "M82"
       ],
       "enables": [
-        "DR-003"
+        "M141"
       ],
       "relatedSystems": [
         "command-dock",
         "mission-control",
-        "concierge-layer"
+        "concierge-layer",
+        "environmental-storytelling"
       ],
-      "implementationNotes": "Subtle presence — never decorative animation or busy UI."
+      "implementationNotes": "DR-003 merged — feeds Environmental Storytelling™ via M141 and Legacy Vault (M106)."
     },
     {
       "canonicalId": "M83",
@@ -1228,9 +1741,8 @@
         "M82"
       ],
       "enables": [
-        "M83.5",
         "M86",
-        "DR-002"
+        "M89.1"
       ],
       "relatedSystems": [
         "mission-control",
@@ -1254,16 +1766,16 @@
         "M83"
       ],
       "enables": [
-        "M86",
-        "DR-002"
+        "M86"
       ],
       "relatedSystems": [
         "command-dock",
         "studio-intelligence",
         "knowledge-registry",
-        "system-registry"
+        "system-registry",
+        "headquarters-experience-v2"
       ],
-      "implementationNotes": "Primary Headquarters route. Shipped badge M83 on nav; canonical M83.5 distinguishes HQ module from EIA milestone."
+      "implementationNotes": "Primary Headquarters route. DR-002 merged into M86 + experience-architecture.yaml wings."
     },
     {
       "canonicalId": "M86",
@@ -1273,21 +1785,22 @@
       "chapterId": "chapter-i-4",
       "volumeId": "volume-i",
       "purpose": "Organization Identity Card, executive flow, progressive disclosure, and command-style primary actions per organization.",
-      "implementationStatus": "in-progress",
+      "implementationStatus": "complete",
       "shippedMilestone": "M86",
       "moduleId": "mission-control",
       "dependsOn": [
         "M83.5"
       ],
       "enables": [
-        "DR-002"
+        "M141"
       ],
       "relatedSystems": [
         "concierge-layer",
         "command-dock",
-        "design-genome"
+        "design-genome",
+        "headquarters-experience-v2"
       ],
-      "implementationNotes": "Merge target for DR-002 Headquarters Experience™ V2 overlays."
+      "implementationNotes": "DR-002 Headquarters Experience™ V2 merged — Executive Lobby, Company Pulse, and immersive wings defined in experience-architecture.yaml."
     },
     {
       "canonicalId": "M84",
@@ -1345,9 +1858,9 @@
       "chapterId": "chapter-i-6",
       "volumeId": "volume-i",
       "purpose": "Clean bootstrap experience — empty states, Page 001 numbering, maturity tiers, and Founder Timeline for first organizations.",
-      "implementationStatus": "in-progress",
+      "implementationStatus": "complete",
       "shippedMilestone": "M87",
-      "moduleId": null,
+      "moduleId": "founder-pilot-mode",
       "dependsOn": [
         "M85",
         "M86"
@@ -1404,14 +1917,16 @@
         "M87.5"
       ],
       "enables": [
-        "DR-003"
+        "M141",
+        "M82.5"
       ],
       "relatedSystems": [
         "design-token-engine",
         "interaction-engine",
-        "mission-control"
+        "mission-control",
+        "environmental-storytelling"
       ],
-      "implementationNotes": "Canonical home Volume I (moved from volume-ii-iv bundle). Depends on Volume XI design foundations M129/M130."
+      "implementationNotes": "Environmental adaptation + DR-003 Living Headquarters merged. Volume XI foundations M129/M130."
     },
     {
       "canonicalId": "M88",
@@ -1421,7 +1936,7 @@
       "chapterId": "chapter-i-7",
       "volumeId": "volume-i",
       "purpose": "Industry packs and department expansion — founders install capabilities, never subscribe to features.",
-      "implementationStatus": "in-progress",
+      "implementationStatus": "complete",
       "shippedMilestone": "M88",
       "moduleId": "expansion-center",
       "dependsOn": [
@@ -1438,7 +1953,7 @@
         "pack-install-engine",
         "headquarters-layout-engine"
       ],
-      "implementationNotes": "One-click department install with preview — Creator Studio example."
+      "implementationNotes": "One-click department install — Volume III infrastructure (M127.x) feeds this consumer."
     },
     {
       "canonicalId": "M89",
@@ -1448,13 +1963,15 @@
       "chapterId": "chapter-i-7",
       "volumeId": "volume-i",
       "purpose": "Digital payroll, department ownership, royalties — Studio OS economic engine without SaaS framing.",
-      "implementationStatus": "in-progress",
+      "implementationStatus": "complete",
       "shippedMilestone": "M89",
       "moduleId": "business-model-engine",
       "dependsOn": [
         "M88"
       ],
-      "enables": [],
+      "enables": [
+        "M89.1"
+      ],
       "relatedSystems": [
         "expansion-center",
         "marketplace",
@@ -1471,26 +1988,32 @@
       "registryKind": "milestone",
       "chapterId": "chapter-i-8",
       "volumeId": "volume-i",
-      "purpose": "Ambient intelligence presence replacing persistent dock — radial menu, luxury sound, intelligent positioning.",
+      "purpose": "Ambient intelligence presence — radial menu, luxury sound, intelligent positioning. Canonical interaction evolution of Command Dock™ (DR-001 merged).",
       "implementationStatus": "planned",
       "shippedMilestone": null,
-      "moduleId": null,
+      "moduleId": "studio-orb",
       "dependsOn": [
         "M82",
         "M129",
         "M130",
         "M131",
-        "DR-004"
+        "M89.5"
       ],
       "enables": [
-        "DR-001"
+        "M89.2",
+        "M89.3",
+        "M89.4"
       ],
       "relatedSystems": [
         "command-dock",
         "voice-mode",
         "conversation-mode"
       ],
-      "implementationNotes": "DR-001 merge target. Sprint 2 registers only — no Orb product implementation."
+      "alignedPhilosophies": [
+        "philosophy-studio-orb",
+        "philosophy-ambient-intelligence"
+      ],
+      "implementationNotes": "Foundation spec complete — product UI intentionally deferred per Foundation Freeze v1.0."
     },
     {
       "canonicalId": "M89.2",
@@ -1502,20 +2025,21 @@
       "purpose": "Orb-based voice interaction with Studio Intelligence™.",
       "implementationStatus": "planned",
       "shippedMilestone": null,
-      "moduleId": null,
+      "moduleId": "voice-mode",
       "dependsOn": [
         "M89.1",
         "M87.5"
       ],
-      "enables": [
-        "DR-001"
-      ],
+      "enables": [],
       "relatedSystems": [
         "studio-orb",
         "command-dock",
         "model-orchestrator"
       ],
-      "implementationNotes": "Foundation registered; voice implementation deferred."
+      "alignedPhilosophies": [
+        "philosophy-conversational-ux"
+      ],
+      "implementationNotes": "Foundation spec complete — voice implementation deferred."
     },
     {
       "canonicalId": "M89.3",
@@ -1527,18 +2051,19 @@
       "purpose": "Full-screen conversational experience with Studio Intelligence™.",
       "implementationStatus": "planned",
       "shippedMilestone": null,
-      "moduleId": null,
+      "moduleId": "conversation-mode",
       "dependsOn": [
         "M89.1"
       ],
-      "enables": [
-        "DR-001"
-      ],
+      "enables": [],
       "relatedSystems": [
         "studio-orb",
         "studio-intelligence"
       ],
-      "implementationNotes": "DR-001 merge target — spec only in Sprint 2."
+      "alignedPhilosophies": [
+        "philosophy-conversational-ux"
+      ],
+      "implementationNotes": "DR-001 merged — spec frozen at Foundation v1.0."
     },
     {
       "canonicalId": "M89.4",
@@ -1550,20 +2075,52 @@
       "purpose": "Ceremonial Orb activation sequence on Headquarters arrival.",
       "implementationStatus": "planned",
       "shippedMilestone": null,
-      "moduleId": null,
+      "moduleId": "awakening-sequence",
       "dependsOn": [
         "M89.1",
         "M73.6"
       ],
-      "enables": [
-        "DR-001"
-      ],
+      "enables": [],
       "relatedSystems": [
         "studio-orb",
         "arrival-experience",
         "living-headquarters-presence"
       ],
-      "implementationNotes": "Emotional entry moment — registered for roadmap search."
+      "alignedPhilosophies": [
+        "philosophy-environmental-storytelling",
+        "philosophy-progressive-disclosure"
+      ],
+      "implementationNotes": "Emotional entry moment — spec frozen; product deferred."
+    },
+    {
+      "canonicalId": "M89.5",
+      "name": "Life & Culture Preferences™",
+      "internalId": "life-culture-preferences",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-8",
+      "volumeId": "volume-i",
+      "purpose": "Respectful cultural, holiday, sensitive date, celebration, communication, tone, accessibility, and privacy preferences (DR-004 merged).",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": "life-culture-preferences",
+      "dependsOn": [
+        "volume-0",
+        "M87.5"
+      ],
+      "enables": [
+        "M89.1"
+      ],
+      "relatedSystems": [
+        "studio-orb",
+        "identity-graph",
+        "command-dock",
+        "experience-engine"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-personalization-dna",
+        "philosophy-emotional-computing"
+      ],
+      "implementationNotes": "Emotional Computing™ and Personalization DNA™ canonical home. Settings UI deferred."
     },
     {
       "canonicalId": "M90",
@@ -2437,9 +2994,9 @@
         "manifest-authoring",
         "system-registry",
         "documentation-sync",
-        "DR-005"
+        "M127.13"
       ],
-      "implementationNotes": "Studio OS Knowledge Registry™ — Master Spec single source of truth. Formal closure: per-volume manifests, Core Philosophy™, Constitution™, Architecture Validator™ gate, and module documentation complete. Feeds Executive Strategy Floor™ (DR-005)."
+      "implementationNotes": "Studio OS Knowledge Registry™ — Master Spec single source of truth. Formal closure: per-volume manifests, Core Philosophy™, Constitution™, Architecture Validator™ gate, and module documentation complete. Feeds Executive Strategy Floor™ (M127.13)."
     },
     {
       "canonicalId": "M126.5",
@@ -2479,16 +3036,47 @@
         "M126.5"
       ],
       "enables": [
-        "DR-005"
+        "M127.13"
       ],
       "chapterId": "chapter-ii-9",
       "relatedSystems": [
         "knowledge-registry",
         "documentation-governance",
         "component-registry",
-        "DR-005"
+        "M127.13"
       ],
-      "implementationNotes": "Master directory of every platform object — consumes Knowledge Registry entries. Enables Executive Strategy Floor™ (DR-005) registration."
+      "implementationNotes": "Master directory of every platform object — consumes Knowledge Registry entries. Enables Executive Strategy Floor™ (M128)."
+    },
+    {
+      "canonicalId": "M127.13",
+      "name": "Executive Strategy Floor™",
+      "internalId": "executive-strategy-floor",
+      "registryKind": "milestone",
+      "volumeId": "volume-ii",
+      "chapterId": "chapter-ii-9",
+      "purpose": "Studio OS meta-headquarters — immersive departmental home for platform architecture, knowledge, quality, and governed evolution (DR-005 merged).",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": "executive-strategy-floor",
+      "dependsOn": [
+        "M127",
+        "volume-0"
+      ],
+      "enables": [],
+      "relatedSystems": [
+        "knowledge-registry",
+        "system-registry",
+        "manifest-reconciliation",
+        "engineering-excellence-dashboard",
+        "qa-headquarters",
+        "release-readiness",
+        "experience-architecture"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-documentation-as-architecture",
+        "philosophy-places-not-pages"
+      ],
+      "implementationNotes": "Canonical architecture frozen at Foundation v1.0. Immersive UI product implementation intentionally deferred — all merge targets registered in experience-architecture.yaml."
     },
     {
       "canonicalId": "M127.1",
@@ -2632,7 +3220,7 @@
       "relatedSystems": [
         "mission-control",
         "expansion-center",
-        "DR-002"
+        "headquarters-experience-v2"
       ],
       "implementationNotes": "buildHeadquartersLayout in install-engine — feeds Mission Control HQ Layout."
     },
@@ -5121,7 +5709,16 @@
       "canonicalId": "DR-001",
       "title": "Studio Orb™, Conversation Mode™, Command Dock Reimagined",
       "purpose": "Replace persistent dock with Studio Orb™, Awakening Sequence™, ambient presence, radial menu, Conversation Mode™, intelligent positioning, luxury sound architecture, and Voice foundation.",
-      "implementationStatus": "planned",
+      "implementationStatus": "merged",
+      "mergedAt": "2026-07-07",
+      "mergedInto": [
+        "M89.1",
+        "M89.2",
+        "M89.3",
+        "M89.4",
+        "M82",
+        "presence-interaction"
+      ],
       "volumeId": "volume-i",
       "mergeTargets": [
         "studio-orb",
@@ -5132,18 +5729,25 @@
         "M129",
         "M130",
         "M131",
-        "DR-004"
+        "M89.5"
       ],
       "enables": [
-        "DR-002"
-      ]
+        "M86"
+      ],
+      "mergeNote": "Permanently absorbed into Experience Architecture™ presence-interaction layer."
     },
     {
       "id": "DR-002",
       "canonicalId": "DR-002",
       "title": "Headquarters Experience™ V2",
       "purpose": "Transform Headquarters from dashboard into immersive Executive Lobby™, Company Pulse™, Operations Wing™, Knowledge Wing™, Financial Wing™, Innovation Wing™, and Legacy Wing™.",
-      "implementationStatus": "in-progress",
+      "implementationStatus": "merged",
+      "mergedAt": "2026-07-07",
+      "mergedInto": [
+        "M83.5",
+        "M86",
+        "headquarters-experience-v2"
+      ],
       "volumeId": "volume-i",
       "mergeTargets": [
         "mission-control",
@@ -5156,15 +5760,23 @@
         "M83.5"
       ],
       "enables": [
-        "DR-003"
-      ]
+        "M141"
+      ],
+      "mergeNote": "Wings defined in experience-architecture.yaml headquarters-environment layer."
     },
     {
       "id": "DR-003",
       "canonicalId": "DR-003",
       "title": "Living Headquarters™ / Environmental Storytelling",
       "purpose": "Headquarters evolves with seasons, anniversaries, milestones, Legacy Wall™, Executive Collection™, and meaningful memories.",
-      "implementationStatus": "planned",
+      "implementationStatus": "merged",
+      "mergedAt": "2026-07-07",
+      "mergedInto": [
+        "M82.5",
+        "M141",
+        "M106",
+        "environmental-storytelling"
+      ],
       "volumeId": "volume-i",
       "mergeTargets": [
         "mission-control",
@@ -5172,17 +5784,24 @@
         "legacy-vault"
       ],
       "dependsOn": [
-        "DR-002",
+        "M86",
         "M106"
       ],
-      "enables": []
+      "enables": [],
+      "mergeNote": "Merged into Living Headquarters™ and Environmental Storytelling™ concepts."
     },
     {
       "id": "DR-004",
       "canonicalId": "DR-004",
       "title": "Emotional Intelligence™ + Life & Culture Preferences™",
       "purpose": "Orb settings for respectful cultural, holiday, sensitive date, celebration, communication, tone, accessibility, and privacy preferences.",
-      "implementationStatus": "in-progress",
+      "implementationStatus": "merged",
+      "mergedAt": "2026-07-07",
+      "mergedInto": [
+        "M89.5",
+        "emotional-computing",
+        "personalization-dna"
+      ],
       "volumeId": "volume-i",
       "mergeTargets": [
         "studio-orb",
@@ -5193,30 +5812,29 @@
         "volume-0"
       ],
       "enables": [
-        "DR-001"
-      ]
+        "M89.1"
+      ],
+      "mergeNote": "Canonical milestone M89.5 Life & Culture Preferences™."
     },
     {
       "id": "DR-005",
       "canonicalId": "DR-005",
       "title": "Executive Strategy Floor™",
-      "purpose": "Executive headquarters for Studio OS itself — not a developer tool. Immersive departmental environment where founders, executives, architects, designers, engineers, and Studio Intelligence™ oversee the operating system: Constitution™, Knowledge Registry™, System Registry™, Architecture Graph™, Dependency Graph™, Engineering Excellence™, QA Center™, Release Readiness™, Roadmap™, Component Library™, Design System™, Design Tokens™, Animation Language™, Version History™, Changelog™, Studio Intelligence™ Architecture Advisor, Implementation Progress, Future Research, Experimental Systems, Technical Debt, Architecture Decisions, and Design Revisions. Documentation becomes environment; architecture becomes explorable; knowledge has a physical home.",
-      "implementationStatus": "planned",
+      "purpose": "Executive headquarters for Studio OS itself — immersive departmental environment where founders, executives, architects, and Studio Intelligence™ oversee the operating system. Documentation becomes environment; architecture becomes explorable.",
+      "implementationStatus": "merged",
+      "mergedAt": "2026-07-07",
+      "mergedInto": [
+        "M127.13",
+        "executive-strategy-floor"
+      ],
       "volumeId": "volume-0",
       "mergeTargets": [
         "knowledge-registry",
         "system-registry",
         "manifest-reconciliation",
-        "manifest-authoring",
-        "documentation-governance",
-        "documentation-sync",
         "engineering-excellence-dashboard",
         "qa-headquarters",
-        "release-readiness",
-        "component-registry",
-        "design-token-engine",
-        "interaction-engine",
-        "studio-intelligence-architecture"
+        "release-readiness"
       ],
       "dependsOn": [
         "volume-0",
@@ -5230,15 +5848,7 @@
         "Studio OS Headquarters",
         "Platform Executive HQ"
       ],
-      "keywords": [
-        "executive strategy floor",
-        "studio os headquarters",
-        "platform executive",
-        "architecture advisor",
-        "dependency graph",
-        "design revisions",
-        "technical debt"
-      ]
+      "mergeNote": "Canonical milestone M128 Executive Strategy Floor™ — UI deferred, architecture frozen."
     }
   ],
   "milestoneAliases": [
@@ -5357,10 +5967,16 @@
       "formerModuleId": "documentation-registry"
     },
     {
-      "canonicalId": "DR-005",
+      "canonicalId": "M127.13",
       "name": "Executive Strategy Floor™",
       "moduleId": "executive-strategy-floor",
-      "reason": "Planned executive headquarters for Studio OS platform architecture — registration only"
+      "reason": "DR-005 merged into canonical milestone M127.13 — immersive UI deferred"
+    },
+    {
+      "canonicalId": "M89.5",
+      "name": "Life & Culture Preferences™",
+      "moduleId": "life-culture-preferences",
+      "reason": "DR-004 merged — Emotional Computing™ and Personalization DNA™"
     }
   ],
   "dependencyEdges": [
@@ -5402,8 +6018,21 @@
     },
     {
       "from": "M83.5",
-      "to": "DR-002",
-      "type": "enables"
+      "to": "M86",
+      "type": "enables",
+      "note": "Headquarters Experience V2 (DR-002 merged)"
+    },
+    {
+      "from": "M86",
+      "to": "M141",
+      "type": "enables",
+      "note": "HQ refinement → Experience Engine environmental layer"
+    },
+    {
+      "from": "M82.5",
+      "to": "M141",
+      "type": "relates",
+      "note": "Living presence → environmental storytelling (DR-003 merged)"
     },
     {
       "from": "M87.5",
@@ -5430,6 +6059,12 @@
       "from": "M126.5",
       "to": "M127",
       "type": "enables"
+    },
+    {
+      "from": "M127",
+      "to": "M127.13",
+      "type": "enables",
+      "note": "Executive Strategy Floor (DR-005 merged)"
     },
     {
       "from": "M127",
@@ -5538,47 +6173,42 @@
     },
     {
       "from": "M131",
-      "to": "DR-001",
-      "type": "enables"
-    },
-    {
-      "from": "DR-004",
-      "to": "DR-001",
-      "type": "enables"
-    },
-    {
-      "from": "DR-001",
-      "to": "DR-002",
-      "type": "enables"
-    },
-    {
-      "from": "DR-002",
-      "to": "DR-003",
-      "type": "enables"
-    },
-    {
-      "from": "volume-0",
-      "to": "DR-005",
+      "to": "M89.1",
       "type": "enables",
-      "note": "Constitution governs Studio OS executive headquarters"
+      "note": "Design foundations → Studio Orb (DR-001 merged)"
     },
     {
-      "from": "M126",
-      "to": "DR-005",
+      "from": "M89.5",
+      "to": "M89.1",
       "type": "enables",
-      "note": "Knowledge Registry anchors executive knowledge wing"
+      "note": "Life & Culture Preferences → Orb (DR-004 merged)"
     },
     {
-      "from": "M127",
-      "to": "DR-005",
-      "type": "enables",
-      "note": "System Registry completes registry spine; reserves executive home"
+      "from": "M89.1",
+      "to": "M89.2",
+      "type": "chain"
     },
     {
-      "from": "DR-005",
-      "to": "DR-002",
+      "from": "M89.1",
+      "to": "M89.3",
+      "type": "chain"
+    },
+    {
+      "from": "M89.1",
+      "to": "M89.4",
+      "type": "chain"
+    },
+    {
+      "from": "M106",
+      "to": "M141",
       "type": "relates",
-      "note": "Shared immersive Headquarters department philosophy — org HQ and Studio OS meta-HQ"
+      "note": "Legacy Vault → environmental storytelling"
+    },
+    {
+      "from": "M127.13",
+      "to": "M86",
+      "type": "relates",
+      "note": "Platform executive HQ shares immersive department philosophy with org HQ"
     },
     {
       "from": "M154",
@@ -5658,9 +6288,9 @@
       "category": "experiential",
       "summary": "The environment communicates before interfaces do. Seasons, milestones, memory, and organizational moments should be felt through space, light, motion, and presence — not explained through dashboards or copy blocks.",
       "governs": [
-        "DR-003",
         "living-headquarters",
-        "legacy-vault"
+        "legacy-vault",
+        "environmental-storytelling"
       ],
       "alignsVolumes": [
         "volume-i",
@@ -5673,9 +6303,9 @@
       "category": "experiential",
       "summary": "Headquarters is a living place that evolves with the organization — not a static admin home. Departments, wings, pulse, and memory should change as the company grows, celebrates, and learns.",
       "governs": [
-        "DR-002",
-        "DR-003",
-        "mission-control"
+        "mission-control",
+        "headquarters-experience-v2",
+        "living-headquarters"
       ],
       "alignsVolumes": [
         "volume-i"
@@ -5687,9 +6317,9 @@
       "category": "experiential",
       "summary": "Intelligence should feel ambient, respectful, and present — not trapped in a persistent toolbar. The Orb is a philosophy of presence: arrive, listen, guide, and disappear until needed again.",
       "governs": [
-        "DR-001",
         "studio-orb",
-        "command-dock"
+        "command-dock",
+        "voice-mode"
       ],
       "alignsVolumes": [
         "volume-i"
@@ -5746,7 +6376,7 @@
       "governs": [
         "command-dock",
         "studio-intelligence",
-        "DR-001"
+        "studio-orb"
       ],
       "alignsVolumes": [
         "volume-i",
@@ -5776,7 +6406,7 @@
       "governs": [
         "mission-control",
         "executive-council",
-        "DR-005"
+        "executive-strategy-floor"
       ],
       "alignsVolumes": [
         "volume-i",
@@ -5791,7 +6421,7 @@
       "governs": [
         "knowledge-registry",
         "documentation-governance",
-        "DR-005"
+        "executive-strategy-floor"
       ],
       "alignsVolumes": [
         "volume-ii",
@@ -5806,7 +6436,7 @@
       "governs": [
         "studio-intelligence",
         "experience-studio",
-        "DR-004"
+        "emotional-computing"
       ],
       "alignsVolumes": [
         "volume-i",
@@ -5850,7 +6480,7 @@
       "governs": [
         "manifest-authoring",
         "manifest-reconciliation",
-        "DR-005"
+        "executive-strategy-floor"
       ],
       "alignsVolumes": [
         "volume-0",
@@ -5877,28 +6507,114 @@
       "category": "experiential",
       "summary": "Users walk through destinations — Headquarters wings, departments, floors, registries, and studios — not disconnected admin pages. Navigation is spatial and narrative, not a flat route tree.",
       "governs": [
-        "DR-002",
-        "DR-005",
-        "mission-control"
+        "mission-control",
+        "industry-architecture",
+        "headquarters-experience-v2"
       ],
       "alignsVolumes": [
         "volume-i",
         "volume-iii"
+      ]
+    },
+    {
+      "id": "philosophy-workspace-dna",
+      "title": "Workspace DNA™",
+      "category": "design-canon",
+      "summary": "Each organization workspace carries an experiential genome — isolated identity, atmosphere, and memory while inheriting Studio OS canon. Multi-organization does not mean multi-product fragmentation.",
+      "governs": [
+        "workspace-runtime",
+        "design-genome",
+        "organization-genome"
+      ],
+      "alignsVolumes": [
+        "volume-i"
+      ]
+    },
+    {
+      "id": "philosophy-personalization-dna",
+      "title": "Personalization DNA™",
+      "category": "design-canon",
+      "summary": "Personalization is respectful and explicit — culture, tone, accessibility, grief, celebration, and privacy preferences authored through Life & Culture Preferences™, never inferred from assumptions.",
+      "governs": [
+        "M89.5",
+        "studio-orb",
+        "identity-graph",
+        "command-dock"
+      ],
+      "alignsVolumes": [
+        "volume-i"
+      ]
+    },
+    {
+      "id": "philosophy-emotional-computing",
+      "title": "Emotional Computing™",
+      "category": "intelligence",
+      "summary": "Intelligence systems account for emotional context — sensitivity, celebration, grief, and tone — as first-class inputs, not afterthoughts in copy generation.",
+      "governs": [
+        "studio-intelligence",
+        "studio-orb",
+        "experience-engine"
+      ],
+      "alignsVolumes": [
+        "volume-i"
+      ]
+    },
+    {
+      "id": "philosophy-ambient-intelligence",
+      "title": "Ambient Intelligence™",
+      "category": "intelligence",
+      "summary": "Intelligence is felt through the environment — briefings, presence, and guidance arrive when needed and recede when not. No persistent toolbar clutter.",
+      "governs": [
+        "ambient-awareness",
+        "studio-intelligence",
+        "living-headquarters-presence"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-ii"
+      ]
+    },
+    {
+      "id": "philosophy-context-aware-experiences",
+      "title": "Context-Aware Experiences™",
+      "category": "interaction",
+      "summary": "Every surface adapts to organizational context — role, route, mission state, and executive priority — without requiring the user to reconfigure the OS.",
+      "governs": [
+        "experience-engine",
+        "command-dock",
+        "mission-control"
+      ],
+      "alignsVolumes": [
+        "volume-i"
+      ]
+    },
+    {
+      "id": "philosophy-dynamic-workspace-personalization",
+      "title": "Dynamic Workspace Personalization™",
+      "category": "interaction",
+      "summary": "Workspaces personalize atmosphere dynamically — seasons, milestones, and organizational moments reshape Headquarters while preserving canonical integrity.",
+      "governs": [
+        "experience-engine",
+        "workspace-runtime",
+        "living-headquarters-presence"
+      ],
+      "alignsVolumes": [
+        "volume-i"
       ]
     }
   ],
   "stats": {
     "volumeCount": 20,
     "chapterCount": 32,
-    "milestoneCount": 230,
+    "milestoneCount": 232,
     "designRevisionCount": 5,
-    "completeCount": 96,
-    "inProgressCount": 13,
-    "plannedCount": 121,
-    "volumeIMilestoneCount": 25,
+    "completeCount": 101,
+    "inProgressCount": 8,
+    "plannedCount": 123,
+    "volumeIMilestoneCount": 26,
     "volumeIChapterCount": 8,
-    "volumeICompleteCount": 16,
-    "volumeIIMilestoneCount": 39,
+    "volumeICompleteCount": 21,
+    "volumeIIMilestoneCount": 40,
     "volumeIIChapterCount": 9,
     "volumeIICompleteCount": 39,
     "volumeIIIMilestoneCount": 12,
@@ -5907,6 +6623,9 @@
     "volumeIVMilestoneCount": 23,
     "volumeIVChapterCount": 9,
     "volumeIVCompleteCount": 22,
-    "philosophyCount": 16
+    "philosophyCount": 22,
+    "foundationFrozen": true,
+    "experienceLayerCount": 4,
+    "mergedDrCount": 5
   }
 }

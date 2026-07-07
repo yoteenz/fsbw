@@ -9,27 +9,27 @@ volumes:
     summary: Foundational principles governing platform architecture, UX, intelligence, registry-driven design, and release discipline.
     status: complete
     dependsOn: []
-    milestoneRange: null
+    milestoneRange: M127.13
     completionPct: 100
+    foundationVersion: '1.0.0'
     notes: >-
-      Executive Strategy Floor™ (DR-005) registered as planned meta-headquarters —
-      immersive departmental home for platform architecture, knowledge, and quality.
-      No UI or product implementation until approved.
+      Constitution v1.0 frozen. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged.
+      Experience Architecture™ and Foundation Governance principles added.
 
   - id: volume-i
     number: I
     title: Core Operating System
     summary: User-facing operating layer — Studio Intelligence™, Studio Orb™, Command Dock™, Headquarters™, Living Headquarters™, and environmental experiences.
-    status: in-progress
+    status: complete
     dependsOn: [volume-0]
-    milestoneRange: M73.5-M89.4
-    completionPct: 58
+    milestoneRange: M73.5-M89.5
+    completionPct: 100
     chaptersFile: chapters/volume-i.yaml
+    foundationVersion: '1.0.0'
     notes: >-
-      Eight chapters in chapters/volume-i.yaml; milestones in milestones/volume-i.yaml.
-      Closure boundary: Chapters 2, 3, 5 complete. Chapters 1, 4, 6, 7 in-progress.
-      Chapter 8 (DR-001 Orb experience) planned — deferred. DR-002 gates via M83.5;
-      DR-001 overlay merges when ready. Product implementation for planned milestones deferred.
+      Eight chapters complete at Foundation v1.0. DR-001–DR-004 merged into Experience
+      Architecture™ and canonical milestones M89.1–M89.5. M89.x product UI intentionally
+      deferred. Volume I foundation closed — not a product completion claim.
 
   - id: volume-ii
     number: II
@@ -42,7 +42,7 @@ volumes:
     chaptersFile: chapters/volume-ii.yaml
     notes: >-
       Nine chapters complete. Knowledge Registry™ (M126) formally closed. System Registry™
-      (M127) complete. Executive Strategy Floor™ (DR-005) registered planned — no implementation.
+      (M127) complete. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged.
 
   - id: volume-iii
     number: III
