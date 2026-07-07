@@ -1,15 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/studio/AdminStudioDisclaimerFooter';
-import { NdxbookNewsroom } from '../../../../../components/admin/studio-os/ndxbook-newsroom/NdxbookNewsroom';
+import { NdxbookProductionEngine } from '../../../../../components/admin/studio-os/ndxbook-production-engine/NdxbookProductionEngine';
 import { useEnsureNdxbookWorkspaceOnMount } from '../../../../../hooks/useEnsureNdxbookWorkspace';
 import { NDXBOOK_WORKSPACE_ID } from '../../../../../studio-os-core/ndxbook/constants';
 import { ensureFounderPilotForOrganization } from '../../../../../studio-os-core/founder-pilot-mode';
 import { adminStudioNdxbookMissionControlPath } from '../../../../../utils/adminStudioRoutes';
 
 /**
- * NDXBook Newsroom — Page 001 create · Studio Intelligence review · approve · schedule · publish.
- * Production Floor tab shows the PAGE 001 PIPELINE panel at the top.
+ * NDXBook Production Wing — department-based Studio Production Engine for Page 001.
  */
 export default function AdminStudioNdxbookNewsroomPage() {
   useEnsureNdxbookWorkspaceOnMount();
@@ -18,16 +17,16 @@ export default function AdminStudioNdxbookNewsroomPage() {
 
   return (
     <AdminStudioStageShell
-      title="NDXBOOK NEWSROOM"
-      subtitle="PRODUCTION FLOOR · REVIEW · APPROVE · PUBLISH PAGE 001"
+      title="NDXBOOK PRODUCTION WING"
+      subtitle="STUDIO PRODUCTION ENGINE · PAGE 001 · DEPARTMENT WORKSPACES"
       breadcrumbParentLabel="HEADQUARTERS"
       breadcrumbParentPath={adminStudioNdxbookMissionControlPath()}
       onBack={() => navigate(adminStudioNdxbookMissionControlPath())}
       navGroupId="production"
     >
-      <NdxbookNewsroom workspaceId={NDXBOOK_WORKSPACE_ID} />
+      <NdxbookProductionEngine workspaceId={NDXBOOK_WORKSPACE_ID} />
       <AdminStudioDisclaimerFooter>
-        PAGE 001 PIPELINE · INSTAGRAM ONLY · STUDIO INTELLIGENCE GATE · ADMIN APPROVAL REQUIRED
+        DEPARTMENT NAVIGATION · MASTER CONTENT ASSET PASSPORT · INSTAGRAM PILOT
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

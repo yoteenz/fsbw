@@ -40173,3 +40173,27 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - Updated pipeline · gates · architecture · NDXBOOK runbook · GLOSSARY · DOCUMENTATION_MAP · PRODUCT_PHILOSOPHY · website-builder README · design/README · executive-IA · MASTER_SPEC_INDEX · CORE.md.
 
 **Conventions:** Users think *"I entered Review Department"* not *"I'm on a production page."* Engineering deferred until architecture ratified.
+
+---
+
+## 2026-07-07 — Studio Production Engine department UI (Page 001)
+
+**Context (full chat arc):** Page 001 persistence + social fixes; Master Content Pipeline™ (17-stage → ten gates); gate documentation; Studio Production Engine department UX architecture (docs-only). User then requested **real implementation** — department-based production flow for NDXBook Page 001 (not documentation-only): ten department routes/workspaces, pipeline strip, ceremonial Continue/Approve/Publish routing, Master Content Asset workspace in Production, instructions on every department, placeholder content, Studio OS visual language, push to master + Vercel deploy.
+
+**Decisions / outcomes:**
+- **Studio Production Engine™ UI shipped** — replaces long static Production Floor with **ten department workspaces** at `/admin/studio/ndxbook/newsroom/:departmentId` (`discover` … `learning`).
+- **Base `/newsroom`** auto-redirects to recommended department (pilot seeds Discover→Assembly complete; Production unlocked when no page exists).
+- **Pipeline strip** shows current · complete ✓ · locked 🔒 · available; completed rooms navigable; future locked until asset advances.
+- **Ceremonial handoffs:** Continue / Approve Production / Publish navigate to next department; progress persisted in `studioOsNdxbook_deptProgress_v1`.
+- **Production Department** — real Master Content Asset workspace (editor · script · caption · live preview thumbnail) after CREATE PAGE 001; not static image card only.
+- **Review** — Studio Intelligence + Approve Production (existing pipeline hooks); approve routes to Expansion.
+- **Publishing** — schedule/publish Instagram (existing hooks); success routes to Intelligence.
+- Mission Control quick links → department paths (create→production, approve→review, publish→publishing). NDXBook workspace Pages tab → **OPEN STUDIO PRODUCTION ENGINE** → Discover.
+
+**Changes:**
+- **Core:** `content-pipeline/departments.ts` (10 dept defs + nav helpers); `ndxbook/productionDepartmentProgress.ts` (access/progress/continue rules); `content-pipeline/index.ts` exports departments.
+- **UI:** `ndxbook-production-engine/` — `NdxbookProductionEngine`, `ProductionDepartmentStrip`, `MasterAssetPassport`, `NdxbookDepartmentWorkspace` (per-dept instructions + placeholder bodies).
+- **Routes:** `App.tsx` — `studio/ndxbook/newsroom/:departmentId` before base newsroom; `newsroom/page.tsx` + `newsroom/department/page.tsx` use production engine.
+- **Helpers:** `adminStudioNdxbookNewsroomDepartmentPath()`; storage allowlist `studioOsNdxbook_deptProgress_v1`; mission action routes + workspace newsroom redirect updated.
+
+**Conventions:** NDXBook Page 001 production = department navigation, not stacked Production Floor panel. Legacy `NdxbookNewsroom.tsx` / `NdxbookPagePipelinePanel` remain for registry pilot but canonical flow is department workspaces.

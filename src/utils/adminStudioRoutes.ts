@@ -609,6 +609,12 @@ export function adminStudioNdxbookNewsroomPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ndxbook/newsroom`;
 }
 
+export function adminStudioNdxbookNewsroomDepartmentPath(
+  departmentId: string
+): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/ndxbook/newsroom/${departmentId}`;
+}
+
 export function adminStudioOsPath(): string {
   return '/admin/studio-os';
 }

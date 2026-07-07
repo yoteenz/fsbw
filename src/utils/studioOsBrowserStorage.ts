@@ -41,6 +41,7 @@ const LIGHTWEIGHT_EXACT_KEYS = new Set([
   'studioOsNdxbook_v1',
   'studioOsNdxbookNewsroom_v1',
   'studioOsNdxbookMissionControl_v1',
+  'studioOsNdxbook_deptProgress_v1',
 ]);
 
 /** Substring patterns for small UI preference keys. */

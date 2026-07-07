@@ -2,7 +2,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import { useRequireAdminPageAccess } from '../../../../../hooks/useRequireAdminPageAccess';
 import { STUDIO_OS_ROUTES } from '../../../../../studio-os-core/workspace/routes';
 import { isKnownWorkspaceId } from '../../../../../workspaces';
-import { adminStudioNdxbookNewsroomPath } from '../../../../../utils/adminStudioRoutes';
+import { adminStudioNdxbookNewsroomDepartmentPath } from '../../../../../utils/adminStudioRoutes';
 
 /** Legacy workspace newsroom URL — canonical Page 001 pipeline lives at /admin/studio/ndxbook/newsroom. */
 export default function AdminStudioOsWorkspaceNewsroomPage() {
@@ -14,7 +14,7 @@ export default function AdminStudioOsWorkspaceNewsroomPage() {
   }
 
   if (workspaceId === 'ai-media') {
-    return <Navigate to={adminStudioNdxbookNewsroomPath()} replace />;
+    return <Navigate to={adminStudioNdxbookNewsroomDepartmentPath('production')} replace />;
   }
 
   return <Navigate to={STUDIO_OS_ROUTES.workspaceDashboard(workspaceId)} replace />;

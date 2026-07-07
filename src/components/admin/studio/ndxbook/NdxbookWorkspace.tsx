@@ -17,7 +17,7 @@ import {
   adminStudioMemoryBiblePath,
   adminStudioNdxbookDistributionPath,
   adminStudioNdxbookMissionControlPath,
-  adminStudioNdxbookNewsroomPath,
+  adminStudioNdxbookNewsroomDepartmentPath,
   adminStudioTalentNetworkPath,
 } from '../../../../utils/adminStudioRoutes';
 
@@ -296,11 +296,11 @@ export function NdxbookWorkspace() {
             />
             <button
               type="button"
-              onClick={() => navigate(adminStudioNdxbookNewsroomPath())}
+              onClick={() => navigate(adminStudioNdxbookNewsroomDepartmentPath('discover'))}
               className="w-full py-2 text-[7px] font-futura uppercase border"
               style={{ fontWeight: 515, color: '#6366F1', borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(99,102,241,0.06)' }}
             >
-              OPEN FULL NEWSROOM · PRODUCTION FLOOR →
+              OPEN STUDIO PRODUCTION ENGINE →
             </button>
             <div className="p-2 border" style={panelStyle}>
               <p className="text-[7px] font-futura uppercase" style={{ color: ADMIN_STUDIO_THEME.accent }}>
