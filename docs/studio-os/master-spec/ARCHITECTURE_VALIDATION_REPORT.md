@@ -1,6 +1,6 @@
 # Architecture Validator™ Report
 
-Generated: 2026-07-07T06:07:43.628Z
+Generated: 2026-07-07T06:17:30.813Z
 
 ## Summary
 
@@ -20,6 +20,7 @@ Generated: 2026-07-07T06:07:43.628Z
 - Duplicate definitions (canonicalId, internalId, shipped badge)
 - Version consistency (YAML file versions)
 - Constitution compliance (required principles)
+- Core Philosophy compliance (≥15 principles, Volume III alignment)
 - Knowledge Registry compliance
 - Missing documentation (complete modules without docs/studio-os/*.md)
 

@@ -7,16 +7,18 @@
 | Version | 1.0.0 |
 | Location | `docs/studio-os/master-spec/` |
 | Compiled bundle | `public/studio-os/master-spec/manifest-bundle.json` |
-| Sprint | S3 — Architecture Audit · Foundation Hardening |
+| Sprint | S4 — Core Philosophy + Volume III Business Infrastructure |
 
 ## Manifest files
 
 | File | Contents |
 |------|----------|
 | `constitution.yaml` | Volume 0 principles |
+| `core-philosophies.yaml` | Core Studio OS Philosophy — 16 design principles |
 | `volumes.yaml` | Volumes 0–XIX containers |
 | `chapters/volume-i.yaml` | Volume I chapter structure (8 chapters) |
 | `chapters/volume-ii.yaml` | Volume II chapter structure (9 chapters) |
+| `chapters/volume-iii.yaml` | Volume III chapter structure (6 chapters) |
 | `milestones/*.yaml` | Per-volume milestone manifests (I, II, IV, X, XI, XIV, V, VI–XIX) |
 | `milestone-aliases.yaml` | Canonical ↔ shipped ID reconciliation |
 | `design-revisions.yaml` | DR-001–DR-005 merge overlays |
@@ -36,6 +38,8 @@
 8. **Architecture Validator™** — compile-time gatekeeper; errors block build
 9. **QA chain canonical IDs** — `M159-spec-qa` … `M162-spec-qa` unified across manifest, aliases, graph
 10. **One Knowledge Registry™** — governance and legacy documentation-registry paths delegate to knowledge-registry
+11. **Core Studio OS Philosophy** — 16 constitutional design principles in `core-philosophies.yaml`
+12. **Volume III registered** — 6 chapters, 12 milestones (M127.1–M127.12)
 
 ## Compile
 

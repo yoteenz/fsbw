@@ -34,3 +34,9 @@ principles:
       where platform leaders oversee architecture, knowledge, quality, and evolution through
       immersive departments inside Headquarters, not disconnected developer dashboards.
       Registration only until implementation (DR-005).
+  - id: constitution-core-philosophies
+    title: Core Studio OS Philosophy
+    summary: >-
+      Constitutional design principles in core-philosophies.yaml govern every future
+      Volume, Chapter, Milestone, and Design Revision — experiential, not feature lists.
+      Architecture Before Implementation; Places Instead of Pages; Operating System, Not SaaS.

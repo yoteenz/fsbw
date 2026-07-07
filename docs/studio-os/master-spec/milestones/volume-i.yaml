@@ -330,7 +330,7 @@ milestones:
     moduleId: expansion-center
     dependsOn: [M87]
     enables: [M89]
-    relatedSystems: [business-model-engine, mission-control, studio-institute]
+    relatedSystems: [business-model-engine, mission-control, studio-institute, industry-architecture, pack-install-engine, headquarters-layout-engine]
     implementationNotes: One-click department install with preview — Creator Studio example.
 
   - canonicalId: M89
@@ -347,7 +347,7 @@ milestones:
     moduleId: business-model-engine
     dependsOn: [M88]
     enables: []
-    relatedSystems: [expansion-center, marketplace, knowledge-commerce]
+    relatedSystems: [expansion-center, marketplace, knowledge-commerce, monetization-architecture, pack-licensing-infrastructure]
     implementationNotes: Never "subscribe to features" — Expansion Center + Digital Payroll language.
 
   - canonicalId: M89.1

@@ -16,6 +16,7 @@ export const REGISTRY_KINDS = [
   'chapter',
   'milestone',
   'design-revision',
+  'philosophy',
   'component',
   'system',
   'api',

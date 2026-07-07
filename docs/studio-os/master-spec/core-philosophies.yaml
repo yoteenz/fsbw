@@ -1,0 +1,164 @@
+# Core Studio OS Philosophy — constitutional design principles (not product features)
+# Governs every Volume, Chapter, Milestone, and Design Revision authored in the Master Specification.
+version: '1.0.0'
+updatedAt: '2026-07-07'
+
+philosophies:
+  - id: philosophy-environmental-storytelling
+    title: Environmental Storytelling™
+    category: experiential
+    summary: >-
+      The environment communicates before interfaces do. Seasons, milestones, memory,
+      and organizational moments should be felt through space, light, motion, and
+      presence — not explained through dashboards or copy blocks.
+    governs: [DR-003, living-headquarters, legacy-vault]
+    alignsVolumes: [volume-i, volume-xvi]
+
+  - id: philosophy-living-headquarters
+    title: Living Headquarters™
+    category: experiential
+    summary: >-
+      Headquarters is a living place that evolves with the organization — not a static
+      admin home. Departments, wings, pulse, and memory should change as the company
+      grows, celebrates, and learns.
+    governs: [DR-002, DR-003, mission-control]
+    alignsVolumes: [volume-i]
+
+  - id: philosophy-studio-orb
+    title: Studio Orb™
+    category: experiential
+    summary: >-
+      Intelligence should feel ambient, respectful, and present — not trapped in a
+      persistent toolbar. The Orb is a philosophy of presence: arrive, listen, guide,
+      and disappear until needed again.
+    governs: [DR-001, studio-orb, command-dock]
+    alignsVolumes: [volume-i]
+
+  - id: philosophy-experience-studio
+    title: Experience Studio™
+    category: experiential
+    summary: >-
+      Experience design is authored, interviewed, and refined — not configured through
+      settings panels. Founders and executives shape atmosphere, tone, and feel through
+      creative direction, not technical forms.
+    governs: [experience-studio, design-dna-canon, design-genome]
+    alignsVolumes: [volume-i, volume-xi]
+
+  - id: philosophy-design-dna
+    title: Design DNA™
+    category: design-canon
+    summary: >-
+      Every organization carries a visual and behavioral genome — canon, tokens,
+      typography, glass, motion, and hierarchy that remain coherent across thousands
+      of modules and future generations.
+    governs: [design-dna-canon, design-token-engine]
+    alignsVolumes: [volume-i, volume-xi]
+
+  - id: philosophy-experience-dna
+    title: Experience DNA™
+    category: design-canon
+    summary: >-
+      Experience is inherited, not reinvented per screen. Emotional rhythm, arrival
+      moments, hospitality, and environmental adaptation compose an Experience DNA
+      that scales with the operating system.
+    governs: [design-genome, experience-engine, arrival-experience]
+    alignsVolumes: [volume-i]
+
+  - id: philosophy-conversational-ux
+    title: Conversational UX
+    category: interaction
+    summary: >-
+      The OS speaks naturally. Command, discovery, and guidance flow through conversation
+      — voice, text, and concierge dialogue — before users hunt through menus or
+      documentation indexes.
+    governs: [command-dock, studio-intelligence, DR-001]
+    alignsVolumes: [volume-i, volume-ii]
+
+  - id: philosophy-invisible-complexity
+    title: Invisible Complexity
+    category: interaction
+    summary: >-
+      Sophisticated systems should feel simple. Registries, orchestration, policies,
+      and intelligence pipelines remain engineering-visible — never user-visible
+      complexity.
+    governs: [system-registry, manifest-reconciliation, model-orchestrator]
+    alignsVolumes: [volume-ii, volume-xi]
+
+  - id: philosophy-executive-first
+    title: Executive-first Design
+    category: interaction
+    summary: >-
+      Founders and executives are the primary audience. Every surface should support
+      judgment, oversight, and strategic clarity before operator or developer convenience.
+    governs: [mission-control, executive-council, DR-005]
+    alignsVolumes: [volume-i, volume-iv]
+
+  - id: philosophy-documentation-as-architecture
+    title: Documentation as Architecture
+    category: governance
+    summary: >-
+      Documentation is not an afterthought — it is part of the architecture. Knowledge,
+      dependencies, and implementation status live in registries and manifest artifacts
+      that are as authoritative as code.
+    governs: [knowledge-registry, documentation-governance, DR-005]
+    alignsVolumes: [volume-ii, volume-0]
+
+  - id: philosophy-ai-creative-director
+    title: AI as Collaborative Creative Director
+    category: intelligence
+    summary: >-
+      Studio Intelligence™ does not replace human judgment — it collaborates as a
+      creative director: proposing, critiquing, refining, and explaining — while
+      founders retain authorship and final decisions.
+    governs: [studio-intelligence, experience-studio, DR-004]
+    alignsVolumes: [volume-i, volume-ii]
+
+  - id: philosophy-single-source-of-truth
+    title: Single Source of Truth
+    category: governance
+    summary: >-
+      Every architectural object exists exactly once in the Master Specification and
+      is referenced everywhere else. No duplicate milestone definitions, no parallel
+      registries, no shadow roadmaps.
+    governs: [knowledge-registry, manifest-reconciliation, constitution-single-source]
+    alignsVolumes: [volume-0, volume-ii]
+
+  - id: philosophy-progressive-disclosure
+    title: Progressive Disclosure
+    category: interaction
+    summary: >-
+      Reveal depth only when needed. Onboarding, Headquarters, Command Dock, and
+      intelligence surfaces should start calm and ceremonial — expanding into power
+      as confidence grows.
+    governs: [company-onboarding-intelligence, arrival-experience, command-dock]
+    alignsVolumes: [volume-i]
+
+  - id: philosophy-architecture-before-implementation
+    title: Architecture Before Implementation
+    category: governance
+    summary: >-
+      Specify, register, and validate before building product surfaces. Volumes,
+      chapters, milestones, philosophies, and design revisions precede routes,
+      components, and feature work.
+    governs: [manifest-authoring, manifest-reconciliation, DR-005]
+    alignsVolumes: [volume-0, volume-ii]
+
+  - id: philosophy-os-not-saas
+    title: Operating System, Not SaaS
+    category: platform
+    summary: >-
+      Studio OS is an organizational operating system — not a subscription dashboard.
+      Founders install departments, hire digital staff, and expand capabilities;
+      they do not buy feature tiers.
+    governs: [expansion-center, business-model-engine]
+    alignsVolumes: [volume-i, volume-iii]
+
+  - id: philosophy-places-not-pages
+    title: Places Instead of Pages
+    category: experiential
+    summary: >-
+      Users walk through destinations — Headquarters wings, departments, floors,
+      registries, and studios — not disconnected admin pages. Navigation is spatial
+      and narrative, not a flat route tree.
+    governs: [DR-002, DR-005, mission-control]
+    alignsVolumes: [volume-i, volume-iii]

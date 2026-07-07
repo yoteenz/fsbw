@@ -21,6 +21,7 @@ const REPORT_FILE = path.join(ROOT, 'docs/studio-os/master-spec/MASTER_SPEC_RECO
 const DEFAULT_MILESTONE_FILES = [
   'volume-i.yaml',
   'volume-ii.yaml',
+  'volume-iii.yaml',
   'volume-iv.yaml',
   'volume-x.yaml',
   'volume-xi.yaml',
@@ -64,6 +65,7 @@ function main() {
   const constitution = readYaml(path.join(SPEC_DIR, 'constitution.yaml'));
   const volumes = readYaml(path.join(SPEC_DIR, 'volumes.yaml'));
   const designRevisions = readYaml(path.join(SPEC_DIR, 'design-revisions.yaml'));
+  const corePhilosophies = readYaml(path.join(SPEC_DIR, 'core-philosophies.yaml'));
   const milestoneAliases = readYaml(path.join(SPEC_DIR, 'milestone-aliases.yaml'));
   const dependencyGraph = readYaml(path.join(SPEC_DIR, 'dependency-graph.yaml'));
   const { milestones, files: milestoneFiles } = loadMilestones();
@@ -72,6 +74,8 @@ function main() {
   const volumeIMilestones = milestones.filter((m) => m.volumeId === 'volume-i');
   const volumeIICoverage = chapters.filter((c) => c.volumeId === 'volume-ii');
   const volumeIIMilestones = milestones.filter((m) => m.volumeId === 'volume-ii');
+  const volumeIIIMilestones = milestones.filter((m) => m.volumeId === 'volume-iii');
+  const volumeIIICoverage = chapters.filter((c) => c.volumeId === 'volume-iii');
 
   const specVersion = constitution?.version ?? volumes?.version ?? '1.0.0';
   const compiledAt = new Date().toISOString();
@@ -87,6 +91,7 @@ function main() {
     designRevisions: designRevisions?.designRevisions ?? [],
     milestoneAliases: milestoneAliases?.aliases ?? [],
     dependencyEdges: dependencyGraph?.edges ?? [],
+    corePhilosophies: corePhilosophies?.philosophies ?? [],
     stats: {
       volumeCount: volumes?.volumes?.length ?? 0,
       chapterCount: chapters.length,
@@ -101,6 +106,10 @@ function main() {
       volumeIIMilestoneCount: volumeIIMilestones.length,
       volumeIIChapterCount: volumeIICoverage.length,
       volumeIICompleteCount: volumeIIMilestones.filter((m) => m.implementationStatus === 'complete').length,
+      volumeIIIMilestoneCount: volumeIIIMilestones.length,
+      volumeIIIChapterCount: volumeIIICoverage.length,
+      volumeIIICompleteCount: volumeIIIMilestones.filter((m) => m.implementationStatus === 'complete').length,
+      philosophyCount: corePhilosophies?.philosophies?.length ?? 0,
     },
   };
 
@@ -144,6 +153,10 @@ Generated: ${bundle.compiledAt}
 | Volume II chapters | ${bundle.stats.volumeIIChapterCount} |
 | Volume II milestones | ${bundle.stats.volumeIIMilestoneCount} |
 | Volume II complete | ${bundle.stats.volumeIICompleteCount} |
+| Volume III chapters | ${bundle.stats.volumeIIIChapterCount} |
+| Volume III milestones | ${bundle.stats.volumeIIIMilestoneCount} |
+| Volume III complete | ${bundle.stats.volumeIIICompleteCount} |
+| Core Philosophies | ${bundle.stats.philosophyCount} |
 | Design Revisions | ${bundle.stats.designRevisionCount} |
 | Complete | ${bundle.stats.completeCount} |
 | In Progress | ${bundle.stats.inProgressCount} |

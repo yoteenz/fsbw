@@ -1,0 +1,89 @@
+# Volume III — Business Infrastructure chapters
+version: '1.0.0'
+updatedAt: '2026-07-07'
+volumeId: volume-iii
+
+chapters:
+  - id: chapter-iii-1
+    number: 1
+    title: Industry & Pack Architecture
+    summary: >-
+      Industry Architecture™, Department Pack Registry™, and Expansion Pack Catalog™ —
+      the structural foundation for how every organization is created and expanded.
+    status: in-progress
+    dependsOn: [volume-ii, M127]
+    milestoneIds: [M127.1, M127.2, M127.3]
+    completionPct: 75
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-invisible-complexity
+
+  - id: chapter-iii-2
+    number: 2
+    title: Installation & Headquarters Expansion
+    summary: >-
+      Pack Install Engine™ and Headquarters Layout Engine™ — installing capabilities
+      physically expands Headquarters departments, concierges, and Command Dock reach.
+    status: in-progress
+    dependsOn: [chapter-iii-1]
+    milestoneIds: [M127.4, M127.5]
+    completionPct: 70
+    alignedPhilosophies:
+      - philosophy-places-not-pages
+      - philosophy-living-headquarters
+
+  - id: chapter-iii-3
+    number: 3
+    title: Digital Workforce Infrastructure
+    summary: >-
+      Digital Staff Catalog™ — hire digital executives and staff as organizational
+      capacity, not SaaS seat licenses.
+    status: in-progress
+    dependsOn: [chapter-iii-2]
+    milestoneIds: [M127.6]
+    completionPct: 65
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-executive-first
+
+  - id: chapter-iii-4
+    number: 4
+    title: Templates & Organization Blueprints
+    summary: >-
+      Business Template Library™ and Organization Template Engine™ — reusable
+      blueprints for departments, operations, and profession-specific starters.
+    status: planned
+    dependsOn: [chapter-iii-1]
+    milestoneIds: [M127.7, M127.9]
+    completionPct: 20
+    alignedPhilosophies:
+      - philosophy-architecture-before-implementation
+      - philosophy-progressive-disclosure
+
+  - id: chapter-iii-5
+    number: 5
+    title: Licensing & Business Commerce
+    summary: >-
+      Pack Licensing Infrastructure™ and Business Marketplace Infrastructure™ —
+      license packs, templates, and capabilities without SaaS subscription framing.
+    status: planned
+    dependsOn: [chapter-iii-2]
+    milestoneIds: [M127.8, M127.11]
+    completionPct: 25
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-single-source-of-truth
+
+  - id: chapter-iii-6
+    number: 6
+    title: Monetization Foundation
+    summary: >-
+      Profession Pack System™ and Monetization Architecture Foundation™ — economic
+      substrate beneath Expansion Center™ (M88) and Permanent Monetization (M89).
+    status: in-progress
+    dependsOn: [chapter-iii-3, chapter-iii-5]
+    milestoneIds: [M127.10, M127.12]
+    completionPct: 55
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-documentation-as-architecture

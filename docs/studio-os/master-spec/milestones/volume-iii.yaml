@@ -1,0 +1,283 @@
+version: 1.0.0
+updatedAt: '2026-07-07'
+volumeId: volume-iii
+milestones:
+  - canonicalId: M127.1
+    name: Industry Architecture™
+    internalId: industry-architecture
+    registryKind: milestone
+    chapterId: chapter-iii-1
+    volumeId: volume-iii
+    purpose: >-
+      Permanent architecture for industry selection, starter packs, and organization
+      expansion — every company is a Business Operating System, not an industry app.
+    implementationStatus: in-progress
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127, M91]
+    enables: [M127.2]
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-places-not-pages
+      - philosophy-invisible-complexity
+    relatedSystems:
+      - expansion-center
+      - organization-genome
+      - profession-brain
+      - mission-control
+    implementationNotes: >-
+      Core logic in studio-os-core/industry-architecture/. Consumed by Expansion Center™ (M88).
+      Spec only — no new product routes in this sprint.
+
+  - canonicalId: M127.2
+    name: Department Pack Registry™
+    internalId: department-pack-registry
+    registryKind: milestone
+    chapterId: chapter-iii-1
+    volumeId: volume-iii
+    purpose: >-
+      Canonical registry of department packs — modular business capability bundles
+      (Creator, Beauty, Contractor, Marketing, …) installable into Headquarters.
+    implementationStatus: in-progress
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.1]
+    enables: [M127.3, M127.10]
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-single-source-of-truth
+    relatedSystems:
+      - industry-architecture
+      - expansion-center
+      - knowledge-registry
+    implementationNotes: Catalog in industry-architecture/department-packs.ts and pack-registry.ts.
+
+  - canonicalId: M127.3
+    name: Expansion Pack Catalog™
+    internalId: expansion-pack-catalog
+    registryKind: milestone
+    chapterId: chapter-iii-1
+    volumeId: volume-iii
+    purpose: >-
+      Post-launch expansion packs — Creator Studio, Sales CRM, Warehouse, Accounting —
+      discoverable and installable through Expansion Center™.
+    implementationStatus: in-progress
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.2]
+    enables: [M127.4, M127.8]
+    alignedPhilosophies:
+      - philosophy-progressive-disclosure
+      - philosophy-os-not-saas
+    relatedSystems:
+      - expansion-center
+      - industry-architecture
+    implementationNotes: expansion-packs.ts — consumed by install-engine.
+
+  - canonicalId: M127.4
+    name: Pack Install Engine™
+    internalId: pack-install-engine
+    registryKind: milestone
+    chapterId: chapter-iii-2
+    volumeId: volume-iii
+    purpose: >-
+      Merges packs into organization profiles — departments, concierges, KPIs, and
+      Command Dock capabilities without migration or new software.
+    implementationStatus: in-progress
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.3]
+    enables: [M127.5, M127.7]
+    alignedPhilosophies:
+      - philosophy-invisible-complexity
+      - philosophy-living-headquarters
+    relatedSystems:
+      - expansion-center
+      - workspace-runtime
+      - mission-control
+    implementationNotes: install-engine.ts — one-click department install per M88 vision.
+
+  - canonicalId: M127.5
+    name: Headquarters Layout Engine™
+    internalId: headquarters-layout-engine
+    registryKind: milestone
+    chapterId: chapter-iii-2
+    volumeId: volume-iii
+    purpose: >-
+      Translates installed packs into Headquarters layout — wings, departments,
+      cards, and spatial navigation (places, not pages).
+    implementationStatus: in-progress
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.4]
+    enables: [M127.6]
+    alignedPhilosophies:
+      - philosophy-places-not-pages
+      - philosophy-living-headquarters
+      - philosophy-environmental-storytelling
+    relatedSystems:
+      - mission-control
+      - expansion-center
+      - DR-002
+    implementationNotes: buildHeadquartersLayout in install-engine — feeds Mission Control HQ Layout.
+
+  - canonicalId: M127.6
+    name: Digital Staff Catalog™
+    internalId: digital-staff-catalog
+    registryKind: milestone
+    chapterId: chapter-iii-3
+    volumeId: volume-iii
+    purpose: >-
+      Registry of hireable digital executives and staff — capacity and expertise, not
+      SaaS seats. Feeds Digital Payroll and Executive Council expansion.
+    implementationStatus: in-progress
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.5]
+    enables: [M127.12]
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-executive-first
+    relatedSystems:
+      - monetization-architecture
+      - executive-council
+      - profession-brain
+    implementationNotes: monetization-architecture/digital-staff-catalog.ts.
+
+  - canonicalId: M127.7
+    name: Business Template Library™
+    internalId: business-template-library
+    registryKind: milestone
+    chapterId: chapter-iii-4
+    volumeId: volume-iii
+    purpose: >-
+      Reusable templates for workflows, departments, operations, and profession-specific
+      business patterns — installable assets, not blank forms.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.4]
+    enables: [M127.9]
+    alignedPhilosophies:
+      - philosophy-architecture-before-implementation
+      - philosophy-documentation-as-architecture
+    relatedSystems:
+      - asset-registry
+      - knowledge-registry
+      - expansion-center
+    implementationNotes: Planned — templates registered before product implementation.
+
+  - canonicalId: M127.8
+    name: Pack Licensing Infrastructure™
+    internalId: pack-licensing-infrastructure
+    registryKind: milestone
+    chapterId: chapter-iii-5
+    volumeId: volume-iii
+    purpose: >-
+      Licensing substrate for department packs, expansion packs, and templates —
+      one-time and recurring without subscription-tier framing.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.3]
+    enables: [M127.11, M127.12]
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-single-source-of-truth
+    relatedSystems:
+      - business-model-engine
+      - monetization-architecture
+      - policy-engine
+    implementationNotes: Distinct from Automation Licensing (M200, Volume X).
+
+  - canonicalId: M127.9
+    name: Organization Template Engine™
+    internalId: organization-template-engine
+    registryKind: milestone
+    chapterId: chapter-iii-4
+    volumeId: volume-iii
+    purpose: >-
+      Starter organization blueprints by industry and profession — day-one
+      Headquarters, packs, and Genome seeds from templates.
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.7, M91]
+    enables: []
+    alignedPhilosophies:
+      - philosophy-progressive-disclosure
+      - philosophy-places-not-pages
+    relatedSystems:
+      - business-discovery-blueprint
+      - organization-genome
+      - industry-architecture
+    implementationNotes: Connects discovery blueprint to pack installation.
+
+  - canonicalId: M127.10
+    name: Profession Pack System™
+    internalId: profession-pack-system
+    registryKind: milestone
+    chapterId: chapter-iii-6
+    volumeId: volume-iii
+    purpose: >-
+      Profession-specific pack overlays — Profession Brain™ seeds, concierge bridges,
+      and industry intelligence wired into pack installs.
+    implementationStatus: in-progress
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.2, M91]
+    enables: [M127.12]
+    alignedPhilosophies:
+      - philosophy-design-dna
+      - philosophy-invisible-complexity
+    relatedSystems:
+      - profession-brain
+      - industry-architecture
+      - workspace-runtime
+    implementationNotes: workspace-runtime profession-packs category; profession-brain bridge.
+
+  - canonicalId: M127.11
+    name: Business Marketplace Infrastructure™
+    internalId: business-marketplace-infrastructure
+    registryKind: milestone
+    chapterId: chapter-iii-5
+    volumeId: volume-iii
+    purpose: >-
+      Infrastructure for discovering, certifying, and installing third-party and
+      Studio-authored business packs — distinct from Expert Marketplace™ (M92).
+    implementationStatus: planned
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.8]
+    enables: []
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-single-source-of-truth
+    relatedSystems:
+      - expert-marketplace
+      - expansion-center
+      - qa-headquarters
+    implementationNotes: Business packs ≠ expertise commerce; separate infrastructure.
+
+  - canonicalId: M127.12
+    name: Monetization Architecture Foundation™
+    internalId: monetization-architecture
+    registryKind: milestone
+    chapterId: chapter-iii-6
+    volumeId: volume-iii
+    purpose: >-
+      Economic substrate — digital payroll, pack pricing, royalties, wallets — beneath
+      Permanent Monetization Architecture™ (M89) and Expansion Center™ (M88).
+    implementationStatus: in-progress
+    shippedMilestone: null
+    moduleId: null
+    dependsOn: [M127.6, M127.8, M127.10]
+    enables: []
+    alignedPhilosophies:
+      - philosophy-os-not-saas
+      - philosophy-documentation-as-architecture
+    relatedSystems:
+      - business-model-engine
+      - expansion-center
+      - knowledge-commerce
+    implementationNotes: studio-os-core/monetization-architecture/ — M89 is Volume I consumer.

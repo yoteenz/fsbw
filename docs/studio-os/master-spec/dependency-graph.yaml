@@ -58,6 +58,79 @@ edges:
     type: enables
 
   - from: M127
+    to: M127.1
+    type: enables
+    note: System Registry spine → Business Infrastructure foundation
+
+  - from: volume-ii
+    to: M127.1
+    type: enables
+    note: Knowledge Infrastructure feeds Business Infrastructure
+
+  - from: M91
+    to: M127.1
+    type: enables
+    note: Profession Brain seeds industry architecture
+
+  - from: M127.1
+    to: M127.2
+    type: chain
+
+  - from: M127.2
+    to: M127.3
+    type: chain
+
+  - from: M127.3
+    to: M127.4
+    type: enables
+
+  - from: M127.4
+    to: M127.5
+    type: enables
+
+  - from: M127.5
+    to: M127.6
+    type: enables
+
+  - from: M127.4
+    to: M127.7
+    type: enables
+
+  - from: M127.7
+    to: M127.9
+    type: enables
+
+  - from: M127.3
+    to: M127.8
+    type: enables
+
+  - from: M127.8
+    to: M127.11
+    type: enables
+
+  - from: M127.2
+    to: M127.10
+    type: enables
+
+  - from: M127.6
+    to: M127.12
+    type: enables
+
+  - from: M127.10
+    to: M127.12
+    type: enables
+
+  - from: M127.12
+    to: M88
+    type: relates
+    note: Monetization foundation → Expansion Center consumer (Volume I)
+
+  - from: M127.5
+    to: M88
+    type: relates
+    note: Headquarters layout → Expansion Center installs
+
+  - from: M127
     to: M129
     type: enables
 

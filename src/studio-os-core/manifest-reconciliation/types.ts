@@ -22,6 +22,15 @@ export type MasterSpecVolume = {
   chaptersFile?: string;
 };
 
+export type MasterSpecPhilosophy = {
+  id: string;
+  title: string;
+  category: string;
+  summary: string;
+  governs?: string[];
+  alignsVolumes?: string[];
+};
+
 export type MasterSpecChapter = {
   id: string;
   number: number;
@@ -32,6 +41,7 @@ export type MasterSpecChapter = {
   milestoneIds: string[];
   completionPct: number;
   volumeId: string;
+  alignedPhilosophies?: string[];
 };
 
 export type MasterSpecMilestone = {
@@ -49,6 +59,7 @@ export type MasterSpecMilestone = {
   enables: string[];
   relatedSystems?: string[];
   implementationNotes?: string;
+  alignedPhilosophies?: string[];
 };
 
 export type MasterSpecDesignRevision = {
@@ -93,6 +104,7 @@ export type MasterSpecBundle = {
   designRevisions: MasterSpecDesignRevision[];
   milestoneAliases: MilestoneAlias[];
   dependencyEdges: DependencyEdge[];
+  corePhilosophies: MasterSpecPhilosophy[];
   stats: {
     volumeCount: number;
     chapterCount: number;
@@ -107,6 +119,10 @@ export type MasterSpecBundle = {
     volumeIIMilestoneCount: number;
     volumeIIChapterCount: number;
     volumeIICompleteCount: number;
+    volumeIIIMilestoneCount: number;
+    volumeIIIChapterCount: number;
+    volumeIIICompleteCount: number;
+    philosophyCount: number;
   };
 };
 

@@ -88,8 +88,26 @@ export function validateMasterSpecManifest(bundle: MasterSpecBundle = getMasterS
     issues.push({ severity: 'warning', code: 'LOW_VOLUME_II_CHAPTERS', message: 'Volume II should have structured chapters' });
   }
 
-  if (bundle.milestones.length < 210) {
-    issues.push({ severity: 'warning', code: 'LOW_MILESTONE_COUNT', message: `Expected ~218 milestones, found ${bundle.milestones.length}` });
+  if (!bundle.volumes.some((v) => v.id === 'volume-iii')) {
+    issues.push({ severity: 'warning', code: 'MISSING_VOLUME_III', message: 'Volume III container missing' });
+  }
+
+  const volumeIII = bundle.milestones.filter((m) => m.volumeId === 'volume-iii');
+  if (volumeIII.length < 10) {
+    issues.push({ severity: 'warning', code: 'LOW_VOLUME_III_COUNT', message: `Expected ≥10 Volume III milestones, found ${volumeIII.length}` });
+  }
+
+  if ((bundle.chapters ?? []).filter((c) => c.volumeId === 'volume-iii').length < 5) {
+    issues.push({ severity: 'warning', code: 'LOW_VOLUME_III_CHAPTERS', message: 'Volume III should have structured chapters' });
+  }
+
+  const philosophies = bundle.corePhilosophies ?? [];
+  if (philosophies.length < 15) {
+    issues.push({ severity: 'error', code: 'LOW_PHILOSOPHY_COUNT', message: `Expected ≥15 core philosophies, found ${philosophies.length}` });
+  }
+
+  if (bundle.milestones.length < 225) {
+    issues.push({ severity: 'warning', code: 'LOW_MILESTONE_COUNT', message: `Expected ~230 milestones, found ${bundle.milestones.length}` });
   }
 
   return issues;

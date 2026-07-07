@@ -7,6 +7,7 @@ import {
   type MasterSpecChapter,
   type MasterSpecDesignRevision,
   type MasterSpecMilestone,
+  type MasterSpecPhilosophy,
   type MasterSpecVolume,
 } from '../manifest-reconciliation';
 import { IMPLEMENTATION_STATUS_LABELS } from './constants';
@@ -17,6 +18,7 @@ function inferCategory(id: string, registryKind: string, volumeId?: string): Reg
   if (registryKind === 'volume') return 'volume';
   if (registryKind === 'chapter') return 'chapter';
   if (registryKind === 'design-revision') return 'design-revision';
+  if (registryKind === 'philosophy') return 'philosophy';
   if (volumeId === 'volume-i') return 'platform';
   if (['business-discovery-blueprint', 'profession-brain', 'organization-genome', 'professional-trust-framework'].includes(id)) {
     return 'foundation';
@@ -65,6 +67,8 @@ function inferOwner(category: RegistryCategory): string {
       return 'Executive Council';
     case 'design-revision':
       return 'Design Architecture';
+    case 'philosophy':
+      return 'Core Studio OS Philosophy';
     default:
       return 'Studio OS Platform';
   }
@@ -231,6 +235,23 @@ function buildFromDesignRevision(dr: MasterSpecDesignRevision): KnowledgeRegistr
   });
 }
 
+function buildFromPhilosophy(p: MasterSpecPhilosophy): KnowledgeRegistryEntry {
+  return buildEntryBase({
+    officialName: p.title,
+    internalId: p.id,
+    purpose: p.summary,
+    category: 'philosophy',
+    implementationStatus: 'complete',
+    registryKind: 'philosophy',
+    volumeId: 'volume-0',
+    dependsOn: ['volume-0'],
+    keywords: [p.title.toLowerCase(), p.category, 'philosophy', 'design principle'],
+    aliases: [p.id, p.title],
+    relatedSystems: p.governs ?? [],
+    capabilities: p.alignsVolumes?.map((v) => `Aligns ${v}`) ?? [],
+    architectureDocumentation: ['docs/studio-os/master-spec/core-philosophies.yaml'],
+  });
+}
 function buildConstitutionEntries(bundle: MasterSpecBundle): KnowledgeRegistryEntry[] {
   return (bundle.constitution?.principles ?? []).map((p) =>
     buildEntryBase({
@@ -257,6 +278,10 @@ export function buildKnowledgeRegistry(bundle: MasterSpecBundle = getMasterSpecB
 
   for (const p of buildConstitutionEntries(bundle)) {
     byId.set(p.internalId, p);
+  }
+
+  for (const ph of bundle.corePhilosophies ?? []) {
+    byId.set(ph.id, buildFromPhilosophy(ph));
   }
 
   for (const dr of bundle.designRevisions) {

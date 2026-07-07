@@ -50,10 +50,15 @@ volumes:
     number: III
     title: Business Infrastructure
     summary: Turns organizations into expandable business systems with packs, marketplace, licensing, templates, and digital workforces.
-    status: planned
+    status: in-progress
     dependsOn: [volume-ii]
-    milestoneRange: null
-    completionPct: 15
+    milestoneRange: M127.1-M127.12
+    completionPct: 52
+    chaptersFile: chapters/volume-iii.yaml
+    notes: >-
+      Six chapters, twelve milestones (M127.1–M127.12). Infrastructure beneath
+      Expansion Center™ (M88) and Monetization (M89) in Volume I. Aligned with
+      philosophy-os-not-saas and philosophy-places-not-pages. Spec only — no new routes.
 
   - id: volume-iv
     number: IV

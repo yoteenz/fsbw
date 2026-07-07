@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "compiledAt": "2026-07-07T06:07:43.628Z",
+  "compiledAt": "2026-07-07T06:17:30.813Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
     "version": "1.0.0",
@@ -50,6 +50,11 @@
         "id": "constitution-executive-strategy-floor",
         "title": "Studio OS Executive Strategy Floor™",
         "summary": "Studio OS maintains its own executive headquarters — the Executive Strategy Floor™ — where platform leaders oversee architecture, knowledge, quality, and evolution through immersive departments inside Headquarters, not disconnected developer dashboards. Registration only until implementation (DR-005)."
+      },
+      {
+        "id": "constitution-core-philosophies",
+        "title": "Core Studio OS Philosophy",
+        "summary": "Constitutional design principles in core-philosophies.yaml govern every future Volume, Chapter, Milestone, and Design Revision — experiential, not feature lists. Architecture Before Implementation; Places Instead of Pages; Operating System, Not SaaS."
       }
     ]
   },
@@ -99,12 +104,14 @@
       "number": "III",
       "title": "Business Infrastructure",
       "summary": "Turns organizations into expandable business systems with packs, marketplace, licensing, templates, and digital workforces.",
-      "status": "planned",
+      "status": "in-progress",
       "dependsOn": [
         "volume-ii"
       ],
-      "milestoneRange": null,
-      "completionPct": 15
+      "milestoneRange": "M127.1-M127.12",
+      "completionPct": 52,
+      "chaptersFile": "chapters/volume-iii.yaml",
+      "notes": "Six chapters, twelve milestones (M127.1–M127.12). Infrastructure beneath Expansion Center™ (M88) and Monetization (M89) in Volume I. Aligned with philosophy-os-not-saas and philosophy-places-not-pages. Spec only — no new routes."
     },
     {
       "id": "volume-iv",
@@ -626,6 +633,128 @@
       ],
       "completionPct": 88,
       "volumeId": "volume-ii"
+    },
+    {
+      "id": "chapter-iii-1",
+      "number": 1,
+      "title": "Industry & Pack Architecture",
+      "summary": "Industry Architecture™, Department Pack Registry™, and Expansion Pack Catalog™ — the structural foundation for how every organization is created and expanded.",
+      "status": "in-progress",
+      "dependsOn": [
+        "volume-ii",
+        "M127"
+      ],
+      "milestoneIds": [
+        "M127.1",
+        "M127.2",
+        "M127.3"
+      ],
+      "completionPct": 75,
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-invisible-complexity"
+      ],
+      "volumeId": "volume-iii"
+    },
+    {
+      "id": "chapter-iii-2",
+      "number": 2,
+      "title": "Installation & Headquarters Expansion",
+      "summary": "Pack Install Engine™ and Headquarters Layout Engine™ — installing capabilities physically expands Headquarters departments, concierges, and Command Dock reach.",
+      "status": "in-progress",
+      "dependsOn": [
+        "chapter-iii-1"
+      ],
+      "milestoneIds": [
+        "M127.4",
+        "M127.5"
+      ],
+      "completionPct": 70,
+      "alignedPhilosophies": [
+        "philosophy-places-not-pages",
+        "philosophy-living-headquarters"
+      ],
+      "volumeId": "volume-iii"
+    },
+    {
+      "id": "chapter-iii-3",
+      "number": 3,
+      "title": "Digital Workforce Infrastructure",
+      "summary": "Digital Staff Catalog™ — hire digital executives and staff as organizational capacity, not SaaS seat licenses.",
+      "status": "in-progress",
+      "dependsOn": [
+        "chapter-iii-2"
+      ],
+      "milestoneIds": [
+        "M127.6"
+      ],
+      "completionPct": 65,
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-executive-first"
+      ],
+      "volumeId": "volume-iii"
+    },
+    {
+      "id": "chapter-iii-4",
+      "number": 4,
+      "title": "Templates & Organization Blueprints",
+      "summary": "Business Template Library™ and Organization Template Engine™ — reusable blueprints for departments, operations, and profession-specific starters.",
+      "status": "planned",
+      "dependsOn": [
+        "chapter-iii-1"
+      ],
+      "milestoneIds": [
+        "M127.7",
+        "M127.9"
+      ],
+      "completionPct": 20,
+      "alignedPhilosophies": [
+        "philosophy-architecture-before-implementation",
+        "philosophy-progressive-disclosure"
+      ],
+      "volumeId": "volume-iii"
+    },
+    {
+      "id": "chapter-iii-5",
+      "number": 5,
+      "title": "Licensing & Business Commerce",
+      "summary": "Pack Licensing Infrastructure™ and Business Marketplace Infrastructure™ — license packs, templates, and capabilities without SaaS subscription framing.",
+      "status": "planned",
+      "dependsOn": [
+        "chapter-iii-2"
+      ],
+      "milestoneIds": [
+        "M127.8",
+        "M127.11"
+      ],
+      "completionPct": 25,
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-single-source-of-truth"
+      ],
+      "volumeId": "volume-iii"
+    },
+    {
+      "id": "chapter-iii-6",
+      "number": 6,
+      "title": "Monetization Foundation",
+      "summary": "Profession Pack System™ and Monetization Architecture Foundation™ — economic substrate beneath Expansion Center™ (M88) and Permanent Monetization (M89).",
+      "status": "in-progress",
+      "dependsOn": [
+        "chapter-iii-3",
+        "chapter-iii-5"
+      ],
+      "milestoneIds": [
+        "M127.10",
+        "M127.12"
+      ],
+      "completionPct": 55,
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-documentation-as-architecture"
+      ],
+      "volumeId": "volume-iii"
     }
   ],
   "milestones": [
@@ -1115,7 +1244,10 @@
       "relatedSystems": [
         "business-model-engine",
         "mission-control",
-        "studio-institute"
+        "studio-institute",
+        "industry-architecture",
+        "pack-install-engine",
+        "headquarters-layout-engine"
       ],
       "implementationNotes": "One-click department install with preview — Creator Studio example."
     },
@@ -1137,7 +1269,9 @@
       "relatedSystems": [
         "expansion-center",
         "marketplace",
-        "knowledge-commerce"
+        "knowledge-commerce",
+        "monetization-architecture",
+        "pack-licensing-infrastructure"
       ],
       "implementationNotes": "Never \"subscribe to features\" — Expansion Center + Digital Payroll language."
     },
@@ -2166,6 +2300,347 @@
         "DR-005"
       ],
       "implementationNotes": "Master directory of every platform object — consumes Knowledge Registry entries. Enables Executive Strategy Floor™ (DR-005) registration."
+    },
+    {
+      "canonicalId": "M127.1",
+      "name": "Industry Architecture™",
+      "internalId": "industry-architecture",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-1",
+      "volumeId": "volume-iii",
+      "purpose": "Permanent architecture for industry selection, starter packs, and organization expansion — every company is a Business Operating System, not an industry app.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127",
+        "M91"
+      ],
+      "enables": [
+        "M127.2"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-places-not-pages",
+        "philosophy-invisible-complexity"
+      ],
+      "relatedSystems": [
+        "expansion-center",
+        "organization-genome",
+        "profession-brain",
+        "mission-control"
+      ],
+      "implementationNotes": "Core logic in studio-os-core/industry-architecture/. Consumed by Expansion Center™ (M88). Spec only — no new product routes in this sprint."
+    },
+    {
+      "canonicalId": "M127.2",
+      "name": "Department Pack Registry™",
+      "internalId": "department-pack-registry",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-1",
+      "volumeId": "volume-iii",
+      "purpose": "Canonical registry of department packs — modular business capability bundles (Creator, Beauty, Contractor, Marketing, …) installable into Headquarters.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.1"
+      ],
+      "enables": [
+        "M127.3",
+        "M127.10"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-single-source-of-truth"
+      ],
+      "relatedSystems": [
+        "industry-architecture",
+        "expansion-center",
+        "knowledge-registry"
+      ],
+      "implementationNotes": "Catalog in industry-architecture/department-packs.ts and pack-registry.ts."
+    },
+    {
+      "canonicalId": "M127.3",
+      "name": "Expansion Pack Catalog™",
+      "internalId": "expansion-pack-catalog",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-1",
+      "volumeId": "volume-iii",
+      "purpose": "Post-launch expansion packs — Creator Studio, Sales CRM, Warehouse, Accounting — discoverable and installable through Expansion Center™.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.2"
+      ],
+      "enables": [
+        "M127.4",
+        "M127.8"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-progressive-disclosure",
+        "philosophy-os-not-saas"
+      ],
+      "relatedSystems": [
+        "expansion-center",
+        "industry-architecture"
+      ],
+      "implementationNotes": "expansion-packs.ts — consumed by install-engine."
+    },
+    {
+      "canonicalId": "M127.4",
+      "name": "Pack Install Engine™",
+      "internalId": "pack-install-engine",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-2",
+      "volumeId": "volume-iii",
+      "purpose": "Merges packs into organization profiles — departments, concierges, KPIs, and Command Dock capabilities without migration or new software.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.3"
+      ],
+      "enables": [
+        "M127.5",
+        "M127.7"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-invisible-complexity",
+        "philosophy-living-headquarters"
+      ],
+      "relatedSystems": [
+        "expansion-center",
+        "workspace-runtime",
+        "mission-control"
+      ],
+      "implementationNotes": "install-engine.ts — one-click department install per M88 vision."
+    },
+    {
+      "canonicalId": "M127.5",
+      "name": "Headquarters Layout Engine™",
+      "internalId": "headquarters-layout-engine",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-2",
+      "volumeId": "volume-iii",
+      "purpose": "Translates installed packs into Headquarters layout — wings, departments, cards, and spatial navigation (places, not pages).",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.4"
+      ],
+      "enables": [
+        "M127.6"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-places-not-pages",
+        "philosophy-living-headquarters",
+        "philosophy-environmental-storytelling"
+      ],
+      "relatedSystems": [
+        "mission-control",
+        "expansion-center",
+        "DR-002"
+      ],
+      "implementationNotes": "buildHeadquartersLayout in install-engine — feeds Mission Control HQ Layout."
+    },
+    {
+      "canonicalId": "M127.6",
+      "name": "Digital Staff Catalog™",
+      "internalId": "digital-staff-catalog",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-3",
+      "volumeId": "volume-iii",
+      "purpose": "Registry of hireable digital executives and staff — capacity and expertise, not SaaS seats. Feeds Digital Payroll and Executive Council expansion.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.5"
+      ],
+      "enables": [
+        "M127.12"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-executive-first"
+      ],
+      "relatedSystems": [
+        "monetization-architecture",
+        "executive-council",
+        "profession-brain"
+      ],
+      "implementationNotes": "monetization-architecture/digital-staff-catalog.ts."
+    },
+    {
+      "canonicalId": "M127.7",
+      "name": "Business Template Library™",
+      "internalId": "business-template-library",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-4",
+      "volumeId": "volume-iii",
+      "purpose": "Reusable templates for workflows, departments, operations, and profession-specific business patterns — installable assets, not blank forms.",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.4"
+      ],
+      "enables": [
+        "M127.9"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-architecture-before-implementation",
+        "philosophy-documentation-as-architecture"
+      ],
+      "relatedSystems": [
+        "asset-registry",
+        "knowledge-registry",
+        "expansion-center"
+      ],
+      "implementationNotes": "Planned — templates registered before product implementation."
+    },
+    {
+      "canonicalId": "M127.8",
+      "name": "Pack Licensing Infrastructure™",
+      "internalId": "pack-licensing-infrastructure",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-5",
+      "volumeId": "volume-iii",
+      "purpose": "Licensing substrate for department packs, expansion packs, and templates — one-time and recurring without subscription-tier framing.",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.3"
+      ],
+      "enables": [
+        "M127.11",
+        "M127.12"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-single-source-of-truth"
+      ],
+      "relatedSystems": [
+        "business-model-engine",
+        "monetization-architecture",
+        "policy-engine"
+      ],
+      "implementationNotes": "Distinct from Automation Licensing (M200, Volume X)."
+    },
+    {
+      "canonicalId": "M127.9",
+      "name": "Organization Template Engine™",
+      "internalId": "organization-template-engine",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-4",
+      "volumeId": "volume-iii",
+      "purpose": "Starter organization blueprints by industry and profession — day-one Headquarters, packs, and Genome seeds from templates.",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.7",
+        "M91"
+      ],
+      "enables": [],
+      "alignedPhilosophies": [
+        "philosophy-progressive-disclosure",
+        "philosophy-places-not-pages"
+      ],
+      "relatedSystems": [
+        "business-discovery-blueprint",
+        "organization-genome",
+        "industry-architecture"
+      ],
+      "implementationNotes": "Connects discovery blueprint to pack installation."
+    },
+    {
+      "canonicalId": "M127.10",
+      "name": "Profession Pack System™",
+      "internalId": "profession-pack-system",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-6",
+      "volumeId": "volume-iii",
+      "purpose": "Profession-specific pack overlays — Profession Brain™ seeds, concierge bridges, and industry intelligence wired into pack installs.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.2",
+        "M91"
+      ],
+      "enables": [
+        "M127.12"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-design-dna",
+        "philosophy-invisible-complexity"
+      ],
+      "relatedSystems": [
+        "profession-brain",
+        "industry-architecture",
+        "workspace-runtime"
+      ],
+      "implementationNotes": "workspace-runtime profession-packs category; profession-brain bridge."
+    },
+    {
+      "canonicalId": "M127.11",
+      "name": "Business Marketplace Infrastructure™",
+      "internalId": "business-marketplace-infrastructure",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-5",
+      "volumeId": "volume-iii",
+      "purpose": "Infrastructure for discovering, certifying, and installing third-party and Studio-authored business packs — distinct from Expert Marketplace™ (M92).",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.8"
+      ],
+      "enables": [],
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-single-source-of-truth"
+      ],
+      "relatedSystems": [
+        "expert-marketplace",
+        "expansion-center",
+        "qa-headquarters"
+      ],
+      "implementationNotes": "Business packs ≠ expertise commerce; separate infrastructure."
+    },
+    {
+      "canonicalId": "M127.12",
+      "name": "Monetization Architecture Foundation™",
+      "internalId": "monetization-architecture",
+      "registryKind": "milestone",
+      "chapterId": "chapter-iii-6",
+      "volumeId": "volume-iii",
+      "purpose": "Economic substrate — digital payroll, pack pricing, royalties, wallets — beneath Permanent Monetization Architecture™ (M89) and Expansion Center™ (M88).",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M127.6",
+        "M127.8",
+        "M127.10"
+      ],
+      "enables": [],
+      "alignedPhilosophies": [
+        "philosophy-os-not-saas",
+        "philosophy-documentation-as-architecture"
+      ],
+      "relatedSystems": [
+        "business-model-engine",
+        "expansion-center",
+        "knowledge-commerce"
+      ],
+      "implementationNotes": "studio-os-core/monetization-architecture/ — M89 is Volume I consumer."
     },
     {
       "canonicalId": "M94",
@@ -4575,6 +5050,96 @@
     },
     {
       "from": "M127",
+      "to": "M127.1",
+      "type": "enables",
+      "note": "System Registry spine → Business Infrastructure foundation"
+    },
+    {
+      "from": "volume-ii",
+      "to": "M127.1",
+      "type": "enables",
+      "note": "Knowledge Infrastructure feeds Business Infrastructure"
+    },
+    {
+      "from": "M91",
+      "to": "M127.1",
+      "type": "enables",
+      "note": "Profession Brain seeds industry architecture"
+    },
+    {
+      "from": "M127.1",
+      "to": "M127.2",
+      "type": "chain"
+    },
+    {
+      "from": "M127.2",
+      "to": "M127.3",
+      "type": "chain"
+    },
+    {
+      "from": "M127.3",
+      "to": "M127.4",
+      "type": "enables"
+    },
+    {
+      "from": "M127.4",
+      "to": "M127.5",
+      "type": "enables"
+    },
+    {
+      "from": "M127.5",
+      "to": "M127.6",
+      "type": "enables"
+    },
+    {
+      "from": "M127.4",
+      "to": "M127.7",
+      "type": "enables"
+    },
+    {
+      "from": "M127.7",
+      "to": "M127.9",
+      "type": "enables"
+    },
+    {
+      "from": "M127.3",
+      "to": "M127.8",
+      "type": "enables"
+    },
+    {
+      "from": "M127.8",
+      "to": "M127.11",
+      "type": "enables"
+    },
+    {
+      "from": "M127.2",
+      "to": "M127.10",
+      "type": "enables"
+    },
+    {
+      "from": "M127.6",
+      "to": "M127.12",
+      "type": "enables"
+    },
+    {
+      "from": "M127.10",
+      "to": "M127.12",
+      "type": "enables"
+    },
+    {
+      "from": "M127.12",
+      "to": "M88",
+      "type": "relates",
+      "note": "Monetization foundation → Expansion Center consumer (Volume I)"
+    },
+    {
+      "from": "M127.5",
+      "to": "M88",
+      "type": "relates",
+      "note": "Headquarters layout → Expansion Center installs"
+    },
+    {
+      "from": "M127",
       "to": "M129",
       "type": "enables"
     },
@@ -4703,19 +5268,259 @@
       "type": "enables"
     }
   ],
+  "corePhilosophies": [
+    {
+      "id": "philosophy-environmental-storytelling",
+      "title": "Environmental Storytelling™",
+      "category": "experiential",
+      "summary": "The environment communicates before interfaces do. Seasons, milestones, memory, and organizational moments should be felt through space, light, motion, and presence — not explained through dashboards or copy blocks.",
+      "governs": [
+        "DR-003",
+        "living-headquarters",
+        "legacy-vault"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-xvi"
+      ]
+    },
+    {
+      "id": "philosophy-living-headquarters",
+      "title": "Living Headquarters™",
+      "category": "experiential",
+      "summary": "Headquarters is a living place that evolves with the organization — not a static admin home. Departments, wings, pulse, and memory should change as the company grows, celebrates, and learns.",
+      "governs": [
+        "DR-002",
+        "DR-003",
+        "mission-control"
+      ],
+      "alignsVolumes": [
+        "volume-i"
+      ]
+    },
+    {
+      "id": "philosophy-studio-orb",
+      "title": "Studio Orb™",
+      "category": "experiential",
+      "summary": "Intelligence should feel ambient, respectful, and present — not trapped in a persistent toolbar. The Orb is a philosophy of presence: arrive, listen, guide, and disappear until needed again.",
+      "governs": [
+        "DR-001",
+        "studio-orb",
+        "command-dock"
+      ],
+      "alignsVolumes": [
+        "volume-i"
+      ]
+    },
+    {
+      "id": "philosophy-experience-studio",
+      "title": "Experience Studio™",
+      "category": "experiential",
+      "summary": "Experience design is authored, interviewed, and refined — not configured through settings panels. Founders and executives shape atmosphere, tone, and feel through creative direction, not technical forms.",
+      "governs": [
+        "experience-studio",
+        "design-dna-canon",
+        "design-genome"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-xi"
+      ]
+    },
+    {
+      "id": "philosophy-design-dna",
+      "title": "Design DNA™",
+      "category": "design-canon",
+      "summary": "Every organization carries a visual and behavioral genome — canon, tokens, typography, glass, motion, and hierarchy that remain coherent across thousands of modules and future generations.",
+      "governs": [
+        "design-dna-canon",
+        "design-token-engine"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-xi"
+      ]
+    },
+    {
+      "id": "philosophy-experience-dna",
+      "title": "Experience DNA™",
+      "category": "design-canon",
+      "summary": "Experience is inherited, not reinvented per screen. Emotional rhythm, arrival moments, hospitality, and environmental adaptation compose an Experience DNA that scales with the operating system.",
+      "governs": [
+        "design-genome",
+        "experience-engine",
+        "arrival-experience"
+      ],
+      "alignsVolumes": [
+        "volume-i"
+      ]
+    },
+    {
+      "id": "philosophy-conversational-ux",
+      "title": "Conversational UX",
+      "category": "interaction",
+      "summary": "The OS speaks naturally. Command, discovery, and guidance flow through conversation — voice, text, and concierge dialogue — before users hunt through menus or documentation indexes.",
+      "governs": [
+        "command-dock",
+        "studio-intelligence",
+        "DR-001"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-ii"
+      ]
+    },
+    {
+      "id": "philosophy-invisible-complexity",
+      "title": "Invisible Complexity",
+      "category": "interaction",
+      "summary": "Sophisticated systems should feel simple. Registries, orchestration, policies, and intelligence pipelines remain engineering-visible — never user-visible complexity.",
+      "governs": [
+        "system-registry",
+        "manifest-reconciliation",
+        "model-orchestrator"
+      ],
+      "alignsVolumes": [
+        "volume-ii",
+        "volume-xi"
+      ]
+    },
+    {
+      "id": "philosophy-executive-first",
+      "title": "Executive-first Design",
+      "category": "interaction",
+      "summary": "Founders and executives are the primary audience. Every surface should support judgment, oversight, and strategic clarity before operator or developer convenience.",
+      "governs": [
+        "mission-control",
+        "executive-council",
+        "DR-005"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-iv"
+      ]
+    },
+    {
+      "id": "philosophy-documentation-as-architecture",
+      "title": "Documentation as Architecture",
+      "category": "governance",
+      "summary": "Documentation is not an afterthought — it is part of the architecture. Knowledge, dependencies, and implementation status live in registries and manifest artifacts that are as authoritative as code.",
+      "governs": [
+        "knowledge-registry",
+        "documentation-governance",
+        "DR-005"
+      ],
+      "alignsVolumes": [
+        "volume-ii",
+        "volume-0"
+      ]
+    },
+    {
+      "id": "philosophy-ai-creative-director",
+      "title": "AI as Collaborative Creative Director",
+      "category": "intelligence",
+      "summary": "Studio Intelligence™ does not replace human judgment — it collaborates as a creative director: proposing, critiquing, refining, and explaining — while founders retain authorship and final decisions.",
+      "governs": [
+        "studio-intelligence",
+        "experience-studio",
+        "DR-004"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-ii"
+      ]
+    },
+    {
+      "id": "philosophy-single-source-of-truth",
+      "title": "Single Source of Truth",
+      "category": "governance",
+      "summary": "Every architectural object exists exactly once in the Master Specification and is referenced everywhere else. No duplicate milestone definitions, no parallel registries, no shadow roadmaps.",
+      "governs": [
+        "knowledge-registry",
+        "manifest-reconciliation",
+        "constitution-single-source"
+      ],
+      "alignsVolumes": [
+        "volume-0",
+        "volume-ii"
+      ]
+    },
+    {
+      "id": "philosophy-progressive-disclosure",
+      "title": "Progressive Disclosure",
+      "category": "interaction",
+      "summary": "Reveal depth only when needed. Onboarding, Headquarters, Command Dock, and intelligence surfaces should start calm and ceremonial — expanding into power as confidence grows.",
+      "governs": [
+        "company-onboarding-intelligence",
+        "arrival-experience",
+        "command-dock"
+      ],
+      "alignsVolumes": [
+        "volume-i"
+      ]
+    },
+    {
+      "id": "philosophy-architecture-before-implementation",
+      "title": "Architecture Before Implementation",
+      "category": "governance",
+      "summary": "Specify, register, and validate before building product surfaces. Volumes, chapters, milestones, philosophies, and design revisions precede routes, components, and feature work.",
+      "governs": [
+        "manifest-authoring",
+        "manifest-reconciliation",
+        "DR-005"
+      ],
+      "alignsVolumes": [
+        "volume-0",
+        "volume-ii"
+      ]
+    },
+    {
+      "id": "philosophy-os-not-saas",
+      "title": "Operating System, Not SaaS",
+      "category": "platform",
+      "summary": "Studio OS is an organizational operating system — not a subscription dashboard. Founders install departments, hire digital staff, and expand capabilities; they do not buy feature tiers.",
+      "governs": [
+        "expansion-center",
+        "business-model-engine"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-iii"
+      ]
+    },
+    {
+      "id": "philosophy-places-not-pages",
+      "title": "Places Instead of Pages",
+      "category": "experiential",
+      "summary": "Users walk through destinations — Headquarters wings, departments, floors, registries, and studios — not disconnected admin pages. Navigation is spatial and narrative, not a flat route tree.",
+      "governs": [
+        "DR-002",
+        "DR-005",
+        "mission-control"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-iii"
+      ]
+    }
+  ],
   "stats": {
     "volumeCount": 20,
-    "chapterCount": 17,
-    "milestoneCount": 218,
+    "chapterCount": 23,
+    "milestoneCount": 230,
     "designRevisionCount": 5,
     "completeCount": 95,
-    "inProgressCount": 6,
-    "plannedCount": 117,
+    "inProgressCount": 14,
+    "plannedCount": 121,
     "volumeIMilestoneCount": 25,
     "volumeIChapterCount": 8,
     "volumeICompleteCount": 16,
     "volumeIIMilestoneCount": 39,
     "volumeIIChapterCount": 9,
-    "volumeIICompleteCount": 38
+    "volumeIICompleteCount": 38,
+    "volumeIIIMilestoneCount": 12,
+    "volumeIIIChapterCount": 6,
+    "volumeIIICompleteCount": 0,
+    "philosophyCount": 16
   }
 }

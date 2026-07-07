@@ -43,6 +43,9 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
   const internalIds = new Map();
   const shippedBadges = new Map();
 
+  const philosophies = bundle.corePhilosophies ?? [];
+  const philosophyIds = new Set(philosophies.map((p) => p.id));
+
   const resolvableIds = new Set([
     ...volumeIds,
     ...chapterIds,
@@ -51,14 +54,15 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
     ...designRevisions.map((d) => d.id),
     ...aliases.map((a) => a.canonicalId),
     ...aliases.map((a) => a.shippedId).filter(Boolean),
+    ...philosophyIds,
   ]);
 
   // ── Manifest integrity ──────────────────────────────────────────────
   if (!constitution.principles?.length) {
     issue(issues, 'error', 'CONSTITUTION_EMPTY', 'Constitution has no principles');
   }
-  if (milestones.length < 210) {
-    issue(issues, 'warning', 'LOW_MILESTONE_COUNT', `Expected ~218 milestones, found ${milestones.length}`);
+  if (milestones.length < 225) {
+    issue(issues, 'warning', 'LOW_MILESTONE_COUNT', `Expected ~230 milestones, found ${milestones.length}`);
   }
   if (!volumes.some((v) => v.id === 'volume-i')) {
     issue(issues, 'error', 'MISSING_VOLUME_I', 'Volume I container missing');
@@ -229,8 +233,32 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
     issue(issues, 'warning', 'VERSION_MISMATCH', `Multiple spec file versions: ${[...yamlVersions].join(', ')}`);
   }
 
+  // ── Core Philosophy compliance ────────────────────────────────────────
+  const corePhilosophies = bundle.corePhilosophies ?? [];
+  if (corePhilosophies.length < 15) {
+    issue(issues, 'error', 'LOW_PHILOSOPHY_COUNT', `Expected ≥15 core philosophies, found ${corePhilosophies.length}`);
+  }
+  const requiredPhilosophyCategories = ['experiential', 'governance', 'platform'];
+  for (const cat of requiredPhilosophyCategories) {
+    if (!corePhilosophies.some((p) => p.category === cat)) {
+      issue(issues, 'warning', 'PHILOSOPHY_CATEGORY_MISSING', `No philosophy in category ${cat}`);
+    }
+  }
+  if (!volumes.some((v) => v.id === 'volume-iii')) {
+    issue(issues, 'warning', 'MISSING_VOLUME_III', 'Volume III container missing');
+  }
+  const volumeIII = milestones.filter((m) => m.volumeId === 'volume-iii');
+  if (volumeIII.length > 0 && volumeIII.length < 10) {
+    issue(issues, 'warning', 'LOW_VOLUME_III_COUNT', `Volume III has only ${volumeIII.length} milestones`);
+  }
+  for (const m of volumeIII) {
+    if (!m.alignedPhilosophies?.length) {
+      issue(issues, 'warning', 'MISSING_PHILOSOPHY_ALIGNMENT', `${m.canonicalId} has no alignedPhilosophies`, m.canonicalId);
+    }
+  }
+
   // ── Constitution compliance ───────────────────────────────────────────
-  const requiredPrinciples = ['constitution-single-source', 'constitution-registry-driven'];
+  const requiredPrinciples = ['constitution-single-source', 'constitution-registry-driven', 'constitution-core-philosophies'];
   for (const id of requiredPrinciples) {
     if (!constitution.principles?.some((p) => p.id === id)) {
       issue(issues, 'error', 'CONSTITUTION_PRINCIPLE_MISSING', `Missing required principle ${id}`, id);
@@ -303,6 +331,7 @@ export function writeValidationReport(result, compiledAt) {
     '- Duplicate definitions (canonicalId, internalId, shipped badge)',
     '- Version consistency (YAML file versions)',
     '- Constitution compliance (required principles)',
+    '- Core Philosophy compliance (≥15 principles, Volume III alignment)',
     '- Knowledge Registry compliance',
     '- Missing documentation (complete modules without docs/studio-os/*.md)',
     '',

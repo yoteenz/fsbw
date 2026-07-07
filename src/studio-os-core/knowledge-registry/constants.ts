@@ -56,6 +56,7 @@ export const REGISTRY_CATEGORIES = [
   'platform',
   'design-revision',
   'roadmap',
+  'philosophy',
 ] as const;
 
 import { IMPLEMENTATION_STATUS_LABELS as MANIFEST_STATUS_LABELS } from '../manifest-reconciliation/constants';
