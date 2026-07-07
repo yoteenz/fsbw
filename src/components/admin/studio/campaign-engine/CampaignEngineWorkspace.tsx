@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useCampaignEngineState } from '../../../../hooks/useCampaignEngineState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { StudioTabMoreHint } from '../StudioTabMoreHint';
+import { CampaignDeliverablesPipelinePanel } from './CampaignDeliverablesPipelinePanel';
 import { CampaignDeliverableStatsPanel } from './CampaignDeliverableStats';
 import { CampaignWorkspaceTabs } from './CampaignWorkspaceTabs';
 import { DeliverablesManagerPanel } from './DeliverablesManagerPanel';
@@ -24,6 +25,7 @@ import {
   CreatorRecommendationsPanel,
   DepartmentCoordinationPanel,
   WorkOrchestrationLinkPanel,
+  WorkspaceCampaignSelector,
 } from './CampaignEnginePanels';
 
 type CeTab = 'dashboard' | 'campaign' | 'calendar' | 'intelligence' | 'learning';
@@ -53,6 +55,14 @@ export function CampaignEngineWorkspace() {
     setBuilderStep,
     applyDeliverableAction,
   } = useCampaignEngineState();
+
+  const workspaceDeliverables = useMemo(
+    () =>
+      store.deliverables.filter((d) =>
+        workspaceCampaigns.some((c) => c.id === d.campaignId)
+      ),
+    [store.deliverables, workspaceCampaigns]
+  );
 
   const panelProps = {
     store,
@@ -183,6 +193,15 @@ export function CampaignEngineWorkspace() {
   return (
     <div className="campaign-engine-root">
       <CampaignEngineHeader />
+
+      <WorkspaceCampaignSelector store={store} onSelectWorkspace={selectWorkspace} />
+
+      <CampaignDeliverablesPipelinePanel
+        deliverables={workspaceDeliverables}
+        campaigns={workspaceCampaigns}
+        selectedCampaign={selectedCampaign}
+        onOpenDeliverables={viewCampaignDeliverables}
+      />
 
       <div className="flex gap-1 overflow-x-auto pb-2 mb-2">
         {TABS.map((t) => (

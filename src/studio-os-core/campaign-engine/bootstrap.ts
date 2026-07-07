@@ -208,6 +208,29 @@ export function buildCampaignEngineSeed(): Partial<CampaignEngineStore> {
       platform: 'newsletter',
       dueAt: daysFromNow(60),
     }),
+    del({
+      id: 'del-fs-1',
+      campaignId: 'camp-fs-noir-launch',
+      type: 'landing-page',
+      format: 'section',
+      title: 'Build-a-Wig live preview hero',
+      workflowStatus: 'approved',
+      owner: 'Chief Product Officer',
+      platform: 'web',
+      dueAt: daysFromNow(7),
+      bodyPreview: 'Interactive NOIR live preview · luxury commerce CTA.',
+    }),
+    del({
+      id: 'del-fs-2',
+      campaignId: 'camp-fs-noir-launch',
+      type: 'video',
+      format: 'reel',
+      title: 'NOIR launch reel script',
+      workflowStatus: 'draft',
+      owner: 'Chief Creative Officer',
+      platform: 'instagram',
+      dueAt: daysFromNow(10),
+    }),
     // Truth Tuesday · Fact-Forward Cadence — full deliverables pipeline
     del({
       id: 'del-tt-001',
@@ -461,9 +484,10 @@ export function buildCampaignEngineSeed(): Partial<CampaignEngineStore> {
     ],
     builderStep: 5,
     selectedCampaignId: 'camp-truth-tuesday',
-    workspaceTab: 'overview',
+    workspaceTab: 'deliverables',
     selectedDeliverableId: null,
     autoPublishEnabled: false,
+    dataRevision: 2,
   };
 }
 

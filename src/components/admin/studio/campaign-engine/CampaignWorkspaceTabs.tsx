@@ -15,7 +15,7 @@ export function CampaignWorkspaceTabs({ activeTab, onSelectTab }: Props) {
           key={t.id}
           type="button"
           onClick={() => onSelectTab(t.id)}
-          className="whitespace-nowrap px-2 py-1 text-[6px] font-futura border"
+            className="whitespace-nowrap px-2 py-1.5 text-[8px] font-futura border"
           style={{
             fontWeight: 515,
             borderColor: activeTab === t.id ? '#D97706' : ADMIN_STUDIO_THEME.panelBorder,

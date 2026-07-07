@@ -23,20 +23,20 @@ export function CampaignDeliverableStats({ campaign, deliverables, onViewDeliver
       </p>
       {stats.total > 0 ? (
         <div className="flex flex-wrap gap-x-3 gap-y-1 mt-1">
-          <span style={{ ...ceLabel, fontSize: '6px', fontFamily: '"Futura PT Medium"', color: '#0F172A' }}>
+          <span style={{ ...ceLabel, fontSize: '8px', fontFamily: '"Futura PT Medium"', color: '#0F172A' }}>
             {stats.total} DELIVERABLE{stats.total === 1 ? '' : 'S'}
           </span>
           {stats.complete > 0 ? (
-            <span style={{ ...ceLabel, fontSize: '5px', color: '#16A34A' }}>{stats.complete} COMPLETE</span>
+            <span style={{ ...ceLabel, fontSize: '7px', color: '#16A34A' }}>{stats.complete} COMPLETE</span>
           ) : null}
           {stats.inReview > 0 ? (
-            <span style={{ ...ceLabel, fontSize: '5px', color: '#D97706' }}>{stats.inReview} IN REVIEW</span>
+            <span style={{ ...ceLabel, fontSize: '7px', color: '#D97706' }}>{stats.inReview} IN REVIEW</span>
           ) : null}
           {stats.draft > 0 ? (
-            <span style={{ ...ceLabel, fontSize: '5px', color: '#808080' }}>{stats.draft} DRAFT</span>
+            <span style={{ ...ceLabel, fontSize: '7px', color: '#808080' }}>{stats.draft} DRAFT</span>
           ) : null}
           {stats.scheduled > 0 ? (
-            <span style={{ ...ceLabel, fontSize: '5px', color: '#0891B2' }}>{stats.scheduled} SCHEDULED</span>
+            <span style={{ ...ceLabel, fontSize: '7px', color: '#0891B2' }}>{stats.scheduled} SCHEDULED</span>
           ) : null}
         </div>
       ) : (
@@ -49,7 +49,7 @@ export function CampaignDeliverableStats({ campaign, deliverables, onViewDeliver
             e.stopPropagation();
             onViewDeliverables();
           }}
-          className="mt-2 text-[6px] font-futura"
+          className="mt-2 text-[8px] font-futura"
           style={{
             fontWeight: 515,
             color: '#D97706',

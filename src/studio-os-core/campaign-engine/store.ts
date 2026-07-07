@@ -1,4 +1,4 @@
-import { CAMPAIGN_HIERARCHY_CHAIN, CAMPAIGN_ENGINE_STORAGE_KEY, CAMPAIGN_ENGINE_VERSION } from './constants';
+import { CAMPAIGN_HIERARCHY_CHAIN, CAMPAIGN_ENGINE_STORAGE_KEY, CAMPAIGN_ENGINE_VERSION, CAMPAIGN_ENGINE_DATA_REVISION } from './constants';
 import {
   deriveApprovalStatus,
   derivePublishingStatus,
@@ -55,6 +55,7 @@ function emptyStore(): CampaignEngineStore {
     workspaceTab: 'overview',
     selectedDeliverableId: null,
     autoPublishEnabled: false,
+    dataRevision: 0,
   };
 }
 
@@ -132,15 +133,52 @@ export function mergeCampaignEngineDeliverables(extra: CampaignDeliverable[]): v
   });
 }
 
+export function syncCampaignEngineFromSeed(seed: Partial<CampaignEngineStore>): CampaignEngineStore {
+  const store = readCampaignEngineStore();
+  let deliverables = store.deliverables.map((d) => migrateCampaignDeliverable(d));
+  let changed = (store.dataRevision ?? 0) < CAMPAIGN_ENGINE_DATA_REVISION;
+
+  if (seed.deliverables?.length) {
+    const ids = new Set(deliverables.map((d) => d.id));
+    for (const raw of seed.deliverables) {
+      const del = migrateCampaignDeliverable(raw);
+      if (!ids.has(del.id)) {
+        deliverables.push(del);
+        changed = true;
+      }
+    }
+  }
+
+  const migratedDeliverables = deliverables.map((d) => migrateCampaignDeliverable(d));
+  if (migratedDeliverables.some((d, i) => d.workflowStatus !== deliverables[i]?.workflowStatus)) {
+    changed = true;
+  }
+
+  const next: CampaignEngineStore = {
+    ...store,
+    deliverables: migratedDeliverables,
+    workspaceTab: store.workspaceTab ?? 'overview',
+    selectedDeliverableId: store.selectedDeliverableId ?? null,
+    autoPublishEnabled: store.autoPublishEnabled ?? false,
+    dataRevision: CAMPAIGN_ENGINE_DATA_REVISION,
+    dashboard: refreshDashboard({ ...store, deliverables: migratedDeliverables }),
+  };
+
+  if (changed || !readRawStore()) {
+    writeCampaignEngineStore(next);
+    return next;
+  }
+
+  return { ...next, dashboard: refreshDashboard(next) };
+}
+
 export function bootstrapCampaignEngineStore(seed?: Partial<CampaignEngineStore>): void {
   const existing = readRawStore();
   if (existing && existing.campaigns.length > 0) {
-    if (seed?.deliverables?.length) {
-      mergeCampaignEngineDeliverables(seed.deliverables.map((d) => migrateCampaignDeliverable(d)));
-    }
+    if (seed) syncCampaignEngineFromSeed(seed);
     return;
   }
-  const merged = migrateStore({ ...emptyStore(), ...seed });
+  const merged = migrateStore({ ...emptyStore(), ...seed, dataRevision: CAMPAIGN_ENGINE_DATA_REVISION });
   writeCampaignEngineStore({ ...merged, dashboard: refreshDashboard(merged) });
 }
 
@@ -161,7 +199,7 @@ export function selectCampaignEngineCampaign(id: string | null): void {
   writeCampaignEngineStore({
     ...store,
     selectedCampaignId: id,
-    workspaceTab: 'overview',
+    workspaceTab: id ? 'deliverables' : 'overview',
     selectedDeliverableId: null,
   });
 }

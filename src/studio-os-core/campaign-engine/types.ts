@@ -324,4 +324,5 @@ export type CampaignEngineStore = {
   workspaceTab: CampaignWorkspaceTab;
   selectedDeliverableId: string | null;
   autoPublishEnabled: boolean;
+  dataRevision?: number;
 };

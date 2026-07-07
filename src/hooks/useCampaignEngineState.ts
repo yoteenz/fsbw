@@ -10,6 +10,7 @@ import {
   selectCampaignEngineWorkspace,
   selectCampaignEngineWorkspaceTab,
   setCampaignBuilderStep,
+  syncCampaignEngineFromSeed,
 } from '../studio-os-core/campaign-engine/store';
 import type { DeliverableWorkflowAction } from '../studio-os-core/campaign-engine/store';
 import type {
@@ -21,7 +22,9 @@ import type {
 import { computeDeliverableStats } from '../studio-os-core/campaign-engine/deliverableUtils';
 
 function ensureSeeded(): void {
-  bootstrapCampaignEngineStore(buildCampaignEngineSeed());
+  const seed = buildCampaignEngineSeed();
+  bootstrapCampaignEngineStore(seed);
+  syncCampaignEngineFromSeed(seed);
 }
 
 export function useCampaignEngineState() {

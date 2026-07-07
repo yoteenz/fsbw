@@ -39893,6 +39893,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-07 — Studio Overview page mobile render / scroll fix
 
 **Context:** User reported the Studio OS **Overview** page (`/admin/studio/overview`) keeps glitching on mobile — only the first **HEADQUARTERS WINGS** card (OVERVIEW) renders, then a large empty white void; the rest of the page (remaining wing cards, focus panel, installed module summaries) fails to appear.
@@ -39904,3 +39905,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** Studio OS pages using `AdminStudioLayout` rely on the inner `workspace-content` scroll region for long module lists; do not rely on page-level scroll when the card has `overflow-hidden`.
 
 **Changes:** `src/components/admin/studio/AdminStudioLayout.tsx`, `motherboard/MEMORY.md`.
+=======
+## 2026-07-07 — Campaign Engine deliverables not visible (follow-up fix)
+
+**Context (full chat arc):** Session delivered Campaign Deliverables Manager™ revision; user reported **they don't see anything about deliverables** on the Campaign Engine page.
+
+**Root causes:** (1) Deliverables UI buried behind second-level **Overview** tab and 6px tabs — easy to miss. (2) **WorkspaceCampaignSelector** (NDXBOOK vs Frontal Slayer) not rendered — wrong workspace could show campaigns with zero assets. (3) Existing browser **localStorage v1** stores did not reliably merge new Truth Tuesday seed deliverables (`dataRevision` merge missing). (4) Selecting a campaign defaulted to Overview, not Deliverables.
+
+**Fix delivered:**
+- **`syncCampaignEngineFromSeed()`** + **`CAMPAIGN_ENGINE_DATA_REVISION`** — merges seed deliverables into existing stores on every page load; migrates workflow fields; persists to v2 key
+- **Always-visible `CampaignDeliverablesPipelinePanel`** at top of Campaign Engine (counts, featured campaign preview, **OPEN DELIVERABLES MANAGER™** CTA)
+- Restored **`WorkspaceCampaignSelector`** above pipeline
+- **Default workspace tab → Deliverables** when a campaign is selected
+- Larger readable type on deliverable stats + workspace tabs (8px)
+- Seed deliverables for Frontal Slayer NOIR campaign; fresh seed defaults Truth Tuesday + Deliverables tab
+
+**Conventions:** Campaign Engine page must surface Deliverables Manager™ above the fold without requiring tab discovery; run `syncCampaignEngineFromSeed` on hook init.
+
+**Changes:** store.ts, constants.ts, bootstrap.ts, CampaignDeliverablesPipelinePanel.tsx, CampaignEngineWorkspace.tsx, CampaignWorkspaceTabs.tsx, CampaignDeliverableStats.tsx, useCampaignEngineState.ts, MEMORY.md.
+>>>>>>> 3b85de5b (Fix Campaign Engine deliverables visibility: pipeline panel, seed sync, NDXBOOK selector)

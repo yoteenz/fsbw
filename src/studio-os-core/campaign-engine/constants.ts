@@ -2,6 +2,8 @@ import type { CampaignHierarchyLevel, CampaignTypeId, CampaignWorkspaceTab } fro
 
 export const CAMPAIGN_ENGINE_STORAGE_KEY = 'studioOsCampaignEngine_v2';
 export const CAMPAIGN_ENGINE_VERSION = '1.1.0';
+/** Bump when seed deliverables change — forces merge into existing browser stores. */
+export const CAMPAIGN_ENGINE_DATA_REVISION = 2;
 
 export const CAMPAIGN_WORKSPACE_TABS: { id: CampaignWorkspaceTab; label: string }[] = [
   { id: 'overview', label: 'OVERVIEW' },
