@@ -26,7 +26,7 @@ export const CAMPAIGN_HIERARCHY_CHAIN: { level: CampaignHierarchyLevel; label: s
   { level: 'strategy', label: 'STRATEGY', description: 'How we win' },
   { level: 'initiative', label: 'INITIATIVE', description: 'Major program bridging strategy and campaigns' },
   { level: 'campaign', label: 'CAMPAIGN', description: 'Coordinated execution unit' },
-  { level: 'deliverables', label: 'DELIVERABLES', description: 'Pages · videos · emails · products · assets' },
+  { level: 'deliverables', label: 'MASTER CONTENT ASSETS', description: 'Master Content Asset™ + platform derivatives · linked to campaign' },
   { level: 'distribution', label: 'DISTRIBUTION', description: 'Channels · platforms · publish schedule' },
   { level: 'analytics', label: 'ANALYTICS', description: 'Reach · engagement · conversion · ROI' },
   { level: 'institutional-learning', label: 'INSTITUTIONAL LEARNING', description: 'Retrospectives · playbooks · knowledge graph' },

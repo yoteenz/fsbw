@@ -1,5 +1,7 @@
 import type { CampaignDeliverable, CampaignRecord } from '../../../../studio-os-core/campaign-engine/types';
 import { computeDeliverableStats } from '../../../../studio-os-core/campaign-engine/deliverableUtils';
+import { mapDeliverableWorkflowToLifecycle } from '../../../../studio-os-core/content-pipeline/mapping';
+import { MasterContentLifecycleStrip } from '../content-pipeline/MasterContentLifecycleStrip';
 import { ceLabel, ceSectionTitle, CE } from './campaignEngineTheme';
 import { ceDeliverablesDeskTitle, ceMarblePanel } from './campaignDeliverablesTheme';
 
@@ -28,19 +30,25 @@ export function CampaignDeliverablesPipelinePanel({
     ? deliverables.filter((d) => d.campaignId === featured.id)
     : deliverables;
   const featuredStats = computeDeliverableStats(featuredDeliverables);
+  const pipelineStage = featuredDeliverables[0]
+    ? mapDeliverableWorkflowToLifecycle(
+        featuredDeliverables[0].workflowStatus,
+        Boolean(featuredDeliverables[0].researchSources?.length)
+      )
+    : 'campaign-assignment';
 
   if (deliverables.length === 0) {
     const hasOtherWorkspaceAssets = campaigns.length === 0;
     return (
       <section className="p-4 mb-3" style={{ ...ceMarblePanel, borderLeft: `4px solid ${CE.amber}` }}>
-        <p style={ceDeliverablesDeskTitle}>Deliverables Manager™</p>
+        <p style={ceDeliverablesDeskTitle}>Master Content Pipeline™ · Deliverables</p>
         <p style={{ ...ceLabel, fontSize: '8px' }}>
           {hasOtherWorkspaceAssets
-            ? 'No deliverables in this workspace yet.'
+            ? 'No master content assets in this workspace yet.'
             : 'No deliverables loaded — tap NDXBOOK above, then OPEN DELIVERABLES MANAGER™.'}
         </p>
         <p style={{ ...ceLabel, fontSize: '7px', marginTop: 6 }}>
-          Truth Tuesday · Fact-Forward Cadence includes 12 sample assets (pages, social, scripts, newsletter).
+          Truth Tuesday · Fact-Forward Cadence includes 12 sample assets (master pages, social derivatives, scripts, newsletter).
         </p>
       </section>
     );
@@ -48,10 +56,11 @@ export function CampaignDeliverablesPipelinePanel({
 
   return (
     <section className="p-4 mb-3" style={{ ...ceMarblePanel, borderLeft: `4px solid ${CE.amber}` }}>
-      <p style={ceDeliverablesDeskTitle}>Deliverables Manager™</p>
+      <p style={ceDeliverablesDeskTitle}>Master Content Pipeline™ · Deliverables</p>
       <p style={{ ...ceLabel, fontSize: '8px', marginBottom: 12 }}>
-        Where campaign content is reviewed, edited, approved, and published — not the executive strategy view.
+        Campaign production pipeline — Master Content Assets™ and derivatives reviewed, approved, expanded, and published.
       </p>
+      <MasterContentLifecycleStrip activeStageId={pipelineStage} compact />
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 mb-3">
         {[

@@ -25,13 +25,19 @@ Ceremonial intelligence entry sequence (M89.4). First visit to Headquarters — 
 ## C
 
 ### Campaign Engine™
-Future Studio OS product for marketing experience authoring. Queued P2 Phase 2.
+Studio OS module — transforms strategy into coordinated **production pipelines** (Master Content Assets™ + platform derivatives). Route: `/admin/studio/campaign-engine`. Core: `src/studio-os-core/campaign-engine/`. Inherits [Master Content Pipeline™](../master-content-pipeline.md).
 
 ### Component Catalog™
 Canonical library of reusable UI components (`comp-*` IDs). Path: `design/COMPONENT_CATALOG.md`. Products use — never fork.
 
 ### Constitutional Amendment™ (CA-###)
 Rare process for changing Studio Constitution™ principles. Example: CA-001 Release Channel System™.
+
+### Concierge Review Board™
+Multidisciplinary review layer for content readiness. Each concierge (Brand, Editorial, SEO, Legal, etc.) returns PASS · WARNING · FAIL with recommendations and an overall readiness score. Stage 9 of [Master Content Pipeline™](../master-content-pipeline.md). Surfaces: Concierge Approval Flow™, Studio Intelligence review dimensions.
+
+### Content Expansion Engine™
+Flagship Studio OS capability (architecture) — from one [Master Content Asset™](#master-content-asset) generates platform-specific derivatives (Instagram carousel, TikTok script, newsletter, FAQ, etc.) while preserving lineage. Stage 11 of Master Content Pipeline™.
 
 ### Conversation Engine™
 Platform module orchestrating AI dialogue turns, routing, and session management. Milestone M89.3.
@@ -148,6 +154,12 @@ Headquarters that evolves with organizational life — seasons, milestones, memo
 
 ## M
 
+### Master Content Asset™
+The single source of truth for campaign content — Page 001, episode, article, video, interview, guide, etc. All platform-specific outputs are **derivatives** linked to this asset. Stage 7 of [Master Content Pipeline™](../master-content-pipeline.md).
+
+### Master Content Pipeline™
+Canonical 17-stage content operating model for Studio OS — production pipeline, not publishing pipeline. Spec: [master-content-pipeline.md](../master-content-pipeline.md). Code: `src/studio-os-core/content-pipeline/`. Inherited by Campaign Engine™, Newsroom™, Publishing Studio™, Knowledge Library™, Studio Intelligence™.
+
 ### Master Specification™
 Architectural source of truth — Volumes 0–XIX, milestones, dependencies. Path: `master-spec/`.
 
@@ -199,7 +211,7 @@ Mandatory pre-implementation review gate — 9–10 reviews + Founder Approval.
 Canonical product onboarding — 22 documents, templates, lifecycle. v2.0.0.
 
 ### Publishing Studio™
-Future distribution product. Queued P2 Phase 3.
+Distribution and multi-platform publishing product. Queued P2 Phase 3. Inherits [Master Content Pipeline™](../master-content-pipeline.md) stages 12–14 (derivative review, scheduling, publishing).
 
 ---
 

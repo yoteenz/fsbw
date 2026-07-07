@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useNdxbookPagePipeline } from '../../../../hooks/useNdxbookPagePipeline';
 import { ndxbookSocialAccountsQuickLink } from '../ndxbook-mission-control/ndxbookMissionActionRoutes';
 import { createProductionPageFromRegistry } from '../../../../studio-os-core/ndxbook/newsroom/pageSync';
+import { mapNdxbookPageToLifecycle } from '../../../../studio-os-core/content-pipeline/mapping';
+import { MasterContentLifecycleStrip } from '../../studio/content-pipeline/MasterContentLifecycleStrip';
 import { VOLUME_LABELS } from '../../../../studio-os-core/ndxbook/constants';
 import type { NdxbookPage } from '../../../../studio-os-core/ndxbook/types';
 import type { StudioIntelligenceReview } from '../../../../studio-os-core/ndxbook/types';
@@ -62,6 +64,7 @@ export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
 
   const review = page?.pipeline?.studioReview ?? null;
   const canCreate = summary.pageCount === 0;
+  const lifecycleStageId = mapNdxbookPageToLifecycle(page);
 
   const igReady = useMemo(
     () => instagramStatus.active && instagramStatus.postingEnabled,
@@ -84,8 +87,9 @@ export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
 
   return (
     <section className="p-3 mb-3" style={{ ...nrPanel, borderLeft: `4px solid ${NR.indigo}` }}>
-      <p style={nrSectionTitle}>PAGE 001 PIPELINE · FIRST POST</p>
-      <p style={nrLabel}>Money / Credit / Business Education · Instagram only · No fake history</p>
+      <p style={nrSectionTitle}>MASTER CONTENT ASSET · PAGE 001 PIPELINE</p>
+      <p style={nrLabel}>Production pipeline · Money / Credit / Business Education · Instagram pilot</p>
+      <MasterContentLifecycleStrip activeStageId={lifecycleStageId} compact />
 
       <div className="grid grid-cols-2 gap-2 mt-2 sm:grid-cols-4">
         {[
@@ -121,13 +125,13 @@ export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
             run('create', () => {
               const created = createPage001();
               createProductionPageFromRegistry(created);
-              setMessage(`${created.pageLabel} created — first official NDXBook knowledge asset.`);
+              setMessage(`Master Content Asset · ${created.pageLabel} created — first official NDXBook knowledge asset.`);
             })
           }
           className="mt-3 w-full py-2 text-[7px] font-futura border"
           style={{ fontWeight: 515, borderColor: NR.accent, color: NR.accent, background: 'rgba(220,38,38,0.06)' }}
         >
-          {busy === 'create' ? 'CREATING…' : '＋ CREATE PAGE 001'}
+          {busy === 'create' ? 'CREATING…' : '＋ CREATE MASTER CONTENT ASSET · PAGE 001'}
         </button>
       ) : null}
 
@@ -245,7 +249,9 @@ export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
           ) : null}
         </div>
       ) : (
-        <p style={{ ...nrLabel, marginTop: 8 }}>Create Page 001 to begin NDXBook&apos;s real content history.</p>
+        <p style={{ ...nrLabel, marginTop: 8 }}>
+          Create Master Content Asset · Page 001 to begin NDXBook&apos;s real content history.
+        </p>
       )}
 
       {message ? <p style={{ ...nrLabel, color: '#22C55E', marginTop: 6 }}>{message}</p> : null}
@@ -253,7 +259,7 @@ export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
 
       {summary.hasPage001 && summary.pageCount === 1 ? (
         <p style={{ ...nrLabel, fontSize: '6px', marginTop: 8, color: NR.gray }}>
-          After Page 001 works · create Page 002 · continue Instagram-only until reliable.
+          After Page 001 master asset works · create Page 002 · continue Instagram-only until reliable.
         </p>
       ) : null}
     </section>

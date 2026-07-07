@@ -40112,3 +40112,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **`buildOfflineSocialAccounts()`** when API fails — still shows 5 platforms + setup steps (OAuth env vars still required to connect).
 
 **Changes:** studioOsBrowserStorage.ts, ndxbook/store.ts, newsroom/store.ts, mission-control/store.ts, pagePipeline.ts, founder-pilot-mode/bootstrap.ts, useNdxbookPagePipeline.ts, NdxbookPagePipelinePanel.tsx, useAdminStudioSocialAccounts.ts, adminStudioSocialPublishing.ts, MEMORY.md.
+
+---
+
+## 2026-07-07 — Master Content Pipeline™ (Content Operating System revision)
+
+**Context (full chat arc):** Studio scroll audit; Page 001 newsroom route + HQ CTAs; Orb black border; Page 001 persistence + social routing (two passes). User then issued **Master Content Pipeline™** spec — **product logic + UX architecture** (explicitly **not** a Design Revision · **not** a new milestone). Replace page-centric publishing with **Master Content Asset™** as single source of truth; adopt canonical **17-stage content lifecycle** across Campaign Engine, Newsroom, Publishing Studio, Knowledge Library, Studio Intelligence.
+
+**Decisions / outcomes:**
+- **Master Content Asset™** replaces “page” as the product unit in Studio OS content language; pages remain as asset **kind** (`page 001`).
+- **17-stage lifecycle** is permanent operating philosophy: concept → … → Knowledge Library™.
+- Campaign workspace UX pivots from “pages” to **production pipeline** (lifecycle strip, deliverables = master assets + derivatives).
+- Content Expansion Engine™ and full Concierge Review Board UI marked as architecture / partial (existing Studio Intelligence + Concierge Approval Flow bridge pilot stages 8–9).
+
+**Changes:**
+- **Core module:** `src/studio-os-core/content-pipeline/` — `types.ts`, `lifecycle.ts`, `concierge-review.ts`, `mapping.ts`, `index.ts`.
+- **UX:** `MasterContentLifecycleStrip.tsx`; wired in `NdxbookPagePipelinePanel.tsx` (MASTER CONTENT ASSET · PAGE 001 PIPELINE) and `CampaignDeliverablesPipelinePanel.tsx`; campaign tab label → **MASTER CONTENT ASSETS** (`constants.ts`).
+- **Docs:** `docs/studio-os/master-content-pipeline.md` (canonical spec); reframed `docs/NDXBOOK_PAGE_001_PIPELINE.md`; updated `architecture.md`, `developer-handbook/GLOSSARY.md`, `DOCUMENTATION_MAP.md`, `product-starter-pack/PRODUCT_PHILOSOPHY.md`; **`motherboard/CORE.md`** — Master Content Pipeline + Campaign Engine deliverables framing.
+- **Import fixes:** lifecycle strip import paths for NDXBook panel + `studio-os-core` types.
+
+**Conventions:** All future Studio OS content products inherit Master Content Pipeline™; do not introduce parallel page-centric workflows without mapping to Master Content Asset™. NDXBook path: `/admin/studio/ndxbook/newsroom` → CREATE MASTER CONTENT ASSET · PAGE 001 → Studio Intelligence → Approve → Schedule/Publish.

@@ -10,6 +10,8 @@
 
 They inherit architecture, design, governance, and intelligence. They contribute **behavior**, **flows**, and **domain value** — never parallel foundations.
 
+**Content products** additionally inherit the [Master Content Pipeline™](../master-content-pipeline.md): campaigns are production pipelines; the **Master Content Asset™** is the single source of truth from which all platform derivatives originate.
+
 ---
 
 ## The Studio OS Product Lifecycle

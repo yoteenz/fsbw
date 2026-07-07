@@ -118,8 +118,28 @@ See `src/studio-os-core/feature-inheritance/registry.ts`.
 
 When Studio OS becomes its own application, remap `application/routes.ts` prefixes only. All business logic remains in `studio-os-core/`.
 
+## Master Content Pipeline™
+
+Studio OS content products share a **production pipeline**, not a page-centric publishing workflow.
+
+| Concept | Role |
+|---------|------|
+| **Master Content Asset™** | Single source of truth (Page 001, episode, article, video, …) |
+| **Derivatives** | Platform-specific outputs linked to the master asset |
+| **17-stage lifecycle** | Concept → … → Knowledge Library™ |
+| **Concierge Review Board™** | Multidisciplinary PASS / WARNING / FAIL per domain |
+| **Content Expansion Engine™** | Generate derivatives from one master asset (architecture) |
+
+**Code:** `src/studio-os-core/content-pipeline/`  
+**UX:** `MasterContentLifecycleStrip` in Campaign Engine deliverables and NDXBook Page 001 pipeline  
+**Spec:** [master-content-pipeline.md](./master-content-pipeline.md)
+
+Inherited by Campaign Engine™, Newsroom™, Publishing Studio™, Knowledge Library™, and Studio Intelligence™.
+
 ## Related Docs
 
+- [Master Content Pipeline™](./master-content-pipeline.md)
 - [Workspace System](./workspace-system.md)
 - [Core vs Workspace](./core-vs-workspace.md)
 - [Frontal Slayer Workspace Implementation](../frontal-slayer/workspace-implementation.md)
+- [NDXBook Page 001 runbook](../NDXBOOK_PAGE_001_PIPELINE.md)
