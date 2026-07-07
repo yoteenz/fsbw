@@ -85,6 +85,26 @@ edges:
     to: DR-003
     type: enables
 
+  - from: volume-0
+    to: DR-005
+    type: enables
+    note: Constitution governs Studio OS executive headquarters
+
+  - from: M126
+    to: DR-005
+    type: enables
+    note: Knowledge Registry anchors executive knowledge wing
+
+  - from: M127
+    to: DR-005
+    type: enables
+    note: System Registry completes registry spine; reserves executive home
+
+  - from: DR-005
+    to: DR-002
+    type: relates
+    note: Shared immersive Headquarters department philosophy — org HQ and Studio OS meta-HQ
+
   - from: M154
     to: M158
     type: chain

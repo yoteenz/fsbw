@@ -42,3 +42,45 @@ designRevisions:
     mergeTargets: [studio-orb, identity-graph, command-dock]
     dependsOn: [volume-0]
     enables: [DR-001]
+
+  - id: DR-005
+    canonicalId: DR-005
+    title: Executive Strategy Floor™
+    purpose: >-
+      Executive headquarters for Studio OS itself — not a developer tool. Immersive
+      departmental environment where founders, executives, architects, designers,
+      engineers, and Studio Intelligence™ oversee the operating system: Constitution™,
+      Knowledge Registry™, System Registry™, Architecture Graph™, Dependency Graph™,
+      Engineering Excellence™, QA Center™, Release Readiness™, Roadmap™, Component
+      Library™, Design System™, Design Tokens™, Animation Language™, Version History™,
+      Changelog™, Studio Intelligence™ Architecture Advisor, Implementation Progress,
+      Future Research, Experimental Systems, Technical Debt, Architecture Decisions,
+      and Design Revisions. Documentation becomes environment; architecture becomes
+      explorable; knowledge has a physical home.
+    implementationStatus: planned
+    volumeId: volume-0
+    mergeTargets:
+      - knowledge-registry
+      - system-registry
+      - manifest-reconciliation
+      - manifest-authoring
+      - documentation-governance
+      - documentation-sync
+      - engineering-excellence-dashboard
+      - qa-headquarters
+      - release-readiness
+      - component-registry
+      - design-token-engine
+      - interaction-engine
+      - studio-intelligence-architecture
+    dependsOn: [volume-0, M126, M126.5, M127]
+    enables: []
+    aliases: [Executive Strategy Floor, Studio OS Headquarters, Platform Executive HQ]
+    keywords:
+      - executive strategy floor
+      - studio os headquarters
+      - platform executive
+      - architecture advisor
+      - dependency graph
+      - design revisions
+      - technical debt

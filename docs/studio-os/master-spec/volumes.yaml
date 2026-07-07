@@ -11,6 +11,10 @@ volumes:
     dependsOn: []
     milestoneRange: null
     completionPct: 100
+    notes: >-
+      Executive Strategy Floor™ (DR-005) registered as planned meta-headquarters —
+      immersive departmental home for platform architecture, knowledge, and quality.
+      No UI or product implementation until approved.
 
   - id: volume-i
     number: I
@@ -38,7 +42,8 @@ volumes:
     notes: >-
       Nine chapters registered in chapters/volume-ii.yaml. Milestones in
       milestones/volume-ii.yaml. Knowledge Registry™ (M126) in progress; all other
-      Volume II milestones complete.
+      Volume II milestones complete. Executive Strategy Floor™ (DR-005) registered
+      planned in Chapter 9 — no implementation.
 
   - id: volume-iii
     number: III

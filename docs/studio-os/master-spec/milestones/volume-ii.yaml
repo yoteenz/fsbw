@@ -707,7 +707,8 @@ milestones:
       - manifest-authoring
       - system-registry
       - documentation-sync
-    implementationNotes: Studio OS Knowledge Registry™ — Master Spec single source of truth. Sprint 1–2 foundation.
+      - DR-005
+    implementationNotes: Studio OS Knowledge Registry™ — Master Spec single source of truth. Sprint 1–2 foundation. Feeds Executive Strategy Floor™ (DR-005).
   - canonicalId: M126.5
     name: Documentation Governance™
     internalId: documentation-governance
@@ -738,10 +739,12 @@ milestones:
     moduleId: system-registry
     dependsOn:
       - M126.5
-    enables: []
+    enables:
+      - DR-005
     chapterId: chapter-ii-9
     relatedSystems:
       - knowledge-registry
       - documentation-governance
       - component-registry
-    implementationNotes: Master directory of every platform object — consumes Knowledge Registry entries.
+      - DR-005
+    implementationNotes: Master directory of every platform object — consumes Knowledge Registry entries. Enables Executive Strategy Floor™ (DR-005) registration.

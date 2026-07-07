@@ -27,3 +27,10 @@ principles:
   - id: constitution-single-source
     title: Single Source of Truth
     summary: The Master Specification is the single source of truth — Volumes, milestones, and design revisions exist exactly once and are referenced everywhere.
+  - id: constitution-executive-strategy-floor
+    title: Studio OS Executive Strategy Floor™
+    summary: >-
+      Studio OS maintains its own executive headquarters — the Executive Strategy Floor™ —
+      where platform leaders oversee architecture, knowledge, quality, and evolution through
+      immersive departments inside Headquarters, not disconnected developer dashboards.
+      Registration only until implementation (DR-005).

@@ -61,6 +61,8 @@ export type MasterSpecDesignRevision = {
   mergeTargets: string[];
   dependsOn: string[];
   enables: string[];
+  aliases?: string[];
+  keywords?: string[];
 };
 
 export type MilestoneAlias = {

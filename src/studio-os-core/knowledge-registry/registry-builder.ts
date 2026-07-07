@@ -224,9 +224,10 @@ function buildFromDesignRevision(dr: MasterSpecDesignRevision): KnowledgeRegistr
     dependsOn: dr.dependsOn,
     enables: dr.enables,
     mergeTargets: dr.mergeTargets,
-    relatedSystems: dr.mergeTargets,
-    keywords: [dr.id, 'design revision', ...dr.mergeTargets],
-    aliases: [dr.canonicalId, dr.id],
+    relatedSystems: [...dr.mergeTargets, ...dr.dependsOn.filter((d) => d.startsWith('M') || d.startsWith('DR-'))],
+    keywords: dr.keywords ?? [dr.id, 'design revision', ...dr.mergeTargets],
+    aliases: dr.aliases ?? [dr.canonicalId, dr.id],
+    owner: dr.id === 'DR-005' ? 'Studio OS Executive Architecture' : undefined,
   });
 }
 

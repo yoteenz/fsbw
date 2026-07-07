@@ -93,3 +93,9 @@ aliases:
     moduleId: knowledge-registry
     formerName: Documentation Registry™
     formerModuleId: documentation-registry
+
+  # Executive Strategy Floor — planned meta-headquarters (DR-005)
+  - canonicalId: DR-005
+    name: Executive Strategy Floor™
+    moduleId: executive-strategy-floor
+    reason: Planned executive headquarters for Studio OS platform architecture — registration only
