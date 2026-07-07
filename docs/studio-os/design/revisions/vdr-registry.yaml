@@ -1,0 +1,24 @@
+# Visual Design Revisions (VDR) — Studio OS Design Governance
+# Distinct from architectural DR-### in master-spec/design-revisions.yaml
+version: '1.0.0'
+designGovernanceVersion: '1.0.0'
+updatedAt: '2026-07-07'
+
+visualDesignRevisions:
+  - id: VDR-000
+    canonicalId: VDR-000
+    title: Design Governance Package Baseline
+    purpose: Ratify initial Design Governance layer — Studio Design Constitution, Design Language System, Component Catalog, Design Registry, Design Revision Framework, Design Health.
+    type: major
+    status: ratified
+    ratifiedAt: '2026-07-07'
+    packageVersion: '1.0.0'
+    artifacts:
+      - STUDIO_DESIGN_CONSTITUTION.md
+      - DESIGN_LANGUAGE_SYSTEM.md
+      - COMPONENT_CATALOG.md
+      - DESIGN_REGISTRY.md
+      - DESIGN_REVISION_FRAMEWORK.md
+      - DESIGN_HEALTH.md
+    breakingChanges: []
+    migrationNote: Baseline — no prior visual governance package. Products inherit from 1.0.0.

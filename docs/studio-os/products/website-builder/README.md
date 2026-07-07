@@ -8,6 +8,26 @@
 
 ---
 
+## Design Governance Compliance
+
+```yaml
+designCompliance:
+  registryVersion: "1.0.0"
+  inherits:
+    - docs/studio-os/design/STUDIO_DESIGN_CONSTITUTION.md
+    - docs/studio-os/design/DESIGN_LANGUAGE_SYSTEM.md
+    - docs/studio-os/design/COMPONENT_CATALOG.md
+  validates: docs/studio-os/design/DESIGN_HEALTH.md
+  note: >
+    §6 of WEBSITE_BUILDER_EXPERIENCE_SPEC.md describes composition and
+    product atmosphere — not a parallel design system. Global visual rules
+    defer to Design Governance.
+```
+
+**Starter Pack:** [product-starter-pack](../../product-starter-pack/)
+
+---
+
 ## Approval Gate
 
 Implementation **must not begin** until this package is reviewed and approved.
@@ -46,15 +66,17 @@ Implementation **must not begin** until this package is reviewed and approved.
 ## Product Lifecycle Position
 
 ```
-✅ 1. Product Vision          — THIS PACKAGE
-✅ 2. UX/UI Design            — THIS PACKAGE (§2, §4, §6–§8)
-⏳ 3. Experience Prototype    — After approval
-⏳ 4. Technical Architecture  — §10 (spec); implementation after approval
-⏳ 5. Master Spec additions  — Minimal delta on approval
-⏳ 6. Implementation
-⏳ 7. QA
-⏳ 8. Launch
-⏳ 9. Governance registration
+✅ 1. Idea & Research         — P2 Phase 1 flagship
+✅ 2. Architecture alignment  — Experience Architecture · Digital Architect
+✅ 3. Design Governance       — Inherits design/ v1.0.0
+✅ 4. Product Specification   — THIS PACKAGE (§1–§10)
+⏳ 5. Experience Prototype    — After spec approval · catalog components only
+⏳ 6. Technical Architecture  — §10 implementation after approval
+⏳ 7. Master Spec additions   — Minimal delta on approval
+⏳ 8. Implementation
+⏳ 9. QA (Design Health™ + Architecture Validator™)
+⏳ 10. Launch
+⏳ 11. Governance registration
 ```
 
 ---
@@ -63,6 +85,9 @@ Implementation **must not begin** until this package is reviewed and approved.
 
 | Artifact | Path |
 |----------|------|
+| Design Governance | `docs/studio-os/design/` |
+| Component Catalog | `docs/studio-os/design/COMPONENT_CATALOG.md` |
+| Product Starter Pack | `docs/studio-os/product-starter-pack/` |
 | Product Phase Charter | `docs/studio-os/PRODUCT_PHASE_CHARTER.md` |
 | Product Roadmap | `docs/studio-os/master-spec/product-roadmap.yaml` |
 | Experience Studio (current) | `src/components/admin/studio/experience-studio/` |

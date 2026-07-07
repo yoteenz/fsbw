@@ -78,6 +78,28 @@ Runs automatically before `npm run build` via `prebuild`.
 - Global search · Studio Intelligence™ · Documentation Governance™
 - Engineering Excellence Dashboard™
 
+## Design Governance (Active)
+
+| Document | Purpose |
+|----------|---------|
+| `docs/studio-os/design/` | **Studio OS Design Governance™** — permanent visual source of truth |
+| `docs/studio-os/design/STUDIO_DESIGN_CONSTITUTION.md` | Governing document — no product may override |
+| `docs/studio-os/design/DESIGN_LANGUAGE_SYSTEM.md` | Permanent principles — survives complete redesigns |
+| `docs/studio-os/design/COMPONENT_CATALOG.md` | Canonical `comp-*` component library |
+| `docs/studio-os/design/DESIGN_REGISTRY.md` | Version truth · compatibility · deprecation |
+| `docs/studio-os/design/DESIGN_REVISION_FRAMEWORK.md` | Visual Design Revisions (VDR-###) |
+| `docs/studio-os/design/DESIGN_HEALTH.md` | Design Validator™ — PASS · WARNING · FAIL |
+| `docs/studio-os/design/revisions/vdr-registry.yaml` | VDR historical record |
+
+## Product Starter Pack (Active)
+
+| Document | Purpose |
+|----------|---------|
+| `docs/studio-os/product-starter-pack/` | **Studio Product Starter Pack™** — canonical product onboarding |
+| `docs/studio-os/product-starter-pack/PRODUCT_PHILOSOPHY.md` | Idea → Governance lifecycle |
+| `docs/studio-os/product-starter-pack/REQUIRED_DOCUMENTATION_CHECKLIST.md` | Mandatory product docs |
+| `docs/studio-os/product-starter-pack/DEFINITION_OF_DONE.md` | Architecture + Design + QA gates |
+
 ## Product Phase (Active)
 
 | Document | Purpose |

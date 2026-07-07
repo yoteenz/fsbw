@@ -30,18 +30,33 @@ Studio OS has sufficient architecture to build as a **real product**. We are off
 ## Product Lifecycle (Required for Every Major Product)
 
 ```
-1. Product Vision
-2. UX/UI Design
-3. Experience Prototype
-4. Technical Architecture
-5. Required Master Spec additions
-6. Implementation
-7. QA
-8. Launch
-9. Governance registration
+1. Idea & Research
+2. Architecture alignment
+3. Design Governance compliance
+4. Product Specification
+5. Experience Prototype
+6. Technical Architecture (if not in spec)
+7. Required Master Spec additions
+8. Implementation
+9. QA
+10. Launch
+11. Governance registration
 ```
 
-Master Specification expansion occurs at **step 5** — only what the product needs.
+**Canonical reference:** [Studio Product Starter Pack™](./product-starter-pack/PRODUCT_PHILOSOPHY.md)
+
+Master Specification expansion occurs at **step 7** — only what the product needs.
+
+### Design Governance Gate (Mandatory)
+
+Before Experience Prototype or implementation, every product must:
+
+- Inherit [Studio Design Constitution™](./design/STUDIO_DESIGN_CONSTITUTION.md)
+- Reference [Component Catalog™](./design/COMPONENT_CATALOG.md) — `comp-*` IDs only
+- Declare compliance in product README
+- Pass [Design Health™](./design/DESIGN_HEALTH.md) at launch
+
+Products **never** author parallel design languages. See [GOVERNANCE_RULES.md](./product-starter-pack/GOVERNANCE_RULES.md).
 
 ---
 
@@ -100,9 +115,12 @@ Every launched product registers through:
 
 - System Registry™ (M127)
 - Knowledge Registry™ (M126)
+- **Design Registry™** version declaration (`docs/studio-os/design/DESIGN_REGISTRY.md`)
+- **Design Health™** PASS (or channel-appropriate WARNING)
 - Milestone status update (`in-progress` → `complete`)
 - Module documentation (`docs/studio-os/*.md`)
 - Architecture Validator™ pass on compile
+- [Definition of Done](./product-starter-pack/DEFINITION_OF_DONE.md) — all six gates
 
 ---
 

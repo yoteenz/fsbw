@@ -433,6 +433,8 @@ WB-S03 Canvas (hub)
 
 ## §6 — Design Language
 
+> **Governance:** This section describes **composition and product atmosphere** for Website Builder — not a parallel design system. Global visual rules inherit from [Studio Design Constitution™](../../design/STUDIO_DESIGN_CONSTITUTION.md) · [Design Language System™](../../design/DESIGN_LANGUAGE_SYSTEM.md) · [Component Catalog™](../../design/COMPONENT_CATALOG.md). Product-specific tokens (e.g. `--wb-*`) express Design DNA™ atmosphere within constitutional bounds.
+
 ### 6.1 Material Philosophy
 
 **Marble · Glass · Crystal · Light**
