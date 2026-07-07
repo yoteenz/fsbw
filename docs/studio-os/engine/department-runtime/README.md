@@ -82,6 +82,7 @@ Department Workspace              → user experiences living place
 | **SDK `15_CURSOR_RUNTIME_REQUIREMENTS.md`** | Cursor assembly obligations |
 | **Studio Department Generator™** | `docs/studio-os/engine/department-generator/` — package blueprints + runtime manifests |
 | **Studio Validation Loop™** | `docs/studio-os/engine/validation-loop/` — install blocked without `validationApprovalToken` |
+| **Studio Critique Sessions™** | `docs/studio-os/engine/critique-sessions/` — collaborative review before founder approval |
 | **This engine (`department-runtime/`)** | Canonical full runtime architecture |
 
 ---

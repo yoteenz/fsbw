@@ -45,7 +45,12 @@ Nothing moves directly from generation to implementation.
 │  Founder Review → Revision → Revalidation → Approval →       │
 │  Learning                                                    │
 └───────────────────────────┬─────────────────────────────────┘
-                            ↓ (approved only)
+                            ↑ (Critique Sessions enrich founder review)
+┌─────────────────────────────────────────────────────────────┐
+│         STUDIO CRITIQUE SESSIONS™                            │
+│  Conversation → Debate → Founder Decisions → Action Items    │
+└───────────────────────────┬─────────────────────────────────┘
+                            ↓
 ┌─────────────────────────────────────────────────────────────┐
 │         STUDIO DEPARTMENT RUNTIME™ + HEADQUARTERS            │
 │  Install · operate · evolve                                    │
@@ -90,6 +95,7 @@ Nothing moves directly from generation to implementation.
 | **Company Genome™** | Genome Validation (05) — inevitability test |
 | **Headquarters Marketplace™** | Marketplace Certification (13) required before publish |
 | **Creative Direction Studio™** | Living creative authority layer above production departments |
+| **Studio Critique Sessions™** | Conversational critique precedes Founder Review; feeds Scorecard context and Revision Engine |
 
 ---
 

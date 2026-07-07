@@ -40557,3 +40557,41 @@ Summary of the **whole conversation so far** in this chat: six architecture spri
 - **Changes:** `docs/studio-os/engine/validation-loop/` (16 files) · cross-refs in department-generator/README.md · asset-compiler/README.md · department-runtime/README.md · golden-department/README.md · `motherboard/CORE.md` · this MEMORY entry. Prior sprints committed (`9eb35d67` Generator · `469c822b` Golden Department · earlier SDK/Compiler/Runtime commits).
 - **Conventions:** Architecture/docs only — no React · no UI · no implementation. One commit + one push per task on **`master`**.
 
+
+---
+
+## 2026-07-07 — Studio Critique Sessions™ canonical collaborative review engine spec (complete)
+
+Summary of the **whole conversation so far** in this chat: seven architecture sprints for Studio OS engines — SDK, Asset Compiler, Runtime, Golden Department CDS, Department Generator, Validation Loop, and now **Studio Critique Sessions™** — the official collaborative review experience inside Studio OS.
+
+- **Context:** User mandated highest-level architecture sprint — **not** UI, **not** React, **not** dashboards. Create **Studio Critique Sessions™** as a first-class collaborative decision-making system. Not an approval screen · not a scorecard · not a checklist. Structured creative conversation between founder (Creative Director) and Studio Intelligence (trusted advisors). Goal: make work better — not simply approve it.
+- **Topics covered (full chat arc):**
+  1. **Studio Department SDK™** — 18 files · `docs/studio-os/sdk/`
+  2. **Studio Asset Compiler™** — 16 files · `docs/studio-os/engine/asset-compiler/`
+  3. **Studio Department Runtime™** — 21 files · `docs/studio-os/engine/department-runtime/`
+  4. **Golden Department™ — Creative Direction Studio™** — 14 files · `docs/studio-os/golden-department/`
+  5. **Studio Department Generator™** — 18 files · `docs/studio-os/engine/department-generator/`
+  6. **Studio Validation Loop™** — 16 files · `docs/studio-os/engine/validation-loop/` · committed `c6df3478`
+  7. **Studio Critique Sessions™** — **13 files** · `docs/studio-os/engine/critique-sessions/` · schema `studio.critique-sessions.v1`
+- **Critique Sessions deliverables (01–12 + README):**
+  - **01 Session Overview** — purpose · participants · inputs/outputs · lifecycle · relationships to Validation Loop · Genome · CDS · Production Engine · Founder Notes · Orb
+  - **02 Session Types** — 11 types: Creative Direction · Brand · Editorial · Visual · Marketing · Launch Readiness · Executive · Experience · Marketplace Certification · Department · Project Retrospective
+  - **03 Braintrust Model** — 15 specialists auto-assembled per session · Orb permanent seat · differs from Validation Loop async Braintrust (conversational vs parallel)
+  - **04 Conversation Engine** — natural dialogue · founder interrupt · anti-comment-thread · turn-taking · artifact referencing
+  - **05 Role Behaviors** — distinct personalities per specialist · collision avoidance · no repetition
+  - **06 Debate Engine™** — constructive disagreement · Orb moderates · founder resolves · no artificial consensus
+  - **07 Founder Decisions** — approve · reject · alternatives · evidence · branch · pause · assign · rationale capture
+  - **08 Action Items** — decisions · open questions · revisions · assignments · effort · dependencies · next session — nothing lost
+  - **09 Revision Workflows** — apply immediately · assign concierge · send to department · branch experiment · schedule · dismiss → Production Engine + Generator/Compiler
+  - **10 Memory System** — preferences · rejected advice · creative philosophy · debate patterns · Genome update recommendations
+  - **11 Post Session Learning** — compare recommendations to real outcomes · rejection-regretted detection · specialist calibration
+  - **12 Implementation Guide** — 5-phase abstract engineering roadmap
+- **Decisions / outcomes:**
+  - Critique Sessions complement Validation Loop: **Critique = make it better** · **Validation = should it exist**
+  - Updated platform stack: **SDK → Generator → Compiler → Critique Sessions → Validation Loop → Runtime → Evolution**
+  - Founder is Creative Director; AI team = experienced colleagues not chatbots
+  - Debate encouraged; Orb moderates never resolves
+  - Every session produces Action Item Bundle; revisions route to Production Engine
+  - Cross-refs added to Validation Loop · Generator · Asset Compiler · Runtime · Golden Department READMEs
+- **Changes:** `docs/studio-os/engine/critique-sessions/` (13 files) · cross-refs in validation-loop/README.md · department-generator/README.md · asset-compiler/README.md · department-runtime/README.md · golden-department/README.md · `motherboard/CORE.md` · this MEMORY entry.
+- **Conventions:** Architecture/docs only — no React · no UI · no implementation. One commit + one push per task on **`master`**.

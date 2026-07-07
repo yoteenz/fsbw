@@ -103,6 +103,7 @@ Studio Department Generator™ is the **official creation engine** responsible f
 | **Studio Department SDK™** | Generator must satisfy SDK anatomy, spatial, object, interaction law |
 | **Studio Asset Compiler™** | Generator outputs instructions; Compiler executes generation |
 | **Studio Validation Loop™** | Generator QA (16) = Self Review stage; full Validation Loop gates Runtime install |
+| **Studio Critique Sessions™** | Conversational review before Founder Approval; action items feed Revision Engine |
 | **Studio Department Runtime™** | Generator outputs package manifest; Runtime assembles only after Validation approves |
 | **Golden Department™** | Creative Direction Studio™ is first validation project through this pipeline |
 | **Company Genome™** | All branding derived at compile-time via Genome slots — never baked |

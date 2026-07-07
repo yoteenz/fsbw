@@ -95,6 +95,7 @@ Founders define intent. The compiler translates intent into **hundreds of struct
 | **Studio Department Generator™** | `docs/studio-os/engine/department-generator/` | How departments are **created** — DNA, compile tasks, package blueprints |
 | **Studio Asset Compiler™** | `docs/studio-os/engine/asset-compiler/` | How department assets are **generated** |
 | **Studio Validation Loop™** | `docs/studio-os/engine/validation-loop/` | Whether outputs **deserve to exist** — creative authority gate |
+| **Studio Critique Sessions™** | `docs/studio-os/engine/critique-sessions/` | **Collaborative critique** — make work better before approval |
 | **Department Runtime** | `docs/studio-os/engine/department-runtime/` | How packages are **assembled and operated** (approved only) |
 | **Cursor Runtime** | SDK `15_CURSOR_RUNTIME_REQUIREMENTS.md` | How Cursor **connects** interactions |
 
