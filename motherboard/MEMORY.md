@@ -40132,3 +40132,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Import fixes:** lifecycle strip import paths for NDXBook panel + `studio-os-core` types.
 
 **Conventions:** All future Studio OS content products inherit Master Content Pipeline™; do not introduce parallel page-centric workflows without mapping to Master Content Asset™. NDXBook path: `/admin/studio/ndxbook/newsroom` → CREATE MASTER CONTENT ASSET · PAGE 001 → Studio Intelligence → Approve → Schedule/Publish.
+
+---
+
+## 2026-07-07 — Master Content Pipeline lifecycle gates (operating model upgrade)
+
+**Context (full chat arc):** Scroll audit; Page 001 fixes; Master Content Pipeline™ adopted as canonical content OS (17-stage model + core module + UI strip). User then requested **operating model upgrade only** — promote pipeline from Campaign Engine feature to **platform-wide canonical workflow**; replace generic numbered stages with **ten named lifecycle gates**; **do not rename** Master Content Pipeline; **do not change implementation code**.
+
+**Decisions / outcomes:**
+- **System name preserved:** Master Content Pipeline™ (official until future architecture revision).
+- **Canonical lifecycle:** ten gates — DISCOVER · DEVELOP · ASSEMBLY · PRODUCTION · REVIEW · EXPANSION · APPROVAL · PUBLISH · MEASURE · LEARNING — each with entry/exit artifacts, owners, inputs, outputs, approvals, AI/concierge systems, failure conditions.
+- **Products consume gates** (Campaign Engine, Newsroom, Website Builder, Publishing Studio, Social Studio, Email Studio, future content products) — no independent workflows.
+- **Terminology standard:** use gate names in docs/status copy (*"Page 001 is in Review Gate"*, *"Campaign 024 passed Approval Gate"*).
+- **Backward compatibility:** legacy 17-stage model maps to gates; `content-pipeline/` code unchanged; UI gate naming deferred to future pass.
+
+**Changes (documentation only):**
+- Rewrote `docs/studio-os/master-content-pipeline.md` — gate model, mermaid diagrams, product inheritance, terminology, legacy mapping.
+- Added `docs/studio-os/master-content-pipeline-gates.md` — full per-gate specifications.
+- Updated `architecture.md`, `NDXBOOK_PAGE_001_PIPELINE.md`, `GLOSSARY.md`, `DOCUMENTATION_MAP.md`, `PRODUCT_PHILOSOPHY.md`, `products/website-builder/README.md`, `motherboard/CORE.md` (append gate bullet).
+
+**Conventions:** Documentation and architecture use gate names as canonical; implementation registry remains legacy bridge until future code pass.

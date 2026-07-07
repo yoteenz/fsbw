@@ -120,25 +120,25 @@ When Studio OS becomes its own application, remap `application/routes.ts` prefix
 
 ## Master Content Pipeline™
 
-Studio OS content products share a **production pipeline**, not a page-centric publishing workflow.
+Studio OS content products share a **production pipeline**, not a page-centric publishing workflow. The pipeline is the **canonical operating model** — products consume it; they do not own independent lifecycles.
 
 | Concept | Role |
 |---------|------|
 | **Master Content Asset™** | Single source of truth (Page 001, episode, article, video, …) |
 | **Derivatives** | Platform-specific outputs linked to the master asset |
-| **17-stage lifecycle** | Concept → … → Knowledge Library™ |
-| **Concierge Review Board™** | Multidisciplinary PASS / WARNING / FAIL per domain |
-| **Content Expansion Engine™** | Generate derivatives from one master asset (architecture) |
+| **Ten lifecycle gates** | DISCOVER → DEVELOP → ASSEMBLY → PRODUCTION → REVIEW → EXPANSION → APPROVAL → PUBLISH → MEASURE → LEARNING |
+| **Concierge Review Board™** | Multidisciplinary PASS / WARNING / FAIL (REVIEW GATE + APPROVAL GATE) |
+| **Content Expansion Engine™** | Generate derivatives from one master asset (EXPANSION GATE) |
 
-**Code:** `src/studio-os-core/content-pipeline/`  
-**UX:** `MasterContentLifecycleStrip` in Campaign Engine deliverables and NDXBook Page 001 pipeline  
-**Spec:** [master-content-pipeline.md](./master-content-pipeline.md)
+**Spec:** [master-content-pipeline.md](./master-content-pipeline.md) · [Gates reference](./master-content-pipeline-gates.md)  
+**Implementation registry (legacy bridge):** `src/studio-os-core/content-pipeline/`
 
-Inherited by Campaign Engine™, Newsroom™, Publishing Studio™, Knowledge Library™, and Studio Intelligence™.
+**Consumers:** Campaign Engine™ · Newsroom™ · Website Builder™ · Publishing Studio™ · Social Studio™ · Email Studio™ · Knowledge Library™ · Studio Intelligence™
 
 ## Related Docs
 
 - [Master Content Pipeline™](./master-content-pipeline.md)
+- [Lifecycle Gates Reference](./master-content-pipeline-gates.md)
 - [Workspace System](./workspace-system.md)
 - [Core vs Workspace](./core-vs-workspace.md)
 - [Frontal Slayer Workspace Implementation](../frontal-slayer/workspace-implementation.md)

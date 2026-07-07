@@ -2,7 +2,7 @@
 
 Operational runbook for the first authentic NDXBook Instagram post inside **AI Media / NDXBook Operating Center**.
 
-**Canonical model:** [Master Content Pipeline™](./studio-os/master-content-pipeline.md) — Page 001 is a **Master Content Asset™** (lifecycle stage 7), not a standalone publishing unit.
+**Canonical model:** [Master Content Pipeline™](./studio-os/master-content-pipeline.md) — Page 001 is a **Master Content Asset™** created in **PRODUCTION GATE™**, not a standalone publishing unit.
 
 ## Prerequisites
 
@@ -18,47 +18,48 @@ Operational runbook for the first authentic NDXBook Instagram post inside **AI M
 1. Open **NDXBook Headquarters** → Mission Control or workspace dashboard.
 2. **Enter Newsroom / Production Floor** (`/admin/studio/ndxbook/newsroom` or `/admin/studio-os/workspace/ai-media/newsroom`).
 3. Use **MASTER CONTENT ASSET · PAGE 001 PIPELINE** panel at top of Production Floor tab.
-4. The **Master Content Lifecycle Strip** shows where Page 001 sits in the 17-stage pipeline.
+4. Status reflects the active **lifecycle gate** (Production · Review · Approval · Publish · Learning).
 
-## Lifecycle mapping (Page 001 pilot)
+## Gate mapping (Page 001 pilot)
 
-| Pipeline stage | Page 001 behavior |
-|----------------|-------------------|
-| 7 · Master Content Creation™ | `createNdxbookPage()` — registry + newsroom sync |
-| 8 · Internal Editing | Draft content pre-filled; founder may edit in Newsroom Editor |
-| 9 · Concierge Review Board™ | Studio Intelligence review (clarity, accuracy, tone, brand, authenticity) |
-| 10 · Founder Approval | Explicit **APPROVE PRODUCTION** after review PASS |
-| 13 · Scheduling | Datetime picker + schedule Instagram |
-| 14 · Publishing | Publish Now or scheduled publish |
-| 17 · Knowledge Library™ | On publish → `knowledgeOutputs` + institutional-knowledge stage |
+| Gate | Page 001 behavior |
+|------|-------------------|
+| DISCOVER · DEVELOP · ASSEMBLY | Implicit in pilot seed — full surfaces as Campaign Engine and Newsroom expand |
+| **PRODUCTION GATE™** | `createNdxbookPage()` — master asset registered + newsroom sync |
+| **REVIEW GATE™** | Studio Intelligence review (clarity, accuracy, tone, brand, authenticity) |
+| **REVIEW GATE™** (founder) | Explicit **APPROVE PRODUCTION** after review PASS |
+| **APPROVAL GATE™** | Datetime + Instagram readiness before schedule |
+| **PUBLISH GATE™** | Publish Now or scheduled Instagram |
+| **LEARNING GATE™** | On publish → `knowledgeOutputs` + institutional-knowledge archive |
 
-Stages 1–6 (concept through production planning) are implicit in the pilot seed; full UI for research, storyboard, and talent comes online as Campaign Engine and Newsroom expand.
+**Example status copy:** *"Page 001 is currently in Review Gate."*
 
 ## 15-Step Runbook
 
-| Step | Action | System behavior |
-|------|--------|-----------------|
-| 1 | Confirm Instagram connection | Pipeline panel shows OAuth status; link to Social Accounts |
-| 2 | Open NDXBook HQ | `ai-media` workspace only |
-| 3 | Enter Newsroom | Production Floor tab |
-| 4 | Create Master Content Asset · Page 001 | `createNdxbookPage()` → registry + newsroom sync |
-| 5 | Category | Money / Credit — Instagram only |
-| 6 | Draft content | Pre-filled educational post (debt payoff & credit score) |
-| 7 | Generate visual | SVG thumbnail with NDXBook identity |
-| 8 | Studio Intelligence | Concierge Review Board pilot — clarity, accuracy, tone, brand, authenticity scores |
-| 9 | Approve production | Requires review PASS; records `first-approval` milestone |
-| 10 | Schedule Instagram only | No TikTok, YouTube, Facebook, newsletter |
-| 11 | Publish or schedule | Publish Now or pick datetime |
-| 12 | Confirm status | `scheduled` or `published`; page count = 001 |
-| 13 | Monitor | Activity wall, publish errors, Labs experiment link |
-| 14 | Knowledge Library | On publish → `knowledgeOutputs` + institutional-knowledge stage |
-| 15 | Page 002 | Only after Page 001 master asset pipeline is reliable |
+| Step | Action | Gate | System behavior |
+|------|--------|------|-----------------|
+| 1 | Confirm Instagram connection | APPROVAL (prep) | Pipeline panel shows OAuth status; link to Social Accounts |
+| 2 | Open NDXBook HQ | — | `ai-media` workspace only |
+| 3 | Enter Newsroom | — | Production Floor tab |
+| 4 | Create Master Content Asset · Page 001 | PRODUCTION | `createNdxbookPage()` → registry + newsroom sync |
+| 5 | Category | PRODUCTION | Money / Credit — Instagram only |
+| 6 | Draft content | PRODUCTION | Pre-filled educational post (debt payoff & credit score) |
+| 7 | Generate visual | PRODUCTION | SVG thumbnail with NDXBook identity |
+| 8 | Studio Intelligence | REVIEW | Concierge review pilot — clarity, accuracy, tone, brand, authenticity |
+| 9 | Approve production | REVIEW | Requires review PASS; records `first-approval` milestone |
+| 10 | Schedule Instagram only | APPROVAL | No TikTok, YouTube, Facebook, newsletter |
+| 11 | Publish or schedule | PUBLISH | Publish Now or pick datetime |
+| 12 | Confirm status | PUBLISH | `scheduled` or `published`; page count = 001 |
+| 13 | Monitor | MEASURE (light) | Activity wall, publish errors, Labs experiment link |
+| 14 | Knowledge Library | LEARNING | `knowledgeOutputs` + institutional-knowledge stage |
+| 15 | Page 002 | — | Only after Page 001 master asset pipeline is reliable |
 
 ## Code Entry Points
 
 | Module | Path |
 |--------|------|
-| Content pipeline (canonical lifecycle) | `src/studio-os-core/content-pipeline/` |
+| Content pipeline (canonical gates) | `docs/studio-os/master-content-pipeline-gates.md` |
+| Legacy lifecycle bridge | `src/studio-os-core/content-pipeline/` |
 | Lifecycle strip UI | `src/components/admin/studio/content-pipeline/MasterContentLifecycleStrip.tsx` |
 | Pipeline orchestration | `src/studio-os-core/ndxbook/pagePipeline.ts` |
 | Registry ↔ Newsroom sync | `src/studio-os-core/ndxbook/newsroom/pageSync.ts` |
@@ -71,11 +72,13 @@ Stages 1–6 (concept through production planning) are implicit in the pilot see
 
 **Registry (`NdxbookPage.status`):** `draft` → `review` → `scheduled` → `published`
 
+**Gate mapping:** `draft` ≈ Production Gate · `review` ≈ Review Gate · `scheduled` ≈ Approval Gate · `published` ≈ Publish Gate → Learning Gate
+
 **Approval gate:** `pipeline.approvedAt` must be set before schedule/publish.
 
-**Newsroom stages:** Synced from registry; publish moves to `published` → `institutional-knowledge`.
+**Newsroom stages:** Synced from registry; publish moves to `published` → institutional-knowledge (Learning Gate).
 
-**Lifecycle mapping:** `mapNdxbookPageToLifecycle()` in `src/studio-os-core/content-pipeline/mapping.ts`.
+**Legacy mapping:** `mapNdxbookPageToLifecycle()` in `src/studio-os-core/content-pipeline/mapping.ts` (17-stage bridge — see gate mapping table in master spec).
 
 ## Pilot Fallback
 
@@ -83,23 +86,24 @@ When Instagram OAuth is not configured, Founder Pilot Mode allows **local schedu
 
 ## Milestones Recorded
 
-- `first-page-written` — on Master Content Asset · Page 001 creation
-- `first-approval` — on explicit production approval
-- `first-publish` — on publish (local or live)
+- `first-page-written` — on Master Content Asset · Page 001 creation (Production Gate)
+- `first-approval` — on explicit production approval (Review Gate)
+- `first-publish` — on publish (Publish Gate)
 
 ## Manual Verification Checklist
 
 - [ ] Instagram status shows in pipeline panel
 - [ ] Create Master Content Asset · Page 001 → production board shows single page
-- [ ] Lifecycle strip reflects current stage
+- [ ] Gate status understandable (Production / Review / Approval / Publish)
 - [ ] No fake historical pages (028–042)
-- [ ] Studio Intelligence review passes
+- [ ] Studio Intelligence review passes (Review Gate)
 - [ ] Approve before schedule buttons appear
-- [ ] Schedule sets status `scheduled`
-- [ ] Publish sets status `published` + Knowledge Library entry
+- [ ] Schedule sets status `scheduled` (Approval Gate)
+- [ ] Publish sets status `published` + Knowledge Library entry (Publish → Learning Gate)
 - [ ] `nextPageNumber` = 2 after Page 001
 
 ## Related docs
 
-- [Master Content Pipeline™](./studio-os/master-content-pipeline.md) — canonical 17-stage operating model
+- [Master Content Pipeline™](./studio-os/master-content-pipeline.md) — canonical operating model
+- [Lifecycle Gates Reference](./studio-os/master-content-pipeline-gates.md) — full gate specifications
 - [Studio Social Publishing](./STUDIO_SOCIAL_PUBLISHING.md) — OAuth setup

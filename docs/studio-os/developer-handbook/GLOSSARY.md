@@ -9,13 +9,21 @@
 
 ---
 
+---
+
 ## A
+
+### APPROVAL GATE™
+Seventh gate after expansion — approve every derivative before publishing. Exit: **Publishing Package**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
 
 ### Architecture Governance™
 Rules and processes governing platform architecture — Foundation baseline, milestones, dependency graph, DR process. See [GOVERNANCE_MODEL.md](./GOVERNANCE_MODEL.md).
 
 ### Architecture Validator™
 Automated script (`scripts/architecture-validator.mjs`) that validates structural compliance. Runs on compile and build. **0 errors required.**
+
+### ASSEMBLY GATE™
+Third gate — gather talent, props, locations, brand assets, and dependencies. Exit: **Production Ready**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
 
 ### Awakening Experience™
 Ceremonial intelligence entry sequence (M89.4). First visit to Headquarters — optional Studio Orb™ awakening.
@@ -34,10 +42,10 @@ Canonical library of reusable UI components (`comp-*` IDs). Path: `design/COMPON
 Rare process for changing Studio Constitution™ principles. Example: CA-001 Release Channel System™.
 
 ### Concierge Review Board™
-Multidisciplinary review layer for content readiness. Each concierge (Brand, Editorial, SEO, Legal, etc.) returns PASS · WARNING · FAIL with recommendations and an overall readiness score. Stage 9 of [Master Content Pipeline™](../master-content-pipeline.md). Surfaces: Concierge Approval Flow™, Studio Intelligence review dimensions.
+Multidisciplinary review layer for content readiness. Each concierge (Brand, Editorial, SEO, Legal, etc.) returns PASS · WARNING · FAIL with recommendations and an overall readiness score. Primary gate: **REVIEW GATE™**; per-derivative review in **APPROVAL GATE™**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
 
 ### Content Expansion Engine™
-Flagship Studio OS capability (architecture) — from one [Master Content Asset™](#master-content-asset) generates platform-specific derivatives (Instagram carousel, TikTok script, newsletter, FAQ, etc.) while preserving lineage. Stage 11 of Master Content Pipeline™.
+Flagship Studio OS capability (architecture) — from one [Master Content Asset™](#master-content-asset) generates platform-specific derivatives (Instagram carousel, TikTok script, newsletter, FAQ, etc.) while preserving lineage. Gate: **EXPANSION GATE™**.
 
 ### Conversation Engine™
 Platform module orchestrating AI dialogue turns, routing, and session management. Milestone M89.3.
@@ -57,6 +65,12 @@ Headquarters environment zone where Experience Studio™ and creative products l
 
 ### Definition of Done
 Official product completion criteria — 12 gates. Path: `product-starter-pack/DEFINITION_OF_DONE.md`.
+
+### DEVELOP GATE™
+Second lifecycle gate — creative brief becomes **Production Blueprint** (storyboard, script, messaging, moodboard). See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
+
+### DISCOVER GATE™
+First lifecycle gate — ideas become validated opportunities. Exit: **Approved Creative Brief**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
 
 ### Design DNA™
 Brand personality blending system (Luxury™ · Editorial™ · etc.). Milestone M84. Customer canon: Design DNA Canon™.
@@ -92,6 +106,9 @@ See Design Revision™. Architectural scope only.
 
 ## E
 
+### EXPANSION GATE™
+Sixth gate — generate platform derivatives from Approved Master Asset. Exit: **Derivative Library**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
+
 ### Experience Architecture™
 Frozen canonical experiential layer — presence, headquarters, design genome stack. Path: `experience-architecture.yaml`.
 
@@ -103,6 +120,9 @@ Environmental adaptation and storytelling engine. Milestone M141.
 
 ### Experience Prototype
 Interactive proof of product feel — not production code. Uses catalog components only.
+
+### Email Studio™
+Future Studio OS product for email and newsletter content. Consumes Master Content Pipeline **EXPANSION · APPROVAL · PUBLISH · MEASURE** gates. Queued.
 
 ### Experience Studio™
 AI Creative Operating System — Golden Product™ and Reference Implementation™. NOT a website builder. Milestone M131.
@@ -147,6 +167,9 @@ Searchable documentation index for all platform modules (M126). Module docs at `
 
 ## L
 
+### LEARNING GATE™
+Final gate — feed performance and lessons into institutional knowledge. Exit: **Institutional Knowledge**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
+
 ### Living Headquarters™
 Headquarters that evolves with organizational life — seasons, milestones, memory. DR-003 merged.
 
@@ -155,10 +178,13 @@ Headquarters that evolves with organizational life — seasons, milestones, memo
 ## M
 
 ### Master Content Asset™
-The single source of truth for campaign content — Page 001, episode, article, video, interview, guide, etc. All platform-specific outputs are **derivatives** linked to this asset. Stage 7 of [Master Content Pipeline™](../master-content-pipeline.md).
+The single source of truth for campaign content — Page 001, episode, article, video, interview, guide, etc. All platform-specific outputs are **derivatives** linked to this asset. Created in **PRODUCTION GATE™**. See [Master Content Pipeline™](../master-content-pipeline.md).
 
 ### Master Content Pipeline™
-Canonical 17-stage content operating model for Studio OS — production pipeline, not publishing pipeline. Spec: [master-content-pipeline.md](../master-content-pipeline.md). Code: `src/studio-os-core/content-pipeline/`. Inherited by Campaign Engine™, Newsroom™, Publishing Studio™, Knowledge Library™, Studio Intelligence™.
+Canonical **ten-gate** content operating model for Studio OS — production pipeline, not publishing pipeline. Products consume gates; they do not own independent lifecycles. Spec: [master-content-pipeline.md](../master-content-pipeline.md) · [Gates reference](../master-content-pipeline-gates.md). Inherited by Campaign Engine™, Newsroom™, Website Builder™, Publishing Studio™, Social Studio™, Email Studio™, Knowledge Library™, Studio Intelligence™.
+
+### MEASURE GATE™
+Ninth gate — measure published asset performance. Exit: **Performance Report**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
 
 ### Master Specification™
 Architectural source of truth — Volumes 0–XIX, milestones, dependencies. Path: `master-spec/`.
@@ -192,6 +218,9 @@ Maturity level 🏛 — product is core OS dependency for other products.
 ### POP (Product Operating Procedure)
 Synonym for Product Starter Pack™ v2.0.0.
 
+### PRODUCTION GATE™
+Fourth gate — create the Master Content Asset. Exit: **Master Content Asset**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
+
 ### Product Governance™
 Rules for how products inherit and extend platform governance without overriding.
 
@@ -210,12 +239,18 @@ Mandatory pre-implementation review gate — 9–10 reviews + Founder Approval.
 ### Product Starter Pack™
 Canonical product onboarding — 22 documents, templates, lifecycle. v2.0.0.
 
+### PUBLISH GATE™
+Eighth gate — distribute approved publishing package. Exit: **Published Assets**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
+
 ### Publishing Studio™
-Distribution and multi-platform publishing product. Queued P2 Phase 3. Inherits [Master Content Pipeline™](../master-content-pipeline.md) stages 12–14 (derivative review, scheduling, publishing).
+Distribution and multi-platform publishing product. Queued P2 Phase 3. Consumes **APPROVAL GATE™** and **PUBLISH GATE™** of [Master Content Pipeline™](../master-content-pipeline.md).
 
 ---
 
 ## R
+
+### REVIEW GATE™
+Fifth gate — validate master asset quality before expansion. Exit: **Approved Master Asset**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
 
 ### Reference Implementation™
 Official product validating the entire Studio OS stack. Experience Studio™.
@@ -232,6 +267,9 @@ Quick design transformation workflow in Experience Studio™ — preview before 
 ---
 
 ## S
+
+### Social Studio™
+Future Studio OS product for social channel content. Consumes Master Content Pipeline **EXPANSION · APPROVAL · PUBLISH · MEASURE** gates. Queued.
 
 ### Studio Constitution™
 Supreme platform law — 13 principles. Volume 0. `constitution.yaml`.

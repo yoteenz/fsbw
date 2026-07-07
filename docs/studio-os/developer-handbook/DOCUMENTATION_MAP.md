@@ -97,7 +97,8 @@ docs/studio-os/
 | Engineering Guidelines | `developer-handbook/ENGINEERING_GUIDELINES.md` | Code standards |
 | Core module docs | `docs/studio-os/{module-id}.md` | Per-module (Knowledge Registry™) |
 | Architecture | `architecture.md` | Platform hierarchy + content OS |
-| Master Content Pipeline™ | `master-content-pipeline.md` | Canonical 17-stage content lifecycle |
+| Master Content Pipeline™ | `master-content-pipeline.md` | Canonical ten-gate content lifecycle |
+| Lifecycle Gates Reference | `master-content-pipeline-gates.md` | Per-gate specifications |
 | NDXBook Page 001 runbook | `../NDXBOOK_PAGE_001_PIPELINE.md` | Master Content Asset pilot |
 | Architecture Validator | `scripts/architecture-validator.mjs` | Build gate |
 | Compile script | `scripts/compile-master-spec.mjs` | Spec compilation |
@@ -113,6 +114,7 @@ docs/studio-os/
 | Design DNA Canon™ | `design-dna-canon.md` |
 | Knowledge Registry™ | `knowledge-registry.md` |
 | Master Content Pipeline™ | `master-content-pipeline.md` |
+| Lifecycle Gates Reference | `master-content-pipeline-gates.md` |
 | System Registry™ | `system-registry.md` |
 
 ---

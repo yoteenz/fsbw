@@ -6,6 +6,8 @@
 
 **Status:** Permanent operating philosophy for all Studio OS content products
 
+**System name:** **Master Content Pipeline™** remains the official name until a future architecture revision.
+
 ---
 
 ## Executive summary
@@ -16,17 +18,23 @@ Every campaign is a **production pipeline**, not a publishing pipeline.
 
 The **Master Content Asset™** is the single source of truth. All platform-specific outputs are **derivatives** linked to that master asset and reviewed on their own merit.
 
+Content products **consume** the Master Content Pipeline — they do **not** own independent lifecycles.
+
 This document is the canonical reference for:
 
 - Campaign Engine™
 - Newsroom™
+- Website Builder™
 - Publishing Studio™
+- Social Studio™
+- Email Studio™
 - Knowledge Library™
 - Studio Intelligence™
 - NDXBook Page 001 pipeline (Master Content Asset pilot)
 - All future Studio OS content products
 
-**Code registry:** `src/studio-os-core/content-pipeline/`
+**Gate reference:** [master-content-pipeline-gates.md](./master-content-pipeline-gates.md)  
+**Implementation registry (legacy bridge):** `src/studio-os-core/content-pipeline/`
 
 ---
 
@@ -34,274 +42,208 @@ This document is the canonical reference for:
 
 | Before (publishing pipeline) | After (content operating system) |
 |-----------------------------|----------------------------------|
-| Create a page → publish | Identify opportunity → produce master asset → expand → review → schedule → publish → learn |
+| Create a page → publish | DISCOVER → … → LEARNING — gates, not ad-hoc steps |
 | Page is the product | Master Content Asset™ is the product |
-| One approval covers everything | Concierge Review Board™ + per-derivative review |
+| One approval covers everything | REVIEW GATE + APPROVAL GATE per asset class |
 | Campaign = calendar of posts | Campaign = coordinated production pipeline |
-| Success = published | Success = archived in Knowledge Library™ with performance + lessons |
+| Each product invents its own workflow | Products **consume** Master Content Pipeline gates |
+| Success = published | Success = **Institutional Knowledge** (LEARNING GATE exit) |
 
 ---
 
-## Canonical 17-stage lifecycle
+## Canonical lifecycle — ten gates
+
+Studio OS content moves through **named lifecycle gates**, not generic numbered stages.
 
 ```
-1.  Concept / Opportunity
-2.  Campaign Assignment
-3.  Research & Knowledge Gathering
-4.  Storyboard + Script
-5.  Talent Selection & Availability
-6.  Production Planning
-7.  Master Content Creation™
-8.  Internal Editing
-9.  Concierge Review Board™
-10. Founder Approval (when required)
-11. Content Expansion Engine™
-12. Multi-Platform Asset Review
-13. Scheduling
-14. Publishing
-15. Performance Evaluation
-16. Studio Intelligence™ Learning
-17. Knowledge Library™
+Idea
+  ↓
+DISCOVER GATE™          → Approved Creative Brief
+  ↓
+DEVELOP GATE™           → Production Blueprint
+  ↓
+ASSEMBLY GATE™          → Production Ready
+  ↓
+PRODUCTION GATE™        → Master Content Asset
+  ↓
+REVIEW GATE™            → Approved Master Asset
+  ↓
+EXPANSION GATE™         → Derivative Library
+  ↓
+APPROVAL GATE™          → Publishing Package
+  ↓
+PUBLISH GATE™           → Published Assets
+  ↓
+MEASURE GATE™           → Performance Report
+  ↓
+LEARNING GATE™          → Institutional Knowledge
 ```
 
-Each stage is defined in `src/studio-os-core/content-pipeline/lifecycle.ts` as `MASTER_CONTENT_LIFECYCLE`.
+### Lifecycle diagram
+
+```mermaid
+flowchart TD
+  IDEA[Idea / Opportunity]
+  DG[DISCOVER GATE™]
+  DEV[DEVELOP GATE™]
+  ASM[ASSEMBLY GATE™]
+  PROD[PRODUCTION GATE™]
+  REV[REVIEW GATE™]
+  EXP[EXPANSION GATE™]
+  APR[APPROVAL GATE™]
+  PUB[PUBLISH GATE™]
+  MEAS[MEASURE GATE™]
+  LEARN[LEARNING GATE™]
+
+  IDEA --> DG
+  DG -->|Approved Creative Brief| DEV
+  DEV -->|Production Blueprint| ASM
+  ASM -->|Production Ready| PROD
+  PROD -->|Master Content Asset| REV
+  REV -->|Approved Master Asset| EXP
+  EXP -->|Derivative Library| APR
+  APR -->|Publishing Package| PUB
+  PUB -->|Published Assets| MEAS
+  MEAS -->|Performance Report| LEARN
+  LEARN -->|Institutional Knowledge| IDEA
+```
+
+Each gate is fully specified in [master-content-pipeline-gates.md](./master-content-pipeline-gates.md) with purpose, owners, inputs, outputs, approvals, AI systems, concierges, entry/exit criteria, and failure conditions.
 
 ---
 
-## Stage reference
+## Canonical terminology
 
-### 1. Concept / Opportunity
+Use **gate names** in navigation copy, status messages, documentation, and operating manuals.
 
-Every campaign begins with an **opportunity** — not content.
+| Prefer | Avoid (unless mapping legacy code) |
+|--------|-------------------------------------|
+| DISCOVER GATE™ | Stage 1 · Step 1 · "research phase" without gate name |
+| DEVELOP GATE™ | Stage 4 · "script step" |
+| ASSEMBLY GATE™ | Stage 5–6 · "pre-production" |
+| PRODUCTION GATE™ | "Page creation" · Stage 7 |
+| REVIEW GATE™ | "In review" without gate name |
+| EXPANSION GATE™ | "Generate social" without gate name |
+| APPROVAL GATE™ | "Ready to schedule" without gate name |
+| PUBLISH GATE™ | "Go live" without gate name |
+| MEASURE GATE™ | "Analytics phase" |
+| LEARNING GATE™ | "Archive step" |
 
-Examples: Truth Tuesday · Product Launch · New Collection · Customer Question · Educational Topic · Seasonal Event · Industry Trend · Company Announcement · Viral Trend · Internal Initiative.
+**Examples:**
 
-**Rule:** No content is created in this phase.
-
-**Surfaces:** Strategy Engine™ · Innovation Lab™ · Mission Control priority cards.
-
----
-
-### 2. Campaign Assignment
-
-Attach the opportunity to a **campaign** so Studio OS understands **WHY** before **WHAT**.
-
-Examples: Truth Tuesday™ · Luxury Without Limits™ · Holiday Campaign · Education Series · Launch Campaign · Brand Awareness · Referral Program.
-
-**Surfaces:** Campaign Engine™ · Campaign Workspace.
-
----
-
-### 3. Research & Knowledge Gathering
-
-Before AI writes anything, collect:
-
-- Sources · statistics · references
-- Existing Knowledge Assets
-- Company knowledge · customer questions
-- Competitive insights · internal documentation
-
-**Mandatory** for educational brands (e.g. NDXBOOK) before script generation.
-
-**Surfaces:** Campaign Workspace · Research tab · Knowledge Hub · Profession Brain™.
+- *"Page 001 is currently in Review Gate."*
+- *"Campaign 024 passed Approval Gate."*
+- *"Website Launch blocked at Assembly Gate."*
 
 ---
 
-### 4. Storyboard + Script
+## Product inheritance — consumers, not owners
 
-Develop before Master Content exists:
+Every Studio OS product that creates content **references the same gate model**. Products implement gate **surfaces**; the pipeline owns the **lifecycle**.
 
-- Outline · storyboard · hook · sections
-- Talking points · visual direction · CTA
-- Supporting graphics · B-roll ideas · scene transitions · script
+| Product | Primary gates | Role |
+|---------|---------------|------|
+| **Campaign Engine™** | DISCOVER · ASSEMBLY · MEASURE · LEARNING | Campaign assignment · production planning · performance · campaign DNA |
+| **Newsroom™** | DEVELOP · PRODUCTION · REVIEW | Storyboard · master asset creation · editorial review |
+| **Website Builder™** | DEVELOP · PRODUCTION · EXPANSION · APPROVAL · PUBLISH | Section planning · master web experiences · page derivatives · deploy |
+| **Publishing Studio™** | APPROVAL · PUBLISH | Unified publishing queue · multi-platform orchestration |
+| **Social Studio™** | EXPANSION · APPROVAL · PUBLISH · MEASURE | Social derivatives · channel QA · social publish · engagement |
+| **Email Studio™** | EXPANSION · APPROVAL · PUBLISH · MEASURE | Newsletter/email derivatives · send · performance |
+| **Production Studio™** | PRODUCTION · REVIEW | Cinematic / media production of master assets |
+| **Distribution Engine** | EXPANSION · APPROVAL · PUBLISH | Channel routing · adaptation · calendar |
+| **Knowledge Library™** | LEARNING | Archival · retrieval · institutional memory |
+| **Studio Intelligence™** | DISCOVER · REVIEW · MEASURE · LEARNING | Research · review dimensions · performance analysis · learning loop |
+| **Concierge Approval Flow** | REVIEW · APPROVAL | Multidisciplinary board · founder brief |
+| **NDXBook Page 001** | PRODUCTION · REVIEW · APPROVAL · PUBLISH · LEARNING | Master Content Asset pilot |
 
-**Rule:** Nothing enters production until this is approved.
+```mermaid
+flowchart LR
+  MCP[Master Content Pipeline™]
+  CE[Campaign Engine™]
+  NR[Newsroom™]
+  WB[Website Builder™]
+  PS[Publishing Studio™]
+  SS[Social Studio™]
+  ES[Email Studio™]
+  KL[Knowledge Library™]
+  SI[Studio Intelligence™]
 
-**Surfaces:** Newsroom Editor · Campaign Deliverables Manager™ · Production Builder.
+  MCP --> CE
+  MCP --> NR
+  MCP --> WB
+  MCP --> PS
+  MCP --> SS
+  MCP --> ES
+  MCP --> KL
+  MCP --> SI
+```
 
----
-
-### 5. Talent Selection & Availability
-
-Determine who appears: Founder · team · UGC · voice actor · photographer · AI avatar · virtual host · guest.
-
-Studio OS manages availability · scheduling · location · wardrobe · hair · equipment · dependencies · confirmations.
-
-**Rule:** Production cannot begin until dependencies are satisfied.
-
-**Surfaces:** Talent Network · Casting · Newsroom talent routing.
-
----
-
-### 6. Production Planning
-
-Producer workspace: timeline · equipment · locations · products · assets · props · dependencies · deadlines · checklist · approvals.
-
-**Surfaces:** Work Orchestration Engine · Production Studio · Campaign Engine timeline.
-
----
-
-### 7. Master Content Creation™
-
-**Replaces “Page Creation.”**
-
-The page is no longer the product. The **Master Content Asset™** is the product — single source of truth.
-
-Examples: Page 001 · Episode 014 · Article · Video · Interview · Tutorial · Guide · Lesson · Case Study.
-
-Everything else derives from this.
-
-**NDXBook mapping:** `createNdxbookPage()` creates a Master Content Asset (`page` kind) in the registry.
-
-**Surfaces:** Newsroom™ Production Floor · NDXBook Page 001 Pipeline · Campaign deliverables (type `page`).
+**Rule:** New content products declare which gates they surface — never a parallel lifecycle.
 
 ---
 
-### 8. Internal Editing
+## Gate quick reference
 
-Review: grammar · readability · brand voice · accessibility · SEO · legal · formatting · fact accuracy · visual quality.
+| Gate | Purpose (one line) | Exit artifact |
+|------|-------------------|---------------|
+| **DISCOVER GATE™** | Ideas → validated opportunities | Approved Creative Brief |
+| **DEVELOP GATE™** | Brief → creative plan | Production Blueprint |
+| **ASSEMBLY GATE™** | Gather everything for production | Production Ready |
+| **PRODUCTION GATE™** | Create master asset | Master Content Asset |
+| **REVIEW GATE™** | Validate before expansion | Approved Master Asset |
+| **EXPANSION GATE™** | Generate derivatives | Derivative Library |
+| **APPROVAL GATE™** | Approve each derivative | Publishing Package |
+| **PUBLISH GATE™** | Distribute | Published Assets |
+| **MEASURE GATE™** | Measure performance | Performance Report |
+| **LEARNING GATE™** | Feed intelligence back | Institutional Knowledge |
 
-**Surfaces:** Newsroom Editor · Campaign Deliverables Manager™.
-
----
-
-### 9. Concierge Review Board™
-
-Replace single-review approval with a **multidisciplinary review board**.
-
-Reviewers (each returns PASS · WARNING · FAIL · recommendations · score):
-
-- Creative Director Concierge™
-- Brand Concierge™
-- Editorial Concierge™
-- SEO Concierge™
-- Accessibility Concierge™
-- Legal Concierge™
-- Marketing Concierge™
-- Social Media Concierge™
-- Visual Design Concierge™
-- Studio Intelligence™
-
-**Overall readiness score** aggregates board results.
-
-**NDXBook mapping:** Studio Intelligence review on Page 001 ≈ partial board (brand · editorial · intelligence dimensions).
-
-**Surfaces:** Concierge Approval Flow · Studio Intelligence gate on NDXBook pipeline.
-
----
-
-### 10. Founder Approval
-
-Configurable per campaign policy. High-impact or regulated content always requires founder sign-off.
-
-**Surfaces:** Concierge Approval Flow · Mission Control approval center.
-
----
-
-### 11. Content Expansion Engine™
-
-Flagship capability: from **one** Master Content Asset™, generate platform-specific derivatives.
-
-Examples: Instagram carousel · caption · story · reel · Facebook post · TikTok script · Pinterest pin · LinkedIn article · X thread · newsletter · email · push · SMS · podcast outline · YouTube short/long · website article · FAQ · knowledge base · landing page · ad copy · press release.
-
-**Rule:** Every derivative remains **linked** to the master asset ID.
-
-**Surfaces:** Content Expansion Engine™ (architecture) · Distribution Engine · Campaign deliverables generation (future).
-
----
-
-### 12. Multi-Platform Asset Review
-
-Each derivative receives **its own review**.
-
-**Rule:** Master Content approval does **not** auto-approve derivatives.
-
-**Surfaces:** Campaign Deliverables Manager™ · Publishing Studio™ review queue.
-
----
-
-### 13. Scheduling
-
-Approved assets enter Campaign Engine scheduling.
-
-Support: single publish · multi-platform · sequenced campaigns · time zones · approval windows · blackout periods · recurring schedules.
-
-**Surfaces:** Campaign Engine calendar · Publishing Queue · Distribution Network.
-
----
-
-### 14. Publishing
-
-Only **approved** assets may publish.
-
-Modes: immediate · scheduled · staged · platform-specific · campaign-specific.
-
-**Surfaces:** Social Publishing · Distribution Network · NDXBook Instagram schedule/publish.
-
----
-
-### 15. Performance Evaluation
-
-**Performance Concierge™** evaluates: CTR · reach · watch time · completion · conversions · engagement · comments · shares · retention · sentiment · platform/campaign performance.
-
-**Surfaces:** Analytics · Mission Control · Campaign Engine analytics tab.
-
----
-
-### 16. Studio Intelligence™ Learning
-
-Every campaign teaches Studio Intelligence™.
-
-Updates: Knowledge Graph™ · Audience Memory™ · Topic Performance™ · Content Performance™ · Brand Memory™ · Recommendation Engine™ · Future Campaign Suggestions™.
-
-**Surfaces:** Studio Intelligence™ · Memory Engine™ · Campaign deliverable **Learn** action.
-
----
-
-### 17. Knowledge Library™
-
-Archive after publishing:
-
-- Original Master Content™
-- Platform variants · performance · lessons learned
-- Related campaigns · source materials · research · associated assets
-
-Future AI retrieves from this library before generating similar content.
-
-**Surfaces:** Knowledge Library™ · Memory Bible · NDXBook `knowledgeOutputs` · deliverable `knowledgeAssetId`.
+Full specifications: [master-content-pipeline-gates.md](./master-content-pipeline-gates.md)
 
 ---
 
 ## UX principles
 
-The Campaign Workspace and Newsroom must answer at all times:
+Campaign Workspace, Newsroom, and all content product UIs must answer:
 
-1. **What stage** is this content in?
-2. **What approvals** remain?
+1. **Which gate** is this content in?
+2. **What approvals** remain before the next gate?
 3. **Which concierges** have reviewed it?
 4. **Which derivatives** exist vs. still needed?
-5. **Which assets** are scheduled vs. published?
-6. **How did the campaign perform?**
-7. **What did Studio Intelligence™ learn?**
+5. **Which assets** are in Approval Gate vs. Publish Gate?
+6. **How did the campaign perform** (Measure Gate)?
+7. **What did Studio Intelligence™ learn** (Learning Gate)?
 
-The experience should feel like managing a **professional media production studio** — not creating social posts in isolation.
+The experience should feel like managing a **professional media production studio** — not creating isolated social posts.
 
-**UI component:** `MasterContentLifecycleStrip` — compact stage indicator shared across Campaign Engine and Newsroom.
+**Note:** Existing UI may still show legacy stage indicators (`MasterContentLifecycleStrip`) until a future implementation pass maps display to gate names. Documentation and architecture use **gate terminology** as canonical.
 
 ---
 
-## Product inheritance map
+## Legacy mapping (backward compatibility)
 
-| Product | Role in pipeline |
-|---------|------------------|
-| **Campaign Engine™** | Stages 2–3, 6, 13–15 — campaign assignment, research, planning, scheduling, performance |
-| **Newsroom™** | Stages 4–9, 7 — storyboard, master asset creation, editing, review board |
-| **Publishing Studio™** | Stages 12–14 — derivative review, scheduling, publishing |
-| **Knowledge Library™** | Stage 17 — archival and retrieval |
-| **Studio Intelligence™** | Stages 9, 15–16 — review, performance, learning |
-| **Distribution Engine** | Stages 11–14 — expansion routing and publish |
-| **Concierge Approval Flow** | Stages 9–10 — review board + founder approval |
-| **NDXBook Page 001** | Stage 7 pilot — Master Content Asset (`page 001`) |
+The prior **17-stage** model maps to gates for existing code, docs, and migration:
+
+| Prior stage (17-stage model) | Canonical gate |
+|-----------------------------|----------------|
+| 1 · Concept / Opportunity | DISCOVER GATE™ |
+| 2 · Campaign Assignment | DISCOVER GATE™ |
+| 3 · Research & Knowledge Gathering | DISCOVER GATE™ |
+| 4 · Storyboard + Script | DEVELOP GATE™ |
+| 5 · Talent Selection & Availability | ASSEMBLY GATE™ |
+| 6 · Production Planning | ASSEMBLY GATE™ |
+| 7 · Master Content Creation™ | PRODUCTION GATE™ |
+| 8 · Internal Editing | PRODUCTION GATE™ |
+| 9 · Concierge Review Board™ | REVIEW GATE™ |
+| 10 · Founder Approval | REVIEW GATE™ |
+| 11 · Content Expansion Engine™ | EXPANSION GATE™ |
+| 12 · Multi-Platform Asset Review | APPROVAL GATE™ |
+| 13 · Scheduling | APPROVAL GATE™ |
+| 14 · Publishing | PUBLISH GATE™ |
+| 15 · Performance Evaluation | MEASURE GATE™ |
+| 16 · Studio Intelligence™ Learning | LEARNING GATE™ |
+| 17 · Knowledge Library™ | LEARNING GATE™ |
+
+Bridge functions (implementation): `src/studio-os-core/content-pipeline/mapping.ts`
 
 ---
 
@@ -310,35 +252,50 @@ The experience should feel like managing a **professional media production studi
 | Legacy term | Master Content Pipeline term |
 |-------------|------------------------------|
 | Page | Master Content Asset™ (kind: `page`) |
-| Create Page 001 | Create Master Content Asset · Page 001 |
+| Create Page 001 | Create Master Content Asset · Page 001 (Production Gate) |
 | Deliverable | Derivative asset (or master, if type is page/episode/article) |
-| `workflowStatus: review` | Lifecycle stage: Concierge Review Board™ |
-| `workflowStatus: published` | Stages 14–17 (publish → performance → learning → library) |
-| Studio Intelligence review (NDXBook) | Partial Concierge Review Board™ |
-
-Bridge functions: `src/studio-os-core/content-pipeline/mapping.ts`
+| `workflowStatus: review` | REVIEW GATE™ |
+| `workflowStatus: published` | PUBLISH GATE™ → MEASURE → LEARNING |
+| Studio Intelligence review (NDXBook) | Partial REVIEW GATE™ |
+| "In pipeline stage 9" | "In Review Gate" |
 
 ---
 
-## Implementation status (2026-07-07)
+## NDXBook Page 001 gate mapping (pilot)
+
+| Gate | Page 001 behavior |
+|------|-------------------|
+| DISCOVER · DEVELOP · ASSEMBLY | Implicit in pilot seed (full UI as Campaign/Newsroom expand) |
+| PRODUCTION GATE™ | `createNdxbookPage()` — master asset registered |
+| REVIEW GATE™ | Studio Intelligence review + **APPROVE PRODUCTION** |
+| APPROVAL GATE™ | Schedule datetime validation · Instagram readiness |
+| PUBLISH GATE™ | Publish Now / scheduled Instagram |
+| LEARNING GATE™ | `knowledgeOutputs` + institutional-knowledge archive |
+
+Runbook: [NDXBOOK_PAGE_001_PIPELINE.md](../NDXBOOK_PAGE_001_PIPELINE.md)
+
+---
+
+## Implementation status
 
 | Layer | Status |
 |-------|--------|
-| Canonical lifecycle registry | ✅ `content-pipeline/lifecycle.ts` |
-| Types + concierge board model | ✅ `content-pipeline/types.ts` |
-| Legacy mapping (Campaign · NDXBook) | ✅ `content-pipeline/mapping.ts` |
-| UX lifecycle strip component | ✅ `MasterContentLifecycleStrip.tsx` |
-| Full Content Expansion Engine automation | 🔜 Architecture defined; generation TBD |
+| Canonical gate documentation | ✅ This document + gates reference |
+| Product inheritance architecture | ✅ Documented |
+| Gate terminology standard | ✅ Canonical in docs |
+| Legacy 17-stage code registry | ✅ Preserved (`content-pipeline/lifecycle.ts`) |
+| UI gate naming | 🔜 Docs lead; UI maps on future pass |
+| Full Content Expansion Engine automation | 🔜 Architecture defined |
 | Full Concierge Review Board UI | 🔜 Partial via Concierge Approval Flow + SI review |
-| Publishing Studio™ unified queue | 🔜 Inherits this model |
 
 ---
 
 ## Related documentation
 
+- [Lifecycle Gates Reference](./master-content-pipeline-gates.md)
 - [Studio OS Architecture](./architecture.md)
-- [Campaign Engine deliverables workflow](../NDXBOOK_PAGE_001_PIPELINE.md) (NDXBook runbook)
-- [Concierge Approval Flow](./concierge-approval-flow.md) (when present)
+- [NDXBook Page 001 runbook](../NDXBOOK_PAGE_001_PIPELINE.md)
+- [Website Builder™](./products/website-builder/README.md)
 - [Founder Pilot Mode](./founder-pilot-mode.md)
 - [Studio Intelligence Architecture](./studio-intelligence-architecture.md)
 
@@ -348,7 +305,8 @@ Bridge functions: `src/studio-os-core/content-pipeline/mapping.ts`
 
 - This is **product logic**, not a Design Revision (DR).
 - Do **not** create a new milestone number for this architecture.
-- New content features **must** declare which lifecycle stage(s) they own.
+- Do **not** rename Master Content Pipeline™ until a future architecture revision.
+- New content features **must** declare which **gate(s)** they surface.
 - Do **not** introduce parallel page-centric workflows without mapping to Master Content Asset™.
 
-**Permanent philosophy:** *Campaigns are production pipelines. The Master Content Asset™ is the single source of truth.*
+**Permanent philosophy:** *Campaigns are production pipelines. The Master Content Asset™ is the single source of truth. Ten gates govern every content product.*
