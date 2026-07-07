@@ -40295,3 +40295,37 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** User-facing growth = **Expand Headquarters · Install Expansion** — never apps/templates/feature packs. Marketplace = operational architecture only. All future Studio OS documentation inherits this philosophy.
 
+---
+
+## 2026-07-07 — Studio Department SDK™ canonical engine specification (docs only)
+
+**Context:** User issued a **specification-first architecture task** — create the canonical **Studio Department SDK™** as the permanent blueprint for every department inside Studio OS. Explicit constraints: **no React**, **no UI**, **no implementation code** — architecture/spec only. SDK should feel like AAA game studio internal docs (HIG + Unreal Actor system + The Movies building system). Departments are **interactive worlds**, not SaaS pages — assembled from modular assets, AI employees, Company Genome data, interactions, and workflows.
+
+**Topics covered:**
+- Full SDK package at **`docs/studio-os/sdk/`** — 18 files: README + 17 numbered system documents
+- **01 Department Anatomy** — mandatory inheritance (purpose, responsibilities, inputs/outputs, objects, AI, zones, panels, commands, dependencies, transitions, genome hooks, marketplace meta)
+- **02 Spatial Layout System** — physical environment topology (entry, hero, primary/secondary zones, orb, lighting, mood wall, furniture, cameras, navigation, exit)
+- **03 Object Library** — 12 canonical object classes (Floating Panel, Mood Wall, Glass Table, Timeline Table, Orb Pedestal, Asset Shelf, Media Display, Project Board, Interactive Wall, Command Console, Preview Screen, Approval Station)
+- **04 Interaction Engine** — physical verbs (click, drag, pin, annotate, approve, reject, branch, compare, preview, scrub, speak, orb-conversation, reference-drop, version-history) — forms as escape hatches only
+- **05 AI Employee System** — collaborative roles (Creative Director, Research/Production/Quality/Marketing/Publishing/Legal/Brand Concierge, Orb) with permissions, memory, escalation
+- **06 Asset Standard** — 12 modular categories; never flattened scenes
+- **07–09** Visual Language, Motion Standard (cinematic), Audio Standard (ambient, ceremonies, silence rules)
+- **10 Company Genome Integration** — departments never define branding; Genome injects colors, typography, voice, materials, lighting, music, terminology — same department transforms across industries without rebuild
+- **11 Department Runtime** — dynamic assembly (load → assemble → inject genome → activate AI → hydrate data → go live)
+- **12 World Routing** — departments as locations; travel/arrival/exit; world map; quick travel
+- **13 Marketplace Packaging** — identity-neutral installable packages
+- **14 FAL Asset Compiler** — prompts → 14 independent modular outputs; never UI mockups
+- **15 Cursor Runtime Requirements** — Cursor assembles only; folder structure; performance, caching, fallbacks
+- **16 Department Creation Guide** — 7-phase official workflow
+- **17 QA Checklist** — 11 sections; 10 founder gut-check questions
+
+**Decisions / outcomes:**
+- SDK version **1.0.0** · schema namespace **`studio.department.sdk.v1`**
+- Aligns with existing Studio OS: Headquarters Engine™, Company Genome™ M277, Interaction Engine™ M130, industry-architecture install engine, Asset Registry™
+- Pipeline: Blueprint → FAL Compiler → Asset Registry → Department Runtime → Genome injection → living department
+- **`motherboard/CORE.md`** updated with Studio Department SDK bullet
+
+**Changes:** `docs/studio-os/sdk/README.md` · `01_DEPARTMENT_ANATOMY.md` through `17_QA_CHECKLIST.md` · `motherboard/CORE.md` · this MEMORY entry.
+
+**Conventions:** All future departments must inherit SDK anatomy; no per-department branding; FAL generates modular neutral assets; Cursor assembles at runtime; QA checklist gates release. Specification sprint only — no React/components/pages.
+
