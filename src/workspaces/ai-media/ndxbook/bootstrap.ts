@@ -66,9 +66,10 @@ export function buildNdxbookStorePatch(): Partial<NdxbookStore> {
 export function bootstrapAiMediaNdxbook(): void {
   ensureAiMediaNdxbookModuleEnabled();
   ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
-  bootstrapNdxbookStore();
   const store = readNdxbookStore();
-  if (store.brand?.id !== 'ndxbook' || shouldUseFounderPilotSeed(NDXBOOK_WORKSPACE_ID)) {
+  // Seed once when registry is empty — never re-merge pilot patch (pages: []) on revisit.
+  if (store.brand?.id !== 'ndxbook') {
+    bootstrapNdxbookStore();
     mergeNdxbookPatch(buildNdxbookStorePatch());
   }
   refreshNdxbookDashboardMetrics();

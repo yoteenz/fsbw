@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
+import { NDXBOOK_WORKSPACE_ID } from '../../../studio-os-core/ndxbook/constants';
 import { STUDIO_OS_DEFAULT_WORKSPACE_ID, STUDIO_PLATFORM_WORKSPACE_ID } from '../../../studio-os-core/workspace/storage';
 import { workspaceStudioModulePath } from '../../../studio-os-core/workspace/routes';
 import { isLegacyFrontalSlayerStudioPath } from '../../../studio-os-core/workspace/headquarters-module-resolver';
@@ -9,6 +10,19 @@ import { getCachedOrgMembership } from '../../../studio-os-core/auth/membership'
 import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
 import { isPlatformAdministrationPath } from '../../../studio-os-core/application/platform-paths';
 import { ORGANIZATION_ROUTES } from '../../../studio-os-core/application/routes';
+
+function isNdxbookScopedRoute(pathname: string, search: string): boolean {
+  return (
+    pathname.includes('/studio/ndxbook') ||
+    pathname.includes('/studio-os/workspace/ai-media/studio/ndxbook') ||
+    search.includes('brand=ndxbook')
+  );
+}
+
+function ndxbookLegacyRedirectTarget(pathname: string, search: string): string {
+  const rest = pathname.replace('/admin/studio/', '') || 'mission-control';
+  return `${workspaceStudioModulePath(NDXBOOK_WORKSPACE_ID, rest)}${search}`;
+}
 
 /**
  * Route boundary enforcement:
@@ -32,11 +46,7 @@ export default function StudioWorkspaceGuard() {
 
   useEffect(() => {
     if (platformPath || !legacyFsPath) return;
-    const ndxbookRoute =
-      pathname.includes('/studio/ndxbook') ||
-      pathname.includes('/studio-os/workspace/ai-media/studio/ndxbook') ||
-      search.includes('brand=ndxbook');
-    if (ndxbookRoute) return;
+    if (isNdxbookScopedRoute(pathname, search)) return;
     if (workspaceId !== STUDIO_OS_DEFAULT_WORKSPACE_ID) {
       activateWorkspaceContext(STUDIO_OS_DEFAULT_WORKSPACE_ID);
       enterWorkspace(STUDIO_OS_DEFAULT_WORKSPACE_ID);
@@ -57,8 +67,9 @@ export default function StudioWorkspaceGuard() {
       assigned.workspaceId === STUDIO_OS_DEFAULT_WORKSPACE_ID || canSwitchOrganizations();
 
     if (!mayUseLegacyFs && assigned.workspaceId) {
-      const rest = pathname.replace('/admin/studio/', '') || 'mission-control';
-      const target = `${workspaceStudioModulePath(assigned.workspaceId, rest)}${search}`;
+      const target = isNdxbookScopedRoute(pathname, search)
+        ? ndxbookLegacyRedirectTarget(pathname, search)
+        : `${workspaceStudioModulePath(assigned.workspaceId, pathname.replace('/admin/studio/', '') || 'mission-control')}${search}`;
       return <Navigate to={target} replace />;
     }
 
@@ -70,8 +81,9 @@ export default function StudioWorkspaceGuard() {
     pathname.startsWith('/admin/studio/') &&
     !pathname.startsWith('/admin/studio-os')
   ) {
-    const rest = pathname.replace('/admin/studio/', '') || 'mission-control';
-    const target = `${workspaceStudioModulePath(workspaceId, rest)}${search}`;
+    const target = isNdxbookScopedRoute(pathname, search)
+      ? ndxbookLegacyRedirectTarget(pathname, search)
+      : `${workspaceStudioModulePath(workspaceId, pathname.replace('/admin/studio/', '') || 'mission-control')}${search}`;
     return <Navigate to={target} replace />;
   }
 

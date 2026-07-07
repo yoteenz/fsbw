@@ -9,9 +9,7 @@ import { useAdminStudioSocialAccounts } from '../../../../hooks/useAdminStudioSo
 import { useEnsureNdxbookWorkspaceFromBrandParam } from '../../../../hooks/useEnsureNdxbookWorkspace';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { NDXBOOK_WORKSPACE_ID } from '../../../../studio-os-core/ndxbook/constants';
-import {
-  adminStudioNdxbookDistributionPath,
-} from '../../../../utils/adminStudioRoutes';
+import { adminStudioNdxbookNewsroomPath } from '../../../../utils/adminStudioRoutes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { allOAuthPlatformsUnconfigured } from '../../../../utils/socialOAuthSetupGuide';
 
@@ -37,9 +35,9 @@ export default function AdminStudioSocialAccountsPage() {
     <AdminStudioStageShell
       title="SOCIAL ACCOUNTS"
       subtitle={isNdxbook ? 'NDXBOOK · OFFICIAL OAUTH CONNECTORS — TOKENS ENCRYPTED SERVER-SIDE ONLY' : 'OFFICIAL OAUTH CONNECTORS — TOKENS ENCRYPTED SERVER-SIDE ONLY'}
-      breadcrumbParentLabel={isNdxbook ? 'NDXBOOK DISTRIBUTION' : 'DISTRIBUTION NETWORK'}
-      breadcrumbParentPath={isNdxbook ? adminStudioNdxbookDistributionPath() : '/admin/studio/distribution-network'}
-      onBack={() => navigate(isNdxbook ? adminStudioNdxbookDistributionPath() : '/admin/studio/distribution-network')}
+      breadcrumbParentLabel={isNdxbook ? 'NDXBOOK NEWSROOM' : 'DISTRIBUTION NETWORK'}
+      breadcrumbParentPath={isNdxbook ? adminStudioNdxbookNewsroomPath() : '/admin/studio/distribution-network'}
+      onBack={() => navigate(isNdxbook ? adminStudioNdxbookNewsroomPath() : '/admin/studio/distribution-network')}
     >
       <div className="p-2.5 mb-3 border" style={{ background: ADMIN_STUDIO_THEME.panelBg, borderColor: ADMIN_STUDIO_THEME.panelBorder, borderTop: `2px solid ${ADMIN_STUDIO_THEME.accent}` }}>
         <p className="text-[7px] font-futura uppercase" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>

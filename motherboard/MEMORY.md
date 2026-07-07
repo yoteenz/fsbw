@@ -40069,3 +40069,27 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - Removed redundant **ambient insight red outer ring** in **`StudioOrb.tsx`** (was `1px solid rgba(235,28,36,0.28)`); ambient state still reflected in aria-label.
 
 **Changes:** studioOrbTheme.ts, StudioOrb.tsx, MEMORY.md.
+
+---
+
+## 2026-07-07 — Page 001 create persistence + Social Accounts routing
+
+**Context (full chat arc):** Studio scroll audit; Page 001 newsroom route + HQ CTAs; newsroom resolver; Studio Orb black border. User then reported **CREATE PAGE 001** shows success toast but **state resets on revisit** (still prompts to create), and **SOCIAL ACCOUNTS →** link **routes to command center** instead of the OAuth social page.
+
+**Root cause — create page not persisting:**
+- **`bootstrapAiMediaNdxbook()`** re-ran on every newsroom mount when founder pilot active: `shouldUseFounderPilotSeed` branch called **`mergeNdxbookPatch(buildPilotNdxbookStorePatch())`** which includes **`pages: []`** — wiping Page 001 immediately after create (and on every return visit).
+
+**Fix — create page:**
+- **`bootstrapAiMediaNdxbook()`** only seeds when **`store.brand?.id !== 'ndxbook'`** (first-time init). Pilot bootstrap remains in **`ensureFounderPilotForOrganization`** on first activation only.
+
+**Root cause — social link:**
+- NDXBook-scoped legacy routes with **`?brand=ndxbook`** could redirect to the **wrong workspace** (assigned org ≠ ai-media). **`useSyncWorkspaceFromRoute`** checked pathname for `brand=ndxbook` (never matches query string).
+
+**Fix — social link:**
+- **`ndxbookSocialAccountsQuickLink()`** — canonical **`/admin/studio/social-accounts?brand=ndxbook`** (workspace-scoped when needed).
+- **`StudioWorkspaceGuard`** — NDXBook-scoped routes (`brand=ndxbook`, `/studio/ndxbook/*`) always redirect to **ai-media** workspace path, not assigned FS workspace.
+- **`useSyncWorkspaceFromRoute`** — reads **`search`** for `brand=ndxbook`.
+- Pipeline panel, NdxbookSocialsPanel, CONNECT INSTAGRAM action use quick link.
+- Social Accounts page NDXBook back breadcrumb → **Newsroom** (not Distribution).
+
+**Changes:** bootstrap.ts, StudioWorkspaceGuard.tsx, ndxbookMissionActionRoutes.ts, NdxbookPagePipelinePanel.tsx, NdxbookSocialsPanel.tsx, useSyncWorkspaceFromRoute.ts, social-accounts/page.tsx, MEMORY.md.

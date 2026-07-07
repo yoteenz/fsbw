@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNdxbookPagePipeline } from '../../../../hooks/useNdxbookPagePipeline';
+import { ndxbookSocialAccountsQuickLink } from '../ndxbook-mission-control/ndxbookMissionActionRoutes';
 import { VOLUME_LABELS } from '../../../../studio-os-core/ndxbook/constants';
 import type { NdxbookPage } from '../../../../studio-os-core/ndxbook/types';
 import type { StudioIntelligenceReview } from '../../../../studio-os-core/ndxbook/types';
-import { adminStudioNdxbookSocialAccountsPath } from '../../../../utils/adminStudioRoutes';
 import { NR, nrLabel, nrPanel, nrSectionTitle } from './ndxbookNewsroomTheme';
 
 function toDatetimeLocalValue(iso: string): string {
@@ -104,7 +104,7 @@ export function NdxbookPagePipelinePanel({ page, onRefresh }: Props) {
         {instagramStatus.accountLabel ? (
           <p style={{ ...nrLabel, fontSize: '6px' }}>ACCOUNT · {instagramStatus.accountLabel}</p>
         ) : null}
-        <Link to={adminStudioNdxbookSocialAccountsPath()} style={{ ...nrLabel, color: NR.indigo, fontSize: '6px' }}>
+        <Link to={ndxbookSocialAccountsQuickLink()} style={{ ...nrLabel, color: NR.indigo, fontSize: '6px' }}>
           SOCIAL ACCOUNTS →
         </Link>
       </div>

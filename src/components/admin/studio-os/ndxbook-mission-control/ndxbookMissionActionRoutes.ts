@@ -65,7 +65,7 @@ export function buildNdxbookMissionActionLinks(
     { id: 'knowledge-graph', label: 'OPEN KNOWLEDGE GRAPH', route: ndxModule('knowledge-hub', workspaceId) },
     { id: 'talent', label: 'OPEN TALENT NETWORK', route: ndxModule('talent-network', workspaceId) },
     { id: 'marketplace', label: 'OPEN MARKETPLACE', route: ndxModule('marketplace', workspaceId) },
-    { id: 'connect-instagram', label: 'CONNECT INSTAGRAM', route: `${ndxModule('ndxbook', workspaceId)}?tab=socials` },
+    { id: 'connect-instagram', label: 'CONNECT INSTAGRAM', route: ndxbookSocialAccountsQuickLink(workspaceId) },
   ];
 }
 
@@ -73,8 +73,14 @@ export function ndxbookDistributionQuickLink(workspaceId: string = NDXBOOK_WORKS
   return `${ndxModule('distribution-network', workspaceId)}?brand=ndxbook`;
 }
 
+export function ndxbookSocialAccountsQuickLink(workspaceId: string = NDXBOOK_WORKSPACE_ID): string {
+  const path = ndxModule('social-accounts', workspaceId);
+  return `${path}?brand=ndxbook`;
+}
+
+/** @deprecated Use ndxbookSocialAccountsQuickLink — kept for existing imports. */
 export function ndxbookSocialsQuickLink(workspaceId: string = NDXBOOK_WORKSPACE_ID): string {
-  return `${ndxModule('ndxbook', workspaceId)}?tab=socials`;
+  return ndxbookSocialAccountsQuickLink(workspaceId);
 }
 
 export function ndxbookMissionControlQuickLink(workspaceId: string = NDXBOOK_WORKSPACE_ID): string {

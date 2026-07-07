@@ -11,7 +11,8 @@ import type { NdxbookSocialAccount } from '../../../../studio-os-core/ndxbook/ty
 import type { PublicSocialAccount } from '../../../../utils/adminStudioSocialPublishing';
 import { allOAuthPlatformsUnconfigured } from '../../../../utils/socialOAuthSetupGuide';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
-import { adminStudioNdxbookDistributionPath, adminStudioNdxbookSocialAccountsPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioNdxbookDistributionPath } from '../../../../utils/adminStudioRoutes';
+import { ndxbookSocialAccountsQuickLink } from '../../studio-os/ndxbook-mission-control/ndxbookMissionActionRoutes';
 
 const panelStyle = {
   background: ADMIN_STUDIO_THEME.panelBg,
@@ -148,7 +149,7 @@ export function NdxbookSocialsPanel({ socialAccounts, onRegistryUpdated }: Ndxbo
           type="button"
           className="text-[6px] underline"
           style={{ color: '#6366F1' }}
-          onClick={() => navigate(adminStudioNdxbookSocialAccountsPath())}
+          onClick={() => navigate(ndxbookSocialAccountsQuickLink())}
         >
           OPEN FULL SOCIAL ACCOUNTS PAGE
         </button>

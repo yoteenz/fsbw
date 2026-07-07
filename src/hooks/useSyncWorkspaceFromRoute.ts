@@ -4,12 +4,12 @@ import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import { NDXBOOK_WORKSPACE_ID } from '../studio-os-core/ndxbook/constants';
 
 /** Map Studio OS routes to platform workspace ids — active org follows URL, not storage defaults. */
-function resolveWorkspaceIdFromPath(pathname: string): string | null {
+function resolveWorkspaceIdFromRoute(pathname: string, search: string): string | null {
   if (
     pathname.includes('/studio/ndxbook') ||
     pathname.includes('/studio-os/workspace/ai-media/') ||
     pathname.includes('/workspace/ai-media') ||
-    pathname.includes('brand=ndxbook')
+    search.includes('brand=ndxbook')
   ) {
     return NDXBOOK_WORKSPACE_ID;
   }
@@ -28,15 +28,14 @@ function resolveWorkspaceIdFromPath(pathname: string): string | null {
   return null;
 }
 
-/** Keep active workspace aligned with organization routes before paint. */
 export function useSyncWorkspaceFromRoute(): void {
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   const { workspaceId, setActiveWorkspace } = useWorkspace();
 
   useLayoutEffect(() => {
-    const routeWorkspaceId = resolveWorkspaceIdFromPath(pathname);
+    const routeWorkspaceId = resolveWorkspaceIdFromRoute(pathname, search);
     if (routeWorkspaceId && routeWorkspaceId !== workspaceId) {
       setActiveWorkspace(routeWorkspaceId);
     }
-  }, [pathname, workspaceId, setActiveWorkspace]);
+  }, [pathname, search, workspaceId, setActiveWorkspace]);
 }
