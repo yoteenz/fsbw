@@ -288,9 +288,15 @@ export function AdminStudioLayout({
               <WorkspaceSwitcher />
 
               <div
-                className="flex-1 min-h-0"
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden admin-hub-tab-scroll"
                 data-studio-manual="workspace-content"
-                style={{ paddingLeft: '20px', paddingRight: '20px', paddingBottom: '24px', boxSizing: 'border-box' }}
+                style={{
+                  paddingLeft: '20px',
+                  paddingRight: '20px',
+                  paddingBottom: '24px',
+                  boxSizing: 'border-box',
+                  WebkitOverflowScrolling: 'touch',
+                }}
               >
                 <StudioImmersionShell />
                 <KnowledgeContextualHint />

@@ -39890,3 +39890,17 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** Campaign Engine = orchestration/KPIs; Campaign Workspace Deliverables tab = content pipeline; published deliverables get `knowledgeAssetId` + Studio Intelligence learning metrics on **Learn** action.
 
 **Changes:** `src/studio-os-core/campaign-engine/*`, `src/components/admin/studio/campaign-engine/*`, `useCampaignEngineState.ts`, MEMORY.md.
+
+---
+
+## 2026-07-07 — Studio Overview page mobile render / scroll fix
+
+**Context:** User reported the Studio OS **Overview** page (`/admin/studio/overview`) keeps glitching on mobile — only the first **HEADQUARTERS WINGS** card (OVERVIEW) renders, then a large empty white void; the rest of the page (remaining wing cards, focus panel, installed module summaries) fails to appear.
+
+**Root cause:** `AdminStudioLayout` main card uses `minHeight: calc(100dvh - 160px)` + `overflow-hidden` + `flex flex-col`, with the workspace body in `flex-1 min-h-0` but **no `overflow-y-auto`**. On mobile, the tall header (`summarySlot` hero + breadcrumbs + `StudioImmersionShell` presence strip) constrains the flex child; overflowing overview content (8 department cards + focus panel + module summaries) was clipped inside the card with no scroll — appearing as a blank white gap above the marble background.
+
+**Fix:** Added `overflow-y-auto overflow-x-hidden admin-hub-tab-scroll` and `WebkitOverflowScrolling: 'touch'` to the `workspace-content` region in `AdminStudioLayout.tsx` — same pattern as admin hub pages (Clients, Backend, Pending, etc.).
+
+**Conventions:** Studio OS pages using `AdminStudioLayout` rely on the inner `workspace-content` scroll region for long module lists; do not rely on page-level scroll when the card has `overflow-hidden`.
+
+**Changes:** `src/components/admin/studio/AdminStudioLayout.tsx`, `motherboard/MEMORY.md`.
