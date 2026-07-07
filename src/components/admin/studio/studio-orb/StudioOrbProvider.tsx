@@ -41,7 +41,7 @@ type StudioOrbContextValue = {
 
 const StudioOrbContext = createContext<StudioOrbContextValue | null>(null);
 
-const DEFAULT_POSITION: StudioOrbPosition = { bottom: 20, right: 16 };
+const DEFAULT_POSITION: StudioOrbPosition = { bottom: 14, right: 12 };
 
 function resolvePresenceState(store: ReturnType<typeof readCommandDockStore>): StudioOrbPresenceState {
   if (store.processingActive) return 'thinking';

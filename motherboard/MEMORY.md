@@ -39893,8 +39893,11 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+<<<<<<< HEAD
 ---
 
+=======
+>>>>>>> 9b5c2668 (Fix Studio Command Center card height; shrink Studio Orb to reduce text overlap)
 ## 2026-07-07 — Studio Overview page mobile render / scroll fix
 
 **Context:** User reported the Studio OS **Overview** page (`/admin/studio/overview`) keeps glitching on mobile — only the first **HEADQUARTERS WINGS** card (OVERVIEW) renders, then a large empty white void; the rest of the page (remaining wing cards, focus panel, installed module summaries) fails to appear.
@@ -39929,6 +39932,7 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-07 — Studio OS page-breaking scroll audit (all layouts + bare workspace pages)
 
 **Context (full chat):** User reported Studio **Overview** (`/admin/studio/overview`) glitching on mobile — only first HEADQUARTERS WINGS card visible, then large white void; rest of page (wing cards, focus panel, module summaries) failed to render. Follow-up: same issue occurs on **other Studio pages** — requested full audit and fix.
@@ -39949,3 +39953,18 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** All Studio OS content pages must scroll inside the layout card's `workspace-content` region — never rely on page-level scroll when the card uses `overflow-hidden`. New bare workspace pages should use `AdminStudioModulePageShell` rather than rendering the workspace directly.
 
 **Changes:** `AdminStudioLayout.tsx`, `StudioPlatformLayout.tsx`, `AdminStudioModulePageShell.tsx`, 13 `src/pages/admin/studio/*/page.tsx` files, `motherboard/MEMORY.md`.
+=======
+## 2026-07-07 — Studio Command Center card height + smaller Studio Orb
+
+**Context (full chat arc):** Session included Campaign Deliverables Manager work and deliverables visibility fixes. User reported **Studio Command Center** (`/admin/studio-os/command-center`) main card was **too short** (marble gap below) — should match **menu toggle main card** height; **Studio Orb** too large and covering page text (CROSS-COMPANY INSIGHTS area).
+
+**Root cause:** **`StudioPlatformLayout`** used `minHeight: calc(100dvh - 160px)` without fixed `height`, no inner scroll region — card collapsed to content height. Orb at **58px** overlapped bottom-right copy.
+
+**Fix delivered:**
+- **`StudioPlatformLayout`** + **`AdminStudioLayout`** — main card uses **`MENU_TOGGLE_PANEL_HEIGHT`** (`calc(100dvh - 80px)`) with **`height` + `minHeight`** (same as account/shop menu-toggle cards); **`flex-1` scroll** body; **56px bottom padding** in scroll area when Command Dock/Orb shown
+- **Studio Orb** — **`ORB_SIZE_PX` 58 → 44**; default position tightened (`bottom: 14`, `right: 12`); awakening overlay uses shared size constant
+
+**Conventions:** Studio Administration + Organization Studio shells use **`MENU_TOGGLE_PANEL_HEIGHT`** for main card — not `calc(100dvh - 160px)` alone. Scroll lives inside the card; reserve bottom padding for Orb.
+
+**Changes:** StudioPlatformLayout.tsx, AdminStudioLayout.tsx, studioOrbTheme.ts, StudioOrbProvider.tsx, StudioOrbAwakeningOverlay.tsx, MEMORY.md.
+>>>>>>> 9b5c2668 (Fix Studio Command Center card height; shrink Studio Orb to reduce text overlap)

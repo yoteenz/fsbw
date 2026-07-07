@@ -1,7 +1,7 @@
 /** Studio Orb™ — crystal acrylic intelligence · premium OS motion language. */
 import type { CSSProperties } from 'react';
 
-export const ORB_SIZE_PX = 58;
+export const ORB_SIZE_PX = 44;
 
 export const ORB_VISUAL = {
   brandRed: '#EB1C24',

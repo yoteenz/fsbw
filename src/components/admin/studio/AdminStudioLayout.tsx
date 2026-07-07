@@ -5,6 +5,7 @@ import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
+import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
 import { StudioKnowledgeProvider } from '../../../contexts/StudioKnowledgeContext';
 import { StudioManualBridge } from './StudioManualBridge';
 import { AdminStudioBreadcrumbTrail } from './AdminStudioBreadcrumbTrail';
@@ -193,7 +194,7 @@ export function AdminStudioLayout({
           globalSearchTargetPath={pathname}
         />
 
-        <div className="pb-6 px-4" style={{ paddingBottom: shouldShowCommandDock(pathname) ? '88px' : undefined }}>
+        <div className="pb-6 px-4">
           <div className="max-w-md mx-auto">
             {studioSearchQuery.trim() ? (
               <AdminStudioSearchResultsPanel
@@ -203,12 +204,12 @@ export function AdminStudioLayout({
               />
             ) : null}
             <div
-              className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
+              className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden"
               style={{
                 borderWidth: '1.3px',
-                minHeight: 'calc(100dvh - 160px)',
-                height: 'calc(100dvh - 160px)',
-                maxHeight: 'calc(100dvh - 160px)',
+                minHeight: MENU_TOGGLE_PANEL_HEIGHT,
+                height: MENU_TOGGLE_PANEL_HEIGHT,
+                maxHeight: MENU_TOGGLE_PANEL_HEIGHT,
               }}
             >
               <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }}>
@@ -300,7 +301,7 @@ export function AdminStudioLayout({
                 style={{
                   paddingLeft: '20px',
                   paddingRight: '20px',
-                  paddingBottom: '24px',
+                  paddingBottom: shouldShowCommandDock(pathname) ? '56px' : '24px',
                   boxSizing: 'border-box',
                   WebkitOverflowScrolling: 'touch',
                 }}

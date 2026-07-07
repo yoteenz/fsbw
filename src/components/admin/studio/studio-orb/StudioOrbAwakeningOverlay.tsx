@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ORB_ANIMATION_CSS, ORB_VISUAL } from './studioOrbTheme';
+import { ORB_ANIMATION_CSS, ORB_SIZE_PX, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 
 const PHASE_MS = [1200, 1600, 1400, 1800, 1200];
@@ -53,8 +53,8 @@ export function StudioOrbAwakeningOverlay() {
         {phase >= 1 ? (
           <div
             style={{
-              width: 58,
-              height: 58,
+              width: ORB_SIZE_PX,
+              height: ORB_SIZE_PX,
               borderRadius: '50%',
               position: 'relative',
               animation: phase >= 3 ? 'studio-orb-awaken-ignite 1.4s ease-out forwards' : undefined,
