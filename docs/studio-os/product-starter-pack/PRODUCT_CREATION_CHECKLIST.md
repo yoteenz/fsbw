@@ -212,8 +212,8 @@
 
 | Product | ID | Checklist location |
 |---------|-----|-------------------|
-| Experience Studio™ | `experience-studio` | legacy — align on next revision |
-| Studio Website Builder™ | `website-builder` | `products/website-builder/` |
+| **Experience Studio™** | `experience-studio` | **Golden Product — spec complete · awaiting approval** |
+| Studio Website Builder™ | `website-builder` | `products/website-builder/` — publish specialization |
 | Campaign Engine™ | `campaign-engine` | TBD |
 | Publishing Studio™ | `publishing-studio` | TBD |
 | Relationship Intelligence™ | `relationship-intelligence` | TBD |

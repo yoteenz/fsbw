@@ -93,7 +93,8 @@ Duplicate this checklist for:
 
 | Product | Product ID | Status |
 |---------|------------|--------|
-| **Studio Website Builder™** | `website-builder` | Spec complete · awaiting approval |
+| **Experience Studio™** | `experience-studio` | Golden Product — spec awaiting approval |
+| **Studio Website Builder™** | `website-builder` | Publish specialization · spec awaiting approval |
 | **Campaign Engine™** | `campaign-engine` | Queued |
 | **Publishing Studio™** | `publishing-studio` | Queued |
 | **Relationship Intelligence** | `relationship-intelligence` | Roadmap |

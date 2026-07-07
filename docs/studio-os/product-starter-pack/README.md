@@ -124,7 +124,8 @@ Products **inherit** all layers above. They **never override**.
 
 | Product | Status |
 |---------|--------|
-| Studio Website Builder™ | Spec complete · awaiting approval |
+| Experience Studio™ | Golden Product · spec awaiting approval |
+| Studio Website Builder™ | Publish specialization · spec awaiting approval |
 | Campaign Engine™ | Queued |
 | Publishing Studio™ | Queued |
 | Relationship Intelligence™ | Governed roadmap |
