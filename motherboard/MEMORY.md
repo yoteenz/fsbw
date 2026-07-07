@@ -39813,3 +39813,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** Awakening overlay must stay mounted for the full sequence whenever `awakeningActive` — never gate it behind command-dock visibility. Awakening “seen” flags are lightweight Studio OS keys — always use `studioOsBrowserStorage` read/write helpers.
 
 **Changes:** studioOrbAwakening.ts, StudioOrbProvider.tsx, StudioOrbAwakeningOverlay.tsx, StudioOrbMount.tsx, MEMORY.md.
+
+---
+
+## 2026-07-07 — Experience Studio™ builder redesign (Digital Architect UX evolution)
+
+**Context (full chat arc):** Session fixed Studio Orb awakening stuck on AWAKENING (`bb87accb`). User requested **DESIGN REVISION — EXPERIENCE STUDIO™** — evolve the existing website builder into an elite creative-agency experience (not a new milestone · do not redesign unrelated Studio OS · preserve Digital Architect architecture).
+
+**Design requirements (non-negotiable):** Not Squarespace/Shopify/Wix/Framer/Webflow/Canva/Figma/Claude — Apple-grade OS for founders and luxury brands · calm · premium · spacious · marble/glass/crystal · large editorial headlines · thin uppercase metadata · slow fade/blur/scale motion · Studio Orb as primary interaction · 90% canvas time · no traditional themes — **Design DNA™** + **Experience DNA™** · **Remix™** (not start over) · **AI Creative Director™** proactive critiques with WHY · **Design Health™** continuous scoring.
+
+**Delivered:**
+- **`src/studio-os-core/experience-studio/`** — session store (scoped `studioOs_experienceStudioSession_v1`) · entry cards · interview choices · Design DNA personalities · Experience DNA sliders · Remix engine · resolver (canvas tokens · creative director critiques · design health categories) · bridges to existing **`digital-architect`** store via **`useExperienceStudioState`**
+- **`src/components/admin/studio/experience-studio/`** — **`ExperienceStudioWorkspace`** · entry (Orb welcome + immersive cards) · conversational interview (style · audience · feeling) · full-width live canvas preview · slide-in panels (Design DNA · Experience DNA · Director · Remix) · Design Health indicator · Orb action bar
+- **`/admin/studio/digital-architect`** page rebranded **EXPERIENCE STUDIO™** · **`hideNavTabs`** · legacy **`DigitalArchitectWorkspace`** preserved (not default UI)
+- **`adminStudioNavigation.ts`** — module title/purpose updated to Experience Studio™
+
+**Conventions:** Experience Studio is a **UI/session layer** on M55 Digital Architect — business logic and `digital-architect` core unchanged. Builder panels slide in on demand; never permanent toolbars. Remix adjusts design DNA only — content/navigation/business logic preserved in architecture layer.
+
+**Changes:** experience-studio/*, experience-studio components, useExperienceStudioState.ts, digital-architect/page.tsx, adminStudioNavigation.ts, CORE.md, MEMORY.md.

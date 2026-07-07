@@ -155,8 +155,8 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   },
   {
     id: 'digital-architect',
-    title: 'DIGITAL ARCHITECT',
-    purpose: 'Digital solution architect — experience gallery, hybrid modes, ecosystem design, inheritance, launch handoff. V2.0.',
+    title: 'EXPERIENCE STUDIO',
+    purpose: 'Experience Studio™ — conversational creative direction, Design DNA™, live canvas, Remix™, AI Creative Director. Not a page builder — a world-class agency. (Digital Architect core preserved.)',
     route: p('digital-architect'),
     groupId: 'overview',
     status: 'demo',

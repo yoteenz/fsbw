@@ -1,26 +1,28 @@
 import { useNavigate } from 'react-router-dom';
 import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
 import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
-import { DigitalArchitectWorkspace } from '../../../../components/admin/studio/digital-architect/DigitalArchitectWorkspace';
+import { ExperienceStudioWorkspace } from '../../../../components/admin/studio/experience-studio/ExperienceStudioWorkspace';
 
-const DIGITAL_ARCHITECT_SUBTITLE =
-  'Digital solution architect — transform approved blueprints into unforgettable digital worlds. Purpose before templates.';
+const EXPERIENCE_STUDIO_SUBTITLE =
+  'Direct a world-class creative agency — Studio Intelligence™ as your Creative Director. Experiences, not pages.';
 
 export default function AdminStudioDigitalArchitectPage() {
   const navigate = useNavigate();
 
   return (
     <AdminStudioStageShell
-      title="DIGITAL ARCHITECT"
-      subtitle={DIGITAL_ARCHITECT_SUBTITLE}
+      title="EXPERIENCE STUDIO"
+      subtitle={EXPERIENCE_STUDIO_SUBTITLE}
       breadcrumbParentLabel="ADMIN"
       breadcrumbParentPath="/admin/dashboard"
       onBack={() => navigate('/admin/studio/experience-architect')}
       navGroupId="overview"
+      hideNavTabs
+      pageHeading="EXPERIENCE STUDIO™"
     >
-      <DigitalArchitectWorkspace />
+      <ExperienceStudioWorkspace />
       <AdminStudioDisclaimerFooter>
-        DIGITAL ARCHITECT V2.0 · EXPERIENCE GALLERY · ECOSYSTEM DESIGN · DEMO PLACEHOLDER
+        EXPERIENCE STUDIO™ · DESIGN DNA · EXPERIENCE DNA · REMIX · AI CREATIVE DIRECTOR · DEMO PLACEHOLDER
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );
