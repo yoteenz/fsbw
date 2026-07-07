@@ -3,7 +3,7 @@
  * Always resolves through ai-media workspace paths — stable regardless of guard/workspace churn.
  */
 import { NDXBOOK_WORKSPACE_ID } from '../../../../studio-os-core/ndxbook/constants';
-import { workspaceStudioModulePath } from '../../../../studio-os-core/workspace/routes';
+import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 
 export type NdxbookMissionActionId =
   | 'create-page'
@@ -23,7 +23,10 @@ export type NdxbookMissionActionLink = {
 };
 
 function ndxModule(segment: string, workspaceId = NDXBOOK_WORKSPACE_ID): string {
-  return workspaceStudioModulePath(workspaceId, segment);
+  if (workspaceId === NDXBOOK_WORKSPACE_ID) {
+    return `/admin/studio/${segment.replace(/^\//, '')}`;
+  }
+  return `${STUDIO_OS_ROUTES.workspaceShell(workspaceId).replace(/\/$/, '')}/studio/${segment.replace(/^\//, '')}`;
 }
 
 /** @internal exported for panel deep links */
@@ -42,13 +45,20 @@ export function migrateLegacyNdxbookActionRoute(route: string): string {
   return queryPart ? `${target}?${queryPart}` : target;
 }
 
+export function ndxbookNewsroomQuickLink(workspaceId: string = NDXBOOK_WORKSPACE_ID): string {
+  if (workspaceId === NDXBOOK_WORKSPACE_ID) {
+    return '/admin/studio/ndxbook/newsroom';
+  }
+  return STUDIO_OS_ROUTES.workspaceNewsroom(workspaceId);
+}
+
 export function buildNdxbookMissionActionLinks(
   workspaceId: string = NDXBOOK_WORKSPACE_ID
 ): NdxbookMissionActionLink[] {
   return [
-    { id: 'create-page', label: 'CREATE PAGE', route: `${ndxModule('ndxbook', workspaceId)}?tab=pages` },
-    { id: 'approve', label: 'APPROVE PRODUCTION', route: `${ndxModule('ndxbook', workspaceId)}?tab=checklist` },
-    { id: 'publish', label: 'PUBLISH', route: `${ndxModule('distribution-network', workspaceId)}?brand=ndxbook` },
+    { id: 'create-page', label: 'CREATE PAGE', route: ndxbookNewsroomQuickLink(workspaceId) },
+    { id: 'approve', label: 'APPROVE PRODUCTION', route: ndxbookNewsroomQuickLink(workspaceId) },
+    { id: 'publish', label: 'PUBLISH', route: ndxbookNewsroomQuickLink(workspaceId) },
     { id: 'intelligence', label: 'OPEN STUDIO INTELLIGENCE', route: ndxModule('studio-intelligence', workspaceId) },
     { id: 'experiment', label: 'LAUNCH EXPERIMENT', route: ndxModule('labs', workspaceId) },
     { id: 'knowledge-graph', label: 'OPEN KNOWLEDGE GRAPH', route: ndxModule('knowledge-hub', workspaceId) },
@@ -70,7 +80,6 @@ export function ndxbookMissionControlQuickLink(workspaceId: string = NDXBOOK_WOR
   return ndxModule('ndxbook/mission-control', workspaceId);
 }
 
-export function ndxbookPagesQuickLink(stage?: string, workspaceId: string = NDXBOOK_WORKSPACE_ID): string {
-  const base = `${ndxModule('ndxbook', workspaceId)}?tab=pages`;
-  return stage ? `${base}&stage=${encodeURIComponent(stage)}` : base;
+export function ndxbookPagesQuickLink(_stage?: string, workspaceId: string = NDXBOOK_WORKSPACE_ID): string {
+  return ndxbookNewsroomQuickLink(workspaceId);
 }

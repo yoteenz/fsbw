@@ -40004,3 +40004,33 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** All Studio org + platform pages scroll inside **`.admin-studio-scroll-body`** within **`.menu-toggle-card.admin-studio-main-card`**. Nav tabs scroll with workspace content. Inner three-column workspaces cap panel height on large screens and scroll inside panels.
 
 **Changes:** index.css, menuToggleHeights.ts, AdminStudioLayout.tsx, StudioPlatformLayout.tsx, 7 studio-os page files, ProductionStudioWorkspace.tsx, RenderQueueWorkspace.tsx, ProductionBuilderWorkspace.tsx, ProductionStudioPanels.tsx, RenderQueuePanels.tsx, MEMORY.md.
+<<<<<<< HEAD
+=======
+
+---
+
+## 2026-07-07 — Page 001 review/approve discoverability (not on Production page)
+
+**Context (full chat arc):** Session included Campaign Deliverables Manager, deliverables visibility, Studio Command Center card/orb fixes, and Studio scroll audit (`fe5749be`). User could not find where to **review and approve Page 001** — expected it on **Production** page.
+
+**Clarification:** **`/admin/studio/production`** = Frontal Slayer **content-pack kanban** (casting → production pipeline) — **not** NDXBook Page 001. **Page 001** is **NDXBook (ai-media)** Founder Pilot flow: create → Studio Intelligence review → **APPROVE PRODUCTION** → schedule/publish Instagram.
+
+**Root cause (UX bug):** **`PAGE 001 PIPELINE`** UI lived only in **`NdxbookNewsroom`** (`/admin/studio-os/workspace/ai-media/newsroom`), but links pointed elsewhere:
+- **`adminStudioNdxbookNewsroomPath()`** → `/admin/studio/ndxbook?tab=pages` (registry list only — **no approve buttons**)
+- Mission Control **REVIEW & POST CONTENT** → distribution network
+- **APPROVE PRODUCTION** action → ndxbook checklist tab
+
+**Fix delivered:**
+- New route **`/admin/studio/ndxbook/newsroom`** — full Newsroom + **PAGE 001 PIPELINE** panel (Production Floor tab default)
+- **`adminStudioNdxbookNewsroomPath()`** → newsroom route
+- **`ndxbookNewsroomQuickLink()`**; mission action links (create / approve / publish) → newsroom
+- Mission Control CTA → **REVIEW & APPROVE PAGE 001 →**
+- **NDXBook → Pages tab** embeds pipeline panel + link to full newsroom
+- Founder pilot seed **CREATE PAGE 001** route updated
+
+**How to use (NDXBook / ai-media):** Headquarters → **REVIEW & APPROVE PAGE 001** or **`/admin/studio/ndxbook/newsroom`** → **＋ CREATE PAGE 001** → **RUN STUDIO INTELLIGENCE** → **APPROVE PRODUCTION** → schedule/publish.
+
+**Campaign Engine note:** Truth Tuesday **“Page 001 · Sleep debt myth”** deliverable is separate — **Campaign Engine → Deliverables** tab → tap deliverable → Newsroom Editor overlay.
+
+**Changes:** ndxbook/newsroom/page.tsx, App.tsx, adminStudioRoutes.ts, ndxbookMissionActionRoutes.ts, ndxbook/mission-control/page.tsx, NdxbookWorkspace.tsx, mission-control-pilot.ts, MEMORY.md.
+>>>>>>> 676b7e7c (Fix Studio scroll on all pages: shared scroll body, migrate studio-os shells, panel max-heights)

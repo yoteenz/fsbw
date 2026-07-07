@@ -606,7 +606,7 @@ export function adminStudioPublishingQueuePath(): string {
 }
 
 export function adminStudioNdxbookNewsroomPath(): string {
-  return `${ADMIN_STUDIO_BASE_PATH}/ndxbook?tab=pages`;
+  return `${ADMIN_STUDIO_BASE_PATH}/ndxbook/newsroom`;
 }
 
 export function adminStudioOsPath(): string {

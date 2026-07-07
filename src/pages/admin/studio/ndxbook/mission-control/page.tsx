@@ -4,8 +4,8 @@ import { AdminStudioDisclaimerFooter } from '../../../../../components/admin/stu
 import { NdxbookMissionControl } from '../../../../../components/admin/studio-os/ndxbook-mission-control/NdxbookMissionControl';
 import { MissionQuickLink } from '../../../../../components/admin/studio-os/ndxbook-mission-control/MissionQuickLink';
 import {
-  ndxbookDistributionQuickLink,
   ndxbookModulePath,
+  ndxbookNewsroomQuickLink,
   ndxbookSocialsQuickLink,
 } from '../../../../../components/admin/studio-os/ndxbook-mission-control/ndxbookMissionActionRoutes';
 import { useEnsureNdxbookWorkspaceOnMount } from '../../../../../hooks/useEnsureNdxbookWorkspace';
@@ -29,7 +29,7 @@ export default function AdminStudioNdxbookMissionControlPage() {
     >
       <div className="flex flex-wrap gap-1 mb-3">
         <MissionQuickLink
-          to={ndxbookDistributionQuickLink()}
+          to={ndxbookNewsroomQuickLink()}
           className="flex-1 py-2 text-[7px] font-futura uppercase border text-center"
           style={{
             fontWeight: 515,
@@ -40,7 +40,7 @@ export default function AdminStudioNdxbookMissionControlPage() {
             display: 'block',
           }}
         >
-          REVIEW & POST CONTENT →
+          REVIEW & APPROVE PAGE 001 →
         </MissionQuickLink>
         <MissionQuickLink
           to={ndxbookSocialsQuickLink()}

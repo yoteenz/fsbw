@@ -10,11 +10,14 @@ import {
   PROGRAMMING_SLOT_FIELDS,
   LABS_TRACKING_FIELDS,
 } from '../../../../studio-os-core/ndxbook/constants';
+import { useNdxbookPagePipeline } from '../../../../hooks/useNdxbookPagePipeline';
+import { NdxbookPagePipelinePanel } from '../../studio-os/ndxbook-newsroom/NdxbookPagePipelinePanel';
 import {
   adminStudioLabsPath,
   adminStudioMemoryBiblePath,
   adminStudioNdxbookDistributionPath,
   adminStudioNdxbookMissionControlPath,
+  adminStudioNdxbookNewsroomPath,
   adminStudioTalentNetworkPath,
 } from '../../../../utils/adminStudioRoutes';
 
@@ -80,6 +83,8 @@ export function NdxbookWorkspace() {
     labsTrackingFields,
     refresh,
   } = useAdminStudioNdxbookState();
+
+  const { page001, refresh: refreshPipeline } = useNdxbookPagePipeline();
 
   const selectTab = (id: NdxbookTabId) => {
     setTab(id);
@@ -282,6 +287,21 @@ export function NdxbookWorkspace() {
       case 'pages':
         return (
           <div className="space-y-2">
+            <NdxbookPagePipelinePanel
+              page={page001}
+              onRefresh={() => {
+                refresh();
+                refreshPipeline();
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => navigate(adminStudioNdxbookNewsroomPath())}
+              className="w-full py-2 text-[7px] font-futura uppercase border"
+              style={{ fontWeight: 515, color: '#6366F1', borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(99,102,241,0.06)' }}
+            >
+              OPEN FULL NEWSROOM · PRODUCTION FLOOR →
+            </button>
             <div className="p-2 border" style={panelStyle}>
               <p className="text-[7px] font-futura uppercase" style={{ color: ADMIN_STUDIO_THEME.accent }}>
                 GLOBAL PAGE NUMBERING
@@ -292,7 +312,7 @@ export function NdxbookWorkspace() {
             </div>
             {pages.length === 0 ? (
               <p className="text-[6px] font-futura uppercase px-2 py-2 border" style={{ ...panelStyle, fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-                NO PAGES YET · CREATE FIRST PAGE FROM LAUNCH CHECKLIST
+                NO PAGES IN REGISTRY YET · USE PAGE 001 PIPELINE ABOVE
               </p>
             ) : (
               pages.map((page) => (
