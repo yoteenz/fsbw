@@ -99,6 +99,8 @@ docs/studio-os/
 | Architecture | `architecture.md` | Platform hierarchy + content OS |
 | Master Content Pipeline™ | `master-content-pipeline.md` | Canonical ten-gate content lifecycle |
 | Lifecycle Gates Reference | `master-content-pipeline-gates.md` | Per-gate specifications |
+| Studio Production Engine™ | `studio-production-engine.md` | Department-based production UX · IA |
+| Department workspaces | `studio-production-engine-departments.md` | Per-department workspace definitions |
 | NDXBook Page 001 runbook | `../NDXBOOK_PAGE_001_PIPELINE.md` | Master Content Asset pilot |
 | Architecture Validator | `scripts/architecture-validator.mjs` | Build gate |
 | Compile script | `scripts/compile-master-spec.mjs` | Spec compilation |
@@ -115,6 +117,8 @@ docs/studio-os/
 | Knowledge Registry™ | `knowledge-registry.md` |
 | Master Content Pipeline™ | `master-content-pipeline.md` |
 | Lifecycle Gates Reference | `master-content-pipeline-gates.md` |
+| Studio Production Engine™ | `studio-production-engine.md` |
+| Department workspaces | `studio-production-engine-departments.md` |
 | System Registry™ | `system-registry.md` |
 
 ---

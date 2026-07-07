@@ -1,26 +1,27 @@
 # Master Content Pipeline™ — Lifecycle Gates Reference
 
 **Parent:** [Master Content Pipeline™](./master-content-pipeline.md)  
+**Department UX:** [Studio Production Engine™](./studio-production-engine.md) · [Department workspaces](./studio-production-engine-departments.md)  
 **Type:** Architecture & documentation (operating model upgrade · not a Design Revision · not a new milestone)
 
-This document defines the **ten canonical lifecycle gates** for Studio OS content. Every gate uses the same schema so products, concierges, and AI systems share one vocabulary.
+This document defines the **ten canonical lifecycle gates** for Studio OS content. Each gate maps 1:1 to a **department workspace** in the Studio Production Engine.
 
 ---
 
 ## Gate index
 
-| Gate | Entry | Exit |
-|------|-------|------|
-| [DISCOVER GATE™](#discover-gate) | Idea exists | Approved Creative Brief |
-| [DEVELOP GATE™](#develop-gate) | Creative Brief | Production Blueprint |
-| [ASSEMBLY GATE™](#assembly-gate) | Production Blueprint | Production Ready |
-| [PRODUCTION GATE™](#production-gate) | Production Ready | Master Content Asset |
-| [REVIEW GATE™](#review-gate) | Master Content Asset | Approved Master Asset |
-| [EXPANSION GATE™](#expansion-gate) | Approved Master Asset | Derivative Library |
-| [APPROVAL GATE™](#approval-gate) | Derivative Library | Publishing Package |
-| [PUBLISH GATE™](#publish-gate) | Publishing Package | Published Assets |
-| [MEASURE GATE™](#measure-gate) | Published Assets | Performance Report |
-| [LEARNING GATE™](#learning-gate) | Performance Report | Institutional Knowledge |
+| Gate | Department | Entry | Exit |
+|------|------------|-------|------|
+| [DISCOVER GATE™](#discover-gate) | DISCOVER DEPARTMENT | Idea exists | Approved Creative Brief |
+| [DEVELOP GATE™](#develop-gate) | DEVELOPMENT DEPARTMENT | Creative Brief | Production Package |
+| [ASSEMBLY GATE™](#assembly-gate) | ASSEMBLY DEPARTMENT | Production Package | Production Ready |
+| [PRODUCTION GATE™](#production-gate) | PRODUCTION DEPARTMENT | Production Ready | Master Content Asset v1 |
+| [REVIEW GATE™](#review-gate) | REVIEW DEPARTMENT | Master Content Asset | Quality Approved |
+| [EXPANSION GATE™](#expansion-gate) | EXPANSION DEPARTMENT | Quality Approved | Derivative Asset Library |
+| [APPROVAL GATE™](#approval-gate) | APPROVAL DEPARTMENT | Derivative Library | Publishing Authorization |
+| [PUBLISH GATE™](#publish-gate) | PUBLISHING DEPARTMENT | Publishing Authorization | Campaign Live |
+| [MEASURE GATE™](#measure-gate) | INTELLIGENCE DEPARTMENT | Campaign Live | Performance Report |
+| [LEARNING GATE™](#learning-gate) | LEARNING DEPARTMENT | Performance Report | Continuous Improvement |
 
 ---
 
@@ -54,12 +55,12 @@ This document defines the **ten canonical lifecycle gates** for Studio OS conten
 |-------|--------|
 | **Owner(s)** | Creative Director · Newsroom Editor · Campaign deliverables lead |
 | **Inputs** | Approved Creative Brief |
-| **Outputs** | **Production Blueprint** — storyboard · script · messaging · references · creative direction · moodboard · deliverables plan |
+| **Outputs** | **Production Package** — storyboard · script · messaging · references · creative direction · moodboard · deliverables plan |
 | **Required approvals** | Editorial / creative plan approval before Assembly |
 | **AI systems** | Studio Intelligence™ · Content Brain · Writing DNA · Profession Brain™ (domain knowledge) |
 | **Concierge systems** | Creative Director Concierge™ · Editorial Concierge™ · Brand Concierge™ · Visual Design Concierge™ |
 | **Entry criteria** | Approved Creative Brief on record |
-| **Exit criteria** | Production Blueprint approved — nothing enters Assembly without it |
+| **Exit criteria** | Production Package approved — nothing enters Assembly without it |
 | **Failure conditions** | Script incomplete · off-brand messaging · missing CTA/hook · no visual direction · deliverables plan undefined |
 
 **Includes:** Storyboard · script · messaging · references · creative direction · moodboard · deliverables planning.

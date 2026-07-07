@@ -40152,3 +40152,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - Updated `architecture.md`, `NDXBOOK_PAGE_001_PIPELINE.md`, `GLOSSARY.md`, `DOCUMENTATION_MAP.md`, `PRODUCT_PHILOSOPHY.md`, `products/website-builder/README.md`, `motherboard/CORE.md` (append gate bullet).
 
 **Conventions:** Documentation and architecture use gate names as canonical; implementation registry remains legacy bridge until future code pass.
+
+---
+
+## 2026-07-07 — Studio Production Engine (department-based UX architecture)
+
+**Context (full chat arc):** Page 001 fixes; Master Content Pipeline adopted (17-stage → ten gates); gate documentation upgrade. User identified **fundamental UX issue**: prototype behaves like **long report with stacked sections** — not Studio OS philosophy. Requested **workflow + IA redesign only** — department-based operating model; living Master Content Asset; ceremonial navigation; **no implementation · no visual redesign · no rename of Master Content Pipeline**.
+
+**Decisions / outcomes:**
+- **Studio Production Engine™** — canonical UX/IA layer implementing Master Content Pipeline as **ten department workspaces** in Studio Headquarters Production Wing.
+- **Departments:** DISCOVER · DEVELOPMENT · ASSEMBLY · PRODUCTION · REVIEW · EXPANSION · APPROVAL · PUBLISHING · INTELLIGENCE · LEARNING — each with own workspace · tools · entry/exit · tagline.
+- **Living asset passport** — single Master Content Asset object follows user; no duplication.
+- **Navigation:** ceremonial Continue handoffs · breadcrumbs · completed → history · future locked · anti-pattern = one scrolling production page.
+- **Production Department** — full studio (canvas · editor · asset library · prompt builder · live preview · collaboration) — NOT a report.
+- **Prototype gap documented:** `NdxbookPagePipelinePanel` is persistence pilot only; target = department rooms.
+- Master Content Pipeline™ name unchanged; design language unchanged.
+
+**Changes (documentation only):**
+- Added `docs/studio-os/studio-production-engine.md`, `studio-production-engine-departments.md`, `master-spec/studio-production-engine.yaml`.
+- Updated pipeline · gates · architecture · NDXBOOK runbook · GLOSSARY · DOCUMENTATION_MAP · PRODUCT_PHILOSOPHY · website-builder README · design/README · executive-IA · MASTER_SPEC_INDEX · CORE.md.
+
+**Conventions:** Users think *"I entered Review Department"* not *"I'm on a production page."* Engineering deferred until architecture ratified.

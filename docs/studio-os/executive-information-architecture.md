@@ -10,6 +10,7 @@ Studio OS is **Executive Headquarters**, not an admin dashboard. Milestone 83 es
 - Everything else **quietly supports** that answer
 - Founders should feel **guided**, not overwhelmed
 - Scrolling should feel like **walking through Headquarters**
+- **Content production:** [Studio Production Engine™](../studio-production-engine.md) extends this to the Production Wing — one department workspace at a time, not one long scrolling production page
 
 ## Page hierarchy (mandatory rhythm)
 

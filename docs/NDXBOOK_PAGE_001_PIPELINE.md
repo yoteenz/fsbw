@@ -2,7 +2,18 @@
 
 Operational runbook for the first authentic NDXBook Instagram post inside **AI Media / NDXBook Operating Center**.
 
-**Canonical model:** [Master Content Pipeline™](./studio-os/master-content-pipeline.md) — Page 001 is a **Master Content Asset™** created in **PRODUCTION GATE™**, not a standalone publishing unit.
+**Canonical model:** [Master Content Pipeline™](./studio-os/master-content-pipeline.md) · [Studio Production Engine™](./studio-os/studio-production-engine.md)
+
+Page 001 is a **living Master Content Asset** — not a static preview card. It travels through **department workspaces** (Production · Review · Approval · Publishing · Learning).
+
+### Prototype vs target UX
+
+| State | Behavior |
+|-------|----------|
+| **Current prototype** | Single Newsroom panel stacks create · review · approve · schedule · publish — persistence pilot only |
+| **Target (Studio Production Engine)** | Separate department rooms · ceremonial **Continue** handoffs · asset passport follows user |
+
+Do not treat the stacked panel as the canonical UX. See [studio-production-engine-departments.md](./studio-os/studio-production-engine-departments.md).
 
 ## Prerequisites
 
@@ -18,21 +29,22 @@ Operational runbook for the first authentic NDXBook Instagram post inside **AI M
 1. Open **NDXBook Headquarters** → Mission Control or workspace dashboard.
 2. **Enter Newsroom / Production Floor** (`/admin/studio/ndxbook/newsroom` or `/admin/studio-os/workspace/ai-media/newsroom`).
 3. Use **MASTER CONTENT ASSET · PAGE 001 PIPELINE** panel at top of Production Floor tab.
-4. Status reflects the active **lifecycle gate** (Production · Review · Approval · Publish · Learning).
+4. Status reflects active **department** — e.g. *"Page 001 · REVIEW DEPARTMENT"* (prototype maps gates on one panel until department workspaces ship).
 
-## Gate mapping (Page 001 pilot)
+## Department mapping (Page 001 pilot)
 
-| Gate | Page 001 behavior |
-|------|-------------------|
-| DISCOVER · DEVELOP · ASSEMBLY | Implicit in pilot seed — full surfaces as Campaign Engine and Newsroom expand |
-| **PRODUCTION GATE™** | `createNdxbookPage()` — master asset registered + newsroom sync |
-| **REVIEW GATE™** | Studio Intelligence review (clarity, accuracy, tone, brand, authenticity) |
-| **REVIEW GATE™** (founder) | Explicit **APPROVE PRODUCTION** after review PASS |
-| **APPROVAL GATE™** | Datetime + Instagram readiness before schedule |
-| **PUBLISH GATE™** | Publish Now or scheduled Instagram |
-| **LEARNING GATE™** | On publish → `knowledgeOutputs` + institutional-knowledge archive |
+| Department | Gate | Page 001 behavior |
+|------------|------|-------------------|
+| DISCOVER · DEVELOPMENT · ASSEMBLY | (upstream) | Implicit in pilot seed |
+| **PRODUCTION DEPARTMENT** | PRODUCTION GATE™ | `createNdxbookPage()` — master asset registered |
+| **REVIEW DEPARTMENT** | REVIEW GATE™ | Studio Intelligence + **APPROVE PRODUCTION** |
+| **APPROVAL DEPARTMENT** | APPROVAL GATE™ | Instagram readiness · schedule validation |
+| **PUBLISHING DEPARTMENT** | PUBLISH GATE™ | Publish Now / scheduled Instagram |
+| **LEARNING DEPARTMENT** | LEARNING GATE™ | `knowledgeOutputs` archive |
 
-**Example status copy:** *"Page 001 is currently in Review Gate."*
+**Example status copy:** *"Page 001 is currently in Review Department."* · *"I'm waiting on Marketing Concierge approval."*
+
+## Gate mapping (legacy reference)
 
 ## 15-Step Runbook
 
@@ -104,6 +116,7 @@ When Instagram OAuth is not configured, Founder Pilot Mode allows **local schedu
 
 ## Related docs
 
+- [Studio Production Engine™](./studio-os/studio-production-engine.md) — target department UX
 - [Master Content Pipeline™](./studio-os/master-content-pipeline.md) — canonical operating model
 - [Lifecycle Gates Reference](./studio-os/master-content-pipeline-gates.md) — full gate specifications
 - [Studio Social Publishing](./STUDIO_SOCIAL_PUBLISHING.md) — OAuth setup

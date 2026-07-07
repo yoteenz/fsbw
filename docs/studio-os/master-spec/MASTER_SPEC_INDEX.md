@@ -119,6 +119,8 @@ Runs automatically before `npm run build` via `prebuild`.
 | Document | Purpose |
 |----------|---------|
 | `docs/studio-os/PRODUCT_PHASE_CHARTER.md` | Product lifecycle · priorities · roadmap policy |
+| `docs/studio-os/studio-production-engine.md` | **Studio Production Engine™** — department-based content UX (governed architecture) |
+| `docs/studio-os/master-spec/studio-production-engine.yaml` | Master Spec registration — Production Engine departments |
 | `docs/studio-os/products/experience-studio/` | **Experience Studio™** — Golden Product · Reference Implementation · spec awaiting approval |
 | `docs/studio-os/products/website-builder/` | **Studio Website Builder™** — Website publish specialization · spec awaiting approval |
 | `docs/studio-os/master-spec/product-roadmap.yaml` | P1–P3 products · governed volume roadmaps |

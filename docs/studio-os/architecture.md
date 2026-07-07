@@ -118,25 +118,31 @@ See `src/studio-os-core/feature-inheritance/registry.ts`.
 
 When Studio OS becomes its own application, remap `application/routes.ts` prefixes only. All business logic remains in `studio-os-core/`.
 
-## Master Content Pipeline™
+## Master Content Pipeline™ · Studio Production Engine™
 
 Studio OS content products share a **production pipeline**, not a page-centric publishing workflow. The pipeline is the **canonical operating model** — products consume it; they do not own independent lifecycles.
 
+**Lifecycle (gates):** DISCOVER → DEVELOP → ASSEMBLY → PRODUCTION → REVIEW → EXPANSION → APPROVAL → PUBLISH → MEASURE → LEARNING
+
+**UX (departments):** The [Studio Production Engine™](./studio-production-engine.md) implements each gate as a **department workspace** inside Studio Headquarters. Users **travel** between departments with a **living Master Content Asset** — not a long scrolling report page.
+
 | Concept | Role |
 |---------|------|
-| **Master Content Asset™** | Single source of truth (Page 001, episode, article, video, …) |
+| **Master Content Asset™** | Living object — single passport through all departments |
 | **Derivatives** | Platform-specific outputs linked to the master asset |
-| **Ten lifecycle gates** | DISCOVER → DEVELOP → ASSEMBLY → PRODUCTION → REVIEW → EXPANSION → APPROVAL → PUBLISH → MEASURE → LEARNING |
-| **Concierge Review Board™** | Multidisciplinary PASS / WARNING / FAIL (REVIEW GATE + APPROVAL GATE) |
-| **Content Expansion Engine™** | Generate derivatives from one master asset (EXPANSION GATE) |
+| **Ten lifecycle gates** | Entry/exit criteria (Master Content Pipeline™) |
+| **Ten departments** | Workspaces · tools · navigation (Studio Production Engine™) |
+| **Asset passport** | Brief · research · versions · reviews · derivatives — never duplicated |
 
-**Spec:** [master-content-pipeline.md](./master-content-pipeline.md) · [Gates reference](./master-content-pipeline-gates.md)  
-**Implementation registry (legacy bridge):** `src/studio-os-core/content-pipeline/`
+**Spec:** [master-content-pipeline.md](./master-content-pipeline.md) · [Gates](./master-content-pipeline-gates.md) · [Production Engine](./studio-production-engine.md) · [Departments](./studio-production-engine-departments.md)  
+**Master Spec:** [studio-production-engine.yaml](./master-spec/studio-production-engine.yaml)
 
 **Consumers:** Campaign Engine™ · Newsroom™ · Website Builder™ · Publishing Studio™ · Social Studio™ · Email Studio™ · Knowledge Library™ · Studio Intelligence™
 
 ## Related Docs
 
+- [Studio Production Engine™](./studio-production-engine.md)
+- [Department workspaces](./studio-production-engine-departments.md)
 - [Master Content Pipeline™](./master-content-pipeline.md)
 - [Lifecycle Gates Reference](./master-content-pipeline-gates.md)
 - [Workspace System](./workspace-system.md)

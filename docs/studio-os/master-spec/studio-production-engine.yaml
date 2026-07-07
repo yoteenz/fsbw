@@ -1,0 +1,145 @@
+# Studio Production Engine™ — Master Spec Registration
+# Product architecture (governed documentation — NOT a new milestone · NOT frozen Foundation)
+# Version: 1.0.0
+# Date: 2026-07-07
+
+id: studio-production-engine
+name: Studio Production Engine™
+type: product-architecture
+status: ratified-documentation
+implementation: deferred
+
+relationship:
+  implements: master-content-pipeline
+  parent-system: Studio OS
+  design-governance:
+    - docs/studio-os/design/STUDIO_DESIGN_CONSTITUTION.md
+    - docs/studio-os/executive-information-architecture.md
+
+philosophy: >
+  Studio OS content production is department-based travel through Studio Headquarters —
+  not stacked sections on one scrolling page. Each department owns the living Master
+  Content Asset until handoff.
+
+documents:
+  primary: docs/studio-os/studio-production-engine.md
+  departments: docs/studio-os/studio-production-engine-departments.md
+  pipeline: docs/studio-os/master-content-pipeline.md
+  gates: docs/studio-os/master-content-pipeline-gates.md
+
+departments:
+  - id: discover
+    number: 01
+    name: DISCOVER DEPARTMENT
+    tagline: Find the opportunity.
+    gate: discover-gate
+    exit: Approved Creative Brief
+  - id: development
+    number: 02
+    name: DEVELOPMENT DEPARTMENT
+    tagline: Design the idea.
+    gate: develop-gate
+    exit: Production Package
+  - id: assembly
+    number: 03
+    name: ASSEMBLY DEPARTMENT
+    tagline: Prepare production.
+    gate: assembly-gate
+    exit: Production Ready
+  - id: production
+    number: 04
+    name: PRODUCTION DEPARTMENT
+    tagline: Create the master asset.
+    gate: production-gate
+    exit: Master Content Asset v1
+  - id: review
+    number: 05
+    name: REVIEW DEPARTMENT
+    tagline: Perfect the experience.
+    gate: review-gate
+    exit: Quality Approved
+  - id: expansion
+    number: 06
+    name: EXPANSION DEPARTMENT
+    tagline: Multiply the content.
+    gate: expansion-gate
+    exit: Derivative Asset Library
+  - id: approval
+    number: 07
+    name: APPROVAL DEPARTMENT
+    tagline: Authorize launch.
+    gate: approval-gate
+    exit: Publishing Authorization
+  - id: publishing
+    number: 08
+    name: PUBLISHING DEPARTMENT
+    tagline: Release to the world.
+    gate: publish-gate
+    exit: Campaign Live
+  - id: intelligence
+    number: 09
+    name: INTELLIGENCE DEPARTMENT
+    tagline: Measure impact.
+    gate: measure-gate
+    exit: Performance Report
+  - id: learning
+    number: 10
+    name: LEARNING DEPARTMENT
+    tagline: Improve the next campaign.
+    gate: learning-gate
+    exit: Continuous Improvement
+    loops_to: discover
+
+navigation:
+  model: ceremonial-department-travel
+  anti_patterns:
+    - single-long-scrolling-production-page
+    - stacked-report-sections
+    - browser-tab-switching-metaphor
+  requirements:
+    - one-department-workspace-at-a-time
+    - asset-passport-follows-user
+    - completed-departments-collapse-to-history
+    - future-departments-locked-until-prerequisites
+    - breadcrumbs-always-visible
+
+master-asset:
+  type: living-object
+  rule: single-passport-no-duplication
+  carries:
+    - creative-brief
+    - research
+    - storyboard
+    - scripts
+    - references
+    - prompt-history
+    - versions
+    - media
+    - comments
+    - concierge-reviews
+    - approvals
+    - derivatives
+    - publishing-history
+    - analytics
+    - ai-learnings
+
+product-consumers:
+  - campaign-engine
+  - newsroom
+  - website-builder
+  - publishing-studio
+  - social-studio
+  - email-studio
+  - production-studio
+  - ndxbook-page-001-pilot
+
+prototype-gap:
+  current: NdxbookPagePipelinePanel stacks actions on one panel
+  target: department workspaces per this spec
+  implementation: explicitly-deferred
+
+governance:
+  not-a-design-revision: true
+  not-a-milestone: true
+  not-implementation: true
+  visual-language: unchanged

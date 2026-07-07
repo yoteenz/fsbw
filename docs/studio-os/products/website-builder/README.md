@@ -56,7 +56,7 @@ Implementation **must not begin** until this package is reviewed and approved.
 | Priority | **P2 Phase 0 Golden Product** — Reference Implementation for Studio OS |
 | Relationship | Website Builder™ is a **publish specialization** for Website experience type — inherits this Reference Implementation |
 | Precedes | Website publish pipeline · Campaign Engine™ · Publishing Studio™ |
-| Content operating model | Consumes [Master Content Pipeline™](../../master-content-pipeline.md) gates — DEVELOP · PRODUCTION · EXPANSION · APPROVAL · PUBLISH |
+| Content operating model | Consumes [Master Content Pipeline™](../../master-content-pipeline.md) · [Studio Production Engine™](../../studio-production-engine.md) department workspaces |
 | Release Channel | Preview (organization opt-in) |
 | Evolves from | Experience Studio™ UI + Digital Architect™ core |
 | Does NOT resemble | WordPress · Wix · Squarespace · Shopify · Webflow |

@@ -19,6 +19,8 @@ Products **inherit** design. They never own it.
 
 When Studio OS visual language evolves, update **one governance layer** — every future product inherits automatically.
 
+**Content production IA:** [Studio Production Engine™](../studio-production-engine.md) defines department workspaces (Discover · Development · Production · …) — each department composes catalog components into **places**, not stacked report sections. Visual canon unchanged; department **atmosphere** varies within [Design Language System™](./DESIGN_LANGUAGE_SYSTEM.md) bounds.
+
 ---
 
 ## Document Index

@@ -283,6 +283,9 @@ Platform-owned intelligence layer. AI models are replaceable engines beneath it.
 ### Studio Orb™
 Ambient intelligence presence — primary OS interaction anchor. `comp-studio-orb`. M89.1.
 
+### Studio Production Engine™
+Department-based UX implementing [Master Content Pipeline™](../master-content-pipeline.md). Ten **department workspaces** (Discover · Development · Assembly · Production · Review · Expansion · Approval · Publishing · Intelligence · Learning) inside Studio Headquarters Production Wing. Users travel with a **living Master Content Asset passport** — not a stacked report page. Spec: [studio-production-engine.md](../studio-production-engine.md). **Not implementation** — governed architecture only.
+
 ### Studio OS™
 Organizational Intelligence Platform — the complete ecosystem documented in this handbook.
 

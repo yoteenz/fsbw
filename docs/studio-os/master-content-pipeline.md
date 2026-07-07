@@ -34,6 +34,7 @@ This document is the canonical reference for:
 - All future Studio OS content products
 
 **Gate reference:** [master-content-pipeline-gates.md](./master-content-pipeline-gates.md)  
+**Department UX / IA:** [Studio Production Engine™](./studio-production-engine.md) — gates implemented as **Headquarters departments**, not stacked report sections  
 **Implementation registry (legacy bridge):** `src/studio-os-core/content-pipeline/`
 
 ---
@@ -47,6 +48,7 @@ This document is the canonical reference for:
 | One approval covers everything | REVIEW GATE + APPROVAL GATE per asset class |
 | Campaign = calendar of posts | Campaign = coordinated production pipeline |
 | Each product invents its own workflow | Products **consume** Master Content Pipeline gates |
+| One scrolling "production page" | **Studio Production Engine™** — department workspaces |
 | Success = published | Success = **Institutional Knowledge** (LEARNING GATE exit) |
 
 ---
@@ -109,6 +111,8 @@ flowchart TD
 ```
 
 Each gate is fully specified in [master-content-pipeline-gates.md](./master-content-pipeline-gates.md) with purpose, owners, inputs, outputs, approvals, AI systems, concierges, entry/exit criteria, and failure conditions.
+
+**UX implementation:** Each gate maps 1:1 to a **department workspace** in [Studio Production Engine™](./studio-production-engine.md). Users **travel** between departments; they do not scroll through all phases on one page.
 
 ---
 
@@ -215,7 +219,7 @@ Campaign Workspace, Newsroom, and all content product UIs must answer:
 
 The experience should feel like managing a **professional media production studio** — not creating isolated social posts.
 
-**Note:** Existing UI may still show legacy stage indicators (`MasterContentLifecycleStrip`) until a future implementation pass maps display to gate names. Documentation and architecture use **gate terminology** as canonical.
+**Note:** Existing UI may still show legacy stage indicators (`MasterContentLifecycleStrip`) on a **single panel** — prototype gap documented in Studio Production Engine. Target: department workspaces with ceremonial navigation. Documentation and architecture use **gate + department** terminology as canonical.
 
 ---
 
@@ -292,6 +296,8 @@ Runbook: [NDXBOOK_PAGE_001_PIPELINE.md](../NDXBOOK_PAGE_001_PIPELINE.md)
 
 ## Related documentation
 
+- [Studio Production Engine™](./studio-production-engine.md) — department-based UX · navigation · asset passport
+- [Department workspaces](./studio-production-engine-departments.md)
 - [Lifecycle Gates Reference](./master-content-pipeline-gates.md)
 - [Studio OS Architecture](./architecture.md)
 - [NDXBook Page 001 runbook](../NDXBOOK_PAGE_001_PIPELINE.md)
