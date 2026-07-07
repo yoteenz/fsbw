@@ -34,18 +34,6 @@ export function StudioOrb({ onOrbTap }: Props) {
       >
         <span className="studio-orb-chrome-ring" aria-hidden />
         <span className="studio-orb-crystal" aria-hidden />
-        {hasAmbient ? (
-          <span
-            aria-hidden
-            style={{
-              position: 'absolute',
-              inset: -2,
-              borderRadius: '50%',
-              border: '1px solid rgba(235,28,36,0.28)',
-              pointerEvents: 'none',
-            }}
-          />
-        ) : null}
       </button>
     </>
   );

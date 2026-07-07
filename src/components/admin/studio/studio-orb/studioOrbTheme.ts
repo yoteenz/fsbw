@@ -17,6 +17,8 @@ export const ORB_VISUAL = {
   textMuted: '#666',
   gold: '#92704A',
   portfolio: '#6366F1',
+  /** Matches admin main card shell (`border border-black` + `borderWidth: 1.3px`). */
+  border: '1.3px solid #000000',
 } as const;
 
 export const ORB_ANIMATION_CSS = `
@@ -79,7 +81,7 @@ export const ORB_ANIMATION_CSS = `
   backdrop-filter: blur(14px) saturate(1.35);
   -webkit-backdrop-filter: blur(14px) saturate(1.35);
   box-shadow: ${ORB_VISUAL.shadow}, ${ORB_VISUAL.innerGlow};
-  border: 1.5px solid rgba(255,255,255,0.72);
+  border: ${ORB_VISUAL.border};
   overflow: hidden;
 }
 .studio-orb-crystal::before {
@@ -101,7 +103,7 @@ export const ORB_ANIMATION_CSS = `
   position: absolute;
   inset: -1px;
   border-radius: 50%;
-  border: 1px solid rgba(200,200,200,0.55);
+  border: none;
   pointer-events: none;
 }
 .studio-orb-state-idle .studio-orb-crystal { animation: studio-orb-breathe 4.8s ease-in-out infinite; }

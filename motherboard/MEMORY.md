@@ -40031,3 +40031,41 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Campaign Engine note:** Truth Tuesday **“Page 001 · Sleep debt myth”** deliverable is separate — **Campaign Engine → Deliverables** tab → tap deliverable → Newsroom Editor overlay.
 
 **Changes:** ndxbook/newsroom/page.tsx, App.tsx, adminStudioRoutes.ts, ndxbookMissionActionRoutes.ts, ndxbook/mission-control/page.tsx, NdxbookWorkspace.tsx, mission-control-pilot.ts, MEMORY.md.
+
+---
+
+## 2026-07-07 — Page 001 newsroom route broken + HQ overview CTA missing
+
+**Context (full chat arc):** After **`bb3ef99e`** added **`/admin/studio/ndxbook/newsroom`**, user reported **newsroom route doesn't work** and **routing link/button no longer on headquarters/overview**.
+
+**Root causes:**
+1. **AI Media users** on `/admin/studio/ndxbook/newsroom` were redirected by **`StudioWorkspaceGuard`** to **`/admin/studio-os/workspace/ai-media/studio/ndxbook/newsroom`**, but **`resolveHeadquartersPageModule()`** only handled **`ndxbook/mission-control`** — **`ndxbook/newsroom` fell through to generic `ndxbook` page** (no pipeline).
+2. **Legacy workspace newsroom URL** (`/admin/studio-os/workspace/ai-media/newsroom`) used a different shell and confused routing.
+3. **Headquarters overview CTAs hidden on Day One:** **`MissionActionsPanel`** (CREATE / APPROVE / PUBLISH) sits in **Innovation Wing**, gated by **`resolveHeadquartersMaturity()`** (`showInnovation` requires 3+ pages or health ≥ 60). Founder Pilot starts at **0 pages** — wing hidden. **`ENTER NEWSROOM`** pointed at workspace URL, not canonical newsroom route.
+
+**Fix delivered:**
+- **`headquarters-module-resolver.ts`** — **`ndxbook/newsroom` → `ndxbook/newsroom/page`**
+- **`/admin/studio-os/workspace/ai-media/newsroom`** — redirect to **`/admin/studio/ndxbook/newsroom`**
+- All newsroom quick links use **`ndxbookNewsroomQuickLink()`** (Mission Control NEWSROOM tab, Operations panel, stage chips)
+- **`NdxbookPilotNewsroomBar`** — always-visible bar on Headquarters overview (below Executive Lobby)
+- **`PageOfTheDayPanel`** — **OPEN NEWSROOM · REVIEW & APPROVE →** button
+
+**How to use:** NDXBOOK Headquarters overview → **OPEN NEWSROOM · REVIEW & APPROVE PAGE 001 →** (top bar or Priority of the Day) → **`/admin/studio/ndxbook/newsroom`**.
+
+**Changes:** headquarters-module-resolver.ts, NdxbookPilotNewsroomBar.tsx, NdxbookMissionControl.tsx, NdxbookMissionControlPanels.tsx, ndxbookMissionActionRoutes.ts, studio-os/workspace/newsroom/page.tsx, MEMORY.md.
+
+---
+
+## 2026-07-07 — Studio Orb border: red → black (match main card)
+
+**Context (full chat arc):** User asked to change the **red border around the Studio Orb** to **black**, with the **same line weight as the main card border** (`1.3px solid #000000`).
+
+**Prior work in chat (already shipped):** Studio scroll audit; Page 001 newsroom route + HQ CTAs; newsroom resolver fix for AI Media workspace.
+
+**Orb border fix:**
+- Added **`ORB_VISUAL.border`** = `1.3px solid #000000` in **`studioOrbTheme.ts`** (matches admin main card `border border-black` + `borderWidth: 1.3px`).
+- **`.studio-orb-crystal`** uses that border instead of white `1.5px`.
+- **`.studio-orb-chrome-ring`** border removed (avoids double outline).
+- Removed redundant **ambient insight red outer ring** in **`StudioOrb.tsx`** (was `1px solid rgba(235,28,36,0.28)`); ambient state still reflected in aria-label.
+
+**Changes:** studioOrbTheme.ts, StudioOrb.tsx, MEMORY.md.
