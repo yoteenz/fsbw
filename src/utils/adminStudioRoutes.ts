@@ -1045,6 +1045,10 @@ export function adminStudioRoleIntelligencePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/role-intelligence`;
 }
 
+export function adminStudioOrganizationalHierarchyPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/organizational-hierarchy`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

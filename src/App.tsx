@@ -378,6 +378,10 @@ const AdminStudioRoleIntelligence = lazyWithRetry(
   () => import('./pages/admin/studio/role-intelligence/page'),
   'AdminStudioRoleIntelligence'
 );
+const AdminStudioOrganizationalHierarchy = lazyWithRetry(
+  () => import('./pages/admin/studio/organizational-hierarchy/page'),
+  'AdminStudioOrganizationalHierarchy'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1829,6 +1833,11 @@ function App() {
           <Route path="studio/role-intelligence" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioRoleIntelligence />
+            </Suspense>
+          } />
+          <Route path="studio/organizational-hierarchy" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioOrganizationalHierarchy />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

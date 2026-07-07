@@ -41,6 +41,7 @@ import {
   adminStudioProfessionalProfilePath,
   adminStudioSkillGraphPath,
   adminStudioRoleIntelligencePath,
+  adminStudioOrganizationalHierarchyPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1334,6 +1335,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['MAP → UNDERSTAND → EVOLVE → AUTOMATE'],
     aliases: ['role intelligence', 'work not titles', 'role definition', 'responsibilities map', 'role evolution', 'decision authority'],
     searchKeywords: ['role', 'responsibility', 'workflow', 'title', 'dispatcher', 'receptionist', 'estimator', 'project manager', 'evolution', 'authority', 'automation', 'ai employee'],
+  }),
+  entry({
+    id: 'organizational-hierarchy',
+    label: 'Organizational Hierarchy™',
+    moduleId: 'organizational-hierarchy',
+    milestone: 'M167',
+    route: adminStudioOrganizationalHierarchyPath(),
+    purpose: 'Maps how every person, department, team, and organization connects — how organizations actually function, not just an org chart.',
+    overview:
+      'Founders · Executives · Departments · Teams · Managers · Employees · Contractors · Partners · Advisors · Shared Services · Matrix lines · Approval routes · Structure support for holding companies, franchises, and project teams.',
+    capabilities: ['Organizational structure mapping', 'Matrix & shared service lines', 'Approval route modeling', 'Manager gap detection', 'Multi-structure support', 'Studio Intelligence™ routing insights'],
+    howItWorks: 'Sync Identity Graph™, Executive Organization, Role Intelligence™, and Profession Brain™ → build hierarchy nodes and links → model approval routes and matrix assignments → surface Studio Intelligence™ structural insights.',
+    whenUsed: ['Org design', 'Approval workflow routing', 'Matrix capacity review', 'Manager assignment audit', 'Multi-location governance', 'Project team oversight'],
+    relatedSystems: ['identity-graph', 'role-intelligence', 'professional-profile', 'executive-organization', 'policy-engine', 'workflow-engine'],
+    exampleWorkflows: ['MAP → CONNECT → ROUTE → GOVERN'],
+    aliases: ['organizational hierarchy', 'org hierarchy', 'org chart', 'matrix organization', 'approval routing', 'shared services', 'holding company'],
+    searchKeywords: ['hierarchy', 'department', 'team', 'manager', 'matrix', 'approval', 'operations', 'finance', 'franchise', 'family business', 'shared service', 'project team'],
   }),
 ];
 

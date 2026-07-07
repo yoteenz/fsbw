@@ -2112,6 +2112,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'organizational-hierarchy',
+    title: 'ORGANIZATIONAL HIERARCHY™',
+    purpose: 'Maps how every person, department, team, and organization connects — matrix orgs, holding companies, franchises, shared services, and approval routes. How organizations actually function.',
+    route: p('organizational-hierarchy'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M167',
+    ctaLabel: 'OPEN ORGANIZATIONAL HIERARCHY',
+    moduleKey: 'organizational-hierarchy',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',
