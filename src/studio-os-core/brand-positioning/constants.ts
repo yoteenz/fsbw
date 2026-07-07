@@ -83,6 +83,7 @@ export type StudioOsBrandSystemId =
   | 'engineering-excellence-dashboard'
   | 'identity-graph'
   | 'professional-profile'
+  | 'skill-graph'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -165,6 +166,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'engineering-excellence-dashboard': 'Excellence is a mindset. World-class habits—even for teams of one.',
   'identity-graph': 'People are first-class citizens. Organizations are built from people.',
   'professional-profile': 'Careers evolve. Professional identities grow — never freeze in time.',
+  'skill-graph': 'Skills are assets. Knowledge should never remain invisible.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

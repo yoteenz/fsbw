@@ -2088,6 +2088,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'skill-graph',
+    title: 'SKILL GRAPH™',
+    purpose: 'Maps every capability across the organization — who knows what, who can teach, who needs help, who should collaborate. Skills as searchable assets.',
+    route: p('skill-graph'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M165',
+    ctaLabel: 'OPEN SKILL GRAPH',
+    moduleKey: 'skill-graph',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

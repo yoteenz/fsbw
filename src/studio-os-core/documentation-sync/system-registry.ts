@@ -39,6 +39,7 @@ import {
   adminStudioEngineeringExcellenceDashboardPath,
   adminStudioIdentityGraphPath,
   adminStudioProfessionalProfilePath,
+  adminStudioSkillGraphPath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1298,6 +1299,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['GROW → DOCUMENT → TIMELINE → EVOLVE'],
     aliases: ['professional profile', 'career profile', 'living resume', 'professional timeline', 'career evolution', 'dynamic resume'],
     searchKeywords: ['professional', 'profile', 'career', 'timeline', 'resume', 'certification', 'portfolio', 'mentorship', 'leadership', 'academy', 'skills', 'experience'],
+  }),
+  entry({
+    id: 'skill-graph',
+    label: 'Skill Graph™',
+    moduleId: 'skill-graph',
+    milestone: 'M165',
+    route: adminStudioSkillGraphPath(),
+    purpose: 'Maps every organizational capability — who knows what, who can teach, who needs help, who should collaborate.',
+    overview:
+      '16 skill categories · Skill holders & mentors · Gap detection · Skill relationships (complements, requires, outdated, demanded) · Studio Intelligence™ insights · Department summaries.',
+    capabilities: ['Organizational skill mapping', 'Mentor identification', 'Gap & demand detection', 'Skill relationship graph', 'Department capability summaries', 'Studio Intelligence™ insights', 'Searchable skill assets'],
+    howItWorks: 'Sync Professional Profile™, Identity Graph™, Profession Brain™, and Studio Institute™ → index skills per person → map relationships → detect gaps and mentorship opportunities → surface Studio Intelligence™ insights.',
+    whenUsed: ['Hiring & team planning', 'Mentorship pairing', 'Training prioritization', 'Department capability audit', 'Expertise discovery', 'Collaboration matching'],
+    relatedSystems: ['professional-profile', 'identity-graph', 'profession-brain', 'studio-institute', 'expert-marketplace', 'qa-headquarters'],
+    exampleWorkflows: ['MAP → DISCOVER → MENTOR → COLLABORATE'],
+    aliases: ['skill graph', 'capability map', 'who knows what', 'organizational skills', 'skill assets', 'mentor matching'],
+    searchKeywords: ['skill', 'capability', 'mentor', 'expertise', 'gap', 'seo', 'bookkeeping', 'certification', 'department', 'collaboration', 'demand'],
   }),
 ];
 

@@ -1037,6 +1037,10 @@ export function adminStudioProfessionalProfilePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/professional-profile`;
 }
 
+export function adminStudioSkillGraphPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/skill-graph`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

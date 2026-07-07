@@ -157,6 +157,7 @@ export type StudioOsCoreModuleId =
   | 'engineering-excellence-dashboard'
   | 'identity-graph'
   | 'professional-profile'
+  | 'skill-graph'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1094,6 +1095,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PROFESSIONAL PROFILE™',
     description: 'Professional Profile V1.0 — living career identities that evolve with experience, Profession Brains™, timeline, and academy progress.',
     routeSegment: 'professional-profile',
+  },
+  {
+    id: 'skill-graph',
+    label: 'SKILL GRAPH™',
+    description: 'Skill Graph V1.0 — maps every organizational capability. Who knows what, who can teach, who needs help. Searchable skill assets.',
+    routeSegment: 'skill-graph',
   },
   {
     id: 'succession-mode',
