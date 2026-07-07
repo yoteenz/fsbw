@@ -10,7 +10,7 @@ import {
 import type { CreativeDirectorCritique, DesignHealthCategory, ResolvedCanvasTokens } from '../../../../studio-os-core/experience-studio';
 import { experienceTypeLabel, orbWelcomeLine } from '../../../../studio-os-core/experience-studio';
 import type { ExperienceStudioSession } from '../../../../studio-os-core/experience-studio';
-import { ES, esChoiceChip, esGlass, esHeadline, esMeta, esSubhead, EXPERIENCE_STUDIO_STYLES, healthColor } from './experienceStudioTheme';
+import { ES, esChoiceChip, esGlass, esHeadline, esMeta, esSubhead, healthColor } from './experienceStudioTheme';
 
 type EntryProps = {
   companyName: string;

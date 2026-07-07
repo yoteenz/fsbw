@@ -61,7 +61,6 @@ export function advanceInterview(
   step: InterviewStep,
   choice: string
 ): ExperienceStudioSession {
-  const current = readExperienceStudioSession(organizationId);
   if (step === 'style') {
     return writeExperienceStudioSession(organizationId, {
       styleChoice: choice,
