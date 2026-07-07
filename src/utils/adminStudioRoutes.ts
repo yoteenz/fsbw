@@ -1041,6 +1041,10 @@ export function adminStudioSkillGraphPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/skill-graph`;
 }
 
+export function adminStudioRoleIntelligencePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/role-intelligence`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

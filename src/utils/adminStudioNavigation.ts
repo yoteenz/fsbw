@@ -2100,6 +2100,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'role-intelligence',
+    title: 'ROLE INTELLIGENCE™',
+    purpose: 'Understand work — not titles. Maps responsibilities, workflows, decision authority, skills, documents, automations, and AI Employee counterparts. Role Evolution™ keeps definitions current.',
+    route: p('role-intelligence'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M166',
+    ctaLabel: 'OPEN ROLE INTELLIGENCE',
+    moduleKey: 'role-intelligence',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

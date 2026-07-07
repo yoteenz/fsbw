@@ -117,6 +117,7 @@ import { MissionControlEngineeringExcellencePanel } from './MissionControlEngine
 import { MissionControlIdentityGraphPanel } from './MissionControlIdentityGraphPanel';
 import { MissionControlProfessionalProfilePanel } from './MissionControlProfessionalProfilePanel';
 import { MissionControlSkillGraphPanel } from './MissionControlSkillGraphPanel';
+import { MissionControlRoleIntelligencePanel } from './MissionControlRoleIntelligencePanel';
 import { MissionControlDeferredPanel } from './MissionControlDeferredPanel';
 import {
   MC_VISUAL,
@@ -211,6 +212,7 @@ export function MissionControlWorkspace() {
                 <MissionControlIdentityGraphPanel />
                 <MissionControlProfessionalProfilePanel />
                 <MissionControlSkillGraphPanel />
+                <MissionControlRoleIntelligencePanel />
                 <MissionControlKnowledgeConfidencePanel />
                 <MissionControlAmbientBriefingPanel />
               </div>

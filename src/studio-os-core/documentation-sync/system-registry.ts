@@ -40,6 +40,7 @@ import {
   adminStudioIdentityGraphPath,
   adminStudioProfessionalProfilePath,
   adminStudioSkillGraphPath,
+  adminStudioRoleIntelligencePath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1316,6 +1317,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['MAP → DISCOVER → MENTOR → COLLABORATE'],
     aliases: ['skill graph', 'capability map', 'who knows what', 'organizational skills', 'skill assets', 'mentor matching'],
     searchKeywords: ['skill', 'capability', 'mentor', 'expertise', 'gap', 'seo', 'bookkeeping', 'certification', 'department', 'collaboration', 'demand'],
+  }),
+  entry({
+    id: 'role-intelligence',
+    label: 'Role Intelligence™',
+    moduleId: 'role-intelligence',
+    milestone: 'M166',
+    route: adminStudioRoleIntelligencePath(),
+    purpose: 'Understand work — not titles. Maps actual responsibilities, workflows, decision authority, and Role Evolution™ as organizations grow.',
+    overview:
+      '10 role templates · Responsibilities & daily workflows · Decision authority scopes · Required skills & Profession Brains™ · Documents & automations · Performance metrics · Learning requirements · AI Employee counterparts · Role Evolution™',
+    capabilities: ['Role responsibility mapping', 'Daily workflow instrumentation', 'Decision authority modeling', 'Title/work gap detection', 'Role Evolution™ tracking', 'AI Employee counterpart pairing', 'Studio Intelligence™ insights'],
+    howItWorks: 'Sync Identity Graph™, Professional Profile™, Skill Graph™, Profession Brain™, Automation Registry™, Documentation Registry™, and Studio Institute™ → build role definitions from actual work signals → detect title mismatches → track Role Evolution™ → surface Studio Intelligence™ insights.',
+    whenUsed: ['Hiring & role design', 'Org growth planning', 'Automation coverage audit', 'Authority & escalation mapping', 'AI workforce pairing', 'Training path alignment'],
+    relatedSystems: ['identity-graph', 'professional-profile', 'skill-graph', 'profession-brain', 'automation-registry', 'documentation-registry', 'studio-institute'],
+    exampleWorkflows: ['MAP → UNDERSTAND → EVOLVE → AUTOMATE'],
+    aliases: ['role intelligence', 'work not titles', 'role definition', 'responsibilities map', 'role evolution', 'decision authority'],
+    searchKeywords: ['role', 'responsibility', 'workflow', 'title', 'dispatcher', 'receptionist', 'estimator', 'project manager', 'evolution', 'authority', 'automation', 'ai employee'],
   }),
 ];
 

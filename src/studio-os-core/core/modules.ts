@@ -158,6 +158,7 @@ export type StudioOsCoreModuleId =
   | 'identity-graph'
   | 'professional-profile'
   | 'skill-graph'
+  | 'role-intelligence'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1101,6 +1102,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'SKILL GRAPH™',
     description: 'Skill Graph V1.0 — maps every organizational capability. Who knows what, who can teach, who needs help. Searchable skill assets.',
     routeSegment: 'skill-graph',
+  },
+  {
+    id: 'role-intelligence',
+    label: 'ROLE INTELLIGENCE™',
+    description: 'Role Intelligence V1.0 — understand work, not titles. Responsibilities, workflows, decision authority, Role Evolution™, and AI Employee counterparts.',
+    routeSegment: 'role-intelligence',
   },
   {
     id: 'succession-mode',
