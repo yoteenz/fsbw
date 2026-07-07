@@ -83,7 +83,12 @@ export function StudioPlatformLayout({
           <div className="max-w-md mx-auto">
             <div
               className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
-              style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}
+              style={{
+                borderWidth: '1.3px',
+                minHeight: 'calc(100dvh - 160px)',
+                height: 'calc(100dvh - 160px)',
+                maxHeight: 'calc(100dvh - 160px)',
+              }}
             >
               <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }}>
                 <div className="p-2 mb-2" style={{ border: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(99,102,241,0.06)' }}>
@@ -151,7 +156,16 @@ export function StudioPlatformLayout({
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginTop: '10px' }} />
               </div>
 
-              <div style={{ padding: '8px 20px 24px', boxSizing: 'border-box' }}>{children}</div>
+              <div
+                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden admin-hub-tab-scroll"
+                style={{
+                  padding: '8px 20px 24px',
+                  boxSizing: 'border-box',
+                  WebkitOverflowScrolling: 'touch',
+                }}
+              >
+                {children}
+              </div>
             </div>
           </div>
         </div>

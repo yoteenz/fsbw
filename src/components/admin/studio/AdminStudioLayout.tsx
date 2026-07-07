@@ -204,7 +204,12 @@ export function AdminStudioLayout({
             ) : null}
             <div
               className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden min-h-0"
-              style={{ borderWidth: '1.3px', minHeight: 'calc(100dvh - 160px)' }}
+              style={{
+                borderWidth: '1.3px',
+                minHeight: 'calc(100dvh - 160px)',
+                height: 'calc(100dvh - 160px)',
+                maxHeight: 'calc(100dvh - 160px)',
+              }}
             >
               <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }}>
                 {summarySlot}
@@ -279,13 +284,15 @@ export function AdminStudioLayout({
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginTop: '10px' }} />
               </div>
 
+              <div className="flex-shrink-0 min-h-0">
                 {!hideNavTabs && workspace.studioEnabled ? (
-                <div data-studio-manual="nav-tabs">
-                  <AdminStudioNavTabs activeGroupId={activeGroupId} />
-                </div>
-              ) : null}
+                  <div data-studio-manual="nav-tabs">
+                    <AdminStudioNavTabs activeGroupId={activeGroupId} />
+                  </div>
+                ) : null}
 
-              <WorkspaceSwitcher />
+                <WorkspaceSwitcher />
+              </div>
 
               <div
                 className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden admin-hub-tab-scroll"

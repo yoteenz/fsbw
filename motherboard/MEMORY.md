@@ -39893,7 +39893,8 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-07-07 — Studio Overview page mobile render / scroll fix
 
 **Context:** User reported the Studio OS **Overview** page (`/admin/studio/overview`) keeps glitching on mobile — only the first **HEADQUARTERS WINGS** card (OVERVIEW) renders, then a large empty white void; the rest of the page (remaining wing cards, focus panel, installed module summaries) fails to appear.
@@ -39905,7 +39906,9 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** Studio OS pages using `AdminStudioLayout` rely on the inner `workspace-content` scroll region for long module lists; do not rely on page-level scroll when the card has `overflow-hidden`.
 
 **Changes:** `src/components/admin/studio/AdminStudioLayout.tsx`, `motherboard/MEMORY.md`.
-=======
+
+---
+
 ## 2026-07-07 — Campaign Engine deliverables not visible (follow-up fix)
 
 **Context (full chat arc):** Session delivered Campaign Deliverables Manager™ revision; user reported **they don't see anything about deliverables** on the Campaign Engine page.
@@ -39923,4 +39926,26 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** Campaign Engine page must surface Deliverables Manager™ above the fold without requiring tab discovery; run `syncCampaignEngineFromSeed` on hook init.
 
 **Changes:** store.ts, constants.ts, bootstrap.ts, CampaignDeliverablesPipelinePanel.tsx, CampaignEngineWorkspace.tsx, CampaignWorkspaceTabs.tsx, CampaignDeliverableStats.tsx, useCampaignEngineState.ts, MEMORY.md.
->>>>>>> 3b85de5b (Fix Campaign Engine deliverables visibility: pipeline panel, seed sync, NDXBOOK selector)
+
+---
+
+## 2026-07-07 — Studio OS page-breaking scroll audit (all layouts + bare workspace pages)
+
+**Context (full chat):** User reported Studio **Overview** (`/admin/studio/overview`) glitching on mobile — only first HEADQUARTERS WINGS card visible, then large white void; rest of page (wing cards, focus panel, module summaries) failed to render. Follow-up: same issue occurs on **other Studio pages** — requested full audit and fix.
+
+**Root cause:** Shared Studio card shells used `minHeight: calc(100dvh - 160px)` + `overflow-hidden` + `flex flex-col`, but workspace body had no bounded height and no internal scroll. Tall headers (hero `summarySlot`, breadcrumbs, `StudioImmersionShell` presence strip, nav tabs) consumed viewport; overflowing content was clipped inside the card — white void above marble. `overflow-y-auto` alone was insufficient without a **fixed card height** to constrain the flex child.
+
+**Audit findings:**
+- **~193 Studio module pages** route through `AdminStudioLayout` (directly or via `AdminStudioStageShell` / `AdminStudioPlaceholderShell`) — one layout fix covers the majority.
+- **`StudioPlatformLayout`** (Studio Administration: command center, platform modules) had the identical bug — no scroll region.
+- **13 intelligence milestone pages** rendered workspace components **without any layout shell** (no marble card, no header, no scroll) — e.g. ambient-awareness, presence-engine, relationship-memory, organizational-consciousness, etc.
+
+**Fixes delivered:**
+1. **`AdminStudioLayout.tsx`** — card now `height` + `maxHeight: calc(100dvh - 160px)` (with existing `minHeight`); nav tabs + `WorkspaceSwitcher` wrapped in `flex-shrink-0`; workspace body keeps `flex-1 min-h-0 overflow-y-auto admin-hub-tab-scroll` + `WebkitOverflowScrolling: touch`.
+2. **`StudioPlatformLayout.tsx`** — same height constraint + scrollable `flex-1` content region.
+3. **`AdminStudioModulePageShell.tsx`** (new) — wraps bare workspace pages in `AdminStudioStageShell` using `getStudioModuleById` for title/subtitle/nav group + auto disclaimer footer.
+4. **13 pages updated** to use `AdminStudioModulePageShell`: ambient-awareness, anticipation-engine, autonomous-preparation, business-simulation-lab, cross-organization-intelligence, founder-cognitive-load, knowledge-confidence, legacy-vault, organizational-consciousness, organization-digital-twin, predictive-organization, presence-engine, relationship-memory.
+
+**Conventions:** All Studio OS content pages must scroll inside the layout card's `workspace-content` region — never rely on page-level scroll when the card uses `overflow-hidden`. New bare workspace pages should use `AdminStudioModulePageShell` rather than rendering the workspace directly.
+
+**Changes:** `AdminStudioLayout.tsx`, `StudioPlatformLayout.tsx`, `AdminStudioModulePageShell.tsx`, 13 `src/pages/admin/studio/*/page.tsx` files, `motherboard/MEMORY.md`.
