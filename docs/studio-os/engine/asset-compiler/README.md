@@ -52,10 +52,10 @@ Founders define intent. The compiler translates intent into **hundreds of struct
 └───────────────────────────┬─────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
-│              DEPARTMENT ASSET PACKAGE                        │
-│  Modular assets · metadata · interactions · genome hooks   │
+│              STUDIO VALIDATION LOOP™                         │
+│  Creative · Experience · Genome · Braintrust · Founder       │
 └───────────────────────────┬─────────────────────────────────┘
-                            ↓
+                            ↓ (approved only)
 ┌─────────────────────────────────────────────────────────────┐
 │              STUDIO RUNTIME + CURSOR                         │
 │  Runtime assembles · Cursor connects interactions            │
@@ -92,8 +92,10 @@ Founders define intent. The compiler translates intent into **hundreds of struct
 | Layer | Document | Scope |
 |-------|----------|-------|
 | **Department SDK™** | `docs/studio-os/sdk/` | What departments are — anatomy, objects, interactions |
+| **Studio Department Generator™** | `docs/studio-os/engine/department-generator/` | How departments are **created** — DNA, compile tasks, package blueprints |
 | **Studio Asset Compiler™** | `docs/studio-os/engine/asset-compiler/` | How department assets are **generated** |
-| **Department Runtime** | SDK `11_DEPARTMENT_RUNTIME.md` | How packages are **assembled and operated** |
+| **Studio Validation Loop™** | `docs/studio-os/engine/validation-loop/` | Whether outputs **deserve to exist** — creative authority gate |
+| **Department Runtime** | `docs/studio-os/engine/department-runtime/` | How packages are **assembled and operated** (approved only) |
 | **Cursor Runtime** | SDK `15_CURSOR_RUNTIME_REQUIREMENTS.md` | How Cursor **connects** interactions |
 
 SDK doc `14_FAL_ASSET_COMPILER.md` is the **FAL-specific subset** of this engine. This document set is the **canonical, provider-agnostic** specification.
@@ -129,7 +131,7 @@ Users never type prompts. Founders express intent through Company Genome, Depart
 5. **Modular output** — every asset is independently replaceable and versioned
 6. **Provider-agnostic** — abstraction layer over FAL, OpenAI, BFL, Runway, Luma
 7. **Runtime assembles, compiler generates** — compiler never builds experiences
-8. **Validate before ship** — automated QA on every package
+8. **Validate before ship** — Compiler QA (12) feeds Self Review; Studio Validation Loop™ grants creative authority before Runtime
 
 ---
 

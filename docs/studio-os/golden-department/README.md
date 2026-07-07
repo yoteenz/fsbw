@@ -52,7 +52,9 @@ Every Golden Department spec validates against:
 | Engine | Document |
 |--------|----------|
 | Studio Department SDK™ | `docs/studio-os/sdk/` |
+| Studio Department Generator™ | `docs/studio-os/engine/department-generator/` |
 | Studio Asset Compiler™ | `docs/studio-os/engine/asset-compiler/` |
+| Studio Validation Loop™ | `docs/studio-os/engine/validation-loop/` |
 | Studio Department Runtime™ | `docs/studio-os/engine/department-runtime/` |
 
 ---
@@ -65,7 +67,7 @@ Before any new department enters engineering:
 2. Map zones to department-specific responsibilities
 3. Inherit interaction, motion, audio, Genome, and runtime patterns
 4. Extend object inventory — never omit SDK anatomy requirements
-5. Pass SDK QA Checklist (17) + Runtime QA (20)
+5. Pass SDK QA Checklist (17) + Studio Validation Loop™ (creative · experience · Genome · founder) + Runtime QA (20)
 
 ---
 

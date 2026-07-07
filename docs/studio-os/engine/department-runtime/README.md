@@ -36,6 +36,8 @@ Think of this as Unreal Engine's runtime, Unity's play mode, or a AAA game engin
 ```
 Studio Asset Compiler™          → generates packages
          ↓
+Studio Validation Loop™         → creative authority gate (validationApprovalToken)
+         ↓ (approved only)
 Department Asset Package        → modular assets + metadata
          ↓
 Studio Department Runtime™      → THIS ENGINE (brings to life)
@@ -79,6 +81,7 @@ Department Workspace              → user experiences living place
 | **SDK `11_DEPARTMENT_RUNTIME.md`** | SDK-level runtime contract (summary) |
 | **SDK `15_CURSOR_RUNTIME_REQUIREMENTS.md`** | Cursor assembly obligations |
 | **Studio Department Generator™** | `docs/studio-os/engine/department-generator/` — package blueprints + runtime manifests |
+| **Studio Validation Loop™** | `docs/studio-os/engine/validation-loop/` — install blocked without `validationApprovalToken` |
 | **This engine (`department-runtime/`)** | Canonical full runtime architecture |
 
 ---
@@ -91,7 +94,8 @@ Department Workspace              → user experiences living place
 4. **Actors, not widgets** — Orb, Concierges, objects are runtime actors
 5. **Project follows the user** — active Project is first-class runtime object
 6. **Graceful always** — missing assets never white-screen
-7. **Live installation** — Marketplace packages without HQ restart
+7. **Live installation** — Marketplace packages without HQ restart (Validation-certified only)
+8. **Approved packages only** — Runtime refuses HQ install without Validation Loop approval token
 
 ---
 

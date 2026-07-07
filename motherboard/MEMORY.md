@@ -40477,3 +40477,83 @@ Summary of the **whole conversation so far** in this chat: five architecture spr
 - **Changes:** `docs/studio-os/engine/department-generator/` (18 files) · cross-refs in asset-compiler/README.md + department-runtime/README.md · `motherboard/CORE.md` · this MEMORY entry. Prior sprints committed (`469c822b` Golden Department · earlier SDK/Compiler/Runtime commits).
 - **Conventions:** Architecture/docs only — no React · no UI · no implementation. One commit + one push per task on **`master`**.
 
+---
+
+## 2026-07-07 — Studio Validation Loop™ canonical quality engine spec (complete)
+
+Summary of the **whole conversation so far** in this chat: six architecture sprints for Studio OS engines — SDK, Asset Compiler, Runtime, Golden Department CDS, Department Generator, and now **Studio Validation Loop™** — the official quality engine governing every Studio OS output.
+
+- **Context:** User mandated highest-level architecture sprint — **not** departments, **not** React, **not** UI. Create **Studio Validation Loop™** as the permanent creative authority before anything moves from generation to implementation. QA checks if something works; Validation determines whether something deserves to exist.
+- **Topics covered (full chat arc):**
+  1. **Studio Department SDK™** — 18 files · `docs/studio-os/sdk/` · schema `studio.department.sdk.v1`
+  2. **Studio Asset Compiler™** — 16 files · `docs/studio-os/engine/asset-compiler/` · schema `studio.asset-compiler.v1`
+  3. **Studio Department Runtime™** — 21 files · `docs/studio-os/engine/department-runtime/` · schema `studio.department-runtime.v1`
+  4. **Golden Department™ — Creative Direction Studio™** — 14 files · `docs/studio-os/golden-department/` · reference standard for creative/experience review
+  5. **Studio Department Generator™** — 18 files · `docs/studio-os/engine/department-generator/` · schema `studio.department-generator.v1`
+  6. **Studio Validation Loop™** — **16 files** · `docs/studio-os/engine/validation-loop/` · schema `studio.validation-loop.v1`
+- **Validation Loop deliverables (01–15 + README):**
+  - **01 Validation Overview** — purpose · responsibilities · inputs/outputs · lifecycle · relationships to SDK · Generator · Compiler · Runtime · Genome · CDS · Marketplace
+  - **02 Review Pipeline** — mandatory 11-stage pipeline: Generate → Self Review → AI Braintrust → Genome → Experience → Creative → Founder → Revision → Revalidation → Approval → Learning → Runtime
+  - **03 Creative Review** — originality · composition · art direction · luxury · storytelling · anti-generic
+  - **04 Experience Review** — nine place/immersion questions · Runtime preview protocol
+  - **05 Company Genome Validation** — inevitability test · two-Genome swap test (fail if transferable)
+  - **06 Department Review** — per-asset + holistic audit (environment · objects · lighting · audio · interactions · motion · AI · navigation · runtime · marketplace)
+  - **07 AI Braintrust** — 10 independent specialists · praise · critique · disagree respectfully · no forced consensus
+  - **08 Scorecard System** — Studio Scorecard™ 14 dimensions with explanations
+  - **09 Revision Engine** — surgical regen scopes (asset · object · interaction · lighting · audio · motion · environment only — never full regen by default)
+  - **10 Learning Engine** — founder preferences · repeated revisions · successful/failed patterns · Genome updates
+  - **11 Approval Engine** — AI · Founder · Executive · Department · Marketplace tiers · `validationApprovalToken` Runtime gate
+  - **12 Founder Override** — final authority · approve/reject anyway · branch alternatives · override memory
+  - **13 Marketplace Certification** — Studio Certified™ · Luxury Certified™ · Genome Optimized™ · Experience Gold™ badges
+  - **14 Evolution System** — post-launch continuous validation (analytics · heatmaps · engagement · support tickets)
+  - **15 Implementation Guide** — abstract 5-phase engineering roadmap (orchestrator · braintrust · scorecard · learning · certification)
+- **Decisions / outcomes:**
+  - Validation Loop is **not QA** — it is the final creative authority
+  - Nothing moves directly from generation to implementation
+  - Updated platform stack: **SDK (law) → Generator (create) → Asset Compiler (generate) → Validation Loop (should this exist?) → Runtime (execute) → Cursor (wire) → Evolution (continuous)**
+  - Generator QA (16) + Compiler QA (12) + Runtime QA (20) map to Self Review; Validation adds creative · experiential · Genome layers
+  - Golden Department Creative Direction Studio™ = reference standard for creative/experience review
+  - Cross-refs added to Generator · Asset Compiler · Runtime · Golden Department READMEs
+- **Changes:** `docs/studio-os/engine/validation-loop/` (16 files) · cross-refs in department-generator/README.md · asset-compiler/README.md · department-runtime/README.md · golden-department/README.md · `motherboard/CORE.md` · this MEMORY entry. Prior sprints committed (`9eb35d67` Generator · `469c822b` Golden Department · earlier SDK/Compiler/Runtime commits).
+- **Conventions:** Architecture/docs only — no React · no UI · no implementation. One commit + one push per task on **`master`**.
+
+---
+
+## 2026-07-07 — Studio Validation Loop™ canonical quality engine spec (complete)
+
+Summary of the **whole conversation so far** in this chat: six architecture sprints for Studio OS engines — SDK, Asset Compiler, Runtime, Golden Department CDS, Department Generator, and now **Studio Validation Loop™** — the official quality engine governing every Studio OS output.
+
+- **Context:** User mandated highest-level architecture sprint — **not** departments, **not** React, **not** UI. Create **Studio Validation Loop™** as the permanent creative authority before anything moves from generation to implementation. QA checks if something works; Validation determines whether something deserves to exist.
+- **Topics covered (full chat arc):**
+  1. **Studio Department SDK™** — 18 files · `docs/studio-os/sdk/` · schema `studio.department.sdk.v1`
+  2. **Studio Asset Compiler™** — 16 files · `docs/studio-os/engine/asset-compiler/` · schema `studio.asset-compiler.v1`
+  3. **Studio Department Runtime™** — 21 files · `docs/studio-os/engine/department-runtime/` · schema `studio.department-runtime.v1`
+  4. **Golden Department™ — Creative Direction Studio™** — 14 files · `docs/studio-os/golden-department/` · reference standard for creative/experience review
+  5. **Studio Department Generator™** — 18 files · `docs/studio-os/engine/department-generator/` · schema `studio.department-generator.v1`
+  6. **Studio Validation Loop™** — **16 files** · `docs/studio-os/engine/validation-loop/` · schema `studio.validation-loop.v1`
+- **Validation Loop deliverables (01–15 + README):**
+  - **01 Validation Overview** — purpose · responsibilities · inputs/outputs · lifecycle · relationships to SDK · Generator · Compiler · Runtime · Genome · CDS · Marketplace
+  - **02 Review Pipeline** — mandatory 11-stage pipeline: Generate → Self Review → AI Braintrust → Genome → Experience → Creative → Founder → Revision → Revalidation → Approval → Learning → Runtime
+  - **03 Creative Review** — originality · composition · art direction · luxury · storytelling · anti-generic
+  - **04 Experience Review** — nine place/immersion questions · Runtime preview protocol
+  - **05 Company Genome Validation** — inevitability test · two-Genome swap test (fail if transferable)
+  - **06 Department Review** — per-asset + holistic audit (environment · objects · lighting · audio · interactions · motion · AI · navigation · runtime · marketplace)
+  - **07 AI Braintrust** — 10 independent specialists · praise · critique · disagree respectfully · no forced consensus
+  - **08 Scorecard System** — Studio Scorecard™ 14 dimensions with explanations
+  - **09 Revision Engine** — surgical regen scopes (asset · object · interaction · lighting · audio · motion · environment only — never full regen by default)
+  - **10 Learning Engine** — founder preferences · repeated revisions · successful/failed patterns · Genome updates
+  - **11 Approval Engine** — AI · Founder · Executive · Department · Marketplace tiers · `validationApprovalToken` Runtime gate
+  - **12 Founder Override** — final authority · approve/reject anyway · branch alternatives · override memory
+  - **13 Marketplace Certification** — Studio Certified™ · Luxury Certified™ · Genome Optimized™ · Experience Gold™ badges
+  - **14 Evolution System** — post-launch continuous validation (analytics · heatmaps · engagement · support tickets)
+  - **15 Implementation Guide** — abstract 5-phase engineering roadmap (orchestrator · braintrust · scorecard · learning · certification)
+- **Decisions / outcomes:**
+  - Validation Loop is **not QA** — it is the final creative authority
+  - Nothing moves directly from generation to implementation
+  - Updated platform stack: **SDK (law) → Generator (create) → Asset Compiler (generate) → Validation Loop (should this exist?) → Runtime (execute) → Cursor (wire) → Evolution (continuous)**
+  - Generator QA (16) + Compiler QA (12) + Runtime QA (20) map to Self Review; Validation adds creative · experiential · Genome layers
+  - Golden Department Creative Direction Studio™ = reference standard for creative/experience review
+  - Cross-refs added to Generator · Asset Compiler · Runtime · Golden Department READMEs
+- **Changes:** `docs/studio-os/engine/validation-loop/` (16 files) · cross-refs in department-generator/README.md · asset-compiler/README.md · department-runtime/README.md · golden-department/README.md · `motherboard/CORE.md` · this MEMORY entry. Prior sprints committed (`9eb35d67` Generator · `469c822b` Golden Department · earlier SDK/Compiler/Runtime commits).
+- **Conventions:** Architecture/docs only — no React · no UI · no implementation. One commit + one push per task on **`master`**.
+

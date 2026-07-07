@@ -53,6 +53,11 @@ Studio Department Generator™ is the **official creation engine** responsible f
 └───────────────────────────┬─────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
+│              STUDIO VALIDATION LOOP™                       │
+│  Self Review → Braintrust → Genome → Experience → Founder    │
+└───────────────────────────┬─────────────────────────────────┘
+                            ↓ (approved only)
+┌─────────────────────────────────────────────────────────────┐
 │              STUDIO DEPARTMENT RUNTIME™                      │
 │  Assembles package → living interactive department           │
 └───────────────────────────┬─────────────────────────────────┘
@@ -63,7 +68,7 @@ Studio Department Generator™ is the **official creation engine** responsible f
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Law:** SDK defines what departments are. **Generator** defines what to create. **Compiler** cooks assets. **Runtime** brings them alive.
+**Law:** SDK defines what departments are. **Generator** defines what to create. **Compiler** cooks assets. **Validation Loop** decides what deserves to exist. **Runtime** brings approved packages alive.
 
 ---
 
@@ -97,7 +102,8 @@ Studio Department Generator™ is the **official creation engine** responsible f
 |--------|--------------|
 | **Studio Department SDK™** | Generator must satisfy SDK anatomy, spatial, object, interaction law |
 | **Studio Asset Compiler™** | Generator outputs instructions; Compiler executes generation |
-| **Studio Department Runtime™** | Generator outputs package manifest; Runtime assembles and operates |
+| **Studio Validation Loop™** | Generator QA (16) = Self Review stage; full Validation Loop gates Runtime install |
+| **Studio Department Runtime™** | Generator outputs package manifest; Runtime assembles only after Validation approves |
 | **Golden Department™** | Creative Direction Studio™ is first validation project through this pipeline |
 | **Company Genome™** | All branding derived at compile-time via Genome slots — never baked |
 | **Headquarters Marketplace™** | Generator exports installable Department Packages |
@@ -130,7 +136,7 @@ Every type inherits Golden Department principles. Topology may vary; **place-not
 | Compiler profile | `engine/asset-compiler/07_DEPARTMENT_COMPILER.md` |
 | Expected package | `pkg-creative-direction-golden-v1` |
 
-Pipeline success criterion: Generated package passes Generator QA (16) + Compiler QA (12) + Runtime QA (20) and feels indistinguishable from Golden Department intent.
+Pipeline success criterion: Generated package passes Generator QA (16) + Compiler QA (12) + **Validation Loop** (creative · experience · Genome · founder) + Runtime QA (20) and feels indistinguishable from Golden Department intent.
 
 ---
 
