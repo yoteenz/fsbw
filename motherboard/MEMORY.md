@@ -40220,3 +40220,29 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Storage allowlist:** `studioOsNdxbook_founderNotes_v1`.
 
 **Conventions:** Founder direction is a luxury creative layer across all departments — not a cluttered comment board. Deferred/resolved notes do not block advancement.
+
+---
+
+## 2026-07-07 — Creative Direction Studio™ (foundational creative subsystem)
+
+**Context (full chat arc):** Page 001 fixes; Master Content Pipeline + gates; Studio Production Engine department UI (`09591de8`); Founder Notes + concierge revisions (`f9492cc8`). User issued **Architectural Amendment** — introduce **Creative Direction Studio™** as foundational subsystem **above** Studio Production Engine (NOT another department). Living creative brain before/during/after production; continuous direction; Inspiration Library with auto-analysis; Living Mood Board; parallel creative timelines/branches; natural-language Studio Orb commands; Founder Notes → Creative Direction Notes; department read/contribute; downstream impact warnings on direction change.
+
+**Decisions / outcomes:**
+- **Creative Direction Studio™** canonical creative operating layer alongside Studio Orb · Studio Production Engine · DLS · Component Catalog · Design Governance.
+- **Not a department** — project workspace exists **before Discover** and follows entire lifecycle; every department reads active direction.
+- **Workspace contains:** brief · vision · north star · living mood board (14 sections) · inspiration library · parallel branches · creative direction notes · AI suggestions · concierge recommendations · direction timeline · version history.
+- **Inspiration drop** → Studio Intelligence extracts lighting · composition · mood · materials · typography · motion · pacing · luxury cues · palette · brand personality · etc.; auto-updates mood board.
+- **Creative commands** via Studio Orb (*change direction*, *Apple Vision Pro*, *start over*, etc.) with downstream impact options (update · rebuild · keep · parallel branch).
+- **Page 001 pilot branches seeded:** Luxury Editorial · Apple Launch · Fashion Campaign · Minimal Luxury · High Energy Social · Futuristic.
+- **Founder Notes bridge** syncs production notes into Creative Direction Notes.
+- **Production Engine** shows Creative Direction strip above department strip; department instructions show active branch + north star.
+
+**Changes:**
+- **Core:** `src/studio-os-core/creative-direction-studio/` — types, inspirationAnalyzer, routing, commandEngine, impactAnalysis, store, founderNotesBridge.
+- **Hook:** `useCreativeDirectionStudio.ts`.
+- **UI:** `CreativeDirectionStudioWorkspace.tsx` · `CreativeDirectionStrip`; route **`/admin/studio/ndxbook/creative-direction`**.
+- **Integration:** `NdxbookProductionEngine`, `NdxbookDepartmentWorkspace`, `NdxbookWorkspace`, Mission Control create-page → creative direction first.
+- **Docs:** `docs/studio-os/creative-direction-studio.md` · **`motherboard/CORE.md`** updated.
+- **Storage:** `studioOsCreativeDirection_v1`.
+
+**Conventions:** Creative direction is continuous — never locked after creation. All future Studio OS creative workflows inherit Creative Direction Studio as canonical intent layer.

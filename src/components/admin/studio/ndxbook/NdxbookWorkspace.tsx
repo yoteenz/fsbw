@@ -15,6 +15,7 @@ import { NdxbookPagePipelinePanel } from '../../studio-os/ndxbook-newsroom/Ndxbo
 import {
   adminStudioLabsPath,
   adminStudioMemoryBiblePath,
+  adminStudioNdxbookCreativeDirectionPath,
   adminStudioNdxbookDistributionPath,
   adminStudioNdxbookMissionControlPath,
   adminStudioNdxbookNewsroomDepartmentPath,
@@ -296,11 +297,19 @@ export function NdxbookWorkspace() {
             />
             <button
               type="button"
-              onClick={() => navigate(adminStudioNdxbookNewsroomDepartmentPath('discover'))}
+              onClick={() => navigate(adminStudioNdxbookCreativeDirectionPath())}
               className="w-full py-2 text-[7px] font-futura uppercase border"
               style={{ fontWeight: 515, color: '#6366F1', borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(99,102,241,0.06)' }}
             >
-              OPEN STUDIO PRODUCTION ENGINE →
+              OPEN CREATIVE DIRECTION STUDIO →
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate(adminStudioNdxbookNewsroomDepartmentPath('discover'))}
+              className="w-full py-2 text-[7px] font-futura uppercase border"
+              style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary, borderColor: ADMIN_STUDIO_THEME.panelBorder }}
+            >
+              ENTER PRODUCTION ENGINE · DISCOVER →
             </button>
             <div className="p-2 border" style={panelStyle}>
               <p className="text-[7px] font-futura uppercase" style={{ color: ADMIN_STUDIO_THEME.accent }}>

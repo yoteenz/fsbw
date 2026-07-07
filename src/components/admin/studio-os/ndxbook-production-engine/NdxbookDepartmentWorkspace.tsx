@@ -25,10 +25,26 @@ function ReviewDimension({ label, dim }: ReviewDim) {
   );
 }
 
-function InstructionBlock({ department }: { department: ProductionDepartmentDef }) {
+function InstructionBlock({
+  department,
+  creativeSnapshot,
+}: {
+  department: ProductionDepartmentDef;
+  creativeSnapshot?: {
+    branchName: string;
+    northStar: string;
+    tone: string[];
+  } | null;
+}) {
   return (
     <div className="p-3 mb-3 border" style={{ ...nrPanel, borderLeft: `4px solid ${NR.accent}` }}>
       <p style={nrSectionTitle}>{department.name}</p>
+      {creativeSnapshot ? (
+        <p style={{ ...nrLabel, fontSize: '6px', color: NR.indigo, marginBottom: 6 }}>
+          CREATIVE DIRECTION · {creativeSnapshot.branchName.toUpperCase()} · {creativeSnapshot.northStar.slice(0, 100)}
+          {creativeSnapshot.northStar.length > 100 ? '…' : ''}
+        </p>
+      ) : null}
       <p style={{ ...nrLabel, fontFamily: '"Futura PT Medium"', color: NR.black, fontSize: '8px' }}>
         {department.tagline}
       </p>
@@ -98,6 +114,11 @@ function ContinueBar({
 export type DepartmentWorkspaceProps = {
   department: ProductionDepartmentDef;
   page: NdxbookPage | null;
+  creativeSnapshot?: {
+    branchName: string;
+    northStar: string;
+    tone: string[];
+  } | null;
   instagramStatus: InstagramConnectionStatus;
   accountsLoading: boolean;
   canContinue: boolean;
@@ -115,11 +136,11 @@ export type DepartmentWorkspaceProps = {
 };
 
 export function NdxbookDepartmentWorkspace(props: DepartmentWorkspaceProps) {
-  const { department } = props;
+  const { department, creativeSnapshot } = props;
 
   return (
     <div>
-      <InstructionBlock department={department} />
+      <InstructionBlock department={department} creativeSnapshot={creativeSnapshot} />
       {renderDepartmentBody(props)}
     </div>
   );

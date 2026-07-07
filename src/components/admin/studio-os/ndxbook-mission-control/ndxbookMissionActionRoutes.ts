@@ -4,7 +4,7 @@
  */
 import { NDXBOOK_WORKSPACE_ID } from '../../../../studio-os-core/ndxbook/constants';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
-import { adminStudioNdxbookNewsroomDepartmentPath } from '../../../../utils/adminStudioRoutes';
+import { adminStudioNdxbookNewsroomDepartmentPath, adminStudioNdxbookCreativeDirectionPath } from '../../../../utils/adminStudioRoutes';
 
 export type NdxbookMissionActionId =
   | 'create-page'
@@ -49,7 +49,7 @@ export function migrateLegacyNdxbookActionRoute(route: string): string {
 
 export function ndxbookNewsroomQuickLink(workspaceId: string = NDXBOOK_WORKSPACE_ID): string {
   if (workspaceId === NDXBOOK_WORKSPACE_ID) {
-    return adminStudioNdxbookNewsroomDepartmentPath('production');
+    return adminStudioNdxbookCreativeDirectionPath();
   }
   return STUDIO_OS_ROUTES.workspaceNewsroom(workspaceId);
 }
@@ -58,7 +58,7 @@ export function buildNdxbookMissionActionLinks(
   workspaceId: string = NDXBOOK_WORKSPACE_ID
 ): NdxbookMissionActionLink[] {
   return [
-    { id: 'create-page', label: 'CREATE PAGE', route: adminStudioNdxbookNewsroomDepartmentPath('production') },
+    { id: 'create-page', label: 'CREATE PAGE', route: adminStudioNdxbookCreativeDirectionPath() },
     { id: 'approve', label: 'APPROVE PRODUCTION', route: adminStudioNdxbookNewsroomDepartmentPath('review') },
     { id: 'publish', label: 'PUBLISH', route: adminStudioNdxbookNewsroomDepartmentPath('publishing') },
     { id: 'intelligence', label: 'OPEN STUDIO INTELLIGENCE', route: ndxModule('studio-intelligence', workspaceId) },

@@ -26,6 +26,9 @@ import { MasterAssetPassport } from './MasterAssetPassport';
 import { NdxbookDepartmentWorkspace } from './NdxbookDepartmentWorkspace';
 import { ProductionDepartmentStrip } from './ProductionDepartmentStrip';
 import { FounderNotesPanel } from './FounderNotesPanel';
+import { CreativeDirectionStrip } from '../creative-direction-studio/CreativeDirectionStudioWorkspace';
+import { useCreativeDirectionStudio } from '../../../../hooks/useCreativeDirectionStudio';
+import { syncFounderNotesToCreativeDirection } from '../../../../studio-os-core/creative-direction-studio';
 
 function defaultScheduleLaterToday(): string {
   const d = new Date();
@@ -76,6 +79,12 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
   );
 
   const founderNotes = useFounderNotes(page001, activeDept);
+
+  useEffect(() => {
+    syncFounderNotesToCreativeDirection();
+  }, [founderNotes.notes.length]);
+
+  const creativeDirection = useCreativeDirectionStudio();
 
   const mergedContinueCheck = useMemo(() => {
     if (!continueCheck.ok) return continueCheck;
@@ -210,6 +219,8 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
 
       <ProductionDepartmentStrip statuses={statuses} currentId={activeDept} />
 
+      <CreativeDirectionStrip currentDepartment={activeDept} />
+
       <div className="grid grid-cols-1 gap-3 lg:grid-cols-4">
         <div className="lg:col-span-1 order-2 lg:order-1">
           <MasterAssetPassport
@@ -228,6 +239,7 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
           <NdxbookDepartmentWorkspace
             department={department}
             page={page001}
+            creativeSnapshot={creativeDirection.snapshot}
             instagramStatus={instagramStatus}
             accountsLoading={accountsLoading}
             canContinue={mergedContinueCheck.ok}
