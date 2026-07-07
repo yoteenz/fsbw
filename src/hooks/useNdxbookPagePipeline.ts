@@ -14,7 +14,7 @@ import {
   type InstagramConnectionStatus,
   type PagePipelineResult,
 } from '../studio-os-core/ndxbook/pagePipeline';
-import { readNdxbookStore } from '../studio-os-core/ndxbook/store';
+import { readNdxbookStore, refreshNdxbookDashboardMetrics } from '../studio-os-core/ndxbook/store';
 import type { NdxbookPage } from '../studio-os-core/ndxbook/types';
 
 export function useNdxbookPagePipeline() {
@@ -22,7 +22,7 @@ export function useNdxbookPagePipeline() {
   const { accounts, loading: accountsLoading, refresh: refreshAccounts } = useAdminStudioSocialAccounts();
 
   const bump = useCallback(() => {
-    bootstrapAiMediaNdxbook();
+    refreshNdxbookDashboardMetrics();
     setVersion((v) => v + 1);
   }, []);
 

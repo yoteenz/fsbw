@@ -1,6 +1,7 @@
 import type { PublicSocialAccount, SocialPlatformId } from '../../utils/adminStudioSocialPublishing';
 import { NDXBOOK_STORAGE_KEY, NDXBOOK_VERSION } from './constants';
 import type { NdxbookDashboardSnapshot, NdxbookPlatformId, NdxbookStore } from './types';
+import { readStudioOsJson, writeStudioOsJson } from '../../utils/studioOsBrowserStorage';
 
 function defaultDashboard(): NdxbookDashboardSnapshot {
   return {
@@ -35,20 +36,11 @@ function emptyStore(): NdxbookStore {
 }
 
 export function readNdxbookStore(): NdxbookStore {
-  if (typeof localStorage === 'undefined') return emptyStore();
-  try {
-    const raw = localStorage.getItem(NDXBOOK_STORAGE_KEY);
-    if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as NdxbookStore;
-    return { ...emptyStore(), ...parsed, version: NDXBOOK_VERSION };
-  } catch {
-    return emptyStore();
-  }
+  return readStudioOsJson(NDXBOOK_STORAGE_KEY, emptyStore);
 }
 
 export function writeNdxbookStore(store: NdxbookStore): void {
-  if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(NDXBOOK_STORAGE_KEY, JSON.stringify(store));
+  writeStudioOsJson(NDXBOOK_STORAGE_KEY, { ...store, version: NDXBOOK_VERSION });
 }
 
 export function mergeNdxbookPatch(patch: Partial<NdxbookStore>): void {

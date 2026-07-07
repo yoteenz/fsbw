@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useNdxbookPagePipeline } from '../../../../hooks/useNdxbookPagePipeline';
 import { ndxbookSocialAccountsQuickLink } from '../ndxbook-mission-control/ndxbookMissionActionRoutes';
+import { createProductionPageFromRegistry } from '../../../../studio-os-core/ndxbook/newsroom/pageSync';
 import { VOLUME_LABELS } from '../../../../studio-os-core/ndxbook/constants';
 import type { NdxbookPage } from '../../../../studio-os-core/ndxbook/types';
 import type { StudioIntelligenceReview } from '../../../../studio-os-core/ndxbook/types';
@@ -40,9 +41,10 @@ type Props = {
   onRefresh?: () => void;
 };
 
-export function NdxbookPagePipelinePanel({ page, onRefresh }: Props) {
+export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
   const {
     summary,
+    page001,
     instagramStatus,
     accountsLoading,
     createPage001,
@@ -50,6 +52,8 @@ export function NdxbookPagePipelinePanel({ page, onRefresh }: Props) {
     approveProduction,
     scheduleInstagram,
   } = useNdxbookPagePipeline();
+
+  const page = page001 ?? pageProp;
 
   const [busy, setBusy] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -115,8 +119,9 @@ export function NdxbookPagePipelinePanel({ page, onRefresh }: Props) {
           disabled={busy !== null}
           onClick={() =>
             run('create', () => {
-              createPage001();
-              setMessage('Page 001 created — first official NDXBook knowledge asset.');
+              const created = createPage001();
+              createProductionPageFromRegistry(created);
+              setMessage(`${created.pageLabel} created — first official NDXBook knowledge asset.`);
             })
           }
           className="mt-3 w-full py-2 text-[7px] font-futura border"

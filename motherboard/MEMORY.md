@@ -40093,3 +40093,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - Social Accounts page NDXBook back breadcrumb → **Newsroom** (not Distribution).
 
 **Changes:** bootstrap.ts, StudioWorkspaceGuard.tsx, ndxbookMissionActionRoutes.ts, NdxbookPagePipelinePanel.tsx, NdxbookSocialsPanel.tsx, useSyncWorkspaceFromRoute.ts, social-accounts/page.tsx, MEMORY.md.
+
+---
+
+## 2026-07-07 — Page 001 still not persisting + Social Accounts API error
+
+**Context (full chat arc):** Scroll audit; newsroom route/HQ CTAs; Orb black border; Page 001 bootstrap fix + social routing fix. User reported **CREATE PAGE 001** still only shows toast (not visible/persistent) and **Social Accounts** shows **FAILED TO LOAD** + OAuth not configured.
+
+**Root causes (second pass):**
+1. **Storage guard** — `studioOsNdxbook_*` keys were **memory-only** (not lightweight), so Page 001 vanished on navigation/reload even when written.
+2. **UI disconnect** — `NdxbookPagePipelinePanel` displayed **`page` prop** from parent while **`summary`/create** used a **second hook instance** — toast fired but STATUS stayed **NO PAGE**.
+3. **Social API** — `/api/admin/social-accounts` failure left **empty accounts** + red error; setup panel needs **offline fallback** rows.
+
+**Fixes:**
+- NDXBook registry/newsroom/mission-control stores → **`readStudioOsJson` / `writeStudioOsJson`**; keys added to **lightweight persist allowlist**.
+- Pipeline panel uses **`page001` from hook** (`page001 ?? pageProp`); create also syncs **newsroom production floor** immediately.
+- **`createNdxbookPage`** idempotent for page 001; founder pilot bootstrap **won't wipe** if pages already exist; **`bump()`** no longer re-runs full bootstrap.
+- **`buildOfflineSocialAccounts()`** when API fails — still shows 5 platforms + setup steps (OAuth env vars still required to connect).
+
+**Changes:** studioOsBrowserStorage.ts, ndxbook/store.ts, newsroom/store.ts, mission-control/store.ts, pagePipeline.ts, founder-pilot-mode/bootstrap.ts, useNdxbookPagePipeline.ts, NdxbookPagePipelinePanel.tsx, useAdminStudioSocialAccounts.ts, adminStudioSocialPublishing.ts, MEMORY.md.

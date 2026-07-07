@@ -86,3 +86,18 @@ export type SocialPublishLogEntry = {
   error_details: string | null;
   created_at: string;
 };
+
+/** Client fallback when /api/admin/social-accounts is unreachable — still shows setup UI. */
+export function buildOfflineSocialAccounts(): PublicSocialAccount[] {
+  return SOCIAL_PUBLISH_PLATFORMS.map((p) => ({
+    platform: p.id,
+    label: p.label,
+    status: p.id === 'x' ? ('unavailable' as SocialAccountStatus) : ('disconnected' as SocialAccountStatus),
+    accountLabel: null,
+    postingDisabled: false,
+    tokenExpiresAt: null,
+    lastError: null,
+    connectedAt: null,
+    oauthConfigured: false,
+  }));
+}

@@ -209,6 +209,9 @@ export function runStudioIntelligenceReview(page: NdxbookPage): StudioIntelligen
 export function createNdxbookPage(input: CreateNdxbookPageInput = PAGE_001_CONTENT): NdxbookPage {
   bootstrapAiMediaNdxbook();
   const store = readNdxbookStore();
+  const existingPage001 = store.pages.find((p) => p.pageNumber === 1);
+  if (existingPage001) return existingPage001;
+
   const { pageNumber, pageLabel, nextPageNumber } = allocatePageNumber(store.pages, store.nextPageNumber);
   const now = new Date().toISOString();
   const id = `page-${String(pageNumber).padStart(3, '0')}`;

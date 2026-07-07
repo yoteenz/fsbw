@@ -37,6 +37,10 @@ const LIGHTWEIGHT_EXACT_KEYS = new Set([
   'studioOs_studioOrbSoundEnabled_v1',
   'studioOs_visionActiveMode',
   'studioOsPlatformBootstrapped_v1',
+  /** NDXBook pilot registry — must persist Page 001 across navigation (founder pilot). */
+  'studioOsNdxbook_v1',
+  'studioOsNdxbookNewsroom_v1',
+  'studioOsNdxbookMissionControl_v1',
 ]);
 
 /** Substring patterns for small UI preference keys. */

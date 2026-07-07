@@ -6,6 +6,7 @@ import {
   startSocialOAuth,
 } from '../utils/apiSocialPublishing';
 import type { PublicSocialAccount, SocialPlatformId } from '../utils/adminStudioSocialPublishing';
+import { buildOfflineSocialAccounts } from '../utils/adminStudioSocialPublishing';
 
 export function useAdminStudioSocialAccounts() {
   const [accounts, setAccounts] = useState<PublicSocialAccount[]>([]);
@@ -20,7 +21,12 @@ export function useAdminStudioSocialAccounts() {
       const list = await fetchSocialAccounts();
       setAccounts(list);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load accounts');
+      setAccounts(buildOfflineSocialAccounts());
+      setError(
+        e instanceof Error
+          ? `${e.message} — showing offline connector status. Configure OAuth env vars on Vercel to connect.`
+          : 'API unavailable — showing offline connector status.'
+      );
     } finally {
       setLoading(false);
     }

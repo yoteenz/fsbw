@@ -7,6 +7,7 @@ import {
   STAGE_ORDER,
 } from './constants';
 import type { NewsroomPipelineStageId, NewsroomStore, ProductionPage } from './types';
+import { readStudioOsJson, writeStudioOsJson } from '../../../utils/studioOsBrowserStorage';
 
 function emptyStore(): NewsroomStore {
   return {
@@ -105,23 +106,15 @@ function refreshDashboard(store: NewsroomStore): NewsroomStore['dashboard'] {
 }
 
 export function readNdxbookNewsroomStore(): NewsroomStore {
-  if (typeof localStorage === 'undefined') return emptyStore();
-  try {
-    const raw = localStorage.getItem(NDXBOOK_NEWSROOM_STORAGE_KEY);
-    if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as NewsroomStore;
-    return { ...emptyStore(), ...parsed, version: NDXBOOK_NEWSROOM_VERSION };
-  } catch {
-    return emptyStore();
-  }
+  return readStudioOsJson(NDXBOOK_NEWSROOM_STORAGE_KEY, emptyStore);
 }
 
 export function writeNdxbookNewsroomStore(store: NewsroomStore): void {
-  if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(
-    NDXBOOK_NEWSROOM_STORAGE_KEY,
-    JSON.stringify({ ...store, lastUpdatedAt: new Date().toISOString(), version: NDXBOOK_NEWSROOM_VERSION })
-  );
+  writeStudioOsJson(NDXBOOK_NEWSROOM_STORAGE_KEY, {
+    ...store,
+    lastUpdatedAt: new Date().toISOString(),
+    version: NDXBOOK_NEWSROOM_VERSION,
+  });
 }
 
 export function bootstrapNdxbookNewsroomStore(seed?: Partial<NewsroomStore>, options?: { force?: boolean }): void {

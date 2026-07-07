@@ -8,14 +8,10 @@ import { enableFounderPilotMode, isFounderPilotModeActive } from './store';
 import { bootstrapNdxbookMissionControlStore } from '../ndxbook/mission-control/store';
 import { bootstrapNdxbookNewsroomStore } from '../ndxbook/newsroom/store';
 import { writeNdxbookStore, readNdxbookStore } from '../ndxbook/store';
+import { removeStudioOsStorageValue } from '../../utils/studioOsBrowserStorage';
 
 function clearLegacyStorageKey(key: string): void {
-  if (typeof localStorage === 'undefined') return;
-  try {
-    localStorage.removeItem(key);
-  } catch {
-    /* ignore */
-  }
+  removeStudioOsStorageValue(key);
 }
 
 /** Reset demo seeds and apply pilot bootstrap for an organization. */
@@ -39,6 +35,11 @@ export function ensureFounderPilotForOrganization(organizationId: string): boole
   if (!shouldPilot) return false;
 
   if (!isFounderPilotModeActive(organizationId)) {
+    const existingPages = readNdxbookStore().pages;
+    if (existingPages.length > 0) {
+      enableFounderPilotMode(organizationId);
+      return true;
+    }
     applyFounderPilotBootstrap(organizationId);
     return true;
   }

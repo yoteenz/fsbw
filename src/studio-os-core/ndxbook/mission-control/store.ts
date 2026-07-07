@@ -3,6 +3,7 @@ import {
   NDXBOOK_MISSION_CONTROL_VERSION,
 } from './constants';
 import type { NdxbookMissionControlStore, PublishingScheduleItem } from './types';
+import { readStudioOsJson, writeStudioOsJson } from '../../../utils/studioOsBrowserStorage';
 
 function emptyStore(): NdxbookMissionControlStore {
   return {
@@ -95,23 +96,15 @@ function emptyStore(): NdxbookMissionControlStore {
 }
 
 export function readNdxbookMissionControlStore(): NdxbookMissionControlStore {
-  if (typeof localStorage === 'undefined') return emptyStore();
-  try {
-    const raw = localStorage.getItem(NDXBOOK_MISSION_CONTROL_STORAGE_KEY);
-    if (!raw) return emptyStore();
-    const parsed = JSON.parse(raw) as NdxbookMissionControlStore;
-    return { ...emptyStore(), ...parsed, version: NDXBOOK_MISSION_CONTROL_VERSION };
-  } catch {
-    return emptyStore();
-  }
+  return readStudioOsJson(NDXBOOK_MISSION_CONTROL_STORAGE_KEY, emptyStore);
 }
 
 export function writeNdxbookMissionControlStore(store: NdxbookMissionControlStore): void {
-  if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(
-    NDXBOOK_MISSION_CONTROL_STORAGE_KEY,
-    JSON.stringify({ ...store, lastUpdatedAt: new Date().toISOString(), version: NDXBOOK_MISSION_CONTROL_VERSION })
-  );
+  writeStudioOsJson(NDXBOOK_MISSION_CONTROL_STORAGE_KEY, {
+    ...store,
+    lastUpdatedAt: new Date().toISOString(),
+    version: NDXBOOK_MISSION_CONTROL_VERSION,
+  });
 }
 
 export function mergeNdxbookMissionControlPatch(patch: Partial<NdxbookMissionControlStore>): void {
