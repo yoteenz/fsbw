@@ -40329,3 +40329,37 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** All future departments must inherit SDK anatomy; no per-department branding; FAL generates modular neutral assets; Cursor assembles at runtime; QA checklist gates release. Specification sprint only — no React/components/pages.
 
+---
+
+## 2026-07-07 — Studio Asset Compiler™ core engine specification (docs only)
+
+**Context (continued from Department SDK sprint):** User issued second **architecture-only** sprint — create official **Studio Asset Compiler™** as one of the **core engines** of Studio OS. Explicit: **no React, no UI, no implementation code**. Compiler converts structured company data into modular FAL/AI asset generation packages — **not webpages**. Philosophy: Unreal Engine asset cooking + Pixar production pipeline + AAA procedural generation. Founders define intent; compiler auto-generates hundreds of structured generation tasks. Never flattened mockups.
+
+**Topics covered:**
+- Full engine package at **`docs/studio-os/engine/asset-compiler/`** — README + 15 numbered documents
+- **01 Compiler Overview** — purpose, 6-phase pipeline (Resolve → Compile → Generate → Assemble → Validate → Export), Studio Engine/Cursor/Marketplace integration
+- **02 Input System** — 6 primary inputs (Company Genome, Department DNA, Project Intent, Design Language, Experience DNA, World Rules) + 10 supporting inputs
+- **03 Prompt Compiler** — heart of system; 35–50 prompt stacks per department; auto Genome layer injection; Creative Direction example inventory
+- **04 Asset Generation Pipeline** — 15 ordered stages (architecture → environment → lighting → materials → furniture → decor → glass → interactive → orb → particles → audio → animations → interactions → previews → validation)
+- **05 Asset Package Spec** — `studio.department-package.v1` directory structure; creative-direction example
+- **06 Metadata Standard** — per-asset metadata (name, version, genome, dependencies, prompt history, marketplace tags)
+- **07 Department Compiler** — 10 department profiles (Creative Direction, Discovery, Storyboarding, Talent, Production, Review, Publishing, Marketing, Marketplace, Executive)
+- **08 Company Genome Injection** — compile-time + runtime dual injection; 6-company transform table (NDX, Frontal Slayer, Architecture, Medical, Law, Construction)
+- **09 World Assembly** — compiler generates packages; Studio Runtime assembles; Cursor connects interactions
+- **10 Versioning** — independent asset lineages (environment_v1→v3, lighting_v5, mood-wall_v12)
+- **11 Regeneration Rules** — surgical: change lighting → only lighting regenerates
+- **12 QA Validation** — 11 automated check categories
+- **13 Marketplace Export** — Genome-neutral installable packages with transform previews
+- **14 Future AI Providers** — abstraction layer (FAL, OpenAI, BFL, Runway, Luma, future)
+- **15 Implementation Guide** — 6-phase engineering roadmap; module structure; no production code
+
+**Decisions / outcomes:**
+- Engine version **1.0.0** · schema **`studio.asset-compiler.v1`** · package format **`studio.department-package.v1`**
+- SDK `14_FAL_ASSET_COMPILER.md` annotated as FAL subset of canonical engine
+- Relationship: Department SDK (what departments are) → Asset Compiler (how assets generate) → Department Runtime (how worlds assemble)
+- **`motherboard/CORE.md`** updated with Studio Asset Compiler bullet
+
+**Changes:** `docs/studio-os/engine/asset-compiler/` (16 files) · `docs/studio-os/sdk/14_FAL_ASSET_COMPILER.md` (cross-ref) · `motherboard/CORE.md` · this MEMORY entry.
+
+**Conventions:** Compiler never hardcodes visuals; dozens of prompts never one; ordered generation; provider-agnostic; surgical regeneration; validate before export. Architecture sprint only.
+

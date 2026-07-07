@@ -1,14 +1,15 @@
 # 14 — FAL Asset Compiler
 
 **SDK Module:** `studio.department.sdk.v1.fal-compiler`  
-**Status:** Generation pipeline specification  
+**Status:** Generation pipeline specification (SDK subset)  
+**Canonical engine:** [Studio Asset Compiler™](../../engine/asset-compiler/README.md) — provider-agnostic full specification  
 **Philosophy:** FAL compiles prompts into modular asset packages — never flattened UI mockups
 
 ---
 
 ## Definition
 
-The **FAL Asset Compiler** is the Studio OS pipeline that transforms approved blueprints and generation prompts into **modular, identity-neutral asset packages** ready for Department Runtime assembly.
+The **FAL Asset Compiler** is the FAL-specific subset of [Studio Asset Compiler™](../../engine/asset-compiler/README.md). It transforms approved blueprints and generation prompts into **modular, identity-neutral asset packages** ready for Department Runtime assembly.
 
 FAL generates **parts** — not scenes. Cursor assembles parts at runtime. Company Genome brands parts at runtime.
 
