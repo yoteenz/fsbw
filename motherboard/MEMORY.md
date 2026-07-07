@@ -39850,3 +39850,21 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** All Orb radial actions (current + future enabled) must use **`computeRadialMenuLayout`** — never hard-coded fan angles. Stacked mode is acceptable fallback; clipping is not.
 
 **Changes:** studioOrbRadialLayout.ts, StudioOrbRadialMenu.tsx, StudioOrbMount.tsx, StudioOrbProvider.tsx, test script, MEMORY.md.
+
+---
+
+## 2026-07-07 — Studio Orb surfaces stuck / panels not showing (Life & Culture close)
+
+**Context (full chat arc):** Session fixed radial menu clipping, Experience Studio redesign, Studio Orb awakening. User reported **Life & Culture panel won't close** and **Command Dock / Page Guide popups don't show** after selecting radial actions.
+
+**Root cause:** In **`AdminStudioLayout`**, **`StudioOrbMount`** (backdrop, panels, radial menu, orb) rendered **inside** **`StudioOrbEnvironment`**. When any Orb surface opens, `.studio-conversation-environment-active` applies **`transform: scale(0.98)`** + **`pointer-events: none`** — **`position: fixed` panels become relative to the transformed ancestor** (clipped/misplaced/off-screen) and clicks fail. **`StudioOrbConversationBackdrop`** omitted **`life-culture`**, so no tap-outside dismiss.
+
+**Fix delivered:**
+- **`AdminStudioLayout.tsx`** — move **`StudioOrbMount`** **outside** **`StudioOrbEnvironment`** (matches **`StudioPlatformLayout`** pattern) so fixed overlays anchor to viewport
+- **`StudioOrbConversationBackdrop.tsx`** — backdrop for **command-dock · page-guide · life-culture**
+- **`StudioOrbLifeCulturePanel.tsx`** — explicit **`pointer-events-auto`**
+- **`StudioOrbProvider.tsx`** — **`closeSurface`** plays close sound for all surfaces (not only command-dock)
+
+**Conventions:** Never mount Orb overlays inside a transformed/pointer-events-none environment wrapper — page content only inside **`StudioOrbEnvironment`**.
+
+**Changes:** AdminStudioLayout.tsx, StudioOrbConversationBackdrop.tsx, StudioOrbLifeCulturePanel.tsx, StudioOrbProvider.tsx, MEMORY.md.

@@ -1,9 +1,12 @@
 import { useStudioOrb } from './StudioOrbProvider';
 
-/** Conversation Mode™ — soft blur · dashboard remains visible context. */
+/** Conversation Mode™ — soft blur · tap outside to close any Orb surface. */
 export function StudioOrbConversationBackdrop() {
-  const { conversationMode, activeSurface, closeSurface } = useStudioOrb();
-  const active = conversationMode || activeSurface === 'page-guide';
+  const { activeSurface, closeSurface } = useStudioOrb();
+  const active =
+    activeSurface === 'command-dock' ||
+    activeSurface === 'page-guide' ||
+    activeSurface === 'life-culture';
   if (!active) return null;
 
   return (

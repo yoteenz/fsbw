@@ -125,10 +125,12 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const closeSurface = useCallback(() => {
     if (activeSurface === 'command-dock') {
       dock.dismiss();
-      playStudioOrbSound('conversation-close');
     }
     setActiveSurface(null);
     setRadialOpen(false);
+    if (activeSurface) {
+      playStudioOrbSound('conversation-close');
+    }
   }, [activeSurface, dock]);
 
   const toggleRadial = useCallback(() => {

@@ -41,7 +41,7 @@ export function StudioOrbLifeCulturePanel() {
 
   return (
     <div
-      className="fixed left-1/2 z-[100055]"
+      className="fixed left-1/2 z-[100055] pointer-events-auto"
       style={{
         top: '50%',
         transform: 'translate(-50%, -50%)',

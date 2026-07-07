@@ -316,9 +316,9 @@ export function AdminStudioLayout({
         </div>
       </div>
       <KnowledgeGraphEntryPanel />
-      {workspace.studioEnabled && shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
     </div>
     </StudioOrbEnvironment>
+    {workspace.studioEnabled && shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
     </StudioManualBridge>
     </StudioKnowledgeProvider>
     </StudioOrbProvider>
