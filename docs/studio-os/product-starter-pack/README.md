@@ -116,7 +116,8 @@ Products **inherit** all layers above. They **never override**.
 | **Knowledge Registry™** (M126) | `docs/studio-os/knowledge-registry.md` |
 | **System Registry™** (M127) | `docs/studio-os/system-registry.md` |
 | **Product Phase Charter** | `docs/studio-os/PRODUCT_PHASE_CHARTER.md` |
-| **Example product** | `docs/studio-os/products/website-builder/` |
+| **Developer Handbook™** | `docs/studio-os/developer-handbook/START_HERE.md` |
+| **Example product** | `docs/studio-os/products/experience-studio/` |
 
 ---
 
