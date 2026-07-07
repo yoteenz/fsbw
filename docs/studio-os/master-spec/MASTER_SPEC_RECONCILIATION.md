@@ -1,17 +1,20 @@
 # Master Specification Reconciliation Report
 
-Generated: 2026-07-07T05:21:15.357Z
+Generated: 2026-07-07T05:39:41.804Z
 
 ## Coverage
 
 | Metric | Count |
 |--------|-------|
 | Volumes | 20 |
-| Chapters | 8 |
+| Chapters | 17 |
 | Milestones | 218 |
 | Volume I chapters | 8 |
 | Volume I milestones | 25 |
 | Volume I complete | 16 |
+| Volume II chapters | 9 |
+| Volume II milestones | 39 |
+| Volume II complete | 38 |
 | Design Revisions | 4 |
 | Complete | 95 |
 | In Progress | 6 |

@@ -1,0 +1,105 @@
+# Volume II — Knowledge Infrastructure™ chapters
+version: '1.0.0'
+updatedAt: '2026-07-07'
+volumeId: volume-ii
+
+chapters:
+  - id: chapter-ii-1
+    number: 1
+    title: Discovery & Institutional Intelligence
+    summary: >-
+      Business Discovery Blueprint™, Organization Inauguration™, Profession Brain™,
+      and Organization Genome™ — capture how the organization works before
+      intelligence compounds.
+    status: complete
+    dependsOn: [volume-i, volume-0]
+    milestoneIds: [M90, M90.5, M91, M95]
+    completionPct: 100
+
+  - id: chapter-ii-2
+    number: 2
+    title: Expertise Commerce & Teaching
+    summary: >-
+      Expert Marketplace™, Knowledge Commerce™, and Studio Institute™ — discover,
+      monetize, and teach organizational expertise.
+    status: complete
+    dependsOn: [chapter-ii-1]
+    milestoneIds: [M92, M92.5, M93]
+    completionPct: 100
+
+  - id: chapter-ii-3
+    number: 3
+    title: Memory, Wisdom & Legacy
+    summary: >-
+      Memory Engine™, Wisdom Capture™, Knowledge Confidence™, Legacy Vault™,
+      Organization Operating Manual™, Legacy Network™, and Executive Timeline™.
+    status: complete
+    dependsOn: [chapter-ii-1]
+    milestoneIds: [M96, M101, M105, M106, M120, M121, M116]
+    completionPct: 100
+
+  - id: chapter-ii-4
+    number: 4
+    title: Executive Pulse & Leadership
+    summary: >-
+      Company Health Index™, Executive Council™, Organization Pulse™, and
+      Founder Operating System™ — feel and lead the organization.
+    status: complete
+    dependsOn: [chapter-ii-3]
+    milestoneIds: [M97, M99, M100, M118]
+    completionPct: 100
+
+  - id: chapter-ii-5
+    number: 5
+    title: Simulation & Shadow Intelligence
+    summary: >-
+      Shadow Mode™, Organization Digital Twin™, and Business Simulation Lab™ —
+      observe, clone, and test before acting.
+    status: complete
+    dependsOn: [chapter-ii-3]
+    milestoneIds: [M102, M103, M104]
+    completionPct: 100
+
+  - id: chapter-ii-6
+    number: 6
+    title: Ambient Awareness to Organizational Consciousness
+    summary: >-
+      Ambient Awareness™ through Organizational Consciousness™ — predictive,
+      cross-org, and unified intelligence chain.
+    status: complete
+    dependsOn: [chapter-ii-4]
+    milestoneIds: [M107, M108, M109, M110, M111, M112, M113, M114, M115]
+    completionPct: 100
+
+  - id: chapter-ii-7
+    number: 7
+    title: World Knowledge & Innovation
+    summary: >-
+      World Knowledge Engine™ and Innovation Lab™ — external intelligence and
+      internal idea generation.
+    status: complete
+    dependsOn: [chapter-ii-6]
+    milestoneIds: [M117, M119]
+    completionPct: 100
+
+  - id: chapter-ii-8
+    number: 8
+    title: Studio Intelligence Architecture
+    summary: >-
+      Studio Intelligence™ Architecture, Model Orchestrator™, and Studio Foundation
+      Models™ — knowledge fabric, model independence, and long-term intelligence.
+    status: complete
+    dependsOn: [chapter-ii-1]
+    milestoneIds: [M122, M123, M124]
+    completionPct: 100
+
+  - id: chapter-ii-9
+    number: 9
+    title: Knowledge Registry & Platform Directory
+    summary: >-
+      Documentation Synchronization™, Studio OS Knowledge Registry™, Documentation
+      Governance™, and System Registry™ — single source of truth for platform knowledge.
+    status: in-progress
+    dependsOn: [chapter-ii-8]
+    milestoneIds: [M125, M126, M126.5, M127]
+    completionPct: 88

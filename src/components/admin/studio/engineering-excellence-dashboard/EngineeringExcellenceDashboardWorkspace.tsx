@@ -296,6 +296,16 @@ export function EngineeringExcellenceDashboardWorkspace() {
               </p>
             </ExecutiveSecondaryCard>
           ) : null}
+          {m.volumeIICoverage ? (
+            <ExecutiveSecondaryCard title="VOLUME II · KNOWLEDGE INFRASTRUCTURE™">
+              <p className="text-[6px] font-futura mb-1" style={{ color: ENGINEERING_EXCELLENCE_ACCENT, fontWeight: 515 }}>
+                {m.volumeIICoverage.chapterCount} chapters · {m.volumeIICoverage.milestoneCount} milestones · {m.volumeIICoverage.completeCount} complete
+              </p>
+              <p className="text-[6px] font-futura" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+                Live matched: {m.volumeIICoverage.matchedLive} · Planned only: {m.volumeIICoverage.plannedOnly}
+              </p>
+            </ExecutiveSecondaryCard>
+          ) : null}
           <ExecutiveSecondaryCard title="VOLUME COVERAGE">
             {m.volumeCoverage
               .filter((v) => v.milestoneCount > 0)

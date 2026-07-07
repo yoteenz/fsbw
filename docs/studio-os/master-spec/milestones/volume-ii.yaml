@@ -1,0 +1,747 @@
+version: 1.0.0
+volumeId: volume-ii
+milestones:
+  - canonicalId: M90
+    name: Business Discovery Blueprint™
+    internalId: business-discovery-blueprint
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Captures workflows, expertise, offers, customers, operations, and decision logic.
+    implementationStatus: complete
+    shippedMilestone: M90
+    moduleId: business-discovery-blueprint
+    dependsOn: []
+    enables:
+      - M90.5
+      - M91
+    chapterId: chapter-ii-1
+    relatedSystems:
+      - profession-brain
+      - organization-genome
+      - organization-inauguration
+    implementationNotes: Day-one discovery — seeds Profession Brain™ and downstream knowledge systems.
+  - canonicalId: M90.5
+    name: Organization Inauguration™
+    internalId: organization-inauguration
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Activates organization after Discovery Blueprint with Charter and HQ setup.
+    implementationStatus: complete
+    shippedMilestone: M90.5
+    moduleId: organization-inauguration
+    dependsOn:
+      - M90
+    enables: []
+    chapterId: chapter-ii-1
+    relatedSystems:
+      - business-discovery-blueprint
+      - mission-control
+      - profession-brain
+    implementationNotes: Activates organization after Blueprint — Charter and HQ setup.
+  - canonicalId: M91
+    name: Profession Brain™
+    internalId: profession-brain
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Living institutional intelligence preserving professional expertise and judgment.
+    implementationStatus: complete
+    shippedMilestone: M91
+    moduleId: profession-brain
+    dependsOn:
+      - M90
+    enables:
+      - M92
+      - M93
+      - M95
+      - M96
+      - M120
+      - M122
+    chapterId: chapter-ii-1
+    relatedSystems:
+      - studio-institute
+      - knowledge-commerce
+      - memory-engine
+      - studio-intelligence-architecture
+    implementationNotes: >-
+      Central institutional intelligence — every concierge and automation consumes Profession
+      Brain™.
+  - canonicalId: M92
+    name: Expert Marketplace™
+    internalId: expert-marketplace
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: External discovery and access layer for expertise and expert experiences.
+    implementationStatus: complete
+    shippedMilestone: M92
+    moduleId: expert-marketplace
+    dependsOn:
+      - M91
+    enables:
+      - M92.5
+    chapterId: chapter-ii-2
+    relatedSystems:
+      - profession-brain
+      - knowledge-commerce
+      - expert-marketplace
+    implementationNotes: External discovery layer for expertise and expert experiences.
+  - canonicalId: M92.5
+    name: Knowledge Commerce™
+    internalId: knowledge-commerce
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Turns expertise into products, subscriptions, courses, tools, and licensing.
+    implementationStatus: complete
+    shippedMilestone: M92.5
+    moduleId: knowledge-commerce
+    dependsOn:
+      - M92
+    enables: []
+    chapterId: chapter-ii-2
+    relatedSystems:
+      - expert-marketplace
+      - studio-institute
+      - knowledge-hub
+    implementationNotes: Monetizes expertise — products, subscriptions, courses, licensing.
+  - canonicalId: M93
+    name: Studio Institute™
+    internalId: studio-institute
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Teaching engine for employees, customers, future owners, and communities.
+    implementationStatus: complete
+    shippedMilestone: M93
+    moduleId: studio-institute
+    dependsOn:
+      - M91
+    enables: []
+    chapterId: chapter-ii-2
+    relatedSystems:
+      - profession-brain
+      - knowledge-commerce
+      - knowledge-registry
+    implementationNotes: Teaching engine — Academy lessons auto-sync from Knowledge Registry™.
+  - canonicalId: M95
+    name: Organization Genome™
+    internalId: organization-genome
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Preserves identity — tone, values, culture, standards, and decision philosophy.
+    implementationStatus: complete
+    shippedMilestone: M95
+    moduleId: organization-genome
+    dependsOn:
+      - M91
+    enables: []
+    chapterId: chapter-ii-1
+    relatedSystems:
+      - business-discovery-blueprint
+      - profession-brain
+      - organization-operating-manual
+    implementationNotes: Organizational DNA — tone, values, culture inherited by every module.
+  - canonicalId: M96
+    name: Memory Engine™
+    internalId: memory-engine
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Organizational memory for lessons, outcomes, failures, successes, and decisions.
+    implementationStatus: complete
+    shippedMilestone: M96
+    moduleId: memory-engine
+    dependsOn:
+      - M91
+    enables:
+      - M97
+      - M101
+      - M105
+      - M106
+    chapterId: chapter-ii-3
+    relatedSystems:
+      - legacy-vault
+      - studio-intelligence-architecture
+      - wisdom-capture
+    implementationNotes: Organizational memory backbone — lessons, outcomes, decisions.
+  - canonicalId: M97
+    name: Company Health Index™
+    internalId: company-health-index
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Executive score of organizational health across departments.
+    implementationStatus: complete
+    shippedMilestone: M97
+    moduleId: company-health-index
+    dependsOn:
+      - M96
+    enables:
+      - M99
+    chapterId: chapter-ii-4
+    relatedSystems:
+      - organization-pulse
+      - company-maturity-engine
+      - executive-council
+    implementationNotes: Executive health score across departments.
+  - canonicalId: M99
+    name: Executive Council™ V2
+    internalId: executive-council
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Digital executives collaborate and summarize strategic recommendations.
+    implementationStatus: complete
+    shippedMilestone: M99
+    moduleId: executive-council
+    dependsOn:
+      - M97
+    enables:
+      - M100
+    chapterId: chapter-ii-4
+    relatedSystems:
+      - studio-intelligence
+      - command-dock
+      - organization-operating-manual
+    implementationNotes: Digital executives — multi-perspective strategic recommendations.
+  - canonicalId: M100
+    name: Organization Pulse™
+    internalId: organization-pulse
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Real-time organizational well-being and operating state.
+    implementationStatus: complete
+    shippedMilestone: M100
+    moduleId: organization-pulse
+    dependsOn:
+      - M99
+    enables:
+      - M107
+    chapterId: chapter-ii-4
+    relatedSystems:
+      - company-health-index
+      - founder-cognitive-load
+      - ambient-awareness
+    implementationNotes: Real-time organizational well-being beyond financial metrics.
+  - canonicalId: M101
+    name: Wisdom Capture™
+    internalId: wisdom-capture
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Captures small lessons and observations before they disappear.
+    implementationStatus: complete
+    shippedMilestone: M101
+    moduleId: wisdom-capture
+    dependsOn:
+      - M96
+    enables:
+      - M102
+    chapterId: chapter-ii-3
+    relatedSystems:
+      - memory-engine
+      - shadow-mode
+      - wisdom-capture
+    implementationNotes: Captures small lessons before they disappear.
+  - canonicalId: M102
+    name: Shadow Mode™
+    internalId: shadow-mode
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Concierges observe before recommending, assisting, or automating.
+    implementationStatus: complete
+    shippedMilestone: M102
+    moduleId: shadow-mode
+    dependsOn:
+      - M101
+    enables:
+      - M103
+    chapterId: chapter-ii-5
+    relatedSystems:
+      - anticipation-engine
+      - shadow-mode
+      - command-dock
+    implementationNotes: Concierges observe before recommending or automating.
+  - canonicalId: M103
+    name: Organization Digital Twin™
+    internalId: organization-digital-twin
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Simulation clone of the organization.
+    implementationStatus: complete
+    shippedMilestone: M103
+    moduleId: organization-digital-twin
+    dependsOn:
+      - M102
+    enables:
+      - M104
+    chapterId: chapter-ii-5
+    relatedSystems:
+      - business-simulation-lab
+      - shadow-mode
+      - predictive-organization
+    implementationNotes: Simulation clone of the organization for safe testing.
+  - canonicalId: M104
+    name: Business Simulation Lab™
+    internalId: business-simulation-lab
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Strategic what-if testing before real-world changes.
+    implementationStatus: complete
+    shippedMilestone: M104
+    moduleId: business-simulation-lab
+    dependsOn:
+      - M103
+    enables: []
+    chapterId: chapter-ii-5
+    relatedSystems:
+      - organization-digital-twin
+      - business-simulation-lab
+    implementationNotes: Strategic what-if testing before real-world changes.
+  - canonicalId: M105
+    name: Knowledge Confidence™
+    internalId: knowledge-confidence
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Measures completeness, reliability, and currency of knowledge.
+    implementationStatus: complete
+    shippedMilestone: M105
+    moduleId: knowledge-confidence
+    dependsOn:
+      - M96
+    enables: []
+    chapterId: chapter-ii-3
+    relatedSystems:
+      - profession-brain
+      - knowledge-registry
+      - documentation-governance
+    implementationNotes: Measures completeness and currency of organizational knowledge.
+  - canonicalId: M106
+    name: Legacy Vault™
+    internalId: legacy-vault
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Permanent archive of milestones, founder letters, and organizational history.
+    implementationStatus: complete
+    shippedMilestone: M106
+    moduleId: legacy-vault
+    dependsOn:
+      - M96
+    enables:
+      - M116
+      - M121
+    chapterId: chapter-ii-3
+    relatedSystems:
+      - executive-timeline
+      - memory-engine
+      - legacy-network
+    implementationNotes: Permanent archive — milestones, founder letters, organizational history.
+  - canonicalId: M107
+    name: Ambient Awareness™
+    internalId: ambient-awareness
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Contextual awareness of projects, priorities, calendar, and workloads.
+    implementationStatus: complete
+    shippedMilestone: M107
+    moduleId: ambient-awareness
+    dependsOn:
+      - M100
+    enables:
+      - M108
+    chapterId: chapter-ii-6
+    relatedSystems:
+      - organization-pulse
+      - anticipation-engine
+      - command-dock
+    implementationNotes: Contextual awareness of projects, priorities, and workloads.
+  - canonicalId: M108
+    name: Anticipation Engine™
+    internalId: anticipation-engine
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Predicts needs and prepares work before users ask.
+    implementationStatus: complete
+    shippedMilestone: M108
+    moduleId: anticipation-engine
+    dependsOn:
+      - M107
+    enables:
+      - M109
+    chapterId: chapter-ii-6
+    relatedSystems:
+      - ambient-awareness
+      - founder-cognitive-load
+      - autonomous-preparation
+    implementationNotes: Predicts needs and prepares work before users ask.
+  - canonicalId: M109
+    name: Founder Cognitive Load™
+    internalId: founder-cognitive-load
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Protects founder attention and reduces overload.
+    implementationStatus: complete
+    shippedMilestone: M109
+    moduleId: founder-cognitive-load
+    dependsOn:
+      - M108
+    enables:
+      - M110
+      - M118
+    chapterId: chapter-ii-6
+    relatedSystems:
+      - anticipation-engine
+      - presence-engine
+      - founder-operating-system
+    implementationNotes: Protects founder attention and reduces overload.
+  - canonicalId: M110
+    name: Presence Engine™
+    internalId: presence-engine
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Creates calm, responsive, executive presence.
+    implementationStatus: complete
+    shippedMilestone: M110
+    moduleId: presence-engine
+    dependsOn:
+      - M109
+    enables:
+      - M111
+    chapterId: chapter-ii-6
+    relatedSystems:
+      - founder-cognitive-load
+      - cross-organization-intelligence
+    implementationNotes: Calm, responsive executive presence layer.
+  - canonicalId: M111
+    name: Cross-Organization Intelligence™
+    internalId: cross-organization-intelligence
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Permission-based opportunity discovery across organizations.
+    implementationStatus: complete
+    shippedMilestone: M111
+    moduleId: cross-organization-intelligence
+    dependsOn:
+      - M110
+    enables:
+      - M112
+    chapterId: chapter-ii-6
+    relatedSystems:
+      - relationship-memory
+      - legacy-network
+      - profession-brain
+    implementationNotes: Permission-based opportunity discovery across organizations.
+  - canonicalId: M112
+    name: Relationship Memory™
+    internalId: relationship-memory
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Learns how people and organizations prefer to work together.
+    implementationStatus: complete
+    shippedMilestone: M112
+    moduleId: relationship-memory
+    dependsOn:
+      - M111
+    enables:
+      - M113
+    chapterId: chapter-ii-6
+    relatedSystems:
+      - cross-organization-intelligence
+      - predictive-organization
+      - identity-graph
+    implementationNotes: Learns how people and organizations prefer to work together.
+  - canonicalId: M113
+    name: Predictive Organization™
+    internalId: predictive-organization
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Forecasts risks, opportunities, bottlenecks, and future needs.
+    implementationStatus: complete
+    shippedMilestone: M113
+    moduleId: predictive-organization
+    dependsOn:
+      - M112
+    enables:
+      - M114
+    chapterId: chapter-ii-6
+    relatedSystems:
+      - relationship-memory
+      - autonomous-preparation
+      - organization-pulse
+    implementationNotes: Forecasts risks, opportunities, bottlenecks, and future needs.
+  - canonicalId: M114
+    name: Autonomous Preparation™
+    internalId: autonomous-preparation
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Prepares drafts, agendas, assets, and workflows for approval.
+    implementationStatus: complete
+    shippedMilestone: M114
+    moduleId: autonomous-preparation
+    dependsOn:
+      - M113
+    enables:
+      - M115
+    chapterId: chapter-ii-6
+    relatedSystems:
+      - predictive-organization
+      - organizational-consciousness
+      - command-dock
+    implementationNotes: Prepares drafts, agendas, assets, and workflows for approval.
+  - canonicalId: M115
+    name: Organizational Consciousness™
+    internalId: organizational-consciousness
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Unified intelligence connecting awareness, memory, prediction, and action.
+    implementationStatus: complete
+    shippedMilestone: M115
+    moduleId: organizational-consciousness
+    dependsOn:
+      - M114
+    enables:
+      - M117
+    chapterId: chapter-ii-6
+    relatedSystems:
+      - memory-engine
+      - predictive-organization
+      - studio-intelligence-architecture
+    implementationNotes: Unified intelligence connecting awareness, memory, prediction, and action.
+  - canonicalId: M116
+    name: Executive Timeline™
+    internalId: executive-timeline
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Interactive history of the organization.
+    implementationStatus: complete
+    shippedMilestone: M116
+    moduleId: executive-timeline
+    dependsOn:
+      - M106
+    enables: []
+    chapterId: chapter-ii-3
+    relatedSystems:
+      - legacy-vault
+      - executive-timeline
+      - mission-control
+    implementationNotes: Interactive organizational history — engineering and executive surfaces.
+  - canonicalId: M117
+    name: World Knowledge Engine™
+    internalId: world-knowledge-engine
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Monitors external trends, regulations, competitors, and technologies.
+    implementationStatus: complete
+    shippedMilestone: M117
+    moduleId: world-knowledge-engine
+    dependsOn:
+      - M115
+    enables: []
+    chapterId: chapter-ii-7
+    relatedSystems:
+      - organizational-consciousness
+      - innovation-lab
+      - studio-intelligence-architecture
+    implementationNotes: Monitors external trends, regulations, competitors, and technologies.
+  - canonicalId: M118
+    name: Founder Operating System™
+    internalId: founder-operating-system
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Supports founder focus, coaching, leadership, and executive health.
+    implementationStatus: complete
+    shippedMilestone: M118
+    moduleId: founder-operating-system
+    dependsOn:
+      - M109
+    enables:
+      - M119
+    chapterId: chapter-ii-4
+    relatedSystems:
+      - founder-cognitive-load
+      - executive-council
+      - innovation-lab
+    implementationNotes: Founder focus, coaching, leadership, and executive health support.
+  - canonicalId: M119
+    name: Innovation Lab™
+    internalId: innovation-lab
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Generates and manages ideas, prototypes, partnerships, and opportunities.
+    implementationStatus: complete
+    shippedMilestone: M119
+    moduleId: innovation-lab
+    dependsOn:
+      - M118
+    enables: []
+    chapterId: chapter-ii-7
+    relatedSystems:
+      - founder-operating-system
+      - world-knowledge-engine
+      - business-simulation-lab
+    implementationNotes: Ideas, prototypes, partnerships, and opportunity pipeline.
+  - canonicalId: M120
+    name: Organization Operating Manual™
+    internalId: organization-operating-manual
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Living handbook generated from organizational systems and knowledge.
+    implementationStatus: complete
+    shippedMilestone: M120
+    moduleId: organization-operating-manual
+    dependsOn:
+      - M91
+    enables: []
+    chapterId: chapter-ii-3
+    relatedSystems:
+      - profession-brain
+      - documentation-sync
+      - knowledge-registry
+    implementationNotes: Living handbook generated from organizational systems and knowledge.
+  - canonicalId: M121
+    name: Legacy Network™
+    internalId: legacy-network
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Permission-based global ecosystem for shared frameworks and knowledge.
+    implementationStatus: complete
+    shippedMilestone: M121
+    moduleId: legacy-network
+    dependsOn:
+      - M106
+    enables: []
+    chapterId: chapter-ii-3
+    relatedSystems:
+      - legacy-vault
+      - knowledge-commerce
+      - expert-marketplace
+    implementationNotes: Permission-based global ecosystem for shared frameworks and knowledge.
+  - canonicalId: M122
+    name: Studio Intelligence™ Architecture
+    internalId: studio-intelligence-architecture
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Separates knowledge from reasoning; Knowledge Fabric™ and durable intelligence.
+    implementationStatus: complete
+    shippedMilestone: M122
+    moduleId: studio-intelligence-architecture
+    dependsOn:
+      - M91
+    enables:
+      - M123
+      - M125
+    chapterId: chapter-ii-8
+    relatedSystems:
+      - profession-brain
+      - memory-engine
+      - model-orchestrator
+      - studio-intelligence
+    implementationNotes: >-
+      Knowledge Fabric™ — organization owns knowledge; models reason. Volume I M87.5 consumes this
+      layer.
+  - canonicalId: M123
+    name: Model Orchestrator™ + AI Swap Engine™
+    internalId: model-orchestrator
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Provider-agnostic AI routing, failover, and model independence.
+    implementationStatus: complete
+    shippedMilestone: M123
+    moduleId: model-orchestrator
+    dependsOn:
+      - M122
+    enables:
+      - M124
+    chapterId: chapter-ii-8
+    relatedSystems:
+      - studio-intelligence-architecture
+      - studio-foundation-models
+      - prompt-registry
+    implementationNotes: Provider-agnostic AI routing, failover, and model independence.
+  - canonicalId: M124
+    name: Studio Foundation Models™
+    internalId: studio-foundation-models
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Long-term roadmap for Studio-owned specialized Profession Models™.
+    implementationStatus: complete
+    shippedMilestone: M124
+    moduleId: studio-foundation-models
+    dependsOn:
+      - M123
+    enables: []
+    chapterId: chapter-ii-8
+    relatedSystems:
+      - model-orchestrator
+      - profession-brain
+      - studio-intelligence-architecture
+    implementationNotes: Long-term Studio-owned Profession Models™ roadmap.
+  - canonicalId: M125
+    name: Documentation Synchronization™
+    internalId: documentation-sync
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: One-time update of manual, walkthrough, search, help, academy, and docs.
+    implementationStatus: complete
+    shippedMilestone: M125
+    moduleId: documentation-sync
+    dependsOn:
+      - M122
+    enables:
+      - M126
+    chapterId: chapter-ii-9
+    relatedSystems:
+      - knowledge-registry
+      - documentation-governance
+      - studio-institute
+    implementationNotes: Living documentation sync — manual, walkthrough, search, Academy consumers.
+  - canonicalId: M126
+    name: Studio OS Knowledge Registry™
+    internalId: knowledge-registry
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Single source of truth for platform knowledge architecture.
+    implementationStatus: in-progress
+    shippedMilestone: M126
+    moduleId: knowledge-registry
+    dependsOn:
+      - M125
+    enables:
+      - M126.5
+    chapterId: chapter-ii-9
+    relatedSystems:
+      - manifest-reconciliation
+      - manifest-authoring
+      - system-registry
+      - documentation-sync
+    implementationNotes: Studio OS Knowledge Registry™ — Master Spec single source of truth. Sprint 1–2 foundation.
+  - canonicalId: M126.5
+    name: Documentation Governance™
+    internalId: documentation-governance
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Audits documentation coverage, terminology, dependencies, and health.
+    implementationStatus: complete
+    shippedMilestone: M126.5
+    moduleId: documentation-governance
+    dependsOn:
+      - M126
+    enables:
+      - M127
+    chapterId: chapter-ii-9
+    relatedSystems:
+      - knowledge-registry
+      - documentation-sync
+      - engineering-excellence-dashboard
+    implementationNotes: Continuous documentation audits, coverage, and pre-deploy validation.
+  - canonicalId: M127
+    name: System Registry™
+    internalId: system-registry
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Master registry of every platform object and system.
+    implementationStatus: complete
+    shippedMilestone: M127
+    moduleId: system-registry
+    dependsOn:
+      - M126.5
+    enables: []
+    chapterId: chapter-ii-9
+    relatedSystems:
+      - knowledge-registry
+      - documentation-governance
+      - component-registry
+    implementationNotes: Master directory of every platform object — consumes Knowledge Registry entries.

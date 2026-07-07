@@ -32,8 +32,13 @@ volumes:
     summary: Captures, preserves, teaches, searches, monetizes, and passes down organizational expertise.
     status: in-progress
     dependsOn: [volume-i, volume-0]
-    milestoneRange: M90-M124
-    completionPct: 72
+    milestoneRange: M90-M127
+    completionPct: 92
+    chaptersFile: chapters/volume-ii.yaml
+    notes: >-
+      Nine chapters registered in chapters/volume-ii.yaml. Milestones in
+      milestones/volume-ii.yaml. Knowledge Registry™ (M126) in progress; all other
+      Volume II milestones complete.
 
   - id: volume-iii
     number: III

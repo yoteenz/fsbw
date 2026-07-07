@@ -58,6 +58,8 @@ function main() {
   const chapters = loadChapters();
   const volumeICoverage = chapters.filter((c) => c.volumeId === 'volume-i');
   const volumeIMilestones = milestones.filter((m) => m.volumeId === 'volume-i');
+  const volumeIICoverage = chapters.filter((c) => c.volumeId === 'volume-ii');
+  const volumeIIMilestones = milestones.filter((m) => m.volumeId === 'volume-ii');
 
   const bundle = {
     version: '1.0.0',
@@ -81,6 +83,9 @@ function main() {
       volumeIMilestoneCount: volumeIMilestones.length,
       volumeIChapterCount: volumeICoverage.length,
       volumeICompleteCount: volumeIMilestones.filter((m) => m.implementationStatus === 'complete').length,
+      volumeIIMilestoneCount: volumeIIMilestones.length,
+      volumeIIChapterCount: volumeIICoverage.length,
+      volumeIICompleteCount: volumeIIMilestones.filter((m) => m.implementationStatus === 'complete').length,
     },
   };
 
@@ -104,6 +109,9 @@ Generated: ${bundle.compiledAt}
 | Volume I chapters | ${bundle.stats.volumeIChapterCount} |
 | Volume I milestones | ${bundle.stats.volumeIMilestoneCount} |
 | Volume I complete | ${bundle.stats.volumeICompleteCount} |
+| Volume II chapters | ${bundle.stats.volumeIIChapterCount} |
+| Volume II milestones | ${bundle.stats.volumeIIMilestoneCount} |
+| Volume II complete | ${bundle.stats.volumeIICompleteCount} |
 | Design Revisions | ${bundle.stats.designRevisionCount} |
 | Complete | ${bundle.stats.completeCount} |
 | In Progress | ${bundle.stats.inProgressCount} |

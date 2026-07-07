@@ -16,6 +16,7 @@
 | `constitution.yaml` | Volume 0 principles |
 | `volumes.yaml` | Volumes 0–XIX containers |
 | `chapters/volume-i.yaml` | Volume I chapter structure (8 chapters) |
+| `chapters/volume-ii.yaml` | Volume II chapter structure (9 chapters) |
 | `milestones/*.yaml` | All canonical milestones (M73.5–M276) |
 | `design-revisions.yaml` | DR-001–DR-004 merge overlays |
 | `milestone-aliases.yaml` | Canonical ↔ shipped ID reconciliation |
@@ -27,7 +28,8 @@
 1. **Manifest in docs/** — specification independent of application code
 2. **Shipped badges in UX** — canonical IDs only in engineering surfaces
 3. **Unified search** — planned milestones labeled Planned / In Progress / Complete / Deprecated
-4. **Volume I registered now** — 8 chapters, 25 milestones, canonical IDs M73.5–M89.4
+4. **Volume I registered** — 8 chapters, 25 milestones (M73.5–M89.4)
+5. **Volume II registered** — 9 chapters, 39 milestones (M90–M127)
 
 ## Compile
 

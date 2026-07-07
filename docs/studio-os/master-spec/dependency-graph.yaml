@@ -98,6 +98,21 @@ edges:
     to: M91
     type: enables
 
+  - from: volume-i
+    to: M90
+    type: enables
+    note: Core OS onboarding feeds Knowledge Infrastructure discovery
+
+  - from: M91
+    to: M122
+    type: enables
+    note: Profession Brain feeds Studio Intelligence Architecture
+
+  - from: M122
+    to: M125
+    type: chain
+    note: Intelligence stack → documentation platform
+
   - from: M91
     to: M92
     type: enables

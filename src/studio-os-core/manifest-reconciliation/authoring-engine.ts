@@ -75,6 +75,19 @@ export function validateMasterSpecManifest(bundle: MasterSpecBundle = getMasterS
     issues.push({ severity: 'warning', code: 'LOW_VOLUME_I_CHAPTERS', message: 'Volume I should have structured chapters' });
   }
 
+  if (!bundle.volumes.some((v) => v.id === 'volume-ii')) {
+    issues.push({ severity: 'error', code: 'MISSING_VOLUME_II', message: 'Volume II container missing' });
+  }
+
+  const volumeII = bundle.milestones.filter((m) => m.volumeId === 'volume-ii');
+  if (volumeII.length < 35) {
+    issues.push({ severity: 'warning', code: 'LOW_VOLUME_II_COUNT', message: `Expected ≥35 Volume II milestones, found ${volumeII.length}` });
+  }
+
+  if ((bundle.chapters ?? []).filter((c) => c.volumeId === 'volume-ii').length < 8) {
+    issues.push({ severity: 'warning', code: 'LOW_VOLUME_II_CHAPTERS', message: 'Volume II should have structured chapters' });
+  }
+
   if (bundle.milestones.length < 210) {
     issues.push({ severity: 'warning', code: 'LOW_MILESTONE_COUNT', message: `Expected ~218 milestones, found ${bundle.milestones.length}` });
   }

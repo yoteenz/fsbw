@@ -169,9 +169,9 @@ export function KnowledgeRegistryWorkspace() {
         ))}
       </ExecutiveFocusPanel>
       {profile.chapterSummaries.length > 0 ? (
-        <ExecutiveFocusPanel title="CHAPTERS — VOLUME I STRUCTURE">
+        <ExecutiveFocusPanel title={`CHAPTERS — ${profile.chapterSummaries[0]?.volumeId === 'volume-ii' ? 'VOLUME I & II' : 'VOLUME'} STRUCTURE`}>
           {profile.chapterSummaries.map((ch) => (
-            <ExecutiveSecondaryCard key={ch.chapterId} title={`CHAPTER ${ch.number} · ${ch.title.toUpperCase()}`}>
+            <ExecutiveSecondaryCard key={ch.chapterId} title={`${ch.volumeId.toUpperCase()} · CH ${ch.number} · ${ch.title.toUpperCase()}`}>
               <p className="text-[6px] font-futura mb-1" style={{ color: KNOWLEDGE_REGISTRY_ACCENT, fontWeight: 515 }}>
                 {ch.chapterId} · {ch.status.toUpperCase().replace(/-/g, ' ')} · {ch.completeCount}/{ch.milestoneCount} milestones · {ch.completionPct}%
               </p>

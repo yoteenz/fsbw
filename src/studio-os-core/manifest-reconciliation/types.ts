@@ -102,6 +102,9 @@ export type MasterSpecBundle = {
     volumeIMilestoneCount: number;
     volumeIChapterCount: number;
     volumeICompleteCount: number;
+    volumeIIMilestoneCount: number;
+    volumeIIChapterCount: number;
+    volumeIICompleteCount: number;
   };
 };
 
