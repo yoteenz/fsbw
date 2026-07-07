@@ -39963,3 +39963,44 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Studio Orb** — **`ORB_SIZE_PX` 58 → 44**; position tightened (`bottom: 14`, `right: 12`)
 
 **Changes:** StudioPlatformLayout.tsx, AdminStudioLayout.tsx, studioOrbTheme.ts, StudioOrbProvider.tsx, StudioOrbAwakeningOverlay.tsx, MEMORY.md.
+
+---
+
+## 2026-07-07 — Studio Command Center layout override fix (menu-toggle-card + global Orb CSS)
+
+**Context (full chat arc):** User reported **nothing changed** after card-height / smaller-Orb deploy on Studio Command Center — "something is overriding."
+
+**Root cause:** Inline `height` / `MENU_TOGGLE_PANEL_HEIGHT` on studio shells **lost to** global **`.menu-toggle-card`** in **`index.css`** (`calc(100dvh - 100px)` + `!important`) used everywhere else for full-height mobile cards — studio layouts never applied that class. Orb size in TS/theme was easy to miss vs visual glow (breathe scale, ambient ring).
+
+**Fix delivered:**
+- **`StudioPlatformLayout`** + **`AdminStudioLayout`** — main card uses **`menu-toggle-card`** class (`MENU_TOGGLE_MAIN_CARD_CLASS`) instead of inline height; keeps **`flex-1` scroll** body + **72px** bottom padding for Orb clearance
+- **`index.css`** — **`.studio-orb-root { 40px !important }`** global footprint (cannot be reverted by injected runtime styles)
+- **`studioOrbTheme.ts`** — removed width/height from injected `.studio-orb-root`; breathe scale **1.035 → 1.02**; **`ORB_SIZE_PX` = 40**
+- **`StudioOrb.tsx`** — no inline width/height; smaller ambient ring inset
+
+**Conventions:** Admin/Studio main cards = **`.menu-toggle-card`** from `index.css`. Orb size = **`index.css` !important**, not JS-only.
+
+**Changes:** index.css, menuToggleHeights.ts, StudioPlatformLayout.tsx, AdminStudioLayout.tsx, studioOrbTheme.ts, StudioOrb.tsx, MEMORY.md.
+
+---
+
+## 2026-07-07 — Studio scroll audit: all pages card + panel internal scroll
+
+**Context (full chat arc):** Session covered Campaign Deliverables Manager, deliverables visibility, Studio Command Center card height, menu-toggle-card override fix, smaller Studio Orb, and prior scroll audit (45cb03cd). User asked to **confirm all Studio pages’ panels/cards scroll internally** — some pages had **no scroll on the card at all**.
+
+**Root causes:**
+1. **Fixed header + nav tabs outside scroll body** could consume the entire `menu-toggle-card` height on mobile (especially Overview with `ExecutiveHeroCard` in `summarySlot`), collapsing `flex-1` scroll region to **0px** — content clipped with no scrollbar.
+2. **Studio OS platform pages** (create, blueprints, promotion-center, workspace dashboard/settings/shell/newsroom) used **raw page layout** without bounded card + internal scroll.
+3. **Production Studio / Render Queue / Production Builder** used **viewport-based `minHeight` + `h-full`** on grid columns, fighting the parent scroll chain on some viewports.
+
+**Fix delivered:**
+- **`index.css`** — **`.admin-studio-main-card`** (flex column, min-h-0, overflow hidden) + **`.admin-studio-scroll-body`** (flex 1 1 0, min-h-0, overflow-y auto)
+- **`menuToggleHeights.ts`** — **`ADMIN_STUDIO_MAIN_CARD_CLASS`**, **`ADMIN_STUDIO_SCROLL_BODY_CLASS`**
+- **`AdminStudioLayout`** — uses shared classes; **nav tabs + WorkspaceSwitcher moved inside scroll body**; optional **`summarySlot` header max-height** (`min(42vh, 340px)`) with overflow when hero strip present
+- **`StudioPlatformLayout`** — same shared card/scroll classes
+- **Studio OS pages** migrated to **`StudioPlatformLayout`**: create, blueprints, promotion-center, workspace dashboard, settings, shell, newsroom
+- **Production Studio / Render Queue / Production Builder** — removed vh-based grid min-heights; panel columns use **`lg:max-h-[min(52vh,520px)]`** + **`overflow-y-auto`** instead of unbounded **`h-full`**
+
+**Conventions:** All Studio org + platform pages scroll inside **`.admin-studio-scroll-body`** within **`.menu-toggle-card.admin-studio-main-card`**. Nav tabs scroll with workspace content. Inner three-column workspaces cap panel height on large screens and scroll inside panels.
+
+**Changes:** index.css, menuToggleHeights.ts, AdminStudioLayout.tsx, StudioPlatformLayout.tsx, 7 studio-os page files, ProductionStudioWorkspace.tsx, RenderQueueWorkspace.tsx, ProductionBuilderWorkspace.tsx, ProductionStudioPanels.tsx, RenderQueuePanels.tsx, MEMORY.md.

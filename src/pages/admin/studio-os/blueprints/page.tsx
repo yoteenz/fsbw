@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import AdminHeader from '../../components/AdminHeader';
+import { StudioPlatformLayout } from '../../../../components/admin/studio-os/StudioPlatformLayout';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
-import { STUDIO_OS_PLATFORM } from '../../../../studio-os-core/config/platform';
 import { WORKSPACE_BLUEPRINTS } from '../../../../studio-os-core/workspace-creation/blueprints';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
@@ -11,19 +10,12 @@ export default function AdminStudioOsBlueprintsPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen relative uppercase" style={{ textTransform: 'uppercase' }}>
-      <div className="fixed inset-0 -z-10" style={{ backgroundImage: `url('/assets/marble-half.png')`, backgroundSize: 'contain', backgroundRepeat: 'repeat' }} />
-      <AdminHeader
-        title="BLUEPRINT LIBRARY"
-        showBack
-        onBack={() => navigate(STUDIO_OS_ROUTES.entry)}
-        breadcrumbParentLabel={STUDIO_OS_PLATFORM.name}
-        breadcrumbParentPath={STUDIO_OS_ROUTES.entry}
-      />
-      <div className="pb-8 px-4 max-w-2xl mx-auto space-y-3">
-        <p className="text-[7px] font-futura" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-          DUPLICATE · CREATE · IMPORT · EXPORT · CLONE · VERSION · COMPARE — BLUEPRINT MARKETPLACE V1
-        </p>
+    <StudioPlatformLayout
+      title="BLUEPRINT LIBRARY"
+      subtitle="DUPLICATE · CREATE · IMPORT · EXPORT · CLONE · VERSION · COMPARE — BLUEPRINT MARKETPLACE V1"
+      onBack={() => navigate(STUDIO_OS_ROUTES.entry)}
+    >
+      <div className="space-y-3">
         {WORKSPACE_BLUEPRINTS.map((bp) => (
           <div key={bp.id} className="p-3 border" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(255,255,255,0.85)' }}>
             <p className="text-[10px]">{bp.icon}</p>
@@ -54,6 +46,6 @@ export default function AdminStudioOsBlueprintsPage() {
           </div>
         ))}
       </div>
-    </div>
+    </StudioPlatformLayout>
   );
 }

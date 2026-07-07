@@ -6,7 +6,7 @@ import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAcc
 import { STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { STUDIO_PLATFORM_NAV, resolvePlatformNavFromPath } from '../../../studio-os-core/platform/navigation';
 import { STUDIO_OS_UPPERCASE_CLASS, ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
-import { MENU_TOGGLE_MAIN_CARD_CLASS } from '../../../layouts/menuToggleHeights';
+import { ADMIN_STUDIO_MAIN_CARD_CLASS, ADMIN_STUDIO_SCROLL_BODY_CLASS } from '../../../layouts/menuToggleHeights';
 import { shouldShowCommandDock } from '../studio/command-dock/CommandDock';
 import { StudioOrbMount, StudioOrbProvider, useStudioOrbEnvironmentActive } from '../studio/studio-orb/StudioOrbShell';
 import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
@@ -83,7 +83,7 @@ export function StudioPlatformLayout({
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto">
             <div
-              className={`${MENU_TOGGLE_MAIN_CARD_CLASS} bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden`}
+              className={`${ADMIN_STUDIO_MAIN_CARD_CLASS} bg-white/60 backdrop-blur-sm border border-black`}
               style={{ borderWidth: '1.3px' }}
               data-admin-main-card="studio-platform"
             >
@@ -154,12 +154,10 @@ export function StudioPlatformLayout({
               </div>
 
               <div
-                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden admin-hub-tab-scroll"
+                className={ADMIN_STUDIO_SCROLL_BODY_CLASS}
                 style={{
                   padding: '8px 20px 24px',
                   paddingBottom: shouldShowCommandDock(pathname) ? '72px' : '24px',
-                  boxSizing: 'border-box',
-                  WebkitOverflowScrolling: 'touch',
                 }}
               >
                 {children}

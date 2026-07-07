@@ -40,10 +40,9 @@ export function RenderQueueWorkspace() {
       <RenderPipelineStrip job={selectedRender} />
 
       <div
-        className="flex flex-col gap-3 mb-3 lg:grid"
+        className="flex flex-col gap-3 mb-3 lg:grid lg:items-stretch"
         style={{
           gridTemplateColumns: 'minmax(140px, 24%) minmax(0, 1fr) minmax(160px, 26%)',
-          minHeight: 'min(58vh, 480px)',
         }}
       >
         <RenderJobList

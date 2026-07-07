@@ -5,7 +5,7 @@ import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
-import { MENU_TOGGLE_MAIN_CARD_CLASS } from '../../../layouts/menuToggleHeights';
+import { ADMIN_STUDIO_MAIN_CARD_CLASS, ADMIN_STUDIO_SCROLL_BODY_CLASS } from '../../../layouts/menuToggleHeights';
 import { StudioKnowledgeProvider } from '../../../contexts/StudioKnowledgeContext';
 import { StudioManualBridge } from './StudioManualBridge';
 import { AdminStudioBreadcrumbTrail } from './AdminStudioBreadcrumbTrail';
@@ -204,11 +204,14 @@ export function AdminStudioLayout({
               />
             ) : null}
             <div
-              className={`${MENU_TOGGLE_MAIN_CARD_CLASS} bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden`}
+              className={`${ADMIN_STUDIO_MAIN_CARD_CLASS} bg-white/60 backdrop-blur-sm border border-black`}
               style={{ borderWidth: '1.3px' }}
               data-admin-main-card="studio-organization"
             >
-              <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }}>
+              <div
+                className="flex-shrink-0 px-5 pb-2 min-h-0"
+                style={{ marginTop: '10px', maxHeight: summarySlot ? 'min(42vh, 340px)' : undefined, overflowY: summarySlot ? 'auto' : undefined }}
+              >
                 {summarySlot}
 
                 <AdminStudioBreadcrumbTrail segments={breadcrumbs} />
@@ -281,7 +284,15 @@ export function AdminStudioLayout({
                 <div style={{ borderBottom: '1px solid #e5e7eb', marginTop: '10px' }} />
               </div>
 
-              <div className="flex-shrink-0 min-h-0">
+              <div
+                className={ADMIN_STUDIO_SCROLL_BODY_CLASS}
+                data-studio-manual="workspace-content"
+                style={{
+                  paddingLeft: '20px',
+                  paddingRight: '20px',
+                  paddingBottom: shouldShowCommandDock(pathname) ? '72px' : '24px',
+                }}
+              >
                 {!hideNavTabs && workspace.studioEnabled ? (
                   <div data-studio-manual="nav-tabs">
                     <AdminStudioNavTabs activeGroupId={activeGroupId} />
@@ -289,19 +300,7 @@ export function AdminStudioLayout({
                 ) : null}
 
                 <WorkspaceSwitcher />
-              </div>
 
-              <div
-                className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden admin-hub-tab-scroll"
-                data-studio-manual="workspace-content"
-                style={{
-                  paddingLeft: '20px',
-                  paddingRight: '20px',
-                  paddingBottom: shouldShowCommandDock(pathname) ? '72px' : '24px',
-                  boxSizing: 'border-box',
-                  WebkitOverflowScrolling: 'touch',
-                }}
-              >
                 <StudioImmersionShell />
                 <KnowledgeContextualHint />
                 <div style={{ paddingTop: '8px', boxSizing: 'border-box' }}>{children}</div>

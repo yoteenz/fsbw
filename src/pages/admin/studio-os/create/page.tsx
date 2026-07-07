@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import AdminHeader from '../../components/AdminHeader';
+import { StudioPlatformLayout } from '../../../../components/admin/studio-os/StudioPlatformLayout';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
-import { STUDIO_OS_PLATFORM } from '../../../../studio-os-core/config/platform';
 import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useWorkspaceCreationEngine } from '../../../../hooks/useWorkspaceCreationEngine';
 import { WorkspaceCreationWizard } from '../../../../components/admin/studio-os/workspace-creation/WorkspaceCreationWizard';
@@ -34,22 +33,19 @@ export default function AdminStudioOsCreatePage() {
   };
 
   return (
-    <div className="min-h-screen relative uppercase" style={{ textTransform: 'uppercase' }}>
-      <div className="fixed inset-0 -z-10" style={{ backgroundImage: `url('/assets/marble-half.png')`, backgroundSize: 'contain', backgroundRepeat: 'repeat' }} />
-      <AdminHeader
+    <>
+      <StudioPlatformLayout
         title="LAUNCH NEW COMPANY"
-        showBack
+        subtitle="WORKSPACE CREATION ENGINE V1.0 · SELECT BLUEPRINT · PROVISION COMPLETE OPERATING SYSTEM"
         onBack={() => navigate(STUDIO_OS_ROUTES.entry)}
-        breadcrumbParentLabel={STUDIO_OS_PLATFORM.name}
-        breadcrumbParentPath={STUDIO_OS_ROUTES.entry}
-      />
-      <div className="pb-8 px-4 max-w-2xl mx-auto">
+        hideNav
+      >
         <p className="text-[7px] font-futura mb-3" style={{ fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
           WORKSPACE CREATION ENGINE V1.0 · SELECT BLUEPRINT · PROVISION COMPLETE OPERATING SYSTEM
         </p>
         <WorkspaceCreationWizard blueprints={blueprints} onLaunch={handleLaunch} initialBlueprintId={initialBlueprint} />
-      </div>
+      </StudioPlatformLayout>
       <ProvisioningSequence open={provisioning} workspaceName={pendingName} onComplete={handleProvisioningComplete} />
-    </div>
+    </>
   );
 }

@@ -27,16 +27,14 @@ export function ProductionStudioWorkspace() {
       className="production-studio-root studio-living-panel"
       style={{
         backgroundImage: PS_VISUAL.cinematicGlow,
-        minHeight: 'min(80vh, 720px)',
       }}
     >
       <ProductionStudioHeader store={store} />
 
       <div
-        className="flex flex-col gap-3 mb-3 lg:grid"
+        className="flex flex-col gap-3 mb-3 lg:grid lg:items-stretch"
         style={{
           gridTemplateColumns: 'minmax(140px, 22%) minmax(0, 1fr) minmax(160px, 26%)',
-          minHeight: 'min(68vh, 560px)',
         }}
       >
         <ProductionStudioQueuePanel

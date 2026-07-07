@@ -77,6 +77,23 @@ img.natural-front-mobile {
   box-sizing: border-box;
 }
 
+/** Studio OS org + platform shells — bounded card column with internal scroll body. */
+.admin-studio-main-card {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.admin-studio-scroll-body {
+  flex: 1 1 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
 /* Admin Revenue tab content – inner horizontal padding; vertical padding comes from scroll + meetings-style wrapper */
 .admin-revenue-tab-content {
   padding-top: 12px !important;

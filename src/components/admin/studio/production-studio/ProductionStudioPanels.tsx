@@ -99,7 +99,7 @@ export function ProductionStudioQueuePanel({
   onSetQueueFilter,
 }: Pick<PanelProps, 'store' | 'selectedJob' | 'filteredJobs' | 'onSelectJob' | 'onSetQueueFilter'>) {
   return (
-    <aside className="p-3 h-full flex flex-col" style={psPanelStyle}>
+    <aside className="p-3 flex flex-col min-h-0 lg:max-h-[min(52vh,520px)]" style={psPanelStyle}>
       <p style={psSectionTitle}>PRODUCTION QUEUE</p>
       <div className="flex flex-wrap gap-1 mb-3">
         <button type="button" style={psQueueBtn(store.queueFilter === 'all')} onClick={() => onSetQueueFilter('all')}>
@@ -147,7 +147,7 @@ export function ProductionStudioCanvas({
 }: Pick<PanelProps, 'selectedJob' | 'onAdvanceStage'>) {
   if (!selectedJob) {
     return (
-      <main className="p-6 flex items-center justify-center h-full" style={psCanvasStyle}>
+      <main className="p-6 flex items-center justify-center min-h-[160px]" style={psCanvasStyle}>
         <p style={{ ...psValue, color: PS_VISUAL.gray }}>SELECT A PRODUCTION FROM THE QUEUE</p>
       </main>
     );
@@ -156,7 +156,7 @@ export function ProductionStudioCanvas({
   const stageIdx = PRODUCTION_PIPELINE_STAGES.findIndex((s) => s.id === selectedJob.pipelineStage);
 
   return (
-    <main className="p-3 h-full flex flex-col overflow-hidden" style={psCanvasStyle}>
+    <main className="p-3 flex flex-col min-h-0 lg:max-h-[min(52vh,520px)] lg:overflow-y-auto" style={psCanvasStyle}>
       <div className="flex justify-between items-start mb-3 gap-2">
         <div>
           <p style={psSectionTitle}>PRODUCTION CANVAS</p>
@@ -292,7 +292,7 @@ export function ProductionStudioIntelligencePanel({
 }: Pick<PanelProps, 'selectedJob' | 'onOverrideAsset' | 'onResetOverride'>) {
   if (!selectedJob) {
     return (
-      <aside className="p-3 h-full" style={psPanelStyle}>
+      <aside className="p-3 min-h-[120px]" style={psPanelStyle}>
         <p style={psSectionTitle}>STUDIO INTELLIGENCE</p>
         <p style={{ ...psValue, color: PS_VISUAL.gray }}>Select a production to view recommendations.</p>
       </aside>
@@ -302,7 +302,7 @@ export function ProductionStudioIntelligencePanel({
   const intel = selectedJob.intelligence;
 
   return (
-    <aside className="p-3 h-full flex flex-col overflow-hidden" style={psPanelStyle}>
+    <aside className="p-3 flex flex-col min-h-0 lg:max-h-[min(52vh,520px)] overflow-hidden" style={psPanelStyle}>
       <p style={psSectionTitle}>STUDIO INTELLIGENCE</p>
       <p style={{ ...psLabel, marginBottom: 8 }}>FOUNDER OVERRIDE · ANY AI DECISION</p>
 

@@ -59,10 +59,9 @@ export function ProductionBuilderWorkspace() {
       <ProductionBuilderDepartmentBar departmentStatus={draft.departmentStatus} />
 
       <div
-        className="flex flex-col gap-3 mb-3 lg:grid"
+        className="flex flex-col gap-3 mb-3 lg:grid lg:items-stretch"
         style={{
           gridTemplateColumns: 'minmax(140px, 22%) minmax(0, 1fr) minmax(160px, 26%)',
-          minHeight: 'min(72vh, 640px)',
         }}
       >
         <ProductionBuilderAssetLibrary onAssetDragStart={onAssetDragStart} />

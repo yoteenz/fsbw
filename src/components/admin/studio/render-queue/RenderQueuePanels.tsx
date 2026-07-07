@@ -143,7 +143,7 @@ export function RenderJobList({
   onToggleBatchSelect,
 }: Pick<Props, 'store' | 'activeRenders' | 'selectedRender' | 'batchMode' | 'onSelectRender' | 'onToggleBatchSelect'>) {
   return (
-    <aside className="p-3 h-full flex flex-col overflow-hidden" style={rqPanelStyle}>
+    <aside className="p-3 flex flex-col min-h-0 lg:max-h-[min(52vh,520px)] overflow-hidden" style={rqPanelStyle}>
       <p style={rqSectionTitle}>CENTRALIZED QUEUE</p>
       <div className="flex-1 overflow-y-auto min-h-0 space-y-2">
         {activeRenders.map((job) => {
@@ -209,7 +209,7 @@ export function RenderJobDetail({
   };
 
   return (
-    <main className="p-3 h-full overflow-y-auto" style={{ ...rqPanelStyle, background: RQ_VISUAL.glassDeep }}>
+    <main className="p-3 min-h-0 lg:max-h-[min(52vh,520px)] overflow-y-auto" style={{ ...rqPanelStyle, background: RQ_VISUAL.glassDeep }}>
       <p style={rqSectionTitle}>CURRENT RENDER</p>
       <p style={{ ...rqGrace, fontSize: '16px' }}>{job.productionTitle}</p>
       <p style={{ ...rqLabel, marginTop: 4 }}>{job.pageRoute}</p>
@@ -265,7 +265,7 @@ export function RenderJobDetail({
 
 export function RenderIntelligencePanel({ alerts }: { alerts: RenderIntelligenceAlert[] }) {
   return (
-    <aside className="p-3 h-full overflow-y-auto" style={rqPanelStyle}>
+    <aside className="p-3 min-h-0 lg:max-h-[min(52vh,520px)] overflow-y-auto" style={rqPanelStyle}>
       <p style={rqSectionTitle}>STUDIO INTELLIGENCE · DELAY EXPLANATIONS</p>
       <p style={{ ...rqLabel, marginBottom: 8 }}>THE FOUNDER NEVER WONDERS WHAT AI IS DOING</p>
       {alerts.map((alert) => (
