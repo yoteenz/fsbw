@@ -110,9 +110,27 @@ Every production department:
 
 ---
 
+## Golden Department™ (canonical experience spec)
+
+**First fully realized Studio OS department** — the reference every future department inherits before engineering.
+
+| Resource | Path |
+|----------|------|
+| Golden Department index | [golden-department/README.md](./golden-department/README.md) |
+| **Creative Direction Studio™ Experience Design Specification** | [golden-department/creative-direction-studio/](./golden-department/creative-direction-studio/) |
+
+13 documents: The Room · The Experience · Interactive Zones · Founder Tools · Art Direction · Genome Adaptation · Asset Strategy · Interaction Map · Orb & Concierge · Motion & Audio · Compiler & Runtime · Marketplace & Inheritance · Experience Narrative.
+
+> *"I've entered the creative brain of my company."* — This is not a page. It is a place.
+
+---
+
 ## Related docs
 
 - [Studio Production Engine™](./studio-production-engine.md)
 - [Master Content Pipeline™](./master-content-pipeline.md)
 - [Studio Orb](./studio-orb.md)
 - [Design DNA Canon](./design-dna-canon.md)
+- [Studio Department SDK™](./sdk/)
+- [Studio Asset Compiler™](./engine/asset-compiler/)
+- [Studio Department Runtime™](./engine/department-runtime/)

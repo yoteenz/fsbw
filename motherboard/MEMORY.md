@@ -40400,3 +40400,40 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Runtime industry-agnostic; Genome+DNA+package define expression; assemble never create; Marketplace hot install. Architecture only.
 
+---
+
+## 2026-07-07 — Golden Department™ Creative Direction Studio™ Experience Design Specification (complete)
+
+Summary of the **whole conversation so far** in this chat: four architecture sprints for Studio OS engines, culminating in the first **Golden Department** — a complete experience design specification for Creative Direction Studio™ (not implementation).
+
+- **Context:** User mandated a different sprint — no dashboards, no SaaS pages, no static prototypes, no React. Build the **first fully realized Studio OS department** as the canonical "Golden Department" that every future department inherits (interaction patterns, spatial philosophy, runtime behaviors, object systems, experience principles).
+- **Topics covered:**
+  1. **Studio Department SDK™** — 18 files at `docs/studio-os/sdk/` (anatomy through QA checklist); schema `studio.department.sdk.v1`
+  2. **Studio Asset Compiler™** — 16 files at `docs/studio-os/engine/asset-compiler/`; pipeline Resolve → Compile → Generate → Assemble → Validate → Export; schema `studio.asset-compiler.v1`
+  3. **Studio Department Runtime™** — 21 files at `docs/studio-os/engine/department-runtime/`; subsystems from Asset Loader through Runtime QA; schema `studio.department-runtime.v1`
+  4. **Golden Department™ — Creative Direction Studio™** — complete 13-document Experience Design Specification at `docs/studio-os/golden-department/creative-direction-studio/` plus index at `docs/studio-os/golden-department/README.md`
+- **Golden Department deliverables (CDS spec 01–13):**
+  - **01 The Room** — double-height editorial atelier; Stage layout; lighting/materials/ceiling/windows/glass/furniture; hero = Living Mood Wall™; Orb pedestal placement
+  - **02 The Experience** — 5s arrival sequence (7s first visit); camera paths; Orb greeting; continuous environmental animation; project hydration; departure
+  - **03 Interactive Zones** — 7 dedicated spaces: Creative Brief Wall™, Living Mood Wall™, Company Genome Observatory™, Project Timeline Table™, Creative Sandbox™, Reference Library™, Orb Command Center™
+  - **04 Founder Tools** — drop pipeline (screenshots, reels, pins, packaging, photography, voice, sketch, branch/merge/approve/reject)
+  - **05 Art Direction** — luxury architecture/editorial/Hollywood/Apple ID/fashion/interior registers; **Anti-SaaS Law**
+  - **06 Genome Adaptation** — fixed topology · variable soul; Frontal Slayer · NDX · restaurant · law firm transformations
+  - **07 Asset Strategy** — modular package `pkg-creative-direction-golden-v1` (45 assets); Genome slots; regeneration rules
+  - **08 Interaction Map** — 16 verbs bound per zone; ceremonies; gesture bindings; SDK compliance
+  - **09 Orb & Concierge** — Orb state machine; Creative Director · Research Concierge · Brand Concierge behaviors
+  - **10 Motion & Audio** — continuous ambient + event catalog; ceremony weight; Genome audio stems
+  - **11 Compiler & Runtime** — FAL 15-stage generation strategy; sandbox isolation contract; ceremony runtime; Cursor handler contracts
+  - **12 Marketplace & Inheritance** — install modes; future department archetype mapping; inheritance checklist
+  - **13 Experience Narrative** — founder journey Acts I–VI (arrival → approval → departure); narrative QA criteria
+- **Decisions / outcomes:**
+  - Creative Direction Studio™ is the **flagship demonstration** — emotional register: Inspired · Curious · Creative · Powerful · Focused · Supported
+  - Primary verbs: pin · annotate · compare · branch · reference-drop · approve · reject · scrub · speak
+  - AI staff: Creative Director · Research Concierge · Brand Concierge · Orb
+  - Ceremony: `creative-approval` on Timeline Table
+  - Sandbox **isolated** — promote via approve only
+  - Platform stack finalized: **SDK (law) → Compiler (generate) → Runtime (execute) → Golden Department (intent) → Cursor (wire)**
+  - Every future department must answer: *"Does it feel as alive as Creative Direction Studio™?"*
+- **Changes:** `docs/studio-os/golden-department/` (14 files total) · cross-ref in `docs/studio-os/creative-direction-studio.md` · `motherboard/CORE.md` · this MEMORY entry. Prior engine sprints already committed on `master` (SDK `f37e6c33`, Compiler `aa8b08bb`, Runtime `8d0b3513`).
+- **Conventions:** All four sprints are **architecture/spec only** — no React, no UI implementation, no placeholder cards. Work on **`master`** only; one commit + one push per task via `./scripts/agent-commit.sh`. Golden Department docs are canonical reference before any department engineering begins.
+
