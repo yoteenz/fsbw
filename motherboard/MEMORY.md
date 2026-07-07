@@ -40595,3 +40595,38 @@ Summary of the **whole conversation so far** in this chat: seven architecture sp
   - Cross-refs added to Validation Loop · Generator · Asset Compiler · Runtime · Golden Department READMEs
 - **Changes:** `docs/studio-os/engine/critique-sessions/` (13 files) · cross-refs in validation-loop/README.md · department-generator/README.md · asset-compiler/README.md · department-runtime/README.md · golden-department/README.md · `motherboard/CORE.md` · this MEMORY entry.
 - **Conventions:** Architecture/docs only — no React · no UI · no implementation. One commit + one push per task on **`master`**.
+
+---
+
+## 2026-07-07 — Walk the Room™ flagship immersive critique experience spec (complete)
+
+Summary of the **whole conversation so far** in this chat: eight architecture sprints for Studio OS — SDK, Asset Compiler, Runtime, Golden Department CDS, Department Generator, Validation Loop, Critique Sessions, and now **Walk the Room™** — the immersive critique experience.
+
+- **Context:** User mandated flagship experience architecture sprint — **not** UI, **not** React, **not** review dashboard. Create **Walk the Room™** as one of the defining Studio OS experiences. Not a meeting · not a review page · not a comment thread. Founder and Studio Intelligence physically explore departments/projects/campaigns **inside the environment**. Review work in context — not as documents.
+- **Topics covered (full chat arc):**
+  1. **Studio Department SDK™** · **Asset Compiler™** · **Runtime™** · **Golden Department™** · **Generator™**
+  2. **Studio Validation Loop™** — committed `c6df3478`
+  3. **Studio Critique Sessions™** — committed `e3ca3f9c`
+  4. **Walk the Room™** — **13 files** · `docs/studio-os/engine/walk-the-room/` · schema `studio.walk-the-room.v1`
+- **Walk the Room deliverables (01–12 + README):**
+  - **01 Experience Overview** — mission · philosophy · lifecycle · relationships to Critique Sessions · Runtime · Experience Engine · Validation · CDS
+  - **02 Presentation Mode** — arrival sequence · lighting · audio · camera · Orb welcome · Experience Engine integration
+  - **03 Spatial Critiques** — feedback anchored to objects · zones · interactions · navigation · never detached
+  - **04 AI Team Presence** — concierges walk · point · gesture · disagree · Orb moderates · spatial audio
+  - **05 Founder Interaction** — interrupt · challenge · alternatives · compare versions · regenerate · Genome/brand queries
+  - **06 Live Visualization** — room reacts · lighting/mood/motion/Genome ripple previews · ephemeral until commit
+  - **07 Walkthrough Path** — narrative stops: arrival → creative intent → mood → genome → story → environment → interactions → navigation → content → conversion → summary
+  - **08 Room Memory** — per-anchor history · resolved ghosts · open concerns · version snapshots
+  - **09 Action Mode** — apply · assign · production · branch · regen scopes · follow-up · schedule · dismiss — in situ
+  - **10 Emotional Design** — inspired · confident · understood · challenged · supported · excited · never overwhelmed
+  - **11 Future Evolution** — multi-founder · remote · voice · AR · VR · studio tours · client/investor walks
+  - **12 Implementation Guide** — 5-phase roadmap · PresentationModeCapable Runtime contract
+- **Decisions / outcomes:**
+  - Walk the Room = **immersive presentation layer** for Critique Sessions (logic vs experience)
+  - Core philosophy: people experience places — review should happen inside the environment
+  - Creative Direction Studio™ = first flagship Walk the Room reference
+  - Updated stack: Critique Sessions (conversation) → **Walk the Room (spatial experience)** → Validation Loop → Runtime
+  - Signature test: *"walking through my company with my executive team"* not *"another design review"*
+  - Cross-refs: critique-sessions · department-runtime · golden-department READMEs
+- **Changes:** `docs/studio-os/engine/walk-the-room/` (13 files) · cross-refs · `motherboard/CORE.md` · this MEMORY entry.
+- **Conventions:** Architecture/docs only — no React · no UI · no implementation. One commit + one push on **`master`**.

@@ -56,6 +56,7 @@ Every Golden Department spec validates against:
 | Studio Asset Compiler™ | `docs/studio-os/engine/asset-compiler/` |
 | Studio Validation Loop™ | `docs/studio-os/engine/validation-loop/` |
 | Studio Critique Sessions™ | `docs/studio-os/engine/critique-sessions/` |
+| Walk the Room™ | `docs/studio-os/engine/walk-the-room/` |
 | Studio Department Runtime™ | `docs/studio-os/engine/department-runtime/` |
 
 ---

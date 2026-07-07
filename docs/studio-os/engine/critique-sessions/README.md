@@ -43,6 +43,11 @@ The goal is not simply to approve work. **The goal is to make the work better.**
 │  Assemble Braintrust → Conversation → Debate → Founder       │
 │  Decisions → Action Items → Revision Workflows → Memory      │
 └───────────────────────────┬─────────────────────────────────┘
+                            ↓ experienced via
+┌─────────────────────────────────────────────────────────────┐
+│         WALK THE ROOM™                                       │
+│  Presentation Mode · Spatial Critique · Live Preview · Path  │
+└───────────────────────────┬─────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐
 │         STUDIO VALIDATION LOOP™                              │
@@ -75,6 +80,8 @@ The goal is not simply to approve work. **The goal is to make the work better.**
 | 11 | [Post Session Learning](./11_POST_SESSION_LEARNING.md) | Outcome-based learning |
 | 12 | [Implementation Guide](./12_IMPLEMENTATION_GUIDE.md) | Abstract engineering roadmap |
 
+**Immersive presentation:** [Walk the Room™](../walk-the-room/README.md) — canonical spatial experience layer for critique sessions.
+
 ---
 
 ## Relationship to Other Engines
@@ -87,6 +94,7 @@ The goal is not simply to approve work. **The goal is to make the work better.**
 | **Studio Production Engine™** | Action items become structured work in department workspaces |
 | **Founder Notes™** | Voice · sketch · rationale drops feed session context |
 | **Studio Orb™** | Moderates debate · surfaces improvements · founder command interface |
+| **Walk the Room™** | Canonical immersive presentation — spatial walk inside environments |
 | **Studio Department Generator™** | Revision workflows trigger surgical regen scopes |
 | **Learning Engine (Validation Loop)**** | Post-session learning feeds shared preference profiles |
 

@@ -83,6 +83,7 @@ Department Workspace              → user experiences living place
 | **Studio Department Generator™** | `docs/studio-os/engine/department-generator/` — package blueprints + runtime manifests |
 | **Studio Validation Loop™** | `docs/studio-os/engine/validation-loop/` — install blocked without `validationApprovalToken` |
 | **Studio Critique Sessions™** | `docs/studio-os/engine/critique-sessions/` — collaborative review before founder approval |
+| **Walk the Room™** | `docs/studio-os/engine/walk-the-room/` — immersive spatial critique inside Presentation Mode |
 | **This engine (`department-runtime/`)** | Canonical full runtime architecture |
 
 ---
