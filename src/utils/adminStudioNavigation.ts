@@ -2124,6 +2124,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'identity-timeline',
+    title: 'IDENTITY TIMELINE™',
+    purpose: 'Permanent Identity Timeline™ for every person — joined, trained, contributed, mentored, promoted, awarded, and led. Preserve the professional story of every individual.',
+    route: p('identity-timeline'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M168',
+    ctaLabel: 'OPEN IDENTITY TIMELINE',
+    moduleKey: 'identity-timeline',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

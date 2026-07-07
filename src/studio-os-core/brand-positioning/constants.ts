@@ -86,6 +86,7 @@ export type StudioOsBrandSystemId =
   | 'skill-graph'
   | 'role-intelligence'
   | 'organizational-hierarchy'
+  | 'identity-timeline'
   | 'executive-timeline'
   | 'succession-mode'
   | 'executive-council'
@@ -171,6 +172,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'skill-graph': 'Skills are assets. Knowledge should never remain invisible.',
   'role-intelligence': 'Understand work — not titles. Responsibilities define roles.',
   'organizational-hierarchy': 'Organizations function through connections — not boxes on a chart.',
+  'identity-timeline': 'Every career leaves a legacy. Preserve the professional story forever.',
   'executive-timeline': 'See how you arrived. Preserve the journey forever.',
   'succession-mode': 'Preserve expertise. Survive transitions.',
   'executive-council': 'Many minds. One briefing.',

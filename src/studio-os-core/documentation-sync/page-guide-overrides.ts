@@ -129,6 +129,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'skill-graph': fromSystem('skill-graph'),
   'role-intelligence': fromSystem('role-intelligence'),
   'organizational-hierarchy': fromSystem('organizational-hierarchy'),
+  'identity-timeline': fromSystem('identity-timeline'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },

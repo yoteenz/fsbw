@@ -42,6 +42,7 @@ import {
   adminStudioSkillGraphPath,
   adminStudioRoleIntelligencePath,
   adminStudioOrganizationalHierarchyPath,
+  adminStudioIdentityTimelinePath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1352,6 +1353,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['MAP → CONNECT → ROUTE → GOVERN'],
     aliases: ['organizational hierarchy', 'org hierarchy', 'org chart', 'matrix organization', 'approval routing', 'shared services', 'holding company'],
     searchKeywords: ['hierarchy', 'department', 'team', 'manager', 'matrix', 'approval', 'operations', 'finance', 'franchise', 'family business', 'shared service', 'project team'],
+  }),
+  entry({
+    id: 'identity-timeline',
+    label: 'Identity Timeline™',
+    moduleId: 'identity-timeline',
+    milestone: 'M168',
+    route: adminStudioIdentityTimelinePath(),
+    purpose: 'Permanent Identity Timeline™ for every person — preserve the professional story of every individual, not just the organization.',
+    overview:
+      'Joined Organization · First Login · Training · Profession Brain™ contributions · Knowledge published · Projects · Promotions · Awards · Mentorship · Departments · Marketplace · Expert sessions · Leadership · Company milestones.',
+    capabilities: ['Permanent per-person timelines', '14 event types', 'Mentorship & knowledge stats', 'Top contributor recognition', 'Studio Intelligence™ celebrations', 'Individual legacy preservation'],
+    howItWorks: 'Sync Identity Graph™, Professional Profile™, Profession Brain™, Wisdom Capture™, Expert Marketplace™, and Studio Institute™ → build permanent timeline per person → compute journey stats → surface Studio Intelligence™ insights.',
+    whenUsed: ['Career recognition', 'Mentorship tracking', 'Knowledge contribution audit', 'Top contributor celebration', 'Individual legacy preservation', 'Onboarding history review'],
+    relatedSystems: ['identity-graph', 'professional-profile', 'profession-brain', 'wisdom-capture', 'expert-marketplace', 'studio-institute'],
+    exampleWorkflows: ['JOIN → CONTRIBUTE → MENTOR → PRESERVE'],
+    aliases: ['identity timeline', 'professional journey', 'permanent timeline', 'career story', 'individual legacy', 'mentorship record'],
+    searchKeywords: ['timeline', 'journey', 'mentor', 'knowledge', 'promotion', 'award', 'training', 'contribution', 'marketplace', 'expert session', 'leadership', 'milestone'],
   }),
 ];
 

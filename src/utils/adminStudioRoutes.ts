@@ -1049,6 +1049,10 @@ export function adminStudioOrganizationalHierarchyPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organizational-hierarchy`;
 }
 
+export function adminStudioIdentityTimelinePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/identity-timeline`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

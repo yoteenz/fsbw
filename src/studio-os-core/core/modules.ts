@@ -160,6 +160,7 @@ export type StudioOsCoreModuleId =
   | 'skill-graph'
   | 'role-intelligence'
   | 'organizational-hierarchy'
+  | 'identity-timeline'
   | 'succession-mode'
   | 'brand-positioning'
   | 'governance'
@@ -1115,6 +1116,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ORGANIZATIONAL HIERARCHY™',
     description: 'Organizational Hierarchy V1.0 — how organizations actually function. People, departments, teams, matrix lines, shared services, and approval routes.',
     routeSegment: 'organizational-hierarchy',
+  },
+  {
+    id: 'identity-timeline',
+    label: 'IDENTITY TIMELINE™',
+    description: 'Identity Timeline V1.0 — permanent professional journey for every person. Training, contributions, mentorship, leadership, and milestones preserved forever.',
+    routeSegment: 'identity-timeline',
   },
   {
     id: 'succession-mode',
