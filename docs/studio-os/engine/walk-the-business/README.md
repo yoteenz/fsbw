@@ -41,7 +41,12 @@ Not a dashboard. Not an analytics page. Not a homepage.
 ┌─────────────────────────────────────────────────────────────┐
 │         STUDIO OS DAILY ENTRY (login · return)               │
 └───────────────────────────┬─────────────────────────────────┘
-                            ↓ default
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│         ADAPTIVE WALK™ (intelligence layer)                  │
+│  Mode Resolution → Path · HQ Story · Priorities · Personalize│
+└───────────────────────────┬─────────────────────────────────┘
+                            ↓ orchestrates
 ┌─────────────────────────────────────────────────────────────┐
 │         WALK THE BUSINESS™ (this experience)               │
 │  Arrival → Executive Walk → Health · Moments → Conclusion    │

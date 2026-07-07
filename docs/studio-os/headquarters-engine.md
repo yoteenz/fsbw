@@ -129,6 +129,7 @@ Headquarters Marketplace™   ← creators sell operational architecture
 | **Monetization (M89)** | HQ License · permanent Expansion purchase · Digital Payroll |
 | **Living Creative Headquarters Experience™** | Experiential canon for creative/production headquarters |
 | **Walk the Business™** | `engine/walk-the-business/` — daily executive ritual · default login · HQ as dashboard |
+| **Adaptive Walk™** | `engine/adaptive-walk/` — intelligence layer · dynamic modes · no two walks alike |
 | **Walk the Room™** | `engine/walk-the-room/` — immersive critique inside departments |
 | **Mission Control** | Project Dashboard · company pulse · wing navigation |
 

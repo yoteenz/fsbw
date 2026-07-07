@@ -40661,3 +40661,26 @@ Summary of the **whole conversation so far** in this chat: nine architecture spr
   - Cross-refs: walk-the-room · critique-sessions · golden-department · headquarters-engine · CORE.md
 - **Changes:** `docs/studio-os/engine/walk-the-business/` (14 files) · cross-refs · `motherboard/CORE.md` · this MEMORY entry.
 - **Conventions:** Architecture only — no React · no UI · one commit on **`master`**.
+
+---
+
+## 2026-07-07 — Adaptive Walk™ living executive intelligence layer spec (complete)
+
+Summary of the **whole conversation so far** in this chat: ten architecture sprints — SDK through Adaptive Walk™ — extending Walk the Business into adaptive executive experience.
+
+- **Context:** User mandated architecture sprint extending Walk the Business™ — **not** UI · **not** React · **not** dashboard. Create **Adaptive Walk™** as intelligence layer so no two executive walkthroughs feel identical. HQ reacts to business · asks *"What kind of day is today?"*
+- **Topics:** Prior sprints (SDK · Compiler · Runtime · Golden Dept · Generator · Validation Loop · Critique Sessions · Walk the Room · Walk the Business `fb26e816`) · **Adaptive Walk™** (13 files · `docs/studio-os/engine/adaptive-walk/` · schema `studio.adaptive-walk.v1`)
+- **Adaptive Walk deliverables:**
+  - **01 Overview** · **02 Walk Modes** (Morning Brief · Launch Day · Creative Sprint · Operations · Crisis · Celebration · Innovation)
+  - **03 Mode Resolution** — signal ingestion · priority hierarchy · intraday re-resolution
+  - **04 Dynamic Headquarters** — atmosphere per mode (launch · quiet · crisis · celebration)
+  - **05 Orb Adaptation** — emotionally intelligent tone per mode
+  - **06 Executive Priorities** — attention · delegate · celebrate · ignore · defer
+  - **07 Headquarters Storytelling** — momentum · urgency · success as felt sense
+  - **08 Personalization** — skip/dwell/override learning
+  - **09 Founder Control** — full override authority
+  - **10 Long-Term Memory** — routes · habits · leadership style
+  - **11 Future Evolution** · **12 Implementation Guide**
+- **Decisions:** Adaptive Walk orchestrates Walk the Business (brain vs experience) · anti-repetition guarantee · Crisis > Launch > Celebration priority · founder always wins on override
+- **Changes:** `docs/studio-os/engine/adaptive-walk/` · cross-refs walk-the-business · headquarters-engine · CORE.md · MEMORY
+- **Conventions:** Architecture only · one commit on **`master`**
