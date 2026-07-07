@@ -41,6 +41,10 @@
 | 8 | [PROTOTYPE_REVIEW_FINDINGS.md](./PROTOTYPE_REVIEW_FINDINGS.md) | Validation rubric · friction points |
 | 9 | [RECOMMENDED_VDRs.md](./RECOMMENDED_VDRs.md) | Proposed Design Revisions |
 | 10 | [PROTOTYPE_READINESS_REPORT.md](./PROTOTYPE_READINESS_REPORT.md) | Final verdict |
+| 11 | [INTERACTIVE_PROTOTYPE.md](./INTERACTIVE_PROTOTYPE.md) | **HTML/CSS/JS walkable prototype** |
+| 12 | [EXPERIENCE_VALIDATION_CHECKLIST.md](./EXPERIENCE_VALIDATION_CHECKLIST.md) | Per-screen validation scores |
+
+**Walk the prototype:** `/experience-studio-prototype/` (static · `public/experience-studio-prototype/`)
 
 ---
 

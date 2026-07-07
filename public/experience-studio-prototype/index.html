@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Experience Studio™ — Interactive Prototype</title>
+  <meta name="description" content="Experience Studio™ high-fidelity interactive prototype. No backend. Specification validation only.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@400;500;600&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/screens.css">
+</head>
+<body>
+  <div class="marble-bg" aria-hidden="true"></div>
+
+  <div id="app" role="application" aria-label="Experience Studio">
+
+    <!-- Offline Banner -->
+    <div class="banner" id="offline-banner" role="alert">
+      <span>Editing locally — changes will sync when connection returns.</span>
+      <button class="btn-ghost" onclick="App.dismissBanner()">Dismiss</button>
+    </div>
+
+    <!-- ═══ SCREEN: Arrival ═══ -->
+    <section class="screen active" id="screen-arrival" data-screen="arrival" role="main">
+      <div class="arrival-content">
+        <p class="arrival-wing">Headquarters · Creative Wing</p>
+        <h1>Experience Studio™</h1>
+        <p>Enter a premium creative studio where you collaborate with Studio Intelligence™ to shape digital experiences — calm, architectural, unmistakably yours.</p>
+        <button class="btn btn-primary" onclick="App.navigate('welcome')">Enter Creative Wing</button>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Welcome ═══ -->
+    <section class="screen" id="screen-welcome" data-screen="welcome">
+      <header class="chrome-bar">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <button class="breadcrumb-link btn-ghost" onclick="App.navigate('arrival')">Headquarters</button>
+          <span> › </span>
+          <span>Creative Wing</span>
+        </nav>
+        <div class="chrome-actions">
+          <button class="btn-icon" onclick="App.openCommandPalette()" aria-label="Command palette" title="⌘K">⌘</button>
+        </div>
+      </header>
+      <div class="screen-body">
+        <div class="welcome-hero">
+          <p class="arrival-wing">Welcome</p>
+          <h1 class="display-xl">Shape worlds.<br>Direct intelligence.</h1>
+          <blockquote class="welcome-quote">"Every great experience begins with a conversation — not a configuration panel. Tell me what you see, and I'll help you build it."</blockquote>
+          <p style="font-family:var(--font-meta);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--es-text-muted);margin-bottom:var(--space-lg);">— AI Creative Director™</p>
+          <div style="display:flex;gap:var(--space-md);justify-content:center;flex-wrap:wrap;">
+            <button class="btn btn-primary" onclick="App.navigate('dashboard')">View your experiences</button>
+            <button class="btn btn-secondary" onclick="App.startNewProject()">Begin something new</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Dashboard (scr-es-004) ═══ -->
+    <section class="screen" id="screen-dashboard" data-screen="dashboard">
+      <header class="chrome-bar">
+        <nav class="breadcrumb">
+          <button class="breadcrumb-link btn-ghost" onclick="App.navigate('welcome')">Headquarters</button>
+          <span> › </span>
+          <span>Creative Wing</span>
+        </nav>
+        <div class="chrome-actions">
+          <button class="btn-icon" onclick="App.openCommandPalette()" aria-label="Command palette">⌘</button>
+          <button class="btn btn-primary" onclick="App.startNewProject()">+ New</button>
+        </div>
+      </header>
+      <div class="screen-body">
+        <div class="dashboard-header">
+          <h1>Your Experiences</h1>
+          <p id="dashboard-director-chip" style="font-size:13px;color:var(--es-org-accent);font-style:italic;opacity:0;transition:opacity var(--motion-standard);">Director: Resume Salon Lumière? You're 72% there.</p>
+        </div>
+        <div class="dashboard-toolbar">
+          <div class="search-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="search" class="search-input" id="project-search" placeholder="Search experiences…" oninput="App.filterProjects(this.value)" aria-label="Search projects">
+          </div>
+          <div class="tabs" role="tablist">
+            <button class="tab active" role="tab" data-filter="all" onclick="App.setProjectFilter('all',this)">All</button>
+            <button class="tab" role="tab" data-filter="active" onclick="App.setProjectFilter('active',this)">Active</button>
+            <button class="tab" role="tab" data-filter="draft" onclick="App.setProjectFilter('draft',this)">Drafts</button>
+            <button class="tab" role="tab" data-filter="published" onclick="App.setProjectFilter('published',this)">Published</button>
+          </div>
+        </div>
+        <div class="project-grid" id="project-grid"></div>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Type Entry (scr-es-001) ═══ -->
+    <section class="screen" id="screen-type-entry" data-screen="type-entry">
+      <header class="chrome-bar">
+        <nav class="breadcrumb">
+          <button class="breadcrumb-link btn-ghost" onclick="App.navigate('dashboard')">← Projects</button>
+        </nav>
+        <span class="chrome-title">What would you like to create?</span>
+        <div class="chrome-actions">
+          <button class="btn-icon" onclick="App.openCommandPalette()">⌘</button>
+        </div>
+      </header>
+      <div class="screen-body">
+        <p class="section-sub">Studio Intelligence™ listens. Pick a world — or describe something entirely your own.</p>
+        <div class="type-grid" id="type-grid"></div>
+        <div class="type-footer">
+          <button class="btn btn-ghost" onclick="App.navigate('templates')">Browse templates</button>
+          <p id="director-type-hint" style="font-size:13px;color:var(--es-org-accent);font-style:italic;opacity:0;transition:opacity var(--motion-standard);">Based on your industry, Website might fit best.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Interview (scr-es-002) ═══ -->
+    <section class="screen" id="screen-interview" data-screen="interview">
+      <header class="chrome-bar">
+        <div class="progress-dots" id="interview-progress"></div>
+        <span class="chrome-title" id="interview-step-label">Step 1 of 5 — Style</span>
+        <div class="chrome-actions">
+          <button class="btn btn-ghost" onclick="App.skipInterview()">Skip →</button>
+        </div>
+      </header>
+      <div class="interview-container">
+        <div class="glass-panel interview-panel">
+          <!-- Step 1: Style -->
+          <div class="interview-step active" data-step="1">
+            <h2>What atmosphere should visitors feel?</h2>
+            <div class="chip-grid" id="style-chips"></div>
+          </div>
+          <!-- Step 2: Audience -->
+          <div class="interview-step" data-step="2">
+            <h2>Who is this experience for?</h2>
+            <div class="chip-grid" id="audience-chips"></div>
+            <div class="chat-input-wrap" style="margin-top:var(--space-lg);">
+              <input type="text" class="chat-input" id="audience-freeform" placeholder="Or tell the Director…">
+              <button class="btn btn-secondary" onclick="App.interviewNext()">→</button>
+            </div>
+          </div>
+          <!-- Step 3: Feeling -->
+          <div class="interview-step" data-step="3">
+            <h2>What feeling should they leave with?</h2>
+            <div class="chip-grid" id="feeling-chips"></div>
+          </div>
+          <!-- Step 4: DNA Preview -->
+          <div class="interview-step" data-step="4">
+            <h2>Your Design DNA™ blend</h2>
+            <p style="text-align:center;color:var(--es-text-secondary);margin-bottom:var(--space-lg);">I've composed a personality mix from your answers.</p>
+            <div class="dna-preview-viz" id="interview-dna-viz"></div>
+            <div class="dna-preview-legend" id="interview-dna-legend"></div>
+          </div>
+          <!-- Step 5: Confirm -->
+          <div class="interview-step" data-step="5">
+            <h2>Ready to create?</h2>
+            <div class="director-message">
+              <div class="sender">AI Creative Director™</div>
+              <p id="interview-summary">I'll shape a <strong>Website</strong> for <strong>luxury hair clients</strong> with an <strong>editorial + luxury</strong> atmosphere. Visitors will feel <strong>inspired and exclusive</strong>.</p>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:var(--space-lg);" onclick="App.startGeneration()">Create my experience</button>
+          </div>
+          <div class="interview-actions" id="interview-nav">
+            <button class="btn btn-ghost" id="interview-back" onclick="App.interviewBack()" style="visibility:hidden;">← Back</button>
+            <button class="btn btn-primary" id="interview-continue" onclick="App.interviewNext()">Continue</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Workspace (scr-es-003) ═══ -->
+    <section class="screen" id="screen-workspace" data-screen="workspace">
+      <header class="chrome-bar">
+        <nav class="breadcrumb">
+          <button class="breadcrumb-link btn-ghost" onclick="App.navigate('dashboard')">← Projects</button>
+        </nav>
+        <span class="chrome-title" id="workspace-title">Salon Lumière · Website</span>
+        <div class="chrome-actions">
+          <span class="save-indicator" id="save-indicator">Saved</span>
+          <span class="dh-badge" id="workspace-dh">DH: 84</span>
+          <button class="btn-icon" onclick="App.openCommandPalette()">⌘</button>
+        </div>
+      </header>
+      <div class="workspace-body" id="workspace-body">
+        <div class="workspace-toolbar">
+          <div style="display:flex;gap:var(--space-sm);">
+            <button class="btn btn-ghost" onclick="App.navigate('version-history')">Versions</button>
+            <button class="btn btn-ghost" onclick="App.navigate('assets')">Assets</button>
+            <button class="btn btn-ghost" onclick="App.navigate('settings')">Settings</button>
+          </div>
+          <button class="btn btn-accent" onclick="App.navigate('publish')">Publish</button>
+        </div>
+        <div class="canvas-frame" id="canvas-frame">
+          <div class="generating-state hidden" id="generating-state">
+            <svg class="progress-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" transform="rotate(-90 50 50)"/></svg>
+            <h2>Composing your experience</h2>
+            <p class="generating-copy" id="generating-copy">Structuring your story…</p>
+            <button class="btn btn-ghost" style="margin-top:var(--space-lg);" onclick="App.finishGeneration()">Skip</button>
+          </div>
+          <div class="canvas-content hidden" id="canvas-content">
+            <section class="canvas-section canvas-hero" data-section="hero" onclick="App.selectSection('hero', event)">
+              <span class="section-label">Hero</span>
+              <h1 contenteditable="true" spellcheck="false" id="hero-headline">Where light meets craft</h1>
+              <p contenteditable="true" spellcheck="false" id="hero-subhead">Salon Lumière — luxury color services and editorial styling for those who expect excellence.</p>
+            </section>
+            <section class="canvas-section" data-section="features" onclick="App.selectSection('features', event)">
+              <span class="section-label">Features</span>
+              <div class="canvas-features" id="canvas-features">
+                <div class="feature-card"><h3>Color Atelier</h3><p>Hand-mixed tones · balayage · corrective color by master colorists.</p></div>
+                <div class="feature-card"><h3>Editorial Styling</h3><p>Runway-ready looks · occasion styling · texture and movement.</p></div>
+                <div class="feature-card"><h3>Private Suites</h3><p>Intimate appointments · champagne service · unhurried attention.</p></div>
+              </div>
+            </section>
+            <section class="canvas-section canvas-cta" data-section="cta" onclick="App.selectSection('cta', event)">
+              <span class="section-label">Call to Action</span>
+              <span class="cta-btn">Reserve your appointment</span>
+            </section>
+          </div>
+          <div class="remix-overlay" id="remix-overlay"><span>Remix preview — More Editorial</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Publish (scr-es-007) ═══ -->
+    <section class="screen" id="screen-publish" data-screen="publish">
+      <header class="chrome-bar">
+        <nav class="breadcrumb">
+          <button class="breadcrumb-link btn-ghost" onclick="App.navigate('workspace')">← Workspace</button>
+        </nav>
+        <span class="chrome-title">Publish</span>
+        <div class="chrome-actions">
+          <button class="btn-icon" onclick="App.openCommandPalette()">⌘</button>
+        </div>
+      </header>
+      <div class="publish-layout">
+        <div class="publish-preview">
+          <div class="mini-canvas" id="publish-preview-canvas"></div>
+        </div>
+        <div class="glass-panel publish-checklist">
+          <div class="publish-steps" id="publish-steps">
+            <div class="publish-step" data-step="1">Validate</div>
+            <div class="publish-step" data-step="2">Deploy</div>
+            <div class="publish-step" data-step="3">Live</div>
+          </div>
+          <h2>Ready to publish?</h2>
+          <div style="display:flex;align-items:baseline;margin-bottom:var(--space-lg);">
+            <span class="dh-score-large" id="publish-dh-score">87</span>
+            <div>
+              <div style="font-family:var(--font-meta);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--es-success);">Design Health™ PASS</div>
+              <div style="font-size:13px;color:var(--es-text-secondary);">All checks passed</div>
+            </div>
+          </div>
+          <div class="check-item"><span>Accessibility</span><span class="check-icon">✓</span></div>
+          <div class="check-item"><span>SEO metadata</span><span class="check-icon">✓</span></div>
+          <div class="check-item"><span>Mobile preview</span><span class="check-icon">✓</span></div>
+          <div class="check-item"><span>Brand consistency</span><span class="check-icon">✓</span></div>
+          <div class="director-message" style="margin:var(--space-lg) 0;padding:var(--space-md);">
+            <div class="sender">AI Creative Director™</div>
+            <p style="font-size:13px;">I've verified accessibility — one contrast adjustment applied. Ready when you are.</p>
+          </div>
+          <div class="url-field" id="publish-url">salon-lumiere.studio.os</div>
+          <button class="btn btn-ghost" style="width:100%;margin-bottom:var(--space-md);">Preview in new tab</button>
+          <button class="btn btn-primary" style="width:100%;" onclick="App.startPublish()">Publish experience</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Version History (scr-es-008) ═══ -->
+    <section class="screen" id="screen-version-history" data-screen="version-history">
+      <header class="chrome-bar">
+        <nav class="breadcrumb">
+          <button class="breadcrumb-link btn-ghost" onclick="App.navigate('workspace')">← Workspace</button>
+        </nav>
+        <span class="chrome-title">Version History</span>
+        <div class="chrome-actions">
+          <button class="btn-icon" onclick="App.openCommandPalette()">⌘</button>
+        </div>
+      </header>
+      <div class="version-layout">
+        <div class="glass-panel version-list" id="version-list"></div>
+        <div class="version-compare" id="version-compare">
+          <span class="compare-label before">Before</span>
+          <span class="compare-label after">Current</span>
+          <div class="compare-divider" id="compare-divider"></div>
+          <div class="compare-pane before" id="compare-before"></div>
+          <div class="compare-pane after" id="compare-after"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Assets (scr-es-005) ═══ -->
+    <section class="screen" id="screen-assets" data-screen="assets">
+      <header class="chrome-bar">
+        <nav class="breadcrumb">
+          <button class="breadcrumb-link btn-ghost" onclick="App.navigate('workspace')">← Workspace</button>
+        </nav>
+        <span class="chrome-title">Assets</span>
+        <div class="chrome-actions">
+          <button class="btn-icon" onclick="App.openCommandPalette()">⌘</button>
+        </div>
+      </header>
+      <div class="screen-body">
+        <div class="upload-zone" id="upload-zone" onclick="App.simulateUpload()">
+          <p style="font-size:32px;margin-bottom:var(--space-sm);">↑</p>
+          <p style="font-weight:500;margin-bottom:var(--space-xs);">Drop images here</p>
+          <p style="font-size:13px;color:var(--es-text-muted);">or click to browse · PNG, JPG, WebP up to 10MB</p>
+        </div>
+        <div class="assets-grid" id="assets-grid"></div>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Templates (scr-es-006) ═══ -->
+    <section class="screen" id="screen-templates" data-screen="templates">
+      <header class="chrome-bar">
+        <nav class="breadcrumb">
+          <button class="breadcrumb-link btn-ghost" onclick="App.navigate('type-entry')">← Back</button>
+        </nav>
+        <span class="chrome-title">Templates</span>
+        <div class="chrome-actions">
+          <button class="btn-icon" onclick="App.openCommandPalette()">⌘</button>
+        </div>
+      </header>
+      <div class="screen-body">
+        <h2 class="section-heading">Curated starting points</h2>
+        <p class="section-sub">Each template carries Design DNA™ — customize freely with Studio Intelligence™.</p>
+        <div class="template-grid" id="template-grid"></div>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN: Settings (scr-es-009) ═══ -->
+    <section class="screen" id="screen-settings" data-screen="settings">
+      <header class="chrome-bar">
+        <nav class="breadcrumb">
+          <button class="breadcrumb-link btn-ghost" onclick="App.navigate('workspace')">← Workspace</button>
+        </nav>
+        <span class="chrome-title">Settings</span>
+        <div class="chrome-actions">
+          <button class="btn-icon" onclick="App.openCommandPalette()">⌘</button>
+        </div>
+      </header>
+      <div class="settings-layout">
+        <nav class="settings-nav" role="tablist">
+          <button class="active" onclick="App.showSettingsPanel('general',this)">General</button>
+          <button onclick="App.showSettingsPanel('director',this)">Director</button>
+          <button onclick="App.showSettingsPanel('memory',this)">Memory</button>
+          <button onclick="App.showSettingsPanel('accessibility',this)">Accessibility</button>
+        </nav>
+        <div>
+          <div class="settings-panel active" id="settings-general">
+            <h2 class="section-heading" style="font-size:24px;">General</h2>
+            <div class="setting-row"><label>Auto-save</label><div class="toggle on" onclick="App.toggleSetting(this)"></div></div>
+            <div class="setting-row"><label>Show Design Health in strip</label><div class="toggle on" onclick="App.toggleSetting(this)"></div></div>
+            <div class="setting-row"><label>Reduced motion (override)</label><div class="toggle" onclick="App.toggleSetting(this)"></div></div>
+          </div>
+          <div class="settings-panel" id="settings-director">
+            <h2 class="section-heading" style="font-size:24px;">Director</h2>
+            <div class="setting-row"><label>Proactive suggestions</label><div class="toggle on" onclick="App.toggleSetting(this)"></div></div>
+            <div class="setting-row"><label>Explain recommendations</label><div class="toggle on" onclick="App.toggleSetting(this)"></div></div>
+            <div class="setting-row"><label>Voice Mode™</label><div class="toggle" onclick="App.toggleSetting(this)"></div></div>
+          </div>
+          <div class="settings-panel" id="settings-memory">
+            <h2 class="section-heading" style="font-size:24px;">Memory</h2>
+            <p class="section-sub">Studio Intelligence™ remembers your preferences within this product.</p>
+            <div class="setting-row"><label>Remember Design DNA blends</label><div class="toggle on" onclick="App.toggleSetting(this)"></div></div>
+            <div class="setting-row"><label>Learn from published experiences</label><div class="toggle on" onclick="App.toggleSetting(this)"></div></div>
+          </div>
+          <div class="settings-panel" id="settings-accessibility">
+            <h2 class="section-heading" style="font-size:24px;">Accessibility</h2>
+            <div class="setting-row"><label>High contrast glass</label><div class="toggle" onclick="App.toggleSetting(this)"></div></div>
+            <div class="setting-row"><label>Focus indicators enhanced</label><div class="toggle on" onclick="App.toggleSetting(this)"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ Publish Success Overlay ═══ -->
+    <div class="publish-success" id="publish-success" role="dialog" aria-labelledby="publish-success-title">
+      <div class="bloom"></div>
+      <div class="publish-success-content">
+        <h2 id="publish-success-title">Your experience is live.</h2>
+        <p style="color:var(--es-text-secondary);font-size:16px;">salon-lumiere.studio.os</p>
+        <div class="publish-success-actions">
+          <button class="btn btn-primary" onclick="window.open('#','_blank')">View live</button>
+          <button class="btn btn-secondary" onclick="App.sharePublished()">Share</button>
+          <button class="btn btn-ghost" onclick="App.navigate('dashboard')">Return to HQ</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Studio Orb ═══ -->
+    <div class="studio-orb-container" id="orb-container">
+      <div class="studio-orb" id="studio-orb" role="button" tabindex="0" aria-label="Studio Orb — tap for menu" onclick="App.toggleRadialMenu()" onkeydown="if(event.key==='Enter')App.toggleRadialMenu()"></div>
+      <span class="orb-label">Studio Intelligence™</span>
+    </div>
+
+    <!-- ═══ Radial Menu ═══ -->
+    <nav class="radial-menu" id="radial-menu" aria-label="Studio Orb menu">
+      <button class="radial-item" onclick="App.orbAction('director')">Ask Director</button>
+      <button class="radial-item" onclick="App.orbAction('remix')">Remix suggestion</button>
+      <button class="radial-item" onclick="App.orbAction('health')">Design Health</button>
+      <button class="radial-item" onclick="App.orbAction('commands')">Commands</button>
+      <button class="radial-item" onclick="App.orbAction('hq')">Return HQ</button>
+    </nav>
+
+    <!-- ═══ Floating Dock ═══ -->
+    <aside class="floating-dock glass-panel" id="floating-dock" aria-label="Collaboration dock">
+      <div class="dock-tabs" role="tablist">
+        <button class="dock-tab active" role="tab" data-tab="director" onclick="App.switchDockTab('director')">Director</button>
+        <button class="dock-tab" role="tab" data-tab="dna" onclick="App.switchDockTab('dna')">DNA</button>
+        <button class="dock-tab" role="tab" data-tab="remix" onclick="App.switchDockTab('remix')">Remix</button>
+        <button class="dock-tab" role="tab" data-tab="inspector" onclick="App.switchDockTab('inspector')">Inspector</button>
+      </div>
+      <div class="dock-body">
+        <!-- Director Panel -->
+        <div class="dock-panel active" id="dock-director" role="tabpanel">
+          <div id="director-thread">
+            <div class="director-message">
+              <div class="sender">AI Creative Director™</div>
+              <p>Your hero has strong editorial rhythm. I notice the subhead could breathe more — want me to widen the line length?</p>
+            </div>
+          </div>
+          <div class="proposal-card" id="director-proposal">
+            <span class="proposal-confidence">Confidence 88%</span>
+            <p style="font-size:14px;">Widen hero padding 48→72px and reduce subhead width for editorial rhythm.</p>
+            <div class="proposal-actions">
+              <button class="btn btn-primary" onclick="App.acceptProposal()">Accept</button>
+              <button class="btn btn-secondary" onclick="App.previewProposal()">Preview</button>
+              <button class="btn btn-ghost" onclick="App.alternativeProposal()">Alternative</button>
+              <button class="btn btn-ghost" onclick="App.explainProposal()">Why?</button>
+            </div>
+          </div>
+          <div class="chat-input-wrap">
+            <input type="text" class="chat-input" id="director-input" placeholder="Ask the Director…" onkeydown="if(event.key==='Enter')App.sendDirectorMessage()">
+            <button class="btn btn-secondary" onclick="App.sendDirectorMessage()">Send</button>
+          </div>
+        </div>
+        <!-- DNA Panel -->
+        <div class="dock-panel" id="dock-dna" role="tabpanel">
+          <p style="font-family:var(--font-meta);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--es-text-muted);margin-bottom:var(--space-md);">Design DNA™</p>
+          <div id="dna-sliders"></div>
+          <div class="dna-sum valid" id="dna-sum">Sum: 100%</div>
+          <p style="font-size:13px;color:var(--es-text-secondary);margin-top:var(--space-md);font-style:italic;" id="dna-director-note">Luxury at 70% — I've widened margins and softened contrast.</p>
+          <hr style="border:none;border-top:1px solid var(--es-glass-border);margin:var(--space-lg) 0;">
+          <p style="font-family:var(--font-meta);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--es-text-muted);margin-bottom:var(--space-md);">Experience DNA™</p>
+          <div id="experience-dna-sliders"></div>
+        </div>
+        <!-- Remix Panel -->
+        <div class="dock-panel" id="dock-remix" role="tabpanel">
+          <div class="remix-scroll" id="remix-chips"></div>
+          <p style="font-size:13px;color:var(--es-text-secondary);font-style:italic;" id="remix-explanation">Tap a direction to preview on canvas — nothing commits until you accept.</p>
+          <div style="display:flex;gap:var(--space-sm);margin-top:var(--space-md);">
+            <button class="btn btn-primary" onclick="App.acceptRemix()">Accept</button>
+            <button class="btn btn-ghost" onclick="App.revertRemix()">Revert</button>
+          </div>
+        </div>
+        <!-- Inspector Panel -->
+        <div class="dock-panel" id="dock-inspector" role="tabpanel">
+          <p style="font-family:var(--font-meta);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--es-text-muted);margin-bottom:var(--space-md);">Section Inspector</p>
+          <div class="inspector-field">
+            <label class="inspector-label">Section type</label>
+            <select class="inspector-input" id="inspector-type">
+              <option>Hero</option>
+              <option>Features</option>
+              <option>Call to Action</option>
+              <option>Gallery</option>
+              <option>Testimonials</option>
+            </select>
+          </div>
+          <div class="inspector-field">
+            <label class="inspector-label">Padding</label>
+            <input type="range" class="dna-slider" min="24" max="96" value="64" id="inspector-padding" oninput="App.updateInspector()">
+          </div>
+          <div class="inspector-field">
+            <label class="inspector-label">Background</label>
+            <div class="chip-grid">
+              <button class="chip selected" onclick="App.setBg('white',this)">White</button>
+              <button class="chip" onclick="App.setBg('marble',this)">Marble</button>
+              <button class="chip" onclick="App.setBg('accent',this)">Accent</button>
+            </div>
+          </div>
+          <button class="btn btn-ghost" style="margin-top:var(--space-md);color:var(--es-studio-red);" onclick="App.deleteSection()">Delete section</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══ Command Palette ═══ -->
+    <div class="command-palette-overlay" id="command-palette" role="dialog" aria-label="Command palette">
+      <div class="command-palette">
+        <input type="text" id="command-input" placeholder="Search commands…" oninput="App.filterCommands(this.value)" onkeydown="App.commandKeydown(event)">
+        <div class="command-list" id="command-list"></div>
+      </div>
+    </div>
+
+    <!-- ═══ Context Menu ═══ -->
+    <menu class="context-menu" id="context-menu">
+      <button class="context-item" onclick="App.contextAction('duplicate')">Duplicate section</button>
+      <button class="context-item" onclick="App.contextAction('director')">Ask Director about this</button>
+      <button class="context-item" onclick="App.contextAction('moveup')">Move up</button>
+      <button class="context-item" onclick="App.contextAction('movedown')">Move down</button>
+      <button class="context-item danger" onclick="App.contextAction('delete')">Delete</button>
+    </menu>
+
+    <!-- ═══ Modals ═══ -->
+    <div class="modal-overlay" id="modal-restore">
+      <div class="modal" role="dialog">
+        <h3>Restore this version?</h3>
+        <p style="color:var(--es-text-secondary);">Your current work will be saved as a new version before restoring.</p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="App.closeModal('modal-restore')">Cancel</button>
+          <button class="btn btn-primary" onclick="App.confirmRestore()">Restore</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="modal-delete">
+      <div class="modal" role="dialog">
+        <h3>Delete this section?</h3>
+        <p style="color:var(--es-text-secondary);">You can undo within 30 seconds.</p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="App.closeModal('modal-delete')">Cancel</button>
+          <button class="btn btn-primary" style="background:var(--es-studio-red);" onclick="App.confirmDelete()">Delete</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="modal-template">
+      <div class="modal" role="dialog">
+        <h3>Apply template?</h3>
+        <p style="color:var(--es-text-secondary);" id="modal-template-text">This will replace your current canvas content. A version will be saved first.</p>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" onclick="App.closeModal('modal-template')">Cancel</button>
+          <button class="btn btn-primary" onclick="App.confirmTemplate()">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

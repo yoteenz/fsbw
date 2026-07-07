@@ -1,0 +1,77 @@
+/* Experience Studio™ — Design Tokens (inherited from Studio OS Design Governance) */
+:root {
+  /* Marble environment */
+  --es-marble: #f7f5f2;
+  --es-marble-vein: #e8e3dc;
+  --es-marble-shadow: #d4cfc6;
+
+  /* Glass & acrylic */
+  --es-glass: rgba(255, 255, 255, 0.48);
+  --es-glass-heavy: rgba(255, 255, 255, 0.62);
+  --es-glass-border: rgba(255, 255, 255, 0.72);
+  --es-glass-shadow: 0 8px 32px rgba(26, 24, 20, 0.06), 0 2px 8px rgba(26, 24, 20, 0.04);
+  --es-crystal-edge: rgba(255, 255, 255, 0.9);
+
+  /* Chrome & text */
+  --es-chrome: rgba(255, 255, 255, 0.88);
+  --es-text: #1c1917;
+  --es-text-secondary: #57534e;
+  --es-text-muted: #a8a29e;
+  --es-metadata: #78716c;
+
+  /* Brand */
+  --es-studio-red: #b91c3c;
+  --es-studio-red-soft: rgba(185, 28, 60, 0.12);
+  --es-org-accent: #8b5a2b;
+  --es-org-accent-soft: rgba(139, 90, 43, 0.15);
+  --es-gold: #c9a227;
+  --es-gold-soft: rgba(201, 162, 39, 0.2);
+  --es-amber: #d97706;
+
+  /* Status */
+  --es-success: #16a34a;
+  --es-success-soft: rgba(22, 163, 74, 0.1);
+  --es-warm-error: #b45309;
+  --es-warm-error-soft: rgba(180, 83, 9, 0.08);
+
+  /* Typography */
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-ui: 'Outfit', system-ui, sans-serif;
+  --font-meta: 'Jost', system-ui, sans-serif;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+
+  /* Motion tokens */
+  --motion-fast: 180ms;
+  --motion-standard: 280ms;
+  --motion-emphasis: 400ms;
+  --motion-ceremonial: 560ms;
+  --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-ceremonial: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Layout */
+  --chrome-height: 48px;
+  --orb-size: 56px;
+  --dock-width: 380px;
+  --canvas-max: 1200px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-standard: 0ms;
+    --motion-emphasis: 0ms;
+    --motion-ceremonial: 0ms;
+  }
+}
