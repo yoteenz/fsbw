@@ -12,6 +12,21 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Experience Studio™ — all interface copy uppercase */
+#app {
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+#app * {
+  text-transform: uppercase;
+}
+
+#app input::placeholder,
+#app textarea::placeholder {
+  text-transform: uppercase;
+}
+
 button, input, textarea, select {
   font: inherit;
   color: inherit;
