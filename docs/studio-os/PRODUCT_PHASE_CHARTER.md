@@ -82,7 +82,8 @@ Studio Orb™, Conversation Engine™, Voice Mode™, Awakening Experience — s
 
 | Phase | Product | Status |
 |-------|---------|--------|
-| **Phase 1** | **Studio Website Builder™** | Pre-implementation spec — **awaiting approval** |
+| **Phase 0** | **Experience Studio™** | Spec complete · **Golden Product · awaiting approval** |
+| Phase 1 | Studio Website Builder™ | Publish specialization · spec awaiting approval |
 | Phase 2 | Campaign Engine™ | Queued |
 | Phase 3 | Publishing Studio™ | Queued |
 

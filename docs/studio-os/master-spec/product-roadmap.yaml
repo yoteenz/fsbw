@@ -60,11 +60,25 @@ priorities:
     title: Creative & Publishing
     status: active
     implementationOrder:
+      - phase-0-experience-studio
       - phase-1-website-builder
       - phase-2-campaign-engine
       - phase-3-publishing-studio
     minimumReleaseChannel: preview
     products:
+      - id: experience-studio
+        title: Experience Studio™
+        milestoneId: M131
+        moduleId: experience-studio
+        lifecycleStage: product-specification
+        releaseChannel: preview
+        specPath: docs/studio-os/products/experience-studio/
+        goldenProduct: true
+        referenceImplementation: true
+        note: >-
+          Golden Product™ · Reference Implementation™ — first POP v2.0.0 product.
+          AI Creative Operating System. Spec complete · awaiting approval.
+          Website Builder is a publish specialization within Experience Studio output taxonomy.
       - id: website-builder
         title: Studio Website Builder™
         milestoneId: M127.10
@@ -72,7 +86,9 @@ priorities:
         lifecycleStage: product-vision
         releaseChannel: preview
         specPath: docs/studio-os/products/website-builder/
-        note: Flagship — pre-implementation spec complete; awaiting approval.
+        note: >-
+          Publish-pipeline specialization for Website experience type.
+          Inherits Experience Studio Reference Implementation. Pre-implementation spec complete.
       - id: campaign-engine
         title: Campaign Engine™
         lifecycleStage: queued

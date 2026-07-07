@@ -53,8 +53,9 @@ Implementation **must not begin** until this package is reviewed and approved.
 
 | Property | Value |
 |----------|-------|
-| Priority | **P2 Phase 1** (highest product priority) |
-| Precedes | Campaign Engine™ → Publishing Studio™ |
+| Priority | **P2 Phase 0 Golden Product** — Reference Implementation for Studio OS |
+| Relationship | Website Builder™ is a **publish specialization** for Website experience type — inherits this Reference Implementation |
+| Precedes | Website publish pipeline · Campaign Engine™ · Publishing Studio™ |
 | Release Channel | Preview (organization opt-in) |
 | Evolves from | Experience Studio™ UI + Digital Architect™ core |
 | Does NOT resemble | WordPress · Wix · Squarespace · Shopify · Webflow |
