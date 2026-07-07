@@ -137,6 +137,7 @@ milestones:
       - business-discovery-blueprint
       - profession-brain
       - organization-operating-manual
+      - release-channel-system
     implementationNotes: Organizational DNA — tone, values, culture inherited by every module.
   - canonicalId: M96
     name: Memory Engine™
@@ -708,6 +709,7 @@ milestones:
       - system-registry
       - documentation-sync
       - M127.13
+      - release-channel-system
     implementationNotes: >-
       Studio OS Knowledge Registry™ — Master Spec single source of truth. Formal closure:
       per-volume manifests, Core Philosophy™, Constitution™, Architecture Validator™ gate,
@@ -744,12 +746,14 @@ milestones:
       - M126.5
     enables:
       - M127.13
+      - M127.14
     chapterId: chapter-ii-9
     relatedSystems:
       - knowledge-registry
       - documentation-governance
       - component-registry
       - M127.13
+      - release-channel-system
     implementationNotes: Master directory of every platform object — consumes Knowledge Registry entries. Enables Executive Strategy Floor™ (M128).
   - canonicalId: M127.13
     name: Executive Strategy Floor™
@@ -777,3 +781,31 @@ milestones:
     implementationNotes: >-
       Canonical architecture frozen at Foundation v1.0. Immersive UI product implementation
       intentionally deferred — all merge targets registered in experience-architecture.yaml.
+  - canonicalId: M127.14
+    name: Studio OS Release Channel System™
+    internalId: release-channel-system
+    registryKind: milestone
+    volumeId: volume-ii
+    chapterId: chapter-ii-9
+    purpose: >-
+      Constitutional operating channels (Stable, Preview, Beta, Experimental) governing
+      how organizations adopt capabilities at different speeds without production risk.
+    implementationStatus: complete
+    shippedMilestone: M127.14
+    moduleId: release-channel-system
+    dependsOn: [M127, volume-0]
+    enables: []
+    relatedSystems:
+      - system-registry
+      - knowledge-registry
+      - organization-genome
+      - qa-headquarters
+      - release-readiness
+      - manifest-reconciliation
+      - documentation-sync
+      - platform-governance
+    alignedPhilosophies: [philosophy-release-channel-governance, philosophy-invisible-complexity]
+    implementationNotes: >-
+      Constitutional capability (CA-001). Release Channel is part of Organization Profile
+      and System Registry. QA Engine™, Update Engine™, and Deployment Engine™ are channel-native.
+      Default assignments — Frontal Slayer: Stable · NDXBOOK: Beta · Sandbox: Experimental.

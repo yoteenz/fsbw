@@ -1,12 +1,15 @@
 {
-  "version": "1.0.0",
-  "compiledAt": "2026-07-07T15:07:24.081Z",
+  "version": "1.1.0",
+  "compiledAt": "2026-07-07T16:33:44.134Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
-    "version": "1.0.0",
-    "foundationVersion": "1.0.0",
+    "version": "1.1.0",
+    "foundationVersion": "1.1.0",
     "updatedAt": "2026-07-07",
     "status": "frozen",
+    "constitutionalAmendments": [
+      "CA-001"
+    ],
     "principles": [
       {
         "id": "constitution-platform",
@@ -56,7 +59,7 @@
       {
         "id": "constitution-core-philosophies",
         "title": "Core Studio OS Philosophy",
-        "summary": "Twenty-two constitutional design principles in core-philosophies.yaml govern every Volume, Chapter, Milestone, and architectural amendment — experiential, not feature lists. Architecture Before Implementation; Places Instead of Pages; Operating System, Not SaaS."
+        "summary": "Twenty-three constitutional design principles in core-philosophies.yaml govern every Volume, Chapter, Milestone, and architectural amendment — experiential, not feature lists. Architecture Before Implementation; Places Instead of Pages; Operating System, Not SaaS."
       },
       {
         "id": "constitution-experience-architecture",
@@ -66,7 +69,12 @@
       {
         "id": "constitution-foundation-governance",
         "title": "Foundation Governance™",
-        "summary": "Foundation Baseline v1.0 is frozen. All future architectural evolution requires governed Design Revisions, Constitutional Amendments, Master Specification updates, or new Volume additions — never silent modification of the baseline."
+        "summary": "Foundation Baseline v1.1 is frozen. All future architectural evolution requires governed Design Revisions, Constitutional Amendments, Master Specification updates, or new Volume additions — never silent modification of the baseline."
+      },
+      {
+        "id": "constitution-release-channels",
+        "title": "Studio OS Release Channel System™",
+        "summary": "Studio OS supports Stable, Preview, Beta, and Experimental operating channels so organizations adopt capabilities at different speeds without affecting production stability. Every organization has an assigned Release Channel in its Organization Profile and System Registry. Studio Orb™, Studio Intelligence™, QA™, Experience Systems™, Marketplace™, Website Builder™, and all future modules must respect channel eligibility. QA Engine™, Update Engine™, and Deployment Engine™ are channel-native. Constitutional capability — not a product feature (CA-001)."
       }
     ]
   },
@@ -446,25 +454,342 @@
       }
     }
   },
+  "releaseChannelSystem": {
+    "version": "1.1.0",
+    "foundationVersion": "1.1.0",
+    "constitutionalAmendment": "CA-001",
+    "updatedAt": "2026-07-07",
+    "status": "frozen",
+    "milestoneId": "M127.14",
+    "moduleId": "release-channel-system",
+    "summary": "Studio OS supports multiple operating channels so organizations can safely adopt new capabilities at different speeds. Release Channel is a constitutional capability — not a product feature. Every organization receives an assigned channel. All modules, engines, and experience systems must respect channel eligibility before exposing functionality.",
+    "constitutionalBasis": {
+      "principleId": "constitution-release-channels",
+      "philosophyId": "philosophy-release-channel-governance",
+      "amendmentId": "CA-001"
+    },
+    "channels": [
+      {
+        "id": "stable",
+        "title": "Stable",
+        "order": 1,
+        "description": "Production-ready. Fully validated. Recommended for live organizations operating customer-facing businesses with zero tolerance for experimental instability.",
+        "validationRequirements": [
+          "architecture-validator-pass",
+          "qa-chain-complete",
+          "documentation-complete",
+          "release-readiness-approved"
+        ],
+        "recommendedFor": [
+          "live-organizations",
+          "customer-facing-brands",
+          "regulated-industries"
+        ]
+      },
+      {
+        "id": "preview",
+        "title": "Preview",
+        "order": 2,
+        "description": "Feature-complete capabilities gathering production feedback before Stable promotion. Suitable for organizations willing to validate near-production surfaces with controlled exposure.",
+        "validationRequirements": [
+          "qa-inspector-pass",
+          "documentation-present",
+          "release-readiness-review"
+        ],
+        "recommendedFor": [
+          "early-adopters",
+          "internal-pilots",
+          "partner-organizations"
+        ]
+      },
+      {
+        "id": "beta",
+        "title": "Beta",
+        "order": 3,
+        "description": "Major new capabilities undergoing broader validation. Organizations accept elevated change velocity in exchange for early access to platform evolution.",
+        "validationRequirements": [
+          "spec-complete",
+          "regression-suite-defined"
+        ],
+        "recommendedFor": [
+          "media-labs",
+          "innovation-brands",
+          "platform-co-development"
+        ]
+      },
+      {
+        "id": "experimental",
+        "title": "Experimental",
+        "order": 4,
+        "description": "Research features, prototype systems, and future architecture. No production guarantees. Sandbox and research organizations only.",
+        "validationRequirements": [
+          "constitutional-registration"
+        ],
+        "recommendedFor": [
+          "sandbox-organizations",
+          "research-labs",
+          "architecture-prototypes"
+        ]
+      }
+    ],
+    "organizationProfile": {
+      "field": "releaseChannel",
+      "description": "Every organization profile carries an assigned Release Channel. The channel governs which modules, routes, intelligence surfaces, and experience systems may activate for that tenant. Future organizations choose their channel at onboarding or via governed channel migration.",
+      "storageLocations": [
+        "organization-genome",
+        "system-registry",
+        "workspace-schema"
+      ],
+      "defaultAssignments": [
+        {
+          "organizationId": "frontal-slayer",
+          "displayName": "Frontal Slayer",
+          "releaseChannel": "stable",
+          "rationale": "Live customer-facing brand — production stability required."
+        },
+        {
+          "organizationId": "ai-media",
+          "displayName": "NDXBOOK",
+          "releaseChannel": "beta",
+          "rationale": "AI media lab — broader validation of knowledge and distribution capabilities."
+        },
+        {
+          "organizationId": "sandbox",
+          "displayName": "Sandbox Organization",
+          "releaseChannel": "experimental",
+          "rationale": "Research and prototype workspace — no production guarantees."
+        }
+      ],
+      "futureOrganizations": "self-select-at-onboarding"
+    },
+    "nativeEngines": {
+      "description": "QA Engine™, Update Engine™, and Deployment Engine™ understand release channels natively — eligibility, promotion, and rollout decisions are channel-aware.",
+      "engines": [
+        {
+          "id": "qa-engine",
+          "title": "QA Engine™",
+          "description": "Validates modules and surfaces against channel-specific QA gates before exposure. Stable requires full QA chain; Experimental requires constitutional registration only.",
+          "modules": [
+            "qa-headquarters",
+            "qa-inspector",
+            "qa-simulation-engine",
+            "release-readiness"
+          ],
+          "milestoneIds": [
+            "M142",
+            "M143",
+            "M144",
+            "M161"
+          ],
+          "channelResponsibilities": [
+            "validate-channel-eligibility",
+            "enforce-qa-gates-per-channel",
+            "block-stable-promotion-without-pass"
+          ]
+        },
+        {
+          "id": "update-engine",
+          "title": "Update Engine™",
+          "description": "Propagates Master Specification, manifest, and documentation updates through channel-aware rollout schedules — Preview and Beta receive updates before Stable.",
+          "modules": [
+            "manifest-reconciliation",
+            "documentation-sync",
+            "knowledge-registry"
+          ],
+          "milestoneIds": [
+            "M125",
+            "M126",
+            "M126.5"
+          ],
+          "channelResponsibilities": [
+            "channel-staged-manifest-rollout",
+            "documentation-sync-per-channel",
+            "reconcile-eligibility-metadata"
+          ]
+        },
+        {
+          "id": "deployment-engine",
+          "title": "Deployment Engine™",
+          "description": "Governs build, release, and deployment promotion across channels. Stable deployments require Release Readiness™ approval; Experimental may deploy registered prototypes.",
+          "modules": [
+            "release-readiness",
+            "self-healing-engine",
+            "documentation-governance"
+          ],
+          "milestoneIds": [
+            "M161",
+            "M162",
+            "M126.5"
+          ],
+          "channelResponsibilities": [
+            "channel-scoped-deployment-gates",
+            "promote-preview-to-stable",
+            "isolate-experimental-deployments"
+          ]
+        }
+      ]
+    },
+    "moduleEligibility": {
+      "description": "All modules must declare minimumReleaseChannel. Surfaces below the organization's assigned channel are hidden, disabled, or routed to upgrade guidance — never silently exposed.",
+      "rules": [
+        {
+          "moduleId": "studio-orb",
+          "minimumReleaseChannel": "preview",
+          "surfaces": [
+            "M89.1",
+            "M89.2",
+            "M89.3",
+            "M89.4"
+          ]
+        },
+        {
+          "moduleId": "studio-intelligence",
+          "minimumReleaseChannel": "stable",
+          "surfaces": [
+            "M87.5",
+            "M122"
+          ]
+        },
+        {
+          "moduleId": "qa-headquarters",
+          "minimumReleaseChannel": "stable",
+          "surfaces": [
+            "M142"
+          ]
+        },
+        {
+          "moduleId": "experience-engine",
+          "minimumReleaseChannel": "preview",
+          "surfaces": [
+            "M141"
+          ]
+        },
+        {
+          "moduleId": "marketplace",
+          "minimumReleaseChannel": "beta",
+          "surfaces": [
+            "M127.1",
+            "M127.2"
+          ]
+        },
+        {
+          "moduleId": "website-builder",
+          "minimumReleaseChannel": "preview",
+          "surfaces": [
+            "M127.10"
+          ]
+        },
+        {
+          "moduleId": "executive-strategy-floor",
+          "minimumReleaseChannel": "experimental",
+          "surfaces": [
+            "M127.13"
+          ]
+        }
+      ],
+      "defaultMinimumChannel": "stable",
+      "enforcementPoints": [
+        "module-bootstrap",
+        "route-guard",
+        "command-dock-advisor",
+        "system-registry-discovery",
+        "studio-intelligence-tooling"
+      ]
+    },
+    "platformGovernance": {
+      "milestoneId": "M212",
+      "moduleId": "platform-governance",
+      "relationship": "Platform Governance™ (M212) enforces extension review and policy. Release Channel System™ is the constitutional baseline that Platform Governance inherits for channel policy, promotion approvals, and cross-organization rollout discipline."
+    },
+    "registryIntegration": {
+      "knowledgeRegistry": {
+        "milestoneId": "M126",
+        "indexes": [
+          "release-channel-system.md",
+          "release-channel-system.yaml"
+        ]
+      },
+      "systemRegistry": {
+        "milestoneId": "M127",
+        "registers": [
+          "release-channel-system",
+          "organization:workspace.releaseChannel",
+          "qa-engine",
+          "update-engine",
+          "deployment-engine"
+        ]
+      }
+    },
+    "governance": {
+      "changesRequire": [
+        "constitutional-amendment",
+        "design-revision"
+      ],
+      "prohibited": [
+        "silent-channel-override",
+        "bypass-qa-gates-for-stable",
+        "cross-channel-bleed-without-promotion"
+      ]
+    }
+  },
+  "constitutionalAmendments": {
+    "version": "1.1.0",
+    "foundationVersion": "1.1.0",
+    "updatedAt": "2026-07-07",
+    "amendments": [
+      {
+        "id": "CA-001",
+        "title": "Studio OS Release Channel System™",
+        "type": "constitutional-capability",
+        "ratifiedAt": "2026-07-07",
+        "foundationVersion": "1.1.0",
+        "status": "ratified",
+        "summary": "Introduces Release Channel System™ as a constitutional platform capability. Organizations adopt capabilities at different speeds through Stable, Preview, Beta, and Experimental channels. Release Channel is part of Organization Profile and System Registry. QA Engine™, Update Engine™, and Deployment Engine™ are channel-native.",
+        "artifacts": [
+          "constitution.yaml",
+          "core-philosophies.yaml",
+          "release-channel-system.yaml",
+          "milestones/volume-ii.yaml",
+          "foundation-baseline.yaml"
+        ],
+        "milestoneTargets": [
+          "M127.14"
+        ],
+        "principleTargets": [
+          "constitution-release-channels"
+        ],
+        "philosophyTargets": [
+          "philosophy-release-channel-governance"
+        ],
+        "operationalCompletion": true,
+        "note": "Final constitutional addition before Volume V authoring. Foundation v1.1 is operationally complete — baseline remains frozen; future changes require governed amendments only."
+      }
+    ]
+  },
   "foundationBaseline": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "frozenAt": "2026-07-07",
+    "operationalCompleteAt": "2026-07-07",
     "status": "frozen",
     "sprint": "Foundation Completion Sprint™",
+    "constitutionalAmendments": [
+      "CA-001"
+    ],
     "baseline": {
       "constitution": {
-        "version": "1.0.0",
+        "version": "1.1.0",
         "path": "constitution.yaml",
-        "status": "frozen"
+        "status": "frozen",
+        "principleCount": 13
       },
       "corePhilosophy": {
-        "version": "1.0.0",
+        "version": "1.1.0",
         "path": "core-philosophies.yaml",
-        "principleCount": 22,
+        "principleCount": 23,
         "status": "frozen"
       },
       "masterSpecFoundation": {
-        "version": "1.0.0",
+        "version": "1.1.0",
         "path": "docs/studio-os/master-spec/",
         "volumesFrozen": [
           "volume-0",
@@ -480,24 +805,34 @@
         "path": "experience-architecture.yaml",
         "status": "frozen"
       },
+      "releaseChannelSystem": {
+        "version": "1.1.0",
+        "path": "release-channel-system.yaml",
+        "milestone": "M127.14",
+        "moduleId": "release-channel-system",
+        "status": "frozen",
+        "constitutionalAmendment": "CA-001"
+      },
       "knowledgeRegistry": {
-        "version": "1.0.0",
+        "version": "1.1.0",
         "milestone": "M126",
         "moduleId": "knowledge-registry",
         "status": "frozen"
       },
       "systemRegistry": {
-        "version": "1.0.0",
+        "version": "1.1.0",
         "milestone": "M127",
         "moduleId": "system-registry",
         "status": "frozen"
       },
       "canonicalArchitecture": {
-        "version": "1.0.0",
+        "version": "1.1.0",
         "components": [
           "constitution.yaml",
           "core-philosophies.yaml",
+          "constitutional-amendments.yaml",
           "experience-architecture.yaml",
+          "release-channel-system.yaml",
           "foundation-baseline.yaml",
           "volumes.yaml",
           "chapters/",
@@ -509,18 +844,20 @@
       }
     },
     "governance": {
-      "description": "Foundation v1.0 is the permanent source of truth. Future changes require one of:",
+      "description": "Foundation v1.1 is the permanent source of truth. Future changes require one of:",
       "allowedChangeMechanisms": [
         "design-revision",
         "constitutional-amendment",
         "master-spec-volume-addition",
         "master-spec-milestone-addition",
-        "experience-architecture-amendment"
+        "experience-architecture-amendment",
+        "release-channel-amendment"
       ],
       "prohibited": [
         "silent-baseline-mutation",
         "duplicate-milestone-definitions",
-        "shadow-roadmaps-outside-master-spec"
+        "shadow-roadmaps-outside-master-spec",
+        "bypass-release-channel-eligibility"
       ]
     },
     "mergedDesignRevisions": [
@@ -530,18 +867,26 @@
       "DR-004",
       "DR-005"
     ],
+    "ratifiedAmendments": [
+      "CA-001"
+    ],
     "intentionallyDeferred": {
       "productImplementation": [
         "M89.1 Studio Orb™ UI",
         "M89.2 Voice Mode™",
         "M89.3 Conversation Mode™",
         "M89.4 Awakening Sequence™",
-        "M128 Executive Strategy Floor™ immersive UI",
+        "M127.13 Executive Strategy Floor™ immersive UI",
         "M127.7–M127.11 Volume III planned packs",
         "M145 Digital Twin™ Sandbox",
         "Volumes V–XIX chapter authoring"
       ],
-      "note": "Deferred items are fully specified in Master Specification. Implementation resumes in Phase 4 per governed roadmap — not through baseline modification."
+      "note": "Deferred items are fully specified in Master Specification. Implementation resumes in Phase 4 per governed roadmap — not through baseline modification. Release Channel eligibility governs when deferred surfaces may activate per organization."
+    },
+    "operationalCompletion": {
+      "status": "complete",
+      "finalAddition": "Studio OS Release Channel System™ (CA-001)",
+      "authorizedNextPhase": "Volume V+ authoring"
     }
   },
   "volumes": [
@@ -549,13 +894,13 @@
       "id": "volume-0",
       "number": 0,
       "title": "Studio OS Constitution™",
-      "summary": "Foundational principles governing platform architecture, UX, intelligence, registry-driven design, and release discipline.",
+      "summary": "Foundational principles governing platform architecture, UX, intelligence, registry-driven design, release discipline, and Release Channel governance.",
       "status": "complete",
       "dependsOn": [],
-      "milestoneRange": "M127.13",
+      "milestoneRange": "M127.13-M127.14",
       "completionPct": 100,
-      "foundationVersion": "1.0.0",
-      "notes": "Constitution v1.0 frozen. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged. Experience Architecture™ and Foundation Governance principles added."
+      "foundationVersion": "1.1.0",
+      "notes": "Constitution v1.1 frozen. CA-001 adds Release Channel System™. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged. Experience Architecture™ and Foundation Governance principles retained."
     },
     {
       "id": "volume-i",
@@ -585,7 +930,7 @@
       "milestoneRange": "M90-M127",
       "completionPct": 100,
       "chaptersFile": "chapters/volume-ii.yaml",
-      "notes": "Nine chapters complete. Knowledge Registry™ (M126) formally closed. System Registry™ (M127) complete. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged."
+      "notes": "Nine chapters complete. Knowledge Registry™ (M126) formally closed. System Registry™ (M127) complete. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged. Release Channel System™ (M127.14) — CA-001 constitutional capability."
     },
     {
       "id": "volume-iii",
@@ -1133,7 +1478,7 @@
       "id": "chapter-ii-9",
       "number": 9,
       "title": "Knowledge Registry & Platform Directory",
-      "summary": "Documentation Synchronization™, Studio OS Knowledge Registry™, Documentation Governance™, System Registry™, and Executive Strategy Floor™ (M128) — single source of truth for platform knowledge and reserved executive headquarters.",
+      "summary": "Documentation Synchronization™, Studio OS Knowledge Registry™, Documentation Governance™, System Registry™, Executive Strategy Floor™ (M127.13), and Release Channel System™ (M127.14) — single source of truth, governed rollout, and platform directory.",
       "status": "complete",
       "dependsOn": [
         "chapter-ii-8"
@@ -1143,7 +1488,8 @@
         "M126",
         "M126.5",
         "M127",
-        "M127.13"
+        "M127.13",
+        "M127.14"
       ],
       "completionPct": 100,
       "volumeId": "volume-ii"
@@ -2283,7 +2629,8 @@
       "relatedSystems": [
         "business-discovery-blueprint",
         "profession-brain",
-        "organization-operating-manual"
+        "organization-operating-manual",
+        "release-channel-system"
       ],
       "implementationNotes": "Organizational DNA — tone, values, culture inherited by every module."
     },
@@ -2994,7 +3341,8 @@
         "manifest-authoring",
         "system-registry",
         "documentation-sync",
-        "M127.13"
+        "M127.13",
+        "release-channel-system"
       ],
       "implementationNotes": "Studio OS Knowledge Registry™ — Master Spec single source of truth. Formal closure: per-volume manifests, Core Philosophy™, Constitution™, Architecture Validator™ gate, and module documentation complete. Feeds Executive Strategy Floor™ (M127.13)."
     },
@@ -3036,14 +3384,16 @@
         "M126.5"
       ],
       "enables": [
-        "M127.13"
+        "M127.13",
+        "M127.14"
       ],
       "chapterId": "chapter-ii-9",
       "relatedSystems": [
         "knowledge-registry",
         "documentation-governance",
         "component-registry",
-        "M127.13"
+        "M127.13",
+        "release-channel-system"
       ],
       "implementationNotes": "Master directory of every platform object — consumes Knowledge Registry entries. Enables Executive Strategy Floor™ (M128)."
     },
@@ -3077,6 +3427,38 @@
         "philosophy-places-not-pages"
       ],
       "implementationNotes": "Canonical architecture frozen at Foundation v1.0. Immersive UI product implementation intentionally deferred — all merge targets registered in experience-architecture.yaml."
+    },
+    {
+      "canonicalId": "M127.14",
+      "name": "Studio OS Release Channel System™",
+      "internalId": "release-channel-system",
+      "registryKind": "milestone",
+      "volumeId": "volume-ii",
+      "chapterId": "chapter-ii-9",
+      "purpose": "Constitutional operating channels (Stable, Preview, Beta, Experimental) governing how organizations adopt capabilities at different speeds without production risk.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M127.14",
+      "moduleId": "release-channel-system",
+      "dependsOn": [
+        "M127",
+        "volume-0"
+      ],
+      "enables": [],
+      "relatedSystems": [
+        "system-registry",
+        "knowledge-registry",
+        "organization-genome",
+        "qa-headquarters",
+        "release-readiness",
+        "manifest-reconciliation",
+        "documentation-sync",
+        "platform-governance"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-release-channel-governance",
+        "philosophy-invisible-complexity"
+      ],
+      "implementationNotes": "Constitutional capability (CA-001). Release Channel is part of Organization Profile and System Registry. QA Engine™, Update Engine™, and Deployment Engine™ are channel-native. Default assignments — Frontal Slayer: Stable · NDXBOOK: Beta · Sandbox: Experimental."
     },
     {
       "canonicalId": "M127.1",
@@ -3483,7 +3865,8 @@
       "relatedSystems": [
         "system-registry",
         "knowledge-registry",
-        "engineering-excellence-dashboard"
+        "engineering-excellence-dashboard",
+        "release-channel-system"
       ],
       "implementationNotes": "QA Headquarters — trust scores and organizational integrity spine."
     },
@@ -6068,6 +6451,30 @@
     },
     {
       "from": "M127",
+      "to": "M127.14",
+      "type": "enables",
+      "note": "Release Channel System™ (CA-001)"
+    },
+    {
+      "from": "volume-0",
+      "to": "M127.14",
+      "type": "enables",
+      "note": "Constitutional Release Channel capability"
+    },
+    {
+      "from": "M127.14",
+      "to": "M142",
+      "type": "relates",
+      "note": "QA Engine™ channel-native validation"
+    },
+    {
+      "from": "M127.14",
+      "to": "M161",
+      "type": "relates",
+      "note": "Deployment Engine™ channel-scoped release gates"
+    },
+    {
+      "from": "M127",
       "to": "M127.1",
       "type": "enables",
       "note": "System Registry spine → Business Infrastructure foundation"
@@ -6601,30 +7008,52 @@
       "alignsVolumes": [
         "volume-i"
       ]
+    },
+    {
+      "id": "philosophy-release-channel-governance",
+      "title": "Release Channel Governance™",
+      "category": "governance",
+      "summary": "Organizations adopt platform capabilities at governed speeds — Stable for production, Preview for feedback, Beta for validation, Experimental for research. No module may bypass channel eligibility. Promotion requires QA Engine™, Update Engine™, and Deployment Engine™ channel-native approval — not ad-hoc feature flags.",
+      "governs": [
+        "release-channel-system",
+        "qa-headquarters",
+        "release-readiness",
+        "system-registry",
+        "platform-governance"
+      ],
+      "alignsVolumes": [
+        "volume-0",
+        "volume-ii",
+        "volume-iv",
+        "volume-xi"
+      ]
     }
   ],
   "stats": {
     "volumeCount": 20,
     "chapterCount": 32,
-    "milestoneCount": 232,
+    "milestoneCount": 233,
     "designRevisionCount": 5,
-    "completeCount": 101,
+    "completeCount": 102,
     "inProgressCount": 8,
     "plannedCount": 123,
     "volumeIMilestoneCount": 26,
     "volumeIChapterCount": 8,
     "volumeICompleteCount": 21,
-    "volumeIIMilestoneCount": 40,
+    "volumeIIMilestoneCount": 41,
     "volumeIIChapterCount": 9,
-    "volumeIICompleteCount": 39,
+    "volumeIICompleteCount": 40,
     "volumeIIIMilestoneCount": 12,
     "volumeIIIChapterCount": 6,
     "volumeIIICompleteCount": 0,
     "volumeIVMilestoneCount": 23,
     "volumeIVChapterCount": 9,
     "volumeIVCompleteCount": 22,
-    "philosophyCount": 22,
+    "philosophyCount": 23,
     "foundationFrozen": true,
+    "foundationOperationalComplete": true,
+    "releaseChannelCount": 4,
+    "constitutionalAmendmentCount": 1,
     "experienceLayerCount": 4,
     "mergedDrCount": 5
   }

@@ -28,6 +28,19 @@ Both are required for Studio OS to behave like a true extension of the business.
 | Brand vocabulary | Approved terms for external communication |
 | Internal terminology | Headquarters · Profession Brain · Digital Staff |
 | Mission · Vision · Long-term objectives | From Blueprint and Organization Charter |
+| **Release Channel** | Constitutional operating channel — Stable · Preview · Beta · Experimental (CA-001) |
+
+## Release Channel (Organization Profile)
+
+Every organization profile carries an assigned **Release Channel** per Studio OS Release Channel System™ (M127.14 / CA-001):
+
+| Organization | Default Channel |
+|--------------|-----------------|
+| Frontal Slayer | Stable |
+| NDXBOOK | Beta |
+| Sandbox | Experimental |
+
+Resolved via `resolveOrganizationReleaseChannel()` and stored on `OrganizationGenomeProfile.releaseChannel`.
 
 ## AI consultation
 

@@ -22,7 +22,8 @@
 | Certificate Item | Status |
 |------------------|--------|
 | ✅ **Foundation Complete** | Volumes 0–IV authored and closed at foundation level |
-| ✅ **Foundation Frozen (Version 1.0)** | `foundation-baseline.yaml` status: frozen |
+| ✅ **Foundation Frozen (Version 1.1)** | `foundation-baseline.yaml` status: frozen · operationally complete |
+| ✅ **Release Channel System™ (CA-001)** | M127.14 · 4 channels · 3 native engines |
 | ✅ **Canonical Architecture Established** | DR-001–DR-005 merged into permanent spec |
 | ✅ **Constitutional Integrity Verified** | 12 Constitution principles · Validator PASS |
 | ✅ **Registry Integrity Verified** | M126 Knowledge · M127 System · M127.13 Executive Strategy |
@@ -49,10 +50,11 @@
 
 | Artifact | Version |
 |----------|---------|
-| Constitution™ | 1.0.0 |
-| Core Philosophy™ | 1.0.0 (22 principles) |
-| Master Specification™ Foundation | 1.0.0 |
+| Constitution™ | 1.1.0 (13 principles) |
+| Core Philosophy™ | 1.1.0 (23 principles) |
+| Master Specification™ Foundation | 1.1.0 |
 | Experience Architecture™ | 1.0.0 |
+| Release Channel System™ | 1.1.0 |
 | Knowledge Registry™ | 1.0.0 |
 | System Registry™ | 1.0.0 |
 | Canonical Architecture™ | 1.0.0 |
@@ -105,6 +107,7 @@ This certificate marks the official milestone indicating that:
 |-------|--------|--------|
 | Phase 1 | Foundation Completion Sprint™ | ✅ Certified |
 | Phase 2 | Foundation Freeze™ v1.0 | ✅ Certified |
+| Phase 2b | Operational Completion (CA-001) | ✅ Certified |
 | Phase 3 | Volume V+ authoring | 🔓 Authorized to begin |
 | Phase 4 | Product implementation | ⏸ After Phase 3 |
 | Phase 5 | Governed evolution only | 🔒 Permanent policy |

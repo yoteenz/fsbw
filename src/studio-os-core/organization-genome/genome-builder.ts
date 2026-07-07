@@ -1,3 +1,4 @@
+import { resolveOrganizationReleaseChannel } from '../release-channel-system/eligibility';
 import { getOrganizationDiscoveryBlueprint } from '../business-discovery-blueprint/store';
 import { getOrganizationInaugurationProfile } from '../organization-inauguration/store';
 import { resolveIndustryForWorkspace } from '../industry-architecture/industries';
@@ -23,6 +24,7 @@ export function buildOrganizationGenomeProfile(organizationId: string): Organiza
   const decisionDna = buildDecisionDna(blueprint);
   const customerStandards = buildCustomerStandards(blueprint);
   const identityLayers = buildIdentityLayers(identityCore, brandVoice, decisionDna, customerStandards, now);
+  const releaseChannel = resolveOrganizationReleaseChannel(organizationId).releaseChannel;
 
   const baseProfile: OrganizationGenomeProfile = {
     organizationId,
@@ -31,6 +33,7 @@ export function buildOrganizationGenomeProfile(organizationId: string): Organiza
       blueprint?.companyName ||
       organizationId.replace(/-/g, ' ').toUpperCase(),
     industryId: blueprint?.industryId ?? resolveIndustryForWorkspace(organizationId),
+    releaseChannel,
     updatedAt: now,
     blueprintSyncedAt: blueprint?.updatedAt,
     charterSyncedAt: inauguration?.inauguratedAt,
@@ -45,6 +48,7 @@ export function buildOrganizationGenomeProfile(organizationId: string): Organiza
       'Genome seeded from Business Discovery Blueprint™ and Organization Charter.',
       'Profession Brain™ preserves expertise — Organization Genome™ preserves identity.',
       'Every AI interaction consults Genome before generating work.',
+      `Release Channel: ${releaseChannel} (Studio OS Release Channel System™ CA-001).`,
     ],
   };
 

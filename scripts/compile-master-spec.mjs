@@ -64,6 +64,8 @@ function loadChapters() {
 function main() {
   const constitution = readYaml(path.join(SPEC_DIR, 'constitution.yaml'));
   const experienceArchitecture = readYaml(path.join(SPEC_DIR, 'experience-architecture.yaml'));
+  const releaseChannelSystem = readYaml(path.join(SPEC_DIR, 'release-channel-system.yaml'));
+  const constitutionalAmendments = readYaml(path.join(SPEC_DIR, 'constitutional-amendments.yaml'));
   const foundationBaseline = readYaml(path.join(SPEC_DIR, 'foundation-baseline.yaml'));
   const volumes = readYaml(path.join(SPEC_DIR, 'volumes.yaml'));
   const designRevisions = readYaml(path.join(SPEC_DIR, 'design-revisions.yaml'));
@@ -90,6 +92,8 @@ function main() {
     sourceRoot: 'docs/studio-os/master-spec',
     constitution,
     experienceArchitecture,
+    releaseChannelSystem,
+    constitutionalAmendments,
     foundationBaseline,
     volumes: volumes?.volumes ?? [],
     chapters,
@@ -120,6 +124,9 @@ function main() {
       volumeIVCompleteCount: volumeIVMilestones.filter((m) => m.implementationStatus === 'complete').length,
       philosophyCount: corePhilosophies?.philosophies?.length ?? 0,
       foundationFrozen: foundationBaseline?.status === 'frozen',
+      foundationOperationalComplete: foundationBaseline?.operationalCompletion?.status === 'complete',
+      releaseChannelCount: releaseChannelSystem?.channels?.length ?? 0,
+      constitutionalAmendmentCount: constitutionalAmendments?.amendments?.length ?? 0,
       experienceLayerCount: experienceArchitecture?.layers?.length ?? 0,
       mergedDrCount: (designRevisions?.designRevisions ?? []).filter((d) => d.implementationStatus === 'merged').length,
     },

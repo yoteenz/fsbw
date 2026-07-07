@@ -1,0 +1,30 @@
+# Studio OS Constitutional Amendments — governed changes to frozen Foundation baseline
+version: '1.1.0'
+foundationVersion: '1.1.0'
+updatedAt: '2026-07-07'
+
+amendments:
+  - id: CA-001
+    title: Studio OS Release Channel System™
+    type: constitutional-capability
+    ratifiedAt: '2026-07-07'
+    foundationVersion: '1.1.0'
+    status: ratified
+    summary: >-
+      Introduces Release Channel System™ as a constitutional platform capability. Organizations
+      adopt capabilities at different speeds through Stable, Preview, Beta, and Experimental
+      channels. Release Channel is part of Organization Profile and System Registry. QA Engine™,
+      Update Engine™, and Deployment Engine™ are channel-native.
+    artifacts:
+      - constitution.yaml
+      - core-philosophies.yaml
+      - release-channel-system.yaml
+      - milestones/volume-ii.yaml
+      - foundation-baseline.yaml
+    milestoneTargets: [M127.14]
+    principleTargets: [constitution-release-channels]
+    philosophyTargets: [philosophy-release-channel-governance]
+    operationalCompletion: true
+    note: >-
+      Final constitutional addition before Volume V authoring. Foundation v1.1 is operationally
+      complete — baseline remains frozen; future changes require governed amendments only.

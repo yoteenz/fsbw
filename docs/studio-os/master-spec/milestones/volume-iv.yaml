@@ -44,7 +44,7 @@ milestones:
     moduleId: qa-headquarters
     dependsOn: [M127]
     enables: [M143]
-    relatedSystems: [system-registry, knowledge-registry, engineering-excellence-dashboard]
+    relatedSystems: [system-registry, knowledge-registry, engineering-excellence-dashboard, release-channel-system]
     implementationNotes: QA Headquarters — trust scores and organizational integrity spine.
 
   - canonicalId: M143

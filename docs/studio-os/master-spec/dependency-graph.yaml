@@ -1,7 +1,7 @@
 # Master Specification dependency graph (import order + hard deps)
-# Foundation v1.0 — DR edges replaced with canonical milestone references
-version: '1.0.0'
-foundationVersion: '1.0.0'
+# Foundation v1.1 — CA-001 Release Channel System added
+version: '1.1.0'
+foundationVersion: '1.1.0'
 updatedAt: '2026-07-07'
 
 edges:
@@ -74,6 +74,26 @@ edges:
     to: M127.13
     type: enables
     note: Executive Strategy Floor (DR-005 merged)
+
+  - from: M127
+    to: M127.14
+    type: enables
+    note: Release Channel System™ (CA-001)
+
+  - from: volume-0
+    to: M127.14
+    type: enables
+    note: Constitutional Release Channel capability
+
+  - from: M127.14
+    to: M142
+    type: relates
+    note: QA Engine™ channel-native validation
+
+  - from: M127.14
+    to: M161
+    type: relates
+    note: Deployment Engine™ channel-scoped release gates
 
   - from: M127
     to: M127.1

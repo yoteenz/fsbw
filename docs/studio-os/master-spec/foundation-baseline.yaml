@@ -1,22 +1,25 @@
-# Studio OS Foundation Baseline™ — Version 1.0 (Frozen)
+# Studio OS Foundation Baseline™ — Version 1.1 (Frozen · Operationally Complete)
 # All future evolution requires governed change — never silent baseline mutation.
-version: '1.0.0'
+version: '1.1.0'
 frozenAt: '2026-07-07'
+operationalCompleteAt: '2026-07-07'
 status: frozen
 sprint: Foundation Completion Sprint™
+constitutionalAmendments: [CA-001]
 
 baseline:
   constitution:
-    version: '1.0.0'
+    version: '1.1.0'
     path: constitution.yaml
     status: frozen
+    principleCount: 13
   corePhilosophy:
-    version: '1.0.0'
+    version: '1.1.0'
     path: core-philosophies.yaml
-    principleCount: 22
+    principleCount: 23
     status: frozen
   masterSpecFoundation:
-    version: '1.0.0'
+    version: '1.1.0'
     path: docs/studio-os/master-spec/
     volumesFrozen: [volume-0, volume-i, volume-ii, volume-iii, volume-iv]
     status: frozen
@@ -24,22 +27,31 @@ baseline:
     version: '1.0.0'
     path: experience-architecture.yaml
     status: frozen
+  releaseChannelSystem:
+    version: '1.1.0'
+    path: release-channel-system.yaml
+    milestone: M127.14
+    moduleId: release-channel-system
+    status: frozen
+    constitutionalAmendment: CA-001
   knowledgeRegistry:
-    version: '1.0.0'
+    version: '1.1.0'
     milestone: M126
     moduleId: knowledge-registry
     status: frozen
   systemRegistry:
-    version: '1.0.0'
+    version: '1.1.0'
     milestone: M127
     moduleId: system-registry
     status: frozen
   canonicalArchitecture:
-    version: '1.0.0'
+    version: '1.1.0'
     components:
       - constitution.yaml
       - core-philosophies.yaml
+      - constitutional-amendments.yaml
       - experience-architecture.yaml
+      - release-channel-system.yaml
       - foundation-baseline.yaml
       - volumes.yaml
       - chapters/
@@ -50,17 +62,19 @@ baseline:
 
 governance:
   description: >-
-    Foundation v1.0 is the permanent source of truth. Future changes require one of:
+    Foundation v1.1 is the permanent source of truth. Future changes require one of:
   allowedChangeMechanisms:
     - design-revision
     - constitutional-amendment
     - master-spec-volume-addition
     - master-spec-milestone-addition
     - experience-architecture-amendment
+    - release-channel-amendment
   prohibited:
     - silent-baseline-mutation
     - duplicate-milestone-definitions
     - shadow-roadmaps-outside-master-spec
+    - bypass-release-channel-eligibility
 
 mergedDesignRevisions:
   - DR-001
@@ -69,16 +83,25 @@ mergedDesignRevisions:
   - DR-004
   - DR-005
 
+ratifiedAmendments:
+  - CA-001
+
 intentionallyDeferred:
   productImplementation:
     - M89.1 Studio Orb™ UI
     - M89.2 Voice Mode™
     - M89.3 Conversation Mode™
     - M89.4 Awakening Sequence™
-    - M128 Executive Strategy Floor™ immersive UI
+    - M127.13 Executive Strategy Floor™ immersive UI
     - M127.7–M127.11 Volume III planned packs
     - M145 Digital Twin™ Sandbox
     - Volumes V–XIX chapter authoring
   note: >-
     Deferred items are fully specified in Master Specification. Implementation resumes
-    in Phase 4 per governed roadmap — not through baseline modification.
+    in Phase 4 per governed roadmap — not through baseline modification. Release Channel
+    eligibility governs when deferred surfaces may activate per organization.
+
+operationalCompletion:
+  status: complete
+  finalAddition: Studio OS Release Channel System™ (CA-001)
+  authorizedNextPhase: Volume V+ authoring

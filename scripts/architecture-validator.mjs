@@ -45,6 +45,8 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
 
   const foundationBaseline = bundle.foundationBaseline ?? {};
   const experienceArchitecture = bundle.experienceArchitecture ?? {};
+  const releaseChannelSystem = bundle.releaseChannelSystem ?? {};
+  const constitutionalAmendments = bundle.constitutionalAmendments ?? {};
 
   const philosophies = bundle.corePhilosophies ?? [];
   const philosophyIds = new Set(philosophies.map((p) => p.id));
@@ -65,6 +67,11 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
     'personalization-dna',
     'presence-interaction',
     'platform-executive',
+    'release-channel-system',
+    'qa-engine',
+    'update-engine',
+    'deployment-engine',
+    'platform-governance',
   ]);
 
   for (const layer of experienceArchitecture.layers ?? []) {
@@ -77,8 +84,8 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
   if (!constitution.principles?.length) {
     issue(issues, 'error', 'CONSTITUTION_EMPTY', 'Constitution has no principles');
   }
-  if (milestones.length < 225) {
-    issue(issues, 'warning', 'LOW_MILESTONE_COUNT', `Expected ~230 milestones, found ${milestones.length}`);
+  if (milestones.length < 232) {
+    issue(issues, 'warning', 'LOW_MILESTONE_COUNT', `Expected ~233 milestones, found ${milestones.length}`);
   }
   if (!volumes.some((v) => v.id === 'volume-i')) {
     issue(issues, 'error', 'MISSING_VOLUME_I', 'Volume I container missing');
@@ -248,13 +255,17 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
     }
   }
   if (yamlVersions.size > 1) {
-    issue(issues, 'warning', 'VERSION_MISMATCH', `Multiple spec file versions: ${[...yamlVersions].join(', ')}`);
+    const legacyFrozen = new Set(['1.0.0']);
+    const activeVersions = [...yamlVersions].filter((v) => !legacyFrozen.has(v));
+    if (activeVersions.length > 1) {
+      issue(issues, 'warning', 'VERSION_MISMATCH', `Multiple active spec file versions: ${activeVersions.join(', ')}`);
+    }
   }
 
   // ── Core Philosophy compliance ────────────────────────────────────────
   const corePhilosophies = bundle.corePhilosophies ?? [];
-  if (corePhilosophies.length < 22) {
-    issue(issues, 'error', 'LOW_PHILOSOPHY_COUNT', `Expected ≥22 core philosophies (Foundation v1.0), found ${corePhilosophies.length}`);
+  if (corePhilosophies.length < 23) {
+    issue(issues, 'error', 'LOW_PHILOSOPHY_COUNT', `Expected ≥23 core philosophies (Foundation v1.1), found ${corePhilosophies.length}`);
   }
   const requiredPhilosophyCategories = ['experiential', 'governance', 'platform'];
   for (const cat of requiredPhilosophyCategories) {
@@ -282,6 +293,7 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
     'constitution-core-philosophies',
     'constitution-experience-architecture',
     'constitution-foundation-governance',
+    'constitution-release-channels',
   ];
   for (const id of requiredPrinciples) {
     if (!constitution.principles?.some((p) => p.id === id)) {
@@ -305,6 +317,38 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
   const m127_13 = milestoneByCanonical.get('M127.13');
   if (!m127_13) {
     issue(issues, 'warning', 'MISSING_EXECUTIVE_STRATEGY_FLOOR', 'M127.13 Executive Strategy Floor milestone missing (DR-005 merge target)');
+  }
+
+  const m127_14 = milestoneByCanonical.get('M127.14');
+  if (!m127_14) {
+    issue(issues, 'error', 'MISSING_RELEASE_CHANNEL_SYSTEM', 'M127.14 Release Channel System milestone missing (CA-001)');
+  } else if (m127_14.internalId !== 'release-channel-system') {
+    issue(issues, 'error', 'RCS_INTERNAL_ID', 'M127.14 must use internalId release-channel-system', 'M127.14');
+  }
+
+  // ── Release Channel System compliance (CA-001) ───────────────────────
+  if (!releaseChannelSystem.channels?.length) {
+    issue(issues, 'error', 'RCS_NO_CHANNELS', 'release-channel-system.yaml must define operating channels');
+  } else {
+    const channelIds = new Set(['stable', 'preview', 'beta', 'experimental']);
+    for (const ch of releaseChannelSystem.channels) {
+      if (!channelIds.has(ch.id)) {
+        issue(issues, 'warning', 'RCS_UNKNOWN_CHANNEL', `Unknown release channel ${ch.id}`, ch.id);
+      }
+    }
+    if (releaseChannelSystem.channels.length !== 4) {
+      issue(issues, 'warning', 'RCS_CHANNEL_COUNT', `Expected 4 release channels, found ${releaseChannelSystem.channels.length}`);
+    }
+  }
+  if (!releaseChannelSystem.nativeEngines?.engines?.length) {
+    issue(issues, 'error', 'RCS_NO_ENGINES', 'release-channel-system.yaml must define QA/Update/Deployment engines');
+  }
+  const ratified = (constitutionalAmendments.amendments ?? []).filter((a) => a.status === 'ratified');
+  if (!ratified.some((a) => a.id === 'CA-001')) {
+    issue(issues, 'error', 'CA001_NOT_RATIFIED', 'Constitutional Amendment CA-001 must be ratified');
+  }
+  if (foundationBaseline.baseline?.releaseChannelSystem?.status !== 'frozen') {
+    issue(issues, 'warning', 'RCS_NOT_FROZEN', 'Release Channel System not frozen in foundation baseline');
   }
 
   // ── Foundation baseline compliance ────────────────────────────────────
@@ -333,11 +377,15 @@ export function validateArchitecture(bundle, milestoneFiles = []) {
   // ── Search integrity (Knowledge Registry module doc) ────────────────
   const krDoc = path.join(DOCS_STUDIO, 'knowledge-registry.md');
   const expDoc = path.join(DOCS_STUDIO, 'experience-architecture.md');
+  const rcsDoc = path.join(DOCS_STUDIO, 'release-channel-system.md');
   if (!fs.existsSync(krDoc)) {
     issue(issues, 'warning', 'SEARCH_INTEGRITY_KR', 'knowledge-registry.md missing for search/registry integrity');
   }
   if (!fs.existsSync(expDoc)) {
     issue(issues, 'warning', 'SEARCH_INTEGRITY_EXP', 'experience-architecture.md missing for experiential search');
+  }
+  if (!fs.existsSync(rcsDoc)) {
+    issue(issues, 'warning', 'SEARCH_INTEGRITY_RCS', 'release-channel-system.md missing for release channel search integrity');
   }
   for (const m of milestones.filter((x) => x.implementationStatus === 'complete' && x.moduleId)) {
     const docPath = path.join(DOCS_STUDIO, `${m.moduleId}.md`);

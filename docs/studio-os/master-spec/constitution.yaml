@@ -1,8 +1,9 @@
-# Volume 0 — Studio OS Constitution™ (Foundation v1.0 — Frozen)
-version: '1.0.0'
-foundationVersion: '1.0.0'
+# Volume 0 — Studio OS Constitution™ (Foundation v1.1 — Frozen)
+version: '1.1.0'
+foundationVersion: '1.1.0'
 updatedAt: '2026-07-07'
 status: frozen
+constitutionalAmendments: [CA-001]
 
 principles:
   - id: constitution-platform
@@ -48,7 +49,7 @@ principles:
   - id: constitution-core-philosophies
     title: Core Studio OS Philosophy
     summary: >-
-      Twenty-two constitutional design principles in core-philosophies.yaml govern every Volume,
+      Twenty-three constitutional design principles in core-philosophies.yaml govern every Volume,
       Chapter, Milestone, and architectural amendment — experiential, not feature lists.
       Architecture Before Implementation; Places Instead of Pages; Operating System, Not SaaS.
 
@@ -63,6 +64,17 @@ principles:
   - id: constitution-foundation-governance
     title: Foundation Governance™
     summary: >-
-      Foundation Baseline v1.0 is frozen. All future architectural evolution requires governed
+      Foundation Baseline v1.1 is frozen. All future architectural evolution requires governed
       Design Revisions, Constitutional Amendments, Master Specification updates, or new Volume
       additions — never silent modification of the baseline.
+
+  - id: constitution-release-channels
+    title: Studio OS Release Channel System™
+    summary: >-
+      Studio OS supports Stable, Preview, Beta, and Experimental operating channels so
+      organizations adopt capabilities at different speeds without affecting production
+      stability. Every organization has an assigned Release Channel in its Organization
+      Profile and System Registry. Studio Orb™, Studio Intelligence™, QA™, Experience
+      Systems™, Marketplace™, Website Builder™, and all future modules must respect channel
+      eligibility. QA Engine™, Update Engine™, and Deployment Engine™ are channel-native.
+      Constitutional capability — not a product feature (CA-001).

@@ -6,6 +6,8 @@ import type {
   GENOME_RISK_LEVELS,
 } from './constants';
 
+import type { ReleaseChannelId } from '../release-channel-system/constants';
+
 export type GenomeIdentityLayer = (typeof GENOME_IDENTITY_LAYERS)[number];
 export type AiConsultationContext = (typeof AI_CONSULTATION_CONTEXTS)[number];
 export type GenomeRiskLevel = (typeof GENOME_RISK_LEVELS)[number];
@@ -64,6 +66,8 @@ export type OrganizationGenomeProfile = {
   organizationId: string;
   companyName: string;
   industryId: string;
+  /** Constitutional Release Channel assignment (CA-001) */
+  releaseChannel: ReleaseChannelId;
   updatedAt: string;
   blueprintSyncedAt?: string;
   charterSyncedAt?: string;

@@ -1,20 +1,21 @@
 # Studio OS Master Specification — Volumes (0–XIX)
-version: '1.0.0'
+version: '1.1.0'
 updatedAt: '2026-07-07'
 
 volumes:
   - id: volume-0
     number: 0
     title: Studio OS Constitution™
-    summary: Foundational principles governing platform architecture, UX, intelligence, registry-driven design, and release discipline.
+    summary: Foundational principles governing platform architecture, UX, intelligence, registry-driven design, release discipline, and Release Channel governance.
     status: complete
     dependsOn: []
-    milestoneRange: M127.13
+    milestoneRange: M127.13-M127.14
     completionPct: 100
-    foundationVersion: '1.0.0'
+    foundationVersion: '1.1.0'
     notes: >-
-      Constitution v1.0 frozen. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged.
-      Experience Architecture™ and Foundation Governance principles added.
+      Constitution v1.1 frozen. CA-001 adds Release Channel System™. Executive Strategy
+      Floor™ (M127.13) canonical — DR-005 merged. Experience Architecture™ and Foundation
+      Governance principles retained.
 
   - id: volume-i
     number: I
@@ -43,6 +44,7 @@ volumes:
     notes: >-
       Nine chapters complete. Knowledge Registry™ (M126) formally closed. System Registry™
       (M127) complete. Executive Strategy Floor™ (M127.13) canonical — DR-005 merged.
+      Release Channel System™ (M127.14) — CA-001 constitutional capability.
 
   - id: volume-iii
     number: III

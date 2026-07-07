@@ -1,6 +1,6 @@
 # Core Studio OS Philosophy — constitutional design principles (not product features)
 # Governs every Volume, Chapter, Milestone, and Design Revision authored in the Master Specification.
-version: '1.0.0'
+version: '1.1.0'
 updatedAt: '2026-07-07'
 
 philosophies:
@@ -218,3 +218,14 @@ philosophies:
       organizational moments reshape Headquarters while preserving canonical integrity.
     governs: [experience-engine, workspace-runtime, living-headquarters-presence]
     alignsVolumes: [volume-i]
+
+  - id: philosophy-release-channel-governance
+    title: Release Channel Governance™
+    category: governance
+    summary: >-
+      Organizations adopt platform capabilities at governed speeds — Stable for production,
+      Preview for feedback, Beta for validation, Experimental for research. No module may
+      bypass channel eligibility. Promotion requires QA Engine™, Update Engine™, and
+      Deployment Engine™ channel-native approval — not ad-hoc feature flags.
+    governs: [release-channel-system, qa-headquarters, release-readiness, system-registry, platform-governance]
+    alignsVolumes: [volume-0, volume-ii, volume-iv, volume-xi]

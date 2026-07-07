@@ -1,0 +1,201 @@
+# Studio OS Release Channel System™ — constitutional platform capability (Foundation v1.1)
+# Governs how organizations adopt capabilities at different speeds without affecting production stability.
+version: '1.1.0'
+foundationVersion: '1.1.0'
+constitutionalAmendment: CA-001
+updatedAt: '2026-07-07'
+status: frozen
+milestoneId: M127.14
+moduleId: release-channel-system
+
+summary: >-
+  Studio OS supports multiple operating channels so organizations can safely adopt new
+  capabilities at different speeds. Release Channel is a constitutional capability —
+  not a product feature. Every organization receives an assigned channel. All modules,
+  engines, and experience systems must respect channel eligibility before exposing
+  functionality.
+
+constitutionalBasis:
+  principleId: constitution-release-channels
+  philosophyId: philosophy-release-channel-governance
+  amendmentId: CA-001
+
+channels:
+  - id: stable
+    title: Stable
+    order: 1
+    description: >-
+      Production-ready. Fully validated. Recommended for live organizations operating
+      customer-facing businesses with zero tolerance for experimental instability.
+    validationRequirements:
+      - architecture-validator-pass
+      - qa-chain-complete
+      - documentation-complete
+      - release-readiness-approved
+    recommendedFor: [live-organizations, customer-facing-brands, regulated-industries]
+
+  - id: preview
+    title: Preview
+    order: 2
+    description: >-
+      Feature-complete capabilities gathering production feedback before Stable promotion.
+      Suitable for organizations willing to validate near-production surfaces with controlled exposure.
+    validationRequirements:
+      - qa-inspector-pass
+      - documentation-present
+      - release-readiness-review
+    recommendedFor: [early-adopters, internal-pilots, partner-organizations]
+
+  - id: beta
+    title: Beta
+    order: 3
+    description: >-
+      Major new capabilities undergoing broader validation. Organizations accept elevated
+      change velocity in exchange for early access to platform evolution.
+    validationRequirements:
+      - spec-complete
+      - regression-suite-defined
+    recommendedFor: [media-labs, innovation-brands, platform-co-development]
+
+  - id: experimental
+    title: Experimental
+    order: 4
+    description: >-
+      Research features, prototype systems, and future architecture. No production guarantees.
+      Sandbox and research organizations only.
+    validationRequirements:
+      - constitutional-registration
+    recommendedFor: [sandbox-organizations, research-labs, architecture-prototypes]
+
+organizationProfile:
+  field: releaseChannel
+  description: >-
+    Every organization profile carries an assigned Release Channel. The channel governs
+    which modules, routes, intelligence surfaces, and experience systems may activate for
+    that tenant. Future organizations choose their channel at onboarding or via governed
+    channel migration.
+  storageLocations:
+    - organization-genome
+    - system-registry
+    - workspace-schema
+  defaultAssignments:
+    - organizationId: frontal-slayer
+      displayName: Frontal Slayer
+      releaseChannel: stable
+      rationale: Live customer-facing brand — production stability required.
+    - organizationId: ai-media
+      displayName: NDXBOOK
+      releaseChannel: beta
+      rationale: AI media lab — broader validation of knowledge and distribution capabilities.
+    - organizationId: sandbox
+      displayName: Sandbox Organization
+      releaseChannel: experimental
+      rationale: Research and prototype workspace — no production guarantees.
+  futureOrganizations: self-select-at-onboarding
+
+nativeEngines:
+  description: >-
+    QA Engine™, Update Engine™, and Deployment Engine™ understand release channels
+    natively — eligibility, promotion, and rollout decisions are channel-aware.
+  engines:
+    - id: qa-engine
+      title: QA Engine™
+      description: >-
+        Validates modules and surfaces against channel-specific QA gates before exposure.
+        Stable requires full QA chain; Experimental requires constitutional registration only.
+      modules: [qa-headquarters, qa-inspector, qa-simulation-engine, release-readiness]
+      milestoneIds: [M142, M143, M144, M161]
+      channelResponsibilities:
+        - validate-channel-eligibility
+        - enforce-qa-gates-per-channel
+        - block-stable-promotion-without-pass
+
+    - id: update-engine
+      title: Update Engine™
+      description: >-
+        Propagates Master Specification, manifest, and documentation updates through
+        channel-aware rollout schedules — Preview and Beta receive updates before Stable.
+      modules: [manifest-reconciliation, documentation-sync, knowledge-registry]
+      milestoneIds: [M125, M126, M126.5]
+      channelResponsibilities:
+        - channel-staged-manifest-rollout
+        - documentation-sync-per-channel
+        - reconcile-eligibility-metadata
+
+    - id: deployment-engine
+      title: Deployment Engine™
+      description: >-
+        Governs build, release, and deployment promotion across channels. Stable deployments
+        require Release Readiness™ approval; Experimental may deploy registered prototypes.
+      modules: [release-readiness, self-healing-engine, documentation-governance]
+      milestoneIds: [M161, M162, M126.5]
+      channelResponsibilities:
+        - channel-scoped-deployment-gates
+        - promote-preview-to-stable
+        - isolate-experimental-deployments
+
+moduleEligibility:
+  description: >-
+    All modules must declare minimumReleaseChannel. Surfaces below the organization's
+    assigned channel are hidden, disabled, or routed to upgrade guidance — never silently exposed.
+  rules:
+    - moduleId: studio-orb
+      minimumReleaseChannel: preview
+      surfaces: [M89.1, M89.2, M89.3, M89.4]
+    - moduleId: studio-intelligence
+      minimumReleaseChannel: stable
+      surfaces: [M87.5, M122]
+    - moduleId: qa-headquarters
+      minimumReleaseChannel: stable
+      surfaces: [M142]
+    - moduleId: experience-engine
+      minimumReleaseChannel: preview
+      surfaces: [M141]
+    - moduleId: marketplace
+      minimumReleaseChannel: beta
+      surfaces: [M127.1, M127.2]
+    - moduleId: website-builder
+      minimumReleaseChannel: preview
+      surfaces: [M127.10]
+    - moduleId: executive-strategy-floor
+      minimumReleaseChannel: experimental
+      surfaces: [M127.13]
+  defaultMinimumChannel: stable
+  enforcementPoints:
+    - module-bootstrap
+    - route-guard
+    - command-dock-advisor
+    - system-registry-discovery
+    - studio-intelligence-tooling
+
+platformGovernance:
+  milestoneId: M212
+  moduleId: platform-governance
+  relationship: >-
+    Platform Governance™ (M212) enforces extension review and policy. Release Channel
+    System™ is the constitutional baseline that Platform Governance inherits for channel
+    policy, promotion approvals, and cross-organization rollout discipline.
+
+registryIntegration:
+  knowledgeRegistry:
+    milestoneId: M126
+    indexes:
+      - release-channel-system.md
+      - release-channel-system.yaml
+  systemRegistry:
+    milestoneId: M127
+    registers:
+      - release-channel-system
+      - organization:workspace.releaseChannel
+      - qa-engine
+      - update-engine
+      - deployment-engine
+
+governance:
+  changesRequire:
+    - constitutional-amendment
+    - design-revision
+  prohibited:
+    - silent-channel-override
+    - bypass-qa-gates-for-stable
+    - cross-channel-bleed-without-promotion
