@@ -1,4 +1,4 @@
-import { ORB_ANIMATION_CSS, ORB_SIZE_PX } from './studioOrbTheme';
+import { ORB_ANIMATION_CSS } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 
 type Props = {
@@ -20,8 +20,6 @@ export function StudioOrb({ onOrbTap }: Props) {
         style={{
           bottom: `max(${position.bottom}px, env(safe-area-inset-bottom))`,
           right: `max(${position.right}px, env(safe-area-inset-right))`,
-          width: ORB_SIZE_PX,
-          height: ORB_SIZE_PX,
         }}
         onClick={onOrbTap}
         aria-label={
@@ -41,9 +39,9 @@ export function StudioOrb({ onOrbTap }: Props) {
             aria-hidden
             style={{
               position: 'absolute',
-              inset: -4,
+              inset: -2,
               borderRadius: '50%',
-              border: '1px solid rgba(235,28,36,0.35)',
+              border: '1px solid rgba(235,28,36,0.28)',
               pointerEvents: 'none',
             }}
           />

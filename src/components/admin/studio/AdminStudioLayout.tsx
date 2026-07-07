@@ -5,7 +5,7 @@ import AdminHeader from '../../../pages/admin/components/AdminHeader';
 import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAccess';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { PageActionsBelowCard, pageActionButtonStyle } from '../../../layouts/PageActionsBelowCard';
-import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import { MENU_TOGGLE_MAIN_CARD_CLASS } from '../../../layouts/menuToggleHeights';
 import { StudioKnowledgeProvider } from '../../../contexts/StudioKnowledgeContext';
 import { StudioManualBridge } from './StudioManualBridge';
 import { AdminStudioBreadcrumbTrail } from './AdminStudioBreadcrumbTrail';
@@ -204,13 +204,9 @@ export function AdminStudioLayout({
               />
             ) : null}
             <div
-              className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden"
-              style={{
-                borderWidth: '1.3px',
-                minHeight: MENU_TOGGLE_PANEL_HEIGHT,
-                height: MENU_TOGGLE_PANEL_HEIGHT,
-                maxHeight: MENU_TOGGLE_PANEL_HEIGHT,
-              }}
+              className={`${MENU_TOGGLE_MAIN_CARD_CLASS} bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden`}
+              style={{ borderWidth: '1.3px' }}
+              data-admin-main-card="studio-organization"
             >
               <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }}>
                 {summarySlot}
@@ -301,7 +297,7 @@ export function AdminStudioLayout({
                 style={{
                   paddingLeft: '20px',
                   paddingRight: '20px',
-                  paddingBottom: shouldShowCommandDock(pathname) ? '56px' : '24px',
+                  paddingBottom: shouldShowCommandDock(pathname) ? '72px' : '24px',
                   boxSizing: 'border-box',
                   WebkitOverflowScrolling: 'touch',
                 }}

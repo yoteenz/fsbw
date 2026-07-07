@@ -1,7 +1,7 @@
 /** Studio Orb™ — crystal acrylic intelligence · premium OS motion language. */
 import type { CSSProperties } from 'react';
 
-export const ORB_SIZE_PX = 44;
+export const ORB_SIZE_PX = 40;
 
 export const ORB_VISUAL = {
   brandRed: '#EB1C24',
@@ -22,7 +22,7 @@ export const ORB_VISUAL = {
 export const ORB_ANIMATION_CSS = `
 @keyframes studio-orb-breathe {
   0%, 100% { transform: scale(1); opacity: 0.92; }
-  50% { transform: scale(1.035); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 1; }
 }
 @keyframes studio-orb-think {
   0%, 100% { box-shadow: 0 0 0 0 rgba(235,28,36,0.25); }
@@ -61,8 +61,6 @@ export const ORB_ANIMATION_CSS = `
 .studio-orb-root {
   position: fixed;
   z-index: 100050;
-  width: ${ORB_SIZE_PX}px;
-  height: ${ORB_SIZE_PX}px;
   border-radius: 50%;
   border: none;
   padding: 0;

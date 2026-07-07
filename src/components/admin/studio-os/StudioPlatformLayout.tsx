@@ -6,7 +6,7 @@ import { useRequireAdminPageAccess } from '../../../hooks/useRequireAdminPageAcc
 import { STUDIO_ADMINISTRATION_ROUTES } from '../../../studio-os-core/application/routes';
 import { STUDIO_PLATFORM_NAV, resolvePlatformNavFromPath } from '../../../studio-os-core/platform/navigation';
 import { STUDIO_OS_UPPERCASE_CLASS, ADMIN_STUDIO_THEME } from '../../../utils/adminStudioTheme';
-import { MENU_TOGGLE_PANEL_HEIGHT } from '../../../layouts/menuToggleHeights';
+import { MENU_TOGGLE_MAIN_CARD_CLASS } from '../../../layouts/menuToggleHeights';
 import { shouldShowCommandDock } from '../studio/command-dock/CommandDock';
 import { StudioOrbMount, StudioOrbProvider, useStudioOrbEnvironmentActive } from '../studio/studio-orb/StudioOrbShell';
 import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
@@ -83,13 +83,9 @@ export function StudioPlatformLayout({
         <div className="pb-6 px-4">
           <div className="max-w-md mx-auto">
             <div
-              className="bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden"
-              style={{
-                borderWidth: '1.3px',
-                minHeight: MENU_TOGGLE_PANEL_HEIGHT,
-                height: MENU_TOGGLE_PANEL_HEIGHT,
-                maxHeight: MENU_TOGGLE_PANEL_HEIGHT,
-              }}
+              className={`${MENU_TOGGLE_MAIN_CARD_CLASS} bg-white/60 backdrop-blur-sm border border-black flex flex-col overflow-hidden`}
+              style={{ borderWidth: '1.3px' }}
+              data-admin-main-card="studio-platform"
             >
               <div className="flex-shrink-0 px-5 pb-2" style={{ marginTop: '10px' }}>
                 <div className="p-2 mb-2" style={{ border: ADMIN_STUDIO_THEME.panelBorder, background: 'rgba(99,102,241,0.06)' }}>
@@ -161,10 +157,7 @@ export function StudioPlatformLayout({
                 className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden admin-hub-tab-scroll"
                 style={{
                   padding: '8px 20px 24px',
-<<<<<<< HEAD
-=======
-                  paddingBottom: shouldShowCommandDock(pathname) ? '56px' : '24px',
->>>>>>> 9b5c2668 (Fix Studio Command Center card height; shrink Studio Orb to reduce text overlap)
+                  paddingBottom: shouldShowCommandDock(pathname) ? '72px' : '24px',
                   boxSizing: 'border-box',
                   WebkitOverflowScrolling: 'touch',
                 }}
