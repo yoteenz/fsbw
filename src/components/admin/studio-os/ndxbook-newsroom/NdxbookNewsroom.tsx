@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNdxbookNewsroomState } from '../../../../hooks/useNdxbookNewsroomState';
+import { useNdxbookPagePipeline } from '../../../../hooks/useNdxbookPagePipeline';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import {
   ActivityWallPanel,
@@ -18,6 +19,7 @@ import {
   QualityGatesPanel,
   TalentRoutingPanel,
 } from './NdxbookNewsroomPanels';
+import { NdxbookPagePipelinePanel } from './NdxbookPagePipelinePanel';
 
 type NewsroomTab = 'floor' | 'page' | 'departments' | 'calendar' | 'intelligence' | 'dna';
 
@@ -36,7 +38,13 @@ type NdxbookNewsroomProps = {
 
 export function NdxbookNewsroom({ workspaceId }: NdxbookNewsroomProps) {
   const [tab, setTab] = useState<NewsroomTab>('floor');
-  const { store, selectedPage, movePage, selectPage, rescheduleCalendar, formatTime } = useNdxbookNewsroomState();
+  const { store, selectedPage, movePage, selectPage, rescheduleCalendar, formatTime, refresh } = useNdxbookNewsroomState();
+  const { page001, refresh: refreshPipeline } = useNdxbookPagePipeline();
+
+  const handlePipelineRefresh = () => {
+    refresh();
+    refreshPipeline();
+  };
 
   const panelProps = {
     store,
@@ -53,6 +61,7 @@ export function NdxbookNewsroom({ workspaceId }: NdxbookNewsroomProps) {
       case 'page':
         return (
           <>
+            <NdxbookPagePipelinePanel page={page001} onRefresh={handlePipelineRefresh} />
             <ProductionBoardPanel {...panelProps} />
             <PageWorkspacePanel {...panelProps} />
             <StrategyAlignmentPanel selectedPage={selectedPage} />
@@ -90,6 +99,7 @@ export function NdxbookNewsroom({ workspaceId }: NdxbookNewsroomProps) {
       default:
         return (
           <>
+            <NdxbookPagePipelinePanel page={page001} onRefresh={handlePipelineRefresh} />
             <NewsroomDashboardPanel store={store} />
             <ProductionBoardPanel {...panelProps} />
             <PageWorkspacePanel {...panelProps} />

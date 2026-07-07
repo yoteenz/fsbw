@@ -1,5 +1,8 @@
 import {useCallback, useMemo, useState} from 'react';
+import { bootstrapAiMediaNdxbook } from '../workspaces/ai-media/ndxbook/bootstrap';
+import { readNdxbookStore } from '../studio-os-core/ndxbook/store';
 import { buildNdxbookNewsroomSeed } from '../studio-os-core/ndxbook/newsroom/bootstrap';
+import { createProductionPageFromRegistry } from '../studio-os-core/ndxbook/newsroom/pageSync';
 import {
   bootstrapNdxbookNewsroomStore,
   movePageToStage,
@@ -13,8 +16,11 @@ import type { NewsroomPipelineStageId } from '../studio-os-core/ndxbook/newsroom
 
 function ensureSeeded(): void {
   ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
+  bootstrapAiMediaNdxbook();
   if (shouldUseFounderPilotSeed(NDXBOOK_WORKSPACE_ID)) {
     bootstrapNdxbookNewsroomStore(undefined, { force: false });
+    const registryPages = readNdxbookStore().pages;
+    registryPages.forEach((p) => createProductionPageFromRegistry(p));
     return;
   }
   bootstrapNdxbookNewsroomStore(buildNdxbookNewsroomSeed());

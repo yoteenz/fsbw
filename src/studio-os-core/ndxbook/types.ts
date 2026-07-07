@@ -91,6 +91,31 @@ export type NdxbookProgrammingSlot = {
   };
 };
 
+export type StudioIntelligenceDimension = {
+  score: number;
+  note: string;
+  pass: boolean;
+};
+
+export type StudioIntelligenceReview = {
+  clarity: StudioIntelligenceDimension;
+  accuracy: StudioIntelligenceDimension;
+  tone: StudioIntelligenceDimension;
+  brandAlignment: StudioIntelligenceDimension;
+  authenticity: StudioIntelligenceDimension;
+  overallPass: boolean;
+  reviewedAt: string;
+};
+
+export type NdxbookPagePipelineMeta = {
+  distributionPackId?: string | null;
+  socialPostId?: string | null;
+  studioReview?: StudioIntelligenceReview | null;
+  approvedAt?: string | null;
+  scheduledAt?: string | null;
+  publishError?: string | null;
+};
+
 export type NdxbookPage = {
   id: string;
   workspaceId: string;
@@ -118,6 +143,7 @@ export type NdxbookPage = {
     clicks: number;
     revenue: number;
   };
+  pipeline?: NdxbookPagePipelineMeta;
   createdAt: string;
   updatedAt: string;
 };
