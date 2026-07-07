@@ -2,8 +2,8 @@
 
 **Product ID:** `experience-studio`  
 **Role:** Golden Product™ · Reference Implementation™ · Studio OS Flagship  
-**Maturity:** 🏗 Prototype Complete  
-**Status:** ⚠ Prototype Ready with Revisions · Awaiting Founder walkthrough  
+**Maturity:** 🏗 Prototype Complete · Experience Design v2.0  
+**Status:** ⚠ Prototype Ready with Revisions · Experience Design v2.0 Awaiting Approval  
 **Release Channel:** Preview (organization opt-in)  
 **Date:** 2026-07-07  
 **POP Version:** Product Starter Pack v2.0.0
@@ -49,7 +49,8 @@ Implementation **must not begin** until prototype is approved and **Founder Appr
 | 5 | Reference Implementation Assessment™ | `REFERENCE_IMPLEMENTATION_ASSESSMENT.md` | ✅ |
 | 6 | Implementation Readiness Report | `IMPLEMENTATION_READINESS_REPORT.md` | ✅ |
 | 7 | Prototype Readiness Report | `prototype/PROTOTYPE_READINESS_REPORT.md` | ⚠ Ready with Revisions |
-| 8 | Product Creation Checklist | `PRODUCT_CREATION_CHECKLIST.md` | ✅ |
+| 8 | **Experience Design v2.0** | `experience-v2/` | ✅ Complete · ⏳ Awaiting Approval |
+| 9 | Product Creation Checklist | `PRODUCT_CREATION_CHECKLIST.md` | ✅ |
 
 ---
 
@@ -89,6 +90,7 @@ Implementation **must not begin** until prototype is approved and **Founder Appr
 ✅ 4. Design Governance           — designCompliance declared
 ✅ 5. Product Specification       — APPROVED
 ✅ 6. Experience Prototype        — prototype/ package complete · ⚠ Ready with Revisions
+✅ 6b. Experience Design v2.0     — experience-v2/ immersive HQ blueprint · ⏳ Awaiting Approval
 ⏳ 7. Founder Prototype Walkthrough — Pending
 ⏳ 8. Founder Approval            — Required before implementation
 ⏳ 9. Implementation
@@ -107,7 +109,10 @@ Implementation **must not begin** until prototype is approved and **Founder Appr
 | [REFERENCE_IMPLEMENTATION_ASSESSMENT.md](./REFERENCE_IMPLEMENTATION_ASSESSMENT.md) | Governance validation assessment |
 | [IMPLEMENTATION_READINESS_REPORT.md](./IMPLEMENTATION_READINESS_REPORT.md) | Readiness verdict · risks · phases |
 | [PRODUCT_CREATION_CHECKLIST.md](./PRODUCT_CREATION_CHECKLIST.md) | POP master checklist |
-| **[prototype/](./prototype/)** | **Experience Prototype — canonical reference experience** |
+| **[prototype/](./prototype/)** | **Experience Prototype v1.0 — Creative Wing reference** |
+| [prototype/INTERACTIVE_PROTOTYPE.md](./prototype/INTERACTIVE_PROTOTYPE.md) | Walkable HTML prototype |
+| **[experience-v2/](./experience-v2/)** | **Experience Studio™ 2.0 — immersive HQ experience blueprint** |
+| [experience-v2/EXPERIENCE_STUDIO_2.0_SPEC.md](./experience-v2/EXPERIENCE_STUDIO_2.0_SPEC.md) | Master experience design specification |
 | [prototype/PROTOTYPE_READINESS_REPORT.md](./prototype/PROTOTYPE_READINESS_REPORT.md) | ⚠ Ready with Revisions |
 
 ---
