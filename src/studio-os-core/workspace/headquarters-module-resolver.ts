@@ -82,6 +82,7 @@ export function resolveHeadquartersPageModule(rest: string): PageModule | null {
 
   if (head === 'ndxbook') {
     if (second === 'mission-control') return loadModule('ndxbook/mission-control');
+    if (second === 'newsroom') return loadModule('ndxbook/newsroom');
     return loadModule('ndxbook');
   }
 

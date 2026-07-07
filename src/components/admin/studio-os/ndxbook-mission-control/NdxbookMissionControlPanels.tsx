@@ -16,6 +16,7 @@ import {
   buildNdxbookMissionActionLinks,
   migrateLegacyNdxbookActionRoute,
   ndxbookModulePath,
+  ndxbookNewsroomQuickLink,
   ndxbookPagesQuickLink,
   type NdxbookMissionActionId,
 } from './ndxbookMissionActionRoutes';
@@ -297,11 +298,11 @@ export function NewsroomPanel({ store }: PanelProps) {
           ))}
         </div>
         <MissionQuickLink
-          to={STUDIO_OS_ROUTES.workspaceNewsroom(org.organizationId)}
+          to={ndxbookNewsroomQuickLink(org.organizationId)}
           className="mt-2 px-2 py-1 text-[6px] font-futura border inline-block"
           style={{ fontWeight: 515, color: MC.accent, borderColor: MC.accent, textDecoration: 'none' }}
         >
-          ENTER NEWSROOM →
+          REVIEW & APPROVE PAGE 001 →
         </MissionQuickLink>
       </div>
     </CollapsibleSection>
@@ -433,22 +434,39 @@ export function PublishingTimelinePanel({ store, formatTime, onReschedule }: Pan
 }
 
 export function PageOfTheDayPanel({ store, countdownToLaunch }: PanelProps) {
+  const org = useOrganizationContext();
   const p = store.pageOfTheDay;
   return (
-    <PriorityMissionHero
-      title={p.title}
-      headline={p.pageLabel.toUpperCase()}
-      subtitle={p.title}
-      countdown={`LAUNCH IN ${countdownToLaunch}`}
-      predictedImpact={p.predictedPerformance}
-      recommendedAction={`HOST · ${p.hostName} · ${VOLUME_LABELS[p.volumeId]} · ${p.chapter.toUpperCase()}`}
-      details={[
-        { label: 'STATUS', value: p.status.toUpperCase() },
-        { label: 'PLATFORMS', value: p.platforms.map((pl) => PLATFORM_LABELS[pl]).join(' · ') },
-        { label: 'THUMBNAIL', value: p.thumbnailNote },
-      ]}
-      accentHex={MC.red}
-    />
+    <div>
+      <PriorityMissionHero
+        title={p.title}
+        headline={p.pageLabel.toUpperCase()}
+        subtitle={p.title}
+        countdown={`LAUNCH IN ${countdownToLaunch}`}
+        predictedImpact={p.predictedPerformance}
+        recommendedAction={`HOST · ${p.hostName} · ${VOLUME_LABELS[p.volumeId]} · ${p.chapter.toUpperCase()}`}
+        details={[
+          { label: 'STATUS', value: p.status.toUpperCase() },
+          { label: 'PLATFORMS', value: p.platforms.map((pl) => PLATFORM_LABELS[pl]).join(' · ') },
+          { label: 'THUMBNAIL', value: p.thumbnailNote },
+        ]}
+        accentHex={MC.red}
+      />
+      <MissionQuickLink
+        to={ndxbookNewsroomQuickLink(org.organizationId)}
+        className="mt-2 w-full py-2 text-[7px] font-futura uppercase border text-center"
+        style={{
+          fontWeight: 515,
+          color: '#FFF',
+          background: MC.accent,
+          borderColor: MC.accent,
+          textDecoration: 'none',
+          display: 'block',
+        }}
+      >
+        OPEN NEWSROOM · REVIEW & APPROVE →
+      </MissionQuickLink>
+    </div>
   );
 }
 

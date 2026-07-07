@@ -37,6 +37,7 @@ export function ndxbookModulePath(segment: string, workspaceId: string = NDXBOOK
 /** Rewrite legacy /admin/studio/* seed routes to workspace-scoped NDXBOOK paths. */
 export function migrateLegacyNdxbookActionRoute(route: string): string {
   if (route.startsWith('/admin/studio-os/workspace/')) return route;
+  if (route.includes('/studio/ndxbook/newsroom')) return route;
   if (!route.startsWith('/admin/studio/')) return route;
 
   const withoutPrefix = route.slice('/admin/studio/'.length);

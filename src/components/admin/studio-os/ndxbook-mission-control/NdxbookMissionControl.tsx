@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NDXBOOK_MISSION_CONTROL_NAV } from '../../../../studio-os-core/ndxbook/mission-control/constants';
 import type { MissionControlNavId } from '../../../../studio-os-core/ndxbook/mission-control/types';
-import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
 import { useNdxbookMissionControlState } from '../../../../hooks/useNdxbookMissionControlState';
 import { useOrganizationContext } from '../../../../studio-os-core/organization-context';
 import { readFounderPilotModeStore } from '../../../../studio-os-core/founder-pilot-mode';
@@ -36,6 +35,8 @@ import {
   TalentBoardPanel,
   VolumeExplorerPanel,
 } from './NdxbookMissionControlPanels';
+import { NdxbookPilotNewsroomBar } from './NdxbookPilotNewsroomBar';
+import { ndxbookNewsroomQuickLink } from './ndxbookMissionActionRoutes';
 
 type NdxbookMissionControlProps = {
   workspaceId: string;
@@ -105,6 +106,7 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
         return (
           <LivingHeadquartersShell living={living} className="ndxbook-hq-flow pb-36">
             <NdxbookExecutiveLobby store={store} formatDate={formatDate} formatClock={formatClock} />
+            <NdxbookPilotNewsroomBar />
 
             <HqWingZone wing="COMPANY PULSE™" title="How the organization feels today" accentHex={env.accentHex}>
               <CompanyHealthPanel {...panelProps} />
@@ -169,7 +171,7 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
             aria-selected={activeNav === item.id}
             onClick={() => {
               if (item.id === 'newsroom') {
-                navigate(STUDIO_OS_ROUTES.workspaceNewsroom(workspaceId));
+                navigate(ndxbookNewsroomQuickLink(workspaceId));
                 return;
               }
               setActiveNav(item.id);

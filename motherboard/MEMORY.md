@@ -40004,8 +40004,6 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** All Studio org + platform pages scroll inside **`.admin-studio-scroll-body`** within **`.menu-toggle-card.admin-studio-main-card`**. Nav tabs scroll with workspace content. Inner three-column workspaces cap panel height on large screens and scroll inside panels.
 
 **Changes:** index.css, menuToggleHeights.ts, AdminStudioLayout.tsx, StudioPlatformLayout.tsx, 7 studio-os page files, ProductionStudioWorkspace.tsx, RenderQueueWorkspace.tsx, ProductionBuilderWorkspace.tsx, ProductionStudioPanels.tsx, RenderQueuePanels.tsx, MEMORY.md.
-<<<<<<< HEAD
-=======
 
 ---
 
@@ -40033,4 +40031,3 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Campaign Engine note:** Truth Tuesday **“Page 001 · Sleep debt myth”** deliverable is separate — **Campaign Engine → Deliverables** tab → tap deliverable → Newsroom Editor overlay.
 
 **Changes:** ndxbook/newsroom/page.tsx, App.tsx, adminStudioRoutes.ts, ndxbookMissionActionRoutes.ts, ndxbook/mission-control/page.tsx, NdxbookWorkspace.tsx, mission-control-pilot.ts, MEMORY.md.
->>>>>>> 676b7e7c (Fix Studio scroll on all pages: shared scroll body, migrate studio-os shells, panel max-heights)
