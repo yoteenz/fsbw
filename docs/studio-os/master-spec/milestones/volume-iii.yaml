@@ -165,7 +165,9 @@ milestones:
       - asset-registry
       - knowledge-registry
       - expansion-center
-    implementationNotes: Planned — templates registered before product implementation.
+    implementationNotes: >-
+      Reusable template registry for workflows, departments, and profession patterns.
+      Spec authoring complete — templates register in Knowledge Registry before UI.
 
   - canonicalId: M127.8
     name: Pack Licensing Infrastructure™
@@ -188,7 +190,9 @@ milestones:
       - business-model-engine
       - monetization-architecture
       - policy-engine
-    implementationNotes: Distinct from Automation Licensing (M200, Volume X).
+    implementationNotes: >-
+      Licensing substrate for packs and templates — one-time and recurring economics.
+      Spec authoring complete — distinct from Automation Licensing (M200, Volume X).
 
   - canonicalId: M127.9
     name: Organization Template Engine™
@@ -211,7 +215,9 @@ milestones:
       - business-discovery-blueprint
       - organization-genome
       - industry-architecture
-    implementationNotes: Connects discovery blueprint to pack installation.
+    implementationNotes: >-
+      Starter organization blueprints by industry — day-one HQ, packs, Genome seeds.
+      Spec authoring complete — connects Business Discovery Blueprint to pack install.
 
   - canonicalId: M127.10
     name: Profession Pack System™
@@ -257,7 +263,9 @@ milestones:
       - expert-marketplace
       - expansion-center
       - qa-headquarters
-    implementationNotes: Business packs ≠ expertise commerce; separate infrastructure.
+    implementationNotes: >-
+      Business pack marketplace infrastructure — discovery, certification, install.
+      Spec authoring complete — distinct from Expert Marketplace™ (M92).
 
   - canonicalId: M127.12
     name: Monetization Architecture Foundation™

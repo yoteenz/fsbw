@@ -10,10 +10,10 @@ chapters:
     summary: >-
       Industry Architecture™, Department Pack Registry™, and Expansion Pack Catalog™ —
       the structural foundation for how every organization is created and expanded.
-    status: in-progress
+    status: complete
     dependsOn: [volume-ii, M127]
     milestoneIds: [M127.1, M127.2, M127.3]
-    completionPct: 75
+    completionPct: 100
     alignedPhilosophies:
       - philosophy-os-not-saas
       - philosophy-invisible-complexity
@@ -24,10 +24,10 @@ chapters:
     summary: >-
       Pack Install Engine™ and Headquarters Layout Engine™ — installing capabilities
       physically expands Headquarters departments, concierges, and Command Dock reach.
-    status: in-progress
+    status: complete
     dependsOn: [chapter-iii-1]
     milestoneIds: [M127.4, M127.5]
-    completionPct: 70
+    completionPct: 100
     alignedPhilosophies:
       - philosophy-places-not-pages
       - philosophy-living-headquarters
@@ -38,10 +38,10 @@ chapters:
     summary: >-
       Digital Staff Catalog™ — hire digital executives and staff as organizational
       capacity, not SaaS seat licenses.
-    status: in-progress
+    status: complete
     dependsOn: [chapter-iii-2]
     milestoneIds: [M127.6]
-    completionPct: 65
+    completionPct: 100
     alignedPhilosophies:
       - philosophy-os-not-saas
       - philosophy-executive-first
@@ -52,10 +52,10 @@ chapters:
     summary: >-
       Business Template Library™ and Organization Template Engine™ — reusable
       blueprints for departments, operations, and profession-specific starters.
-    status: planned
+    status: complete
     dependsOn: [chapter-iii-1]
     milestoneIds: [M127.7, M127.9]
-    completionPct: 20
+    completionPct: 100
     alignedPhilosophies:
       - philosophy-architecture-before-implementation
       - philosophy-progressive-disclosure
@@ -66,10 +66,10 @@ chapters:
     summary: >-
       Pack Licensing Infrastructure™ and Business Marketplace Infrastructure™ —
       license packs, templates, and capabilities without SaaS subscription framing.
-    status: planned
+    status: complete
     dependsOn: [chapter-iii-2]
     milestoneIds: [M127.8, M127.11]
-    completionPct: 25
+    completionPct: 100
     alignedPhilosophies:
       - philosophy-os-not-saas
       - philosophy-single-source-of-truth
@@ -80,10 +80,10 @@ chapters:
     summary: >-
       Profession Pack System™ and Monetization Architecture Foundation™ — economic
       substrate beneath Expansion Center™ (M88) and Permanent Monetization (M89).
-    status: in-progress
+    status: complete
     dependsOn: [chapter-iii-3, chapter-iii-5]
     milestoneIds: [M127.10, M127.12]
-    completionPct: 55
+    completionPct: 100
     alignedPhilosophies:
       - philosophy-os-not-saas
       - philosophy-documentation-as-architecture

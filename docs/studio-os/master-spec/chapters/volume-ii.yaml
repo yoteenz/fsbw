@@ -100,7 +100,7 @@ chapters:
       Documentation Synchronization™, Studio OS Knowledge Registry™, Documentation
       Governance™, System Registry™, and Executive Strategy Floor™ (DR-005) — single
       source of truth for platform knowledge and reserved executive headquarters.
-    status: in-progress
+    status: complete
     dependsOn: [chapter-ii-8]
     milestoneIds: [M125, M126, M126.5, M127, DR-005]
-    completionPct: 88
+    completionPct: 100

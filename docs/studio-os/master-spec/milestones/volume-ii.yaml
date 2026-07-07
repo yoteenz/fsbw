@@ -694,7 +694,7 @@ milestones:
     registryKind: milestone
     volumeId: volume-ii
     purpose: Single source of truth for platform knowledge architecture.
-    implementationStatus: in-progress
+    implementationStatus: complete
     shippedMilestone: M126
     moduleId: knowledge-registry
     dependsOn:
@@ -708,7 +708,10 @@ milestones:
       - system-registry
       - documentation-sync
       - DR-005
-    implementationNotes: Studio OS Knowledge Registry™ — Master Spec single source of truth. Sprint 1–2 foundation. Feeds Executive Strategy Floor™ (DR-005).
+    implementationNotes: >-
+      Studio OS Knowledge Registry™ — Master Spec single source of truth. Formal closure:
+      per-volume manifests, Core Philosophy™, Constitution™, Architecture Validator™ gate,
+      and module documentation complete. Feeds Executive Strategy Floor™ (DR-005).
   - canonicalId: M126.5
     name: Documentation Governance™
     internalId: documentation-governance

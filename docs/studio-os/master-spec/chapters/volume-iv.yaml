@@ -1,0 +1,131 @@
+# Volume IV — Trust Infrastructure chapters
+version: '1.0.0'
+updatedAt: '2026-07-07'
+volumeId: volume-iv
+
+chapters:
+  - id: chapter-iv-1
+    number: 1
+    title: Professional Trust & Succession
+    summary: >-
+      Professional Trust Framework™ and Succession Mode™ — regulated guidance,
+      disclaimers, escalation, and organizational survival without the founder.
+    status: complete
+    dependsOn: [volume-ii, volume-i]
+    milestoneIds: [M94, M98]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-executive-first
+      - philosophy-documentation-as-architecture
+
+  - id: chapter-iv-2
+    number: 2
+    title: QA Headquarters & Inspection
+    summary: >-
+      Quality Assurance & Trust Infrastructure™ and QA Inspector™ — permanent QA
+      layer with continuous audits, severity, confidence, and root-cause analysis.
+    status: complete
+    dependsOn: [chapter-iv-1, M127]
+    milestoneIds: [M142, M143]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-invisible-complexity
+      - philosophy-single-source-of-truth
+
+  - id: chapter-iv-3
+    number: 3
+    title: Simulation, Sandbox & Red Team
+    summary: >-
+      QA Simulation Engine™, Digital Twin™ Sandbox, and AI Red Team™ — practice
+      every persona journey and stress-test prompts, workflows, and AI behavior.
+    status: complete
+    dependsOn: [chapter-iv-2]
+    milestoneIds: [M144, M145, M146]
+    completionPct: 92
+    alignedPhilosophies:
+      - philosophy-architecture-before-implementation
+      - philosophy-ai-creative-director
+
+  - id: chapter-iv-4
+    number: 4
+    title: Executive Trust & Time Machine
+    summary: >-
+      Executive Trust Dashboard™ and Time Machine™ Replay Engine — executive risk
+      overview and replay of events, workflows, decisions, and AI actions.
+    status: complete
+    dependsOn: [chapter-iv-3]
+    milestoneIds: [M147, M148]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-executive-first
+      - philosophy-documentation-as-architecture
+
+  - id: chapter-iv-5
+    number: 5
+    title: Predictive QA & Self-Healing
+    summary: >-
+      Predictive QA™ and Self-Healing™ Engine — forecast quality risks and repair
+      low-risk issues with prepared recovery plans.
+    status: complete
+    dependsOn: [chapter-iv-4]
+    milestoneIds: [M149, M150]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-invisible-complexity
+      - philosophy-ai-creative-director
+
+  - id: chapter-iv-6
+    number: 6
+    title: Decision Accountability & Guardian
+    summary: >-
+      Decision Audit™, Confidence Engine™, and Organizational Guardian™ — record
+      rationale and evidence; highest oversight for quality, trust, and resilience.
+    status: complete
+    dependsOn: [chapter-iv-5]
+    milestoneIds: [M151, M152, M153]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-executive-first
+      - philosophy-single-source-of-truth
+
+  - id: chapter-iv-7
+    number: 7
+    title: Design, Prompt & Experience QA
+    summary: >-
+      Design Compliance Engine™, Prompt QA™, and Experience QA™ — audit UI canon,
+      prompt safety, and emotional quality of every surface.
+    status: complete
+    dependsOn: [chapter-iv-6]
+    milestoneIds: [M154, M155, M156]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-design-dna
+      - philosophy-experience-dna
+
+  - id: chapter-iv-8
+    number: 8
+    title: Visual, Accessibility & Performance QA
+    summary: >-
+      Visual Diff Engine™, Accessibility Auditor™, and Performance Monitor™ —
+      golden screenshots, inclusive design, and continuous performance measurement.
+    status: complete
+    dependsOn: [chapter-iv-7]
+    milestoneIds: [M157, M158, M159-spec-qa]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-design-dna
+      - philosophy-invisible-complexity
+
+  - id: chapter-iv-9
+    number: 9
+    title: Release Readiness & Engineering Excellence
+    summary: >-
+      Regression Engine™, Release Readiness™, and Engineering Excellence Dashboard™ —
+      final deployment gate and executive command center for engineering health.
+    status: complete
+    dependsOn: [chapter-iv-8]
+    milestoneIds: [M160-spec-qa, M161-spec-qa, M162-spec-qa]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-documentation-as-architecture
+      - philosophy-architecture-before-implementation

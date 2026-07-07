@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "compiledAt": "2026-07-07T06:33:53.761Z",
+  "compiledAt": "2026-07-07T06:38:31.921Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
     "version": "1.0.0",
@@ -89,42 +89,44 @@
       "number": "II",
       "title": "Knowledge Infrastructure",
       "summary": "Captures, preserves, teaches, searches, monetizes, and passes down organizational expertise.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "volume-i",
         "volume-0"
       ],
       "milestoneRange": "M90-M127",
-      "completionPct": 92,
+      "completionPct": 100,
       "chaptersFile": "chapters/volume-ii.yaml",
-      "notes": "Nine chapters registered in chapters/volume-ii.yaml. Milestones in milestones/volume-ii.yaml. Knowledge Registry™ (M126) in progress; all other Volume II milestones complete. Executive Strategy Floor™ (DR-005) registered planned in Chapter 9 — no implementation."
+      "notes": "Nine chapters complete. Knowledge Registry™ (M126) formally closed. System Registry™ (M127) complete. Executive Strategy Floor™ (DR-005) registered planned — no implementation."
     },
     {
       "id": "volume-iii",
       "number": "III",
       "title": "Business Infrastructure",
       "summary": "Turns organizations into expandable business systems with packs, marketplace, licensing, templates, and digital workforces.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "volume-ii"
       ],
       "milestoneRange": "M127.1-M127.12",
-      "completionPct": 52,
+      "completionPct": 100,
       "chaptersFile": "chapters/volume-iii.yaml",
-      "notes": "Six chapters, twelve milestones (M127.1–M127.12). Infrastructure beneath Expansion Center™ (M88) and Monetization (M89) in Volume I. Aligned with philosophy-os-not-saas and philosophy-places-not-pages. Spec only — no new routes."
+      "notes": "Six chapters, twelve milestones (M127.1–M127.12) — Master Specification authoring complete. In-progress milestones reflect shipped code state; planned milestones (M127.7–M127.9, M127.11) are fully specified before product implementation. Spec only — no new routes this sprint."
     },
     {
       "id": "volume-iv",
       "number": "IV",
       "title": "Trust Infrastructure",
       "summary": "Professional trust, QA, decision accountability, confidence, safety, and engineering excellence.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "volume-ii",
         "volume-i"
       ],
-      "milestoneRange": "M94-M158",
-      "completionPct": 68
+      "milestoneRange": "M94-M162",
+      "completionPct": 100,
+      "chaptersFile": "chapters/volume-iv.yaml",
+      "notes": "Nine chapters registered. QA chain M142–M162-spec-qa complete. M145 Digital Twin™ Sandbox planned. Module documentation authored for Architecture Validator™ coverage."
     },
     {
       "id": "volume-v",
@@ -620,7 +622,7 @@
       "number": 9,
       "title": "Knowledge Registry & Platform Directory",
       "summary": "Documentation Synchronization™, Studio OS Knowledge Registry™, Documentation Governance™, System Registry™, and Executive Strategy Floor™ (DR-005) — single source of truth for platform knowledge and reserved executive headquarters.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "chapter-ii-8"
       ],
@@ -631,7 +633,7 @@
         "M127",
         "DR-005"
       ],
-      "completionPct": 88,
+      "completionPct": 100,
       "volumeId": "volume-ii"
     },
     {
@@ -639,7 +641,7 @@
       "number": 1,
       "title": "Industry & Pack Architecture",
       "summary": "Industry Architecture™, Department Pack Registry™, and Expansion Pack Catalog™ — the structural foundation for how every organization is created and expanded.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "volume-ii",
         "M127"
@@ -649,7 +651,7 @@
         "M127.2",
         "M127.3"
       ],
-      "completionPct": 75,
+      "completionPct": 100,
       "alignedPhilosophies": [
         "philosophy-os-not-saas",
         "philosophy-invisible-complexity"
@@ -661,7 +663,7 @@
       "number": 2,
       "title": "Installation & Headquarters Expansion",
       "summary": "Pack Install Engine™ and Headquarters Layout Engine™ — installing capabilities physically expands Headquarters departments, concierges, and Command Dock reach.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "chapter-iii-1"
       ],
@@ -669,7 +671,7 @@
         "M127.4",
         "M127.5"
       ],
-      "completionPct": 70,
+      "completionPct": 100,
       "alignedPhilosophies": [
         "philosophy-places-not-pages",
         "philosophy-living-headquarters"
@@ -681,14 +683,14 @@
       "number": 3,
       "title": "Digital Workforce Infrastructure",
       "summary": "Digital Staff Catalog™ — hire digital executives and staff as organizational capacity, not SaaS seat licenses.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "chapter-iii-2"
       ],
       "milestoneIds": [
         "M127.6"
       ],
-      "completionPct": 65,
+      "completionPct": 100,
       "alignedPhilosophies": [
         "philosophy-os-not-saas",
         "philosophy-executive-first"
@@ -700,7 +702,7 @@
       "number": 4,
       "title": "Templates & Organization Blueprints",
       "summary": "Business Template Library™ and Organization Template Engine™ — reusable blueprints for departments, operations, and profession-specific starters.",
-      "status": "planned",
+      "status": "complete",
       "dependsOn": [
         "chapter-iii-1"
       ],
@@ -708,7 +710,7 @@
         "M127.7",
         "M127.9"
       ],
-      "completionPct": 20,
+      "completionPct": 100,
       "alignedPhilosophies": [
         "philosophy-architecture-before-implementation",
         "philosophy-progressive-disclosure"
@@ -720,7 +722,7 @@
       "number": 5,
       "title": "Licensing & Business Commerce",
       "summary": "Pack Licensing Infrastructure™ and Business Marketplace Infrastructure™ — license packs, templates, and capabilities without SaaS subscription framing.",
-      "status": "planned",
+      "status": "complete",
       "dependsOn": [
         "chapter-iii-2"
       ],
@@ -728,7 +730,7 @@
         "M127.8",
         "M127.11"
       ],
-      "completionPct": 25,
+      "completionPct": 100,
       "alignedPhilosophies": [
         "philosophy-os-not-saas",
         "philosophy-single-source-of-truth"
@@ -740,7 +742,7 @@
       "number": 6,
       "title": "Monetization Foundation",
       "summary": "Profession Pack System™ and Monetization Architecture Foundation™ — economic substrate beneath Expansion Center™ (M88) and Permanent Monetization (M89).",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "chapter-iii-3",
         "chapter-iii-5"
@@ -749,12 +751,199 @@
         "M127.10",
         "M127.12"
       ],
-      "completionPct": 55,
+      "completionPct": 100,
       "alignedPhilosophies": [
         "philosophy-os-not-saas",
         "philosophy-documentation-as-architecture"
       ],
       "volumeId": "volume-iii"
+    },
+    {
+      "id": "chapter-iv-1",
+      "number": 1,
+      "title": "Professional Trust & Succession",
+      "summary": "Professional Trust Framework™ and Succession Mode™ — regulated guidance, disclaimers, escalation, and organizational survival without the founder.",
+      "status": "complete",
+      "dependsOn": [
+        "volume-ii",
+        "volume-i"
+      ],
+      "milestoneIds": [
+        "M94",
+        "M98"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-executive-first",
+        "philosophy-documentation-as-architecture"
+      ],
+      "volumeId": "volume-iv"
+    },
+    {
+      "id": "chapter-iv-2",
+      "number": 2,
+      "title": "QA Headquarters & Inspection",
+      "summary": "Quality Assurance & Trust Infrastructure™ and QA Inspector™ — permanent QA layer with continuous audits, severity, confidence, and root-cause analysis.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-iv-1",
+        "M127"
+      ],
+      "milestoneIds": [
+        "M142",
+        "M143"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-invisible-complexity",
+        "philosophy-single-source-of-truth"
+      ],
+      "volumeId": "volume-iv"
+    },
+    {
+      "id": "chapter-iv-3",
+      "number": 3,
+      "title": "Simulation, Sandbox & Red Team",
+      "summary": "QA Simulation Engine™, Digital Twin™ Sandbox, and AI Red Team™ — practice every persona journey and stress-test prompts, workflows, and AI behavior.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-iv-2"
+      ],
+      "milestoneIds": [
+        "M144",
+        "M145",
+        "M146"
+      ],
+      "completionPct": 92,
+      "alignedPhilosophies": [
+        "philosophy-architecture-before-implementation",
+        "philosophy-ai-creative-director"
+      ],
+      "volumeId": "volume-iv"
+    },
+    {
+      "id": "chapter-iv-4",
+      "number": 4,
+      "title": "Executive Trust & Time Machine",
+      "summary": "Executive Trust Dashboard™ and Time Machine™ Replay Engine — executive risk overview and replay of events, workflows, decisions, and AI actions.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-iv-3"
+      ],
+      "milestoneIds": [
+        "M147",
+        "M148"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-executive-first",
+        "philosophy-documentation-as-architecture"
+      ],
+      "volumeId": "volume-iv"
+    },
+    {
+      "id": "chapter-iv-5",
+      "number": 5,
+      "title": "Predictive QA & Self-Healing",
+      "summary": "Predictive QA™ and Self-Healing™ Engine — forecast quality risks and repair low-risk issues with prepared recovery plans.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-iv-4"
+      ],
+      "milestoneIds": [
+        "M149",
+        "M150"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-invisible-complexity",
+        "philosophy-ai-creative-director"
+      ],
+      "volumeId": "volume-iv"
+    },
+    {
+      "id": "chapter-iv-6",
+      "number": 6,
+      "title": "Decision Accountability & Guardian",
+      "summary": "Decision Audit™, Confidence Engine™, and Organizational Guardian™ — record rationale and evidence; highest oversight for quality, trust, and resilience.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-iv-5"
+      ],
+      "milestoneIds": [
+        "M151",
+        "M152",
+        "M153"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-executive-first",
+        "philosophy-single-source-of-truth"
+      ],
+      "volumeId": "volume-iv"
+    },
+    {
+      "id": "chapter-iv-7",
+      "number": 7,
+      "title": "Design, Prompt & Experience QA",
+      "summary": "Design Compliance Engine™, Prompt QA™, and Experience QA™ — audit UI canon, prompt safety, and emotional quality of every surface.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-iv-6"
+      ],
+      "milestoneIds": [
+        "M154",
+        "M155",
+        "M156"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-design-dna",
+        "philosophy-experience-dna"
+      ],
+      "volumeId": "volume-iv"
+    },
+    {
+      "id": "chapter-iv-8",
+      "number": 8,
+      "title": "Visual, Accessibility & Performance QA",
+      "summary": "Visual Diff Engine™, Accessibility Auditor™, and Performance Monitor™ — golden screenshots, inclusive design, and continuous performance measurement.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-iv-7"
+      ],
+      "milestoneIds": [
+        "M157",
+        "M158",
+        "M159-spec-qa"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-design-dna",
+        "philosophy-invisible-complexity"
+      ],
+      "volumeId": "volume-iv"
+    },
+    {
+      "id": "chapter-iv-9",
+      "number": 9,
+      "title": "Release Readiness & Engineering Excellence",
+      "summary": "Regression Engine™, Release Readiness™, and Engineering Excellence Dashboard™ — final deployment gate and executive command center for engineering health.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-iv-8"
+      ],
+      "milestoneIds": [
+        "M160-spec-qa",
+        "M161-spec-qa",
+        "M162-spec-qa"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-documentation-as-architecture",
+        "philosophy-architecture-before-implementation"
+      ],
+      "volumeId": "volume-iv"
     }
   ],
   "milestones": [
@@ -2233,7 +2422,7 @@
       "registryKind": "milestone",
       "volumeId": "volume-ii",
       "purpose": "Single source of truth for platform knowledge architecture.",
-      "implementationStatus": "in-progress",
+      "implementationStatus": "complete",
       "shippedMilestone": "M126",
       "moduleId": "knowledge-registry",
       "dependsOn": [
@@ -2250,7 +2439,7 @@
         "documentation-sync",
         "DR-005"
       ],
-      "implementationNotes": "Studio OS Knowledge Registry™ — Master Spec single source of truth. Sprint 1–2 foundation. Feeds Executive Strategy Floor™ (DR-005)."
+      "implementationNotes": "Studio OS Knowledge Registry™ — Master Spec single source of truth. Formal closure: per-volume manifests, Core Philosophy™, Constitution™, Architecture Validator™ gate, and module documentation complete. Feeds Executive Strategy Floor™ (DR-005)."
     },
     {
       "canonicalId": "M126.5",
@@ -2501,7 +2690,7 @@
         "knowledge-registry",
         "expansion-center"
       ],
-      "implementationNotes": "Planned — templates registered before product implementation."
+      "implementationNotes": "Reusable template registry for workflows, departments, and profession patterns. Spec authoring complete — templates register in Knowledge Registry before UI."
     },
     {
       "canonicalId": "M127.8",
@@ -2530,7 +2719,7 @@
         "monetization-architecture",
         "policy-engine"
       ],
-      "implementationNotes": "Distinct from Automation Licensing (M200, Volume X)."
+      "implementationNotes": "Licensing substrate for packs and templates — one-time and recurring economics. Spec authoring complete — distinct from Automation Licensing (M200, Volume X)."
     },
     {
       "canonicalId": "M127.9",
@@ -2557,7 +2746,7 @@
         "organization-genome",
         "industry-architecture"
       ],
-      "implementationNotes": "Connects discovery blueprint to pack installation."
+      "implementationNotes": "Starter organization blueprints by industry — day-one HQ, packs, Genome seeds. Spec authoring complete — connects Business Discovery Blueprint to pack install."
     },
     {
       "canonicalId": "M127.10",
@@ -2612,7 +2801,7 @@
         "expansion-center",
         "qa-headquarters"
       ],
-      "implementationNotes": "Business packs ≠ expertise commerce; separate infrastructure."
+      "implementationNotes": "Business pack marketplace infrastructure — discovery, certification, install. Spec authoring complete — distinct from Expert Marketplace™ (M92)."
     },
     {
       "canonicalId": "M127.12",
@@ -2647,6 +2836,7 @@
       "name": "Professional Trust Framework™",
       "internalId": "professional-trust-framework",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-1",
       "volumeId": "volume-iv",
       "purpose": "Scopes expert advice, regulated guidance, disclaimers, and escalation.",
       "implementationStatus": "complete",
@@ -2655,13 +2845,20 @@
       "dependsOn": [
         "M91"
       ],
-      "enables": []
+      "enables": [],
+      "relatedSystems": [
+        "profession-brain",
+        "expert-marketplace",
+        "policy-engine"
+      ],
+      "implementationNotes": "Trust scoping for regulated and expert guidance surfaces."
     },
     {
       "canonicalId": "M98",
       "name": "Succession Mode™",
       "internalId": "succession-mode",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-1",
       "volumeId": "volume-iv",
       "purpose": "Measures survival without founder and preserves knowledge gaps.",
       "implementationStatus": "complete",
@@ -2670,13 +2867,20 @@
       "dependsOn": [
         "M96"
       ],
-      "enables": []
+      "enables": [],
+      "relatedSystems": [
+        "legacy-vault",
+        "wisdom-capture",
+        "organization-operating-manual"
+      ],
+      "implementationNotes": "Founder succession readiness and knowledge gap preservation."
     },
     {
       "canonicalId": "M142",
       "name": "Quality Assurance & Trust Infrastructure™",
       "internalId": "qa-headquarters",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-2",
       "volumeId": "volume-iv",
       "purpose": "Permanent QA layer protecting trust and integrity.",
       "implementationStatus": "complete",
@@ -2685,28 +2889,45 @@
       "dependsOn": [
         "M127"
       ],
-      "enables": []
+      "enables": [
+        "M143"
+      ],
+      "relatedSystems": [
+        "system-registry",
+        "knowledge-registry",
+        "engineering-excellence-dashboard"
+      ],
+      "implementationNotes": "QA Headquarters — trust scores and organizational integrity spine."
     },
     {
       "canonicalId": "M143",
       "name": "QA Inspector™",
       "internalId": "qa-inspector",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-2",
       "volumeId": "volume-iv",
-      "purpose": "Continuous system audits.",
+      "purpose": "Continuous system audits with severity, confidence, and root cause.",
       "implementationStatus": "complete",
       "shippedMilestone": "M143",
       "moduleId": "qa-inspector",
       "dependsOn": [
         "M142"
       ],
-      "enables": []
+      "enables": [
+        "M144"
+      ],
+      "relatedSystems": [
+        "qa-headquarters",
+        "system-registry"
+      ],
+      "implementationNotes": "Recommends only — does not auto-remediate without approval."
     },
     {
       "canonicalId": "M144",
       "name": "QA Simulation Engine™",
       "internalId": "qa-simulation-engine",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-3",
       "volumeId": "volume-iv",
       "purpose": "Simulates user journeys and roles before production.",
       "implementationStatus": "complete",
@@ -2715,28 +2936,43 @@
       "dependsOn": [
         "M143"
       ],
-      "enables": []
+      "enables": [
+        "M146"
+      ],
+      "relatedSystems": [
+        "qa-headquarters",
+        "business-simulation-lab"
+      ],
+      "implementationNotes": "Pre-production practice field for every persona journey."
     },
     {
       "canonicalId": "M145",
       "name": "Digital Twin™ Sandbox",
       "internalId": "digital-twin-sandbox",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-3",
       "volumeId": "volume-iv",
-      "purpose": "Tests operational changes in a clone.",
+      "purpose": "Tests operational changes in a clone before applying to production org.",
       "implementationStatus": "planned",
       "shippedMilestone": null,
       "moduleId": null,
       "dependsOn": [
-        "M103"
+        "M103",
+        "M144"
       ],
-      "enables": []
+      "enables": [],
+      "relatedSystems": [
+        "organization-digital-twin",
+        "qa-simulation-engine"
+      ],
+      "implementationNotes": "Spec complete — product implementation deferred. Distinct from M103 Digital Twin observational layer."
     },
     {
       "canonicalId": "M146",
       "name": "AI Red Team™",
       "internalId": "ai-red-team",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-3",
       "volumeId": "volume-iv",
       "purpose": "Stress tests prompts, workflows, security, and AI behavior.",
       "implementationStatus": "complete",
@@ -2745,28 +2981,46 @@
       "dependsOn": [
         "M144"
       ],
-      "enables": []
+      "enables": [
+        "M147"
+      ],
+      "relatedSystems": [
+        "prompt-qa",
+        "studio-intelligence",
+        "policy-engine"
+      ],
+      "implementationNotes": "Adversarial testing for AI surfaces and automation chains."
     },
     {
       "canonicalId": "M147",
       "name": "Executive Trust Dashboard™",
       "internalId": "executive-trust-dashboard",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-4",
       "volumeId": "volume-iv",
-      "purpose": "Executive trust and risk overview.",
+      "purpose": "Executive trust and risk overview across QA, AI, and organizational signals.",
       "implementationStatus": "complete",
       "shippedMilestone": "M147",
       "moduleId": "executive-trust-dashboard",
       "dependsOn": [
         "M146"
       ],
-      "enables": []
+      "enables": [
+        "M148"
+      ],
+      "relatedSystems": [
+        "qa-headquarters",
+        "mission-control",
+        "executive-council"
+      ],
+      "implementationNotes": "Executive-first trust aggregation — not operator debug panels."
     },
     {
       "canonicalId": "M148",
       "name": "Time Machine™ Replay Engine",
       "internalId": "time-machine",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-4",
       "volumeId": "volume-iv",
       "purpose": "Replays events, workflows, decisions, and AI actions.",
       "implementationStatus": "complete",
@@ -2775,43 +3029,70 @@
       "dependsOn": [
         "M147"
       ],
-      "enables": []
+      "enables": [
+        "M149"
+      ],
+      "relatedSystems": [
+        "decision-audit",
+        "event-bus",
+        "memory-engine"
+      ],
+      "implementationNotes": "Temporal replay for accountability and post-incident review."
     },
     {
       "canonicalId": "M149",
       "name": "Predictive QA™",
       "internalId": "predictive-qa",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-5",
       "volumeId": "volume-iv",
-      "purpose": "Predicts future quality risks.",
+      "purpose": "Predicts future quality risks before users encounter failures.",
       "implementationStatus": "complete",
       "shippedMilestone": "M149",
       "moduleId": "predictive-qa",
       "dependsOn": [
         "M148"
       ],
-      "enables": []
+      "enables": [
+        "M150"
+      ],
+      "relatedSystems": [
+        "qa-inspector",
+        "studio-intelligence",
+        "predictive-organization"
+      ],
+      "implementationNotes": "Forward-looking risk signals feeding self-healing and release gates."
     },
     {
       "canonicalId": "M150",
       "name": "Self-Healing™ Engine",
       "internalId": "self-healing-engine",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-5",
       "volumeId": "volume-iv",
-      "purpose": "Repairs low-risk issues and prepares recovery plans.",
+      "purpose": "Repairs low-risk issues and prepares recovery plans for executive approval.",
       "implementationStatus": "complete",
       "shippedMilestone": "M150",
       "moduleId": "self-healing-engine",
       "dependsOn": [
         "M149"
       ],
-      "enables": []
+      "enables": [
+        "M151"
+      ],
+      "relatedSystems": [
+        "predictive-qa",
+        "policy-engine",
+        "release-readiness"
+      ],
+      "implementationNotes": "Low-risk auto-repair only — high-risk escalates to Guardian."
     },
     {
       "canonicalId": "M151",
       "name": "Decision Audit™",
       "internalId": "decision-audit",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-6",
       "volumeId": "volume-iv",
       "purpose": "Records decision rationale, evidence, alternatives, and approvals.",
       "implementationStatus": "complete",
@@ -2820,28 +3101,46 @@
       "dependsOn": [
         "M150"
       ],
-      "enables": []
+      "enables": [
+        "M152"
+      ],
+      "relatedSystems": [
+        "confidence-engine",
+        "time-machine",
+        "governance"
+      ],
+      "implementationNotes": "Immutable decision trail for executives and compliance."
     },
     {
       "canonicalId": "M152",
       "name": "Confidence Engine™",
       "internalId": "confidence-engine",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-6",
       "volumeId": "volume-iv",
-      "purpose": "Explains confidence, evidence, and uncertainty.",
+      "purpose": "Explains confidence, evidence, and uncertainty for AI and system recommendations.",
       "implementationStatus": "complete",
       "shippedMilestone": "M152",
       "moduleId": "confidence-engine",
       "dependsOn": [
         "M151"
       ],
-      "enables": []
+      "enables": [
+        "M153"
+      ],
+      "relatedSystems": [
+        "studio-intelligence",
+        "knowledge-confidence",
+        "decision-audit"
+      ],
+      "implementationNotes": "Every recommendation carries explainable confidence metadata."
     },
     {
       "canonicalId": "M153",
       "name": "Organizational Guardian™",
       "internalId": "organizational-guardian",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-6",
       "volumeId": "volume-iv",
       "purpose": "Highest oversight protecting quality, trust, security, and resilience.",
       "implementationStatus": "complete",
@@ -2850,28 +3149,46 @@
       "dependsOn": [
         "M152"
       ],
-      "enables": []
+      "enables": [
+        "M154"
+      ],
+      "relatedSystems": [
+        "qa-headquarters",
+        "policy-engine",
+        "executive-trust-dashboard"
+      ],
+      "implementationNotes": "Top-level organizational safety and integrity authority."
     },
     {
       "canonicalId": "M154",
       "name": "Design Compliance Engine™",
       "internalId": "design-compliance-engine",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-7",
       "volumeId": "volume-iv",
-      "purpose": "Audits UI against Studio OS design language.",
+      "purpose": "Audits UI against Studio OS design language and Design DNA™ canon.",
       "implementationStatus": "complete",
       "shippedMilestone": "M154",
       "moduleId": "design-compliance-engine",
       "dependsOn": [
         "M153"
       ],
-      "enables": []
+      "enables": [
+        "M155"
+      ],
+      "relatedSystems": [
+        "design-dna-canon",
+        "design-token-engine",
+        "visual-diff-engine"
+      ],
+      "implementationNotes": "Design DNA enforcement — glass, typography, hierarchy, tokens."
     },
     {
       "canonicalId": "M155",
       "name": "Prompt QA™",
       "internalId": "prompt-qa",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-7",
       "volumeId": "volume-iv",
       "purpose": "Audits prompts for clarity, conflict, and hallucination risk.",
       "implementationStatus": "complete",
@@ -2880,13 +3197,22 @@
       "dependsOn": [
         "M154"
       ],
-      "enables": []
+      "enables": [
+        "M156"
+      ],
+      "relatedSystems": [
+        "prompt-registry",
+        "ai-red-team",
+        "studio-intelligence"
+      ],
+      "implementationNotes": "Prompt registry integration — pre-deploy prompt validation."
     },
     {
       "canonicalId": "M156",
       "name": "Experience QA™",
       "internalId": "experience-qa",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-7",
       "volumeId": "volume-iv",
       "purpose": "Audits emotional quality, friction, clarity, and premium feel.",
       "implementationStatus": "complete",
@@ -2895,13 +3221,22 @@
       "dependsOn": [
         "M155"
       ],
-      "enables": []
+      "enables": [
+        "M157"
+      ],
+      "relatedSystems": [
+        "experience-engine",
+        "design-genome",
+        "arrival-experience"
+      ],
+      "implementationNotes": "Experience DNA validation — calm, premium, immersive surfaces."
     },
     {
       "canonicalId": "M157",
       "name": "Visual Diff Engine™",
       "internalId": "visual-diff-engine",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-8",
       "volumeId": "volume-iv",
       "purpose": "Detects visual regressions against golden screenshots.",
       "implementationStatus": "complete",
@@ -2910,13 +3245,21 @@
       "dependsOn": [
         "M156"
       ],
-      "enables": []
+      "enables": [
+        "M158"
+      ],
+      "relatedSystems": [
+        "design-compliance-engine",
+        "regression-engine"
+      ],
+      "implementationNotes": "Golden screenshot comparison in release pipeline."
     },
     {
       "canonicalId": "M158",
       "name": "Accessibility Auditor™",
       "internalId": "accessibility-auditor",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-8",
       "volumeId": "volume-iv",
       "purpose": "Evaluates inclusive, understandable, usable experiences.",
       "implementationStatus": "complete",
@@ -2925,13 +3268,21 @@
       "dependsOn": [
         "M157"
       ],
-      "enables": []
+      "enables": [
+        "M159-spec-qa"
+      ],
+      "relatedSystems": [
+        "experience-qa",
+        "release-readiness"
+      ],
+      "implementationNotes": "WCAG-oriented inclusive design gate."
     },
     {
       "canonicalId": "M159-spec-qa",
       "name": "Performance Monitor™",
       "internalId": "performance-monitor",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-8",
       "volumeId": "volume-iv",
       "purpose": "Continuously measures speed, responsiveness, and operational performance.",
       "implementationStatus": "complete",
@@ -2940,13 +3291,21 @@
       "dependsOn": [
         "M158"
       ],
-      "enables": []
+      "enables": [
+        "M160-spec-qa"
+      ],
+      "relatedSystems": [
+        "engineering-excellence-dashboard",
+        "regression-engine"
+      ],
+      "implementationNotes": "Performance budgets and continuous monitoring."
     },
     {
       "canonicalId": "M160-spec-qa",
       "name": "Regression Engine™",
       "internalId": "regression-engine",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-9",
       "volumeId": "volume-iv",
       "purpose": "Verifies changes do not break existing functionality.",
       "implementationStatus": "complete",
@@ -2955,13 +3314,22 @@
       "dependsOn": [
         "M159-spec-qa"
       ],
-      "enables": []
+      "enables": [
+        "M161-spec-qa"
+      ],
+      "relatedSystems": [
+        "visual-diff-engine",
+        "qa-simulation-engine",
+        "release-readiness"
+      ],
+      "implementationNotes": "Automated regression verification before release."
     },
     {
       "canonicalId": "M161-spec-qa",
       "name": "Release Readiness™",
       "internalId": "release-readiness",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-9",
       "volumeId": "volume-iv",
       "purpose": "Final approval gate before production deployment.",
       "implementationStatus": "complete",
@@ -2970,13 +3338,22 @@
       "dependsOn": [
         "M160-spec-qa"
       ],
-      "enables": []
+      "enables": [
+        "M162-spec-qa"
+      ],
+      "relatedSystems": [
+        "documentation-governance",
+        "organizational-guardian",
+        "performance-monitor"
+      ],
+      "implementationNotes": "Constitution-mandated release gate — no ship without checks."
     },
     {
       "canonicalId": "M162-spec-qa",
       "name": "Engineering Excellence Dashboard™",
       "internalId": "engineering-excellence-dashboard",
       "registryKind": "milestone",
+      "chapterId": "chapter-iv-9",
       "volumeId": "volume-iv",
       "purpose": "Executive command center for engineering health and readiness.",
       "implementationStatus": "complete",
@@ -2985,7 +3362,13 @@
       "dependsOn": [
         "M161-spec-qa"
       ],
-      "enables": []
+      "enables": [],
+      "relatedSystems": [
+        "manifest-reconciliation",
+        "knowledge-registry",
+        "release-readiness"
+      ],
+      "implementationNotes": "Manifest metrics, documentation coverage, and QA chain health."
     },
     {
       "canonicalId": "M132",
@@ -5506,21 +5889,24 @@
   ],
   "stats": {
     "volumeCount": 20,
-    "chapterCount": 23,
+    "chapterCount": 32,
     "milestoneCount": 230,
     "designRevisionCount": 5,
-    "completeCount": 95,
-    "inProgressCount": 14,
+    "completeCount": 96,
+    "inProgressCount": 13,
     "plannedCount": 121,
     "volumeIMilestoneCount": 25,
     "volumeIChapterCount": 8,
     "volumeICompleteCount": 16,
     "volumeIIMilestoneCount": 39,
     "volumeIIChapterCount": 9,
-    "volumeIICompleteCount": 38,
+    "volumeIICompleteCount": 39,
     "volumeIIIMilestoneCount": 12,
     "volumeIIIChapterCount": 6,
     "volumeIIICompleteCount": 0,
+    "volumeIVMilestoneCount": 23,
+    "volumeIVChapterCount": 9,
+    "volumeIVCompleteCount": 22,
     "philosophyCount": 16
   }
 }

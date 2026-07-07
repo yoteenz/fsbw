@@ -6,275 +6,343 @@ milestones:
     name: Professional Trust Framework™
     internalId: professional-trust-framework
     registryKind: milestone
+    chapterId: chapter-iv-1
     volumeId: volume-iv
     purpose: Scopes expert advice, regulated guidance, disclaimers, and escalation.
     implementationStatus: complete
     shippedMilestone: M94
     moduleId: professional-trust-framework
-    dependsOn:
-      - M91
+    dependsOn: [M91]
     enables: []
+    relatedSystems: [profession-brain, expert-marketplace, policy-engine]
+    implementationNotes: Trust scoping for regulated and expert guidance surfaces.
+
   - canonicalId: M98
     name: Succession Mode™
     internalId: succession-mode
     registryKind: milestone
+    chapterId: chapter-iv-1
     volumeId: volume-iv
     purpose: Measures survival without founder and preserves knowledge gaps.
     implementationStatus: complete
     shippedMilestone: M98
     moduleId: succession-mode
-    dependsOn:
-      - M96
+    dependsOn: [M96]
     enables: []
+    relatedSystems: [legacy-vault, wisdom-capture, organization-operating-manual]
+    implementationNotes: Founder succession readiness and knowledge gap preservation.
+
   - canonicalId: M142
     name: Quality Assurance & Trust Infrastructure™
     internalId: qa-headquarters
     registryKind: milestone
+    chapterId: chapter-iv-2
     volumeId: volume-iv
     purpose: Permanent QA layer protecting trust and integrity.
     implementationStatus: complete
     shippedMilestone: M142
     moduleId: qa-headquarters
-    dependsOn:
-      - M127
-    enables: []
+    dependsOn: [M127]
+    enables: [M143]
+    relatedSystems: [system-registry, knowledge-registry, engineering-excellence-dashboard]
+    implementationNotes: QA Headquarters — trust scores and organizational integrity spine.
+
   - canonicalId: M143
     name: QA Inspector™
     internalId: qa-inspector
     registryKind: milestone
+    chapterId: chapter-iv-2
     volumeId: volume-iv
-    purpose: Continuous system audits.
+    purpose: Continuous system audits with severity, confidence, and root cause.
     implementationStatus: complete
     shippedMilestone: M143
     moduleId: qa-inspector
-    dependsOn:
-      - M142
-    enables: []
+    dependsOn: [M142]
+    enables: [M144]
+    relatedSystems: [qa-headquarters, system-registry]
+    implementationNotes: Recommends only — does not auto-remediate without approval.
+
   - canonicalId: M144
     name: QA Simulation Engine™
     internalId: qa-simulation-engine
     registryKind: milestone
+    chapterId: chapter-iv-3
     volumeId: volume-iv
     purpose: Simulates user journeys and roles before production.
     implementationStatus: complete
     shippedMilestone: M144
     moduleId: qa-simulation-engine
-    dependsOn:
-      - M143
-    enables: []
+    dependsOn: [M143]
+    enables: [M146]
+    relatedSystems: [qa-headquarters, business-simulation-lab]
+    implementationNotes: Pre-production practice field for every persona journey.
+
   - canonicalId: M145
     name: Digital Twin™ Sandbox
     internalId: digital-twin-sandbox
     registryKind: milestone
+    chapterId: chapter-iv-3
     volumeId: volume-iv
-    purpose: Tests operational changes in a clone.
+    purpose: Tests operational changes in a clone before applying to production org.
     implementationStatus: planned
     shippedMilestone: null
     moduleId: null
-    dependsOn:
-      - M103
+    dependsOn: [M103, M144]
     enables: []
+    relatedSystems: [organization-digital-twin, qa-simulation-engine]
+    implementationNotes: Spec complete — product implementation deferred. Distinct from M103 Digital Twin observational layer.
+
   - canonicalId: M146
     name: AI Red Team™
     internalId: ai-red-team
     registryKind: milestone
+    chapterId: chapter-iv-3
     volumeId: volume-iv
     purpose: Stress tests prompts, workflows, security, and AI behavior.
     implementationStatus: complete
     shippedMilestone: M146
     moduleId: ai-red-team
-    dependsOn:
-      - M144
-    enables: []
+    dependsOn: [M144]
+    enables: [M147]
+    relatedSystems: [prompt-qa, studio-intelligence, policy-engine]
+    implementationNotes: Adversarial testing for AI surfaces and automation chains.
+
   - canonicalId: M147
     name: Executive Trust Dashboard™
     internalId: executive-trust-dashboard
     registryKind: milestone
+    chapterId: chapter-iv-4
     volumeId: volume-iv
-    purpose: Executive trust and risk overview.
+    purpose: Executive trust and risk overview across QA, AI, and organizational signals.
     implementationStatus: complete
     shippedMilestone: M147
     moduleId: executive-trust-dashboard
-    dependsOn:
-      - M146
-    enables: []
+    dependsOn: [M146]
+    enables: [M148]
+    relatedSystems: [qa-headquarters, mission-control, executive-council]
+    implementationNotes: Executive-first trust aggregation — not operator debug panels.
+
   - canonicalId: M148
     name: Time Machine™ Replay Engine
     internalId: time-machine
     registryKind: milestone
+    chapterId: chapter-iv-4
     volumeId: volume-iv
     purpose: Replays events, workflows, decisions, and AI actions.
     implementationStatus: complete
     shippedMilestone: M148
     moduleId: time-machine
-    dependsOn:
-      - M147
-    enables: []
+    dependsOn: [M147]
+    enables: [M149]
+    relatedSystems: [decision-audit, event-bus, memory-engine]
+    implementationNotes: Temporal replay for accountability and post-incident review.
+
   - canonicalId: M149
     name: Predictive QA™
     internalId: predictive-qa
     registryKind: milestone
+    chapterId: chapter-iv-5
     volumeId: volume-iv
-    purpose: Predicts future quality risks.
+    purpose: Predicts future quality risks before users encounter failures.
     implementationStatus: complete
     shippedMilestone: M149
     moduleId: predictive-qa
-    dependsOn:
-      - M148
-    enables: []
+    dependsOn: [M148]
+    enables: [M150]
+    relatedSystems: [qa-inspector, studio-intelligence, predictive-organization]
+    implementationNotes: Forward-looking risk signals feeding self-healing and release gates.
+
   - canonicalId: M150
     name: Self-Healing™ Engine
     internalId: self-healing-engine
     registryKind: milestone
+    chapterId: chapter-iv-5
     volumeId: volume-iv
-    purpose: Repairs low-risk issues and prepares recovery plans.
+    purpose: Repairs low-risk issues and prepares recovery plans for executive approval.
     implementationStatus: complete
     shippedMilestone: M150
     moduleId: self-healing-engine
-    dependsOn:
-      - M149
-    enables: []
+    dependsOn: [M149]
+    enables: [M151]
+    relatedSystems: [predictive-qa, policy-engine, release-readiness]
+    implementationNotes: Low-risk auto-repair only — high-risk escalates to Guardian.
+
   - canonicalId: M151
     name: Decision Audit™
     internalId: decision-audit
     registryKind: milestone
+    chapterId: chapter-iv-6
     volumeId: volume-iv
     purpose: Records decision rationale, evidence, alternatives, and approvals.
     implementationStatus: complete
     shippedMilestone: M151
     moduleId: decision-audit
-    dependsOn:
-      - M150
-    enables: []
+    dependsOn: [M150]
+    enables: [M152]
+    relatedSystems: [confidence-engine, time-machine, governance]
+    implementationNotes: Immutable decision trail for executives and compliance.
+
   - canonicalId: M152
     name: Confidence Engine™
     internalId: confidence-engine
     registryKind: milestone
+    chapterId: chapter-iv-6
     volumeId: volume-iv
-    purpose: Explains confidence, evidence, and uncertainty.
+    purpose: Explains confidence, evidence, and uncertainty for AI and system recommendations.
     implementationStatus: complete
     shippedMilestone: M152
     moduleId: confidence-engine
-    dependsOn:
-      - M151
-    enables: []
+    dependsOn: [M151]
+    enables: [M153]
+    relatedSystems: [studio-intelligence, knowledge-confidence, decision-audit]
+    implementationNotes: Every recommendation carries explainable confidence metadata.
+
   - canonicalId: M153
     name: Organizational Guardian™
     internalId: organizational-guardian
     registryKind: milestone
+    chapterId: chapter-iv-6
     volumeId: volume-iv
     purpose: Highest oversight protecting quality, trust, security, and resilience.
     implementationStatus: complete
     shippedMilestone: M153
     moduleId: organizational-guardian
-    dependsOn:
-      - M152
-    enables: []
+    dependsOn: [M152]
+    enables: [M154]
+    relatedSystems: [qa-headquarters, policy-engine, executive-trust-dashboard]
+    implementationNotes: Top-level organizational safety and integrity authority.
+
   - canonicalId: M154
     name: Design Compliance Engine™
     internalId: design-compliance-engine
     registryKind: milestone
+    chapterId: chapter-iv-7
     volumeId: volume-iv
-    purpose: Audits UI against Studio OS design language.
+    purpose: Audits UI against Studio OS design language and Design DNA™ canon.
     implementationStatus: complete
     shippedMilestone: M154
     moduleId: design-compliance-engine
-    dependsOn:
-      - M153
-    enables: []
+    dependsOn: [M153]
+    enables: [M155]
+    relatedSystems: [design-dna-canon, design-token-engine, visual-diff-engine]
+    implementationNotes: Design DNA enforcement — glass, typography, hierarchy, tokens.
+
   - canonicalId: M155
     name: Prompt QA™
     internalId: prompt-qa
     registryKind: milestone
+    chapterId: chapter-iv-7
     volumeId: volume-iv
     purpose: Audits prompts for clarity, conflict, and hallucination risk.
     implementationStatus: complete
     shippedMilestone: M155
     moduleId: prompt-qa
-    dependsOn:
-      - M154
-    enables: []
+    dependsOn: [M154]
+    enables: [M156]
+    relatedSystems: [prompt-registry, ai-red-team, studio-intelligence]
+    implementationNotes: Prompt registry integration — pre-deploy prompt validation.
+
   - canonicalId: M156
     name: Experience QA™
     internalId: experience-qa
     registryKind: milestone
+    chapterId: chapter-iv-7
     volumeId: volume-iv
     purpose: Audits emotional quality, friction, clarity, and premium feel.
     implementationStatus: complete
     shippedMilestone: M156
     moduleId: experience-qa
-    dependsOn:
-      - M155
-    enables: []
+    dependsOn: [M155]
+    enables: [M157]
+    relatedSystems: [experience-engine, design-genome, arrival-experience]
+    implementationNotes: Experience DNA validation — calm, premium, immersive surfaces.
+
   - canonicalId: M157
     name: Visual Diff Engine™
     internalId: visual-diff-engine
     registryKind: milestone
+    chapterId: chapter-iv-8
     volumeId: volume-iv
     purpose: Detects visual regressions against golden screenshots.
     implementationStatus: complete
     shippedMilestone: M157
     moduleId: visual-diff-engine
-    dependsOn:
-      - M156
-    enables: []
+    dependsOn: [M156]
+    enables: [M158]
+    relatedSystems: [design-compliance-engine, regression-engine]
+    implementationNotes: Golden screenshot comparison in release pipeline.
+
   - canonicalId: M158
     name: Accessibility Auditor™
     internalId: accessibility-auditor
     registryKind: milestone
+    chapterId: chapter-iv-8
     volumeId: volume-iv
     purpose: Evaluates inclusive, understandable, usable experiences.
     implementationStatus: complete
     shippedMilestone: M158
     moduleId: accessibility-auditor
-    dependsOn:
-      - M157
-    enables: []
+    dependsOn: [M157]
+    enables: [M159-spec-qa]
+    relatedSystems: [experience-qa, release-readiness]
+    implementationNotes: WCAG-oriented inclusive design gate.
+
   - canonicalId: M159-spec-qa
     name: Performance Monitor™
     internalId: performance-monitor
     registryKind: milestone
+    chapterId: chapter-iv-8
     volumeId: volume-iv
     purpose: Continuously measures speed, responsiveness, and operational performance.
     implementationStatus: complete
     shippedMilestone: M159
     moduleId: performance-monitor
-    dependsOn:
-      - M158
-    enables: []
+    dependsOn: [M158]
+    enables: [M160-spec-qa]
+    relatedSystems: [engineering-excellence-dashboard, regression-engine]
+    implementationNotes: Performance budgets and continuous monitoring.
+
   - canonicalId: M160-spec-qa
     name: Regression Engine™
     internalId: regression-engine
     registryKind: milestone
+    chapterId: chapter-iv-9
     volumeId: volume-iv
     purpose: Verifies changes do not break existing functionality.
     implementationStatus: complete
     shippedMilestone: M160
     moduleId: regression-engine
-    dependsOn:
-      - M159-spec-qa
-    enables: []
+    dependsOn: [M159-spec-qa]
+    enables: [M161-spec-qa]
+    relatedSystems: [visual-diff-engine, qa-simulation-engine, release-readiness]
+    implementationNotes: Automated regression verification before release.
+
   - canonicalId: M161-spec-qa
     name: Release Readiness™
     internalId: release-readiness
     registryKind: milestone
+    chapterId: chapter-iv-9
     volumeId: volume-iv
     purpose: Final approval gate before production deployment.
     implementationStatus: complete
     shippedMilestone: M161
     moduleId: release-readiness
-    dependsOn:
-      - M160-spec-qa
-    enables: []
+    dependsOn: [M160-spec-qa]
+    enables: [M162-spec-qa]
+    relatedSystems: [documentation-governance, organizational-guardian, performance-monitor]
+    implementationNotes: Constitution-mandated release gate — no ship without checks.
+
   - canonicalId: M162-spec-qa
     name: Engineering Excellence Dashboard™
     internalId: engineering-excellence-dashboard
     registryKind: milestone
+    chapterId: chapter-iv-9
     volumeId: volume-iv
     purpose: Executive command center for engineering health and readiness.
     implementationStatus: complete
     shippedMilestone: M162
     moduleId: engineering-excellence-dashboard
-    dependsOn:
-      - M161-spec-qa
+    dependsOn: [M161-spec-qa]
     enables: []
+    relatedSystems: [manifest-reconciliation, knowledge-registry, release-readiness]
+    implementationNotes: Manifest metrics, documentation coverage, and QA chain health.

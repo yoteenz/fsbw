@@ -35,39 +35,41 @@ volumes:
     number: II
     title: Knowledge Infrastructure
     summary: Captures, preserves, teaches, searches, monetizes, and passes down organizational expertise.
-    status: in-progress
+    status: complete
     dependsOn: [volume-i, volume-0]
     milestoneRange: M90-M127
-    completionPct: 92
+    completionPct: 100
     chaptersFile: chapters/volume-ii.yaml
     notes: >-
-      Nine chapters registered in chapters/volume-ii.yaml. Milestones in
-      milestones/volume-ii.yaml. Knowledge Registry™ (M126) in progress; all other
-      Volume II milestones complete. Executive Strategy Floor™ (DR-005) registered
-      planned in Chapter 9 — no implementation.
+      Nine chapters complete. Knowledge Registry™ (M126) formally closed. System Registry™
+      (M127) complete. Executive Strategy Floor™ (DR-005) registered planned — no implementation.
 
   - id: volume-iii
     number: III
     title: Business Infrastructure
     summary: Turns organizations into expandable business systems with packs, marketplace, licensing, templates, and digital workforces.
-    status: in-progress
+    status: complete
     dependsOn: [volume-ii]
     milestoneRange: M127.1-M127.12
-    completionPct: 52
+    completionPct: 100
     chaptersFile: chapters/volume-iii.yaml
     notes: >-
-      Six chapters, twelve milestones (M127.1–M127.12). Infrastructure beneath
-      Expansion Center™ (M88) and Monetization (M89) in Volume I. Aligned with
-      philosophy-os-not-saas and philosophy-places-not-pages. Spec only — no new routes.
+      Six chapters, twelve milestones (M127.1–M127.12) — Master Specification authoring complete.
+      In-progress milestones reflect shipped code state; planned milestones (M127.7–M127.9, M127.11)
+      are fully specified before product implementation. Spec only — no new routes this sprint.
 
   - id: volume-iv
     number: IV
     title: Trust Infrastructure
     summary: Professional trust, QA, decision accountability, confidence, safety, and engineering excellence.
-    status: in-progress
+    status: complete
     dependsOn: [volume-ii, volume-i]
-    milestoneRange: M94-M158
-    completionPct: 68
+    milestoneRange: M94-M162
+    completionPct: 100
+    chaptersFile: chapters/volume-iv.yaml
+    notes: >-
+      Nine chapters registered. QA chain M142–M162-spec-qa complete. M145 Digital Twin™ Sandbox
+      planned. Module documentation authored for Architecture Validator™ coverage.
 
   - id: volume-v
     number: V

@@ -7,7 +7,7 @@
 | Version | 1.0.0 |
 | Location | `docs/studio-os/master-spec/` |
 | Compiled bundle | `public/studio-os/master-spec/manifest-bundle.json` |
-| Sprint | S4 — Core Philosophy + Volume III Business Infrastructure |
+| Sprint | S5 — Volume III/IV completion + M126 closure + Platform Readiness Review |
 
 ## Manifest files
 
@@ -19,6 +19,7 @@
 | `chapters/volume-i.yaml` | Volume I chapter structure (8 chapters) |
 | `chapters/volume-ii.yaml` | Volume II chapter structure (9 chapters) |
 | `chapters/volume-iii.yaml` | Volume III chapter structure (6 chapters) |
+| `chapters/volume-iv.yaml` | Volume IV chapter structure (9 chapters) |
 | `milestones/*.yaml` | Per-volume milestone manifests (I, II, IV, X, XI, XIV, V, VI–XIX) |
 | `milestone-aliases.yaml` | Canonical ↔ shipped ID reconciliation |
 | `design-revisions.yaml` | DR-001–DR-005 merge overlays |
@@ -39,7 +40,11 @@
 9. **QA chain canonical IDs** — `M159-spec-qa` … `M162-spec-qa` unified across manifest, aliases, graph
 10. **One Knowledge Registry™** — governance and legacy documentation-registry paths delegate to knowledge-registry
 11. **Core Studio OS Philosophy** — 16 constitutional design principles in `core-philosophies.yaml`
-12. **Volume III registered** — 6 chapters, 12 milestones (M127.1–M127.12)
+12. **Volume III registered** — 6 chapters, 12 milestones (M127.1–M127.12) — **authoring complete**
+13. **Volume IV registered** — 9 chapters, 23 milestones (M94, M98, M142–M162-spec-qa) — **authoring complete**
+14. **M126 formally closed** — Knowledge Registry™ `complete`; module documentation at `knowledge-registry.md`
+15. **Documentation coverage** — Architecture Validator™ 0 warnings; all complete modules documented
+16. **Platform Readiness Review** — `docs/studio-os/PLATFORM_READINESS_REVIEW.md` (pause gate before Volume V+)
 
 ## Compile
 
