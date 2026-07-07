@@ -2,6 +2,7 @@
 
 **Engine Module:** `studio.asset-compiler.v1.world-assembly`  
 **Status:** Compiler → Runtime handoff specification  
+**Canonical runtime:** [Studio Department Runtime™](../department-runtime/README.md)  
 **Philosophy:** The compiler generates packages. The runtime assembles worlds. Cursor connects interactions.
 
 ---

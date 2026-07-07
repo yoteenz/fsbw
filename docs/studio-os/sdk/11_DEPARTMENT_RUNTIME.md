@@ -1,7 +1,8 @@
 # 11 — Department Runtime
 
 **SDK Module:** `studio.department.sdk.v1.runtime`  
-**Status:** Dynamic assembly specification  
+**Status:** Dynamic assembly specification (SDK summary)  
+**Canonical engine:** [Studio Department Runtime™](../../engine/department-runtime/README.md) — full execution architecture  
 **Philosophy:** Everything is assembled at runtime — nothing is pre-baked
 
 ---

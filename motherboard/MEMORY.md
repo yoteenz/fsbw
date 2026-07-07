@@ -40363,3 +40363,40 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Compiler never hardcodes visuals; dozens of prompts never one; ordered generation; provider-agnostic; surgical regeneration; validate before export. Architecture sprint only.
 
+---
+
+## 2026-07-07 — Studio Department Runtime™ core execution engine (docs only)
+
+**Context (continued from Department SDK + Asset Compiler sprints):** User issued third **engine architecture-only** sprint — create official **Studio Department Runtime™** as core execution engine. Explicit: **no redesign departments, no artwork, no UI concepts, no environments** — not a design sprint. Runtime loads/assembles/animates/operates Department Asset Packages from Studio Asset Compiler™. Philosophy: Unreal/Unity/AAA game engine runtime layer — **brings assets to life, never creates them**. Cursor becomes runtime engineer (assembles worlds, connects interactions, powers AI, injects Genome) — not designer.
+
+**Topics covered:**
+- Full engine at **`docs/studio-os/engine/department-runtime/`** — README + 20 numbered documents
+- **01 Runtime Overview** — lifecycle, inputs/outputs, relationships with Compiler, Genome, SDK, Studio Engine, Cursor
+- **02 Asset Loader** — independent/lazy/progressive loading, hot-swap, cache, fallbacks
+- **03 World Assembler** — ordered pipeline: environment → lighting → materials → furniture → glass → interactive → orb → particles → audio → animations → zones → AI → genome → ready
+- **04 Object Manager** — runtime actors (Mood Wall, Glass Table, Timeline, etc.) with identity, state, events, permissions
+- **05 Interaction Engine** — physical verbs (click, drag, pin, approve, speak, navigate, etc.)
+- **06 Orb Runtime** — Orb as actor (navigation, conversation, memory, visual reactions)
+- **07 Concierge Runtime** — AI employees as living actors (arrival, collaboration, escalation)
+- **08 Navigation Engine** — walk, quick travel, arrival/exit animations
+- **09 Camera System** — cinematic presets and modes
+- **10–12** Animation, Particle, Audio engines
+- **13 Genome Injection** — runtime brand transform without rebuild
+- **14 State Manager** — department, project, AI, object, approval, session state
+- **15 Project Runtime** — Project as living object following user through HQ
+- **16 Performance** — lazy load, streaming, mobile/desktop scaling
+- **17 Marketplace Runtime** — hot install without HQ restart
+- **18 Runtime API** — public service contracts (abstract)
+- **19 Error Recovery** — graceful degradation, never white-screen
+- **20 Runtime QA** — 10 living-place validation questions
+
+**Decisions / outcomes:**
+- Engine version **1.0.0** · schema **`studio.department-runtime.v1`**
+- Platform stack: SDK (law) → Compiler (generate) → **Runtime (execute)** → Cursor (wire)
+- SDK `11_DEPARTMENT_RUNTIME.md` + Asset Compiler `09_WORLD_ASSEMBLY.md` cross-referenced to canonical engine
+- **`motherboard/CORE.md`** updated
+
+**Changes:** `docs/studio-os/engine/department-runtime/` (21 files) · cross-refs in SDK 11 + Compiler 09 · `motherboard/CORE.md` · this MEMORY entry.
+
+**Conventions:** Runtime industry-agnostic; Genome+DNA+package define expression; assemble never create; Marketplace hot install. Architecture only.
+
