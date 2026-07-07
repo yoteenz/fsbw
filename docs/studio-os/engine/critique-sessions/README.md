@@ -94,7 +94,8 @@ The goal is not simply to approve work. **The goal is to make the work better.**
 | **Studio Production Engine™** | Action items become structured work in department workspaces |
 | **Founder Notes™** | Voice · sketch · rationale drops feed session context |
 | **Studio Orb™** | Moderates debate · surfaces improvements · founder command interface |
-| **Walk the Room™** | Canonical immersive presentation — spatial walk inside environments |
+| **Walk the Room™** | Branch from daily walk when critique/review needed at a stop |
+| **Walk the Business™** | **Default login experience** — daily HQ walk before department work |
 | **Studio Department Generator™** | Revision workflows trigger surgical regen scopes |
 | **Learning Engine (Validation Loop)**** | Post-session learning feeds shared preference profiles |
 

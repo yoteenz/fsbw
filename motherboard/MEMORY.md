@@ -40630,3 +40630,34 @@ Summary of the **whole conversation so far** in this chat: eight architecture sp
   - Cross-refs: critique-sessions · department-runtime · golden-department READMEs
 - **Changes:** `docs/studio-os/engine/walk-the-room/` (13 files) · cross-refs · `motherboard/CORE.md` · this MEMORY entry.
 - **Conventions:** Architecture/docs only — no React · no UI · no implementation. One commit + one push on **`master`**.
+
+---
+
+## 2026-07-07 — Walk the Business™ daily executive ritual experience spec (complete)
+
+Summary of the **whole conversation so far** in this chat: nine architecture sprints for Studio OS — SDK through Walk the Business™ — culminating in the **platform heartbeat** daily experience.
+
+- **Context:** User mandated flagship experience architecture sprint — **not** UI, **not** React, **not** dashboard. Create **Walk the Business™** as the **primary daily experience** and canonical morning executive ritual. Not dashboard · not analytics · not homepage. Founder physically arrives at Headquarters every morning. **The Headquarters itself is the dashboard.**
+- **Topics covered (full chat arc):** SDK · Compiler · Runtime · Golden Department · Generator · Validation Loop (`c6df3478`) · Critique Sessions (`e3ca3f9c`) · Walk the Room (`7fd4523b`) · **Walk the Business™** (14 files · `docs/studio-os/engine/walk-the-business/` · schema `studio.walk-the-business.v1`)
+- **Walk the Business deliverables (01–13 + README):**
+  - **01 Experience Overview** — daily ritual · lifecycle · vs Walk the Room · heartbeat principle
+  - **02 Arrival Experience** — morning fade-in · departments online · Orb welcome · full/priority/summary/free-explore
+  - **03 Executive Walk** — physical path through HQ buildings · priority resolver
+  - **04 Department Behavior** — living departments · Creative/Production/Marketing/Publishing/CX/Marketplace status expression
+  - **05 Orb Executive Assistant** — proactive guidance not widgets · approval/revenue/risk narration
+  - **06 AI Employees** — concierges greet · update · approve · celebrate · concern — not notifications
+  - **07 Headquarters Health** — environment reflects thriving vs attention · not charts alone
+  - **08 Executive Moments** — organic celebrations · opportunities · testimonials · milestones
+  - **09 Command Interface** — "Take me to Production" · natural navigation
+  - **10 World Evolution** — buildings · expansions · achievements visible on walk
+  - **11 Walk Conclusion** — Daily Executive Brief · priorities · begin work
+  - **12 Future Evolution** — teams · Vision Pro · AR/VR · investor tours
+  - **13 Implementation Guide** — default login hook · DailyWalkCapable contract · forbidden dashboard-as-entry
+- **Decisions / outcomes:**
+  - Walk the Business = **platform heartbeat** · default Studio OS entry
+  - Walk the Room = on-demand critique · branches from daily walk
+  - Signature: *"I walked my business"* not *"I checked my dashboard"*
+  - As iconic as News Feed · Figma Timeline · macOS Dock
+  - Cross-refs: walk-the-room · critique-sessions · golden-department · headquarters-engine · CORE.md
+- **Changes:** `docs/studio-os/engine/walk-the-business/` (14 files) · cross-refs · `motherboard/CORE.md` · this MEMORY entry.
+- **Conventions:** Architecture only — no React · no UI · one commit on **`master`**.

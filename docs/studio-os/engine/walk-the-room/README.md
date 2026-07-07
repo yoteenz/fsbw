@@ -88,6 +88,7 @@ Not a meeting. Not a review page. Not a comment thread.
 | **Company Genome™** | Live Genome ripple previews during visualization |
 | **Studio Orb™** | Walk guide · moderator · improvement surfacing |
 | **Studio Production Engine™** | Action Mode routes work to department buildings |
+| **Walk the Business™** | Daily executive ritual — morning HQ walk · platform heartbeat |
 
 ---
 

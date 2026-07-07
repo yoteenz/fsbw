@@ -57,6 +57,7 @@ Every Golden Department spec validates against:
 | Studio Validation Loop™ | `docs/studio-os/engine/validation-loop/` |
 | Studio Critique Sessions™ | `docs/studio-os/engine/critique-sessions/` |
 | Walk the Room™ | `docs/studio-os/engine/walk-the-room/` |
+| Walk the Business™ | `docs/studio-os/engine/walk-the-business/` |
 | Studio Department Runtime™ | `docs/studio-os/engine/department-runtime/` |
 
 ---
