@@ -18,6 +18,7 @@ import {
   hasSeenStudioOrbAwakening,
   markStudioOrbAwakeningSeen,
 } from './studioOrbAwakening';
+import { readSafeAreaInsets } from './studioOrbRadialLayout';
 
 type StudioOrbContextValue = {
   presenceState: StudioOrbPresenceState;
@@ -26,6 +27,8 @@ type StudioOrbContextValue = {
   conversationMode: boolean;
   awakeningActive: boolean;
   position: StudioOrbPosition;
+  menuAnchor: { x: number; y: number };
+  setMenuAnchor: (anchor: { x: number; y: number }) => void;
   ambientInsight: string | null;
   toggleRadial: () => void;
   closeRadial: () => void;
@@ -56,6 +59,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const [radialOpen, setRadialOpen] = useState(false);
   const [activeSurface, setActiveSurface] = useState<StudioOrbSurface>(null);
   const [position, setPosition] = useState<StudioOrbPosition>(DEFAULT_POSITION);
+  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const [awakeningActive, setAwakeningActive] = useState(false);
 
   const store = dock.store;
@@ -77,11 +81,14 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
     if (typeof window === 'undefined' || !window.visualViewport) return;
     const vv = window.visualViewport;
     const update = () => {
+      const safe = readSafeAreaInsets();
+      const baseBottom = Math.max(DEFAULT_POSITION.bottom, safe.bottom + 10);
+      const baseRight = Math.max(DEFAULT_POSITION.right, safe.right + 12);
       const keyboardLikely = window.innerHeight - vv.height > 120;
       setPosition(
         keyboardLikely
-          ? { bottom: Math.max(20, window.innerHeight - vv.height + 12), right: 16 }
-          : DEFAULT_POSITION
+          ? { bottom: Math.max(baseBottom, window.innerHeight - vv.height + 12), right: baseRight }
+          : { bottom: baseBottom, right: baseRight }
       );
     };
     vv.addEventListener('resize', update);
@@ -150,6 +157,8 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       conversationMode,
       awakeningActive,
       position,
+      menuAnchor,
+      setMenuAnchor,
       ambientInsight,
       toggleRadial,
       closeRadial,
@@ -166,6 +175,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       conversationMode,
       awakeningActive,
       position,
+      menuAnchor,
       ambientInsight,
       toggleRadial,
       closeRadial,

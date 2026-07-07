@@ -39831,3 +39831,22 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** Experience Studio is a **UI/session layer** on M55 Digital Architect — business logic and `digital-architect` core unchanged. Builder panels slide in on demand; never permanent toolbars. Remix adjusts design DNA only — content/navigation/business logic preserved in architecture layer.
 
 **Changes:** experience-studio/*, experience-studio components, useExperienceStudioState.ts, digital-architect/page.tsx, adminStudioNavigation.ts, CORE.md, MEMORY.md.
+
+---
+
+## 2026-07-07 — Studio Orb radial menu mobile clipping fix (urgent)
+
+**Context (full chat arc):** Session delivered Experience Studio™ builder redesign and prior Studio Orb awakening fix. User reported **urgent UI bug** — Studio Orb quick-action radial menu (Page Guide, Command Dock, Life & Culture) **cut off on mobile**, especially Safari.
+
+**Root cause:** Radial items used **fixed arc angles** from orb center without viewport/safe-area checks; bottom-right Orb placement pushed actions off-screen right/bottom. Menu anchor used approximate math instead of DOM measurement.
+
+**Fix delivered:**
+- **`studioOrbRadialLayout.ts`** — viewport-aware layout engine: `visualViewport` + **`env(safe-area-inset-*)`** probe · edge-aware arc (opens **upward/inward** from bottom-right) · radius reduction · **stacked vertical fallback** above Orb when radial cannot fit · clamp pass as last resort
+- **`StudioOrbRadialMenu.tsx`** — fixed positioning per computed layout · `useLayoutEffect` refresh on viewport/orientation change · z-index **100049** (above content, below Orb **100050**)
+- **`StudioOrbMount.tsx`** — menu anchor from **`getBoundingClientRect()`** on Orb
+- **`StudioOrbProvider.tsx`** — safe-area-aware Orb `bottom`/`right` · shared `menuAnchor` state
+- **`scripts/test-studio-orb-radial-layout.ts`** — iPhone Safari + tight viewport smoke tests
+
+**Conventions:** All Orb radial actions (current + future enabled) must use **`computeRadialMenuLayout`** — never hard-coded fan angles. Stacked mode is acceptable fallback; clipping is not.
+
+**Changes:** studioOrbRadialLayout.ts, StudioOrbRadialMenu.tsx, StudioOrbMount.tsx, StudioOrbProvider.tsx, test script, MEMORY.md.

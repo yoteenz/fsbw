@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { useStudioOrb } from './StudioOrbProvider';
 import { StudioOrb } from './StudioOrb';
 import { StudioOrbRadialMenu } from './StudioOrbRadialMenu';
@@ -6,21 +6,18 @@ import { StudioOrbConversationBackdrop } from './StudioOrbConversationBackdrop';
 import { StudioOrbPageGuide } from './StudioOrbPageGuide';
 import { StudioOrbLifeCulturePanel } from './StudioOrbLifeCulturePanel';
 import { CommandDockConversationPanel } from '../command-dock/CommandDock';
-import { ORB_SIZE_PX } from './studioOrbTheme';
+import { measureOrbCenterFromDom } from './studioOrbRadialLayout';
 
 export function StudioOrbMount() {
-  const { toggleRadial, radialOpen, position } = useStudioOrb();
-  const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
+  const { toggleRadial, radialOpen, menuAnchor, setMenuAnchor } = useStudioOrb();
 
   const handleOrbTap = useCallback(() => {
-    const right = Math.max(position.right, 16);
-    const bottom = Math.max(position.bottom, 20);
-    const x = typeof window !== 'undefined' ? window.innerWidth - right - ORB_SIZE_PX / 2 : 0;
-    const y =
-      typeof window !== 'undefined' ? window.innerHeight - bottom - ORB_SIZE_PX / 2 : 0;
-    setMenuAnchor({ x, y });
+    const measured = measureOrbCenterFromDom();
+    if (measured) {
+      setMenuAnchor(measured);
+    }
     toggleRadial();
-  }, [toggleRadial, position]);
+  }, [toggleRadial, setMenuAnchor]);
 
   return (
     <>
@@ -29,7 +26,7 @@ export function StudioOrbMount() {
       <StudioOrbLifeCulturePanel />
       <CommandDockConversationPanel />
       {radialOpen ? (
-        <StudioOrbRadialMenu orbCenterX={menuAnchor.x} orbCenterY={menuAnchor.y - ORB_SIZE_PX * 0.35} />
+        <StudioOrbRadialMenu orbCenterX={menuAnchor.x} orbCenterY={menuAnchor.y} />
       ) : null}
       <StudioOrb onOrbTap={handleOrbTap} />
     </>

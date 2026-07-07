@@ -1,21 +1,70 @@
+import { useCallback, useLayoutEffect, useState } from 'react';
 import { STUDIO_ORB_RADIAL_ACTIONS, type StudioOrbRadialActionId } from './studioOrbTypes';
+import {
+  computeRadialMenuLayout,
+  measureOrbCenterFromDom,
+  readViewportRect,
+  type RadialMenuLayout,
+} from './studioOrbRadialLayout';
 import { orbLabel, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 
 const PRIMARY_ACTIONS: StudioOrbRadialActionId[] = ['command-dock', 'page-guide', 'life-culture'];
 
 type Props = {
+  /** Initial orb center from mount — refreshed from DOM on open. */
   orbCenterX: number;
   orbCenterY: number;
 };
 
-/** AssistiveTouch-inspired radial menu — tap Orb to expand, not immediate dock. */
+const itemShellStyle = {
+  background: 'rgba(255,255,255,0.9)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  border: '1px solid rgba(255,255,255,0.7)',
+  boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
+  borderRadius: 12,
+  padding: '8px 10px',
+  minWidth: 72,
+  cursor: 'pointer',
+} as const;
+
+/** AssistiveTouch-inspired radial menu — viewport-aware, never clipped. */
 export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
   const { radialOpen, closeRadial, openCommandDock, openPageGuide, openLifeCulture } = useStudioOrb();
-  if (!radialOpen) return null;
-
   const enabledActions = STUDIO_ORB_RADIAL_ACTIONS.filter((a) => a.enabled && PRIMARY_ACTIONS.includes(a.id));
-  const radius = 72;
+
+  const [layout, setLayout] = useState<RadialMenuLayout>(() =>
+    computeRadialMenuLayout(orbCenterX, orbCenterY, enabledActions.length)
+  );
+
+  const refreshLayout = useCallback(() => {
+    const measured = measureOrbCenterFromDom();
+    const ax = measured?.x ?? orbCenterX;
+    const ay = measured?.y ?? orbCenterY;
+    setLayout(computeRadialMenuLayout(ax, ay, enabledActions.length, readViewportRect()));
+  }, [enabledActions.length, orbCenterX, orbCenterY]);
+
+  useLayoutEffect(() => {
+    if (!radialOpen) return;
+    refreshLayout();
+
+    const vv = window.visualViewport;
+    const onViewportChange = () => refreshLayout();
+    vv?.addEventListener('resize', onViewportChange);
+    vv?.addEventListener('scroll', onViewportChange);
+    window.addEventListener('resize', onViewportChange);
+    window.addEventListener('orientationchange', onViewportChange);
+
+    return () => {
+      vv?.removeEventListener('resize', onViewportChange);
+      vv?.removeEventListener('scroll', onViewportChange);
+      window.removeEventListener('resize', onViewportChange);
+      window.removeEventListener('orientationchange', onViewportChange);
+    };
+  }, [radialOpen, refreshLayout]);
+
+  if (!radialOpen) return null;
 
   const handleAction = (id: StudioOrbRadialActionId) => {
     if (id === 'command-dock') openCommandDock();
@@ -33,29 +82,27 @@ export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
         style={{ background: 'transparent', border: 'none', cursor: 'default' }}
         onClick={closeRadial}
       />
-      <div className="fixed z-[100048] pointer-events-none" style={{ left: orbCenterX, top: orbCenterY }}>
+      <div
+        className="fixed z-[100049] pointer-events-none studio-orb-radial-menu-root"
+        aria-label="Studio Orb quick actions"
+        role="menu"
+        data-layout={layout.mode}
+      >
         {enabledActions.map((action, index) => {
-          const angle = (index / enabledActions.length) * Math.PI - Math.PI * 0.85;
-          const x = Math.cos(angle) * radius;
-          const y = Math.sin(angle) * radius;
+          const pos = layout.items[index];
+          if (!pos) return null;
           return (
             <button
               key={action.id}
               type="button"
-              className="studio-radial-menu-item pointer-events-auto absolute flex flex-col items-center"
+              role="menuitem"
+              className="studio-radial-menu-item pointer-events-auto fixed flex flex-col items-center"
               style={{
-                left: x,
-                top: y,
+                left: pos.x,
+                top: pos.y,
                 transform: 'translate(-50%, -50%)',
                 animationDelay: `${index * 40}ms`,
-                background: 'rgba(255,255,255,0.9)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255,255,255,0.7)',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-                borderRadius: 12,
-                padding: '8px 10px',
-                minWidth: 72,
-                cursor: 'pointer',
+                ...itemShellStyle,
               }}
               onClick={() => handleAction(action.id)}
             >
