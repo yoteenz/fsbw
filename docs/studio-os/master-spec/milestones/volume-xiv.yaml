@@ -1,0 +1,28 @@
+version: 1.0.0
+updatedAt: '2026-07-07'
+volumeId: volume-xiv
+milestones:
+  - canonicalId: M134
+    name: Policy Engine™
+    internalId: policy-engine
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: Central rulebook for approvals, privacy, AI, and compliance.
+    implementationStatus: complete
+    shippedMilestone: M134
+    moduleId: policy-engine
+    dependsOn:
+      - M127
+    enables: []
+  - canonicalId: M135
+    name: Permission Engine™
+    internalId: permission-engine
+    registryKind: milestone
+    volumeId: volume-xiv
+    purpose: Capability-based access and authorization.
+    implementationStatus: complete
+    shippedMilestone: M135
+    moduleId: permission-engine
+    dependsOn:
+      - M134
+    enables: []

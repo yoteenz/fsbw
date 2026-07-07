@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
  * Compiles docs/studio-os/master-spec/*.yaml → public/studio-os/master-spec/manifest-bundle.json
- * The specification lives in docs/; the bundle is a compiled consumption artifact only.
+ * Runs Architecture Validator™ as architectural gatekeeper before writing bundle.
  */
 import fs from 'fs';
 import path from 'path';
-import { load, dump } from 'js-yaml';
+import { load } from 'js-yaml';
 import { fileURLToPath } from 'url';
+import { validateArchitecture, writeValidationReport } from './architecture-validator.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
@@ -17,6 +18,17 @@ const GENERATED_DIR = path.join(ROOT, 'src/studio-os-core/manifest-reconciliatio
 const GENERATED_FILE = path.join(GENERATED_DIR, 'manifest-bundle.json');
 const REPORT_FILE = path.join(ROOT, 'docs/studio-os/master-spec/MASTER_SPEC_RECONCILIATION.md');
 
+const DEFAULT_MILESTONE_FILES = [
+  'volume-i.yaml',
+  'volume-ii.yaml',
+  'volume-iv.yaml',
+  'volume-x.yaml',
+  'volume-xi.yaml',
+  'volume-xiv.yaml',
+  'volume-v.yaml',
+  'volume-vi-xix.yaml',
+];
+
 function readYaml(filePath) {
   if (!fs.existsSync(filePath)) return null;
   return load(fs.readFileSync(filePath, 'utf8'));
@@ -24,13 +36,13 @@ function readYaml(filePath) {
 
 function loadMilestones() {
   const index = readYaml(path.join(SPEC_DIR, 'milestones/index.yaml'));
-  const files = index?.files ?? ['volume-i.yaml', 'volume-ii-iv.yaml', 'volume-v.yaml', 'volume-vi-xix.yaml'];
+  const files = index?.files ?? DEFAULT_MILESTONE_FILES;
   const milestones = [];
   for (const file of files) {
     const data = readYaml(path.join(SPEC_DIR, 'milestones', file));
     if (data?.milestones) milestones.push(...data.milestones);
   }
-  return milestones;
+  return { milestones, files };
 }
 
 function loadChapters() {
@@ -54,16 +66,19 @@ function main() {
   const designRevisions = readYaml(path.join(SPEC_DIR, 'design-revisions.yaml'));
   const milestoneAliases = readYaml(path.join(SPEC_DIR, 'milestone-aliases.yaml'));
   const dependencyGraph = readYaml(path.join(SPEC_DIR, 'dependency-graph.yaml'));
-  const milestones = loadMilestones();
+  const { milestones, files: milestoneFiles } = loadMilestones();
   const chapters = loadChapters();
   const volumeICoverage = chapters.filter((c) => c.volumeId === 'volume-i');
   const volumeIMilestones = milestones.filter((m) => m.volumeId === 'volume-i');
   const volumeIICoverage = chapters.filter((c) => c.volumeId === 'volume-ii');
   const volumeIIMilestones = milestones.filter((m) => m.volumeId === 'volume-ii');
 
+  const specVersion = constitution?.version ?? volumes?.version ?? '1.0.0';
+  const compiledAt = new Date().toISOString();
+
   const bundle = {
-    version: '1.0.0',
-    compiledAt: new Date().toISOString(),
+    version: specVersion,
+    compiledAt,
     sourceRoot: 'docs/studio-os/master-spec',
     constitution,
     volumes: volumes?.volumes ?? [],
@@ -88,6 +103,23 @@ function main() {
       volumeIICompleteCount: volumeIIMilestones.filter((m) => m.implementationStatus === 'complete').length,
     },
   };
+
+  const validation = validateArchitecture(bundle, milestoneFiles);
+  const errorCount = writeValidationReport(validation, compiledAt);
+
+  if (errorCount > 0) {
+    console.error(`Architecture Validator™ — ${validation.errors} errors · ${validation.warnings} warnings — BUILD BLOCKED`);
+    for (const i of validation.issues.filter((x) => x.severity === 'error').slice(0, 20)) {
+      console.error(`  [${i.code}] ${i.message}`);
+    }
+    process.exit(1);
+  }
+
+  if (validation.warnings > 0) {
+    console.warn(`Architecture Validator™ — 0 errors · ${validation.warnings} warnings`);
+  } else {
+    console.log('Architecture Validator™ — PASS');
+  }
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
   fs.mkdirSync(GENERATED_DIR, { recursive: true });
@@ -117,6 +149,10 @@ Generated: ${bundle.compiledAt}
 | In Progress | ${bundle.stats.inProgressCount} |
 | Planned | ${bundle.stats.plannedCount} |
 
+## Architecture Validation
+
+See \`ARCHITECTURE_VALIDATION_REPORT.md\` — Architecture Validator™ gate: **PASS** (${validation.warnings} warnings)
+
 ## Source of Truth
 
 - Specification: \`docs/studio-os/master-spec/\`
@@ -127,13 +163,8 @@ Generated: ${bundle.compiledAt}
 
 - **Shipped badges** remain in user-facing navigation
 - **Canonical IDs** appear in engineering surfaces only
+- **QA chain** uses \`M159-spec-qa\` … \`M162-spec-qa\` canonical form
 - See \`milestone-aliases.yaml\` for reconciliation
-
-## Next Steps
-
-1. Review bundle stats against expected coverage
-2. Run Manifest Reconciliation™ against live modules
-3. Present architecture for review before product feature work
 `;
 
   fs.writeFileSync(REPORT_FILE, report);

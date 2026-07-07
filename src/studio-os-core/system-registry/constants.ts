@@ -53,4 +53,4 @@ export const SYSTEM_DISCOVERY_SURFACES = [
   'future-milestones',
 ] as const;
 
-export const SYSTEM_LIFECYCLE_STATUSES = ['live', 'demo', 'planned', 'deprecated', 'upcoming'] as const;
+export const SYSTEM_LIFECYCLE_STATUSES = ['live', 'demo', 'in-progress', 'planned', 'deprecated', 'upcoming'] as const;

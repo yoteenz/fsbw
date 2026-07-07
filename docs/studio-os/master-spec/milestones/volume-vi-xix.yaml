@@ -304,16 +304,19 @@ milestones:
     dependsOn: []
     enables: []
   - canonicalId: M190
-    name: Voice Mode™
-    internalId: voice-mode
+    name: Voice Mode™ (Communications)
+    internalId: voice-mode-communications
     registryKind: milestone
     volumeId: volume-ix
-    purpose: Orb-based voice interaction with Studio Intelligence™.
+    purpose: Orb-based voice interaction with Studio Intelligence™ across communications surfaces.
     implementationStatus: planned
     shippedMilestone: null
     moduleId: null
-    dependsOn: []
+    dependsOn: [M89.2]
     enables: []
+    implementationNotes: >-
+      Volume IX expansion of M89.2 Voice Mode™ (DR-001). Canonical voice-mode internalId
+      reserved for M89.2 merge target.
   - canonicalId: M191
     name: Meeting Intelligence™
     internalId: meeting-intelligence

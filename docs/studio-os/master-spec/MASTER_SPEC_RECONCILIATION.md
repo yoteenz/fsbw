@@ -1,6 +1,6 @@
 # Master Specification Reconciliation Report
 
-Generated: 2026-07-07T05:45:35.715Z
+Generated: 2026-07-07T06:07:43.628Z
 
 ## Coverage
 
@@ -20,6 +20,10 @@ Generated: 2026-07-07T05:45:35.715Z
 | In Progress | 6 |
 | Planned | 117 |
 
+## Architecture Validation
+
+See `ARCHITECTURE_VALIDATION_REPORT.md` — Architecture Validator™ gate: **PASS** (34 warnings)
+
 ## Source of Truth
 
 - Specification: `docs/studio-os/master-spec/`
@@ -30,10 +34,5 @@ Generated: 2026-07-07T05:45:35.715Z
 
 - **Shipped badges** remain in user-facing navigation
 - **Canonical IDs** appear in engineering surfaces only
+- **QA chain** uses `M159-spec-qa` … `M162-spec-qa` canonical form
 - See `milestone-aliases.yaml` for reconciliation
-
-## Next Steps
-
-1. Review bundle stats against expected coverage
-2. Run Manifest Reconciliation™ against live modules
-3. Present architecture for review before product feature work

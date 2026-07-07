@@ -1,4 +1,4 @@
-import { getAllRegistryEntries } from '../documentation-registry/registration';
+import { getAllRegistryEntries } from '../knowledge-registry/registration';
 import { COVERAGE_STANDARD_PCT } from './constants';
 import { validateAllFeatureCoverage } from './coverage-validator';
 import { runDocumentationAudits } from './audit-engine';

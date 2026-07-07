@@ -1,5 +1,5 @@
-import { getAllRegistryEntries, validateRegistryEntry } from '../documentation-registry/registration';
-import type { DocumentationRegistryEntry } from '../documentation-registry/types';
+import { getAllRegistryEntries, validateRegistryEntry } from '../knowledge-registry/registration';
+import type { KnowledgeRegistryEntry } from '../knowledge-registry/types';
 import type { DocumentationAuditFinding } from './types';
 
 const STALE_DAYS = 90;
@@ -10,7 +10,7 @@ function daysSince(isoDate: string): number {
   return Math.floor((Date.now() - then) / (1000 * 60 * 60 * 24));
 }
 
-function auditEntry(entry: DocumentationRegistryEntry, now: string): DocumentationAuditFinding[] {
+function auditEntry(entry: KnowledgeRegistryEntry, now: string): DocumentationAuditFinding[] {
   const findings: DocumentationAuditFinding[] = [];
   const base = { featureId: entry.internalId, featureName: entry.officialName, detectedAt: now };
 

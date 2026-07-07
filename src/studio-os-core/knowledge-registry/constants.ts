@@ -58,12 +58,9 @@ export const REGISTRY_CATEGORIES = [
   'roadmap',
 ] as const;
 
-export const IMPLEMENTATION_STATUS_LABELS = {
-  planned: 'Planned',
-  'in-progress': 'In Progress',
-  complete: 'Complete',
-  deprecated: 'Deprecated',
-} as const;
+import { IMPLEMENTATION_STATUS_LABELS as MANIFEST_STATUS_LABELS } from '../manifest-reconciliation/constants';
+
+export const IMPLEMENTATION_STATUS_LABELS = MANIFEST_STATUS_LABELS;
 
 /** Engineering-facing surfaces show canonical milestone IDs */
 export const ENGINEERING_SURFACES = [

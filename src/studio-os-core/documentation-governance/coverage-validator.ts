@@ -1,9 +1,9 @@
 import { COVERAGE_SURFACES, COVERAGE_STANDARD_PCT } from './constants';
 import type { CoverageSurface, FeatureCoverageResult } from './types';
-import { getAllRegistryEntries } from '../documentation-registry/registration';
-import type { DocumentationRegistryEntry } from '../documentation-registry/types';
+import { getAllRegistryEntries } from '../knowledge-registry/registration';
+import type { KnowledgeRegistryEntry } from '../knowledge-registry/types';
 
-function surfaceCovered(entry: DocumentationRegistryEntry, surface: CoverageSurface): { covered: boolean; detail: string } {
+function surfaceCovered(entry: KnowledgeRegistryEntry, surface: CoverageSurface): { covered: boolean; detail: string } {
   switch (surface) {
     case 'studio-manual':
       return { covered: Boolean(entry.docPath && entry.documentationLinks.length > 0), detail: entry.docPath || 'No doc path' };
@@ -38,7 +38,7 @@ function surfaceCovered(entry: DocumentationRegistryEntry, surface: CoverageSurf
   }
 }
 
-export function validateFeatureCoverage(entry: DocumentationRegistryEntry): FeatureCoverageResult {
+export function validateFeatureCoverage(entry: KnowledgeRegistryEntry): FeatureCoverageResult {
   const surfaces = COVERAGE_SURFACES.map((surface) => {
     const { covered, detail } = surfaceCovered(entry, surface);
     return { surface, covered, detail };

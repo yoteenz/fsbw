@@ -1,4 +1,4 @@
-import { computeDocumentationHealthMetrics, computeRegistryHealthScore } from '../documentation-registry/health-dashboard';
+import { computeDocumentationHealthMetrics, computeRegistryHealthScore } from '../knowledge-registry/health-dashboard';
 import { runDocumentationAudits } from './audit-engine';
 import {
   computeOverallCoveragePct,

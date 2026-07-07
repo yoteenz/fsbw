@@ -42,7 +42,7 @@ function inferCategory(id: string, registryKind: string, volumeId?: string): Reg
 
 function mapImplementationToLegacyStatus(status: string): RegistryFeatureStatus {
   if (status === 'complete') return 'live';
-  if (status === 'in-progress') return 'demo';
+  if (status === 'in-progress') return 'in-progress';
   if (status === 'deprecated') return 'deprecated';
   return 'planned';
 }

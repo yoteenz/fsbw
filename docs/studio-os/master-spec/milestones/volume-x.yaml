@@ -1,0 +1,16 @@
+version: 1.0.0
+updatedAt: '2026-07-07'
+volumeId: volume-x
+milestones:
+  - canonicalId: M132
+    name: Automation Registry™
+    internalId: automation-registry
+    registryKind: milestone
+    volumeId: volume-x
+    purpose: Transparent registry for every automation.
+    implementationStatus: complete
+    shippedMilestone: M132
+    moduleId: automation-registry
+    dependsOn:
+      - M131
+    enables: []

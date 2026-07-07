@@ -20,7 +20,7 @@ designRevisions:
     implementationStatus: in-progress
     volumeId: volume-i
     mergeTargets: [mission-control, headquarters, executive-information-architecture]
-    dependsOn: [M129, M130, DR-001]
+    dependsOn: [M129, M130, M83.5]
     enables: [DR-003]
 
   - id: DR-003

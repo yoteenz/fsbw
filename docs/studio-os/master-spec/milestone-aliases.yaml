@@ -7,6 +7,19 @@ notes: >
   (Knowledge Registry™, System Registry™, Engineering Dashboard™, Roadmap™, QA views).
 
 aliases:
+  # M83 shipped badge — EIA + Headquarters share nav badge; canonical IDs distinguish
+  - canonicalId: M83
+    shippedId: M83
+    name: Executive Information Architecture™
+    moduleId: executive-information-architecture
+    reason: Shipped badge M83; canonical M83 is EIA design language (not Mission Control)
+
+  - canonicalId: M83.5
+    shippedId: M83
+    name: Mission Control™ / Headquarters™
+    moduleId: mission-control
+    reason: Shared shipped badge M83 on nav; canonical M83.5 distinguishes HQ from EIA
+
   # Volume V Identity — canonical vs shipped offset (+4 from QA chain insertion)
   - canonicalId: M159
     shippedId: M163

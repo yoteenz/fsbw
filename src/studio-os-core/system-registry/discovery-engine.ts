@@ -1,13 +1,6 @@
+import { expandSemanticQuery } from '../documentation-sync/semantic-search';
 import { getAllRegisteredSystems } from './registration';
 import type { SystemDiscoveryHit } from './types';
-
-const SEMANTIC_CLUSTERS: Record<string, string[]> = {
-  memory: ['module:memory-engine', 'module:legacy-vault', 'module:profession-brain', 'feature:organizational-consciousness'],
-  ai: ['module:studio-intelligence', 'module:model-orchestrator', 'module:studio-foundation-models', 'module:profession-brain'],
-  documentation: ['module:knowledge-registry', 'module:documentation-governance', 'module:documentation-sync', 'module:knowledge-hub'],
-  executive: ['module:executive-council', 'module:mission-control', 'module:organization-pulse', 'concierge:chief-of-staff'],
-  registry: ['module:system-registry', 'module:knowledge-registry'],
-};
 
 function scoreEntry(entry: ReturnType<typeof getAllRegisteredSystems>[number], terms: string[]): { score: number; reason: string } {
   const blob = `${entry.officialName} ${entry.description} ${entry.keywords.join(' ')} ${entry.aliases.join(' ')} ${entry.category}`.toLowerCase();
@@ -33,22 +26,22 @@ export function querySystemRegistry(query: string, limit = 12): SystemDiscoveryH
   if (!q) return [];
 
   const terms = q.split(/\s+/).filter(Boolean);
+  const { expandedTerms, relatedSystemIds } = expandSemanticQuery(q);
+  const allTerms = [...new Set([...terms, ...expandedTerms])];
   const systems = getAllRegisteredSystems();
   const hits: SystemDiscoveryHit[] = [];
 
-  for (const [cluster, ids] of Object.entries(SEMANTIC_CLUSTERS)) {
-    if (q.includes(cluster) || terms.includes(cluster)) {
-      for (const id of ids) {
-        const entry = systems.find((s) => s.uniqueId === id || s.moduleId === id.replace(/^module:/, ''));
-        if (entry) {
-          hits.push({ entry, score: 20, matchReason: `semantic:${cluster}` });
-        }
-      }
+  for (const systemId of relatedSystemIds) {
+    const entry = systems.find(
+      (s) => s.moduleId === systemId || s.uniqueId === `module:${systemId}` || s.uniqueId === `feature:${systemId}`
+    );
+    if (entry && !hits.some((h) => h.entry.uniqueId === entry.uniqueId)) {
+      hits.push({ entry, score: 20, matchReason: 'semantic-cluster' });
     }
   }
 
   for (const entry of systems) {
-    const { score, reason } = scoreEntry(entry, terms);
+    const { score, reason } = scoreEntry(entry, allTerms);
     if (score > 0 && !hits.some((h) => h.entry.uniqueId === entry.uniqueId)) {
       hits.push({ entry, score, matchReason: reason });
     }

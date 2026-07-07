@@ -1,4 +1,4 @@
-import { getAllRegistryEntries } from '../documentation-registry/registration';
+import { getAllRegistryEntries } from '../knowledge-registry/registration';
 import type { DependencyImpact } from './types';
 
 const SURFACE_LABELS: Record<string, string> = {

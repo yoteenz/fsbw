@@ -7,7 +7,7 @@ export type KnowledgeImplementationStatus = ImplementationStatus;
 export type KnowledgeRegistryKind = RegistryKind;
 
 /** @deprecated use complete/planned via implementationStatus */
-export type RegistryFeatureStatus = 'live' | 'demo' | 'planned' | 'deprecated' | 'upcoming';
+export type RegistryFeatureStatus = 'live' | 'demo' | 'in-progress' | 'planned' | 'deprecated' | 'upcoming';
 
 export type KnowledgeRegistryEntry = {
   officialName: string;

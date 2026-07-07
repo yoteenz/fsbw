@@ -1,4 +1,6 @@
 version: 1.0.0
+updatedAt: '2026-07-07'
+volumeId: volume-iv
 milestones:
   - canonicalId: M94
     name: Professional Trust Framework™
@@ -23,162 +25,6 @@ milestones:
     moduleId: succession-mode
     dependsOn:
       - M96
-    enables: []
-  - canonicalId: M128
-    name: Component Registry™
-    internalId: component-registry
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Registry of reusable UI components and variants.
-    implementationStatus: complete
-    shippedMilestone: M128
-    moduleId: component-registry
-    dependsOn:
-      - M127
-    enables: []
-  - canonicalId: M129
-    name: Design Token Engine™
-    internalId: design-token-engine
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Visual source of truth for spacing, typography, glass, motion, and themes.
-    implementationStatus: complete
-    shippedMilestone: M129
-    moduleId: design-token-engine
-    dependsOn:
-      - M127
-    enables: []
-  - canonicalId: M130
-    name: Interaction Engine™
-    internalId: interaction-engine
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Behavioral source of truth for every interaction and state.
-    implementationStatus: complete
-    shippedMilestone: M130
-    moduleId: interaction-engine
-    dependsOn:
-      - M129
-    enables: []
-  - canonicalId: M131
-    name: Event Bus™
-    internalId: event-bus
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Communication backbone for event-driven systems.
-    implementationStatus: complete
-    shippedMilestone: M131
-    moduleId: event-bus
-    dependsOn:
-      - M130
-    enables: []
-  - canonicalId: M132
-    name: Automation Registry™
-    internalId: automation-registry
-    registryKind: milestone
-    volumeId: volume-x
-    purpose: Transparent registry for every automation.
-    implementationStatus: complete
-    shippedMilestone: M132
-    moduleId: automation-registry
-    dependsOn:
-      - M131
-    enables: []
-  - canonicalId: M133
-    name: Prompt Registry™
-    internalId: prompt-registry
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Versioned prompt and AI instruction management.
-    implementationStatus: complete
-    shippedMilestone: M133
-    moduleId: prompt-registry
-    dependsOn:
-      - M131
-    enables: []
-  - canonicalId: M134
-    name: Policy Engine™
-    internalId: policy-engine
-    registryKind: milestone
-    volumeId: volume-xiv
-    purpose: Central rulebook for approvals, privacy, AI, and compliance.
-    implementationStatus: complete
-    shippedMilestone: M134
-    moduleId: policy-engine
-    dependsOn:
-      - M127
-    enables: []
-  - canonicalId: M135
-    name: Permission Engine™
-    internalId: permission-engine
-    registryKind: milestone
-    volumeId: volume-xiv
-    purpose: Capability-based access and authorization.
-    implementationStatus: complete
-    shippedMilestone: M135
-    moduleId: permission-engine
-    dependsOn:
-      - M134
-    enables: []
-  - canonicalId: M136
-    name: Workspace Runtime™
-    internalId: workspace-runtime
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Isolated organization runtime with sandbox and production modes.
-    implementationStatus: complete
-    shippedMilestone: M136
-    moduleId: workspace-runtime
-    dependsOn:
-      - M135
-    enables: []
-  - canonicalId: M137
-    name: Plugin SDK™
-    internalId: plugin-sdk
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Extensible plugin ecosystem.
-    implementationStatus: complete
-    shippedMilestone: M137
-    moduleId: plugin-sdk
-    dependsOn:
-      - M136
-    enables: []
-  - canonicalId: M138
-    name: Workflow Engine™
-    internalId: workflow-engine
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Visual no-code orchestration for business workflows.
-    implementationStatus: complete
-    shippedMilestone: M138
-    moduleId: workflow-engine
-    dependsOn:
-      - M131
-    enables: []
-  - canonicalId: M139
-    name: State Engine™
-    internalId: state-engine
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Lifecycle management for all objects.
-    implementationStatus: complete
-    shippedMilestone: M139
-    moduleId: state-engine
-    dependsOn:
-      - M138
-    enables: []
-  - canonicalId: M140
-    name: Asset Registry™
-    internalId: asset-registry
-    registryKind: milestone
-    volumeId: volume-xi
-    purpose: Versioned registry for media, documents, templates, and assets.
-    implementationStatus: complete
-    shippedMilestone: M140
-    moduleId: asset-registry
-    dependsOn:
-      - M127
     enables: []
   - canonicalId: M142
     name: Quality Assurance & Trust Infrastructure™
@@ -384,7 +230,7 @@ milestones:
     dependsOn:
       - M157
     enables: []
-  - canonicalId: M159-shipped
+  - canonicalId: M159-spec-qa
     name: Performance Monitor™
     internalId: performance-monitor
     registryKind: milestone
@@ -396,7 +242,7 @@ milestones:
     dependsOn:
       - M158
     enables: []
-  - canonicalId: M160-shipped
+  - canonicalId: M160-spec-qa
     name: Regression Engine™
     internalId: regression-engine
     registryKind: milestone
@@ -406,9 +252,9 @@ milestones:
     shippedMilestone: M160
     moduleId: regression-engine
     dependsOn:
-      - M159-shipped
+      - M159-spec-qa
     enables: []
-  - canonicalId: M161-shipped
+  - canonicalId: M161-spec-qa
     name: Release Readiness™
     internalId: release-readiness
     registryKind: milestone
@@ -418,9 +264,9 @@ milestones:
     shippedMilestone: M161
     moduleId: release-readiness
     dependsOn:
-      - M160-shipped
+      - M160-spec-qa
     enables: []
-  - canonicalId: M162-shipped
+  - canonicalId: M162-spec-qa
     name: Engineering Excellence Dashboard™
     internalId: engineering-excellence-dashboard
     registryKind: milestone
@@ -430,5 +276,5 @@ milestones:
     shippedMilestone: M162
     moduleId: engineering-excellence-dashboard
     dependsOn:
-      - M161-shipped
+      - M161-spec-qa
     enables: []
