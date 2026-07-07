@@ -38,6 +38,7 @@ import {
   adminStudioReleaseReadinessPath,
   adminStudioEngineeringExcellenceDashboardPath,
   adminStudioIdentityGraphPath,
+  adminStudioProfessionalProfilePath,
   adminStudioExecutiveCouncilPath,
   adminStudioExpertMarketplacePath,
   adminStudioKnowledgeCommercePath,
@@ -1280,6 +1281,23 @@ export const DOCUMENTATION_SYSTEM_REGISTRY: DocumentationSystemEntry[] = [
     exampleWorkflows: ['DISCOVER → CONNECT → UNDERSTAND → RESPECT'],
     aliases: ['identity graph', 'people graph', 'person profiles', 'living profiles', 'organizational people', 'first class citizens'],
     searchKeywords: ['identity', 'people', 'person', 'relationship', 'founder', 'employee', 'customer', 'expert', 'vendor', 'partner', 'graph', 'profile', 'department', 'role'],
+  }),
+  entry({
+    id: 'professional-profile',
+    label: 'Professional Profile™',
+    moduleId: 'professional-profile',
+    milestone: 'M164',
+    route: adminStudioProfessionalProfilePath(),
+    purpose: 'Living career identities that evolve alongside each person — dynamic professional representations, not static resumes.',
+    overview:
+      'Experience · Skills · Certifications · Profession Brains™ · Projects · Achievements · Learning · Academy progress · Knowledge contributions · Mentorship · Leadership history · Portfolio · Professional Timeline™.',
+    capabilities: ['Living professional profiles', 'Professional Timeline™', 'Profession Brain™ linkage', 'Academy & certification tracking', 'Portfolio & projects', 'Mentorship & leadership history', 'Skills evolution', 'Work preferences'],
+    howItWorks: 'Sync Identity Graph™, Profession Brain™, Studio Institute™, Expert Marketplace™, and Wisdom Capture™ → build evolving profiles per person → maintain Professional Timeline™ of career growth events → compute evolution score.',
+    whenUsed: ['Career development', 'Hiring & team planning', 'Expert credentialing', 'Academy progress review', 'Leadership succession', 'Portfolio showcase'],
+    relatedSystems: ['identity-graph', 'profession-brain', 'studio-institute', 'expert-marketplace', 'wisdom-capture', 'relationship-memory'],
+    exampleWorkflows: ['GROW → DOCUMENT → TIMELINE → EVOLVE'],
+    aliases: ['professional profile', 'career profile', 'living resume', 'professional timeline', 'career evolution', 'dynamic resume'],
+    searchKeywords: ['professional', 'profile', 'career', 'timeline', 'resume', 'certification', 'portfolio', 'mentorship', 'leadership', 'academy', 'skills', 'experience'],
   }),
 ];
 

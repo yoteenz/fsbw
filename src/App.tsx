@@ -366,6 +366,10 @@ const AdminStudioIdentityGraph = lazyWithRetry(
   () => import('./pages/admin/studio/identity-graph/page'),
   'AdminStudioIdentityGraph'
 );
+const AdminStudioProfessionalProfile = lazyWithRetry(
+  () => import('./pages/admin/studio/professional-profile/page'),
+  'AdminStudioProfessionalProfile'
+);
 const AdminStudioSuccessionMode = lazyWithRetry(() => import('./pages/admin/studio/succession-mode/page'), 'AdminStudioSuccessionMode');
 const AdminStudioGovernance = lazyWithRetry(() => import('./pages/admin/studio/governance/page'), 'AdminStudioGovernance');
 const AdminStudioIntelligence = lazyWithRetry(() => import('./pages/admin/studio/studio-intelligence/page'), 'AdminStudioIntelligence');
@@ -1802,6 +1806,11 @@ function App() {
           <Route path="studio/identity-graph" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioIdentityGraph />
+            </Suspense>
+          } />
+          <Route path="studio/professional-profile" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioProfessionalProfile />
             </Suspense>
           } />
           <Route path="studio/succession-mode" element={

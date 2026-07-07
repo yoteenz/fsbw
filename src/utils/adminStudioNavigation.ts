@@ -2076,6 +2076,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'professional-profile',
+    title: 'PROFESSIONAL PROFILE™',
+    purpose: 'Living career identities that evolve — experience, skills, Profession Brains™, Professional Timeline™, academy progress, and portfolio. Dynamic, not frozen.',
+    route: p('professional-profile'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'M164',
+    ctaLabel: 'OPEN PROFESSIONAL PROFILE',
+    moduleKey: 'professional-profile',
+    featuredOnOverview: true,
+  },
+  {
     id: 'succession-mode',
     title: 'SUCCESSION MODE™',
     purpose: 'Succession readiness — survive founder unavailability. Knowledge dependency map, recommendations, legacy continuity.',

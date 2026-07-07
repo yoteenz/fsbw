@@ -1033,6 +1033,10 @@ export function adminStudioIdentityGraphPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/identity-graph`;
 }
 
+export function adminStudioProfessionalProfilePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/professional-profile`;
+}
+
 export function adminStudioSuccessionModePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/succession-mode`;
 }

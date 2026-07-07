@@ -125,6 +125,7 @@ export const DOCUMENTATION_PAGE_GUIDE_OVERRIDES: Partial<Record<string, PageGuid
   'release-readiness': fromSystem('release-readiness'),
   'engineering-excellence-dashboard': fromSystem('engineering-excellence-dashboard'),
   'identity-graph': fromSystem('identity-graph'),
+  'professional-profile': fromSystem('professional-profile'),
   'mission-control': fromSystem('mission-control', {
     relatedPages: [
       { label: 'KNOWLEDGE HUB', route: `${ADMIN_STUDIO_BASE_PATH}/knowledge-hub` },
