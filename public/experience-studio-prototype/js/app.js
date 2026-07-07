@@ -106,7 +106,7 @@ const App = (() => {
     { label: 'Templates', action: () => navigate('templates'), keys: '' },
     { label: 'Settings', action: () => navigate('settings'), keys: '' },
     { label: 'Return to projects', action: () => navigate('dashboard'), keys: '' },
-    { label: 'Return to HQ', action: () => navigate('welcome'), keys: '' },
+    { label: 'Return to HQ', action: () => navigate('dashboard'), keys: '' },
   ];
 
   let generatingInterval = null;
@@ -156,12 +156,14 @@ const App = (() => {
     const next = document.getElementById(`screen-${screen}`);
     if (!next) return;
 
-    if (prev) {
+    if (prev && prev !== next) {
       prev.classList.remove('active');
-      if (animate) prev.style.opacity = '0';
+      // Clear inline opacity — otherwise returning to this screen stays invisible
+      prev.style.removeProperty('opacity');
     }
 
     state.currentScreen = screen;
+    next.style.removeProperty('opacity');
     next.classList.add('active');
     if (animate) {
       next.classList.add('screen-enter');
@@ -175,6 +177,7 @@ const App = (() => {
       showCanvas();
     }
     if (screen === 'dashboard') {
+      renderProjects();
       setTimeout(() => {
         const chip = document.getElementById('dashboard-director-chip');
         if (chip) chip.style.opacity = '1';
@@ -712,7 +715,7 @@ const App = (() => {
         showToast(`Design Health™: ${state.designHealth} — PASS`);
         break;
       case 'commands': openCommandPalette(); break;
-      case 'hq': navigate('dashboard'); break;
+      case 'hq': navigate('dashboard'); break; // HQ = project dashboard home base
     }
   }
 
