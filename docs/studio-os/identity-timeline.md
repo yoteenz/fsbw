@@ -1,6 +1,6 @@
-# Identity Timeline™ (M168)
+# Identity Timeline™ (M164)
 
-**Studio OS preserves the professional story of every individual — not just the organization.**
+**Canonical milestone M164 · Shipped nav badge M168 · Volume V — Identity Infrastructure**
 
 ## Philosophy
 

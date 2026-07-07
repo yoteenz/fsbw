@@ -1,6 +1,6 @@
-# Organizational Hierarchy™ (M167)
+# Organizational Hierarchy™ (M163)
 
-**Hierarchy should represent how organizations actually function — not just an org chart.**
+**Canonical milestone M163 · Shipped nav badge M167 · Volume V — Identity Infrastructure**
 
 ## Philosophy
 

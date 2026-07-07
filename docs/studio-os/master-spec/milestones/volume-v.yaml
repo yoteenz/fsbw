@@ -1,74 +1,162 @@
 version: 1.0.0
+updatedAt: '2026-07-07'
+volumeId: volume-v
 milestones:
   - canonicalId: M159
     name: Identity Graph™
     internalId: identity-graph
     registryKind: milestone
     volumeId: volume-v
+    chapterId: chapter-v-1
     purpose: Living graph of every person connected to the organization.
     implementationStatus: complete
     shippedMilestone: M163
     moduleId: identity-graph
-    dependsOn:
-      - M112
-    enables: []
+    dependsOn: [M112, M95, M127]
+    enables: [M160]
+    relatedSystems:
+      - relationship-memory
+      - organization-genome
+      - profession-brain
+      - expert-marketplace
+      - wisdom-capture
+      - business-discovery-blueprint
+      - mission-control
+      - studio-intelligence
+    alignedPhilosophies:
+      - philosophy-context-aware-experiences
+      - philosophy-personalization-dna
+    implementationNotes: >-
+      Foundational people intelligence. Canonical M159; shipped nav badge M163 per
+      milestone-aliases.yaml (QA chain insertion offset). Syncs from Relationship
+      Memory™, Blueprint people chapter, and cross-org intelligence.
+
   - canonicalId: M160
     name: Professional Profile™
     internalId: professional-profile
     registryKind: milestone
     volumeId: volume-v
+    chapterId: chapter-v-2
     purpose: Dynamic career identity with skills, achievements, and contributions.
     implementationStatus: complete
     shippedMilestone: M164
     moduleId: professional-profile
-    dependsOn:
-      - M159
-    enables: []
+    dependsOn: [M159]
+    enables: [M161]
+    relatedSystems:
+      - identity-graph
+      - skill-graph
+      - studio-institute
+      - profession-brain
+      - knowledge-commerce
+      - expert-marketplace
+    alignedPhilosophies:
+      - philosophy-documentation-as-architecture
+      - philosophy-progressive-disclosure
+    implementationNotes: >-
+      Living profiles — not static resumes. Canonical M160; shipped badge M164.
+      Links Profession Brains™, Academy progress, and marketplace portfolio.
+
   - canonicalId: M161
     name: Skill Graph™
     internalId: skill-graph
     registryKind: milestone
     volumeId: volume-v
+    chapterId: chapter-v-3
     purpose: Maps capabilities, mentors, gaps, and invisible knowledge.
     implementationStatus: complete
     shippedMilestone: M165
     moduleId: skill-graph
-    dependsOn:
-      - M160
-    enables: []
+    dependsOn: [M160]
+    enables: [M162]
+    relatedSystems:
+      - professional-profile
+      - role-intelligence
+      - profession-brain
+      - studio-institute
+      - studio-intelligence
+    alignedPhilosophies:
+      - philosophy-invisible-complexity
+      - philosophy-ai-creative-director
+    implementationNotes: >-
+      Skills as searchable organizational assets. Canonical M161; shipped badge M165.
+      Powers mentor matching, gap detection, and collaboration recommendations.
+
   - canonicalId: M162
     name: Role Intelligence™
     internalId: role-intelligence
     registryKind: milestone
     volumeId: volume-v
+    chapterId: chapter-v-4
     purpose: Understands responsibilities and workflows, not just titles.
     implementationStatus: complete
     shippedMilestone: M166
     moduleId: role-intelligence
-    dependsOn:
-      - M161
-    enables: []
+    dependsOn: [M161]
+    enables: [M163]
+    relatedSystems:
+      - skill-graph
+      - identity-graph
+      - profession-brain
+      - executive-organization
+      - organization-operating-manual
+      - studio-intelligence
+    alignedPhilosophies:
+      - philosophy-executive-first
+      - philosophy-context-aware-experiences
+    implementationNotes: >-
+      Maps actual work — responsibilities, workflows, decision authority, AI counterparts.
+      Canonical M162; shipped badge M166. Role Evolution™ tracks splitting and consolidation.
+
   - canonicalId: M163
     name: Organizational Hierarchy™
     internalId: organizational-hierarchy
     registryKind: milestone
     volumeId: volume-v
+    chapterId: chapter-v-5
     purpose: Maps real-world reporting, matrix teams, and shared services.
     implementationStatus: complete
     shippedMilestone: M167
     moduleId: organizational-hierarchy
-    dependsOn:
-      - M162
-    enables: []
+    dependsOn: [M162]
+    enables: [M164]
+    relatedSystems:
+      - role-intelligence
+      - identity-graph
+      - executive-organization
+      - mission-control
+      - organization-pulse
+    alignedPhilosophies:
+      - philosophy-places-not-pages
+      - philosophy-living-headquarters
+    implementationNotes: >-
+      Hierarchy as lived structure — matrix, holding company, franchise, project teams.
+      Canonical M163; shipped badge M167. Powers approval routing and org health signals.
+
   - canonicalId: M164
     name: Identity Timeline™
     internalId: identity-timeline
     registryKind: milestone
     volumeId: volume-v
+    chapterId: chapter-v-6
     purpose: Preserves the professional journey of every individual.
     implementationStatus: complete
     shippedMilestone: M168
     moduleId: identity-timeline
-    dependsOn:
-      - M163
+    dependsOn: [M163]
     enables: []
+    relatedSystems:
+      - organizational-hierarchy
+      - professional-profile
+      - identity-graph
+      - legacy-vault
+      - studio-institute
+      - expert-marketplace
+      - wisdom-capture
+    alignedPhilosophies:
+      - philosophy-environmental-storytelling
+      - philosophy-documentation-as-architecture
+    implementationNotes: >-
+      Permanent professional story — promotions, mentorship, knowledge published, milestones.
+      Canonical M164; shipped badge M168. Volume V identity chain terminus; feeds Volume VI
+      Relationship Intelligence.

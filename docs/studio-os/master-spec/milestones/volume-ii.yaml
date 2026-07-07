@@ -438,6 +438,7 @@ milestones:
       - M111
     enables:
       - M113
+      - M159
     chapterId: chapter-ii-6
     relatedSystems:
       - cross-organization-intelligence

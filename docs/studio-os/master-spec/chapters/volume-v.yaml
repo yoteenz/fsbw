@@ -1,0 +1,92 @@
+# Volume V — Identity Infrastructure™ chapters
+version: '1.0.0'
+updatedAt: '2026-07-07'
+volumeId: volume-v
+authoringPhase: Phase 3
+authoringStatus: complete
+
+chapters:
+  - id: chapter-v-1
+    number: 1
+    title: First-Class People & Identity Graph
+    summary: >-
+      Identity Graph™ — every person connected to the organization becomes a living
+      profile with relationships, expertise, history, and organizational context.
+      People are first-class citizens, not user accounts.
+    status: complete
+    dependsOn: [volume-ii, volume-iv, M112]
+    milestoneIds: [M159]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-context-aware-experiences
+      - philosophy-personalization-dna
+
+  - id: chapter-v-2
+    number: 2
+    title: Living Professional Identity
+    summary: >-
+      Professional Profile™ — dynamic career identities that evolve with skills,
+      achievements, contributions, and learning history — never static resumes.
+    status: complete
+    dependsOn: [chapter-v-1]
+    milestoneIds: [M160]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-documentation-as-architecture
+      - philosophy-progressive-disclosure
+
+  - id: chapter-v-3
+    number: 3
+    title: Organizational Capabilities & Skill Graph
+    summary: >-
+      Skill Graph™ — maps every capability across the organization. Skills become
+      searchable assets; invisible knowledge becomes discoverable.
+    status: complete
+    dependsOn: [chapter-v-2]
+    milestoneIds: [M161]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-invisible-complexity
+      - philosophy-ai-creative-director
+
+  - id: chapter-v-4
+    number: 4
+    title: Work Beyond Titles
+    summary: >-
+      Role Intelligence™ — understands responsibilities, workflows, decision authority,
+      and performance patterns — not job titles alone.
+    status: complete
+    dependsOn: [chapter-v-3]
+    milestoneIds: [M162]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-executive-first
+      - philosophy-context-aware-experiences
+
+  - id: chapter-v-5
+    number: 5
+    title: Real-World Organizational Structure
+    summary: >-
+      Organizational Hierarchy™ — maps reporting lines, matrix teams, shared services,
+      project teams, and multi-location structures as the organization actually operates.
+    status: complete
+    dependsOn: [chapter-v-4]
+    milestoneIds: [M163]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-places-not-pages
+      - philosophy-living-headquarters
+
+  - id: chapter-v-6
+    number: 6
+    title: Professional Journey & Identity Timeline
+    summary: >-
+      Identity Timeline™ — preserves the permanent professional story of every
+      individual inside Studio OS — never rebuilt, never lost.
+    status: complete
+    dependsOn: [chapter-v-5]
+    milestoneIds: [M164]
+    completionPct: 100
+    alignedPhilosophies:
+      - philosophy-environmental-storytelling
+      - philosophy-documentation-as-architecture

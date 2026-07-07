@@ -1,6 +1,6 @@
-# Role Intelligence™ (M166)
+# Role Intelligence™ (M162)
 
-**Studio OS understands work — not titles.**
+**Canonical milestone M162 · Shipped nav badge M166 · Volume V — Identity Infrastructure**
 
 ## Philosophy
 

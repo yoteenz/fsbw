@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "compiledAt": "2026-07-07T16:33:44.134Z",
+  "compiledAt": "2026-07-07T16:43:44.338Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
     "version": "1.1.0",
@@ -966,13 +966,15 @@
       "number": "V",
       "title": "Identity Infrastructure",
       "summary": "People as first-class citizens — identities, profiles, skills, roles, hierarchy, and timelines.",
-      "status": "in-progress",
+      "status": "complete",
       "dependsOn": [
         "volume-ii",
         "volume-iv"
       ],
       "milestoneRange": "M159-M164",
-      "completionPct": 85
+      "completionPct": 100,
+      "chaptersFile": "chapters/volume-v.yaml",
+      "notes": "Six chapters authored (Phase 3). Identity chain M159→M164 complete in codebase. Canonical vs shipped milestone offset documented in milestone-aliases.yaml. Feeds Volume VI Relationship Intelligence."
     },
     {
       "id": "volume-vi",
@@ -1802,6 +1804,122 @@
         "philosophy-architecture-before-implementation"
       ],
       "volumeId": "volume-iv"
+    },
+    {
+      "id": "chapter-v-1",
+      "number": 1,
+      "title": "First-Class People & Identity Graph",
+      "summary": "Identity Graph™ — every person connected to the organization becomes a living profile with relationships, expertise, history, and organizational context. People are first-class citizens, not user accounts.",
+      "status": "complete",
+      "dependsOn": [
+        "volume-ii",
+        "volume-iv",
+        "M112"
+      ],
+      "milestoneIds": [
+        "M159"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-context-aware-experiences",
+        "philosophy-personalization-dna"
+      ],
+      "volumeId": "volume-v"
+    },
+    {
+      "id": "chapter-v-2",
+      "number": 2,
+      "title": "Living Professional Identity",
+      "summary": "Professional Profile™ — dynamic career identities that evolve with skills, achievements, contributions, and learning history — never static resumes.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-v-1"
+      ],
+      "milestoneIds": [
+        "M160"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-documentation-as-architecture",
+        "philosophy-progressive-disclosure"
+      ],
+      "volumeId": "volume-v"
+    },
+    {
+      "id": "chapter-v-3",
+      "number": 3,
+      "title": "Organizational Capabilities & Skill Graph",
+      "summary": "Skill Graph™ — maps every capability across the organization. Skills become searchable assets; invisible knowledge becomes discoverable.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-v-2"
+      ],
+      "milestoneIds": [
+        "M161"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-invisible-complexity",
+        "philosophy-ai-creative-director"
+      ],
+      "volumeId": "volume-v"
+    },
+    {
+      "id": "chapter-v-4",
+      "number": 4,
+      "title": "Work Beyond Titles",
+      "summary": "Role Intelligence™ — understands responsibilities, workflows, decision authority, and performance patterns — not job titles alone.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-v-3"
+      ],
+      "milestoneIds": [
+        "M162"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-executive-first",
+        "philosophy-context-aware-experiences"
+      ],
+      "volumeId": "volume-v"
+    },
+    {
+      "id": "chapter-v-5",
+      "number": 5,
+      "title": "Real-World Organizational Structure",
+      "summary": "Organizational Hierarchy™ — maps reporting lines, matrix teams, shared services, project teams, and multi-location structures as the organization actually operates.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-v-4"
+      ],
+      "milestoneIds": [
+        "M163"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-places-not-pages",
+        "philosophy-living-headquarters"
+      ],
+      "volumeId": "volume-v"
+    },
+    {
+      "id": "chapter-v-6",
+      "number": 6,
+      "title": "Professional Journey & Identity Timeline",
+      "summary": "Identity Timeline™ — preserves the permanent professional story of every individual inside Studio OS — never rebuilt, never lost.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-v-5"
+      ],
+      "milestoneIds": [
+        "M164"
+      ],
+      "completionPct": 100,
+      "alignedPhilosophies": [
+        "philosophy-environmental-storytelling",
+        "philosophy-documentation-as-architecture"
+      ],
+      "volumeId": "volume-v"
     }
   ],
   "milestones": [
@@ -3007,7 +3125,8 @@
         "M111"
       ],
       "enables": [
-        "M113"
+        "M113",
+        "M159"
       ],
       "chapterId": "chapter-ii-6",
       "relatedSystems": [
@@ -4542,14 +4661,34 @@
       "internalId": "identity-graph",
       "registryKind": "milestone",
       "volumeId": "volume-v",
+      "chapterId": "chapter-v-1",
       "purpose": "Living graph of every person connected to the organization.",
       "implementationStatus": "complete",
       "shippedMilestone": "M163",
       "moduleId": "identity-graph",
       "dependsOn": [
-        "M112"
+        "M112",
+        "M95",
+        "M127"
       ],
-      "enables": []
+      "enables": [
+        "M160"
+      ],
+      "relatedSystems": [
+        "relationship-memory",
+        "organization-genome",
+        "profession-brain",
+        "expert-marketplace",
+        "wisdom-capture",
+        "business-discovery-blueprint",
+        "mission-control",
+        "studio-intelligence"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-context-aware-experiences",
+        "philosophy-personalization-dna"
+      ],
+      "implementationNotes": "Foundational people intelligence. Canonical M159; shipped nav badge M163 per milestone-aliases.yaml (QA chain insertion offset). Syncs from Relationship Memory™, Blueprint people chapter, and cross-org intelligence."
     },
     {
       "canonicalId": "M160",
@@ -4557,6 +4696,7 @@
       "internalId": "professional-profile",
       "registryKind": "milestone",
       "volumeId": "volume-v",
+      "chapterId": "chapter-v-2",
       "purpose": "Dynamic career identity with skills, achievements, and contributions.",
       "implementationStatus": "complete",
       "shippedMilestone": "M164",
@@ -4564,7 +4704,22 @@
       "dependsOn": [
         "M159"
       ],
-      "enables": []
+      "enables": [
+        "M161"
+      ],
+      "relatedSystems": [
+        "identity-graph",
+        "skill-graph",
+        "studio-institute",
+        "profession-brain",
+        "knowledge-commerce",
+        "expert-marketplace"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-documentation-as-architecture",
+        "philosophy-progressive-disclosure"
+      ],
+      "implementationNotes": "Living profiles — not static resumes. Canonical M160; shipped badge M164. Links Profession Brains™, Academy progress, and marketplace portfolio."
     },
     {
       "canonicalId": "M161",
@@ -4572,6 +4727,7 @@
       "internalId": "skill-graph",
       "registryKind": "milestone",
       "volumeId": "volume-v",
+      "chapterId": "chapter-v-3",
       "purpose": "Maps capabilities, mentors, gaps, and invisible knowledge.",
       "implementationStatus": "complete",
       "shippedMilestone": "M165",
@@ -4579,7 +4735,21 @@
       "dependsOn": [
         "M160"
       ],
-      "enables": []
+      "enables": [
+        "M162"
+      ],
+      "relatedSystems": [
+        "professional-profile",
+        "role-intelligence",
+        "profession-brain",
+        "studio-institute",
+        "studio-intelligence"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-invisible-complexity",
+        "philosophy-ai-creative-director"
+      ],
+      "implementationNotes": "Skills as searchable organizational assets. Canonical M161; shipped badge M165. Powers mentor matching, gap detection, and collaboration recommendations."
     },
     {
       "canonicalId": "M162",
@@ -4587,6 +4757,7 @@
       "internalId": "role-intelligence",
       "registryKind": "milestone",
       "volumeId": "volume-v",
+      "chapterId": "chapter-v-4",
       "purpose": "Understands responsibilities and workflows, not just titles.",
       "implementationStatus": "complete",
       "shippedMilestone": "M166",
@@ -4594,7 +4765,22 @@
       "dependsOn": [
         "M161"
       ],
-      "enables": []
+      "enables": [
+        "M163"
+      ],
+      "relatedSystems": [
+        "skill-graph",
+        "identity-graph",
+        "profession-brain",
+        "executive-organization",
+        "organization-operating-manual",
+        "studio-intelligence"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-executive-first",
+        "philosophy-context-aware-experiences"
+      ],
+      "implementationNotes": "Maps actual work — responsibilities, workflows, decision authority, AI counterparts. Canonical M162; shipped badge M166. Role Evolution™ tracks splitting and consolidation."
     },
     {
       "canonicalId": "M163",
@@ -4602,6 +4788,7 @@
       "internalId": "organizational-hierarchy",
       "registryKind": "milestone",
       "volumeId": "volume-v",
+      "chapterId": "chapter-v-5",
       "purpose": "Maps real-world reporting, matrix teams, and shared services.",
       "implementationStatus": "complete",
       "shippedMilestone": "M167",
@@ -4609,7 +4796,21 @@
       "dependsOn": [
         "M162"
       ],
-      "enables": []
+      "enables": [
+        "M164"
+      ],
+      "relatedSystems": [
+        "role-intelligence",
+        "identity-graph",
+        "executive-organization",
+        "mission-control",
+        "organization-pulse"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-places-not-pages",
+        "philosophy-living-headquarters"
+      ],
+      "implementationNotes": "Hierarchy as lived structure — matrix, holding company, franchise, project teams. Canonical M163; shipped badge M167. Powers approval routing and org health signals."
     },
     {
       "canonicalId": "M164",
@@ -4617,6 +4818,7 @@
       "internalId": "identity-timeline",
       "registryKind": "milestone",
       "volumeId": "volume-v",
+      "chapterId": "chapter-v-6",
       "purpose": "Preserves the professional journey of every individual.",
       "implementationStatus": "complete",
       "shippedMilestone": "M168",
@@ -4624,7 +4826,21 @@
       "dependsOn": [
         "M163"
       ],
-      "enables": []
+      "enables": [],
+      "relatedSystems": [
+        "organizational-hierarchy",
+        "professional-profile",
+        "identity-graph",
+        "legacy-vault",
+        "studio-institute",
+        "expert-marketplace",
+        "wisdom-capture"
+      ],
+      "alignedPhilosophies": [
+        "philosophy-environmental-storytelling",
+        "philosophy-documentation-as-architecture"
+      ],
+      "implementationNotes": "Permanent professional story — promotions, mentorship, knowledge published, milestones. Canonical M164; shipped badge M168. Volume V identity chain terminus; feeds Volume VI Relationship Intelligence."
     },
     {
       "canonicalId": "M165",
@@ -6662,6 +6878,36 @@
       "type": "enables"
     },
     {
+      "from": "M112",
+      "to": "M159",
+      "type": "enables",
+      "note": "Relationship Memory feeds Identity Graph (Volume V)"
+    },
+    {
+      "from": "volume-ii",
+      "to": "M159",
+      "type": "enables",
+      "note": "Knowledge Infrastructure feeds Identity Infrastructure"
+    },
+    {
+      "from": "volume-iv",
+      "to": "M159",
+      "type": "enables",
+      "note": "Trust Infrastructure gates people intelligence surfaces"
+    },
+    {
+      "from": "volume-v",
+      "to": "M159",
+      "type": "enables",
+      "note": "Volume V Identity Infrastructure container"
+    },
+    {
+      "from": "M164",
+      "to": "M165",
+      "type": "enables",
+      "note": "Identity Timeline feeds Volume VI Relationship Intelligence"
+    },
+    {
       "from": "M159",
       "to": "M160",
       "type": "enables",
@@ -7031,7 +7277,7 @@
   ],
   "stats": {
     "volumeCount": 20,
-    "chapterCount": 32,
+    "chapterCount": 38,
     "milestoneCount": 233,
     "designRevisionCount": 5,
     "completeCount": 102,
@@ -7049,6 +7295,9 @@
     "volumeIVMilestoneCount": 23,
     "volumeIVChapterCount": 9,
     "volumeIVCompleteCount": 22,
+    "volumeVMilestoneCount": 6,
+    "volumeVChapterCount": 6,
+    "volumeVCompleteCount": 6,
     "philosophyCount": 23,
     "foundationFrozen": true,
     "foundationOperationalComplete": true,

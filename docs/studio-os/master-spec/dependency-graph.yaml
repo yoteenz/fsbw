@@ -248,6 +248,31 @@ edges:
     to: M123
     type: enables
 
+  - from: M112
+    to: M159
+    type: enables
+    note: Relationship Memory feeds Identity Graph (Volume V)
+
+  - from: volume-ii
+    to: M159
+    type: enables
+    note: Knowledge Infrastructure feeds Identity Infrastructure
+
+  - from: volume-iv
+    to: M159
+    type: enables
+    note: Trust Infrastructure gates people intelligence surfaces
+
+  - from: volume-v
+    to: M159
+    type: enables
+    note: Volume V Identity Infrastructure container
+
+  - from: M164
+    to: M165
+    type: enables
+    note: Identity Timeline feeds Volume VI Relationship Intelligence
+
   - from: M159
     to: M160
     type: enables

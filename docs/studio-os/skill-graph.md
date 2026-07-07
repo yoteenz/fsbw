@@ -1,6 +1,6 @@
-# Skill Graph™ (M165)
+# Skill Graph™ (M161)
 
-**Maps every capability across the organization — skills as searchable assets.**
+**Canonical milestone M161 · Shipped nav badge M165 · Volume V — Identity Infrastructure**
 
 ## Philosophy
 

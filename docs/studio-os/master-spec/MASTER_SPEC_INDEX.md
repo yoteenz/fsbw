@@ -25,6 +25,7 @@
 | `chapters/volume-ii.yaml` | Volume II — 9 chapters |
 | `chapters/volume-iii.yaml` | Volume III — 6 chapters |
 | `chapters/volume-iv.yaml` | Volume IV — 9 chapters |
+| `chapters/volume-v.yaml` | Volume V — **6 chapters complete** (Phase 3) |
 | `milestones/*.yaml` | Per-volume milestone manifests (233 milestones) |
 | `milestone-aliases.yaml` | Canonical ↔ shipped ID reconciliation |
 | `design-revisions.yaml` | DR-001–DR-005 **merged** (historical record) |
@@ -83,7 +84,8 @@ Runs automatically before `npm run build` via `prebuild`.
 Phase 1 — Foundation Completion Sprint™  ✅
 Phase 2 — Foundation Freeze™ v1.0        ✅
 Phase 2b — Operational Completion CA-001 ✅
-Phase 3 — Volume V+ authoring            → NEXT
+Phase 3 — Volume V authoring            ✅ Complete
+Phase 3+ — Volume VI+ authoring         → NEXT
 Phase 4 — Product implementation         → AFTER Phase 3
 Phase 5 — Governed evolution only        → PERMANENT
 ```

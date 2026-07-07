@@ -77,10 +77,15 @@ volumes:
     number: V
     title: Identity Infrastructure
     summary: People as first-class citizens — identities, profiles, skills, roles, hierarchy, and timelines.
-    status: in-progress
+    status: complete
     dependsOn: [volume-ii, volume-iv]
     milestoneRange: M159-M164
-    completionPct: 85
+    completionPct: 100
+    chaptersFile: chapters/volume-v.yaml
+    notes: >-
+      Six chapters authored (Phase 3). Identity chain M159→M164 complete in codebase.
+      Canonical vs shipped milestone offset documented in milestone-aliases.yaml.
+      Feeds Volume VI Relationship Intelligence.
 
   - id: volume-vi
     number: VI

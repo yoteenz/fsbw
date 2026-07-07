@@ -1,6 +1,6 @@
-# Professional Profile™ (M164)
+# Professional Profile™ (M160)
 
-**Living career identities that evolve — not static resumes.**
+**Canonical milestone M160 · Shipped nav badge M164 · Volume V — Identity Infrastructure**
 
 ## Philosophy
 

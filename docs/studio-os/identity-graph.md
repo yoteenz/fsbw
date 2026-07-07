@@ -1,6 +1,6 @@
-# Identity Graph™ (M163)
+# Identity Graph™ (M159)
 
-**Foundational people intelligence layer for Studio OS.**
+**Canonical milestone M159 · Shipped nav badge M163 · Volume V — Identity Infrastructure**
 
 ## Philosophy
 

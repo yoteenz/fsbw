@@ -82,6 +82,8 @@ function main() {
   const volumeIIICoverage = chapters.filter((c) => c.volumeId === 'volume-iii');
   const volumeIVMilestones = milestones.filter((m) => m.volumeId === 'volume-iv');
   const volumeIVCoverage = chapters.filter((c) => c.volumeId === 'volume-iv');
+  const volumeVMilestones = milestones.filter((m) => m.volumeId === 'volume-v');
+  const volumeVCoverage = chapters.filter((c) => c.volumeId === 'volume-v');
 
   const specVersion = constitution?.version ?? volumes?.version ?? '1.0.0';
   const compiledAt = new Date().toISOString();
@@ -122,6 +124,9 @@ function main() {
       volumeIVMilestoneCount: volumeIVMilestones.length,
       volumeIVChapterCount: volumeIVCoverage.length,
       volumeIVCompleteCount: volumeIVMilestones.filter((m) => m.implementationStatus === 'complete').length,
+      volumeVMilestoneCount: volumeVMilestones.length,
+      volumeVChapterCount: volumeVCoverage.length,
+      volumeVCompleteCount: volumeVMilestones.filter((m) => m.implementationStatus === 'complete').length,
       philosophyCount: corePhilosophies?.philosophies?.length ?? 0,
       foundationFrozen: foundationBaseline?.status === 'frozen',
       foundationOperationalComplete: foundationBaseline?.operationalCompletion?.status === 'complete',
@@ -178,6 +183,9 @@ Generated: ${bundle.compiledAt}
 | Volume IV chapters | ${bundle.stats.volumeIVChapterCount} |
 | Volume IV milestones | ${bundle.stats.volumeIVMilestoneCount} |
 | Volume IV complete | ${bundle.stats.volumeIVCompleteCount} |
+| Volume V chapters | ${bundle.stats.volumeVChapterCount} |
+| Volume V milestones | ${bundle.stats.volumeVMilestoneCount} |
+| Volume V complete | ${bundle.stats.volumeVCompleteCount} |
 | Core Philosophies | ${bundle.stats.philosophyCount} |
 | Design Revisions | ${bundle.stats.designRevisionCount} |
 | Complete | ${bundle.stats.completeCount} |
