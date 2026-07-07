@@ -70,15 +70,16 @@ priorities:
         title: Experience Studio™
         milestoneId: M131
         moduleId: experience-studio
-        lifecycleStage: product-specification
+        lifecycleStage: experience-prototype
         releaseChannel: preview
         specPath: docs/studio-os/products/experience-studio/
+        prototypePath: docs/studio-os/products/experience-studio/prototype/
         goldenProduct: true
         referenceImplementation: true
         note: >-
-          Golden Product™ · Reference Implementation™ — first POP v2.0.0 product.
-          AI Creative Operating System. Spec complete · awaiting approval.
-          Website Builder is a publish specialization within Experience Studio output taxonomy.
+          Golden Product™ · Reference Implementation™. Spec approved.
+          Experience prototype complete · Ready with Revisions.
+          Awaiting Founder walkthrough before engineering.
       - id: website-builder
         title: Studio Website Builder™
         milestoneId: M127.10
