@@ -79,6 +79,8 @@ priorities:
         note: >-
           Golden Product™ · Reference Implementation™. Spec approved.
           Experience prototype complete · Ready with Revisions.
+          CA-002 Genome-First — interpret company identity before layout.
+          Website generation is a final step, never first.
           Awaiting Founder walkthrough before engineering.
       - id: website-builder
         title: Studio Website Builder™

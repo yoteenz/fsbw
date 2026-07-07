@@ -139,6 +139,70 @@ milestones:
       - organization-operating-manual
       - release-channel-system
     implementationNotes: Organizational DNA — tone, values, culture inherited by every module.
+    note: >-
+      Identity governance slice under Company Genome™ (CA-002 M277). Consulted via
+      Genome-First Orchestration — not replaced.
+  - canonicalId: M277
+    name: Company Genome™
+    internalId: company-genome
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: >-
+      Apex living identity object — learned company DNA consulted before any creative
+      generation. Not logo · theme · or style guide.
+    implementationStatus: planned
+    moduleId: company-genome
+    dependsOn:
+      - M95
+      - M85
+    enables:
+      - M278
+      - M279
+    chapterId: chapter-ii-1
+    relatedSystems:
+      - organization-genome
+      - design-genome
+      - studio-intelligence
+      - experience-studio
+      - genome-first-orchestration
+    implementationNotes: CA-002 constitutional capability. Documentation ratified — implementation requires DR.
+  - canonicalId: M278
+    name: Project Genome™
+    internalId: project-genome
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Per-production genome inheriting Company Genome — project intent · mood · constraints.
+    implementationStatus: planned
+    moduleId: project-genome
+    dependsOn:
+      - M277
+    enables: []
+    chapterId: chapter-ii-1
+    relatedSystems:
+      - company-genome
+      - experience-studio
+      - studio-production-engine
+    implementationNotes: CA-002. Every Project™ carries genome. Consulted step 2 in Genome-First pipeline.
+  - canonicalId: M279
+    name: Genome-First Orchestration™
+    internalId: genome-first-orchestration
+    registryKind: milestone
+    volumeId: volume-ii
+    purpose: Mandatory AI creative pipeline — genome consultation before layout · copy · motion.
+    implementationStatus: planned
+    moduleId: genome-first-orchestration
+    dependsOn:
+      - M277
+      - M278
+    enables: []
+    chapterId: chapter-ii-1
+    relatedSystems:
+      - studio-intelligence
+      - conversation-engine
+      - creative-director
+      - editorial-art-director
+      - experience-studio
+    implementationNotes: CA-002. 13-step pipeline. Website generation is final step — never first.
   - canonicalId: M96
     name: Memory Engine™
     internalId: memory-engine

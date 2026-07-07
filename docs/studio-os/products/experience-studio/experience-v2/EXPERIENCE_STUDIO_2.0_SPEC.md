@@ -66,6 +66,7 @@ Every interaction reinforces four pillars:
 This specification **uses** — never replaces:
 
 - Studio Constitution™ · Master Specification™ · `experience-architecture.yaml`
+- **Company Genome™ (CA-002)** · **Project Genome™** · Genome-First Orchestration™
 - Headquarters Experience™ V2 wings (Executive Lobby through Legacy)
 - Studio Production Engine™ ten departments
 - Design Governance™ · Component Catalog `comp-*`

@@ -4,7 +4,9 @@
 
 ## Canonical direction
 
-See **[Headquarters Engine™](./headquarters-engine.md)** · **[Headquarters Marketplace™](./headquarters-marketplace.md)**.
+See **[Headquarters Engine™](./headquarters-engine.md)** · **[Headquarters Marketplace™](./headquarters-marketplace.md)** · **[Company Genome™](./company-genome.md)** (CA-002).
+
+**Genome-First (CA-002):** Matching · recommendations · deal introductions consult **Company Genome™** before suggesting participants or expansions. Never re-ask genome-known company facts.
 
 | Old concept | New concept |
 |-------------|-------------|

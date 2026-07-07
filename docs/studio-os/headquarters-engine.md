@@ -102,6 +102,8 @@ Tasks
 ## Relationship to existing subsystems
 
 ```
+Company Genome™ (M277)        ← apex living identity — consulted before any HQ generation
+         ↓
 Headquarters Engine™          ← generates & evolves business environments
          ↓
 Experience DNA™               ← how Headquarters feels (lot · buildings · roles)
@@ -119,6 +121,9 @@ Headquarters Marketplace™   ← creators sell operational architecture
 
 | Subsystem | Relationship |
 |-----------|--------------|
+| **Company Genome™ (M277)** | CA-002 — every HQ generation reads genome first; no generic headquarters |
+| **Project Genome™ (M278)** | Per-production intent layered on company identity |
+| **Genome-First Orchestration™ (M279)** | Creative direction before spatial layout |
 | **Industry Architecture (M88)** | Day-one industry → starter headquarters layout + department packs |
 | **Expansion Center** | Consumer UX for installing **Headquarters Expansions™** |
 | **Monetization (M89)** | HQ License · permanent Expansion purchase · Digital Payroll |

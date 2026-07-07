@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "compiledAt": "2026-07-07T21:13:33.951Z",
+  "compiledAt": "2026-07-07T21:53:54.696Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
     "version": "1.1.0",
@@ -8,7 +8,8 @@
     "updatedAt": "2026-07-07",
     "status": "frozen",
     "constitutionalAmendments": [
-      "CA-001"
+      "CA-001",
+      "CA-002"
     ],
     "principles": [
       {
@@ -75,16 +76,84 @@
         "id": "constitution-release-channels",
         "title": "Studio OS Release Channel System™",
         "summary": "Studio OS supports Stable, Preview, Beta, and Experimental operating channels so organizations adopt capabilities at different speeds without affecting production stability. Every organization has an assigned Release Channel in its Organization Profile and System Registry. Studio Orb™, Studio Intelligence™, QA™, Experience Systems™, Marketplace™, Website Builder™, and all future modules must respect channel eligibility. QA Engine™, Update Engine™, and Deployment Engine™ are channel-native. Constitutional capability — not a product feature (CA-001)."
+      },
+      {
+        "id": "constitution-company-genome",
+        "title": "Company Genome™",
+        "summary": "Company Genome™ is the living DNA of every organization — the apex architectural object for creative identity. It is learned continuously from every interaction, never a static form. Project Genome™ extends it per production. Every Studio OS intelligence system must consult the Genome before generating anything. Creative direction precedes layout. Website generation is a final step — never the first. Studio OS must never produce generic experiences — every output must feel inevitable for that specific company. Constitutional capability (CA-002)."
       }
     ]
   },
   "experienceArchitecture": {
-    "version": "1.0.0",
-    "foundationVersion": "1.0.0",
+    "version": "1.1.0",
+    "foundationVersion": "1.1.0",
     "updatedAt": "2026-07-07",
     "status": "frozen",
-    "summary": "The experiential layer defines how Studio OS feels, adapts, and communicates — ambient intelligence, immersive Headquarters, design genomes, and respectful personalization. Product implementation of individual surfaces may be deferred; architectural definitions are canonical and frozen at Foundation v1.0.",
+    "constitutionalAmendments": [
+      "CA-001",
+      "CA-002"
+    ],
+    "summary": "The experiential layer defines how Studio OS feels, adapts, and communicates — ambient intelligence, immersive Headquarters, design genomes, and respectful personalization. Company Genome™ (CA-002) is the apex identity layer above all genome systems. Product implementation of individual surfaces may be deferred; architectural definitions are canonical and frozen at Foundation v1.1.",
     "layers": [
+      {
+        "id": "company-genome-layer",
+        "title": "Company Genome Layer (CA-002)",
+        "concepts": [
+          {
+            "id": "company-genome",
+            "title": "Company Genome™",
+            "milestoneIds": [
+              "M277"
+            ],
+            "summary": "Living DNA of the company — learned · evolving · apex creative identity.",
+            "systems": [
+              "company-genome",
+              "organization-genome",
+              "design-genome",
+              "brand-assets",
+              "memory-engine"
+            ],
+            "philosophyIds": [
+              "philosophy-company-genome",
+              "philosophy-genome-first"
+            ]
+          },
+          {
+            "id": "project-genome",
+            "title": "Project Genome™",
+            "milestoneIds": [
+              "M278"
+            ],
+            "summary": "Per-production genome — inherits Company Genome + project intent.",
+            "systems": [
+              "project-genome",
+              "experience-studio",
+              "studio-production-engine"
+            ],
+            "philosophyIds": [
+              "philosophy-company-genome",
+              "philosophy-genome-first"
+            ]
+          },
+          {
+            "id": "genome-first-orchestration",
+            "title": "Genome-First Orchestration™",
+            "milestoneIds": [
+              "M279"
+            ],
+            "summary": "Mandatory AI pipeline — creative direction before layout · genome before all.",
+            "systems": [
+              "studio-intelligence",
+              "conversation-engine",
+              "creative-director",
+              "editorial-art-director"
+            ],
+            "philosophyIds": [
+              "philosophy-genome-first"
+            ]
+          }
+        ]
+      },
       {
         "id": "presence-interaction",
         "title": "Presence & Interaction Layer",
@@ -763,6 +832,40 @@
         ],
         "operationalCompletion": true,
         "note": "Final constitutional addition before Volume V authoring. Foundation v1.1 is operationally complete — baseline remains frozen; future changes require governed amendments only."
+      },
+      {
+        "id": "CA-002",
+        "title": "Company Genome™ — Foundational Platform Amendment",
+        "type": "constitutional-capability",
+        "ratifiedAt": "2026-07-07",
+        "foundationVersion": "1.1.0",
+        "status": "ratified",
+        "summary": "Introduces Company Genome™ as the apex living identity object for every organization. Project Genome™ extends per production. Genome-First Orchestration™ mandates that all intelligence systems consult genome before generating — creative direction before layout. Studio OS must never produce generic interchangeable experiences. Organization Genome™ and Design Genome™ become slices under Company Genome™. Not a feature — foundational architecture.",
+        "artifacts": [
+          "constitution.yaml",
+          "core-philosophies.yaml",
+          "company-genome.yaml",
+          "genome-first-orchestration.yaml",
+          "experience-architecture.yaml",
+          "milestones/volume-ii.yaml",
+          "company-genome.md",
+          "project-genome.md",
+          "COMPANY_GENOME_AMENDMENT_REPORT.md"
+        ],
+        "milestoneTargets": [
+          "M277",
+          "M278",
+          "M279"
+        ],
+        "principleTargets": [
+          "constitution-company-genome"
+        ],
+        "philosophyTargets": [
+          "philosophy-company-genome",
+          "philosophy-genome-first"
+        ],
+        "operationalCompletion": false,
+        "note": "Documentation and architecture ratified. Core module implementation requires DR. No UI or React per amendment sprint scope."
       }
     ]
   },
@@ -854,7 +957,7 @@
             "prototypePath": "docs/studio-os/products/experience-studio/prototype/",
             "goldenProduct": true,
             "referenceImplementation": true,
-            "note": "Golden Product™ · Reference Implementation™. Spec approved. Experience prototype complete · Ready with Revisions. Awaiting Founder walkthrough before engineering."
+            "note": "Golden Product™ · Reference Implementation™. Spec approved. Experience prototype complete · Ready with Revisions. CA-002 Genome-First — interpret company identity before layout. Website generation is a final step, never first. Awaiting Founder walkthrough before engineering."
           },
           {
             "id": "website-builder",
@@ -2983,7 +3086,80 @@
         "organization-operating-manual",
         "release-channel-system"
       ],
-      "implementationNotes": "Organizational DNA — tone, values, culture inherited by every module."
+      "implementationNotes": "Organizational DNA — tone, values, culture inherited by every module.",
+      "note": "Identity governance slice under Company Genome™ (CA-002 M277). Consulted via Genome-First Orchestration — not replaced."
+    },
+    {
+      "canonicalId": "M277",
+      "name": "Company Genome™",
+      "internalId": "company-genome",
+      "registryKind": "milestone",
+      "volumeId": "volume-ii",
+      "purpose": "Apex living identity object — learned company DNA consulted before any creative generation. Not logo · theme · or style guide.",
+      "implementationStatus": "planned",
+      "moduleId": "company-genome",
+      "dependsOn": [
+        "M95",
+        "M85"
+      ],
+      "enables": [
+        "M278",
+        "M279"
+      ],
+      "chapterId": "chapter-ii-1",
+      "relatedSystems": [
+        "organization-genome",
+        "design-genome",
+        "studio-intelligence",
+        "experience-studio",
+        "genome-first-orchestration"
+      ],
+      "implementationNotes": "CA-002 constitutional capability. Documentation ratified — implementation requires DR."
+    },
+    {
+      "canonicalId": "M278",
+      "name": "Project Genome™",
+      "internalId": "project-genome",
+      "registryKind": "milestone",
+      "volumeId": "volume-ii",
+      "purpose": "Per-production genome inheriting Company Genome — project intent · mood · constraints.",
+      "implementationStatus": "planned",
+      "moduleId": "project-genome",
+      "dependsOn": [
+        "M277"
+      ],
+      "enables": [],
+      "chapterId": "chapter-ii-1",
+      "relatedSystems": [
+        "company-genome",
+        "experience-studio",
+        "studio-production-engine"
+      ],
+      "implementationNotes": "CA-002. Every Project™ carries genome. Consulted step 2 in Genome-First pipeline."
+    },
+    {
+      "canonicalId": "M279",
+      "name": "Genome-First Orchestration™",
+      "internalId": "genome-first-orchestration",
+      "registryKind": "milestone",
+      "volumeId": "volume-ii",
+      "purpose": "Mandatory AI creative pipeline — genome consultation before layout · copy · motion.",
+      "implementationStatus": "planned",
+      "moduleId": "genome-first-orchestration",
+      "dependsOn": [
+        "M277",
+        "M278"
+      ],
+      "enables": [],
+      "chapterId": "chapter-ii-1",
+      "relatedSystems": [
+        "studio-intelligence",
+        "conversation-engine",
+        "creative-director",
+        "editorial-art-director",
+        "experience-studio"
+      ],
+      "implementationNotes": "CA-002. 13-step pipeline. Website generation is final step — never first."
     },
     {
       "canonicalId": "M96",
@@ -7584,20 +7760,56 @@
         "volume-i",
         "volume-xvi"
       ]
+    },
+    {
+      "id": "philosophy-company-genome",
+      "title": "Company Genome™",
+      "category": "platform",
+      "constitutionalAmendment": "CA-002",
+      "summary": "Every company has living DNA — not a logo, theme, or style guide. Company Genome™ is the apex identity object learned from every interaction. Studio OS must never create generic experiences. Outputs must feel inevitable for that specific company. Two companies generating the same product type must never receive interchangeable experiences.",
+      "governs": [
+        "company-genome",
+        "project-genome",
+        "organization-genome",
+        "design-genome",
+        "experience-studio"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-ii"
+      ]
+    },
+    {
+      "id": "philosophy-genome-first",
+      "title": "Genome-First Intelligence",
+      "category": "platform",
+      "constitutionalAmendment": "CA-002",
+      "summary": "Every AI system consults Company Genome™ and Project Genome™ before generating anything. Creative direction and editorial art direction precede layout, copy, and motion. Website generation is a final step. No intelligence may skip genome consultation. Rejected concepts teach the genome. Approved work strengthens it.",
+      "governs": [
+        "genome-first-orchestration",
+        "studio-intelligence",
+        "creative-director",
+        "experience-studio",
+        "studio-production-engine"
+      ],
+      "alignsVolumes": [
+        "volume-i",
+        "volume-ii"
+      ]
     }
   ],
   "stats": {
     "volumeCount": 20,
     "chapterCount": 38,
-    "milestoneCount": 233,
+    "milestoneCount": 236,
     "designRevisionCount": 5,
     "completeCount": 102,
     "inProgressCount": 12,
-    "plannedCount": 119,
+    "plannedCount": 122,
     "volumeIMilestoneCount": 26,
     "volumeIChapterCount": 8,
     "volumeICompleteCount": 21,
-    "volumeIIMilestoneCount": 41,
+    "volumeIIMilestoneCount": 44,
     "volumeIIChapterCount": 9,
     "volumeIICompleteCount": 40,
     "volumeIIIMilestoneCount": 12,
@@ -7609,12 +7821,12 @@
     "volumeVMilestoneCount": 6,
     "volumeVChapterCount": 6,
     "volumeVCompleteCount": 6,
-    "philosophyCount": 28,
+    "philosophyCount": 30,
     "foundationFrozen": true,
     "foundationOperationalComplete": true,
     "releaseChannelCount": 4,
-    "constitutionalAmendmentCount": 1,
-    "experienceLayerCount": 4,
+    "constitutionalAmendmentCount": 2,
+    "experienceLayerCount": 5,
     "mergedDrCount": 5
   }
 }

@@ -39,7 +39,10 @@ Studio OS module — transforms strategy into coordinated **production pipelines
 Canonical library of reusable UI components (`comp-*` IDs). Path: `design/COMPONENT_CATALOG.md`. Products use — never fork.
 
 ### Constitutional Amendment™ (CA-###)
-Rare process for changing Studio Constitution™ principles. Example: CA-001 Release Channel System™.
+Rare process for changing Studio Constitution™ principles. Examples: CA-001 Release Channel System™ · **CA-002 Company Genome™**.
+
+### Company Genome™
+Apex living identity object (M277 · CA-002). Learned DNA of a company — not logo, theme, or style guide. Every intelligence system consults before creative generation. Path: [company-genome.md](../company-genome.md).
 
 ### Concierge Review Board™
 Multidisciplinary review layer for content readiness. Each concierge (Brand, Editorial, SEO, Legal, etc.) returns PASS · WARNING · FAIL with recommendations and an overall readiness score. Primary gate: **REVIEW GATE™**; per-derivative review in **APPROVAL GATE™**. See [Master Content Pipeline Gates](../master-content-pipeline-gates.md).
@@ -214,6 +217,9 @@ Creators sell **business architecture** — living operational systems (UI · AI
 
 ### Studio Project™
 Primary user-facing object in Studio OS — a complete creative initiative (Truth Tuesday Episode, Product Launch, Email Campaign, …). Contains creative direction, brief, mood board, production assets, timeline, analytics, and **Outputs** (derivatives). Users *direct productions*, not pages. Mission Control shows **Project Dashboard** health. Core: `src/studio-os-core/studio-project/`. See [Project Model](../project-model.md).
+
+### Project Genome™
+Per-production genome (M278 · CA-002). Inherits Company Genome™ + project-specific objective · mood · constraints · deliverables. Consulted step 2 in Genome-First pipeline. Path: [project-genome.md](../project-genome.md).
 
 ### Project Output
 Deliverable linked to a parent Project — Instagram Reel, Landing Page, Newsletter, Blog Article, etc. Complete traceability from idea to publication.

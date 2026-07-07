@@ -28,3 +28,33 @@ amendments:
     note: >-
       Final constitutional addition before Volume V authoring. Foundation v1.1 is operationally
       complete — baseline remains frozen; future changes require governed amendments only.
+
+  - id: CA-002
+    title: Company Genome™ — Foundational Platform Amendment
+    type: constitutional-capability
+    ratifiedAt: '2026-07-07'
+    foundationVersion: '1.1.0'
+    status: ratified
+    summary: >-
+      Introduces Company Genome™ as the apex living identity object for every organization.
+      Project Genome™ extends per production. Genome-First Orchestration™ mandates that all
+      intelligence systems consult genome before generating — creative direction before
+      layout. Studio OS must never produce generic interchangeable experiences. Organization
+      Genome™ and Design Genome™ become slices under Company Genome™. Not a feature — foundational architecture.
+    artifacts:
+      - constitution.yaml
+      - core-philosophies.yaml
+      - company-genome.yaml
+      - genome-first-orchestration.yaml
+      - experience-architecture.yaml
+      - milestones/volume-ii.yaml
+      - company-genome.md
+      - project-genome.md
+      - COMPANY_GENOME_AMENDMENT_REPORT.md
+    milestoneTargets: [M277, M278, M279]
+    principleTargets: [constitution-company-genome]
+    philosophyTargets: [philosophy-company-genome, philosophy-genome-first]
+    operationalCompletion: false
+    note: >-
+      Documentation and architecture ratified. Core module implementation requires DR.
+      No UI or React per amendment sprint scope.

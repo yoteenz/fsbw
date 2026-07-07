@@ -2,7 +2,7 @@
 
 **Product ID:** `experience-studio`  
 **Role:** Golden Product™ · Reference Implementation™ · Studio OS Flagship  
-**Maturity:** 🏗 Prototype Complete · Experience Design v2.0  
+**Maturity:** 🏗 Prototype Complete · Experience Design v2.0 · **Company Genome™ CA-002**  
 **Status:** ⚠ Prototype Ready with Revisions · Experience Design v2.0 Awaiting Approval  
 **Release Channel:** Preview (organization opt-in)  
 **Date:** 2026-07-07  
@@ -50,7 +50,8 @@ Implementation **must not begin** until prototype is approved and **Founder Appr
 | 6 | Implementation Readiness Report | `IMPLEMENTATION_READINESS_REPORT.md` | ✅ |
 | 7 | Prototype Readiness Report | `prototype/PROTOTYPE_READINESS_REPORT.md` | ⚠ Ready with Revisions |
 | 8 | **Experience Design v2.0** | `experience-v2/` | ✅ Complete · ⏳ Awaiting Approval |
-| 9 | Product Creation Checklist | `PRODUCT_CREATION_CHECKLIST.md` | ✅ |
+| 9 | **Company Genome™ (CA-002)** | `../../company-genome.md` | ✅ Ratified |
+| 10 | Product Creation Checklist | `PRODUCT_CREATION_CHECKLIST.md` | ✅ |
 
 ---
 

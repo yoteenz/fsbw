@@ -27,7 +27,11 @@ Organizational visual memory — preserves identity patterns across workspaces.
 
 ## Related systems
 
-design-dna-canon · organization-genome · design-token-engine
+design-dna-canon · organization-genome · design-token-engine · **company-genome (M277)**
+
+## Company Genome™ relationship (CA-002)
+
+Design Genome™ is the **visual memory slice** under Company Genome™ — organizational visual patterns preserved across workspaces. Consulted as part of Genome-First Orchestration™ step 1 (via Company Genome™).
 
 ## Engineering notes
 

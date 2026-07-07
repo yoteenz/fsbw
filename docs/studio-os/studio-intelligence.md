@@ -10,7 +10,9 @@ studio os platform pillar — strategic operating intelligence layer. Not anothe
 
 **Augment judgment, not replace it.** Studio Intelligence recommends, explains, simulates, and learns — never acts autonomously on high-impact business decisions. The founder remains CEO; Studio Intelligence is CIO.
 
-Every major system reports in: Company DNA, Creative DNA, Memory Bible, Writing Bible, Knowledge Graph, Growth Network, Talent Network, Marketplace, Business Model Engine, Labs, Governance, Ecosystem.
+Every major system reports in: **Company Genome™** (CA-002 apex), Company DNA, Creative DNA, Memory Bible, Writing Bible, Knowledge Graph, Growth Network, Talent Network, Marketplace, Business Model Engine, Labs, Governance, Ecosystem.
+
+**Genome-First:** Studio Intelligence consults **Company Genome™** before synthesizing briefings, opportunities, or recommendations. Generic advice that could apply to any company is a failure.
 
 ## Capabilities (v1)
 

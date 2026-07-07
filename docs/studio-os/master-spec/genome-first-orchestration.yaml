@@ -1,0 +1,139 @@
+# Genome-First Orchestration™ — AI Creative Pipeline
+
+# Canonical generation order for all Studio OS intelligence (CA-002)
+version: '1.0.0'
+constitutionalAmendment: CA-002
+milestoneId: M279
+moduleId: genome-first-orchestration
+updatedAt: '2026-07-07'
+status: ratified
+
+summary: >-
+  Every AI system follows Genome-First order. Creative direction precedes layout.
+  Website generation is a final step — not a first step. No intelligence may
+  skip consultation layers.
+
+mandate: genome-first
+
+pipeline:
+  - step: 1
+    id: read-company-genome
+    title: Read Company Genome™
+    source: company-genome
+    required: true
+    skip: never
+
+  - step: 2
+    id: read-project-genome
+    title: Read Project Genome™
+    source: project-genome
+    required: true
+    skip: when-no-project-context-only
+
+  - step: 3
+    id: read-mood-board
+    title: Read Mood Board
+    source: project-creative-direction
+    required: when-available
+
+  - step: 4
+    id: read-inspiration-library
+    title: Read Inspiration Library
+    source: company-genome.visualReferences
+    required: when-available
+
+  - step: 5
+    id: read-brand-assets
+    title: Read Brand Assets
+    source: brand-assets
+    required: when-available
+
+  - step: 6
+    id: read-existing-products
+    title: Read Existing Products
+    source: system-registry
+    required: when-available
+
+  - step: 7
+    id: read-previous-decisions
+    title: Read Previous Creative Decisions
+    source: ai-memory · project-history
+    required: when-available
+
+  - step: 8
+    id: generate-creative-direction
+    title: Generate Creative Direction
+    output: creative-brief · constraints · emotional intent
+    actors: [creative-director, brand-concierge]
+
+  - step: 9
+    id: generate-editorial-art-direction
+    title: Generate Editorial Art Direction
+    output: composition rules · rhythm · section emotional purpose
+    actors: [editorial-art-director, art-director]
+    rules:
+      - no-identical-repeated-cards
+      - unique-emotional-purpose-per-section
+      - luxury-from-composition-not-decoration
+
+  - step: 10
+    id: generate-layout
+    title: Generate Layout
+    output: structure · hierarchy · spacing
+    actors: [creative-director, digital-architect]
+    note: Layout is interpretation — not template selection
+
+  - step: 11
+    id: generate-copy
+    title: Generate Copy
+    output: headlines · body · microcopy
+    actors: [creative-director]
+    constraints: [company-genome.voice, project-genome.audience]
+
+  - step: 12
+    id: generate-motion
+    title: Generate Motion
+    output: motion tokens · transitions · signature animations
+    actors: [motion-concierge]
+    constraints: [company-genome.motionPhilosophy]
+
+  - step: 13
+    id: generate-prototype
+    title: Generate Prototype / Implementation
+    output: experience · page · asset
+    actors: [experience-studio, production-engine]
+    note: Final step — never first
+
+experienceStudioWorkflow:
+  deprecated: generate-website-first
+  canonical:
+    - understand      # Company + Project Genome
+    - interpret       # Creative direction from genome
+    - creative-direction
+    - art-direction
+    - experience-design
+    - content-strategy
+    - prototype
+    - implementation
+
+violationHandling:
+  skip-genome: block-generation
+  generic-template-detected: reject · consult-genome · regenerate
+  interchangeable-output: failure · log · refine-genome
+
+apiPattern:
+  consult: consultCompanyGenome(orgId, context) → GenomeConsultationBrief
+  project: consultProjectGenome(projectId, context) → ProjectGenomeBrief
+  pipeline: executeGenomeFirstPipeline(context) → ordered-step-results
+  validate: validateOutputAgainstGenome(output, genome) → pass | fail · reasons
+
+consumers:
+  - studio-intelligence
+  - conversation-engine
+  - studio-orb
+  - experience-studio
+  - studio-production-engine
+  - all-concierges
+  - marketplace
+  - campaign-engine
+  - publishing-studio

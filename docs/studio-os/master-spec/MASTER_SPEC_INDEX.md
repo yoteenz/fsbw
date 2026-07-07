@@ -5,18 +5,21 @@
 | Property | Value |
 |----------|-------|
 | Version | 1.1.0 |
-| Foundation | **🔒 Frozen v1.1 · Operationally Complete** |
+| Foundation | **🔒 Frozen v1.1 · CA-002 Company Genome™** |
 | Location | `docs/studio-os/master-spec/` |
 | Compiled bundle | `public/studio-os/master-spec/manifest-bundle.json` |
-| Sprint | Foundation Completion Sprint™ + CA-001 |
+| Sprint | Foundation Completion Sprint™ + CA-001 + **CA-002** |
 
 ## Foundation v1.1 Artifacts
 
 | File | Contents |
 |------|----------|
-| `constitution.yaml` | Volume 0 principles (13) — frozen |
-| `core-philosophies.yaml` | Core Studio OS Philosophy — **28 principles** — v1.2 Headquarters Engine amendment |
-| `experience-architecture.yaml` | Experience Architecture™ — DR-001–004 merged — frozen |
+| `constitution.yaml` | Volume 0 principles (14) — CA-002 Company Genome™ |
+| `core-philosophies.yaml` | Core Studio OS Philosophy — **30 principles** — CA-002 amendment |
+| `experience-architecture.yaml` | Experience Architecture™ — Company Genome layer — CA-002 |
+| `company-genome.yaml` | **Company Genome™** canonical schema (M277) |
+| `genome-first-orchestration.yaml` | **Genome-First** AI pipeline (M279) |
+| `constitutional-amendments.yaml` | CA-001 · CA-002 |
 | `release-channel-system.yaml` | Release Channel System™ — CA-001 — frozen |
 | `product-roadmap.yaml` | Product Phase priorities · VI–XIX governed roadmaps |
 | `foundation-baseline.yaml` | Foundation Freeze registry — operationally complete |

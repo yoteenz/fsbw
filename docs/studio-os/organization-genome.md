@@ -74,11 +74,20 @@ Sync triggers:
 | Hook | `src/hooks/useOrganizationGenomeState.ts` |
 | Command Dock | `resolveOrganizationGenomeAdvice()` · proactive on Genome route |
 
-## Relationship to Company Genome (M57)
+## Relationship to Company Genome™ (M277 — CA-002)
 
-**Company Genome** (M57) visualizes living organizational genetics across DNA layers and zoom levels.
+**Company Genome™** (M277) is the **apex living identity object** — the full learned DNA of the company.
 
-**Organization Genome™** (M95) is the **identity governance layer** consumed by AI before generating work. Complementary — not a replacement.
+**Organization Genome™** (M95) is the **identity governance slice** — tone, values, culture, decision philosophy. It **feeds into** Company Genome™ and is consulted via Genome-First Orchestration™.
+
+| System | Role |
+|--------|------|
+| Company Genome™ (M277) | Who the company IS — full living DNA |
+| Organization Genome™ (M95) | Identity governance layer · AI consultation API |
+| Design Genome™ (M85) | Visual memory slice |
+| Company Genome viz (M57) | Visualization across DNA layers |
+
+**Post-CA-002:** `consultOrganizationGenome()` remains — routes through Company Genome™ consultation.
 
 ## Brand voice
 

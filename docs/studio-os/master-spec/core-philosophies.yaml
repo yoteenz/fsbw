@@ -2,7 +2,7 @@
 # Governs every Volume, Chapter, Milestone, and Design Revision authored in the Master Specification.
 version: '1.2.0'
 updatedAt: '2026-07-07'
-amendmentNote: 'Headquarters Engine™ platform philosophy — living businesses, Expansions, Marketplace of operational architecture'
+amendmentNote: 'CA-002 Company Genome™ — genome-first intelligence · living company DNA'
 
 philosophies:
   - id: philosophy-environmental-storytelling
@@ -282,3 +282,28 @@ philosophies:
       they are building something alive; achievements reflect real organizational progress.
     governs: [headquarters-engine, experience-dna, living-creative-headquarters, campus-evolution-engine]
     alignsVolumes: [volume-i, volume-xvi]
+
+  - id: philosophy-company-genome
+    title: Company Genome™
+    category: platform
+    constitutionalAmendment: CA-002
+    summary: >-
+      Every company has living DNA — not a logo, theme, or style guide. Company Genome™
+      is the apex identity object learned from every interaction. Studio OS must never
+      create generic experiences. Outputs must feel inevitable for that specific company.
+      Two companies generating the same product type must never receive interchangeable
+      experiences.
+    governs: [company-genome, project-genome, organization-genome, design-genome, experience-studio]
+    alignsVolumes: [volume-i, volume-ii]
+
+  - id: philosophy-genome-first
+    title: Genome-First Intelligence
+    category: platform
+    constitutionalAmendment: CA-002
+    summary: >-
+      Every AI system consults Company Genome™ and Project Genome™ before generating
+      anything. Creative direction and editorial art direction precede layout, copy,
+      and motion. Website generation is a final step. No intelligence may skip genome
+      consultation. Rejected concepts teach the genome. Approved work strengthens it.
+    governs: [genome-first-orchestration, studio-intelligence, creative-director, experience-studio, studio-production-engine]
+    alignsVolumes: [volume-i, volume-ii]

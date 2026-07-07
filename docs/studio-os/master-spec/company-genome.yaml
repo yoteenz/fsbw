@@ -1,0 +1,158 @@
+# Company Genome™ & Project Genome™ — Master Spec Artifact
+
+# Canonical schema for Company Genome™ (CA-002)
+# Foundational platform subsystem — not a product feature
+version: '1.0.0'
+constitutionalAmendment: CA-002
+foundationVersion: '1.1.0'
+updatedAt: '2026-07-07'
+status: ratified
+milestoneId: M277
+moduleId: company-genome
+
+summary: >-
+  Company Genome™ is the living DNA of a company — the apex architectural object
+  for creative identity. Every intelligence system consults it before generating
+  anything. Learned continuously from interactions — never a static form.
+
+not:
+  - logo
+  - style-guide
+  - design-system
+  - theme
+  - color-palette
+
+is:
+  - living-identity-model
+  - learned-from-interactions
+  - genome-first-consultation-layer
+  - evolving-institutional-knowledge
+
+domains:
+  identity:
+    - mission
+    - purpose
+    - coreBeliefs
+    - values
+    - longTermVision
+  personality:
+    - personality
+    - archetype
+    - voice
+    - writingStyle
+    - microcopyStyle
+    - humorStyle
+    - brandEmotions
+    - customerEmotions
+  creativeDirection:
+    - visualPhilosophy
+    - experiencePhilosophy
+    - motionPhilosophy
+    - contentPhilosophy
+    - productPhilosophy
+    - photographyDirection
+    - artDirection
+    - editorialDirection
+    - pacing
+  materialSpatial:
+    - colorPrinciples
+    - materialLanguage
+    - lightingStyle
+    - spatialDesign
+    - worldBuilding
+  sensory:
+    - musicStyle
+    - soundDesign
+  behavior:
+    - interactionStyle
+    - immersionLevel
+    - gamificationPhilosophy
+    - accessibilityPrinciples
+  competitive:
+    - competitors
+    - aspirationalBrands
+    - visualReferences
+    - thingsWeLove
+    - thingsWeNeverDo
+  signature:
+    - signatureMoments
+    - signatureInteractions
+    - signatureAnimations
+    - signatureExperiences
+  offerings:
+    - coreProducts
+    - coreServices
+
+learningSources:
+  - onboarding-conversations
+  - founder-conversations
+  - mood-boards
+  - pinterest-references
+  - instagram-saves
+  - tiktok-references
+  - behance-inspiration
+  - packaging
+  - photography
+  - videos
+  - fonts
+  - brand-assets
+  - existing-websites
+  - previous-projects
+  - customer-feedback
+  - creative-decisions
+  - founder-revisions
+  - design-approvals
+  - notes
+  - rejected-concepts
+
+evolutionRules:
+  approval: strengthens-domain-confidence
+  rejection: updates-things-we-never-do
+  revision: refines-domain-values
+  successful-launch: validates-signature-patterns
+  uploaded-inspiration: expands-reference-library
+  founder-note: institutional-knowledge-entry
+
+genomeStack:
+  apex: company-genome
+  project: project-genome
+  slices:
+    - organization-genome  # M95 — identity governance
+    - design-genome        # M85 — visual memory
+  expression:
+    - design-dna-canon     # M84
+    - experience-dna
+    - workspace-dna
+
+mandatoryConsumers:
+  - studio-orb
+  - creative-director
+  - editorial-art-director
+  - studio-production-engine
+  - marketing-concierge
+  - photography-concierge
+  - brand-concierge
+  - motion-concierge
+  - review-concierge
+  - publishing-concierge
+  - marketplace
+  - experience-engine
+  - mission-control
+  - experience-studio
+  - campaign-engine
+  - publishing-studio
+  - relationship-intelligence
+  - all-future-products
+
+successCriteria:
+  interchangeableOutputs: forbidden
+  companySpecificInevitability: required
+  genericPremium: failure
+
+relatedMilestones:
+  - M277  # company-genome
+  - M278  # project-genome
+  - M279  # genome-first-orchestration
+  - M95   # organization-genome (slice)
+  - M85   # design-genome (slice)
+  - M84   # design-dna-canon (expression)

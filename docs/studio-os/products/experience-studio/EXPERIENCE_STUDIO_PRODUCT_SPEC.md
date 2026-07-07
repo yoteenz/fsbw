@@ -281,6 +281,37 @@ See §2 for full principles. Core belief: **Design experiences — not pages.**
 
 ## §3 — User Experience (End-to-End)
 
+> **CA-002 Genome-First:** Experience Studio™ never asks "Generate a website." It interprets Company Genome™ + Project Genome™ first. See [Company Genome™](../../company-genome.md) · [Genome-First Orchestration](../../master-spec/genome-first-orchestration.yaml).
+
+### 3.0 Genome-First Workflow (CA-002 — Canonical)
+
+```
+Understand — Company Genome™ + Project Genome™
+    ↓
+Interpret — identity into creative constraints
+    ↓
+Creative Direction — brief · mood · emotional intent
+    ↓
+Editorial Art Direction — composition · unique section purpose
+    ↓
+Experience Design — structure · rhythm (not template)
+    ↓
+Content Strategy — copy plan from genome voice
+    ↓
+Prototype — preview experience
+    ↓
+Implementation — canvas · publish (FINAL step)
+```
+
+| Rule | Detail |
+|------|--------|
+| Never first | Layout · website generation |
+| Always first | Company Genome™ consultation |
+| Per project | Project Genome™ at creation |
+| Editorial | No identical repeated cards — luxury from composition |
+| Generic output | **Failure** — regenerate from genome |
+| Skip interview | Infer from Company Genome™ — not generic defaults |
+
 ### 3.1 Onboarding
 
 | Step | Experience | Component |
@@ -304,13 +335,19 @@ See §2 for full principles. Core belief: **Design experiences — not pages.**
 ### 3.3 Project Creation
 
 ```
-Select Experience Type (13 cards)
+Genome consultation (Company + Project)
     ↓
-Interview (style · audience · feeling) — skippable for returning users
+Inspiration injection (optional · encouraged)
     ↓
-Design DNA™ blend suggested from interview
+Select Experience Type OR describe production
     ↓
-Canvas generated — Director narrates choices
+Interview (style · audience · feeling) — seeds Project Genome™
+    ↓
+Creative Direction + Art Direction from genome
+    ↓
+Design DNA™ blend (derived from genome — not generic)
+    ↓
+Canvas generated — Director narrates genome-informed choices
     ↓
 Builder workspace
 ```

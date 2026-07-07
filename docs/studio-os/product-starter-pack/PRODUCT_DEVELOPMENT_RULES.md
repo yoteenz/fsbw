@@ -32,8 +32,10 @@ Optimize for **beauty · maintainability · accessibility · scalability · user
 | 9 | **Never create local design systems** | No `{product}DesignSystem.ts` |
 | 10 | **Never fork catalog components** | Use `comp-*` IDs · propose new via VDR |
 | 11 | **Never skip accessibility** | WCAG 2.2 AA minimum |
-| 12 | **Never ship without validators** | Architecture + Design + Product Health |
-| 13 | **Never mutate Foundation baseline** | v1.1 frozen — constitutional process only |
+| 12 | **Never generate without Genome** | CA-002 — consult Company + Project Genome first |
+| 13 | **Never produce generic interchangeable output** | Genome validation required |
+| 14 | **Never ship without validators** | Architecture + Design + Product Health |
+| 15 | **Never mutate Foundation baseline** | v1.1 frozen — constitutional process only |
 
 ---
 
@@ -56,6 +58,8 @@ Optimize for **beauty · maintainability · accessibility · scalability · user
 | 13 | **Always use Product Starter Pack templates** | This package |
 | 14 | **Always pass Product Review Board** | Before implementation |
 | 15 | **Always register at launch** | System Registry™ · Knowledge Registry™ |
+| 16 | **Always consult Company Genome™** | CA-002 — before AI generation |
+| 17 | **Always declare genomeCompliance** | Product README · genome-first adherence |
 
 ---
 

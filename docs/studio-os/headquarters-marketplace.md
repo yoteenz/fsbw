@@ -53,6 +53,23 @@ This is an **IP economy** for how businesses run — not a asset store for files
 
 ---
 
+## Genome-First personalization (CA-002)
+
+Every Marketplace install **inherits Company Genome™ + Project Genome™**.
+
+| Stage | Genome role |
+|-------|-------------|
+| Discovery | Match listings to genome-known gaps · aspirations · signature moments |
+| Preview | Show how expansion feels **for this company** — not generic demo |
+| Install | Adapt spatial rhythm · copy · concierge tone to genome constraints |
+| Post-install | Successful installs strengthen genome; rejections teach it |
+
+**Two companies installing the same Expansion must never feel interchangeable.**
+
+See [Company Genome™](./company-genome.md) · [Genome-First Orchestration](./master-spec/genome-first-orchestration.yaml).
+
+---
+
 ## Cross-industry installation
 
 Marketplace listings are **not gated by industry**.

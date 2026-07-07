@@ -13,7 +13,7 @@ Studio OS uses models. Studio OS is not defined by models.
 ## Core philosophy
 
 - Studio Intelligence™ is the layer **above** AI models
-- Combines Profession Brain™ · Organization Genome™ · Memory Engine™ · Knowledge Fabric™ · Executive Council™ · Relationship Memory™ · Legacy Vault™ · Operating Manual™ · World Knowledge Engine™ · Organizational Consciousness™
+- Combines **Company Genome™** (CA-002 apex) · Profession Brain™ · Organization Genome™ · Project Genome™ · Memory Engine™ · Knowledge Fabric™ · Executive Council™ · Relationship Memory™ · Legacy Vault™ · Operating Manual™ · World Knowledge Engine™ · Organizational Consciousness™
 - AI models help reason, write, summarize, and execute — **Studio OS owns organizational knowledge**
 - The moat is preserved expertise, identity, memory, decisions, relationships, and history — **not any vendor**
 
@@ -35,7 +35,7 @@ API: `buildKnowledgeFabricNodes()` · `buildKnowledgeFabricEdges()` · `summariz
 
 Trusted context assembled **before any AI response**:
 
-Active Organization · Profession Brain™ · Organization Genome™ · Relevant Memories · Documents · Policies · Customer History · Current Timeline · Knowledge Confidence™ · Professional Trust Framework™
+**Company Genome™** · **Project Genome™** · Active Organization · Profession Brain™ · Organization Genome™ · Relevant Memories · Documents · Policies · Customer History · Current Timeline · Knowledge Confidence™ · Professional Trust Framework™
 
 API: `assembleTrustedContext()` · `summarizeContextEngine()`
 
@@ -59,7 +59,7 @@ API: `buildModelGatewayRoutes()` · `selectModelGatewayProvider()` · `summarize
 
 ## Sync chain
 
-Profession Brain · Genome · Memory Engine · Executive Council · Relationship Memory · Legacy Vault · Operating Manual · World Knowledge Engine · Organizational Consciousness · Legacy Network.
+**Company Genome™** · **Project Genome™** · Profession Brain · Organization Genome · Memory Engine · Executive Council · Relationship Memory · Legacy Vault · Operating Manual · World Knowledge Engine · Organizational Consciousness · Legacy Network.
 
 **`legacy-network/store`** resync triggers **`syncStudioIntelligenceArchitectureFromSources`** · **boundary-sync**
 

@@ -3,7 +3,7 @@ version: '1.1.0'
 foundationVersion: '1.1.0'
 updatedAt: '2026-07-07'
 status: frozen
-constitutionalAmendments: [CA-001]
+constitutionalAmendments: [CA-001, CA-002]
 
 principles:
   - id: constitution-platform
@@ -78,3 +78,14 @@ principles:
       Systems™, Marketplace™, Website Builder™, and all future modules must respect channel
       eligibility. QA Engine™, Update Engine™, and Deployment Engine™ are channel-native.
       Constitutional capability — not a product feature (CA-001).
+
+  - id: constitution-company-genome
+    title: Company Genome™
+    summary: >-
+      Company Genome™ is the living DNA of every organization — the apex architectural
+      object for creative identity. It is learned continuously from every interaction,
+      never a static form. Project Genome™ extends it per production. Every Studio OS
+      intelligence system must consult the Genome before generating anything. Creative
+      direction precedes layout. Website generation is a final step — never the first.
+      Studio OS must never produce generic experiences — every output must feel inevitable
+      for that specific company. Constitutional capability (CA-002).

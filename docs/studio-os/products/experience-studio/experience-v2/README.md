@@ -108,10 +108,26 @@ designCompliance:
 
 ---
 
+## CA-002 — Company Genome™ Integration
+
+Experience Studio™ 2.0 adopts **Genome-First** (CA-002) as permanent platform direction:
+
+| Principle | Expression in v2.0 |
+|-----------|-------------------|
+| Never "generate a website" | **Interpret this company's identity** |
+| Workflow | Understand → Interpret → Creative Direction → Art Direction → Experience Design → Content Strategy → Prototype → Implementation |
+| Genome stack | Company Genome™ + Project Genome™ inherited by every experience |
+| Success test | Frontal Slayer · NDX · salon vs law firm — never interchangeable |
+
+See [Company Genome™](../../../company-genome.md) · [Project Genome™](../../../project-genome.md) · [COMPANY_GENOME_AMENDMENT_REPORT.md](../../../COMPANY_GENOME_AMENDMENT_REPORT.md).
+
+---
+
 ## Cross-References
 
 | System | Path |
 |--------|------|
+| **Company Genome™ (CA-002)** | `docs/studio-os/company-genome.md` |
 | Experience Architecture (frozen) | `master-spec/experience-architecture.yaml` |
 | Production Engine departments | `studio-production-engine-departments.md` |
 | Executive IA | `executive-information-architecture.md` |

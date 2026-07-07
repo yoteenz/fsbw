@@ -1,17 +1,43 @@
 # Studio OS Experience Architecture™ — canonical experiential layer (Foundation v1.0)
 # Absorbs DR-001 through DR-004 into permanent architecture (not isolated overlays).
-version: '1.0.0'
-foundationVersion: '1.0.0'
+version: '1.1.0'
+foundationVersion: '1.1.0'
 updatedAt: '2026-07-07'
 status: frozen
+constitutionalAmendments: [CA-001, CA-002]
 
 summary: >-
   The experiential layer defines how Studio OS feels, adapts, and communicates —
   ambient intelligence, immersive Headquarters, design genomes, and respectful
-  personalization. Product implementation of individual surfaces may be deferred;
-  architectural definitions are canonical and frozen at Foundation v1.0.
+  personalization. Company Genome™ (CA-002) is the apex identity layer above all
+  genome systems. Product implementation of individual surfaces may be deferred;
+  architectural definitions are canonical and frozen at Foundation v1.1.
 
 layers:
+  - id: company-genome-layer
+    title: Company Genome Layer (CA-002)
+    concepts:
+      - id: company-genome
+        title: Company Genome™
+        milestoneIds: [M277]
+        summary: Living DNA of the company — learned · evolving · apex creative identity.
+        systems: [company-genome, organization-genome, design-genome, brand-assets, memory-engine]
+        philosophyIds: [philosophy-company-genome, philosophy-genome-first]
+
+      - id: project-genome
+        title: Project Genome™
+        milestoneIds: [M278]
+        summary: Per-production genome — inherits Company Genome + project intent.
+        systems: [project-genome, experience-studio, studio-production-engine]
+        philosophyIds: [philosophy-company-genome, philosophy-genome-first]
+
+      - id: genome-first-orchestration
+        title: Genome-First Orchestration™
+        milestoneIds: [M279]
+        summary: Mandatory AI pipeline — creative direction before layout · genome before all.
+        systems: [studio-intelligence, conversation-engine, creative-director, editorial-art-director]
+        philosophyIds: [philosophy-genome-first]
+
   - id: presence-interaction
     title: Presence & Interaction Layer
     concepts:

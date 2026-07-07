@@ -31,6 +31,22 @@ Every phase of the production lifecycle must feel like **traveling to a differen
 
 ---
 
+## Genome-First Mandate (CA-002)
+
+Every department **must consult Company Genome™ and Project Genome™** before generating departmental outputs. See [Genome-First Orchestration](./master-spec/genome-first-orchestration.yaml).
+
+| Department | Genome use |
+|------------|------------|
+| Discover | `competitors` · `aspirationalBrands` · opportunity fit |
+| Development | `artDirection` · `editorialDirection` · mood boards |
+| Production | Layout interpretation — not templates |
+| Review | `thingsWeNeverDo` · brand consistency |
+| Publishing | `signatureMoments` · voice |
+
+**Nobody asks the founder to repeat genome-known information.**
+
+---
+
 ## Philosophy shift
 
 | Anti-pattern (rejected) | Studio Production Engine (canonical) |

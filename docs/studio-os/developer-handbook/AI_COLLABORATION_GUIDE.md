@@ -20,6 +20,33 @@ AI is not a feature bolted onto products — it is **ambient presence** through 
 | Transparency | Explain · teach · offer alternatives |
 | Never silent mutation | Preview → accept/reject always |
 | Conversation before configuration | Dialogue precedes forms |
+| **Genome-first (CA-002)** | Consult Company + Project Genome before any generation |
+
+---
+
+## Genome-First Pipeline (CA-002 — Mandatory)
+
+Every AI system follows this order. **Layout and website generation are final steps — never first.**
+
+```
+1. Company Genome™
+2. Project Genome™
+3. Mood Board
+4. Inspiration Library
+5. Brand Assets
+6. Existing Products
+7. Previous Creative Decisions
+8. Creative Direction
+9. Editorial Art Direction
+10. Layout
+11. Copy
+12. Motion
+13. Prototype / Implementation
+```
+
+See [genome-first-orchestration.yaml](../master-spec/genome-first-orchestration.yaml) · [company-genome.md](../company-genome.md).
+
+**Generic interchangeable output is a failure** — regenerate from genome.
 
 ---
 
