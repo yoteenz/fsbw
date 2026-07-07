@@ -2,15 +2,15 @@ import { MissionQuickLink } from './MissionQuickLink';
 import { ndxbookNewsroomQuickLink } from './ndxbookMissionActionRoutes';
 import { MC, mcLabel, mcPanel, mcSectionTitle } from './ndxbookMissionControlTheme';
 
-/** Always visible on NDXBOOK Headquarters overview — Page 001 review lives in Newsroom, not Production. */
+/** Always visible on NDXBOOK Headquarters overview — Project 001 production lives in the Production Wing. */
 export function NdxbookPilotNewsroomBar() {
   const newsroomPath = ndxbookNewsroomQuickLink();
 
   return (
     <section className="p-3 mb-4" style={{ ...mcPanel, borderTop: `3px solid ${MC.accent}` }}>
-      <p style={mcSectionTitle}>PAGE 001 · REVIEW & APPROVE</p>
+      <p style={mcSectionTitle}>PROJECT 001 · DIRECT PRODUCTION</p>
       <p style={{ ...mcLabel, marginBottom: 10, lineHeight: 1.45 }}>
-        Create · run Studio Intelligence · approve production · schedule Instagram — all on the Newsroom Production Floor.
+        Set creative direction · run Studio Intelligence · approve production · schedule Instagram — all through the Production Wing.
       </p>
       <MissionQuickLink
         to={newsroomPath}
@@ -24,7 +24,7 @@ export function NdxbookPilotNewsroomBar() {
           display: 'block',
         }}
       >
-        OPEN NEWSROOM · REVIEW & APPROVE PAGE 001 →
+        OPEN PRODUCTION · DIRECT PROJECT 001 →
       </MissionQuickLink>
     </section>
   );

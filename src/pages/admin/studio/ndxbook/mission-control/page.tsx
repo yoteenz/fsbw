@@ -40,7 +40,7 @@ export default function AdminStudioNdxbookMissionControlPage() {
             display: 'block',
           }}
         >
-          REVIEW & APPROVE PAGE 001 →
+          REVIEW & APPROVE PROJECT 001 →
         </MissionQuickLink>
         <MissionQuickLink
           to={ndxbookSocialsQuickLink()}

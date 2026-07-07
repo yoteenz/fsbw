@@ -79,14 +79,14 @@ export function bootstrapPage001CreativeDirection(): CreativeDirectionProject {
 
   const project: CreativeDirectionProject = {
     id: 'ndxbook-page-001',
-    name: 'PAGE 001 · TRUTH TUESDAY',
+    name: 'PROJECT 001 · TRUTH TUESDAY',
     workspaceId: 'ai-media',
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     activeBranchId: branches[0]!.id,
     branches,
     directionTimeline: [
-      timelineEvent('branch-created', 'Luxury Editorial', 'Default pilot branch for Page 001', branches[0]!.id),
+      timelineEvent('branch-created', 'Luxury Editorial', 'Default pilot branch for Project 001', branches[0]!.id),
     ],
   };
 

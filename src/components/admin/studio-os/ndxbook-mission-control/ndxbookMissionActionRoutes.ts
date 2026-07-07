@@ -58,7 +58,7 @@ export function buildNdxbookMissionActionLinks(
   workspaceId: string = NDXBOOK_WORKSPACE_ID
 ): NdxbookMissionActionLink[] {
   return [
-    { id: 'create-page', label: 'CREATE PAGE', route: adminStudioNdxbookCreativeDirectionPath() },
+    { id: 'create-page', label: 'START PROJECT', route: adminStudioNdxbookCreativeDirectionPath() },
     { id: 'approve', label: 'APPROVE PRODUCTION', route: adminStudioNdxbookNewsroomDepartmentPath('review') },
     { id: 'publish', label: 'PUBLISH', route: adminStudioNdxbookNewsroomDepartmentPath('publishing') },
     { id: 'intelligence', label: 'OPEN STUDIO INTELLIGENCE', route: ndxModule('studio-intelligence', workspaceId) },

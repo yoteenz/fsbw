@@ -19,9 +19,9 @@ export function syncMissionControlFromRegistry(): void {
     pendingApprovals,
     nextSuggestedAction:
       pages.length === 0
-        ? 'enter newsroom · create page 001'
+        ? 'enter production wing · start project 001'
         : primary?.status === 'published'
-          ? 'monitor page 001 · plan page 002'
+          ? 'monitor project 001 · plan project 002'
           : primary?.status === 'scheduled'
             ? `track ${primary.pageLabel} scheduled post`
             : primary?.status === 'review'
@@ -31,7 +31,7 @@ export function syncMissionControlFromRegistry(): void {
       pages.length === 0
         ? 'learning — publish 5 posts to unlock basic recommendations'
         : 'Studio Intelligence learning from first authentic NDXBook data',
-    topOpportunity: pages.length === 0 ? 'connect instagram & create page 001' : `${primary?.pageLabel ?? 'page'} · instagram pilot`,
+    topOpportunity: pages.length === 0 ? 'connect instagram & start project 001' : `${primary?.pageLabel ?? 'project'} · instagram pilot`,
   };
 
   const pageOfTheDay = primary

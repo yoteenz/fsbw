@@ -52,13 +52,13 @@ function refreshDashboard(store: ReturnType<typeof readNdxbookNewsroomStore>) {
     ...store.dashboard,
     summary:
       store.pages.length === 0
-        ? 'Production floor ready — create Page 001 to begin NDXBook history.'
+        ? 'Production floor ready — start Project 001 to begin NDXBook history.'
         : `${store.pages.length} page(s) in pipeline · ${inProduction} in production`,
     pagesInProduction: inProduction,
     pagesPublishingToday: publishingToday,
     bottlenecks,
     overallHealthPct: avgHealth,
-    cosOrchestrationStatus: store.pages.length > 0 ? 'ACTIVE' : 'AWAITING PAGE 001',
+    cosOrchestrationStatus: store.pages.length > 0 ? 'ACTIVE' : 'AWAITING PROJECT 001',
   };
 }
 
@@ -117,7 +117,7 @@ export function productionPageFromRegistry(page: NdxbookPage): ProductionPage {
       strategyId: 'str-ndx-pilot',
       strategyLabel: 'FIRST POST PIPELINE',
       initiativeId: 'init-page-001',
-      initiativeLabel: 'PAGE 001 PILOT',
+      initiativeLabel: 'PROJECT 001 PILOT',
       campaignId: 'camp-instagram-only',
       volumeId: page.volumeId,
       chapter: page.chapter,

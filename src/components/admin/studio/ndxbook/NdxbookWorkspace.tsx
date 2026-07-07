@@ -321,7 +321,7 @@ export function NdxbookWorkspace() {
             </div>
             {pages.length === 0 ? (
               <p className="text-[6px] font-futura uppercase px-2 py-2 border" style={{ ...panelStyle, fontWeight: 515, color: ADMIN_STUDIO_THEME.textSecondary }}>
-                NO PAGES IN REGISTRY YET · USE PAGE 001 PIPELINE ABOVE
+                NO PRODUCTIONS IN REGISTRY YET · USE PROJECT 001 PRODUCTION WING ABOVE
               </p>
             ) : (
               pages.map((page) => (

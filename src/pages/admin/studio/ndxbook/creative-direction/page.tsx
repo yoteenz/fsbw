@@ -10,7 +10,7 @@ import {
   adminStudioNdxbookNewsroomDepartmentPath,
 } from '../../../../../utils/adminStudioRoutes';
 
-/** Creative Direction Studio™ — canonical creative layer for Page 001 (above Production Engine). */
+/** Creative Direction Studio™ — canonical creative layer for Project 001 (above Production Engine). */
 export default function AdminStudioNdxbookCreativeDirectionPage() {
   useEnsureNdxbookWorkspaceOnMount();
   ensureFounderPilotForOrganization(NDXBOOK_WORKSPACE_ID);
@@ -19,7 +19,7 @@ export default function AdminStudioNdxbookCreativeDirectionPage() {
   return (
     <AdminStudioStageShell
       title="CREATIVE DIRECTION STUDIO™"
-      subtitle="PAGE 001 · LIVING CREATIVE BRAIN · ABOVE STUDIO PRODUCTION ENGINE"
+      subtitle="PROJECT 001 · LIVING CREATIVE BRAIN · ABOVE STUDIO PRODUCTION ENGINE"
       breadcrumbParentLabel="HEADQUARTERS"
       breadcrumbParentPath={adminStudioNdxbookMissionControlPath()}
       onBack={() => navigate(adminStudioNdxbookMissionControlPath())}

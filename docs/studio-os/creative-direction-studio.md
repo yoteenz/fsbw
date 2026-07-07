@@ -6,7 +6,7 @@
 
 **Status:** Canonical creative intent layer — lives **above** [Studio Production Engine™](./studio-production-engine.md)
 
-**Relationship:** Every project receives a Creative Direction workspace **before** entering Discover Department. Direction persists through the entire [Master Content Pipeline™](./master-content-pipeline.md) lifecycle.
+**Relationship:** Every **Project** receives a Creative Direction workspace **before** entering Discover Department. Direction persists through the entire [Master Content Pipeline™](./master-content-pipeline.md) lifecycle. See [Studio Project™ Model](./project-model.md).
 
 ---
 

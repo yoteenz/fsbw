@@ -188,7 +188,7 @@ function DiscoverBody(p: DepartmentWorkspaceProps) {
     <>
       <PlaceholderPanel title="OPPORTUNITY · TRUTH TUESDAY PILOT">
         <p style={nrLabel}>
-          Campaign · NDXBook Money / Credit education · Instagram-first Page 001.
+          Campaign · NDXBook Money / Credit education · Instagram-first Project 001.
         </p>
         <ul style={{ ...nrLabel, marginTop: 8, paddingLeft: 12 }}>
           <li>Audience · adults rebuilding credit after debt payoff</li>
@@ -217,7 +217,7 @@ function DiscoverBody(p: DepartmentWorkspaceProps) {
 function DevelopmentBody(p: DepartmentWorkspaceProps) {
   return (
     <>
-      <PlaceholderPanel title="STORYBOARD · PAGE 001">
+      <PlaceholderPanel title="STORYBOARD · PROJECT 001">
         <p style={nrLabel}>1. Hook — score dipped after payoff</p>
         <p style={nrLabel}>2. Explain utilization lag</p>
         <p style={nrLabel}>3. Closed account / average age</p>
@@ -277,7 +277,7 @@ function ProductionBody(p: DepartmentWorkspaceProps) {
               Infinite canvas · editor · asset library · prompt builder · live preview (placeholder layout).
             </p>
             <p style={{ ...nrLabel, marginTop: 8, color: NR.accent }}>
-              Create Page 001 to register the Master Content Asset in the passport.
+              Start production to register primary assets in the project passport.
             </p>
           </PlaceholderPanel>
           <button
@@ -287,7 +287,7 @@ function ProductionBody(p: DepartmentWorkspaceProps) {
             className="w-full py-3 text-[7px] font-futura border"
             style={{ fontWeight: 515, borderColor: NR.accent, color: NR.accent, background: 'rgba(220,38,38,0.06)' }}
           >
-            {p.busy === 'create' ? 'CREATING…' : '＋ CREATE MASTER CONTENT ASSET · PAGE 001'}
+            {p.busy === 'create' ? 'CREATING…' : '＋ START PRODUCTION · PROJECT 001'}
           </button>
         </>
       ) : (
@@ -448,7 +448,7 @@ function ApprovalBody(p: DepartmentWorkspaceProps) {
   return (
     <>
       <PlaceholderPanel title="CAMPAIGN APPROVAL GRID">
-        <p style={nrLabel}>Instagram Page 001 · {igReady ? 'READY' : 'CHECK CONNECTION'}</p>
+        <p style={nrLabel}>Instagram output · Project 001 · {igReady ? 'READY' : 'CHECK CONNECTION'}</p>
         <Link to={ndxbookSocialAccountsQuickLink()} style={{ ...nrLabel, color: NR.indigo, fontSize: '6px' }}>
           SOCIAL ACCOUNTS →
         </Link>
@@ -542,7 +542,7 @@ function IntelligenceBody(p: DepartmentWorkspaceProps) {
             ))}
           </div>
         ) : (
-          <p style={nrLabel}>Publish Page 001 to unlock live metrics.</p>
+          <p style={nrLabel}>Publish Project 001 outputs to unlock live metrics.</p>
         )}
       </PlaceholderPanel>
       <ContinueBar
@@ -562,17 +562,17 @@ function LearningBody(p: DepartmentWorkspaceProps) {
       <PlaceholderPanel title="STUDIO INTELLIGENCE · LEARNINGS">
         <ul style={{ ...nrLabel, paddingLeft: 12 }}>
           <li>Educational credit content outperforms generic debt posts (pilot hypothesis)</li>
-          <li>Instagram-first cadence validated for Page 001</li>
+          <li>Instagram-first cadence validated for Project 001</li>
           <li>Archive to Knowledge Library on publish</li>
         </ul>
         {p.page?.status === 'published' ? (
-          <p style={{ ...nrLabel, color: '#22C55E', marginTop: 8 }}>Page 001 archived · institutional knowledge updated.</p>
+          <p style={{ ...nrLabel, color: '#22C55E', marginTop: 8 }}>Project 001 archived · institutional knowledge updated.</p>
         ) : null}
       </PlaceholderPanel>
       <ContinueBar
         departmentId="learning"
         canContinue={p.canContinue}
-        continueLabel="RETURN → DISCOVER DEPARTMENT (PAGE 002)"
+        continueLabel="RETURN → DISCOVER DEPARTMENT (PROJECT 002)"
         onContinue={p.onContinue}
         blockReason={p.continueBlockReason}
       />

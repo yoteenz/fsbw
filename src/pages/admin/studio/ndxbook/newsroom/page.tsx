@@ -8,7 +8,7 @@ import { ensureFounderPilotForOrganization } from '../../../../../studio-os-core
 import { adminStudioNdxbookMissionControlPath } from '../../../../../utils/adminStudioRoutes';
 
 /**
- * NDXBook Production Wing — department-based Studio Production Engine for Page 001.
+ * NDXBook Production Wing — department-based Studio Production Engine for Project 001.
  */
 export default function AdminStudioNdxbookNewsroomPage() {
   useEnsureNdxbookWorkspaceOnMount();
@@ -18,7 +18,7 @@ export default function AdminStudioNdxbookNewsroomPage() {
   return (
     <AdminStudioStageShell
       title="NDXBOOK PRODUCTION WING"
-      subtitle="STUDIO PRODUCTION ENGINE · PAGE 001 · DEPARTMENT WORKSPACES"
+      subtitle="STUDIO PRODUCTION ENGINE · PROJECT 001 · DEPARTMENT WORKSPACES"
       breadcrumbParentLabel="HEADQUARTERS"
       breadcrumbParentPath={adminStudioNdxbookMissionControlPath()}
       onBack={() => navigate(adminStudioNdxbookMissionControlPath())}

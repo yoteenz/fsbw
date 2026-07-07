@@ -26,8 +26,8 @@ export function buildFounderPilotDockBrief(organizationId: string, organizationN
     : hasFirstPage
       ? ['Review your first page in the newsroom.', 'Approve production when ready.', 'Schedule your first Instagram post.']
       : hasInstagram
-        ? ['Create Page 001 in the NDXBOOK registry.', 'Move it through research → write → review.', 'Schedule your first post.']
-        : ['Connect Instagram.', 'Create Page 001.', 'Review your first page.', 'Publish your first knowledge asset.'];
+        ? ['Start Project 001 in the NDXBOOK production wing.', 'Move it through research → write → review.', 'Schedule your first output.']
+        : ['Connect Instagram.', 'Start Project 001.', 'Review your first production.', 'Publish your first knowledge asset.'];
 
   return {
     greeting,

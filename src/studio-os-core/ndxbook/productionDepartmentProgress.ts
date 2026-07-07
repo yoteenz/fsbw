@@ -133,7 +133,7 @@ export function canContinueFromDepartment(
     case 'learning':
       return page?.status === 'published'
         ? { ok: true }
-        : { ok: false, reason: 'Publish Page 001 before archiving learnings.' };
+        : { ok: false, reason: 'Publish Project 001 outputs before archiving learnings.' };
     default:
       return { ok: false, reason: 'Unknown department.' };
   }

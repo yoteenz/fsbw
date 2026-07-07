@@ -140,7 +140,7 @@ export function branchPresetFromIntent(intent: string, name: string): Partial<Cr
       ? 'Feel like a luxury brand introducing a philosophy, not a corporate explainer.'
       : 'Help adults rebuild credit without panic — save-worthy, trustworthy, precise.',
     brief: {
-      objective: 'Page 001 · Truth Tuesday pilot · credit score after debt payoff',
+      objective: 'Project 001 · Truth Tuesday pilot · credit score after debt payoff',
       audience: 'Adults rebuilding credit after debt payoff',
       tone: luxury ? ['authoritative', 'editorial', 'calm luxury'] : ['factual', 'approachable', 'ndxbook index'],
       constraints: ['Instagram-first', 'Educational only', 'No panic framing'],

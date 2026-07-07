@@ -26,11 +26,17 @@ import {
   HqGlassSurface,
   KnowledgeLibraryCollections,
   LegacyTimelineStory,
-  PriorityMissionHero,
   StudioIntelligenceNarrative,
   StudioLabsGrid,
 } from '../../studio/headquarters-experience';
 import { useLivingHeadquartersState } from '../../../../hooks/useLivingHeadquartersState';
+import { useNdxbookPagePipeline } from '../../../../hooks/useNdxbookPagePipeline';
+import { useStudioProjectDashboard } from '../../../../hooks/useStudioProjectDashboard';
+import {
+  resolveDepartmentStatuses,
+  resolveRecommendedDepartment,
+} from '../../../../studio-os-core/ndxbook/productionDepartmentProgress';
+import { ProjectMissionControlDashboard } from '../studio-project/ProjectMissionControlDashboard';
 import {
   MC,
   formatCurrency,
@@ -302,7 +308,7 @@ export function NewsroomPanel({ store }: PanelProps) {
           className="mt-2 px-2 py-1 text-[6px] font-futura border inline-block"
           style={{ fontWeight: 515, color: MC.accent, borderColor: MC.accent, textDecoration: 'none' }}
         >
-          REVIEW & APPROVE PAGE 001 →
+          REVIEW & APPROVE PROJECT 001 →
         </MissionQuickLink>
       </div>
     </CollapsibleSection>
@@ -339,7 +345,7 @@ export function PublishingTimelinePanel({ store, formatTime, onReschedule }: Pan
         <p style={{ ...mcValue, fontSize: '14px', color: MC.gray }}>No scheduled content.</p>
         <p style={{ ...mcSectionTitle, fontSize: '8px', marginTop: 12 }}>NEXT STEP</p>
         <ul style={{ margin: 0, paddingLeft: 14 }}>
-          {['Connect Instagram', 'Create Page 001', 'Schedule your first post'].map((step) => (
+          {['Connect Instagram', 'Start Project 001', 'Schedule your first output'].map((step) => (
             <li key={step} style={{ ...mcLabel, color: MC.black, marginBottom: 4 }}>{step}</li>
           ))}
         </ul>
@@ -433,25 +439,16 @@ export function PublishingTimelinePanel({ store, formatTime, onReschedule }: Pan
   );
 }
 
-export function PageOfTheDayPanel({ store, countdownToLaunch }: PanelProps) {
+export function PageOfTheDayPanel(_props: PanelProps) {
   const org = useOrganizationContext();
-  const p = store.pageOfTheDay;
+  const { page001 } = useNdxbookPagePipeline();
+  const activeDept = resolveRecommendedDepartment(page001);
+  const statuses = resolveDepartmentStatuses(page001, activeDept);
+  const dashboard = useStudioProjectDashboard(page001, activeDept, statuses);
+
   return (
     <div>
-      <PriorityMissionHero
-        title={p.title}
-        headline={p.pageLabel.toUpperCase()}
-        subtitle={p.title}
-        countdown={`LAUNCH IN ${countdownToLaunch}`}
-        predictedImpact={p.predictedPerformance}
-        recommendedAction={`HOST · ${p.hostName} · ${VOLUME_LABELS[p.volumeId]} · ${p.chapter.toUpperCase()}`}
-        details={[
-          { label: 'STATUS', value: p.status.toUpperCase() },
-          { label: 'PLATFORMS', value: p.platforms.map((pl) => PLATFORM_LABELS[pl]).join(' · ') },
-          { label: 'THUMBNAIL', value: p.thumbnailNote },
-        ]}
-        accentHex={MC.red}
-      />
+      <ProjectMissionControlDashboard dashboard={dashboard} />
       <MissionQuickLink
         to={ndxbookNewsroomQuickLink(org.organizationId)}
         className="mt-2 w-full py-2 text-[7px] font-futura uppercase border text-center"
@@ -464,7 +461,7 @@ export function PageOfTheDayPanel({ store, countdownToLaunch }: PanelProps) {
           display: 'block',
         }}
       >
-        OPEN NEWSROOM · REVIEW & APPROVE →
+        OPEN PRODUCTION · DIRECT PROJECT 001 →
       </MissionQuickLink>
     </div>
   );
@@ -514,7 +511,7 @@ export function NdxbookLibraryPanel({ store }: PanelProps) {
           className="mt-3 px-4 py-2 text-[7px] font-futura border inline-block"
           style={{ fontWeight: 515, borderColor: MC.accent, color: MC.accent, background: 'rgba(255,255,255,0.5)', textDecoration: 'none' }}
         >
-          CREATE PAGE 001 →
+          CREATE PROJECT 001 →
         </MissionQuickLink>
       </div>
     );

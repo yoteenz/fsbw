@@ -8,7 +8,7 @@ export function buildPilotDistributionProfile(base: DistributionNetworkOrgProfil
     packs: [
       createDistributionPack({
         id: 'dist-ndx-page-001',
-        title: 'PAGE 001 — PILOT · AWAITING CREATION',
+        title: 'PROJECT 001 — PILOT · AWAITING PRODUCTION',
         accentHex: '#6366F1',
         contentPackRef: 'page-001',
         showName: 'NDXBOOK PAGES',

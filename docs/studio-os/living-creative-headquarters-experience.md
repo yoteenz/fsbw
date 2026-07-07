@@ -6,7 +6,7 @@
 
 **Status:** Governing experiential standard for all Studio OS products
 
-**Applies to:** Experience DNA™ · Creative Direction Studio™ · Studio Production Engine™ · Living Headquarters™ · all future creative workflows
+**Applies to:** Experience DNA™ · Creative Direction Studio™ · Studio Production Engine™ · Living Headquarters™ · [Studio Project™ Model](./project-model.md) · all future creative workflows
 
 ---
 
@@ -24,7 +24,7 @@ The founder runs a **luxury creative studio**. Projects **physically travel** th
 
 | Role | Who |
 |------|-----|
-| **Project protagonist** | Master Content Asset — never static |
+| **Project protagonist** | The active **Project** in production — never static |
 | **Studio Director** | Founder |
 | **Executive Creative Director** | Studio Orb |
 | **Department Head** | Concierge |

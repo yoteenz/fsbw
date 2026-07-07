@@ -51,7 +51,7 @@ export function ProductionDepartmentStrip({ statuses, currentId }: Props) {
   return (
     <div className="mb-3 p-2 border" style={{ borderColor: NR.panelBorder, background: 'rgba(255,255,255,0.72)' }}>
       <p style={{ ...nrLabel, fontFamily: '"Futura PT Medium"', color: NR.black, marginBottom: 4 }}>
-        STUDIO LOT · PRODUCTION WING · PAGE 001 IN TRANSIT
+        STUDIO LOT · PRODUCTION WING · PROJECT 001 IN TRANSIT
       </p>
       <p style={{ ...nrLabel, fontSize: '5px', color: NR.gray, marginBottom: 8 }}>
         {completed}/10 buildings cleared · now at {currentDest.buildingName} · {currentDest.lotZone}

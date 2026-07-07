@@ -87,7 +87,7 @@ export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
 
   return (
     <section className="p-3 mb-3" style={{ ...nrPanel, borderLeft: `4px solid ${NR.indigo}` }}>
-      <p style={nrSectionTitle}>MASTER CONTENT ASSET · PAGE 001 PIPELINE</p>
+      <p style={nrSectionTitle}>PROJECT 001 · PRODUCTION PIPELINE</p>
       <p style={nrLabel}>Production pipeline · Money / Credit / Business Education · Instagram pilot</p>
       <MasterContentLifecycleStrip activeStageId={lifecycleStageId} compact />
 
@@ -131,7 +131,7 @@ export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
           className="mt-3 w-full py-2 text-[7px] font-futura border"
           style={{ fontWeight: 515, borderColor: NR.accent, color: NR.accent, background: 'rgba(220,38,38,0.06)' }}
         >
-          {busy === 'create' ? 'CREATING…' : '＋ CREATE MASTER CONTENT ASSET · PAGE 001'}
+          {busy === 'create' ? 'CREATING…' : '＋ START PRODUCTION · PROJECT 001'}
         </button>
       ) : null}
 
@@ -250,7 +250,7 @@ export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
         </div>
       ) : (
         <p style={{ ...nrLabel, marginTop: 8 }}>
-          Create Master Content Asset · Page 001 to begin NDXBook&apos;s real content history.
+          Start Project 001 production to begin NDXBook&apos;s real content history.
         </p>
       )}
 
@@ -259,7 +259,7 @@ export function NdxbookPagePipelinePanel({ page: pageProp, onRefresh }: Props) {
 
       {summary.hasPage001 && summary.pageCount === 1 ? (
         <p style={{ ...nrLabel, fontSize: '6px', marginTop: 8, color: NR.gray }}>
-          After Page 001 master asset works · create Page 002 · continue Instagram-only until reliable.
+          After Project 001 succeeds · start Project 002 · continue Instagram-only until reliable.
         </p>
       ) : null}
     </section>

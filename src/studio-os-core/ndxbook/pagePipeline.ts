@@ -69,7 +69,7 @@ export type PagePipelineResult = {
 
 /** Default Page 001 educational content — Money / Credit / Business Education. */
 export const PAGE_001_CONTENT: Required<CreateNdxbookPageInput> = {
-  title: 'Page 001',
+  title: 'Truth Tuesday · Credit Education',
   hook: 'Why paying off debt can still affect your credit score',
   volumeId: 'money',
   chapter: 'credit',
@@ -274,7 +274,7 @@ export function createNdxbookPage(input: CreateNdxbookPageInput = PAGE_001_CONTE
   if (pageNumber === 1) {
     recordFounderMilestone(NDXBOOK_WORKSPACE_ID, 'first-page-written', {
       pageNumber: 1,
-      description: 'Page 001 created — first official NDXBook knowledge asset.',
+      description: 'Project 001 production started — first official NDXBook knowledge asset.',
       metadata: { pageId: page.id, pageLabel: page.pageLabel },
     });
   }

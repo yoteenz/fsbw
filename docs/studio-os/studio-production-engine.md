@@ -4,7 +4,7 @@
 
 **Type:** Workflow + information architecture (not a Design Revision · not a new milestone · not implementation)
 
-**Status:** Governing standard — department UI shipped Page 001 pilot · [Living Creative Headquarters Experience™](./living-creative-headquarters-experience.md) defines experiential canon
+**Status:** Governing standard — department UI shipped Project 001 pilot · [Living Creative Headquarters Experience™](./living-creative-headquarters-experience.md) defines experiential canon · [Studio Project™ Model](./project-model.md) defines user-facing mental model
 
 **Experience DNA:** Projects **travel the studio lot** — departments are **buildings**, not pages. Founder = Studio Director · Studio Orb = Executive Creative Director · Concierge = Department Head · Asset = protagonist in transit.
 
@@ -37,7 +37,7 @@ Every phase of the production lifecycle must feel like **traveling to a differen
 |---------------------------|--------------------------------------|
 | One long scrolling production page | Ten **department workspaces** — one room at a time |
 | Stacked sections like a report | **Ceremonial travel** between departments |
-| Static preview card for Page 001 | **Living Master Content Asset** that follows the user |
+| Static preview card for Project 001 | **Living production** that follows the user |
 | "Production → Review → Approve" on one screen | Each department owns tools · approvals · exit |
 | Switching feels like browser tabs | **Continue** travels to the next department |
 | Duplicate context per step | **One asset object** — everything attached, nothing duplicated |
@@ -132,7 +132,7 @@ Each [lifecycle gate](./master-content-pipeline-gates.md) maps 1:1 to a departme
 
 1. **One department at a time** — primary workspace fills the Production Wing; no infinite vertical stack of all phases.
 2. **Ceremonial travel** — **Continue** / **Hand off to [Next Department]** transitions feel like entering another room, not switching tabs.
-3. **Breadcrumbs** — always show: `Campaign · Page 001 · REVIEW DEPARTMENT · Quality Approved pending`
+3. **Breadcrumbs** — always show: `Campaign · Project 001 · REVIEW DEPARTMENT · Quality Approved pending`
 4. **Completed departments** — collapse into **history** (read-only summary · re-entry only with governance).
 5. **Future departments** — **locked** until prerequisites and exit criteria met.
 6. **No trap** — user never feels stuck inside one long page; back navigation returns to department lobby or asset passport, not a scroll position.

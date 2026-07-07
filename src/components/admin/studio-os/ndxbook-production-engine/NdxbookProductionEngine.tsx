@@ -30,6 +30,9 @@ import { CreativeDirectionStrip } from '../creative-direction-studio/CreativeDir
 import { useCreativeDirectionStudio } from '../../../../hooks/useCreativeDirectionStudio';
 import { syncFounderNotesToCreativeDirection } from '../../../../studio-os-core/creative-direction-studio';
 import { StudioDirectorBanner } from '../experience-dna/HeadquartersExperiencePanels';
+import { useStudioProjectDashboard } from '../../../../hooks/useStudioProjectDashboard';
+import { ProjectMissionControlDashboard } from '../studio-project/ProjectMissionControlDashboard';
+import { PROJECT_001 } from '../../../../studio-os-core/studio-project/constants';
 
 function defaultScheduleLaterToday(): string {
   const d = new Date();
@@ -86,6 +89,8 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
   }, [founderNotes.notes.length]);
 
   const creativeDirection = useCreativeDirectionStudio();
+
+  const projectDashboard = useStudioProjectDashboard(page001, activeDept, statuses);
 
   const mergedContinueCheck = useMemo(() => {
     if (!continueCheck.ok) return continueCheck;
@@ -213,14 +218,16 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
           PRODUCTION WING
         </Link>
         <span>/</span>
-        <span style={{ color: NR.black }}>PAGE 001</span>
+        <span style={{ color: NR.black }}>{PROJECT_001.displayCode}</span>
         <span>/</span>
         <span style={{ color: NR.accent }}>{department.shortName}</span>
       </nav>
 
       <ProductionDepartmentStrip statuses={statuses} currentId={activeDept} />
 
-      <StudioDirectorBanner projectLabel="PAGE 001" currentDepartment={activeDept} statuses={statuses} />
+      <ProjectMissionControlDashboard dashboard={projectDashboard} compact />
+
+      <StudioDirectorBanner projectLabel={PROJECT_001.displayCode} currentDepartment={activeDept} statuses={statuses} />
 
       <CreativeDirectionStrip currentDepartment={activeDept} />
 
@@ -271,7 +278,7 @@ export function NdxbookProductionEngine({ workspaceId }: Props) {
         >
           history
         </button>
-        · Locked rooms unlock as the asset advances.
+        · Locked rooms unlock as the production advances.
       </p>
     </div>
   );

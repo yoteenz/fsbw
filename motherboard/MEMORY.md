@@ -40260,3 +40260,23 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 - **Docs updated:** `studio-production-engine.md`, `creative-direction-studio.md`, `experience-architecture.md`, **`motherboard/CORE.md`**.
 
 **Conventions:** Departments are **destinations on a studio lot**, never pages. Movement · progression · ownership · momentum — not forms.
+
+---
+
+## 2026-07-07 — Studio Project™ terminology amendment (platform philosophy)
+
+**Context (full chat arc):** Page 001 pipeline evolution — department UI (`09591de8`) · Founder Notes + concierge revisions (`f9492cc8`) · Creative Direction Studio (`37185b0d`) · Living Creative Headquarters Experience (`72846653`). User issued **Architectural Terminology Amendment** — Studio OS must stop thinking in **pages** (implementation detail); primary object is **Project™**. Users direct **productions**, not edit pages. Project = single source of truth containing creative direction, brief, mood board, assets, timeline, analytics, AI learnings, and **Outputs** (linked derivatives). **Project Dashboard** = Mission Control health view. Living **Production Timeline** per Project. User-facing terminology shift only — **do not** rename technical URLs, route paths, or internal IDs (`page001`, `ndxbook-page-001`, `PAGE_001_ASSET_KEY` remain).
+
+**Decisions / outcomes:**
+- **Philosophy:** Prefer Project · Production · Output · Creative Direction · Production Timeline · Deliverable · Department · Workspace · Mission Control — avoid Page · Post · File · Document · Screen · Task in UX copy.
+- **Core module:** `src/studio-os-core/studio-project/` — types, constants (`PROJECT_001`, output plan), `resolveProject001Dashboard()`, `formatProjectCode()`.
+- **Hook:** `useStudioProjectDashboard.ts`.
+- **UI:** `ProjectMissionControlDashboard.tsx` — progress · department · outputs · founder notes · concierge · timeline · AI recommendations.
+- **Integration:** Compact dashboard in **`NdxbookProductionEngine`** (Production Wing); full dashboard replaces page-centric **`PageOfTheDayPanel`** in Mission Control **MISSION CONTROL** wing; **`NdxbookPilotNewsroomBar`** → PROJECT 001 · DIRECT PRODUCTION.
+- **Copy sweep:** Production departments · passport · mission control CTAs · creative direction · founder pilot seeds · onboarding · department purposes · legacy pipeline panel — Page 001 → Project 001 / production language.
+- **Docs:** **`docs/studio-os/project-model.md`** (canonical) · GLOSSARY · `studio-production-engine.md` · `creative-direction-studio.md` · `living-creative-headquarters-experience.md` · **`motherboard/CORE.md`**.
+
+**Changes (key paths):** `NdxbookProductionEngine.tsx` · `NdxbookMissionControl.tsx` · `NdxbookMissionControlPanels.tsx` · `NdxbookPilotNewsroomBar.tsx` · `NdxbookDepartmentWorkspace.tsx` · `MasterAssetPassport.tsx` · `ProductionDepartmentStrip.tsx` · `ndxbookMissionActionRoutes.ts` · page shells · `creative-direction-studio/store.ts` · `departments.ts` · `productionDepartmentProgress.ts` · `pageSync.ts` · `mission-control/sync.ts` · founder pilot seeds.
+
+**Conventions:** Users think *"I'm producing Project 001"* not *"I'm editing Page 001"*. Registry `pageLabel` and URLs unchanged; user-facing conceptual model only. All future Studio OS products inherit Project-centric language.
+

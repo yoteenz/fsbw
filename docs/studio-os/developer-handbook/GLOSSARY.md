@@ -203,6 +203,12 @@ What Studio OS is — not a generic SaaS dashboard. Constitution principle #1.
 
 ## P
 
+### Studio Project™
+Primary user-facing object in Studio OS — a complete creative initiative (Truth Tuesday Episode, Product Launch, Email Campaign, …). Contains creative direction, brief, mood board, production assets, timeline, analytics, and **Outputs** (derivatives). Users *direct productions*, not pages. Mission Control shows **Project Dashboard** health. Core: `src/studio-os-core/studio-project/`. See [Project Model](../project-model.md).
+
+### Project Output
+Deliverable linked to a parent Project — Instagram Reel, Landing Page, Newsletter, Blog Article, etc. Complete traceability from idea to publication.
+
 ### Personalization DNA™
 Respectful personalization — culture, tone, accessibility. Milestone M89.5.
 

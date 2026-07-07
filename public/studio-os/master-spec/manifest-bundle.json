@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "compiledAt": "2026-07-07T17:12:29.265Z",
+  "compiledAt": "2026-07-07T21:09:33.205Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
     "version": "1.1.0",
@@ -836,12 +836,26 @@
         "title": "Creative & Publishing",
         "status": "active",
         "implementationOrder": [
+          "phase-0-experience-studio",
           "phase-1-website-builder",
           "phase-2-campaign-engine",
           "phase-3-publishing-studio"
         ],
         "minimumReleaseChannel": "preview",
         "products": [
+          {
+            "id": "experience-studio",
+            "title": "Experience Studio™",
+            "milestoneId": "M131",
+            "moduleId": "experience-studio",
+            "lifecycleStage": "experience-prototype",
+            "releaseChannel": "preview",
+            "specPath": "docs/studio-os/products/experience-studio/",
+            "prototypePath": "docs/studio-os/products/experience-studio/prototype/",
+            "goldenProduct": true,
+            "referenceImplementation": true,
+            "note": "Golden Product™ · Reference Implementation™. Spec approved. Experience prototype complete · Ready with Revisions. Awaiting Founder walkthrough before engineering."
+          },
           {
             "id": "website-builder",
             "title": "Studio Website Builder™",
@@ -850,7 +864,7 @@
             "lifecycleStage": "product-vision",
             "releaseChannel": "preview",
             "specPath": "docs/studio-os/products/website-builder/",
-            "note": "Flagship — pre-implementation spec complete; awaiting approval."
+            "note": "Publish-pipeline specialization for Website experience type. Inherits Experience Studio Reference Implementation. Pre-implementation spec complete."
           },
           {
             "id": "campaign-engine",

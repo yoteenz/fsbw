@@ -828,7 +828,7 @@ export function resolveDockContext(pathname: string): DockContextProfile {
       activeOrg.tenantId === 'ndxbook'
         ? [
             'Help me connect Instagram.',
-            'Create Page 001 for NDXBOOK.',
+            'Start Project 001 for NDXBOOK.',
             ...brainSuggestions.slice(0, 1),
             ...discoverySuggestions.slice(0, 1),
             ...growthSuggestions.slice(0, 1),

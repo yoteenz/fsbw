@@ -12,9 +12,9 @@ type Props = {
 export function MasterAssetPassport({ page, department, openNotesCount = 0 }: Props) {
   return (
     <aside className="p-3 mb-3 border-l-4" style={{ ...nrPanel, borderLeftColor: NR.indigo }}>
-      <p style={nrSectionTitle}>MASTER CONTENT ASSET · PASSPORT</p>
+      <p style={nrSectionTitle}>PROJECT PASSPORT · PRODUCTION ASSETS</p>
       <p style={{ ...nrLabel, fontFamily: '"Futura PT Medium"', color: NR.accent }}>
-        {page ? page.pageLabel.toUpperCase() : 'PAGE 001 · NOT CREATED'}
+        {page ? page.pageLabel.toUpperCase() : 'PROJECT 001 · PRODUCTION NOT STARTED'}
       </p>
       {page ? (
         <>

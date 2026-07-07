@@ -28,7 +28,7 @@ export function analyzeFounderInstinct(
       insight(
         'Asset not registered',
         'high',
-        'No Master Content Asset exists yet — direction may feel abstract until Production creates Page 001.',
+        'No primary production assets exist yet — direction may feel abstract until Production starts Project 001.',
         'studio-orb'
       )
     );

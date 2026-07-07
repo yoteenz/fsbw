@@ -112,7 +112,7 @@ export function NdxbookMissionControl({ workspaceId, accentColor = '#6366F1' }: 
               <CompanyHealthPanel {...panelProps} />
             </HqWingZone>
 
-            <HqWingZone wing="PRIORITY OF THE DAY" title="Today's mission" accentHex={env.accentHex}>
+            <HqWingZone wing="MISSION CONTROL" title="Project health · Mission Control" accentHex={env.accentHex}>
               <PageOfTheDayPanel {...panelProps} />
             </HqWingZone>
 

@@ -101,7 +101,7 @@ export function buildPilotMissionControlSeed(): Partial<NdxbookMissionControlSto
     experiments: [],
     talentBoard: [],
     missionActions: [
-      { id: 'create-page', label: 'CREATE PAGE 001', route: '/admin/studio/ndxbook/newsroom', priority: 1, frequencyScore: 100 },
+      { id: 'create-page', label: 'START PROJECT 001', route: '/admin/studio/ndxbook/newsroom', priority: 1, frequencyScore: 100 },
       { id: 'connect-ig', label: 'CONNECT INSTAGRAM', route: '/admin/studio/ndxbook?tab=socials', priority: 1, frequencyScore: 99 },
       { id: 'publish', label: 'PUBLISH FIRST POST', route: '/admin/studio/distribution-network?brand=ndxbook', priority: 2, frequencyScore: 98 },
       { id: 'intelligence', label: 'STUDIO INTELLIGENCE', route: '/admin/studio/studio-intelligence', priority: 3, frequencyScore: 50 },

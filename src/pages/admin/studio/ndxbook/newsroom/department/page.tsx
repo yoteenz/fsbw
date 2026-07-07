@@ -16,7 +16,7 @@ export default function AdminStudioNdxbookNewsroomDepartmentPage() {
   return (
     <AdminStudioStageShell
       title="NDXBOOK PRODUCTION WING"
-      subtitle="STUDIO PRODUCTION ENGINE · PAGE 001 · DEPARTMENT WORKSPACES"
+      subtitle="STUDIO PRODUCTION ENGINE · PROJECT 001 · DEPARTMENT WORKSPACES"
       breadcrumbParentLabel="HEADQUARTERS"
       breadcrumbParentPath={adminStudioNdxbookMissionControlPath()}
       onBack={() => navigate(adminStudioNdxbookMissionControlPath())}
