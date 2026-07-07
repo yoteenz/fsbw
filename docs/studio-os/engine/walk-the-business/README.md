@@ -110,6 +110,13 @@ Both are spatial. Both use Orb. **Different rituals.**
 | **Living Creative Headquarters Experience™** | Experience DNA · lot · buildings · arrivals |
 | **Company Genome™** | HQ expression · health register · celebration style |
 | **Campus Evolution Engine™** | World Evolution visualizes growth over time |
+| **Adaptive Walk™** | Intelligence layer — dynamic modes · paths · personalization |
+
+---
+
+## Intelligence Layer
+
+Walk the Business **executes** the daily ritual. [Adaptive Walk™](../adaptive-walk/README.md) **decides** what today's walk should be — mode · path · atmosphere · Orb tone · priorities. No two walkthroughs should feel identical.
 
 ---
 

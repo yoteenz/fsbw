@@ -37,6 +37,11 @@ Walk the Business is the **experience**. Adaptive Walk is the **brain**.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
+│         FOUNDER JOURNEY™ (lifelong founder lens)             │
+│  Stages · Profile · Chronicle · Milestones · Adaptation      │
+└───────────────────────────┬─────────────────────────────────┘
+                            ↓ influences
+┌─────────────────────────────────────────────────────────────┐
 │         BUSINESS INTELLIGENCE FEEDS                          │
 │  Projects · Analytics · Approvals · Launches · Genome · CoS  │
 └───────────────────────────┬─────────────────────────────────┘

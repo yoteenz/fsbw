@@ -130,6 +130,7 @@ Headquarters Marketplace™   ← creators sell operational architecture
 | **Living Creative Headquarters Experience™** | Experiential canon for creative/production headquarters |
 | **Walk the Business™** | `engine/walk-the-business/` — daily executive ritual · default login · HQ as dashboard |
 | **Adaptive Walk™** | `engine/adaptive-walk/` — intelligence layer · dynamic modes · no two walks alike |
+| **Founder Journey™** | `engine/founder-journey/` — lifelong founder evolution · stages · chronicle |
 | **Walk the Room™** | `engine/walk-the-room/` — immersive critique inside departments |
 | **Mission Control** | Project Dashboard · company pulse · wing navigation |
 
