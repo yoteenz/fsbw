@@ -39868,3 +39868,25 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **Conventions:** Never mount Orb overlays inside a transformed/pointer-events-none environment wrapper — page content only inside **`StudioOrbEnvironment`**.
 
 **Changes:** AdminStudioLayout.tsx, StudioOrbConversationBackdrop.tsx, StudioOrbLifeCulturePanel.tsx, StudioOrbProvider.tsx, MEMORY.md.
+
+---
+
+## 2026-07-07 — Campaign Deliverables Manager™ (Campaign Engine workflow revision)
+
+**Context (full chat arc):** Session included Studio Orb fixes (awakening, radial clipping, panel trap), Experience Studio™ redesign, then user requested **UX + logic revision** for Campaign Engine / Newsroom / Publishing — **not a new milestone**, keep Campaign Engine as executive orchestration, add clear path **Campaign → Deliverables → Content → Review → Approval → Publishing → Knowledge Library → Studio Intelligence learning**.
+
+**Problem:** Campaign Engine felt strategy-only (health, KPIs, timeline) with no obvious place to review/edit/approve actual campaign content (e.g. Truth Tuesday assets).
+
+**Delivered:**
+- **State Engine™ workflow** on deliverables: Draft → Review → Approved → Scheduled → Published → Learning (`deliverableUtils.ts`, extended `CampaignDeliverable` types, store v2 migration from v1)
+- **Campaign Workspace second-level tabs:** Overview · Deliverables · Calendar · Research · Analytics (`CampaignWorkspaceTabs.tsx`, `workspaceTab` in store)
+- **Deliverables Manager™** — marble/glass production desk list (not kanban): title, type, platform, owner, due, approval/publishing status, open action (`DeliverablesManagerPanel.tsx`)
+- **Newsroom Editor™** slide-over on deliverable click: content preview, caption, research, AI suggestions, fact-check, approval timeline, comments, version history, Approval Center actions (Submit/Approve/Revision/Reject/Schedule/Publish/Learn), links to Newsroom · Publishing Queue · Knowledge Hub (`NewsroomEditorPanel.tsx`)
+- **Campaign cards** show deliverable counts + **View Deliverables →** (`CampaignDeliverableStats.tsx`, updated `CampaignListPanel`)
+- **Truth Tuesday seed:** 12 deliverables (Page 001/002, IG post/carousel, reel script, newsletter, YT shorts, caption, thumbnail, research notes, CTA graphic, landing section)
+- **Executive overview** stays on Campaign Workspace Overview tab; content editing primary path is Deliverables → Newsroom Editor
+- Hook/store: `selectWorkspaceTab`, `viewCampaignDeliverables`, `applyDeliverableAction`, publish gated unless `autoPublishEnabled`
+
+**Conventions:** Campaign Engine = orchestration/KPIs; Campaign Workspace Deliverables tab = content pipeline; published deliverables get `knowledgeAssetId` + Studio Intelligence learning metrics on **Learn** action.
+
+**Changes:** `src/studio-os-core/campaign-engine/*`, `src/components/admin/studio/campaign-engine/*`, `useCampaignEngineState.ts`, MEMORY.md.

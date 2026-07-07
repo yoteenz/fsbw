@@ -35,7 +35,86 @@ export type DeliverableType =
   | 'podcast'
   | 'course'
   | 'ebook'
-  | 'event';
+  | 'event'
+  | 'script'
+  | 'caption'
+  | 'thumbnail'
+  | 'notes';
+
+/** State Engine™ — content production workflow */
+export type DeliverableWorkflowStatus =
+  | 'draft'
+  | 'review'
+  | 'approved'
+  | 'scheduled'
+  | 'published'
+  | 'learning';
+
+export type DeliverableApprovalStatus =
+  | 'none'
+  | 'pending'
+  | 'approved'
+  | 'revision-requested'
+  | 'rejected';
+
+export type DeliverablePublishingStatus = 'unpublished' | 'scheduled' | 'published';
+
+export type DeliverablePlatform =
+  | 'ndxbook'
+  | 'instagram'
+  | 'tiktok'
+  | 'youtube'
+  | 'newsletter'
+  | 'pinterest'
+  | 'web'
+  | 'internal';
+
+export type DeliverableFormat =
+  | 'page'
+  | 'post'
+  | 'carousel'
+  | 'reel'
+  | 'short'
+  | 'script'
+  | 'email'
+  | 'graphic'
+  | 'section'
+  | 'notes'
+  | 'article'
+  | 'caption';
+
+export type CampaignWorkspaceTab = 'overview' | 'deliverables' | 'calendar' | 'research' | 'analytics';
+
+export type DeliverableApprovalEvent = {
+  at: string;
+  actor: string;
+  action: string;
+};
+
+export type DeliverableComment = {
+  id: string;
+  author: string;
+  text: string;
+  at: string;
+};
+
+export type DeliverableVersion = {
+  version: number;
+  at: string;
+  summary: string;
+};
+
+export type DeliverableLearningMetrics = {
+  engagement?: string;
+  reach?: string;
+  saves?: string;
+  clicks?: string;
+  comments?: string;
+  completion?: string;
+  platformPerformance?: string;
+  topicPerformance?: string;
+  formatPerformance?: string;
+};
 
 export type CampaignHierarchyLevel =
   | 'vision'
@@ -52,11 +131,32 @@ export type CampaignDeliverable = {
   id: string;
   campaignId: string;
   type: DeliverableType;
+  format?: DeliverableFormat;
   title: string;
-  status: 'planned' | 'in-production' | 'review' | 'ready' | 'published';
+  /** @deprecated legacy seed — use workflowStatus */
+  status?: 'planned' | 'in-production' | 'review' | 'ready' | 'published';
+  workflowStatus: DeliverableWorkflowStatus;
+  approvalStatus: DeliverableApprovalStatus;
+  publishingStatus: DeliverablePublishingStatus;
   owner: string;
+  platform: DeliverablePlatform;
   newsroomPageId?: string;
   dueAt: string;
+  updatedAt: string;
+  scheduledAt?: string;
+  publishedAt?: string;
+  bodyPreview?: string;
+  caption?: string;
+  thumbnailPreview?: string;
+  researchSources?: string[];
+  aiSuggestions?: string[];
+  factCheckStatus?: 'pending' | 'passed' | 'flagged';
+  approvalTimeline?: DeliverableApprovalEvent[];
+  comments?: DeliverableComment[];
+  versionHistory?: DeliverableVersion[];
+  knowledgeAssetId?: string;
+  learningMetrics?: DeliverableLearningMetrics;
+  studioIntelligenceNotes?: string[];
 };
 
 export type DepartmentCoordination = {
@@ -221,4 +321,7 @@ export type CampaignEngineStore = {
   playbooks: { id: string; title: string; sourceCampaignId: string; description: string }[];
   builderStep: number;
   selectedCampaignId: string | null;
+  workspaceTab: CampaignWorkspaceTab;
+  selectedDeliverableId: string | null;
+  autoPublishEnabled: boolean;
 };

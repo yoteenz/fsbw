@@ -1,7 +1,15 @@
-import type { CampaignHierarchyLevel, CampaignTypeId } from './types';
+import type { CampaignHierarchyLevel, CampaignTypeId, CampaignWorkspaceTab } from './types';
 
-export const CAMPAIGN_ENGINE_STORAGE_KEY = 'studioOsCampaignEngine_v1';
-export const CAMPAIGN_ENGINE_VERSION = '1.0.0';
+export const CAMPAIGN_ENGINE_STORAGE_KEY = 'studioOsCampaignEngine_v2';
+export const CAMPAIGN_ENGINE_VERSION = '1.1.0';
+
+export const CAMPAIGN_WORKSPACE_TABS: { id: CampaignWorkspaceTab; label: string }[] = [
+  { id: 'overview', label: 'OVERVIEW' },
+  { id: 'deliverables', label: 'DELIVERABLES' },
+  { id: 'calendar', label: 'CALENDAR' },
+  { id: 'research', label: 'RESEARCH' },
+  { id: 'analytics', label: 'ANALYTICS' },
+];
 export const CAMPAIGN_ENGINE_ID = 'campaign-engine';
 
 export const CAMPAIGN_PLATFORM_CHAIN = [

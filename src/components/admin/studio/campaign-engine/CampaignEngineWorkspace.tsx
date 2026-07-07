@@ -2,6 +2,10 @@ import { useState } from 'react';
 import { useCampaignEngineState } from '../../../../hooks/useCampaignEngineState';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { StudioTabMoreHint } from '../StudioTabMoreHint';
+import { CampaignDeliverableStatsPanel } from './CampaignDeliverableStats';
+import { CampaignWorkspaceTabs } from './CampaignWorkspaceTabs';
+import { DeliverablesManagerPanel } from './DeliverablesManagerPanel';
+import { NewsroomEditorPanel } from './NewsroomEditorPanel';
 import {
   CampaignAnalyticsPanel,
   CampaignBuilderPanel,
@@ -15,18 +19,18 @@ import {
   CampaignPlaybooksPanel,
   CampaignRetrospectivesPanel,
   CampaignSimulationPanel,
-  CampaignWorkspacePanel,
+  CampaignWorkspaceOverviewPanel,
   ConnectedSystemsPanel,
   CreatorRecommendationsPanel,
-  DeliverablesPanel,
   DepartmentCoordinationPanel,
+  WorkOrchestrationLinkPanel,
 } from './CampaignEnginePanels';
 
 type CeTab = 'dashboard' | 'campaign' | 'calendar' | 'intelligence' | 'learning';
 
 const TABS: { id: CeTab; label: string }[] = [
   { id: 'dashboard', label: 'DASHBOARD' },
-  { id: 'campaign', label: 'CAMPAIGN · BUILDER' },
+  { id: 'campaign', label: 'CAMPAIGNS' },
   { id: 'calendar', label: 'CALENDAR · COORDINATION' },
   { id: 'intelligence', label: 'INTELLIGENCE · ANALYTICS' },
   { id: 'learning', label: 'LEARNING · PLAYBOOKS' },
@@ -37,11 +41,17 @@ export function CampaignEngineWorkspace() {
   const {
     store,
     selectedCampaign,
+    selectedDeliverable,
     workspaceCampaigns,
     campaignDeliverables,
+    deliverableStatsByCampaign,
     selectWorkspace,
     selectCampaign,
+    selectWorkspaceTab,
+    viewCampaignDeliverables,
+    selectDeliverable,
     setBuilderStep,
+    applyDeliverableAction,
   } = useCampaignEngineState();
 
   const panelProps = {
@@ -49,21 +59,79 @@ export function CampaignEngineWorkspace() {
     selectedCampaign,
     workspaceCampaigns,
     campaignDeliverables,
+    deliverableStatsByCampaign,
     onSelectWorkspace: selectWorkspace,
     onSelectCampaign: selectCampaign,
+    onViewDeliverables: viewCampaignDeliverables,
     onSetBuilderStep: setBuilderStep,
   };
 
-  const renderTab = () => {
+  const renderWorkspaceTab = () => {
+    if (!selectedCampaign) return null;
+    switch (store.workspaceTab) {
+      case 'deliverables':
+        return (
+          <>
+            <CampaignDeliverableStatsPanel deliverables={campaignDeliverables} />
+            <DeliverablesManagerPanel
+              campaign={selectedCampaign}
+              deliverables={campaignDeliverables}
+              selectedDeliverableId={store.selectedDeliverableId}
+              onSelectDeliverable={selectDeliverable}
+            />
+          </>
+        );
+      case 'calendar':
+        return (
+          <>
+            <CampaignCalendarPanel {...panelProps} />
+            <DepartmentCoordinationPanel {...panelProps} />
+          </>
+        );
+      case 'research':
+        return (
+          <>
+            <CreatorRecommendationsPanel {...panelProps} />
+            <CampaignLineagePanel {...panelProps} />
+            <WorkOrchestrationLinkPanel />
+          </>
+        );
+      case 'analytics':
+        return (
+          <>
+            <CampaignAnalyticsPanel {...panelProps} />
+            <CampaignExperimentsPanel {...panelProps} />
+            <CampaignSimulationPanel {...panelProps} />
+          </>
+        );
+      case 'overview':
+      default:
+        return (
+          <>
+            <CampaignWorkspaceOverviewPanel {...panelProps} />
+            <ConnectedSystemsPanel />
+          </>
+        );
+    }
+  };
+
+  const renderEngineTab = () => {
     switch (tab) {
       case 'campaign':
         return (
           <>
             <CampaignBuilderPanel {...panelProps} />
             <CampaignListPanel {...panelProps} />
-            <CampaignWorkspacePanel {...panelProps} />
-            <DeliverablesPanel {...panelProps} />
-            <CampaignLineagePanel {...panelProps} />
+            {selectedCampaign ? (
+              <>
+                <CampaignWorkspaceTabs activeTab={store.workspaceTab} onSelectTab={selectWorkspaceTab} />
+                {renderWorkspaceTab()}
+              </>
+            ) : (
+              <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+                SELECT A CAMPAIGN TO OPEN CAMPAIGN WORKSPACE · DELIVERABLES · REVIEW · PUBLISHING
+              </StudioTabMoreHint>
+            )}
           </>
         );
       case 'calendar':
@@ -91,16 +159,22 @@ export function CampaignEngineWorkspace() {
           </>
         );
       case 'dashboard':
+      default:
         return (
           <>
             <CampaignDashboardPanel {...panelProps} />
             <CampaignListPanel {...panelProps} />
-            <CampaignWorkspacePanel {...panelProps} />
-
-            <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
-              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
-            </StudioTabMoreHint>
-            <ConnectedSystemsPanel />
+            {selectedCampaign ? (
+              <>
+                <CampaignWorkspaceTabs activeTab={store.workspaceTab} onSelectTab={selectWorkspaceTab} />
+                {renderWorkspaceTab()}
+              </>
+            ) : null}
+            {!selectedCampaign ? (
+              <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
+                EXECUTIVE OVERVIEW · SELECT A CAMPAIGN FOR DELIVERABLES MANAGER™
+              </StudioTabMoreHint>
+            ) : null}
           </>
         );
     }
@@ -129,7 +203,17 @@ export function CampaignEngineWorkspace() {
         ))}
       </div>
 
-      {renderTab()}
+      {renderEngineTab()}
+
+      {selectedDeliverable && selectedCampaign ? (
+        <NewsroomEditorPanel
+          deliverable={selectedDeliverable}
+          campaign={selectedCampaign}
+          autoPublishEnabled={store.autoPublishEnabled}
+          onClose={() => selectDeliverable(null)}
+          onAction={(action) => applyDeliverableAction(selectedDeliverable.id, action)}
+        />
+      ) : null}
     </div>
   );
 }

@@ -5,8 +5,11 @@ import type {
   CampaignRecord,
   CampaignWorkspaceId,
 } from '../../../../studio-os-core/campaign-engine/types';
+import type { DeliverableStats } from '../../../../studio-os-core/campaign-engine/deliverableUtils';
 import { CAMPAIGN_BUILDER_STEPS, CAMPAIGN_CONNECTED_SYSTEMS, CAMPAIGN_TYPES } from '../../../../studio-os-core/campaign-engine/constants';
 import { adminStudioStrategyEnginePath, adminStudioWorkOrchestrationPath, adminStudioDistributionEnginePath } from '../../../../utils/adminStudioRoutes';
+import { CampaignDeliverableStats } from './CampaignDeliverableStats';
+import { ceMarblePanel } from './campaignDeliverablesTheme';
 import {
   CAMPAIGN_ENGINE_STYLES,
   CE,
@@ -24,8 +27,10 @@ type Props = {
   selectedCampaign: CampaignRecord | null;
   workspaceCampaigns: CampaignRecord[];
   campaignDeliverables: CampaignDeliverable[];
+  deliverableStatsByCampaign?: Map<string, DeliverableStats>;
   onSelectWorkspace: (id: CampaignWorkspaceId) => void;
   onSelectCampaign: (id: string) => void;
+  onViewDeliverables?: (campaignId: string) => void;
   onSetBuilderStep: (step: number) => void;
 };
 
@@ -37,9 +42,9 @@ export function CampaignEngineHeader() {
         <p style={{ fontFamily: '"Covered By Your Grace", sans-serif', fontSize: '22px', margin: 0 }}>
           CAMPAIGN ENGINE
         </p>
-        <p style={{ ...ceLabel, color: '#94A3B8' }}>
+        <p style={{ ...ceLabel, fontSize: '5px', color: '#94A3B8' }}>
           <span style={ceLiveDot} />
-          STRATEGY → CAMPAIGN → DELIVERABLES → DISTRIBUTION → LEARNING
+          CAMPAIGN ENGINE → WORKSPACE → DELIVERABLES MANAGER™ → NEWSROOM → APPROVAL → PUBLISHING → LEARNING
         </p>
         <p style={{ ...ceLabel, color: '#CBD5E1', marginTop: 4 }}>
           COORDINATED EXECUTION · NOT PROJECT MANAGEMENT · EVERY ASSET BELONGS TO A CAMPAIGN
@@ -126,42 +131,86 @@ export function CampaignHierarchyPanel({ store }: Pick<Props, 'store'>) {
   );
 }
 
-export function CampaignListPanel({ workspaceCampaigns, store, onSelectCampaign }: Pick<Props, 'workspaceCampaigns' | 'store' | 'onSelectCampaign'>) {
+export function CampaignListPanel({
+  store,
+  workspaceCampaigns,
+  onSelectCampaign,
+  onViewDeliverables,
+}: Pick<Props, 'store' | 'workspaceCampaigns' | 'onSelectCampaign' | 'onViewDeliverables'>) {
   return (
-    <section className="p-3 mb-3" style={cePanel}>
+    <section className="p-3 mb-3" style={ceMarblePanel}>
       <p style={ceSectionTitle}>ACTIVE CAMPAIGNS · {CAMPAIGN_TYPES.length} TYPES SUPPORTED</p>
-      {workspaceCampaigns.map((camp) => (
-        <button
-          key={camp.id}
-          type="button"
-          onClick={() => onSelectCampaign(camp.id)}
-          className="w-full text-left p-2 mb-1 border"
-          style={{
-            borderColor: store.selectedCampaignId === camp.id ? CE.amber : CE.panelBorder,
-            background: store.selectedCampaignId === camp.id ? 'rgba(217,119,6,0.04)' : 'white',
-          }}
-        >
-          <div className="flex justify-between">
-            <p className="text-[7px] font-futura" style={{ fontWeight: 515 }}>{camp.name}</p>
-            <span className="text-[5px] font-futura" style={{ color: camp.status === 'active' ? CE.green : CE.gray }}>{camp.status.toUpperCase()}</span>
-          </div>
-          <p style={{ ...ceLabel, fontSize: '5px' }}>{camp.type.replace(/-/g, ' ').toUpperCase()} · {camp.owner}</p>
-          <p style={{ ...ceLabel, fontSize: '5px', color: healthColor(camp.healthPct) }}>HEALTH {camp.healthPct}% · {camp.confidencePct}% CONF</p>
-        </button>
-      ))}
+      {workspaceCampaigns.map((camp) => {
+        const campDeliverables = store.deliverables.filter((d) => d.campaignId === camp.id);
+
+        return (
+          <button
+            key={camp.id}
+            type="button"
+            onClick={() => onSelectCampaign(camp.id)}
+            className="w-full text-left p-3 mb-2 border"
+            style={{
+              borderColor: store.selectedCampaignId === camp.id ? CE.amber : CE.panelBorder,
+              background:
+                store.selectedCampaignId === camp.id
+                  ? 'linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,248,0.85))'
+                  : 'rgba(255,255,255,0.75)',
+              backdropFilter: 'blur(8px)',
+            }}
+          >
+            <div className="flex justify-between gap-2">
+              <p className="text-[7px] font-futura" style={{ fontWeight: 515 }}>
+                {camp.name}
+              </p>
+              <span className="text-[5px] font-futura shrink-0" style={{ color: camp.status === 'active' ? CE.green : CE.gray }}>
+                {camp.status.toUpperCase()}
+              </span>
+            </div>
+            <p style={{ ...ceLabel, fontSize: '5px' }}>
+              {camp.type.replace(/-/g, ' ').toUpperCase()} · {camp.owner}
+            </p>
+            <p style={{ ...ceLabel, fontSize: '5px', color: healthColor(camp.healthPct) }}>
+              HEALTH {camp.healthPct}% · {camp.confidencePct}% CONF
+            </p>
+            {campDeliverables.length > 0 ? (
+              <CampaignDeliverableStats
+                campaign={camp}
+                deliverables={campDeliverables}
+                compact
+                onViewDeliverables={onViewDeliverables ? () => onViewDeliverables(camp.id) : undefined}
+              />
+            ) : null}
+          </button>
+        );
+      })}
     </section>
   );
 }
 
-export function CampaignWorkspacePanel({ selectedCampaign, store }: Pick<Props, 'selectedCampaign' | 'store'>) {
+export function CampaignWorkspaceOverviewPanel({ selectedCampaign, store }: Pick<Props, 'selectedCampaign' | 'store'>) {
   if (!selectedCampaign) return null;
   const intel = store.intelligence[selectedCampaign.id];
   const health = store.healthScores[selectedCampaign.id];
+  const campaignDeliverables = store.deliverables.filter((d) => d.campaignId === selectedCampaign.id);
+
   return (
-    <section className="p-3 mb-3" style={{ ...cePanel, borderLeft: `4px solid ${CE.amber}` }}>
-      <p style={ceSectionTitle}>CAMPAIGN WORKSPACE · {selectedCampaign.name}</p>
+    <section className="p-4 mb-3" style={{ ...ceMarblePanel, borderLeft: `4px solid ${CE.amber}` }}>
+      <p style={ceSectionTitle}>CAMPAIGN WORKSPACE · EXECUTIVE OVERVIEW</p>
+      <p className="text-[7px] font-futura mb-1" style={{ fontWeight: 515, color: '#64748B' }}>
+        {selectedCampaign.name}
+      </p>
       <p style={{ ...ceValue, fontSize: '14px' }}>{selectedCampaign.objective}</p>
-      <div className="grid grid-cols-2 gap-2 mt-2">
+      <p style={{ ...ceLabel, fontSize: '5px', marginTop: 8 }}>
+        Strategy lives here · content lives in Deliverables · open Newsroom Editor™ to review assets
+      </p>
+
+      {campaignDeliverables.length > 0 ? (
+        <div className="mt-3 p-2 border" style={{ borderColor: CE.panelBorder, background: 'rgba(255,255,255,0.5)' }}>
+          <CampaignDeliverableStats campaign={selectedCampaign} deliverables={campaignDeliverables} />
+        </div>
+      ) : null}
+
+      <div className="grid grid-cols-2 gap-2 mt-3">
         {[
           ['STRATEGY', selectedCampaign.relatedStrategyLabel],
           ['INITIATIVE', selectedCampaign.relatedInitiativeLabel],
@@ -191,6 +240,14 @@ export function CampaignWorkspacePanel({ selectedCampaign, store }: Pick<Props, 
           CAMPAIGN HEALTH {health.overallPct}%
         </p>
       ) : null}
+      <div className="mt-3 flex flex-wrap gap-1">
+        {selectedCampaign.channels.map((ch) => (
+          <span key={ch} className="text-[5px] font-futura px-1 py-0.5 border" style={{ borderColor: CE.panelBorder }}>
+            {ch.toUpperCase()}
+          </span>
+        ))}
+      </div>
+      <p style={{ ...ceLabel, fontSize: '5px', marginTop: 8 }}>CADENCE · {selectedCampaign.timeline}</p>
       <Link to={adminStudioStrategyEnginePath()} style={{ ...ceLabel, color: CE.slate, fontSize: '6px', display: 'inline-block', marginTop: 6 }}>
         → STRATEGY ENGINE · {selectedCampaign.relatedStrategyLabel}
       </Link>
@@ -198,22 +255,19 @@ export function CampaignWorkspacePanel({ selectedCampaign, store }: Pick<Props, 
   );
 }
 
-export function DeliverablesPanel({ campaignDeliverables }: Pick<Props, 'campaignDeliverables'>) {
+/** @deprecated Use CampaignWorkspaceOverviewPanel */
+export const CampaignWorkspacePanel = CampaignWorkspaceOverviewPanel;
+
+export function DeliverablesPanel({ campaignDeliverables, selectedCampaign, onViewDeliverables }: Pick<Props, 'campaignDeliverables' | 'selectedCampaign' | 'onViewDeliverables'>) {
+  if (!selectedCampaign || campaignDeliverables.length === 0) return null;
   return (
     <section className="p-3 mb-3" style={cePanel}>
-      <p style={ceSectionTitle}>DELIVERABLE ORCHESTRATION · NEWSROOM LINKED</p>
-      <p style={ceLabel}>Pages · videos · emails · graphics automatically appear in newsroom production</p>
-      {campaignDeliverables.map((del) => (
-        <div key={del.id} className="flex justify-between py-1 border-b" style={{ borderColor: CE.panelBorder }}>
-          <div>
-            <p className="text-[7px] font-futura" style={{ fontWeight: 515 }}>{del.title}</p>
-            <p style={{ ...ceLabel, fontSize: '5px' }}>{del.type.toUpperCase()} · {del.owner}{del.newsroomPageId ? ` · ${del.newsroomPageId}` : ''}</p>
-          </div>
-          <span className="text-[5px] font-futura px-1 border" style={{ borderColor: del.status === 'in-production' ? CE.amber : CE.panelBorder }}>
-            {del.status.toUpperCase()}
-          </span>
-        </div>
-      ))}
+      <p style={ceSectionTitle}>DELIVERABLES · QUICK LINK</p>
+      <CampaignDeliverableStats
+        campaign={selectedCampaign}
+        deliverables={campaignDeliverables}
+        onViewDeliverables={onViewDeliverables ? () => onViewDeliverables(selectedCampaign.id) : undefined}
+      />
     </section>
   );
 }
