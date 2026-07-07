@@ -203,6 +203,15 @@ What Studio OS is — not a generic SaaS dashboard. Constitution principle #1.
 
 ## P
 
+### Headquarters Engine™
+Foundational Studio OS subsystem — generates immersive **Headquarters** tailored to business type (Salon, Law Firm, Agency, …). Hierarchy: Headquarters → Buildings → Departments → Workspaces → Projects → Assets → Tasks. See [Headquarters Engine](../headquarters-engine.md).
+
+### Headquarters Expansions™
+Business capabilities installed into an existing Headquarters — departments, workflows, AI specialists, concierges, automations, analytics, progression. **Not templates or feature packs.** See [Headquarters Engine](../headquarters-engine.md).
+
+### Headquarters Marketplace™
+Creators sell **business architecture** — living operational systems (UI · AI · workflows · docs · analytics). Not graphics or page templates. Cross-industry install encouraged. See [Headquarters Marketplace](../headquarters-marketplace.md).
+
 ### Studio Project™
 Primary user-facing object in Studio OS — a complete creative initiative (Truth Tuesday Episode, Product Launch, Email Campaign, …). Contains creative direction, brief, mood board, production assets, timeline, analytics, and **Outputs** (derivatives). Users *direct productions*, not pages. Mission Control shows **Project Dashboard** health. Core: `src/studio-os-core/studio-project/`. See [Project Model](../project-model.md).
 

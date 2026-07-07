@@ -12,13 +12,14 @@
 
 ## What Studio OS Is
 
-**Studio OS™** is an **Organizational Intelligence Platform** — not a generic SaaS dashboard.
+**Studio OS™** is an **immersive Business Headquarters Operating System** — not a generic SaaS dashboard or app store.
 
-Every organization receives a **living digital headquarters**: immersive, calm, premium, registry-driven, and AI-native. Users collaborate with intelligence inside **places**, not configure settings inside **tools**.
+Every organization receives a **living Headquarters** that **grows over time** through **Headquarters Expansions™**. Users collaborate with intelligence inside **places**, not configure settings inside **tools**.
 
 Studio OS is:
-- A **platform** — constitution, architecture, design canon, registries
-- A **product ecosystem** — Experience Studio™, Campaign Engine™, and future products
+- A **platform** — constitution, architecture, design canon, registries, **[Headquarters Engine™](../headquarters-engine.md)**
+- A **business operating system** — expand capabilities, not download templates
+- A **product ecosystem** — products are **extensions of Headquarters**, not standalone apps
 - A **governance system** — changes are deliberate, versioned, and validated
 - A **reference implementation** — Experience Studio™ proves the entire stack
 
@@ -26,9 +27,11 @@ Studio OS is:
 
 ## Platform Vision
 
-> Every organization operates from a premium creative headquarters where intelligence is ambient, design is inherited, and experiences are authored — not configured.
+> Every entrepreneur steps inside a **living Headquarters** tailored to their business — expands it as the business evolves — and never outgrows the operating system.
 
-**Horizon:** Studio OS becomes the operating system for organizational creativity, intelligence, and digital presence for decades.
+**Horizon:** Studio OS becomes the world's first **immersive Business Headquarters Operating System** — where founders build businesses, not buy software.
+
+**Canonical:** [Platform Vision](../platform-vision.md) · [Headquarters Engine™](../headquarters-engine.md)
 
 ---
 

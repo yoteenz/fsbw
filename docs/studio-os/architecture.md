@@ -1,6 +1,8 @@
 # studio os Architecture
 
-studio os is a standalone operating system for modern brands. Frontal Slayer is one organization running on it — not the root application.
+studio os is a standalone **Business Headquarters Operating System** for modern brands. Frontal Slayer is one organization running on it — not the root application.
+
+**Platform philosophy:** [Headquarters Engine™](./headquarters-engine.md) · [Platform Vision](./platform-vision.md)
 
 ## Product Hierarchy
 
@@ -20,7 +22,7 @@ Organizations                ← Frontal Slayer, NDXBOOK, VXD INC, All In One En
 | Application shell | `src/studio-os-core/application/` | Product hierarchy, portfolio access, application routes |
 | Workspace registry | `src/workspaces/` | Per-organization configs and data adapters |
 | Organization HQ UI | `src/pages/admin/studio/*` | Headquarters modules (Mission Control, production, …) |
-| Studio Administration | `src/pages/admin/studio-os/administration/` | Portfolio control plane (registry, onboarding, templates) |
+| Studio Administration | `src/pages/admin/studio-os/administration/` | Portfolio control plane (registry, onboarding, headquarters types) |
 | Frontal Slayer admin | `src/pages/admin/dashboard/` | Commerce admin — **Headquarters** entry launches Studio OS HQ |
 
 ## Access model

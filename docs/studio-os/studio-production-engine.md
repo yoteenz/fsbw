@@ -4,7 +4,7 @@
 
 **Type:** Workflow + information architecture (not a Design Revision · not a new milestone · not implementation)
 
-**Status:** Governing standard — department UI shipped Project 001 pilot · [Living Creative Headquarters Experience™](./living-creative-headquarters-experience.md) defines experiential canon · [Studio Project™ Model](./project-model.md) defines user-facing mental model
+**Status:** Governing standard — department UI shipped Project 001 pilot · [Living Creative Headquarters Experience™](./living-creative-headquarters-experience.md) · [Studio Project™ Model](./project-model.md) · [Headquarters Engine™](./headquarters-engine.md)
 
 **Experience DNA:** Projects **travel the studio lot** — departments are **buildings**, not pages. Founder = Studio Director · Studio Orb = Executive Creative Director · Concierge = Department Head · Asset = protagonist in transit.
 

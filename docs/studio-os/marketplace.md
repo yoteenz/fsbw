@@ -1,14 +1,28 @@
 # Marketplace + Business Ecosystem v1.0
 
-studio os platform pillar — professional operating network for modern businesses.
+**Reframed (2026-07-07):** Studio OS Marketplace documentation now follows **[Headquarters Marketplace™](./headquarters-marketplace.md)** philosophy. Creators sell **business architecture**, not graphics or templates. This document describes the **legacy operational network module** — future marketplace UX aligns with Headquarters Expansions installs.
 
-## Entry point
+## Canonical direction
 
-- **Marketplace:** `/admin/studio/marketplace`
+See **[Headquarters Engine™](./headquarters-engine.md)** · **[Headquarters Marketplace™](./headquarters-marketplace.md)**.
+
+| Old concept | New concept |
+|-------------|-------------|
+| Template marketplace | Headquarters Marketplace™ |
+| Download assets | Install operational capability |
+| Feature packs | Headquarters Expansions™ |
+
+---
+
+## Entry point (legacy module)
+
+- **Route:** `/admin/studio/marketplace`
 
 ## Design principle
 
 **Not a freelancer marketplace.** Studio OS becomes the professional operating network where businesses launch, operate, discover opportunities, collaborate, and grow. The goal is **lasting partnerships**, not isolated one-off gigs.
+
+**Future alignment:** Deal Center and participant matching remain valuable — but **growth purchases** flow through Expansion Center / Headquarters Marketplace installs, not template stores.
 
 ## Capabilities (v1)
 
@@ -52,4 +66,4 @@ Overview · Participants · Matching · Deal Center · Collaboration · Trust ·
 
 ## Future vision
 
-Every new participant strengthens the ecosystem for everyone else. Studio OS becomes where businesses build lasting partnerships — not where they complete isolated freelance jobs.
+Every new participant strengthens the ecosystem for everyone else. Studio OS becomes where businesses build lasting partnerships — and **install operational architecture** from Headquarters Marketplace™ when ready to expand.

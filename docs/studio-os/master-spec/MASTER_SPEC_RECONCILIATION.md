@@ -1,6 +1,6 @@
 # Master Specification Reconciliation Report
 
-Generated: 2026-07-07T21:09:33.205Z
+Generated: 2026-07-07T21:13:33.951Z
 
 ## Coverage
 
@@ -24,7 +24,7 @@ Generated: 2026-07-07T21:09:33.205Z
 | Volume V chapters | 6 |
 | Volume V milestones | 6 |
 | Volume V complete | 6 |
-| Core Philosophies | 23 |
+| Core Philosophies | 28 |
 | Design Revisions | 5 |
 | Complete | 102 |
 | In Progress | 12 |
@@ -32,7 +32,7 @@ Generated: 2026-07-07T21:09:33.205Z
 
 ## Architecture Validation
 
-See `ARCHITECTURE_VALIDATION_REPORT.md` — Architecture Validator™ gate: **PASS** (0 warnings)
+See `ARCHITECTURE_VALIDATION_REPORT.md` — Architecture Validator™ gate: **PASS** (1 warnings)
 
 ## Source of Truth
 

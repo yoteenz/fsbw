@@ -40280,3 +40280,18 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 
 **Conventions:** Users think *"I'm producing Project 001"* not *"I'm editing Page 001"*. Registry `pageLabel` and URLs unchanged; user-facing conceptual model only. All future Studio OS products inherit Project-centric language.
 
+---
+
+## 2026-07-07 — Headquarters Engine™ platform architecture amendment (docs only)
+
+**Context (full chat arc):** Page 001 pipeline evolution — department UI · Founder Notes · Creative Direction Studio · Living Creative Headquarters Experience · Studio Project™ model shipped (`685ec888`). User issued **Platform Architecture Amendment** — most important architectural update: Studio OS must **no longer** think in apps/templates/feature packs; think in **living businesses**. Every customer owns a **Headquarters** that grows. **Headquarters Engine™** = foundational subsystem generating immersive HQ by business type. **Headquarters Expansions™** = install business capabilities (not templates). **Headquarters Marketplace™** = creators sell **business architecture** (UI · AI · workflows · docs · analytics · automation · concierge · knowledge) — not graphics/page templates. **Cross-industry** Expansion install required. **IP economy** for operational systems. **HQ evolution** — buildings · departments · AI specialists · achievements unlock with business growth. **Game design philosophy** — meaningful progression (Sims/Movies/Watch Dogs/Xbox), **not gamification**. **Vision:** world's first **immersive Business Headquarters Operating System** — step inside business, not open software. **Explicit:** documentation and architecture only — **no implementation code**.
+
+**Decisions / outcomes:**
+- **Canonical docs:** `docs/studio-os/headquarters-engine.md` · `platform-vision.md` · `headquarters-marketplace.md`
+- **Master Spec:** `core-philosophies.yaml` **v1.2** — 5 new philosophies (Headquarters Engine · Expansions · Marketplace · Business HQ OS · Meaningful Progression); updated Operating System Not SaaS
+- **Updated:** marketplace.md · expansion-center.md · industry-architecture.md · monetization-architecture.md · architecture.md · PLATFORM_CONCEPTS.md · VOCABULARY.md · README.md · START_HERE · PRODUCT_PHILOSOPHY · living-creative-headquarters · creative-direction-studio · studio-production-engine · project-model · GLOSSARY · MASTER_SPEC_INDEX · **`motherboard/CORE.md`**
+
+**Hierarchy (canonical):** Headquarters → Buildings → Departments → Workspaces → Projects → Assets → Tasks
+
+**Conventions:** User-facing growth = **Expand Headquarters · Install Expansion** — never apps/templates/feature packs. Marketplace = operational architecture only. All future Studio OS documentation inherits this philosophy.
+

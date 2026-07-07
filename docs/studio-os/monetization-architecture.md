@@ -4,16 +4,16 @@ Permanent pricing and monetization architecture for Studio OS. Founders build co
 
 ## Core philosophy
 
-- Founders **build Headquarters**, **expand Departments**, and **hire Digital Staff**.
-- Every payment is an **investment in organizational growth**, never a feature unlock.
-- Studio OS should feel like **building a company**, not buying software.
+- Founders **build Headquarters**, **install Expansions**, and **hire Digital Staff**.
+- Every payment is an **investment in organizational growth**, never a feature unlock or template purchase.
+- Studio OS should feel like **building a living business**, not buying software or downloading apps.
 
 ## Three-layer economy
 
 | Layer | Billing | Purpose |
 |-------|---------|---------|
 | **Headquarters License** | Monthly | Operating system — Mission Control, Command Dock, Registry, security, core intelligence |
-| **Department Packs** | Permanent purchase | New wings of Headquarters — Creator Studio, Accounting, Warehouse, CRM, etc. |
+| **Department Packs / Expansions** | Permanent purchase | **Headquarters Expansions™** — new wings, departments, workflows, AI specialists |
 | **Digital Workforce** | Monthly payroll | Active Digital Staff — concierges and intelligence employees |
 
 ## Code layout
@@ -48,8 +48,8 @@ src/studio-os-core/monetization-architecture/
 | Subscribe / subscription | Headquarters License · Digital Payroll |
 | Buy software / unlock features | Expand Headquarters · Own Department permanently |
 | AI subscription | Hire Digital Staff · Activate Concierge |
-| Marketplace | Expansion Center · Recommended Growth |
-| Install pack | Expand Headquarters · Permanent purchase |
+| Marketplace | Headquarters Marketplace™ · Expansion Center |
+| Install pack / template | Expand Headquarters · Install Expansion |
 
 ## Demo behavior
 

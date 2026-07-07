@@ -1,13 +1,13 @@
 # Architecture Validator™ Report
 
-Generated: 2026-07-07T21:09:33.205Z
+Generated: 2026-07-07T21:13:33.951Z
 
 ## Summary
 
 | Severity | Count |
 |----------|-------|
 | Errors | 0 |
-| Warnings | 0 |
+| Warnings | 1 |
 | **Gate** | **✅ PASS** |
 
 ## Checks Performed
@@ -26,7 +26,9 @@ Generated: 2026-07-07T21:09:33.205Z
 
 ## Issues
 
-_No issues detected._
+| Severity | Code | Entity | Message |
+|----------|------|--------|---------|
+| warning | VERSION_MISMATCH | — | Multiple active spec file versions: 1.1.0, 1.2.0 |
 
 ## Architectural Gatekeeper
 

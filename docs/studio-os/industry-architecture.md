@@ -1,16 +1,27 @@
 # Industry Architecture & Expansion Center (Milestone 88)
 
-Studio OS is a **Business Operating System** — not a content platform, website builder, or industry-specific app. Milestone 88 establishes the permanent architecture for how every organization is created, expanded, and evolves.
+Studio OS is a **Business Headquarters Operating System** — not a content platform, website builder, collection of apps, or industry-specific SaaS. Milestone 88 establishes how every organization receives a **Headquarters** and **expands** it over time.
+
+**Canonical philosophy:** [Headquarters Engine™](./headquarters-engine.md)
 
 ## Core concepts
 
 | Concept | Purpose |
 |---------|---------|
-| **Industry** | Day-one selection (Creator, Beauty, Painting, Restaurant, …) drives headquarters layout |
-| **Department Pack** | Modular business capability bundle (Creator Pack, Beauty Pack, Contractor Pack, …) |
+| **Headquarters** | Every org owns a living business environment — grows via Expansions |
+| **Industry** | Day-one selection (Creator, Beauty, Restaurant, …) drives **starter headquarters layout** |
+| **Department Pack / Expansion** | Modular **business capability** — not a template or app |
 | **Universal Marketing** | Every org receives Marketing — industry-aware insights and channels |
-| **Expansion Center** | Install new packs after launch — Creator Studio, Sales CRM, Warehouse, … |
-| **Headquarters expansion** | Installing a pack physically adds departments, concierges, KPIs, and Command Dock capabilities |
+| **Expansion Center** | Install **Headquarters Expansions™** after launch |
+| **Headquarters growth** | Installing an Expansion adds buildings, departments, concierges, KPIs, Command Dock capabilities |
+
+## Canonical hierarchy
+
+```
+Headquarters → Buildings → Departments → Workspaces → Projects → Assets → Tasks
+```
+
+See [Headquarters Engine™](./headquarters-engine.md#canonical-hierarchy).
 
 ## Code layout
 
@@ -60,4 +71,4 @@ src/studio-os-core/industry-architecture/
 - Add new industries in `industries.ts`; add packs in `department-packs.ts` or `expansion-packs.ts`.
 - Every pack must declare `outcome.departmentsAdded`, `conciergesAdded`, `navModuleIds`, `kpiLabels`, `commandDockCapabilities`.
 - Do **not** expose irrelevant departments in HQ — filter via installed packs only.
-- Expansion Center replaces Marketplace as the **org growth** UX; legacy Marketplace modules remain for other purposes.
+- Expansion Center is the **consumer UX for Headquarters Expansions**; legacy Marketplace deal network remains separate. Growth purchases use **Expand Headquarters** language — see [Headquarters Marketplace™](./headquarters-marketplace.md).

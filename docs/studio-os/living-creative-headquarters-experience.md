@@ -6,7 +6,9 @@
 
 **Status:** Governing experiential standard for all Studio OS products
 
-**Applies to:** Experience DNA™ · Creative Direction Studio™ · Studio Production Engine™ · Living Headquarters™ · [Studio Project™ Model](./project-model.md) · all future creative workflows
+**Applies to:** Experience DNA™ · Creative Direction Studio™ · Studio Production Engine™ · Living Headquarters™ · [Studio Project™ Model](./project-model.md) · [Headquarters Engine™](./headquarters-engine.md) · all future creative workflows
+
+**Platform context:** Headquarters are **living businesses** — not apps. See [Headquarters Engine™](./headquarters-engine.md).
 
 ---
 

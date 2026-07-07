@@ -6,7 +6,25 @@
 
 **Status:** Canonical user-facing model — technical URLs and registry IDs unchanged
 
-**Applies to:** UX copy · documentation · onboarding · Mission Control · Creative Direction Studio™ · Studio Production Engine™ · all future Studio OS products
+**Applies to:** UX copy · documentation · onboarding · Mission Control · Creative Direction Studio™ · Studio Production Engine™ · [Headquarters Engine™](./headquarters-engine.md) · all future Studio OS products
+
+---
+
+## Position in Headquarters hierarchy
+
+```
+Headquarters
+    ↓
+Buildings
+    ↓
+Departments          ← Studio Production Engine (ten departments)
+    ↓
+Workspaces
+    ↓
+Projects             ← primary user-facing object (this document)
+    ↓
+Assets · Outputs
+```
 
 ---
 

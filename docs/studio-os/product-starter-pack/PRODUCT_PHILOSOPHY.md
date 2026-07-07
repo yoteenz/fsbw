@@ -6,11 +6,13 @@
 
 ## Core Belief
 
-> Products are **extensions** of Studio OS — not independent applications with Studio skin.
+> Products are **extensions of a customer's Headquarters** — not independent applications with Studio skin.
 
-They inherit architecture, design, governance, and intelligence. They contribute **behavior**, **flows**, and **domain value** — never parallel foundations.
+They inherit architecture, design, governance, and intelligence. They contribute **business capabilities**, **flows**, and **domain value** — never parallel foundations, never standalone apps, never template stores.
 
-**Content products** additionally inherit the [Master Content Pipeline™](../master-content-pipeline.md): campaigns are production pipelines; the **Master Content Asset™** is the single source of truth from which all platform derivatives originate. Products **consume** the ten **lifecycle gates** (DISCOVER → LEARNING) — they do not define independent workflows.
+**Headquarters model:** [Headquarters Engine™](../headquarters-engine.md) · [Platform Vision](../platform-vision.md)
+
+**Content products** additionally inherit the [Master Content Pipeline™](../master-content-pipeline.md): campaigns are production pipelines; **Projects** produce **Outputs** linked to the parent Project. Products **consume** the ten **lifecycle gates** (DISCOVER → LEARNING) — they do not define independent workflows.
 
 **Production UX:** [Studio Production Engine™](../studio-production-engine.md) — each gate is a **department workspace** in Studio Headquarters. Users walk the asset through departments; they never scroll through all phases on one page. Gate reference: [master-content-pipeline-gates.md](../master-content-pipeline-gates.md) · Departments: [studio-production-engine-departments.md](../studio-production-engine-departments.md).
 

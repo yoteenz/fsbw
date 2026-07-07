@@ -4,6 +4,10 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 
 | Document | Description |
 |----------|-------------|
+| [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
+| [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
+| [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |
+| [project-model.md](./project-model.md) | **Studio Project™** — Projects · Outputs · Mission Control dashboard |
 | [PLATFORM_ARCHITECTURE.md](./PLATFORM_ARCHITECTURE.md) | Two-layer model, code layout, routing |
 | [VOCABULARY.md](./VOCABULARY.md) | Workspace, Studio, Project, Content Pack, Asset |
 | [WORKSPACE_SYSTEM.md](./WORKSPACE_SYSTEM.md) | Registry, schema, switching, data adapters |

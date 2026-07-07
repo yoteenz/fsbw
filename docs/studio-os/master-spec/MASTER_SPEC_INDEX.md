@@ -15,7 +15,7 @@
 | File | Contents |
 |------|----------|
 | `constitution.yaml` | Volume 0 principles (13) — frozen |
-| `core-philosophies.yaml` | Core Studio OS Philosophy — **23 principles** — frozen |
+| `core-philosophies.yaml` | Core Studio OS Philosophy — **28 principles** — v1.2 Headquarters Engine amendment |
 | `experience-architecture.yaml` | Experience Architecture™ — DR-001–004 merged — frozen |
 | `release-channel-system.yaml` | Release Channel System™ — CA-001 — frozen |
 | `product-roadmap.yaml` | Product Phase priorities · VI–XIX governed roadmaps |
@@ -50,7 +50,7 @@
 3. **DR-001–DR-005 merged** — canonical milestones M89.x, M127.13, experience-architecture.yaml
 4. **Experience Architecture™** — first-class spec artifact (not isolated DRs)
 5. **Release Channel System™ (CA-001)** — constitutional capability; M127.14
-6. **23 Core Philosophies** — including Release Channel Governance™
+6. **28 Core Philosophies** — including Headquarters Engine™ · Expansions · Marketplace · Meaningful Progression (v1.2)
 7. **Volume I foundation closed** — 8 chapters; M89.x product UI deferred
 8. **M127.13** — Executive Strategy Floor™ (DR-005 canonical home)
 9. **M127.14** — Release Channel System™ (CA-001 canonical home)

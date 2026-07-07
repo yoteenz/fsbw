@@ -1,7 +1,8 @@
 # Core Studio OS Philosophy — constitutional design principles (not product features)
 # Governs every Volume, Chapter, Milestone, and Design Revision authored in the Master Specification.
-version: '1.1.0'
+version: '1.2.0'
 updatedAt: '2026-07-07'
+amendmentNote: 'Headquarters Engine™ platform philosophy — living businesses, Expansions, Marketplace of operational architecture'
 
 philosophies:
   - id: philosophy-environmental-storytelling
@@ -148,9 +149,9 @@ philosophies:
     category: platform
     summary: >-
       Studio OS is an organizational operating system — not a subscription dashboard.
-      Founders install departments, hire digital staff, and expand capabilities;
-      they do not buy feature tiers.
-    governs: [expansion-center, business-model-engine]
+      Founders expand Headquarters, install Expansions, and hire digital staff;
+      they do not buy apps, templates, or feature packs.
+    governs: [headquarters-engine, expansion-center, headquarters-marketplace, business-model-engine]
     alignsVolumes: [volume-i, volume-iii]
 
   - id: philosophy-places-not-pages
@@ -229,3 +230,55 @@ philosophies:
       Deployment Engine™ channel-native approval — not ad-hoc feature flags.
     governs: [release-channel-system, qa-headquarters, release-readiness, system-registry, platform-governance]
     alignsVolumes: [volume-0, volume-ii, volume-iv, volume-xi]
+
+  - id: philosophy-headquarters-engine
+    title: Headquarters Engine™
+    category: platform
+    summary: >-
+      Every customer owns a Headquarters that grows over time. The Headquarters Engine
+      generates immersive business environments tailored to business type — buildings,
+      departments, workspaces, and operational rhythm — not apps or admin pages.
+    governs: [headquarters-engine, industry-architecture, mission-control, headquarters-experience-v2]
+    alignsVolumes: [volume-i, volume-iii]
+
+  - id: philosophy-headquarters-expansions
+    title: Headquarters Expansions™
+    category: platform
+    summary: >-
+      Businesses never outgrow Studio OS — they install Expansions. Each Expansion
+      adds departments, workflows, AI specialists, concierges, automations, analytics,
+      and progression systems into an existing Headquarters. Expansions are business
+      capabilities, not templates or feature packs.
+    governs: [headquarters-engine, expansion-center, monetization-architecture]
+    alignsVolumes: [volume-i, volume-iii]
+
+  - id: philosophy-headquarters-marketplace
+    title: Headquarters Marketplace™
+    category: platform
+    summary: >-
+      Creators sell business architecture — living operational systems with UI, AI
+      behavior, workflows, documentation, analytics, automation, and concierge roles.
+      Not graphics, page templates, or downloadable files. Cross-industry installation
+      is encouraged.
+    governs: [headquarters-engine, expert-marketplace, ecosystem-marketplace]
+    alignsVolumes: [volume-i, volume-iii]
+
+  - id: philosophy-business-headquarters-os
+    title: Business Headquarters Operating System
+    category: platform
+    summary: >-
+      Studio OS vision: the world's first immersive Business Headquarters Operating
+      System. Founders step inside their business when they log in — not open software.
+      Long-term goal is building businesses, not buying business software.
+    governs: [headquarters-engine, platform-vision, arrival-experience]
+    alignsVolumes: [volume-i]
+
+  - id: philosophy-meaningful-progression
+    title: Meaningful Progression
+    category: experiential
+    summary: >-
+      Borrow progression psychology from great games — ownership, production management,
+      ambient intelligence, earned mastery — without gamification theater. Users feel
+      they are building something alive; achievements reflect real organizational progress.
+    governs: [headquarters-engine, experience-dna, living-creative-headquarters, campus-evolution-engine]
+    alignsVolumes: [volume-i, volume-xvi]
