@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ORB_ANIMATION_CSS, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 
@@ -8,16 +8,24 @@ const PHASE_MS = [1200, 1600, 1400, 1800, 1200];
 export function StudioOrbAwakeningOverlay() {
   const { awakeningActive, completeAwakening } = useStudioOrb();
   const [phase, setPhase] = useState(0);
+  const completeRef = useRef(completeAwakening);
+
+  completeRef.current = completeAwakening;
 
   useEffect(() => {
-    if (!awakeningActive) return;
-    if (phase >= PHASE_MS.length) {
-      completeAwakening();
+    if (!awakeningActive) {
+      setPhase(0);
       return;
     }
+
+    if (phase >= PHASE_MS.length) {
+      completeRef.current();
+      return;
+    }
+
     const id = window.setTimeout(() => setPhase((p) => p + 1), PHASE_MS[phase]);
     return () => window.clearTimeout(id);
-  }, [awakeningActive, phase, completeAwakening]);
+  }, [awakeningActive, phase]);
 
   if (!awakeningActive) return null;
 
@@ -96,7 +104,27 @@ export function StudioOrbAwakeningOverlay() {
           >
             ENTER HEADQUARTERS
           </button>
-        ) : null}
+        ) : (
+          <button
+            type="button"
+            onClick={completeAwakening}
+            style={{
+              marginTop: 20,
+              fontFamily: '"Futura PT Medium"',
+              fontSize: '7px',
+              letterSpacing: '0.1em',
+              color: phase < 2 ? 'rgba(255,255,255,0.45)' : 'rgba(235,28,36,0.55)',
+              background: 'transparent',
+              border: 'none',
+              padding: '8px 16px',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              textUnderlineOffset: '3px',
+            }}
+          >
+            SKIP INTRO
+          </button>
+        )}
       </div>
     </>
   );

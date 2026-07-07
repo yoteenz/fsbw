@@ -10,8 +10,8 @@ import {
 import { useLocation } from 'react-router-dom';
 import { readCommandDockStore } from '../../../../studio-os-core/command-dock/store';
 import { useCommandDockState } from '../../../../hooks/useCommandDockState';
-import { useOrganizationContextOptional } from '../../../../studio-os-core/organization-context';
-import { getRuntimeActiveWorkspaceId } from '../../../../studio-os-core/workspace/storage';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
+import { StudioOrbAwakeningOverlay } from './StudioOrbAwakeningOverlay';
 import type { StudioOrbPosition, StudioOrbPresenceState, StudioOrbSurface } from './studioOrbTypes';
 import { playStudioOrbSound } from './studioOrbSounds';
 import {
@@ -49,9 +49,9 @@ function resolvePresenceState(store: ReturnType<typeof readCommandDockStore>): S
 
 export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
-  const org = useOrganizationContextOptional();
+  const { workspaceId } = useWorkspace();
   const dock = useCommandDockState();
-  const organizationId = org?.organizationId ?? getRuntimeActiveWorkspaceId();
+  const organizationId = workspaceId;
 
   const [radialOpen, setRadialOpen] = useState(false);
   const [activeSurface, setActiveSurface] = useState<StudioOrbSurface>(null);
@@ -65,9 +65,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!organizationId) return;
-    if (!hasSeenStudioOrbAwakening(organizationId)) {
-      setAwakeningActive(true);
-    }
+    setAwakeningActive(!hasSeenStudioOrbAwakening(organizationId));
   }, [organizationId]);
 
   useEffect(() => {
@@ -179,7 +177,12 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
     ]
   );
 
-  return <StudioOrbContext.Provider value={value}>{children}</StudioOrbContext.Provider>;
+  return (
+    <StudioOrbContext.Provider value={value}>
+      <StudioOrbAwakeningOverlay />
+      {children}
+    </StudioOrbContext.Provider>
+  );
 }
 
 export function useStudioOrb(): StudioOrbContextValue {

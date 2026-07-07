@@ -39792,3 +39792,24 @@ Summary of the **whole conversation so far** in this chat: user reported **creat
 **User request:** Center the "LOADING WORKSPACE MODULE…" text on screen when lazy-loading Studio OS workspace modules, with a loading bar below for visual feedback.
 
 **Change:** Added **`src/components/base/WorkspaceModuleLoadingFallback.tsx`** — full-viewport fixed overlay (`position: fixed; inset: 0`) flex-centered label + indeterminate brand-red progress bar. CSS in **`index.css`** (`.workspace-module-loading*` + `workspace-module-loading-slide` keyframes). **`WorkspaceStudioModuleHost.tsx`** Suspense fallback now uses this component instead of a top-left `p-4` div.
+
+---
+
+## 2026-07-07 — Studio Orb awakening stuck on “AWAKENING” (fix)
+
+**Context (full chat arc):** Session delivered Headquarters Experience V2.0, Living Headquarters™, and Life & Culture Preferences™. User reported **Studio Orb keeps getting stuck on “awakening” status** — full-screen overlay frozen on **STUDIO INTELLIGENCE · AWAKENING** (phase 0).
+
+**Root causes identified:**
+- **`StudioOrbAwakeningOverlay` lived inside `StudioOrbMount`**, which unmounts when `shouldShowCommandDock(pathname)` is false or `workspace.studioEnabled` toggles — phase timers cleared on every remount, so awakening never advanced past phase 0 while `awakeningActive` stayed true in the provider.
+- **`studioOrbAwakening.ts` used raw `safeLocalStorage`** instead of **`readStudioOsStorageValue` / `writeStudioOsStorageValue`** — no in-memory fallback when localStorage quota fails, so “seen” flag could not persist and awakening re-triggered every navigation/reload.
+- **`organizationId` used `org ?? getRuntimeActiveWorkspaceId()`**, which could briefly resolve to a different scoped key than `workspace.id` after org context loaded.
+
+**Fix delivered:**
+- **`studioOrbAwakening.ts`** — Studio OS storage layer + session **`awakeningSeenMemory` Set** for quota-safe persistence.
+- **`StudioOrbProvider`** — stable **`workspaceId`** from `useWorkspace()`; awakening effect sets **`awakeningActive` explicitly** from seen state; **`StudioOrbAwakeningOverlay` rendered at provider level** (survives `StudioOrbMount` unmount).
+- **`StudioOrbAwakeningOverlay`** — stable completion via ref (no timer reset from callback identity churn); reset phase when inactive; **SKIP INTRO** available from phase 0; **ENTER HEADQUARTERS** at phase ≥ 4 unchanged.
+- **`StudioOrbMount`** — removed duplicate overlay mount.
+
+**Conventions:** Awakening overlay must stay mounted for the full sequence whenever `awakeningActive` — never gate it behind command-dock visibility. Awakening “seen” flags are lightweight Studio OS keys — always use `studioOsBrowserStorage` read/write helpers.
+
+**Changes:** studioOrbAwakening.ts, StudioOrbProvider.tsx, StudioOrbAwakeningOverlay.tsx, StudioOrbMount.tsx, MEMORY.md.
