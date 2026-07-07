@@ -1,6 +1,6 @@
 # Folder Structure Template
 
-**Parent:** [Studio Product Starter Pack™](./README.md)
+> **v2.0.0:** Superseded by [PRODUCT_FOLDER_STRUCTURE.md](./PRODUCT_FOLDER_STRUCTURE.md).
 
 ---
 

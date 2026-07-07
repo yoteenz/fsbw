@@ -91,14 +91,18 @@ Runs automatically before `npm run build` via `prebuild`.
 | `docs/studio-os/design/DESIGN_HEALTH.md` | Design Validator™ — PASS · WARNING · FAIL |
 | `docs/studio-os/design/revisions/vdr-registry.yaml` | VDR historical record |
 
-## Product Starter Pack (Active)
+## Product Starter Pack (Active — v2.0.0)
 
 | Document | Purpose |
 |----------|---------|
-| `docs/studio-os/product-starter-pack/` | **Studio Product Starter Pack™** — canonical product onboarding |
-| `docs/studio-os/product-starter-pack/PRODUCT_PHILOSOPHY.md` | Idea → Governance lifecycle |
-| `docs/studio-os/product-starter-pack/REQUIRED_DOCUMENTATION_CHECKLIST.md` | Mandatory product docs |
-| `docs/studio-os/product-starter-pack/DEFINITION_OF_DONE.md` | Architecture + Design + QA gates |
+| `docs/studio-os/product-starter-pack/` | **Studio Product Starter Pack™** — official Product Operating Procedure |
+| `docs/studio-os/product-starter-pack/START_HERE.md` | Mandatory onboarding · lifecycle · approvals |
+| `docs/studio-os/product-starter-pack/PRODUCT_DEVELOPMENT_RULES.md` | Cursor operating manual |
+| `docs/studio-os/product-starter-pack/PRODUCT_CREATION_CHECKLIST.md` | Master checklist — every new product |
+| `docs/studio-os/product-starter-pack/PRODUCT_REVIEW_BOARD.md` | Nine pre-implementation reviews |
+| `docs/studio-os/product-starter-pack/PRODUCT_HEALTH.md` | Composite product validator |
+| `docs/studio-os/product-starter-pack/DEFINITION_OF_DONE.md` | Twelve launch gates |
+| `docs/studio-os/product-starter-pack/*_TEMPLATE.md` | 11 reusable product templates |
 
 ## Product Phase (Active)
 

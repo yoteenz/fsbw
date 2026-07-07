@@ -1,6 +1,6 @@
 # Required Documentation Checklist
 
-**Parent:** [Studio Product Starter Pack™](./README.md)
+> **v2.0.0:** Superseded by [PRODUCT_CREATION_CHECKLIST.md](./PRODUCT_CREATION_CHECKLIST.md) and per-document templates in this package.
 
 ---
 

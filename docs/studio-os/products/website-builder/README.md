@@ -24,7 +24,7 @@ designCompliance:
     defer to Design Governance.
 ```
 
-**Starter Pack:** [product-starter-pack](../../product-starter-pack/)
+**Starter Pack:** [product-starter-pack v2.0.0](../../product-starter-pack/START_HERE.md) · [PRODUCT_CREATION_CHECKLIST](../../product-starter-pack/PRODUCT_CREATION_CHECKLIST.md)
 
 ---
 

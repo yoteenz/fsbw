@@ -1,6 +1,6 @@
-# Starter Checklist — Copy for New Products
+# Studio Product Starter Pack™
 
-**Parent:** [Studio Product Starter Pack™](./README.md)
+> **v2.0.0:** This checklist is superseded by [PRODUCT_CREATION_CHECKLIST.md](./PRODUCT_CREATION_CHECKLIST.md) — the master checklist for all new products.
 
 ---
 

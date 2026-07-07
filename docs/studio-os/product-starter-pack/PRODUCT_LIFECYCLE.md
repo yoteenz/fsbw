@@ -1,6 +1,6 @@
 # Product Lifecycle
 
-**Parent:** [Studio Product Starter Pack™](./README.md)
+> **v2.0.0:** Superseded by [START_HERE.md](./START_HERE.md) lifecycle section.
 
 ---
 

@@ -66,7 +66,7 @@ Product Starter Pack™ ──onboards──→ every new product
 | Core Philosophies | `docs/studio-os/master-spec/core-philosophies.yaml` |
 | Component Registry™ (M127) | `docs/studio-os/system-registry.md` |
 | Design Token Engine™ | `docs/studio-os/master-spec/milestones/volume-i.yaml` |
-| Product Starter Pack | `docs/studio-os/product-starter-pack/` |
+| Product Starter Pack | `docs/studio-os/product-starter-pack/START_HERE.md` |
 | Website Builder (example product) | `docs/studio-os/products/website-builder/` |
 
 ---

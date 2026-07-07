@@ -1,6 +1,6 @@
 # Governance Rules — Products
 
-**Parent:** [Studio Product Starter Pack™](./README.md)
+> **v2.0.0:** Superseded by [PRODUCT_GOVERNANCE.md](./PRODUCT_GOVERNANCE.md) and [PRODUCT_DEVELOPMENT_RULES.md](./PRODUCT_DEVELOPMENT_RULES.md).
 
 ---
 
