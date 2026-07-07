@@ -1,6 +1,6 @@
 {
   "version": "1.1.0",
-  "compiledAt": "2026-07-07T16:57:23.062Z",
+  "compiledAt": "2026-07-07T17:12:29.265Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
     "version": "1.1.0",
@@ -792,8 +792,9 @@
       {
         "id": "priority-1",
         "title": "Studio Intelligence Presence",
-        "status": "active",
+        "status": "mature",
         "minimumReleaseChannel": "preview",
+        "note": "Sufficient for future work — UX refinement deferred.",
         "products": [
           {
             "id": "studio-orb",
@@ -833,24 +834,35 @@
       {
         "id": "priority-2",
         "title": "Creative & Publishing",
-        "status": "queued",
+        "status": "active",
+        "implementationOrder": [
+          "phase-1-website-builder",
+          "phase-2-campaign-engine",
+          "phase-3-publishing-studio"
+        ],
         "minimumReleaseChannel": "preview",
         "products": [
           {
             "id": "website-builder",
-            "title": "Website Builder / Experience Studio™",
+            "title": "Studio Website Builder™",
             "milestoneId": "M127.10",
-            "lifecycleStage": "product-vision"
+            "moduleId": "website-builder",
+            "lifecycleStage": "product-vision",
+            "releaseChannel": "preview",
+            "specPath": "docs/studio-os/products/website-builder/",
+            "note": "Flagship — pre-implementation spec complete; awaiting approval."
           },
           {
             "id": "campaign-engine",
             "title": "Campaign Engine™",
-            "lifecycleStage": "experience-prototype"
+            "lifecycleStage": "queued",
+            "phase": 2
           },
           {
             "id": "publishing-studio",
             "title": "Publishing Studio™",
-            "lifecycleStage": "product-vision"
+            "lifecycleStage": "queued",
+            "phase": 3
           }
         ]
       },

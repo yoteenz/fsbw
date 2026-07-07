@@ -26,8 +26,9 @@ productLifecycle:
 priorities:
   - id: priority-1
     title: Studio Intelligence Presence
-    status: active
+    status: mature
     minimumReleaseChannel: preview
+    note: Sufficient for future work — UX refinement deferred.
     products:
       - id: studio-orb
         title: Studio Orb™
@@ -57,19 +58,29 @@ priorities:
 
   - id: priority-2
     title: Creative & Publishing
-    status: queued
+    status: active
+    implementationOrder:
+      - phase-1-website-builder
+      - phase-2-campaign-engine
+      - phase-3-publishing-studio
     minimumReleaseChannel: preview
     products:
       - id: website-builder
-        title: Website Builder / Experience Studio™
+        title: Studio Website Builder™
         milestoneId: M127.10
+        moduleId: website-builder
         lifecycleStage: product-vision
+        releaseChannel: preview
+        specPath: docs/studio-os/products/website-builder/
+        note: Flagship — pre-implementation spec complete; awaiting approval.
       - id: campaign-engine
         title: Campaign Engine™
-        lifecycleStage: experience-prototype
+        lifecycleStage: queued
+        phase: 2
       - id: publishing-studio
         title: Publishing Studio™
-        lifecycleStage: product-vision
+        lifecycleStage: queued
+        phase: 3
 
   - id: priority-3
     title: Intelligence Headquarters

@@ -83,6 +83,7 @@ Runs automatically before `npm run build` via `prebuild`.
 | Document | Purpose |
 |----------|---------|
 | `docs/studio-os/PRODUCT_PHASE_CHARTER.md` | Product lifecycle · priorities · roadmap policy |
+| `docs/studio-os/products/website-builder/` | **Studio Website Builder™** — flagship pre-implementation spec |
 | `docs/studio-os/master-spec/product-roadmap.yaml` | P1–P3 products · governed volume roadmaps |
 
 ## Roadmap
@@ -90,8 +91,10 @@ Runs automatically before `npm run build` via `prebuild`.
 ```
 Architecture Phase                         ✅ Complete
 Product Phase                              → ACTIVE
-Priority 1 — Studio Orb / Voice / Conversation → IN PROGRESS
-Priority 2 — Website / Campaign / Publishing   → Queued
-Priority 3 — Relationship / Knowledge / HQ     → Queued
+Priority 1 — Studio Orb / Voice / Conversation → Mature (refinement deferred)
+Priority 2 Phase 1 — Studio Website Builder™      → Spec awaiting approval
+Priority 2 Phase 2 — Campaign Engine™             → Queued
+Priority 2 Phase 3 — Publishing Studio™         → Queued
+Priority 3 — Relationship / Knowledge / HQ        → Queued
 Volumes VI–XIX                               → Governed roadmaps (not prerequisites)
 ```

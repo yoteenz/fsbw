@@ -57,24 +57,21 @@ All products respect **Release Channel eligibility** (CA-001):
 
 ---
 
-## Implementation Priorities
+## Implementation Priorities (Updated)
 
-### Priority 1 — Studio Intelligence Presence *(Active)*
+### Priority 1 — Studio Intelligence Presence *(Mature — refinement deferred)*
 
-| Product | Milestone | Lifecycle stage |
-|---------|-----------|-----------------|
-| Studio Orb™ | M89.1 | Implementation |
-| Conversation Engine™ | M89.3 | Implementation |
-| Voice Mode™ | M89.2 | Implementation |
-| Awakening Experience™ | M89.4 | Implementation |
+Studio Orb™, Conversation Engine™, Voice Mode™, Awakening Experience — sufficient to support future products.
 
-### Priority 2 — Creative & Publishing *(Queued)*
+### Priority 2 — Creative & Publishing *(Active)*
 
-| Product | Notes |
-|---------|-------|
-| Website Builder | Experience Studio evolution |
-| Campaign Engine | Executive orchestration |
-| Publishing Studio | Content → approval → distribution |
+| Phase | Product | Status |
+|-------|---------|--------|
+| **Phase 1** | **Studio Website Builder™** | Pre-implementation spec — **awaiting approval** |
+| Phase 2 | Campaign Engine™ | Queued |
+| Phase 3 | Publishing Studio™ | Queued |
+
+**Website Builder spec:** `docs/studio-os/products/website-builder/`
 
 ### Priority 3 — Intelligence Headquarters *(Queued)*
 
