@@ -4,6 +4,7 @@ import {
   getMasterSpecBundleSync,
   reconcileMasterSpecWithLive,
   type MasterSpecBundle,
+  type MasterSpecChapter,
   type MasterSpecDesignRevision,
   type MasterSpecMilestone,
   type MasterSpecVolume,
@@ -14,7 +15,9 @@ import type { KnowledgeRegistryEntry, RegistryCategory, RegistryFeatureStatus } 
 function inferCategory(id: string, registryKind: string, volumeId?: string): RegistryCategory {
   if (registryKind === 'constitution') return 'constitution';
   if (registryKind === 'volume') return 'volume';
+  if (registryKind === 'chapter') return 'chapter';
   if (registryKind === 'design-revision') return 'design-revision';
+  if (volumeId === 'volume-i') return 'platform';
   if (['business-discovery-blueprint', 'profession-brain', 'organization-genome', 'professional-trust-framework'].includes(id)) {
     return 'foundation';
   }
@@ -129,6 +132,7 @@ function buildEntryBase(
 
 function buildFromManifestMilestone(m: MasterSpecMilestone, live?: DocumentationSystemEntry): KnowledgeRegistryEntry {
   const category = inferCategory(m.internalId, m.registryKind, m.volumeId);
+  const notes = m.implementationNotes ? ` ${m.implementationNotes}` : '';
   return buildEntryBase({
     officialName: m.name,
     internalId: m.internalId,
@@ -137,6 +141,7 @@ function buildFromManifestMilestone(m: MasterSpecMilestone, live?: Documentation
     implementationStatus: m.implementationStatus,
     registryKind: 'milestone',
     volumeId: m.volumeId,
+    chapterId: m.chapterId,
     canonicalMilestone: m.canonicalId,
     shippedMilestone: m.shippedMilestone,
     dependsOn: m.dependsOn,
@@ -144,9 +149,10 @@ function buildFromManifestMilestone(m: MasterSpecMilestone, live?: Documentation
     moduleId: m.moduleId ?? live?.moduleId,
     route: live?.route,
     milestone: m.shippedMilestone ?? undefined,
-    description: live?.overview ?? m.purpose,
+    description: `${live?.overview ?? m.purpose}${notes}`.trim(),
+    implementationNotes: m.implementationNotes,
     capabilities: live?.capabilities ?? [],
-    relatedSystems: live?.relatedSystems ?? m.dependsOn,
+    relatedSystems: [...new Set([...(m.relatedSystems ?? []), ...(live?.relatedSystems ?? [])])],
     dependencies: m.dependsOn,
     keywords: live?.searchKeywords ?? [m.name.toLowerCase(), m.canonicalId],
     aliases: live?.aliases ?? [m.canonicalId],
@@ -158,8 +164,31 @@ function buildFromManifestMilestone(m: MasterSpecMilestone, live?: Documentation
   });
 }
 
+function buildFromManifestChapter(ch: MasterSpecChapter, bundle: MasterSpecBundle): KnowledgeRegistryEntry {
+  const milestones = bundle.milestones.filter(
+    (m) => m.chapterId === ch.id || ch.milestoneIds.includes(m.canonicalId)
+  );
+  return buildEntryBase({
+    officialName: ch.title,
+    internalId: ch.id,
+    purpose: ch.summary,
+    category: 'chapter',
+    implementationStatus: ch.status,
+    registryKind: 'chapter',
+    volumeId: ch.volumeId,
+    dependsOn: ch.dependsOn,
+    completionPct: ch.completionPct,
+    description: ch.summary,
+    keywords: [ch.title.toLowerCase(), ch.id, `chapter ${ch.number}`],
+    aliases: [`Chapter ${ch.number}`, ch.id],
+    capabilities: [`${milestones.length} milestones`, `${milestones.filter((m) => m.implementationStatus === 'complete').length} complete`],
+    relatedSystems: milestones.slice(0, 6).map((m) => m.internalId),
+  });
+}
+
 function buildFromManifestVolume(v: MasterSpecVolume, bundle: MasterSpecBundle): KnowledgeRegistryEntry {
   const milestones = bundle.milestones.filter((m) => m.volumeId === v.id);
+  const chapters = (bundle.chapters ?? []).filter((c) => c.volumeId === v.id);
   return buildEntryBase({
     officialName: v.title,
     internalId: v.id,
@@ -173,7 +202,11 @@ function buildFromManifestVolume(v: MasterSpecVolume, bundle: MasterSpecBundle):
     description: v.notes ? `${v.summary} ${v.notes}` : v.summary,
     keywords: [v.title.toLowerCase(), v.id, `volume ${v.number}`],
     aliases: [`Volume ${v.number}`, v.id],
-    capabilities: [`${milestones.length} milestones`, `${milestones.filter((m) => m.implementationStatus === 'complete').length} complete`],
+    capabilities: [
+      `${chapters.length} chapters`,
+      `${milestones.length} milestones`,
+      `${milestones.filter((m) => m.implementationStatus === 'complete').length} complete`,
+    ],
     relatedSystems: milestones.slice(0, 5).map((m) => m.internalId),
   });
 }
@@ -229,6 +262,10 @@ export function buildKnowledgeRegistry(bundle: MasterSpecBundle = getMasterSpecB
     byId.set(dr.id, buildFromDesignRevision(dr));
   }
 
+  for (const ch of bundle.chapters ?? []) {
+    byId.set(ch.id, buildFromManifestChapter(ch, bundle));
+  }
+
   for (const m of bundle.milestones) {
     const live = m.moduleId ? liveByModule.get(m.moduleId) : liveByModule.get(m.internalId);
     byId.set(m.internalId, buildFromManifestMilestone(m, live));
@@ -255,6 +292,7 @@ export function getRegistryEntryCount(): number {
 }
 
 export function getVolumeSummaries(bundle: MasterSpecBundle = getMasterSpecBundleSync()) {
+  const chapters = bundle.chapters ?? [];
   return bundle.volumes.map((v) => {
     const milestones = bundle.milestones.filter((m) => m.volumeId === v.id);
     return {
@@ -264,7 +302,27 @@ export function getVolumeSummaries(bundle: MasterSpecBundle = getMasterSpecBundl
       completionPct: v.completionPct,
       milestoneCount: milestones.length,
       completeCount: milestones.filter((m) => m.implementationStatus === 'complete').length,
+      chapterCount: chapters.filter((c) => c.volumeId === v.id).length,
       dependsOn: v.dependsOn,
+    };
+  });
+}
+
+export function getChapterSummaries(bundle: MasterSpecBundle = getMasterSpecBundleSync()) {
+  return (bundle.chapters ?? []).map((ch) => {
+    const milestones = bundle.milestones.filter(
+      (m) => m.chapterId === ch.id || ch.milestoneIds.includes(m.canonicalId)
+    );
+    return {
+      chapterId: ch.id,
+      volumeId: ch.volumeId,
+      number: ch.number,
+      title: ch.title,
+      status: ch.status,
+      completionPct: ch.completionPct,
+      milestoneCount: milestones.length,
+      completeCount: milestones.filter((m) => m.implementationStatus === 'complete').length,
+      dependsOn: ch.dependsOn,
     };
   });
 }

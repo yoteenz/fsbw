@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "compiledAt": "2026-07-07T05:04:30.431Z",
+  "compiledAt": "2026-07-07T05:21:15.357Z",
   "sourceRoot": "docs/studio-os/master-spec",
   "constitution": {
     "version": "1.0.0",
@@ -68,9 +68,10 @@
       "dependsOn": [
         "volume-0"
       ],
-      "milestoneRange": null,
-      "completionPct": 45,
-      "notes": "Volume container registered; milestone breakdown in progress."
+      "milestoneRange": "M73.5-M89.4",
+      "completionPct": 58,
+      "chaptersFile": "chapters/volume-i.yaml",
+      "notes": "Eight chapters registered in chapters/volume-i.yaml. Milestones in milestones/volume-i.yaml. Design revisions DR-001–DR-004 overlay planned experience work — product implementation deferred."
     },
     {
       "id": "volume-ii",
@@ -304,7 +305,768 @@
       "completionPct": 5
     }
   ],
+  "chapters": [
+    {
+      "id": "chapter-i-1",
+      "number": 1,
+      "title": "Workspace & Organizational Arrival",
+      "summary": "Multi-organization workspace runtime, intelligent onboarding, and ceremonial arrival — the foundation before Headquarters feels alive.",
+      "status": "in-progress",
+      "dependsOn": [
+        "volume-0"
+      ],
+      "milestoneIds": [
+        "M76.5",
+        "M73.5",
+        "M73.6"
+      ],
+      "completionPct": 70,
+      "volumeId": "volume-i"
+    },
+    {
+      "id": "chapter-i-2",
+      "number": 2,
+      "title": "Concierge Hospitality & Production Review",
+      "summary": "Concierge Layer™, production floor, render queue, screening room, and concierge approval — luxury hospitality before content reaches the founder.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-i-1"
+      ],
+      "milestoneIds": [
+        "M77",
+        "M78",
+        "M79",
+        "M80",
+        "M81",
+        "M81.5"
+      ],
+      "completionPct": 100,
+      "volumeId": "volume-i"
+    },
+    {
+      "id": "chapter-i-3",
+      "number": 3,
+      "title": "Command Dock & Living Presence",
+      "summary": "Command Dock™ primary interaction layer and Living Headquarters Presence™ — the OS speaks naturally and Headquarters feels quietly alive.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-i-2"
+      ],
+      "milestoneIds": [
+        "M82",
+        "M82.5"
+      ],
+      "completionPct": 100,
+      "volumeId": "volume-i"
+    },
+    {
+      "id": "chapter-i-4",
+      "number": 4,
+      "title": "Headquarters & Executive Information Architecture",
+      "summary": "Mission Control™, Executive Information Architecture (M83), and organization headquarters refinement — walking through Headquarters, not scrolling dashboards.",
+      "status": "in-progress",
+      "dependsOn": [
+        "chapter-i-3"
+      ],
+      "milestoneIds": [
+        "M83",
+        "M83.5",
+        "M86",
+        "DR-002",
+        "DR-003"
+      ],
+      "completionPct": 72,
+      "volumeId": "volume-i"
+    },
+    {
+      "id": "chapter-i-5",
+      "number": 5,
+      "title": "Design Canon & Organizational Genome",
+      "summary": "Design DNA & Canon™ and Design Genome™ — customer-facing canon and organizational visual memory governing every surface.",
+      "status": "complete",
+      "dependsOn": [
+        "chapter-i-4"
+      ],
+      "milestoneIds": [
+        "M84",
+        "M85"
+      ],
+      "completionPct": 100,
+      "volumeId": "volume-i"
+    },
+    {
+      "id": "chapter-i-6",
+      "number": 6,
+      "title": "Studio Intelligence Runtime & Experience",
+      "summary": "User-facing Studio Intelligence™, Founder Pilot Mode, and Experience Engine™ environmental adaptation across Headquarters.",
+      "status": "in-progress",
+      "dependsOn": [
+        "chapter-i-5",
+        "M122"
+      ],
+      "milestoneIds": [
+        "M87",
+        "M87.5",
+        "M141"
+      ],
+      "completionPct": 65,
+      "volumeId": "volume-i"
+    },
+    {
+      "id": "chapter-i-7",
+      "number": 7,
+      "title": "Expansion & Platform Economics",
+      "summary": "Expansion Center™ and permanent monetization architecture — founders expand departments and hire Digital Staff, never subscribe to features.",
+      "status": "in-progress",
+      "dependsOn": [
+        "chapter-i-6"
+      ],
+      "milestoneIds": [
+        "M88",
+        "M89"
+      ],
+      "completionPct": 55,
+      "volumeId": "volume-i"
+    },
+    {
+      "id": "chapter-i-8",
+      "number": 8,
+      "title": "Future Experience Layer (Planned)",
+      "summary": "Studio Orb™, Voice Mode™, Conversation Mode™, and Awakening Sequence™ — registered for roadmap and reconciliation; implementation deferred (DR-001).",
+      "status": "planned",
+      "dependsOn": [
+        "chapter-i-3",
+        "M129",
+        "M130",
+        "M131",
+        "DR-004"
+      ],
+      "milestoneIds": [
+        "M89.1",
+        "M89.2",
+        "M89.3",
+        "M89.4",
+        "DR-001",
+        "DR-004"
+      ],
+      "completionPct": 0,
+      "volumeId": "volume-i"
+    }
+  ],
   "milestones": [
+    {
+      "canonicalId": "M76.5",
+      "name": "Multi-Organization Workspace™",
+      "internalId": "ecosystem",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-1",
+      "volumeId": "volume-i",
+      "purpose": "Transform Studio OS into a true multi-organization operating system — each company is an isolated workspace with shared platform capabilities.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": "M76.5",
+      "moduleId": "ecosystem",
+      "dependsOn": [
+        "volume-0"
+      ],
+      "enables": [
+        "M73.5"
+      ],
+      "relatedSystems": [
+        "workspace-runtime",
+        "mission-control",
+        "command-dock"
+      ],
+      "implementationNotes": "Foundational refactor — Studio OS = OS, each company = Workspace. Sprint 2 registers spec only; workspace runtime hardening continues separately."
+    },
+    {
+      "canonicalId": "M73.5",
+      "name": "Company Onboarding Intelligence™",
+      "internalId": "company-onboarding-intelligence",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-1",
+      "volumeId": "volume-i",
+      "purpose": "Intelligent onboarding that progressively discovers the organization before Headquarters activation.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M73.5",
+      "moduleId": "company-onboarding-intelligence",
+      "dependsOn": [
+        "M76.5"
+      ],
+      "enables": [
+        "M73.6"
+      ],
+      "relatedSystems": [
+        "business-discovery-blueprint",
+        "mission-control",
+        "chief-of-staff"
+      ],
+      "implementationNotes": "Onboarding discovers — never rushes setup. Arrival at Headquarters is the goal."
+    },
+    {
+      "canonicalId": "M73.6",
+      "name": "Arrival Experience™",
+      "internalId": "arrival-experience",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-1",
+      "volumeId": "volume-i",
+      "purpose": "Ceremonial conclusion of onboarding — quiet confidence and wonder, never theatrical \"setup complete.\"",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M73.6",
+      "moduleId": "arrival-experience",
+      "dependsOn": [
+        "M73.5"
+      ],
+      "enables": [
+        "M77"
+      ],
+      "relatedSystems": [
+        "mission-control",
+        "founder-walk",
+        "concierge-layer"
+      ],
+      "implementationNotes": "Meaningful arrival moment. Feeds Living Headquarters storytelling (DR-003)."
+    },
+    {
+      "canonicalId": "M77",
+      "name": "Concierge Layer™",
+      "internalId": "concierge-layer",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-2",
+      "volumeId": "volume-i",
+      "purpose": "Founder-facing guidance layer — luxury headquarters hospitality atop the executive organization.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M77",
+      "moduleId": "concierge-layer",
+      "dependsOn": [
+        "M73.6"
+      ],
+      "enables": [
+        "M78",
+        "M81.5"
+      ],
+      "relatedSystems": [
+        "chief-of-staff",
+        "executive-council",
+        "command-dock",
+        "concierge-routing"
+      ],
+      "implementationNotes": "Does not replace executives — transforms founder emotional experience."
+    },
+    {
+      "canonicalId": "M78",
+      "name": "Production Studio™",
+      "internalId": "production-studio",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-2",
+      "volumeId": "volume-i",
+      "purpose": "Centralized production floor for AI-assisted content creation.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M78",
+      "moduleId": "production-studio",
+      "dependsOn": [
+        "M77"
+      ],
+      "enables": [
+        "M79"
+      ],
+      "relatedSystems": [
+        "render-queue",
+        "screening-room",
+        "asset-factory"
+      ],
+      "implementationNotes": "Alive production floor — founder always sees pipeline state."
+    },
+    {
+      "canonicalId": "M79",
+      "name": "Render Queue™",
+      "internalId": "render-queue",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-2",
+      "volumeId": "volume-i",
+      "purpose": "Visible pipeline for every production — founder never wonders what AI is doing.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M79",
+      "moduleId": "render-queue",
+      "dependsOn": [
+        "M78"
+      ],
+      "enables": [
+        "M80"
+      ],
+      "relatedSystems": [
+        "production-studio",
+        "screening-room"
+      ],
+      "implementationNotes": "Subtle animations communicate work in progress."
+    },
+    {
+      "canonicalId": "M80",
+      "name": "Screening Room™",
+      "internalId": "screening-room",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-2",
+      "volumeId": "volume-i",
+      "purpose": "Luxury review theater — experience every production before publication.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M80",
+      "moduleId": "screening-room",
+      "dependsOn": [
+        "M79"
+      ],
+      "enables": [
+        "M81"
+      ],
+      "relatedSystems": [
+        "render-queue",
+        "concierge-approval-flow"
+      ],
+      "implementationNotes": "Private cinema aesthetic — darkened environment, glass controls."
+    },
+    {
+      "canonicalId": "M81",
+      "name": "Concierge Approval Flow™",
+      "internalId": "concierge-approval-flow",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-2",
+      "volumeId": "volume-i",
+      "purpose": "Intelligent concierge review before content reaches the founder.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M81",
+      "moduleId": "concierge-approval-flow",
+      "dependsOn": [
+        "M80"
+      ],
+      "enables": [
+        "M82"
+      ],
+      "relatedSystems": [
+        "concierge-layer",
+        "screening-room",
+        "command-dock"
+      ],
+      "implementationNotes": "Luxury editorial board — founder never receives unfinished work."
+    },
+    {
+      "canonicalId": "M81.5",
+      "name": "Intelligent Concierge Routing™",
+      "internalId": "concierge-routing",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-2",
+      "volumeId": "volume-i",
+      "purpose": "Universal command routing — founders speak naturally; OS assigns concierges.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M81.5",
+      "moduleId": "concierge-routing",
+      "dependsOn": [
+        "M77"
+      ],
+      "enables": [
+        "M82"
+      ],
+      "relatedSystems": [
+        "command-dock",
+        "concierge-layer",
+        "studio-intelligence"
+      ],
+      "implementationNotes": "Voice-ready architecture; text-first implementation shipped."
+    },
+    {
+      "canonicalId": "M82",
+      "name": "Command Dock™",
+      "internalId": "command-dock",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-3",
+      "volumeId": "volume-i",
+      "purpose": "Primary interaction layer — executive command console on every Headquarters surface.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M82",
+      "moduleId": "command-dock",
+      "dependsOn": [
+        "M81",
+        "M81.5"
+      ],
+      "enables": [
+        "M82.5",
+        "DR-001"
+      ],
+      "relatedSystems": [
+        "concierge-routing",
+        "studio-intelligence",
+        "mission-control"
+      ],
+      "implementationNotes": "Not chatbot/search/palette. DR-001 will reimagine dock via Studio Orb™ — spec registered, product work deferred."
+    },
+    {
+      "canonicalId": "M82.5",
+      "name": "Living Headquarters Presence™",
+      "internalId": "living-headquarters-presence",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-3",
+      "volumeId": "volume-i",
+      "purpose": "Headquarters feels quietly alive — organizational activity continues in background.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M82.5",
+      "moduleId": "living-headquarters-presence",
+      "dependsOn": [
+        "M82"
+      ],
+      "enables": [
+        "DR-003"
+      ],
+      "relatedSystems": [
+        "command-dock",
+        "mission-control",
+        "concierge-layer"
+      ],
+      "implementationNotes": "Subtle presence — never decorative animation or busy UI."
+    },
+    {
+      "canonicalId": "M83",
+      "name": "Executive Information Architecture™",
+      "internalId": "executive-information-architecture",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-4",
+      "volumeId": "volume-i",
+      "purpose": "Permanent design language — Hero → Department Cards → Focus → Collapsible hierarchy for every Studio OS module.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M83",
+      "moduleId": null,
+      "dependsOn": [
+        "M82"
+      ],
+      "enables": [
+        "M83.5",
+        "M86",
+        "DR-002"
+      ],
+      "relatedSystems": [
+        "mission-control",
+        "component-registry",
+        "design-token-engine"
+      ],
+      "implementationNotes": "docs/studio-os/executive-information-architecture.md. All modules inherit M83 rhythm."
+    },
+    {
+      "canonicalId": "M83.5",
+      "name": "Mission Control™ / Headquarters™",
+      "internalId": "mission-control",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-4",
+      "volumeId": "volume-i",
+      "purpose": "Executive operating room — missions, departments, approvals, live workspace activity.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M83",
+      "moduleId": "mission-control",
+      "dependsOn": [
+        "M83"
+      ],
+      "enables": [
+        "M86",
+        "DR-002"
+      ],
+      "relatedSystems": [
+        "command-dock",
+        "studio-intelligence",
+        "knowledge-registry",
+        "system-registry"
+      ],
+      "implementationNotes": "Primary Headquarters route. Shipped badge M83 on nav; canonical M83.5 distinguishes HQ module from EIA milestone."
+    },
+    {
+      "canonicalId": "M86",
+      "name": "Organization Mission Control Refinement™",
+      "internalId": "organization-mission-control",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-4",
+      "volumeId": "volume-i",
+      "purpose": "Organization Identity Card, executive flow, progressive disclosure, and command-style primary actions per organization.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": "M86",
+      "moduleId": "mission-control",
+      "dependsOn": [
+        "M83.5"
+      ],
+      "enables": [
+        "DR-002"
+      ],
+      "relatedSystems": [
+        "concierge-layer",
+        "command-dock",
+        "design-genome"
+      ],
+      "implementationNotes": "Merge target for DR-002 Headquarters Experience™ V2 overlays."
+    },
+    {
+      "canonicalId": "M84",
+      "name": "Design DNA & Canon™",
+      "internalId": "design-dna-canon",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-5",
+      "volumeId": "volume-i",
+      "purpose": "Protected customer-facing design canon — locked rules for every customer page.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M84",
+      "moduleId": "design-dna-canon",
+      "dependsOn": [
+        "M83"
+      ],
+      "enables": [
+        "M85"
+      ],
+      "relatedSystems": [
+        "design-genome",
+        "brand-assets",
+        "component-registry"
+      ],
+      "implementationNotes": "Customer canon layer — distinct from Studio OS executive IA."
+    },
+    {
+      "canonicalId": "M85",
+      "name": "Design Genome™",
+      "internalId": "design-genome",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-5",
+      "volumeId": "volume-i",
+      "purpose": "Organizational visual memory — preserves identity patterns across workspaces.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M85",
+      "moduleId": "design-genome",
+      "dependsOn": [
+        "M84"
+      ],
+      "enables": [
+        "M87"
+      ],
+      "relatedSystems": [
+        "design-dna-canon",
+        "organization-genome",
+        "design-token-engine"
+      ],
+      "implementationNotes": "Consult genome before new UI — promotions are org-scoped."
+    },
+    {
+      "canonicalId": "M87",
+      "name": "Founder Pilot Mode™",
+      "internalId": "founder-pilot-mode",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-6",
+      "volumeId": "volume-i",
+      "purpose": "Clean bootstrap experience — empty states, Page 001 numbering, maturity tiers, and Founder Timeline for first organizations.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": "M87",
+      "moduleId": null,
+      "dependsOn": [
+        "M85",
+        "M86"
+      ],
+      "enables": [
+        "M88"
+      ],
+      "relatedSystems": [
+        "mission-control",
+        "command-dock",
+        "executive-timeline"
+      ],
+      "implementationNotes": "Founder-first empty states — intelligence maturity tiers guide growth."
+    },
+    {
+      "canonicalId": "M87.5",
+      "name": "Studio Intelligence™ Runtime",
+      "internalId": "studio-intelligence",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-6",
+      "volumeId": "volume-i",
+      "purpose": "User-facing intelligence surface — briefings, Q&A, and executive assistance atop Studio Intelligence Architecture™ (M122).",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M87.5",
+      "moduleId": "studio-intelligence",
+      "dependsOn": [
+        "M122",
+        "M82"
+      ],
+      "enables": [
+        "M141"
+      ],
+      "relatedSystems": [
+        "studio-intelligence-architecture",
+        "model-orchestrator",
+        "command-dock"
+      ],
+      "implementationNotes": "Volume I user-facing layer. Knowledge infrastructure (M122) lives in Volume II; this milestone is the operating-layer consumer."
+    },
+    {
+      "canonicalId": "M141",
+      "name": "Experience Engine™",
+      "internalId": "experience-engine",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-6",
+      "volumeId": "volume-i",
+      "purpose": "Experience modes and environmental adaptation across Headquarters.",
+      "implementationStatus": "complete",
+      "shippedMilestone": "M141",
+      "moduleId": "experience-engine",
+      "dependsOn": [
+        "M129",
+        "M130",
+        "M87.5"
+      ],
+      "enables": [
+        "DR-003"
+      ],
+      "relatedSystems": [
+        "design-token-engine",
+        "interaction-engine",
+        "mission-control"
+      ],
+      "implementationNotes": "Canonical home Volume I (moved from volume-ii-iv bundle). Depends on Volume XI design foundations M129/M130."
+    },
+    {
+      "canonicalId": "M88",
+      "name": "Expansion Center™",
+      "internalId": "expansion-center",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-7",
+      "volumeId": "volume-i",
+      "purpose": "Industry packs and department expansion — founders install capabilities, never subscribe to features.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": "M88",
+      "moduleId": "expansion-center",
+      "dependsOn": [
+        "M87"
+      ],
+      "enables": [
+        "M89"
+      ],
+      "relatedSystems": [
+        "business-model-engine",
+        "mission-control",
+        "studio-institute"
+      ],
+      "implementationNotes": "One-click department install with preview — Creator Studio example."
+    },
+    {
+      "canonicalId": "M89",
+      "name": "Permanent Monetization Architecture™",
+      "internalId": "business-model-engine",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-7",
+      "volumeId": "volume-i",
+      "purpose": "Digital payroll, department ownership, royalties — Studio OS economic engine without SaaS framing.",
+      "implementationStatus": "in-progress",
+      "shippedMilestone": "M89",
+      "moduleId": "business-model-engine",
+      "dependsOn": [
+        "M88"
+      ],
+      "enables": [],
+      "relatedSystems": [
+        "expansion-center",
+        "marketplace",
+        "knowledge-commerce"
+      ],
+      "implementationNotes": "Never \"subscribe to features\" — Expansion Center + Digital Payroll language."
+    },
+    {
+      "canonicalId": "M89.1",
+      "name": "Studio Orb™",
+      "internalId": "studio-orb",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-8",
+      "volumeId": "volume-i",
+      "purpose": "Ambient intelligence presence replacing persistent dock — radial menu, luxury sound, intelligent positioning.",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M82",
+        "M129",
+        "M130",
+        "M131",
+        "DR-004"
+      ],
+      "enables": [
+        "DR-001"
+      ],
+      "relatedSystems": [
+        "command-dock",
+        "voice-mode",
+        "conversation-mode"
+      ],
+      "implementationNotes": "DR-001 merge target. Sprint 2 registers only — no Orb product implementation."
+    },
+    {
+      "canonicalId": "M89.2",
+      "name": "Voice Mode™",
+      "internalId": "voice-mode",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-8",
+      "volumeId": "volume-i",
+      "purpose": "Orb-based voice interaction with Studio Intelligence™.",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M89.1",
+        "M87.5"
+      ],
+      "enables": [
+        "DR-001"
+      ],
+      "relatedSystems": [
+        "studio-orb",
+        "command-dock",
+        "model-orchestrator"
+      ],
+      "implementationNotes": "Foundation registered; voice implementation deferred."
+    },
+    {
+      "canonicalId": "M89.3",
+      "name": "Conversation Mode™",
+      "internalId": "conversation-mode",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-8",
+      "volumeId": "volume-i",
+      "purpose": "Full-screen conversational experience with Studio Intelligence™.",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M89.1"
+      ],
+      "enables": [
+        "DR-001"
+      ],
+      "relatedSystems": [
+        "studio-orb",
+        "studio-intelligence"
+      ],
+      "implementationNotes": "DR-001 merge target — spec only in Sprint 2."
+    },
+    {
+      "canonicalId": "M89.4",
+      "name": "Awakening Sequence™",
+      "internalId": "awakening-sequence",
+      "registryKind": "milestone",
+      "chapterId": "chapter-i-8",
+      "volumeId": "volume-i",
+      "purpose": "Ceremonial Orb activation sequence on Headquarters arrival.",
+      "implementationStatus": "planned",
+      "shippedMilestone": null,
+      "moduleId": null,
+      "dependsOn": [
+        "M89.1",
+        "M73.6"
+      ],
+      "enables": [
+        "DR-001"
+      ],
+      "relatedSystems": [
+        "studio-orb",
+        "arrival-experience",
+        "living-headquarters-presence"
+      ],
+      "implementationNotes": "Emotional entry moment — registered for roadmap search."
+    },
     {
       "canonicalId": "M90",
       "name": "Business Discovery Blueprint™",
@@ -1110,22 +1872,6 @@
       "moduleId": "asset-registry",
       "dependsOn": [
         "M127"
-      ],
-      "enables": []
-    },
-    {
-      "canonicalId": "M141",
-      "name": "Experience Engine™",
-      "internalId": "experience-engine",
-      "registryKind": "milestone",
-      "volumeId": "volume-i",
-      "purpose": "Experience modes and environmental adaptation.",
-      "implementationStatus": "complete",
-      "shippedMilestone": "M141",
-      "moduleId": "experience-engine",
-      "dependsOn": [
-        "M129",
-        "M130"
       ],
       "enables": []
     },
@@ -3178,6 +3924,53 @@
   "dependencyEdges": [
     {
       "from": "volume-0",
+      "to": "M76.5",
+      "type": "enables"
+    },
+    {
+      "from": "M76.5",
+      "to": "M73.5",
+      "type": "enables"
+    },
+    {
+      "from": "M73.5",
+      "to": "M73.6",
+      "type": "chain"
+    },
+    {
+      "from": "M73.6",
+      "to": "M77",
+      "type": "enables"
+    },
+    {
+      "from": "M77",
+      "to": "M82",
+      "type": "chain",
+      "note": "Concierge hospitality → Command Dock"
+    },
+    {
+      "from": "M82",
+      "to": "M83",
+      "type": "enables"
+    },
+    {
+      "from": "M83",
+      "to": "M83.5",
+      "type": "enables"
+    },
+    {
+      "from": "M83.5",
+      "to": "DR-002",
+      "type": "enables"
+    },
+    {
+      "from": "M87.5",
+      "to": "M141",
+      "type": "enables",
+      "note": "Intelligence runtime → Experience Engine"
+    },
+    {
+      "from": "volume-0",
       "to": "M125",
       "type": "enables"
     },
@@ -3286,10 +4079,14 @@
   ],
   "stats": {
     "volumeCount": 20,
-    "milestoneCount": 194,
+    "chapterCount": 8,
+    "milestoneCount": 218,
     "designRevisionCount": 4,
-    "completeCount": 80,
-    "inProgressCount": 1,
-    "plannedCount": 113
+    "completeCount": 95,
+    "inProgressCount": 6,
+    "plannedCount": 117,
+    "volumeIMilestoneCount": 25,
+    "volumeIChapterCount": 8,
+    "volumeICompleteCount": 16
   }
 }

@@ -18,9 +18,13 @@ volumes:
     summary: User-facing operating layer — Studio Intelligence™, Studio Orb™, Command Dock™, Headquarters™, Living Headquarters™, and environmental experiences.
     status: in-progress
     dependsOn: [volume-0]
-    milestoneRange: null
-    completionPct: 45
-    notes: Volume container registered; milestone breakdown in progress.
+    milestoneRange: M73.5-M89.4
+    completionPct: 58
+    chaptersFile: chapters/volume-i.yaml
+    notes: >-
+      Eight chapters registered in chapters/volume-i.yaml. Milestones in
+      milestones/volume-i.yaml. Design revisions DR-001–DR-004 overlay planned
+      experience work — product implementation deferred.
 
   - id: volume-ii
     number: II

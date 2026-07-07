@@ -663,19 +663,6 @@ milestones:
     dependsOn:
       - M127
     enables: []
-  - canonicalId: M141
-    name: Experience Engine™
-    internalId: experience-engine
-    registryKind: milestone
-    volumeId: volume-i
-    purpose: Experience modes and environmental adaptation.
-    implementationStatus: complete
-    shippedMilestone: M141
-    moduleId: experience-engine
-    dependsOn:
-      - M129
-      - M130
-    enables: []
   - canonicalId: M142
     name: Quality Assurance & Trust Infrastructure™
     internalId: qa-headquarters

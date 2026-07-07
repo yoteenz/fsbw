@@ -160,6 +160,7 @@ export function KnowledgeRegistryWorkspace() {
           <ExecutiveSecondaryCard key={vol.volumeId} title={`${vol.title.toUpperCase()} · ${vol.completionPct}%`}>
             <p className="text-[6px] font-futura mb-1" style={{ color: KNOWLEDGE_REGISTRY_ACCENT, fontWeight: 515 }}>
               {vol.volumeId.toUpperCase()} · {vol.status.toUpperCase().replace(/-/g, ' ')} · {vol.completeCount}/{vol.milestoneCount} milestones
+              {vol.chapterCount ? ` · ${vol.chapterCount} chapters` : ''}
             </p>
             <p className="text-[6px] font-futura" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
               Dependencies: {vol.dependsOn.length ? vol.dependsOn.join(', ') : 'none'}
@@ -167,6 +168,20 @@ export function KnowledgeRegistryWorkspace() {
           </ExecutiveSecondaryCard>
         ))}
       </ExecutiveFocusPanel>
+      {profile.chapterSummaries.length > 0 ? (
+        <ExecutiveFocusPanel title="CHAPTERS — VOLUME I STRUCTURE">
+          {profile.chapterSummaries.map((ch) => (
+            <ExecutiveSecondaryCard key={ch.chapterId} title={`CHAPTER ${ch.number} · ${ch.title.toUpperCase()}`}>
+              <p className="text-[6px] font-futura mb-1" style={{ color: KNOWLEDGE_REGISTRY_ACCENT, fontWeight: 515 }}>
+                {ch.chapterId} · {ch.status.toUpperCase().replace(/-/g, ' ')} · {ch.completeCount}/{ch.milestoneCount} milestones · {ch.completionPct}%
+              </p>
+              <p className="text-[6px] font-futura" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+                Depends on: {ch.dependsOn.join(', ') || 'none'}
+              </p>
+            </ExecutiveSecondaryCard>
+          ))}
+        </ExecutiveFocusPanel>
+      ) : null}
     </ExecutivePageShell>
   );
 

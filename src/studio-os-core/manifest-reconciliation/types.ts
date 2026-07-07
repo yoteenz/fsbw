@@ -19,6 +19,19 @@ export type MasterSpecVolume = {
   milestoneRange: string | null;
   completionPct: number;
   notes?: string;
+  chaptersFile?: string;
+};
+
+export type MasterSpecChapter = {
+  id: string;
+  number: number;
+  title: string;
+  summary: string;
+  status: ImplementationStatus;
+  dependsOn: string[];
+  milestoneIds: string[];
+  completionPct: number;
+  volumeId: string;
 };
 
 export type MasterSpecMilestone = {
@@ -26,6 +39,7 @@ export type MasterSpecMilestone = {
   name: string;
   internalId: string;
   registryKind: RegistryKind;
+  chapterId?: string;
   volumeId: string;
   purpose: string;
   implementationStatus: ImplementationStatus;
@@ -33,6 +47,8 @@ export type MasterSpecMilestone = {
   moduleId: string | null;
   dependsOn: string[];
   enables: string[];
+  relatedSystems?: string[];
+  implementationNotes?: string;
 };
 
 export type MasterSpecDesignRevision = {
@@ -70,18 +86,32 @@ export type MasterSpecBundle = {
   sourceRoot: string;
   constitution: MasterSpecConstitution;
   volumes: MasterSpecVolume[];
+  chapters: MasterSpecChapter[];
   milestones: MasterSpecMilestone[];
   designRevisions: MasterSpecDesignRevision[];
   milestoneAliases: MilestoneAlias[];
   dependencyEdges: DependencyEdge[];
   stats: {
     volumeCount: number;
+    chapterCount: number;
     milestoneCount: number;
     designRevisionCount: number;
     completeCount: number;
     inProgressCount: number;
     plannedCount: number;
+    volumeIMilestoneCount: number;
+    volumeIChapterCount: number;
+    volumeICompleteCount: number;
   };
+};
+
+export type VolumeReconciliationCoverage = {
+  volumeId: string;
+  milestoneCount: number;
+  completeCount: number;
+  chapterCount: number;
+  matchedLive: number;
+  plannedOnly: number;
 };
 
 export type ReconciliationMatch = {
@@ -100,8 +130,10 @@ export type ReconciliationReport = {
   plannedOnly: number;
   orphanedLiveModules: string[];
   idConflicts: Array<{ canonicalId: string; shippedId: string; moduleId: string }>;
-  volumeCoverage: Array<{ volumeId: string; milestoneCount: number; completeCount: number }>;
+  volumeCoverage: VolumeReconciliationCoverage[];
   masterSpecCoveragePct: number;
+  manifestAuthoringErrors: number;
+  manifestAuthoringWarnings: number;
 };
 
 export type ManifestValidationIssue = {

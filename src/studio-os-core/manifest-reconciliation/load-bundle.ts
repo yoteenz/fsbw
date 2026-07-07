@@ -11,7 +11,11 @@ function getEmbeddedBundle(): MasterSpecBundle {
 
 export function getMasterSpecBundleSync(): MasterSpecBundle {
   if (cachedBundle) return cachedBundle;
-  cachedBundle = getEmbeddedBundle();
+  const embedded = getEmbeddedBundle();
+  cachedBundle = {
+    ...embedded,
+    chapters: embedded.chapters ?? [],
+  };
   return cachedBundle;
 }
 

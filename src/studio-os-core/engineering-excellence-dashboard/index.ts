@@ -8,6 +8,7 @@ export * from './culture-engine';
 export * from './report-engine';
 export * from './discovery-engine';
 export * from './registration';
+export * from './manifest-metrics';
 export * from './engine-profile-builder';
 export * from './store';
 export * from './dock-advisor';

@@ -5,7 +5,7 @@ import {
   computeDocumentationHealthMetrics,
   computeRegistryHealthScore,
 } from './health-dashboard';
-import { getMasterSpecCoveragePct, getVolumeSummaries } from './registry-builder';
+import { getMasterSpecCoveragePct, getVolumeSummaries, getChapterSummaries } from './registry-builder';
 import { getAllRegistryEntries } from './registration';
 import { buildAcademyLessonsFromRegistry } from './academy-sync';
 import { buildWalkthroughStopsFromRegistry } from './walkthrough-sync';
@@ -34,6 +34,7 @@ export function buildOrganizationKnowledgeRegistryProfile(
     totalEntries: entries.length,
     masterSpecCoveragePct: getMasterSpecCoveragePct(),
     volumeSummaries: getVolumeSummaries(bundle),
+    chapterSummaries: getChapterSummaries(bundle),
     healthMetrics,
     autoSyncSurfaces,
     registryEntries: entries,

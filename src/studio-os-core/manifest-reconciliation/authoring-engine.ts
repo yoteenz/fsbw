@@ -7,6 +7,23 @@ export function validateMasterSpecManifest(bundle: MasterSpecBundle = getMasterS
   const milestoneIds = new Set<string>();
   const internalIds = new Set<string>();
   const volumeIds = new Set(bundle.volumes.map((v) => v.id));
+  const chapters = bundle.chapters ?? [];
+  const chapterIds = new Set(chapters.map((c) => c.id));
+
+  for (const ch of chapters) {
+    if (!volumeIds.has(ch.volumeId)) {
+      issues.push({ severity: 'warning', code: 'CHAPTER_UNKNOWN_VOLUME', message: `${ch.id} references unknown volume ${ch.volumeId}`, entityId: ch.id });
+    }
+    for (const mid of ch.milestoneIds) {
+      const exists =
+        bundle.milestones.some((m) => m.canonicalId === mid) ||
+        bundle.designRevisions.some((d) => d.id === mid) ||
+        mid.startsWith('DR-');
+      if (!exists) {
+        issues.push({ severity: 'warning', code: 'CHAPTER_UNKNOWN_MILESTONE', message: `${ch.id} lists unknown milestone ${mid}`, entityId: ch.id });
+      }
+    }
+  }
 
   for (const m of bundle.milestones) {
     if (milestoneIds.has(m.canonicalId)) {
@@ -21,6 +38,10 @@ export function validateMasterSpecManifest(bundle: MasterSpecBundle = getMasterS
 
     if (!volumeIds.has(m.volumeId)) {
       issues.push({ severity: 'warning', code: 'UNKNOWN_VOLUME', message: `${m.canonicalId} references unknown volume ${m.volumeId}`, entityId: m.canonicalId });
+    }
+
+    if (m.chapterId && !chapterIds.has(m.chapterId)) {
+      issues.push({ severity: 'warning', code: 'UNKNOWN_CHAPTER', message: `${m.canonicalId} references unknown chapter ${m.chapterId}`, entityId: m.canonicalId });
     }
 
     for (const dep of m.dependsOn) {
@@ -45,8 +66,17 @@ export function validateMasterSpecManifest(bundle: MasterSpecBundle = getMasterS
     issues.push({ severity: 'error', code: 'MISSING_VOLUME_I', message: 'Volume I container missing' });
   }
 
-  if (bundle.milestones.length < 190) {
-    issues.push({ severity: 'warning', code: 'LOW_MILESTONE_COUNT', message: `Expected ~194 milestones, found ${bundle.milestones.length}` });
+  const volumeI = bundle.milestones.filter((m) => m.volumeId === 'volume-i');
+  if (volumeI.length < 20) {
+    issues.push({ severity: 'warning', code: 'LOW_VOLUME_I_COUNT', message: `Expected ≥20 Volume I milestones, found ${volumeI.length}` });
+  }
+
+  if ((bundle.chapters ?? []).filter((c) => c.volumeId === 'volume-i').length < 6) {
+    issues.push({ severity: 'warning', code: 'LOW_VOLUME_I_CHAPTERS', message: 'Volume I should have structured chapters' });
+  }
+
+  if (bundle.milestones.length < 210) {
+    issues.push({ severity: 'warning', code: 'LOW_MILESTONE_COUNT', message: `Expected ~218 milestones, found ${bundle.milestones.length}` });
   }
 
   return issues;
@@ -56,5 +86,5 @@ export function summarizeManifestAuthoring(bundle: MasterSpecBundle = getMasterS
   const issues = validateMasterSpecManifest(bundle);
   const errors = issues.filter((i) => i.severity === 'error').length;
   const warnings = issues.filter((i) => i.severity === 'warning').length;
-  return `Manifest Authoring™ — ${bundle.stats.milestoneCount} milestones · ${bundle.stats.volumeCount} volumes · ${errors} errors · ${warnings} warnings`;
+  return `Manifest Authoring™ — ${bundle.stats.milestoneCount} milestones · ${bundle.stats.chapterCount ?? 0} chapters · ${bundle.stats.volumeCount} volumes · ${errors} errors · ${warnings} warnings`;
 }

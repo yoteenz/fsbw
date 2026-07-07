@@ -8,6 +8,7 @@ import {
 import { buildHistoricalExcellence } from './history-engine';
 import { buildEngineeringKpis } from './kpi-engine';
 import { buildDockExcellenceLine } from './report-engine';
+import { buildManifestReconciliationMetrics } from './manifest-metrics';
 import type { OrganizationEngineeringExcellenceProfile } from './types';
 
 export function buildOrganizationEngineeringExcellenceProfile(
@@ -49,6 +50,7 @@ export function buildOrganizationEngineeringExcellenceProfile(
     dockExcellenceLine: '',
     excellenceIsMindset: true,
     lastSyncedAt: now,
+    manifestReconciliation: buildManifestReconciliationMetrics(),
   };
 
   profile.dockExcellenceLine = buildDockExcellenceLine(profile);

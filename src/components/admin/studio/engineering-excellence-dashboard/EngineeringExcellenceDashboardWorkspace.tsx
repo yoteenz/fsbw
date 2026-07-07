@@ -26,10 +26,11 @@ import {
 } from '../executive-ia';
 import { StudioOsBrandTagline } from '../brand/StudioOsBrandTagline';
 
-type ExcellenceTab = 'overview' | 'health' | 'kpis' | 'briefing' | 'history' | 'culture';
+type ExcellenceTab = 'overview' | 'health' | 'kpis' | 'briefing' | 'history' | 'culture' | 'manifest';
 
 const TABS: { id: ExcellenceTab; label: string }[] = [
   { id: 'overview', label: 'OVERVIEW' },
+  { id: 'manifest', label: 'MANIFEST RECONCILIATION' },
   { id: 'health', label: 'HEALTH PILLARS' },
   { id: 'kpis', label: 'ENGINEERING KPIs' },
   { id: 'briefing', label: 'EXECUTIVE BRIEFING' },
@@ -102,6 +103,17 @@ export function EngineeringExcellenceDashboardWorkspace() {
           ))}
         </div>
       </div>
+      <ExecutiveSecondaryCard title="MASTER SPECIFICATION · RECONCILIATION">
+        <p className="text-[6px] font-futura mb-1" style={{ color: ENGINEERING_EXCELLENCE_ACCENT, fontWeight: 515, lineHeight: 1.5 }}>
+          {profile.manifestReconciliation.summaryLine}
+        </p>
+        <p className="text-[6px] font-futura" style={{ color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.45 }}>
+          Live match {profile.manifestReconciliation.liveMatchPct}% · Compiled {new Date(profile.manifestReconciliation.compiledAt).toLocaleString()}
+        </p>
+      </ExecutiveSecondaryCard>
+      <button type="button" onClick={() => setTab('manifest')} className="mt-2 mr-2 px-2 py-1 text-[6px] font-futura uppercase border" style={{ borderColor: ENGINEERING_EXCELLENCE_ACCENT, color: ENGINEERING_EXCELLENCE_ACCENT }}>
+        MANIFEST RECONCILIATION™ →
+      </button>
       <ExecutiveSecondaryCard title="EXCELLENCE IS A PERMANENT MINDSET">
         <p className="text-[6px] font-futura mb-2" style={{ color: ENGINEERING_EXCELLENCE_ACCENT, fontWeight: 515, lineHeight: 1.5 }}>
           Studio OS rewards engineering excellence rather than speed alone — world-class habits for teams of one.
@@ -257,6 +269,62 @@ export function EngineeringExcellenceDashboardWorkspace() {
     </ExecutivePageShell>
   );
 
+  const renderManifest = () => {
+    const m = profile.manifestReconciliation;
+    const volI = m.volumeICoverage;
+    return (
+      <ExecutivePageShell>
+        <ExecutiveFocusPanel title="MANIFEST RECONCILIATION™ · MASTER SPEC COVERAGE">
+          <ExecutiveSecondaryCard title="RECONCILIATION SUMMARY">
+            <p className="text-[6px] font-futura mb-2" style={{ color: ENGINEERING_EXCELLENCE_ACCENT, fontWeight: 515 }}>
+              {m.authoringSummary}
+            </p>
+            <p className="text-[6px] font-futura mb-1" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+              {m.summaryLine}
+            </p>
+            <p className="text-[6px] font-futura" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+              Orphaned live modules: {m.orphanedLiveModules} · ID conflicts: {m.idConflictCount}
+            </p>
+          </ExecutiveSecondaryCard>
+          {volI ? (
+            <ExecutiveSecondaryCard title="VOLUME I · CORE OPERATING SYSTEM">
+              <p className="text-[6px] font-futura mb-1" style={{ color: ENGINEERING_EXCELLENCE_ACCENT, fontWeight: 515 }}>
+                {volI.chapterCount} chapters · {volI.milestoneCount} milestones · {volI.completeCount} complete
+              </p>
+              <p className="text-[6px] font-futura" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+                Live matched: {volI.matchedLive} · Planned only: {volI.plannedOnly}
+              </p>
+            </ExecutiveSecondaryCard>
+          ) : null}
+          <ExecutiveSecondaryCard title="VOLUME COVERAGE">
+            {m.volumeCoverage
+              .filter((v) => v.milestoneCount > 0)
+              .slice(0, 10)
+              .map((v) => (
+                <p key={v.volumeId} className="text-[6px] font-futura mb-1" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+                  {v.volumeId}: {v.milestoneCount} milestones · {v.completeCount} complete · {v.matchedLive} live
+                  {v.chapterCount ? ` · ${v.chapterCount} chapters` : ''}
+                </p>
+              ))}
+          </ExecutiveSecondaryCard>
+          <ExecutiveSecondaryCard title="MANIFEST AUTHORING™ ISSUES">
+            {m.topAuthoringIssues.length ? (
+              m.topAuthoringIssues.map((issue) => (
+                <p key={issue} className="text-[6px] font-futura mb-1" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+                  {issue}
+                </p>
+              ))
+            ) : (
+              <p className="text-[6px] font-futura" style={{ color: '#10B981' }}>
+                No authoring issues detected.
+              </p>
+            )}
+          </ExecutiveSecondaryCard>
+        </ExecutiveFocusPanel>
+      </ExecutivePageShell>
+    );
+  };
+
   const renderCulture = () => (
     <ExecutivePageShell>
       <ExecutiveFocusPanel title="ENGINEERING CULTURE™ — CELEBRATE EXCELLENCE">
@@ -338,6 +406,7 @@ export function EngineeringExcellenceDashboardWorkspace() {
         </ExecutiveSecondaryCard>
       ) : null}
       {tab === 'overview' && renderOverview()}
+      {tab === 'manifest' && renderManifest()}
       {tab === 'health' && renderHealth()}
       {tab === 'kpis' && renderKpis()}
       {tab === 'briefing' && renderBriefing()}

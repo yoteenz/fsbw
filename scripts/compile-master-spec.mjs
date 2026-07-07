@@ -24,13 +24,28 @@ function readYaml(filePath) {
 
 function loadMilestones() {
   const index = readYaml(path.join(SPEC_DIR, 'milestones/index.yaml'));
-  const files = index?.files ?? ['volume-ii-iv.yaml', 'volume-v.yaml', 'volume-vi-xix.yaml'];
+  const files = index?.files ?? ['volume-i.yaml', 'volume-ii-iv.yaml', 'volume-v.yaml', 'volume-vi-xix.yaml'];
   const milestones = [];
   for (const file of files) {
     const data = readYaml(path.join(SPEC_DIR, 'milestones', file));
     if (data?.milestones) milestones.push(...data.milestones);
   }
   return milestones;
+}
+
+function loadChapters() {
+  const index = readYaml(path.join(SPEC_DIR, 'milestones/index.yaml'));
+  const files = index?.chapters ?? [];
+  const chapters = [];
+  for (const file of files) {
+    const data = readYaml(path.join(SPEC_DIR, 'chapters', file));
+    if (data?.chapters) {
+      for (const ch of data.chapters) {
+        chapters.push({ ...ch, volumeId: data.volumeId ?? ch.volumeId });
+      }
+    }
+  }
+  return chapters;
 }
 
 function main() {
@@ -40,6 +55,9 @@ function main() {
   const milestoneAliases = readYaml(path.join(SPEC_DIR, 'milestone-aliases.yaml'));
   const dependencyGraph = readYaml(path.join(SPEC_DIR, 'dependency-graph.yaml'));
   const milestones = loadMilestones();
+  const chapters = loadChapters();
+  const volumeICoverage = chapters.filter((c) => c.volumeId === 'volume-i');
+  const volumeIMilestones = milestones.filter((m) => m.volumeId === 'volume-i');
 
   const bundle = {
     version: '1.0.0',
@@ -47,17 +65,22 @@ function main() {
     sourceRoot: 'docs/studio-os/master-spec',
     constitution,
     volumes: volumes?.volumes ?? [],
+    chapters,
     milestones,
     designRevisions: designRevisions?.designRevisions ?? [],
     milestoneAliases: milestoneAliases?.aliases ?? [],
     dependencyEdges: dependencyGraph?.edges ?? [],
     stats: {
       volumeCount: volumes?.volumes?.length ?? 0,
+      chapterCount: chapters.length,
       milestoneCount: milestones.length,
       designRevisionCount: designRevisions?.designRevisions?.length ?? 0,
       completeCount: milestones.filter((m) => m.implementationStatus === 'complete').length,
       inProgressCount: milestones.filter((m) => m.implementationStatus === 'in-progress').length,
       plannedCount: milestones.filter((m) => m.implementationStatus === 'planned').length,
+      volumeIMilestoneCount: volumeIMilestones.length,
+      volumeIChapterCount: volumeICoverage.length,
+      volumeICompleteCount: volumeIMilestones.filter((m) => m.implementationStatus === 'complete').length,
     },
   };
 
@@ -76,7 +99,11 @@ Generated: ${bundle.compiledAt}
 | Metric | Count |
 |--------|-------|
 | Volumes | ${bundle.stats.volumeCount} |
+| Chapters | ${bundle.stats.chapterCount} |
 | Milestones | ${bundle.stats.milestoneCount} |
+| Volume I chapters | ${bundle.stats.volumeIChapterCount} |
+| Volume I milestones | ${bundle.stats.volumeIMilestoneCount} |
+| Volume I complete | ${bundle.stats.volumeICompleteCount} |
 | Design Revisions | ${bundle.stats.designRevisionCount} |
 | Complete | ${bundle.stats.completeCount} |
 | In Progress | ${bundle.stats.inProgressCount} |

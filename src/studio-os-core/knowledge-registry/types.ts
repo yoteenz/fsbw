@@ -63,6 +63,8 @@ export type KnowledgeRegistryEntry = {
   milestone?: string;
   docPath: string;
   completionPct?: number;
+  implementationNotes?: string;
+  chapterId?: string;
   searchableInGlobalSearch: true;
 };
 
@@ -71,6 +73,19 @@ export type DocumentationRegistryEntry = KnowledgeRegistryEntry;
 
 export type VolumeRegistrySummary = {
   volumeId: string;
+  title: string;
+  status: KnowledgeImplementationStatus;
+  completionPct: number;
+  milestoneCount: number;
+  completeCount: number;
+  chapterCount: number;
+  dependsOn: string[];
+};
+
+export type ChapterRegistrySummary = {
+  chapterId: string;
+  volumeId: string;
+  number: number;
   title: string;
   status: KnowledgeImplementationStatus;
   completionPct: number;
@@ -114,6 +129,7 @@ export type OrganizationKnowledgeRegistryProfile = {
   totalEntries: number;
   masterSpecCoveragePct: number;
   volumeSummaries: VolumeRegistrySummary[];
+  chapterSummaries: ChapterRegistrySummary[];
   healthMetrics: KnowledgeHealthMetric[];
   autoSyncSurfaces: AutoSyncSurfaceStatus[];
   registryEntries: KnowledgeRegistryEntry[];

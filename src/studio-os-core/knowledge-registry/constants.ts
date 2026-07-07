@@ -46,6 +46,7 @@ export const AUTO_SYNC_SURFACES = [
 export const REGISTRY_CATEGORIES = [
   'constitution',
   'volume',
+  'chapter',
   'foundation',
   'intelligence',
   'operations',

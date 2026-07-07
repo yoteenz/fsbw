@@ -5,6 +5,7 @@ import type {
   EXCELLENCE_PERIODS,
   HEALTH_PILLARS,
 } from './constants';
+import type { ManifestReconciliationMetrics } from './manifest-metrics';
 
 export type HealthPillar = (typeof HEALTH_PILLARS)[number];
 export type EngineeringKpi = (typeof ENGINEERING_KPIS)[number];
@@ -83,6 +84,7 @@ export type OrganizationEngineeringExcellenceProfile = {
   dockExcellenceLine: string;
   excellenceIsMindset: true;
   lastSyncedAt: string;
+  manifestReconciliation: ManifestReconciliationMetrics;
 };
 
 export type EngineeringExcellenceStore = {

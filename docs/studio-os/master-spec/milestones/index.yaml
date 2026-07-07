@@ -1,7 +1,10 @@
 version: 1.0.0
 updatedAt: '2026-07-07'
-totalMilestones: 194
+totalMilestones: 218
 files:
+  - volume-i.yaml
   - volume-ii-iv.yaml
   - volume-v.yaml
   - volume-vi-xix.yaml
+chapters:
+  - volume-i.yaml

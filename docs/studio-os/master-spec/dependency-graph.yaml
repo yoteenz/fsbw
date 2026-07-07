@@ -4,6 +4,44 @@ updatedAt: '2026-07-07'
 
 edges:
   - from: volume-0
+    to: M76.5
+    type: enables
+
+  - from: M76.5
+    to: M73.5
+    type: enables
+
+  - from: M73.5
+    to: M73.6
+    type: chain
+
+  - from: M73.6
+    to: M77
+    type: enables
+
+  - from: M77
+    to: M82
+    type: chain
+    note: Concierge hospitality → Command Dock
+
+  - from: M82
+    to: M83
+    type: enables
+
+  - from: M83
+    to: M83.5
+    type: enables
+
+  - from: M83.5
+    to: DR-002
+    type: enables
+
+  - from: M87.5
+    to: M141
+    type: enables
+    note: Intelligence runtime → Experience Engine
+
+  - from: volume-0
     to: M125
     type: enables
 
