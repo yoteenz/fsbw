@@ -37,8 +37,12 @@ Founders define intent. The compiler translates intent into **hundreds of struct
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    FOUNDER INTENT                            │
-│  Company Genome · Department DNA · Project Intent ·          │
-│  Design Language · Experience DNA · World Rules              │
+│  Company Genome · Department Type · Project · Creative Dir   │
+└───────────────────────────┬─────────────────────────────────┘
+                            ↓
+┌─────────────────────────────────────────────────────────────┐
+│         STUDIO DEPARTMENT GENERATOR™                       │
+│  DNA · Compilers · Genome · Package blueprint · QA           │
 └───────────────────────────┬─────────────────────────────────┘
                             ↓
 ┌─────────────────────────────────────────────────────────────┐

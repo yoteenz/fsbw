@@ -78,6 +78,7 @@ Department Workspace              → user experiences living place
 |----------|-------|
 | **SDK `11_DEPARTMENT_RUNTIME.md`** | SDK-level runtime contract (summary) |
 | **SDK `15_CURSOR_RUNTIME_REQUIREMENTS.md`** | Cursor assembly obligations |
+| **Studio Department Generator™** | `docs/studio-os/engine/department-generator/` — package blueprints + runtime manifests |
 | **This engine (`department-runtime/`)** | Canonical full runtime architecture |
 
 ---

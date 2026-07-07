@@ -40437,3 +40437,43 @@ Summary of the **whole conversation so far** in this chat: four architecture spr
 - **Changes:** `docs/studio-os/golden-department/` (14 files total) · cross-ref in `docs/studio-os/creative-direction-studio.md` · `motherboard/CORE.md` · this MEMORY entry. Prior engine sprints already committed on `master` (SDK `f37e6c33`, Compiler `aa8b08bb`, Runtime `8d0b3513`).
 - **Conventions:** All four sprints are **architecture/spec only** — no React, no UI implementation, no placeholder cards. Work on **`master`** only; one commit + one push per task via `./scripts/agent-commit.sh`. Golden Department docs are canonical reference before any department engineering begins.
 
+---
+
+## 2026-07-07 — Studio Department Generator™ canonical creation engine spec (complete)
+
+Summary of the **whole conversation so far** in this chat: five architecture sprints for Studio OS engines — SDK, Asset Compiler, Runtime, Golden Department CDS, and now **Studio Department Generator™** — the factory that creates departments.
+
+- **Context:** User mandated highest-level architecture sprint — **not** a department, **not** React, **not** UI, **not** screens. Create **Studio Department Generator™** — the official creation engine producing every immersive department (Creative Direction, Discovery, Story, Production, Review, Publishing, Marketing, Marketplace, Executive HQ, Photography, Podcast, Education, Salon, Law Firm, Medical, Restaurant, Construction, and all future types). Founder never manually prompts FAL; Generator translates structured business intelligence into generation tasks.
+- **Topics covered (full chat arc):**
+  1. **Studio Department SDK™** — 18 files · `docs/studio-os/sdk/` · schema `studio.department.sdk.v1`
+  2. **Studio Asset Compiler™** — 16 files · `docs/studio-os/engine/asset-compiler/` · schema `studio.asset-compiler.v1`
+  3. **Studio Department Runtime™** — 21 files · `docs/studio-os/engine/department-runtime/` · schema `studio.department-runtime.v1`
+  4. **Golden Department™ — Creative Direction Studio™** — 14 files · `docs/studio-os/golden-department/` · 13-doc Experience Design Specification · validation project for Generator pipeline
+  5. **Studio Department Generator™** — **18 files** · `docs/studio-os/engine/department-generator/` · schema `studio.department-generator.v1`
+- **Generator deliverables (01–17 + README):**
+  - **01 Generator Overview** — purpose · pipeline · dependencies · relationships to SDK · Compiler · Runtime · Genome · Marketplace · FAL · Cursor
+  - **02 Input Pipeline** — 13 input domains (Genome · Project · Department Type · Industry DNA · Experience DNA · Design Language · Founder Notes · Mood Board · Reference Library · Creative Direction · Brand Assets · Marketplace Expansions · Headquarters)
+  - **03 Department DNA** — per-type catalog (creative pipeline · executive · industry departments) · DNA schema
+  - **04 Environment Compiler** — 10–15 discrete tasks (architecture · interior · ceiling · floor · windows · lighting · furniture · decor · view · atmosphere)
+  - **05 Object Compiler** — modular objects (Mood Wall · Timeline Table · Orb Pedestal · etc.) · 15–50 tasks
+  - **06 Interaction Compiler** — verb maps · ceremonies · permissions · separate from visual assets
+  - **07 AI Team Compiler** — Orb + specialized concierges per department type
+  - **08 Audio Compiler** — ambient · orb · ceremony · silence rules · Genome sonic identity
+  - **09 Animation Compiler** — arrival · departure · ceremonies · camera paths · idle motion
+  - **10 Genome Injection** — fixed topology · variable soul · Frontal Slayer · NDX · restaurant · law firm examples
+  - **11 Asset Compiler Handoff** — GenerationInstructionSet contract · Generator never calls FAL
+  - **12 Runtime Handoff** — RuntimeAssemblyManifest · behavior contracts · Cursor handler bindings
+  - **13 Package Spec** — DepartmentPackage.zip structure · modular replacement rules
+  - **14 Regeneration System** — surgical scope (lighting · mood-wall · orb only) · non-destructive iteration
+  - **15 Marketplace Export** — listing schema · install modes · compatibility matrix
+  - **16 Department QA** — nine living-place questions
+  - **17 Implementation Guide** — abstract 5-phase engineering roadmap
+- **Decisions / outcomes:**
+  - Generator is **factory not department** — creates worlds, never webpages
+  - Updated platform stack: **SDK (law) → Generator (create) → Asset Compiler (generate) → Runtime (execute) → Cursor (wire)**
+  - Golden Department Creative Direction Studio™ = first validation project through full Generator → Compiler → Runtime pipeline
+  - Generator outputs instructions; Compiler executes; Runtime assembles
+  - Cross-refs added to Asset Compiler README + Runtime README
+- **Changes:** `docs/studio-os/engine/department-generator/` (18 files) · cross-refs in asset-compiler/README.md + department-runtime/README.md · `motherboard/CORE.md` · this MEMORY entry. Prior sprints committed (`469c822b` Golden Department · earlier SDK/Compiler/Runtime commits).
+- **Conventions:** Architecture/docs only — no React · no UI · no implementation. One commit + one push per task on **`master`**.
+
