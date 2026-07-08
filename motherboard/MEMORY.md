@@ -40816,3 +40816,49 @@ Summary of the **whole conversation so far** in this chat: Department Generator 
 - **Smart Reuse:** Reuse default · generation last resort — Compiler consults Registry before every provider call
 - **Cross-refs:** Updated `engines/studio-asset-compiler/README.md` + `compiler-overview.md` (four-engine) · `motherboard/CORE.md`
 - **Conventions:** Docs only · no implementation · one commit on **`master`**
+
+---
+
+## 2026-07-08 — Creative Direction Studio™ Production Pipeline v1 (complete)
+
+Summary of the **whole conversation so far** in this chat: Department Generator schema layer · CDS Golden Department Definition · Studio Asset Compiler™ v1 · Studio Asset Registry™ v1 · **Creative Direction Studio™ Production Pipeline v1 — Experience Production phase**.
+
+- **Context:** User declared Studio OS foundation **sufficiently mature** — **STOP** new foundational engines · architecture frameworks · governance docs. Official transition: **PLATFORM ARCHITECTURE → EXPERIENCE PRODUCTION**. Define complete production pipeline to manufacture one AAA immersive department (CDS pilot) — **production plan only**, not implementation.
+- **Prior in chat:** Generator · CDS Definition · Compiler manufacturing layer · Registry Living Library (14 docs each)
+- **Deliverable:** **9-doc production layer** at **`docs/studio-os/production/`**:
+  - README · creative-production-pipeline (Stages 01–09 end-to-end)
+  - asset-production-workflow (12-stage generation order · all 35 CDS assets with generator/prompt/deps/validation/registry)
+  - asset-review-system (11 review dimensions · founder protocol · revision scopes)
+  - department-assembly (Cursor law · zone map · no baked screenshots)
+  - runtime-preparation (boot checklist · Orb · concierges · Walk the Room bind)
+  - validation-pipeline (Walk the Room™ · Braintrust · scorecard · validationApprovalToken)
+  - golden-department-process (certification · inheritance law · golden registry entry)
+  - future-production-roadmap (v1.1 CDS first run → v3 department factory)
+- **Nine stages:** Creative Direction → Asset Planning → Asset Generation → Asset Review → Registry → Department Assembly → Runtime → Validation → Golden Department
+- **Phase rule:** No new engines · consumes existing Generator/Compiler/Registry/Runtime/Validation stack
+- **Commit:** `a633cebc` on **`master`**
+- **Cross-refs:** `departments/creative-direction-studio/README.md` · `motherboard/CORE.md`
+- **Conventions:** Docs only · no React/Three.js/HTML/screenshots · one commit on **`master`**
+
+---
+
+## 2026-07-08 — Studio Generation Manager™ v1 The AI Production Coordinator (complete)
+
+Summary of the **whole conversation so far** in this chat: Department Generator · CDS Definition · Asset Compiler · Asset Registry · CDS Production Pipeline · **Studio Generation Manager™ v1**.
+
+- **Context:** User mandated platform architecture sprint for **final core engine** — **Studio Generation Manager™** (The AI Production Coordinator). Orchestrates visual asset manufacturing; does **not** generate images itself. **NOT** React · UI · FAL connection · asset generation.
+- **Prior in chat:** Production Pipeline v1 (`docs/studio-os/production/` 9 docs) · four/five-engine stack · CDS 35-asset pilot
+- **Deliverable:** **11-doc engine** at **`docs/studio-os/engines/generation-manager/`**:
+  - README · generation-overview (Hollywood production model · founder never writes prompts)
+  - queue-system (auto queue · CDS 16 groups · scheduling · progress ETA)
+  - dependency-engine (lighting after env · furniture after floor · stage gates)
+  - generation-states (queued → generating → validating → approved · 12 states · founder controls)
+  - retry-engine (timeout · quality · perspective · provider failover · surgical revision scopes)
+  - provider-abstraction (FAL · OpenAI · Runway · Luma · BFL · adapter interface)
+  - validation-handoff (quality gates · Validation Loop · nothing to Registry until validated)
+  - registry-integration (artifact storage · register on approve · Runtime notification)
+  - build-report-schema (generation-build-report.md · generated/reused/failed/retried/cost)
+  - future-roadmap (v1.1 FAL · v2 parallel · overnight · enterprise farms)
+- **Pipeline position:** CDS → Generator → Compiler → Prompt Compiler → **Generation Manager** → AI Providers → Validation Loop → Registry → Runtime
+- **Cross-refs:** Updated `production/README.md` · `asset-production-workflow.md` · `studio-asset-compiler/README.md` · `motherboard/CORE.md`
+- **Conventions:** Docs only · no implementation · one commit on **`master`**

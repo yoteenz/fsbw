@@ -38,7 +38,7 @@ Stage 01  Creative Direction™     Genome · brief · mood · art direction · 
     ↓
 Stage 02  Asset Planning™         Environment · objects · interactions · languages
     ↓
-Stage 03  Asset Generation™       Ordered production · prompts · dependencies
+Stage 03  Asset Generation™       Compiler packages → Generation Manager orchestrates providers
     ↓
 Stage 04  Asset Review™           Quality · genome · scale · immersion · founder gate
     ↓
@@ -78,6 +78,7 @@ Production consumes existing engines — does not redefine them:
 |--------|-----------------|
 | [Studio Department Generator™](../department-generator/README.md) | Stage 02 output — Department Definition |
 | [Studio Asset Compiler™](../engines/studio-asset-compiler/README.md) | Stage 03 packaging — `DepartmentPackage.zip` |
+| [Studio Generation Manager™](../engines/generation-manager/README.md) | Stage 03 execution — provider orchestration · queue · retry |
 | [Studio Asset Registry™](../engines/studio-asset-registry/README.md) | Stage 05 — permanent library |
 | [Studio Department Runtime™](../engine/department-runtime/README.md) | Stage 07 — live operation |
 | [Studio Validation Loop™](../engine/validation-loop/README.md) | Stage 08 — quality authority |

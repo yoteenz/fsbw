@@ -6,6 +6,7 @@
 **Engine ID:** `studio.asset-compiler.v1`  
 **Canonical engine (deep spec):** [`../../engine/asset-compiler/`](../../engine/asset-compiler/README.md)  
 **Living Library (reuse + prompts):** [`../studio-asset-registry/`](../studio-asset-registry/README.md)  
+**Production coordinator:** [`../generation-manager/`](../generation-manager/README.md)  
 **Department Definition input:** [`../../departments/creative-direction-studio/`](../../departments/creative-direction-studio/README.md)
 
 ---
@@ -39,7 +40,7 @@ The compiler is the **bridge between Studio OS intelligence and visual generatio
 | Expand prompts (material · scale · negative · Genome) | Send simplistic one-line prompts |
 | Organize assets into 16 package folders | Output single background image |
 | Generate `package-manifest.json` + runtime manifest | Build React · Three.js · UI |
-| Run Quality Engine before packaging | Execute FAL (generation is downstream) |
+| Run Quality Engine before packaging | Execute providers (Generation Manager™ downstream) |
 | Adapt per Company Genome + Room DNA™ | Hardcode brand visuals |
 | Remain provider-agnostic (FAL today) | Lock to one model forever |
 
@@ -57,6 +58,8 @@ Studio Asset Registry™ (Smart Reuse · Prompt Library · Pack entitlements)
 STUDIO ASSET COMPILER™ (this engine)
   Reuse lookup → Adapt → Organize → Expand Prompts → Resolve Dependencies
   → Quality Engine → Package → DepartmentPackage.zip
+         ↓
+Studio Generation Manager™ (queue · schedule · retry · validate handoff)
          ↓
 AI Providers (FAL · OpenAI · Runway · future) — generation is last resort
          ↓

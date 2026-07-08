@@ -202,14 +202,18 @@ Every asset specifies five production fields:
 ```
 DepartmentPackage.zip sealed (Compiler Stage 12)
          ↓
-Provider queue (FAL primary · OpenAI · Runway future)
+Studio Generation Manager™ ingests generation-queue.json
+         ↓
+Provider queue (FAL primary · OpenAI · Runway future) — orchestrated by Manager
          ↓
 Per-stage execution (parallel within stage allowed)
          ↓
-Artifact delivery → artifact:// storage
+Artifact delivery → validation → artifact:// storage
          ↓
 Stage 04 Asset Review (per artifact)
 ```
+
+See [Generation Manager™](../engines/generation-manager/README.md).
 
 ### Provider Profile (CDS)
 
