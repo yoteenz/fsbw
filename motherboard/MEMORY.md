@@ -43967,3 +43967,23 @@ Summary of the **full conversation in this chat**: Career Worlds™ implementati
 - **Verification:** `npm run build` passed; Architecture Validator **0 errors · 1 warning**; World Graph compile **673 nodes · 1341 edges · PASS**.
 - **Conventions:** New founder-facing Studio OS architecture should use Headquarters vocabulary and treat dashboard language as legacy implementation vocabulary only. Major subsystems should prove value inside Studio OS before commercialization or public platform expansion.
 
+---
+
+## 2026-07-08 — Headquarters Principles™ implementation sprint (ARTICLE-C04 platform)
+
+Summary of the **full conversation in this chat**: Career Worlds™ implementation sprint → ARTICLE-C01 Codex First Principle™ → Codex platform infrastructure → Phase II Canonical Seeding → ARTICLE-C02 Complete Codex Collections™ → ARTICLE-C03 Institute architecture and implementation → ARTICLE-C04 Headquarters Principle™ & Proof Before Expansion Principle™ architecture → **Headquarters Principles™ IMPLEMENTATION SPRINT** — refactor Studio OS around constitutional principles.
+
+- **Context:** User approved C04 architecture and requested full implementation: rename internal terminology, headquarters experience zones, subsystem maturity registry, platform readiness scores, expansion gates, routing philosophy, reusable enforcement infrastructure, and graduation documentation.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/headquarters-principles/`** platform module: `constants`, `types`, `engine`, `terminology`, `routing`, `headquarters/architecture` (9 zones: Executive Atrium™, Founder Office™, Department Wings™, Mission Control™, Daily Briefing™, AI Concierge™, Studio Intelligence™, Orb™, Atlas™), `maturity/stages`, `registry`, `readiness` (8 dimensions), `promotion-gate`, `bootstrap/seeds` (12 subsystems), `persistence/store` (`headquartersPrinciples_v1`), `briefing/daily-briefing`, `orb/advisor`.
+  - Key APIs: `listPlatformMaturityRegistry()`, `listPlatformReadinessReports()`, `constitutionalExpansionSummary()`, `canPromoteToPlatformProduct()`, `assertPlatformExpansionAllowed()`, `buildDailyBriefing()`, `resolveHeadquartersPrinciplesAdvice()`. Readiness threshold **75**; minimum expansion stage **Company Capability**.
+  - Constitutional terminology map: Admin Dashboard → Company Headquarters™, Widgets → Workspaces™, Navigation Menu → Atlas™, Notifications → Executive Advisories™, Reports → Intelligence Briefings™, Settings → Operations Rooms™, Assistant → Orb™.
+  - Routing: default founder arrival **`/admin/studio/overview`** (Executive Atrium™); governance workspace at **`/admin/studio/headquarters-principles`**; legacy dashboard paths redirect via `resolveHeadquartersRoute()`.
+  - Admin UI: **`HeadquartersPrinciplesWorkspace`** at `/admin/studio/headquarters-principles` with Daily Briefing™, maturity registry, readiness scores, terminology, and HQ zones tabs; hook **`useHeadquartersPrinciplesState()`**.
+  - Integrated **`StudioCommandCenterRoom`**: Daily Briefing lines in priority stack; exit label → "Exit Executive Atrium".
+  - Orb chain: **`resolveHeadquartersPrinciplesAdvice()`** added to `studio-world-codex/orb/curator.ts`.
+  - Navigation: `headquarters-principles` module in `adminStudioNavigation.ts`, `core/modules.ts`, `adminStudioDemo.ts`, `App.tsx` lazy route; SETTINGS label → **Operations Rooms** in Studio nav.
+  - Docs: **`docs/studio-os/headquarters-principles/HEADQUARTERS_PRINCIPLES_PLATFORM.md`**, **`README.md`**; Studio OS index updated with graduation path from internal tools to platform products.
+- **Verification:** `npm run build` passed; World Graph compile **673 nodes · 1341 edges · PASS**.
+- **Conventions:** Studio OS is operational headquarters, not an admin dashboard. No subsystem promotes to Platform Product without constitutional readiness. Use Headquarters vocabulary in founder-facing UI; maturity records and promotion gates are enforced via `assertPlatformExpansionAllowed()`.
+

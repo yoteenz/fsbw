@@ -54,6 +54,7 @@ export type AdminStudioSectionId =
   | 'career-worlds'
   | 'studio-world-codex'
   | 'institute-of-knowledge'
+  | 'headquarters-principles'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'

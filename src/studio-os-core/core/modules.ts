@@ -178,6 +178,7 @@ export type StudioOsCoreModuleId =
   | 'studio-exchange'
   | 'studio-world-codex'
   | 'institute-of-knowledge'
+  | 'headquarters-principles'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -1238,6 +1239,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'INSTITUTE OF KNOWLEDGE™',
     description: 'Knowledge governance institution — publication engine, review pipeline, canon promotion, Codex integration, Orb citations.',
     routeSegment: 'institute',
+  },
+  {
+    id: 'headquarters-principles',
+    label: 'HEADQUARTERS PRINCIPLES™',
+    description: 'ARTICLE-C04 governance — Company Headquarters™ vocabulary, platform maturity registry, readiness scores, Proof Before Expansion gates.',
+    routeSegment: 'headquarters-principles',
   },
   {
     id: 'vision-engine',

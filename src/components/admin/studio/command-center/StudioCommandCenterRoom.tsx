@@ -18,6 +18,7 @@ import {
   getModulesForGroup,
   STUDIO_NAV_GROUPS,
 } from '../../../../utils/adminStudioNavigation';
+import { buildDailyBriefingLines } from '../../../../studio-os-core/headquarters-principles';
 import { getWorkspaceStudioHubFooter, getWorkspaceStudioHubSubtitle } from '../../../../studio-os-core/workspace/loader';
 import { OrganizationPulseCore } from './OrganizationPulseCore';
 import { COMMAND_CENTER_DESTINATION_STYLES } from './commandCenterDestinationTheme';
@@ -98,9 +99,10 @@ export function StudioCommandCenterRoom() {
     [companyHealthPct, liveSystems, studioPulse, totalModules]
   );
 
+  const briefingLines = useMemo(() => buildDailyBriefingLines(), []);
   const priorityLine = focusedWingId
     ? `PRIORITY · ${COMMAND_CENTER_WING_PORTALS.find((w) => w.id === focusedWingId)?.label ?? 'WING'}`
-    : 'WHAT SHOULD THE FOUNDER REVIEW FIRST TODAY?';
+    : briefingLines[0] ?? 'WHAT SHOULD THE FOUNDER REVIEW FIRST TODAY?';
 
   const focusedModules = useMemo(() => {
     if (!focusedWingId) return [];
@@ -286,7 +288,7 @@ export function StudioCommandCenterRoom() {
             type="button"
             className="scc-world__back"
             onClick={() => navigate('/admin/dashboard')}
-            aria-label="Exit to admin dashboard"
+            aria-label="Exit Executive Atrium"
           >
             ←
           </button>

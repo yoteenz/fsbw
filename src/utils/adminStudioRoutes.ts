@@ -25,6 +25,12 @@ export type { CompanyDepartmentId };
 
 export const ADMIN_STUDIO_BASE_PATH = '/admin/studio';
 
+/** ARTICLE-C04 — default founder arrival at Executive Atrium™. */
+export const STUDIO_HEADQUARTERS_ARRIVAL_PATH = `${ADMIN_STUDIO_BASE_PATH}/overview`;
+
+/** Platform maturity registry and constitutional readiness gates. */
+export const STUDIO_HEADQUARTERS_PRINCIPLES_PATH = `${ADMIN_STUDIO_BASE_PATH}/headquarters-principles`;
+
 export type AdminStudioBuiltSectionId = Extract<
   AdminStudioSectionId,
   | 'shows'

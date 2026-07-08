@@ -49,7 +49,7 @@ export const STUDIO_NAV_GROUPS: readonly StudioNavGroup[] = [
   { id: 'distribution', label: 'DISTRIBUTION', description: 'CHANNELS · QUEUE · CALENDAR' },
   { id: 'intelligence', label: 'INTELLIGENCE', description: 'STRATEGY · AUDIENCE · ANALYTICS' },
   { id: 'legacy', label: 'LEGACY', description: 'ARCHIVE · HALL OF FAME · VAULT' },
-  { id: 'settings', label: 'SETTINGS', description: 'WORKSPACE · BRAND · PLATFORM' },
+  { id: 'settings', label: 'OPERATIONS ROOMS', description: 'OPERATIONS ROOMS™ · WORKSPACE · BRAND · PLATFORM CONFIGURATION' },
 ] as const;
 
 export const STUDIO_OVERVIEW_PATH = `${ADMIN_STUDIO_BASE_PATH}/overview`;
@@ -68,6 +68,19 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     status: 'demo',
     metric: 'HQ',
     ctaLabel: 'ENTER HQ',
+    featuredOnOverview: true,
+  },
+  {
+    id: 'headquarters-principles',
+    title: 'HEADQUARTERS PRINCIPLES™',
+    purpose:
+      'Constitutional platform governance — Company Headquarters™ vocabulary, maturity registry, readiness scores, and Proof Before Expansion gates.',
+    route: p('headquarters-principles'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'ARTICLE-C04',
+    ctaLabel: 'OPEN GOVERNANCE',
+    moduleKey: 'headquarters-principles',
     featuredOnOverview: true,
   },
   {

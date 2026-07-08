@@ -5,6 +5,7 @@ import {
   findRelatedArticleIds,
 } from '../relationships/engine';
 import { resolveInstituteAdvice } from '../../institute-of-knowledge/orb/advisor';
+import { resolveHeadquartersPrinciplesAdvice } from '../../headquarters-principles/orb/advisor';
 import type { CodexArticleRecord, CodexOrbRecommendation } from '../types';
 
 /** Orb Curator™ — constitutional memory advisor for the Codex. */
@@ -123,7 +124,7 @@ export function resolveCodexOrbLine(query: string): string | null {
 
 export type CodexOrbAdvice = {
   response: string;
-  concierge: 'Orb Curator™' | 'Orb Curator™ · Institute Advisor™';
+  concierge: 'Orb Curator™' | 'Orb Curator™ · Institute Advisor™' | 'Orb Curator™ · Headquarters Advisor™';
   articleCount: number;
 };
 
@@ -137,8 +138,17 @@ export function resolveCodexAdvice(input: string): CodexOrbAdvice | null {
   };
 }
 
-/** Combined Orb response — Codex constitutional memory + Institute canonical publications. */
+/** Combined Orb response — constitutional memory + Institute + Headquarters principles. */
 export function resolveCodexAndInstituteAdvice(input: string): CodexOrbAdvice | null {
+  const headquarters = resolveHeadquartersPrinciplesAdvice(input);
+  if (headquarters) {
+    return {
+      response: headquarters.response,
+      concierge: 'Orb Curator™ · Headquarters Advisor™',
+      articleCount: listCodexArticles().length,
+    };
+  }
+
   const institute = resolveInstituteAdvice(input);
   if (institute) {
     const citationNote =
