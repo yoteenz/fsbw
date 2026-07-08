@@ -183,6 +183,7 @@ const AdminStudioExpansionCenter = lazyWithRetry(() => import('./pages/admin/stu
 const AdminStudioBusinessDiscoveryBlueprint = lazyWithRetry(() => import('./pages/admin/studio/business-discovery-blueprint/page'), 'AdminStudioBusinessDiscoveryBlueprint');
 const AdminStudioOrganizationInauguration = lazyWithRetry(() => import('./pages/admin/studio/organization-inauguration/page'), 'AdminStudioOrganizationInauguration');
 const AdminStudioProfessionBrain = lazyWithRetry(() => import('./pages/admin/studio/profession-brain/page'), 'AdminStudioProfessionBrain');
+const AdminStudioProfessionSimulation = lazyWithRetry(() => import('./pages/admin/studio/profession-simulation/page'), 'AdminStudioProfessionSimulation');
 const AdminStudioExpertMarketplace = lazyWithRetry(() => import('./pages/admin/studio/expert-marketplace/page'), 'AdminStudioExpertMarketplace');
 const AdminStudioKnowledgeCommerce = lazyWithRetry(() => import('./pages/admin/studio/knowledge-commerce/page'), 'AdminStudioKnowledgeCommerce');
 const AdminStudioProfessionalTrustFramework = lazyWithRetry(() => import('./pages/admin/studio/professional-trust-framework/page'), 'AdminStudioProfessionalTrustFramework');
@@ -1637,6 +1638,11 @@ function App() {
           <Route path="studio/profession-brain" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioProfessionBrain />
+            </Suspense>
+          } />
+          <Route path="studio/profession-simulation" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioProfessionSimulation />
             </Suspense>
           } />
           <Route path="studio/expert-marketplace" element={

@@ -1,11 +1,11 @@
-import { getProfessionDefinition } from './catalog';
+import { getProfessionDefinition } from '../catalog';
 import type {
   CareerStageDefinition,
   ProfessionDefinition,
   ProfessionSimulationBlueprint,
   ProfessionSimulationResolution,
   SimulationSceneDefinition,
-} from './types';
+} from '../types';
 
 export type ProfessionSimulationResolutionInput = {
   professionId: string;
@@ -99,4 +99,3 @@ export function getPromotionReadinessSummary(
       requiredSceneIds.length > 0 && completedRequiredScenes === requiredSceneIds.length,
   };
 }
-

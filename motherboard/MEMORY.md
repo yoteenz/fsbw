@@ -43631,6 +43631,7 @@ Summary of the **whole conversation so far** in this chat: user first requested 
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-08 — Career Worlds™ foundational engine implementation sprint
 
 Summary of the **full conversation in this chat**: after ARTICLE-E02 architecture was accepted and pushed (`27b08dc38`), the user requested **IMPLEMENTATION SPRINT** to extend the Profession Simulation Engine™ into persistent **Career Worlds™** — a reusable engine every profession plugs into (not Frontal Slayer Academy, not an LMS).
@@ -43653,3 +43654,27 @@ Summary of the **full conversation in this chat**: after ARTICLE-E02 architectur
 - **Verification:** `npm run build` passed
 - **Conventions:** Every profession adds a blueprint in `catalog.ts` + `CAREER_WORLD_IDS`; engines read blueprint fields generically. Career Hub replaces course dashboard metaphor. Academy may exist as a surface inside a world later.
 
+=======
+## 2026-07-08 — Profession Simulation Engine™ implementation foundation
+
+Summary of the **whole conversation so far** in this chat: user requested **ARTICLE-D09 Hero Objects™ & Contextual Orb™** architecture, then the **D09 implementation sprint**, then **ARTICLE-E01 Profession Simulation Engine™ architecture**, and finally the **E01 implementation sprint** to build a reusable simulation engine foundation (not Frontal Slayer Academy).
+
+- **Prior outcomes in this chat:**
+  - D09 architecture + implementation completed (Hero Objects context registry, Orb toolbelt, acrylic tiles).
+  - E01 architecture completed: canon doc, core package seed, Hair Profession™ reference catalog, World Graph ingestion, Design Principle #10 Careers Are Simulated™.
+  - E02 Career Worlds™ already on master as persistent-world layer depending on Profession Simulation Engine as runtime.
+- **Implementation sprint user goal:** Build reusable **Profession Simulation Engine™** modules every profession can plug into — careers, jobs, characters, scenarios, progression, reputation, certifications, mentor, profession-brains — with simulation loop, Profession Brain adapters (no hardcoded profession knowledge in engine), and stub UI for one playable shift. Avoid LMS/dashboard/chapter-list UX.
+- **Decisions / outcomes:**
+  - Modularized `src/studio-os-core/profession-simulation-engine/` into ten submodules: `simulation/`, `careers/`, `jobs/`, `characters/`, `scenarios/`, `progression/`, `reputation/`, `certifications/`, `mentor/`, `profession-brains/`.
+  - Defined schemas for career tracks, shifts/missions, persistent NPCs (memory, relationship, teaching style, authority, conversation history), scenarios, progression evidence, reputation dimensions, certifications, mentor briefs.
+  - Implemented 10-phase simulation loop state machine: Arrival → Briefing → Mission → Execution → Unexpected Event → Evaluation → Feedback → Knowledge Update → Rewards → Promotion Progress.
+  - Profession Brain integration via `ProfessionBrainAdapter` registry + `stubProfessionBrainAdapter` — engine requests briefing, mission, evaluation criteria, feedback, knowledge topics from brain; stub resolves from scene metadata until living brain APIs mature.
+  - Moved resolution helpers from `progression.ts` to `progression/resolution.ts` to avoid file/folder name conflict.
+  - Stub UI at `/admin/studio/profession-simulation`: workplace-feel **Shampoo Station Rush™** demo shift (clock-in through promotion progress), not an academy product.
+- **Changes:**
+  - Core: all new module folders under `profession-simulation-engine/`; `simulation/runner.ts` (`startSimulationSession`, `advanceSimulationSession`); `constants.ts` v1.1.0 + module path list.
+  - UI: `ProfessionSimulationShiftWorkspace.tsx`, `useProfessionSimulationShift.ts`, `adminStudioProfessionSimulationDemo.ts`, route in `App.tsx`.
+  - World Graph: profession-simulation-engine node `implementationStatus: prototype`.
+- **Verification:** `npx tsc --noEmit` passed; `npm run compile-world-graph` (**542 nodes · 1024 edges · PASS**); `npm run build` passed.
+- **Convention:** Future academies register `ProfessionDefinition` + Profession Brain adapter; reuse simulation loop runner. Do not hardcode profession knowledge inside engine runtime — always request from Profession Brain™.
+>>>>>>> 6a0ff7dd1 (Profession Simulation Engine foundation: modular runtime, brain adapters, playable shift demo)

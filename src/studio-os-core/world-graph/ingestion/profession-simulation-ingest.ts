@@ -32,7 +32,7 @@ export function ingestProfessionSimulationNodes(): { nodes: WorldNode[]; edges: 
       version: '1.0.0',
       summary:
         'Transforms professional learning into immersive career progression through scenes, shifts, clients, challenges, projects, and promotions.',
-      implementationStatus: 'spec',
+      implementationStatus: 'prototype',
       codePaths: ['src/studio-os-core/profession-simulation-engine/'],
       docPaths: ['docs/studio-os/profession-simulation-engine/ARTICLE_E01_PROFESSION_SIMULATION_ENGINE.md'],
       provenance: { source: 'constitution', sourceRef: PROFESSION_SIMULATION_ENGINE_ARTICLE_ID, ingestedAt: ts },

@@ -1,6 +1,6 @@
 /** ARTICLE-E01 — Profession Simulation Engine™ */
 
-export const PROFESSION_SIMULATION_ENGINE_VERSION = '1.0.0';
+export const PROFESSION_SIMULATION_ENGINE_VERSION = '1.1.0';
 export const PROFESSION_SIMULATION_ENGINE_ARTICLE_ID = 'ARTICLE-E01';
 
 export const PROFESSION_SIMULATION_PHILOSOPHY = [
@@ -26,6 +26,8 @@ export const PROFESSION_SIMULATION_FORBIDDEN_LANGUAGE = [
   'quiz funnel',
   'static LMS',
   'assignment-only learning',
+  'chapter list',
+  'training dashboard',
 ] as const;
 
 export const PROFESSION_SIMULATION_SUPPORTED_PROFESSION_HORIZON = [
@@ -47,3 +49,15 @@ export const PROFESSION_SIMULATION_SUPPORTED_PROFESSION_HORIZON = [
   'business',
 ] as const;
 
+export const PROFESSION_SIMULATION_MODULE_PATHS = [
+  'simulation',
+  'careers',
+  'jobs',
+  'characters',
+  'scenarios',
+  'progression',
+  'reputation',
+  'certifications',
+  'mentor',
+  'profession-brains',
+] as const;
