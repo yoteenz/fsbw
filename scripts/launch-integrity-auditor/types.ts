@@ -22,7 +22,9 @@ export type LaunchIntegrityReport = {
   auditor: 'Launch Integrity Auditor™';
   product: 'Frontal Slayer / Build-a-Wig';
   generated_at: string;
+  static_integrity_score: number;
   launch_readiness_score: number;
+  commerce_launch_status: 'blocked' | 'incomplete' | 'env-configured';
   deployment_status: 'pass' | 'fail' | 'warn';
   summary: {
     routes_tested: number;
@@ -35,6 +37,7 @@ export type LaunchIntegrityReport = {
     medium_open: number;
     low_open: number;
     fixed_in_run: number;
+    commerce_blockers_open: number;
   };
   checks: {
     typescript: { status: string; detail: string };
@@ -42,6 +45,7 @@ export type LaunchIntegrityReport = {
     lazy_imports: { status: string; missing: string[] };
     public_assets: { status: string; missing: string[] };
     api_routes: { status: string; count: number };
+    commerce_integration: { id: string; label: string; status: string; detail: string }[];
   };
   issues: AuditIssue[];
   fixes_applied?: { route: string; issue: string; fix: string; file: string }[];

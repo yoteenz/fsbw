@@ -1,20 +1,23 @@
 {
   "auditor": "Launch Integrity Auditor™",
   "product": "Frontal Slayer / Build-a-Wig",
-  "generated_at": "2026-07-08T13:08:29.146Z",
-  "launch_readiness_score": 100,
-  "deployment_status": "pass",
+  "generated_at": "2026-07-08T13:30:31.925Z",
+  "static_integrity_score": 100,
+  "launch_readiness_score": 25,
+  "commerce_launch_status": "blocked",
+  "deployment_status": "warn",
   "summary": {
     "routes_tested": 37,
     "routes_passed": 40,
     "routes_failed": 0,
-    "routes_warn": 0,
-    "routes_manual": 9,
+    "routes_warn": 5,
+    "routes_manual": 12,
     "critical_open": 0,
     "high_open": 0,
     "medium_open": 0,
     "low_open": 38,
-    "fixed_in_run": 6
+    "fixed_in_run": 6,
+    "commerce_blockers_open": 5
   },
   "checks": {
     "typescript": {
@@ -22,8 +25,8 @@
       "detail": "tsc --noEmit clean"
     },
     "production_build": {
-      "status": "pass",
-      "detail": "vite build succeeded"
+      "status": "skip",
+      "detail": "Skipped (--skip-build)"
     },
     "lazy_imports": {
       "status": "pass",
@@ -36,7 +39,39 @@
     "api_routes": {
       "status": "pass",
       "count": 277
-    }
+    },
+    "commerce_integration": [
+      {
+        "id": "stripe-secret",
+        "label": "STRIPE_SECRET_KEY",
+        "status": "missing",
+        "detail": "Missing — blocks: Product PaymentIntents, membership Checkout, booking autopay"
+      },
+      {
+        "id": "stripe-publishable",
+        "label": "STRIPE_PUBLISHABLE_KEY",
+        "status": "missing",
+        "detail": "Missing — blocks: Client-side Stripe Elements on checkout"
+      },
+      {
+        "id": "stripe-webhook",
+        "label": "STRIPE_WEBHOOK_SECRET",
+        "status": "missing",
+        "detail": "Missing — blocks: Order + membership confirmation after payment"
+      },
+      {
+        "id": "stripe-membership-prices",
+        "label": "STRIPE_PRICE_ID_3MONTHS / _6MONTHS / _12MONTHS",
+        "status": "missing",
+        "detail": "Missing — blocks: Rewards / membership subscription checkout"
+      },
+      {
+        "id": "site-url",
+        "label": "SITE_URL",
+        "status": "missing",
+        "detail": "Missing — blocks: Stripe return URLs and webhook callbacks"
+      }
+    ]
   },
   "fixes_applied": [
     {
@@ -676,10 +711,88 @@
       "recommended_fix": "None",
       "file_component_location": "e2e/helpers/routes.ts",
       "fix_priority": 0
+    },
+    {
+      "id": "LIA-0041",
+      "resolution_status": "open",
+      "regression_risk": "high",
+      "design_risk": "none",
+      "route_tested": "(commerce) STRIPE_SECRET_KEY",
+      "status": "warn",
+      "issue_type": "commerce_integration",
+      "severity": "critical",
+      "what_broke": "STRIPE_SECRET_KEY not configured — Product PaymentIntents, membership Checkout, booking autopay",
+      "likely_cause": "Stripe/payment wiring incomplete in Vercel env (or local .env)",
+      "recommended_fix": "Set STRIPE_SECRET_KEY in Vercel → Environment Variables; see docs/STRIPE_MEMBERSHIP_SETUP.md",
+      "file_component_location": "docs/STRIPE_MEMBERSHIP_SETUP.md",
+      "fix_priority": 1
+    },
+    {
+      "id": "LIA-0042",
+      "resolution_status": "open",
+      "regression_risk": "high",
+      "design_risk": "none",
+      "route_tested": "(commerce) STRIPE_PUBLISHABLE_KEY",
+      "status": "warn",
+      "issue_type": "commerce_integration",
+      "severity": "critical",
+      "what_broke": "STRIPE_PUBLISHABLE_KEY not configured — Client-side Stripe Elements on checkout",
+      "likely_cause": "Stripe/payment wiring incomplete in Vercel env (or local .env)",
+      "recommended_fix": "Set STRIPE_PUBLISHABLE_KEY in Vercel → Environment Variables; see api/stripe/product-checkout-available.ts",
+      "file_component_location": "api/stripe/product-checkout-available.ts",
+      "fix_priority": 1
+    },
+    {
+      "id": "LIA-0043",
+      "resolution_status": "open",
+      "regression_risk": "high",
+      "design_risk": "none",
+      "route_tested": "(commerce) STRIPE_WEBHOOK_SECRET",
+      "status": "warn",
+      "issue_type": "commerce_integration",
+      "severity": "critical",
+      "what_broke": "STRIPE_WEBHOOK_SECRET not configured — Order + membership confirmation after payment",
+      "likely_cause": "Stripe/payment wiring incomplete in Vercel env (or local .env)",
+      "recommended_fix": "Set STRIPE_WEBHOOK_SECRET in Vercel → Environment Variables; see api/stripe/webhook.ts",
+      "file_component_location": "api/stripe/webhook.ts",
+      "fix_priority": 1
+    },
+    {
+      "id": "LIA-0044",
+      "resolution_status": "open",
+      "regression_risk": "high",
+      "design_risk": "none",
+      "route_tested": "(commerce) STRIPE_PRICE_ID_3MONTHS / _6MONTHS / _12MONTHS",
+      "status": "warn",
+      "issue_type": "commerce_integration",
+      "severity": "critical",
+      "what_broke": "STRIPE_PRICE_ID_3MONTHS / _6MONTHS / _12MONTHS not configured — Rewards / membership subscription checkout",
+      "likely_cause": "Stripe/payment wiring incomplete in Vercel env (or local .env)",
+      "recommended_fix": "Set STRIPE_PRICE_ID_3MONTHS / _6MONTHS / _12MONTHS in Vercel → Environment Variables; see api/_lib/stripeMembership.ts",
+      "file_component_location": "api/_lib/stripeMembership.ts",
+      "fix_priority": 1
+    },
+    {
+      "id": "LIA-0045",
+      "resolution_status": "open",
+      "regression_risk": "high",
+      "design_risk": "none",
+      "route_tested": "(commerce) SITE_URL",
+      "status": "warn",
+      "issue_type": "commerce_integration",
+      "severity": "critical",
+      "what_broke": "SITE_URL not configured — Stripe return URLs and webhook callbacks",
+      "likely_cause": "Stripe/payment wiring incomplete in Vercel env (or local .env)",
+      "recommended_fix": "Set SITE_URL in Vercel → Environment Variables; see api/_lib/stripeMembership.ts → siteUrlFromEnv",
+      "file_component_location": "api/_lib/stripeMembership.ts → siteUrlFromEnv",
+      "fix_priority": 1
     }
   ],
   "routes_still_needing_manual_review": [
-    "Checkout with live Stripe + Supabase session (payment submit)",
+    "End-to-end product checkout: bag → checkout → Stripe PaymentIntent → webhook → order in account",
+    "Membership upgrade checkout: /checkout/upgrade → Stripe session → webhook → rewards profile",
+    "Booking checkout + final balance autopay (saved default payment method)",
+    "Gift card checkout flow",
     "Admin sync-profile with production credentials",
     "Build-a-Wig FAL live preview (founder-only)",
     "Lounge TV ticket purchase end-to-end on device",

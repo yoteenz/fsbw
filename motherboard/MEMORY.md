@@ -42021,3 +42021,14 @@ User asked how to regenerate **one** Scene Stack layer (e.g. dislike lighting) w
 - **UI added:** Bottom-left **layer strip** on `SceneStackViewport` — Shell · Landmark · Furniture · Lighting · Atmosphere · Materials · Motion · Personal — each with **Regen** when that layer exists; **Retry** on failed; dot = ready/failed/pending. Calls existing `stack.regenerateLayer(zoneId, layerId)`.
 - **Files:** `SceneStackViewport.tsx`, `cdsInteractionLayerTheme.ts` (`.cds-stack__layer-strip*`).
 - **Prior arc (same chat):** Scene Stack refresh persistence fix · Launch Integrity Auditor™ · CDS auto-generation Q&A.
+
+---
+
+## 2026-07-08 — Launch Auditor score honesty: static vs commerce launch
+
+User correctly challenged **100/100 launch readiness** while Stripe/payment methods not fully wired to checkout.
+
+- **Problem:** Auditor only verified `/checkout` **route exists** + build/TS — not live payments. "Launch readiness 100" was misleading.
+- **Fix:** Split scores — **`static_integrity_score`** (routes/build/TS) vs **`launch_readiness_score`** (includes commerce env blockers). Added **`COMMERCE_INTEGRATION_CHECKS`** (STRIPE_SECRET_KEY, publishable, webhook, 3/6/12 price IDs, SITE_URL). Missing env → critical **commerce_integration** warnings; **`commerce_launch_status: blocked`**. Report disclaimer: passing `/checkout` route ≠ payments work.
+- **Example run (no Stripe env in audit shell):** static **100/100**, launch **25/100**, commerce **blocked**.
+- **Prior arc (same chat):** CDS per-layer Regen UI · Scene Stack persistence · Launch Integrity Auditor™ sprint.

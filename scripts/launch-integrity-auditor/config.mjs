@@ -75,3 +75,46 @@ export const RESOLVED_E2E_FIXES = [
   { e2ePath: '/brand', fix: 'Redirect /brand → /brand/about in App.tsx' },
   { e2ePath: '/orders', fix: 'Redirect /orders → /account/orders; e2e uses /account/orders' },
 ];
+
+/**
+ * Commerce / payment integration — NOT inferred from route registry.
+ * Missing env = launch blocker even when /checkout route exists.
+ */
+export const COMMERCE_INTEGRATION_CHECKS = [
+  {
+    id: 'stripe-secret',
+    label: 'STRIPE_SECRET_KEY',
+    envKeys: ['STRIPE_SECRET_KEY'],
+    blocks: 'Product PaymentIntents, membership Checkout, booking autopay',
+    doc: 'docs/STRIPE_MEMBERSHIP_SETUP.md',
+  },
+  {
+    id: 'stripe-publishable',
+    label: 'STRIPE_PUBLISHABLE_KEY',
+    envKeys: ['STRIPE_PUBLISHABLE_KEY', 'VITE_STRIPE_PUBLISHABLE_KEY'],
+    blocks: 'Client-side Stripe Elements on checkout',
+    doc: 'api/stripe/product-checkout-available.ts',
+  },
+  {
+    id: 'stripe-webhook',
+    label: 'STRIPE_WEBHOOK_SECRET',
+    envKeys: ['STRIPE_WEBHOOK_SECRET'],
+    blocks: 'Order + membership confirmation after payment',
+    doc: 'api/stripe/webhook.ts',
+  },
+  {
+    id: 'stripe-membership-prices',
+    label: 'STRIPE_PRICE_ID_3MONTHS / _6MONTHS / _12MONTHS',
+    envKeys: ['STRIPE_PRICE_ID_3MONTHS', 'STRIPE_PRICE_ID_6MONTHS', 'STRIPE_PRICE_ID_12MONTHS'],
+    requireAll: true,
+    blocks: 'Rewards / membership subscription checkout',
+    doc: 'api/_lib/stripeMembership.ts',
+  },
+  {
+    id: 'site-url',
+    label: 'SITE_URL',
+    envKeys: ['SITE_URL', 'VERCEL_URL'],
+    blocks: 'Stripe return URLs and webhook callbacks',
+    doc: 'api/_lib/stripeMembership.ts → siteUrlFromEnv',
+  },
+];

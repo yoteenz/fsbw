@@ -15,6 +15,7 @@ import {
   LAUNCH_CRITICAL_ROUTES,
   REQUIRED_PUBLIC_ASSETS,
   RESOLVED_E2E_FIXES,
+  COMMERCE_INTEGRATION_CHECKS,
   FIXES_APPLIED,
 } from './launch-integrity-auditor/config.mjs';
 
@@ -154,13 +155,27 @@ function scoreReport(issues, routesTested) {
   return Math.max(0, Math.min(100, Math.round(score)));
 }
 
+function envConfigured(envKeys, requireAll = false) {
+  const hits = envKeys.map((k) => Boolean(process.env[k]?.trim()));
+  return requireAll ? hits.every(Boolean) : hits.some(Boolean);
+}
+
+function isStaticIntegrityIssue(i) {
+  return i.issue_type !== 'commerce_integration';
+}
+
 function renderMarkdown(report) {
   const lines = [
     '# Launch Integrity Auditor™ — Frontal Slayer',
     '',
     `**Generated:** ${report.generated_at}`,
+    '',
+    '> **Important:** **Static integrity** = routes/build/TS only. **Launch readiness** includes commerce/payment env blockers. A passing `/checkout` route does **not** mean Stripe is wired or payments work.',
+    '',
+    `**Static integrity score:** ${report.static_integrity_score}/100`,
     `**Launch readiness score:** ${report.launch_readiness_score}/100`,
     `**Deployment status:** ${report.deployment_status}`,
+    `**Commerce launch:** ${report.commerce_launch_status}`,
     '',
     '## Summary',
     '',
@@ -174,6 +189,7 @@ function renderMarkdown(report) {
     `| Critical open | ${report.summary.critical_open} |`,
     `| High open | ${report.summary.high_open} |`,
     `| Fixed this run | ${report.summary.fixed_in_run} |`,
+    `| Commerce blockers open | ${report.summary.commerce_blockers_open} |`,
     '',
     '## Build checks',
     '',
@@ -183,11 +199,21 @@ function renderMarkdown(report) {
     `- Public assets: **${report.checks.public_assets.status}**`,
     `- API routes: **${report.checks.api_routes.count}** files`,
     '',
+    '## Commerce integration (env)',
+    '',
+  ];
+
+  for (const c of report.checks.commerce_integration) {
+    lines.push(`- ${c.label}: **${c.status}** — ${c.detail}`);
+  }
+
+  lines.push(
+    '',
     '## Issues',
     '',
     '| Route | Status | Severity | Type | What broke | Location | Resolution |',
     '|-------|--------|----------|------|------------|----------|------------|',
-  ];
+  );
 
   for (const i of report.issues) {
     lines.push(
@@ -414,7 +440,10 @@ function main() {
   }
 
   manualReview.push(
-    'Checkout with live Stripe + Supabase session (payment submit)',
+    'End-to-end product checkout: bag → checkout → Stripe PaymentIntent → webhook → order in account',
+    'Membership upgrade checkout: /checkout/upgrade → Stripe session → webhook → rewards profile',
+    'Booking checkout + final balance autopay (saved default payment method)',
+    'Gift card checkout flow',
     'Admin sync-profile with production credentials',
     'Build-a-Wig FAL live preview (founder-only)',
     'Lounge TV ticket purchase end-to-end on device',
@@ -425,8 +454,57 @@ function main() {
     'SEO meta per page — manual content review'
   );
 
+  const commerceIntegrationChecks = [];
+  for (const check of COMMERCE_INTEGRATION_CHECKS) {
+    const ok = envConfigured(check.envKeys, check.requireAll);
+    commerceIntegrationChecks.push({
+      id: check.id,
+      label: check.label,
+      status: ok ? 'configured' : 'missing',
+      detail: ok ? 'Present in process.env for this audit run' : `Missing — blocks: ${check.blocks}`,
+    });
+    issues.push(
+      issue({
+        route_tested: `(commerce) ${check.label}`,
+        status: ok ? 'pass' : 'warn',
+        issue_type: 'commerce_integration',
+        severity: 'critical',
+        what_broke: ok
+          ? 'None'
+          : `${check.label} not configured — ${check.blocks}`,
+        likely_cause: ok
+          ? 'Env var present when auditor ran'
+          : 'Stripe/payment wiring incomplete in Vercel env (or local .env)',
+        recommended_fix: ok
+          ? 'Verify live payment submit in staging before public launch'
+          : `Set ${check.label} in Vercel → Environment Variables; see ${check.doc}`,
+        file_component_location: check.doc,
+        fix_priority: 1,
+        regression_risk: 'high',
+        resolution_status: ok ? 'open' : 'open',
+      })
+    );
+  }
+
+  const staticIssues = issues.filter(isStaticIntegrityIssue);
+  const staticIntegrityScore = scoreReport(staticIssues, routesTested.size);
+  const launchReadinessScore = scoreReport(issues, routesTested.size);
+
   const openIssues = issues.filter((i) => i.status === 'fail' && i.resolution_status === 'open');
+  const commerceBlockersOpen = issues.filter(
+    (i) =>
+      i.issue_type === 'commerce_integration' &&
+      i.resolution_status === 'open' &&
+      i.status !== 'pass'
+  ).length;
   const criticalOpen = openIssues.filter((i) => i.severity === 'critical').length;
+  const commerceCriticalOpen = issues.filter(
+    (i) =>
+      i.issue_type === 'commerce_integration' &&
+      i.severity === 'critical' &&
+      i.resolution_status === 'open' &&
+      i.status !== 'pass'
+  ).length;
   const highOpen = openIssues.filter((i) => i.severity === 'high').length;
   const mediumOpen = issues.filter((i) => i.severity === 'medium' && i.resolution_status === 'open').length;
   const lowOpen = issues.filter((i) => i.severity === 'low' && i.resolution_status === 'open').length;
@@ -437,8 +515,16 @@ function main() {
     auditor: 'Launch Integrity Auditor™',
     product: 'Frontal Slayer / Build-a-Wig',
     generated_at: new Date().toISOString(),
-    launch_readiness_score: scoreReport(issues, routesTested.size),
-    deployment_status: criticalOpen > 0 || tscStatus === 'fail' || buildStatus === 'fail' ? 'fail' : highOpen > 0 ? 'warn' : 'pass',
+    static_integrity_score: staticIntegrityScore,
+    launch_readiness_score: launchReadinessScore,
+    commerce_launch_status:
+      commerceCriticalOpen > 0 ? 'blocked' : commerceBlockersOpen > 0 ? 'incomplete' : 'env-configured',
+    deployment_status:
+      criticalOpen > 0 || tscStatus === 'fail' || buildStatus === 'fail'
+        ? 'fail'
+        : commerceCriticalOpen > 0 || highOpen > 0
+          ? 'warn'
+          : 'pass',
     summary: {
       routes_tested: routesTested.size,
       routes_passed: issues.filter((i) => i.status === 'pass').length,
@@ -450,6 +536,7 @@ function main() {
       medium_open: mediumOpen,
       low_open: lowOpen,
       fixed_in_run: fixedInRun,
+      commerce_blockers_open: commerceBlockersOpen,
     },
     checks: {
       typescript: { status: tscStatus, detail: tsc.ok ? 'tsc --noEmit clean' : (tsc.stderr || '').slice(0, 300) },
@@ -457,6 +544,7 @@ function main() {
       lazy_imports: { status: missingLazy.length ? 'fail' : 'pass', missing: missingLazy },
       public_assets: { status: missingAssets.length ? 'fail' : 'pass', missing: missingAssets },
       api_routes: { status: 'pass', count: apiFiles.length },
+      commerce_integration: commerceIntegrationChecks,
     },
     fixes_applied: FIXES_APPLIED,
     issues,
@@ -467,7 +555,9 @@ function main() {
   fs.writeFileSync(REPORT_JSON, JSON.stringify(report, null, 2));
   fs.writeFileSync(REPORT_MD, renderMarkdown(report));
 
-  console.log(`Launch Integrity Auditor™ — score ${report.launch_readiness_score}/100`);
+  console.log(
+    `Launch Integrity Auditor™ — static ${report.static_integrity_score}/100 · launch ${report.launch_readiness_score}/100 · commerce ${report.commerce_launch_status}`
+  );
   console.log(`Report: ${REPORT_MD}`);
   console.log(`Critical open: ${criticalOpen} · High open: ${highOpen} · Failed checks: ${report.summary.routes_failed}`);
 
