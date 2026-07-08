@@ -15,6 +15,12 @@ import { DEPARTMENT_SLICE_STYLES } from '../department-vertical-slice/department
 import { CreativePipelineBoard } from './CreativePipelineBoard';
 import { CDS_V2_STYLES } from './creativeDirectionStudioTheme';
 import {
+  CDS_AMBIENT_MOOD_TILES,
+  CDS_LIBRARY_SPINE_DEFAULTS,
+  CDS_STORY_PROJECTIONS,
+} from './cdsEnvironmentalData';
+import { CdsZoneShell } from './CdsZoneShell';
+import {
   CDS_CAMERA_ZONES,
   cdsZonePanVw,
   getCdsZone,
@@ -37,10 +43,16 @@ export function CreativeDirectionStudioRoom() {
   const [refTitle, setRefTitle] = useState('');
   const [refUrl, setRefUrl] = useState('');
   const [noteBody, setNoteBody] = useState('');
+  const [ambientTick, setAmbientTick] = useState(0);
 
   useEffect(() => {
     document.body.classList.add('cds-v2-active');
     return () => document.body.classList.remove('cds-v2-active');
+  }, []);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setAmbientTick((t) => t + 1), 12000);
+    return () => window.clearInterval(id);
   }, []);
 
   const orbCopy = useMemo(
@@ -66,6 +78,8 @@ export function CreativeDirectionStudioRoom() {
     [arrivalComplete]
   );
 
+  const pipelineLive = pipeline.progress.percent > 0 && pipeline.progress.percent < 100;
+
   const goToZone = useCallback(
     (zoneId: CdsCameraZoneId) => {
       const zone = getCdsZone(zoneId);
@@ -85,15 +99,18 @@ export function CreativeDirectionStudioRoom() {
     const shelves = ['Editorial', 'Luxury', 'Motion', 'Packaging'] as const;
     return shelves.map((label, i) => ({
       label,
-      items: items.filter((_, idx) => idx % 4 === i).slice(0, 3),
+      userItems: items.filter((_, idx) => idx % 4 === i).slice(0, 3),
+      defaultSpines: CDS_LIBRARY_SPINE_DEFAULTS[label] ?? [],
     }));
   }, [moodWall.wall.inspirations]);
+
+  const showAmbientMood = moodWall.wall.inspirations.length === 0;
 
   return (
     <>
       <style>{DEPARTMENT_SLICE_STYLES}</style>
       <style>{CDS_V2_STYLES}</style>
-      <div className={`cds-v2${reviewMode ? ' cds-v2--review-mode' : ''}`}>
+      <div className={`cds-v2${reviewMode ? ' cds-v2--review-mode' : ''}`} data-ambient={ambientTick}>
         <div className="cds-v2__atmosphere" aria-hidden />
 
         <header className="cds-v2__hud">
@@ -104,7 +121,7 @@ export function CreativeDirectionStudioRoom() {
             <p className="cds-v2__dept">{slice.pkg.definition.displayName}</p>
             <p className="cds-v2__project">{slice.project.name}</p>
           </div>
-          <span className="cds-v2__pill">V2 · Living Atelier</span>
+          <span className="cds-v2__pill">Env Pass V1</span>
         </header>
 
         <div className="cds-v2__camera">
@@ -112,264 +129,306 @@ export function CreativeDirectionStudioRoom() {
             className="cds-v2__camera-track"
             style={{ transform: `translate3d(-${cameraPan}vw, 0, 0)` }}
           >
-            {/* Arrival Zone™ */}
+            {/* Arrival Zone™ — Hero: The Orb™ */}
             <section
-              className={`cds-v2__zone-panel${activeZoneId === 'arrival' ? ' is-active' : ''}${!arrivalComplete ? '' : ''}`}
+              className={`cds-v2__zone-panel${activeZoneId === 'arrival' ? ' is-active' : ''}`}
               aria-label="Arrival Zone"
             >
-              <div className="cds-v2__zone-horizon" aria-hidden />
-              <div className="cds-v2__zone-wall" aria-hidden />
-              <div
-                className="cds-v2__zone-floor"
-                style={{
-                  background: `linear-gradient(180deg, ${slice.atmosphere.floorTone} 0%, rgba(8,7,6,0.55) 100%)`,
-                }}
-                aria-hidden
-              />
-              <div className="cds-v2__arrival-threshold">
-                <div className="cds-v2__arrival-arch" aria-hidden />
-                <p className="cds-v2__arrival-sign">Creative Direction Studio™</p>
-                <p className="cds-v2__arrival-copy">
-                  The atelier opens before you — not dumped on screen.
-                  <br />
-                  Step forward when ready.
-                </p>
-                {!arrivalComplete ? (
-                  <button type="button" className="cds-v2__enter-btn" onClick={completeArrival}>
-                    Step Into the Atelier →
-                  </button>
-                ) : (
-                  <button type="button" className="cds-v2__enter-btn" onClick={() => goToZone('story-table')}>
-                    Continue to Story Table →
-                  </button>
-                )}
-              </div>
-              <div className="cds-v2__arrival-peek" aria-hidden />
+              <CdsZoneShell lightTone="rgba(201, 169, 98, 0.2)">
+                <div className="cds-v2__arrival-threshold">
+                  <div className="cds-v2__arrival-arch" aria-hidden>
+                    <div className="cds-v2__arrival-orb-hero">
+                      <div className="cds-v2__arrival-orb-glow" aria-hidden />
+                      <div className="cds-v2__arrival-orb-ring" aria-hidden />
+                      <div className="cds-v2__arrival-orb-sphere" aria-hidden title="Studio Orb" />
+                    </div>
+                  </div>
+                  <p className="cds-v2__arrival-sign">Creative Direction Studio™</p>
+                  <p className="cds-v2__arrival-copy">
+                    World-class creative decisions happen here.
+                    <br />
+                    Step forward when ready.
+                  </p>
+                  {!arrivalComplete ? (
+                    <button type="button" className="cds-v2__enter-btn" onClick={completeArrival}>
+                      Step Into the Atelier →
+                    </button>
+                  ) : (
+                    <button type="button" className="cds-v2__enter-btn" onClick={() => goToZone('story-table')}>
+                      Continue to Story Table →
+                    </button>
+                  )}
+                </div>
+                <div className="cds-v2__arrival-peek" aria-hidden />
+              </CdsZoneShell>
             </section>
 
-            {/* Story Table™ + Orb™ */}
+            {/* Story Table™ — Hero: floating creative altar */}
             <section
               className={`cds-v2__zone-panel${activeZoneId === 'story-table' ? ' is-active' : ''}${!arrivalComplete ? ' is-locked' : ''}`}
               aria-label="Story Table"
             >
-              <div className="cds-v2__zone-horizon" aria-hidden />
-              <div className="cds-v2__zone-wall" aria-hidden />
-              <div className="cds-v2__zone-floor" aria-hidden />
-              <div className="cds-v2__story-table">
-                <div className="cds-v2__orb-anchor">
-                  <div className="cds-v2__orb-sphere" aria-hidden title="Studio Orb" />
-                  <p className="cds-v2__orb-speech">
-                    {orbReviewSpeech ? (
-                      <span style={{ color: 'rgba(201,169,98,0.98)' }}>{orbReviewSpeech}</span>
-                    ) : (
-                      <>
-                        {orbCopy.greeting}
-                        <br />
-                        <span style={{ opacity: 0.75 }}>{orbCopy.guidance}</span>
-                        <br />
-                        <span style={{ color: 'rgba(201,169,98,0.95)' }}>{orbInsight}</span>
-                      </>
-                    )}
-                  </p>
-                </div>
-                <div className="cds-v2__table-surface">
-                  <div className="cds-v2__table-chips">
-                    <span className="cds-v2__table-chip">
-                      {slice.project.activeBranchName ?? 'Main Direction'}
-                    </span>
-                    {slice.project.tone.slice(0, 2).map((t) => (
-                      <span key={t} className="cds-v2__table-chip">
-                        {t}
+              <CdsZoneShell lightTone="rgba(201, 169, 98, 0.16)">
+                <div className="cds-v2__story-table">
+                  <div className="cds-v2__orb-anchor">
+                    <div className="cds-v2__orb-spotlight" aria-hidden />
+                    <div className="cds-v2__orb-sphere" aria-hidden title="Studio Orb" />
+                    <p className="cds-v2__orb-speech">
+                      {orbReviewSpeech ? (
+                        <span style={{ color: 'rgba(201,169,98,0.98)' }}>{orbReviewSpeech}</span>
+                      ) : (
+                        <>
+                          {orbCopy.greeting}
+                          <br />
+                          <span style={{ opacity: 0.75 }}>{orbCopy.guidance}</span>
+                          <br />
+                          <span style={{ color: 'rgba(201,169,98,0.95)' }}>{orbInsight}</span>
+                        </>
+                      )}
+                    </p>
+                  </div>
+                  <div className="cds-v2__table-projections" aria-hidden>
+                    {CDS_STORY_PROJECTIONS.map((label, i) => (
+                      <span
+                        key={label}
+                        className="cds-v2__table-projection"
+                        style={{ '--p-i': i } as React.CSSProperties}
+                      >
+                        {label}
                       </span>
                     ))}
                   </div>
+                  <div className="cds-v2__table-float" aria-hidden />
+                  <div className="cds-v2__table-surface">
+                    <div className="cds-v2__table-chips">
+                      <span className="cds-v2__table-chip">
+                        {slice.project.activeBranchName ?? 'Main Direction'}
+                      </span>
+                      {slice.project.tone.slice(0, 2).map((t) => (
+                        <span key={t} className="cds-v2__table-chip">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </CdsZoneShell>
             </section>
 
-            {/* Living Mood Wall™ */}
+            {/* Living Mood Wall™ — Hero: editorial wall */}
             <section
               className={`cds-v2__zone-panel${activeZoneId === 'mood-wall' ? ' is-active' : ''}${!arrivalComplete ? ' is-locked' : ''}`}
               aria-label="Living Mood Wall"
             >
-              <div className="cds-v2__zone-horizon" aria-hidden />
-              <div className="cds-v2__zone-floor" aria-hidden />
-              <div className="cds-v2__mood-wall">
-                <p className="cds-v2__mood-wall-label">Living Mood Wall™</p>
-                <div className="cds-v2__mood-wall-grid">
-                  {moodWall.wall.inspirations.length === 0 ? (
-                    <div className="cds-v2__mood-tile" style={{ gridColumn: '1 / -1', aspectRatio: 'auto' }}>
-                      Pin inspiration — the wall grows as you work.
+              <CdsZoneShell lightTone="rgba(180, 150, 100, 0.14)">
+                <div className="cds-v2__mood-wall">
+                  <div className="cds-v2__mood-wall-frame">
+                    <div className="cds-v2__mood-wall-header">
+                      <p className="cds-v2__mood-wall-label">Living Mood Wall™</p>
+                      <span className="cds-v2__mood-wall-scale">Editorial · 30ft</span>
                     </div>
-                  ) : (
-                    moodWall.wall.inspirations.map((item: MoodWallInspiration) => (
-                      <div key={item.id} className="cds-v2__mood-tile">
-                        <span>{item.title}</span>
-                        <button
-                          type="button"
-                          onClick={() => moodWall.removeInspiration(item.id)}
-                          style={{ fontSize: 5, alignSelf: 'flex-start' }}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))
-                  )}
-                </div>
-                <div className="cds-v2__mood-add">
-                  <input
-                    value={refTitle}
-                    onChange={(e) => setRefTitle(e.target.value)}
-                    placeholder="Title"
-                    className="cds-v2__input"
-                  />
-                  <input
-                    value={refUrl}
-                    onChange={(e) => setRefUrl(e.target.value)}
-                    placeholder="Reference URL"
-                    className="cds-v2__input"
-                  />
-                  <button
-                    type="button"
-                    className="cds-v2__btn"
-                    onClick={() => {
-                      if (!refTitle.trim() || !refUrl.trim()) return;
-                      moodWall.addInspiration({ title: refTitle.trim(), sourceType: 'reference', url: refUrl.trim() });
-                      setRefTitle('');
-                      setRefUrl('');
-                    }}
-                  >
-                    Pin to Wall
-                  </button>
-                  {moodWall.wall.aiSuggestions[0] ? (
-                    <p style={{ fontSize: 5, marginTop: 4, color: 'rgba(201,169,98,0.9)' }}>
-                      AI · {moodWall.wall.aiSuggestions[0].summary}
-                    </p>
-                  ) : null}
-                </div>
-              </div>
-            </section>
-
-            {/* Founder Notes™ desk */}
-            <section
-              className={`cds-v2__zone-panel${activeZoneId === 'founder-notes' ? ' is-active' : ''}${!arrivalComplete ? ' is-locked' : ''}`}
-              aria-label="Founder Notes Desk"
-            >
-              <div className="cds-v2__zone-horizon" aria-hidden />
-              <div className="cds-v2__zone-floor" aria-hidden />
-              <div className="cds-v2__notes-desk">
-                <div className="cds-v2__desk-lamp" aria-hidden />
-                <div className="cds-v2__desk-surface">
-                  <p className="cds-v2__desk-label">Founder Notes™</p>
-                  <textarea
-                    value={noteBody}
-                    onChange={(e) => setNoteBody(e.target.value)}
-                    rows={2}
-                    placeholder="Note or decision…"
-                    className="cds-v2__input"
-                    style={{ resize: 'none' }}
-                  />
-                  <div className="cds-v2__btn-row">
+                    <div className="cds-v2__mood-wall-grid">
+                      {showAmbientMood
+                        ? CDS_AMBIENT_MOOD_TILES.map((tile, i) => (
+                            <div
+                              key={tile.id}
+                              className="cds-v2__mood-tile cds-v2__mood-tile--ambient"
+                              style={
+                                {
+                                  '--tile-i': i,
+                                  '--tile-accent': tile.accent,
+                                } as React.CSSProperties
+                              }
+                            >
+                              <span className="cds-v2__mood-tile-cat">{tile.category}</span>
+                              <span className="cds-v2__mood-tile-title">{tile.title}</span>
+                            </div>
+                          ))
+                        : moodWall.wall.inspirations.map((item: MoodWallInspiration, i) => (
+                            <div
+                              key={item.id}
+                              className="cds-v2__mood-tile cds-v2__mood-tile--user"
+                              style={{ '--tile-i': i } as React.CSSProperties}
+                            >
+                              <span className="cds-v2__mood-tile-title">{item.title}</span>
+                              <button
+                                type="button"
+                                className="cds-v2__mood-tile-remove"
+                                onClick={() => moodWall.removeInspiration(item.id)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ))}
+                    </div>
+                  </div>
+                  <div className="cds-v2__mood-console">
+                    <span className="cds-v2__mood-console-label">Pin to wall</span>
+                    <input
+                      value={refTitle}
+                      onChange={(e) => setRefTitle(e.target.value)}
+                      placeholder="Title"
+                      className="cds-v2__input"
+                    />
+                    <input
+                      value={refUrl}
+                      onChange={(e) => setRefUrl(e.target.value)}
+                      placeholder="Reference URL"
+                      className="cds-v2__input"
+                    />
                     <button
                       type="button"
                       className="cds-v2__btn"
                       onClick={() => {
-                        if (!noteBody.trim()) return;
-                        founderNotes.addNote(noteBody.trim(), 'text');
-                        setNoteBody('');
+                        if (!refTitle.trim() || !refUrl.trim()) return;
+                        moodWall.addInspiration({ title: refTitle.trim(), sourceType: 'reference', url: refUrl.trim() });
+                        setRefTitle('');
+                        setRefUrl('');
                       }}
                     >
-                      Save
+                      Pin to Wall
                     </button>
-                    <button
-                      type="button"
-                      className="cds-v2__btn"
-                      onClick={() => founderNotes.addNote('Voice placeholder', 'voice')}
-                    >
-                      Voice
-                    </button>
-                  </div>
-                  <div className="cds-v2__desk-scroll">
-                    {founderNotes.notes.map((note: FounderNote) => (
-                      <div
-                        key={note.id}
-                        style={{
-                          marginTop: 6,
-                          fontSize: 5,
-                          borderTop: '1px solid rgba(255,255,255,0.06)',
-                          paddingTop: 4,
-                        }}
-                      >
-                        <p>{note.body}</p>
-                        <button type="button" onClick={() => founderNotes.pinNote(note.id)} style={{ fontSize: 5, marginRight: 6 }}>
-                          Pin
-                        </button>
-                        <button type="button" onClick={() => founderNotes.removeNote(note.id)} style={{ fontSize: 5 }}>
-                          Del
-                        </button>
-                      </div>
-                    ))}
+                    {moodWall.wall.aiSuggestions[0] ? (
+                      <p style={{ fontSize: 5, marginTop: 4, color: 'rgba(201,169,98,0.85)' }}>
+                        AI · {moodWall.wall.aiSuggestions[0].summary}
+                      </p>
+                    ) : null}
                   </div>
                 </div>
-              </div>
+              </CdsZoneShell>
             </section>
 
-            {/* Creative Pipeline™ wall board */}
+            {/* Founder Notes™ — Hero: executive desk */}
+            <section
+              className={`cds-v2__zone-panel${activeZoneId === 'founder-notes' ? ' is-active' : ''}${!arrivalComplete ? ' is-locked' : ''}`}
+              aria-label="Founder Notes Desk"
+            >
+              <CdsZoneShell lightTone="rgba(255, 220, 160, 0.1)">
+                <div className="cds-v2__notes-desk">
+                  <div className="cds-v2__desk-scene">
+                    <div className="cds-v2__desk-lamp" aria-hidden>
+                      <div className="cds-v2__desk-lamp-shade" />
+                      <div className="cds-v2__desk-lamp-beam" />
+                    </div>
+                    <div className="cds-v2__desk-props" aria-hidden>
+                      <div className="cds-v2__desk-prop-coffee" title="Coffee" />
+                      <div className="cds-v2__desk-prop-tablet" title="Glass tablet" />
+                      <div className="cds-v2__desk-prop-recorder" title="Voice recorder" />
+                    </div>
+                    <div className="cds-v2__desk-notebook" aria-hidden />
+                    <div className="cds-v2__desk-surface">
+                      <p className="cds-v2__desk-label">Founder Notes™</p>
+                      <textarea
+                        value={noteBody}
+                        onChange={(e) => setNoteBody(e.target.value)}
+                        rows={2}
+                        placeholder="Note or decision…"
+                        className="cds-v2__input"
+                        style={{ resize: 'none' }}
+                      />
+                      <div className="cds-v2__btn-row">
+                        <button
+                          type="button"
+                          className="cds-v2__btn"
+                          onClick={() => {
+                            if (!noteBody.trim()) return;
+                            founderNotes.addNote(noteBody.trim(), 'text');
+                            setNoteBody('');
+                          }}
+                        >
+                          Save
+                        </button>
+                        <button
+                          type="button"
+                          className="cds-v2__btn"
+                          onClick={() => founderNotes.addNote('Voice placeholder', 'voice')}
+                        >
+                          Voice
+                        </button>
+                      </div>
+                      <div className="cds-v2__desk-scroll">
+                        {founderNotes.notes.map((note: FounderNote) => (
+                          <div key={note.id} className="cds-v2__desk-note-row">
+                            <p>{note.body}</p>
+                            <div className="cds-v2__desk-note-actions">
+                              <button type="button" onClick={() => founderNotes.pinNote(note.id)}>
+                                Pin
+                              </button>
+                              <button type="button" onClick={() => founderNotes.removeNote(note.id)}>
+                                Del
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CdsZoneShell>
+            </section>
+
+            {/* Creative Pipeline™ — Hero: mission control wall */}
             <section
               className={`cds-v2__zone-panel${activeZoneId === 'pipeline-board' ? ' is-active' : ''}${!arrivalComplete ? ' is-locked' : ''}`}
               aria-label="Creative Pipeline Board"
             >
-              <div className="cds-v2__zone-horizon" aria-hidden />
-              <div className="cds-v2__zone-floor" aria-hidden />
-              <div className="cds-v2__pipeline-wall">
-                <div className="cds-v2__pipeline-scroll">
-                  <CreativePipelineBoard
-                    pipeline={pipeline}
-                    setDisplayName={slice.pkg.definition.displayName}
-                    onReviewModeChange={setReviewMode}
-                  />
+              <CdsZoneShell lightTone="rgba(120, 200, 140, 0.08)">
+                <div className="cds-v2__pipeline-wall">
+                  <div className="cds-v2__pipeline-frame">
+                    <div className="cds-v2__pipeline-status-lights" aria-hidden>
+                      <span className={`cds-v2__pipeline-light${pipelineLive ? ' is-live' : ''}`} />
+                      <span className={`cds-v2__pipeline-light${pipeline.progress.percent === 100 ? ' is-live' : ''}`} />
+                      <span className="cds-v2__pipeline-light" />
+                    </div>
+                    <div className="cds-v2__pipeline-scroll">
+                      <CreativePipelineBoard
+                        pipeline={pipeline}
+                        setDisplayName={slice.pkg.definition.displayName}
+                        onReviewModeChange={setReviewMode}
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </CdsZoneShell>
             </section>
 
-            {/* Reference Library™ */}
+            {/* Reference Library™ — Hero: luxury archive */}
             <section
               className={`cds-v2__zone-panel${activeZoneId === 'reference-library' ? ' is-active' : ''}${!arrivalComplete ? ' is-locked' : ''}`}
               aria-label="Reference Library"
             >
-              <div className="cds-v2__zone-horizon" aria-hidden />
-              <div className="cds-v2__zone-floor" aria-hidden />
-              <p
-                style={{
-                  position: 'absolute',
-                  top: '12%',
-                  left: '8%',
-                  fontSize: 6,
-                  letterSpacing: '0.12em',
-                  textTransform: 'uppercase',
-                  color: 'rgba(201,169,98,0.9)',
-                }}
-              >
-                Reference Library™
-              </p>
-              <div className="cds-v2__library">
-                {libraryVolumes.map((shelf) => (
-                  <div key={shelf.label} className="cds-v2__shelf-unit">
-                    <p className="cds-v2__shelf-label">{shelf.label}</p>
-                    {shelf.items.length === 0 ? (
-                      <p className="cds-v2__volume" style={{ opacity: 0.55 }}>
-                        Empty shelf — add references at the Mood Wall.
-                      </p>
-                    ) : (
-                      shelf.items.map((item) => (
-                        <div key={item.id} className="cds-v2__volume">
-                          {item.title}
+              <CdsZoneShell lightTone="rgba(160, 140, 110, 0.1)">
+                <div className="cds-v2__library-zone">
+                  <p className="cds-v2__library-header">Reference Library™</p>
+                  <div className="cds-v2__library">
+                    {libraryVolumes.map((shelf) => (
+                      <div key={shelf.label} className="cds-v2__shelf-unit">
+                        <p className="cds-v2__shelf-label">{shelf.label}</p>
+                        <div className="cds-v2__shelf-drawer">
+                          {shelf.userItems.length === 0
+                            ? shelf.defaultSpines.map((spine) => (
+                                <div
+                                  key={spine.id}
+                                  className="cds-v2__volume-spine"
+                                  style={{ '--spine-tone': spine.tone } as React.CSSProperties}
+                                >
+                                  {spine.title}
+                                </div>
+                              ))
+                            : shelf.userItems.map((item) => (
+                                <div key={item.id} className="cds-v2__volume-spine cds-v2__volume-spine--user">
+                                  {item.title}
+                                </div>
+                              ))}
+                          {shelf.userItems.length === 0 && shelf.defaultSpines.length === 0 ? (
+                            <p className="cds-v2__shelf-empty">Empty shelf — add references at the Mood Wall.</p>
+                          ) : null}
                         </div>
-                      ))
-                    )}
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              </CdsZoneShell>
             </section>
           </div>
         </div>

@@ -104,7 +104,7 @@ export function CreativePipelineBoard({ pipeline, setDisplayName, onReviewModeCh
   };
 
   return (
-    <div className="gb-immersive__pipeline">
+    <div className="gb-immersive__pipeline cds-pipeline-mission">
       <p className="gb-immersive__object-label">Creative Pipeline™</p>
       <p className="gb-immersive__pipeline-sub">
         {setDisplayName} · {pipeline.progress.completed}/{pipeline.progress.total} stages ·{' '}

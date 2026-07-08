@@ -41520,3 +41520,19 @@ User defined **Studio Preview™** as Studio OS's most important **acquisition e
 - **Cross-refs added:** `founder-discovery/README.md` · `world/studio-world.md` · `onboarding/README.md` · `motherboard/CORE.md`
 - **Prior arc (same chat):** Guild System™ · CDS V2 prototype (`/admin/studio/department/creative-direction`) · Scene Architecture™ · Routines™ · Expeditions™ · Founder Discovery™
 - **No UI · no landing page · no marketing pages · no onboarding build this sprint**
+
+---
+
+## 2026-07-08 — Creative Direction Studio™ Environmental Production Pass V1 (code implementation)
+
+User sprint: **environmental design** — NOT UI flow redesign · NOT documentation. **Mission:** CDS becomes flagship department of Studio World™ — must feel like walking into world's greatest creative headquarters · not a dashboard. **Keep station architecture:** Arrival → Story Table → Mood Wall → Notes Desk → Pipeline → Library.
+
+- **Design philosophy:** Each station has unmistakable hero object (Orb · floating table · editorial wall · executive desk · mission control wall · luxury archive). Room = interface · reduce floating rectangles. Luxury materials: dark bronze · smoked glass · brushed metal · stone · architectural lighting · volumetric atmosphere.
+- **Environmental shell:** `CdsZoneShell.tsx` — shared ceiling coffers · bronze columns · stone floor · skylight breathe · volumetric fog · 10 dust particles · reflection sweep per zone.
+- **Station upgrades:** Arrival dominant Orb with rings/glow · Story Table floating altar + holographic projections · Mood Wall 30ft editorial frame + ambient campaign tiles when empty · Notes Desk lamp/coffee/tablet/recorder/notebook props · Pipeline mission-control frame + status lights · Library shelf drawers with default book spines.
+- **Ambient Life™:** CSS-only animations (light breathe · particle drift · tile breathe · table float · orb rotate · pipeline LED pulse) · 12s ambient tick · `prefers-reduced-motion` respected · mobile-safe (no blur stacks).
+- **Camera:** 0.85s glide transition (was 0.55s) — physical walk not page change.
+- **Files:** `CreativeDirectionStudioRoom.tsx` · `creativeDirectionStudioTheme.ts` (major rewrite) · `CdsZoneShell.tsx` · `cdsEnvironmentalData.ts` · `CreativePipelineBoard.tsx` (cds-pipeline-mission class)
+- **Route unchanged:** `/admin/studio/department/creative-direction`
+- **Build:** `npm run build` passes
+- **Prior arc (same chat):** Studio Preview™ docs · Founder Discovery™ · Expeditions™ · Routines™ · Scene Architecture™ · CDS V2 architecture sprint · Guild System™
