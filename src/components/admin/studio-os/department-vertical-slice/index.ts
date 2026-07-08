@@ -1,2 +1,2 @@
 export { DepartmentVerticalSliceRoom } from './DepartmentVerticalSliceRoom';
-export { DepartmentGoldenBuildShell } from './DepartmentGoldenBuildShell';
+export { DepartmentGoldenBuildShell, useDepartmentRoomExit } from './DepartmentGoldenBuildShell';

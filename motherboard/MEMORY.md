@@ -40953,3 +40953,12 @@ Summary of **whole conversation in this chat**: Production Lifecycle docs · use
 - **Route:** `/admin/studio/department/creative-direction`
 - **Functional:** zones · orb copy · mood wall add/delete · founder notes · queue · generate environment (FAL)
 - **Placeholder:** flat/simplified 2.5D · voice note · rule-based AI · preview link not inline image
+
+---
+
+## 2026-07-08 — Golden Build full-viewport immersive shell (visual correction)
+
+User required department **not embedded in admin card** — full-screen room experience.
+
+- **Changed:** `DepartmentGoldenBuildShell` → `position: fixed; inset: 0; z-index: 200` + body scroll lock · rebuilt room as `gb-immersive` spatial scene (environment wall/floor/horizon full viewport) · objects absolutely positioned (Mood Wall back-left · Notes back-right · Orb center · Console bottom · zones on floor) · minimal HUD (back · dept/project · status pill) · removed grid/scroll-column/card layout · mobile optional horizontal scene pan (108vw) · no blur/animations.
+- **Route:** `/admin/studio/department/creative-direction`

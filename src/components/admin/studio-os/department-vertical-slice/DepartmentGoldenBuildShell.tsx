@@ -1,46 +1,55 @@
 import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 
 type Props = {
   children: ReactNode;
-  onExit?: () => void;
-  exitLabel?: string;
 };
 
 /**
- * Full-screen Golden Build shell — bypasses AdminStudioLayout (marble fixed bg,
- * backdrop-blur card, Studio Orb mount, platform bootstrap) for mobile stability.
+ * Full-viewport immersive shell — escapes admin document flow.
+ * Locks body scroll; department canvas is the entire screen.
  */
-export function DepartmentGoldenBuildShell({ children, onExit, exitLabel = 'Exit' }: Props) {
+export function DepartmentGoldenBuildShell({ children }: Props) {
   useRequireAdminPageAccess();
-  const navigate = useNavigate();
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+    body.classList.add('gb-immersive-active');
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+      body.classList.remove('gb-immersive-active');
+    };
+  }, []);
 
   return (
-    <div className="gb-room-shell" style={{ minHeight: '100dvh', background: '#141210' }}>
-      <button
-        type="button"
-        className="gb-room__exit"
-        style={{
-          position: 'fixed',
-          top: 'max(10px, env(safe-area-inset-top))',
-          right: 10,
-          zIndex: 20,
-          padding: '6px 10px',
-          fontSize: 7,
-          letterSpacing: '0.12em',
-          textTransform: 'uppercase',
-          border: '1px solid rgba(201, 169, 98, 0.55)',
-          background: 'rgba(20, 18, 16, 0.92)',
-          color: '#f0ebe3',
-          cursor: 'pointer',
-          fontFamily: '"Futura PT", sans-serif',
-        }}
-        onClick={onExit ?? (() => navigate('/admin/studio/overview'))}
-      >
-        {exitLabel}
-      </button>
+    <div
+      className="gb-immersive-portal"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 200,
+        width: '100vw',
+        height: '100dvh',
+        overflow: 'hidden',
+        background: '#12100e',
+      }}
+      role="application"
+      aria-label="Studio OS department room"
+    >
       {children}
     </div>
   );
+}
+
+export function useDepartmentRoomExit() {
+  const navigate = useNavigate();
+  return () => navigate('/admin/studio/overview');
 }

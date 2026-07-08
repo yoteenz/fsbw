@@ -1,332 +1,375 @@
-/** Golden Build department room — lightweight spatial shell (no blur, no infinite motion). */
+/** Golden Build — full-viewport immersive department scene (lightweight, no blur/motion). */
 
 export const DEPARTMENT_SLICE_STYLES = `
-.gb-room {
-  position: relative;
-  width: 100%;
-  min-height: 100dvh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  color: #f0ebe3;
-  font-family: "Futura PT", sans-serif;
-  background: #1a1816;
-  touch-action: manipulation;
+body.gb-immersive-active {
+  overflow: hidden !important;
+  overscroll-behavior: none;
 }
 
-.gb-room__sky {
+.gb-immersive {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  color: #f0ebe3;
+  font-family: "Futura PT", sans-serif;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gb-immersive__atmosphere {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 90% 55% at 50% 0%, rgba(201, 169, 98, 0.14) 0%, transparent 58%),
-    linear-gradient(180deg, #2a2622 0%, #1e1c19 38%, #141210 100%);
+    radial-gradient(ellipse 120% 70% at 50% -10%, rgba(201, 169, 98, 0.16) 0%, transparent 55%),
+    linear-gradient(180deg, #2c2824 0%, #1c1a17 45%, #100e0c 100%);
 }
 
-.gb-room__hud {
-  position: relative;
-  z-index: 4;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px 14px 8px;
-  padding-top: max(12px, env(safe-area-inset-top));
-}
-
-.gb-room__exit {
-  position: fixed;
-  top: max(10px, env(safe-area-inset-top));
-  right: 10px;
-  z-index: 6;
-  padding: 6px 10px;
-  font-size: 7px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  border: 1px solid rgba(201, 169, 98, 0.55);
-  background: rgba(20, 18, 16, 0.92);
-  color: #f0ebe3;
-  cursor: pointer;
-}
-
-.gb-room__label {
-  font-size: 7px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(201, 169, 98, 0.92);
-}
-
-.gb-room__title {
-  font-family: "Covered By Your Grace", cursive;
-  font-size: clamp(16px, 4.5vw, 22px);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #f5f0e8;
-  margin: 2px 0 4px;
-}
-
-.gb-room__meta {
-  font-size: 7px;
-  letter-spacing: 0.08em;
-  opacity: 0.72;
-  text-align: right;
-  line-height: 1.5;
-}
-
-.gb-room__canvas {
-  position: relative;
-  z-index: 1;
-  min-height: calc(100dvh - 52px);
-  padding: 0 10px 120px;
-}
-
-/* 2.5D space — simplified on mobile */
-.gb-room__space {
-  position: relative;
-  min-height: 62vh;
-  margin-top: 4px;
-}
-
-.gb-room__vanishing {
+.gb-immersive__scene {
   position: absolute;
-  left: 6%;
-  right: 6%;
-  top: 8%;
-  bottom: 18%;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 4px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(12, 11, 10, 0.35) 100%);
-  transform: perspective(900px) rotateX(8deg);
-  transform-origin: center bottom;
+  inset: 0;
+  overflow: hidden;
 }
 
-.gb-room__floor-plane {
+/* Environment shell — full viewport architecture */
+.gb-immersive__env-floor {
   position: absolute;
-  left: 4%;
-  right: 4%;
-  bottom: 6%;
-  height: 22%;
-  border-top: 1px solid rgba(201, 169, 98, 0.22);
-  background: linear-gradient(180deg, rgba(245, 240, 232, 0.05) 0%, rgba(0, 0, 0, 0.15) 100%);
-  transform: perspective(700px) rotateX(52deg);
-  transform-origin: center top;
-  border-radius: 4px;
-}
-
-.gb-room__zone {
-  position: absolute;
-  z-index: 3;
-  transform: translate(-50%, -50%);
-  padding: 5px 8px;
-  font-size: 6px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(16, 14, 12, 0.82);
-  color: #f0ebe3;
-  cursor: pointer;
-  max-width: 88px;
-  text-align: center;
-  line-height: 1.3;
-}
-
-.gb-room__zone.is-active {
-  border-color: rgba(201, 169, 98, 0.85);
-  background: rgba(201, 169, 98, 0.14);
-}
-
-.gb-room__orb {
-  position: absolute;
-  left: 50%;
-  bottom: 22%;
-  z-index: 4;
-  transform: translateX(-50%);
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 1px solid rgba(201, 169, 98, 0.55);
-  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.28), rgba(201, 169, 98, 0.22) 42%, rgba(18, 16, 14, 0.9) 100%);
-  box-shadow: 0 0 20px rgba(201, 169, 98, 0.25);
-}
-
-.gb-room__orb-caption {
-  position: absolute;
-  left: 50%;
-  bottom: 14%;
-  z-index: 4;
-  transform: translateX(-50%);
-  width: min(280px, 88vw);
-  text-align: center;
-  font-size: 7px;
-  line-height: 1.45;
-  opacity: 0.88;
+  left: -5%;
+  right: -5%;
+  bottom: 0;
+  height: 32%;
+  border-top: 1px solid rgba(201, 169, 98, 0.28);
+  background: linear-gradient(180deg, rgba(245, 240, 232, 0.07) 0%, rgba(8, 7, 6, 0.55) 100%);
   pointer-events: none;
 }
 
-.gb-room__teaching {
-  position: relative;
-  z-index: 2;
-  margin: 10px 4px 0;
-  font-size: 7px;
-  letter-spacing: 0.06em;
-  opacity: 0.78;
-  line-height: 1.4;
+.gb-immersive__env-wall {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 11%;
+  bottom: 30%;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(14, 12, 10, 0.45) 100%);
+  pointer-events: none;
 }
 
-/* Spatial objects — not stacked dashboard cards */
-.gb-room__mood-wall {
-  position: relative;
-  z-index: 2;
-  margin-top: 14px;
-  padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-left: 3px solid rgba(201, 169, 98, 0.65);
-  background: rgba(22, 20, 18, 0.78);
-  border-radius: 2px;
-}
-
-.gb-room__notes-rail {
-  position: relative;
-  z-index: 2;
-  margin-top: 12px;
-  padding: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(18, 16, 14, 0.72);
-  border-radius: 2px;
-}
-
-.gb-room__console {
-  position: fixed;
+.gb-immersive__env-horizon {
+  position: absolute;
   left: 0;
   right: 0;
-  bottom: 0;
-  z-index: 5;
-  padding: 10px 12px;
-  padding-bottom: max(10px, env(safe-area-inset-bottom));
-  border-top: 1px solid rgba(201, 169, 98, 0.28);
-  background: rgba(14, 12, 10, 0.96);
+  top: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 169, 98, 0.35), transparent);
+  pointer-events: none;
 }
 
-.gb-room__console-inner {
-  max-width: 640px;
-  margin: 0 auto;
-}
-
-.gb-room__queue-row {
+/* Minimal HUD */
+.gb-immersive__hud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 4px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 7px;
-  letter-spacing: 0.06em;
+  gap: 10px;
+  padding: max(8px, env(safe-area-inset-top)) 12px 8px;
+  pointer-events: none;
 }
 
-.gb-room__btn {
-  padding: 9px 12px;
+.gb-immersive__hud > * {
+  pointer-events: auto;
+}
+
+.gb-immersive__back {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(201, 169, 98, 0.5);
+  background: rgba(14, 12, 10, 0.88);
+  color: #f0ebe3;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.gb-immersive__identity {
+  flex: 1;
+  min-width: 0;
+}
+
+.gb-immersive__dept {
   font-size: 7px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(201, 169, 98, 0.95);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gb-immersive__project {
+  font-family: "Covered By Your Grace", cursive;
+  font-size: clamp(14px, 4vw, 18px);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #f5f0e8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gb-immersive__pill {
+  flex-shrink: 0;
+  padding: 4px 8px;
+  font-size: 6px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid rgba(201, 169, 98, 0.45);
+  background: rgba(201, 169, 98, 0.1);
+  color: rgba(201, 169, 98, 0.95);
+  white-space: nowrap;
+}
+
+/* Spatial objects — float in scene, not stacked cards */
+.gb-immersive__object {
+  position: absolute;
+  z-index: 3;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(16, 14, 12, 0.82);
+}
+
+.gb-immersive__object-label {
+  font-size: 6px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border: 1px solid rgba(201, 169, 98, 0.65);
-  background: rgba(201, 169, 98, 0.12);
-  color: #f0ebe3;
-  cursor: pointer;
-  font-family: "Futura PT Medium", sans-serif;
+  color: rgba(201, 169, 98, 0.9);
+  margin-bottom: 6px;
 }
 
-.gb-room__btn:disabled {
+.gb-immersive__object--mood-wall {
+  left: 3%;
+  top: 12%;
+  width: 54%;
+  height: 34%;
+  padding: 8px;
+  border-left: 2px solid rgba(201, 169, 98, 0.55);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gb-immersive__object--notes {
+  right: 3%;
+  top: 12%;
+  width: 36%;
+  height: 34%;
+  padding: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.gb-immersive__object-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.gb-immersive__object--orb {
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border: none;
+  background: transparent;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.gb-immersive__orb-sphere {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 169, 98, 0.55);
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.3), rgba(201, 169, 98, 0.2) 42%, rgba(18, 16, 14, 0.92) 100%);
+}
+
+.gb-immersive__orb-speech {
+  position: absolute;
+  left: 50%;
+  top: 58px;
+  transform: translateX(-50%);
+  width: min(260px, 72vw);
+  text-align: center;
+  font-size: 6px;
+  line-height: 1.4;
+  opacity: 0.88;
+}
+
+.gb-immersive__object--console {
+  left: 3%;
+  right: 3%;
+  bottom: max(8px, env(safe-area-inset-bottom));
+  height: auto;
+  max-height: 28%;
+  padding: 8px 10px;
+  border-color: rgba(201, 169, 98, 0.25);
+  z-index: 6;
+}
+
+.gb-immersive__zone {
+  position: absolute;
+  z-index: 4;
+  transform: translate(-50%, -50%);
+  padding: 4px 7px;
+  font-size: 5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(12, 10, 9, 0.78);
+  color: #f0ebe3;
+  cursor: pointer;
+  max-width: 72px;
+  text-align: center;
+  line-height: 1.25;
+}
+
+.gb-immersive__zone.is-active {
+  border-color: rgba(201, 169, 98, 0.8);
+  background: rgba(201, 169, 98, 0.14);
+}
+
+.gb-immersive__input {
+  width: 100%;
+  margin-top: 4px;
+  padding: 5px 6px;
+  font-size: 7px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #f0ebe3;
+}
+
+.gb-immersive__btn {
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 6px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid rgba(201, 169, 98, 0.55);
+  background: rgba(201, 169, 98, 0.1);
+  color: #f0ebe3;
+  cursor: pointer;
+}
+
+.gb-immersive__btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
 }
 
-.gb-room__btn--block {
-  width: 100%;
-  margin-top: 8px;
-}
-
-.gb-room__input {
-  width: 100%;
+.gb-immersive__btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
   margin-top: 6px;
-  padding: 6px 8px;
-  font-size: 8px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #f0ebe3;
 }
 
-.gb-room__mood-tile {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 8px;
-  margin-top: 6px;
-  background: rgba(255, 255, 255, 0.02);
+.gb-immersive__queue-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 3px 0;
+  font-size: 6px;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.gb-room__preview-link {
+.gb-immersive__mood-tile {
+  margin-top: 4px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 6px;
+}
+
+.gb-immersive__preview-link {
   display: inline-block;
-  margin-top: 8px;
-  font-size: 7px;
-  letter-spacing: 0.08em;
+  margin-top: 4px;
+  font-size: 6px;
   color: rgba(201, 169, 98, 0.95);
   text-decoration: underline;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
 }
 
-/* Tablet/desktop: wider spatial layout */
-@media (min-width: 768px) {
-  .gb-room__canvas {
-    display: grid;
-    grid-template-columns: 1fr 300px;
-    gap: 12px;
-    align-items: start;
-    padding: 0 16px 130px;
-  }
-
-  .gb-room__space-col {
-    grid-column: 1;
-  }
-
-  .gb-room__rail-col {
-    grid-column: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .gb-room__space {
-    min-height: 52vh;
-  }
+.gb-immersive__teaching {
+  position: absolute;
+  left: 50%;
+  top: 68%;
+  transform: translateX(-50%);
+  width: min(300px, 80vw);
+  text-align: center;
+  font-size: 6px;
+  opacity: 0.7;
+  z-index: 4;
+  pointer-events: none;
 }
 
-/* Mobile: flatten 3D transforms — major Safari perf win */
+/* Mobile: slight horizontal room pan for spatial feel */
 @media (max-width: 767px) {
-  .gb-room__vanishing,
-  .gb-room__floor-plane {
-    transform: none;
+  .gb-immersive__scene-pan {
+    position: absolute;
+    inset: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
   }
 
-  .gb-room__vanishing {
-    top: 4%;
-    bottom: 28%;
+  .gb-immersive__scene-inner {
+    position: relative;
+    width: 108vw;
+    min-width: 108vw;
+    height: 100%;
   }
 
-  .gb-room__floor-plane {
-    height: 14%;
-    bottom: 10%;
+  .gb-immersive__object--mood-wall {
+    left: 2%;
+    width: 58%;
+    height: 30%;
   }
 
-  .gb-room__orb {
-    bottom: 26%;
+  .gb-immersive__object--notes {
+    right: 2%;
+    width: 34%;
+    height: 30%;
   }
 
-  .gb-room__orb-caption {
-    bottom: 18%;
+  .gb-immersive__object--console {
+    left: 2%;
+    right: 2%;
+    max-height: 32%;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .gb-room__orb {
-    box-shadow: none;
+@media (min-width: 768px) {
+  .gb-immersive__scene-pan {
+    position: absolute;
+    inset: 0;
+  }
+
+  .gb-immersive__scene-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
   }
 }
 `;

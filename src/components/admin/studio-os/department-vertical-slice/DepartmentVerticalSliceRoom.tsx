@@ -13,6 +13,7 @@ import type { GenerationQueueItem } from '../../../../studio-os-core/studio-buil
 import type { WalkableZone } from '../../../../studio-os-core/department-room';
 import type { MoodWallInspiration } from '../../../../studio-os-core/studio-objects/living-mood-wall';
 import type { FounderNote } from '../../../../studio-os-core/studio-objects/founder-notes';
+import { useDepartmentRoomExit } from './DepartmentGoldenBuildShell';
 import { DEPARTMENT_SLICE_STYLES } from './departmentSliceTheme';
 
 type Props = {
@@ -21,14 +22,15 @@ type Props = {
 
 const STATUS_LABEL: Record<string, string> = {
   queued: 'Queued',
-  generating: 'Generating…',
-  validating: 'Validating…',
+  generating: 'Generating',
+  validating: 'Validating',
   complete: 'Complete',
   failed: 'Failed',
 };
 
 export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
   const { workspaceId } = useWorkspace();
+  const exitRoom = useDepartmentRoomExit();
   const slice = useDepartmentVerticalSlice(departmentId);
   const queue = useStudioBuilderQueue(departmentId, slice.project.projectId, workspaceId);
   const moodWall = useLivingMoodWall(departmentId, slice.project.projectId);
@@ -37,7 +39,6 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
   const [refTitle, setRefTitle] = useState('');
   const [refUrl, setRefUrl] = useState('');
   const [noteBody, setNoteBody] = useState('');
-  const [showPreview, setShowPreview] = useState(false);
 
   const orbCopy = useMemo(
     () => resolveDepartmentOrbGreeting(slice.pkg, slice.project),
@@ -50,152 +51,140 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
 
   const environmentItem = queue.items.find((i: GenerationQueueItem) => i.productionGroupId === 'environment');
   const isGenerating = environmentItem?.status === 'generating' || environmentItem?.status === 'validating';
+  const genLabel = environmentItem?.status ? STATUS_LABEL[environmentItem.status] : 'Ready';
 
   const onGenerateEnvironment = async () => {
-    setShowPreview(false);
     await queue.generateProductionGroup('environment');
   };
 
   const zoneTeaching = slice.activeZone ? zoneLabelForTeaching(slice.activeZone) : '';
 
-  const moodWallSection = (
-    <section className="gb-room__mood-wall" aria-label="Living Mood Wall">
-      <p className="gb-room__label">Living Mood Wall™</p>
-      <input
-        value={refTitle}
-        onChange={(e) => setRefTitle(e.target.value)}
-        placeholder="Inspiration title"
-        className="gb-room__input"
-      />
-      <input
-        value={refUrl}
-        onChange={(e) => setRefUrl(e.target.value)}
-        placeholder="URL or reference"
-        className="gb-room__input"
-      />
-      <button
-        type="button"
-        className="gb-room__btn gb-room__btn--block"
-        onClick={() => {
-          if (!refTitle.trim() || !refUrl.trim()) return;
-          moodWall.addInspiration({ title: refTitle.trim(), sourceType: 'reference', url: refUrl.trim() });
-          setRefTitle('');
-          setRefUrl('');
-        }}
-      >
-        Add Inspiration
-      </button>
-      {moodWall.wall.inspirations.map((item: MoodWallInspiration) => (
-        <div key={item.id} className="gb-room__mood-tile">
-          <p style={{ fontSize: '8px' }}>{item.title}</p>
-          <p style={{ fontSize: '6px', opacity: 0.6, wordBreak: 'break-all' }}>{item.url}</p>
-          <button type="button" onClick={() => moodWall.removeInspiration(item.id)} style={{ fontSize: '6px', marginTop: 4 }}>
-            Delete
-          </button>
-        </div>
-      ))}
-      {moodWall.wall.aiSuggestions[0] ? (
-        <div style={{ marginTop: 8, fontSize: '7px', opacity: 0.85 }}>
-          <p style={{ color: 'rgba(201,169,98,0.95)' }}>AI · {moodWall.wall.aiSuggestions[0].summary}</p>
-          <ul style={{ paddingLeft: 12, marginTop: 4 }}>
-            {moodWall.wall.aiSuggestions[0].concepts.map((c: string) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-    </section>
-  );
-
-  const notesSection = (
-    <section className="gb-room__notes-rail" aria-label="Founder Notes">
-      <p className="gb-room__label">Founder Notes™</p>
-      <textarea
-        value={noteBody}
-        onChange={(e) => setNoteBody(e.target.value)}
-        rows={2}
-        placeholder="Quick note, decision, or reminder…"
-        className="gb-room__input"
-        style={{ resize: 'vertical', minHeight: 48 }}
-      />
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
-        <button
-          type="button"
-          className="gb-room__btn"
-          onClick={() => {
-            if (!noteBody.trim()) return;
-            founderNotes.addNote(noteBody.trim(), 'text');
-            setNoteBody('');
-          }}
-        >
-          Save Note
-        </button>
-        <button
-          type="button"
-          className="gb-room__btn"
-          onClick={() => founderNotes.addNote('Voice note placeholder — record in Sprint 002', 'voice')}
-        >
-          Voice Placeholder
-        </button>
-      </div>
-      {founderNotes.notes.map((note: FounderNote) => (
-        <div key={note.id} style={{ marginTop: 8, fontSize: '7px', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 6 }}>
-          <p>{note.body}</p>
-          <p style={{ opacity: 0.55, marginTop: 2 }}>
-            {note.kind.toUpperCase()} · {note.status.toUpperCase()}
-          </p>
-          <button type="button" onClick={() => founderNotes.pinNote(note.id)} style={{ fontSize: '6px', marginRight: 8 }}>
-            Pin
-          </button>
-          <button type="button" onClick={() => founderNotes.removeNote(note.id)} style={{ fontSize: '6px' }}>
-            Remove
-          </button>
-        </div>
-      ))}
-    </section>
-  );
-
   return (
     <>
       <style>{DEPARTMENT_SLICE_STYLES}</style>
-      <div
-        className="gb-room"
-        style={{
-          background: slice.atmosphere.ambientGradient,
-          ...slice.atmosphere.cssVars,
-        }}
-      >
-        <div className="gb-room__sky" aria-hidden />
+      <div className="gb-immersive">
+        <div className="gb-immersive__atmosphere" aria-hidden />
 
-        <header className="gb-room__hud">
-          <div>
-            <p className="gb-room__label">{slice.pkg.definition.displayName} · Golden Build™</p>
-            <h1 className="gb-room__title">{slice.project.name}</h1>
-            <p style={{ fontSize: '7px', letterSpacing: '0.08em', opacity: 0.72, maxWidth: 320 }}>
-              {slice.pkg.definition.identity.purpose}
-            </p>
+        <header className="gb-immersive__hud">
+          <button type="button" className="gb-immersive__back" onClick={exitRoom} aria-label="Exit department">
+            ←
+          </button>
+          <div className="gb-immersive__identity">
+            <p className="gb-immersive__dept">{slice.pkg.definition.displayName}</p>
+            <p className="gb-immersive__project">{slice.project.name}</p>
           </div>
-          <div className="gb-room__meta">
-            <p>WHERE · {slice.activeZone?.displayName ?? 'Arrival'}</p>
-            <p>PROJECT · {slice.project.name}</p>
-            <p>GEN · {environmentItem?.status ? STATUS_LABEL[environmentItem.status] : 'Ready'}</p>
-          </div>
+          <span className="gb-immersive__pill">Golden Build™ · {genLabel}</span>
         </header>
 
-        <div className="gb-room__canvas">
-          <div className="gb-room__space-col">
-            <div className="gb-room__space">
-              <div className="gb-room__vanishing" aria-hidden />
-              <div className="gb-room__floor-plane" style={{ background: slice.atmosphere.floorTone }} aria-hidden />
+        <div className="gb-immersive__scene">
+          <div className="gb-immersive__scene-pan">
+            <div className="gb-immersive__scene-inner">
+              <div className="gb-immersive__env-horizon" aria-hidden />
+              <div className="gb-immersive__env-wall" aria-hidden />
+              <div
+                className="gb-immersive__env-floor"
+                style={{
+                  background: `linear-gradient(180deg, ${slice.atmosphere.floorTone} 0%, rgba(8,7,6,0.55) 100%)`,
+                }}
+                aria-hidden
+              />
+
+              <div className="gb-immersive__object gb-immersive__object--mood-wall">
+                <p className="gb-immersive__object-label">Living Mood Wall™</p>
+                <div className="gb-immersive__object-scroll">
+                  <input
+                    value={refTitle}
+                    onChange={(e) => setRefTitle(e.target.value)}
+                    placeholder="Title"
+                    className="gb-immersive__input"
+                  />
+                  <input
+                    value={refUrl}
+                    onChange={(e) => setRefUrl(e.target.value)}
+                    placeholder="Reference URL"
+                    className="gb-immersive__input"
+                  />
+                  <button
+                    type="button"
+                    className="gb-immersive__btn"
+                    onClick={() => {
+                      if (!refTitle.trim() || !refUrl.trim()) return;
+                      moodWall.addInspiration({ title: refTitle.trim(), sourceType: 'reference', url: refUrl.trim() });
+                      setRefTitle('');
+                      setRefUrl('');
+                    }}
+                  >
+                    Add
+                  </button>
+                  {moodWall.wall.inspirations.map((item: MoodWallInspiration) => (
+                    <div key={item.id} className="gb-immersive__mood-tile">
+                      <p>{item.title}</p>
+                      <button type="button" onClick={() => moodWall.removeInspiration(item.id)} style={{ fontSize: 5, marginTop: 2 }}>
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                  {moodWall.wall.aiSuggestions[0] ? (
+                    <p style={{ fontSize: 5, marginTop: 4, color: 'rgba(201,169,98,0.9)' }}>
+                      AI · {moodWall.wall.aiSuggestions[0].summary}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="gb-immersive__object gb-immersive__object--notes">
+                <p className="gb-immersive__object-label">Founder Notes™</p>
+                <div className="gb-immersive__object-scroll">
+                  <textarea
+                    value={noteBody}
+                    onChange={(e) => setNoteBody(e.target.value)}
+                    rows={2}
+                    placeholder="Note or decision…"
+                    className="gb-immersive__input"
+                    style={{ resize: 'none' }}
+                  />
+                  <div className="gb-immersive__btn-row">
+                    <button
+                      type="button"
+                      className="gb-immersive__btn"
+                      onClick={() => {
+                        if (!noteBody.trim()) return;
+                        founderNotes.addNote(noteBody.trim(), 'text');
+                        setNoteBody('');
+                      }}
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      className="gb-immersive__btn"
+                      onClick={() => founderNotes.addNote('Voice placeholder', 'voice')}
+                    >
+                      Voice
+                    </button>
+                  </div>
+                  {founderNotes.notes.map((note: FounderNote) => (
+                    <div key={note.id} style={{ marginTop: 6, fontSize: 5, borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: 4 }}>
+                      <p>{note.body}</p>
+                      <button type="button" onClick={() => founderNotes.pinNote(note.id)} style={{ fontSize: 5, marginRight: 6 }}>
+                        Pin
+                      </button>
+                      <button type="button" onClick={() => founderNotes.removeNote(note.id)} style={{ fontSize: 5 }}>
+                        Del
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
               {slice.zones.map((zone: WalkableZone) => (
                 <button
                   key={zone.id}
                   type="button"
-                  className={`gb-room__zone${slice.activeZoneId === zone.id ? ' is-active' : ''}`}
+                  className={`gb-immersive__zone${slice.activeZoneId === zone.id ? ' is-active' : ''}`}
                   style={{
-                    left: `${50 + zone.position.x * 36}%`,
-                    top: `${46 - zone.position.z * 22}%`,
+                    left: `${50 + zone.position.x * 34}%`,
+                    top: `${72 - zone.position.z * 14}%`,
                   }}
                   onClick={() => slice.setActiveZoneId(zone.id)}
                 >
@@ -203,77 +192,59 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
                 </button>
               ))}
 
-              <div className="gb-room__orb" aria-hidden title="Studio Orb" />
-              <p className="gb-room__orb-caption">
-                {orbCopy.greeting}
-                <br />
-                <span style={{ opacity: 0.75 }}>{orbCopy.guidance}</span>
-                <br />
-                <span style={{ color: 'rgba(201,169,98,0.95)' }}>{orbInsight}</span>
-              </p>
-            </div>
+              <div className="gb-immersive__object gb-immersive__object--orb">
+                <div className="gb-immersive__orb-sphere" aria-hidden title="Studio Orb" />
+                <p className="gb-immersive__orb-speech">
+                  {orbCopy.greeting}
+                  <br />
+                  <span style={{ opacity: 0.75 }}>{orbCopy.guidance}</span>
+                  <br />
+                  <span style={{ color: 'rgba(201,169,98,0.95)' }}>{orbInsight}</span>
+                </p>
+              </div>
 
-            <p className="gb-room__teaching">{zoneTeaching}</p>
+              <p className="gb-immersive__teaching">{zoneTeaching}</p>
 
-            {environmentItem?.previewUrl ? (
-              <div style={{ margin: '8px 4px 0', fontSize: '7px' }}>
-                {!showPreview ? (
-                  <button type="button" className="gb-room__preview-link" onClick={() => setShowPreview(true)}>
-                    Environment preview ready — tap to load
-                  </button>
+              <div className="gb-immersive__object gb-immersive__object--console">
+                <p className="gb-immersive__object-label">Generation Queue™ · Production Console</p>
+                {queue.items.length === 0 ? (
+                  <p style={{ fontSize: 6, opacity: 0.65 }}>No jobs yet.</p>
                 ) : (
+                  queue.items.map((item: GenerationQueueItem) => (
+                    <div key={item.id} className="gb-immersive__queue-row">
+                      <span>{item.displayName}</span>
+                      <span>{STATUS_LABEL[item.status] ?? item.status}</span>
+                      {item.status === 'failed' ? (
+                        <button type="button" onClick={() => queue.retryItem(item.id)} style={{ fontSize: 6 }}>
+                          Retry
+                        </button>
+                      ) : null}
+                    </div>
+                  ))
+                )}
+                {environmentItem?.previewUrl ? (
                   <a
                     href={environmentItem.previewUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="gb-room__preview-link"
+                    className="gb-immersive__preview-link"
                   >
-                    Open generated environment (new tab)
+                    Environment preview →
                   </a>
-                )}
+                ) : null}
+                <button
+                  type="button"
+                  className="gb-immersive__btn"
+                  style={{ width: '100%' }}
+                  disabled={isGenerating}
+                  onClick={onGenerateEnvironment}
+                >
+                  {isGenerating ? 'Generating Environment…' : 'Generate Environment™'}
+                </button>
               </div>
-            ) : null}
-
-            <div className="md:hidden">
-              {moodWallSection}
-              {notesSection}
             </div>
           </div>
-
-          <div className="gb-room__rail-col hidden md:flex">
-            {moodWallSection}
-            {notesSection}
-          </div>
         </div>
-
-        <footer className="gb-room__console" aria-label="Generation Queue">
-          <div className="gb-room__console-inner">
-            <p className="gb-room__label">Production Console · Generation Queue™</p>
-            {queue.items.length === 0 ? (
-              <p style={{ fontSize: '7px', marginTop: 4, opacity: 0.7 }}>No production jobs yet.</p>
-            ) : (
-              queue.items.map((item: GenerationQueueItem) => (
-                <div key={item.id} className="gb-room__queue-row">
-                  <span>{item.displayName}</span>
-                  <span>{STATUS_LABEL[item.status] ?? item.status}</span>
-                  {item.status === 'failed' ? (
-                    <button type="button" onClick={() => queue.retryItem(item.id)} style={{ fontSize: '7px' }}>
-                      Retry
-                    </button>
-                  ) : null}
-                </div>
-              ))
-            )}
-            <button
-              type="button"
-              className="gb-room__btn gb-room__btn--block"
-              disabled={isGenerating}
-              onClick={onGenerateEnvironment}
-            >
-              {isGenerating ? 'Generating Environment…' : 'Generate Environment™'}
-            </button>
-          </div>
-        </footer>
       </div>
     </>
   );
