@@ -23,7 +23,8 @@ export type AtlasMapMode =
   | 'company-genome'
   | 'construction'
   | 'future-vision'
-  | 'master-planner';
+  | 'master-planner'
+  | 'parallel-futures';
 
 export type AtlasTravelMode =
   | 'walk'
@@ -114,6 +115,9 @@ export type AtlasNode = {
   planId?: string;
   planPhase?: MasterPlanProjectPhase;
   isConcept?: boolean;
+  /** Phase 4 — parallel futures */
+  parallelFutureId?: string;
+  isParallelFuture?: boolean;
 };
 
 export type AtlasOrbRecommendationKind =
@@ -280,8 +284,122 @@ export type AtlasMasterPlanReservation = {
   amenities?: string[];
 };
 
+/** Phase 4 — Parallel Futures™ */
+export type ParallelFutureArchetype = 'future-a' | 'future-b' | 'future-c' | 'future-d';
+
+export type ParallelFutureStatus = 'draft' | 'approved' | 'committed' | 'archived' | 'forked';
+
+export type ParallelFutureBuilding = {
+  id: string;
+  label: string;
+  department: string;
+  mapX: number;
+  mapY: number;
+  wingCount: number;
+  roomCount: number;
+};
+
+export type AtlasFutureAnalysis = {
+  creativeBudgetEstimate: string;
+  generationCostEstimate: string;
+  buildDurationWeeks: number;
+  creativeEquity: string;
+  assetReusePct: number;
+  marketplacePotential: string;
+  expansionFlexibility: number;
+  aiWorkforceCount: number;
+  navigationEfficiency: number;
+  operationalComplexity: 'low' | 'medium' | 'high';
+  maintainability: number;
+  founderWorkloadHours: number;
+  riskProfile: 'conservative' | 'balanced' | 'aggressive' | 'experimental';
+  timelineMonths: number;
+  growthProjection: string;
+};
+
+export type AtlasFutureCommitSummary = {
+  totalAssets: number;
+  productionCost: string;
+  productionHours: number;
+  reusableAssets: number;
+  newAssetsRequired: number;
+  reuseSavings: string;
+  approvedAt: string;
+};
+
+export type ParallelFutureWalkStep = {
+  order: number;
+  buildingLabel: string;
+  department: string;
+  preview: string;
+  trafficLevel: 'low' | 'medium' | 'high';
+  aiMovement: string;
+};
+
+export type ParallelFutureWalkSimulation = {
+  futureId: string;
+  steps: ParallelFutureWalkStep[];
+  summary: string;
+  simulatedAt: string;
+};
+
+export type MasterPlanningLibraryEntry = {
+  id: string;
+  label: string;
+  archetype: ParallelFutureArchetype;
+  version: number;
+  status: ParallelFutureStatus;
+  savedAt: string;
+  notes?: string;
+  futureSnapshotId: string;
+};
+
+export type FutureVersionSnapshot = {
+  id: string;
+  futureId: string;
+  label: string;
+  version: number;
+  savedAt: string;
+  analysis: AtlasFutureAnalysis;
+  forkedFromId?: string;
+};
+
+export type AtlasParallelFuture = {
+  id: string;
+  archetype: ParallelFutureArchetype;
+  label: string;
+  tagline: string;
+  strategy: string;
+  createdAt: string;
+  updatedAt: string;
+  version: number;
+  status: ParallelFutureStatus;
+  forkedFromId?: string;
+  buildings: ParallelFutureBuilding[];
+  roads: AtlasPlanFeature[];
+  departments: string[];
+  expansionStrategy: string;
+  constructionPhases: string[];
+  analysis: AtlasFutureAnalysis;
+  commitSummary?: AtlasFutureCommitSummary;
+};
+
+export type AtlasParallelFuturesComparisonRow = {
+  futureId: string;
+  label: string;
+  archetype: ParallelFutureArchetype;
+  buildCost: string;
+  timelineMonths: number;
+  creativeEquity: string;
+  marketplaceValue: string;
+  navigationEfficiency: number;
+  expansionFlexibility: number;
+  reusableAssetsPct: number;
+  aiWorkforce: number;
+};
+
 export type AtlasDiscoveryStore = {
-  version: 3;
+  version: 4;
   discoveredNodeIds: string[];
   achievements: string[];
   hiddenFinds: string[];
@@ -293,6 +411,12 @@ export type AtlasDiscoveryStore = {
   futureVisionConcepts: AtlasFutureVisionConcept[];
   forecastHorizon: AtlasWorldForecastYear;
   lastSimulations: Record<string, AtlasSimulationResult>;
+  parallelFutures: AtlasParallelFuture[];
+  activeParallelFutureId: string | null;
+  parallelFutureWalks: Record<string, ParallelFutureWalkSimulation>;
+  masterPlanningLibrary: MasterPlanningLibraryEntry[];
+  futureVersionHistory: FutureVersionSnapshot[];
+  committedFutureId: string | null;
 };
 
 export const ATLAS_MAP_MODE_LABELS: Record<AtlasMapMode, string> = {
@@ -312,6 +436,7 @@ export const ATLAS_MAP_MODE_LABELS: Record<AtlasMapMode, string> = {
   construction: 'CONSTRUCTION™',
   'future-vision': 'FUTURE VISION™',
   'master-planner': 'MASTER PLANNER™',
+  'parallel-futures': 'PARALLEL FUTURES™',
 };
 
 export const ATLAS_ZOOM_LABELS: Record<AtlasZoomLevel, string> = {
@@ -400,4 +525,5 @@ export const ATLAS_MODE_ENGINE_FOCUS: Partial<Record<AtlasMapMode, AtlasEngineId
   construction: ['generation-pipeline', 'scene-stack', 'blueprint-archive'],
   'future-vision': ['expedition-hub', 'blueprint-archive'],
   'master-planner': ['expedition-hub', 'blueprint-archive', 'creative-budget'],
+  'parallel-futures': ['expedition-hub', 'blueprint-archive', 'creative-budget', 'asset-registry'],
 };

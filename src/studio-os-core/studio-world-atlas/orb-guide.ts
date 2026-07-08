@@ -2,6 +2,7 @@ import type { AtlasDiscoveryStore, AtlasNode, AtlasOrbRecommendation } from './t
 import { ATLAS_ENGINE_LABELS } from './types';
 import { listActiveEnginesInCatalog } from './engine-registry';
 import { buildMasterPlannerOrbRecommendations } from './master-planner-orb';
+import { buildParallelFuturesOrbRecommendations } from './parallel-futures-orb';
 import { isUnderConstruction } from './world-construction';
 import { ATLAS_HIDDEN_DISCOVERIES } from './world-discovery';
 
@@ -15,6 +16,12 @@ export function buildAtlasOrbRecommendations(
   discovery?: AtlasDiscoveryStore,
   options?: { mapMode?: string; selectedPlanId?: string | null }
 ): AtlasOrbRecommendation[] {
+  if (discovery && options?.mapMode === 'parallel-futures') {
+    return buildParallelFuturesOrbRecommendations(
+      discovery.parallelFutures ?? [],
+      discovery.activeParallelFutureId
+    );
+  }
   if (
     discovery &&
     (options?.mapMode === 'master-planner' || options?.mapMode === 'future-vision')

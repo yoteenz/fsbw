@@ -760,4 +760,73 @@ body.studio-world-atlas-active {
   0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(0.8); }
   50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
 }
+
+/* Phase 4 — Parallel Futures™ */
+.swa.is-parallel-futures .swa__table-surface {
+  box-shadow:
+    0 0 48px rgba(201, 169, 98, 0.18),
+    inset 0 0 70px rgba(80, 200, 255, 0.1);
+}
+
+.swa__building.is-pf-active .swa__extrusion {
+  border: 1px solid rgba(201, 169, 98, 0.65);
+  box-shadow: 0 0 16px rgba(201, 169, 98, 0.45);
+}
+.swa__building.is-pf-inactive .swa__extrusion {
+  opacity: 0.45;
+  border: 1px dashed rgba(80, 200, 255, 0.35);
+}
+
+.swa__pf-comparison {
+  position: absolute;
+  left: 8px;
+  top: 38%;
+  width: min(42vw, 200px);
+  max-height: 52vh;
+  overflow-y: auto;
+  z-index: 35;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(201, 169, 98, 0.3);
+  font-size: 4px;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+}
+
+.swa__pf-row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 6px;
+  padding: 6px 8px;
+  border: 1px solid rgba(80, 200, 255, 0.25);
+  background: rgba(0, 0, 0, 0.4);
+  color: #e8e0d4;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: inherit;
+}
+.swa__pf-row.is-active {
+  border-color: rgba(201, 169, 98, 0.65);
+  background: rgba(201, 169, 98, 0.12);
+}
+
+.swa__pf-analysis,
+.swa__pf-commit {
+  font-size: 3px;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+.swa__planner-btn.is-active {
+  border-color: rgba(201, 169, 98, 0.7);
+  background: rgba(201, 169, 98, 0.15);
+}
+
+.swa__travel-btn.is-primary {
+  border-color: rgba(201, 169, 98, 0.6);
+  color: #c9a962;
+}
 `;

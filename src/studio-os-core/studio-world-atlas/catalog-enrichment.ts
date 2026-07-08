@@ -17,6 +17,7 @@ import { constructionExtrusionScale, resolveConstructionPhaseForNode } from './w
 import { buildDiscoveryNodes } from './world-discovery';
 import { getBuildingMemory } from './world-memory';
 import { buildPotentialRoadPaths } from './master-planner';
+import { buildParallelFutureRoadPaths } from './parallel-futures';
 import { planPhaseProgress } from './master-planner-phases';
 
 export type AtlasEnrichmentInput = {
@@ -104,6 +105,42 @@ function masterPlanNodes(plans: AtlasMasterPlanReservation[]): AtlasNode[] {
   );
 }
 
+export function buildParallelFutureNodes(
+  futures: AtlasDiscoveryStore['parallelFutures'],
+  activeFutureId: string | null
+): AtlasNode[] {
+  const nodes: AtlasNode[] = [];
+  for (const future of futures) {
+    const isActive = future.id === activeFutureId;
+    for (const b of future.buildings) {
+      nodes.push({
+        id: `pf-node-${b.id}`,
+        displayName: `${future.tagline} · ${b.label}`,
+        level: 1,
+        parentId: 'atlas-world-root',
+        physicalType: 'district',
+        mapX: b.mapX,
+        mapY: b.mapY,
+        mapZ: isActive ? 0.28 : 0.12,
+        extrusion: isActive ? 0.14 : 0.06,
+        travelPath: '/admin/studio/world-atlas',
+        unlocked: true,
+        fogged: false,
+        hidden: false,
+        activity: isActive ? 'pulse' : 'dormant',
+        childIds: [],
+        modes: ['parallel-futures', 'master-planner', 'future-vision'],
+        isPlanned: true,
+        isConcept: !isActive,
+        isParallelFuture: true,
+        parallelFutureId: future.id,
+        livingSignals: isActive ? ['ai-glow'] : [],
+      });
+    }
+  }
+  return nodes;
+}
+
 export function enrichAtlasNodes(nodes: AtlasNode[], input: AtlasEnrichmentInput): AtlasNode[] {
   const ctx: LivingWorldContext = {
     mapMode: input.mapMode,
@@ -122,11 +159,23 @@ export function enrichAtlasNodes(nodes: AtlasNode[], input: AtlasEnrichmentInput
   );
 
   const planNodes =
-    input.mapMode === 'master-planner' || input.mapMode === 'future-vision'
+    input.mapMode === 'master-planner' ||
+    input.mapMode === 'future-vision' ||
+    input.mapMode === 'parallel-futures'
       ? [
-          ...masterPlanNodes(input.discovery.masterPlan),
-          ...buildPlannerFeatureNodes(input.discovery.planFeatures),
-          ...buildFutureVisionNodes(input.discovery.futureVisionConcepts),
+          ...(input.mapMode === 'parallel-futures'
+            ? buildParallelFutureNodes(
+                input.discovery.parallelFutures,
+                input.discovery.activeParallelFutureId
+              )
+            : []),
+          ...(input.mapMode !== 'parallel-futures'
+            ? [
+                ...masterPlanNodes(input.discovery.masterPlan),
+                ...buildPlannerFeatureNodes(input.discovery.planFeatures),
+                ...buildFutureVisionNodes(input.discovery.futureVisionConcepts),
+              ]
+            : []),
         ]
       : [];
 
@@ -166,6 +215,18 @@ export function buildPlannerRoadPaths(
   input: AtlasEnrichmentInput,
   anchor: { mapX: number; mapY: number }
 ): string[] {
-  if (input.mapMode !== 'master-planner' && input.mapMode !== 'future-vision') return [];
+  if (
+    input.mapMode !== 'master-planner' &&
+    input.mapMode !== 'future-vision' &&
+    input.mapMode !== 'parallel-futures'
+  )
+    return [];
+  if (input.mapMode === 'parallel-futures') {
+    const active = input.discovery.parallelFutures.find(
+      (f) => f.id === input.discovery.activeParallelFutureId
+    );
+    if (!active) return [];
+    return buildParallelFutureRoadPaths(active, anchor);
+  }
   return buildPotentialRoadPaths(input.discovery.masterPlan, input.discovery.planFeatures, anchor);
 }

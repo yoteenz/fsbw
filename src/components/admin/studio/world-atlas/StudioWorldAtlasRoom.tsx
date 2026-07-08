@@ -15,6 +15,8 @@ import {
   getBuildingMemory,
   livingSignalClass,
   planPhaseProgress,
+  formatFutureAnalysisLines,
+  commitSummaryLines,
   type AtlasMapMode,
   type AtlasNode,
   type AtlasTravelMode,
@@ -70,6 +72,8 @@ function BuildingMarker({
         node.id === focusNodeId ? 'is-focused' : '',
         node.isPlanned ? 'is-planned' : '',
         node.isConcept ? 'is-planned' : '',
+        node.isParallelFuture && node.isConcept ? 'is-pf-inactive' : '',
+        node.isParallelFuture && !node.isConcept ? 'is-pf-active' : '',
         draggable && node.planId ? 'is-draggable' : '',
         orbSignalKind ?? '',
         ...signalClasses,
@@ -199,12 +203,13 @@ export function StudioWorldAtlasRoom() {
   );
 
   const showPlanner = atlas.isMasterPlannerMode;
+  const showParallelFutures = atlas.isParallelFuturesMode;
 
   return (
     <>
       <style>{STUDIO_WORLD_ATLAS_STYLES}</style>
       <div
-        className={`swa${showPlanner ? ' is-master-planner' : ''}`}
+        className={`swa${showPlanner ? ' is-master-planner' : ''}${showParallelFutures ? ' is-parallel-futures' : ''}`}
         role="application"
         aria-label="Studio World Atlas"
       >
@@ -221,7 +226,11 @@ export function StudioWorldAtlasRoom() {
             <p className="swa__eyebrow">STUDIO COMMAND CENTER™ · EXECUTIVE ATRIUM™</p>
             <p className="swa__title">STUDIO WORLD ATLAS™</p>
             <p className="swa__zoom">
-              {showPlanner ? 'MASTER PLANNER™ · PLANNING MODE' : ATLAS_ZOOM_LABELS[atlas.view.zoomLevel]}
+              {showParallelFutures
+                ? 'PARALLEL FUTURES™ · COMPARE BEFORE YOU BUILD'
+                : showPlanner
+                  ? 'MASTER PLANNER™ · PLANNING MODE'
+                  : ATLAS_ZOOM_LABELS[atlas.view.zoomLevel]}
             </p>
           </div>
           {atlas.focusNode.parentId ? (
@@ -238,7 +247,9 @@ export function StudioWorldAtlasRoom() {
         <div className="swa__ticker" aria-live="polite">
           <span className="swa__ticker-inner">
             {showPlanner
-              ? `MASTER PLANNER™ · ${atlas.discovery.masterPlan.length} RESERVED · SIMULATE BEFORE YOU GENERATE · ${atlas.worldForecast.narrative}`
+              ? showParallelFutures
+                ? `PARALLEL FUTURES™ · ${atlas.discovery.parallelFutures.length} VISIONS · DESIGN FIRST · BUILD SECOND`
+                : `MASTER PLANNER™ · ${atlas.discovery.masterPlan.length} RESERVED · SIMULATE BEFORE YOU GENERATE · ${atlas.worldForecast.narrative}`
               : atlas.worldTicker}{' '}
             &nbsp;&nbsp;&nbsp;{' '}
             {showPlanner ? atlas.worldForecast.narrative : atlas.worldTicker}
@@ -283,7 +294,38 @@ export function StudioWorldAtlasRoom() {
               </>
             ) : null}
           </p>
-          {atlas.selectedPlanBudget && (selectedNode.isPlanned || atlas.selectedPlan) ? (
+          {showParallelFutures && atlas.activeParallelFuture ? (
+            <div className="swa__pf-analysis">
+              {formatFutureAnalysisLines(atlas.activeParallelFuture.analysis).map((line) => (
+                <span key={line}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {showParallelFutures && atlas.activeParallelFutureWalk ? (
+            <div className="swa__sim-panel">
+              <p className="swa__sim-score">FUTURE WALK™</p>
+              {atlas.activeParallelFutureWalk.summary}
+              {atlas.activeParallelFutureWalk.steps.slice(0, 3).map((step) => (
+                <span key={step.order} style={{ display: 'block', opacity: 0.7, marginTop: 4 }}>
+                  {step.order}. {step.buildingLabel} — {step.trafficLevel} traffic
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {showParallelFutures && atlas.parallelFutureCommitPreview ? (
+            <div className="swa__pf-commit">
+              {commitSummaryLines(atlas.parallelFutureCommitPreview).map((line) => (
+                <span key={line}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {atlas.selectedPlanBudget && (selectedNode.isPlanned || atlas.selectedPlan) && !showParallelFutures ? (
             <div className="swa__budget-line">
               GEN {atlas.selectedPlanBudget.generationCost} · BUILD {atlas.selectedPlanBudget.constructionCost}
               <br />
@@ -323,7 +365,29 @@ export function StudioWorldAtlasRoom() {
               {ATLAS_TRAVEL_LABELS[atlas.view.travelMode]} → {selectedNode.displayName}
             </button>
           ) : null}
-          {showPlanner && atlas.selectedPlan ? (
+          {showParallelFutures && atlas.activeParallelFuture ? (
+            <>
+              <button
+                type="button"
+                className="swa__travel-btn"
+                onClick={() => atlas.walkParallelFuture(atlas.activeParallelFuture!.id)}
+              >
+                SIMULATE THE FUTURE™
+              </button>
+              <button
+                type="button"
+                className="swa__travel-btn is-primary"
+                style={{ marginTop: 4 }}
+                onClick={() => atlas.approveParallelFuture(atlas.activeParallelFuture!.id)}
+                disabled={atlas.discovery.committedFutureId === atlas.activeParallelFuture.id}
+              >
+                {atlas.discovery.committedFutureId === atlas.activeParallelFuture.id
+                  ? 'COMMITTED — AWAITING GENERATION'
+                  : 'APPROVE & COMMIT FUTURE →'}
+              </button>
+            </>
+          ) : null}
+          {showPlanner && !showParallelFutures && atlas.selectedPlan ? (
             <>
               <button
                 type="button"
@@ -344,7 +408,44 @@ export function StudioWorldAtlasRoom() {
           ) : null}
         </aside>
 
-        {showPlanner ? (
+        {showParallelFutures ? (
+          <aside className="swa__pf-comparison" aria-label="Parallel Futures comparison">
+            <p className="swa__planner-title">SIDE-BY-SIDE COMPARISON™</p>
+            {atlas.parallelFuturesComparison.map((row) => (
+              <button
+                key={row.futureId}
+                type="button"
+                className={`swa__pf-row${atlas.discovery.activeParallelFutureId === row.futureId ? ' is-active' : ''}`}
+                onClick={() => atlas.selectParallelFuture(row.futureId)}
+              >
+                <strong>{row.label}</strong>
+                <br />
+                COST {row.buildCost} · {row.timelineMonths} MO
+                <br />
+                EQUITY {row.creativeEquity} · MKT {row.marketplaceValue}
+                <br />
+                NAV {row.navigationEfficiency}% · EXP {row.expansionFlexibility}% · REUSE {row.reusableAssetsPct}%
+              </button>
+            ))}
+            <p className="swa__planner-title" style={{ marginTop: 8 }}>
+              MASTER PLANNING LIBRARY™
+            </p>
+            {atlas.discovery.masterPlanningLibrary.slice(0, 6).map((entry) => (
+              <button
+                key={entry.id}
+                type="button"
+                className="swa__planner-item"
+                onClick={() => atlas.reviveLibraryFuture(entry.id)}
+              >
+                {entry.label} V{entry.version}
+                <br />
+                <span style={{ opacity: 0.55 }}>{entry.status.toUpperCase()}</span>
+              </button>
+            ))}
+          </aside>
+        ) : null}
+
+        {showPlanner && !showParallelFutures ? (
           <aside className="swa__planner-panel" aria-label="Master Planner reservations">
             <p className="swa__planner-title">RESERVED LAND™</p>
             {atlas.discovery.masterPlan.map((plan) => (
@@ -375,7 +476,40 @@ export function StudioWorldAtlasRoom() {
           </aside>
         ) : null}
 
-        {showPlanner ? (
+        {showParallelFutures ? (
+          <aside className="swa__planner-toolbar" aria-label="Parallel Futures tools">
+            <p className="swa__planner-toolbar-title">PARALLEL FUTURES™</p>
+            {atlas.discovery.parallelFutures.map((future) => (
+              <button
+                key={future.id}
+                type="button"
+                className={`swa__planner-btn${atlas.discovery.activeParallelFutureId === future.id ? ' is-active' : ''}`}
+                onClick={() => atlas.selectParallelFuture(future.id)}
+              >
+                {future.tagline} · {future.label}
+              </button>
+            ))}
+            <button
+              type="button"
+              className="swa__planner-btn is-primary"
+              style={{ marginTop: 8 }}
+              onClick={() => atlas.walkParallelFuture()}
+            >
+              SIMULATE THE FUTURE™
+            </button>
+            <button
+              type="button"
+              className="swa__planner-btn"
+              onClick={() =>
+                atlas.forkActiveParallelFuture(
+                  `${atlas.activeParallelFuture?.label ?? 'Future'} Fork`
+                )
+              }
+            >
+              FORK VISION →
+            </button>
+          </aside>
+        ) : showPlanner ? (
           <aside className="swa__planner-toolbar" aria-label="Master Planner tools">
             <p className="swa__planner-toolbar-title">RESERVE LAND™</p>
             {RESERVE_LAND_PRESETS.slice(0, 4).map((preset) => (
@@ -461,7 +595,11 @@ export function StudioWorldAtlasRoom() {
         <aside className="swa__orb" aria-label="Studio Orb world guide">
           <div className="swa__orb-sphere" aria-hidden />
           <p className="swa__orb-title">
-            {showPlanner ? 'STUDIO ORB™ · MASTER PLANNER' : 'STUDIO ORB™ · CHIEF OF STAFF'}
+            {showParallelFutures
+              ? 'STUDIO ORB™ · STRATEGIC ADVISOR'
+              : showPlanner
+                ? 'STUDIO ORB™ · MASTER PLANNER'
+                : 'STUDIO ORB™ · CHIEF OF STAFF'}
           </p>
           {!showPlanner
             ? atlas.orbProactiveRecommendations.map((rec) => (

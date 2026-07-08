@@ -26,6 +26,7 @@ const ALL_MODES: AtlasMapMode[] = [
   'construction',
   'future-vision',
   'master-planner',
+  'parallel-futures',
 ];
 
 const MODE_BY_FLAGSHIP: Record<StudioWorldFlagshipId, AtlasMapMode[]> = {
@@ -373,7 +374,7 @@ export function getVisibleAtlasNodes(
   if (focus.level === 1 && focus.id === 'atlas-world-root') {
     return filtered.filter((n) => n.level === 1 && n.parentId === focus.id);
   }
-  if (mapMode === 'master-planner' || mapMode === 'future-vision') {
+  if (mapMode === 'master-planner' || mapMode === 'future-vision' || mapMode === 'parallel-futures') {
     const plans = c.filter((n) => n.isPlanned && n.parentId === focus.id);
     if (plans.length) return [...filtered, ...plans];
   }

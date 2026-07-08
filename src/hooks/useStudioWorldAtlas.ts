@@ -26,6 +26,11 @@ import {
   resolveZoomLevelForNode,
   saveSimulationResult,
   setForecastHorizon,
+  commitParallelFuture,
+  forkParallelFutureInStore,
+  reviveParallelFutureFromLibrary,
+  saveParallelFutureWalk,
+  setActiveParallelFuture,
   simulateMasterPlanPlacement,
   STUDIO_WORLD_ATLAS_EVENT,
   advanceMasterPlanPhase,
@@ -34,6 +39,9 @@ import {
   upsertPlanFeature,
   updateMasterPlanReservation,
   type AtlasMapMode,
+  buildParallelFuturesComparison,
+  buildFutureCommitSummary,
+  simulateParallelFutureWalk,
   type AtlasMasterPlanReservation,
   type AtlasNode,
   type AtlasOrbRecommendation,
@@ -68,7 +76,11 @@ export function useStudioWorldAtlas(options?: {
   }, [discoveryTick]);
 
   const isMasterPlannerMode =
-    view.mapMode === 'master-planner' || view.mapMode === 'future-vision';
+    view.mapMode === 'master-planner' ||
+    view.mapMode === 'future-vision' ||
+    view.mapMode === 'parallel-futures';
+
+  const isParallelFuturesMode = view.mapMode === 'parallel-futures';
 
   const catalog = useMemo(() => {
     void liveTick;
@@ -88,6 +100,31 @@ export function useStudioWorldAtlas(options?: {
   const visibleNodes = useMemo(
     () => getVisibleAtlasNodes(view.focusNodeId, view.mapMode, catalog),
     [view.focusNodeId, view.mapMode, catalog]
+  );
+
+  const activeParallelFuture = useMemo(
+    () =>
+      discovery.parallelFutures.find((f) => f.id === discovery.activeParallelFutureId) ??
+      discovery.parallelFutures[0],
+    [discovery.parallelFutures, discovery.activeParallelFutureId]
+  );
+
+  const parallelFuturesComparison = useMemo(
+    () => buildParallelFuturesComparison(discovery.parallelFutures),
+    [discovery.parallelFutures]
+  );
+
+  const activeParallelFutureWalk = useMemo(
+    () =>
+      activeParallelFuture
+        ? discovery.parallelFutureWalks[activeParallelFuture.id]
+        : undefined,
+    [discovery.parallelFutureWalks, activeParallelFuture]
+  );
+
+  const parallelFutureCommitPreview = useMemo(
+    () => (activeParallelFuture ? buildFutureCommitSummary(activeParallelFuture) : undefined),
+    [activeParallelFuture]
   );
 
   const selectedPlan = useMemo(
@@ -336,6 +373,52 @@ export function useStudioWorldAtlas(options?: {
     setDiscoveryTick((t) => t + 1);
   }, []);
 
+  const selectParallelFuture = useCallback((futureId: string) => {
+    setActiveParallelFuture(futureId);
+    setView((v) => ({ ...v, mapMode: 'parallel-futures', focusNodeId: 'atlas-world-root', transitionMs: 600 }));
+    invalidateAtlasCatalogCache();
+    setDiscoveryTick((t) => t + 1);
+  }, []);
+
+  const walkParallelFuture = useCallback(
+    (futureId?: string) => {
+      const id = futureId ?? discovery.activeParallelFutureId;
+      const future = discovery.parallelFutures.find((f) => f.id === id);
+      if (!future) return null;
+      const sim = simulateParallelFutureWalk(future);
+      saveParallelFutureWalk(sim);
+      setDiscoveryTick((t) => t + 1);
+      return sim;
+    },
+    [discovery.parallelFutures, discovery.activeParallelFutureId]
+  );
+
+  const approveParallelFuture = useCallback(
+    (futureId: string) => {
+      const committed = commitParallelFuture(futureId);
+      setDiscoveryTick((t) => t + 1);
+      return committed;
+    },
+    []
+  );
+
+  const forkActiveParallelFuture = useCallback(
+    (newLabel: string) => {
+      const id = discovery.activeParallelFutureId;
+      if (!id) return null;
+      const forked = forkParallelFutureInStore(id, newLabel);
+      setDiscoveryTick((t) => t + 1);
+      return forked;
+    },
+    [discovery.activeParallelFutureId]
+  );
+
+  const reviveLibraryFuture = useCallback((entryId: string) => {
+    reviveParallelFutureFromLibrary(entryId);
+    setView((v) => ({ ...v, mapMode: 'parallel-futures' }));
+    setDiscoveryTick((t) => t + 1);
+  }, []);
+
   const addVisionConcept = useCallback((label: string, mapX = 45, mapY = 60) => {
     const coords = clampPlanCoords(mapX, mapY);
     const concept = createFutureVisionConcept(
@@ -392,7 +475,12 @@ export function useStudioWorldAtlas(options?: {
     worldTicker,
     focusMemory,
     isMasterPlannerMode,
+    isParallelFuturesMode,
     selectedPlan,
+    activeParallelFuture,
+    parallelFuturesComparison,
+    activeParallelFutureWalk,
+    parallelFutureCommitPreview,
     selectedPlanBudget,
     activeSimulation,
     expansionRecommendations,
@@ -414,6 +502,11 @@ export function useStudioWorldAtlas(options?: {
     advancePlan,
     changeForecastHorizon,
     addVisionConcept,
+    selectParallelFuture,
+    walkParallelFuture,
+    approveParallelFuture,
+    forkActiveParallelFuture,
+    reviveLibraryFuture,
     setSelectedPlanId,
   };
 }

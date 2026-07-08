@@ -42369,3 +42369,19 @@ User **FOLLOW-UP SPRINT — Master Planner™ Phase 3:** Extend Atlas (not redes
 - **UI evolution:** `is-master-planner` table styling, planner toolbar (reserve/features/forecast/vision), draggable planned markers, dashed potential roads, simulation panel, budget lines, travel rail hidden in planning mode, Orb title → MASTER PLANNER.
 - **Docs:** `docs/studio-os/studio-world-atlas-master-planner.md` · `studio-world-atlas.md` cross-link.
 - **Prior arc (same chat):** Atlas Phase 1 flagship navigation · Phase 2 operating table/digital twin · V5 migration · Architecture Auditor™ · Experience Intelligence Engine™.
+
+---
+
+## 2026-07-08 — Studio Orb™ Orb Recommendations™ proactive intelligence layer
+
+User **FOLLOW-UP SPRINT — Orb Recommendations™ (Proactive Intelligence Layer):** Evolve Studio Orb™ from guide to Executive Chief of Staff — continuously observes company, proactively surfaces highest-value opportunities before founder asks "what next?"
+
+- **Core engine `src/studio-os-core/orb-recommendations/`:** `types` · `constants` (6 Focus Modes™) · `personalization-store` (`studioOrbRecommendations_v1`) · `context-collector` (Pulse, Council, Blueprint, Atlas) · `daily-brief` · `recommendation-engine` (priority, impact, time, cost, savings, departments, equity, reasoning, confidence) · `surprise-discoveries` · `executive-journey` (optimal route) · `focus-modes` · `atlas-world-signals` · `index` (`buildOrbRecommendationsSnapshot`).
+- **The Daily Brief™:** `StudioOrbDailyBriefOverlay` — greets founder on first `/admin/studio/*` entry per session (overnight gens, approvals, savings, Golden Build, high-priority count).
+- **Recommendations panel:** `StudioOrbRecommendationsPanel` — open via Orb radial **Daily Brief** (🔔); Focus Mode pills · Executive Journey itinerary · full recommendation cards with WHY + GO.
+- **Hook:** `useStudioOrbRecommendations` — snapshot, focus mode, accept rec/journey, ambient insight, room visit tracking.
+- **Studio Orb integration:** `StudioOrbProvider` ambient insight from top recommendation · `openRecommendations` surface · radial menu enables notifications as Daily Brief.
+- **Atlas world integration:** `useStudioWorldAtlas` + `StudioWorldAtlasRoom` — `orbWorldSignals` (glow/pulse/beacon on buildings), `orbJourneyRoadPaths` (gold dashed routes), proactive rec cards in Orb sidebar (CHIEF OF STAFF title); CSS `has-orb-glow`, `has-orb-pulse`, `has-orb-beacon`, `is-orb-journey`.
+- **Docs:** `docs/studio-os/studio-orb-recommendations.md`.
+- **Heuristic layer:** company signals synthesized from demo stores — not yet live Creative Budget / Asset Registry / Marketplace APIs.
+- **Prior arc (same chat):** Atlas Phase 1–3 (flagship nav · digital twin · Master Planner™) · Architecture Auditor™ · Experience Intelligence Engine™ · command-center route fix.
