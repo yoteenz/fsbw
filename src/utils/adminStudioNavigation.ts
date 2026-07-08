@@ -1814,7 +1814,7 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
   {
     id: 'studio-warehouse',
     title: 'STUDIO WAREHOUSE™',
-    purpose: 'Physical manifestation of Asset Registry™ — walk districts, preview objects, reuse before you regenerate.',
+    purpose: 'Immersive warehouse destination — walk galleries, retrieve assets for workspaces. Not a webpage.',
     route: p('studio-warehouse'),
     groupId: 'visuals',
     status: 'live',

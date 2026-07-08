@@ -4,6 +4,11 @@ import {
   CDS_SCENE_STACK_STATION_META,
   getCdsSceneStackLayerPrompts,
 } from './cds-station-prompts';
+import {
+  WAREHOUSE_SCENE_STACK_HOTSPOTS,
+  WAREHOUSE_SCENE_STACK_STATION_META,
+  getWarehouseSceneStackLayerPrompts,
+} from './warehouse-station-prompts';
 
 function buildCdsManifest(): SceneStackManifest {
   return {
@@ -24,8 +29,28 @@ function buildCdsManifest(): SceneStackManifest {
   };
 }
 
+function buildWarehouseManifest(): SceneStackManifest {
+  return {
+    departmentId: 'studio-warehouse',
+    packageId: 'pkg-studio-warehouse-golden-v1',
+    milestone: 'Studio Warehouse™ Golden Build',
+    signatureLandmarkId: 'central-atrium',
+    aspectRatio: '9:16',
+    outputFormat: 'webp',
+    stations: WAREHOUSE_SCENE_STACK_STATION_META.map((meta) => ({
+      stationId: meta.stationId,
+      displayName: meta.displayName,
+      shortLabel: meta.shortLabel,
+      signatureLandmarkId: 'signatureLandmarkId' in meta ? meta.signatureLandmarkId : undefined,
+      layerPrompts: getWarehouseSceneStackLayerPrompts(meta.stationId),
+      hotspots: WAREHOUSE_SCENE_STACK_HOTSPOTS[meta.stationId] ?? {},
+    })),
+  };
+}
+
 const MANIFESTS: Record<string, SceneStackManifest> = {
   'creative-direction': buildCdsManifest(),
+  'studio-warehouse': buildWarehouseManifest(),
 };
 
 export function requireSceneStackManifest(departmentId: string): SceneStackManifest {

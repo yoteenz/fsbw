@@ -42115,3 +42115,18 @@ User reported CDS **auto-refresh feel** while Scene Stack generates, and **envir
 - **Motion freeze:** `useCdsImmersion(enabled, freezeMotion)` + `CreativeDirectionStudioRoom` passes `stack.isAnyPipelineActive`; `cdsImmersionTheme` disables camera breathe/parallax on `.is-pipeline-active`; locked-layer CSS in `cdsInteractionLayerTheme`.
 - **Still manual Stack only** — auto `ensureStation` on mount/zone change removed earlier (`b84a7b3a`).
 - **Prior arc (same chat):** layer strip nav clearance (`3e57fb47`) · stop auto-gen (`b84a7b3a`) · Studio Warehouse™ (`850e2ce6`) · Studio Museum™ (`2cb88120`).
+
+---
+
+## 2026-07-08 — Studio Warehouse™ immersive destination (Studio World™ architectural correction)
+
+User **IMPLEMENTATION SPRINT — ARCHITECTURAL CORRECTION:** Studio Warehouse™ violated Studio World™ philosophy by existing as a webpage/dashboard. **New law:** no major feature as a page — every feature is physical architecture inside Studio World™. Warehouse must be a continuous destination (Threshold™ → galleries → service wings → Museum Connection™), built with **Scene Stack™**, Asset Registry™ embedded diegetically, **Live Assembly™** deep links from workspaces.
+
+- **Replaced webpage shell:** `/admin/studio/studio-warehouse` now uses **`DepartmentGoldenBuildShell`** + **`StudioWarehouseRoom`** (not `AdminStudioStageShell` + card grid `WarehouseWorkspace`).
+- **15 camera zones (`warehouseCameraZones.ts`):** Entrance Hall → Central Atrium → 8 asset galleries + Particle/Animation/Audio wings → Marketplace Imports → Restoration Lab → Generation Bay → **Museum Connection™** walkway to `/admin/studio/studio-museum`.
+- **Arrival Sequence™:** `Cross the Threshold™` ceremony gates nav; persisted `arrivalComplete` + `lastZoneId` in `adminStudioWarehouse_v1`.
+- **Scene Stack™ for Warehouse:** `studio-warehouse` department package (`department-package/registry.ts`) · manifest (`warehouse-station-prompts.ts` + `station-manifest.ts`) · per-gallery **Stack** button assembles room shell like CDS.
+- **Diegetic Asset Registry™:** `WarehouseGalleryFloor` — physical pedestals/capsules/swatches (not cards); `WarehouseInspectorConsole` — rotate/zoom/compare/apply embedded in gallery glass panels.
+- **Live Assembly™:** `?workspace=&slot=` URL → `enterLiveAssembly()` auto-pans to gallery (e.g. Lighting → Lighting Gallery™) with replace flow · `resolveWarehouseZoneForSlot()` in `studio-warehouse/camera-zones.ts`.
+- **Preserved domain logic:** `studio-warehouse/*` types/search/recipes · `useAdminStudioWarehouseState` · registry hydration · `WarehouseWorkspace.tsx` kept but no longer primary route.
+- **Prior arc (same chat):** Scene Stack shell lock (`bd5f90d9`) · CDS layer strip · auto-gen stop · Studio Museum™ sprint · Warehouse/Museum first webpage sprints.

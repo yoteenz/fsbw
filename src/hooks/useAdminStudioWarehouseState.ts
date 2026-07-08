@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   buildWarehouseRecommendations,
   filterCompatibleAssets,
@@ -8,6 +8,9 @@ import {
   type WarehouseDistrictId,
   type WarehouseReplaceContext,
   type WarehouseViewMode,
+  districtForWarehouseZone,
+  resolveWarehouseZoneForSlot,
+  type WarehouseCameraZoneId,
 } from '../studio-os-core/studio-warehouse';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 import type { WarehouseAsset } from '../studio-os-core/studio-warehouse';
@@ -17,12 +20,16 @@ type WarehousePrefs = {
   favorites: string[];
   archived: string[];
   appliedReplacements: Array<{ workspaceId: string; slotRole: string; assetId: string; at: string }>;
+  lastZoneId?: WarehouseCameraZoneId;
+  arrivalComplete?: boolean;
 };
 
 const EMPTY_PREFS: WarehousePrefs = { favorites: [], archived: [], appliedReplacements: [] };
 
 export function useAdminStudioWarehouse() {
   const [viewMode, setViewMode] = useState<WarehouseViewMode>('districts');
+  const [activeZoneId, setActiveZoneId] = useState<WarehouseCameraZoneId>('threshold');
+  const [arrivalComplete, setArrivalComplete] = useState(false);
   const [activeDistrictId, setActiveDistrictId] = useState<WarehouseDistrictId>('environment-gallery');
   const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,6 +44,15 @@ export function useAdminStudioWarehouse() {
     void version;
     return readStudioJson<WarehousePrefs>(ADMIN_STUDIO_STORAGE_KEYS.warehouse) ?? EMPTY_PREFS;
   }, [version]);
+
+  useEffect(() => {
+    if (prefs.arrivalComplete) setArrivalComplete(true);
+    if (prefs.lastZoneId) {
+      setActiveZoneId(prefs.lastZoneId);
+      const district = districtForWarehouseZone(prefs.lastZoneId);
+      if (district) setActiveDistrictId(district);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps -- restore visit once
 
   const baseCatalog = useMemo(() => buildStudioWarehouseCatalog(), [version]);
 
@@ -83,6 +99,40 @@ export function useAdminStudioWarehouse() {
       bump();
     },
     [bump]
+  );
+
+  const syncZoneToDistrict = useCallback((zoneId: WarehouseCameraZoneId) => {
+    const district = districtForWarehouseZone(zoneId);
+    if (district) setActiveDistrictId(district);
+    setActiveZoneId(zoneId);
+    const stored = readStudioJson<WarehousePrefs>(ADMIN_STUDIO_STORAGE_KEYS.warehouse) ?? EMPTY_PREFS;
+    writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.warehouse, {
+      ...stored,
+      lastZoneId: zoneId,
+    });
+  }, []);
+
+  const completeArrival = useCallback(() => {
+    setArrivalComplete(true);
+    setActiveZoneId('central-atrium');
+    setActiveDistrictId('environment-gallery');
+    const stored = readStudioJson<WarehousePrefs>(ADMIN_STUDIO_STORAGE_KEYS.warehouse) ?? EMPTY_PREFS;
+    writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.warehouse, {
+      ...stored,
+      arrivalComplete: true,
+      lastZoneId: 'central-atrium',
+    });
+    bump();
+  }, [bump]);
+
+  const enterLiveAssembly = useCallback(
+    (ctx: WarehouseReplaceContext) => {
+      const zoneId = resolveWarehouseZoneForSlot(ctx.slotRole);
+      setArrivalComplete(true);
+      setReplaceContext(ctx);
+      syncZoneToDistrict(zoneId);
+    },
+    [syncZoneToDistrict]
   );
 
   const toggleFavorite = useCallback(
@@ -149,6 +199,12 @@ export function useAdminStudioWarehouse() {
   return {
     viewMode,
     setViewMode,
+    activeZoneId,
+    setActiveZoneId: syncZoneToDistrict,
+    arrivalComplete,
+    setArrivalComplete,
+    completeArrival,
+    enterLiveAssembly,
     activeDistrictId,
     setActiveDistrictId,
     selectedAssetId,
