@@ -1,11 +1,13 @@
 import type { SceneStackHotspotBounds } from '../../../../studio-os-core/scene-stack';
 import type { LivingArchitectureSnapshot } from '../../../../studio-os-core/living-architecture';
+import type { LivingDistrictEcologySnapshot } from '../../../../studio-os-core/living-district-ecology';
 import { museumGalleryCount, prototypeVaultBayCount } from '../../../../studio-os-core/living-architecture';
 
 type Props = {
   hotspots: Record<string, SceneStackHotspotBounds | undefined>;
   onContinueToExpansion: () => void;
   livingArchitecture?: LivingArchitectureSnapshot | null;
+  livingEcology?: LivingDistrictEcologySnapshot | null;
 };
 
 const INNOVATION_STORIES = [
@@ -45,8 +47,15 @@ const INNOVATION_STORIES = [
 export function InnovationHallInteractions({
   onContinueToExpansion,
   livingArchitecture,
+  livingEcology,
 }: Props) {
-  const innovationTier = livingArchitecture?.districts['innovation-district']?.tier ?? 0;
+  const innovationTier =
+    livingEcology?.districts['innovation-district']?.effectiveTier ??
+    livingArchitecture?.districts['innovation-district']?.tier ??
+    0;
+  const crossDistrictReaction = livingEcology?.chainReactions.find(
+    (r) => r.sourceDistrict === 'innovation-district' || r.consequences.some((c) => c.districtId === 'innovation-district')
+  );
 
   return (
     <div className="wh-wing-panel">
@@ -62,6 +71,11 @@ export function InnovationHallInteractions({
           {livingArchitecture?.districts['innovation-district']?.latestMilestone ? (
             <p className="wh-world__hint" style={{ marginTop: 8, color: '#8ba4c4' }}>
               {livingArchitecture.districts['innovation-district'].latestMilestone!.architecturalChange}
+            </p>
+          ) : null}
+          {crossDistrictReaction ? (
+            <p className="wh-world__hint" style={{ marginTop: 6, color: '#b8d4a8' }}>
+              Ecosystem response: {crossDistrictReaction.consequences.map((c) => c.districtId.replace(/-/g, ' ')).join(' · ')} reacting
             </p>
           ) : null}
         </div>
@@ -101,15 +115,20 @@ export function InnovationHallInteractions({
 
 type ExpansionProps = {
   livingArchitecture?: LivingArchitectureSnapshot | null;
+  livingEcology?: LivingDistrictEcologySnapshot | null;
 };
 
 /**
  * Future Expansion Wings™ — architectural bays that commission as progress is earned.
  */
-export function FutureExpansionInteractions({ livingArchitecture }: ExpansionProps) {
+export function FutureExpansionInteractions({ livingArchitecture, livingEcology }: ExpansionProps) {
+  const warehouseTier =
+    livingEcology?.districts.warehouse?.effectiveTier ??
+    livingArchitecture?.districts.warehouse?.tier ??
+    0;
   const bayCount = livingArchitecture ? prototypeVaultBayCount(livingArchitecture) : 3;
-  const warehouseTier = livingArchitecture?.districts.warehouse?.tier ?? 0;
   const tierClass = warehouseTier > 0 ? ` is-tier-${warehouseTier}` : '';
+  const naturalExpansions = livingEcology?.districts.warehouse?.naturalExpansions ?? [];
 
   const bayLabels = [
     'Research Institute™',
@@ -147,6 +166,11 @@ export function FutureExpansionInteractions({ livingArchitecture }: ExpansionPro
               {livingArchitecture.districts.warehouse.latestMilestone.architecturalChange}
             </p>
           ) : null}
+          {naturalExpansions.map((exp) => (
+            <p key={exp} className="wh-world__hint" style={{ marginTop: 6, color: '#b8d4a8' }}>
+              ↗ {exp}
+            </p>
+          ))}
         </div>
       </div>
     </div>

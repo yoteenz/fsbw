@@ -1,5 +1,6 @@
 import type { WarehouseWingKind } from '../../../../studio-os-core/studio-warehouse/campus-nav';
 import type { LivingArchitectureSnapshot } from '../../../../studio-os-core/living-architecture';
+import type { LivingDistrictEcologySnapshot } from '../../../../studio-os-core/living-district-ecology';
 
 export type WarehouseOrbPersonality = {
   role: string;
@@ -66,9 +67,30 @@ const PERSONALITIES: Record<WarehouseWingKind, WarehouseOrbPersonality> = {
 
 export function resolveWarehouseOrbPersonality(
   wing: WarehouseWingKind,
-  livingArchitecture?: LivingArchitectureSnapshot | null
+  livingArchitecture?: LivingArchitectureSnapshot | null,
+  livingEcology?: LivingDistrictEcologySnapshot | null
 ): WarehouseOrbPersonality {
   const base = PERSONALITIES[wing];
+
+  if (livingEcology?.orbPlannerLine) {
+    const plannerRoles: Partial<Record<WarehouseWingKind, string>> = {
+      atrium: 'Ecosystem Architect',
+      warehouse: 'Urban Production Planner',
+      marketplace: 'Commerce Strategist',
+      innovation: 'Innovation Ecologist',
+      legacy: 'Preservation Planner',
+      expansion: 'Campus Urban Planner',
+      blueprint: 'Systems Ecologist',
+      genome: 'Growth Analyst',
+    };
+
+    return {
+      ...base,
+      role: plannerRoles[wing] ?? 'Ecosystem Architect',
+      greeting: livingEcology.orbPlannerLine,
+      accent: '#8ba4c4',
+    };
+  }
 
   if (livingArchitecture?.orbHistorianLine) {
     const historianRoles: Partial<Record<WarehouseWingKind, string>> = {

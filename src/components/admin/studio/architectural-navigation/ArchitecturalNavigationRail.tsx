@@ -13,6 +13,7 @@ import {
 import type { ArchitecturalNavRailMode } from '../../../../studio-os-core/architectural-navigation';
 import { districtForContextualWing } from '../../../../studio-os-core/living-architecture';
 import type { LivingArchitectureSnapshot } from '../../../../studio-os-core/living-architecture';
+import type { LivingDistrictEcologySnapshot } from '../../../../studio-os-core/living-district-ecology';
 import { railWidthForMode } from '../../../../hooks/useArchitecturalNavigationRail';
 
 type Props = {
@@ -26,10 +27,35 @@ type Props = {
   onCycleMode: () => void;
   showPrimaryDestinations?: boolean;
   livingArchitecture?: LivingArchitectureSnapshot | null;
+  livingEcology?: LivingDistrictEcologySnapshot | null;
 };
+
+function EcologyHealthBlock({ ecology }: { ecology: LivingDistrictEcologySnapshot }) {
+  const topMetrics = [...ecology.worldHealth]
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 4);
+
+  return (
+    <div className="sw-nav-rail__ecology-health" aria-label="World Health">
+      <p className="sw-nav-rail__ecology-health-title">World Health™</p>
+      {topMetrics.map((metric) => (
+        <div key={metric.id} className="sw-nav-rail__health-row">
+          <span>{metric.label.replace('™', '')}</span>
+          <div className="sw-nav-rail__health-bar" aria-hidden>
+            <div
+              className={`sw-nav-rail__health-fill${metric.trend === 'rising' ? ' is-rising' : metric.trend === 'stagnant' ? ' is-stagnant' : ''}`}
+              style={{ width: `${metric.value}%` }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 function FrameStatusBlock({ status }: { status: ArchitecturalFrameStatus }) {
   const rows: Array<[string, string | undefined]> = [
+    ['Ecosystem', status.ecosystemSummary],
     ['Campus', status.growthSummary],
     ['Generation', status.generationStatus],
     ['World Graph', status.worldGraphStatus],
@@ -90,6 +116,7 @@ export function ArchitecturalNavigationRail({
   onCycleMode,
   showPrimaryDestinations = false,
   livingArchitecture,
+  livingEcology,
 }: Props) {
   const navigate = useNavigate();
   const atlas = useGlobalAtlasLayerOptional();
@@ -163,14 +190,15 @@ export function ArchitecturalNavigationRail({
           <p className="sw-nav-rail__section-title">Rooms in this Wing</p>
           {contextualWings.map((wing) => {
             const wingDistrict = districtForContextualWing(wing.id);
-            const wingTier =
-              wingDistrict && livingArchitecture
+            const ecologyState = wingDistrict && livingEcology ? livingEcology.districts[wingDistrict] : undefined;
+            const wingTier = ecologyState?.effectiveTier ?? (wingDistrict && livingArchitecture
                 ? livingArchitecture.districts[wingDistrict]?.tier
-                : undefined;
+                : undefined);
             const wingTierLabel =
               wingDistrict && livingArchitecture
                 ? livingArchitecture.districts[wingDistrict]?.tierLabel
                 : undefined;
+            const hasSpillover = (ecologyState?.spilloverFrom.length ?? 0) > 0;
 
             return (
             <div key={wing.id} className="sw-nav-rail__wing">
@@ -179,9 +207,14 @@ export function ArchitecturalNavigationRail({
                 {wingTier !== undefined && wingTier > 0 ? (
                   <span
                     className={`sw-nav-rail__wing-tier${wingTier >= 2 ? ' is-growing' : ''}`}
-                    title={`${wingTierLabel} — earned architectural growth`}
+                    title={`${wingTierLabel} — earned + ecology influence`}
                   >
                     T{wingTier}
+                  </span>
+                ) : null}
+                {hasSpillover ? (
+                  <span className="sw-nav-rail__wing-synergy is-spillover" title="Receiving cross-district influence">
+                    ↗
                   </span>
                 ) : null}
               </p>
@@ -234,9 +267,12 @@ export function ArchitecturalNavigationRail({
         ) : null}
 
         {mode === 'expanded' ? (
-          <footer className="sw-nav-rail__atmosphere" aria-label="Environmental identity">
-            <p className="sw-nav-rail__atmosphere-feeling">{district.feeling}</p>
-          </footer>
+          <>
+            {livingEcology ? <EcologyHealthBlock ecology={livingEcology} /> : null}
+            <footer className="sw-nav-rail__atmosphere" aria-label="Environmental identity">
+              <p className="sw-nav-rail__atmosphere-feeling">{district.feeling}</p>
+            </footer>
+          </>
         ) : null}
       </div>
     </nav>

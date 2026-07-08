@@ -23,6 +23,8 @@ export type ArchitecturalFrameStatus = {
   workspace?: string;
   /** Living Architecture™ — campus growth language instead of abstract stats */
   growthSummary?: string;
+  /** Living District Ecology™ — ecosystem balance summary */
+  ecosystemSummary?: string;
 };
 
 export type ArchitecturalDestination = {

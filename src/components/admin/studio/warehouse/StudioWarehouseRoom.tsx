@@ -30,12 +30,17 @@ import {
 import { useArchitecturalNavigationRail } from '../../../../hooks/useArchitecturalNavigationRail';
 import {
   livingArchitectureClassForDistrict,
-  useLivingArchitecture,
-} from '../../../../hooks/useLivingArchitecture';
+  effectiveCampusTier,
+  useLivingDistrictEcology,
+} from '../../../../hooks/useLivingDistrictEcology';
 import {
   LivingArchitectureLayer,
   LIVING_ARCHITECTURE_STYLES,
 } from '../living-architecture';
+import {
+  DistrictEcologyLayer,
+  DISTRICT_ECOLOGY_STYLES,
+} from '../living-district-ecology';
 import {
   buildWarehouseContextualWings,
   buildWarehouseFrameStatus,
@@ -167,7 +172,8 @@ export function StudioWarehouseRoom() {
   const industrialWing = useMemo(() => industrialWingForZone(wh.activeZoneId), [wh.activeZoneId]);
   const galleryMode = isGalleryZone(wh.activeZoneId);
   const navRail = useArchitecturalNavigationRail();
-  const livingArchitecture = useLivingArchitecture(wh.catalog);
+  const { architecture: livingArchitecture, ecology: livingEcology } =
+    useLivingDistrictEcology(wh.catalog);
 
   const navLocation = useMemo(
     () => resolveWarehouseLocationStack(wh.activeZoneId, wh.arrivalComplete),
@@ -180,8 +186,8 @@ export function StudioWarehouseRoom() {
   );
 
   const orbPersonality = useMemo(
-    () => resolveWarehouseOrbPersonality(activeWing, livingArchitecture),
-    [activeWing, livingArchitecture]
+    () => resolveWarehouseOrbPersonality(activeWing, livingArchitecture, livingEcology),
+    [activeWing, livingArchitecture, livingEcology]
   );
 
   const frameStatus = useMemo(
@@ -195,8 +201,9 @@ export function StudioWarehouseRoom() {
         layersTotal: activePipeline.layersTotal,
         orbRole: orbPersonality.role,
         livingArchitecture,
+        livingEcology,
       }),
-    [wh.activeZoneId, wh.arrivalComplete, activeZone.label, activePipeline, orbPersonality.role, livingArchitecture]
+    [wh.activeZoneId, wh.arrivalComplete, activeZone.label, activePipeline, orbPersonality.role, livingArchitecture, livingEcology]
   );
 
   const districtThemeId = useMemo(
@@ -205,7 +212,11 @@ export function StudioWarehouseRoom() {
   );
   const districtClass = districtCssClass(districtThemeId);
   const livingClass = livingArchitectureClassForDistrict(districtThemeId, livingArchitecture);
-  const livingTier = livingArchitecture.districts[districtThemeId]?.tier ?? 0;
+  const livingTier = effectiveCampusTier(districtThemeId, {
+    architecture: livingArchitecture,
+    ecology: livingEcology,
+  });
+  const ecologyBalanced = livingEcology.ecosystemBalance >= 55;
 
   const campusTitle = useMemo(() => {
     if (industrialWing) {
@@ -338,12 +349,18 @@ export function StudioWarehouseRoom() {
           <InnovationHallInteractions
             hotspots={hotspots}
             livingArchitecture={livingArchitecture}
+            livingEcology={livingEcology}
             onContinueToExpansion={() => goToZone('company-genome-vault')}
           />
         );
 
       case 'future-expansion-wings':
-        return <FutureExpansionInteractions livingArchitecture={livingArchitecture} />;
+        return (
+          <FutureExpansionInteractions
+            livingArchitecture={livingArchitecture}
+            livingEcology={livingEcology}
+          />
+        );
 
       default:
         if (!zone.districtId) return null;
@@ -491,11 +508,13 @@ export function StudioWarehouseRoom() {
       <style>{ARCHITECTURAL_NAV_STYLES}</style>
       <style>{DISTRICT_THEME_STYLES}</style>
       <style>{LIVING_ARCHITECTURE_STYLES}</style>
+      <style>{DISTRICT_ECOLOGY_STYLES}</style>
       <style>{WAREHOUSE_CAMPUS_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
-        className={`${worldClass} ${districtClass} ${livingClass}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
+        className={`${worldClass} ${districtClass} ${livingClass}${ecologyBalanced ? ' sw-ecology--balanced' : ''}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
         data-living-tier={livingTier > 0 ? livingTier : undefined}
+        data-ecology-tier={livingTier > 0 ? livingTier : undefined}
         onPointerMove={immersion.onPointerMove}
         style={immersion.parallaxStyle}
       >
@@ -535,12 +554,18 @@ export function StudioWarehouseRoom() {
           contextualWings={contextualWings}
           activeRoomId={wh.activeZoneId}
           livingArchitecture={livingArchitecture}
+          livingEcology={livingEcology}
           onSelectRoom={(roomId) => goToZone(roomId as WarehouseCameraZoneId)}
           onCycleMode={navRail.cycleMode}
         />
 
         <LivingArchitectureLayer
           snapshot={livingArchitecture}
+          districtThemeId={districtThemeId}
+        />
+
+        <DistrictEcologyLayer
+          ecology={livingEcology}
           districtThemeId={districtThemeId}
         />
 

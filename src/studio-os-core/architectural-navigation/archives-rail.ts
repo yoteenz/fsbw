@@ -8,6 +8,7 @@ import { INDUSTRIAL_CAMPUS_WINGS } from '../studio-warehouse/industrial-campus';
 import type { WarehouseCameraZoneId } from '../studio-warehouse/camera-zones';
 import type { ArchitecturalContextualWing, ArchitecturalFrameStatus, ArchitecturalLocationStack } from './types';
 import type { LivingArchitectureSnapshot } from '../living-architecture/types';
+import type { LivingDistrictEcologySnapshot } from '../living-district-ecology/types';
 
 function campusEntry(zoneId: WarehouseCameraZoneId) {
   return WAREHOUSE_CAMPUS_DIRECTORY.find((z) => z.id === zoneId);
@@ -82,6 +83,7 @@ export function buildWarehouseFrameStatus(input: {
   orbRole?: string;
   workspace?: string;
   livingArchitecture?: LivingArchitectureSnapshot | null;
+  livingEcology?: LivingDistrictEcologySnapshot | null;
 }): ArchitecturalFrameStatus {
   const loc = resolveWarehouseLocationStack(input.activeZoneId, input.arrivalComplete);
   const entry = campusEntry(input.activeZoneId);
@@ -94,6 +96,7 @@ export function buildWarehouseFrameStatus(input: {
   }
 
   const living = input.livingArchitecture;
+  const ecology = input.livingEcology;
   let worldGraphStatus = 'Connected';
   if (living) {
     const expansionCount = living.expansionGraph.length;
@@ -101,6 +104,9 @@ export function buildWarehouseFrameStatus(input: {
       expansionCount > 0
         ? `${expansionCount} architectural expansions recorded`
         : 'Campus foundational — milestones await';
+  }
+  if (ecology && ecology.chainReactions.length > 0) {
+    worldGraphStatus += ` · ${ecology.chainReactions.length} chain reaction${ecology.chainReactions.length > 1 ? 's' : ''}`;
   }
 
   return {
@@ -114,5 +120,6 @@ export function buildWarehouseFrameStatus(input: {
     connectedOrb: input.orbRole ? `Studio Orb™ · ${input.orbRole}` : 'Studio Orb™',
     workspace: input.workspace,
     growthSummary: living?.skylineSummary,
+    ecosystemSummary: ecology?.ecosystemSummary,
   };
 }
