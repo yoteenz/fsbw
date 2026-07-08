@@ -87,6 +87,19 @@ Studio World™ construction begins
 
 ---
 
+## Relationship to Studio Preview™
+
+| System | Relationship |
+|--------|--------------|
+| [Studio Preview™](../preview/README.md) | **Acquisition** — anonymous visitors experience a Future Company™ before signup |
+| **Founder Discovery™** (this sprint) | **Post-signup depth** — full Orb conversation · Founder Genome™ · Business Matching™ |
+| [Company Preview™](./company-preview.md) | **Committed founder** — walk future HQ before company creation |
+| [Business Simulator™](./business-simulator.md) | **Founder-depth** life simulation · Preview uses lighter curated demo |
+
+**Funnel:** Studio Preview™ (belief) → signup → Founder Discovery™ (clarity) → Company Preview™ → Adaptive Onboarding™ → Studio World™ construction.
+
+---
+
 ## Forbidden This Sprint
 
 | Forbidden | Why |

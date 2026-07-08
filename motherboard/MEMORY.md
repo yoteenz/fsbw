@@ -41499,3 +41499,24 @@ User defined **Founder Discovery™** — how Studio OS helps someone discover w
 - **11-doc spec:** `docs/studio-os/founder-discovery/` — README · founder-discovery · conversation-framework · founder-genome · business-matching-engine · discovery-report · business-simulator · cost-engine · company-preview · founder-evolution · future-discovery-roadmap
 - **Prior arc (same chat):** Expeditions™ · Routines™ · Scene Architecture™ · CDS V2 prototype · Guild System™ · Adaptive Onboarding™ · Founder Intelligence™
 - **CORE.md + studio-world.md + onboarding/README.md:** Founder Discovery™ cross-refs added
+
+---
+
+## 2026-07-08 — Studio Preview™ — Experience Your Future Company (acquisition sprint, docs only)
+
+User defined **Studio Preview™** as Studio OS's most important **acquisition experience** — product experience sprint, **docs only**. Explicit **STOP** constraints: **no onboarding build · no marketing pages · no landing page implementation.**
+
+- **Mission:** Studio OS too different to explain via screenshots/videos/feature lists — people must **experience** it. Philosophy: **Don't explain · demonstrate. Don't describe · immerse. Don't market software · let people experience their future.**
+- **The invitation:** Visitors land on one CTA — **Step Into Your Future Company™** — not features · pricing · dashboards.
+- **Discovery:** Orb asks handful of natural questions (work excitement · skills · freedom/income/creativity/impact · lifestyle · industries) — **conversation not quiz**.
+- **Future Company Experiences™:** Luxury Hair Brand™ · Restaurant™ · Law Firm™ · Creator Business™ · Architecture Studio™ · Marketing Agency™ · Medical Practice™ · Technology Startup™ — visitor chooses one.
+- **The Demo:** Instant transport into **curated interactive Headquarters™** — Orb greets · walk departments · scenes · Living Sets™ · watch work · AI professionals collaborating · typical workday · product launch · customer interactions · milestone celebration. Goal = **belief** (*"I understand · I want this · I can picture myself here"*) not software training.
+- **Multiple Futures™:** Simulator of possible futures — explore salon owner vs software founder vs fashion brand vs agency life.
+- **Marketing:** Studio Preview™ **is** primary marketing — ads invite **Step Into Your Future Company™** not watch demo/read docs/view screenshots.
+- **Social sharing:** My Future Company™ · My Headquarters™ · My Founder Profile™ · My Recommended Businesses™ · My Company Preview™.
+- **Conversion:** Only after preview — Orb asks *"Would you like to build this company together?"*
+- **9-doc spec:** `docs/studio-os/preview/` — README · studio-preview · future-company-experience · interactive-marketing · preview-flow · orb-demo · company-simulator · visitor-conversion · future-roadmap
+- **Canon hierarchy:** Studio Preview™ = anonymous **acquisition** (belief-first) · Founder Discovery™ = post-signup **depth** · Company Preview™ = committed founder before HQ creation. **Funnel:** Preview → signup → Founder Discovery™ → Adaptive Onboarding™ → Studio World™
+- **Cross-refs added:** `founder-discovery/README.md` · `world/studio-world.md` · `onboarding/README.md` · `motherboard/CORE.md`
+- **Prior arc (same chat):** Guild System™ · CDS V2 prototype (`/admin/studio/department/creative-direction`) · Scene Architecture™ · Routines™ · Expeditions™ · Founder Discovery™
+- **No UI · no landing page · no marketing pages · no onboarding build this sprint**

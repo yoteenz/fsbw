@@ -38,7 +38,11 @@ The onboarding experience should feel like meeting the **Executive Producer** of
 
 **Adaptive Onboarding™ evolves** [Mode System™](../modes/README.md) — it does not replace the Company Engine™ or create a new platform.
 
+**Acquisition (pre-signup):** [Studio Preview™](../preview/README.md) — visitors step into a Future Company Experience™ · create belief before account creation.
+
 **Precedes (when needed):** [Founder Discovery™](../founder-discovery/README.md) — helps founders discover *what* to build before *"What are we going to build together?"*
+
+**Funnel:** Studio Preview™ → signup → Founder Discovery™ → Adaptive Onboarding™ → ENTER HEADQUARTERS.
 
 ---
 

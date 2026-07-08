@@ -109,6 +109,8 @@ STUDIO WORLD™
 
 **Founder Discovery™:** [The Company Before The Company](../founder-discovery/README.md) — pre-HQ clarity · business matching · Company Preview™
 
+**Studio Preview™:** [Experience Your Future Company](../preview/README.md) — acquisition · immersive demo · belief before signup
+
 ---
 
 ## Related Canon (Subsystems)
@@ -125,6 +127,7 @@ STUDIO WORLD™
 | **Routines™** | [../routines/](../routines/) | Guided journeys · outcomes · Orb orchestration |
 | **Expeditions™** | [../expeditions/](../expeditions/) | Transformation · milestones · company autobiography |
 | **Founder Journey™** | [../alpha/founder-journey.md](../alpha/founder-journey.md) | Founder maturity arc across the world |
+| **Studio Preview™** | [../preview/](../preview/) | Visitor acquisition · Future Company Experiences™ · curated HQ demo |
 
 ---
 
