@@ -40974,3 +40974,38 @@ User defined **Foundational Experience Systems™** — permanent interaction la
 - **System 002 Idle Life™** — world continues when founder idle
 - **World Persistence™** · **Ambient Storytelling™** · **Emotional Design Principle™** (CDS → inspired)
 - **Commit:** `b6c71721`
+
+---
+
+## 2026-07-08 — Sets™ world-building philosophy (docs only)
+
+User defined **Sets™** — Studio OS world model replacing pages/screens/dashboards. Philosophy sprint only — no UI · no implementation · no file rename.
+
+- **Concept:** Set™ = physical environment (Hollywood soundstage); Department = organization
+- **7-doc spec:** `docs/studio-os/world/` — sets-philosophy · set-dna · department-vs-set · headquarters-layout · set-registry · marketplace-set-system · future-set-generator
+- **Pilot:** Creative Direction Department → Creative Atelier™ Set
+- **Set DNA™:** Purpose · emotion · architecture · lighting · materials · hero · Orb · audio · genome influence
+- **Marketplace:** Luxury publishable Sets™ across industries
+- **Cross-ref:** Foundational Experience Systems · Room DNA (predecessor) · Golden Build
+
+---
+
+## 2026-07-08 — Transitions™ world-building philosophy (docs only)
+
+User defined **Transitions™** — *"The Journey Between Sets™"* — permanent Studio OS concept for movement between Sets™. World-building sprint only — **no UI · no implementation · no new departments**.
+
+- **Mission:** Founder never feels they changed pages; they **traveled**. Studio OS = one connected living Headquarters.
+- **Core philosophy:** Every destination deserves a journey; transitions are storytelling (hallways · elevators · bridges · vaults); **not loaders** (no freeze · black fade · spinners).
+- **Two-part world model:** **Sets™** = destinations · **Transitions™** = journeys.
+- **11-doc spec:** `docs/studio-os/world/transitions/` — README · transition-philosophy · transition-types · transition-dna · camera-language · arrival-system · movement-system · orb-guidance · world-streaming · marketplace-transition-system · future-roadmap
+- **Transition types:** Arrival™ · Walk™ · Elevator™ · Panoramic Elevator™ · Skybridge™ · Glass Hallway™ · Executive Corridor™ · Security Checkpoint™ · Gallery Walk™ · Innovation Tunnel™ · Portal™
+- **Every transition requires:** arrival animation · camera choreography · lighting identity · ambient audio · environmental storytelling · Orb guidance · movement speed · department signage · optional narration · persistent world state
+- **Transition DNA™:** inherits Company Genome™ · department personality · architectural/lighting/audio language · Founder Journey™ · time of day · business state · Adaptive Walk™
+- **Orb:** contextual guide during transit ("Creative Direction has prepared new concepts." etc.)
+- **World continuity:** HQ activity continues during movement — nothing pauses
+- **Canonical journey example:** Creative Atelier™ → Glass Hallway™ → Discovery Lab™ → Executive Corridor™ → Marketing War Room™ → Panoramic Elevator™ → Finance Vault™ → Gallery Walk™ → Hall of Legacy™
+- **Marketplace vision:** installable transition SKUs (Luxury Marble Hallway™ · Modern Glass Skybridge™ · etc.) per HQ topology edge
+- **Implementation roadmap:** Phase 0 canon (this sprint) → Phase 1 shell-first proof between two Sets™ → Certified™ types → Marketplace
+- **Success language:** "I walked over to Marketing" / "I took the elevator to Finance" — not "I opened Marketing"
+- **Cross-ref:** Sets™ · Arrival Sequence™ · World Persistence™ · Idle Life™ · Golden Build™
+- **CORE.md:** Transitions™ world-building line added
