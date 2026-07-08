@@ -57,7 +57,8 @@
     "bcf:cf-photos:manifest": "node scripts/bcf/generate-bcf-cf-photo-manifest.mjs",
     "bcf:cf-photos:generate": "node scripts/bcf/pregenerate-bcf-cf-photos.mjs",
     "bcf:cf-photos:sync": "node scripts/bcf/sync-bcf-cf-photo-manifest.mjs",
-    "bcf:cf-photos:batch": "node scripts/bcf/batch-bcf-cf-photos.mjs"
+    "bcf:cf-photos:batch": "node scripts/bcf/batch-bcf-cf-photos.mjs",
+    "audit:launch": "node scripts/launch-integrity-auditor.mjs"
   },
   "dependencies": {
     "@fal-ai/client": "^1.4.0",

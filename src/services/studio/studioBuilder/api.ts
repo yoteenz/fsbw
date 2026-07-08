@@ -13,6 +13,8 @@ export type StudioBuilderGeneratePayload = {
   prompt: string;
   aspectRatio: string;
   outputFormat: 'png' | 'webp';
+  /** When true, bypass CIE reuse-only gate for explicit layer generation */
+  forceGenerate?: boolean;
 };
 
 export type StudioBuilderGenerateApiResponse = {

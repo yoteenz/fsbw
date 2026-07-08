@@ -15,6 +15,6 @@ export const SIGNED_IN_ACCOUNT_ROUTES = [
   { path: '/account', label: 'Account menu' },
   { path: '/account/concierge', label: 'Concierge' },
   { path: '/account/rewards', label: 'Rewards' },
-  { path: '/orders', label: 'Orders' },
+  { path: '/account/orders', label: 'Orders' },
   { path: '/wishlist', label: 'Wishlist' },
 ] as const;

@@ -2678,6 +2678,7 @@ function App() {
           </Suspense>
         } />
         {/* Brand pages: /brand/about … /brand/reviews, /brand/careers, /brand/terms */}
+        <Route path="/brand" element={<Navigate to="/brand/about" replace />} />
         <Route path="/brand/jobs" element={<Navigate to="/brand/careers" replace />} />
         <Route path="/brand/care" element={<Navigate to="/brand/about" replace />} />
         <Route path="/brand/payment" element={<Navigate to="/brand/about" replace />} />
@@ -2758,6 +2759,7 @@ function App() {
             </Suspense>
           </AccountRouteGuard>
         } />
+        <Route path="/account/notifications" element={<Navigate to="/account/alerts" replace />} />
         <Route path="/account/consult-offer" element={
           <AccountRouteGuard>
             <Suspense fallback={<LoadingScreen />}>
@@ -2826,6 +2828,8 @@ function App() {
             </Suspense>
           </CommerceRouteGuard>
         } />
+        <Route path="/shopping-bag" element={<Navigate to="/bag" replace />} />
+        <Route path="/orders" element={<Navigate to="/account/orders" replace />} />
         <Route path="/checkout/upgrade" element={
           <Suspense fallback={<LoadingScreen />}>
             <CheckoutPage />

@@ -41980,3 +41980,22 @@ User implementation sprint: build **Creative Intelligence Engine™** as Studio 
 - **Smoke test:** `scripts/studio-creative-intelligence-smoke.mjs` — decision persist/retrieve + learning signal; passed.
 - **Philosophy implemented:** reuse-first · cost intelligence · quality tiers · provider selection from capabilities · founder Creative Director voice in `founder_messages`.
 - **Prior arc (same chat):** Asset Registry™ v1 implementation sprint immediately before this prompt.
+
+---
+
+## 2026-07-08 — Launch Integrity Auditor™ — pre-launch audit + route stabilization
+
+User sprint: build **Launch Integrity Auditor™** for Frontal Slayer — comprehensive pre-launch audit/stabilization. **No redesign** — audit, verify, fix only confirmed issues.
+
+- **Auditor system:** `scripts/launch-integrity-auditor.mjs` + `scripts/launch-integrity-auditor/config.mjs` + `types.ts`; npm script `audit:launch`; outputs `audits/launch-integrity/report.json` + `report.md`.
+- **Checks:** route registry (37 launch-critical paths), legacy redirects, lazy import resolution, public assets, TypeScript (`tsc --noEmit`), production build (`vite build`), API route count (277).
+- **Route parser fix:** depth-balanced nested `/admin/*` extraction handles self-closing `<Route />` tags; param route matching (`:departmentId`) for CDS department paths.
+- **Confirmed fixes (no visual changes):**
+  - `/brand` → `/brand/about` redirect (`src/App.tsx`)
+  - `/orders` → `/account/orders` redirect (`src/App.tsx`)
+  - `/shopping-bag` → `/bag` redirect (`src/App.tsx`)
+  - `/account/notifications` → `/account/alerts` redirect (`src/App.tsx`)
+  - CDS Scene Stack: `forceGenerate: true` when layer has no `publicUrl` (`src/hooks/useSceneStack.ts`, `src/services/studio/studioBuilder/api.ts`)
+  - e2e signed-in routes: `/orders` → `/account/orders` (`e2e/helpers/routes.ts`)
+- **Final audit:** score **100/100**, deployment **pass**, 0 critical/high open, 6 fixes applied, 9 manual-review items (Stripe checkout, admin sync, FAL preview, lounge TV, CDS live gen, desktop preview, full studio smoke, a11y, SEO).
+- **Prior arc (same chat):** Asset Registry™ v1 + Creative Intelligence Engine™ v1 implementation sprints; user Q on CDS Story Table scene generation (auto via zone enter / Stack header).

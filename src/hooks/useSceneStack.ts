@@ -97,6 +97,7 @@ export function useSceneStack(
           prompt: compiled.prompt,
           aspectRatio: compiled.aspectRatio,
           outputFormat: compiled.outputFormat,
+          forceGenerate: force || !existing?.publicUrl,
         });
 
         if (!result.ok || !result.publicUrl) {
