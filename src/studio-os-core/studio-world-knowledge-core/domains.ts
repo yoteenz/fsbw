@@ -69,6 +69,11 @@ const DOMAIN_COPY: Record<KnowledgeCoreDomain, { summary: string; question: stri
     question: 'What does the civilization remember?',
     orb: 'Knowledge Engine',
   },
+  'Codex™': {
+    summary: 'Constitutional memory: Codex Articles, volumes, lifecycle, and article-first governance.',
+    question: 'What must be written before we build?',
+    orb: 'Codex Memory',
+  },
   'Marketplace™': {
     summary: 'Economy, distribution, licensing, and asset reuse.',
     question: 'What value travels?',

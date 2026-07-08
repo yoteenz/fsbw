@@ -10,6 +10,22 @@
 
 ---
 
+## Codex-first gate
+
+**ARTICLE-C01 — The Codex First Principle™** now governs major feature creation:
+
+> Every major Studio World feature must become a Codex Article™ before implementation begins.
+
+The Codex lifecycle runs before engineering scope:
+
+```text
+Idea → Exploration → Architectural Evolution → Codex Article™ → Constitution Review™ → World Bible™ → Implementation Plan™ → Engineering → Production → Post-Launch Review → Codex Update™
+```
+
+The four governance layers below still determine validity, but the Codex is the institutional memory that captures the idea, purpose, system connections, dependencies, and future evolution before code exists.
+
+---
+
 ## The four layers
 
 ```
@@ -81,7 +97,7 @@ Behavioral and architectural governance.
 
 Documentation First™ · Canon Promotion™ · No Orphan Objects™ · Agent Memory Subordination™ · Immutability of History™ · Scene Assembly Rules™ · Knowledge Review™ · Repository Governance™ · Approval Workflow™
 
-**Articles:** World Graph Is Truth™ · Three Eras Roadmap™ · Scene Assembly Immutability™ · ARTICLE-K21 Architecture Decision Records™ · ARTICLE-K22 Studio World Knowledge Core™ · ARTICLE-K23 Memory System™ · ARTICLE-D09 Hero Objects™ & Contextual Orb™ · ARTICLE-E01 Profession Simulation Engine™
+**Articles:** World Graph Is Truth™ · Three Eras Roadmap™ · Scene Assembly Immutability™ · ARTICLE-C01 The Codex First Principle™ · ARTICLE-K21 Architecture Decision Records™ · ARTICLE-K22 Studio World Knowledge Core™ · ARTICLE-K23 Memory System™ · ARTICLE-D09 Hero Objects™ & Contextual Orb™ · ARTICLE-E01 Profession Simulation Engine™ · ARTICLE-E02 Career Worlds™
 
 **Graph:** `constitutional-law` · `W-LAW-*`
 
@@ -123,6 +139,8 @@ const result = runDesignReviewFilter({
 ```
 
 Combine with `runConstitutionReview()` and `evaluateImplementationEra()` for full governance gate.
+
+For major features, add `evaluateCodexReadiness()` first so implementation cannot begin without a Codex Article™, purpose, system connections, reusable-capability assessment, and implementation strategy.
 
 ---
 

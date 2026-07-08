@@ -43773,3 +43773,25 @@ Summary of the **full conversation in this chat so far**: the user first request
 
 **Conventions:** Work on `master` only; one deploy per task. Career Worlds should call `syncKnowledgeRetention()` on return; Profession Brain updates should use `queueProfessionBrainRefreshers()`. Extend refresher UX via `RefresherGeneratorRegistry` — do not hardcode profession content in the review engine.
 
+---
+
+## 2026-07-08 — ARTICLE-C01 Codex First Principle™ architecture sprint
+
+Summary of the **full conversation in this chat**: the user first requested an implementation sprint for **Career Worlds™**, extending the Profession Simulation Engine™ into persistent reusable professional worlds; that work was completed and pushed to `master` (`6a8b34dd7`) with core modules, Career Hub prototype, persistence, simulation ticks, docs, and World Graph updates. The user then requested **ARCHITECTURE SPRINT — ARTICLE-C01 The Codex First Principle™**, establishing that Studio World has reached a complexity level where major ideas must be documented as Codex Articles before implementation begins.
+
+- **Context:** The Codex™ is not documentation; it is the constitutional memory of Studio World. It should become the single source of truth for philosophy, systems, features, laws, naming conventions, architectural decisions, and long-term vision. It must outlive individual AI models, conversations, contributors, and implementations.
+- **C01 decisions / outcomes:**
+  - Every **major** Studio World feature must become a **Codex Article™ before implementation begins**.
+  - Codex lifecycle: Idea → Exploration → Architectural Evolution → Codex Article™ → Constitution Review™ → World Bible™ → Implementation Plan™ → Engineering → Production → Post-Launch Review → Codex Update™.
+  - Ten permanent Codex volumes: Studio World Manifesto™, Constitution™, World Bible™, Architecture Standards™, Design Language™, Production Standards™, Profession Brains™, Career Worlds™, Knowledge Core™, Future Vision™.
+  - Every Codex Article contains Article ID, Title, Category, Status, Origin, Purpose, Core Philosophy, Guiding Principles, Architectural Implications, Affected Systems, Dependencies, Future Evolution, Related Articles, Implementation Strategy, Revision History, and Canonical Status.
+  - Canonical Thinking™ questions now gate major ideas: why it exists, how it strengthens Studio World philosophy, how it connects to existing systems, what future systems evolve from it, and whether it should be a reusable platform capability.
+- **Changes:**
+  - Added **`docs/studio-os/codex/ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md`**, `CODEX_ARTICLE_TEMPLATE.md`, and Codex README.
+  - Added **`src/studio-os-core/studio-world-codex/`** with typed volumes, article schema, C01 seed article, pipeline stages, canonical thinking questions, and `evaluateCodexReadiness()`.
+  - Added **`Codex™`** as a Knowledge Core domain and **`C01-codex-first-principle`** as a Canon Knowledge Core entry.
+  - Added Codex World Graph ingestion: **`W-ENG-studio-world-codex`**, **`W-LAW-codex-first-principle`**, and ten Codex Volume `knowledge-object` nodes; graph report now validates **556 nodes · 1044 edges · PASS**.
+  - Added canon file **`knowledge/canon/constitution/codex-first-principle.md`**.
+  - Updated Studio OS docs index, governance hierarchy, and `motherboard/CORE.md`.
+- **Verification:** `npm run build` passed; timestamp-only master-spec generated diffs were reverted, while intentional Codex + World Graph artifacts were retained.
+- **Conventions:** From now on, future major Studio World feature prompts should be treated as Codex-first architecture work before implementation; Knowledge Core, World Bible, ADRs, implementation plans, and production review are lifecycle projections of Codex-approved truth, not replacements for the Codex.

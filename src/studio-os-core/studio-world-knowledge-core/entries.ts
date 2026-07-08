@@ -39,6 +39,14 @@ export const KNOWLEDGE_RETENTION_ARTICLE = {
     'Studio World preserves long-term professional mastery through professional memories, retention profiles, adaptive refreshers, Orb mentorship, and living industry updates.',
 } as const;
 
+export const CODEX_FIRST_PRINCIPLE_ARTICLE = {
+  id: 'ARTICLE-C01',
+  title: 'The Codex First Principle™',
+  approvedDate: '2026-07-08',
+  summary:
+    'Every major Studio World feature becomes a Codex Article™ before implementation so philosophy, system ownership, dependencies, and future evolution are preserved before code.',
+} as const;
+
 export const PROMPT_STANDARDS: PromptStandard[] = [
   {
     id: 'recommended-model',
@@ -614,6 +622,47 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
       'certification-ceremonies',
       'studio-economy',
     ],
+  },
+  {
+    id: 'C01-codex-first-principle',
+    title: 'ARTICLE-C01 — The Codex First Principle™',
+    domain: 'Codex™',
+    status: 'Canon',
+    version: 'v1',
+    summary:
+      'The Studio World Codex™ becomes the constitutional memory and single source of truth; every major feature must become a Codex Article™ before implementation begins.',
+    reasoning:
+      'Studio World has reached a complexity threshold where ideas implemented before documentation risk fragmentation, contradiction, and loss of architectural intent. The Codex preserves philosophy, naming, systems, dependencies, and future evolution before code exists.',
+    finalPrompt:
+      'Establish the Codex™ as institutional memory: every approved idea becomes a Codex Article™ before implementation, following Idea → Exploration → Architectural Evolution → Codex Article™ → Constitution Review™ → World Bible™ → Implementation Plan™ → Engineering → Production → Post-Launch Review → Codex Update™.',
+    architectureAdded: [
+      'Studio World Codex™',
+      'Codex First Principle™',
+      'Codex Pipeline™',
+      'Codex Volumes™',
+      'Codex Article™ template',
+      'Canonical Thinking™ checklist',
+      'Codex World Graph nodes',
+    ],
+    relatedSystems: [
+      'Knowledge Core™',
+      'Memory System™',
+      'World Graph™',
+      'Architecture Decision Records™',
+      'World Bible™',
+      'Production Completion System™',
+      'Studio Production Orchestrator™',
+      'Career Worlds™',
+    ],
+    constitutionArticles: ['ARTICLE-C01', 'ARTICLE-K21', 'ARTICLE-K22', 'ARTICLE-K23', 'ARTICLE-K24'],
+    adrReferences: ['ADR-0001'],
+    worldBibleReferences: [
+      'Studio World Codex™',
+      'Studio World Governance Hierarchy™',
+      'Studio World Knowledge Core™',
+    ],
+    implementationStatus: 'Specified',
+    tags: ['codex', 'codex-first', 'constitutional-memory', 'article-c01'],
   },
 ];
 

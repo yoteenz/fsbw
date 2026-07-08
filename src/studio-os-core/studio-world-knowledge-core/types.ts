@@ -28,6 +28,7 @@ export const KNOWLEDGE_CORE_DOMAINS = [
   'Atlas™',
   'Scene Assembly™',
   'Knowledge Engine™',
+  'Codex™',
   'Marketplace™',
   'Discovery Packs™',
   'Civilization™',
