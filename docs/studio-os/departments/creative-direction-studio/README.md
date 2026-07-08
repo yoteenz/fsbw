@@ -12,15 +12,9 @@
 
 ---
 
-> **"I've entered the creative brain of my company."**
+> **"I've entered the creative headquarters of my brand."**
 
 Creative Direction Studio™ is the **living creative brain of every Project™** — where creative intent is formed, challenged, evolved, and approved **before** work enters production. It exists above production. It is the Golden Department every future Studio OS department learns from.
-
-This folder is the **complete Department Definition package** — the generated output that will later pass into:
-
-- **Studio Asset Compiler™** → FAL generation
-- **Department Runtime™** → living interactive room
-- **Cursor** → handler wiring and project state
 
 **No React · No CSS · No Three.js · No static webpage.**
 
@@ -28,92 +22,98 @@ This folder is the **complete Department Definition package** — the generated 
 
 ## Department Purpose
 
+Creative Direction Studio™ supports:
+
+- Company Genome™ · Project Genome™ interpretation
+- Creative Brief · Living Mood Board · Inspiration Library
+- Creative Timelines · Parallel Branches · Founder Notes
+- Orb Creative Commands · Editorial Art Direction · Reference Analysis
+- Direction Approval · Walk the Room™ critique · Studio Validation Loop™
+
 | Attribute | Value |
 |-----------|-------|
-| **Purpose** | Living creative brain — strategic direction before production |
 | **Metaphor** | Luxury editorial atelier × Hollywood writers' room × Apple Industrial Design Lab |
-| **Emotional goals** | Inspired · Curious · Creative · Powerful · Focused · Supported |
 | **Layout** | Stage (double-height hero) |
 | **Hero object** | Living Mood Wall™ |
 | **Ceremony** | Creative Direction Approval |
-| **Position** | Above Production Engine — continuous, not locked at project creation |
+| **Exit** | Discover Department™ (and Story · Production per project) |
 
 ---
 
 ## Package Contents
 
-| File | Schema | Purpose |
-|------|--------|---------|
-| [department.json](./department.json) | Department Manifest | Identity · profiles · concierges · unlocks |
-| [room-dna.json](./room-dna.json) | Room DNA™ | Aesthetic slider snapshot |
-| [environment-blueprint.md](./environment-blueprint.md) | Environment Blueprint | Architecture · lighting · zones · navigation |
-| [asset-blueprint.md](./asset-blueprint.md) | Asset Blueprint | Per-object specs · dependencies |
-| [asset-manifest.json](./asset-manifest.json) | Asset Manifest | Full inventory for Asset Compiler |
-| [interaction-manifest.json](./interaction-manifest.json) | Interaction Manifest | Verb bindings per zone |
-| [scene-assembly-blueprint.md](./scene-assembly-blueprint.md) | Scene Assembly | Runtime + Cursor assembly rules |
-| [fal-prompt-package/](./fal-prompt-package/) | Environment Prompt Package | FAL-ready generation prompts |
+| File | Purpose |
+|------|---------|
+| [department.json](./department.json) | Department Manifest |
+| [room-dna.json](./room-dna.json) | Room DNA™ — 17 sliders |
+| [environment-blueprint.md](./environment-blueprint.md) | Physical studio environment |
+| [asset-blueprint.md](./asset-blueprint.md) | Per-object modular specs |
+| [asset-manifest.json](./asset-manifest.json) | 35 assets · 9-stage pipeline |
+| [interaction-manifest.json](./interaction-manifest.json) | Verb bindings |
+| [interactions-catalog.md](./interactions-catalog.md) | Full interaction definitions |
+| [scene-assembly-blueprint.md](./scene-assembly-blueprint.md) | Runtime assembly + mobile/desktop |
+| [ai-team.md](./ai-team.md) | 9 AI employees |
+| [company-genome-adaptation.md](./company-genome-adaptation.md) | 7 industry examples |
+| [validation-criteria.md](./validation-criteria.md) | Golden success gates |
+| [fal-prompt-package/](./fal-prompt-package/) | 15 FAL prompt files |
 
 ---
 
-## Seven Interactive Zones
+## Ten Interactive Zones
 
-| Zone | Asset ID | Purpose |
+| Zone | Asset(s) | Purpose |
 |------|----------|---------|
-| Creative Brief Wall™ | `wall-brief-cds` | Mission · objective · audience · founder truth |
-| Living Mood Wall™ | `wall-mood-cds` | Infinite inspiration — hero surface |
-| Company Genome Observatory™ | `observatory-cds` | Living Genome visualization |
-| Project Timeline Table™ | `table-timeline-cds` | Temporal command — branches · approvals |
-| Creative Sandbox™ | `table-sandbox-cds` | Isolated experimentation |
-| Reference Library™ | `shelf-library-cds` | Permanent visual memory |
-| Orb Command Center™ | `orb-cds` · `pedestal-orb-cds` | Intelligence anchor |
+| Arrival | `portal-entry-cds` | Entry ceremony |
+| Creative Brief Wall™ | `wall-brief-cds` | Strategic anchor |
+| Living Mood Wall™ | `wall-mood-cds` | Hero inspiration |
+| Company Genome Observatory™ | `observatory-cds` | Living Genome |
+| Project Timeline Table™ | `table-timeline-cds` | Temporal command |
+| Creative Sandbox™ | `table-sandbox-cds` | Isolated experiments |
+| Branch Comparison Area™ | `screen-compare-cds` | Side-by-side branches |
+| Reference Library™ | `shelf-library-cds` | Visual memory |
+| Founder Review Area™ | `pedestal-approval-cds` · `panel-founder-notes-cds` | Approval + notes |
+| Orb Command Center™ | `orb-cds` · `pedestal-orb-cds` | Intelligence |
+| Exit → Discover | `portal-exit-cds` | Departure |
+
+---
+
+## Room DNA™ Summary (Default)
+
+| Slider | Value | Feel |
+|--------|-------|------|
+| luxuryLevel | 0.92 | Ultra-luxury editorial |
+| editorialLevel | 0.94 | Strong typographic composition |
+| immersionLevel | 0.88 | Deep spatial presence |
+| calmLevel | 0.78 | Intelligent calm |
+| creativeChaosLevel | 0.42 | Controlled exploration |
+| founderControl | 0.95 | Founder approves all direction |
+| aiPresence | 0.65 | Ambient staff, not overwhelming |
+
+**Default:** luxurious · editorial · cinematic · intelligent · calm · immersive · architectural — **not** corporate · not SaaS.
 
 ---
 
 ## Handoff Pipeline
 
 ```
-Creative Direction Studio™ Definition (this folder)
-         ↓
-Studio Asset Compiler™
-  ← asset-manifest.json + fal-prompt-package/
-         ↓
-DepartmentPackage.zip (cooked assets)
-         ↓
-Studio Validation Loop™
-         ↓
-Department Runtime™
-  ← scene-assembly-blueprint.md + interaction-manifest.json
-         ↓
-Cursor (project state · production signals)
+Definition (this folder)
+    ↓
+Studio Asset Compiler™ + FAL
+    ↓
+DepartmentPackage.zip
+    ↓
+Validation Loop™
+    ↓
+Department Runtime™ + Cursor
 ```
 
 ---
 
-## Design Laws (Golden)
+## Golden Department Inheritance
 
-1. **No flattened backgrounds** — 45 modular assets, max 120 MB
-2. **Every object is its own asset** — independent FAL prompt + behavior
-3. **Genome-native** — materials · lighting · voice via injection slots, never baked
-4. **Physical verbs** — pin · branch · approve — not tabs or forms
-5. **Sandbox isolation** — experiments do not touch main Project until approved
-6. **Orb is furniture** — pedestal anchor, not chat bubble
+Every future department inherits: modular asset pipeline · Room DNA machinery · zone interaction model · Genome injection · ceremonies · Orb + Concierge stack · Walk the Room™ compatibility.
 
----
-
-## Inheritance
-
-Every future department must answer: **Does it feel as alive as Creative Direction Studio™?**
-
-| Inherit | From CDS |
-|---------|----------|
-| Modular asset pipeline | ✓ |
-| Room DNA™ slider machinery | ✓ |
-| Zone-based interaction model | ✓ |
-| Genome injection pattern | ✓ |
-| Arrival ceremony + approval ceremony | ✓ |
-| Orb + Concierge stack | ✓ |
-
-See [Golden Department Marketplace & Inheritance](../../golden-department/creative-direction-studio/12_MARKETPLACE_AND_INHERITANCE.md).
+See [validation-criteria.md](./validation-criteria.md).
 
 ---
 

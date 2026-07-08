@@ -59,8 +59,10 @@ Double-height editorial atelier — part luxury architecture studio, part Hollyw
 | `timeline-table` | X = 0, Z = 0.35, center | primary | — |
 | `sandbox` | X = 0.2, Z = 0.15, behind table | secondary | — |
 | `reference-library` | X = 0.75, Z = 0.25 | secondary | — |
+| `branch-comparison` | X = 0.25, Z = 0.12 | secondary | — |
+| `founder-review` | X = 0.45, Z = 0.30 | primary | — |
 | `orb-command` | X = 0.35, Y = 0.55, Z = 0.4 | orb | — |
-| `departure-threshold` | Z = -0.9, center-right | exit | — |
+| `departure-threshold` | Z = -0.9, center-right | exit | → Discover Department™ |
 
 ---
 
@@ -176,6 +178,40 @@ env-architecture (shell)
 ├── env-atmosphere
 └── env-navigation + env-camera
 ```
+
+---
+
+## Depth Planes
+
+| Plane | Elements | Parallax |
+|-------|----------|----------|
+| **Foreground** | Timeline Table · Sandbox · Orb Pedestal · Inspiration Drop Zone | 1.0× |
+| **Midground** | Brief Wall · Library · Founder Review · Branch Comparison | 0.6× |
+| **Background** | Living Mood Wall · Glass exterior · Ceiling coffer | 0.3× |
+
+Environmental storytelling: rejected references fade to archive below Mood Wall · Observatory data streams connect to Brief · approval ceremony elevates ceiling accent.
+
+---
+
+## Spatial Flow
+
+```
+ARRIVAL → Mood Wall reveal (hero) → Timeline Table (primary work)
+    ↓                                    ↓
+Brief Wall ←→ Observatory          Sandbox / Branch Comparison
+    ↓                                    ↓
+Reference Library ← drag refs ← Mood Wall
+    ↓
+Orb Command (routes all) → Founder Review → Approval Pedestal
+    ↓
+EXIT → Discover Department™ (or Story / Production per project)
+```
+
+---
+
+## Genome Room Transformation
+
+Architecture and zone topology **fixed**. Per [company-genome-adaptation.md](./company-genome-adaptation.md): materials · lighting · exterior · Mood Wall character · Observatory palette · Orb voice · audio · particles · terminology change completely. Examples: NDX · Frontal Slayer · Luxury Salon · Law Firm · Restaurant · Construction · Creative Agency.
 
 ---
 

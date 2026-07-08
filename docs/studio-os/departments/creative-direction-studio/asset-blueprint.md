@@ -153,14 +153,110 @@ Every object is an **independently generatable asset** with its own FAL prompt, 
 | **FAL Prompt** | `fal-prompt-package/furniture.md#library` |
 | **Interaction** | browse · filter · drag · preview · search · pin · inspect |
 
-### `screen-compare-cds` — Sandbox Comparison Screens
+### `screen-compare-cds` — Branch Comparison Area™ / Twin Screens
 
 | Field | Value |
 |-------|-------|
-| **Purpose** | Twin glass panels for branch compare |
-| **Zone** | sandbox |
+| **Purpose** | Branch Comparison Table — side-by-side concept compare |
+| **Zone** | branch-comparison · sandbox |
 | **FAL Prompt** | `fal-prompt-package/objects.md#compare-screens` |
-| **Interaction** | compare · preview |
+| **Interaction** | compare · preview · merge preview |
+| **Data in** | sandbox branch concepts |
+| **Data out** | comparison session metadata |
+
+---
+
+## Supporting Core Objects
+
+### `zone-inspiration-drop-cds` — Inspiration Drop Zone
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Physical drop target for links · images · screenshots |
+| **Zone** | mood-wall (floor threshold near entry) |
+| **Visual** | Subtle luminous floor ring · frosted glass disc |
+| **FAL Prompt** | `fal-prompt-package/objects.md#inspiration-drop` |
+| **Interaction** | reference-drop · paste · upload |
+| **Data in** | files · URLs |
+| **Data out** | ingest pipeline → Mood Wall or Library |
+| **Reuse** | `inspiration-drop-zone` |
+
+### `panel-founder-notes-cds` — Founder Notes Panel
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Floating glass cards for founder voice · sketches · decisions |
+| **Zone** | founder-review · timeline-table |
+| **Visual** | Stack of glass cards above timeline nodes |
+| **FAL Prompt** | `fal-prompt-package/objects.md#founder-notes` |
+| **Interaction** | pin · speak · inspect |
+| **Data in** | voice transcripts · manual notes |
+| **Data out** | `founderNotes` · Founder Chronicle |
+| **AI** | Founder Memory Concierge |
+
+### `console-command-cds` — Creative Command Console
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Orb-adjacent command ring surface — touch creative commands |
+| **Zone** | orb-command |
+| **Visual** | Etched ring on pedestal top — no literal buttons |
+| **FAL Prompt** | `fal-prompt-package/orb.md#pedestal` (integrated) |
+| **Interaction** | touch · speak · activate |
+| **Data in** | voice commands |
+| **Data out** | routed actions |
+
+### `glass-panels-cds` — Glass Presentation Panels
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Frosted inspect overlays — detail without leaving room |
+| **FAL Prompt** | `fal-prompt-package/objects.md` |
+| **Interaction** | inspect · minimize |
+| **Reuse** | `glass-inspect-panels` |
+
+### `panel-context-float-cds` — Floating Context Panels
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Genome-tinted context glass near active object |
+| **Zone** | any (runtime spawned) |
+| **Interaction** | inspect · expand · minimize |
+| **Data in** | object metadata · AI suggestions |
+
+### `pedestal-approval-cds` — Approval Pedestal
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Founder Review Area — ceremonial direction commit surface |
+| **Zone** | founder-review |
+| **Visual** | Stone pedestal with seal impression zone near timeline |
+| **FAL Prompt** | `fal-prompt-package/objects.md#approval-pedestal` |
+| **Interaction** | approve · inspect |
+| **Data out** | `creative-approval` ceremony · production unlock |
+
+### `markers-walk-room-cds` — Walk the Room™ Path Markers
+
+| Field | Value |
+|-------|-------|
+| **Purpose** | Spatial critique path — floor light traces between zones |
+| **Zone** | global navigation overlay |
+| **Visual** | Subtle brass inlay path lines · zone stop markers |
+| **FAL Prompt** | `fal-prompt-package/objects.md#walk-markers` |
+| **Interaction** | walk · activate critique |
+| **Data out** | Walk the Room™ session start |
+
+### `shelf-library-cds` — Reference Library Wall
+
+Alias: Reference Library™ wall + shelving — see above.
+
+### `lighting-rig-cds` — Ambient Light System
+
+See Atmosphere Assets — three-point editorial rig.
+
+### `particles-ambient-cds` — Particle System
+
+See Atmosphere Assets — hero dust · haze.
 
 ---
 
@@ -237,6 +333,12 @@ env-shell-cds
 ├── pedestal-orb-cds
 │   └── orb-cds
 ├── screen-compare-cds
+├── zone-inspiration-drop-cds
+├── panel-founder-notes-cds
+├── pedestal-approval-cds
+├── markers-walk-room-cds
+├── panel-context-float-cds
+├── console-command-cds
 ├── lighting-rig-cds
 ├── particles-ambient-cds
 ├── portal-entry-cds

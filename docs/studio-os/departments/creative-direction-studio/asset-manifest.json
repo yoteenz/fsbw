@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "packageId": "pkg-creative-direction-golden-v1",
   "goldenDepartment": true,
-  "count": 45,
+  "count": 35,
   "budgetMB": 120,
 
   "categories": {
@@ -13,7 +13,8 @@
     "intelligence": ["orb-cds", "pedestal-orb-cds", "ai-creative-director-cds", "ai-research-concierge-cds", "ai-brand-concierge-cds"],
     "atmosphere": ["lighting-rig-cds", "particles-ambient-cds", "audio-ambient-cds", "audio-ceremony-cds", "audio-orb-cds"],
     "navigation": ["camera-paths-cds", "portal-entry-cds", "portal-exit-cds"],
-    "interaction": ["ceremony-approval-cds", "glass-panels-cds"],
+    "interaction": ["ceremony-approval-cds", "glass-panels-cds", "panel-context-float-cds", "markers-walk-room-cds"],
+    "founder": ["panel-founder-notes-cds", "pedestal-approval-cds", "zone-inspiration-drop-cds"],
     "content-seed": ["seed-mood-cds", "seed-brief-cds", "seed-library-cds"]
   },
 
@@ -500,6 +501,86 @@
       "promptRef": null,
       "outputPath": "seeds/reference-library.json",
       "optional": true
+    },
+    {
+      "assetId": "zone-inspiration-drop-cds",
+      "category": "founder",
+      "objectClass": "drop-zone",
+      "generatorPrompt": "Inspiration drop zone, subtle luminous floor ring frosted glass disc, luxury editorial atelier entry threshold, reference ingest affordance",
+      "dimensions": { "diameterM": 1.2, "heightM": 0.02 },
+      "material": "frosted-glass-luminous-ring",
+      "interactiveState": "reference-drop-paste-upload",
+      "dependencies": ["env-floor-cds"],
+      "recommendedReuse": ["inspiration-drop-zone"],
+      "zoneId": "mood-wall",
+      "stageOrder": 6,
+      "genomeSlots": [],
+      "promptRef": "fal-prompt-package/objects.md#inspiration-drop",
+      "outputPath": "zones/inspiration-drop.glb"
+    },
+    {
+      "assetId": "panel-founder-notes-cds",
+      "category": "founder",
+      "objectClass": "founder-notes-panel",
+      "generatorPrompt": "Founder Notes floating glass card stack, frosted editorial glass panels, luxury atelier, no readable UI text",
+      "dimensions": { "widthM": 0.4, "heightM": 0.55, "depthM": 0.02 },
+      "material": "frosted-glass-card",
+      "interactiveState": "pin-speak-inspect",
+      "dependencies": ["table-timeline-cds"],
+      "recommendedReuse": ["founder-notes-panel"],
+      "zoneId": "founder-review",
+      "stageOrder": 7,
+      "genomeSlots": ["voice"],
+      "promptRef": "fal-prompt-package/objects.md#founder-notes",
+      "outputPath": "zones/founder-notes.glb"
+    },
+    {
+      "assetId": "pedestal-approval-cds",
+      "category": "founder",
+      "objectClass": "approval-pedestal",
+      "generatorPrompt": "Approval pedestal stone cylinder with seal impression zone, founder review area, luxury editorial ceremony surface",
+      "dimensions": { "diameterM": 0.6, "heightM": 1.0 },
+      "material": "stone-brass-accent",
+      "interactiveState": "approve-inspect",
+      "dependencies": ["env-floor-cds", "table-timeline-cds"],
+      "recommendedReuse": ["approval-pedestal"],
+      "zoneId": "founder-review",
+      "stageOrder": 7,
+      "genomeSlots": ["materialLanguage"],
+      "promptRef": "fal-prompt-package/objects.md#approval-pedestal",
+      "outputPath": "zones/approval-pedestal.glb"
+    },
+    {
+      "assetId": "markers-walk-room-cds",
+      "category": "interaction",
+      "objectClass": "walk-path-markers",
+      "generatorPrompt": "Walk the Room path markers, subtle brass floor inlay lines between zones, luxury editorial atelier navigation traces",
+      "dimensions": null,
+      "material": "brass-floor-inlay",
+      "interactiveState": "walk-activate-critique",
+      "dependencies": ["env-floor-cds", "camera-paths-cds"],
+      "recommendedReuse": ["walk-the-room-markers"],
+      "zoneId": null,
+      "stageOrder": 7,
+      "genomeSlots": [],
+      "promptRef": "fal-prompt-package/objects.md#walk-markers",
+      "outputPath": "navigation/walk-markers.glb"
+    },
+    {
+      "assetId": "panel-context-float-cds",
+      "category": "interaction",
+      "objectClass": "floating-context-panel",
+      "generatorPrompt": "Floating context glass panel, frosted Genome tint, rounded editorial corners, inspect overlay furniture not UI",
+      "dimensions": { "widthM": 0.5, "heightM": 0.35, "depthM": 0.02 },
+      "material": "frosted-glass-genome-tint",
+      "interactiveState": "inspect-expand-minimize",
+      "dependencies": ["glass-panels-cds"],
+      "recommendedReuse": ["floating-context-panel"],
+      "zoneId": null,
+      "stageOrder": 7,
+      "genomeSlots": ["materialLanguage"],
+      "promptRef": "fal-prompt-package/objects.md",
+      "outputPath": "ui/context-panel.glb"
     }
   ],
 
@@ -509,8 +590,8 @@
     { "stage": 3, "label": "windows-glass", "assetIds": ["env-window-cds", "glass-panels-cds"] },
     { "stage": 4, "label": "lighting", "assetIds": ["lighting-rig-cds"] },
     { "stage": 5, "label": "furniture", "assetIds": ["table-timeline-cds", "table-sandbox-cds", "shelf-library-cds"] },
-    { "stage": 6, "label": "intelligence-zones", "assetIds": ["wall-mood-cds", "wall-brief-cds", "observatory-cds", "screen-compare-cds", "pedestal-orb-cds", "orb-cds"] },
-    { "stage": 7, "label": "atmosphere-navigation", "assetIds": ["particles-ambient-cds", "portal-entry-cds", "portal-exit-cds", "camera-paths-cds"] },
+    { "stage": 6, "label": "intelligence-zones", "assetIds": ["wall-mood-cds", "wall-brief-cds", "observatory-cds", "screen-compare-cds", "zone-inspiration-drop-cds", "pedestal-orb-cds", "orb-cds"] },
+    { "stage": 7, "label": "atmosphere-navigation", "assetIds": ["particles-ambient-cds", "portal-entry-cds", "portal-exit-cds", "camera-paths-cds", "panel-founder-notes-cds", "pedestal-approval-cds", "markers-walk-room-cds", "panel-context-float-cds"] },
     { "stage": 8, "label": "ai-audio-ceremony", "assetIds": ["ai-creative-director-cds", "ai-research-concierge-cds", "ai-brand-concierge-cds", "audio-ambient-cds", "audio-ceremony-cds", "audio-orb-cds", "ceremony-approval-cds"] },
     { "stage": 9, "label": "content-seeds", "assetIds": ["seed-mood-cds", "seed-brief-cds", "seed-library-cds"], "optional": true }
   ]

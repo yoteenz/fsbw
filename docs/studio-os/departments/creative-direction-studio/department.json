@@ -35,15 +35,17 @@
     "layoutTemplate": "stage",
     "envelope": { "widthM": 18.0, "depthM": 12.0, "footprintM2": 120, "aspectRatio": "3:2" },
     "zones": [
-      { "id": "arrival-threshold", "type": "entry", "displayName": "Entry Portal" },
+      { "id": "arrival-threshold", "type": "entry", "displayName": "Arrival Zone" },
       { "id": "brief-wall", "type": "secondary", "displayName": "Creative Brief Wall™" },
       { "id": "mood-wall", "type": "hero", "displayName": "Living Mood Wall™" },
       { "id": "observatory", "type": "secondary", "displayName": "Company Genome Observatory™" },
       { "id": "timeline-table", "type": "primary", "displayName": "Project Timeline Table™" },
       { "id": "sandbox", "type": "secondary", "displayName": "Creative Sandbox™" },
+      { "id": "branch-comparison", "type": "secondary", "displayName": "Branch Comparison Area™" },
       { "id": "reference-library", "type": "secondary", "displayName": "Reference Library™" },
+      { "id": "founder-review", "type": "primary", "displayName": "Founder Review Area™" },
       { "id": "orb-command", "type": "orb", "displayName": "Orb Command Center™" },
-      { "id": "departure-threshold", "type": "exit", "displayName": "Exit Portal" }
+      { "id": "departure-threshold", "type": "exit", "displayName": "Exit → Discover Department™" }
     ],
     "heroObjectId": "wall-mood-cds",
     "entryZoneId": "arrival-threshold",
@@ -53,8 +55,33 @@
   "assets": {
     "manifestRef": "asset-manifest.json",
     "blueprintRef": "asset-blueprint.md",
-    "count": 45,
+    "count": 35,
     "budgetMB": 120
+  },
+
+  "capabilities": {
+    "companyGenome": true,
+    "projectGenome": true,
+    "creativeBrief": true,
+    "livingMoodBoard": true,
+    "inspirationLibrary": true,
+    "creativeTimelines": true,
+    "parallelBranches": true,
+    "founderNotes": true,
+    "orbCreativeCommands": true,
+    "editorialArtDirection": true,
+    "referenceAnalysis": true,
+    "directionApproval": true,
+    "walkTheRoom": true,
+    "validationLoop": true,
+    "discoverDeparture": true
+  },
+
+  "documentation": {
+    "aiTeam": "ai-team.md",
+    "genomeAdaptation": "company-genome-adaptation.md",
+    "interactionsCatalog": "interactions-catalog.md",
+    "validationCriteria": "validation-criteria.md"
   },
 
   "interactions": {
@@ -68,10 +95,15 @@
   },
 
   "aiConcierges": [
+    { "roleId": "studio-orb", "required": true, "zones": ["orb-command"] },
     { "roleId": "creative-director", "required": true, "zones": ["brief-wall", "timeline-table"] },
+    { "roleId": "editorial-art-director", "required": true, "zones": ["mood-wall"] },
     { "roleId": "brand-concierge", "required": true, "zones": ["observatory", "brief-wall"] },
-    { "roleId": "research-concierge", "required": true, "zones": ["mood-wall", "reference-library"] },
-    { "roleId": "production-manager", "required": false, "zones": ["timeline-table"] }
+    { "roleId": "experience-architect", "required": false, "zones": ["observatory", "brief-wall"] },
+    { "roleId": "motion-director", "required": false, "zones": ["mood-wall"] },
+    { "roleId": "visual-research-concierge", "required": true, "zones": ["mood-wall", "reference-library"] },
+    { "roleId": "marketing-concierge", "required": false, "zones": ["sandbox", "brief-wall"] },
+    { "roleId": "founder-memory-concierge", "required": true, "zones": ["founder-review", "brief-wall"] }
   ],
 
   "orb": {

@@ -272,6 +272,50 @@ Observatory reads live Genome — domains pulse on update.
 | interaction-colliders | every interaction-manifest object has collider |
 | sandbox-isolation | sandbox mutations do not write main project state until approve |
 | genome-observatory | observatory-cds bound to live Genome feed |
+| walk-the-room | markers-walk-room-cds loaded with navigation layer |
+| discover-exit | portal-exit-cds routes to `discovery` department |
+
+---
+
+## Mobile Adaptation
+
+| Aspect | Mobile Behavior |
+|--------|-----------------|
+| Camera | Single primary-work default · zone focus transitions replace walk |
+| Navigation | Tap zone markers in radial menu — not ghost-walk |
+| Mood Wall | Horizontal scrub primary · pinch compare |
+| Timeline | Vertical stack fallback for table content planes |
+| Orb | Full-width conversation mode — pedestal remains visible in mini form |
+| Walk the Room™ | Guided zone sequence — auto camera path vs free walk |
+| Particles | Reduced density 50% · optional off per device tier |
+| Asset budget | Lazy-load decor · stage 9 seeds deferred |
+
+**Law:** All verbs functional on mobile — beauty may simplify, never disable approve/branch.
+
+---
+
+## Desktop Adaptation
+
+| Aspect | Desktop Behavior |
+|--------|------------------|
+| Camera | Full camera path set · mouse orbit on inspect |
+| Navigation | Ghost-walk + zone triggers |
+| Mood Wall | Full parallax depth planes |
+| Multi-panel | Floating context panels alongside hero view |
+| Walk the Room™ | Free path following floor markers |
+| Keyboard | Paste link · shortcuts for approve/reject with permission gates |
+
+---
+
+## Fallback Behavior
+
+| Condition | Fallback |
+|-----------|----------|
+| Asset load fail | Placeholder genome-tinted bounding box — zone still interactive |
+| Reduced motion | Static beauty per interaction-manifest |
+| Low bandwidth | Environment shell + hero mood wall priority load |
+| No project context | Seed brief + mood from Company Genome only |
+| Genome unavailable | Default Room DNA slider snapshot |
 
 ---
 

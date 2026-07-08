@@ -85,3 +85,43 @@ Content seeds are JSON metadata — not FAL mesh generation.
 | Timeline Table™ | [timeline-table.md](./timeline-table.md) |
 | Genome Observatory™ | [genome-observatory.md](./genome-observatory.md) |
 | Studio Orb + Pedestal | [orb.md](./orb.md) |
+
+---
+
+## zone-inspiration-drop-cds — Inspiration Drop Zone {#inspiration-drop}
+
+### Prompt
+
+Inspiration drop zone floor disc, subtle luminous frosted glass ring flush with polished stone floor, soft internal glow inviting reference ingest, luxury editorial atelier entry threshold, physical drop affordance not UI upload button, photorealistic 3D object, studio lighting, transparent background.
+
+### Negative
+
+upload button, file picker UI, dashed drag-drop rectangle, SaaS import modal
+
+---
+
+## panel-founder-notes-cds — Founder Notes Panel {#founder-notes}
+
+### Prompt
+
+Stack of floating frosted glass note cards, editorial luxury atelier, subtle depth offset between cards, no readable text baked, glass furniture not UI widget, photorealistic 3D, transparent background.
+
+---
+
+## pedestal-approval-cds — Approval Pedestal {#approval-pedestal}
+
+### Prompt
+
+Ceremonial approval pedestal, stone cylinder with brass seal impression disc on top, founder review ceremony surface, luxury editorial atelier, sculptural not transactional, photorealistic 3D, studio lighting, transparent background.
+
+---
+
+## markers-walk-room-cds — Walk the Room™ Path Markers {#walk-markers}
+
+### Prompt
+
+Subtle brass floor inlay path lines connecting creative studio zones, luxury editorial atelier navigation traces, low profile flush with stone floor, ambient luminous when critique active, photorealistic architectural detail, no literal signage text.
+
+### Negative
+
+arrow stickers, wayfinding UI, GPS map overlay
