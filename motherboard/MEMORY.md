@@ -42590,8 +42590,11 @@ User **FOLLOW-UP SPRINT — Innovation Lineage™ (The Living Innovation Graph):
 
 ---
 
+<<<<<<< HEAD
 ---
 
+=======
+>>>>>>> e732b4a6 (Four-layer governance — Design Principles, World Physics, Constitution, Implementation Standards + Design Review Filter)
 ## 2026-07-08 — Studio World Three Eras Roadmap™ (guiding architecture)
 
 User defined **three major eras** for Studio World's evolution — **not** to build all three today, but as a **guiding principle** every future system must be evaluated against.
@@ -42631,6 +42634,7 @@ User **FOLLOW-UP SPRINT — Innovation Constellations™ (The Living Knowledge U
 - **Boundaries:** visualization layer — not Marketplace redesign; demo/heuristic universe from lineage; full real-time World Graph ingestion deferred.
 - **Prior arc (same chat):** Innovation Lineage™ · World Graph™ Phase 1 · Three Eras Roadmap™ · Collaborative Innovation Network™ · Global Atlas Layer™.
 
+<<<<<<< HEAD
 ---
 
 ## 2026-07-08 — Innovation Expeditions™ guided knowledge network
@@ -42652,6 +42656,8 @@ User **FOLLOW-UP SPRINT — Innovation Expeditions™ (The Guided Knowledge Netw
 - **Boundaries:** guided exploration layer — not tutorial/docs redesign; demo/heuristic expeditions; full community authoring + live event scheduling deferred.
 - **Prior arc (same chat):** Innovation Constellations™ · Innovation Lineage™ · Three Eras Roadmap™ · World Graph™ Phase 1 · Collaborative Innovation Network™ · Global Atlas Layer™.
 
+=======
+>>>>>>> e732b4a6 (Four-layer governance — Design Principles, World Physics, Constitution, Implementation Standards + Design Review Filter)
 ---
 
 ## 2026-07-08 — World Physics™ + three-tier Canon hierarchy (approved)
@@ -42669,5 +42675,30 @@ User **approved** Three Eras constitutional direction and introduced the next ar
   - `knowledge/canon/README.md` · `knowledge/canon/physics/` (10 laws) · `behavioral-laws.md` · `implementation-standards/README.md`
   - `src/studio-os-core/world-physics/` · `behavioral-laws.ts` · `implementation-standards/`
   - World Graph: `foundational-physics-law` (`W-PHY-*`) · `implementation-standard` (`W-STD-*`) · ingestion adapters · `depends-on` / `implements` edges (387 nodes · 533 edges)
+<<<<<<< HEAD
 - **Prior arc (same chat):** Three Eras Roadmap™ · World Graph Phase 1 · Innovation Lineage™ · Scene Stack hardening · Knowledge System.
 
+=======
+- **Prior arc (same chat):** Three Eras Roadmap™ · World Graph Phase 1 · Innovation Lineage™ · Innovation Constellations™ · Scene Stack hardening · Knowledge System.
+
+---
+
+## 2026-07-08 — Four-layer governance hierarchy + Design Review Filter™ (final model)
+
+User **approved** Knowledge Core, Constitutional Laws, repository architecture, and **discovered the final governance hierarchy** — four distinct layers, each serving a different purpose. Supersedes three-tier model by adding **Design Principles™** as Layer 1.
+
+- **Layer 1 — Design Principles™ (philosophy):** Immersion Over Pages™ · World First™ · Reuse Before Regeneration™ · Memory Before Intelligence™ · Progressive Disclosure™ · Everything Has A Home™ · Beauty Through Function™ · Founders Build Worlds™ — north star when multiple valid solutions exist.
+- **Layer 2 — World Physics™ (immutable):** ten natural laws — unchanged from prior sprint.
+- **Layer 3 — Constitutional Law™ (rare change):** expanded behavioral laws — Documentation First™ · Canon Promotion™ · No Orphan Objects™ · **Agent Memory Subordination™** · Immutability of History™ · **Scene Assembly Rules™** · **Knowledge Review™** · **Repository Governance™** · **Approval Workflow™** + Eight Foundational Laws + articles.
+- **Layer 4 — Implementation Standards™ (continuous):** expanded to 14 standards — repository structure · naming · scene graph contract · generation API · CI · migration · **Design Review Filter™** · etc.
+- **Inheritance:** Design Principles → Physics → Constitution → Standards → Code → Runtime → Experience. No layer violates the layer above.
+- **Design Review Filter™ (6 steps):** Principles → Physics → Constitution → Standards → technical soundness → immersive/premium/coherent experience. `runDesignReviewFilter()` in `design-principles/design-review.ts`.
+- **Final vision:** Studio World as coherent civilization — invisible, consistent, automatically enforced rules; founders inhabit a world not software.
+- **Delivered:**
+  - `docs/studio-os/governance/STUDIO_WORLD_GOVERNANCE_HIERARCHY.md` — canonical four-layer doc
+  - `src/studio-os-core/design-principles/` — principles + design review
+  - Updated behavioral-laws (9 laws) · implementation-standards (14) · physics principleBasis edges
+  - World Graph: `design-principle` (`W-DPR-*`) · 407 nodes · 603 edges
+  - Updated `knowledge/canon/` · CANON_HIERARCHY · constitution · world-graph architecture docs
+- **Prior arc (same chat):** Three Eras™ · World Physics three-tier · World Graph Phase 1 · Knowledge Core approved · Innovation Constellations™ · Scene Stack hardening.
+>>>>>>> e732b4a6 (Four-layer governance — Design Principles, World Physics, Constitution, Implementation Standards + Design Review Filter)

@@ -1,20 +1,21 @@
 # Behavioral Constitutional Laws™
 
-**Canon Tier 2 · Process governance**
+**Layer 3 governance · Process and architecture**
 
-These laws govern what Studio World **may do** — subordinate to Foundational Physics™.
+| # | Law | Summary |
+|---|-----|---------|
+| 1 | Documentation First™ | Graph-first; register before ship |
+| 2 | Canon Promotion™ | Lifecycle graduation to canon |
+| 3 | No Orphan Objects™ | Every object has a home |
+| 4 | Agent Memory Subordination™ | Motherboard syncs to graph; graph is truth |
+| 5 | Immutability of History™ | Historical nodes read-only |
+| 6 | Scene Assembly Rules™ | Runtime composite; no layer re-generation |
+| 7 | Knowledge Review™ | Flagship proposals pass governance review |
+| 8 | Repository Governance™ | Master-only · one deploy per task |
+| 9 | Approval Workflow™ | Founder final authority; no silent canon |
 
-| # | Law | Physics basis |
-|---|-----|---------------|
-| 1 | Documentation First™ | World Memory, Knowledge Conservation |
-| 2 | No Orphan Objects™ | Physical Place, Relationship Gravity |
-| 3 | Canon Promotion™ | Knowledge Conservation, Identity, Temporal |
-| 4 | Immutability of History™ | Knowledge Conservation, Temporal Continuity |
-| 5 | Agent Memory™ | World Memory, Knowledge Conservation |
-| 6 | Scene Assembly™ | Scene Integrity, Asset Conservation, Blueprint Determinism |
+**Eight Foundational Laws** (flagship governance) remain in `laws.ts`.
 
 **Code:** `src/studio-os-core/studio-world-constitution/behavioral-laws.ts`
 
-The **Eight Foundational Laws** (flagship governance) remain in `laws.ts`.
-
-*Constitution changes rarely.*
+*Constitution changes rarely. Subordinate to Design Principles™ and World Physics™.*

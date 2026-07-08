@@ -11,7 +11,7 @@
 
 Studio World should never drift back toward traditional software. The Constitution™ is the permanent operating framework that preserves philosophy, architecture, responsibilities, and evolution for years to come.
 
-**Canon has three tiers:** Foundational Physics™ (immutable) → Constitutional Law™ (rare change) → Implementation Standards™ (continuous evolution). See [STUDIO_WORLD_CANON_HIERARCHY.md](./canon/STUDIO_WORLD_CANON_HIERARCHY.md) and [STUDIO_WORLD_PHYSICS_ARCHITECTURE.md](./world-physics/STUDIO_WORLD_PHYSICS_ARCHITECTURE.md).
+**Canon has four governance layers:** Design Principles™ (philosophy) → World Physics™ (immutable) → Constitutional Law™ (rare change) → Implementation Standards™ (continuous evolution). See [STUDIO_WORLD_GOVERNANCE_HIERARCHY.md](./governance/STUDIO_WORLD_GOVERNANCE_HIERARCHY.md).
 
 Every future feature, room, department, headquarters, AI engine, Blueprint, Expedition, Marketplace asset, and workflow must comply before entering Studio World.
 

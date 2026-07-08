@@ -23,6 +23,8 @@ export type FoundationalPhysicsLaw = {
   /** What becomes impossible if this law is violated */
   violation: string;
   examples: string[];
+  /** Design Principles™ this law implements */
+  principleBasis: string[];
   /** Engines or modules that enforce this law in code */
   enforcementPaths?: string[];
 };

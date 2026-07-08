@@ -22,12 +22,12 @@ export function ingestBehavioralConstitutionalNodes(): { nodes: WorldNode[]; edg
     lifecycle: 'live',
     plane: lifecyclePlane('live'),
     version: '1.0.0',
-    summary: 'Process governance — what Studio World may do. Subordinate to World Physics™.',
+    summary: 'Layer 3 — process governance. What Studio World may do. Subordinate to Physics and Design Principles.',
     docPaths: ['knowledge/canon/constitution/behavioral-laws.md'],
     codePaths: ['src/studio-os-core/studio-world-constitution/behavioral-laws.ts'],
     provenance: { source: 'constitution', sourceRef: 'behavioral-constitution', ingestedAt: ts },
-    tags: ['canon', 'constitution', 'tier-2'],
-    metadata: { canonTier: 'constitutional-law', lawCount: BEHAVIORAL_CONSTITUTIONAL_LAWS.length },
+    tags: ['canon', 'constitution', 'layer-3'],
+    metadata: { governanceLayer: 3, canonTier: 'constitutional-law', lawCount: BEHAVIORAL_CONSTITUTIONAL_LAWS.length },
   });
 
   for (const law of BEHAVIORAL_CONSTITUTIONAL_LAWS) {
@@ -44,8 +44,8 @@ export function ingestBehavioralConstitutionalNodes(): { nodes: WorldNode[]; edg
       docPaths: ['knowledge/canon/constitution/behavioral-laws.md'],
       codePaths: ['src/studio-os-core/studio-world-constitution/behavioral-laws.ts'],
       provenance: { source: 'constitution', sourceRef: law.id, ingestedAt: ts },
-      metadata: { canonTier: 'constitutional-law', lawNumber: law.number, enforcement: law.enforcement },
-      tags: ['constitution', 'canon', 'tier-2'],
+      metadata: { governanceLayer: 3, canonTier: 'constitutional-law', lawNumber: law.number, enforcement: law.enforcement },
+      tags: ['constitution', 'canon', 'layer-3'],
     });
 
     edges.push({
@@ -55,6 +55,18 @@ export function ingestBehavioralConstitutionalNodes(): { nodes: WorldNode[]; edg
       to: id,
       provenance: { source: 'constitution', sourceRef: law.id, ingestedAt: ts },
     });
+
+    for (const principleSlug of law.principleBasis) {
+      const principleId = worldNodeId('design-principle', principleSlug);
+      edges.push({
+        id: worldEdgeId('depends-on', id, principleId),
+        type: 'depends-on',
+        from: id,
+        to: principleId,
+        label: 'principle-basis',
+        provenance: { source: 'constitution', sourceRef: law.id, ingestedAt: ts },
+      });
+    }
 
     for (const physicsSlug of law.physicsBasis) {
       const physicsId = worldNodeId('foundational-physics-law', physicsSlug);

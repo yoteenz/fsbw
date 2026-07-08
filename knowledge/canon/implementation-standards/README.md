@@ -1,18 +1,23 @@
 # Implementation Standards™
 
-**Canon Tier 3 · Engineering patterns**
+**Layer 4 governance · Engineering conventions**
 
-Standards evolve continuously. They implement Physics and Constitution in code, CI, and repository structure.
-
-| Standard | Summary |
-|----------|---------|
-| World Graph Compile Gate™ | prebuild graph validation |
-| W-ID Registry™ | Stable `W-*` identity prefixes |
-| Route Registry Pattern™ | Room + flagship graph registration |
-| Scene Stack Prompt Version™ | Pinned `scene-stack.v2` determinism |
-| Era Evaluation Gate™ | Three Eras review before ship |
-| Motherboard Sync Contract™ | Graph is canon; MEMORY syncs in |
-| One Deploy Per Task™ | Single commit + push per task |
+| Standard | Domain |
+|----------|--------|
+| World Graph Compile Gate™ | CI validation |
+| W-ID Registry™ | Identity prefixes |
+| Route Registry Pattern™ | Physical place registration |
+| Repository Structure™ | Folder hierarchy |
+| Naming Conventions™ | Trademarks · W-IDs · versions |
+| Scene Graph Contract™ | Scene stack modules |
+| Scene Stack Prompt Version™ | Deterministic prompts |
+| Generation API Contract™ | FAL reference enforcement |
+| Era Evaluation Gate™ | Three Eras review |
+| Design Review Filter™ | Six-step flagship gate |
+| Motherboard Sync Contract™ | Agent memory subordination |
+| One Deploy Per Task™ | Deploy discipline |
+| CI Validation Gate™ | tsc + prebuild |
+| Migration Strategy™ | Legacy path preservation |
 
 **Code:** `src/studio-os-core/implementation-standards/standards.ts`
 

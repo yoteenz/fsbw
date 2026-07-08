@@ -1,6 +1,6 @@
 import type { ImplementationStandard } from './types';
 
-/** Engineering patterns — evolve continuously; subordinate to Physics and Constitution. */
+/** Engineering patterns — Layer 4; evolve continuously; subordinate to all governance layers above. */
 export const IMPLEMENTATION_STANDARDS: ImplementationStandard[] = [
   {
     id: 'world-graph-compile-gate',
@@ -27,12 +27,44 @@ export const IMPLEMENTATION_STANDARDS: ImplementationStandard[] = [
     implementsLaws: ['physical-place-law', 'spatial-continuity'],
   },
   {
+    id: 'repository-structure',
+    title: 'Repository Structure™',
+    summary: 'studio-os-core platform logic · workspaces brand impl · knowledge/canon governance · docs/studio-os specs.',
+    docPaths: ['motherboard/CODEBASE.md', 'docs/studio-os/architecture.md'],
+    codePaths: ['src/studio-os-core/', 'knowledge/canon/'],
+    implementsLaws: ['repository-governance', 'documentation-first'],
+  },
+  {
+    id: 'naming-conventions',
+    title: 'Naming Conventions™',
+    summary: 'Trademark™ product names · W-* graph IDs · flagship slugs · scene-stack.v* prompt versions.',
+    docPaths: ['docs/studio-os/canon/STUDIO_WORLD_CANON_HIERARCHY.md'],
+    codePaths: ['src/studio-os-core/world-graph/id.ts'],
+    implementsLaws: ['identity-persistence'],
+  },
+  {
+    id: 'scene-graph-contract',
+    title: 'Scene Graph Contract™',
+    summary: 'Master Scene Blueprint™, layer types, assembly law, quality guard, export rules — pinned contracts.',
+    docPaths: ['docs/studio-os/scene-stack/quality-preservation-law.md'],
+    codePaths: ['src/studio-os-core/scene-stack/'],
+    implementsLaws: ['scene-integrity', 'blueprint-determinism', 'scene-assembly-rules'],
+  },
+  {
     id: 'scene-stack-prompt-version',
     title: 'Scene Stack Prompt Version™',
     summary: 'Pinned prompt versions (scene-stack.v2) for Blueprint Determinism and reproducible assembly.',
     docPaths: ['docs/studio-os/scene-stack/quality-preservation-law.md'],
     codePaths: ['src/studio-os-core/scene-stack/prompt-compiler.ts'],
     implementsLaws: ['blueprint-determinism', 'scene-integrity'],
+  },
+  {
+    id: 'generation-api-contract',
+    title: 'Generation API Contract™',
+    summary: 'FAL reference enforcement, single shell ref max, forbidden cumulative layer inputs.',
+    docPaths: ['docs/studio-os/scene-stack/quality-preservation-law.md'],
+    codePaths: ['api/_lib/sceneStackReferenceEnforcement.ts', 'api/_lib/studioBuilderGeneration.ts'],
+    implementsLaws: ['scene-integrity', 'asset-conservation'],
   },
   {
     id: 'era-evaluation-gate',
@@ -43,12 +75,20 @@ export const IMPLEMENTATION_STANDARDS: ImplementationStandard[] = [
     implementsLaws: ['world-memory', 'temporal-continuity'],
   },
   {
+    id: 'design-review-filter',
+    title: 'Design Review Filter™',
+    summary: 'Six-step flagship review: Principles → Physics → Constitution → Standards → Technical → Experience.',
+    docPaths: ['docs/studio-os/governance/STUDIO_WORLD_GOVERNANCE_HIERARCHY.md'],
+    codePaths: ['src/studio-os-core/design-principles/design-review.ts'],
+    implementsLaws: ['knowledge-review', 'approval-workflow'],
+  },
+  {
     id: 'motherboard-sync-contract',
     title: 'Motherboard Sync Contract™',
     summary: 'Agent memory appends to MEMORY.md; graph ingestion is canon. One deploy per task.',
     docPaths: ['motherboard/ADDING.md', '.cursor/rules/one-deploy-per-task.mdc'],
     codePaths: ['motherboard/MEMORY.md'],
-    implementsLaws: ['agent-memory', 'world-memory'],
+    implementsLaws: ['agent-memory-subordination', 'world-memory'],
   },
   {
     id: 'one-deploy-per-task',
@@ -56,6 +96,22 @@ export const IMPLEMENTATION_STANDARDS: ImplementationStandard[] = [
     summary: 'Each completed task = one commit + one push; MEMORY folded into same commit.',
     docPaths: ['.cursor/rules/one-deploy-per-task.mdc'],
     codePaths: ['scripts/agent-commit.sh'],
-    implementsLaws: ['knowledge-conservation', 'temporal-continuity'],
+    implementsLaws: ['knowledge-conservation', 'repository-governance'],
+  },
+  {
+    id: 'ci-validation-gate',
+    title: 'CI Validation Gate™',
+    summary: 'tsc --noEmit + world graph compile + master spec reconciliation in prebuild.',
+    docPaths: ['package.json'],
+    codePaths: ['scripts/compile-master-spec.mjs'],
+    implementsLaws: ['documentation-first', 'world-memory'],
+  },
+  {
+    id: 'migration-strategy',
+    title: 'Migration Strategy™',
+    summary: 'Legacy paths preserved in route-registry; migration-audit tracks immersive status; no silent breaks.',
+    docPaths: ['src/studio-os-core/studio-world/migration-audit.ts'],
+    codePaths: ['src/studio-os-core/studio-world/migration-audit.ts'],
+    implementsLaws: ['temporal-continuity', 'spatial-continuity'],
   },
 ];

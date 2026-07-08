@@ -2,6 +2,7 @@ import { finalizeWorldGraph } from './graph';
 import {
   ingestBehavioralConstitutionalNodes,
   ingestConstitutionalLawNodes,
+  ingestDesignPrincipleNodes,
   ingestEraRoadmapNodes,
   ingestEngineNodes,
   ingestFlagshipNodes,
@@ -34,6 +35,7 @@ export function buildWorldGraph(input: BuildWorldGraphInput = {}): BuildWorldGra
   const allEdges = [];
 
   const sources = [
+    ingestDesignPrincipleNodes(),
     ingestFoundationalPhysicsNodes(),
     ingestEngineNodes(),
     ingestGenomeNodes(),

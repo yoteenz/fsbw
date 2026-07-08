@@ -1,100 +1,71 @@
 # Studio World Canon Hierarchy™
 
-**Status:** Approved · Ratified 2026-07-08
+**Status:** Approved · Four-layer governance · Ratified 2026-07-08
+
+Superseded three-tier model — Design Principles™ added as Layer 1.
+
+Full documentation: [STUDIO_WORLD_GOVERNANCE_HIERARCHY.md](../governance/STUDIO_WORLD_GOVERNANCE_HIERARCHY.md)
 
 ---
 
-## Three tiers
+## Four layers
 
-### Tier 1 — Foundational Physics™
+### Layer 1 — Design Principles™
 
-**Immutable natural laws.** Comparable to gravity.
+| # | Principle |
+|---|-----------|
+| 1 | Immersion Over Pages™ |
+| 2 | World First™ |
+| 3 | Reuse Before Regeneration™ |
+| 4 | Memory Before Intelligence™ |
+| 5 | Progressive Disclosure™ |
+| 6 | Everything Has A Home™ |
+| 7 | Beauty Through Function™ |
+| 8 | Founders Build Worlds™ |
 
-- Physical Place Law™
-- Relationship Gravity™
-- Knowledge Conservation™
-- Identity Persistence™
-- Scene Integrity™
-- Asset Conservation™
-- Blueprint Determinism™
-- Spatial Continuity™
-- Temporal Continuity™
-- World Memory™
-
-**Code:** `src/studio-os-core/world-physics/`  
-**Canon:** `knowledge/canon/physics/`  
-**Graph:** `foundational-physics-law` · `W-PHY-*`
+`src/studio-os-core/design-principles/` · `W-DPR-*`
 
 ---
 
-### Tier 2 — Constitutional Law™
+### Layer 2 — World Physics™
 
-**Behavioral and architectural governance.** Changes rarely.
+Ten immutable natural laws — see [STUDIO_WORLD_PHYSICS_ARCHITECTURE.md](../world-physics/STUDIO_WORLD_PHYSICS_ARCHITECTURE.md)
 
-**Eight Foundational Laws** (flagship governance):  
-`src/studio-os-core/studio-world-constitution/laws.ts`
-
-**Behavioral Constitutional Laws** (process governance):
-
-| Law | Summary |
-|-----|---------|
-| Documentation First™ | Graph-first; register before ship |
-| No Orphan Objects™ | Every object has a home |
-| Canon Promotion™ | Lifecycle graduation to canon |
-| Immutability of History™ | Historical nodes read-only |
-| Agent Memory™ | Motherboard syncs to graph; graph is truth |
-| Scene Assembly™ | Runtime composite; no layer re-generation |
-
-**Additional articles:** World Graph Is Truth™ · Three Eras Roadmap™ · Scene Assembly Immutability™
-
-**Canon:** `knowledge/canon/constitution/`  
-**Graph:** `constitutional-law` · `W-LAW-*`
+`src/studio-os-core/world-physics/` · `W-PHY-*`
 
 ---
 
-### Tier 3 — Implementation Standards™
+### Layer 3 — Constitutional Law™
 
-**Engineering patterns.** Evolves continuously.
+Eight Foundational Laws + nine Behavioral Laws + constitutional articles.
 
-| Standard | Implements |
-|----------|------------|
-| World Graph Compile Gate™ | World Memory, Relationship Gravity |
-| W-ID Registry™ | Identity Persistence |
-| Route Registry Pattern™ | Physical Place, Spatial Continuity |
-| Scene Stack Prompt Version™ | Blueprint Determinism, Scene Integrity |
-| Era Evaluation Gate™ | World Memory, Temporal Continuity |
-| Motherboard Sync Contract™ | Agent Memory |
-| One Deploy Per Task™ | Knowledge Conservation |
-
-**Code:** `src/studio-os-core/implementation-standards/`  
-**Canon:** `knowledge/canon/implementation-standards/`  
-**Graph:** `implementation-standard` · `W-STD-*`
+`src/studio-os-core/studio-world-constitution/` · `W-LAW-*`
 
 ---
 
-## Dependency chain
+### Layer 4 — Implementation Standards™
+
+Fourteen engineering standards — repository, naming, scene contracts, CI, migration, design review.
+
+`src/studio-os-core/implementation-standards/` · `W-STD-*`
+
+---
+
+## Inheritance
 
 ```
-Physics (immutable)
-  ↑ depends-on
-Constitution (rare change)
-  ↑ implements
-Implementation Standards (continuous evolution)
+Design Principles → World Physics → Constitutional Law → Implementation Standards → Code
 ```
 
-Constitutional laws declare `physicsBasis` in code. Standards declare `implementsLaws`.
+No layer violates the layer above.
 
 ---
 
-## Evaluation before implementation
+## Design Review Filter™ (6 steps)
 
-1. Does this respect **Physics**? (Cannot be waived)
-2. Does this comply with **Constitution**?
-3. Does this follow current **Implementation Standards**?
-
----
-
-## See also
-
-- [STUDIO_WORLD_PHYSICS_ARCHITECTURE.md](../world-physics/STUDIO_WORLD_PHYSICS_ARCHITECTURE.md)
-- [knowledge/canon/README.md](../../knowledge/canon/README.md)
+1. Design Principles  
+2. World Physics  
+3. Constitution  
+4. Implementation Standards  
+5. Technical soundness  
+6. Immersive · premium · coherent experience

@@ -30,8 +30,8 @@ export function ingestFoundationalPhysicsNodes(): { nodes: WorldNode[]; edges: W
     ],
     codePaths: ['src/studio-os-core/world-physics/laws.ts'],
     provenance: { source: 'constitution', sourceRef: 'world-physics', ingestedAt: ts },
-    tags: ['canon', 'physics', 'tier-1'],
-    metadata: { canonTier: 'foundational-physics', lawCount: FOUNDATIONAL_PHYSICS_LAWS.length },
+    tags: ['canon', 'physics', 'layer-2'],
+    metadata: { governanceLayer: 2, canonTier: 'foundational-physics', lawCount: FOUNDATIONAL_PHYSICS_LAWS.length },
   });
 
   const worldGraphId = worldNodeId('engine', 'world-graph');
@@ -59,8 +59,8 @@ export function ingestFoundationalPhysicsNodes(): { nodes: WorldNode[]; edges: W
       docPaths: [`knowledge/canon/physics/${law.id}.md`],
       codePaths: law.enforcementPaths,
       provenance: { source: 'constitution', sourceRef: law.id, ingestedAt: ts },
-      metadata: { canonTier: 'foundational-physics', lawNumber: law.number },
-      tags: ['physics', 'canon', 'tier-1'],
+      metadata: { governanceLayer: 2, canonTier: 'foundational-physics', lawNumber: law.number },
+      tags: ['physics', 'canon', 'layer-2'],
     });
 
     edges.push({
@@ -70,6 +70,18 @@ export function ingestFoundationalPhysicsNodes(): { nodes: WorldNode[]; edges: W
       to: id,
       provenance: { source: 'constitution', sourceRef: law.id, ingestedAt: ts },
     });
+
+    for (const principleSlug of law.principleBasis ?? []) {
+      const principleId = worldNodeId('design-principle', principleSlug);
+      edges.push({
+        id: worldEdgeId('depends-on', id, principleId),
+        type: 'depends-on',
+        from: id,
+        to: principleId,
+        label: 'principle-basis',
+        provenance: { source: 'constitution', sourceRef: law.id, ingestedAt: ts },
+      });
+    }
 
     if (prevId) {
       edges.push({

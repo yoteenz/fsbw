@@ -30,6 +30,7 @@ export type WorldPlane = 'canon' | 'working' | 'historical';
 export const WORLD_NODE_TYPES = [
   'knowledge-object',
   'architectural-decision',
+  'design-principle',
   'constitutional-law',
   'foundational-physics-law',
   'implementation-standard',

@@ -3,6 +3,7 @@ import type { WorldNodeType } from './types';
 const TYPE_PREFIX: Record<WorldNodeType, string> = {
   'knowledge-object': 'W-KNO',
   'architectural-decision': 'W-DEC',
+  'design-principle': 'W-DPR',
   'constitutional-law': 'W-LAW',
   'foundational-physics-law': 'W-PHY',
   'implementation-standard': 'W-STD',

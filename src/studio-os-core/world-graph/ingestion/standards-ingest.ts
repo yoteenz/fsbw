@@ -13,19 +13,27 @@ function resolveLawNodeId(lawSlug: string): string {
     'no-orphan-objects',
     'canon-promotion',
     'immutability-of-history',
-    'agent-memory',
-    'scene-assembly',
+    'agent-memory-subordination',
+    'scene-assembly-rules',
+    'knowledge-review',
+    'repository-governance',
+    'approval-workflow',
   ]);
-  if (behavioralIds.has(lawSlug)) {
-    return worldNodeId('constitutional-law', lawSlug);
+  const aliases: Record<string, string> = {
+    'agent-memory': 'agent-memory-subordination',
+    'scene-assembly': 'scene-assembly-rules',
+  };
+  const slug = aliases[lawSlug] ?? lawSlug;
+  if (behavioralIds.has(slug)) {
+    return worldNodeId('constitutional-law', slug);
   }
-  if (lawSlug === 'world-graph-is-truth') {
+  if (slug === 'world-graph-is-truth') {
     return worldNodeId('constitutional-law', 'world-graph-is-truth');
   }
-  return worldNodeId('foundational-physics-law', lawSlug);
+  return worldNodeId('foundational-physics-law', slug);
 }
 
-/** Register Implementation Standards™ as Tier 3 canon nodes. */
+/** Register Implementation Standards™ as Layer 4 governance nodes. */
 export function ingestImplementationStandardNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } {
   const nodes: WorldNode[] = [];
   const edges: WorldEdge[] = [];
@@ -48,8 +56,8 @@ export function ingestImplementationStandardNodes(): { nodes: WorldNode[]; edges
     ],
     codePaths: ['src/studio-os-core/implementation-standards/standards.ts'],
     provenance: { source: 'constitution', sourceRef: 'implementation-standards', ingestedAt: ts },
-    tags: ['canon', 'standards', 'tier-3'],
-    metadata: { canonTier: 'implementation-standard', standardCount: IMPLEMENTATION_STANDARDS.length },
+    tags: ['canon', 'standards', 'layer-4'],
+    metadata: { governanceLayer: 4, canonTier: 'implementation-standard', standardCount: IMPLEMENTATION_STANDARDS.length },
   });
 
   for (const std of IMPLEMENTATION_STANDARDS) {
@@ -66,8 +74,8 @@ export function ingestImplementationStandardNodes(): { nodes: WorldNode[]; edges
       docPaths: std.docPaths,
       codePaths: std.codePaths,
       provenance: { source: 'constitution', sourceRef: std.id, ingestedAt: ts },
-      metadata: { canonTier: 'implementation-standard' },
-      tags: ['standards', 'canon', 'tier-3'],
+      metadata: { governanceLayer: 4, canonTier: 'implementation-standard' },
+      tags: ['standards', 'canon', 'layer-4'],
     });
 
     edges.push({

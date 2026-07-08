@@ -6,7 +6,7 @@
 import type { FoundationalPhysicsLaw } from './types';
 
 export const WORLD_PHYSICS_PREAMBLE =
-  'World Physics™ defines what is fundamentally possible inside Studio World. These are natural laws — not policies. The Constitution governs behavior; Physics governs reality.';
+  'World Physics™ (Layer 2) defines what is fundamentally possible inside Studio World. Natural laws — subordinate to Design Principles™, superior to Constitutional Law. Nothing may violate Physics.';
 
 export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
   {
@@ -16,6 +16,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
     summary: 'Every object must physically exist somewhere inside Studio World. Everything has a home.',
     violation: 'Orphan objects, webpage-only features, and disconnected modules cannot exist as canon.',
     examples: ['Room in a wing', 'Engine in a flagship', 'Publication in Archives', 'Asset in Warehouse'],
+    principleBasis: ['everything-has-a-home', 'world-first'],
     enforcementPaths: [
       'src/studio-os-core/architecture-auditor/',
       'src/studio-os-core/studio-world/route-registry.ts',
@@ -28,6 +29,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
     summary: 'Nothing exists in isolation. Every node attracts relationships. Unrelated objects are incomplete.',
     violation: 'Nodes without meaningful edges are incomplete — not ready for canon.',
     examples: ['depends-on', 'located-in', 'integrates-with', 'spawned-from', 'reused-by'],
+    principleBasis: ['world-first', 'everything-has-a-home'],
     enforcementPaths: ['src/studio-os-core/world-graph/validator.ts'],
   },
   {
@@ -38,6 +40,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
       'Knowledge is never destroyed. Objects may evolve, archive, or become historical — never simply disappear.',
     violation: 'Hard deletes of canon nodes, erasing history, or silent removal of approved work.',
     examples: ['Spark → Legacy lifecycle', 'supersedes chains', 'historical plane', 'deprecated-by edges'],
+    principleBasis: ['memory-before-intelligence'],
     enforcementPaths: ['src/studio-os-core/world-graph/lifecycle.ts'],
   },
   {
@@ -47,6 +50,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
     summary: 'Every object has one permanent identity. Versions evolve. Identity remains.',
     violation: 'Renaming W-IDs, forked truth without supersedes, or duplicate competing identities.',
     examples: ['W-FLG-studio-archives', 'W-ENG-world-graph', 'versioned lifecycle without id change'],
+    principleBasis: ['memory-before-intelligence'],
     enforcementPaths: ['src/studio-os-core/world-graph/id.ts'],
   },
   {
@@ -61,6 +65,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
       'Immutable approved layers',
       'Runtime composite only',
     ],
+    principleBasis: ['beauty-through-function', 'reuse-before-regeneration'],
     enforcementPaths: [
       'src/studio-os-core/scene-stack/assembly-law.ts',
       'api/_lib/sceneStackReferenceEnforcement.ts',
@@ -73,6 +78,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
     summary: 'Existing assets should always be reused before regeneration. Reuse is default; generation is last resort.',
     violation: 'Regenerating assets that exist in Registry, Warehouse, or Marketplace without reuse attempt.',
     examples: ['Asset Registry™', 'reused-by traversals', 'Golden Build™', 'Blueprint Archive™'],
+    principleBasis: ['reuse-before-regeneration'],
     enforcementPaths: ['src/studio-os-core/studio-warehouse/'],
   },
   {
@@ -83,6 +89,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
       'Given the same Blueprint, Scene Graph, Asset Registry, and generation settings — Studio World produces an equivalent result.',
     violation: 'Non-reproducible builds, undocumented prompt drift, or untracked generation variance.',
     examples: ['Master Scene Blueprint™', 'prompt version pins', 'scene-stack.v2', 'golden-build nodes'],
+    principleBasis: ['beauty-through-function'],
     enforcementPaths: ['src/studio-os-core/scene-stack/master-scene-blueprint.ts'],
   },
   {
@@ -93,6 +100,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
       'Departments are physical destinations. Rooms → wings → headquarters → districts → Atlas. No disconnected place.',
     violation: 'Floating pages, broken walkways, destinations invisible on Atlas, orphaned routes.',
     examples: ['Studio World Atlas™', 'flagship-destinations', 'Global Atlas Layer™', 'located-in edges'],
+    principleBasis: ['world-first', 'immersion-over-pages'],
     enforcementPaths: [
       'src/studio-os-core/studio-world-atlas/',
       'src/studio-os-core/global-atlas-layer/',
@@ -106,6 +114,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
       'Everything has a timeline, history, origin, and evolution. All history is explorable.',
     violation: 'State without provenance, features without lifecycle, decisions without historical chain.',
     examples: ['historical-event nodes', 'supersedes', 'provenance.ingestedAt', 'Executive Timeline™'],
+    principleBasis: ['memory-before-intelligence', 'progressive-disclosure'],
     enforcementPaths: ['src/studio-os-core/world-graph/'],
   },
   {
@@ -115,6 +124,7 @@ export const FOUNDATIONAL_PHYSICS_LAWS: FoundationalPhysicsLaw[] = [
     summary: 'The World Graph™ remembers everything. Documentation is one projection of that memory.',
     violation: 'Competing sources of truth, markdown canon outside the graph, projections overriding graph.',
     examples: ['World Graph Is Truth™', 'Bible as publication', 'Knowledge Library as projection'],
+    principleBasis: ['memory-before-intelligence'],
     enforcementPaths: [
       'src/studio-os-core/world-graph/',
       'scripts/compile-world-graph-runner.ts',
