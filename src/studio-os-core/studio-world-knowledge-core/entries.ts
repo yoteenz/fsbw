@@ -612,7 +612,7 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
       'Profession Brain™',
       'World Graph™',
     ],
-    implementationStatus: 'Specified',
+    implementationStatus: 'Implemented',
     tags: [
       'professional-memory',
       'wisdom-engine',

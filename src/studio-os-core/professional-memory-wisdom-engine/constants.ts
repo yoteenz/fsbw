@@ -1,4 +1,4 @@
-import type { MemoryReflectionMode } from './types';
+import type { MemoryReflectionMode, MemoryReflectionModeId } from './types';
 
 export const PROFESSIONAL_MEMORY_WISDOM_ENGINE_ARTICLE = {
   id: 'ARTICLE-E04',
@@ -8,7 +8,11 @@ export const PROFESSIONAL_MEMORY_WISDOM_ENGINE_ARTICLE = {
     'Studio World preserves professional wisdom by turning meaningful career experiences into a lifelong timeline that the Orb and Wisdom Engine™ can recall for context-aware guidance.',
 } as const;
 
-export const PROFESSIONAL_MEMORY_WISDOM_ENGINE_VERSION = '1.0.0';
+export const PROFESSIONAL_MEMORY_WISDOM_ENGINE_VERSION = '1.1.0';
+
+export const PROFESSIONAL_MEMORY_STORAGE_KEY = 'studio-os:professional-memory-wisdom-engine';
+
+export const PROFESSIONAL_MEMORY_UPDATED_EVENT = 'studio-os:professional-memory-updated';
 
 export const WISDOM_ENGINE_PHILOSOPHY =
   'Knowledge teaches people HOW. Wisdom teaches people WHEN.';
@@ -18,10 +22,10 @@ export const PROFESSIONAL_MEMORY_PHILOSOPHY =
 
 export const MEMORY_REFLECTION_MODES: MemoryReflectionMode[] = [
   {
-    id: 'career-recap',
-    label: 'Career Recap™',
-    horizon: 'session',
-    description: 'A concise reflection on recent professional growth, decisions, and lessons.',
+    id: 'career-timeline',
+    label: 'Career Timeline™',
+    horizon: 'lifetime',
+    description: 'A persistent view of milestones, transitions, and professional identity.',
   },
   {
     id: 'year-in-review',
@@ -30,37 +34,57 @@ export const MEMORY_REFLECTION_MODES: MemoryReflectionMode[] = [
     description: 'A calendar-year reflection across achievements, mistakes, clients, and growth.',
   },
   {
-    id: 'five-year-journey',
-    label: 'Five-Year Journey™',
+    id: 'mastery-replay',
+    label: 'Mastery Replay™',
     horizon: 'multi-year',
-    description: 'A long-range professional arc showing identity, mastery, and career evolution.',
+    description: 'Replay the arc from first attempts through expert judgment.',
   },
   {
-    id: 'mastery-timeline',
-    label: 'Mastery Timeline™',
-    horizon: 'lifetime',
-    description: 'A visual professional memory path from first attempts to expert judgment.',
-  },
-  {
-    id: 'business-growth-replay',
-    label: 'Business Growth Replay™',
+    id: 'business-timeline',
+    label: 'Business Timeline™',
     horizon: 'business',
-    description: 'A founder/operator view of growth, decisions, hires, reputation, and resilience.',
+    description: 'Founder/operator growth, hires, launches, reputation, and resilience.',
   },
   {
-    id: 'industry-impact',
-    label: 'Industry Impact™',
+    id: 'knowledge-evolution',
+    label: 'Knowledge Evolution™',
     horizon: 'industry',
-    description: 'A reflection on contributions that changed peers, clients, community, or craft.',
+    description: 'How retained knowledge and industry updates shaped professional practice.',
+  },
+  {
+    id: 'skill-growth',
+    label: 'Skill Growth™',
+    horizon: 'skills',
+    description: 'Skill-by-skill growth across simulations, clients, and real work.',
+  },
+  {
+    id: 'mentorship-journey',
+    label: 'Mentorship Journey™',
+    horizon: 'session',
+    description: 'Teaching, apprentices, feedback given, and mastery passed forward.',
   },
 ];
 
+export const LEGACY_REFLECTION_MODE_MAP: Record<string, MemoryReflectionModeId> = {
+  'career-recap': 'career-timeline',
+  'five-year-journey': 'mastery-replay',
+  'mastery-timeline': 'mastery-replay',
+  'business-growth-replay': 'business-timeline',
+  'industry-impact': 'knowledge-evolution',
+};
+
 export const WISDOM_SOURCE_DEFAULT_WEIGHTS = {
-  'profession-brain': 0.22,
-  'professional-memory': 0.24,
-  'career-history': 0.16,
-  'simulation-outcomes': 0.14,
-  mentorship: 0.1,
-  'industry-updates': 0.08,
-  'community-contributions': 0.06,
+  'profession-brain': 0.18,
+  'professional-memory': 0.22,
+  'knowledge-retention': 0.14,
+  'career-world': 0.12,
+  'world-graph': 0.06,
+  'simulation-outcomes': 0.12,
+  mentorship: 0.08,
+  'industry-updates': 0.05,
+  'community-contributions': 0.03,
 } as const;
+
+export const ORB_MEMORY_RECALL_COOLDOWN_MS = 12 * 60 * 60 * 1000;
+
+export const ORB_MEMORY_IMPORTANCE_THRESHOLD = 70;

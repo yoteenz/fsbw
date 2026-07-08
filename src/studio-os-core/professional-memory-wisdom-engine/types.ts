@@ -15,6 +15,9 @@ export type ProfessionalMemoryClass =
   | 'community-memory'
   | 'historical-memory';
 
+/** Alias for memory model category field. */
+export type MemoryCategory = ProfessionalMemoryClass;
+
 export type ProfessionalMemorySignal =
   | 'achievement'
   | 'mistake'
@@ -27,7 +30,21 @@ export type ProfessionalMemorySignal =
   | 'competition'
   | 'community-contribution'
   | 'certification'
-  | 'knowledge-breakthrough';
+  | 'knowledge-breakthrough'
+  | 'promotion'
+  | 'award'
+  | 'industry-contribution';
+
+export type TimelineEntryKind =
+  | 'career-milestone'
+  | 'business'
+  | 'promotion'
+  | 'project'
+  | 'mentorship'
+  | 'award'
+  | 'community-event'
+  | 'competition'
+  | 'industry-contribution';
 
 export type ProfessionalMemoryEmotionalTone =
   | 'proud'
@@ -40,18 +57,29 @@ export type ProfessionalMemoryEmotionalTone =
   | 'legacy-building';
 
 export type ProfessionalMemoryRecord = {
+  /** Memory ID */
   id: string;
   learnerId: string;
+  /** Career World or profession blueprint id — never hardcoded to a single world. */
+  worldId?: string;
   profession: string;
+  category: MemoryCategory;
   title: string;
-  memoryClass: ProfessionalMemoryClass;
   occurredAt: string;
+  sceneId?: string;
+  sceneLabel?: string;
+  simulationId?: string;
+  careerLevel?: string;
+  importance: number;
+  participants: string[];
+  relatedSkillIds: string[];
+  relatedBrainConceptIds: string[];
+  relatedCertificationIds: string[];
+  reflectionSummary: string;
   signals: ProfessionalMemorySignal[];
   summary: string;
   wisdomExtracted: string;
   emotionalTone: ProfessionalMemoryEmotionalTone;
-  relatedConceptIds: string[];
-  relatedSimulationIds: string[];
   relatedCareerGoalIds: string[];
   relatedBusinessIds: string[];
   relatedMentorshipIds: string[];
@@ -60,10 +88,24 @@ export type ProfessionalMemoryRecord = {
   visibleToOrb: boolean;
 };
 
+export type TimelineEntry = {
+  id: string;
+  memoryId: string;
+  kind: TimelineEntryKind;
+  title: string;
+  occurredAt: string;
+  profession: string;
+  worldId?: string;
+  importance: number;
+  summary: string;
+};
+
 export type ProfessionalTimeline = {
   learnerId: string;
   profession: string;
+  worldId?: string;
   generatedAt: string;
+  entries: TimelineEntry[];
   memories: ProfessionalMemoryRecord[];
   milestoneCount: number;
   wisdomScore: number;
@@ -71,8 +113,17 @@ export type ProfessionalTimeline = {
 };
 
 export type MemoryReflectionModeId =
-  | 'career-recap'
+  | 'career-timeline'
   | 'year-in-review'
+  | 'mastery-replay'
+  | 'business-timeline'
+  | 'knowledge-evolution'
+  | 'skill-growth'
+  | 'mentorship-journey';
+
+/** @deprecated Architecture sprint reflection ids — mapped in constants. */
+export type LegacyMemoryReflectionModeId =
+  | 'career-recap'
   | 'five-year-journey'
   | 'mastery-timeline'
   | 'business-growth-replay'
@@ -81,14 +132,28 @@ export type MemoryReflectionModeId =
 export type MemoryReflectionMode = {
   id: MemoryReflectionModeId;
   label: string;
-  horizon: 'session' | 'year' | 'multi-year' | 'lifetime' | 'business' | 'industry';
+  horizon: 'session' | 'year' | 'multi-year' | 'lifetime' | 'business' | 'industry' | 'skills';
   description: string;
+};
+
+export type MemoryReflectionSpec = {
+  id: string;
+  modeId: MemoryReflectionModeId;
+  learnerId: string;
+  profession: string;
+  headline: string;
+  mentorIntro: string;
+  memoryIds: string[];
+  highlights: string[];
+  estimatedMinutes: number;
 };
 
 export type WisdomSource =
   | 'profession-brain'
   | 'professional-memory'
-  | 'career-history'
+  | 'knowledge-retention'
+  | 'career-world'
+  | 'world-graph'
   | 'simulation-outcomes'
   | 'mentorship'
   | 'industry-updates'
@@ -96,11 +161,14 @@ export type WisdomSource =
 
 export type WisdomContext = {
   learnerId: string;
+  organizationId: string;
   profession: string;
+  worldId?: string;
   currentQuestion: string;
   activeCareerGoalIds: string[];
   sourceWeights: Record<WisdomSource, number>;
   memoryIds: string[];
+  retentionProfileIds: string[];
   simulationOutcomeIds: string[];
   industryUpdateIds: string[];
   mentorshipIds: string[];
@@ -120,10 +188,95 @@ export type WisdomRecommendation = {
   suggestedNextStep: string;
 };
 
+export type OrbMemoryRecallContext =
+  | 'anniversary'
+  | 'milestone'
+  | 'promotion-anniversary'
+  | 'certification-anniversary'
+  | 'industry-relevance'
+  | 'personal-growth';
+
 export type OrbMemoryRecall = {
   id: string;
   memoryId: string;
   line: string;
+  context: OrbMemoryRecallContext;
   tone: 'mentor' | 'celebration' | 'reflection' | 'guidance';
   optional: true;
+  priority: 'low' | 'medium' | 'high';
+};
+
+export type ProfessionalCareerHistoryEntry = {
+  id: string;
+  learnerId: string;
+  profession: string;
+  worldId?: string;
+  kind: TimelineEntryKind;
+  title: string;
+  occurredAt: string;
+  careerLevel?: string;
+  businessId?: string;
+  projectId?: string;
+  mentorshipId?: string;
+  summary: string;
+};
+
+export type AchievementRecord = {
+  id: string;
+  learnerId: string;
+  profession: string;
+  worldId?: string;
+  title: string;
+  earnedAt: string;
+  category: 'certification' | 'award' | 'promotion' | 'competition' | 'community' | 'milestone';
+  importance: number;
+  memoryId?: string;
+  summary: string;
+};
+
+export type ProfessionalMemoryStore = {
+  version: string;
+  organizationId: string;
+  learnerId: string;
+  profession: string;
+  worldId?: string;
+  memories: ProfessionalMemoryRecord[];
+  careerHistory: ProfessionalCareerHistoryEntry[];
+  achievements: AchievementRecord[];
+  orbSurfacedMemoryIds: string[];
+  lastOrbRecallAt?: string;
+  updatedAt: string;
+};
+
+export type ProfessionalMemoryState = {
+  store: ProfessionalMemoryStore;
+  timeline: ProfessionalTimeline;
+  wisdomRecommendation: WisdomRecommendation | null;
+};
+
+export type MemoryEventRegistration = {
+  worldId: string;
+  profession: string;
+  eventType: string;
+  description: string;
+};
+
+export type MemoryEventPayload = {
+  worldId: string;
+  profession: string;
+  eventType: string;
+  title: string;
+  occurredAt?: string;
+  sceneId?: string;
+  simulationId?: string;
+  careerLevel?: string;
+  importance?: number;
+  participants?: string[];
+  relatedSkillIds?: string[];
+  relatedBrainConceptIds?: string[];
+  relatedCertificationIds?: string[];
+  reflectionSummary?: string;
+  summary?: string;
+  signals?: ProfessionalMemorySignal[];
+  category?: MemoryCategory;
 };

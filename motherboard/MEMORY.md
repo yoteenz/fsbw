@@ -43836,3 +43836,33 @@ Summary of the **full conversation in this chat**: the user first requested **Ca
 - **Docs:** **`docs/studio-os/codex/CODEX_PLATFORM.md`** — guide for creating future Codex Articles; README updated.
 - **Verification:** `npm run build` passed; World Graph compile **569 nodes · 1093 edges · PASS**.
 - **Conventions:** Add new articles via `createCodexArticle()` + markdown in `docs/studio-os/codex/`; use bootstrap seeds only for initial empty-store seed (C01); one deploy per task on `master`.
+
+---
+
+## 2026-07-08 — ARTICLE-E04 Professional Memory™ / Wisdom Engine™ implementation sprint
+
+**Context:** Full conversation in this chat: E03 Knowledge Retention implementation sprint, E04 architecture sprint, then **IMPLEMENTATION SPRINT** for Professional Memory™ / Wisdom Engine™ reusable infrastructure.
+
+**Topics covered (entire conversation so far):**
+- **E03 implementation:** Modular Knowledge Retention Engine™ (retention profiles, scheduler, Orb refresh reminders, Profession Brain hooks, analytics, hook, docs).
+- **E04 architecture:** Professional Timeline™, Memory Types™, Orb mentor recalls, Memory Reflection™, Wisdom Engine™ synthesis across Profession Brain / Career History / Simulation / Mentorship / Industry Updates.
+- **E04 implementation sprint:** Refactored `professional-memory-wisdom-engine/` into submodules: `professional-memory/`, `memory-events/`, `memory-timeline/`, `reflection-engine/`, `wisdom-engine/`, `career-history/`, `achievement-history/`, `orb-integration/`.
+- Expanded memory model: profession, category, date, scene, simulation, career level, importance, participants, related skills, brain concepts, certifications, reflection summary.
+- Timeline supports milestones, businesses, promotions, projects, mentorship, awards, community events, competitions, industry contributions.
+- Reflection modes updated to implementation spec: Career Timeline™, Year In Review™, Mastery Replay™, Business Timeline™, Knowledge Evolution™, Skill Growth™, Mentorship Journey™.
+- Orb integration: anniversaries, milestones, promotion/certification anniversaries, industry relevance, personal growth — with cooldown and surfaced-id tracking to avoid repetition.
+- Wisdom orchestration combines Profession Brain™, Knowledge Retention Engine™, Professional Memory™, Career World™, World Graph™, simulation outcomes, mentorship history.
+- Profession-agnostic launch seeds across beauty, architecture, finance, healthcare, construction, marketing worlds — no Hair World hardcoding.
+- Career Worlds register memory events via `MEMORY_EVENT_REGISTRY` and `ingestCareerWorldMemoryEvent()` — not by editing engine internals.
+- React hook: `useProfessionalMemoryState.ts`; implementation doc `PROFESSIONAL_MEMORY_WISDOM_ENGINE.md`.
+
+**Decisions / outcomes:**
+- localStorage persistence (`PROFESSIONAL_MEMORY_STORAGE_KEY`); `ProfessionalMemoryPersistenceAdapter` stub for future Supabase.
+- Orb Recommendations wired via `buildProfessionalMemoryOrbRecommendations()`.
+- Knowledge Core E04 `implementationStatus: Implemented`; World Graph engine lifecycle `implemented`.
+- Renamed `CareerHistoryEntry` → `ProfessionalCareerHistoryEntry` to avoid export collision with Career Worlds.
+
+**Verification:** `npx tsc --noEmit`, `npm run compile-world-graph` (**590 nodes · 1126 edges · PASS**), `npm run build` passed.
+
+**Conventions:** Career Worlds emit generic memory events; Wisdom Engine synthesizes — do not embed world-specific logic in core runtime. Use `orchestrateWisdomRecommendation()` when guidance must combine retention + lived experience.
+
