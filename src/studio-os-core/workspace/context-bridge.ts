@@ -1,6 +1,7 @@
 import { asModuleTenantId, resolveModuleTenantId, type ModuleTenantId } from './tenant-ids';
 import { isRuntimeWorkspaceActive, writeActiveWorkspaceIdToStorage, setRuntimeActiveWorkspaceId } from './storage';
 import { syncOrganizationBoundaryForPlatformWorkspace } from '../organization-context/boundary-sync';
+import { isWorkspaceRegistryConfigured } from './registry';
 
 export const STUDIO_OS_WORKSPACE_CHANGED = 'studio-os-workspace-changed';
 
@@ -20,6 +21,11 @@ function trySelect<T extends string>(fn: ((id: T) => void) | undefined, id: T): 
   } catch {
     /* module store optional */
   }
+}
+
+/** Persist workspace id from URL before registry import — safe during guard bootstrap. */
+export function persistWorkspaceId(platformWorkspaceId: string): void {
+  writeActiveWorkspaceIdToStorage(platformWorkspaceId);
 }
 
 /**
@@ -77,6 +83,8 @@ export function activateWorkspaceContext(platformWorkspaceId: string): ModuleTen
   );
 
   dispatchWorkspaceChanged({ platformWorkspaceId, moduleTenantId: tenantId });
-  syncOrganizationBoundaryForPlatformWorkspace(platformWorkspaceId);
+  if (isWorkspaceRegistryConfigured()) {
+    syncOrganizationBoundaryForPlatformWorkspace(platformWorkspaceId);
+  }
   return tenantId;
 }

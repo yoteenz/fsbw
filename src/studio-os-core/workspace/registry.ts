@@ -19,6 +19,10 @@ export type WorkspaceRegistryApi = {
 
 let workspaceRegistry: WorkspaceRegistryApi | null = null;
 
+export function isWorkspaceRegistryConfigured(): boolean {
+  return workspaceRegistry !== null;
+}
+
 export function configureWorkspaceRegistry(api: WorkspaceRegistryApi): void {
   workspaceRegistry = api;
 }

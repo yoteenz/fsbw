@@ -8,7 +8,10 @@ import {
   isWorkspacesBootstrapped,
 } from '../utils/ensureWorkspacesBootstrapped';
 import { ensureOrgMembershipResolved, getCachedOrgMembership } from '../studio-os-core/auth/membership';
-import { activateWorkspaceContext } from '../studio-os-core/workspace/context-bridge';
+import {
+  activateWorkspaceContext,
+  persistWorkspaceId,
+} from '../studio-os-core/workspace/context-bridge';
 import { resolveBootstrapWorkspaceId } from '../studio-os-core/workspace/route-workspace-resolver';
 import { getAccessToken } from '../utils/api';
 import LoadingScreen from './base/LoadingScreen';
@@ -41,9 +44,9 @@ export default function AdminStudioWorkspaceGuard() {
     [pathname, search]
   );
 
-  /** URL is source of truth — sync before paint so refresh never boots the wrong workspace. */
+  /** URL → storage only before registry loads (refresh must not boot wrong org). */
   useLayoutEffect(() => {
-    activateWorkspaceContext(routeWorkspaceId);
+    persistWorkspaceId(routeWorkspaceId);
   }, [routeWorkspaceId]);
 
   /** Registry bootstrap — never block paint on auth token or membership API. */
@@ -54,6 +57,9 @@ export default function AdminStudioWorkspaceGuard() {
       try {
         await ensureWorkspacesBootstrapped();
         if (!cancelled) {
+          activateWorkspaceContext(
+            resolveBootstrapWorkspaceId(pathname, search, getCachedOrgMembership())
+          );
           setBootstrapError(null);
           setWorkspacesReady(true);
         }
@@ -74,6 +80,12 @@ export default function AdminStudioWorkspaceGuard() {
       cancelled = true;
     };
   }, []);
+
+  /** Keep workspace context aligned when navigating after bootstrap. */
+  useEffect(() => {
+    if (!workspacesReady) return;
+    activateWorkspaceContext(routeWorkspaceId);
+  }, [workspacesReady, routeWorkspaceId]);
 
   if (bootstrapError) {
     return (
