@@ -43531,3 +43531,31 @@ Summary of the **full conversation in this chat** covering ARTICLE-A01 Asset Com
 - New Studio World navigation architecture should say **Hero Object™**, not icon.
 - Do not flatten Hero Objects into SVG/app-icon metaphors. They require silhouette, material, motion, history, editions, Asset Registry identity, Foundry product line, and World Graph presence.
 - Orb navigation should be contextual and location-aware: five relevant living objects, not a universal static launcher.
+
+---
+
+## 2026-07-08 — Hero Objects™ + Contextual Orb™ implementation sprint
+
+Summary of the **whole conversation so far** in this chat: user first requested **ARCHITECTURE SPRINT (ARTICLE-D09)** defining Hero Objects™ and Contextual Orb™; that was completed and pushed (`44ff54d83`). User then requested **IMPLEMENTATION SPRINT** to replace the Orb icon/launcher model with the first Hero Object engine and Contextual Orb UI.
+
+- **Context:** Transform Studio Orb from static radial icon launcher into collectible **Hero Objects™** with location-aware **Contextual Orb™** toolbelts. Hero Objects should occupy ~75–85% of acrylic tiles, have unique silhouettes, museum-grade materials, living idle/hover/selection motion, and graceful context transitions.
+- **Architecture sprint (prior in chat):** D09 spec, catalog (20 objects), contextual resolver, World Graph `hero-object` nodes, design principle #9 — all on `master`.
+- **Implementation delivered:**
+  - **Hero Object engine** (`src/studio-os-core/hero-objects/`):
+    - `context-registry/` — ten department files: `command-center`, `creative-direction`, `warehouse`, `marketing`, `finance`, `operations`, `product`, `customer-experience`, `legal`, `intelligence`; each exports primary/secondary Hero Object ids + context actions; `registerOrbContext()` for future departments without Orb edits.
+    - `resolve-context.ts` — `resolveOrbContextFromLocation(pathname, activeDepartment)` via path patterns, company department, flagship fallback.
+    - `orb-actions.ts` — hero object → surface open vs navigate; Foundry slug bridge.
+    - `orb-toolbelt.ts` — `resolveOrbToolbelt()` builds five display slots.
+    - `catalog.ts` — `CONTEXTUAL_ORB_TOOLBELTS` derived from registry (no duplicate hardcoding).
+  - **UI** (`src/components/admin/studio/hero-objects/`):
+    - `HeroObjectSculptureD09.tsx` — 15 unique D09 silhouettes + reuse of legacy sculptures for atlas/voice/daily-brief/etc.
+    - `HeroObjectSculptures.tsx` — sculpture map; tile 64px / sculpture 50px (~78%).
+    - `HeroObjectRenderer.tsx` — Foundry when ready, SVG fallback, living caustic/bloom/energy ring.
+  - **Orb wiring:**
+    - `StudioOrbProvider` — exposes `orbToolbelt`, `orbContextId`, `orbContextTransition`; resolves context on pathname/department change with dissolve/materialize phases.
+    - `StudioOrbRadialMenu` — consumes contextual toolbelt (no hardcoded `PRIMARY_ACTIONS`); Hero Object clicks navigate or open surfaces (Atlas, Daily Brief, Command Dock, etc.); context transition animations.
+    - `studioOrbTheme.ts` — thicker 64px acrylic, enhanced refraction/chrome/caustics, Hero Object living CSS, context light sweep.
+    - `studioOrbRadialLayout.ts` — item bounds bumped for larger tiles.
+- **Verification:** `npx tsc --noEmit`, `npx tsx scripts/test-studio-orb-radial-layout.ts`, `npm run build` — all passed.
+- **Conventions:** Orb component stays presentation-only; department logic lives in `context-registry/` + resolvers. Future departments register via `registerOrbContext()` or new registry file + `ORB_CONTEXT_REGISTRY` entry — do not hardcode in Orb UI.
+

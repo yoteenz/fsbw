@@ -1,4 +1,5 @@
 import type { ContextualOrbToolbelt, HeroObjectDefinition } from './types';
+import { ORB_CONTEXT_REGISTRY } from './context-registry';
 
 const SHARED_SURFACES: HeroObjectDefinition['surfaces'] = [
   'orb',
@@ -593,52 +594,14 @@ export const HERO_OBJECTS: HeroObjectDefinition[] = [
   },
 ];
 
-export const CONTEXTUAL_ORB_TOOLBELTS: ContextualOrbToolbelt[] = [
-  {
-    contextId: 'command-center',
-    contextLabel: 'Command Center™',
-    heroObjectIds: [
-      'world-atlas-globe',
-      'mission-control-console',
-      'daily-brief-lens',
-      'knowledge-core-crystal',
-      'production-board-slate',
-    ],
-  },
-  {
-    contextId: 'creative-direction-studio',
-    contextLabel: 'Creative Direction Studio™',
-    heroObjectIds: [
-      'story-table-relic',
-      'mood-wall-prism',
-      'studio-foundry-crucible',
-      'asset-registry-vault',
-      'golden-review-marquee',
-    ],
-  },
-  {
-    contextId: 'warehouse-wing',
-    contextLabel: 'Warehouse Wing™',
-    heroObjectIds: [
-      'generation-bay-engine',
-      'materials-library-tower',
-      'blueprint-archive-scroll',
-      'marketplace-pavilion-arch',
-      'hero-object-vault',
-    ],
-  },
-  {
-    contextId: 'marketing-hq',
-    contextLabel: 'Marketing HQ™',
-    heroObjectIds: [
-      'campaign-studio-beacon',
-      'launch-theater-marquee',
-      'social-media-lab-signal',
-      'brand-partnerships-handshake',
-      'performance-wall-monolith',
-    ],
-  },
-];
+/** Derived from the context registry — kept for World Graph / legacy resolver compatibility. */
+export const CONTEXTUAL_ORB_TOOLBELTS: ContextualOrbToolbelt[] = ORB_CONTEXT_REGISTRY.map(
+  (context) => ({
+    contextId: context.contextId,
+    contextLabel: context.contextLabel,
+    heroObjectIds: context.primaryHeroObjectIds,
+  })
+);
 
 export function getHeroObject(id: string): HeroObjectDefinition | undefined {
   return HERO_OBJECTS.find((object) => object.id === id);

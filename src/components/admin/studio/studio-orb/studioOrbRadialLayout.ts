@@ -1,7 +1,7 @@
 /** Viewport-aware Studio Orb radial menu layout — AssistiveTouch-style, never clipped. */
 
-export const RADIAL_ITEM_WIDTH = 72;
-export const RADIAL_ITEM_HEIGHT = 76;
+export const RADIAL_ITEM_WIDTH = 76;
+export const RADIAL_ITEM_HEIGHT = 82;
 export const RADIAL_MENU_EDGE_PADDING = 12;
 export const RADIAL_MENU_STACK_GAP = 12;
 /** Minimum air gap between projection tiles and the Orb shell. */

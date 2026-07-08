@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -20,6 +21,12 @@ import { useCommandDockState } from '../../../../hooks/useCommandDockState';
 import { useStudioOrbRecommendations } from '../../../../hooks/useStudioOrbRecommendations';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { useCompanyRouteOptional, buildOrbCompanyContext } from '../../../../studio-os-core/company-routes';
+import {
+  resolveOrbContextFromLocation,
+  resolveOrbToolbelt,
+  type OrbContextTransitionPhase,
+  type ResolvedOrbToolbelt,
+} from '../../../../studio-os-core/hero-objects';
 import { StudioOrbAwakeningOverlay } from './StudioOrbAwakeningOverlay';
 import type {
   StudioOrbPosition,
@@ -52,6 +59,10 @@ type StudioOrbContextValue = {
   openRecommendations: () => void;
   closeSurface: () => void;
   completeAwakening: () => void;
+  orbToolbelt: ResolvedOrbToolbelt;
+  orbContextId: string;
+  orbContextLabel: string;
+  orbContextTransition: OrbContextTransitionPhase;
 };
 
 const StudioOrbContext = createContext<StudioOrbContextValue | null>(null);
@@ -141,6 +152,43 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const [position, setPosition] = useState<StudioOrbPosition>(DEFAULT_POSITION);
   const [menuAnchor, setMenuAnchor] = useState({ x: 0, y: 0 });
   const [awakeningActive, setAwakeningActive] = useState(false);
+  const [orbContextTransition, setOrbContextTransition] = useState<OrbContextTransitionPhase>('idle');
+  const prevContextIdRef = useRef<string | null>(null);
+
+  const orbContextResolution = useMemo(
+    () =>
+      resolveOrbContextFromLocation({
+        pathname,
+        activeDepartment: companyRoute?.activeDepartment,
+      }),
+    [pathname, companyRoute?.activeDepartment]
+  );
+
+  const orbToolbelt = useMemo(
+    () =>
+      resolveOrbToolbelt({
+        contextId: orbContextResolution.contextId,
+        limit: 5,
+      }),
+    [orbContextResolution.contextId]
+  );
+
+  useEffect(() => {
+    const nextId = orbContextResolution.contextId;
+    const prevId = prevContextIdRef.current;
+    prevContextIdRef.current = nextId;
+
+    if (prevId && prevId !== nextId) {
+      setOrbContextTransition('dissolving');
+      const timer = window.setTimeout(() => {
+        setOrbContextTransition('materializing');
+        window.setTimeout(() => setOrbContextTransition('idle'), 580);
+      }, 380);
+      return () => window.clearTimeout(timer);
+    }
+
+    setOrbContextTransition('idle');
+  }, [orbContextResolution.contextId]);
 
   const store = dock.store;
   const [voiceTick, setVoiceTick] = useState(0);
@@ -325,6 +373,10 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       openRecommendations,
       closeSurface,
       completeAwakening,
+      orbToolbelt,
+      orbContextId: orbContextResolution.contextId,
+      orbContextLabel: orbContextResolution.contextLabel,
+      orbContextTransition,
     }),
     [
       presenceState,
@@ -344,6 +396,10 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       openRecommendations,
       closeSurface,
       completeAwakening,
+      orbToolbelt,
+      orbContextResolution.contextId,
+      orbContextResolution.contextLabel,
+      orbContextTransition,
     ]
   );
 

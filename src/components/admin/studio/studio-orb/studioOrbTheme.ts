@@ -95,6 +95,24 @@ export const ORB_ANIMATION_CSS = `
   0%, 100% { opacity: 0.55; transform: translateX(0); }
   50% { opacity: 0.85; transform: translateX(1px); }
 }
+@keyframes studio-orb-context-light-sweep {
+  0% { opacity: 0; transform: translateX(-40%) skewX(-8deg); }
+  40% { opacity: 0.85; }
+  100% { opacity: 0; transform: translateX(140%) skewX(-8deg); }
+}
+@keyframes ho-object-energy-circulate {
+  0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.45; }
+  50% { transform: rotate(180deg) scale(1.06); opacity: 0.75; }
+}
+@keyframes ho-object-idle-rotate {
+  0%, 100% { transform: rotateY(-4deg) rotateX(2deg); }
+  50% { transform: rotateY(4deg) rotateX(-2deg); }
+}
+@keyframes ho-object-selection-ripple {
+  0% { transform: scale(0.85); opacity: 0.85; }
+  70% { transform: scale(1.35); opacity: 0; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
 @keyframes studio-orb-tile-light-sweep {
   0% { transform: translateX(-120%) skewX(-12deg); opacity: 0; }
   35% { opacity: 0.75; }
@@ -247,17 +265,18 @@ export const ORB_ANIMATION_CSS = `
 }
 .studio-orb-projection__glass {
   position: relative; display: flex; align-items: center; justify-content: center;
-  width: 58px; height: 58px; border-radius: 18px;
+  width: 64px; height: 64px; border-radius: 19px;
   background:
-    linear-gradient(148deg, rgba(255,255,255,0.52) 0%, rgba(255,252,248,0.06) 38%, rgba(255,248,240,0.22) 100%);
-  backdrop-filter: blur(26px) saturate(1.65) brightness(1.14);
-  -webkit-backdrop-filter: blur(26px) saturate(1.65) brightness(1.14);
-  border: 0.5px solid rgba(255, 255, 255, 0.42);
+    linear-gradient(148deg, rgba(255,255,255,0.58) 0%, rgba(255,252,248,0.08) 36%, rgba(255,248,240,0.26) 100%);
+  backdrop-filter: blur(28px) saturate(1.75) brightness(1.16);
+  -webkit-backdrop-filter: blur(28px) saturate(1.75) brightness(1.16);
+  border: 0.5px solid rgba(255, 255, 255, 0.48);
   box-shadow:
-    0 18px 48px rgba(0,0,0,0.34),
-    0 6px 16px rgba(201,169,98,0.08),
-    inset 0 1px 0 rgba(255,255,255,0.78),
-    inset 0 -3px 12px rgba(201,169,98,0.07);
+    0 20px 52px rgba(0,0,0,0.36),
+    0 8px 18px rgba(201,169,98,0.1),
+    inset 0 2px 0 rgba(255,255,255,0.82),
+    inset 0 -4px 14px rgba(201,169,98,0.09),
+    inset 2px 0 8px rgba(136,200,255,0.06);
   transition: transform 0.48s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.48s ease, filter 0.48s ease;
   overflow: hidden;
   transform-style: preserve-3d;
@@ -282,19 +301,19 @@ export const ORB_ANIMATION_CSS = `
     inset 0 1px 0 rgba(255,255,255,0.9);
 }
 .studio-orb-projection__refraction-edge {
-  position: absolute; inset: 0; border-radius: 18px; pointer-events: none;
-  background: linear-gradient(135deg, rgba(255,255,255,0.65) 0%, transparent 28%, transparent 72%, rgba(136,200,255,0.22) 100%);
-  opacity: 0.55;
+  position: absolute; inset: 0; border-radius: 19px; pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0.72) 0%, transparent 26%, transparent 70%, rgba(136,200,255,0.28) 100%);
+  opacity: 0.62;
   animation: studio-orb-tile-refraction 5.5s ease-in-out infinite;
 }
 .studio-orb-projection__chrome-edge {
-  position: absolute; inset: 0; border-radius: 18px;
-  border: 0.5px solid rgba(201, 169, 98, 0.42); pointer-events: none;
-  box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.35);
+  position: absolute; inset: 0; border-radius: 19px;
+  border: 0.5px solid rgba(201, 169, 98, 0.48); pointer-events: none;
+  box-shadow: inset 0 0 0 0.5px rgba(255,255,255,0.42), inset 0 -1px 0 rgba(0,0,0,0.04);
 }
 .studio-orb-projection__frost {
-  position: absolute; inset: 6px; border-radius: 13px; pointer-events: none;
-  background: radial-gradient(circle at 50% 42%, rgba(255,252,248,0.38) 0%, rgba(255,248,240,0.12) 45%, transparent 72%);
+  position: absolute; inset: 4px; border-radius: 15px; pointer-events: none;
+  background: radial-gradient(circle at 50% 40%, rgba(255,252,248,0.42) 0%, rgba(255,248,240,0.14) 42%, transparent 74%);
 }
 .studio-orb-projection__depth {
   position: absolute; inset: 0; border-radius: 18px; pointer-events: none;
@@ -313,7 +332,23 @@ export const ORB_ANIMATION_CSS = `
 .studio-orb-projection__icon-wrap {
   animation: studio-orb-projection-icon 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   z-index: 2; position: relative;
-  perspective: 120px;
+  perspective: 140px;
+  width: 50px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+}
+.studio-orb-radial-menu-root.is-context-dissolving .studio-orb-projection__glass {
+  animation: studio-orb-projection-dismiss 0.38s ease-in forwards;
+}
+.studio-orb-radial-menu-root.is-context-materializing .studio-orb-projection {
+  animation: studio-orb-projection-emerge 0.58s cubic-bezier(0.22, 1, 0.36, 1) backwards,
+    studio-orb-tile-float 7.5s ease-in-out 0.58s infinite;
+}
+.studio-orb-radial-menu-root.is-context-materializing .studio-orb-projection__glass::after {
+  content: '';
+  position: absolute; inset: 0; border-radius: 19px; pointer-events: none;
+  background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,0.55) 48%, transparent 100%);
+  animation: studio-orb-context-light-sweep 0.72s ease-out forwards;
 }
 .studio-orb-projection__glow {
   position: absolute; inset: 8px; border-radius: 12px;
@@ -380,6 +415,43 @@ export const ORB_ANIMATION_CSS = `
 .studio-orb-projection.is-selected .sw-hero-icon {
   animation: sw-hero-icon-energy-travel 0.55s ease-out forwards;
 }
+
+/* Hero Objects™ — living museum artifacts in Orb tiles */
+.ho-object {
+  width: 100%; height: 100%;
+  animation: sw-hero-icon-float 8.5s ease-in-out infinite, ho-object-idle-rotate 14s ease-in-out infinite;
+}
+.ho-object__sculpture {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18));
+}
+.ho-object__energy-ring {
+  position: absolute; inset: -2px; border-radius: 50%; pointer-events: none;
+  border: 0.5px solid rgba(201,169,98,0.22);
+  animation: ho-object-energy-circulate 9s linear infinite;
+  opacity: 0.55;
+}
+.ho-object__particle-drift {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.35;
+  background-image:
+    radial-gradient(circle at 22% 35%, rgba(255,255,255,0.8) 0.5px, transparent 1px),
+    radial-gradient(circle at 78% 65%, rgba(255,248,240,0.7) 0.4px, transparent 0.8px);
+  animation: studio-orb-particle-drift 9s ease-in-out infinite;
+}
+.ho-object__caustic { opacity: 0.65; }
+.ho-object__bloom { opacity: 0.85; }
+.studio-orb-projection:hover .ho-object {
+  animation: sw-hero-icon-float 3.5s ease-in-out infinite;
+}
+.studio-orb-projection:hover .ho-object__sculpture {
+  transform: rotateY(-8deg) rotateX(5deg) translateY(-2px) scale(1.03);
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.studio-orb-projection.is-selected .ho-object__energy-ring {
+  animation: ho-object-selection-ripple 0.65s ease-out forwards;
+}
+.ho-sculpture--selected { filter: brightness(1.1) drop-shadow(0 0 10px rgba(201,169,98,0.45)); }
 
 /* Studio Foundry™ — asset preview states (no emoji / flat glyph fallbacks) */
 @keyframes foundry-asset-shimmer-sweep {
