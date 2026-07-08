@@ -41434,3 +41434,25 @@ User defined **Scene Architecture™** — navigation philosophy for **ALL** of 
 - **11-doc spec:** `docs/studio-os/navigation/` — README · scene-architecture · department-framework · scene-framework · workspace-framework · movement-philosophy · orb-context-system · headquarters-continuity · immersion-principles · navigation-laws · future-scene-catalog
 - **Prior arc (same chat):** CDS V2 prototype implementation (`252a6809`) · Guild System™ · Studio Professionals™ · Studio Architects™ · Studio Marketplace™ v2 · Living Sets™ · CDS V2 docs
 - **CORE.md + studio-world.md:** Scene Architecture™ cross-refs added
+
+---
+
+## 2026-07-08 — Routines™ — The Guided Workflows of Studio World™ (OS workflow sprint, docs only)
+
+User defined **Routines™** — how founders experience work inside Studio World™ as guided journeys. **No UI · no animations · no routing.**
+
+- **Mission:** Studio OS understands what founder is trying to accomplish · guides through correct departments · scenes · workspaces — work = journey not navigation
+- **Philosophy:** Departments = destinations · Scenes = workspaces · **Routines™ = guided journeys**; founder asks *"What am I trying to accomplish today?"* not *"What feature do I open?"*
+- **Hierarchy:** Goal™ → Routine™ → Department™ → Scene™ → Workspace™ → Task™ → Completion™
+- **Examples documented:** Launch Product™ (CDS → Distribution → Marketing → Analytics) · Hire Employee™ · Create Brand™ · Weekly Executive Review™ · Morning Arrival™
+- **Routine Start™:** Arrival Scene™ · greeting · context · objectives · duration · dependencies · recent changes — never spawn mid-work
+- **Orb guide:** routine-aware context (current routine · step · remaining · dependencies · progress · recommendations) — *"Next we'll review the Mood Wall before approving your Golden Build"* not *"Click here"*
+- **Intelligent Shortcuts™:** skip complete steps · reuse assets · carry forward decisions · Founder Taste™ adaptation (lighting before architecture · sleep on Golden Build · compare three concepts)
+- **Interruptions™ / Resume System™:** leave anytime · restore exact department · scene · workspace · task · open decisions · pending reviews
+- **Routine Memory™:** completed routines → Company Memory™ — decision patterns · bottlenecks · habits · completion time · personalization
+- **Routine Transitions™:** physical movement between steps (walk · elevator · hallway · glass bridge · skywalk · train · shuttle · floating platform · portal) — World Streaming™ during transit
+- **Explorer Mode™ vs Routine Mode™:** self-guided vs Orb-guided — same headquarters · experienced founders ignore routines · new founders rely on them
+- **Routine Engine™:** orchestration logic (selection · dependencies · shortcuts · blockers · completion signals · memory write) — philosophy only
+- **11-doc spec:** `docs/studio-os/routines/` — README · routine-philosophy · routine-framework · routine-engine · routine-memory · routine-transitions · orb-guidance · routine-adaptation · resume-system · explorer-vs-routine · future-routine-library
+- **Prior arc (same chat):** Scene Architecture™ · CDS V2 prototype (`252a6809`) · Guild System™ · Studio Professionals™ · Studio Marketplace™ v2 · Living Sets™
+- **CORE.md + studio-world.md + navigation/README.md:** Routines™ cross-refs added

@@ -103,6 +103,8 @@ STUDIO WORLD™
 
 **Scene Architecture™:** [Navigation](../navigation/README.md) — departments as destinations · scenes as workspaces · OS navigation philosophy
 
+**Routines™:** [Guided Workflows](../routines/README.md) — business objectives as journeys · Orb-guided orchestration
+
 ---
 
 ## Related Canon (Subsystems)
@@ -116,6 +118,7 @@ STUDIO WORLD™
 | **Production Lifecycle™** | [../production-lifecycle/](../production-lifecycle/) | Blueprint → Golden Build → Certified → Live → Evolution → Legacy |
 | **Walk the Business™** | [../engine/walk-the-business/](../engine/walk-the-business/) | Journey-aware routing through HQ |
 | **Scene Architecture™** | [../navigation/](../navigation/) | Departments · scenes · workspaces · navigation laws |
+| **Routines™** | [../routines/](../routines/) | Guided journeys · outcomes · Orb orchestration |
 | **Founder Journey™** | [../alpha/founder-journey.md](../alpha/founder-journey.md) | Founder maturity arc across the world |
 
 ---
