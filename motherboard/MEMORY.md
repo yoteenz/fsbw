@@ -42483,6 +42483,7 @@ User **FOLLOW-UP SPRINT:** Harden Scene Assembly™ so quality degradation never
 - **Hook exports:** `getStationBlueprint`, `getStationSceneGraph`, `planStationCleanRegeneration`, `cleanRegenerateStation`, `exportStationScene`.
 - **Types:** `SCENE_ASSEMBLY_LAW_VERSION`, `MASTER_SCENE_BLUEPRINT_VERSION`, `SCENE_STACK_PROMPT_VERSION` → `scene-stack.v2`, layer records store `blueprintId`, `assemblyLawVersion`, `qualityStatus`, `qualityIssues`.
 - **Docs:** `docs/studio-os/scene-stack/quality-preservation-law.md`.
+<<<<<<< HEAD
 - **Prior arc (same chat):** First degradation fix · Studio World/Atlas sprints · Executive Atrium · Cost HUD.
 
 ---
@@ -42517,3 +42518,6 @@ User **FOLLOW-UP SPRINT — Studio World Constitution™:** Studio World complex
 - **Boundaries:** heuristic constitutional review — extends Command Center, no redesign of other flagships.
 - **Prior arc (same chat):** Responsibility Framework™ seven flagships · Future Tournament™ · CDS pipeline · Atlas phases.
 
+=======
+- **Prior arc (same chat):** First degradation fix · CDS Parallel Futures · Studio World/Atlas · Executive Atrium · Cost HUD.
+>>>>>>> 0237e79a (Add Studio World Knowledge System architectural proposal (documentation-first pivot))
