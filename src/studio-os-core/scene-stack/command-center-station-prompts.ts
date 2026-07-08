@@ -102,6 +102,7 @@ export const COMMAND_CENTER_SCENE_STACK_HOTSPOTS: Record<
     pulseCore: { left: '30%', top: '32%', width: '40%', height: '36%' },
     wingRing: { left: '4%', top: '14%', width: '92%', height: '78%' },
     priorityDisplay: { left: '8%', top: '6%', width: '84%', height: '10%' },
+    worldAtlas: { left: '18%', top: '72%', width: '64%', height: '18%' },
   },
 };
 

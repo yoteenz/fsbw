@@ -160,3 +160,4 @@ export type {
 export * from './studio-world';
 export * from './architecture-auditor';
 export * from './experience-intelligence-engine';
+export * from './studio-world-atlas';

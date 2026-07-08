@@ -42316,3 +42316,31 @@ User reported Vercel dev site: `/admin/studio/world/command-center` (and related
 - **Fix:** `legacyEntryPath` → `/admin/studio/overview`; registry entries for `command-center` flagship root + `mission-control` world sub-path → `overview`; `/admin/studio` default redirect → `/admin/studio/world/command-center`; V4 doc table updated.
 - **Legacy `/admin/studio/mission-control` preserved** for direct access (dashboard placeholder) but no longer canonical world resolver target.
 - **Prior arc (same chat):** Experience Intelligence Engine™ · Architecture Auditor™ · V5 migration report.
+
+---
+
+## 2026-07-08 — Studio World Atlas™ flagship spatial navigation
+
+User **IMPLEMENTATION SPRINT — Studio World Atlas™:** Flagship Studio OS feature — living blueprint of Studio World™ inside Executive Atrium™ holographic table. Not a sitemap, sidebar, menu, or file explorer. GTA/Skyrim/Google Earth × Apple Maps × architectural blueprint. Six zoom levels (World → Campus → Building → Wing → Room → Workspace), seven map modes, Fog of Discovery™, live pulsing buildings, Studio Orb™ guide, Walk/Elevator/Fast Travel/Guided Tour with cinematic transitions, Scene Stack™ layer architecture.
+
+- **Core engine `src/studio-os-core/studio-world-atlas/`:** `types` · `catalog` (flagship + district + route-registry node tree, deterministic map coords) · `fog-of-discovery` · `live-world` · `orb-guide` · `fast-travel` · `memory-store` (`studioWorldAtlasDiscovery_v1`) · `index` exports.
+- **Founder UI:** `StudioWorldAtlasRoom` — perspective holographic table, building extrusions, road SVGs, mode/travel rails, focus panel, Orb recommendations, cinematic travel overlay · `useStudioWorldAtlas` hook · theme `studioWorldAtlasTheme.ts`.
+- **Route:** `/admin/studio/world-atlas` · world path `command-center/executive-district/world-atlas` · nav module STUDIO WORLD ATLAS (live, overview).
+- **Entry points:** Executive Atrium HUD pill · holographic table hotspot in `StudioCommandCenterRoom` · overview module card.
+- **Scene Stack:** department `studio-world-atlas` · station `holographic-table` · `world-atlas-station-prompts.ts` · command-center executive-atrium hotspot `worldAtlas` added.
+- **Docs:** `docs/studio-os/studio-world-atlas.md` · migration-audit immersive-partial includes `world-atlas`.
+- **Prior arc (same chat):** V5 migration report · Architecture Auditor™ · Experience Intelligence Engine™ · command-center world route fix.
+
+---
+
+## 2026-07-08 — Studio World Atlas™ flagship spatial navigation
+
+User **IMPLEMENTATION SPRINT — Studio World Atlas™:** Flagship Studio OS feature — living blueprint of Studio World™ inside Executive Atrium™ holographic table. Not a sitemap, sidebar, menu, or file explorer. GTA/Skyrim/Google Earth × Apple Maps × architectural blueprint. Six zoom levels (World → Campus → Building → Wing → Room → Workspace), seven map modes, Fog of Discovery™, live pulsing buildings, Studio Orb™ guide, Walk/Elevator/Fast Travel/Guided Tour with cinematic transitions, Scene Stack™ layer architecture.
+
+- **Core engine `src/studio-os-core/studio-world-atlas/`:** `types` · `catalog` (flagship + district + route-registry node tree, deterministic map coords) · `fog-of-discovery` · `live-world` · `orb-guide` · `fast-travel` · `memory-store` (`studioWorldAtlasDiscovery_v1`) · `index` exports.
+- **Founder UI:** `StudioWorldAtlasRoom` — perspective holographic table, building extrusions, road SVGs, mode/travel rails, focus panel, Orb recommendations, cinematic travel overlay · `useStudioWorldAtlas` hook · theme `studioWorldAtlasTheme.ts`.
+- **Route:** `/admin/studio/world-atlas` · world path `command-center/executive-district/world-atlas` · nav module STUDIO WORLD ATLAS (live, overview).
+- **Entry points:** Executive Atrium HUD pill · holographic table hotspot in `StudioCommandCenterRoom` · overview module card.
+- **Scene Stack:** department `studio-world-atlas` · station `holographic-table` · `world-atlas-station-prompts.ts` · command-center executive-atrium hotspot `worldAtlas` added.
+- **Docs:** `docs/studio-os/studio-world-atlas.md` · migration-audit immersive-partial includes `world-atlas`.
+- **Prior arc (same chat):** V5 migration report · Architecture Auditor™ · Experience Intelligence Engine™ · command-center world route fix.

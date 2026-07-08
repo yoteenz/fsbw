@@ -88,6 +88,11 @@ const V5_ROOM_CANON: Record<string, { room: string; wing?: string; building?: st
     wing: 'System Health Observatory™',
     building: 'Executive Operations Headquarters™',
   },
+  'world-atlas': {
+    room: 'Studio World Atlas™',
+    wing: 'Executive Atrium™',
+    building: 'Executive Operations Headquarters™',
+  },
   'mission-control': { room: 'Mission Control Room™', wing: 'Mission Control™' },
   'company-health-index': { room: 'Financial Observatory™', wing: 'Finance Wing™' },
   'organization-pulse': { room: 'Organization Pulse Core™', wing: 'Mission Control™' },
@@ -106,7 +111,7 @@ const V5_ROOM_CANON: Record<string, { room: string; wing?: string; building?: st
 };
 
 const IMMERSIVE_LIVE_IDS = new Set(['studio-warehouse', 'department', 'creative-direction-immersive']);
-const IMMERSIVE_PARTIAL_IDS = new Set(['overview', 'architecture-observatory', 'experience-observatory']);
+const IMMERSIVE_PARTIAL_IDS = new Set(['overview', 'architecture-observatory', 'experience-observatory', 'world-atlas']);
 
 const P0_IDS = new Set([
   'overview',

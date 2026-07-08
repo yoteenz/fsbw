@@ -430,6 +430,10 @@ const AdminStudioExperienceObservatory = lazyWithRetry(
   () => import('./pages/admin/studio/experience-observatory/page'),
   'AdminStudioExperienceObservatory'
 );
+const AdminStudioWorldAtlas = lazyWithRetry(
+  () => import('./pages/admin/studio/world-atlas/page'),
+  'AdminStudioWorldAtlas'
+);
 const AdminStudioChiefOfStaff = lazyWithRetry(() => import('./pages/admin/studio/chief-of-staff/page'), 'AdminStudioChiefOfStaff');
 const AdminStudioExecutiveOrganization = lazyWithRetry(() => import('./pages/admin/studio/executive-organization/page'), 'AdminStudioExecutiveOrganization');
 const AdminStudioOrganizationalInheritance = lazyWithRetry(() => import('./pages/admin/studio/organizational-inheritance/page'), 'AdminStudioOrganizationalInheritance');
@@ -2031,6 +2035,11 @@ function App() {
           <Route path="studio/experience-observatory" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioExperienceObservatory />
+            </Suspense>
+          } />
+          <Route path="studio/world-atlas" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioWorldAtlas />
             </Suspense>
           } />
           <Route path="studio/chief-of-staff" element={

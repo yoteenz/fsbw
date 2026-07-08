@@ -14,6 +14,11 @@ import {
   WAREHOUSE_SCENE_STACK_STATION_META,
   getWarehouseSceneStackLayerPrompts,
 } from './warehouse-station-prompts';
+import {
+  WORLD_ATLAS_SCENE_STACK_HOTSPOTS,
+  WORLD_ATLAS_SCENE_STACK_STATION_META,
+  getWorldAtlasSceneStackLayerPrompts,
+} from './world-atlas-station-prompts';
 
 function buildCdsManifest(): SceneStackManifest {
   return {
@@ -72,10 +77,30 @@ function buildCommandCenterManifest(): SceneStackManifest {
   };
 }
 
+function buildWorldAtlasManifest(): SceneStackManifest {
+  return {
+    departmentId: 'studio-world-atlas',
+    packageId: 'pkg-studio-world-atlas-golden-v1',
+    milestone: 'Studio World Atlas™ Golden Build',
+    signatureLandmarkId: 'holographic-table',
+    aspectRatio: '16:9',
+    outputFormat: 'webp',
+    stations: WORLD_ATLAS_SCENE_STACK_STATION_META.map((meta) => ({
+      stationId: meta.stationId,
+      displayName: meta.displayName,
+      shortLabel: meta.shortLabel,
+      signatureLandmarkId: 'signatureLandmarkId' in meta ? meta.signatureLandmarkId : undefined,
+      layerPrompts: getWorldAtlasSceneStackLayerPrompts(meta.stationId),
+      hotspots: WORLD_ATLAS_SCENE_STACK_HOTSPOTS[meta.stationId] ?? {},
+    })),
+  };
+}
+
 const MANIFESTS: Record<string, SceneStackManifest> = {
   'creative-direction': buildCdsManifest(),
   'studio-warehouse': buildWarehouseManifest(),
   'studio-command-center': buildCommandCenterManifest(),
+  'studio-world-atlas': buildWorldAtlasManifest(),
 };
 
 export function requireSceneStackManifest(departmentId: string): SceneStackManifest {

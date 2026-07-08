@@ -226,6 +226,19 @@ export function StudioCommandCenterRoom() {
               </div>
             ))}
 
+            <div
+              className="scc-world__hotspot scc-world__hotspot--ghost"
+              style={hotspotStyle({ left: '18%', top: '72%', width: '64%', height: '18%' })}
+            >
+              <button
+                type="button"
+                className="scc-world__enter-btn"
+                onClick={() => navigate('/admin/studio/world-atlas')}
+              >
+                Studio World Atlas™ — Holographic Table →
+              </button>
+            </div>
+
             {focusedWingId && focusedModules.length > 0 ? (
               <div className="scc-world__station-list">
                 <p style={{ fontSize: 5, color: '#c9a962', margin: '0 0 6px' }}>
@@ -282,6 +295,13 @@ export function StudioCommandCenterRoom() {
             <p className="scc-world__title">Studio Command Center™</p>
             <p className="scc-world__sub">{hubSubtitle}</p>
           </div>
+          <button
+            type="button"
+            className="scc-world__pill-btn"
+            onClick={() => navigate('/admin/studio/world-atlas')}
+          >
+            Studio World Atlas™
+          </button>
           <button
             type="button"
             className="scc-world__pill-btn"

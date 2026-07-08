@@ -95,6 +95,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'world-atlas',
+    title: 'STUDIO WORLD ATLAS',
+    purpose:
+      'Living holographic blueprint of Studio World™ — spatial civilization navigation with Fog of Discovery™, map modes, and cinematic fast travel.',
+    route: p('world-atlas'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'ATLAS',
+    ctaLabel: 'OPEN ATLAS',
+    featuredOnOverview: true,
+  },
+  {
     id: 'chief-of-staff',
     title: 'CHIEF OF STAFF',
     purpose: 'Founder primary executive — soft approvals, unified briefings, and attention protection before escalations.',
