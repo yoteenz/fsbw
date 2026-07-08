@@ -94,3 +94,6 @@ export type WarehouseReplaceContext = {
 };
 
 export type WarehouseViewMode = 'districts' | 'recipe' | 'marketplace' | 'search';
+
+/** Asset Inspection Mode™ — browse shelf · inspect hero stage · compare side-by-side */
+export type WarehouseInteractionMode = 'browse' | 'inspect' | 'compare';

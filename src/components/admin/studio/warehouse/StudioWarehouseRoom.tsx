@@ -17,8 +17,10 @@ import { CDS_GENESIS_INTERACTION_STYLES } from '../../studio-os/creative-directi
 import { CDS_IMMERSION_STYLES } from '../../studio-os/creative-direction-studio/cdsImmersionTheme';
 import { DEPARTMENT_SLICE_STYLES } from '../../studio-os/department-vertical-slice/departmentSliceTheme';
 import { STUDIO_ARCHIVES_SUBTITLE } from '../../../../utils/adminStudioWarehouseDemo';
-import { WarehouseGalleryFloor } from './WarehouseGalleryFloor';
-import { WarehouseInspectorConsole } from './WarehouseInspectorConsole';
+import { WarehouseArchitecturalAssetShelf } from './WarehouseArchitecturalAssetShelf';
+import { WarehouseInspectionStage } from './WarehouseInspectionStage';
+import { WarehouseCollapsibleInspector } from './WarehouseCollapsibleInspector';
+import { WarehouseCompareMode } from './WarehouseCompareMode';
 import { WarehouseArchitecturalDirectory } from './WarehouseArchitecturalDirectory';
 import { MuseumWingInteractions } from './MuseumWingInteractions';
 import { FutureExpansionInteractions, InnovationHallInteractions } from './InnovationHallInteractions';
@@ -32,8 +34,9 @@ import {
 } from './ArchivesWingInteractions';
 import { resolveWarehouseOrbPersonality } from './warehouseOrbPersonality';
 import { WAREHOUSE_DESTINATION_STYLES } from './warehouseDestinationTheme';
+import { WAREHOUSE_CAMPUS_STYLES } from './warehouseCampusTheme';
 import type { WarehouseCameraZoneId } from '../../../../studio-os-core/studio-warehouse';
-import { districtForWarehouseZone } from '../../../../studio-os-core/studio-warehouse';
+import { districtForWarehouseZone, industrialWingForZone, isGalleryZone } from '../../../../studio-os-core/studio-warehouse';
 import {
   getWarehouseZone,
   WAREHOUSE_CAMERA_ZONES,
@@ -133,10 +136,20 @@ export function StudioWarehouseRoom() {
   const zoneAssets = useMemo(() => {
     const district = districtForWarehouseZone(wh.activeZoneId);
     if (!district) return [];
-    return wh.catalog.filter((a) => a.districtId === district && !a.archived);
-  }, [wh.activeZoneId, wh.catalog]);
+    const base = wh.catalog.filter((a) => a.districtId === district && !a.archived);
+    if (wh.searchQuery.trim()) {
+      return wh.searchResults.map((r) => r.asset).filter((a) => a.districtId === district);
+    }
+    return base;
+  }, [wh.activeZoneId, wh.catalog, wh.searchQuery, wh.searchResults]);
+
+  const industrialWing = useMemo(() => industrialWingForZone(wh.activeZoneId), [wh.activeZoneId]);
+  const galleryMode = isGalleryZone(wh.activeZoneId);
 
   const campusTitle = useMemo(() => {
+    if (industrialWing) {
+      return `Industrial Design Campus™ · ${industrialWing.label}`;
+    }
     if (activeWing === 'legacy') return 'Studio Archives™ · Museum Wing™';
     if (activeWing === 'innovation') return 'Studio Archives™ · Hall of Innovation™';
     if (activeWing === 'genome') return 'Studio Archives™ · Company Genome Vault™';
@@ -144,9 +157,9 @@ export function StudioWarehouseRoom() {
     if (activeWing === 'marketplace') return 'Studio Archives™ · Marketplace Pavilion™';
     if (activeWing === 'expansion') return 'Studio Archives™ · Future Expansion™';
     if (activeWing === 'atrium') return 'Studio Archives™ · Orientation Atrium™';
-    if (activeWing === 'warehouse') return 'Studio Archives™ · Warehouse Wing™';
-    return 'Studio Archives™';
-  }, [activeWing]);
+    if (activeWing === 'warehouse') return 'Industrial Design Campus™ · Warehouse Wing™';
+    return 'Industrial Design Campus™';
+  }, [activeWing, industrialWing]);
 
   const costSnapshot = useStudioAlphaCost({
     departmentId: DEPARTMENT_ID,
@@ -273,27 +286,11 @@ export function StudioWarehouseRoom() {
       default:
         if (!zone.districtId) return null;
         return (
-          <>
-            <div
-              className="wh-world__hotspot wh-world__hotspot--ghost"
-              style={hotspotStyle(hotspots.floor ?? { left: '4%', top: '48%', width: '92%', height: '36%' })}
-            >
-              <WarehouseGalleryFloor
-                zone={zone}
-                assets={zoneAssets}
-                selectedAssetId={wh.selectedAssetId}
-                previewRotation={wh.previewRotation}
-                previewZoom={wh.previewZoom}
-                onSelectAsset={wh.setSelectedAssetId}
-              />
-            </div>
-            <div
-              className="wh-world__hotspot"
-              style={{ left: '4%', top: '8%', width: '92%', height: '32%' }}
-            >
-              <div className="wh-world__glass-embed">
+          <div className="wh-campus">
+            <div className="wh-campus__workspace">
+              <div className="wh-campus__search">
                 <input
-                  className="wh-world__search-input"
+                  className="wh-campus__search-input"
                   placeholder='Try: "white marble" · "Story Table lighting"'
                   value={searchDraft}
                   onChange={(e) => {
@@ -302,46 +299,115 @@ export function StudioWarehouseRoom() {
                   }}
                   aria-label="Warehouse search"
                 />
-                <WarehouseInspectorConsole
+              </div>
+
+              <div className="wh-campus__toolbar">
+                <button
+                  type="button"
+                  className={`wh-campus__toolbar-btn${wh.inspectorOpen ? ' is-active' : ''}`}
+                  onClick={wh.toggleInspector}
+                >
+                  Inspector
+                </button>
+                <button
+                  type="button"
+                  className={`wh-campus__toolbar-btn${wh.interactionMode === 'compare' ? ' is-active' : ''}`}
+                  onClick={() =>
+                    wh.interactionMode === 'compare' ? wh.exitCompareMode() : wh.enterCompareMode()
+                  }
+                >
+                  Compare Mode™
+                </button>
+              </div>
+
+              {wh.interactionMode === 'compare' && wh.compareAssets.length > 0 ? (
+                <WarehouseCompareMode
+                  assets={wh.compareAssets}
+                  onRemove={wh.toggleCompareAsset}
+                  onClear={wh.clearCompare}
+                />
+              ) : (
+                <WarehouseInspectionStage
                   asset={wh.selectedAsset}
-                  recommendReuse={wh.selectedAsset ? wh.recommendReuseFor(wh.selectedAsset) : false}
-                  onFavorite={() => wh.selectedAsset && wh.toggleFavorite(wh.selectedAsset.id)}
-                  onArchive={() => wh.selectedAsset && wh.archiveAsset(wh.selectedAsset.id)}
+                  previewRotation={wh.previewRotation}
+                  previewZoom={wh.previewZoom}
+                  inspectionActive={wh.interactionMode === 'inspect' && Boolean(wh.selectedAsset)}
                   onRotate={wh.rotatePreview}
                   onZoom={wh.zoomPreview}
                   onResetPreview={wh.resetPreview}
-                  onApply={
-                    wh.replaceContext
-                      ? () => wh.selectedAsset && wh.applyReplacement(wh.selectedAsset.id)
-                      : undefined
-                  }
-                  applyLabel={
-                    wh.replaceContext
-                      ? `Retrieve for ${wh.replaceContext.workspaceName}`
-                      : undefined
-                  }
+                  onOpenInspector={wh.openInspector}
                 />
-              </div>
+              )}
             </div>
-          </>
+
+            <WarehouseArchitecturalAssetShelf
+              assets={zoneAssets}
+              selectedAssetId={wh.selectedAssetId}
+              compareAssetIds={wh.compareAssetIds}
+              compareMode={wh.interactionMode === 'compare'}
+              transitioningAssetId={wh.transitioningAssetId}
+              onSelectAsset={wh.selectAssetForInspection}
+              onToggleCompare={wh.toggleCompareAsset}
+            />
+
+            <WarehouseCollapsibleInspector
+              open={wh.inspectorOpen}
+              asset={wh.selectedAsset}
+              catalog={wh.catalog}
+              recommendReuse={wh.selectedAsset ? wh.recommendReuseFor(wh.selectedAsset) : false}
+              onClose={wh.closeInspector}
+              onFavorite={() => wh.selectedAsset && wh.toggleFavorite(wh.selectedAsset.id)}
+              onArchive={() => wh.selectedAsset && wh.archiveAsset(wh.selectedAsset.id)}
+              onSelectRelated={(assetId) => {
+                const related = wh.catalog.find((a) => a.id === assetId);
+                if (related) {
+                  const relatedZone = WAREHOUSE_CAMERA_ZONES.find((z) => z.districtId === related.districtId);
+                  if (relatedZone && relatedZone.id !== wh.activeZoneId) {
+                    goToZone(relatedZone.id);
+                  }
+                  wh.selectAssetForInspection(assetId);
+                }
+              }}
+              onApply={
+                wh.replaceContext
+                  ? () => wh.selectedAsset && wh.applyReplacement(wh.selectedAsset.id)
+                  : undefined
+              }
+              applyLabel={
+                wh.replaceContext
+                  ? `Retrieve for ${wh.replaceContext.workspaceName}`
+                  : undefined
+              }
+            />
+          </div>
         );
     }
   };
 
   const worldClass =
-    activeWing === 'legacy'
-      ? 'wh-world is-legacy-wing'
-      : activeWing === 'innovation'
-        ? 'wh-world is-innovation-wing'
-        : activeWing === 'genome'
-          ? 'wh-world is-genome-wing'
-          : activeWing === 'blueprint'
-            ? 'wh-world is-blueprint-wing'
-            : activeWing === 'marketplace'
-              ? 'wh-world is-marketplace-wing'
-              : activeWing === 'atrium'
-                ? 'wh-world is-atrium-wing'
-                : 'wh-world';
+    industrialWing?.id === 'asset-gallery'
+      ? 'wh-world is-asset-gallery-wing'
+      : industrialWing?.id === 'material-library'
+        ? 'wh-world is-material-library-wing'
+        : industrialWing?.id === 'blueprint-hall'
+          ? 'wh-world is-blueprint-hall-wing'
+          : industrialWing?.id === 'prototype-vault'
+            ? 'wh-world is-prototype-vault-wing'
+            : industrialWing?.id === 'innovation-gallery'
+              ? 'wh-world is-innovation-gallery-wing'
+              : activeWing === 'legacy'
+                ? 'wh-world is-legacy-wing'
+                : activeWing === 'innovation'
+                  ? 'wh-world is-innovation-wing'
+                  : activeWing === 'genome'
+                    ? 'wh-world is-genome-wing'
+                    : activeWing === 'blueprint'
+                      ? 'wh-world is-blueprint-wing'
+                      : activeWing === 'marketplace'
+                        ? 'wh-world is-marketplace-wing'
+                        : activeWing === 'atrium'
+                          ? 'wh-world is-atrium-wing'
+                          : 'wh-world';
 
   return (
     <>
@@ -349,6 +415,7 @@ export function StudioWarehouseRoom() {
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
       <style>{CDS_IMMERSION_STYLES}</style>
       <style>{WAREHOUSE_DESTINATION_STYLES}</style>
+      <style>{WAREHOUSE_CAMPUS_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div className={worldClass} onPointerMove={immersion.onPointerMove} style={immersion.parallaxStyle}>
         <header className="wh-world__hud">
@@ -430,7 +497,9 @@ export function StudioWarehouseRoom() {
         </div>
 
         <p className="wh-world__teaching">
-          {activeZone.teaching}
+          {galleryMode && industrialWing
+            ? `${industrialWing.tagline} · Select a pedestal — asset travels to inspection stage`
+            : activeZone.teaching}
           {wh.replaceContext ? (
             <>
               {' · Live Assembly™ — retrieving '}

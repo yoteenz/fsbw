@@ -17,6 +17,7 @@ import {
   districtForWarehouseZone,
   resolveWarehouseZoneForSlot,
   type WarehouseCameraZoneId,
+  type WarehouseInteractionMode,
 } from '../studio-os-core/studio-warehouse';
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 import type { WarehouseAsset } from '../studio-os-core/studio-warehouse';
@@ -31,6 +32,7 @@ type WarehousePrefs = {
   appliedReplacements: Array<{ workspaceId: string; slotRole: string; assetId: string; at: string }>;
   lastZoneId?: WarehouseCameraZoneId;
   arrivalComplete?: boolean;
+  inspectorOpen?: boolean;
 };
 
 const EMPTY_PREFS: WarehousePrefs = { favorites: [], archived: [], appliedReplacements: [] };
@@ -45,6 +47,10 @@ export function useAdminStudioWarehouse() {
   const [replaceContext, setReplaceContext] = useState<WarehouseReplaceContext | null>(null);
   const [previewRotation, setPreviewRotation] = useState(0);
   const [previewZoom, setPreviewZoom] = useState(1);
+  const [interactionMode, setInteractionMode] = useState<WarehouseInteractionMode>('browse');
+  const [compareAssetIds, setCompareAssetIds] = useState<string[]>([]);
+  const [inspectorOpen, setInspectorOpen] = useState(false);
+  const [transitioningAssetId, setTransitioningAssetId] = useState<string | null>(null);
   const [version, setVersion] = useState(0);
   const [applyNotice, setApplyNotice] = useState<string | null>(null);
 
@@ -69,6 +75,7 @@ export function useAdminStudioWarehouse() {
 
   useEffect(() => {
     if (prefs.arrivalComplete) setArrivalComplete(true);
+    if (prefs.inspectorOpen !== undefined) setInspectorOpen(prefs.inspectorOpen);
     if (prefs.lastZoneId) {
       setActiveZoneId(prefs.lastZoneId);
       const district = districtForWarehouseZone(prefs.lastZoneId);
@@ -258,6 +265,67 @@ export function useAdminStudioWarehouse() {
     setPreviewZoom(1);
   }, []);
 
+  const selectAssetForInspection = useCallback(
+    (assetId: string) => {
+      setTransitioningAssetId(assetId);
+      setSelectedAssetId(assetId);
+      setInteractionMode('inspect');
+      resetPreview();
+      window.setTimeout(() => setTransitioningAssetId(null), 680);
+    },
+    [resetPreview]
+  );
+
+  const toggleCompareAsset = useCallback((assetId: string) => {
+    setCompareAssetIds((prev) => {
+      if (prev.includes(assetId)) return prev.filter((id) => id !== assetId);
+      if (prev.length >= 4) return prev;
+      return [...prev, assetId];
+    });
+  }, []);
+
+  const clearCompare = useCallback(() => {
+    setCompareAssetIds([]);
+    setInteractionMode('browse');
+  }, []);
+
+  const enterCompareMode = useCallback(() => {
+    setInteractionMode('compare');
+    if (selectedAssetId && !compareAssetIds.includes(selectedAssetId)) {
+      setCompareAssetIds((prev) => (prev.length >= 4 ? prev : [...prev, selectedAssetId]));
+    }
+  }, [compareAssetIds, selectedAssetId]);
+
+  const exitCompareMode = useCallback(() => {
+    setInteractionMode('inspect');
+  }, []);
+
+  const toggleInspector = useCallback(() => {
+    setInspectorOpen((open) => {
+      const next = !open;
+      const stored = readStudioJson<WarehousePrefs>(ADMIN_STUDIO_STORAGE_KEYS.warehouse) ?? EMPTY_PREFS;
+      writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.warehouse, { ...stored, inspectorOpen: next });
+      return next;
+    });
+  }, []);
+
+  const openInspector = useCallback(() => {
+    setInspectorOpen(true);
+    const stored = readStudioJson<WarehousePrefs>(ADMIN_STUDIO_STORAGE_KEYS.warehouse) ?? EMPTY_PREFS;
+    writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.warehouse, { ...stored, inspectorOpen: true });
+  }, []);
+
+  const closeInspector = useCallback(() => {
+    setInspectorOpen(false);
+    const stored = readStudioJson<WarehousePrefs>(ADMIN_STUDIO_STORAGE_KEYS.warehouse) ?? EMPTY_PREFS;
+    writeStudioJson(ADMIN_STUDIO_STORAGE_KEYS.warehouse, { ...stored, inspectorOpen: false });
+  }, []);
+
+  const compareAssets = useMemo(
+    () => compareAssetIds.map((id) => catalog.find((a) => a.id === id)).filter(Boolean) as WarehouseAsset[],
+    [catalog, compareAssetIds]
+  );
+
   return {
     viewMode,
     setViewMode,
@@ -292,6 +360,20 @@ export function useAdminStudioWarehouse() {
     rotatePreview,
     zoomPreview,
     resetPreview,
+    selectAssetForInspection,
+    interactionMode,
+    setInteractionMode,
+    compareAssetIds,
+    compareAssets,
+    toggleCompareAsset,
+    clearCompare,
+    enterCompareMode,
+    exitCompareMode,
+    inspectorOpen,
+    toggleInspector,
+    openInspector,
+    closeInspector,
+    transitioningAssetId,
     snapshot,
     appliedReplacements: prefs.appliedReplacements,
     applyNotice,

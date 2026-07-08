@@ -7,7 +7,7 @@ import {
 } from '../studio-os-core/studio-warehouse';
 
 export const STUDIO_ARCHIVES_SUBTITLE =
-  'The institutional memory of Studio OS™ — reusable assets, masterpieces, blueprints, and living company DNA under one architectural campus.';
+  'Studio World\'s Industrial Design Campus™ — the living memory of every reusable asset, blueprint, and prototype under one architectural roof.';
 
 /** @deprecated Use STUDIO_ARCHIVES_SUBTITLE */
 export const STUDIO_WAREHOUSE_SUBTITLE = STUDIO_ARCHIVES_SUBTITLE;
