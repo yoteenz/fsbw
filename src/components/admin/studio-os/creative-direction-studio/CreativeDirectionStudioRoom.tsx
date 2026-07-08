@@ -9,15 +9,15 @@ import { useDepartmentVerticalSlice } from '../../../../hooks/useDepartmentVerti
 import { useCreativeApprovalPipeline } from '../../../../hooks/useCreativeApprovalPipeline';
 import { useLivingMoodWall } from '../../../../hooks/useLivingMoodWall';
 import { useStudioFounderNotes } from '../../../../hooks/useStudioFounderNotesObject';
-import { useSceneGenesis } from '../../../../hooks/useSceneGenesis';
-import type { SceneGenesisHotspotBounds } from '../../../../studio-os-core/scene-genesis';
+import { useSceneStack } from '../../../../hooks/useSceneStack';
+import type { SceneStackHotspotBounds, SceneStackLayerId } from '../../../../studio-os-core/scene-stack';
 import type { MoodWallInspiration } from '../../../../studio-os-core/studio-objects/living-mood-wall';
 import type { FounderNote } from '../../../../studio-os-core/studio-objects/founder-notes';
-import { getSceneGenesisStation } from '../../../../studio-os-core/scene-genesis';
+import { getSceneStackStation } from '../../../../studio-os-core/scene-stack';
 import { useDepartmentRoomExit } from '../department-vertical-slice/DepartmentGoldenBuildShell';
 import { DEPARTMENT_SLICE_STYLES } from '../department-vertical-slice/departmentSliceTheme';
 import { CreativePipelineBoard } from './CreativePipelineBoard';
-import { SceneGenesisViewport } from './SceneGenesisViewport';
+import { SceneStackViewport } from './SceneStackViewport';
 import { CDS_GENESIS_INTERACTION_STYLES } from './cdsInteractionLayerTheme';
 import {
   CDS_CAMERA_ZONES,
@@ -28,7 +28,7 @@ import {
 
 const DEPARTMENT_ID = 'creative-direction';
 
-function hotspotStyle(bounds: SceneGenesisHotspotBounds): CSSProperties {
+function hotspotStyle(bounds: SceneStackHotspotBounds): CSSProperties {
   return {
     left: bounds.left,
     top: bounds.top,
@@ -41,7 +41,7 @@ export function CreativeDirectionStudioRoom() {
   const { workspaceId } = useWorkspace();
   const exitRoom = useDepartmentRoomExit();
   const slice = useDepartmentVerticalSlice(DEPARTMENT_ID);
-  const genesis = useSceneGenesis(DEPARTMENT_ID, slice.project.projectId, workspaceId);
+  const stack = useSceneStack(DEPARTMENT_ID, slice.project.projectId, workspaceId);
   const pipeline = useCreativeApprovalPipeline(DEPARTMENT_ID, slice.project.projectId, workspaceId);
   const moodWall = useLivingMoodWall(DEPARTMENT_ID, slice.project.projectId);
   const founderNotes = useStudioFounderNotes(DEPARTMENT_ID, slice.project.projectId);
@@ -54,16 +54,16 @@ export function CreativeDirectionStudioRoom() {
   const [noteBody, setNoteBody] = useState('');
 
   useEffect(() => {
-    document.body.classList.add('cds-genesis-active');
-    document.body.classList.remove('cds-v2-active');
+    document.body.classList.add('cds-stack-active');
+    document.body.classList.remove('cds-v2-active', 'cds-genesis-active');
     return () => {
-      document.body.classList.remove('cds-genesis-active');
+      document.body.classList.remove('cds-stack-active');
     };
   }, []);
 
   useEffect(() => {
-    void genesis.ensureStation(activeZoneId);
-  }, [activeZoneId, genesis.ensureStation]);
+    void stack.ensureStation(activeZoneId);
+  }, [activeZoneId, stack.ensureStation]);
 
   const orbCopy = useMemo(
     () => resolveDepartmentOrbGreeting(slice.pkg, slice.project),
@@ -83,8 +83,16 @@ export function CreativeDirectionStudioRoom() {
   const activeZone = useMemo(() => getCdsZone(activeZoneId), [activeZoneId]);
   const cameraPan = cdsZonePanVw(activeZone);
   const stationSpec = useMemo(
-    () => getSceneGenesisStation(DEPARTMENT_ID, activeZoneId),
+    () => getSceneStackStation(DEPARTMENT_ID, activeZoneId),
     [activeZoneId]
+  );
+  const activeLayers = useMemo(
+    () => stack.getLayerViews(activeZoneId),
+    [stack, activeZoneId]
+  );
+  const compositeStatus = useMemo(
+    () => stack.getCompositeStatus(activeZoneId),
+    [stack, activeZoneId]
   );
 
   const visibleNavZones = useMemo(
@@ -116,7 +124,7 @@ export function CreativeDirectionStudioRoom() {
   }, [moodWall.wall.inspirations]);
 
   const renderZoneInteractions = (zoneId: CdsCameraZoneId) => {
-    const spec = getSceneGenesisStation(DEPARTMENT_ID, zoneId);
+    const spec = getSceneStackStation(DEPARTMENT_ID, zoneId);
     const hotspots = spec?.hotspots ?? {};
 
     switch (zoneId) {
@@ -339,7 +347,7 @@ export function CreativeDirectionStudioRoom() {
     <>
       <style>{DEPARTMENT_SLICE_STYLES}</style>
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
-      <div className={`cds-genesis${reviewMode ? ' cds-genesis--review-mode' : ''}`}>
+      <div className={`cds-stack${reviewMode ? ' cds-genesis--review-mode' : ''}`}>
         <header className="cds-genesis__hud">
           <button type="button" className="cds-genesis__back" onClick={exitRoom} aria-label="Exit department">
             ←
@@ -351,12 +359,10 @@ export function CreativeDirectionStudioRoom() {
           <button
             type="button"
             className="cds-genesis__pill cds-genesis__pill-btn"
-            onClick={() => {
-              void genesis.ensureStation(activeZoneId);
-            }}
-            title="Golden Build™ Scene Genesis™"
+            onClick={() => void stack.ensureStation(activeZoneId)}
+            title="Golden Build™ Scene Stack™"
           >
-            Genesis {genesis.readyCount}/{genesis.totalCount}
+            Stack {stack.readyStationCount}/{stack.totalStationCount}
           </button>
         </header>
 
@@ -367,17 +373,20 @@ export function CreativeDirectionStudioRoom() {
           >
             {CDS_CAMERA_ZONES.map((zone) => {
               const locked = zone.requiresArrival && !arrivalComplete;
+              const zoneLayers = stack.getLayerViews(zone.id);
               return (
                 <section
                   key={zone.id}
                   className={`cds-genesis__zone-panel${activeZoneId === zone.id ? ' is-active' : ''}${locked ? ' is-locked' : ''}`}
                   aria-label={zone.label}
                 >
-                  <SceneGenesisViewport
-                    imageUrl={genesis.getSceneUrl(zone.id)}
-                    status={genesis.getStatus(zone.id)}
+                  <SceneStackViewport
+                    layers={zoneLayers}
+                    status={stack.getCompositeStatus(zone.id)}
                     stationLabel={zone.label}
-                    onRegenerate={() => void genesis.generateStation(zone.id)}
+                    onRegenerateLayer={(layerId) =>
+                      void stack.regenerateLayer(zone.id, layerId as SceneStackLayerId)
+                    }
                   />
                   <div className="cds-genesis__interaction-layer">{renderZoneInteractions(zone.id)}</div>
                 </section>
@@ -388,7 +397,8 @@ export function CreativeDirectionStudioRoom() {
 
         <p className="cds-genesis__teaching">
           {activeZone.teaching}
-          {stationSpec?.signatureLandmark ? ' · Signature Landmark™' : ''}
+          {stationSpec?.signatureLandmarkId ? ' · Signature Landmark™' : ''}
+          {compositeStatus === 'partial' ? ` · ${activeLayers.filter((l) => l.publicUrl).length} layers composed` : ''}
         </p>
 
         <nav className="cds-genesis__nav" aria-label="Department zones">

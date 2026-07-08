@@ -1,12 +1,14 @@
 /** Creative Direction Studio™ — Scene Genesis™ interaction layer only (no architectural CSS). */
 
 export const CDS_GENESIS_INTERACTION_STYLES = `
-body.cds-genesis-active {
+body.cds-genesis-active,
+body.cds-stack-active {
   overflow: hidden !important;
   overscroll-behavior: none;
 }
 
-.cds-genesis {
+.cds-genesis,
+.cds-stack {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -19,7 +21,89 @@ body.cds-genesis-active {
   background: #080706;
 }
 
-/* ── FAL environment plate (full viewport) ── */
+/* ── Scene Stack™ compositor (layered FAL plates — never single scene) ── */
+.cds-stack__viewport {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: #080706;
+}
+
+.cds-stack__layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cds-stack__layer--environment-shell { z-index: 1; }
+.cds-stack__layer--signature-landmark { z-index: 2; }
+.cds-stack__layer--furniture-objects { z-index: 3; }
+.cds-stack__layer--lighting-systems { z-index: 4; mix-blend-mode: soft-light; opacity: 0.85; }
+.cds-stack__layer--atmospheric-systems { z-index: 5; mix-blend-mode: screen; opacity: 0.55; }
+.cds-stack__layer--surface-materials { z-index: 6; mix-blend-mode: overlay; opacity: 0.45; }
+.cds-stack__layer--ambient-motion { z-index: 7; mix-blend-mode: screen; opacity: 0.35; animation: cds-stack-ambient-drift 12s ease-in-out infinite; }
+.cds-stack__layer--founder-personalization { z-index: 8; mix-blend-mode: color; opacity: 0.25; }
+
+@keyframes cds-stack-ambient-drift {
+  0%, 100% { transform: scale(1); opacity: 0.35; }
+  50% { transform: scale(1.01); opacity: 0.42; }
+}
+
+.cds-stack__runtime-effects {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 50% at 50% 60%, transparent 0%, rgba(0,0,0,0.15) 100%);
+}
+
+.cds-stack__plate-fallback {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201, 169, 98, 0.05) 0%, #080706 70%);
+}
+
+.cds-stack__viewport-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 18%, transparent 72%, rgba(0,0,0,0.5) 100%);
+}
+
+.cds-stack__viewport-status,
+.cds-stack__viewport-hint {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  width: min(280px, 80vw);
+  text-align: center;
+  font-size: 6px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(201, 169, 98, 0.8);
+  z-index: 11;
+  pointer-events: none;
+}
+
+.cds-stack__viewport-error {
+  position: absolute;
+  left: 50%;
+  top: 48%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 12;
+  font-size: 6px;
+}
+
+/* Legacy genesis single-plate (deprecated) */
 .cds-genesis__viewport {
   position: absolute;
   inset: 0;

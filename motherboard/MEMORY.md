@@ -41575,3 +41575,25 @@ User milestone: **Scene first · UI second** — CDS becomes first department St
 - **Docs:** `docs/studio-os/scene-genesis/README.md`
 - **Build:** `npm run build` passes
 - **Prior arc (same chat):** Architectural Icons™ · CDS Environmental Pass V1 · Studio Preview™ · Founder Discovery™ · Expeditions™ · Routines™ · Scene Architecture™
+
+---
+
+## 2026-07-08 — Golden Build™ Scene Stack™ — layered environment pipeline (supersedes Scene Genesis™)
+
+User **STOP** directive: fundamentally redesign Golden Build™ generation — Studio OS must **NEVER** generate complete scenes as a single image. Every environment assembled through layered **Scene Stack™**.
+
+- **10 layers:** (01) Environment Shell™ · (02) Signature Landmark™ · (03) Furniture & Physical Objects™ · (04) Lighting Systems™ · (05) Atmospheric Systems™ · (06) Surface Materials & Detail™ · (07) Ambient Motion™ · (08) Interaction Layer™ (Cursor) · (09) Runtime Effects™ (Cursor) · (10) Founder Personalization™
+- **Per-layer independence:** each layer independently generatable · approvable · regeneratable · versioned · replaceable — e.g. regenerate Lighting Layer™ only; room shell stays intact
+- **Golden Build™ output:** layered environments (composition of approved layers), not single images
+- **Cursor boundary:** interaction · behavior · navigation · animation · runtime state only — **never** recreate cinematic architecture with HTML/CSS
+- **Core module:** `src/studio-os-core/scene-stack/` — types · layer-catalog · store (`studioOsSceneStack_v1`) · prompt-compiler (`scene-stack.v1`) · compose · cds-station-prompts · station-manifest
+- **Hook:** `useSceneStack.ts` — `generateLayer` · `regenerateLayer` · `ensureStation` · per-layer status
+- **Compositor:** `SceneStackViewport.tsx` — stacks `<img>` layers with CSS blend modes (soft-light · screen · overlay · color)
+- **CDS migration:** `CreativeDirectionStudioRoom.tsx` → `useSceneStack` + `SceneStackViewport` · HUD `Stack X/6` · body class `cds-stack-active` · `cdsInteractionLayerTheme.ts` layer z-order/blend
+- **API:** reuses `POST /api/admin/studio-builder-generate` · `productionGroupId: scene-stack-{stationId}-{layerId}` · 9:16 mobile portrait
+- **Required layers for `ready`:** environment-shell · signature-landmark · lighting-systems
+- **Deprecation:** `scene-genesis/` module deprecated · `useSceneGenesis` re-exports `useSceneStack` · `SceneGenesisViewport` retired from active CDS path
+- **8-doc spec:** `docs/studio-os/scene-stack/` — README · scene-stack · layer-architecture · golden-build-pipeline · regeneration-system · cursor-boundary · department-composition · future-roadmap
+- **Cross-refs:** `docs/studio-os/scene-genesis/README.md` marked deprecated · `docs/studio-os/world/studio-world.md` · `motherboard/CORE.md`
+- **Build:** `npm run build` passes
+- **Prior arc (same chat):** Golden Build Scene Genesis™ (single-plate, now superseded) · Architectural Icons™ · CDS Environmental Pass V1 · Studio Preview™ · Founder Discovery™ · Expeditions™ · Routines™ · Scene Architecture™ · Guild System™

@@ -113,7 +113,9 @@ STUDIO WORLD™
 
 **Architectural Icons™:** [The Landmarks of Studio World™](../architectural-icons/README.md) — one Signature Landmark™ per department · permanent identity law
 
-**Scene Genesis™:** [Golden Build™ Scene Genesis](../scene-genesis/README.md) — FAL-generated environments · interaction layer only
+**Scene Stack™:** [Golden Build™ Layered Environments](../scene-stack/README.md) — independent FAL layers · per-layer regeneration · Cursor interaction only
+
+**Scene Genesis™ (deprecated):** [../scene-genesis/README.md](../scene-genesis/README.md) — superseded by Scene Stack™
 
 ---
 
@@ -133,7 +135,8 @@ STUDIO WORLD™
 | **Founder Journey™** | [../alpha/founder-journey.md](../alpha/founder-journey.md) | Founder maturity arc across the world |
 | **Studio Preview™** | [../preview/](../preview/) | Visitor acquisition · Future Company Experiences™ · curated HQ demo |
 | **Architectural Icons™** | [../architectural-icons/](../architectural-icons/) | Signature Landmarks™ · department identity · Founder Memory™ anchors |
-| **Scene Genesis™** | [../scene-genesis/](../scene-genesis/) | FAL environment plates per station · Golden Build™ milestone |
+| **Scene Stack™** | [../scene-stack/](../scene-stack/) | Layered Golden Build™ pipeline · per-layer FAL generation · composited environments |
+| **Scene Genesis™ (deprecated)** | [../scene-genesis/](../scene-genesis/) | Superseded by Scene Stack™ — single-image plates retired |
 
 ---
 
