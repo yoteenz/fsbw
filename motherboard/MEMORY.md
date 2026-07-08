@@ -43813,3 +43813,26 @@ Summary of the **full conversation in this chat**: the user first requested an i
 **Verification:** `npx tsc --noEmit` passed; `npm run compile-world-graph` passed (**561 nodes · 1086 edges · PASS**); `npm run build` passed.
 
 **Conventions:** Future Career Worlds, simulations, certifications, Studio Exchange actions, mentorship outcomes, and community contributions should emit Professional Memory™ records when they are meaningful to a learner's career. Wisdom Engine™ guidance should cite lived context, not produce generic advice.
+
+---
+
+## 2026-07-08 — Studio World Codex™ implementation sprint (constitutional knowledge platform)
+
+Summary of the **full conversation in this chat**: the user first requested **Career Worlds™** (completed and pushed to `master`), then **ARTICLE-C01 Codex First Principle™** architecture sprint (completed and pushed to `master`, `76f4efd54`), then **Studio World Codex™ implementation sprint** to build the foundational reusable platform — not hardcoded articles, but living constitutional memory infrastructure.
+
+- **Context:** The Codex must store, organize, version, and relate every canonical concept; integrate with World Graph and Orb; support semantic search and append-only revision history.
+- **Platform decisions / outcomes:**
+  - **`src/studio-os-core/studio-world-codex/`** expanded into a full module tree: `articles/`, `bootstrap/`, `persistence/`, `versioning/`, `relationships/`, `search/`, `world-graph/`, `orb/`, and volume modules (`manifesto`, `constitution`, `world-bible`, `architecture`, `design-language`, `production`, `knowledge-core`, `future-vision`).
+  - **Article model** (`CodexArticleRecord`): articleId, title, category, volume, status (`Draft`/`Approved`/`Canonical`), dates, author, contributors, summary, philosophy, guiding principles, architectural decisions, implementation references, related systems/articles, revision history, tags, optional department/docPaths/codePaths/worldGraphNodeId.
+  - **Relationship engine** with types: supports, depends-on, supersedes, extends, contradicts, related-to, referenced-by.
+  - **Semantic search** + filters (volume, category, status, system, department, date, tags, related articles).
+  - **Versioning:** every edit via `reviseCodexArticle()` appends `CodexArticleRevisionSnapshot` — never overwrites canonical history.
+  - **Bootstrap only:** ARTICLE-C01 seed in `bootstrap/seeds.ts`; runtime articles via `createCodexArticle()` / store — no hardcoded `CODEX_ARTICLES` array in engine core.
+  - **World Graph:** dynamic `codex-ingest.ts` from bootstrap articles + volume nodes; runtime sync via `getCodexWorldGraphSyncPayload()`.
+  - **Orb Curator™:** `getCodexOrbRecommendations()` for related articles, conflicts, history, evolution, philosophy.
+- **UI / routes:**
+  - Admin workspace **`/admin/studio/codex`** — `CodexWorkspace.tsx`, `useCodexState` hook.
+  - Registered in `App.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts`, `core/modules.ts`.
+- **Docs:** **`docs/studio-os/codex/CODEX_PLATFORM.md`** — guide for creating future Codex Articles; README updated.
+- **Verification:** `npm run build` passed; World Graph compile **569 nodes · 1093 edges · PASS**.
+- **Conventions:** Add new articles via `createCodexArticle()` + markdown in `docs/studio-os/codex/`; use bootstrap seeds only for initial empty-store seed (C01); one deploy per task on `master`.

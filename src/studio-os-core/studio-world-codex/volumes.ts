@@ -7,6 +7,7 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 1,
     purpose: 'Permanent philosophy, promise, and civilization-level worldview.',
     owns: ['origin philosophy', 'north-star statements', 'founder-facing meaning'],
+    modulePath: 'codex/manifesto',
   },
   {
     id: 'volume-ii-constitution',
@@ -14,6 +15,7 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 2,
     purpose: 'Laws, governance, review gates, and non-negotiable constraints.',
     owns: ['constitutional laws', 'review gates', 'behavioral governance'],
+    modulePath: 'codex/constitution',
   },
   {
     id: 'volume-iii-world-bible',
@@ -21,6 +23,7 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 3,
     purpose: 'Canonical world lore, rooms, districts, roles, and institutional narrative.',
     owns: ['world canon', 'rooms', 'districts', 'civilization lore'],
+    modulePath: 'codex/world-bible',
   },
   {
     id: 'volume-iv-architecture-standards',
@@ -28,6 +31,7 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 4,
     purpose: 'Reusable system architecture, ownership boundaries, and platform standards.',
     owns: ['engines', 'registries', 'contracts', 'extension points'],
+    modulePath: 'codex/architecture',
   },
   {
     id: 'volume-v-design-language',
@@ -35,6 +39,7 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 5,
     purpose: 'Visual, spatial, material, interaction, and motion language.',
     owns: ['material language', 'motion rules', 'spatial composition', 'visual canon'],
+    modulePath: 'codex/design-language',
   },
   {
     id: 'volume-vi-production-standards',
@@ -42,6 +47,7 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 6,
     purpose: 'Definition of Done, release readiness, QA, and production governance.',
     owns: ['quality gates', 'completion standards', 'launch review', 'post-launch review'],
+    modulePath: 'codex/production',
   },
   {
     id: 'volume-vii-profession-brains',
@@ -49,6 +55,7 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 7,
     purpose: 'Professional truth models, vocabularies, standards, and reasoning systems.',
     owns: ['profession knowledge', 'skill standards', 'judgment frameworks'],
+    modulePath: 'codex/profession-brains',
   },
   {
     id: 'volume-viii-career-worlds',
@@ -56,6 +63,7 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 8,
     purpose: 'Persistent profession worlds, player identity, economy, NPCs, and career progression.',
     owns: ['career worlds', 'profession simulation', 'persistent identity', 'world events'],
+    modulePath: 'codex/career-worlds',
   },
   {
     id: 'volume-ix-knowledge-core',
@@ -63,6 +71,7 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 9,
     purpose: 'Institutional memory, knowledge lifecycle, archives, extraction, and canon promotion.',
     owns: ['knowledge entries', 'memory lineage', 'architect memory', 'searchable canon'],
+    modulePath: 'codex/knowledge-core',
   },
   {
     id: 'volume-x-future-vision',
@@ -70,9 +79,14 @@ export const CODEX_VOLUMES: CodexVolume[] = [
     order: 10,
     purpose: 'Long-term possibilities, future eras, preserved concepts, and evolution paths.',
     owns: ['future systems', 'era transitions', 'unbuilt opportunities'],
+    modulePath: 'codex/future-vision',
   },
 ];
 
 export function getCodexVolume(id: CodexVolume['id']): CodexVolume | undefined {
   return CODEX_VOLUMES.find((volume) => volume.id === id);
+}
+
+export function listCodexVolumes(): CodexVolume[] {
+  return [...CODEX_VOLUMES];
 }

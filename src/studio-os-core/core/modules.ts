@@ -176,6 +176,7 @@ export type StudioOsCoreModuleId =
   | 'simulation-engine'
   | 'career-worlds'
   | 'studio-exchange'
+  | 'studio-world-codex'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -1224,6 +1225,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'CAREER WORLDS™',
     description: 'Persistent professional simulation engine — Career Hub, world clock, economy, NPC ecosystem. Reusable across every profession.',
     routeSegment: 'career-worlds',
+  },
+  {
+    id: 'studio-world-codex',
+    label: 'STUDIO WORLD CODEX™',
+    description: 'Constitutional memory platform — articles, relationships, semantic search, versioning, World Graph and Orb integration.',
+    routeSegment: 'codex',
   },
   {
     id: 'vision-engine',

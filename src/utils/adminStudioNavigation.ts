@@ -2346,6 +2346,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'studio-world-codex',
+    title: 'STUDIO WORLD CODEX™',
+    purpose: 'Living constitutional memory — articles, relationships, versioning, and Orb curation before implementation.',
+    route: p('codex'),
+    groupId: 'legacy',
+    status: 'demo',
+    metric: '10 VOLUMES',
+    ctaLabel: 'OPEN CODEX',
+    moduleKey: 'studio-world-codex',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

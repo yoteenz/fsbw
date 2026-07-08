@@ -52,6 +52,7 @@ export type AdminStudioSectionId =
   | 'studio-intelligence'
   | 'simulation-engine'
   | 'career-worlds'
+  | 'studio-world-codex'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'

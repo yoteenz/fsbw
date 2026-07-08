@@ -59,6 +59,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'studio-intelligence'
   | 'simulation-engine'
   | 'career-worlds'
+  | 'studio-world-codex'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'
@@ -163,6 +164,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'governance',
   'simulation-engine',
   'career-worlds',
+  'studio-world-codex',
   'vision-engine',
   'executive-command-center',
   'mission-control',
@@ -284,6 +286,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   studioIntelligence: 'studio/studio-intelligence',
   simulationEngine: 'studio/simulation-engine',
   careerWorlds: 'studio/career-worlds',
+  studioWorldCodex: 'studio/codex',
   visionEngine: 'studio/vision-engine',
   executiveCommandCenter: 'studio/executive-command-center',
   missionControl: 'studio/mission-control',
@@ -1185,6 +1188,10 @@ export function adminStudioSimulationEnginePath(): string {
 
 export function adminStudioCareerWorldsPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/career-worlds`;
+}
+
+export function adminStudioCodexPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/codex`;
 }
 
 export function adminStudioVisionEnginePath(): string {

@@ -15,17 +15,20 @@ It is not documentation. It is the source of truth for approved philosophy, syst
 
 ## Core
 
+- [Codex Platform Guide](./CODEX_PLATFORM.md) — schemas, API, relationships, search, versioning
+- Admin workspace: `/admin/studio/codex`
+
 ```text
 src/studio-os-core/studio-world-codex/
 ```
 
-Exports:
+Key exports:
 
-- `CODEX_VOLUMES`
-- `CODEX_ARTICLES`
-- `CODEX_PIPELINE_STAGES`
-- `CANONICAL_THINKING_QUESTIONS`
-- `evaluateCodexReadiness()`
+- `queryCodex()` — semantic search with filters
+- `createCodexArticle()` / `reviseCodexArticle()` — append-only article lifecycle
+- `getCodexOrbRecommendations()` — Orb Curator™ hooks
+- `getCodexWorldGraphSyncPayload()` — World Graph integration
+- `CODEX_VOLUMES` · `CODEX_PIPELINE_STAGES` · `evaluateCodexReadiness()`
 
 ---
 

@@ -1,0 +1,197 @@
+# Studio World Codex™ — Platform Guide
+
+The Codex is **not documentation**. It is the living constitutional memory of Studio World — a reusable platform that stores, organizes, versions, and relates every canonical concept before implementation begins.
+
+---
+
+## Core location
+
+```
+src/studio-os-core/studio-world-codex/
+├── articles/          # Article schema, registry, create, update
+├── bootstrap/         # One-time seed (ARTICLE-C01 only — not runtime registry)
+├── manifesto/         # Volume I module
+├── constitution/      # Volume II module
+├── world-bible/       # Volume III module
+├── architecture/      # Volume IV module
+├── design-language/   # Volume V module
+├── production/        # Volume VI module
+├── knowledge-core/    # Volume IX module
+├── future-vision/     # Volume X module
+├── relationships/     # Knowledge graph edges
+├── search/            # Semantic search + filters
+├── versioning/        # Append-only revision snapshots
+├── world-graph/       # Graph sync hooks
+├── orb/               # Orb Curator™ recommendations
+├── persistence/       # localStorage store (future: Supabase)
+├── engine.ts          # Public orchestration API
+├── types.ts           # Article, relationship, store schemas
+└── volumes.ts         # Ten Codex Volumes™
+```
+
+Admin workspace: **`/admin/studio/codex`**
+
+---
+
+## Article model
+
+Every Codex Article (`CodexArticleRecord`) stores:
+
+| Field | Purpose |
+|-------|---------|
+| `articleId` | Stable ID (e.g. `ARTICLE-C01`) |
+| `title` | Display name |
+| `category` | Section within a volume |
+| `volume` | One of ten `CodexVolumeId` values |
+| `status` | `Draft` · `Approved` · `Canonical` |
+| `createdAt` / `updatedAt` | ISO timestamps |
+| `author` / `contributors` | Provenance |
+| `summary` | Executive summary |
+| `philosophy` | Core belief protected by this article |
+| `guidingPrinciples` | Bullet principles |
+| `architecturalDecisions` | System ownership and constraints |
+| `implementationReferences` | Doc paths, plans, ADRs |
+| `relatedSystems` | World Graph system references |
+| `relatedArticles` | Cross-article links |
+| `revisionHistory` | Inline revision metadata |
+| `tags` | Search and filter tags |
+| `worldGraphNodeId` | Optional explicit graph node ID |
+
+Use **`docs/studio-os/codex/CODEX_ARTICLE_TEMPLATE.md`** for human-authored articles.
+
+---
+
+## Creating a new Codex Article
+
+### 1. Author the markdown (human)
+
+Create `docs/studio-os/codex/ARTICLE_XXX_<SLUG>.md` using the template.
+
+### 2. Register via API (runtime)
+
+```typescript
+import { createCodexArticle } from '@/studio-os-core/studio-world-codex';
+
+createCodexArticle({
+  articleId: 'ARTICLE-E03',
+  title: 'My New System™',
+  volume: 'volume-iv-architecture-standards',
+  category: 'Platform Architecture',
+  status: 'Draft',
+  summary: 'Why this should exist.',
+  philosophy: 'The permanent belief this protects.',
+  guidingPrinciples: ['Principle one'],
+  architecturalDecisions: ['Decision one'],
+  relatedSystems: ['World Graph™'],
+  relatedArticles: ['ARTICLE-C01'],
+  tags: ['platform', 'architecture'],
+  docPaths: ['docs/studio-os/codex/ARTICLE_E03_MY_NEW_SYSTEM.md'],
+});
+```
+
+### 3. Revise (append-only)
+
+```typescript
+import { reviseCodexArticle } from '@/studio-os-core/studio-world-codex';
+
+reviseCodexArticle(
+  'ARTICLE-E03',
+  { status: 'Approved', summary: 'Updated summary after Constitution Review.' },
+  'Passed Constitution Review™',
+  'Founder'
+);
+```
+
+Every revision creates a **`CodexArticleRevisionSnapshot`** — canonical history is never overwritten.
+
+---
+
+## Relationship engine
+
+Supported relationship types:
+
+- `supports`
+- `depends-on`
+- `supersedes`
+- `extends`
+- `contradicts`
+- `related-to`
+- `referenced-by`
+
+Relationships sync from `relatedArticles` / `relatedSystems` fields and can be extended programmatically via `relationships/engine.ts`.
+
+---
+
+## Search
+
+```typescript
+import { queryCodex } from '@/studio-os-core/studio-world-codex';
+
+queryCodex('codex first', {
+  volume: 'volume-ii-constitution',
+  status: 'Canonical',
+  tag: 'codex-first',
+  system: 'Knowledge Core',
+});
+```
+
+Semantic clusters expand queries (constitution, architecture, career worlds, knowledge core, future vision).
+
+---
+
+## World Graph integration
+
+- **`bootstrap/seeds.ts`** — compile-time bootstrap articles for graph ingestion
+- **`world-graph/ingestion/codex-ingest.ts`** — builds engine, volume, and article nodes
+- **`world-graph/sync.ts`** — runtime sync payload for the Codex workspace UI
+
+Every article becomes a graph node; systems reference articles via `integrates-with` edges.
+
+---
+
+## Orb integration
+
+**`orb/curator.ts`** exposes:
+
+- Related articles
+- Architectural conflicts (`contradicts` edges)
+- Historical decisions (revision history)
+- Future evolution opportunities
+- Relevant philosophy
+
+The Orb acts as **Codex Curator™** — not a folder browser.
+
+---
+
+## Volumes
+
+Ten volumes map to module paths under `codex/`:
+
+| Volume | Module path |
+|--------|-------------|
+| I — Manifesto | `codex/manifesto` |
+| II — Constitution | `codex/constitution` |
+| III — World Bible | `codex/world-bible` |
+| IV — Architecture Standards | `codex/architecture` |
+| V — Design Language | `codex/design-language` |
+| VI — Production Standards | `codex/production` |
+| VII — Profession Brains | `codex/profession-brains` |
+| VIII — Career Worlds | `codex/career-worlds` |
+| IX — Knowledge Core | `codex/knowledge-core` |
+| X — Future Vision | `codex/future-vision` |
+
+---
+
+## Bootstrap vs platform
+
+- **Do not** add articles to hardcoded arrays in engine core.
+- **Do** use `createCodexArticle()` or bootstrap seeds for the initial empty store only.
+- **ARTICLE-C01** lives in `bootstrap/seeds.ts` as the constitutional seed — loaded once when the store is empty.
+
+---
+
+## Related docs
+
+- [ARTICLE-C01 — Codex First Principle](./ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md)
+- [Codex Article Template](./CODEX_ARTICLE_TEMPLATE.md)
+- [Codex README](./README.md)
