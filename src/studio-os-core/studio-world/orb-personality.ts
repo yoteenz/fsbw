@@ -25,6 +25,11 @@ import {
   COSMIC_GUIDE_GREETING,
   COSMIC_GUIDE_ROLE,
 } from '../innovation-constellations/cosmic-guide';
+import {
+  EXPEDITION_GUIDE_ACCENT,
+  EXPEDITION_GUIDE_GREETING,
+  EXPEDITION_GUIDE_ROLE,
+} from '../innovation-expeditions/expedition-guide';
 
 export type StudioWorldOrbPersonality = {
   flagshipId: StudioWorldFlagshipId;
@@ -170,6 +175,16 @@ export function resolveOrbPersonalityForPath(pathname: string): StudioWorldOrbPe
       guidance:
         'I navigate the living universe — constellation evolution, derivative innovations, collaboration pathways, and whitespace opportunity.',
       accent: COSMIC_GUIDE_ACCENT,
+    };
+  }
+  if (p.includes('innovation-expeditions') || p.includes('expeditions-hall')) {
+    return {
+      flagshipId: 'studio-archives',
+      role: EXPEDITION_GUIDE_ROLE,
+      greeting: EXPEDITION_GUIDE_GREETING,
+      guidance:
+        'I guide expeditions through Studio World — stories, principles, and missions at every stop. Learning by experiencing, not reading.',
+      accent: EXPEDITION_GUIDE_ACCENT,
     };
   }
   if (p.includes('innovation-district')) {

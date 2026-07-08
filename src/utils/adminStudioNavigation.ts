@@ -158,6 +158,19 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     moduleKey: 'innovation-constellations',
   },
   {
+    id: 'innovation-expeditions',
+    title: 'INNOVATION EXPEDITIONS',
+    purpose:
+      'Innovation Expeditions™ — guided knowledge network. Industry, innovation, founder, company, and Blueprint journeys with missions, live events, and rewards.',
+    route: p('innovation-expeditions'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'EXPEDITION',
+    ctaLabel: 'BEGIN JOURNEY',
+    featuredOnOverview: true,
+    moduleKey: 'innovation-expeditions',
+  },
+  {
     id: 'chief-of-staff',
     title: 'CHIEF OF STAFF',
     purpose: 'Founder primary executive — soft approvals, unified briefings, and attention protection before escalations.',

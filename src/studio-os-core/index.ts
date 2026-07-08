@@ -163,6 +163,7 @@ export * from './global-atlas-layer';
 export * from './collaborative-innovation-network';
 export * from './innovation-lineage';
 export * from './innovation-constellations';
+export * from './innovation-expeditions';
 export * from './world-physics';
 export * from './implementation-standards';
 export * from './architecture-auditor';

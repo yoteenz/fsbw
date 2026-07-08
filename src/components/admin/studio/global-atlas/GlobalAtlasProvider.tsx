@@ -40,6 +40,12 @@ import {
   type AtlasConstellationGlow,
 } from '../../../../studio-os-core/innovation-constellations';
 import {
+  ensureOrganizationInnovationExpeditionsProfile,
+  formatAtlasExpeditionLine,
+  resolveAtlasExpeditionJourneys,
+  type AtlasExpeditionJourney,
+} from '../../../../studio-os-core/innovation-expeditions';
+import {
   ATLAS_TRAVEL_LABELS,
   type AtlasNode,
   type AtlasTravelMode,
@@ -59,6 +65,8 @@ export type GlobalAtlasLayerContextValue = {
   atlasLineageSignals: AtlasLineageSignal[];
   constellationLine: string | null;
   atlasConstellationGlows: AtlasConstellationGlow[];
+  expeditionLine: string | null;
+  atlasExpeditionJourneys: AtlasExpeditionJourney[];
   traveling: boolean;
   openAtlas: () => void;
   closeAtlas: () => void;
@@ -126,6 +134,16 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   const constellationLine = useMemo(
     () => formatAtlasConstellationLine(atlasConstellationGlows),
     [atlasConstellationGlows]
+  );
+
+  const atlasExpeditionJourneys = useMemo(() => {
+    const profile = ensureOrganizationInnovationExpeditionsProfile(workspaceId ?? 'frontal-slayer');
+    return resolveAtlasExpeditionJourneys(profile.expeditions, profile.activeExpeditionId);
+  }, [workspaceId, isOpen]);
+
+  const expeditionLine = useMemo(
+    () => formatAtlasExpeditionLine(atlasExpeditionJourneys),
+    [atlasExpeditionJourneys]
   );
 
   const syncLocationFocus = useCallback(() => {
@@ -234,6 +252,8 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
     atlasLineageSignals,
     constellationLine,
     atlasConstellationGlows,
+    expeditionLine,
+    atlasExpeditionJourneys,
     traveling,
     openAtlas,
     closeAtlas,

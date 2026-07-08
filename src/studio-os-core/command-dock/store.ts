@@ -149,6 +149,9 @@ import {
   resolveInnovationConstellationsAdvice,
 } from '../innovation-constellations/dock-advisor';
 import {
+  resolveInnovationExpeditionsAdvice,
+} from '../innovation-expeditions/dock-advisor';
+import {
   resolveOrganizationOperatingManualAdvice,
   buildProactiveOrganizationOperatingManualSuggestion,
   buildOperatingManualOpeningLine,
@@ -1298,6 +1301,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${innovationConstellationsAdvice.concierge}\n${innovationConstellationsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const innovationExpeditionsAdvice = resolveInnovationExpeditionsAdvice(trimmed, getRuntimeActiveWorkspaceId());
+  if (innovationExpeditionsAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${innovationExpeditionsAdvice.concierge}\n${innovationExpeditionsAdvice.response}`,
     });
     return null;
   }

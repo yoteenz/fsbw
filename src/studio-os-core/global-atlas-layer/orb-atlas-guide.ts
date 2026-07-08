@@ -19,6 +19,7 @@ const NODE_ALIASES: Array<{ patterns: string[]; nodeId: string; path: string }> 
   { patterns: ['world atlas', 'atlas'], nodeId: 'room-world-atlas', path: '/admin/studio/world-atlas' },
   { patterns: ['innovation lineage', 'lineage gallery', 'innovation museum'], nodeId: 'room-innovation-lineage-gallery', path: '/admin/studio/innovation-lineage-gallery' },
   { patterns: ['innovation constellation', 'living universe', 'knowledge universe', 'constellation observatory'], nodeId: 'room-innovation-constellations', path: '/admin/studio/innovation-constellations' },
+  { patterns: ['innovation expedition', 'guided tour', 'expedition hall', 'guided exploration'], nodeId: 'room-innovation-expeditions', path: '/admin/studio/innovation-expeditions' },
   { patterns: ['innovation district', 'co-invent', 'collaborat'], nodeId: 'room-innovation-district', path: '/admin/studio/innovation-district' },
   { patterns: ['constitution'], nodeId: 'room-constitution-hall', path: '/admin/studio/constitution-hall' },
   { patterns: ['expedition', 'expansion'], nodeId: 'flagship-expedition-hub', path: '/admin/studio/expansion-center' },

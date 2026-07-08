@@ -450,6 +450,10 @@ const AdminStudioInnovationConstellations = lazyWithRetry(
   () => import('./pages/admin/studio/innovation-constellations/page'),
   'AdminStudioInnovationConstellations'
 );
+const AdminStudioInnovationExpeditions = lazyWithRetry(
+  () => import('./pages/admin/studio/innovation-expeditions/page'),
+  'AdminStudioInnovationExpeditions'
+);
 const AdminStudioChiefOfStaff = lazyWithRetry(() => import('./pages/admin/studio/chief-of-staff/page'), 'AdminStudioChiefOfStaff');
 const AdminStudioExecutiveOrganization = lazyWithRetry(() => import('./pages/admin/studio/executive-organization/page'), 'AdminStudioExecutiveOrganization');
 const AdminStudioOrganizationalInheritance = lazyWithRetry(() => import('./pages/admin/studio/organizational-inheritance/page'), 'AdminStudioOrganizationalInheritance');
@@ -2076,6 +2080,11 @@ function App() {
           <Route path="studio/innovation-constellations" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioInnovationConstellations />
+            </Suspense>
+          } />
+          <Route path="studio/innovation-expeditions" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioInnovationExpeditions />
             </Suspense>
           } />
           <Route path="studio/chief-of-staff" element={

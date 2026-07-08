@@ -42590,7 +42590,8 @@ User **FOLLOW-UP SPRINT — Innovation Lineage™ (The Living Innovation Graph):
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-07-08 — Studio World Three Eras Roadmap™ (guiding architecture)
 
 User defined **three major eras** for Studio World's evolution — **not** to build all three today, but as a **guiding principle** every future system must be evaluated against.
@@ -42609,8 +42610,9 @@ User defined **three major eras** for Studio World's evolution — **not** to bu
   - `scripts/compile-world-graph-runner.ts` — CI now uses canonical TypeScript `buildWorldGraph` (360 nodes · 467 edges)
   - Updated `STUDIO_WORLD_GRAPH_ARCHITECTURE.md` · `world-graph-law.md` · `motherboard/CORE.md`
 - **Prior arc (same chat):** Scene Stack quality fix + hardening sprint · Knowledge System proposal · World Graph™ Phase 1 approved · Responsibility Framework™ · Constitution™ · Global Atlas Layer™ · Collaborative Innovation Network™ · Innovation Lineage™.
-<<<<<<< HEAD
-=======
+
+---
+
 ## 2026-07-08 — Innovation Constellations™ living knowledge universe
 
 User **FOLLOW-UP SPRINT — Innovation Constellations™ (The Living Knowledge Universe):** After Innovation Lineage™ records history, transform that history into a living universe founders explore — not another Marketplace view or search page. Visual representation of collective business intelligence inside Studio World.
@@ -42627,10 +42629,28 @@ User **FOLLOW-UP SPRINT — Innovation Constellations™ (The Living Knowledge U
 - **Export:** `studio-os-core/index.ts`.
 - **Docs:** `docs/studio-os/innovation-constellations.md`.
 - **Boundaries:** visualization layer — not Marketplace redesign; demo/heuristic universe from lineage; full real-time World Graph ingestion deferred.
-- **Prior arc (same chat):** Innovation Lineage™ · World Graph™ Phase 1 · Collaborative Innovation Network™ · Global Atlas Layer™.
+- **Prior arc (same chat):** Innovation Lineage™ · World Graph™ Phase 1 · Three Eras Roadmap™ · Collaborative Innovation Network™ · Global Atlas Layer™.
 
->>>>>>> c89fbc2f (Innovation Constellations™ — living knowledge universe observatory, engine, Orb Cosmic Guide, Atlas glow, Command Dock)
-=======
+---
+
+## 2026-07-08 — Innovation Expeditions™ guided knowledge network
+
+User **FOLLOW-UP SPRINT — Innovation Expeditions™ (The Guided Knowledge Network):** After Innovation Constellations™ visualizes collective knowledge, allow founders to journey through that knowledge with purpose — not tutorial, documentation, or onboarding. Museum tour + university course + documentary + RPG quest inside Studio World.
+
+- **Engine `src/studio-os-core/innovation-expeditions/`:** expedition types (Industry · Innovation · Founder · Company · Blueprint · Community) · `expedition-catalog.ts` (5 demo expeditions with guided stops at real Studio World locations) · `filterStopsForPath()` (Beginner™ through Strategy™ paths) · `community-expeditions.ts` · `live-events.ts` (Founder Talks™, Museum Nights™, etc.) · `rewards-engine.ts` (Knowledge™, Blueprints™, Certificates™, Creative Equity™) · `expedition-guide.ts` (Orb Expedition Guide) · `atlas-expeditions.ts` (journey route illumination) · `expeditions-builder.ts` · `store.ts` (`studioOsInnovationExpeditions_v1`, start/advance/complete) · `dock-advisor.ts`.
+- **Innovation Expeditions™ Hall:** immersive guided tour `InnovationExpeditionsHall.tsx` + `/admin/studio/innovation-expeditions` — expedition type filters, path level pills, expedition cards, active stop progress, interactive missions, community expeditions, live events, rewards, Orb guide footer with ENTER location / NEXT STOP / ATLAS JOURNEY.
+- **Hook:** `useInnovationExpeditions` — profile, guide lines, begin expedition, advance stop, change path.
+- **Demo expeditions:** Luxury Beauty™ industry · Evolution of Customer Experience™ · Legendary Luxury Retail Founder™ · Evolution of Frontal Slayer™ company · Luxury CX HQ™ Blueprint — stops link to lineage gallery, constellations, district, marketplace, headquarters, world atlas.
+- **Sync:** reads Innovation Constellations™, Innovation Lineage™, profession brain.
+- **Studio World wiring:** `route-registry` theater in Studio Archives™ · `flagship-destinations` `archives-innovation-expeditions` · `navigation.ts` walkway from Constellations · `migration-audit` immersive-partial · `adminStudioNavigation` EXPEDITION metric · `adminStudioRoutes` · `App.tsx` lazy route · `core/modules.ts` id `innovation-expeditions`.
+- **Orb:** Innovation Expeditions path → Expedition Guide (`expedition-guide.ts` + `orb-personality.ts`).
+- **Global Atlas:** expedition journey hint (`formatAtlasExpeditionLine` / `gal-expedition-hint`); context priorities; orb guide aliases for "guided tour" / "expedition hall".
+- **Command Dock:** `resolveInnovationExpeditionsAdvice()` after Innovation Constellations chain.
+- **Bootstrap:** `workspaces/index.ts` after innovation-constellations.
+- **Export:** `studio-os-core/index.ts`.
+- **Docs:** `docs/studio-os/innovation-expeditions.md`.
+- **Boundaries:** guided exploration layer — not tutorial/docs redesign; demo/heuristic expeditions; full community authoring + live event scheduling deferred.
+- **Prior arc (same chat):** Innovation Constellations™ · Innovation Lineage™ · Three Eras Roadmap™ · World Graph™ Phase 1 · Collaborative Innovation Network™ · Global Atlas Layer™.
 
 ---
 
@@ -42650,4 +42670,4 @@ User **approved** Three Eras constitutional direction and introduced the next ar
   - `src/studio-os-core/world-physics/` · `behavioral-laws.ts` · `implementation-standards/`
   - World Graph: `foundational-physics-law` (`W-PHY-*`) · `implementation-standard` (`W-STD-*`) · ingestion adapters · `depends-on` / `implements` edges (387 nodes · 533 edges)
 - **Prior arc (same chat):** Three Eras Roadmap™ · World Graph Phase 1 · Innovation Lineage™ · Scene Stack hardening · Knowledge System.
->>>>>>> 01b02d4d (World Physics™ + three-tier Canon hierarchy — physics laws, behavioral constitution, implementation standards)
+

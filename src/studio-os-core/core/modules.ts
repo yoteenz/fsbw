@@ -116,6 +116,7 @@ export type StudioOsCoreModuleId =
   | 'collaborative-innovation-network'
   | 'innovation-lineage'
   | 'innovation-constellations'
+  | 'innovation-expeditions'
   | 'organization-operating-manual'
   | 'legacy-network'
   | 'studio-intelligence-architecture'
@@ -858,6 +859,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'INNOVATION CONSTELLATIONS™',
     description: 'Living knowledge universe — galaxies, constellations, stars, influence tiers, Opportunity Map™, Collaboration Pathways™, Academic Mode™.',
     routeSegment: 'innovation-constellations',
+  },
+  {
+    id: 'innovation-expeditions',
+    label: 'INNOVATION EXPEDITIONS™',
+    description: 'Guided knowledge network — industry, innovation, founder, company, and Blueprint expeditions with missions, live events, and rewards.',
+    routeSegment: 'innovation-expeditions',
   },
   {
     id: 'organization-operating-manual',

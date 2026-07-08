@@ -325,6 +325,10 @@ export function bootstrapWorkspacesPlatform(): void {
     innovationConstellations.bootstrapInnovationConstellationsPlatform();
     await yieldToMain();
 
+    const innovationExpeditions = await import('../studio-os-core/innovation-expeditions/bootstrap');
+    innovationExpeditions.bootstrapInnovationExpeditionsPlatform();
+    await yieldToMain();
+
     const organizationOperatingManual = await import('../studio-os-core/organization-operating-manual/bootstrap');
     organizationOperatingManual.bootstrapOrganizationOperatingManualPlatform();
     await yieldToMain();

@@ -204,6 +204,14 @@ export const FLAGSHIP_DISTRICTS: StudioWorldLocation[] = [
     teaching: 'Living knowledge universe — explore galaxies, constellations, and stars as business intelligence evolves.',
   },
   {
+    id: 'archives-innovation-expeditions',
+    displayName: 'Innovation Expeditions™',
+    physicalType: 'theater',
+    flagshipId: 'studio-archives',
+    worldPath: 'archives/innovation-expeditions',
+    teaching: 'Guided knowledge network — journey through real businesses, innovations, and decisions inside Studio World.',
+  },
+  {
     id: 'archives-genome-vault',
     displayName: 'Company Genome Vault™',
     physicalType: 'vault',

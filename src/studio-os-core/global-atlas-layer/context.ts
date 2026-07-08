@@ -119,6 +119,20 @@ export function resolveAtlasContextForPath(pathname: string): GlobalAtlasLocatio
       ],
     };
   }
+  if (p.includes('innovation-expeditions') || p.includes('expeditions-hall')) {
+    return {
+      ...CONTEXT_BY_FLAGSHIP['studio-archives'],
+      contextLabel: 'Innovation Expeditions™',
+      priorityModes: ['innovation', 'archives', 'marketplace', 'company-genome'],
+      priorityDestinations: [
+        'Innovation Expeditions™',
+        'Innovation Constellations™',
+        'World Atlas™',
+        'Innovation Lineage Gallery™',
+        'Marketplace Pavilion™',
+      ],
+    };
+  }
   if (p.includes('innovation-district')) {
     return {
       ...CONTEXT_BY_FLAGSHIP['studio-archives'],

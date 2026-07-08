@@ -22,6 +22,7 @@ function GlobalAtlasLayerInner() {
     atlasCollaborators,
     lineageLine,
     constellationLine,
+    expeditionLine,
     traveling,
     closeAtlas,
     travelToNode,
@@ -87,6 +88,12 @@ function GlobalAtlasLayerInner() {
           {constellationLine ? (
             <p className="gal-constellation-hint" aria-label="Innovation constellations spreading">
               {constellationLine}
+            </p>
+          ) : null}
+
+          {expeditionLine ? (
+            <p className="gal-expedition-hint" aria-label="Innovation expedition journey">
+              {expeditionLine}
             </p>
           ) : null}
 
