@@ -133,6 +133,8 @@ STUDIO WORLD™
 
 **Prompt Composer™:** [Intent → production brief](../engines/prompt-composer/README.md) — provider-neutral ProductionPrompt™ · never hardcode FAL
 
+**Scene Planner™:** [Plan before generate](../engines/scene-planner/README.md) — workspace → layers → Scene Blueprint™ · dependencies · inventory · order · estimates
+
 **Creative Intelligence Engine™:** [Build the engine first](../creative-intelligence-engine/README.md) — CDS pilot · generated scenes · prompt pipeline
 
 **Studio Alpha™ Production Dashboard™:** [Internal Mission Control of Studio World™](../../studio-alpha/production-dashboard/README.md) — operators only · full GPU · ROI · queue · **not** Studio OS
@@ -161,6 +163,7 @@ STUDIO WORLD™
 | **Asset Intelligence Engine™** | [../asset-intelligence-engine/](../asset-intelligence-engine/) | Remember-first generation · Registry search · compatibility · Company DNA™ |
 | **Studio Asset Registry™** | [../engines/studio-asset-registry/](../engines/studio-asset-registry/) | Living Library · canonical record · generation gate · auto-registration |
 | **Prompt Composer™** | [../engines/prompt-composer/](../engines/prompt-composer/) | Intent → provider-neutral ProductionPrompt™ · twelve composition sources · Provider Optimizer handoff |
+| **Scene Planner™** | [../engines/scene-planner/](../engines/scene-planner/) | Workspace → production layers · Scene Blueprint™ · dependencies · inventory · generation order · estimates |
 | **Creative Blueprint Engine™** | [../creative-blueprint-engine/](../creative-blueprint-engine/) | Visual DNA™ · design languages · Systems™ · inheritance above Registry |
 | **Living Company Genome™** | [../living-company-genome/](../living-company-genome/) | Evolutionary memory · genome events · HQ maturation · time capsules |
 | **Studio Production Estimates™** | [../studio-production-estimates/](../studio-production-estimates/) | Pre-production scope · cost · savings · complexity · Orb WHY |

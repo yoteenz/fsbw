@@ -41880,3 +41880,19 @@ User sprint: build **Prompt Composer™** — underlying architecture. **Do NOT 
 - **Cross-refs updated:** `creative-intelligence-engine/prompt-generation-architecture.md` · `creative-intelligence-engine/README.md` · `generation-manager/README.md` · `studio-world.md` · `CORE.md`
 - **Prior arc (same chat):** Studio Asset Registry™ v1.1 · Creative Intelligence Engine™ · Creative Portfolio™ · Creative Equity™ · intelligence stack
 - **No UI · no provider SDKs this sprint**
+
+---
+
+## 2026-07-08 — Scene Planner™ v1.0 — construction blueprint (core engine sprint, docs only)
+
+User sprint: build **Scene Planner™** — underlying architecture. **Do NOT generate images.** System only plans the scene.
+
+- **Mission:** Before anything is generated, Studio OS must understand how the scene should be constructed. Break every workspace into reusable production layers. Every layer independently generatable · regeneratable without rebuilding entire scene.
+- **Example Story Table™ layers:** Environment Shell™ · Lighting™ · Architecture™ · Furniture™ · Hero Landmark™ · Atmosphere™ · Materials™ · Particles™ · Interactive Objects™ · Runtime FX™ · Audio™ · Camera™ (+ Cursor Interaction Layer™)
+- **Output Scene Blueprint™:** dependencies · reusableAssets · requiredAssets · missingAssets · generationOrder · estimatedCost · estimatedGenerationTime
+- **Pipeline position:** Blueprint Engine™ → Registry → **Scene Planner™** → Production Estimates™ (approve) → Prompt Composer™ → Generation Manager™
+- **Key modules:** workspace-layer-decomposition · layer-plan-spec · scene-blueprint-schema · dependency-resolution · asset-inventory · generation-order · regeneration-planning · registry-integration · production-estimate-handoff
+- **10-doc spec:** `docs/studio-os/engines/scene-planner/`
+- **Cross-refs updated:** CIE prompt-generation-architecture · scene-generation-pipeline · studio-world · remember-first-law · CORE.md
+- **Prior arc (same chat):** Prompt Composer™ v1.0 · Studio Asset Registry™ v1.1 · Creative Intelligence Engine™ · intelligence stack
+- **No UI · no image generation this sprint**

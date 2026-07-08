@@ -102,17 +102,40 @@ Output: `blueprintScope` for scene/asset generation.
 
 ### 5. Scene Planner™
 
+[Scene Planner™](../engines/scene-planner/README.md) — plans **how** the scene is constructed before anything is generated.
+
+Decomposes workspace → independent production layers · outputs **`SceneBlueprint™`**:
+
+| Field | Meaning |
+|-------|---------|
+| `dependencies` | Layer DAG · asset deps |
+| `reusableAssets` | Registry matches — zero new generation |
+| `requiredAssets` | Must exist for assembly |
+| `missingAssets` | Gaps requiring generate · modify · acquire |
+| `generationOrder` | Topological stages · parallel groups |
+| `estimatedCost` | Abstract production dollars |
+| `estimatedGenerationTime` | Wall-clock duration |
+
 ```yaml
 ScenePlan:
+  sceneBlueprintId: uuid
   workspaceScene: string
-  layerManifest: LayerPlan[]      # Scene Stack™ layers
-  dependencies: string[]
-  productionEstimateId: string    # Production Estimates™
+  layerManifest: LayerPlan[]
+  dependencies: LayerDependencyGraph
+  reusableAssets: ReusableAssetRef[]
+  requiredAssets: RequiredAssetRef[]
+  missingAssets: MissingAssetRef[]
+  generationOrder: GenerationStage[]
+  estimatedCost: ProductionCostEstimate
+  estimatedGenerationTime: ProductionTimeEstimate
   reuseLineItems: ReuseLineItem[]
   newGenerationLineItems: GenerationLineItem[]
+  productionEstimateId: string | null
 ```
 
-Plans **what** to generate — not provider prompts yet.
+Plans **what** to generate and **in what order** — not provider prompts. Every layer independently generatable · regeneratable.
+
+See [scene-blueprint-schema.md](../engines/scene-planner/scene-blueprint-schema.md) · [workspace-layer-decomposition.md](../engines/scene-planner/workspace-layer-decomposition.md).
 
 ---
 

@@ -33,6 +33,7 @@ No engine may invoke a provider without Registry consultation.
 | Engine | Gate |
 |--------|------|
 | [Asset Intelligence Engine™](../../asset-intelligence-engine/README.md) | Founder-facing search · explain · Founder Control™ |
+| [Scene Planner™](../scene-planner/README.md) | Per-layer Registry inventory at plan phase |
 | [Creative Intelligence Engine™](../../creative-intelligence-engine/README.md) | Scene Planner™ · Prompt Composer™ path |
 | [Studio Generation Manager™](../generation-manager/README.md) | Job queue — blocked without registry resolution |
 | [Studio Asset Compiler™](../studio-asset-compiler/README.md) | Batch compile stages |

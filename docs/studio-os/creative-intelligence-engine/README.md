@@ -47,6 +47,7 @@ Everything rebuilds around that philosophy.
 | [workspaces-as-scenes.md](./workspaces-as-scenes.md) | Every tab → physical scene |
 | [physical-workspaces.md](./physical-workspaces.md) | Room-by-room environment design |
 | [prompt-generation-architecture.md](./prompt-generation-architecture.md) | Founder Intent™ → ProductionPrompt™ pipeline |
+| [../engines/scene-planner/README.md](../engines/scene-planner/README.md) | **Scene Planner™** — workspace → layers → Scene Blueprint™ |
 | [../engines/prompt-composer/README.md](../engines/prompt-composer/README.md) | **Prompt Composer™** — intent → provider-neutral production brief |
 | [scene-generation-pipeline.md](./scene-generation-pipeline.md) | Scene Stack™ proving ground |
 | [asset-first-layers.md](./asset-first-layers.md) | Independent reusable layers |

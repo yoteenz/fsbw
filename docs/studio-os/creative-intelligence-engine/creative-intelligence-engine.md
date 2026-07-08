@@ -70,7 +70,7 @@
 | Interpret founder creative intent | Creative Interpreter™ |
 | Apply company Visual DNA™ | [Blueprint Engine™](../creative-blueprint-engine/README.md) |
 | Search reuse before generate | [Asset Intelligence™](../asset-intelligence-engine/README.md) |
-| Plan scene layer manifest | Scene Planner™ |
+| Plan scene layer manifest | [Scene Planner™](../engines/scene-planner/README.md) |
 | Compose provider prompts | Prompt Composer™ |
 | Route providers internally | Provider Optimizer™ |
 | Validate output quality | Quality Inspector™ |

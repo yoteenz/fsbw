@@ -78,9 +78,13 @@ Aligns with [Asset Intelligence generation-order](../asset-intelligence-engine/g
 ## Pipeline Integration
 
 ```
-Scene Planner™ (layer manifest)
+Scene Planner™ (Scene Blueprint™ — plan only)
          ↓
 Production Estimate™ (founder approve)
+         ↓
+Prompt Composer™ (per GenerationLineItem)
+         ↓
+Provider Optimizer™
          ↓
 Generation Manager™ (per-layer jobs)
          ↓
@@ -92,6 +96,8 @@ Scene Stack compositor (SceneAssembly™)
          ↓
 Workspace scene ready
 ```
+
+Full spec: [Scene Planner™](../engines/scene-planner/README.md).
 
 ---
 
