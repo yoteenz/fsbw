@@ -41411,3 +41411,26 @@ User required **actual code implementation** of CDS V2 reset (not docs). **No ne
 - **Files:** `cameraZones.ts` · `creativeDirectionStudioTheme.ts` · `CreativeDirectionStudioRoom.tsx` · `CreativePipelineBoard.tsx` · `department/page.tsx` (routes creative-direction to V2 room)
 - **Build:** `npm run build` passed
 - **Prior arc (same chat):** Guild System™ docs sprint · Studio Professionals™ · Studio Architects™ · Studio Marketplace™ v2 · Living Sets™ · CDS V2 docs sprint
+
+---
+
+## 2026-07-08 — Scene Architecture™ — The Workspace System of Studio World™ (OS navigation architecture sprint, docs only)
+
+User defined **Scene Architecture™** — navigation philosophy for **ALL** of Studio OS. **No UI · no CDS redesign · no new scene builds.**
+
+- **Mission:** Departments are NOT pages — **destinations**; Scenes are NOT pages — **workspaces**; navigation = walking not routing
+- **Hierarchy:** Studio World™ → Headquarters™ → Department™ → Scene™ → Workspace™ → Interaction™ → Task™ — everything inherits from level above
+- **Departments:** Creative Direction · Distribution · Intelligence · Marketing · Hiring · Finance · CX · Operations · Research · Brand · Automation · Analytics · Marketplace — major business function wings
+- **Scenes:** focused places with one clear purpose (CDS examples: Arrival · Mood Wall · Story Table · Founder Review · Asset/Content Creation · Sandbox · Production Pipeline · Branch Gallery · Golden Build)
+- **Workspaces:** activity layer inside scenes (Content Creation · Asset Creation · Hiring · Automation · Strategy · Review · Publishing · Research · Comparison · Monitoring)
+- **Movement:** physical — enter department · arrive · look around · move between scenes · continuous environment not webpage changes; movement not scroll; Transitions™ between departments
+- **Continuity:** Arrival Zone™ · Orb™ · Navigation™ · Lighting™ · Ambient Life™ · Hallways™ · Transitions™ · Doors™ · Materials™ — founder always inside Studio World™
+- **Orb Context System™:** department · scene · workspace · task · project history · founder preferences · company context — intelligent host not chatbot
+- **Immersion:** headquarters never waits · displays update · lights shift · background work continues · founder joins work in progress · Idle Life™
+- **Scene principles:** why place exists · what work · why separated · emotional state · attention · background
+- **No page thinking:** ask *"What workspace belongs in this department?"* not *"What page should we build?"*
+- **Navigation Laws™:** 10 binding laws (places not pages · arrival before exploration · movement not scroll · continuity · orb context · world never empty · inheritance · workspace question)
+- **Future Scene Catalog™:** full scene inventories for Hiring · Distribution · Intelligence · Marketing · Finance · CX · Operations · Research · Brand · Automation · Analytics · Marketplace (+ CDS reference status)
+- **11-doc spec:** `docs/studio-os/navigation/` — README · scene-architecture · department-framework · scene-framework · workspace-framework · movement-philosophy · orb-context-system · headquarters-continuity · immersion-principles · navigation-laws · future-scene-catalog
+- **Prior arc (same chat):** CDS V2 prototype implementation (`252a6809`) · Guild System™ · Studio Professionals™ · Studio Architects™ · Studio Marketplace™ v2 · Living Sets™ · CDS V2 docs
+- **CORE.md + studio-world.md:** Scene Architecture™ cross-refs added

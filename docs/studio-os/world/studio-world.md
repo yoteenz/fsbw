@@ -101,6 +101,8 @@ STUDIO WORLD™
 
 **Guild System™:** [Professional Societies](../community/README.md) — institutions · Guild Halls™ · mentorship · Hall of Legends™
 
+**Scene Architecture™:** [Navigation](../navigation/README.md) — departments as destinations · scenes as workspaces · OS navigation philosophy
+
 ---
 
 ## Related Canon (Subsystems)
@@ -113,6 +115,7 @@ STUDIO WORLD™
 | **Foundational Experience Systems™** | [../foundational-experience-systems/](../foundational-experience-systems/) | Arrival · Idle Life · persistence · ambient · emotional design |
 | **Production Lifecycle™** | [../production-lifecycle/](../production-lifecycle/) | Blueprint → Golden Build → Certified → Live → Evolution → Legacy |
 | **Walk the Business™** | [../engine/walk-the-business/](../engine/walk-the-business/) | Journey-aware routing through HQ |
+| **Scene Architecture™** | [../navigation/](../navigation/) | Departments · scenes · workspaces · navigation laws |
 | **Founder Journey™** | [../alpha/founder-journey.md](../alpha/founder-journey.md) | Founder maturity arc across the world |
 
 ---
