@@ -25,6 +25,8 @@ export type ArchitecturalFrameStatus = {
   growthSummary?: string;
   /** Living District Ecology™ — ecosystem balance summary */
   ecosystemSummary?: string;
+  /** Living Civilization™ — self-balancing civilization summary */
+  civilizationSummary?: string;
 };
 
 export type ArchitecturalDestination = {

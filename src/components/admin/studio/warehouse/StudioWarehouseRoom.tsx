@@ -31,8 +31,8 @@ import { useArchitecturalNavigationRail } from '../../../../hooks/useArchitectur
 import {
   livingArchitectureClassForDistrict,
   effectiveCampusTier,
-  useLivingDistrictEcology,
-} from '../../../../hooks/useLivingDistrictEcology';
+  useLivingCivilization,
+} from '../../../../hooks/useLivingCivilization';
 import {
   LivingArchitectureLayer,
   LIVING_ARCHITECTURE_STYLES,
@@ -41,6 +41,10 @@ import {
   DistrictEcologyLayer,
   DISTRICT_ECOLOGY_STYLES,
 } from '../living-district-ecology';
+import {
+  LivingCivilizationLayer,
+  LIVING_CIVILIZATION_STYLES,
+} from '../living-civilization';
 import {
   buildWarehouseContextualWings,
   buildWarehouseFrameStatus,
@@ -172,8 +176,8 @@ export function StudioWarehouseRoom() {
   const industrialWing = useMemo(() => industrialWingForZone(wh.activeZoneId), [wh.activeZoneId]);
   const galleryMode = isGalleryZone(wh.activeZoneId);
   const navRail = useArchitecturalNavigationRail();
-  const { architecture: livingArchitecture, ecology: livingEcology } =
-    useLivingDistrictEcology(wh.catalog);
+  const { architecture: livingArchitecture, ecology: livingEcology, civilization: livingCivilization } =
+    useLivingCivilization(wh.catalog);
 
   const navLocation = useMemo(
     () => resolveWarehouseLocationStack(wh.activeZoneId, wh.arrivalComplete),
@@ -186,8 +190,8 @@ export function StudioWarehouseRoom() {
   );
 
   const orbPersonality = useMemo(
-    () => resolveWarehouseOrbPersonality(activeWing, livingArchitecture, livingEcology),
-    [activeWing, livingArchitecture, livingEcology]
+    () => resolveWarehouseOrbPersonality(activeWing, livingArchitecture, livingEcology, livingCivilization),
+    [activeWing, livingArchitecture, livingEcology, livingCivilization]
   );
 
   const frameStatus = useMemo(
@@ -202,8 +206,9 @@ export function StudioWarehouseRoom() {
         orbRole: orbPersonality.role,
         livingArchitecture,
         livingEcology,
+        livingCivilization,
       }),
-    [wh.activeZoneId, wh.arrivalComplete, activeZone.label, activePipeline, orbPersonality.role, livingArchitecture, livingEcology]
+    [wh.activeZoneId, wh.arrivalComplete, activeZone.label, activePipeline, orbPersonality.role, livingArchitecture, livingEcology, livingCivilization]
   );
 
   const districtThemeId = useMemo(
@@ -217,6 +222,7 @@ export function StudioWarehouseRoom() {
     ecology: livingEcology,
   });
   const ecologyBalanced = livingEcology.ecosystemBalance >= 55;
+  const civilizationSelfBalancing = livingCivilization.health.selfBalancing;
 
   const campusTitle = useMemo(() => {
     if (industrialWing) {
@@ -509,10 +515,11 @@ export function StudioWarehouseRoom() {
       <style>{DISTRICT_THEME_STYLES}</style>
       <style>{LIVING_ARCHITECTURE_STYLES}</style>
       <style>{DISTRICT_ECOLOGY_STYLES}</style>
+      <style>{LIVING_CIVILIZATION_STYLES}</style>
       <style>{WAREHOUSE_CAMPUS_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
-        className={`${worldClass} ${districtClass} ${livingClass}${ecologyBalanced ? ' sw-ecology--balanced' : ''}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
+        className={`${worldClass} ${districtClass} ${livingClass}${ecologyBalanced ? ' sw-ecology--balanced' : ''}${civilizationSelfBalancing ? ' sw-civilization--self-balancing' : ''}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
         data-living-tier={livingTier > 0 ? livingTier : undefined}
         data-ecology-tier={livingTier > 0 ? livingTier : undefined}
         onPointerMove={immersion.onPointerMove}
@@ -555,6 +562,7 @@ export function StudioWarehouseRoom() {
           activeRoomId={wh.activeZoneId}
           livingArchitecture={livingArchitecture}
           livingEcology={livingEcology}
+          livingCivilization={livingCivilization}
           onSelectRoom={(roomId) => goToZone(roomId as WarehouseCameraZoneId)}
           onCycleMode={navRail.cycleMode}
         />
@@ -566,6 +574,12 @@ export function StudioWarehouseRoom() {
 
         <DistrictEcologyLayer
           ecology={livingEcology}
+          districtThemeId={districtThemeId}
+          compact
+        />
+
+        <LivingCivilizationLayer
+          civilization={livingCivilization}
           districtThemeId={districtThemeId}
         />
 

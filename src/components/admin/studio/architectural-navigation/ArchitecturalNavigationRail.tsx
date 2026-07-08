@@ -14,6 +14,8 @@ import type { ArchitecturalNavRailMode } from '../../../../studio-os-core/archit
 import { districtForContextualWing } from '../../../../studio-os-core/living-architecture';
 import type { LivingArchitectureSnapshot } from '../../../../studio-os-core/living-architecture';
 import type { LivingDistrictEcologySnapshot } from '../../../../studio-os-core/living-district-ecology';
+import { civilizationLayerForDistrict } from '../../../../studio-os-core/living-civilization';
+import type { LivingCivilizationSnapshot } from '../../../../studio-os-core/living-civilization';
 import { railWidthForMode } from '../../../../hooks/useArchitecturalNavigationRail';
 
 type Props = {
@@ -28,6 +30,7 @@ type Props = {
   showPrimaryDestinations?: boolean;
   livingArchitecture?: LivingArchitectureSnapshot | null;
   livingEcology?: LivingDistrictEcologySnapshot | null;
+  livingCivilization?: LivingCivilizationSnapshot | null;
 };
 
 function EcologyHealthBlock({ ecology }: { ecology: LivingDistrictEcologySnapshot }) {
@@ -55,6 +58,7 @@ function EcologyHealthBlock({ ecology }: { ecology: LivingDistrictEcologySnapsho
 
 function FrameStatusBlock({ status }: { status: ArchitecturalFrameStatus }) {
   const rows: Array<[string, string | undefined]> = [
+    ['Civilization', status.civilizationSummary],
     ['Ecosystem', status.ecosystemSummary],
     ['Campus', status.growthSummary],
     ['Generation', status.generationStatus],
@@ -117,11 +121,14 @@ export function ArchitecturalNavigationRail({
   showPrimaryDestinations = false,
   livingArchitecture,
   livingEcology,
+  livingCivilization,
 }: Props) {
   const navigate = useNavigate();
   const atlas = useGlobalAtlasLayerOptional();
   const district = getDistrictIdentity(districtThemeId);
   const districtClass = districtCssClass(districtThemeId);
+  const activeLayerId = civilizationLayerForDistrict(districtThemeId);
+  const activeLayer = activeLayerId && livingCivilization ? livingCivilization.layers[activeLayerId] : null;
 
   const railClass =
     mode === 'hidden'
@@ -268,6 +275,13 @@ export function ArchitecturalNavigationRail({
 
         {mode === 'expanded' ? (
           <>
+            {activeLayer ? (
+              <div className="sw-nav-rail__civilization-layer" aria-label="Civilization layer">
+                <span className="sw-nav-rail__civilization-layer-name">{activeLayer.label}</span>
+                {' · '}
+                {activeLayer.vitality}% · {activeLayer.trend}
+              </div>
+            ) : null}
             {livingEcology ? <EcologyHealthBlock ecology={livingEcology} /> : null}
             <footer className="sw-nav-rail__atmosphere" aria-label="Environmental identity">
               <p className="sw-nav-rail__atmosphere-feeling">{district.feeling}</p>
