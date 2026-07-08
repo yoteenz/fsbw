@@ -406,4 +406,353 @@ body.wh-world-active {
   border-bottom: 1px solid rgba(255,255,255,0.06);
   align-items: center;
 }
+
+/* ── Left architectural directory (replaces bottom zone toolbar) ── */
+.wh-world__directory {
+  position: absolute;
+  left: 0;
+  top: 52px;
+  bottom: 72px;
+  z-index: 24;
+  width: 52px;
+  padding: 8px 4px;
+  background: linear-gradient(90deg, rgba(0,0,0,0.72), rgba(0,0,0,0.35) 80%, transparent);
+  border-right: 1px solid rgba(201, 169, 98, 0.18);
+  pointer-events: auto;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.wh-world__directory::-webkit-scrollbar { display: none; }
+
+.wh-world__directory-title {
+  margin: 0 0 8px 4px;
+  font-size: 4px;
+  letter-spacing: 0.14em;
+  color: rgba(201, 169, 98, 0.55);
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  height: 48px;
+}
+
+.wh-world__directory-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.wh-world__directory-btn {
+  width: 100%;
+  padding: 6px 4px;
+  border: 1px solid rgba(201, 169, 98, 0.15);
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(245, 240, 232, 0.7);
+  font-size: 4px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.wh-world__directory-btn.is-active {
+  border-color: rgba(201, 169, 98, 0.75);
+  color: #c9a962;
+  background: rgba(201, 169, 98, 0.12);
+}
+
+.wh-world__directory-btn.is-locked,
+.wh-world__directory-btn:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+.wh-world__directory-btn__label {
+  display: block;
+}
+
+/* ── Orb courier (personality shifts by wing) ── */
+.wh-world__orb-courier {
+  position: absolute;
+  right: 8px;
+  top: 56px;
+  z-index: 23;
+  max-width: 140px;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.62);
+  border: 1px solid rgba(201, 169, 98, 0.28);
+  pointer-events: none;
+}
+
+.wh-world__orb-courier-role {
+  margin: 0 0 4px;
+  font-size: 4px;
+  letter-spacing: 0.12em;
+  color: #c9a962;
+}
+
+.wh-world__orb-courier-quote {
+  margin: 0;
+  font-size: 5px;
+  line-height: 1.45;
+  letter-spacing: 0.05em;
+  opacity: 0.82;
+}
+
+.wh-world.is-legacy-wing {
+  --wh-accent: #9b7bb8;
+}
+
+.wh-world.is-legacy-wing .wh-world__zone-shell {
+  background: radial-gradient(ellipse 82% 58% at 50% 54%, #1a1428 0%, #0a0908 74%);
+}
+
+.wh-world.is-innovation-wing .wh-world__zone-shell {
+  background: radial-gradient(ellipse 82% 58% at 50% 54%, #141c28 0%, #0a0908 74%);
+}
+
+/* ── Museum Wing™ installations ── */
+.wh-museum__legacy-hall {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+}
+
+.wh-museum__installation {
+  position: absolute;
+  width: 18%;
+  min-height: 72px;
+  padding: 0;
+  border: 1px solid rgba(155, 123, 184, 0.35);
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+
+.wh-museum__installation:nth-child(1) { left: 2%; top: 8%; }
+.wh-museum__installation:nth-child(2) { left: 22%; top: 14%; }
+.wh-museum__installation:nth-child(3) { left: 42%; top: 6%; }
+.wh-museum__installation:nth-child(4) { left: 62%; top: 12%; }
+.wh-museum__installation:nth-child(5) { left: 80%; top: 8%; }
+
+.wh-museum__installation.is-selected {
+  border-color: rgba(155, 123, 184, 0.9);
+  box-shadow: 0 0 20px rgba(155, 123, 184, 0.25);
+}
+
+.wh-museum__installation-plate {
+  height: 48px;
+  width: 100%;
+}
+
+.wh-museum__installation-title {
+  margin: 0;
+  padding: 4px;
+  font-size: 4px;
+  letter-spacing: 0.06em;
+  color: #e8dff0;
+}
+
+.wh-museum__installation-sub {
+  margin: 0;
+  padding: 0 4px 4px;
+  font-size: 4px;
+  opacity: 0.55;
+}
+
+.wh-museum__legacy-wall {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 6px;
+  padding: 8px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.wh-museum__legacy-wall::-webkit-scrollbar { display: none; }
+
+.wh-museum__legacy-frame {
+  flex: 0 0 auto;
+  min-width: 64px;
+  padding: 6px;
+  border: 1px solid rgba(155, 123, 184, 0.3);
+  background: rgba(0,0,0,0.45);
+  color: #e8dff0;
+  font-size: 4px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.wh-museum__legacy-frame-title {
+  display: block;
+  margin-top: 4px;
+  letter-spacing: 0.06em;
+}
+
+.wh-museum__historian { text-align: center; }
+
+.wh-museum__orb-glow {
+  width: 36px;
+  height: 36px;
+  margin: 6px auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(155,123,184,0.55), transparent 70%);
+}
+
+.wh-museum__historian-quote {
+  margin: 0 0 8px;
+  font-size: 5px;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+  font-style: italic;
+  color: #d8c8e8;
+}
+
+.wh-museum__exhibit-room { max-height: 100%; overflow-y: auto; scrollbar-width: none; }
+.wh-museum__exhibit-room::-webkit-scrollbar { display: none; }
+
+.wh-museum__hologram {
+  margin: 8px 0;
+  border: 1px solid rgba(155, 123, 184, 0.35);
+}
+
+.wh-museum__hologram-plate {
+  height: 64px;
+}
+
+.wh-museum__hologram-caption {
+  margin: 0;
+  padding: 6px;
+  font-size: 5px;
+  opacity: 0.75;
+  line-height: 1.4;
+}
+
+.wh-museum__rooms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.wh-museum__room-chip {
+  font-size: 4px;
+  padding: 3px 6px;
+  border: 1px solid rgba(155, 123, 184, 0.25);
+  opacity: 0.8;
+}
+
+.wh-museum__timeline-scrub {
+  width: 100%;
+  margin: 6px 0;
+}
+
+.wh-museum__recipe-line,
+.wh-museum__note-line {
+  margin: 0 0 4px;
+  font-size: 4px;
+  opacity: 0.72;
+  line-height: 1.4;
+}
+
+/* ── Hall of Innovation™ ── */
+.wh-innovation__storyteller .wh-innovation__quote {
+  margin: 8px 0 0;
+  font-size: 5px;
+  line-height: 1.5;
+  color: #b8cce0;
+  font-style: italic;
+}
+
+.wh-innovation__bay {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+}
+
+.wh-innovation__pod {
+  position: absolute;
+  top: 12%;
+  width: 20%;
+  min-height: 80px;
+  padding: 8px 6px;
+  border: 1px solid rgba(139, 164, 196, 0.35);
+  background: rgba(0, 0, 0, 0.48);
+}
+
+.wh-innovation__pod-glow {
+  height: 32px;
+  margin-bottom: 6px;
+  background: linear-gradient(180deg, rgba(139,164,196,0.35), transparent);
+}
+
+.wh-innovation__pod-title {
+  margin: 0 0 4px;
+  font-size: 4px;
+  color: #c9d8ea;
+}
+
+.wh-innovation__pod-sub {
+  margin: 0 0 6px;
+  font-size: 4px;
+  opacity: 0.6;
+  line-height: 1.35;
+}
+
+.wh-innovation__pod-status {
+  font-size: 4px;
+  letter-spacing: 0.1em;
+  color: #8ba4c4;
+}
+
+.wh-expansion__bays { text-align: center; }
+
+.wh-expansion__manifest {
+  margin: 8px 0;
+  font-size: 5px;
+  line-height: 1.5;
+  color: #d4af7a;
+  font-style: italic;
+}
+
+.wh-expansion__frames {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.wh-expansion__frame {
+  width: 48px;
+  height: 72px;
+  border: 1px dashed rgba(212, 175, 122, 0.45);
+  background: rgba(0,0,0,0.35);
+}
+
+.wh-expansion__frame--ghost {
+  opacity: 0.35;
+}
+
+/* Bottom bar — workspace-specific functions only (not zone navigation) */
+.wh-world__workspace-bar {
+  position: absolute;
+  right: 8px;
+  bottom: 72px;
+  z-index: 22;
+  max-width: 160px;
+  padding: 8px;
+  background: rgba(0,0,0,0.7);
+  border: 1px solid rgba(201,169,98,0.35);
+  font-size: 5px;
+  pointer-events: auto;
+}
 `;

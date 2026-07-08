@@ -42174,3 +42174,20 @@ User reported Studio Warehouse™ and Studio Museum™ keep crashing and auto-re
 - **Fix — Warehouse perf:** Only **active** camera zone mounts `SceneStackViewport` + interactions; inactive zones use lightweight `wh-world__zone-shell` placeholder (pan still works).
 - **Files:** `chunkLoadRecovery.ts`, `pipelineSync.ts`, `useSceneStack.ts`, `useAdminStudioWarehouseState.ts`, `registry-store.ts`, `adminStudioWarehouseDemo.ts`, `historian.ts`, `StudioWarehouseRoom.tsx`, `warehouseDestinationTheme.ts`.
 - **Verify after deploy:** Open Warehouse/Museum on phone — should load without reload loop; Warehouse galleries mount shell when navigated; registry API failure should not white-screen/reload.
+
+---
+
+## 2026-07-08 — Museum absorbed into Warehouse campus (architectural refactor)
+
+User **IMPLEMENTATION SPRINT / ARCHITECTURAL REFACTOR:** Studio Museum™ must no longer exist as standalone webpage — inherit Studio Warehouse™ immersive framework as connected wing inside one campus destination.
+
+- **New world rule:** Warehouse™ · Museum Wing™ · Hall of Innovation™ are **districts** of one building, not separate apps. Founder walks deeper — never opens another page.
+- **Campus layout (linear camera track):** Entrance → Atrium → Environment → Lighting → Furniture → Materials → Atmosphere → Hero Vault → Marketplace → **Museum Wing™** → **Hall of Innovation™** → **Future Expansion Wings™**. Removed old disconnected zones (particle/animation/audio/restoration/generation/museum-connection walkway).
+- **Museum Wing™:** `MuseumWingInteractions` — Legacy Hall physical exhibit installations (not cards), holographic exhibit room, Time Machine™ scrubber, Scene Recipe™, founder notes, Memory Sphere historian, Legacy Wall frames. Uses `useAdminStudioMuseum` data inside warehouse glass-embed UI.
+- **Hall of Innovation™ / Future Expansion™:** `InnovationHallInteractions` + `FutureExpansionInteractions` — storyteller + prototype pods + expansion bays placeholder.
+- **Navigation:** Bottom zone toolbar **removed**; **`WarehouseArchitecturalDirectory`** — permanent left-wall vertical campus directory (Entrance → Future). Bottom bar only for **workspace Live Assembly™** replace candidates.
+- **Orb personality:** `warehouseOrbPersonality.ts` — Production Assistant / Company Historian / Storyteller & Inventor / Campus Architect by wing; diegetic `wh-world__orb-courier` panel in HUD.
+- **Scene Stack:** New stations `museum-wing`, `hall-of-innovation`, `future-expansion-wings` in `warehouse-station-prompts.ts` + station manifest (12 zones).
+- **Routes:** `/admin/studio/studio-museum` → **redirect** to `/admin/studio/studio-warehouse?zone=museum-wing`; `adminStudioMuseumPath()` updated; nav CTA **ENTER MUSEUM WING**. Marketplace Imports has **Walk Into Museum Wing™** (no external navigation).
+- **Prior arc (same chat):** crash/reload fix · Supabase registry · Warehouse→Scene Stack bridge · direct links · migration verify (5 tables).
+- **Files:** `campus-nav.ts`, `camera-zones.ts`, `warehouseCameraZones.ts`, `warehouse-station-prompts.ts`, `StudioWarehouseRoom.tsx`, `MuseumWingInteractions.tsx`, `InnovationHallInteractions.tsx`, `WarehouseArchitecturalDirectory.tsx`, `warehouseDestinationTheme.ts`, `warehouseOrbPersonality.ts`, `studio-museum/page.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts`.

@@ -1,7 +1,8 @@
 /**
  * Studio Warehouse™ — continuous architectural destination (camera track, not scroll).
  */
-import type { WarehouseCameraZoneId, WarehouseDistrictId } from '../../../../studio-os-core/studio-warehouse';
+import type { WarehouseCameraZoneId, WarehouseDistrictId, WarehouseWingKind } from '../../../../studio-os-core/studio-warehouse';
+import { warehouseWingKind } from '../../../../studio-os-core/studio-warehouse/campus-nav';
 
 export type { WarehouseCameraZoneId };
 
@@ -12,9 +13,10 @@ export type WarehouseCameraZone = {
   index: number;
   requiresArrival: boolean;
   teaching: string;
+  wing: WarehouseWingKind;
   /** Asset district for registry objects in this room (undefined = service wing) */
   districtId?: WarehouseDistrictId;
-  galleryLayout?: 'diorama' | 'capsules' | 'showroom' | 'swatches' | 'chambers' | 'vault' | 'loops' | 'service' | 'walkway';
+  galleryLayout?: 'diorama' | 'capsules' | 'showroom' | 'swatches' | 'chambers' | 'vault' | 'loops' | 'service' | 'walkway' | 'legacy-hall' | 'innovation' | 'expansion';
 };
 
 export const WAREHOUSE_CAMERA_ZONES: WarehouseCameraZone[] = [
@@ -24,6 +26,7 @@ export const WAREHOUSE_CAMERA_ZONES: WarehouseCameraZone[] = [
     shortLabel: 'Entrance',
     index: 0,
     requiresArrival: false,
+    wing: 'threshold',
     teaching: 'Threshold™ — massive warehouse doors, partial sightlines into the atrium beyond.',
     galleryLayout: 'service',
   },
@@ -33,15 +36,17 @@ export const WAREHOUSE_CAMERA_ZONES: WarehouseCameraZone[] = [
     shortLabel: 'Atrium',
     index: 1,
     requiresArrival: true,
+    wing: 'production',
     teaching: 'Orientation™ — primary landmark, gallery wings branch from here.',
     galleryLayout: 'service',
   },
   {
     id: 'environment-gallery',
     label: 'Environment Gallery™',
-    shortLabel: 'Environ',
+    shortLabel: 'Environment',
     index: 2,
     requiresArrival: true,
+    wing: 'production',
     teaching: 'Miniature headquarters displayed like architectural models.',
     districtId: 'environment-gallery',
     galleryLayout: 'diorama',
@@ -49,9 +54,10 @@ export const WAREHOUSE_CAMERA_ZONES: WarehouseCameraZone[] = [
   {
     id: 'lighting-gallery',
     label: 'Lighting Gallery™',
-    shortLabel: 'Light',
+    shortLabel: 'Lighting',
     index: 3,
     requiresArrival: true,
+    wing: 'production',
     teaching: 'Illuminated capsules suspended in space — compare packs in real time.',
     districtId: 'lighting-gallery',
     galleryLayout: 'capsules',
@@ -59,9 +65,10 @@ export const WAREHOUSE_CAMERA_ZONES: WarehouseCameraZone[] = [
   {
     id: 'furniture-hall',
     label: 'Furniture Hall™',
-    shortLabel: 'Furn',
+    shortLabel: 'Furniture',
     index: 4,
     requiresArrival: true,
+    wing: 'production',
     teaching: 'Luxury showroom — walk around, rotate, inspect physical props.',
     districtId: 'furniture-hall',
     galleryLayout: 'showroom',
@@ -69,9 +76,10 @@ export const WAREHOUSE_CAMERA_ZONES: WarehouseCameraZone[] = [
   {
     id: 'materials-library',
     label: 'Materials Library™',
-    shortLabel: 'Mat',
+    shortLabel: 'Materials',
     index: 5,
     requiresArrival: true,
+    wing: 'production',
     teaching: 'Massive walls of marble, glass, chrome, fabric, and stone finishes.',
     districtId: 'materials-library',
     galleryLayout: 'swatches',
@@ -79,9 +87,10 @@ export const WAREHOUSE_CAMERA_ZONES: WarehouseCameraZone[] = [
   {
     id: 'atmosphere-lab',
     label: 'Atmosphere Lab™',
-    shortLabel: 'Atmos',
+    shortLabel: 'Atmosphere',
     index: 6,
     requiresArrival: true,
+    wing: 'production',
     teaching: 'Interactive chambers — fog, bloom, depth, environmental FX.',
     districtId: 'atmosphere-lab',
     galleryLayout: 'chambers',
@@ -89,86 +98,66 @@ export const WAREHOUSE_CAMERA_ZONES: WarehouseCameraZone[] = [
   {
     id: 'hero-object-vault',
     label: 'Hero Object Vault™',
-    shortLabel: 'Hero',
+    shortLabel: 'Hero Vault',
     index: 7,
     requiresArrival: true,
+    wing: 'production',
     teaching: 'Floating landmarks under dramatic lighting — Studio Orbs™, monuments.',
     districtId: 'hero-object-vault',
     galleryLayout: 'vault',
   },
   {
-    id: 'particle-lab',
-    label: 'Particle Lab™',
-    shortLabel: 'Part',
-    index: 8,
-    requiresArrival: true,
-    teaching: 'Particle systems, dust motes, shimmer fields in isolation.',
-    districtId: 'atmosphere-lab',
-    galleryLayout: 'chambers',
-  },
-  {
-    id: 'animation-archive',
-    label: 'Animation Archive™',
-    shortLabel: 'Anim',
-    index: 9,
-    requiresArrival: true,
-    teaching: 'Runtime loops, idle life, motion trails archived physically.',
-    districtId: 'motion-sound-wing',
-    galleryLayout: 'loops',
-  },
-  {
-    id: 'audio-vault',
-    label: 'Audio Vault™',
-    shortLabel: 'Audio',
-    index: 10,
-    requiresArrival: true,
-    teaching: 'Ambient beds, ceremony stems, sonic identity capsules.',
-    districtId: 'motion-sound-wing',
-    galleryLayout: 'loops',
-  },
-  {
     id: 'marketplace-imports',
     label: 'Marketplace Imports™',
-    shortLabel: 'Import',
-    index: 11,
+    shortLabel: 'Marketplace',
+    index: 8,
     requiresArrival: true,
+    wing: 'production',
     teaching: 'Purchased assets arrive here — choose what enters production.',
     galleryLayout: 'service',
   },
   {
-    id: 'restoration-lab',
-    label: 'Asset Restoration Lab™',
-    shortLabel: 'Restore',
-    index: 12,
-    requiresArrival: true,
-    teaching: 'Repair, upscale, and revalidate archived registry objects.',
-    galleryLayout: 'service',
-  },
-  {
-    id: 'generation-bay',
-    label: 'Generation Bay™',
-    shortLabel: 'Gen',
-    index: 13,
-    requiresArrival: true,
-    teaching: 'New assets manifest on the floor when generation completes.',
-    districtId: 'texture-archive',
-    galleryLayout: 'service',
-  },
-  {
-    id: 'museum-connection',
-    label: 'Museum Connection™',
+    id: 'museum-wing',
+    label: 'Museum Wing™',
     shortLabel: 'Museum',
-    index: 14,
+    index: 9,
     requiresArrival: true,
-    teaching: 'Walk from production into legacy — Studio Museum™ awaits beyond.',
-    galleryLayout: 'walkway',
+    wing: 'legacy',
+    teaching: 'Leave active production — enter legacy. Lighting softens. History is preserved here.',
+    galleryLayout: 'legacy-hall',
+  },
+  {
+    id: 'hall-of-innovation',
+    label: 'Hall of Innovation™',
+    shortLabel: 'Innovation',
+    index: 10,
+    requiresArrival: true,
+    wing: 'innovation',
+    teaching: 'Storyteller and inventor wing — prototypes, experiments, what comes next.',
+    galleryLayout: 'innovation',
+  },
+  {
+    id: 'future-expansion-wings',
+    label: 'Future Expansion Wings™',
+    shortLabel: 'Future',
+    index: 11,
+    requiresArrival: true,
+    wing: 'expansion',
+    teaching: 'The campus grows as your company grows — expansion bays await future districts.',
+    galleryLayout: 'expansion',
   },
 ];
 
 export function getWarehouseZone(id: WarehouseCameraZoneId): WarehouseCameraZone {
-  return WAREHOUSE_CAMERA_ZONES.find((z) => z.id === id) ?? WAREHOUSE_CAMERA_ZONES[0];
+  const zone = WAREHOUSE_CAMERA_ZONES.find((z) => z.id === id);
+  if (zone) return zone;
+  return WAREHOUSE_CAMERA_ZONES[0]!;
 }
 
 export function warehouseZonePanVw(zone: WarehouseCameraZone): number {
   return zone.index * 100;
+}
+
+export function warehouseZoneWing(zoneId: WarehouseCameraZoneId): WarehouseWingKind {
+  return warehouseWingKind(zoneId);
 }

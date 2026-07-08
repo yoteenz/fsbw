@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useState, type CSSProperties } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { ensureProjectGenome, resolveActiveProjectGenome } from '../../../../studio-os-core/project-genome';
 import { getSceneStackStation } from '../../../../studio-os-core/scene-stack';
 import type { SceneStackHotspotBounds, SceneStackLayerId } from '../../../../studio-os-core/scene-stack';
+import { isWarehouseCameraZoneId } from '../../../../studio-os-core/studio-warehouse/campus-nav';
 import { useAdminStudioWarehouse } from '../../../../hooks/useAdminStudioWarehouseState';
+import { useAdminStudioMuseum } from '../../../../hooks/useAdminStudioMuseumState';
 import { useSceneStack } from '../../../../hooks/useSceneStack';
 import { useCdsImmersion } from '../../../../hooks/useCdsImmersion';
 import { useDepartmentRoomExit } from '../../studio-os/department-vertical-slice/DepartmentGoldenBuildShell';
@@ -12,10 +14,13 @@ import { SceneStackViewport } from '../../studio-os/creative-direction-studio/Sc
 import { CDS_GENESIS_INTERACTION_STYLES } from '../../studio-os/creative-direction-studio/cdsInteractionLayerTheme';
 import { CDS_IMMERSION_STYLES } from '../../studio-os/creative-direction-studio/cdsImmersionTheme';
 import { DEPARTMENT_SLICE_STYLES } from '../../studio-os/department-vertical-slice/departmentSliceTheme';
-import { adminStudioMuseumPath } from '../../../../utils/adminStudioRoutes';
 import { STUDIO_WAREHOUSE_SUBTITLE } from '../../../../utils/adminStudioWarehouseDemo';
 import { WarehouseGalleryFloor } from './WarehouseGalleryFloor';
 import { WarehouseInspectorConsole } from './WarehouseInspectorConsole';
+import { WarehouseArchitecturalDirectory } from './WarehouseArchitecturalDirectory';
+import { MuseumWingInteractions } from './MuseumWingInteractions';
+import { FutureExpansionInteractions, InnovationHallInteractions } from './InnovationHallInteractions';
+import { resolveWarehouseOrbPersonality } from './warehouseOrbPersonality';
 import { WAREHOUSE_DESTINATION_STYLES } from './warehouseDestinationTheme';
 import type { WarehouseCameraZoneId } from '../../../../studio-os-core/studio-warehouse';
 import { districtForWarehouseZone } from '../../../../studio-os-core/studio-warehouse';
@@ -23,6 +28,7 @@ import {
   getWarehouseZone,
   WAREHOUSE_CAMERA_ZONES,
   warehouseZonePanVw,
+  warehouseZoneWing,
 } from './warehouseCameraZones';
 
 const DEPARTMENT_ID = 'studio-warehouse';
@@ -47,15 +53,15 @@ function hotspotStyle(bounds: SceneStackHotspotBounds): CSSProperties {
 }
 
 /**
- * Studio Warehouse™ — immersive architectural destination inside Studio World™.
- * Not a webpage. Continuous gallery campus with Scene Stack™ shell per room.
+ * Studio Warehouse™ — parent destination for Studio World™ campus.
+ * Museum Wing™ and Hall of Innovation™ are districts — not separate pages.
  */
 export function StudioWarehouseRoom() {
   const { workspaceId } = useWorkspace();
   const exitRoom = useDepartmentRoomExit();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const wh = useAdminStudioWarehouse();
+  const museum = useAdminStudioMuseum();
 
   useEffect(() => {
     ensureProjectGenome(DEPARTMENT_ID);
@@ -73,6 +79,11 @@ export function StudioWarehouseRoom() {
   }, []);
 
   useEffect(() => {
+    const zoneParam = searchParams.get('zone');
+    if (zoneParam && isWarehouseCameraZoneId(zoneParam)) {
+      wh.setArrivalComplete(true);
+      wh.setActiveZoneId(zoneParam);
+    }
     const workspaceIdParam = searchParams.get('workspace');
     const slot = searchParams.get('slot');
     if (workspaceIdParam && slot) {
@@ -87,10 +98,12 @@ export function StudioWarehouseRoom() {
         currentAssetId: ingredient?.assetId ?? '',
       });
     }
-  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps -- live assembly deep link once
+  }, [searchParams]); // eslint-disable-line react-hooks/exhaustive-deps -- deep link once
 
   const activeZone = useMemo(() => getWarehouseZone(wh.activeZoneId), [wh.activeZoneId]);
+  const activeWing = warehouseZoneWing(wh.activeZoneId);
   const cameraPan = warehouseZonePanVw(activeZone);
+  const orbPersonality = useMemo(() => resolveWarehouseOrbPersonality(activeWing), [activeWing]);
 
   const activeLayers = useMemo(
     () => stack.getLayerViews(wh.activeZoneId),
@@ -113,10 +126,12 @@ export function StudioWarehouseRoom() {
     return wh.catalog.filter((a) => a.districtId === district && !a.archived);
   }, [wh.activeZoneId, wh.catalog]);
 
-  const visibleNavZones = useMemo(
-    () => WAREHOUSE_CAMERA_ZONES.filter((z) => wh.arrivalComplete || !z.requiresArrival),
-    [wh.arrivalComplete]
-  );
+  const campusTitle = useMemo(() => {
+    if (activeWing === 'legacy') return 'Studio Warehouse™ · Museum Wing™';
+    if (activeWing === 'innovation') return 'Studio Warehouse™ · Hall of Innovation™';
+    if (activeWing === 'expansion') return 'Studio Warehouse™ · Future Expansion™';
+    return 'Studio Warehouse™';
+  }, [activeWing]);
 
   const goToZone = useCallback(
     (zoneId: WarehouseCameraZoneId) => {
@@ -202,75 +217,45 @@ export function StudioWarehouseRoom() {
 
       case 'marketplace-imports':
         return (
-          <div
-            className="wh-world__hotspot"
-            style={hotspotStyle(hotspots.dock ?? { left: '8%', top: '42%', width: '84%', height: '42%' })}
-          >
-            <div className="wh-world__glass-embed">
-              <p className="wh-world__label">Marketplace Imports™</p>
-              <p className="wh-world__hint">Purchased assets arrive naturally — choose what enters production.</p>
-              {MARKETPLACE_IMPORT_OPTIONS.map((opt) => (
-                <button key={opt} type="button" className="wh-world__btn" style={{ marginRight: 4, marginBottom: 4 }}>
-                  {opt}
-                </button>
-              ))}
+          <>
+            <div
+              className="wh-world__hotspot"
+              style={hotspotStyle(hotspots.dock ?? { left: '8%', top: '42%', width: '84%', height: '36%' })}
+            >
+              <div className="wh-world__glass-embed">
+                <p className="wh-world__label">Marketplace Imports™</p>
+                <p className="wh-world__hint">Purchased assets arrive naturally — choose what enters production.</p>
+                {MARKETPLACE_IMPORT_OPTIONS.map((opt) => (
+                  <button key={opt} type="button" className="wh-world__btn" style={{ marginRight: 4, marginBottom: 4 }}>
+                    {opt}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-        );
-
-      case 'restoration-lab':
-        return (
-          <div
-            className="wh-world__hotspot"
-            style={hotspotStyle(hotspots.bench ?? { left: '10%', top: '44%', width: '80%', height: '40%' })}
-          >
-            <div className="wh-world__glass-embed">
-              <p className="wh-world__label">Asset Restoration Lab™</p>
-              <p className="wh-world__hint">Repair · upscale · revalidate archived registry objects.</p>
-              <button type="button" className="wh-world__btn">Queue Restoration</button>
-            </div>
-          </div>
-        );
-
-      case 'generation-bay':
-        return (
-          <div
-            className="wh-world__hotspot"
-            style={hotspotStyle(hotspots.bay ?? { left: '6%', top: '40%', width: '88%', height: '44%' })}
-          >
-            <div className="wh-world__glass-embed">
-              <p className="wh-world__label">Generation Bay™</p>
-              <p className="wh-world__hint">
-                When generation completes, assets manifest on the floor — founders walk to them.
-              </p>
-              <p style={{ fontSize: 5, opacity: 0.55 }}>
-                {wh.catalog.filter((a) => a.districtId === 'texture-archive').length} texture objects staged
-              </p>
-            </div>
-          </div>
-        );
-
-      case 'museum-connection':
-        return (
-          <div
-            className="wh-world__hotspot"
-            style={hotspotStyle(hotspots.walkway ?? { left: '12%', top: '50%', width: '76%', height: '28%' })}
-          >
-            <div className="wh-world__glass-embed" style={{ textAlign: 'center' }}>
-              <p className="wh-world__label">Museum Connection™</p>
-              <p className="wh-world__hint">
-                Warehouse™ holds active production. Museum™ preserves historic masterpieces. Walk from production into legacy.
-              </p>
-              <button
-                type="button"
-                className="wh-world__walkway-btn"
-                onClick={() => navigate(adminStudioMuseumPath())}
-              >
-                Walk Into Studio Museum™ →
+            <div
+              className="wh-world__hotspot wh-world__hotspot--ghost"
+              style={{ left: '12%', top: '78%', width: '76%', height: '12%' }}
+            >
+              <button type="button" className="wh-world__walkway-btn" onClick={() => goToZone('museum-wing')}>
+                Walk Into Museum Wing™ →
               </button>
             </div>
-          </div>
+          </>
         );
+
+      case 'museum-wing':
+        return <MuseumWingInteractions museum={museum} hotspots={hotspots} />;
+
+      case 'hall-of-innovation':
+        return (
+          <InnovationHallInteractions
+            hotspots={hotspots}
+            onContinueToExpansion={() => goToZone('future-expansion-wings')}
+          />
+        );
+
+      case 'future-expansion-wings':
+        return <FutureExpansionInteractions hotspots={hotspots} />;
 
       default:
         if (!zone.districtId) return null;
@@ -330,19 +315,26 @@ export function StudioWarehouseRoom() {
     }
   };
 
+  const worldClass =
+    activeWing === 'legacy'
+      ? 'wh-world is-legacy-wing'
+      : activeWing === 'innovation'
+        ? 'wh-world is-innovation-wing'
+        : 'wh-world';
+
   return (
     <>
       <style>{DEPARTMENT_SLICE_STYLES}</style>
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
       <style>{CDS_IMMERSION_STYLES}</style>
       <style>{WAREHOUSE_DESTINATION_STYLES}</style>
-      <div className="wh-world" onPointerMove={immersion.onPointerMove} style={immersion.parallaxStyle}>
+      <div className={worldClass} onPointerMove={immersion.onPointerMove} style={immersion.parallaxStyle}>
         <header className="wh-world__hud">
           <button type="button" className="wh-world__back" onClick={exitRoom} aria-label="Exit warehouse">
             ←
           </button>
           <div className="wh-world__identity">
-            <p className="wh-world__title">Studio Warehouse™</p>
+            <p className="wh-world__title">{campusTitle}</p>
             <p className="wh-world__sub">{STUDIO_WAREHOUSE_SUBTITLE}</p>
           </div>
           <button
@@ -363,6 +355,19 @@ export function StudioWarehouseRoom() {
             )}
           </button>
         </header>
+
+        <WarehouseArchitecturalDirectory
+          activeZoneId={wh.activeZoneId}
+          arrivalComplete={wh.arrivalComplete}
+          onSelectZone={goToZone}
+        />
+
+        <aside className="wh-world__orb-courier" aria-label="Studio Orb courier">
+          <p className="wh-world__orb-courier-role" style={{ color: orbPersonality.accent }}>
+            Studio Orb™ · {orbPersonality.role}
+          </p>
+          <p className="wh-world__orb-courier-quote">{orbPersonality.greeting}</p>
+        </aside>
 
         <div className="wh-world__camera">
           <div
@@ -423,38 +428,9 @@ export function StudioWarehouseRoom() {
           )}
         </p>
 
-        <nav className="wh-world__nav" aria-label="Warehouse galleries">
-          <div className="wh-world__nav-track">
-            {visibleNavZones.map((zone) => (
-              <button
-                key={zone.id}
-                type="button"
-                className={`wh-world__nav-btn${wh.activeZoneId === zone.id ? ' is-active' : ''}`}
-                onClick={() => goToZone(zone.id)}
-                disabled={zone.requiresArrival && !wh.arrivalComplete}
-              >
-                {zone.shortLabel}
-              </button>
-            ))}
-          </div>
-        </nav>
-
         {wh.replaceContext && wh.replaceCandidates.length > 0 ? (
-          <div
-            style={{
-              position: 'absolute',
-              right: 8,
-              bottom: Math.max(120, 100),
-              zIndex: 22,
-              maxWidth: 160,
-              padding: 8,
-              background: 'rgba(0,0,0,0.7)',
-              border: '1px solid rgba(201,169,98,0.35)',
-              fontSize: 5,
-              pointerEvents: 'auto',
-            }}
-          >
-            <p style={{ color: '#c9a962', marginBottom: 4 }}>Compatible Objects</p>
+          <nav className="wh-world__workspace-bar" aria-label="Workspace retrieval">
+            <p style={{ color: '#c9a962', marginBottom: 4, fontSize: 5 }}>Compatible Objects</p>
             {wh.replaceCandidates.slice(0, 4).map((a) => (
               <button
                 key={a.id}
@@ -472,7 +448,7 @@ export function StudioWarehouseRoom() {
             <button type="button" className="wh-world__btn" onClick={() => wh.setReplaceContext(null)}>
               Cancel
             </button>
-          </div>
+          </nav>
         ) : null}
       </div>
     </>

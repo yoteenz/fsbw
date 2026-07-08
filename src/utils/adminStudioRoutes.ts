@@ -976,7 +976,7 @@ export function adminStudioWarehousePath(): string {
 }
 
 export function adminStudioMuseumPath(): string {
-  return `${ADMIN_STUDIO_BASE_PATH}/studio-museum`;
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-warehouse?zone=museum-wing`;
 }
 
 export function adminStudioExperienceEnginePath(): string {

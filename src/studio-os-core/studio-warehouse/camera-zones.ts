@@ -10,13 +10,10 @@ export const WAREHOUSE_CAMERA_ZONE_IDS = [
   'materials-library',
   'atmosphere-lab',
   'hero-object-vault',
-  'particle-lab',
-  'animation-archive',
-  'audio-vault',
   'marketplace-imports',
-  'restoration-lab',
-  'generation-bay',
-  'museum-connection',
+  'museum-wing',
+  'hall-of-innovation',
+  'future-expansion-wings',
 ] as const;
 
 export type WarehouseCameraZoneId = (typeof WAREHOUSE_CAMERA_ZONE_IDS)[number];
@@ -29,10 +26,6 @@ export function districtForWarehouseZone(zoneId: WarehouseCameraZoneId): Warehou
     'materials-library': 'materials-library',
     'atmosphere-lab': 'atmosphere-lab',
     'hero-object-vault': 'hero-object-vault',
-    'particle-lab': 'atmosphere-lab',
-    'animation-archive': 'motion-sound-wing',
-    'audio-vault': 'motion-sound-wing',
-    'generation-bay': 'texture-archive',
   };
   return map[zoneId] ?? null;
 }
@@ -47,9 +40,9 @@ export function resolveWarehouseZoneForSlot(slotRole: string): WarehouseCameraZo
     ['atmosphere', 'atmosphere-lab'],
     ['material', 'materials-library'],
     ['hero', 'hero-object-vault'],
-    ['particle', 'particle-lab'],
-    ['animation', 'animation-archive'],
-    ['audio', 'audio-vault'],
+    ['museum', 'museum-wing'],
+    ['legacy', 'museum-wing'],
+    ['innovation', 'hall-of-innovation'],
   ];
   for (const [pattern, zoneId] of rules) {
     if (key.includes(pattern)) return zoneId;

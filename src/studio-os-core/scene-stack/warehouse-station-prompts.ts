@@ -72,21 +72,23 @@ const STATIONS: Record<string, StationCtx> = {
     subject: 'import dock receiving bay purchased assets arrive on conveyor luxury warehouse intake',
     landmark: 'Marketplace Intake Dock™',
   },
-  'restoration-lab': {
-    name: 'Asset Restoration Lab™',
-    subject: 'restoration workbench upscale validation lab precision lighting repair station',
-    landmark: 'Restoration Workbench™',
-  },
-  'generation-bay': {
-    name: 'Generation Bay™',
-    subject: 'manufacturing generation bay new assets manifest on floor industrial luxury hybrid',
-    landmark: 'Generation Manifestation Bay™',
-  },
-  'museum-connection': {
-    name: 'Museum Connection™',
+  'museum-wing': {
+    name: 'Museum Wing™',
     subject:
-      'architectural walkway bridge from active warehouse into preserved legacy museum wing continuous campus',
-    landmark: 'Museum Connection Arch™',
+      'quiet refined legacy museum wing softer acoustics purple bronze gallery lighting preserved Golden Build installations holographic exhibit reconstructions monumental legacy hallway',
+    landmark: 'Legacy Hall Arch™',
+  },
+  'hall-of-innovation': {
+    name: 'Hall of Innovation™',
+    subject:
+      'innovation laboratory wing prototype bays inventor storytelling displays experimental installations future company inventions luminous discovery corridor',
+    landmark: 'Innovation Beacon™',
+  },
+  'future-expansion-wings': {
+    name: 'Future Expansion Wings™',
+    subject:
+      'unfinished architectural expansion bays scaffolding luxury industrial future campus growth wings awaiting new districts',
+    landmark: 'Expansion Portal Frame™',
   },
 };
 
@@ -188,29 +190,32 @@ export const WAREHOUSE_SCENE_STACK_HOTSPOTS: Record<
   'materials-library': { floor: { left: '4%', top: '44%', width: '92%', height: '40%' } },
   'atmosphere-lab': { floor: { left: '6%', top: '48%', width: '88%', height: '36%' } },
   'hero-object-vault': { floor: { left: '8%', top: '46%', width: '84%', height: '38%' } },
-  'particle-lab': { floor: { left: '6%', top: '50%', width: '88%', height: '34%' } },
-  'animation-archive': { floor: { left: '4%', top: '48%', width: '92%', height: '36%' } },
-  'audio-vault': { floor: { left: '6%', top: '50%', width: '88%', height: '34%' } },
   'marketplace-imports': { dock: { left: '8%', top: '42%', width: '84%', height: '42%' } },
-  'restoration-lab': { bench: { left: '10%', top: '44%', width: '80%', height: '40%' } },
-  'generation-bay': { bay: { left: '6%', top: '40%', width: '88%', height: '44%' } },
-  'museum-connection': { walkway: { left: '12%', top: '50%', width: '76%', height: '28%' } },
+  'museum-wing': {
+    legacyHall: { left: '4%', top: '38%', width: '92%', height: '48%' },
+    historian: { left: '6%', top: '8%', width: '88%', height: '26%' },
+    exhibit: { left: '8%', top: '12%', width: '84%', height: '72%' },
+  },
+  'hall-of-innovation': {
+    prototypes: { left: '6%', top: '40%', width: '88%', height: '44%' },
+    storyteller: { left: '10%', top: '10%', width: '80%', height: '24%' },
+  },
+  'future-expansion-wings': {
+    bays: { left: '8%', top: '36%', width: '84%', height: '48%' },
+  },
 };
 
 export const WAREHOUSE_SCENE_STACK_STATION_META = [
   { stationId: 'threshold', displayName: 'Entrance Hall™', shortLabel: 'Entrance' },
   { stationId: 'central-atrium', displayName: 'Central Atrium™', shortLabel: 'Atrium', signatureLandmarkId: 'central-atrium' },
-  { stationId: 'environment-gallery', displayName: 'Environment Gallery™', shortLabel: 'Environ' },
-  { stationId: 'lighting-gallery', displayName: 'Lighting Gallery™', shortLabel: 'Light' },
-  { stationId: 'furniture-hall', displayName: 'Furniture Hall™', shortLabel: 'Furn' },
-  { stationId: 'materials-library', displayName: 'Materials Library™', shortLabel: 'Mat' },
-  { stationId: 'atmosphere-lab', displayName: 'Atmosphere Lab™', shortLabel: 'Atmos' },
-  { stationId: 'hero-object-vault', displayName: 'Hero Object Vault™', shortLabel: 'Hero' },
-  { stationId: 'particle-lab', displayName: 'Particle Lab™', shortLabel: 'Part' },
-  { stationId: 'animation-archive', displayName: 'Animation Archive™', shortLabel: 'Anim' },
-  { stationId: 'audio-vault', displayName: 'Audio Vault™', shortLabel: 'Audio' },
-  { stationId: 'marketplace-imports', displayName: 'Marketplace Imports™', shortLabel: 'Import' },
-  { stationId: 'restoration-lab', displayName: 'Asset Restoration Lab™', shortLabel: 'Restore' },
-  { stationId: 'generation-bay', displayName: 'Generation Bay™', shortLabel: 'Gen' },
-  { stationId: 'museum-connection', displayName: 'Museum Connection™', shortLabel: 'Museum' },
+  { stationId: 'environment-gallery', displayName: 'Environment Gallery™', shortLabel: 'Environment' },
+  { stationId: 'lighting-gallery', displayName: 'Lighting Gallery™', shortLabel: 'Lighting' },
+  { stationId: 'furniture-hall', displayName: 'Furniture Hall™', shortLabel: 'Furniture' },
+  { stationId: 'materials-library', displayName: 'Materials Library™', shortLabel: 'Materials' },
+  { stationId: 'atmosphere-lab', displayName: 'Atmosphere Lab™', shortLabel: 'Atmosphere' },
+  { stationId: 'hero-object-vault', displayName: 'Hero Object Vault™', shortLabel: 'Hero Vault' },
+  { stationId: 'marketplace-imports', displayName: 'Marketplace Imports™', shortLabel: 'Marketplace' },
+  { stationId: 'museum-wing', displayName: 'Museum Wing™', shortLabel: 'Museum', signatureLandmarkId: 'museum-wing' },
+  { stationId: 'hall-of-innovation', displayName: 'Hall of Innovation™', shortLabel: 'Innovation' },
+  { stationId: 'future-expansion-wings', displayName: 'Future Expansion Wings™', shortLabel: 'Future' },
 ] as const;
