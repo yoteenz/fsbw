@@ -41273,3 +41273,29 @@ User defined **Living Sets™** — fundamental world-building philosophy sprint
 - **9-doc spec:** `docs/studio-os/world/` — living-sets · department-transformation-engine · environment-dna · company-expression-system · set-continuity · headquarters-evolution · living-architecture · world-immersion · archive-integration (+ studio-world.md index updated)
 - **Prior arc (same chat):** CDS V2 Architectural Reset · Founder Intelligence System™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™ · Alpha prototype
 - **CORE.md:** Living Sets™ line added · Studio World™ line updated
+
+---
+
+## 2026-07-08 — Studio Marketplace™ — The Marketplace for Living Headquarters (docs only)
+
+User defined **Studio Marketplace™** — platform economy philosophy sprint defining how Studio OS scales creative production, controls generation costs, and creates a creator economy. **No UI · no marketplace components · no payment systems.**
+
+- **Mission:** Studio OS should NOT generate every headquarters for every founder (expensive · unnecessary · overwhelming) — begin with curated world-class **Studio Originals™** · **Generation = premium capability not default**
+- **Day-one promise:** Every founder immediately receives beautiful HQ — no waiting · no GPU · no prompts · no creative fatigue · polished from day one
+- **Studio Originals™:** Official handcrafted HQ per industry — Entrepreneur Loft™ · Luxury HQ™ · Editorial HQ™ · Minimal HQ™ · Innovation Lab™ · Creator Loft™ · Industrial · Glass · Executive · Luxury Agency™ — default starting experiences
+- **Onboarding flow:** Mode™ → Industry → Company → Studio Originals™ recommended via Founder Genome™ · Founder Taste Genome™ · Company Genome™ — begin working immediately
+- **Renovation™:** Founders never forced to generate — Orb offers Continue Working™ · Renovate Headquarters™ · Browse Marketplace™ · Generate New Concepts™ — generation intentional · homeowner language (not software settings)
+- **Premium Generation™:** Only on explicit request → Creative Direction Pipeline™ → Concept A/B/C → Founder selects → Scene Blueprint™ · Asset Graph™ · Room DNA™ · Living Set™
+- **Marketplace product:** Complete experiences NOT assets — Entire HQ™ · Creative HQ™ · Living Sets™ · Departments™ · Founder Offices™ · Reception · Innovation Labs™ · Production Floors™ · Brand Worlds™ · Conference Rooms™ — one-click HQ purchase
+- **Headquarters Packages™:** Auto-package Living Set™ · Scene Blueprint™ · Environment DNA™ · Asset Graph™ · Room DNA™ · lighting · materials · interactive objects · camera · transitions · animations · audio · navigation · Orb · production stations
+- **Quality tiers:** Studio Originals™ (official) · Private™ (founder only) · Community™ (creator purchasable) · Studio Certified™ (reviewed · Featured-eligible)
+- **Creator Economy™:** World builders earn on HQ · Living Sets™ · Brand Worlds™ · Environmental Collections™ — prestigious publish path Private™ → Share With Team™ → Submit For Review™ → Community™ → Studio Certified™ → Featured Collection™
+- **Taste-Driven Recommendations™:** 97% Taste Match · Founder Taste Genome™ personalization — not generic catalog
+- **GPU Strategy™:** Default = Studio Originals™ · Marketplace purchases · Renovations™ (no GPU) · GPU only when founder explicitly requests new concepts
+- **Headquarters History™:** Every purchased/generated HQ preserved — revisit · restore · fork · Alternate Branch™ · sell — nothing lost
+- **Distinction:** Studio Marketplace™ (places) vs Expert Marketplace™ (expertise) — complementary economies
+- **Success:** Start with Studio Original™ · renovate over time · premium gen when desired · buy creator HQ · sell own Living Sets™ · passive income for world builders
+- **Final philosophy:** World's first marketplace for living business headquarters — not endless image generator · not templates — places where companies come to life
+- **12-doc spec:** `docs/studio-os/marketplace/` — README · studio-marketplace-philosophy · studio-originals · living-set-marketplace · headquarters-packages · creator-economy · quality-certification · gpu-generation-strategy · marketplace-ranking · taste-driven-recommendations · renovation-system · headquarters-history
+- **Prior arc (same chat):** Living Sets™ · CDS V2 · Founder Intelligence™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™
+- **CORE.md:** Studio Marketplace™ line added · marketplace-set-system.md + studio-world.md cross-refs

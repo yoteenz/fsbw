@@ -1,8 +1,9 @@
 # Marketplace Set System™
 
 **Version:** 1.0.0  
-**Status:** Canonical marketplace vision (docs only)  
-**Scope:** Publishable Set™ packs · cross-industry reuse
+**Status:** Canonical marketplace vision (docs only) — **extended by Studio Marketplace™ sprint**  
+**Scope:** Publishable Set™ packs · cross-industry reuse  
+**Canonical home:** [Studio Marketplace™](../marketplace/README.md) — complete headquarters economy supersedes Set-only framing
 
 ---
 
