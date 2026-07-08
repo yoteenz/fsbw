@@ -47,6 +47,8 @@ Asset Intelligence Engine™ (search Registry · compatibility · founder gate)
          ↓
 Studio Production Estimates™ (scope · cost · savings · Orb WHY · founder approve)
          ↓
+Creative Budgets™ (monthly capacity · pending reserve · savings rollup)
+         ↓
 STUDIO GENERATION MANAGER™ (this engine — only approved estimate scope)
   Queue · schedule · execute · retry · validate handoff
          ↓

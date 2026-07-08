@@ -21,6 +21,7 @@
 
 | System | Receives |
 |--------|----------|
+| [Creative Budgets™](../creative-budgets/README.md) | Monthly capacity · pending reserve · savings rollup |
 | [Studio Generation Manager™](../engines/generation-manager/README.md) | Approved estimate · locked line items |
 | [Creative Approval Pipeline™](../creative-direction-pipeline/README.md) | Post-production review (separate) |
 | [Production Lifecycle Golden Build™](../production-lifecycle/golden-build.md) | Estimate at certification gates |
@@ -38,6 +39,8 @@ Asset Intelligence search
 ★ Production Estimate™ ★
          ↓
 Founder approve
+         ↓
+★ Creative Budget™ reserve (pending) ★
          ↓
 Generation Manager™
          ↓

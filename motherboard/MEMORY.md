@@ -41703,3 +41703,37 @@ User **STOP** directive: **production planning sprint** — create Studio Produc
 - **Cross-refs:** `studio-world.md` · `CORE.md` · `engines/generation-manager/README.md` · `asset-intelligence-engine/README.md`
 - **Prior arc (same chat):** CDS uppercase text · centered nav tabs · Living Company Genome™ · Creative Blueprint · Asset Intelligence · Scene Stack™
 - **No UI this sprint**
+
+---
+
+## 2026-07-08 — Creative Budgets™ — think in creative capacity, not API calls (monthly capacity sprint, docs only)
+
+User **STOP** directive: **production planning sprint** introducing **Creative Budgets™**. Every company receives a monthly Creative Budget™ representing creative production capacity — founders never think in API calls.
+
+- **Mission:** Track monthly creative capacity — **Estimated Production Spend™** · **Creative Savings™** · **Blueprint Reuse™** · **Asset Reuse™** · **Monthly Production™** · **Pending Productions™** · **Completed Productions™**
+- **Dashboard example:** Monthly Budget $250 · Spent $41.72 · Estimated Pending $28.14 · Saved Through Reuse $137.55 · Efficiency Score 94% · Assets Reused 482 · Blueprint Systems Reused 118
+- **Orb coaching:** *"saved ~$87 reusing Blueprints"* · HQ maturation efficiency · Founder Taste Genome reducing unnecessary production
+- **Philosophy:** Reward intelligent creative production · efficient HQ = visually consistent HQ · every reused asset increases efficiency · every Blueprint strengthens the company · every approved generation is long-term investment
+- **Forbidden:** GPU providers · raw API · token pricing (same veil as Production Estimates™)
+- **Pipeline:** Monthly Budget → Production Estimate™ → Creative Budget gate (pending reserve) → Generation Manager™ → spend + savings rollup → Efficiency Score™ → Orb coaching
+- **11-doc spec:** `docs/studio-os/creative-budgets/` — README · creative-budgets · budget-model · monthly-cycle · efficiency-score · savings-rollup · dashboard-fields · orb-coaching · founder-experience · integration-map · forbidden-exposure · future-roadmap
+- **Cross-refs:** `studio-world.md` · `CORE.md` · `studio-production-estimates/` · `asset-intelligence-engine/README.md` · `engines/generation-manager/README.md`
+- **Prior arc (same chat):** Scene Stack™ · Asset Intelligence Engine™ · Creative Blueprint Engine™ · Living Company Genome™ · CDS uppercase text · CDS centered nav · Studio Production Estimates™
+- **No UI this sprint**
+
+---
+
+## 2026-07-08 — Creative Budgets™ — think in creative capacity, not API calls (monthly capacity sprint, docs only)
+
+User **STOP** directive: **production planning sprint** introducing **Creative Budgets™**. Every company receives a monthly Creative Budget™ representing creative production capacity — founders never think in API calls.
+
+- **Mission:** Track monthly creative capacity — **Estimated Production Spend™** · **Creative Savings™** · **Blueprint Reuse™** · **Asset Reuse™** · **Monthly Production™** · **Pending Productions™** · **Completed Productions™**
+- **Dashboard example:** Monthly Budget $250 · Spent $41.72 · Estimated Pending $28.14 · Saved Through Reuse $137.55 · Efficiency Score 94% · Assets Reused 482 · Blueprint Systems Reused 118
+- **Orb coaching:** *"saved ~$87 reusing Blueprints"* · HQ maturation efficiency · Founder Taste Genome reducing unnecessary production
+- **Philosophy:** Reward intelligent creative production · efficient HQ = visually consistent HQ · every reused asset increases efficiency · every Blueprint strengthens the company · every approved generation is long-term investment
+- **Forbidden:** GPU providers · raw API · token pricing (same veil as Production Estimates™)
+- **Pipeline:** Monthly Budget → Production Estimate™ → Creative Budget gate (pending reserve) → Generation Manager™ → spend + savings rollup → Efficiency Score™ → Orb coaching
+- **11-doc spec:** `docs/studio-os/creative-budgets/` — README · creative-budgets · budget-model · monthly-cycle · efficiency-score · savings-rollup · dashboard-fields · orb-coaching · founder-experience · integration-map · forbidden-exposure · future-roadmap
+- **Cross-refs:** `studio-world.md` · `CORE.md` · `studio-production-estimates/` · `asset-intelligence-engine/README.md` · `engines/generation-manager/README.md`
+- **Prior arc (same chat):** Scene Stack™ · Asset Intelligence Engine™ · Creative Blueprint Engine™ · Living Company Genome™ · CDS uppercase text · CDS centered nav · Studio Production Estimates™
+- **No UI this sprint**

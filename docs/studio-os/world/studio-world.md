@@ -123,6 +123,8 @@ STUDIO WORLD™
 
 **Studio Production Estimates™:** [Estimate productions, not images](../studio-production-estimates/README.md) — scope · cost · savings · Orb WHY
 
+**Creative Budgets™:** [Think in creative capacity, not API calls](../creative-budgets/README.md) — monthly budget · spend · savings · efficiency · Orb coaching
+
 **Scene Genesis™ (deprecated):** [../scene-genesis/README.md](../scene-genesis/README.md) — superseded by Scene Stack™
 
 ---
@@ -148,6 +150,7 @@ STUDIO WORLD™
 | **Creative Blueprint Engine™** | [../creative-blueprint-engine/](../creative-blueprint-engine/) | Visual DNA™ · design languages · Systems™ · inheritance above Registry |
 | **Living Company Genome™** | [../living-company-genome/](../living-company-genome/) | Evolutionary memory · genome events · HQ maturation · time capsules |
 | **Studio Production Estimates™** | [../studio-production-estimates/](../studio-production-estimates/) | Pre-production scope · cost · savings · complexity · Orb WHY |
+| **Creative Budgets™** | [../creative-budgets/](../creative-budgets/) | Monthly creative capacity · spend · pending · savings · Efficiency Score™ · Orb coaching |
 | **Scene Genesis™ (deprecated)** | [../scene-genesis/](../scene-genesis/) | Superseded by Scene Stack™ — single-image plates retired |
 
 ---

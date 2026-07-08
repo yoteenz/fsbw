@@ -88,6 +88,8 @@ STUDIO PRODUCTION ESTIMATES™ (this system)
          ↓
 Founder Control™ gate (approve estimate)
          ↓
+Creative Budgets™ (monthly capacity · pending reserve)
+         ↓
 Generation Manager™ (execute approved scope only)
 ```
 
@@ -108,6 +110,8 @@ Generation Manager™ (execute approved scope only)
 | [cds-story-table-example.md](./cds-story-table-example.md) | CDS worked example |
 | [forbidden-exposure.md](./forbidden-exposure.md) | No GPU · no API pricing |
 | [future-roadmap.md](./future-roadmap.md) | v2+ evolution |
+
+**Sibling:** [Creative Budgets™](../creative-budgets/README.md) — monthly capacity rollup from approved estimates
 
 ---
 
