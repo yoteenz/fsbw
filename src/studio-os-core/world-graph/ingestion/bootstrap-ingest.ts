@@ -170,7 +170,10 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
         'ARTICLE-E03 long-term mastery engine — preserves professional memories through retention profiles, adaptive refreshers, Orb mentorship, and living industry updates.',
       lifecycle: 'implemented',
       codePaths: ['src/studio-os-core/knowledge-retention-engine/'],
-      docPaths: ['docs/studio-os/engine/knowledge-retention/ARTICLE_E03_KNOWLEDGE_RETENTION_ENGINE.md'],
+      docPaths: [
+        'docs/studio-os/engine/knowledge-retention/ARTICLE_E03_KNOWLEDGE_RETENTION_ENGINE.md',
+        'docs/studio-os/engine/knowledge-retention/KNOWLEDGE_RETENTION_ENGINE.md',
+      ],
       integratesWith: [
         'profession-brain',
         'studio-institute',

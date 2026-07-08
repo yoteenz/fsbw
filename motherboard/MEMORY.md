@@ -43739,3 +43739,37 @@ Summary of the **full conversation in this chat so far**: the user first request
   - Use **Studio Exchange™** for future customer-facing economy language.
   - Do not frame professional learning as buying courses, enrolling, or subscribing unless referencing legacy implementation or external systems.
   - Certification rewards should always expand the world; never ship PDF-only achievement language as the final product model.
+
+---
+
+## 2026-07-08 — ARTICLE-E03 Knowledge Retention Engine™ implementation sprint
+
+**Context:** User requested **IMPLEMENTATION SPRINT** for Knowledge Retention Engine™ after architecture approval. Build reusable foundation for lifelong professional retention adoptable by every Career World.
+
+**Topics covered (entire conversation so far):**
+- Prior in chat: fixed World Atlas React #301; shipped ARTICLE-E03 architecture (flat `knowledge-retention-engine/` package, World Graph Professional Memory™ nodes, Knowledge Core E03 entry).
+- **Implementation sprint:** Modular foundation under `src/studio-os-core/knowledge-retention-engine/` with six submodules: `knowledge-retention/`, `memory-engine/`, `retention-profiles/`, `review-engine/`, `orb-reminders/`, `refresher-generator/`.
+- Expanded retention profile schema: profession, lastPracticed, lastSimulated, recallScore, applicationsCompleted, mistakesMade, industryVersion, certificationStatus (`RetentionCertificationStatus`), careerRelevance — with legacy normalization for recallStrength/successfulApplications.
+- Updated Refresher Modes™ to implementation spec: Memory Spark™, TL;DR Review™, Interactive Scenario™, Simulation Replay™, Mentor Walkthrough™, Quick Assessment™, Industry Update™, Certification Renewal™ (legacy mode id map preserved).
+- Review engine triggers: time elapsed, low confidence, repeated mistakes, industry standards, upcoming simulations, career goals, certification deadlines; 6-hour scheduler interval.
+- Orb integration: optional contextual reminders wired into Orb Recommendations (`knowledge-refresh` category) — never mandatory language.
+- Profession Brain hooks: `queueProfessionBrainRefreshers()` maps canonical brain updates → affected learners → queued refreshers with what/why/how.
+- Analytics snapshot: retention, confidence, mastery, review completion, knowledge growth, concept decay.
+- React hook: `useKnowledgeRetentionState.ts`; implementation doc `KNOWLEDGE_RETENTION_ENGINE.md`.
+
+**Decisions / outcomes:**
+- Root `engine.ts` / `catalog.ts` remain backward-compatible facades for World Graph ingest.
+- Persistence via localStorage (`KNOWLEDGE_RETENTION_STORAGE_KEY`) mirroring Career Worlds pattern; `KnowledgeRetentionPersistenceAdapter` stub for future Supabase.
+- Orb Recommendations engine calls `buildRetentionOrbRecommendations()` for proactive optional refreshers.
+
+**Changes:**
+- New modules under `knowledge-retention-engine/` (orchestrator, store, analytics, evaluator, scheduler, triggers, refresher generator, orb reminders, profession-brain hooks).
+- Updated orb-recommendations types + recommendation-engine integration.
+- Updated world-graph ingest metadata (`recallScore`).
+- Hook: `src/hooks/useKnowledgeRetentionState.ts`.
+- Doc: `docs/studio-os/engine/knowledge-retention/KNOWLEDGE_RETENTION_ENGINE.md`.
+
+**Verification:** `npx tsc --noEmit`, `npm run compile-world-graph` (553 nodes · 1061 edges · PASS), `npm run build` passed.
+
+**Conventions:** Work on `master` only; one deploy per task. Career Worlds should call `syncKnowledgeRetention()` on return; Profession Brain updates should use `queueProfessionBrainRefreshers()`. Extend refresher UX via `RefresherGeneratorRegistry` — do not hardcode profession content in the review engine.
+

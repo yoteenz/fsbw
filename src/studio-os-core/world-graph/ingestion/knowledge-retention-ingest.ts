@@ -58,14 +58,14 @@ export function ingestKnowledgeRetentionNodes(): { nodes: WorldNode[]; edges: Wo
         `${profile.conceptTitle} retained as a professional memory with confidence, recall, usage, certification, update, and career-goal signals.`,
       tags: ['professional-memory', 'knowledge-retention', profile.domain, profile.brainId],
       implementationStatus: 'live',
-      codePaths: ['src/studio-os-core/knowledge-retention-engine/catalog.ts'],
+      codePaths: ['src/studio-os-core/knowledge-retention-engine/retention-profiles/catalog.ts'],
       provenance: { source: 'constitution', sourceRef: 'ARTICLE-E03', ingestedAt: ts },
       metadata: {
         brainId: profile.brainId,
         domain: profile.domain,
         difficulty: profile.difficulty,
         confidenceScore: profile.confidenceScore,
-        recallStrength: profile.recallStrength,
+        recallScore: profile.recallScore,
         certificationRelevance: profile.certificationRelevance,
       },
     });

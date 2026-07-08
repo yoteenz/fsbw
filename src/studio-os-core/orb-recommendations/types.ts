@@ -23,7 +23,8 @@ export type OrbRecommendationCategory =
   | 'generate-department'
   | 'optimize-budget'
   | 'celebrate-milestone'
-  | 'surprise-discovery';
+  | 'surprise-discovery'
+  | 'knowledge-refresh';
 
 export type OrbRecommendationImpact = 'transformative' | 'high' | 'moderate' | 'low';
 
