@@ -40941,3 +40941,15 @@ Summary of the **whole conversation in this chat**: Platform architecture frozen
 - **Lifecycle rules:** No skip Blueprint/Golden Build · Live requires Certification · Legacy via Archive
 - **CDS mapping:** Sprint 001 = Golden Build™ achieved · Sprint 002+ = Certified™ path
 - **Conventions:** Production Lifecycle names *where*; Production Pipeline names *how*. Docs only this sprint.
+
+---
+
+## 2026-07-08 — Golden Build mobile stability + spatial room shell
+
+Summary of **whole conversation in this chat**: Production Lifecycle docs · user reported **Golden Build freezes on mobile** + **stacked card UI** not immersive · stability/rendering audit + fix (no new features).
+
+- **Freeze root causes:** `AdminStudioLayout` wrapping room in white `backdrop-blur` card + marble `background-attachment: fixed` (iOS Safari) · multiple `backdrop-filter: blur()` on panels/zone buttons · 3× infinite CSS animations · heavy `perspective`/`rotateX` compositing · inline generated preview image decode · nested admin scroll regions · full Studio Orb/Knowledge/bootstrap stack on route.
+- **Fixes:** New **`DepartmentGoldenBuildShell`** — full-screen, auth only, bypasses AdminStudioLayout · rebuilt **`DepartmentVerticalSliceRoom`** as spatial 2.5D shell (`gb-room_*`) · CSS: no blur, no infinite motion, mobile flattens 3D transforms · preview deferred (tap-to-load link, opens new tab) · removed drag-reorder on mood wall (tap delete only) · production console fixed at bottom · `/studio/department/` added to `skipHeavyPlatformBootstrap`.
+- **Route:** `/admin/studio/department/creative-direction`
+- **Functional:** zones · orb copy · mood wall add/delete · founder notes · queue · generate environment (FAL)
+- **Placeholder:** flat/simplified 2.5D · voice note · rule-based AI · preview link not inline image

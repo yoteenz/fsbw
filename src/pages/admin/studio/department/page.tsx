@@ -1,11 +1,11 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { AdminStudioLayout } from '../../../../components/admin/studio/AdminStudioLayout';
 import { DepartmentVerticalSliceRoom } from '../../../../components/admin/studio-os/department-vertical-slice';
+import { DepartmentGoldenBuildShell } from '../../../../components/admin/studio-os/department-vertical-slice/DepartmentGoldenBuildShell';
 import { loadDepartmentPackage } from '../../../../studio-os-core/department-package';
 
 /**
- * Studio OS Alpha — Department Vertical Slice™
- * Generic route: any registered department package can mount the immersive room.
+ * Studio OS Alpha — Department Golden Build™
+ * Full-screen immersive shell (no AdminStudioLayout card frame).
  */
 export default function AdminStudioDepartmentVerticalSlicePage() {
   const { departmentId = '' } = useParams<{ departmentId: string }>();
@@ -14,30 +14,18 @@ export default function AdminStudioDepartmentVerticalSlicePage() {
 
   if (!pkg) {
     return (
-      <AdminStudioLayout
-        title="DEPARTMENT NOT FOUND"
-        subtitle={departmentId}
-        onBack={() => navigate('/admin/studio/overview')}
-        hideNavTabs
-      >
-        <p className="text-[10px] font-futura uppercase tracking-widest text-gray-500">
-          No department package registered for &quot;{departmentId}&quot;.
-        </p>
-      </AdminStudioLayout>
+      <DepartmentGoldenBuildShell onExit={() => navigate('/admin/studio/overview')} exitLabel="Back">
+        <div style={{ padding: 24, color: '#f0ebe3', fontFamily: '"Futura PT", sans-serif' }}>
+          <p style={{ fontSize: 10, letterSpacing: '0.1em' }}>DEPARTMENT NOT FOUND</p>
+          <p style={{ fontSize: 8, opacity: 0.7, marginTop: 8 }}>{departmentId}</p>
+        </div>
+      </DepartmentGoldenBuildShell>
     );
   }
 
   return (
-    <AdminStudioLayout
-      title={pkg.definition.displayName.toUpperCase()}
-      subtitle="STUDIO OS ALPHA · GOLDEN BUILD™"
-      breadcrumbParentLabel="STUDIO OVERVIEW"
-      breadcrumbParentPath="/admin/studio/overview"
-      onBack={() => navigate('/admin/studio/overview')}
-      hideNavTabs
-      hideOverviewLink
-    >
+    <DepartmentGoldenBuildShell onExit={() => navigate('/admin/studio/overview')}>
       <DepartmentVerticalSliceRoom departmentId={departmentId} />
-    </AdminStudioLayout>
+    </DepartmentGoldenBuildShell>
   );
 }

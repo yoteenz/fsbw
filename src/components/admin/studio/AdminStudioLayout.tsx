@@ -110,7 +110,9 @@ export function AdminStudioLayout({
 
   /** Routes that self-seed via module hooks — never block paint with full platform bootstrap. */
   const skipHeavyPlatformBootstrap =
-    pathname.includes('/studio/ndxbook') || pathname.includes('/studio/chief-of-staff');
+    pathname.includes('/studio/ndxbook') ||
+    pathname.includes('/studio/chief-of-staff') ||
+    pathname.includes('/studio/department/');
 
   useEffect(() => {
     if (skipHeavyPlatformBootstrap) return;
