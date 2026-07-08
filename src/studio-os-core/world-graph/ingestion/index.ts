@@ -19,3 +19,4 @@ export { ingestCareerWorldNodes } from './career-worlds-ingest';
 export { ingestProfessionSimulationNodes } from './profession-simulation-ingest';
 export { ingestKnowledgeRetentionNodes } from './knowledge-retention-ingest';
 export { ingestStudioExchangeNodes } from './studio-exchange-ingest';
+export { ingestProfessionalMemoryWisdomNodes } from './professional-memory-wisdom-ingest';

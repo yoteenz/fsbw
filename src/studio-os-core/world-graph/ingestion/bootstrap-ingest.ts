@@ -184,6 +184,25 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       ],
     },
     {
+      slug: 'professional-memory-wisdom-engine',
+      name: 'Professional Memory™ / Wisdom Engine™',
+      summary:
+        'ARTICLE-E04 lifelong wisdom layer — preserves meaningful career experiences as Professional Timeline™ memories and synthesizes them into context-aware guidance.',
+      lifecycle: 'architecture',
+      codePaths: ['src/studio-os-core/professional-memory-wisdom-engine/'],
+      docPaths: [
+        'docs/studio-os/engine/professional-memory/ARTICLE_E04_PROFESSIONAL_MEMORY_WISDOM_ENGINE.md',
+      ],
+      integratesWith: [
+        'profession-brain',
+        'career-worlds',
+        'profession-simulation-engine',
+        'knowledge-retention-engine',
+        'orb-recommendations',
+        'world-graph',
+      ],
+    },
+    {
       slug: 'studio-exchange',
       name: 'Studio Exchange™',
       summary:

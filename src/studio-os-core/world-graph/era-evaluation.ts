@@ -111,6 +111,7 @@ export const ENGINE_ERA_MAP: Record<string, StudioWorldEra> = {
   'studio-foundry': 'knowledge',
   'asset-compiler': 'knowledge',
   'knowledge-retention-engine': 'knowledge',
+  'professional-memory-wisdom-engine': 'knowledge',
   'orb-archivist': 'knowledge',
   'scene-stack': 'knowledge',
   'company-genome': 'knowledge',

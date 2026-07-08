@@ -43786,3 +43786,30 @@ Summary of the **full conversation in this chat**: the user first requested an i
   - Updated Studio OS docs index, governance hierarchy, and `motherboard/CORE.md`.
 - **Verification:** `npm run build` passed; timestamp-only master-spec generated diffs were reverted, while intentional Codex + World Graph artifacts were retained.
 - **Conventions:** From now on, future major Studio World feature prompts should be treated as Codex-first architecture work before implementation; Knowledge Core, World Bible, ADRs, implementation plans, and production review are lifecycle projections of Codex-approved truth, not replacements for the Codex.
+
+---
+
+## 2026-07-08 — ARTICLE-E04 Professional Memory™ / Wisdom Engine™ architecture sprint
+
+**Context:** This chat has covered the lifelong mastery sequence after E01/E02/E03 approval. The user first requested and received the Knowledge Retention Engine™ implementation sprint, then requested **ARCHITECTURE SPRINT / ARTICLE-E04 / Professional Memory™ / The Wisdom Engine™** as the final layer of lifelong mastery.
+
+**Topics covered (entire conversation so far):**
+- **ARTICLE-E03 implementation sprint:** Implemented reusable Knowledge Retention Engine™ foundation with submodules `knowledge-retention/`, `memory-engine/`, `retention-profiles/`, `review-engine/`, `orb-reminders/`, and `refresher-generator/`; expanded retention profiles; added scheduler, Orb optional refresh reminders, Profession Brain update hooks, analytics, React hook, and implementation docs.
+- **ARTICLE-E04 architecture sprint:** Added the final lifelong mastery layer: Professional Memory™ as living career history and The Wisdom Engine™ as context-aware professional judgment synthesis.
+- Defined the core philosophy: Knowledge teaches **how**; wisdom teaches **when**. Traditional education tracks completed lessons; Studio World tracks experiences.
+- Defined **Professional Timeline™** as a persistent learner-owned history of achievements, mistakes, discoveries, career milestones, businesses, mentorship, projects, industry events, competitions, community contributions, certifications, and knowledge breakthroughs.
+- Defined Memory Types™: Career Memories™, Client Memories™, Simulation Memories™, Teaching Memories™, Innovation Memories™, Business Memories™, Leadership Memories™, Community Memories™, Historical Memories™.
+- Defined Orb evolution from course reminder to professional mentor that recalls meaningful moments and progress deltas.
+- Defined Memory Reflection™ modes: Career Recap™, Year In Review™, Five-Year Journey™, Mastery Timeline™, Business Growth Replay™, Industry Impact™.
+- Defined Wisdom Engine™ synthesis inputs: Profession Brain™, Professional Memory™, Career History™, Simulation Outcomes™, Mentorship™, Industry Updates™, Community Contributions™.
+
+**Decisions / outcomes:**
+- Created `src/studio-os-core/professional-memory-wisdom-engine/` with architecture primitives: professional memory records, timeline, reflection modes, wisdom contexts, recommendations, Orb recalls, launch memory examples, and synthesis helpers.
+- Added Knowledge Core canon entry `E04-professional-memory-wisdom-engine` between E03 and E05.
+- Registered `professional-memory-wisdom-engine` in World Graph bootstrap, era evaluation, root exports, and dedicated graph ingestion.
+- Reused the E03 `professional-memory` World Graph node type for lived career experiences; E03 memories can be retained concepts, while E04 memories are meaningful career experiences.
+- Added canonical architecture doc: `docs/studio-os/engine/professional-memory/ARTICLE_E04_PROFESSIONAL_MEMORY_WISDOM_ENGINE.md`.
+
+**Verification:** `npx tsc --noEmit` passed; `npm run compile-world-graph` passed (**561 nodes · 1086 edges · PASS**); `npm run build` passed.
+
+**Conventions:** Future Career Worlds, simulations, certifications, Studio Exchange actions, mentorship outcomes, and community contributions should emit Professional Memory™ records when they are meaningful to a learner's career. Wisdom Engine™ guidance should cite lived context, not produce generic advice.

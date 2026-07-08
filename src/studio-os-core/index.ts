@@ -185,3 +185,4 @@ export * from './studio-foundry';
 export * from './career-worlds';
 export * from './knowledge-retention-engine';
 export * from './studio-exchange';
+export * from './professional-memory-wisdom-engine';
