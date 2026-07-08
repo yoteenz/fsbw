@@ -125,6 +125,8 @@ STUDIO WORLD™
 
 **Creative Budgets™:** [Think in creative capacity, not API calls](../creative-budgets/README.md) — monthly budget · spend · savings · efficiency · Orb coaching
 
+**Creative Equity™:** [The creative net worth of a company](../creative-equity/README.md) — lifetime wealth · portfolio · ROI · never resets
+
 **Studio Alpha™ Production Dashboard™:** [Internal Mission Control of Studio World™](../../studio-alpha/production-dashboard/README.md) — operators only · full GPU · ROI · queue · **not** Studio OS
 
 **Scene Genesis™ (deprecated):** [../scene-genesis/README.md](../scene-genesis/README.md) — superseded by Scene Stack™
@@ -153,6 +155,7 @@ STUDIO WORLD™
 | **Living Company Genome™** | [../living-company-genome/](../living-company-genome/) | Evolutionary memory · genome events · HQ maturation · time capsules |
 | **Studio Production Estimates™** | [../studio-production-estimates/](../studio-production-estimates/) | Pre-production scope · cost · savings · complexity · Orb WHY |
 | **Creative Budgets™** | [../creative-budgets/](../creative-budgets/) | Monthly creative capacity · spend · pending · savings · Efficiency Score™ · Orb coaching |
+| **Creative Equity™** | [../creative-equity/](../creative-equity/) | Lifetime creative net worth · portfolio · Creative ROI™ · Company Genome™ · never resets |
 | **Studio Alpha™ Production Dashboard™** | [../../studio-alpha/production-dashboard/](../../studio-alpha/production-dashboard/) | Internal manufacturing Mission Control · **not** customer-facing · GPU · ROI · queue |
 | **Scene Genesis™ (deprecated)** | [../scene-genesis/](../scene-genesis/) | Superseded by Scene Stack™ — single-image plates retired |
 

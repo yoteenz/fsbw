@@ -41783,3 +41783,24 @@ User **STOP** directive: **internal Studio Alpha™ sprint** — **Production Da
 - **Cross-refs:** `studio-world.md` · `CORE.md` · `studio-production-estimates/`
 - **Prior arc (same chat):** Creative Budgets™ · Production Estimates™ · Scene Stack™ · intelligence stack · CDS changes
 - **No UI this sprint**
+
+---
+
+## 2026-07-08 — Creative Equity™ — the creative net worth of a company (platform intelligence sprint, docs only)
+
+User **STOP** directive: **platform intelligence sprint** — **Creative Equity™**. Long-term value system inside Studio OS. **Do NOT** build UI · marketplace features · financial systems.
+
+- **Mission:** **Creative Budget™** = production capacity (monthly, resets). **Creative Equity™** = accumulated creative value (lifetime, **never resets**, grows). Distinguish spending money vs building lasting assets.
+- **Philosophy:** Every approved generation = investment. Blueprints · Landmarks™ · Living Sets™ · Departments · Studio Originals™ · Marketplace Assets · Systems add equity. Nothing valuable disappears. Most software tracks expenses — Studio OS tracks creative wealth.
+- **Equity contributors:** Golden Builds™ · reusable Blueprints/Systems · marketplace publications/sales · asset/blueprint reuse · Studio Certified™ · landmarks · living sets · founder collections · high compatibility · long-term usage · community adoption
+- **Equity score example:** $12,480 · 1,428 assets · 63 blueprint systems · 182 reusable systems · 41 marketplace products · 12 studio certified · avg reuse 247 · Creative ROI 94%
+- **Equity Engine™ rewards:** longevity · consistency · quality · reuse · adaptability · marketplace value · founder satisfaction · efficiency · design excellence — **never** unnecessary generation
+- **Creative ROI™:** generation cost · reuse · departments/scenes/companies using · marketplace downloads · revenue · savings · lifetime value · effective cost per use — assets as investments not expenses
+- **Creative Portfolio™:** Blueprint Library™ · Landmark Collection™ · Living Sets™ · Departments · Marketplace Products · Architectural/Material/Lighting/Atmosphere/Transition Systems · Founder Collections™ — portfolio value = Creative Equity™
+- **Marketplace Equity™:** spec-only signals when assets purchased · blueprints licensed · landmarks popular · systems reused · derivatives · influential design language
+- **Company Genome™:** creative wealth domain — foundational investments · smarter recommendations over time
+- **Orb:** *"Blueprint most valuable asset"* · *"Landmark reused nine departments"* · *"equity increased — Blueprint adopted by three headquarters"* · *"design language more valuable over time"*
+- **9-doc spec:** `docs/studio-os/creative-equity/` — README · creative-equity · equity-engine · creative-roi · asset-lifetime-value · creative-portfolio · marketplace-equity · creative-investments · future-equity-roadmap
+- **Cross-refs:** `studio-world.md` · `CORE.md` · `creative-budgets/`
+- **Prior arc (same chat):** Creative Budgets™ · Studio Alpha Production Dashboard™ · Production Estimates™ · intelligence stack sprints
+- **No UI this sprint**
