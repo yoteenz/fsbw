@@ -335,6 +335,46 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
     implementationStatus: 'Implemented',
     tags: ['memory-system', 'conversation-archive', 'knowledge-ingestion', 'memory-graph'],
   },
+  {
+    id: 'A01-asset-compiler',
+    title: 'ARTICLE-A01 — Asset Compiler™',
+    domain: 'Asset Standards™',
+    status: 'Canon',
+    version: 'v1',
+    summary:
+      'Asset Compiler™ turns founder asset intent into reusable Generation Recipes™, FAL generation requests, metadata, versions, storage paths, and Asset Registry entries.',
+    reasoning:
+      'The founder should never leave Studio World to manually prompt FAL, choose models, tune generation settings, download files, upload assets, name folders, or import registry metadata.',
+    finalPrompt:
+      'Create an Asset Compiler™ that uses reusable Generation Recipes™ and existing FAL integration to produce registry-ready generated assets from asset name, recipe, and optional modifiers.',
+    architectureAdded: [
+      'Asset Compiler™',
+      'Generation Recipes™',
+      'FAL request compiler',
+      'Compiled Asset Metadata',
+      'Asset Registry entry generation',
+      'Generation Recipe World Graph nodes',
+    ],
+    relatedSystems: [
+      'Asset Registry™',
+      'FAL',
+      'World Graph™',
+      'Scene Assembly™',
+      'Orb™',
+      'Atlas™',
+      'Mission Control™',
+      'Marketplace™',
+    ],
+    constitutionArticles: ['ARTICLE-A01', 'ARTICLE-K22', 'ARTICLE-K23'],
+    adrReferences: ['ADR-0001'],
+    worldBibleReferences: [
+      'Studio Asset Compiler™',
+      'Asset Registry™',
+      'Studio World Production Pipeline',
+    ],
+    implementationStatus: 'Implemented',
+    tags: ['asset-compiler', 'generation-recipes', 'fal', 'asset-registry'],
+  },
 ];
 
 export function canInfluenceFutureArchitecture(status: KnowledgeCoreStatus): boolean {

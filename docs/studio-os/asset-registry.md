@@ -62,6 +62,16 @@ Broken Links · Unused Assets · Duplicate Assets · Missing Alt Text · Brand C
 
 **`asset-registry/store`** triggers **`syncExperienceEngineFromSources`** · **boundary-sync**
 
+## Asset Compiler™ integration
+
+**ARTICLE-A01:** [Asset Compiler™](./engine/asset-compiler/ARTICLE_A01_ASSET_COMPILER.md) is the production layer that creates registry-ready generated assets from founder intent.
+
+Flow:
+
+`Asset Name + Generation Recipe™ + Optional Modifiers → FAL request → metadata → versioned storage path → RegisteredAssetEntry → Asset Registry™`
+
+The founder should not manually download, upload, name, version, or import generated assets.
+
 ## UI
 
 - **`AssetRegistryWorkspace`** — Overview · Asset Categories · Metadata · Versioning · Asset Health · Governance · Discovery

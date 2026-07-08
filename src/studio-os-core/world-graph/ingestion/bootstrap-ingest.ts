@@ -94,6 +94,26 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       integratesWith: ['world-graph'],
     },
     {
+      slug: 'asset-registry',
+      name: 'Asset Registry™',
+      summary:
+        'Permanent home for every organizational asset — metadata, versioning, usage, relationships, and discovery.',
+      lifecycle: 'live',
+      codePaths: ['src/studio-os-core/asset-registry/'],
+      docPaths: ['docs/studio-os/asset-registry.md'],
+      integratesWith: ['world-graph', 'studio-world-atlas'],
+    },
+    {
+      slug: 'asset-compiler',
+      name: 'Asset Compiler™',
+      summary:
+        'ARTICLE-A01 production layer that turns founder intent into FAL generation recipes, metadata, versions, and Asset Registry entries.',
+      lifecycle: 'implemented',
+      codePaths: ['src/studio-os-core/asset-compiler/'],
+      docPaths: ['docs/studio-os/engine/asset-compiler/ARTICLE_A01_ASSET_COMPILER.md'],
+      integratesWith: ['asset-registry', 'scene-stack', 'studio-world-atlas'],
+    },
+    {
       slug: 'orb-archivist',
       name: 'Orb Archivist™',
       summary: 'Relationship-first explorer of the World Graph™ — institutional memory interface.',

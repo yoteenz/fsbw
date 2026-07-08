@@ -2,6 +2,7 @@ import { finalizeWorldGraph } from './graph';
 import {
   ingestBehavioralConstitutionalNodes,
   ingestArchitectureDecisionNodes,
+  ingestAssetCompilerNodes,
   ingestConstitutionalLawNodes,
   ingestDesignPrincipleNodes,
   ingestEraRoadmapNodes,
@@ -49,6 +50,7 @@ export function buildWorldGraph(input: BuildWorldGraphInput = {}): BuildWorldGra
     ingestEraRoadmapNodes(),
     ingestArchitectureDecisionNodes(),
     ingestKnowledgeCoreNodes(),
+    ingestAssetCompilerNodes(),
     ingestRouteRegistryNodes(),
   ];
 

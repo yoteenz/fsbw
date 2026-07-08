@@ -88,6 +88,7 @@ First compile target: [`departments/creative-direction-studio/`](../departments/
 
 | # | Document | System |
 |---|----------|--------|
+| A01 | [Asset Compiler™ Implementation Article](./ARTICLE_A01_ASSET_COMPILER.md) | Founder intent → Generation Recipes™ → FAL request → Asset Registry™ |
 | 01 | [Compiler Overview](./01_COMPILER_OVERVIEW.md) | Purpose, pipeline, integrations |
 | 02 | [Input System](./02_INPUT_SYSTEM.md) | Every compiler input defined |
 | 03 | [Prompt Compiler](./03_PROMPT_COMPILER.md) | Multi-prompt generation heart |

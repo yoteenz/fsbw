@@ -43159,7 +43159,6 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Published entries are **Approved™**, never auto-Canon. Canon remains explicit ratification only.
 - Memory System is infrastructure — UIs (Knowledge Core Observatory, Orb Archivist, future Memory Graph views) consume its APIs.
 - `queryMemorySystem()` for cross-layer search; `buildMemoryGraph()` for lineage visualization data.
-
 ---
 
 ## 2026-07-08 — Mission Control™ holographic civilization transformation (Article-K20 follow-up)
@@ -43196,3 +43195,63 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Mission Control spatial mode = default after Activation Sequence™; planner modes retain legacy panels
 - Navigation happens through the hologram (building select + spatial annotation TRAVEL); world is the interface
 - Dashboard rails/panels suppressed in `is-mc-spatial`; information emerges via Progressive Presence™ only
+---
+
+## 2026-07-08 — ARTICLE-A01 Asset Compiler™ production layer
+
+**Context:** This chat has advanced Studio World’s institutional memory and production architecture. Earlier turns implemented **ARTICLE-K21 Architecture Decision Records™**, **ARTICLE-K22 Studio World Knowledge Core™**, and **ARTICLE-K23 Memory System™** so major decisions, knowledge, conversations, extractions, and founder review paths become durable World Graph memory. The latest user request was an **IMPLEMENTATION SPRINT** for **ARTICLE-A01 Asset Compiler™**: Studio World should already leverage its FAL integration so the founder never manually leaves Studio World to generate individual assets or manage prompt engineering, model selection, resolution, transparent backgrounds, file naming, versioning, metadata, folders, downloads/uploads, or registry imports.
+
+**Topics covered (entire conversation so far):**
+- **K21 ADRs:** Architecture Decision Records™ as constitutional history, Constitution Hall™, Architect’s Journal™, Decision Graph™, Architect’s Oath™, review stages, and ADR World Graph ingestion.
+- **K22 Knowledge Core:** Canonical internal memory with domains, statuses, prompt memory, Prompt Standards™, Architect’s Memory™, search behavior, versioning, and Knowledge Entry graph ingestion.
+- **K23 Memory System:** Conversation Archive™ → Knowledge Ingestion™ → Architect Review™ → Knowledge Core™; first raw archive/extraction report for the Studio World architecture discussion; memory lineage nodes (`conversation-archive`, `knowledge-extraction`, `founder-approval`).
+- **A01 Asset Compiler:** Founder-facing production compiler that accepts only **Asset Name + Generation Recipe™ + optional modifiers** and produces FAL request details, prompt/negative prompt, parameters, metadata, version, storage path, and registry entry.
+
+**Decisions / outcomes:**
+- Implemented **Asset Compiler™** as the reusable production layer in `src/studio-os-core/asset-compiler/`.
+- Introduced reusable **Generation Recipes™** for: Hero Icon, Environment, Furniture, Orb, Glass UI, Room, Architecture, Material, Particle, Animation, Portrait, and Brand Asset.
+- Each recipe defines FAL model, prompt prefix, negative prompt, resolution, aspect ratio, background behavior, lighting/material profile, output format, registry destination, versioning strategy, upscaling pipeline, and metadata.
+- `compileAssetIntent(...)` now deterministically compiles founder intent into:
+  - selected recipe,
+  - FAL request payload,
+  - compiled prompt,
+  - generation parameters,
+  - versioned storage path,
+  - `CompiledAssetMetadata`,
+  - `RegisteredAssetEntry`.
+- Added **ARTICLE-A01** as a Canon Knowledge Core entry under **Asset Standards™**.
+- Registered **Asset Compiler™** and **Asset Registry™** as World Graph engine nodes and ingested every Generation Recipe™ as a `knowledge-object` node connected to the compiler and registry.
+
+**Changes:**
+- Added Asset Compiler core:
+  - `src/studio-os-core/asset-compiler/types.ts`
+  - `src/studio-os-core/asset-compiler/recipes.ts`
+  - `src/studio-os-core/asset-compiler/compiler.ts`
+  - `src/studio-os-core/asset-compiler/index.ts`
+- Added World Graph recipe ingestion:
+  - `src/studio-os-core/world-graph/ingestion/asset-compiler-ingest.ts`
+  - `src/studio-os-core/world-graph/ingestion/index.ts`
+  - `src/studio-os-core/world-graph/builder.ts`
+  - `src/studio-os-core/world-graph/ingestion/bootstrap-ingest.ts`
+  - `src/studio-os-core/world-graph/era-evaluation.ts`
+- Added/updated documentation:
+  - `docs/studio-os/engine/asset-compiler/ARTICLE_A01_ASSET_COMPILER.md`
+  - `docs/studio-os/engine/asset-compiler/README.md`
+  - `docs/studio-os/asset-registry.md`
+  - `docs/studio-os/world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md`
+- Updated Knowledge Core and generated graph artifacts:
+  - `src/studio-os-core/studio-world-knowledge-core/entries.ts`
+  - `public/studio-os/world-graph/graph.json`
+  - `docs/studio-os/world-graph/WORLD_GRAPH_COMPILE_REPORT.md`
+- Added permanent CORE note:
+  - `motherboard/CORE.md`
+
+**Verification:**
+- `npm run compile-world-graph` passed after rebase: **470 nodes · 767 edges · PASS**.
+- `npm run build` passed. Existing large chunk warnings remain non-blocking.
+- Restored unrelated master-spec timestamp-only generated files; retained World Graph artifacts because they contain the A01 engine, Knowledge Entry, Asset Registry engine, and Generation Recipe nodes/edges.
+
+**Conventions:**
+- Future asset-generation features should route through **Asset Compiler™** recipes instead of ad hoc prompts.
+- Founder-facing asset creation should expose intent only; implementation details belong to the compiler.
+- Generated assets should always become registry-ready metadata objects, not loose files.
