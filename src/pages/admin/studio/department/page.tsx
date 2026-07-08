@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { DepartmentVerticalSliceRoom } from '../../../../components/admin/studio-os/department-vertical-slice';
+import { CreativeDirectionStudioRoom } from '../../../../components/admin/studio-os/creative-direction-studio/CreativeDirectionStudioRoom';
 import { DepartmentGoldenBuildShell } from '../../../../components/admin/studio-os/department-vertical-slice/DepartmentGoldenBuildShell';
 import { loadDepartmentPackage } from '../../../../studio-os-core/department-package';
 
@@ -28,7 +29,11 @@ export default function AdminStudioDepartmentVerticalSlicePage() {
 
   return (
     <DepartmentGoldenBuildShell>
-      <DepartmentVerticalSliceRoom departmentId={departmentId} />
+      {departmentId === 'creative-direction' ? (
+        <CreativeDirectionStudioRoom />
+      ) : (
+        <DepartmentVerticalSliceRoom departmentId={departmentId} />
+      )}
     </DepartmentGoldenBuildShell>
   );
 }

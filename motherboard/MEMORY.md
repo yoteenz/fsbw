@@ -41393,3 +41393,21 @@ User defined **Guild System™** — where Studio Professionals™ belong; cultu
 - **9-doc spec:** `docs/studio-os/community/` — README · guild-system · guild-philosophy · guild-halls · guild-activities · mentorship-framework · guild-reputation · hall-of-legends · future-community-roadmap
 - **Prior arc (same chat):** Studio Professionals™ · Studio Architects™ · Studio Marketplace™ v2 · Living Sets™ · CDS V2 · Founder Intelligence™
 - **CORE.md:** Guild System™ line added
+
+---
+
+## 2026-07-08 — Creative Direction Studio™ V2 Architectural Reset — live prototype implementation
+
+User required **actual code implementation** of CDS V2 reset (not docs). **No new docs · no philosophy summary.**
+
+- **Route:** `/admin/studio/department/creative-direction` (`adminStudioDepartmentVerticalSlicePath('creative-direction')`)
+- **Replaced:** flat `DepartmentVerticalSliceRoom` prototype (full-room-on-one-screen · floating bottom `CreativeApprovalPipelinePanel`)
+- **New component:** `CreativeDirectionStudioRoom.tsx` — 6-zone horizontal camera track (600vw), movement not scroll, arrival-first
+- **Zones:** Arrival Zone™ → Story Table™ + Orb™ → Living Mood Wall™ (architectural wall) → Founder Notes™ desk → Creative Pipeline™ wall board → Reference Library™ shelving
+- **Arrival ceremony:** "Step Into the Atelier" unlocks progressive zone nav; locked zones until arrival complete
+- **Camera:** `translate3d` pan between 100vw zone panels; floor diegetic nav bar (not floating dashboard)
+- **Pipeline:** `CreativePipelineBoard.tsx` — same `useCreativeApprovalPipeline` logic as panel, wall-mounted in pipeline zone; `CreativeReviewPanel` preserved
+- **Performance:** no blur/backdrop-filter; CSS transforms only; `prefers-reduced-motion` respected; internal scroll only inside workstations
+- **Files:** `cameraZones.ts` · `creativeDirectionStudioTheme.ts` · `CreativeDirectionStudioRoom.tsx` · `CreativePipelineBoard.tsx` · `department/page.tsx` (routes creative-direction to V2 room)
+- **Build:** `npm run build` passed
+- **Prior arc (same chat):** Guild System™ docs sprint · Studio Professionals™ · Studio Architects™ · Studio Marketplace™ v2 · Living Sets™ · CDS V2 docs sprint
