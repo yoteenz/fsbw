@@ -1,10 +1,12 @@
 # Creator Economy™
 
-**Studio OS — the platform for business world builders**
+**Studio OS — the platform for Studio Architects™**
 
-**Version:** 2.0.0  
+**Version:** 2.1.0  
 **Status:** Canonical creator economy (docs only)  
 **Parent:** [The Economy of Studio World™](./README.md)
+
+> **Canonical profession layer:** [Studio Architects™](./studio-architects.md) — world builders graduate into architects.
 
 ---
 

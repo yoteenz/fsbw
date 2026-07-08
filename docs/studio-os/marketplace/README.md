@@ -53,6 +53,7 @@ Every founder deserves an **incredible Headquarters on Day One**.
 | **Renovation™** | Homeowner-style improvements | Light (packs) |
 | **Premium Generation™** | Custom architectural commission | Full pipeline |
 | **Creator Economy™** | World builders earn | Creator absorbs design GPU |
+| **Studio Architects™** | Defining creative profession | Design-time GPU |
 | **Studio Certified™** | Quality guarantee | N/A |
 
 ---
@@ -93,7 +94,22 @@ Orb offers:
 | [business-model.md](./business-model.md) | Long-term revenue architecture |
 | [future-roadmap.md](./future-roadmap.md) | Economy evolution phases |
 
-### Extended Canon (Prior Sprint)
+### Studio Architects™ (Creator Profession)
+
+| Document | Contents |
+|----------|----------|
+| [studio-architects.md](./studio-architects.md) | Master definition · creative economy |
+| [architect-philosophy.md](./architect-philosophy.md) | New profession · aspiration |
+| [architect-profiles.md](./architect-profiles.md) | Profile™ · Portfolio™ case studies |
+| [architect-rankings.md](./architect-rankings.md) | Architect Level™ · reputation |
+| [architect-certification.md](./architect-certification.md) | Prestigious Studio Certified™ |
+| [architect-collections.md](./architect-collections.md) | Environmental collection bundles |
+| [commission-system.md](./commission-system.md) | Custom architect commissions |
+| [taste-match-system.md](./taste-match-system.md) | Architect-level Taste Match™ |
+| [creator-economy-roadmap.md](./creator-economy-roadmap.md) | Profession evolution phases |
+| [future-marketplace.md](./future-marketplace.md) | Long-term marketplace + architects vision |
+
+### Extended Canon (Prior Sprints)
 
 | Document | Contents |
 |----------|----------|

@@ -41326,3 +41326,26 @@ User defined **platform strategy sprint** consolidating long-term Studio OS econ
 - **12-doc canonical v2 spec:** `docs/studio-os/marketplace/` — README · studio-originals · **studio-marketplace** · **living-headquarters** · headquarters-packages · creator-economy · **studio-certified** · **gpu-strategy** · renovation-system · **taste-recommendations** · **business-model** · **future-roadmap** (prior sprint files redirected as extended reference)
 - **Prior arc (same chat):** Living Sets™ · Studio Marketplace™ economy sprint (v1) · CDS V2 · Founder Intelligence™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™
 - **CORE.md:** Studio Marketplace™ line updated to v2 strategy
+
+---
+
+## 2026-07-08 — Studio Architects™ — The Creative Economy of Studio World™ (platform economy evolution sprint, docs only)
+
+User defined **Studio Architects™** creator profession evolution sprint — long-term creator economy inside Studio OS. **No UI · no profile pages · no marketplace components.**
+
+- **Mission:** Studio OS should have **Architects** not merely users — defining community inside Studio World™ who design how founders experience companies
+- **Philosophy:** People come to Marketplace to discover **extraordinary places** not assets — architects known for iconic HQ like architects known for iconic buildings · new aspirational profession (famous architects · industrial designers · game environment artists · luxury hotel designers · theme park imagineers)
+- **Studio Architect™ designs:** Entire HQ™ · Living Sets™ · Departments™ · Reception · Founder Offices™ · Creative Studios™ · Innovation Labs™ · CX Centers™ · Conference Wings™ · Brand Worlds™ · Environmental Collections™ · Business Campuses™ — complete experiences only
+- **Architect Profile™:** Luxury design firm feel (NOT seller account) — portrait · biography · design philosophy · specialties · portfolio · published HQ · Studio Certified™ · downloads · installs · followers · collections · awards · years active · **Architect Level™**
+- **Architect Portfolio™:** Each HQ = design case study — overview · story · screenshots · walkthrough · architecture · mood · materials · lighting · company types · recommended Modes™ · Founder Taste Matches™ · version history · reviews · awards
+- **Follow Architects™:** Kateena Armstrong™ · Alex Chen™ · Maria Rossi™ · Jordan Blake™ (reference) — notify on new HQ · Living Sets™ · renovations · Certified™ · seasonal collections · collection expansion
+- **Architect Collections™:** Editorial · Luxury Marble · Minimal Technology · Hollywood · Hospitality · Modern Retail · Founder Essentials · Innovation — entire ecosystems
+- **Commission System™:** Custom Creative Atelier™ · Founder Office™ · complete HQ transformation — premium creative professionals
+- **Architect Rankings™:** Emerging → Professional → Master → Studio Certified™ → Legendary — rewards quality · founder satisfaction · innovation · retention · originality · community impact — NOT sales volume alone
+- **Architect Certification™:** Prestigious Studio Certified™ — quality · usability · performance · accessibility · originality · environmental storytelling · Studio World™ integration · Living Set™ quality · Creative Direction · Founder Experience
+- **Taste Match System™:** 98% match · architect-level recommendations deeply personal
+- **Business model:** HQ sales · Living Set sales · collections · commissioned projects · architect subscriptions · Certified collections · enterprise · royalties
+- **Long-term vision:** Marketplace = discover · collect · commission · follow · purchase complete HQ by Studio Architects™ — celebrate world builders
+- **10-doc spec:** `docs/studio-os/marketplace/` — studio-architects · architect-philosophy · architect-profiles · architect-rankings · architect-certification · architect-collections · commission-system · taste-match-system · creator-economy-roadmap · future-marketplace (+ README · creator-economy v2.1 cross-ref)
+- **Prior arc (same chat):** Studio Marketplace™ v2 strategy · Living Sets™ · Studio Marketplace™ v1 · CDS V2 · Founder Intelligence™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™
+- **CORE.md:** Studio Architects™ line added
