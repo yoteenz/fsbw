@@ -1,11 +1,11 @@
-# Studio Originals™ & Studio Marketplace™
+# Studio Originals™ & Studio Exchange™
 
 **The Economy of Studio World™**
 
 **Version:** 2.0.0  
 **Status:** Canonical platform strategy  
 **Phase:** Long-term economy (post-Living Sets™)  
-**Scope:** Studio Originals™ · Studio Marketplace™ · creator economy · generation economics
+**Scope:** Studio Originals™ · Studio Exchange™ · Professional Licenses™ · creator economy · generation economics
 
 ---
 
@@ -29,7 +29,7 @@ Instead, Studio OS combines:
 
 ```
 Curated Design  +  AI Generation  +  Creator Economy
-        +  Marketplace  +  Renovation
+        +  Studio Exchange  +  Renovation
                     ↓
             ONE ECOSYSTEM
 ```
@@ -49,7 +49,7 @@ Every founder deserves an **incredible Headquarters on Day One**.
 | Layer | Role | GPU |
 |-------|------|-----|
 | **Studio Originals™** | Curated day-one headquarters | None |
-| **Studio Marketplace™** | Buy complete environments | None on install |
+| **Studio Exchange™** | Obtain professions, environments, expansions, businesses, assets, knowledge, and opportunities | None on install for packaged worlds |
 | **Renovation™** | Homeowner-style improvements | Light (packs) |
 | **Premium Generation™** | Custom architectural commission | Full pipeline |
 | **Creator Economy™** | World builders earn | Creator absorbs design GPU |
@@ -73,7 +73,7 @@ Studio Originals™ recommended
 Begin building immediately — no GPU · no waiting
         ↓
 Orb offers:
-  Continue Working™ · Renovate™ · Browse Marketplace™ · Generate New Concepts™
+  Continue Working™ · Renovate™ · Enter Studio Exchange™ · Generate New Concepts™
 ```
 
 ---
@@ -82,8 +82,9 @@ Orb offers:
 
 | Document | Contents |
 |----------|----------|
+| [studio-exchange.md](./studio-exchange.md) | ARTICLE-E05 · Professional Licenses™ · Career Expansions™ · Mentor Economy™ |
 | [studio-originals.md](./studio-originals.md) | Official curated starting headquarters |
-| [studio-marketplace.md](./studio-marketplace.md) | Marketplace philosophy · products · browse vision |
+| [studio-marketplace.md](./studio-marketplace.md) | Historical marketplace philosophy · products · browse vision |
 | [living-headquarters.md](./living-headquarters.md) | Living Headquarters™ as marketplace object |
 | [headquarters-packages.md](./headquarters-packages.md) | Auto-packaging · install manifest |
 | [creator-economy.md](./creator-economy.md) | World builders · revenue · named creations |
@@ -120,7 +121,7 @@ Orb offers:
 
 ## Success Benchmark
 
-Studio Marketplace™ becomes the world's first marketplace where founders **buy · sell · renovate · collect · and evolve** complete business headquarters — not disconnected templates or assets.
+Studio Exchange™ becomes the world's first professional economy where citizens **enter professions · earn certifications · mentor · build businesses · exchange assets · renovate · collect · and evolve** complete living worlds — not disconnected templates or assets.
 
 | Outcome | Meaning |
 |---------|---------|
@@ -136,13 +137,13 @@ Studio Marketplace™ becomes the world's first marketplace where founders **buy
 
 | System | Relationship |
 |--------|--------------|
-| [Living Sets™](../world/living-sets.md) | Marketplace distributes Living Sets™ |
+| [Living Sets™](../world/living-sets.md) | Studio Exchange™ distributes Living Sets™ and world expansions |
 | [Studio World™](../world/studio-world.md) | Parent universe |
 | [Adaptive Onboarding™](../onboarding/README.md) | Originals selection |
 | [Creative Direction Pipeline™](../creative-direction-pipeline/README.md) | Premium Generation™ |
 | [Founder Taste Engine™](../founder-taste-engine/README.md) | Recommendations |
 | [Monetization Architecture](../monetization-architecture.md) | HQ License · Department Packs |
-| [Expert Marketplace™](../expert-marketplace.md) | Separate — expertise not places |
+| [Expert Marketplace™](../expert-marketplace.md) | Expertise supply becomes part of the Exchange economy |
 | [Studio Professionals™](../ecosystem/README.md) | Professional careers · disciplines · graph |
 
 ---
@@ -151,9 +152,10 @@ Studio Marketplace™ becomes the world's first marketplace where founders **buy
 
 Studio OS should not become an AI image generator.
 
-Studio OS should become the world's first marketplace for **living companies**.
+Studio OS should become the world's first exchange for **living companies and living professions**.
 
 - **Studio Originals™** welcome founders
+- **Professional Licenses™** grant entry into Career Worlds™
 - **Living Headquarters™** inspire founders
 - **Creators** build extraordinary worlds
 - **Studio Certified™** guarantees quality
@@ -163,7 +165,7 @@ Every Headquarters tells the story of a company.
 
 Every renovation tells the story of its evolution.
 
-Every purchase expands **Studio World™**.
+Every license, certification, mentorship, and purchase expands **Studio World™**.
 
 ---
 

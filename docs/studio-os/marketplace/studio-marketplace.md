@@ -3,7 +3,7 @@
 **The world's first marketplace for living business headquarters**
 
 **Version:** 2.0.0  
-**Status:** Canonical marketplace strategy (docs only)  
+**Status:** Historical canonical marketplace strategy — superseded for customer-facing economy language by [ARTICLE-E05 — Studio Exchange™](./studio-exchange.md)  
 **Parent:** [The Economy of Studio World™](./README.md)
 
 ---
@@ -11,6 +11,23 @@
 ## One Sentence
 
 **Studio Marketplace™** is where founders acquire, evolve, and eventually sell **complete living headquarters** — while GPU generation remains a premium commission, not the default path.
+
+ARTICLE-E05 upgrades this into **Studio Exchange™**: the civic economy where citizens obtain Professional Licenses™, Career Expansions™, businesses, assets, knowledge, mentorship, and opportunities. The package/Headquarters architecture in this file remains valid as one product class inside the Exchange.
+
+---
+
+## E05 Language Boundary
+
+| Legacy marketplace phrase | Studio Exchange™ phrase |
+|---------------------------|--------------------------|
+| Browse Marketplace™ | Enter Studio Exchange™ |
+| Buy course | Acquire Professional License™ |
+| Enroll | Enter Career World™ |
+| Subscription | License access / world membership |
+| DLC | Career Expansion™ |
+| Download certificate | Certification Ceremony™ |
+
+Future UI and commercial copy should prefer Studio Exchange™ language unless referring to legacy implementation paths or historical marketplace package specs.
 
 ---
 
@@ -179,6 +196,13 @@ Studio OS recommends **places** — not products.
 | Install into Studio World™ | Learn · consult · academy |
 
 Complementary economies — different product classes.
+
+Under ARTICLE-E05, both product classes become offerings inside **Studio Exchange™**:
+
+- Headquarters / Living Sets™ = built-world offerings
+- Expertise / Profession Brain™ = professional knowledge offerings
+- Professional Licenses™ = entry into Career Worlds™
+- Career Expansions™ = specializations within those worlds
 
 ---
 

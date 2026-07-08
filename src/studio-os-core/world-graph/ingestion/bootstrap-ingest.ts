@@ -181,6 +181,16 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       ],
     },
     {
+      slug: 'studio-exchange',
+      name: 'Studio Exchange™',
+      summary:
+        'ARTICLE-E05 professional economy — citizens acquire Professional Licenses™ into Career Worlds™, expansions, mentorship, businesses, assets, knowledge, and opportunities.',
+      lifecycle: 'architecture',
+      codePaths: [],
+      docPaths: ['docs/studio-os/marketplace/studio-exchange.md'],
+      integratesWith: ['profession-brain', 'world-graph', 'knowledge-core'],
+    },
+    {
       slug: 'orb-archivist',
       name: 'Orb Archivist™',
       summary: 'Relationship-first explorer of the World Graph™ — institutional memory interface.',

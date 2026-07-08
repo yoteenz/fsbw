@@ -563,6 +563,58 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
       'living-knowledge',
     ],
   },
+  {
+    id: 'E05-studio-exchange-professional-license-system',
+    title: 'ARTICLE-E05 — Studio Exchange™ / Professional License System™',
+    domain: 'Marketplace™',
+    status: 'Canon',
+    version: 'v1',
+    summary:
+      'Studio Exchange™ replaces marketplace/storefront/course language with a professional economy where citizens acquire Professional Licenses™ that grant entry into Career Worlds™, expansions, businesses, assets, knowledge, mentorship, certifications, and opportunities.',
+    reasoning:
+      'Studio World should never sell courses. It should grant entry into professions. The economy must reward contribution, mentorship, certification, business creation, and world expansion instead of treating education as one-off content transactions.',
+    finalPrompt:
+      'Design ARTICLE-E05: rename Marketplace to Studio Exchange™, replace Buy Course / Enroll / Subscription with Professional Licenses™, define Career Expansions™, Certification Ceremonies™, unlocks, Mentor Economy™, Legacy Businesses™, and the contribution-first Studio Economy™.',
+    architectureAdded: [
+      'Studio Exchange™',
+      'Professional Licenses™',
+      'Career Expansions™',
+      'Certification Ceremonies™',
+      'Certification Unlocks',
+      'Mentor Economy™',
+      'Legacy Businesses™',
+      'Contribution-first Studio Economy™',
+    ],
+    relatedSystems: [
+      'Career Worlds™',
+      'Profession Simulation Engine™',
+      'Profession Brain™',
+      'Studio Professionals™',
+      'Studio Institute™',
+      'Expert Marketplace™',
+      'Headquarters Marketplace™',
+      'World Graph™',
+      'Orb™',
+      'Atlas™',
+    ],
+    constitutionArticles: ['ARTICLE-E05', 'ARTICLE-K22', 'ARTICLE-K23'],
+    adrReferences: ['ADR-0001'],
+    worldBibleReferences: [
+      'Studio Exchange™',
+      'Professional License System™',
+      'Career Worlds™',
+      'Studio Economy™',
+    ],
+    implementationStatus: 'Specified',
+    tags: [
+      'studio-exchange',
+      'professional-licenses',
+      'career-worlds',
+      'mentor-economy',
+      'certification-ceremonies',
+      'studio-economy',
+    ],
+  },
 ];
 
 export function canInfluenceFutureArchitecture(status: KnowledgeCoreStatus): boolean {

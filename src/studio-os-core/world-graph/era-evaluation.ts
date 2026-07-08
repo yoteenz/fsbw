@@ -120,6 +120,7 @@ export const ENGINE_ERA_MAP: Record<string, StudioWorldEra> = {
   'architecture-auditor': 'intelligence',
   'experience-intelligence-engine': 'intelligence',
   'profession-brain': 'intelligence',
+  'studio-exchange': 'world',
 };
 
 export function eraForEngineSlug(slug: string): StudioWorldEra {

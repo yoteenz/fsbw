@@ -97,11 +97,14 @@ How founders work with professionals:
 | Model | Description |
 |-------|-------------|
 | **Follow** | Subscribe to professional updates |
-| **Purchase** | Marketplace install of published work |
+| **Acquire License** | Professional License™ into a Career World™ |
+| **Purchase** | Studio Exchange™ install of published work |
 | **Commission** | Custom scoped engagement |
 | **Collaborate** | Multi-professional team on one company |
 | **Hire** | Ongoing retainer (Operators · Advisors) |
-| **Learn** | Courses · playbooks (Advisors) |
+| **Learn** | Career World™ progression · playbooks · mentorship (Advisors) |
+
+ARTICLE-E05 forbids making "course buyer" the primary identity. Learning offers should be framed as professional entry, advancement, and specialization.
 
 ---
 
@@ -135,6 +138,7 @@ Every profession commits to:
 | [Certification Framework™](./certification-framework.md) | Per-profession gates |
 | [Professional Graph™](./professional-graph.md) | Collaboration map |
 | [Future Professions™](./future-professions.md) | Extension process |
+| [Studio Exchange™](../marketplace/studio-exchange.md) | Professional Licenses™ · Career Expansions™ · Mentor Economy™ |
 
 ---
 

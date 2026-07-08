@@ -5,7 +5,7 @@
 **Version:** 1.0.0  
 **Status:** Canonical professional ecosystem architecture (docs only)  
 **Phase:** Platform ecosystem (post-Studio Architects™)  
-**Scope:** All professional disciplines inside Studio OS
+**Scope:** All professional disciplines inside Studio OS · Professional Licenses™ · Career Worlds™
 
 ---
 
@@ -24,6 +24,8 @@ Not everyone inside Studio World™ is a founder.
 Some people **design**. Some **strategize**. Some **automate**. Some **operate**. Some **teach**. Some **review**. Some **innovate**.
 
 Studio OS should recognize these as **distinct professional disciplines**.
+
+ARTICLE-E05 adds the commercial entry model: citizens do not buy courses or subscriptions; they acquire **Professional Licenses™** that grant entry into full **Career Worlds™**.
 
 ---
 
@@ -93,6 +95,7 @@ Founders **hire · follow · collaborate with** Studio Professionals™.
 | [certification-framework.md](./certification-framework.md) | Per-profession certification |
 | [career-progression.md](./career-progression.md) | Levels · reputation · careers |
 | [future-professions.md](./future-professions.md) | Expanding ecosystem |
+| [Studio Exchange™](../marketplace/studio-exchange.md) | ARTICLE-E05 · licenses · expansions · mentor economy |
 | [Guild System™](../community/README.md) | Professional societies · cultural backbone |
 
 ---
@@ -114,7 +117,7 @@ Studio OS becomes a **professional ecosystem** where founders and specialists co
 | System | Relationship |
 |--------|--------------|
 | [Studio Architects™](../marketplace/studio-architects.md) | First defined profession — environmental design |
-| [Studio Marketplace™](../marketplace/README.md) | Distribution for professional work products |
+| [Studio Exchange™](../marketplace/studio-exchange.md) | Professional economy · licenses · expansions · opportunities |
 | [Expert Marketplace™](../expert-marketplace.md) | Org expertise publishing — complementary |
 | [Living Sets™](../world/living-sets.md) | Architects' primary craft object |
 | [Creative Direction Pipeline™](../creative-direction-pipeline/README.md) | Directors' domain |
@@ -146,6 +149,8 @@ Complementary — not duplicate.
 - **Studio Advisors™** build wisdom
 
 Together they create **living companies** that continuously evolve inside Studio World™.
+
+Professional Licenses™ turn that ecosystem into an economy: every license grants entry to a Career World™, and every certification should expand the world through opportunities, districts, mentorship, competitions, businesses, and Hero Objects™.
 
 ---
 
