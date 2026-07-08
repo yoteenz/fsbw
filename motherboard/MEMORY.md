@@ -40924,4 +40924,20 @@ Summary of the **whole conversation in this chat**: Platform architecture frozen
 - **FAL reuse:** `api/_lib/studioBuilderGeneration.ts` · `fal-ai/nano-banana-pro/edit` · Supabase `live-preview` · same patterns as `studioAssetGeneration.ts`
 - **Placeholders:** 2.5D CSS room (not 3D meshes) · voice note button · rule-based AI suggestions · localStorage queue/registry · auto-validation on FAL success (no Walk the Room / Validation Loop yet)
 - **This turn:** User-facing copy updated Vertical Slice → Golden Build™ in department page, ndxbook CTA, room footer; CORE.md aligned.
-- **Conventions:** Golden Build™ = product language; code paths may retain `vertical-slice` naming until explicit rename requested. No new architecture in Sprint 001.
+
+---
+
+## 2026-07-08 — Studio OS Production Lifecycle™ canonical language (docs only)
+
+Summary of the **whole conversation in this chat**: Platform architecture frozen · Sprint 001 Golden Build™ delivered (prior turn) · user issued **Production Lifecycle™ sprint** — **docs only**, no UI · no React · no new engines.
+
+- **Context:** User defined official Studio OS production language replacing generic software stages (Draft/Beta/Production).
+- **Delivered:** 14-document spec at **`docs/studio-os/production-lifecycle/`**:
+  - README · production-lifecycle.md (master)
+  - blueprint · golden-build · certification-system · live-system · evolution-system · legacy-system
+  - archive-system · founder-chronicle · quality-gates · founder-experience · marketplace-lifecycle · future-roadmap
+- **Six stages:** Blueprint™ → Golden Build™ → Certified™ → Live™ → Evolution™ → Legacy™
+- **Key systems:** The Archive™ (immersive history wing) · Founder Chronicle™ (company autobiography)
+- **Lifecycle rules:** No skip Blueprint/Golden Build · Live requires Certification · Legacy via Archive
+- **CDS mapping:** Sprint 001 = Golden Build™ achieved · Sprint 002+ = Certified™ path
+- **Conventions:** Production Lifecycle names *where*; Production Pipeline names *how*. Docs only this sprint.
