@@ -199,12 +199,13 @@ body.cds-stack-active {
 .cds-stack__layer-strip {
   position: absolute;
   left: 6px;
-  bottom: 6px;
+  /* Clear centered zone nav + teaching line (nav z-index 18 sits ~0–52px) */
+  bottom: max(64px, calc(56px + env(safe-area-inset-bottom, 0px)));
   z-index: 14;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-height: 42%;
+  max-height: min(38%, calc(100% - 72px - env(safe-area-inset-bottom, 0px)));
   overflow-y: auto;
   padding: 4px 5px;
   background: rgba(0, 0, 0, 0.55);

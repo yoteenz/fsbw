@@ -42061,3 +42061,13 @@ User implementation sprint: Creative Direction Studio™ room feels like webpage
 - **Other zones:** Mood Wall / Pipeline / Notes / Library use `cds-diegetic__*` embeds (transparent, inset shadow) instead of glass cards.
 - **Files:** `CreativeDirectionStudioRoom.tsx`, `SceneStackViewport.tsx`, `StoryTableSurface.tsx`, `StudioOrbHost.tsx`, `cdsImmersionTheme.ts`, `useCdsImmersion.ts`.
 - **Prior arc (same chat):** Stack pipeline feedback · Launch Auditor · Scene Stack persistence · per-layer Regen.
+
+---
+
+## 2026-07-08 — CDS layer strip clearance above zone nav
+
+User screenshot: bottom-left **Scene Stack layer strip** (SHELL…PERSONAL) overlapping centered zone nav (**ARRIVAL**, **STORY TABLE**, etc.) on mobile.
+
+- **Cause:** `.cds-stack__layer-strip` at `bottom: 6px` inside viewport; `.cds-genesis__nav` at `bottom: 0` with `z-index: 18` overlays strip (`z-index: 14`).
+- **Fix (`cdsInteractionLayerTheme.ts`):** Nudge strip up — `bottom: max(64px, calc(56px + env(safe-area-inset-bottom)))`; cap height with `max-height: min(38%, calc(100% - 72px - env(safe-area-inset-bottom)))` so tall 8-row lists stay above nav + teaching line (~46px).
+- **Prior arc (same chat):** CDS immersion sprint · Stack pipeline HUD · Launch Auditor commerce scores · Scene Stack persistence · per-layer Regen · commerce simulation Q&A.
