@@ -126,6 +126,7 @@ Creative Blueprints™ **inform** Production Lifecycle Blueprint™ outputs (gen
 | [Studio Asset Registry™](../engines/studio-asset-registry/README.md) | Stores individual Assets™ linked to Blueprint Systems™ |
 | [Scene Stack™](../scene-stack/README.md) | Layers inherit Blueprint Systems™ (lighting · materials · atmosphere) |
 | [Company Genome™](../sdk/11_COMPANY_GENOME.md) | Blueprints become genome slots · aesthetic memory |
+| [Living Company Genome™](../living-company-genome/README.md) | Genome Events™ · maturity · earned World Evolution™ |
 | [Asset Intelligence Company DNA™](../asset-intelligence-engine/company-dna.md) | Emergent coherence **measured** from blueprint + asset reuse |
 | [Founder Taste Engine™](../founder-taste-engine/README.md) | Taste refines Visual DNA™ selection |
 | [Architectural Icons™](../architectural-icons/README.md) | Landmarks express Blueprint architectural language |

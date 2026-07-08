@@ -41644,3 +41644,25 @@ User **STOP** directive: **platform architecture sprint** — design intelligenc
 - **11-doc spec:** `docs/studio-os/creative-blueprint-engine/` — README · creative-blueprint-engine · visual-dna · creative-blueprints · systems-architecture · blueprint-registry · inheritance-model · evolution-system · founder-choice · marketplace-blueprints · company-genome-integration · future-roadmap
 - **Cross-refs:** `studio-world.md` · `CORE.md` · `asset-intelligence-engine/README.md` · `engines/studio-asset-registry/README.md`
 - **Prior arc (same chat):** Asset Intelligence Engine™ (`c0300e67`) · Scene Stack™ (`c9e76577`) · Scene Genesis™ superseded
+
+---
+
+## 2026-07-08 — Living Company Genome™ — evolutionary company memory (platform architecture sprint, docs only)
+
+User **STOP** directive: **platform architecture sprint** — evolutionary memory of every company. **No UI · no generation.**
+
+- **Mission:** Companies never visually frozen — HQ matures · departments evolve · architecture gains history · materials reflect success · every milestone shapes world permanently
+- **Philosophy:** Founder grows an **organism** — every decision · launch · failure · redesign · achievement → company DNA. Most software stores files; Studio OS stores **legacy**
+- **Eight DNA strands:** Creative · Architectural · Operational · Leadership · Brand · Customer · Innovation · Culture — maps to Company Genome™ M277 + maturity levels
+- **Genome Events™:** First Product™ · First Customer™ · 100/1000 Customers™ · First Employee™ · Brand Refresh™ · Major Launch™ · Patent · Funding™ · Award™ · Acquisition™ · Expansion™ — immutable history
+- **World Evolution™:** HQ matures earned (startup minimal → signature craftsmanship) — not manual redecoration
+- **Living Departments™:** walls gain history · awards · launch exhibits · prototype rooms preserved · retired branding accessible
+- **Time Capsule™:** Golden Build™ · approved scenes · rebrands · HQ states sealed forever in Legacy Vault™
+- **Legacy Layer™:** architecture as storytelling — *"This was our first logo"* · *"Version 1 was born here"*
+- **Intelligent Evolution™:** earned recommendations (*"evolve toward Executive Luxury™"*) — never random
+- **Multiple Timelines™:** Company Today™ · Year One™ · Before Rebrand™ · After Expansion™ · Future Vision™ (labeled)
+- **Living Museum™:** Founder Hall™ · Launch Gallery™ · Innovation Museum™ · Prototype Vault™ · Legacy Archive™ · Wall of Milestones™ · Evolution Timeline™
+- **Marketplace Impact™:** Historic Headquarters™ · Legendary Blueprint Evolutions™ · Launch Worlds™ publishable
+- **12-doc spec:** `docs/studio-os/living-company-genome/` — README · living-company-genome · genome-domains · genome-events · world-evolution · living-departments · time-capsule · legacy-layer · intelligent-evolution · multiple-timelines · living-museum · marketplace-impact · future-roadmap
+- **Cross-refs:** `company-genome.md` · `legacy-vault.md` · `studio-world.md` · `CORE.md` · Creative Blueprint · Asset Intelligence · Expeditions · Architectural Icons Living Company Genome landmark
+- **Prior arc (same chat):** Creative Blueprint Engine™ (`24ee3faf`) · Asset Intelligence Engine™ · Scene Stack™

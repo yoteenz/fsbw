@@ -14,6 +14,8 @@
 > It is not a logo · style guide · theme · or color palette.  
 > Every Studio OS intelligence system consults it before any creative decision.
 
+**Evolution engine:** [Living Company Genome™](./living-company-genome/README.md) — Genome Events™ · World Evolution™ · Time Capsule™ · how DNA matures in the world.
+
 ---
 
 ## §1 Problem Statement

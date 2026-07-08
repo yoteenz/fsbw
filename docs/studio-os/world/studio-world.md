@@ -119,6 +119,8 @@ STUDIO WORLD™
 
 **Creative Blueprint Engine™:** [The Company's Visual DNA](../creative-blueprint-engine/README.md) — design languages · Systems™ · blueprint inheritance
 
+**Living Company Genome™:** [Evolutionary company memory](../living-company-genome/README.md) — genome events · world evolution · time capsules · living museum
+
 **Scene Genesis™ (deprecated):** [../scene-genesis/README.md](../scene-genesis/README.md) — superseded by Scene Stack™
 
 ---
@@ -142,6 +144,7 @@ STUDIO WORLD™
 | **Scene Stack™** | [../scene-stack/](../scene-stack/) | Layered Golden Build™ pipeline · per-layer FAL generation · composited environments |
 | **Asset Intelligence Engine™** | [../asset-intelligence-engine/](../asset-intelligence-engine/) | Remember-first generation · Registry search · compatibility · Company DNA™ |
 | **Creative Blueprint Engine™** | [../creative-blueprint-engine/](../creative-blueprint-engine/) | Visual DNA™ · design languages · Systems™ · inheritance above Registry |
+| **Living Company Genome™** | [../living-company-genome/](../living-company-genome/) | Evolutionary memory · genome events · HQ maturation · time capsules |
 | **Scene Genesis™ (deprecated)** | [../scene-genesis/](../scene-genesis/) | Superseded by Scene Stack™ — single-image plates retired |
 
 ---

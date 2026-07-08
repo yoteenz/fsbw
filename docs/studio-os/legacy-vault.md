@@ -48,6 +48,10 @@ Letters to children · family history · company traditions · lessons learned �
 
 ## Organizational time capsules
 
+See **[Living Company Genome™ — Time Capsule™](./studio-os/living-company-genome/time-capsule.md)** for canonical sealing rules · capsule schema · Multiple Timelines™ integration.
+
+Organizational time capsules
+
 Triggers: Open in 5 Years · 10th Anniversary · After Retirement · After Succession · Upon Company Sale · Custom Date
 
 Contents: letters · videos · photos · goals · predictions · company snapshots · founder messages
