@@ -1,5 +1,7 @@
 # Quality Certification™
 
+> **Canonical home:** [studio-certified.md](./studio-certified.md) — v2.0 platform strategy sprint. This file remains as extended reference.
+
 **Four tiers · one path to excellence**
 
 **Version:** 1.0.0  

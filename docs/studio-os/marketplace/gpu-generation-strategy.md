@@ -1,5 +1,7 @@
 # GPU Generation Strategy™
 
+> **Canonical home:** [gpu-strategy.md](./gpu-strategy.md) — v2.0 platform strategy sprint. This file remains as extended reference.
+
 **Generation is premium — costs stay predictable**
 
 **Version:** 1.0.0  

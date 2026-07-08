@@ -1,18 +1,18 @@
 # Creator Economy™
 
-**World builders earn income inside Studio OS**
+**Studio OS — the platform for business world builders**
 
-**Version:** 1.0.0  
-**Status:** Canonical creator economy architecture (docs only)  
-**Parent:** [Studio Marketplace™](./README.md)
+**Version:** 2.0.0  
+**Status:** Canonical creator economy (docs only)  
+**Parent:** [The Economy of Studio World™](./README.md)
 
 ---
 
 ## Purpose
 
-Define how creators design, publish, earn, and grow businesses building **Headquarters™** · **Living Sets™** · **Brand Worlds™** inside Studio Marketplace™.
+Creators earn revenue by publishing **complete architectural experiences** — not asset packs.
 
-Studio OS becomes a platform where **environmental architects** earn income — not asset packagers.
+Studio OS becomes the platform where **business world builders** build income and reputation.
 
 ---
 
@@ -22,42 +22,43 @@ Studio OS becomes a platform where **environmental architects** earn income — 
 CREATORS SELL PLACES — NOT PARTS
 ```
 
-The creator economy rewards **complete architectural vision**.
+---
+
+## What Creators Publish
+
+| Product | Value tier |
+|---------|------------|
+| **Entire Headquarters™** | Highest |
+| **Complete Business Campus™** | Highest |
+| **Brand Worlds™** | High |
+| **Living Headquarters™** | High |
+| **Living Sets™** | High |
+| **Creative Studios™** | Medium-high |
+| **Departments™** | Medium |
+| **Production Floors™** | Medium |
+| **Innovation Labs™** | Medium |
+| **Reception Areas™** | Medium |
+| **Founder Offices™** | Medium |
+| **Conference Wings™** | Medium |
+| **Environmental Collections™** | Bundle |
+| **Renovation Packs™** | Recurring |
+
+Complete **architectural collections** — not disconnected pieces.
 
 ---
 
-## What Creators Build
+## The Bigger Vision — Named Creations
 
-| Product class | Creator delivers |
-|---------------|------------------|
-| **Headquarters™** | Full campus · wings · circulation |
-| **Living Sets™** | Department-scale production sets |
-| **Departments™** | Single installable department environments |
-| **Production Floors™** | Manufacturing · media · culinary floors |
-| **Brand Worlds™** | Full brand expression campuses |
-| **Environmental Collections™** | Themed wing series · seasonal packs |
-| **Conference Rooms™** | Meeting · review · screening environments |
-| **Founder Offices™** | Executive personal spaces |
-| **Reception Areas™** | Arrival · lobby experiences |
+Founders and creators become known for signature headquarters:
 
-Highest value: **Entire Headquarters™** and **Brand Worlds™**.
+| Creation | Legacy |
+|----------|--------|
+| **The Black Atelier™** | Iconic creative environment |
+| **The Editorial Loft™** | Media company landmark |
+| **The Innovation Campus™** | Product HQ reference |
+| **The Glass Founder HQ™** | Executive aesthetic standard |
 
----
-
-## Creator Identity
-
-Creators are **world builders** — not:
-
-- Texture artists selling maps
-- UI designers selling dashboard themes
-- Prompt engineers selling generation recipes
-
-Creator profile emphasizes:
-
-- Portfolio of walkable environments
-- Install count · taste match ratings
-- Studio Certified™ badges
-- Featured Collection™ placements
+Recognizable within the Studio OS ecosystem — like architectural firms with signature styles.
 
 ---
 
@@ -65,83 +66,38 @@ Creator profile emphasizes:
 
 | Stream | Trigger |
 |--------|---------|
-| **Package purchase** | Buyer installs Headquarters Package™ |
-| **Royalty per install** | Ongoing attribution to creator |
-| **Featured placement** | Studio Certified™ spotlight fee / rev share |
-| **Environmental Collection™** | Bundle pricing |
-| **Exclusive commission** | Custom HQ for enterprise founder |
-| **Renovation pack** | Creator sells upgrade to their own set |
+| Package purchase | Buyer installs Headquarters Package™ |
+| Install royalty | Per activation · attributed |
+| Renovation pack sales | Upgrades to existing installs |
+| Featured Collection™ | Editorial spotlight · rev share |
+| Certified Creator Program | Studio Certified™ portfolio benefits |
+| Environmental Collection™ bundles | Multi-pack pricing |
 
-**No payment systems in this sprint** — economic architecture only.
+**No payment systems this sprint** — economic architecture only.
 
-Aligns with [Monetization Architecture](../monetization-architecture.md) tone: founders **build headquarters** — creators **publish places**.
+Creators absorb **design-time GPU** — buyers install with **zero GPU**.
 
 ---
 
 ## Publishing Prestige Path
 
-Publishing should feel **prestigious**:
-
 ```
 Private™
-    ↓  (creator ready to share)
+    ↓
 Share With Team™
-    ↓  (wider internal proof)
+    ↓
 Submit For Review™
-    ↓  (Studio OS quality review)
+    ↓
 Community Marketplace™
-    ↓  (public · purchasable)
+    ↓
 Studio Certified™
-    ↓  (verified excellence)
+    ↓
 Featured Collection™
-    ↓  (platform spotlight)
 ```
 
-Each step increases **visibility** · **trust** · **revenue potential**.
+Publishing feels **prestigious** — not uploading files.
 
-**Detail:** [quality-certification.md](./quality-certification.md)
-
----
-
-## Creator Workflow
-
-```
-1. DESIGN in Studio OS (Premium Generation™ or manual craft)
-        ↓
-2. ACHIEVE Golden Build™ in sandbox
-        ↓
-3. AUTO-PACKAGE as Headquarters Package™
-        ↓
-4. SUBMIT for certification
-        ↓
-5. LIST in Community Marketplace™
-        ↓
-6. EARN per install
-        ↓
-7. EVOLVE package (version bumps)
-        ↓
-8. LEGACY™ in Archive™ when superseded
-```
-
-Follows [Production Lifecycle™](../production-lifecycle/marketplace-lifecycle.md).
-
----
-
-## Quality Obligations
-
-Creators must maintain:
-
-| Obligation | Reason |
-|------------|--------|
-| Framework Lock™ compliance | Buyer workflow integrity |
-| Genome adaptation quality | Cross-industry installs |
-| Install/uninstall cleanliness | HQ stability |
-| Version compatibility | Runtime evolution |
-| Accurate preview | Trust — preview = install |
-
-Poor installs reduce **ranking** · **certification eligibility**.
-
-**Detail:** [marketplace-ranking.md](./marketplace-ranking.md)
+**Detail:** [studio-certified.md](./studio-certified.md)
 
 ---
 
@@ -149,15 +105,23 @@ Poor installs reduce **ranking** · **certification eligibility**.
 
 A creator should be able to:
 
-- Publish one exceptional **Luxury Editorial Atelier™**
-- Earn on every install for years
-- Release **Renovation packs** to existing buyers
-- Build a portfolio of **Studio Certified™** environments
-- Become a featured **environmental architect** in Studio Marketplace™
+- Publish one exceptional Living Headquarters™
+- Earn on installs for years
+- Release Renovation Packs™ to existing buyers
+- Build a **Studio Certified™** portfolio
+- Become a recognized **environmental architect**
 
-Founders say: *"I work in a headquarters designed by [Creator]."*
+Founders say: *"We work in The Editorial Loft™ by [Creator]."*
 
-Not: *"I bought a theme."*
+---
+
+## Everyone Benefits
+
+| Stakeholder | Benefit |
+|-------------|---------|
+| **Creators** | Revenue · reputation · named creations |
+| **Founders** | Save time · world-class environments day one |
+| **Studio OS** | Controlled GPU costs · curated quality · network effects |
 
 ---
 
@@ -166,34 +130,8 @@ Not: *"I bought a theme."*
 | Creator Economy™ | Expert Marketplace™ |
 |------------------|---------------------|
 | Sells **places** | Sells **expertise** |
-| Environmental architects | Profession Brain experts |
-| Headquarters Package™ | Courses · consults · templates |
-| Install into Studio World™ | Learn outside HQ |
-
-Complementary economies — different creators.
-
----
-
-## Anti-Patterns
-
-| Anti-pattern | Violation |
-|--------------|-----------|
-| Creator sells individual props | Asset store — not economy |
-| Skip certification for public listing | Quality collapse |
-| Hardcode buyer company in package | Breaks genome adaptation |
-| Misleading preview | Trust destruction |
-| Prompt-only listing | Not a place |
-
----
-
-## Relationship to Canon
-
-| System | Role |
-|--------|------|
-| [Headquarters Packages™](./headquarters-packages.md) | Delivery unit |
-| [Selling a Headquarters™](./headquarters-history.md) | Publish · fork · sell |
-| [GPU Strategy™](./gpu-generation-strategy.md) | Creator may use premium gen to design |
-| [Living Set Marketplace™](./living-set-marketplace.md) | Product catalog |
+| World builders | Domain experts |
+| Headquarters Package™ | Courses · consults |
 
 ---
 

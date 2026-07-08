@@ -95,7 +95,7 @@ STUDIO WORLD™
 | [archive-integration.md](./archive-integration.md) | The Archive™ · preserved Living Set™ evolutions |
 | [future-roadmap.md](./future-roadmap.md) | Implementation phases |
 
-**Platform economy:** [Studio Marketplace™](../marketplace/README.md) — headquarters distribution · Studio Originals™ · creator economy
+**Platform economy:** [Studio Marketplace™](../marketplace/README.md) — *The Economy of Studio World™* · Studio Originals™ · creator economy · business model
 
 ---
 

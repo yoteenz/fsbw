@@ -2,185 +2,107 @@
 
 **Founders think like homeowners — not software users**
 
-**Version:** 1.0.0  
+**Version:** 2.0.0  
 **Status:** Canonical renovation architecture (docs only)  
-**Parent:** [Studio Marketplace™](./README.md)
-
----
-
-## Purpose
-
-Define how founders improve headquarters over time through **Renovation™** — intentional upgrades that feel like improving a physical property, not editing software settings.
-
-Renovation is the **default improvement path**.
-
-Premium Generation™ is the **custom commission path**.
+**Parent:** [The Economy of Studio World™](./README.md)
 
 ---
 
 ## Core Law
 
 ```
-RENOVATE — DON'T RE-GENERATE BY DEFAULT
+RENOVATE™ — DON'T RE-GENERATE BY DEFAULT
 ```
+
+The founder decides **when creativity becomes custom**.
 
 ---
 
-## Orb Renovation Gate
+## Orb Gate
 
-When founder pauses or returns, Orb asks:
-
-> *Would you like to:*
-> - **Continue Working™**
-> - **Renovate Headquarters™**
-> - **Browse Marketplace™**
-> - **Generate New Concepts™**
-
-Only **Generate New Concepts™** triggers GPU.
-
-**Detail:** [GPU Generation Strategy™](./gpu-generation-strategy.md)
+| Option | GPU | Purpose |
+|--------|-----|---------|
+| **Continue Working™** | None | Resume current HQ |
+| **Renovate Headquarters™** | Light | Homeowner improvements |
+| **Browse Marketplace™** | None | Acquire pre-built environments |
+| **Generate New Concepts™** | Full | Premium commission |
 
 ---
 
 ## Homeowner Language (Mandatory)
 
-| Renovation™ (correct) | Software language (forbidden) |
-|-----------------------|-------------------------------|
-| Renovate Creative Direction Studio™ | Re-render department |
-| Upgrade Founder Office™ | Update workspace module |
+| Renovate™ (correct) | Forbidden software language |
+|-----------------------|----------------------------|
+| Renovate Creative Atelier™ | Re-render department |
+| Upgrade Founder Office™ | Update workspace config |
 | Replace Story Table™ | Swap component |
 | Install New Mood Wall™ | Change widget |
-| Refresh Lighting™ | Adjust theme |
-| Seasonal Headquarters™ | Apply seasonal variant |
-| Expand Innovation Lab™ | Add department pack |
-| Refinish Reception™ | Redesign lobby |
+| Modernize Lighting™ | Adjust theme variables |
+| Expand Innovation Lab™ | Add module |
+| Seasonal Headquarters™ | Apply seasonal skin |
+| Luxury Refresh™ | Apply premium theme |
 
-Founders **renovate** · **upgrade** · **install** · **refresh** · **expand**.
+Everything feels like **improving a physical headquarters**.
 
 ---
 
 ## Renovation Categories
 
-### 1 — Surface Renovations (No GPU)
+### No GPU (Pack-Based)
 
-| Renovation | What changes |
-|------------|--------------|
-| **Refresh Lighting™** | Lighting pack · ceremony modes |
-| **Seasonal Headquarters™** | Holiday · season atmosphere pack |
-| **Material Refinish™** | Pre-authored material swaps within genre |
-| **Audio Atmosphere™** | Ambient · SFX profile swap |
+| Renovation | Source |
+|------------|--------|
+| Modernize Lighting™ | Renovation pack |
+| Seasonal Headquarters™ | Seasonal pack |
+| Luxury Refresh™ | Material · atmosphere pack |
+| Replace Story Table™ | Marketplace object pack |
+| Install New Mood Wall™ | Display system pack |
 
-Source: Marketplace renovation packs · Studio Original™ variants.
+### Light GPU (Parametric)
 
----
+| Renovation | GPU |
+|------------|-----|
+| Material refinish within genre | Minimal parametric |
+| Audio atmosphere swap | None |
 
-### 2 — Object Renovations (No GPU)
+### Full GPU (Custom)
 
-| Renovation | What changes |
-|------------|--------------|
-| **Replace Story Table™** | Marketplace workstation swap |
-| **Install New Mood Wall™** | Wall technology · display system |
-| **Upgrade Founder Review seating** | Furniture pack |
-| **New Reference Library millwork** | Shelving · storage character |
+| Renovation | Path |
+|------------|------|
+| Custom unique redesign | Premium Original Concept Generation™ |
 
-Framework zone **role preserved** — form changes.
-
----
-
-### 3 — Room Renovations (No GPU)
-
-| Renovation | What changes |
-|------------|--------------|
-| **Renovate Creative Direction Studio™** | Full Living Set™ pack swap (pre-built) |
-| **Upgrade Founder Office™** | Department package install |
-| **Replace Conference Room™** | Complete room package |
-
-Purchased **Headquarters Packages™** — instant install.
-
----
-
-### 4 — Wing Renovations (No GPU)
-
-| Renovation | What changes |
-|------------|--------------|
-| **Expand Innovation Lab™** | New wing topology node |
-| **Add Production Floor™** | Department pack expansion |
-| **Install Reception upgrade** | Arrival experience pack |
-
-Aligns with [Monetization Architecture](../monetization-architecture.md) **Department Packs**.
-
----
-
-### 5 — Custom Renovation™ (GPU — Premium)
-
-When pre-built packs are insufficient:
-
-```
-Founder requests unique redesign
-        ↓
-Premium Generation™ path
-        ↓
-Concept A · B · C
-        ↓
-Founder selects · pipeline completes
-        ↓
-New Private™ package replaces target zone
-        ↓
-Prior version → Headquarters History™
-```
-
-Explicit opt-in · GPU allocated intentionally.
-
----
-
-## Renovation vs Set Continuity™
-
-| System | Focus |
-|--------|-------|
-| **Set Continuity™** | Automatic evolution with business milestones |
-| **Renovation™** | Founder-initiated improvement |
-
-Both accumulate history. Renovation may **accelerate** or **redirect** expression.
-
-Milestone props from Set Continuity™ **persist** through renovations unless founder archives them.
-
----
-
-## Seasonal Headquarters™
-
-Special renovation class:
-
-| Season | Atmosphere |
-|--------|------------|
-| Launch week | Celebration lighting · campaign surfaces |
-| Holiday | Taste-aware seasonal (Life & Culture Preferences™ gate) |
-| Anniversary | Milestone ceremony · Archive™ cues |
-| Summer / Winter | Material · light temperature shifts |
-
-Seasonal packs revert or evolve per founder preference.
-
----
-
-## Marketplace Renovation Packs
-
-Creators publish **Renovation Packs™** — smaller scoped packages:
-
-| Pack type | Example |
-|-----------|---------|
-| Lighting refresh | *"Golden Hour Editorial Lighting™"* |
-| Furniture swap | *"Brass Story Table Collection™"* |
-| Seasonal | *"Winter Atelier Atmosphere™"* |
-| Room upgrade | *"CDS Luxury v2 Renovation™"* |
-
-Lower price than full Living Set™ · targets existing installs.
+**Detail:** [gpu-strategy.md](./gpu-strategy.md)
 
 ---
 
 ## Pre-Renovation Archive
 
-Every renovation **snapshots** current state to [Headquarters History™](./headquarters-history.md) before applying change.
+Every renovation snapshots current state to [Headquarters History™](./headquarters-history.md) before applying.
 
-Founder can restore if renovation disappoints.
+Founder can restore if dissatisfied.
+
+---
+
+## Marketplace Renovation Packs
+
+Creators publish scoped upgrades:
+
+- *"Golden Hour Editorial Lighting™"*
+- *"Winter Atelier Atmosphere™"*
+- *"Luxury Refresh v2™"*
+
+Lower price than full Living Headquarters™ — targets existing installs.
+
+---
+
+## Relationship to Set Continuity™
+
+| System | Focus |
+|--------|-------|
+| **Set Continuity™** | Automatic milestone evolution |
+| **Renovation™** | Founder-initiated improvement |
+
+Both accumulate headquarters story.
 
 ---
 
@@ -188,22 +110,9 @@ Founder can restore if renovation disappoints.
 
 | Anti-pattern | Violation |
 |--------------|-----------|
-| "Settings" panel for materials | Software mental model |
+| Settings panel for materials | Software mental model |
+| GPU for lighting refresh pack | Priority 3 violation |
 | Silent auto-renovation | Founder agency |
-| GPU for lighting refresh | Cost strategy violation |
-| Renovation removes framework zones | Living Sets™ law |
-| Theme toggle | Skinning — not renovation |
-
----
-
-## Relationship to Canon
-
-| System | Role |
-|--------|------|
-| [Living Sets™](../world/living-sets.md) | Framework preserved |
-| [Set Continuity™](../world/set-continuity.md) | Automatic evolution |
-| [Headquarters History™](./headquarters-history.md) | Restore path |
-| [Living Set Marketplace™](./living-set-marketplace.md) | Renovation pack source |
 
 ---
 

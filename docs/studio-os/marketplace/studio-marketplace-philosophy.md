@@ -1,5 +1,7 @@
 # Studio Marketplace Philosophy™
 
+> **Canonical home:** [studio-marketplace.md](./studio-marketplace.md) · [README.md](./README.md) — v2.0 platform strategy sprint. This file remains as extended reference.
+
 **The world's first marketplace for living business headquarters**
 
 **Version:** 1.0.0  

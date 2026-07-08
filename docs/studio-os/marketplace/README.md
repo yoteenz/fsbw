@@ -1,149 +1,118 @@
-# Studio Marketplace™
+# Studio Originals™ & Studio Marketplace™
 
-**The Marketplace for Living Headquarters**
+**The Economy of Studio World™**
 
-**Version:** 1.0.0  
-**Status:** Canonical platform economy architecture  
-**Phase:** Platform economy (post-Living Sets™)  
-**Scope:** Headquarters distribution · creator economy · generation economics
+**Version:** 2.0.0  
+**Status:** Canonical platform strategy  
+**Phase:** Long-term economy (post-Living Sets™)  
+**Scope:** Studio Originals™ · Studio Marketplace™ · creator economy · generation economics
 
 ---
 
-> **Studio OS doesn't sell templates. It cultivates places where companies come to life.**
+> **Studio OS does not sell templates. Studio OS builds the places where companies come to life.**
 
 ---
 
 ## Mission
 
-Studio OS should **not** generate every headquarters for every founder.
+Studio OS should **never** rely on unlimited AI generation for every founder.
 
-That would be expensive, unnecessary, and overwhelming.
+Unlimited generation is:
 
-Instead, Studio OS begins with a **curated collection of world-class Headquarters and Living Sets™**.
+- Expensive
+- Unnecessary
+- Slower
+- Overwhelming
+- Difficult to curate
 
-**Generation becomes a premium creative capability — not the default.**
-
----
-
-## One Sentence
-
-**Studio Marketplace™** is where founders acquire complete living headquarters — Studio Originals™ · creator worlds · certified environments — while GPU generation remains an intentional premium path for founders who want something uniquely theirs.
-
----
-
-## The Paradigm Shift
-
-| Old assumption | Studio Marketplace™ model |
-|----------------|----------------------------|
-| Every founder triggers GPU generation | Every founder receives **Studio Originals™** immediately |
-| Marketplace sells assets | Marketplace sells **complete experiences** |
-| Customization = prompts | Customization = **Renovation™** |
-| Generation is default | Generation is **Premium Generation™** |
-| Creators sell chairs and textures | Creators sell **Headquarters™** |
-| Onboarding waits on assets | Onboarding **starts working day one** |
-
----
-
-## Founder Journey (Summary)
+Instead, Studio OS combines:
 
 ```
-Mode™
-    ↓
-Industry
-    ↓
-Company
-    ↓
-Studio Originals™ (recommended)
-    ↓
-Begin working immediately
-    ↓
-Orb offers: Continue · Renovate · Browse · Generate
+Curated Design  +  AI Generation  +  Creator Economy
+        +  Marketplace  +  Renovation
+                    ↓
+            ONE ECOSYSTEM
 ```
 
-**Detail:** [studio-originals.md](./studio-originals.md) · [taste-driven-recommendations.md](./taste-driven-recommendations.md)
+---
+
+## Foundational Philosophy
+
+Studio OS should feel like **buying a luxury home** — not generating random images.
+
+Every founder deserves an **incredible Headquarters on Day One**.
 
 ---
 
-## What the Marketplace Sells
+## The Ecosystem (At a Glance)
 
-**Not assets. Complete worlds.**
-
-| Product type | Description |
-|--------------|-------------|
-| **Entire Headquarters™** | Full campus · wings · circulation |
-| **Creative Headquarters™** | CDS-class creative environments |
-| **Living Sets™** | Department-scale production sets |
-| **Departments™** | Installable department environments |
-| **Founder Offices™** | Executive personal spaces |
-| **Reception Areas™** | Arrival · lobby experiences |
-| **Innovation Labs™** | R&D · product environments |
-| **Production Floors™** | Manufacturing · media floors |
-| **Brand Worlds™** | Full brand expression campuses |
-| **Conference Rooms™** | Meeting · review environments |
-
-Primary product: **A Headquarters** — not a chair · lamp · wall · texture.
+| Layer | Role | GPU |
+|-------|------|-----|
+| **Studio Originals™** | Curated day-one headquarters | None |
+| **Studio Marketplace™** | Buy complete environments | None on install |
+| **Renovation™** | Homeowner-style improvements | Light (packs) |
+| **Premium Generation™** | Custom architectural commission | Full pipeline |
+| **Creator Economy™** | World builders earn | Creator absorbs design GPU |
+| **Studio Certified™** | Quality guarantee | N/A |
 
 ---
 
-## Quality Tiers
+## Founder Journey
 
-| Tier | Description |
-|------|-------------|
-| **Studio Originals™** | Official · handcrafted · canonical · default |
-| **Private™** | Founder-created · visible only to them |
-| **Community™** | Creator-published · purchasable |
-| **Studio Certified™** | Reviewed · production-ready · Featured-eligible |
-
-**Detail:** [quality-certification.md](./quality-certification.md)
-
----
-
-## GPU Strategy™
-
-| Default (no GPU) | Premium (GPU) |
-|------------------|---------------|
-| Studio Originals™ | Founder requests new concepts |
-| Marketplace purchases | Creative Direction Pipeline™ A/B/C |
-| Renovations™ | Scene Blueprint™ · Asset Graph™ · Living Set™ |
-
-**Detail:** [gpu-generation-strategy.md](./gpu-generation-strategy.md)
+```
+Founder enters Studio OS
+        ↓
+Orb learns about founder
+        ↓
+Mode™ selection
+        ↓
+Studio Originals™ recommended
+  (Founder Genome™ · Taste · Company Genome™)
+        ↓
+Begin building immediately — no GPU · no waiting
+        ↓
+Orb offers:
+  Continue Working™ · Renovate™ · Browse Marketplace™ · Generate New Concepts™
+```
 
 ---
 
-## Document Index
+## Document Index (Canonical)
 
 | Document | Contents |
 |----------|----------|
-| [studio-marketplace-philosophy.md](./studio-marketplace-philosophy.md) | Master philosophy · economy · anti-patterns |
-| [studio-originals.md](./studio-originals.md) | Official curated headquarters |
-| [living-set-marketplace.md](./living-set-marketplace.md) | Living Sets™ as marketplace products |
+| [studio-originals.md](./studio-originals.md) | Official curated starting headquarters |
+| [studio-marketplace.md](./studio-marketplace.md) | Marketplace philosophy · products · browse vision |
+| [living-headquarters.md](./living-headquarters.md) | Living Headquarters™ as marketplace object |
 | [headquarters-packages.md](./headquarters-packages.md) | Auto-packaging · install manifest |
-| [creator-economy.md](./creator-economy.md) | Creator revenue · publishing |
-| [quality-certification.md](./quality-certification.md) | Four tiers · certification path |
-| [gpu-generation-strategy.md](./gpu-generation-strategy.md) | Cost control · premium generation |
-| [marketplace-ranking.md](./marketplace-ranking.md) | Discovery · Featured · ranking signals |
-| [taste-driven-recommendations.md](./taste-driven-recommendations.md) | Founder Taste™ matching |
+| [creator-economy.md](./creator-economy.md) | World builders · revenue · named creations |
+| [studio-certified.md](./studio-certified.md) | Quality tiers · certification path |
+| [gpu-strategy.md](./gpu-strategy.md) | Priority order · cost control |
 | [renovation-system.md](./renovation-system.md) | Homeowner mental model |
-| [headquarters-history.md](./headquarters-history.md) | Versions · restore · fork · sell |
+| [taste-recommendations.md](./taste-recommendations.md) | Founder Taste™ personalization |
+| [business-model.md](./business-model.md) | Long-term revenue architecture |
+| [future-roadmap.md](./future-roadmap.md) | Economy evolution phases |
+
+### Extended Canon (Prior Sprint)
+
+| Document | Contents |
+|----------|----------|
+| [headquarters-history.md](./headquarters-history.md) | Revisit · restore · fork · sell |
+| [marketplace-ranking.md](./marketplace-ranking.md) | Discovery · Featured placement |
 
 ---
 
 ## Success Benchmark
 
-A founder should be able to:
+Studio Marketplace™ becomes the world's first marketplace where founders **buy · sell · renovate · collect · and evolve** complete business headquarters — not disconnected templates or assets.
 
-- Start with a beautiful **Studio Original™**
-- **Renovate** over time without GPU by default
-- **Generate premium concepts** only when desired
-- **Buy** incredible headquarters from creators
-- **Sell** their own Living Sets™
-- Build a **passive income** business inside Studio OS
-
-Generation becomes **intentional**.
-
-Creativity becomes **valuable**.
-
-The marketplace becomes an **economy of complete headquarters** — not disconnected assets.
+| Outcome | Meaning |
+|---------|---------|
+| **Generation intentional** | GPU only when founder opts in |
+| **Architecture valuable** | Creators earn on complete worlds |
+| **Creativity = economy** | World builders build businesses |
+| **Day one incredible** | Studio Originals™ — no wait |
+| **Personal discovery** | Taste-driven recommendations |
 
 ---
 
@@ -152,46 +121,28 @@ The marketplace becomes an **economy of complete headquarters** — not disconne
 | System | Relationship |
 |--------|--------------|
 | [Living Sets™](../world/living-sets.md) | Marketplace distributes Living Sets™ |
-| [Environment DNA™](../world/environment-dna.md) | Packaged in Headquarters Packages™ |
-| [Adaptive Onboarding™](../onboarding/README.md) | Studio Originals™ selection step |
-| [Creative Direction Pipeline™](../creative-direction-pipeline/README.md) | Premium Generation™ path |
-| [Founder Taste Engine™](../founder-taste-engine/README.md) | Recommendation intelligence |
-| [Archive Integration™](../world/archive-integration.md) | Headquarters History™ preservation |
-| [Marketplace Set System™](../world/marketplace-set-system.md) | Prior Set-focused vision — extended here |
-| [Production Lifecycle™](../production-lifecycle/marketplace-lifecycle.md) | Certification stages |
-| [Expert Marketplace™](../expert-marketplace.md) | Separate — expertise economy not HQ economy |
-| [Monetization Architecture](../monetization-architecture.md) | HQ License · Department Packs align |
-
----
-
-## Distinction: Studio Marketplace™ vs Expert Marketplace™
-
-| Studio Marketplace™ | Expert Marketplace™ |
-|-----------------------|----------------------|
-| **Places** — headquarters · Living Sets™ | **Expertise** — Profession Brain surfaces |
-| Environmental products | Knowledge products |
-| World builders earn | Experts earn |
-| Install into Studio World™ | Learn · consult · academy |
-
-Both are marketplace economies — different product classes.
+| [Studio World™](../world/studio-world.md) | Parent universe |
+| [Adaptive Onboarding™](../onboarding/README.md) | Originals selection |
+| [Creative Direction Pipeline™](../creative-direction-pipeline/README.md) | Premium Generation™ |
+| [Founder Taste Engine™](../founder-taste-engine/README.md) | Recommendations |
+| [Monetization Architecture](../monetization-architecture.md) | HQ License · Department Packs |
+| [Expert Marketplace™](../expert-marketplace.md) | Separate — expertise not places |
 
 ---
 
 ## Final Philosophy
 
-Studio OS should not become an endless image generator.
+Studio OS should not become an AI image generator.
 
-Studio OS should become the world's first marketplace for **living business headquarters**.
+Studio OS should become the world's first marketplace for **living companies**.
 
-Founders begin with exceptional **Studio Originals™**.
+- **Studio Originals™** welcome founders
+- **Living Headquarters™** inspire founders
+- **Creators** build extraordinary worlds
+- **Studio Certified™** guarantees quality
+- **Founder Taste™** makes recommendations personal
 
-Creators build extraordinary **Living Sets™**.
-
-Communities share and improve them.
-
-**Studio Certified™** guarantees excellence.
-
-Every headquarters tells the story of a company.
+Every Headquarters tells the story of a company.
 
 Every renovation tells the story of its evolution.
 
@@ -201,4 +152,4 @@ Every purchase expands **Studio World™**.
 
 ## Implementation Status
 
-**Docs only this sprint.** No UI · no marketplace components · no payment systems.
+**Docs only this sprint.** No UI · no marketplace pages · no payment systems.

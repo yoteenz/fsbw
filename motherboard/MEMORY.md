@@ -41299,3 +41299,30 @@ User defined **Studio Marketplace™** — platform economy philosophy sprint de
 - **12-doc spec:** `docs/studio-os/marketplace/` — README · studio-marketplace-philosophy · studio-originals · living-set-marketplace · headquarters-packages · creator-economy · quality-certification · gpu-generation-strategy · marketplace-ranking · taste-driven-recommendations · renovation-system · headquarters-history
 - **Prior arc (same chat):** Living Sets™ · CDS V2 · Founder Intelligence™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™
 - **CORE.md:** Studio Marketplace™ line added · marketplace-set-system.md + studio-world.md cross-refs
+
+---
+
+## 2026-07-08 — Studio Originals™ & Studio Marketplace™ — The Economy of Studio World™ (platform strategy sprint, docs only)
+
+User defined **platform strategy sprint** consolidating long-term Studio OS economy under **"The Economy of Studio World™"**. **No UI · no marketplace pages · no payment systems.**
+
+- **Mission:** Studio OS should NEVER rely on unlimited AI generation — combine **Curated Design + AI Generation + Creator Economy + Marketplace + Renovation** into one ecosystem
+- **Foundational philosophy:** Feel like **buying a luxury home** — not generating random images · every founder deserves incredible HQ Day One
+- **Studio Originals™:** Handcrafted NOT AI-generated at onboarding — Founder Loft™ · Luxury · Editorial · Glass · Industrial · **Innovation Campus™** · Creator Loft™ · **Agency HQ™** · Executive · Minimal
+- **Onboarding:** Orb learns founder → Mode™ → taste-matched Originals (Three Genomes™) → build immediately · no GPU
+- **Orb gate:** Continue Working™ · Renovate™ · Browse Marketplace™ · Generate New Concepts™ — founder decides when creativity becomes custom
+- **Premium Generation™:** GPU like elite architectural firm — Creative Brief™ → 3 Concepts → Scene Blueprint™ → Reverse Engineering™ → Asset Graph™ → Refinement™ → Golden Build™
+- **Marketplace:** Complete experiences — Entire HQ™ · Living Headquarters™ · Living Sets™ · Creative Studios™ · Founder Offices™ · Reception · Innovation Labs™ · Production Floors™ · Conference Wings™ · Customer Experience Centers™ · Brand Worlds™ · Complete Business Campuses™ — one-click install
+- **Headquarters Packages™:** Auto-seal Living Set™ · Scene Blueprint™ · Environment DNA™ · Asset Graph™ · Room DNA™ · lighting · materials · interactive objects · **Orb configuration** · navigation · camera · transitions · audio · animations · production stations
+- **Renovate™:** Homeowner language — Renovate Creative Atelier™ · Upgrade Founder Office™ · Replace Story Table™ · Install Mood Wall™ · Modernize Lighting™ · Expand Innovation Lab™ · Seasonal HQ™ · Luxury Refresh™
+- **Quality tiers:** Studio Originals™ · Private™ · Community™ · Studio Certified™ (premium · featured · trusted)
+- **Creator Economy™:** World builders earn · named creations (The Black Atelier™ · Editorial Loft™ · Innovation Campus™ · Glass Founder HQ™) · passive income vision
+- **Taste Recommendations™:** 97% Taste Match™ · recommend places not products · Golden Build alignment
+- **GPU Strategy™ priority order:** (1) Studio Originals™ no GPU (2) Marketplace Installations™ no GPU (3) Renovations™ light GPU (4) Premium Original Concept Generation™ full pipeline
+- **Business Model™:** HQ License · marketplace commissions · Premium HQ · Generation Credits · Renovation Packs · Certified Creator Program · Enterprise HQ · Seasonal Collections · Architectural Expansions · creator subscriptions · GPU premium generations — everyone benefits
+- **Browse vision:** Luxury homes · architecture portfolios · Sims Gallery · Unreal Marketplace · Steam Workshop · Apple Design Awards
+- **Living Headquarters™:** New canonical product — complete living HQ marketplace object (contains Living Sets™)
+- **Future Roadmap™:** Phases 0–8 from philosophy → Originals → Renovation → Community → Certified → Taste → Creator Economy → Premium Credits → Enterprise
+- **12-doc canonical v2 spec:** `docs/studio-os/marketplace/` — README · studio-originals · **studio-marketplace** · **living-headquarters** · headquarters-packages · creator-economy · **studio-certified** · **gpu-strategy** · renovation-system · **taste-recommendations** · **business-model** · **future-roadmap** (prior sprint files redirected as extended reference)
+- **Prior arc (same chat):** Living Sets™ · Studio Marketplace™ economy sprint (v1) · CDS V2 · Founder Intelligence™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™
+- **CORE.md:** Studio Marketplace™ line updated to v2 strategy

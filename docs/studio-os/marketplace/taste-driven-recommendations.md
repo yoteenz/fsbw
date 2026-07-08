@@ -1,5 +1,7 @@
 # Taste-Driven Recommendations™
 
+> **Canonical home:** [taste-recommendations.md](./taste-recommendations.md) — v2.0 platform strategy sprint. This file remains as extended reference.
+
 **Marketplace discovery powered by Founder Taste Genome™**
 
 **Version:** 1.0.0  
