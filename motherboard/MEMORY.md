@@ -41621,3 +41621,26 @@ User **STOP** directive: **platform architecture sprint** — define permanent i
 - **Cross-refs:** `studio-world.md` · `CORE.md` · `engines/studio-asset-registry/README.md` · `reuse-engine.md` · `engines/generation-manager/README.md` · `scene-stack/golden-build-pipeline.md`
 - **Prior arc (same chat):** Scene Stack™ implementation committed (`c9e76577`) · Scene Genesis™ superseded · Architectural Icons™ · Studio Preview™ · Founder Discovery™
 - **No UI · no API · no CDS redesign this sprint**
+
+---
+
+## 2026-07-08 — Creative Blueprint Engine™ — The Company's Visual DNA (platform architecture sprint, docs only)
+
+User **STOP** directive: **platform architecture sprint** — design intelligence **above** Asset Registry™. **No UI · no asset generation.**
+
+- **Mission:** Asset Registry remembers objects; companies stay consistent by reusing **entire design systems**. Studio OS thinks like an **Architecture Firm**, not an image generator.
+- **Hierarchy:** Company → **Visual DNA™** → **Creative Blueprints™** → **Systems™** → **Assets™** → Runtime — every layer inherits upward
+- **Visual DNA™ archetypes:** Editorial Luxury™ · Modern Scandinavian™ · Japanese Minimal™ · Neo Futurism™ · Industrial Loft™ · Luxury Hospitality™ · Executive Modern™ · Art Deco™ · Organic Wellness™
+- **Creative Blueprints™:** reusable languages (Editorial Luxury Blueprint™ · Executive Modern · etc.) bundling Material · Lighting · Architectural · Glass · Atmospheric · Motion · Audio · Transition · Color · Typography · Orb · FX systems
+- **Systems™ travel together:** e.g. Editorial Lighting System™ = indirect · accent · practical · volumetrics · reflections · color temp · shadows · bloom · ambient glow — founder never manages individually
+- **CDS + Marketing example:** same Editorial Luxury Blueprint™ → rooms feel related without full regen
+- **Blueprint Registry™ fields:** Blueprint ID™ · Name · Company · Industries · Visual Style · all system refs · Asset Dependencies · Performance Cost · Reuse Count · Founder Rating · Compatibility · Golden Build Version™
+- **Inheritance:** new departments never empty — Visual DNA → Blueprint → Systems → Assets → Interactions
+- **Evolution:** blueprint/system upgrades propagate optionally org-wide — company evolves together
+- **Founder Choice™:** Apply Existing™ · Duplicate Blueprint™ · Create Variant™ · Generate Completely New™ — generation last
+- **Blueprint Marketplace™:** sell complete design languages (Luxury Executive · Editorial Studio · Salon · Law Office · etc.) not single objects
+- **Company Genome™:** aesthetic memory — preferred materials · lighting · architecture · proportions · transitions · atmosphere · layouts · interaction styles
+- **Disambiguation:** Creative Blueprint™ ≠ Production Lifecycle Blueprint™ ≠ Business Discovery Blueprint™
+- **11-doc spec:** `docs/studio-os/creative-blueprint-engine/` — README · creative-blueprint-engine · visual-dna · creative-blueprints · systems-architecture · blueprint-registry · inheritance-model · evolution-system · founder-choice · marketplace-blueprints · company-genome-integration · future-roadmap
+- **Cross-refs:** `studio-world.md` · `CORE.md` · `asset-intelligence-engine/README.md` · `engines/studio-asset-registry/README.md`
+- **Prior arc (same chat):** Asset Intelligence Engine™ (`c0300e67`) · Scene Stack™ (`c9e76577`) · Scene Genesis™ superseded

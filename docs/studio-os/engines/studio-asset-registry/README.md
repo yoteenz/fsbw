@@ -100,7 +100,8 @@ Compiler `designRegistryRef` migrates to `registrySnapshotRef`. See [runtime-int
 
 | System | Path |
 |--------|------|
-| **Asset Intelligence Engine™** | [`../../asset-intelligence-engine/`](../../asset-intelligence-engine/README.md) — founder-facing remember-first search · Compatibility Engine™ · Founder Control™ |
+| **Creative Blueprint Engine™** | [`../../creative-blueprint-engine/`](../../creative-blueprint-engine/README.md) — Visual DNA™ · design languages · Systems™ scope |
+| **Asset Intelligence Engine™** | [`../../asset-intelligence-engine/`](../../asset-intelligence-engine/README.md) — founder-facing remember-first search · Compatibility Engine™ |
 | Studio Asset Compiler™ | [`../studio-asset-compiler/`](../studio-asset-compiler/README.md) |
 | Studio Department Generator™ | [`../../department-generator/`](../../department-generator/README.md) |
 | Department Generator engine | [`../../engine/department-generator/`](../../engine/department-generator/README.md) |

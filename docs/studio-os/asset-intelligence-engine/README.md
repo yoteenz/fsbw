@@ -69,24 +69,23 @@ See [generation-order.md](./generation-order.md).
 ## Engine Position
 
 ```
-Founder / Department / Scene Stack™ request
+Founder · Department · Scene request
+         ↓
+Creative Blueprint Engine™ (Visual DNA™ · Blueprint™ · Systems™)
          ↓
 ASSET INTELLIGENCE ENGINE™ (this system)
   Search · Score · Explain · Recommend · Learn
          ↓
-┌────────┴────────┐
-│ Reuse Existing™ │ Duplicate & Modify™ │ Upgrade™ │ Generate New™
-└────────┬────────┘
+Asset Registry™ (individual assets)
          ↓
-Studio Generation Manager™ (only when required)
+Generation Manager™ (only when required)
          ↓
-Studio Asset Registry™ (permanent storage)
-         ↓
-Company DNA™ · Founder Taste Engine™ · Runtime
+Runtime
 ```
 
+**Creative Blueprint Engine™** = design language (what the world should feel like).  
 **Studio Asset Registry™** = the library.  
-**Asset Intelligence Engine™** = the mind that uses the library.
+**Asset Intelligence Engine™** = the mind that searches the library within blueprint context.
 
 ---
 
