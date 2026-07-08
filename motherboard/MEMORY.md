@@ -42588,3 +42588,23 @@ User **FOLLOW-UP SPRINT — Innovation Lineage™ (The Living Innovation Graph):
 - **Boundaries:** heuristic/demo lineage graph — extends CIN + Museum + Marketplace; no full Atlas district glow visualization yet; no room redesign outside new gallery.
 - **Prior arc (same chat):** World Graph™ Phase 1 · Collaborative Innovation Network™ · Global Atlas Layer™ · Constitution Hall™.
 
+---
+
+## 2026-07-08 — Studio World Three Eras Roadmap™ (guiding architecture)
+
+User defined **three major eras** for Studio World's evolution — **not** to build all three today, but as a **guiding principle** every future system must be evaluated against.
+
+- **ERA 1 — Knowledge™ (current):** Memory first — World Graph™, Knowledge Core™, Bible, Library, Blueprint Registry, Architecture Decisions, Constitutional Laws, Dependency/Scene Graphs, Asset Registry, Genomes. Objective: Studio World understands itself before it can think.
+- **ERA 2 — World™ (future):** Living civilization — Atlas, HQ, departments, marketplace, collaboration network, living scene graphs, timelines, simulations. Graph drives the world; everything has place, relationships, history.
+- **ERA 3 — Intelligence™ (future):** Reasoning over graph — Orb Intelligence™, planners, auditors, recommenders, proactive assistance (system stops waiting for prompts).
+- **Evolution law:** Knowledge → World → Intelligence. Knowledge creates memory · memory creates relationships · relationships create understanding · understanding enables intelligence.
+- **Implementation gate (4 questions):** Which era? Foundation for next era? Premature complexity? Evolves without rewrite?
+- **Delivered (architecture only — no Era 2/3 features):**
+  - `docs/studio-os/world-graph/STUDIO_WORLD_THREE_ERAS_ROADMAP.md` — canonical roadmap + system mapping + checklist
+  - `knowledge/canon/constitution/three-eras-roadmap.md` — constitutional article
+  - `src/studio-os-core/world-graph/era-evaluation.ts` — `evaluateImplementationEra()` · `CURRENT_STUDIO_WORLD_ERA` · `ENGINE_ERA_MAP`
+  - `src/studio-os-core/world-graph/ingestion/era-roadmap-ingest.ts` — `W-ERA-knowledge/world/intelligence` nodes · `evolved-into` / `depends-on` chains · Three Eras law node
+  - `era` node type (`W-ERA-*`) in types/schema · engine nodes tagged with primary era
+  - `scripts/compile-world-graph-runner.ts` — CI now uses canonical TypeScript `buildWorldGraph` (360 nodes · 467 edges)
+  - Updated `STUDIO_WORLD_GRAPH_ARCHITECTURE.md` · `world-graph-law.md` · `motherboard/CORE.md`
+- **Prior arc (same chat):** Scene Stack quality fix + hardening sprint · Knowledge System proposal · World Graph™ Phase 1 approved · Responsibility Framework™ · Constitution™ · Global Atlas Layer™ · Collaborative Innovation Network™ · Innovation Lineage™.

@@ -1,6 +1,7 @@
 import { finalizeWorldGraph } from './graph';
 import {
   ingestConstitutionalLawNodes,
+  ingestEraRoadmapNodes,
   ingestEngineNodes,
   ingestFlagshipNodes,
   ingestGenomeNodes,
@@ -35,6 +36,7 @@ export function buildWorldGraph(input: BuildWorldGraphInput = {}): BuildWorldGra
     ingestPublicationNodes(),
     ingestFlagshipNodes(),
     ingestConstitutionalLawNodes(),
+    ingestEraRoadmapNodes(),
     ingestRouteRegistryNodes(),
   ];
 

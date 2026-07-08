@@ -9,3 +9,4 @@ export * from './query';
 export * from './store';
 export * from './projections';
 export * from './ingestion';
+export * from './era-evaluation';

@@ -1,3 +1,4 @@
+import { eraForEngineSlug } from '../era-evaluation';
 import { worldEdgeId, worldNodeId } from '../id';
 import { lifecyclePlane } from '../lifecycle';
 import type { WorldEdge, WorldNode } from '../types';
@@ -126,6 +127,17 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       docPaths: eng.docPaths,
       provenance: { source: 'bootstrap', sourceRef: eng.slug, ingestedAt: ts },
       tags: ['engine', 'studio-world'],
+      metadata: { studioWorldEra: eraForEngineSlug(eng.slug) },
+    });
+
+    const eraId = worldNodeId('era', eraForEngineSlug(eng.slug));
+    edges.push({
+      id: worldEdgeId('references', id, eraId),
+      type: 'references',
+      from: id,
+      to: eraId,
+      label: 'primary-era',
+      provenance: { source: 'bootstrap', sourceRef: eng.slug, ingestedAt: ts },
     });
 
     for (const target of eng.integratesWith ?? []) {

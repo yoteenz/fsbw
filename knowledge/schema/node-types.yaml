@@ -8,6 +8,7 @@ domains:
     - constitutional-law
     - publication
     - implementation-sprint
+    - era
   places:
     - company
     - organization
@@ -64,3 +65,4 @@ id_prefixes:
   engine: W-ENG
   company-genome: W-CGN
   publication: W-PUB
+  era: W-ERA

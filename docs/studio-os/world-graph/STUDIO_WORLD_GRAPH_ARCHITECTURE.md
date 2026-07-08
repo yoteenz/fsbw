@@ -141,7 +141,25 @@ Future systems connect by:
 
 ---
 
+## Three Eras Roadmap™ (guiding principle)
+
+Studio World evolves in sequenced eras — **not** as a single sprint:
+
+| Era | Objective | Current |
+|-----|-----------|---------|
+| **Knowledge™** | Memory — graph understands civilization | **Active** |
+| **World™** | Living civilization driven by graph | Future |
+| **Intelligence™** | Reasoning and proactive assistance | Future |
+
+Every major implementation is evaluated with `evaluateImplementationEra()` before shipping. Full roadmap: [STUDIO_WORLD_THREE_ERAS_ROADMAP.md](./STUDIO_WORLD_THREE_ERAS_ROADMAP.md). Constitutional law: [three-eras-roadmap.md](../../knowledge/canon/constitution/three-eras-roadmap.md).
+
+World Graph Phase 1 is **Era 1 infrastructure** — not Era 2 spatial civilization or Era 3 proactive intelligence.
+
+---
+
 ## See also
 
+- [STUDIO_WORLD_THREE_ERAS_ROADMAP.md](./STUDIO_WORLD_THREE_ERAS_ROADMAP.md) — **guiding principle:** Knowledge™ → World™ → Intelligence™
 - [STUDIO_WORLD_KNOWLEDGE_SYSTEM_ARCHITECTURE.md](../knowledge-system/STUDIO_WORLD_KNOWLEDGE_SYSTEM_ARCHITECTURE.md) — original proposal (subsumed)
 - [world-graph-law.md](../../knowledge/canon/constitution/world-graph-law.md)
+- [three-eras-roadmap.md](../../knowledge/canon/constitution/three-eras-roadmap.md)

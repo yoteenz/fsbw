@@ -45,6 +45,7 @@ const TYPE_PREFIX: Record<WorldNodeType, string> = {
   publication: 'W-PUB',
   'implementation-sprint': 'W-SPR',
   milestone: 'W-MS',
+  era: 'W-ERA',
 };
 
 export function worldNodeId(nodeType: WorldNodeType, slug: string): string {

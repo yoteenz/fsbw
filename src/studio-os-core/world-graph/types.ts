@@ -72,6 +72,7 @@ export const WORLD_NODE_TYPES = [
   'publication',
   'implementation-sprint',
   'milestone',
+  'era',
 ] as const;
 
 export type WorldNodeType = (typeof WORLD_NODE_TYPES)[number];

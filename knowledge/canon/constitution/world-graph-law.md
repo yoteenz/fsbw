@@ -39,6 +39,8 @@ No projection may override the graph. No projection may become a competing sourc
 - `validateWorldGraph()` — runtime integrity checks
 - Architecture Auditor™ — alignment of code routes with graph nodes (future gate)
 
+Era sequencing is governed by **Three Eras Roadmap™** — see `three-eras-roadmap.md`.
+
 ---
 
 *Ratified Phase 1 — 2026-07-08*
