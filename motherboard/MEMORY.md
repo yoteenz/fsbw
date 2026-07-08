@@ -42305,3 +42305,14 @@ User **IMPLEMENTATION SPRINT — Experience Intelligence Engine™** (formerly E
 - **Founder UI:** `ExperienceObservatoryRoom` — Magic Core sculpture, Wonder/Luxury/Discovery installation columns, upgrade deck · route `/admin/studio/experience-observatory` · Executive Atrium HUD link · nav module (live).
 - **Docs:** `docs/studio-os/experience-intelligence-engine.md` · architecture-auditor.md updated for pipeline chain.
 - **Prior arc (same chat):** Architecture Auditor™ engine · Architecture Observatory™ · V5 migration report.
+
+---
+
+## 2026-07-08 — Studio World command-center world route fix
+
+User reported Vercel dev site: `/admin/studio/world/command-center` (and related world paths) kept redirecting to `/admin/studio/mission-control` instead of immersive Command Center.
+
+- **Root cause:** `FLAGSHIP_DESTINATIONS` `studio-command-center.legacyEntryPath` still pointed at legacy dashboard `mission-control`; `resolveStudioWorldPath()` redirects world URLs → `legacyEntryPath`. Overview (`/admin/studio/overview`) is the live Executive Atrium / Command Center immersive shell.
+- **Fix:** `legacyEntryPath` → `/admin/studio/overview`; registry entries for `command-center` flagship root + `mission-control` world sub-path → `overview`; `/admin/studio` default redirect → `/admin/studio/world/command-center`; V4 doc table updated.
+- **Legacy `/admin/studio/mission-control` preserved** for direct access (dashboard placeholder) but no longer canonical world resolver target.
+- **Prior arc (same chat):** Experience Intelligence Engine™ · Architecture Auditor™ · V5 migration report.

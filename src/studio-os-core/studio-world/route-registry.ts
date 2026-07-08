@@ -47,7 +47,8 @@ function m(
 /** Authoritative mapping — extend as rooms gain immersive shells. */
 export const STUDIO_WORLD_ROUTE_REGISTRY: StudioWorldRouteMapping[] = [
   // ── Studio Command Center™ ──
-  m('mission-control', 'Mission Control Room™', 'command-center', 'studio-command-center', 'scc-executive-district', 'command-center/executive-district/mission-control', 'mission-control', 'standard', 'standard-room', 'Mission Control'),
+  m('studio-command-center-entry', 'Studio Command Center™', 'command-center', 'studio-command-center', 'scc-executive-district', 'command-center', 'overview', 'immersive', 'immersive-partial'),
+  m('mission-control', 'Mission Control Room™', 'command-center', 'studio-command-center', 'scc-executive-district', 'command-center/executive-district/mission-control', 'overview', 'immersive', 'immersive-partial', 'Mission Control'),
   m('executive-command-center', 'Executive Command Center™', 'command-center', 'studio-command-center', 'scc-executive-district', 'command-center/executive-district/executive-command', 'executive-command-center', 'standard', 'standard-room'),
   m('chief-of-staff', 'Chief of Staff Office™', 'room', 'studio-command-center', 'scc-executive-district', 'command-center/executive-district/chief-of-staff', 'chief-of-staff', 'standard', 'standard-room'),
   m('executive-council', 'Executive Council Chamber™', 'room', 'studio-command-center', 'scc-executive-district', 'command-center/executive-district/executive-council', 'executive-council', 'standard', 'standard-room'),

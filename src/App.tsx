@@ -2358,7 +2358,7 @@ function App() {
               <AdminStudioSection />
             </Suspense>
           } />
-          <Route path="studio" element={<Navigate to="/admin/studio/mission-control" replace />} />
+          <Route path="studio" element={<Navigate to="/admin/studio/world/command-center" replace />} />
           </Route>
           </Route>
           </Route>

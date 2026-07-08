@@ -21,7 +21,7 @@ export const FLAGSHIP_DESTINATIONS: FlagshipDestination[] = [
     displayName: 'Studio Command Center™',
     purpose: 'Operate · Monitor · Decide · Coordinate',
     worldEntryPath: '/admin/studio/world/command-center',
-    legacyEntryPath: '/admin/studio/mission-control',
+    legacyEntryPath: '/admin/studio/overview',
     physicalType: 'command-center',
   },
   {

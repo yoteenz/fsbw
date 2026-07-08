@@ -21,7 +21,7 @@ The founder **walks** — they do not click menus.
 
 | Flagship | Purpose | Canonical entry | Legacy implementation (preserved) |
 |----------|---------|-----------------|-----------------------------------|
-| **Studio Command Center™** | Operate · Monitor · Decide · Coordinate | `/admin/studio/world/command-center` | `/admin/studio/mission-control` |
+| **Studio Command Center™** | Operate · Monitor · Decide · Coordinate | `/admin/studio/world/command-center` | `/admin/studio/overview` |
 | **Creative Direction Studio™** | Invent · Create · Imagine · Generate · Direct | `/admin/studio/world/creative-direction-studio` | `/admin/studio/department/creative-direction` |
 | **Studio Archives™** | Memory · Reuse · Legacy · Knowledge · Marketplace | `/admin/studio/world/archives` | `/admin/studio/studio-archives` |
 | **Headquarters™** | Run the company — immersive department offices | `/admin/studio/world/headquarters` | `/admin/headquarters` |
