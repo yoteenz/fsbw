@@ -28,8 +28,8 @@ import {
   type MissionControlOrbLine,
   type MissionControlTravelOption,
 } from '../studio-os-core/mission-control';
-import type { AtlasNode } from '../studio-os-core/studio-world-atlas/types';
-import type { AtlasTravelResolution } from '../studio-os-core/studio-world-atlas/fast-travel';
+import type { AtlasNode, AtlasTravelMode, AtlasZoomLevel } from '../studio-os-core/studio-world-atlas/types';
+import { resolveAtlasTravel } from '../studio-os-core/studio-world-atlas/fast-travel';
 
 export function useMissionControl(options: {
   visibleNodes: AtlasNode[];
@@ -37,7 +37,8 @@ export function useMissionControl(options: {
   atlasMapMode: string;
   setMapMode: (mode: ReturnType<typeof resolveAtlasModeFromMissionControl>) => void;
   setTravelMode: (mode: ReturnType<typeof resolveAtlasTravelFromMissionOption>) => void;
-  resolveTravel: (nodeId: string) => AtlasTravelResolution | null;
+  travelMode: AtlasTravelMode;
+  zoomLevel: AtlasZoomLevel;
   selectedNode: AtlasNode;
   skipActivation?: boolean;
 }) {
@@ -47,7 +48,8 @@ export function useMissionControl(options: {
     atlasMapMode,
     setMapMode,
     setTravelMode,
-    resolveTravel,
+    travelMode,
+    zoomLevel,
     selectedNode,
     skipActivation = false,
   } = options;
@@ -105,9 +107,12 @@ export function useMissionControl(options: {
   );
 
   const travelPreview = useMemo(() => {
-    const resolution = resolveTravel(selectedNode.id);
+    if (!selectedNode.travelPath || selectedNode.isPlanned || selectedNode.isConcept) {
+      return buildTravelPreview(selectedNode, null, []);
+    }
+    const resolution = resolveAtlasTravel(selectedNode, travelMode, { zoomLevel });
     return buildTravelPreview(selectedNode, resolution, []);
-  }, [selectedNode, resolveTravel]);
+  }, [selectedNode, travelMode, zoomLevel]);
 
   const selectMissionMode = useCallback(
     (mode: MissionControlMode) => {
@@ -133,6 +138,22 @@ export function useMissionControl(options: {
 
   const navigationReady = shouldShowNavigation(activation);
 
+  const replayActivation = useCallback(() => {
+    setActivation(initialActivationState());
+    const advance = (phase: (typeof ACTIVATION_PHASES)[number]) => {
+      const n = nextActivationPhase(phase);
+      if (!n) {
+        setActivation(activationStateForPhase('navigation-ready'));
+        setOrbLines(buildMissionControlWelcomeLines());
+        return;
+      }
+      setActivation(activationStateForPhase(n));
+      setOrbLines([buildActivationOrbLine(n)]);
+      window.setTimeout(() => advance(n), activationPhaseDuration(n));
+    };
+    window.setTimeout(() => advance('darkening'), activationPhaseDuration('darkening'));
+  }, []);
+
   return {
     activation,
     navigationReady,
@@ -153,20 +174,6 @@ export function useMissionControl(options: {
     travelLabels: MISSION_CONTROL_TRAVEL_LABELS,
     modeLabels: MISSION_CONTROL_MODE_LABELS,
     focusDestination,
-    replayActivation: useCallback(() => {
-      setActivation(initialActivationState());
-      const advance = (phase: (typeof ACTIVATION_PHASES)[number]) => {
-        const n = nextActivationPhase(phase);
-        if (!n) {
-          setActivation(activationStateForPhase('navigation-ready'));
-          setOrbLines(buildMissionControlWelcomeLines());
-          return;
-        }
-        setActivation(activationStateForPhase(n));
-        setOrbLines([buildActivationOrbLine(n)]);
-        window.setTimeout(() => advance(n), activationPhaseDuration(n));
-      };
-      window.setTimeout(() => advance('darkening'), activationPhaseDuration('darkening'));
-    }, []),
+    replayActivation,
   };
 }

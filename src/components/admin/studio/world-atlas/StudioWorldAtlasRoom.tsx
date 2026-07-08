@@ -180,7 +180,8 @@ export function StudioWorldAtlasRoom() {
     atlasMapMode: atlas.view.mapMode,
     setMapMode: atlas.setMapMode,
     setTravelMode: atlas.setTravelMode,
-    resolveTravel: atlas.resolveTravel,
+    travelMode: atlas.view.travelMode,
+    zoomLevel: atlas.view.zoomLevel,
     selectedNode: selectedNodeId
       ? atlas.catalog.find((n) => n.id === selectedNodeId) ?? atlas.focusNode
       : atlas.focusNode,

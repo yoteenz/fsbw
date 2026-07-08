@@ -43301,6 +43301,7 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-08 — ARTICLE-A02 Studio Foundry™ manufacturing boundary
 
 **Context:** This chat has built a Studio World institutional-memory and production architecture arc. Earlier turns delivered **ARTICLE-K21 Architecture Decision Records™**, **ARTICLE-K22 Studio World Knowledge Core™**, **ARTICLE-K23 Memory System™**, and **ARTICLE-A01 Asset Compiler™**. The latest follow-up corrected the A01 mental model: Studio World should not have a Hero Icon Library™ as a standalone production concept; it should have **Studio Foundry™**, a universal manufacturing system. A library stores finished assets; a foundry manufactures assets.
@@ -43559,3 +43560,23 @@ Summary of the **whole conversation so far** in this chat: user first requested 
 - **Verification:** `npx tsc --noEmit`, `npx tsx scripts/test-studio-orb-radial-layout.ts`, `npm run build` — all passed.
 - **Conventions:** Orb component stays presentation-only; department logic lives in `context-registry/` + resolvers. Future departments register via `registerOrbContext()` or new registry file + `ORB_CONTEXT_REGISTRY` entry — do not hardcode in Orb UI.
 
+=======
+## 2026-07-08 — World Atlas React #301 infinite re-render fix
+
+**Context:** User reported **COMPONENT FAILED TO LOAD** on mobile/production at `/admin/studio/world-atlas` with minified React error **#301** (too many re-renders — render-phase setState loop).
+
+**Topics covered (entire conversation so far):**
+- Prior session: ARTICLE-D08 Hero Icon Library, removed Command Center teaching footer, Orb radial menu left/up clearance fix.
+- **This turn:** Diagnosed React #301 as **`didScheduleRenderPhaseUpdateDuringThisPass`** — not a hooks-order violation.
+- **Root cause:** `useMissionControl` **`travelPreview`** `useMemo` called **`atlas.resolveTravel(selectedNode.id)`** during render. `resolveTravel` in `useStudioWorldAtlas` mutates state (`setDiscoveryTick`, `setView` traveling roads) — each render triggered another render → 25+ passes → error #301.
+- **Fix:** Preview now uses pure **`resolveAtlasTravel(selectedNode, travelMode, { zoomLevel })`** with `travelMode` / `zoomLevel` passed from `StudioWorldAtlasRoom`. Side-effectful `resolveTravel` remains only in actual travel handlers (`handleTravel`, Global Atlas `travelToNode`).
+- Also moved **`replayActivation`** `useCallback` to top-level hook body (was nested in return object).
+
+**Decisions / outcomes:** World Atlas / Mission Control page should load without infinite re-render; travel preview is read-only at render time.
+
+**Changes:** `src/hooks/useMissionControl.ts`, `src/components/admin/studio/world-atlas/StudioWorldAtlasRoom.tsx`, `motherboard/MEMORY.md`.
+
+**Verification:** `npm run build` passed.
+
+**Conventions:** Never call mutating atlas hook methods (`resolveTravel`, `focusOn`, etc.) inside `useMemo` / render — use pure `studio-os-core` helpers for previews.
+>>>>>>> e23dfbf56 (Fix World Atlas infinite re-render — pure travel preview in useMissionControl)
