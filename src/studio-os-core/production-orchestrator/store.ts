@@ -4,7 +4,13 @@ import {
   PRODUCTION_ORCHESTRATOR_VERSION,
   STUDIO_OS_PRODUCTION_ORCHESTRATOR_UPDATED,
 } from './constants';
-import { generateArchitecturePrompt, generateProductionPackage, isArchitectureOutputComplete } from './package-builder';
+import { generateArchitecturePrompt, generateProductionPackage, isArchitectureOutputComplete, buildTaskCompletionChecklist } from './package-builder';
+import {
+  advanceQualityGate,
+  formatCompletionSummary,
+  syncChecklistGateFromOrchestratorStage,
+  toggleChecklistItemPassed,
+} from '../production-completion-system';
 import type {
   CreateProductionTaskInput,
   ProductionBoardTask,
@@ -56,17 +62,40 @@ export function getOrganizationProductionOrchestratorProfile(organizationId: str
   return readProductionOrchestratorStore().profiles.find((p) => p.organizationId === organizationId) ?? null;
 }
 
+function migrateBoardTask(task: ProductionBoardTask): ProductionBoardTask {
+  if (task.completionChecklist?.items?.length && task.owner) {
+    return refreshTaskCompletion(task);
+  }
+  const input = taskInputFromBoard(task);
+  const pkg = task.productionPackage?.completionChecklistSummary
+    ? task.productionPackage
+    : generateProductionPackage(input, task.output || task.productionPackage?.architectureOutput);
+  const checklist = buildTaskCompletionChecklist(input, pkg.architectureOutput, task.assignedModel);
+  return refreshTaskCompletion({
+    ...task,
+    owner: task.owner ?? 'Founder',
+    blockedBy: task.blockedBy ?? [],
+    readyForReview: task.readyForReview ?? false,
+    approvedBy: task.approvedBy ?? null,
+    completionTimestamp: task.completionTimestamp ?? null,
+    productionPackage: pkg,
+    completionChecklist: syncChecklistGateFromOrchestratorStage(checklist, task.currentStage),
+  });
+}
+
 function summarizeProfile(profile: ProductionOrchestratorProfile): ProductionOrchestratorProfile {
-  const architectureQueuedCount = profile.tasks.filter((t) =>
+  const tasks = profile.tasks.map(migrateBoardTask);
+  const architectureQueuedCount = tasks.filter((t) =>
     ['architecture-queued', 'architecture-running'].includes(t.currentStage)
   ).length;
-  const implementationReadyCount = profile.tasks.filter((t) => t.currentStage === 'implementation-ready').length;
-  const blockedCount = profile.tasks.filter((t) => t.status === 'blocked').length;
-  const reviewNeededCount = profile.tasks.filter((t) => t.currentStage === 'review-needed').length;
-  const approvedCount = profile.tasks.filter((t) => t.currentStage === 'approved').length;
+  const implementationReadyCount = tasks.filter((t) => t.currentStage === 'implementation-ready').length;
+  const blockedCount = tasks.filter((t) => t.status === 'blocked').length;
+  const reviewNeededCount = tasks.filter((t) => t.currentStage === 'review-needed').length;
+  const approvedCount = tasks.filter((t) => t.currentStage === 'approved').length;
 
   return {
     ...profile,
+    tasks,
     architectureQueuedCount,
     implementationReadyCount,
     blockedCount,
@@ -87,24 +116,68 @@ function upsertProfile(profile: ProductionOrchestratorProfile): ProductionOrches
   return summarized;
 }
 
+function taskInputFromBoard(task: ProductionBoardTask): CreateProductionTaskInput {
+  return {
+    featureName: task.featureName,
+    founderIntent: task.founderIntent,
+    owner: task.owner,
+    dependencies: task.dependencies,
+    requiresAssets: task.requiresAssets,
+    requiresMotion: task.requiresMotion,
+    autoApprovalAllowed: task.gate.autoApprovalAllowed,
+  };
+}
+
+function passedMapFromChecklist(task: ProductionBoardTask): Record<string, boolean> {
+  return Object.fromEntries(task.completionChecklist.items.map((i) => [i.id, i.passed]));
+}
+
+function refreshTaskCompletion(task: ProductionBoardTask): ProductionBoardTask {
+  const passed = passedMapFromChecklist(task);
+  const checklist = buildTaskCompletionChecklist(
+    taskInputFromBoard(task),
+    task.productionPackage.architectureOutput,
+    task.assignedModel,
+    passed
+  );
+  const synced = syncChecklistGateFromOrchestratorStage(checklist, task.currentStage);
+  const pkg = {
+    ...task.productionPackage,
+    completionChecklistSummary: formatCompletionSummary(synced),
+  };
+  return {
+    ...task,
+    completionChecklist: synced,
+    productionPackage: pkg,
+    readyForReview: synced.readyForReview,
+    blockedBy: synced.blockingLabels,
+  };
+}
+
 function createBoardTask(input: CreateProductionTaskInput, stage: ProductionOrchestratorStage = 'architecture-queued'): ProductionBoardTask {
   const createdAt = nowIso();
   const productionPackage = generateProductionPackage(input);
+  const completionChecklist = buildTaskCompletionChecklist(input, productionPackage.architectureOutput, stage === 'idea' ? 'founder' : 'gpt-5.5');
   return {
     id: newId('spo'),
     featureName: input.featureName.trim() || 'Untitled Studio World Feature',
+    owner: input.owner?.trim() || 'Founder',
     founderIntent: input.founderIntent.trim(),
     currentStage: stage,
     assignedModel: stage === 'idea' ? 'founder' : 'gpt-5.5',
     prompt: generateArchitecturePrompt(input),
     output: '',
     dependencies: input.dependencies ?? [],
+    blockedBy: completionChecklist.blockingLabels,
     status: stage === 'idea' ? 'queued' : 'queued',
     nextRequiredAction: 'Send architecture prompt to GPT-5.5 and wait for architecture output.',
     blockingIssues: [],
     reviewState: 'not-started',
     requiresAssets: input.requiresAssets ?? false,
     requiresMotion: input.requiresMotion ?? false,
+    readyForReview: false,
+    approvedBy: null,
+    completionTimestamp: null,
     createdAt,
     updatedAt: createdAt,
     gate: {
@@ -113,8 +186,14 @@ function createBoardTask(input: CreateProductionTaskInput, stage: ProductionOrch
       founderApproval: false,
       autoApprovalAllowed: input.autoApprovalAllowed ?? false,
     },
-    productionPackage,
-    handoffLog: [`${createdAt}: Founder Intent™ captured and Architecture Prompt Queue™ populated.`],
+    productionPackage: {
+      ...productionPackage,
+      completionChecklistSummary: formatCompletionSummary(completionChecklist),
+    },
+    completionChecklist,
+    handoffLog: [
+      `${createdAt}: Founder Intent™ captured, Architecture Prompt Queue™ populated, and Production Completion Checklist™ generated.`,
+    ],
   };
 }
 
@@ -129,6 +208,7 @@ function buildDemoTasks(): ProductionBoardTask[] {
     {
       featureName: 'Studio Production Orchestrator™',
       founderIntent: 'Submit one Studio World idea and route it through GPT architecture, Composer implementation, OpenArt/FAL assets, Kling motion, review, Knowledge Core, and ADR updates.',
+      owner: 'Founder',
       dependencies: ['Model Orchestrator™', 'Workflow Engine™', 'Prompt Registry™', 'Knowledge Registry™', 'Decision Audit™'],
       requiresAssets: true,
       requiresMotion: true,
@@ -136,8 +216,20 @@ function buildDemoTasks(): ProductionBoardTask[] {
     },
     'implementation-ready'
   );
-  return [
+  const seedChecklist = buildTaskCompletionChecklist(
     {
+      featureName: task.featureName,
+      founderIntent: task.founderIntent,
+      owner: task.owner,
+      dependencies: task.dependencies,
+      requiresAssets: true,
+      requiresMotion: true,
+    },
+    seedArchitecture,
+    'composer-2.5'
+  );
+  return [
+    refreshTaskCompletion({
       ...task,
       output: seedArchitecture,
       assignedModel: 'composer-2.5',
@@ -160,11 +252,12 @@ function buildDemoTasks(): ProductionBoardTask[] {
         },
         seedArchitecture
       ),
+      completionChecklist: syncChecklistGateFromOrchestratorStage(seedChecklist, 'implementation-ready'),
       handoffLog: [
         ...task.handoffLog,
         `${nowIso()}: GPT Architecture Output™ saved and Composer Implementation Queue™ package generated.`,
       ],
-    },
+    }),
   ];
 }
 
@@ -204,7 +297,9 @@ function updateTask(
   return upsertProfile({
     ...profile,
     activeTaskId: taskId,
-    tasks: profile.tasks.map((task) => (task.id === taskId ? updater(task) : task)),
+    tasks: profile.tasks.map((task) =>
+      task.id === taskId ? refreshTaskCompletion(updater(task)) : task
+    ),
   });
 }
 
@@ -390,8 +485,101 @@ export function approveProductionTask(organizationId: string, taskId: string): P
     assignedModel: 'founder',
     status: 'approved',
     reviewState: 'approved',
+    approvedBy: 'Founder',
+    readyForReview: false,
     nextRequiredAction: 'Archive after Knowledge Core and ADR updates are committed.',
     updatedAt: nowIso(),
+    completionChecklist: {
+      ...task.completionChecklist,
+      approvedBy: 'Founder',
+      currentGate: 'founder-review',
+      readyForReview: false,
+    },
     handoffLog: [...task.handoffLog, `${nowIso()}: Founder approved; Knowledge Core / ADR update ready.`],
   }));
+}
+
+export function toggleProductionChecklistItem(
+  organizationId: string,
+  taskId: string,
+  itemId: string,
+  passed: boolean
+): ProductionOrchestratorProfile {
+  return updateTask(organizationId, taskId, (task) => {
+    const updated = toggleChecklistItemPassed(task.completionChecklist, itemId, passed);
+    return {
+      ...task,
+      completionChecklist: updated,
+      blockedBy: updated.blockingLabels,
+      blockingIssues: updated.gateBlocked
+        ? [`Quality Gate™ blocked: ${updated.blockingLabels.slice(0, 2).join('; ')}`]
+        : task.blockingIssues.filter((i) => !i.startsWith('Quality Gate™')),
+      nextRequiredAction: updated.gateBlocked
+        ? `Complete checkpoints: ${updated.blockingLabels.slice(0, 2).join('; ')}`
+        : task.nextRequiredAction,
+      updatedAt: nowIso(),
+      handoffLog: [...task.handoffLog, `${nowIso()}: Checklist "${itemId}" marked ${passed ? 'complete' : 'incomplete'}.`],
+    };
+  });
+}
+
+export function advanceProductionQualityGate(
+  organizationId: string,
+  taskId: string
+): ProductionOrchestratorProfile {
+  return updateTask(organizationId, taskId, (task) => {
+    const result = advanceQualityGate(task.completionChecklist);
+    if (!result.advanced) {
+      return {
+        ...task,
+        status: 'blocked',
+        blockingIssues: [result.reason ?? 'Quality Gate™ blocked.'],
+        nextRequiredAction: result.reason ?? 'Complete required checkpoints before advancing.',
+        updatedAt: nowIso(),
+      };
+    }
+    return {
+      ...task,
+      completionChecklist: result.checklist,
+      blockedBy: result.checklist.blockingLabels,
+      nextRequiredAction: `Advanced to ${result.checklist.currentGate.replace(/-/g, ' ')} gate.`,
+      updatedAt: nowIso(),
+      handoffLog: [...task.handoffLog, `${nowIso()}: Quality Gate™ advanced to ${result.checklist.currentGate}.`],
+    };
+  });
+}
+
+export function markProductionComplete(organizationId: string, taskId: string): ProductionOrchestratorProfile {
+  return updateTask(organizationId, taskId, (task) => {
+    const full = advanceQualityGate({
+      ...task.completionChecklist,
+      currentGate: 'production-ready',
+    });
+    if (!full.advanced && task.completionChecklist.gateBlocked) {
+      return {
+        ...task,
+        status: 'blocked',
+        blockingIssues: ['Cannot mark complete — required checkpoints remain.'],
+        nextRequiredAction: 'Finish Production Completion Checklist™ before marking complete.',
+        updatedAt: nowIso(),
+      };
+    }
+    const ts = nowIso();
+    return {
+      ...task,
+      currentStage: 'archived',
+      status: 'complete',
+      completionTimestamp: ts,
+      completionChecklist: {
+        ...task.completionChecklist,
+        currentGate: 'complete',
+        completionTimestamp: ts,
+        gateBlocked: false,
+        blockingLabels: [],
+      },
+      nextRequiredAction: 'Production Ready™ — feature complete.',
+      updatedAt: ts,
+      handoffLog: [...task.handoffLog, `${ts}: Production Completion System™ marked feature complete.`],
+    };
+  });
 }

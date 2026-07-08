@@ -12,3 +12,4 @@ export { ingestArchitectureDecisionNodes } from './architecture-decisions-ingest
 export { ingestKnowledgeCoreNodes } from './knowledge-core-ingest';
 export { ingestAssetCompilerNodes } from './asset-compiler-ingest';
 export { ingestCompanyRouteNodes } from './company-routes-ingest';
+export { ingestProductionCompletionNodes } from './production-completion-ingest';

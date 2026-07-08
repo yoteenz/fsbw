@@ -1,4 +1,8 @@
 import type { CreateProductionTaskInput, ProductionBoardTask, ProductionPackage } from './types';
+import {
+  buildProductionCompletionChecklist,
+  formatCompletionSummary,
+} from '../production-completion-system';
 
 const defaultArchitectureOutput =
   'Waiting for GPT-5.5 architecture output. Paste or sync the completed architecture response to unlock implementation handoff generation.';
@@ -30,6 +34,8 @@ export function generateArchitecturePrompt(input: CreateProductionTaskInput): st
     '7. Knowledge Core references.',
     '8. ADR requirements and decision record title.',
     '9. Conflicts, missing inputs, or blockers.',
+    '',
+    '10. Production Completion Checklist™ scope (routing, database, API, constitutional, visual-only, assets, motion).',
   ].join('\n');
 }
 
@@ -54,7 +60,29 @@ export function generateComposerPrompt(task: Pick<ProductionBoardTask, 'featureN
     '- Add focused tests or build verification appropriate to the change.',
     '- Update Knowledge Core and ADR notes listed in the Production Package.',
     '- Stop and mark blocked if architecture is incomplete or conflicting.',
+    '- Complete every required Production Completion Checklist™ checkpoint before marking done.',
   ].join('\n');
+}
+
+function buildCompletionForPackage(
+  input: CreateProductionTaskInput,
+  architectureOutput: string,
+  assignedModel = 'composer-2.5',
+  existingPassed?: Record<string, boolean>
+) {
+  return buildProductionCompletionChecklist(
+    {
+      featureName: input.featureName,
+      founderIntent: input.founderIntent,
+      architectureOutput,
+      requiresAssets: input.requiresAssets,
+      requiresMotion: input.requiresMotion,
+      scopeOverrides: input.scopeOverrides,
+      owner: input.owner,
+      assignedModel,
+    },
+    { existingPassed }
+  );
 }
 
 export function generateProductionPackage(input: CreateProductionTaskInput, architectureOutput = ''): ProductionPackage {
@@ -68,6 +96,7 @@ export function generateProductionPackage(input: CreateProductionTaskInput, arch
     },
     safeArchitectureOutput
   );
+  const completion = buildCompletionForPackage(input, safeArchitectureOutput);
 
   return {
     architecturePrompt,
@@ -87,12 +116,14 @@ export function generateProductionPackage(input: CreateProductionTaskInput, arch
       'Verify architecture output is saved before implementation begins.',
       'Verify dependencies are resolved or explicitly blocked.',
       'Verify Composer prompt includes architecture, Knowledge Core references, ADR requirements, and integration checklist.',
+      'Complete required Production Completion Checklist™ checkpoints for current Quality Gate™.',
       'Run build/typecheck after implementation.',
       'Founder reviews final package before approval unless auto-approval is allowed.',
     ],
     knowledgeCoreUpdates: [
       'Record the production workflow intent, chosen architecture, implementation outcome, and review decision.',
       'Link related Studio OS modules: Model Orchestrator™, Workflow Engine™, Prompt Registry™, Knowledge Registry™, Decision Audit™.',
+      'Update ARTICLE-K24 Production Completion System™ checkpoint status when feature ships.',
     ],
     adrUpdates: [
       `ADR: ${input.featureName} — architecture-to-implementation handoff decision.`,
@@ -103,6 +134,7 @@ export function generateProductionPackage(input: CreateProductionTaskInput, arch
       'Architecture Prompt Queue™ populated.',
       'GPT Architecture Output™ saved.',
       'Architecture Completion Detection™ passed.',
+      'Production Completion Checklist™ generated for feature scope.',
       'Implementation Handoff Package™ generated.',
       'Composer Implementation Queue™ gated by approval and dependencies.',
       'Asset Generation Queue™ populated when visual assets are needed.',
@@ -110,7 +142,17 @@ export function generateProductionPackage(input: CreateProductionTaskInput, arch
       'Review Queue™ prepared.',
       'Knowledge Core / ADR Update™ prepared.',
     ],
+    completionChecklistSummary: formatCompletionSummary(completion),
   };
+}
+
+export function buildTaskCompletionChecklist(
+  input: CreateProductionTaskInput,
+  architectureOutput = '',
+  assignedModel = 'composer-2.5',
+  existingPassed?: Record<string, boolean>
+) {
+  return buildCompletionForPackage(input, architectureOutput, assignedModel, existingPassed);
 }
 
 export function isArchitectureOutputComplete(output: string): boolean {

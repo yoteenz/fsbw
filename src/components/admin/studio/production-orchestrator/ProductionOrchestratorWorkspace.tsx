@@ -25,8 +25,9 @@ import {
   ExecutivePageShell,
   ExecutiveSecondaryCard,
 } from '../executive-ia';
+import { ProductionCompletionChecklistPanel } from './ProductionCompletionChecklistPanel';
 
-type PackageTab = 'architecture' | 'composer' | 'assets' | 'motion' | 'testing' | 'knowledge' | 'adr' | 'integration';
+type PackageTab = 'architecture' | 'composer' | 'assets' | 'motion' | 'testing' | 'knowledge' | 'adr' | 'integration' | 'completion';
 
 const PACKAGE_TABS: { id: PackageTab; label: string }[] = [
   { id: 'architecture', label: 'ARCHITECTURE' },
@@ -37,6 +38,7 @@ const PACKAGE_TABS: { id: PackageTab; label: string }[] = [
   { id: 'knowledge', label: 'KNOWLEDGE' },
   { id: 'adr', label: 'ADR' },
   { id: 'integration', label: 'INTEGRATION' },
+  { id: 'completion', label: 'COMPLETION™' },
 ];
 
 const emptyForm = {
@@ -113,7 +115,7 @@ function StageColumn({
               {task.featureName}
             </p>
             <p className="text-[6px] font-futura uppercase mb-1" style={{ color: PRODUCTION_ORCHESTRATOR_ACCENT }}>
-              {PRODUCTION_MODEL_LABELS[task.assignedModel]} · {task.status}
+              {PRODUCTION_MODEL_LABELS[task.assignedModel]} · {task.status} · {task.completionChecklist.completionPct}%
             </p>
             <p className="text-[6px] font-futura" style={{ color: ADMIN_STUDIO_THEME.textSecondary, lineHeight: 1.35 }}>
               {task.nextRequiredAction}
@@ -171,6 +173,9 @@ export function ProductionOrchestratorWorkspace() {
     completeImplementation,
     advanceMediaQueue,
     approveProductionTask,
+    toggleChecklistItem,
+    advanceQualityGate,
+    markProductionComplete,
   } = useProductionOrchestratorState();
   const [form, setForm] = useState(emptyForm);
   const [selectedTaskId, setSelectedTaskId] = useState('');
@@ -236,6 +241,16 @@ export function ProductionOrchestratorWorkspace() {
     if (packageTab === 'testing') return <ListBlock title="Testing Checklist" items={task.productionPackage.testingChecklist} />;
     if (packageTab === 'knowledge') return <ListBlock title="Knowledge Core Updates" items={task.productionPackage.knowledgeCoreUpdates} />;
     if (packageTab === 'adr') return <ListBlock title="ADR Updates" items={task.productionPackage.adrUpdates} />;
+    if (packageTab === 'completion') {
+      return (
+        <ProductionCompletionChecklistPanel
+          checklist={task.completionChecklist}
+          onToggleItem={(itemId, passed) => toggleChecklistItem(task.id, itemId, passed)}
+          onAdvanceGate={() => advanceQualityGate(task.id)}
+          onMarkComplete={() => markProductionComplete(task.id)}
+        />
+      );
+    }
     return <ListBlock title="Integration Checklist" items={task.productionPackage.integrationChecklist} />;
   };
 

@@ -1,4 +1,5 @@
 import type { PRODUCTION_MODEL_ROLES, PRODUCTION_ORCHESTRATOR_STAGES } from './constants';
+import type { ProductionCompletionChecklist } from '../production-completion-system';
 
 export type ProductionOrchestratorStage = (typeof PRODUCTION_ORCHESTRATOR_STAGES)[number];
 export type ProductionModelRole = (typeof PRODUCTION_MODEL_ROLES)[number];
@@ -23,27 +24,35 @@ export type ProductionPackage = {
   knowledgeCoreUpdates: string[];
   adrUpdates: string[];
   integrationChecklist: string[];
+  /** ARTICLE-K24 — adaptive Production Completion Checklist™ */
+  completionChecklistSummary: string;
 };
 
 export type ProductionBoardTask = {
   id: string;
   featureName: string;
+  owner: string;
   founderIntent: string;
   currentStage: ProductionOrchestratorStage;
   assignedModel: ProductionModelRole;
   prompt: string;
   output: string;
   dependencies: string[];
+  blockedBy: string[];
   status: ProductionTaskStatus;
   nextRequiredAction: string;
   blockingIssues: string[];
   reviewState: ProductionReviewState;
   requiresAssets: boolean;
   requiresMotion: boolean;
+  readyForReview: boolean;
+  approvedBy: string | null;
+  completionTimestamp: string | null;
   createdAt: string;
   updatedAt: string;
   gate: ProductionAutomationGate;
   productionPackage: ProductionPackage;
+  completionChecklist: ProductionCompletionChecklist;
   handoffLog: string[];
 };
 
@@ -69,8 +78,10 @@ export type ProductionOrchestratorStore = {
 export type CreateProductionTaskInput = {
   featureName: string;
   founderIntent: string;
+  owner?: string;
   dependencies?: string[];
   requiresAssets?: boolean;
   requiresMotion?: boolean;
   autoApprovalAllowed?: boolean;
+  scopeOverrides?: Partial<import('../production-completion-system').ProductionFeatureScope>;
 };

@@ -124,6 +124,26 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       integratesWith: ['studio-foundry', 'asset-registry', 'scene-stack', 'studio-world-atlas'],
     },
     {
+      slug: 'production-orchestrator',
+      name: 'Studio Production Orchestrator™',
+      summary:
+        'AI production handoff board — Founder Intent™ through architecture, Composer implementation, assets, motion, review, and Knowledge Core updates.',
+      lifecycle: 'live',
+      codePaths: ['src/studio-os-core/production-orchestrator/'],
+      docPaths: ['docs/studio-os/engine/production-orchestrator/README.md'],
+      integratesWith: ['model-orchestrator', 'workflow-engine', 'knowledge-registry', 'decision-audit'],
+    },
+    {
+      slug: 'production-completion-system',
+      name: 'Production Completion System™',
+      summary:
+        'ARTICLE-K24 Definition of Done™ — adaptive Production Completion Checklist™ and Quality Gates™ enforced on every Production Package™.',
+      lifecycle: 'implemented',
+      codePaths: ['src/studio-os-core/production-completion-system/'],
+      docPaths: ['docs/studio-os/engine/production-completion/ARTICLE_K24_PRODUCTION_COMPLETION_SYSTEM.md'],
+      integratesWith: ['production-orchestrator', 'experience-intelligence-engine', 'world-graph', 'knowledge-core'],
+    },
+    {
       slug: 'orb-archivist',
       name: 'Orb Archivist™',
       summary: 'Relationship-first explorer of the World Graph™ — institutional memory interface.',

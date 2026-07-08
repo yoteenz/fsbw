@@ -23,6 +23,14 @@ export const MEMORY_SYSTEM_ARTICLE = {
     'Studio World separates Conversation™, Knowledge™, History™, and Canon™ so raw history, extracted understanding, founder review, and approved memory are never confused.',
 } as const;
 
+export const PRODUCTION_COMPLETION_ARTICLE = {
+  id: 'ARTICLE-K24',
+  title: 'Production Completion System™',
+  approvedDate: '2026-07-08',
+  summary:
+    'Every implementation passes a standardized Production Completion Checklist™ and Quality Gates™ before it is considered done — adaptive to feature scope, enforced by Studio Production Orchestrator™.',
+} as const;
+
 export const PROMPT_STANDARDS: PromptStandard[] = [
   {
     id: 'recommended-model',
@@ -416,6 +424,47 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
     ],
     implementationStatus: 'Implemented',
     tags: ['studio-foundry', 'asset-manufacturing', 'asset-registry', 'generation-recipes'],
+  },
+  {
+    id: 'K24-production-completion-system',
+    title: 'ARTICLE-K24 — Production Completion System™',
+    domain: 'Engineering Standards™',
+    status: 'Canon',
+    version: 'v1',
+    summary:
+      'Definition of Done™ engine — every Production Package™ includes adaptive Planning, Architecture, Implementation, Integration, Testing, Knowledge Updates, Review, and Approval checkpoints with Quality Gates™ that block silent completion.',
+    reasoning:
+      'Studio World complexity requires a single consistent definition of "done." Feature-complete is insufficient; constitutional, engineering, experience, visual, performance, world-integration, and QA checkpoints must pass before a feature advances through Architecture → Implementation → Integration → QA → Founder Review → Knowledge Update → Production Ready → Complete.',
+    finalPrompt:
+      'Create Production Completion System™ integrated with Studio Production Orchestrator™. Checklist adapts to scope (visual-only skips database; routing skips OpenArt assets; constitutional changes require ADR). Quality Gates™ pause progression and identify remaining work — never silently mark complete.',
+    architectureAdded: [
+      'Production Completion System™',
+      'Adaptive Production Checklist™',
+      'Quality Gates™',
+      'Production Board completion fields',
+      'Scope inference engine',
+      'Orchestrator integration',
+    ],
+    relatedSystems: [
+      'Studio Production Orchestrator™',
+      'Experience Intelligence Engine™',
+      'World Graph™',
+      'Knowledge Core™',
+      'Architecture Decision Records™',
+      'QA Inspector™',
+      'Orb™',
+      'Atlas™',
+    ],
+    constitutionArticles: ['ARTICLE-K24', 'ARTICLE-K22', 'ARTICLE-K23'],
+    adrReferences: ['ADR-0001'],
+    worldBibleReferences: [
+      'Studio Production Orchestrator™',
+      'Production Completion Checklist™',
+      'Quality Gates™',
+      'Studio World Production Pipeline',
+    ],
+    implementationStatus: 'Implemented',
+    tags: ['production-completion', 'definition-of-done', 'quality-gates', 'production-orchestrator'],
   },
 ];
 

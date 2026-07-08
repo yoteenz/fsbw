@@ -14,6 +14,9 @@ import {
   startComposerImplementation,
   syncProductionOrchestratorFromSources,
   advanceMediaQueue,
+  toggleProductionChecklistItem,
+  advanceProductionQualityGate,
+  markProductionComplete,
   type CreateProductionTaskInput,
   type ProductionOrchestratorProfile,
 } from '../studio-os-core/production-orchestrator';
@@ -55,5 +58,9 @@ export function useProductionOrchestratorState() {
     completeImplementation: (taskId: string, output: string) => runAction(() => completeImplementation(workspaceId, taskId, output)),
     advanceMediaQueue: (taskId: string) => runAction(() => advanceMediaQueue(workspaceId, taskId)),
     approveProductionTask: (taskId: string) => runAction(() => approveProductionTask(workspaceId, taskId)),
+    toggleChecklistItem: (taskId: string, itemId: string, passed: boolean) =>
+      runAction(() => toggleProductionChecklistItem(workspaceId, taskId, itemId, passed)),
+    advanceQualityGate: (taskId: string) => runAction(() => advanceProductionQualityGate(workspaceId, taskId)),
+    markProductionComplete: (taskId: string) => runAction(() => markProductionComplete(workspaceId, taskId)),
   };
 }
