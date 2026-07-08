@@ -108,3 +108,17 @@ export function listComposeLayers(): SceneStackLayerDefinition[] {
     .filter((l) => l.role === 'fal-generated')
     .sort((a, b) => a.order - b.order);
 }
+
+/** HUD / pipeline strip abbreviations */
+export const SCENE_STACK_LAYER_SHORT_LABELS: Record<SceneStackLayerId, string> = {
+  'environment-shell': 'Shell',
+  'signature-landmark': 'Landmark',
+  'furniture-objects': 'Furniture',
+  'lighting-systems': 'Lighting',
+  'atmospheric-systems': 'Atmosphere',
+  'surface-materials': 'Materials',
+  'ambient-motion': 'Motion',
+  interaction: 'Interaction',
+  'runtime-effects': 'FX',
+  'founder-personalization': 'Personal',
+};

@@ -94,6 +94,11 @@ export function CreativeDirectionStudioRoom() {
     () => stack.getCompositeStatus(activeZoneId),
     [stack, activeZoneId]
   );
+  const activePipeline = useMemo(
+    () => stack.getStationPipelineProgress(activeZoneId),
+    [stack, activeZoneId]
+  );
+  const stackButtonBusy = stack.isStationPipelineActive(activeZoneId);
 
   const visibleNavZones = useMemo(
     () => CDS_CAMERA_ZONES.filter((z) => arrivalComplete || !z.requiresArrival),
@@ -358,11 +363,22 @@ export function CreativeDirectionStudioRoom() {
           </div>
           <button
             type="button"
-            className="cds-genesis__pill cds-genesis__pill-btn"
+            className={`cds-genesis__pill cds-genesis__pill-btn cds-genesis__stack-btn${stackButtonBusy ? ' is-building' : ''}`}
             onClick={() => void stack.ensureStation(activeZoneId)}
-            title="Golden Build™ Scene Stack™"
+            disabled={stackButtonBusy}
+            title="Golden Build™ Scene Stack™ — builds missing layers for this zone"
+            aria-busy={stackButtonBusy}
           >
-            Stack {stack.readyStationCount}/{stack.totalStationCount}
+            {stackButtonBusy ? (
+              <>
+                <span className="cds-genesis__stack-spinner" aria-hidden />
+                {activePipeline.currentLayerLabel
+                  ? `${activePipeline.currentLayerLabel} ${activePipeline.layersComplete + 1}/${activePipeline.layersTotal}`
+                  : `Building ${activePipeline.layersComplete}/${activePipeline.layersTotal}`}
+              </>
+            ) : (
+              `Stack ${stack.readyStationCount}/${stack.totalStationCount}`
+            )}
           </button>
         </header>
 
@@ -384,6 +400,9 @@ export function CreativeDirectionStudioRoom() {
                     layers={zoneLayers}
                     status={stack.getCompositeStatus(zone.id)}
                     stationLabel={zone.label}
+                    pipeline={
+                      zone.id === activeZoneId ? stack.getStationPipelineProgress(zone.id) : undefined
+                    }
                     onRegenerateLayer={(layerId) =>
                       void stack.regenerateLayer(zone.id, layerId as SceneStackLayerId)
                     }
@@ -398,7 +417,18 @@ export function CreativeDirectionStudioRoom() {
         <p className="cds-genesis__teaching">
           {activeZone.teaching}
           {stationSpec?.signatureLandmarkId ? ' · Signature Landmark™' : ''}
-          {compositeStatus === 'partial' ? ` · ${activeLayers.filter((l) => l.publicUrl).length} layers composed` : ''}
+          {stackButtonBusy ? (
+            <>
+              {' · Scene Stack™ '}
+              {activePipeline.currentLayerLabel
+                ? `generating ${activePipeline.currentLayerLabel} (${activePipeline.layersComplete}/${activePipeline.layersTotal})`
+                : `building (${activePipeline.layersComplete}/${activePipeline.layersTotal})`}
+            </>
+          ) : compositeStatus === 'partial' ? (
+            ` · ${activeLayers.filter((l) => l.publicUrl).length} layers composed`
+          ) : (
+            ''
+          )}
         </p>
 
         <nav className="cds-genesis__nav" aria-label="Department zones">

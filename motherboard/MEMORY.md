@@ -42032,3 +42032,17 @@ User correctly challenged **100/100 launch readiness** while Stripe/payment meth
 - **Fix:** Split scores — **`static_integrity_score`** (routes/build/TS) vs **`launch_readiness_score`** (includes commerce env blockers). Added **`COMMERCE_INTEGRATION_CHECKS`** (STRIPE_SECRET_KEY, publishable, webhook, 3/6/12 price IDs, SITE_URL). Missing env → critical **commerce_integration** warnings; **`commerce_launch_status: blocked`**. Report disclaimer: passing `/checkout` route ≠ payments work.
 - **Example run (no Stripe env in audit shell):** static **100/100**, launch **25/100**, commerce **blocked**.
 - **Prior arc (same chat):** CDS per-layer Regen UI · Scene Stack persistence · Launch Integrity Auditor™ sprint.
+
+---
+
+## 2026-07-08 — CDS Scene Stack pipeline visual feedback (Stack button + HUD)
+
+User: **Stack 0/6** not responsive on first click — need visual cues during pipeline instead of aimless waiting.
+
+- **Root cause:** `ensureStation` had no synchronous “started” state; UI only updated after first FAL request; **Stack X/6** counts **fully ready stations** (not per-layer progress on active zone).
+- **Hook (`useSceneStack`):** `ensuringStations` Set + `pipelineLayer` state set **immediately** on `ensureStation` click; `getStationPipelineProgress`, `isStationPipelineActive`; composite status `building` while station ensuring.
+- **Stack button:** pulses + spinner on click; label switches to e.g. `Shell 1/8` / `Building 2/8`; disabled while active zone pipeline runs.
+- **Viewport HUD:** center panel — station name, current layer (“Generating Lighting…”), progress bar, layer count; pulsing empty plate; layer strip visible from first build with Gen/… on active row.
+- **Teaching line:** live “generating Shell (0/8)” during pipeline.
+- **Files:** `useSceneStack.ts`, `CreativeDirectionStudioRoom.tsx`, `SceneStackViewport.tsx`, `cdsInteractionLayerTheme.ts`, `layer-catalog.ts` (`SCENE_STACK_LAYER_SHORT_LABELS`).
+- **Prior arc (same chat):** Launch Auditor commerce score honesty · per-layer Regen · persistence fix.

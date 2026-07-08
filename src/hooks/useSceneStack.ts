@@ -11,12 +11,22 @@ import {
   resolveStationLayerViews,
   saveSceneStackLayerRecord,
   getSceneStackStation,
+  SCENE_STACK_LAYER_SHORT_LABELS,
   type SceneStackCompositeStatus,
   type SceneStackLayerId,
   type SceneStackLayerView,
 } from '../studio-os-core/scene-stack';
 import { registerStudioAsset } from '../studio-os-core/studio-builder/registry-store';
 import { requestStudioBuilderGenerate } from '../services/studio/studioBuilder/api';
+
+export type SceneStackPipelineProgress = {
+  stationId: string;
+  layersComplete: number;
+  layersTotal: number;
+  currentLayerId: SceneStackLayerId | null;
+  currentLayerLabel: string | null;
+  phase: 'idle' | 'queued' | 'generating';
+};
 
 export function useSceneStack(
   departmentId: string,
@@ -25,6 +35,12 @@ export function useSceneStack(
 ) {
   const [version, setVersion] = useState(0);
   const [generatingKeys, setGeneratingKeys] = useState<Set<string>>(new Set());
+  const [ensuringStations, setEnsuringStations] = useState<Set<string>>(new Set());
+  const [pipelineLayer, setPipelineLayer] = useState<{
+    stationId: string;
+    layerId: SceneStackLayerId;
+    phase: 'queued' | 'generating';
+  } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const bump = useCallback(() => setVersion((v) => v + 1), []);
@@ -54,9 +70,64 @@ export function useSceneStack(
   );
 
   const getCompositeStatus = useCallback(
-    (stationId: string): SceneStackCompositeStatus =>
-      resolveStackCompositeStatus(getLayerViews(stationId)),
-    [getLayerViews]
+    (stationId: string): SceneStackCompositeStatus => {
+      const base = resolveStackCompositeStatus(getLayerViews(stationId));
+      if (ensuringStations.has(stationId) && base !== 'ready') return 'building';
+      return base;
+    },
+    [ensuringStations, getLayerViews]
+  );
+
+  const isStationPipelineActive = useCallback(
+    (stationId: string) => {
+      if (ensuringStations.has(stationId)) return true;
+      for (const key of generatingKeys) {
+        if (key.startsWith(`${stationId}:`)) return true;
+      }
+      return false;
+    },
+    [ensuringStations, generatingKeys]
+  );
+
+  const getStationPipelineProgress = useCallback(
+    (stationId: string): SceneStackPipelineProgress => {
+      const station = getSceneStackStation(departmentId, stationId);
+      const layerIds = station
+        ? listGeneratableLayerIdsForStation(departmentId, stationId, station.layerPrompts)
+        : [];
+      const views = getLayerViews(stationId);
+      const layersComplete = views.filter((l) => l.definition.generatable && l.publicUrl).length;
+      const layersTotal = layerIds.length;
+
+      let currentLayerId: SceneStackLayerId | null = null;
+      let phase: SceneStackPipelineProgress['phase'] = 'idle';
+
+      if (pipelineLayer?.stationId === stationId) {
+        currentLayerId = pipelineLayer.layerId;
+        phase = pipelineLayer.phase;
+      } else if (ensuringStations.has(stationId)) {
+        phase = 'queued';
+        currentLayerId = layerIds.find((id) => !getSceneStackLayerRecord(departmentId, projectId, stationId, id)?.publicUrl) ?? null;
+      } else {
+        for (const key of generatingKeys) {
+          if (key.startsWith(`${stationId}:`)) {
+            currentLayerId = key.split(':')[1] as SceneStackLayerId;
+            phase = 'generating';
+            break;
+          }
+        }
+      }
+
+      return {
+        stationId,
+        layersComplete,
+        layersTotal,
+        currentLayerId,
+        currentLayerLabel: currentLayerId ? SCENE_STACK_LAYER_SHORT_LABELS[currentLayerId] : null,
+        phase,
+      };
+    },
+    [departmentId, ensuringStations, generatingKeys, getLayerViews, pipelineLayer, projectId]
   );
 
   const generateLayer = useCallback(
@@ -67,6 +138,7 @@ export function useSceneStack(
       const existing = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
       if (!force && existing?.status === 'approved' && existing.publicUrl) return true;
 
+      setPipelineLayer({ stationId, layerId, phase: 'generating' });
       setGeneratingKeys((prev) => new Set(prev).add(key));
       setErrors((prev) => {
         const next = { ...prev };
@@ -144,6 +216,9 @@ export function useSceneStack(
           next.delete(key);
           return next;
         });
+        setPipelineLayer((prev) =>
+          prev?.stationId === stationId && prev.layerId === layerId ? null : prev
+        );
       }
     },
     [bump, departmentId, generatingKeys, pkg.packageId, projectId, workspaceId]
@@ -157,7 +232,7 @@ export function useSceneStack(
   const ensureStation = useCallback(
     async (stationId: string) => {
       const station = getSceneStackStation(departmentId, stationId);
-      if (!station) return;
+      if (!station || ensuringStations.has(stationId)) return;
 
       const layerIds = listGeneratableLayerIdsForStation(
         departmentId,
@@ -165,19 +240,42 @@ export function useSceneStack(
         station.layerPrompts
       );
 
-      for (const layerId of layerIds) {
-        const rec = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
-        if (!rec?.publicUrl) {
-          await generateLayer(stationId, layerId);
+      setEnsuringStations((prev) => new Set(prev).add(stationId));
+      const firstPending = layerIds.find(
+        (layerId) => !getSceneStackLayerRecord(departmentId, projectId, stationId, layerId)?.publicUrl
+      );
+      if (firstPending) {
+        setPipelineLayer({ stationId, layerId: firstPending, phase: 'queued' });
+      }
+
+      try {
+        for (const layerId of layerIds) {
+          const rec = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
+          if (!rec?.publicUrl) {
+            setPipelineLayer({ stationId, layerId, phase: 'queued' });
+            await generateLayer(stationId, layerId);
+          }
         }
+      } finally {
+        setEnsuringStations((prev) => {
+          const next = new Set(prev);
+          next.delete(stationId);
+          return next;
+        });
+        setPipelineLayer((prev) => (prev?.stationId === stationId ? null : prev));
       }
     },
-    [departmentId, generateLayer, projectId]
+    [departmentId, generateLayer, projectId, ensuringStations]
   );
 
   const readyStationCount = useMemo(
     () => stations.filter((s) => getCompositeStatus(s.stationId) === 'ready').length,
     [stations, getCompositeStatus]
+  );
+
+  const isAnyPipelineActive = useMemo(
+    () => ensuringStations.size > 0 || generatingKeys.size > 0,
+    [ensuringStations, generatingKeys]
   );
 
   return {
@@ -190,6 +288,9 @@ export function useSceneStack(
     approveLayer: approveSceneStackLayer,
     readyStationCount,
     totalStationCount: stations.length,
+    isStationPipelineActive,
+    getStationPipelineProgress,
+    isAnyPipelineActive,
     errors,
     bump,
   };
