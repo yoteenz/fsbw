@@ -6,6 +6,7 @@ import { STUDIO_OS_ROUTES } from '../../../../../studio-os-core/workspace/routes
 import { getWorkspaceRegistry } from '../../../../../studio-os-core/workspace/registry';
 import { resolveHeadquartersPageModule } from '../../../../../studio-os-core/workspace/headquarters-module-resolver';
 import { activateWorkspaceContext } from '../../../../../studio-os-core/workspace/context-bridge';
+import { loadWorkspace } from '../../../../../studio-os-core/workspace/loader';
 import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from '../../../../../studio-os-core/workspace/storage';
 
 function wrapLazy(loader: () => Promise<{ default: React.ComponentType }>) {
@@ -25,9 +26,10 @@ function wrapLazy(loader: () => Promise<{ default: React.ComponentType }>) {
  */
 export default function WorkspaceStudioModuleHost() {
   const { workspaceId, '*': rest } = useParams<{ workspaceId: string; '*': string }>();
-  const { enterWorkspace, workspace } = useWorkspace();
+  const { enterWorkspace } = useWorkspace();
   const { pathname } = useLocation();
   const restPath = rest ?? 'mission-control';
+  const urlWorkspace = workspaceId ? loadWorkspace(workspaceId) : null;
 
   useEffect(() => {
     if (workspaceId && getWorkspaceRegistry().isKnownWorkspaceId(workspaceId)) {
@@ -40,7 +42,7 @@ export default function WorkspaceStudioModuleHost() {
     return <Navigate to={STUDIO_OS_ROUTES.administration} replace />;
   }
 
-  if (!workspace.studioEnabled) {
+  if (!urlWorkspace?.schema.studioEnabled) {
     return <Navigate to={STUDIO_OS_ROUTES.workspaceShell(workspaceId)} replace />;
   }
 

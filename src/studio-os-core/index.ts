@@ -24,6 +24,13 @@ export {
   headquartersModuleCount,
 } from './workspace/headquarters-module-resolver';
 
+export {
+  resolveWorkspaceIdFromRoute,
+  resolveBootstrapWorkspaceId,
+  isNdxbookScopedRoute,
+} from './workspace/route-workspace-resolver';
+export type { RouteMembershipContext } from './workspace/route-workspace-resolver';
+
 export { STUDIO_OS_PLATFORM } from './config/platform';
 export type { StudioOsPlatformConfig } from './config/platform';
 

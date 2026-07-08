@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useWorkspace } from '../../../studio-os-core/context/WorkspaceProvider';
 import { NDXBOOK_WORKSPACE_ID } from '../../../studio-os-core/ndxbook/constants';
@@ -6,18 +6,11 @@ import { STUDIO_OS_DEFAULT_WORKSPACE_ID, STUDIO_PLATFORM_WORKSPACE_ID } from '..
 import { workspaceStudioModulePath } from '../../../studio-os-core/workspace/routes';
 import { isLegacyFrontalSlayerStudioPath } from '../../../studio-os-core/workspace/headquarters-module-resolver';
 import { activateWorkspaceContext } from '../../../studio-os-core/workspace/context-bridge';
+import { isNdxbookScopedRoute } from '../../../studio-os-core/workspace/route-workspace-resolver';
 import { getCachedOrgMembership } from '../../../studio-os-core/auth/membership';
 import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
 import { isPlatformAdministrationPath } from '../../../studio-os-core/application/platform-paths';
 import { ORGANIZATION_ROUTES } from '../../../studio-os-core/application/routes';
-
-function isNdxbookScopedRoute(pathname: string, search: string): boolean {
-  return (
-    pathname.includes('/studio/ndxbook') ||
-    pathname.includes('/studio-os/workspace/ai-media/studio/ndxbook') ||
-    search.includes('brand=ndxbook')
-  );
-}
 
 function ndxbookLegacyRedirectTarget(pathname: string, search: string): string {
   const rest = pathname.replace('/admin/studio/', '') || 'mission-control';
@@ -37,14 +30,14 @@ export default function StudioWorkspaceGuard() {
   const platformPath = isPlatformAdministrationPath(pathname);
   const headquartersEntryPath = pathname === ORGANIZATION_ROUTES.headquartersEntry;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (platformPath && workspaceId !== STUDIO_PLATFORM_WORKSPACE_ID) {
       activateWorkspaceContext(STUDIO_PLATFORM_WORKSPACE_ID);
       enterWorkspace(STUDIO_PLATFORM_WORKSPACE_ID);
     }
   }, [platformPath, workspaceId, enterWorkspace]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (platformPath || !legacyFsPath) return;
     if (isNdxbookScopedRoute(pathname, search)) return;
     if (workspaceId !== STUDIO_OS_DEFAULT_WORKSPACE_ID) {
