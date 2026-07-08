@@ -33,6 +33,7 @@ export const WORLD_NODE_TYPES = [
   'knowledge-extraction',
   'founder-approval',
   'architectural-decision',
+  'professional-memory',
   'design-principle',
   'constitutional-law',
   'foundational-physics-law',
@@ -107,6 +108,8 @@ export const WORLD_EDGE_TYPES = [
   'generated-from',
   'published-as',
   'projects-to',
+  'refreshes',
+  'affected-by',
 ] as const;
 
 export type WorldEdgeType = (typeof WORLD_EDGE_TYPES)[number];

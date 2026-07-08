@@ -8,6 +8,7 @@ domains:
     - knowledge-extraction
     - founder-approval
     - architectural-decision
+    - professional-memory
     - design-principle
     - constitutional-law
     - foundational-physics-law
@@ -73,6 +74,7 @@ id_prefixes:
   knowledge-extraction: W-KEX
   founder-approval: W-APP
   architectural-decision: W-DEC
+  professional-memory: W-MEM
   design-principle: W-DPR
   constitutional-law: W-LAW
   foundational-physics-law: W-PHY

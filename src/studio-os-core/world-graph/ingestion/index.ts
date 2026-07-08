@@ -16,3 +16,4 @@ export { ingestProductionCompletionNodes } from './production-completion-ingest'
 export { ingestHeroObjectNodes } from './hero-objects-ingest';
 export { ingestCareerWorldNodes } from './career-worlds-ingest';
 export { ingestProfessionSimulationNodes } from './profession-simulation-ingest';
+export { ingestKnowledgeRetentionNodes } from './knowledge-retention-ingest';

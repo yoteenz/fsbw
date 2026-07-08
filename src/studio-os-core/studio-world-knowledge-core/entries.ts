@@ -31,6 +31,14 @@ export const PRODUCTION_COMPLETION_ARTICLE = {
     'Every implementation passes a standardized Production Completion Checklist™ and Quality Gates™ before it is considered done — adaptive to feature scope, enforced by Studio Production Orchestrator™.',
 } as const;
 
+export const KNOWLEDGE_RETENTION_ARTICLE = {
+  id: 'ARTICLE-E03',
+  title: 'Knowledge Retention Engine™',
+  approvedDate: '2026-07-08',
+  summary:
+    'Studio World preserves long-term professional mastery through professional memories, retention profiles, adaptive refreshers, Orb mentorship, and living industry updates.',
+} as const;
+
 export const PROMPT_STANDARDS: PromptStandard[] = [
   {
     id: 'recommended-model',
@@ -505,6 +513,55 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
     ],
     implementationStatus: 'Specified',
     tags: ['career-worlds', 'profession-simulation', 'persistent-worlds', 'professional-identity'],
+  },
+  {
+    id: 'E03-knowledge-retention-engine',
+    title: 'ARTICLE-E03 — Knowledge Retention Engine™',
+    domain: 'Knowledge Engine™',
+    status: 'Canon',
+    version: 'v1',
+    summary:
+      'Long-term mastery engine — every learned concept becomes a professional memory with retention profile signals, adaptive refresher modes, Orb mentor prompts, living updates, and World Graph presence.',
+    reasoning:
+      'Studio World should not simply teach knowledge. It should preserve knowledge for life. Learners should not feel like students returning to courses; they should feel like professionals revisiting memories, practicing naturally through real projects, simulations, and industry changes.',
+    finalPrompt:
+      'Create Knowledge Retention Engine™. Every concept tracks date learned, successful applications, last real usage, confidence, recall strength, industry updates, certification relevance, and difficulty. The Orb acts as intelligent mentor; refreshers range from Memory Spark™ to Certification Renewal™; Profession Brains evolve and identify affected learners.',
+    architectureAdded: [
+      'Knowledge Retention Engine™',
+      'Professional Memory™ graph nodes',
+      'Retention Profiles™',
+      'Adaptive Refresher Modes™',
+      'Orb Mentor prompts',
+      'Living Knowledge update impacts',
+      'Retention planning engine',
+    ],
+    relatedSystems: [
+      'Profession Brain™',
+      'Career Worlds™',
+      'Profession Simulation Engine™',
+      'Studio Institute™',
+      'Knowledge Confidence™',
+      'Orb™',
+      'World Graph™',
+      'Studio World Atlas™',
+      'Certification Renewal™',
+    ],
+    constitutionArticles: ['ARTICLE-E03', 'ARTICLE-K22', 'ARTICLE-K23'],
+    adrReferences: ['ADR-0001'],
+    worldBibleReferences: [
+      'Profession Brain™',
+      'Studio Institute™',
+      'World Graph™',
+      'Studio World Atlas™',
+    ],
+    implementationStatus: 'Implemented',
+    tags: [
+      'knowledge-retention',
+      'professional-memory',
+      'adaptive-refreshers',
+      'orb-mentor',
+      'living-knowledge',
+    ],
   },
 ];
 

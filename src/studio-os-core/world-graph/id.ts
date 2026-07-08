@@ -6,6 +6,7 @@ const TYPE_PREFIX: Record<WorldNodeType, string> = {
   'knowledge-extraction': 'W-KEX',
   'founder-approval': 'W-APP',
   'architectural-decision': 'W-DEC',
+  'professional-memory': 'W-MEM',
   'design-principle': 'W-DPR',
   'constitutional-law': 'W-LAW',
   'foundational-physics-law': 'W-PHY',

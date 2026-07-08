@@ -183,3 +183,4 @@ export * from './studio-world-memory-system';
 export * from './asset-compiler';
 export * from './studio-foundry';
 export * from './career-worlds';
+export * from './knowledge-retention-engine';

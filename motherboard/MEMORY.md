@@ -43631,7 +43631,6 @@ Summary of the **whole conversation so far** in this chat: user first requested 
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-08 — Career Worlds™ foundational engine implementation sprint
 
 Summary of the **full conversation in this chat**: after ARTICLE-E02 architecture was accepted and pushed (`27b08dc38`), the user requested **IMPLEMENTATION SPRINT** to extend the Profession Simulation Engine™ into persistent **Career Worlds™** — a reusable engine every profession plugs into (not Frontal Slayer Academy, not an LMS).
@@ -43654,7 +43653,8 @@ Summary of the **full conversation in this chat**: after ARTICLE-E02 architectur
 - **Verification:** `npm run build` passed
 - **Conventions:** Every profession adds a blueprint in `catalog.ts` + `CAREER_WORLD_IDS`; engines read blueprint fields generically. Career Hub replaces course dashboard metaphor. Academy may exist as a surface inside a world later.
 
-=======
+---
+
 ## 2026-07-08 — Profession Simulation Engine™ implementation foundation
 
 Summary of the **whole conversation so far** in this chat: user requested **ARTICLE-D09 Hero Objects™ & Contextual Orb™** architecture, then the **D09 implementation sprint**, then **ARTICLE-E01 Profession Simulation Engine™ architecture**, and finally the **E01 implementation sprint** to build a reusable simulation engine foundation (not Frontal Slayer Academy).
@@ -43677,4 +43677,32 @@ Summary of the **whole conversation so far** in this chat: user requested **ARTI
   - World Graph: profession-simulation-engine node `implementationStatus: prototype`.
 - **Verification:** `npx tsc --noEmit` passed; `npm run compile-world-graph` (**542 nodes · 1024 edges · PASS**); `npm run build` passed.
 - **Convention:** Future academies register `ProfessionDefinition` + Profession Brain adapter; reuse simulation loop runner. Do not hardcode profession knowledge inside engine runtime — always request from Profession Brain™.
->>>>>>> 6a0ff7dd1 (Profession Simulation Engine foundation: modular runtime, brain adapters, playable shift demo)
+
+---
+
+## 2026-07-08 — ARTICLE-E03 Knowledge Retention Engine™ architecture sprint
+
+**Context:** User requested **ARCHITECTURE SPRINT / ARTICLE-E03 / Knowledge Retention Engine™** after approving Profession Simulation Engine™ and Career Worlds™. Mission: Studio World should preserve knowledge for life, replacing course review with intelligent professional-memory retention. The learner never revisits courses; the learner revisits professional memories.
+
+**Topics covered (entire conversation so far):**
+- Prior in this chat: fixed `/admin/studio/world-atlas` production React #301 by making Mission Control travel preview pure; shipped on `master`.
+- **E03 sprint:** Added foundational long-term mastery architecture that tracks learned concepts like hair bleaching chemistry, color theory, lace installation, client consultations, corrective color, salon management, marketing strategy, accounting, and leadership.
+- Defined retention profile signals: date learned, successful applications, last real usage, confidence score, recall strength, industry updates, certification relevance, difficulty, career goals, upcoming simulations, and upcoming projects.
+- Defined Orb mentor language and adaptive refresher depth: Memory Spark™, Skill Refresh™, Interactive Simulation™, Mentor Demonstration™, Client Scenario™, Industry Update™, Challenge Mode™, Certification Renewal™.
+- Added Living Knowledge™ update impact handling so Profession Brains™ can identify affected learners and explain what changed, why it changed, and how it affects work.
+
+**Decisions / outcomes:**
+- Created **`src/studio-os-core/knowledge-retention-engine/`** as an industry-agnostic core package with types, constants, launch catalog, retention scoring, mastery planning, Orb mentor lines, and living update impacts.
+- Added **Professional Memory™** as a first-class World Graph node type (`professional-memory`, prefix `W-MEM`).
+- Added `refreshes` / `affected-by` edge types; E03 graph ingestion creates launch Professional Memory™ nodes and connects them to Knowledge Retention Engine™, Profession Brain™, and Studio World Atlas™.
+- Added **E03 Knowledge Core** canon entry under `Knowledge Engine™`.
+- Added architecture doc: `docs/studio-os/engine/knowledge-retention/ARTICLE_E03_KNOWLEDGE_RETENTION_ENGINE.md`.
+- Registered Knowledge Retention Engine™ in core exports and World Graph engine bootstrap / era evaluation.
+- Cleaned leftover conflict markers in `motherboard/MEMORY.md` from prior rebase while appending this entry.
+
+**Verification:**
+- `npx tsc --noEmit` passed.
+- `npm run compile-world-graph` passed.
+- `npm run build` passed.
+
+**Conventions:** Future learning/mastery features should not model "review a course" as the primary interaction. Store durable concepts as Professional Memory™ records, evaluate retention through E03, and let Orb/Institute/Simulation/Career Worlds project the appropriate refresher depth.

@@ -164,6 +164,23 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       integratesWith: ['production-orchestrator', 'experience-intelligence-engine', 'world-graph', 'knowledge-core'],
     },
     {
+      slug: 'knowledge-retention-engine',
+      name: 'Knowledge Retention Engine™',
+      summary:
+        'ARTICLE-E03 long-term mastery engine — preserves professional memories through retention profiles, adaptive refreshers, Orb mentorship, and living industry updates.',
+      lifecycle: 'implemented',
+      codePaths: ['src/studio-os-core/knowledge-retention-engine/'],
+      docPaths: ['docs/studio-os/engine/knowledge-retention/ARTICLE_E03_KNOWLEDGE_RETENTION_ENGINE.md'],
+      integratesWith: [
+        'profession-brain',
+        'studio-institute',
+        'knowledge-confidence',
+        'simulation-engine',
+        'studio-world-atlas',
+        'orb-recommendations',
+      ],
+    },
+    {
       slug: 'orb-archivist',
       name: 'Orb Archivist™',
       summary: 'Relationship-first explorer of the World Graph™ — institutional memory interface.',
