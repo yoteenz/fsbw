@@ -13,6 +13,8 @@
 
 The Reuse Engine is the intelligence layer that saves generation cost, preserves quality, and compounds platform memory.
 
+**Founder-facing interactive decisions** (search · explain · Founder Control™ gate) are owned by [Asset Intelligence Engine™](../../asset-intelligence-engine/README.md). This module serves **batch Compiler** integration; both share scoring signals.
+
 ---
 
 ## The Six Questions

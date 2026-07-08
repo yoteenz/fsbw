@@ -100,6 +100,7 @@ Compiler `designRegistryRef` migrates to `registrySnapshotRef`. See [runtime-int
 
 | System | Path |
 |--------|------|
+| **Asset Intelligence Engine™** | [`../../asset-intelligence-engine/`](../../asset-intelligence-engine/README.md) — founder-facing remember-first search · Compatibility Engine™ · Founder Control™ |
 | Studio Asset Compiler™ | [`../studio-asset-compiler/`](../studio-asset-compiler/README.md) |
 | Studio Department Generator™ | [`../../department-generator/`](../../department-generator/README.md) |
 | Department Generator engine | [`../../engine/department-generator/`](../../engine/department-generator/README.md) |

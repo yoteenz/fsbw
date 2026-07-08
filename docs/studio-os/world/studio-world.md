@@ -115,6 +115,8 @@ STUDIO WORLD™
 
 **Scene Stack™:** [Golden Build™ Layered Environments](../scene-stack/README.md) — independent FAL layers · per-layer regeneration · Cursor interaction only
 
+**Asset Intelligence Engine™:** [Generate Once. Reuse Forever.](../asset-intelligence-engine/README.md) — remember-first generation · Registry search · Company DNA™
+
 **Scene Genesis™ (deprecated):** [../scene-genesis/README.md](../scene-genesis/README.md) — superseded by Scene Stack™
 
 ---
@@ -136,6 +138,7 @@ STUDIO WORLD™
 | **Studio Preview™** | [../preview/](../preview/) | Visitor acquisition · Future Company Experiences™ · curated HQ demo |
 | **Architectural Icons™** | [../architectural-icons/](../architectural-icons/) | Signature Landmarks™ · department identity · Founder Memory™ anchors |
 | **Scene Stack™** | [../scene-stack/](../scene-stack/) | Layered Golden Build™ pipeline · per-layer FAL generation · composited environments |
+| **Asset Intelligence Engine™** | [../asset-intelligence-engine/](../asset-intelligence-engine/) | Remember-first generation · Registry search · compatibility · Company DNA™ |
 | **Scene Genesis™ (deprecated)** | [../scene-genesis/](../scene-genesis/) | Superseded by Scene Stack™ — single-image plates retired |
 
 ---

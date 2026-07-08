@@ -74,6 +74,14 @@ Extends Creative Approval Pipeline™ philosophy to **per-layer** granularity.
 
 ---
 
+## Intelligence Gate (Mandatory)
+
+Before any layer generation, **Asset Intelligence Engine™** searches Registry for compatible existing layers.
+
+See [Asset Intelligence Engine™](../asset-intelligence-engine/generation-order.md) · [Scene Stack regeneration](../asset-intelligence-engine/asset-categories.md).
+
+---
+
 ## Golden Build™ Output
 
 Golden Build™ no longer outputs **images**.

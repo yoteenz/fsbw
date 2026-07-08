@@ -41597,3 +41597,27 @@ User **STOP** directive: fundamentally redesign Golden Build™ generation — S
 - **Cross-refs:** `docs/studio-os/scene-genesis/README.md` marked deprecated · `docs/studio-os/world/studio-world.md` · `motherboard/CORE.md`
 - **Build:** `npm run build` passes
 - **Prior arc (same chat):** Golden Build Scene Genesis™ (single-plate, now superseded) · Architectural Icons™ · CDS Environmental Pass V1 · Studio Preview™ · Founder Discovery™ · Expeditions™ · Routines™ · Scene Architecture™ · Guild System™
+
+---
+
+## 2026-07-08 — Asset Intelligence Engine™ — Generate Once. Reuse Forever. (platform architecture sprint, docs only)
+
+User **STOP** directive: **platform architecture sprint** — define permanent intelligence system inside Studio OS. **No Creative Direction Studio™ redesign · no UI.**
+
+- **Mission:** Solve AI inefficiency — traditional systems regenerate nearly identical assets, wasting tokens · time · compute · consistency. Studio OS should **remember everything it has ever created**.
+- **Foundational law:** **Before generating… always remember.** Every approved asset → **Company Memory™**. Generation is **last option, never first**.
+- **New generation order:** Founder request → Registry Search™ → find similar → Compatibility Engine™ → Reuse · Modify · Upgrade · Generate New → Founder chooses → Generation Manager™ only if needed
+- **Asset Registry™ fields:** Asset ID™ · Name · Department · Scene · Station · Category · Style · Materials · Lighting Profile · Color Palette · Environment Tags · Creator · Generation Prompt · Golden Build Version™ · Dependencies · Reuse Count™ · Performance Cost™ · Date Created™ · Last Used™ · Compatibility Score™ — maps to Studio Asset Registry™ schema
+- **Asset categories:** Environment Shell™ · Landmarks™ · Lighting™ · Furniture™ · Decor™ · Atmosphere™ · Materials™ · Glass™ · Stone™ · Metal™ · Plants™ · Particles™ · Screens™ · Transitions™ · Audio™ · Animations™ · Runtime FX™ — everything reusable
+- **Compatibility Engine™:** Exact Match™ · Close Match™ · Can Be Modified™ · Requires Upgrade™ · Generate New™ — must explain WHY (CDS lighting 96% · Marketing shelves 91% · Finance marble 98% examples)
+- **Founder Control™:** mandatory gate — "We already own three compatible lighting systems" → Reuse Existing™ · Duplicate & Modify™ · Generate Completely New™ — founder always chooses
+- **Learning:** reuse frequency · rejections · founder preferences · favorite materials/lighting/architecture/styles → Founder Taste Engine™ integration
+- **Company DNA™:** emergent visual consistency — materials · lighting · architecture coherence protected; drift warnings
+- **Marketplace™:** Asset Packs™ · Lighting Packs™ · Furniture Collections™ · Material Libraries™ · Atmosphere Packs™ · Architectural Components™ · Transition Systems™ — everything enters Registry
+- **Performance philosophy:** reuse preferred — lower tokens · compute · faster · consistency · quality · shared visual language · fewer approvals
+- **Final philosophy:** *Great AI generates. Great operating systems remember.*
+- **11-doc spec:** `docs/studio-os/asset-intelligence-engine/` — README · asset-intelligence-engine · generation-order · asset-registry · asset-categories · compatibility-engine · founder-control · learning-system · company-dna · marketplace-integration · performance-philosophy · future-roadmap
+- **Engine position:** queries Studio Asset Registry™ · sits above Generation Manager™ · founder-facing layer complements Compiler Reuse Engine
+- **Cross-refs:** `studio-world.md` · `CORE.md` · `engines/studio-asset-registry/README.md` · `reuse-engine.md` · `engines/generation-manager/README.md` · `scene-stack/golden-build-pipeline.md`
+- **Prior arc (same chat):** Scene Stack™ implementation committed (`c9e76577`) · Scene Genesis™ superseded · Architectural Icons™ · Studio Preview™ · Founder Discovery™
+- **No UI · no API · no CDS redesign this sprint**

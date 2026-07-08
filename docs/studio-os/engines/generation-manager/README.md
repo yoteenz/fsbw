@@ -43,7 +43,9 @@ Studio Asset Compiler™ (DepartmentPackage.zip · prompts · metadata)
          ↓
 Prompt Compiler™ (expanded prompt stacks in 13_prompts/)
          ↓
-STUDIO GENERATION MANAGER™ (this engine)
+Asset Intelligence Engine™ (search Registry · compatibility · founder gate)
+         ↓
+STUDIO GENERATION MANAGER™ (this engine — only when Intelligence routes to generate)
   Queue · schedule · execute · retry · validate handoff
          ↓
 AI Generators (FAL · OpenAI Images · Runway · Luma · BFL · future)
