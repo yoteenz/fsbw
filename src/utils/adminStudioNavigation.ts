@@ -1824,6 +1824,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'studio-museum',
+    title: 'STUDIO MUSEUM™',
+    purpose: 'Permanent archive of greatest achievements — Golden Builds™, Time Machine™, Legacy Wall™, Memory Sphere™.',
+    route: p('studio-museum'),
+    groupId: 'visuals',
+    status: 'live',
+    metric: 'LEGACY',
+    ctaLabel: 'ENTER MUSEUM',
+    moduleKey: 'studio-museum',
+    featuredOnOverview: true,
+  },
+  {
     id: 'experience-engine',
     title: 'EXPERIENCE ENGINE™',
     purpose: 'Emotional and environmental layer — adaptive atmosphere, context-aware modes, subtle transitions.',

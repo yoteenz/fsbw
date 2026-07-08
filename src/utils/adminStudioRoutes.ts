@@ -95,6 +95,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'blueprint-manager'
   | 'asset-factory'
   | 'studio-warehouse'
+  | 'studio-museum'
   | 'production-builder'
   | 'director-mode'
   | 'executive-ai-director'
@@ -193,6 +194,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'blueprint-manager',
   'asset-factory',
   'studio-warehouse',
+  'studio-museum',
   'production-builder',
   'director-mode',
   'executive-ai-director',
@@ -316,6 +318,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   blueprintDetail: 'studio/blueprint-manager/:blueprintId',
   assetFactory: 'studio/asset-factory',
   studioWarehouse: 'studio/studio-warehouse',
+  studioMuseum: 'studio/studio-museum',
   assetDirectorStudios: 'studio/asset-director/studios',
   assetDirectorStudioDetail: 'studio/asset-director/studios/:studioId',
   assetDirectorTalent: 'studio/asset-director/talent',
@@ -970,6 +973,10 @@ export function adminStudioAssetRegistryPath(): string {
 
 export function adminStudioWarehousePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/studio-warehouse`;
+}
+
+export function adminStudioMuseumPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-museum`;
 }
 
 export function adminStudioExperienceEnginePath(): string {

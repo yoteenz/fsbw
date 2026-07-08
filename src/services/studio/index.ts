@@ -284,6 +284,9 @@ export type { AssetFactorySnapshot, AssetFactorySummary } from './assetFactory/s
 export { warehouseStudioService } from './warehouse/service';
 export type { WarehouseSnapshot } from './warehouse/service';
 
+export { museumStudioService } from './museum/service';
+export type { MuseumSnapshot } from './museum/service';
+
 export { knowledgeHubStudioService } from './knowledgeHub/service';
 export type { KnowledgeHubQueryInput, KnowledgeHubQueryOutput } from './knowledgeHub/service';
 
@@ -416,6 +419,7 @@ import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
 import { warehouseStudioService } from './warehouse/service';
+import { museumStudioService } from './museum/service';
 import { knowledgeHubStudioService } from './knowledgeHub/service';
 import { memoryBibleStudioService } from './memoryBible/service';
 import { productPhotographyBibleStudioService } from './productPhotographyBible/service';
@@ -513,6 +517,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   blueprintManagerStudioService,
   assetFactoryStudioService,
   warehouseStudioService,
+  museumStudioService,
   socialPublishingStudioService,
   knowledgeHubStudioService,
   memoryBibleStudioService,
