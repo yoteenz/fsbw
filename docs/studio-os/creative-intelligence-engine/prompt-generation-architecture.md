@@ -13,33 +13,37 @@
 
 ## Canonical Pipeline
 
+**Master orchestrator:** [Generation Pipeline™](../engines/generation-pipeline/README.md) — the production engine of Studio OS.
+
 ```
 Founder Intent™
          ↓
-Creative Interpreter™
-         ↓
-Blueprint Engine™
-         ↓
-Asset Registry™
+Prompt Composer™
          ↓
 Scene Planner™
          ↓
-Prompt Composer™
+Asset Registry Check™
+         ↓
+Missing Assets™
+         ↓
+Pre-Generation Estimate (approve)
          ↓
 Provider Optimizer™
          ↓
-FAL (internal — never founder-facing)
+Generation Queue™
          ↓
 Quality Inspector™
          ↓
-Approval Queue™
-         ↓
-Asset Registry™
+Founder Approval™
          ↓
 Scene Assembly™
          ↓
-Completed Workspace™
+Registry Update™
+         ↓
+Workspace Published™
 ```
+
+Legacy CIE detail flow (upstream intelligence): Creative Interpreter™ · Blueprint Engine™ feed Founder Intent™ before Prompt Composer™.
 
 **Creative Direction Studio™** is the first department on this pipeline.
 

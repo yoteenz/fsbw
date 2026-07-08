@@ -34,6 +34,20 @@ Think of this as the **Production Manager inside a Hollywood studio**.
 
 ## Position in the Pipeline
 
+Generation Manager™ executes **Generation Queue™** stage inside [Generation Pipeline™](../generation-pipeline/README.md) — the master production engine.
+
+```
+Generation Pipeline™ (orchestrator)
+  … → Provider Optimizer™ → ★ Generation Queue™ ★ → Quality Inspector™ → …
+         ↓
+STUDIO GENERATION MANAGER™ (this engine — queue execution)
+  Schedule · execute · retry · store artifacts
+         ↓
+AI Providers (FAL · OpenAI · Flux · Imagen · future)
+```
+
+Batch manufacturing path (department packages):
+
 ```
 Creative Direction Studio™ (intent)
          ↓
@@ -41,24 +55,11 @@ Studio Department Generator™ (Department Definition)
          ↓
 Studio Asset Compiler™ (DepartmentPackage.zip · prompts · metadata)
          ↓
-Prompt Compiler™ (expanded prompt stacks in 13_prompts/)
+Generation Pipeline™ (batch entry)
          ↓
-Asset Intelligence Engine™ (search Registry · compatibility · founder gate)
+STUDIO GENERATION MANAGER™
          ↓
-Studio Production Estimates™ (scope · cost · savings · Orb WHY · founder approve)
-         ↓
-Creative Budgets™ (monthly capacity · pending reserve · savings rollup)
-         ↓
-STUDIO GENERATION MANAGER™ (this engine — only approved estimate scope)
-  Queue · schedule · execute · retry · validate handoff
-         ↓
-AI Generators (FAL · OpenAI Images · Runway · Luma · BFL · future)
-         ↓
-Studio Validation Loop™ (quality authority)
-         ↓
-Studio Asset Registry™ (permanent library)
-         ↓
-Department Runtime™ (live operation)
+Validation Loop™ → Registry → Runtime
 ```
 
 **Prompt Compiler™** = Compiler Prompt Expansion Engine ([prompt-expansion-engine.md](../studio-asset-compiler/prompt-expansion-engine.md)) for batch manufacturing. **Prompt Composer™** = intent-path translation ([prompt-composer/README.md](../prompt-composer/README.md)) — both output provider-neutral `ProductionPrompt™`. Generation Manager consumes **OptimizedProviderPayload™** from Provider Optimizer™ — never re-expands or re-composes.

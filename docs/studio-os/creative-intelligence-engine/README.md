@@ -47,6 +47,7 @@ Everything rebuilds around that philosophy.
 | [workspaces-as-scenes.md](./workspaces-as-scenes.md) | Every tab → physical scene |
 | [physical-workspaces.md](./physical-workspaces.md) | Room-by-room environment design |
 | [prompt-generation-architecture.md](./prompt-generation-architecture.md) | Founder Intent™ → ProductionPrompt™ pipeline |
+| [../engines/generation-pipeline/README.md](../engines/generation-pipeline/README.md) | **Generation Pipeline™** — master production engine · layer-by-layer |
 | [../engines/scene-planner/README.md](../engines/scene-planner/README.md) | **Scene Planner™** — workspace → layers → Scene Blueprint™ |
 | [../engines/prompt-composer/README.md](../engines/prompt-composer/README.md) | **Prompt Composer™** — intent → provider-neutral production brief |
 | [scene-generation-pipeline.md](./scene-generation-pipeline.md) | Scene Stack™ proving ground |
@@ -57,37 +58,18 @@ Everything rebuilds around that philosophy.
 
 ## Prompt Pipeline (Summary)
 
+**Production engine:** [Generation Pipeline™](../engines/generation-pipeline/README.md)
+
 ```
-Founder Intent™
-      ↓
-Creative Interpreter™
-      ↓
-Blueprint Engine™
-      ↓
-Asset Registry™
-      ↓
-Scene Planner™
-      ↓
-Prompt Composer™
-      ↓
-Prompt Composer™
-      ↓
-Provider Optimizer™
-      ↓
-Providers (FAL · OpenAI · Flux · Imagen · future)
-      ↓
-Quality Inspector™
-      ↓
-Approval Queue™
-      ↓
-Asset Registry™
-      ↓
-Scene Assembly™
-      ↓
-Completed Workspace™
+Founder Intent™ → Prompt Composer™ → Scene Planner™ → Registry Check™
+→ Missing Assets™ → Estimate → Provider Optimizer™ → Generation Queue™
+→ Quality Inspector™ → Founder Approval™ → Scene Assembly™
+→ Registry Update™ → Workspace Published™
 ```
 
-Founders **never** write production prompts. [Prompt Composer™](../engines/prompt-composer/README.md) creates the brief.
+Layer-by-layer: Environment → Lighting → Architecture → Furniture → Hero Objects → Atmosphere → Particles → Runtime FX.
+
+Founders **never** write production prompts.
 
 ---
 

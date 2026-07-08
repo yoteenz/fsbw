@@ -77,27 +77,21 @@ Aligns with [Asset Intelligence generation-order](../asset-intelligence-engine/g
 
 ## Pipeline Integration
 
+Orchestrated by [Generation Pipeline™](../engines/generation-pipeline/README.md):
+
 ```
-Scene Planner™ (Scene Blueprint™ — plan only)
+Scene Planner™ (Scene Blueprint™)
          ↓
-Production Estimate™ (founder approve)
+Registry Check™ → Missing Assets™ → Estimate (approve)
          ↓
-Prompt Composer™ (per GenerationLineItem)
+Provider Optimizer™ → Generation Queue™ (layer-by-layer)
          ↓
-Provider Optimizer™
+Quality Inspector™ → Founder Approval™
          ↓
-Generation Manager™ (per-layer jobs)
-         ↓
-Quality Inspector™ (per-layer)
-         ↓
-Approval Queue™ (per-layer or batch)
-         ↓
-Scene Stack compositor (SceneAssembly™)
-         ↓
-Workspace scene ready
+Scene Assembly™ → Registry Update™ → Workspace Published™
 ```
 
-Full spec: [Scene Planner™](../engines/scene-planner/README.md).
+Full spec: [Scene Planner™](../engines/scene-planner/README.md) · [Generation Pipeline™](../engines/generation-pipeline/README.md).
 
 ---
 

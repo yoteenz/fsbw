@@ -41896,3 +41896,20 @@ User sprint: build **Scene Planner™** — underlying architecture. **Do NOT ge
 - **Cross-refs updated:** CIE prompt-generation-architecture · scene-generation-pipeline · studio-world · remember-first-law · CORE.md
 - **Prior arc (same chat):** Prompt Composer™ v1.0 · Studio Asset Registry™ v1.1 · Creative Intelligence Engine™ · intelligence stack
 - **No UI · no image generation this sprint**
+
+---
+
+## 2026-07-08 — Generation Pipeline™ v1.0 — production engine (core engine sprint, docs only)
+
+User sprint: build **Generation Pipeline™** — becomes the production engine of Studio OS. Layer-by-layer generation. Remember-first. Pre-gen estimates before generation.
+
+- **12-stage pipeline:** Founder Intent™ → Prompt Composer™ → Scene Planner™ → Asset Registry Check™ → Missing Assets™ → Pre-Generation Estimate → Provider Optimizer™ → Generation Queue™ → Quality Inspector™ → Founder Approval™ → Scene Assembly™ → Registry Update™ → Workspace Published™
+- **Layer order:** Environment → Lighting → Architecture → Furniture → Hero Objects → Atmosphere → Particles → Runtime FX (each independently generatable · regeneratable)
+- **Founder controls every stage:** Approve · Reject · Regenerate · Create Variations · Reuse Existing
+- **Pre-generation estimate (mandatory gate):** generation cost · generation time · provider usage (internal) · reusable asset savings — before queue unlock
+- **Remember-first:** always prefer reusable assets; Reuse Existing™ default at Registry Check™
+- **Master orchestrator:** coordinates Prompt Composer · Scene Planner · Asset Registry · Generation Manager · Scene Stack · Production Estimates — does not replace them
+- **11-doc spec:** `docs/studio-os/engines/generation-pipeline/` — README · pipeline-stages · layer-by-layer-generation · founder-controls · pre-generation-estimates · remember-first-integration · generation-queue-stage · quality-inspector-stage · scene-assembly-stage · engine-orchestration · future-roadmap
+- **Cross-refs updated:** CIE prompt-generation-architecture · CIE README · scene-generation-pipeline · generation-manager README · studio-world · CORE.md
+- **Prior arc (same chat):** Scene Planner™ · Prompt Composer™ · Asset Registry™ · intelligence stack
+- **No UI · no provider execution this sprint**
