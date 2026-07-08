@@ -26,6 +26,11 @@ import {
   COSMIC_GUIDE_ROLE,
 } from '../innovation-constellations/cosmic-guide';
 import {
+  MISSION_CONTROL_ORB_ACCENT,
+  MISSION_CONTROL_ORB_GREETING,
+  MISSION_CONTROL_ORB_ROLE,
+} from '../mission-control/orb-mission-control';
+import {
   EXPEDITION_GUIDE_ACCENT,
   EXPEDITION_GUIDE_GREETING,
   EXPEDITION_GUIDE_ROLE,
@@ -155,6 +160,16 @@ export function resolveOrbPersonalityForPath(pathname: string): StudioWorldOrbPe
       guidance:
         'I explain why principles exist, how Studio World evolves, and whether new ideas fit the civilization.',
       accent: CONSTITUTION_KEEPER_ACCENT,
+    };
+  }
+  if (p.includes('world-atlas')) {
+    return {
+      flagshipId: 'studio-command-center',
+      role: MISSION_CONTROL_ORB_ROLE,
+      greeting: MISSION_CONTROL_ORB_GREETING,
+      guidance:
+        'I narrate Mission Control™ — activation, constellation navigation, world health, and architectural travel through a living civilization.',
+      accent: MISSION_CONTROL_ORB_ACCENT,
     };
   }
   if (p.includes('innovation-lineage-gallery') || p.includes('lineage-gallery')) {

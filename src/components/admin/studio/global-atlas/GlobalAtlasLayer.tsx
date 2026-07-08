@@ -23,6 +23,7 @@ function GlobalAtlasLayerInner() {
     lineageLine,
     constellationLine,
     expeditionLine,
+    missionControlLine,
     traveling,
     closeAtlas,
     travelToNode,
@@ -94,6 +95,12 @@ function GlobalAtlasLayerInner() {
           {expeditionLine ? (
             <p className="gal-expedition-hint" aria-label="Innovation expedition journey">
               {expeditionLine}
+            </p>
+          ) : null}
+
+          {missionControlLine ? (
+            <p className="gal-mission-control-hint" aria-label="Mission Control activation">
+              {missionControlLine}
             </p>
           ) : null}
 

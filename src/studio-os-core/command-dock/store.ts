@@ -152,6 +152,9 @@ import {
   resolveInnovationExpeditionsAdvice,
 } from '../innovation-expeditions/dock-advisor';
 import {
+  resolveMissionControlAdvice,
+} from '../mission-control/dock-advisor';
+import {
   resolveOrganizationOperatingManualAdvice,
   buildProactiveOrganizationOperatingManualSuggestion,
   buildOperatingManualOpeningLine,
@@ -1317,6 +1320,22 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${innovationExpeditionsAdvice.concierge}\n${innovationExpeditionsAdvice.response}`,
+    });
+    return null;
+  }
+
+  const missionControlAdvice = resolveMissionControlAdvice(trimmed);
+  if (missionControlAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${missionControlAdvice.concierge}\n${missionControlAdvice.response}`,
     });
     return null;
   }

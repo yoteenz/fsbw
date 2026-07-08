@@ -1498,4 +1498,297 @@ body.studio-world-atlas-active {
   text-align: center;
   opacity: 0.4;
 }
+
+/* Mission Control™ — nervous system / holographic civilization */
+.swa.is-mission-control { background: radial-gradient(ellipse 100% 70% at 50% 22%, rgba(120, 200, 255, 0.06) 0%, #020408 55%, #000000 100%); }
+.swa.is-mission-control.is-activating .swa__focus-panel,
+.swa.is-mission-control.is-activating .swa__orb,
+.swa.is-mission-control.is-activating .swa__mode-rail,
+.swa.is-mission-control.is-activating .swa__travel-rail,
+.swa.is-mission-control.is-activating .swa__breadcrumb,
+.swa.is-mission-control.is-activating .swa__planner-panel,
+.swa.is-mission-control.is-activating .swa__planner-toolbar {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+}
+
+.mc-room-darken {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background: radial-gradient(ellipse at 50% 40%, transparent 0%, rgba(0,0,0,0.55) 70%);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+  pointer-events: none;
+}
+.mc-room-darken.is-active { opacity: 1; }
+.mc-room-darken.is-ready { opacity: 0; }
+
+.mc-ambient {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.35;
+  transition: background 1.2s ease, opacity 1s ease;
+}
+.mc-ambient.mc-ambient-architecture { background: radial-gradient(circle at 50% 60%, rgba(80,200,255,0.08) 0%, transparent 55%); }
+.mc-ambient.mc-ambient-civilization { background: radial-gradient(circle at 40% 55%, rgba(232,200,120,0.1) 0%, transparent 50%); }
+.mc-ambient.mc-ambient-knowledge { background: radial-gradient(circle at 55% 50%, rgba(110,181,255,0.12) 0%, transparent 52%); }
+.mc-ambient.mc-ambient-marketplace { background: radial-gradient(circle at 48% 58%, rgba(201,169,98,0.14) 0%, transparent 48%); }
+.mc-ambient.mc-ambient-expansion { background: radial-gradient(circle at 50% 45%, rgba(235,28,36,0.06) 0%, rgba(80,200,255,0.08) 40%, transparent 60%); }
+.mc-ambient.mc-ambient-time { background: conic-gradient(from 180deg at 50% 55%, rgba(80,200,255,0.05), transparent, rgba(201,169,98,0.08)); }
+.mc-ambient.mc-ambient-energy { background: radial-gradient(circle at 50% 65%, rgba(74,222,128,0.08) 0%, transparent 45%); }
+
+.mc-beam {
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  width: 2px;
+  height: 42%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(201,232,255,0) 0%, rgba(201,232,255,0.85) 45%, rgba(80,200,255,0.2) 100%);
+  box-shadow: 0 0 24px rgba(120, 200, 255, 0.65), 0 0 48px rgba(201, 169, 98, 0.25);
+  opacity: 0;
+  z-index: 12;
+  pointer-events: none;
+  animation: mc-beam-pulse 2.4s ease-in-out infinite;
+}
+.mc-beam.is-active { opacity: 0.85; }
+@keyframes mc-beam-pulse {
+  0%, 100% { filter: brightness(0.9); }
+  50% { filter: brightness(1.35); }
+}
+
+.mc-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.7) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 70% 40%, rgba(120,200,255,0.8) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 70%, rgba(255,255,255,0.5) 0%, transparent 100%),
+    radial-gradient(1px 1px at 82% 65%, rgba(232,200,120,0.6) 0%, transparent 100%);
+  animation: mc-particles-drift 8s linear infinite;
+}
+.mc-particles.is-active { opacity: 0.75; }
+.mc-particles.is-idle { opacity: 0.2; }
+@keyframes mc-particles-drift {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-12px); }
+}
+
+.mc-ribbons {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 38%;
+  height: 24%;
+  pointer-events: none;
+  z-index: 11;
+  opacity: 0;
+  background:
+    linear-gradient(105deg, transparent 0%, rgba(120,200,255,0.35) 45%, transparent 70%),
+    linear-gradient(-75deg, transparent 10%, rgba(232,200,120,0.25) 50%, transparent 80%);
+  filter: blur(1px);
+}
+.mc-ribbons.is-active {
+  opacity: 0.55;
+  animation: mc-ribbon-sweep 3s ease-in-out infinite;
+}
+@keyframes mc-ribbon-sweep {
+  0%, 100% { transform: translateX(-2%); }
+  50% { transform: translateX(2%); }
+}
+
+.mc-activation-hud {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  transform: translate(-50%, -50%);
+  z-index: 55;
+  text-align: center;
+  width: min(80vw, 280px);
+  pointer-events: none;
+}
+.mc-activation-eyebrow {
+  margin: 0;
+  font-size: 6px;
+  letter-spacing: 0.2em;
+  color: rgba(120, 200, 255, 0.85);
+}
+.mc-activation-title {
+  margin: 6px 0 12px;
+  font-family: "Covered By Your Grace", cursive;
+  font-size: 22px;
+  color: #e8f4ff;
+  text-transform: none;
+}
+.mc-activation-bar {
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(120,200,255,0.25);
+  overflow: hidden;
+}
+.mc-activation-fill {
+  height: 100%;
+  background: linear-gradient(90deg, rgba(80,200,255,0.5), rgba(232,200,120,0.85));
+  transition: width 0.45s ease;
+  box-shadow: 0 0 12px rgba(120,200,255,0.5);
+}
+.mc-activation-phase {
+  margin: 8px 0 0;
+  font-size: 5px;
+  letter-spacing: 0.14em;
+  color: rgba(232, 224, 212, 0.65);
+}
+
+.mc-atlas-table-ring {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%);
+  width: min(96vw, 540px);
+  height: min(64vh, 400px);
+  border-radius: 50%;
+  border: 1px solid rgba(120, 200, 255, 0.18);
+  box-shadow:
+    0 0 60px rgba(80, 200, 255, 0.12),
+    inset 0 0 80px rgba(80, 200, 255, 0.06);
+  z-index: 8;
+  pointer-events: none;
+}
+.swa__table.is-mode-knowledge .swa__table-surface { border-color: rgba(110, 181, 255, 0.55); }
+.swa__table.is-mode-marketplace .swa__table-surface { border-color: rgba(232, 200, 120, 0.5); }
+.swa__table.is-mode-energy .swa__table-surface { border-color: rgba(74, 222, 128, 0.4); }
+.swa__table.is-mode-time .swa__table-surface { border-color: rgba(201, 169, 98, 0.45); box-shadow: 0 0 48px rgba(201,169,98,0.12), inset 0 0 60px rgba(80,200,255,0.08); }
+
+.mc-living-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  opacity: 0.35;
+  background-image: radial-gradient(1px 1px at 15% 80%, rgba(255,255,255,0.35) 0%, transparent 100%);
+  animation: mc-living-drift 14s linear infinite;
+}
+@keyframes mc-living-drift {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(6px, -8px); }
+  100% { transform: translate(0, 0); }
+}
+
+.mc-constellation-layer {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%) rotateX(58deg);
+  width: min(86vw, 480px);
+  height: min(52vh, 320px);
+  pointer-events: none;
+  z-index: 6;
+}
+.mc-constellation-star {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.mc-constellation-core {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #e8f4ff;
+  box-shadow: 0 0 8px rgba(120,200,255,0.8);
+}
+.mc-constellation-star.is-hq .mc-constellation-core {
+  width: 6px;
+  height: 6px;
+  background: #e8c878;
+  box-shadow: 0 0 14px rgba(232,200,120,0.9);
+}
+.mc-constellation-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(120,200,255,0.25);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.mc-health-whisper { display: none; }
+
+.swa__table-surface {
+  border-radius: 50%;
+  clip-path: ellipse(48% 42% at 50% 50%);
+}
+
+.swa__mc-mode-rail .swa__mode-pill {
+  border-color: rgba(120, 200, 255, 0.28);
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(8px);
+}
+.swa__mc-mode-rail .swa__mode-pill.is-active {
+  border-color: rgba(201, 232, 255, 0.75);
+  color: #c9e8ff;
+  box-shadow: 0 0 12px rgba(120,200,255,0.25);
+}
+
+.swa__travel-preview {
+  margin-top: 8px;
+  padding: 6px;
+  border: 1px solid rgba(120, 200, 255, 0.22);
+  background: rgba(0,0,0,0.35);
+  font-size: 3px;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  text-transform: none;
+  color: rgba(232, 240, 255, 0.8);
+}
+
+.swa__scale-pill {
+  position: absolute;
+  right: max(8px, env(safe-area-inset-right));
+  top: max(52px, calc(env(safe-area-inset-top) + 44px));
+  z-index: 32;
+  padding: 4px 8px;
+  font-size: 4px;
+  letter-spacing: 0.1em;
+  border: 1px solid rgba(120,200,255,0.3);
+  background: rgba(0,0,0,0.5);
+  color: #9ecfff;
+}
+
+.swa__world-health-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: max(118px, calc(env(safe-area-inset-top) + 106px));
+  z-index: 24;
+  font-size: 4px;
+  letter-spacing: 0.1em;
+  color: rgba(201, 232, 255, 0.7);
+  pointer-events: none;
+  text-align: center;
+  max-width: 90vw;
+}
+
+.swa__building.mc-health-thriving .swa__extrusion {
+  box-shadow: 0 0 18px rgba(120, 200, 255, 0.55);
+}
+.swa__building.mc-health-growing .swa__extrusion {
+  box-shadow: 0 0 14px rgba(201, 169, 98, 0.45);
+}
+.swa__building.mc-health-strained .swa__extrusion {
+  opacity: 0.65;
+  filter: grayscale(0.25);
+}
+.swa__building.mc-health-opportunity .swa__extrusion {
+  animation: swa-plan-pulse 2.8s ease-in-out infinite;
+  border-color: rgba(232, 200, 120, 0.55);
+}
+}
 `;

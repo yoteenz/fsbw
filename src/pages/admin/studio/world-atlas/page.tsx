@@ -3,8 +3,8 @@ import { DepartmentGoldenBuildShell } from '../../../../components/admin/studio-
 import { StudioWorldAtlasRoom } from '../../../../components/admin/studio/world-atlas/StudioWorldAtlasRoom';
 
 /**
- * Studio World Atlas™ — living holographic blueprint in Executive Atrium™.
- * Primary spatial navigation for Studio World™ (not a sitemap or sidebar).
+ * Mission Control™ — living holographic civilization on the Atlas Table™.
+ * Primary spatial nervous system for Studio World™ (Article-K20: The World Is The Interface™).
  */
 export default function AdminStudioWorldAtlasPage() {
   useEffect(() => {

@@ -42757,3 +42757,30 @@ Follow-up: user said World Atlas™ was architecturally correct but still felt l
   - `registry.ts` — atlas UI elements: `atlas-holographic-table`, `atlas-district-labels`, `atlas-focus-annotation`, `atlas-travel-controls`, `atlas-orb-projections`, `atlas-world-ticker`, `atlas-engine-strip`, `atlas-mode-controls`, `atlas-planner-surfaces`, `atlas-fog-legend`
 - **Preserved:** `useStudioWorldAtlas` hook, catalog/travel/zoom, Master Planner / Parallel Futures / Future Merge modes — data layer unchanged
 - **Prior arc (same chat):** Nav bug fix (ArchitecturalRail vs SceneTray) · Article K18 Progressive Presence™ · Global Experience System™.
+
+---
+
+## 2026-07-08 — Mission Control™ (World Atlas reinvention — Article-K20)
+
+User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Studio World's nervous system / holographic command center. **Not** a dashboard, GIS, admin panel, or settings page. Article-K20: **The World Is The Interface™**. References: JARVIS, Apple Vision Pro, Iron Man workstation, Mass Effect Galaxy Map, Destiny Director, No Man's Sky, luxury showroom, museum installation.
+
+- **Context:** Atlas architecturally correct but emotionally still felt like an information panel — not Studio World's design language. Goal: founders pause to watch civilization come alive; iconic "standing above a living civilization" experience.
+- **Core systems delivered:**
+  - **Activation Sequence™** — 13-phase boot (darkening → Orb → beam → particles → ribbons → grid → foundations → buildings → roads → energy → knowledge → civilization alive → navigation ready); nav hidden until ready
+  - **Atlas Table™** — circular crystal hologram table; civilization grows upward
+  - **Living Civilization™** — particles, pulses, constellation stars, health glow classes
+  - **Continuous Scale™** — civilization → layer pill (no page transitions)
+  - **Architectural Navigation™** — travel preview panel; Walk™ · Glass Elevator™ · Fast Travel™ · Guided Tour™ · Observer Mode™
+  - **Atlas Modes™** — 7 modes transform hologram (Architecture™ · Civilization™ · Knowledge™ · Marketplace™ · Expansion™ · Time™ · Energy™)
+  - **The Constellation™** — star navigation from atlas nodes
+  - **World Health™** — environmental signals (thriving/growing/strained/opportunity)
+  - **Orb Synchronization™** — Mission Control Intelligence narrates activation, modes, destinations
+- **Engine:** `src/studio-os-core/mission-control/` — activation · visualization modes · constellation · world health · architectural travel · scale-travel · orb · atlas-hint · dock-advisor · bootstrap
+- **Hook:** `useMissionControl.ts`
+- **UI:** `MissionControlLayers.tsx` · `StudioWorldAtlasRoom.tsx` merged with Spatial Experience™ (`AtlasSpatialShell`, `useAtlasAssembly`, Progressive Presence™ gates) · `studioWorldAtlasTheme.ts` (spatial + mission control CSS)
+- **Wiring:** exports · Orb · route registry · bootstrap · Global Atlas hint · Command Dock advisor · world-atlas context
+- **Docs:** `docs/studio-os/world-atlas-mission-control.md`
+- **Route:** `/admin/studio/world-atlas`
+- **Rebase:** merged with remote Spatial Experience™ + Global Experience System™ + Progressive Presence™ work
+- **Prior arc (same chat):** World Atlas Spatial Experience™ · Global Experience System™ · Innovation Constellations™ · Innovation Expeditions™ · Four-layer governance
+

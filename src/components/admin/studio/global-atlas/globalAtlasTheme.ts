@@ -155,6 +155,16 @@ body.global-atlas-layer-open {
   background: rgba(0,0,0,0.35);
 }
 
+.gal-mission-control-hint {
+  margin: 0 10px 8px;
+  padding: 6px 8px;
+  font-size: 6px;
+  letter-spacing: 0.08em;
+  color: rgba(201, 232, 255, 0.92);
+  border: 1px solid rgba(201, 232, 255, 0.28);
+  background: rgba(0,0,0,0.35);
+}
+
 .gal-table {
   position: relative;
   flex: 1;

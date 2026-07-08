@@ -45,6 +45,7 @@ import {
   resolveAtlasExpeditionJourneys,
   type AtlasExpeditionJourney,
 } from '../../../../studio-os-core/innovation-expeditions';
+import { formatAtlasMissionControlLine } from '../../../../studio-os-core/mission-control';
 import {
   ATLAS_TRAVEL_LABELS,
   type AtlasNode,
@@ -67,6 +68,7 @@ export type GlobalAtlasLayerContextValue = {
   atlasConstellationGlows: AtlasConstellationGlow[];
   expeditionLine: string | null;
   atlasExpeditionJourneys: AtlasExpeditionJourney[];
+  missionControlLine: string | null;
   traveling: boolean;
   openAtlas: () => void;
   closeAtlas: () => void;
@@ -144,6 +146,11 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   const expeditionLine = useMemo(
     () => formatAtlasExpeditionLine(atlasExpeditionJourneys),
     [atlasExpeditionJourneys]
+  );
+
+  const missionControlLine = useMemo(
+    () => formatAtlasMissionControlLine(pathname),
+    [pathname, isOpen]
   );
 
   const syncLocationFocus = useCallback(() => {
@@ -254,6 +261,7 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
     atlasConstellationGlows,
     expeditionLine,
     atlasExpeditionJourneys,
+    missionControlLine,
     traveling,
     openAtlas,
     closeAtlas,

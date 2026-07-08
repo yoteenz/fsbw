@@ -165,6 +165,20 @@ export function resolveAtlasContextForPath(pathname: string): GlobalAtlasLocatio
     p.includes('world-atlas') ||
     p.includes('constitution')
   ) {
+    if (p.includes('world-atlas')) {
+      return {
+        ...CONTEXT_BY_FLAGSHIP['studio-command-center'],
+        contextLabel: 'Mission Control™',
+        priorityModes: ['architectural-blueprint', 'organization', 'innovation', 'marketplace', 'future-merge'],
+        priorityDestinations: [
+          'Mission Control™',
+          'Atlas Table™',
+          'Executive Atrium™',
+          'Innovation Constellations™',
+          'Innovation Expeditions™',
+        ],
+      };
+    }
     return CONTEXT_BY_FLAGSHIP['studio-command-center'];
   }
   return DEFAULT_CONTEXT;

@@ -2,9 +2,12 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import {
+  CONTINUOUS_SCALE_LABELS,
+  worldHealthClass,
+} from '../../../../studio-os-core/mission-control';
+import {
   ATLAS_CONSTRUCTION_PHASE_LABELS,
   ATLAS_ENGINE_LABELS,
-  ATLAS_MAP_MODE_LABELS,
   ATLAS_TRAVEL_LABELS,
   ATLAS_ZOOM_LABELS,
   MASTER_PLAN_PHASE_LABELS,
@@ -17,9 +20,7 @@ import {
   planPhaseProgress,
   formatFutureAnalysisLines,
   commitSummaryLines,
-  type AtlasMapMode,
   type AtlasNode,
-  type AtlasTravelMode,
 } from '../../../../studio-os-core/studio-world-atlas';
 import { orbSignalClass, resolveOrbSignalForNode } from '../../../../studio-os-core/orb-recommendations';
 import { useStudioWorldAtlas } from '../../../../hooks/useStudioWorldAtlas';
@@ -27,10 +28,10 @@ import { useStudioWorldExperienceOptional } from '../global-experience';
 import { PresenceGated } from '../progressive-presence/PresenceGated';
 import { AtlasSpatialShell } from './AtlasSpatialShell';
 import { useAtlasAssembly } from './useAtlasAssembly';
+import { useMissionControl } from '../../../../hooks/useMissionControl';
+import { MissionControlLayers } from './MissionControlLayers';
 import { STUDIO_WORLD_ATLAS_STYLES } from './studioWorldAtlasTheme';
 
-const MAP_MODES = Object.keys(ATLAS_MAP_MODE_LABELS) as AtlasMapMode[];
-const TRAVEL_MODES = Object.keys(ATLAS_TRAVEL_LABELS) as AtlasTravelMode[];
 const FORECAST_HORIZONS = [1, 3, 5, 10] as const;
 
 function BuildingMarker({
@@ -42,6 +43,7 @@ function BuildingMarker({
   mergeDraggable,
   onMergeDrag,
   orbSignalKind,
+  healthClass,
 }: {
   node: AtlasNode;
   focusNodeId: string;
@@ -51,6 +53,7 @@ function BuildingMarker({
   orbSignalKind?: string;
   mergeDraggable?: boolean;
   onMergeDrag?: (buildingId: string, mapX: number, mapY: number) => void;
+  healthClass?: string;
 }) {
   const heightPx = 12 + node.extrusion * 48;
   const opacity = fogOpacity(node.unlocked, node.fogged);
@@ -85,6 +88,7 @@ function BuildingMarker({
         mergeDraggable ? 'is-merge-draggable' : '',
         draggable && node.planId ? 'is-draggable' : '',
         orbSignalKind ?? '',
+        healthClass ?? '',
         ...signalClasses,
       ]
         .filter(Boolean)
@@ -158,6 +162,24 @@ export function StudioWorldAtlasRoom() {
     cinematicClass: string;
   } | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+
+  const mission = useMissionControl({
+    visibleNodes: atlas.visibleNodes,
+    focusNode: atlas.focusNode,
+    atlasMapMode: atlas.view.mapMode,
+    setMapMode: atlas.setMapMode,
+    setTravelMode: atlas.setTravelMode,
+    resolveTravel: atlas.resolveTravel,
+    selectedNode: selectedNodeId
+      ? atlas.catalog.find((n) => n.id === selectedNodeId) ?? atlas.focusNode
+      : atlas.focusNode,
+  });
+
+  const healthByNodeId = useMemo(() => {
+    const map = new Map<string, string>();
+    mission.worldHealth.forEach((s) => map.set(s.nodeId, worldHealthClass(s.health)));
+    return map;
+  }, [mission.worldHealth]);
 
   const selectedNode = useMemo(
     () =>
@@ -243,8 +265,10 @@ export function StudioWorldAtlasRoom() {
         className={[
           'swa',
           'is-spatial',
+          'is-mission-control',
           `is-assembly-${phase}`,
           isAlive ? 'is-assembly-alive' : '',
+          !mission.navigationReady ? 'is-activating' : '',
           labelsVisible ? 'is-labels-visible' : '',
           showPlanner ? 'is-master-planner' : '',
           showParallelFutures ? 'is-parallel-futures' : '',
@@ -254,9 +278,17 @@ export function StudioWorldAtlasRoom() {
           .filter(Boolean)
           .join(' ')}
         role="application"
-        aria-label="Studio World Atlas"
+        aria-label="Mission Control"
       >
         <AtlasSpatialShell phase={phase} alive={isAlive}>
+        <MissionControlLayers
+          activation={mission.activation}
+          navigationReady={mission.navigationReady}
+          constellationStars={mission.constellationStars}
+          worldHealth={mission.worldHealth}
+          modeTableClass={mission.modeMapping.tableClass}
+          modeAmbientClass={mission.modeMapping.ambientClass}
+        />
         <header className="swa__hud">
           <button
             type="button"
@@ -267,8 +299,8 @@ export function StudioWorldAtlasRoom() {
             ←
           </button>
           <div className="swa__title-block">
-            <p className="swa__eyebrow">STUDIO COMMAND CENTER™ · GLOBAL ATLAS LAYER™</p>
-            <p className="swa__title">STUDIO WORLD ATLAS™</p>
+            <p className="swa__eyebrow">STUDIO COMMAND CENTER™ · THE WORLD IS THE INTERFACE™</p>
+            <p className="swa__title">MISSION CONTROL™</p>
             <p className="swa__zoom">
               {showFutureMerge
                 ? 'FUTURE MERGE™ · MERGE LAB™'
@@ -276,7 +308,7 @@ export function StudioWorldAtlasRoom() {
                 ? 'PARALLEL FUTURES™ · COMPARE BEFORE YOU BUILD'
                 : showPlanner
                   ? 'MASTER PLANNER™ · PLANNING MODE'
-                  : ATLAS_ZOOM_LABELS[atlas.view.zoomLevel]}
+                  : `ATLAS TABLE™ · ${CONTINUOUS_SCALE_LABELS[mission.continuousScale]}`}
             </p>
           </div>
           {atlas.focusNode.parentId ? (
@@ -289,6 +321,14 @@ export function StudioWorldAtlasRoom() {
             </button>
           )}
         </header>
+
+        {mission.worldHealthLine && mission.navigationReady ? (
+          <p className="swa__world-health-line">{mission.worldHealthLine}</p>
+        ) : null}
+
+        {mission.navigationReady ? (
+          <span className="swa__scale-pill">{CONTINUOUS_SCALE_LABELS[mission.continuousScale]}</span>
+        ) : null}
 
         <div className="swa__ticker" aria-live="polite">
           <PresenceGated elementId="atlas-world-ticker">
@@ -453,14 +493,19 @@ export function StudioWorldAtlasRoom() {
             </div>
           ) : null}
           {!selectedNode.isPlanned && !selectedNode.isConcept ? (
-            <button
-              type="button"
-              className="swa__travel-btn"
-              onClick={() => void handleTravel(selectedNode.id)}
-              disabled={traveling || (selectedNode.fogged && !selectedNode.unlocked)}
-            >
-              {ATLAS_TRAVEL_LABELS[atlas.view.travelMode]} → {selectedNode.displayName}
-            </button>
+            <>
+              {mission.navigationReady ? (
+                <p className="swa__travel-preview">{mission.travelPreview.previewLine}</p>
+              ) : null}
+              <button
+                type="button"
+                className="swa__travel-btn"
+                onClick={() => void handleTravel(selectedNode.id)}
+                disabled={traveling || !mission.navigationReady || (selectedNode.fogged && !selectedNode.unlocked)}
+              >
+                {mission.travelLabels[mission.travelOption]} → {selectedNode.displayName}
+              </button>
+            </>
           ) : null}
           {plannerSurfacesVisible && showFutureMerge ? (
             <>
@@ -782,9 +827,16 @@ export function StudioWorldAtlasRoom() {
               ? 'STUDIO ORB™ · STRATEGIC ADVISOR'
               : showPlanner
                 ? 'STUDIO ORB™ · MASTER PLANNER'
-                : 'STUDIO ORB™ · CHIEF OF STAFF'}
+                : 'STUDIO ORB™ · MISSION CONTROL'}
           </p>
-          {!showPlanner
+          {!showPlanner && mission.navigationReady
+            ? mission.orbLines.map((line) => (
+                <p key={line.id} className="swa__orb-rec is-medium" style={{ cursor: 'default' }}>
+                  {line.message}
+                </p>
+              ))
+            : null}
+          {!showPlanner && mission.navigationReady
             ? atlas.orbProactiveRecommendations.map((rec) => (
                 <button
                   key={rec.id}
@@ -819,7 +871,7 @@ export function StudioWorldAtlasRoom() {
         </PresenceGated>
 
         <div className="swa__table-stage">
-          <div className={`swa__table${atlas.view.transitionMs > 800 ? ' is-zooming' : ''}`}>
+          <div className={`swa__table${atlas.view.transitionMs > 800 ? ' is-zooming' : ''} ${mission.modeMapping.tableClass}`}>
             <div className="swa__table-surface">
               <div className="swa__table-glow" aria-hidden />
               {showPlanner ? (
@@ -873,6 +925,7 @@ export function StudioWorldAtlasRoom() {
                       }
                       onMergeDrag={atlas.moveMergeBuilding}
                       orbSignalKind={signal ? orbSignalClass(signal.kind) : undefined}
+                      healthClass={healthByNodeId.get(node.id)}
                     />
                   );
                 })}
@@ -881,34 +934,36 @@ export function StudioWorldAtlasRoom() {
           </div>
         </div>
 
-        <PresenceGated elementId="atlas-mode-controls">
-        <div className="swa__mode-rail" role="tablist" aria-label="Map modes">
-          {MAP_MODES.map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              role="tab"
-              aria-selected={atlas.view.mapMode === mode}
-              className={`swa__mode-pill${atlas.view.mapMode === mode ? ' is-active' : ''}`}
-              onClick={() => atlas.setMapMode(mode)}
-            >
-              {ATLAS_MAP_MODE_LABELS[mode]}
-            </button>
-          ))}
-        </div>
-        </PresenceGated>
-
-        {!showPlanner ? (
-          <PresenceGated elementId="atlas-travel-controls">
-          <div className="swa__travel-rail" role="group" aria-label="Travel mode">
-            {TRAVEL_MODES.map((mode) => (
+        {mission.navigationReady && !showPlanner ? (
+          <PresenceGated elementId="atlas-mode-controls">
+          <div className="swa__mode-rail swa__mc-mode-rail" role="tablist" aria-label="Mission Control visualization modes">
+            {mission.missionModes.map((mode) => (
               <button
                 key={mode}
                 type="button"
-                className={`swa__travel-pill${atlas.view.travelMode === mode ? ' is-active' : ''}`}
-                onClick={() => atlas.setTravelMode(mode)}
+                role="tab"
+                aria-selected={mission.missionMode === mode}
+                className={`swa__mode-pill${mission.missionMode === mode ? ' is-active' : ''}`}
+                onClick={() => mission.selectMissionMode(mode)}
               >
-                {ATLAS_TRAVEL_LABELS[mode]}
+                {mission.modeLabels[mode]}
+              </button>
+            ))}
+          </div>
+          </PresenceGated>
+        ) : null}
+
+        {mission.navigationReady && !showPlanner ? (
+          <PresenceGated elementId="atlas-travel-controls">
+          <div className="swa__travel-rail" role="group" aria-label="Architectural travel mode">
+            {mission.travelOptions.map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                className={`swa__travel-pill${mission.travelOption === mode ? ' is-active' : ''}`}
+                onClick={() => mission.selectTravelOption(mode)}
+              >
+                {mission.travelLabels[mode]}
               </button>
             ))}
           </div>
