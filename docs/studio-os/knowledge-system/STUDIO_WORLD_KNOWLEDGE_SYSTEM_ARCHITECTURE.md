@@ -1,9 +1,11 @@
 # Studio World Knowledge System™ — Architectural Proposal
 
-**Status:** Proposal — awaiting founder approval before implementation  
-**Version:** 0.1.0-proposal  
-**Date:** 2026-07-08  
-**Author:** Principal architecture sprint (documentation-first pivot)
+> **Superseded by World Graph™:** This proposal is adopted. Phase 1 is implemented as  
+> [`../world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md`](../world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md).  
+> The Knowledge Graph is the **first subsystem** of the World Graph — not a parallel system.
+
+**Status:** Approved · Phase 1 → World Graph Core  
+**Version:** 0.1.0-proposal (archived)
 
 ---
 

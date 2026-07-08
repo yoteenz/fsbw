@@ -1,0 +1,6082 @@
+{
+  "graphId": "studio-world-graph",
+  "version": "world-graph.v1",
+  "compiledAt": "2026-07-08T18:32:00.275Z",
+  "nodeCount": 240,
+  "edgeCount": 206,
+  "nodes": [
+    {
+      "id": "W-RM-ai-production-engine",
+      "slug": "ai-production-engine",
+      "displayName": "AI Production Engine™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "ai-production-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-ai-studio",
+      "slug": "ai-studio",
+      "displayName": "AI Studio Laboratory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "ai-studio",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-RM-concierge-approval-flow",
+      "slug": "concierge-approval-flow",
+      "displayName": "Approval Gallery™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "concierge-approval-flow",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-RM-architecture-observatory",
+      "slug": "architecture-observatory",
+      "displayName": "Architecture Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "architecture-observatory",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-arrival-experience",
+      "slug": "arrival-experience",
+      "displayName": "Arrival Experience Garden™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "arrival-experience",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-FLG-warehouse-assembly-bay",
+      "slug": "warehouse-assembly-bay",
+      "displayName": "Assembly Bay™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-asset-director",
+      "slug": "asset-director",
+      "displayName": "Asset Director Gallery™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "asset-director",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-warehouse"
+      ]
+    },
+    {
+      "id": "W-RM-asset-registry",
+      "slug": "asset-registry",
+      "displayName": "Asset Registry Vault™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "asset-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-warehouse"
+      ]
+    },
+    {
+      "id": "W-RM-audience-brain",
+      "slug": "audience-brain",
+      "displayName": "Audience Brain Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "audience-brain",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-FLG-archives-blueprint-archive",
+      "slug": "archives-blueprint-archive",
+      "displayName": "Blueprint Archive™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-blueprint-manager",
+      "slug": "blueprint-manager",
+      "displayName": "Blueprint Archive™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "blueprint-manager",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-archives"
+      ]
+    },
+    {
+      "id": "W-RM-brand-assets",
+      "slug": "brand-assets",
+      "displayName": "Brand Asset Vault™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "brand-assets",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-brand-architect",
+      "slug": "brand-architect",
+      "displayName": "Brand Headquarters™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "brand-architect",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-business-discovery-blueprint",
+      "slug": "business-discovery-blueprint",
+      "displayName": "Business Discovery Expedition™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "business-discovery-blueprint",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-RM-business-model-engine",
+      "slug": "business-model-engine",
+      "displayName": "Business Model Laboratory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "business-model-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-RM-campaign-orchestrator",
+      "slug": "campaign-orchestrator",
+      "displayName": "Campaign Operations Theater™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "campaign-orchestrator",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-campaign-engine",
+      "slug": "campaign-engine",
+      "displayName": "Campaign Studio™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "campaign-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-studio-overview",
+      "slug": "studio-overview",
+      "displayName": "Campus Map Atrium™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-overview",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-casting",
+      "slug": "casting",
+      "displayName": "Casting Studio™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "casting",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-chief-of-staff",
+      "slug": "chief-of-staff",
+      "displayName": "Chief of Staff Office™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "chief-of-staff",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-FLG-studio-command-center",
+      "slug": "studio-command-center",
+      "displayName": "Command Center™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-FLG-archives-genome-vault",
+      "slug": "archives-genome-vault",
+      "displayName": "Company Genome Vault™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-organization-genome-archives",
+      "slug": "organization-genome-archives",
+      "displayName": "Company Genome Vault™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "organization-genome-archives",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-archives"
+      ]
+    },
+    {
+      "id": "W-RM-company-health-index",
+      "slug": "company-health-index",
+      "displayName": "Company Health Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "company-health-index",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-FLG-scc-constitution-hall",
+      "slug": "scc-constitution-hall",
+      "displayName": "Constitution Hall™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-constitution-hall",
+      "slug": "constitution-hall",
+      "displayName": "Constitution Hall™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "constitution-hall",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-content-brain",
+      "slug": "content-brain",
+      "displayName": "Content Brain Library™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "content-brain",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-RM-content-packs",
+      "slug": "content-packs",
+      "displayName": "Content Pack Workshop™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "content-packs",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-FLG-creative-direction-studio",
+      "slug": "creative-direction-studio",
+      "displayName": "Creative Direction Studio™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-creative-direction-immersive",
+      "slug": "creative-direction-immersive",
+      "displayName": "Creative Direction Studio™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "creative-direction-immersive",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-RM-creative-director",
+      "slug": "creative-director",
+      "displayName": "Creative Director Briefing Room™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "creative-director",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-RM-design-dna-canon",
+      "slug": "design-dna-canon",
+      "displayName": "Design DNA Canon Vault™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "design-dna-canon",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-RM-organization-digital-twin",
+      "slug": "organization-digital-twin",
+      "displayName": "Digital Twin Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "organization-digital-twin",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-RM-director-mode",
+      "slug": "director-mode",
+      "displayName": "Director Mode Theater™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "director-mode",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-FLG-exp-discovery-atrium",
+      "slug": "exp-discovery-atrium",
+      "displayName": "Discovery Atrium™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-publishing-queue",
+      "slug": "publishing-queue",
+      "displayName": "Distribution Dock™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "publishing-queue",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-FLG-hq-distribution-headquarters",
+      "slug": "hq-distribution-headquarters",
+      "displayName": "Distribution Headquarters™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-distribution-network",
+      "slug": "distribution-network",
+      "displayName": "Distribution Headquarters™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "distribution-network",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-distribution-engine",
+      "slug": "distribution-engine",
+      "displayName": "Distribution Operations Wing™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "distribution-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-engineering-excellence-dashboard",
+      "slug": "engineering-excellence-dashboard",
+      "displayName": "Engineering Excellence Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "engineering-excellence-dashboard",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-event-bus",
+      "slug": "event-bus",
+      "displayName": "Event Bus Room™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "event-bus",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-executive-ai-director",
+      "slug": "executive-ai-director",
+      "displayName": "Executive AI Director Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "executive-ai-director",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-executive-command-center",
+      "slug": "executive-command-center",
+      "displayName": "Executive Command Center™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "executive-command-center",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-executive-council",
+      "slug": "executive-council",
+      "displayName": "Executive Council Chamber™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "executive-council",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-FLG-scc-executive-district",
+      "slug": "scc-executive-district",
+      "displayName": "Executive District™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-executive-timeline",
+      "slug": "executive-timeline",
+      "displayName": "Executive Timeline Gallery™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "executive-timeline",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-expansion-center",
+      "slug": "expansion-center",
+      "displayName": "Expansion Center Atrium™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "expansion-center",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-FLG-expedition-hub",
+      "slug": "expedition-hub",
+      "displayName": "Expedition Hub™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-experience-observatory",
+      "slug": "experience-observatory",
+      "displayName": "Experience Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "experience-observatory",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-FLG-scc-finance-command",
+      "slug": "scc-finance-command",
+      "displayName": "Finance Command™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-asset-factory",
+      "slug": "asset-factory",
+      "displayName": "Generation Bay™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "asset-factory",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-warehouse"
+      ]
+    },
+    {
+      "id": "W-FLG-archives-grand-entrance",
+      "slug": "archives-grand-entrance",
+      "displayName": "Grand Entrance™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-FLG-exp-growth-corridor",
+      "slug": "exp-growth-corridor",
+      "displayName": "Growth Corridor™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-FLG-archives-innovation-hall",
+      "slug": "archives-innovation-hall",
+      "displayName": "Hall of Innovation™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-innovation-lab-archives",
+      "slug": "innovation-lab-archives",
+      "displayName": "Hall of Innovation™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "innovation-lab-archives",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-archives"
+      ]
+    },
+    {
+      "id": "W-FLG-headquarters",
+      "slug": "headquarters",
+      "displayName": "Headquarters™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-headquarters-entry",
+      "slug": "headquarters-entry",
+      "displayName": "Headquarters™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "headquarters-entry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-organization-inauguration",
+      "slug": "organization-inauguration",
+      "displayName": "Inauguration Ceremony Hall™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "organization-inauguration",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-RM-performance-monitor",
+      "slug": "performance-monitor",
+      "displayName": "Infrastructure Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "performance-monitor",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-FLG-hq-intelligence-headquarters",
+      "slug": "hq-intelligence-headquarters",
+      "displayName": "Intelligence Headquarters™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-intelligence-engine",
+      "slug": "intelligence-engine",
+      "displayName": "Intelligence Headquarters™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "intelligence-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-PUB-knowledge-library",
+      "slug": "knowledge-library",
+      "displayName": "Knowledge Library™",
+      "nodeType": "publication",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "0.1.0",
+      "provenance": {
+        "source": "bootstrap",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "publication"
+      ]
+    },
+    {
+      "id": "W-RM-knowledge-hub",
+      "slug": "knowledge-hub",
+      "displayName": "Knowledge Library™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "knowledge-hub",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-ENG-knowledge-registry",
+      "slug": "knowledge-registry",
+      "displayName": "Knowledge Registry™",
+      "nodeType": "engine",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "bootstrap",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "engine"
+      ]
+    },
+    {
+      "id": "W-RM-tutorial-os",
+      "slug": "tutorial-os",
+      "displayName": "Learning Path Library™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "tutorial-os",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-RM-studio-hub",
+      "slug": "studio-hub",
+      "displayName": "Legacy Campus Map™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-hub",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-legacy-system",
+      "slug": "legacy-system",
+      "displayName": "Legacy Museum Hall™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "legacy-system",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-archives"
+      ]
+    },
+    {
+      "id": "W-RM-legacy-vault",
+      "slug": "legacy-vault",
+      "displayName": "Legacy Vault™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "legacy-vault",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-archives"
+      ]
+    },
+    {
+      "id": "W-FLG-marketplace-licensing-hall",
+      "slug": "marketplace-licensing-hall",
+      "displayName": "Licensing Hall™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-MS-m100",
+      "slug": "m100",
+      "displayName": "m100",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m101",
+      "slug": "m101",
+      "displayName": "m101",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m102",
+      "slug": "m102",
+      "displayName": "m102",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m103",
+      "slug": "m103",
+      "displayName": "m103",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m104",
+      "slug": "m104",
+      "displayName": "m104",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m105",
+      "slug": "m105",
+      "displayName": "m105",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m106",
+      "slug": "m106",
+      "displayName": "m106",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m107",
+      "slug": "m107",
+      "displayName": "m107",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m108",
+      "slug": "m108",
+      "displayName": "m108",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m109",
+      "slug": "m109",
+      "displayName": "m109",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m110",
+      "slug": "m110",
+      "displayName": "m110",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m111",
+      "slug": "m111",
+      "displayName": "m111",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m112",
+      "slug": "m112",
+      "displayName": "m112",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m113",
+      "slug": "m113",
+      "displayName": "m113",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m114",
+      "slug": "m114",
+      "displayName": "m114",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m115",
+      "slug": "m115",
+      "displayName": "m115",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m116",
+      "slug": "m116",
+      "displayName": "m116",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m117",
+      "slug": "m117",
+      "displayName": "m117",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m118",
+      "slug": "m118",
+      "displayName": "m118",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m119",
+      "slug": "m119",
+      "displayName": "m119",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m120",
+      "slug": "m120",
+      "displayName": "m120",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m121",
+      "slug": "m121",
+      "displayName": "m121",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m122",
+      "slug": "m122",
+      "displayName": "m122",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m123",
+      "slug": "m123",
+      "displayName": "m123",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m124",
+      "slug": "m124",
+      "displayName": "m124",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m125",
+      "slug": "m125",
+      "displayName": "m125",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m126",
+      "slug": "m126",
+      "displayName": "m126",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m126-5",
+      "slug": "m126-5",
+      "displayName": "m126-5",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127",
+      "slug": "m127",
+      "displayName": "m127",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-1",
+      "slug": "m127-1",
+      "displayName": "m127-1",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-10",
+      "slug": "m127-10",
+      "displayName": "m127-10",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-11",
+      "slug": "m127-11",
+      "displayName": "m127-11",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-12",
+      "slug": "m127-12",
+      "displayName": "m127-12",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-13",
+      "slug": "m127-13",
+      "displayName": "m127-13",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-14",
+      "slug": "m127-14",
+      "displayName": "m127-14",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-2",
+      "slug": "m127-2",
+      "displayName": "m127-2",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-3",
+      "slug": "m127-3",
+      "displayName": "m127-3",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-4",
+      "slug": "m127-4",
+      "displayName": "m127-4",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-5",
+      "slug": "m127-5",
+      "displayName": "m127-5",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-6",
+      "slug": "m127-6",
+      "displayName": "m127-6",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-7",
+      "slug": "m127-7",
+      "displayName": "m127-7",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-8",
+      "slug": "m127-8",
+      "displayName": "m127-8",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m127-9",
+      "slug": "m127-9",
+      "displayName": "m127-9",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m128",
+      "slug": "m128",
+      "displayName": "m128",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m129",
+      "slug": "m129",
+      "displayName": "m129",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m130",
+      "slug": "m130",
+      "displayName": "m130",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m131",
+      "slug": "m131",
+      "displayName": "m131",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m132",
+      "slug": "m132",
+      "displayName": "m132",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m133",
+      "slug": "m133",
+      "displayName": "m133",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m134",
+      "slug": "m134",
+      "displayName": "m134",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m135",
+      "slug": "m135",
+      "displayName": "m135",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m136",
+      "slug": "m136",
+      "displayName": "m136",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m137",
+      "slug": "m137",
+      "displayName": "m137",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m138",
+      "slug": "m138",
+      "displayName": "m138",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m139",
+      "slug": "m139",
+      "displayName": "m139",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m140",
+      "slug": "m140",
+      "displayName": "m140",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m141",
+      "slug": "m141",
+      "displayName": "m141",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m142",
+      "slug": "m142",
+      "displayName": "m142",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m143",
+      "slug": "m143",
+      "displayName": "m143",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m144",
+      "slug": "m144",
+      "displayName": "m144",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m145",
+      "slug": "m145",
+      "displayName": "m145",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m146",
+      "slug": "m146",
+      "displayName": "m146",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m147",
+      "slug": "m147",
+      "displayName": "m147",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m148",
+      "slug": "m148",
+      "displayName": "m148",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m149",
+      "slug": "m149",
+      "displayName": "m149",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m150",
+      "slug": "m150",
+      "displayName": "m150",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m151",
+      "slug": "m151",
+      "displayName": "m151",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m152",
+      "slug": "m152",
+      "displayName": "m152",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m153",
+      "slug": "m153",
+      "displayName": "m153",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m154",
+      "slug": "m154",
+      "displayName": "m154",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m155",
+      "slug": "m155",
+      "displayName": "m155",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m156",
+      "slug": "m156",
+      "displayName": "m156",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m157",
+      "slug": "m157",
+      "displayName": "m157",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m158",
+      "slug": "m158",
+      "displayName": "m158",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m159",
+      "slug": "m159",
+      "displayName": "m159",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m159-spec-qa",
+      "slug": "m159-spec-qa",
+      "displayName": "m159-spec-qa",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m160",
+      "slug": "m160",
+      "displayName": "m160",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m160-spec-qa",
+      "slug": "m160-spec-qa",
+      "displayName": "m160-spec-qa",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m161-spec-qa",
+      "slug": "m161-spec-qa",
+      "displayName": "m161-spec-qa",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m162-spec-qa",
+      "slug": "m162-spec-qa",
+      "displayName": "m162-spec-qa",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m277",
+      "slug": "m277",
+      "displayName": "m277",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m278",
+      "slug": "m278",
+      "displayName": "m278",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m279",
+      "slug": "m279",
+      "displayName": "m279",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m73-5",
+      "slug": "m73-5",
+      "displayName": "m73-5",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m73-6",
+      "slug": "m73-6",
+      "displayName": "m73-6",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m76-5",
+      "slug": "m76-5",
+      "displayName": "m76-5",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m77",
+      "slug": "m77",
+      "displayName": "m77",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m78",
+      "slug": "m78",
+      "displayName": "m78",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m79",
+      "slug": "m79",
+      "displayName": "m79",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m80",
+      "slug": "m80",
+      "displayName": "m80",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m81",
+      "slug": "m81",
+      "displayName": "m81",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m81-5",
+      "slug": "m81-5",
+      "displayName": "m81-5",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m82",
+      "slug": "m82",
+      "displayName": "m82",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m82-5",
+      "slug": "m82-5",
+      "displayName": "m82-5",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m83",
+      "slug": "m83",
+      "displayName": "m83",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m83-5",
+      "slug": "m83-5",
+      "displayName": "m83-5",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m84",
+      "slug": "m84",
+      "displayName": "m84",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m85",
+      "slug": "m85",
+      "displayName": "m85",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m86",
+      "slug": "m86",
+      "displayName": "m86",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m87",
+      "slug": "m87",
+      "displayName": "m87",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m87-5",
+      "slug": "m87-5",
+      "displayName": "m87-5",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m88",
+      "slug": "m88",
+      "displayName": "m88",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m89",
+      "slug": "m89",
+      "displayName": "m89",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m89-1",
+      "slug": "m89-1",
+      "displayName": "m89-1",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m89-2",
+      "slug": "m89-2",
+      "displayName": "m89-2",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m89-3",
+      "slug": "m89-3",
+      "displayName": "m89-3",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m89-4",
+      "slug": "m89-4",
+      "displayName": "m89-4",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m89-5",
+      "slug": "m89-5",
+      "displayName": "m89-5",
+      "nodeType": "milestone",
+      "lifecycle": "approved",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m90",
+      "slug": "m90",
+      "displayName": "m90",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m90-5",
+      "slug": "m90-5",
+      "displayName": "m90-5",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m91",
+      "slug": "m91",
+      "displayName": "m91",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m92",
+      "slug": "m92",
+      "displayName": "m92",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m92-5",
+      "slug": "m92-5",
+      "displayName": "m92-5",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m93",
+      "slug": "m93",
+      "displayName": "m93",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m94",
+      "slug": "m94",
+      "displayName": "m94",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m95",
+      "slug": "m95",
+      "displayName": "m95",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m96",
+      "slug": "m96",
+      "displayName": "m96",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m97",
+      "slug": "m97",
+      "displayName": "m97",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m98",
+      "slug": "m98",
+      "displayName": "m98",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-MS-m99",
+      "slug": "m99",
+      "displayName": "m99",
+      "nodeType": "milestone",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      },
+      "tags": [
+        "milestone"
+      ]
+    },
+    {
+      "id": "W-FLG-hq-marketing-headquarters",
+      "slug": "hq-marketing-headquarters",
+      "displayName": "Marketing Headquarters™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-FLG-marketplace-pavilion",
+      "slug": "marketplace-pavilion",
+      "displayName": "Marketplace Pavilion™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-marketplace-nav",
+      "slug": "marketplace-nav",
+      "displayName": "Marketplace Pavilion™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "marketplace-nav",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "marketplace"
+      ]
+    },
+    {
+      "id": "W-FLG-marketplace",
+      "slug": "marketplace",
+      "displayName": "Marketplace™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-marketplace-entry",
+      "slug": "marketplace-entry",
+      "displayName": "Marketplace™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "marketplace-entry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "marketplace"
+      ]
+    },
+    {
+      "id": "W-RM-asset-library",
+      "slug": "asset-library",
+      "displayName": "Media Vault™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "asset-library",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-warehouse"
+      ]
+    },
+    {
+      "id": "W-RM-memory-engine",
+      "slug": "memory-engine",
+      "displayName": "Memory Engine Vault™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "memory-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-mission-control",
+      "slug": "mission-control",
+      "displayName": "Mission Control Room™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "mission-control",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-FLG-archives-museum-wing",
+      "slug": "archives-museum-wing",
+      "displayName": "Museum Wing™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-archives-museum-wing",
+      "slug": "archives-museum-wing",
+      "displayName": "Museum Wing™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "archives-museum-wing",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-archives"
+      ]
+    },
+    {
+      "id": "W-RM-company-onboarding-intelligence",
+      "slug": "company-onboarding-intelligence",
+      "displayName": "Onboarding Expedition™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "company-onboarding-intelligence",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-RM-work-orchestration",
+      "slug": "work-orchestration",
+      "displayName": "Operations Coordination Room™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "work-orchestration",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-FLG-hq-operations-headquarters",
+      "slug": "hq-operations-headquarters",
+      "displayName": "Operations Headquarters™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-FLG-scc-operations-wing",
+      "slug": "scc-operations-wing",
+      "displayName": "Operations Wing™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-organization-pulse",
+      "slug": "organization-pulse",
+      "displayName": "Organization Pulse Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "organization-pulse",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-FLG-archives-orientation-atrium",
+      "slug": "archives-orientation-atrium",
+      "displayName": "Orientation Atrium™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-FLG-scc-performance-observatory",
+      "slug": "scc-performance-observatory",
+      "displayName": "Performance Observatory™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-analytics",
+      "slug": "analytics",
+      "displayName": "Performance Observatory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "analytics",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-permission-engine",
+      "slug": "permission-engine",
+      "displayName": "Permission Control Room™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "permission-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-policy-engine",
+      "slug": "policy-engine",
+      "displayName": "Policy Control Room™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "policy-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-production-builder",
+      "slug": "production-builder",
+      "displayName": "Production Builder Workshop™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "production-builder",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-RM-production",
+      "slug": "production",
+      "displayName": "Production Wall™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "production",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-FLG-warehouse-production-wing",
+      "slug": "warehouse-production-wing",
+      "displayName": "Production Wing™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-profession-brain",
+      "slug": "profession-brain",
+      "displayName": "Profession Brain Library™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "profession-brain",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-prompt-library",
+      "slug": "prompt-library",
+      "displayName": "Prompt Library™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "prompt-library",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-RM-qa-headquarters",
+      "slug": "qa-headquarters",
+      "displayName": "QA Command Center™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "qa-headquarters",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-render-queue",
+      "slug": "render-queue",
+      "displayName": "Render Queue Bay™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "render-queue",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-FLG-cds-scene-stack",
+      "slug": "cds-scene-stack",
+      "displayName": "Scene Stack™ Assembly",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-screening-room",
+      "slug": "screening-room",
+      "displayName": "Screening Theater™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "screening-room",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "creative-direction-studio"
+      ]
+    },
+    {
+      "id": "W-FLG-scc-security-center",
+      "slug": "scc-security-center",
+      "displayName": "Security Center™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-governance",
+      "slug": "governance",
+      "displayName": "Security Center™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "governance",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-shows",
+      "slug": "shows",
+      "displayName": "Shows Theater™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "shows",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-business-simulation-lab",
+      "slug": "business-simulation-lab",
+      "displayName": "Simulation Laboratory™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "business-simulation-lab",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-RM-social-accounts",
+      "slug": "social-accounts",
+      "displayName": "Social Publishing Studio™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "social-accounts",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-state-engine",
+      "slug": "state-engine",
+      "displayName": "State Engine Room™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "state-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-FLG-cds-story-table",
+      "slug": "cds-story-table",
+      "displayName": "Story Table™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-simulation-engine",
+      "slug": "simulation-engine",
+      "displayName": "Strategy Simulation Workshop™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "simulation-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "expedition-hub"
+      ]
+    },
+    {
+      "id": "W-FLG-studio-archives",
+      "slug": "studio-archives",
+      "displayName": "Studio Archives™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-studio-archives",
+      "slug": "studio-archives",
+      "displayName": "Studio Archives™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-archives",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-archives"
+      ]
+    },
+    {
+      "id": "W-RM-studio-command-center-entry",
+      "slug": "studio-command-center-entry",
+      "displayName": "Studio Command Center™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-command-center-entry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-studio-institute",
+      "slug": "studio-institute",
+      "displayName": "Studio Institute Academy™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-institute",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-FLG-studio-warehouse",
+      "slug": "studio-warehouse",
+      "displayName": "Studio Warehouse™",
+      "nodeType": "flagship",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "flagship"
+      ]
+    },
+    {
+      "id": "W-RM-studio-warehouse-entry",
+      "slug": "studio-warehouse-entry",
+      "displayName": "Studio Warehouse™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-warehouse-entry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-warehouse"
+      ]
+    },
+    {
+      "id": "W-RM-studio-warehouse-alias",
+      "slug": "studio-warehouse-alias",
+      "displayName": "Studio Warehouse™ (legacy path)",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-warehouse-alias",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-warehouse"
+      ]
+    },
+    {
+      "id": "W-RM-world-atlas",
+      "slug": "world-atlas",
+      "displayName": "Studio World Atlas™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "world-atlas",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-PUB-studio-world-bible",
+      "slug": "studio-world-bible",
+      "displayName": "Studio World Bible™",
+      "nodeType": "publication",
+      "lifecycle": "architecture",
+      "plane": "working",
+      "version": "0.1.0",
+      "summary": "Publication projection — generated from World Graph.",
+      "provenance": {
+        "source": "bootstrap",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "publication"
+      ]
+    },
+    {
+      "id": "W-RM-system-registry",
+      "slug": "system-registry",
+      "displayName": "Systems Registry Room™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "system-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-RM-talent-agency",
+      "slug": "talent-agency",
+      "displayName": "Talent Theater™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "talent-agency",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "headquarters"
+      ]
+    },
+    {
+      "id": "W-RM-workflow-engine",
+      "slug": "workflow-engine",
+      "displayName": "Workflow Engine Room™",
+      "nodeType": "room",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "workflow-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "studio-command-center"
+      ]
+    },
+    {
+      "id": "W-LAW-world-graph-is-truth",
+      "slug": "world-graph-is-truth",
+      "displayName": "World Graph Is Truth™",
+      "nodeType": "constitutional-law",
+      "lifecycle": "live",
+      "plane": "canon",
+      "version": "1.0.0",
+      "provenance": {
+        "source": "bootstrap",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "constitution"
+      ]
+    },
+    {
+      "id": "W-ENG-world-graph",
+      "slug": "world-graph",
+      "displayName": "World Graph™",
+      "nodeType": "engine",
+      "lifecycle": "implemented",
+      "plane": "canon",
+      "version": "1.0.0",
+      "summary": "Canonical civilization graph — single source of truth.",
+      "provenance": {
+        "source": "bootstrap",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      },
+      "tags": [
+        "engine"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "W-EDGE-governed-by-W-ENG-world-graph-W-LAW-world-graph-is-truth",
+      "type": "governed-by",
+      "from": "W-ENG-world-graph",
+      "to": "W-LAW-world-graph-is-truth",
+      "provenance": {
+        "source": "bootstrap",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-generated-from-W-PUB-studio-world-bible-W-ENG-world-graph",
+      "type": "generated-from",
+      "from": "W-PUB-studio-world-bible",
+      "to": "W-ENG-world-graph",
+      "provenance": {
+        "source": "bootstrap",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-studio-command-center-entry-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-studio-command-center-entry",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-command-center-entry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-mission-control-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-mission-control",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "mission-control",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-executive-command-center-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-executive-command-center",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "executive-command-center",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-chief-of-staff-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-chief-of-staff",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "chief-of-staff",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-executive-council-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-executive-council",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "executive-council",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-executive-ai-director-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-executive-ai-director",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "executive-ai-director",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-executive-timeline-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-executive-timeline",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "executive-timeline",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-analytics-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-analytics",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "analytics",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-company-health-index-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-company-health-index",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "company-health-index",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-organization-pulse-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-organization-pulse",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "organization-pulse",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-work-orchestration-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-work-orchestration",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "work-orchestration",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-campaign-orchestrator-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-campaign-orchestrator",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "campaign-orchestrator",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-governance-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-governance",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "governance",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-qa-headquarters-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-qa-headquarters",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "qa-headquarters",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-engineering-excellence-dashboard-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-engineering-excellence-dashboard",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "engineering-excellence-dashboard",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-studio-overview-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-studio-overview",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-overview",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-studio-hub-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-studio-hub",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-hub",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-creative-direction-immersive-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-creative-direction-immersive",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "creative-direction-immersive",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-creative-director-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-creative-director",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "creative-director",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-director-mode-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-director-mode",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "director-mode",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-production-builder-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-production-builder",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "production-builder",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-content-brain-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-content-brain",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "content-brain",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-design-dna-canon-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-design-dna-canon",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "design-dna-canon",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-prompt-library-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-prompt-library",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "prompt-library",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-ai-studio-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-ai-studio",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "ai-studio",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-concierge-approval-flow-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-concierge-approval-flow",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "concierge-approval-flow",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-screening-room-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-screening-room",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "screening-room",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-render-queue-W-FLG-creative-direction-studio",
+      "type": "located-in",
+      "from": "W-RM-render-queue",
+      "to": "W-FLG-creative-direction-studio",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "render-queue",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-studio-warehouse-entry-W-FLG-studio-warehouse",
+      "type": "located-in",
+      "from": "W-RM-studio-warehouse-entry",
+      "to": "W-FLG-studio-warehouse",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-warehouse-entry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-studio-warehouse-alias-W-FLG-studio-warehouse",
+      "type": "located-in",
+      "from": "W-RM-studio-warehouse-alias",
+      "to": "W-FLG-studio-warehouse",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-warehouse-alias",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-asset-registry-W-FLG-studio-warehouse",
+      "type": "located-in",
+      "from": "W-RM-asset-registry",
+      "to": "W-FLG-studio-warehouse",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "asset-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-asset-library-W-FLG-studio-warehouse",
+      "type": "located-in",
+      "from": "W-RM-asset-library",
+      "to": "W-FLG-studio-warehouse",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "asset-library",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-asset-factory-W-FLG-studio-warehouse",
+      "type": "located-in",
+      "from": "W-RM-asset-factory",
+      "to": "W-FLG-studio-warehouse",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "asset-factory",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-asset-director-W-FLG-studio-warehouse",
+      "type": "located-in",
+      "from": "W-RM-asset-director",
+      "to": "W-FLG-studio-warehouse",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "asset-director",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-studio-archives-W-FLG-studio-archives",
+      "type": "located-in",
+      "from": "W-RM-studio-archives",
+      "to": "W-FLG-studio-archives",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-archives",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-archives-museum-wing-W-FLG-studio-archives",
+      "type": "located-in",
+      "from": "W-RM-archives-museum-wing",
+      "to": "W-FLG-studio-archives",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "archives-museum-wing",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-blueprint-manager-W-FLG-studio-archives",
+      "type": "located-in",
+      "from": "W-RM-blueprint-manager",
+      "to": "W-FLG-studio-archives",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "blueprint-manager",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-legacy-system-W-FLG-studio-archives",
+      "type": "located-in",
+      "from": "W-RM-legacy-system",
+      "to": "W-FLG-studio-archives",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "legacy-system",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-legacy-vault-W-FLG-studio-archives",
+      "type": "located-in",
+      "from": "W-RM-legacy-vault",
+      "to": "W-FLG-studio-archives",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "legacy-vault",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-organization-genome-archives-W-FLG-studio-archives",
+      "type": "located-in",
+      "from": "W-RM-organization-genome-archives",
+      "to": "W-FLG-studio-archives",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "organization-genome-archives",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-innovation-lab-archives-W-FLG-studio-archives",
+      "type": "located-in",
+      "from": "W-RM-innovation-lab-archives",
+      "to": "W-FLG-studio-archives",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "innovation-lab-archives",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-marketplace-entry-W-FLG-marketplace",
+      "type": "located-in",
+      "from": "W-RM-marketplace-entry",
+      "to": "W-FLG-marketplace",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "marketplace-entry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-marketplace-nav-W-FLG-marketplace",
+      "type": "located-in",
+      "from": "W-RM-marketplace-nav",
+      "to": "W-FLG-marketplace",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "marketplace-nav",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-headquarters-entry-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-headquarters-entry",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "headquarters-entry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-distribution-network-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-distribution-network",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "distribution-network",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-distribution-engine-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-distribution-engine",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "distribution-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-publishing-queue-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-publishing-queue",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "publishing-queue",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-social-accounts-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-social-accounts",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "social-accounts",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-campaign-engine-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-campaign-engine",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "campaign-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-brand-architect-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-brand-architect",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "brand-architect",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-brand-assets-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-brand-assets",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "brand-assets",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-intelligence-engine-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-intelligence-engine",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "intelligence-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-audience-brain-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-audience-brain",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "audience-brain",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-profession-brain-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-profession-brain",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "profession-brain",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-memory-engine-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-memory-engine",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "memory-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-knowledge-hub-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-knowledge-hub",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "knowledge-hub",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-studio-institute-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-studio-institute",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "studio-institute",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-production-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-production",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "production",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-ai-production-engine-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-ai-production-engine",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "ai-production-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-shows-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-shows",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "shows",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-content-packs-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-content-packs",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "content-packs",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-talent-agency-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-talent-agency",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "talent-agency",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-casting-W-FLG-headquarters",
+      "type": "located-in",
+      "from": "W-RM-casting",
+      "to": "W-FLG-headquarters",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "casting",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-expansion-center-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-expansion-center",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "expansion-center",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-business-discovery-blueprint-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-business-discovery-blueprint",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "business-discovery-blueprint",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-organization-inauguration-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-organization-inauguration",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "organization-inauguration",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-business-simulation-lab-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-business-simulation-lab",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "business-simulation-lab",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-organization-digital-twin-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-organization-digital-twin",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "organization-digital-twin",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-simulation-engine-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-simulation-engine",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "simulation-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-business-model-engine-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-business-model-engine",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "business-model-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-company-onboarding-intelligence-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-company-onboarding-intelligence",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "company-onboarding-intelligence",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-arrival-experience-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-arrival-experience",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "arrival-experience",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-tutorial-os-W-FLG-expedition-hub",
+      "type": "located-in",
+      "from": "W-RM-tutorial-os",
+      "to": "W-FLG-expedition-hub",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "tutorial-os",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-system-registry-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-system-registry",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "system-registry",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-workflow-engine-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-workflow-engine",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "workflow-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-state-engine-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-state-engine",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "state-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-event-bus-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-event-bus",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "event-bus",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-permission-engine-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-permission-engine",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "permission-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-policy-engine-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-policy-engine",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "policy-engine",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-performance-monitor-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-performance-monitor",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "performance-monitor",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-architecture-observatory-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-architecture-observatory",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "architecture-observatory",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-experience-observatory-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-experience-observatory",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "experience-observatory",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-world-atlas-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-world-atlas",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "world-atlas",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-located-in-W-RM-constitution-hall-W-FLG-studio-command-center",
+      "type": "located-in",
+      "from": "W-RM-constitution-hall",
+      "to": "W-FLG-studio-command-center",
+      "provenance": {
+        "source": "route-registry",
+        "sourceRef": "constitution-hall",
+        "ingestedAt": "2026-07-08T18:32:00.273Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m76-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m76-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m73-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m73-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m73-6-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m73-6",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m77-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m77",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m78-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m78",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m79-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m79",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m80-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m80",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m81-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m81",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m81-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m81-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m82-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m82",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m82-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m82-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m83-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m83",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m83-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m83-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m86-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m86",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m84-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m84",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m85-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m85",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m87-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m87",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m87-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m87-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m141-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m141",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m88-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m88",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m89-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m89",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m89-1-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m89-1",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m89-2-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m89-2",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m89-3-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m89-3",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m89-4-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m89-4",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m89-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m89-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m90-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m90",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m90-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m90-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m91-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m91",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m92-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m92",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m92-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m92-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m93-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m93",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m95-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m95",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m277-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m277",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m278-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m278",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m279-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m279",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m96-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m96",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m97-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m97",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m99-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m99",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m100-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m100",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m101-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m101",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m102-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m102",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m103-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m103",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m104-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m104",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m105-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m105",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m106-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m106",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m107-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m107",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m108-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m108",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m109-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m109",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m110-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m110",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m111-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m111",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m112-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m112",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m113-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m113",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m114-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m114",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m115-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m115",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m116-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m116",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m117-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m117",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m118-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m118",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m119-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m119",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m120-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m120",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m121-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m121",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m122-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m122",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m123-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m123",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m124-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m124",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m125-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m125",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m126-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m126",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m126-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m126-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-13-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-13",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-14-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-14",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-1-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-1",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-2-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-2",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-3-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-3",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-4-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-4",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-5-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-5",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-6-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-6",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-7-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-7",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-8-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-8",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-9-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-9",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-10-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-10",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-11-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-11",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m127-12-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m127-12",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m94-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m94",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m98-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m98",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m142-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m142",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m143-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m143",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m144-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m144",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m145-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m145",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m146-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m146",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m147-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m147",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m148-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m148",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m149-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m149",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m150-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m150",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m151-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m151",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m152-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m152",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m153-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m153",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m154-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m154",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m155-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m155",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m156-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m156",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m157-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m157",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m158-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m158",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m159-spec-qa-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m159-spec-qa",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m160-spec-qa-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m160-spec-qa",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m161-spec-qa-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m161-spec-qa",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m162-spec-qa-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m162-spec-qa",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m132-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m132",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m128-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m128",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m129-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m129",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m130-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m130",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m131-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m131",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m133-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m133",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m136-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m136",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m137-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m137",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m138-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m138",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m139-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m139",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m140-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m140",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m134-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m134",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m135-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m135",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m159-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m159",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    },
+    {
+      "id": "W-EDGE-implements-W-MS-m160-W-ENG-knowledge-registry",
+      "type": "implements",
+      "from": "W-MS-m160",
+      "to": "W-ENG-knowledge-registry",
+      "provenance": {
+        "source": "master-spec",
+        "ingestedAt": "2026-07-08T18:32:00.275Z"
+      }
+    }
+  ],
+  "canonicalRule": "world-graph-is-truth"
+}

@@ -1,0 +1,32 @@
+# World Graph edge types — relationship ontology
+version: world-graph.v1
+
+structural:
+  - owns
+  - located-in
+  - implements
+  - integrates-with
+
+governance:
+  - governed-by
+  - depends-on
+  - required-by
+
+evolution:
+  - spawned-from
+  - supersedes
+  - deprecated-by
+  - inspired-by
+  - evolved-into
+  - versioned
+
+provenance:
+  - created-by
+  - collaborated-with
+  - generated-from
+  - published-as
+
+reuse:
+  - references
+  - reused-by
+  - projects-to

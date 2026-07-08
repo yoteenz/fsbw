@@ -1,0 +1,22 @@
+# Universal lifecycle — nothing disappears
+version: world-graph.v1
+
+stages:
+  - spark
+  - concept
+  - research
+  - architecture
+  - prototype
+  - review
+  - approved
+  - implemented
+  - live
+  - versioned
+  - deprecated
+  - historical
+  - legacy
+
+planes:
+  working: [spark, concept, research, architecture, prototype, review]
+  canon: [approved, implemented, live, versioned]
+  historical: [deprecated, historical, legacy]

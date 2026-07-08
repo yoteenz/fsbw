@@ -1,0 +1,66 @@
+# World Graph node types — civilization-wide taxonomy
+version: world-graph.v1
+
+domains:
+  knowledge:
+    - knowledge-object
+    - architectural-decision
+    - constitutional-law
+    - publication
+    - implementation-sprint
+  places:
+    - company
+    - organization
+    - founder
+    - headquarters
+    - flagship
+    - district
+    - wing
+    - room
+    - department
+  production:
+    - blueprint
+    - master-scene-blueprint
+    - scene-graph
+    - scene-stack-layer
+    - environment-shell
+    - golden-build
+    - warehouse-object
+  assets:
+    - asset
+    - asset-pack
+    - lighting-preset
+    - furniture-collection
+    - material
+    - camera
+    - animation
+  economy:
+    - marketplace-product
+    - marketplace-transaction
+    - reputation
+    - collaboration
+  identity:
+    - company-genome
+    - founder-genome
+    - industry-genome
+  innovation:
+    - innovation-lineage
+    - innovation-constellation
+    - innovation-expedition
+    - historical-event
+    - future-simulation
+  intelligence:
+    - engine
+    - ai-agent
+    - orb-personality
+    - milestone
+
+id_prefixes:
+  knowledge-object: W-KNO
+  architectural-decision: W-DEC
+  constitutional-law: W-LAW
+  flagship: W-FLG
+  room: W-RM
+  engine: W-ENG
+  company-genome: W-CGN
+  publication: W-PUB
