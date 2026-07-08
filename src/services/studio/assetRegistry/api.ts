@@ -84,7 +84,7 @@ export type ReuseRecommendation = {
 
 type ApiError = { ok: false; error: string; code?: string };
 
-async function registryFetch<T>(
+export async function registryFetch<T>(
   path: string,
   init?: { method?: string; body?: unknown }
 ): Promise<T | ApiError> {

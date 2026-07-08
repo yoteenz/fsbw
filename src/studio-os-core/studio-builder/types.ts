@@ -151,6 +151,8 @@ export type StudioAssetRegistryEntry = {
   stationId?: string;
   /** Scene Stack™ layer — pairs with stationId for hydration */
   layerId?: string;
+  /** Supabase Studio Asset Registry™ row id after cloud sync */
+  supabaseAssetId?: string;
 };
 
 /** @deprecated Use Creative Approval Pipeline™ */

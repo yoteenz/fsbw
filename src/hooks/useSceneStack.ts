@@ -53,12 +53,20 @@ export function useSceneStack(
 
   useEffect(() => {
     hydrateSceneStackFromBuilderRegistry(departmentId, projectId);
+    void import('../services/studio/assetRegistry/pipelineSync').then((m) =>
+      m.hydratePipelineRegistryFromSupabase(departmentId, projectId)
+    );
   }, [departmentId, projectId]);
 
   useEffect(() => {
     const onHydrated = () => bump();
+    const onRegistrySynced = () => bump();
     window.addEventListener(SCENE_STACK_HYDRATED_EVENT, onHydrated);
-    return () => window.removeEventListener(SCENE_STACK_HYDRATED_EVENT, onHydrated);
+    window.addEventListener('studio-os-pipeline-registry-synced', onRegistrySynced);
+    return () => {
+      window.removeEventListener(SCENE_STACK_HYDRATED_EVENT, onHydrated);
+      window.removeEventListener('studio-os-pipeline-registry-synced', onRegistrySynced);
+    };
   }, [bump]);
 
   const genKey = (stationId: string, layerId: SceneStackLayerId) => `${stationId}:${layerId}`;

@@ -42144,3 +42144,17 @@ User asked why CDS regenerated environment shell on refresh instead of mounting 
 - **User flow after deploy:** Generate once → asset in registry + Warehouse (`wh-reg-*` with real URL) → survives refresh → CDS hydrates layers on load → **Stack** skips FAL for layers already mounted; Warehouse **Apply** / **Use Existing** mounts without generation. Demo seed assets (gradient only) still cannot mount — need pipeline-registered preview URLs.
 - **Files:** `warehouse-bridge.ts`, `registry-store.ts`, `useSceneStack.ts`, `useAdminStudioWarehouseState.ts`, `WarehouseWorkspace.tsx`, `adminStudioWarehouseDemo.ts`, `studioOsBrowserStorage.ts`, `studio-builder/types.ts`.
 - **Prior arc (same chat):** CDS shell regen diagnosis · Scene Stack persistence · Warehouse immersive sprint · shell lock during pipeline.
+
+---
+
+## 2026-07-08 — Supabase pipeline registry sync (Warehouse hydrates from server)
+
+User approved completing the registry fix: persist builder registry · resolve M140 key collision · **sync `registerStudioAsset` → Supabase Studio Asset Registry™** so Warehouse/CDS hydrate from server on load.
+
+- **Already shipped (prior turn):** `studioOsStudioBuilderRegistry_v1` (renamed from colliding `studioOsAssetRegistry_v1`) · localStorage whitelist · Warehouse → Scene Stack bridge.
+- **Server (`api/_lib/assetRegistry/pipeline-registry.ts`):** `upsertPipelineRegistryAsset` · `listPipelineRegistryAssets` · dedupe via `metadata.studio_builder_asset_id` + `project_id` · `created_by_type: scene-stack-pipeline`.
+- **API (`studio-asset-registry.ts`):** POST `action=upsert_pipeline` · GET `action=list_pipeline` (`department_id` + `project_id`).
+- **Client (`pipelineSync.ts`):** `schedulePipelineAssetSync` on every `registerStudioAsset` (deferred) · `hydratePipelineRegistryFromSupabase` merges remote rows into local builder registry + Scene Stack · `PIPELINE_REGISTRY_SYNCED_EVENT` refreshes Warehouse catalog.
+- **Hooks:** `useSceneStack` + `useAdminStudioWarehouseState` call server hydrate on mount (after local hydrate).
+- **Requires:** Supabase migration `20260708120000_studio_asset_registry.sql` applied + admin session for API calls; unsigned-in falls back to local registry only.
+- **Files:** `pipeline-registry.ts`, `pipelineSync.ts`, `registry-store.ts`, `studio-asset-registry.ts`, `api.ts`, `useSceneStack.ts`, `useAdminStudioWarehouseState.ts`.

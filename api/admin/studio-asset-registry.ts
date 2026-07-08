@@ -14,6 +14,11 @@ import {
   searchRegistryByTags,
   updateRegistryAsset,
 } from '../_lib/assetRegistry/service.js';
+import {
+  listPipelineRegistryAssets,
+  upsertPipelineRegistryAsset,
+  type PipelineRegistryUpsertInput,
+} from '../_lib/assetRegistry/pipeline-registry.js';
 import { findSimilarAssets } from '../_lib/assetRegistry/similarity.js';
 import { getReuseRecommendations } from '../_lib/assetRegistry/recommendations.js';
 import type {
@@ -173,6 +178,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(200).json({ ok: true, recommendations });
       }
 
+      if (action === 'list_pipeline') {
+        const departmentId = strParam(query.department_id);
+        const projectId = strParam(query.project_id);
+        if (!departmentId || !projectId) {
+          return res.status(400).json({ error: 'department_id and project_id required' });
+        }
+        const assets = await listPipelineRegistryAssets(
+          supabase,
+          orgId,
+          departmentId,
+          projectId,
+          Number(query.limit) || 200
+        );
+        return res.status(200).json({ ok: true, assets, total: assets.length });
+      }
+
       return res.status(400).json({ error: `Unknown action: ${action}` });
     }
 
@@ -250,6 +271,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         };
         const recommendations = await getReuseRecommendations(supabase, simQuery);
         return res.status(200).json({ ok: true, recommendations });
+      }
+
+      if (action === 'upsert_pipeline') {
+        const input = body as unknown as PipelineRegistryUpsertInput;
+        if (
+          !input.department_id ||
+          !input.project_id ||
+          !input.builder_asset_id ||
+          !input.artifact_url ||
+          !input.name
+        ) {
+          return res.status(400).json({
+            error: 'department_id, project_id, builder_asset_id, name, and artifact_url required',
+          });
+        }
+        input.org_id = orgId;
+        const asset = await upsertPipelineRegistryAsset(supabase, input);
+        return res.status(200).json({ ok: true, asset });
       }
 
       const input = body as unknown as CreateRegistryAssetInput;

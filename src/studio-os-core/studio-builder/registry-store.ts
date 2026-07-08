@@ -57,7 +57,64 @@ export function registerStudioAsset(
       )
   );
   writeStore({ entries: [entry, ...filtered] });
+  schedulePipelineAssetSyncDeferred(entry);
   return entry;
+}
+
+/** Merge remote or updated entry without creating duplicate assetId rows. */
+export function upsertLocalRegistryEntry(
+  input: Omit<StudioAssetRegistryEntry, 'id' | 'registeredAt' | 'status'> & {
+    id?: string;
+    registeredAt?: string;
+    status?: StudioAssetRegistryEntry['status'];
+  }
+): StudioAssetRegistryEntry {
+  const store = readStore();
+  const existing = store.entries.find(
+    (e) =>
+      e.departmentId === input.departmentId &&
+      e.projectId === input.projectId &&
+      e.assetId === input.assetId
+  );
+
+  const entry: StudioAssetRegistryEntry = {
+    id: existing?.id ?? input.id ?? uid(),
+    registeredAt: existing?.registeredAt ?? input.registeredAt ?? new Date().toISOString(),
+    status: input.status ?? existing?.status ?? 'validated',
+    departmentId: input.departmentId,
+    projectId: input.projectId,
+    packageId: input.packageId,
+    assetId: input.assetId,
+    productionGroupId: input.productionGroupId,
+    category: input.category,
+    publicUrl: input.publicUrl,
+    storagePath: input.storagePath,
+    model: input.model,
+    promptVersion: input.promptVersion,
+    stationId: input.stationId ?? existing?.stationId,
+    layerId: input.layerId ?? existing?.layerId,
+    supabaseAssetId: input.supabaseAssetId ?? existing?.supabaseAssetId,
+  };
+
+  const filtered = store.entries.filter(
+    (e) =>
+      !(
+        e.departmentId === entry.departmentId &&
+        e.projectId === entry.projectId &&
+        e.assetId === entry.assetId
+      )
+  );
+  writeStore({ entries: [entry, ...filtered] });
+  return entry;
+}
+
+function schedulePipelineAssetSyncDeferred(entry: StudioAssetRegistryEntry): void {
+  if (typeof window === 'undefined' || !entry.publicUrl?.startsWith('http')) return;
+  void import('../../services/studio/assetRegistry/pipelineSync')
+    .then((m) => m.schedulePipelineAssetSync(entry))
+    .catch(() => {
+      /* offline / unsigned-in — local registry still works */
+    });
 }
 
 export function getRegistryAsset(

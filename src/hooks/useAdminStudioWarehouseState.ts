@@ -21,6 +21,7 @@ import {
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 import type { WarehouseAsset } from '../studio-os-core/studio-warehouse';
 import { buildStudioWarehouseCatalog, exportWarehouseSnapshot } from '../utils/adminStudioWarehouseDemo';
+import { PIPELINE_REGISTRY_SYNCED_EVENT } from '../services/studio/assetRegistry/pipelineSync';
 
 const CDS_DEPARTMENT_ID = 'creative-direction';
 
@@ -48,6 +49,16 @@ export function useAdminStudioWarehouse() {
   const [applyNotice, setApplyNotice] = useState<string | null>(null);
 
   const bump = useCallback(() => setVersion((v) => v + 1), []);
+
+  useEffect(() => {
+    const project = resolveActiveProjectGenome(CDS_DEPARTMENT_ID);
+    void import('../services/studio/assetRegistry/pipelineSync').then((m) =>
+      m.hydratePipelineRegistryFromSupabase(CDS_DEPARTMENT_ID, project.projectId).then(() => bump())
+    );
+    const onSynced = () => bump();
+    window.addEventListener(PIPELINE_REGISTRY_SYNCED_EVENT, onSynced);
+    return () => window.removeEventListener(PIPELINE_REGISTRY_SYNCED_EVENT, onSynced);
+  }, [bump]);
 
   const prefs = useMemo(() => {
     void version;
