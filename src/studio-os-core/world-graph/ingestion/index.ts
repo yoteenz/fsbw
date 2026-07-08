@@ -9,3 +9,4 @@ export { ingestFoundationalPhysicsNodes } from './physics-ingest';
 export { ingestImplementationStandardNodes } from './standards-ingest';
 export { ingestEraRoadmapNodes } from './era-roadmap-ingest';
 export { ingestArchitectureDecisionNodes } from './architecture-decisions-ingest';
+export { ingestKnowledgeCoreNodes } from './knowledge-core-ingest';

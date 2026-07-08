@@ -37,7 +37,7 @@ Studio World must first understand itself. Before Studio World can think, it mus
 | System | Role in Era 1 |
 |--------|----------------|
 | World Graph™ | Canonical memory substrate — single source of truth |
-| Knowledge Core™ | Schema, registry, lifecycle, query over graph nodes |
+| Knowledge Core™ | Studio World's internal memory — domains, statuses, prompt memory, Architect's Memory™, lifecycle, query over graph nodes |
 | Studio World Bible™ | Publication projection — never canonical |
 | Knowledge Library™ | Immersive Archives projection for exploring relationships |
 | Blueprint Registry™ | Registered blueprint nodes in the graph |

@@ -14,7 +14,8 @@ export type BehavioralConstitutionalLawId =
   | 'repository-governance'
   | 'approval-workflow'
   | 'progressive-presence'
-  | 'architecture-decision-records';
+  | 'architecture-decision-records'
+  | 'studio-world-knowledge-core';
 
 export type BehavioralConstitutionalLaw = {
   id: BehavioralConstitutionalLawId;
@@ -132,5 +133,16 @@ export const BEHAVIORAL_CONSTITUTIONAL_LAWS: BehavioralConstitutionalLaw[] = [
       'Flagship decisions generate ADR drafts, accepted ADRs become Constitution Hall™ exhibits, and previous ADRs are never deleted.',
     physicsBasis: ['world-memory', 'knowledge-conservation', 'temporal-continuity'],
     principleBasis: ['memory-before-intelligence', 'everything-has-a-home', 'founders-build-worlds'],
+  },
+  {
+    id: 'studio-world-knowledge-core',
+    number: 12,
+    title: 'Studio World Knowledge Core™',
+    summary:
+      'Article K22 — Studio World becomes its own memory through canonical domains, statuses, prompt memory, Architect’s Memory™, and searchable knowledge entries.',
+    enforcement:
+      'Only Canon knowledge may influence future architecture automatically. Every major prompt creates a Knowledge Entry. History is versioned, never overwritten.',
+    physicsBasis: ['world-memory', 'knowledge-conservation', 'temporal-continuity', 'relationship-gravity'],
+    principleBasis: ['memory-before-intelligence', 'everything-has-a-home', 'world-first'],
   },
 ];

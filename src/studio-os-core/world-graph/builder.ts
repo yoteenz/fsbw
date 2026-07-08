@@ -10,6 +10,7 @@ import {
   ingestFoundationalPhysicsNodes,
   ingestGenomeNodes,
   ingestImplementationStandardNodes,
+  ingestKnowledgeCoreNodes,
   ingestMasterSpecMilestones,
   ingestPublicationNodes,
   ingestRouteRegistryNodes,
@@ -47,6 +48,7 @@ export function buildWorldGraph(input: BuildWorldGraphInput = {}): BuildWorldGra
     ingestImplementationStandardNodes(),
     ingestEraRoadmapNodes(),
     ingestArchitectureDecisionNodes(),
+    ingestKnowledgeCoreNodes(),
     ingestRouteRegistryNodes(),
   ];
 

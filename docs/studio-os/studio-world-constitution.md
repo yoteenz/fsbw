@@ -24,6 +24,7 @@ A monumental architectural chamber — not settings, not documentation. Governin
 - **UI:** `src/components/admin/studio/constitution-hall/ConstitutionHallRoom.tsx`
 - **Orb:** Keeper of Studio World — explains principles, evolution, and fit
 - **ADR exhibits:** Accepted Architecture Decision Records™ are preserved here as constitutional history, with Architect Journal™ narratives and Decision Graph™ lineage.
+- **Knowledge Core™:** Article K22 preserves Studio World's internal memory as searchable canon, domains, statuses, prompt memory, and Architect's Memory™.
 
 ---
 
@@ -99,6 +100,7 @@ Reviews persist in `studioOsStudioWorldConstitution_v1`.
 - **Architecture Auditor™:** complementary guardian for webpage detection and Scene Stack™
 - **Orb:** `resolveOrbPersonalityForPath` returns Keeper in Constitution Hall™
 - **Architecture Decision Records™:** `src/studio-os-core/architecture-decision-records/` preserves accepted decisions as `architectural-decision` nodes.
+- **Studio World Knowledge Core™:** `src/studio-os-core/studio-world-knowledge-core/` preserves canonical knowledge entries as World Graph `knowledge-object` nodes.
 
 ---
 
@@ -117,6 +119,26 @@ Every accepted ADR records:
 Accepted ADRs are never deleted. If Studio World evolves, a new ADR supersedes the previous one and the earlier decision remains historical.
 
 Canon text: [ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md](./architecture-decision-records/ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md)
+
+---
+
+## ARTICLE-K22 — The Knowledge Core™
+
+Studio World should not rely on external AI memory. Studio World becomes its own memory through the Knowledge Core™.
+
+The Knowledge Core preserves:
+
+- decisions and reasoning,
+- system evolution,
+- canon vs draft vs experimental status,
+- prompt memory,
+- prompt standards,
+- Architect's Memory™,
+- what should never be contradicted.
+
+Only Canon™ Knowledge Entries may influence future architecture automatically. Other statuses remain preserved and searchable, but cannot silently govern new architecture.
+
+Canon text: [ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md](./knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md)
 
 ---
 

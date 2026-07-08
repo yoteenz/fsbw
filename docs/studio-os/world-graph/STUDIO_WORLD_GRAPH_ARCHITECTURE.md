@@ -110,6 +110,7 @@ Archivist queries **relationships**, not documents:
 
 - Route registry → room + flagship nodes
 - Studio World Constitution → law nodes
+- Studio World Knowledge Core™ → knowledge-object domain, entry, and prompt-standard nodes
 - Architecture Decision Records™ → architectural-decision nodes
 - Scene Stack assembly law → law node
 - Bootstrap engines, genomes, publications
@@ -179,6 +180,7 @@ Full docs: [STUDIO_WORLD_GOVERNANCE_HIERARCHY.md](../governance/STUDIO_WORLD_GOV
 ## See also
 
 - [STUDIO_WORLD_THREE_ERAS_ROADMAP.md](./STUDIO_WORLD_THREE_ERAS_ROADMAP.md) — **guiding principle:** Knowledge™ → World™ → Intelligence™
+- [ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md](../knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md) — Studio World internal memory
 - [ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md](../architecture-decision-records/ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md) — ADRs as constitutional history
 - [STUDIO_WORLD_KNOWLEDGE_SYSTEM_ARCHITECTURE.md](../knowledge-system/STUDIO_WORLD_KNOWLEDGE_SYSTEM_ARCHITECTURE.md) — original proposal (subsumed)
 - [world-graph-law.md](../../knowledge/canon/constitution/world-graph-law.md)

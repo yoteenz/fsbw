@@ -42849,3 +42849,68 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
   4. Will this still make sense five years from now?
   5. How does it strengthen the civilization?
 - Do not store major architectural rationale only in chat, commits, or MEMORY. Promote accepted foundational decisions into ADRs and World Graph nodes.
+
+---
+
+## 2026-07-08 — ARTICLE-K22 Studio World Knowledge Core™ internal memory
+
+**Context:** User followed the ADR sprint with a larger discovery: **Studio World should not rely on external AI memory; Studio World should become its own memory.** Requested **ARTICLE-K22 — The Knowledge Core™**, a permanent internal system where Studio World preserves decisions, evolution, principles, canon, experiments, prompt memory, prompt standards, Architect’s Memory™, and searchable relationships without relying on chat history.
+
+**Topics covered (entire conversation so far):**
+- Previous turn delivered **ARTICLE-K21 Architecture Decision Records™** as constitutional history: ADR core module, ADR-0001, Constitution Hall™ exhibit projection, World Graph `architectural-decision` ingestion, Article K21 behavioral law, docs/canon, CORE/MEMORY updates, and build verification.
+- This follow-up promoted the broader **Knowledge Core™** into constitutional memory:
+  - not documentation,
+  - not external AI memory,
+  - not chat history,
+  - but Studio World’s canonical internal memory.
+- Inspected existing Knowledge System proposal, World Graph Phase 1, Three Eras Roadmap™, Knowledge Object Model, World Graph ingestion pipeline, and behavioral constitutional laws.
+- Chose an **Era 1 Knowledge™** implementation: typed memory model + canon/docs + World Graph ingestion, not a premature full UI/search product.
+
+**Decisions / outcomes:**
+- **ARTICLE-K22** is now Behavioral Constitutional Law #12: Studio World Knowledge Core™.
+- Knowledge Core owns permanent domains:
+  - Constitution · Architecture · World Bible · Design Language · Experience System · Orb · Mission Control · Atlas · Scene Assembly · Knowledge Engine · Marketplace · Discovery Packs · Civilization · ADR Archive · Asset Standards · Engineering Standards · Prompt Standards · Brand Standards · Research · Future Concepts · **Architect’s Memory™**.
+- Every Knowledge Entry receives exactly one canonical status:
+  - Canon · Approved · Draft · Experimental · Deprecated · Historical · Archived.
+- **Only Canon™ entries may influence future architecture automatically.**
+- Major prompts that fundamentally change Studio World become searchable Knowledge Entries with:
+  - Title · Summary · Reasoning · Final Prompt · Architecture Added · Related Systems · Constitution Articles · ADR References · World Bible References · Implementation Status · Superseded By.
+- Prompt Standards™ are now canonizable internal standards, including Recommended Model, Prompt Classification, Architectural Improvements Added, Future Expansion, Architect Before Prompting, and Reusable Systems Over One-Offs.
+- Architect’s Memory™ is a dedicated domain for architectural consistency (philosophy, vocabulary, naming, material language, interaction philosophy, presentation format, heuristics), not personal conversation memory.
+- Every Knowledge Core domain, entry, and prompt standard now becomes a World Graph `knowledge-object` node.
+
+**Changes:**
+- Added Knowledge Core module:
+  - `src/studio-os-core/studio-world-knowledge-core/types.ts`
+  - `src/studio-os-core/studio-world-knowledge-core/entries.ts`
+  - `src/studio-os-core/studio-world-knowledge-core/index.ts`
+- Added World Graph ingestion:
+  - `src/studio-os-core/world-graph/ingestion/knowledge-core-ingest.ts`
+  - wired into `src/studio-os-core/world-graph/ingestion/index.ts`
+  - wired into `src/studio-os-core/world-graph/builder.ts`
+- Added Article K22 constitutional law:
+  - `src/studio-os-core/studio-world-constitution/behavioral-laws.ts`
+  - `knowledge/canon/constitution/behavioral-laws.md`
+  - `knowledge/canon/constitution/studio-world-knowledge-core.md`
+- Added canonical K22 docs:
+  - `docs/studio-os/knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md`
+  - updated `docs/studio-os/studio-world-constitution.md`
+  - updated `docs/studio-os/governance/STUDIO_WORLD_GOVERNANCE_HIERARCHY.md`
+  - updated `docs/studio-os/world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md`
+  - updated `docs/studio-os/world-graph/STUDIO_WORLD_THREE_ERAS_ROADMAP.md`
+  - updated `knowledge/README.md`
+- Regenerated World Graph artifacts:
+  - `public/studio-os/world-graph/graph.json`
+  - `docs/studio-os/world-graph/WORLD_GRAPH_COMPILE_REPORT.md`
+- Added permanent CORE note:
+  - `motherboard/CORE.md`
+
+**Verification:**
+- `npm run compile-world-graph` passed: **444 nodes · 682 edges · PASS**.
+- `npm run build` passed. Vite emitted the existing large-chunk warning only.
+- Dropped unrelated timestamp-only master-spec generated diffs; retained World Graph artifacts because they include K22 knowledge nodes/edges.
+
+**Conventions:**
+- Future major Studio World prompts should create Knowledge Entries when they change architecture, canon, systems, standards, or long-term philosophy.
+- Do not rely on external AI/chat memory for architectural continuity. Promote durable memory into Knowledge Core + World Graph.
+- Treat status as governance: Canon can guide architecture automatically; Approved/Draft/Experimental/Historical/Archived can inform humans but cannot silently govern new systems.
