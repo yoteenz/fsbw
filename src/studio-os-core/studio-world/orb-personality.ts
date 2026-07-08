@@ -15,6 +15,11 @@ import {
   COLLABORATION_CURATOR_GREETING,
   COLLABORATION_CURATOR_ROLE,
 } from '../collaborative-innovation-network/orb-curator';
+import {
+  INNOVATION_HISTORIAN_ACCENT,
+  INNOVATION_HISTORIAN_GREETING,
+  INNOVATION_HISTORIAN_ROLE,
+} from '../innovation-lineage/orb-historian';
 
 export type StudioWorldOrbPersonality = {
   flagshipId: StudioWorldFlagshipId;
@@ -140,6 +145,16 @@ export function resolveOrbPersonalityForPath(pathname: string): StudioWorldOrbPe
       guidance:
         'I explain why principles exist, how Studio World evolves, and whether new ideas fit the civilization.',
       accent: CONSTITUTION_KEEPER_ACCENT,
+    };
+  }
+  if (p.includes('innovation-lineage-gallery') || p.includes('lineage-gallery')) {
+    return {
+      flagshipId: 'studio-archives',
+      role: INNOVATION_HISTORIAN_ROLE,
+      greeting: INNOVATION_HISTORIAN_GREETING,
+      guidance:
+        'I trace how inventions evolved — generations, forks, merges, and Marketplace impact preserved forever.',
+      accent: INNOVATION_HISTORIAN_ACCENT,
     };
   }
   if (p.includes('innovation-district')) {

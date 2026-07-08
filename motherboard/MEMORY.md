@@ -42554,6 +42554,8 @@ User **FOLLOW-UP SPRINT — Collaborative Innovation Network™:** Studio World 
 
 ---
 
+---
+
 ## 2026-07-08 — World Graph™ Phase 1 (Knowledge Core foundation)
 
 User **approved** Knowledge System direction and **expanded** to **World Graph™** — civilization-wide canonical graph, not documentation-only. Knowledge Graph is first subsystem. Graph is truth; Bible, Atlas, Archives, Orb are projections.
@@ -42566,3 +42568,23 @@ User **approved** Knowledge System direction and **expanded** to **World Graph�
 - **Orb Archivist™** registered as engine node — relationship-first queries (`queryNodesReusingAsset`, `queryEvolutionChain`, etc.).
 - **Extension contract:** future systems add nodeType + ingestion adapter + `integrates-with` W-ENG-world-graph.
 - **Prior arc (same chat):** Knowledge System proposal approved · Collaborative Innovation Network™ · Global Atlas Layer™ · Scene Stack hardening.
+
+---
+
+## 2026-07-08 — Innovation Lineage™ living innovation graph + Museum gallery
+
+User **FOLLOW-UP SPRINT — Innovation Lineage™ (The Living Innovation Graph):** After Collaborative Innovation Network™ introduced co-invention, ensure every invention develops permanent lineage — Studio OS remembers how innovations evolved, not only who created them.
+
+- **Engine `src/studio-os-core/innovation-lineage/`:** `lineage-graph.ts` (Innovation Graph™ — Original Creator™, Inspired By™, Forked From™, Merged With™, Enhanced By™, etc.) · `contribution-timeline.ts` (13 domains, permanent attribution) · `intellectual-equity.ts` (Influence Score™, Innovation Reach™, Creative Equity™) · `forking-engine.ts` (Fork/Improve/Customize/Merge/Republish — lineage preserved) · `marketplace-lineage.ts` (invention listings — story, timeline, time/budget saved, future forks) · `founder-legacy.ts` (Innovation Score™, companies helped, breakthroughs) · `discovery-lineage.ts` · `atlas-lineage.ts` (spread signals for Atlas) · `orb-historian.ts` (Innovation Historian) · `lineage-builder.ts` · `store.ts` (`studioOsInnovationLineage_v1`) · `dock-advisor.ts`.
+- **Innovation Lineage Gallery™:** immersive Museum Wing exhibit `InnovationLineageGalleryRoom.tsx` + `/admin/studio/innovation-lineage-gallery` — evolution timeline, Intellectual Equity grid, Marketplace invention story, discovery, Founder Legacy™; Orb Historian.
+- **Hook:** `useInnovationLineage` — profile, exhibits, historian lines, focus exhibit/legacy.
+- **Demo flagship lineage:** Luxury Customer Experience HQ™ — 5 generations · Marketplace Bestseller™ · 18,400+ companies.
+- **Studio World wiring:** `route-registry` gallery in Museum Wing · `flagship-destinations` teaching on museum wing · `navigation.ts` walkway · `migration-audit` immersive-partial · `adminStudioNavigation` · `App.tsx` · `core/modules.ts` id `innovation-lineage`.
+- **Orb:** Innovation Lineage Gallery path → Innovation Historian (`orb-personality.ts`).
+- **Global Atlas:** lineage spread hint in overlay (`formatAtlasLineageLine`); context priorities for gallery; orb guide aliases.
+- **Command Dock:** `resolveInnovationLineageAdvice()` after Collaborative Innovation Network chain.
+- **Sync:** reads `collaborative-innovation-network` joint innovations + marketplace + studio-museum.
+- **Docs:** `docs/studio-os/innovation-lineage.md`.
+- **Boundaries:** heuristic/demo lineage graph — extends CIN + Museum + Marketplace; no full Atlas district glow visualization yet; no room redesign outside new gallery.
+- **Prior arc (same chat):** World Graph™ Phase 1 · Collaborative Innovation Network™ · Global Atlas Layer™ · Constitution Hall™.
+

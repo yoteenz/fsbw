@@ -40,6 +40,7 @@ const CONTEXT_BY_FLAGSHIP: Record<StudioWorldFlagshipId, GlobalAtlasLocationCont
       'Warehouse Wing™',
       'Museum Wing™',
       'Hall of Innovation™',
+      'Innovation Lineage Gallery™',
       'Blueprint Archive™',
       'Marketplace™',
     ],
@@ -89,6 +90,20 @@ export function resolveAtlasContextForPath(pathname: string): GlobalAtlasLocatio
   }
   if (p.includes('studio-warehouse') || p.includes('/world/warehouse')) {
     return CONTEXT_BY_FLAGSHIP['studio-warehouse'];
+  }
+  if (p.includes('innovation-lineage-gallery') || p.includes('lineage-gallery')) {
+    return {
+      ...CONTEXT_BY_FLAGSHIP['studio-archives'],
+      contextLabel: 'Innovation Lineage Gallery™',
+      priorityModes: ['innovation', 'archives', 'marketplace', 'company-genome'],
+      priorityDestinations: [
+        'Innovation Lineage Gallery™',
+        'Museum Wing™',
+        'Innovation District™',
+        'Marketplace Pavilion™',
+        'Blueprint Archive™',
+      ],
+    };
   }
   if (p.includes('innovation-district')) {
     return {

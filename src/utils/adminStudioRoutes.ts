@@ -888,6 +888,10 @@ export function adminStudioInnovationDistrictPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/innovation-district`;
 }
 
+export function adminStudioInnovationLineageGalleryPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/innovation-lineage-gallery`;
+}
+
 export function adminStudioOrganizationOperatingManualPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organization-operating-manual`;
 }

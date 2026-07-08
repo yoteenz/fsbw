@@ -132,6 +132,19 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     moduleKey: 'collaborative-innovation-network',
   },
   {
+    id: 'innovation-lineage-gallery',
+    title: 'INNOVATION LINEAGE GALLERY',
+    purpose:
+      'Innovation Lineage™ — permanent Innovation Graph™, evolution timelines, Intellectual Equity™, and Marketplace invention stories in Museum Wing™.',
+    route: p('innovation-lineage-gallery'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'LINEAGE',
+    ctaLabel: 'ENTER GALLERY',
+    featuredOnOverview: true,
+    moduleKey: 'innovation-lineage',
+  },
+  {
     id: 'chief-of-staff',
     title: 'CHIEF OF STAFF',
     purpose: 'Founder primary executive — soft approvals, unified briefings, and attention protection before escalations.',

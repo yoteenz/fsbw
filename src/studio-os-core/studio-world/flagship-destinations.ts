@@ -178,6 +178,7 @@ export const FLAGSHIP_DISTRICTS: StudioWorldLocation[] = [
     physicalType: 'museum',
     flagshipId: 'studio-archives',
     worldPath: 'archives/museum-wing',
+    teaching: 'Preserved masterpieces — Innovation Lineage Gallery™ celebrates collective invention.',
   },
   {
     id: 'archives-innovation-hall',

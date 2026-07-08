@@ -20,6 +20,7 @@ function GlobalAtlasLayerInner() {
     orbGuideLine,
     collaboratorLine,
     atlasCollaborators,
+    lineageLine,
     traveling,
     closeAtlas,
     travelToNode,
@@ -74,6 +75,12 @@ function GlobalAtlasLayerInner() {
                   </p>
                 ))}
             </div>
+          ) : null}
+
+          {lineageLine ? (
+            <p className="gal-lineage-hint" aria-label="Innovation lineage spreading">
+              {lineageLine}
+            </p>
           ) : null}
 
           <div className="gal-table" aria-label="Holographic navigation table">

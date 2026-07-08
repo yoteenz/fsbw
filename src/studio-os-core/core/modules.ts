@@ -114,6 +114,7 @@ export type StudioOsCoreModuleId =
   | 'founder-operating-system'
   | 'innovation-lab'
   | 'collaborative-innovation-network'
+  | 'innovation-lineage'
   | 'organization-operating-manual'
   | 'legacy-network'
   | 'studio-intelligence-architecture'
@@ -844,6 +845,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'COLLABORATIVE INNOVATION NETWORK™',
     description: 'Innovation economy — co-invent with founders, Shared Genome™, contribution and royalty engines, joint Marketplace publishing.',
     routeSegment: 'innovation-district',
+  },
+  {
+    id: 'innovation-lineage',
+    label: 'INNOVATION LINEAGE™',
+    description: 'Living innovation graph — permanent lineage, Intellectual Equity™, fork preservation, Museum gallery, Marketplace invention stories.',
+    routeSegment: 'innovation-lineage-gallery',
   },
   {
     id: 'organization-operating-manual',

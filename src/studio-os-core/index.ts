@@ -161,6 +161,7 @@ export * from './studio-world';
 export * from './studio-world-constitution';
 export * from './global-atlas-layer';
 export * from './collaborative-innovation-network';
+export * from './innovation-lineage';
 export * from './architecture-auditor';
 export * from './experience-intelligence-engine';
 export * from './studio-world-atlas';

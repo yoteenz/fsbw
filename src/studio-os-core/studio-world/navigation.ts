@@ -25,6 +25,7 @@ export const STUDIO_WORLD_NAVIGATION_EDGES: StudioWorldNavigationEdge[] = [
   { fromLocationId: 'archives-orientation-atrium', toLocationId: 'hq-marketing-headquarters', movementVerb: 'ride-elevator', label: 'Ascend to Headquarters™' },
   { fromLocationId: 'exp-discovery-atrium', toLocationId: 'scc-executive-district', movementVerb: 'walk', label: 'Return to Command Center™' },
   { fromLocationId: 'archives-museum-wing', toLocationId: 'archives-innovation-hall', movementVerb: 'walk', label: 'Continue to Hall of Innovation™' },
+  { fromLocationId: 'archives-museum-wing', toLocationId: 'archives-innovation-district', movementVerb: 'walk', label: 'Walk to Innovation Lineage Gallery™' },
   { fromLocationId: 'archives-innovation-hall', toLocationId: 'archives-innovation-district', movementVerb: 'walk', label: 'Enter Innovation District™' },
   { fromLocationId: 'archives-innovation-district', toLocationId: 'archives-genome-vault', movementVerb: 'descend', label: 'Descend to Genome Vault™' },
   { fromLocationId: 'archives-innovation-hall', toLocationId: 'archives-genome-vault', movementVerb: 'descend', label: 'Descend to Genome Vault™' },

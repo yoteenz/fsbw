@@ -97,6 +97,7 @@ const PATH_RULES: PathRule[] = [
   { test: (p) => p.includes('studio-museum') || p.includes('museum-wing'), kind: 'museum-exhibit', flagshipId: 'studio-archives' },
   { test: (p) => p.includes('studio-archives'), kind: 'museum-exhibit', flagshipId: 'studio-archives' },
   { test: (p) => p.includes('marketplace'), kind: 'marketplace-pavilion', flagshipId: 'marketplace' },
+  { test: (p) => p.includes('innovation-lineage-gallery') || p.includes('lineage-gallery'), kind: 'museum-exhibit', flagshipId: 'studio-archives' },
   { test: (p) => p.includes('innovation-district'), kind: 'innovation-campus', flagshipId: 'studio-archives' },
   { test: (p) => p.includes('constitution-hall'), kind: 'constitution-hall', flagshipId: 'studio-command-center' },
   { test: (p) => p.includes('world-atlas'), kind: 'holographic-table', flagshipId: 'studio-command-center' },
