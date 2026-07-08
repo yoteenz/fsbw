@@ -829,4 +829,59 @@ body.studio-world-atlas-active {
   border-color: rgba(201, 169, 98, 0.6);
   color: #c9a962;
 }
+
+/* Phase 5 — Future Merge™ */
+.swa.is-future-merge .swa__table-surface {
+  box-shadow:
+    0 0 64px rgba(120, 180, 255, 0.22),
+    inset 0 0 90px rgba(201, 169, 98, 0.12);
+  perspective: 900px;
+}
+
+.swa.is-future-merge .swa__buildings {
+  transform-style: preserve-3d;
+}
+
+.swa.is-future-merge .swa__building {
+  filter: drop-shadow(0 12px 18px rgba(0, 0, 0, 0.45));
+}
+
+.swa.is-future-merge .swa__building.is-pf-active .swa__extrusion {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 0 22px rgba(120, 200, 255, 0.55),
+    0 18px 28px rgba(0, 0, 0, 0.35);
+}
+
+.swa__building.is-merge-draggable {
+  cursor: grab;
+  touch-action: none;
+}
+.swa__building.is-merge-draggable:active {
+  cursor: grabbing;
+}
+
+.swa__merge-lab-panel {
+  border-color: rgba(120, 200, 255, 0.35);
+  box-shadow: 0 0 24px rgba(120, 200, 255, 0.12);
+}
+
+.swa__pf-row.is-resolved {
+  opacity: 0.55;
+  border-color: rgba(80, 200, 120, 0.35);
+}
+
+.swa__merge-live-metrics,
+.swa__merge-genome,
+.swa__merge-replay,
+.swa__merge-comments {
+  font-size: 3px;
+  letter-spacing: 0.05em;
+  opacity: 0.88;
+  margin-top: 6px;
+  line-height: 1.45;
+  padding: 6px;
+  border: 1px solid rgba(120, 200, 255, 0.2);
+  background: rgba(0, 0, 0, 0.35);
+}
 `;

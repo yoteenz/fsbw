@@ -35,6 +35,8 @@ function BuildingMarker({
   onSelect,
   draggable,
   onDrag,
+  mergeDraggable,
+  onMergeDrag,
   orbSignalKind,
 }: {
   node: AtlasNode;
@@ -43,6 +45,8 @@ function BuildingMarker({
   draggable?: boolean;
   onDrag?: (planId: string, mapX: number, mapY: number) => void;
   orbSignalKind?: string;
+  mergeDraggable?: boolean;
+  onMergeDrag?: (buildingId: string, mapX: number, mapY: number) => void;
 }) {
   const heightPx = 12 + node.extrusion * 48;
   const opacity = fogOpacity(node.unlocked, node.fogged);
@@ -74,6 +78,7 @@ function BuildingMarker({
         node.isConcept ? 'is-planned' : '',
         node.isParallelFuture && node.isConcept ? 'is-pf-inactive' : '',
         node.isParallelFuture && !node.isConcept ? 'is-pf-active' : '',
+        mergeDraggable ? 'is-merge-draggable' : '',
         draggable && node.planId ? 'is-draggable' : '',
         orbSignalKind ?? '',
         ...signalClasses,
@@ -87,10 +92,20 @@ function BuildingMarker({
       }}
       onClick={() => onSelect(node.id)}
       onPointerDown={(e) => {
+        if (mergeDraggable && onMergeDrag && node.id.startsWith('pf-node-')) {
+          (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+          return;
+        }
         if (!draggable || !node.planId || !onDrag) return;
         (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
       }}
       onPointerMove={(e) => {
+        if (mergeDraggable && onMergeDrag && (e.currentTarget as HTMLElement).hasPointerCapture(e.pointerId)) {
+          const buildingId = node.id.replace('pf-node-', '');
+          const { mapX, mapY } = pointerToMap(e.clientX, e.clientY);
+          onMergeDrag(buildingId, mapX, mapY);
+          return;
+        }
         if (!draggable || !node.planId || !onDrag || !(e.currentTarget as HTMLElement).hasPointerCapture(e.pointerId))
           return;
         const { mapX, mapY } = pointerToMap(e.clientX, e.clientY);
@@ -204,12 +219,13 @@ export function StudioWorldAtlasRoom() {
 
   const showPlanner = atlas.isMasterPlannerMode;
   const showParallelFutures = atlas.isParallelFuturesMode;
+  const showFutureMerge = atlas.isFutureMergeMode;
 
   return (
     <>
       <style>{STUDIO_WORLD_ATLAS_STYLES}</style>
       <div
-        className={`swa${showPlanner ? ' is-master-planner' : ''}${showParallelFutures ? ' is-parallel-futures' : ''}`}
+        className={`swa${showPlanner ? ' is-master-planner' : ''}${showParallelFutures ? ' is-parallel-futures' : ''}${showFutureMerge ? ' is-future-merge' : ''}`}
         role="application"
         aria-label="Studio World Atlas"
       >
@@ -226,7 +242,9 @@ export function StudioWorldAtlasRoom() {
             <p className="swa__eyebrow">STUDIO COMMAND CENTER™ · EXECUTIVE ATRIUM™</p>
             <p className="swa__title">STUDIO WORLD ATLAS™</p>
             <p className="swa__zoom">
-              {showParallelFutures
+              {showFutureMerge
+                ? 'FUTURE MERGE™ · MERGE LAB™'
+                : showParallelFutures
                 ? 'PARALLEL FUTURES™ · COMPARE BEFORE YOU BUILD'
                 : showPlanner
                   ? 'MASTER PLANNER™ · PLANNING MODE'
@@ -246,11 +264,13 @@ export function StudioWorldAtlasRoom() {
 
         <div className="swa__ticker" aria-live="polite">
           <span className="swa__ticker-inner">
-            {showPlanner
-              ? showParallelFutures
-                ? `PARALLEL FUTURES™ · ${atlas.discovery.parallelFutures.length} VISIONS · DESIGN FIRST · BUILD SECOND`
-                : `MASTER PLANNER™ · ${atlas.discovery.masterPlan.length} RESERVED · SIMULATE BEFORE YOU GENERATE · ${atlas.worldForecast.narrative}`
-              : atlas.worldTicker}{' '}
+            {showFutureMerge
+              ? `FUTURE MERGE™ · MERGE LAB™ · ${atlas.discovery.parallelFutures.length} FUTURES FLOATING`
+              : showPlanner
+                ? showParallelFutures
+                  ? `PARALLEL FUTURES™ · ${atlas.discovery.parallelFutures.length} VISIONS · DESIGN FIRST · BUILD SECOND`
+                  : `MASTER PLANNER™ · ${atlas.discovery.masterPlan.length} RESERVED · SIMULATE BEFORE YOU GENERATE · ${atlas.worldForecast.narrative}`
+                : atlas.worldTicker}{' '}
             &nbsp;&nbsp;&nbsp;{' '}
             {showPlanner ? atlas.worldForecast.narrative : atlas.worldTicker}
           </span>
@@ -294,7 +314,49 @@ export function StudioWorldAtlasRoom() {
               </>
             ) : null}
           </p>
-          {showParallelFutures && atlas.activeParallelFuture ? (
+          {showFutureMerge && atlas.liveMergeMetrics ? (
+            <div className="swa__merge-live-metrics">
+              <p className="swa__sim-score">LIVE COMPARISON™</p>
+              {atlas.liveMergeMetricLines(atlas.liveMergeMetrics).map((line) => (
+                <span key={line}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {showFutureMerge && atlas.mergeDraftFuture?.genome ? (
+            <div className="swa__merge-genome">
+              <p className="swa__sim-score">FUTURE GENOME™</p>
+              {atlas.formatGenomeLines(atlas.mergeDraftFuture.genome).map((line) => (
+                <span key={line}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {showFutureMerge && atlas.mergeHistory[0] ? (
+            <div className="swa__merge-replay">
+              <p className="swa__sim-score">VISUAL HISTORY™</p>
+              {atlas.formatMergeReplay(atlas.mergeHistory[0]).split('\n').map((line) => (
+                <span key={line}>
+                  {line}
+                  <br />
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {showFutureMerge && atlas.mergeComments.length > 0 ? (
+            <div className="swa__merge-comments">
+              {atlas.mergeComments.slice(0, 2).map((c) => (
+                <span key={c.id} style={{ display: 'block', opacity: 0.75, marginTop: 4 }}>
+                  {c.authorName}: {c.text}
+                </span>
+              ))}
+            </div>
+          ) : null}
+          {showParallelFutures && !showFutureMerge && atlas.activeParallelFuture ? (
             <div className="swa__pf-analysis">
               {formatFutureAnalysisLines(atlas.activeParallelFuture.analysis).map((line) => (
                 <span key={line}>
@@ -365,7 +427,26 @@ export function StudioWorldAtlasRoom() {
               {ATLAS_TRAVEL_LABELS[atlas.view.travelMode]} → {selectedNode.displayName}
             </button>
           ) : null}
-          {showParallelFutures && atlas.activeParallelFuture ? (
+          {showFutureMerge ? (
+            <>
+              <button
+                type="button"
+                className="swa__travel-btn is-primary"
+                onClick={() => atlas.runFutureMerge()}
+              >
+                MERGE FUTURES™
+              </button>
+              <button
+                type="button"
+                className="swa__travel-btn"
+                style={{ marginTop: 4 }}
+                onClick={() => atlas.closeMergeLab()}
+              >
+                EXIT MERGE LAB™
+              </button>
+            </>
+          ) : null}
+          {showParallelFutures && !showFutureMerge && atlas.activeParallelFuture ? (
             <>
               <button
                 type="button"
@@ -408,7 +489,42 @@ export function StudioWorldAtlasRoom() {
           ) : null}
         </aside>
 
-        {showParallelFutures ? (
+        {showFutureMerge ? (
+          <aside className="swa__pf-comparison swa__merge-lab-panel" aria-label="Merge Lab ingredients">
+            <p className="swa__planner-title">MERGE FUTURES™</p>
+            {(atlas.discovery.activeMergeRecipe?.ingredients ?? []).map((ing) => (
+              <p key={`${ing.label}-${ing.sourceFutureId}`} className="swa__planner-item" style={{ cursor: 'default' }}>
+                {ing.label}
+                <br />
+                <span style={{ opacity: 0.55 }}>← {ing.sourceFutureLabel}</span>
+              </p>
+            ))}
+            <p className="swa__planner-title" style={{ marginTop: 8 }}>
+              CONFLICTS ({atlas.mergeConflicts.filter((c) => !c.resolved).length})
+            </p>
+            {atlas.mergeConflicts.slice(0, 4).map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className={`swa__pf-row${c.resolved ? ' is-resolved' : ''}`}
+                onClick={() => atlas.resolveMergeConflict(c.id)}
+                title={c.recommendation}
+              >
+                {c.severity.toUpperCase()} · {c.kind.replace(/-/g, ' ')}
+                <br />
+                <span style={{ opacity: 0.7 }}>{c.description.slice(0, 60)}…</span>
+              </button>
+            ))}
+            <p className="swa__planner-title" style={{ marginTop: 8 }}>
+              COLLABORATORS
+            </p>
+            {atlas.mergeCollaborators.map((c) => (
+              <p key={c.id} className="swa__planner-item" style={{ cursor: 'default', fontSize: 3 }}>
+                {c.name} · {c.role.replace(/-/g, ' ')}
+              </p>
+            ))}
+          </aside>
+        ) : showParallelFutures ? (
           <aside className="swa__pf-comparison" aria-label="Parallel Futures comparison">
             <p className="swa__planner-title">SIDE-BY-SIDE COMPARISON™</p>
             {atlas.parallelFuturesComparison.map((row) => (
@@ -476,10 +592,31 @@ export function StudioWorldAtlasRoom() {
           </aside>
         ) : null}
 
-        {showParallelFutures ? (
+        {showFutureMerge ? (
+          <aside className="swa__planner-toolbar" aria-label="Merge Lab tools">
+            <p className="swa__planner-toolbar-title">MERGE LAB™</p>
+            <p style={{ fontSize: 3, opacity: 0.75, margin: '0 0 6px', lineHeight: 1.4 }}>
+              Drag merged buildings · campuses float above the table
+            </p>
+            <button type="button" className="swa__planner-btn is-primary" onClick={() => atlas.runFutureMerge()}>
+              MERGE FUTURES™
+            </button>
+            <button type="button" className="swa__planner-btn" onClick={() => atlas.closeMergeLab()}>
+              EXIT MERGE LAB™
+            </button>
+            <p className="swa__planner-toolbar-title" style={{ marginTop: 8 }}>
+              VISUAL HISTORY™
+            </p>
+            {atlas.mergeHistory.slice(0, 3).map((entry) => (
+              <p key={entry.id} className="swa__planner-item" style={{ cursor: 'default', fontSize: 3 }}>
+                {entry.sourceLabels.join(' + ')} → {entry.resultLabel}
+              </p>
+            ))}
+          </aside>
+        ) : showParallelFutures ? (
           <aside className="swa__planner-toolbar" aria-label="Parallel Futures tools">
             <p className="swa__planner-toolbar-title">PARALLEL FUTURES™</p>
-            {atlas.discovery.parallelFutures.map((future) => (
+            {atlas.discovery.parallelFutures.filter((f) => !f.isMerged).map((future) => (
               <button
                 key={future.id}
                 type="button"
@@ -493,6 +630,13 @@ export function StudioWorldAtlasRoom() {
               type="button"
               className="swa__planner-btn is-primary"
               style={{ marginTop: 8 }}
+              onClick={() => atlas.openMergeLab()}
+            >
+              MERGE FUTURES™
+            </button>
+            <button
+              type="button"
+              className="swa__planner-btn"
               onClick={() => atlas.walkParallelFuture()}
             >
               SIMULATE THE FUTURE™
@@ -595,7 +739,9 @@ export function StudioWorldAtlasRoom() {
         <aside className="swa__orb" aria-label="Studio Orb world guide">
           <div className="swa__orb-sphere" aria-hidden />
           <p className="swa__orb-title">
-            {showParallelFutures
+            {showFutureMerge
+              ? 'STUDIO ORB™ · DESIGN PARTNER'
+              : showParallelFutures
               ? 'STUDIO ORB™ · STRATEGIC ADVISOR'
               : showPlanner
                 ? 'STUDIO ORB™ · MASTER PLANNER'
@@ -682,6 +828,12 @@ export function StudioWorldAtlasRoom() {
                       onSelect={handleSelect}
                       draggable={showPlanner && !!node.planId}
                       onDrag={atlas.movePlanReservation}
+                      mergeDraggable={
+                        showFutureMerge &&
+                        !!atlas.mergeDraftFuture &&
+                        node.parallelFutureId === atlas.mergeDraftFuture.id
+                      }
+                      onMergeDrag={atlas.moveMergeBuilding}
                       orbSignalKind={signal ? orbSignalClass(signal.kind) : undefined}
                     />
                   );

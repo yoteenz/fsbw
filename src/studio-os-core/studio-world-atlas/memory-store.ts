@@ -22,17 +22,22 @@ import {
 import { nextMasterPlanPhase } from './master-planner-phases';
 import { defaultParallelFutures, forkParallelFuture } from './parallel-futures';
 import { buildFutureCommitSummary } from './parallel-futures-simulation';
+import { defaultMergeRecipe, executeFutureMerge, moveMergedBuilding } from './future-merge';
+import { resolveMergeConflict, detectMergeConflicts } from './future-merge-conflicts';
+import { buildMergeHistoryEntry } from './future-merge-history';
+import { defaultMergeCollaborators, defaultMergeComments } from './future-merge-collaboration';
 import {
   libraryEntryFromFuture,
   seedMasterPlanningLibrary,
   versionSnapshotFromFuture,
 } from './master-planning-library';
 
-const STORAGE_KEY = 'studioWorldAtlasDiscovery_v4';
+const STORAGE_KEY = 'studioWorldAtlasDiscovery_v5';
+const LEGACY_V4_KEY = 'studioWorldAtlasDiscovery_v4';
 const LEGACY_V3_KEY = 'studioWorldAtlasDiscovery_v3';
 
 const EMPTY: AtlasDiscoveryStore = {
-  version: 4,
+  version: 5,
   discoveredNodeIds: [],
   achievements: [],
   hiddenFinds: [],
@@ -50,6 +55,13 @@ const EMPTY: AtlasDiscoveryStore = {
   masterPlanningLibrary: [],
   futureVersionHistory: [],
   committedFutureId: null,
+  mergeLabActive: false,
+  activeMergeRecipe: null,
+  mergeDraftFutureId: null,
+  mergeConflicts: [],
+  mergeHistory: [],
+  mergeCollaborators: defaultMergeCollaborators(),
+  mergeComments: defaultMergeComments(),
 };
 
 const DEFAULT_DISCOVERED = [
@@ -61,29 +73,50 @@ const DEFAULT_DISCOVERED = [
   'flagship-creative-direction-studio',
 ];
 
+function migrateV4(raw: unknown): AtlasDiscoveryStore {
+  const v4 = raw as AtlasDiscoveryStore;
+  return {
+    version: 5,
+    discoveredNodeIds: v4.discoveredNodeIds ?? [],
+    achievements: v4.achievements ?? [],
+    hiddenFinds: v4.hiddenFinds ?? [],
+    collectibles: v4.collectibles ?? [],
+    buildingMemories: v4.buildingMemories ?? [],
+    masterPlan: v4.masterPlan ?? defaultMasterPlanReservations(),
+    activeConstructions: v4.activeConstructions ?? defaultDemoConstructions(),
+    planFeatures: v4.planFeatures ?? defaultPlanFeatures(),
+    futureVisionConcepts: v4.futureVisionConcepts ?? defaultFutureVisionConcepts(),
+    forecastHorizon: v4.forecastHorizon ?? 3,
+    lastSimulations: v4.lastSimulations ?? {},
+    parallelFutures: v4.parallelFutures ?? defaultParallelFutures(),
+    activeParallelFutureId: v4.activeParallelFutureId ?? null,
+    parallelFutureWalks: v4.parallelFutureWalks ?? {},
+    masterPlanningLibrary: v4.masterPlanningLibrary ?? [],
+    futureVersionHistory: v4.futureVersionHistory ?? [],
+    committedFutureId: v4.committedFutureId ?? null,
+    mergeLabActive: false,
+    activeMergeRecipe: null,
+    mergeDraftFutureId: null,
+    mergeConflicts: [],
+    mergeHistory: [],
+    mergeCollaborators: defaultMergeCollaborators(),
+    mergeComments: defaultMergeComments(),
+  };
+}
+
 function migrateV3(raw: unknown): AtlasDiscoveryStore {
   const v3 = raw as AtlasDiscoveryStore;
   const futures = defaultParallelFutures();
-  return {
+  return migrateV4({
+    ...v3,
     version: 4,
-    discoveredNodeIds: v3.discoveredNodeIds ?? [],
-    achievements: v3.achievements ?? [],
-    hiddenFinds: v3.hiddenFinds ?? [],
-    collectibles: v3.collectibles ?? [],
-    buildingMemories: v3.buildingMemories ?? [],
-    masterPlan: v3.masterPlan ?? defaultMasterPlanReservations(),
-    activeConstructions: v3.activeConstructions ?? defaultDemoConstructions(),
-    planFeatures: v3.planFeatures ?? defaultPlanFeatures(),
-    futureVisionConcepts: v3.futureVisionConcepts ?? defaultFutureVisionConcepts(),
-    forecastHorizon: v3.forecastHorizon ?? 3,
-    lastSimulations: v3.lastSimulations ?? {},
     parallelFutures: futures,
     activeParallelFutureId: futures[0]?.id ?? null,
     parallelFutureWalks: {},
     masterPlanningLibrary: seedMasterPlanningLibrary(futures),
     futureVersionHistory: futures.map(versionSnapshotFromFuture),
     committedFutureId: null,
-  };
+  } as unknown as AtlasDiscoveryStore);
 }
 
 function migrateV2(raw: unknown): AtlasDiscoveryStore {
@@ -103,8 +136,10 @@ function migrateV1(raw: unknown): AtlasDiscoveryStore {
 }
 
 function loadRaw(): unknown {
-  const v4 = readStudioOsJson(STORAGE_KEY, () => null);
-  if (v4) return v4;
+  const v5 = readStudioOsJson(STORAGE_KEY, () => null);
+  if (v5) return v5;
+  const v4 = readStudioOsJson(LEGACY_V4_KEY, () => null);
+  if (v4) return migrateV4(v4);
   const v3 = readStudioOsJson(LEGACY_V3_KEY, () => null);
   if (v3) return migrateV3(v3);
   const v2 = readStudioOsJson('studioWorldAtlasDiscovery_v2', () => null);
@@ -137,7 +172,7 @@ export function readAtlasDiscovery(): AtlasDiscoveryStore {
   const futures =
     store.parallelFutures?.length ? store.parallelFutures : defaultParallelFutures();
   return {
-    version: 4,
+    version: 5,
     discoveredNodeIds: [...merged],
     achievements: store.achievements ?? [],
     hiddenFinds: store.hiddenFinds ?? [],
@@ -161,6 +196,15 @@ export function readAtlasDiscovery(): AtlasDiscoveryStore {
       : seedMasterPlanningLibrary(futures),
     futureVersionHistory: store.futureVersionHistory ?? futures.map(versionSnapshotFromFuture),
     committedFutureId: store.committedFutureId ?? null,
+    mergeLabActive: store.mergeLabActive ?? false,
+    activeMergeRecipe: store.activeMergeRecipe ?? null,
+    mergeDraftFutureId: store.mergeDraftFutureId ?? null,
+    mergeConflicts: store.mergeConflicts ?? [],
+    mergeHistory: store.mergeHistory ?? [],
+    mergeCollaborators: store.mergeCollaborators?.length
+      ? store.mergeCollaborators
+      : defaultMergeCollaborators(),
+    mergeComments: store.mergeComments?.length ? store.mergeComments : defaultMergeComments(),
   };
 }
 
@@ -354,5 +398,81 @@ export function reviveParallelFutureFromLibrary(entryId: string): void {
     parallelFutures: store.parallelFutures.map((f) =>
       f.id === future.id ? { ...f, status: 'draft', updatedAt: new Date().toISOString() } : f
     ),
+  });
+}
+
+export function enterMergeLab(): void {
+  const store = readAtlasDiscovery();
+  const recipe = store.activeMergeRecipe ?? defaultMergeRecipe(store.parallelFutures);
+  writeStore({
+    ...store,
+    mergeLabActive: true,
+    activeMergeRecipe: recipe,
+    mergeConflicts: [],
+    mergeDraftFutureId: null,
+  });
+}
+
+export function exitMergeLab(): void {
+  const store = readAtlasDiscovery();
+  writeStore({
+    ...store,
+    mergeLabActive: false,
+    mergeDraftFutureId: null,
+    mergeConflicts: [],
+  });
+}
+
+export function runFutureMergeInStore(): AtlasParallelFuture | null {
+  const store = readAtlasDiscovery();
+  const recipe = store.activeMergeRecipe ?? defaultMergeRecipe(store.parallelFutures);
+  const { future, conflicts } = executeFutureMerge(
+    recipe,
+    store.parallelFutures,
+    store.parallelFutures
+  );
+  const sources = store.parallelFutures.filter((f) =>
+    recipe.ingredients.some((i) => i.sourceFutureId === f.id)
+  );
+  const historyEntry = buildMergeHistoryEntry(future, recipe, sources, conflicts);
+  writeStore({
+    ...store,
+    parallelFutures: [future, ...store.parallelFutures],
+    activeParallelFutureId: future.id,
+    mergeDraftFutureId: future.id,
+    mergeConflicts: conflicts,
+    mergeHistory: [historyEntry, ...store.mergeHistory].slice(0, 30),
+    masterPlanningLibrary: [libraryEntryFromFuture(future, 'Future Merge™ synthesis'), ...store.masterPlanningLibrary],
+    futureVersionHistory: [versionSnapshotFromFuture(future), ...store.futureVersionHistory].slice(0, 40),
+  });
+  return future;
+}
+
+export function resolveMergeConflictInStore(conflictId: string): void {
+  const store = readAtlasDiscovery();
+  writeStore({
+    ...store,
+    mergeConflicts: resolveMergeConflict(store.mergeConflicts, conflictId),
+  });
+}
+
+export function moveMergeBuildingInStore(
+  buildingId: string,
+  mapX: number,
+  mapY: number
+): void {
+  const store = readAtlasDiscovery();
+  const draftId = store.mergeDraftFutureId;
+  if (!draftId) return;
+  const draft = store.parallelFutures.find((f) => f.id === draftId);
+  if (!draft) return;
+  const moved = moveMergedBuilding(draft, buildingId, mapX, mapY);
+  const sources = store.parallelFutures.filter((f) => moved.mergeSourceIds?.includes(f.id));
+  const conflicts = detectMergeConflicts(moved, sources);
+  const rest = store.parallelFutures.filter((f) => f.id !== draftId);
+  writeStore({
+    ...store,
+    parallelFutures: [moved, ...rest],
+    mergeConflicts: conflicts,
   });
 }

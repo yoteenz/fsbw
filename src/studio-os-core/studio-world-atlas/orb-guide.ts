@@ -3,6 +3,7 @@ import { ATLAS_ENGINE_LABELS } from './types';
 import { listActiveEnginesInCatalog } from './engine-registry';
 import { buildMasterPlannerOrbRecommendations } from './master-planner-orb';
 import { buildParallelFuturesOrbRecommendations } from './parallel-futures-orb';
+import { buildFutureMergeOrbRecommendations } from './future-merge-orb';
 import { isUnderConstruction } from './world-construction';
 import { ATLAS_HIDDEN_DISCOVERIES } from './world-discovery';
 
@@ -16,6 +17,13 @@ export function buildAtlasOrbRecommendations(
   discovery?: AtlasDiscoveryStore,
   options?: { mapMode?: string; selectedPlanId?: string | null }
 ): AtlasOrbRecommendation[] {
+  if (discovery && options?.mapMode === 'future-merge') {
+    const draft = discovery.mergeDraftFutureId
+      ? discovery.parallelFutures.find((f) => f.id === discovery.mergeDraftFutureId)
+      : undefined;
+    const sources = discovery.parallelFutures.filter((f) => !f.isMerged || f.id === draft?.id);
+    return buildFutureMergeOrbRecommendations(draft, discovery.mergeConflicts, sources);
+  }
   if (discovery && options?.mapMode === 'parallel-futures') {
     return buildParallelFuturesOrbRecommendations(
       discovery.parallelFutures ?? [],

@@ -6,12 +6,26 @@ import type {
   ParallelFutureBuilding,
 } from './types';
 
+type BaseParallelFutureArchetype = 'future-a' | 'future-b' | 'future-c' | 'future-d';
+
+function baseArchetype(archetype: ParallelFutureArchetype): BaseParallelFutureArchetype {
+  if (
+    archetype === 'future-a' ||
+    archetype === 'future-b' ||
+    archetype === 'future-c' ||
+    archetype === 'future-d'
+  ) {
+    return archetype;
+  }
+  return 'future-a';
+}
+
 function uid(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
 const ARCHETYPE_META: Record<
-  ParallelFutureArchetype,
+  BaseParallelFutureArchetype,
   { label: string; tagline: string; strategy: string; risk: AtlasFutureAnalysis['riskProfile'] }
 > = {
   'future-a': {
@@ -41,7 +55,7 @@ const ARCHETYPE_META: Record<
 };
 
 function analysisFor(archetype: ParallelFutureArchetype): AtlasFutureAnalysis {
-  const base: Record<ParallelFutureArchetype, AtlasFutureAnalysis> = {
+  const base: Record<BaseParallelFutureArchetype, AtlasFutureAnalysis> = {
     'future-a': {
       creativeBudgetEstimate: '$142K',
       generationCostEstimate: '$118.4K',
@@ -111,11 +125,11 @@ function analysisFor(archetype: ParallelFutureArchetype): AtlasFutureAnalysis {
       growthProjection: '+42% campus capacity · 4yr',
     },
   };
-  return base[archetype];
+  return base[baseArchetype(archetype)];
 }
 
 function buildingsFor(archetype: ParallelFutureArchetype): ParallelFutureBuilding[] {
-  const layouts: Record<ParallelFutureArchetype, ParallelFutureBuilding[]> = {
+  const layouts: Record<BaseParallelFutureArchetype, ParallelFutureBuilding[]> = {
     'future-a': [
       { id: 'b-a-hq', label: 'Luxury Marketing HQ™', department: 'Marketing', mapX: 58, mapY: 36, wingCount: 4, roomCount: 28 },
       { id: 'b-a-creative', label: 'Flagship Creative Campus™', department: 'Creative', mapX: 24, mapY: 56, wingCount: 3, roomCount: 22 },
@@ -141,21 +155,22 @@ function buildingsFor(archetype: ParallelFutureArchetype): ParallelFutureBuildin
       { id: 'b-d-pavilion', label: 'Marketplace Pavilion™', department: 'Marketplace', mapX: 58, mapY: 24, wingCount: 2, roomCount: 10 },
     ],
   };
-  return layouts[archetype];
+  return layouts[baseArchetype(archetype)];
 }
 
 function roadsFor(archetype: ParallelFutureArchetype, buildings: ParallelFutureBuilding[]): AtlasPlanFeature[] {
   const anchor = { mapX: 50, mapY: 50 };
+  const meta = ARCHETYPE_META[baseArchetype(archetype)];
   return buildings.slice(0, 3).map((b, i) => ({
     id: `pf-road-${archetype}-${i}`,
     type: 'road' as const,
-    label: `${ARCHETYPE_META[archetype].tagline} Boulevard™`,
+    label: `${meta.tagline} Boulevard™`,
     mapX: (anchor.mapX + b.mapX) / 2,
     mapY: (anchor.mapY + b.mapY) / 2,
   }));
 }
 
-export function buildParallelFuture(archetype: ParallelFutureArchetype): AtlasParallelFuture {
+export function buildParallelFuture(archetype: BaseParallelFutureArchetype): AtlasParallelFuture {
   const meta = ARCHETYPE_META[archetype];
   const buildings = buildingsFor(archetype);
   const now = new Date().toISOString();
@@ -196,7 +211,9 @@ export function buildParallelFuture(archetype: ParallelFutureArchetype): AtlasPa
 }
 
 export function defaultParallelFutures(): AtlasParallelFuture[] {
-  return (['future-a', 'future-b', 'future-c', 'future-d'] as ParallelFutureArchetype[]).map(buildParallelFuture);
+  return (['future-a', 'future-b', 'future-c', 'future-d'] as BaseParallelFutureArchetype[]).map(
+    buildParallelFuture
+  );
 }
 
 export function forkParallelFuture(source: AtlasParallelFuture, newLabel: string): AtlasParallelFuture {

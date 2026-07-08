@@ -24,7 +24,8 @@ export type AtlasMapMode =
   | 'construction'
   | 'future-vision'
   | 'master-planner'
-  | 'parallel-futures';
+  | 'parallel-futures'
+  | 'future-merge';
 
 export type AtlasTravelMode =
   | 'walk'
@@ -285,7 +286,14 @@ export type AtlasMasterPlanReservation = {
 };
 
 /** Phase 4 — Parallel Futures™ */
-export type ParallelFutureArchetype = 'future-a' | 'future-b' | 'future-c' | 'future-d';
+export type ParallelFutureArchetype =
+  | 'future-a'
+  | 'future-b'
+  | 'future-c'
+  | 'future-d'
+  | 'future-e'
+  | 'future-f'
+  | 'future-g';
 
 export type ParallelFutureStatus = 'draft' | 'approved' | 'committed' | 'archived' | 'forked';
 
@@ -382,6 +390,11 @@ export type AtlasParallelFuture = {
   constructionPhases: string[];
   analysis: AtlasFutureAnalysis;
   commitSummary?: AtlasFutureCommitSummary;
+  /** Phase 5 — merged future metadata */
+  isMerged?: boolean;
+  mergeRecipe?: FutureMergeRecipe;
+  genome?: FutureGenome;
+  mergeSourceIds?: string[];
 };
 
 export type AtlasParallelFuturesComparisonRow = {
@@ -398,8 +411,114 @@ export type AtlasParallelFuturesComparisonRow = {
   aiWorkforce: number;
 };
 
+/** Phase 5 — Future Merge™ */
+export type MergeIngredientKind =
+  | 'campus-layout'
+  | 'building'
+  | 'transportation'
+  | 'district'
+  | 'budget-strategy'
+  | 'department';
+
+export type MergeIngredient = {
+  kind: MergeIngredientKind;
+  label: string;
+  sourceFutureId: string;
+  sourceFutureLabel: string;
+  buildingId?: string;
+};
+
+export type FutureMergeRecipe = {
+  id: string;
+  ingredients: MergeIngredient[];
+  createdAt: string;
+  createdBy: string;
+};
+
+export type MergeConflictKind =
+  | 'land-overlap'
+  | 'road-conflict'
+  | 'duplicate-department'
+  | 'lighting-mismatch'
+  | 'style-mismatch'
+  | 'genome-inconsistency'
+  | 'blueprint-dependency'
+  | 'ai-routing';
+
+export type MergeConflict = {
+  id: string;
+  kind: MergeConflictKind;
+  severity: 'critical' | 'warning' | 'info';
+  description: string;
+  recommendation: string;
+  affectedBuildingIds: string[];
+  resolved: boolean;
+};
+
+export type FutureGenome = {
+  founderSatisfaction: number;
+  brandConsistency: number;
+  navigationQuality: number;
+  aiEfficiency: number;
+  creativeDirection: number;
+  operationalComplexity: number;
+  longTermScalability: number;
+  summary: string;
+};
+
+export type MergeCollaboratorRole =
+  | 'founder'
+  | 'creative-director'
+  | 'architect'
+  | 'designer'
+  | 'operations-lead';
+
+export type MergeCollaborator = {
+  id: string;
+  name: string;
+  role: MergeCollaboratorRole;
+  lastActiveAt: string;
+};
+
+export type MergeComment = {
+  id: string;
+  authorId: string;
+  authorName: string;
+  text: string;
+  targetLabel: string;
+  createdAt: string;
+  status: 'proposed' | 'approved' | 'alternative';
+};
+
+export type MergeHistoryEntry = {
+  id: string;
+  mergedAt: string;
+  resultFutureId: string;
+  resultLabel: string;
+  sourceFutureIds: string[];
+  sourceLabels: string[];
+  recipe: FutureMergeRecipe;
+  conflictsDetected: number;
+  conflictsResolved: number;
+  author: string;
+  replaySteps: string[];
+};
+
+export type AtlasLiveMergeMetrics = {
+  creativeBudget: string;
+  buildCost: string;
+  generationCost: string;
+  creativeEquity: string;
+  marketplacePotential: string;
+  reuseSavings: string;
+  constructionTimeline: string;
+  aiWorkforce: number;
+  expansionFlexibility: number;
+  navigationEfficiency: number;
+};
+
 export type AtlasDiscoveryStore = {
-  version: 4;
+  version: 5;
   discoveredNodeIds: string[];
   achievements: string[];
   hiddenFinds: string[];
@@ -417,6 +536,13 @@ export type AtlasDiscoveryStore = {
   masterPlanningLibrary: MasterPlanningLibraryEntry[];
   futureVersionHistory: FutureVersionSnapshot[];
   committedFutureId: string | null;
+  mergeLabActive: boolean;
+  activeMergeRecipe: FutureMergeRecipe | null;
+  mergeDraftFutureId: string | null;
+  mergeConflicts: MergeConflict[];
+  mergeHistory: MergeHistoryEntry[];
+  mergeCollaborators: MergeCollaborator[];
+  mergeComments: MergeComment[];
 };
 
 export const ATLAS_MAP_MODE_LABELS: Record<AtlasMapMode, string> = {
@@ -437,6 +563,7 @@ export const ATLAS_MAP_MODE_LABELS: Record<AtlasMapMode, string> = {
   'future-vision': 'FUTURE VISION™',
   'master-planner': 'MASTER PLANNER™',
   'parallel-futures': 'PARALLEL FUTURES™',
+  'future-merge': 'FUTURE MERGE™',
 };
 
 export const ATLAS_ZOOM_LABELS: Record<AtlasZoomLevel, string> = {
@@ -526,4 +653,5 @@ export const ATLAS_MODE_ENGINE_FOCUS: Partial<Record<AtlasMapMode, AtlasEngineId
   'future-vision': ['expedition-hub', 'blueprint-archive'],
   'master-planner': ['expedition-hub', 'blueprint-archive', 'creative-budget'],
   'parallel-futures': ['expedition-hub', 'blueprint-archive', 'creative-budget', 'asset-registry'],
+  'future-merge': ['expedition-hub', 'blueprint-archive', 'creative-budget', 'company-genome', 'experience-intelligence'],
 };

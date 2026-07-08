@@ -18,6 +18,7 @@ import { buildDiscoveryNodes } from './world-discovery';
 import { getBuildingMemory } from './world-memory';
 import { buildPotentialRoadPaths } from './master-planner';
 import { buildParallelFutureRoadPaths } from './parallel-futures';
+import { buildMergeLabRoadPaths } from './future-merge';
 import { planPhaseProgress } from './master-planner-phases';
 
 export type AtlasEnrichmentInput = {
@@ -141,6 +142,47 @@ export function buildParallelFutureNodes(
   return nodes;
 }
 
+export function buildMergeLabNodes(
+  futures: AtlasDiscoveryStore['parallelFutures'],
+  draftFutureId: string | null,
+  activeFutureId: string | null
+): AtlasNode[] {
+  const nodes: AtlasNode[] = [];
+  let floatLayer = 0;
+  for (const future of futures) {
+    const isDraft = future.id === draftFutureId;
+    const isActive = future.id === activeFutureId || isDraft;
+    const layerOffset = floatLayer * 0.04;
+    floatLayer += 1;
+    for (const b of future.buildings) {
+      nodes.push({
+        id: `pf-node-${b.id}`,
+        displayName: isDraft ? `MERGED · ${b.label}` : `${future.tagline} · ${b.label}`,
+        level: 1,
+        parentId: 'atlas-world-root',
+        physicalType: 'district',
+        mapX: b.mapX,
+        mapY: b.mapY - layerOffset * 20,
+        mapZ: isDraft ? 0.42 : 0.12 + layerOffset,
+        extrusion: isDraft ? 0.18 : isActive ? 0.1 : 0.05,
+        travelPath: '/admin/studio/world-atlas',
+        unlocked: true,
+        fogged: false,
+        hidden: false,
+        activity: isDraft ? 'generating' : isActive ? 'pulse' : 'dormant',
+        childIds: [],
+        modes: ['future-merge', 'parallel-futures', 'master-planner'],
+        isPlanned: true,
+        isConcept: !isDraft && !isActive,
+        isParallelFuture: true,
+        parallelFutureId: future.id,
+        livingSignals: isDraft ? ['construction-crane', 'ai-glow'] : isActive ? ['pulse'] : [],
+      });
+    }
+  }
+  return nodes;
+}
+
 export function enrichAtlasNodes(nodes: AtlasNode[], input: AtlasEnrichmentInput): AtlasNode[] {
   const ctx: LivingWorldContext = {
     mapMode: input.mapMode,
@@ -161,15 +203,23 @@ export function enrichAtlasNodes(nodes: AtlasNode[], input: AtlasEnrichmentInput
   const planNodes =
     input.mapMode === 'master-planner' ||
     input.mapMode === 'future-vision' ||
-    input.mapMode === 'parallel-futures'
+    input.mapMode === 'parallel-futures' ||
+    input.mapMode === 'future-merge'
       ? [
+          ...(input.mapMode === 'future-merge'
+            ? buildMergeLabNodes(
+                input.discovery.parallelFutures,
+                input.discovery.mergeDraftFutureId,
+                input.discovery.activeParallelFutureId
+              )
+            : []),
           ...(input.mapMode === 'parallel-futures'
             ? buildParallelFutureNodes(
                 input.discovery.parallelFutures,
                 input.discovery.activeParallelFutureId
               )
             : []),
-          ...(input.mapMode !== 'parallel-futures'
+          ...(input.mapMode !== 'parallel-futures' && input.mapMode !== 'future-merge'
             ? [
                 ...masterPlanNodes(input.discovery.masterPlan),
                 ...buildPlannerFeatureNodes(input.discovery.planFeatures),
@@ -218,9 +268,13 @@ export function buildPlannerRoadPaths(
   if (
     input.mapMode !== 'master-planner' &&
     input.mapMode !== 'future-vision' &&
-    input.mapMode !== 'parallel-futures'
+    input.mapMode !== 'parallel-futures' &&
+    input.mapMode !== 'future-merge'
   )
     return [];
+  if (input.mapMode === 'future-merge') {
+    return buildMergeLabRoadPaths(input.discovery.parallelFutures, anchor);
+  }
   if (input.mapMode === 'parallel-futures') {
     const active = input.discovery.parallelFutures.find(
       (f) => f.id === input.discovery.activeParallelFutureId

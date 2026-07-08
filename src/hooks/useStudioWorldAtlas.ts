@@ -31,6 +31,11 @@ import {
   reviveParallelFutureFromLibrary,
   saveParallelFutureWalk,
   setActiveParallelFuture,
+  enterMergeLab,
+  exitMergeLab,
+  runFutureMergeInStore,
+  resolveMergeConflictInStore,
+  moveMergeBuildingInStore,
   simulateMasterPlanPlacement,
   STUDIO_WORLD_ATLAS_EVENT,
   advanceMasterPlanPhase,
@@ -42,6 +47,10 @@ import {
   buildParallelFuturesComparison,
   buildFutureCommitSummary,
   simulateParallelFutureWalk,
+  buildLiveMergeMetrics,
+  liveMergeMetricLines,
+  formatGenomeLines,
+  formatMergeReplay,
   type AtlasMasterPlanReservation,
   type AtlasNode,
   type AtlasOrbRecommendation,
@@ -78,9 +87,13 @@ export function useStudioWorldAtlas(options?: {
   const isMasterPlannerMode =
     view.mapMode === 'master-planner' ||
     view.mapMode === 'future-vision' ||
-    view.mapMode === 'parallel-futures';
+    view.mapMode === 'parallel-futures' ||
+    view.mapMode === 'future-merge';
 
-  const isParallelFuturesMode = view.mapMode === 'parallel-futures';
+  const isParallelFuturesMode =
+    view.mapMode === 'parallel-futures' || view.mapMode === 'future-merge';
+
+  const isFutureMergeMode = view.mapMode === 'future-merge';
 
   const catalog = useMemo(() => {
     void liveTick;
@@ -126,6 +139,19 @@ export function useStudioWorldAtlas(options?: {
     () => (activeParallelFuture ? buildFutureCommitSummary(activeParallelFuture) : undefined),
     [activeParallelFuture]
   );
+
+  const mergeDraftFuture = useMemo(
+    () =>
+      discovery.mergeDraftFutureId
+        ? discovery.parallelFutures.find((f) => f.id === discovery.mergeDraftFutureId)
+        : undefined,
+    [discovery.mergeDraftFutureId, discovery.parallelFutures]
+  );
+
+  const liveMergeMetrics = useMemo(() => {
+    const analysis = mergeDraftFuture?.analysis ?? activeParallelFuture?.analysis;
+    return analysis ? buildLiveMergeMetrics(analysis) : undefined;
+  }, [mergeDraftFuture, activeParallelFuture]);
 
   const selectedPlan = useMemo(
     () => resolveSelectedPlan(discovery, selectedPlanId ?? (focusNode.planId ? `plan-${focusNode.planId}` : null)),
@@ -373,6 +399,39 @@ export function useStudioWorldAtlas(options?: {
     setDiscoveryTick((t) => t + 1);
   }, []);
 
+  const openMergeLab = useCallback(() => {
+    enterMergeLab();
+    setView((v) => ({ ...v, mapMode: 'future-merge', focusNodeId: 'atlas-world-root', transitionMs: 800 }));
+    invalidateAtlasCatalogCache();
+    setDiscoveryTick((t) => t + 1);
+  }, []);
+
+  const closeMergeLab = useCallback(() => {
+    exitMergeLab();
+    setView((v) => ({ ...v, mapMode: 'parallel-futures', transitionMs: 600 }));
+    setDiscoveryTick((t) => t + 1);
+  }, []);
+
+  const runFutureMerge = useCallback(() => {
+    const merged = runFutureMergeInStore();
+    if (merged) {
+      invalidateAtlasCatalogCache();
+      setDiscoveryTick((t) => t + 1);
+    }
+    return merged;
+  }, []);
+
+  const resolveMergeConflict = useCallback((conflictId: string) => {
+    resolveMergeConflictInStore(conflictId);
+    setDiscoveryTick((t) => t + 1);
+  }, []);
+
+  const moveMergeBuilding = useCallback((buildingId: string, mapX: number, mapY: number) => {
+    moveMergeBuildingInStore(buildingId, mapX, mapY);
+    invalidateAtlasCatalogCache();
+    setDiscoveryTick((t) => t + 1);
+  }, []);
+
   const selectParallelFuture = useCallback((futureId: string) => {
     setActiveParallelFuture(futureId);
     setView((v) => ({ ...v, mapMode: 'parallel-futures', focusNodeId: 'atlas-world-root', transitionMs: 600 }));
@@ -476,6 +535,14 @@ export function useStudioWorldAtlas(options?: {
     focusMemory,
     isMasterPlannerMode,
     isParallelFuturesMode,
+    isFutureMergeMode,
+    mergeDraftFuture,
+    liveMergeMetrics,
+    mergeConflicts: discovery.mergeConflicts,
+    mergeHistory: discovery.mergeHistory,
+    mergeCollaborators: discovery.mergeCollaborators,
+    mergeComments: discovery.mergeComments,
+    mergeLabActive: discovery.mergeLabActive,
     selectedPlan,
     activeParallelFuture,
     parallelFuturesComparison,
@@ -507,6 +574,14 @@ export function useStudioWorldAtlas(options?: {
     approveParallelFuture,
     forkActiveParallelFuture,
     reviveLibraryFuture,
+    openMergeLab,
+    closeMergeLab,
+    runFutureMerge,
+    resolveMergeConflict,
+    moveMergeBuilding,
+    formatGenomeLines,
+    liveMergeMetricLines,
+    formatMergeReplay,
     setSelectedPlanId,
   };
 }

@@ -42385,3 +42385,34 @@ User **FOLLOW-UP SPRINT — Orb Recommendations™ (Proactive Intelligence Layer
 - **Docs:** `docs/studio-os/studio-orb-recommendations.md`.
 - **Heuristic layer:** company signals synthesized from demo stores — not yet live Creative Budget / Asset Registry / Marketplace APIs.
 - **Prior arc (same chat):** Atlas Phase 1–3 (flagship nav · digital twin · Master Planner™) · Architecture Auditor™ · Experience Intelligence Engine™ · command-center route fix.
+
+---
+
+## 2026-07-08 — Studio World Atlas™ Phase 4 Parallel Futures™ architectural planning
+
+User **FOLLOW-UP SPRINT — Parallel Futures™ (Architectural Planning Engine) Phase 4:** Extend Master Planner™ (not redesign Atlas) so founders compare multiple complete master plans before committing construction. Design first · build second · nothing generates until explicit approval.
+
+- **Parallel Futures™ mode:** new map mode `parallel-futures` — four simultaneous visions (Future A™ Luxury Flagship · Future B™ Enterprise Scale · Future C™ Lean Startup · Future D™ Experimental Vision).
+- **Engine modules:** `parallel-futures.ts` (campus layouts, roads, departments) · `parallel-futures-comparison.ts` (side-by-side metrics) · `parallel-futures-simulation.ts` (Simulate the Future™ walk + commit summary) · `parallel-futures-orb.ts` (strategic advisor with WHY) · `master-planning-library.ts` (version history, fork, revive, merge).
+- **Future Analysis™ per vision:** Creative Budget, generation cost, build duration, equity, reuse %, marketplace, expansion flexibility, AI workforce, navigation, complexity, maintainability, founder workload, risk, growth.
+- **UI (same room):** comparison panel · future selector pills · active/inactive building layers on table · **SIMULATE THE FUTURE™** · **APPROVE & COMMIT FUTURE →** with asset/cost/savings summary · Master Planning Library™ revive · **FORK VISION** · Orb → STRATEGIC ADVISOR.
+- **Storage v4:** `studioWorldAtlasDiscovery_v4` — `parallelFutures`, `activeParallelFutureId`, `parallelFutureWalks`, `masterPlanningLibrary`, `futureVersionHistory`, `committedFutureId`; migrates v3.
+- **Commit gate:** marks future committed + library entry + version snapshot — no Scene Stack generation trigger (intentional boundary).
+- **Docs:** `docs/studio-os/studio-world-atlas-parallel-futures.md`.
+- **Prior arc (same chat):** Atlas Phase 1–3 · Orb Recommendations™ · Architecture Auditor™ · Experience Intelligence Engine™.
+
+---
+
+## 2026-07-08 — Studio World Atlas™ Phase 5 Future Merge™ intelligent synthesis engine
+
+User **FOLLOW-UP SPRINT — Future Merge™ (Intelligent Future Synthesis Engine) Phase 5:** Inside Parallel Futures™, let founders combine the strongest parts of multiple futures into new master plans without overwriting originals — Git merge + architecture + master planning + creative direction + AI reasoning.
+
+- **Future Merge™ mode:** new map mode `future-merge` · **MERGE FUTURES™** action from Parallel Futures toolbar opens **Merge Lab™** inside Master Planner™.
+- **Engine modules:** `future-merge.ts` (default recipe, `executeFutureMerge`, drag buildings, merge-lab roads) · `future-merge-analysis.ts` (synthesized analysis + live comparison metrics) · `future-merge-conflicts.ts` (detect + resolve — never silent) · `future-merge-genome.ts` (Future Genome™ per synthesized future) · `future-merge-orb.ts` (Orb Design Partner with WHY) · `future-merge-collaboration.ts` (demo collaborators + comments) · `future-merge-history.ts` (replayable Visual History™).
+- **Forking:** merged futures become **Future E™ / F™ / G™** (`isMerged`, `mergeRecipe`, `mergeSourceIds`, `genome`) — all prior futures remain explorable.
+- **UI (extend `StudioWorldAtlasRoom`, no redesign):** Merge Lab panel (ingredients, conflicts, collaborators) · floating-campus CSS · draggable merged buildings · focus panel Live Comparison™ + Future Genome™ + Visual History™ + merge comments · toolbar MERGE/EXIT · Orb title → DESIGN PARTNER · fixed broken Parallel Futures comparison `<aside>` JSX + ticker ternary.
+- **Storage v5:** `studioWorldAtlasDiscovery_v5` — `mergeLabActive`, `activeMergeRecipe`, `mergeDraftFutureId`, `mergeConflicts`, `mergeHistory`, `mergeCollaborators`, `mergeComments`; migrates v4.
+- **Hook:** `useStudioWorldAtlas` — `openMergeLab`, `closeMergeLab`, `runFutureMerge`, `resolveMergeConflict`, `moveMergeBuilding`, `liveMergeMetrics`, merge state exports.
+- **Docs:** `docs/studio-os/studio-world-atlas-future-merge.md`.
+- **Boundaries:** heuristic/demo synthesis — not live Creative Budget / Asset Registry APIs; commit does not trigger Scene Stack™ generation.
+- **Prior arc (same chat):** Atlas Phase 1–4 · Master Planner™ · Orb Recommendations™ · Parallel Futures™.
