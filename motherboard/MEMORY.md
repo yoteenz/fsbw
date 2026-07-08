@@ -42267,3 +42267,17 @@ User **IMPLEMENTATION SPRINT — ARCHITECTURAL CORRECTION:** `/admin/studio/over
 - **Preserved:** all module routes/links · `workspace.studioEnabled` guard · dashboard metric/footer data · station list on wing focus (compact buttons, not cards).
 - **Nav copy:** OVERVIEW group description → `STUDIO COMMAND CENTER™ · EXECUTIVE ATRIUM™`.
 - **Prior arc (same chat):** Studio Archives™ campus · Studio World V4 · Warehouse immersive sprint · Scene Stack shell lock.
+
+---
+
+## 2026-07-08 — Studio World™ V5 Architectural Enforcement Sprint (audit deliverable)
+
+User **ARCHITECTURAL ENFORCEMENT SPRINT — Studio World™ V5:** Complete architectural audit — locate every remaining webpage/dashboard experience; **not** a visual redesign sprint. Mission: remove final website thinking. Command Center still functions as admin webpage (KPIs, cards, dashboard layout, `navigate()` to legacy routes). Target: **Executive Operations Headquarters™** — founder enters **Mission Control™**, **Organization Pulse Core™** at center, operational wings reached by **movement** not pages. Room Rule mappings (Portfolio Health→Executive Monitoring Room™, Revenue→Financial Observatory™, Marketplace→Commerce Pavilion™, Global AI→Intelligence Nexus™, System Health→Infrastructure Observatory™, etc.). Forbidden: dashboard cards, statistic grids, scroll reports, admin widgets. Deliverable: **Architecture Migration Report** per route. Implementation order: inventory → categorize → map buildings → districts → Studio World → **only then replace** (no mass redesign now).
+
+- **Audit completed (automated inventory):** 213 `page.tsx` under `/admin/studio` · 191 nav modules · 76 routes in `STUDIO_WORLD_ROUTE_REGISTRY` · **192 pages / 163 modules** still `AdminStudioStageShell` · **3** `DepartmentGoldenBuildShell` (CDS, Archives, Overview) · **85% flagged webpage-like**.
+- **Overview flagged immersive-partial:** `StudioCommandCenterRoom` has Golden Build shell but `OrganizationPulseCore` 3×2 KPI grid + wing `navigate()` = dashboard hybrid — P0 rebuild target.
+- **Deliverable:** `docs/studio-os/STUDIO_WORLD_ARCHITECTURE_MIGRATION_REPORT_V5.md` — executive summary · forbidden patterns · P0 Command Center V5 plan (10 walkable wings, Scene Stack) · district map · flagship tables · full 191-route appendix · cost/complexity model · implementation checklist.
+- **Machine-readable:** `src/studio-os-core/studio-world/migration-audit.ts` — `STUDIO_WORLD_MIGRATION_AUDIT` · `getMigrationAuditSummary()` · exported from `studio-world/index.ts`.
+- **Priority tiers:** P0 Command Center/exec observatories (44) · P1 distribution/archives/production/create (42) · P2 intelligence engines (105) · P3 settings/platform.
+- **No code redesign this sprint** — audit and plan only per user mandate.
+- **Prior arc (same chat):** Studio Command Center overview implementation · Studio World V4 · Archives immersive · Scene Stack stability.
