@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { CampusTransitionProvider } from './admin/studio-os/campus/CampusTransitionProvider';
 import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
@@ -25,6 +25,15 @@ async function resolveMembershipWithTimeout(accessToken?: string) {
   ]);
 }
 
+async function getAccessTokenWithTimeout(): Promise<string | null> {
+  return Promise.race([
+    getAccessToken(),
+    new Promise<null>((resolve) => {
+      window.setTimeout(() => resolve(null), MEMBERSHIP_API_TIMEOUT_MS);
+    }),
+  ]);
+}
+
 /**
  * Studio OS routes only (/admin/studio/*, /admin/studio-os/*).
  * Loads workspace registry + org membership + WorkspaceProvider — never on /admin/dashboard.
@@ -34,14 +43,27 @@ export default function AdminStudioWorkspaceGuard() {
   const [workspacesReady, setWorkspacesReady] = useState(false);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
 
+  const routeWorkspaceId = useMemo(
+    () => resolveBootstrapWorkspaceId(pathname, search, getCachedOrgMembership()),
+    [pathname, search]
+  );
+
+  /** URL is source of truth — sync before paint so refresh never boots the wrong workspace. */
+  useLayoutEffect(() => {
+    activateWorkspaceContext(routeWorkspaceId);
+  }, [routeWorkspaceId]);
+
+  /** Registry + membership bootstrap runs once — never re-triggered on in-app navigation. */
   useEffect(() => {
     let cancelled = false;
 
     void (async () => {
       try {
-        const [_, token] = await Promise.all([ensureWorkspacesBootstrapped(), getAccessToken()]);
-        const membership = await resolveMembershipWithTimeout(token ?? undefined);
-        activateWorkspaceContext(resolveBootstrapWorkspaceId(pathname, search, membership));
+        const token = await getAccessTokenWithTimeout();
+        await Promise.all([ensureWorkspacesBootstrapped(), resolveMembershipWithTimeout(token ?? undefined)]);
+        activateWorkspaceContext(
+          resolveBootstrapWorkspaceId(pathname, search, getCachedOrgMembership())
+        );
         if (!cancelled) {
           setBootstrapError(null);
           setWorkspacesReady(true);
@@ -56,7 +78,7 @@ export default function AdminStudioWorkspaceGuard() {
     return () => {
       cancelled = true;
     };
-  }, [pathname, search]);
+  }, []);
 
   if (bootstrapError) {
     return (
@@ -105,7 +127,7 @@ export default function AdminStudioWorkspaceGuard() {
   }
 
   return (
-    <WorkspaceProvider>
+    <WorkspaceProvider initialWorkspaceId={routeWorkspaceId}>
       <OrganizationContextProvider>
         <CampusTransitionProvider>
           <Outlet />
