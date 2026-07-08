@@ -40962,3 +40962,15 @@ User required department **not embedded in admin card** — full-screen room exp
 
 - **Changed:** `DepartmentGoldenBuildShell` → `position: fixed; inset: 0; z-index: 200` + body scroll lock · rebuilt room as `gb-immersive` spatial scene (environment wall/floor/horizon full viewport) · objects absolutely positioned (Mood Wall back-left · Notes back-right · Orb center · Console bottom · zones on floor) · minimal HUD (back · dept/project · status pill) · removed grid/scroll-column/card layout · mobile optional horizontal scene pan (108vw) · no blur/animations.
 - **Route:** `/admin/studio/department/creative-direction`
+
+---
+
+## 2026-07-08 — Foundational Experience Systems™ (docs only)
+
+User defined **Foundational Experience Systems™** — permanent interaction laws every department inherits; CDS first establishment. Docs only — no implementation until mobile stability confirmed.
+
+- **Spec:** `docs/studio-os/foundational-experience-systems/` (8 files)
+- **System 001 Arrival Sequence™** — cinematic entry, never instant spawn
+- **System 002 Idle Life™** — world continues when founder idle
+- **World Persistence™** · **Ambient Storytelling™** · **Emotional Design Principle™** (CDS → inspired)
+- **Commit:** `b6c71721`
