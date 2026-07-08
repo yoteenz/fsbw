@@ -16,12 +16,15 @@
 | 10 | Progressive Presence™ | Article K18 — information earns visibility through intent |
 | 11 | Architecture Decision Records™ | Article K21 — constitutional history preserves architectural reasoning |
 | 12 | Studio World Knowledge Core™ | Article K22 — Studio World becomes its own canonical memory |
+| 13 | Studio World Memory System™ | Article K23 — conversation, extraction, review, and canon remain distinct |
 
 **Article K18:** `docs/studio-os/governance/PROGRESSIVE_PRESENCE.md`
 
 **Article K21:** `docs/studio-os/architecture-decision-records/ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md`
 
 **Article K22:** `docs/studio-os/knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md`
+
+**Article K23:** `docs/studio-os/knowledge-core/ARTICLE_K23_MEMORY_SYSTEM.md`
 
 **Eight Foundational Laws** (flagship governance) remain in `laws.ts`.
 

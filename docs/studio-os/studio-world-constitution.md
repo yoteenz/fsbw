@@ -25,6 +25,7 @@ A monumental architectural chamber — not settings, not documentation. Governin
 - **Orb:** Keeper of Studio World — explains principles, evolution, and fit
 - **ADR exhibits:** Accepted Architecture Decision Records™ are preserved here as constitutional history, with Architect Journal™ narratives and Decision Graph™ lineage.
 - **Knowledge Core™:** Article K22 preserves Studio World's internal memory as searchable canon, domains, statuses, prompt memory, and Architect's Memory™.
+- **Memory System™:** Article K23 separates raw Conversation Archive™, Knowledge Ingestion™, Architect Review™, and approved Knowledge Core™.
 
 ---
 
@@ -101,6 +102,7 @@ Reviews persist in `studioOsStudioWorldConstitution_v1`.
 - **Orb:** `resolveOrbPersonalityForPath` returns Keeper in Constitution Hall™
 - **Architecture Decision Records™:** `src/studio-os-core/architecture-decision-records/` preserves accepted decisions as `architectural-decision` nodes.
 - **Studio World Knowledge Core™:** `src/studio-os-core/studio-world-knowledge-core/` preserves canonical knowledge entries as World Graph `knowledge-object` nodes.
+- **Studio World Memory System™:** Conversation archives, extraction reports, and founder review nodes preserve how Studio World learned before knowledge becomes canon.
 
 ---
 
@@ -139,6 +141,21 @@ The Knowledge Core preserves:
 Only Canon™ Knowledge Entries may influence future architecture automatically. Other statuses remain preserved and searchable, but cannot silently govern new architecture.
 
 Canon text: [ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md](./knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md)
+
+---
+
+## ARTICLE-K23 — The Memory System™
+
+Studio World distinguishes between Conversation™, Knowledge™, History™, and Canon™.
+
+- **Conversation Archive™:** raw historical record, preserved exactly.
+- **Knowledge Ingestion™:** extracted understanding, not canon.
+- **Architect Review™:** founder approval gate.
+- **Knowledge Core™:** approved canonical memory.
+
+Conversations are history. Knowledge is understanding. Canon is approval.
+
+Canon text: [ARTICLE_K23_MEMORY_SYSTEM.md](./knowledge-core/ARTICLE_K23_MEMORY_SYSTEM.md)
 
 ---
 

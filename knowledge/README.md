@@ -7,6 +7,8 @@ The graph is truth; these files are structured canon inputs and schema definitio
 
 **Article K22 — Studio World Knowledge Core™:** Studio World should not rely on external AI memory. The Knowledge Core is the internal memory of the civilization: domains, statuses, prompt memory, Architect's Memory™, and searchable entries that compile into `knowledge-object` nodes.
 
+**Article K23 — Studio World Memory System™:** Conversations are history, knowledge is understanding, and canon is approval. Raw conversations live in `knowledge/archive/conversations/`; extraction reports live in `knowledge/working/extraction-reports/`; only reviewed knowledge enters the Knowledge Core.
+
 ## Structure
 
 ```
@@ -27,6 +29,7 @@ knowledge/
 3. Never duplicate truth in `docs/` without a graph node reference.
 4. Only **Canon™** Knowledge Entries may influence future architecture automatically.
 5. Never overwrite major history; create a new version and preserve the previous entry.
+6. Never confuse Conversation Archive™ with Canon™; extraction requires Architect Review™ before promotion.
 
 ## Compile
 

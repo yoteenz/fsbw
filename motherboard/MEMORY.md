@@ -42914,3 +42914,76 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Future major Studio World prompts should create Knowledge Entries when they change architecture, canon, systems, standards, or long-term philosophy.
 - Do not rely on external AI/chat memory for architectural continuity. Promote durable memory into Knowledge Core + World Graph.
 - Treat status as governance: Canon can guide architecture automatically; Approved/Draft/Experimental/Historical/Archived can inform humans but cannot silently govern new systems.
+
+---
+
+## 2026-07-08 — ARTICLE-K23 Studio World Memory System™ living institutional memory
+
+**Context:** User followed K21 ADRs and K22 Knowledge Core with a sharper architectural distinction: Studio World’s memory must not become a folder of documents. It must function as living institutional memory and separate **Conversation™**, **Knowledge™**, **History™**, and **Canon™**.
+
+**Topics covered (entire conversation so far):**
+- Prior turn delivered **ARTICLE-K21 Architecture Decision Records™** as constitutional history: ADR-0001, ADR registry, Constitution Hall™ exhibit, World Graph `architectural-decision` nodes, Article K21 law, docs/canon, and verification.
+- Prior turn delivered **ARTICLE-K22 Studio World Knowledge Core™** as internal memory: domains, statuses, prompt memory, Architect’s Memory™, prompt standards, Knowledge Entry model, World Graph ingestion, Article K22 law, docs/canon, and verification.
+- This turn delivered **ARTICLE-K23 The Memory System™**:
+  - Layer 1: Conversation Archive™ — raw historical record, preserved exactly.
+  - Layer 2: Knowledge Ingestion™ — extracts understanding from the archive, not canon.
+  - Layer 3: Architect Review™ — founder approve/modify/reject/merge/delay gate.
+  - Layer 4: Knowledge Core™ — approved canonical memory only.
+- Created the **First Ingestion™** using today’s Studio World memory architecture discussion as the first archived conversation and extraction report.
+
+**Decisions / outcomes:**
+- **ARTICLE-K23** is now Behavioral Constitutional Law #13: Studio World Memory System™.
+- World Graph now has explicit memory lineage node types:
+  - `conversation-archive` (`W-CONV-*`)
+  - `knowledge-extraction` (`W-KEX-*`)
+  - `founder-approval` (`W-APP-*`)
+- Memory Graph™ connects archived conversation → extraction report → pending founder review → Knowledge Core target → ADR precedent.
+- The first Knowledge Extraction Report™ is explicitly **Awaiting Founder Review** and **not canon**.
+- Expanded Architect’s Memory™ with recurring architectural preferences as Canon principles:
+  - Architect before implementation.
+  - Recommend the best model.
+  - Include architectural improvements.
+  - Include future expansion.
+  - Prefer reusable systems.
+  - Prefer immersive interaction.
+  - Prefer world-first architecture.
+
+**Changes:**
+- Extended Knowledge Core types/data:
+  - `src/studio-os-core/studio-world-knowledge-core/types.ts`
+  - `src/studio-os-core/studio-world-knowledge-core/entries.ts`
+- Extended World Graph taxonomy and ingestion:
+  - `src/studio-os-core/world-graph/types.ts`
+  - `src/studio-os-core/world-graph/id.ts`
+  - `knowledge/schema/node-types.yaml`
+  - `src/studio-os-core/world-graph/ingestion/knowledge-core-ingest.ts`
+- Added raw Conversation Archive:
+  - `knowledge/archive/conversations/2026-07-08-studio-world-memory-architecture.md`
+- Added first Knowledge Extraction Report:
+  - `knowledge/working/extraction-reports/2026-07-08-studio-world-memory-architecture.md`
+- Added Article K23 docs/canon:
+  - `docs/studio-os/knowledge-core/ARTICLE_K23_MEMORY_SYSTEM.md`
+  - `knowledge/canon/constitution/studio-world-memory-system.md`
+- Updated cross-links/rules:
+  - `docs/studio-os/studio-world-constitution.md`
+  - `docs/studio-os/governance/STUDIO_WORLD_GOVERNANCE_HIERARCHY.md`
+  - `docs/studio-os/knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md`
+  - `docs/studio-os/world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md`
+  - `knowledge/README.md`
+  - `knowledge/canon/constitution/behavioral-laws.md`
+- Regenerated World Graph artifacts:
+  - `public/studio-os/world-graph/graph.json`
+  - `docs/studio-os/world-graph/WORLD_GRAPH_COMPILE_REPORT.md`
+- Added permanent CORE note:
+  - `motherboard/CORE.md`
+
+**Verification:**
+- `npm run compile-world-graph` passed: **457 nodes · 725 edges · PASS**.
+- `npm run build` passed. The build completed successfully; existing bundle-size warnings remain non-blocking.
+- Dropped unrelated timestamp-only master-spec generated diffs; retained World Graph artifacts because they include K23 memory nodes/edges.
+
+**Conventions:**
+- Future significant Studio World design conversations should be archived raw before knowledge extraction.
+- Extraction reports are review bridges, not canon.
+- Do not promote extracted knowledge into Knowledge Core until founder review.
+- Studio World should preserve not only decisions, but the conversations and extraction path that produced them.

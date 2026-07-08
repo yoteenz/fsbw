@@ -29,6 +29,9 @@ export type WorldPlane = 'canon' | 'working' | 'historical';
 /** Node domains — civilization-wide, not documentation-only. */
 export const WORLD_NODE_TYPES = [
   'knowledge-object',
+  'conversation-archive',
+  'knowledge-extraction',
+  'founder-approval',
   'architectural-decision',
   'design-principle',
   'constitutional-law',

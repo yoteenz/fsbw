@@ -1,4 +1,11 @@
-import type { KnowledgeCoreEntry, KnowledgeCoreStatus, PromptStandard } from './types';
+import type {
+  ArchitectsMemoryPrinciple,
+  ConversationArchiveRecord,
+  KnowledgeCoreEntry,
+  KnowledgeCoreStatus,
+  KnowledgeExtractionReport,
+  PromptStandard,
+} from './types';
 
 export const KNOWLEDGE_CORE_ARTICLE = {
   id: 'ARTICLE-K22',
@@ -6,6 +13,14 @@ export const KNOWLEDGE_CORE_ARTICLE = {
   approvedDate: '2026-07-08',
   summary:
     'Studio World becomes its own memory through a canonical Knowledge Core that preserves decisions, evolution, principles, canon, experiments, and standards.',
+} as const;
+
+export const MEMORY_SYSTEM_ARTICLE = {
+  id: 'ARTICLE-K23',
+  title: 'The Memory System™',
+  approvedDate: '2026-07-08',
+  summary:
+    'Studio World separates Conversation™, Knowledge™, History™, and Canon™ so raw history, extracted understanding, founder review, and approved memory are never confused.',
 } as const;
 
 export const PROMPT_STANDARDS: PromptStandard[] = [
@@ -54,6 +69,147 @@ export const PROMPT_STANDARDS: PromptStandard[] = [
     standard:
       'Recurring needs should become reusable systems, registries, standards, or graph entries rather than isolated prompts.',
     reason: 'Civilization memory compounds only when work becomes reusable infrastructure.',
+  },
+];
+
+export const ARCHITECTS_MEMORY_PRINCIPLES: ArchitectsMemoryPrinciple[] = [
+  {
+    id: 'architect-before-implementation',
+    title: 'Architect Before Implementation',
+    status: 'Canon',
+    principle: 'Define the system, ownership, graph relationships, and governance before implementation.',
+    source: 'ARTICLE-K23 Architect’s Memory™ expansion',
+  },
+  {
+    id: 'recommend-best-model',
+    title: 'Recommend The Best Model',
+    status: 'Canon',
+    principle: 'When prompts or generation workflows depend on model choice, preserve the recommended model.',
+    source: 'ARTICLE-K23 Architect’s Memory™ expansion',
+  },
+  {
+    id: 'include-architectural-improvements',
+    title: 'Include Architectural Improvements',
+    status: 'Canon',
+    principle: 'Major prompts should record the architectural improvements added by the work.',
+    source: 'ARTICLE-K23 Architect’s Memory™ expansion',
+  },
+  {
+    id: 'include-future-expansion',
+    title: 'Include Future Expansion',
+    status: 'Canon',
+    principle: 'Preserve future expansion opportunities without implementing them prematurely.',
+    source: 'ARTICLE-K23 Architect’s Memory™ expansion',
+  },
+  {
+    id: 'prefer-reusable-systems',
+    title: 'Prefer Reusable Systems',
+    status: 'Canon',
+    principle: 'Favor reusable systems, registries, standards, and graph entries over one-off implementations.',
+    source: 'ARTICLE-K23 Architect’s Memory™ expansion',
+  },
+  {
+    id: 'prefer-immersive-interaction',
+    title: 'Prefer Immersive Interaction',
+    status: 'Canon',
+    principle: 'Studio World experiences should feel inhabited and spatial, not like ordinary software panels.',
+    source: 'ARTICLE-K23 Architect’s Memory™ expansion',
+  },
+  {
+    id: 'prefer-world-first-architecture',
+    title: 'Prefer World-First Architecture',
+    status: 'Canon',
+    principle: 'Begin from Studio World as a civilization; pages, folders, and documents are projections, not the world.',
+    source: 'ARTICLE-K23 Architect’s Memory™ expansion',
+  },
+];
+
+export const CONVERSATION_ARCHIVE_RECORDS: ConversationArchiveRecord[] = [
+  {
+    id: 'CONV-2026-07-08-studio-world-memory-architecture',
+    title: 'Studio World Memory Architecture Discussion — Articles K21, K22, K23',
+    date: '2026-07-08',
+    status: 'Archived',
+    transcriptPath:
+      'knowledge/archive/conversations/2026-07-08-studio-world-memory-architecture.md',
+    summaryForIndex:
+      'Raw conversation archive preserving the founder’s Article K21 ADR, Article K22 Knowledge Core, and Article K23 Memory System prompts.',
+    preservedExactly: true,
+    relatedExtractionReportId: 'KEX-2026-07-08-studio-world-memory-architecture',
+  },
+];
+
+export const KNOWLEDGE_EXTRACTION_REPORTS: KnowledgeExtractionReport[] = [
+  {
+    id: 'KEX-2026-07-08-studio-world-memory-architecture',
+    title: 'Knowledge Extraction Report™ — Studio World Memory Architecture Discussion',
+    sourceConversationId: 'CONV-2026-07-08-studio-world-memory-architecture',
+    status: 'Awaiting Founder Review',
+    reportPath:
+      'knowledge/working/extraction-reports/2026-07-08-studio-world-memory-architecture.md',
+    conversationSummary:
+      'The discussion introduced ADRs as constitutional history, the Knowledge Core as internal memory, and the Memory System as the separation between conversation, extracted knowledge, founder review, and canon.',
+    architecturalDecisions: [
+      'Separate Conversation™, Knowledge™, History™, and Canon™.',
+      'Preserve significant design conversations exactly as historical records.',
+      'Generate extraction reports before Knowledge Core promotion.',
+      'Require Architect Review before extracted knowledge enters canon.',
+      'Connect conversation lineage through Memory Graph relationships.',
+    ],
+    systemsIntroduced: [
+      'Conversation Archive™',
+      'Knowledge Ingestion™',
+      'Architect Review™',
+      'Memory Graph™',
+      'Knowledge Extraction Report™',
+      'Expanded Architect’s Memory™',
+    ],
+    designPrinciples: [
+      'Conversations are history.',
+      'Knowledge is understanding.',
+      'Canon is approval.',
+      'Studio World should never confuse history with canon.',
+    ],
+    conflictsDetected: [
+      'Knowledge Core must not become a folder of documents.',
+      'Conversation archives must remain raw while Knowledge Core remains reviewed and canonical.',
+      'Extracted items must not automatically become canon.',
+    ],
+    potentialAdrs: [
+      'ADR candidate — Conversation Archive™ as historical substrate.',
+      'ADR candidate — Knowledge Ingestion™ and Architect Review™ as canon gate.',
+      'ADR candidate — Memory Graph™ as learning lineage.',
+    ],
+    constitutionUpdates: ['ARTICLE-K23 — The Memory System™'],
+    worldBibleUpdates: [
+      'Studio World Memory System™',
+      'Conversation Archive™',
+      'Knowledge Extraction Report™',
+      'Memory Graph™',
+    ],
+    promptStandardUpdates: [
+      'Archive significant architecture prompts exactly.',
+      'Generate Knowledge Extraction Reports after major conversations.',
+      'Route extracted knowledge through Architect Review before canon promotion.',
+    ],
+    engineeringRecommendations: [
+      'Add World Graph node types for archived conversations, extraction reports, and founder approvals.',
+      'Store raw archives separately from extraction reports.',
+      'Represent extraction reports as awaiting review until founder approval.',
+      'Link conversation → extraction → approval → Knowledge Core → ADR → implementation → impact.',
+    ],
+    futureOpportunities: [
+      'Full searchable Conversation Archive UI.',
+      'Automated transcript capture from Studio World sessions.',
+      'Founder review queue for extraction reports.',
+      'Memory Graph visualization inside Knowledge Library™.',
+      'Orb answers that cite both canon and originating conversations.',
+    ],
+    itemsAwaitingApproval: [
+      'Whether K23 extraction reports should generate ADR drafts automatically.',
+      'Which extracted items from today’s discussion should become Canon Knowledge Entries beyond Article K23 itself.',
+      'Whether full raw assistant/tool transcript capture should be automated at platform runtime.',
+    ],
   },
 ];
 
@@ -143,6 +299,41 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
     worldBibleReferences: ['Studio World Bible™', 'Studio World Governance Hierarchy™'],
     implementationStatus: 'Implemented',
     tags: ['architects-memory', 'design-philosophy', 'vocabulary', 'consistency'],
+  },
+  {
+    id: 'K23-memory-system',
+    title: 'ARTICLE-K23 — The Memory System™',
+    domain: 'Knowledge Engine™',
+    status: 'Canon',
+    version: 'v1',
+    summary:
+      'The Memory System distinguishes Conversation™, Knowledge™, History™, and Canon™ through four layers: raw archive, extraction, architect review, and approved Knowledge Core.',
+    reasoning:
+      'If Studio World stores only documents, it loses the learning process that created its knowledge. The civilization must remember both what it knows and how it learned it.',
+    finalPrompt:
+      'Evolve Knowledge Core™ into a living institutional memory with Conversation Archive™, Knowledge Ingestion™, Architect Review™, Knowledge Core™, first ingestion, Knowledge Extraction Reports™, Memory Graph™, and expanded Architect’s Memory™.',
+    architectureAdded: [
+      'The Memory System™',
+      'Conversation Archive™',
+      'Knowledge Ingestion™',
+      'Architect Review™',
+      'Knowledge Extraction Report™',
+      'Memory Graph™',
+      'Expanded Architect’s Memory™',
+    ],
+    relatedSystems: [
+      'Knowledge Core™',
+      'World Graph™',
+      'Architecture Decision Records™',
+      'Orb™',
+      'Mission Control™',
+      'Knowledge Library™',
+    ],
+    constitutionArticles: ['ARTICLE-K23', 'ARTICLE-K22', 'ARTICLE-K21'],
+    adrReferences: ['ADR-0001'],
+    worldBibleReferences: ['Studio World Memory System™', 'Studio World Knowledge Core™'],
+    implementationStatus: 'Implemented',
+    tags: ['memory-system', 'conversation-archive', 'knowledge-ingestion', 'memory-graph'],
   },
 ];
 

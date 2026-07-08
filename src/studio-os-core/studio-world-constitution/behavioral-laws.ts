@@ -15,7 +15,8 @@ export type BehavioralConstitutionalLawId =
   | 'approval-workflow'
   | 'progressive-presence'
   | 'architecture-decision-records'
-  | 'studio-world-knowledge-core';
+  | 'studio-world-knowledge-core'
+  | 'studio-world-memory-system';
 
 export type BehavioralConstitutionalLaw = {
   id: BehavioralConstitutionalLawId;
@@ -142,6 +143,17 @@ export const BEHAVIORAL_CONSTITUTIONAL_LAWS: BehavioralConstitutionalLaw[] = [
       'Article K22 — Studio World becomes its own memory through canonical domains, statuses, prompt memory, Architect’s Memory™, and searchable knowledge entries.',
     enforcement:
       'Only Canon knowledge may influence future architecture automatically. Every major prompt creates a Knowledge Entry. History is versioned, never overwritten.',
+    physicsBasis: ['world-memory', 'knowledge-conservation', 'temporal-continuity', 'relationship-gravity'],
+    principleBasis: ['memory-before-intelligence', 'everything-has-a-home', 'world-first'],
+  },
+  {
+    id: 'studio-world-memory-system',
+    number: 13,
+    title: 'Studio World Memory System™',
+    summary:
+      'Article K23 — conversations are history, knowledge is understanding, and canon is approval. Raw archives, extraction, review, and Knowledge Core must remain distinct.',
+    enforcement:
+      'Significant conversations are archived exactly, extraction reports remain review-gated, and nothing extracted enters the Knowledge Core until founder approval.',
     physicsBasis: ['world-memory', 'knowledge-conservation', 'temporal-continuity', 'relationship-gravity'],
     principleBasis: ['memory-before-intelligence', 'everything-has-a-home', 'world-first'],
   },

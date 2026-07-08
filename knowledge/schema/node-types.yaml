@@ -4,6 +4,9 @@ version: world-graph.v1
 domains:
   knowledge:
     - knowledge-object
+    - conversation-archive
+    - knowledge-extraction
+    - founder-approval
     - architectural-decision
     - design-principle
     - constitutional-law
@@ -61,6 +64,9 @@ domains:
 
 id_prefixes:
   knowledge-object: W-KNO
+  conversation-archive: W-CONV
+  knowledge-extraction: W-KEX
+  founder-approval: W-APP
   architectural-decision: W-DEC
   design-principle: W-DPR
   constitutional-law: W-LAW

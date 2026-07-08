@@ -69,3 +69,54 @@ export type PromptStandard = {
   standard: string;
   reason: string;
 };
+
+export const MEMORY_SYSTEM_LAYERS = [
+  'Conversation Archive™',
+  'Knowledge Ingestion™',
+  'Architect Review™',
+  'Knowledge Core™',
+] as const;
+
+export type MemorySystemLayer = (typeof MEMORY_SYSTEM_LAYERS)[number];
+
+export const ARCHITECT_REVIEW_ACTIONS = ['Approve', 'Modify', 'Reject', 'Merge', 'Delay'] as const;
+export type ArchitectReviewAction = (typeof ARCHITECT_REVIEW_ACTIONS)[number];
+
+export type ConversationArchiveRecord = {
+  id: string;
+  title: string;
+  date: string;
+  status: 'Archived';
+  transcriptPath: string;
+  summaryForIndex: string;
+  preservedExactly: boolean;
+  relatedExtractionReportId: string;
+};
+
+export type KnowledgeExtractionReport = {
+  id: string;
+  title: string;
+  sourceConversationId: string;
+  status: 'Awaiting Founder Review';
+  reportPath: string;
+  conversationSummary: string;
+  architecturalDecisions: string[];
+  systemsIntroduced: string[];
+  designPrinciples: string[];
+  conflictsDetected: string[];
+  potentialAdrs: string[];
+  constitutionUpdates: string[];
+  worldBibleUpdates: string[];
+  promptStandardUpdates: string[];
+  engineeringRecommendations: string[];
+  futureOpportunities: string[];
+  itemsAwaitingApproval: string[];
+};
+
+export type ArchitectsMemoryPrinciple = {
+  id: string;
+  title: string;
+  status: KnowledgeCoreStatus;
+  principle: string;
+  source: string;
+};

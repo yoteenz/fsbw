@@ -79,7 +79,7 @@ Behavioral and architectural governance.
 
 Documentation First™ · Canon Promotion™ · No Orphan Objects™ · Agent Memory Subordination™ · Immutability of History™ · Scene Assembly Rules™ · Knowledge Review™ · Repository Governance™ · Approval Workflow™
 
-**Articles:** World Graph Is Truth™ · Three Eras Roadmap™ · Scene Assembly Immutability™ · ARTICLE-K21 Architecture Decision Records™ · ARTICLE-K22 Studio World Knowledge Core™
+**Articles:** World Graph Is Truth™ · Three Eras Roadmap™ · Scene Assembly Immutability™ · ARTICLE-K21 Architecture Decision Records™ · ARTICLE-K22 Studio World Knowledge Core™ · ARTICLE-K23 Memory System™
 
 **Graph:** `constitutional-law` · `W-LAW-*`
 
@@ -138,4 +138,5 @@ World Graph™ registers all four layers with `depends-on` and `implements` edge
 - [STUDIO_WORLD_PHYSICS_ARCHITECTURE.md](../world-physics/STUDIO_WORLD_PHYSICS_ARCHITECTURE.md)
 - [ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md](../architecture-decision-records/ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md)
 - [ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md](../knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md)
+- [ARTICLE_K23_MEMORY_SYSTEM.md](../knowledge-core/ARTICLE_K23_MEMORY_SYSTEM.md)
 - [knowledge/canon/README.md](../../knowledge/canon/README.md)

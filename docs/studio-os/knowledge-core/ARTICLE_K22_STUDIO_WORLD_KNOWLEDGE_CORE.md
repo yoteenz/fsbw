@@ -20,6 +20,8 @@ The Knowledge Core™ is the canonical source of truth for everything inside Stu
 
 It is not documentation. It is the memory of the civilization.
 
+Article K23 refines this by separating raw conversation history from extracted knowledge and approved canon. See [ARTICLE_K23_MEMORY_SYSTEM.md](./ARTICLE_K23_MEMORY_SYSTEM.md).
+
 The Knowledge Core preserves:
 
 - why decisions were made,
@@ -217,3 +219,9 @@ If Studio World were handed to an entirely new team five years from now, they sh
 Without relying on chat history.
 
 The Knowledge Core becomes Studio World's institutional memory.
+
+---
+
+## Related constitutional memory layers
+
+- [ARTICLE_K23_MEMORY_SYSTEM.md](./ARTICLE_K23_MEMORY_SYSTEM.md) — Conversation Archive™ → Knowledge Ingestion™ → Architect Review™ → Knowledge Core™
