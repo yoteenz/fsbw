@@ -41948,3 +41948,18 @@ User sprint: build **Company Genome™** — living DNA of every company. **NOT 
 - **Cross-refs:** company-genome.md v1 · Living Company Genome · prompt-composer · studio-world · CORE.md
 - **Prior arc (same chat):** Story Table™ Hello World · Generation Pipeline™ · Scene Planner™ · Prompt Composer™ · Asset Registry™ · intelligence stack
 - **No UI · no CRM · no analytics implementation this sprint**
+
+---
+
+## 2026-07-08 — Studio Asset Registry™ v1 — first working implementation (Supabase + API)
+
+User left Architecture Mode: **implement executable software**, no new markdown specs. First working **Studio Asset Registry™** with Supabase as source of truth.
+
+- **Supabase migration:** `supabase/migrations/20260708120000_studio_asset_registry.sql` — tables `studio_asset_registry_assets`, `_versions`, `_relationships`, `_usage_events`, `_similarity_hooks`; full-text `search_document` via **trigger** (`studio_asset_registry_refresh_search_document`) because generated `tsvector` with `array_to_string` is not immutable in Postgres; RLS service_role-only (same pattern as `studio_os_workspace_state`). Applied to FS Website project via Supabase MCP (`studio_asset_registry_v1`).
+- **Server lib:** `api/_lib/assetRegistry/` — `types.ts`, `service.ts` (CRUD, search, tag search, versions, usage, relationships), `similarity.ts` (trait/tag/material scoring hooks), `recommendations.ts` (reuse recommendations + estimated savings).
+- **API:** `api/admin/studio-asset-registry.ts` — admin-auth REST: GET actions `get|search|tags|related|versions|usage|similar|recommend`; POST create + `record_usage|add_relationship|search|similar|recommend`; PUT update (version bump); DELETE archive. Default `org_id=frontal-slayer`.
+- **Client:** `src/services/studio/assetRegistry/api.ts` — `createRegistryAsset`, `getRegistryAsset`, `searchRegistryAssets`, `getRelatedRegistryAssets`, `getRegistryRecommendations`, `recordRegistryUsage`, `getRegistryVersions`, `getRegistryUsageEvents`.
+- **Smoke test:** `scripts/studio-asset-registry-smoke.mjs` — register · tag search · FTS · relationships (scene/department/generation_pack) · usage · retrieve; passed against live Supabase.
+- **Capabilities proven:** register · search · retrieve · related assets · reuse recommendations · generation cost/provider tracking · usage tracking · version history · similarity hooks (traits + embedding_ref placeholder).
+- **Legacy unchanged:** in-memory `src/studio-os-core/asset-registry/` + `/admin/studio/asset-registry` UI — new layer is additive; wire UI in a future sprint.
+- **Prior arc (same chat):** blueprint/docs sprints for Asset Registry v1.1, Prompt Composer, Scene Planner, Generation Pipeline, Story Table Hello World, Company Genome v2.0 — then implementation sprint pivot.
