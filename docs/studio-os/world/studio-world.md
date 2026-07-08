@@ -97,6 +97,8 @@ STUDIO WORLD™
 
 **Platform economy:** [Studio Marketplace™](../marketplace/README.md) — *The Economy of Studio World™* · Studio Originals™ · creator economy · business model
 
+**Professional ecosystem:** [Studio Professionals™](../ecosystem/README.md) — careers · disciplines · certification · Professional Graph™
+
 ---
 
 ## Related Canon (Subsystems)

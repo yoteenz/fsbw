@@ -41349,3 +41349,25 @@ User defined **Studio Architects™** creator profession evolution sprint — lo
 - **10-doc spec:** `docs/studio-os/marketplace/` — studio-architects · architect-philosophy · architect-profiles · architect-rankings · architect-certification · architect-collections · commission-system · taste-match-system · creator-economy-roadmap · future-marketplace (+ README · creator-economy v2.1 cross-ref)
 - **Prior arc (same chat):** Studio Marketplace™ v2 strategy · Living Sets™ · Studio Marketplace™ v1 · CDS V2 · Founder Intelligence™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™
 - **CORE.md:** Studio Architects™ line added
+
+---
+
+## 2026-07-08 — Studio Professionals™ — The Careers Inside Studio World™ (platform ecosystem sprint, docs only)
+
+User defined **Studio Professionals™** — long-term professional ecosystem sprint. Studio OS = careers ecosystem not just software. **No UI · no profiles · no permissions · no marketplace features.**
+
+- **Mission:** Recognize distinct professional disciplines inside Studio World™ — not everyone is a founder; some design · strategize · automate · operate · teach · review · innovate
+- **Philosophy:** New category of **digital professionals** — NOT marketplace sellers; every professional helps founders build better companies
+- **Founders™ (distinct):** Vision · leadership · strategy · decision making · company building — inhabitant role not Studio Professional™
+- **Launch professions:** **Studio Architects™** (HQ · Living Sets™ · environment · spatial storytelling · business worlds) · **Studio Brand Designers™** (Company Genome™ · brand systems · visual identity · typography · packaging · color · photography direction · voice · brand evolution) · **Studio Directors™** (creative pipelines · automation · workflows · AI collaboration · Creative Review™ · Golden Builds™ · department processes) · **Studio Operators™** (operations · KPIs · analytics · efficiency · hiring · scaling · growth · financial optimization) · **Studio Advisors™** (playbooks · education · industry templates · mentorship · courses · frameworks · workshops · strategic reviews)
+- **Future Professions™:** Experience Designers™ · Customer Journey Architects™ · Innovation Coaches™ · AI Trainers™ · Culture Designers™ · Community Builders™ · Revenue Strategists™ · Industry Specialists™ — ecosystem continuously expands
+- **Professional Profile™:** Premium professional network (not seller) — biography · specialties · portfolio · projects · HQ · certifications · collections · followers · reviews · achievements · awards · years active · **Professional Level™**
+- **Certifications™:** Per profession — Studio Certified Architect™ · Brand Designer™ · Director™ · Operator™ · Advisor™ — genuine excellence
+- **Professional Graph™:** Founders follow architects · architects collaborate with brand designers · operators hire advisors · directors work with architects · professionals build teams
+- **Reputation rewards:** Quality · innovation · founder success · collaboration · originality · community contribution · mentorship · long-term impact — NOT downloads/sales alone
+- **Marketplace expansion:** HQ · Living Sets™ · Company Genomes™ · brand systems · creative pipelines · playbooks · automation · production templates · educational collections · business frameworks · entire operating systems
+- **Career vision:** *"I design Headquarters"* · *"I create Brand Systems"* · *"I optimize companies"* · *"I build Creative Pipelines"* · *"I teach founders"* — recognized digital professions
+- **Final philosophy:** Founders build companies · architects build HQ · brand designers build identity · directors build production · operators build performance · advisors build wisdom — living companies evolve in Studio World™
+- **12-doc spec:** `docs/studio-os/ecosystem/` — README · studio-professionals · profession-framework · architects · brand-designers · directors · operators · advisors · professional-graph · certification-framework · career-progression · future-professions
+- **Prior arc (same chat):** Studio Architects™ · Studio Marketplace™ v2 · Living Sets™ · CDS V2 · Founder Intelligence™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™
+- **CORE.md:** Studio Professionals™ line added

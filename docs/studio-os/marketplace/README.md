@@ -143,6 +143,7 @@ Studio Marketplace™ becomes the world's first marketplace where founders **buy
 | [Founder Taste Engine™](../founder-taste-engine/README.md) | Recommendations |
 | [Monetization Architecture](../monetization-architecture.md) | HQ License · Department Packs |
 | [Expert Marketplace™](../expert-marketplace.md) | Separate — expertise not places |
+| [Studio Professionals™](../ecosystem/README.md) | Professional careers · disciplines · graph |
 
 ---
 
