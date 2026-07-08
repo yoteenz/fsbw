@@ -40862,3 +40862,27 @@ Summary of the **whole conversation so far** in this chat: Department Generator 
 - **Pipeline position:** CDS → Generator → Compiler → Prompt Compiler → **Generation Manager** → AI Providers → Validation Loop → Registry → Runtime
 - **Cross-refs:** Updated `production/README.md` · `asset-production-workflow.md` · `studio-asset-compiler/README.md` · `motherboard/CORE.md`
 - **Conventions:** Docs only · no implementation · one commit on **`master`**
+
+---
+
+## 2026-07-08 — Studio OS Alpha v0.1 experiential blueprint (complete)
+
+Summary of the **whole conversation in this chat**: prior platform engines (Generator · Compiler · Registry · Generation Manager · Production Pipeline) · **Studio OS Alpha v0.1 officially begins** — platform architecture **FROZEN**.
+
+- **Context:** User declared end of architecture speculation — enter **Studio OS Alpha v0.1**. Prove OS by building first immersive department (Creative Direction Studio™). **NOT** implementation · React · CSS · Three.js · code. Define **experiential blueprint** for environment artist · level designer · UX · motion · technical art · AI · gameplay to construct the place.
+- **Philosophy:** Think Naughty Dog/Rockstar/Pixar/The Movies — immersive creative workplace not SaaS. Deliverable = **experience** not docs. Golden rule: stranger knows Creative Direction in 30s not traditional software.
+- **Deliverable:** **11-doc blueprint** at **`docs/studio-os/alpha/`**:
+  - README · creative-direction-alpha (charter · first impression · interactive vs ambient)
+  - arrival-experience (5s/7s sequence · camera · audio · no loading UI)
+  - room-layout (top-down · zones · sightlines · anchors)
+  - environment-storytelling (materials · genome expression · anti-SaaS law)
+  - interaction-map (verbs per zone · physical affordances)
+  - object-catalog (35 assets · GEN/REG/META/SEED · permanence)
+  - runtime-behaviors (Orb · concierges · state machines · ceremony)
+  - walk-the-room (10-stop critique path · presentation mode)
+  - founder-journey (Genome · Project · Journey · Room DNA modulation)
+  - alpha-validation (Phase A–E gates · ship criteria · iteration loop)
+- **Alpha production order:** design experience → objects → generate → validate → assemble → behaviors → walk → critique → iterate
+- **Rule:** No new platform systems unless real production exposes genuine gap
+- **Cross-refs:** `departments/creative-direction-studio/README.md` · `motherboard/CORE.md`
+- **Conventions:** Experiential blueprint only · one commit on **`master`**

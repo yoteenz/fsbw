@@ -109,7 +109,8 @@ Validation Loop™
 Department Runtime™ + Cursor
 ```
 
-**Production methodology:** [`docs/studio-os/production/`](../../production/README.md)
+**Production methodology:** [`docs/studio-os/production/`](../../production/README.md)  
+**Alpha experiential blueprint:** [`docs/studio-os/alpha/`](../../alpha/README.md)
 
 ---
 
