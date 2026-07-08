@@ -1,8 +1,18 @@
 import type { CSSProperties } from 'react';
 import { useRef } from 'react';
-import type { SceneStackCompositeStatus, SceneStackLayerView } from '../../../../studio-os-core/scene-stack';
+import type {
+  SceneGraph,
+  SceneGraphNode,
+  SceneStackCompositeStatus,
+  SceneStackLayerView,
+} from '../../../../studio-os-core/scene-stack';
 import type { SceneStackPipelineProgress } from '../../../../hooks/useSceneStack';
 import { SCENE_STACK_LAYER_SHORT_LABELS } from '../../../../studio-os-core/scene-stack';
+import {
+  debugCategoryForLayerId,
+  type ArchitectDebugViewState,
+} from '../../../../studio-os-core/scene-stack/world-compiler/debug-view';
+import { ArchitectDebugPanel } from './ArchitectDebugPanel';
 
 const REAR_LAYER_IDS = new Set(['environment-shell']);
 const FORE_LAYER_IDS = new Set(['atmospheric-systems', 'surface-materials', 'ambient-motion']);
@@ -15,6 +25,12 @@ type Props = {
   immersiveProfile?: 'story-table' | 'default';
   parallaxStyle?: CSSProperties;
   onRegenerateLayer?: (layerId: string) => void;
+  sceneGraph?: SceneGraph | null;
+  debugView?: ArchitectDebugViewState;
+  onDebugToggle?: () => void;
+  onDebugLayerToggle?: (layer: import('../../../../studio-os-core/scene-stack/world-compiler/debug-view').ArchitectDebugLayer) => void;
+  compilationHeadline?: string | null;
+  sceneIntegrityPct?: number | null;
 };
 
 function layerPlane(layerId: string): 'rear' | 'mid' | 'fore' {
@@ -23,13 +39,28 @@ function layerPlane(layerId: string): 'rear' | 'mid' | 'fore' {
   return 'mid';
 }
 
+function nodeStyleForGraph(node: SceneGraphNode | undefined): CSSProperties {
+  if (!node) return {};
+  const isStructural = node.mountType === 'structural' || node.mountType === 'reference-only';
+  return {
+    zIndex: node.zIndex,
+    mixBlendMode: node.blendMode as CSSProperties['mixBlendMode'],
+    opacity: node.opacity,
+    ...(isStructural ? { mixBlendMode: 'normal', opacity: 1 } : {}),
+  };
+}
+
 /** Freeze displayed src once a layer completes — prevents shell swap while later passes generate. */
 function StackLayerImage({
   layer,
   locked,
+  graphNode,
+  hidden,
 }: {
   layer: SceneStackLayerView;
   locked: boolean;
+  graphNode?: SceneGraphNode;
+  hidden?: boolean;
 }) {
   const frozenSrc = useRef<string | null>(null);
   const src = layer.publicUrl!;
@@ -39,12 +70,19 @@ function StackLayerImage({
     frozenSrc.current = null;
   }
   const displaySrc = locked && frozenSrc.current ? frozenSrc.current : src;
+  const wcClass =
+    graphNode?.mountType === 'effect-calculated'
+      ? ' cds-stack__layer--wc-effect'
+      : graphNode?.mountType === 'structural'
+        ? ' cds-stack__layer--wc-structural'
+        : ' cds-stack__layer--wc-reference';
 
   return (
     <img
       src={displaySrc}
       alt=""
-      className={`cds-stack__layer ${layer.definition.composeClass}${locked ? ' cds-stack__layer--locked' : ''}`}
+      className={`cds-stack__layer ${layer.definition.composeClass}${locked ? ' cds-stack__layer--locked' : ''}${wcClass}${hidden ? ' cds-stack__layer--debug-hidden' : ''}`}
+      style={graphNode ? nodeStyleForGraph(graphNode) : undefined}
       decoding="async"
       draggable={false}
     />
@@ -52,8 +90,8 @@ function StackLayerImage({
 }
 
 /**
- * Composites independently generated Scene Stack™ layers with depth planes + Idle Life™.
- * NEVER a single complete scene image.
+ * World Compiler™ viewport — Scene Graph™ drives composition.
+ * NEVER alpha-composites full scenes. Structural layers mount at opacity 1.
  */
 export function SceneStackViewport({
   layers,
@@ -63,15 +101,24 @@ export function SceneStackViewport({
   immersiveProfile = 'default',
   parallaxStyle,
   onRegenerateLayer,
+  sceneGraph,
+  debugView,
+  onDebugToggle,
+  onDebugLayerToggle,
+  compilationHeadline,
+  sceneIntegrityPct,
 }: Props) {
   const approvedLayers = layers.filter((l) => l.publicUrl && l.status !== 'failed');
   const generatableLayers = layers.filter((l) => l.definition.generatable);
   const isBuilding = status === 'building' || (pipeline?.phase && pipeline.phase !== 'idle');
   const isStoryTable = immersiveProfile === 'story-table';
+  const isWorldCompiler = sceneGraph?.compositionMode !== 'legacy-stack';
   const progressPct =
     pipeline && pipeline.layersTotal > 0
       ? Math.round((pipeline.layersComplete / pipeline.layersTotal) * 100)
       : 0;
+
+  const nodeByLayer = new Map(sceneGraph?.nodes.map((n) => [n.layerId, n]) ?? []);
 
   const rearLayers = approvedLayers.filter((l) => layerPlane(l.layerId) === 'rear');
   const midLayers = approvedLayers.filter((l) => layerPlane(l.layerId) === 'mid');
@@ -89,13 +136,26 @@ export function SceneStackViewport({
     layer.status !== 'generating' &&
     layer.layerId !== pipeline?.currentLayerId;
 
+  const isLayerDebugHidden = (layerId: string) => {
+    if (!debugView?.enabled) return false;
+    const cat = debugCategoryForLayerId(layerId);
+    if (!cat) return false;
+    return !debugView.visibleLayers.has(cat);
+  };
+
   const renderLayer = (layer: SceneStackLayerView) => (
-    <StackLayerImage key={layer.layerId} layer={layer} locked={isLayerLocked(layer)} />
+    <StackLayerImage
+      key={layer.layerId}
+      layer={layer}
+      locked={isLayerLocked(layer)}
+      graphNode={nodeByLayer.get(layer.layerId)}
+      hidden={isLayerDebugHidden(layer.layerId)}
+    />
   );
 
   return (
     <div
-      className={`cds-stack__viewport${isBuilding ? ' is-pipeline-active' : ''}${isStoryTable ? ' is-story-table' : ''}`}
+      className={`cds-stack__viewport${isBuilding ? ' is-pipeline-active' : ''}${isStoryTable ? ' is-story-table' : ''}${isWorldCompiler ? ' is-world-compiler' : ''}${debugView?.enabled ? ' is-debug-active' : ''}`}
       style={parallaxStyle}
       aria-label={`${stationLabel} layered environment`}
     >
@@ -123,15 +183,29 @@ export function SceneStackViewport({
       <div className="cds-stack__runtime-effects" aria-hidden />
       <div className="cds-stack__viewport-vignette" aria-hidden />
 
+      {debugView && onDebugToggle && onDebugLayerToggle ? (
+        <ArchitectDebugPanel
+          debugView={debugView}
+          onToggle={onDebugToggle}
+          onToggleLayer={onDebugLayerToggle}
+          compilationHeadline={compilationHeadline}
+          sceneIntegrityPct={sceneIntegrityPct}
+        />
+      ) : null}
+
       {isBuilding ? (
         <div className="cds-stack__pipeline-hud" role="status" aria-live="polite">
-          <p className="cds-stack__pipeline-title">Scene Assembly™ — {stationLabel}</p>
+          <p className="cds-stack__pipeline-title">
+            {isWorldCompiler ? 'World Compiler™' : 'Scene Assembly™'} — {stationLabel}
+          </p>
           <p className="cds-stack__pipeline-step">
             {pipeline?.phase === 'queued'
               ? `Queued · ${pipeline.currentLayerLabel ?? 'preparing'}…`
               : pipeline?.currentLayerLabel
                 ? `Generating ${pipeline.currentLayerLabel}…`
-                : 'Assembling layers…'}
+                : isWorldCompiler
+                  ? 'Compiling world…'
+                  : 'Assembling layers…'}
           </p>
           <div className="cds-stack__pipeline-bar" aria-hidden>
             <div
@@ -163,7 +237,9 @@ export function SceneStackViewport({
 
       {!isBuilding && (status === 'idle' || status === 'partial' || status === 'ready') && !isStoryTable ? (
         <p className="cds-stack__viewport-hint">
-          Scene Stack™ {approvedLayers.length}/{layers.length} layers
+          {isWorldCompiler ? 'World Compiler™' : 'Scene Stack™'} {approvedLayers.length}/{layers.length}{' '}
+          layers
+          {sceneGraph?.shellLocked ? ' · Shell Locked™' : ''}
         </p>
       ) : null}
 

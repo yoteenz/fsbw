@@ -2,28 +2,38 @@ import type { SceneStackLayerId } from './types';
 
 /**
  * Scene Assembly™ Immutable Layer Law
+ * ARTICLE-K19 — Scene Graph Before Scene Stack™
  *
  * Approved layers are immutable source assets. Scene Assembly may only
- * position, mask, align, composite, blend, depth-sort, color-match,
- * shadow-match, and optimize display at runtime.
+ * position, mask, align, depth-sort, color-match, shadow-match, and
+ * optimize display at runtime via the World Compiler™ Scene Graph™.
  *
  * It may NEVER send prior approved generative layers back into an image model.
+ * It may NEVER alpha-composite full rendered scenes as the compositing mechanism.
  */
 export const SCENE_ASSEMBLY_IMMUTABILITY_LAW = {
   id: 'scene-assembly-immutability-law',
-  version: 'v1',
+  version: 'v2',
+  articleK19: 'Scene Graph Before Scene Stack™ — the Scene Graph™ is the source of truth.',
   summary:
-    'Approved layers are immutable. Never regenerate, repaint, reinterpret, or re-encode prior layers via FAL.',
+    'Approved layers are immutable. World Compiler™ mounts components — never regenerates, repaints, or re-encodes prior layers via FAL.',
   allowedRuntimeOps: [
     'position',
     'mask',
     'align',
-    'composite',
-    'blend',
     'depth-sort',
     'color-match',
     'shadow-match',
+    'calculate-lighting',
+    'apply-atmosphere',
+    'mount-component',
     'optimize-display',
+  ] as const,
+  forbiddenRuntimeOps: [
+    'alpha-composite-full-scene',
+    'stack-rendered-images',
+    'css-blend-structural-layers',
+    'inherit-prior-furniture-pixels',
   ] as const,
   forbiddenFalInputs: [
     'full-stack-composite',

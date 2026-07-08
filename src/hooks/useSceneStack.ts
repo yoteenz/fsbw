@@ -5,6 +5,8 @@ import {
   buildSceneGraph,
   buildSceneStackExportBundle,
   compileSceneStackLayerPrompt,
+  compileWorldStation,
+  createDebugViewState,
   enforceFalReferenceLaw,
   executeCleanRegenerationDiscard,
   getSceneStackLayerRecord,
@@ -26,12 +28,18 @@ import {
   validateSceneLayerQuality,
   formatQualityGuardSummary,
   SCENE_ASSEMBLY_LAW_VERSION,
+  assertShellImmutableForLayer,
+  resolveShellLockState,
+  toggleDebugLayer,
   type SceneGraph,
   type SceneStackExportBundle,
   type CleanRegenerationPlan,
   type SceneStackCompositeStatus,
   type SceneStackLayerId,
   type SceneStackLayerView,
+  type WorldCompilationReport,
+  type ArchitectDebugViewState,
+  type ArchitectDebugLayer,
 } from '../studio-os-core/scene-stack';
 import { registerStudioAsset } from '../studio-os-core/studio-builder/registry-store';
 import { requestStudioBuilderGenerate } from '../services/studio/studioBuilder/api';
@@ -71,6 +79,8 @@ export function useSceneStack(
     phase: 'queued' | 'generating';
   } | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [compileReports, setCompileReports] = useState<Record<string, WorldCompilationReport>>({});
+  const [debugView, setDebugView] = useState<ArchitectDebugViewState>(() => createDebugViewState());
 
   const bump = useCallback(() => setVersion((v) => v + 1), []);
   const pkg = useMemo(() => requireDepartmentPackage(departmentId), [departmentId]);
@@ -244,6 +254,14 @@ export function useSceneStack(
           workspaceId,
         });
 
+        const shellLock = resolveShellLockState(departmentId, projectId, stationId);
+        const shellCheck = assertShellImmutableForLayer(layerId, shellLock);
+        if (!shellCheck.ok) {
+          failStudioAlphaGeneration(generationId, shellCheck.reason);
+          setErrors((prev) => ({ ...prev, [key]: shellCheck.reason }));
+          return false;
+        }
+
         const rawReferenceUrls = station
           ? getLockedReferenceUrlsForLayer(
               departmentId,
@@ -376,6 +394,14 @@ export function useSceneStack(
         });
 
         bump();
+        void compileWorldStation({
+          departmentId,
+          projectId,
+          stationId,
+          blueprint,
+        }).then((result) => {
+          setCompileReports((prev) => ({ ...prev, [stationId]: result.report }));
+        });
         void gateAfterSceneAssembly({ departmentId, projectId, stationId })
           .then(() => gateAfterArchitectureAudit({ departmentId, projectId, stationId }))
           .then(() => {
@@ -439,6 +465,19 @@ export function useSceneStack(
             await generateLayer(stationId, layerId);
           }
         }
+        const blueprint = resolveMasterSceneBlueprint({
+          departmentId,
+          projectId,
+          stationId,
+          workspaceId,
+        });
+        const compiled = await compileWorldStation({
+          departmentId,
+          projectId,
+          stationId,
+          blueprint,
+        });
+        setCompileReports((prev) => ({ ...prev, [stationId]: compiled.report }));
       } finally {
         setEnsuringStations((prev) => {
           const next = new Set(prev);
@@ -448,7 +487,7 @@ export function useSceneStack(
         setPipelineLayer((prev) => (prev?.stationId === stationId ? null : prev));
       }
     },
-    [departmentId, generateLayer, projectId, ensuringStations]
+    [departmentId, generateLayer, projectId, ensuringStations, workspaceId]
   );
 
   const getStationBlueprint = useCallback(
@@ -460,10 +499,44 @@ export function useSceneStack(
   const getStationSceneGraph = useCallback(
     (stationId: string): SceneGraph => {
       const blueprint = getStationBlueprint(stationId);
-      return buildSceneGraph({ blueprint, departmentId, projectId, stationId });
+      return buildSceneGraph({
+        blueprint,
+        departmentId,
+        projectId,
+        stationId,
+        compositionMode: 'world-compiler',
+      });
     },
     [departmentId, getStationBlueprint, projectId]
   );
+
+  const getStationCompileReport = useCallback(
+    (stationId: string): WorldCompilationReport | null => compileReports[stationId] ?? null,
+    [compileReports]
+  );
+
+  const compileStation = useCallback(
+    async (stationId: string) => {
+      const blueprint = getStationBlueprint(stationId);
+      const result = await compileWorldStation({
+        departmentId,
+        projectId,
+        stationId,
+        blueprint,
+      });
+      setCompileReports((prev) => ({ ...prev, [stationId]: result.report }));
+      return result;
+    },
+    [departmentId, getStationBlueprint, projectId]
+  );
+
+  const toggleDebugView = useCallback(() => {
+    setDebugView((prev) => ({ ...prev, enabled: !prev.enabled }));
+  }, []);
+
+  const toggleDebugViewLayer = useCallback((layer: ArchitectDebugLayer) => {
+    setDebugView((prev) => toggleDebugLayer(prev, layer));
+  }, []);
 
   const planStationCleanRegeneration = useCallback(
     (stationId: string): CleanRegenerationPlan | null =>
@@ -528,6 +601,11 @@ export function useSceneStack(
     bump,
     getStationBlueprint,
     getStationSceneGraph,
+    getStationCompileReport,
+    compileStation,
+    debugView,
+    toggleDebugView,
+    toggleDebugViewLayer,
     planStationCleanRegeneration,
     cleanRegenerateStation,
     exportStationScene,

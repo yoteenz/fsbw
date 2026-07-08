@@ -732,6 +732,12 @@ export function StudioWarehouseRoom() {
                       stationLabel={zone.label}
                       parallaxStyle={immersion.parallaxStyle}
                       pipeline={stack.getStationPipelineProgress(zone.id)}
+                      sceneGraph={stack.getStationSceneGraph(zone.id)}
+                      debugView={stack.debugView}
+                      onDebugToggle={stack.toggleDebugView}
+                      onDebugLayerToggle={stack.toggleDebugViewLayer}
+                      compilationHeadline={stack.getStationCompileReport(zone.id)?.headline}
+                      sceneIntegrityPct={stack.getStationCompileReport(zone.id)?.sceneIntegrityPct}
                       onRegenerateLayer={(layerId) =>
                         void stack.regenerateLayer(zone.id, layerId as SceneStackLayerId)
                       }

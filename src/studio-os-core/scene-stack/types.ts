@@ -118,8 +118,9 @@ export type CompiledSceneStackLayerPrompt = {
 export type SceneStackCompositeStatus = 'idle' | 'building' | 'partial' | 'ready' | 'failed';
 
 export const SCENE_STACK_PROMPT_VERSION = 'scene-stack.v2';
-export const SCENE_ASSEMBLY_LAW_VERSION = 'scene-assembly-law.v1';
+export const SCENE_ASSEMBLY_LAW_VERSION = 'scene-assembly-law.v2';
 export const MASTER_SCENE_BLUEPRINT_VERSION = 'master-blueprint.v1';
+export const WORLD_COMPILER_LAW_VERSION = 'world-compiler.v1';
 
 export const SCENE_STACK_REQUIRED_LAYERS: SceneStackLayerId[] = [
   'environment-shell',

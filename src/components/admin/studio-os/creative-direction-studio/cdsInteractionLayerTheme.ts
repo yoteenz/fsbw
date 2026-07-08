@@ -63,6 +63,84 @@ body.cds-stack-active {
 .cds-stack__layer--ambient-motion { z-index: 7; mix-blend-mode: screen; opacity: 0.35; animation: cds-stack-ambient-drift 12s ease-in-out infinite; }
 .cds-stack__layer--founder-personalization { z-index: 8; mix-blend-mode: color; opacity: 0.25; }
 
+/* World Compiler™ — ARTICLE-K19: structural layers mount at full opacity, no alpha stack */
+.cds-stack__viewport.is-world-compiler .cds-stack__depth-stage {
+  isolation: isolate;
+}
+
+.cds-stack__viewport.is-world-compiler .cds-stack__layer--wc-structural,
+.cds-stack__viewport.is-world-compiler .cds-stack__layer--wc-reference {
+  mix-blend-mode: normal !important;
+  opacity: 1 !important;
+}
+
+.cds-stack__viewport.is-world-compiler .cds-stack__layer--wc-effect {
+  mix-blend-mode: soft-light;
+  opacity: 0.85;
+}
+
+.cds-stack__layer--debug-hidden {
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+.cds-stack__debug-panel {
+  position: absolute;
+  top: calc(var(--wh-frame-hud-h, 48px) + 8px);
+  right: max(8px, env(safe-area-inset-right));
+  z-index: 30;
+  max-width: min(280px, 36vw);
+  padding: 8px 10px;
+  border: 1px solid rgba(139, 164, 196, 0.35);
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(8px);
+  pointer-events: auto;
+}
+
+.cds-stack__debug-toggle {
+  font-size: 7px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8ba4c4;
+  background: transparent;
+  border: 1px solid rgba(139, 164, 196, 0.4);
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.cds-stack__debug-report {
+  margin: 6px 0 2px;
+  font-size: 7px;
+  color: rgba(184, 212, 168, 0.9);
+}
+
+.cds-stack__debug-integrity {
+  margin: 0 0 6px;
+  font-size: 7px;
+  color: rgba(212, 196, 160, 0.78);
+}
+
+.cds-stack__debug-layers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.cds-stack__debug-layer-btn {
+  font-size: 6px;
+  letter-spacing: 0.08em;
+  padding: 3px 6px;
+  border: 1px solid rgba(139, 164, 196, 0.25);
+  background: rgba(0, 0, 0, 0.4);
+  color: rgba(212, 196, 160, 0.75);
+  cursor: pointer;
+}
+
+.cds-stack__debug-layer-btn.is-active {
+  border-color: #8ba4c4;
+  color: #8ba4c4;
+}
+
 /* Locked layers stay fixed once approved — no drift during later pipeline passes */
 .cds-stack__layer--locked {
   transition: none !important;

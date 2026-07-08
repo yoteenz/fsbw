@@ -3,6 +3,9 @@ import type { MasterSceneBlueprint } from './master-scene-blueprint';
 import { isBlendCompositeLayer } from './reference-chain';
 import { listSceneStackLayersForStation } from './store';
 import type { SceneLayerQualityStatus, SceneStackLayerId } from './types';
+import { resolveMountType } from './world-compiler/component-package';
+import { resolveShellLockState } from './world-compiler/immutable-shell';
+import { WORLD_COMPILER_VERSION } from './world-compiler/constants';
 
 /** Scene Graph™ — technical node model (Scene Stack™ remains founder-facing term). */
 export type SceneGraphBlendMode =
@@ -11,6 +14,10 @@ export type SceneGraphBlendMode =
   | 'screen'
   | 'overlay'
   | 'color';
+
+export type SceneGraphMountType = 'structural' | 'effect-calculated' | 'reference-only';
+
+export type SceneGraphCompositionMode = 'world-compiler' | 'legacy-stack';
 
 export type SceneGraphNode = {
   nodeId: string;
@@ -27,6 +34,9 @@ export type SceneGraphNode = {
   qualityIssues: string[];
   version: number;
   immutable: boolean;
+  mountType: SceneGraphMountType;
+  /** World Compiler™ — temporary placement reference, not composite source */
+  referenceOnly: boolean;
 };
 
 export type SceneGraph = {
@@ -36,6 +46,9 @@ export type SceneGraph = {
   projectId: string;
   stationId: string;
   nodes: SceneGraphNode[];
+  compositionMode: SceneGraphCompositionMode;
+  shellLocked: boolean;
+  compilerVersion: string;
   /** Runtime composition only — never sent to FAL */
   flatteningAllowed: false;
 };
@@ -60,8 +73,25 @@ export function resolveSceneGraphBlendMode(layerId: SceneStackLayerId): SceneGra
   return BLEND_MODES[layerId] ?? 'normal';
 }
 
-export function resolveSceneGraphOpacity(layerId: SceneStackLayerId): number {
+export function resolveSceneGraphOpacity(layerId: SceneStackLayerId, mode: SceneGraphCompositionMode = 'world-compiler'): number {
+  if (mode === 'world-compiler') {
+    const mountType = resolveMountType(layerId);
+    if (mountType === 'structural' || mountType === 'reference-only') return 1;
+    return OPACITY[layerId] ?? 1;
+  }
   return OPACITY[layerId] ?? 1;
+}
+
+export function resolveSceneGraphBlendModeForMount(
+  layerId: SceneStackLayerId,
+  mode: SceneGraphCompositionMode = 'world-compiler'
+): SceneGraphBlendMode {
+  if (mode === 'world-compiler') {
+    const mountType = resolveMountType(layerId);
+    if (mountType === 'structural' || mountType === 'reference-only') return 'normal';
+    return BLEND_MODES[layerId] ?? 'normal';
+  }
+  return resolveSceneGraphBlendMode(layerId);
 }
 
 export function buildSceneGraph(input: {
@@ -69,7 +99,10 @@ export function buildSceneGraph(input: {
   departmentId: string;
   projectId: string;
   stationId: string;
+  compositionMode?: SceneGraphCompositionMode;
 }): SceneGraph {
+  const compositionMode = input.compositionMode ?? 'world-compiler';
+  const shellLock = resolveShellLockState(input.departmentId, input.projectId, input.stationId);
   const records = listSceneStackLayersForStation(
     input.departmentId,
     input.projectId,
@@ -93,8 +126,8 @@ export function buildSceneGraph(input: {
         assetRegistryId,
         sourceImageUrl: rec?.publicUrl ?? null,
         zIndex: depRule?.zIndex ?? def.order,
-        blendMode: resolveSceneGraphBlendMode(def.id),
-        opacity: resolveSceneGraphOpacity(def.id),
+        blendMode: resolveSceneGraphBlendModeForMount(def.id, compositionMode),
+        opacity: resolveSceneGraphOpacity(def.id, compositionMode),
         transform: 'none',
         dependencyRules: [
           depRule?.requiresShell ? 'requires-shell' : 'shell-genesis',
@@ -105,6 +138,8 @@ export function buildSceneGraph(input: {
         qualityIssues: rec?.qualityIssues ?? [],
         version: rec?.version ?? 0,
         immutable: Boolean(rec?.status === 'approved' && rec.publicUrl),
+        mountType: resolveMountType(def.id),
+        referenceOnly: def.id === 'environment-shell' || compositionMode === 'world-compiler',
       };
     });
 
@@ -115,6 +150,9 @@ export function buildSceneGraph(input: {
     projectId: input.projectId,
     stationId: input.stationId,
     nodes,
+    compositionMode,
+    shellLocked: shellLock.locked,
+    compilerVersion: WORLD_COMPILER_VERSION,
     flatteningAllowed: false,
   };
 }

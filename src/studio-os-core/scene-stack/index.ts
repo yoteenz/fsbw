@@ -13,3 +13,4 @@ export * from './scene-graph';
 export * from './quality-guard';
 export * from './clean-regeneration';
 export * from './scene-export';
+export * from './world-compiler';

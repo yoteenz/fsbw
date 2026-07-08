@@ -1,5 +1,5 @@
 import type { SceneGraph } from './scene-graph';
-import { listApprovedGraphNodes, resolveSceneGraphBlendMode, resolveSceneGraphOpacity } from './scene-graph';
+import { listApprovedGraphNodes } from './scene-graph';
 import type { MasterSceneBlueprint } from './master-scene-blueprint';
 import type { SceneStackLayerId } from './types';
 
@@ -66,8 +66,8 @@ export async function flattenSceneGraphToCanvas(
     if (!node.sourceImageUrl) continue;
     const img = await loadImage(node.sourceImageUrl);
     ctx.save();
-    ctx.globalAlpha = resolveSceneGraphOpacity(node.layerId);
-    ctx.globalCompositeOperation = mapBlendMode(resolveSceneGraphBlendMode(node.layerId));
+    ctx.globalAlpha = node.opacity;
+    ctx.globalCompositeOperation = mapBlendMode(node.blendMode);
     ctx.drawImage(img, 0, 0, width, height);
     ctx.restore();
   }

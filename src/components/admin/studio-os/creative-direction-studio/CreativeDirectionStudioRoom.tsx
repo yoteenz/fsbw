@@ -472,6 +472,22 @@ export function CreativeDirectionStudioRoom() {
                     pipeline={
                       zone.id === activeZoneId ? stack.getStationPipelineProgress(zone.id) : undefined
                     }
+                    sceneGraph={
+                      zone.id === activeZoneId ? stack.getStationSceneGraph(stackZoneId) : undefined
+                    }
+                    debugView={stack.debugView}
+                    onDebugToggle={stack.toggleDebugView}
+                    onDebugLayerToggle={stack.toggleDebugViewLayer}
+                    compilationHeadline={
+                      zone.id === activeZoneId
+                        ? stack.getStationCompileReport(stackZoneId)?.headline
+                        : undefined
+                    }
+                    sceneIntegrityPct={
+                      zone.id === activeZoneId
+                        ? stack.getStationCompileReport(stackZoneId)?.sceneIntegrityPct
+                        : undefined
+                    }
                     onRegenerateLayer={(layerId) =>
                       void stack.regenerateLayer(zone.id, layerId as SceneStackLayerId)
                     }

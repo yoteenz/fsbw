@@ -350,6 +350,22 @@ export function StudioCommandCenterRoom() {
                     pipeline={
                       activeZoneId === zone.id ? stack.getStationPipelineProgress(zone.id) : undefined
                     }
+                    sceneGraph={
+                      activeZoneId === zone.id ? stack.getStationSceneGraph(zone.id) : undefined
+                    }
+                    debugView={stack.debugView}
+                    onDebugToggle={stack.toggleDebugView}
+                    onDebugLayerToggle={stack.toggleDebugViewLayer}
+                    compilationHeadline={
+                      activeZoneId === zone.id
+                        ? stack.getStationCompileReport(zone.id)?.headline
+                        : undefined
+                    }
+                    sceneIntegrityPct={
+                      activeZoneId === zone.id
+                        ? stack.getStationCompileReport(zone.id)?.sceneIntegrityPct
+                        : undefined
+                    }
                     onRegenerateLayer={(layerId) =>
                       void stack.regenerateLayer(zone.id, layerId as SceneStackLayerId)
                     }
