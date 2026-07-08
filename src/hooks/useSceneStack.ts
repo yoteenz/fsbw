@@ -4,6 +4,7 @@ import {
   approveSceneStackLayer,
   compileSceneStackLayerPrompt,
   getSceneStackLayerRecord,
+  getLockedReferenceUrlsForLayer,
   listGeneratableLayerIdsForStation,
   listSceneStackStations,
   nextSceneStackLayerVersion,
@@ -153,11 +154,23 @@ export function useSceneStack(
           : nextSceneStackLayerVersion(departmentId, projectId, stationId, layerId);
 
       try {
+        const station = getSceneStackStation(departmentId, stationId);
+        const referenceImageUrls = station
+          ? getLockedReferenceUrlsForLayer(
+              departmentId,
+              projectId,
+              stationId,
+              layerId,
+              station.layerPrompts
+            )
+          : [];
+
         const compiled = compileSceneStackLayerPrompt({
           departmentId,
           stationId,
           layerId,
           workspaceId,
+          referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
         });
 
         const result = await requestStudioBuilderGenerate({
@@ -170,6 +183,7 @@ export function useSceneStack(
           aspectRatio: compiled.aspectRatio,
           outputFormat: compiled.outputFormat,
           forceGenerate: force || !existing?.publicUrl,
+          referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
         });
 
         if (!result.ok || !result.publicUrl) {

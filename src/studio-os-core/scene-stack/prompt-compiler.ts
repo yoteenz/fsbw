@@ -32,6 +32,8 @@ export function compileSceneStackLayerPrompt(input: {
   stationId: string;
   layerId: SceneStackLayerId;
   workspaceId?: string;
+  /** Approved layer URLs locked before this pass — prompts FAL to preserve geometry. */
+  referenceImageUrls?: string[];
 }): CompiledSceneStackLayerPrompt {
   const pkg = requireDepartmentPackage(input.departmentId);
   const manifest = requireSceneStackManifest(input.departmentId);
@@ -49,10 +51,16 @@ export function compileSceneStackLayerPrompt(input: {
   const feeling = pkg.roomDna.defaultFeeling.join(', ');
   const forbidden = pkg.roomDna.forbiddenFeeling.join(', ');
 
+  const hasAnchor = (input.referenceImageUrls?.length ?? 0) > 0;
+  const anchorClause = hasAnchor
+    ? 'CRITICAL ANCHOR: Reference image defines locked architecture, camera angle, room geometry, and shell. Preserve exactly — add ONLY this layer pass on top. Do NOT rebuild walls, ceiling, floor, or replace the environment shell.'
+    : '';
+
   const prompt = [
     `SCENE STACK™ — ${layerDef.displayName.toUpperCase()}.`,
     `STATION: ${station.displayName} · ${station.stationId}.`,
     LAYER_ISOLATION[input.layerId],
+    anchorClause,
     layerPrompt.primary,
     `PROJECT: ${project.name}. ROOM DNA: ${feeling}. Avoid: ${forbidden}.`,
     `Company ${company.companyName}: ${company.editorialDirection}.`,

@@ -10,7 +10,7 @@ export type CdsParallax = {
  * Cinematic camera breath + subtle pointer parallax for CDS zones.
  * Values are normalized -1..1 (pointer) and 0..1 (breath phase).
  */
-export function useCdsImmersion(enabled: boolean) {
+export function useCdsImmersion(enabled: boolean, freezeMotion = false) {
   const [parallax, setParallax] = useState<CdsParallax>({ px: 0, py: 0, breath: 0 });
   const frameRef = useRef<number | null>(null);
   const startRef = useRef<number>(typeof performance !== 'undefined' ? performance.now() : 0);
@@ -30,7 +30,7 @@ export function useCdsImmersion(enabled: boolean) {
   );
 
   useEffect(() => {
-    if (!enabled) return undefined;
+    if (!enabled || freezeMotion) return undefined;
     const tick = (now: number) => {
       const t = (now - startRef.current) / 1000;
       const breath = (Math.sin(t * 0.35) + 1) / 2;
@@ -41,7 +41,7 @@ export function useCdsImmersion(enabled: boolean) {
     return () => {
       if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     };
-  }, [enabled]);
+  }, [enabled, freezeMotion]);
 
   const parallaxStyle = {
     '--cds-px': String(parallax.px),

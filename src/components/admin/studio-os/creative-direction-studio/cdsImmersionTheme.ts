@@ -6,6 +6,24 @@ export const CDS_IMMERSION_STYLES = `
   animation: cds-camera-breathe 14s ease-in-out infinite;
 }
 
+/* Freeze camera + parallax while Scene Stack pipeline runs — stops "page refresh" feel */
+.cds-stack__viewport.is-pipeline-active {
+  animation: none !important;
+  transform: none !important;
+}
+
+.cds-stack__viewport.is-pipeline-active .cds-stack__depth-plane {
+  transition: none !important;
+  transform: none !important;
+  will-change: auto;
+}
+
+.cds-stack__idle-life.is-frozen,
+.cds-stack__idle-life.is-frozen::before,
+.cds-stack__idle-life.is-frozen::after {
+  animation: none !important;
+}
+
 @keyframes cds-camera-breathe {
   0%, 100% {
     transform: scale(1) translate3d(

@@ -99,7 +99,7 @@ export function CreativeDirectionStudioRoom() {
     [stack, activeZoneId]
   );
   const stackButtonBusy = stack.isStationPipelineActive(activeZoneId);
-  const immersion = useCdsImmersion(true);
+  const immersion = useCdsImmersion(true, stack.isAnyPipelineActive);
 
   const pipelineProgressPct = useMemo(() => {
     if (!activePipeline.layersTotal) return 0;

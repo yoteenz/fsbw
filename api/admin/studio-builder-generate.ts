@@ -123,6 +123,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     prompt,
     aspectRatio,
     outputFormat,
+    referenceImageUrls: Array.isArray(body?.referenceImageUrls)
+      ? (body.referenceImageUrls as unknown[]).filter((u): u is string => typeof u === 'string' && u.startsWith('http'))
+      : undefined,
   });
 
   if (!result.ok) {

@@ -63,6 +63,22 @@ body.cds-stack-active {
 .cds-stack__layer--ambient-motion { z-index: 7; mix-blend-mode: screen; opacity: 0.35; animation: cds-stack-ambient-drift 12s ease-in-out infinite; }
 .cds-stack__layer--founder-personalization { z-index: 8; mix-blend-mode: color; opacity: 0.25; }
 
+/* Locked layers stay fixed once approved — no drift during later pipeline passes */
+.cds-stack__layer--locked {
+  transition: none !important;
+  animation: none !important;
+}
+
+.cds-stack__viewport.is-pipeline-active .cds-stack__layer--locked {
+  will-change: auto;
+}
+
+.cds-stack__viewport.is-pipeline-active .cds-stack__layer--environment-shell {
+  z-index: 1;
+  mix-blend-mode: normal;
+  opacity: 1;
+}
+
 @keyframes cds-stack-ambient-drift {
   0%, 100% { transform: scale(1); opacity: 0.35; }
   50% { transform: scale(1.01); opacity: 0.42; }

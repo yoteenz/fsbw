@@ -19,6 +19,8 @@ export type StudioBuilderGenerateInput = {
   prompt: string;
   aspectRatio: string;
   outputFormat: 'png' | 'webp';
+  /** Locked layer URLs (shell first) — FAL edit anchors to these instead of marble-only regen */
+  referenceImageUrls?: string[];
 };
 
 export type StudioBuilderGenerateResult = {
@@ -120,9 +122,23 @@ export async function generateStudioBuilderAsset(
     const { fal } = await import('@fal-ai/client');
     fal.config({ credentials: falKey });
 
-    const imageUrls = [
-      await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png'),
-    ];
+    const imageUrls: string[] = [];
+
+    if (input.referenceImageUrls?.length) {
+      for (const refUrl of input.referenceImageUrls.slice(0, 4)) {
+        if (refUrl?.startsWith('http')) imageUrls.push(refUrl);
+      }
+    }
+
+    if (imageUrls.length === 0) {
+      imageUrls.push(
+        await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png')
+      );
+    } else {
+      imageUrls.push(
+        await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png')
+      );
+    }
 
     const result = await fal.subscribe(STUDIO_BUILDER_FAL_MODEL, {
       input: {

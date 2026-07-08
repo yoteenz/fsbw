@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { useRef } from 'react';
 import type { SceneStackCompositeStatus, SceneStackLayerView } from '../../../../studio-os-core/scene-stack';
 import type { SceneStackPipelineProgress } from '../../../../hooks/useSceneStack';
 import { SCENE_STACK_LAYER_SHORT_LABELS } from '../../../../studio-os-core/scene-stack';
@@ -20,6 +21,34 @@ function layerPlane(layerId: string): 'rear' | 'mid' | 'fore' {
   if (REAR_LAYER_IDS.has(layerId)) return 'rear';
   if (FORE_LAYER_IDS.has(layerId)) return 'fore';
   return 'mid';
+}
+
+/** Freeze displayed src once a layer completes — prevents shell swap while later passes generate. */
+function StackLayerImage({
+  layer,
+  locked,
+}: {
+  layer: SceneStackLayerView;
+  locked: boolean;
+}) {
+  const frozenSrc = useRef<string | null>(null);
+  const src = layer.publicUrl!;
+  if (locked) {
+    if (frozenSrc.current === null) frozenSrc.current = src;
+  } else {
+    frozenSrc.current = null;
+  }
+  const displaySrc = locked && frozenSrc.current ? frozenSrc.current : src;
+
+  return (
+    <img
+      src={displaySrc}
+      alt=""
+      className={`cds-stack__layer ${layer.definition.composeClass}${locked ? ' cds-stack__layer--locked' : ''}`}
+      decoding="async"
+      draggable={false}
+    />
+  );
 }
 
 /**
@@ -53,56 +82,40 @@ export function SceneStackViewport({
     (isBuilding ||
       generatableLayers.some((l) => l.publicUrl || l.status === 'failed' || l.status === 'generating'));
 
+  const showDepthStage = approvedLayers.length > 0 || isBuilding;
+
+  const isLayerLocked = (layer: SceneStackLayerView) =>
+    Boolean(layer.publicUrl) &&
+    layer.status !== 'generating' &&
+    layer.layerId !== pipeline?.currentLayerId;
+
+  const renderLayer = (layer: SceneStackLayerView) => (
+    <StackLayerImage key={layer.layerId} layer={layer} locked={isLayerLocked(layer)} />
+  );
+
   return (
     <div
       className={`cds-stack__viewport${isBuilding ? ' is-pipeline-active' : ''}${isStoryTable ? ' is-story-table' : ''}`}
       style={parallaxStyle}
       aria-label={`${stationLabel} layered environment`}
     >
-      {approvedLayers.length === 0 ? (
-        <div className={`cds-stack__plate-fallback${isBuilding ? ' is-pulsing' : ''}`} aria-hidden />
-      ) : (
+      {showDepthStage ? (
         <div className="cds-stack__depth-stage">
           <div className="cds-stack__depth-plane cds-stack__depth-plane--rear">
-            {rearLayers.map((layer) => (
-              <img
-                key={`${layer.layerId}-v${layer.version}`}
-                src={layer.publicUrl!}
-                alt=""
-                className={`cds-stack__layer ${layer.definition.composeClass}`}
-                decoding="async"
-                draggable={false}
-              />
-            ))}
+            {rearLayers.map(renderLayer)}
           </div>
           <div className="cds-stack__depth-plane cds-stack__depth-plane--mid">
-            {midLayers.map((layer) => (
-              <img
-                key={`${layer.layerId}-v${layer.version}`}
-                src={layer.publicUrl!}
-                alt=""
-                className={`cds-stack__layer ${layer.definition.composeClass}`}
-                decoding="async"
-                draggable={false}
-              />
-            ))}
+            {midLayers.map(renderLayer)}
           </div>
           <div className="cds-stack__depth-plane cds-stack__depth-plane--fore">
-            {foreLayers.map((layer) => (
-              <img
-                key={`${layer.layerId}-v${layer.version}`}
-                src={layer.publicUrl!}
-                alt=""
-                className={`cds-stack__layer ${layer.definition.composeClass}`}
-                decoding="async"
-                draggable={false}
-              />
-            ))}
+            {foreLayers.map(renderLayer)}
           </div>
         </div>
+      ) : (
+        <div className={`cds-stack__plate-fallback${isBuilding ? ' is-pulsing' : ''}`} aria-hidden />
       )}
 
-      <div className="cds-stack__idle-life" aria-hidden>
+      <div className={`cds-stack__idle-life${isBuilding ? ' is-frozen' : ''}`} aria-hidden>
         <div className="cds-stack__idle-scanline" />
       </div>
       {isStoryTable ? <div className="cds-stack__foreground-props" aria-hidden /> : null}

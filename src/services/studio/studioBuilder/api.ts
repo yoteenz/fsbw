@@ -15,6 +15,8 @@ export type StudioBuilderGeneratePayload = {
   outputFormat: 'png' | 'webp';
   /** When true, bypass CIE reuse-only gate for explicit layer generation */
   forceGenerate?: boolean;
+  /** Locked Scene Stack layer URLs — shell + prior passes preserve geometry */
+  referenceImageUrls?: string[];
 };
 
 export type StudioBuilderGenerateApiResponse = {

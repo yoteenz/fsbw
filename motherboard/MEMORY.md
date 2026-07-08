@@ -42084,3 +42084,34 @@ User implementation sprint: **Studio Warehouse™** — physical manifestation o
 - **UI (`WarehouseWorkspace.tsx`):** district floors · asset inspector (rotate/zoom/metadata) · favorites/archive · Scene Recipe™ + Replace modal · Marketplace Import · Smart Recommendations + reuse banner
 - **Service:** `warehouseStudioService` · `useAdminStudioWarehouseState` · storage `adminStudioWarehouse_v1`
 - **Prior arc (same chat):** CDS auto-gen fix · layer strip clearance · immersion sprint · Launch Auditor · Asset Registry™ v1 · Scene Stack persistence.
+
+---
+
+## 2026-07-08 — Studio Museum™ implementation sprint (company legacy archive)
+
+User implementation sprint: **Studio Museum™** — permanent archive of greatest achievements; NOT asset library. **Warehouse builds the future. Museum preserves it.**
+
+- **Route:** `/admin/studio/studio-museum` · nav **STUDIO MUSEUM™** (visuals, featured) · links to Studio Warehouse™
+- **Philosophy:** Golden Builds™, launches, milestones, retired environments — immersive exhibits (reconstructed environments, not screenshots)
+- **Core (`src/studio-os-core/studio-museum/`):** exhibit types · historian orb quotes · legacy wall kinds
+- **Seed exhibits (`adminStudioMuseumDemo.ts`):** Frontal Slayer™ **The Mansion™** Golden Build (6 rooms, full Scene/Asset Recipe, marketplace history, timeline Mar→V2) · Summer Slay Launch™ · First Million™ · Brand Refresh V2 · Website V1
+- **UI tabs:** Exhibits · **Time Machine™** (timeline scrub Mar/Apr/May/Launch/Holiday/V2) · **Legacy Wall™** (7 framed milestones) · **Memory Sphere™** (Museum Orb historian) · **Immersive Replay™** (Founder Intent→Launch pipeline) · **Marketplace History™** (downloads, revenue, forks, evolution tree)
+- **Exhibit archive panel:** generation cost · revenue impact · runtime stats · creative decisions · founder notes · approval history · Company Genome™ snapshot
+- **Service:** `museumStudioService` · `useAdminStudioMuseumState` · `adminStudioMuseum_v1` (visited/favorite exhibits)
+- **Prior arc (same chat):** Studio Warehouse™ sprint (`850e2ce6`) · CDS fixes · Asset Registry™ · Scene Stack persistence.
+
+---
+
+## 2026-07-08 — Scene Stack shell lock during pipeline (CDS stability)
+
+User reported CDS **auto-refresh feel** while Scene Stack generates, and **environment shell swapping** when atmosphere/lighting/etc. layers run — each pass looked like a whole new room instead of stacking on a locked shell.
+
+- **Root cause:** FAL `nano-banana-pro/edit` was anchored to **marble reference only** per layer, so every pass regenerated a full scene; camera breathe/parallax during pipeline made the viewport feel like it was refreshing.
+- **Reference chaining (`reference-chain.ts`):** `getLockedReferenceUrlsForLayer()` collects approved layer URLs before the current pass; non-shell layers always prepend locked **environment-shell** URL.
+- **Prompts (`prompt-compiler.ts`):** `referenceImageUrls` + **CRITICAL ANCHOR** clause — preserve geometry, add only this layer pass.
+- **API:** `studioBuilderGeneration.ts` / `studio-builder-generate.ts` / `studioBuilder/api.ts` pass `referenceImageUrls` to FAL `image_urls` (shell first, marble secondary).
+- **Hook (`useSceneStack.ts`):** Resolves locked refs per station/layer on `generateLayer` / `ensureStation` pipeline.
+- **Compositor (`SceneStackViewport.tsx`):** `StackLayerImage` freezes `src` once layer is locked (not generating, not `currentLayerId`); stable `key={layerId}` avoids remount flicker; depth stage stays mounted during build.
+- **Motion freeze:** `useCdsImmersion(enabled, freezeMotion)` + `CreativeDirectionStudioRoom` passes `stack.isAnyPipelineActive`; `cdsImmersionTheme` disables camera breathe/parallax on `.is-pipeline-active`; locked-layer CSS in `cdsInteractionLayerTheme`.
+- **Still manual Stack only** — auto `ensureStation` on mount/zone change removed earlier (`b84a7b3a`).
+- **Prior arc (same chat):** layer strip nav clearance (`3e57fb47`) · stop auto-gen (`b84a7b3a`) · Studio Warehouse™ (`850e2ce6`) · Studio Museum™ (`2cb88120`).
