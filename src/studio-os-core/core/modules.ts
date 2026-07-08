@@ -51,6 +51,7 @@ export type StudioOsCoreModuleId =
   | 'organizational-apprenticeship'
   | 'concierge-layer'
   | 'production-studio'
+  | 'production-orchestrator'
   | 'render-queue'
   | 'screening-room'
   | 'concierge-approval-flow'
@@ -481,6 +482,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'PRODUCTION STUDIO',
     description: 'Cinematic production headquarters — approved pages become production-ready media. V1.0.',
     routeSegment: 'production-studio',
+  },
+  {
+    id: 'production-orchestrator',
+    label: 'STUDIO PRODUCTION ORCHESTRATOR',
+    description: 'Production Board — Founder Intent to architecture, implementation, assets, motion, review, Knowledge Core, and ADR handoffs.',
+    routeSegment: 'production-orchestrator',
   },
   {
     id: 'render-queue',

@@ -974,6 +974,19 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'production-orchestrator',
+    title: 'STUDIO PRODUCTION ORCHESTRATOR™',
+    purpose:
+      'Production Board™ — submit Founder Intent once, route GPT architecture, generate Composer handoffs, queue assets and motion, review, Knowledge Core, and ADR updates.',
+    route: p('production-orchestrator'),
+    groupId: 'production',
+    status: 'live',
+    metric: 'BOARD',
+    ctaLabel: 'OPEN ORCHESTRATOR',
+    moduleKey: 'production-orchestrator',
+    featuredOnOverview: true,
+  },
+  {
     id: 'render-queue',
     title: 'RENDER QUEUE',
     purpose: 'Centralized production floor — visible pipeline, live progress, pause/resume/batch. The founder never wonders what AI is doing.',

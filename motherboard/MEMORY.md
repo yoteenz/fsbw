@@ -42987,3 +42987,48 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Extraction reports are review bridges, not canon.
 - Do not promote extracted knowledge into Knowledge Core until founder review.
 - Studio World should preserve not only decisions, but the conversations and extraction path that produced them.
+
+---
+
+## 2026-07-08 — Studio Production Orchestrator implementation sprint
+
+**Context:** User requested an implementation sprint to build **Studio Production Orchestrator™** inside Studio World: a workflow system that lets the founder submit a Studio World idea once and have it move through GPT-5.5 architecture, architecture completion detection, Composer 2.5 implementation handoff, OpenArt/FAL asset generation, Kling motion, review, and Knowledge Core / ADR update queues without manual copy/paste.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context per project protocol, then explored Studio OS admin modules and routing patterns.
+- Located existing Studio World patterns around `/admin/studio/*`, especially Model Orchestrator™, Workflow Engine™, Production Studio, Render Queue, Prompt Registry, Knowledge Registry, and Decision Audit.
+- Implemented a new dedicated route/module: `/admin/studio/production-orchestrator`.
+- Built a local Studio OS core profile/store for production orchestration with browser-local persistence, matching neighboring Studio OS module patterns.
+- Added explicit Production Board™ tracking fields: feature name, current stage, assigned model, prompt, output, dependencies, status, next required action, blocking issues, and review state.
+- Encoded required stages: Idea, Architecture Queued, Architecture Running, Architecture Complete, Implementation Ready, Composer Running, Implementation Complete, Assets Needed, Motion Needed, Review Needed, Approved, Archived.
+- Implemented handoff logic so saving GPT architecture output runs completion detection, saves the output, generates Composer prompt/package content, attaches Knowledge Core and ADR requirements, moves complete tasks to Implementation Ready, and blocks incomplete/conflicting architecture.
+- Implemented Composer gate rule: Composer can start only when architecture is complete, dependencies are resolved, and founder approval or auto-approval is present.
+- Added Production Package™ tabs for Architecture Prompt, Architecture Output, Composer Prompt, Asset Prompts, Motion Prompts, Testing Checklist, Knowledge Core Updates, ADR Updates, and Integration Checklist.
+
+**Decisions / outcomes:**
+- MVP is frontend/local-state only; it does not call external GPT, Composer, OpenArt/FAL, or Kling APIs yet. It creates the orchestration board, prompts, handoff package, gates, and review tracking needed to remove manual copy/paste from the founder workflow once provider execution is connected.
+- New module is registered under the Studio **Production** nav group and uses existing Studio page shell, brand tagline, executive cards, and localStorage profile conventions.
+- Incomplete architecture output is intentionally marked **Blocked** rather than allowing Composer to proceed.
+- Build verification passed with `npm run build`; build-generated master-spec/world-graph artifact churn was reverted because it did not contain the new module and was unrelated.
+
+**Changes:**
+- Added `src/studio-os-core/production-orchestrator/`:
+  - `constants.ts`
+  - `types.ts`
+  - `package-builder.ts`
+  - `store.ts`
+  - `index.ts`
+- Added `src/hooks/useProductionOrchestratorState.ts`.
+- Added `src/components/admin/studio/production-orchestrator/ProductionOrchestratorWorkspace.tsx`.
+- Added `src/pages/admin/studio/production-orchestrator/page.tsx`.
+- Updated `src/App.tsx` to lazy-load and route `/admin/studio/production-orchestrator`.
+- Updated Studio registries:
+  - `src/utils/adminStudioRoutes.ts`
+  - `src/utils/adminStudioNavigation.ts`
+  - `src/utils/adminStudioDemo.ts`
+  - `src/studio-os-core/core/modules.ts`
+  - `src/studio-os-core/brand-positioning/constants.ts`
+
+**Conventions:**
+- Future Studio production automation should keep model execution gates explicit and visible to the founder: architecture completeness, dependency resolution, and founder approval/auto-approval are separate signals.
+- Production handoffs should generate complete packages instead of isolated prompts, including Knowledge Core and ADR requirements at the same moment as Composer handoff generation.

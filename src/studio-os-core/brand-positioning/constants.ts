@@ -47,6 +47,7 @@ export type StudioOsBrandSystemId =
   | 'knowledge-registry'
   | 'documentation-registry'
   | 'documentation-governance'
+  | 'production-orchestrator'
   | 'system-registry'
   | 'component-registry'
   | 'design-token-engine'
@@ -134,6 +135,7 @@ export const STUDIO_OS_BRAND_VOICE: Record<StudioOsBrandSystemId, string> = {
   'knowledge-registry': 'The architectural brain. One Master Specification — infinite consumers.',
   'documentation-registry': 'One source. Infinite knowledge. Always synchronized.',
   'documentation-governance': 'Documentation is living organizational knowledge — always accurate, always connected.',
+  'production-orchestrator': 'Founder intent becomes production — architecture, implementation, assets, motion, review, and memory moving as one.',
   'system-registry': 'Nothing exists anonymously. The operating system always knows what exists.',
   'component-registry': 'Assemble interfaces. Never recreate. Every component exists once.',
   'design-token-engine': 'Design consistency is automatic. Every surface speaks the same visual language.',

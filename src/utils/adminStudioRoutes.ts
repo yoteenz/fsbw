@@ -85,6 +85,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'organizational-apprenticeship'
   | 'concierge-layer'
   | 'production-studio'
+  | 'production-orchestrator'
   | 'render-queue'
   | 'screening-room'
   | 'concierge-approval-flow'
@@ -185,6 +186,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'organizational-apprenticeship',
   'concierge-layer',
   'production-studio',
+  'production-orchestrator',
   'render-queue',
   'screening-room',
   'concierge-approval-flow',
@@ -303,6 +305,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   organizationalApprenticeship: 'studio/organizational-apprenticeship',
   conciergeLayer: 'studio/concierge-layer',
   productionStudio: 'studio/production-studio',
+  productionOrchestrator: 'studio/production-orchestrator',
   renderQueue: 'studio/render-queue',
   screeningRoom: 'studio/screening-room',
   conciergeApprovalFlow: 'studio/concierge-approval-flow',
@@ -583,6 +586,10 @@ export function adminStudioConciergeLayerPath(): string {
 
 export function adminStudioProductionStudioPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/production-studio`;
+}
+
+export function adminStudioProductionOrchestratorPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/production-orchestrator`;
 }
 
 export function adminStudioRenderQueuePath(): string {

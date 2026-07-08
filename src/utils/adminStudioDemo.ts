@@ -99,6 +99,7 @@ export type AdminStudioSectionId =
   | 'organizational-apprenticeship'
   | 'concierge-layer'
   | 'production-studio'
+  | 'production-orchestrator'
   | 'render-queue'
   | 'screening-room'
   | 'concierge-approval-flow'
