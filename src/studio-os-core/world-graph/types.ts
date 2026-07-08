@@ -31,6 +31,8 @@ export const WORLD_NODE_TYPES = [
   'knowledge-object',
   'architectural-decision',
   'constitutional-law',
+  'foundational-physics-law',
+  'implementation-standard',
   'blueprint',
   'master-scene-blueprint',
   'scene-graph',

@@ -80,5 +80,23 @@ export function ingestConstitutionalLawNodes(): { nodes: WorldNode[]; edges: Wor
     provenance: { source: 'scene-stack', ingestedAt: ts },
   });
 
+  edges.push({
+    id: worldEdgeId('depends-on', sceneLawId, worldNodeId('foundational-physics-law', 'scene-integrity')),
+    type: 'depends-on',
+    from: sceneLawId,
+    to: worldNodeId('foundational-physics-law', 'scene-integrity'),
+    label: 'physics-basis',
+    provenance: { source: 'scene-stack', ingestedAt: ts },
+  });
+
+  edges.push({
+    id: worldEdgeId('depends-on', worldGraphLawId, worldNodeId('foundational-physics-law', 'world-memory')),
+    type: 'depends-on',
+    from: worldGraphLawId,
+    to: worldNodeId('foundational-physics-law', 'world-memory'),
+    label: 'physics-basis',
+    provenance: { source: 'constitution', ingestedAt: ts },
+  });
+
   return { nodes, edges };
 }

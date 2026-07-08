@@ -42609,6 +42609,7 @@ User defined **three major eras** for Studio World's evolution — **not** to bu
   - `scripts/compile-world-graph-runner.ts` — CI now uses canonical TypeScript `buildWorldGraph` (360 nodes · 467 edges)
   - Updated `STUDIO_WORLD_GRAPH_ARCHITECTURE.md` · `world-graph-law.md` · `motherboard/CORE.md`
 - **Prior arc (same chat):** Scene Stack quality fix + hardening sprint · Knowledge System proposal · World Graph™ Phase 1 approved · Responsibility Framework™ · Constitution™ · Global Atlas Layer™ · Collaborative Innovation Network™ · Innovation Lineage™.
+<<<<<<< HEAD
 =======
 ## 2026-07-08 — Innovation Constellations™ living knowledge universe
 
@@ -42629,3 +42630,24 @@ User **FOLLOW-UP SPRINT — Innovation Constellations™ (The Living Knowledge U
 - **Prior arc (same chat):** Innovation Lineage™ · World Graph™ Phase 1 · Collaborative Innovation Network™ · Global Atlas Layer™.
 
 >>>>>>> c89fbc2f (Innovation Constellations™ — living knowledge universe observatory, engine, Orb Cosmic Guide, Atlas glow, Command Dock)
+=======
+
+---
+
+## 2026-07-08 — World Physics™ + three-tier Canon hierarchy (approved)
+
+User **approved** Three Eras constitutional direction and introduced the next architectural layer: **World Physics™** — natural laws distinct from Constitutional Laws (legislation vs gravity). Also approved **three-tier Canon split.**
+
+- **Tier 1 — Foundational Physics™ (immutable):** Physical Place Law™ · Relationship Gravity™ · Knowledge Conservation™ · Identity Persistence™ · Scene Integrity™ · Asset Conservation™ · Blueprint Determinism™ · Spatial Continuity™ · Temporal Continuity™ · World Memory™
+- **Tier 2 — Constitutional Law™ (rare change):** Eight Foundational Laws (flagships) + **Behavioral Constitutional Laws** — Documentation First™ · No Orphan Objects™ · Canon Promotion™ · Immutability of History™ · Agent Memory™ · Scene Assembly™ · plus World Graph Is Truth™ · Three Eras™ · Scene Assembly Immutability™
+- **Tier 3 — Implementation Standards™ (continuous evolution):** World Graph compile gate · W-ID registry · route registry · scene-stack prompt version · era evaluation · motherboard sync · one-deploy-per-task
+- **Hierarchy:** Physics constrains Constitution constrains Standards. Constitution cannot violate Physics.
+- **Long-term vision:** Internal consistency — every department, company, scene, AI, marketplace product, innovation, collaboration obeys same invisible laws; World Graph + Canon + Physics enforce automatically.
+- **Delivered:**
+  - `docs/studio-os/world-physics/STUDIO_WORLD_PHYSICS_ARCHITECTURE.md`
+  - `docs/studio-os/canon/STUDIO_WORLD_CANON_HIERARCHY.md`
+  - `knowledge/canon/README.md` · `knowledge/canon/physics/` (10 laws) · `behavioral-laws.md` · `implementation-standards/README.md`
+  - `src/studio-os-core/world-physics/` · `behavioral-laws.ts` · `implementation-standards/`
+  - World Graph: `foundational-physics-law` (`W-PHY-*`) · `implementation-standard` (`W-STD-*`) · ingestion adapters · `depends-on` / `implements` edges (387 nodes · 533 edges)
+- **Prior arc (same chat):** Three Eras Roadmap™ · World Graph Phase 1 · Innovation Lineage™ · Scene Stack hardening · Knowledge System.
+>>>>>>> 01b02d4d (World Physics™ + three-tier Canon hierarchy — physics laws, behavioral constitution, implementation standards)

@@ -6,6 +6,8 @@ domains:
     - knowledge-object
     - architectural-decision
     - constitutional-law
+    - foundational-physics-law
+    - implementation-standard
     - publication
     - implementation-sprint
     - era
@@ -60,6 +62,8 @@ id_prefixes:
   knowledge-object: W-KNO
   architectural-decision: W-DEC
   constitutional-law: W-LAW
+  foundational-physics-law: W-PHY
+  implementation-standard: W-STD
   flagship: W-FLG
   room: W-RM
   engine: W-ENG

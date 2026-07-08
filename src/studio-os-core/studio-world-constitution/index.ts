@@ -5,6 +5,7 @@
 
 export type * from './types';
 export { STUDIO_WORLD_CONSTITUTION_EVENT, CONSTITUTION_COMPLIANCE_THRESHOLD } from './types';
+export * from './behavioral-laws';
 export * from './laws';
 export * from './scoring';
 export * from './review-engine';

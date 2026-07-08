@@ -4,6 +4,8 @@ const TYPE_PREFIX: Record<WorldNodeType, string> = {
   'knowledge-object': 'W-KNO',
   'architectural-decision': 'W-DEC',
   'constitutional-law': 'W-LAW',
+  'foundational-physics-law': 'W-PHY',
+  'implementation-standard': 'W-STD',
   blueprint: 'W-BP',
   'master-scene-blueprint': 'W-MSB',
   'scene-graph': 'W-SG',

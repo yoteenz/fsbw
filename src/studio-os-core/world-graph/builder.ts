@@ -1,10 +1,13 @@
 import { finalizeWorldGraph } from './graph';
 import {
+  ingestBehavioralConstitutionalNodes,
   ingestConstitutionalLawNodes,
   ingestEraRoadmapNodes,
   ingestEngineNodes,
   ingestFlagshipNodes,
+  ingestFoundationalPhysicsNodes,
   ingestGenomeNodes,
+  ingestImplementationStandardNodes,
   ingestMasterSpecMilestones,
   ingestPublicationNodes,
   ingestRouteRegistryNodes,
@@ -31,11 +34,14 @@ export function buildWorldGraph(input: BuildWorldGraphInput = {}): BuildWorldGra
   const allEdges = [];
 
   const sources = [
+    ingestFoundationalPhysicsNodes(),
     ingestEngineNodes(),
     ingestGenomeNodes(),
     ingestPublicationNodes(),
     ingestFlagshipNodes(),
     ingestConstitutionalLawNodes(),
+    ingestBehavioralConstitutionalNodes(),
+    ingestImplementationStandardNodes(),
     ingestEraRoadmapNodes(),
     ingestRouteRegistryNodes(),
   ];

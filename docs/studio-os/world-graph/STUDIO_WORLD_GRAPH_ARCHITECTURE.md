@@ -157,6 +157,22 @@ World Graph Phase 1 is **Era 1 infrastructure** — not Era 2 spatial civilizati
 
 ---
 
+## Canon hierarchy (Physics · Constitution · Standards)
+
+Studio World Canon has three tiers:
+
+| Tier | Role | Graph node type |
+|------|------|-----------------|
+| **Foundational Physics™** | Natural laws — what is possible | `foundational-physics-law` (`W-PHY-*`) |
+| **Constitutional Law™** | Governance — what is allowed | `constitutional-law` (`W-LAW-*`) |
+| **Implementation Standards™** | Engineering — how we build | `implementation-standard` (`W-STD-*`) |
+
+Physics never changes. Constitution changes rarely. Standards evolve continuously.
+
+Full docs: [STUDIO_WORLD_CANON_HIERARCHY.md](../canon/STUDIO_WORLD_CANON_HIERARCHY.md) · [STUDIO_WORLD_PHYSICS_ARCHITECTURE.md](../world-physics/STUDIO_WORLD_PHYSICS_ARCHITECTURE.md)
+
+---
+
 ## See also
 
 - [STUDIO_WORLD_THREE_ERAS_ROADMAP.md](./STUDIO_WORLD_THREE_ERAS_ROADMAP.md) — **guiding principle:** Knowledge™ → World™ → Intelligence™

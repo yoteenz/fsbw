@@ -3,4 +3,7 @@ export { ingestConstitutionalLawNodes } from './constitution-ingest';
 export { ingestEngineNodes, ingestPublicationNodes, ingestGenomeNodes } from './bootstrap-ingest';
 export { ingestMasterSpecMilestones } from './master-spec-ingest';
 export type { MasterSpecMilestoneInput } from './master-spec-ingest';
+export { ingestBehavioralConstitutionalNodes } from './behavioral-constitution-ingest';
+export { ingestFoundationalPhysicsNodes } from './physics-ingest';
+export { ingestImplementationStandardNodes } from './standards-ingest';
 export { ingestEraRoadmapNodes } from './era-roadmap-ingest';
