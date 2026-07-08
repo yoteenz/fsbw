@@ -1,39 +1,41 @@
 /**
- * Orb Icon Sculptures™ — delegates to Studio World Hero Icon Library™.
- * @deprecated Import from `studio-world-hero-icons` directly for new code.
+ * Orb icon layer — Studio Foundry™ hero-icon product line.
+ * Radial tiles consume registry assets by slug; no emoji or flat glyph fallbacks.
  */
-
-import type { ComponentType } from 'react';
-import { StudioWorldHeroIconFromOrb } from '../studio-world-hero-icons';
+import { FoundryHeroIconFromOrb } from '../foundry/FoundryHeroIcon';
 import type { StudioOrbIconId } from './studioOrbTypes';
 
-type IconProps = {
-  size?: number;
-  className?: string;
-};
-
-function orbIcon(orbIconId: StudioOrbIconId): ComponentType<IconProps> {
-  return function OrbIconBridge({ size, className }: IconProps) {
-    return <StudioWorldHeroIconFromOrb orbIconId={orbIconId} size={size} className={className} />;
-  };
-}
-
-export const OrbIconAtlas = orbIcon('atlas');
-export const OrbIconVoice = orbIcon('voice');
-export const OrbIconDailyBrief = orbIcon('daily-brief');
-export const OrbIconCommandDock = orbIcon('command-dock');
-export const OrbIconPageGuide = orbIcon('page-guide');
-export const OrbIconLifeCulture = orbIcon('life-culture');
-export const OrbIconMuseum = orbIcon('museum');
-
-export function OrbIconSculpture({
-  iconId,
-  size,
-  className,
-}: {
+export type OrbIconSculptureProps = {
   iconId: StudioOrbIconId;
   size?: number;
   className?: string;
-}) {
-  return <StudioWorldHeroIconFromOrb orbIconId={iconId} size={size} className={className} />;
+  /** Queue generation when asset is missing (default false for Orb). */
+  autoQueue?: boolean;
+  selected?: boolean;
+};
+
+export function OrbIconSculpture({
+  iconId,
+  size = 28,
+  className,
+  autoQueue = false,
+  selected,
+}: OrbIconSculptureProps) {
+  return (
+    <FoundryHeroIconFromOrb
+      iconId={iconId}
+      size={size}
+      className={className}
+      autoQueue={autoQueue}
+      selected={selected}
+    />
+  );
+}
+
+export function OrbIconDailyBrief(props: Omit<OrbIconSculptureProps, 'iconId'>) {
+  return <OrbIconSculpture iconId="daily-brief" {...props} />;
+}
+
+export function OrbIconVoice(props: Omit<OrbIconSculptureProps, 'iconId'>) {
+  return <OrbIconSculpture iconId="voice" {...props} />;
 }

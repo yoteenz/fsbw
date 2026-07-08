@@ -43395,3 +43395,37 @@ Summary of this chat's implementation sprint: refactor Studio World routing so F
 - Use `useCompanyRoute()` / path builders — never hardcode `frontal-slayer` in new company-scoped UI.
 - Frontal Slayer Grand Atrium: `/admin/studio/companies/frontal-slayer/grand-atrium`.
 - NDXBOOK overrides: grand-atrium → ndxbook mission-control implementation.
+
+---
+
+## 2026-07-08 — Studio Foundry Hero Icon product line (UI implementation sprint)
+
+Summary of the **full conversation in this chat** covering ARTICLE-A01 Asset Compiler, ARTICLE-A02 Studio Foundry architecture approval, rebase/conflict resolution, and the **Studio Foundry Implementation Sprint** to wire Hero Icons as the first Foundry product line.
+
+- **Context:** User approved architecture where **a library stores assets; a foundry manufactures assets**. Hero Icon Library must become the first product line inside Studio Foundry — UI consumes by asset ID only; Foundry owns generation; Registry owns storage; World Graph owns relationships.
+- **Topics covered:**
+  - ARTICLE-A01 Asset Compiler (already pushed): `compileAssetIntent()`, 12 generation recipes, World Graph nodes.
+  - ARTICLE-A02 Studio Foundry core (already pushed): `resolveStudioFoundryAsset()`, recipes reframed as Foundry asset classes, docs + Knowledge Core.
+  - Rebase conflicts on `motherboard/MEMORY.md` and master-spec timestamp files — resolved; World Graph 472 nodes · 789 edges PASS.
+  - **Implementation sprint:** Create `src/studio/foundry/` domain, Hero Icon seeds, registry/resolver/client, FAL adapter, Orb wiring, completion report.
+- **Decisions / outcomes:**
+  - Separate UI foundry module at **`src/studio/foundry/`** (registry + React consumption) alongside core **`src/studio-os-core/studio-foundry/`** (compiler integration).
+  - Orb acrylic tile design preserved; **only icon sourcing replaced** — no emoji/flat glyph/sculpture as final state.
+  - Missing/generating states: shimmer + elegant crystal void placeholder.
+  - `autoQueue: false` default on Orb to avoid unsolicited FAL spend.
+  - Production cost fields stored on assets; not shown in Orb menu.
+  - Local registry first (`localStorage`); Supabase persistence documented as future adapter.
+- **Changes (this sprint):**
+  - **New:** `src/studio/foundry/*` (types, recipes, registry, resolver, client, adapter, `productLines/heroIcons.ts`).
+  - **New:** `src/hooks/useFoundryAsset.ts`, `src/components/admin/studio/foundry/*`, `api/admin/studio-foundry-generate.ts`.
+  - **Wired:** `StudioWorldHeroIcon.tsx`, `OrbIconSculptures.tsx` → Foundry; `studioOrbTheme.ts` foundry CSS.
+  - **Doc:** `docs/studio-os/engine/asset-compiler/STUDIO_FOUNDRY_IMPLEMENTATION.md`.
+  - **Deprecated as source:** `StudioWorldHeroIconSculptures.tsx` (retained, not deleted).
+  - 24 Hero Icon seeds including all requested slugs (`hero-icon.world-atlas` … `hero-icon.distribution`).
+- **Verification:** `npm run build` passed.
+- **Conventions:**
+  - UI never embeds generation prompts.
+  - Add future asset classes via recipe + product line seed file + thin preview component.
+  - Regenerate via `regenerateFoundryAsset(slug)` or `autoQueue` on admin surfaces.
+  - One deploy per task — this entry ships with code in a single commit.
+

@@ -1,59 +1,58 @@
 /**
- * Studio World Hero Icon Library™ — animated collectible wrapper.
+ * Studio World Hero Icon — Foundry-backed.
+ * UI consumes manufactured assets by slug; no hardcoded sculpture art.
  */
-
-import { useId } from 'react';
-import { HERO_SCULPTURE_MAP } from './StudioWorldHeroIconSculptures';
+import { FoundryHeroIconFromId, FoundryHeroIconFromOrb } from '../foundry/FoundryHeroIcon';
 import type { StudioWorldHeroIconId } from './studioWorldHeroIconTypes';
-import { orbIconIdToHeroIconId } from './studioWorldHeroIconTypes';
 
 export type StudioWorldHeroIconProps = {
   iconId: StudioWorldHeroIconId;
-  size?: number;
   className?: string;
-  /** Pressed / navigating — energy pulse + bloom */
+  size?: number;
   selected?: boolean;
+  /** When true, queue Foundry generation for missing assets (admin contexts). */
+  autoQueue?: boolean;
 };
 
 export function StudioWorldHeroIcon({
   iconId,
-  size = 28,
-  className = '',
-  selected = false,
-}: StudioWorldHeroIconProps) {
-  const uid = useId().replace(/:/g, '');
-  const Sculpture = HERO_SCULPTURE_MAP[iconId] ?? HERO_SCULPTURE_MAP.dormant;
-
-  return (
-    <span
-      className={`sw-hero-icon${selected ? ' sw-hero-icon--selected' : ''}${className ? ` ${className}` : ''}`}
-      data-hero-icon={iconId}
-    >
-      <span className="sw-hero-icon__caustic" aria-hidden />
-      <span className="sw-hero-icon__bloom" aria-hidden />
-      <Sculpture size={size} uid={uid} className="sw-hero-icon__sculpture" />
-    </span>
-  );
-}
-
-/** Bridge for legacy Orb radial `iconId` strings. */
-export function StudioWorldHeroIconFromOrb({
-  orbIconId,
-  size,
   className,
+  size,
   selected,
-}: {
-  orbIconId: string;
-  size?: number;
-  className?: string;
-  selected?: boolean;
-}) {
+  autoQueue = false,
+}: StudioWorldHeroIconProps) {
   return (
-    <StudioWorldHeroIcon
-      iconId={orbIconIdToHeroIconId(orbIconId)}
+    <FoundryHeroIconFromId
+      iconId={iconId}
       size={size}
       className={className}
       selected={selected}
+      autoQueue={autoQueue}
+    />
+  );
+}
+
+/** Bridge: Orb radial iconId → Foundry hero icon. */
+export function StudioWorldHeroIconFromOrb({
+  orbIconId,
+  className,
+  size,
+  selected,
+  autoQueue,
+}: {
+  orbIconId: string;
+  className?: string;
+  size?: number;
+  selected?: boolean;
+  autoQueue?: boolean;
+}) {
+  return (
+    <FoundryHeroIconFromOrb
+      iconId={orbIconId}
+      size={size}
+      className={className}
+      selected={selected}
+      autoQueue={autoQueue}
     />
   );
 }

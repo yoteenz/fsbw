@@ -381,6 +381,35 @@ export const ORB_ANIMATION_CSS = `
   animation: sw-hero-icon-energy-travel 0.55s ease-out forwards;
 }
 
+/* Studio Foundry™ — asset preview states (no emoji / flat glyph fallbacks) */
+@keyframes foundry-asset-shimmer-sweep {
+  0% { opacity: 0.45; transform: translateX(-8%) scale(0.98); }
+  50% { opacity: 0.95; transform: translateX(8%) scale(1.02); }
+  100% { opacity: 0.45; transform: translateX(-8%) scale(0.98); }
+}
+.foundry-asset-shimmer {
+  animation: foundry-asset-shimmer-sweep 1.8s ease-in-out infinite;
+  filter: drop-shadow(0 2px 6px rgba(201, 169, 98, 0.25));
+}
+.foundry-asset-missing {
+  opacity: 0.88;
+  filter: drop-shadow(0 2px 8px rgba(201, 169, 98, 0.18));
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+.foundry-asset-missing.is-selected {
+  opacity: 1;
+  filter: drop-shadow(0 0 12px rgba(201, 169, 98, 0.45));
+}
+.foundry-asset-preview {
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.12));
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), filter 0.35s ease;
+}
+.foundry-asset-preview.is-selected {
+  filter: drop-shadow(0 0 14px rgba(201, 169, 98, 0.55)) brightness(1.08);
+}
+.foundry-hero-icon__preview { max-width: 100%; max-height: 100%; }
+
 .studio-conversation-backdrop {
   position: fixed; inset: 0; z-index: 100040;
   background: rgba(8, 7, 6, 0.35);
