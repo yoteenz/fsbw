@@ -4,7 +4,7 @@ export const WAREHOUSE_CAMPUS_STYLES = `
 /* ── Campus shell — bounded between directory, HUD, teaching, safe areas ── */
 .wh-campus {
   position: absolute;
-  left: var(--wh-frame-dir-w, 52px);
+  left: var(--wh-frame-dir-w, var(--sw-rail-w, 168px));
   right: max(0px, env(safe-area-inset-right));
   top: var(--wh-frame-hud-h, 48px);
   bottom: var(--wh-frame-teach-h, 56px);

@@ -73,6 +73,7 @@ export const ADMIN_STUDIO_STORAGE_KEYS = {
   brandAssetsProductAssetFactory: 'adminStudioBrandAssetsProductAssetFactory_v1',
   warehouse: 'adminStudioWarehouse_v1',
   museum: 'adminStudioMuseum_v1',
+  architecturalNavRail: 'studioArchitecturalNavRail_v1',
 } as const;
 
 export type AdminStudioStorageKey = (typeof ADMIN_STUDIO_STORAGE_KEYS)[keyof typeof ADMIN_STUDIO_STORAGE_KEYS];

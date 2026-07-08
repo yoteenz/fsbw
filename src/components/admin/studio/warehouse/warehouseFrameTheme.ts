@@ -1,14 +1,18 @@
 /** Architectural frame system — every panel is a bounded, non-spilling container. */
 
 export const WAREHOUSE_FRAME_STYLES = `
-/* ── Frame insets (respect HUD, directory, teaching, safe areas) ── */
+/* ── Frame insets (respect HUD, navigation rail, teaching, safe areas) ── */
 .wh-world {
-  --wh-frame-dir-w: 52px;
+  --wh-frame-dir-w: var(--sw-rail-w, 168px);
   --wh-frame-hud-h: max(48px, calc(38px + env(safe-area-inset-top)));
   --wh-frame-teach-h: max(56px, calc(48px + env(safe-area-inset-bottom)));
   --wh-frame-pad: 6px;
   --wh-frame-border: 1px solid rgba(201, 169, 98, 0.22);
   --wh-frame-bg: rgba(0, 0, 0, 0.48);
+}
+
+.wh-world.wh-world--rail-hidden {
+  --wh-frame-dir-w: 0px;
 }
 
 /* ── Global containment — nothing escapes the world shell ── */
@@ -60,31 +64,9 @@ export const WAREHOUSE_FRAME_STYLES = `
   text-overflow: ellipsis;
 }
 
-/* ── Navigation directory frame ── */
+/* ── Navigation directory (legacy — superseded by Architectural Navigation Rail™) ── */
 .wh-world__directory {
-  box-sizing: border-box;
-  width: var(--wh-frame-dir-w);
-  max-width: var(--wh-frame-dir-w);
-  top: var(--wh-frame-hud-h);
-  bottom: var(--wh-frame-teach-h);
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-}
-
-.wh-world__directory-btn,
-.wh-world__directory-btn__label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
-.wh-world__directory-wing {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
+  display: none;
 }
 
 /* ── Teaching strip frame ── */

@@ -21,7 +21,17 @@ import { WarehouseArchitecturalAssetShelf } from './WarehouseArchitecturalAssetS
 import { WarehouseInspectionStage } from './WarehouseInspectionStage';
 import { WarehouseCollapsibleInspector } from './WarehouseCollapsibleInspector';
 import { WarehouseCompareMode } from './WarehouseCompareMode';
-import { WarehouseArchitecturalDirectory } from './WarehouseArchitecturalDirectory';
+import {
+  ArchitecturalFrameStatusStrip,
+  ArchitecturalNavigationRail,
+  ARCHITECTURAL_NAV_STYLES,
+} from '../architectural-navigation';
+import { useArchitecturalNavigationRail } from '../../../../hooks/useArchitecturalNavigationRail';
+import {
+  buildWarehouseContextualWings,
+  buildWarehouseFrameStatus,
+  resolveWarehouseLocationStack,
+} from '../../../../studio-os-core/architectural-navigation';
 import { MuseumWingInteractions } from './MuseumWingInteractions';
 import { FutureExpansionInteractions, InnovationHallInteractions } from './InnovationHallInteractions';
 import { OrientationAtriumInteractions } from './OrientationAtriumInteractions';
@@ -146,6 +156,31 @@ export function StudioWarehouseRoom() {
 
   const industrialWing = useMemo(() => industrialWingForZone(wh.activeZoneId), [wh.activeZoneId]);
   const galleryMode = isGalleryZone(wh.activeZoneId);
+  const navRail = useArchitecturalNavigationRail();
+
+  const navLocation = useMemo(
+    () => resolveWarehouseLocationStack(wh.activeZoneId, wh.arrivalComplete),
+    [wh.activeZoneId, wh.arrivalComplete]
+  );
+
+  const contextualWings = useMemo(
+    () => buildWarehouseContextualWings(wh.arrivalComplete),
+    [wh.arrivalComplete]
+  );
+
+  const frameStatus = useMemo(
+    () =>
+      buildWarehouseFrameStatus({
+        activeZoneId: wh.activeZoneId,
+        arrivalComplete: wh.arrivalComplete,
+        stackLabel: activeZone.label,
+        pipelinePhase: activePipeline.phase,
+        layersComplete: activePipeline.layersComplete,
+        layersTotal: activePipeline.layersTotal,
+        orbRole: orbPersonality.role,
+      }),
+    [wh.activeZoneId, wh.arrivalComplete, activeZone.label, activePipeline, orbPersonality.role]
+  );
 
   const campusTitle = useMemo(() => {
     if (industrialWing) {
@@ -427,10 +462,11 @@ export function StudioWarehouseRoom() {
       <style>{CDS_IMMERSION_STYLES}</style>
       <style>{WAREHOUSE_DESTINATION_STYLES}</style>
       <style>{WAREHOUSE_FRAME_STYLES}</style>
+      <style>{ARCHITECTURAL_NAV_STYLES}</style>
       <style>{WAREHOUSE_CAMPUS_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
-        className={`${worldClass}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}`}
+        className={`${worldClass}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
         onPointerMove={immersion.onPointerMove}
         style={immersion.parallaxStyle}
       >
@@ -441,6 +477,7 @@ export function StudioWarehouseRoom() {
           <div className="wh-world__identity">
             <p className="wh-world__title">{campusTitle}</p>
             <p className="wh-world__sub">{STUDIO_ARCHIVES_SUBTITLE}</p>
+            <ArchitecturalFrameStatusStrip status={frameStatus} />
           </div>
           <button
             type="button"
@@ -461,10 +498,14 @@ export function StudioWarehouseRoom() {
           </button>
         </header>
 
-        <WarehouseArchitecturalDirectory
-          activeZoneId={wh.activeZoneId}
-          arrivalComplete={wh.arrivalComplete}
-          onSelectZone={goToZone}
+        <ArchitecturalNavigationRail
+          mode={navRail.mode}
+          location={navLocation}
+          frameStatus={frameStatus}
+          contextualWings={contextualWings}
+          activeRoomId={wh.activeZoneId}
+          onSelectRoom={(roomId) => goToZone(roomId as WarehouseCameraZoneId)}
+          onCycleMode={navRail.cycleMode}
         />
 
         <aside className="wh-world__orb-courier" aria-label="Studio Orb courier">
