@@ -41109,3 +41109,44 @@ User defined **The Company Engine™** — *"The Purpose of Studio OS"* — high
 - **Decision law for future features:** create · operate · enhance · scale · preserve · evolve a company?
 - **Prior arc (same chat):** Golden Build™ · Sets™ · Transitions™ · Studio World™ · Creative Approval Pipeline™ · Creative Review™ · mobile storage fix
 - **CORE.md:** Company Engine™ line added above Studio World™
+
+---
+
+## 2026-07-08 — Mode System™ onboarding philosophy (docs only)
+
+User defined **Mode System™** — *"How Would You Like To Build Today?"* — philosophy & onboarding sprint. **No UI · no components · no new engines.**
+
+- **Mission:** Studio OS adapts to founder; founder never adapts to software. First moment = choose **how** to build — not template/dashboard/layout.
+- **Experience:** HQ slowly appears → Orb welcomes → *"How would you like to build today?"* → founder selects Mode™
+- **Initial Modes:** 🚀 Entrepreneur · 🏢 Enterprise · 🎨 Creator · 🤝 Agency · 🏪 Franchise — each with focus areas and recommended audiences
+- **Critical rule:** Modes do NOT fork platform · NOT separate products — one Company Engine™ · one Studio World™
+- **Mode DNA™** configures: HQ defaults · department priorities · AI concierge roster · Studio World layout · Orb personality · recommendations · starter packs · marketplace · workflows · KPIs · learning path
+- **Orb Onboarding™:** conversational · reassures ("change later" · "HQ evolves" · "nothing permanent") · way of working not different software
+- **Mode Evolution™:** Entrepreneur→Enterprise · Creator→Agency · Agency acquires · Enterprise incubates — never trapped
+- **Example:** Teena selects Entrepreneur → Orb prioritizes Brand/Product/Marketing/Launch · Creative Atelier™ as heart
+- **Future Modes:** Innovation · Studio · Healthcare · Legal · Construction · Hospitality · Education · Financial · Research
+- **Onboarding order:** Mode™ → Blueprint™ → Inauguration → Headquarters
+- **11-doc spec:** `docs/studio-os/modes/` — README · mode-system · mode-dna · 5 mode specs · mode-evolution · orb-onboarding · future-modes
+- **Success:** Never "What template?" — always "How would you like to build today?"
+- **Prior arc:** Company Engine™ · Studio World™ · Creative Pipeline · Creative Review™ · mobile fix
+- **CORE.md:** Mode System™ line added
+
+---
+
+## 2026-07-08 — Adaptive Onboarding™ — The First Conversation (docs only)
+
+User defined **Adaptive Onboarding™** — philosophy & onboarding **evolution** sprint. **No UI · no React components · no new engines.**
+
+- **Mission:** Founders should not begin Studio OS by filling forms — they begin by **having a conversation** with the Orb™ (experienced business advisor / Executive Producer of their future company)
+- **Philosophy shift:** Do NOT ask template · industry · business name · logo · colors · domain · website first — start with curiosity (*"What are we going to build together?"*)
+- **Conversation examples:** What are you building? · What inspired you? · Solo or team? · Existing business or creating together? · Customer experience desired? · Five-year vision?
+- **Mode Recommendation™:** Orb listens first · then recommends Mode with reasoning — founder may Accept · Choose Another · Tell Me Why · Compare Modes™ — nothing locked
+- **Headquarters Preview™:** After Mode selected — *"This is the Headquarters we'll build together"* — Creative Atelier™ · Marketing War Room™ · Product Lab™ · Finance Vault™ · Customer Experience™ · Hall of Legacy™
+- **Company Genome™ initialization:** Only AFTER Mode — conversation auto-contributes mission · vision · values · industry · business model · founder personality · brand direction · creative style · leadership · growth · customer philosophy — nothing entered twice
+- **Adaptive Evolution™:** Engine continues learning — solo hires → Enterprise · creator gets clients → Agency · entrepreneur acquires → Holding Company support — founder never starts over
+- **Success feeling:** *"I just hired an executive team"* — not *"I completed onboarding"*
+- **Evolves Mode System™:** Inserts conversation + recommendation before immediate mode pick; supersedes orb-onboarding.md first-entry sequence for V2
+- **Updated onboarding order:** Conversation → Mode Recommendation → HQ Preview → Genome init → Blueprint™ → Inauguration™ → ENTER HEADQUARTERS
+- **8-doc spec:** `docs/studio-os/onboarding/` — README · adaptive-onboarding · orb-conversation · mode-recommendation-engine · headquarters-preview · company-genome-initialization · adaptive-evolution · future-onboarding
+- **Prior arc (same chat):** Transitions™ · Studio World™ · Creative Approval Pipeline™ · Creative Review™ · mobile storage fix · Company Engine™ · Mode System™
+- **CORE.md:** Adaptive Onboarding™ line added after Mode System™
