@@ -141,6 +141,19 @@ Pipeline success criterion: Generated package passes Generator QA (16) + Compile
 
 ---
 
+## Schema & Output Layer
+
+Canonical **manifest schemas** and **prompt package specs** live alongside this engine:
+
+| Layer | Path |
+|-------|------|
+| **Engine architecture** | `docs/studio-os/engine/department-generator/` (this folder) |
+| **Output schemas** | [`docs/studio-os/department-generator/`](../../department-generator/README.md) |
+
+The schema layer defines `department.json` · `environment-blueprint.json` · `assets.json` · `interactions.json` · `assembly-blueprint.json` · `room-dna.json` · `prompts/*.md` — the files every generation run produces before Asset Compiler cooks assets.
+
+---
+
 ## Schema Namespace
 
 ```

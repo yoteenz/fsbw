@@ -111,6 +111,7 @@ Both are spatial. Both use Orb. **Different rituals.**
 | **Company Genome™** | HQ expression · health register · celebration style |
 | **Campus Evolution Engine™** | World Evolution visualizes growth over time |
 | **Adaptive Walk™** | Intelligence layer — dynamic modes · paths · personalization |
+| **Founder Journey™** | Lifelong founder evolution — stages · profile · chronicle |
 
 ---
 

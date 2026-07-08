@@ -91,6 +91,7 @@ Walk the Business is the **experience**. Adaptive Walk is the **brain**.
 | **Headquarters Health** | Feeds mode resolution and storytelling |
 | **Company Genome™** | Celebration style · pacing · industry expression |
 | **Chief of Staff / Org Intelligence** | Priority signals · risk · opportunity feeds |
+| **Founder Journey™** | Stage · profile · ritual directives · Orb relationship phase |
 | **Campus Evolution Engine™** | Celebration mode surfaces growth events |
 
 ---

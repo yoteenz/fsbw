@@ -40698,3 +40698,26 @@ Summary of **whole conversation**: eleven architecture sprints ending with **Fou
 - **Decisions:** Stages are guidance not achievements · multi-stage simultaneous · AdaptationDirective bus · Chronicle records turning points · influences all major subsystems
 - **Changes:** `docs/studio-os/engine/founder-journey/` · cross-refs adaptive-walk · walk-the-business · headquarters-engine · CORE · MEMORY
 - **Conventions:** Architecture only · one commit on **`master`**
+
+---
+
+## 2026-07-08 — Studio Department Generator™ schema & output layer v1 (complete)
+
+Summary of the **whole conversation so far** in this chat: twelve architecture sprints — SDK through Founder Journey™ — plus **Department Generator schema & output layer v1** defining the machine that generates every Studio OS department.
+
+- **Context:** User mandated **architecture sprint only** — **NOT** UI · **NOT** React · **NOT** CSS · **NOT** Three.js · **NOT** building Creative Direction Studio itself. Build the **system that generates** departments. Think Unreal Engine for businesses — modular assets, no flattened backgrounds.
+- **Prior sprints in chat:** SDK · Asset Compiler · Department Runtime · Golden Department · Department Generator engine (`9eb35d67`, 18 docs) · Validation Loop · Critique Sessions · Walk the Room · Walk the Business · Adaptive Walk · Founder Journey (`b292b604`)
+- **This sprint deliverable:** **9-doc schema layer** at **`docs/studio-os/department-generator/`**:
+  - **README.md** — index · output folder structure · platform position · design laws
+  - **department-schema.md** — `department.json` Department Manifest
+  - **room-dna.md** — Room DNA™ aesthetic sliders (luxury · innovation · minimalism · warmth · technology · corporate · playfulness · creativity · glass · wood · stone · chrome · brand personality)
+  - **environment-schema.md** — `environment-blueprint.json` (floor · walls · windows · architecture · ceiling · columns · glass · lighting · atmosphere · furniture layout · navigation · camera · composition)
+  - **asset-schema.md** — per-object Asset Blueprints + `assets.json` manifest
+  - **interaction-schema.md** — `interactions.json` (click · hover · walk · focus · inspect · talk · open · sit · expand · minimize · activate + editorial verbs)
+  - **assembly-pipeline.md** — `assembly-blueprint.json` Scene Assembly Blueprint (zone-anchor procedural placement · Three.js scene graph · lighting · camera · animation · physics · navigation · Cursor handoff)
+  - **fal-prompt-spec.md** — Environment Prompt Package (`prompts/environment.md` · `lighting.md` · `materials.md` · `furniture.md` · `decor.md` · `architecture.md` · `camera.md` · `vfx.md` · `animation.md`)
+  - **future-roadmap.md** — v1.1 through v4.0 evolution
+- **Generator outputs defined:** (1) Department Manifest · (2) Environment Blueprint · (3) Asset Blueprint · (4) Environment Prompt Package · (5) Asset Manifest · (6) Interaction Manifest · (7) Scene Assembly Blueprint · (8) Room DNA™ · (9) output folder structure per department run
+- **Decisions:** Schema layer complements engine at `engine/department-generator/` (does not replace) · Creative Direction Studio™ validation reference only · every object own asset with FAL prompt · prompt packages as `.md` not HTML · Cursor assembles via rules not manual positioning · Room DNA™ instance aesthetic distinct from Department DNA™ and Company Genome™
+- **Cross-refs:** Engine README updated with schema layer table · `motherboard/CORE.md` extended with 9-doc schema layer entry
+- **Conventions:** Architecture/docs only · no implementation · one commit on **`master`** via `./scripts/agent-commit.sh`
