@@ -63,7 +63,10 @@ export type SceneStackManifest = {
   stations: SceneStackStationSpec[];
 };
 
-export type SceneStackLayerStatus = 'idle' | 'generating' | 'approved' | 'failed';
+export type SceneStackLayerStatus = 'idle' | 'generating' | 'approved' | 'failed' | 'discarded';
+
+/** Scene Stack Quality Guard™ — per-layer validation outcome */
+export type SceneLayerQualityStatus = 'pending' | 'validated' | 'regenerate_required';
 
 export type SceneStackLayerRecord = {
   id: string;
@@ -81,6 +84,12 @@ export type SceneStackLayerRecord = {
   promptVersion: string;
   productionGroupId: string;
   heroAssetId: string;
+  /** Master Scene Blueprint™ id used at generation time */
+  blueprintId?: string;
+  /** Scene Assembly Law version — regression guard */
+  assemblyLawVersion?: string;
+  qualityStatus?: SceneLayerQualityStatus;
+  qualityIssues?: string[];
 };
 
 export type SceneStackLayerView = {
@@ -89,6 +98,8 @@ export type SceneStackLayerView = {
   status: SceneStackLayerStatus;
   publicUrl: string | null;
   version: number;
+  qualityStatus?: SceneLayerQualityStatus;
+  qualityIssues?: string[];
 };
 
 export type CompiledSceneStackLayerPrompt = {
@@ -101,11 +112,14 @@ export type CompiledSceneStackLayerPrompt = {
   productionGroupId: string;
   heroAssetId: string;
   promptVersion: string;
+  blueprintId: string;
 };
 
 export type SceneStackCompositeStatus = 'idle' | 'building' | 'partial' | 'ready' | 'failed';
 
-export const SCENE_STACK_PROMPT_VERSION = 'scene-stack.v1';
+export const SCENE_STACK_PROMPT_VERSION = 'scene-stack.v2';
+export const SCENE_ASSEMBLY_LAW_VERSION = 'scene-assembly-law.v1';
+export const MASTER_SCENE_BLUEPRINT_VERSION = 'master-blueprint.v1';
 
 export const SCENE_STACK_REQUIRED_LAYERS: SceneStackLayerId[] = [
   'environment-shell',

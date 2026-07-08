@@ -2,12 +2,18 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { requireDepartmentPackage } from '../studio-os-core/department-package';
 import {
   approveSceneStackLayer,
+  buildSceneGraph,
+  buildSceneStackExportBundle,
   compileSceneStackLayerPrompt,
+  enforceFalReferenceLaw,
+  executeCleanRegenerationDiscard,
   getSceneStackLayerRecord,
   getLockedReferenceUrlsForLayer,
   listGeneratableLayerIdsForStation,
   listSceneStackStations,
   nextSceneStackLayerVersion,
+  planCleanRegeneration,
+  resolveMasterSceneBlueprint,
   resolveStackCompositeStatus,
   resolveStationLayerViews,
   saveSceneStackLayerRecord,
@@ -17,6 +23,12 @@ import {
   tryMountSceneStackLayerFromRegistry,
   SCENE_STACK_HYDRATED_EVENT,
   getRegistryAssetForSceneLayer,
+  validateSceneLayerQuality,
+  formatQualityGuardSummary,
+  SCENE_ASSEMBLY_LAW_VERSION,
+  type SceneGraph,
+  type SceneStackExportBundle,
+  type CleanRegenerationPlan,
   type SceneStackCompositeStatus,
   type SceneStackLayerId,
   type SceneStackLayerView,
@@ -225,7 +237,14 @@ export function useSceneStack(
 
       try {
         const station = getSceneStackStation(departmentId, stationId);
-        const referenceImageUrls = station
+        const blueprint = resolveMasterSceneBlueprint({
+          departmentId,
+          projectId,
+          stationId,
+          workspaceId,
+        });
+
+        const rawReferenceUrls = station
           ? getLockedReferenceUrlsForLayer(
               departmentId,
               projectId,
@@ -235,11 +254,29 @@ export function useSceneStack(
             )
           : [];
 
+        const refEnforcement = enforceFalReferenceLaw({
+          departmentId,
+          projectId,
+          stationId,
+          targetLayerId: layerId,
+          requestedUrls: rawReferenceUrls,
+        });
+
+        if (!refEnforcement.ok) {
+          const msg = refEnforcement.violations.join(' ');
+          failStudioAlphaGeneration(generationId, msg);
+          setErrors((prev) => ({ ...prev, [key]: msg }));
+          return false;
+        }
+
+        const referenceImageUrls = refEnforcement.sanitizedUrls;
+
         const compiled = compileSceneStackLayerPrompt({
           departmentId,
           stationId,
           layerId,
           workspaceId,
+          projectId,
           referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
         });
 
@@ -259,6 +296,39 @@ export function useSceneStack(
         if (!result.ok || !result.publicUrl) {
           failStudioAlphaGeneration(generationId, result.error ?? 'Layer generation failed');
           setErrors((prev) => ({ ...prev, [key]: result.error ?? 'Layer generation failed' }));
+          return false;
+        }
+
+        const quality = await validateSceneLayerQuality({
+          layerId,
+          publicUrl: result.publicUrl,
+          blueprint,
+        });
+
+        if (quality.status === 'regenerate_required') {
+          const msg = formatQualityGuardSummary(quality);
+          failStudioAlphaGeneration(generationId, msg);
+          setErrors((prev) => ({ ...prev, [key]: msg }));
+          saveSceneStackLayerRecord({
+            departmentId,
+            projectId,
+            stationId,
+            layerId,
+            version: nextVersion,
+            status: 'failed',
+            publicUrl: result.publicUrl,
+            storagePath: result.storagePath,
+            model: result.model,
+            generatedAt: new Date().toISOString(),
+            promptVersion: compiled.promptVersion,
+            productionGroupId: compiled.productionGroupId,
+            heroAssetId: compiled.heroAssetId,
+            blueprintId: compiled.blueprintId,
+            assemblyLawVersion: SCENE_ASSEMBLY_LAW_VERSION,
+            qualityStatus: 'regenerate_required',
+            qualityIssues: quality.issues,
+          });
+          bump();
           return false;
         }
 
@@ -283,6 +353,10 @@ export function useSceneStack(
           promptVersion: compiled.promptVersion,
           productionGroupId: compiled.productionGroupId,
           heroAssetId: compiled.heroAssetId,
+          blueprintId: compiled.blueprintId,
+          assemblyLawVersion: SCENE_ASSEMBLY_LAW_VERSION,
+          qualityStatus: quality.status,
+          qualityIssues: quality.issues,
         });
 
         registerStudioAsset({
@@ -377,6 +451,56 @@ export function useSceneStack(
     [departmentId, generateLayer, projectId, ensuringStations]
   );
 
+  const getStationBlueprint = useCallback(
+    (stationId: string) =>
+      resolveMasterSceneBlueprint({ departmentId, projectId, stationId, workspaceId }),
+    [departmentId, projectId, workspaceId]
+  );
+
+  const getStationSceneGraph = useCallback(
+    (stationId: string): SceneGraph => {
+      const blueprint = getStationBlueprint(stationId);
+      return buildSceneGraph({ blueprint, departmentId, projectId, stationId });
+    },
+    [departmentId, getStationBlueprint, projectId]
+  );
+
+  const planStationCleanRegeneration = useCallback(
+    (stationId: string): CleanRegenerationPlan | null =>
+      planCleanRegeneration(departmentId, projectId, stationId),
+    [departmentId, projectId]
+  );
+
+  const cleanRegenerateStation = useCallback(
+    async (stationId: string): Promise<boolean> => {
+      const plan = planCleanRegeneration(departmentId, projectId, stationId);
+      if (!plan) return false;
+
+      executeCleanRegenerationDiscard(departmentId, projectId, plan);
+      bump();
+
+      for (const layerId of plan.regenerateOrder) {
+        const ok = await generateLayer(stationId, layerId, true);
+        if (!ok && layerId === 'environment-shell') return false;
+      }
+      return true;
+    },
+    [bump, departmentId, generateLayer, projectId]
+  );
+
+  const exportStationScene = useCallback(
+    async (stationId: string, includeFlattenedPreview = true): Promise<SceneStackExportBundle> => {
+      const blueprint = getStationBlueprint(stationId);
+      const graph = buildSceneGraph({ blueprint, departmentId, projectId, stationId });
+      return buildSceneStackExportBundle({
+        blueprint,
+        graph,
+        includeFlattenedPreview,
+      });
+    },
+    [departmentId, getStationBlueprint, projectId]
+  );
+
   const readyStationCount = useMemo(
     () => stations.filter((s) => getCompositeStatus(s.stationId) === 'ready').length,
     [stations, getCompositeStatus]
@@ -402,5 +526,10 @@ export function useSceneStack(
     isAnyPipelineActive,
     errors,
     bump,
+    getStationBlueprint,
+    getStationSceneGraph,
+    planStationCleanRegeneration,
+    cleanRegenerateStation,
+    exportStationScene,
   };
 }

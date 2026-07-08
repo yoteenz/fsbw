@@ -47,6 +47,10 @@ function slimLayerRecord(rec: SceneStackLayerRecord): SceneStackLayerRecord {
     promptVersion: rec.promptVersion,
     productionGroupId: rec.productionGroupId,
     heroAssetId: rec.heroAssetId,
+    blueprintId: rec.blueprintId,
+    assemblyLawVersion: rec.assemblyLawVersion,
+    qualityStatus: rec.qualityStatus,
+    qualityIssues: rec.qualityIssues,
   };
 }
 
@@ -125,4 +129,27 @@ export function nextSceneStackLayerVersion(
 ): number {
   const current = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
   return (current?.version ?? 0) + 1;
+}
+
+/** Remove layer records except those in keepLayerIds — used by Clean Regeneration Mode™. */
+export function purgeSceneStackLayerRecords(
+  departmentId: string,
+  projectId: string,
+  stationId: string,
+  keepLayerIds: SceneStackLayerId[]
+): number {
+  const keep = new Set(keepLayerIds);
+  const store = readStore();
+  const before = store.layers.length;
+  const next = store.layers.filter(
+    (rec) =>
+      !(
+        rec.departmentId === departmentId &&
+        rec.projectId === projectId &&
+        rec.stationId === stationId &&
+        !keep.has(rec.layerId)
+      )
+  );
+  writeStore({ layers: next });
+  return before - next.length;
 }

@@ -42434,6 +42434,7 @@ User reported Scene Assembly™ degrades quality with each stacked layer — eac
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-08 — Creative Direction Studio™ Parallel Futures Integration™ universal vision-first pipeline
 
 User **FOLLOW-UP SPRINT — Creative Direction Studio™ Parallel Futures Integration™:** Parallel Futures™ must become Studio OS's universal creative workflow inside CDS — not Atlas-only. Replace prompt→generate→approve with Founder Intent™ → Story Table™ → Parallel Futures™ → Future Merge™ → Concept Approval™ → Scene Deconstruction™ → Asset Registry™ → Warehouse™ → Scene Assembly™ → Golden Build™.
@@ -42464,3 +42465,20 @@ User **FOLLOW-UP SPRINT — Future Tournament™ (Intelligent Design Review Engi
 - **Docs:** `docs/studio-os/creative-direction-studio-future-tournament.md`.
 - **Boundaries:** heuristic judging — not live engine API calls; extends CDS room (new zone), no redesign.
 - **Prior arc (same chat):** CDS Parallel Futures Integration™ · Atlas Future Merge™ · Parallel Futures™.
+=======
+## 2026-07-08 — Scene Stack™ quality preservation hardening sprint
+
+User **FOLLOW-UP SPRINT:** Harden Scene Assembly™ so quality degradation never regresses — expand beyond first fix (shell-only refs, isolated prompts, no marble on layered passes).
+
+- **Immutable Layer Law (`assembly-law.ts`):** Approved layers are immutable source assets. Scene Assembly may only position/mask/align/composite/blend at runtime — never send prior generative layers back to FAL.
+- **Master Scene Blueprint™ (`master-scene-blueprint.ts`):** Shared spatial+creative contract per station — camera, zones, placement, lighting, visual DNA, shell ref, layer dependency rules. Every layer prompt compiled from blueprint (`prompt-compiler.ts` v2), not flattened prior outputs.
+- **Reference enforcement (`reference-enforcement.ts` + `api/_lib/sceneStackReferenceEnforcement.ts`):** Client strips/forbids prior layer URLs; server rejects `referenceImageUrls.length > 1` for `scene-stack-*` groups with `SCENE_STACK_REFERENCE_LAW`.
+- **Scene Graph™ (`scene-graph.ts`):** Technical node model — blueprint id, asset registry id, source image, z-index, blend mode, opacity, quality status, immutability flag. `flatteningAllowed: false` at runtime.
+- **Quality Guard™ (`quality-guard.ts`):** Canvas heuristics before save — resolution, aspect, frame coverage, shell similarity, edge sharpness, washout. Failures → `regenerate_required` + reasons; layer saved as failed not approved.
+- **Clean Regeneration Mode™ (`clean-regeneration.ts` + `useSceneStack.cleanRegenerateStation`):** Discard degraded derived layers, keep sharp shell, regenerate from blueprint+shell only. `purgeSceneStackLayerRecords` in store.
+- **Final Export Rule™ (`scene-export.ts`):** `buildSceneStackExportBundle` / `flattenSceneGraphToCanvas` — flattening only on export; layered graph canonical.
+- **Hook exports:** `getStationBlueprint`, `getStationSceneGraph`, `planStationCleanRegeneration`, `cleanRegenerateStation`, `exportStationScene`.
+- **Types:** `SCENE_ASSEMBLY_LAW_VERSION`, `MASTER_SCENE_BLUEPRINT_VERSION`, `SCENE_STACK_PROMPT_VERSION` → `scene-stack.v2`, layer records store `blueprintId`, `assemblyLawVersion`, `qualityStatus`, `qualityIssues`.
+- **Docs:** `docs/studio-os/scene-stack/quality-preservation-law.md`.
+- **Prior arc (same chat):** First degradation fix · Studio World/Atlas sprints · Executive Atrium · Cost HUD.
+>>>>>>> c0fcc673 (Harden Scene Stack quality preservation — blueprint, graph, quality guard, clean regen)

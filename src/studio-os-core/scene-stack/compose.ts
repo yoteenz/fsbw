@@ -21,7 +21,7 @@ export function resolveStationLayerViews(
     if (generatingLayerIds.has(def.id)) status = 'generating';
     else if (failedLayerIds.has(def.id)) status = 'failed';
     else if (rec?.status === 'approved' && rec.publicUrl) status = 'approved';
-    else if (rec?.publicUrl) status = 'approved';
+    else if (rec?.publicUrl && rec.status !== 'discarded') status = 'approved';
 
     return {
       layerId: def.id,
@@ -29,6 +29,8 @@ export function resolveStationLayerViews(
       status,
       publicUrl: rec?.publicUrl ?? null,
       version: rec?.version ?? 0,
+      qualityStatus: rec?.qualityStatus,
+      qualityIssues: rec?.qualityIssues,
     };
   });
 }

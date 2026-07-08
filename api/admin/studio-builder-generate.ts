@@ -5,6 +5,7 @@ export const config = {
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
 import { generateStudioBuilderAsset } from '../_lib/studioBuilderGeneration.js';
+import { assertSceneStackFalReferencesAllowed } from '../_lib/sceneStackReferenceEnforcement.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
 import {
   evaluateCreativeDecision,
@@ -114,6 +115,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
+  const referenceImageUrls = Array.isArray(body?.referenceImageUrls)
+    ? (body.referenceImageUrls as unknown[]).filter((u): u is string => typeof u === 'string' && u.startsWith('http'))
+    : undefined;
+
+  const refCheck = assertSceneStackFalReferencesAllowed({ productionGroupId, referenceImageUrls });
+  if (!refCheck.ok) {
+    return res.status(400).json({ ok: false, error: refCheck.error, code: 'SCENE_STACK_REFERENCE_LAW' });
+  }
+
   const result = await generateStudioBuilderAsset({
     departmentId,
     packageId,
@@ -123,9 +133,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     prompt,
     aspectRatio,
     outputFormat,
-    referenceImageUrls: Array.isArray(body?.referenceImageUrls)
-      ? (body.referenceImageUrls as unknown[]).filter((u): u is string => typeof u === 'string' && u.startsWith('http'))
-      : undefined,
+    referenceImageUrls,
   });
 
   if (!result.ok) {

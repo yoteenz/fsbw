@@ -17,11 +17,7 @@ export const SCENE_STACK_BLEND_COMPOSITE_LAYERS: ReadonlySet<SceneStackLayerId> 
 
 /**
  * Placement reference for FAL — NOT a cumulative composite of all prior layers.
- *
- * Each new pass receives only the locked environment shell so the model knows
- * camera angle, room geometry, and where to place this layer. Prior generative
- * layers are composed at runtime in the viewport; passing them into FAL edit
- * re-encodes the stack and degrades quality with every pass.
+ * Returns shell URL only. Use enforceFalReferenceLaw() before every FAL call.
  */
 export function getLockedReferenceUrlsForLayer(
   departmentId: string,

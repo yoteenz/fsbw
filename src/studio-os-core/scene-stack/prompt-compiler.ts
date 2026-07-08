@@ -2,6 +2,10 @@ import { requireDepartmentPackage } from '../department-package';
 import { resolveCompanyGenomeSnapshot } from '../studio-builder/genome-context';
 import { resolveActiveProjectGenome } from '../project-genome';
 import { getLayerDefinition } from './layer-catalog';
+import {
+  formatBlueprintPromptClause,
+  resolveMasterSceneBlueprint,
+} from './master-scene-blueprint';
 import { isBlendCompositeLayer } from './reference-chain';
 import { getSceneStackStation, requireSceneStackManifest } from './station-manifest';
 import type { CompiledSceneStackLayerPrompt, SceneStackLayerId } from './types';
@@ -11,17 +15,17 @@ const LAYER_ISOLATION: Record<SceneStackLayerId, string> = {
   'environment-shell':
     'LAYER PASS 01 ENVIRONMENT SHELL ONLY — architecture walls ceiling floor structure proportions. NO furniture NO hero objects NO lighting effects NO atmosphere NO people NO UI.',
   'signature-landmark':
-    'LAYER PASS 02 SIGNATURE LANDMARK ONLY — department hero object isolated in scene context. NO full room rebuild NO UI.',
+    'LAYER PASS 02 SIGNATURE LANDMARK ONLY — hero object / landmark isolated. NO full room rebuild NO UI.',
   'furniture-objects':
     'LAYER PASS 03 FURNITURE AND PHYSICAL OBJECTS ONLY — desks shelves props equipment. NO architecture rebuild NO lighting pass.',
   'lighting-systems':
-    'LAYER PASS 04 LIGHTING SYSTEMS ONLY — light pools accents tracks coffer glow reflections. Dark-friendly lighting pass for compositing.',
+    'LAYER PASS 04 LIGHTING SYSTEMS ONLY — light pools accents tracks coffer glow reflections. Overlay-friendly pass.',
   'atmospheric-systems':
-    'LAYER PASS 05 ATMOSPHERIC SYSTEMS ONLY — volumetric haze depth air particles subtle fog.',
+    'LAYER PASS 05 ATMOSPHERIC SYSTEMS ONLY — volumetric haze depth air particles subtle fog. Transparent overlay when possible.',
   'surface-materials':
     'LAYER PASS 06 SURFACE MATERIALS AND DETAIL ONLY — bronze stone glass metal texture richness.',
   'ambient-motion':
-    'LAYER PASS 07 AMBIENT MOTION HINT — subtle motion blur trails shimmer for idle life compositing.',
+    'LAYER PASS 07 AMBIENT MOTION HINT — subtle motion blur trails shimmer particles. Transparent overlay when possible.',
   interaction: '',
   'runtime-effects': '',
   'founder-personalization':
@@ -33,7 +37,8 @@ export function compileSceneStackLayerPrompt(input: {
   stationId: string;
   layerId: SceneStackLayerId;
   workspaceId?: string;
-  /** Approved layer URLs locked before this pass — prompts FAL to preserve geometry. */
+  projectId?: string;
+  /** Shell placement URL only — never prior generative layers */
   referenceImageUrls?: string[];
 }): CompiledSceneStackLayerPrompt {
   const pkg = requireDepartmentPackage(input.departmentId);
@@ -46,6 +51,13 @@ export function compileSceneStackLayerPrompt(input: {
     throw new Error(`No layer prompt for ${input.stationId}/${input.layerId}`);
   }
 
+  const blueprint = resolveMasterSceneBlueprint({
+    departmentId: input.departmentId,
+    projectId: input.projectId ?? 'default',
+    stationId: input.stationId,
+    workspaceId: input.workspaceId,
+  });
+
   const layerDef = getLayerDefinition(input.layerId);
   const company = resolveCompanyGenomeSnapshot(input.workspaceId);
   const project = resolveActiveProjectGenome(input.departmentId);
@@ -54,22 +66,23 @@ export function compileSceneStackLayerPrompt(input: {
 
   const hasPlacementRef = (input.referenceImageUrls?.length ?? 0) > 0;
   const placementClause = hasPlacementRef
-    ? 'PLACEMENT REFERENCE ONLY: The reference image shows locked camera angle, room geometry, and shell proportions — use it to position this layer correctly. Do NOT redraw, copy, or re-encode the reference into your output. Do NOT include walls, ceiling, floor, or content from other layer passes.'
+    ? 'PLACEMENT REFERENCE ONLY: Shell reference defines camera angle and room geometry for positioning — NOT an image to redraw or re-encode. Do NOT include walls, ceiling, floor, or any prior layer content in output.'
     : '';
 
   const outputClause = (() => {
     if (input.layerId === 'environment-shell') {
-      return 'OUTPUT: Full environment shell plate — architecture only, no furniture, no hero objects, no lighting FX.';
+      return 'OUTPUT: Full environment shell plate — architecture only. This is the ONLY layer pass permitted as a full-scene render.';
     }
     if (isBlendCompositeLayer(input.layerId)) {
-      return 'OUTPUT: Isolated effect pass on pure black (#000000) background for runtime CSS blend compositing. Include ONLY this layer\'s lighting, atmosphere, materials, motion, or personalization effect — no architecture, no furniture, no full scene.';
+      return 'OUTPUT: Isolated lighting/atmosphere/particle/material overlay on pure black (#000000) or transparent background for runtime CSS blend. NOT a full scene.';
     }
-    return 'OUTPUT: Isolated layer plate — ONLY this pass\'s new objects and elements with transparent background outside subjects. Match reference perspective. Do NOT bake in shell architecture or prior layer content.';
+    return 'OUTPUT: Isolated asset plate — ONLY this pass\'s landmark/furniture/objects with transparent background outside subjects. NOT a full scene.';
   })();
 
   const prompt = [
     `SCENE STACK™ — ${layerDef.displayName.toUpperCase()}.`,
     `STATION: ${station.displayName} · ${station.stationId}.`,
+    formatBlueprintPromptClause(blueprint, input.layerId),
     LAYER_ISOLATION[input.layerId],
     placementClause,
     outputClause,
@@ -77,7 +90,7 @@ export function compileSceneStackLayerPrompt(input: {
     `PROJECT: ${project.name}. ROOM DNA: ${feeling}. Avoid: ${forbidden}.`,
     `Company ${company.companyName}: ${company.editorialDirection}.`,
     `OUTPUT: Mobile portrait ${manifest.aspectRatio} · single isolated layer pass · photoreal · compositing-ready · no UI chrome.`,
-    `NEGATIVE: complete scene single image full room render cumulative layer stack re-encoded reference dashboard UI ${layerPrompt.negative}`,
+    `NEGATIVE: complete scene single image full room render cumulative layer stack re-encoded reference prior layers baked composite dashboard UI ${layerPrompt.negative}`,
   ]
     .filter(Boolean)
     .join(' ');
@@ -92,5 +105,6 @@ export function compileSceneStackLayerPrompt(input: {
     productionGroupId: layerPrompt.productionGroupId,
     heroAssetId: layerPrompt.heroAssetId,
     promptVersion: SCENE_STACK_PROMPT_VERSION,
+    blueprintId: blueprint.blueprintId,
   };
 }

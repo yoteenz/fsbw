@@ -15,7 +15,7 @@ export type StudioBuilderGeneratePayload = {
   outputFormat: 'png' | 'webp';
   /** When true, bypass CIE reuse-only gate for explicit layer generation */
   forceGenerate?: boolean;
-  /** Locked Scene Stack layer URLs — shell + prior passes preserve geometry */
+  /** Shell placement URL only — Scene Assembly Law: never prior generative layers */
   referenceImageUrls?: string[];
 };
 
