@@ -9,6 +9,8 @@ import { useAdminStudioWarehouse } from '../../../../hooks/useAdminStudioWarehou
 import { useAdminStudioMuseum } from '../../../../hooks/useAdminStudioMuseumState';
 import { useSceneStack } from '../../../../hooks/useSceneStack';
 import { useCdsImmersion } from '../../../../hooks/useCdsImmersion';
+import { useStudioAlphaCost } from '../../../../hooks/useStudioAlphaCost';
+import { StudioAlphaCostHud } from '../../studio-os/studio-alpha-cost/StudioAlphaCostHud';
 import { useDepartmentRoomExit } from '../../studio-os/department-vertical-slice/DepartmentGoldenBuildShell';
 import { SceneStackViewport } from '../../studio-os/creative-direction-studio/SceneStackViewport';
 import { CDS_GENESIS_INTERACTION_STYLES } from '../../studio-os/creative-direction-studio/cdsInteractionLayerTheme';
@@ -132,6 +134,19 @@ export function StudioWarehouseRoom() {
     if (activeWing === 'expansion') return 'Studio Warehouse™ · Future Expansion™';
     return 'Studio Warehouse™';
   }, [activeWing]);
+
+  const costSnapshot = useStudioAlphaCost({
+    departmentId: DEPARTMENT_ID,
+    projectId: project.projectId,
+    sceneId: wh.activeZoneId,
+    departmentDisplayName: campusTitle,
+    sceneDisplayName: activeZone.label,
+    layersComplete: activePipeline.layersComplete,
+    layersTotal: activePipeline.layersTotal,
+    pipelinePhase: activePipeline.phase,
+    currentLayerId: activePipeline.currentLayerId,
+    currentLayerLabel: activePipeline.currentLayerLabel,
+  });
 
   const goToZone = useCallback(
     (zoneId: WarehouseCameraZoneId) => {
@@ -328,6 +343,7 @@ export function StudioWarehouseRoom() {
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
       <style>{CDS_IMMERSION_STYLES}</style>
       <style>{WAREHOUSE_DESTINATION_STYLES}</style>
+      <StudioAlphaCostHud snapshot={costSnapshot} />
       <div className={worldClass} onPointerMove={immersion.onPointerMove} style={immersion.parallaxStyle}>
         <header className="wh-world__hud">
           <button type="button" className="wh-world__back" onClick={exitRoom} aria-label="Exit warehouse">

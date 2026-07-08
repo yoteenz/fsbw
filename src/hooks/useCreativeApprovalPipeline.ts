@@ -23,6 +23,11 @@ import { getNextPipelineStage, type PipelineStageId } from '../studio-os-core/st
 import { registerStudioAsset } from '../studio-os-core/studio-builder/registry-store';
 import { requireDepartmentPackage } from '../studio-os-core/department-package';
 import { requestStudioBuilderGenerate } from '../services/studio/studioBuilder/api';
+import {
+  beginPipelineGeneration,
+  completeStudioAlphaGeneration,
+  failStudioAlphaGeneration,
+} from '../studio-os-core/studio-alpha-cost';
 import type {
   CreativeReviewReport,
   FounderReviewPath,
@@ -187,6 +192,15 @@ export function useCreativeApprovalPipeline(
       );
       bump();
 
+      const generationId = beginPipelineGeneration({
+        departmentId,
+        projectId,
+        stageId,
+        stageName: stage.displayName,
+        heroAssetId: stage.heroAssetId,
+        aspectRatio: compiled.aspectRatio,
+      });
+
       const result = await requestStudioBuilderGenerate({
         departmentId,
         packageId: pkg.packageId,
@@ -199,6 +213,7 @@ export function useCreativeApprovalPipeline(
       });
 
       if (!result.ok || !result.publicUrl) {
+        failStudioAlphaGeneration(generationId, result.error ?? 'Generation failed');
         updatePipelineStage(departmentId, projectId, stageId, {
           status: 'failed',
           error: result.error ?? 'Generation failed',
@@ -206,6 +221,12 @@ export function useCreativeApprovalPipeline(
         bump();
         return { ok: false as const, error: result.error };
       }
+
+      completeStudioAlphaGeneration({
+        generationId,
+        model: result.model,
+        assetId: stage.heroAssetId,
+      });
 
       const refreshed = getPipelineStageRecord(departmentId, projectId, stageId);
       if (!refreshed) return { ok: false as const };

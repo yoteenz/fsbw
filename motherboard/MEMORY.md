@@ -42191,3 +42191,18 @@ User **IMPLEMENTATION SPRINT / ARCHITECTURAL REFACTOR:** Studio Museum™ must n
 - **Routes:** `/admin/studio/studio-museum` → **redirect** to `/admin/studio/studio-warehouse?zone=museum-wing`; `adminStudioMuseumPath()` updated; nav CTA **ENTER MUSEUM WING**. Marketplace Imports has **Walk Into Museum Wing™** (no external navigation).
 - **Prior arc (same chat):** crash/reload fix · Supabase registry · Warehouse→Scene Stack bridge · direct links · migration verify (5 tables).
 - **Files:** `campus-nav.ts`, `camera-zones.ts`, `warehouseCameraZones.ts`, `warehouse-station-prompts.ts`, `StudioWarehouseRoom.tsx`, `MuseumWingInteractions.tsx`, `InnovationHallInteractions.tsx`, `WarehouseArchitecturalDirectory.tsx`, `warehouseDestinationTheme.ts`, `warehouseOrbPersonality.ts`, `studio-museum/page.tsx`, `adminStudioRoutes.ts`, `adminStudioNavigation.ts`.
+
+---
+
+## 2026-07-08 — Studio Alpha™ Production Cost HUD (immersive internal)
+
+User **IMPLEMENTATION SPRINT:** Live internal production cost visibility inside immersive Studio OS environments (CDS, Scene Stack, Warehouse/Museum/Innovation wings) — **not** old admin pages or standard webpages.
+
+- **Core module (`src/studio-os-core/studio-alpha-cost/`):** Centralized **`FAL_PRICING_CONFIG`** (`pricing-config.ts`) — provider, model, quality, resolution, `costPerImage`, storage/upscale placeholders, `lastUpdated`, notes; update here when FAL pricing changes. **`cost-engine.ts`** estimates from config; labels **Estimated / Actual / Unknown** — never fakes exact API costs. **`receipt-store.ts`** — per-generation receipts (`generationId`, asset/scene/department ids, provider, model, costs, duration, status, reuse/savings) in `studioOsStudioAlphaCostReceipts_v1`. **`budget-store.ts`** — monthly creative budget default **$250** in `studioOsStudioAlphaCreativeBudget_v1`. **`tracker.ts`** — `beginStudioAlphaGeneration` / `complete` / `fail` / `recordStudioAlphaReuse`. **`aggregation.ts`** + **`portfolio-metrics.ts`** — HUD snapshots (current gen/scene/dept, Studio Alpha totals, Creative Budget™, Creative Portfolio™, Asset ROI).
+- **HUD UI:** `StudioAlphaCostHud.tsx` — right-side collapsible glass drawer ("Production Cost" tab); sections: Current Generation, Current Scene, Current Department, Studio Alpha Totals, Creative Budget™, Creative Portfolio™, top Asset ROI. Mounted in **`CreativeDirectionStudioRoom`** + **`StudioWarehouseRoom`** only (immersive overlay, does not block scene).
+- **Hook:** `useStudioAlphaCost` — live refresh on `studio-os-alpha-cost-updated` + 2s tick while generating.
+- **Generation wiring:** `useSceneStack.generateLayer` — receipt on FAL start/complete/fail; registry reuse → `recordStudioAlphaReuse` with real `reusedFromAssetId`. `useCreativeApprovalPipeline` pipeline stages → same receipt flow via `beginPipelineGeneration`.
+- **Storage:** Receipt + budget keys added to `studioOsBrowserStorage` lightweight allowlist.
+- **Prior arc (same chat):** Museum→Warehouse absorption · crash/reload fix · Supabase registry · direct links.
+- **Files:** `studio-alpha-cost/*`, `StudioAlphaCostHud.tsx`, `useStudioAlphaCost.ts`, `useSceneStack.ts`, `useCreativeApprovalPipeline.ts`, `CreativeDirectionStudioRoom.tsx`, `StudioWarehouseRoom.tsx`, `studioOsBrowserStorage.ts`.
+- **Future:** Wire `apiActualCost` when FAL billing returns from API; optional Supabase receipts table.

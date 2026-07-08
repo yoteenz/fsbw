@@ -24,6 +24,9 @@ function maxLocalValueBytesForKey(key: string): number {
   if (key === 'studioOsSceneStack_v1' || key === 'studioOsStudioBuilderRegistry_v1') {
     return SCENE_STACK_LOCAL_VALUE_BYTES;
   }
+  if (key === 'studioOsStudioAlphaCostReceipts_v1') {
+    return SCENE_STACK_LOCAL_VALUE_BYTES;
+  }
   return STUDIO_OS_MAX_LOCAL_VALUE_BYTES;
 }
 
@@ -60,6 +63,9 @@ const LIGHTWEIGHT_EXACT_KEYS = new Set([
   'studioOsProjectGenome_v1',
   /** Studio Builder pipeline registry — Warehouse™ catalog source (not M140 Asset Registry™). */
   'studioOsStudioBuilderRegistry_v1',
+  /** Studio Alpha™ production cost receipts + creative budget (internal HUD). */
+  'studioOsStudioAlphaCostReceipts_v1',
+  'studioOsStudioAlphaCreativeBudget_v1',
 ]);
 
 /** Substring patterns for small UI preference keys. */

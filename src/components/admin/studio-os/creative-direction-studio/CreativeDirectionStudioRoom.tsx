@@ -23,6 +23,8 @@ import { StudioOrbHost } from './StudioOrbHost';
 import { CDS_GENESIS_INTERACTION_STYLES } from './cdsInteractionLayerTheme';
 import { CDS_IMMERSION_STYLES } from './cdsImmersionTheme';
 import { useCdsImmersion } from '../../../../hooks/useCdsImmersion';
+import { useStudioAlphaCost } from '../../../../hooks/useStudioAlphaCost';
+import { StudioAlphaCostHud } from '../studio-alpha-cost/StudioAlphaCostHud';
 import {
   CDS_CAMERA_ZONES,
   cdsZonePanVw,
@@ -100,6 +102,19 @@ export function CreativeDirectionStudioRoom() {
   );
   const stackButtonBusy = stack.isStationPipelineActive(activeZoneId);
   const immersion = useCdsImmersion(true, stack.isAnyPipelineActive);
+
+  const costSnapshot = useStudioAlphaCost({
+    departmentId: DEPARTMENT_ID,
+    projectId: slice.project.projectId,
+    sceneId: activeZoneId,
+    departmentDisplayName: slice.pkg.definition.displayName,
+    sceneDisplayName: activeZone.label,
+    layersComplete: activePipeline.layersComplete,
+    layersTotal: activePipeline.layersTotal,
+    pipelinePhase: activePipeline.phase,
+    currentLayerId: activePipeline.currentLayerId,
+    currentLayerLabel: activePipeline.currentLayerLabel,
+  });
 
   const pipelineProgressPct = useMemo(() => {
     if (!activePipeline.layersTotal) return 0;
@@ -346,6 +361,7 @@ export function CreativeDirectionStudioRoom() {
       <style>{DEPARTMENT_SLICE_STYLES}</style>
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
       <style>{CDS_IMMERSION_STYLES}</style>
+      <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
         className={`cds-stack${reviewMode ? ' cds-genesis--review-mode' : ''}`}
         onPointerMove={immersion.onPointerMove}

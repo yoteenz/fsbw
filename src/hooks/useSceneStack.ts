@@ -16,12 +16,20 @@ import {
   hydrateSceneStackFromBuilderRegistry,
   tryMountSceneStackLayerFromRegistry,
   SCENE_STACK_HYDRATED_EVENT,
+  getRegistryAssetForSceneLayer,
   type SceneStackCompositeStatus,
   type SceneStackLayerId,
   type SceneStackLayerView,
 } from '../studio-os-core/scene-stack';
 import { registerStudioAsset } from '../studio-os-core/studio-builder/registry-store';
 import { requestStudioBuilderGenerate } from '../services/studio/studioBuilder/api';
+import {
+  beginStudioAlphaGeneration,
+  completeStudioAlphaGeneration,
+  failStudioAlphaGeneration,
+  layerIdToAssetType,
+  recordStudioAlphaReuse,
+} from '../studio-os-core/studio-alpha-cost';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -162,9 +170,29 @@ export function useSceneStack(
       const existing = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
       if (!force && existing?.status === 'approved' && existing.publicUrl) return true;
 
-      if (!force && tryMountSceneStackLayerFromRegistry(departmentId, projectId, stationId, layerId)) {
-        bump();
-        return true;
+      if (!force) {
+        const reuseEntry = getRegistryAssetForSceneLayer(
+          departmentId,
+          projectId,
+          stationId,
+          layerId
+        );
+        if (
+          reuseEntry?.publicUrl &&
+          tryMountSceneStackLayerFromRegistry(departmentId, projectId, stationId, layerId)
+        ) {
+          recordStudioAlphaReuse({
+            departmentId,
+            projectId,
+            sceneId: stationId,
+            assetId: `scene-stack-${stationId}-${layerId}-reused`,
+            assetType: layerIdToAssetType(layerId),
+            reusedFromAssetId: reuseEntry.assetId,
+            model: reuseEntry.model,
+          });
+          bump();
+          return true;
+        }
       }
 
       setPipelineLayer({ stationId, layerId, phase: 'generating' });
@@ -180,6 +208,15 @@ export function useSceneStack(
         : existing?.publicUrl
           ? existing.version
           : nextSceneStackLayerVersion(departmentId, projectId, stationId, layerId);
+
+      const assetId = `scene-stack-${stationId}-${layerId}-v${nextVersion}`;
+      const generationId = beginStudioAlphaGeneration({
+        departmentId,
+        projectId,
+        sceneId: stationId,
+        assetId,
+        assetType: layerIdToAssetType(layerId),
+      });
 
       try {
         const station = getSceneStackStation(departmentId, stationId);
@@ -215,9 +252,16 @@ export function useSceneStack(
         });
 
         if (!result.ok || !result.publicUrl) {
+          failStudioAlphaGeneration(generationId, result.error ?? 'Layer generation failed');
           setErrors((prev) => ({ ...prev, [key]: result.error ?? 'Layer generation failed' }));
           return false;
         }
+
+        completeStudioAlphaGeneration({
+          generationId,
+          model: result.model,
+          assetId,
+        });
 
         saveSceneStackLayerRecord({
           departmentId,
@@ -240,7 +284,7 @@ export function useSceneStack(
           departmentId,
           projectId,
           packageId: pkg.packageId,
-          assetId: `scene-stack-${stationId}-${layerId}-v${nextVersion}`,
+          assetId,
           productionGroupId: compiled.productionGroupId,
           category: 'scene-stack-layer',
           publicUrl: result.publicUrl,
@@ -254,6 +298,16 @@ export function useSceneStack(
 
         bump();
         return true;
+      } catch (err) {
+        failStudioAlphaGeneration(
+          generationId,
+          err instanceof Error ? err.message : 'Layer generation failed'
+        );
+        setErrors((prev) => ({
+          ...prev,
+          [key]: err instanceof Error ? err.message : 'Layer generation failed',
+        }));
+        return false;
       } finally {
         setGeneratingKeys((prev) => {
           const next = new Set(prev);
