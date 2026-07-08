@@ -33,6 +33,7 @@ const ROUTE_ENGINE_HINTS: Record<string, AtlasEngineId[]> = {
   'architecture-observatory': ['architecture-auditor'],
   'experience-observatory': ['experience-intelligence'],
   'world-atlas': ['company-genome'],
+  'constitution-hall': ['architecture-auditor', 'experience-intelligence'],
   'creative-direction-immersive': ['creative-intelligence', 'scene-stack'],
   'studio-warehouse': ['asset-registry', 'generation-pipeline'],
   marketplace: ['creative-portfolio'],

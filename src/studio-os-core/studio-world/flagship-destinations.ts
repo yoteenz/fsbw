@@ -116,6 +116,14 @@ export const FLAGSHIP_DISTRICTS: StudioWorldLocation[] = [
     flagshipId: 'studio-command-center',
     worldPath: 'command-center/security-center',
   },
+  {
+    id: 'scc-constitution-hall',
+    displayName: 'Constitution Hall™',
+    physicalType: 'theater',
+    flagshipId: 'studio-command-center',
+    worldPath: 'command-center/constitution-hall',
+    teaching: 'Permanent governance — eight foundational laws of Studio World™.',
+  },
   // Creative Direction Studio™
   {
     id: 'cds-story-table',

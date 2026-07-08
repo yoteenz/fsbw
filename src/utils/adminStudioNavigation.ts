@@ -107,6 +107,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'constitution-hall',
+    title: 'CONSTITUTION HALL',
+    purpose:
+      'Permanent governance chamber — eight foundational laws, Constitution Review™, and compliance scoring before any feature enters Studio World™.',
+    route: p('constitution-hall'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'LAW',
+    ctaLabel: 'ENTER HALL',
+    featuredOnOverview: true,
+  },
+  {
     id: 'chief-of-staff',
     title: 'CHIEF OF STAFF',
     purpose: 'Founder primary executive — soft approvals, unified briefings, and attention protection before escalations.',

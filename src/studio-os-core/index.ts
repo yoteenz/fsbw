@@ -158,6 +158,7 @@ export type {
 } from './creative-intelligence-engine';
 
 export * from './studio-world';
+export * from './studio-world-constitution';
 export * from './architecture-auditor';
 export * from './experience-intelligence-engine';
 export * from './studio-world-atlas';

@@ -112,4 +112,5 @@ assertFeatureBelongsToFlagship('asset-registry', 'studio-archives'); // violatio
 ## Related docs
 
 - [STUDIO_WORLD_ARCHITECTURE_V4.md](./STUDIO_WORLD_ARCHITECTURE_V4.md) — physical taxonomy and routing
+- [studio-world-constitution.md](./studio-world-constitution.md) — permanent governance and Constitution Review™
 - [creative-direction-studio-parallel-futures-integration.md](./creative-direction-studio-parallel-futures-integration.md) — vision pipeline through Concept Approval™

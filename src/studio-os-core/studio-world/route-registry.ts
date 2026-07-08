@@ -144,6 +144,7 @@ export const STUDIO_WORLD_ROUTE_REGISTRY: StudioWorldRouteMapping[] = [
   m('architecture-observatory', 'Architecture Observatory™', 'observatory', 'studio-command-center', 'scc-executive-district', 'command-center/executive-district/architecture-observatory', 'architecture-observatory', 'immersive', 'immersive-partial', 'Architecture Auditor'),
   m('experience-observatory', 'Experience Observatory™', 'observatory', 'studio-command-center', 'scc-executive-district', 'command-center/executive-district/experience-observatory', 'experience-observatory', 'immersive', 'immersive-partial', 'Experience Intelligence'),
   m('world-atlas', 'Studio World Atlas™', 'observatory', 'studio-command-center', 'scc-executive-district', 'command-center/executive-district/world-atlas', 'world-atlas', 'immersive', 'immersive-partial', 'World Atlas'),
+  m('constitution-hall', 'Constitution Hall™', 'theater', 'studio-command-center', 'scc-constitution-hall', 'command-center/constitution-hall', 'constitution-hall', 'immersive', 'immersive-partial', 'Studio World Constitution'),
 ];
 
 const worldPathIndex = new Map<string, StudioWorldRouteMapping>();

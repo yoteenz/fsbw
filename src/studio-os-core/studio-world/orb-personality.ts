@@ -5,6 +5,11 @@
 
 import type { StudioWorldFlagshipId } from './types';
 import { FLAGSHIP_RESPONSIBILITY_LAWS } from './responsibility-framework';
+import {
+  CONSTITUTION_KEEPER_ACCENT,
+  CONSTITUTION_KEEPER_GREETING,
+  CONSTITUTION_KEEPER_ROLE,
+} from '../studio-world-constitution/orb-keeper';
 
 export type StudioWorldOrbPersonality = {
   flagshipId: StudioWorldFlagshipId;
@@ -108,6 +113,7 @@ export function resolveFlagshipFromPath(pathname: string): StudioWorldFlagshipId
     return 'expedition-hub';
   }
   if (
+    p.includes('constitution-hall') ||
     p.includes('/studio/overview') ||
     p.includes('command-center') ||
     p.includes('world-atlas') ||
@@ -120,6 +126,17 @@ export function resolveFlagshipFromPath(pathname: string): StudioWorldFlagshipId
 }
 
 export function resolveOrbPersonalityForPath(pathname: string): StudioWorldOrbPersonality | null {
+  const p = pathname.toLowerCase();
+  if (p.includes('constitution-hall')) {
+    return {
+      flagshipId: 'studio-command-center',
+      role: CONSTITUTION_KEEPER_ROLE,
+      greeting: CONSTITUTION_KEEPER_GREETING,
+      guidance:
+        'I explain why principles exist, how Studio World evolves, and whether new ideas fit the civilization.',
+      accent: CONSTITUTION_KEEPER_ACCENT,
+    };
+  }
   const flagshipId = resolveFlagshipFromPath(pathname);
   return flagshipId ? ORB_PERSONALITIES[flagshipId] : null;
 }

@@ -42434,7 +42434,8 @@ User reported Scene Assembly™ degrades quality with each stacked layer — eac
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-07-08 — Creative Direction Studio™ Parallel Futures Integration™ universal vision-first pipeline
 
 User **FOLLOW-UP SPRINT — Creative Direction Studio™ Parallel Futures Integration™:** Parallel Futures™ must become Studio OS's universal creative workflow inside CDS — not Atlas-only. Replace prompt→generate→approve with Founder Intent™ → Story Table™ → Parallel Futures™ → Future Merge™ → Concept Approval™ → Scene Deconstruction™ → Asset Registry™ → Warehouse™ → Scene Assembly™ → Golden Build™.
@@ -42465,7 +42466,9 @@ User **FOLLOW-UP SPRINT — Future Tournament™ (Intelligent Design Review Engi
 - **Docs:** `docs/studio-os/creative-direction-studio-future-tournament.md`.
 - **Boundaries:** heuristic judging — not live engine API calls; extends CDS room (new zone), no redesign.
 - **Prior arc (same chat):** CDS Parallel Futures Integration™ · Atlas Future Merge™ · Parallel Futures™.
-=======
+
+---
+
 ## 2026-07-08 — Scene Stack™ quality preservation hardening sprint
 
 User **FOLLOW-UP SPRINT:** Harden Scene Assembly™ so quality degradation never regresses — expand beyond first fix (shell-only refs, isolated prompts, no marble on layered passes).
@@ -42481,4 +42484,36 @@ User **FOLLOW-UP SPRINT:** Harden Scene Assembly™ so quality degradation never
 - **Types:** `SCENE_ASSEMBLY_LAW_VERSION`, `MASTER_SCENE_BLUEPRINT_VERSION`, `SCENE_STACK_PROMPT_VERSION` → `scene-stack.v2`, layer records store `blueprintId`, `assemblyLawVersion`, `qualityStatus`, `qualityIssues`.
 - **Docs:** `docs/studio-os/scene-stack/quality-preservation-law.md`.
 - **Prior arc (same chat):** First degradation fix · Studio World/Atlas sprints · Executive Atrium · Cost HUD.
->>>>>>> c0fcc673 (Harden Scene Stack quality preservation — blueprint, graph, quality guard, clean regen)
+
+---
+
+## 2026-07-08 — Studio World Responsibility Framework™ seven flagship missions
+
+User **FOLLOW-UP SPRINT — Studio World Responsibility Framework™:** After architectural redesign created flagship destinations, define **permanent non-overlapping responsibilities** — every building answers *"What happens here that cannot happen anywhere else?"* Studio World™ = continuous workflow; each destination hands work to the next.
+
+- **Seven flagships (was five):** Command Center™ · Creative Direction Studio™ · **Studio Warehouse™** · Studio Archives™ · **Marketplace™** · Headquarters™ · Expedition Hub™. Split Warehouse + Marketplace out of Archives umbrella.
+- **Engine `src/studio-os-core/studio-world/responsibility-framework.ts`:** `FLAGSHIP_RESPONSIBILITY_LAWS` (missions, exclusive responsibilities, forbidden actions, output artifacts, handoffs) · `STUDIO_WORLD_PIPELINE` (Founder Intent → CDS → Tournament → Merge → Approval → Warehouse → Assembly → Golden Build → Archives → Marketplace → HQ → Learn) · `assertFeatureBelongsToFlagship` · `auditResponsibilityOverlap`.
+- **Orb personalities `orb-personality.ts`:** Creative Director · Production Supervisor · Historian · Curator · Executive Assistant · Chief of Staff · Coach — `resolveOrbPersonalityForPath`; wired into `StudioOrbPageGuide.tsx`.
+- **Types/routing:** `STUDIO_WORLD_FLAGSHIP_IDS` +7 · `flagship-destinations.ts` districts (warehouse production wing, marketplace pavilion) · `route-registry.ts` warehouse routes → `studio-warehouse`, marketplace → `marketplace` · `navigation.ts` pipeline walkway edges · `migration-audit.ts` visuals→warehouse, marketplace building canon.
+- **Atlas:** `catalog.ts` positions/modes for 7 flagships · `engine-registry.ts` · `world-memory.ts` · `fog-of-discovery.ts` · `orb-guide.ts` · `living-world-signals.ts` · `memory-store.ts` default discovered IDs.
+- **Docs:** `docs/studio-os/studio-world-responsibility-framework.md`; `STUDIO_WORLD_ARCHITECTURE_V4.md` updated to seven flagships.
+- **CDS pipeline comment:** `creative-pipeline-types.ts` notes vision output hands to Warehouse (Responsibility Framework alignment).
+- **Boundaries:** structural/routing law — no immersive room redesign; legacy paths preserved.
+- **Prior arc (same chat):** Future Tournament™ Phase 6 · CDS Parallel Futures Integration™ · Atlas Future Merge™ Phase 5 · Scene Stack reference-only layering fix.
+
+---
+
+## 2026-07-08 — Studio World Constitution™ governance system + Constitution Hall™
+
+User **FOLLOW-UP SPRINT — Studio World Constitution™:** Studio World complexity requires governed architecture, not just documentation. Create permanent Constitution™ — every future feature, room, department, engine, Blueprint, Expedition, Marketplace asset, and workflow must comply before entering Studio World.
+
+- **Engine `src/studio-os-core/studio-world-constitution/`:** `laws.ts` (8 Foundational Laws) · `scoring.ts` (Constitution Score™ — 9 dimensions + 70% threshold) · `review-engine.ts` (`runConstitutionReview` — 9 constitutional questions, violated laws, recommendations, room/expedition/blueprint alternatives) · `orb-keeper.ts` (Keeper of Studio World) · `store.ts` (`studioOsStudioWorldConstitution_v1` review history).
+- **Constitution Hall™:** immersive chamber in Command Center™ — `ConstitutionHallRoom.tsx` + `/admin/studio/constitution-hall` (not settings/doc). Law tablets · compliance monument · score walls · proposal review dock.
+- **Hook:** `useStudioWorldConstitution` — laws, reviewProposal, keeperLines.
+- **Routing:** `route-registry` + `flagship-destinations` district `scc-constitution-hall` · `adminStudioNavigation` overview module · `App.tsx` route · `migration-audit` immersive-partial.
+- **Orb:** Constitution Hall path → Keeper of Studio World (`orb-personality.ts`); Page Guide shows Keeper guidance.
+- **Integration:** Responsibility Framework ownership checks · Architecture Auditor complementary · exported from `studio-os-core/index.ts`.
+- **Docs:** `docs/studio-os/studio-world-constitution.md`; cross-link responsibility framework doc.
+- **Boundaries:** heuristic constitutional review — extends Command Center, no redesign of other flagships.
+- **Prior arc (same chat):** Responsibility Framework™ seven flagships · Future Tournament™ · CDS pipeline · Atlas phases.
+
