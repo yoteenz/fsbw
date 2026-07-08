@@ -1,24 +1,26 @@
 # Implementation Strategy™
 
-**Environment first · workstations second · controls last**
+**Engine first · environment generated · controls last**
 
 ---
 
 ## Purpose
 
-Define **build order** for Creative Direction Studio™ V2 reset.
+Define **build order** for Creative Direction Studio™ **V3** — Creative Intelligence Engine™ pilot.
 
-**Do NOT begin by rebuilding controls.**
+**Do NOT begin by rebuilding controls or polishing the prototype.**
 
 ---
 
-## Core Law
+## Core Law (V3)
 
 ```
-ENVIRONMENT  →  WORKSTATIONS  →  CONTROLS
+CREATIVE INTELLIGENCE ENGINE™  →  SCENE GENERATION  →  ASSEMBLY  →  PRESENTATION  →  CONTROLS
 ```
 
-Every interaction emerges naturally from the physical environment.
+V2 began with visual environment. **V3 begins with generation pipeline** — then engine builds worlds.
+
+Detail: [engine-first-roadmap.md](../creative-intelligence-engine/engine-first-roadmap.md).
 
 ---
 
@@ -26,29 +28,54 @@ Every interaction emerges naturally from the physical environment.
 
 | Action | Rule |
 |--------|------|
-| Stop card iteration | No spacing · layout fixes |
+| **Stop all CDS UI polish** | No cards · spacing · dashboard fixes |
 | Preserve route | `/admin/studio/department/creative-direction` |
-| Preserve learnings | [prototype-lessons.md](./prototype-lessons.md) |
-| Document only this sprint | V2 spec before code |
+| Preserve pipeline logic | Stores · state machines — new diegetic UI |
+| Document only this sprint | V3 engine spec before code |
 
 ---
 
-## Phase 1 — Environment Architecture
+## Phase 1 — Creative Intelligence Pipeline
 
 | Deliverable | Priority |
 |-------------|----------|
-| Spatial envelope · scale · ceiling | P0 |
-| Foreground / midground / background meshes | P0 |
-| Lighting rig · genome slots | P0 |
-| Floor · reflections · windows | P0 |
-| Arrival Zone™ camera path | P0 |
-| No page scroll enforcement | P0 |
+| Founder Intent™ contract | P0 |
+| Scene Planner™ · Prompt Composer™ | P0 |
+| Quality Inspector™ gates | P0 |
+| Provider Optimizer™ handoff to Generation Manager™ | P0 |
+| Asset Registry search-before-generate | P0 |
 
-**Exit gate:** Founder can **stand in arrival** · sense scale · no cards visible.
+**Exit gate:** One layer generates end-to-end without founder prompt.
 
 ---
 
-## Phase 2 — Arrival & Movement
+## Phase 2 — Scene Stack Generation (CDS)
+
+| Deliverable | Priority |
+|-------------|----------|
+| Six workspace scene manifests | P0 |
+| Per-layer Generation Manager™ jobs | P0 |
+| Scene Assembly™ compositor | P0 |
+| First proof scene (Story Table™ or Arrival™) | P0 |
+
+**Exit gate:** One workspace scene assembled from generated layers.
+
+---
+
+## Phase 3 — Environment Architecture (Generated)
+
+| Deliverable | Priority |
+|-------------|----------|
+| Spatial envelope from layers — not mockup | P0 |
+| Foreground / midground / background from stack | P0 |
+| Arrival Zone™ camera on generated scene | P0 |
+| No page scroll enforcement | P0 |
+
+**Exit gate:** Founder stands in **generated** arrival · no cards.
+
+---
+
+## Phase 4 — Arrival & Movement
 
 | Deliverable | Priority |
 |-------------|----------|
@@ -61,23 +88,20 @@ Every interaction emerges naturally from the physical environment.
 
 ---
 
-## Phase 3 — Physical Workstations
+## Phase 5 — Physical Workstations (Diegetic)
 
 | Deliverable | Priority |
 |-------------|----------|
 | Story Table™ + Orb anchor | P0 |
-| Living Mood Wall™ (architectural) | P0 |
-| Pipeline production board (not panel) | P0 |
-| Timeline Table™ | P1 |
-| Review Area™ seating | P1 |
-| Asset Console™ | P1 |
-| Gallery · Library · Observatory | P2 |
+| Mood Wall™ (generated editorial wall) | P0 |
+| Pipeline™ production board (not panel) | P0 |
+| Notes Desk™ · Library™ | P1 |
 
-**Exit gate:** Every feature maps to [room-as-interface.md](./room-as-interface.md).
+**Exit gate:** Six [workspace scenes](../creative-intelligence-engine/workspaces-as-scenes.md) navigable.
 
 ---
 
-## Phase 4 — Idle Life & World
+## Phase 6 — Idle Life & Orb Host
 
 | Deliverable | Priority |
 |-------------|----------|
@@ -88,18 +112,7 @@ Every interaction emerges naturally from the physical environment.
 
 ---
 
-## Phase 5 — Orb Host & Intelligence
-
-| Deliverable | Priority |
-|-------------|----------|
-| Orb spatial behaviors | P1 |
-| Pipeline narration | P1 |
-| Founder Intelligence integration | P2 |
-| Creative Direction Pipeline™ V2 at board | P2 |
-
----
-
-## Phase 6 — Controls (Last)
+## Phase 7 — Controls (Last)
 
 | Deliverable | Priority |
 |-------------|----------|
@@ -133,6 +146,8 @@ Specific framework (Three.js · R3F · etc.) — implementation decision · not 
 |-----------|
 | Rearrange prototype cards |
 | Improve dashboard spacing |
+| Polish CDS environmental CSS pass |
+| Chase pixel-perfect room renders before pipeline |
 | Add sidebar navigation |
 | Embed Notion-style blocks |
 | Ship scrollable room wrapper |

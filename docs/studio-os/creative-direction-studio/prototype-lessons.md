@@ -114,8 +114,9 @@ Card approve buttons         →    Physical approve gestures
 |------|----------|
 | 2026-07-08 Alpha | Ship prototype to prove concept |
 | 2026-07-08 Reset | Concept validated · architecture rejected · V2 docs |
+| 2026-07-08 V3 | **Creative Intelligence Engine™** — **freeze prototype · engine-first** |
 
----
+**Do NOT polish prototype after V3.**
 
 ## Cross-References
 

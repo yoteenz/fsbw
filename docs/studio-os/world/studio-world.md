@@ -129,6 +129,8 @@ STUDIO WORLD™
 
 **Creative Portfolio™:** [The Creative Net Worth Dashboard](../creative-portfolio/README.md) — multidimensional health · maturity · consistency · influence
 
+**Creative Intelligence Engine™:** [Build the engine first](../creative-intelligence-engine/README.md) — CDS pilot · generated scenes · prompt pipeline
+
 **Studio Alpha™ Production Dashboard™:** [Internal Mission Control of Studio World™](../../studio-alpha/production-dashboard/README.md) — operators only · full GPU · ROI · queue · **not** Studio OS
 
 **Scene Genesis™ (deprecated):** [../scene-genesis/README.md](../scene-genesis/README.md) — superseded by Scene Stack™
@@ -159,6 +161,7 @@ STUDIO WORLD™
 | **Creative Budgets™** | [../creative-budgets/](../creative-budgets/) | Monthly creative capacity · spend · pending · savings · Efficiency Score™ · Orb coaching |
 | **Creative Equity™** | [../creative-equity/](../creative-equity/) | Lifetime creative net worth · Creative ROI™ · Company Genome™ · never resets |
 | **Creative Portfolio™** | [../creative-portfolio/](../creative-portfolio/) | Multidimensional ecosystem health · Portfolio Health™ · maturity · consistency · influence |
+| **Creative Intelligence Engine™** | [../creative-intelligence-engine/](../creative-intelligence-engine/) | Generated departments · prompt pipeline · CDS flagship pilot |
 | **Studio Alpha™ Production Dashboard™** | [../../studio-alpha/production-dashboard/](../../studio-alpha/production-dashboard/) | Internal manufacturing Mission Control · **not** customer-facing · GPU · ROI · queue |
 | **Scene Genesis™ (deprecated)** | [../scene-genesis/](../scene-genesis/) | Superseded by Scene Stack™ — single-image plates retired |
 

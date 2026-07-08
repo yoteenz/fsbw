@@ -25,6 +25,8 @@ The current implementation at `/admin/studio/department/creative-direction` is a
 
 **This sprint does not iterate the prototype. It replaces the philosophy.**
 
+**V3 evolution:** CDS is now the pilot for [Creative Intelligence Engine™](../creative-intelligence-engine/README.md) — engine-first · generated workspace scenes · prompt pipeline. See [engine-first-roadmap.md](../creative-intelligence-engine/engine-first-roadmap.md).
+
 ---
 
 ## What CDS Is

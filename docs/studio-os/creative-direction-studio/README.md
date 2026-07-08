@@ -1,133 +1,117 @@
-# Creative Direction Studio™ — Architectural Reset
+# Creative Direction Studio™ — Creative Intelligence Engine™ Pilot
 
-**The Room Is The Interface**
+**The Room Is The Interface · The Engine Builds The Worlds**
 
-**Version:** 2.0.0  
-**Status:** Canonical architectural reset  
-**Phase:** Studio World™ department architecture (post-prototype)  
-**Scope:** Creative Direction Studio™ (`creative-direction`) — full reset
+**Version:** 3.0.0  
+**Status:** Architectural reset V3 — Creative Intelligence Engine™  
+**Phase:** Engine-first · generated headquarters  
+**Scope:** Creative Direction Studio™ (`creative-direction`) — **do not polish prototype**
 
 ---
 
-> **Creative Direction Studio™ is NOT a webpage. It is a department inside Studio World™.**
+> **Creative Direction Studio™ is no longer a page. It is Studio OS's Creative Intelligence Engine™.**
 
 ---
 
 ## Mission
 
-Complete **architectural reset** of Creative Direction Studio™.
+Fundamental vision evolution:
 
-The current implementation proved one important thing: **the concept works**.
+| Was (prototype) | Becoming (V3) |
+|-----------------|---------------|
+| Page with cards | **Immersive creative headquarters** |
+| Dashboard tabs | **Physical workspace scenes** |
+| Manual scene design | **Generated Scene Stack™ layers** |
+| Founder prompts | **Prompt Generation Pipeline™** |
+| UI-first build | **Engine-first build** |
 
-The execution philosophy is **wrong**.
+The current implementation proved **navigation concept** — it no longer represents what CDS is becoming.
 
----
-
-## The Fundamental Shift
-
-| Wrong (prototype) | Right (reset) |
-|-------------------|---------------|
-| Webpage | **Department in Studio World™** |
-| Dashboard | **Playable creative headquarters** |
-| Cards floating on screen | **Furniture · architecture · equipment** |
-| Software embedded in page | **Founder physically entered the room** |
-| Entire room on one screen | **Arrival Zone™ · discovery · exploration** |
-| Page scroll | **Walk · camera · pan · orbit · zoom** |
-| Orb as decoration | **Orb as host of the department** |
-| Static layout | **Environmental life · Idle Life™** |
-| "Nice UI" | **"Is this a game?"** |
-
-### Think Less
-
-Notion · Linear · ClickUp · Figma
-
-### Think More
-
-The Movies · Pixar Studios · Apple Industrial Design Lab · Hollywood Production Stage · AAA Game Hub
+**Do NOT continue polishing the prototype.**
 
 ---
 
-## Prototype Status
+## New Core Principle
 
-| Artifact | Status |
-|----------|--------|
-| `DepartmentVerticalSliceRoom` | **Prototype** — concept validated · philosophy rejected |
-| `CreativeApprovalPipelinePanel` | **Prototype** — card-based · must become physical workstations |
-| `CreativeReviewPanel` | **Prototype** — popup pattern · must become Review Area™ |
-| Route `/admin/studio/department/creative-direction` | **Preserved** — same destination · new architecture |
+> The founder should never feel like they are using software.  
+> They should feel like they have **physically entered** a creative headquarters.  
+> The interface disappears. **The environment becomes the interface.** The room becomes the workflow.
 
-**Do NOT iterate** on cards · spacing · dashboard layout. **Rebuild** from environment architecture.
+---
 
-**Detail:** [prototype-lessons.md](./prototype-lessons.md)
+## Workspaces (Scenes — Not Tabs)
+
+| Workspace | Physical environment |
+|-----------|---------------------|
+| **Arrival™** | Threshold · reveal |
+| **Story Table™** | Executive strategy table · Orb · holographic cards |
+| **Mood Wall™** | Double-height editorial gallery |
+| **Notes Desk™** | Executive writing desk |
+| **Pipeline™** | Film production command wall |
+| **Library™** | Architectural design archive |
+
+**Engine spec:** [Creative Intelligence Engine™](../creative-intelligence-engine/README.md)
+
+---
+
+## Build Order (V3)
+
+```
+1. CREATIVE INTELLIGENCE ENGINE™  — pipeline contracts
+2. SCENE GENERATION               — layered generation per workspace
+3. ASSET REGISTRY + ASSEMBLY      — reuse · compose
+4. PHYSICAL PRESENTATION          — camera · movement · diegetic controls
+```
+
+**Not:** polish cards · iterate prototype · chase pixels first.
+
+Detail: [engine-first-roadmap.md](../creative-intelligence-engine/engine-first-roadmap.md)
 
 ---
 
 ## Document Index
 
+### V3 — Creative Intelligence Engine™
+
 | Document | Contents |
 |----------|----------|
-| [architectural-reset.md](./architectural-reset.md) | Master spec · laws · anti-patterns |
-| [room-as-interface.md](./room-as-interface.md) | Every feature exists physically |
-| [arrival-zone.md](./arrival-zone.md) | First space · gradual reveal |
-| [spatial-hierarchy.md](./spatial-hierarchy.md) | Foreground · midground · background |
-| [movement-not-scroll.md](./movement-not-scroll.md) | No room scroll · game movement |
-| [orb-as-host.md](./orb-as-host.md) | Orb anchors room emotionally |
-| [environmental-life.md](./environmental-life.md) | Idle Life™ · department breathes |
-| [arrival-experience.md](./arrival-experience.md) | Doors · hallway · reveal |
-| [world-building.md](./world-building.md) | Part of living headquarters |
-| [founder-experience.md](./founder-experience.md) | Success feeling · language law |
-| [implementation-strategy.md](./implementation-strategy.md) | Environment → workstations → controls |
-| [prototype-lessons.md](./prototype-lessons.md) | What prototype proved |
+| [Creative Intelligence Engine™](../creative-intelligence-engine/README.md) | **Primary V3 spec** — pipeline · scenes · layers |
+| [physical-workspaces.md](../creative-intelligence-engine/physical-workspaces.md) | Room-by-room design |
+| [prompt-generation-architecture.md](../creative-intelligence-engine/prompt-generation-architecture.md) | Founder Intent™ → Completed Workspace™ |
+
+### V2 — Room Philosophy (Still Valid)
+
+| Document | Contents |
+|----------|----------|
+| [architectural-reset.md](./architectural-reset.md) | Room-as-interface laws |
+| [room-as-interface.md](./room-as-interface.md) | Physical feature mapping |
+| [movement-not-scroll.md](./movement-not-scroll.md) | Camera not scroll |
+| [orb-as-host.md](./orb-as-host.md) | Orb spatial host |
+| [prototype-lessons.md](./prototype-lessons.md) | **Frozen** — do not iterate |
+| [implementation-strategy.md](./implementation-strategy.md) | Updated with engine-first phases |
 
 ---
 
-## Workstation Map (Physical)
+## Prototype Status
 
-| Feature | Physical form | Zone |
-|---------|---------------|------|
-| Living Mood Wall™ | Architectural hero wall | Midground · hero |
-| Founder Notes™ | Illuminated writing desk | Foreground |
-| Orb™ | Floats above Story Table™ | Spatial center |
-| Reference Library™ | Physical shelving | Background flank |
-| Creative Pipeline™ | Production board on wall | Midground wall |
-| Branch Comparison™ | Gallery wall | Discovery zone |
-| Timeline™ | Illuminated production table | Midground |
-| Review Area™ | Collaborative seating | Foreground |
-| Asset Console™ | Production workstation | Midground |
-
-**Nothing is a card.**
-
----
-
-## Implementation Order
-
-```
-1. ENVIRONMENT     — architecture · lighting · scale · depth
-2. ARRIVAL         — zone · camera · reveal sequence
-3. WORKSTATIONS    — physical objects · placement
-4. MOVEMENT        — walk · orbit · transitions
-5. IDLE LIFE       — ambient animation · audio
-6. ORB HOST        — spatial anchor · dialogue
-7. CONTROLS LAST   — interactions emerge from touch
-```
-
-**Detail:** [implementation-strategy.md](./implementation-strategy.md)
+| Artifact | V3 Status |
+|----------|-----------|
+| `CreativeDirectionStudioRoom` | **Frozen** — not polished |
+| Card pipeline panels | **Rejected** — Pipeline™ wall replaces |
+| Route | **Preserved** |
+| Pipeline logic stores | **Preserved** — new presentation |
 
 ---
 
 ## Success Benchmark
 
-When someone watches a screen recording, first reaction should **NOT** be:
+CDS should **no longer resemble a website**.
 
-> "Nice UI."
+It should feel like stepping into a **living creative headquarters** — every workspace physically purposeful · every scene **generated · assembled · remembered · evolved**.
 
-It should be:
+> **Build the engine first. Then let the engine build the worlds.**
 
-> **"Wait… is this a game?"**  
-> **"Is this an interactive production studio?"**  
-> **"I've never seen software feel like a real place before."**
-
-Anything less = still designing software instead of building Studio World™.
+This department becomes the **foundation every future Studio OS department is built upon.**
 
 ---
 
@@ -135,30 +119,18 @@ Anything less = still designing software instead of building Studio World™.
 
 | System | Relationship |
 |--------|--------------|
-| [Studio World™](../world/studio-world.md) | Parent — CDS is one Set™ |
-| [Sets™ philosophy](../world/sets-philosophy.md) | CDS = Creative Atelier™ Set |
-| [Arrival Sequence™](../foundational-experience-systems/arrival-sequence.md) | Entry law |
-| [Idle Life™](../foundational-experience-systems/idle-life.md) | Environmental breathing |
-| [Creative Direction Pipeline™](../creative-direction-pipeline/README.md) | Production at workstations |
-| [Founder Intelligence System™](../intelligence/README.md) | Orb learns · taste at Mood Wall |
-| [Golden Department](../golden-department/creative-direction-studio/) | V1 spec — topology reference · execution reset |
-| [Architectural Icons™](../architectural-icons/README.md) | **Story Table™** = CDS Signature Landmark™ · Mood Wall · Pipeline = scenes |
-| [Alpha charter](../alpha/creative-direction-alpha.md) | Emotional contract — still valid |
-
----
-
-## Final Philosophy
-
-The founder is no longer using software.
-
-The founder has **physically entered** the creative headquarters of their company.
-
-They are **directing a production team** inside the world's first **Company Engine™**.
+| [Creative Intelligence Engine™](../creative-intelligence-engine/README.md) | **V3 parent engine** |
+| [Scene Stack™](../scene-stack/README.md) | Layer generation · assembly |
+| [Scene Genesis™](../scene-genesis/README.md) | **Deprecated** |
+| [Studio World™](../world/studio-world.md) | CDS = department Set™ |
+| [Golden Department](../golden-department/creative-direction-studio/) | Topology reference |
 
 ---
 
 ## Implementation Status
 
-**Docs only this sprint.** No UI iteration · no card rearrangement · no dashboard redesign.
+**Docs only this sprint.** No prototype polish · no pixel perfection chase.
 
-Prototype remains until environment-first rebuild ships per [implementation-strategy.md](./implementation-strategy.md).
+---
+
+_Creative Direction Studio™ V3 — Creative Intelligence Engine™ pilot._

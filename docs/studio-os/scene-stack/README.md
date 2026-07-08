@@ -79,6 +79,7 @@ The room shell remains intact.
 - `src/studio-os-core/scene-stack/`
 - `useSceneStack` hook
 - `SceneStackViewport` compositor
+- **V3:** [Creative Intelligence Engine™](../creative-intelligence-engine/README.md) — CDS proving ground for generated workspace scenes
 - Route: `/admin/studio/department/creative-direction`
 
 ---

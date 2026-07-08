@@ -41827,3 +41827,23 @@ User **STOP** directive: **platform intelligence sprint** — **Creative Portfol
 - **Cross-refs:** `studio-world.md` · `CORE.md` · `creative-equity/` · `creative-budgets/`
 - **Prior arc (same chat):** Creative Equity™ · Creative Budgets™ · Studio Alpha Production Dashboard™ · intelligence stack
 - **No UI this sprint**
+
+---
+
+## 2026-07-08 — Creative Intelligence Engine™ + CDS V3 Architectural Reset (docs only)
+
+User **STOP** directive: **architectural reset** — fundamental vision evolution. **Do NOT** polish existing CDS prototype · **Do NOT** iterate current implementation.
+
+- **Mission:** CDS is no longer page/dashboard/forms — it is Studio OS **Creative Intelligence Engine™** — immersive HQ (Pixar · Apple ID Lab · Hollywood · archviz combined). Environment is interface · room is workflow.
+- **Workspaces as scenes (not tabs):** Arrival™ · Story Table™ (executive table · Orb · holographic cards · orbiting camera) · Mood Wall™ (double-height editorial wall) · Notes Desk™ (executive desk · voice · journal) · Pipeline™ (film production command wall) · Library™ (architectural archive)
+- **Design physical department first** — controls emerge from objects
+- **Scene Generation Pipeline:** Scene Stack™ layers per workspace — Environment Shell · Lighting · Architecture · Furniture · Atmosphere · Hero Landmark · Materials · Particles · Runtime FX · Interaction
+- **Prompt pipeline:** Founder Intent™ → Creative Interpreter™ → Blueprint Engine™ → Asset Registry™ → Scene Planner™ → Prompt Composer™ → Provider Optimizer™ → FAL → Quality Inspector™ → Approval Queue™ → Registry → Scene Assembly™ → Completed Workspace™ — founders never write FAL prompts
+- **Asset-first:** independent reusable layers across Studio World™
+- **Engine-first:** build systems before pixel perfection — CDS = first fully generated flagship department · benchmark for all departments
+- **Prototype frozen:** `CreativeDirectionStudioRoom` · card panels — logic preserved · presentation replaced
+- **8-doc spec:** `docs/studio-os/creative-intelligence-engine/` — README · creative-intelligence-engine · workspaces-as-scenes · physical-workspaces · prompt-generation-architecture · scene-generation-pipeline · asset-first-layers · engine-first-roadmap
+- **CDS V3:** `docs/studio-os/creative-direction-studio/README.md` · implementation-strategy updated
+- **Cross-refs:** `scene-stack/` · `studio-world.md` · `CORE.md`
+- **Prior arc (same chat):** Creative Portfolio™ · Creative Equity™ · Creative Budgets™ · Studio Alpha · intelligence stack · CDS V2 reset
+- **No UI polish this sprint**
