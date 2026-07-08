@@ -41200,3 +41200,27 @@ User defined **Founder Taste Engine™** — one of the most important foundatio
 - **11-doc spec:** `docs/studio-os/founder-taste-engine/` — README · founder-taste-engine · concept-first · taste-learning · taste-genome · predictive-design · canon-and-branches · taste-transfer · orb-taste-dialogue · world-integration · future-taste-engine
 - **Prior arc (same chat):** Creative Direction Pipeline™ · Adaptive Onboarding™ · Mode System™ · Company Engine™
 - **CORE.md:** Founder Taste Engine™ line added
+
+---
+
+## 2026-07-08 — Founder Intelligence System™ — The Memory Behind Studio OS (docs only)
+
+User defined **Founder Intelligence System™** — foundational intelligence architecture sprint defining Studio OS's **permanent memory architecture**. **No UI · no React · no new AI engine.**
+
+- **Mission:** Studio OS should remember **people** not data — deepen understanding of Founder · Founder's Taste · Company with every interaction
+- **Foundational principle:** Smarter through **understanding founder more deeply** — not because models improve
+- **Three Genomes™:** **Founder Genome™** (who founder is — leadership · communication · decision style · creative process · philosophy · risk · goals · habits · journey · travels across companies) · **Founder Taste Genome™** (how founder creates — every approval/rejection/comparison teaches WHY) · **Company Genome™** (what makes THIS company unique — belongs to company not founder · maps to Organization Genome™ M95)
+- **Intelligence Hierarchy™:** Founder Genome → Taste Genome → Company Genome → Project Genome → Room DNA™ → Scene Blueprint™ → Asset Graph™ → Golden Build™ — each level inherits above · preserves own identity
+- **Taste Learning™:** Concept First for important creative work · analyze WHY not WHAT
+- **Predictive Intelligence™:** Proactive alignment — prioritize matching concepts · eliminate conflicts · emphasize defining patterns — transparently
+- **Canon™** (approved truth) · **Alternate Branch™** (preserved rejected explorations)
+- **Taste Transfer™:** Teena Frontal Slayer → NDX — taste travels · Company Genome fresh per venture
+- **Orb Learning System™:** Orb explains learned patterns · founder confirm · correct · reject · expand
+- **World Integration™:** Creative Review™ · Braintrust™ · Atelier · Marketplace · Studio Builder · HQ · Sets™ · Transitions™ · Archive™ · Golden Builds™
+- **Relationship to Founder Taste Engine™:** Taste Engine = deep taste subsystem · Intelligence System = umbrella memory architecture
+- **Relationship to Relationship Memory™:** RM = how founder works · Intelligence = who they are + how they create + what company is
+- **Success:** *"I no longer have to explain myself"* — from following instructions to genuine understanding
+- **Final philosophy:** Studio OS powered by **understanding** not prompts
+- **11-doc spec:** `docs/studio-os/intelligence/` — README · founder-intelligence-system · founder-genome · founder-taste-genome · company-genome · project-genome · intelligence-hierarchy · predictive-intelligence · canon-vs-alternate-branches · orb-learning-system · future-intelligence-roadmap
+- **Prior arc (same chat):** Founder Taste Engine™ (docs committed 7af69db2; CORE/MEMORY for taste engine folded here) · Creative Direction Pipeline™ · Adaptive Onboarding™
+- **CORE.md:** Founder Intelligence System™ + Founder Taste Engine™ lines
