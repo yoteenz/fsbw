@@ -5,6 +5,11 @@ import {
   getCdsSceneStackLayerPrompts,
 } from './cds-station-prompts';
 import {
+  COMMAND_CENTER_SCENE_STACK_HOTSPOTS,
+  COMMAND_CENTER_SCENE_STACK_STATION_META,
+  getCommandCenterSceneStackLayerPrompts,
+} from './command-center-station-prompts';
+import {
   WAREHOUSE_SCENE_STACK_HOTSPOTS,
   WAREHOUSE_SCENE_STACK_STATION_META,
   getWarehouseSceneStackLayerPrompts,
@@ -48,9 +53,29 @@ function buildWarehouseManifest(): SceneStackManifest {
   };
 }
 
+function buildCommandCenterManifest(): SceneStackManifest {
+  return {
+    departmentId: 'studio-command-center',
+    packageId: 'pkg-studio-command-center-golden-v1',
+    milestone: 'Studio Command Center™ Golden Build',
+    signatureLandmarkId: 'executive-atrium',
+    aspectRatio: '9:16',
+    outputFormat: 'webp',
+    stations: COMMAND_CENTER_SCENE_STACK_STATION_META.map((meta) => ({
+      stationId: meta.stationId,
+      displayName: meta.displayName,
+      shortLabel: meta.shortLabel,
+      signatureLandmarkId: 'signatureLandmarkId' in meta ? meta.signatureLandmarkId : undefined,
+      layerPrompts: getCommandCenterSceneStackLayerPrompts(meta.stationId),
+      hotspots: COMMAND_CENTER_SCENE_STACK_HOTSPOTS[meta.stationId] ?? {},
+    })),
+  };
+}
+
 const MANIFESTS: Record<string, SceneStackManifest> = {
   'creative-direction': buildCdsManifest(),
   'studio-warehouse': buildWarehouseManifest(),
+  'studio-command-center': buildCommandCenterManifest(),
 };
 
 export function requireSceneStackManifest(departmentId: string): SceneStackManifest {

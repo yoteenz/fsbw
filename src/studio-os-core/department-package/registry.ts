@@ -58,6 +58,53 @@ const warehouseProductionGroups = {
   },
 };
 
+const commandCenterDefinition = {
+  ...(creativeDirectionDepartment as DepartmentPackage['definition']),
+  id: 'studio-command-center',
+  displayName: 'Studio Command Center™',
+  packageId: 'pkg-studio-command-center-golden-v1',
+  identity: {
+    ...(creativeDirectionDepartment as DepartmentPackage['definition']).identity,
+    purpose: 'Executive operational arrival space — the founder stands at the center of the company',
+    metaphor: 'Mission control cathedral atrium — not a dashboard, not a webpage',
+    emotionalGoals: ['commanding', 'grounded', 'clear', 'architectural', 'operational'],
+  },
+};
+
+const commandCenterRoomDna = {
+  ...(creativeDirectionRoomDna as DepartmentPackage['roomDna']),
+  departmentId: 'studio-command-center',
+  packageId: 'pkg-studio-command-center-golden-v1',
+  defaultFeeling: ['executive', 'architectural', 'commanding', 'immersive', 'operational'],
+  forbiddenFeeling: [
+    'webpage',
+    'dashboard',
+    'card-grid',
+    'marble-cards',
+    'saas-admin',
+    'flat-panels',
+    ...(creativeDirectionRoomDna as DepartmentPackage['roomDna']).forbiddenFeeling,
+  ],
+  promptModifiers: {
+    ...(creativeDirectionRoomDna as DepartmentPackage['roomDna']).promptModifiers,
+    environment:
+      'Executive Command Center cathedral atrium, radial wing corridors, Organization Pulse Core landmark, mission control architecture never webpage UI',
+  },
+};
+
+const commandCenterProductionGroups = {
+  ...(creativeDirectionProductionGroups as DepartmentPackage['productionGroups']),
+  departmentId: 'studio-command-center',
+  packageId: 'pkg-studio-command-center-golden-v1',
+  defaultProject: {
+    id: 'command-center-golden-v1',
+    name: 'Executive Atrium Golden Build™',
+    vision: 'The founder enters the operational heart of Frontal Slayer Executive HQ.',
+    northStar: 'All wings branch physically from one living command sculpture.',
+    tone: ['executive', 'architectural', 'commanding'],
+  },
+};
+
 const PACKAGES: Record<string, DepartmentPackage> = {
   'creative-direction': {
     departmentId: 'creative-direction',
@@ -74,6 +121,14 @@ const PACKAGES: Record<string, DepartmentPackage> = {
     roomDna: warehouseRoomDna as DepartmentPackage['roomDna'],
     assetManifest: creativeDirectionManifest as DepartmentPackage['assetManifest'],
     productionGroups: warehouseProductionGroups as DepartmentPackage['productionGroups'],
+  },
+  'studio-command-center': {
+    departmentId: 'studio-command-center',
+    packageId: 'pkg-studio-command-center-golden-v1',
+    definition: commandCenterDefinition as DepartmentPackage['definition'],
+    roomDna: commandCenterRoomDna as DepartmentPackage['roomDna'],
+    assetManifest: creativeDirectionManifest as DepartmentPackage['assetManifest'],
+    productionGroups: commandCenterProductionGroups as DepartmentPackage['productionGroups'],
   },
 };
 

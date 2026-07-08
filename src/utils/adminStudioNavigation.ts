@@ -42,7 +42,7 @@ export type StudioNavGroup = {
 };
 
 export const STUDIO_NAV_GROUPS: readonly StudioNavGroup[] = [
-  { id: 'overview', label: 'OVERVIEW', description: 'COMMAND SURFACE · DASHBOARD · DAILY SIGNALS' },
+  { id: 'overview', label: 'OVERVIEW', description: 'STUDIO COMMAND CENTER™ · EXECUTIVE ATRIUM™ · OPERATIONAL ARRIVAL' },
   { id: 'create', label: 'CREATE', description: 'IDEATION · BIBLES · PROMPTS · AI TOOLS' },
   { id: 'visuals', label: 'VISUALS', description: 'SETS · TALENT · ASSETS · CASTING' },
   { id: 'production', label: 'PRODUCTION', description: 'PACKS · PIPELINE · AI EXECUTION' },

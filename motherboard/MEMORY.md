@@ -42133,6 +42133,8 @@ User **IMPLEMENTATION SPRINT — ARCHITECTURAL CORRECTION:** Studio Warehouse™
 
 ---
 
+---
+
 ## 2026-07-08 — Warehouse → Scene Stack bridge (CDS mount without FAL on refresh)
 
 User asked why CDS regenerated environment shell on refresh instead of mounting pregenerated Warehouse assets; then approved implementation of the Warehouse → Scene Stack bridge.
@@ -42250,3 +42252,18 @@ User reported **COMPONENT FAILED TO LOAD** / minified React error **#306** on mo
 - **Root cause:** `src/pages/admin/studio/world/page.tsx` exported **`StudioWorldPathResolver` as named export only**; `App.tsx` `lazyWithRetry(() => import(...))` requires **`export default`** like every other admin page. Lazy resolved to `undefined` → React #306.
 - **Fix:** Added `export default StudioWorldPathResolver`.
 - **Prior arc (same chat):** Studio World V4 architectural reset · Studio Archives™ · Cost HUD.
+
+---
+
+## 2026-07-08 — Studio Command Center™ / Executive Atrium™ (Overview architectural reset)
+
+User **IMPLEMENTATION SPRINT — ARCHITECTURAL CORRECTION:** `/admin/studio/overview` still rendered as old webpage (cards, wing cards, module grids, AdminStudioLayout) — violated Studio World™ law. Transform into **Studio Command Center™** / **Executive Atrium™** — founder operational arrival for Frontal Slayer Executive HQ, not dashboard.
+
+- **Replaced webpage:** `overview/page.tsx` now **`DepartmentGoldenBuildShell`** + **`StudioCommandCenterRoom`** — removed `AdminStudioLayout`, `ExecutiveDepartmentCard`, `AdminStudioModuleCard`, marble card grids.
+- **Arrival Sequence™:** Command Threshold™ → `Enter Executive Atrium™` → central hub.
+- **Organization Pulse Core™:** hero landmark sculpture (`OrganizationPulseCore.tsx`) — Studio Pulse · Active Wings · Modules · Live Systems · Company Health · priorities as environmental displays (not analytics cards).
+- **8 wing portals (physical doors):** Create · Intelligence · Distribution · Operations · Customer Experience · Finance · Studio Archives · Creative Direction Studio™ — `commandCenterWings.ts` preserves all existing routes; tap to focus stations · double-click to enter wing.
+- **Scene Stack™:** `studio-command-center` department package + `command-center-station-prompts.ts` manifest (threshold + executive-atrium stations).
+- **Preserved:** all module routes/links · `workspace.studioEnabled` guard · dashboard metric/footer data · station list on wing focus (compact buttons, not cards).
+- **Nav copy:** OVERVIEW group description → `STUDIO COMMAND CENTER™ · EXECUTIVE ATRIUM™`.
+- **Prior arc (same chat):** Studio Archives™ campus · Studio World V4 · Warehouse immersive sprint · Scene Stack shell lock.
