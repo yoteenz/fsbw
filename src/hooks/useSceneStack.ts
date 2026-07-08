@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { requireDepartmentPackage } from '../studio-os-core/department-package';
 import {
   approveSceneStackLayer,
@@ -13,6 +13,9 @@ import {
   saveSceneStackLayerRecord,
   getSceneStackStation,
   SCENE_STACK_LAYER_SHORT_LABELS,
+  hydrateSceneStackFromBuilderRegistry,
+  tryMountSceneStackLayerFromRegistry,
+  SCENE_STACK_HYDRATED_EVENT,
   type SceneStackCompositeStatus,
   type SceneStackLayerId,
   type SceneStackLayerView,
@@ -47,6 +50,16 @@ export function useSceneStack(
   const bump = useCallback(() => setVersion((v) => v + 1), []);
   const pkg = useMemo(() => requireDepartmentPackage(departmentId), [departmentId]);
   const stations = useMemo(() => listSceneStackStations(departmentId), [departmentId]);
+
+  useEffect(() => {
+    hydrateSceneStackFromBuilderRegistry(departmentId, projectId);
+  }, [departmentId, projectId]);
+
+  useEffect(() => {
+    const onHydrated = () => bump();
+    window.addEventListener(SCENE_STACK_HYDRATED_EVENT, onHydrated);
+    return () => window.removeEventListener(SCENE_STACK_HYDRATED_EVENT, onHydrated);
+  }, [bump]);
 
   const genKey = (stationId: string, layerId: SceneStackLayerId) => `${stationId}:${layerId}`;
 
@@ -139,6 +152,11 @@ export function useSceneStack(
       const existing = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
       if (!force && existing?.status === 'approved' && existing.publicUrl) return true;
 
+      if (!force && tryMountSceneStackLayerFromRegistry(departmentId, projectId, stationId, layerId)) {
+        bump();
+        return true;
+      }
+
       setPipelineLayer({ stationId, layerId, phase: 'generating' });
       setGeneratingKeys((prev) => new Set(prev).add(key));
       setErrors((prev) => {
@@ -220,6 +238,8 @@ export function useSceneStack(
           model: result.model ?? 'fal-ai/nano-banana-pro/edit',
           promptVersion: compiled.promptVersion,
           status: 'validated',
+          stationId,
+          layerId,
         });
 
         bump();

@@ -21,7 +21,9 @@ export const STUDIO_OS_MAX_LOCAL_VALUE_BYTES = 24 * 1024;
 const SCENE_STACK_LOCAL_VALUE_BYTES = 64 * 1024;
 
 function maxLocalValueBytesForKey(key: string): number {
-  if (key === 'studioOsSceneStack_v1') return SCENE_STACK_LOCAL_VALUE_BYTES;
+  if (key === 'studioOsSceneStack_v1' || key === 'studioOsStudioBuilderRegistry_v1') {
+    return SCENE_STACK_LOCAL_VALUE_BYTES;
+  }
   return STUDIO_OS_MAX_LOCAL_VALUE_BYTES;
 }
 
@@ -56,6 +58,8 @@ const LIGHTWEIGHT_EXACT_KEYS = new Set([
   'studioOsSceneStack_v1',
   /** Project Genome™ active project context — pairs with Scene Stack lookups. */
   'studioOsProjectGenome_v1',
+  /** Studio Builder pipeline registry — Warehouse™ catalog source (not M140 Asset Registry™). */
+  'studioOsStudioBuilderRegistry_v1',
 ]);
 
 /** Substring patterns for small UI preference keys. */

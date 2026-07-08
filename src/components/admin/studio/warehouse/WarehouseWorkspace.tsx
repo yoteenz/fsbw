@@ -76,6 +76,24 @@ export function WarehouseWorkspace() {
         aria-label="Natural language warehouse search"
       />
 
+      {wh.applyNotice ? (
+        <p
+          className="wh-hero__sub"
+          style={{ marginTop: 4, color: '#c9a962', fontSize: 6 }}
+          role="status"
+        >
+          {wh.applyNotice}
+          <button
+            type="button"
+            className="wh-action"
+            style={{ marginLeft: 8, fontSize: 5 }}
+            onClick={() => wh.clearApplyNotice()}
+          >
+            Dismiss
+          </button>
+        </p>
+      ) : null}
+
       {wh.viewMode === 'recipe' ? (
         <section className="wh-recipe">
           <p style={whSectionTitle}>Scene Recipe™ — How workspaces are assembled</p>
@@ -258,7 +276,17 @@ export function WarehouseWorkspace() {
                   >
                     Archive
                   </button>
-                  <button type="button" className="wh-action">
+                  <button
+                    type="button"
+                    className="wh-action"
+                    disabled={!wh.selectedAsset?.previewUrl}
+                    title={
+                      wh.selectedAsset?.previewUrl
+                        ? 'Mount on Creative Direction Scene Stack without FAL'
+                        : 'Pipeline-registered assets only — demo seeds have no stored image URL'
+                    }
+                    onClick={() => wh.applySelectedAssetToSceneStack()}
+                  >
                     Use Existing
                   </button>
                 </div>

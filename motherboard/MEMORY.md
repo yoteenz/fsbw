@@ -42130,3 +42130,17 @@ User **IMPLEMENTATION SPRINT — ARCHITECTURAL CORRECTION:** Studio Warehouse™
 - **Live Assembly™:** `?workspace=&slot=` URL → `enterLiveAssembly()` auto-pans to gallery (e.g. Lighting → Lighting Gallery™) with replace flow · `resolveWarehouseZoneForSlot()` in `studio-warehouse/camera-zones.ts`.
 - **Preserved domain logic:** `studio-warehouse/*` types/search/recipes · `useAdminStudioWarehouseState` · registry hydration · `WarehouseWorkspace.tsx` kept but no longer primary route.
 - **Prior arc (same chat):** Scene Stack shell lock (`bd5f90d9`) · CDS layer strip · auto-gen stop · Studio Museum™ sprint · Warehouse/Museum first webpage sprints.
+
+---
+
+## 2026-07-08 — Warehouse → Scene Stack bridge (CDS mount without FAL on refresh)
+
+User asked why CDS regenerated environment shell on refresh instead of mounting pregenerated Warehouse assets; then approved implementation of the Warehouse → Scene Stack bridge.
+
+- **Root causes (prior diagnosis):** Studio Builder registry (`registerStudioAsset`) used key `studioOsAssetRegistry_v1` — **collided** with M140 Asset Registry™ profiles store and was **not** localStorage-whitelisted → pipeline assets only in memory; Warehouse **Apply** wrote prefs only, never `saveSceneStackLayerRecord`; CDS read only `studioOsSceneStack_v1`, not Warehouse.
+- **Fix — persistence:** Renamed builder registry to **`studioOsStudioBuilderRegistry_v1`** (`registry-store.ts`) with legacy `{ entries }` migration; whitelisted in `studioOsBrowserStorage.ts` (64KB cap like Scene Stack). `registerStudioAsset` now stores **`stationId` + `layerId`** on each Scene Stack generation.
+- **Fix — bridge (`scene-stack/warehouse-bridge.ts`):** `hydrateSceneStackFromBuilderRegistry()` on CDS mount; `tryMountSceneStackLayerFromRegistry()` before FAL in `generateLayer`; `applyWarehouseAssetToSceneStack()` / `applyWarehouseAssetByCategory()`; `SCENE_STACK_HYDRATED_EVENT` for viewport refresh.
+- **Fix — Warehouse UI:** `applyReplacement` mounts asset to Scene Stack (no FAL); **Use Existing** button enabled when `previewUrl` present; apply status notice in `WarehouseWorkspace`.
+- **User flow after deploy:** Generate once → asset in registry + Warehouse (`wh-reg-*` with real URL) → survives refresh → CDS hydrates layers on load → **Stack** skips FAL for layers already mounted; Warehouse **Apply** / **Use Existing** mounts without generation. Demo seed assets (gradient only) still cannot mount — need pipeline-registered preview URLs.
+- **Files:** `warehouse-bridge.ts`, `registry-store.ts`, `useSceneStack.ts`, `useAdminStudioWarehouseState.ts`, `WarehouseWorkspace.tsx`, `adminStudioWarehouseDemo.ts`, `studioOsBrowserStorage.ts`, `studio-builder/types.ts`.
+- **Prior arc (same chat):** CDS shell regen diagnosis · Scene Stack persistence · Warehouse immersive sprint · shell lock during pipeline.

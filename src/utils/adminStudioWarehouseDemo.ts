@@ -49,6 +49,8 @@ function registryToWarehouse(entry: ReturnType<typeof listAllRegistryAssets>[num
   const category = mapRegistryCategory(entry.category);
   const name = entry.assetId.replace(/scene-stack-|[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   const id = `wh-reg-${entry.id}`;
+  const scenePacks = new Set<string>(['story-table', 'arrival', 'mood-wall']);
+  if (entry.stationId) scenePacks.add(entry.stationId);
   return {
     id,
     name: name || entry.assetId,
@@ -56,7 +58,9 @@ function registryToWarehouse(entry: ReturnType<typeof listAllRegistryAssets>[num
     category,
     districtId: districtForCategory(category, entry.category),
     department: entry.departmentId.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-    workspace: 'Frontal Slayer HQ',
+    workspace: entry.stationId
+      ? entry.stationId.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+      : 'Frontal Slayer HQ',
     generationDate: entry.registeredAt.slice(0, 10),
     generationCostUsd: 0.42 + (index % 7) * 0.18,
     provider: entry.model?.split('/').pop() ?? 'FAL',
@@ -68,7 +72,7 @@ function registryToWarehouse(entry: ReturnType<typeof listAllRegistryAssets>[num
     previewUrl: entry.publicUrl || undefined,
     tags: [entry.category, entry.departmentId, 'pipeline-registered'],
     similarAssetIds: [],
-    compatibleScenePackIds: ['story-table', 'arrival', 'mood-wall'],
+    compatibleScenePackIds: [...scenePacks],
     goldenBuildCount: index % 12,
     archived: false,
     favorite: index % 9 === 0,

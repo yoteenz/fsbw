@@ -147,6 +147,10 @@ export type StudioAssetRegistryEntry = {
   promptVersion: string;
   status: 'validated' | 'pending' | 'rejected';
   registeredAt: string;
+  /** Scene Stack™ station (zone) — enables Warehouse → CDS mount without re-parsing assetId */
+  stationId?: string;
+  /** Scene Stack™ layer — pairs with stationId for hydration */
+  layerId?: string;
 };
 
 /** @deprecated Use Creative Approval Pipeline™ */

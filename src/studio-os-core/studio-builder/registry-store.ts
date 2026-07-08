@@ -1,7 +1,9 @@
 import { readStudioOsJson, writeStudioOsJson } from '../../utils/studioOsBrowserStorage';
 import type { StudioAssetRegistryEntry } from './types';
 
-const STORAGE_KEY = 'studioOsAssetRegistry_v1';
+/** Distinct from Milestone 140 Asset Registry™ (`studioOsAssetRegistry_v1` profiles store). */
+export const STUDIO_BUILDER_REGISTRY_STORAGE_KEY = 'studioOsStudioBuilderRegistry_v1';
+const LEGACY_STORAGE_KEY = 'studioOsAssetRegistry_v1';
 
 type Store = { entries: StudioAssetRegistryEntry[] };
 
@@ -11,12 +13,29 @@ function uid(): string {
   return `reg-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
+function isBuilderRegistryStore(value: unknown): value is Store {
+  return (
+    Boolean(value) &&
+    typeof value === 'object' &&
+    Array.isArray((value as Store).entries)
+  );
+}
+
 function readStore(): Store {
-  return readStudioOsJson(STORAGE_KEY, () => EMPTY);
+  const store = readStudioOsJson(STUDIO_BUILDER_REGISTRY_STORAGE_KEY, () => EMPTY);
+  if (store.entries.length > 0) return store;
+
+  const legacyRaw = readStudioOsJson(LEGACY_STORAGE_KEY, () => EMPTY);
+  if (isBuilderRegistryStore(legacyRaw) && legacyRaw.entries.length > 0) {
+    writeStore(legacyRaw);
+    return legacyRaw;
+  }
+
+  return store;
 }
 
 function writeStore(store: Store): void {
-  writeStudioOsJson(STORAGE_KEY, store);
+  writeStudioOsJson(STUDIO_BUILDER_REGISTRY_STORAGE_KEY, store);
 }
 
 export function registerStudioAsset(

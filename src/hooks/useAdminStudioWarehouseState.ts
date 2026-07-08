@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  applyWarehouseAssetByCategory,
+  applyWarehouseAssetToSceneStack,
+  warehouseSlotRoleToLayerId,
+} from '../studio-os-core/scene-stack/warehouse-bridge';
+import { resolveActiveProjectGenome } from '../studio-os-core/project-genome';
+import {
   buildWarehouseRecommendations,
   filterCompatibleAssets,
   searchWarehouseAssets,
@@ -15,6 +21,8 @@ import {
 import { ADMIN_STUDIO_STORAGE_KEYS, readStudioJson, writeStudioJson } from '../utils/adminStudioStorage';
 import type { WarehouseAsset } from '../studio-os-core/studio-warehouse';
 import { buildStudioWarehouseCatalog, exportWarehouseSnapshot } from '../utils/adminStudioWarehouseDemo';
+
+const CDS_DEPARTMENT_ID = 'creative-direction';
 
 type WarehousePrefs = {
   favorites: string[];
@@ -37,6 +45,7 @@ export function useAdminStudioWarehouse() {
   const [previewRotation, setPreviewRotation] = useState(0);
   const [previewZoom, setPreviewZoom] = useState(1);
   const [version, setVersion] = useState(0);
+  const [applyNotice, setApplyNotice] = useState<string | null>(null);
 
   const bump = useCallback(() => setVersion((v) => v + 1), []);
 
@@ -158,6 +167,27 @@ export function useAdminStudioWarehouse() {
   const applyReplacement = useCallback(
     (assetId: string) => {
       if (!replaceContext) return;
+      const asset = catalog.find((a) => a.id === assetId);
+      const layerId = warehouseSlotRoleToLayerId(replaceContext.slotRole);
+      const project = resolveActiveProjectGenome(CDS_DEPARTMENT_ID);
+
+      let mounted = false;
+      if (asset && layerId) {
+        const result = applyWarehouseAssetToSceneStack({
+          departmentId: CDS_DEPARTMENT_ID,
+          projectId: project.projectId,
+          stationId: replaceContext.workspaceId,
+          layerId,
+          asset,
+        });
+        mounted = result.ok;
+        setApplyNotice(
+          result.ok
+            ? `Mounted ${asset.name} on ${replaceContext.workspaceName} · ${replaceContext.slotRole} (no FAL).`
+            : result.reason ?? 'Could not mount asset.'
+        );
+      }
+
       persistPrefs({
         ...prefs,
         appliedReplacements: [
@@ -172,9 +202,28 @@ export function useAdminStudioWarehouse() {
       });
       setReplaceContext(null);
       setSelectedAssetId(assetId);
+      if (mounted) bump();
     },
-    [persistPrefs, prefs, replaceContext]
+    [bump, catalog, persistPrefs, prefs, replaceContext]
   );
+
+  const applySelectedAssetToSceneStack = useCallback(() => {
+    if (!selectedAssetId) return;
+    const asset = catalog.find((a) => a.id === selectedAssetId);
+    if (!asset) return;
+    const project = resolveActiveProjectGenome(CDS_DEPARTMENT_ID);
+    const result = applyWarehouseAssetByCategory({
+      departmentId: CDS_DEPARTMENT_ID,
+      projectId: project.projectId,
+      asset,
+    });
+    setApplyNotice(
+      result.ok
+        ? `Mounted ${asset.name} on ${result.stationId} · ${result.layerId} (no FAL).`
+        : result.reason ?? 'Could not mount asset — pick a pipeline-registered object with a preview URL.'
+    );
+    if (result.ok) bump();
+  }, [bump, catalog, selectedAssetId]);
 
   const openReplaceFlow = useCallback((ctx: WarehouseReplaceContext) => {
     setReplaceContext(ctx);
@@ -232,5 +281,8 @@ export function useAdminStudioWarehouse() {
     resetPreview,
     snapshot,
     appliedReplacements: prefs.appliedReplacements,
+    applyNotice,
+    clearApplyNotice: () => setApplyNotice(null),
+    applySelectedAssetToSceneStack,
   };
 }
