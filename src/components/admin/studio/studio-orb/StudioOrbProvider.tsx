@@ -15,6 +15,7 @@ import {
 import { stopVoiceListening } from '../../../../studio-os-core/voice-mode';
 import { readCommandDockStore } from '../../../../studio-os-core/command-dock/store';
 import { useCommandDockState } from '../../../../hooks/useCommandDockState';
+import { useStudioOrbRecommendations } from '../../../../hooks/useStudioOrbRecommendations';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { StudioOrbAwakeningOverlay } from './StudioOrbAwakeningOverlay';
 import type { StudioOrbPosition, StudioOrbPresenceState, StudioOrbSurface } from './studioOrbTypes';
@@ -41,6 +42,7 @@ type StudioOrbContextValue = {
   openPageGuide: () => void;
   openLifeCulture: () => void;
   openVoiceMode: () => void;
+  openRecommendations: () => void;
   closeSurface: () => void;
   completeAwakening: () => void;
 };
@@ -60,6 +62,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const { workspaceId } = useWorkspace();
   const dock = useCommandDockState();
+  const orbRecs = useStudioOrbRecommendations();
   const organizationId = workspaceId;
 
   const [radialOpen, setRadialOpen] = useState(false);
@@ -72,7 +75,8 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const presenceState = useMemo(() => resolvePresenceState(store), [store]);
   const conversationMode =
     activeSurface === 'command-dock' || activeSurface === 'voice-mode';
-  const ambientInsight = store.proactiveSuggestion?.insight ?? null;
+  const ambientInsight =
+    orbRecs.topAmbientInsight ?? store.proactiveSuggestion?.insight ?? null;
 
   useEffect(() => {
     if (!organizationId) return;
@@ -137,6 +141,12 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
     playStudioOrbSound('conversation-open');
   }, [organizationId]);
 
+  const openRecommendations = useCallback(() => {
+    setRadialOpen(false);
+    setActiveSurface('recommendations');
+    playStudioOrbSound('conversation-open');
+  }, []);
+
   const closeSurface = useCallback(() => {
     if (activeSurface === 'command-dock') {
       dock.dismiss();
@@ -187,6 +197,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       openPageGuide,
       openLifeCulture,
       openVoiceMode,
+      openRecommendations,
       closeSurface,
       completeAwakening,
     }),
@@ -205,6 +216,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       openPageGuide,
       openLifeCulture,
       openVoiceMode,
+      openRecommendations,
       closeSurface,
       completeAwakening,
     ]
@@ -237,6 +249,7 @@ export function useStudioOrbEnvironmentActive(): boolean {
     ctx?.conversationMode ||
       ctx?.activeSurface === 'page-guide' ||
       ctx?.activeSurface === 'life-culture' ||
-      ctx?.activeSurface === 'voice-mode'
+      ctx?.activeSurface === 'voice-mode' ||
+      ctx?.activeSurface === 'recommendations'
   );
 }

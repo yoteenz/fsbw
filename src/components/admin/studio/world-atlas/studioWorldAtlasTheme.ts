@@ -719,4 +719,45 @@ body.studio-world-atlas-active {
   margin-top: 4px;
   line-height: 1.4;
 }
+
+/* Orb Recommendations™ — world integration */
+.swa__road.is-orb-journey {
+  stroke: rgba(235, 28, 36, 0.45);
+  stroke-width: 1.2;
+  stroke-dasharray: 4 6;
+  opacity: 0.85;
+  animation: swa-journey-glow 3s ease-in-out infinite;
+}
+@keyframes swa-journey-glow {
+  0%, 100% { opacity: 0.55; stroke-width: 1; }
+  50% { opacity: 0.95; stroke-width: 1.4; }
+}
+
+.swa__building.has-orb-glow .swa__extrusion {
+  box-shadow: 0 0 14px rgba(201, 169, 98, 0.55), inset 0 0 8px rgba(201, 169, 98, 0.2);
+}
+.swa__building.has-orb-pulse .swa__extrusion {
+  animation: swa-orb-pulse 2.4s ease-in-out infinite;
+}
+@keyframes swa-orb-pulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(235, 28, 36, 0.35); }
+  50% { box-shadow: 0 0 22px rgba(235, 28, 36, 0.65); }
+}
+.swa__building.has-orb-beacon .swa__extrusion::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #EB1C24;
+  box-shadow: 0 0 10px rgba(235, 28, 36, 0.9);
+  animation: swa-beacon-blink 1.8s ease-in-out infinite;
+}
+@keyframes swa-beacon-blink {
+  0%, 100% { opacity: 0.4; transform: translateX(-50%) scale(0.8); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
+}
 `;

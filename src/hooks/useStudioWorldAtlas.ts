@@ -44,9 +44,17 @@ import {
   type AtlasWorldForecastYear,
   type MasterPlanLandCategory,
 } from '../studio-os-core/studio-world-atlas';
+import {
+  buildJourneyRoadPaths,
+  buildOrbRecommendationsSnapshot,
+  buildOrbWorldSignals,
+  journeyNodePositions,
+  type OrbRecommendation,
+} from '../studio-os-core/orb-recommendations';
 
 export function useStudioWorldAtlas(options?: {
   companyName?: string;
+  organizationId?: string;
   liveRefreshMs?: number;
 }) {
   const [view, setView] = useState<AtlasViewState>(defaultAtlasView);
@@ -118,6 +126,31 @@ export function useStudioWorldAtlas(options?: {
         { mapX: focusNode.mapX, mapY: focusNode.mapY }
       ),
     [view.mapMode, discovery, liveTick, focusNode.mapX, focusNode.mapY]
+  );
+
+  const orbSnapshot = useMemo(
+    () =>
+      buildOrbRecommendationsSnapshot(
+        options?.organizationId ?? 'frontal-slayer',
+        options?.companyName ?? 'Studio World',
+        '/admin/studio/world-atlas'
+      ),
+    [options?.organizationId, options?.companyName]
+  );
+
+  const orbWorldSignals = useMemo(
+    () => buildOrbWorldSignals(orbSnapshot.recommendations, catalog),
+    [orbSnapshot.recommendations, catalog]
+  );
+
+  const orbJourneyRoadPaths = useMemo(() => {
+    const positions = journeyNodePositions(catalog, orbSnapshot.executiveJourney);
+    return buildJourneyRoadPaths(orbSnapshot.executiveJourney, positions);
+  }, [catalog, orbSnapshot.executiveJourney]);
+
+  const orbProactiveRecommendations: OrbRecommendation[] = useMemo(
+    () => orbSnapshot.recommendations.slice(0, 5),
+    [orbSnapshot.recommendations]
   );
 
   const activeEngines = useMemo(() => listActiveEnginesInCatalog(catalog), [catalog]);
@@ -349,6 +382,10 @@ export function useStudioWorldAtlas(options?: {
     focusNode,
     visibleNodes,
     orbRecommendations,
+    orbProactiveRecommendations,
+    orbWorldSignals,
+    orbJourneyRoadPaths,
+    orbDailyBrief: orbSnapshot.dailyBrief,
     breadcrumb,
     discovery,
     activeEngines,

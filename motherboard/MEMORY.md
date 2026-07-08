@@ -42349,3 +42349,23 @@ User **FOLLOW-UP SPRINT — Studio World Atlas™ Evolution Phase 2:** Evolve (n
 - **Storage:** `studioWorldAtlasDiscovery_v2` (migrates v1).
 - **Docs:** `docs/studio-os/studio-world-atlas.md` updated for Phase 2.
 - **Prior arc (same chat):** Studio World Atlas™ Phase 1 · V5 migration report · Architecture Auditor™ · Experience Intelligence Engine™ · command-center route fix.
+
+---
+
+## 2026-07-08 — Studio World Atlas™ Phase 3 Master Planner™ strategic planning
+
+User **FOLLOW-UP SPRINT — Master Planner™ Phase 3:** Extend Atlas (not redesign) so founders architect the future before generating anything. City/campus planner experience — Reserve Land™, District Planning (drag districts), Simulation Mode™, 9-phase planning pipeline (Vision™ → Operational™), Expansion Recommendations™, World Forecast™ (1/3/5/10 years), Orb as Master Planner campus architect, Creative Budget integration, Future Vision™ concepts without commit.
+
+- **Planning pipeline:** `master-planner-phases.ts` — Vision → Reserved Land → Concept Blueprint → Approved Blueprint → Construction → Interior Assembly → Commissioning → Grand Opening → Operational; **ADVANCE PHASE** in UI.
+- **Reserve Land™:** `RESERVE_LAND_PRESETS` + toolbar — Future HQ, Innovation District, Research Campus, Marketplace Pavilion, Creative Campus, CX Center, Training Academy; `reserveLand()` persists to store.
+- **District Planning™:** drag planned buildings (`movePlanReservation`), add plaza/transit hub/skybridge/observation tower features, potential roads (`buildPotentialRoadPaths`), expansion zone overlay.
+- **Simulation Mode™:** `master-planner-simulation.ts` — placement score, navigation/crowd/AI traffic/walking/discoverability/expansion fit; **RUN SIMULATION MODE™** button.
+- **Creative Budget™:** `master-planner-budget.ts` — gen/construction cost, budget %, reuse, equity, marketplace value per reservation.
+- **World Forecast™:** `master-planner-forecast.ts` — 1/3/5/10 year building/district projections + narrative milestones.
+- **Expansion Recommendations™:** `master-planner-expansion.ts` — proactive capacity/growth messages.
+- **Future Vision™:** `createFutureVisionConcept` — Prototype District™ etc.; no generation until approved.
+- **Orb Master Planner:** `master-planner-orb.ts` — placement, budget, simulation, forecast, expansion advice when in Master Planner / Future Vision modes.
+- **Storage v3:** `studioWorldAtlasDiscovery_v3` — planFeatures, futureVisionConcepts, forecastHorizon, lastSimulations; migrates v2.
+- **UI evolution:** `is-master-planner` table styling, planner toolbar (reserve/features/forecast/vision), draggable planned markers, dashed potential roads, simulation panel, budget lines, travel rail hidden in planning mode, Orb title → MASTER PLANNER.
+- **Docs:** `docs/studio-os/studio-world-atlas-master-planner.md` · `studio-world-atlas.md` cross-link.
+- **Prior arc (same chat):** Atlas Phase 1 flagship navigation · Phase 2 operating table/digital twin · V5 migration · Architecture Auditor™ · Experience Intelligence Engine™.

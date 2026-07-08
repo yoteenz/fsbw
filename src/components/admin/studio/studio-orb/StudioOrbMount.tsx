@@ -6,6 +6,8 @@ import { StudioOrbConversationBackdrop } from './StudioOrbConversationBackdrop';
 import { StudioOrbPageGuide } from './StudioOrbPageGuide';
 import { StudioOrbLifeCulturePanel } from './StudioOrbLifeCulturePanel';
 import { StudioOrbVoicePanel } from './StudioOrbVoicePanel';
+import { StudioOrbRecommendationsPanel } from './StudioOrbRecommendationsPanel';
+import { StudioOrbDailyBriefOverlay } from './StudioOrbDailyBriefOverlay';
 import { CommandDockConversationPanel } from '../command-dock/CommandDock';
 import { measureOrbCenterFromDom } from './studioOrbRadialLayout';
 
@@ -23,9 +25,11 @@ export function StudioOrbMount() {
   return (
     <>
       <StudioOrbConversationBackdrop />
+      <StudioOrbDailyBriefOverlay />
       <StudioOrbPageGuide />
       <StudioOrbLifeCulturePanel />
       <StudioOrbVoicePanel />
+      <StudioOrbRecommendationsPanel />
       <CommandDockConversationPanel />
       {radialOpen ? (
         <StudioOrbRadialMenu orbCenterX={menuAnchor.x} orbCenterY={menuAnchor.y} />

@@ -19,6 +19,7 @@ import {
   type AtlasNode,
   type AtlasTravelMode,
 } from '../../../../studio-os-core/studio-world-atlas';
+import { orbSignalClass, resolveOrbSignalForNode } from '../../../../studio-os-core/orb-recommendations';
 import { useStudioWorldAtlas } from '../../../../hooks/useStudioWorldAtlas';
 import { STUDIO_WORLD_ATLAS_STYLES } from './studioWorldAtlasTheme';
 
@@ -32,12 +33,14 @@ function BuildingMarker({
   onSelect,
   draggable,
   onDrag,
+  orbSignalKind,
 }: {
   node: AtlasNode;
   focusNodeId: string;
   onSelect: (id: string) => void;
   draggable?: boolean;
   onDrag?: (planId: string, mapX: number, mapY: number) => void;
+  orbSignalKind?: string;
 }) {
   const heightPx = 12 + node.extrusion * 48;
   const opacity = fogOpacity(node.unlocked, node.fogged);
@@ -68,6 +71,7 @@ function BuildingMarker({
         node.isPlanned ? 'is-planned' : '',
         node.isConcept ? 'is-planned' : '',
         draggable && node.planId ? 'is-draggable' : '',
+        orbSignalKind ?? '',
         ...signalClasses,
       ]
         .filter(Boolean)
@@ -116,9 +120,10 @@ function BuildingMarker({
  */
 export function StudioWorldAtlasRoom() {
   const navigate = useNavigate();
-  const { workspace } = useWorkspace();
+  const { workspace, workspaceId } = useWorkspace();
   const atlas = useStudioWorldAtlas({
     companyName: workspace.displayName,
+    organizationId: workspaceId ?? 'frontal-slayer',
     liveRefreshMs: 45_000,
   });
 
@@ -456,8 +461,26 @@ export function StudioWorldAtlasRoom() {
         <aside className="swa__orb" aria-label="Studio Orb world guide">
           <div className="swa__orb-sphere" aria-hidden />
           <p className="swa__orb-title">
-            {showPlanner ? 'STUDIO ORB™ · MASTER PLANNER' : 'STUDIO ORB™ · WORLD GUIDE'}
+            {showPlanner ? 'STUDIO ORB™ · MASTER PLANNER' : 'STUDIO ORB™ · CHIEF OF STAFF'}
           </p>
+          {!showPlanner
+            ? atlas.orbProactiveRecommendations.map((rec) => (
+                <button
+                  key={rec.id}
+                  type="button"
+                  className={`swa__orb-rec is-${rec.priority === 'critical' ? 'high' : rec.priority}`}
+                  onClick={() => {
+                    if (rec.targetNodeId) {
+                      atlas.focusOn(rec.targetNodeId);
+                      setSelectedNodeId(rec.targetNodeId);
+                    }
+                  }}
+                  title={rec.reasoning}
+                >
+                  {rec.title}
+                </button>
+              ))
+            : null}
           {atlas.orbRecommendations.map((rec) => (
             <button
               key={rec.id}
@@ -501,18 +524,30 @@ export function StudioWorldAtlasRoom() {
                     vectorEffect="non-scaling-stroke"
                   />
                 ))}
-              </svg>
-              <div className="swa__buildings">
-                {atlas.visibleNodes.map((node) => (
-                  <BuildingMarker
-                    key={node.id}
-                    node={node}
-                    focusNodeId={selectedNodeId ?? atlas.focusNode.id}
-                    onSelect={handleSelect}
-                    draggable={showPlanner && !!node.planId}
-                    onDrag={atlas.movePlanReservation}
+                {atlas.orbJourneyRoadPaths.map((d, i) => (
+                  <path
+                    key={`j-${i}`}
+                    className="swa__road is-orb-journey"
+                    d={d}
+                    vectorEffect="non-scaling-stroke"
                   />
                 ))}
+              </svg>
+              <div className="swa__buildings">
+                {atlas.visibleNodes.map((node) => {
+                  const signal = resolveOrbSignalForNode(node.id, atlas.orbWorldSignals);
+                  return (
+                    <BuildingMarker
+                      key={node.id}
+                      node={node}
+                      focusNodeId={selectedNodeId ?? atlas.focusNode.id}
+                      onSelect={handleSelect}
+                      draggable={showPlanner && !!node.planId}
+                      onDrag={atlas.movePlanReservation}
+                      orbSignalKind={signal ? orbSignalClass(signal.kind) : undefined}
+                    />
+                  );
+                })}
               </div>
             </div>
           </div>

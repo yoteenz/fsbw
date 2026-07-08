@@ -9,7 +9,13 @@ import {
 import { orbLabel, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 
-const PRIMARY_ACTIONS: StudioOrbRadialActionId[] = ['command-dock', 'page-guide', 'life-culture', 'voice'];
+const PRIMARY_ACTIONS: StudioOrbRadialActionId[] = [
+  'command-dock',
+  'notifications',
+  'page-guide',
+  'life-culture',
+  'voice',
+];
 
 type Props = {
   /** Initial orb center from mount — refreshed from DOM on open. */
@@ -31,7 +37,8 @@ const itemShellStyle = {
 
 /** AssistiveTouch-inspired radial menu — viewport-aware, never clipped. */
 export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
-  const { radialOpen, closeRadial, openCommandDock, openPageGuide, openLifeCulture, openVoiceMode } = useStudioOrb();
+  const { radialOpen, closeRadial, openCommandDock, openPageGuide, openLifeCulture, openVoiceMode, openRecommendations } =
+    useStudioOrb();
   const enabledActions = STUDIO_ORB_RADIAL_ACTIONS.filter((a) => a.enabled && PRIMARY_ACTIONS.includes(a.id));
 
   const [layout, setLayout] = useState<RadialMenuLayout>(() =>
@@ -68,6 +75,7 @@ export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
 
   const handleAction = (id: StudioOrbRadialActionId) => {
     if (id === 'command-dock') openCommandDock();
+    else if (id === 'notifications') openRecommendations();
     else if (id === 'page-guide') openPageGuide();
     else if (id === 'life-culture') openLifeCulture();
     else if (id === 'voice') openVoiceMode();
