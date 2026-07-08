@@ -41913,3 +41913,18 @@ User sprint: build **Generation Pipeline™** — becomes the production engine 
 - **Cross-refs updated:** CIE prompt-generation-architecture · CIE README · scene-generation-pipeline · generation-manager README · studio-world · CORE.md
 - **Prior arc (same chat):** Scene Planner™ · Prompt Composer™ · Asset Registry™ · intelligence stack
 - **No UI · no provider execution this sprint**
+
+---
+
+## 2026-07-08 — Story Table™ Hello World — first fully generated workspace (benchmark sprint, docs only)
+
+User sprint: Story Table™ becomes first fully generated workspace via complete generation pipeline. **Do NOT manually design.** **Do NOT optimize beauty first** — prove engine: generated · assembled · stored · reused correctly. Story Table™ = "Hello World" of Studio OS generation engine · benchmark for every future department.
+
+- **Pipeline:** Founder Intent™ → Prompt Composer™ → Scene Planner™ → Asset Registry™ → Generation Queue™ → Approval™ → Scene Assembly™ → Workspace Published™
+- **12 required layers:** Environment Shell™ · Lighting™ · Architecture™ · Furniture™ · Executive Strategy Table™ · Floating Studio Orb™ · Holographic Project Boards™ · Material Samples™ · Atmosphere™ · Particles™ · Ambient Audio™ · Runtime FX™
+- **Proof focus:** layer independence · Registry reuse ≥40% · pre-gen estimate gate · per-layer quality + approval · Registry Canonical Records · partial lighting regen · benchmark scorecard ≥80%
+- **Reference estimate:** $2.48 · 2m 12s · 8 reused · 3 modified · 2 new · $4.86 saved (cds-story-table-example)
+- **9-doc spec:** `docs/studio-os/benchmarks/story-table-hello-world/` — README · layer-manifest · pipeline-run-spec · proof-criteria · registry-expectations · approval-checkpoints · assembly-verification · department-inheritance · future-roadmap
+- **Cross-refs:** Generation Pipeline · CDS V3 README · engine-first-roadmap · studio-world · CORE.md
+- **Prior arc (same chat):** Generation Pipeline™ · Scene Planner™ · Prompt Composer™ · Asset Registry™ · intelligence stack
+- **No manual design · no implementation this sprint**

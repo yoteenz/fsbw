@@ -49,9 +49,10 @@ PHASE 3 — CDS WORKSPACE MANIFESTS
   Production Estimate™ per workspace bootstrap
 
 PHASE 4 — FIRST GENERATED SCENE
-  Single scene proof: Story Table™ OR Arrival™
-  Layer-by-layer generate · approve · compose
-  Not pixel-perfect — pipeline proof
+  Story Table™ Hello World — docs/studio-os/benchmarks/story-table-hello-world/
+  Complete Generation Pipeline™ — no manual design
+  Layer-by-layer generate · approve · compose · Registry proof
+  Not pixel-perfect — engine proof first
 
 PHASE 5 — REMAINING CDS SCENES
   Mood Wall™ · Notes Desk™ · Pipeline™ · Library™

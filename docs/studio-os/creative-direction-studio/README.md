@@ -76,6 +76,7 @@ Detail: [engine-first-roadmap.md](../creative-intelligence-engine/engine-first-r
 | Document | Contents |
 |----------|----------|
 | [Creative Intelligence Engine™](../creative-intelligence-engine/README.md) | **Primary V3 spec** — pipeline · scenes · layers |
+| [Story Table™ Hello World](../benchmarks/story-table-hello-world/README.md) | **First fully generated workspace** — engine benchmark |
 | [physical-workspaces.md](../creative-intelligence-engine/physical-workspaces.md) | Room-by-room design |
 | [prompt-generation-architecture.md](../creative-intelligence-engine/prompt-generation-architecture.md) | Founder Intent™ → Completed Workspace™ |
 
@@ -104,6 +105,10 @@ Detail: [engine-first-roadmap.md](../creative-intelligence-engine/engine-first-r
 ---
 
 ## Success Benchmark
+
+**Story Table™ Hello World** — [first fully generated workspace](../benchmarks/story-table-hello-world/README.md)
+
+Story Table™ is generated via the complete [Generation Pipeline™](../engines/generation-pipeline/README.md) — **not manually designed**. Engine proof before beauty.
 
 CDS should **no longer resemble a website**.
 

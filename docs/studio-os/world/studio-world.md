@@ -137,6 +137,8 @@ STUDIO WORLD™
 
 **Generation Pipeline™:** [The production engine](../engines/generation-pipeline/README.md) — intent → published workspace · layer-by-layer · founder controls · pre-gen estimates
 
+**Story Table™ Hello World:** [First fully generated workspace](../benchmarks/story-table-hello-world/README.md) — engine benchmark · not manual design
+
 **Creative Intelligence Engine™:** [Build the engine first](../creative-intelligence-engine/README.md) — CDS pilot · generated scenes · prompt pipeline
 
 **Studio Alpha™ Production Dashboard™:** [Internal Mission Control of Studio World™](../../studio-alpha/production-dashboard/README.md) — operators only · full GPU · ROI · queue · **not** Studio OS
@@ -167,6 +169,7 @@ STUDIO WORLD™
 | **Prompt Composer™** | [../engines/prompt-composer/](../engines/prompt-composer/) | Intent → provider-neutral ProductionPrompt™ · twelve composition sources · Provider Optimizer handoff |
 | **Scene Planner™** | [../engines/scene-planner/](../engines/scene-planner/) | Workspace → production layers · Scene Blueprint™ · dependencies · inventory · generation order · estimates |
 | **Generation Pipeline™** | [../engines/generation-pipeline/](../engines/generation-pipeline/) | Master production engine · 12 stages · layer-by-layer · founder controls · pre-gen estimates · remember-first |
+| **Story Table™ Hello World** | [../benchmarks/story-table-hello-world/](../benchmarks/story-table-hello-world/) | First fully generated workspace · engine proof benchmark · CDS foundation |
 | **Creative Blueprint Engine™** | [../creative-blueprint-engine/](../creative-blueprint-engine/) | Visual DNA™ · design languages · Systems™ · inheritance above Registry |
 | **Living Company Genome™** | [../living-company-genome/](../living-company-genome/) | Evolutionary memory · genome events · HQ maturation · time capsules |
 | **Studio Production Estimates™** | [../studio-production-estimates/](../studio-production-estimates/) | Pre-production scope · cost · savings · complexity · Orb WHY |

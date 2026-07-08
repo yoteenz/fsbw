@@ -30,7 +30,7 @@
 | `GenerationPipelineCoordinator` API | P0 |
 | Stage state machine implementation | P0 |
 | Estimate gate enforcement | P0 |
-| CDS Story Table™ first full pipeline run | P0 |
+| CDS Story Table™ first full pipeline run | P0 — [Story Table™ Hello World](../../benchmarks/story-table-hello-world/README.md) |
 | Progressive assembly preview | P1 |
 
 ---
