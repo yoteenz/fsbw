@@ -41456,3 +41456,25 @@ User defined **Routines™** — how founders experience work inside Studio Worl
 - **11-doc spec:** `docs/studio-os/routines/` — README · routine-philosophy · routine-framework · routine-engine · routine-memory · routine-transitions · orb-guidance · routine-adaptation · resume-system · explorer-vs-routine · future-routine-library
 - **Prior arc (same chat):** Scene Architecture™ · CDS V2 prototype (`252a6809`) · Guild System™ · Studio Professionals™ · Studio Marketplace™ v2 · Living Sets™
 - **CORE.md + studio-world.md + navigation/README.md:** Routines™ cross-refs added
+
+---
+
+## 2026-07-08 — Expeditions™ — The Transformational Journeys of Studio World™ (workflow evolution sprint, docs only)
+
+User defined **Expeditions™** — second category of work alongside Routines™. **No UI · no navigation · no project management.**
+
+- **Mission:** Not every objective is repeatable — some transform the company; **Routines™ improve · Expeditions™ transform**
+- **Routine™:** repeatable · operational · short duration · frequent (Weekly Executive Review™ · Launch Campaign™ · Hire Employee™ · Approve Golden Build™ · Monthly Planning™)
+- **Expedition™:** transformational · strategic · long duration · milestone-driven (Launch Company™ · Complete Rebrand™ · Build New Headquarters™ · International Expansion™ · Fundraising™ · Product Line Expansion™ · AI Transformation™ · Acquisition™ · Market Expansion™ · Platform Migration™)
+- **Hierarchy:** Transformation Goal™ → Expedition™ → Stage™ → Department™ → Scene™ → Workspace™ → Milestone™ → Completion™
+- **Relationship:** Routine keeps company moving · Expedition changes where company is going · expeditions **compose** routines within stages
+- **Expedition Map™:** living diegetic roadmap — founder always knows where they are and what's next (Launch Company™: Vision → Brand → Creative → Legal → Finance → Website → Marketing → Launch → Growth)
+- **Living Timeline™:** persistent history — milestones · decisions · versions · Golden Builds™ · Founder Notes™ · Lessons Learned™ · Celebrations™ — nothing forgotten
+- **Milestones™:** First Prototype™ · First Customer™ · First Sale™ · First Employee™ · First Office™ · First Million™ · Global Expansion™ — permanent Company Memory™
+- **Headquarters Responds™:** walls update · displays change · celebrations · awards · new departments unlock during expeditions (complements world/headquarters-evolution.md)
+- **Pause & Resume™:** weeks/months — Orb remembers stage · decisions · milestones · blockers · pending approvals
+- **Expedition Memory™ / Founder's Story™:** institutional knowledge · revisit launch day · first HQ · rebrand · acquisition — living business autobiography
+- **Orb scale-aware:** Routine *"We'll complete this today"* vs Expedition *"This will likely take several weeks. I've prepared the roadmap."*
+- **10-doc spec:** `docs/studio-os/expeditions/` — README · expedition-philosophy · routine-vs-expedition · expedition-engine · living-roadmaps · milestone-system · headquarters-evolution · company-memory · orb-guidance · future-expeditions
+- **Prior arc (same chat):** Routines™ · Scene Architecture™ · CDS V2 prototype · Guild System™ · Studio Professionals™ · Living Sets™
+- **CORE.md + studio-world.md + routines/README.md + navigation/README.md:** Expeditions™ cross-refs added

@@ -105,6 +105,8 @@ STUDIO WORLD™
 
 **Routines™:** [Guided Workflows](../routines/README.md) — business objectives as journeys · Orb-guided orchestration
 
+**Expeditions™:** [Transformational Journeys](../expeditions/README.md) — strategic arcs · milestones · Founder's Story™
+
 ---
 
 ## Related Canon (Subsystems)
@@ -119,6 +121,7 @@ STUDIO WORLD™
 | **Walk the Business™** | [../engine/walk-the-business/](../engine/walk-the-business/) | Journey-aware routing through HQ |
 | **Scene Architecture™** | [../navigation/](../navigation/) | Departments · scenes · workspaces · navigation laws |
 | **Routines™** | [../routines/](../routines/) | Guided journeys · outcomes · Orb orchestration |
+| **Expeditions™** | [../expeditions/](../expeditions/) | Transformation · milestones · company autobiography |
 | **Founder Journey™** | [../alpha/founder-journey.md](../alpha/founder-journey.md) | Founder maturity arc across the world |
 
 ---

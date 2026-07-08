@@ -88,6 +88,7 @@ Studio World™ should feel like **walking through a living headquarters**.
 | System | Relationship |
 |--------|--------------|
 | [Routines™](../routines/README.md) | Orchestrates journeys across departments · scenes · workspaces |
+| [Expeditions™](../expeditions/README.md) | Transformational arcs · milestones · Company Memory™ |
 | [Studio World™](../world/studio-world.md) | Umbrella — Scene Architecture™ is its **navigation layer** |
 | [Living Sets™](../world/living-sets.md) | Departments **transform** — scenes **persist** as framework zones |
 | [Transitions™](../world/transitions/README.md) | Movement **between** destinations |

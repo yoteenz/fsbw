@@ -32,10 +32,11 @@ A **Routine™** is a guided journey through Studio World™ that completes a **
 | Layer | What it is | Founder thinks |
 |-------|------------|----------------|
 | **[Scene Architecture™](../navigation/README.md)** | Where work happens | *"Which room do I need?"* |
-| **Routines™** | Why work happens today | *"What am I trying to accomplish?"* |
+| **[Routines™](./README.md)** | Repeatable operational journeys | *"What am I trying to accomplish today?"* |
+| **[Expeditions™](../expeditions/README.md)** | Transformational strategic arcs | *"Where are we taking this company?"* |
 | **Tasks™** | Atomic actions in place | *"Approve this stage"* |
 
-**Law:** Routines™ orchestrate Scene Architecture™. They do not replace it.
+**Law:** Routines™ and Expeditions™ orchestrate Scene Architecture™. They do not replace it.
 
 ---
 
