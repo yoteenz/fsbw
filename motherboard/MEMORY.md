@@ -43159,3 +43159,40 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Published entries are **Approved™**, never auto-Canon. Canon remains explicit ratification only.
 - Memory System is infrastructure — UIs (Knowledge Core Observatory, Orb Archivist, future Memory Graph views) consume its APIs.
 - `queryMemorySystem()` for cross-layer search; `buildMemoryGraph()` for lineage visualization data.
+
+---
+
+## 2026-07-08 — Mission Control™ holographic civilization transformation (Article-K20 follow-up)
+
+**Context:** User approved Mission Control architecture and requested transforming World Atlas™ into Mission Control™ — remove dashboard behavior, implement spatial holographic civilization, Atlas Table™, Orb projection, Civilization/District/Building views, continuous zoom, Progressive Presence™, World Health visualization, environmental storytelling, holographic spatial annotations (not panels), navigation through the hologram, inherit Experience Engine behavior; Atlas becomes subsystem inside Mission Control.
+
+**Topics covered (entire conversation so far):**
+- Prior arc: Knowledge Core engine + Observatory UI; Memory System four-layer pipeline (Conversation Archive → Knowledge Extraction → Founder Review → Knowledge Core) as reusable infrastructure.
+- **This follow-up:** Full Mission Control spatial transformation on `/admin/studio/world-atlas`.
+
+**Decisions / outcomes:**
+- **Atlas Subsystem™** — World Atlas is a subsystem inside Mission Control (`atlas-subsystem.ts`); Mission Control owns holographic experience; Atlas supplies world model/travel.
+- **Engine extensions** (`src/studio-os-core/mission-control/`):
+  - `holographic-views.ts` — Civilization View™ · District View™ · Building View™ · Interior View™ from Continuous Scale™
+  - `spatial-annotations.ts` — holographic callouts anchored to map coordinates (replaces information panels)
+  - `orb-projection.ts` — Orb Projection System™ beams + floating cards
+  - `environmental-storytelling.ts` — World Health™ ambient whispers on the table
+  - `continuous-zoom.ts` — camera descent without page transitions
+- **UI components** (`src/components/admin/studio/world-atlas/`):
+  - `MissionControlSpatialAnnotations.tsx` — travel/navigation via hologram annotations
+  - `MissionControlOrbProjector.tsx` — Orb intelligence projected through light
+  - `MissionControlViewLens.tsx` — Continuous Scale view lens
+  - `MissionControlHolographicNav.tsx` — orbital ring mode/travel navigation (replaces dashboard rails in spatial mode)
+- **`StudioWorldAtlasRoom.tsx` refactor:**
+  - `is-mc-spatial` mode hides ticker, engine strip, breadcrumb, focus panel, legacy orb aside, mode/travel rails
+  - Spatial annotations inside Atlas Table™; environmental whispers; continuous zoom camera on table
+  - Experience Engine + Progressive Presence™ gates for new elements (`mc-view-lens`, `mc-spatial-annotations`, `mc-orb-projection`, `mc-holographic-nav`)
+- **Experience profile** updated: `world-atlas` → **Mission Control™** display name and narrative
+- **Theme** (`studioWorldAtlasTheme.ts`): holographic annotation ribbons, orb projector, orbital nav ring, environmental whispers, dashboard suppression in spatial mode
+
+**Verification:** `npm run build` passed.
+
+**Conventions:**
+- Mission Control spatial mode = default after Activation Sequence™; planner modes retain legacy panels
+- Navigation happens through the hologram (building select + spatial annotation TRAVEL); world is the interface
+- Dashboard rails/panels suppressed in `is-mc-spatial`; information emerges via Progressive Presence™ only

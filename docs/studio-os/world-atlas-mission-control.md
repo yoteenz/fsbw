@@ -55,7 +55,12 @@ Founders should pause for a few seconds simply to watch the world come alive bef
 | Architectural travel | `architectural-travel.ts` |
 | Orb narration | `orb-mission-control.ts` |
 | Command Dock advisor | `dock-advisor.ts` |
-| Global Atlas hint | `atlas-hint.ts` |
+| Continuous zoom | `continuous-zoom.ts` |
+| Holographic views | `holographic-views.ts` |
+| Spatial annotations | `spatial-annotations.ts` |
+| Orb projection | `orb-projection.ts` |
+| Environmental storytelling | `environmental-storytelling.ts` |
+| Atlas subsystem | `atlas-subsystem.ts` |
 
 ---
 
@@ -65,6 +70,10 @@ Founders should pause for a few seconds simply to watch the world come alive bef
 |-----------|------|
 | Room shell | `StudioWorldAtlasRoom.tsx` |
 | Holographic layers | `MissionControlLayers.tsx` |
+| Spatial annotations | `MissionControlSpatialAnnotations.tsx` |
+| Orb projection | `MissionControlOrbProjector.tsx` |
+| View lens | `MissionControlViewLens.tsx` |
+| Holographic nav | `MissionControlHolographicNav.tsx` |
 | Theme | `studioWorldAtlasTheme.ts` |
 | Hook | `useMissionControl.ts` |
 

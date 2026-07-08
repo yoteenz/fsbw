@@ -4,6 +4,13 @@ import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvid
 import {
   CONTINUOUS_SCALE_LABELS,
   worldHealthClass,
+  resolveHolographicView,
+  buildSpatialAnnotations,
+  buildOrbProjection,
+  buildEnvironmentalStories,
+  primaryEnvironmentalWhisper,
+  resolveContinuousZoomCamera,
+  continuousZoomStyle,
 } from '../../../../studio-os-core/mission-control';
 import {
   ATLAS_CONSTRUCTION_PHASE_LABELS,
@@ -30,6 +37,10 @@ import { AtlasSpatialShell } from './AtlasSpatialShell';
 import { useAtlasAssembly } from './useAtlasAssembly';
 import { useMissionControl } from '../../../../hooks/useMissionControl';
 import { MissionControlLayers } from './MissionControlLayers';
+import { MissionControlSpatialAnnotations } from './MissionControlSpatialAnnotations';
+import { MissionControlOrbProjector } from './MissionControlOrbProjector';
+import { MissionControlViewLens } from './MissionControlViewLens';
+import { MissionControlHolographicNav } from './MissionControlHolographicNav';
 import { STUDIO_WORLD_ATLAS_STYLES } from './studioWorldAtlasTheme';
 
 const FORECAST_HORIZONS = [1, 3, 5, 10] as const;
@@ -194,6 +205,87 @@ export function StudioWorldAtlasRoom() {
     [selectedNode.id, atlas.discovery.buildingMemories]
   );
 
+  const showPlanner = atlas.isMasterPlannerMode;
+  const showParallelFutures = atlas.isParallelFuturesMode;
+  const showFutureMerge = atlas.isFutureMergeMode;
+
+  const holographicView = useMemo(
+    () => resolveHolographicView(mission.continuousScale, atlas.focusNode),
+    [mission.continuousScale, atlas.focusNode]
+  );
+
+  const zoomCamera = useMemo(
+    () => resolveContinuousZoomCamera(mission.continuousScale),
+    [mission.continuousScale]
+  );
+
+  const environmentalStories = useMemo(
+    () =>
+      buildEnvironmentalStories({
+        view: holographicView,
+        mode: mission.missionMode,
+        focusNode: atlas.focusNode,
+        worldHealth: mission.worldHealth,
+        worldTicker: atlas.worldTicker,
+      }),
+    [holographicView, mission.missionMode, atlas.focusNode, mission.worldHealth, atlas.worldTicker]
+  );
+
+  const environmentalWhisper = useMemo(
+    () => primaryEnvironmentalWhisper(environmentalStories),
+    [environmentalStories]
+  );
+
+  const spatialAnnotations = useMemo(
+    () =>
+      buildSpatialAnnotations({
+        selectedNode,
+        focusNode: atlas.focusNode,
+        visibleNodes: atlas.visibleNodes,
+        worldHealth: mission.worldHealth,
+        view: holographicView,
+        travelPreviewLine: mission.navigationReady ? mission.travelPreview.previewLine : undefined,
+        memoryReason: selectedMemory?.reason,
+        environmentalWhisper: environmentalWhisper ?? undefined,
+      }),
+    [
+      selectedNode,
+      atlas.focusNode,
+      atlas.visibleNodes,
+      mission.worldHealth,
+      holographicView,
+      mission.navigationReady,
+      mission.travelPreview.previewLine,
+      selectedMemory?.reason,
+      environmentalWhisper,
+    ]
+  );
+
+  const orbProjection = useMemo(
+    () =>
+      buildOrbProjection({
+        orbLines: mission.orbLines,
+        recommendations: [
+          ...atlas.orbProactiveRecommendations.map((r) => ({
+            id: r.id,
+            title: r.title,
+            targetNodeId: r.targetNodeId,
+            priority: r.priority,
+          })),
+          ...atlas.orbRecommendations.map((r) => ({
+            id: r.id,
+            title: r.message,
+            targetNodeId: r.targetNodeId,
+            priority: r.priority,
+          })),
+        ],
+        focusAnnotation: spatialAnnotations.find((a) => a.emphasis),
+      }),
+    [mission.orbLines, atlas.orbProactiveRecommendations, atlas.orbRecommendations, spatialAnnotations]
+  );
+
+  const mcSpatialMode = mission.navigationReady && !showPlanner;
+
   const roadPaths = useMemo(() => {
     const focus = atlas.focusNode;
     return atlas.visibleNodes
@@ -213,6 +305,7 @@ export function StudioWorldAtlasRoom() {
     (nodeId: string) => {
       experience?.presence.expand('atlas-district-labels', 1);
       experience?.presence.expand('atlas-focus-annotation', 2);
+      experience?.presence.expand('mc-spatial-annotations', 2);
       experience?.presence.revealLevel(1);
       setSelectedNodeId(nodeId);
       const node = atlas.catalog.find((n) => n.id === nodeId);
@@ -251,9 +344,6 @@ export function StudioWorldAtlasRoom() {
     [atlas, experience, navigate, selectedNode.id, selectedNode.isPlanned, selectedNode.isConcept]
   );
 
-  const showPlanner = atlas.isMasterPlannerMode;
-  const showParallelFutures = atlas.isParallelFuturesMode;
-  const showFutureMerge = atlas.isFutureMergeMode;
   const labelsVisible = experience?.presence.isVisible('atlas-district-labels') ?? false;
   const plannerSurfacesVisible =
     showPlanner || showParallelFutures || showFutureMerge || experience?.presence.isVisible('atlas-planner-surfaces');
@@ -269,6 +359,7 @@ export function StudioWorldAtlasRoom() {
           `is-assembly-${phase}`,
           isAlive ? 'is-assembly-alive' : '',
           !mission.navigationReady ? 'is-activating' : '',
+          mcSpatialMode ? 'is-mc-spatial' : '',
           labelsVisible ? 'is-labels-visible' : '',
           showPlanner ? 'is-master-planner' : '',
           showParallelFutures ? 'is-parallel-futures' : '',
@@ -322,14 +413,24 @@ export function StudioWorldAtlasRoom() {
           )}
         </header>
 
-        {mission.worldHealthLine && mission.navigationReady ? (
+        {mission.worldHealthLine && mission.navigationReady && !mcSpatialMode ? (
           <p className="swa__world-health-line">{mission.worldHealthLine}</p>
         ) : null}
 
-        {mission.navigationReady ? (
+        {mcSpatialMode ? (
+          <PresenceGated elementId="mc-view-lens">
+            <MissionControlViewLens
+              view={holographicView}
+              scaleLabel={CONTINUOUS_SCALE_LABELS[mission.continuousScale]}
+            />
+          </PresenceGated>
+        ) : null}
+
+        {mission.navigationReady && !mcSpatialMode ? (
           <span className="swa__scale-pill">{CONTINUOUS_SCALE_LABELS[mission.continuousScale]}</span>
         ) : null}
 
+        {!mcSpatialMode ? (
         <div className="swa__ticker" aria-live="polite">
           <PresenceGated elementId="atlas-world-ticker">
             <span className="swa__ticker-inner">
@@ -345,8 +446,9 @@ export function StudioWorldAtlasRoom() {
             </span>
           </PresenceGated>
         </div>
+        ) : null}
 
-        {!showPlanner ? (
+        {!mcSpatialMode && !showPlanner ? (
           <PresenceGated elementId="atlas-engine-strip">
             <div className="swa__engine-strip" aria-hidden>
               {atlas.activeEngines.slice(0, 8).map((engine) => (
@@ -358,6 +460,7 @@ export function StudioWorldAtlasRoom() {
           </PresenceGated>
         ) : null}
 
+        {!mcSpatialMode ? (
         <PresenceGated elementId="atlas-breadcrumb-trail">
           <nav className="swa__breadcrumb" aria-label="Atlas focus trail">
             {atlas.breadcrumb.map((node, i) => (
@@ -372,7 +475,9 @@ export function StudioWorldAtlasRoom() {
             ))}
           </nav>
         </PresenceGated>
+        ) : null}
 
+        {!mcSpatialMode ? (
         <PresenceGated elementId="atlas-focus-annotation">
         <aside className="swa__focus-panel" aria-live="polite">
           <p className="swa__focus-name">{selectedNode.displayName}</p>
@@ -569,6 +674,19 @@ export function StudioWorldAtlasRoom() {
           ) : null}
         </aside>
         </PresenceGated>
+        ) : null}
+
+        {mcSpatialMode ? (
+          <PresenceGated elementId="mc-orb-projection">
+            <MissionControlOrbProjector
+              projection={orbProjection}
+              onSelectTarget={(nodeId) => {
+                atlas.focusOn(nodeId);
+                setSelectedNodeId(nodeId);
+              }}
+            />
+          </PresenceGated>
+        ) : null}
 
         {plannerSurfacesVisible && showFutureMerge ? (
           <aside className="swa__pf-comparison swa__merge-lab-panel" aria-label="Merge Lab ingredients">
@@ -817,6 +935,7 @@ export function StudioWorldAtlasRoom() {
           </aside>
         ) : null}
 
+        {!mcSpatialMode ? (
         <PresenceGated elementId="atlas-orb-projections">
         <aside className="swa__orb" aria-label="Studio Orb world guide">
           <div className="swa__orb-sphere" aria-hidden />
@@ -869,11 +988,37 @@ export function StudioWorldAtlasRoom() {
           ))}
         </aside>
         </PresenceGated>
+        ) : null}
 
         <div className="swa__table-stage">
-          <div className={`swa__table${atlas.view.transitionMs > 800 ? ' is-zooming' : ''} ${mission.modeMapping.tableClass}`}>
+          <div
+            className={[
+              'swa__table',
+              atlas.view.transitionMs > 800 ? 'is-zooming' : '',
+              mission.modeMapping.tableClass,
+              holographicView.tableClass,
+              zoomCamera.tableClass,
+              mcSpatialMode ? 'is-mc-spatial-table' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+            style={mcSpatialMode ? continuousZoomStyle(zoomCamera) : undefined}
+          >
             <div className="swa__table-surface">
               <div className="swa__table-glow" aria-hidden />
+              {mcSpatialMode ? (
+                <div className={`mc-environmental-whispers ${holographicView.ambientClass}`} aria-hidden>
+                  {environmentalStories.map((story) => (
+                    <span
+                      key={story.id}
+                      className={`mc-environmental-whisper is-mood-${story.mood}`}
+                      style={{ left: `${story.mapX}%`, top: `${story.mapY}%` }}
+                    >
+                      {story.whisper}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
               {showPlanner ? (
                 <div
                   className="swa__expansion-zone"
@@ -930,11 +1075,35 @@ export function StudioWorldAtlasRoom() {
                   );
                 })}
               </div>
+              {mcSpatialMode ? (
+                <PresenceGated elementId="mc-spatial-annotations">
+                  <MissionControlSpatialAnnotations
+                    annotations={spatialAnnotations}
+                    onSelectNode={(nodeId) => handleSelect(nodeId)}
+                    onTravel={(nodeId) => void handleTravel(nodeId)}
+                  />
+                </PresenceGated>
+              ) : null}
             </div>
           </div>
         </div>
 
-        {mission.navigationReady && !showPlanner ? (
+        {mcSpatialMode ? (
+          <PresenceGated elementId="mc-holographic-nav">
+            <MissionControlHolographicNav
+              missionModes={mission.missionModes}
+              modeLabels={mission.modeLabels}
+              activeMode={mission.missionMode}
+              onSelectMode={mission.selectMissionMode}
+              travelOptions={mission.travelOptions}
+              travelLabels={mission.travelLabels}
+              activeTravel={mission.travelOption}
+              onSelectTravel={mission.selectTravelOption}
+            />
+          </PresenceGated>
+        ) : null}
+
+        {mission.navigationReady && !showPlanner && !mcSpatialMode ? (
           <PresenceGated elementId="atlas-mode-controls">
           <div className="swa__mode-rail swa__mc-mode-rail" role="tablist" aria-label="Mission Control visualization modes">
             {mission.missionModes.map((mode) => (
