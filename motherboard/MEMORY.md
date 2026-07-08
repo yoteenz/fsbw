@@ -41175,3 +41175,28 @@ User defined **Creative Direction Pipeline™** — production philosophy sprint
 - **13-doc spec:** `docs/studio-os/creative-direction-pipeline/` — README · creative-direction-pipeline · creative-brief · creative-direction · complete-concepts · founder-vision-selection · scene-blueprint · reverse-engineering · asset-graph · refinement-pipeline · director-feedback · production-intelligence · world-persistence · future-production
 - **Prior arc (same chat):** Adaptive Onboarding™ · Mode System™ · Company Engine™ · Creative Approval Pipeline™ implementation
 - **CORE.md:** Creative Direction Pipeline™ line added
+
+---
+
+## 2026-07-08 — Founder Taste Engine™ — The AI That Learns How You Think (docs only)
+
+User defined **Founder Taste Engine™** — one of the most important foundational intelligence philosophy sprints. **No UI · no React · no new generation engine.**
+
+- **Mission:** Studio OS should learn **WHY** founders choose — not merely remember what they clicked — and over time begin **thinking like the founder**
+- **Philosophy:** Founder is not training prompts · they are **teaching Studio OS their creative instincts** — every decision strengthens the engine
+- **Signal sources:** Every approval · rejection · branch · regeneration · comparison · feedback · concept selection · conversation
+- **Concept First™:** Every significant creative decision (room · website · packaging · logo · campaign · brand · UI · etc.) begins with **multiple complete concepts** (A/B/C) — not one option
+- **Founder choice:** Selected → **Canon™** (official truth) · rejected optionally preserved → **Alternate Branch™** (explorations · parallel timelines · future inspiration)
+- **Taste Learning™:** Important part is **WHY** not which — auto-detect patterns (minimal UI · hero objects · luxury materials · cinematic · experiential nav · etc.) from decisions not surveys
+- **Founder Taste Genome™:** Permanent founder-scoped creative DNA — visual · architectural · lighting · typography · color · motion · audio · interaction · brand · packaging · marketing · writing · leadership · decision patterns · creative risk tolerance · innovation style
+- **Predictive Design™:** Prioritize taste-aligned concepts · eliminate conflicts transparently · "I generated three options prioritized for your taste" · "eliminated twelve weaker concepts"
+- **Taste Transfer™:** Genome travels to second company — Company Genome™ changes · founder taste does not — day-one alignment
+- **Orb Taste Dialogue™:** Orb occasionally explains learned patterns · founder confirms · rejects · refines
+- **World Integration™:** Influences Creative Review™ · Braintrust™ · Golden Builds™ · Marketplace · Concierges · generation prompts · HQ evolution · Studio World™ · Command Dock
+- **Relationship to Relationship Memory™:** RM = how founder **works** · Taste Engine = **why** they **create** — complementary
+- **Relationship to Organization Genome™:** Org Genome = who **company** is · Taste Genome = founder creative identity
+- **Success:** *"I no longer have to explain myself"* — software evolves from following instructions to understanding taste
+- **Final philosophy:** Most valuable thing Studio OS creates is **understanding** — not companies alone
+- **11-doc spec:** `docs/studio-os/founder-taste-engine/` — README · founder-taste-engine · concept-first · taste-learning · taste-genome · predictive-design · canon-and-branches · taste-transfer · orb-taste-dialogue · world-integration · future-taste-engine
+- **Prior arc (same chat):** Creative Direction Pipeline™ · Adaptive Onboarding™ · Mode System™ · Company Engine™
+- **CORE.md:** Founder Taste Engine™ line added
