@@ -41079,3 +41079,13 @@ User enhanced **Creative Approval Pipeline™** with mandatory **Creative Review
 - **Route:** `/admin/studio/department/creative-direction`
 - **Prior arc:** Creative Approval Pipeline™ · Studio World™ · Sets™ · Transitions™ · Golden Build™
 - **CORE.md:** Creative Review™ added to Golden Build / pipeline line
+
+---
+
+## 2026-07-08 — Fix Creative Approval Pipeline mobile crash (readAll .find)
+
+User reported **COMPONENT FAILED TO LOAD** on iPhone at `fsbw.vercel.app` — error: `K().find is not a function` in pipeline lookup by departmentId/projectId.
+
+- **Root cause:** `approval-pipeline-store.ts` used `readStudioOsJson(STORAGE_KEY, () => [])` — `readStudioOsJson` spreads parsed JSON into `{ ...empty(), ...parsed }`, which **destroys array shape** when stored value is a JSON array; result is plain object without `.find`.
+- **Fix:** Pipeline storage now uses wrapper `{ pipelines: CreativeApprovalPipeline[] }` (same pattern as Generation Queue `{ items: [] }`); custom `readStore()` migrates legacy raw-array persisted data.
+- **Files:** `src/studio-os-core/studio-builder/approval-pipeline-store.ts`
