@@ -21,6 +21,11 @@ export function setRuntimeActiveWorkspaceId(workspaceId: string): void {
   runtimeActiveWorkspaceId = workspaceId;
 }
 
+/** True when this workspace was already activated in the current page session. */
+export function isRuntimeWorkspaceActive(workspaceId: string): boolean {
+  return runtimeActiveWorkspaceId === workspaceId;
+}
+
 export function readActiveWorkspaceIdFromStorage(): string {
   const raw = safeLocalStorageGetItem(STUDIO_OS_ACTIVE_WORKSPACE_KEY);
   if (raw && raw.trim()) return raw.trim();

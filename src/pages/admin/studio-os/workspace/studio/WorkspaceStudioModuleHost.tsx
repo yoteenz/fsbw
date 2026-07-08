@@ -5,7 +5,6 @@ import { useWorkspace } from '../../../../../studio-os-core/context/WorkspacePro
 import { STUDIO_OS_ROUTES } from '../../../../../studio-os-core/workspace/routes';
 import { getWorkspaceRegistry } from '../../../../../studio-os-core/workspace/registry';
 import { resolveHeadquartersPageModule } from '../../../../../studio-os-core/workspace/headquarters-module-resolver';
-import { activateWorkspaceContext } from '../../../../../studio-os-core/workspace/context-bridge';
 import { loadWorkspace } from '../../../../../studio-os-core/workspace/loader';
 import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from '../../../../../studio-os-core/workspace/storage';
 
@@ -34,7 +33,6 @@ export default function WorkspaceStudioModuleHost() {
   useEffect(() => {
     if (workspaceId && getWorkspaceRegistry().isKnownWorkspaceId(workspaceId)) {
       enterWorkspace(workspaceId);
-      activateWorkspaceContext(workspaceId);
     }
   }, [workspaceId, enterWorkspace]);
 

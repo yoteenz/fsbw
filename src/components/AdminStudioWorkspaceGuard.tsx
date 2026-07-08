@@ -3,7 +3,10 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { CampusTransitionProvider } from './admin/studio-os/campus/CampusTransitionProvider';
 import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
 import { OrganizationContextProvider } from '../studio-os-core/organization-context';
-import { ensureWorkspacesBootstrapped } from '../utils/ensureWorkspacesBootstrapped';
+import {
+  ensureWorkspacesBootstrapped,
+  isWorkspacesBootstrapped,
+} from '../utils/ensureWorkspacesBootstrapped';
 import { ensureOrgMembershipResolved, getCachedOrgMembership } from '../studio-os-core/auth/membership';
 import { activateWorkspaceContext } from '../studio-os-core/workspace/context-bridge';
 import { resolveBootstrapWorkspaceId } from '../studio-os-core/workspace/route-workspace-resolver';
@@ -12,24 +15,14 @@ import LoadingScreen from './base/LoadingScreen';
 
 const MEMBERSHIP_API_TIMEOUT_MS = 2000;
 
-async function resolveMembershipWithTimeout(accessToken?: string) {
+async function resolveMembershipInBackground(accessToken?: string | null): Promise<void> {
   const cached = getCachedOrgMembership();
-  if (cached.source !== 'default') {
-    return cached;
-  }
-  return Promise.race([
-    ensureOrgMembershipResolved(accessToken),
-    new Promise<ReturnType<typeof getCachedOrgMembership>>((resolve) => {
-      window.setTimeout(() => resolve(getCachedOrgMembership()), MEMBERSHIP_API_TIMEOUT_MS);
-    }),
-  ]);
-}
+  if (cached.source !== 'default') return;
 
-async function getAccessTokenWithTimeout(): Promise<string | null> {
-  return Promise.race([
-    getAccessToken(),
-    new Promise<null>((resolve) => {
-      window.setTimeout(() => resolve(null), MEMBERSHIP_API_TIMEOUT_MS);
+  await Promise.race([
+    ensureOrgMembershipResolved(accessToken ?? undefined),
+    new Promise<void>((resolve) => {
+      window.setTimeout(resolve, MEMBERSHIP_API_TIMEOUT_MS);
     }),
   ]);
 }
@@ -40,7 +33,7 @@ async function getAccessTokenWithTimeout(): Promise<string | null> {
  */
 export default function AdminStudioWorkspaceGuard() {
   const { pathname, search } = useLocation();
-  const [workspacesReady, setWorkspacesReady] = useState(false);
+  const [workspacesReady, setWorkspacesReady] = useState(isWorkspacesBootstrapped);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
 
   const routeWorkspaceId = useMemo(
@@ -53,27 +46,29 @@ export default function AdminStudioWorkspaceGuard() {
     activateWorkspaceContext(routeWorkspaceId);
   }, [routeWorkspaceId]);
 
-  /** Registry + membership bootstrap runs once — never re-triggered on in-app navigation. */
+  /** Registry bootstrap — never block paint on auth token or membership API. */
   useEffect(() => {
     let cancelled = false;
 
     void (async () => {
       try {
-        const token = await getAccessTokenWithTimeout();
-        await Promise.all([ensureWorkspacesBootstrapped(), resolveMembershipWithTimeout(token ?? undefined)]);
-        activateWorkspaceContext(
-          resolveBootstrapWorkspaceId(pathname, search, getCachedOrgMembership())
-        );
+        await ensureWorkspacesBootstrapped();
         if (!cancelled) {
           setBootstrapError(null);
           setWorkspacesReady(true);
         }
       } catch (error: unknown) {
         if (!cancelled) {
-          setBootstrapError(error instanceof Error ? error.message : 'Failed to load Studio OS workspaces');
+          setBootstrapError(
+            error instanceof Error ? error.message : 'Failed to load Studio OS workspaces'
+          );
         }
       }
     })();
+
+    void getAccessToken()
+      .then((token) => resolveMembershipInBackground(token))
+      .catch(() => resolveMembershipInBackground(null));
 
     return () => {
       cancelled = true;

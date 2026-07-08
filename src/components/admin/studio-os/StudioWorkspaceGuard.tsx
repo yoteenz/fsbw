@@ -5,7 +5,6 @@ import { NDXBOOK_WORKSPACE_ID } from '../../../studio-os-core/ndxbook/constants'
 import { STUDIO_OS_DEFAULT_WORKSPACE_ID, STUDIO_PLATFORM_WORKSPACE_ID } from '../../../studio-os-core/workspace/storage';
 import { workspaceStudioModulePath } from '../../../studio-os-core/workspace/routes';
 import { isLegacyFrontalSlayerStudioPath } from '../../../studio-os-core/workspace/headquarters-module-resolver';
-import { activateWorkspaceContext } from '../../../studio-os-core/workspace/context-bridge';
 import { isNdxbookScopedRoute } from '../../../studio-os-core/workspace/route-workspace-resolver';
 import { getCachedOrgMembership } from '../../../studio-os-core/auth/membership';
 import { canSwitchOrganizations } from '../../../studio-os-core/application/portfolio-access';
@@ -32,7 +31,6 @@ export default function StudioWorkspaceGuard() {
 
   useLayoutEffect(() => {
     if (platformPath && workspaceId !== STUDIO_PLATFORM_WORKSPACE_ID) {
-      activateWorkspaceContext(STUDIO_PLATFORM_WORKSPACE_ID);
       enterWorkspace(STUDIO_PLATFORM_WORKSPACE_ID);
     }
   }, [platformPath, workspaceId, enterWorkspace]);
@@ -41,7 +39,6 @@ export default function StudioWorkspaceGuard() {
     if (platformPath || !legacyFsPath) return;
     if (isNdxbookScopedRoute(pathname, search)) return;
     if (workspaceId !== STUDIO_OS_DEFAULT_WORKSPACE_ID) {
-      activateWorkspaceContext(STUDIO_OS_DEFAULT_WORKSPACE_ID);
       enterWorkspace(STUDIO_OS_DEFAULT_WORKSPACE_ID);
     }
   }, [platformPath, legacyFsPath, workspaceId, enterWorkspace, pathname, search]);

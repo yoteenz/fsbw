@@ -1,5 +1,5 @@
 import { asModuleTenantId, resolveModuleTenantId, type ModuleTenantId } from './tenant-ids';
-import { writeActiveWorkspaceIdToStorage, setRuntimeActiveWorkspaceId } from './storage';
+import { isRuntimeWorkspaceActive, writeActiveWorkspaceIdToStorage, setRuntimeActiveWorkspaceId } from './storage';
 import { syncOrganizationBoundaryForPlatformWorkspace } from '../organization-context/boundary-sync';
 
 export const STUDIO_OS_WORKSPACE_CHANGED = 'studio-os-workspace-changed';
@@ -27,9 +27,13 @@ function trySelect<T extends string>(fn: ((id: T) => void) | undefined, id: T): 
  * Does not duplicate features; fans out to existing module selectors.
  */
 export function activateWorkspaceContext(platformWorkspaceId: string): ModuleTenantId {
+  const tenantId = resolveModuleTenantId(platformWorkspaceId);
+  if (isRuntimeWorkspaceActive(platformWorkspaceId)) {
+    return tenantId;
+  }
+
   writeActiveWorkspaceIdToStorage(platformWorkspaceId);
   setRuntimeActiveWorkspaceId(platformWorkspaceId);
-  const tenantId = resolveModuleTenantId(platformWorkspaceId);
 
   void import('../concierge-layer/store').then((m) =>
     trySelect(m.selectConciergeLayerWorkspace, asModuleTenantId(tenantId))

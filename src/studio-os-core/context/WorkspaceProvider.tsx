@@ -59,15 +59,17 @@ export function WorkspaceProvider({ children, initialWorkspaceId }: WorkspacePro
   const moduleTenantId = useMemo(() => resolveModuleTenantId(workspaceId), [workspaceId]);
 
   const setActiveWorkspace = useCallback((id: string) => {
+    if (id === workspaceId) return;
     activateWorkspaceContext(id);
     setWorkspaceId(id);
-  }, []);
+  }, [workspaceId]);
 
   const enterWorkspace = useCallback((id: string) => {
+    if (id === workspaceId) return;
     activateWorkspaceContext(id);
     setWorkspaceId(id);
     recordWorkspaceVisit(id);
-  }, []);
+  }, [workspaceId]);
 
   const resolveModulePath = useCallback(
     (segment: string) => workspaceStudioModulePath(workspaceId, segment),
