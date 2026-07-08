@@ -42046,3 +42046,18 @@ User: **Stack 0/6** not responsive on first click — need visual cues during pi
 - **Teaching line:** live “generating Shell (0/8)” during pipeline.
 - **Files:** `useSceneStack.ts`, `CreativeDirectionStudioRoom.tsx`, `SceneStackViewport.tsx`, `cdsInteractionLayerTheme.ts`, `layer-catalog.ts` (`SCENE_STACK_LAYER_SHORT_LABELS`).
 - **Prior arc (same chat):** Launch Auditor commerce score honesty · per-layer Regen · persistence fix.
+
+---
+
+## 2026-07-08 — CDS workspace immersion sprint (Story Table™ — environment as interface)
+
+User implementation sprint: Creative Direction Studio™ room feels like webpage on background — transform Story Table™ into living workspace; **no department redesign**.
+
+- **Rule #1 implemented:** Environment → furniture → objects → interaction. Removed floating gray `cds-genesis__glass-panel` on Story Table; strategy **table surface IS the UI**.
+- **`StoryTableSurface.tsx`:** Diegetic cards on table (active direction, approval on table, scene assembly hologram, pipeline mini-cards, mood polaroids); perspective transform; paper/mug props; no backdrop blur panel.
+- **`StudioOrbHost.tsx`:** Orb breathes, orbit ring, progress ring during stack build, holographic speech (not full-width gray bar), glance beam toward table.
+- **`useCdsImmersion.ts` + `cdsImmersionTheme.ts`:** Cinematic camera breath, pointer parallax CSS vars, Idle Life™ (sun shift, dust, hologram scanline), Scene Stack depth planes (rear/mid/fore parallax), Story Table foreground props.
+- **`SceneStackViewport.tsx`:** Layers split into rear/mid/fore depth planes; idle life overlay; story-table profile hides generic layer hint.
+- **Other zones:** Mood Wall / Pipeline / Notes / Library use `cds-diegetic__*` embeds (transparent, inset shadow) instead of glass cards.
+- **Files:** `CreativeDirectionStudioRoom.tsx`, `SceneStackViewport.tsx`, `StoryTableSurface.tsx`, `StudioOrbHost.tsx`, `cdsImmersionTheme.ts`, `useCdsImmersion.ts`.
+- **Prior arc (same chat):** Stack pipeline feedback · Launch Auditor · Scene Stack persistence · per-layer Regen.

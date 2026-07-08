@@ -1,17 +1,29 @@
+import type { CSSProperties } from 'react';
 import type { SceneStackCompositeStatus, SceneStackLayerView } from '../../../../studio-os-core/scene-stack';
 import type { SceneStackPipelineProgress } from '../../../../hooks/useSceneStack';
 import { SCENE_STACK_LAYER_SHORT_LABELS } from '../../../../studio-os-core/scene-stack';
+
+const REAR_LAYER_IDS = new Set(['environment-shell']);
+const FORE_LAYER_IDS = new Set(['atmospheric-systems', 'surface-materials', 'ambient-motion']);
 
 type Props = {
   layers: SceneStackLayerView[];
   status: SceneStackCompositeStatus;
   stationLabel: string;
   pipeline?: SceneStackPipelineProgress;
+  immersiveProfile?: 'story-table' | 'default';
+  parallaxStyle?: CSSProperties;
   onRegenerateLayer?: (layerId: string) => void;
 };
 
+function layerPlane(layerId: string): 'rear' | 'mid' | 'fore' {
+  if (REAR_LAYER_IDS.has(layerId)) return 'rear';
+  if (FORE_LAYER_IDS.has(layerId)) return 'fore';
+  return 'mid';
+}
+
 /**
- * Composites independently generated Scene Stack™ layers.
+ * Composites independently generated Scene Stack™ layers with depth planes + Idle Life™.
  * NEVER a single complete scene image.
  */
 export function SceneStackViewport({
@@ -19,15 +31,22 @@ export function SceneStackViewport({
   status,
   stationLabel,
   pipeline,
+  immersiveProfile = 'default',
+  parallaxStyle,
   onRegenerateLayer,
 }: Props) {
   const approvedLayers = layers.filter((l) => l.publicUrl && l.status !== 'failed');
   const generatableLayers = layers.filter((l) => l.definition.generatable);
   const isBuilding = status === 'building' || (pipeline?.phase && pipeline.phase !== 'idle');
+  const isStoryTable = immersiveProfile === 'story-table';
   const progressPct =
     pipeline && pipeline.layersTotal > 0
       ? Math.round((pipeline.layersComplete / pipeline.layersTotal) * 100)
       : 0;
+
+  const rearLayers = approvedLayers.filter((l) => layerPlane(l.layerId) === 'rear');
+  const midLayers = approvedLayers.filter((l) => layerPlane(l.layerId) === 'mid');
+  const foreLayers = approvedLayers.filter((l) => layerPlane(l.layerId) === 'fore');
 
   const showLayerStrip =
     Boolean(onRegenerateLayer) &&
@@ -36,29 +55,64 @@ export function SceneStackViewport({
 
   return (
     <div
-      className={`cds-stack__viewport${isBuilding ? ' is-pipeline-active' : ''}`}
+      className={`cds-stack__viewport${isBuilding ? ' is-pipeline-active' : ''}${isStoryTable ? ' is-story-table' : ''}`}
+      style={parallaxStyle}
       aria-label={`${stationLabel} layered environment`}
     >
       {approvedLayers.length === 0 ? (
         <div className={`cds-stack__plate-fallback${isBuilding ? ' is-pulsing' : ''}`} aria-hidden />
       ) : (
-        approvedLayers.map((layer) => (
-          <img
-            key={`${layer.layerId}-v${layer.version}`}
-            src={layer.publicUrl!}
-            alt=""
-            className={`cds-stack__layer ${layer.definition.composeClass}`}
-            decoding="async"
-            draggable={false}
-          />
-        ))
+        <div className="cds-stack__depth-stage">
+          <div className="cds-stack__depth-plane cds-stack__depth-plane--rear">
+            {rearLayers.map((layer) => (
+              <img
+                key={`${layer.layerId}-v${layer.version}`}
+                src={layer.publicUrl!}
+                alt=""
+                className={`cds-stack__layer ${layer.definition.composeClass}`}
+                decoding="async"
+                draggable={false}
+              />
+            ))}
+          </div>
+          <div className="cds-stack__depth-plane cds-stack__depth-plane--mid">
+            {midLayers.map((layer) => (
+              <img
+                key={`${layer.layerId}-v${layer.version}`}
+                src={layer.publicUrl!}
+                alt=""
+                className={`cds-stack__layer ${layer.definition.composeClass}`}
+                decoding="async"
+                draggable={false}
+              />
+            ))}
+          </div>
+          <div className="cds-stack__depth-plane cds-stack__depth-plane--fore">
+            {foreLayers.map((layer) => (
+              <img
+                key={`${layer.layerId}-v${layer.version}`}
+                src={layer.publicUrl!}
+                alt=""
+                className={`cds-stack__layer ${layer.definition.composeClass}`}
+                decoding="async"
+                draggable={false}
+              />
+            ))}
+          </div>
+        </div>
       )}
+
+      <div className="cds-stack__idle-life" aria-hidden>
+        <div className="cds-stack__idle-scanline" />
+      </div>
+      {isStoryTable ? <div className="cds-stack__foreground-props" aria-hidden /> : null}
+
       <div className="cds-stack__runtime-effects" aria-hidden />
       <div className="cds-stack__viewport-vignette" aria-hidden />
 
       {isBuilding ? (
         <div className="cds-stack__pipeline-hud" role="status" aria-live="polite">
-          <p className="cds-stack__pipeline-title">Scene Stack™ — {stationLabel}</p>
+          <p className="cds-stack__pipeline-title">Scene Assembly™ — {stationLabel}</p>
           <p className="cds-stack__pipeline-step">
             {pipeline?.phase === 'queued'
               ? `Queued · ${pipeline.currentLayerLabel ?? 'preparing'}…`
@@ -94,7 +148,7 @@ export function SceneStackViewport({
         </div>
       ) : null}
 
-      {!isBuilding && (status === 'idle' || status === 'partial' || status === 'ready') ? (
+      {!isBuilding && (status === 'idle' || status === 'partial' || status === 'ready') && !isStoryTable ? (
         <p className="cds-stack__viewport-hint">
           Scene Stack™ {approvedLayers.length}/{layers.length} layers
         </p>

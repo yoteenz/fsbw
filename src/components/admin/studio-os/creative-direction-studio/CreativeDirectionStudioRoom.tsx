@@ -18,7 +18,11 @@ import { useDepartmentRoomExit } from '../department-vertical-slice/DepartmentGo
 import { DEPARTMENT_SLICE_STYLES } from '../department-vertical-slice/departmentSliceTheme';
 import { CreativePipelineBoard } from './CreativePipelineBoard';
 import { SceneStackViewport } from './SceneStackViewport';
+import { StoryTableSurface } from './StoryTableSurface';
+import { StudioOrbHost } from './StudioOrbHost';
 import { CDS_GENESIS_INTERACTION_STYLES } from './cdsInteractionLayerTheme';
+import { CDS_IMMERSION_STYLES } from './cdsImmersionTheme';
+import { useCdsImmersion } from '../../../../hooks/useCdsImmersion';
 import {
   CDS_CAMERA_ZONES,
   cdsZonePanVw,
@@ -99,6 +103,12 @@ export function CreativeDirectionStudioRoom() {
     [stack, activeZoneId]
   );
   const stackButtonBusy = stack.isStationPipelineActive(activeZoneId);
+  const immersion = useCdsImmersion(true);
+
+  const pipelineProgressPct = useMemo(() => {
+    if (!activePipeline.layersTotal) return 0;
+    return Math.round((activePipeline.layersComplete / activePipeline.layersTotal) * 100);
+  }, [activePipeline]);
 
   const visibleNavZones = useMemo(
     () => CDS_CAMERA_ZONES.filter((z) => arrivalComplete || !z.requiresArrival),
@@ -160,40 +170,27 @@ export function CreativeDirectionStudioRoom() {
               className="cds-genesis__hotspot cds-genesis__hotspot--ghost"
               style={hotspotStyle(hotspots.orb ?? { left: '35%', top: '8%', width: '30%', height: '18%' })}
             >
-              <div className="cds-genesis__orb-sphere" aria-hidden title="Studio Orb" />
+              <StudioOrbHost
+                greeting={orbCopy.greeting}
+                guidance={orbCopy.guidance}
+                insight={orbInsight ?? ''}
+                reviewSpeech={orbReviewSpeech}
+                pipelineActive={stackButtonBusy}
+                pipelineLayerLabel={activePipeline.currentLayerLabel}
+                pipelineProgress={pipelineProgressPct}
+              />
             </div>
             <div
-              className="cds-genesis__hotspot"
-              style={hotspotStyle(hotspots.speech ?? { left: '8%', top: '26%', width: '84%', height: '14%' })}
-            >
-              <p className="cds-genesis__orb-speech">
-                {orbReviewSpeech ? (
-                  <span style={{ color: 'rgba(201,169,98,0.98)' }}>{orbReviewSpeech}</span>
-                ) : (
-                  <>
-                    {orbCopy.greeting}
-                    <br />
-                    <span style={{ opacity: 0.75 }}>{orbCopy.guidance}</span>
-                    <br />
-                    <span style={{ color: 'rgba(201,169,98,0.95)' }}>{orbInsight}</span>
-                  </>
-                )}
-              </p>
-            </div>
-            <div
-              className="cds-genesis__hotspot cds-genesis__glass-panel"
+              className="cds-genesis__hotspot cds-genesis__hotspot--ghost"
               style={hotspotStyle(hotspots.table ?? { left: '10%', top: '42%', width: '80%', height: '28%' })}
             >
-              <div className="cds-genesis__chip-row">
-                <span className="cds-genesis__chip">
-                  {slice.project.activeBranchName ?? 'Main Direction'}
-                </span>
-                {slice.project.tone.slice(0, 2).map((t) => (
-                  <span key={t} className="cds-genesis__chip">
-                    {t}
-                  </span>
-                ))}
-              </div>
+              <StoryTableSurface
+                project={slice.project}
+                pipeline={pipeline}
+                pipelineProgress={activePipeline}
+                stackBusy={stackButtonBusy}
+                moodPins={moodWall.wall.inspirations}
+              />
             </div>
           </>
         );
@@ -201,7 +198,7 @@ export function CreativeDirectionStudioRoom() {
       case 'mood-wall':
         return (
           <div
-            className="cds-genesis__hotspot cds-genesis__glass-panel"
+            className="cds-genesis__hotspot cds-diegetic__wall-embed"
             style={hotspotStyle(hotspots.console ?? { left: '6%', top: '66%', width: '88%', height: '22%' })}
           >
             <p className="cds-genesis__label">Pin to Living Mood Wall™</p>
@@ -251,7 +248,7 @@ export function CreativeDirectionStudioRoom() {
       case 'founder-notes':
         return (
           <div
-            className="cds-genesis__hotspot cds-genesis__glass-panel"
+            className="cds-genesis__hotspot cds-diegetic__desk-embed"
             style={hotspotStyle(hotspots.desk ?? { left: '8%', top: '32%', width: '84%', height: '48%' })}
           >
             <p className="cds-genesis__label">Founder Notes™</p>
@@ -302,7 +299,7 @@ export function CreativeDirectionStudioRoom() {
       case 'pipeline-board':
         return (
           <div
-            className="cds-genesis__hotspot cds-genesis__glass-panel"
+            className="cds-genesis__hotspot cds-diegetic__wall-embed"
             style={hotspotStyle(hotspots.wall ?? { left: '4%', top: '8%', width: '92%', height: '78%' })}
           >
             <div className="cds-genesis__pipeline-scroll">
@@ -318,7 +315,7 @@ export function CreativeDirectionStudioRoom() {
       case 'reference-library':
         return (
           <div
-            className="cds-genesis__hotspot cds-genesis__glass-panel"
+            className="cds-genesis__hotspot cds-diegetic__shelf-embed"
             style={hotspotStyle(hotspots.shelves ?? { left: '6%', top: '12%', width: '88%', height: '68%' })}
           >
             <p className="cds-genesis__label">Reference Library™</p>
@@ -352,7 +349,12 @@ export function CreativeDirectionStudioRoom() {
     <>
       <style>{DEPARTMENT_SLICE_STYLES}</style>
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
-      <div className={`cds-stack${reviewMode ? ' cds-genesis--review-mode' : ''}`}>
+      <style>{CDS_IMMERSION_STYLES}</style>
+      <div
+        className={`cds-stack${reviewMode ? ' cds-genesis--review-mode' : ''}`}
+        onPointerMove={immersion.onPointerMove}
+        style={immersion.parallaxStyle}
+      >
         <header className="cds-genesis__hud">
           <button type="button" className="cds-genesis__back" onClick={exitRoom} aria-label="Exit department">
             ←
@@ -400,6 +402,8 @@ export function CreativeDirectionStudioRoom() {
                     layers={zoneLayers}
                     status={stack.getCompositeStatus(zone.id)}
                     stationLabel={zone.label}
+                    immersiveProfile={zone.id === 'story-table' ? 'story-table' : 'default'}
+                    parallaxStyle={zone.id === activeZoneId ? immersion.parallaxStyle : undefined}
                     pipeline={
                       zone.id === activeZoneId ? stack.getStationPipelineProgress(zone.id) : undefined
                     }
