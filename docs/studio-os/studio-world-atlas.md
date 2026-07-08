@@ -80,3 +80,8 @@ Department: `studio-world-atlas` · Station: `holographic-table`
 2. HUD pill: **Studio World Atlas™**
 3. Overview module card
 4. `/admin/studio/world-atlas`
+
+## Master Planner™ (Phase 3)
+
+See **`docs/studio-os/studio-world-atlas-master-planner.md`** — Reserve Land™, District Planning™, Simulation Mode™, 9-phase pipeline, World Forecast™, Creative Budget integration, Future Vision™ concepts.
+

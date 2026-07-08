@@ -605,4 +605,118 @@ body.studio-world-atlas-active {
 .swa__travel-overlay.is-skybridge { background: linear-gradient(180deg, rgba(80,200,255,0.1) 0%, rgba(0,0,0,0.92) 60%); }
 .swa__travel-overlay.is-train { background: repeating-linear-gradient(90deg, rgba(0,0,0,0.4) 0px, rgba(0,0,0,0.4) 8px, rgba(201,169,98,0.08) 8px, rgba(201,169,98,0.08) 16px); }
 .swa__travel-overlay.is-transit { background: radial-gradient(circle, rgba(80,200,255,0.12) 0%, rgba(0,0,0,0.94) 50%); }
+
+/* Phase 3 — Master Planner™ */
+.swa.is-master-planner .swa__table-surface {
+  box-shadow:
+    0 0 40px rgba(80, 200, 255, 0.15),
+    inset 0 0 60px rgba(201, 169, 98, 0.06),
+    inset 0 0 80px rgba(80, 200, 255, 0.08);
+}
+
+.swa__road.is-potential {
+  stroke: rgba(201, 169, 98, 0.35);
+  stroke-dasharray: 6 8;
+  opacity: 0.7;
+}
+
+.swa__building.is-draggable {
+  cursor: grab;
+  touch-action: none;
+}
+.swa__building.is-draggable:active { cursor: grabbing; }
+
+.swa__planner-toolbar {
+  position: absolute;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: max(100px, calc(env(safe-area-inset-bottom) + 84px));
+  width: min(38vw, 175px);
+  z-index: 27;
+  padding: 8px;
+  border: 1px solid rgba(80, 200, 255, 0.3);
+  background: rgba(0,0,0,0.65);
+  max-height: 32vh;
+  overflow-y: auto;
+}
+.swa__planner-toolbar-title {
+  margin: 0 0 6px;
+  font-size: 5px;
+  color: #c9a962;
+  letter-spacing: 0.1em;
+}
+.swa__planner-btn {
+  display: block;
+  width: 100%;
+  margin-bottom: 3px;
+  padding: 4px 6px;
+  font-size: 3px;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(0,0,0,0.4);
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+}
+.swa__planner-btn.is-primary {
+  border-color: rgba(201, 169, 98, 0.5);
+  color: #c9a962;
+}
+
+.swa__forecast-row {
+  display: flex;
+  gap: 3px;
+  margin: 6px 0;
+  flex-wrap: wrap;
+}
+.swa__forecast-pill {
+  padding: 3px 6px;
+  font-size: 3px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.35);
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+}
+.swa__forecast-pill.is-active {
+  border-color: rgba(201, 169, 98, 0.6);
+  color: #c9a962;
+}
+
+.swa__sim-panel {
+  margin-top: 6px;
+  padding: 6px;
+  border: 1px solid rgba(80, 200, 255, 0.25);
+  font-size: 3px;
+  line-height: 1.45;
+  letter-spacing: 0.05em;
+  opacity: 0.85;
+}
+.swa__sim-score {
+  font-family: "Covered By Your Grace", cursive;
+  font-size: 12px;
+  color: #c9a962;
+  margin: 0 0 4px;
+}
+
+.swa__expansion-zone {
+  position: absolute;
+  border: 1px dashed rgba(201, 169, 98, 0.25);
+  border-radius: 2px;
+  pointer-events: none;
+  z-index: 3;
+  animation: swa-zone-pulse 4s ease-in-out infinite;
+}
+@keyframes swa-zone-pulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.5; }
+}
+
+.swa__budget-line {
+  font-size: 3px;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+  margin-top: 4px;
+  line-height: 1.4;
+}
 `;

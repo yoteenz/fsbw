@@ -1,6 +1,7 @@
 import type { AtlasDiscoveryStore, AtlasNode, AtlasOrbRecommendation } from './types';
 import { ATLAS_ENGINE_LABELS } from './types';
 import { listActiveEnginesInCatalog } from './engine-registry';
+import { buildMasterPlannerOrbRecommendations } from './master-planner-orb';
 import { isUnderConstruction } from './world-construction';
 import { ATLAS_HIDDEN_DISCOVERIES } from './world-discovery';
 
@@ -11,8 +12,15 @@ function uid(): string {
 /** Studio Orb™ World Guide — curator of Studio World™ */
 export function buildAtlasOrbRecommendations(
   nodes: AtlasNode[],
-  discovery?: AtlasDiscoveryStore
+  discovery?: AtlasDiscoveryStore,
+  options?: { mapMode?: string; selectedPlanId?: string | null }
 ): AtlasOrbRecommendation[] {
+  if (
+    discovery &&
+    (options?.mapMode === 'master-planner' || options?.mapMode === 'future-vision')
+  ) {
+    return buildMasterPlannerOrbRecommendations(nodes, discovery, options.selectedPlanId ?? undefined);
+  }
   const recs: AtlasOrbRecommendation[] = [];
   const active = nodes.filter((n) => n.activity === 'generating' || n.activity === 'pulse');
   const fogged = nodes.filter((n) => n.fogged && n.unlocked);

@@ -16,6 +16,8 @@ import {
 import { constructionExtrusionScale, resolveConstructionPhaseForNode } from './world-construction';
 import { buildDiscoveryNodes } from './world-discovery';
 import { getBuildingMemory } from './world-memory';
+import { buildPotentialRoadPaths } from './master-planner';
+import { planPhaseProgress } from './master-planner-phases';
 
 export type AtlasEnrichmentInput = {
   mapMode: AtlasMapMode;
@@ -23,6 +25,56 @@ export type AtlasEnrichmentInput = {
   liveTick?: number;
   view?: Pick<AtlasViewState, 'travelingRoads' | 'travelMode'>;
 };
+
+export function buildPlannerFeatureNodes(features: AtlasDiscoveryStore['planFeatures']): AtlasNode[] {
+  return features.map(
+    (f): AtlasNode => ({
+      id: `feat-${f.id}`,
+      displayName: f.label,
+      level: 1,
+      parentId: 'atlas-world-root',
+      physicalType: f.type,
+      mapX: f.mapX,
+      mapY: f.mapY,
+      mapZ: 0.1,
+      extrusion: 0.08,
+      travelPath: '/admin/studio/world-atlas',
+      unlocked: true,
+      fogged: false,
+      hidden: false,
+      activity: 'dormant',
+      childIds: [],
+      modes: ['master-planner', 'future-vision'],
+      isPlanned: true,
+      livingSignals: f.type === 'road' ? [] : ['pulse'],
+    })
+  );
+}
+
+export function buildFutureVisionNodes(concepts: AtlasDiscoveryStore['futureVisionConcepts']): AtlasNode[] {
+  return concepts.map(
+    (c): AtlasNode => ({
+      id: `vision-${c.id}`,
+      displayName: c.label,
+      level: 1,
+      parentId: 'atlas-world-root',
+      physicalType: 'district',
+      mapX: c.mapX,
+      mapY: c.mapY,
+      mapZ: 0.15,
+      extrusion: 0.1,
+      travelPath: '/admin/studio/world-atlas',
+      unlocked: true,
+      fogged: false,
+      hidden: false,
+      activity: 'dormant',
+      childIds: [],
+      modes: ['future-vision', 'master-planner'],
+      isPlanned: true,
+      isConcept: true,
+    })
+  );
+}
 
 function masterPlanNodes(plans: AtlasMasterPlanReservation[]): AtlasNode[] {
   return plans.map(
@@ -35,15 +87,18 @@ function masterPlanNodes(plans: AtlasMasterPlanReservation[]): AtlasNode[] {
       mapX: p.mapX,
       mapY: p.mapY,
       mapZ: 0.25,
-      extrusion: 0.12,
+      extrusion: 0.12 + planPhaseProgress(p.phase ?? 'reserved-land') / 500,
       travelPath: '/admin/studio/world-atlas',
       unlocked: true,
       fogged: false,
       hidden: false,
-      activity: 'dormant',
+      activity: p.phase === 'operational' ? 'active' : 'dormant',
       childIds: [],
-      modes: ['master-planner', 'future-vision', 'construction'],
+      modes: ['master-planner', 'future-vision', 'construction', 'creative-budget'],
       isPlanned: true,
+      isConcept: p.isConcept,
+      planId: p.id,
+      planPhase: p.phase,
       livingSignals: ['construction-crane'],
     })
   );
@@ -68,7 +123,11 @@ export function enrichAtlasNodes(nodes: AtlasNode[], input: AtlasEnrichmentInput
 
   const planNodes =
     input.mapMode === 'master-planner' || input.mapMode === 'future-vision'
-      ? masterPlanNodes(input.discovery.masterPlan)
+      ? [
+          ...masterPlanNodes(input.discovery.masterPlan),
+          ...buildPlannerFeatureNodes(input.discovery.planFeatures),
+          ...buildFutureVisionNodes(input.discovery.futureVisionConcepts),
+        ]
       : [];
 
   const enriched = [...nodes, ...discoveryNodes, ...planNodes].map((node) => {
@@ -101,4 +160,12 @@ export function enrichAtlasNodes(nodes: AtlasNode[], input: AtlasEnrichmentInput
 export function filterNodesForMapMode(nodes: AtlasNode[], mapMode: AtlasMapMode): AtlasNode[] {
   if (mapMode === 'architectural-blueprint') return nodes;
   return nodes.filter((n) => nodeVisibleInMapMode(n, mapMode));
+}
+
+export function buildPlannerRoadPaths(
+  input: AtlasEnrichmentInput,
+  anchor: { mapX: number; mapY: number }
+): string[] {
+  if (input.mapMode !== 'master-planner' && input.mapMode !== 'future-vision') return [];
+  return buildPotentialRoadPaths(input.discovery.masterPlan, input.discovery.planFeatures, anchor);
 }

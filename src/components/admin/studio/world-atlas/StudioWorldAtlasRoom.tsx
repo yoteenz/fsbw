@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import {
@@ -7,10 +7,14 @@ import {
   ATLAS_MAP_MODE_LABELS,
   ATLAS_TRAVEL_LABELS,
   ATLAS_ZOOM_LABELS,
+  MASTER_PLAN_PHASE_LABELS,
+  RESERVE_LAND_PRESETS,
   activityGlowClass,
   fogOpacity,
+  forecastHorizonLabel,
   getBuildingMemory,
   livingSignalClass,
+  planPhaseProgress,
   type AtlasMapMode,
   type AtlasNode,
   type AtlasTravelMode,
@@ -20,23 +24,41 @@ import { STUDIO_WORLD_ATLAS_STYLES } from './studioWorldAtlasTheme';
 
 const MAP_MODES = Object.keys(ATLAS_MAP_MODE_LABELS) as AtlasMapMode[];
 const TRAVEL_MODES = Object.keys(ATLAS_TRAVEL_LABELS) as AtlasTravelMode[];
+const FORECAST_HORIZONS = [1, 3, 5, 10] as const;
 
 function BuildingMarker({
   node,
   focusNodeId,
   onSelect,
+  draggable,
+  onDrag,
 }: {
   node: AtlasNode;
   focusNodeId: string;
   onSelect: (id: string) => void;
+  draggable?: boolean;
+  onDrag?: (planId: string, mapX: number, mapY: number) => void;
 }) {
   const heightPx = 12 + node.extrusion * 48;
   const opacity = fogOpacity(node.unlocked, node.fogged);
   const signalClasses = (node.livingSignals ?? []).map(livingSignalClass);
+  const surfaceRef = useRef<HTMLElement | null>(null);
+
+  const pointerToMap = useCallback((clientX: number, clientY: number) => {
+    const surface = surfaceRef.current?.closest('.swa__table-surface') as HTMLElement | null;
+    if (!surface) return { mapX: node.mapX, mapY: node.mapY };
+    const rect = surface.getBoundingClientRect();
+    const mapX = ((clientX - rect.left) / rect.width) * 100;
+    const mapY = ((clientY - rect.top) / rect.height) * 100;
+    return { mapX, mapY };
+  }, [node.mapX, node.mapY]);
 
   return (
     <button
       type="button"
+      ref={(el) => {
+        surfaceRef.current = el;
+      }}
       className={[
         'swa__building',
         activityGlowClass(node.activity),
@@ -44,6 +66,8 @@ function BuildingMarker({
         node.hidden ? 'is-hidden' : '',
         node.id === focusNodeId ? 'is-focused' : '',
         node.isPlanned ? 'is-planned' : '',
+        node.isConcept ? 'is-planned' : '',
+        draggable && node.planId ? 'is-draggable' : '',
         ...signalClasses,
       ]
         .filter(Boolean)
@@ -54,6 +78,21 @@ function BuildingMarker({
         opacity,
       }}
       onClick={() => onSelect(node.id)}
+      onPointerDown={(e) => {
+        if (!draggable || !node.planId || !onDrag) return;
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      }}
+      onPointerMove={(e) => {
+        if (!draggable || !node.planId || !onDrag || !(e.currentTarget as HTMLElement).hasPointerCapture(e.pointerId))
+          return;
+        const { mapX, mapY } = pointerToMap(e.clientX, e.clientY);
+        onDrag(node.planId, mapX, mapY);
+      }}
+      onPointerUp={(e) => {
+        if ((e.currentTarget as HTMLElement).hasPointerCapture(e.pointerId)) {
+          (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+        }
+      }}
       disabled={node.fogged && !node.unlocked}
       title={node.displayName}
       aria-label={node.displayName}
@@ -62,9 +101,10 @@ function BuildingMarker({
       <span className="swa__building-label">{node.displayName}</span>
       <span className="swa__building-level">
         L{node.level}
-        {node.constructionPhase && node.constructionPhase !== 'complete'
+        {node.planPhase ? ` · ${MASTER_PLAN_PHASE_LABELS[node.planPhase]}` : null}
+        {!node.planPhase && node.constructionPhase && node.constructionPhase !== 'complete'
           ? ` · ${ATLAS_CONSTRUCTION_PHASE_LABELS[node.constructionPhase]}`
-          : ''}
+          : null}
       </span>
     </button>
   );
@@ -72,7 +112,7 @@ function BuildingMarker({
 
 /**
  * Studio World Atlas™ — living holographic blueprint inside Executive Atrium™.
- * Phase 2: operating table + digital twin — not a redesign.
+ * Phase 3: Master Planner™ strategic planning table — extend, never redesign.
  */
 export function StudioWorldAtlasRoom() {
   const navigate = useNavigate();
@@ -122,6 +162,7 @@ export function StudioWorldAtlasRoom() {
       setSelectedNodeId(nodeId);
       const node = atlas.catalog.find((n) => n.id === nodeId);
       if (!node) return;
+      if (node.planId) atlas.setSelectedPlanId(node.planId);
       if (node.childIds.length > 0 && node.level < 6) {
         atlas.focusOn(nodeId);
       }
@@ -135,6 +176,7 @@ export function StudioWorldAtlasRoom() {
   const handleTravel = useCallback(
     async (nodeId?: string) => {
       const targetId = nodeId ?? selectedNode.id;
+      if (selectedNode.isPlanned || selectedNode.isConcept) return;
       const resolution = atlas.resolveTravel(targetId);
       if (!resolution) return;
       setTraveling(true);
@@ -148,16 +190,19 @@ export function StudioWorldAtlasRoom() {
       setTravelOverlay(null);
       atlas.clearTravelingRoads();
     },
-    [atlas, navigate, selectedNode.id]
+    [atlas, navigate, selectedNode.id, selectedNode.isPlanned, selectedNode.isConcept]
   );
 
-  const showPlanner =
-    atlas.view.mapMode === 'master-planner' || atlas.view.mapMode === 'future-vision';
+  const showPlanner = atlas.isMasterPlannerMode;
 
   return (
     <>
       <style>{STUDIO_WORLD_ATLAS_STYLES}</style>
-      <div className="swa" role="application" aria-label="Studio World Atlas">
+      <div
+        className={`swa${showPlanner ? ' is-master-planner' : ''}`}
+        role="application"
+        aria-label="Studio World Atlas"
+      >
         <header className="swa__hud">
           <button
             type="button"
@@ -170,7 +215,9 @@ export function StudioWorldAtlasRoom() {
           <div className="swa__title-block">
             <p className="swa__eyebrow">STUDIO COMMAND CENTER™ · EXECUTIVE ATRIUM™</p>
             <p className="swa__title">STUDIO WORLD ATLAS™</p>
-            <p className="swa__zoom">{ATLAS_ZOOM_LABELS[atlas.view.zoomLevel]}</p>
+            <p className="swa__zoom">
+              {showPlanner ? 'MASTER PLANNER™ · PLANNING MODE' : ATLAS_ZOOM_LABELS[atlas.view.zoomLevel]}
+            </p>
           </div>
           {atlas.focusNode.parentId ? (
             <button type="button" className="swa__zoom-out" onClick={atlas.zoomOut}>
@@ -185,17 +232,23 @@ export function StudioWorldAtlasRoom() {
 
         <div className="swa__ticker" aria-live="polite">
           <span className="swa__ticker-inner">
-            {atlas.worldTicker} &nbsp;&nbsp;&nbsp; {atlas.worldTicker}
+            {showPlanner
+              ? `MASTER PLANNER™ · ${atlas.discovery.masterPlan.length} RESERVED · SIMULATE BEFORE YOU GENERATE · ${atlas.worldForecast.narrative}`
+              : atlas.worldTicker}{' '}
+            &nbsp;&nbsp;&nbsp;{' '}
+            {showPlanner ? atlas.worldForecast.narrative : atlas.worldTicker}
           </span>
         </div>
 
-        <div className="swa__engine-strip" aria-hidden>
-          {atlas.activeEngines.slice(0, 8).map((engine) => (
-            <span key={engine} className="swa__engine-chip">
-              {ATLAS_ENGINE_LABELS[engine]}
-            </span>
-          ))}
-        </div>
+        {!showPlanner ? (
+          <div className="swa__engine-strip" aria-hidden>
+            {atlas.activeEngines.slice(0, 8).map((engine) => (
+              <span key={engine} className="swa__engine-chip">
+                {ATLAS_ENGINE_LABELS[engine]}
+              </span>
+            ))}
+          </div>
+        ) : null}
 
         <nav className="swa__breadcrumb" aria-label="Atlas focus trail">
           {atlas.breadcrumb.map((node, i) => (
@@ -213,26 +266,39 @@ export function StudioWorldAtlasRoom() {
         <aside className="swa__focus-panel" aria-live="polite">
           <p className="swa__focus-name">{selectedNode.displayName}</p>
           <p className="swa__focus-meta">
-            {ATLAS_ZOOM_LABELS[selectedNode.level]}
+            {selectedNode.planPhase
+              ? MASTER_PLAN_PHASE_LABELS[selectedNode.planPhase]
+              : ATLAS_ZOOM_LABELS[selectedNode.level]}
             <br />
-            {selectedNode.activity.toUpperCase()} · {selectedNode.physicalType.toUpperCase()}
-            {selectedNode.migrationStatus ? (
+            {selectedNode.isConcept ? 'FUTURE VISION™ CONCEPT' : selectedNode.activity.toUpperCase()}
+            {selectedNode.planPhase ? (
               <>
                 <br />
-                {selectedNode.migrationStatus.replace(/-/g, ' ').toUpperCase()}
+                {planPhaseProgress(selectedNode.planPhase)}% TO OPERATIONAL™
               </>
             ) : null}
           </p>
-          {selectedNode.constructionPhase && selectedNode.constructionPhase !== 'complete' ? (
-            <p className="swa__construction-phase">
-              {ATLAS_CONSTRUCTION_PHASE_LABELS[selectedNode.constructionPhase]}
-            </p>
+          {atlas.selectedPlanBudget && (selectedNode.isPlanned || atlas.selectedPlan) ? (
+            <div className="swa__budget-line">
+              GEN {atlas.selectedPlanBudget.generationCost} · BUILD {atlas.selectedPlanBudget.constructionCost}
+              <br />
+              BUDGET +{atlas.selectedPlanBudget.budgetImpactPct}% · EQUITY {atlas.selectedPlanBudget.projectedEquity}
+              {atlas.selectedPlanBudget.marketplaceValue ? (
+                <>
+                  <br />
+                  MARKETPLACE: {atlas.selectedPlanBudget.marketplaceValue}
+                </>
+              ) : null}
+              <br />
+              REUSE: {atlas.selectedPlanBudget.reuseOpportunities}
+            </div>
           ) : null}
-          {selectedNode.engineIds && selectedNode.engineIds.length > 0 ? (
-            <div className="swa__engine-dots" aria-label="Connected engines">
-              {selectedNode.engineIds.slice(0, 6).map((e) => (
-                <span key={e} className="swa__engine-dot" title={ATLAS_ENGINE_LABELS[e]} />
-              ))}
+          {atlas.activeSimulation && selectedNode.planId === atlas.activeSimulation.planId ? (
+            <div className="swa__sim-panel">
+              <p className="swa__sim-score">SIMULATION {atlas.activeSimulation.placementScore}</p>
+              {atlas.activeSimulation.summary}
+              <br />
+              <span style={{ opacity: 0.65 }}>{atlas.activeSimulation.navigationImpact}</span>
             </div>
           ) : null}
           {selectedMemory ? (
@@ -240,61 +306,158 @@ export function StudioWorldAtlasRoom() {
               BUILT {new Date(selectedMemory.constructedAt).toLocaleDateString()}
               <br />
               {selectedMemory.reason}
-              {selectedMemory.unlockedByExpedition ? (
-                <>
-                  <br />
-                  EXPEDITION: {selectedMemory.unlockedByExpedition}
-                </>
-              ) : null}
-              {selectedMemory.enabledByBlueprint ? (
-                <>
-                  <br />
-                  BLUEPRINT: {selectedMemory.enabledByBlueprint}
-                </>
-              ) : null}
-              {selectedMemory.creativeEquityGained ? (
-                <>
-                  <br />
-                  EQUITY: {selectedMemory.creativeEquityGained}
-                </>
-              ) : null}
             </div>
           ) : null}
-          <button
-            type="button"
-            className="swa__travel-btn"
-            onClick={() => void handleTravel(selectedNode.id)}
-            disabled={traveling || (selectedNode.fogged && !selectedNode.unlocked)}
-          >
-            {ATLAS_TRAVEL_LABELS[atlas.view.travelMode]} → {selectedNode.displayName}
-          </button>
+          {!selectedNode.isPlanned && !selectedNode.isConcept ? (
+            <button
+              type="button"
+              className="swa__travel-btn"
+              onClick={() => void handleTravel(selectedNode.id)}
+              disabled={traveling || (selectedNode.fogged && !selectedNode.unlocked)}
+            >
+              {ATLAS_TRAVEL_LABELS[atlas.view.travelMode]} → {selectedNode.displayName}
+            </button>
+          ) : null}
+          {showPlanner && atlas.selectedPlan ? (
+            <>
+              <button
+                type="button"
+                className="swa__travel-btn"
+                onClick={() => atlas.runSimulation(atlas.selectedPlan!.id)}
+              >
+                RUN SIMULATION MODE™
+              </button>
+              <button
+                type="button"
+                className="swa__travel-btn"
+                style={{ marginTop: 4, opacity: 0.85 }}
+                onClick={() => atlas.advancePlan(atlas.selectedPlan!.id)}
+              >
+                ADVANCE PHASE →
+              </button>
+            </>
+          ) : null}
         </aside>
 
         {showPlanner ? (
-          <aside className="swa__planner-panel" aria-label="Master Planner">
-            <p className="swa__planner-title">MASTER PLANNER™</p>
+          <aside className="swa__planner-panel" aria-label="Master Planner reservations">
+            <p className="swa__planner-title">RESERVED LAND™</p>
             {atlas.discovery.masterPlan.map((plan) => (
               <button
                 key={plan.id}
                 type="button"
                 className="swa__planner-item"
-                onClick={() => atlas.selectMasterPlan(plan)}
+                onClick={() => {
+                  atlas.selectMasterPlan(plan);
+                  setSelectedNodeId(`plan-${plan.id}`);
+                }}
               >
                 {plan.label}
-                {plan.districtSketch ? (
-                  <>
-                    <br />
-                    <span style={{ opacity: 0.6 }}>{plan.districtSketch}</span>
-                  </>
-                ) : null}
+                <br />
+                <span style={{ opacity: 0.55 }}>
+                  {MASTER_PLAN_PHASE_LABELS[plan.phase ?? 'reserved-land']}
+                </span>
               </button>
             ))}
+            <p className="swa__planner-title" style={{ marginTop: 8 }}>
+              EXPANSION RECOMMENDATIONS™
+            </p>
+            {atlas.expansionRecommendations.map((rec) => (
+              <p key={rec.id} className="swa__planner-item" style={{ cursor: 'default' }}>
+                {rec.message}
+              </p>
+            ))}
+          </aside>
+        ) : null}
+
+        {showPlanner ? (
+          <aside className="swa__planner-toolbar" aria-label="Master Planner tools">
+            <p className="swa__planner-toolbar-title">RESERVE LAND™</p>
+            {RESERVE_LAND_PRESETS.slice(0, 4).map((preset) => (
+              <button
+                key={preset.label}
+                type="button"
+                className="swa__planner-btn"
+                onClick={() => {
+                  const plan = atlas.reserveLand(
+                    preset.label,
+                    preset.category,
+                    40 + Math.random() * 20,
+                    30 + Math.random() * 25
+                  );
+                  setSelectedNodeId(`plan-${plan.id}`);
+                }}
+              >
+                + {preset.label}
+              </button>
+            ))}
+            <p className="swa__planner-toolbar-title" style={{ marginTop: 8 }}>
+              DISTRICT PLANNING™
+            </p>
+            <button
+              type="button"
+              className="swa__planner-btn"
+              onClick={() => atlas.addDistrictFeature('plaza', 'Central Plaza™', 52, 48)}
+            >
+              + Plaza
+            </button>
+            <button
+              type="button"
+              className="swa__planner-btn"
+              onClick={() => atlas.addDistrictFeature('transit-hub', 'Transit Hub™', 50, 58)}
+            >
+              + Transit Hub
+            </button>
+            <button
+              type="button"
+              className="swa__planner-btn"
+              onClick={() => atlas.addDistrictFeature('skybridge', 'Skybridge™', 45, 35)}
+            >
+              + Skybridge
+            </button>
+            {atlas.selectedPlan ? (
+              <button
+                type="button"
+                className="swa__planner-btn"
+                onClick={() => atlas.addPlanAmenity(atlas.selectedPlan!.id, 'observation-tower')}
+              >
+                + Observation Tower
+              </button>
+            ) : null}
+            <p className="swa__planner-toolbar-title" style={{ marginTop: 8 }}>
+              WORLD FORECAST™
+            </p>
+            <div className="swa__forecast-row">
+              {FORECAST_HORIZONS.map((y) => (
+                <button
+                  key={y}
+                  type="button"
+                  className={`swa__forecast-pill${atlas.discovery.forecastHorizon === y ? ' is-active' : ''}`}
+                  onClick={() => atlas.changeForecastHorizon(y)}
+                >
+                  {forecastHorizonLabel(y)}
+                </button>
+              ))}
+            </div>
+            <p style={{ fontSize: 3, opacity: 0.7, margin: '4px 0', lineHeight: 1.4 }}>
+              {atlas.worldForecast.buildingCount} buildings · {atlas.worldForecast.districtCount} districts
+            </p>
+            <button
+              type="button"
+              className="swa__planner-btn is-primary"
+              style={{ marginTop: 6 }}
+              onClick={() => atlas.addVisionConcept('Experimental Headquarters™')}
+            >
+              + FUTURE VISION™ CONCEPT
+            </button>
           </aside>
         ) : null}
 
         <aside className="swa__orb" aria-label="Studio Orb world guide">
           <div className="swa__orb-sphere" aria-hidden />
-          <p className="swa__orb-title">STUDIO ORB™ · WORLD GUIDE</p>
+          <p className="swa__orb-title">
+            {showPlanner ? 'STUDIO ORB™ · MASTER PLANNER' : 'STUDIO ORB™ · WORLD GUIDE'}
+          </p>
           {atlas.orbRecommendations.map((rec) => (
             <button
               key={rec.id}
@@ -314,11 +477,26 @@ export function StudioWorldAtlasRoom() {
           <div className={`swa__table${atlas.view.transitionMs > 800 ? ' is-zooming' : ''}`}>
             <div className="swa__table-surface">
               <div className="swa__table-glow" aria-hidden />
+              {showPlanner ? (
+                <div
+                  className="swa__expansion-zone"
+                  style={{ left: '15%', top: '18%', width: '70%', height: '65%' }}
+                  aria-hidden
+                />
+              ) : null}
               <svg className="swa__roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
                 {roadPaths.map((d, i) => (
                   <path
-                    key={i}
+                    key={`r-${i}`}
                     className={`swa__road${atlas.view.travelingRoads ? ' is-illuminated' : ''}`}
+                    d={d}
+                    vectorEffect="non-scaling-stroke"
+                  />
+                ))}
+                {atlas.plannerRoadPaths.map((d, i) => (
+                  <path
+                    key={`p-${i}`}
+                    className="swa__road is-potential"
                     d={d}
                     vectorEffect="non-scaling-stroke"
                   />
@@ -331,6 +509,8 @@ export function StudioWorldAtlasRoom() {
                     node={node}
                     focusNodeId={selectedNodeId ?? atlas.focusNode.id}
                     onSelect={handleSelect}
+                    draggable={showPlanner && !!node.planId}
+                    onDrag={atlas.movePlanReservation}
                   />
                 ))}
               </div>
@@ -353,23 +533,25 @@ export function StudioWorldAtlasRoom() {
           ))}
         </div>
 
-        <div className="swa__travel-rail" role="group" aria-label="Travel mode">
-          {TRAVEL_MODES.map((mode) => (
-            <button
-              key={mode}
-              type="button"
-              className={`swa__travel-pill${atlas.view.travelMode === mode ? ' is-active' : ''}`}
-              onClick={() => atlas.setTravelMode(mode)}
-            >
-              {ATLAS_TRAVEL_LABELS[mode]}
-            </button>
-          ))}
-        </div>
+        {!showPlanner ? (
+          <div className="swa__travel-rail" role="group" aria-label="Travel mode">
+            {TRAVEL_MODES.map((mode) => (
+              <button
+                key={mode}
+                type="button"
+                className={`swa__travel-pill${atlas.view.travelMode === mode ? ' is-active' : ''}`}
+                onClick={() => atlas.setTravelMode(mode)}
+              >
+                {ATLAS_TRAVEL_LABELS[mode]}
+              </button>
+            ))}
+          </div>
+        ) : null}
 
         <p className="swa__fog-legend">
-          FOG OF DISCOVERY™ · {atlas.discovery.discoveredNodeIds.length} revealed ·{' '}
-          {atlas.discovery.collectibles.length} collectibles ·{' '}
-          {atlas.discovery.activeConstructions.filter((j) => j.phase !== 'complete').length} building
+          {showPlanner
+            ? `MASTER PLANNER™ · ${atlas.discovery.masterPlan.length} reserved · ${atlas.discovery.futureVisionConcepts.length} vision concepts`
+            : `FOG OF DISCOVERY™ · ${atlas.discovery.discoveredNodeIds.length} revealed · ${atlas.discovery.collectibles.length} collectibles`}
         </p>
 
         {travelOverlay ? (

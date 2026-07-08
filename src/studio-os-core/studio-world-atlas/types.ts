@@ -110,6 +110,10 @@ export type AtlasNode = {
   isPlanned?: boolean;
   monumentType?: AtlasMonumentType;
   worldMemoryId?: string;
+  /** Phase 3 — master planner */
+  planId?: string;
+  planPhase?: MasterPlanProjectPhase;
+  isConcept?: boolean;
 };
 
 export type AtlasOrbRecommendationKind =
@@ -120,7 +124,11 @@ export type AtlasOrbRecommendationKind =
   | 'expedition'
   | 'construction'
   | 'discovery'
-  | 'master-plan';
+  | 'master-plan'
+  | 'placement'
+  | 'forecast'
+  | 'simulation'
+  | 'budget';
 
 export type AtlasOrbRecommendation = {
   id: string;
@@ -164,6 +172,96 @@ export type AtlasConstructionJob = {
   unlockedByExpedition?: string;
 };
 
+export type MasterPlanProjectPhase =
+  | 'vision'
+  | 'reserved-land'
+  | 'concept-blueprint'
+  | 'approved-blueprint'
+  | 'construction'
+  | 'interior-assembly'
+  | 'commissioning'
+  | 'grand-opening'
+  | 'operational';
+
+export type MasterPlanLandCategory =
+  | 'headquarters'
+  | 'district'
+  | 'campus'
+  | 'pavilion'
+  | 'academy'
+  | 'experience-center'
+  | 'innovation';
+
+export type AtlasPlanFeatureType =
+  | 'road'
+  | 'bridge'
+  | 'plaza'
+  | 'park'
+  | 'courtyard'
+  | 'water-feature'
+  | 'observation-tower'
+  | 'transit-hub'
+  | 'skybridge';
+
+export type AtlasPlanFeature = {
+  id: string;
+  type: AtlasPlanFeatureType;
+  label: string;
+  mapX: number;
+  mapY: number;
+  connectToPlanId?: string;
+};
+
+export type AtlasCreativeBudgetEstimate = {
+  generationCost: string;
+  constructionCost: string;
+  budgetImpactPct: number;
+  reuseOpportunities: string;
+  projectedEquity: string;
+  marketplaceValue?: string;
+};
+
+export type AtlasSimulationResult = {
+  planId: string;
+  navigationImpact: string;
+  crowdRisk: 'low' | 'medium' | 'high';
+  entranceRecommendation?: string;
+  placementScore: number;
+  aiTrafficImpact: string;
+  walkingDistanceDelta: string;
+  discoverability: string;
+  expansionFit: string;
+  summary: string;
+};
+
+export type AtlasExpansionRecommendation = {
+  id: string;
+  message: string;
+  targetPlanLabel: string;
+  priority: 'high' | 'medium' | 'low';
+  suggestedCategory: MasterPlanLandCategory;
+};
+
+export type AtlasWorldForecastYear = 1 | 3 | 5 | 10;
+
+export type AtlasWorldForecast = {
+  horizonYears: AtlasWorldForecastYear;
+  buildingCount: number;
+  districtCount: number;
+  narrative: string;
+  milestones: string[];
+};
+
+export type AtlasFutureVisionConcept = {
+  id: string;
+  label: string;
+  description: string;
+  mapX: number;
+  mapY: number;
+  alternativeLayout?: string;
+  createdAt: string;
+};
+
 export type AtlasMasterPlanReservation = {
   id: string;
   label: string;
@@ -174,10 +272,16 @@ export type AtlasMasterPlanReservation = {
   headquartersPlan?: string;
   notes?: string;
   reservedAt: string;
+  /** Phase 3 — planning pipeline */
+  phase?: MasterPlanProjectPhase;
+  category?: MasterPlanLandCategory;
+  isConcept?: boolean;
+  budget?: AtlasCreativeBudgetEstimate;
+  amenities?: string[];
 };
 
 export type AtlasDiscoveryStore = {
-  version: 2;
+  version: 3;
   discoveredNodeIds: string[];
   achievements: string[];
   hiddenFinds: string[];
@@ -185,6 +289,10 @@ export type AtlasDiscoveryStore = {
   buildingMemories: AtlasBuildingMemory[];
   masterPlan: AtlasMasterPlanReservation[];
   activeConstructions: AtlasConstructionJob[];
+  planFeatures: AtlasPlanFeature[];
+  futureVisionConcepts: AtlasFutureVisionConcept[];
+  forecastHorizon: AtlasWorldForecastYear;
+  lastSimulations: Record<string, AtlasSimulationResult>;
 };
 
 export const ATLAS_MAP_MODE_LABELS: Record<AtlasMapMode, string> = {
@@ -253,6 +361,28 @@ export const ATLAS_ENGINE_LABELS: Record<AtlasEngineId, string> = {
   'expedition-hub': 'EXPEDITION HUB™',
 };
 
+export const MASTER_PLAN_PHASE_LABELS: Record<MasterPlanProjectPhase, string> = {
+  vision: 'VISION™',
+  'reserved-land': 'RESERVED LAND™',
+  'concept-blueprint': 'CONCEPT BLUEPRINT™',
+  'approved-blueprint': 'APPROVED BLUEPRINT™',
+  construction: 'CONSTRUCTION™',
+  'interior-assembly': 'INTERIOR ASSEMBLY™',
+  commissioning: 'COMMISSIONING™',
+  'grand-opening': 'GRAND OPENING™',
+  operational: 'OPERATIONAL™',
+};
+
+export const RESERVE_LAND_PRESETS: { label: string; category: MasterPlanLandCategory }[] = [
+  { label: 'Future Headquarters™', category: 'headquarters' },
+  { label: 'Innovation District™', category: 'innovation' },
+  { label: 'Research Campus™', category: 'campus' },
+  { label: 'Marketplace Pavilion Expansion™', category: 'pavilion' },
+  { label: 'Creative Campus™', category: 'campus' },
+  { label: 'Customer Experience Center™', category: 'experience-center' },
+  { label: 'Training Academy™', category: 'academy' },
+];
+
 export const STUDIO_WORLD_ATLAS_EVENT = 'studio-world-atlas-updated';
 
 /** Which engines surface in each map mode */
@@ -269,5 +399,5 @@ export const ATLAS_MODE_ENGINE_FOCUS: Partial<Record<AtlasMapMode, AtlasEngineId
   'company-genome': ['company-genome', 'creative-intelligence'],
   construction: ['generation-pipeline', 'scene-stack', 'blueprint-archive'],
   'future-vision': ['expedition-hub', 'blueprint-archive'],
-  'master-planner': ['expedition-hub', 'blueprint-archive'],
+  'master-planner': ['expedition-hub', 'blueprint-archive', 'creative-budget'],
 };
