@@ -41150,3 +41150,28 @@ User defined **Adaptive Onboarding™** — philosophy & onboarding **evolution*
 - **8-doc spec:** `docs/studio-os/onboarding/` — README · adaptive-onboarding · orb-conversation · mode-recommendation-engine · headquarters-preview · company-genome-initialization · adaptive-evolution · future-onboarding
 - **Prior arc (same chat):** Transitions™ · Studio World™ · Creative Approval Pipeline™ · Creative Review™ · mobile storage fix · Company Engine™ · Mode System™
 - **CORE.md:** Adaptive Onboarding™ line added after Mode System™
+
+---
+
+## 2026-07-08 — Creative Direction Pipeline™ — Vision First. Production Second. (docs only)
+
+User defined **Creative Direction Pipeline™** — production philosophy sprint replacing Creative Approval Pipeline™ methodology. **No UI · no new engines.**
+
+- **Realization:** Creative directors approve **vision** before walls · film directors approve **sets** before lighting · architects approve **buildings** before furniture — Studio OS should operate the same way
+- **Philosophy:** Founders direct **visions** · Studio OS directs **production** — founder is Creative Director · not AI operator
+- **New pipeline:** Creative Brief™ → Creative Direction™ → Generate Complete Concepts™ (A/B/C full cinematic environments) → Founder Selects Vision™ → Scene Blueprint™ → Reverse Engineering™ → Asset Graph™ → Refinement Pipeline™ → Golden Build™
+- **Creative Brief™:** Natural language · images · Reels · Pinterest · sketches · voice · video · packaging · mood boards — Studio OS builds brief automatically
+- **Complete Concepts:** 3 full environments — NOT separate assets · faithful to Company · Project · Brand · Room DNA · Creative Direction™
+- **Scene Blueprint™ (CRITICAL):** Co-generated with concept — production truth (zones · layout · camera · hero · furniture · materials · lighting · relationships · audio · navigation) — **never reverse engineer from pixels alone**
+- **Reverse Engineering™:** Blueprint + genomes + rendered image (confirmation)
+- **Asset Graph™:** Every object editable node (architecture · lighting · furniture · Orb™ · Mood Wall™ · particles · audio · navigation…)
+- **Refinement Pipeline™:** Tap object → Refine — surgical · everything else untouched
+- **Director Feedback™:** Natural language ("warmer" · "more cinematic" · "move Orb closer") → generation instructions — not prompt engineering
+- **Production Intelligence™:** Background Intelligence™ · Dependency Awareness™ · Creative Review™ on every refinement
+- **World Persistence™:** Vision + refinements update Scene Blueprint™ · Asset Graph™ · Room DNA™ · Project Genome™ · Golden Build™ · Studio World™
+- **Preserved from Creative Approval Pipeline™:** Creative Review™ · Braintrust™ · Orb facilitator · Director's Notes™ · Approve/Regenerate/Branch
+- **Success:** Pixar production team — not Midjourney · Figma · Cursor
+- **Final philosophy:** Studio OS develops visions → visions become worlds → worlds become companies → companies become legacies
+- **13-doc spec:** `docs/studio-os/creative-direction-pipeline/` — README · creative-direction-pipeline · creative-brief · creative-direction · complete-concepts · founder-vision-selection · scene-blueprint · reverse-engineering · asset-graph · refinement-pipeline · director-feedback · production-intelligence · world-persistence · future-production
+- **Prior arc (same chat):** Adaptive Onboarding™ · Mode System™ · Company Engine™ · Creative Approval Pipeline™ implementation
+- **CORE.md:** Creative Direction Pipeline™ line added
