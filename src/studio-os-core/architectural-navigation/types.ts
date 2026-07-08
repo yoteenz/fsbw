@@ -21,6 +21,8 @@ export type ArchitecturalFrameStatus = {
   connectedOrb?: string;
   blueprint?: string;
   workspace?: string;
+  /** Living Architecture™ — campus growth language instead of abstract stats */
+  growthSummary?: string;
 };
 
 export type ArchitecturalDestination = {

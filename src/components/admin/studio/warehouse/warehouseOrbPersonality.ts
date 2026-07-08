@@ -1,4 +1,5 @@
 import type { WarehouseWingKind } from '../../../../studio-os-core/studio-warehouse/campus-nav';
+import type { LivingArchitectureSnapshot } from '../../../../studio-os-core/living-architecture';
 
 export type WarehouseOrbPersonality = {
   role: string;
@@ -63,6 +64,27 @@ const PERSONALITIES: Record<WarehouseWingKind, WarehouseOrbPersonality> = {
   },
 };
 
-export function resolveWarehouseOrbPersonality(wing: WarehouseWingKind): WarehouseOrbPersonality {
-  return PERSONALITIES[wing];
+export function resolveWarehouseOrbPersonality(
+  wing: WarehouseWingKind,
+  livingArchitecture?: LivingArchitectureSnapshot | null
+): WarehouseOrbPersonality {
+  const base = PERSONALITIES[wing];
+
+  if (livingArchitecture?.orbHistorianLine) {
+    const historianRoles: Partial<Record<WarehouseWingKind, string>> = {
+      legacy: 'Architectural Historian',
+      innovation: 'Architectural Historian',
+      expansion: 'Campus Architect',
+      warehouse: 'Production Historian',
+      atrium: 'Campus Historian',
+    };
+
+    return {
+      ...base,
+      role: historianRoles[wing] ?? 'Architectural Historian',
+      greeting: livingArchitecture.orbHistorianLine,
+    };
+  }
+
+  return base;
 }

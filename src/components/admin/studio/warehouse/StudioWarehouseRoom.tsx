@@ -29,6 +29,14 @@ import {
 } from '../architectural-navigation';
 import { useArchitecturalNavigationRail } from '../../../../hooks/useArchitecturalNavigationRail';
 import {
+  livingArchitectureClassForDistrict,
+  useLivingArchitecture,
+} from '../../../../hooks/useLivingArchitecture';
+import {
+  LivingArchitectureLayer,
+  LIVING_ARCHITECTURE_STYLES,
+} from '../living-architecture';
+import {
   buildWarehouseContextualWings,
   buildWarehouseFrameStatus,
   districtCssClass,
@@ -130,7 +138,6 @@ export function StudioWarehouseRoom() {
   const activeZone = useMemo(() => getWarehouseZone(wh.activeZoneId), [wh.activeZoneId]);
   const activeWing = warehouseZoneWing(wh.activeZoneId);
   const cameraPan = warehouseZonePanVw(activeZone);
-  const orbPersonality = useMemo(() => resolveWarehouseOrbPersonality(activeWing), [activeWing]);
 
   const activeLayers = useMemo(
     () => stack.getLayerViews(wh.activeZoneId),
@@ -160,6 +167,7 @@ export function StudioWarehouseRoom() {
   const industrialWing = useMemo(() => industrialWingForZone(wh.activeZoneId), [wh.activeZoneId]);
   const galleryMode = isGalleryZone(wh.activeZoneId);
   const navRail = useArchitecturalNavigationRail();
+  const livingArchitecture = useLivingArchitecture(wh.catalog);
 
   const navLocation = useMemo(
     () => resolveWarehouseLocationStack(wh.activeZoneId, wh.arrivalComplete),
@@ -169,6 +177,11 @@ export function StudioWarehouseRoom() {
   const contextualWings = useMemo(
     () => buildWarehouseContextualWings(wh.arrivalComplete),
     [wh.arrivalComplete]
+  );
+
+  const orbPersonality = useMemo(
+    () => resolveWarehouseOrbPersonality(activeWing, livingArchitecture),
+    [activeWing, livingArchitecture]
   );
 
   const frameStatus = useMemo(
@@ -181,8 +194,9 @@ export function StudioWarehouseRoom() {
         layersComplete: activePipeline.layersComplete,
         layersTotal: activePipeline.layersTotal,
         orbRole: orbPersonality.role,
+        livingArchitecture,
       }),
-    [wh.activeZoneId, wh.arrivalComplete, activeZone.label, activePipeline, orbPersonality.role]
+    [wh.activeZoneId, wh.arrivalComplete, activeZone.label, activePipeline, orbPersonality.role, livingArchitecture]
   );
 
   const districtThemeId = useMemo(
@@ -190,6 +204,8 @@ export function StudioWarehouseRoom() {
     [wh.activeZoneId]
   );
   const districtClass = districtCssClass(districtThemeId);
+  const livingClass = livingArchitectureClassForDistrict(districtThemeId, livingArchitecture);
+  const livingTier = livingArchitecture.districts[districtThemeId]?.tier ?? 0;
 
   const campusTitle = useMemo(() => {
     if (industrialWing) {
@@ -321,12 +337,13 @@ export function StudioWarehouseRoom() {
         return (
           <InnovationHallInteractions
             hotspots={hotspots}
+            livingArchitecture={livingArchitecture}
             onContinueToExpansion={() => goToZone('company-genome-vault')}
           />
         );
 
       case 'future-expansion-wings':
-        return <FutureExpansionInteractions />;
+        return <FutureExpansionInteractions livingArchitecture={livingArchitecture} />;
 
       default:
         if (!zone.districtId) return null;
@@ -473,10 +490,12 @@ export function StudioWarehouseRoom() {
       <style>{WAREHOUSE_FRAME_STYLES}</style>
       <style>{ARCHITECTURAL_NAV_STYLES}</style>
       <style>{DISTRICT_THEME_STYLES}</style>
+      <style>{LIVING_ARCHITECTURE_STYLES}</style>
       <style>{WAREHOUSE_CAMPUS_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
-        className={`${worldClass} ${districtClass}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
+        className={`${worldClass} ${districtClass} ${livingClass}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
+        data-living-tier={livingTier > 0 ? livingTier : undefined}
         onPointerMove={immersion.onPointerMove}
         style={immersion.parallaxStyle}
       >
@@ -515,8 +534,14 @@ export function StudioWarehouseRoom() {
           frameStatus={frameStatus}
           contextualWings={contextualWings}
           activeRoomId={wh.activeZoneId}
+          livingArchitecture={livingArchitecture}
           onSelectRoom={(roomId) => goToZone(roomId as WarehouseCameraZoneId)}
           onCycleMode={navRail.cycleMode}
+        />
+
+        <LivingArchitectureLayer
+          snapshot={livingArchitecture}
+          districtThemeId={districtThemeId}
         />
 
         <aside className="wh-world__orb-courier" aria-label="Studio Orb courier">

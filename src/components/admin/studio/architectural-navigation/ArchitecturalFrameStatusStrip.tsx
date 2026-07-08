@@ -16,7 +16,8 @@ export function ArchitecturalFrameStatusStrip({ status, districtThemeId }: Props
   if (status.generationStatus && status.generationStatus !== 'Idle') {
     chips.push(`Gen · ${status.generationStatus}`);
   }
-  if (status.worldGraphStatus) chips.push(`Graph · ${status.worldGraphStatus}`);
+  if (status.worldGraphStatus) chips.push(status.worldGraphStatus);
+  if (status.growthSummary) chips.push(status.growthSummary);
 
   if (chips.length === 0) return null;
 

@@ -11,6 +11,8 @@ import {
   type DistrictThemeId,
 } from '../../../../studio-os-core/architectural-navigation';
 import type { ArchitecturalNavRailMode } from '../../../../studio-os-core/architectural-navigation';
+import { districtForContextualWing } from '../../../../studio-os-core/living-architecture';
+import type { LivingArchitectureSnapshot } from '../../../../studio-os-core/living-architecture';
 import { railWidthForMode } from '../../../../hooks/useArchitecturalNavigationRail';
 
 type Props = {
@@ -23,10 +25,12 @@ type Props = {
   onSelectRoom: (roomId: string) => void;
   onCycleMode: () => void;
   showPrimaryDestinations?: boolean;
+  livingArchitecture?: LivingArchitectureSnapshot | null;
 };
 
 function FrameStatusBlock({ status }: { status: ArchitecturalFrameStatus }) {
   const rows: Array<[string, string | undefined]> = [
+    ['Campus', status.growthSummary],
     ['Generation', status.generationStatus],
     ['World Graph', status.worldGraphStatus],
     ['Orb', status.connectedOrb],
@@ -85,6 +89,7 @@ export function ArchitecturalNavigationRail({
   onSelectRoom,
   onCycleMode,
   showPrimaryDestinations = false,
+  livingArchitecture,
 }: Props) {
   const navigate = useNavigate();
   const atlas = useGlobalAtlasLayerOptional();
@@ -156,9 +161,30 @@ export function ArchitecturalNavigationRail({
 
         <div className="sw-nav-rail__section">
           <p className="sw-nav-rail__section-title">Rooms in this Wing</p>
-          {contextualWings.map((wing) => (
+          {contextualWings.map((wing) => {
+            const wingDistrict = districtForContextualWing(wing.id);
+            const wingTier =
+              wingDistrict && livingArchitecture
+                ? livingArchitecture.districts[wingDistrict]?.tier
+                : undefined;
+            const wingTierLabel =
+              wingDistrict && livingArchitecture
+                ? livingArchitecture.districts[wingDistrict]?.tierLabel
+                : undefined;
+
+            return (
             <div key={wing.id} className="sw-nav-rail__wing">
-              <p className="sw-nav-rail__wing-label">{wing.label}</p>
+              <p className="sw-nav-rail__wing-label">
+                {wing.label}
+                {wingTier !== undefined && wingTier > 0 ? (
+                  <span
+                    className={`sw-nav-rail__wing-tier${wingTier >= 2 ? ' is-growing' : ''}`}
+                    title={`${wingTierLabel} — earned architectural growth`}
+                  >
+                    T{wingTier}
+                  </span>
+                ) : null}
+              </p>
               <ul className="sw-nav-rail__rooms">
                 {wing.rooms.map((room) => {
                   const isActive = activeRoomId === room.id;
@@ -183,7 +209,8 @@ export function ArchitecturalNavigationRail({
                 })}
               </ul>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {showPrimaryDestinations ? (
