@@ -17,6 +17,8 @@ From each Profession Brain, Studio Institute automatically generates:
 
 Courses · lessons · learning paths · micro-lessons · checklists · playbooks · reference guides · scenario training · interactive exercises · knowledge articles · certification programs · operational simulations · role-based training.
 
+**ARTICLE-E01 update:** The default learner experience should now be routed through **Profession Simulation Engine™** where possible: scenes · jobs · shifts · clients · challenges · projects · promotions. Courses and lessons remain reference/certification surfaces, not the primary experience when a profession can be simulated.
+
 ## Capabilities
 
 | Area | Description |
@@ -58,6 +60,7 @@ Hook: **`useStudioInstituteOrgState`**
 ## Integration
 
 - **`profession-brain/store.ts`** — `syncStudioInstituteFromProfessionBrain()` on upsert
+- **`profession-simulation-engine/`** — converts Profession Brain knowledge into playable workplace scenes, promotion gates, AI characters, and career progression.
 - **`boundary-sync.ts`** — `ensureOrganizationStudioInstituteProfile()`
 - **`command-dock`** — `resolveStudioInstituteAdvice()` · proactive learning recommendations
 - **`expert-marketplace`** — customer academy offerings complement Institute customer education

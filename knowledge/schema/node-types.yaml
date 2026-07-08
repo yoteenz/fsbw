@@ -62,6 +62,10 @@ domains:
     - ai-agent
     - orb-personality
     - milestone
+  learning:
+    - profession
+    - career-stage
+    - simulation-scene
 
 id_prefixes:
   knowledge-object: W-KNO
@@ -74,6 +78,9 @@ id_prefixes:
   foundational-physics-law: W-PHY
   implementation-standard: W-STD
   hero-object: W-HO
+  profession: W-PRO
+  career-stage: W-CST
+  simulation-scene: W-SCN
   flagship: W-FLG
   room: W-RM
   engine: W-ENG

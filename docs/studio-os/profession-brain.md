@@ -46,6 +46,7 @@ src/studio-os-core/profession-brain/
 
 - **`business-discovery-blueprint/store.ts`** — syncs Profession Brain when Blueprint completes.
 - **`organization-inauguration`** — Charter seeds policy knowledge.
+- **`profession-simulation-engine/`** — uses the Profession Brain as source truth for workplace scenes, client scenarios, mentor dialogue, assessments, adaptive difficulty, and career progression.
 - **`command-dock/store.ts`** — `resolveProfessionBrainAdvice()` before Blueprint living updates for domain commands.
 - **`command-dock/context.ts`** — Profession Brain route + Mission Control suggestions.
 - **`monetization-architecture`** — concierge catalog bindings via `concierge-bridge.ts`.

@@ -12,7 +12,8 @@ export type DesignPrincipleId =
   | 'everything-has-a-home'
   | 'beauty-through-function'
   | 'founders-build-worlds'
-  | 'hero-objects-over-icons';
+  | 'hero-objects-over-icons'
+  | 'careers-are-simulated';
 
 export type DesignPrinciple = {
   id: DesignPrincipleId;
@@ -103,6 +104,16 @@ export const DESIGN_PRINCIPLES: DesignPrinciple[] = [
     decisionGuide:
       'When navigation needs a visual primitive, design a unique manufactured object with silhouette, material, history, motion, and graph identity before considering any icon-like mark.',
     examples: ['World Atlas Globe™', 'Production Board Slate™', 'Story Table Relic™', 'Hero Object Vault™'],
+  },
+  {
+    id: 'careers-are-simulated',
+    number: 10,
+    title: 'Careers Are Simulated™',
+    summary:
+      'Studio World learning should feel like entering a profession on Day One, not taking a traditional course.',
+    decisionGuide:
+      'When building professional education, prefer workplace scenes, shifts, clients, challenges, projects, and promotions over lessons, modules, videos, quizzes, or assignments.',
+    examples: ['Hair Profession™ ladder', 'Living Salon Workplace™', 'Mentor Stylist™', 'Promotion gates'],
   },
 ];
 

@@ -92,6 +92,8 @@ export { emptyWorkspaceDataAdapter } from './workspace/empty-data-adapter';
 
 export { STUDIO_OS_ROUTES, workspaceStudioModulePath, workspaceStudioEntryPath } from './workspace/routes';
 
+export * from './profession-simulation-engine';
+
 export {
   readActiveWorkspaceIdFromStorage,
   writeActiveWorkspaceIdToStorage,

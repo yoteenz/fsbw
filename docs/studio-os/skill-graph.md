@@ -37,6 +37,7 @@ Technical · Industry · Leadership · Creative · Operational · AI · Communic
 - Identity Graph™ (people & departments)
 - Profession Brain™ (domain expertise)
 - Studio Institute™ (certifications)
+- Profession Simulation Engine™ (workplace scenes, promotion evidence, client challenge outcomes)
 
 ## Route
 

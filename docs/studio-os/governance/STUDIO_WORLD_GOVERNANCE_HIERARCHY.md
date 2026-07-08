@@ -51,6 +51,7 @@ Philosophy — not technical rules. When multiple valid solutions exist, princip
 | 7 | Beauty Through Function™ |
 | 8 | Founders Build Worlds™ |
 | 9 | Hero Objects Over Icons™ |
+| 10 | Careers Are Simulated™ |
 
 **Code:** `src/studio-os-core/design-principles/principles.ts`  
 **Canon:** `knowledge/canon/design-principles/`  
@@ -80,7 +81,7 @@ Behavioral and architectural governance.
 
 Documentation First™ · Canon Promotion™ · No Orphan Objects™ · Agent Memory Subordination™ · Immutability of History™ · Scene Assembly Rules™ · Knowledge Review™ · Repository Governance™ · Approval Workflow™
 
-**Articles:** World Graph Is Truth™ · Three Eras Roadmap™ · Scene Assembly Immutability™ · ARTICLE-K21 Architecture Decision Records™ · ARTICLE-K22 Studio World Knowledge Core™ · ARTICLE-K23 Memory System™ · ARTICLE-D09 Hero Objects™ & Contextual Orb™
+**Articles:** World Graph Is Truth™ · Three Eras Roadmap™ · Scene Assembly Immutability™ · ARTICLE-K21 Architecture Decision Records™ · ARTICLE-K22 Studio World Knowledge Core™ · ARTICLE-K23 Memory System™ · ARTICLE-D09 Hero Objects™ & Contextual Orb™ · ARTICLE-E01 Profession Simulation Engine™
 
 **Graph:** `constitutional-law` · `W-LAW-*`
 

@@ -13,6 +13,7 @@
 | 7 | Beauty Through Function™ | Elegant and purposeful |
 | 8 | Founders Build Worlds™ | Amplify creativity, not admin |
 | 9 | Hero Objects Over Icons™ | Collectible living artifacts, not software iconography |
+| 10 | Careers Are Simulated™ | Professional learning as workplace career progression |
 
 **Code:** `src/studio-os-core/design-principles/principles.ts`
 

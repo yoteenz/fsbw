@@ -43579,6 +43579,7 @@ Summary of the **whole conversation so far** in this chat: user first requested 
 **Verification:** `npm run build` passed.
 
 **Conventions:** Never call mutating atlas hook methods (`resolveTravel`, `focusOn`, etc.) inside `useMemo` / render — use pure `studio-os-core` helpers for previews.
+
 ---
 
 ## 2026-07-08 — ARTICLE-E02 Career Worlds™ architecture sprint
@@ -43603,3 +43604,27 @@ Summary of the **full conversation in this chat**: after completing Studio Found
   - Build future profession education as persistent worlds with identity, economy, relationships, offline evolution, and mastery.
   - New Career Worlds should be added as typed blueprints and graph nodes, not standalone pages.
 
+---
+
+## 2026-07-08 — ARTICLE-E01 Profession Simulation Engine™ architecture sprint
+
+Summary of the **whole conversation so far** in this chat: user first requested **ARTICLE-D09 Hero Objects™ & Contextual Orb™** architecture; then requested the **Hero Objects + Contextual Orb implementation sprint**; then requested **ARTICLE-E01 Profession Simulation Engine™** as a new foundational Studio World pillar where Studio World simulates careers instead of teaching traditional courses.
+
+- **Prior outcomes in this chat:**
+  - D09 architecture was completed and pushed (`44ff54d83`): Hero Objects™ as collectible navigation artifacts, Contextual Orb™ as five relevant location-aware objects, D09 docs/core/World Graph/design principle.
+  - D09 implementation was completed and pushed (`26448379e`): contextual Orb registry, Hero Object renderer/sculptures, larger Orb artifacts, living material/motion CSS, provider/radial menu integration.
+- **E01 user goal:** Create **Profession Simulation Engine™** so learners feel like they enter a profession on Day One. Replace lessons/modules/videos/quizzes/assignments with scenes/jobs/shifts/clients/challenges/projects/promotions. Every profession should become a playable career powered by Profession Brain™ and AI characters with memory.
+- **E01 decisions / outcomes:**
+  - Added Layer 1 Design Principle #10: **Careers Are Simulated™**.
+  - Defined E01 canon: Studio World learning should be career simulation, not LMS/course delivery.
+  - Clarified boundary: **Simulation Engine™** models business decisions; **Profession Simulation Engine™** simulates professional careers.
+  - Clarified relationship: **Profession Brain™** supplies truth; **Profession Simulation Engine™** creates scenes/shifts/clients/promotions; **Studio Institute™** remains reference/certification surface; **Skill Graph™** and **Professional Profile™** record evidence/history.
+  - Added World Graph node types: `profession` (`W-PRO-*`), `career-stage` (`W-CST-*`), `simulation-scene` (`W-SCN-*`).
+- **E01 changes:**
+  - New canon doc: `docs/studio-os/profession-simulation-engine/ARTICLE_E01_PROFESSION_SIMULATION_ENGINE.md`.
+  - New core package: `src/studio-os-core/profession-simulation-engine/` (`constants.ts`, `types.ts`, `catalog.ts`, `progression.ts`, `index.ts`).
+  - Hair Profession™ reference blueprint: Intern™ → Industry Icon™ 13-stage career ladder, Living Salon Workplace™ loop, AI characters, simulation scenes, promotion gates, unlocks.
+  - New World Graph ingestion: `src/studio-os-core/world-graph/ingestion/profession-simulation-ingest.ts`; builder/index wired; regenerated `public/studio-os/world-graph/graph.json` and `docs/studio-os/world-graph/WORLD_GRAPH_COMPILE_REPORT.md`.
+  - Updated governance/canon/docs: design principles, node schema, Studio OS README, governance hierarchy, Profession Brain, Studio Institute, Skill Graph, Simulation Engine.
+- **Verification:** `npm run compile-world-graph` passed (**528 nodes · 952 edges · PASS**); `npx tsc --noEmit` passed; `npm run build` passed. Timestamp-only master-spec generated diffs were reverted; intentional E01 World Graph artifacts retained.
+- **Convention:** Future professional learning work should register professions as `ProfessionDefinition` blueprints and simulate workplace progression. Do not build profession education as static course/module/video/quiz pages when it can be represented as scenes, shifts, clients, projects, and promotions.

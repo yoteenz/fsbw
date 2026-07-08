@@ -10,6 +10,17 @@ studio os platform pillar — model business decisions before committing real ti
 
 **Not predictions with certainty.** Explore possibilities, reveal tradeoffs, identify assumptions, improve decision quality. The founder remains responsible for every final business decision — Studio OS provides intelligence, context, and simulation, not guarantees.
 
+## Boundary with Profession Simulation Engine™
+
+**Simulation Engine™** models business decisions before committing money, time, resources, or risk.
+
+**Profession Simulation Engine™** (ARTICLE-E01) simulates careers so learners master professions by working shifts, serving clients, solving challenges, and earning promotions.
+
+They may share scenario infrastructure, but their intent is different:
+
+- Simulation Engine™ → decision modeling for founders and organizations.
+- Profession Simulation Engine™ → immersive career progression for learners.
+
 ## Capabilities (v1)
 
 | Area | Description |

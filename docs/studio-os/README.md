@@ -34,6 +34,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [workflow-engine.md](./workflow-engine.md) | Workflow Engine™ — visual orchestration, testing, analytics, M138 |
 | [state-engine.md](./state-engine.md) | State Engine™ — lifecycle management, transitions, history, M139 |
 | [asset-registry.md](./asset-registry.md) | Asset Registry™ — managed assets, metadata, versioning, health, M140 |
+| [profession-simulation-engine/ARTICLE_E01_PROFESSION_SIMULATION_ENGINE.md](./profession-simulation-engine/ARTICLE_E01_PROFESSION_SIMULATION_ENGINE.md) | **ARTICLE-E01** — Profession Simulation Engine™ · careers as playable workplace progression |
 | [experience-engine.md](./experience-engine.md) | Experience Engine™ — adaptive atmosphere, context modes, M141 · Infrastructure Chapter complete |
 | [memory-bible.md](./memory-bible.md) | Institutional knowledge, naming, decisions, AI Context Builder |
 
