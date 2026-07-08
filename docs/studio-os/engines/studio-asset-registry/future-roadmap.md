@@ -5,9 +5,21 @@
 
 ---
 
-## v1.0.0 (This Sprint) — Intelligence Plane
+## v1.1.0 (This Sprint) — Remember-First Architecture
 
-**Delivered:** Canonical specification only.
+| Deliverable | Status |
+|-------------|--------|
+| Remember-First Law™ | ✓ Spec |
+| Canonical Asset Record™ (UUID · workspace · cost · …) | ✓ Spec |
+| Scene Stack Categories™ | ✓ Spec |
+| Generation Gate™ | ✓ Spec |
+| Auto-Registration™ | ✓ Spec |
+
+**No UI · no storage backend · no implementation this sprint.**
+
+---
+
+## v1.0.0 — Intelligence Plane
 
 | Deliverable | Status |
 |-------------|--------|

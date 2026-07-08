@@ -1,10 +1,14 @@
 # Studio Asset Registry™ — The Living Library (v1)
 
-**Version:** 1.0.0  
-**Status:** Canonical asset intelligence specification  
+**Version:** 1.1.0  
+**Status:** Canonical asset intelligence specification — architecture sprint  
 **Type:** Core Studio OS Engine — not a feature, not a department  
 **Engine ID:** `studio.asset-registry.v1`  
-**Tagline:** *The Living Library*
+**Tagline:** *The Living Library — remember first, generate last.*
+
+---
+
+> **Every generated asset should become a reusable company asset. Studio OS should never generate something it already owns unless the founder explicitly requests a variation.**
 
 ---
 
@@ -27,6 +31,18 @@ The Registry is **not merely an asset database**. It is the **living memory** of
 | Generators guess what exists | Generators **ask** before they create |
 
 **No implementation in this sprint. No React. No Three.js. No Supabase. No UI. No asset generation.**
+
+---
+
+## Remember-First Law
+
+```
+Every generation → ask Registry first
+Reuse exists     → recommend reuse
+No match         → generate → auto-register
+```
+
+See [remember-first-law.md](./remember-first-law.md) · [generation-gate.md](./generation-gate.md) · [auto-registration.md](./auto-registration.md).
 
 ---
 
@@ -81,6 +97,11 @@ Compiler `designRegistryRef` migrates to `registrySnapshotRef`. See [runtime-int
 
 | Document | Contents |
 |----------|----------|
+| [remember-first-law.md](./remember-first-law.md) | **Core law** — reuse before generate |
+| [canonical-asset-record.md](./canonical-asset-record.md) | UUID · workspace · cost · every field |
+| [scene-stack-categories.md](./scene-stack-categories.md) | Environment Shell™ · Lighting™ · … |
+| [generation-gate.md](./generation-gate.md) | Mandatory pre-generation query |
+| [auto-registration.md](./auto-registration.md) | Auto-save every generated asset |
 | [registry-overview.md](./registry-overview.md) | Philosophy · living memory · platform role |
 | [asset-schema.md](./asset-schema.md) | Registry Item — every required field |
 | [category-system.md](./category-system.md) | Taxonomy · subcategories · reuse categories |
@@ -101,7 +122,8 @@ Compiler `designRegistryRef` migrates to `registrySnapshotRef`. See [runtime-int
 | System | Path |
 |--------|------|
 | **Creative Blueprint Engine™** | [`../../creative-blueprint-engine/`](../../creative-blueprint-engine/README.md) — Visual DNA™ · design languages · Systems™ scope |
-| **Asset Intelligence Engine™** | [`../../asset-intelligence-engine/`](../../asset-intelligence-engine/README.md) — founder-facing remember-first search · Compatibility Engine™ |
+| **Asset Intelligence Engine™** | [`../../asset-intelligence-engine/`](../../asset-intelligence-engine/README.md) — founder-facing remember-first · Compatibility Engine™ |
+| **Creative Intelligence Engine™** | [`../../creative-intelligence-engine/`](../../creative-intelligence-engine/README.md) — auto-register · generation gate on Scene Planner™ |
 | Studio Asset Compiler™ | [`../studio-asset-compiler/`](../studio-asset-compiler/README.md) |
 | Studio Department Generator™ | [`../../department-generator/`](../../department-generator/README.md) |
 | Department Generator engine | [`../../engine/department-generator/`](../../engine/department-generator/README.md) |
@@ -110,8 +132,13 @@ Compiler `designRegistryRef` migrates to `registrySnapshotRef`. See [runtime-int
 
 ---
 
-## Success Criteria (v1)
+## Success Criteria (v1.1)
 
+- [ ] Remember-First Law™ canonical
+- [ ] Canonical Asset Record™ fields complete
+- [ ] Scene Stack™ category alignment documented
+- [ ] Generation Gate™ mandatory before provider
+- [ ] Auto-Registration™ on every generation
 - [ ] Registry functions as **permanent creative memory** of Studio OS
 - [ ] Supports unlimited industries · departments · Packs™ · assets · generators
 - [ ] Every Registry Item has complete metadata schema

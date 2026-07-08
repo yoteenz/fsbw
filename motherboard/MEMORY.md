@@ -41847,3 +41847,20 @@ User **STOP** directive: **architectural reset** — fundamental vision evolutio
 - **Cross-refs:** `scene-stack/` · `studio-world.md` · `CORE.md`
 - **Prior arc (same chat):** Creative Portfolio™ · Creative Equity™ · Creative Budgets™ · Studio Alpha · intelligence stack · CDS V2 reset
 - **No UI polish this sprint**
+
+---
+
+## 2026-07-08 — Studio Asset Registry™ v1.1 — remember-first architecture (core engine sprint, docs only)
+
+User sprint: build **Asset Registry™** core engine architecture. **Do NOT build UI first.** Design underlying architecture.
+
+- **Mission:** Every generated asset becomes reusable company asset. Never generate what org already owns unless founder requests variation.
+- **Canonical Asset Record™ fields:** UUID · Name · Category · Department · Workspace · Scene · Generation Pack · Tags · Materials · Lighting Profile · Camera Profile · Resolution · Aspect Ratio · Generation Cost · Generation Model (internal) · Prompt Version · Blueprint Version · Created By · Date · Usage Count · Marketplace Eligible · Favorite · Archived
+- **Supported categories:** Environment Shell™ · Lighting™ · Atmosphere™ · Architecture™ · Furniture™ · Hero Objects™ · Interactive Objects™ · Materials™ · Particles™ · Animations™ · Runtime FX™ · Audio™ · UI Components™ · Textures™ · Icons™
+- **Remember-First Law™:** every generation asks Registry — YES → recommend reuse · NO → generate → auto-register
+- **Generation Gate™:** mandatory before Generation Manager™ enqueue
+- **Auto-Registration™:** every generated asset automatically saves to Registry on complete (draft → approved)
+- **5 new docs:** `remember-first-law.md` · `canonical-asset-record.md` · `scene-stack-categories.md` · `generation-gate.md` · `auto-registration.md` — README v1.1 · `future-roadmap.md` updated
+- **Cross-refs:** `asset-intelligence-engine/asset-registry.md` · `studio-world.md` · `CORE.md`
+- **Prior arc (same chat):** Creative Intelligence Engine™ · Creative Portfolio™ · Creative Equity™ · intelligence stack
+- **No UI this sprint**

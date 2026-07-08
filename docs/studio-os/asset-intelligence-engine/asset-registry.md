@@ -2,6 +2,7 @@
 
 **Module:** `studio.asset-intelligence.v1.registry-view`  
 **Storage Engine:** [Studio Asset Registry™](../engines/studio-asset-registry/README.md)  
+**Canonical fields:** [canonical-asset-record.md](../engines/studio-asset-registry/canonical-asset-record.md)  
 **Status:** Intelligence-facing registry contract
 
 ---
@@ -121,9 +122,11 @@ Natural language search spec: [search-system.md](../engines/studio-asset-registr
 Nothing enters the searchable Registry without:
 
 1. **Approval** (founder or Creative Approval Pipeline™ gate)
-2. **Complete metadata** (all required fields)
+2. **Complete metadata** — [Canonical Asset Record™](../engines/studio-asset-registry/canonical-asset-record.md)
 3. **Dependency resolution** (no broken requires)
 4. **Golden Build Version™** stamp when from Golden Build™ / Scene Stack™
+
+**Auto-Registration™:** every generation automatically creates draft record — see [auto-registration.md](../engines/studio-asset-registry/auto-registration.md).
 
 Rejected explorations may enter as **alternate branch** records (Founder Taste Engine™) — not promoted to reuse candidates until approved.
 
