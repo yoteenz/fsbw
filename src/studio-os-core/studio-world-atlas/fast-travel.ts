@@ -27,7 +27,7 @@ export function resolveAtlasTravel(
         path,
         transitionMs: 900,
         cinematicClass: 'atlas-travel-elevator',
-        verb: 'Rising to',
+        verb: 'Rising via Glass Elevator™ to',
       };
     case 'fast-travel':
       return {
@@ -43,6 +43,34 @@ export function resolveAtlasTravel(
         cinematicClass: 'atlas-travel-tour',
         verb: 'Guided tour to',
       };
+    case 'executive-shuttle':
+      return {
+        path,
+        transitionMs: 1100,
+        cinematicClass: 'atlas-travel-shuttle',
+        verb: 'Executive Shuttle™ en route to',
+      };
+    case 'skybridge':
+      return {
+        path,
+        transitionMs: 1300,
+        cinematicClass: 'atlas-travel-skybridge',
+        verb: 'Crossing skybridge to',
+      };
+    case 'observation-train':
+      return {
+        path,
+        transitionMs: 1800,
+        cinematicClass: 'atlas-travel-train',
+        verb: 'Observation Train™ departing for',
+      };
+    case 'autonomous-transit':
+      return {
+        path,
+        transitionMs: 1000,
+        cinematicClass: 'atlas-travel-transit',
+        verb: 'Autonomous transit to',
+      };
     default:
       return { path, transitionMs: 800, cinematicClass: 'atlas-travel-fast', verb: 'Entering' };
   }
@@ -55,5 +83,6 @@ export function defaultAtlasView(): AtlasViewState {
     mapMode: 'architectural-blueprint',
     travelMode: 'fast-travel',
     transitionMs: 800,
+    travelingRoads: false,
   };
 }

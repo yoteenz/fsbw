@@ -6,9 +6,25 @@
 
 ## Purpose
 
-The Atlas is the **living blueprint** of Studio World™ — spatial civilization navigation for founders. It is **not** a sitemap, sidebar, navigation menu, or file explorer.
+The Atlas is the **living digital twin** of Studio World™ — spatial civilization navigation and the central operating table for every major Studio OS engine. It is **not** a sitemap, sidebar, navigation menu, or file explorer.
 
-Founders stand over a holographic table projecting the entire campus: buildings rise, roads connect destinations, activity pulses where work is live, and Fog of Discovery™ hides what the company has not yet unlocked.
+Founders stand over a holographic table projecting the entire campus: buildings rise, roads connect destinations, activity pulses where work is live, construction sites evolve in phases, and Fog of Discovery™ hides what the company has not yet unlocked.
+
+## Phase 2 — Operating Table Evolution
+
+The Atlas connects every major engine visually on the same world:
+
+- Creative Intelligence Engine™ · Company Genome™ · Asset Registry™ · Blueprint Archive™
+- Creative Budget™ · Creative Portfolio™ · Architecture Auditor™ · Experience Intelligence Engine™
+- Generation Pipeline™ · Scene Stack™ · Studio Archives™ · Expedition Hub™
+
+**Living world:** buildings pulse, departments glow when AI works, construction cranes appear, roads illuminate during travel, marketplace deliveries animate, Golden Builds become monuments.
+
+**World construction:** phased builds (reserve land → fencing → blueprint hologram → foundation → steel → glass → lighting → opening ceremony → permanent).
+
+**World memory:** every building stores construction date, reason, expedition, blueprint, generation cost, creative budget, equity gained, milestones.
+
+**Master Planner™:** reserve land, sketch districts, plan wings — simulate before generating.
 
 ## Zoom levels
 
@@ -21,30 +37,33 @@ Founders stand over a holographic table projecting the entire campus: buildings 
 | 5 | Room™ | Campaign Studio, Story Table, Museum |
 | 6 | Workspace™ | Actual working environment entry |
 
-## Map modes
+## Map modes (16 layers — same world, never separate dashboards)
 
-- Architectural Blueprint™
-- Organization View™
-- Creative View™
-- Operations View™
-- Archives View™
-- AI View™
-- Generation View™
+Architectural Blueprint™ · Organization™ · Operations™ · Creative™ · AI Activity™ · Generation™ · Archives™ · Creative Budget™ · Creative Portfolio™ · Creative Equity™ · Marketplace™ · Innovation™ · Company Genome™ · Construction™ · Future Vision™ · Master Planner™
 
 ## Travel modes
 
-Walk · Elevator · Fast Travel · Guided Tour — cinematic transitions, never abrupt.
+Walk · Glass Elevator™ · Fast Travel™ · Guided Tour · Executive Shuttle™ · Skybridge™ · Observation Train™ · Autonomous Transit™
 
 ## Core package
 
 `src/studio-os-core/studio-world-atlas/`
 
-- `catalog.ts` — node tree from flagships + route registry
-- `fog-of-discovery.ts` — unlock logic
-- `live-world.ts` — activity pulse levels
-- `orb-guide.ts` — Studio Orb™ recommendations
-- `fast-travel.ts` — travel resolution + timing
-- `memory-store.ts` — discovery persistence (`studioWorldAtlasDiscovery_v1`)
+| Module | Purpose |
+|--------|---------|
+| `catalog.ts` | Node tree + enrichment pipeline |
+| `catalog-enrichment.ts` | Engine signals, living world, master plan ghosts |
+| `engine-registry.ts` | Engine ↔ node ↔ mode intelligence layer |
+| `world-construction.ts` | Phased construction system |
+| `world-memory.ts` | Building memory + evolution timeline |
+| `world-discovery.ts` | Hidden observatories, easter eggs, monuments |
+| `master-planner.ts` | Future land reservations |
+| `living-world-signals.ts` | Ambient pulse, cranes, deliveries, road glow |
+| `fog-of-discovery.ts` | Unlock logic |
+| `live-world.ts` | Activity pulse levels |
+| `orb-guide.ts` | Studio Orb™ World Guide |
+| `fast-travel.ts` | Cinematic travel resolution |
+| `memory-store.ts` | Persistence (`studioWorldAtlasDiscovery_v2`) |
 
 ## UI
 
@@ -53,15 +72,11 @@ Walk · Elevator · Fast Travel · Guided Tour — cinematic transitions, never 
 
 ## Scene Stack™
 
-Department: `studio-world-atlas`  
-Station: `holographic-table`  
-Prompts: `src/studio-os-core/scene-stack/world-atlas-station-prompts.ts`
-
-Layer order: Environment Shell → Architecture → Lighting → Terrain → Buildings → Landmarks → Runtime → Navigation → Interactive → Atlas.
+Department: `studio-world-atlas` · Station: `holographic-table`
 
 ## Entry points
 
-1. Executive Atrium™ holographic table hotspot (Command Center)
+1. Executive Atrium™ holographic table hotspot
 2. HUD pill: **Studio World Atlas™**
-3. Overview module card: **STUDIO WORLD ATLAS**
-4. Direct route: `/admin/studio/world-atlas`
+3. Overview module card
+4. `/admin/studio/world-atlas`

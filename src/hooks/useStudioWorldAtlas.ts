@@ -1,18 +1,23 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  ambientWorldTicker,
   buildAtlasCatalog,
   buildAtlasOrbRecommendations,
   defaultAtlasView,
   getAtlasNode,
+  getBuildingMemory,
   getParentNode,
   getVisibleAtlasNodes,
   invalidateAtlasCatalogCache,
+  listActiveEnginesInCatalog,
   readAtlasDiscovery,
   recordAtlasDiscovery,
+  recordHiddenFind,
   resolveAtlasTravel,
   resolveZoomLevelForNode,
   STUDIO_WORLD_ATLAS_EVENT,
   type AtlasMapMode,
+  type AtlasMasterPlanReservation,
   type AtlasNode,
   type AtlasOrbRecommendation,
   type AtlasTravelMode,
@@ -35,8 +40,13 @@ export function useStudioWorldAtlas(options?: {
 
   const catalog = useMemo(() => {
     void liveTick;
-    return buildAtlasCatalog(options?.companyName, discovery.discoveredNodeIds);
-  }, [options?.companyName, discovery.discoveredNodeIds, liveTick]);
+    return buildAtlasCatalog({
+      companyName: options?.companyName,
+      discovery,
+      mapMode: view.mapMode,
+      liveTick,
+    });
+  }, [options?.companyName, discovery, view.mapMode, liveTick]);
 
   const focusNode = useMemo(
     () => getAtlasNode(view.focusNodeId, catalog) ?? catalog[0]!,
@@ -49,8 +59,27 @@ export function useStudioWorldAtlas(options?: {
   );
 
   const orbRecommendations: AtlasOrbRecommendation[] = useMemo(
-    () => buildAtlasOrbRecommendations(catalog),
-    [catalog]
+    () => buildAtlasOrbRecommendations(catalog, discovery),
+    [catalog, discovery]
+  );
+
+  const activeEngines = useMemo(() => listActiveEnginesInCatalog(catalog), [catalog]);
+
+  const worldTicker = useMemo(
+    () =>
+      ambientWorldTicker(catalog, {
+        mapMode: view.mapMode,
+        view: { travelingRoads: view.travelingRoads, travelMode: view.travelMode },
+        constructions: discovery.activeConstructions,
+        hiddenFinds: discovery.hiddenFinds,
+        tick: liveTick,
+      }),
+    [catalog, view.mapMode, view.travelingRoads, view.travelMode, discovery, liveTick]
+  );
+
+  const focusMemory = useMemo(
+    () => getBuildingMemory(focusNode.id, discovery.buildingMemories),
+    [focusNode.id, discovery.buildingMemories]
   );
 
   const breadcrumb = useMemo(() => {
@@ -64,6 +93,7 @@ export function useStudioWorldAtlas(options?: {
   }, [focusNode, catalog]);
 
   const setMapMode = useCallback((mapMode: AtlasMapMode) => {
+    invalidateAtlasCatalogCache();
     setView((v) => ({ ...v, mapMode, transitionMs: 500 }));
   }, []);
 
@@ -74,9 +104,24 @@ export function useStudioWorldAtlas(options?: {
   const focusOn = useCallback(
     (nodeId: string) => {
       const node = getAtlasNode(nodeId, catalog);
-      if (!node || node.hidden) return;
-      if (node.fogged && !node.unlocked) return;
-      recordAtlasDiscovery(nodeId);
+      if (!node || (node.hidden && view.mapMode !== 'innovation' && view.mapMode !== 'future-vision')) {
+        return;
+      }
+      if (node.fogged && !node.unlocked) {
+        if (
+          nodeId.startsWith('discovery-') &&
+          (view.mapMode === 'innovation' || view.mapMode === 'future-vision')
+        ) {
+          recordHiddenFind(nodeId);
+        } else {
+          return;
+        }
+      } else {
+        recordAtlasDiscovery(nodeId);
+      }
+      if (nodeId.startsWith('discovery-') && !node.unlocked) {
+        recordHiddenFind(nodeId);
+      }
       invalidateAtlasCatalogCache();
       setDiscoveryTick((t) => t + 1);
       setView((v) => ({
@@ -86,7 +131,7 @@ export function useStudioWorldAtlas(options?: {
         transitionMs: node.level > v.zoomLevel ? 1100 : 800,
       }));
     },
-    [catalog]
+    [catalog, view.mapMode]
   );
 
   const zoomOut = useCallback(() => {
@@ -111,10 +156,27 @@ export function useStudioWorldAtlas(options?: {
       recordAtlasDiscovery(nodeId);
       invalidateAtlasCatalogCache();
       setDiscoveryTick((t) => t + 1);
+      setView((v) => ({ ...v, travelingRoads: true }));
       return resolveAtlasTravel(node, view.travelMode, view);
     },
     [catalog, view]
   );
+
+  const clearTravelingRoads = useCallback(() => {
+    setView((v) => ({ ...v, travelingRoads: false }));
+  }, []);
+
+  const selectMasterPlan = useCallback((plan: AtlasMasterPlanReservation) => {
+    const planNodeId = `plan-${plan.id}`;
+    setView((v) => ({
+      ...v,
+      mapMode: 'master-planner',
+      focusNodeId: 'atlas-world-root',
+      transitionMs: 600,
+    }));
+    recordAtlasDiscovery(planNodeId);
+    setDiscoveryTick((t) => t + 1);
+  }, []);
 
   useEffect(() => {
     const onUpdate = () => {
@@ -132,6 +194,12 @@ export function useStudioWorldAtlas(options?: {
     return () => window.clearInterval(id);
   }, [options?.liveRefreshMs]);
 
+  // Ambient live world pulse — keeps table alive between interactions
+  useEffect(() => {
+    const id = window.setInterval(() => setLiveTick((t) => t + 1), 12_000);
+    return () => window.clearInterval(id);
+  }, []);
+
   return {
     view,
     catalog,
@@ -140,11 +208,16 @@ export function useStudioWorldAtlas(options?: {
     orbRecommendations,
     breadcrumb,
     discovery,
+    activeEngines,
+    worldTicker,
+    focusMemory,
     setMapMode,
     setTravelMode,
     focusOn,
     zoomOut,
     resetToWorld,
     resolveTravel,
+    clearTravelingRoads,
+    selectMasterPlan,
   };
 }

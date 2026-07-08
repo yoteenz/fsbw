@@ -1,32 +1,47 @@
-import type { AtlasNode, AtlasOrbRecommendation } from './types';
+import type { AtlasDiscoveryStore, AtlasNode, AtlasOrbRecommendation } from './types';
+import { ATLAS_ENGINE_LABELS } from './types';
+import { listActiveEnginesInCatalog } from './engine-registry';
+import { isUnderConstruction } from './world-construction';
+import { ATLAS_HIDDEN_DISCOVERIES } from './world-discovery';
 
 function uid(): string {
   return `orb-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
 }
 
-/** Studio Orb™ world guide — recommends where the founder should go next */
-export function buildAtlasOrbRecommendations(nodes: AtlasNode[]): AtlasOrbRecommendation[] {
+/** Studio Orb™ World Guide — curator of Studio World™ */
+export function buildAtlasOrbRecommendations(
+  nodes: AtlasNode[],
+  discovery?: AtlasDiscoveryStore
+): AtlasOrbRecommendation[] {
   const recs: AtlasOrbRecommendation[] = [];
   const active = nodes.filter((n) => n.activity === 'generating' || n.activity === 'pulse');
   const fogged = nodes.filter((n) => n.fogged && n.unlocked);
-  const command = nodes.find((n) => n.id.includes('studio-command-center') && n.level === 1);
+  const constructing = (discovery?.activeConstructions ?? []).filter((j) =>
+    isUnderConstruction(j.phase)
+  );
+  const engines = listActiveEnginesInCatalog(nodes);
 
+  const command = nodes.find((n) => n.id.includes('studio-command-center') && n.level === 1);
   if (command?.activity === 'pulse') {
     recs.push({
       id: uid(),
-      message: 'Studio Command Center™ is highly active today — the Organization Pulse Core awaits.',
+      message: 'Studio Command Center™ is highly active — Organization Pulse Core awaits your review.',
       targetNodeId: command.id,
       priority: 'high',
+      kind: 'attention',
+      engineId: 'architecture-auditor',
     });
   }
 
   const creative = nodes.find((n) => n.flagshipId === 'creative-direction-studio' && n.level === 1);
-  if (creative && creative.activity === 'generating') {
+  if (creative && (creative.activity === 'generating' || creative.livingSignals?.includes('ai-glow'))) {
     recs.push({
       id: uid(),
-      message: 'Creative Direction Studio has pending Golden Build layers — Scene Stack™ is assembling.',
+      message: 'Creative Direction Studio™ — Scene Stack™ assembling Golden Build layers. AI is working.',
       targetNodeId: creative.id,
       priority: 'high',
+      kind: 'ai-active',
+      engineId: 'scene-stack',
     });
   }
 
@@ -34,39 +49,108 @@ export function buildAtlasOrbRecommendations(nodes: AtlasNode[]): AtlasOrbRecomm
   if (archives) {
     recs.push({
       id: uid(),
-      message: 'Studio Archives™ Museum Wing has new assets ready for retrieval.',
+      message: 'Studio Archives™ — Museum exhibits illuminated. New assets ready in Asset Registry™.',
       targetNodeId: archives.id,
       priority: 'medium',
+      kind: 'opportunity',
+      engineId: 'asset-registry',
     });
   }
 
-  const intel = nodes.find((n) => n.displayName.includes('Intelligence') || n.id.includes('intelligence'));
+  if (constructing.length > 0) {
+    const job = constructing[0]!;
+    recs.push({
+      id: uid(),
+      message: `${job.displayName} is under construction (${job.phase.replace(/-/g, ' ')}) — watch the city evolve.`,
+      targetNodeId: job.nodeId,
+      priority: 'high',
+      kind: 'construction',
+      engineId: 'blueprint-archive',
+    });
+  }
+
+  if (discovery?.masterPlan.length) {
+    recs.push({
+      id: uid(),
+      message: `Master Planner™ — ${discovery.masterPlan.length} future districts reserved. Simulate before you generate.`,
+      targetNodeId: 'atlas-world-root',
+      priority: 'medium',
+      kind: 'master-plan',
+      engineId: 'expedition-hub',
+    });
+  }
+
+  const expedition = nodes.find((n) => n.flagshipId === 'expedition-hub' && n.level === 1);
+  if (expedition) {
+    recs.push({
+      id: uid(),
+      message: 'Expedition Hub™ — guided expansions available. Reserve land before building.',
+      targetNodeId: expedition.id,
+      priority: 'medium',
+      kind: 'expedition',
+      engineId: 'expedition-hub',
+    });
+  }
+
+  const intel = nodes.find(
+    (n) => n.displayName.includes('Intelligence') || n.id.includes('experience-observatory')
+  );
   if (intel) {
     recs.push({
       id: uid(),
-      message: 'Intelligence Headquarters discovered three opportunities worth your attention.',
+      message: 'Experience Intelligence™ flagged three destinations worth your attention today.',
       targetNodeId: intel.id,
       priority: 'medium',
+      kind: 'opportunity',
+      engineId: 'experience-intelligence',
+    });
+  }
+
+  const undiscovered = ATLAS_HIDDEN_DISCOVERIES.filter(
+    (d) => !discovery?.hiddenFinds.includes(d.id)
+  );
+  if (undiscovered.length > 0) {
+    recs.push({
+      id: uid(),
+      message: 'Fog of Discovery™ hides observatories and monuments — walk the campus to find them.',
+      targetNodeId: undiscovered[0]!.parentId,
+      priority: 'low',
+      kind: 'discovery',
     });
   }
 
   if (fogged.length > 0) {
     recs.push({
       id: uid(),
-      message: `${fogged.length} wings remain in Fog of Discovery™ — expand your company to reveal them.`,
+      message: `${fogged.length} wings remain fogged — expand via Expedition Hub™ to reveal them.`,
       targetNodeId: fogged[0]!.id,
       priority: 'low',
+      kind: 'expansion',
+      engineId: 'expedition-hub',
     });
   }
 
-  if (active.length === 0) {
+  if (engines.includes('creative-budget')) {
     recs.push({
       id: uid(),
-      message: 'Walk the campus — discovery rewards curiosity more than fast travel.',
-      targetNodeId: 'atlas-world-root',
+      message: 'Creative Budget™ — switch to budget mode to see spend across generating buildings.',
+      targetNodeId: creative?.id ?? 'atlas-world-root',
       priority: 'low',
+      kind: 'attention',
+      engineId: 'creative-budget',
     });
   }
 
-  return recs.slice(0, 4);
+  if (active.length === 0 && constructing.length === 0) {
+    recs.push({
+      id: uid(),
+      message: `Walk the campus — ${ATLAS_ENGINE_LABELS['company-genome']} remembers every expansion you've made.`,
+      targetNodeId: 'atlas-world-root',
+      priority: 'low',
+      kind: 'discovery',
+      engineId: 'company-genome',
+    });
+  }
+
+  return recs.slice(0, 6);
 }

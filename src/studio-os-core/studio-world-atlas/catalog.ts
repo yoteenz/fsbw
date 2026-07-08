@@ -1,16 +1,74 @@
 import { FLAGSHIP_DESTINATIONS, FLAGSHIP_DISTRICTS } from '../studio-world/flagship-destinations';
 import { STUDIO_WORLD_ROUTE_REGISTRY } from '../studio-world/route-registry';
 import type { StudioWorldFlagshipId } from '../studio-world/types';
-import type { AtlasMapMode, AtlasNode, AtlasZoomLevel } from './types';
+import type { AtlasDiscoveryStore, AtlasMapMode, AtlasNode, AtlasZoomLevel } from './types';
+import { enrichAtlasNodes, filterNodesForMapMode } from './catalog-enrichment';
+import { nodeVisibleInMapMode } from './engine-registry';
+import { readAtlasDiscovery, seedBuildingMemoriesIfEmpty } from './memory-store';
+import { buildDefaultBuildingMemories } from './world-memory';
 import { resolveFogForNode } from './fog-of-discovery';
 import { resolveNodeActivity } from './live-world';
 
+const ALL_MODES: AtlasMapMode[] = [
+  'architectural-blueprint',
+  'organization',
+  'operations',
+  'creative',
+  'archives',
+  'ai',
+  'generation',
+  'creative-budget',
+  'creative-portfolio',
+  'creative-equity',
+  'marketplace',
+  'innovation',
+  'company-genome',
+  'construction',
+  'future-vision',
+  'master-planner',
+];
+
 const MODE_BY_FLAGSHIP: Record<StudioWorldFlagshipId, AtlasMapMode[]> = {
-  'studio-command-center': ['architectural-blueprint', 'organization', 'operations', 'ai', 'generation'],
-  'creative-direction-studio': ['architectural-blueprint', 'creative', 'generation'],
-  'studio-archives': ['architectural-blueprint', 'archives', 'generation'],
-  headquarters: ['architectural-blueprint', 'organization', 'operations', 'ai'],
-  'expedition-hub': ['architectural-blueprint', 'operations', 'creative'],
+  'studio-command-center': [
+    'architectural-blueprint',
+    'organization',
+    'operations',
+    'ai',
+    'generation',
+    'company-genome',
+    'construction',
+  ],
+  'creative-direction-studio': [
+    'architectural-blueprint',
+    'creative',
+    'generation',
+    'creative-budget',
+    'creative-portfolio',
+    'innovation',
+  ],
+  'studio-archives': [
+    'architectural-blueprint',
+    'archives',
+    'generation',
+    'marketplace',
+    'creative-portfolio',
+  ],
+  headquarters: [
+    'architectural-blueprint',
+    'organization',
+    'operations',
+    'ai',
+    'creative-equity',
+    'company-genome',
+  ],
+  'expedition-hub': [
+    'architectural-blueprint',
+    'operations',
+    'creative',
+    'innovation',
+    'future-vision',
+    'master-planner',
+  ],
 };
 
 /** World-level flagship positions on holographic table (polar layout) */
@@ -54,7 +112,7 @@ function buildWorldNodes(companyName: string, discoveredIds: Set<string>): Atlas
     hidden: false,
     activity: 'pulse',
     childIds: [],
-    modes: ['architectural-blueprint', 'organization', 'creative', 'operations', 'archives', 'ai', 'generation'],
+    modes: ALL_MODES,
   };
   nodes.push(worldRoot);
 
@@ -135,14 +193,19 @@ function buildWorldNodes(companyName: string, discoveredIds: Set<string>): Atlas
   };
   nodes.push(campus);
 
-  // Level 3–5 — districts, wings, rooms from registry
+  // Level 3–4 — districts & wings
   for (const district of FLAGSHIP_DISTRICTS) {
     const parentFlagship = uid('flagship', district.flagshipId);
+    const level: AtlasZoomLevel =
+      district.physicalType === 'wing' || district.parentId ? 4 : 3;
+    const parentId = district.parentId
+      ? uid('district', district.parentId)
+      : parentFlagship;
     const dNode: AtlasNode = {
       id: uid('district', district.id),
       displayName: district.displayName,
-      level: 3,
-      parentId: parentFlagship,
+      level,
+      parentId,
       physicalType: district.physicalType,
       mapX: stableMapCoord(district.id, 'x'),
       mapY: stableMapCoord(district.id, 'y'),
@@ -159,13 +222,22 @@ function buildWorldNodes(companyName: string, discoveredIds: Set<string>): Atlas
       modes: MODE_BY_FLAGSHIP[district.flagshipId],
     };
     const flagshipNode = nodes.find((n) => n.id === parentFlagship);
-    if (flagshipNode) flagshipNode.childIds.push(dNode.id);
+    const parentNode = nodes.find((n) => n.id === parentId);
+    if (parentNode) parentNode.childIds.push(dNode.id);
+    else if (flagshipNode) flagshipNode.childIds.push(dNode.id);
     nodes.push(dNode);
   }
 
   for (const route of STUDIO_WORLD_ROUTE_REGISTRY) {
-    const parentDistrict = nodes.find((n) => n.flagshipId === route.flagshipId && n.level === 3);
-    const parentId = parentDistrict?.id ?? uid('flagship', route.flagshipId);
+    const parentDistrict = nodes.find(
+      (n) =>
+        n.flagshipId === route.flagshipId &&
+        (n.level === 3 || n.level === 4) &&
+        route.parentLocationId &&
+        n.id === uid('district', route.parentLocationId)
+    );
+    const fallbackDistrict = nodes.find((n) => n.flagshipId === route.flagshipId && n.level === 3);
+    const parentId = parentDistrict?.id ?? fallbackDistrict?.id ?? uid('flagship', route.flagshipId);
     const room: AtlasNode = {
       id: uid('room', route.id),
       displayName: route.displayName,
@@ -235,11 +307,38 @@ function buildWorldNodes(companyName: string, discoveredIds: Set<string>): Atlas
 let cachedCatalog: AtlasNode[] | null = null;
 let cachedKey = '';
 
-export function buildAtlasCatalog(companyName = 'Frontal Slayer', discoveredIds: string[] = []): AtlasNode[] {
-  const key = `${companyName}:${discoveredIds.sort().join(',')}`;
+export type BuildAtlasCatalogOptions = {
+  companyName?: string;
+  discoveredIds?: string[];
+  discovery?: AtlasDiscoveryStore;
+  mapMode?: AtlasMapMode;
+  liveTick?: number;
+};
+
+export function buildAtlasCatalog(
+  companyNameOrOptions: string | BuildAtlasCatalogOptions = 'Frontal Slayer',
+  discoveredIds: string[] = []
+): AtlasNode[] {
+  const opts: BuildAtlasCatalogOptions =
+    typeof companyNameOrOptions === 'string'
+      ? { companyName: companyNameOrOptions, discoveredIds }
+      : companyNameOrOptions;
+  const companyName = opts.companyName ?? 'Frontal Slayer';
+  const discovery = opts.discovery ?? readAtlasDiscovery();
+  const ids = opts.discoveredIds ?? discovery.discoveredNodeIds;
+  const mapMode = opts.mapMode ?? 'architectural-blueprint';
+
+  const key = `${companyName}:${ids.sort().join(',')}:${mapMode}:${opts.liveTick ?? 0}:${discovery.hiddenFinds.length}:${discovery.activeConstructions.map((j) => j.phase).join(',')}`;
   if (cachedCatalog && cachedKey === key) return cachedCatalog;
-  const set = new Set(discoveredIds);
-  cachedCatalog = buildWorldNodes(companyName, set);
+
+  const base = buildWorldNodes(companyName, new Set(ids));
+  seedBuildingMemoriesIfEmpty(buildDefaultBuildingMemories(base, companyName));
+  const freshDiscovery = readAtlasDiscovery();
+  cachedCatalog = enrichAtlasNodes(base, {
+    mapMode,
+    discovery: freshDiscovery,
+    liveTick: opts.liveTick,
+  });
   cachedKey = key;
   return cachedCatalog;
 }
@@ -261,15 +360,24 @@ export function getVisibleAtlasNodes(
   mapMode: AtlasMapMode,
   catalog?: AtlasNode[]
 ): AtlasNode[] {
-  const c = catalog ?? buildAtlasCatalog();
+  const c = catalog ?? buildAtlasCatalog({ mapMode });
   const focus = getAtlasNode(focusNodeId, c) ?? c[0]!;
-  const children = getAtlasChildren(focus.id, c).filter(
-    (n) => !n.fogged && !n.hidden && n.modes.includes(mapMode)
-  );
+  const children = getAtlasChildren(focus.id, c).filter((n) => {
+    if (n.fogged && !n.unlocked) return false;
+    if (n.hidden) {
+      return mapMode === 'future-vision' || mapMode === 'innovation';
+    }
+    return nodeVisibleInMapMode(n, mapMode);
+  });
+  const filtered = filterNodesForMapMode(children, mapMode);
   if (focus.level === 1 && focus.id === 'atlas-world-root') {
-    return children.filter((n) => n.level === 1 && n.parentId === focus.id);
+    return filtered.filter((n) => n.level === 1 && n.parentId === focus.id);
   }
-  return children.length > 0 ? children : [focus];
+  if (mapMode === 'master-planner' || mapMode === 'future-vision') {
+    const plans = c.filter((n) => n.isPlanned && n.parentId === focus.id);
+    if (plans.length) return [...filtered, ...plans];
+  }
+  return filtered.length > 0 ? filtered : [focus];
 }
 
 export function resolveZoomLevelForNode(node: AtlasNode): AtlasZoomLevel {

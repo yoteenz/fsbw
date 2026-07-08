@@ -42333,6 +42333,25 @@ User **IMPLEMENTATION SPRINT — Studio World Atlas™:** Flagship Studio OS fea
 
 ---
 
+## 2026-07-08 — Studio World Atlas™ Phase 2 evolution (operating table + digital twin)
+
+User **FOLLOW-UP SPRINT — Studio World Atlas™ Evolution Phase 2:** Evolve (not redesign) Atlas into living operating table connecting every major Studio OS engine. Living world animations, phased world construction, world memory, expanded transportation, 16 map modes, Master Planner™, discovery rewards, Orb as World Guide.
+
+- **Engine intelligence layer:** `engine-registry.ts` maps Creative Intelligence, Company Genome, Asset Registry, Blueprint Archive, Creative Budget/Portfolio, Architecture Auditor, Experience Intelligence, Generation Pipeline, Scene Stack, Studio Archives, Expedition Hub to nodes and map modes.
+- **Living world:** `living-world-signals.ts` — pulse, AI glow, construction cranes, road illumination, marketplace deliveries, golden monuments, museum exhibits, seasonal events, ambient ticker (world never frozen).
+- **World construction:** `world-construction.ts` — 9-phase build pipeline (reserve → fencing → blueprint hologram → foundation → steel → glass → lighting → opening ceremony → complete); demo job on Future Districts™.
+- **World memory:** `world-memory.ts` + v2 store — construction date, reason, expedition, blueprint, gen cost, creative budget, equity, milestones per building.
+- **Master Planner™:** `master-planner.ts` — land reservations (Marketing HQ, Innovation Quarter); planner panel in Master Planner / Future Vision modes.
+- **Discovery:** `world-discovery.ts` — hidden observatories, founder easter eggs, innovation monuments, seasonal pavilion, hidden archive; reveal via Innovation / Future Vision exploration.
+- **Transport expanded:** Glass Elevator™, Executive Shuttle™, Skybridge™, Observation Train™, Autonomous Transit™ with cinematic overlays.
+- **Map modes expanded to 16** including Creative Budget™, Creative Portfolio™, Creative Equity™, Marketplace™, Innovation™, Company Genome™, Construction™, Future Vision™, Master Planner™.
+- **UI evolution (same room):** engine strip, world ticker, construction phase labels, memory block in focus panel, living signal CSS (cranes, deliveries, monuments), illuminated roads during travel, scrollable travel rail, Master Planner sidebar.
+- **Storage:** `studioWorldAtlasDiscovery_v2` (migrates v1).
+- **Docs:** `docs/studio-os/studio-world-atlas.md` updated for Phase 2.
+- **Prior arc (same chat):** Studio World Atlas™ Phase 1 · V5 migration report · Architecture Auditor™ · Experience Intelligence Engine™ · command-center route fix.
+
+---
+
 ## 2026-07-08 — Studio World Atlas™ flagship spatial navigation
 
 User **IMPLEMENTATION SPRINT — Studio World Atlas™:** Flagship Studio OS feature — living blueprint of Studio World™ inside Executive Atrium™ holographic table. Not a sitemap, sidebar, menu, or file explorer. GTA/Skyrim/Google Earth × Apple Maps × architectural blueprint. Six zoom levels (World → Campus → Building → Wing → Room → Workspace), seven map modes, Fog of Discovery™, live pulsing buildings, Studio Orb™ guide, Walk/Elevator/Fast Travel/Guided Tour with cinematic transitions, Scene Stack™ layer architecture.
@@ -42344,3 +42363,22 @@ User **IMPLEMENTATION SPRINT — Studio World Atlas™:** Flagship Studio OS fea
 - **Scene Stack:** department `studio-world-atlas` · station `holographic-table` · `world-atlas-station-prompts.ts` · command-center executive-atrium hotspot `worldAtlas` added.
 - **Docs:** `docs/studio-os/studio-world-atlas.md` · migration-audit immersive-partial includes `world-atlas`.
 - **Prior arc (same chat):** V5 migration report · Architecture Auditor™ · Experience Intelligence Engine™ · command-center world route fix.
+
+---
+
+## 2026-07-08 — Studio World Atlas™ Phase 2 evolution (operating table + digital twin)
+
+User **FOLLOW-UP SPRINT — Studio World Atlas™ Evolution Phase 2:** Evolve (not redesign) Atlas into living operating table connecting every major Studio OS engine. Living world animations, phased world construction, world memory, expanded transportation, 16 map modes, Master Planner™, discovery rewards, Orb as World Guide.
+
+- **Engine intelligence layer:** `engine-registry.ts` maps Creative Intelligence, Company Genome, Asset Registry, Blueprint Archive, Creative Budget/Portfolio, Architecture Auditor, Experience Intelligence, Generation Pipeline, Scene Stack, Studio Archives, Expedition Hub to nodes and map modes.
+- **Living world:** `living-world-signals.ts` — pulse, AI glow, construction cranes, road illumination, marketplace deliveries, golden monuments, museum exhibits, seasonal events, ambient ticker (world never frozen).
+- **World construction:** `world-construction.ts` — 9-phase build pipeline (reserve → fencing → blueprint hologram → foundation → steel → glass → lighting → opening ceremony → complete); demo job on Future Districts™.
+- **World memory:** `world-memory.ts` + v2 store — construction date, reason, expedition, blueprint, gen cost, creative budget, equity, milestones per building.
+- **Master Planner™:** `master-planner.ts` — land reservations (Marketing HQ, Innovation Quarter); planner panel in Master Planner / Future Vision modes.
+- **Discovery:** `world-discovery.ts` — hidden observatories, founder easter eggs, innovation monuments, seasonal pavilion, hidden archive; reveal via Innovation / Future Vision exploration.
+- **Transport expanded:** Glass Elevator™, Executive Shuttle™, Skybridge™, Observation Train™, Autonomous Transit™ with cinematic overlays.
+- **Map modes expanded to 16** including Creative Budget™, Creative Portfolio™, Creative Equity™, Marketplace™, Innovation™, Company Genome™, Construction™, Future Vision™, Master Planner™.
+- **UI evolution (same room):** engine strip, world ticker, construction phase labels, memory block in focus panel, living signal CSS (cranes, deliveries, monuments), illuminated roads during travel, scrollable travel rail, Master Planner sidebar.
+- **Storage:** `studioWorldAtlasDiscovery_v2` (migrates v1).
+- **Docs:** `docs/studio-os/studio-world-atlas.md` updated for Phase 2.
+- **Prior arc (same chat):** Studio World Atlas™ Phase 1 · V5 migration report · Architecture Auditor™ · Experience Intelligence Engine™ · command-center route fix.

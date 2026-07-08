@@ -2,11 +2,15 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import {
+  ATLAS_CONSTRUCTION_PHASE_LABELS,
+  ATLAS_ENGINE_LABELS,
   ATLAS_MAP_MODE_LABELS,
   ATLAS_TRAVEL_LABELS,
   ATLAS_ZOOM_LABELS,
   activityGlowClass,
   fogOpacity,
+  getBuildingMemory,
+  livingSignalClass,
   type AtlasMapMode,
   type AtlasNode,
   type AtlasTravelMode,
@@ -28,6 +32,7 @@ function BuildingMarker({
 }) {
   const heightPx = 12 + node.extrusion * 48;
   const opacity = fogOpacity(node.unlocked, node.fogged);
+  const signalClasses = (node.livingSignals ?? []).map(livingSignalClass);
 
   return (
     <button
@@ -38,6 +43,8 @@ function BuildingMarker({
         node.fogged ? 'is-fogged' : '',
         node.hidden ? 'is-hidden' : '',
         node.id === focusNodeId ? 'is-focused' : '',
+        node.isPlanned ? 'is-planned' : '',
+        ...signalClasses,
       ]
         .filter(Boolean)
         .join(' ')}
@@ -53,14 +60,19 @@ function BuildingMarker({
     >
       <div className="swa__extrusion" style={{ height: `${heightPx}px` }} />
       <span className="swa__building-label">{node.displayName}</span>
-      <span className="swa__building-level">L{node.level}</span>
+      <span className="swa__building-level">
+        L{node.level}
+        {node.constructionPhase && node.constructionPhase !== 'complete'
+          ? ` · ${ATLAS_CONSTRUCTION_PHASE_LABELS[node.constructionPhase]}`
+          : ''}
+      </span>
     </button>
   );
 }
 
 /**
  * Studio World Atlas™ — living holographic blueprint inside Executive Atrium™.
- * Spatial civilization navigation — not a sitemap, sidebar, or file explorer.
+ * Phase 2: operating table + digital twin — not a redesign.
  */
 export function StudioWorldAtlasRoom() {
   const navigate = useNavigate();
@@ -83,6 +95,11 @@ export function StudioWorldAtlasRoom() {
         ? atlas.catalog.find((n) => n.id === selectedNodeId) ?? atlas.focusNode
         : atlas.focusNode,
     [selectedNodeId, atlas.catalog, atlas.focusNode]
+  );
+
+  const selectedMemory = useMemo(
+    () => getBuildingMemory(selectedNode.id, atlas.discovery.buildingMemories),
+    [selectedNode.id, atlas.discovery.buildingMemories]
   );
 
   const roadPaths = useMemo(() => {
@@ -108,6 +125,9 @@ export function StudioWorldAtlasRoom() {
       if (node.childIds.length > 0 && node.level < 6) {
         atlas.focusOn(nodeId);
       }
+      if (nodeId.startsWith('discovery-') && node.fogged) {
+        atlas.focusOn(nodeId);
+      }
     },
     [atlas]
   );
@@ -126,9 +146,13 @@ export function StudioWorldAtlasRoom() {
       navigate(resolution.path);
       setTraveling(false);
       setTravelOverlay(null);
+      atlas.clearTravelingRoads();
     },
     [atlas, navigate, selectedNode.id]
   );
+
+  const showPlanner =
+    atlas.view.mapMode === 'master-planner' || atlas.view.mapMode === 'future-vision';
 
   return (
     <>
@@ -159,6 +183,20 @@ export function StudioWorldAtlasRoom() {
           )}
         </header>
 
+        <div className="swa__ticker" aria-live="polite">
+          <span className="swa__ticker-inner">
+            {atlas.worldTicker} &nbsp;&nbsp;&nbsp; {atlas.worldTicker}
+          </span>
+        </div>
+
+        <div className="swa__engine-strip" aria-hidden>
+          {atlas.activeEngines.slice(0, 8).map((engine) => (
+            <span key={engine} className="swa__engine-chip">
+              {ATLAS_ENGINE_LABELS[engine]}
+            </span>
+          ))}
+        </div>
+
         <nav className="swa__breadcrumb" aria-label="Atlas focus trail">
           {atlas.breadcrumb.map((node, i) => (
             <button
@@ -185,6 +223,43 @@ export function StudioWorldAtlasRoom() {
               </>
             ) : null}
           </p>
+          {selectedNode.constructionPhase && selectedNode.constructionPhase !== 'complete' ? (
+            <p className="swa__construction-phase">
+              {ATLAS_CONSTRUCTION_PHASE_LABELS[selectedNode.constructionPhase]}
+            </p>
+          ) : null}
+          {selectedNode.engineIds && selectedNode.engineIds.length > 0 ? (
+            <div className="swa__engine-dots" aria-label="Connected engines">
+              {selectedNode.engineIds.slice(0, 6).map((e) => (
+                <span key={e} className="swa__engine-dot" title={ATLAS_ENGINE_LABELS[e]} />
+              ))}
+            </div>
+          ) : null}
+          {selectedMemory ? (
+            <div className="swa__memory-block">
+              BUILT {new Date(selectedMemory.constructedAt).toLocaleDateString()}
+              <br />
+              {selectedMemory.reason}
+              {selectedMemory.unlockedByExpedition ? (
+                <>
+                  <br />
+                  EXPEDITION: {selectedMemory.unlockedByExpedition}
+                </>
+              ) : null}
+              {selectedMemory.enabledByBlueprint ? (
+                <>
+                  <br />
+                  BLUEPRINT: {selectedMemory.enabledByBlueprint}
+                </>
+              ) : null}
+              {selectedMemory.creativeEquityGained ? (
+                <>
+                  <br />
+                  EQUITY: {selectedMemory.creativeEquityGained}
+                </>
+              ) : null}
+            </div>
+          ) : null}
           <button
             type="button"
             className="swa__travel-btn"
@@ -195,9 +270,31 @@ export function StudioWorldAtlasRoom() {
           </button>
         </aside>
 
+        {showPlanner ? (
+          <aside className="swa__planner-panel" aria-label="Master Planner">
+            <p className="swa__planner-title">MASTER PLANNER™</p>
+            {atlas.discovery.masterPlan.map((plan) => (
+              <button
+                key={plan.id}
+                type="button"
+                className="swa__planner-item"
+                onClick={() => atlas.selectMasterPlan(plan)}
+              >
+                {plan.label}
+                {plan.districtSketch ? (
+                  <>
+                    <br />
+                    <span style={{ opacity: 0.6 }}>{plan.districtSketch}</span>
+                  </>
+                ) : null}
+              </button>
+            ))}
+          </aside>
+        ) : null}
+
         <aside className="swa__orb" aria-label="Studio Orb world guide">
           <div className="swa__orb-sphere" aria-hidden />
-          <p className="swa__orb-title">STUDIO ORB™</p>
+          <p className="swa__orb-title">STUDIO ORB™ · WORLD GUIDE</p>
           {atlas.orbRecommendations.map((rec) => (
             <button
               key={rec.id}
@@ -219,7 +316,12 @@ export function StudioWorldAtlasRoom() {
               <div className="swa__table-glow" aria-hidden />
               <svg className="swa__roads" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden>
                 {roadPaths.map((d, i) => (
-                  <path key={i} className="swa__road" d={d} vectorEffect="non-scaling-stroke" />
+                  <path
+                    key={i}
+                    className={`swa__road${atlas.view.travelingRoads ? ' is-illuminated' : ''}`}
+                    d={d}
+                    vectorEffect="non-scaling-stroke"
+                  />
                 ))}
               </svg>
               <div className="swa__buildings">
@@ -265,7 +367,9 @@ export function StudioWorldAtlasRoom() {
         </div>
 
         <p className="swa__fog-legend">
-          FOG OF DISCOVERY™ · {atlas.discovery.discoveredNodeIds.length} destinations revealed
+          FOG OF DISCOVERY™ · {atlas.discovery.discoveredNodeIds.length} revealed ·{' '}
+          {atlas.discovery.collectibles.length} collectibles ·{' '}
+          {atlas.discovery.activeConstructions.filter((j) => j.phase !== 'complete').length} building
         </p>
 
         {travelOverlay ? (

@@ -259,7 +259,11 @@ body.studio-world-atlas-active {
   z-index: 30;
   display: flex;
   gap: 4px;
+  overflow-x: auto;
+  max-width: 96vw;
+  scrollbar-width: none;
 }
+.swa__travel-rail::-webkit-scrollbar { display: none; }
 
 /* Orb guide */
 .swa__orb {
@@ -433,4 +437,172 @@ body.studio-world-atlas-active {
   opacity: 0.55;
   z-index: 20;
 }
+
+/* Phase 2 — living world evolution */
+.swa__ticker {
+  position: absolute;
+  left: 0; right: 0;
+  top: max(88px, calc(env(safe-area-inset-top) + 76px));
+  z-index: 28;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 4px;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+  pointer-events: none;
+}
+.swa__ticker-inner {
+  display: inline-block;
+  animation: swa-ticker 32s linear infinite;
+}
+@keyframes swa-ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.swa__engine-strip {
+  position: absolute;
+  left: max(8px, env(safe-area-inset-left));
+  right: max(8px, env(safe-area-inset-right));
+  top: max(100px, calc(env(safe-area-inset-top) + 88px));
+  z-index: 22;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  max-width: 96vw;
+  pointer-events: none;
+}
+.swa__engine-chip {
+  padding: 2px 5px;
+  font-size: 3px;
+  letter-spacing: 0.06em;
+  border: 1px solid rgba(80, 200, 255, 0.25);
+  background: rgba(0,0,0,0.45);
+  opacity: 0.8;
+}
+
+.swa__building.is-planned .swa__extrusion {
+  background: linear-gradient(180deg, rgba(201, 169, 98, 0.35) 0%, transparent 100%);
+  border-style: dashed;
+  animation: swa-plan-pulse 3s ease-in-out infinite;
+}
+@keyframes swa-plan-pulse {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.85; }
+}
+
+.swa__building.has-signal-construction-crane .swa__extrusion::after {
+  content: '▲';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 6px;
+  color: #e8a040;
+  animation: swa-crane 1.6s ease-in-out infinite;
+}
+@keyframes swa-crane {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+
+.swa__building.has-signal-golden-monument .swa__extrusion {
+  border-color: #c9a962;
+  box-shadow: 0 0 16px rgba(201, 169, 98, 0.65);
+}
+
+.swa__building.has-signal-ai-glow .swa__extrusion {
+  box-shadow: 0 0 14px rgba(235, 28, 36, 0.35), 0 0 8px rgba(80, 200, 255, 0.4);
+}
+
+.swa__building.has-signal-marketplace-delivery::before {
+  content: '◆';
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  font-size: 5px;
+  color: #c9a962;
+  animation: swa-delivery 2s ease-in-out infinite;
+}
+@keyframes swa-delivery {
+  0% { opacity: 0.3; transform: translateY(4px); }
+  50% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0.3; transform: translateY(-2px); }
+}
+
+.swa__road.is-illuminated {
+  stroke: rgba(201, 169, 98, 0.65);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 4px rgba(201, 169, 98, 0.5));
+}
+
+.swa__memory-block {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 3px;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+.swa__construction-phase {
+  margin-top: 4px;
+  font-size: 4px;
+  color: #e8a040;
+  letter-spacing: 0.08em;
+}
+
+.swa__engine-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 6px;
+}
+.swa__engine-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(80, 200, 255, 0.7);
+  box-shadow: 0 0 4px rgba(80, 200, 255, 0.5);
+}
+
+.swa__planner-panel {
+  position: absolute;
+  left: max(8px, env(safe-area-inset-left));
+  bottom: max(100px, calc(env(safe-area-inset-bottom) + 84px));
+  width: min(42vw, 190px);
+  z-index: 26;
+  padding: 8px;
+  border: 1px solid rgba(201, 169, 98, 0.35);
+  background: rgba(0,0,0,0.6);
+  max-height: 22vh;
+  overflow-y: auto;
+}
+.swa__planner-title {
+  margin: 0 0 6px;
+  font-size: 5px;
+  color: #c9a962;
+  letter-spacing: 0.1em;
+}
+.swa__planner-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  margin-bottom: 4px;
+  padding: 4px 5px;
+  font-size: 3px;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(0,0,0,0.35);
+  color: inherit;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.swa__travel-overlay.is-shuttle { background: linear-gradient(90deg, rgba(0,0,0,0.5) 0%, rgba(201,169,98,0.12) 50%, rgba(0,0,0,0.5) 100%); }
+.swa__travel-overlay.is-skybridge { background: linear-gradient(180deg, rgba(80,200,255,0.1) 0%, rgba(0,0,0,0.92) 60%); }
+.swa__travel-overlay.is-train { background: repeating-linear-gradient(90deg, rgba(0,0,0,0.4) 0px, rgba(0,0,0,0.4) 8px, rgba(201,169,98,0.08) 8px, rgba(201,169,98,0.08) 16px); }
+.swa__travel-overlay.is-transit { background: radial-gradient(circle, rgba(80,200,255,0.12) 0%, rgba(0,0,0,0.94) 50%); }
 `;
