@@ -44,6 +44,10 @@ const LIGHTWEIGHT_EXACT_KEYS = new Set([
   'studioOsNdxbook_deptProgress_v1',
   'studioOsNdxbook_founderNotes_v1',
   'studioOsCreativeDirection_v1',
+  /** Golden Build™ Scene Stack™ layer URLs — must survive refresh/navigation. */
+  'studioOsSceneStack_v1',
+  /** Project Genome™ active project context — pairs with Scene Stack lookups. */
+  'studioOsProjectGenome_v1',
 ]);
 
 /** Substring patterns for small UI preference keys. */

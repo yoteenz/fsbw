@@ -41999,3 +41999,14 @@ User sprint: build **Launch Integrity Auditor™** for Frontal Slayer — compre
   - e2e signed-in routes: `/orders` → `/account/orders` (`e2e/helpers/routes.ts`)
 - **Final audit:** score **100/100**, deployment **pass**, 0 critical/high open, 6 fixes applied, 9 manual-review items (Stripe checkout, admin sync, FAL preview, lounge TV, CDS live gen, desktop preview, full studio smoke, a11y, SEO).
 - **Prior arc (same chat):** Asset Registry™ v1 + Creative Intelligence Engine™ v1 implementation sprints; user Q on CDS Story Table scene generation (auto via zone enter / Stack header).
+
+---
+
+## 2026-07-08 — Scene Stack™ refresh persistence fix (studioOsSceneStack_v1)
+
+User reported CDS Scene Stack showed **3/6** then **0/6 after page refresh** — no layers restored.
+
+- **Root cause:** `studioOsSceneStack_v1` was **not** in `LIGHTWEIGHT_EXACT_KEYS` in `studioOsBrowserStorage.ts` — Scene Stack writes went to **in-memory cache only**; refresh cleared all layer URLs. Header **Stack X/6** counts **stations ready** (not per-zone layer count); viewport shows **X/8 layers** per zone.
+- **Fix:** Whitelist `studioOsSceneStack_v1` + `studioOsProjectGenome_v1` for localStorage persistence; compact Scene Stack store to latest version per layer on read/write (`scene-stack/store.ts`) to stay within Studio OS 24KB per-key quota.
+- **User impact:** Layers generated **before** this deploy are gone (never persisted). After deploy, completed layers survive refresh/navigation in the same browser.
+- **Prior arc (same chat):** Launch Integrity Auditor™ · Asset Registry™ · CIE™ · CDS Story Table generation UX Q&A.

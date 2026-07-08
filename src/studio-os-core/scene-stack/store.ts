@@ -11,12 +11,30 @@ function uid(): string {
   return `ssl-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
+function layerScopeKey(rec: Pick<SceneStackLayerRecord, 'departmentId' | 'projectId' | 'stationId' | 'layerId'>): string {
+  return `${rec.departmentId}:${rec.projectId}:${rec.stationId}:${rec.layerId}`;
+}
+
+/** Keep latest version per layer so localStorage stays within Studio OS quota after refresh. */
+function compactLayers(layers: SceneStackLayerRecord[]): SceneStackLayerRecord[] {
+  const map = new Map<string, SceneStackLayerRecord>();
+  for (const rec of layers) {
+    const key = layerScopeKey(rec);
+    const existing = map.get(key);
+    if (!existing || rec.version > existing.version) {
+      map.set(key, rec);
+    }
+  }
+  return Array.from(map.values());
+}
+
 function readStore(): Store {
-  return readStudioOsJson(STORAGE_KEY, () => EMPTY);
+  const store = readStudioOsJson(STORAGE_KEY, () => EMPTY);
+  return { layers: compactLayers(store.layers) };
 }
 
 function writeStore(store: Store): void {
-  writeStudioOsJson(STORAGE_KEY, store);
+  writeStudioOsJson(STORAGE_KEY, { layers: compactLayers(store.layers) });
 }
 
 export function getSceneStackLayerRecord(
