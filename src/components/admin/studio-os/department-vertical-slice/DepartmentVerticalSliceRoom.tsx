@@ -263,7 +263,7 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
 
         <footer className="px-4 pb-4" style={{ fontSize: '7px', opacity: 0.65 }}>
           <p>
-            Studio OS Alpha · Vertical Slice · Department engine validates production pipeline.{' '}
+            Studio OS Alpha · Golden Build™ · Department engine validates production pipeline.{' '}
             <Link to="/admin/studio/overview" style={{ color: 'rgba(201,169,98,0.95)' }}>
               Exit to Studio Overview
             </Link>

@@ -40914,21 +40914,14 @@ Summary of the **whole conversation in this chat**: prior platform engines (Gene
 
 ---
 
-## 2026-07-08 — Studio OS Alpha Sprint 001 Vertical Slice + AI infrastructure audit (complete)
+## 2026-07-08 — Studio OS Alpha Sprint 001 Golden Build™ complete + delivery report
 
-Summary of the **whole conversation in this chat**: Sprint 002 Studio Builder docs · user correction (FAL already integrated — no copy-paste workflow) · **AI generation infrastructure inventory** (classify reuse/refactor/missing) · **Alpha Sprint 001 Vertical Slice implementation** — prove reusable department engine end-to-end.
+Summary of the **whole conversation in this chat**: Platform architecture frozen (no new engines/docs) · Sprint 002 Studio Builder docs · user correction (use existing FAL, not manual copy-paste) · AI infrastructure audit · **Sprint 001 Golden Build™ implementation** for Creative Direction Studio™ · terminology alignment (user-facing **Golden Build™**; internal module names remain `department-vertical-slice`).
 
-- **Infrastructure audit:** All FAL server-side (`api/_lib/`). Live patterns: `studioAssetGeneration.ts` (Asset Director) · `studioBuilderGeneration.ts` (new, department-agnostic) · Product Photography/Factory · live try-on queue/poll. Client bridge: `src/services/studio/assetGeneration/api.ts` · `studioBuilder/api.ts`. Missing: durable job DB · consolidated `studioGeneration` lib · CDS-specific logic must not live in reusable modules.
-- **Sprint 001 mission:** Smallest magical vertical slice proving Studio OS manufactures departments — **CDS is first package, not special-case code**. Critical rule: uniqueness only from Department Definition · Company Genome · Project Genome · Room DNA (bundled in `department-package/`).
-- **Implemented reusable systems** (`src/studio-os-core/`):
-  - `department-package/` — registry + bundled CDS JSON + `production-groups.json`
-  - `studio-builder/` — prompt compiler · queue store · asset registry store · genome context
-  - `studio-objects/living-mood-wall/` · `studio-objects/founder-notes/`
-  - `department-room/` — atmosphere CSS vars · walkable zones
-  - `studio-orb-runtime/` — department greetings/insights
-  - `project-genome/` — active project context
-- **API:** `POST /api/admin/studio-builder-generate` — FAL NBP edit 16:9 → Supabase `studio-assets/departments/...`
-- **UI:** `DepartmentVerticalSliceRoom` — Environment Shell (2.5D perspective) · Orb · Mood Wall · Founder Notes · Queue · Generate Environment
-- **Route:** `/admin/studio/department/creative-direction` · CTA from ndxbook creative-direction page
-- **Build:** `npm run build` passes
-- **Conventions:** Work on **`master`** · one commit per task · no new platform architecture docs
+- **Context:** User declared Studio OS architecture complete and entered production with Sprint 001 — first **Golden Build™** proving the shared engine via Creative Direction Studio™ (not CDS-specific code).
+- **Mission delivered:** Six experiences — Environment Shell · Studio Orb · Living Mood Wall · Founder Notes · Generation Queue · Generate Environment — all department-agnostic; CDS uniqueness from bundled package data only.
+- **Route:** `/admin/studio/department/creative-direction` (primary) · `/admin/studio/ndxbook/creative-direction` → **ENTER GOLDEN BUILD™**
+- **FAL reuse:** `api/_lib/studioBuilderGeneration.ts` · `fal-ai/nano-banana-pro/edit` · Supabase `live-preview` · same patterns as `studioAssetGeneration.ts`
+- **Placeholders:** 2.5D CSS room (not 3D meshes) · voice note button · rule-based AI suggestions · localStorage queue/registry · auto-validation on FAL success (no Walk the Room / Validation Loop yet)
+- **This turn:** User-facing copy updated Vertical Slice → Golden Build™ in department page, ndxbook CTA, room footer; CORE.md aligned.
+- **Conventions:** Golden Build™ = product language; code paths may retain `vertical-slice` naming until explicit rename requested. No new architecture in Sprint 001.

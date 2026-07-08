@@ -30,7 +30,7 @@ export default function AdminStudioDepartmentVerticalSlicePage() {
   return (
     <AdminStudioLayout
       title={pkg.definition.displayName.toUpperCase()}
-      subtitle="STUDIO OS ALPHA · VERTICAL SLICE™"
+      subtitle="STUDIO OS ALPHA · GOLDEN BUILD™"
       breadcrumbParentLabel="STUDIO OVERVIEW"
       breadcrumbParentPath="/admin/studio/overview"
       onBack={() => navigate('/admin/studio/overview')}

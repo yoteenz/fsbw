@@ -34,7 +34,7 @@ export default function AdminStudioNdxbookCreativeDirectionPage() {
           className="px-3 py-2 text-[7px] font-futura border"
           style={{ fontWeight: 515, borderColor: '#C9A962', color: '#C9A962' }}
         >
-          ENTER VERTICAL SLICE™ →
+          ENTER GOLDEN BUILD™ →
         </button>
         <button
           type="button"
