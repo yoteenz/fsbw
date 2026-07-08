@@ -342,9 +342,9 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
     status: 'Canon',
     version: 'v1',
     summary:
-      'Asset Compiler™ turns founder asset intent into reusable Generation Recipes™, FAL generation requests, metadata, versions, storage paths, and Asset Registry entries.',
+      'Asset Compiler™ is the internal compilation layer that turns Studio Foundry™ manufacturing intent and Generation Recipes™ into FAL generation requests, metadata, versions, storage paths, and Asset Registry entries.',
     reasoning:
-      'The founder should never leave Studio World to manually prompt FAL, choose models, tune generation settings, download files, upload assets, name folders, or import registry metadata.',
+      'The founder should never leave Studio World to manually prompt FAL, choose models, tune generation settings, download files, upload assets, name folders, or import registry metadata. ARTICLE-A02 elevates this into Studio Foundry™ as the universal manufacturing boundary.',
     finalPrompt:
       'Create an Asset Compiler™ that uses reusable Generation Recipes™ and existing FAL integration to produce registry-ready generated assets from asset name, recipe, and optional modifiers.',
     architectureAdded: [
@@ -374,6 +374,48 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
     ],
     implementationStatus: 'Implemented',
     tags: ['asset-compiler', 'generation-recipes', 'fal', 'asset-registry'],
+  },
+  {
+    id: 'A02-studio-foundry',
+    title: 'ARTICLE-A02 — Studio Foundry™',
+    domain: 'Asset Standards™',
+    status: 'Canon',
+    version: 'v1',
+    summary:
+      'Studio Foundry™ is the universal manufacturing system for reusable Studio World objects; Asset Registry™ stores/indexes assets, Generation Recipes™ define manufacturing, and Orb/Atlas/UI consume assets by ID only.',
+    reasoning:
+      'A library stores finished assets; a foundry manufactures assets. Hero Icons are only the first asset class, not a standalone production model. Studio World needs a universal manufacturing boundary for hero icons, architecture, rooms, furniture, materials, glass objects, holograms, motion assets, particle systems, portraits, UI components, landmark objects, audio, collectibles, and future asset classes.',
+    finalPrompt:
+      'Replace the Hero Icon Library mental model with Studio Foundry™: UI asks Asset Registry by asset ID; if missing or regeneration requested, Studio Foundry™ uses the appropriate Generation Recipe™, existing FAL integration performs generation, and the asset is versioned, registered, cached, and returned.',
+    architectureAdded: [
+      'Studio Foundry™',
+      'Foundry asset class catalog',
+      'Cache-first asset resolver',
+      'Asset ID consumption boundary',
+      'Foundry-owned Generation Recipe graph',
+      'Registry upsert for manufactured assets',
+    ],
+    relatedSystems: [
+      'Asset Registry™',
+      'Generation Recipes™',
+      'Asset Compiler™',
+      'FAL',
+      'World Graph™',
+      'Orb™',
+      'Atlas™',
+      'Mission Control™',
+      'UI Components',
+    ],
+    constitutionArticles: ['ARTICLE-A02', 'ARTICLE-A01', 'ARTICLE-K22', 'ARTICLE-K23'],
+    adrReferences: ['ADR-0001'],
+    worldBibleReferences: [
+      'Studio Foundry™',
+      'Studio Asset Compiler™',
+      'Asset Registry™',
+      'Studio World Production Pipeline',
+    ],
+    implementationStatus: 'Implemented',
+    tags: ['studio-foundry', 'asset-manufacturing', 'asset-registry', 'generation-recipes'],
   },
 ];
 

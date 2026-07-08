@@ -11,6 +11,7 @@ export function ingestAssetCompilerNodes(): { nodes: WorldNode[]; edges: WorldEd
   const nodes: WorldNode[] = [];
   const edges: WorldEdge[] = [];
   const ts = now();
+  const foundryId = worldNodeId('engine', 'studio-foundry');
   const compilerId = worldNodeId('engine', 'asset-compiler');
   const registryId = worldNodeId('engine', 'asset-registry');
 
@@ -43,19 +44,27 @@ export function ingestAssetCompilerNodes(): { nodes: WorldNode[]; edges: WorldEd
 
     edges.push(
       {
-        id: worldEdgeId('owns', compilerId, id),
+        id: worldEdgeId('owns', foundryId, id),
         type: 'owns',
-        from: compilerId,
+        from: foundryId,
         to: id,
         label: 'generation-recipe',
         provenance: { source: 'constitution', sourceRef: recipe.id, ingestedAt: ts },
       },
       {
-        id: worldEdgeId('generated-from', id, compilerId),
+        id: worldEdgeId('generated-from', id, foundryId),
         type: 'generated-from',
         from: id,
+        to: foundryId,
+        label: 'foundry-recipe',
+        provenance: { source: 'constitution', sourceRef: recipe.id, ingestedAt: ts },
+      },
+      {
+        id: worldEdgeId('depends-on', id, compilerId),
+        type: 'depends-on',
+        from: id,
         to: compilerId,
-        label: 'compiler-recipe',
+        label: 'compiled-into-fal-request',
         provenance: { source: 'constitution', sourceRef: recipe.id, ingestedAt: ts },
       },
       {

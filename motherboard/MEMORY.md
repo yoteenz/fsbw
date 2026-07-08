@@ -43297,3 +43297,69 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 **Verification:** `npx tsx scripts/test-studio-orb-radial-layout.ts` passed.
 
 **Conventions:** When changing projection tile dimensions, update **`RADIAL_ITEM_WIDTH` / `RADIAL_ITEM_HEIGHT`** in `studioOrbRadialLayout.ts` and re-run the layout smoke script.
+---
+
+## 2026-07-08 — ARTICLE-A02 Studio Foundry™ manufacturing boundary
+
+**Context:** This chat has built a Studio World institutional-memory and production architecture arc. Earlier turns delivered **ARTICLE-K21 Architecture Decision Records™**, **ARTICLE-K22 Studio World Knowledge Core™**, **ARTICLE-K23 Memory System™**, and **ARTICLE-A01 Asset Compiler™**. The latest follow-up corrected the A01 mental model: Studio World should not have a Hero Icon Library™ as a standalone production concept; it should have **Studio Foundry™**, a universal manufacturing system. A library stores finished assets; a foundry manufactures assets.
+
+**Topics covered (entire conversation so far):**
+- **K21 ADRs:** constitutional history for major architecture decisions, Constitution Hall™, Architect’s Oath™, ADR graph nodes.
+- **K22 Knowledge Core:** canonical institutional memory with domains, statuses, prompt memory, Architect’s Memory™, and searchable Knowledge Entries.
+- **K23 Memory System:** Conversation Archive™ → Knowledge Ingestion™ → Architect Review™ → Knowledge Core™, with memory lineage graph nodes.
+- **A01 Asset Compiler:** Generation Recipes™, FAL request compilation, metadata/version/storage/registry entry generation.
+- **A02 Studio Foundry:** elevated manufacturing boundary where UI/Orb/Atlas ask Asset Registry™ by asset ID; missing/regenerated assets route to Studio Foundry™, which uses Generation Recipes™ and Asset Compiler™ internals to manufacture, register, cache, and return assets.
+
+**Decisions / outcomes:**
+- Implemented **Studio Foundry™** as the universal manufacturing layer in `src/studio-os-core/studio-foundry/`.
+- Added `resolveStudioFoundryAsset(...)`:
+  - accepts an `assetId` and registry,
+  - returns a cache hit when Asset Registry™ already has the asset,
+  - manufactures or regenerates when missing/requested,
+  - preserves the requested `assetId` through manufacturing,
+  - returns updated registry data and the manufacturing pipeline.
+- Added `STUDIO_FOUNDRY_ASSET_CLASS_CATALOG` for supported/planned asset classes:
+  - Hero Icons, Architecture, Rooms, Furniture, Materials, Glass Objects, Holograms, Motion Assets, Particle Systems, Portraits, UI Components, Landmark Objects, Audio, Collectibles, Brand Assets, Future Asset Classes.
+- Reframed A01:
+  - Asset Compiler™ is now the internal compiler used by Studio Foundry™.
+  - Generation Recipes™ declare **Foundry asset classes**, not class-specific libraries.
+  - Asset Registry™ stores/indexes; Foundry manufactures; Recipes define manufacturing; World Graph tracks usage; Orb/Atlas/UI consume IDs.
+- Added **ARTICLE-A02** as a Canon Knowledge Core entry under **Asset Standards™**.
+- World Graph now registers **`W-ENG-studio-foundry`**; Generation Recipe nodes are owned by Studio Foundry™ and depend on Asset Compiler™ for FAL request compilation.
+
+**Changes:**
+- Added Studio Foundry core:
+  - `src/studio-os-core/studio-foundry/types.ts`
+  - `src/studio-os-core/studio-foundry/foundry.ts`
+  - `src/studio-os-core/studio-foundry/index.ts`
+- Updated Asset Compiler internals:
+  - `src/studio-os-core/asset-compiler/types.ts` — Foundry asset classes + optional `assetId` in compiler intent.
+  - `src/studio-os-core/asset-compiler/recipes.ts` — recipes now declare `foundryAssetClass`.
+  - `src/studio-os-core/asset-compiler/compiler.ts` — metadata uses Foundry classes and preserves requested IDs.
+  - `src/studio-os-core/index.ts` — exports Asset Compiler + Studio Foundry.
+- Updated World Graph:
+  - `src/studio-os-core/world-graph/era-evaluation.ts`
+  - `src/studio-os-core/world-graph/ingestion/bootstrap-ingest.ts`
+  - `src/studio-os-core/world-graph/ingestion/asset-compiler-ingest.ts`
+  - `public/studio-os/world-graph/graph.json`
+  - `docs/studio-os/world-graph/WORLD_GRAPH_COMPILE_REPORT.md`
+  - `docs/studio-os/world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md`
+- Added/updated docs:
+  - `docs/studio-os/engine/asset-compiler/ARTICLE_A02_STUDIO_FOUNDRY.md`
+  - `docs/studio-os/engine/asset-compiler/ARTICLE_A01_ASSET_COMPILER.md`
+  - `docs/studio-os/engine/asset-compiler/README.md`
+  - `docs/studio-os/asset-registry.md`
+- Updated Knowledge Core and motherboard:
+  - `src/studio-os-core/studio-world-knowledge-core/entries.ts`
+  - `motherboard/CORE.md`
+  - `motherboard/MEMORY.md`
+
+**Verification:**
+- `npm run compile-world-graph` passed: **472 nodes · 789 edges · PASS**.
+- `npm run build` passed. Existing large chunk warnings remain non-blocking.
+- Restored unrelated master-spec timestamp-only generated files; retained World Graph artifacts because they include A02 Foundry engine/recipe relationships.
+
+**Conventions:**
+- Future reusable visual/object generation must flow through **Studio Foundry™**, not standalone libraries or loose files.
+- Orb, Atlas, Mission Control, and UI should consume assets by **asset ID only**.
+- Asset Registry™ is storage/indexing/versioning; Studio Foundry™ is manufacturing; Generation Recipes™ are manufacturing definitions; Asset Compiler™ is internal compilation machinery.

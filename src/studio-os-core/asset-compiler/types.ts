@@ -3,6 +3,27 @@ import type { AssetCategory, RegisteredAssetEntry } from '../asset-registry';
 export const ASSET_COMPILER_VERSION = '1.0.0';
 export const ASSET_COMPILER_ARTICLE = 'ARTICLE-A01';
 
+export const STUDIO_FOUNDRY_ASSET_CLASSES = [
+  'hero-icon',
+  'architecture',
+  'room',
+  'furniture',
+  'material',
+  'glass-object',
+  'hologram',
+  'motion-asset',
+  'particle-system',
+  'portrait',
+  'ui-component',
+  'landmark-object',
+  'audio',
+  'collectible',
+  'brand-asset',
+  'future-asset',
+] as const;
+
+export type StudioFoundryAssetClass = (typeof STUDIO_FOUNDRY_ASSET_CLASSES)[number];
+
 export const GENERATION_RECIPE_IDS = [
   'hero-icon',
   'environment',
@@ -61,11 +82,12 @@ export type GenerationRecipe = {
     relatedSystems: string[];
     departmentsUsingIt: string[];
     transparentBackground: boolean;
-    registryLibrary: string;
+    foundryAssetClass: StudioFoundryAssetClass;
   };
 };
 
 export type AssetCompilerIntent = {
+  assetId?: string;
   assetName: string;
   recipeId: GenerationRecipeId;
   modifiers?: string[];
@@ -103,7 +125,7 @@ export type CompiledAssetMetadata = {
   preview: string;
   relationships: string[];
   registryDestination: AssetCategory;
-  registryLibrary: string;
+  foundryAssetClass: StudioFoundryAssetClass;
   storagePath: string;
 };
 

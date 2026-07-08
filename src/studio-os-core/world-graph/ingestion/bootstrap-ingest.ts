@@ -104,14 +104,24 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       integratesWith: ['world-graph', 'studio-world-atlas'],
     },
     {
+      slug: 'studio-foundry',
+      name: 'Studio Foundry™',
+      summary:
+        'ARTICLE-A02 universal manufacturing system that resolves assets by ID, calls recipes when missing/regenerated, registers versions, and returns registry-ready assets.',
+      lifecycle: 'implemented',
+      codePaths: ['src/studio-os-core/studio-foundry/'],
+      docPaths: ['docs/studio-os/engine/asset-compiler/ARTICLE_A02_STUDIO_FOUNDRY.md'],
+      integratesWith: ['asset-registry', 'asset-compiler', 'world-graph', 'studio-world-atlas'],
+    },
+    {
       slug: 'asset-compiler',
       name: 'Asset Compiler™',
       summary:
-        'ARTICLE-A01 production layer that turns founder intent into FAL generation recipes, metadata, versions, and Asset Registry entries.',
+        'ARTICLE-A01 internal compilation layer used by Studio Foundry™ to turn Generation Recipes™ into FAL requests, metadata, versions, and Asset Registry entries.',
       lifecycle: 'implemented',
       codePaths: ['src/studio-os-core/asset-compiler/'],
       docPaths: ['docs/studio-os/engine/asset-compiler/ARTICLE_A01_ASSET_COMPILER.md'],
-      integratesWith: ['asset-registry', 'scene-stack', 'studio-world-atlas'],
+      integratesWith: ['studio-foundry', 'asset-registry', 'scene-stack', 'studio-world-atlas'],
     },
     {
       slug: 'orb-archivist',

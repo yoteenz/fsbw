@@ -62,15 +62,17 @@ Broken Links · Unused Assets · Duplicate Assets · Missing Alt Text · Brand C
 
 **`asset-registry/store`** triggers **`syncExperienceEngineFromSources`** · **boundary-sync**
 
-## Asset Compiler™ integration
+## Studio Foundry™ integration
 
-**ARTICLE-A01:** [Asset Compiler™](./engine/asset-compiler/ARTICLE_A01_ASSET_COMPILER.md) is the production layer that creates registry-ready generated assets from founder intent.
+**ARTICLE-A02:** [Studio Foundry™](./engine/asset-compiler/ARTICLE_A02_STUDIO_FOUNDRY.md) is the universal manufacturing layer that creates registry-ready generated assets when an asset is missing or regeneration is requested.
+
+**ARTICLE-A01:** [Asset Compiler™](./engine/asset-compiler/ARTICLE_A01_ASSET_COMPILER.md) is the internal compiler used by Studio Foundry™.
 
 Flow:
 
-`Asset Name + Generation Recipe™ + Optional Modifiers → FAL request → metadata → versioned storage path → RegisteredAssetEntry → Asset Registry™`
+`UI assetId → Asset Registry™ → cache hit OR Studio Foundry™ → Generation Recipe™ → Asset Compiler™ → FAL → versioned asset → RegisteredAssetEntry → Asset Registry™ → UI`
 
-The founder should not manually download, upload, name, version, or import generated assets.
+The UI should not know how an asset was produced. Orb, Atlas, and interface surfaces consume assets by ID only.
 
 ## UI
 

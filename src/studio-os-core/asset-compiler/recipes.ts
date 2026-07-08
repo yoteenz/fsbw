@@ -25,7 +25,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Orb™', 'Atlas™', 'Mission Control™', 'Asset Registry™'],
       departmentsUsingIt: ['Orb', 'Atlas', 'Mission Control'],
       transparentBackground: true,
-      registryLibrary: 'Hero Icon Library™',
+      foundryAssetClass: 'hero-icon',
     },
   },
   environment: {
@@ -49,7 +49,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Scene Assembly™', 'Experience Engine™', 'Asset Registry™'],
       departmentsUsingIt: ['Scene Assembly', 'Experience System'],
       transparentBackground: false,
-      registryLibrary: 'Environment Library™',
+      foundryAssetClass: 'architecture',
     },
   },
   furniture: {
@@ -73,7 +73,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Scene Assembly™', 'Asset Registry™', 'Marketplace™'],
       departmentsUsingIt: ['Scene Assembly', 'Marketplace'],
       transparentBackground: true,
-      registryLibrary: 'Furniture Library™',
+      foundryAssetClass: 'furniture',
     },
   },
   orb: {
@@ -97,7 +97,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Orb™', 'Command Dock™', 'Mission Control™'],
       departmentsUsingIt: ['Orb', 'Mission Control'],
       transparentBackground: true,
-      registryLibrary: 'Orb Artifact Library™',
+      foundryAssetClass: 'landmark-object',
     },
   },
   'glass-ui': {
@@ -121,7 +121,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Experience Engine™', 'Design Language™'],
       departmentsUsingIt: ['Experience System', 'Design Language'],
       transparentBackground: false,
-      registryLibrary: 'Glass UI Library™',
+      foundryAssetClass: 'ui-component',
     },
   },
   room: {
@@ -145,7 +145,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Atlas™', 'Scene Assembly™', 'Architecture Auditor™'],
       departmentsUsingIt: ['Atlas', 'Scene Assembly'],
       transparentBackground: false,
-      registryLibrary: 'Room Concept Library™',
+      foundryAssetClass: 'room',
     },
   },
   architecture: {
@@ -169,7 +169,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Atlas™', 'World Graph™', 'Mission Control™'],
       departmentsUsingIt: ['Atlas', 'Mission Control'],
       transparentBackground: false,
-      registryLibrary: 'Architecture Library™',
+      foundryAssetClass: 'landmark-object',
     },
   },
   material: {
@@ -193,7 +193,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Design Language™', 'Scene Assembly™'],
       departmentsUsingIt: ['Design Language', 'Scene Assembly'],
       transparentBackground: false,
-      registryLibrary: 'Material Library™',
+      foundryAssetClass: 'material',
     },
   },
   particle: {
@@ -217,7 +217,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Experience Engine™', 'Scene Assembly™'],
       departmentsUsingIt: ['Experience System', 'Scene Assembly'],
       transparentBackground: true,
-      registryLibrary: 'Particle System Library™',
+      foundryAssetClass: 'particle-system',
     },
   },
   animation: {
@@ -241,7 +241,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Experience Engine™', 'Mission Control™'],
       departmentsUsingIt: ['Experience System', 'Mission Control'],
       transparentBackground: false,
-      registryLibrary: 'Animation Library™',
+      foundryAssetClass: 'motion-asset',
     },
   },
   portrait: {
@@ -265,7 +265,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Brand Standards™', 'Experience Engine™'],
       departmentsUsingIt: ['Brand Standards', 'Experience System'],
       transparentBackground: true,
-      registryLibrary: 'Portrait Library™',
+      foundryAssetClass: 'portrait',
     },
   },
   'brand-asset': {
@@ -289,7 +289,7 @@ export const GENERATION_RECIPES: Record<GenerationRecipeId, GenerationRecipe> = 
       relatedSystems: ['Brand Standards™', 'Asset Registry™', 'Marketplace™'],
       departmentsUsingIt: ['Brand Standards', 'Marketplace'],
       transparentBackground: true,
-      registryLibrary: 'Brand Asset Library™',
+      foundryAssetClass: 'brand-asset',
     },
   },
 };

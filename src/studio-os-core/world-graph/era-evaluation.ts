@@ -108,6 +108,7 @@ export const ENGINE_ERA_MAP: Record<string, StudioWorldEra> = {
   'world-graph': 'knowledge',
   'knowledge-registry': 'knowledge',
   'asset-registry': 'knowledge',
+  'studio-foundry': 'knowledge',
   'asset-compiler': 'knowledge',
   'orb-archivist': 'knowledge',
   'scene-stack': 'knowledge',

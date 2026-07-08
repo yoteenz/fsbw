@@ -2,14 +2,14 @@
 
 **Status:** Implemented foundation  
 **Engine:** Asset Compiler™  
-**Layer:** Production · Asset generation · Asset Registry integration  
+**Layer:** Internal compiler used by Studio Foundry™  
 **Version:** 1.0.0  
 
 ---
 
 ## One sentence
 
-**The founder describes intent. The Asset Compiler™ handles prompt engineering, model selection, generation settings, metadata, versioning, and Asset Registry registration.**
+**The founder describes intent to Studio Foundry™. Asset Compiler™ is the internal layer that turns a Generation Recipe™ into prompt engineering, model selection, generation settings, metadata, versioning, and Asset Registry registration.**
 
 ---
 
@@ -17,7 +17,7 @@
 
 The founder should never manually leave Studio World to generate individual assets.
 
-Studio World already has FAL integrated. The Asset Compiler™ leverages that production stack and turns it into a repeatable internal manufacturing layer.
+Studio World already has FAL integrated. The Asset Compiler™ leverages that production stack and turns it into repeatable internal manufacturing machinery for **Studio Foundry™**.
 
 The founder should never think about:
 
@@ -39,7 +39,7 @@ All of this becomes automated.
 
 ## Founder input
 
-The founder chooses only:
+Through Studio Foundry™, the founder chooses only:
 
 1. **Asset Name**
 2. **Generation Recipe™**
@@ -77,20 +77,20 @@ Output:
 
 Implemented recipes:
 
-| Recipe | Model | Output | Registry destination |
-|--------|-------|--------|----------------------|
-| Hero Icon™ | `openai/gpt-image-2/edit` | Transparent PNG | Hero Icon Library™ / icons |
-| Environment™ | `fal-ai/nano-banana-pro/edit` | WebP | Environment Library™ / images |
-| Furniture™ | `fal-ai/nano-banana-pro/edit` | Transparent PNG | Furniture Library™ / 3D models |
-| Orb™ | `openai/gpt-image-2/edit` | Transparent PNG | Orb Artifact Library™ / icons |
-| Glass UI™ | `fal-ai/nano-banana-pro/edit` | WebP | Glass UI Library™ / templates |
-| Room™ | `fal-ai/nano-banana-pro/edit` | WebP | Room Concept Library™ / images |
-| Architecture™ | `fal-ai/nano-banana-pro/edit` | WebP | Architecture Library™ / images |
-| Material™ | `fal-ai/nano-banana-pro/edit` | WebP | Material Library™ / images |
-| Particle™ | deterministic runtime | JSON | Particle System Library™ / animations |
-| Animation™ | `fal-ai/kling-video/v3/pro/image-to-video` | MP4 | Animation Library™ / animations |
-| Portrait™ | `openai/gpt-image-2/edit` | Transparent PNG | Portrait Library™ / images |
-| Brand Asset™ | `openai/gpt-image-2/edit` | Transparent PNG | Brand Asset Library™ / brand kits |
+| Recipe | Model | Output | Foundry asset class / registry destination |
+|--------|-------|--------|------------------------------------------|
+| Hero Icon™ | `openai/gpt-image-2/edit` | Transparent PNG | hero-icon / icons |
+| Environment™ | `fal-ai/nano-banana-pro/edit` | WebP | architecture / images |
+| Furniture™ | `fal-ai/nano-banana-pro/edit` | Transparent PNG | furniture / 3D models |
+| Orb™ | `openai/gpt-image-2/edit` | Transparent PNG | landmark-object / icons |
+| Glass UI™ | `fal-ai/nano-banana-pro/edit` | WebP | ui-component / templates |
+| Room™ | `fal-ai/nano-banana-pro/edit` | WebP | room / images |
+| Architecture™ | `fal-ai/nano-banana-pro/edit` | WebP | landmark-object / images |
+| Material™ | `fal-ai/nano-banana-pro/edit` | WebP | material / images |
+| Particle™ | deterministic runtime | JSON | particle-system / animations |
+| Animation™ | `fal-ai/kling-video/v3/pro/image-to-video` | MP4 | motion-asset / animations |
+| Portrait™ | `openai/gpt-image-2/edit` | Transparent PNG | portrait / images |
+| Brand Asset™ | `openai/gpt-image-2/edit` | Transparent PNG | brand-asset / brand kits |
 
 Each recipe defines:
 
@@ -127,7 +127,7 @@ Every compiled asset stores:
 - Preview
 - Relationships
 - Registry destination
-- Registry library
+- Foundry asset class
 - Storage path
 
 The compiler builds both:
@@ -143,6 +143,8 @@ This makes assets immediately discoverable by Asset Registry™ and available to
 
 Asset Compiler™ is registered as `W-ENG-asset-compiler`.
 
+ARTICLE-A02 registers **Studio Foundry™** as `W-ENG-studio-foundry`. Generation Recipes™ are owned by Studio Foundry™ and depend on Asset Compiler™ for FAL request compilation.
+
 Each Generation Recipe™ compiles into a `knowledge-object` node:
 
 ```text
@@ -155,9 +157,10 @@ W-KNO-generation-recipe-furniture
 Relationships:
 
 ```text
-Asset Compiler™ owns Generation Recipe™
+Studio Foundry™ owns Generation Recipe™
+Generation Recipe™ depends on Asset Compiler™
 Generation Recipe™ references Asset Registry™
-Asset Compiler™ integrates with Asset Registry™, Scene Stack™, and Atlas™
+Asset Compiler™ integrates with Studio Foundry™, Asset Registry™, Scene Stack™, and Atlas™
 ```
 
 ---
@@ -187,6 +190,6 @@ import { compileAssetIntent } from 'src/studio-os-core/asset-compiler';
 
 Studio World becomes a self-producing design platform.
 
-The founder describes intent. The Asset Compiler™ handles production.
+The founder describes intent. Studio Foundry™ handles manufacturing. Asset Compiler™ handles internal compilation.
 
 Every generated asset flows directly from idea to generation recipe to Asset Registry without manual prompt engineering, manual downloads, manual uploads, or manual imports.

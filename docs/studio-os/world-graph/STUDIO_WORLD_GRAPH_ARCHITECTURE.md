@@ -113,7 +113,7 @@ Archivist queries **relationships**, not documents:
 - Studio World Knowledge Core™ → knowledge-object domain, entry, and prompt-standard nodes
 - Studio World Memory System™ → conversation-archive, knowledge-extraction, and founder-approval nodes
 - Architecture Decision Records™ → architectural-decision nodes
-- Asset Compiler™ → generation-recipe knowledge-object nodes
+- Studio Foundry™ → generation-recipe knowledge-object nodes for manufactured asset classes
 - Scene Stack assembly law → law node
 - Bootstrap engines, genomes, publications
 - Master Spec milestones (CI compile)
