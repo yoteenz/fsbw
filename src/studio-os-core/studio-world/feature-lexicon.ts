@@ -21,7 +21,7 @@ export const STUDIO_WORLD_FEATURE_LEXICON: FeatureLexiconEntry[] = [
   { formerName: 'Integrations', architecturalName: 'Systems Dock™', physicalType: 'room' },
   { formerName: 'Reports', architecturalName: 'Executive Briefing Room™', physicalType: 'room' },
   { formerName: 'Marketplace', architecturalName: 'Marketplace Pavilion™', physicalType: 'pavilion' },
-  { formerName: 'Asset Library', architecturalName: 'Warehouse Wing™', physicalType: 'wing' },
+  { formerName: 'Asset Library', architecturalName: 'Studio Warehouse™', physicalType: 'workshop', notes: 'Manufacture · Assemble · Reuse — not Archives' },
   { formerName: 'Dashboard', architecturalName: 'Command Center™', physicalType: 'command-center' },
   { formerName: 'Publishing Queue', architecturalName: 'Distribution Dock™', physicalType: 'room' },
   { formerName: 'Blueprint Manager', architecturalName: 'Blueprint Archive™', physicalType: 'library' },

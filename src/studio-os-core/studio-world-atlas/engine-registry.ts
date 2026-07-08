@@ -17,12 +17,14 @@ const FLAGSHIP_ENGINES: Record<string, AtlasEngineId[]> = {
     'creative-budget',
     'creative-portfolio',
   ],
+  'studio-warehouse': ['generation-pipeline', 'asset-registry', 'scene-stack', 'creative-budget'],
   'studio-archives': [
     'studio-archives',
     'asset-registry',
     'blueprint-archive',
     'creative-portfolio',
   ],
+  marketplace: ['creative-portfolio', 'asset-registry'],
   headquarters: ['company-genome', 'creative-budget', 'creative-portfolio'],
   'expedition-hub': ['expedition-hub', 'blueprint-archive', 'company-genome'],
 };
@@ -32,8 +34,8 @@ const ROUTE_ENGINE_HINTS: Record<string, AtlasEngineId[]> = {
   'experience-observatory': ['experience-intelligence'],
   'world-atlas': ['company-genome'],
   'creative-direction-immersive': ['creative-intelligence', 'scene-stack'],
-  'studio-warehouse': ['asset-registry', 'studio-archives'],
-  marketplace: ['studio-archives'],
+  'studio-warehouse': ['asset-registry', 'generation-pipeline'],
+  marketplace: ['creative-portfolio'],
   'expansion-center': ['expedition-hub'],
   'business-discovery-blueprint': ['expedition-hub', 'company-genome'],
 };

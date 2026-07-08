@@ -11,8 +11,8 @@ export function resolveFogForNode(
   if (discoveredIds.has(flagshipId)) return true;
   if (migrationStatus === 'immersive-live' || migrationStatus === 'immersive-partial') return true;
   if (flagshipId === 'studio-command-center' || flagshipId === 'creative-direction-studio') return true;
-  if (flagshipId === 'studio-archives') return true;
-  if (flagshipId === 'headquarters' || flagshipId === 'expedition-hub') return true;
+  if (flagshipId === 'studio-warehouse' || flagshipId === 'studio-archives') return true;
+  if (flagshipId === 'marketplace' || flagshipId === 'headquarters' || flagshipId === 'expedition-hub') return true;
   return migrationStatus !== 'coming-soon';
 }
 

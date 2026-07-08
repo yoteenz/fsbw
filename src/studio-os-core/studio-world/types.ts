@@ -30,7 +30,9 @@ export type StudioWorldPhysicalType = (typeof STUDIO_WORLD_PHYSICAL_TYPES)[numbe
 export const STUDIO_WORLD_FLAGSHIP_IDS = [
   'studio-command-center',
   'creative-direction-studio',
+  'studio-warehouse',
   'studio-archives',
+  'marketplace',
   'headquarters',
   'expedition-hub',
 ] as const;

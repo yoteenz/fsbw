@@ -78,20 +78,26 @@ export const STUDIO_WORLD_ROUTE_REGISTRY: StudioWorldRouteMapping[] = [
   m('screening-room', 'Screening Theater™', 'theater', 'creative-direction-studio', 'cds-scene-stack', 'creative-direction-studio/screening-room', 'screening-room', 'standard', 'standard-room'),
   m('render-queue', 'Render Queue Bay™', 'room', 'creative-direction-studio', 'cds-scene-stack', 'creative-direction-studio/render-queue', 'render-queue', 'standard', 'standard-room'),
 
+  // ── Studio Warehouse™ ──
+  m('studio-warehouse-entry', 'Studio Warehouse™', 'workshop', 'studio-warehouse', 'warehouse-production-wing', 'warehouse', 'studio-warehouse', 'immersive', 'immersive-live'),
+  m('studio-warehouse-alias', 'Studio Warehouse™ (legacy path)', 'workshop', 'studio-warehouse', 'warehouse-production-wing', 'warehouse/legacy', 'studio-warehouse', 'immersive', 'immersive-live'),
+  m('asset-registry', 'Asset Registry Vault™', 'vault', 'studio-warehouse', 'warehouse-production-wing', 'warehouse/production-wing/asset-registry', 'asset-registry', 'standard', 'standard-room'),
+  m('asset-library', 'Media Vault™', 'vault', 'studio-warehouse', 'warehouse-production-wing', 'warehouse/production-wing/media-vault', 'asset-library', 'standard', 'standard-room', 'Asset Library'),
+  m('asset-factory', 'Generation Bay™', 'laboratory', 'studio-warehouse', 'warehouse-production-wing', 'warehouse/production-wing/generation-bay', 'asset-factory', 'standard', 'immersive-partial', 'Asset Factory'),
+  m('asset-director', 'Asset Director Gallery™', 'gallery', 'studio-warehouse', 'warehouse-production-wing', 'warehouse/production-wing/asset-director', 'asset-director', 'standard', 'standard-room'),
+
   // ── Studio Archives™ ──
   m('studio-archives', 'Studio Archives™', 'building', 'studio-archives', 'archives-grand-entrance', 'archives', 'studio-archives', 'immersive', 'immersive-live'),
-  m('studio-warehouse-alias', 'Studio Archives™ (legacy path)', 'building', 'studio-archives', 'archives-grand-entrance', 'archives/legacy-warehouse', 'studio-warehouse', 'immersive', 'immersive-live'),
   m('archives-museum-wing', 'Museum Wing™', 'museum', 'studio-archives', 'archives-museum-wing', 'archives/museum-wing', '/admin/studio/studio-archives?zone=museum-wing', 'immersive', 'immersive-live'),
-  m('asset-registry', 'Asset Registry Vault™', 'vault', 'studio-archives', 'archives-warehouse-wing', 'archives/warehouse-wing/asset-registry', 'asset-registry', 'standard', 'standard-room'),
-  m('asset-library', 'Media Vault™', 'vault', 'studio-archives', 'archives-warehouse-wing', 'archives/warehouse-wing/media-vault', 'asset-library', 'standard', 'standard-room', 'Asset Library'),
   m('blueprint-manager', 'Blueprint Archive™', 'library', 'studio-archives', 'archives-blueprint-archive', 'archives/blueprint-archive', 'blueprint-manager', 'standard', 'immersive-partial', 'Blueprint Manager'),
-  m('asset-factory', 'Generation Bay™', 'laboratory', 'studio-archives', 'archives-warehouse-wing', 'archives/warehouse-wing/generation-bay', 'asset-factory', 'standard', 'immersive-partial', 'Asset Factory'),
-  m('asset-director', 'Asset Director Gallery™', 'gallery', 'studio-archives', 'archives-warehouse-wing', 'archives/warehouse-wing/asset-director', 'asset-director', 'standard', 'standard-room'),
-  m('marketplace-nav', 'Marketplace Pavilion™', 'pavilion', 'studio-archives', 'archives-marketplace-pavilion', 'archives/marketplace-pavilion', 'marketplace', 'standard', 'immersive-partial', 'Marketplace'),
   m('legacy-system', 'Legacy Museum Hall™', 'museum', 'studio-archives', 'archives-museum-wing', 'archives/museum-wing/legacy-system', 'legacy-system', 'standard', 'standard-room'),
   m('legacy-vault', 'Legacy Vault™', 'vault', 'studio-archives', 'archives-museum-wing', 'archives/museum-wing/legacy-vault', 'legacy-vault', 'module', 'standard-room'),
   m('organization-genome-archives', 'Company Genome Vault™', 'vault', 'studio-archives', 'archives-genome-vault', 'archives/genome-vault', 'organization-genome', 'standard', 'immersive-partial'),
   m('innovation-lab-archives', 'Hall of Innovation™', 'gallery', 'studio-archives', 'archives-innovation-hall', 'archives/hall-of-innovation', 'innovation-lab', 'standard', 'immersive-partial'),
+
+  // ── Marketplace™ ──
+  m('marketplace-entry', 'Marketplace™', 'pavilion', 'marketplace', 'marketplace-pavilion', 'marketplace', 'marketplace', 'standard', 'immersive-partial', 'Marketplace'),
+  m('marketplace-nav', 'Marketplace Pavilion™', 'pavilion', 'marketplace', 'marketplace-pavilion', 'marketplace/pavilion', 'marketplace', 'standard', 'immersive-partial', 'Marketplace'),
 
   // ── Headquarters™ (department immersive offices) ──
   m('headquarters-entry', 'Headquarters™', 'headquarters', 'headquarters', 'hq-operations-headquarters', 'headquarters', '/admin/headquarters', 'standard', 'immersive-partial'),

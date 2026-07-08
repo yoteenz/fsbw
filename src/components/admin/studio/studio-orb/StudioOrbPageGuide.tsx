@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { resolveManualModuleIdForPath, getManualDefinitionForModule } from '../../../../studio-interactive-manual/buildFromKnowledge';
 import { getModuleGraphEntry } from '../../../../studio-interactive-manual/knowledge-graph/queries';
+import { resolveOrbPersonalityForPath } from '../../../../studio-os-core/studio-world/orb-personality';
 import { conversationDockPanelStyle, orbBody, orbGrace, orbLabel, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 import { useOrganizationContextOptional } from '../../../../studio-os-core/organization-context';
@@ -16,7 +17,8 @@ export function StudioOrbPageGuide() {
     const moduleId = resolveManualModuleIdForPath(pathname);
     const definition = moduleId ? getManualDefinitionForModule(moduleId) : undefined;
     const graph = moduleId ? getModuleGraphEntry(moduleId) : undefined;
-    return { moduleId, definition, graph };
+    const personality = resolveOrbPersonalityForPath(pathname);
+    return { moduleId, definition, graph, personality };
   }, [pathname]);
 
   if (activeSurface !== 'page-guide') return null;
@@ -53,6 +55,13 @@ export function StudioOrbPageGuide() {
 
       <p style={{ ...orbLabel, margin: '12px 0 4px' }}>PURPOSE</p>
       <p style={{ ...orbBody, margin: 0 }}>{purpose}</p>
+
+      {guide.personality ? (
+        <>
+          <p style={{ ...orbLabel, margin: '12px 0 4px' }}>STUDIO ORB · {guide.personality.role.toUpperCase()}</p>
+          <p style={{ ...orbBody, margin: 0 }}>{guide.personality.guidance}</p>
+        </>
+      ) : null}
 
       {org ? (
         <>

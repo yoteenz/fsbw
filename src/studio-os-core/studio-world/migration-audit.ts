@@ -44,7 +44,7 @@ export type MigrationAuditRow = {
 const GROUP_FLAGSHIP: Record<StudioNavGroupId, StudioWorldFlagshipId> = {
   overview: 'studio-command-center',
   create: 'creative-direction-studio',
-  visuals: 'studio-archives',
+  visuals: 'studio-warehouse',
   production: 'headquarters',
   distribution: 'headquarters',
   intelligence: 'headquarters',
@@ -55,7 +55,7 @@ const GROUP_FLAGSHIP: Record<StudioNavGroupId, StudioWorldFlagshipId> = {
 const GROUP_WING: Record<StudioNavGroupId, string> = {
   overview: 'Executive District™',
   create: 'Story Table Wing™',
-  visuals: 'Warehouse Wing™',
+  visuals: 'Production Wing™',
   production: 'Operations Headquarters™',
   distribution: 'Distribution Headquarters™',
   intelligence: 'Intelligence Headquarters™',
@@ -64,9 +64,11 @@ const GROUP_WING: Record<StudioNavGroupId, string> = {
 };
 
 const BUILDING_BY_FLAGSHIP: Record<StudioWorldFlagshipId, string> = {
-  'studio-command-center': 'Executive Operations Headquarters™',
+  'studio-command-center': 'Command Center™',
   'creative-direction-studio': 'Creative Direction Studio™',
+  'studio-warehouse': 'Studio Warehouse™',
   'studio-archives': 'Studio Archives™',
+  marketplace: 'Marketplace™',
   headquarters: 'Headquarters™',
   'expedition-hub': 'Expedition Hub™',
 };
@@ -98,13 +100,13 @@ const V5_ROOM_CANON: Record<string, { room: string; wing?: string; building?: st
   'organization-pulse': { room: 'Organization Pulse Core™', wing: 'Mission Control™' },
   analytics: { room: 'Performance Observatory™', wing: 'Intelligence Wing™' },
   'executive-ai-director': { room: 'Intelligence Nexus™', wing: 'Global AI Wing™' },
-  marketplace: { room: 'Commerce Pavilion™', wing: 'Marketplace Wing™', building: 'Studio Archives™' },
-  'ecosystem-marketplace': { room: 'Commerce Pavilion™', wing: 'Marketplace Wing™', building: 'Studio Archives™' },
+  marketplace: { room: 'Marketplace Pavilion™', wing: 'Licensing Hall™', building: 'Marketplace™' },
+  'ecosystem-marketplace': { room: 'Marketplace Pavilion™', wing: 'Licensing Hall™', building: 'Marketplace™' },
   'qa-headquarters': { room: 'Infrastructure Observatory™', wing: 'System Health Observatory™' },
   'engineering-excellence-dashboard': { room: 'Infrastructure Observatory™', wing: 'System Health Observatory™' },
   'performance-monitor': { room: 'Infrastructure Observatory™', wing: 'System Health Observatory™' },
   'system-registry': { room: 'Systems Dock™', wing: 'Operations Wing™' },
-  'studio-warehouse': { room: 'Studio Archives™', wing: 'Grand Entrance™', building: 'Studio Archives™' },
+  'studio-warehouse': { room: 'Studio Warehouse™', wing: 'Production Wing™', building: 'Studio Warehouse™' },
   department: { room: 'Creative Direction Studio™', wing: 'Scene Stack™', building: 'Creative Direction Studio™' },
   'expansion-center': { room: 'Expansion Center Atrium™', wing: 'Discovery Atrium™', building: 'Expedition Hub™' },
   'business-discovery-blueprint': { room: 'Business Discovery Expedition™', wing: 'Discovery Atrium™', building: 'Expedition Hub™' },
@@ -162,7 +164,7 @@ function resolveSceneStack(moduleId: string, ui: MigrationUiPattern): string {
     return 'studio-command-center: threshold → executive-atrium → pulse-core → wing-corridors (V5)';
   }
   if (moduleId === 'studio-warehouse') {
-    return 'studio-archives: grand-entrance → orientation → 20-zone camera track';
+    return 'studio-warehouse: production-wing → assembly-bay → asset-registry';
   }
   if (moduleId === 'department') {
     return 'creative-direction: genesis → story-table → scene-stack-9-layer';

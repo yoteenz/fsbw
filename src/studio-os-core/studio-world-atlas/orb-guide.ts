@@ -72,11 +72,35 @@ export function buildAtlasOrbRecommendations(
   if (archives) {
     recs.push({
       id: uid(),
-      message: 'Studio Archives™ — Museum exhibits illuminated. New assets ready in Asset Registry™.',
+      message: 'Studio Archives™ — Museum exhibits illuminated. Golden Builds™ preserved for institutional memory.',
       targetNodeId: archives.id,
       priority: 'medium',
       kind: 'opportunity',
-      engineId: 'asset-registry',
+      engineId: 'studio-archives',
+    });
+  }
+
+  const warehouse = nodes.find((n) => n.flagshipId === 'studio-warehouse' && n.level === 1);
+  if (warehouse && (warehouse.activity === 'generating' || warehouse.activity === 'pulse')) {
+    recs.push({
+      id: uid(),
+      message: 'Studio Warehouse™ — manufacturing pipeline active. Asset Registry™ ready for assembly.',
+      targetNodeId: warehouse.id,
+      priority: 'high',
+      kind: 'ai-active',
+      engineId: 'generation-pipeline',
+    });
+  }
+
+  const mkt = nodes.find((n) => n.flagshipId === 'marketplace' && n.level === 1);
+  if (mkt) {
+    recs.push({
+      id: uid(),
+      message: 'Marketplace™ — licensed packs and blueprints ready to share. Everything here originated elsewhere.',
+      targetNodeId: mkt.id,
+      priority: 'medium',
+      kind: 'opportunity',
+      engineId: 'creative-portfolio',
     });
   }
 

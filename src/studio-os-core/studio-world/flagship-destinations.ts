@@ -1,8 +1,10 @@
 /**
- * Studio World™ V4 — five flagship destinations on one connected campus.
+ * Studio World™ — seven flagship destinations on one connected campus.
+ * Responsibility Framework™: docs/studio-os/studio-world-responsibility-framework.md
  */
 
 import type { StudioWorldFlagshipId, StudioWorldLocation } from './types';
+import { FLAGSHIP_RESPONSIBILITY_LAWS } from './responsibility-framework';
 
 export const STUDIO_WORLD_CAMPUS_NAME = 'Studio World™';
 
@@ -12,14 +14,14 @@ export type FlagshipDestination = {
   purpose: string;
   worldEntryPath: string;
   legacyEntryPath: string;
-  physicalType: 'command-center' | 'studio' | 'building' | 'headquarters' | 'building';
+  physicalType: 'command-center' | 'studio' | 'building' | 'headquarters' | 'workshop' | 'pavilion';
 };
 
 export const FLAGSHIP_DESTINATIONS: FlagshipDestination[] = [
   {
     id: 'studio-command-center',
-    displayName: 'Studio Command Center™',
-    purpose: 'Operate · Monitor · Decide · Coordinate',
+    displayName: 'Command Center™',
+    purpose: FLAGSHIP_RESPONSIBILITY_LAWS['studio-command-center'].mission,
     worldEntryPath: '/admin/studio/world/command-center',
     legacyEntryPath: '/admin/studio/overview',
     physicalType: 'command-center',
@@ -27,23 +29,39 @@ export const FLAGSHIP_DESTINATIONS: FlagshipDestination[] = [
   {
     id: 'creative-direction-studio',
     displayName: 'Creative Direction Studio™',
-    purpose: 'Invent · Create · Imagine · Generate · Direct',
+    purpose: FLAGSHIP_RESPONSIBILITY_LAWS['creative-direction-studio'].mission,
     worldEntryPath: '/admin/studio/world/creative-direction-studio',
     legacyEntryPath: '/admin/studio/department/creative-direction',
     physicalType: 'studio',
   },
   {
+    id: 'studio-warehouse',
+    displayName: 'Studio Warehouse™',
+    purpose: FLAGSHIP_RESPONSIBILITY_LAWS['studio-warehouse'].mission,
+    worldEntryPath: '/admin/studio/world/warehouse',
+    legacyEntryPath: '/admin/studio/studio-warehouse',
+    physicalType: 'workshop',
+  },
+  {
     id: 'studio-archives',
     displayName: 'Studio Archives™',
-    purpose: 'Memory · Reuse · Legacy · Knowledge · Marketplace',
+    purpose: FLAGSHIP_RESPONSIBILITY_LAWS['studio-archives'].mission,
     worldEntryPath: '/admin/studio/world/archives',
     legacyEntryPath: '/admin/studio/studio-archives',
     physicalType: 'building',
   },
   {
+    id: 'marketplace',
+    displayName: 'Marketplace™',
+    purpose: FLAGSHIP_RESPONSIBILITY_LAWS.marketplace.mission,
+    worldEntryPath: '/admin/studio/world/marketplace',
+    legacyEntryPath: '/admin/studio/marketplace',
+    physicalType: 'pavilion',
+  },
+  {
     id: 'headquarters',
     displayName: 'Headquarters™',
-    purpose: 'Run the company — every department is an immersive office',
+    purpose: FLAGSHIP_RESPONSIBILITY_LAWS.headquarters.mission,
     worldEntryPath: '/admin/studio/world/headquarters',
     legacyEntryPath: '/admin/headquarters',
     physicalType: 'headquarters',
@@ -51,7 +69,7 @@ export const FLAGSHIP_DESTINATIONS: FlagshipDestination[] = [
   {
     id: 'expedition-hub',
     displayName: 'Expedition Hub™',
-    purpose: 'Transformation · Learning · Guided implementation · Business evolution',
+    purpose: FLAGSHIP_RESPONSIBILITY_LAWS['expedition-hub'].mission,
     worldEntryPath: '/admin/studio/world/expedition-hub',
     legacyEntryPath: '/admin/studio/expansion-center',
     physicalType: 'building',
@@ -60,7 +78,7 @@ export const FLAGSHIP_DESTINATIONS: FlagshipDestination[] = [
 
 /** District / wing skeleton inside each flagship — rooms hang off these nodes. */
 export const FLAGSHIP_DISTRICTS: StudioWorldLocation[] = [
-  // Studio Command Center™
+  // Command Center™
   {
     id: 'scc-executive-district',
     displayName: 'Executive District™',
@@ -113,6 +131,23 @@ export const FLAGSHIP_DISTRICTS: StudioWorldLocation[] = [
     flagshipId: 'creative-direction-studio',
     worldPath: 'creative-direction-studio/scene-stack',
   },
+  // Studio Warehouse™
+  {
+    id: 'warehouse-production-wing',
+    displayName: 'Production Wing™',
+    physicalType: 'wing',
+    flagshipId: 'studio-warehouse',
+    worldPath: 'warehouse/production-wing',
+    teaching: 'Manufacture · Assemble · Reuse — production only, never invention.',
+  },
+  {
+    id: 'warehouse-assembly-bay',
+    displayName: 'Assembly Bay™',
+    physicalType: 'workshop',
+    flagshipId: 'studio-warehouse',
+    parentId: 'warehouse-production-wing',
+    worldPath: 'warehouse/production-wing/assembly-bay',
+  },
   // Studio Archives™
   {
     id: 'archives-grand-entrance',
@@ -128,13 +163,6 @@ export const FLAGSHIP_DISTRICTS: StudioWorldLocation[] = [
     flagshipId: 'studio-archives',
     parentId: 'archives-grand-entrance',
     worldPath: 'archives/orientation-atrium',
-  },
-  {
-    id: 'archives-warehouse-wing',
-    displayName: 'Warehouse Wing™',
-    physicalType: 'wing',
-    flagshipId: 'studio-archives',
-    worldPath: 'archives/warehouse-wing',
   },
   {
     id: 'archives-museum-wing',
@@ -164,12 +192,22 @@ export const FLAGSHIP_DISTRICTS: StudioWorldLocation[] = [
     flagshipId: 'studio-archives',
     worldPath: 'archives/blueprint-archive',
   },
+  // Marketplace™
   {
-    id: 'archives-marketplace-pavilion',
+    id: 'marketplace-pavilion',
     displayName: 'Marketplace Pavilion™',
     physicalType: 'pavilion',
-    flagshipId: 'studio-archives',
-    worldPath: 'archives/marketplace-pavilion',
+    flagshipId: 'marketplace',
+    worldPath: 'marketplace/pavilion',
+    teaching: 'Share · Exchange · License — everything here originated elsewhere.',
+  },
+  {
+    id: 'marketplace-licensing-hall',
+    displayName: 'Licensing Hall™',
+    physicalType: 'gallery',
+    flagshipId: 'marketplace',
+    parentId: 'marketplace-pavilion',
+    worldPath: 'marketplace/pavilion/licensing-hall',
   },
   // Headquarters™
   {

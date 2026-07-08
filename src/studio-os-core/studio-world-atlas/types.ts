@@ -646,7 +646,7 @@ export const ATLAS_MODE_ENGINE_FOCUS: Partial<Record<AtlasMapMode, AtlasEngineId
   'creative-budget': ['creative-budget', 'generation-pipeline'],
   'creative-portfolio': ['creative-portfolio', 'asset-registry'],
   'creative-equity': ['creative-portfolio', 'creative-budget'],
-  marketplace: ['studio-archives', 'asset-registry'],
+  marketplace: ['creative-portfolio', 'asset-registry'],
   innovation: ['creative-intelligence', 'expedition-hub'],
   'company-genome': ['company-genome', 'creative-intelligence'],
   construction: ['generation-pipeline', 'scene-stack', 'blueprint-archive'],

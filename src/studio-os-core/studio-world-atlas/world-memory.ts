@@ -23,11 +23,26 @@ export function seedBuildingMemoryForNode(node: AtlasNode, companyName: string):
       milestones: [...base.milestones, 'GOLDEN BUILD MONUMENT', 'STORY TABLE™ OPENED'],
     };
   }
+  if (node.flagshipId === 'studio-warehouse') {
+    return {
+      ...base,
+      enabledByBlueprint: 'Warehouse Manufacturing Blueprint™',
+      milestones: [...base.milestones, 'PRODUCTION WING LIVE', 'ASSET REGISTRY™ OPEN'],
+    };
+  }
   if (node.flagshipId === 'studio-archives') {
     return {
       ...base,
-      enabledByBlueprint: 'Studio Archives Warehouse Blueprint™',
+      enabledByBlueprint: 'Studio Archives Preservation Blueprint™',
       milestones: [...base.milestones, 'MUSEUM WING ILLUMINATED'],
+    };
+  }
+  if (node.flagshipId === 'marketplace') {
+    return {
+      ...base,
+      enabledByBlueprint: 'Marketplace Pavilion Blueprint™',
+      milestones: [...base.milestones, 'LICENSING HALL OPEN'],
+      reason: 'Distribution layer — everything here originated in another flagship.',
     };
   }
   if (node.flagshipId === 'studio-command-center') {

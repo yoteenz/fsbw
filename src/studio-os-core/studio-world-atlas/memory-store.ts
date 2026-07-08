@@ -67,10 +67,14 @@ const EMPTY: AtlasDiscoveryStore = {
 const DEFAULT_DISCOVERED = [
   'studio-command-center',
   'creative-direction-studio',
+  'studio-warehouse',
   'studio-archives',
+  'marketplace',
   'architecture-observatory',
   'flagship-studio-command-center',
   'flagship-creative-direction-studio',
+  'flagship-studio-warehouse',
+  'flagship-marketplace',
 ];
 
 function migrateV4(raw: unknown): AtlasDiscoveryStore {

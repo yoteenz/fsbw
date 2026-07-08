@@ -1,5 +1,6 @@
 /**
- * Studio World™ V4 — navigation graph and path resolution.
+ * Studio World™ — navigation graph and path resolution.
+ * Pipeline handoffs follow Responsibility Framework™.
  */
 
 import { FLAGSHIP_DESTINATIONS, FLAGSHIP_DISTRICTS } from './flagship-destinations';
@@ -8,20 +9,24 @@ import {
   resolveWorldRouteByPath,
   STUDIO_WORLD_ROUTE_REGISTRY,
 } from './route-registry';
+import { STUDIO_WORLD_PIPELINE } from './responsibility-framework';
 import type { StudioWorldNavigationEdge, StudioWorldRouteMapping } from './types';
 
 export const STUDIO_WORLD_BASE_PATH = '/admin/studio/world';
 
+/** Campus walkways — each edge follows the canonical pipeline where applicable */
 export const STUDIO_WORLD_NAVIGATION_EDGES: StudioWorldNavigationEdge[] = [
+  { fromLocationId: 'scc-executive-district', toLocationId: 'cds-story-table', movementVerb: 'cross-bridge', label: 'Cross to Creative Direction Studio™' },
+  { fromLocationId: 'cds-story-table', toLocationId: 'warehouse-production-wing', movementVerb: 'walk', label: 'Hand vision to Studio Warehouse™' },
+  { fromLocationId: 'warehouse-production-wing', toLocationId: 'archives-orientation-atrium', movementVerb: 'walk', label: 'Deliver Golden Build to Studio Archives™' },
+  { fromLocationId: 'archives-blueprint-archive', toLocationId: 'marketplace-pavilion', movementVerb: 'walk', label: 'Share preserved work at Marketplace™' },
+  { fromLocationId: 'marketplace-pavilion', toLocationId: 'hq-marketing-headquarters', movementVerb: 'ride-elevator', label: 'Execute at Headquarters™' },
   { fromLocationId: 'scc-executive-district', toLocationId: 'archives-orientation-atrium', movementVerb: 'walk', label: 'Walk to Studio Archives™' },
-  { fromLocationId: 'archives-orientation-atrium', toLocationId: 'cds-story-table', movementVerb: 'cross-bridge', label: 'Cross to Creative Direction Studio™' },
   { fromLocationId: 'archives-orientation-atrium', toLocationId: 'hq-marketing-headquarters', movementVerb: 'ride-elevator', label: 'Ascend to Headquarters™' },
   { fromLocationId: 'exp-discovery-atrium', toLocationId: 'scc-executive-district', movementVerb: 'walk', label: 'Return to Command Center™' },
-  { fromLocationId: 'archives-warehouse-wing', toLocationId: 'archives-museum-wing', movementVerb: 'walk', label: 'Enter Museum Wing™' },
   { fromLocationId: 'archives-museum-wing', toLocationId: 'archives-innovation-hall', movementVerb: 'walk', label: 'Continue to Hall of Innovation™' },
   { fromLocationId: 'archives-innovation-hall', toLocationId: 'archives-genome-vault', movementVerb: 'descend', label: 'Descend to Genome Vault™' },
   { fromLocationId: 'archives-genome-vault', toLocationId: 'archives-blueprint-archive', movementVerb: 'walk', label: 'Enter Blueprint Archive™' },
-  { fromLocationId: 'archives-blueprint-archive', toLocationId: 'archives-marketplace-pavilion', movementVerb: 'walk', label: 'Enter Marketplace Pavilion™' },
 ];
 
 export type StudioWorldPathResolution =
@@ -62,6 +67,7 @@ export function inventorySummary() {
     flagshipCount: FLAGSHIP_DESTINATIONS.length,
     districtCount: FLAGSHIP_DISTRICTS.length,
     navigationEdges: STUDIO_WORLD_NAVIGATION_EDGES.length,
+    pipelineSteps: STUDIO_WORLD_PIPELINE.length,
     immersiveLive: STUDIO_WORLD_ROUTE_REGISTRY.filter((r) => r.migrationStatus === 'immersive-live').length,
     standardRooms: STUDIO_WORLD_ROUTE_REGISTRY.filter((r) => r.migrationStatus === 'standard-room').length,
   };

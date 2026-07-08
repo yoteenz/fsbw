@@ -39,6 +39,7 @@ const MODE_BY_FLAGSHIP: Record<StudioWorldFlagshipId, AtlasMapMode[]> = {
     'generation',
     'company-genome',
     'construction',
+    'master-planner',
   ],
   'creative-direction-studio': [
     'architectural-blueprint',
@@ -47,13 +48,27 @@ const MODE_BY_FLAGSHIP: Record<StudioWorldFlagshipId, AtlasMapMode[]> = {
     'creative-budget',
     'creative-portfolio',
     'innovation',
+    'parallel-futures',
+    'future-merge',
+  ],
+  'studio-warehouse': [
+    'architectural-blueprint',
+    'generation',
+    'creative-budget',
+    'construction',
   ],
   'studio-archives': [
     'architectural-blueprint',
     'archives',
-    'generation',
+    'creative-portfolio',
+    'innovation',
+    'company-genome',
+  ],
+  marketplace: [
+    'architectural-blueprint',
     'marketplace',
     'creative-portfolio',
+    'creative-equity',
   ],
   headquarters: [
     'architectural-blueprint',
@@ -73,13 +88,15 @@ const MODE_BY_FLAGSHIP: Record<StudioWorldFlagshipId, AtlasMapMode[]> = {
   ],
 };
 
-/** World-level flagship positions on holographic table (polar layout) */
+/** World-level flagship positions on holographic table (polar layout — 7 flagships) */
 const FLAGSHIP_POSITIONS: Record<StudioWorldFlagshipId, { x: number; y: number; z: number; extrusion: number }> = {
-  'studio-command-center': { x: 50, y: 42, z: 0.9, extrusion: 0.95 },
-  'creative-direction-studio': { x: 22, y: 58, z: 0.7, extrusion: 0.75 },
-  'studio-archives': { x: 78, y: 55, z: 0.75, extrusion: 0.82 },
-  headquarters: { x: 35, y: 28, z: 0.65, extrusion: 0.7 },
-  'expedition-hub': { x: 68, y: 30, z: 0.6, extrusion: 0.65 },
+  'studio-command-center': { x: 50, y: 38, z: 0.9, extrusion: 0.95 },
+  'creative-direction-studio': { x: 18, y: 58, z: 0.7, extrusion: 0.75 },
+  'studio-warehouse': { x: 38, y: 68, z: 0.72, extrusion: 0.78 },
+  'studio-archives': { x: 72, y: 58, z: 0.75, extrusion: 0.82 },
+  marketplace: { x: 88, y: 42, z: 0.68, extrusion: 0.7 },
+  headquarters: { x: 32, y: 22, z: 0.65, extrusion: 0.7 },
+  'expedition-hub': { x: 68, y: 22, z: 0.6, extrusion: 0.65 },
 };
 
 function uid(prefix: string, slug: string): string {

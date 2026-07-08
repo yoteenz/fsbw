@@ -42447,3 +42447,20 @@ User **FOLLOW-UP SPRINT — Creative Direction Studio™ Parallel Futures Integr
 - **Docs:** `docs/studio-os/creative-direction-studio-parallel-futures-integration.md`.
 - **Boundaries:** heuristic/demo — not live FAL generation or Warehouse API writes on approve; extends CDS room without redesign.
 - **Prior arc (same chat):** Atlas Future Merge™ Phase 5 · Parallel Futures™ · Master Planner™ · Orb Recommendations™.
+
+---
+
+## 2026-07-08 — Creative Direction Studio™ Future Tournament™ Phase 6 intelligent design review
+
+User **FOLLOW-UP SPRINT — Future Tournament™ (Intelligent Design Review Engine) Phase 6:** After Parallel Futures™ + Future Merge™, Studio OS must evaluate every proposed future across executive judges **before** founders manually compare six concepts — eliminate decision fatigue, retain founder authority.
+
+- **Future Tournament™ engine `src/studio-os-core/creative-direction-studio/`:** `future-tournament-types.ts` (10 judges · 19 score categories) · `future-tournament-scoring.ts` · `future-tournament-bracket.ts` (head-to-head with WHY) · `future-tournament-championship.ts` (clear winner vs merge recommendation) · `future-tournament-learning.ts` · `future-tournament-orb.ts` (Chairman of Review Board) · `future-tournament.ts`.
+- **Pipeline v2:** `studioOsCreativeUniversalPipeline_v2` — `tournamentResult`, `tournamentLearning`, `reviewChamberActive`; new phase `future-tournament`; auto-run tournament on concept generation; migrates v1.
+- **Review Chamber™:** new CDS camera zone `review-chamber` · `ReviewChamberSurface.tsx` — holographic finalist environments, bracket replay, championship merge/winner panel, ACCEPT CHAIRMAN / FOUNDER OVERRIDE / APPROVE CONCEPT™.
+- **Story Table™:** finalists only after tournament · RUN TOURNAMENT™ · REVIEW CHAMBER™ · eliminated concepts dimmed; `StoryTableParallelFutures.tsx` updated.
+- **Orb:** Chairman lines on Story Table + Review Chamber via `buildChairmanOrbRecommendations`; explains recommendations, never final decision.
+- **Learning:** tracks accepted/rejected chairman recs, preferred archetypes, merge patterns, founder overrides.
+- **Hook:** `useCreativeUniversalPipeline` — `runTournament`, `openReviewChamber`, `acceptChairmanRecommendation`, `rejectChairmanRecommendation`, `finalistConcepts`, `chairmanLines`.
+- **Docs:** `docs/studio-os/creative-direction-studio-future-tournament.md`.
+- **Boundaries:** heuristic judging — not live engine API calls; extends CDS room (new zone), no redesign.
+- **Prior arc (same chat):** CDS Parallel Futures Integration™ · Atlas Future Merge™ · Parallel Futures™.

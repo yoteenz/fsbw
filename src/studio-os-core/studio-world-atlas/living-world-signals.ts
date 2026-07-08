@@ -31,7 +31,13 @@ export function resolveLivingSignals(node: AtlasNode, ctx: LivingWorldContext): 
   if (node.flagshipId === 'studio-archives' && node.activity !== 'dormant') {
     signals.push('museum-exhibit');
   }
-  if (ctx.mapMode === 'marketplace' && node.engineIds?.includes('studio-archives')) {
+  if (node.flagshipId === 'studio-warehouse' && node.activity === 'generating') {
+    signals.push('ai-glow');
+  }
+  if (
+    (node.flagshipId === 'marketplace' || ctx.mapMode === 'marketplace') &&
+    node.engineIds?.includes('creative-portfolio')
+  ) {
     signals.push('marketplace-delivery');
   }
   if (ctx.hiddenFinds.includes(node.id)) signals.push('hidden-discovery');

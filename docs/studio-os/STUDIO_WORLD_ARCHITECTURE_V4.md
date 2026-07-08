@@ -17,15 +17,19 @@ The founder **walks** — they do not click menus.
 
 ---
 
-## One Campus · Five Flagships
+## One Campus · Seven Flagships
+
+> **Responsibility Framework™:** Each flagship has one mission, no overlap. See [studio-world-responsibility-framework.md](./studio-world-responsibility-framework.md).
 
 | Flagship | Purpose | Canonical entry | Legacy implementation (preserved) |
 |----------|---------|-----------------|-----------------------------------|
-| **Studio Command Center™** | Operate · Monitor · Decide · Coordinate | `/admin/studio/world/command-center` | `/admin/studio/overview` |
-| **Creative Direction Studio™** | Invent · Create · Imagine · Generate · Direct | `/admin/studio/world/creative-direction-studio` | `/admin/studio/department/creative-direction` |
-| **Studio Archives™** | Memory · Reuse · Legacy · Knowledge · Marketplace | `/admin/studio/world/archives` | `/admin/studio/studio-archives` |
-| **Headquarters™** | Run the company — immersive department offices | `/admin/studio/world/headquarters` | `/admin/headquarters` |
-| **Expedition Hub™** | Transformation · Learning · Guided implementation | `/admin/studio/world/expedition-hub` | `/admin/studio/expansion-center` |
+| **Command Center™** | Operate · Observe · Coordinate | `/admin/studio/world/command-center` | `/admin/studio/overview` |
+| **Creative Direction Studio™** | Imagine · Invent · Explore · Direct | `/admin/studio/world/creative-direction-studio` | `/admin/studio/department/creative-direction` |
+| **Studio Warehouse™** | Manufacture · Assemble · Reuse · Produce | `/admin/studio/world/warehouse` | `/admin/studio/studio-warehouse` |
+| **Studio Archives™** | Remember · Preserve · Teach · Celebrate | `/admin/studio/world/archives` | `/admin/studio/studio-archives` |
+| **Marketplace™** | Share · Exchange · License · Monetize | `/admin/studio/world/marketplace` | `/admin/studio/marketplace` |
+| **Headquarters™** | Execute · Operate · Grow | `/admin/studio/world/headquarters` | `/admin/headquarters` |
+| **Expedition Hub™** | Transform · Guide · Coach | `/admin/studio/world/expedition-hub` | `/admin/studio/expansion-center` |
 
 ---
 

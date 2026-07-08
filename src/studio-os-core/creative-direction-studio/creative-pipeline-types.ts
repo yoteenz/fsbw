@@ -1,4 +1,4 @@
-/** Creative Direction Studio™ — universal vision-first pipeline (Parallel Futures integration). */
+/** Creative Direction Studio™ output → Studio Warehouse™ input (Responsibility Framework™ pipeline). */
 
 import type { FutureTournamentResult, TournamentLearningRecord } from './future-tournament-types';
 
