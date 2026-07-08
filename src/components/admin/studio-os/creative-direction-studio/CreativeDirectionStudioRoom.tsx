@@ -19,6 +19,7 @@ import { DEPARTMENT_SLICE_STYLES } from '../department-vertical-slice/department
 import { CreativePipelineBoard } from './CreativePipelineBoard';
 import { SceneStackViewport } from './SceneStackViewport';
 import { StoryTableSurface } from './StoryTableSurface';
+import { ReviewChamberSurface } from './ReviewChamberSurface';
 import { StudioOrbHost } from './StudioOrbHost';
 import { CDS_GENESIS_INTERACTION_STYLES } from './cdsInteractionLayerTheme';
 import { CDS_IMMERSION_STYLES } from './cdsImmersionTheme';
@@ -75,9 +76,15 @@ export function CreativeDirectionStudioRoom() {
   );
   const orbInsight = useMemo(() => {
     const creativeLine = universal.orbPrimaryLine;
-    if (creativeLine && activeZoneId === 'story-table') return creativeLine;
+    if (creativeLine && (activeZoneId === 'story-table' || activeZoneId === 'review-chamber')) return creativeLine;
     return resolveDepartmentOrbAmbientInsight(slice.pkg, activeZoneId) ?? '';
   }, [slice.pkg, activeZoneId, universal.orbPrimaryLine]);
+
+  useEffect(() => {
+    if (universal.pipeline.reviewChamberActive) {
+      setActiveZoneId('review-chamber');
+    }
+  }, [universal.pipeline.reviewChamberActive]);
 
   const orbReviewSpeech = useMemo(() => {
     const stage = pipeline.activeReviewStage;
@@ -206,6 +213,29 @@ export function CreativeDirectionStudioRoom() {
                 stackBusy={stackButtonBusy}
                 moodPins={moodWall.wall.inspirations}
               />
+            </div>
+          </>
+        );
+
+      case 'review-chamber':
+        return (
+          <>
+            <div
+              className="cds-genesis__hotspot cds-genesis__hotspot--ghost"
+              style={hotspotStyle(hotspots.orb ?? { left: '30%', top: '6%', width: '40%', height: '16%' })}
+            >
+              <StudioOrbHost
+                greeting="Chairman of the Review Board™"
+                guidance="Inspect finalists · compare tradeoffs · you retain final authority."
+                insight={orbInsight ?? ''}
+                pipelineActive={false}
+              />
+            </div>
+            <div
+              className="cds-genesis__hotspot cds-genesis__hotspot--ghost cds-review-chamber__embed"
+              style={hotspotStyle({ left: '4%', top: '18%', width: '92%', height: '72%' })}
+            >
+              <ReviewChamberSurface universal={universal} />
             </div>
           </>
         );
@@ -409,7 +439,9 @@ export function CreativeDirectionStudioRoom() {
           >
             {CDS_CAMERA_ZONES.map((zone) => {
               const locked = zone.requiresArrival && !arrivalComplete;
-              const zoneLayers = stack.getLayerViews(zone.id);
+              const stackZoneId: CdsCameraZoneId =
+                zone.id === 'review-chamber' ? 'story-table' : zone.id;
+              const zoneLayers = stack.getLayerViews(stackZoneId);
               return (
                 <section
                   key={zone.id}
@@ -418,9 +450,11 @@ export function CreativeDirectionStudioRoom() {
                 >
                   <SceneStackViewport
                     layers={zoneLayers}
-                    status={stack.getCompositeStatus(zone.id)}
+                    status={stack.getCompositeStatus(stackZoneId)}
                     stationLabel={zone.label}
-                    immersiveProfile={zone.id === 'story-table' ? 'story-table' : 'default'}
+                    immersiveProfile={
+                      zone.id === 'story-table' || zone.id === 'review-chamber' ? 'story-table' : 'default'
+                    }
                     parallaxStyle={zone.id === activeZoneId ? immersion.parallaxStyle : undefined}
                     pipeline={
                       zone.id === activeZoneId ? stack.getStationPipelineProgress(zone.id) : undefined

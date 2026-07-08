@@ -3,6 +3,7 @@
 export type CdsCameraZoneId =
   | 'arrival'
   | 'story-table'
+  | 'review-chamber'
   | 'mood-wall'
   | 'founder-notes'
   | 'pipeline-board'
@@ -36,10 +37,18 @@ export const CDS_CAMERA_ZONES: CdsCameraZone[] = [
     teaching: 'Studio Orb hosts above the table — speak your creative intent.',
   },
   {
+    id: 'review-chamber',
+    label: 'Review Chamber™',
+    shortLabel: 'Review',
+    index: 2,
+    requiresArrival: true,
+    teaching: 'Future Tournament™ finalists — holographic executive presentation room.',
+  },
+  {
     id: 'mood-wall',
     label: 'Living Mood Wall™',
     shortLabel: 'Mood Wall',
-    index: 2,
+    index: 3,
     requiresArrival: true,
     teaching: 'Double-height wall — pin inspiration and shape editorial direction.',
   },
@@ -47,7 +56,7 @@ export const CDS_CAMERA_ZONES: CdsCameraZone[] = [
     id: 'founder-notes',
     label: 'Founder Notes™',
     shortLabel: 'Notes Desk',
-    index: 3,
+    index: 4,
     requiresArrival: true,
     teaching: 'Illuminated desk — capture decisions before they fade.',
   },
@@ -55,7 +64,7 @@ export const CDS_CAMERA_ZONES: CdsCameraZone[] = [
     id: 'pipeline-board',
     label: 'Creative Pipeline™',
     shortLabel: 'Pipeline',
-    index: 4,
+    index: 5,
     requiresArrival: true,
     teaching: 'Production board on the wall — approve each Golden Build™ stage.',
   },
@@ -63,7 +72,7 @@ export const CDS_CAMERA_ZONES: CdsCameraZone[] = [
     id: 'reference-library',
     label: 'Reference Library™',
     shortLabel: 'Library',
-    index: 5,
+    index: 6,
     requiresArrival: true,
     teaching: 'Shelving gallery — pull references into the Mood Wall.',
   },

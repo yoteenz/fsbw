@@ -42421,7 +42421,6 @@ User **FOLLOW-UP SPRINT — Future Merge™ (Intelligent Future Synthesis Engine
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-08 — Scene Stack quality degradation fix (reference-only layering)
 
 User reported Scene Assembly™ degrades quality with each stacked layer — each FAL pass was re-encoding all prior layers instead of using them only as placement reference; finished scenes lost significant fidelity.
@@ -42432,7 +42431,9 @@ User reported Scene Assembly™ degrades quality with each stacked layer — eac
 - **Fix — generation API (`studioBuilderGeneration.ts`):** Single shell placement URL max; **marble anchor only when no placement ref** (shell genesis) — no marble + shell combo on layered passes.
 - **Regen note:** Existing stations with degraded layers should **regenerate layers** (especially landmark/furniture after shell) to get isolated plates; shell can stay if still sharp.
 - **Prior arc (same chat):** Studio World V4 · React #306 fix · Studio Archives™ · Cost HUD · Executive Atrium · Atlas phases.
-=======
+
+---
+
 ## 2026-07-08 — Creative Direction Studio™ Parallel Futures Integration™ universal vision-first pipeline
 
 User **FOLLOW-UP SPRINT — Creative Direction Studio™ Parallel Futures Integration™:** Parallel Futures™ must become Studio OS's universal creative workflow inside CDS — not Atlas-only. Replace prompt→generate→approve with Founder Intent™ → Story Table™ → Parallel Futures™ → Future Merge™ → Concept Approval™ → Scene Deconstruction™ → Asset Registry™ → Warehouse™ → Scene Assembly™ → Golden Build™.
@@ -42446,4 +42447,3 @@ User **FOLLOW-UP SPRINT — Creative Direction Studio™ Parallel Futures Integr
 - **Docs:** `docs/studio-os/creative-direction-studio-parallel-futures-integration.md`.
 - **Boundaries:** heuristic/demo — not live FAL generation or Warehouse API writes on approve; extends CDS room without redesign.
 - **Prior arc (same chat):** Atlas Future Merge™ Phase 5 · Parallel Futures™ · Master Planner™ · Orb Recommendations™.
->>>>>>> 2ef2c4db (CDS Parallel Futures Integration: universal vision-first creative pipeline)

@@ -10,8 +10,11 @@ import { defaultConceptMergeRecipe, executeConceptMerge } from './concept-merge'
 import { deconstructApprovedConcept } from './concept-deconstruction';
 import { analyzeConceptAssetReuse } from './concept-reuse';
 import { unlockProductionPipelineAfterConceptApproval } from '../studio-builder/approval-pipeline-store';
+import { runFutureTournament } from './future-tournament';
+import { defaultTournamentLearning, recordTournamentLearning } from './future-tournament-learning';
 
-const STORAGE_KEY = 'studioOsCreativeUniversalPipeline_v1';
+const STORAGE_KEY = 'studioOsCreativeUniversalPipeline_v2';
+const LEGACY_V1_KEY = 'studioOsCreativeUniversalPipeline_v1';
 export const CREATIVE_UNIVERSAL_PIPELINE_EVENT = 'studio-os-creative-universal-pipeline';
 
 type Store = { pipelines: CreativeUniversalPipelineRecord[] };
@@ -32,21 +35,71 @@ function writeStore(store: Store): void {
   dispatch();
 }
 
-function pipelineKey(departmentId: string, projectId: string): string {
-  return `${departmentId}::${projectId}`;
+function migrateV1(raw: unknown): CreativeUniversalPipelineRecord {
+  const v1 = raw as CreativeUniversalPipelineRecord & { version?: number };
+  const concepts = v1.concepts ?? buildDefaultCreativeConcepts();
+  const tournamentResult = runFutureTournament(concepts, defaultTournamentLearning());
+  const finalistId = tournamentResult.finalistIds[0] ?? concepts[0]?.id ?? null;
+  return {
+    version: 2,
+    departmentId: v1.departmentId,
+    projectId: v1.projectId,
+    phase: v1.approvedConceptId ? v1.phase : 'future-tournament',
+    founderIntent: v1.founderIntent ?? '',
+    concepts,
+    activeConceptId: finalistId,
+    mergeLabActive: v1.mergeLabActive ?? false,
+    activeMergeRecipe: v1.activeMergeRecipe ?? null,
+    mergeDraftConceptId: v1.mergeDraftConceptId ?? null,
+    approvedConceptId: v1.approvedConceptId ?? null,
+    approvedAt: v1.approvedAt ?? null,
+    deconstructionLayers: v1.deconstructionLayers ?? [],
+    warehouseAssetsAdded: v1.warehouseAssetsAdded ?? 0,
+    assetReuseSummary: v1.assetReuseSummary ?? null,
+    goldenBuildCertified: v1.goldenBuildCertified ?? false,
+    tournamentResult,
+    tournamentLearning: defaultTournamentLearning(),
+    reviewChamberActive: false,
+    history: v1.history ?? [],
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+function loadPipelineFromStorage(
+  departmentId: string,
+  projectId: string
+): CreativeUniversalPipelineRecord | null {
+  const store = readStore();
+  const hit = store.pipelines.find((p) => p.departmentId === departmentId && p.projectId === projectId);
+  if (hit) return hit;
+
+  const legacy = readStudioOsJson(LEGACY_V1_KEY, () => ({ pipelines: [] as CreativeUniversalPipelineRecord[] }));
+  const legacyHit = legacy.pipelines?.find(
+    (p) => p.departmentId === departmentId && p.projectId === projectId
+  );
+  if (!legacyHit) return null;
+
+  const migrated = migrateV1(legacyHit);
+  store.pipelines.push(migrated);
+  writeStore(store);
+  return migrated;
 }
 
 function createPipeline(departmentId: string, projectId: string, founderIntent = ''): CreativeUniversalPipelineRecord {
   const concepts = buildDefaultCreativeConcepts(founderIntent);
+  const learning = defaultTournamentLearning();
+  const tournamentResult = runFutureTournament(concepts, learning);
   const now = new Date().toISOString();
+  const activeConceptId = tournamentResult.finalistIds[0] ?? concepts[0]?.id ?? null;
+
   return {
-    version: 1,
+    version: 2,
     departmentId,
     projectId,
-    phase: concepts.length ? 'parallel-futures' : 'founder-intent',
+    phase: 'future-tournament',
     founderIntent,
     concepts,
-    activeConceptId: concepts[0]?.id ?? null,
+    activeConceptId,
     mergeLabActive: false,
     activeMergeRecipe: null,
     mergeDraftConceptId: null,
@@ -56,11 +109,14 @@ function createPipeline(departmentId: string, projectId: string, founderIntent =
     warehouseAssetsAdded: 0,
     assetReuseSummary: null,
     goldenBuildCertified: false,
+    tournamentResult,
+    tournamentLearning: learning,
+    reviewChamberActive: false,
     history: [
       {
         at: now,
-        label: 'Story Table™',
-        detail: `${concepts.length} complete Scene Stack™ concepts generated — nothing deconstructed yet`,
+        label: 'Future Tournament™',
+        detail: `${concepts.length} concepts judged · ${tournamentResult.finalistIds.length} finalists advance to Review Chamber™`,
       },
     ],
     updatedAt: now,
@@ -71,13 +127,21 @@ export function getCreativeUniversalPipeline(
   departmentId: string,
   projectId: string
 ): CreativeUniversalPipelineRecord {
-  const store = readStore();
-  const existing = store.pipelines.find(
-    (p) => p.departmentId === departmentId && p.projectId === projectId
-  );
-  if (existing) return existing;
+  const existing = loadPipelineFromStorage(departmentId, projectId);
+  if (existing) {
+    if (!existing.tournamentResult && existing.concepts.length) {
+      const tournamentResult = runFutureTournament(existing.concepts, existing.tournamentLearning);
+      return updatePipeline(departmentId, projectId, {
+        tournamentResult,
+        phase: existing.approvedConceptId ? existing.phase : 'future-tournament',
+        activeConceptId: tournamentResult.finalistIds[0] ?? existing.activeConceptId,
+      });
+    }
+    return existing;
+  }
 
   const created = createPipeline(departmentId, projectId);
+  const store = readStore();
   store.pipelines.push(created);
   writeStore(store);
   return created;
@@ -98,6 +162,7 @@ function updatePipeline(
   const next: CreativeUniversalPipelineRecord = {
     ...base,
     ...patch,
+    version: 2,
     updatedAt: now,
     history: historyEntry
       ? [{ at: now, label: historyEntry.label, detail: historyEntry.detail }, ...base.history].slice(0, 24)
@@ -109,20 +174,84 @@ function updatePipeline(
   return next;
 }
 
+export function runFutureTournamentInStore(
+  departmentId: string,
+  projectId: string
+): CreativeUniversalPipelineRecord {
+  const pipeline = getCreativeUniversalPipeline(departmentId, projectId);
+  const tournamentResult = runFutureTournament(pipeline.concepts, pipeline.tournamentLearning);
+  return updatePipeline(
+    departmentId,
+    projectId,
+    {
+      tournamentResult,
+      phase: 'future-tournament',
+      activeConceptId: tournamentResult.finalistIds[0] ?? pipeline.activeConceptId,
+      reviewChamberActive: false,
+    },
+    {
+      label: 'Future Tournament™',
+      detail: `${tournamentResult.rounds.length} head-to-head rounds · finalists: ${tournamentResult.finalistIds.length}`,
+    }
+  );
+}
+
+export function enterReviewChamber(
+  departmentId: string,
+  projectId: string
+): CreativeUniversalPipelineRecord {
+  const pipeline = getCreativeUniversalPipeline(departmentId, projectId);
+  const activeConceptId = pipeline.tournamentResult?.finalistIds[0] ?? pipeline.activeConceptId;
+  return updatePipeline(
+    departmentId,
+    projectId,
+    { reviewChamberActive: true, phase: 'future-tournament', activeConceptId },
+    { label: 'Review Chamber™', detail: 'Executive presentation room — finalist holographic environments' }
+  );
+}
+
+export function exitReviewChamber(
+  departmentId: string,
+  projectId: string
+): CreativeUniversalPipelineRecord {
+  return updatePipeline(departmentId, projectId, { reviewChamberActive: false });
+}
+
+export function recordFounderTournamentDecision(
+  departmentId: string,
+  projectId: string,
+  action: import('./future-tournament-types').TournamentLearningRecord['founderOverrides'][0]['action'],
+  detail?: string,
+  conceptId?: string
+): CreativeUniversalPipelineRecord {
+  const pipeline = getCreativeUniversalPipeline(departmentId, projectId);
+  const concept = conceptId ? pipeline.concepts.find((c) => c.id === conceptId) : undefined;
+  const learning = recordTournamentLearning(
+    pipeline.tournamentLearning,
+    action,
+    detail,
+    conceptId,
+    concept?.archetype
+  );
+  return updatePipeline(departmentId, projectId, { tournamentLearning: learning });
+}
+
 export function setFounderIntent(
   departmentId: string,
   projectId: string,
   intent: string
 ): CreativeUniversalPipelineRecord {
   const concepts = buildDefaultCreativeConcepts(intent);
+  const tournamentResult = runFutureTournament(concepts, defaultTournamentLearning());
   return updatePipeline(
     departmentId,
     projectId,
     {
       founderIntent: intent,
       concepts,
-      activeConceptId: concepts[0]?.id ?? null,
-      phase: 'parallel-futures',
+      activeConceptId: tournamentResult.finalistIds[0] ?? concepts[0]?.id ?? null,
+      phase: 'future-tournament',
+      tournamentResult,
     },
     { label: 'Founder Intent™', detail: intent.slice(0, 120) }
   );
@@ -146,7 +275,13 @@ export function enterConceptMergeLab(
   projectId: string
 ): CreativeUniversalPipelineRecord {
   const pipeline = getCreativeUniversalPipeline(departmentId, projectId);
-  const recipe = defaultConceptMergeRecipe(pipeline.concepts.filter((c) => !c.isMerged));
+  const pool =
+    pipeline.tournamentResult?.finalistIds.length ?
+      pipeline.concepts.filter(
+        (c) => pipeline.tournamentResult!.finalistIds.includes(c.id) || !c.isMerged
+      )
+    : pipeline.concepts.filter((c) => !c.isMerged);
+  const recipe = defaultConceptMergeRecipe(pool);
   const merged = executeConceptMerge(recipe, pipeline.concepts);
   return updatePipeline(
     departmentId,
@@ -169,7 +304,7 @@ export function exitConceptMergeLab(
 ): CreativeUniversalPipelineRecord {
   return updatePipeline(departmentId, projectId, {
     mergeLabActive: false,
-    phase: 'parallel-futures',
+    phase: 'future-tournament',
   });
 }
 
@@ -222,6 +357,7 @@ export function approveCreativeConcept(
       deconstructionLayers: layers,
       warehouseAssetsAdded,
       assetReuseSummary: reuse.summary,
+      reviewChamberActive: false,
     },
     {
       label: 'Concept Approval™',
@@ -229,6 +365,7 @@ export function approveCreativeConcept(
     }
   );
 
+  recordFounderTournamentDecision(departmentId, projectId, 'pick-finalist', concept.tagline, concept.id);
   unlockProductionPipelineAfterConceptApproval(departmentId, projectId);
   return result;
 }
@@ -275,6 +412,13 @@ export function getApprovedCreativeConcept(
   return pipeline.concepts.find((c) => c.id === pipeline.approvedConceptId);
 }
 
+export function getTournamentFinalistConcepts(
+  pipeline: CreativeUniversalPipelineRecord
+): CreativeConceptFuture[] {
+  if (!pipeline.tournamentResult) return pipeline.concepts.filter((c) => !c.isMerged).slice(0, 2);
+  return pipeline.concepts.filter((c) => pipeline.tournamentResult!.finalistIds.includes(c.id));
+}
+
 export function listDeconstructionLayers(
   departmentId: string,
   projectId: string
@@ -282,4 +426,6 @@ export function listDeconstructionLayers(
   return getCreativeUniversalPipeline(departmentId, projectId).deconstructionLayers;
 }
 
-export { pipelineKey };
+export function pipelineKey(departmentId: string, projectId: string): string {
+  return `${departmentId}::${projectId}`;
+}

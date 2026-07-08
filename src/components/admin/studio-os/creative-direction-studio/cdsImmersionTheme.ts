@@ -624,6 +624,123 @@ export const CDS_IMMERSION_STYLES = `
   border-color: rgba(201, 169, 98, 0.55);
   color: #f0e6d0;
 }
+.cds-story-table__pf-card.is-eliminated {
+  opacity: 0.35;
+  text-decoration: line-through;
+  pointer-events: none;
+}
+
+/* Review Chamber™ */
+.cds-review-chamber__embed {
+  overflow-y: auto;
+  pointer-events: auto;
+}
+.cds-review-chamber {
+  width: 100%;
+  height: 100%;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  color: #e8e0d4;
+  font-size: 4px;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+}
+.cds-review-chamber__kicker {
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin: 0 0 4px;
+}
+.cds-review-chamber__title {
+  color: #c9a962;
+  font-size: 6px;
+  margin: 0 0 8px;
+}
+.cds-review-chamber__holo-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  min-height: 120px;
+}
+.cds-review-chamber__holo {
+  flex: 1;
+  position: relative;
+  padding: 10px;
+  border: 1px solid rgba(120, 200, 255, 0.35);
+  background: rgba(0, 0, 0, 0.5);
+  transform: perspective(800px) rotateY(var(--holo-rot, 0deg)) translateZ(20px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55);
+}
+.cds-review-chamber__holo.is-active {
+  border-color: rgba(201, 169, 98, 0.6);
+}
+.cds-review-chamber__holo-glow {
+  position: absolute;
+  inset: -4px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(120, 200, 255, 0.2), transparent 70%);
+  pointer-events: none;
+}
+.cds-review-chamber__holo-tag {
+  color: #c9a962;
+  font-size: 7px;
+  margin: 0 0 4px;
+}
+.cds-review-chamber__holo-label,
+.cds-review-chamber__holo-mood,
+.cds-review-chamber__holo-detail {
+  margin: 2px 0;
+  opacity: 0.85;
+}
+.cds-review-chamber__btn {
+  margin-top: 4px;
+  margin-right: 4px;
+  font-size: 3px;
+  text-transform: uppercase;
+  padding: 3px 6px;
+  border: 1px solid rgba(201, 169, 98, 0.35);
+  background: rgba(0, 0, 0, 0.45);
+  color: #c9a962;
+  cursor: pointer;
+}
+.cds-review-chamber__btn.is-primary {
+  border-color: rgba(201, 169, 98, 0.6);
+}
+.cds-review-chamber__championship {
+  margin: 8px 0;
+  padding: 6px 8px;
+  border: 1px solid rgba(201, 169, 98, 0.3);
+  background: rgba(201, 169, 98, 0.06);
+}
+.cds-review-chamber__championship.is-merge {
+  border-color: rgba(120, 200, 255, 0.4);
+}
+.cds-review-chamber__champ-title {
+  color: #c9a962;
+  margin: 0 0 4px;
+}
+.cds-review-chamber__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 6px;
+}
+.cds-review-chamber__bracket {
+  margin-top: 8px;
+  max-height: 48px;
+  overflow-y: auto;
+  opacity: 0.75;
+}
+.cds-review-chamber__round {
+  margin-bottom: 4px;
+}
+.cds-review-chamber__orb-panel {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(201, 169, 98, 0.15);
+}
+.cds-review-chamber__orb-line {
+  margin: 2px 0;
+  opacity: 0.88;
+}
 .cds-pipeline-vision-gate {
   border-color: rgba(120, 200, 255, 0.35) !important;
   color: rgba(200, 220, 255, 0.9) !important;

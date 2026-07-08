@@ -6,12 +6,15 @@ type Props = {
   universal: UniversalApi;
 };
 
-/** Parallel Futures™ + Future Merge™ on Story Table™ — complete Scene Stack concepts. */
+/** Parallel Futures™ + Future Tournament™ on Story Table™. */
 export function StoryTableParallelFutures({ universal }: Props) {
-  const { pipeline, activeConcept, conceptApproved } = universal;
-  const visionConcepts = pipeline.concepts.filter((c) => !c.isMerged || c.id === pipeline.mergeDraftConceptId);
+  const { pipeline, activeConcept, conceptApproved, finalistConcepts, finalistScores } = universal;
+  const tournament = pipeline.tournamentResult;
+  const displayConcepts = tournament
+    ? finalistConcepts
+    : pipeline.concepts.filter((c) => !c.isMerged || c.id === pipeline.mergeDraftConceptId);
 
-  if (conceptApproved && pipeline.phase !== 'parallel-futures' && pipeline.phase !== 'future-merge') {
+  if (conceptApproved && pipeline.phase !== 'parallel-futures' && pipeline.phase !== 'future-merge' && pipeline.phase !== 'future-tournament') {
     return (
       <div className="cds-story-table__pf cds-story-table__pf--approved">
         <p className="cds-story-table__pf-kicker">Concept Approval™</p>
@@ -29,23 +32,36 @@ export function StoryTableParallelFutures({ universal }: Props) {
   return (
     <div className="cds-story-table__pf" role="region" aria-label="Parallel Futures concepts">
       <p className="cds-story-table__pf-kicker">
-        {pipeline.mergeLabActive ? 'Future Merge™' : 'Parallel Futures™'}
+        {pipeline.mergeLabActive ? 'Future Merge™' : tournament ? 'Future Tournament™ · Finalists' : 'Parallel Futures™'}
       </p>
+
+      {tournament ? (
+        <p className="cds-story-table__pf-meta">
+          {tournament.rounds.length} rounds · {tournament.eliminatedIds.length} eliminated ·{' '}
+          {tournament.championship.recommendMerge ? 'Chairman recommends merge' : 'Finalists ready'}
+        </p>
+      ) : null}
+
       <div className="cds-story-table__pf-scroll">
-        {visionConcepts.slice(0, 6).map((concept) => (
-          <button
-            key={concept.id}
-            type="button"
-            className={`cds-story-table__pf-card${activeConcept?.id === concept.id ? ' is-active' : ''}${concept.isMerged ? ' is-merged' : ''}`}
-            onClick={() => universal.selectConcept(concept.id)}
-          >
-            <strong>{concept.tagline}</strong>
-            <span>{concept.label}</span>
-            <span className="cds-story-table__pf-metrics">
-              {concept.analysis.reusePct}% reuse · {concept.analysis.generationCostEstimate}
-            </span>
-          </button>
-        ))}
+        {displayConcepts.slice(0, 6).map((concept) => {
+          const score = finalistScores.find((s) => s.conceptId === concept.id)?.score;
+          return (
+            <button
+              key={concept.id}
+              type="button"
+              className={`cds-story-table__pf-card${activeConcept?.id === concept.id ? ' is-active' : ''}${concept.isMerged ? ' is-merged' : ''}${tournament?.eliminatedIds.includes(concept.id) ? ' is-eliminated' : ''}`}
+              onClick={() => universal.selectConcept(concept.id)}
+              disabled={tournament?.eliminatedIds.includes(concept.id)}
+            >
+              <strong>{concept.tagline}</strong>
+              <span>{concept.label}</span>
+              <span className="cds-story-table__pf-metrics">
+                {score != null ? `Score ${score} · ` : ''}
+                {concept.analysis.reusePct}% reuse · {concept.analysis.generationCostEstimate}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {pipeline.mergeLabActive && pipeline.activeMergeRecipe ? (
@@ -59,8 +75,17 @@ export function StoryTableParallelFutures({ universal }: Props) {
       ) : null}
 
       <div className="cds-story-table__pf-actions">
+        {!tournament ? (
+          <button type="button" className="cds-story-table__pf-btn is-primary" onClick={() => universal.runTournament()}>
+            RUN TOURNAMENT™
+          </button>
+        ) : (
+          <button type="button" className="cds-story-table__pf-btn is-primary" onClick={() => universal.openReviewChamber()}>
+            REVIEW CHAMBER™
+          </button>
+        )}
         {!pipeline.mergeLabActive ? (
-          <button type="button" className="cds-story-table__pf-btn is-primary" onClick={() => universal.openMergeLab()}>
+          <button type="button" className="cds-story-table__pf-btn" onClick={() => universal.openMergeLab()}>
             MERGE CONCEPTS™
           </button>
         ) : (

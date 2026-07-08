@@ -1,9 +1,12 @@
 /** Creative Direction Studio™ — universal vision-first pipeline (Parallel Futures integration). */
 
+import type { FutureTournamentResult, TournamentLearningRecord } from './future-tournament-types';
+
 export type CreativeUniversalPipelinePhase =
   | 'founder-intent'
   | 'story-table'
   | 'parallel-futures'
+  | 'future-tournament'
   | 'future-merge'
   | 'concept-approval'
   | 'scene-deconstruction'
@@ -101,7 +104,7 @@ export type CreativeDirectorOrbRecommendation = {
 };
 
 export type CreativeUniversalPipelineRecord = {
-  version: 1;
+  version: 2;
   departmentId: string;
   projectId: string;
   phase: CreativeUniversalPipelinePhase;
@@ -117,6 +120,9 @@ export type CreativeUniversalPipelineRecord = {
   warehouseAssetsAdded: number;
   assetReuseSummary: string | null;
   goldenBuildCertified: boolean;
+  tournamentResult: FutureTournamentResult | null;
+  tournamentLearning: TournamentLearningRecord;
+  reviewChamberActive: boolean;
   history: Array<{ at: string; label: string; detail: string }>;
   updatedAt: string;
 };
@@ -125,6 +131,7 @@ export const CREATIVE_UNIVERSAL_PIPELINE_LABELS: Record<CreativeUniversalPipelin
   'founder-intent': 'Founder Intent™',
   'story-table': 'Story Table™',
   'parallel-futures': 'Parallel Futures™',
+  'future-tournament': 'Future Tournament™',
   'future-merge': 'Future Merge™',
   'concept-approval': 'Concept Approval™',
   'scene-deconstruction': 'Scene Deconstruction™',
@@ -138,6 +145,7 @@ export const CREATIVE_UNIVERSAL_PIPELINE_ORDER: CreativeUniversalPipelinePhase[]
   'founder-intent',
   'story-table',
   'parallel-futures',
+  'future-tournament',
   'future-merge',
   'concept-approval',
   'scene-deconstruction',

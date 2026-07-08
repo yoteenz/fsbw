@@ -2,20 +2,29 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   approveCreativeConcept,
   advanceCreativePipelinePhase,
+  buildChairmanOrbRecommendations,
   buildCreativeDirectorOrbRecommendations,
   CREATIVE_UNIVERSAL_PIPELINE_EVENT,
   CREATIVE_UNIVERSAL_PIPELINE_LABELS,
   CREATIVE_UNIVERSAL_PIPELINE_ORDER,
   enterConceptMergeLab,
+  enterReviewChamber,
   exitConceptMergeLab,
+  exitReviewChamber,
   formatConceptAnalysisLines,
+  formatHeadToHeadReplay,
   formatReuseLines,
+  finalistCompositeScores,
   getActiveCreativeConcept,
   getApprovedCreativeConcept,
   getCreativeUniversalPipeline,
+  getTournamentFinalistConcepts,
   isConceptApprovedForProduction,
+  primaryChairmanLine,
   primaryOrbCreativeDirectorLine,
+  recordFounderTournamentDecision,
   runConceptMerge,
+  runFutureTournamentInStore,
   selectCreativeConcept,
   setFounderIntent,
   deconstructionSummaryLines,
@@ -40,6 +49,7 @@ export function useCreativeUniversalPipeline(departmentId: string, projectId: st
 
   const activeConcept = useMemo(() => getActiveCreativeConcept(pipeline), [pipeline]);
   const approvedConcept = useMemo(() => getApprovedCreativeConcept(pipeline), [pipeline]);
+  const finalistConcepts = useMemo(() => getTournamentFinalistConcepts(pipeline), [pipeline]);
   const conceptApproved = useMemo(
     () => isConceptApprovedForProduction(departmentId, projectId),
     [departmentId, projectId, tick]
@@ -50,20 +60,50 @@ export function useCreativeUniversalPipeline(departmentId: string, projectId: st
     return analyzeConceptAssetReuse(projectId, approvedConcept);
   }, [approvedConcept, projectId]);
 
+  const chairmanLines = useMemo(
+    () =>
+      buildChairmanOrbRecommendations(
+        pipeline.tournamentResult,
+        pipeline.concepts,
+        pipeline.tournamentLearning
+      ),
+    [pipeline.tournamentResult, pipeline.concepts, pipeline.tournamentLearning]
+  );
+
   const orbRecommendations = useMemo(
     () =>
-      buildCreativeDirectorOrbRecommendations(
-        pipeline.concepts,
-        activeConcept,
-        reuseAnalysis,
-        pipeline.mergeLabActive
-      ),
-    [pipeline.concepts, activeConcept, reuseAnalysis, pipeline.mergeLabActive]
+      pipeline.tournamentResult
+        ? chairmanLines
+        : buildCreativeDirectorOrbRecommendations(
+            pipeline.concepts,
+            activeConcept,
+            reuseAnalysis,
+            pipeline.mergeLabActive
+          ),
+    [pipeline.tournamentResult, chairmanLines, pipeline.concepts, activeConcept, reuseAnalysis, pipeline.mergeLabActive]
   );
 
   const orbPrimaryLine = useMemo(
-    () => primaryOrbCreativeDirectorLine(orbRecommendations),
-    [orbRecommendations]
+    () =>
+      pipeline.tournamentResult
+        ? primaryChairmanLine(chairmanLines)
+        : primaryOrbCreativeDirectorLine(
+            buildCreativeDirectorOrbRecommendations(
+              pipeline.concepts,
+              activeConcept,
+              reuseAnalysis,
+              pipeline.mergeLabActive
+            )
+          ),
+    [pipeline.tournamentResult, chairmanLines, pipeline.concepts, activeConcept, reuseAnalysis, pipeline.mergeLabActive]
+  );
+
+  const finalistScores = useMemo(
+    () =>
+      pipeline.tournamentResult
+        ? finalistCompositeScores(pipeline.tournamentResult, pipeline.concepts)
+        : [],
+    [pipeline.tournamentResult, pipeline.concepts]
   );
 
   const phaseIndex = CREATIVE_UNIVERSAL_PIPELINE_ORDER.indexOf(pipeline.phase);
@@ -85,6 +125,21 @@ export function useCreativeUniversalPipeline(departmentId: string, projectId: st
     [bump, departmentId, projectId]
   );
 
+  const runTournament = useCallback(() => {
+    runFutureTournamentInStore(departmentId, projectId);
+    bump();
+  }, [bump, departmentId, projectId]);
+
+  const openReviewChamber = useCallback(() => {
+    enterReviewChamber(departmentId, projectId);
+    bump();
+  }, [bump, departmentId, projectId]);
+
+  const closeReviewChamber = useCallback(() => {
+    exitReviewChamber(departmentId, projectId);
+    bump();
+  }, [bump, departmentId, projectId]);
+
   const openMergeLab = useCallback(() => {
     enterConceptMergeLab(departmentId, projectId);
     bump();
@@ -97,6 +152,7 @@ export function useCreativeUniversalPipeline(departmentId: string, projectId: st
 
   const mergeConcepts = useCallback(() => {
     runConceptMerge(departmentId, projectId);
+    recordFounderTournamentDecision(departmentId, projectId, 'request-merge', 'Chairman merge path');
     bump();
   }, [bump, departmentId, projectId]);
 
@@ -107,6 +163,23 @@ export function useCreativeUniversalPipeline(departmentId: string, projectId: st
     },
     [bump, departmentId, projectId]
   );
+
+  const acceptChairmanRecommendation = useCallback(() => {
+    const t = pipeline.tournamentResult;
+    if (!t) return;
+    recordFounderTournamentDecision(departmentId, projectId, 'accept-chairman', t.championship.chairmanSummary);
+    if (t.championship.recommendMerge) {
+      enterConceptMergeLab(departmentId, projectId);
+    } else if (t.championship.clearWinnerId) {
+      selectCreativeConcept(departmentId, projectId, t.championship.clearWinnerId);
+    }
+    bump();
+  }, [bump, departmentId, projectId, pipeline.tournamentResult]);
+
+  const rejectChairmanRecommendation = useCallback(() => {
+    recordFounderTournamentDecision(departmentId, projectId, 'reject-chairman', 'Founder override');
+    bump();
+  }, [bump, departmentId, projectId]);
 
   const advancePhase = useCallback(
     (phase: CreativeUniversalPipelinePhase) => {
@@ -120,21 +193,30 @@ export function useCreativeUniversalPipeline(departmentId: string, projectId: st
     pipeline,
     activeConcept,
     approvedConcept,
+    finalistConcepts,
+    finalistScores,
     conceptApproved,
     reuseAnalysis,
+    chairmanLines,
     orbRecommendations,
     orbPrimaryLine,
     phaseLabel: CREATIVE_UNIVERSAL_PIPELINE_LABELS[pipeline.phase],
     phaseProgressPct,
     formatConceptAnalysisLines,
     formatReuseLines,
+    formatHeadToHeadReplay,
     deconstructionSummaryLines,
     updateIntent,
     selectConcept,
+    runTournament,
+    openReviewChamber,
+    closeReviewChamber,
     openMergeLab,
     closeMergeLab,
     mergeConcepts,
     approveConcept,
+    acceptChairmanRecommendation,
+    rejectChairmanRecommendation,
     advancePhase,
     refresh: bump,
   };
