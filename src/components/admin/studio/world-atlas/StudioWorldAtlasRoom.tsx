@@ -239,7 +239,7 @@ export function StudioWorldAtlasRoom() {
             ←
           </button>
           <div className="swa__title-block">
-            <p className="swa__eyebrow">STUDIO COMMAND CENTER™ · EXECUTIVE ATRIUM™</p>
+            <p className="swa__eyebrow">STUDIO COMMAND CENTER™ · GLOBAL ATLAS LAYER™</p>
             <p className="swa__title">STUDIO WORLD ATLAS™</p>
             <p className="swa__zoom">
               {showFutureMerge

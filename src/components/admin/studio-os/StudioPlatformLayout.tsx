@@ -9,6 +9,7 @@ import { STUDIO_OS_UPPERCASE_CLASS, ADMIN_STUDIO_THEME } from '../../../utils/ad
 import { ADMIN_STUDIO_MAIN_CARD_CLASS, ADMIN_STUDIO_SCROLL_BODY_CLASS } from '../../../layouts/menuToggleHeights';
 import { shouldShowCommandDock } from '../studio/command-dock/CommandDock';
 import { StudioOrbMount, StudioOrbProvider, useStudioOrbEnvironmentActive } from '../studio/studio-orb/StudioOrbShell';
+import { GlobalAtlasProvider } from '../studio/global-atlas';
 import { STUDIO_OS_PLATFORM } from '../../../studio-os-core/config/platform';
 
 function StudioOrbEnvironment({ children }: { children: ReactNode }) {
@@ -59,6 +60,7 @@ export function StudioPlatformLayout({
 
   return (
     <StudioOrbProvider>
+    <GlobalAtlasProvider>
     <div className={`min-h-screen ${STUDIO_OS_UPPERCASE_CLASS}`} style={{ position: 'relative' }}>
       <div
         className="fixed inset-0 -z-10"
@@ -169,6 +171,7 @@ export function StudioPlatformLayout({
       </StudioOrbEnvironment>
       {shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
     </div>
+    </GlobalAtlasProvider>
     </StudioOrbProvider>
   );
 }

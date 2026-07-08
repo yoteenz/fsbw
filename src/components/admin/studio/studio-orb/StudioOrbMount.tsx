@@ -9,6 +9,7 @@ import { StudioOrbVoicePanel } from './StudioOrbVoicePanel';
 import { StudioOrbRecommendationsPanel } from './StudioOrbRecommendationsPanel';
 import { StudioOrbDailyBriefOverlay } from './StudioOrbDailyBriefOverlay';
 import { CommandDockConversationPanel } from '../command-dock/CommandDock';
+import { GlobalAtlasLayer } from '../global-atlas/GlobalAtlasLayer';
 import { measureOrbCenterFromDom } from './studioOrbRadialLayout';
 
 export function StudioOrbMount() {
@@ -35,6 +36,7 @@ export function StudioOrbMount() {
         <StudioOrbRadialMenu orbCenterX={menuAnchor.x} orbCenterY={menuAnchor.y} />
       ) : null}
       <StudioOrb onOrbTap={handleOrbTap} />
+      <GlobalAtlasLayer />
     </>
   );
 }

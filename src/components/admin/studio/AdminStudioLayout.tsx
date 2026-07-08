@@ -27,6 +27,7 @@ import { resolveOrganizationMissionControlPath } from '../../../studio-os-core/w
 import { WorkspaceSwitcher } from '../studio-os/WorkspaceSwitcher';
 import { shouldShowCommandDock } from './command-dock/CommandDock';
 import { StudioOrbMount, StudioOrbProvider, useStudioOrbEnvironmentActive } from './studio-orb/StudioOrbShell';
+import { GlobalAtlasProvider } from './global-atlas';
 import { useSyncWorkspaceFromRoute } from '../../../hooks/useSyncWorkspaceFromRoute';
 import { AdminStudioSearchResultsPanel } from './AdminStudioSearchResultsPanel';
 import { searchStudioModules } from '../../../utils/adminStudioSearch';
@@ -169,6 +170,7 @@ export function AdminStudioLayout({
 
   return (
     <StudioOrbProvider>
+    <GlobalAtlasProvider>
     <StudioKnowledgeProvider>
     <StudioManualBridge>
     <StudioOrbEnvironment>
@@ -332,6 +334,7 @@ export function AdminStudioLayout({
     {workspace.studioEnabled && shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
     </StudioManualBridge>
     </StudioKnowledgeProvider>
+    </GlobalAtlasProvider>
     </StudioOrbProvider>
   );
 }

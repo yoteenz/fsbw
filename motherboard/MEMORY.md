@@ -42483,8 +42483,7 @@ User **FOLLOW-UP SPRINT:** Harden Scene Assembly™ so quality degradation never
 - **Hook exports:** `getStationBlueprint`, `getStationSceneGraph`, `planStationCleanRegeneration`, `cleanRegenerateStation`, `exportStationScene`.
 - **Types:** `SCENE_ASSEMBLY_LAW_VERSION`, `MASTER_SCENE_BLUEPRINT_VERSION`, `SCENE_STACK_PROMPT_VERSION` → `scene-stack.v2`, layer records store `blueprintId`, `assemblyLawVersion`, `qualityStatus`, `qualityIssues`.
 - **Docs:** `docs/studio-os/scene-stack/quality-preservation-law.md`.
-<<<<<<< HEAD
-- **Prior arc (same chat):** First degradation fix · Studio World/Atlas sprints · Executive Atrium · Cost HUD.
+- **Prior arc (same chat):** First degradation fix · CDS Parallel Futures · Studio World/Atlas · Executive Atrium · Cost HUD.
 
 ---
 
@@ -42518,6 +42517,29 @@ User **FOLLOW-UP SPRINT — Studio World Constitution™:** Studio World complex
 - **Boundaries:** heuristic constitutional review — extends Command Center, no redesign of other flagships.
 - **Prior arc (same chat):** Responsibility Framework™ seven flagships · Future Tournament™ · CDS pipeline · Atlas phases.
 
-=======
-- **Prior arc (same chat):** First degradation fix · CDS Parallel Futures · Studio World/Atlas · Executive Atrium · Cost HUD.
->>>>>>> 0237e79a (Add Studio World Knowledge System architectural proposal (documentation-first pivot))
+---
+
+## 2026-07-08 — Studio World Knowledge System™ architectural proposal (documentation-first)
+
+User **documentation-first pivot:** Studio World has outgrown scattered markdown as institutional memory. Propose unified **Knowledge System™** — operating system for canon, not another doc pile — before implementing Expansion Blueprint Layers 4–13.
+
+- **Doc:** `docs/studio-os/knowledge-system/STUDIO_WORLD_KNOWLEDGE_SYSTEM_ARCHITECTURE.md` — challenges flat layer stack; unifies six overlapping knowledge layers (~977 `docs/studio-os/` files, Master Spec, Registry, Memory Bible, Profession Brain, motherboard, Interactive Manual).
+- **Core proposal:** Knowledge Core (schema + registry + graph + lifecycle + query) → Bible Volume I publication → immersive Knowledge Library™ in Archives → Orb Archivist™.
+- **Adds:** Knowledge Constitution™ · Canonical ID Registry™ (`K-ID`) · Implementation Status Plane™ · Build Order DAG™ · ingress/egress contract for code/docs/genomes/agent memory.
+- **Status:** proposal v0.1.0 — awaiting founder approval; no runtime implementation in this sprint.
+- **Prior arc (same chat):** Constitution™ · Responsibility Framework™ · Scene Stack quality hardening · CDS Future Tournament™.
+
+---
+
+## 2026-07-08 — Global Atlas Layer™ OS navigation fabric
+
+User **FOLLOW-UP SPRINT — Global Atlas Layer™:** Atlas is no longer only a destination — it becomes part of the operating system. One interaction away everywhere; one living Atlas projected from native anchors; current location auto-highlighted; live world (room stays visible).
+
+- **Engine `src/studio-os-core/global-atlas-layer/`:** `anchors.ts` (Atlas Anchor™ per workspace — Story Table, warehouse floor, museum exhibit, pavilion, etc.) · `location-resolver.ts` (pathname → atlas node + breadcrumb) · `context.ts` (CDS/HQ/Archives-adaptive priorities) · `shortcuts.ts` (recent, frequent, continue, recommended) · `store.ts` (`studioOsGlobalAtlasLayer_v1`) · `orb-atlas-guide.ts` (parse "Take me to…" intents).
+- **UI `GlobalAtlasProvider` + `GlobalAtlasLayer`:** holographic overlay — location ribbon, markers, shortcuts, travel modes, cinematic transitions; `Ctrl/Cmd+Shift+A` toggle.
+- **Universal mount:** `AdminStudioLayout` · `StudioPlatformLayout` · `DepartmentGoldenBuildShell` (immersive rooms get Orb + Global Atlas); `StudioOrbMount` renders layer; Orb radial **World Atlas** (🌐) opens layer.
+- **One Atlas:** same catalog/travel as full Observatory; `/admin/studio/world-atlas` remains canonical table (HUD notes Global Layer).
+- **Docs:** `docs/studio-os/global-atlas-layer.md`.
+- **Boundaries:** overlay navigation fabric — extends Atlas/Orb, no room redesign.
+- **Prior arc (same chat):** Knowledge System proposal · Constitution Hall™ · Responsibility Framework™ seven flagships · Future Tournament™ · Scene Stack quality hardening.
+

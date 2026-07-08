@@ -29,6 +29,7 @@ export type StudioOrbRadialActionId =
   | 'life-culture'
   | 'notifications'
   | 'voice'
+  | 'world-atlas'
   | 'search'
   | 'presentation'
   | 'founder-mode'
@@ -52,6 +53,7 @@ export const STUDIO_ORB_RADIAL_ACTIONS: StudioOrbRadialAction[] = [
   { id: 'life-culture', label: 'Life & Culture', icon: '✦', enabled: true },
   { id: 'notifications', label: 'Daily Brief', icon: '🔔', enabled: true },
   { id: 'voice', label: 'Voice Mode', icon: '🎙', enabled: true },
+  { id: 'world-atlas', label: 'World Atlas', icon: '🌐', enabled: true },
   { id: 'search', label: 'Search', icon: '🔍', enabled: false, hint: 'Soon' },
   { id: 'presentation', label: 'Presentation', icon: '◻', enabled: false, hint: 'Soon' },
   { id: 'founder-mode', label: 'Founder Mode', icon: '★', enabled: false, hint: 'Soon' },

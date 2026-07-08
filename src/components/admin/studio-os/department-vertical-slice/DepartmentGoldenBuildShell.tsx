@@ -1,7 +1,11 @@
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
+import { shouldShowCommandDock } from '../../studio/command-dock/CommandDock';
+import { GlobalAtlasProvider } from '../../studio/global-atlas';
+import { StudioOrbMount } from '../../studio/studio-orb/StudioOrbMount';
+import { StudioOrbProvider } from '../../studio/studio-orb/StudioOrbProvider';
 
 type Props = {
   children: ReactNode;
@@ -9,10 +13,11 @@ type Props = {
 
 /**
  * Full-viewport immersive shell — escapes admin document flow.
- * Locks body scroll; department canvas is the entire screen.
+ * Includes Studio Orb™ + Global Atlas Layer™ for universal navigation.
  */
 export function DepartmentGoldenBuildShell({ children }: Props) {
   useRequireAdminPageAccess();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const html = document.documentElement;
@@ -30,22 +35,27 @@ export function DepartmentGoldenBuildShell({ children }: Props) {
   }, []);
 
   return (
-    <div
-      className="gb-immersive-portal"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 200,
-        width: '100vw',
-        height: '100dvh',
-        overflow: 'hidden',
-        background: '#12100e',
-      }}
-      role="application"
-      aria-label="Studio OS department room"
-    >
-      {children}
-    </div>
+    <StudioOrbProvider>
+      <GlobalAtlasProvider>
+        <div
+          className="gb-immersive-portal"
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 200,
+            width: '100vw',
+            height: '100dvh',
+            overflow: 'hidden',
+            background: '#12100e',
+          }}
+          role="application"
+          aria-label="Studio OS department room"
+        >
+          {children}
+        </div>
+        {shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
+      </GlobalAtlasProvider>
+    </StudioOrbProvider>
   );
 }
 

@@ -8,12 +8,13 @@ import {
 } from './studioOrbRadialLayout';
 import { orbLabel, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
+import { useGlobalAtlasLayerOptional } from '../global-atlas';
 
 const PRIMARY_ACTIONS: StudioOrbRadialActionId[] = [
+  'world-atlas',
   'command-dock',
   'notifications',
   'page-guide',
-  'life-culture',
   'voice',
 ];
 
@@ -39,6 +40,7 @@ const itemShellStyle = {
 export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
   const { radialOpen, closeRadial, openCommandDock, openPageGuide, openLifeCulture, openVoiceMode, openRecommendations } =
     useStudioOrb();
+  const globalAtlas = useGlobalAtlasLayerOptional();
   const enabledActions = STUDIO_ORB_RADIAL_ACTIONS.filter((a) => a.enabled && PRIMARY_ACTIONS.includes(a.id));
 
   const [layout, setLayout] = useState<RadialMenuLayout>(() =>
@@ -74,7 +76,10 @@ export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
   if (!radialOpen) return null;
 
   const handleAction = (id: StudioOrbRadialActionId) => {
-    if (id === 'command-dock') openCommandDock();
+    if (id === 'world-atlas') {
+      globalAtlas?.openAtlas();
+      closeRadial();
+    } else if (id === 'command-dock') openCommandDock();
     else if (id === 'notifications') openRecommendations();
     else if (id === 'page-guide') openPageGuide();
     else if (id === 'life-culture') openLifeCulture();
