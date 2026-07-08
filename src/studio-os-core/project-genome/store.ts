@@ -11,6 +11,7 @@ export type ProjectGenomeRecord = {
   northStar: string;
   tone: string[];
   activeBranchName?: string;
+  creativeDirectionNotes?: string[];
   updatedAt: string;
 };
 
@@ -61,4 +62,23 @@ export function getProjectGenome(departmentId: string, projectId: string): Proje
 export function resolveActiveProjectGenome(departmentId: string): ProjectGenomeRecord {
   const pkg = requireDepartmentPackage(departmentId);
   return ensureProjectGenome(departmentId, pkg.productionGroups.defaultProject.id);
+}
+
+export function appendProjectCreativeDirection(
+  departmentId: string,
+  projectId: string,
+  note: string
+): ProjectGenomeRecord {
+  const key = scopeKey(departmentId, projectId);
+  const record = ensureProjectGenome(departmentId, projectId);
+  const existing = record.creativeDirectionNotes ?? [];
+  const creativeDirectionNotes = [note, ...existing.filter((n) => n !== note)].slice(0, 24);
+  const updated: ProjectGenomeRecord = {
+    ...record,
+    creativeDirectionNotes,
+    updatedAt: new Date().toISOString(),
+  };
+  const store = readStore();
+  writeStore({ records: { ...store.records, [key]: updated } });
+  return updated;
 }

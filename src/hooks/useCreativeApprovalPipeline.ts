@@ -16,12 +16,19 @@ import {
   unlockNextStage,
   updatePipelineStage,
 } from '../studio-os-core/studio-builder/approval-pipeline-store';
+import { runBraintrustReview, answerBraintrustFollowUp } from '../studio-os-core/studio-builder/creative-review';
+import { addDirectorsNote } from '../studio-os-core/studio-builder/directors-notes-store';
 import { compileDepartmentGenerationPrompt } from '../studio-os-core/studio-builder/prompt-compiler';
 import { getNextPipelineStage, type PipelineStageId } from '../studio-os-core/studio-builder/pipeline-definition';
 import { registerStudioAsset } from '../studio-os-core/studio-builder/registry-store';
 import { requireDepartmentPackage } from '../studio-os-core/department-package';
 import { requestStudioBuilderGenerate } from '../services/studio/studioBuilder/api';
-import type { PipelineStageRecord, RegenerationImpact } from '../studio-os-core/studio-builder/types';
+import type {
+  CreativeReviewReport,
+  FounderReviewPath,
+  PipelineStageRecord,
+  RegenerationImpact,
+} from '../studio-os-core/studio-builder/types';
 
 function buildApprovedContext(departmentId: string, projectId: string, stageId: PipelineStageId): string {
   const stages = listPipelineStages(departmentId, projectId);
@@ -61,6 +68,40 @@ function prepareNextStagePrompt(
   cachePreparedPrompt(departmentId, projectId, next.id, compiled.prompt);
 }
 
+function completeBraintrustReview(
+  departmentId: string,
+  projectId: string,
+  stageId: PipelineStageId,
+  displayName: string,
+  branchId: string,
+  branchLabel: string
+): CreativeReviewReport {
+  const report = runBraintrustReview({
+    departmentId,
+    projectId,
+    stageId,
+    displayName,
+    branchId,
+    branchLabel,
+  });
+
+  updatePipelineStage(
+    departmentId,
+    projectId,
+    stageId,
+    {
+      status: 'founder-review',
+      creativeReview: report,
+      founderReviewPath: null,
+      reviewMode: true,
+      pendingReview: true,
+    },
+    { stageId, action: 'braintrust', detail: `Braintrust score ${report.overallScore}` }
+  );
+
+  return report;
+}
+
 export function useCreativeApprovalPipeline(
   departmentId: string,
   projectId: string,
@@ -95,6 +136,13 @@ export function useCreativeApprovalPipeline(
     return getCreativeApprovalPipeline(departmentId, projectId).history;
   }, [departmentId, projectId, version]);
 
+  const activeReviewStage = useMemo(() => {
+    void version;
+    return (
+      stages.find((s) => s.status === 'founder-review' || s.status === 'braintrust-review') ?? null
+    );
+  }, [stages, version]);
+
   const runGeneration = useCallback(
     async (stageId: PipelineStageId, directorFeedback?: string, forceInvalidate = false) => {
       const pkg = requireDepartmentPackage(departmentId);
@@ -127,7 +175,14 @@ export function useCreativeApprovalPipeline(
         departmentId,
         projectId,
         stageId,
-        { status: 'generating', error: undefined, pendingReview: false },
+        {
+          status: 'generating',
+          error: undefined,
+          pendingReview: false,
+          founderReviewPath: null,
+          creativeReview: undefined,
+          reviewMode: false,
+        },
         { stageId, action: 'generate', detail: stage.displayName }
       );
       bump();
@@ -169,10 +224,21 @@ export function useCreativeApprovalPipeline(
       );
 
       updatePipelineStage(departmentId, projectId, stageId, {
-        status: 'review',
+        status: 'braintrust-review',
         branches,
-        pendingReview: true,
+        reviewMode: true,
       });
+      bump();
+
+      const branch = branches.find((b) => b.id === refreshed.activeBranchId);
+      completeBraintrustReview(
+        departmentId,
+        projectId,
+        stageId,
+        stage.displayName,
+        refreshed.activeBranchId,
+        branch?.label ?? 'Version A'
+      );
       bump();
 
       prepareNextStagePrompt(departmentId, projectId, workspaceId, stageId);
@@ -192,8 +258,17 @@ export function useCreativeApprovalPipeline(
           departmentId,
           projectId,
           stageId,
-          { status: 'review', pendingReview: true },
-          { stageId, action: 'generate', detail: 'Golden Build™ walkthrough ready' }
+          { status: 'braintrust-review', reviewMode: true },
+          { stageId, action: 'generate', detail: 'Golden Build™ walkthrough' }
+        );
+        bump();
+        completeBraintrustReview(
+          departmentId,
+          projectId,
+          stageId,
+          stage.displayName,
+          stage.activeBranchId,
+          getActiveBranch(stage).label
         );
         bump();
         return { ok: true as const };
@@ -204,10 +279,69 @@ export function useCreativeApprovalPipeline(
     [bump, departmentId, projectId, runGeneration]
   );
 
+  const selectFounderReviewPath = useCallback(
+    (stageId: PipelineStageId, path: FounderReviewPath) => {
+      const stage = getPipelineStageRecord(departmentId, projectId, stageId);
+      if (!stage?.creativeReview) return;
+
+      const patch: Partial<PipelineStageRecord> = {
+        founderReviewPath: path,
+        reviewMode: path !== 'trust-instinct',
+      };
+
+      if (path === 'trust-instinct') {
+        patch.creativeReview = {
+          ...stage.creativeReview,
+          savedQuietly: true,
+        };
+      }
+
+      updatePipelineStage(
+        departmentId,
+        projectId,
+        stageId,
+        patch,
+        { stageId, action: 'founder-path', detail: path ?? 'none' }
+      );
+      bump();
+    },
+    [bump, departmentId, projectId]
+  );
+
+  const askFollowUp = useCallback(
+    (stageId: PipelineStageId, question: string) => {
+      const stage = getPipelineStageRecord(departmentId, projectId, stageId);
+      if (!stage?.creativeReview || !question.trim()) return null;
+
+      const answer = answerBraintrustFollowUp(stage.creativeReview, question);
+      const followUpThread = [
+        ...stage.creativeReview.followUpThread,
+        { question: question.trim(), answer, at: new Date().toISOString() },
+      ];
+
+      updatePipelineStage(departmentId, projectId, stageId, {
+        creativeReview: { ...stage.creativeReview, followUpThread },
+      });
+      bump();
+      return answer;
+    },
+    [bump, departmentId, projectId]
+  );
+
+  const saveDirectorsNote = useCallback(
+    (body: string, stageId?: PipelineStageId) => {
+      if (!body.trim()) return;
+      addDirectorsNote(departmentId, projectId, body, stageId);
+      bump();
+    },
+    [bump, departmentId, projectId]
+  );
+
   const approveStage = useCallback(
     (stageId: PipelineStageId) => {
       const stage = getPipelineStageRecord(departmentId, projectId, stageId);
-      if (!stage || stage.status !== 'review') return;
+      if (!stage || stage.status !== 'founder-review') return;
+      if (!stage.founderReviewPath) return;
 
       const now = new Date().toISOString();
       const branches = stage.branches.map((b) =>
@@ -223,6 +357,8 @@ export function useCreativeApprovalPipeline(
           branches,
           approvedAt: now,
           pendingReview: false,
+          reviewMode: false,
+          founderReviewPath: null,
         },
         { stageId, action: 'approve', detail: `Approved ${getActiveBranch(stage).label}` }
       );
@@ -248,12 +384,7 @@ export function useCreativeApprovalPipeline(
 
       const next = getNextPipelineStage(stageId);
       if (next) {
-        const nextDef = requireDepartmentPackage(departmentId).productionGroups.groups[next.productionGroupId];
-        if (nextDef && next.id === 'golden-build-review') {
-          updatePipelineStage(departmentId, projectId, next.id, { status: 'ready' });
-        } else {
-          unlockNextStage(departmentId, projectId, stageId);
-        }
+        unlockNextStage(departmentId, projectId, stageId);
       }
 
       bump();
@@ -266,6 +397,10 @@ export function useCreativeApprovalPipeline(
       const stage = getPipelineStageRecord(departmentId, projectId, stageId);
       if (!stage) return;
 
+      if (directorFeedback?.trim()) {
+        saveDirectorsNote(directorFeedback, stageId);
+      }
+
       const impact = getRegenerationImpact(departmentId, projectId, stageId);
       if (impact && !confirmed) {
         return { needsConfirmation: true as const, impact };
@@ -275,14 +410,19 @@ export function useCreativeApprovalPipeline(
         departmentId,
         projectId,
         stageId,
-        { status: 'ready' },
+        {
+          status: 'ready',
+          founderReviewPath: null,
+          creativeReview: undefined,
+          reviewMode: false,
+        },
         { stageId, action: 'regenerate', detail: directorFeedback ?? 'Regenerate' }
       );
       bump();
 
       return runGeneration(stageId, directorFeedback, Boolean(impact && confirmed));
     },
-    [bump, departmentId, projectId, runGeneration]
+    [bump, departmentId, projectId, runGeneration, saveDirectorsNote]
   );
 
   const branchStage = useCallback(
@@ -294,26 +434,14 @@ export function useCreativeApprovalPipeline(
     [bump, departmentId, projectId, regenerateStage]
   );
 
-  const completeGoldenBuildReview = useCallback(
-    (stageId: PipelineStageId) => {
-      const stage = getPipelineStageRecord(departmentId, projectId, stageId);
-      if (!stage || stageId !== 'golden-build-review') return;
-
-      updatePipelineStage(
-        departmentId,
-        projectId,
-        stageId,
-        { status: 'approved', approvedAt: new Date().toISOString(), pendingReview: false },
-        { stageId, action: 'approve', detail: 'Golden Build™ walkthrough approved' }
-      );
-      bump();
-    },
-    [bump, departmentId, projectId]
-  );
-
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
-      if (e.key?.includes('studioOsCreativeApprovalPipeline')) bump();
+      if (
+        e.key?.includes('studioOsCreativeApprovalPipeline') ||
+        e.key?.includes('studioOsDirectorsNotes')
+      ) {
+        bump();
+      }
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
@@ -324,11 +452,14 @@ export function useCreativeApprovalPipeline(
     progress,
     pendingReviews,
     history,
+    activeReviewStage,
     startStage,
     approveStage,
     regenerateStage,
     branchStage,
-    completeGoldenBuildReview,
+    selectFounderReviewPath,
+    askFollowUp,
+    saveDirectorsNote,
     selectBranch: (stageId: PipelineStageId, branchId: string) => {
       selectPipelineBranch(departmentId, projectId, stageId, branchId);
       bump();

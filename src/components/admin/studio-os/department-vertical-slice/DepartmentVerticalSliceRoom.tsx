@@ -6,6 +6,7 @@ import {
   resolveDepartmentOrbGreeting,
 } from '../../../../studio-os-core/studio-orb-runtime';
 import { useDepartmentVerticalSlice } from '../../../../hooks/useDepartmentVerticalSlice';
+import { useCreativeApprovalPipeline } from '../../../../hooks/useCreativeApprovalPipeline';
 import { useLivingMoodWall } from '../../../../hooks/useLivingMoodWall';
 import { useStudioFounderNotes } from '../../../../hooks/useStudioFounderNotesObject';
 import type { WalkableZone } from '../../../../studio-os-core/department-room';
@@ -23,12 +24,14 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
   const { workspaceId } = useWorkspace();
   const exitRoom = useDepartmentRoomExit();
   const slice = useDepartmentVerticalSlice(departmentId);
+  const pipeline = useCreativeApprovalPipeline(departmentId, slice.project.projectId, workspaceId);
   const moodWall = useLivingMoodWall(departmentId, slice.project.projectId);
   const founderNotes = useStudioFounderNotes(departmentId, slice.project.projectId);
 
   const [refTitle, setRefTitle] = useState('');
   const [refUrl, setRefUrl] = useState('');
   const [noteBody, setNoteBody] = useState('');
+  const [reviewMode, setReviewMode] = useState(false);
 
   const orbCopy = useMemo(
     () => resolveDepartmentOrbGreeting(slice.pkg, slice.project),
@@ -39,12 +42,18 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
     [slice.pkg, slice.activeZoneId]
   );
 
+  const orbReviewSpeech = useMemo(() => {
+    const stage = pipeline.activeReviewStage;
+    if (!stage?.creativeReview) return null;
+    return stage.creativeReview.orbIntro;
+  }, [pipeline.activeReviewStage]);
+
   const zoneTeaching = slice.activeZone ? zoneLabelForTeaching(slice.activeZone) : '';
 
   return (
     <>
       <style>{DEPARTMENT_SLICE_STYLES}</style>
-      <div className="gb-immersive">
+      <div className={`gb-immersive${reviewMode ? ' gb-immersive--review-mode' : ''}`}>
         <div className="gb-immersive__atmosphere" aria-hidden />
 
         <header className="gb-immersive__hud">
@@ -177,11 +186,19 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
               <div className="gb-immersive__object gb-immersive__object--orb">
                 <div className="gb-immersive__orb-sphere" aria-hidden title="Studio Orb" />
                 <p className="gb-immersive__orb-speech">
-                  {orbCopy.greeting}
-                  <br />
-                  <span style={{ opacity: 0.75 }}>{orbCopy.guidance}</span>
-                  <br />
-                  <span style={{ color: 'rgba(201,169,98,0.95)' }}>{orbInsight}</span>
+                  {orbReviewSpeech ? (
+                    <>
+                      <span style={{ color: 'rgba(201,169,98,0.98)' }}>{orbReviewSpeech}</span>
+                    </>
+                  ) : (
+                    <>
+                      {orbCopy.greeting}
+                      <br />
+                      <span style={{ opacity: 0.75 }}>{orbCopy.guidance}</span>
+                      <br />
+                      <span style={{ color: 'rgba(201,169,98,0.95)' }}>{orbInsight}</span>
+                    </>
+                  )}
                 </p>
               </div>
 
@@ -189,10 +206,9 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
 
               <div className="gb-immersive__object gb-immersive__object--console">
                 <CreativeApprovalPipelinePanel
-                  departmentId={departmentId}
-                  projectId={slice.project.projectId}
-                  workspaceId={workspaceId}
+                  pipeline={pipeline}
                   setDisplayName={slice.pkg.definition.displayName}
+                  onReviewModeChange={setReviewMode}
                 />
               </div>
             </div>

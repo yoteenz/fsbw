@@ -1,13 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { PipelineStageRecord, RegenerationImpact } from '../../../../studio-os-core/studio-builder';
-import { useCreativeApprovalPipeline } from '../../../../hooks/useCreativeApprovalPipeline';
+import type { useCreativeApprovalPipeline } from '../../../../hooks/useCreativeApprovalPipeline';
 import type { PipelineStageId } from '../../../../studio-os-core/studio-builder/pipeline-definition';
+import { CreativeReviewPanel } from './CreativeReviewPanel';
+
+type PipelineApi = ReturnType<typeof useCreativeApprovalPipeline>;
 
 type Props = {
-  departmentId: string;
-  projectId: string;
-  workspaceId?: string;
+  pipeline: PipelineApi;
   setDisplayName: string;
+  onReviewModeChange?: (active: boolean) => void;
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -15,18 +17,17 @@ const STATUS_LABEL: Record<string, string> = {
   preparing: 'Preparing',
   ready: 'Ready',
   generating: 'Generating',
-  review: 'Ready for Review',
+  'braintrust-review': 'Braintrust Review',
+  'founder-review': 'Founder Review',
   approved: 'Approved',
   failed: 'Failed',
 };
 
 export function CreativeApprovalPipelinePanel({
-  departmentId,
-  projectId,
-  workspaceId,
+  pipeline,
   setDisplayName,
+  onReviewModeChange,
 }: Props) {
-  const pipeline = useCreativeApprovalPipeline(departmentId, projectId, workspaceId);
   const [directorFeedback, setDirectorFeedback] = useState('');
   const [activeStageId, setActiveStageId] = useState<PipelineStageId | null>(null);
   const [impact, setImpact] = useState<RegenerationImpact | null>(null);
@@ -44,20 +45,26 @@ export function CreativeApprovalPipelinePanel({
     );
   }, [activeStageId, pipeline.pendingReviews, pipeline.progress.currentStage, pipeline.stages]);
 
-  const activeBranch = focusStage ? pipeline.getActiveBranch(focusStage) : null;
+  const reviewMode = Boolean(
+    focusStage?.reviewMode ||
+      focusStage?.status === 'braintrust-review' ||
+      focusStage?.status === 'founder-review'
+  );
+
+  useEffect(() => {
+    onReviewModeChange?.(reviewMode);
+  }, [onReviewModeChange, reviewMode]);
+
   const isGenerating = focusStage?.status === 'generating';
   const canStart = focusStage?.status === 'ready' || focusStage?.status === 'failed';
-  const canReview = focusStage?.status === 'review';
+  const inCreativeReview =
+    focusStage?.status === 'braintrust-review' || focusStage?.status === 'founder-review';
   const isGoldenReview = focusStage?.stageId === 'golden-build-review';
 
   const onStart = async () => {
     if (!focusStage) return;
     setBusy(true);
     try {
-      if (isGoldenReview) {
-        pipeline.completeGoldenBuildReview(focusStage.stageId);
-        return;
-      }
       await pipeline.startStage(focusStage.stageId);
     } finally {
       setBusy(false);
@@ -66,10 +73,6 @@ export function CreativeApprovalPipelinePanel({
 
   const onApprove = () => {
     if (!focusStage) return;
-    if (isGoldenReview) {
-      pipeline.completeGoldenBuildReview(focusStage.stageId);
-      return;
-    }
     pipeline.approveStage(focusStage.stageId);
     setDirectorFeedback('');
     setImpact(null);
@@ -85,6 +88,7 @@ export function CreativeApprovalPipelinePanel({
         return;
       }
       setImpact(null);
+      setDirectorFeedback('');
     } finally {
       setBusy(false);
     }
@@ -96,6 +100,7 @@ export function CreativeApprovalPipelinePanel({
     try {
       await pipeline.branchStage(focusStage.stageId, directorFeedback);
       setImpact(null);
+      setDirectorFeedback('');
     } finally {
       setBusy(false);
     }
@@ -105,7 +110,8 @@ export function CreativeApprovalPipelinePanel({
     <div className="gb-immersive__pipeline">
       <p className="gb-immersive__object-label">Creative Approval Pipeline™</p>
       <p className="gb-immersive__pipeline-sub">
-        {setDisplayName} · {pipeline.progress.completed}/{pipeline.progress.total} stages · {pipeline.progress.percent}%
+        {setDisplayName} · {pipeline.progress.completed}/{pipeline.progress.total} stages ·{' '}
+        {pipeline.progress.percent}%
       </p>
 
       {pipeline.pendingReviews.length > 0 ? (
@@ -120,7 +126,7 @@ export function CreativeApprovalPipelinePanel({
                 pipeline.dismissNotification(stage.stageId);
               }}
             >
-              {stage.displayName} — Ready for Review. Tap to Continue.
+              {stage.displayName} — Braintrust review complete. Tap to Continue.
             </button>
           ))}
         </div>
@@ -165,78 +171,60 @@ export function CreativeApprovalPipelinePanel({
             </div>
           ) : null}
 
-          {activeBranch?.previewUrl ? (
-            <a
-              href={activeBranch.previewUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="gb-immersive__preview-link"
-            >
-              Stage preview →
-            </a>
-          ) : null}
-
-          {focusStage.preparedPrompt && focusStage.status === 'locked' ? (
-            <p className="gb-immersive__pipeline-prep">Next stage prompts prepared.</p>
-          ) : null}
-
-          <textarea
-            value={directorFeedback}
-            onChange={(e) => setDirectorFeedback(e.target.value)}
-            rows={2}
-            placeholder='Director feedback: "Warmer." "Less marble." "More futuristic."'
-            className="gb-immersive__input"
-            style={{ resize: 'none', marginTop: 6 }}
-          />
-
-          {impact ? (
-            <div className="gb-immersive__pipeline-warning">
-              <p>This change may affect:</p>
-              <ul>
-                {impact.downstreamImpact.map((item) => (
-                  <li key={item}>• {item}</li>
-                ))}
-              </ul>
-              <p>Affected stages: {impact.affectedStages.map((s) => s.displayName).join(', ')}</p>
-              <div className="gb-immersive__btn-row">
-                <button type="button" className="gb-immersive__btn" onClick={() => onRegenerate(true)} disabled={busy}>
-                  Continue
-                </button>
-                <button type="button" className="gb-immersive__btn" onClick={() => setImpact(null)}>
-                  Cancel
-                </button>
-              </div>
-            </div>
+          {inCreativeReview ? (
+            <CreativeReviewPanel
+              stage={focusStage}
+              pipeline={pipeline}
+              directorFeedback={directorFeedback}
+              onDirectorFeedbackChange={setDirectorFeedback}
+              onApprove={onApprove}
+              onRegenerate={onRegenerate}
+              onBranch={onBranch}
+              busy={busy}
+            />
           ) : (
-            <div className="gb-immersive__btn-row">
-              {canStart || isGoldenReview ? (
-                <button type="button" className="gb-immersive__btn" disabled={busy || isGenerating} onClick={onStart}>
-                  {isGenerating
-                    ? 'Generating…'
-                    : isGoldenReview
-                      ? 'Start Walkthrough Review'
-                      : `Generate ${focusStage.displayName}`}
-                </button>
+            <>
+              {focusStage.preparedPrompt && focusStage.status === 'locked' ? (
+                <p className="gb-immersive__pipeline-prep">Next stage prompts prepared.</p>
               ) : null}
-              {canReview ? (
-                <>
-                  <button type="button" className="gb-immersive__btn" disabled={busy} onClick={onApprove}>
-                    Approve™
-                  </button>
-                  <button type="button" className="gb-immersive__btn" disabled={busy} onClick={() => onRegenerate(false)}>
-                    Regenerate™
-                  </button>
-                  <button type="button" className="gb-immersive__btn" disabled={busy} onClick={onBranch}>
-                    Branch™
-                  </button>
-                </>
-              ) : null}
-              {focusStage.status === 'approved' && !isGoldenReview ? (
-                <button type="button" className="gb-immersive__btn" disabled={busy} onClick={() => onRegenerate(false)}>
-                  Regenerate Approved™
-                </button>
-              ) : null}
-            </div>
+
+              {impact ? (
+                <div className="gb-immersive__pipeline-warning">
+                  <p>This change may affect:</p>
+                  <ul>
+                    {impact.downstreamImpact.map((item) => (
+                      <li key={item}>• {item}</li>
+                    ))}
+                  </ul>
+                  <p>Affected stages: {impact.affectedStages.map((s) => s.displayName).join(', ')}</p>
+                  <div className="gb-immersive__btn-row">
+                    <button type="button" className="gb-immersive__btn" onClick={() => onRegenerate(true)} disabled={busy}>
+                      Continue
+                    </button>
+                    <button type="button" className="gb-immersive__btn" onClick={() => setImpact(null)}>
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="gb-immersive__btn-row">
+                  {canStart ? (
+                    <button type="button" className="gb-immersive__btn" disabled={busy || isGenerating} onClick={onStart}>
+                      {isGenerating
+                        ? 'Generating…'
+                        : isGoldenReview
+                          ? 'Begin Golden Build™ Review'
+                          : `Generate ${focusStage.displayName}`}
+                    </button>
+                  ) : null}
+                  {focusStage.status === 'approved' && !isGoldenReview ? (
+                    <button type="button" className="gb-immersive__btn" disabled={busy} onClick={() => onRegenerate(false)}>
+                      Regenerate Approved™
+                    </button>
+                  ) : null}
+                </div>
+              )}
+            </>
           )}
 
           {focusStage.error ? <p className="gb-immersive__pipeline-error">{focusStage.error}</p> : null}

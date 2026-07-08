@@ -7,9 +7,50 @@ export type PipelineStageStatus =
   | 'preparing'
   | 'ready'
   | 'generating'
-  | 'review'
+  | 'braintrust-review'
+  | 'founder-review'
   | 'approved'
   | 'failed';
+
+/** @deprecated Use founder-review */
+export type LegacyReviewStatus = 'review';
+
+export type FounderReviewPath = 'summary' | 'deep-dive' | 'self-review' | 'trust-instinct' | null;
+
+export type SpecialistReview = {
+  specialistId: string;
+  role: string;
+  overallScore: number;
+  strengths: string[];
+  concerns: string[];
+  recommendations: string[];
+  confidence: number;
+};
+
+export type CreativeReviewFollowUp = {
+  question: string;
+  answer: string;
+  at: string;
+};
+
+export type CreativeReviewReport = {
+  id: string;
+  stageId: PipelineStageId;
+  branchId: string;
+  branchLabel: string;
+  completedAt: string;
+  specialists: string[];
+  overallScore: number;
+  significantObservations: number;
+  optionalRefinements: number;
+  specialistReviews: SpecialistReview[];
+  consensus: string;
+  recommendedAction: 'approve' | 'regenerate' | 'branch' | 'neutral';
+  orbIntro: string;
+  summaryBriefing: string;
+  followUpThread: CreativeReviewFollowUp[];
+  savedQuietly?: boolean;
+};
 
 export type PipelineBranch = {
   id: string;
@@ -38,13 +79,16 @@ export type PipelineStageRecord = {
   approvedAt?: string;
   creativeNotes?: string;
   pendingReview: boolean;
+  creativeReview?: CreativeReviewReport;
+  founderReviewPath?: FounderReviewPath;
+  reviewMode?: boolean;
   updatedAt: string;
 };
 
 export type PipelineHistoryEntry = {
   id: string;
   stageId: PipelineStageId;
-  action: 'generate' | 'approve' | 'regenerate' | 'branch' | 'unlock' | 'invalidate';
+  action: 'generate' | 'approve' | 'regenerate' | 'branch' | 'unlock' | 'invalidate' | 'braintrust' | 'founder-path';
   detail: string;
   at: string;
 };

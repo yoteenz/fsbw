@@ -41030,3 +41030,28 @@ User defined **Studio World™** — *"The Living Headquarters Engine"* — the 
 - **Success vocabulary:** "This belongs to Studio World™" · "This affects World Memory™" · "This changes World State™" · "This installs into Studio World™"
 - **Prior chat arc (same day):** Golden Build™ implementation · mobile immersive shell fix · Production Lifecycle™ · Foundational Experience Systems™ · Sets™ · Transitions™ — Studio World™ now unifies all as umbrella.
 - **CORE.md:** Studio World™ line added
+
+---
+
+## 2026-07-08 — Creative Approval Pipeline™ (production workflow implementation)
+
+User replaced **Generation Queue™** with **Creative Approval Pipeline™** — *"The Director's Workflow"* — production sprint on Golden Build™ Creative Atelier™. **No new engine · no new queue system** — refactored existing Studio Builder™ + FAL integration.
+
+- **Mission:** AI generates · Founder directs · Studio OS produces. Every stage earns approval before next unlocks — AAA studio pipeline.
+- **10 stages:** Environment Shell™ → Lighting™ → Architecture™ → Furniture™ → Hero Objects™ → Decor™ → Interactive Objects™ → Ambient Systems™ → Runtime™ → Golden Build™ Review
+- **Three actions per stage:** Approve™ · Regenerate™ · Branch™ (Version A/B/C compare)
+- **Director Feedback™:** natural language ("Warmer." "Less marble.") → `director-feedback.ts` prompt modifiers — founder never rewrites prompts
+- **Dependency Awareness™:** regenerating approved stage warns downstream impact · invalidates downstream on confirm
+- **Background Preparation™:** while founder reviews, next stage prompt pre-compiled (`preparedPrompt`) — generation waits for approval
+- **Notifications™:** "Ready for Review" in-console notices — no blocking generation screen
+- **Implementation:**
+  - `src/studio-os-core/studio-builder/pipeline-definition.ts` — canonical stages
+  - `src/studio-os-core/studio-builder/approval-pipeline-store.ts` — pipeline state (replaces queue semantics)
+  - `src/studio-os-core/studio-builder/director-feedback.ts`
+  - `src/hooks/useCreativeApprovalPipeline.ts`
+  - `src/components/.../CreativeApprovalPipelinePanel.tsx` — Production Dashboard in Golden Build console
+  - Extended `production-groups.json` with all 10 stage groups
+  - Reuses `POST /api/admin/studio-builder-generate` + FAL nano-banana-pro
+- **Route:** `/admin/studio/department/creative-direction`
+- **Prior arc:** Golden Build™ · mobile shell · Sets™ · Transitions™ · Studio World™ docs · now production workflow live
+- **CORE.md:** Golden Build line updated with Creative Approval Pipeline™

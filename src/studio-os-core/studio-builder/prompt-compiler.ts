@@ -35,10 +35,11 @@ export function compileDepartmentGenerationPrompt(input: {
     throw new Error(`Production group not found: ${input.productionGroupId}`);
   }
 
+  const company = resolveCompanyGenomeSnapshot(input.workspaceId);
   const project = input.projectId
     ? resolveActiveProjectGenome(input.departmentId)
     : resolveActiveProjectGenome(input.departmentId);
-  const company = resolveCompanyGenomeSnapshot(input.workspaceId);
+  const directorsNotes = project.creativeDirectionNotes?.slice(0, 3).join(' · ') ?? '';
   const roomModifier =
     pkg.roomDna.promptModifiers[group.promptTemplate.roomDnaModifierKey] ?? '';
 
@@ -54,6 +55,7 @@ export function compileDepartmentGenerationPrompt(input: {
     roomModifier,
     primary,
     input.approvedStageContext ? `APPROVED CONTEXT: ${input.approvedStageContext}` : '',
+    directorsNotes ? `DIRECTOR'S NOTES: ${directorsNotes}` : '',
     `Company ${company.companyName}: ${company.editorialDirection}.`,
     `North star: ${project.northStar}.`,
     `OUTPUT: ${group.generation.aspectRatio} · ${group.generation.outputFormat.toUpperCase()} · photoreal luxury · no UI chrome.`,

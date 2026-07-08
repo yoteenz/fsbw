@@ -72,7 +72,18 @@ export function getCreativeApprovalPipeline(
   projectId: string
 ): CreativeApprovalPipeline {
   const existing = readAll().find((p) => p.departmentId === departmentId && p.projectId === projectId);
-  if (existing) return existing;
+  if (existing) {
+    const migrated = existing.stages.some((s) => (s.status as string) === 'review');
+    if (migrated) {
+      existing.stages = existing.stages.map((s) =>
+        (s.status as string) === 'review'
+          ? { ...s, status: 'founder-review' as PipelineStageStatus, reviewMode: true }
+          : s
+      );
+      savePipeline(existing);
+    }
+    return existing;
+  }
 
   const pkg = requireDepartmentPackage(departmentId);
   const now = new Date().toISOString();
@@ -289,7 +300,13 @@ export function getPipelineProgress(departmentId: string, projectId: string): {
   const total = stages.length;
   const completed = stages.filter((s) => s.status === 'approved').length;
   const currentStage =
-    stages.find((s) => s.status === 'review' || s.status === 'generating' || s.status === 'ready') ??
+    stages.find(
+      (s) =>
+        s.status === 'founder-review' ||
+        s.status === 'braintrust-review' ||
+        s.status === 'generating' ||
+        s.status === 'ready'
+    ) ??
     stages.find((s) => s.status !== 'approved' && s.status !== 'locked') ??
     null;
   const percent = Math.round((completed / total) * 100);

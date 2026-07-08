@@ -420,6 +420,114 @@ body.gb-immersive-active {
   background: rgba(201, 169, 98, 0.2);
 }
 
+.gb-immersive--review-mode .gb-immersive__atmosphere {
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201, 169, 98, 0.12) 0%, transparent 70%);
+}
+
+.gb-immersive--review-mode .gb-immersive__env-wall {
+  filter: brightness(1.08);
+}
+
+.gb-immersive__creative-review {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(201, 169, 98, 0.2);
+}
+
+.gb-immersive__creative-review-label {
+  font-size: 6px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(201, 169, 98, 0.95);
+  margin-bottom: 4px;
+}
+
+.gb-immersive__creative-review-orb {
+  font-size: 6px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  margin: 0 0 6px;
+  color: rgba(240, 235, 227, 0.92);
+  font-family: inherit;
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.gb-immersive__creative-review-paths {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gb-immersive__creative-review-paths-title {
+  font-size: 5px;
+  opacity: 0.75;
+  margin-bottom: 2px;
+}
+
+.gb-immersive__creative-review-active-path {
+  font-size: 6px;
+  color: rgba(201, 169, 98, 0.95);
+  margin-bottom: 4px;
+}
+
+.gb-immersive__creative-review-brief {
+  font-size: 5px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  margin: 0 0 6px;
+  font-family: inherit;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.gb-immersive__creative-review-specialists {
+  max-height: 80px;
+  overflow-y: auto;
+  margin-bottom: 6px;
+}
+
+.gb-immersive__creative-review-specialist {
+  font-size: 5px;
+  line-height: 1.4;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.gb-immersive__creative-review-specialist-role {
+  color: rgba(201, 169, 98, 0.9);
+  margin-bottom: 2px;
+}
+
+.gb-immersive__creative-review-consensus {
+  font-size: 5px;
+  margin-top: 4px;
+  opacity: 0.85;
+}
+
+.gb-immersive__creative-review-self {
+  font-size: 5px;
+  margin-bottom: 6px;
+}
+
+.gb-immersive__creative-review-quiet {
+  font-size: 5px;
+  opacity: 0.7;
+  margin-bottom: 6px;
+}
+
+.gb-immersive__creative-review-followup {
+  margin-top: 6px;
+}
+
+.gb-immersive__creative-review-answer {
+  font-size: 5px;
+  margin-top: 4px;
+  color: rgba(201, 169, 98, 0.9);
+}
+
 .gb-immersive__mood-tile {
   margin-top: 4px;
   padding: 5px;
