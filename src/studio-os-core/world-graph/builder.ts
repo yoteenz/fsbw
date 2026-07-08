@@ -18,6 +18,7 @@ import {
   ingestRouteRegistryNodes,
   ingestCompanyRouteNodes,
   ingestProductionCompletionNodes,
+  ingestCareerWorldNodes,
   type MasterSpecMilestoneInput,
 } from './ingestion';
 import { validateWorldGraph } from './validator';
@@ -58,6 +59,7 @@ export function buildWorldGraph(input: BuildWorldGraphInput = {}): BuildWorldGra
     ingestRouteRegistryNodes(),
     ingestCompanyRouteNodes(),
     ingestProductionCompletionNodes(),
+    ingestCareerWorldNodes(),
   ];
 
   if (input.masterSpecMilestones?.length) {

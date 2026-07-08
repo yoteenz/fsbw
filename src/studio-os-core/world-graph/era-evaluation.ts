@@ -114,6 +114,8 @@ export const ENGINE_ERA_MAP: Record<string, StudioWorldEra> = {
   'scene-stack': 'knowledge',
   'company-genome': 'knowledge',
   'studio-world-atlas': 'world',
+  'profession-simulation-engine': 'world',
+  'career-worlds': 'world',
   'architecture-auditor': 'intelligence',
   'experience-intelligence-engine': 'intelligence',
   'profession-brain': 'intelligence',

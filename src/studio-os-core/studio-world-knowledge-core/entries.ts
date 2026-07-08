@@ -466,6 +466,46 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
     implementationStatus: 'Implemented',
     tags: ['production-completion', 'definition-of-done', 'quality-gates', 'production-orchestrator'],
   },
+  {
+    id: 'E02-career-worlds',
+    title: 'ARTICLE-E02 — Career Worlds™',
+    domain: 'Experience System™',
+    status: 'Canon',
+    version: 'v1',
+    summary:
+      'Career Worlds™ replace Academies with persistent professional lives: living profession worlds containing companies, workplaces, districts, NPC professionals, mentors, clients, suppliers, competitors, economies, events, challenges, promotions, news, seasons, and community achievements.',
+    reasoning:
+      'The Profession Simulation Engine™ is the runtime for professional scenarios, but Studio World needs a higher product architecture: the learner should not feel like they are taking lessons; they should feel like they live inside an alternate professional reality that continues for months or years.',
+    finalPrompt:
+      'Do not ask “What lesson are you taking today?” Ask “What kind of life are you building?” Build Career Worlds™ where learning, career, game, simulation, community, professional network, business, and personal growth become one persistent life.',
+    architectureAdded: [
+      'Career Worlds™',
+      'Career World blueprints',
+      'Persistent professional identity',
+      'Offline profession-world evolution',
+      'Career World progression phases',
+      'Master professional endgame',
+      'World Graph Career World nodes',
+    ],
+    relatedSystems: [
+      'Profession Simulation Engine™',
+      'Profession Brain™',
+      'World Graph™',
+      'Studio World Atlas™',
+      'Expert Marketplace™',
+      'Professional Trust Framework™',
+      'Identity Graph™',
+    ],
+    constitutionArticles: ['ARTICLE-E02', 'ARTICLE-K22', 'ARTICLE-K23'],
+    adrReferences: ['ADR-0001'],
+    worldBibleReferences: [
+      'Career Worlds™',
+      'Profession Simulation Engine™',
+      'Studio World Professional Life Architecture',
+    ],
+    implementationStatus: 'Specified',
+    tags: ['career-worlds', 'profession-simulation', 'persistent-worlds', 'professional-identity'],
+  },
 ];
 
 export function canInfluenceFutureArchitecture(status: KnowledgeCoreStatus): boolean {

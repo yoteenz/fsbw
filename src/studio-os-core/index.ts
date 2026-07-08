@@ -180,3 +180,4 @@ export * from './studio-world-knowledge-core';
 export * from './studio-world-memory-system';
 export * from './asset-compiler';
 export * from './studio-foundry';
+export * from './career-worlds';

@@ -78,6 +78,26 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       integratesWith: ['company-genome', 'knowledge-library'],
     },
     {
+      slug: 'profession-simulation-engine',
+      name: 'Profession Simulation Engine™',
+      summary:
+        'ARTICLE-E01 runtime layer for practicing professional decisions, roles, clients, teams, and consequences inside simulated work.',
+      lifecycle: 'architecture',
+      codePaths: ['src/studio-os-core/career-worlds/'],
+      docPaths: ['docs/studio-os/career-worlds/ARTICLE_E02_CAREER_WORLDS.md'],
+      integratesWith: ['career-worlds', 'profession-brain', 'world-graph'],
+    },
+    {
+      slug: 'career-worlds',
+      name: 'Career Worlds™',
+      summary:
+        'ARTICLE-E02 persistent professional-life worlds that replace Academies with living professions, identity, economies, events, companies, mentors, clients, and endgame mastery.',
+      lifecycle: 'architecture',
+      codePaths: ['src/studio-os-core/career-worlds/'],
+      docPaths: ['docs/studio-os/career-worlds/ARTICLE_E02_CAREER_WORLDS.md'],
+      integratesWith: ['profession-simulation-engine', 'profession-brain', 'world-graph', 'studio-world-atlas'],
+    },
+    {
       slug: 'company-genome',
       name: 'Company Genome™',
       summary: 'Living company identity — traits, voice, visual DNA.',
