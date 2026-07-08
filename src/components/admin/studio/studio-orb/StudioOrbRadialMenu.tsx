@@ -106,7 +106,7 @@ export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
             <StudioOrbProjectionItem
               key={action.id}
               label={action.label}
-              icon={<OrbIconSculpture iconId={action.iconId} size={26} />}
+              icon={<OrbIconSculpture iconId={action.iconId} size={30} />}
               index={index}
               style={{
                 left: pos.x,

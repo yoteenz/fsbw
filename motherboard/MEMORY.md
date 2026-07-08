@@ -43077,3 +43077,44 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Use `queryKnowledgeCore()` for semantic memory search; use `ingestPromptMemory()` for major prompt → entry pipeline.
 - Only Canon™ entries may influence future architecture automatically; Explorer status filters make this visible without exposing implementation detail.
 - Route: `/admin/studio/knowledge-core` · helper: `adminStudioKnowledgeCorePath()`.
+
+---
+
+## 2026-07-08 — Studio World Hero Icon Library™ + Orb acrylic navigation tiles (ARTICLE-D08 follow-up)
+
+**Context:** Follow-up to Studio Orb industrial acrylic redesign (`f9d2ad25f`). User reported Orb radial icons still felt like placeholder mobile UI (SF Symbols / emoji-in-rounded-cards) and broke Studio World's visual identity. Requested first-principles icon system per **ARTICLE-D08 Studio World Icon Language™**: collectible 3D architectural objects, floating optical acrylic navigation tiles, alive icon behavior, and a reusable Hero Icon Library for all departments.
+
+**Topics covered (entire conversation so far):**
+- Prior session shipped optical acrylic Orb, holographic projections, and initial SVG icon sculptures — user approved direction but rejected flat glyph / generic white-card language.
+- **Studio World Hero Icon Library™** created at **`src/components/admin/studio/studio-world-hero-icons/`**:
+  - **`studioWorldHeroIconTypes.ts`** — canonical registry for World Atlas · Voice · Daily Brief · Page Guide · Command Dock · Life & Culture · Mission Control · Knowledge Core · Constitution Hall · Creative Direction · Marketplace · Warehouse · Museum · Innovation · Finance · Operations · Hiring · Legal · Marketing · Product · Customer Experience · dormant.
+  - **`StudioWorldHeroIconSculptures.tsx`** — premium multi-layer SVG sculptures (chrome · crystal · glass · internal glow · orbital rings · sound ribbons · blueprint lines · pedestal forms) — no flat line icons or emoji metaphors.
+  - **`StudioWorldHeroIcon.tsx`** — animated wrapper with idle float · caustic · core pulse · selection energy.
+  - **`orbIconIdToHeroIconId()`** bridge for legacy Orb radial IDs.
+- **`OrbIconSculptures.tsx`** refactored to delegate to Hero Icon Library (backward compatible exports).
+- **Acrylic navigation tiles** upgraded in **`studioOrbTheme.ts`** + **`StudioOrbProjectionItem.tsx`**:
+  - Crystal-clear acrylic · frosted center · chrome edge · refraction edge · volumetric depth · dynamic reflection sweep · floating shadow · ambient glow · caustics · particles.
+  - Behaviors: idle tile float · hover parallax/elevation/rotation · touch compression · selection bloom.
+  - Icon behaviors: slow float · internal light pulse · caustic drift · hover 3D tilt · selection energy travel.
+- Radial menu icons sized to **30px** inside **58×58** acrylic tiles.
+
+**Decisions / outcomes:**
+- Orb navigation must read as a **curated luxury product collection**, not a mobile OS quick-action sheet.
+- All future department destinations should consume **`StudioWorldHeroIcon`** from the shared library — never ad-hoc Lucide/Material/SF-style glyphs for primary navigation.
+- **`motherboard/CORE.md`** Command Dock / Studio Orb bullet updated with Hero Icon Library path and ARTICLE-D08 rule.
+
+**Changes:**
+- `src/components/admin/studio/studio-world-hero-icons/*` (new library)
+- `src/components/admin/studio/studio-orb/OrbIconSculptures.tsx`
+- `src/components/admin/studio/studio-orb/StudioOrbProjectionItem.tsx`
+- `src/components/admin/studio/studio-orb/studioOrbTheme.ts`
+- `src/components/admin/studio/studio-orb/StudioOrbRadialMenu.tsx`
+- `motherboard/CORE.md`
+- `motherboard/MEMORY.md`
+
+**Verification:** `npm run build` passed.
+
+**Conventions:**
+- Primary Studio World / Orb navigation icons = **3D sculptural hero objects** from **`studio-world-hero-icons/`** only.
+- Acrylic projection tiles use layered CSS (frost · refraction · chrome · float shadow) — not flat white rounded rectangles.
+- Extend **`STUDIO_WORLD_HERO_ICON_REGISTRY`** when adding new department destinations; reuse **`StudioWorldHeroIcon`** component.
