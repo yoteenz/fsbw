@@ -12,7 +12,8 @@ export type BehavioralConstitutionalLawId =
   | 'scene-assembly-rules'
   | 'knowledge-review'
   | 'repository-governance'
-  | 'approval-workflow';
+  | 'approval-workflow'
+  | 'progressive-presence';
 
 export type BehavioralConstitutionalLaw = {
   id: BehavioralConstitutionalLawId;
@@ -108,5 +109,16 @@ export const BEHAVIORAL_CONSTITUTIONAL_LAWS: BehavioralConstitutionalLaw[] = [
     enforcement: 'Founder Creative Director law; Concierge Approval Flow; no silent canon promotion.',
     physicsBasis: ['identity-persistence', 'temporal-continuity'],
     principleBasis: ['founders-build-worlds', 'progressive-disclosure'],
+  },
+  {
+    id: 'progressive-presence',
+    number: 10,
+    title: 'Progressive Presence™',
+    summary:
+      'Article K18 — information earns visibility through founder intent. Architecture first, knowledge second, UI last. The Progressive Presence Engine™ governs all surfaces.',
+    enforcement:
+      'Every UI element registers Presence Level™, Priority™, and Required Intent™. Components consult the engine — they do not self-decide visibility. Max three Level 1 ambient elements per room.',
+    physicsBasis: ['scene-integrity', 'spatial-continuity'],
+    principleBasis: ['progressive-disclosure', 'immersion-over-pages', 'beauty-through-function'],
   },
 ];

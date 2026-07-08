@@ -28,6 +28,8 @@ import {
   DISTRICT_THEME_STYLES,
 } from '../architectural-navigation';
 import { SceneTray, STUDIO_NAVIGATION_STYLES, type SceneTrayEntry } from '../navigation';
+import { PresenceGated, PROGRESSIVE_PRESENCE_STYLES } from '../progressive-presence';
+import { useProgressivePresence } from '../../../../hooks/useProgressivePresence';
 import { useArchitecturalNavigationRail } from '../../../../hooks/useArchitecturalNavigationRail';
 import {
   livingArchitectureClassForDistrict,
@@ -181,6 +183,9 @@ export function StudioWarehouseRoom() {
   const industrialWing = useMemo(() => industrialWingForZone(wh.activeZoneId), [wh.activeZoneId]);
   const galleryMode = isGalleryZone(wh.activeZoneId);
   const navRail = useArchitecturalNavigationRail();
+  const presence = useProgressivePresence(DEPARTMENT_ID);
+  const overlaysEarned =
+    presence.state.expandedElements.has('world-health-expanded') || presence.state.revealedLevel >= 3;
   const {
     architecture: livingArchitecture,
     ecology: livingEcology,
@@ -613,6 +618,7 @@ export function StudioWarehouseRoom() {
       <style>{CIVILIZATION_EVENTS_STYLES}</style>
       <style>{WAREHOUSE_CAMPUS_STYLES}</style>
       <style>{STUDIO_NAVIGATION_STYLES}</style>
+      <style>{PROGRESSIVE_PRESENCE_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
         className={`${worldClass} ${districtClass} ${livingClass}${ecologyBalanced ? ' sw-ecology--balanced' : ''}${civilizationSelfBalancing ? ' sw-civilization--self-balancing' : ''}${eventsActive ? ' sw-events--active' : ''}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
@@ -628,7 +634,9 @@ export function StudioWarehouseRoom() {
           <div className="wh-world__identity">
             <p className="wh-world__title">{campusTitle}</p>
             <p className="wh-world__sub">{STUDIO_ARCHIVES_SUBTITLE}</p>
-            <ArchitecturalFrameStatusStrip status={frameStatus} districtThemeId={districtThemeId} />
+            <PresenceGated elementId="frame-status-strip" presence={presence}>
+              <ArchitecturalFrameStatusStrip status={frameStatus} districtThemeId={districtThemeId} />
+            </PresenceGated>
           </div>
           <button
             type="button"
@@ -660,35 +668,47 @@ export function StudioWarehouseRoom() {
           livingEcology={livingEcology}
           livingCivilization={livingCivilization}
           civilizationEvents={civilizationEvents}
+          roomId={DEPARTMENT_ID}
           onSelectRoom={(roomId) => goToZone(roomId as WarehouseCameraZoneId)}
           onCycleMode={navRail.cycleMode}
         />
 
-        <LivingArchitectureLayer
-          snapshot={livingArchitecture}
-          districtThemeId={districtThemeId}
-        />
+        <div className={overlaysEarned ? 'is-presence-earned' : undefined}>
+          <LivingArchitectureLayer
+            snapshot={livingArchitecture}
+            districtThemeId={districtThemeId}
+            showMonument={presence.isVisible('living-architecture-monument')}
+          />
+        </div>
 
-        <DistrictEcologyLayer
-          ecology={livingEcology}
-          districtThemeId={districtThemeId}
-          compact
-        />
+        <div className={overlaysEarned ? 'is-presence-earned' : undefined}>
+          <DistrictEcologyLayer
+            ecology={livingEcology}
+            districtThemeId={districtThemeId}
+            compact={!presence.isVisible('ecology-synergy-flows')}
+          />
+        </div>
 
-        <LivingCivilizationLayer
-          civilization={livingCivilization}
-          districtThemeId={districtThemeId}
-          compact
-        />
+        <div className={overlaysEarned ? 'is-presence-earned' : undefined}>
+          <LivingCivilizationLayer
+            civilization={livingCivilization}
+            districtThemeId={districtThemeId}
+            compact={!presence.isVisible('civilization-economies')}
+          />
+        </div>
 
-        <CivilizationEventsLayer events={civilizationEvents} />
+        <div className={overlaysEarned ? 'is-presence-earned' : undefined}>
+          <CivilizationEventsLayer events={civilizationEvents} compact />
+        </div>
 
-        <aside className="wh-world__orb-courier" aria-label="Studio Orb courier">
-          <p className="wh-world__orb-courier-role" style={{ color: orbPersonality.accent }}>
-            Studio Orb™ · {orbPersonality.role}
-          </p>
-          <p className="wh-world__orb-courier-quote">{orbPersonality.greeting}</p>
-        </aside>
+        <PresenceGated elementId="orb-courier-message" presence={presence}>
+          <aside className="wh-world__orb-courier" aria-label="Studio Orb courier">
+            <p className="wh-world__orb-courier-role" style={{ color: orbPersonality.accent }}>
+              Studio Orb™ · {orbPersonality.role}
+            </p>
+            <p className="wh-world__orb-courier-quote">{orbPersonality.greeting}</p>
+          </aside>
+        </PresenceGated>
 
         <div className="wh-world__camera">
           <div

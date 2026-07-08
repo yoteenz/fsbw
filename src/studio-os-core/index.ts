@@ -167,6 +167,7 @@ export * from './innovation-expeditions';
 export * from './design-principles';
 export * from './world-physics';
 export * from './implementation-standards';
+export * from './progressive-presence';
 export * from './architecture-auditor';
 export * from './experience-intelligence-engine';
 export * from './studio-world-atlas';

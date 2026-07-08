@@ -42709,3 +42709,19 @@ User reported **BUG FIX SPRINT** — scene/workspace selection (Arrival Zone™,
   - `CreativeDirectionStudioRoom` — uses shared `SceneTray` (Arrival, Story Table, Mood Wall, etc. stay bottom)
 - **Regression targets:** Creative Direction Studio™, Studio Archives™, Warehouse Wing™, Museum Wing™, Innovation Gallery™, Material Library™ — left = architectural destinations; bottom = scenes within destination.
 - **Prior arc (same chat):** Four-layer governance hierarchy · Design Principles™ · World Physics™ · Three Eras Roadmap™ · World Graph Phase 1.
+
+---
+
+## 2026-07-08 — Article K18 Progressive Presence™ (constitutional law + engine)
+
+Follow-up to navigation split — user identified **information hierarchy** as the deeper design issue: every system (World Health™, Civilization™, Events™, metrics, growth, Atlas™, etc.) competing for equal visual attention. Introduced **Article K18 — Progressive Presence™** as Constitutional Behavioral Law #10. Core: architecture IS the interface; environment first, knowledge second, UI last. Five Presence Levels™ (0 Architecture → 4 Architect). No room redesign; no functionality removal — only **how information reveals itself**.
+
+- **Delivered:**
+  - `behavioral-laws.ts` — Law #10 Progressive Presence™ (principleBasis: progressive-disclosure, immersion-over-pages, beauty-through-function)
+  - `src/studio-os-core/progressive-presence/` — **Progressive Presence Engine™**: types · Article K18 law constants · `STUDIO_WORLD_UI_REGISTRY` · `resolvePresenceVisibility()` · `ROOM_PRIMARY_FOCUS` (One Primary Focus™ per room) · `useProgressivePresence` hook
+  - `src/components/admin/studio/progressive-presence/` — `PresenceGated` · `WorldHealthAmbientIndicator` (small ambient dot → tap expand → collapse return to environment) · theme CSS
+  - `ArchitecturalNavigationRail` — navigation only: removed permanent Frame Status / World Health bars / civilization footer; World Health tap-to-expand; frame status + campus destinations gated Level 3–4
+  - `StudioWarehouseRoom` — frame status strip Level 3 gated; living architecture/ecology/civilization overlays hidden until World Health tap or explore; Orb courier Level 1 ambient gated
+  - `docs/studio-os/governance/PROGRESSIVE_PRESENCE.md` · `knowledge/canon/constitution/behavioral-laws.md` updated
+  - World Graph compile: 409 nodes · 611 edges
+- **Prior arc (same chat):** ArchitecturalRail vs SceneTray nav split · Four-layer governance · Design Principles™ · World Physics™ · Three Eras™.

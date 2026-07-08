@@ -13,6 +13,9 @@
 | 7 | Knowledge Review™ | Flagship proposals pass governance review |
 | 8 | Repository Governance™ | Master-only · one deploy per task |
 | 9 | Approval Workflow™ | Founder final authority; no silent canon |
+| 10 | Progressive Presence™ | Article K18 — information earns visibility through intent |
+
+**Article K18:** `docs/studio-os/governance/PROGRESSIVE_PRESENCE.md`
 
 **Eight Foundational Laws** (flagship governance) remain in `laws.ts`.
 

@@ -14,10 +14,11 @@ import type { ArchitecturalNavRailMode } from '../../../../studio-os-core/archit
 import { districtForContextualWing } from '../../../../studio-os-core/living-architecture';
 import type { LivingArchitectureSnapshot } from '../../../../studio-os-core/living-architecture';
 import type { LivingDistrictEcologySnapshot } from '../../../../studio-os-core/living-district-ecology';
-import { civilizationLayerForDistrict } from '../../../../studio-os-core/living-civilization';
 import type { LivingCivilizationSnapshot } from '../../../../studio-os-core/living-civilization';
 import type { CivilizationEventsSnapshot } from '../../../../studio-os-core/civilization-events';
 import { railWidthForMode } from '../../../../hooks/useArchitecturalNavigationRail';
+import { useProgressivePresence } from '../../../../hooks/useProgressivePresence';
+import { PresenceGated, WorldHealthAmbientIndicator, PROGRESSIVE_PRESENCE_STYLES } from '../progressive-presence';
 
 type Props = {
   mode: ArchitecturalNavRailMode;
@@ -33,48 +34,8 @@ type Props = {
   livingEcology?: LivingDistrictEcologySnapshot | null;
   livingCivilization?: LivingCivilizationSnapshot | null;
   civilizationEvents?: CivilizationEventsSnapshot | null;
+  roomId?: string;
 };
-
-function EventsBlock({ events }: { events: CivilizationEventsSnapshot }) {
-  const display = [...events.activeEvents, ...events.upcomingEvents].slice(0, 4);
-  return (
-    <div className="sw-nav-rail__events" aria-label="Civilization Events">
-      <p className="sw-nav-rail__events-title">Civilization Events™</p>
-      {display.map((evt) => (
-        <p
-          key={evt.id}
-          className={`sw-nav-rail__event-row${evt.status === 'active' ? ' is-active' : ''}`}
-        >
-          {evt.status === 'active' ? <span className="sw-nav-rail__event-dot" aria-hidden /> : null}
-          {evt.title}
-        </p>
-      ))}
-    </div>
-  );
-}
-
-function EcologyHealthBlock({ ecology }: { ecology: LivingDistrictEcologySnapshot }) {
-  const topMetrics = [...ecology.worldHealth]
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 4);
-
-  return (
-    <div className="sw-nav-rail__ecology-health" aria-label="World Health">
-      <p className="sw-nav-rail__ecology-health-title">World Health™</p>
-      {topMetrics.map((metric) => (
-        <div key={metric.id} className="sw-nav-rail__health-row">
-          <span>{metric.label.replace('™', '')}</span>
-          <div className="sw-nav-rail__health-bar" aria-hidden>
-            <div
-              className={`sw-nav-rail__health-fill${metric.trend === 'rising' ? ' is-rising' : metric.trend === 'stagnant' ? ' is-stagnant' : ''}`}
-              style={{ width: `${metric.value}%` }}
-            />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 function FrameStatusBlock({ status }: { status: ArchitecturalFrameStatus }) {
   const rows: Array<[string, string | undefined]> = [
@@ -103,7 +64,13 @@ function FrameStatusBlock({ status }: { status: ArchitecturalFrameStatus }) {
   );
 }
 
-function LocationStack({ location }: { location: ArchitecturalLocationStack }) {
+function LocationStack({
+  location,
+  showRoomDetail,
+}: {
+  location: ArchitecturalLocationStack;
+  showRoomDetail: boolean;
+}) {
   return (
     <div className="sw-nav-rail__location" aria-label="You are here">
       <p className="sw-nav-rail__location-line is-headquarters">{location.headquarters}</p>
@@ -115,7 +82,7 @@ function LocationStack({ location }: { location: ArchitecturalLocationStack }) {
           <p className="sw-nav-rail__location-line is-wing">{location.wing}</p>
         </>
       ) : null}
-      {location.room ? (
+      {showRoomDetail && location.room ? (
         <>
           <span className="sw-nav-rail__location-arrow" aria-hidden>
             ↓
@@ -128,7 +95,8 @@ function LocationStack({ location }: { location: ArchitecturalLocationStack }) {
 }
 
 /**
- * Architectural Navigation Rail™ — permanent campus signage, not a software sidebar.
+ * Architectural Navigation Rail™ — navigation only (Article K18 Progressive Presence™).
+ * Operational dashboards defer to Orb, tap intent, and Scene Tray™.
  */
 export function ArchitecturalNavigationRail({
   mode,
@@ -140,17 +108,17 @@ export function ArchitecturalNavigationRail({
   onSelectRoom,
   onCycleMode,
   showPrimaryDestinations = false,
-  livingArchitecture,
+  livingArchitecture: _livingArchitecture,
   livingEcology,
   livingCivilization,
-  civilizationEvents,
+  civilizationEvents: _civilizationEvents,
+  roomId = 'studio-archives',
 }: Props) {
   const navigate = useNavigate();
   const atlas = useGlobalAtlasLayerOptional();
+  const presence = useProgressivePresence(roomId);
   const district = getDistrictIdentity(districtThemeId);
   const districtClass = districtCssClass(districtThemeId);
-  const activeLayerId = civilizationLayerForDistrict(districtThemeId);
-  const activeLayer = activeLayerId && livingCivilization ? livingCivilization.layers[activeLayerId] : null;
 
   const railClass =
     mode === 'hidden'
@@ -162,6 +130,7 @@ export function ArchitecturalNavigationRail({
   if (mode === 'hidden') {
     return (
       <div className={districtClass}>
+        <style>{PROGRESSIVE_PRESENCE_STYLES}</style>
         <button
           type="button"
           className="sw-nav-rail__reveal"
@@ -175,8 +144,11 @@ export function ArchitecturalNavigationRail({
     );
   }
 
+  const showRoomDetail = presence.isVisible('nav-rail-room-detail');
+
   return (
     <div className={districtClass}>
+      <style>{PROGRESSIVE_PRESENCE_STYLES}</style>
       <nav
         className={railClass}
         aria-label={`Architectural Navigation Rail — ${district.campusName}`}
@@ -212,28 +184,32 @@ export function ArchitecturalNavigationRail({
           <span className="sw-nav-rail__atlas-label">{ATLAS_DESTINATION.label}</span>
         </button>
 
-        <LocationStack location={location} />
-        <FrameStatusBlock status={frameStatus} />
+        <PresenceGated elementId="nav-rail-location" presence={presence}>
+          <LocationStack location={location} showRoomDetail={showRoomDetail} />
+        </PresenceGated>
+
+        <PresenceGated elementId="nav-rail-frame-status" presence={presence}>
+          <FrameStatusBlock status={frameStatus} />
+        </PresenceGated>
 
         <div className="sw-nav-rail__section">
           <p className="sw-nav-rail__section-title">Architectural Destinations™</p>
           {contextualWings.map((wing) => {
             const wingDistrict = districtForContextualWing(wing.id);
             const ecologyState = wingDistrict && livingEcology ? livingEcology.districts[wingDistrict] : undefined;
-            const wingTier = ecologyState?.effectiveTier ?? (wingDistrict && livingArchitecture
-                ? livingArchitecture.districts[wingDistrict]?.tier
-                : undefined);
+            const wingTier = ecologyState?.effectiveTier;
             const wingTierLabel =
-              wingDistrict && livingArchitecture
-                ? livingArchitecture.districts[wingDistrict]?.tierLabel
+              wingDistrict && _livingArchitecture
+                ? _livingArchitecture.districts[wingDistrict]?.tierLabel
                 : undefined;
             const hasSpillover = (ecologyState?.spilloverFrom.length ?? 0) > 0;
+            const showTierBadges = presence.isVisible('nav-rail-wing-tier-badges');
 
             return (
             <div key={wing.id} className="sw-nav-rail__wing">
               <p className="sw-nav-rail__wing-label">
                 {wing.label}
-                {wingTier !== undefined && wingTier > 0 ? (
+                {showTierBadges && wingTier !== undefined && wingTier > 0 ? (
                   <span
                     className={`sw-nav-rail__wing-tier${wingTier >= 2 ? ' is-growing' : ''}`}
                     title={`${wingTierLabel} — earned + ecology influence`}
@@ -241,7 +217,7 @@ export function ArchitecturalNavigationRail({
                     T{wingTier}
                   </span>
                 ) : null}
-                {hasSpillover ? (
+                {showTierBadges && hasSpillover ? (
                   <span className="sw-nav-rail__wing-synergy is-spillover" title="Receiving cross-district influence">
                     ↗
                   </span>
@@ -276,36 +252,34 @@ export function ArchitecturalNavigationRail({
         </div>
 
         {showPrimaryDestinations ? (
-          <div className="sw-nav-rail__section">
-            <p className="sw-nav-rail__section-title">Campus Destinations</p>
-            {PRIMARY_ARCHITECTURAL_DESTINATIONS.map((dest) => (
-              <button
-                key={dest.id}
-                type="button"
-                className="sw-nav-rail__dest-btn"
-                onClick={() => navigate(dest.path)}
-                title={dest.label}
-              >
-                <span className="sw-nav-rail__dest-icon" aria-hidden>
-                  {dest.icon}
-                </span>
-                <span className="sw-nav-rail__dest-label">{dest.label}</span>
-              </button>
-            ))}
-          </div>
+          <PresenceGated elementId="nav-rail-campus-destinations" presence={presence}>
+            <div className="sw-nav-rail__section">
+              <p className="sw-nav-rail__section-title">Campus Destinations</p>
+              {PRIMARY_ARCHITECTURAL_DESTINATIONS.map((dest) => (
+                <button
+                  key={dest.id}
+                  type="button"
+                  className="sw-nav-rail__dest-btn"
+                  onClick={() => navigate(dest.path)}
+                  title={dest.label}
+                >
+                  <span className="sw-nav-rail__dest-icon" aria-hidden>
+                    {dest.icon}
+                  </span>
+                  <span className="sw-nav-rail__dest-label">{dest.label}</span>
+                </button>
+              ))}
+            </div>
+          </PresenceGated>
         ) : null}
 
         {mode === 'expanded' ? (
           <>
-            {activeLayer ? (
-              <div className="sw-nav-rail__civilization-layer" aria-label="Civilization layer">
-                <span className="sw-nav-rail__civilization-layer-name">{activeLayer.label}</span>
-                {' · '}
-                {activeLayer.vitality}% · {activeLayer.trend}
-              </div>
-            ) : null}
-            {civilizationEvents ? <EventsBlock events={civilizationEvents} /> : null}
-            {livingEcology ? <EcologyHealthBlock ecology={livingEcology} /> : null}
+            <WorldHealthAmbientIndicator
+              ecology={livingEcology}
+              civilization={livingCivilization}
+              presence={presence}
+            />
             <footer className="sw-nav-rail__atmosphere" aria-label="Environmental identity">
               <p className="sw-nav-rail__atmosphere-feeling">{district.feeling}</p>
             </footer>
