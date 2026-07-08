@@ -884,4 +884,618 @@ body.studio-world-atlas-active {
   border: 1px solid rgba(120, 200, 255, 0.2);
   background: rgba(0, 0, 0, 0.35);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   Spatial Experience™ — projected civilization, not dashboard
+   ═══════════════════════════════════════════════════════════════ */
+
+.swa.is-spatial {
+  background:
+    radial-gradient(ellipse 55% 35% at 50% 6%, rgba(201, 169, 98, 0.14) 0%, transparent 62%),
+    radial-gradient(ellipse 140% 90% at 50% 100%, #060504 0%, #010100 72%);
+}
+
+.swa__spatial-shell {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.swa__spatial-content {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+}
+
+.swa__ambient-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 100% 80% at 50% 50%, transparent 35%, rgba(0, 0, 0, 0.55) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.2) 28%, rgba(0, 0, 0, 0.65) 100%);
+  animation: swa-veil-darken 1.8s ease forwards;
+}
+
+@keyframes swa-veil-darken {
+  from { opacity: 0.35; }
+  to { opacity: 1; }
+}
+
+.swa__marble-floor {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 140%;
+  height: 42%;
+  z-index: 2;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(232, 224, 212, 0.06) 0%, transparent 70%),
+    repeating-linear-gradient(
+      92deg,
+      rgba(255, 255, 255, 0.02) 0px,
+      rgba(255, 255, 255, 0.02) 1px,
+      transparent 1px,
+      transparent 48px
+    );
+  opacity: 0.5;
+}
+
+.swa__orb-projector {
+  position: absolute;
+  left: 50%;
+  top: max(6%, env(safe-area-inset-top));
+  transform: translateX(-50%);
+  z-index: 6;
+  width: 64px;
+  height: 64px;
+  pointer-events: none;
+}
+
+.swa__orb-projector-sphere {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, #fffef6 0%, #e8d49a 35%, #c9a962 58%, #3d3018 100%);
+  box-shadow:
+    0 0 32px rgba(201, 169, 98, 0.75),
+    0 0 64px rgba(201, 169, 98, 0.35),
+    inset 0 -4px 12px rgba(0, 0, 0, 0.25);
+  animation: swa-orb-activate 2.4s ease-in-out infinite;
+}
+
+@keyframes swa-orb-activate {
+  0%, 100% { filter: brightness(1); transform: translateX(-50%) scale(1); }
+  50% { filter: brightness(1.25); transform: translateX(-50%) scale(1.06); }
+}
+
+.swa__projection-beam {
+  position: absolute;
+  left: 50%;
+  top: 34px;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 48vh;
+  background: linear-gradient(
+    180deg,
+    rgba(201, 169, 98, 0.95) 0%,
+    rgba(120, 210, 255, 0.55) 42%,
+    rgba(80, 200, 255, 0.15) 78%,
+    transparent 100%
+  );
+  filter: blur(0.5px);
+  opacity: 0;
+  box-shadow: 0 0 18px rgba(201, 169, 98, 0.45);
+}
+
+.swa__projection-splash {
+  position: absolute;
+  left: 50%;
+  top: calc(34px + 48vh);
+  transform: translate(-50%, -50%);
+  width: min(72vw, 640px);
+  height: min(28vh, 220px);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(80, 200, 255, 0.22) 0%, transparent 68%);
+  opacity: 0;
+  filter: blur(8px);
+}
+
+.swa.is-spatial.is-assembly-beam .swa__projection-beam,
+.swa.is-spatial.is-assembly-grid .swa__projection-beam,
+.swa.is-spatial.is-assembly-terrain .swa__projection-beam,
+.swa.is-spatial.is-assembly-foundations .swa__projection-beam,
+.swa.is-spatial.is-assembly-buildings .swa__projection-beam,
+.swa.is-spatial.is-assembly-roads .swa__projection-beam,
+.swa.is-spatial.is-assembly-transit .swa__projection-beam,
+.swa.is-spatial.is-assembly-labels .swa__projection-beam,
+.swa.is-spatial.is-assembly-overlays .swa__projection-beam,
+.swa.is-spatial.is-assembly-collaborators .swa__projection-beam,
+.swa.is-spatial.is-assembly-alive .swa__projection-beam {
+  opacity: 0.72;
+  animation: swa-beam-breathe 3.2s ease-in-out infinite;
+}
+
+.swa.is-spatial.is-assembly-beam .swa__projection-splash,
+.swa.is-spatial.is-assembly-grid .swa__projection-splash,
+.swa.is-spatial.is-assembly-terrain .swa__projection-splash,
+.swa.is-spatial.is-assembly-foundations .swa__projection-splash,
+.swa.is-spatial.is-assembly-buildings .swa__projection-splash,
+.swa.is-spatial.is-assembly-roads .swa__projection-splash,
+.swa.is-spatial.is-assembly-transit .swa__projection-splash,
+.swa.is-spatial.is-assembly-labels .swa__projection-splash,
+.swa.is-spatial.is-assembly-overlays .swa__projection-splash,
+.swa.is-spatial.is-assembly-collaborators .swa__projection-splash,
+.swa.is-spatial.is-assembly-alive .swa__projection-splash {
+  opacity: 0.55;
+  animation: swa-splash-pulse 4s ease-in-out infinite;
+}
+
+@keyframes swa-beam-breathe {
+  0%, 100% { opacity: 0.55; width: 2px; }
+  50% { opacity: 0.85; width: 4px; }
+}
+
+@keyframes swa-splash-pulse {
+  0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(0.95); }
+  50% { opacity: 0.65; transform: translate(-50%, -50%) scale(1.04); }
+}
+
+.swa__floor-projection-ring {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translate(-50%, -50%);
+  width: min(94vw, 1100px);
+  height: min(76vh, 680px);
+  border: 1px solid rgba(80, 200, 255, 0.12);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 0 80px rgba(80, 200, 255, 0.06),
+    0 0 40px rgba(80, 200, 255, 0.08);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.swa.is-spatial.is-assembly-grid .swa__floor-projection-ring,
+.swa.is-spatial.is-assembly-terrain .swa__floor-projection-ring,
+.swa.is-spatial.is-assembly-foundations .swa__floor-projection-ring,
+.swa.is-spatial.is-assembly-buildings .swa__floor-projection-ring,
+.swa.is-spatial.is-assembly-roads .swa__floor-projection-ring,
+.swa.is-spatial.is-assembly-transit .swa__floor-projection-ring,
+.swa.is-spatial.is-assembly-labels .swa__floor-projection-ring,
+.swa.is-spatial.is-assembly-overlays .swa__floor-projection-ring,
+.swa.is-spatial.is-assembly-collaborators .swa__floor-projection-ring,
+.swa.is-spatial.is-assembly-alive .swa__floor-projection-ring {
+  opacity: 1;
+  animation: swa-ring-appear 1.2s ease forwards;
+}
+
+@keyframes swa-ring-appear {
+  from { opacity: 0; transform: translate(-50%, -50%) scale(0.92); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.swa__living-layers {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.swa__particle-field { position: absolute; inset: 0; }
+
+.swa__particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: rgba(201, 169, 98, 0.85);
+  box-shadow: 0 0 6px rgba(201, 169, 98, 0.6);
+  animation: swa-particle-drift 6s ease-in-out infinite;
+}
+
+@keyframes swa-particle-drift {
+  0%, 100% { transform: translate(0, 0); opacity: 0.25; }
+  50% { transform: translate(6px, -10px); opacity: 0.9; }
+}
+
+.swa__energy-ribbons {
+  position: absolute;
+  inset: 18% 8% 22%;
+  opacity: 0;
+}
+
+.swa.is-spatial.is-assembly-transit .swa__energy-ribbons,
+.swa.is-spatial.is-assembly-labels .swa__energy-ribbons,
+.swa.is-spatial.is-assembly-overlays .swa__energy-ribbons,
+.swa.is-spatial.is-assembly-collaborators .swa__energy-ribbons,
+.swa.is-spatial.is-assembly-alive .swa__energy-ribbons {
+  opacity: 1;
+}
+
+.swa__ribbon {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(80, 200, 255, 0.65), transparent);
+  animation: swa-ribbon-flow 5s linear infinite;
+}
+.swa__ribbon--a { top: 38%; left: 10%; width: 55%; animation-delay: 0s; }
+.swa__ribbon--b { top: 52%; left: 22%; width: 48%; animation-delay: 1.2s; }
+.swa__ribbon--c { top: 64%; left: 8%; width: 62%; animation-delay: 2.4s; }
+
+@keyframes swa-ribbon-flow {
+  0% { opacity: 0.2; transform: scaleX(0.6); }
+  50% { opacity: 0.85; transform: scaleX(1); }
+  100% { opacity: 0.2; transform: scaleX(0.6); }
+}
+
+.swa__crystal-fog {
+  position: absolute;
+  width: 28%;
+  height: 32%;
+  background: radial-gradient(ellipse at center, rgba(180, 220, 255, 0.12) 0%, transparent 72%);
+  filter: blur(12px);
+  animation: swa-fog-shimmer 7s ease-in-out infinite;
+}
+.swa__crystal-fog--nw { left: 4%; top: 28%; }
+.swa__crystal-fog--se { right: 6%; bottom: 18%; animation-delay: 2.5s; }
+
+@keyframes swa-fog-shimmer {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.7; }
+}
+
+.swa__elevation-lines {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  transform: translate(-50%, -50%);
+  width: min(90vw, 1040px);
+  height: min(70vh, 620px);
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 18px, rgba(80, 200, 255, 0.04) 18px, rgba(80, 200, 255, 0.04) 19px);
+  opacity: 0;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+.swa.is-spatial.is-assembly-terrain .swa__elevation-lines,
+.swa.is-spatial.is-assembly-foundations .swa__elevation-lines,
+.swa.is-spatial.is-assembly-buildings .swa__elevation-lines,
+.swa.is-spatial.is-assembly-roads .swa__elevation-lines,
+.swa.is-spatial.is-assembly-transit .swa__elevation-lines,
+.swa.is-spatial.is-assembly-labels .swa__elevation-lines,
+.swa.is-spatial.is-assembly-overlays .swa__elevation-lines,
+.swa.is-spatial.is-assembly-collaborators .swa__elevation-lines,
+.swa.is-spatial.is-assembly-alive .swa__elevation-lines {
+  opacity: 0.65;
+}
+
+/* Full-viewport holographic table */
+.swa.is-spatial .swa__table-stage {
+  top: 56%;
+  width: min(96vw, 1080px);
+  height: min(74vh, 640px);
+  perspective: 1400px;
+  z-index: 12;
+}
+
+.swa.is-spatial .swa__table {
+  transform: rotateX(62deg) translateZ(0);
+}
+
+.swa.is-spatial .swa__table-surface {
+  inset: 4% 2%;
+  border: 1px solid rgba(120, 220, 255, 0.42);
+  background:
+    linear-gradient(rgba(80, 200, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80, 200, 255, 0.08) 1px, transparent 1px),
+    radial-gradient(ellipse at center, rgba(80, 200, 255, 0.16) 0%, rgba(0, 0, 0, 0.62) 72%);
+  background-size: 24px 24px, 24px 24px, 100% 100%;
+  box-shadow:
+    0 0 60px rgba(80, 200, 255, 0.2),
+    inset 0 0 80px rgba(80, 200, 255, 0.1);
+  opacity: 0;
+  transform: scaleY(0.3);
+  transform-origin: center bottom;
+}
+
+.swa.is-spatial.is-assembly-grid .swa__table-surface,
+.swa.is-spatial.is-assembly-terrain .swa__table-surface,
+.swa.is-spatial.is-assembly-foundations .swa__table-surface,
+.swa.is-spatial.is-assembly-buildings .swa__table-surface,
+.swa.is-spatial.is-assembly-roads .swa__table-surface,
+.swa.is-spatial.is-assembly-transit .swa__table-surface,
+.swa.is-spatial.is-assembly-labels .swa__table-surface,
+.swa.is-spatial.is-assembly-overlays .swa__table-surface,
+.swa.is-spatial.is-assembly-collaborators .swa__table-surface,
+.swa.is-spatial.is-assembly-alive .swa__table-surface {
+  opacity: 1;
+}
+
+.swa.is-spatial.is-assembly-grid .swa__table-surface {
+  animation: swa-grid-appear 0.9s ease forwards;
+}
+
+.swa.is-spatial.is-assembly-terrain .swa__table-surface,
+.swa.is-spatial.is-assembly-foundations .swa__table-surface,
+.swa.is-spatial.is-assembly-buildings .swa__table-surface,
+.swa.is-spatial.is-assembly-roads .swa__table-surface,
+.swa.is-spatial.is-assembly-transit .swa__table-surface,
+.swa.is-spatial.is-assembly-labels .swa__table-surface,
+.swa.is-spatial.is-assembly-overlays .swa__table-surface,
+.swa.is-spatial.is-assembly-collaborators .swa__table-surface,
+.swa.is-spatial.is-assembly-alive .swa__table-surface {
+  transform: scaleY(1);
+}
+
+@keyframes swa-grid-appear {
+  from { opacity: 0; transform: scaleY(0.2); }
+  to { opacity: 1; transform: scaleY(1); }
+}
+
+.swa.is-spatial .swa__roads,
+.swa.is-spatial .swa__buildings {
+  inset: 4% 2%;
+}
+
+.swa.is-spatial .swa__road {
+  opacity: 0;
+  stroke-dashoffset: 40;
+}
+
+.swa.is-spatial.is-assembly-roads .swa__road,
+.swa.is-spatial.is-assembly-transit .swa__road,
+.swa.is-spatial.is-assembly-labels .swa__road,
+.swa.is-spatial.is-assembly-overlays .swa__road,
+.swa.is-spatial.is-assembly-collaborators .swa__road,
+.swa.is-spatial.is-assembly-alive .swa__road {
+  opacity: 1;
+  animation: swa-roads-illuminate 1.1s ease forwards, swa-road-flow 12s linear infinite;
+}
+
+@keyframes swa-roads-illuminate {
+  from { stroke-dashoffset: 80; opacity: 0; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+
+.swa.is-spatial .swa__building {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.4);
+}
+
+.swa.is-spatial.is-assembly-buildings .swa__building,
+.swa.is-spatial.is-assembly-roads .swa__building,
+.swa.is-spatial.is-assembly-transit .swa__building,
+.swa.is-spatial.is-assembly-labels .swa__building,
+.swa.is-spatial.is-assembly-overlays .swa__building,
+.swa.is-spatial.is-assembly-collaborators .swa__building,
+.swa.is-spatial.is-assembly-alive .swa__building {
+  animation: swa-building-assemble 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes swa-building-assemble {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) translateY(12px); filter: brightness(2); }
+  60% { filter: brightness(1.4); }
+  100% { opacity: var(--swa-building-opacity, 1); transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+}
+
+.swa.is-spatial .swa__building.is-fogged {
+  --swa-building-opacity: 0.35;
+}
+
+.swa.is-spatial .swa__building-label,
+.swa.is-spatial .swa__building-level {
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.swa.is-spatial.is-labels-visible .swa__building-label,
+.swa.is-spatial.is-labels-visible .swa__building-level,
+.swa.is-spatial.is-assembly-labels .swa__building-label,
+.swa.is-spatial.is-assembly-overlays .swa__building-label,
+.swa.is-spatial.is-assembly-collaborators .swa__building-label,
+.swa.is-spatial.is-assembly-alive .swa__building-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Holographic HUD — no dashboard chrome */
+.swa.is-spatial .swa__hud {
+  background: transparent;
+  padding-top: max(8px, env(safe-area-inset-top));
+  z-index: 45;
+}
+
+.swa.is-spatial .swa__back {
+  border-color: rgba(201, 169, 98, 0.25);
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+}
+
+.swa.is-spatial .swa__title-block {
+  text-align: center;
+}
+
+.swa.is-spatial .swa__eyebrow,
+.swa.is-spatial .swa__title {
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+}
+
+.swa.is-spatial .swa__zoom-out {
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  border-color: rgba(80, 200, 255, 0.3);
+}
+
+/* No Panels™ — glass ribbons instead of rectangles */
+.swa.is-spatial .swa__focus-panel,
+.swa.is-spatial .swa__orb,
+.swa.is-spatial .swa__planner-panel,
+.swa.is-spatial .swa__planner-toolbar,
+.swa.is-spatial .swa__pf-comparison {
+  border: 1px solid rgba(120, 220, 255, 0.22);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(0, 0, 0, 0.35) 55%,
+    rgba(80, 200, 255, 0.06) 100%
+  );
+  backdrop-filter: blur(14px);
+  box-shadow:
+    0 0 24px rgba(80, 200, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  border-radius: 2px;
+}
+
+.swa.is-spatial .swa__focus-panel {
+  top: auto;
+  bottom: max(108px, calc(env(safe-area-inset-bottom) + 92px));
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(88vw, 340px);
+  text-align: center;
+  animation: swa-annotation-float 4.5s ease-in-out infinite;
+}
+
+.swa.is-spatial .swa__orb {
+  top: 12%;
+  right: auto;
+  left: 50%;
+  transform: translateX(calc(50% + min(38vw, 220px)));
+  width: min(30vw, 148px);
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.swa.is-spatial .swa__orb-sphere {
+  display: none;
+}
+
+.swa.is-spatial .swa__orb-title {
+  font-size: 4px;
+  opacity: 0.7;
+}
+
+.swa.is-spatial .swa__orb-rec {
+  border: 1px solid rgba(120, 220, 255, 0.18);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+}
+
+@keyframes swa-annotation-float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+
+.swa.is-spatial .swa__mode-rail,
+.swa.is-spatial .swa__travel-rail {
+  background: transparent;
+  gap: 6px;
+}
+
+.swa.is-spatial .swa__mode-pill,
+.swa.is-spatial .swa__travel-pill {
+  border: 1px solid rgba(120, 220, 255, 0.2);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(10px);
+  border-radius: 999px;
+}
+
+.swa.is-spatial .swa__breadcrumb {
+  top: max(44px, calc(env(safe-area-inset-top) + 36px));
+}
+
+.swa.is-spatial .swa__crumb {
+  border: 1px solid rgba(120, 220, 255, 0.15);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(8px);
+}
+
+.swa.is-spatial .swa__ticker {
+  top: max(72px, calc(env(safe-area-inset-top) + 60px));
+  opacity: 0.45;
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+}
+
+.swa.is-spatial .swa__engine-strip {
+  top: max(84px, calc(env(safe-area-inset-top) + 72px));
+  justify-content: center;
+}
+
+.swa.is-spatial .swa__engine-chip {
+  border-color: rgba(120, 220, 255, 0.2);
+  background: rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(6px);
+}
+
+.swa.is-spatial .swa__travel-overlay {
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 58%, rgba(80, 200, 255, 0.12) 0%, rgba(0, 0, 0, 0.88) 68%);
+  backdrop-filter: blur(4px);
+}
+
+.swa.is-spatial .swa__travel-overlay .swa__travel-route {
+  position: absolute;
+  left: 50%;
+  bottom: 28%;
+  transform: translateX(-50%);
+  width: min(80vw, 480px);
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(201, 169, 98, 0.8), transparent);
+  animation: swa-route-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes swa-route-pulse {
+  0%, 100% { opacity: 0.4; transform: translateX(-50%) scaleX(0.7); }
+  50% { opacity: 1; transform: translateX(-50%) scaleX(1); }
+}
+
+.swa.is-spatial .swa__travel-collaborators {
+  margin-top: 12px;
+  font-size: 4px;
+  letter-spacing: 0.08em;
+  opacity: 0.65;
+}
+
+.swa.is-spatial.is-assembly-alive .swa__table-glow {
+  animation: swa-table-breathe 5s ease-in-out infinite;
+}
+
+@keyframes swa-table-breathe {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.85; }
+}
+
+.swa.is-spatial .swa__extrusion {
+  background: linear-gradient(
+    180deg,
+    rgba(140, 230, 255, 0.9) 0%,
+    rgba(60, 150, 210, 0.45) 55%,
+    rgba(30, 80, 140, 0.25) 100%
+  );
+  border-color: rgba(160, 235, 255, 0.55);
+  box-shadow:
+    0 0 16px rgba(80, 200, 255, 0.4),
+    inset 0 0 8px rgba(255, 255, 255, 0.12);
+}
+
+.swa.is-spatial .swa__fog-legend {
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  opacity: 0.4;
+}
 `;

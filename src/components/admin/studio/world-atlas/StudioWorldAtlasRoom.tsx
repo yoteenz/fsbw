@@ -23,6 +23,10 @@ import {
 } from '../../../../studio-os-core/studio-world-atlas';
 import { orbSignalClass, resolveOrbSignalForNode } from '../../../../studio-os-core/orb-recommendations';
 import { useStudioWorldAtlas } from '../../../../hooks/useStudioWorldAtlas';
+import { useStudioWorldExperienceOptional } from '../global-experience';
+import { PresenceGated } from '../progressive-presence/PresenceGated';
+import { AtlasSpatialShell } from './AtlasSpatialShell';
+import { useAtlasAssembly } from './useAtlasAssembly';
 import { STUDIO_WORLD_ATLAS_STYLES } from './studioWorldAtlasTheme';
 
 const MAP_MODES = Object.keys(ATLAS_MAP_MODE_LABELS) as AtlasMapMode[];
@@ -134,12 +138,14 @@ function BuildingMarker({
 }
 
 /**
- * Studio World Atlas™ — living holographic blueprint inside Executive Atrium™.
- * Phase 3: Master Planner™ strategic planning table — extend, never redesign.
+ * Studio World Atlas™ — spatial holographic civilization projection.
+ * Architecture first; information emerges through Progressive Presence™.
  */
 export function StudioWorldAtlasRoom() {
   const navigate = useNavigate();
   const { workspace, workspaceId } = useWorkspace();
+  const experience = useStudioWorldExperienceOptional();
+  const { phase, isAlive } = useAtlasAssembly();
   const atlas = useStudioWorldAtlas({
     companyName: workspace.displayName,
     organizationId: workspaceId ?? 'frontal-slayer',
@@ -183,6 +189,9 @@ export function StudioWorldAtlasRoom() {
 
   const handleSelect = useCallback(
     (nodeId: string) => {
+      experience?.presence.expand('atlas-district-labels', 1);
+      experience?.presence.expand('atlas-focus-annotation', 2);
+      experience?.presence.revealLevel(1);
       setSelectedNodeId(nodeId);
       const node = atlas.catalog.find((n) => n.id === nodeId);
       if (!node) return;
@@ -194,7 +203,7 @@ export function StudioWorldAtlasRoom() {
         atlas.focusOn(nodeId);
       }
     },
-    [atlas]
+    [atlas, experience]
   );
 
   const handleTravel = useCallback(
@@ -203,32 +212,51 @@ export function StudioWorldAtlasRoom() {
       if (selectedNode.isPlanned || selectedNode.isConcept) return;
       const resolution = atlas.resolveTravel(targetId);
       if (!resolution) return;
+      const targetName = atlas.catalog.find((n) => n.id === targetId)?.displayName ?? 'destination';
+      experience?.presence.expand('atlas-travel-journey', 2);
       setTraveling(true);
       setTravelOverlay({
-        message: `${resolution.verb} ${atlas.catalog.find((n) => n.id === targetId)?.displayName ?? 'destination'}…`,
+        message: `${resolution.verb} ${targetName}…`,
         cinematicClass: resolution.cinematicClass.replace('atlas-travel-', ''),
       });
-      await new Promise((r) => window.setTimeout(r, resolution.transitionMs));
+      await new Promise((r) => window.setTimeout(r, Math.max(600, resolution.transitionMs * 0.55)));
+      await new Promise((r) => window.setTimeout(r, resolution.transitionMs * 0.45));
       navigate(resolution.path);
       setTraveling(false);
       setTravelOverlay(null);
       atlas.clearTravelingRoads();
     },
-    [atlas, navigate, selectedNode.id, selectedNode.isPlanned, selectedNode.isConcept]
+    [atlas, experience, navigate, selectedNode.id, selectedNode.isPlanned, selectedNode.isConcept]
   );
 
   const showPlanner = atlas.isMasterPlannerMode;
   const showParallelFutures = atlas.isParallelFuturesMode;
   const showFutureMerge = atlas.isFutureMergeMode;
+  const labelsVisible = experience?.presence.isVisible('atlas-district-labels') ?? false;
+  const plannerSurfacesVisible =
+    showPlanner || showParallelFutures || showFutureMerge || experience?.presence.isVisible('atlas-planner-surfaces');
 
   return (
     <>
       <style>{STUDIO_WORLD_ATLAS_STYLES}</style>
       <div
-        className={`swa${showPlanner ? ' is-master-planner' : ''}${showParallelFutures ? ' is-parallel-futures' : ''}${showFutureMerge ? ' is-future-merge' : ''}`}
+        className={[
+          'swa',
+          'is-spatial',
+          `is-assembly-${phase}`,
+          isAlive ? 'is-assembly-alive' : '',
+          labelsVisible ? 'is-labels-visible' : '',
+          showPlanner ? 'is-master-planner' : '',
+          showParallelFutures ? 'is-parallel-futures' : '',
+          showFutureMerge ? 'is-future-merge' : '',
+          traveling ? 'is-traveling' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
         role="application"
         aria-label="Studio World Atlas"
       >
+        <AtlasSpatialShell phase={phase} alive={isAlive}>
         <header className="swa__hud">
           <button
             type="button"
@@ -263,42 +291,49 @@ export function StudioWorldAtlasRoom() {
         </header>
 
         <div className="swa__ticker" aria-live="polite">
-          <span className="swa__ticker-inner">
-            {showFutureMerge
-              ? `FUTURE MERGE™ · MERGE LAB™ · ${atlas.discovery.parallelFutures.length} FUTURES FLOATING`
-              : showPlanner
-                ? showParallelFutures
-                  ? `PARALLEL FUTURES™ · ${atlas.discovery.parallelFutures.length} VISIONS · DESIGN FIRST · BUILD SECOND`
-                  : `MASTER PLANNER™ · ${atlas.discovery.masterPlan.length} RESERVED · SIMULATE BEFORE YOU GENERATE · ${atlas.worldForecast.narrative}`
-                : atlas.worldTicker}{' '}
-            &nbsp;&nbsp;&nbsp;{' '}
-            {showPlanner ? atlas.worldForecast.narrative : atlas.worldTicker}
-          </span>
+          <PresenceGated elementId="atlas-world-ticker">
+            <span className="swa__ticker-inner">
+              {showFutureMerge
+                ? `FUTURE MERGE™ · MERGE LAB™ · ${atlas.discovery.parallelFutures.length} FUTURES FLOATING`
+                : showPlanner
+                  ? showParallelFutures
+                    ? `PARALLEL FUTURES™ · ${atlas.discovery.parallelFutures.length} VISIONS · DESIGN FIRST · BUILD SECOND`
+                    : `MASTER PLANNER™ · ${atlas.discovery.masterPlan.length} RESERVED · SIMULATE BEFORE YOU GENERATE · ${atlas.worldForecast.narrative}`
+                  : atlas.worldTicker}{' '}
+              &nbsp;&nbsp;&nbsp;{' '}
+              {showPlanner ? atlas.worldForecast.narrative : atlas.worldTicker}
+            </span>
+          </PresenceGated>
         </div>
 
         {!showPlanner ? (
-          <div className="swa__engine-strip" aria-hidden>
-            {atlas.activeEngines.slice(0, 8).map((engine) => (
-              <span key={engine} className="swa__engine-chip">
-                {ATLAS_ENGINE_LABELS[engine]}
-              </span>
-            ))}
-          </div>
+          <PresenceGated elementId="atlas-engine-strip">
+            <div className="swa__engine-strip" aria-hidden>
+              {atlas.activeEngines.slice(0, 8).map((engine) => (
+                <span key={engine} className="swa__engine-chip">
+                  {ATLAS_ENGINE_LABELS[engine]}
+                </span>
+              ))}
+            </div>
+          </PresenceGated>
         ) : null}
 
-        <nav className="swa__breadcrumb" aria-label="Atlas focus trail">
-          {atlas.breadcrumb.map((node, i) => (
-            <button
-              key={node.id}
-              type="button"
-              className={`swa__crumb${i === atlas.breadcrumb.length - 1 ? ' is-current' : ''}`}
-              onClick={() => atlas.focusOn(node.id)}
-            >
-              {node.displayName}
-            </button>
-          ))}
-        </nav>
+        <PresenceGated elementId="atlas-breadcrumb-trail">
+          <nav className="swa__breadcrumb" aria-label="Atlas focus trail">
+            {atlas.breadcrumb.map((node, i) => (
+              <button
+                key={node.id}
+                type="button"
+                className={`swa__crumb${i === atlas.breadcrumb.length - 1 ? ' is-current' : ''}`}
+                onClick={() => atlas.focusOn(node.id)}
+              >
+                {node.displayName}
+              </button>
+            ))}
+          </nav>
+        </PresenceGated>
 
+        <PresenceGated elementId="atlas-focus-annotation">
         <aside className="swa__focus-panel" aria-live="polite">
           <p className="swa__focus-name">{selectedNode.displayName}</p>
           <p className="swa__focus-meta">
@@ -427,7 +462,7 @@ export function StudioWorldAtlasRoom() {
               {ATLAS_TRAVEL_LABELS[atlas.view.travelMode]} → {selectedNode.displayName}
             </button>
           ) : null}
-          {showFutureMerge ? (
+          {plannerSurfacesVisible && showFutureMerge ? (
             <>
               <button
                 type="button"
@@ -488,8 +523,9 @@ export function StudioWorldAtlasRoom() {
             </>
           ) : null}
         </aside>
+        </PresenceGated>
 
-        {showFutureMerge ? (
+        {plannerSurfacesVisible && showFutureMerge ? (
           <aside className="swa__pf-comparison swa__merge-lab-panel" aria-label="Merge Lab ingredients">
             <p className="swa__planner-title">MERGE FUTURES™</p>
             {(atlas.discovery.activeMergeRecipe?.ingredients ?? []).map((ing) => (
@@ -524,7 +560,7 @@ export function StudioWorldAtlasRoom() {
               </p>
             ))}
           </aside>
-        ) : showParallelFutures ? (
+        ) : showParallelFutures && plannerSurfacesVisible ? (
           <aside className="swa__pf-comparison" aria-label="Parallel Futures comparison">
             <p className="swa__planner-title">SIDE-BY-SIDE COMPARISON™</p>
             {atlas.parallelFuturesComparison.map((row) => (
@@ -561,7 +597,7 @@ export function StudioWorldAtlasRoom() {
           </aside>
         ) : null}
 
-        {showPlanner && !showParallelFutures ? (
+        {showPlanner && !showParallelFutures && plannerSurfacesVisible ? (
           <aside className="swa__planner-panel" aria-label="Master Planner reservations">
             <p className="swa__planner-title">RESERVED LAND™</p>
             {atlas.discovery.masterPlan.map((plan) => (
@@ -592,7 +628,7 @@ export function StudioWorldAtlasRoom() {
           </aside>
         ) : null}
 
-        {showFutureMerge ? (
+        {plannerSurfacesVisible && showFutureMerge ? (
           <aside className="swa__planner-toolbar" aria-label="Merge Lab tools">
             <p className="swa__planner-toolbar-title">MERGE LAB™</p>
             <p style={{ fontSize: 3, opacity: 0.75, margin: '0 0 6px', lineHeight: 1.4 }}>
@@ -613,7 +649,7 @@ export function StudioWorldAtlasRoom() {
               </p>
             ))}
           </aside>
-        ) : showParallelFutures ? (
+        ) : showParallelFutures && plannerSurfacesVisible ? (
           <aside className="swa__planner-toolbar" aria-label="Parallel Futures tools">
             <p className="swa__planner-toolbar-title">PARALLEL FUTURES™</p>
             {atlas.discovery.parallelFutures.filter((f) => !f.isMerged).map((future) => (
@@ -653,7 +689,7 @@ export function StudioWorldAtlasRoom() {
               FORK VISION →
             </button>
           </aside>
-        ) : showPlanner ? (
+        ) : showPlanner && plannerSurfacesVisible ? (
           <aside className="swa__planner-toolbar" aria-label="Master Planner tools">
             <p className="swa__planner-toolbar-title">RESERVE LAND™</p>
             {RESERVE_LAND_PRESETS.slice(0, 4).map((preset) => (
@@ -736,6 +772,7 @@ export function StudioWorldAtlasRoom() {
           </aside>
         ) : null}
 
+        <PresenceGated elementId="atlas-orb-projections">
         <aside className="swa__orb" aria-label="Studio Orb world guide">
           <div className="swa__orb-sphere" aria-hidden />
           <p className="swa__orb-title">
@@ -779,6 +816,7 @@ export function StudioWorldAtlasRoom() {
             </button>
           ))}
         </aside>
+        </PresenceGated>
 
         <div className="swa__table-stage">
           <div className={`swa__table${atlas.view.transitionMs > 800 ? ' is-zooming' : ''}`}>
@@ -843,6 +881,7 @@ export function StudioWorldAtlasRoom() {
           </div>
         </div>
 
+        <PresenceGated elementId="atlas-mode-controls">
         <div className="swa__mode-rail" role="tablist" aria-label="Map modes">
           {MAP_MODES.map((mode) => (
             <button
@@ -857,8 +896,10 @@ export function StudioWorldAtlasRoom() {
             </button>
           ))}
         </div>
+        </PresenceGated>
 
         {!showPlanner ? (
+          <PresenceGated elementId="atlas-travel-controls">
           <div className="swa__travel-rail" role="group" aria-label="Travel mode">
             {TRAVEL_MODES.map((mode) => (
               <button
@@ -871,22 +912,30 @@ export function StudioWorldAtlasRoom() {
               </button>
             ))}
           </div>
+          </PresenceGated>
         ) : null}
 
+        <PresenceGated elementId="atlas-fog-legend">
         <p className="swa__fog-legend">
           {showPlanner
             ? `MASTER PLANNER™ · ${atlas.discovery.masterPlan.length} reserved · ${atlas.discovery.futureVisionConcepts.length} vision concepts`
             : `FOG OF DISCOVERY™ · ${atlas.discovery.discoveredNodeIds.length} revealed · ${atlas.discovery.collectibles.length} collectibles`}
         </p>
+        </PresenceGated>
 
         {travelOverlay ? (
           <div
             className={`swa__travel-overlay is-${travelOverlay.cinematicClass}`}
             aria-live="assertive"
           >
+            <div className="swa__travel-route" aria-hidden />
             <p className="swa__travel-msg">{travelOverlay.message}</p>
+            <p className="swa__travel-collaborators">
+              {ATLAS_TRAVEL_LABELS[atlas.view.travelMode]} · ROUTE ILLUMINATED
+            </p>
           </div>
         ) : null}
+        </AtlasSpatialShell>
       </div>
     </>
   );

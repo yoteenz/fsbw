@@ -42741,3 +42741,19 @@ User **approved** Progressive Presence architectural direction but rejected per-
   - `useProgressivePresence` deprecated (fallback only)
   - `docs/studio-os/governance/GLOBAL_EXPERIENCE_SYSTEM.md`
 - **Prior arc (same chat):** Article K18 Progressive Presence™ · ArchitecturalRail vs SceneTray™ · Four-layer governance · Design Principles™.
+
+---
+
+## 2026-07-08 — World Atlas Spatial Experience™ (holographic civilization projection)
+
+Follow-up: user said World Atlas™ was architecturally correct but still felt like a GIS/admin dashboard — not the iconic Studio World navigation experience. Mandate: **The Atlas Is A Spatial Experience™** — projected into physical space (room darkens, Orb brightens, beam onto marble floor, living 3D world assembles from light). NOT admin panels. References: JARVIS, Vision Pro, Mass Effect galaxy map, Destiny Director — luxury museum installation.
+
+- **Delivered:**
+  - `AtlasSpatialShell.tsx` — ambient veil, marble floor, Orb projector + beam + splash, wraps holographic content
+  - `AtlasLivingLayers.tsx` — particle field, energy ribbons, crystal fog, elevation lines, floor projection ring
+  - `useAtlasAssembly.ts` — **The World Assembles™** staged sequence (orb → beam → grid → terrain → foundations → buildings → roads → transit → labels → overlays → collaborators → alive)
+  - `studioWorldAtlasTheme.ts` — Spatial Experience™ CSS block: full-viewport projection table, assembly keyframes, holographic glass ribbons (no rectangular dashboard chrome), living civilization motion, travel route pulse
+  - `StudioWorldAtlasRoom.tsx` — `is-spatial` mode; assembly phases on root; **Progressive Presence™** gates (architecture only default): district labels L1, focus annotation L2, ticker/engine/mode/planner L2–3; interaction expands presence; travel illuminates routes with cinematic overlay
+  - `registry.ts` — atlas UI elements: `atlas-holographic-table`, `atlas-district-labels`, `atlas-focus-annotation`, `atlas-travel-controls`, `atlas-orb-projections`, `atlas-world-ticker`, `atlas-engine-strip`, `atlas-mode-controls`, `atlas-planner-surfaces`, `atlas-fog-legend`
+- **Preserved:** `useStudioWorldAtlas` hook, catalog/travel/zoom, Master Planner / Parallel Futures / Future Merge modes — data layer unchanged
+- **Prior arc (same chat):** Nav bug fix (ArchitecturalRail vs SceneTray) · Article K18 Progressive Presence™ · Global Experience System™.
