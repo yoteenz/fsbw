@@ -17,6 +17,14 @@ import {
 /** Max bytes per Studio OS localStorage value (Safari ~5MB total domain quota). */
 export const STUDIO_OS_MAX_LOCAL_VALUE_BYTES = 24 * 1024;
 
+/** Scene Stack layer URLs across 6 stations can exceed the default per-key cap. */
+const SCENE_STACK_LOCAL_VALUE_BYTES = 64 * 1024;
+
+function maxLocalValueBytesForKey(key: string): number {
+  if (key === 'studioOsSceneStack_v1') return SCENE_STACK_LOCAL_VALUE_BYTES;
+  return STUDIO_OS_MAX_LOCAL_VALUE_BYTES;
+}
+
 /** Max total bytes for all Studio OS keys in localStorage. */
 export const STUDIO_OS_MAX_TOTAL_LOCAL_BYTES = 256 * 1024;
 
@@ -124,7 +132,7 @@ function measureStudioLocalBytesUncached(): number {
 
 function canPersistStudioKeyLocally(key: string, value: string): boolean {
   if (!isStudioOsStorageKey(key)) return true;
-  if (value.length > STUDIO_OS_MAX_LOCAL_VALUE_BYTES) return false;
+  if (value.length > maxLocalValueBytesForKey(key)) return false;
   if (isLightweightStudioKey(key)) {
     if (getStudioLocalBytesCached() + key.length + value.length > STUDIO_OS_MAX_TOTAL_LOCAL_BYTES) {
       return false;
@@ -250,7 +258,8 @@ export function purgeOversizedStudioLocalKeys(): { removed: string[]; freedBytes
       if (!raw) continue;
 
       let drop = false;
-      if (raw.length > STUDIO_OS_MAX_LOCAL_VALUE_BYTES) drop = true;
+      const maxBytes = maxLocalValueBytesForKey(key);
+      if (raw.length > maxBytes) drop = true;
       else if (!isLightweightStudioKey(key)) drop = true;
       else {
         try {

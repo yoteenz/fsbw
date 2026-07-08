@@ -65,10 +65,6 @@ export function CreativeDirectionStudioRoom() {
     };
   }, []);
 
-  useEffect(() => {
-    void stack.ensureStation(activeZoneId);
-  }, [activeZoneId, stack.ensureStation]);
-
   const orbCopy = useMemo(
     () => resolveDepartmentOrbGreeting(slice.pkg, slice.project),
     [slice.pkg, slice.project]

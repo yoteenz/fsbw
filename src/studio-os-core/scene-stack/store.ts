@@ -33,8 +33,25 @@ function readStore(): Store {
   return { layers: compactLayers(store.layers) };
 }
 
+/** Drop metadata that is not needed to restore the composite on refresh. */
+function slimLayerRecord(rec: SceneStackLayerRecord): SceneStackLayerRecord {
+  return {
+    id: rec.id,
+    departmentId: rec.departmentId,
+    projectId: rec.projectId,
+    stationId: rec.stationId,
+    layerId: rec.layerId,
+    version: rec.version,
+    status: rec.status,
+    publicUrl: rec.publicUrl,
+    promptVersion: rec.promptVersion,
+    productionGroupId: rec.productionGroupId,
+    heroAssetId: rec.heroAssetId,
+  };
+}
+
 function writeStore(store: Store): void {
-  writeStudioOsJson(STORAGE_KEY, { layers: compactLayers(store.layers) });
+  writeStudioOsJson(STORAGE_KEY, { layers: compactLayers(store.layers).map(slimLayerRecord) });
 }
 
 export function getSceneStackLayerRecord(
