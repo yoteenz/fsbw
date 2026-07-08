@@ -43930,3 +43930,21 @@ Summary of the **full conversation in this chat**: Career Worlds™ implementati
 - **Verification:** `npm run build` passed; World Graph compile **671 nodes · 1325 edges · PASS**.
 - **Conventions:** The Institute governs the Codex; the Codex stores civilization knowledge; Knowledge Core remains operational/search memory, not final constitutional authority. Orb answers should cite Institute-governed sources. Profession Brain updates and AI-generated knowledge require Institute validation before canon promotion.
 
+---
+
+## 2026-07-08 — Institute of Knowledge™ implementation sprint (institutional platform)
+
+Summary of the **full conversation in this chat**: Career Worlds™ → ARTICLE-C01 → Codex platform → Phase II Canonical Seeding → ARTICLE-C02 Collections → ARTICLE-C03 Institute architecture → **Institute of Knowledge™ IMPLEMENTATION SPRINT** — build first-class institutional platform (not a documentation website).
+
+- **Context:** User approved Institute architecture and requested reusable institutional infrastructure governing publications, review, canon promotion, World Graph relationships, Codex integration, and Orb citations. Required modules: `/institute`, `/codex`, `/publications`, `/research`, `/constitution`, `/history`, `/standards`, `/review`, `/validation`, `/chronicle`, `/professions`, `/world-graph`. Seven core bureaus plus Publication Office — modular and independently expandable.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/institute-of-knowledge/`** full platform tree with types, persistence (`instituteOfKnowledge_v1`), bootstrap from Codex canonical archive (publications as `PUB-{articleId}`), publication engine (edition/revision/status/contributors/approval/relationships), review pipeline (Profession Brain / Research Engine / Mentor AI submitters), validation/promotion pipeline (Draft→Working→Review→Approved→Canonical→Deprecated→Historical), chronicle, division modules, Codex integration, World Graph sync, Orb advisor with edition/citation metadata, expansion hooks.
+  - **`ingestInstituteNodes()`** added to World Graph builder; Codex ingest updated to reference Institute module (org/division nodes owned by institute-ingest).
+  - **`studio-world-codex/institute-of-knowledge.ts`** now re-exports from canonical Institute module for backward compatibility.
+  - **`resolveCodexAndInstituteAdvice()`** in Codex Orb curator combines Institute citations with Codex responses.
+  - Admin UI: **`InstituteWorkspace`** at **`/admin/studio/institute`** — Publications, Review Pipeline, Divisions, World Chronicle, Knowledge Graph tabs; hook **`useInstituteState()`**.
+  - Navigation/modules: `institute-of-knowledge` in `adminStudioNavigation.ts`, `core/modules.ts`, `adminStudioDemo.ts`, `App.tsx` route.
+  - Docs: **`docs/studio-os/institute/INSTITUTE_PLATFORM.md`**, **`README.md`**.
+- **Verification:** `npm run build` passed; World Graph compile **672 nodes · 1327 edges · PASS**.
+- **Conventions:** Institute is an institution, not a docs site. AI knowledge must pass Institute review before canon. Every publication auto-creates graph relationships. Orb cites edition, revision, and constitutional sources.
+

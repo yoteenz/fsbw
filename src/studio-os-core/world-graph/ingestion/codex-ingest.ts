@@ -1,5 +1,6 @@
 import { getCodexBootstrapArticles, getCodexBootstrapRelationships } from '../../studio-world-codex/bootstrap/seeds';
-import { CODEX_COLLECTIONS, CODEX_VOLUMES, THE_INSTITUTE_OF_KNOWLEDGE } from '../../studio-world-codex';
+import { CODEX_COLLECTIONS, CODEX_VOLUMES } from '../../studio-world-codex';
+import { THE_INSTITUTE_OF_KNOWLEDGE } from '../../institute-of-knowledge';
 import { worldEdgeId, worldNodeId } from '../id';
 import { lifecyclePlane } from '../lifecycle';
 import type { WorldEdge, WorldNode } from '../types';
@@ -79,27 +80,6 @@ export function ingestCodexNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } {
     },
   });
 
-  nodes.push({
-    id: instituteId,
-    slug: THE_INSTITUTE_OF_KNOWLEDGE.id,
-    displayName: THE_INSTITUTE_OF_KNOWLEDGE.title,
-    nodeType: 'organization',
-    lifecycle: 'architecture',
-    plane: lifecyclePlane('architecture'),
-    version: '1.4.0',
-    summary: THE_INSTITUTE_OF_KNOWLEDGE.purpose,
-    implementationStatus: 'spec',
-    codePaths: ['src/studio-os-core/studio-world-codex/institute-of-knowledge.ts'],
-    docPaths: ['docs/studio-os/codex/ARTICLE_C03_INSTITUTE_OF_KNOWLEDGE.md'],
-    provenance: { source: 'constitution', sourceRef: 'ARTICLE-C03', ingestedAt: ts },
-    tags: ['institute-of-knowledge', 'publishing', 'research', 'canon-review', 'knowledge-validation'],
-    metadata: {
-      constitutionalAuthority: THE_INSTITUTE_OF_KNOWLEDGE.constitutionalAuthority,
-      publicationTypes: THE_INSTITUTE_OF_KNOWLEDGE.publicationTypes,
-      supersedes: THE_INSTITUTE_OF_KNOWLEDGE.supersedes,
-    },
-  });
-
   edges.push({
     id: worldEdgeId('governed-by', codexEngineId, instituteId),
     type: 'governed-by',
@@ -108,38 +88,6 @@ export function ingestCodexNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } {
     label: 'official-library-operator',
     provenance: { source: 'constitution', sourceRef: 'ARTICLE-C03', ingestedAt: ts },
   });
-
-  for (const division of THE_INSTITUTE_OF_KNOWLEDGE.divisions) {
-    const divisionId = worldNodeId('department', `institute-${division.id}`);
-    nodes.push({
-      id: divisionId,
-      slug: `institute-${division.id}`,
-      displayName: division.title,
-      nodeType: 'department',
-      lifecycle: 'architecture',
-      plane: lifecyclePlane('architecture'),
-      version: '1.4.0',
-      summary: division.purpose,
-      implementationStatus: 'spec',
-      codePaths: ['src/studio-os-core/studio-world-codex/institute-of-knowledge.ts'],
-      docPaths: ['docs/studio-os/codex/ARTICLE_C03_INSTITUTE_OF_KNOWLEDGE.md'],
-      provenance: { source: 'constitution', sourceRef: `ARTICLE-C03:${division.id}`, ingestedAt: ts },
-      tags: ['institute-division', 'institute-of-knowledge', division.id],
-      metadata: {
-        responsibilities: division.responsibilities,
-        governsSystems: division.governsSystems,
-      },
-    });
-
-    edges.push({
-      id: worldEdgeId('owns', instituteId, divisionId),
-      type: 'owns',
-      from: instituteId,
-      to: divisionId,
-      label: 'institute-division',
-      provenance: { source: 'constitution', sourceRef: `ARTICLE-C03:${division.id}`, ingestedAt: ts },
-    });
-  }
 
   for (const collection of CODEX_COLLECTIONS) {
     const collectionId =

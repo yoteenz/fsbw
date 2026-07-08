@@ -2358,6 +2358,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'institute-of-knowledge',
+    title: 'INSTITUTE OF KNOWLEDGE™',
+    purpose: 'Knowledge governance institution — publications, review pipeline, canon promotion, and World Graph relationships.',
+    route: p('institute'),
+    groupId: 'legacy',
+    status: 'demo',
+    metric: '7 BUREAUS',
+    ctaLabel: 'OPEN INSTITUTE',
+    moduleKey: 'institute-of-knowledge',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

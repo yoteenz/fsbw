@@ -4,6 +4,7 @@ import {
   findConflictingRelationships,
   findRelatedArticleIds,
 } from '../relationships/engine';
+import { resolveInstituteAdvice } from '../../institute-of-knowledge/orb/advisor';
 import type { CodexArticleRecord, CodexOrbRecommendation } from '../types';
 
 /** Orb Curator™ — constitutional memory advisor for the Codex. */
@@ -122,7 +123,7 @@ export function resolveCodexOrbLine(query: string): string | null {
 
 export type CodexOrbAdvice = {
   response: string;
-  concierge: 'Orb Curator™';
+  concierge: 'Orb Curator™' | 'Orb Curator™ · Institute Advisor™';
   articleCount: number;
 };
 
@@ -134,4 +135,21 @@ export function resolveCodexAdvice(input: string): CodexOrbAdvice | null {
     concierge: 'Orb Curator™',
     articleCount: listCodexArticles().length,
   };
+}
+
+/** Combined Orb response — Codex constitutional memory + Institute canonical publications. */
+export function resolveCodexAndInstituteAdvice(input: string): CodexOrbAdvice | null {
+  const institute = resolveInstituteAdvice(input);
+  if (institute) {
+    const citationNote =
+      institute.citations.length > 0
+        ? ` Sources: ${institute.citations.map((c) => `${c.title} (Ed.${c.edition} Rev.${c.revision})`).join(' · ')}.`
+        : '';
+    return {
+      response: institute.response + citationNote,
+      concierge: 'Orb Curator™ · Institute Advisor™',
+      articleCount: institute.publicationCount,
+    };
+  }
+  return resolveCodexAdvice(input);
 }

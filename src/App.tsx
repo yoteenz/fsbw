@@ -454,6 +454,10 @@ const AdminStudioCodex = lazyWithRetry(
   () => import('./pages/admin/studio/codex/page'),
   'AdminStudioCodex'
 );
+const AdminStudioInstitute = lazyWithRetry(
+  () => import('./pages/admin/studio/institute/page'),
+  'AdminStudioInstitute'
+);
 const AdminStudioKnowledgeCore = lazyWithRetry(
   () => import('./pages/admin/studio/knowledge-core/page'),
   'AdminStudioKnowledgeCore'
@@ -2181,6 +2185,11 @@ function App() {
           <Route path="studio/codex" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioCodex />
+            </Suspense>
+          } />
+          <Route path="studio/institute" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioInstitute />
             </Suspense>
           } />
           <Route path="studio/knowledge-core" element={

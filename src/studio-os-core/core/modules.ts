@@ -177,6 +177,7 @@ export type StudioOsCoreModuleId =
   | 'career-worlds'
   | 'studio-exchange'
   | 'studio-world-codex'
+  | 'institute-of-knowledge'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -1231,6 +1232,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO WORLD CODEX™',
     description: 'Constitutional memory platform — articles, relationships, semantic search, versioning, World Graph and Orb integration.',
     routeSegment: 'codex',
+  },
+  {
+    id: 'institute-of-knowledge',
+    label: 'INSTITUTE OF KNOWLEDGE™',
+    description: 'Knowledge governance institution — publication engine, review pipeline, canon promotion, Codex integration, Orb citations.',
+    routeSegment: 'institute',
   },
   {
     id: 'vision-engine',
