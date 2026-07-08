@@ -41224,3 +41224,52 @@ User defined **Founder Intelligence System™** — foundational intelligence ar
 - **11-doc spec:** `docs/studio-os/intelligence/` — README · founder-intelligence-system · founder-genome · founder-taste-genome · company-genome · project-genome · intelligence-hierarchy · predictive-intelligence · canon-vs-alternate-branches · orb-learning-system · future-intelligence-roadmap
 - **Prior arc (same chat):** Founder Taste Engine™ (docs committed 7af69db2; CORE/MEMORY for taste engine folded here) · Creative Direction Pipeline™ · Adaptive Onboarding™
 - **CORE.md:** Founder Intelligence System™ + Founder Taste Engine™ lines
+
+---
+
+## 2026-07-08 — Creative Direction Studio™ V2 Architectural Reset (docs only)
+
+User mandated **complete architectural reset** of Creative Direction Studio™ — **do NOT iterate** current implementation (no card rearrange · spacing · dashboard redesign). Prototype proved concept works · execution philosophy wrong.
+
+- **Fundamental shift:** CDS is NOT webpage/dashboard/cards/software-in-page — **actual department in Studio World™** · playable creative HQ
+- **Think:** Pixar · Apple ID Lab · Hollywood stage · AAA game hub — NOT Notion/Linear/Figma
+- **Room Is The Interface™:** every feature physical — Mood Wall=architectural wall · Founder Notes=illuminated desk · Orb=host above Story Table™ (spatial center) · Library=shelving · Pipeline=wall-mounted board · Branch Comparison=gallery · Timeline=production table · Review Area=seating · Asset Console=workstation — **nothing is a card**
+- **Arrival Zone™:** founder never sees entire department immediately — arrives in first space · walks · discovers · room unfolds
+- **Spatial hierarchy:** foreground (interactive) · midground (workstations) · background (architecture · lighting · windows · ambient activity)
+- **Movement Not Scroll™:** department NEVER scrolls vertically — walk · camera · pan · orbit · zoom · transitions · only workstation-internal scroll allowed
+- **Orb as host:** alive · welcomes · observes · recommends · explains · celebrates — anchors room emotionally/spatially
+- **Environmental life:** moving light · reflections · holograms · particles · parallax · audio · department breathes (Idle Life™)
+- **Arrival Experience™:** doors · hallway · transition · reveal — not dump all workstations on load
+- **World building:** sense of larger headquarters beyond walls — hallways · doors · ambient movement · sound
+- **Implementation strategy:** environment FIRST → workstations SECOND → controls LAST — do not rebuild controls first
+- **Prototype preserved logic not UI:** `DepartmentVerticalSliceRoom` · `CreativeApprovalPipelinePanel` · `CreativeReviewPanel` · pipeline stores — V2 replaces presentation
+- **Success benchmark:** screen recording reaction *"Is this a game?"* / *"interactive production studio"* — NOT *"Nice UI"*
+- **Founder should think:** walking creative HQ · directing production team · inside Company Engine™ — NOT forms/dashboards/software
+- **13-doc spec:** `docs/studio-os/creative-direction-studio/` — README · architectural-reset · room-as-interface · arrival-zone · spatial-hierarchy · movement-not-scroll · orb-as-host · environmental-life · arrival-experience · world-building · founder-experience · implementation-strategy · prototype-lessons
+- **Prior arc (same chat):** Founder Intelligence System™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™ · Alpha prototype implementation
+- **CORE.md:** CDS V2 Architectural Reset line added
+
+---
+
+## 2026-07-08 — Living Sets™ — The Headquarters That Transforms With Every Company (docs only)
+
+User defined **Living Sets™** — fundamental world-building philosophy sprint that changes how every department inside Studio World™ exists. **No UI · no React · no Creative Direction Studio™ redesign.**
+
+- **Mission:** Departments are NOT rooms · NOT pages · NOT dashboards — they are **living production sets** that physically transform around the company currently being worked on
+- **Core insight:** Same department **framework** always · surrounding **world** regenerates completely
+- **Invariant framework (never disappears):** Arrival Zone™ · Orb™ · Story Table™ · Mood Wall™ · Founder Review Area™ · Reference Library™ · Production Pipeline™ · Branch Gallery™ · Timeline™ · Review Flow™ · Creative Review™ · Branch System™ · Golden Build™ · Founder Journey™ — workflow identical · only world transforms
+- **NOT a theme:** NOT skinning · NOT dark mode · NOT color swap — regenerates architecture · materials · lighting · scale · furniture · displays · ambient audio · environmental storytelling · animations · atmosphere · props · hero objects · transitions · interactive equipment
+- **Department Transformation Engine™ stack:** Company Genome™ → Founder Genome™ → Founder Taste Genome™ → Department DNA™ → Project Genome™ → Creative Direction™ → Current Production Stage™ → Living Set™
+- **Company expression examples:** Frontal Slayer™ = luxury editorial atelier (marble · chrome · holographic mood walls) · NDX™ = minimal industrial innovation lab · Law Firm™ = legal strategy headquarters · Restaurant™ = culinary innovation studio
+- **Set Continuity™:** room evolves Blueprint™ → Golden Build™ → Launch™ → Growth™ → Legacy™ — walls gain history · awards · products · campaigns · customer milestones
+- **Headquarters Evolution™:** HQ-scale autobiography — wings · campus · earned spaces
+- **World Immersion™:** leave department = physical walk (doors · hallways · elevators · glass corridors) — not page load
+- **Environment DNA™:** regeneration schema (`studio.environment-dna.v1`) · Framework Lock™ for invariant zones · supersedes static Set DNA™ for company expression
+- **Company Expression System™:** blind shoulder benchmark — identify company without logo
+- **Archive Integration™:** every approved Living Set™ evolution preserved — revisit Blueprint · Version 12 · Launch Week · First Million · Rebrand
+- **Orb awareness:** reconfiguration dialogue — taste updates · Golden Builds incorporated · headquarters evolved
+- **Success benchmark:** founder recognizes company before reading a word · observer says *"That's Frontal Slayer"* or *"That's NDX"* without seeing logo
+- **Final philosophy:** Studio World™ = living headquarters · departments = living production sets · headquarters = company's living autobiography · founder returns to work not software
+- **9-doc spec:** `docs/studio-os/world/` — living-sets · department-transformation-engine · environment-dna · company-expression-system · set-continuity · headquarters-evolution · living-architecture · world-immersion · archive-integration (+ studio-world.md index updated)
+- **Prior arc (same chat):** CDS V2 Architectural Reset · Founder Intelligence System™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™ · Alpha prototype
+- **CORE.md:** Living Sets™ line added · Studio World™ line updated

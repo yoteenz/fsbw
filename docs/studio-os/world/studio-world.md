@@ -84,6 +84,15 @@ STUDIO WORLD™
 | [world-events.md](./world-events.md) | Surprises · celebrations · live moments |
 | [world-evolution.md](./world-evolution.md) | HQ growth · wings · skyline over years |
 | [headquarters-engine.md](./headquarters-engine.md) | Engine architecture · subsystems map |
+| [living-sets.md](./living-sets.md) | **Living Sets™** — departments as transforming production sets |
+| [department-transformation-engine.md](./department-transformation-engine.md) | Intelligence stack → Living Set™ compiler |
+| [environment-dna.md](./environment-dna.md) | Regeneration schema (successor to Set DNA™ for expression) |
+| [company-expression-system.md](./company-expression-system.md) | Company-specific world language |
+| [set-continuity.md](./set-continuity.md) | Living Set™ evolves with production stage |
+| [headquarters-evolution.md](./headquarters-evolution.md) | HQ-scale autobiography |
+| [living-architecture.md](./living-architecture.md) | Architectural regeneration law |
+| [world-immersion.md](./world-immersion.md) | Continuous headquarters · not page loads |
+| [archive-integration.md](./archive-integration.md) | The Archive™ · preserved Living Set™ evolutions |
 | [future-roadmap.md](./future-roadmap.md) | Implementation phases |
 
 ---
