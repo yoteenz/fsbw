@@ -121,6 +121,8 @@ STUDIO WORLD™
 
 **Living Company Genome™:** [Evolutionary company memory](../living-company-genome/README.md) — genome events · world evolution · time capsules · living museum
 
+**Company Genome™:** [Living DNA engine](../engines/company-genome/README.md) — learns every decision · confidence beliefs · not profile/CRM/analytics
+
 **Studio Production Estimates™:** [Estimate productions, not images](../studio-production-estimates/README.md) — scope · cost · savings · Orb WHY
 
 **Creative Budgets™:** [Think in creative capacity, not API calls](../creative-budgets/README.md) — monthly budget · spend · savings · efficiency · Orb coaching
@@ -172,6 +174,7 @@ STUDIO WORLD™
 | **Story Table™ Hello World** | [../benchmarks/story-table-hello-world/](../benchmarks/story-table-hello-world/) | First fully generated workspace · engine proof benchmark · CDS foundation |
 | **Creative Blueprint Engine™** | [../creative-blueprint-engine/](../creative-blueprint-engine/) | Visual DNA™ · design languages · Systems™ · inheritance above Registry |
 | **Living Company Genome™** | [../living-company-genome/](../living-company-genome/) | Evolutionary memory · genome events · HQ maturation · time capsules |
+| **Company Genome™** | [../engines/company-genome/](../engines/company-genome/) | Living DNA · Visual/Creative/Brand/Operational/Decision strands · confidence · Prompt Composer™ consult |
 | **Studio Production Estimates™** | [../studio-production-estimates/](../studio-production-estimates/) | Pre-production scope · cost · savings · complexity · Orb WHY |
 | **Creative Budgets™** | [../creative-budgets/](../creative-budgets/) | Monthly creative capacity · spend · pending · savings · Efficiency Score™ · Orb coaching |
 | **Creative Equity™** | [../creative-equity/](../creative-equity/) | Lifetime creative net worth · Creative ROI™ · Company Genome™ · never resets |

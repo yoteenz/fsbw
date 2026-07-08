@@ -15,7 +15,7 @@ Every `ProductionPrompt™` must assemble from **all applicable** source layers 
 
 | # | Source | Origin Engine | Contributes |
 |---|--------|---------------|-------------|
-| 1 | **Company DNA™** | [Company Genome™](../../company-genome.md) · [Living Company Genome™](../../living-company-genome/README.md) | Brand tone · material language · restraint · sonic identity · editorial direction |
+| 1 | **Company DNA™** | [Company Genome™](../engines/company-genome/README.md) · [Living Company Genome™](../../living-company-genome/README.md) | Brand tone · material language · restraint · sonic identity · editorial direction |
 | 2 | **Department Blueprint™** | [Creative Blueprint Engine™](../../creative-blueprint-engine/README.md) | Visual DNA™ · applicable Blueprints™ · Systems™ · inheritance rules |
 | 3 | **Workspace Rules™** | [Creative Intelligence Engine™](../../creative-intelligence-engine/workspaces-as-scenes.md) | Physical room constraints · zone context · workstation scene behavior |
 | 4 | **Camera Rules™** | Registry `prompt.camera` · Blueprint camera systems | Angle · focal length · isolation · parallax · hero framing |

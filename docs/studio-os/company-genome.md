@@ -16,6 +16,8 @@
 
 **Evolution engine:** [Living Company Genome™](./living-company-genome/README.md) — Genome Events™ · World Evolution™ · Time Capsule™ · how DNA matures in the world.
 
+**v2 Intelligence Engine (2026-07-08):** [engines/company-genome/](./engines/company-genome/README.md) — Visual · Creative · Brand · Operational · Decision DNA™ · confidence scoring · Prompt Composer™ integration · marketplace learning · universal intelligence (no tenant hardcoding).
+
 ---
 
 ## §1 Problem Statement

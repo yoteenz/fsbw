@@ -27,7 +27,7 @@ Generation Pipeline™ does not implement generation logic — it **coordinates*
 | # | Pipeline Stage | Primary Engine | Supporting |
 |---|----------------|----------------|------------|
 | 1 | Founder Intent™ | Creative Intelligence Engine™ | Blueprint Engine™ |
-| 2 | Prompt Composer™ | [prompt-composer/](../prompt-composer/) | Company Genome™ |
+| 2 | Prompt Composer™ | [prompt-composer/](../prompt-composer/) | [Company Genome™](../company-genome/README.md) snapshot |
 | 3 | Scene Planner™ | [scene-planner/](../scene-planner/) | Scene Stack templates |
 | 4 | Asset Registry Check™ | [studio-asset-registry/](../studio-asset-registry/) | Asset Intelligence |
 | 5 | Missing Assets™ | scene-planner/asset-inventory | Asset Intelligence |

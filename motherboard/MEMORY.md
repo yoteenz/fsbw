@@ -41928,3 +41928,23 @@ User sprint: Story Table™ becomes first fully generated workspace via complete
 - **Cross-refs:** Generation Pipeline · CDS V3 README · engine-first-roadmap · studio-world · CORE.md
 - **Prior arc (same chat):** Generation Pipeline™ · Scene Planner™ · Prompt Composer™ · Asset Registry™ · intelligence stack
 - **No manual design · no implementation this sprint**
+
+---
+
+## 2026-07-08 — Company Genome™ v2.0 — Living DNA Engine (core intelligence sprint, docs only)
+
+User sprint: build **Company Genome™** — living DNA of every company. **NOT user profile · NOT analytics · NOT CRM.** Engine first · UI later.
+
+- **Mission:** Every founder decision teaches Studio OS; software becomes increasingly intelligent; eventually understands company identity better than founder can describe
+- **Philosophy:** Founders never repeatedly explain aesthetic · tone · standards · lighting · materials · typography · creative philosophy — learned automatically
+- **Continuous evolution:** approval · rejection · regeneration · edit · marketplace purchase · reused asset · generated department — all update Genome
+- **DNA strands:** Visual DNA™ (architecture · lighting · materials · camera · atmosphere · realism) · Creative DNA™ (editorial · storytelling · pacing · motion) · Brand DNA™ (typography · luxury/minimalism · emotional tone) · Operational DNA™ (approval speed · budget · quality tier) · Decision DNA™ (approved/rejected/modified/regenerated/favorite/archived/purchased/duplicated/reused)
+- **Confidence scores:** every belief 0–100% (e.g. warm editorial lighting 97% · floating architecture 92% · dislikes heavy industrial 95%)
+- **Prompt Composer™ integration:** mandatory `queryCompanyGenome()` before compose — auto-inherit preferences when founder says "Create a headquarters"
+- **Marketplace:** purchases update Genome as learning signals
+- **CDS presentation spec:** living intelligence display (confidence strands · recent learned behaviors · creative drift · DNA evolution timeline) — NOT settings page
+- **Universal:** no Frontal Slayer hardcoding — every company · every profession
+- **14-doc spec:** `docs/studio-os/engines/company-genome/` — README · core-philosophy · dna-categories · decision-dna · confidence-scoring · learning-signals · evolution-engine · prompt-composer-integration · generation-influence · marketplace-integration · cds-presentation · universal-intelligence · engine-relationships · future-roadmap
+- **Cross-refs:** company-genome.md v1 · Living Company Genome · prompt-composer · studio-world · CORE.md
+- **Prior arc (same chat):** Story Table™ Hello World · Generation Pipeline™ · Scene Planner™ · Prompt Composer™ · Asset Registry™ · intelligence stack
+- **No UI · no CRM · no analytics implementation this sprint**
