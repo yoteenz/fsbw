@@ -61,4 +61,6 @@ Each room answers one question first (see `room-focus.ts`).
 
 If removing a panel improves the room, remove the panel. If the founder still needs the information, let the Orb, Atlas, or intentional interaction reveal it.
 
-**Code:** `src/studio-os-core/progressive-presence/` · `src/studio-os-core/studio-world-constitution/behavioral-laws.ts`
+**Code:** `src/studio-os-core/progressive-presence/` · `src/studio-os-core/studio-world-experience/` · `src/components/admin/studio/global-experience/`
+
+**Global system:** `docs/studio-os/governance/GLOBAL_EXPERIENCE_SYSTEM.md` — departments inherit via `StudioWorldExperienceProvider`; no per-department wiring.

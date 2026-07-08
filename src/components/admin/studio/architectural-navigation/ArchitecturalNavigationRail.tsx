@@ -17,8 +17,8 @@ import type { LivingDistrictEcologySnapshot } from '../../../../studio-os-core/l
 import type { LivingCivilizationSnapshot } from '../../../../studio-os-core/living-civilization';
 import type { CivilizationEventsSnapshot } from '../../../../studio-os-core/civilization-events';
 import { railWidthForMode } from '../../../../hooks/useArchitecturalNavigationRail';
-import { useProgressivePresence } from '../../../../hooks/useProgressivePresence';
-import { PresenceGated, WorldHealthAmbientIndicator, PROGRESSIVE_PRESENCE_STYLES } from '../progressive-presence';
+import { useStudioWorldExperience } from '../global-experience';
+import { PresenceGated, WorldHealthAmbientIndicator } from '../progressive-presence';
 
 type Props = {
   mode: ArchitecturalNavRailMode;
@@ -34,7 +34,6 @@ type Props = {
   livingEcology?: LivingDistrictEcologySnapshot | null;
   livingCivilization?: LivingCivilizationSnapshot | null;
   civilizationEvents?: CivilizationEventsSnapshot | null;
-  roomId?: string;
 };
 
 function FrameStatusBlock({ status }: { status: ArchitecturalFrameStatus }) {
@@ -112,11 +111,10 @@ export function ArchitecturalNavigationRail({
   livingEcology,
   livingCivilization,
   civilizationEvents: _civilizationEvents,
-  roomId = 'studio-archives',
 }: Props) {
   const navigate = useNavigate();
   const atlas = useGlobalAtlasLayerOptional();
-  const presence = useProgressivePresence(roomId);
+  const { presence, profile } = useStudioWorldExperience();
   const district = getDistrictIdentity(districtThemeId);
   const districtClass = districtCssClass(districtThemeId);
 
@@ -130,7 +128,6 @@ export function ArchitecturalNavigationRail({
   if (mode === 'hidden') {
     return (
       <div className={districtClass}>
-        <style>{PROGRESSIVE_PRESENCE_STYLES}</style>
         <button
           type="button"
           className="sw-nav-rail__reveal"
@@ -147,8 +144,7 @@ export function ArchitecturalNavigationRail({
   const showRoomDetail = presence.isVisible('nav-rail-room-detail');
 
   return (
-    <div className={districtClass}>
-      <style>{PROGRESSIVE_PRESENCE_STYLES}</style>
+    <div className={districtClass} data-experience-profile={profile.departmentId}>
       <nav
         className={railClass}
         aria-label={`Architectural Navigation Rail — ${district.campusName}`}
@@ -278,7 +274,6 @@ export function ArchitecturalNavigationRail({
             <WorldHealthAmbientIndicator
               ecology={livingEcology}
               civilization={livingCivilization}
-              presence={presence}
             />
             <footer className="sw-nav-rail__atmosphere" aria-label="Environmental identity">
               <p className="sw-nav-rail__atmosphere-feeling">{district.feeling}</p>

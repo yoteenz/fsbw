@@ -1,11 +1,10 @@
 import type { LivingDistrictEcologySnapshot } from '../../../../studio-os-core/living-district-ecology';
 import type { LivingCivilizationSnapshot } from '../../../../studio-os-core/living-civilization';
-import type { ProgressivePresenceController } from '../../../../hooks/useProgressivePresence';
+import { useStudioWorldExperience } from '../global-experience';
 
 type Props = {
   ecology?: LivingDistrictEcologySnapshot | null;
   civilization?: LivingCivilizationSnapshot | null;
-  presence: ProgressivePresenceController;
   className?: string;
 };
 
@@ -14,12 +13,13 @@ function topHealthMetric(ecology: LivingDistrictEcologySnapshot) {
 }
 
 /**
- * World Health™ — Level 1 ambient indicator. Tap to expand Level 2–3 detail.
- * Collapses back to environment when dismissed.
+ * World Health™ — Level 1 ambient indicator (Global Experience System™).
+ * Tap to expand Level 2–3 detail; collapse returns to environment.
  */
-export function WorldHealthAmbientIndicator({ ecology, civilization, presence, className = '' }: Props) {
-  if (!ecology) return null;
+export function WorldHealthAmbientIndicator({ ecology, civilization, className = '' }: Props) {
+  const { presence } = useStudioWorldExperience();
 
+  if (!ecology) return null;
   if (!presence.isVisible('world-health-ambient')) return null;
 
   const expanded = presence.state.expandedElements.has('world-health-expanded');

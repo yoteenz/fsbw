@@ -168,6 +168,7 @@ export * from './design-principles';
 export * from './world-physics';
 export * from './implementation-standards';
 export * from './progressive-presence';
+export * from './studio-world-experience';
 export * from './architecture-auditor';
 export * from './experience-intelligence-engine';
 export * from './studio-world-atlas';

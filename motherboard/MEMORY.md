@@ -42725,3 +42725,19 @@ Follow-up to navigation split — user identified **information hierarchy** as t
   - `docs/studio-os/governance/PROGRESSIVE_PRESENCE.md` · `knowledge/canon/constitution/behavioral-laws.md` updated
   - World Graph compile: 409 nodes · 611 edges
 - **Prior arc (same chat):** ArchitecturalRail vs SceneTray nav split · Four-layer governance · Design Principles™ · World Physics™ · Three Eras™.
+
+---
+
+## 2026-07-08 — Global Experience System™ (Experience Engine + Profile + Tokens)
+
+User **approved** Progressive Presence architectural direction but rejected per-department wiring. Mandate: Progressive Presence™, Orb, navigation, information hierarchy, and interaction philosophy must become **Studio World's Global Experience System™** — every district, headquarters, museum, studio, Discovery Pack™, profession, and expansion **inherits** the same interaction philosophy automatically. Departments declare **WHAT** (Experience Profile™ metadata); **Experience Engine™** decides **HOW**. Long-term: build the operating system governing every experience, not wire individual departments.
+
+- **Delivered:**
+  - `src/studio-os-core/studio-world-experience/` — **Experience Engine™** owns Progressive Presence (subsystem), navigation philosophy, Experience Tokens™, profile registry, path resolver · `createStudioWorldExperienceEngine()` · `EXPERIENCE_TOKENS` (Reveal Speed™, Glass Blur™, Presence Threshold™, etc.)
+  - `STUDIO_WORLD_EXPERIENCE_PROFILES` — Creative Direction™, Studio Archives™, Command Center™, Atlas™, Knowledge Library™, Marketplace™, Museum™ (primaryStory, primaryOrbMode, ambientInformation, contextModules, deepSystems)
+  - `src/components/admin/studio/global-experience/` — `StudioWorldExperienceProvider` · `useStudioWorldExperience()` · Experience Tokens as CSS vars
+  - `DepartmentGoldenBuildShell` — auto-wraps all immersive rooms with provider (`resolveExperienceProfileForPath`)
+  - Refactored: `ArchitecturalNavigationRail`, `PresenceGated`, `WorldHealthAmbientIndicator`, `StudioWarehouseRoom` — consume global context; removed per-department `useProgressivePresence` / `roomId` props
+  - `useProgressivePresence` deprecated (fallback only)
+  - `docs/studio-os/governance/GLOBAL_EXPERIENCE_SYSTEM.md`
+- **Prior arc (same chat):** Article K18 Progressive Presence™ · ArchitecturalRail vs SceneTray™ · Four-layer governance · Design Principles™.

@@ -4,6 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 import { shouldShowCommandDock } from '../../studio/command-dock/CommandDock';
 import { GlobalAtlasProvider } from '../../studio/global-atlas';
+import { StudioWorldExperienceProvider } from '../../studio/global-experience';
+import { resolveExperienceProfileForPath } from '../../../../studio-os-core/studio-world-experience';
 import { StudioOrbMount } from '../../studio/studio-orb/StudioOrbMount';
 import { StudioOrbProvider } from '../../studio/studio-orb/StudioOrbProvider';
 
@@ -18,6 +20,7 @@ type Props = {
 export function DepartmentGoldenBuildShell({ children }: Props) {
   useRequireAdminPageAccess();
   const { pathname } = useLocation();
+  const experienceProfile = resolveExperienceProfileForPath(pathname);
 
   useEffect(() => {
     const html = document.documentElement;
@@ -37,23 +40,26 @@ export function DepartmentGoldenBuildShell({ children }: Props) {
   return (
     <StudioOrbProvider>
       <GlobalAtlasProvider>
-        <div
-          className="gb-immersive-portal"
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 200,
-            width: '100vw',
-            height: '100dvh',
-            overflow: 'hidden',
-            background: '#12100e',
-          }}
-          role="application"
-          aria-label="Studio OS department room"
-        >
-          {children}
-        </div>
-        {shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
+        <StudioWorldExperienceProvider profile={experienceProfile}>
+          <div
+            className="gb-immersive-portal"
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 200,
+              width: '100vw',
+              height: '100dvh',
+              overflow: 'hidden',
+              background: '#12100e',
+            }}
+            role="application"
+            aria-label="Studio OS department room"
+            data-studio-world-experience={experienceProfile.departmentId}
+          >
+            {children}
+          </div>
+          {shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
+        </StudioWorldExperienceProvider>
       </GlobalAtlasProvider>
     </StudioOrbProvider>
   );
