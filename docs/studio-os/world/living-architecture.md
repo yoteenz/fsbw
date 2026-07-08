@@ -134,7 +134,7 @@ Invariant zones have **architectural anchors** — form changes · role does not
 |------|---------------------|
 | **Arrival Zone™** | Threshold · first sightline · compression/expansion |
 | **Orb™** | Volumetric center · float plane above Story Table™ |
-| **Story Table™** | Primary horizontal surface · narrative focal length |
+| **Story Table™** | Primary horizontal surface · narrative focal length · **Signature Landmark™** of Creative Direction Studio™ ([Architectural Icons™](../architectural-icons/department-landmarks.md)) |
 | **Mood Wall™** | Dominant vertical plane · hero wall |
 | **Founder Review Area™** | Seating geometry · sightline to Mood Wall |
 | **Reference Library™** | Flanking storage · depth · archive adjacency |

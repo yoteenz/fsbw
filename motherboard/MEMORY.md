@@ -41536,3 +41536,22 @@ User sprint: **environmental design** — NOT UI flow redesign · NOT documentat
 - **Route unchanged:** `/admin/studio/department/creative-direction`
 - **Build:** `npm run build` passes
 - **Prior arc (same chat):** Studio Preview™ docs · Founder Discovery™ · Expeditions™ · Routines™ · Scene Architecture™ · CDS V2 architecture sprint · Guild System™
+
+---
+
+## 2026-07-08 — Architectural Icons™ — The Landmarks of Studio World™ (environmental identity sprint, docs only)
+
+User sprint: **permanent architectural law** — NOT CDS redesign · NOT new UI. **Mission:** People remember places not interfaces — every Department™ + Headquarters™ gets exactly one **Signature Landmark™** that becomes department identity.
+
+- **Foundational law:** Every Department™ → One Signature Landmark™ → landmark = identity when founders picture the room
+- **Design Law™ (5 rules):** (1) Immediately recognizable (2) Impossible to confuse with another department (3) Visible from multiple viewpoints (4) Functional not decoration (5) Emotionally memorable
+- **Launch department landmarks:** CDS **Story Table™** · Intelligence **Living Company Genome™** · Marketing **Launch Constellation™** · Finance **Capital Vault™** · Hiring **Talent Observatory™** · Distribution **Fulfillment Nexus™** · Legal **Charter Hall™** · CX **Relationship Gallery™** · Operations **Operations Engine™**
+- **HQ landmarks (candidates):** Grand Atrium™ (recommended default) · Founder Hall™ · Central Orb™ · Living Tree™ · Infinite Stair™ · Hall of Companies™ · Heart of Studio World™ — selection pending Founder Review™
+- **Orb™ · Landmark System:** Orb connects to every landmark (projects onto Story Table · manipulates Genome · illuminates Vault · introduces at Observatory · etc.) — Orb is host not landmark
+- **Founder Memory™:** Events anchor to landmarks — *"I approved at the Story Table"* · *"We hired in the Observatory"* · building becomes memory
+- **Landmark Registry™:** Canonical IDs · archetype uniqueness · `signatureLandmark` schema extension for department.json
+- **CDS clarification:** Story Table™ = Signature Landmark™ · Mood Wall/Pipeline/Notes/Library = scenes with hero objects — Environmental Pass V1 atmosphere work unchanged · no redesign
+- **9-doc spec:** `docs/studio-os/architectural-icons/` — README · architectural-icons · landmark-philosophy · design-law · department-landmarks · headquarters-landmarks · orb-landmark-system · founder-memory · landmark-registry · future-roadmap
+- **Cross-refs:** `world/studio-world.md` · `navigation/README.md` · `creative-direction-studio/README.md` · `world/living-architecture.md`
+- **Prior arc (same chat):** CDS Environmental Pass V1 code · Studio Preview™ · Founder Discovery™ · Expeditions™ · Routines™ · Scene Architecture™ · Guild System™
+- **No CDS redesign · no UI implementation this sprint**

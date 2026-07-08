@@ -142,6 +142,7 @@ Anything less = still designing software instead of building Studio World™.
 | [Creative Direction Pipeline™](../creative-direction-pipeline/README.md) | Production at workstations |
 | [Founder Intelligence System™](../intelligence/README.md) | Orb learns · taste at Mood Wall |
 | [Golden Department](../golden-department/creative-direction-studio/) | V1 spec — topology reference · execution reset |
+| [Architectural Icons™](../architectural-icons/README.md) | **Story Table™** = CDS Signature Landmark™ · Mood Wall · Pipeline = scenes |
 | [Alpha charter](../alpha/creative-direction-alpha.md) | Emotional contract — still valid |
 
 ---

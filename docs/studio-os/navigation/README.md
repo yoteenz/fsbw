@@ -94,6 +94,7 @@ Studio World™ should feel like **walking through a living headquarters**.
 | [Transitions™](../world/transitions/README.md) | Movement **between** destinations |
 | [Foundational Experience Systems™](../foundational-experience-systems/README.md) | Arrival · Idle Life · Persistence — every scene inherits |
 | [Creative Direction Studio™ V2](../creative-direction-studio/README.md) | Pilot department — scenes named, not redesigned here |
+| [Architectural Icons™](../architectural-icons/README.md) | One Signature Landmark™ per department — scenes orbit landmark |
 | [Department Runtime™](../engine/department-runtime/01_RUNTIME_OVERVIEW.md) | Future execution — loads scenes as workspaces |
 
 ---

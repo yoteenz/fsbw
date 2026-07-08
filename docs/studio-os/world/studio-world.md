@@ -111,6 +111,8 @@ STUDIO WORLD™
 
 **Studio Preview™:** [Experience Your Future Company](../preview/README.md) — acquisition · immersive demo · belief before signup
 
+**Architectural Icons™:** [The Landmarks of Studio World™](../architectural-icons/README.md) — one Signature Landmark™ per department · permanent identity law
+
 ---
 
 ## Related Canon (Subsystems)
@@ -128,6 +130,7 @@ STUDIO WORLD™
 | **Expeditions™** | [../expeditions/](../expeditions/) | Transformation · milestones · company autobiography |
 | **Founder Journey™** | [../alpha/founder-journey.md](../alpha/founder-journey.md) | Founder maturity arc across the world |
 | **Studio Preview™** | [../preview/](../preview/) | Visitor acquisition · Future Company Experiences™ · curated HQ demo |
+| **Architectural Icons™** | [../architectural-icons/](../architectural-icons/) | Signature Landmarks™ · department identity · Founder Memory™ anchors |
 
 ---
 
