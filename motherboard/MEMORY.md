@@ -42010,3 +42010,14 @@ User reported CDS Scene Stack showed **3/6** then **0/6 after page refresh** —
 - **Fix:** Whitelist `studioOsSceneStack_v1` + `studioOsProjectGenome_v1` for localStorage persistence; compact Scene Stack store to latest version per layer on read/write (`scene-stack/store.ts`) to stay within Studio OS 24KB per-key quota.
 - **User impact:** Layers generated **before** this deploy are gone (never persisted). After deploy, completed layers survive refresh/navigation in the same browser.
 - **Prior arc (same chat):** Launch Integrity Auditor™ · Asset Registry™ · CIE™ · CDS Story Table generation UX Q&A.
+
+---
+
+## 2026-07-08 — CDS Scene Stack per-layer Regen UI
+
+User asked how to regenerate **one** Scene Stack layer (e.g. dislike lighting) without rebuilding the full stack.
+
+- **Prior state:** Engine supported `regenerateLayer(stationId, layerId)` (force new FAL version, other layers unchanged); CDS UI only had **Retry Shell Layer** on total failure. Header **Stack X/6** runs `ensureStation` — fills **missing** layers only, skips layers that already have `publicUrl`.
+- **UI added:** Bottom-left **layer strip** on `SceneStackViewport` — Shell · Landmark · Furniture · Lighting · Atmosphere · Materials · Motion · Personal — each with **Regen** when that layer exists; **Retry** on failed; dot = ready/failed/pending. Calls existing `stack.regenerateLayer(zoneId, layerId)`.
+- **Files:** `SceneStackViewport.tsx`, `cdsInteractionLayerTheme.ts` (`.cds-stack__layer-strip*`).
+- **Prior arc (same chat):** Scene Stack refresh persistence fix · Launch Integrity Auditor™ · CDS auto-generation Q&A.

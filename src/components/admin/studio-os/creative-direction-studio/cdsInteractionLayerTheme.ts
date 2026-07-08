@@ -117,6 +117,83 @@ body.cds-stack-active {
   text-transform: uppercase;
 }
 
+/* Per-layer regeneration strip — regenerates one FAL layer without full stack rebuild */
+.cds-stack__layer-strip {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  z-index: 14;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 42%;
+  overflow-y: auto;
+  padding: 4px 5px;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(201, 169, 98, 0.22);
+  pointer-events: auto;
+  scrollbar-width: none;
+}
+
+.cds-stack__layer-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.cds-stack__layer-strip-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(240, 235, 227, 0.75);
+}
+
+.cds-stack__layer-strip-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.cds-stack__layer-strip-dot.is-ready {
+  background: rgba(201, 169, 98, 0.85);
+}
+
+.cds-stack__layer-strip-dot.is-failed {
+  background: rgba(220, 80, 80, 0.9);
+}
+
+.cds-stack__layer-strip-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.cds-stack__layer-strip-btn {
+  padding: 2px 4px;
+  font-size: 5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(201, 169, 98, 0.4);
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(201, 169, 98, 0.9);
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.cds-stack__layer-strip-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.cds-stack__layer-strip-busy,
+.cds-stack__layer-strip-pending {
+  opacity: 0.45;
+  min-width: 22px;
+  text-align: right;
+}
+
 /* Legacy genesis single-plate (deprecated) */
 .cds-genesis__viewport {
   position: absolute;
