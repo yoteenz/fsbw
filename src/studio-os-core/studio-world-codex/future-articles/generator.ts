@@ -21,7 +21,7 @@ export type FutureCodexArticleProposal = {
 };
 
 const FEATURE_VOLUME_HINTS: Array<{ pattern: RegExp; volume: CodexVolumeId }> = [
-  { pattern: /constitution|law|governance|canonical|codex|institute|publishing|publication|canon review|validation bureau/i, volume: 'volume-ii-constitution' },
+  { pattern: /constitution|law|governance|canonical|codex|institute|publishing|publication|canon review|validation bureau|headquarters principle|proof before expansion|platform maturity|commercialization/i, volume: 'volume-ii-constitution' },
   { pattern: /manifesto|philosophy|principle|civilization/i, volume: 'volume-i-manifesto' },
   { pattern: /world|district|room|headquarters|orb|atlas|npc|economy/i, volume: 'volume-iii-world-bible' },
   { pattern: /architecture|engine|registry|graph|route|simulation|foundry|compiler/i, volume: 'volume-iv-architecture-standards' },
@@ -46,6 +46,8 @@ const SYSTEM_ARTICLE_MAP: Record<string, string[]> = {
   'Professional Memory™': ['ARTICLE-E04', 'ARTICLE-E03'],
   'Studio Exchange™': ['ARTICLE-E05', 'ARTICLE-E02'],
   'Institute of Knowledge™': ['ARTICLE-C03', 'ARTICLE-C02', 'ARTICLE-K22'],
+  'Headquarters™': ['ARTICLE-C04', 'ARTICLE-W01'],
+  'Studio OS™': ['ARTICLE-C04', 'ARTICLE-C01', 'ARTICLE-C02'],
 };
 
 function suggestVolume(featureName: string, summary: string): CodexVolumeId {

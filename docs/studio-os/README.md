@@ -37,6 +37,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [codex/ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md](./codex/ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md) | **ARTICLE-C01** — Studio World Codex™ · major features become Codex Articles before implementation |
 | [codex/ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md](./codex/ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md) | **ARTICLE-C02** — Complete Codex™ · collections-based civilization library architecture |
 | [codex/ARTICLE_C03_INSTITUTE_OF_KNOWLEDGE.md](./codex/ARTICLE_C03_INSTITUTE_OF_KNOWLEDGE.md) | **ARTICLE-C03** — Institute of Knowledge™ · permanent institution for publishing, validation, archives, standards, and canon governance |
+| [codex/ARTICLE_C04_HEADQUARTERS_PROOF_BEFORE_EXPANSION.md](./codex/ARTICLE_C04_HEADQUARTERS_PROOF_BEFORE_EXPANSION.md) | **ARTICLE-C04** — Headquarters Principle™ + Proof Before Expansion Principle™ · internal proof before platform commercialization |
 | [profession-simulation-engine/ARTICLE_E01_PROFESSION_SIMULATION_ENGINE.md](./profession-simulation-engine/ARTICLE_E01_PROFESSION_SIMULATION_ENGINE.md) | **ARTICLE-E01** — Profession Simulation Engine™ · careers as playable workplace progression |
 | [experience-engine.md](./experience-engine.md) | Experience Engine™ — adaptive atmosphere, context modes, M141 · Infrastructure Chapter complete |
 | [memory-bible.md](./memory-bible.md) | Institutional knowledge, naming, decisions, AI Context Builder |

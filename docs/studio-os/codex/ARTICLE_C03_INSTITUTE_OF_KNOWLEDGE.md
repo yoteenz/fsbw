@@ -291,6 +291,7 @@ C03 unlocks:
 
 - ARTICLE-C01 — The Codex First Principle™
 - ARTICLE-C02 — The Complete Studio World Codex™
+- ARTICLE-C04 — The Headquarters Principle™ & Proof Before Expansion Principle™
 - ARTICLE-K22 — Studio World Knowledge Core™
 - ARTICLE-K23 — The Memory System™
 - ARTICLE-B01 — Profession Brain™

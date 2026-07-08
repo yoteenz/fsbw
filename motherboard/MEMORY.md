@@ -43948,3 +43948,22 @@ Summary of the **full conversation in this chat**: Career Worlds™ → ARTICLE-
 - **Verification:** `npm run build` passed; World Graph compile **672 nodes · 1327 edges · PASS**.
 - **Conventions:** Institute is an institution, not a docs site. AI knowledge must pass Institute review before canon. Every publication auto-creates graph relationships. Orb cites edition, revision, and constitutional sources.
 
+---
+
+## 2026-07-08 — ARTICLE-C04 Headquarters Principle™ and Proof Before Expansion Principle™
+
+Summary of the **full conversation in this chat**: Career Worlds™ implementation sprint → ARTICLE-C01 Codex First Principle™ → Codex platform infrastructure → Phase II Canonical Seeding™ → ARTICLE-C02 Complete Codex Collections™ → ARTICLE-C03 Institute architecture and implementation → **ARTICLE-C04 The Headquarters Principle™ & Proof Before Expansion Principle™** master architecture project.
+
+- **Context:** User stated Studio World reached a pivotal milestone and asked for two foundational principles to become constitutional law: Studio OS must be redefined from "admin dashboard" into living company **Headquarters™**, and every major subsystem must prove internal value inside Studio OS before external platform expansion.
+- **Decisions / outcomes:**
+  - Added **`docs/studio-os/codex/ARTICLE_C04_HEADQUARTERS_PROOF_BEFORE_EXPANSION.md`** as accepted constitutional architecture.
+  - Seeded **ARTICLE-C04** into Volume II canonical archive with world node **`W-LAW-headquarters-proof-before-expansion`** and bumped Codex/archive version to **1.5.0** so local stores migrate.
+  - C04 establishes vocabulary replacements: Dashboard → Headquarters™, Menu → Navigation Through Space™, Widgets → Living Workspaces™, Reports → Intelligence Briefings™, Notifications → Executive Advisories™, Settings → Operations Rooms™, Search → Atlas™, Assistant → Orb™.
+  - C04 establishes the **Platform Maturity Model™**: Internal Tool → Founder Workflow → Company Capability → Platform Product; no subsystem should skip stages.
+  - C04 establishes success metrics before external expansion: daily founder usage, measurable productivity gains, architectural stability, reusability, system integration, user delight, and low maintenance burden.
+  - Added canonical relationships from C04 to C01/C02/C03, Studio Foundry™, Studio Exchange™, Profession Brains™, Career Worlds™, Professional Memory™, and Production Completion System™.
+  - Updated Codex semantic search clusters and future article proposal routing for `headquarters principle`, `dashboard`, `proof before expansion`, `platform maturity`, `internal tool`, `founder workflow`, `company capability`, and `platform product`.
+  - Updated Codex docs, C03 related articles, and Studio OS docs index so C04 is discoverable with C01-C03.
+- **Verification:** `npm run build` passed; Architecture Validator **0 errors · 1 warning**; World Graph compile **673 nodes · 1341 edges · PASS**.
+- **Conventions:** New founder-facing Studio OS architecture should use Headquarters vocabulary and treat dashboard language as legacy implementation vocabulary only. Major subsystems should prove value inside Studio OS before commercialization or public platform expansion.
+

@@ -11,6 +11,7 @@ It is not documentation. It is the source of truth for approved philosophy, syst
 - [ARTICLE-C01 — The Codex First Principle™](./ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md)
 - [ARTICLE-C02 — The Complete Studio World Codex™](./ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md)
 - [ARTICLE-C03 — The Institute of Knowledge™](./ARTICLE_C03_INSTITUTE_OF_KNOWLEDGE.md)
+- [ARTICLE-C04 — The Headquarters Principle™ & Proof Before Expansion Principle™](./ARTICLE_C04_HEADQUARTERS_PROOF_BEFORE_EXPANSION.md)
 - [Codex Article™ Template](./CODEX_ARTICLE_TEMPLATE.md)
 
 ---
@@ -39,6 +40,8 @@ Key exports:
 ## Rule
 
 Every major Studio World feature must become a Codex Article™ before implementation begins.
+
+Studio OS is a **Headquarters™**, not an admin dashboard. Every major subsystem must prove measurable value inside Studio OS before becoming an external platform capability.
 
 The intended flow:
 

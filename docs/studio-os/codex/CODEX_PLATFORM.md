@@ -4,6 +4,8 @@ The Codex is **not documentation**. It is the living constitutional memory of St
 
 As of **ARTICLE-C03**, the Codex is the official library operated by **The Institute of Knowledge™** — Studio World's permanent institution for publishing, research, canon review, historical archives, standards, validation, and world history.
 
+As of **ARTICLE-C04**, Studio OS is constitutionally a **Headquarters™**, not an admin dashboard, and major subsystems must prove measurable value internally before becoming external platform products.
+
 ---
 
 ## Core location
@@ -34,6 +36,17 @@ src/studio-os-core/studio-world-codex/
 ```
 
 Admin workspace: **`/admin/studio/codex`**
+
+---
+
+## Constitutional platform principles
+
+| Article | Law | Operational meaning |
+|---------|-----|---------------------|
+| ARTICLE-C01 | Codex First Principle™ | Major features become Codex Articles before implementation. |
+| ARTICLE-C02 | Complete Codex™ | Future knowledge expands through collections, not endless foundational volumes. |
+| ARTICLE-C03 | Institute of Knowledge™ | Canonical knowledge is governed by an institution. |
+| ARTICLE-C04 | Headquarters + Proof Before Expansion | Studio OS replaces dashboard thinking; platform capabilities earn external expansion through internal proof. |
 
 ---
 
@@ -234,11 +247,42 @@ Use `THE_INSTITUTE_OF_KNOWLEDGE`, `listInstituteKnowledgeDivisions()`, and `getI
 
 ---
 
+## Headquarters + Proof Before Expansion
+
+**ARTICLE-C04 — The Headquarters Principle™ & Proof Before Expansion Principle™** defines two permanent platform laws:
+
+1. Studio OS is a living **Headquarters™**, not an admin dashboard.
+2. Major subsystems mature internally before becoming external platform products.
+
+Canonical vocabulary:
+
+| Legacy term | Constitutional term |
+|-------------|---------------------|
+| Dashboard | Headquarters™ |
+| Menu | Navigation Through Space™ |
+| Widgets | Living Workspaces™ |
+| Reports | Intelligence Briefings™ |
+| Notifications | Executive Advisories™ |
+| Settings | Operations Rooms™ |
+| Search | Atlas™ |
+| Assistant | Orb™ |
+
+Platform maturity model:
+
+```text
+Internal Tool → Founder Workflow → Company Capability → Platform Product
+```
+
+Use C04 when evaluating whether a subsystem is ready for external release.
+
+---
+
 ## Bootstrap vs platform
 
 - **Canonical Archive (Phase II):** **`bootstrap/canonical-archive/`** seeds foundational articles across all ten volumes with typed relationships — loaded on first run or when `canonicalArchiveVersion` migrates (`studioWorldCodex_v2`).
 - **Complete Codex (ARTICLE-C02):** `collections.ts` defines the permanent collection expansion model. Add a new collection only when a domain needs independent growth.
 - **Institute of Knowledge (ARTICLE-C03):** `institute-of-knowledge.ts` defines the permanent institution operating the Codex and validating official knowledge.
+- **Headquarters + Proof Before Expansion (ARTICLE-C04):** Future products must prove internal value before commercialization and preserve Headquarters vocabulary in founder-facing architecture.
 - **Do not** add articles to hardcoded arrays in engine core outside the canonical archive.
 - **Do** use `createCodexArticle()` for new articles after bootstrap, or `proposeFutureCodexArticle()` for draft proposals.
 - **ARTICLE-C01** and all volume seeds live in the canonical archive — not runtime hardcoding.
@@ -263,5 +307,6 @@ const proposal = proposeFutureCodexArticle({
 - [ARTICLE-C01 — Codex First Principle](./ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md)
 - [ARTICLE-C02 — Complete Studio World Codex](./ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md)
 - [ARTICLE-C03 — Institute of Knowledge](./ARTICLE_C03_INSTITUTE_OF_KNOWLEDGE.md)
+- [ARTICLE-C04 — Headquarters + Proof Before Expansion](./ARTICLE_C04_HEADQUARTERS_PROOF_BEFORE_EXPANSION.md)
 - [Codex Article Template](./CODEX_ARTICLE_TEMPLATE.md)
 - [Codex README](./README.md)
