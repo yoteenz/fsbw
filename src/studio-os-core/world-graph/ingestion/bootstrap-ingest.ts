@@ -188,10 +188,13 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       name: 'Studio Exchange™',
       summary:
         'ARTICLE-E05 professional economy — citizens acquire Professional Licenses™ into Career Worlds™, expansions, mentorship, businesses, assets, knowledge, and opportunities.',
-      lifecycle: 'architecture',
-      codePaths: [],
-      docPaths: ['docs/studio-os/marketplace/studio-exchange.md'],
-      integratesWith: ['profession-brain', 'world-graph', 'knowledge-core'],
+      lifecycle: 'implemented',
+      codePaths: ['src/studio-os-core/studio-exchange/'],
+      docPaths: [
+        'docs/studio-os/marketplace/studio-exchange.md',
+        'docs/studio-os/engine/studio-exchange/STUDIO_EXCHANGE_IMPLEMENTATION.md',
+      ],
+      integratesWith: ['career-worlds', 'profession-brain', 'knowledge-retention-engine', 'world-graph', 'knowledge-core'],
     },
     {
       slug: 'orb-archivist',

@@ -43711,34 +43711,25 @@ Summary of the **whole conversation so far** in this chat: user requested **ARTI
 
 ## 2026-07-08 — ARTICLE-E05 Studio Exchange™ / Professional License System™
 
-Summary of the **full conversation in this chat so far**: the user first requested Multi-Company Route Architecture™, then ARTICLE-K24 Production Completion System™, then ARTICLE-E05 Studio Exchange™ / Professional License System™ as an architecture sprint.
+Summary of the **full conversation in this chat**: Multi-Company Route Architecture™ → ARTICLE-K24 Production Completion System™ → **ARTICLE-E05 architecture sprint** → **ARTICLE-E05 implementation sprint** (Professional License commerce foundation).
 
 - **Prior completed work in this chat:**
-  - **Multi-Company Route Architecture™:** Studio World company-scoped routes now use canonical `/admin/studio/companies/{companySlug}/...` paths with `CompanyRouteContext`, Frontal Slayer migration, legacy redirects, Atlas/Orb/World Graph integration, and NDXBOOK override conventions.
-  - **ARTICLE-K24 Production Completion System™:** Implemented adaptive Definition of Done™ engine in `src/studio-os-core/production-completion-system/`, integrated with Studio Production Orchestrator™, added COMPLETION™ UI tab, Knowledge Core entry, World Graph relationships, and docs. Quality Gates™ block silent completion.
-- **Current ARTICLE-E05 request:** User stated Career Worlds™ and Profession Simulation Engine™ are approved and asked to design the commercial economy powering Studio World. Mission: Studio World should never sell courses; it should grant entry into professions.
-- **E05 decisions / outcomes:**
-  - **Marketplace** becomes **Studio Exchange™** for the civic/professional economy.
-  - **Buy Course / Enroll / Subscription** language is replaced by **Acquire Professional License™ / Enter Career World™ / License access**.
-  - **Professional Licenses™** grant entry into a full **Career World™**: Profession Brain™, AI Mentors™, simulations, progression, Professional Memory™, Knowledge Retention™, community, competitions, certifications, and lifetime world updates.
-  - **Career Expansions™** are professional specializations, not DLC. Hair World™ examples: Color Lab™, Luxury Salon™, Celebrity Stylist™, Editorial Fashion™, Texture Specialist™, Hair Extension Mastery™, Salon Franchise™.
-  - **Certification Ceremonies™** replace PDF-only credentials; every certification should be an in-world event with mentor speech, awards stage, crystal credential presentation, announcements, and celebration.
-  - Certifications must unlock meaningful world opportunities: districts, businesses, clients, mentorship, competitions, teaching rights, Exchange benefits, Hero Objects™, industry events, and advanced AI mentors.
-  - **Mentor Economy™** rewards master professionals for mentoring apprentices through Mentor Points™, Industry Reputation™, Community Prestige™, Hero Objects™, Exchange Credits™, Founder Collectibles™, and expansion discounts.
-  - **Legacy Businesses™** let citizens create persistent businesses inside Career Worlds™ that hire AI/citizens, train apprentices, expand, earn reputation, participate in events, and leave lasting impact.
-  - Studio Economy™ revolves around contribution: teaching, innovating, mentoring, creating, collaborating, researching, and building.
-- **Changes made for E05:**
-  - Added canonical architecture doc: `docs/studio-os/marketplace/studio-exchange.md`.
-  - Updated marketplace canon/index docs to position Studio Exchange™ as the new economy language while preserving historical package marketplace architecture.
-  - Updated Studio Professionals™ ecosystem docs and profession framework to incorporate Professional Licenses™ and Career Worlds™.
-  - Added Knowledge Core entry `E05-studio-exchange-professional-license-system`.
-  - Added World Graph engine node `studio-exchange` in `bootstrap-ingest.ts` and era metadata in `era-evaluation.ts`.
-  - Added permanent CORE note documenting E05 vocabulary and economy rules.
-- **Verification:** `node scripts/compile-world-graph.mjs` passed (**481 nodes · 811 edges · PASS**). `npm run build` passed.
-- **Conventions for future agents:**
-  - Use **Studio Exchange™** for future customer-facing economy language.
-  - Do not frame professional learning as buying courses, enrolling, or subscribing unless referencing legacy implementation or external systems.
-  - Certification rewards should always expand the world; never ship PDF-only achievement language as the final product model.
+  - **Multi-Company Route Architecture™:** canonical `/admin/studio/companies/{companySlug}/...` paths, `CompanyRouteContext`, Atlas/Orb/World Graph integration.
+  - **ARTICLE-K24 Production Completion System™:** adaptive Definition of Done™ engine, Production Orchestrator COMPLETION™ tab, Quality Gates™.
+  - **ARTICLE-E05 architecture (pushed `9ad110151`):** Studio Exchange™ canon doc, Knowledge Core `E05-studio-exchange-professional-license-system`, World Graph `studio-exchange` engine node, marketplace language migration spec.
+- **E05 architecture decisions:**
+  - **Marketplace** → **Studio Exchange™**; **Buy Course / Enroll / Subscription** → **Acquire Professional License™ / Enter Career World™**.
+  - Professional Licenses™ grant full Career World™ entry (Profession Brain™, simulations, progression, Professional Memory™, certifications, lifetime updates).
+  - Career Expansions™ = professional specializations (not DLC). Certification Ceremonies™ replace PDF-only credentials with world unlocks.
+  - Mentor Economy™ + Legacy Businesses™ + contribution-first Studio Economy™.
+- **E05 implementation sprint delivered:**
+  - **Core** `src/studio-os-core/studio-exchange/` — modules: `exchange/`, `licenses/`, `career-worlds/`, `expansions/`, `certifications/`, `ceremonies/`, `mentor-economy/`, `businesses/`, `rewards/`, `persistence/`, `engine.ts`.
+  - Listings auto-built from all `CAREER_WORLD_BLUEPRINTS` (12 worlds — no Hair hardcoding); universal expansion/cert templates per world.
+  - **UI:** `/admin/studio/studio-exchange` · `StudioExchangeWorkspace.tsx` · `useStudioExchangeState`.
+  - **Routing:** `adminStudioExchangePath()` canonical; `adminStudioMarketplacePath()` aliases; `/admin/studio/marketplace` redirects.
+  - **World Graph:** `ingestStudioExchangeNodes()`; docs `STUDIO_EXCHANGE_IMPLEMENTATION.md`; Knowledge Core E05 → **Implemented**.
+- **Verification:** `npx tsc --noEmit` passed; World Graph **567 nodes · 1082 edges · PASS**; `npm run build` passed.
+- **Conventions:** Studio Exchange™ language only for primary UX; register professions via `CAREER_WORLD_IDS`; payment rails plug at `acquireProfessionalLicense()`.
 
 ---
 

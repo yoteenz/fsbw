@@ -184,3 +184,4 @@ export * from './asset-compiler';
 export * from './studio-foundry';
 export * from './career-worlds';
 export * from './knowledge-retention-engine';
+export * from './studio-exchange';

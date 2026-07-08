@@ -592,6 +592,9 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
       'Mentor Economy™',
       'Legacy Businesses™',
       'Contribution-first Studio Economy™',
+      'studio-exchange core module',
+      'Exchange persistence store',
+      'World Graph studio-exchange ingest',
     ],
     relatedSystems: [
       'Career Worlds™',
@@ -613,7 +616,7 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
       'Career Worlds™',
       'Studio Economy™',
     ],
-    implementationStatus: 'Specified',
+    implementationStatus: 'Implemented',
     tags: [
       'studio-exchange',
       'professional-licenses',

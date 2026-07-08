@@ -52,6 +52,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'ndxbook'
   | 'talent-network'
   | 'marketplace'
+  | 'studio-exchange'
   | 'business-model-engine'
   | 'ecosystem'
   | 'governance'
@@ -156,6 +157,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'ndxbook',
   'talent-network',
   'marketplace',
+  'studio-exchange',
   'business-model-engine',
   'ecosystem',
   'governance',
@@ -274,7 +276,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   aiMediaNetwork: 'studio/ai-media-network',
   ndxbook: 'studio/ndxbook',
   talentNetwork: 'studio/talent-network',
-  marketplace: 'studio/marketplace',
+  marketplace: 'studio/studio-exchange',
+  studioExchange: 'studio/studio-exchange',
   businessModelEngine: 'studio/business-model-engine',
   ecosystem: 'studio/ecosystem',
   governance: 'studio/governance',
@@ -801,8 +804,13 @@ export function adminStudioTalentNetworkPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/talent-network`;
 }
 
+export function adminStudioExchangePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-exchange`;
+}
+
+/** @deprecated Use adminStudioExchangePath — Marketplace renamed to Studio Exchange™ (ARTICLE-E05). */
 export function adminStudioMarketplacePath(): string {
-  return `${ADMIN_STUDIO_BASE_PATH}/marketplace`;
+  return adminStudioExchangePath();
 }
 
 export function adminStudioBusinessModelEnginePath(): string {

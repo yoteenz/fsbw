@@ -175,6 +175,7 @@ export type StudioOsCoreModuleId =
   | 'studio-intelligence'
   | 'simulation-engine'
   | 'career-worlds'
+  | 'studio-exchange'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -1211,6 +1212,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'SIMULATION ENGINE',
     description: 'Model business decisions before committing — scenario comparison, risk analysis, and decision support. Not predictions.',
     routeSegment: 'simulation-engine',
+  },
+  {
+    id: 'studio-exchange',
+    label: 'STUDIO EXCHANGE™',
+    description: 'Professional License System™ — licenses, expansions, ceremonies, mentor economy, legacy businesses. ARTICLE-E05.',
+    routeSegment: 'studio-exchange',
   },
   {
     id: 'career-worlds',

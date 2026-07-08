@@ -45,6 +45,7 @@ export type AdminStudioSectionId =
   | 'ndxbook'
   | 'talent-network'
   | 'marketplace'
+  | 'studio-exchange'
   | 'business-model-engine'
   | 'ecosystem'
   | 'governance'
