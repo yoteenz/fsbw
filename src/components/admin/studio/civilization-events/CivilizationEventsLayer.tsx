@@ -42,6 +42,18 @@ export function CivilizationEventsLayer({ events, compact = false }: Props) {
           </p>
         </article>
       ) : null}
+
+      {!compact && events.discoveryCulture ? (
+        <div className="sw-events-layer__frontier" role="status" aria-label="Discovery frontier">
+          <p className="sw-events-layer__frontier-label">Discovery Culture™ · Frontier</p>
+          <p className="sw-events-layer__frontier-prompt">{events.discoveryCulture.curiosityPrompt}</p>
+          {events.discoveryCulture.investigation.primaryThread ? (
+            <p className="sw-events-layer__frontier-investigation">
+              Investigation: {events.discoveryCulture.investigation.primaryThread.publicTitle}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

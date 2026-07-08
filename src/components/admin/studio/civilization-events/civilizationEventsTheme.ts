@@ -126,6 +126,40 @@ export const CIVILIZATION_EVENTS_STYLES = `
   color: rgba(255, 255, 255, 0.88);
 }
 
+.sw-events-layer__frontier {
+  position: absolute;
+  left: calc(var(--sw-rail-w, 168px) + 12px);
+  bottom: calc(var(--wh-frame-teach-h, 56px) + 16px);
+  max-width: min(260px, 34vw);
+  padding: 8px 10px;
+  border: 1px solid rgba(168, 196, 184, 0.28);
+  border-left: 3px solid rgba(184, 212, 168, 0.65);
+  background: rgba(0, 0, 0, 0.58);
+  backdrop-filter: blur(6px);
+}
+
+.sw-events-layer__frontier-label {
+  margin: 0 0 4px;
+  font-size: 6px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(184, 212, 168, 0.85);
+}
+
+.sw-events-layer__frontier-prompt {
+  margin: 0 0 4px;
+  font-size: 8px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.82);
+  font-style: italic;
+}
+
+.sw-events-layer__frontier-investigation {
+  margin: 0;
+  font-size: 7px;
+  color: rgba(168, 196, 184, 0.78);
+}
+
 .wh-world.sw-events--active::after {
   content: '';
   position: absolute;

@@ -5,6 +5,9 @@
 import type { WorldEdge, WorldNode } from '../../world-graph/types';
 import type { DiscoveryPackRegistryEntry } from '../types';
 import { getPublicReleases } from '../query';
+import { DISCOVERY_STATE_ORDER, countByDiscoveryState, discoveryStateLabel, resolveDiscoveryState } from '../lifecycle';
+import { DISCOVERY_PACK_REGISTRY } from '../registry';
+import { DISCOVERY_CULTURE_VERSION } from '../categories';
 
 function provenance(sourceRef: string) {
   return {
@@ -72,12 +75,82 @@ export function buildReservedPackGraphScaffold(entry: DiscoveryPackRegistryEntry
     lifecycle: 'architecture',
     plane: 'canon',
     version: '1',
-    tags: ['discovery-pack-reserved', entry.category],
+    tags: ['discovery-pack-reserved', entry.category, entry.tier ?? 'standard'],
     provenance: {
       source: 'ingestion',
       sourceRef: 'discovery-pack-registry',
       ingestedAt: new Date().toISOString(),
     },
-    metadata: { packId: entry.packId, status: entry.status },
+    metadata: {
+      packId: entry.packId,
+      status: entry.status,
+      discoveryState: resolveDiscoveryState(entry.discoveryState, entry.status),
+      tier: entry.tier ?? 'standard',
+    },
   };
+}
+
+/** Discovery Culture™ lifecycle scaffold — aggregate state nodes, no pack spoilers */
+export function buildDiscoveryCultureWorldGraphNodes(): {
+  nodes: WorldNode[];
+  edges: WorldEdge[];
+} {
+  const nodes: WorldNode[] = [];
+  const edges: WorldEdge[] = [];
+
+  nodes.push({
+    id: 'W-DC-culture-root',
+    slug: 'discovery-culture',
+    displayName: 'Discovery Culture™',
+    nodeType: 'engine',
+    summary: 'Studio World mythology — mysteries, milestones, and hidden discoveries',
+    lifecycle: 'implemented',
+    plane: 'canon',
+    version: '1',
+    tags: ['discovery-culture', 'mythology'],
+    provenance: provenance('discovery-culture'),
+    metadata: { cultureVersion: DISCOVERY_CULTURE_VERSION },
+  });
+
+  edges.push({
+    id: 'WE-DC-framework-link',
+    from: 'W-DPF-framework',
+    to: 'W-DC-culture-root',
+    type: 'references',
+    label: 'culture-layer',
+    provenance: provenance('discovery-culture-link'),
+  });
+
+  const stateCounts = countByDiscoveryState(DISCOVERY_PACK_REGISTRY);
+
+  for (const state of DISCOVERY_STATE_ORDER) {
+    const count = stateCounts[state];
+    if (count === 0) continue;
+
+    const nodeId = `W-DC-state-${state}`;
+    nodes.push({
+      id: nodeId,
+      slug: `discovery-state-${state}`,
+      displayName: discoveryStateLabel(state),
+      nodeType: 'milestone',
+      summary: `${count} discovery slot${count > 1 ? 's' : ''} in ${discoveryStateLabel(state)} — identities classified`,
+      lifecycle: state === 'historical' ? 'legacy' : 'architecture',
+      plane: 'canon',
+      version: '1',
+      tags: ['discovery-state', state],
+      provenance: provenance('discovery-state-aggregate'),
+      metadata: { state, count },
+    });
+
+    edges.push({
+      id: `WE-DC-${state}`,
+      from: 'W-DC-culture-root',
+      to: nodeId,
+      type: 'spawned-from',
+      label: state,
+      provenance: provenance('discovery-state-edge'),
+    });
+  }
+
+  return { nodes, edges };
 }

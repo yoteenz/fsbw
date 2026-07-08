@@ -1,9 +1,24 @@
 /**
  * Discovery Pack Framework™ — internal registry & release infrastructure.
- * ERA 2 — WORLD™ · Reserve discoveries · Reveal intentionally.
+ * ERA 2 — WORLD™ · Discovery Culture™ · Reserve discoveries · Reveal intentionally.
  *
- * Public API never exposes reserved/classified pack names.
+ * Public API never exposes reserved/classified pack names or the full roadmap.
  */
+
+/** Discovery States™ — full lifecycle recorded in the World Graph™ */
+export type DiscoveryState =
+  | 'conceived'
+  | 'research'
+  | 'prototype'
+  | 'hidden'
+  | 'rumored'
+  | 'teased'
+  | 'announced'
+  | 'discovered'
+  | 'integrated'
+  | 'historical';
+
+export type DiscoveryTier = 'standard' | 'legendary';
 
 export type DiscoveryPackStatus =
   | 'reserved'
@@ -55,9 +70,15 @@ export type DiscoveryPackRegistryEntry = {
   category: DiscoveryPackCategory;
   releaseEra: DiscoveryPackReleaseEra;
   status: DiscoveryPackStatus;
+  /** Discovery States™ lifecycle — defaults from status when omitted */
+  discoveryState?: DiscoveryState;
+  /** Legendary discoveries unlock only through extraordinary achievements */
+  tier?: DiscoveryTier;
   dependencies: string[];
   unlockMethod: DiscoveryPackUnlockMethod;
   linkedEventId?: string;
+  /** World Lore™ anchor — internal until discovered */
+  loreId?: string;
   integrations: DiscoveryPackIntegrations;
   documentationRef: string;
   canonicalHistory: string | null;
@@ -108,4 +129,51 @@ export type DiscoveryEligibilitySnapshot = {
   frontierSignalsActive: number;
   civilizationEventLinked: number;
   collaborationEligible: boolean;
+};
+
+/** Public-safe Discovery Culture™ — mythology, not roadmap */
+export type PublicDiscoveryCultureSnapshot = {
+  cultureVersion: string;
+  computedAt: string;
+  /** Current era only — never the full roadmap */
+  eraSummary: string;
+  curiosityPrompt: string;
+  designPrinciple: string;
+  /** Aggregate mystery signals — no pack identity */
+  mysteryCount: number;
+  rumoredFrontierCount: number;
+  teasedFrontierCount: number;
+  legendaryMysteryCount: number;
+  hiddenActivationCount: number;
+  /** "The world just got bigger" — when hidden discoveries activate */
+  worldExpansionAmbient: string | null;
+  /** World systems responding to a discovery event — aggregate labels only */
+  worldResponsesActive: string[];
+  civilizationMilestones: PublicMilestoneProgress[];
+  approachingMilestoneCount: number;
+  investigation: PublicInvestigationSnapshot;
+  lorePulse: string;
+  /** Orb Discovery Oracle line — exploration voice */
+  discoveryOracleLine: string;
+};
+
+export type PublicMilestoneProgress = {
+  id: string;
+  publicLabel: string;
+  publicDescription: string;
+  progressPct: number;
+  worldEvolutionHint: string;
+  approaching: boolean;
+};
+
+export type PublicInvestigationSnapshot = {
+  activeCount: number;
+  advancingCount: number;
+  primaryThread: {
+    publicTitle: string;
+    publicDescription: string;
+    publicHint: string;
+    communityProgressPct: number;
+  } | null;
+  ambientLine: string | null;
 };

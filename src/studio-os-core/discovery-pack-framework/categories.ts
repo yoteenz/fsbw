@@ -48,6 +48,10 @@ export const DISCOVERY_PACK_CATEGORY_PILLARS: Record<
 
 export const DISCOVERY_FRAMEWORK_VERSION = 'discovery-pack-framework.v1';
 
+export const DISCOVERY_CULTURE_VERSION = 'discovery-culture.v1';
+
+export const CURRENT_DISCOVERY_ERA = 'ERA 2 — WORLD™';
+
 export const HALL_OF_DISCOVERY_ID = 'museum-hall-of-discovery';
 
 export const FRONTIER_SUMMARY =

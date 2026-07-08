@@ -76,6 +76,46 @@ export function resolveWarehouseOrbPersonality(
 ): WarehouseOrbPersonality {
   const base = PERSONALITIES[wing];
 
+  const discoveryCulture = civilizationEvents?.discoveryCulture;
+  const worldExpanding = discoveryCulture?.worldExpansionAmbient != null;
+
+  if (worldExpanding && civilizationEvents?.orbDiscoveryLine) {
+    const oracleRoles: Partial<Record<WarehouseWingKind, string>> = {
+      atrium: 'Discovery Oracle',
+      legacy: 'World Historian',
+      innovation: 'Frontier Explorer',
+      marketplace: 'Discovery Cartographer',
+      expansion: 'Atlas Oracle',
+      blueprint: 'Knowledge Seeker',
+      warehouse: 'Expedition Guide',
+      genome: 'Mystery Analyst',
+      threshold: 'World Greeter',
+    };
+
+    return {
+      ...base,
+      role: oracleRoles[wing] ?? 'Discovery Oracle',
+      greeting: civilizationEvents.orbDiscoveryLine,
+      accent: '#b8d4a8',
+    };
+  }
+
+  if (civilizationEvents?.orbDiscoveryLine && !civilizationEvents.orbCuratorLine) {
+    const oracleRoles: Partial<Record<WarehouseWingKind, string>> = {
+      atrium: 'Discovery Oracle',
+      expansion: 'Frontier Oracle',
+      innovation: 'Exploration Guide',
+      legacy: 'Lore Keeper',
+    };
+
+    return {
+      ...base,
+      role: oracleRoles[wing] ?? 'Discovery Oracle',
+      greeting: civilizationEvents.orbDiscoveryLine,
+      accent: '#a8c4b8',
+    };
+  }
+
   if (civilizationEvents?.orbCuratorLine) {
     const curatorRoles: Partial<Record<WarehouseWingKind, string>> = {
       atrium: 'Civilization Curator',

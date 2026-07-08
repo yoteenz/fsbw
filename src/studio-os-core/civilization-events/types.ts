@@ -3,7 +3,7 @@
  * ERA 2 — WORLD™ · Civilization Events™ · Discovery Pack Framework™
  */
 
-import type { PublicDiscoveryFrameworkSnapshot, DiscoveryEligibilitySnapshot } from '../discovery-pack-framework/types';
+import type { PublicDiscoveryFrameworkSnapshot, DiscoveryEligibilitySnapshot, PublicDiscoveryCultureSnapshot } from '../discovery-pack-framework/types';
 
 export type CivilizationEventCategory =
   | 'innovation-challenge'
@@ -127,6 +127,8 @@ export type CivilizationEventsSnapshot = {
   crossDisciplineTeams: CrossDisciplineTeam[];
   /** Public-safe — no reserved pack names exposed */
   discoveryFramework: PublicDiscoveryFrameworkSnapshot;
+  /** Discovery Culture™ — mythology and mystery, never the full roadmap */
+  discoveryCulture: PublicDiscoveryCultureSnapshot;
   discoveryEligibility: DiscoveryEligibilitySnapshot;
   /** Count of eligible reward grants — identity hidden until release */
   eligibleDiscoveryGrantCount: number;
@@ -134,6 +136,8 @@ export type CivilizationEventsSnapshot = {
   collaborationHonors: CollaborationHonor[];
   worldImpacts: EventWorldImpact[];
   orbCuratorLine: string | null;
+  /** Discovery Oracle™ — exploration voice, higher priority than curator when world expands */
+  orbDiscoveryLine: string | null;
   participationEligible: string[];
 };
 

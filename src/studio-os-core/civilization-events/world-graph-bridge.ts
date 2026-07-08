@@ -5,6 +5,7 @@
 
 import type { WorldEdge, WorldNode } from '../world-graph/types';
 import type { CivilizationEventsSnapshot } from './types';
+import { buildDiscoveryCultureWorldGraphNodes } from '../discovery-pack-framework/integrations/world-graph';
 
 function provenance(sourceRef: string) {
   return {
@@ -113,6 +114,36 @@ export function buildCivilizationEventsWorldGraphProjection(
       provenance: provenance('discovery-release-edge'),
     });
   }
+
+  const cultureGraph = buildDiscoveryCultureWorldGraphNodes();
+  nodes.push(...cultureGraph.nodes);
+  edges.push(...cultureGraph.edges);
+
+  nodes.push({
+    id: 'W-DC-culture-pulse',
+    slug: 'discovery-culture-pulse',
+    displayName: 'Discovery Culture Pulse',
+    nodeType: 'milestone',
+    summary: snapshot.discoveryCulture.lorePulse,
+    lifecycle: 'live',
+    plane: 'canon',
+    version: '1',
+    tags: ['discovery-culture', 'lore'],
+    provenance: provenance('discovery-culture-pulse'),
+    metadata: {
+      mysteryCount: snapshot.discoveryCulture.mysteryCount,
+      eraSummary: snapshot.discoveryCulture.eraSummary,
+    },
+  });
+
+  edges.push({
+    id: 'WE-DC-pulse',
+    from: 'W-DC-culture-root',
+    to: 'W-DC-culture-pulse',
+    type: 'references',
+    label: 'lore-pulse',
+    provenance: provenance('discovery-culture-pulse-edge'),
+  });
 
   for (const impact of snapshot.worldImpacts) {
     edges.push({

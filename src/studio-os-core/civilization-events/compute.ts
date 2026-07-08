@@ -4,6 +4,7 @@
 
 import {
   computePublicDiscoveryFramework,
+  computePublicDiscoveryCulture,
   countEligibleRewardGrants,
   evaluateDiscoveryEligibility,
   getInternalRegistry,
@@ -79,6 +80,18 @@ export function computeCivilizationEvents(
     civilizationHealth: input.civilizationHealth,
     activeEventIds,
   });
+  const discoveryCulture = computePublicDiscoveryCulture({
+    warehouseAssetCount: metrics.warehouseAssetCount,
+    warehouseGoldenBuildTotal: metrics.warehouseGoldenBuildTotal,
+    warehouseFavoriteCount: metrics.warehouseFavoriteCount,
+    knowledgeCapital: input.knowledgeCapital,
+    collaborationCapital: input.collaborationCapital,
+    innovationCapital: input.innovationCapital,
+    civilizationHealth: input.civilizationHealth,
+    activeGrandChallengeCount: grandChallenge?.status === 'active' ? 1 : 0,
+    completedGrandChallengeCount: 0,
+    discoveryEligibility,
+  });
   const eligibleDiscoveryGrantCount = countEligibleRewardGrants(getInternalRegistry(), {
     innovationCapital: input.innovationCapital,
     knowledgeCapital: input.knowledgeCapital,
@@ -99,6 +112,7 @@ export function computeCivilizationEvents(
     worldExpo,
     crossDisciplineTeams: SEED_CROSS_DISCIPLINE_TEAMS,
     discoveryFramework,
+    discoveryCulture,
     discoveryEligibility,
     eligibleDiscoveryGrantCount,
     museumExhibits: LIVING_MUSEUM_EXHIBITS,
@@ -113,6 +127,7 @@ export function computeCivilizationEvents(
       discoveryEligibility,
       frontierSummary: discoveryFramework.frontierSummary,
     }),
+    orbDiscoveryLine: discoveryCulture.discoveryOracleLine,
     participationEligible,
   };
 
