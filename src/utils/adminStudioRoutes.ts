@@ -892,6 +892,10 @@ export function adminStudioInnovationLineageGalleryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/innovation-lineage-gallery`;
 }
 
+export function adminStudioInnovationConstellationsPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/innovation-constellations`;
+}
+
 export function adminStudioOrganizationOperatingManualPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organization-operating-manual`;
 }

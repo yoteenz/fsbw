@@ -135,6 +135,16 @@ body.global-atlas-layer-open {
   background: rgba(0,0,0,0.35);
 }
 
+.gal-constellation-hint {
+  margin: 0 10px 8px;
+  padding: 6px 8px;
+  font-size: 6px;
+  letter-spacing: 0.08em;
+  color: rgba(110, 181, 255, 0.9);
+  border: 1px solid rgba(110, 181, 255, 0.25);
+  background: rgba(0,0,0,0.35);
+}
+
 .gal-table {
   position: relative;
   flex: 1;

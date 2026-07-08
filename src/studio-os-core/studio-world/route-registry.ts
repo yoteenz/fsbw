@@ -96,6 +96,7 @@ export const STUDIO_WORLD_ROUTE_REGISTRY: StudioWorldRouteMapping[] = [
   m('innovation-lab-archives', 'Hall of Innovation™', 'gallery', 'studio-archives', 'archives-innovation-hall', 'archives/hall-of-innovation', 'innovation-lab', 'standard', 'immersive-partial'),
   m('innovation-district', 'Innovation District™', 'district', 'studio-archives', 'archives-innovation-district', 'archives/innovation-district', 'innovation-district', 'immersive', 'immersive-partial', 'Collaborative Innovation Network'),
   m('innovation-lineage-gallery', 'Innovation Lineage Gallery™', 'gallery', 'studio-archives', 'archives-museum-wing', 'archives/museum-wing/innovation-lineage-gallery', 'innovation-lineage-gallery', 'immersive', 'immersive-partial', 'Innovation Lineage'),
+  m('innovation-constellations', 'Innovation Constellations™', 'observatory', 'studio-archives', 'archives-innovation-constellations', 'archives/innovation-constellations', 'innovation-constellations', 'immersive', 'immersive-partial', 'Innovation Constellations'),
 
   // ── Marketplace™ ──
   m('marketplace-entry', 'Marketplace™', 'pavilion', 'marketplace', 'marketplace-pavilion', 'marketplace', 'marketplace', 'standard', 'immersive-partial', 'Marketplace'),

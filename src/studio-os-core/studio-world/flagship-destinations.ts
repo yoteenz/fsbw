@@ -196,6 +196,14 @@ export const FLAGSHIP_DISTRICTS: StudioWorldLocation[] = [
     teaching: 'Collaborative invention campus — co-invent, publish joint IP, distribute royalties.',
   },
   {
+    id: 'archives-innovation-constellations',
+    displayName: 'Innovation Constellations™',
+    physicalType: 'observatory',
+    flagshipId: 'studio-archives',
+    worldPath: 'archives/innovation-constellations',
+    teaching: 'Living knowledge universe — explore galaxies, constellations, and stars as business intelligence evolves.',
+  },
+  {
     id: 'archives-genome-vault',
     displayName: 'Company Genome Vault™',
     physicalType: 'vault',

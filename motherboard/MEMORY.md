@@ -42590,6 +42590,7 @@ User **FOLLOW-UP SPRINT — Innovation Lineage™ (The Living Innovation Graph):
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-08 — Studio World Three Eras Roadmap™ (guiding architecture)
 
 User defined **three major eras** for Studio World's evolution — **not** to build all three today, but as a **guiding principle** every future system must be evaluated against.
@@ -42608,3 +42609,23 @@ User defined **three major eras** for Studio World's evolution — **not** to bu
   - `scripts/compile-world-graph-runner.ts` — CI now uses canonical TypeScript `buildWorldGraph` (360 nodes · 467 edges)
   - Updated `STUDIO_WORLD_GRAPH_ARCHITECTURE.md` · `world-graph-law.md` · `motherboard/CORE.md`
 - **Prior arc (same chat):** Scene Stack quality fix + hardening sprint · Knowledge System proposal · World Graph™ Phase 1 approved · Responsibility Framework™ · Constitution™ · Global Atlas Layer™ · Collaborative Innovation Network™ · Innovation Lineage™.
+=======
+## 2026-07-08 — Innovation Constellations™ living knowledge universe
+
+User **FOLLOW-UP SPRINT — Innovation Constellations™ (The Living Knowledge Universe):** After Innovation Lineage™ records history, transform that history into a living universe founders explore — not another Marketplace view or search page. Visual representation of collective business intelligence inside Studio World.
+
+- **Engine `src/studio-os-core/innovation-constellations/`:** celestial hierarchy (Universe™ → Galaxies™ → Constellations™ → Solar Systems™ → Stars™/Suns™) · `star-influence.ts` (Blue/White/Gold/Red Giant/Constellation Anchor tiers) · `universe-builder.ts` (demo universe from lineage) · `collaboration-pathways.ts` (glowing creator pathways) · `opportunity-map.ts` (dark whitespace regions) · `founders-star.ts` · `academic-mode.ts` · `living-history.ts` · `cosmic-guide.ts` (Orb Cosmic Guide) · `atlas-constellations.ts` · `constellations-builder.ts` · `store.ts` (`studioOsInnovationConstellations_v1`) · `dock-advisor.ts`.
+- **Innovation Constellations™ Observatory:** immersive star-map `InnovationConstellationsObservatory.tsx` + `/admin/studio/innovation-constellations` — constellation nav pills, celestial star map with influence-tier dots, Opportunity Map™, Collaboration Pathways™, Marketplace constellation context, Academic Mode™, Founder's Star™ action, Cosmic Guide footer.
+- **Hook:** `useInnovationConstellations` — profile, zoom levels, focus galaxy/constellation/founder star, cosmic lines.
+- **Sync:** reads Innovation Lineage™, Collaborative Innovation Network™, profession brain, marketplace; builds demo Luxury Customer Experience constellation from lineage graph nodes.
+- **Studio World wiring:** `route-registry` observatory in Studio Archives™ · `flagship-destinations` `archives-innovation-constellations` · `navigation.ts` walkways from Museum Wing · `migration-audit` immersive-partial · `adminStudioNavigation` UNIVERSE metric · `adminStudioRoutes` · `App.tsx` lazy route · `core/modules.ts` id `innovation-constellations`.
+- **Orb:** Innovation Constellations path → Cosmic Guide (`cosmic-guide.ts` + `orb-personality.ts`).
+- **Global Atlas:** constellation glow hint (`formatAtlasConstellationLine` / `gal-constellation-hint`); context priorities for observatory; orb guide aliases for "living universe" / "constellation observatory".
+- **Command Dock:** `resolveInnovationConstellationsAdvice()` after Innovation Lineage chain.
+- **Bootstrap:** `workspaces/index.ts` after innovation-lineage.
+- **Export:** `studio-os-core/index.ts`.
+- **Docs:** `docs/studio-os/innovation-constellations.md`.
+- **Boundaries:** visualization layer — not Marketplace redesign; demo/heuristic universe from lineage; full real-time World Graph ingestion deferred.
+- **Prior arc (same chat):** Innovation Lineage™ · World Graph™ Phase 1 · Collaborative Innovation Network™ · Global Atlas Layer™.
+
+>>>>>>> c89fbc2f (Innovation Constellations™ — living knowledge universe observatory, engine, Orb Cosmic Guide, Atlas glow, Command Dock)

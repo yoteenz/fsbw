@@ -34,6 +34,12 @@ import {
   type AtlasLineageSignal,
 } from '../../../../studio-os-core/innovation-lineage';
 import {
+  ensureOrganizationInnovationConstellationsProfile,
+  formatAtlasConstellationLine,
+  resolveAtlasConstellationGlows,
+  type AtlasConstellationGlow,
+} from '../../../../studio-os-core/innovation-constellations';
+import {
   ATLAS_TRAVEL_LABELS,
   type AtlasNode,
   type AtlasTravelMode,
@@ -51,6 +57,8 @@ export type GlobalAtlasLayerContextValue = {
   atlasCollaborators: AtlasCollaboratorMarker[];
   lineageLine: string | null;
   atlasLineageSignals: AtlasLineageSignal[];
+  constellationLine: string | null;
+  atlasConstellationGlows: AtlasConstellationGlow[];
   traveling: boolean;
   openAtlas: () => void;
   closeAtlas: () => void;
@@ -108,6 +116,16 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   const lineageLine = useMemo(
     () => formatAtlasLineageLine(atlasLineageSignals),
     [atlasLineageSignals]
+  );
+
+  const atlasConstellationGlows = useMemo(() => {
+    const profile = ensureOrganizationInnovationConstellationsProfile(workspaceId ?? 'frontal-slayer');
+    return resolveAtlasConstellationGlows(profile.universe);
+  }, [workspaceId, isOpen]);
+
+  const constellationLine = useMemo(
+    () => formatAtlasConstellationLine(atlasConstellationGlows),
+    [atlasConstellationGlows]
   );
 
   const syncLocationFocus = useCallback(() => {
@@ -214,6 +232,8 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
     atlasCollaborators,
     lineageLine,
     atlasLineageSignals,
+    constellationLine,
+    atlasConstellationGlows,
     traveling,
     openAtlas,
     closeAtlas,

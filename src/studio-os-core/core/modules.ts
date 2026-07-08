@@ -115,6 +115,7 @@ export type StudioOsCoreModuleId =
   | 'innovation-lab'
   | 'collaborative-innovation-network'
   | 'innovation-lineage'
+  | 'innovation-constellations'
   | 'organization-operating-manual'
   | 'legacy-network'
   | 'studio-intelligence-architecture'
@@ -851,6 +852,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'INNOVATION LINEAGE™',
     description: 'Living innovation graph — permanent lineage, Intellectual Equity™, fork preservation, Museum gallery, Marketplace invention stories.',
     routeSegment: 'innovation-lineage-gallery',
+  },
+  {
+    id: 'innovation-constellations',
+    label: 'INNOVATION CONSTELLATIONS™',
+    description: 'Living knowledge universe — galaxies, constellations, stars, influence tiers, Opportunity Map™, Collaboration Pathways™, Academic Mode™.',
+    routeSegment: 'innovation-constellations',
   },
   {
     id: 'organization-operating-manual',

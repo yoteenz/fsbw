@@ -145,6 +145,19 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     moduleKey: 'innovation-lineage',
   },
   {
+    id: 'innovation-constellations',
+    title: 'INNOVATION CONSTELLATIONS',
+    purpose:
+      'Innovation Constellations™ — living knowledge universe. Explore galaxies, constellations, and stars — influence tiers, Opportunity Map™, and Cosmic Guide navigation.',
+    route: p('innovation-constellations'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'UNIVERSE',
+    ctaLabel: 'ENTER OBSERVATORY',
+    featuredOnOverview: true,
+    moduleKey: 'innovation-constellations',
+  },
+  {
     id: 'chief-of-staff',
     title: 'CHIEF OF STAFF',
     purpose: 'Founder primary executive — soft approvals, unified briefings, and attention protection before escalations.',

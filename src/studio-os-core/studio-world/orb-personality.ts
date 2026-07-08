@@ -20,6 +20,11 @@ import {
   INNOVATION_HISTORIAN_GREETING,
   INNOVATION_HISTORIAN_ROLE,
 } from '../innovation-lineage/orb-historian';
+import {
+  COSMIC_GUIDE_ACCENT,
+  COSMIC_GUIDE_GREETING,
+  COSMIC_GUIDE_ROLE,
+} from '../innovation-constellations/cosmic-guide';
 
 export type StudioWorldOrbPersonality = {
   flagshipId: StudioWorldFlagshipId;
@@ -155,6 +160,16 @@ export function resolveOrbPersonalityForPath(pathname: string): StudioWorldOrbPe
       guidance:
         'I trace how inventions evolved — generations, forks, merges, and Marketplace impact preserved forever.',
       accent: INNOVATION_HISTORIAN_ACCENT,
+    };
+  }
+  if (p.includes('innovation-constellations') || p.includes('constellations-observatory')) {
+    return {
+      flagshipId: 'studio-archives',
+      role: COSMIC_GUIDE_ROLE,
+      greeting: COSMIC_GUIDE_GREETING,
+      guidance:
+        'I navigate the living universe — constellation evolution, derivative innovations, collaboration pathways, and whitespace opportunity.',
+      accent: COSMIC_GUIDE_ACCENT,
     };
   }
   if (p.includes('innovation-district')) {

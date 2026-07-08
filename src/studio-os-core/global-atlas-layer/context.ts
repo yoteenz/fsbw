@@ -105,6 +105,20 @@ export function resolveAtlasContextForPath(pathname: string): GlobalAtlasLocatio
       ],
     };
   }
+  if (p.includes('innovation-constellations') || p.includes('constellations-observatory')) {
+    return {
+      ...CONTEXT_BY_FLAGSHIP['studio-archives'],
+      contextLabel: 'Innovation Constellations™',
+      priorityModes: ['innovation', 'archives', 'marketplace', 'company-genome'],
+      priorityDestinations: [
+        'Innovation Constellations™',
+        'Innovation Lineage Gallery™',
+        'Innovation District™',
+        'Marketplace Pavilion™',
+        'Hall of Innovation™',
+      ],
+    };
+  }
   if (p.includes('innovation-district')) {
     return {
       ...CONTEXT_BY_FLAGSHIP['studio-archives'],
