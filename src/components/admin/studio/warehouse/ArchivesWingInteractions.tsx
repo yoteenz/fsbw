@@ -143,16 +143,18 @@ export function MarketplacePavilionInteractions({
 type ServiceBayProps = {
   label: string;
   hint: string;
-  hotspot: CSSProperties;
+  hotspot?: CSSProperties;
 };
 
-export function ArchivesServiceBayInteractions({ label, hint, hotspot }: ServiceBayProps) {
+export function ArchivesServiceBayInteractions({ label, hint }: ServiceBayProps) {
   return (
-    <div className="wh-world__hotspot" style={hotspot}>
-      <div className="wh-world__glass-embed">
-        <p className="wh-world__label">{label}</p>
-        <p className="wh-world__hint">{hint}</p>
-        <p className="wh-world__hint">Scene Stack™ assembles this wing — assets register to Asset Registry™</p>
+    <div className="wh-wing-panel">
+      <div className="wh-wing-panel__frame">
+        <div className="wh-wing-panel__scroll">
+          <p className="wh-world__label">{label}</p>
+          <p className="wh-world__hint">{hint}</p>
+          <p className="wh-world__hint">Scene Stack™ assembles this wing — assets register to Asset Registry™</p>
+        </div>
       </div>
     </div>
   );

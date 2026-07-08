@@ -35,6 +35,7 @@ import {
 import { resolveWarehouseOrbPersonality } from './warehouseOrbPersonality';
 import { WAREHOUSE_DESTINATION_STYLES } from './warehouseDestinationTheme';
 import { WAREHOUSE_CAMPUS_STYLES } from './warehouseCampusTheme';
+import { WAREHOUSE_FRAME_STYLES } from './warehouseFrameTheme';
 import type { WarehouseCameraZoneId } from '../../../../studio-os-core/studio-warehouse';
 import { districtForWarehouseZone, industrialWingForZone, isGalleryZone } from '../../../../studio-os-core/studio-warehouse';
 import {
@@ -281,14 +282,14 @@ export function StudioWarehouseRoom() {
         );
 
       case 'future-expansion-wings':
-        return <FutureExpansionInteractions hotspots={hotspots} />;
+        return <FutureExpansionInteractions />;
 
       default:
         if (!zone.districtId) return null;
         return (
-          <div className="wh-campus">
-            <div className="wh-campus__workspace">
-              <div className="wh-campus__search">
+          <div className={`wh-campus${wh.inspectorOpen ? ' is-inspector-open' : ''}`}>
+            <header className="wh-campus__frame wh-campus__frame--command">
+              <div className="wh-campus__command">
                 <input
                   className="wh-campus__search-input"
                   placeholder='Try: "white marble" · "Story Table lighting"'
@@ -299,86 +300,96 @@ export function StudioWarehouseRoom() {
                   }}
                   aria-label="Warehouse search"
                 />
+                <div className="wh-campus__toolbar">
+                  <button
+                    type="button"
+                    className={`wh-campus__toolbar-btn${wh.inspectorOpen ? ' is-active' : ''}`}
+                    onClick={wh.toggleInspector}
+                  >
+                    Inspector
+                  </button>
+                  <button
+                    type="button"
+                    className={`wh-campus__toolbar-btn${wh.interactionMode === 'compare' ? ' is-active' : ''}`}
+                    onClick={() =>
+                      wh.interactionMode === 'compare' ? wh.exitCompareMode() : wh.enterCompareMode()
+                    }
+                  >
+                    Compare
+                  </button>
+                </div>
               </div>
+            </header>
 
-              <div className="wh-campus__toolbar">
-                <button
-                  type="button"
-                  className={`wh-campus__toolbar-btn${wh.inspectorOpen ? ' is-active' : ''}`}
-                  onClick={wh.toggleInspector}
-                >
-                  Inspector
-                </button>
-                <button
-                  type="button"
-                  className={`wh-campus__toolbar-btn${wh.interactionMode === 'compare' ? ' is-active' : ''}`}
-                  onClick={() =>
-                    wh.interactionMode === 'compare' ? wh.exitCompareMode() : wh.enterCompareMode()
-                  }
-                >
-                  Compare Mode™
-                </button>
+            <section className="wh-campus__frame wh-campus__frame--stage">
+              <div className="wh-campus__frame-body">
+                {wh.interactionMode === 'compare' && wh.compareAssets.length > 0 ? (
+                  <WarehouseCompareMode
+                    assets={wh.compareAssets}
+                    onRemove={wh.toggleCompareAsset}
+                    onClear={wh.clearCompare}
+                  />
+                ) : (
+                  <WarehouseInspectionStage
+                    asset={wh.selectedAsset}
+                    previewRotation={wh.previewRotation}
+                    previewZoom={wh.previewZoom}
+                    inspectionActive={wh.interactionMode === 'inspect' && Boolean(wh.selectedAsset)}
+                    onRotate={wh.rotatePreview}
+                    onZoom={wh.zoomPreview}
+                    onResetPreview={wh.resetPreview}
+                    onOpenInspector={wh.openInspector}
+                  />
+                )}
               </div>
+            </section>
 
-              {wh.interactionMode === 'compare' && wh.compareAssets.length > 0 ? (
-                <WarehouseCompareMode
-                  assets={wh.compareAssets}
-                  onRemove={wh.toggleCompareAsset}
-                  onClear={wh.clearCompare}
+            <footer className="wh-campus__frame wh-campus__frame--shelf">
+              <p className="wh-campus__shelf-header">Architectural Asset Shelf™</p>
+              <div className="wh-campus__shelf-body">
+                <WarehouseArchitecturalAssetShelf
+                  assets={zoneAssets}
+                  selectedAssetId={wh.selectedAssetId}
+                  compareAssetIds={wh.compareAssetIds}
+                  compareMode={wh.interactionMode === 'compare'}
+                  transitioningAssetId={wh.transitioningAssetId}
+                  onSelectAsset={wh.selectAssetForInspection}
+                  onToggleCompare={wh.toggleCompareAsset}
                 />
-              ) : (
-                <WarehouseInspectionStage
-                  asset={wh.selectedAsset}
-                  previewRotation={wh.previewRotation}
-                  previewZoom={wh.previewZoom}
-                  inspectionActive={wh.interactionMode === 'inspect' && Boolean(wh.selectedAsset)}
-                  onRotate={wh.rotatePreview}
-                  onZoom={wh.zoomPreview}
-                  onResetPreview={wh.resetPreview}
-                  onOpenInspector={wh.openInspector}
-                />
-              )}
-            </div>
+              </div>
+            </footer>
 
-            <WarehouseArchitecturalAssetShelf
-              assets={zoneAssets}
-              selectedAssetId={wh.selectedAssetId}
-              compareAssetIds={wh.compareAssetIds}
-              compareMode={wh.interactionMode === 'compare'}
-              transitioningAssetId={wh.transitioningAssetId}
-              onSelectAsset={wh.selectAssetForInspection}
-              onToggleCompare={wh.toggleCompareAsset}
-            />
-
-            <WarehouseCollapsibleInspector
-              open={wh.inspectorOpen}
-              asset={wh.selectedAsset}
-              catalog={wh.catalog}
-              recommendReuse={wh.selectedAsset ? wh.recommendReuseFor(wh.selectedAsset) : false}
-              onClose={wh.closeInspector}
-              onFavorite={() => wh.selectedAsset && wh.toggleFavorite(wh.selectedAsset.id)}
-              onArchive={() => wh.selectedAsset && wh.archiveAsset(wh.selectedAsset.id)}
-              onSelectRelated={(assetId) => {
-                const related = wh.catalog.find((a) => a.id === assetId);
-                if (related) {
-                  const relatedZone = WAREHOUSE_CAMERA_ZONES.find((z) => z.districtId === related.districtId);
-                  if (relatedZone && relatedZone.id !== wh.activeZoneId) {
-                    goToZone(relatedZone.id);
+            <aside className="wh-campus__frame wh-campus__frame--inspector">
+              <WarehouseCollapsibleInspector
+                open={wh.inspectorOpen}
+                asset={wh.selectedAsset}
+                catalog={wh.catalog}
+                recommendReuse={wh.selectedAsset ? wh.recommendReuseFor(wh.selectedAsset) : false}
+                onClose={wh.closeInspector}
+                onFavorite={() => wh.selectedAsset && wh.toggleFavorite(wh.selectedAsset.id)}
+                onArchive={() => wh.selectedAsset && wh.archiveAsset(wh.selectedAsset.id)}
+                onSelectRelated={(assetId) => {
+                  const related = wh.catalog.find((a) => a.id === assetId);
+                  if (related) {
+                    const relatedZone = WAREHOUSE_CAMERA_ZONES.find((z) => z.districtId === related.districtId);
+                    if (relatedZone && relatedZone.id !== wh.activeZoneId) {
+                      goToZone(relatedZone.id);
+                    }
+                    wh.selectAssetForInspection(assetId);
                   }
-                  wh.selectAssetForInspection(assetId);
+                }}
+                onApply={
+                  wh.replaceContext
+                    ? () => wh.selectedAsset && wh.applyReplacement(wh.selectedAsset.id)
+                    : undefined
                 }
-              }}
-              onApply={
-                wh.replaceContext
-                  ? () => wh.selectedAsset && wh.applyReplacement(wh.selectedAsset.id)
-                  : undefined
-              }
-              applyLabel={
-                wh.replaceContext
-                  ? `Retrieve for ${wh.replaceContext.workspaceName}`
-                  : undefined
-              }
-            />
+                applyLabel={
+                  wh.replaceContext
+                    ? `Retrieve for ${wh.replaceContext.workspaceName}`
+                    : undefined
+                }
+              />
+            </aside>
           </div>
         );
     }
@@ -415,9 +426,14 @@ export function StudioWarehouseRoom() {
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
       <style>{CDS_IMMERSION_STYLES}</style>
       <style>{WAREHOUSE_DESTINATION_STYLES}</style>
+      <style>{WAREHOUSE_FRAME_STYLES}</style>
       <style>{WAREHOUSE_CAMPUS_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
-      <div className={worldClass} onPointerMove={immersion.onPointerMove} style={immersion.parallaxStyle}>
+      <div
+        className={`${worldClass}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}`}
+        onPointerMove={immersion.onPointerMove}
+        style={immersion.parallaxStyle}
+      >
         <header className="wh-world__hud">
           <button type="button" className="wh-world__back" onClick={exitRoom} aria-label="Exit Studio Archives">
             ←

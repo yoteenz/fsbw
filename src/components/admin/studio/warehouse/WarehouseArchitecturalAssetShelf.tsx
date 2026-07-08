@@ -43,15 +43,13 @@ export function WarehouseArchitecturalAssetShelf({
   const display = assets.length > 0 ? assets : [];
 
   return (
-    <div className="wh-campus__shelf" aria-label="Architectural Asset Shelf">
-      <div className="wh-campus__shelf-rail" aria-hidden />
-      <div className="wh-campus__shelf-track">
-        {display.length === 0 ? (
-          <p className="wh-campus__shelf-empty">
-            Generation completes → asset enters this wing → select a pedestal to inspect
-          </p>
-        ) : (
-          display.map((asset) => {
+    <div className="wh-campus__shelf-track" aria-label="Architectural Asset Shelf">
+      {display.length === 0 ? (
+        <p className="wh-campus__shelf-empty">
+          Generation completes → asset enters this wing → select a pedestal to inspect
+        </p>
+      ) : (
+        display.map((asset) => {
             const selected = selectedAssetId === asset.id;
             const inCompare = compareAssetIds.includes(asset.id);
             const transitioning = transitioningAssetId === asset.id;
@@ -111,8 +109,7 @@ export function WarehouseArchitecturalAssetShelf({
               </article>
             );
           })
-        )}
-      </div>
+      )}
     </div>
   );
 }

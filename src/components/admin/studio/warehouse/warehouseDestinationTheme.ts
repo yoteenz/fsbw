@@ -145,10 +145,10 @@ body.wh-world-active {
 
 .wh-world__teaching {
   position: absolute;
-  left: 50%;
-  bottom: max(52px, calc(44px + env(safe-area-inset-bottom)));
+  left: calc(var(--wh-frame-dir-w, 52px) + 50%);
+  bottom: max(8px, env(safe-area-inset-bottom));
   transform: translateX(-50%);
-  width: min(92vw, 360px);
+  width: min(calc(100vw - var(--wh-frame-dir-w, 52px) - 24px), 360px);
   text-align: center;
   font-size: 5px;
   letter-spacing: 0.08em;
@@ -156,6 +156,8 @@ body.wh-world-active {
   z-index: 16;
   pointer-events: none;
   line-height: 1.5;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .wh-world__nav {

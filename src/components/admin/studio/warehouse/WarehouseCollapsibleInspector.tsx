@@ -9,7 +9,7 @@ import {
 import { WAREHOUSE_SCENE_RECIPES } from '../../../../studio-os-core/studio-warehouse';
 
 type Props = {
-  open: boolean;
+  open?: boolean;
   asset: WarehouseAsset | null;
   catalog: WarehouseAsset[];
   recommendReuse: boolean;
@@ -31,11 +31,9 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 }
 
 /**
- * Collapsible Inspector Panel — complexity hidden until requested.
- * Asset Inspection Mode™ secondary information layer.
+ * Inspector Panel — lives inside the campus grid frame column (not a floating overlay).
  */
 export function WarehouseCollapsibleInspector({
-  open,
   asset,
   catalog,
   recommendReuse,
@@ -46,19 +44,21 @@ export function WarehouseCollapsibleInspector({
   onApply,
   applyLabel,
 }: Props) {
-  if (!open) return null;
-
   if (!asset) {
     return (
-      <aside className="wh-campus__inspector wh-campus__inspector--open" aria-label="Asset Inspector">
+      <div className="wh-campus__inspector-inner" aria-label="Asset Inspector">
         <header className="wh-campus__inspector-header">
-          <p className="wh-campus__inspector-title">Inspector Panel™</p>
+          <div className="wh-campus__inspector-title-wrap">
+            <p className="wh-campus__inspector-title">Inspector Panel™</p>
+          </div>
           <button type="button" className="wh-campus__inspector-close" onClick={onClose} aria-label="Close inspector">
             ×
           </button>
         </header>
-        <p className="wh-campus__inspector-hint">Select an asset to inspect generation history, dependencies, and reuse intelligence.</p>
-      </aside>
+        <p className="wh-campus__inspector-hint" style={{ padding: '8px' }}>
+          Select an asset to inspect generation history, dependencies, and reuse intelligence.
+        </p>
+      </div>
     );
   }
 
@@ -71,9 +71,9 @@ export function WarehouseCollapsibleInspector({
   );
 
   return (
-    <aside className="wh-campus__inspector wh-campus__inspector--open" aria-label="Asset Inspector">
+    <div className="wh-campus__inspector-inner" aria-label="Asset Inspector">
       <header className="wh-campus__inspector-header">
-        <div>
+        <div className="wh-campus__inspector-title-wrap">
           <p className="wh-campus__inspector-title">{asset.name}</p>
           <p className="wh-campus__inspector-sub">
             {asset.version} · {asset.department}
@@ -86,7 +86,9 @@ export function WarehouseCollapsibleInspector({
 
       <div className="wh-campus__inspector-scroll">
         {recommendReuse ? (
-          <p className="wh-campus__reuse-banner">Reuse Intelligence™ — regenerate avoided · save ${reuse.savingsUsd.toFixed(2)}</p>
+          <p className="wh-campus__reuse-banner">
+            Reuse Intelligence™ — regenerate avoided · save ${reuse.savingsUsd.toFixed(2)}
+          </p>
         ) : null}
 
         <Section title="Generation Cost™">
@@ -159,7 +161,11 @@ export function WarehouseCollapsibleInspector({
         <Section title="Asset Relationships™">
           <div className="wh-campus__relationship-tree">
             {relationships.map((rel, i) => (
-              <div key={`${rel.assetId}-${i}`} className="wh-campus__relationship-node" style={{ paddingLeft: rel.depth * 12 }}>
+              <div
+                key={`${rel.assetId}-${i}`}
+                className="wh-campus__relationship-node"
+                style={{ paddingLeft: rel.depth * 10 }}
+              >
                 <span className="wh-campus__relationship-role">{rel.role}</span>
                 <button
                   type="button"
@@ -256,6 +262,6 @@ export function WarehouseCollapsibleInspector({
           </button>
         ) : null}
       </footer>
-    </aside>
+    </div>
   );
 }

@@ -37,30 +37,32 @@ export function WarehouseCompareMode({ assets, onRemove, onClear }: Props) {
         </button>
       </header>
 
-      <div className="wh-campus__compare-grid">
-        {assets.map((asset) => (
-          <div key={asset.id} className="wh-campus__compare-column">
-            <div className="wh-campus__compare-preview" style={previewStyle(asset)} aria-hidden />
-            <p className="wh-campus__compare-name">{asset.name}</p>
-            <button type="button" className="wh-campus__compare-remove" onClick={() => onRemove(asset.id)}>
-              Remove
-            </button>
-          </div>
-        ))}
-      </div>
-
-      <table className="wh-campus__compare-table">
-        <tbody>
-          {rows.map((row) => (
-            <tr key={row.label}>
-              <th>{row.label}</th>
-              {row.values.map((value, i) => (
-                <td key={i}>{value}</td>
-              ))}
-            </tr>
+      <div className="wh-campus__compare-scroll">
+        <div className="wh-campus__compare-grid">
+          {assets.map((asset) => (
+            <div key={asset.id} className="wh-campus__compare-column">
+              <div className="wh-campus__compare-preview" style={previewStyle(asset)} aria-hidden />
+              <p className="wh-campus__compare-name">{asset.name}</p>
+              <button type="button" className="wh-campus__compare-remove" onClick={() => onRemove(asset.id)}>
+                Remove
+              </button>
+            </div>
           ))}
-        </tbody>
-      </table>
+        </div>
+
+        <table className="wh-campus__compare-table">
+          <tbody>
+            {rows.map((row) => (
+              <tr key={row.label}>
+                <th>{row.label}</th>
+                {row.values.map((value, i) => (
+                  <td key={i}>{value}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
