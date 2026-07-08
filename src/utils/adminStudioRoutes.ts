@@ -94,6 +94,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'asset-director'
   | 'blueprint-manager'
   | 'asset-factory'
+  | 'studio-archives'
   | 'studio-warehouse'
   | 'studio-museum'
   | 'production-builder'
@@ -317,7 +318,8 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   blueprintManager: 'studio/blueprint-manager',
   blueprintDetail: 'studio/blueprint-manager/:blueprintId',
   assetFactory: 'studio/asset-factory',
-  studioWarehouse: 'studio/studio-warehouse',
+  studioArchives: 'studio/studio-archives',
+  studioWarehouse: 'studio/studio-archives',
   studioMuseum: 'studio/studio-museum',
   assetDirectorStudios: 'studio/asset-director/studios',
   assetDirectorStudioDetail: 'studio/asset-director/studios/:studioId',
@@ -971,12 +973,17 @@ export function adminStudioAssetRegistryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/asset-registry`;
 }
 
+export function adminStudioArchivesPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-archives`;
+}
+
+/** @deprecated Use adminStudioArchivesPath — route alias preserved */
 export function adminStudioWarehousePath(): string {
-  return `${ADMIN_STUDIO_BASE_PATH}/studio-warehouse`;
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-archives`;
 }
 
 export function adminStudioMuseumPath(): string {
-  return `${ADMIN_STUDIO_BASE_PATH}/studio-warehouse?zone=museum-wing`;
+  return `${ADMIN_STUDIO_BASE_PATH}/studio-archives?zone=museum-wing`;
 }
 
 export function adminStudioExperienceEnginePath(): string {

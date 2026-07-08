@@ -42206,3 +42206,20 @@ User **IMPLEMENTATION SPRINT:** Live internal production cost visibility inside 
 - **Prior arc (same chat):** Museum→Warehouse absorption · crash/reload fix · Supabase registry · direct links.
 - **Files:** `studio-alpha-cost/*`, `StudioAlphaCostHud.tsx`, `useStudioAlphaCost.ts`, `useSceneStack.ts`, `useCreativeApprovalPipeline.ts`, `CreativeDirectionStudioRoom.tsx`, `StudioWarehouseRoom.tsx`, `studioOsBrowserStorage.ts`.
 - **Future:** Wire `apiActualCost` when FAL billing returns from API; optional Supabase receipts table.
+
+---
+
+## 2026-07-08 — Studio Archives™ evolution (Warehouse → flagship headquarters)
+
+User **IMPLEMENTATION SPRINT:** Studio Warehouse™ evolved into **Studio Archives™** — flagship headquarters inside Studio World™; institutional memory (not storage). Apple ID Lab + Smithsonian + Pixar Archives + Library of Alexandria + luxury architecture museum.
+
+- **Master campus layout (20 zones, linear camera track):** Grand Entrance™ → Orientation Atrium™ → Warehouse Wing™ (foyer + 11 production galleries) → Museum Wing™ → Hall of Innovation™ → Company Genome Vault™ → Blueprint Archive™ → Marketplace Pavilion™ → Future Expansion Wings™.
+- **New zones:** `warehouse-wing`, `particle-lab`, `animation-archive`, `audio-vault`, `generation-bay`, `asset-restoration`, `company-genome-vault`, `blueprint-archive`. Scene Stack prompts + hotspots + station manifest updated (20 stations).
+- **Orientation Atrium™:** `OrientationAtriumInteractions` — Company Summary™, Creative Budget™ (Studio Alpha HUD data), Golden Builds / Scene Recipe™, walk paths to Warehouse + Museum wings.
+- **New wing interactions:** `ArchivesWingInteractions` — Genome Vault (traits grid), Blueprint Archive (versioned systems), Marketplace Pavilion (exposition hall), Warehouse Wing lobby, Generation Bay / Restoration service bays.
+- **Orb personalities expanded:** Greeter · Campus Navigator · Production Assistant · Historian · Storyteller · Brand Analyst · Systems Architect · Creative Advisor · Campus Architect — per wing kind.
+- **Architectural directory:** `ARCHIVES_CAMPUS_SECTIONS` grouped wing nav (left wall); sub-zone buttons under Warehouse Wing™.
+- **Rebrand:** Display name **Studio Archives™** (`department-package/registry.ts`); subtitle/inheritance chain updated; HUD titles; immersive theme wing classes (genome, blueprint, marketplace, atrium).
+- **Routes:** Primary **`/admin/studio/studio-archives`**; legacy **`/admin/studio/studio-warehouse`** still mounts same room; `adminStudioArchivesPath()` + `adminStudioWarehousePath()` alias; museum deep link `?zone=museum-wing` on archives route; nav CTA **ENTER ARCHIVES**.
+- **Prior arc (same chat):** Studio Alpha Cost HUD · Museum absorption · crash fix · Supabase registry.
+- **Files:** `campus-nav.ts`, `camera-zones.ts`, `warehouseCameraZones.ts`, `warehouse-station-prompts.ts`, `station-manifest.ts`, `StudioWarehouseRoom.tsx`, `OrientationAtriumInteractions.tsx`, `ArchivesWingInteractions.tsx`, `WarehouseArchitecturalDirectory.tsx`, `warehouseOrbPersonality.ts`, `warehouseDestinationTheme.ts`, `InnovationHallInteractions.tsx`, `adminStudioNavigation.ts`, `adminStudioRoutes.ts`, `App.tsx`, `adminStudioWarehouseDemo.ts`, `department-package/registry.ts`.

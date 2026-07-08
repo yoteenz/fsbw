@@ -33,7 +33,7 @@ function buildWarehouseManifest(): SceneStackManifest {
   return {
     departmentId: 'studio-warehouse',
     packageId: 'pkg-studio-warehouse-golden-v1',
-    milestone: 'Studio Warehouse™ Golden Build',
+    milestone: 'Studio Archives™ Golden Build',
     signatureLandmarkId: 'central-atrium',
     aspectRatio: '9:16',
     outputFormat: 'webp',

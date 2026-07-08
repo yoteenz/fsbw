@@ -7,7 +7,7 @@ import creativeDirectionProductionGroups from './bundles/creative-direction/prod
 const warehouseDefinition = {
   ...(creativeDirectionDepartment as DepartmentPackage['definition']),
   id: 'studio-warehouse',
-  displayName: 'Studio Warehouse™',
+  displayName: 'Studio Archives™',
   packageId: 'pkg-studio-warehouse-golden-v1',
   identity: {
     ...(creativeDirectionDepartment as DepartmentPackage['definition']).identity,

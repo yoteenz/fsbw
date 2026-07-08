@@ -16,12 +16,20 @@ import { SceneStackViewport } from '../../studio-os/creative-direction-studio/Sc
 import { CDS_GENESIS_INTERACTION_STYLES } from '../../studio-os/creative-direction-studio/cdsInteractionLayerTheme';
 import { CDS_IMMERSION_STYLES } from '../../studio-os/creative-direction-studio/cdsImmersionTheme';
 import { DEPARTMENT_SLICE_STYLES } from '../../studio-os/department-vertical-slice/departmentSliceTheme';
-import { STUDIO_WAREHOUSE_SUBTITLE } from '../../../../utils/adminStudioWarehouseDemo';
+import { STUDIO_ARCHIVES_SUBTITLE } from '../../../../utils/adminStudioWarehouseDemo';
 import { WarehouseGalleryFloor } from './WarehouseGalleryFloor';
 import { WarehouseInspectorConsole } from './WarehouseInspectorConsole';
 import { WarehouseArchitecturalDirectory } from './WarehouseArchitecturalDirectory';
 import { MuseumWingInteractions } from './MuseumWingInteractions';
 import { FutureExpansionInteractions, InnovationHallInteractions } from './InnovationHallInteractions';
+import { OrientationAtriumInteractions } from './OrientationAtriumInteractions';
+import {
+  ArchivesServiceBayInteractions,
+  BlueprintArchiveInteractions,
+  GenomeVaultInteractions,
+  MarketplacePavilionInteractions,
+  WarehouseWingLobbyInteractions,
+} from './ArchivesWingInteractions';
 import { resolveWarehouseOrbPersonality } from './warehouseOrbPersonality';
 import { WAREHOUSE_DESTINATION_STYLES } from './warehouseDestinationTheme';
 import type { WarehouseCameraZoneId } from '../../../../studio-os-core/studio-warehouse';
@@ -55,8 +63,8 @@ function hotspotStyle(bounds: SceneStackHotspotBounds): CSSProperties {
 }
 
 /**
- * Studio Warehouse™ — parent destination for Studio World™ campus.
- * Museum Wing™ and Hall of Innovation™ are districts — not separate pages.
+ * Studio Archives™ — flagship headquarters inside Studio World™.
+ * Warehouse Wing™, Museum Wing™, Genome Vault™, Blueprint Archive™, and Marketplace Pavilion™ — one campus.
  */
 export function StudioWarehouseRoom() {
   const { workspaceId } = useWorkspace();
@@ -129,10 +137,15 @@ export function StudioWarehouseRoom() {
   }, [wh.activeZoneId, wh.catalog]);
 
   const campusTitle = useMemo(() => {
-    if (activeWing === 'legacy') return 'Studio Warehouse™ · Museum Wing™';
-    if (activeWing === 'innovation') return 'Studio Warehouse™ · Hall of Innovation™';
-    if (activeWing === 'expansion') return 'Studio Warehouse™ · Future Expansion™';
-    return 'Studio Warehouse™';
+    if (activeWing === 'legacy') return 'Studio Archives™ · Museum Wing™';
+    if (activeWing === 'innovation') return 'Studio Archives™ · Hall of Innovation™';
+    if (activeWing === 'genome') return 'Studio Archives™ · Company Genome Vault™';
+    if (activeWing === 'blueprint') return 'Studio Archives™ · Blueprint Archive™';
+    if (activeWing === 'marketplace') return 'Studio Archives™ · Marketplace Pavilion™';
+    if (activeWing === 'expansion') return 'Studio Archives™ · Future Expansion™';
+    if (activeWing === 'atrium') return 'Studio Archives™ · Orientation Atrium™';
+    if (activeWing === 'warehouse') return 'Studio Archives™ · Warehouse Wing™';
+    return 'Studio Archives™';
   }, [activeWing]);
 
   const costSnapshot = useStudioAlphaCost({
@@ -171,11 +184,11 @@ export function StudioWarehouseRoom() {
           >
             {!wh.arrivalComplete ? (
               <button type="button" className="wh-world__enter-btn" onClick={wh.completeArrival}>
-                Cross the Threshold™ →
+                Enter Grand Entrance™ →
               </button>
             ) : (
               <button type="button" className="wh-world__enter-btn" onClick={() => goToZone('central-atrium')}>
-                Enter Central Atrium™ →
+                Enter Orientation Atrium™ →
               </button>
             )}
           </div>
@@ -183,79 +196,64 @@ export function StudioWarehouseRoom() {
 
       case 'central-atrium':
         return (
-          <>
-            <div
-              className="wh-world__hotspot"
-              style={hotspotStyle(hotspots.compass ?? { left: '32%', top: '38%', width: '36%', height: '22%' })}
-            >
-              <div className="wh-world__glass-embed" style={{ textAlign: 'center' }}>
-                <p className="wh-world__label">Orientation™</p>
-                <p className="wh-world__registry-count">{wh.snapshot.totalAssets}</p>
-                <p className="wh-world__hint">Objects on floor · Asset Registry™ embedded</p>
-              </div>
-            </div>
-            <div
-              className="wh-world__hotspot"
-              style={hotspotStyle(hotspots.registry ?? { left: '6%', top: '68%', width: '88%', height: '18%' })}
-            >
-              <div className="wh-world__glass-embed">
-                <p className="wh-world__label">Scene Recipe™</p>
-                {wh.sceneRecipes.slice(0, 2).map((recipe) => (
-                  <div key={recipe.workspaceId} style={{ marginBottom: 6 }}>
-                    <p style={{ fontSize: 5, color: '#c9a962' }}>{recipe.workspaceName}</p>
-                    {recipe.ingredients.slice(0, 3).map((ing) => (
-                      <div key={ing.role} className="wh-world__recipe-row">
-                        <span>{ing.role}</span>
-                        <span style={{ textAlign: 'right', opacity: 0.7 }}>{ing.assetName}</span>
-                        <button
-                          type="button"
-                          className="wh-world__btn"
-                          onClick={() =>
-                            wh.openReplaceFlow({
-                              workspaceId: recipe.workspaceId,
-                              workspaceName: recipe.workspaceName,
-                              slotRole: ing.role,
-                              currentAssetId: ing.assetId,
-                            })
-                          }
-                        >
-                          Replace
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ))}
-              </div>
-            </div>
-          </>
+          <OrientationAtriumInteractions
+            wh={wh}
+            costSnapshot={costSnapshot}
+            hotspots={hotspots}
+            onEnterWarehouse={() => goToZone('warehouse-wing')}
+            onEnterMuseum={() => goToZone('museum-wing')}
+          />
+        );
+
+      case 'warehouse-wing':
+        return (
+          <WarehouseWingLobbyInteractions
+            hotspots={hotspots}
+            onEnterGalleries={() => goToZone('environment-gallery')}
+          />
+        );
+
+      case 'company-genome-vault':
+        return (
+          <GenomeVaultInteractions
+            hotspots={hotspots}
+            onEnterBlueprints={() => goToZone('blueprint-archive')}
+          />
+        );
+
+      case 'blueprint-archive':
+        return (
+          <BlueprintArchiveInteractions
+            hotspots={hotspots}
+            onEnterMarketplace={() => goToZone('marketplace-imports')}
+          />
+        );
+
+      case 'generation-bay':
+        return (
+          <ArchivesServiceBayInteractions
+            label="Generation Bay™"
+            hint="Active asset production — Scene Stack™ assembly queue for new objects."
+            hotspot={hotspotStyle(hotspots.bay ?? { left: '8%', top: '40%', width: '84%', height: '44%' })}
+          />
+        );
+
+      case 'asset-restoration':
+        return (
+          <ArchivesServiceBayInteractions
+            label="Asset Restoration™"
+            hint="Repair, refine, and revalidate archived assets before remounting to workspaces."
+            hotspot={hotspotStyle(hotspots.workshop ?? { left: '10%', top: '42%', width: '80%', height: '42%' })}
+          />
         );
 
       case 'marketplace-imports':
         return (
-          <>
-            <div
-              className="wh-world__hotspot"
-              style={hotspotStyle(hotspots.dock ?? { left: '8%', top: '42%', width: '84%', height: '36%' })}
-            >
-              <div className="wh-world__glass-embed">
-                <p className="wh-world__label">Marketplace Imports™</p>
-                <p className="wh-world__hint">Purchased assets arrive naturally — choose what enters production.</p>
-                {MARKETPLACE_IMPORT_OPTIONS.map((opt) => (
-                  <button key={opt} type="button" className="wh-world__btn" style={{ marginRight: 4, marginBottom: 4 }}>
-                    {opt}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div
-              className="wh-world__hotspot wh-world__hotspot--ghost"
-              style={{ left: '12%', top: '78%', width: '76%', height: '12%' }}
-            >
-              <button type="button" className="wh-world__walkway-btn" onClick={() => goToZone('museum-wing')}>
-                Walk Into Museum Wing™ →
-              </button>
-            </div>
-          </>
+          <MarketplacePavilionInteractions
+            hotspots={hotspots}
+            importOptions={MARKETPLACE_IMPORT_OPTIONS}
+            onEnterMuseum={() => goToZone('museum-wing')}
+          />
         );
 
       case 'museum-wing':
@@ -265,7 +263,7 @@ export function StudioWarehouseRoom() {
         return (
           <InnovationHallInteractions
             hotspots={hotspots}
-            onContinueToExpansion={() => goToZone('future-expansion-wings')}
+            onContinueToExpansion={() => goToZone('company-genome-vault')}
           />
         );
 
@@ -335,7 +333,15 @@ export function StudioWarehouseRoom() {
       ? 'wh-world is-legacy-wing'
       : activeWing === 'innovation'
         ? 'wh-world is-innovation-wing'
-        : 'wh-world';
+        : activeWing === 'genome'
+          ? 'wh-world is-genome-wing'
+          : activeWing === 'blueprint'
+            ? 'wh-world is-blueprint-wing'
+            : activeWing === 'marketplace'
+              ? 'wh-world is-marketplace-wing'
+              : activeWing === 'atrium'
+                ? 'wh-world is-atrium-wing'
+                : 'wh-world';
 
   return (
     <>
@@ -346,12 +352,12 @@ export function StudioWarehouseRoom() {
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div className={worldClass} onPointerMove={immersion.onPointerMove} style={immersion.parallaxStyle}>
         <header className="wh-world__hud">
-          <button type="button" className="wh-world__back" onClick={exitRoom} aria-label="Exit warehouse">
+          <button type="button" className="wh-world__back" onClick={exitRoom} aria-label="Exit Studio Archives">
             ←
           </button>
           <div className="wh-world__identity">
             <p className="wh-world__title">{campusTitle}</p>
-            <p className="wh-world__sub">{STUDIO_WAREHOUSE_SUBTITLE}</p>
+            <p className="wh-world__sub">{STUDIO_ARCHIVES_SUBTITLE}</p>
           </div>
           <button
             type="button"

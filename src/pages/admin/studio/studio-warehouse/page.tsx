@@ -2,8 +2,8 @@ import { DepartmentGoldenBuildShell } from '../../../../components/admin/studio-
 import { StudioWarehouseRoom } from '../../../../components/admin/studio/warehouse/StudioWarehouseRoom';
 
 /**
- * Studio Warehouse™ — immersive destination route.
- * No AdminStudioStageShell. Founder physically arrives at the warehouse campus.
+ * Studio Archives™ — immersive flagship headquarters route.
+ * No AdminStudioStageShell. Founder walks the monumental campus.
  */
 export default function AdminStudioWarehousePage() {
   return (

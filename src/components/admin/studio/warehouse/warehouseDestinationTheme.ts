@@ -1,4 +1,4 @@
-/** Studio Warehouse™ — immersive destination shell (not webpage). Reuses Scene Stack compositor classes. */
+/** Studio Archives™ — immersive destination shell (not webpage). Reuses Scene Stack compositor classes. */
 
 export const WAREHOUSE_DESTINATION_STYLES = `
 body.wh-world-active {
@@ -435,6 +435,19 @@ body.wh-world-active {
   height: 48px;
 }
 
+.wh-world__directory-section {
+  margin-bottom: 4px;
+}
+
+.wh-world__directory-wing {
+  margin: 0 0 2px;
+  font-size: 3px;
+  letter-spacing: 0.08em;
+  color: rgba(201, 169, 98, 0.4);
+  text-align: center;
+  line-height: 1.1;
+}
+
 .wh-world__directory-list {
   list-style: none;
   margin: 0;
@@ -474,6 +487,12 @@ body.wh-world-active {
   display: block;
 }
 
+.wh-world__directory-btn.is-sub {
+  padding: 4px 2px;
+  font-size: 3.5px;
+  opacity: 0.92;
+}
+
 /* ── Orb courier (personality shifts by wing) ── */
 .wh-world__orb-courier {
   position: absolute;
@@ -500,6 +519,76 @@ body.wh-world-active {
   line-height: 1.45;
   letter-spacing: 0.05em;
   opacity: 0.82;
+}
+
+.wh-world__directory-btn.is-sub {
+  padding-left: 8px;
+  font-size: 4.5px;
+}
+
+.wh-world__directory-btn.is-sub .wh-world__directory-btn__label {
+  opacity: 0.88;
+}
+
+.wh-world.is-atrium-wing {
+  --wh-accent: #d4c4a0;
+}
+
+.wh-world.is-genome-wing {
+  --wh-accent: #b8d4a8;
+}
+
+.wh-world.is-genome-wing .wh-world__zone-shell {
+  background: radial-gradient(ellipse 82% 58% at 50% 54%, #141a14 0%, #0a0908 74%);
+}
+
+.wh-world.is-blueprint-wing {
+  --wh-accent: #a8c4e0;
+}
+
+.wh-world.is-blueprint-wing .wh-world__zone-shell {
+  background: radial-gradient(ellipse 82% 58% at 50% 54%, #121820 0%, #0a0908 74%);
+}
+
+.wh-world.is-marketplace-wing {
+  --wh-accent: #e8c878;
+}
+
+.wh-world.is-marketplace-wing .wh-world__zone-shell {
+  background: radial-gradient(ellipse 82% 58% at 50% 54%, #1a1810 0%, #0a0908 74%);
+}
+
+.wh-world__glass-embed--genome {
+  border-color: rgba(184, 212, 168, 0.35);
+}
+
+.wh-world__glass-embed--blueprint {
+  border-color: rgba(168, 196, 224, 0.35);
+}
+
+.wh-world__glass-embed--marketplace {
+  border-color: rgba(232, 200, 120, 0.35);
+}
+
+.wh-world__trait-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.wh-world__trait-chip {
+  font-size: 4px;
+  padding: 2px 4px;
+  border: 1px solid rgba(184, 212, 168, 0.3);
+  border-radius: 2px;
+  opacity: 0.85;
+}
+
+.wh-world__blueprint-row {
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .wh-world.is-legacy-wing {

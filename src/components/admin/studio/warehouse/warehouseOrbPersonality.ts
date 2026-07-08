@@ -8,28 +8,57 @@ export type WarehouseOrbPersonality = {
 
 const PERSONALITIES: Record<WarehouseWingKind, WarehouseOrbPersonality> = {
   threshold: {
-    role: 'Campus Greeter',
-    greeting: 'Welcome to Studio Warehouse™ — one campus, endless districts. Cross the threshold when ready.',
+    role: 'Archives Greeter',
+    greeting:
+      'Welcome to Studio Archives™ — the institutional memory of your company. Cross the Grand Entrance when you are ready.',
     accent: '#c9a962',
   },
-  production: {
+  atrium: {
+    role: 'Campus Navigator',
+    greeting:
+      'The Orientation Atrium™ connects every wing — production, legacy, innovation, genome, blueprints, and marketplace.',
+    accent: '#d4c4a0',
+  },
+  warehouse: {
     role: 'Production Assistant',
-    greeting: 'I can help retrieve assets, compare lighting packs, and mount objects to your workspaces without regenerating.',
+    greeting:
+      'I help retrieve assets, compare lighting packs, and mount objects to workspaces without regenerating.',
     accent: '#c9a962',
   },
   legacy: {
     role: 'Company Historian',
-    greeting: 'You have left active production. Every Golden Build™ here is preserved forever — walk the Legacy Hall and touch your history.',
+    greeting:
+      'Every Golden Build™ is preserved forever — walk the Legacy Hall and touch your company history.',
     accent: '#9b7bb8',
   },
   innovation: {
     role: 'Storyteller & Inventor',
-    greeting: 'This wing holds what comes next — prototypes, experiments, and the stories behind your boldest ideas.',
+    greeting:
+      'This wing holds breakthroughs — the problem, the invention, its impact, and its descendants on the Innovation Tree™.',
     accent: '#8ba4c4',
+  },
+  genome: {
+    role: 'Brand Analyst',
+    greeting:
+      'The Company Genome Vault™ holds your evolving DNA — taste, motion, materials, and reuse patterns that power every recommendation.',
+    accent: '#b8d4a8',
+  },
+  blueprint: {
+    role: 'Systems Architect',
+    greeting:
+      'Blueprint Archive™ stores reusable systems — versioned, forkable, and marketplace eligible. Every workflow your company perfected.',
+    accent: '#a8c4e0',
+  },
+  marketplace: {
+    role: 'Creative Advisor',
+    greeting:
+      'Marketplace Pavilion™ — preview headquarters, departments, and scene packs. Import directly into the Warehouse Wing™.',
+    accent: '#e8c878',
   },
   expansion: {
     role: 'Campus Architect',
-    greeting: 'These bays await your company\'s growth. New districts manifest here as you expand Studio World™.',
+    greeting:
+      'Future Expansion Wings™ await — Research Institute™, AI Laboratory™, Patent Vault™, and more connect to the Atrium.',
     accent: '#d4af7a',
   },
 };

@@ -78,7 +78,7 @@ export function InnovationHallInteractions({ hotspots, onContinueToExpansion }: 
 
       <div className="wh-world__hotspot" style={{ left: '20%', top: '86%', width: '60%', height: '8%' }}>
         <button type="button" className="wh-world__enter-btn" onClick={onContinueToExpansion}>
-          Continue to Future Expansion Wings™ →
+          Continue to Company Genome Vault™ →
         </button>
       </div>
     </>
@@ -100,7 +100,7 @@ export function FutureExpansionInteractions({
       <div className="wh-world__glass-embed wh-expansion__bays">
         <p className="wh-world__label">Future Expansion Wings™</p>
         <p className="wh-world__hint">
-          Empty luxury bays await new districts — Talent Archive™, Campaign Vault™, Academy Wing™, and more.
+          Empty luxury bays await — Research Institute™, AI Laboratory™, Patent Vault™, Talent Archive™, Motion Studio™, Audio Conservatory™.
         </p>
         <p className="wh-expansion__manifest">
           The campus is alive. It grows as your company grows. No loading screens. No separate applications.

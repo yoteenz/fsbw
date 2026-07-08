@@ -1749,6 +1749,11 @@ function App() {
               <AdminStudioAssetRegistry />
             </Suspense>
           } />
+          <Route path="studio/studio-archives" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioWarehouse />
+            </Suspense>
+          } />
           <Route path="studio/studio-warehouse" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioWarehouse />

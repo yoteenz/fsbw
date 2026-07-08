@@ -6,11 +6,17 @@ import {
   type WarehouseDistrictId,
 } from '../studio-os-core/studio-warehouse';
 
-export const STUDIO_WAREHOUSE_SUBTITLE =
-  'The physical manifestation of Asset Registry™ — walk districts, preview objects, reuse before you regenerate.';
+export const STUDIO_ARCHIVES_SUBTITLE =
+  'The institutional memory of Studio OS™ — reusable assets, masterpieces, blueprints, and living company DNA under one architectural campus.';
 
-export const STUDIO_WAREHOUSE_INHERITANCE_CHAIN =
-  'Asset Registry™ → Studio Warehouse™ → Scene Recipe™ → Replace Workflow → Golden Build™';
+/** @deprecated Use STUDIO_ARCHIVES_SUBTITLE */
+export const STUDIO_WAREHOUSE_SUBTITLE = STUDIO_ARCHIVES_SUBTITLE;
+
+export const STUDIO_ARCHIVES_INHERITANCE_CHAIN =
+  'Asset Registry™ → Studio Archives™ → Scene Recipe™ → Replace Workflow → Golden Build™';
+
+/** @deprecated Use STUDIO_ARCHIVES_INHERITANCE_CHAIN */
+export const STUDIO_WAREHOUSE_INHERITANCE_CHAIN = STUDIO_ARCHIVES_INHERITANCE_CHAIN;
 
 const GRADIENTS = [
   'linear-gradient(135deg, #1a1814 0%, #3d3428 50%, #c9a962 100%)',

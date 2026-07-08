@@ -1,18 +1,26 @@
 import type { WarehouseDistrictId } from './types';
 
-/** Camera destination zones inside Studio Warehouse™ immersive campus */
+/** Camera destination zones inside Studio Archives™ immersive campus */
 export const WAREHOUSE_CAMERA_ZONE_IDS = [
   'threshold',
   'central-atrium',
+  'warehouse-wing',
   'environment-gallery',
   'lighting-gallery',
   'furniture-hall',
   'materials-library',
   'atmosphere-lab',
   'hero-object-vault',
-  'marketplace-imports',
+  'particle-lab',
+  'animation-archive',
+  'audio-vault',
+  'generation-bay',
+  'asset-restoration',
   'museum-wing',
   'hall-of-innovation',
+  'company-genome-vault',
+  'blueprint-archive',
+  'marketplace-imports',
   'future-expansion-wings',
 ] as const;
 
@@ -26,6 +34,9 @@ export function districtForWarehouseZone(zoneId: WarehouseCameraZoneId): Warehou
     'materials-library': 'materials-library',
     'atmosphere-lab': 'atmosphere-lab',
     'hero-object-vault': 'hero-object-vault',
+    'particle-lab': 'motion-sound-wing',
+    'animation-archive': 'motion-sound-wing',
+    'audio-vault': 'motion-sound-wing',
   };
   return map[zoneId] ?? null;
 }
@@ -40,6 +51,16 @@ export function resolveWarehouseZoneForSlot(slotRole: string): WarehouseCameraZo
     ['atmosphere', 'atmosphere-lab'],
     ['material', 'materials-library'],
     ['hero', 'hero-object-vault'],
+    ['particle', 'particle-lab'],
+    ['animation', 'animation-archive'],
+    ['motion', 'animation-archive'],
+    ['audio', 'audio-vault'],
+    ['sound', 'audio-vault'],
+    ['generation', 'generation-bay'],
+    ['restoration', 'asset-restoration'],
+    ['genome', 'company-genome-vault'],
+    ['blueprint', 'blueprint-archive'],
+    ['marketplace', 'marketplace-imports'],
     ['museum', 'museum-wing'],
     ['legacy', 'museum-wing'],
     ['innovation', 'hall-of-innovation'],
