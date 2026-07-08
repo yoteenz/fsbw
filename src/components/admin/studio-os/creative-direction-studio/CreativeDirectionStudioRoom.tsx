@@ -402,17 +402,19 @@ export function CreativeDirectionStudioRoom() {
         </p>
 
         <nav className="cds-genesis__nav" aria-label="Department zones">
-          {visibleNavZones.map((zone) => (
-            <button
-              key={zone.id}
-              type="button"
-              className={`cds-genesis__nav-btn${activeZoneId === zone.id ? ' is-active' : ''}`}
-              onClick={() => goToZone(zone.id)}
-              disabled={zone.requiresArrival && !arrivalComplete}
-            >
-              {zone.shortLabel}
-            </button>
-          ))}
+          <div className="cds-genesis__nav-track">
+            {visibleNavZones.map((zone) => (
+              <button
+                key={zone.id}
+                type="button"
+                className={`cds-genesis__nav-btn${activeZoneId === zone.id ? ' is-active' : ''}`}
+                onClick={() => goToZone(zone.id)}
+                disabled={zone.requiresArrival && !arrivalComplete}
+              >
+                {zone.shortLabel}
+              </button>
+            ))}
+          </div>
         </nav>
       </div>
     </>

@@ -299,11 +299,26 @@ body.cds-stack-active {
   bottom: 0;
   z-index: 18;
   display: flex;
-  gap: 3px;
+  justify-content: center;
+  align-items: flex-end;
   padding: 4px 6px max(6px, env(safe-area-inset-bottom));
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
   background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%);
   pointer-events: none;
+}
+
+.cds-genesis__nav::-webkit-scrollbar {
+  display: none;
+}
+
+.cds-genesis__nav-track {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+  justify-content: center;
+  pointer-events: auto;
 }
 
 .cds-genesis__nav > * { pointer-events: auto; }

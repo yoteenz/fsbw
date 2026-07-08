@@ -41677,3 +41677,12 @@ User request: all text on Creative Direction Studio™ and all its pages should 
 - **Ndxbook workspace** (`/admin/studio/ndxbook/creative-direction`): new `CDS_WORKSPACE_TEXT_STYLES` export · injected in `CreativeDirectionStudioWorkspace.tsx` + `CreativeDirectionStrip` via `.creative-direction-studio-root`
 - **Copy fixes:** workspace static strings + placeholders uppercased in source (loading · dismiss · helper paragraphs)
 - **Build:** `npm run build` passes
+
+---
+
+## 2026-07-08 — CDS bottom zone nav centered
+
+User request: bottom navigation tabs (Arrival · Story Table · Mood Wall · etc.) centered horizontally on the page.
+
+- **`cdsInteractionLayerTheme.ts`:** `.cds-genesis__nav` — `justify-content: center` · `.cds-genesis__nav-track` inner flex row · hidden scrollbar for overflow
+- **`CreativeDirectionStudioRoom.tsx`:** zone buttons wrapped in `cds-genesis__nav-track`
