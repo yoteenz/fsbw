@@ -31,6 +31,10 @@ import {
   recordStudioAlphaReuse,
 } from '../studio-os-core/studio-alpha-cost';
 import { gateAfterSceneAssembly, requestArchitectureAudit } from '../studio-os-core/architecture-auditor';
+import {
+  gateAfterArchitectureAudit,
+  requestExperienceIntelligenceAudit,
+} from '../studio-os-core/experience-intelligence-engine';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -298,9 +302,12 @@ export function useSceneStack(
         });
 
         bump();
-        void gateAfterSceneAssembly({ departmentId, projectId, stationId }).then(() => {
-          requestArchitectureAudit();
-        });
+        void gateAfterSceneAssembly({ departmentId, projectId, stationId })
+          .then(() => gateAfterArchitectureAudit({ departmentId, projectId, stationId }))
+          .then(() => {
+            requestArchitectureAudit();
+            requestExperienceIntelligenceAudit();
+          });
         return true;
       } catch (err) {
         failStudioAlphaGeneration(

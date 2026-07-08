@@ -71,6 +71,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'experience-observatory',
+    title: 'EXPERIENCE OBSERVATORY',
+    purpose:
+      'Studio World™ Creative Director — wonder, luxury, discovery, flow, and founder delight across every destination.',
+    route: p('experience-observatory'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'MAGIC',
+    ctaLabel: 'ENTER OBSERVATORY',
+    featuredOnOverview: true,
+  },
+  {
     id: 'architecture-observatory',
     title: 'ARCHITECTURE OBSERVATORY',
     purpose:

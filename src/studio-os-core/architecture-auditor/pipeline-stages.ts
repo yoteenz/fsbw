@@ -10,6 +10,7 @@ export type StudioWorldPipelineStageId =
   | 'generation-gate'
   | 'scene-assembly'
   | 'architecture-auditor'
+  | 'experience-intelligence'
   | 'quality-inspector'
   | 'founder-approval'
   | 'deploy';
@@ -34,9 +35,15 @@ export const STUDIO_WORLD_PRODUCTION_PIPELINE: StudioWorldPipelineStage[] = [
     label: 'Architecture Auditor™',
     description: 'Studio World integrity — physical place law, webpage detection, Scene Stack™, continuity',
   },
-  { id: 'quality-inspector', order: 8, label: 'Quality Inspector™', description: 'Visual and experiential QA' },
-  { id: 'founder-approval', order: 9, label: 'Founder Approval™', description: 'Golden Build™ certification' },
-  { id: 'deploy', order: 10, label: 'Deploy™', description: 'Live™ promotion to Studio World' },
+  {
+    id: 'experience-intelligence',
+    order: 8,
+    label: 'Experience Intelligence Engine™',
+    description: 'Creative Director — magic, wonder, luxury, discovery, founder delight',
+  },
+  { id: 'quality-inspector', order: 9, label: 'Quality Inspector™', description: 'Visual and experiential QA' },
+  { id: 'founder-approval', order: 10, label: 'Founder Approval™', description: 'Golden Build™ certification' },
+  { id: 'deploy', order: 11, label: 'Deploy™', description: 'Live™ promotion to Studio World' },
 ];
 
 export function getPipelineStage(id: StudioWorldPipelineStageId): StudioWorldPipelineStage {

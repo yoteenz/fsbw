@@ -42293,3 +42293,15 @@ User **NEW ENGINE IMPLEMENTATION — Architecture Auditor™:** Permanent archit
 - **Founder UI:** `ArchitectureObservatoryRoom` — diegetic health sculpture, wall score projections, violation ticker, migration strip · route `/admin/studio/architecture-observatory` · HUD link from Executive Atrium · nav module ARCHITECTURE OBSERVATORY (live).
 - **Exports:** `studio-os-core/index.ts` · route registry entry · docs `docs/studio-os/architecture-auditor.md`.
 - **Prior arc (same chat):** V5 Migration Report audit sprint · Command Center partial immersive · Studio World V4.
+
+---
+
+## 2026-07-08 — Experience Intelligence Engine™ + Experience Observatory™
+
+User **IMPLEMENTATION SPRINT — Experience Intelligence Engine™** (formerly Experience Auditor™): Studio World's **Creative Director** — not QA, bugs, or accessibility. Evaluates every room/transition/interaction/animation/concierge/workspace/HQ for human experience: magical, cinematic, alive, luxurious, intentional, effortless, memorable. Pipeline: after Architecture Auditor™, before Quality Inspector™. Scores: immersion, wonder, luxury, emotional impact, discovery, cinematic quality, founder/guest delight, overall magic. Flags flat/generic/static/UI-heavy experiences. Auto-improvements (lighting, atmosphere, landmarks, discoveries, flow). Self-learning experience memory. Founder room: **Experience Observatory™** — living observatory with installations not graphs.
+
+- **Core engine `src/studio-os-core/experience-intelligence-engine/`:** `types` · `laws` (Creative Director questions) · `experience-detector` · `destination-evaluator` · `discovery-engine` · `flow-analyzer` · `improvement-engine` · `memory-store` (`studioWorldExperienceMemory_v1`) · `evaluator` (`runExperienceIntelligenceAudit`, `runExperienceIntelligenceGate`) · `pipeline-gate` (`gateAfterArchitectureAudit`) · `pipeline-stages` (`STUDIO_WORLD_EXPERIENCE_PIPELINE` stage 7).
+- **Pipeline chain:** `useSceneStack` → `gateAfterSceneAssembly` → `gateAfterArchitectureAudit` → dispatch architecture + experience audit events.
+- **Founder UI:** `ExperienceObservatoryRoom` — Magic Core sculpture, Wonder/Luxury/Discovery installation columns, upgrade deck · route `/admin/studio/experience-observatory` · Executive Atrium HUD link · nav module (live).
+- **Docs:** `docs/studio-os/experience-intelligence-engine.md` · architecture-auditor.md updated for pipeline chain.
+- **Prior arc (same chat):** Architecture Auditor™ engine · Architecture Observatory™ · V5 migration report.

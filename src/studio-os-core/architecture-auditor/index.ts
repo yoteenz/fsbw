@@ -15,4 +15,10 @@ export * from './recommendation-engine';
 export * from './memory-store';
 export * from './auditor';
 export * from './pipeline-gate';
-export * from './pipeline-stages';
+export * from './pipeline-gate';
+export {
+  STUDIO_WORLD_PRODUCTION_PIPELINE,
+  getPipelineStage,
+  stageComesBefore,
+} from './pipeline-stages';
+export type { StudioWorldPipelineStage, StudioWorldPipelineStageId } from './pipeline-stages';

@@ -285,6 +285,13 @@ export function StudioCommandCenterRoom() {
           <button
             type="button"
             className="scc-world__pill-btn"
+            onClick={() => navigate('/admin/studio/experience-observatory')}
+          >
+            Experience Observatory™
+          </button>
+          <button
+            type="button"
+            className="scc-world__pill-btn"
             onClick={() => navigate('/admin/studio/architecture-observatory')}
           >
             Architecture Observatory™

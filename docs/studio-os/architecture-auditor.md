@@ -25,7 +25,9 @@ Founder Intent™ → Creative Intelligence Engine™ → Scene Planner™
 Canonical stages: `STUDIO_WORLD_PRODUCTION_PIPELINE` in  
 `src/studio-os-core/architecture-auditor/pipeline-stages.ts`
 
-Scene Stack integration: `useSceneStack` calls `gateAfterSceneAssembly()` after each layer assembly and dispatches `studio-world-architecture-audit-requested`.
+Scene Stack integration: `useSceneStack` calls `gateAfterSceneAssembly()` then `gateAfterArchitectureAudit()` after each layer assembly.
+
+Next stage: **Experience Intelligence Engine™** — see `docs/studio-os/experience-intelligence-engine.md`.
 
 ---
 
