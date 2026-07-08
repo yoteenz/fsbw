@@ -40721,3 +40721,27 @@ Summary of the **whole conversation so far** in this chat: twelve architecture s
 - **Decisions:** Schema layer complements engine at `engine/department-generator/` (does not replace) · Creative Direction Studio™ validation reference only · every object own asset with FAL prompt · prompt packages as `.md` not HTML · Cursor assembles via rules not manual positioning · Room DNA™ instance aesthetic distinct from Department DNA™ and Company Genome™
 - **Cross-refs:** Engine README updated with schema layer table · `motherboard/CORE.md` extended with 9-doc schema layer entry
 - **Conventions:** Architecture/docs only · no implementation · one commit on **`master`** via `./scripts/agent-commit.sh`
+
+---
+
+## 2026-07-08 — Creative Direction Studio™ Golden Department Definition v1 (complete)
+
+Summary of the **whole conversation so far** in this chat: Department Generator schema layer (`c65b8c25`) plus **first official Department Definition** generated through Studio Department Generator™.
+
+- **Context:** User mandated **NOT** hand-design outside generator · **NOT** React · CSS · Three.js · static webpage. Create complete **Department Definition package** for **Creative Direction Studio™** — Golden Department — living creative brain of every Project™ above production. Blueprint only for Asset Compiler · FAL · Runtime · Cursor.
+- **Prior in chat:** Department Generator engine (18 docs) · schema layer (9 docs at `docs/studio-os/department-generator/`) · Golden Department experience spec (14 files)
+- **Deliverable:** **`docs/studio-os/departments/creative-direction-studio/`** — first Generator output:
+  - **README.md** — package index · 7 zones · handoff pipeline · inheritance rules
+  - **department.json** — manifest (identity · profiles · spatial · concierges · orb · genome · production handoff)
+  - **room-dna.json** — slider snapshot (luxury 0.92 · creativity 0.95 · glass 0.80 · industry presets)
+  - **environment-blueprint.md** — envelope · zones · environment tasks · lighting · materials · navigation
+  - **asset-blueprint.md** — per-object specs · dependency graph · regeneration rules
+  - **asset-manifest.json** — 30 assets · 9-stage pipeline · genome slots · prompt refs
+  - **interaction-manifest.json** — 7 zones · 16 verbs · ceremonies · permissions · AI triggers
+  - **scene-assembly-blueprint.md** — zone-anchor placement · scene graph · camera · Cursor handoff · boot sequence
+  - **fal-prompt-package/** — 15 files: environment · lighting · materials · furniture · decor · architecture · camera · vfx · animation · objects · mood-wall · orb · timeline-table · genome-observatory · creative-brief-wall
+- **Seven zones:** Brief Wall · Mood Wall (hero) · Genome Observatory · Timeline Table · Sandbox (isolated) · Reference Library · Orb Command Center
+- **Package ID:** `pkg-creative-direction-golden-v1` · 45 asset budget · 120 MB
+- **Decisions:** Sandbox isolation until approve · Orb pedestal not chat bubble · Genome via injection slots not baked colors · creative-approval ceremony unlocks production · aligns with golden-department experience spec
+- **Cross-refs:** department-generator README · engine department-generator README · golden-department README · CORE.md
+- **Conventions:** Definition only · no implementation · one commit on **`master`**

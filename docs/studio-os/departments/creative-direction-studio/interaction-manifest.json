@@ -1,0 +1,302 @@
+{
+  "$schema": "studio.department-generator.v1/interactions.json",
+  "departmentId": "creative-direction",
+  "version": "1.0.0",
+  "packageId": "pkg-creative-direction-golden-v1",
+  "goldenDepartment": true,
+  "interactionStyle": "physical-verbs-editorial",
+
+  "primaryVerbs": [
+    "pin", "annotate", "compare", "branch", "reference-drop",
+    "approve", "reject", "scrub", "speak", "drag", "inspect",
+    "preview", "browse", "filter", "cluster", "click"
+  ],
+
+  "verbRegistry": {
+    "pin": { "id": "pin", "triggers": ["click", "drop"], "sdkClass": "attach" },
+    "annotate": { "id": "annotate", "triggers": ["long-press", "draw"], "sdkClass": "mark" },
+    "compare": { "id": "compare", "triggers": ["click", "pinch"], "sdkClass": "dual-view" },
+    "branch": { "id": "branch", "triggers": ["click", "drag"], "sdkClass": "fork" },
+    "reference-drop": { "id": "reference-drop", "triggers": ["drop"], "sdkClass": "ingest" },
+    "approve": { "id": "approve", "triggers": ["click", "ceremony"], "sdkClass": "ceremony" },
+    "reject": { "id": "reject", "triggers": ["click"], "sdkClass": "archive" },
+    "scrub": { "id": "scrub", "triggers": ["drag", "two-finger-scrub"], "sdkClass": "temporal-nav" },
+    "speak": { "id": "speak", "triggers": ["speak", "hold"], "sdkClass": "voice" },
+    "drag": { "id": "drag", "triggers": ["drag"], "sdkClass": "spatial-move" },
+    "inspect": { "id": "inspect", "triggers": ["click", "tap"], "sdkClass": "detail" },
+    "preview": { "id": "preview", "triggers": ["hover", "click"], "sdkClass": "full-view" },
+    "browse": { "id": "browse", "triggers": ["scroll", "swipe"], "sdkClass": "scroll" },
+    "filter": { "id": "filter", "triggers": ["click"], "sdkClass": "illuminate" },
+    "cluster": { "id": "cluster", "triggers": ["lasso"], "sdkClass": "group" },
+    "click": { "id": "click", "triggers": ["tap", "click"], "sdkClass": "select" },
+    "enter": { "id": "enter", "triggers": ["walk"], "sdkClass": "transit" },
+    "exit": { "id": "exit", "triggers": ["walk"], "sdkClass": "transit" },
+    "touch": { "id": "touch", "triggers": ["tap"], "sdkClass": "activate" }
+  },
+
+  "zones": [
+    {
+      "zoneId": "arrival-threshold",
+      "displayName": "Entry Portal",
+      "objects": [
+        {
+          "assetId": "portal-entry-cds",
+          "allowedVerbs": ["enter"],
+          "events": [
+            {
+              "verb": "enter",
+              "trigger": "walk",
+              "behavior": "arrival.creative-direction",
+              "audioCue": "arrival-ambient-rise",
+              "animationCue": "camera-arrival-dolly",
+              "ceremony": "creative-direction-arrival"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "zoneId": "brief-wall",
+      "displayName": "Creative Brief Wall™",
+      "objects": [
+        {
+          "assetId": "wall-brief-cds",
+          "allowedVerbs": ["pin", "annotate", "drag", "compare", "speak", "inspect"],
+          "states": [
+            { "id": "empty", "transitions": ["pinned"] },
+            { "id": "pinned", "transitions": ["annotated", "reordered"] }
+          ],
+          "events": [
+            { "verb": "pin", "trigger": "drop", "behavior": "brief-wall.pin-to-section", "audioCue": "pin-soft-click", "animationCue": "pin-settle" },
+            { "verb": "annotate", "trigger": "long-press", "behavior": "brief-wall.markup", "animationCue": "ink-stroke" },
+            { "verb": "compare", "trigger": "pinch", "behavior": "brief-wall.side-by-side", "animationCue": "split-view" },
+            { "verb": "speak", "trigger": "hold", "behavior": "orb.transcribe-to-brief", "audioCue": "voice-capture" }
+          ]
+        }
+      ],
+      "aiPresence": ["creative-director", "brand-concierge"]
+    },
+    {
+      "zoneId": "mood-wall",
+      "displayName": "Living Mood Wall™",
+      "objects": [
+        {
+          "assetId": "wall-mood-cds",
+          "allowedVerbs": ["pin", "drag", "cluster", "compare", "annotate", "reject", "approve", "reference-drop", "scrub", "inspect"],
+          "states": [
+            { "id": "empty", "transitions": ["pinned"] },
+            { "id": "pinned", "transitions": ["clustered", "comparing", "approved", "rejected"] }
+          ],
+          "events": [
+            { "verb": "pin", "trigger": "drop", "behavior": "mood-wall.pin-reference", "audioCue": "pin-soft-click", "animationCue": "pin-stick-bounce" },
+            { "verb": "drag", "trigger": "drag", "behavior": "mood-wall.move-reference", "animationCue": "parallax-depth" },
+            { "verb": "cluster", "trigger": "lasso", "behavior": "mood-wall.cluster-group", "animationCue": "ring-cluster" },
+            { "verb": "compare", "trigger": "pinch", "behavior": "mood-wall.split-view", "animationCue": "wall-split" },
+            { "verb": "approve", "trigger": "click", "behavior": "mood-wall.promote-direction", "animationCue": "reference-glow", "permission": "founder-or-creative-director" },
+            { "verb": "reject", "trigger": "click", "behavior": "mood-wall.archive-reference", "animationCue": "dissolve-to-library" },
+            { "verb": "reference-drop", "trigger": "drop", "behavior": "mood-wall.ingest-reference", "animationCue": "shimmer-landing" },
+            { "verb": "scrub", "trigger": "two-finger-scrub", "behavior": "mood-wall.pan-infinite", "animationCue": "horizontal-pan" }
+          ]
+        }
+      ],
+      "aiPresence": ["research-concierge", "creative-director"]
+    },
+    {
+      "zoneId": "observatory",
+      "displayName": "Company Genome Observatory™",
+      "objects": [
+        {
+          "assetId": "observatory-cds",
+          "allowedVerbs": ["inspect", "compare", "speak", "pin", "scrub"],
+          "events": [
+            { "verb": "inspect", "trigger": "click", "behavior": "observatory.zoom-domain", "animationCue": "ring-zoom" },
+            { "verb": "compare", "trigger": "click", "behavior": "observatory.genome-vs-project", "animationCue": "overlay-compare" },
+            { "verb": "speak", "trigger": "hold", "behavior": "orb.explain-domain", "audioCue": "voice-explain" },
+            { "verb": "pin", "trigger": "click", "behavior": "observatory.pin-to-brief", "animationCue": "insight-fly-to-brief" },
+            { "verb": "scrub", "trigger": "drag", "behavior": "observatory.orbit-rings", "animationCue": "ring-rotation" }
+          ]
+        }
+      ],
+      "aiPresence": ["brand-concierge"]
+    },
+    {
+      "zoneId": "timeline-table",
+      "displayName": "Project Timeline Table™",
+      "objects": [
+        {
+          "assetId": "table-timeline-cds",
+          "allowedVerbs": ["scrub", "drag", "click", "compare", "branch", "approve", "reject", "annotate", "pin"],
+          "states": [
+            { "id": "timeline-idle", "transitions": ["scrubbing", "branching", "approving"] }
+          ],
+          "events": [
+            { "verb": "scrub", "trigger": "drag", "behavior": "timeline.scrub-sequence", "audioCue": "scrub-tick", "animationCue": "track-glow" },
+            { "verb": "branch", "trigger": "click", "behavior": "timeline.spawn-ribbon", "audioCue": "branch-tone", "animationCue": "ribbon-rise-600ms" },
+            { "verb": "approve", "trigger": "click", "behavior": "creative-approval.ceremony", "audioCue": "ceremony-approve-chime", "animationCue": "seal-glow", "permission": "founder-or-creative-director", "ceremony": "creative-approval" },
+            { "verb": "reject", "trigger": "click", "behavior": "timeline.return-to-sandbox", "animationCue": "node-fade" },
+            { "verb": "compare", "trigger": "pinch", "behavior": "timeline.side-by-side-states", "animationCue": "dual-timeline" }
+          ]
+        }
+      ],
+      "aiPresence": ["creative-director", "production-manager"]
+    },
+    {
+      "zoneId": "sandbox",
+      "displayName": "Creative Sandbox™",
+      "objects": [
+        {
+          "assetId": "table-sandbox-cds",
+          "allowedVerbs": ["branch", "compare", "preview", "approve", "reject", "speak", "annotate"],
+          "events": [
+            { "verb": "branch", "trigger": "click", "behavior": "sandbox.spawn-experiment", "animationCue": "frost-clear" },
+            { "verb": "approve", "trigger": "click", "behavior": "sandbox.promote-to-timeline", "ceremony": "branch-promotion", "permission": "founder-or-creative-director" },
+            { "verb": "reject", "trigger": "click", "behavior": "sandbox.dissolve-experiment", "animationCue": "concept-dissolve" },
+            { "verb": "speak", "trigger": "hold", "behavior": "orb.generate-three-alternates", "animationCue": "spawn-three-cards" }
+          ]
+        },
+        {
+          "assetId": "screen-compare-cds",
+          "allowedVerbs": ["compare", "preview"],
+          "events": [
+            { "verb": "compare", "trigger": "drag", "behavior": "sandbox.slider-compare", "animationCue": "twin-screen-wipe" }
+          ]
+        }
+      ],
+      "isolationRule": "No main Project mutation until approve promotes to timeline"
+    },
+    {
+      "zoneId": "reference-library",
+      "displayName": "Reference Library™",
+      "objects": [
+        {
+          "assetId": "shelf-library-cds",
+          "allowedVerbs": ["browse", "filter", "drag", "preview", "search", "pin", "inspect"],
+          "events": [
+            { "verb": "browse", "trigger": "scroll", "behavior": "library.inertia-scroll", "animationCue": "spine-highlight" },
+            { "verb": "filter", "trigger": "click", "behavior": "library.illuminate-category", "animationCue": "section-glow" },
+            { "verb": "drag", "trigger": "drag", "behavior": "library.drag-to-mood-or-table", "animationCue": "reference-fly" },
+            { "verb": "preview", "trigger": "hover", "behavior": "library.large-preview", "animationCue": "preview-expand" },
+            { "verb": "pin", "trigger": "click", "behavior": "library.quick-pin-active-project", "animationCue": "pin-settle" }
+          ]
+        }
+      ],
+      "aiPresence": ["research-concierge"]
+    },
+    {
+      "zoneId": "orb-command",
+      "displayName": "Orb Command Center™",
+      "objects": [
+        {
+          "assetId": "orb-cds",
+          "allowedVerbs": ["speak", "touch", "inspect"],
+          "states": [
+            { "id": "idle", "transitions": ["listening", "thinking", "speaking", "routing", "ceremony"] }
+          ],
+          "events": [
+            { "verb": "speak", "trigger": "speak", "behavior": "orb.voice-triage", "audioCue": "orb-activate-hum", "animationCue": "orb-pulse-listen" },
+            { "verb": "touch", "trigger": "tap", "behavior": "orb.activate-listening", "animationCue": "ring-brighten" }
+          ]
+        },
+        {
+          "assetId": "pedestal-orb-cds",
+          "allowedVerbs": ["touch"],
+          "events": [
+            { "verb": "touch", "trigger": "tap", "behavior": "orb.pedestal-ring-activate", "audioCue": "ring-touch" }
+          ]
+        }
+      ]
+    },
+    {
+      "zoneId": "departure-threshold",
+      "displayName": "Exit Portal",
+      "objects": [
+        {
+          "assetId": "portal-exit-cds",
+          "allowedVerbs": ["exit"],
+          "events": [
+            { "verb": "exit", "trigger": "walk", "behavior": "navigation.departure", "ceremony": "departure", "animationCue": "camera-departure" }
+          ]
+        }
+      ]
+    }
+  ],
+
+  "navigationInteractions": {
+    "walk": { "graphRef": "environment-blueprint.md#navigation", "avatarMode": "ghost-walk", "zoneTriggers": true },
+    "arrivalCeremony": "creative-direction-arrival",
+    "departureCeremony": "departure"
+  },
+
+  "ceremonies": [
+    {
+      "id": "creative-direction-arrival",
+      "trigger": "navigation.entry",
+      "sequence": ["floor-reflection-fade", "camera-dolly-rise", "mood-wall-reveal", "brief-pins-illuminate", "orb-greeting-rotate"],
+      "durationMs": 5000,
+      "firstVisitDurationMs": 7000
+    },
+    {
+      "id": "creative-approval",
+      "triggerVerbs": ["approve"],
+      "zones": ["timeline-table"],
+      "sequence": ["camera-ceremony-travel", "seal-glow", "audio-ceremony-stamp", "production-unlock-signal"],
+      "permission": "founder-or-creative-director",
+      "runtimeContract": "project.commitCreativeApproval"
+    },
+    {
+      "id": "branch-promotion",
+      "triggerVerbs": ["approve"],
+      "zones": ["sandbox"],
+      "sequence": ["ribbon-merge-animation", "sandbox-frost", "timeline-main-update"],
+      "permission": "founder-or-creative-director"
+    },
+    {
+      "id": "direction-reject",
+      "triggerVerbs": ["reject"],
+      "zones": ["mood-wall", "timeline-table"],
+      "sequence": ["archive-dissolve", "library-shelf-animate"]
+    },
+    {
+      "id": "departure",
+      "triggerVerbs": ["exit"],
+      "zones": ["departure-threshold"],
+      "sequence": ["camera-departure-path", "ambient-fade"]
+    }
+  ],
+
+  "permissionGates": [
+    {
+      "id": "founder-or-creative-director",
+      "roles": ["founder", "creative-director-concierge"],
+      "fallback": "request-approval-modal",
+      "note": "AI never executes approve without founder permission"
+    }
+  ],
+
+  "gestureBindings": {
+    "tap": ["inspect", "click"],
+    "long-press": ["annotate"],
+    "drag": ["drag", "scrub", "pin"],
+    "pinch": ["compare"],
+    "lasso": ["cluster"],
+    "drop": ["reference-drop", "pin"],
+    "hold": ["speak"],
+    "two-finger-scrub": ["scrub"]
+  },
+
+  "aiTriggeredInteractions": [
+    { "role": "creative-director", "verb": "annotate", "zone": "brief-wall", "behavior": "ai.suggestion-rail-note" },
+    { "role": "research-concierge", "verb": "pin", "zone": "mood-wall", "behavior": "ai.auto-tag-metadata" },
+    { "role": "brand-concierge", "verb": "compare", "zone": "observatory", "behavior": "ai.genome-divergence-alert" },
+    { "role": "orb", "verb": "speak", "zone": "*", "behavior": "orb.route-to-zone" }
+  ],
+
+  "reducedMotionFallback": {
+    "scrub": "discrete-step",
+    "parallax": "static-depth",
+    "stick-bounce": "instant-land",
+    "ceremony": "static-seal",
+    "particles": "off",
+    "note": "All verbs remain functional"
+  }
+}

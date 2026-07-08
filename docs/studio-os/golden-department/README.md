@@ -33,7 +33,7 @@ A **Golden Department** is the first fully realized experience specification for
 
 | Department | Status | Spec |
 |------------|--------|------|
-| **Creative Direction Studio™** | Canonical · v1.0.0 | [Experience Design Specification](./creative-direction-studio/) |
+| **Creative Direction Studio™** | Canonical · v1.0.0 | [Experience Design Specification](./creative-direction-studio/) · [Department Definition (Generator output)](../departments/creative-direction-studio/README.md) |
 | Discovery | Pending | Inherits CDS principles |
 | Storyboarding | Pending | Inherits CDS principles |
 | Production | Pending | Inherits CDS principles |

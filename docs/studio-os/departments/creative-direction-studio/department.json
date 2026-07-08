@@ -1,0 +1,136 @@
+{
+  "$schema": "studio.department-generator.v1/department.json",
+  "id": "creative-direction",
+  "version": "1.0.0",
+  "displayName": "Creative Direction Studio™",
+  "schemaVersion": "1.0.0",
+  "packageId": "pkg-creative-direction-golden-v1",
+  "generatedBy": "studio.department-generator.v1",
+  "generatedAt": "2026-07-08T00:00:00Z",
+  "definitionPath": "docs/studio-os/departments/creative-direction-studio/",
+
+  "identity": {
+    "purpose": "Living creative brain of every Project™ — creative intent formed, challenged, evolved, and approved before production",
+    "personality": "Editorial luxury atelier — inspired, powerful, supported, focused",
+    "category": "creative",
+    "metaphor": "The creative brain of the company — luxury editorial atelier fused with Hollywood writers' room and Apple Industrial Design Lab",
+    "emotionalGoals": ["inspired", "curious", "creative", "powerful", "focused", "supported"],
+    "positionInPipeline": "above-production",
+    "continuity": "continuous-not-locked-at-project-creation"
+  },
+
+  "profiles": {
+    "lighting": "editorial-three-point-warm",
+    "environment": "double-height-stage-atelier",
+    "interaction": "physical-verbs-editorial",
+    "music": "ambient-editorial-piano-stems",
+    "navigation": "zone-exploration-arrival-ceremony",
+    "animation": "continuous-ambient-ceremony-weight"
+  },
+
+  "roomDnaRef": "room-dna.json",
+  "departmentDnaRef": "creative-direction",
+
+  "spatial": {
+    "layoutTemplate": "stage",
+    "envelope": { "widthM": 18.0, "depthM": 12.0, "footprintM2": 120, "aspectRatio": "3:2" },
+    "zones": [
+      { "id": "arrival-threshold", "type": "entry", "displayName": "Entry Portal" },
+      { "id": "brief-wall", "type": "secondary", "displayName": "Creative Brief Wall™" },
+      { "id": "mood-wall", "type": "hero", "displayName": "Living Mood Wall™" },
+      { "id": "observatory", "type": "secondary", "displayName": "Company Genome Observatory™" },
+      { "id": "timeline-table", "type": "primary", "displayName": "Project Timeline Table™" },
+      { "id": "sandbox", "type": "secondary", "displayName": "Creative Sandbox™" },
+      { "id": "reference-library", "type": "secondary", "displayName": "Reference Library™" },
+      { "id": "orb-command", "type": "orb", "displayName": "Orb Command Center™" },
+      { "id": "departure-threshold", "type": "exit", "displayName": "Exit Portal" }
+    ],
+    "heroObjectId": "wall-mood-cds",
+    "entryZoneId": "arrival-threshold",
+    "exitZoneId": "departure-threshold"
+  },
+
+  "assets": {
+    "manifestRef": "asset-manifest.json",
+    "blueprintRef": "asset-blueprint.md",
+    "count": 45,
+    "budgetMB": 120
+  },
+
+  "interactions": {
+    "manifestRef": "interaction-manifest.json",
+    "primaryVerbs": [
+      "pin", "annotate", "compare", "branch", "reference-drop",
+      "approve", "reject", "scrub", "speak", "drag", "inspect",
+      "preview", "browse", "filter", "cluster", "click"
+    ],
+    "ceremonies": ["creative-approval", "branch-promotion", "direction-reject", "departure"]
+  },
+
+  "aiConcierges": [
+    { "roleId": "creative-director", "required": true, "zones": ["brief-wall", "timeline-table"] },
+    { "roleId": "brand-concierge", "required": true, "zones": ["observatory", "brief-wall"] },
+    { "roleId": "research-concierge", "required": true, "zones": ["mood-wall", "reference-library"] },
+    { "roleId": "production-manager", "required": false, "zones": ["timeline-table"] }
+  ],
+
+  "orb": {
+    "placement": "orb-command",
+    "assetId": "orb-cds",
+    "pedestalAssetId": "pedestal-orb-cds",
+    "capabilities": [
+      "triage", "voice", "route", "suggest", "ceremony-trigger",
+      "generate-alternatives", "navigate-departure"
+    ],
+    "position": { "x": 0.35, "y": 0.55, "z": 0.4 }
+  },
+
+  "unlockRequirements": {
+    "companyMaturity": "building",
+    "founderStage": ["building", "launching", "growing", "scaling"],
+    "prerequisiteDepartments": [],
+    "marketplaceExpansionId": null,
+    "defaultInstalled": true
+  },
+
+  "blueprints": {
+    "environment": "environment-blueprint.md",
+    "assembly": "scene-assembly-blueprint.md",
+    "promptPackage": "fal-prompt-package/"
+  },
+
+  "genome": {
+    "snapshotId": "genome-snapshot-v1",
+    "injectionSlots": [
+      "materialLanguage",
+      "lightingStyle",
+      "editorialDirection",
+      "photographyDirection",
+      "visualReferences",
+      "customerEmotions",
+      "experienceDNA",
+      "voice",
+      "sonicIdentity",
+      "brandDNA",
+      "values"
+    ],
+    "observatoryDomains": [
+      "mission", "values", "brandDNA", "experienceDNA",
+      "voice", "photography", "lighting", "emotion"
+    ]
+  },
+
+  "productionHandoff": {
+    "approvalUnlocks": ["story", "production", "discovery"],
+    "approvalCeremony": "creative-approval",
+    "sandboxIsolation": true,
+    "promotionVerb": "approve"
+  },
+
+  "validation": {
+    "goldenDepartment": true,
+    "validationProject": "creative-direction-studio-v1",
+    "experienceSpec": "docs/studio-os/golden-department/creative-direction-studio/",
+    "successCriterion": "Feels indistinguishable from Golden Department intent"
+  }
+}

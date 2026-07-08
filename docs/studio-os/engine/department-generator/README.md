@@ -133,7 +133,8 @@ Every type inherits Golden Department principles. Topology may vary; **place-not
 
 | Reference | Path |
 |-----------|------|
-| Golden Department spec | `docs/studio-os/golden-department/creative-direction-studio/` |
+| **Golden Department Definition** | [`docs/studio-os/departments/creative-direction-studio/`](../../departments/creative-direction-studio/README.md) |
+| Golden Department experience spec | `docs/studio-os/golden-department/creative-direction-studio/` |
 | Compiler profile | `engine/asset-compiler/07_DEPARTMENT_COMPILER.md` |
 | Expected package | `pkg-creative-direction-golden-v1` |
 

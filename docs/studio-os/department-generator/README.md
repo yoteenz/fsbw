@@ -86,11 +86,12 @@ Cooked assets land in `DepartmentPackage.zip` per [engine Package Spec](../engin
 
 ## Validation Project
 
-**Creative Direction Studio™** is the first department through this pipeline — reference only, not built in this sprint.
+**Creative Direction Studio™** is the first department through this pipeline.
 
 | Reference | Path |
 |-----------|------|
-| Golden Department spec | `docs/studio-os/golden-department/creative-direction-studio/` |
+| **Golden Department Definition** | [`docs/studio-os/departments/creative-direction-studio/`](../departments/creative-direction-studio/README.md) |
+| Golden Department experience spec | `docs/studio-os/golden-department/creative-direction-studio/` |
 | Engine DNA catalog | `engine/department-generator/03_DEPARTMENT_DNA.md` |
 | Expected package | `pkg-creative-direction-golden-v1` |
 
