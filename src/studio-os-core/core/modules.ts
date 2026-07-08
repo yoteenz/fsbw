@@ -178,6 +178,7 @@ export type StudioOsCoreModuleId =
   | 'legacy-system'
   | 'knowledge-hub'
   | 'knowledge-core'
+  | 'studio-world-memory-system'
   | 'memory-bible'
   | 'leadership-dna';
 
@@ -1233,6 +1234,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'KNOWLEDGE CORE OBSERVATORY™',
     description: 'Studio World institutional memory — domains, canon, prompt memory, version lineage, World Graph sync.',
     routeSegment: 'knowledge-core',
+  },
+  {
+    id: 'studio-world-memory-system',
+    label: 'STUDIO WORLD MEMORY SYSTEM™',
+    description: 'Four-layer pipeline — Conversation Archive™, Knowledge Extraction™, Founder Review™, Knowledge Core™. Reusable infrastructure.',
+    routeSegment: 'studio-world-memory-system',
   },
   {
     id: 'memory-bible',

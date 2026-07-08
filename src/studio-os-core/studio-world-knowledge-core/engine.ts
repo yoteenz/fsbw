@@ -3,7 +3,8 @@ import { listKnowledgeDomains } from './domains';
 import { buildEntryRelationships, findRelatedEntries } from './relationship-graph';
 import { expandKnowledgeSemanticQuery, scoreKnowledgeEntry } from './semantic-search';
 import { normalizeKnowledgeEntry } from './schema';
-import { listIngestedPromptEntries } from './prompt-memory-ingest';
+import { listPublishedEntries } from '../studio-world-memory-system/canonical-publishing';
+import { seedMemorySystemFromCanon } from '../studio-world-memory-system/bootstrap';
 import { buildEntryVersionHistory } from './version-history';
 import type {
   KnowledgeCoreDomain,
@@ -20,14 +21,16 @@ const CANON_ENTRIES: KnowledgeCoreEntry[] = KNOWLEDGE_CORE_ENTRIES.map((entry) =
   })
 );
 
+/** Canonical seed entries + founder-approved published entries only. */
 export function getAllKnowledgeEntries(): KnowledgeCoreEntry[] {
-  const ingested = listIngestedPromptEntries().map((e) =>
+  seedMemorySystemFromCanon();
+  const published = listPublishedEntries().map((e) =>
     normalizeKnowledgeEntry({
       ...e,
       relationships: e.relationships ?? buildEntryRelationships(e),
     })
   );
-  return [...CANON_ENTRIES, ...ingested];
+  return [...CANON_ENTRIES, ...published];
 }
 
 export function getKnowledgeEntryById(id: string): KnowledgeCoreEntry | null {

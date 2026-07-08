@@ -1,30 +1,64 @@
 import type { IngestedPromptMemory, PromptMemoryIngestInput } from './types';
-import { createKnowledgeEntryFromPrompt, normalizeKnowledgeEntry } from './schema';
-import { buildEntryRelationships } from './relationship-graph';
-import { readKnowledgeCoreStore, writeIngestedEntry } from './store';
+import { ingestConversationWithExtraction } from '../studio-world-memory-system/pipeline';
 
 /**
- * Prompt Memory™ ingestion pipeline — converts major prompts into institutional memory.
- * Prompts are no longer temporary conversations; they become searchable Knowledge Entries.
+ * Prompt Memory™ routes through the four-layer Memory System™ pipeline.
+ * Conversation Archive™ → Knowledge Extraction™ → Founder Review™ → Knowledge Core™
+ *
+ * Nothing enters Knowledge Core automatically. Founder approval required.
  */
 export function ingestPromptMemory(input: PromptMemoryIngestInput): IngestedPromptMemory {
-  const entry = normalizeKnowledgeEntry({
-    ...createKnowledgeEntryFromPrompt(input),
-    relationships: undefined,
-  });
-  entry.relationships = buildEntryRelationships(entry);
+  const transcript = [
+    `# Prompt Memory Ingestion`,
+    ``,
+    `## Title`,
+    input.title,
+    ``,
+    `## Summary`,
+    input.summary,
+    ``,
+    `## Reasoning`,
+    input.reasoning,
+    ``,
+    `## Final Prompt`,
+    input.finalPrompt,
+  ].join('\n');
 
-  writeIngestedEntry(entry);
+  const result = ingestConversationWithExtraction({
+    title: input.title,
+    transcript,
+    summaryForIndex: input.summary,
+    tags: ['prompt-memory', ...(input.tags ?? [])],
+  });
+
+  const proposed = result.extraction.proposedEntries[0];
 
   return {
-    entry,
+    entry: {
+      id: proposed?.id ?? result.reviewItem.id,
+      title: input.title,
+      domain: input.domain ?? 'Knowledge Engine™',
+      status: 'Draft',
+      version: 'v1',
+      summary: input.summary,
+      reasoning: input.reasoning,
+      finalPrompt: input.finalPrompt,
+      architectureAdded: input.architectureAdded ?? [],
+      relatedSystems: input.relatedSystems ?? [],
+      constitutionArticles: input.constitutionArticles ?? [],
+      adrReferences: input.adrReferences ?? [],
+      worldBibleReferences: input.worldBibleReferences ?? [],
+      implementationStatus: input.implementationStatus ?? 'Specified',
+      tags: input.tags ?? ['prompt-memory', 'awaiting-review'],
+    },
     ingestedAt: new Date().toISOString(),
     source: 'prompt-memory-pipeline',
   };
 }
 
-export function listIngestedPromptEntries(): ReturnType<typeof readKnowledgeCoreStore>['ingestedEntries'] {
-  return readKnowledgeCoreStore().ingestedEntries;
+export function listIngestedPromptEntries(): never[] {
+  /** @deprecated Prompt memory no longer bypasses founder review. Use listPublishedEntries() from memory-system. */
+  return [];
 }
 
 export function shouldIngestPrompt(prompt: string): boolean {

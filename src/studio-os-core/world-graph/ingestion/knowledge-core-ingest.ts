@@ -1,10 +1,11 @@
 import { getAllKnowledgeEntries } from '../../studio-world-knowledge-core/engine';
+import { seedMemorySystemFromCanon } from '../../studio-world-memory-system/bootstrap';
+import { listConversationArchives } from '../../studio-world-memory-system/conversation-archive';
+import { listExtractionReports } from '../../studio-world-memory-system/knowledge-extraction';
 import { KNOWLEDGE_CORE_DOMAINS, KNOWLEDGE_CORE_STATUSES } from '../../studio-world-knowledge-core/types';
 import {
   PROMPT_STANDARDS,
   ARCHITECTS_MEMORY_PRINCIPLES,
-  CONVERSATION_ARCHIVE_RECORDS,
-  KNOWLEDGE_EXTRACTION_REPORTS,
   canInfluenceFutureArchitecture,
 } from '../../studio-world-knowledge-core/entries';
 import type { KnowledgeCoreStatus } from '../../studio-world-knowledge-core/types';
@@ -45,6 +46,7 @@ function lifecycleForStatus(status: KnowledgeCoreStatus): WorldLifecycleStage {
 }
 
 export function ingestKnowledgeCoreNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } {
+  seedMemorySystemFromCanon();
   const nodes: WorldNode[] = [];
   const edges: WorldEdge[] = [];
   const ts = now();
@@ -98,8 +100,8 @@ export function ingestKnowledgeCoreNodes(): { nodes: WorldNode[]; edges: WorldEd
     provenance: { source: 'constitution', sourceRef: 'ARTICLE-K23', ingestedAt: ts },
     tags: ['memory-system', 'conversation-archive', 'knowledge-ingestion', 'architect-review'],
     metadata: {
-      archiveCount: CONVERSATION_ARCHIVE_RECORDS.length,
-      extractionReportCount: KNOWLEDGE_EXTRACTION_REPORTS.length,
+      archiveCount: listConversationArchives().length,
+      extractionReportCount: listExtractionReports().length,
       architectMemoryPrincipleCount: ARCHITECTS_MEMORY_PRINCIPLES.length,
     },
   });
@@ -357,9 +359,11 @@ export function ingestKnowledgeCoreNodes(): { nodes: WorldNode[]; edges: WorldEd
     );
   }
 
-  for (const archive of CONVERSATION_ARCHIVE_RECORDS) {
+  for (const archive of listConversationArchives()) {
     const id = worldNodeId('conversation-archive', archive.id);
-    const extractionId = worldNodeId('knowledge-extraction', archive.relatedExtractionReportId);
+    const extractionId = archive.relatedExtractionReportId
+      ? worldNodeId('knowledge-extraction', archive.relatedExtractionReportId)
+      : null;
 
     nodes.push({
       id,
@@ -370,37 +374,39 @@ export function ingestKnowledgeCoreNodes(): { nodes: WorldNode[]; edges: WorldEd
       plane: lifecyclePlane('historical'),
       version: '1.0.0',
       summary: archive.summaryForIndex,
-      docPaths: [archive.transcriptPath],
+      docPaths: archive.transcriptPath ? [archive.transcriptPath] : [],
       provenance: { source: 'manual', sourceRef: archive.id, ingestedAt: ts },
       metadata: {
         archiveDate: archive.date,
         preservedExactly: archive.preservedExactly,
-        relatedExtractionReportId: archive.relatedExtractionReportId,
+        immutable: archive.immutable,
+        relatedExtractionReportId: archive.relatedExtractionReportId ?? '',
       },
       tags: ['conversation-archive', 'memory-system', 'historical-record'],
     });
 
-    edges.push(
-      {
-        id: worldEdgeId('owns', memorySystemId, id),
-        type: 'owns',
-        from: memorySystemId,
-        to: id,
-        label: 'conversation-archive',
-        provenance: { source: 'manual', sourceRef: archive.id, ingestedAt: ts },
-      },
-      {
+    edges.push({
+      id: worldEdgeId('owns', memorySystemId, id),
+      type: 'owns',
+      from: memorySystemId,
+      to: id,
+      label: 'conversation-archive',
+      provenance: { source: 'manual', sourceRef: archive.id, ingestedAt: ts },
+    });
+
+    if (extractionId) {
+      edges.push({
         id: worldEdgeId('generated-from', extractionId, id),
         type: 'generated-from',
         from: extractionId,
         to: id,
         label: 'extracted-from-conversation',
         provenance: { source: 'manual', sourceRef: archive.id, ingestedAt: ts },
-      }
-    );
+      });
+    }
   }
 
-  for (const report of KNOWLEDGE_EXTRACTION_REPORTS) {
+  for (const report of listExtractionReports()) {
     const id = worldNodeId('knowledge-extraction', report.id);
     const conversationId = worldNodeId('conversation-archive', report.sourceConversationId);
     const approvalId = worldNodeId('founder-approval', `${report.id}-founder-review`);
@@ -415,7 +421,7 @@ export function ingestKnowledgeCoreNodes(): { nodes: WorldNode[]; edges: WorldEd
         plane: lifecyclePlane('review'),
         version: '1.0.0',
         summary: report.conversationSummary,
-        docPaths: [report.reportPath],
+        docPaths: report.reportPath ? [report.reportPath] : [],
         provenance: { source: 'manual', sourceRef: report.id, ingestedAt: ts },
         metadata: {
           status: report.status,
@@ -434,7 +440,7 @@ export function ingestKnowledgeCoreNodes(): { nodes: WorldNode[]; edges: WorldEd
         version: '1.0.0',
         summary:
           'Pending Architect Review™. Extracted knowledge cannot enter Knowledge Core until approved, modified, rejected, merged, or delayed by the founder.',
-        docPaths: [report.reportPath],
+        docPaths: report.reportPath ? [report.reportPath] : [],
         provenance: { source: 'manual', sourceRef: `${report.id}:founder-review`, ingestedAt: ts },
         metadata: {
           reviewStatus: 'Awaiting Founder Review',

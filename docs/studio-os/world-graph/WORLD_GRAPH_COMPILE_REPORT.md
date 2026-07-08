@@ -1,11 +1,11 @@
 # World Graph™ Compile Report
 
-Generated: 2026-07-08T20:42:48.431Z
+Generated: 2026-07-08T20:49:14.417Z
 
 ## Summary
 
-- Nodes: 458
-- Edges: 727
+- Nodes: 455
+- Edges: 720
 - Validation: PASS
 - Builder: TypeScript canonical (`buildWorldGraph`)
 

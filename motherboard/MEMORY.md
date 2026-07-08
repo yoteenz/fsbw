@@ -43118,3 +43118,44 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Primary Studio World / Orb navigation icons = **3D sculptural hero objects** from **`studio-world-hero-icons/`** only.
 - Acrylic projection tiles use layered CSS (frost · refraction · chrome · float shadow) — not flat white rounded rectangles.
 - Extend **`STUDIO_WORLD_HERO_ICON_REGISTRY`** when adding new department destinations; reuse **`StudioWorldHeroIcon`** component.
+
+---
+
+## 2026-07-08 — Memory System™ four-layer pipeline (reusable infrastructure)
+
+**Context:** User approved Memory System architecture (ARTICLE-K23) and requested implementation of the four-layer memory pipeline as **reusable infrastructure, not a page**: Conversation Archive™ → Knowledge Extraction™ → Founder Review™ → Knowledge Core™. Requirements: automatic conversation ingestion, knowledge extraction, approval queue, canonical publishing, historical preservation, Memory Graph visualization data, semantic search, conversation references, version lineage. Nothing enters Canon automatically; everything requires founder approval; Conversation Archive immutable; Knowledge Core curated.
+
+**Topics covered (entire conversation so far):**
+- Prior arc: ARTICLE-K22 Knowledge Core engine + Knowledge Core Observatory UI (`/admin/studio/knowledge-core`); ARTICLE-K23 Memory System constitutional law + seed archive/extraction records; World Graph memory node types.
+- **This follow-up:** Full operational four-layer pipeline as engine module.
+
+**Decisions / outcomes:**
+- New module **`src/studio-os-core/studio-world-memory-system/`** — reusable infrastructure consumed by Knowledge Core, World Graph, Orb, and future UIs:
+  - **Layer 1 Conversation Archive™** — `conversation-archive.ts`: `ingestConversation()` immutable archives; never rewritten.
+  - **Layer 2 Knowledge Extraction™** — `knowledge-extraction.ts`: `extractKnowledgeFromConversation()` heuristic extraction → `MemoryExtractionReport` with proposed entries (not canon).
+  - **Layer 3 Founder Review™** — `founder-review.ts`: `enqueueForFounderReview()`, `getApprovalQueue()`, `processFounderReview()` with Approve/Modify/Reject/Merge/Delay.
+  - **Layer 4 Knowledge Core™ publishing** — `canonical-publishing.ts`: `publishApprovedKnowledge()` writes **Approved™** entries only; `canAutoPromoteToCanon()` always false.
+  - **Pipeline orchestrator** — `pipeline.ts`: `runMemoryPipeline()`, `ingestConversationWithExtraction()`, `completeFounderReview()`, `getMemoryPipelineStatus()`.
+  - **Memory Graph™** — `memory-graph.ts`: `buildMemoryGraph()`, `traverseMemoryGraph()` visualization/lineage data.
+  - **Semantic search** — `memory-search.ts`: `queryMemorySystem()` across all four layers; `getConversationReferences()`.
+  - **Version lineage** — `version-lineage.ts`: `getVersionLineage()`, `buildPublishedEntryLineage()`, historical preservation.
+  - **Store + bootstrap** — `store.ts`, `bootstrap.ts` seeds canon archives/reports from `entries.ts`; `useMemorySystemState` hook.
+- **Integration changes:**
+  - `prompt-memory-ingest.ts` now routes through `runMemoryPipeline()` — no direct Knowledge Core writes.
+  - `knowledge-core/engine.ts` reads **seed Canon** + **founder-approved published** entries only.
+  - `world-graph/ingestion/knowledge-core-ingest.ts` reads runtime memory store after `seedMemorySystemFromCanon()`.
+  - Exported from `studio-os-core/index.ts`; registered `studio-world-memory-system` in `core/modules.ts`.
+
+**Changes:**
+- Added `src/studio-os-core/studio-world-memory-system/` (15 files).
+- Updated: `prompt-memory-ingest.ts`, `engine.ts`, `stats.ts`, `knowledge-core-ingest.ts`, `index.ts`, `core/modules.ts`, `useMemorySystemState.ts`.
+- Motherboard: `CORE.md`, this MEMORY entry.
+
+**Verification:**
+- `npm run build` passed. World Graph: **455 nodes · 720 edges · PASS**.
+
+**Conventions:**
+- Use `runMemoryPipeline()` for new conversation ingestion; use `completeFounderReview()` to publish after founder action.
+- Published entries are **Approved™**, never auto-Canon. Canon remains explicit ratification only.
+- Memory System is infrastructure — UIs (Knowledge Core Observatory, Orb Archivist, future Memory Graph views) consume its APIs.
+- `queryMemorySystem()` for cross-layer search; `buildMemoryGraph()` for lineage visualization data.
