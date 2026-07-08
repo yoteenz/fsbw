@@ -140,6 +140,9 @@ import {
   buildInnovationLabOpeningLine,
 } from '../innovation-lab/dock-advisor';
 import {
+  resolveCollaborativeInnovationNetworkAdvice,
+} from '../collaborative-innovation-network/dock-advisor';
+import {
   resolveOrganizationOperatingManualAdvice,
   buildProactiveOrganizationOperatingManualSuggestion,
   buildOperatingManualOpeningLine,
@@ -1238,6 +1241,25 @@ export function submitDockCommand(rawText: string, pathname: string): FounderCom
       pendingRoute: null,
       askWhyAnswer: null,
       lastRoutingSummary: `${founderOperatingSystemAdvice.concierge}\n${founderOperatingSystemAdvice.response}`,
+    });
+    return null;
+  }
+
+  const collaborativeInnovationAdvice = resolveCollaborativeInnovationNetworkAdvice(
+    trimmed,
+    getRuntimeActiveWorkspaceId()
+  );
+  if (collaborativeInnovationAdvice) {
+    writeCommandDockStore({
+      ...readCommandDockStore(),
+      processingActive: false,
+      activeMicrointeraction: null,
+      microinteractionQueue: [],
+      dockInput: '',
+      expansionSize: 'medium',
+      pendingRoute: null,
+      askWhyAnswer: null,
+      lastRoutingSummary: `${collaborativeInnovationAdvice.concierge}\n${collaborativeInnovationAdvice.response}`,
     });
     return null;
   }

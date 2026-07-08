@@ -884,6 +884,10 @@ export function adminStudioInnovationLabPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/innovation-lab`;
 }
 
+export function adminStudioInnovationDistrictPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/innovation-district`;
+}
+
 export function adminStudioOrganizationOperatingManualPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/organization-operating-manual`;
 }

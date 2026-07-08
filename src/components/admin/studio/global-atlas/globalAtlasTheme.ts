@@ -93,6 +93,38 @@ body.global-atlas-layer-open {
 
 .gal-location strong { color: #c9a962; font-weight: 600; }
 
+.gal-collaborators {
+  margin: 0 10px 8px;
+  padding: 8px;
+  border: 1px solid rgba(124, 92, 255, 0.25);
+  background: rgba(0,0,0,0.35);
+}
+
+.gal-collaborators-title {
+  margin: 0 0 4px;
+  font-size: 5px;
+  letter-spacing: 0.14em;
+  color: #9d8cff;
+}
+
+.gal-collaborator-row {
+  margin: 2px 0 0;
+  font-size: 6px;
+  letter-spacing: 0.06em;
+  color: rgba(232, 228, 255, 0.8);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gal-collaborator-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #4ade80;
+  flex-shrink: 0;
+}
+
 .gal-table {
   position: relative;
   flex: 1;

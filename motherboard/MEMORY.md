@@ -42543,3 +42543,21 @@ User **FOLLOW-UP SPRINT — Global Atlas Layer™:** Atlas is no longer only a d
 - **Boundaries:** overlay navigation fabric — extends Atlas/Orb, no room redesign.
 - **Prior arc (same chat):** Knowledge System proposal · Constitution Hall™ · Responsibility Framework™ seven flagships · Future Tournament™ · Scene Stack quality hardening.
 
+---
+
+## 2026-07-08 — Collaborative Innovation Network™ co-invention economy + Innovation District™
+
+User **FOLLOW-UP SPRINT — Collaborative Innovation Network™ (The Innovation Economy):** Studio World evolves from collaboration to collaborative invention — when founders work together, Studio OS treats sessions as potential new IP with transparent attribution, joint publishing, and automatic Marketplace royalties.
+
+- **Engine `src/studio-os-core/collaborative-innovation-network/`:** `shared-genome.ts` (Collaboration Genome™ / Shared Genome™ — temporary combine of Company · Creative · Experience · Innovation Profile · Blueprint Library · Creative Portfolio) · `live-collaboration.ts` (presence, voice, cursor, attribution across Story Table, Future Merge, Warehouse, HQ, etc.) · `contribution-engine.ts` (10 domains, transparent %) · `royalty-engine.ts` (perpetual Marketplace splits) · `joint-innovations.ts` (Innovation ID™, detect + publish Private/Company/Invite/Marketplace/Open Source/Licensed) · `discovery-engine.ts` (genome complement recommendations) · `atlas-collaborators.ts` (live collaborators in Global Atlas) · `orb-curator.ts` (Collaboration Curator) · `network-builder.ts` · `store.ts` (`studioOsCollaborativeInnovationNetwork_v1`) · `dock-advisor.ts`.
+- **Innovation District™:** immersive campus `InnovationDistrictRoom.tsx` + `/admin/studio/innovation-district` — Shared Genome, live presence, discovery, joint innovations with contribution bars, publish prompt; `DepartmentGoldenBuildShell` + Orb Curator.
+- **Hook:** `useCollaborativeInnovationNetwork` — profile, curator lines, publish innovation.
+- **Studio World wiring:** `route-registry` + `flagship-destinations` district `archives-innovation-district` · `navigation.ts` walkway from Hall of Innovation™ · `migration-audit` immersive-partial · `adminStudioNavigation` overview module · `App.tsx` route · `core/modules.ts`.
+- **Orb:** Innovation District path → Collaboration Curator (`orb-personality.ts`).
+- **Global Atlas:** live collaborator strip in overlay; `innovation-campus` anchor; context priorities for Innovation District; orb guide aliases.
+- **Command Dock:** `resolveCollaborativeInnovationNetworkAdvice()` before Innovation Lab chain.
+- **Marketplace evolution:** joint asset types (Headquarters, Blueprints, Departments, Workflows, AI Systems, Genome Presets, Expeditions, Innovation Packs) modeled in engine constants + demo records.
+- **Docs:** `docs/studio-os/collaborative-innovation-network.md`.
+- **Boundaries:** heuristic/demo co-invention — extends Innovation Lab · Cross-Org Intelligence · Marketplace; no live multi-user realtime backend; no room redesign outside new district.
+- **Prior arc (same chat):** Global Atlas Layer™ · Knowledge System proposal · Constitution Hall™ · Responsibility Framework™ · Scene Stack quality hardening.
+

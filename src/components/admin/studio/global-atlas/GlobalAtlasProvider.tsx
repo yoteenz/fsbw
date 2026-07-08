@@ -23,6 +23,11 @@ import {
   type OrbAtlasNavigationIntent,
 } from '../../../../studio-os-core/global-atlas-layer';
 import {
+  formatAtlasCollaboratorLine,
+  resolveAtlasCollaboratorMarkers,
+  type AtlasCollaboratorMarker,
+} from '../../../../studio-os-core/collaborative-innovation-network';
+import {
   ATLAS_TRAVEL_LABELS,
   type AtlasNode,
   type AtlasTravelMode,
@@ -36,6 +41,8 @@ export type GlobalAtlasLayerContextValue = {
   currentNodeId: string;
   shortcuts: GlobalAtlasShortcut[];
   orbGuideLine: string | null;
+  collaboratorLine: string | null;
+  atlasCollaborators: AtlasCollaboratorMarker[];
   traveling: boolean;
   openAtlas: () => void;
   closeAtlas: () => void;
@@ -73,6 +80,16 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   const shortcuts = useMemo(
     () => buildGlobalAtlasShortcuts(pathname, companyName),
     [pathname, companyName, isOpen]
+  );
+
+  const atlasCollaborators = useMemo(
+    () => resolveAtlasCollaboratorMarkers(workspaceId ?? 'frontal-slayer'),
+    [workspaceId, isOpen]
+  );
+
+  const collaboratorLine = useMemo(
+    () => formatAtlasCollaboratorLine(atlasCollaborators),
+    [atlasCollaborators]
   );
 
   const syncLocationFocus = useCallback(() => {
@@ -175,6 +192,8 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
     currentNodeId: location.nodeId,
     shortcuts,
     orbGuideLine,
+    collaboratorLine,
+    atlasCollaborators,
     traveling,
     openAtlas,
     closeAtlas,

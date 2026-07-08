@@ -16,6 +16,7 @@ export type AtlasAnchorKind =
   | 'mission-control'
   | 'holographic-table'
   | 'constitution-hall'
+  | 'innovation-campus'
   | 'generic-room';
 
 export type AtlasAnchor = {

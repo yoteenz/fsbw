@@ -10,6 +10,11 @@ import {
   CONSTITUTION_KEEPER_GREETING,
   CONSTITUTION_KEEPER_ROLE,
 } from '../studio-world-constitution/orb-keeper';
+import {
+  COLLABORATION_CURATOR_ACCENT,
+  COLLABORATION_CURATOR_GREETING,
+  COLLABORATION_CURATOR_ROLE,
+} from '../collaborative-innovation-network/orb-curator';
 
 export type StudioWorldOrbPersonality = {
   flagshipId: StudioWorldFlagshipId;
@@ -135,6 +140,16 @@ export function resolveOrbPersonalityForPath(pathname: string): StudioWorldOrbPe
       guidance:
         'I explain why principles exist, how Studio World evolves, and whether new ideas fit the civilization.',
       accent: CONSTITUTION_KEEPER_ACCENT,
+    };
+  }
+  if (p.includes('innovation-district')) {
+    return {
+      flagshipId: 'studio-archives',
+      role: COLLABORATION_CURATOR_ROLE,
+      greeting: COLLABORATION_CURATOR_GREETING,
+      guidance:
+        'I identify complementary founders, highlight co-invention opportunities, and guide joint publishing with transparent royalties.',
+      accent: COLLABORATION_CURATOR_ACCENT,
     };
   }
   const flagshipId = resolveFlagshipFromPath(pathname);

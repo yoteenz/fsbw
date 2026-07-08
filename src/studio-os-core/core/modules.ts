@@ -113,6 +113,7 @@ export type StudioOsCoreModuleId =
   | 'world-knowledge-engine'
   | 'founder-operating-system'
   | 'innovation-lab'
+  | 'collaborative-innovation-network'
   | 'organization-operating-manual'
   | 'legacy-network'
   | 'studio-intelligence-architecture'
@@ -837,6 +838,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'INNOVATION LAB™',
     description: 'Innovation Lab V1.0 — permanent research, invention, and strategic ideation. Continuously generate ideas from every intelligence source.',
     routeSegment: 'innovation-lab',
+  },
+  {
+    id: 'collaborative-innovation-network',
+    label: 'COLLABORATIVE INNOVATION NETWORK™',
+    description: 'Innovation economy — co-invent with founders, Shared Genome™, contribution and royalty engines, joint Marketplace publishing.',
+    routeSegment: 'innovation-district',
   },
   {
     id: 'organization-operating-manual',

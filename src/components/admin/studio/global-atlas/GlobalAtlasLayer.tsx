@@ -18,6 +18,8 @@ function GlobalAtlasLayerInner() {
     currentNodeId,
     shortcuts,
     orbGuideLine,
+    collaboratorLine,
+    atlasCollaborators,
     traveling,
     closeAtlas,
     travelToNode,
@@ -58,6 +60,21 @@ function GlobalAtlasLayerInner() {
             <br />
             {locationLabel}
           </p>
+
+          {collaboratorLine ? (
+            <div className="gal-collaborators" aria-label="Live collaborators">
+              <p className="gal-collaborators-title">LIVE COLLABORATORS</p>
+              {atlasCollaborators
+                .filter((c) => c.status === 'active')
+                .slice(0, 4)
+                .map((c) => (
+                  <p key={c.id} className="gal-collaborator-row">
+                    <span className="gal-collaborator-dot" />
+                    {c.role} · {c.roomLabel}
+                  </p>
+                ))}
+            </div>
+          ) : null}
 
           <div className="gal-table" aria-label="Holographic navigation table">
             <div className="gal-table-surface">

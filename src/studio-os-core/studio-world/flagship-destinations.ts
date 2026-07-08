@@ -187,6 +187,14 @@ export const FLAGSHIP_DISTRICTS: StudioWorldLocation[] = [
     worldPath: 'archives/hall-of-innovation',
   },
   {
+    id: 'archives-innovation-district',
+    displayName: 'Innovation District™',
+    physicalType: 'district',
+    flagshipId: 'studio-archives',
+    worldPath: 'archives/innovation-district',
+    teaching: 'Collaborative invention campus — co-invent, publish joint IP, distribute royalties.',
+  },
+  {
     id: 'archives-genome-vault',
     displayName: 'Company Genome Vault™',
     physicalType: 'vault',

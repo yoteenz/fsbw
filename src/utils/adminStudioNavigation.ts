@@ -119,6 +119,19 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'innovation-district',
+    title: 'INNOVATION DISTRICT',
+    purpose:
+      'Collaborative Innovation Network™ — co-invent with founders, combine genomes, publish joint IP, and distribute Marketplace royalties automatically.',
+    route: p('innovation-district'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'CO-INVENT',
+    ctaLabel: 'ENTER CAMPUS',
+    featuredOnOverview: true,
+    moduleKey: 'collaborative-innovation-network',
+  },
+  {
     id: 'chief-of-staff',
     title: 'CHIEF OF STAFF',
     purpose: 'Founder primary executive — soft approvals, unified briefings, and attention protection before escalations.',

@@ -95,6 +95,11 @@ const V5_ROOM_CANON: Record<string, { room: string; wing?: string; building?: st
     wing: 'Executive Atrium™',
     building: 'Command Center™',
   },
+  'innovation-district': {
+    room: 'Innovation District™',
+    wing: 'Innovation Campus™',
+    building: 'Studio Archives™',
+  },
   'constitution-hall': {
     room: 'Constitution Hall™',
     wing: 'Executive District™',
@@ -124,6 +129,7 @@ const IMMERSIVE_PARTIAL_IDS = new Set([
   'experience-observatory',
   'world-atlas',
   'constitution-hall',
+  'innovation-district',
 ]);
 
 const P0_IDS = new Set([

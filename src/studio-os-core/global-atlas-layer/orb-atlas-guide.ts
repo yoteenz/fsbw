@@ -17,6 +17,7 @@ const NODE_ALIASES: Array<{ patterns: string[]; nodeId: string; path: string }> 
   { patterns: ['marketing headquarters', 'marketing'], nodeId: 'room-campaign-engine', path: '/admin/studio/campaign-engine' },
   { patterns: ['mission control', 'command center', 'overview'], nodeId: 'flagship-studio-command-center', path: '/admin/studio/overview' },
   { patterns: ['world atlas', 'atlas'], nodeId: 'room-world-atlas', path: '/admin/studio/world-atlas' },
+  { patterns: ['innovation district', 'co-invent', 'collaborat'], nodeId: 'room-innovation-district', path: '/admin/studio/innovation-district' },
   { patterns: ['constitution'], nodeId: 'room-constitution-hall', path: '/admin/studio/constitution-hall' },
   { patterns: ['expedition', 'expansion'], nodeId: 'flagship-expedition-hub', path: '/admin/studio/expansion-center' },
 ];

@@ -67,6 +67,12 @@ const ANCHOR_BY_KIND: Record<AtlasAnchorKind, Omit<AtlasAnchor, 'flagshipId'>> =
     projectionLine: 'Projected from the constitutional monument',
     overlayClass: 'gal-anchor-constitution',
   },
+  'innovation-campus': {
+    kind: 'innovation-campus',
+    displayName: 'Innovation Campus™',
+    projectionLine: 'Projected from the Innovation District holographic pavilion',
+    overlayClass: 'gal-anchor-innovation-campus',
+  },
   'generic-room': {
     kind: 'generic-room',
     displayName: 'Workspace Anchor™',
@@ -91,6 +97,7 @@ const PATH_RULES: PathRule[] = [
   { test: (p) => p.includes('studio-museum') || p.includes('museum-wing'), kind: 'museum-exhibit', flagshipId: 'studio-archives' },
   { test: (p) => p.includes('studio-archives'), kind: 'museum-exhibit', flagshipId: 'studio-archives' },
   { test: (p) => p.includes('marketplace'), kind: 'marketplace-pavilion', flagshipId: 'marketplace' },
+  { test: (p) => p.includes('innovation-district'), kind: 'innovation-campus', flagshipId: 'studio-archives' },
   { test: (p) => p.includes('constitution-hall'), kind: 'constitution-hall', flagshipId: 'studio-command-center' },
   { test: (p) => p.includes('world-atlas'), kind: 'holographic-table', flagshipId: 'studio-command-center' },
   { test: (p) => p.includes('mission-control') || p.includes('/overview'), kind: 'mission-control', flagshipId: 'studio-command-center' },
