@@ -15,7 +15,6 @@ import {
   ADMIN_STUDIO_DASHBOARD_METRIC,
 } from '../../../../utils/adminStudioDemo';
 import {
-  countModulesForGroup,
   getModulesForGroup,
   STUDIO_NAV_GROUPS,
 } from '../../../../utils/adminStudioNavigation';
@@ -376,15 +375,6 @@ export function StudioCommandCenterRoom() {
             })}
           </div>
         </div>
-
-        <p className="scc-world__teaching">
-          {activeZone.teaching}
-          {focusedWingId
-            ? ` · Tap wing portal · double-click to enter · ${countModulesForGroup('overview')} overview modules preserved`
-            : stackButtonBusy
-              ? ` · Scene Stack™ assembling ${activePipeline.currentLayerLabel ?? 'atrium shell'}`
-              : ` · ${totalModules} modules across ${STUDIO_NAV_GROUPS.length} departments`}
-        </p>
 
         {arrivalComplete ? (
           <nav style={{ position: 'absolute', bottom: 36, left: '50%', transform: 'translateX(-50%)', zIndex: 18, display: 'flex', gap: 6 }}>

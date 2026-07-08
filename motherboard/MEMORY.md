@@ -43255,3 +43255,21 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Future asset-generation features should route through **Asset Compiler™** recipes instead of ad hoc prompts.
 - Founder-facing asset creation should expose intent only; implementation details belong to the compiler.
 - Generated assets should always become registry-ready metadata objects, not loose files.
+
+---
+
+## 2026-07-08 — Remove Command Center bottom teaching line
+
+**Context:** Follow-up after Studio World Hero Icon Library™ / Orb acrylic tile work. User asked to remove the bottom text line on studio pages: *"THRESHOLD™ — SIGHTLINES INTO THE EXECUTIVE ATRIUM™ BEYOND. • 200 MODULES ACROSS 8 DEPARTMENT"*.
+
+**Topics covered (entire conversation so far):**
+- Prior turn: ARTICLE-D08 Hero Icon Library + optical acrylic Orb navigation tiles shipped to `master`.
+- **This turn:** Located source in **`StudioCommandCenterRoom.tsx`** — `<p className="scc-world__teaching">` rendered active camera zone `teaching` copy plus dynamic suffix (`modules across N departments`, Scene Stack status, wing portal hints).
+- Removed the entire teaching `<p>` block from Executive Atrium / Command Center immersive room.
+- Dropped unused **`countModulesForGroup`** import (still used elsewhere: `totalModules`, `STUDIO_NAV_GROUPS` for pulse metrics).
+
+**Decisions / outcomes:** Command Center / overview immersive arrival no longer shows zone teaching footer at bottom; zone pill nav and scene content unchanged.
+
+**Changes:** `src/components/admin/studio/command-center/StudioCommandCenterRoom.tsx`, `motherboard/MEMORY.md`.
+
+**Conventions:** Do not re-add ambient teaching footers to Command Center unless explicitly requested — keeps arrival space visually clean.
