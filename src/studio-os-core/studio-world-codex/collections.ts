@@ -22,7 +22,7 @@ export const CODEX_COLLECTIONS: CodexCollection[] = [
       'future vision',
     ],
     governanceLevel: 'Foundational',
-    owningSystems: ['Studio World Codex™', 'Knowledge Core™', 'World Graph™'],
+    owningSystems: ['Studio World Codex™', 'Institute of Knowledge™', 'Knowledge Core™', 'World Graph™'],
     volumeIds: [
       'volume-i-manifesto',
       'volume-ii-constitution',
@@ -130,7 +130,7 @@ export const CODEX_COLLECTIONS: CodexCollection[] = [
       'Conversation archives, Knowledge Core projections, professional memory, wisdom lineage, ADR histories, old superseded canon, historical timelines, and institutional archaeology.',
     scope: ['memory', 'history', 'archives', 'adrs', 'wisdom lineage'],
     governanceLevel: 'Constitutional',
-    owningSystems: ['Knowledge Core™', 'Memory System™', 'Professional Memory™'],
+    owningSystems: ['Institute of Knowledge™', 'Knowledge Core™', 'Memory System™', 'Professional Memory™'],
     volumeIds: [],
     relatedCollections: [FOUNDATIONAL_CODEX_COLLECTION_ID],
     tags: ['memory', 'history', 'archive', 'wisdom'],

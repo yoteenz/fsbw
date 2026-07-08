@@ -2,6 +2,7 @@ export * from './constants';
 export * from './types';
 export * from './volumes';
 export * from './collections';
+export * from './institute-of-knowledge';
 export * from './pipeline';
 export * from './engine';
 export * from './articles';

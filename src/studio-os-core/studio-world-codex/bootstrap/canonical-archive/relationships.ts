@@ -29,6 +29,14 @@ const RELATIONSHIP_SEEDS: RelSeed[] = [
 
   // Constitution chain
   { from: 'ARTICLE-C02', to: 'ARTICLE-C01', type: 'extends', label: 'complete-codex-extends-codex-first' },
+  { from: 'ARTICLE-C03', to: 'CONCEPT-STUDIO-WORLD-PRESS', type: 'supersedes', label: 'institute-supersedes-press' },
+  { from: 'ARTICLE-C03', to: 'ARTICLE-C01', type: 'supports', label: 'institutional-authority-for-codex-first' },
+  { from: 'ARTICLE-C03', to: 'ARTICLE-C02', type: 'supports', label: 'institute-governs-codex-library' },
+  { from: 'ARTICLE-C03', to: 'ARTICLE-K22', type: 'depends-on', label: 'operational-memory-layer' },
+  { from: 'ARTICLE-C03', to: 'ARTICLE-K23', type: 'depends-on', label: 'archive-review-pipeline' },
+  { from: 'ARTICLE-C03', to: 'ARTICLE-B01', type: 'supports', label: 'profession-research-authority' },
+  { from: 'ARTICLE-C03', to: 'ARTICLE-B04', type: 'supports', label: 'knowledge-validation-authority' },
+  { from: 'ARTICLE-C03', to: 'ARTICLE-P05', type: 'supports', label: 'publication-and-release-records' },
   { from: 'ARTICLE-C02', to: 'ARTICLE-K22', type: 'depends-on', label: 'collection-discovery-memory' },
   { from: 'ARTICLE-C02', to: 'ARTICLE-AR01', type: 'depends-on', label: 'collection-world-graph' },
   { from: 'ARTICLE-C02', to: 'ARTICLE-F05', type: 'supports', label: 'decades-scale-roadmap' },

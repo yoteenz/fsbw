@@ -1,7 +1,7 @@
 /** ARTICLE-C01 — Studio World Codex™ */
 
 export const STUDIO_WORLD_CODEX_ARTICLE_ID = 'ARTICLE-C01';
-export const STUDIO_WORLD_CODEX_VERSION = '1.3.0';
+export const STUDIO_WORLD_CODEX_VERSION = '1.4.0';
 export const STUDIO_WORLD_CODEX_NAME = 'Studio World Codex™';
 export const STUDIO_WORLD_CODEX_STORAGE_KEY = 'studioWorldCodex_v2';
 export const STUDIO_WORLD_CODEX_UPDATED_EVENT = 'studio-world-codex-updated';

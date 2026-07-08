@@ -2,6 +2,8 @@
 
 The Codex is **not documentation**. It is the living constitutional memory of Studio World — a reusable platform that stores, organizes, versions, and relates every canonical concept before implementation begins.
 
+As of **ARTICLE-C03**, the Codex is the official library operated by **The Institute of Knowledge™** — Studio World's permanent institution for publishing, research, canon review, historical archives, standards, validation, and world history.
+
 ---
 
 ## Core location
@@ -11,6 +13,7 @@ src/studio-os-core/studio-world-codex/
 ├── articles/          # Article schema, registry, create, update
 ├── bootstrap/         # One-time seed (ARTICLE-C01 only — not runtime registry)
 ├── collections.ts     # ARTICLE-C02 collection registry
+├── institute-of-knowledge.ts # ARTICLE-C03 institution registry
 ├── manifesto/         # Volume I module
 ├── constitution/      # Volume II module
 ├── world-bible/       # Volume III module
@@ -208,10 +211,34 @@ Use `listCodexCollections()` and `getCodexCollection()` for collection metadata.
 
 ---
 
+## Institute of Knowledge™
+
+**ARTICLE-C03 — The Institute of Knowledge™** supersedes the prior Studio World Press™ concept.
+
+The Institute governs the Codex. The Codex stores civilization knowledge.
+
+Divisions:
+
+| Division | Responsibility |
+|----------|----------------|
+| Publishing Bureau™ | Books, manuals, specs, official editions |
+| Research Bureau™ | Profession research and real-world updates |
+| Constitution Office™ | Constitutional articles, amendments, revisions |
+| Historical Archives™ | Previous editions, superseded canon, lineage |
+| Knowledge Validation Bureau™ | AI knowledge review, source verification, canon promotion |
+| Standards Bureau™ | Design, engineering, education, simulation, brand standards |
+| Publication Office™ | Whitepapers, SDK docs, release notes, guides, reports, letters, roadmaps |
+| World Chronicle™ | Living history, Founder Journal™, major events |
+
+Use `THE_INSTITUTE_OF_KNOWLEDGE`, `listInstituteKnowledgeDivisions()`, and `getInstituteKnowledgeDivision()` for institutional metadata.
+
+---
+
 ## Bootstrap vs platform
 
 - **Canonical Archive (Phase II):** **`bootstrap/canonical-archive/`** seeds foundational articles across all ten volumes with typed relationships — loaded on first run or when `canonicalArchiveVersion` migrates (`studioWorldCodex_v2`).
 - **Complete Codex (ARTICLE-C02):** `collections.ts` defines the permanent collection expansion model. Add a new collection only when a domain needs independent growth.
+- **Institute of Knowledge (ARTICLE-C03):** `institute-of-knowledge.ts` defines the permanent institution operating the Codex and validating official knowledge.
 - **Do not** add articles to hardcoded arrays in engine core outside the canonical archive.
 - **Do** use `createCodexArticle()` for new articles after bootstrap, or `proposeFutureCodexArticle()` for draft proposals.
 - **ARTICLE-C01** and all volume seeds live in the canonical archive — not runtime hardcoding.
@@ -235,5 +262,6 @@ const proposal = proposeFutureCodexArticle({
 
 - [ARTICLE-C01 — Codex First Principle](./ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md)
 - [ARTICLE-C02 — Complete Studio World Codex](./ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md)
+- [ARTICLE-C03 — Institute of Knowledge](./ARTICLE_C03_INSTITUTE_OF_KNOWLEDGE.md)
 - [Codex Article Template](./CODEX_ARTICLE_TEMPLATE.md)
 - [Codex README](./README.md)

@@ -10,6 +10,7 @@ It is not documentation. It is the source of truth for approved philosophy, syst
 
 - [ARTICLE-C01 — The Codex First Principle™](./ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md)
 - [ARTICLE-C02 — The Complete Studio World Codex™](./ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md)
+- [ARTICLE-C03 — The Institute of Knowledge™](./ARTICLE_C03_INSTITUTE_OF_KNOWLEDGE.md)
 - [Codex Article™ Template](./CODEX_ARTICLE_TEMPLATE.md)
 
 ---
@@ -28,6 +29,7 @@ Key exports:
 - `queryCodex()` — semantic search with filters
 - `createCodexArticle()` / `reviseCodexArticle()` — append-only article lifecycle
 - `listCodexCollections()` / `getCodexCollection()` — complete Codex library structure
+- `THE_INSTITUTE_OF_KNOWLEDGE` — institutional authority behind Codex governance
 - `getCodexOrbRecommendations()` — Orb Curator™ hooks
 - `getCodexWorldGraphSyncPayload()` — World Graph integration
 - `CODEX_VOLUMES` · `CODEX_PIPELINE_STAGES` · `evaluateCodexReadiness()`

@@ -43911,3 +43911,22 @@ Summary of the **full conversation in this chat**: Career Worlds™ implementati
 - **Verification:** `npm run build` passed; World Graph compile **661 nodes · 1306 edges · PASS**.
 - **Conventions:** Do not create Volume XI in the Foundational Collection by default. When a domain becomes large enough to need independent expansion, add a Codex Collection registry entry and relate it back to the Foundational Collection and governing articles.
 
+---
+
+## 2026-07-08 — ARTICLE-C03 Institute of Knowledge™ master architecture sprint
+
+Summary of the **full conversation in this chat**: Career Worlds™ implementation sprint → ARTICLE-C01 Codex First Principle™ → Codex platform infrastructure → Phase II Canonical Seeding™ → ARTICLE-C02 Complete Codex Collections™ → **ARTICLE-C03 The Institute of Knowledge™** master architecture project. The user specified that the Institute supersedes the previous Studio World Press™ concept and becomes the permanent institution responsible for publishing, research, preservation, canon review, constitutional review, version history, archives, profession research, standards, AI validation, world history, future research, Founder’s Journal, and release records.
+
+- **Context:** Studio World is documenting a civilization, not software. Civilizations do not have documentation departments; they have institutions. Everything official should pass through The Institute of Knowledge™.
+- **Decisions / outcomes:**
+  - Added **`docs/studio-os/codex/ARTICLE_C03_INSTITUTE_OF_KNOWLEDGE.md`** as accepted architecture.
+  - Added **`src/studio-os-core/studio-world-codex/institute-of-knowledge.ts`** with `THE_INSTITUTE_OF_KNOWLEDGE`, publication types, and divisions: Publishing Bureau™, Research Bureau™, Constitution Office™, Historical Archives™, Knowledge Validation Bureau™, Standards Bureau™, Publication Office™, World Chronicle™.
+  - Seeded **ARTICLE-C03** into Volume II canonical archive and linked it to C01, C02, K22, K23, B01, B04, and P05.
+  - Added relationship edges: C03 supersedes `CONCEPT-STUDIO-WORLD-PRESS`, supports/governs Codex/C02, depends on Knowledge Core and Memory System, supports Profession Brain validation and post-launch publication records.
+  - World Graph Codex ingestion now emits **`W-ORG-institute-of-knowledge`** and department nodes for every Institute division, with `governed-by` edge from Codex → Institute.
+  - Updated semantic search for Institute/Publishing/Research/Constitution Office/Historical Archives/Knowledge Validation/World Chronicle/Founder Journal/Release Records.
+  - Future article proposals now map Institute/publication/review concepts to Volume II and related C03.
+  - Updated Codex docs and Studio OS docs index.
+- **Verification:** `npm run build` passed; World Graph compile **671 nodes · 1325 edges · PASS**.
+- **Conventions:** The Institute governs the Codex; the Codex stores civilization knowledge; Knowledge Core remains operational/search memory, not final constitutional authority. Orb answers should cite Institute-governed sources. Profession Brain updates and AI-generated knowledge require Institute validation before canon promotion.
+
