@@ -4,7 +4,7 @@ import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvid
 import { ensureProjectGenome, resolveActiveProjectGenome } from '../../../../studio-os-core/project-genome';
 import { getSceneStackStation } from '../../../../studio-os-core/scene-stack';
 import type { SceneStackHotspotBounds, SceneStackLayerId } from '../../../../studio-os-core/scene-stack';
-import { isWarehouseCameraZoneId } from '../../../../studio-os-core/studio-warehouse/campus-nav';
+import { isWarehouseCameraZoneId, getSceneTrayZoneIds, resolveArchitecturalDestination } from '../../../../studio-os-core/studio-warehouse/campus-nav';
 import { useAdminStudioWarehouse } from '../../../../hooks/useAdminStudioWarehouseState';
 import { useAdminStudioMuseum } from '../../../../hooks/useAdminStudioMuseumState';
 import { useSceneStack } from '../../../../hooks/useSceneStack';
@@ -27,6 +27,7 @@ import {
   ARCHITECTURAL_NAV_STYLES,
   DISTRICT_THEME_STYLES,
 } from '../architectural-navigation';
+import { SceneTray, STUDIO_NAVIGATION_STYLES, type SceneTrayEntry } from '../navigation';
 import { useArchitecturalNavigationRail } from '../../../../hooks/useArchitecturalNavigationRail';
 import {
   livingArchitectureClassForDistrict,
@@ -259,6 +260,72 @@ export function StudioWarehouseRoom() {
       wh.setActiveZoneId(zoneId);
     },
     [wh]
+  );
+
+  const activeDestinationId = useMemo(
+    () => resolveArchitecturalDestination(wh.activeZoneId),
+    [wh.activeZoneId]
+  );
+
+  const museumSceneTrayEntries = useMemo((): SceneTrayEntry[] => {
+    const base: SceneTrayEntry[] = [
+      { id: 'legacy-hall', label: 'Legacy Hall™', shortLabel: 'Legacy' },
+      { id: 'time-machine', label: 'Time Machine™', shortLabel: 'Time' },
+      { id: 'memory-sphere', label: 'Memory Sphere™', shortLabel: 'Sphere' },
+    ];
+    const exhibitEntries = museum.exhibits.map((ex) => ({
+      id: ex.id,
+      label: ex.title,
+      shortLabel: ex.title.length > 14 ? `${ex.title.slice(0, 12)}…` : ex.title,
+    }));
+    return [...base, ...exhibitEntries];
+  }, [museum.exhibits]);
+
+  const sceneTrayEntries = useMemo((): SceneTrayEntry[] => {
+    if (activeDestinationId === 'museum-wing') return museumSceneTrayEntries;
+    return getSceneTrayZoneIds(activeDestinationId).map((zoneId) => {
+      const zone = getWarehouseZone(zoneId);
+      return {
+        id: zoneId,
+        label: zone.label,
+        shortLabel: zone.shortLabel,
+        locked: zone.requiresArrival && !wh.arrivalComplete,
+      };
+    });
+  }, [activeDestinationId, museumSceneTrayEntries, wh.arrivalComplete]);
+
+  const sceneTrayActiveId = useMemo(() => {
+    if (wh.activeZoneId !== 'museum-wing') return wh.activeZoneId;
+    if (museum.viewMode === 'time-machine') return 'time-machine';
+    if (museum.viewMode === 'memory-sphere') return 'memory-sphere';
+    if (museum.selectedExhibitId && museum.viewMode === 'exhibits') return museum.selectedExhibitId;
+    return 'legacy-hall';
+  }, [museum.selectedExhibitId, museum.viewMode, wh.activeZoneId]);
+
+  const onSceneTraySelect = useCallback(
+    (entryId: string) => {
+      if (wh.activeZoneId === 'museum-wing' || activeDestinationId === 'museum-wing') {
+        if (entryId === 'legacy-hall') {
+          museum.setViewMode('exhibits');
+          museum.setHistorianContext('enter');
+          return;
+        }
+        if (entryId === 'time-machine') {
+          museum.setViewMode('time-machine');
+          museum.setHistorianContext('timeline');
+          return;
+        }
+        if (entryId === 'memory-sphere') {
+          museum.setViewMode('memory-sphere');
+          museum.setHistorianContext('idle');
+          return;
+        }
+        museum.selectExhibit(entryId);
+        return;
+      }
+      if (isWarehouseCameraZoneId(entryId)) goToZone(entryId);
+    },
+    [activeDestinationId, goToZone, museum, wh.activeZoneId]
   );
 
   const renderZoneInteractions = (zoneId: WarehouseCameraZoneId) => {
@@ -517,6 +584,7 @@ export function StudioWarehouseRoom() {
       <style>{DISTRICT_ECOLOGY_STYLES}</style>
       <style>{LIVING_CIVILIZATION_STYLES}</style>
       <style>{WAREHOUSE_CAMPUS_STYLES}</style>
+      <style>{STUDIO_NAVIGATION_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
         className={`${worldClass} ${districtClass} ${livingClass}${ecologyBalanced ? ' sw-ecology--balanced' : ''}${civilizationSelfBalancing ? ' sw-civilization--self-balancing' : ''}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
@@ -559,7 +627,7 @@ export function StudioWarehouseRoom() {
           location={navLocation}
           frameStatus={frameStatus}
           contextualWings={contextualWings}
-          activeRoomId={wh.activeZoneId}
+          activeRoomId={activeDestinationId}
           livingArchitecture={livingArchitecture}
           livingEcology={livingEcology}
           livingCivilization={livingCivilization}
@@ -650,6 +718,13 @@ export function StudioWarehouseRoom() {
             ''
           )}
         </p>
+
+        <SceneTray
+          entries={sceneTrayEntries}
+          activeId={sceneTrayActiveId}
+          onSelect={onSceneTraySelect}
+          ariaLabel="Scenes and workspaces in this destination"
+        />
 
         {wh.replaceContext && wh.replaceCandidates.length > 0 ? (
           <nav className="wh-world__workspace-bar" aria-label="Workspace retrieval">

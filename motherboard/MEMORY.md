@@ -42590,11 +42590,8 @@ User **FOLLOW-UP SPRINT — Innovation Lineage™ (The Living Innovation Graph):
 
 ---
 
-<<<<<<< HEAD
 ---
 
-=======
->>>>>>> e732b4a6 (Four-layer governance — Design Principles, World Physics, Constitution, Implementation Standards + Design Review Filter)
 ## 2026-07-08 — Studio World Three Eras Roadmap™ (guiding architecture)
 
 User defined **three major eras** for Studio World's evolution — **not** to build all three today, but as a **guiding principle** every future system must be evaluated against.
@@ -42634,7 +42631,8 @@ User **FOLLOW-UP SPRINT — Innovation Constellations™ (The Living Knowledge U
 - **Boundaries:** visualization layer — not Marketplace redesign; demo/heuristic universe from lineage; full real-time World Graph ingestion deferred.
 - **Prior arc (same chat):** Innovation Lineage™ · World Graph™ Phase 1 · Three Eras Roadmap™ · Collaborative Innovation Network™ · Global Atlas Layer™.
 
-<<<<<<< HEAD
+- **Prior arc (same chat):** Innovation Lineage™ · World Graph™ Phase 1 · Three Eras Roadmap™ · Collaborative Innovation Network™ · Global Atlas Layer™.
+
 ---
 
 ## 2026-07-08 — Innovation Expeditions™ guided knowledge network
@@ -42656,8 +42654,6 @@ User **FOLLOW-UP SPRINT — Innovation Expeditions™ (The Guided Knowledge Netw
 - **Boundaries:** guided exploration layer — not tutorial/docs redesign; demo/heuristic expeditions; full community authoring + live event scheduling deferred.
 - **Prior arc (same chat):** Innovation Constellations™ · Innovation Lineage™ · Three Eras Roadmap™ · World Graph™ Phase 1 · Collaborative Innovation Network™ · Global Atlas Layer™.
 
-=======
->>>>>>> e732b4a6 (Four-layer governance — Design Principles, World Physics, Constitution, Implementation Standards + Design Review Filter)
 ---
 
 ## 2026-07-08 — World Physics™ + three-tier Canon hierarchy (approved)
@@ -42675,10 +42671,6 @@ User **approved** Three Eras constitutional direction and introduced the next ar
   - `knowledge/canon/README.md` · `knowledge/canon/physics/` (10 laws) · `behavioral-laws.md` · `implementation-standards/README.md`
   - `src/studio-os-core/world-physics/` · `behavioral-laws.ts` · `implementation-standards/`
   - World Graph: `foundational-physics-law` (`W-PHY-*`) · `implementation-standard` (`W-STD-*`) · ingestion adapters · `depends-on` / `implements` edges (387 nodes · 533 edges)
-<<<<<<< HEAD
-- **Prior arc (same chat):** Three Eras Roadmap™ · World Graph Phase 1 · Innovation Lineage™ · Scene Stack hardening · Knowledge System.
-
-=======
 - **Prior arc (same chat):** Three Eras Roadmap™ · World Graph Phase 1 · Innovation Lineage™ · Innovation Constellations™ · Scene Stack hardening · Knowledge System.
 
 ---
@@ -42700,5 +42692,20 @@ User **approved** Knowledge Core, Constitutional Laws, repository architecture, 
   - Updated behavioral-laws (9 laws) · implementation-standards (14) · physics principleBasis edges
   - World Graph: `design-principle` (`W-DPR-*`) · 407 nodes · 603 edges
   - Updated `knowledge/canon/` · CANON_HIERARCHY · constitution · world-graph architecture docs
-- **Prior arc (same chat):** Three Eras™ · World Physics three-tier · World Graph Phase 1 · Knowledge Core approved · Innovation Constellations™ · Scene Stack hardening.
->>>>>>> e732b4a6 (Four-layer governance — Design Principles, World Physics, Constitution, Implementation Standards + Design Review Filter)
+- **Prior arc (same chat):** Three Eras™ · World Physics three-tier · World Graph Phase 1 · Knowledge Core approved · Innovation Constellations™ · Innovation Expeditions™ · Scene Stack hardening.
+
+---
+
+## 2026-07-08 — Navigation bug fix sprint: ArchitecturalRail™ vs SceneTray™
+
+User reported **BUG FIX SPRINT** — scene/workspace selection (Arrival Zone™, Story Table™, Mood Wall™, gallery scenes, museum exhibits, etc.) incorrectly rendering on the **left vertical rail** instead of a **bottom horizontal tray**. Left rail must answer “where am I in the world?” (departments/wings/districts only). Bottom tray must answer “what can I do inside this space?” (scenes/workspaces/exhibits only). No layout densification or redesign — navigation responsibility split only.
+
+- **Root cause:** `WarehouseArchitecturalDirectory` rendered all `ARCHIVES_CAMPUS_SECTIONS` zones plus `INDUSTRIAL_CAMPUS_WINGS` gallery expansion on the left (`wh-world__directory` — `position: absolute; left: 0; flex-direction: column`). Legacy bottom `wh-world__nav` existed but was unused. CDS already had bottom `cds-genesis__nav` but warehouse/archives did not wire scene tray.
+- **Delivered:**
+  - `campus-nav.ts` — `ARCHITECTURAL_RAIL_ITEMS` (Atlas™ first, then Studio Archives™, Warehouse Wing™, Material Library™, Museum Wing™, Innovation Hall™, Genome Vault™, Blueprint Hall™, Marketplace Pavilion™, Future Observatory™) · `resolveArchitecturalDestination()` · `getSceneTrayZoneIds()` — gallery scenes moved to tray under parent wing
+  - `src/components/admin/studio/navigation/` — **`ArchitecturalRail.tsx`** (left, vertical, departments only) · **`SceneTray.tsx`** (bottom, horizontal scroll, touch-friendly) · **`studioNavigationTheme.ts`** CSS guardrails (`@media` keeps SceneTray bottom horizontal, never left vertical)
+  - `WarehouseArchitecturalDirectory` — thin wrapper over `ArchitecturalRail` (no scene tabs on left)
+  - `StudioWarehouseRoom` — wires `SceneTray` at bottom; museum wing tray adds Legacy Hall™, Time Machine™, Memory Sphere™, exhibit entries
+  - `CreativeDirectionStudioRoom` — uses shared `SceneTray` (Arrival, Story Table, Mood Wall, etc. stay bottom)
+- **Regression targets:** Creative Direction Studio™, Studio Archives™, Warehouse Wing™, Museum Wing™, Innovation Gallery™, Material Library™ — left = architectural destinations; bottom = scenes within destination.
+- **Prior arc (same chat):** Four-layer governance hierarchy · Design Principles™ · World Physics™ · Three Eras Roadmap™ · World Graph Phase 1.

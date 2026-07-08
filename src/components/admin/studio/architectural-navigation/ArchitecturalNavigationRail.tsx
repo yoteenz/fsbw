@@ -194,7 +194,7 @@ export function ArchitecturalNavigationRail({
         <FrameStatusBlock status={frameStatus} />
 
         <div className="sw-nav-rail__section">
-          <p className="sw-nav-rail__section-title">Rooms in this Wing</p>
+          <p className="sw-nav-rail__section-title">Architectural Destinations™</p>
           {contextualWings.map((wing) => {
             const wingDistrict = districtForContextualWing(wing.id);
             const ecologyState = wingDistrict && livingEcology ? livingEcology.districts[wingDistrict] : undefined;

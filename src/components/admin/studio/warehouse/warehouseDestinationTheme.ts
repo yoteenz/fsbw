@@ -409,7 +409,7 @@ body.wh-world-active {
   align-items: center;
 }
 
-/* ── Left architectural directory (replaces bottom zone toolbar) ── */
+/* ── Left architectural directory — departments/wings only (SceneTray™ owns scenes) ── */
 .wh-world__directory {
   position: absolute;
   left: 0;

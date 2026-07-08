@@ -1,53 +1,37 @@
 /**
- * Studio Archives™ / Warehouse Wing™ — contextual rail rooms.
+ * Studio Archives™ / Warehouse Wing™ — architectural rail destinations (wings only).
+ * Scene/workspace tabs belong in SceneTray™ at the bottom — never in contextualWings rooms.
  */
 
-import { districtForWarehouseZone } from '../studio-warehouse/camera-zones';
-import { ARCHIVES_CAMPUS_SECTIONS, WAREHOUSE_CAMPUS_DIRECTORY } from '../studio-warehouse/campus-nav';
-import { INDUSTRIAL_CAMPUS_WINGS } from '../studio-warehouse/industrial-campus';
+import { ARCHITECTURAL_RAIL_ITEMS } from '../studio-warehouse/campus-nav';
+import { WAREHOUSE_CAMPUS_DIRECTORY } from '../studio-warehouse/campus-nav';
 import type { WarehouseCameraZoneId } from '../studio-warehouse/camera-zones';
 import type { ArchitecturalContextualWing, ArchitecturalFrameStatus, ArchitecturalLocationStack } from './types';
 import type { LivingArchitectureSnapshot } from '../living-architecture/types';
 import type { LivingDistrictEcologySnapshot } from '../living-district-ecology/types';
 import type { LivingCivilizationSnapshot } from '../living-civilization/types';
+import { resolveArchitecturalDestination } from '../studio-warehouse/campus-nav';
 
 function campusEntry(zoneId: WarehouseCameraZoneId) {
   return WAREHOUSE_CAMPUS_DIRECTORY.find((z) => z.id === zoneId);
 }
 
-/** Build contextual wings for Warehouse / Industrial Design Campus */
+/** Wing / district destinations for the left Architectural Navigation Rail™ — no gallery scenes. */
 export function buildWarehouseContextualWings(arrivalComplete: boolean): ArchitecturalContextualWing[] {
-  const warehouseSection = ARCHIVES_CAMPUS_SECTIONS.find((s) => s.sectionId === 'warehouse-wing');
-  if (!warehouseSection) return [];
-
-  const industrialWings: ArchitecturalContextualWing[] = INDUSTRIAL_CAMPUS_WINGS.map((wing) => ({
-    id: wing.id,
-    label: wing.label,
-    rooms: wing.zoneIds
-      .map((zoneId) => warehouseSection.zones.find((z) => z.id === zoneId))
-      .filter(Boolean)
-      .map((entry) => ({
-        id: entry!.id,
-        label: entry!.label,
-        shortLabel: entry!.shortLabel,
-        locked: entry!.id !== 'threshold' && !arrivalComplete,
-      })),
+  const destinations = ARCHITECTURAL_RAIL_ITEMS.filter((item) => item.kind === 'zone').map((item) => ({
+    id: item.zoneId,
+    label: item.label,
+    shortLabel: item.shortLabel,
+    locked: !arrivalComplete,
   }));
 
-  const campusWings: ArchitecturalContextualWing[] = ARCHIVES_CAMPUS_SECTIONS.filter(
-    (s) => s.sectionId !== 'warehouse-wing' && s.sectionId !== 'entrance'
-  ).map((section) => ({
-    id: section.sectionId,
-    label: section.sectionLabel,
-    rooms: section.zones.map((z) => ({
-      id: z.id,
-      label: z.label,
-      shortLabel: z.shortLabel,
-      locked: z.id !== 'threshold' && !arrivalComplete,
-    })),
-  }));
-
-  return [...industrialWings, ...campusWings];
+  return [
+    {
+      id: 'studio-archives-campus',
+      label: 'Campus Destinations™',
+      rooms: destinations,
+    },
+  ];
 }
 
 export function resolveWarehouseLocationStack(
@@ -55,22 +39,15 @@ export function resolveWarehouseLocationStack(
   arrivalComplete: boolean
 ): ArchitecturalLocationStack {
   const entry = campusEntry(activeZoneId);
-  const industrialWing = INDUSTRIAL_CAMPUS_WINGS.find((w) => w.zoneIds.includes(activeZoneId));
-  const section = ARCHIVES_CAMPUS_SECTIONS.find((s) => s.zones.some((z) => z.id === activeZoneId));
-  const district = districtForWarehouseZone(activeZoneId);
-
-  let wing = section?.sectionLabel ?? 'Orientation Atrium™';
-  if (industrialWing) {
-    wing = 'Warehouse Wing™';
-  }
-
-  const room = industrialWing?.label ?? entry?.label ?? 'Grand Entrance™';
+  const destinationId = resolveArchitecturalDestination(activeZoneId);
+  const destinationEntry = campusEntry(destinationId);
+  const district = entry?.id ? campusEntry(activeZoneId) : undefined;
 
   return {
     headquarters: 'Studio Archives™',
-    wing,
-    room: arrivalComplete || activeZoneId === 'threshold' ? room : undefined,
-    scene: district ? entry?.label : undefined,
+    wing: destinationEntry?.label ?? 'Orientation Atrium™',
+    room: arrivalComplete || activeZoneId === 'threshold' ? entry?.label : undefined,
+    scene: district && activeZoneId !== destinationId ? entry?.label : undefined,
   };
 }
 

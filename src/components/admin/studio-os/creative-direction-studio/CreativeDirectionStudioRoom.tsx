@@ -27,6 +27,7 @@ import { useCdsImmersion } from '../../../../hooks/useCdsImmersion';
 import { useCreativeUniversalPipeline } from '../../../../hooks/useCreativeUniversalPipeline';
 import { useStudioAlphaCost } from '../../../../hooks/useStudioAlphaCost';
 import { StudioAlphaCostHud } from '../studio-alpha-cost/StudioAlphaCostHud';
+import { SceneTray, STUDIO_NAVIGATION_STYLES, type SceneTrayEntry } from '../../studio/navigation';
 import {
   CDS_CAMERA_ZONES,
   cdsZonePanVw,
@@ -134,6 +135,17 @@ export function CreativeDirectionStudioRoom() {
   const visibleNavZones = useMemo(
     () => CDS_CAMERA_ZONES.filter((z) => arrivalComplete || !z.requiresArrival),
     [arrivalComplete]
+  );
+
+  const sceneTrayEntries = useMemo(
+    (): SceneTrayEntry[] =>
+      visibleNavZones.map((zone) => ({
+        id: zone.id,
+        label: zone.label,
+        shortLabel: zone.shortLabel,
+        locked: zone.requiresArrival && !arrivalComplete,
+      })),
+    [arrivalComplete, visibleNavZones]
   );
 
   const goToZone = useCallback(
@@ -397,6 +409,7 @@ export function CreativeDirectionStudioRoom() {
       <style>{DEPARTMENT_SLICE_STYLES}</style>
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
       <style>{CDS_IMMERSION_STYLES}</style>
+      <style>{STUDIO_NAVIGATION_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
         className={`cds-stack${reviewMode ? ' cds-genesis--review-mode' : ''}`}
@@ -487,21 +500,13 @@ export function CreativeDirectionStudioRoom() {
           )}
         </p>
 
-        <nav className="cds-genesis__nav" aria-label="Department zones">
-          <div className="cds-genesis__nav-track">
-            {visibleNavZones.map((zone) => (
-              <button
-                key={zone.id}
-                type="button"
-                className={`cds-genesis__nav-btn${activeZoneId === zone.id ? ' is-active' : ''}`}
-                onClick={() => goToZone(zone.id)}
-                disabled={zone.requiresArrival && !arrivalComplete}
-              >
-                {zone.shortLabel}
-              </button>
-            ))}
-          </div>
-        </nav>
+        <SceneTray
+          entries={sceneTrayEntries}
+          activeId={activeZoneId}
+          onSelect={(id) => goToZone(id as CdsCameraZoneId)}
+          ariaLabel="Creative Direction Studio scenes and workspaces"
+          className="cds-genesis__nav"
+        />
       </div>
     </>
   );
