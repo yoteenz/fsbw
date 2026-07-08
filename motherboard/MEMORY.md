@@ -41089,3 +41089,23 @@ User reported **COMPONENT FAILED TO LOAD** on iPhone at `fsbw.vercel.app` — er
 - **Root cause:** `approval-pipeline-store.ts` used `readStudioOsJson(STORAGE_KEY, () => [])` — `readStudioOsJson` spreads parsed JSON into `{ ...empty(), ...parsed }`, which **destroys array shape** when stored value is a JSON array; result is plain object without `.find`.
 - **Fix:** Pipeline storage now uses wrapper `{ pipelines: CreativeApprovalPipeline[] }` (same pattern as Generation Queue `{ items: [] }`); custom `readStore()` migrates legacy raw-array persisted data.
 - **Files:** `src/studio-os-core/studio-builder/approval-pipeline-store.ts`
+
+---
+
+## 2026-07-08 — The Company Engine™ — highest platform philosophy (docs only)
+
+User defined **The Company Engine™** — *"The Purpose of Studio OS"* — highest-level philosophy sprint. **No UI · no implementation · no new engines.**
+
+- **Realization:** Studio OS is NOT website builder · app builder · AI assistant · dashboard · PM tool — those are **capabilities**. Actual product: **create · operate · enhance · scale · preserve · evolve** companies for entire business life.
+- **Core question:** *"How does this help build, operate, improve, or preserve a company?"*
+- **Company is the product:** websites · logos · apps · campaigns · packaging are **outputs** — evidence company exists
+- **Company™** = highest object (replaces Project as root) — containment: Company → HQ → Departments → Sets™ → Projects → Assets → Content → Operations → Products → Customers → Employees → Marketplace → Legacy™
+- **Company Lifecycle™:** Discover → Imagine → Blueprint™ → Golden Build™ → Certified™ → Launch → Operate → Grow → Optimize → Expand → Preserve → Legacy™
+- **Founder experience:** "I'm continuing to build my company" — not "I need to design a page"
+- **Executive AI Model™:** world-class executive team (create · review · improve · question · plan · design · optimize · forecast · protect · celebrate · remember) — Orb facilitates; founder decides
+- **Studio World™** = physical manifestation of company (subordinate to Company Engine purpose)
+- **8-doc spec:** `docs/studio-os/philosophy/` — company-engine · company-object-model · company-lifecycle · company-first-philosophy · founder-experience · executive-ai-model · studio-os-manifesto · future-vision
+- **Manifesto:** *"Studio OS is the world's first Company Engine™. The company is the product. Everything else exists to help it thrive."*
+- **Decision law for future features:** create · operate · enhance · scale · preserve · evolve a company?
+- **Prior arc (same chat):** Golden Build™ · Sets™ · Transitions™ · Studio World™ · Creative Approval Pipeline™ · Creative Review™ · mobile storage fix
+- **CORE.md:** Company Engine™ line added above Studio World™
