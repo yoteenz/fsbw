@@ -46,7 +46,8 @@ Everything rebuilds around that philosophy.
 | [creative-intelligence-engine.md](./creative-intelligence-engine.md) | Master specification |
 | [workspaces-as-scenes.md](./workspaces-as-scenes.md) | Every tab → physical scene |
 | [physical-workspaces.md](./physical-workspaces.md) | Room-by-room environment design |
-| [prompt-generation-architecture.md](./prompt-generation-architecture.md) | Founder Intent™ → FAL pipeline |
+| [prompt-generation-architecture.md](./prompt-generation-architecture.md) | Founder Intent™ → ProductionPrompt™ pipeline |
+| [../engines/prompt-composer/README.md](../engines/prompt-composer/README.md) | **Prompt Composer™** — intent → provider-neutral production brief |
 | [scene-generation-pipeline.md](./scene-generation-pipeline.md) | Scene Stack™ proving ground |
 | [asset-first-layers.md](./asset-first-layers.md) | Independent reusable layers |
 | [engine-first-roadmap.md](./engine-first-roadmap.md) | Build order · CDS benchmark |
@@ -68,9 +69,11 @@ Scene Planner™
       ↓
 Prompt Composer™
       ↓
+Prompt Composer™
+      ↓
 Provider Optimizer™
       ↓
-FAL (internal)
+Providers (FAL · OpenAI · Flux · Imagen · future)
       ↓
 Quality Inspector™
       ↓
@@ -83,7 +86,7 @@ Scene Assembly™
 Completed Workspace™
 ```
 
-Founders **never** write FAL prompts.
+Founders **never** write production prompts. [Prompt Composer™](../engines/prompt-composer/README.md) creates the brief.
 
 ---
 

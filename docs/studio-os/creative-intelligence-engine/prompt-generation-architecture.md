@@ -118,26 +118,47 @@ Plans **what** to generate — not provider prompts yet.
 
 ### 6. Prompt Composer™
 
-Assembles provider-ready prompts from:
+[Prompt Composer™](../engines/prompt-composer/README.md) — the **translation layer** between founder intent and generation engines.
+
+Assembles **twelve composition sources** into one provider-neutral **`ProductionPrompt™`**:
 
 | Source | Contributes |
 |--------|-------------|
-| Blueprint prompt stack | Design language |
-| Layer template | Scene Stack™ layer spec |
-| Asset manifest | Object descriptions |
-| Genome injection | Company-specific tone |
-| Negative constraints | Brand · quality gates |
+| Company DNA™ | Genome tone · material language · restraint |
+| Department Blueprint™ | Visual DNA™ · Blueprints™ · Systems™ |
+| Workspace Rules™ | Physical room · zone context |
+| Camera Rules™ | Angle · focal length · isolation |
+| Architectural Language™ | Envelope · proportion · anti-SaaS |
+| Lighting Rules™ | Editorial rig · key-fill · volumetric |
+| Material Library™ | Stone · brass · glass vocabulary |
+| Asset Registry References™ | Reuse refs · prompt fragments |
+| Rendering Requirements™ | Resolution · aspect · layer isolation |
+| Quality Requirements™ | Golden Build™ · blueprint compliance |
+| Negative Prompt™ | Universal anti-SaaS · brand guardrails |
+| Provider Hints™ | Capability tags — **not** final provider |
 
-Output: `ComposedPromptPackage` — internal only.
+Output: `ProductionPrompt™` — **provider-neutral** · never hardcoded to FAL.
+
+See [production-prompt-schema.md](../engines/prompt-composer/production-prompt-schema.md) · [provider-neutral-contract.md](../engines/prompt-composer/provider-neutral-contract.md).
 
 ---
 
 ### 7. Provider Optimizer™
 
-[Model Orchestrator™](../model-orchestrator.md) / [Generation Manager™](../engines/generation-manager/README.md):
+[Provider Optimizer™](../engines/prompt-composer/provider-optimizer-handoff.md) — adapts `ProductionPrompt™` → `OptimizedProviderPayload™` per provider family:
 
-- Select model route
-- Resolution · aspect · quality tier
+| Family | Status |
+|--------|--------|
+| FAL | Primary v1 |
+| OpenAI Images | Fallback |
+| Flux (BFL) | Future v1.1 |
+| Imagen | Future v1.1 |
+| Runway · Luma · ElevenLabs | Future |
+
+[Model Orchestrator™](../model-orchestrator.md) / [Generation Manager™](../engines/generation-manager/README.md) execute optimized payloads — never raw founder intent.
+
+- Select model route from hints + health + org policy
+- Resolution · aspect · quality tier mapping
 - Failover rules
 
 Founder never sees provider or model.

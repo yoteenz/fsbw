@@ -41864,3 +41864,19 @@ User sprint: build **Asset Registry™** core engine architecture. **Do NOT buil
 - **Cross-refs:** `asset-intelligence-engine/asset-registry.md` · `studio-world.md` · `CORE.md`
 - **Prior arc (same chat):** Creative Intelligence Engine™ · Creative Portfolio™ · Creative Equity™ · intelligence stack
 - **No UI this sprint**
+
+---
+
+## 2026-07-08 — Prompt Composer™ v1.0 — translation layer (core engine sprint, docs only)
+
+User sprint: build **Prompt Composer™** — underlying architecture. **Do NOT build UI.** Founder should never manually write production prompts.
+
+- **Mission:** Translate simple founder intent into world-class AI production prompts. Founder only provides intent; Studio OS creates the production brief.
+- **Example:** *"Build an editorial luxury headquarters."* → Composer assembles Company DNA · Department Blueprint · Workspace Rules · Camera Rules · Architectural Language · Lighting Rules · Material Library · Asset Registry References · Rendering Requirements · Quality Requirements · Negative Prompt · Provider Hints into one optimized brief.
+- **Provider-neutral law:** Never hardcode FAL. Output **`ProductionPrompt™`** object; **Provider Optimizer™** downstream adapts for FAL · OpenAI Images · Flux · Imagen · future providers.
+- **Pipeline position:** Scene Planner™ → **Prompt Composer™** → Provider Optimizer™ → Generation Manager™ → providers
+- **Two converge paths:** Intent Path™ (live founder) + Manufacturing Path™ (Compiler expansion) — both emit `ProductionPrompt™` per `compiler-convergence.md`
+- **8-doc spec:** `docs/studio-os/engines/prompt-composer/` — README · founder-intent-translation · composition-sources · assembly-pipeline · production-prompt-schema · provider-neutral-contract · provider-optimizer-handoff · compiler-convergence · future-roadmap
+- **Cross-refs updated:** `creative-intelligence-engine/prompt-generation-architecture.md` · `creative-intelligence-engine/README.md` · `generation-manager/README.md` · `studio-world.md` · `CORE.md`
+- **Prior arc (same chat):** Studio Asset Registry™ v1.1 · Creative Intelligence Engine™ · Creative Portfolio™ · Creative Equity™ · intelligence stack
+- **No UI · no provider SDKs this sprint**

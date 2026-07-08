@@ -61,7 +61,7 @@ Studio Asset Registry™ (permanent library)
 Department Runtime™ (live operation)
 ```
 
-**Prompt Compiler™** = Compiler Prompt Expansion Engine ([prompt-expansion-engine.md](../studio-asset-compiler/prompt-expansion-engine.md)). Generation Manager consumes its output — never re-expands.
+**Prompt Compiler™** = Compiler Prompt Expansion Engine ([prompt-expansion-engine.md](../studio-asset-compiler/prompt-expansion-engine.md)) for batch manufacturing. **Prompt Composer™** = intent-path translation ([prompt-composer/README.md](../prompt-composer/README.md)) — both output provider-neutral `ProductionPrompt™`. Generation Manager consumes **OptimizedProviderPayload™** from Provider Optimizer™ — never re-expands or re-composes.
 
 ---
 
