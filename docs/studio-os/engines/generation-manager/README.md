@@ -129,6 +129,7 @@ See [generation-states.md](./generation-states.md) for controls.
 | Production Pipeline | [`../../production/`](../../production/README.md) |
 | Creative Direction Studio™ | [`../../departments/creative-direction-studio/`](../../departments/creative-direction-studio/README.md) |
 | Validation Loop™ | [`../../engine/validation-loop/`](../../engine/validation-loop/README.md) |
+| Studio Builder™ | [`../../alpha/studio-builder/`](../../alpha/studio-builder/README.md) |
 
 ---
 

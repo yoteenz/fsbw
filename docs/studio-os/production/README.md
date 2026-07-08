@@ -83,6 +83,7 @@ Production consumes existing engines — does not redefine them:
 | [Studio Department Runtime™](../engine/department-runtime/README.md) | Stage 07 — live operation |
 | [Studio Validation Loop™](../engine/validation-loop/README.md) | Stage 08 — quality authority |
 | [Walk the Room™](../engine/walk-the-room/README.md) | Stage 08 — immersive critique |
+| [Studio Builder™](../alpha/studio-builder/README.md) | Founder production interface — orchestrates Stage 03 without manual prompts |
 
 **CDS inputs already exist:**
 

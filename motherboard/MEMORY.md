@@ -40886,3 +40886,28 @@ Summary of the **whole conversation in this chat**: prior platform engines (Gene
 - **Rule:** No new platform systems unless real production exposes genuine gap
 - **Cross-refs:** `departments/creative-direction-studio/README.md` · `motherboard/CORE.md`
 - **Conventions:** Experiential blueprint only · one commit on **`master`**
+
+---
+
+## 2026-07-08 — Studio Builder™ Alpha Sprint 002 (complete)
+
+Summary of the **whole conversation in this chat**: prior platform engines (Generator · Compiler · Registry · Generation Manager · Production Pipeline · Alpha v0.1 experiential blueprint) · **Studio Builder™ Alpha Sprint 002** — eliminate manual document usage from founder experience.
+
+- **Context:** User declared **Studio OS Alpha Sprint 002** — founders must **never** browse docs folders · locate markdown · copy/combine prompts · decide generation order. Internal architecture docs become **automatic knowledge** consumed by Studio OS. Founder interacts only with immersive production oversight.
+- **Mission:** **Studio Builder™** = canonical founder-facing production interface orchestrating Company Genome · Project Genome · Creative Direction Studio · Department Generator · Asset Compiler · Prompt Compiler · Generation Manager · Asset Registry — founders never open these directly.
+- **Deliverable:** **10-doc spec** at **`docs/studio-os/alpha/studio-builder/`**:
+  - README (mission · stack position · sprint index)
+  - founder-experience (film producer UX · one-button Generate · anti-SaaS dashboard)
+  - navigation (L0–L5 layers · routes · department → project → group → asset)
+  - production-flow (Generate trigger → ingest 9+ internal sources · genomes · manifest · prompt library · compile · display)
+  - generation-queue (visual production queue · progress bar · ETA · group states)
+  - dependency-unlocking (Locked/Ready/Complete · CDS unlock graph · Environment unlocks Architecture/Lighting/Furniture/Glass…)
+  - asset-detail-view (preview · status · history · validation report · dependencies · retry/regenerate · founder notes · creative branches)
+  - validation-workflow (upload · resolution/perspective/luxury/Genome/Room DNA checks · approve → unlock)
+  - alpha-temporary-workflow (Prompt Ready · Copy Prompt · Open Generator · Upload Image — FAL bridge)
+  - future-automation (API-ready architecture · no refactor when direct integration exists)
+- **Alpha v0.2:** Generate → compile → copy/upload → validate → unlock. **Future:** full API automation — architected now, not implemented.
+- **Design principle:** Not another dashboard — world-class production studio; founder as executive producer watching departments build.
+- **Pilot:** Creative Direction Studio™ `pkg-creative-direction-golden-v1` · Project 001 · 16 production groups · 35 modular assets.
+- **Cross-refs:** Updated `docs/studio-os/alpha/README.md` (Sprint 002 section) · `production/README.md` · `engines/generation-manager/README.md` · `motherboard/CORE.md`
+- **Conventions:** Docs only · no React · no generation API · platform frozen · one commit on **`master`**

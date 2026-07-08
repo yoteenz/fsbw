@@ -44,6 +44,30 @@ If no → redesign the experience.
 
 ---
 
+## Alpha Sprint 002 — Studio Builder™
+
+**Sprint 002** defines the **founder-facing production interface** — the layer where founders oversee department manufacturing without ever opening documentation folders, copying prompts, or deciding generation order.
+
+| Document | Contents |
+|----------|----------|
+| [studio-builder/README.md](./studio-builder/README.md) | Mission · stack position · sprint index |
+| [founder-experience.md](./studio-builder/founder-experience.md) | Producer UX · one-button Generate · anti-SaaS |
+| [navigation.md](./studio-builder/navigation.md) | L0–L5 layers · routes |
+| [production-flow.md](./studio-builder/production-flow.md) | Generate → ingest · compile · validate |
+| [generation-queue.md](./studio-builder/generation-queue.md) | Visual queue · progress · ETA |
+| [dependency-unlocking.md](./studio-builder/dependency-unlocking.md) | Locked · ready · complete · CDS unlock graph |
+| [asset-detail-view.md](./studio-builder/asset-detail-view.md) | Per-asset production page |
+| [validation-workflow.md](./studio-builder/validation-workflow.md) | Upload · validate · approve · unlock |
+| [alpha-temporary-workflow.md](./studio-builder/alpha-temporary-workflow.md) | Copy Prompt · Open Generator · Upload (v0.2) |
+| [future-automation.md](./studio-builder/future-automation.md) | API-ready path — zero manual steps |
+
+**Alpha v0.2 workflow:** Generate → Prompt Ready → Copy → FAL → Upload → Validate → Unlock  
+**Future:** Generate → API → validate → registry → unlock — architected now, not implemented.
+
+Studio Builder orchestrates frozen engines (Genomes · Compiler · Prompt Compiler · Generation Manager · Registry). Internal markdown is **consumed automatically**, never shown as files.
+
+---
+
 ## Alpha Document Index
 
 | Document | For Whom | Contents |
@@ -105,6 +129,7 @@ Alpha consumes existing specs — does not extend them:
 | Department Definition | [`../departments/creative-direction-studio/`](../departments/creative-direction-studio/) |
 | Production pipeline | [`../production/`](../production/) |
 | Generation Manager | [`../engines/generation-manager/`](../engines/generation-manager/) |
+| Studio Builder™ (founder production UI) | [`studio-builder/`](./studio-builder/README.md) |
 
 New platform systems only if **real production** exposes a genuine gap.
 
