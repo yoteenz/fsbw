@@ -41963,3 +41963,20 @@ User left Architecture Mode: **implement executable software**, no new markdown 
 - **Capabilities proven:** register · search · retrieve · related assets · reuse recommendations · generation cost/provider tracking · usage tracking · version history · similarity hooks (traits + embedding_ref placeholder).
 - **Legacy unchanged:** in-memory `src/studio-os-core/asset-registry/` + `/admin/studio/asset-registry` UI — new layer is additive; wire UI in a future sprint.
 - **Prior arc (same chat):** blueprint/docs sprints for Asset Registry v1.1, Prompt Composer, Scene Planner, Generation Pipeline, Story Table Hello World, Company Genome v2.0 — then implementation sprint pivot.
+
+---
+
+## 2026-07-08 — Creative Intelligence Engine™ v1 — reasoning layer implementation
+
+User implementation sprint: build **Creative Intelligence Engine™** as Studio OS **reasoning layer** — thinks before generation, does NOT generate assets. No new docs.
+
+- **Kernel position:** Founder Intent™ → **Creative Intelligence Engine™** → Company Genome™ → Prompt Composer™ → Scene Planner™ → Asset Registry™ → Provider Optimizer™ → Generation Manager™ → Approval Queue™ → Scene Assembly™ → Workspace Runtime™. Exported `CREATIVE_INTELLIGENCE_KERNEL_STAGES` from `src/studio-os-core/creative-intelligence-engine/kernel.ts`.
+- **Decision Object:** structured output per request — strategy · confidence · cost intelligence · reusable/missing assets · provider/model · generation order · approval gates · risk · quality tier · genome alignment · founder_messages · reasoning_summary · should_generate.
+- **Server lib:** `api/_lib/creativeIntelligenceEngine/` — `types.ts`, `providers.ts` (capability registry, not hardcoded FAL), `genome-evaluator.ts`, `reuse-evaluator.ts` (queries Asset Registry™ + golden-build/marketplace/department/workspace heuristics), `quality-intelligence.ts`, `cost-intelligence.ts`, `decision-engine.ts`, `learning-loop.ts`.
+- **Supabase:** `supabase/migrations/20260708140000_studio_creative_intelligence.sql` — `studio_creative_intelligence_decisions`, `studio_creative_intelligence_learning_signals`; applied via MCP.
+- **API:** `POST/GET /api/admin/studio-creative-intelligence` — `action=evaluate` (Decision Object + persist), `action=learning` (approve/reject/reuse/etc. signals).
+- **Client:** `src/services/studio/creativeIntelligence/api.ts` — `evaluateCreativeIntelligence`, `getCreativeIntelligenceDecision`, `recordCreativeLearningSignal`, `evaluateForKernelGate`.
+- **Kernel wiring:** `src/studio-os-core/studio-builder/cie-gate.ts` — `gateStudioBuilderGeneration()` injects Company Genome snapshot + calls CIE before generation. **`api/admin/studio-builder-generate.ts`** now runs CIE by default — blocks token spend on `reuse_existing` (returns `CIE_REUSE_RECOMMENDED`); supports `evaluateOnly`, `cieDecisionId`, `forceGenerate`, `skipCie`.
+- **Smoke test:** `scripts/studio-creative-intelligence-smoke.mjs` — decision persist/retrieve + learning signal; passed.
+- **Philosophy implemented:** reuse-first · cost intelligence · quality tiers · provider selection from capabilities · founder Creative Director voice in `founder_messages`.
+- **Prior arc (same chat):** Asset Registry™ v1 implementation sprint immediately before this prompt.

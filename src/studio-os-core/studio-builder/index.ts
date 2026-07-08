@@ -7,6 +7,7 @@ export * from './prompt-compiler';
 export * from './approval-pipeline-store';
 export * from './registry-store';
 export * from './genome-context';
+export * from './cie-gate';
 
 /** @deprecated Generation Queue replaced by Creative Approval Pipeline™ */
 export * from './queue-store';

@@ -143,3 +143,16 @@ export {
   normalizeProviderStatus,
 } from './providers/adapters';
 export type { AiProductionProviderAdapter, AssetFactoryProviderAdapter } from './providers/adapters';
+
+export {
+  CREATIVE_INTELLIGENCE_KERNEL_STAGES,
+  runCreativeIntelligenceGate,
+  shouldProceedToGeneration,
+  formatDecisionForFounder,
+} from './creative-intelligence-engine';
+export type {
+  CreativeIntelligenceDecision,
+  FounderIntentInput,
+  CreativeIntelligenceGateResult,
+  KernelStage,
+} from './creative-intelligence-engine';
