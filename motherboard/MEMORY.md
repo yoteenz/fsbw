@@ -41055,3 +41055,27 @@ User replaced **Generation Queue™** with **Creative Approval Pipeline™** —
 - **Route:** `/admin/studio/department/creative-direction`
 - **Prior arc:** Golden Build™ · mobile shell · Sets™ · Transitions™ · Studio World™ docs · now production workflow live
 - **CORE.md:** Golden Build line updated with Creative Approval Pipeline™
+
+---
+
+## 2026-07-08 — Creative Review™ — The AI Braintrust (pipeline enhancement)
+
+User enhanced **Creative Approval Pipeline™** with mandatory **Creative Review™** gate — *"The AI Braintrust"* — between generation and founder approval. **No new engine · pipeline not replaced** — enhanced in place.
+
+- **New flow:** Generate → **Creative Review™ (Braintrust)** → **Founder Review™** → Approve™ / Regenerate™ / Branch™ / Trust My Instinct™ → Unlock Next Stage
+- **AI Braintrust™:** stage-specific specialists auto-assembled (e.g. Environment Shell™ → Experience Architect · Interior Designer · Lighting Director · Brand Concierge · Technical Director)
+- **Orb™:** Executive Producer — single voice; intro after generation ("Braintrust has completed its review… How would you like to proceed?"); specialists speak only when asked in Deep Dive / follow-up
+- **Founder Review paths:** Summary Review™ (30–60s briefing) · Deep Dive™ (full specialist scores) · Self Review™ (walk environment) · Trust My Instinct™ (report saved quietly — does NOT bypass Braintrust)
+- **Follow-up Questions™:** natural language to Orb ("What concerns you most?" "Compare Version A and B")
+- **Director's Notes™:** permanent notes → `directors-notes-store.ts` + `ProjectGenomeRecord.creativeDirectionNotes` → future generations + Braintrust
+- **Consensus™:** unified Orb recommendation after discussion
+- **World Integration™:** Review Mode lighting in atelier · Orb projects review speech · not a popup
+- **Implementation:**
+  - `creative-review.ts` — rule-based alpha Braintrust (no new API)
+  - `directors-notes-store.ts`
+  - Pipeline statuses: `braintrust-review` · `founder-review` (replaces `review`)
+  - `CreativeReviewPanel.tsx` integrated into pipeline console
+  - `useCreativeApprovalPipeline` — braintrust after FAL · path selection · follow-up · notes
+- **Route:** `/admin/studio/department/creative-direction`
+- **Prior arc:** Creative Approval Pipeline™ · Studio World™ · Sets™ · Transitions™ · Golden Build™
+- **CORE.md:** Creative Review™ added to Golden Build / pipeline line

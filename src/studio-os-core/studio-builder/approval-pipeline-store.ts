@@ -1,4 +1,4 @@
-import { readStudioOsJson, writeStudioOsJson } from '../../utils/studioOsBrowserStorage';
+import { readStudioOsJson, readStudioOsStorageValue, removeStudioOsStorageValue, writeStudioOsJson } from '../../utils/studioOsBrowserStorage';
 import { requireDepartmentPackage } from '../department-package';
 import {
   CREATIVE_APPROVAL_PIPELINE_STAGES,
@@ -17,20 +17,48 @@ import type {
 const STORAGE_KEY = 'studioOsCreativeApprovalPipeline_v1';
 const LEGACY_KEY = 'studioOsGenerationQueue_v1';
 
+type PipelineStore = { pipelines: CreativeApprovalPipeline[] };
+
+const EMPTY_STORE: PipelineStore = { pipelines: [] };
+
+function readStore(): PipelineStore {
+  const raw = readStudioOsStorageValue(STORAGE_KEY);
+  if (!raw) return { ...EMPTY_STORE };
+
+  try {
+    const parsed: unknown = JSON.parse(raw);
+    // Legacy writes persisted a raw JSON array — readStudioOsJson cannot load arrays.
+    if (Array.isArray(parsed)) {
+      return { pipelines: parsed as CreativeApprovalPipeline[] };
+    }
+    if (parsed && typeof parsed === 'object' && Array.isArray((parsed as PipelineStore).pipelines)) {
+      return { ...EMPTY_STORE, ...(parsed as PipelineStore) };
+    }
+  } catch {
+    removeStudioOsStorageValue(STORAGE_KEY);
+  }
+
+  return { ...EMPTY_STORE };
+}
+
+function writeStore(store: PipelineStore): void {
+  writeStudioOsJson(STORAGE_KEY, store);
+}
+
+function readAll(): CreativeApprovalPipeline[] {
+  return readStore().pipelines;
+}
+
+function writeAll(pipelines: CreativeApprovalPipeline[]): void {
+  writeStore({ pipelines });
+}
+
 function uid(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
 function branchLabel(index: number): string {
   return `Version ${String.fromCharCode(65 + index)}`;
-}
-
-function readAll(): CreativeApprovalPipeline[] {
-  return readStudioOsJson(STORAGE_KEY, () => [] as CreativeApprovalPipeline[]);
-}
-
-function writeAll(pipelines: CreativeApprovalPipeline[]): void {
-  writeStudioOsJson(STORAGE_KEY, pipelines);
 }
 
 function createStageRecords(departmentId: string): PipelineStageRecord[] {
