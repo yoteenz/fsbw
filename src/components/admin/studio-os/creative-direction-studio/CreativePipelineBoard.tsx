@@ -9,6 +9,8 @@ type PipelineApi = ReturnType<typeof useCreativeApprovalPipeline>;
 type Props = {
   pipeline: PipelineApi;
   setDisplayName: string;
+  conceptApproved?: boolean;
+  universalPhaseLabel?: string;
   onReviewModeChange?: (active: boolean) => void;
 };
 
@@ -24,7 +26,13 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 /** Wall-mounted Creative Pipeline™ — same logic as panel, physical board presentation. */
-export function CreativePipelineBoard({ pipeline, setDisplayName, onReviewModeChange }: Props) {
+export function CreativePipelineBoard({
+  pipeline,
+  setDisplayName,
+  conceptApproved = false,
+  universalPhaseLabel,
+  onReviewModeChange,
+}: Props) {
   const [directorFeedback, setDirectorFeedback] = useState('');
   const [activeStageId, setActiveStageId] = useState<PipelineStageId | null>(null);
   const [impact, setImpact] = useState<RegenerationImpact | null>(null);
@@ -53,7 +61,7 @@ export function CreativePipelineBoard({ pipeline, setDisplayName, onReviewModeCh
   }, [onReviewModeChange, reviewMode]);
 
   const isGenerating = focusStage?.status === 'generating';
-  const canStart = focusStage?.status === 'ready' || focusStage?.status === 'failed';
+  const canStart = conceptApproved && (focusStage?.status === 'ready' || focusStage?.status === 'failed');
   const inCreativeReview =
     focusStage?.status === 'braintrust-review' || focusStage?.status === 'founder-review';
   const isGoldenReview = focusStage?.stageId === 'golden-build-review';
@@ -109,7 +117,15 @@ export function CreativePipelineBoard({ pipeline, setDisplayName, onReviewModeCh
       <p className="gb-immersive__pipeline-sub">
         {setDisplayName} · {pipeline.progress.completed}/{pipeline.progress.total} stages ·{' '}
         {pipeline.progress.percent}%
+        {universalPhaseLabel ? ` · ${universalPhaseLabel}` : ''}
       </p>
+
+      {!conceptApproved ? (
+        <div className="gb-immersive__pipeline-notice cds-pipeline-vision-gate">
+          Vision first — approve a complete concept on Story Table™ before Scene Deconstruction™ and
+          asset generation unlock.
+        </div>
+      ) : null}
 
       {pipeline.pendingReviews.length > 0 ? (
         <div className="gb-immersive__pipeline-notice">

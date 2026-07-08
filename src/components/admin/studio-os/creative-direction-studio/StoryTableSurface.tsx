@@ -1,13 +1,17 @@
 import type { ProjectGenomeRecord } from '../../../../studio-os-core/project-genome/store';
 import type { useCreativeApprovalPipeline } from '../../../../hooks/useCreativeApprovalPipeline';
+import type { useCreativeUniversalPipeline } from '../../../../hooks/useCreativeUniversalPipeline';
 import type { SceneStackPipelineProgress } from '../../../../hooks/useSceneStack';
 import type { MoodWallInspiration } from '../../../../studio-os-core/studio-objects/living-mood-wall';
+import { StoryTableParallelFutures } from './StoryTableParallelFutures';
 
 type PipelineApi = ReturnType<typeof useCreativeApprovalPipeline>;
+type UniversalApi = ReturnType<typeof useCreativeUniversalPipeline>;
 
 type Props = {
   project: ProjectGenomeRecord;
   pipeline: PipelineApi;
+  universal: UniversalApi;
   pipelineProgress: SceneStackPipelineProgress;
   stackBusy: boolean;
   moodPins: MoodWallInspiration[];
@@ -30,6 +34,7 @@ const STAGE_SHORT: Record<string, string> = {
 export function StoryTableSurface({
   project,
   pipeline,
+  universal,
   pipelineProgress,
   stackBusy,
   moodPins,
@@ -49,7 +54,7 @@ export function StoryTableSurface({
       <div className="cds-story-table__surface-grid" aria-hidden />
 
       <article className="cds-story-table__card cds-story-table__card--branch">
-        <p className="cds-story-table__card-kicker">Active direction</p>
+        <p className="cds-story-table__card-kicker">{universal.phaseLabel}</p>
         <p className="cds-story-table__card-title">{project.activeBranchName ?? 'Main Direction'}</p>
         <p className="cds-story-table__card-sub">{project.name}</p>
         <div className="cds-story-table__tone-row">
@@ -59,9 +64,14 @@ export function StoryTableSurface({
             </span>
           ))}
         </div>
+        <p className="cds-story-table__card-status" style={{ marginTop: 4 }}>
+          Vision pipeline {universal.phaseProgressPct}%
+        </p>
       </article>
 
-      {focusStage ? (
+      <StoryTableParallelFutures universal={universal} />
+
+      {focusStage && universal.conceptApproved ? (
         <article className="cds-story-table__card cds-story-table__card--approval">
           <p className="cds-story-table__card-kicker">On the table</p>
           <p className="cds-story-table__card-title">

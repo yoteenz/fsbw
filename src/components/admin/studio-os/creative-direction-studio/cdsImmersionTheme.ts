@@ -385,7 +385,7 @@ export const CDS_IMMERSION_STYLES = `
 .cds-story-table__card--approval { grid-column: 2; grid-row: 1; }
 .cds-story-table__card--hologram {
   grid-column: 1 / -1;
-  grid-row: 2;
+  grid-row: 3;
   border-color: rgba(201, 169, 98, 0.28);
   background: linear-gradient(145deg, rgba(201, 169, 98, 0.08) 0%, rgba(12, 10, 8, 0.5) 100%);
   animation: cds-holo-card 3s ease-in-out infinite;
@@ -527,6 +527,106 @@ export const CDS_IMMERSION_STYLES = `
   background: rgba(50, 32, 20, 0.8);
   transform: translateZ(30px);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.45);
+}
+
+/* Parallel Futures™ on Story Table™ */
+.cds-story-table__pf {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  padding: 6px 8px;
+  background: rgba(8, 7, 6, 0.55);
+  border: 1px solid rgba(120, 200, 255, 0.2);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+  transform: translateZ(16px);
+  max-height: 42%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cds-story-table__pf--approved {
+  border-color: rgba(201, 169, 98, 0.35);
+}
+.cds-story-table__pf-kicker {
+  font-size: 4px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  margin: 0;
+}
+.cds-story-table__pf-title {
+  font-size: 6px;
+  margin: 2px 0 0;
+  color: #c9a962;
+}
+.cds-story-table__pf-sub,
+.cds-story-table__pf-meta {
+  font-size: 4px;
+  opacity: 0.75;
+  margin: 2px 0 0;
+}
+.cds-story-table__pf-scroll {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+.cds-story-table__pf-card {
+  flex: 0 0 auto;
+  min-width: 72px;
+  padding: 4px 6px;
+  text-align: left;
+  border: 1px solid rgba(80, 200, 255, 0.22);
+  background: rgba(0, 0, 0, 0.35);
+  color: #e8e0d4;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 4px;
+  line-height: 1.35;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cds-story-table__pf-card.is-active {
+  border-color: rgba(201, 169, 98, 0.55);
+  background: rgba(201, 169, 98, 0.1);
+}
+.cds-story-table__pf-card.is-merged {
+  border-color: rgba(120, 200, 255, 0.45);
+}
+.cds-story-table__pf-metrics {
+  opacity: 0.6;
+  font-size: 3px;
+}
+.cds-story-table__pf-merge {
+  font-size: 3px;
+  opacity: 0.7;
+  line-height: 1.4;
+  max-height: 28px;
+  overflow-y: auto;
+}
+.cds-story-table__pf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.cds-story-table__pf-btn {
+  font-size: 3px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 6px;
+  border: 1px solid rgba(201, 169, 98, 0.3);
+  background: rgba(0, 0, 0, 0.4);
+  color: #c9a962;
+  cursor: pointer;
+}
+.cds-story-table__pf-btn.is-primary {
+  border-color: rgba(201, 169, 98, 0.55);
+  color: #f0e6d0;
+}
+.cds-pipeline-vision-gate {
+  border-color: rgba(120, 200, 255, 0.35) !important;
+  color: rgba(200, 220, 255, 0.9) !important;
 }
 
 /* Diegetic wall/shelf surfaces (other zones — not floating web cards) */

@@ -16,6 +16,7 @@ import {
   unlockNextStage,
   updatePipelineStage,
 } from '../studio-os-core/studio-builder/approval-pipeline-store';
+import { isConceptApprovedForProduction } from '../studio-os-core/creative-direction-studio';
 import { runBraintrustReview, answerBraintrustFollowUp } from '../studio-os-core/studio-builder/creative-review';
 import { addDirectorsNote } from '../studio-os-core/studio-builder/directors-notes-store';
 import { compileDepartmentGenerationPrompt } from '../studio-os-core/studio-builder/prompt-compiler';
@@ -271,6 +272,8 @@ export function useCreativeApprovalPipeline(
 
   const startStage = useCallback(
     async (stageId: PipelineStageId) => {
+      if (!isConceptApprovedForProduction(departmentId, projectId)) return;
+
       const stage = getPipelineStageRecord(departmentId, projectId, stageId);
       if (!stage || (stage.status !== 'ready' && stage.status !== 'failed')) return;
 

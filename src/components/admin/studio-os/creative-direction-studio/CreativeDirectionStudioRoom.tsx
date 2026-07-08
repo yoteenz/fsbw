@@ -23,6 +23,7 @@ import { StudioOrbHost } from './StudioOrbHost';
 import { CDS_GENESIS_INTERACTION_STYLES } from './cdsInteractionLayerTheme';
 import { CDS_IMMERSION_STYLES } from './cdsImmersionTheme';
 import { useCdsImmersion } from '../../../../hooks/useCdsImmersion';
+import { useCreativeUniversalPipeline } from '../../../../hooks/useCreativeUniversalPipeline';
 import { useStudioAlphaCost } from '../../../../hooks/useStudioAlphaCost';
 import { StudioAlphaCostHud } from '../studio-alpha-cost/StudioAlphaCostHud';
 import {
@@ -49,6 +50,7 @@ export function CreativeDirectionStudioRoom() {
   const slice = useDepartmentVerticalSlice(DEPARTMENT_ID);
   const stack = useSceneStack(DEPARTMENT_ID, slice.project.projectId, workspaceId);
   const pipeline = useCreativeApprovalPipeline(DEPARTMENT_ID, slice.project.projectId, workspaceId);
+  const universal = useCreativeUniversalPipeline(DEPARTMENT_ID, slice.project.projectId);
   const moodWall = useLivingMoodWall(DEPARTMENT_ID, slice.project.projectId);
   const founderNotes = useStudioFounderNotes(DEPARTMENT_ID, slice.project.projectId);
 
@@ -71,10 +73,11 @@ export function CreativeDirectionStudioRoom() {
     () => resolveDepartmentOrbGreeting(slice.pkg, slice.project),
     [slice.pkg, slice.project]
   );
-  const orbInsight = useMemo(
-    () => resolveDepartmentOrbAmbientInsight(slice.pkg, activeZoneId),
-    [slice.pkg, activeZoneId]
-  );
+  const orbInsight = useMemo(() => {
+    const creativeLine = universal.orbPrimaryLine;
+    if (creativeLine && activeZoneId === 'story-table') return creativeLine;
+    return resolveDepartmentOrbAmbientInsight(slice.pkg, activeZoneId) ?? '';
+  }, [slice.pkg, activeZoneId, universal.orbPrimaryLine]);
 
   const orbReviewSpeech = useMemo(() => {
     const stage = pipeline.activeReviewStage;
@@ -198,6 +201,7 @@ export function CreativeDirectionStudioRoom() {
               <StoryTableSurface
                 project={slice.project}
                 pipeline={pipeline}
+                universal={universal}
                 pipelineProgress={activePipeline}
                 stackBusy={stackButtonBusy}
                 moodPins={moodWall.wall.inspirations}
@@ -317,6 +321,8 @@ export function CreativeDirectionStudioRoom() {
               <CreativePipelineBoard
                 pipeline={pipeline}
                 setDisplayName={slice.pkg.definition.displayName}
+                conceptApproved={universal.conceptApproved}
+                universalPhaseLabel={universal.phaseLabel}
                 onReviewModeChange={setReviewMode}
               />
             </div>

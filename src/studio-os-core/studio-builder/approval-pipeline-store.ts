@@ -65,7 +65,7 @@ function createStageRecords(departmentId: string): PipelineStageRecord[] {
   const pkg = requireDepartmentPackage(departmentId);
   const now = new Date().toISOString();
 
-  return CREATIVE_APPROVAL_PIPELINE_STAGES.map((def, index) => {
+  return CREATIVE_APPROVAL_PIPELINE_STAGES.map((def) => {
     const group = pkg.productionGroups.groups[def.productionGroupId];
     const branchId = uid('branch');
     return {
@@ -73,7 +73,7 @@ function createStageRecords(departmentId: string): PipelineStageRecord[] {
       productionGroupId: def.productionGroupId,
       displayName: def.displayName,
       order: def.order,
-      status: index === 0 ? 'ready' : 'locked',
+      status: 'locked' as PipelineStageStatus,
       heroAssetId: group?.heroAssetId ?? 'env-shell-cds',
       activeBranchId: branchId,
       branches: [{ id: branchId, label: 'Version A', createdAt: now }],
@@ -203,6 +203,21 @@ export function unlockNextStage(
     next.id,
     { status: 'ready' },
     { stageId: next.id, action: 'unlock', detail: `Unlocked after ${approvedStageId} approval` }
+  );
+}
+
+export function unlockProductionPipelineAfterConceptApproval(
+  departmentId: string,
+  projectId: string
+): PipelineStageRecord | null {
+  const first = CREATIVE_APPROVAL_PIPELINE_STAGES[0];
+  if (!first) return null;
+  return updatePipelineStage(
+    departmentId,
+    projectId,
+    first.id,
+    { status: 'ready' },
+    { stageId: first.id, action: 'unlock', detail: 'Concept Approval™ — production pipeline unlocked' }
   );
 }
 
