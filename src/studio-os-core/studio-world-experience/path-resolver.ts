@@ -8,7 +8,7 @@ const PATH_TO_DEPARTMENT: Array<{ pattern: RegExp; departmentId: string }> = [
   { pattern: /creative-direction|story-table/i, departmentId: 'creative-direction' },
   { pattern: /studio-archives|studio-warehouse|warehouse/i, departmentId: 'studio-warehouse' },
   { pattern: /world-atlas/i, departmentId: 'world-atlas' },
-  { pattern: /world-knowledge|knowledge-engine|knowledge-library/i, departmentId: 'world-knowledge-engine' },
+  { pattern: /world-knowledge|knowledge-engine|knowledge-library|knowledge-core/i, departmentId: 'knowledge-core' },
   { pattern: /marketplace/i, departmentId: 'marketplace' },
   { pattern: /museum/i, departmentId: 'museum-wing' },
   { pattern: /overview|command-center|executive/i, departmentId: 'studio-command-center' },

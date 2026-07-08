@@ -1,14 +1,13 @@
+import { getAllKnowledgeEntries } from '../../studio-world-knowledge-core/engine';
+import { KNOWLEDGE_CORE_DOMAINS, KNOWLEDGE_CORE_STATUSES } from '../../studio-world-knowledge-core/types';
 import {
+  PROMPT_STANDARDS,
   ARCHITECTS_MEMORY_PRINCIPLES,
   CONVERSATION_ARCHIVE_RECORDS,
-  KNOWLEDGE_CORE_DOMAINS,
-  KNOWLEDGE_CORE_ENTRIES,
-  KNOWLEDGE_CORE_STATUSES,
   KNOWLEDGE_EXTRACTION_REPORTS,
-  PROMPT_STANDARDS,
   canInfluenceFutureArchitecture,
-  type KnowledgeCoreStatus,
-} from '../../studio-world-knowledge-core';
+} from '../../studio-world-knowledge-core/entries';
+import type { KnowledgeCoreStatus } from '../../studio-world-knowledge-core/types';
 import { worldEdgeId, worldNodeId } from '../id';
 import { lifecyclePlane } from '../lifecycle';
 import type { WorldEdge, WorldLifecycleStage, WorldNode } from '../types';
@@ -78,7 +77,7 @@ export function ingestKnowledgeCoreNodes(): { nodes: WorldNode[]; edges: WorldEd
     metadata: {
       statusCount: KNOWLEDGE_CORE_STATUSES.length,
       domainCount: KNOWLEDGE_CORE_DOMAINS.length,
-      entryCount: KNOWLEDGE_CORE_ENTRIES.length,
+      entryCount: getAllKnowledgeEntries().length,
       promptStandardCount: PROMPT_STANDARDS.length,
     },
   });
@@ -194,7 +193,7 @@ export function ingestKnowledgeCoreNodes(): { nodes: WorldNode[]; edges: WorldEd
     });
   }
 
-  for (const entry of KNOWLEDGE_CORE_ENTRIES) {
+  for (const entry of getAllKnowledgeEntries()) {
     const lifecycle = lifecycleForStatus(entry.status);
     const id = worldNodeId('knowledge-object', `entry-${entry.id}`);
     const domainId = worldNodeId('knowledge-object', `domain-${slugify(entry.domain)}`);

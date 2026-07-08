@@ -117,6 +117,7 @@ export const STUDIO_WORLD_ROUTE_REGISTRY: StudioWorldRouteMapping[] = [
   m('profession-brain', 'Profession Brain Library™', 'library', 'headquarters', 'hq-intelligence-headquarters', 'headquarters/intelligence/profession-brain', 'profession-brain', 'standard', 'standard-room'),
   m('memory-engine', 'Memory Engine Vault™', 'vault', 'headquarters', 'hq-intelligence-headquarters', 'headquarters/intelligence/memory', 'memory-engine', 'standard', 'standard-room'),
   m('knowledge-hub', 'Knowledge Library™', 'library', 'headquarters', 'hq-intelligence-headquarters', 'headquarters/intelligence/knowledge-hub', 'knowledge-hub', 'standard', 'standard-room', 'Knowledge Hub'),
+  m('knowledge-core', 'Knowledge Core Observatory™', 'library', 'studio-archives', 'archives-knowledge-core', 'archives/knowledge-core', 'knowledge-core', 'immersive', 'immersive-partial', 'Knowledge Core'),
   m('studio-institute', 'Studio Institute Academy™', 'building', 'headquarters', 'hq-intelligence-headquarters', 'headquarters/intelligence/institute', 'studio-institute', 'standard', 'standard-room'),
   m('production', 'Production Wall™', 'room', 'headquarters', 'hq-operations-headquarters', 'headquarters/operations/production-wall', 'production', 'standard', 'standard-room', 'Pipeline'),
   m('ai-production-engine', 'AI Production Engine™', 'laboratory', 'headquarters', 'hq-operations-headquarters', 'headquarters/operations/ai-production', 'ai-production-engine', 'standard', 'standard-room'),

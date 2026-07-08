@@ -43,6 +43,37 @@ export const KNOWLEDGE_CORE_DOMAINS = [
 
 export type KnowledgeCoreDomain = (typeof KNOWLEDGE_CORE_DOMAINS)[number];
 
+export type KnowledgeImplementationStatus =
+  | 'Not Started'
+  | 'Specified'
+  | 'Implemented'
+  | 'Live'
+  | 'Historical';
+
+export type KnowledgeEntryVersion = {
+  version: string;
+  createdAt: string;
+  summary: string;
+  status: KnowledgeCoreStatus;
+  supersededBy?: string;
+};
+
+export type KnowledgeRelationshipType =
+  | 'governed-by'
+  | 'references'
+  | 'integrates-with'
+  | 'located-in'
+  | 'supersedes'
+  | 'owns'
+  | 'evidence-for';
+
+export type KnowledgeRelationship = {
+  type: KnowledgeRelationshipType;
+  targetId: string;
+  targetLabel: string;
+  label?: string;
+};
+
 export type KnowledgeCoreEntry = {
   id: string;
   title: string;
@@ -57,9 +88,60 @@ export type KnowledgeCoreEntry = {
   constitutionArticles: string[];
   adrReferences: string[];
   worldBibleReferences: string[];
-  implementationStatus: 'Not Started' | 'Specified' | 'Implemented' | 'Live' | 'Historical';
+  implementationStatus: KnowledgeImplementationStatus;
   supersededBy?: string;
   tags: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  versionHistory?: KnowledgeEntryVersion[];
+  relationships?: KnowledgeRelationship[];
+};
+
+export type KnowledgeCoreSearchHit = {
+  entry: KnowledgeCoreEntry;
+  score: number;
+  matchReason: string;
+  domainLabel: string;
+  canInfluenceArchitecture: boolean;
+};
+
+export type PromptMemoryIngestInput = {
+  title: string;
+  summary: string;
+  reasoning: string;
+  finalPrompt: string;
+  domain?: KnowledgeCoreDomain;
+  status?: KnowledgeCoreStatus;
+  architectureAdded?: string[];
+  relatedSystems?: string[];
+  constitutionArticles?: string[];
+  adrReferences?: string[];
+  worldBibleReferences?: string[];
+  implementationStatus?: KnowledgeImplementationStatus;
+  tags?: string[];
+};
+
+export type IngestedPromptMemory = {
+  entry: KnowledgeCoreEntry;
+  ingestedAt: string;
+  source: 'prompt-memory-pipeline';
+};
+
+export type OrganizationKnowledgeCoreProfile = {
+  organizationId: string;
+  syncedAt: string;
+  entryCount: number;
+  canonCount: number;
+  domainCount: number;
+  promptStandardCount: number;
+  ingestedPromptCount: number;
+  archivistLines: string[];
+};
+
+export type KnowledgeCoreStore = {
+  version: string;
+  profiles: OrganizationKnowledgeCoreProfile[];
+  ingestedEntries: KnowledgeCoreEntry[];
 };
 
 export type PromptStandard = {

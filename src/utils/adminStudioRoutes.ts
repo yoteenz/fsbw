@@ -931,6 +931,10 @@ export function adminStudioKnowledgeRegistryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/knowledge-registry`;
 }
 
+export function adminStudioKnowledgeCorePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/knowledge-core`;
+}
+
 /** @deprecated Use adminStudioKnowledgeRegistryPath */
 export function adminStudioDocumentationRegistryPath(): string {
   return adminStudioKnowledgeRegistryPath();

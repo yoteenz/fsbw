@@ -175,3 +175,4 @@ export * from './experience-intelligence-engine';
 export * from './studio-world-atlas';
 export * from './orb-recommendations';
 export * from './world-graph';
+export * from './studio-world-knowledge-core';

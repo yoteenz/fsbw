@@ -43032,3 +43032,48 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 **Conventions:**
 - Future Studio production automation should keep model execution gates explicit and visible to the founder: architecture completeness, dependency resolution, and founder approval/auto-approval are separate signals.
 - Production handoffs should generate complete packages instead of isolated prompts, including Knowledge Core and ADR requirements at the same moment as Composer handoff generation.
+
+---
+
+## 2026-07-08 — Knowledge Core™ full implementation (engine + Explorer UI)
+
+**Context:** User approved Knowledge Core architecture (ARTICLE-K22) in prior chat and requested follow-up **implementation** — Studio World's canonical intelligence repository, not another documentation section. Goals: Knowledge Core engine, domain registration, Knowledge Entry schema, Canon/Draft/Experimental/Historical states, semantic search, version history, relationship graph hooks, World Graph sync, Prompt Memory ingestion pipeline, Knowledge Explorer UI with Progressive Presence™, Experience Engine rules, Orb Projection language; do not expose engineering complexity to founders.
+
+**Topics covered (this chat):**
+- Prior arc (same initiative): ARTICLE-K22 accepted · ARTICLE-K23 Memory System™ · constitutional laws · scaffold types/entries · World Graph ingestion · governance hierarchy · Three Eras™ · Production Orchestrator sprint on remote.
+- **This follow-up:** Full operational implementation of Knowledge Core as institutional memory engine + founder-facing Explorer, merged atop K23 memory-system work on `master`.
+
+**Decisions / outcomes:**
+- Knowledge Core is now an **operational engine**, not just types + seed entries:
+  - **Domain registration** — `domains.ts` registers all 21 permanent domains with Orb-friendly labels and primary questions.
+  - **Knowledge Entry schema** — extended `types.ts` + `schema.ts` (create, revise, supersede, normalize).
+  - **Canonical states** — Canon / Approved / Draft / Experimental / Deprecated / Historical / Archived with `canInfluenceFutureArchitecture()` (Canon only).
+  - **Semantic search** — `semantic-search.ts` with civilization clusters (Orb, Atlas, Progressive Presence, Constitution, Mission Control, memory, ADR) + `queryKnowledgeCore()`.
+  - **Version history** — `version-history.ts` preserves v1→v2 chains; never overwrites history.
+  - **Relationship graph hooks** — `relationship-graph.ts` builds governed-by / integrates-with / located-in / supersedes edges per entry.
+  - **World Graph sync** — `world-graph-sync.ts` runtime payload; `knowledge-core-ingest.ts` ingests all entries via `getAllKnowledgeEntries()` plus K23 memory-system nodes.
+  - **Prompt Memory pipeline** — `prompt-memory-ingest.ts` converts significant prompts → Knowledge Entries in localStorage store.
+  - **Store + profile** — `store.ts`, `engine-profile-builder.ts`, `bootstrap.ts`, `stats.ts`, `dock-advisor.ts` (Orb Archivist™ language).
+- **Knowledge Explorer UI** — immersive **Knowledge Core Observatory™**:
+  - Route: **`/admin/studio/knowledge-core`** (Studio Archives™ · `archives/knowledge-core` in route registry).
+  - `KnowledgeCoreRoom.tsx` — domain shelves, memory monument, semantic search dock, entry detail with version lineage + connected memory.
+  - Progressive Presence™ elements registered: `knowledge-core-observatory`, `knowledge-domain-tray`, `knowledge-entry-detail`, `knowledge-status-tray`, `knowledge-archivist-ticker`.
+  - Experience profile `knowledge-core` department; path resolver updated.
+  - `useKnowledgeCoreState.ts` hook; exported from `studio-os-core/index.ts`; module registered in `core/modules.ts`.
+- Founder-facing language only — Orb Archivist ticker, domain projection labels, no engineering jargon in UI.
+
+**Changes:**
+- Engine: `src/studio-os-core/studio-world-knowledge-core/` — constants, domains, schema, semantic-search, version-history, relationship-graph, prompt-memory-ingest, store, engine, stats, dock-advisor, bootstrap, world-graph-sync; extended types/entries/index.
+- UI: `src/components/admin/studio/knowledge-core/`, `src/pages/admin/studio/knowledge-core/page.tsx`, `src/hooks/useKnowledgeCoreState.ts`.
+- Wiring: `src/App.tsx`, `route-registry.ts`, `adminStudioRoutes.ts`, `progressive-presence/registry.ts`, `studio-world-experience/path-resolver.ts`, `profile-registry.ts`, `world-graph/ingestion/knowledge-core-ingest.ts`, `studio-os-core/index.ts`, `core/modules.ts`.
+- Motherboard: `motherboard/CORE.md` (operational route note merged with K23), this MEMORY entry.
+- Generated: `public/studio-os/world-graph/graph.json`, compile reports (regenerated after rebase merge).
+
+**Verification:**
+- `npm run build` passed (tsc + vite). World Graph compile regenerated after merge.
+
+**Conventions:**
+- Knowledge Core Observatory™ is the founder-facing institutional memory room — not Knowledge Hub (Interactive Manual) or Knowledge Registry (master spec).
+- Use `queryKnowledgeCore()` for semantic memory search; use `ingestPromptMemory()` for major prompt → entry pipeline.
+- Only Canon™ entries may influence future architecture automatically; Explorer status filters make this visible without exposing implementation detail.
+- Route: `/admin/studio/knowledge-core` · helper: `adminStudioKnowledgeCorePath()`.

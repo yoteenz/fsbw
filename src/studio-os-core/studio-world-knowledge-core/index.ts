@@ -1,3 +1,17 @@
 export type * from './types';
 export * from './types';
+export * from './constants';
+export * from './domains';
+export * from './schema';
+export * from './semantic-search';
+export * from './version-history';
+export * from './relationship-graph';
+export * from './prompt-memory-ingest';
+export * from './store';
+export * from './engine-profile-builder';
+export * from './engine';
+export * from './dock-advisor';
+export * from './bootstrap';
+export * from './stats';
+export * from './world-graph-sync';
 export * from './entries';

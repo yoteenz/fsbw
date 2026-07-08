@@ -340,28 +340,3 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
 export function canInfluenceFutureArchitecture(status: KnowledgeCoreStatus): boolean {
   return status === 'Canon';
 }
-
-export function searchKnowledgeCoreEntries(query: string): KnowledgeCoreEntry[] {
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) return KNOWLEDGE_CORE_ENTRIES;
-
-  return KNOWLEDGE_CORE_ENTRIES.filter((entry) => {
-    const haystack = [
-      entry.title,
-      entry.domain,
-      entry.summary,
-      entry.reasoning,
-      entry.finalPrompt,
-      ...entry.architectureAdded,
-      ...entry.relatedSystems,
-      ...entry.constitutionArticles,
-      ...entry.adrReferences,
-      ...entry.worldBibleReferences,
-      ...entry.tags,
-    ]
-      .join(' ')
-      .toLowerCase();
-
-    return haystack.includes(normalized);
-  });
-}

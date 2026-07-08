@@ -55,6 +55,18 @@ export const STUDIO_WORLD_EXPERIENCE_PROFILES: ExperienceProfile[] = [
     narrativeElementId: 'atlas-holographic-table',
   },
   {
+    departmentId: 'knowledge-core',
+    displayName: 'Knowledge Core Observatory™',
+    primaryStory: 'The civilization remembers.',
+    primaryQuestion: 'What does Studio World know?',
+    primaryOrbMode: 'knowledge',
+    defaultPresenceLevel: 0,
+    ambientInformation: ['Canon Count', 'Active Domain'],
+    contextModules: ['Domain Shelves™', 'Memory Monument™', 'Archivist Ticker™'],
+    deepSystems: ['Knowledge Graph™', 'World Graph™', 'Prompt Memory™', 'Version Lineage™'],
+    narrativeElementId: 'knowledge-core-observatory',
+  },
+  {
     departmentId: 'world-knowledge-engine',
     displayName: 'Knowledge Library™',
     primaryStory: 'Understanding compounds.',

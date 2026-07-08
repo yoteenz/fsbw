@@ -177,6 +177,7 @@ export type StudioOsCoreModuleId =
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
+  | 'knowledge-core'
   | 'memory-bible'
   | 'leadership-dna';
 
@@ -1226,6 +1227,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'KNOWLEDGE HUB',
     description: 'Living documentation — every object explains itself.',
     routeSegment: 'knowledge-hub',
+  },
+  {
+    id: 'knowledge-core',
+    label: 'KNOWLEDGE CORE OBSERVATORY™',
+    description: 'Studio World institutional memory — domains, canon, prompt memory, version lineage, World Graph sync.',
+    routeSegment: 'knowledge-core',
   },
   {
     id: 'memory-bible',
