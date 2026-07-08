@@ -93,6 +93,7 @@ Founders **hire · follow · collaborate with** Studio Professionals™.
 | [certification-framework.md](./certification-framework.md) | Per-profession certification |
 | [career-progression.md](./career-progression.md) | Levels · reputation · careers |
 | [future-professions.md](./future-professions.md) | Expanding ecosystem |
+| [Guild System™](../community/README.md) | Professional societies · cultural backbone |
 
 ---
 
@@ -118,6 +119,7 @@ Studio OS becomes a **professional ecosystem** where founders and specialists co
 | [Living Sets™](../world/living-sets.md) | Architects' primary craft object |
 | [Creative Direction Pipeline™](../creative-direction-pipeline/README.md) | Directors' domain |
 | [Studio Institute™](../../studio-os/) | Advisors' institutional home |
+| [Guild System™](../community/README.md) | Where professionals belong — institutions |
 
 ---
 

@@ -41371,3 +41371,25 @@ User defined **Studio Professionals™** — long-term professional ecosystem sp
 - **12-doc spec:** `docs/studio-os/ecosystem/` — README · studio-professionals · profession-framework · architects · brand-designers · directors · operators · advisors · professional-graph · certification-framework · career-progression · future-professions
 - **Prior arc (same chat):** Studio Architects™ · Studio Marketplace™ v2 · Living Sets™ · CDS V2 · Founder Intelligence™ · Founder Taste Engine™ · Creative Direction Pipeline™ · Adaptive Onboarding™
 - **CORE.md:** Studio Professionals™ line added
+
+---
+
+## 2026-07-08 — Guild System™ — The Professional Societies of Studio World™ (community evolution sprint, docs only)
+
+User defined **Guild System™** — where Studio Professionals™ belong; cultural backbone of Studio World™. Not freelance marketplace — **institutions not groups**. **No UI · no profiles · no social features.**
+
+- **Mission:** Establish where professionals belong after Studio Professionals™ — every profession → one Guild™
+- **Philosophy:** Guilds preserve knowledge · recognize excellence · develop standards · mentor newcomers · celebrate innovation · push craft forward
+- **Five Guilds:** **Architects' Guild™** (Studio Architects™ — Living HQ · environmental storytelling · department design · spatial UX · Living Sets™) · **Brand Guild™** (Brand Designers — brand systems · visual identity · packaging · typography · creative direction) · **Directors' Guild™** (Directors — pipelines · automation · production · Golden Builds™ · AI collaboration) · **Operators' Guild™** (Operators — operations · optimization · scaling · analytics · business performance) · **Advisors' Guild™** (Advisors — education · mentorship · playbooks · frameworks · business strategy)
+- **Guild purpose:** learn · teach · collaborate · mentor · compete · experiment · publish · review · innovate · celebrate
+- **Guild Halls™:** living headquarters inside Studio World™ (not menus) — Architects' · Brand · Directors' · Operators' · Advisors' Guild Halls™
+- **Inside every hall:** Hall of Excellence™ · Member Directory™ · Knowledge Library™ · Innovation Lab™ · Challenge Board™ · Workshop Rooms™ · Lecture Theater™ · Mentorship Lounge™ · Community Gallery™ · Award Hall™ — prestigious institution feel
+- **Guild Activities™:** seasonal challenges · design competitions · Golden Build Awards™ · architecture showcases · brand reviews · innovation weeks · live critiques · community projects · hackathons · masterclasses
+- **Mentorship Framework™:** Master → Professional → Emerging (e.g. Master Architect™ mentors Emerging Architect™)
+- **Guild Reputation™:** innovation · originality · teaching · mentorship · founder success · community contribution · professionalism · long-term impact — NOT popularity
+- **Hall of Legends™:** permanent exhibits — Legendary HQ · Brands · Pipelines · Innovations · Advisors
+- **Orb:** guild history awareness — award nominations · Editor's Choice · mentorship invites
+- **Vision:** *"I'm part of the Architects' Guild"* — mark of craftsmanship; professions people aspire to join; living professional civilization
+- **9-doc spec:** `docs/studio-os/community/` — README · guild-system · guild-philosophy · guild-halls · guild-activities · mentorship-framework · guild-reputation · hall-of-legends · future-community-roadmap
+- **Prior arc (same chat):** Studio Professionals™ · Studio Architects™ · Studio Marketplace™ v2 · Living Sets™ · CDS V2 · Founder Intelligence™
+- **CORE.md:** Guild System™ line added

@@ -99,6 +99,8 @@ STUDIO WORLD™
 
 **Professional ecosystem:** [Studio Professionals™](../ecosystem/README.md) — careers · disciplines · certification · Professional Graph™
 
+**Guild System™:** [Professional Societies](../community/README.md) — institutions · Guild Halls™ · mentorship · Hall of Legends™
+
 ---
 
 ## Related Canon (Subsystems)
