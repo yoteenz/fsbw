@@ -42255,6 +42255,8 @@ User reported **COMPONENT FAILED TO LOAD** / minified React error **#306** on mo
 
 ---
 
+---
+
 ## 2026-07-08 — Studio Command Center™ / Executive Atrium™ (Overview architectural reset)
 
 User **IMPLEMENTATION SPRINT — ARCHITECTURAL CORRECTION:** `/admin/studio/overview` still rendered as old webpage (cards, wing cards, module grids, AdminStudioLayout) — violated Studio World™ law. Transform into **Studio Command Center™** / **Executive Atrium™** — founder operational arrival for Frontal Slayer Executive HQ, not dashboard.
@@ -42416,3 +42418,16 @@ User **FOLLOW-UP SPRINT — Future Merge™ (Intelligent Future Synthesis Engine
 - **Docs:** `docs/studio-os/studio-world-atlas-future-merge.md`.
 - **Boundaries:** heuristic/demo synthesis — not live Creative Budget / Asset Registry APIs; commit does not trigger Scene Stack™ generation.
 - **Prior arc (same chat):** Atlas Phase 1–4 · Master Planner™ · Orb Recommendations™ · Parallel Futures™.
+
+---
+
+## 2026-07-08 — Scene Stack quality degradation fix (reference-only layering)
+
+User reported Scene Assembly™ degrades quality with each stacked layer — each FAL pass was re-encoding all prior layers instead of using them only as placement reference; finished scenes lost significant fidelity.
+
+- **Root cause:** `getLockedReferenceUrlsForLayer()` passed **every approved layer URL** before the current pass into FAL NBP edit (`image_urls` up to 4 + marble). Each generation output baked in the full cumulative stack; the viewport then stacked those full-scene images again via CSS blend modes → double/triple encoding and blur.
+- **Fix — reference chain (`reference-chain.ts`):** Placement reference is now **environment-shell only** (or empty for shell genesis). Prior generative layers are never sent to FAL; they compose at runtime in `SceneStackViewport`.
+- **Fix — prompts (`prompt-compiler.ts`):** Placement clause = reference for camera/geometry only, do not redraw. Per-layer **isolated plate** output: shell = full architecture; blend layers (lighting/atmosphere/materials/motion/personalization) = effect pass on black for CSS blend; object layers = transparent isolated plate. Stronger negatives against cumulative stack re-encode.
+- **Fix — generation API (`studioBuilderGeneration.ts`):** Single shell placement URL max; **marble anchor only when no placement ref** (shell genesis) — no marble + shell combo on layered passes.
+- **Regen note:** Existing stations with degraded layers should **regenerate layers** (especially landmark/furniture after shell) to get isolated plates; shell can stay if still sharp.
+- **Prior arc (same chat):** Studio World V4 · React #306 fix · Studio Archives™ · Cost HUD · Executive Atrium · Atlas phases.

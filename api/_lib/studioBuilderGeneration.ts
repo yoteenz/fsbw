@@ -19,7 +19,7 @@ export type StudioBuilderGenerateInput = {
   prompt: string;
   aspectRatio: string;
   outputFormat: 'png' | 'webp';
-  /** Locked layer URLs (shell first) — FAL edit anchors to these instead of marble-only regen */
+  /** Shell placement URL only — never cumulative prior layers (see reference-chain.ts) */
   referenceImageUrls?: string[];
 };
 
@@ -124,17 +124,14 @@ export async function generateStudioBuilderAsset(
 
     const imageUrls: string[] = [];
 
+    // Placement refs (shell only) — never pass cumulative prior layers; that re-encodes the stack.
     if (input.referenceImageUrls?.length) {
-      for (const refUrl of input.referenceImageUrls.slice(0, 4)) {
-        if (refUrl?.startsWith('http')) imageUrls.push(refUrl);
-      }
+      const placementRef = input.referenceImageUrls.find((u) => u?.startsWith('http'));
+      if (placementRef) imageUrls.push(placementRef);
     }
 
+    // Marble brand anchor is for environment-shell genesis only — not layered passes.
     if (imageUrls.length === 0) {
-      imageUrls.push(
-        await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png')
-      );
-    } else {
       imageUrls.push(
         await uploadLocalOrSiteRefToFal(fal, marbleRef, 'assets/marble-half.png')
       );

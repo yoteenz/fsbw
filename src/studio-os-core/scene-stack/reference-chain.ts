@@ -1,45 +1,45 @@
-import { listComposeLayers } from './layer-catalog';
-import { getSceneStackLayerRecord } from './store';
 import type { SceneStackLayerId } from './types';
+import { getSceneStackLayerRecord } from './store';
 
 /** Layer IDs that must anchor to the approved environment shell (never regenerate from marble alone). */
 const ANCHOR_LAYER_ID: SceneStackLayerId = 'environment-shell';
 
 /**
- * Collect approved layer image URLs in compose order for layers strictly before `targetLayerId`.
- * Used as FAL edit references so each new pass preserves locked architecture.
+ * Blend-mode layers composited in CSS — FAL must output isolated effect passes, not full scenes.
+ */
+export const SCENE_STACK_BLEND_COMPOSITE_LAYERS: ReadonlySet<SceneStackLayerId> = new Set([
+  'lighting-systems',
+  'atmospheric-systems',
+  'surface-materials',
+  'ambient-motion',
+  'founder-personalization',
+]);
+
+/**
+ * Placement reference for FAL — NOT a cumulative composite of all prior layers.
+ *
+ * Each new pass receives only the locked environment shell so the model knows
+ * camera angle, room geometry, and where to place this layer. Prior generative
+ * layers are composed at runtime in the viewport; passing them into FAL edit
+ * re-encodes the stack and degrades quality with every pass.
  */
 export function getLockedReferenceUrlsForLayer(
   departmentId: string,
   projectId: string,
   stationId: string,
   targetLayerId: SceneStackLayerId,
-  layerPrompts: Partial<Record<SceneStackLayerId, unknown>>
+  _layerPrompts: Partial<Record<SceneStackLayerId, unknown>>
 ): string[] {
-  const ordered = listComposeLayers()
-    .map((l) => l.id)
-    .filter((id) => Boolean(layerPrompts[id]));
+  if (targetLayerId === ANCHOR_LAYER_ID) return [];
 
-  const targetIndex = ordered.indexOf(targetLayerId);
-  if (targetIndex <= 0) return [];
-
-  const urls: string[] = [];
-  for (let i = 0; i < targetIndex; i++) {
-    const layerId = ordered[i]!;
-    const rec = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
-    if (rec?.publicUrl) urls.push(rec.publicUrl);
-  }
-
-  if (targetLayerId !== ANCHOR_LAYER_ID) {
-    const shell = getSceneStackLayerRecord(departmentId, projectId, stationId, ANCHOR_LAYER_ID);
-    if (shell?.publicUrl && !urls.includes(shell.publicUrl)) {
-      return [shell.publicUrl, ...urls.filter((u) => u !== shell.publicUrl)];
-    }
-  }
-
-  return urls;
+  const shell = getSceneStackLayerRecord(departmentId, projectId, stationId, ANCHOR_LAYER_ID);
+  return shell?.publicUrl ? [shell.publicUrl] : [];
 }
 
 export function layerRequiresShellAnchor(layerId: SceneStackLayerId): boolean {
   return layerId !== ANCHOR_LAYER_ID;
+}
+
+export function isBlendCompositeLayer(layerId: SceneStackLayerId): boolean {
+  return SCENE_STACK_BLEND_COMPOSITE_LAYERS.has(layerId);
 }
