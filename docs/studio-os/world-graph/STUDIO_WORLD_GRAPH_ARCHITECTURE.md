@@ -22,6 +22,7 @@ Studio World models an entire **living business civilization**, not documentatio
 | Knowledge | knowledge-object, architectural-decision, publication |
 | Places | flagship, wing, room, headquarters |
 | Production | blueprint, scene-graph, environment-shell, golden-build |
+| Assets | asset, hero-object, material, animation |
 | Economy | marketplace-product, asset-pack, reputation |
 | Identity | company-genome, founder-genome, industry-genome |
 | Innovation | innovation-lineage, expedition, constellation |
@@ -122,7 +123,7 @@ Archivist queries **relationships**, not documents:
 
 - Marketplace transactions
 - Scene graphs per station
-- Asset registry assets
+- Asset registry assets beyond Hero Objects™
 - Innovation expeditions
 - Historical events / simulations
 

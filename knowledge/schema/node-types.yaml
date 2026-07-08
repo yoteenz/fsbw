@@ -35,6 +35,7 @@ domains:
     - warehouse-object
   assets:
     - asset
+    - hero-object
     - asset-pack
     - lighting-preset
     - furniture-collection
@@ -72,6 +73,7 @@ id_prefixes:
   constitutional-law: W-LAW
   foundational-physics-law: W-PHY
   implementation-standard: W-STD
+  hero-object: W-HO
   flagship: W-FLG
   room: W-RM
   engine: W-ENG

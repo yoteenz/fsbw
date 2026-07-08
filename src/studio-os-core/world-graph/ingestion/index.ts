@@ -13,3 +13,4 @@ export { ingestKnowledgeCoreNodes } from './knowledge-core-ingest';
 export { ingestAssetCompilerNodes } from './asset-compiler-ingest';
 export { ingestCompanyRouteNodes } from './company-routes-ingest';
 export { ingestProductionCompletionNodes } from './production-completion-ingest';
+export { ingestHeroObjectNodes } from './hero-objects-ingest';

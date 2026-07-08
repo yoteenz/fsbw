@@ -9,6 +9,8 @@ The graph is truth; these files are structured canon inputs and schema definitio
 
 **Article K23 — Studio World Memory System™:** Conversations are history, knowledge is understanding, and canon is approval. Raw conversations live in `knowledge/archive/conversations/`; extraction reports live in `knowledge/working/extraction-reports/`; only reviewed knowledge enters the Knowledge Core.
 
+**Article D09 — Hero Objects™ & Contextual Orb™:** Studio World navigation uses collectible living artifacts, not software icons. Hero Objects are manufactured by Studio Foundry™, registered in Asset Registry™, tracked by World Graph™, and surfaced contextually through the Orb™.
+
 ## Structure
 
 ```

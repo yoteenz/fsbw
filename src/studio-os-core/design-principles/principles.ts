@@ -11,7 +11,8 @@ export type DesignPrincipleId =
   | 'progressive-disclosure'
   | 'everything-has-a-home'
   | 'beauty-through-function'
-  | 'founders-build-worlds';
+  | 'founders-build-worlds'
+  | 'hero-objects-over-icons';
 
 export type DesignPrinciple = {
   id: DesignPrincipleId;
@@ -92,6 +93,16 @@ export const DESIGN_PRINCIPLES: DesignPrinciple[] = [
     summary: 'Studio World exists to amplify creativity — not administrative work.',
     decisionGuide: 'Founder remains Creative Director; OS recommends, explains, simulates — never decides.',
     examples: ['Founder Taste Engine™', 'Future Tournament™', 'Chairman recommends — founder approves'],
+  },
+  {
+    id: 'hero-objects-over-icons',
+    number: 9,
+    title: 'Hero Objects Over Icons™',
+    summary:
+      'Studio World navigation should be represented by collectible living artifacts, not software iconography.',
+    decisionGuide:
+      'When navigation needs a visual primitive, design a unique manufactured object with silhouette, material, history, motion, and graph identity before considering any icon-like mark.',
+    examples: ['World Atlas Globe™', 'Production Board Slate™', 'Story Table Relic™', 'Hero Object Vault™'],
   },
 ];
 

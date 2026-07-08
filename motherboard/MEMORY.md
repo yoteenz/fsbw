@@ -43450,3 +43450,84 @@ Summary of the **full conversation in this chat** covering ARTICLE-A01 Asset Com
 - Never silently mark features complete — Quality Gates™ must pass or explicitly block with remaining checkpoint labels.
 - Checklist adapts to scope: visual-only skips DB/API; routing-only skips OpenArt/motion; constitutional requires ADR.
 - Every new Production Package™ inherits Production Completion Checklist™ automatically via orchestrator task creation.
+
+---
+
+## 2026-07-08 — ARTICLE-D09 Hero Objects™ & Contextual Orb™ architecture sprint
+
+**Context:** User requested an **ARCHITECTURE SPRINT** for **ARTICLE-D09 — Hero Objects™ & Contextual Orb™**. The architectural milestone: Studio World should stop thinking in software “icons” and instead define navigation as collectible luxury **Hero Objects™** manufactured by Studio Foundry™, stored in Asset Registry™, tracked by World Graph™, and surfaced through Orb™, Atlas™, and future interfaces. The Orb should become contextual, surfacing the five most relevant Hero Objects for the founder’s current location.
+
+**Topics covered (entire conversation so far):**
+- Continued from the same chat’s prior implementation sprint that shipped **Studio Production Orchestrator™** at `/admin/studio/production-orchestrator`.
+- Interpreted the new prompt as architecture/canon work, not UI implementation.
+- Explored existing Studio World governance, Design Principles™, World Graph ingestion, Orb docs, Atlas docs, Asset Registry docs, and older `architectural-icons/` Signature Landmark™ docs.
+- Chose to define D09 as **Layer 1 Design Principle** canon because it changes interaction philosophy, not just naming.
+- Preserved older Signature Landmark™ architecture while clarifying that old “icon” language is superseded for navigation artifacts.
+- Added **Hero Objects Over Icons™** as Design Principle #9.
+- Added a new `hero-object` World Graph node type with `W-HO-*` IDs.
+- Built a core `src/studio-os-core/hero-objects/` architecture package:
+  - typed Hero Object definitions,
+  - collectible editions,
+  - silhouette law,
+  - living object motion profile,
+  - surfaces/integrations,
+  - contextual Orb toolbelts,
+  - launch catalog,
+  - Contextual Orb resolver.
+- Added launch Hero Objects for the prompt examples:
+  - Command Center™: World Atlas Globe™, Mission Control Console™, Daily Brief Lens™, Knowledge Core Crystal™, Production Board Slate™.
+  - Creative Direction Studio™: Story Table Relic™, Mood Wall Prism™, Studio Foundry Crucible™, Asset Registry Vault™, Golden Review Marquee™.
+  - Warehouse Wing™: Generation Bay Engine™, Materials Library Tower™, Blueprint Archive Scroll™, Marketplace Pavilion Arch™, Hero Object Vault™.
+  - Marketing HQ™: Campaign Studio Beacon™, Launch Theater Marquee™, Social Media Lab Signal™, Brand Partnerships Handshake™, Performance Wall Monolith™.
+- Added World Graph ingestion for Hero Objects and Contextual Orb so objects become first-class graph citizens and connect to D09, Asset Registry, Atlas, Orb Archivist, and registered destination rooms where available.
+
+**Decisions / outcomes:**
+- Hero Objects™ are now canonical architecture: collectible artifact + navigation primitive + storytelling device + brand symbol + reusable 3D asset + World Graph node + Foundry product line.
+- A Hero Object™ is explicitly **not** an icon, app tile, static launcher, generic pictogram, or decorative prop with no function.
+- **Silhouette Law™** is canonical: every Hero Object needs a unique recognizable form; if two can be confused at a glance, one must be redesigned.
+- **Living Object Law™** is canonical: every Hero Object defines ambient motion, internal energy, material behavior, light refraction, environmental reflections, and personality.
+- Contextual Orb™ should behave as an intelligent location-aware toolbelt, not a static app launcher.
+- Signature Landmarks™ remain department/room-scale identity anchors; Hero Objects™ are smaller collectible navigation artifacts that can point to destinations/landmarks.
+
+**Changes:**
+- Added D09 documentation:
+  - `docs/studio-os/hero-objects/ARTICLE_D09_HERO_OBJECTS_CONTEXTUAL_ORB.md`
+  - `knowledge/canon/design-principles/hero-objects-over-icons.md`
+- Added core architecture:
+  - `src/studio-os-core/hero-objects/constants.ts`
+  - `src/studio-os-core/hero-objects/types.ts`
+  - `src/studio-os-core/hero-objects/catalog.ts`
+  - `src/studio-os-core/hero-objects/contextual-orb.ts`
+  - `src/studio-os-core/hero-objects/index.ts`
+  - exported from `src/studio-os-core/index.ts`
+- Updated governance/design canon:
+  - `src/studio-os-core/design-principles/principles.ts`
+  - `knowledge/canon/design-principles/README.md`
+  - `docs/studio-os/governance/STUDIO_WORLD_GOVERNANCE_HIERARCHY.md`
+  - `knowledge/README.md`
+- Updated World Graph architecture/taxonomy/ingestion:
+  - `knowledge/schema/node-types.yaml`
+  - `src/studio-os-core/world-graph/types.ts`
+  - `src/studio-os-core/world-graph/id.ts`
+  - `src/studio-os-core/world-graph/ingestion/hero-objects-ingest.ts`
+  - `src/studio-os-core/world-graph/ingestion/index.ts`
+  - `src/studio-os-core/world-graph/builder.ts`
+  - `docs/studio-os/world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md`
+  - regenerated `public/studio-os/world-graph/graph.json`
+  - regenerated `docs/studio-os/world-graph/WORLD_GRAPH_COMPILE_REPORT.md`
+- Updated adjacent docs:
+  - `docs/studio-os/studio-orb.md`
+  - `docs/studio-os/studio-world-atlas.md`
+  - `docs/studio-os/asset-registry.md`
+  - `docs/studio-os/architectural-icons/README.md`
+  - `docs/studio-os/architectural-icons/architectural-icons.md`
+
+**Verification:**
+- `npm run compile-world-graph` passed: **480 nodes · 832 edges · PASS**.
+- `npx tsc --noEmit` passed.
+- `npm run build` passed before final master-spec churn cleanup; unrelated timestamp-only master-spec generated diffs were reverted, while intentional World Graph D09 artifacts were retained.
+
+**Conventions:**
+- New Studio World navigation architecture should say **Hero Object™**, not icon.
+- Do not flatten Hero Objects into SVG/app-icon metaphors. They require silhouette, material, motion, history, editions, Asset Registry identity, Foundry product line, and World Graph presence.
+- Orb navigation should be contextual and location-aware: five relevant living objects, not a universal static launcher.

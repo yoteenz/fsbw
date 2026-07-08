@@ -17,9 +17,11 @@
 
 ## Register assets
 
-Images · Videos · Audio · Logos · Brand Kits · Documents · PDFs · Templates · Presentations · Icons · Illustrations · 3D Models · Animations · Marketing Assets · Training Assets · Knowledge Assets · Academy Resources · Marketplace Resources · Documentation Assets
+Images · Videos · Audio · Logos · Brand Kits · Documents · PDFs · Templates · Presentations · Hero Objects™ · Illustrations · 3D Models · Animations · Marketing Assets · Training Assets · Knowledge Assets · Academy Resources · Marketplace Resources · Documentation Assets
 
 Everything searchable.
+
+> **ARTICLE-D09 note:** Studio World navigation artifacts are **Hero Objects™**, not icons. Historical asset categories may still mention icons, but new Studio World destination navigation should register Hero Objects with silhouette, material, edition, motion, usage history, and World Graph identity.
 
 ## Asset metadata
 

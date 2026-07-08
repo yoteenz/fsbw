@@ -29,6 +29,7 @@ const TYPE_PREFIX: Record<WorldNodeType, string> = {
   'marketplace-product': 'W-MKT',
   'marketplace-transaction': 'W-TXN',
   asset: 'W-AST',
+  'hero-object': 'W-HO',
   'asset-pack': 'W-PCK',
   'environment-shell': 'W-ESH',
   'lighting-preset': 'W-LGT',

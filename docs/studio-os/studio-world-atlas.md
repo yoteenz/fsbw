@@ -24,6 +24,8 @@ The Atlas connects every major engine visually on the same world:
 
 **World memory:** every building stores construction date, reason, expedition, blueprint, generation cost, creative budget, equity gained, milestones.
 
+**Hero Objects™:** Atlas projects destination-owned Hero Objects as collectible map artifacts, not software pins. A founder should recognize the World Atlas Globe™, Production Board Slate™, Story Table Relic™, or Hero Object Vault™ by silhouette before reading a label. See `docs/studio-os/hero-objects/ARTICLE_D09_HERO_OBJECTS_CONTEXTUAL_ORB.md`.
+
 **Master Planner™:** reserve land, sketch districts, plan wings — simulate before generating.
 
 ## Zoom levels

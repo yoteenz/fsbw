@@ -12,6 +12,7 @@
 | 6 | Everything Has A Home™ | Every feature has a place |
 | 7 | Beauty Through Function™ | Elegant and purposeful |
 | 8 | Founders Build Worlds™ | Amplify creativity, not admin |
+| 9 | Hero Objects Over Icons™ | Collectible living artifacts, not software iconography |
 
 **Code:** `src/studio-os-core/design-principles/principles.ts`
 

@@ -72,11 +72,13 @@ Supporting scenes · workstations · and walls exist — but orbit the landmark.
 
 ## Landmark vs Scene vs Hero Object
 
+> **ARTICLE-D09 update:** This section is superseded for **Hero Object™** meaning. Hero Objects are now collectible navigation artifacts and World Graph nodes, not merely optional scene focal points. Signature Landmarks™ remain department-scale architectural anchors.
+
 | Concept | Role | Count per department |
 |---------|------|----------------------|
 | **Signature Landmark™** | Department identity · memory anchor | **1** |
 | **Scene™** | Workspace destination orbiting landmark | Many |
-| **Hero object** | Environmental focal point within a scene | Per scene (optional) |
+| **Hero Object™** | Collectible navigation artifact for a destination | Per major destination |
 
 **Creative Direction Studio™ example:**
 

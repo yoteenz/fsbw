@@ -56,6 +56,7 @@ export const WORLD_NODE_TYPES = [
   'marketplace-product',
   'marketplace-transaction',
   'asset',
+  'hero-object',
   'asset-pack',
   'environment-shell',
   'lighting-preset',

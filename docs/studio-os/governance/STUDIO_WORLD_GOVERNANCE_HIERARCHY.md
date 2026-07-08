@@ -50,6 +50,7 @@ Philosophy — not technical rules. When multiple valid solutions exist, princip
 | 6 | Everything Has A Home™ |
 | 7 | Beauty Through Function™ |
 | 8 | Founders Build Worlds™ |
+| 9 | Hero Objects Over Icons™ |
 
 **Code:** `src/studio-os-core/design-principles/principles.ts`  
 **Canon:** `knowledge/canon/design-principles/`  
@@ -79,7 +80,7 @@ Behavioral and architectural governance.
 
 Documentation First™ · Canon Promotion™ · No Orphan Objects™ · Agent Memory Subordination™ · Immutability of History™ · Scene Assembly Rules™ · Knowledge Review™ · Repository Governance™ · Approval Workflow™
 
-**Articles:** World Graph Is Truth™ · Three Eras Roadmap™ · Scene Assembly Immutability™ · ARTICLE-K21 Architecture Decision Records™ · ARTICLE-K22 Studio World Knowledge Core™ · ARTICLE-K23 Memory System™
+**Articles:** World Graph Is Truth™ · Three Eras Roadmap™ · Scene Assembly Immutability™ · ARTICLE-K21 Architecture Decision Records™ · ARTICLE-K22 Studio World Knowledge Core™ · ARTICLE-K23 Memory System™ · ARTICLE-D09 Hero Objects™ & Contextual Orb™
 
 **Graph:** `constitutional-law` · `W-LAW-*`
 
@@ -139,4 +140,5 @@ World Graph™ registers all four layers with `depends-on` and `implements` edge
 - [ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md](../architecture-decision-records/ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md)
 - [ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md](../knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md)
 - [ARTICLE_K23_MEMORY_SYSTEM.md](../knowledge-core/ARTICLE_K23_MEMORY_SYSTEM.md)
+- [ARTICLE_D09_HERO_OBJECTS_CONTEXTUAL_ORB.md](../hero-objects/ARTICLE_D09_HERO_OBJECTS_CONTEXTUAL_ORB.md)
 - [knowledge/canon/README.md](../../knowledge/canon/README.md)

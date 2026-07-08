@@ -11,6 +11,7 @@ Design revision (not a new milestone). Replaces the permanently visible bottom C
 | **Conversation Mode™** | Opening Command Dock blurs/scales page (~98%) · centered acrylic panel |
 | **Page Guide** | Contextual guide from Knowledge Graph / Interactive Manual |
 | **Awakening Sequence™** | One-time per organization on first HQ entry |
+| **Contextual Hero Object Toolbelt™** | Orb surfaces the five most relevant Hero Objects™ for the founder's current location |
 
 ## Code
 
@@ -34,6 +35,20 @@ Design revision (not a new milestone). Replaces the permanently visible bottom C
 ## Conversation Engine™
 
 Sessions orchestrate Command Dock, Voice Mode, and future surfaces — see `conversation-engine.md`.
+
+## ARTICLE-D09 — Contextual Orb™
+
+The Orb should not behave like a static app launcher.
+
+Per **ARTICLE-D09 — Hero Objects™ & Contextual Orb™**, the Orb becomes an adaptive toolbelt that surfaces living, collectible Hero Objects™ based on current location and work context.
+
+Examples:
+
+- Command Center™ → World Atlas Globe™ · Mission Control Console™ · Daily Brief Lens™ · Knowledge Core Crystal™ · Production Board Slate™
+- Creative Direction Studio™ → Story Table Relic™ · Mood Wall Prism™ · Studio Foundry Crucible™ · Asset Registry Vault™ · Golden Review Marquee™
+- Warehouse Wing™ → Generation Bay Engine™ · Materials Library Tower™ · Blueprint Archive Scroll™ · Marketplace Pavilion Arch™ · Hero Object Vault™
+
+**Rule:** Future Orb navigation should render Hero Objects™ as living artifacts, never as flat software icons.
 
 ## Philosophy
 

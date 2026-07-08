@@ -2,6 +2,8 @@
 
 **The Landmarks of Studio World™**
 
+> **ARTICLE-D09 supersession note:** The word **icon** is now legacy language for navigation artifacts. This folder remains valid for **Signature Landmarks™** — room/department-scale architectural anchors. New navigation primitives should use **Hero Objects™**, defined in `docs/studio-os/hero-objects/ARTICLE_D09_HERO_OBJECTS_CONTEXTUAL_ORB.md`.
+
 **Version:** 1.0.0  
 **Status:** Canonical architectural law (docs only)  
 **Phase:** Environmental identity sprint (pre-implementation)  
