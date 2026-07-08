@@ -1,0 +1,105 @@
+{
+  "$schema": "studio.scene-genesis.v1/stations",
+  "departmentId": "creative-direction",
+  "packageId": "pkg-creative-direction-golden-v1",
+  "milestone": "Golden Build™ Scene Genesis™",
+  "signatureLandmarkId": "story-table",
+  "aspectRatio": "9:16",
+  "outputFormat": "webp",
+  "stations": [
+    {
+      "stationId": "arrival",
+      "displayName": "Arrival Zone™",
+      "shortLabel": "Arrival",
+      "productionGroupId": "environment",
+      "heroAssetId": "portal-entry-cds",
+      "landmarkVisible": "story-table",
+      "prompt": {
+        "primary": "Cinematic mobile portrait arrival threshold inside a luxury Creative Direction Studio headquarters. Double-height editorial atelier. Bronze arch threshold in foreground. Soft glimpse of illuminated Story Table altar and Studio Orb glow in the distance. Polished stone floor reflection. Architectural gallery lighting. Dark bronze smoked glass brushed metal stone materials. Volumetric atmosphere. No people. Photorealistic 8K interior visualization. Human eye-level standing position.",
+        "negative": "dashboard UI cards sidebar navigation SaaS office cubicles fluorescent panels flat gray background stock photo banner text overlays buttons menus"
+      },
+      "hotspots": {
+        "enter": { "left": "28%", "top": "62%", "width": "44%", "height": "12%" }
+      }
+    },
+    {
+      "stationId": "story-table",
+      "displayName": "Story Table™",
+      "shortLabel": "Story Table",
+      "productionGroupId": "hero-objects",
+      "heroAssetId": "table-timeline-cds",
+      "landmarkVisible": "story-table",
+      "signatureLandmark": true,
+      "prompt": {
+        "primary": "Cinematic mobile portrait Story Table Signature Landmark inside luxury Creative Direction Studio. Massive illuminated floating creative altar at center. Holographic projections of brand worlds packaging concepts campaigns above table. Studio Orb volumetric host above table casting warm light. Editorial luxury atelier double-height ceiling. Dark bronze smoked glass stone floor reflections. Apple Industrial Design meets Hollywood editorial studio. Photorealistic architectural interior. No UI chrome no dashboards.",
+        "negative": "spreadsheet dashboard card grid sidebar web UI buttons floating rectangles office desk ikea"
+      },
+      "hotspots": {
+        "orb": { "left": "35%", "top": "8%", "width": "30%", "height": "18%" },
+        "table": { "left": "10%", "top": "42%", "width": "80%", "height": "28%" },
+        "speech": { "left": "8%", "top": "26%", "width": "84%", "height": "14%" }
+      }
+    },
+    {
+      "stationId": "mood-wall",
+      "displayName": "Living Mood Wall™",
+      "shortLabel": "Mood Wall",
+      "productionGroupId": "hero-objects",
+      "heroAssetId": "wall-mood-cds",
+      "landmarkVisible": "mood-wall",
+      "prompt": {
+        "primary": "Cinematic mobile portrait Living Mood Wall inside luxury Creative Direction Studio. Massive 30-foot editorial inspiration wall filling frame. Luxury campaigns packaging photography film stills materials color palettes subtly arranged. Living wall with soft ambient motion blur hints. Gallery-left accent lighting on bronze frame. Double-height creative atelier architecture. Photorealistic editorial studio environment. No UI panels.",
+        "negative": "Pinterest grid webpage card UI thumbnail sidebar dashboard flat white wall"
+      },
+      "hotspots": {
+        "wall": { "left": "6%", "top": "10%", "width": "88%", "height": "52%" },
+        "console": { "left": "6%", "top": "66%", "width": "88%", "height": "22%" }
+      }
+    },
+    {
+      "stationId": "founder-notes",
+      "displayName": "Founder Notes Desk™",
+      "shortLabel": "Notes Desk",
+      "productionGroupId": "furniture",
+      "heroAssetId": "panel-founder-notes-cds",
+      "landmarkVisible": "notes-desk",
+      "prompt": {
+        "primary": "Cinematic mobile portrait executive creative workstation inside luxury Creative Direction Studio. Illuminated walnut executive desk with leather notebook glass tablet voice recorder coffee cup. Warm desk lamp cone of light. Founder Notes pedestal integrated into desk architecture. Editorial luxury atelier background softly out of focus. Photorealistic interior prop photography scale. No form UI no SaaS inputs.",
+        "negative": "office cubicle rolling chair monitor wall generic desk flat lay stock photo form fields"
+      },
+      "hotspots": {
+        "desk": { "left": "8%", "top": "32%", "width": "84%", "height": "48%" }
+      }
+    },
+    {
+      "stationId": "pipeline-board",
+      "displayName": "Creative Pipeline™",
+      "shortLabel": "Pipeline",
+      "productionGroupId": "interactive-objects",
+      "heroAssetId": "glass-panels-cds",
+      "landmarkVisible": "pipeline-wall",
+      "prompt": {
+        "primary": "Cinematic mobile portrait mission control production wall inside luxury Creative Direction Studio. NASA mission control meets editorial creative studio. Illuminated stage columns on monumental wall. Projects as spatial light nodes not spreadsheet rows. Dark bronze smoked glass command wall. Status LEDs subtle green amber. Double-height creative headquarters. Photorealistic architectural visualization. No Excel no kanban cards no web UI.",
+        "negative": "spreadsheet Trello Jira dashboard table rows browser window modal dialog sidebar"
+      },
+      "hotspots": {
+        "wall": { "left": "4%", "top": "8%", "width": "92%", "height": "78%" }
+      }
+    },
+    {
+      "stationId": "reference-library",
+      "displayName": "Reference Library™",
+      "shortLabel": "Library",
+      "productionGroupId": "furniture",
+      "heroAssetId": "shelf-library-cds",
+      "landmarkVisible": "library",
+      "prompt": {
+        "primary": "Cinematic mobile portrait luxury reference library inside Creative Direction Studio. Floor-to-ceiling shelving with archive drawers luxury books packaging collections material swatches historic campaigns. Warm accent lighting on bronze shelf frames. Editorial creative archive atmosphere. Photorealistic interior architecture. No card list UI no webpage grid.",
+        "negative": "Kindle app bookshelf icon card grid list view dropdown menu SaaS library"
+      },
+      "hotspots": {
+        "shelves": { "left": "6%", "top": "12%", "width": "88%", "height": "68%" }
+      }
+    }
+  ]
+}
