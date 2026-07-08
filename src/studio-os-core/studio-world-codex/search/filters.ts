@@ -20,6 +20,24 @@ export function applyCodexFilters(
     ) {
       return false;
     }
+    if (filters.architecture) {
+      const needle = filters.architecture.toLowerCase();
+      const archBlob = [
+        article.category,
+        ...article.architecturalDecisions,
+        ...article.implementationReferences,
+        ...article.tags,
+      ]
+        .join(' ')
+        .toLowerCase();
+      if (!archBlob.includes(needle)) return false;
+    }
+    if (filters.futureRoadmap) {
+      const isFuture =
+        article.volume === 'volume-x-future-vision' ||
+        article.tags.some((t) => /future|roadmap|era|evolution/i.test(t));
+      if (!isFuture) return false;
+    }
     if (filters.relatedArticleId) {
       const related = filters.relatedArticleId.trim().toUpperCase();
       if (

@@ -109,6 +109,7 @@ export type CodexStore = {
   relationships: CodexArticleRelationship[];
   revisionSnapshots: CodexArticleRevisionSnapshot[];
   bootstrappedAt?: string;
+  canonicalArchiveVersion?: string;
 };
 
 export type CodexSearchFilters = {
@@ -118,6 +119,8 @@ export type CodexSearchFilters = {
   system?: string;
   department?: string;
   tag?: string;
+  architecture?: string;
+  futureRoadmap?: boolean;
   relatedArticleId?: string;
   createdAfter?: string;
   createdBefore?: string;

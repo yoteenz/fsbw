@@ -128,4 +128,7 @@ export {
   CODEX_VOLUMES,
 };
 
+export { proposeFutureCodexArticle } from './future-articles';
+export { CANONICAL_ARCHIVE_ARTICLE_COUNT, getCanonicalArchiveArticles } from './bootstrap/canonical-archive';
+
 export type { CodexArticleRecord, CodexSearchFilters, CodexSearchHit, CodexOrbRecommendation };

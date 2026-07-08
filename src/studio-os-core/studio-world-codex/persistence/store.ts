@@ -3,7 +3,7 @@ import {
   STUDIO_WORLD_CODEX_UPDATED_EVENT,
   STUDIO_WORLD_CODEX_VERSION,
 } from '../constants';
-import { bootstrapCodexStoreIfEmpty } from '../bootstrap/seeds';
+import { bootstrapCodexStoreIfEmpty, migrateToCanonicalArchive, needsCanonicalArchiveMigration } from '../bootstrap/seeds';
 import type { CodexStore } from '../types';
 
 function emptyStore(): CodexStore {
@@ -44,8 +44,10 @@ export function readCodexStore(): CodexStore {
       revisionSnapshots: parsed.revisionSnapshots ?? [],
     };
 
-    if (merged.articles.length === 0) {
-      return bootstrapCodexStoreIfEmpty(merged);
+    if (merged.articles.length === 0 || needsCanonicalArchiveMigration(merged)) {
+      const migrated = migrateToCanonicalArchive(merged);
+      writeCodexStore(migrated);
+      return migrated;
     }
 
     return merged;

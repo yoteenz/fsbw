@@ -1,0 +1,108 @@
+import type { CanonicalArticleSeed } from '../article-builder';
+
+export const VOLUME_IV_ARCHITECTURE_ARTICLES: CanonicalArticleSeed[] = [
+  {
+    articleId: 'ARTICLE-AR01',
+    title: 'World Graph™ Architecture',
+    volume: 'volume-iv-architecture-standards',
+    category: 'Platform Architecture',
+    summary:
+      'World Graph Is Truth™ — every engine, room, law, knowledge object, and relationship compiles into a canonical graph. If it is not in the graph, it does not exist.',
+    philosophy: 'The graph is the civilization map — not a debug visualization.',
+    guidingPrinciples: [
+      'Stable W-* node IDs with typed prefixes.',
+      'Compile-time ingestion from registries, Codex, Knowledge Core, and engines.',
+      'Relationship edges are first-class — no orphan nodes.',
+      'Three Eras Roadmap™ governs lifecycle planes.',
+    ],
+    relatedSystems: ['World Graph™', 'Knowledge Core™', 'Codex™'],
+    relatedArticles: ['ARTICLE-W01', 'ARTICLE-K21', 'ARTICLE-C01'],
+    tags: ['architecture', 'world-graph', 'platform'],
+    docPaths: ['docs/studio-os/world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md'],
+    codePaths: ['src/studio-os-core/world-graph/'],
+  },
+  {
+    articleId: 'ARTICLE-A01',
+    title: 'Asset Compiler™ & Generation Recipes™',
+    volume: 'volume-iv-architecture-standards',
+    category: 'Manufacturing Architecture',
+    summary:
+      'Generation Recipe™ + intent → FAL request + metadata + version + storage path + RegisteredAssetEntry. Internal compiler machinery for Studio Foundry™.',
+    philosophy: 'Compile assets — do not hand-craft one-off generation scattered across features.',
+    relatedSystems: ['Asset Compiler™', 'Generation Recipes™', 'Studio Foundry™'],
+    relatedArticles: ['ARTICLE-A02', 'ARTICLE-D09'],
+    tags: ['architecture', 'asset-compiler', 'generation-recipes'],
+    docPaths: ['docs/studio-os/engine/asset-compiler/ARTICLE_A01_ASSET_COMPILER.md'],
+    codePaths: ['src/studio-os-core/asset-compiler/'],
+  },
+  {
+    articleId: 'ARTICLE-AR02',
+    title: 'Registry & Knowledge Graph Architecture™',
+    volume: 'volume-iv-architecture-standards',
+    category: 'Registry Architecture',
+    summary:
+      'Asset Registry™, System Registry, Component Registry, and Knowledge Graph synchronize canonical entries with World Graph nodes.',
+    philosophy: 'Registries are projections of truth — not separate silos.',
+    relatedSystems: ['Asset Registry™', 'Knowledge Graph™', 'System Registry™'],
+    relatedArticles: ['ARTICLE-AR01', 'ARTICLE-K22', 'ARTICLE-B02'],
+    tags: ['architecture', 'registry', 'knowledge-graph'],
+    docPaths: ['docs/studio-os/asset-registry.md'],
+  },
+  {
+    articleId: 'ARTICLE-AR03',
+    title: 'Route Philosophy & Context Philosophy™',
+    volume: 'volume-iv-architecture-standards',
+    category: 'Navigation Architecture',
+    summary:
+      'Routes are world addresses — not CRUD pages. Context travels with the citizen: company, room, district, profession, and presence level.',
+    philosophy: 'Immersion over pages — URLs should feel like coordinates in a world.',
+    guidingPrinciples: [
+      'Admin Studio routes map to districts and departments.',
+      'Context philosophy ensures multi-company and multi-room state persists.',
+      'Legacy route redirects preserve bookmarks without breaking world IA.',
+    ],
+    relatedSystems: ['World Atlas™', 'Mission Control™', 'Global Experience System™'],
+    relatedArticles: ['ARTICLE-W04', 'ARTICLE-AR04'],
+    tags: ['architecture', 'routes', 'context'],
+    codePaths: ['src/utils/adminStudioRoutes.ts'],
+  },
+  {
+    articleId: 'ARTICLE-AR04',
+    title: 'Multi-Company Architecture™',
+    volume: 'volume-iv-architecture-standards',
+    category: 'Platform Architecture',
+    summary:
+      'Every organization inherits Studio World physics — experience, governance, memory, and production — without forking core engines.',
+    philosophy: 'One civilization platform; many sovereign companies.',
+    relatedSystems: ['Company Genome™', 'Knowledge Core™', 'Mission Control™'],
+    relatedArticles: ['ARTICLE-W03', 'ARTICLE-K22'],
+    tags: ['architecture', 'multi-company', 'organization'],
+  },
+  {
+    articleId: 'ARTICLE-AR05',
+    title: 'Simulation Architecture™',
+    volume: 'volume-iv-architecture-standards',
+    category: 'Runtime Architecture',
+    summary:
+      'Simulation Engine™, Profession Simulation Engine™, and Career Worlds share tick contracts, persistence adapters, and outcome pipelines.',
+    philosophy: 'Simulate before committing — for careers and for business decisions.',
+    relatedSystems: ['Simulation Engine™', 'Profession Simulation Engine™', 'Career Worlds™'],
+    relatedArticles: ['ARTICLE-E01', 'ARTICLE-E02'],
+    tags: ['architecture', 'simulation'],
+    docPaths: ['docs/studio-os/simulation-engine.md'],
+    codePaths: ['src/studio-os-core/career-worlds/simulation/'],
+  },
+  {
+    articleId: 'ARTICLE-AR06',
+    title: 'Foundry & Registry Integration Architecture™',
+    volume: 'volume-iv-architecture-standards',
+    category: 'Manufacturing Architecture',
+    summary:
+      'Studio Foundry resolves asset IDs, invokes Asset Compiler, registers outputs, and syncs Knowledge Core lineage — single manufacturing path.',
+    philosophy: 'Foundry → Knowledge Core → World Graph — manufacturing is institutional memory.',
+    relatedSystems: ['Studio Foundry™', 'Knowledge Core™', 'World Graph™'],
+    relatedArticles: ['ARTICLE-A02', 'ARTICLE-A01', 'ARTICLE-K22'],
+    tags: ['architecture', 'foundry', 'integration'],
+    docPaths: ['docs/studio-os/engine/asset-compiler/STUDIO_FOUNDRY_IMPLEMENTATION.md'],
+  },
+];

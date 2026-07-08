@@ -20,3 +20,4 @@ export * from './design-language';
 export * from './knowledge-core';
 export * from './production';
 export * from './future-vision';
+export * from './future-articles';

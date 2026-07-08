@@ -43866,3 +43866,29 @@ Summary of the **full conversation in this chat**: the user first requested **Ca
 
 **Conventions:** Career Worlds emit generic memory events; Wisdom Engine synthesizes — do not embed world-specific logic in core runtime. Use `orchestrateWisdomRecommendation()` when guidance must combine retention + lived experience.
 
+---
+
+## 2026-07-08 — Studio World Codex™ Phase II Canonical Seeding™
+
+Summary of the **full conversation in this chat**: Career Worlds™ sprint → ARTICLE-C01 architecture → Codex platform infrastructure (`cd07fd388`) → **Phase II Canonical Seeding™** to populate all ten volumes with approved Studio World institutional memory (not empty placeholders).
+
+- **Context:** Codex infrastructure approved; mission is first complete canonical archive so a new engineer, AI model, or contributor can understand Studio World by reading the Codex alone.
+- **Canonical archive (`bootstrap/canonical-archive/`):**
+  - **62 articles** across all 10 volumes with full Article model content (philosophy, principles, decisions, systems, doc paths).
+  - **Volume I (3):** Manifesto — M01 north star + 10 principles, M02 Inhabited Software, M03 Wisdom Over Information.
+  - **Volume II (13):** Constitution — C01 Codex First, K18 Progressive Presence, D09 Hero Objects, A02 Foundry, E01/E02/E03/E04/E05, K21 ADRs, plus Draft slots C10–C12 for future constitutional articles.
+  - **Volume III (9):** World Bible — hierarchy, Mission Control, companies/HQ, districts/scenes, Orb/Atlas, career districts, NPC/world clock, economy, citizen progression.
+  - **Volume IV (7):** Architecture — World Graph, Asset Compiler/Recipes, registries, route/context philosophy, multi-company, simulation, Foundry integration.
+  - **Volume V (6):** Design Language — industrial philosophy, glass/acrylic, chrome/living interfaces, lighting/motion, Orb/Atlas behavior, Silhouette Law.
+  - **Volume VI (6):** Production — K24 Completion, GPT/Composer workflow, Foundry pipeline, Production Board/DoD, QA/architectural review, post-launch Codex updates.
+  - **Volume VII (5):** Profession Brains — truth model, knowledge graph, teaching/research, validation, mentor AI integration.
+  - **Volume VIII (3):** Career Worlds extensions — progression/licenses, expansions/certifications, mentor economy/ceremonies.
+  - **Volume IX (5):** Knowledge Core — K22/K23, research ingestion, validation pipeline, memory/wisdom integration.
+  - **Volume X (5):** Future Vision — cross-career worlds, citizen governance, AI councils, creator ecosystem, era roadmap.
+- **Relationships:** Explicit graph in `canonical-archive/relationships.ts` plus field-sync from `relatedArticles`/`relatedSystems` — Hero Objects→Foundry→Recipes, Career Worlds→Simulation, Retention→Profession Brain, Memory→Retention, Exchange→Career Worlds, Foundry→Knowledge Core, World Graph→Knowledge Core, etc.
+- **Migration:** `STUDIO_WORLD_CODEX_VERSION` **1.2.0** · storage key **`studioWorldCodex_v2`** · `canonicalArchiveVersion` auto-migrates stores with fewer than 62 articles.
+- **Future articles:** `proposeFutureCodexArticle()` generates Draft + suggested volume + related articles + relationships + World Graph hints.
+- **Search:** Expanded semantic clusters (manifesto, foundry, world bible, design, production, exchange) + filters for `architecture` and `futureRoadmap`.
+- **Verification:** `npm run build` passed; World Graph **647 nodes · 1240 edges · PASS**.
+- **Conventions:** Canonical content lives in `bootstrap/canonical-archive/`; new features use `proposeFutureCodexArticle()` then `createCodexArticle()` after Constitution Review.
+

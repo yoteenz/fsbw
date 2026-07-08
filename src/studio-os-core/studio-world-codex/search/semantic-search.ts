@@ -11,6 +11,48 @@ export type CodexSemanticCluster = {
 /** Semantic clusters — constitutional questions surface related articles, not folder paths. */
 export const CODEX_SEMANTIC_CLUSTERS: CodexSemanticCluster[] = [
   {
+    id: 'manifesto-cluster',
+    triggers: ['manifesto', 'inhabited', 'civilization', 'wisdom', 'careers not courses'],
+    relatedArticleIds: ['ARTICLE-M01', 'ARTICLE-M02', 'ARTICLE-M03'],
+    relatedSystems: ['Orb™', 'Career Worlds™'],
+    relatedVolumes: ['volume-i-manifesto'],
+  },
+  {
+    id: 'foundry-cluster',
+    triggers: ['foundry', 'generation recipe', 'asset compiler', 'manufacturing'],
+    relatedArticleIds: ['ARTICLE-A02', 'ARTICLE-A01', 'ARTICLE-D09'],
+    relatedSystems: ['Studio Foundry™', 'Asset Compiler™'],
+    relatedVolumes: ['volume-iv-architecture-standards', 'volume-ii-constitution'],
+  },
+  {
+    id: 'world-bible-cluster',
+    triggers: ['world bible', 'district', 'headquarters', 'mission control', 'npc', 'world clock'],
+    relatedArticleIds: ['ARTICLE-W01', 'ARTICLE-W02', 'ARTICLE-W07'],
+    relatedSystems: ['Mission Control™', 'World Atlas™', 'Orb™'],
+    relatedVolumes: ['volume-iii-world-bible'],
+  },
+  {
+    id: 'design-cluster',
+    triggers: ['design language', 'glassmorphism', 'silhouette', 'hero object', 'luxury material'],
+    relatedArticleIds: ['ARTICLE-D01', 'ARTICLE-D06', 'ARTICLE-D09'],
+    relatedSystems: ['Hero Objects™', 'Design DNA Canon™'],
+    relatedVolumes: ['volume-v-design-language'],
+  },
+  {
+    id: 'production-cluster',
+    triggers: ['production', 'definition of done', 'qa', 'completion', 'post-launch'],
+    relatedArticleIds: ['ARTICLE-K24', 'ARTICLE-P03', 'ARTICLE-P05'],
+    relatedSystems: ['Production Completion System™'],
+    relatedVolumes: ['volume-vi-production-standards'],
+  },
+  {
+    id: 'exchange-cluster',
+    triggers: ['studio exchange', 'professional license', 'mentor economy', 'certification ceremony'],
+    relatedArticleIds: ['ARTICLE-E05', 'ARTICLE-E07', 'ARTICLE-E08'],
+    relatedSystems: ['Studio Exchange™', 'Studio Economy™'],
+    relatedVolumes: ['volume-viii-career-worlds', 'volume-ii-constitution'],
+  },
+  {
     id: 'codex-first-cluster',
     triggers: ['codex first', 'codex-first', 'before implementation', 'constitutional memory'],
     relatedArticleIds: ['ARTICLE-C01'],
@@ -20,14 +62,14 @@ export const CODEX_SEMANTIC_CLUSTERS: CodexSemanticCluster[] = [
   {
     id: 'constitution-cluster',
     triggers: ['constitution', 'law', 'governance', 'review gate', 'canonical'],
-    relatedArticleIds: ['ARTICLE-C01'],
+    relatedArticleIds: ['ARTICLE-C01', 'ARTICLE-K18', 'ARTICLE-D09', 'ARTICLE-A02', 'ARTICLE-E02'],
     relatedSystems: ['Constitution Hall™', 'Production Completion System™'],
     relatedVolumes: ['volume-ii-constitution'],
   },
   {
     id: 'architecture-cluster',
     triggers: ['architecture', 'platform', 'engine', 'reusable', 'standards'],
-    relatedArticleIds: [],
+    relatedArticleIds: ['ARTICLE-AR01', 'ARTICLE-K21', 'ARTICLE-A01'],
     relatedSystems: ['World Graph™', 'Architecture Decision Records™'],
     relatedVolumes: ['volume-iv-architecture-standards'],
   },
@@ -47,8 +89,8 @@ export const CODEX_SEMANTIC_CLUSTERS: CodexSemanticCluster[] = [
   },
   {
     id: 'future-vision-cluster',
-    triggers: ['future', 'evolution', 'era', 'unbuilt', 'vision'],
-    relatedArticleIds: [],
+    triggers: ['future', 'evolution', 'era', 'unbuilt', 'vision', 'roadmap'],
+    relatedArticleIds: ['ARTICLE-F01', 'ARTICLE-F05'],
     relatedSystems: ['Innovation District™', 'Future Vision™'],
     relatedVolumes: ['volume-x-future-vision'],
   },

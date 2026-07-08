@@ -184,9 +184,23 @@ Ten volumes map to module paths under `codex/`:
 
 ## Bootstrap vs platform
 
-- **Do not** add articles to hardcoded arrays in engine core.
-- **Do** use `createCodexArticle()` or bootstrap seeds for the initial empty store only.
-- **ARTICLE-C01** lives in `bootstrap/seeds.ts` as the constitutional seed — loaded once when the store is empty.
+- **Canonical Archive (Phase II):** **`bootstrap/canonical-archive/`** seeds **62 articles** across all ten volumes with typed relationships — loaded on first run or when `canonicalArchiveVersion` migrates (`studioWorldCodex_v2`).
+- **Do not** add articles to hardcoded arrays in engine core outside the canonical archive.
+- **Do** use `createCodexArticle()` for new articles after bootstrap, or `proposeFutureCodexArticle()` for draft proposals.
+- **ARTICLE-C01** and all volume seeds live in the canonical archive — not runtime hardcoding.
+
+## Future article proposals
+
+```typescript
+import { proposeFutureCodexArticle } from '@/studio-os-core/studio-world-codex';
+
+const proposal = proposeFutureCodexArticle({
+  featureName: 'Cross-District Travel',
+  summary: 'Why citizens should feel spatial continuity between districts.',
+  relatedSystems: ['World Atlas™', 'Orb™'],
+});
+// Returns: draft article, suggested volume, related articles, relationships, World Graph hints
+```
 
 ---
 
