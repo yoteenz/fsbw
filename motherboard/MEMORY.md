@@ -41686,3 +41686,20 @@ User request: bottom navigation tabs (Arrival · Story Table · Mood Wall · etc
 
 - **`cdsInteractionLayerTheme.ts`:** `.cds-genesis__nav` — `justify-content: center` · `.cds-genesis__nav-track` inner flex row · hidden scrollbar for overflow
 - **`CreativeDirectionStudioRoom.tsx`:** zone buttons wrapped in `cds-genesis__nav-track`
+
+---
+
+## 2026-07-08 — Studio Production Estimates™ — estimate productions, not images (production planning sprint, docs only)
+
+User **STOP** directive: **production planning sprint** — create Studio Production Estimates™. **Do NOT expose GPU providers or raw API pricing.**
+
+- **Mission:** Founders understand creative production **scope** before it begins — architecture firm / film studio quote, not AI image generator
+- **Every request calculates:** Estimated Production Cost™ · Time™ · Assets Reused™ · Blueprints Reused™ · Systems Reused™ · Assets Modified™ · New Assets Generated™ · Estimated Savings™ · Production Complexity™
+- **CDS Story Table™ example:** $2.48 · 2m 12s · 8 reused · 3 modified · 2 generated · $4.86 savings · Medium
+- **Orb WHY:** compatible Lighting/Material Blueprints · 63% cost reduction · only 2 new assets recommended
+- **Forbidden:** GPU provider names · model IDs · token counts · per-call API pricing in founder plane
+- **Pipeline:** Blueprint → Asset Intelligence → **Production Estimate™** → Founder Approve → Generation Manager™
+- **11-doc spec:** `docs/studio-os/studio-production-estimates/` — README · studio-production-estimates · estimate-model · calculation-engine · production-complexity · savings-model · orb-narration · founder-experience · integration-map · cds-story-table-example · forbidden-exposure · future-roadmap
+- **Cross-refs:** `studio-world.md` · `CORE.md` · `engines/generation-manager/README.md` · `asset-intelligence-engine/README.md`
+- **Prior arc (same chat):** CDS uppercase text · centered nav tabs · Living Company Genome™ · Creative Blueprint · Asset Intelligence · Scene Stack™
+- **No UI this sprint**

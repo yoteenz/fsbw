@@ -45,7 +45,9 @@ Prompt Compiler™ (expanded prompt stacks in 13_prompts/)
          ↓
 Asset Intelligence Engine™ (search Registry · compatibility · founder gate)
          ↓
-STUDIO GENERATION MANAGER™ (this engine — only when Intelligence routes to generate)
+Studio Production Estimates™ (scope · cost · savings · Orb WHY · founder approve)
+         ↓
+STUDIO GENERATION MANAGER™ (this engine — only approved estimate scope)
   Queue · schedule · execute · retry · validate handoff
          ↓
 AI Generators (FAL · OpenAI Images · Runway · Luma · BFL · future)

@@ -113,7 +113,8 @@ Runtime
 |--------|--------------|
 | [Creative Blueprint Engine™](../creative-blueprint-engine/README.md) | **Upstream** — Visual DNA™ + Blueprint™ + Systems™ scope all asset search |
 | [Studio Asset Registry™](../engines/studio-asset-registry/README.md) | Storage · schema · **Reuse Engine** (compiler path) — Intelligence Engine owns founder-facing search + explain |
-| [Studio Generation Manager™](../engines/generation-manager/README.md) | Executes only after Intelligence Engine routes to Generate New™ |
+| [Studio Production Estimates™](../studio-production-estimates/README.md) | **Pre-execution** — founder-facing scope · cost · savings before Generation Manager™ |
+| [Studio Generation Manager™](../engines/generation-manager/README.md) | Executes only after estimate approved |
 | [Scene Stack™](../scene-stack/README.md) | Per-layer requests query Intelligence before FAL |
 | [Founder Taste Engine™](../founder-taste-engine/README.md) | Taste signals feed learning · DNA protection |
 | [Company Memory™](../expeditions/company-memory.md) | Approved assets become organizational memory |
