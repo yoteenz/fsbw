@@ -42223,3 +42223,20 @@ User **IMPLEMENTATION SPRINT:** Studio Warehouse™ evolved into **Studio Archiv
 - **Routes:** Primary **`/admin/studio/studio-archives`**; legacy **`/admin/studio/studio-warehouse`** still mounts same room; `adminStudioArchivesPath()` + `adminStudioWarehousePath()` alias; museum deep link `?zone=museum-wing` on archives route; nav CTA **ENTER ARCHIVES**.
 - **Prior arc (same chat):** Studio Alpha Cost HUD · Museum absorption · crash fix · Supabase registry.
 - **Files:** `campus-nav.ts`, `camera-zones.ts`, `warehouseCameraZones.ts`, `warehouse-station-prompts.ts`, `station-manifest.ts`, `StudioWarehouseRoom.tsx`, `OrientationAtriumInteractions.tsx`, `ArchivesWingInteractions.tsx`, `WarehouseArchitecturalDirectory.tsx`, `warehouseOrbPersonality.ts`, `warehouseDestinationTheme.ts`, `InnovationHallInteractions.tsx`, `adminStudioNavigation.ts`, `adminStudioRoutes.ts`, `App.tsx`, `adminStudioWarehouseDemo.ts`, `department-package/registry.ts`.
+
+---
+
+## 2026-07-08 — Studio World™ Architectural Reset V4
+
+User **ARCHITECTURAL RESET V4:** Studio World™ evolved beyond a website — architectural restructuring only (no visual redesign). Core law: nothing is a webpage; every destination is a physical place (Headquarters, Building, District, Wing, Room, Studio, Observatory, Vault, etc.). Founder walks — never clicks menus.
+
+- **Five flagship destinations:** Studio Command Center™ · Creative Direction Studio™ · Studio Archives™ · Headquarters™ · Expedition Hub™ — one connected campus.
+- **Laws codified:** Department Law (Arrival→Atrium→Overview→Room→Return) · Room Law (Scene Stack™ assembly) · Feature Law (Pipeline→Production Wall™, Analytics→Performance Observatory™, etc.).
+- **Core module `src/studio-os-core/studio-world/`:** `types.ts` · `flagship-destinations.ts` · `feature-lexicon.ts` · `route-registry.ts` (~80+ routes mapped to physical locations) · `navigation.ts` (movement graph + path resolver).
+- **Canonical URLs:** `/admin/studio/world/{flagship}/{district}/{room}` — world paths are canonical; legacy `/admin/studio/*` preserved.
+- **World path resolver:** `src/pages/admin/studio/world/page.tsx` + `App.tsx` route `studio/world/*` redirects to legacy implementations until rooms rebuilt immersive.
+- **Helpers:** `src/utils/studioWorldRoutes.ts` · exported from `studio-os-core/index.ts`.
+- **Docs:** `docs/studio-os/STUDIO_WORLD_ARCHITECTURE_V4.md` — canonical reference.
+- **Nav updated (architectural routing only):** Mission Control → `/admin/studio/world/command-center` · Archives → `/admin/studio/world/archives` · Expedition Hub → `/admin/studio/world/expedition-hub`.
+- **Migration status per route:** `immersive-live` (CDS, Archives) · `standard-room` (most HQ/SCC rooms) · extend `route-registry.ts` as rooms migrate.
+- **Prior arc (same chat):** Studio Archives™ evolution · Studio Alpha Cost HUD · Museum absorption.

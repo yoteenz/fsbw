@@ -156,3 +156,5 @@ export type {
   CreativeIntelligenceGateResult,
   KernelStage,
 } from './creative-intelligence-engine';
+
+export * from './studio-world';
