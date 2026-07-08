@@ -38,15 +38,18 @@ export function StudioOrbDailyBriefOverlay() {
         </p>
         <p
           style={{
-            fontFamily: '"Covered By Your Grace", cursive',
+            fontFamily: '"Futura PT Demi", "Futura PT", futuristic-pt, Futura, sans-serif',
             fontSize: 18,
+            fontWeight: 600,
             margin: '8px 0 12px',
             lineHeight: 1.2,
+            textTransform: 'uppercase',
+            color: ORB_VISUAL.brandRed,
           }}
         >
           {snapshot.dailyBrief.greeting}
         </p>
-        <ul style={{ margin: 0, paddingLeft: 18, fontSize: 10, lineHeight: 1.5, textTransform: 'none' }}>
+        <ul style={{ margin: 0, paddingLeft: 18, fontSize: 10, lineHeight: 1.5, textTransform: 'uppercase' }}>
           {snapshot.dailyBrief.lines.map((line: string) => (
             <li key={line} style={{ marginBottom: 6, color: ORB_VISUAL.text }}>
               {line}
@@ -67,15 +70,16 @@ export function StudioOrbDailyBriefOverlay() {
             width: '100%',
             padding: '10px 12px',
             border: ORB_VISUAL.border,
-            background: ORB_VISUAL.brandRed,
-            color: '#fff',
+            background: '#fff',
+            color: ORB_VISUAL.brandRed,
             fontSize: 8,
             letterSpacing: '0.12em',
             cursor: 'pointer',
             fontFamily: 'inherit',
+            textTransform: 'uppercase',
           }}
         >
-          ENTER STUDIO WORLD →
+          ENTER STUDIO WORLD
         </button>
       </div>
     </div>
