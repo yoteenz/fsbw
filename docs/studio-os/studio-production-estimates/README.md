@@ -111,7 +111,9 @@ Generation Manager™ (execute approved scope only)
 | [forbidden-exposure.md](./forbidden-exposure.md) | No GPU · no API pricing |
 | [future-roadmap.md](./future-roadmap.md) | v2+ evolution |
 
-**Sibling:** [Creative Budgets™](../creative-budgets/README.md) — monthly capacity rollup from approved estimates
+**Sibling (founder plane):** [Creative Budgets™](../creative-budgets/README.md) — monthly capacity rollup from approved estimates
+
+**Internal (operators):** [Studio Alpha™ Production Dashboard™](../../studio-alpha/production-dashboard/README.md) — full GPU · ROI · queue truth
 
 ---
 

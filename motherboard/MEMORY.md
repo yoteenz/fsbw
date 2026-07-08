@@ -41723,6 +41723,29 @@ User **STOP** directive: **production planning sprint** introducing **Creative B
 
 ---
 
+## 2026-07-08 — Studio Alpha™ Production Dashboard™ — Mission Control of Studio World™ (internal sprint, docs only)
+
+User **STOP** directive: **internal Studio Alpha™ sprint** — **Production Dashboard™**. **NOT** part of Studio OS · **NOT** customer-facing. Internal production command center manufacturing Studio World™ (Pixar · ILM · Unreal · AAA studio discipline).
+
+- **Mission:** Centralized dashboard tracking every asset · scene · department · package · Blueprint™ · generation · cost · metric in Studio World™ build
+- **Main dashboard:** Overall Progress · Completion % · Departments/Scenes/Stations Complete · Assets/Blueprints/Systems/Packages/Marketplace counts · Total/Remaining/Estimated Studio World Cost
+- **Production Queue™:** Every pending generation — priority · status · cost · time · dependencies · assigned Blueprint (CDS Mood Wall Waiting · Lighting Generating · Finance Capital Vault Queued · Hiring Talent Observatory Waiting Approval)
+- **Department Analytics™:** Completion · budget · actual/remaining cost · generated/reused assets · blueprints/systems · approvals · history · Golden Build status
+- **Scene Analytics™:** Scene Stack™ layers — status · cost · gen/reuse count · approval · golden version
+- **Asset ROI™:** Editorial Luxury Lighting example — $0.18 gen · 436 reuse · $0.0004/use · $72.38 savings
+- **Blueprint Analytics™:** Generation cost · reuse · compatibility · Visual DNA™ · ROI™
+- **Internal Creative Budget:** Distinct from founder Creative Budgets™ — actual spend · burn rate · forecast
+- **Generation Analytics™:** FAL · GPU · tokens — **internal only**
+- **Optimization Center™:** Reuse · merge · archive · consolidate recommendations
+- **Roadmap View™:** World → Department → Scene → Station → Layer → Asset
+- **Production Orb™:** Queue · bottlenecks · budget risks · opportunities · Golden Build ready
+- **15-doc spec:** `docs/studio-alpha/production-dashboard/` + `docs/studio-alpha/README.md`
+- **Cross-refs:** `studio-world.md` · `CORE.md` · `studio-production-estimates/`
+- **Prior arc (same chat):** Creative Budgets™ · Production Estimates™ · Scene Stack™ · intelligence stack · CDS changes
+- **No UI this sprint**
+
+---
+
 ## 2026-07-08 — Creative Budgets™ — think in creative capacity, not API calls (monthly capacity sprint, docs only)
 
 User **STOP** directive: **production planning sprint** introducing **Creative Budgets™**. Every company receives a monthly Creative Budget™ representing creative production capacity — founders never think in API calls.
@@ -41736,4 +41759,27 @@ User **STOP** directive: **production planning sprint** introducing **Creative B
 - **11-doc spec:** `docs/studio-os/creative-budgets/` — README · creative-budgets · budget-model · monthly-cycle · efficiency-score · savings-rollup · dashboard-fields · orb-coaching · founder-experience · integration-map · forbidden-exposure · future-roadmap
 - **Cross-refs:** `studio-world.md` · `CORE.md` · `studio-production-estimates/` · `asset-intelligence-engine/README.md` · `engines/generation-manager/README.md`
 - **Prior arc (same chat):** Scene Stack™ · Asset Intelligence Engine™ · Creative Blueprint Engine™ · Living Company Genome™ · CDS uppercase text · CDS centered nav · Studio Production Estimates™
+- **No UI this sprint**
+
+---
+
+## 2026-07-08 — Studio Alpha™ Production Dashboard™ — Mission Control of Studio World™ (internal sprint, docs only)
+
+User **STOP** directive: **internal Studio Alpha™ sprint** — **Production Dashboard™**. **NOT** part of Studio OS · **NOT** customer-facing. Internal production command center manufacturing Studio World™ (Pixar · ILM · Unreal · AAA studio discipline).
+
+- **Mission:** Centralized dashboard tracking every asset · scene · department · package · Blueprint™ · generation · cost · metric in Studio World™ build
+- **Main dashboard:** Overall Progress · Completion % · Departments/Scenes/Stations Complete · Assets/Blueprints/Systems/Packages/Marketplace counts · Total/Remaining/Estimated Studio World Cost
+- **Production Queue™:** Every pending generation — priority · status · cost · time · dependencies · assigned Blueprint (CDS Mood Wall Waiting · Lighting Generating · Finance Capital Vault Queued · Hiring Talent Observatory Waiting Approval)
+- **Department Analytics™:** Completion · budget · actual/remaining cost · generated/reused assets · blueprints/systems · approvals · history · Golden Build status
+- **Scene Analytics™:** Scene Stack™ layers — status · cost · gen/reuse count · approval · golden version
+- **Asset ROI™:** Editorial Luxury Lighting example — $0.18 gen · 436 reuse · $0.0004/use · $72.38 savings
+- **Blueprint Analytics™:** Generation cost · reuse · compatibility · Visual DNA™ · ROI™
+- **Internal Creative Budget:** Distinct from founder Creative Budgets™ — actual spend · burn rate · forecast
+- **Generation Analytics™:** FAL · GPU · tokens — **internal only**
+- **Optimization Center™:** Reuse · merge · archive · consolidate recommendations
+- **Roadmap View™:** World → Department → Scene → Station → Layer → Asset
+- **Production Orb™:** Queue · bottlenecks · budget risks · opportunities · Golden Build ready
+- **15-doc spec:** `docs/studio-alpha/production-dashboard/` + `docs/studio-alpha/README.md`
+- **Cross-refs:** `studio-world.md` · `CORE.md` · `studio-production-estimates/`
+- **Prior arc (same chat):** Creative Budgets™ · Production Estimates™ · Scene Stack™ · intelligence stack · CDS changes
 - **No UI this sprint**
