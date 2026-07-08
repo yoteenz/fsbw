@@ -8,7 +8,7 @@ export function resolveMuseumHistorianQuote(
     return 'Welcome to Studio Museum™ — where your company remembers who it became.';
   }
 
-  if (exhibit.historianQuotes.length > 0 && context !== 'idle') {
+  if (exhibit.historianQuotes?.length && context !== 'idle') {
     const idx =
       context === 'enter' ? 0 : context === 'timeline' ? 1 : context === 'replay' ? 2 : 3;
     return exhibit.historianQuotes[idx] ?? exhibit.historianQuotes[0]!;

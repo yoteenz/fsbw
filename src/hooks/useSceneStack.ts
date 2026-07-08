@@ -53,9 +53,11 @@ export function useSceneStack(
 
   useEffect(() => {
     hydrateSceneStackFromBuilderRegistry(departmentId, projectId);
-    void import('../services/studio/assetRegistry/pipelineSync').then((m) =>
-      m.hydratePipelineRegistryFromSupabase(departmentId, projectId)
-    );
+    void import('../services/studio/assetRegistry/pipelineSync')
+      .then((m) => m.hydratePipelineRegistryFromSupabase(departmentId, projectId))
+      .catch(() => {
+        /* offline — local Scene Stack still mounts from registry */
+      });
   }, [departmentId, projectId]);
 
   useEffect(() => {

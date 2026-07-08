@@ -49,6 +49,12 @@ body.wh-world-active {
   pointer-events: none;
 }
 
+.wh-world__zone-shell {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 82% 58% at 50% 54%, #1c1814 0%, #0a0908 74%);
+}
+
 .wh-world__interaction-layer {
   position: absolute;
   inset: 0;

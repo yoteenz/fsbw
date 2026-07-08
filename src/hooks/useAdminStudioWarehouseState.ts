@@ -52,9 +52,11 @@ export function useAdminStudioWarehouse() {
 
   useEffect(() => {
     const project = resolveActiveProjectGenome(CDS_DEPARTMENT_ID);
-    void import('../services/studio/assetRegistry/pipelineSync').then((m) =>
-      m.hydratePipelineRegistryFromSupabase(CDS_DEPARTMENT_ID, project.projectId).then(() => bump())
-    );
+    void import('../services/studio/assetRegistry/pipelineSync')
+      .then((m) => m.hydratePipelineRegistryFromSupabase(CDS_DEPARTMENT_ID, project.projectId).then(() => bump()))
+      .catch(() => {
+        /* offline — warehouse catalog still uses local registry */
+      });
     const onSynced = () => bump();
     window.addEventListener(PIPELINE_REGISTRY_SYNCED_EVENT, onSynced);
     return () => window.removeEventListener(PIPELINE_REGISTRY_SYNCED_EVENT, onSynced);

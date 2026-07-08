@@ -21,17 +21,33 @@ function isBuilderRegistryStore(value: unknown): value is Store {
   );
 }
 
+function isValidRegistryEntry(entry: unknown): entry is StudioAssetRegistryEntry {
+  if (!entry || typeof entry !== 'object') return false;
+  const e = entry as StudioAssetRegistryEntry;
+  return (
+    typeof e.id === 'string' &&
+    typeof e.departmentId === 'string' &&
+    typeof e.projectId === 'string' &&
+    typeof e.assetId === 'string' &&
+    typeof e.registeredAt === 'string'
+  );
+}
+
 function readStore(): Store {
   const store = readStudioOsJson(STUDIO_BUILDER_REGISTRY_STORAGE_KEY, () => EMPTY);
-  if (store.entries.length > 0) return store;
+  const entries = store.entries.filter(isValidRegistryEntry);
+  if (entries.length > 0) return { entries };
 
   const legacyRaw = readStudioOsJson(LEGACY_STORAGE_KEY, () => EMPTY);
   if (isBuilderRegistryStore(legacyRaw) && legacyRaw.entries.length > 0) {
-    writeStore(legacyRaw);
-    return legacyRaw;
+    const legacyEntries = legacyRaw.entries.filter(isValidRegistryEntry);
+    if (legacyEntries.length > 0) {
+      writeStore({ entries: legacyEntries });
+      return { entries: legacyEntries };
+    }
   }
 
-  return store;
+  return { entries: [] };
 }
 
 function writeStore(store: Store): void {

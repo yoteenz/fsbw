@@ -371,26 +371,31 @@ export function StudioWarehouseRoom() {
           >
             {WAREHOUSE_CAMERA_ZONES.map((zone) => {
               const locked = zone.requiresArrival && !wh.arrivalComplete;
-              const zoneLayers = stack.getLayerViews(zone.id);
+              const isActive = wh.activeZoneId === zone.id;
+              const zoneLayers = isActive ? stack.getLayerViews(zone.id) : [];
               return (
                 <section
                   key={zone.id}
-                  className={`wh-world__zone-panel${wh.activeZoneId === zone.id ? ' is-active' : ''}${locked ? ' is-locked' : ''}`}
+                  className={`wh-world__zone-panel${isActive ? ' is-active' : ''}${locked ? ' is-locked' : ''}`}
                   aria-label={zone.label}
                 >
-                  <SceneStackViewport
-                    layers={zoneLayers}
-                    status={stack.getCompositeStatus(zone.id)}
-                    stationLabel={zone.label}
-                    parallaxStyle={wh.activeZoneId === zone.id ? immersion.parallaxStyle : undefined}
-                    pipeline={
-                      wh.activeZoneId === zone.id ? stack.getStationPipelineProgress(zone.id) : undefined
-                    }
-                    onRegenerateLayer={(layerId) =>
-                      void stack.regenerateLayer(zone.id, layerId as SceneStackLayerId)
-                    }
-                  />
-                  <div className="wh-world__interaction-layer">{renderZoneInteractions(zone.id)}</div>
+                  {isActive ? (
+                    <SceneStackViewport
+                      layers={zoneLayers}
+                      status={stack.getCompositeStatus(zone.id)}
+                      stationLabel={zone.label}
+                      parallaxStyle={immersion.parallaxStyle}
+                      pipeline={stack.getStationPipelineProgress(zone.id)}
+                      onRegenerateLayer={(layerId) =>
+                        void stack.regenerateLayer(zone.id, layerId as SceneStackLayerId)
+                      }
+                    />
+                  ) : (
+                    <div className="wh-world__zone-shell" aria-hidden />
+                  )}
+                  {isActive ? (
+                    <div className="wh-world__interaction-layer">{renderZoneInteractions(zone.id)}</div>
+                  ) : null}
                 </section>
               );
             })}

@@ -140,21 +140,26 @@ export async function hydratePipelineRegistryFromSupabase(
   projectId: string,
   orgId = DEFAULT_ORG_ID
 ): Promise<number> {
-  const remote = await fetchPipelineRegistryAssets(departmentId, projectId, orgId);
-  let merged = 0;
-  for (const row of remote) {
-    if (!row.artifact_url?.startsWith('http')) continue;
-    const mapped = entryFromSupabaseRow(row);
-    if (!mapped.projectId || mapped.projectId !== projectId) continue;
-    upsertLocalRegistryEntry(mapped);
-    merged += 1;
-  }
+  try {
+    const remote = await fetchPipelineRegistryAssets(departmentId, projectId, orgId);
+    let merged = 0;
+    for (const row of remote) {
+      if (!row.artifact_url?.startsWith('http')) continue;
+      const mapped = entryFromSupabaseRow(row);
+      if (!mapped.projectId || mapped.projectId !== projectId) continue;
+      upsertLocalRegistryEntry(mapped);
+      merged += 1;
+    }
 
-  if (merged > 0) {
-    const mounted = hydrateSceneStackFromBuilderRegistry(departmentId, projectId);
-    dispatchPipelineRegistrySynced({ merged });
-    if (mounted > 0) dispatchSceneStackHydrated();
-  }
+    if (merged > 0) {
+      const mounted = hydrateSceneStackFromBuilderRegistry(departmentId, projectId);
+      dispatchPipelineRegistrySynced({ merged });
+      if (mounted > 0) dispatchSceneStackHydrated();
+    }
 
-  return merged;
+    return merged;
+  } catch {
+    /* offline / API timeout — local registry + Scene Stack still work */
+    return 0;
+  }
 }

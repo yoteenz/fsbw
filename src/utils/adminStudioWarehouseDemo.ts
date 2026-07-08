@@ -61,7 +61,7 @@ function registryToWarehouse(entry: ReturnType<typeof listAllRegistryAssets>[num
     workspace: entry.stationId
       ? entry.stationId.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
       : 'Frontal Slayer HQ',
-    generationDate: entry.registeredAt.slice(0, 10),
+    generationDate: entry.registeredAt?.slice(0, 10) ?? '—',
     generationCostUsd: 0.42 + (index % 7) * 0.18,
     provider: entry.model?.split('/').pop() ?? 'FAL',
     usageCount: index % 5,

@@ -42158,3 +42158,19 @@ User approved completing the registry fix: persist builder registry · resolve M
 - **Hooks:** `useSceneStack` + `useAdminStudioWarehouseState` call server hydrate on mount (after local hydrate).
 - **Requires:** Supabase migration `20260708120000_studio_asset_registry.sql` applied + admin session for API calls; unsigned-in falls back to local registry only.
 - **Files:** `pipeline-registry.ts`, `pipelineSync.ts`, `registry-store.ts`, `studio-asset-registry.ts`, `api.ts`, `useSceneStack.ts`, `useAdminStudioWarehouseState.ts`.
+
+---
+
+## 2026-07-08 — Studio Warehouse/Museum crash + auto-refresh fix
+
+User reported Studio Warehouse™ and Studio Museum™ keep crashing and auto-refreshing on navigate (mobile). Same chat also covered CDS/Warehouse persistence arc, Supabase migration verify (5 registry tables), and direct links to `/admin/studio/studio-warehouse` + `/admin/studio/studio-museum`.
+
+- **Root cause (primary):** Global chunk recovery (`chunkLoadRecovery.ts` + `ErrorBoundary` + `unhandledrejection`) treated **any** `"Failed to fetch"` as a stale **chunk** failure → `reloadForStaleChunks()` → full page reload. Warehouse mount fires **`hydratePipelineRegistryFromSupabase`** (registry API) without `.catch()`; mobile network/API blips threw unhandled rejections → **reload loop** that felt like a crash.
+- **Root cause (secondary — Warehouse):** `StudioWarehouseRoom` mounted **15** `SceneStackViewport` compositors at once (all camera zones), each potentially loading many layer images — heavy on phone memory.
+- **Root cause (tertiary):** Corrupt/migrated builder registry rows missing `registeredAt` could throw in `registryToWarehouse` during catalog build.
+- **Fix — chunk recovery:** `isDynamicImportChunkFailure` now requires **chunk/module context** with `failed to fetch` / `load failed` — bare API network errors no longer auto-reload the SPA.
+- **Fix — pipeline hydrate:** `hydratePipelineRegistryFromSupabase` wrapped in try/catch; `useSceneStack` + `useAdminStudioWarehouseState` hydrate promises `.catch()` — offline/API failure is silent fallback to local registry.
+- **Fix — registry/catalog:** `registry-store.ts` filters invalid entries on read; `registryToWarehouse` uses optional `registeredAt`; `historian.ts` guards missing `historianQuotes`.
+- **Fix — Warehouse perf:** Only **active** camera zone mounts `SceneStackViewport` + interactions; inactive zones use lightweight `wh-world__zone-shell` placeholder (pan still works).
+- **Files:** `chunkLoadRecovery.ts`, `pipelineSync.ts`, `useSceneStack.ts`, `useAdminStudioWarehouseState.ts`, `registry-store.ts`, `adminStudioWarehouseDemo.ts`, `historian.ts`, `StudioWarehouseRoom.tsx`, `warehouseDestinationTheme.ts`.
+- **Verify after deploy:** Open Warehouse/Museum on phone — should load without reload loop; Warehouse galleries mount shell when navigated; registry API failure should not white-screen/reload.

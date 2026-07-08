@@ -12,19 +12,27 @@ export function isDynamicImportChunkFailure(error: unknown): boolean {
   const msg = error instanceof Error ? error.message || '' : String(error || '');
   const name = error instanceof Error ? error.name || '' : '';
   const lower = msg.toLowerCase();
-  return (
-    name === 'ChunkLoadError' ||
-    lower.includes('failed to fetch') ||
-    lower.includes('loading chunk') ||
-    lower.includes('loading css chunk') ||
-    lower.includes('mime type') ||
-    lower.includes('text/html') ||
-    lower.includes('importing a module script failed') ||
-    lower.includes('failed to load module script') ||
-    lower.includes('error loading dynamically imported module') ||
-    lower.includes('dynamically imported module') ||
-    (lower.includes('failed to load') && lower.includes('module'))
-  );
+  const chunkContext =
+    lower.includes('chunk') ||
+    lower.includes('module script') ||
+    lower.includes('dynamically imported') ||
+    lower.includes('importing a module') ||
+    lower.includes('preload') ||
+    (lower.includes('mime type') && (lower.includes('html') || lower.includes('javascript')));
+
+  if (name === 'ChunkLoadError') return true;
+  if (lower.includes('loading chunk') || lower.includes('loading css chunk')) return true;
+  if (lower.includes('importing a module script failed')) return true;
+  if (lower.includes('failed to load module script')) return true;
+  if (lower.includes('error loading dynamically imported module')) return true;
+  if (lower.includes('dynamically imported module')) return true;
+  if (lower.includes('failed to load') && lower.includes('module')) return true;
+  // Bare "Failed to fetch" from API/network calls must NOT trigger SPA reload loops.
+  if (lower.includes('failed to fetch') && chunkContext) return true;
+  if (lower.includes('load failed') && chunkContext) return true;
+  if (lower.includes('mime type') && lower.includes('text/html')) return true;
+
+  return false;
 }
 
 /** Hard reload at most once per cooldown window (sessionStorage). Returns true if reload was invoked. */
