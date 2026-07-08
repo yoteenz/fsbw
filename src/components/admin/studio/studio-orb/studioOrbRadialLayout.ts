@@ -1,12 +1,18 @@
 /** Viewport-aware Studio Orb radial menu layout — AssistiveTouch-style, never clipped. */
 
-export const RADIAL_ITEM_WIDTH = 80;
-export const RADIAL_ITEM_HEIGHT = 56;
+export const RADIAL_ITEM_WIDTH = 72;
+export const RADIAL_ITEM_HEIGHT = 76;
 export const RADIAL_MENU_EDGE_PADDING = 12;
-export const RADIAL_MENU_STACK_GAP = 10;
-export const RADIAL_MENU_ORB_GAP = 14;
-export const RADIAL_RADIUS_DEFAULT = 72;
-export const RADIAL_RADIUS_MIN = 52;
+export const RADIAL_MENU_STACK_GAP = 12;
+/** Minimum air gap between projection tiles and the Orb shell. */
+export const RADIAL_MENU_ORB_GAP = 22;
+export const RADIAL_RADIUS_DEFAULT = 108;
+export const RADIAL_RADIUS_MIN = 84;
+/** Orb acrylic core + micro shell (matches ORB_SIZE_PX + shell ring). */
+export const RADIAL_ORB_HALF_PX = 24;
+/** Extra nudge so stacked projections read clearly separated from the Orb (px). */
+export const RADIAL_STACKED_ORB_OFFSET_X = 14;
+export const RADIAL_STACKED_ORB_OFFSET_Y = 12;
 
 export type ViewportInsets = {
   top: number;
@@ -110,6 +116,32 @@ function itemFits(cx: number, cy: number, bounds: ReturnType<typeof contentBound
   );
 }
 
+function itemOverlapsOrb(
+  cx: number,
+  cy: number,
+  anchorX: number,
+  anchorY: number
+): boolean {
+  const halfW = RADIAL_ITEM_WIDTH / 2;
+  const halfH = RADIAL_ITEM_HEIGHT / 2;
+  const pad = RADIAL_MENU_ORB_GAP;
+  const orbHalf = RADIAL_ORB_HALF_PX;
+  return !(
+    cx + halfW < anchorX - orbHalf - pad ||
+    cx - halfW > anchorX + orbHalf + pad ||
+    cy + halfH < anchorY - orbHalf - pad ||
+    cy - halfH > anchorY + orbHalf + pad
+  );
+}
+
+function layoutClearOfOrb(
+  items: RadialMenuItemPosition[],
+  anchorX: number,
+  anchorY: number
+): boolean {
+  return items.every((item) => !itemOverlapsOrb(item.x, item.y, anchorX, anchorY));
+}
+
 function radialPositions(
   anchorX: number,
   anchorY: number,
@@ -127,17 +159,18 @@ function radialPositions(
   let arcEnd: number;
 
   if (nearRight && nearBottom) {
-    arcStart = Math.PI * 1.1;
-    arcEnd = Math.PI * 1.42;
+    /* Upper-left fan — clear bottom-right Orb */
+    arcStart = Math.PI * 1.14;
+    arcEnd = Math.PI * 1.56;
   } else if (nearRight && !nearBottom) {
-    arcStart = Math.PI * 1.08;
-    arcEnd = Math.PI * 1.42;
+    arcStart = Math.PI * 1.12;
+    arcEnd = Math.PI * 1.48;
   } else if (!nearRight && nearBottom) {
-    arcStart = Math.PI * 1.58;
-    arcEnd = Math.PI * 1.92;
+    arcStart = Math.PI * 1.62;
+    arcEnd = Math.PI * 1.96;
   } else {
-    arcStart = Math.PI * 0.58;
-    arcEnd = Math.PI * 0.92;
+    arcStart = Math.PI * 0.52;
+    arcEnd = Math.PI * 0.88;
   }
 
   if (count <= 1) {
@@ -156,7 +189,16 @@ function radialPositions(
   });
 }
 
-function radialFits(items: RadialMenuItemPosition[], bounds: ReturnType<typeof contentBounds>): boolean {
+function radialFits(
+  items: RadialMenuItemPosition[],
+  bounds: ReturnType<typeof contentBounds>,
+  anchorX: number,
+  anchorY: number
+): boolean {
+  return radialItemsInBounds(items, bounds) && layoutClearOfOrb(items, anchorX, anchorY);
+}
+
+function radialItemsInBounds(items: RadialMenuItemPosition[], bounds: ReturnType<typeof contentBounds>): boolean {
   return items.every((item) => itemFits(item.x, item.y, bounds));
 }
 
@@ -170,26 +212,51 @@ function stackedPositions(
   const halfW = RADIAL_ITEM_WIDTH / 2;
   const halfH = RADIAL_ITEM_HEIGHT / 2;
   const step = RADIAL_ITEM_HEIGHT + RADIAL_MENU_STACK_GAP;
+  const midX = (bounds.minX + bounds.maxX) / 2;
+  const midY = (bounds.minY + bounds.maxY) / 2;
+  const nearRight = anchorX > midX;
+  const nearBottom = anchorY > midY;
+  const orbHalf = RADIAL_ORB_HALF_PX;
+  const gap = RADIAL_MENU_ORB_GAP;
 
   let cx = anchorX;
+  let firstCenterY = anchorY - gap - halfH;
+  let direction: 1 | -1 = -1;
+
+  if (nearRight && nearBottom) {
+    /* Bottom-right Orb — column sits above and to the left */
+    cx = anchorX - orbHalf - gap - halfW - RADIAL_STACKED_ORB_OFFSET_X;
+    firstCenterY = anchorY - orbHalf - gap - halfH - RADIAL_STACKED_ORB_OFFSET_Y;
+    direction = -1;
+  } else if (nearRight && !nearBottom) {
+    cx = anchorX - orbHalf - gap - halfW - RADIAL_STACKED_ORB_OFFSET_X;
+    firstCenterY = anchorY + orbHalf + gap + halfH + RADIAL_STACKED_ORB_OFFSET_Y;
+    direction = 1;
+  } else if (!nearRight && nearBottom) {
+    cx = anchorX + orbHalf + gap + halfW + RADIAL_STACKED_ORB_OFFSET_X;
+    firstCenterY = anchorY - orbHalf - gap - halfH - RADIAL_STACKED_ORB_OFFSET_Y;
+    direction = -1;
+  } else {
+    cx = anchorX + orbHalf + gap + halfW + RADIAL_STACKED_ORB_OFFSET_X;
+    firstCenterY = anchorY + orbHalf + gap + halfH + RADIAL_STACKED_ORB_OFFSET_Y;
+    direction = 1;
+  }
+
   if (cx + halfW > bounds.maxX) cx = bounds.maxX - halfW;
   if (cx - halfW < bounds.minX) cx = bounds.minX + halfW;
 
-  const firstCenterY = anchorY - RADIAL_MENU_ORB_GAP - halfH;
   const items: RadialMenuItemPosition[] = [];
-
   for (let i = 0; i < count; i++) {
-    let cy = firstCenterY - i * step;
-    items.push({ index: i, x: cx, y: cy });
+    items.push({ index: i, x: cx, y: firstCenterY + direction * i * step });
   }
 
-  const top = items[items.length - 1].y - halfH;
+  const top = Math.min(...items.map((item) => item.y - halfH));
   if (top < bounds.minY) {
     const shift = bounds.minY - top;
     for (const item of items) item.y += shift;
   }
 
-  const bottom = items[0].y + halfH;
+  const bottom = Math.max(...items.map((item) => item.y + halfH));
   if (bottom > bounds.maxY) {
     const shift = bottom - bounds.maxY;
     for (const item of items) item.y -= shift;
@@ -198,8 +265,13 @@ function stackedPositions(
   return items;
 }
 
-function stackedFits(items: RadialMenuItemPosition[], bounds: ReturnType<typeof contentBounds>): boolean {
-  return items.every((item) => itemFits(item.x, item.y, bounds));
+function stackedFits(
+  items: RadialMenuItemPosition[],
+  bounds: ReturnType<typeof contentBounds>,
+  anchorX: number,
+  anchorY: number
+): boolean {
+  return radialItemsInBounds(items, bounds) && layoutClearOfOrb(items, anchorX, anchorY);
 }
 
 /** Compute fully in-viewport positions for radial menu items. */
@@ -218,13 +290,13 @@ export function computeRadialMenuLayout(
 
   for (let radius = RADIAL_RADIUS_DEFAULT; radius >= RADIAL_RADIUS_MIN; radius -= 8) {
     const items = radialPositions(anchorX, anchorY, count, radius, viewport);
-    if (radialFits(items, bounds)) {
+    if (radialFits(items, bounds, anchorX, anchorY)) {
       return { mode: 'radial', anchorX, anchorY, items };
     }
   }
 
   const stacked = stackedPositions(anchorX, anchorY, count, viewport);
-  if (stackedFits(stacked, bounds)) {
+  if (stackedFits(stacked, bounds, anchorX, anchorY)) {
     return { mode: 'stacked', anchorX, anchorY, items: stacked };
   }
 

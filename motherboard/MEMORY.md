@@ -43273,3 +43273,27 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 **Changes:** `src/components/admin/studio/command-center/StudioCommandCenterRoom.tsx`, `motherboard/MEMORY.md`.
 
 **Conventions:** Do not re-add ambient teaching footers to Command Center unless explicitly requested — keeps arrival space visually clean.
+
+---
+
+## 2026-07-08 — Orb radial menu panel clearance (left + up offset)
+
+**Context:** Follow-up in same session as Hero Icon Library + teaching line removal. User reported Orb projection panels overlapping the Orb on mobile — panels needed to move **left** and **up significantly**.
+
+**Topics covered (entire conversation so far):**
+- Prior: ARTICLE-D08 Hero Icon Library, acrylic tiles, removed Command Center teaching footer.
+- **This turn:** Root cause in **`studioOrbRadialLayout.ts`** — stacked fallback centered items on Orb `anchorX` with only 14px vertical gap; hit boxes (80×56) underestimated actual 58px tile + label (~72×76).
+- **Fix:** Updated layout constants and quadrant-aware stacked positioning for bottom-right Orb:
+  - Larger item bounds (`72×76`), increased Orb gap (`22px`), wider default radial radius (`108px`).
+  - Stacked column for bottom-right now anchors **left and above** Orb (`cx = anchorX - orbHalf - gap - halfW - 14`, `firstCenterY` with `-12px` extra lift).
+  - Added **`itemOverlapsOrb`** / **`layoutClearOfOrb`** guards so radial + stacked layouts reject Orb collisions.
+  - Radial arc for bottom-right widened upward-left (`1.14π–1.56π`).
+- Extended **`scripts/test-studio-orb-radial-layout.ts`** — 5-item iPhone case, Orb overlap assertion, lowest-item-above-Orb check.
+
+**Decisions / outcomes:** Orb menu projections on bottom-right (default) fan in a column up-left of the Orb with visible clearance; no overlap with the acrylic Orb shell.
+
+**Changes:** `src/components/admin/studio/studio-orb/studioOrbRadialLayout.ts`, `scripts/test-studio-orb-radial-layout.ts`, `motherboard/MEMORY.md`.
+
+**Verification:** `npx tsx scripts/test-studio-orb-radial-layout.ts` passed.
+
+**Conventions:** When changing projection tile dimensions, update **`RADIAL_ITEM_WIDTH` / `RADIAL_ITEM_HEIGHT`** in `studioOrbRadialLayout.ts` and re-run the layout smoke script.
