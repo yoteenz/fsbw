@@ -174,6 +174,7 @@ export type StudioOsCoreModuleId =
   | 'governance'
   | 'studio-intelligence'
   | 'simulation-engine'
+  | 'career-worlds'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -1210,6 +1211,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'SIMULATION ENGINE',
     description: 'Model business decisions before committing — scenario comparison, risk analysis, and decision support. Not predictions.',
     routeSegment: 'simulation-engine',
+  },
+  {
+    id: 'career-worlds',
+    label: 'CAREER WORLDS™',
+    description: 'Persistent professional simulation engine — Career Hub, world clock, economy, NPC ecosystem. Reusable across every profession.',
+    routeSegment: 'career-worlds',
   },
   {
     id: 'vision-engine',

@@ -2334,6 +2334,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'career-worlds',
+    title: 'CAREER WORLDS™',
+    purpose: 'Persistent professional realities — Career Hub, world clock, economy, NPC memory. Every profession plugs into one engine.',
+    route: p('career-worlds'),
+    groupId: 'intelligence',
+    status: 'demo',
+    metric: '12 WORLDS',
+    ctaLabel: 'OPEN CAREER HUB',
+    moduleKey: 'career-worlds',
+    featuredOnOverview: true,
+  },
+  {
     id: 'vision-engine',
     title: 'VISION ENGINE',
     purpose: 'Generate cinematic Vision Modes — Builder, Recorder, Share, Analytics. Internal only.',

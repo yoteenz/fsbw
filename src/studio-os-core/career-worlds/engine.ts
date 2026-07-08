@@ -1,74 +1,72 @@
-import { evaluateImplementationEra } from '../world-graph/era-evaluation';
-import { CAREER_WORLD_BLUEPRINTS, CAREER_WORLD_BLUEPRINT_BY_ID } from './catalog';
-import type {
-  CareerWorldBlueprint,
-  CareerWorldId,
-  CareerWorldProgressPhase,
-  CareerWorldRuntimeSnapshot,
-} from './types';
+/**
+ * Career Worlds™ — orchestration engine (Profession Simulation Engine™ extension).
+ * Reusable across every profession blueprint; no single-world hardcoding.
+ */
 
-export const CAREER_WORLDS_SYSTEM = {
-  article: 'ARTICLE-E02',
-  name: 'Career Worlds™',
-  oneLine:
-    'Career Worlds™ replace education with persistent professional lives where learners inhabit evolving professions for months or years.',
-  coreQuestion: 'What kind of life are you building?',
-  antiPattern: 'Do not frame professional growth as Academies, courses, lessons, or static training tracks.',
-  runtimeOwner: 'Profession Simulation Engine™',
-  graphOwner: 'World Graph™',
-} as const;
+import { CAREER_WORLD_BLUEPRINT_BY_ID } from './catalog';
+import { buildCareerHubViewModel } from './career-hub/builder';
+import {
+  ensureCareerWorldSave,
+  loadCareerWorldSave,
+  saveCareerWorldSave,
+} from './persistence/save-store';
+import { runSimulationTick } from './simulation/tick-engine';
+import type { CareerHubViewModel } from './career-hub/builder';
+import type { CareerWorldSave } from './core/schemas';
+import type { CareerWorldBlueprint, CareerWorldId } from './types';
+
+export type { CareerHubViewModel, CareerWorldBlueprint, CareerWorldSave };
+
+export function getCareerWorld(worldId: CareerWorldId): CareerWorldBlueprint | undefined {
+  return CAREER_WORLD_BLUEPRINT_BY_ID[worldId];
+}
 
 export function listCareerWorlds(): CareerWorldBlueprint[] {
-  return CAREER_WORLD_BLUEPRINTS;
+  return Object.values(CAREER_WORLD_BLUEPRINT_BY_ID);
 }
 
-export function getCareerWorld(id: CareerWorldId): CareerWorldBlueprint {
-  return CAREER_WORLD_BLUEPRINT_BY_ID[id];
+/** Load or create persistent save for a learner in a world. */
+export function bootstrapCareerWorld(worldId: CareerWorldId, learnerId: string): CareerWorldSave {
+  return ensureCareerWorldSave(worldId, learnerId);
 }
 
-export function assertCareerWorld(id: string): CareerWorldBlueprint {
-  const blueprint = CAREER_WORLD_BLUEPRINT_BY_ID[id as CareerWorldId];
-  if (!blueprint) {
-    throw new Error(`Unknown Career World™: ${id}`);
-  }
-  return blueprint;
+/** Advance simulation when player returns (offline catch-up + live tick). */
+export function syncCareerWorldOnReturn(
+  worldId: CareerWorldId,
+  learnerId: string,
+  options?: { maxSimDays?: number },
+): CareerWorldSave {
+  const save = ensureCareerWorldSave(worldId, learnerId);
+  const result = runSimulationTick(
+    save,
+    options?.maxSimDays ? { forceDays: options.maxSimDays } : undefined,
+  );
+  saveCareerWorldSave(result.save);
+  return result.save;
 }
 
-export function buildCareerWorldRuntimeSnapshot(input: {
-  worldId: CareerWorldId;
-  learnerId: string;
-  currentPhase?: CareerWorldProgressPhase;
-  lastSeenAt?: string;
-  now?: string;
-}): CareerWorldRuntimeSnapshot {
-  const blueprint = getCareerWorld(input.worldId);
-  const now = input.now ? new Date(input.now) : new Date();
-  const lastSeen = input.lastSeenAt ? new Date(input.lastSeenAt) : now;
-  const offlineDeltaHours = Math.max(0, Math.round((now.getTime() - lastSeen.getTime()) / 36_000) / 100);
-
-  return {
-    worldId: input.worldId,
-    learnerId: input.learnerId,
-    currentPhase: input.currentPhase ?? 'entry',
-    simulatedAt: now.toISOString(),
-    offlineDeltaHours,
-    activeEvents: blueprint.offlineEvolutionSignals.slice(0, 3),
-    marketSignals: blueprint.economy.marketForces,
-    reputationSignals: [
-      `${blueprint.profession} reputation changes through client outcomes`,
-      `${blueprint.profession} network expands through collaborators and mentors`,
-      `${blueprint.profession} portfolio grows through completed work`,
-    ],
-    recommendedNextLives: blueprint.challengeLoops.map((loop) => `Practice ${loop} inside ${blueprint.name}`),
-  };
+/** Read save without advancing time. */
+export function readCareerWorldSave(
+  worldId: CareerWorldId,
+  learnerId: string,
+): CareerWorldSave | null {
+  return loadCareerWorldSave(worldId, learnerId);
 }
 
-export const CAREER_WORLDS_ERA_EVALUATION = evaluateImplementationEra({
-  systemName: 'Career Worlds™',
-  proposedEra: 'world',
-  establishesFoundationForNext: true,
-  unnecessaryComplexityTooEarly: false,
-  evolvesWithoutRewrite: true,
-  notes:
-    'ARTICLE-E02 is an Era 2 World™ architecture, implemented now as graph/canon foundation only. Runtime NPC autonomy, economies, and persistent offline simulation can mature without replacing the model.',
-});
+/** Build Career Hub view model (replaces course dashboard). */
+export function getCareerHub(
+  worldId: CareerWorldId,
+  learnerId: string,
+): CareerHubViewModel | null {
+  const save = loadCareerWorldSave(worldId, learnerId);
+  if (!save) return null;
+  return buildCareerHubViewModel(save);
+}
+
+/** Persist manual mutations (UI actions, admin tools). */
+export function persistCareerWorldSave(save: CareerWorldSave): CareerWorldSave {
+  saveCareerWorldSave(save);
+  return save;
+}
+
+export { runSimulationTick, buildCareerHubViewModel };

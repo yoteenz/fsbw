@@ -441,6 +441,10 @@ const AdminStudioConstitutionHall = lazyWithRetry(
   () => import('./pages/admin/studio/constitution-hall/page'),
   'AdminStudioConstitutionHall'
 );
+const AdminStudioCareerWorlds = lazyWithRetry(
+  () => import('./pages/admin/studio/career-worlds/page'),
+  'AdminStudioCareerWorlds'
+);
 const AdminStudioKnowledgeCore = lazyWithRetry(
   () => import('./pages/admin/studio/knowledge-core/page'),
   'AdminStudioKnowledgeCore'
@@ -2148,6 +2152,11 @@ function App() {
           <Route path="studio/constitution-hall" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioConstitutionHall />
+            </Suspense>
+          } />
+          <Route path="studio/career-worlds" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioCareerWorlds />
             </Suspense>
           } />
           <Route path="studio/knowledge-core" element={
