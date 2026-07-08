@@ -41478,3 +41478,24 @@ User defined **Expeditions™** — second category of work alongside Routines�
 - **10-doc spec:** `docs/studio-os/expeditions/` — README · expedition-philosophy · routine-vs-expedition · expedition-engine · living-roadmaps · milestone-system · headquarters-evolution · company-memory · orb-guidance · future-expeditions
 - **Prior arc (same chat):** Routines™ · Scene Architecture™ · CDS V2 prototype · Guild System™ · Studio Professionals™ · Living Sets™
 - **CORE.md + studio-world.md + routines/README.md + navigation/README.md:** Expeditions™ cross-refs added
+
+---
+
+## 2026-07-08 — Founder Discovery™ — The Company Before The Company (pre-company discovery sprint, docs only)
+
+User defined **Founder Discovery™** — how Studio OS helps someone discover what company to build before Headquarters™ exists. **No UI · no questionnaires · no recommendation algorithms.**
+
+- **Mission:** Most people don't know what business to build — never open with *"What business do you want to create?"* — Orb helps discover answer
+- **First product = clarity:** who they are · natural aptitude · motivations · work style · industry fit · company fit · founder potential
+- **Orb conversation not forms:** skills · experience · hobbies · education · careers · income/lifestyle goals · risk · leadership · creative/technical ability · time · budget · family · vision · mission · values — **interviewed not surveyed**
+- **Founder Genome™:** built continuously during discovery · confidence model · nothing from one questionnaire · travels to post-company · Discovery Never Ends™
+- **Business Matching™:** multi-dimensional (Highest Profit™ · Lowest Startup Cost™ · Fastest Launch™ · Most Passive™ · Creativity™ · Lifestyle™ · Growth™ · Automation™ · AI Leverage™ · Enjoyable™ · Mission Driven™) — every match explains **WHY**
+- **Multiple Paths™:** Best Overall™ · Highest Profit™ · Lowest Risk™ · Fastest Launch™ · Lifestyle Favorite™ · Wild Card™ · Mission Match™ — founder chooses
+- **Discovery Report™:** per-path packages (overview · compatibility score · startup/monthly costs · time · team · concierges · HQ · Studio Original™ · departments · AI workforce · routines · expeditions · revenue · risks · growth · difficulty · time to profit · first-year roadmap · licenses · insurance · legal structures advisory · skills · outsourcing · automation)
+- **Business Simulator™:** typical workday · weekly rhythm · seasonality · milestones · customers · hiring · cash flow · stress · travel · scalability — experience before commit
+- **Cost Engine™:** registration · licensing · insurance · software · equipment · inventory · marketing · branding · legal · accounting · taxes · AI · Studio subscription · concierge · employees · office · cloud · emergency reserve · working capital · burn · break-even
+- **Company Preview™:** walk future HQ · departments · scenes · workspaces · Orb · AI team · roadmap · growth projections before company creation
+- **Flow:** clarity → confidence → commitment → Adaptive Onboarding™ → Studio World™ construction
+- **11-doc spec:** `docs/studio-os/founder-discovery/` — README · founder-discovery · conversation-framework · founder-genome · business-matching-engine · discovery-report · business-simulator · cost-engine · company-preview · founder-evolution · future-discovery-roadmap
+- **Prior arc (same chat):** Expeditions™ · Routines™ · Scene Architecture™ · CDS V2 prototype · Guild System™ · Adaptive Onboarding™ · Founder Intelligence™
+- **CORE.md + studio-world.md + onboarding/README.md:** Founder Discovery™ cross-refs added

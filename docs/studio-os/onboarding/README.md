@@ -38,6 +38,8 @@ The onboarding experience should feel like meeting the **Executive Producer** of
 
 **Adaptive Onboarding™ evolves** [Mode System™](../modes/README.md) — it does not replace the Company Engine™ or create a new platform.
 
+**Precedes (when needed):** [Founder Discovery™](../founder-discovery/README.md) — helps founders discover *what* to build before *"What are we going to build together?"*
+
 ---
 
 ## The Experience

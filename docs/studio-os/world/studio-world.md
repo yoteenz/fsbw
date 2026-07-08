@@ -107,6 +107,8 @@ STUDIO WORLD™
 
 **Expeditions™:** [Transformational Journeys](../expeditions/README.md) — strategic arcs · milestones · Founder's Story™
 
+**Founder Discovery™:** [The Company Before The Company](../founder-discovery/README.md) — pre-HQ clarity · business matching · Company Preview™
+
 ---
 
 ## Related Canon (Subsystems)
