@@ -41804,3 +41804,26 @@ User **STOP** directive: **platform intelligence sprint** — **Creative Equity�
 - **Cross-refs:** `studio-world.md` · `CORE.md` · `creative-budgets/`
 - **Prior arc (same chat):** Creative Budgets™ · Studio Alpha Production Dashboard™ · Production Estimates™ · intelligence stack sprints
 - **No UI this sprint**
+
+---
+
+## 2026-07-08 — Creative Portfolio™ — the Creative Net Worth Dashboard (platform intelligence sprint, docs only)
+
+User **STOP** directive: **platform intelligence sprint** — **Creative Portfolio™** multidimensional ecosystem health. **Do NOT** build UI · financial dashboards · redesign Creative Equity™.
+
+- **Mission:** Creative Equity™ should never be a single dollar amount alone — creative wealth is multidimensional. Portfolio evaluates strength · maturity · influence · efficiency · long-term value of creative ecosystem.
+- **Portfolio Overview dimensions:** Creative Equity™ (one signal) · Estimated Portfolio Value™ · Portfolio Health™ · Creative Maturity™ · Creative Efficiency™ · Design Consistency™ · Marketplace Influence™ · Visual DNA Stability™ · Blueprint Strength™ · Asset Health™
+- **Portfolio Health™ 0–100:** blueprint/system reuse · asset quality · generation efficiency · design consistency · marketplace adoption · founder satisfaction · maintainability · creative evolution
+- **Design Consistency™:** materials · lighting · architecture · orb · motion · storytelling · typography · interaction · color · transitions — one cohesive world
+- **Blueprint Strength™:** reuse · cross-dept compatibility · marketplace demand · longevity · variants · adaptability
+- **Asset Health™:** active · frequently/rarely used · high/low ROI · legacy · deprecated · recommended upgrade/retirement
+- **Creative Efficiency™:** savings · reuse rate · blueprint utilization · golden build success · iterations
+- **Marketplace Influence™:** sales · downloads · installs · licenses · reputation · featured · studio certified (spec only)
+- **Visual DNA™:** recognizability · stability · Orb identity narration
+- **Portfolio Evolution™:** never resets · matures via Expeditions™ · Routines™ · Generations · Golden Builds™ · Blueprints™ · marketplace
+- **Orb portfolio advisor:** *"portfolio healthier"* · *"Blueprint exceptional value"* · *"upgrade legacy Lighting"* · *"68% cost reduction through reuse"*
+- **Collections schema unchanged:** `docs/studio-os/creative-equity/creative-portfolio.md`
+- **11-doc spec:** `docs/studio-os/creative-portfolio/` — README · creative-portfolio · portfolio-health · creative-maturity · creative-efficiency · design-consistency · blueprint-strength · marketplace-influence · asset-health · visual-dna · portfolio-roadmap
+- **Cross-refs:** `studio-world.md` · `CORE.md` · `creative-equity/` · `creative-budgets/`
+- **Prior arc (same chat):** Creative Equity™ · Creative Budgets™ · Studio Alpha Production Dashboard™ · intelligence stack
+- **No UI this sprint**

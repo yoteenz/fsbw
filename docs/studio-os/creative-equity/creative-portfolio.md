@@ -1,7 +1,9 @@
 # Creative Portfolio™
 
 **Module:** `studio.creative-equity.v1.portfolio`  
-**Status:** Founder's creative asset library — portfolio value = Creative Equity™
+**Status:** Founder's creative asset library — collections schema
+
+> **Expanded multidimensional dashboard:** [Creative Portfolio™ system](../creative-portfolio/README.md) — Portfolio Health™ · maturity · consistency · influence. This file defines **collections structure** only.
 
 ---
 

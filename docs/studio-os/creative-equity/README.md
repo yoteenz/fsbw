@@ -87,6 +87,8 @@ Every approved generation should become an **investment**.
 | [creative-investments.md](./creative-investments.md) | Investment categories · Company Genome™ |
 | [future-equity-roadmap.md](./future-equity-roadmap.md) | v2+ evolution |
 
+**Multidimensional dashboard:** [Creative Portfolio™](../creative-portfolio/README.md) — Portfolio Health™ · maturity · consistency · influence (collections schema in [creative-portfolio.md](./creative-portfolio.md))
+
 ---
 
 ## Sprint Constraints

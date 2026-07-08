@@ -154,3 +154,5 @@ Orb coaches toward higher reuse · maturity · consistency
 _Creative Budgets™ — creative capacity, not API calls._
 
 **Sibling (lifetime):** [Creative Equity™](../creative-equity/README.md) — creative net worth · portfolio · never resets
+
+**Sibling (multidimensional):** [Creative Portfolio™](../creative-portfolio/README.md) — ecosystem health dashboard
