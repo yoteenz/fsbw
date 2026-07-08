@@ -40911,3 +40911,24 @@ Summary of the **whole conversation in this chat**: prior platform engines (Gene
 - **Pilot:** Creative Direction Studio™ `pkg-creative-direction-golden-v1` · Project 001 · 16 production groups · 35 modular assets.
 - **Cross-refs:** Updated `docs/studio-os/alpha/README.md` (Sprint 002 section) · `production/README.md` · `engines/generation-manager/README.md` · `motherboard/CORE.md`
 - **Conventions:** Docs only · no React · no generation API · platform frozen · one commit on **`master`**
+
+---
+
+## 2026-07-08 — Studio OS Alpha Sprint 001 Vertical Slice + AI infrastructure audit (complete)
+
+Summary of the **whole conversation in this chat**: Sprint 002 Studio Builder docs · user correction (FAL already integrated — no copy-paste workflow) · **AI generation infrastructure inventory** (classify reuse/refactor/missing) · **Alpha Sprint 001 Vertical Slice implementation** — prove reusable department engine end-to-end.
+
+- **Infrastructure audit:** All FAL server-side (`api/_lib/`). Live patterns: `studioAssetGeneration.ts` (Asset Director) · `studioBuilderGeneration.ts` (new, department-agnostic) · Product Photography/Factory · live try-on queue/poll. Client bridge: `src/services/studio/assetGeneration/api.ts` · `studioBuilder/api.ts`. Missing: durable job DB · consolidated `studioGeneration` lib · CDS-specific logic must not live in reusable modules.
+- **Sprint 001 mission:** Smallest magical vertical slice proving Studio OS manufactures departments — **CDS is first package, not special-case code**. Critical rule: uniqueness only from Department Definition · Company Genome · Project Genome · Room DNA (bundled in `department-package/`).
+- **Implemented reusable systems** (`src/studio-os-core/`):
+  - `department-package/` — registry + bundled CDS JSON + `production-groups.json`
+  - `studio-builder/` — prompt compiler · queue store · asset registry store · genome context
+  - `studio-objects/living-mood-wall/` · `studio-objects/founder-notes/`
+  - `department-room/` — atmosphere CSS vars · walkable zones
+  - `studio-orb-runtime/` — department greetings/insights
+  - `project-genome/` — active project context
+- **API:** `POST /api/admin/studio-builder-generate` — FAL NBP edit 16:9 → Supabase `studio-assets/departments/...`
+- **UI:** `DepartmentVerticalSliceRoom` — Environment Shell (2.5D perspective) · Orb · Mood Wall · Founder Notes · Queue · Generate Environment
+- **Route:** `/admin/studio/department/creative-direction` · CTA from ndxbook creative-direction page
+- **Build:** `npm run build` passes
+- **Conventions:** Work on **`master`** · one commit per task · no new platform architecture docs

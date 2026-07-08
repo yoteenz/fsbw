@@ -8,6 +8,7 @@ import { ensureFounderPilotForOrganization } from '../../../../../studio-os-core
 import {
   adminStudioNdxbookMissionControlPath,
   adminStudioNdxbookNewsroomDepartmentPath,
+  adminStudioDepartmentVerticalSlicePath,
 } from '../../../../../utils/adminStudioRoutes';
 
 /** Creative Direction Studio™ — canonical creative layer for Project 001 (above Production Engine). */
@@ -27,6 +28,14 @@ export default function AdminStudioNdxbookCreativeDirectionPage() {
     >
       <CreativeDirectionStudioWorkspace />
       <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => navigate(adminStudioDepartmentVerticalSlicePath('creative-direction'))}
+          className="px-3 py-2 text-[7px] font-futura border"
+          style={{ fontWeight: 515, borderColor: '#C9A962', color: '#C9A962' }}
+        >
+          ENTER VERTICAL SLICE™ →
+        </button>
         <button
           type="button"
           onClick={() => navigate(adminStudioNdxbookNewsroomDepartmentPath('discover'))}

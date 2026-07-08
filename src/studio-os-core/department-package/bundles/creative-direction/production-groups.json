@@ -1,0 +1,30 @@
+{
+  "$schema": "studio.department-package.v1/production-groups",
+  "departmentId": "creative-direction",
+  "packageId": "pkg-creative-direction-golden-v1",
+  "groups": {
+    "environment": {
+      "displayName": "Environment Shell",
+      "heroAssetId": "env-shell-cds",
+      "assetIds": ["env-shell-cds", "env-floor-cds", "env-ceiling-cds", "env-window-cds", "env-alcove-cds"],
+      "promptTemplate": {
+        "primary": "Double-height editorial creative atelier, luxury architecture studio headquarters, Stage layout 3:2 proportion, generous horizontal sweep, polished stone floor with deep reflection, gallery-white hero wall zone, warm material honesty, photorealistic architectural interior visualization, 8K detail, cinematic editorial grade, human-scale standing workspace, no office cubicles, no computer monitors as furniture.",
+        "negative": "dashboard, card grid, sidebar navigation, white void, stock photo banner, UI chrome, SaaS office, fluorescent overhead panels, cubicle partitions, generic conference room, flat background plate",
+        "roomDnaModifierKey": "environment",
+        "genomeSlots": ["materialLanguage", "editorialDirection", "lightingStyle"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    }
+  },
+  "defaultProject": {
+    "id": "project-001",
+    "name": "PROJECT 001",
+    "vision": "The creative brain of the company — luxury editorial atelier where direction is formed before production.",
+    "northStar": "Every asset downstream inherits approved creative intent.",
+    "tone": ["editorial", "luxurious", "calm", "architectural"]
+  }
+}

@@ -1,0 +1,1 @@
+export { DepartmentVerticalSliceRoom } from './DepartmentVerticalSliceRoom';

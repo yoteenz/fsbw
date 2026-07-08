@@ -1,0 +1,139 @@
+{
+  "$schema": "studio.department-generator.v1/room-dna.json",
+  "departmentId": "creative-direction",
+  "version": "1.0.0",
+  "packageId": "pkg-creative-direction-golden-v1",
+  "resolvedAt": "2026-07-08T00:00:00Z",
+  "goldenDepartment": true,
+
+  "sliders": {
+    "luxuryLevel": 0.92,
+    "innovationLevel": 0.55,
+    "editorialLevel": 0.94,
+    "immersionLevel": 0.88,
+    "calmLevel": 0.78,
+    "technologyLevel": 0.48,
+    "glassLevel": 0.80,
+    "chromeLevel": 0.40,
+    "warmthLevel": 0.75,
+    "playfulnessLevel": 0.35,
+    "creativeChaosLevel": 0.42,
+    "minimalismLevel": 0.68,
+    "spatialDepth": 0.85,
+    "motionIntensity": 0.55,
+    "ambientIntelligence": 0.72,
+    "founderControl": 0.95,
+    "aiPresence": 0.65
+  },
+
+  "legacySliders": {
+    "luxury": 0.92,
+    "innovation": 0.55,
+    "minimalism": 0.68,
+    "warmth": 0.75,
+    "technology": 0.48,
+    "corporate": 0.22,
+    "playfulness": 0.35,
+    "creativity": 0.95,
+    "glass": 0.80,
+    "wood": 0.45,
+    "stone": 0.30,
+    "chrome": 0.40
+  },
+
+  "defaultFeeling": [
+    "luxurious",
+    "editorial",
+    "cinematic",
+    "intelligent",
+    "calm",
+    "immersive",
+    "high-end",
+    "architectural"
+  ],
+
+  "forbiddenFeeling": [
+    "corporate",
+    "generic-saas",
+    "dashboard",
+    "clinical-office",
+    "startup-cubicle"
+  ],
+
+  "brandPersonality": {
+    "source": "company-genome",
+    "archetype": "creator-editor",
+    "voiceRegister": "editorial-luxury",
+    "defaultExpression": "luxury-editorial-atelier",
+    "thingsWeNeverDo": [
+      "popup-modals",
+      "dashboard-chrome",
+      "card-grid-layout",
+      "sidebar-navigation",
+      "floating-chat-bubble-orb",
+      "stock-photo-hero-banner",
+      "flat-overhead-fluorescent",
+      "generic-ui-cards",
+      "fake-browser-chrome"
+    ]
+  },
+
+  "sliderEffects": {
+    "luxuryLevel": "Premium materials · ceremony weight · negative space",
+    "editorialLevel": "Typography register · pin rail style · composition restraint",
+    "immersionLevel": "Depth planes · parallax · arrival ceremony duration",
+    "calmLevel": "Ambient audio duck · particle density · motion pacing",
+    "creativeChaosLevel": "Mood wall density tolerance · sandbox activity",
+    "spatialDepth": "Foreground/midground/background separation",
+    "motionIntensity": "Continuous ambient motion amplitude",
+    "ambientIntelligence": "AI ambient note frequency · Orb proactive suggestions",
+    "founderControl": "Approval gates · AI cannot auto-approve",
+    "aiPresence": "Concierge visibility · ambient annotations"
+  },
+
+  "materialBias": {
+    "primary": ["polished-stone-floor", "brushed-brass", "frosted-glass", "walnut"],
+    "accent": ["marble-vein-subtle", "gallery-plaster", "linen-upholstery"],
+    "forbidden": ["neon-plastic", "stock-photo-frames", "saas-white-void", "cubicle-furniture"]
+  },
+
+  "promptModifiers": {
+    "environment": "Double-height editorial creative atelier, luxury architecture studio, generous negative space, gallery-white hero wall, polished stone floor with reflection depth, cinematic not corporate",
+    "lighting": "Warm key 3200K editorial three-point, soft fill preserving shadow detail, controlled rim on glass and brass, calm immersive register",
+    "furniture": "Bespoke editorial furniture, low-profile luxury timeline table, human-scale standing height, no office cubicle aesthetics",
+    "atmosphere": "Gold dust motes in hero light, floor reflects Mood Wall glow, three depth planes, gallery air — clean material warmth",
+    "architecture": "Minimal columns at 35% depth, floor-to-ceiling glass right flank, double-volume hero zone 6.5m equivalent"
+  },
+
+  "industryAdaptationPresets": {
+    "ndx": { "editorialLevel": 0.90, "warmthLevel": 0.40, "chromeLevel": 0.65, "playfulnessLevel": 0.15, "corporate": 0.45 },
+    "frontal-slayer": { "warmthLevel": 0.85, "luxuryLevel": 0.95, "wood": 0.55, "playfulnessLevel": 0.40 },
+    "luxury-salon": { "warmthLevel": 0.88, "luxuryLevel": 0.93, "calmLevel": 0.85, "immersionLevel": 0.90 },
+    "law-firm": { "corporate": 0.70, "wood": 0.75, "warmthLevel": 0.65, "creativeChaosLevel": 0.25 },
+    "restaurant": { "warmthLevel": 0.80, "wood": 0.70, "playfulnessLevel": 0.45, "stone": 0.40 },
+    "construction": { "technologyLevel": 0.55, "chromeLevel": 0.50, "minimalismLevel": 0.75, "warmthLevel": 0.50 },
+    "creative-agency": { "creativeChaosLevel": 0.65, "playfulnessLevel": 0.55, "innovationLevel": 0.70 }
+  },
+
+  "regenerationScopes": {
+    "lighting-only": {
+      "affectedSliders": ["warmthLevel", "luxuryLevel", "calmLevel"],
+      "affectedAssets": ["lighting-rig-cds", "particles-ambient-cds", "env-window-cds"],
+      "preserveTopology": true
+    },
+    "materials-only": {
+      "affectedSliders": ["glassLevel", "chromeLevel", "wood", "stone"],
+      "affectedAssets": ["env-shell-cds", "env-floor-cds", "wall-brief-cds", "table-timeline-cds"],
+      "preserveTopology": true
+    },
+    "mood-wall-only": {
+      "affectedAssets": ["wall-mood-cds"],
+      "preserveTopology": true
+    },
+    "full-industry-switch": {
+      "affectedSliders": ["*"],
+      "preserveTopology": true,
+      "requiresValidationLoop": true
+    }
+  }
+}

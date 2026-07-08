@@ -619,6 +619,11 @@ export function adminStudioNdxbookCreativeDirectionPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/ndxbook/creative-direction`;
 }
 
+/** Studio OS Alpha — immersive department vertical slice (any registered package). */
+export function adminStudioDepartmentVerticalSlicePath(departmentId: string): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/department/${encodeURIComponent(departmentId)}`;
+}
+
 export function adminStudioOsPath(): string {
   return '/admin/studio-os';
 }
