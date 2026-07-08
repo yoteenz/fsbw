@@ -13,15 +13,16 @@ It receives **structured intelligence** (Department Definition + Genomes) and ou
 
 ---
 
-## The Three-Engine Foundation
+## The Four-Engine Foundation
 
 | Engine | Role | Output |
 |--------|------|--------|
 | **Studio Department Generator™** | Creates departments | Department Definition |
 | **Studio Asset Compiler™** | Manufactures departments | DepartmentPackage.zip |
+| **Studio Asset Registry™** | Remembers everything | Permanent creative library |
 | **Studio Department Runtime™** | Operates departments | Living interactive room |
 
-Together these power every immersive Studio OS experience.
+Together these power every immersive Studio OS experience. See [`../studio-asset-registry/`](../studio-asset-registry/README.md).
 
 ---
 

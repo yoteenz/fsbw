@@ -65,6 +65,25 @@ Founders define intent. The compiler translates intent into **hundreds of struct
 
 ---
 
+## Manufacturing Layer (v1)
+
+Canonical **Department Definition → DepartmentPackage.zip** manufacturing spec:
+
+**[`docs/studio-os/engines/studio-asset-compiler/`](../engines/studio-asset-compiler/README.md)**
+
+| Manufacturing doc | This engine doc |
+|-------------------|-----------------|
+| `input-spec.md` (Department Definition) | `02_INPUT_SYSTEM.md` |
+| `prompt-expansion-engine.md` | `03_PROMPT_COMPILER.md` |
+| `generation-pipeline.md` | `04_ASSET_GENERATION_PIPELINE.md` |
+| `output-spec.md` (16-folder zip) | `05_ASSET_PACKAGE_SPEC.md` |
+| `quality-engine.md` | `12_QA_VALIDATION.md` |
+| `provider-abstraction.md` | `14_FUTURE_AI_PROVIDERS.md` |
+
+First compile target: [`departments/creative-direction-studio/`](../departments/creative-direction-studio/README.md) → `CreativeDirectionStudio_Package.zip`
+
+---
+
 ## Document Index
 
 | # | Document | System |

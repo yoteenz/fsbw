@@ -69,7 +69,7 @@ generated/{departmentId}/{version}/
     └── runtime-assembly-manifest.json    # → Department Runtime
 ```
 
-Cooked assets land in `DepartmentPackage.zip` per [engine Package Spec](../engine/department-generator/13_PACKAGE_SPEC.md).
+Cooked assets land in `DepartmentPackage.zip` per [engine Package Spec](../engine/department-generator/13_PACKAGE_SPEC.md). Manufacturing layer: [Studio Asset Compiler™](../engines/studio-asset-compiler/README.md).
 
 ---
 

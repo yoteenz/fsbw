@@ -40739,3 +40739,54 @@ Summary of the **whole conversation so far** in this chat: Department Generator 
 - **Package ID:** `pkg-creative-direction-golden-v1` · 35 assets · 120 MB budget
 - **Decisions:** Sandbox isolation · founderControl 0.95 · AI never auto-approves · Genome topology fixed/soul variable · Walk the Room™ + Validation Loop™ integrated · Discover Department™ exit path
 - **Conventions:** Definition only · no implementation · commits on **`master`**
+
+---
+
+## 2026-07-08 — Studio Asset Compiler™ v1 Manufacturing Engine spec (complete)
+
+Summary of the **whole conversation so far** in this chat: Department Generator schema layer · CDS Golden Department Definition (`09517914`) · **Studio Asset Compiler™ v1 — The Manufacturing Engine**.
+
+- **Context:** User mandated architecture sprint — **NOT** React · UI · Three.js · image generation · runtime code. Define **Studio Asset Compiler™** — bridge between Studio OS intelligence and visual generation · manufactures Department Definitions into **`DepartmentPackage.zip`** without manual FAL prompts.
+- **Prior in chat:** Generator engine + schema layer · CDS Definition at `departments/creative-direction-studio/` · existing 15-doc engine at `engine/asset-compiler/`
+- **Deliverable:** **14-doc manufacturing layer** at **`docs/studio-os/engines/studio-asset-compiler/`**:
+  - README · compiler-overview · compiler-flow
+  - input-spec (Department Definition + Company/Project/Brand Genome + Founder Journey + Design Language/Registry)
+  - output-spec (`DepartmentPackage.zip` · 16 folders 01_environment–16_preview · manifest · build-report)
+  - prompt-expansion-engine (Glass Panel → full stack: material · thickness · Genome · negatives · resolution · isolation)
+  - generation-pipeline (12 stages · CDS stage map · ~151 min estimate)
+  - dependency-resolution · quality-engine (Build Health 0–100)
+  - package-schema (`package-manifest.json`) · runtime-manifest (`15_runtime/`)
+  - provider-abstraction (FAL today · OpenAI/Runway/Midjourney/3D/audio future)
+  - build-report-schema · future-roadmap
+- **Automatic chain:** Read DNA/Genomes → adapt personality → organize assets → expand prompts → assign stages → runtime manifest → dependency graph → Quality Engine → zip
+- **Brand adaptation:** Same CDS compiles differently for Frontal Slayer · NDX · Salon · Law · Restaurant · Construction · Agency · etc.
+- **Three-engine foundation:** Generator creates · Compiler manufactures · Runtime operates
+- **First target:** `CreativeDirectionStudio_Package.zip` from CDS Definition
+- **Cross-refs:** `engine/asset-compiler/README.md` · `department-generator/README.md` · CDS README · CORE.md
+- **Conventions:** Docs only · no implementation · one commit on **`master`**
+
+---
+
+## 2026-07-08 — Studio Asset Registry™ v1 The Living Library spec (complete)
+
+Summary of the **whole conversation so far** in this chat: Department Generator schema layer · CDS Golden Department Definition · Studio Asset Compiler™ v1 Manufacturing Engine · **Studio Asset Registry™ v1 — The Living Library**.
+
+- **Context:** User mandated architecture sprint — **NOT** React · Three.js · Supabase · UI · asset generation · runtime code. Define **Studio Asset Registry™** — canonical library and permanent creative memory for every reusable Studio OS resource; single source of truth all future engines depend upon.
+- **Prior in chat:** Generator engine + schema layer · CDS Definition at `departments/creative-direction-studio/` · Compiler manufacturing layer at `engines/studio-asset-compiler/` (14 docs) · Design Registry™ referenced in Compiler input-spec
+- **Deliverable:** **14-doc engine** at **`docs/studio-os/engines/studio-asset-registry/`**:
+  - README · registry-overview (four-engine foundation · living memory principles)
+  - asset-schema (unified Registry Item · RegistrySnapshot · supersedes Design Registry™)
+  - category-system (30+ categories · reuse categories · compiler folder mapping)
+  - versioning (Draft · Internal · Approved · Deprecated · Archived · Experimental · Marketplace · Premium · Generated · Custom)
+  - dependency-graph (belongs-to · requires · used-by · pack introduction · impact analysis)
+  - reuse-engine (six questions before generation · exact/adapt/inherit/merge/remix/upscale/evolve modes · Build Health reuse %)
+  - prompt-library (templates · fragments · recipes · negatives · genome/room modifiers · CDS seed from fal-prompt-package)
+  - pack-support (Pack manifests · Marketplace injection · entitlements · Luxury Office/Salon/Law/Restaurant/Medical/Retail/Construction/Podcast/Music/Creator packs)
+  - company-genome-adaptation (one asset · many souls · genome slots · Room DNA overlays)
+  - search-system (natural language spec · facets · ranking · Command Dock integration)
+  - runtime-integration (Generator/Compiler/Runtime/Marketplace contracts · designRegistryRef → registrySnapshotRef migration)
+  - future-roadmap (v1.1 Compiler integration through v3 autonomous library growth)
+- **Four-engine foundation:** Generator creates · Compiler manufactures · **Registry remembers** · Runtime operates
+- **Smart Reuse:** Reuse default · generation last resort — Compiler consults Registry before every provider call
+- **Cross-refs:** Updated `engines/studio-asset-compiler/README.md` + `compiler-overview.md` (four-engine) · `motherboard/CORE.md`
+- **Conventions:** Docs only · no implementation · one commit on **`master`**

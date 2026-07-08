@@ -5,11 +5,12 @@
 **Type:** Core Studio OS Engine — not a feature, not a department  
 **Engine ID:** `studio.asset-compiler.v1`  
 **Canonical engine (deep spec):** [`../../engine/asset-compiler/`](../../engine/asset-compiler/README.md)  
+**Living Library (reuse + prompts):** [`../studio-asset-registry/`](../studio-asset-registry/README.md)  
 **Department Definition input:** [`../../departments/creative-direction-studio/`](../../departments/creative-direction-studio/README.md)
 
 ---
 
-> **Department Generator™ creates departments. Studio Asset Compiler™ manufactures them. Department Runtime™ brings them to life.**
+> **Department Generator™ creates departments. Studio Asset Compiler™ manufactures them. Studio Asset Registry™ remembers everything. Department Runtime™ brings them to life.**
 
 Studio Asset Compiler™ converts an official **Department Definition** into a complete **DepartmentPackage.zip** ready for AI asset generation — without a human writing dozens of FAL prompts.
 
@@ -50,12 +51,14 @@ The compiler is the **bridge between Studio OS intelligence and visual generatio
 Company Genome™ + Project Genome™ + Brand Genome™ + Founder Journey™
          +
 Department Definition (Generator output)
+         +
+Studio Asset Registry™ (Smart Reuse · Prompt Library · Pack entitlements)
          ↓
 STUDIO ASSET COMPILER™ (this engine)
-  Read → Adapt → Organize → Expand Prompts → Resolve Dependencies
+  Reuse lookup → Adapt → Organize → Expand Prompts → Resolve Dependencies
   → Quality Engine → Package → DepartmentPackage.zip
          ↓
-AI Providers (FAL · OpenAI · Runway · future)
+AI Providers (FAL · OpenAI · Runway · future) — generation is last resort
          ↓
 Studio Validation Loop™
          ↓
