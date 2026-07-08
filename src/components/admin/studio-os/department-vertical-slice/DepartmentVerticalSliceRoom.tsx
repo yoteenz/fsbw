@@ -6,33 +6,23 @@ import {
   resolveDepartmentOrbGreeting,
 } from '../../../../studio-os-core/studio-orb-runtime';
 import { useDepartmentVerticalSlice } from '../../../../hooks/useDepartmentVerticalSlice';
-import { useStudioBuilderQueue } from '../../../../hooks/useStudioBuilderQueue';
 import { useLivingMoodWall } from '../../../../hooks/useLivingMoodWall';
 import { useStudioFounderNotes } from '../../../../hooks/useStudioFounderNotesObject';
-import type { GenerationQueueItem } from '../../../../studio-os-core/studio-builder';
 import type { WalkableZone } from '../../../../studio-os-core/department-room';
 import type { MoodWallInspiration } from '../../../../studio-os-core/studio-objects/living-mood-wall';
 import type { FounderNote } from '../../../../studio-os-core/studio-objects/founder-notes';
 import { useDepartmentRoomExit } from './DepartmentGoldenBuildShell';
+import { CreativeApprovalPipelinePanel } from './CreativeApprovalPipelinePanel';
 import { DEPARTMENT_SLICE_STYLES } from './departmentSliceTheme';
 
 type Props = {
   departmentId: string;
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  queued: 'Queued',
-  generating: 'Generating',
-  validating: 'Validating',
-  complete: 'Complete',
-  failed: 'Failed',
-};
-
 export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
   const { workspaceId } = useWorkspace();
   const exitRoom = useDepartmentRoomExit();
   const slice = useDepartmentVerticalSlice(departmentId);
-  const queue = useStudioBuilderQueue(departmentId, slice.project.projectId, workspaceId);
   const moodWall = useLivingMoodWall(departmentId, slice.project.projectId);
   const founderNotes = useStudioFounderNotes(departmentId, slice.project.projectId);
 
@@ -48,14 +38,6 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
     () => resolveDepartmentOrbAmbientInsight(slice.pkg, slice.activeZoneId),
     [slice.pkg, slice.activeZoneId]
   );
-
-  const environmentItem = queue.items.find((i: GenerationQueueItem) => i.productionGroupId === 'environment');
-  const isGenerating = environmentItem?.status === 'generating' || environmentItem?.status === 'validating';
-  const genLabel = environmentItem?.status ? STATUS_LABEL[environmentItem.status] : 'Ready';
-
-  const onGenerateEnvironment = async () => {
-    await queue.generateProductionGroup('environment');
-  };
 
   const zoneTeaching = slice.activeZone ? zoneLabelForTeaching(slice.activeZone) : '';
 
@@ -73,7 +55,7 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
             <p className="gb-immersive__dept">{slice.pkg.definition.displayName}</p>
             <p className="gb-immersive__project">{slice.project.name}</p>
           </div>
-          <span className="gb-immersive__pill">Golden Build™ · {genLabel}</span>
+          <span className="gb-immersive__pill">Golden Build™ · Director&apos;s Workflow</span>
         </header>
 
         <div className="gb-immersive__scene">
@@ -206,41 +188,12 @@ export function DepartmentVerticalSliceRoom({ departmentId }: Props) {
               <p className="gb-immersive__teaching">{zoneTeaching}</p>
 
               <div className="gb-immersive__object gb-immersive__object--console">
-                <p className="gb-immersive__object-label">Generation Queue™ · Production Console</p>
-                {queue.items.length === 0 ? (
-                  <p style={{ fontSize: 6, opacity: 0.65 }}>No jobs yet.</p>
-                ) : (
-                  queue.items.map((item: GenerationQueueItem) => (
-                    <div key={item.id} className="gb-immersive__queue-row">
-                      <span>{item.displayName}</span>
-                      <span>{STATUS_LABEL[item.status] ?? item.status}</span>
-                      {item.status === 'failed' ? (
-                        <button type="button" onClick={() => queue.retryItem(item.id)} style={{ fontSize: 6 }}>
-                          Retry
-                        </button>
-                      ) : null}
-                    </div>
-                  ))
-                )}
-                {environmentItem?.previewUrl ? (
-                  <a
-                    href={environmentItem.previewUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="gb-immersive__preview-link"
-                  >
-                    Environment preview →
-                  </a>
-                ) : null}
-                <button
-                  type="button"
-                  className="gb-immersive__btn"
-                  style={{ width: '100%' }}
-                  disabled={isGenerating}
-                  onClick={onGenerateEnvironment}
-                >
-                  {isGenerating ? 'Generating Environment…' : 'Generate Environment™'}
-                </button>
+                <CreativeApprovalPipelinePanel
+                  departmentId={departmentId}
+                  projectId={slice.project.projectId}
+                  workspaceId={workspaceId}
+                  setDisplayName={slice.pkg.definition.displayName}
+                />
               </div>
             </div>
           </div>

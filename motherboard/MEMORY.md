@@ -41009,3 +41009,24 @@ User defined **Transitions™** — *"The Journey Between Sets™"* — permanen
 - **Success language:** "I walked over to Marketing" / "I took the elevator to Finance" — not "I opened Marketing"
 - **Cross-ref:** Sets™ · Arrival Sequence™ · World Persistence™ · Idle Life™ · Golden Build™
 - **CORE.md:** Transitions™ world-building line added
+
+---
+
+## 2026-07-08 — Studio World™ umbrella world architecture (docs only)
+
+User defined **Studio World™** — *"The Living Headquarters Engine"* — the **highest-level experiential system** unifying every immersive experience in Studio OS. World architecture sprint only — **no UI · no implementation · no new departments**.
+
+- **Mission:** Studio OS is **one persistent world**, not a collection of pages. Everything immersive belongs inside Studio World™.
+- **Core philosophy:** Founders **inhabit places**, not navigate interfaces; every interaction happens somewhere; Studio World™ defines that reality.
+- **Containment model:** Headquarters™ · Floors™ · Departments™ · Sets™ · Transitions™ · Arrival Sequence™ · Idle Life™ · World Persistence™ · Ambient Storytelling™ · Walk the Business™ · Walk the Room™ · Founder Journey™ · The Archive™ · Hall of Legacy™ · Studio Orb™ · AI Employees™ · Marketplace Packs™ · Company/Project Genome™ · Room/Set DNA™.
+- **10-doc spec:** `docs/studio-os/world/` — studio-world · world-philosophy · world-rules · world-states · world-memory · world-streaming · world-events · world-evolution · headquarters-engine · future-roadmap
+- **World Rules™:** HQ never resets; world continues without founder (departments · AI · generation · ambient life); every entity has a place; movement continuous; state cascades; legacy append-only; genome shapes world; scale without philosophy change; marketplace installs into world; evolution visible.
+- **World States™:** Morning™ · Launch Day™ · Creative Sprint™ · Quiet Focus™ · Celebration™ · Crisis™ · Holiday™ · Company Anniversary™ · Investor Visit™ · Studio Event™ — influence lighting · music · Orb · department activity · transitions · atmosphere.
+- **World Memory™:** last location · conversations · projects on tables · mood boards · notes · camera · lighting prefs — nothing feels temporary.
+- **World Streaming™:** nearby Sets™ active · distant dormant · transitions hide loading · continuous HQ illusion (umbrella over Transitions™ streaming).
+- **World Events™:** earned surprises (Golden Build complete · launch success · concierge meeting · marketplace pack arrived · legacy exhibit · awards).
+- **World Evolution™:** HQ expands over years — wings · skyline · courtyards · topology versioning · reveal ceremonies.
+- **Headquarters Engine™:** orchestration map — Topology Manager · World State Resolver · World Memory Store · Streaming Orchestrator · Event Dispatcher · Evolution Controller — atop Department Runtime™.
+- **Success vocabulary:** "This belongs to Studio World™" · "This affects World Memory™" · "This changes World State™" · "This installs into Studio World™"
+- **Prior chat arc (same day):** Golden Build™ implementation · mobile immersive shell fix · Production Lifecycle™ · Foundational Experience Systems™ · Sets™ · Transitions™ — Studio World™ now unifies all as umbrella.
+- **CORE.md:** Studio World™ line added

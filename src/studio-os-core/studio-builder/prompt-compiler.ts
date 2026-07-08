@@ -3,6 +3,7 @@ import { requireDepartmentPackage } from '../department-package';
 import { resolveCompanyGenomeSnapshot } from './genome-context';
 import { resolveActiveProjectGenome } from '../project-genome';
 import type { CompiledGenerationPrompt } from './types';
+import { applyDirectorFeedbackToPrompt } from './director-feedback';
 
 const PROMPT_VERSION = 'studio-builder.v1';
 
@@ -25,6 +26,8 @@ export function compileDepartmentGenerationPrompt(input: {
   productionGroupId: string;
   workspaceId?: string;
   projectId?: string;
+  directorFeedback?: string;
+  approvedStageContext?: string;
 }): CompiledGenerationPrompt {
   const pkg = requireDepartmentPackage(input.departmentId);
   const group = pkg.productionGroups.groups[input.productionGroupId];
@@ -43,13 +46,14 @@ export function compileDepartmentGenerationPrompt(input: {
   const forbidden = pkg.roomDna.forbiddenFeeling.join(', ');
 
   const primary = injectGenomeSlots(group.promptTemplate.primary, company);
-  const prompt = [
+  let prompt = [
     `${pkg.definition.displayName.toUpperCase()} — ${group.displayName.toUpperCase()}.`,
     `DEPARTMENT: ${pkg.definition.id} · PACKAGE: ${pkg.packageId}.`,
     `PROJECT: ${project.name} · ${project.vision}`,
     `ROOM DNA: ${feeling}. Avoid: ${forbidden}.`,
     roomModifier,
     primary,
+    input.approvedStageContext ? `APPROVED CONTEXT: ${input.approvedStageContext}` : '',
     `Company ${company.companyName}: ${company.editorialDirection}.`,
     `North star: ${project.northStar}.`,
     `OUTPUT: ${group.generation.aspectRatio} · ${group.generation.outputFormat.toUpperCase()} · photoreal luxury · no UI chrome.`,
@@ -57,6 +61,10 @@ export function compileDepartmentGenerationPrompt(input: {
   ]
     .filter(Boolean)
     .join(' ');
+
+  if (input.directorFeedback?.trim()) {
+    prompt = applyDirectorFeedbackToPrompt(prompt, input.directorFeedback);
+  }
 
   return {
     prompt,

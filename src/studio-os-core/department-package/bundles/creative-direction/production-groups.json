@@ -4,7 +4,7 @@
   "packageId": "pkg-creative-direction-golden-v1",
   "groups": {
     "environment": {
-      "displayName": "Environment Shell",
+      "displayName": "Environment Shell™",
       "heroAssetId": "env-shell-cds",
       "assetIds": ["env-shell-cds", "env-floor-cds", "env-ceiling-cds", "env-window-cds", "env-alcove-cds"],
       "promptTemplate": {
@@ -12,6 +12,150 @@
         "negative": "dashboard, card grid, sidebar navigation, white void, stock photo banner, UI chrome, SaaS office, fluorescent overhead panels, cubicle partitions, generic conference room, flat background plate",
         "roomDnaModifierKey": "environment",
         "genomeSlots": ["materialLanguage", "editorialDirection", "lightingStyle"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    },
+    "lighting": {
+      "displayName": "Lighting™",
+      "heroAssetId": "lighting-rig-cds",
+      "assetIds": ["lighting-rig-cds"],
+      "promptTemplate": {
+        "primary": "Editorial gallery lighting rig for luxury creative atelier, diffused coffer ceiling hero glow, recessed accent tracks, warm key light on mood wall zone, soft fill, controlled reflections on polished stone floor, cinematic interior lighting design, photorealistic.",
+        "negative": "flat fluorescent office panels, harsh noon blowout, neon gaming lights, UI glow, unrealistic bloom",
+        "roomDnaModifierKey": "lighting",
+        "genomeSlots": ["lightingStyle", "editorialDirection"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    },
+    "architecture": {
+      "displayName": "Architecture™",
+      "heroAssetId": "env-window-cds",
+      "assetIds": ["env-ceiling-cds", "env-window-cds", "env-alcove-cds"],
+      "promptTemplate": {
+        "primary": "Architectural layer for creative atelier: walls, luminous coffer ceiling, floor-to-ceiling glass flank with slim steel frames, left observatory alcove niche, structural editorial proportions, luxury architecture studio, photorealistic interior architecture.",
+        "negative": "generic office drywall, drop ceiling tiles, cubicle walls, flat background plate",
+        "roomDnaModifierKey": "architecture",
+        "genomeSlots": ["materialLanguage", "editorialDirection"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    },
+    "furniture": {
+      "displayName": "Furniture™",
+      "heroAssetId": "table-timeline-cds",
+      "assetIds": ["table-timeline-cds", "table-sandbox-cds", "shelf-library-cds"],
+      "promptTemplate": {
+        "primary": "Luxury editorial studio furniture: timeline table, sandbox work surface, reference library shelving, walnut and stone material honesty, generous spacing, creative director workspace furnishings, photorealistic product-grade interior props.",
+        "negative": "office desks, rolling chairs grid, ikea catalog, gaming desk, monitor walls",
+        "roomDnaModifierKey": "furniture",
+        "genomeSlots": ["materialLanguage", "editorialDirection"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    },
+    "hero-objects": {
+      "displayName": "Hero Objects™",
+      "heroAssetId": "orb-cds",
+      "assetIds": ["orb-cds", "wall-mood-cds", "table-timeline-cds", "panel-founder-notes-cds"],
+      "promptTemplate": {
+        "primary": "Hero object cluster for creative atelier: Studio Orb command focal point, Living Mood Wall hero surface, Story Timeline table anchor, Founder Notes pedestal — editorial luxury, spatial hierarchy, photorealistic hero props.",
+        "negative": "flat icon, UI widget, dashboard card, stock clip art",
+        "roomDnaModifierKey": "hero",
+        "genomeSlots": ["photographyDirection", "editorialDirection"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    },
+    "decor": {
+      "displayName": "Decor™",
+      "heroAssetId": "seed-mood-cds",
+      "assetIds": ["seed-mood-cds", "seed-brief-cds", "seed-library-cds"],
+      "promptTemplate": {
+        "primary": "Decor layer for creative atelier: plants, books, packaging samples, material swatches, awards, editorial props — tasteful density, luxury creative studio styling, photorealistic set dressing.",
+        "negative": "clutter chaos, fast food props, random stock objects, messy piles",
+        "roomDnaModifierKey": "decor",
+        "genomeSlots": ["materialLanguage", "photographyDirection"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    },
+    "interactive-objects": {
+      "displayName": "Interactive Objects™",
+      "heroAssetId": "glass-panels-cds",
+      "assetIds": ["glass-panels-cds", "panel-context-float-cds", "ceremony-approval-cds", "zone-inspiration-drop-cds"],
+      "promptTemplate": {
+        "primary": "Interactive object layer: frosted glass panels, floating context surfaces, approval ceremony pedestal, inspiration drop zone — spatial UI-as-architecture, no SaaS chrome, photorealistic luxury studio interactions.",
+        "negative": "browser window, modal dialog, sidebar menu, card grid UI",
+        "roomDnaModifierKey": "interaction",
+        "genomeSlots": ["editorialDirection"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    },
+    "ambient-systems": {
+      "displayName": "Ambient Systems™",
+      "heroAssetId": "particles-ambient-cds",
+      "assetIds": ["particles-ambient-cds", "audio-ambient-cds", "audio-ceremony-cds", "audio-orb-cds"],
+      "promptTemplate": {
+        "primary": "Ambient systems visualization for creative atelier: subtle particle atmosphere, lighting FX accents, audio atmosphere cues as spatial design elements, idle life readiness, cinematic editorial mood.",
+        "negative": "disco effects, heavy fog, nightclub lasers, UI sound icons",
+        "roomDnaModifierKey": "atmosphere",
+        "genomeSlots": ["lightingStyle", "customerEmotions"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    },
+    "runtime": {
+      "displayName": "Runtime™",
+      "heroAssetId": "markers-walk-room-cds",
+      "assetIds": ["markers-walk-room-cds", "camera-paths-cds", "portal-entry-cds", "portal-exit-cds"],
+      "promptTemplate": {
+        "primary": "Runtime layer visualization: Walk the Room markers, camera path choreography, entry and exit portals — spatial navigation design for immersive department, editorial luxury atelier, photorealistic.",
+        "negative": "breadcrumb UI, tab bar, loading screen, minimap HUD",
+        "roomDnaModifierKey": "navigation",
+        "genomeSlots": ["editorialDirection"]
+      },
+      "generation": {
+        "modelPresetId": "department-environment-nbp-16x9",
+        "aspectRatio": "16:9",
+        "outputFormat": "png"
+      }
+    },
+    "golden-build-review": {
+      "displayName": "Golden Build™ Review",
+      "heroAssetId": "env-shell-cds",
+      "assetIds": ["env-shell-cds"],
+      "promptTemplate": {
+        "primary": "Final Golden Build composite review frame for Creative Atelier — all approved stages unified, editorial luxury creative direction studio, walkthrough-ready, photorealistic hero still.",
+        "negative": "work-in-progress wireframe, placeholder graybox, UI overlay",
+        "roomDnaModifierKey": "environment",
+        "genomeSlots": ["editorialDirection", "materialLanguage"]
       },
       "generation": {
         "modelPresetId": "department-environment-nbp-16x9",
