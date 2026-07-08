@@ -19,6 +19,19 @@ body.cds-stack-active {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   background: #080706;
+  text-transform: uppercase;
+}
+
+.cds-genesis *,
+.cds-stack * {
+  text-transform: uppercase;
+}
+
+.cds-genesis input::placeholder,
+.cds-genesis textarea::placeholder,
+.cds-stack input::placeholder,
+.cds-stack textarea::placeholder {
+  text-transform: uppercase;
 }
 
 /* ── Scene Stack™ compositor (layered FAL plates — never single scene) ── */
@@ -101,6 +114,7 @@ body.cds-stack-active {
   text-align: center;
   z-index: 12;
   font-size: 6px;
+  text-transform: uppercase;
 }
 
 /* Legacy genesis single-plate (deprecated) */
@@ -321,6 +335,8 @@ body.cds-stack-active {
   width: min(280px, 82vw);
   text-align: center;
   font-size: 5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   opacity: 0.5;
   z-index: 12;
   pointer-events: none;
@@ -351,6 +367,7 @@ body.cds-stack-active {
   text-align: center;
   font-size: 6px;
   line-height: 1.45;
+  text-transform: uppercase;
 }
 
 .cds-genesis__chip-row {
@@ -364,6 +381,8 @@ body.cds-stack-active {
 .cds-genesis__chip {
   padding: 3px 6px;
   font-size: 5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   border: 1px solid rgba(255,255,255,0.1);
   background: rgba(0,0,0,0.35);
 }
@@ -372,6 +391,7 @@ body.cds-stack-active {
   width: 100%;
   padding: 5px 6px;
   font-size: 7px;
+  text-transform: uppercase;
   background: rgba(0,0,0,0.4);
   border: 1px solid rgba(255,255,255,0.1);
   color: #f0ebe3;
@@ -415,6 +435,7 @@ body.cds-stack-active {
 .cds-genesis__mood-tile {
   padding: 4px;
   font-size: 5px;
+  text-transform: uppercase;
   background: rgba(0,0,0,0.35);
   border: 1px solid rgba(255,255,255,0.06);
   line-height: 1.3;
@@ -430,6 +451,7 @@ body.cds-stack-active {
 
 .cds-genesis__shelf-row {
   font-size: 5px;
+  text-transform: uppercase;
   padding: 4px 0;
   border-top: 1px solid rgba(255,255,255,0.05);
 }
@@ -457,5 +479,18 @@ body.cds-stack-active {
 
 @media (prefers-reduced-motion: reduce) {
   .cds-genesis__camera-track { transition: none; }
+}
+`;
+
+/** Ndxbook Creative Direction Studio™ workspace + embedded strip */
+export const CDS_WORKSPACE_TEXT_STYLES = `
+.creative-direction-studio-root,
+.creative-direction-studio-root * {
+  text-transform: uppercase;
+}
+
+.creative-direction-studio-root input::placeholder,
+.creative-direction-studio-root textarea::placeholder {
+  text-transform: uppercase;
 }
 `;

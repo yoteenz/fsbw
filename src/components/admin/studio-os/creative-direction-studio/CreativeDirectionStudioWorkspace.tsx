@@ -6,6 +6,7 @@ import {
   MOOD_BOARD_SECTION_LABELS,
 } from '../../../../studio-os-core/creative-direction-studio/types';
 import { useCreativeDirectionStudio } from '../../../../hooks/useCreativeDirectionStudio';
+import { CDS_WORKSPACE_TEXT_STYLES } from './cdsInteractionLayerTheme';
 import {
   adminStudioNdxbookCreativeDirectionPath,
   adminStudioNdxbookNewsroomDepartmentPath,
@@ -51,9 +52,10 @@ export function CreativeDirectionStrip({
 
   return (
     <div
-      className="mb-3 p-2 border flex flex-wrap items-center gap-2 justify-between"
+      className="creative-direction-studio-root mb-3 p-2 border flex flex-wrap items-center gap-2 justify-between"
       style={{ borderColor: NR.panelBorder, background: 'rgba(99,102,241,0.05)' }}
     >
+      <style>{CDS_WORKSPACE_TEXT_STYLES}</style>
       <div>
         <p style={{ ...nrLabel, fontFamily: '"Futura PT Medium"', color: NR.indigo, fontSize: '6px' }}>
           EXECUTIVE CREATIVE DIRECTOR · STUDIO ORB · CANONICAL CREATIVE INTENT
@@ -103,7 +105,12 @@ export function CreativeDirectionStudioWorkspace({ projectId, currentDepartment 
   const project = cds.project;
 
   if (!project || !branch) {
-    return <p style={nrLabel}>Loading Creative Direction Studio…</p>;
+    return (
+      <div className="creative-direction-studio-root">
+        <style>{CDS_WORKSPACE_TEXT_STYLES}</style>
+        <p style={nrLabel}>LOADING CREATIVE DIRECTION STUDIO…</p>
+      </div>
+    );
   }
 
   const onRunCommand = () => {
@@ -123,13 +130,14 @@ export function CreativeDirectionStudioWorkspace({ projectId, currentDepartment 
 
   return (
     <div className="creative-direction-studio-root space-y-3">
+      <style>{CDS_WORKSPACE_TEXT_STYLES}</style>
       <header className="p-3 border" style={{ ...nrPanel, borderLeft: `4px solid ${NR.indigo}` }}>
         <p style={nrSectionTitle}>CREATIVE DIRECTION STUDIO™</p>
         <p style={{ ...nrLabel, fontFamily: '"Futura PT Medium"', color: NR.black, fontSize: '8px' }}>
           {project.name}
         </p>
         <p style={{ ...nrLabel, fontSize: '6px', marginTop: 4 }}>
-          Canonical creative intent · lives above Studio Production Engine · continuous · never locked after creation.
+          CANONICAL CREATIVE INTENT · LIVES ABOVE STUDIO PRODUCTION ENGINE · CONTINUOUS · NEVER LOCKED AFTER CREATION.
         </p>
       </header>
 
@@ -181,7 +189,7 @@ export function CreativeDirectionStudioWorkspace({ projectId, currentDepartment 
           value={command}
           onChange={(e) => setCommand(e.target.value)}
           rows={2}
-          placeholder="Type naturally — Studio Orb understands creative intent…"
+          placeholder="TYPE NATURALLY — STUDIO ORB UNDERSTANDS CREATIVE INTENT…"
           className="w-full mt-2 p-2 text-[6px] font-futura border"
           style={{ borderColor: NR.panelBorder }}
         />
@@ -236,14 +244,14 @@ export function CreativeDirectionStudioWorkspace({ projectId, currentDepartment 
           <input
             value={refTitle}
             onChange={(e) => setRefTitle(e.target.value)}
-            placeholder="Title · e.g. Apple Vision Pro launch frame"
+            placeholder="TITLE · E.G. APPLE VISION PRO LAUNCH FRAME"
             className="w-full text-[6px] border px-2 py-1 mt-1"
             style={{ borderColor: NR.panelBorder }}
           />
           <input
             value={refUrl}
             onChange={(e) => setRefUrl(e.target.value)}
-            placeholder="URL or paste link"
+            placeholder="URL OR PASTE LINK"
             className="w-full text-[6px] border px-2 py-1 mt-1"
             style={{ borderColor: NR.panelBorder }}
           />
@@ -292,7 +300,7 @@ export function CreativeDirectionStudioWorkspace({ projectId, currentDepartment 
         <section className="p-3 border max-h-72 overflow-y-auto" style={nrPanel}>
           <p style={nrSectionTitle}>INSPIRATION LIBRARY · EXTRACTED INTELLIGENCE</p>
           {branch.references.length === 0 ? (
-            <p style={{ ...nrLabel, fontSize: '6px' }}>Drop Instagram Reels, packaging, luxury campaigns — Studio Intelligence extracts structured creative knowledge.</p>
+            <p style={{ ...nrLabel, fontSize: '6px' }}>DROP INSTAGRAM REELS, PACKAGING, LUXURY CAMPAIGNS — STUDIO INTELLIGENCE EXTRACTS STRUCTURED CREATIVE KNOWLEDGE.</p>
           ) : (
             branch.references.map((ref) => (
               <div key={ref.id} className="mt-2 p-2 border" style={{ borderColor: NR.panelBorder }}>
@@ -313,7 +321,7 @@ export function CreativeDirectionStudioWorkspace({ projectId, currentDepartment 
         <section className="p-3 border max-h-72 overflow-y-auto" style={nrPanel}>
           <p style={nrSectionTitle}>CREATIVE DIRECTION NOTES</p>
           {branch.notes.length === 0 ? (
-            <p style={{ ...nrLabel, fontSize: '6px' }}>Founder notes from production departments sync here as creative direction notes.</p>
+            <p style={{ ...nrLabel, fontSize: '6px' }}>FOUNDER NOTES FROM PRODUCTION DEPARTMENTS SYNC HERE AS CREATIVE DIRECTION NOTES.</p>
           ) : (
             branch.notes.map((note) => (
               <div key={note.id} className="mt-2 p-2 border" style={{ borderColor: NR.panelBorder }}>
@@ -353,13 +361,13 @@ export function CreativeDirectionStudioWorkspace({ projectId, currentDepartment 
             ))}
           </div>
           <button type="button" onClick={() => setImpactOpen(null)} className="mt-2 text-[6px] underline" style={{ color: NR.indigo }}>
-            Dismiss
+            DISMISS
           </button>
         </div>
       ) : null}
 
       <p style={{ ...nrLabel, fontSize: '6px' }}>
-        Every production department reads this direction before work begins.{' '}
+        EVERY PRODUCTION DEPARTMENT READS THIS DIRECTION BEFORE WORK BEGINS.{' '}
         <Link to={adminStudioNdxbookNewsroomDepartmentPath('discover')} style={{ color: NR.indigo }}>
           Enter Discover Department →
         </Link>

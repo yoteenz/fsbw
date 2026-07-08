@@ -41666,3 +41666,14 @@ User **STOP** directive: **platform architecture sprint** — evolutionary memor
 - **12-doc spec:** `docs/studio-os/living-company-genome/` — README · living-company-genome · genome-domains · genome-events · world-evolution · living-departments · time-capsule · legacy-layer · intelligent-evolution · multiple-timelines · living-museum · marketplace-impact · future-roadmap
 - **Cross-refs:** `company-genome.md` · `legacy-vault.md` · `studio-world.md` · `CORE.md` · Creative Blueprint · Asset Intelligence · Expeditions · Architectural Icons Living Company Genome landmark
 - **Prior arc (same chat):** Creative Blueprint Engine™ (`24ee3faf`) · Asset Intelligence Engine™ · Scene Stack™
+
+---
+
+## 2026-07-08 — Creative Direction Studio™ uppercase-only text
+
+User request: all text on Creative Direction Studio™ and all its pages should be **uppercase only**.
+
+- **Golden Build room** (`/admin/studio/department/creative-direction`): `cdsInteractionLayerTheme.ts` — `text-transform: uppercase` on `.cds-stack` / `.cds-genesis` and all descendants; inputs + placeholders; teaching · orb speech · chips · mood tiles · shelf rows · viewport errors
+- **Ndxbook workspace** (`/admin/studio/ndxbook/creative-direction`): new `CDS_WORKSPACE_TEXT_STYLES` export · injected in `CreativeDirectionStudioWorkspace.tsx` + `CreativeDirectionStrip` via `.creative-direction-studio-root`
+- **Copy fixes:** workspace static strings + placeholders uppercased in source (loading · dismiss · helper paragraphs)
+- **Build:** `npm run build` passes
