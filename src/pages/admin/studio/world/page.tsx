@@ -38,3 +38,5 @@ export function StudioWorldPathResolver() {
 
   return <Navigate to={{ pathname: targetPath, search: targetSearch }} replace />;
 }
+
+export default StudioWorldPathResolver;

@@ -42240,3 +42240,13 @@ User **ARCHITECTURAL RESET V4:** Studio World™ evolved beyond a website — ar
 - **Nav updated (architectural routing only):** Mission Control → `/admin/studio/world/command-center` · Archives → `/admin/studio/world/archives` · Expedition Hub → `/admin/studio/world/expedition-hub`.
 - **Migration status per route:** `immersive-live` (CDS, Archives) · `standard-room` (most HQ/SCC rooms) · extend `route-registry.ts` as rooms migrate.
 - **Prior arc (same chat):** Studio Archives™ evolution · Studio Alpha Cost HUD · Museum absorption.
+
+---
+
+## 2026-07-08 — Studio World V4 world route crash fix (React #306)
+
+User reported **COMPONENT FAILED TO LOAD** / minified React error **#306** on mobile (`fsbw.vercel.app`) after V4 deploy — likely navigating canonical world paths (`/admin/studio/world/command-center`, Archives, etc.) from updated nav.
+
+- **Root cause:** `src/pages/admin/studio/world/page.tsx` exported **`StudioWorldPathResolver` as named export only**; `App.tsx` `lazyWithRetry(() => import(...))` requires **`export default`** like every other admin page. Lazy resolved to `undefined` → React #306.
+- **Fix:** Added `export default StudioWorldPathResolver`.
+- **Prior arc (same chat):** Studio World V4 architectural reset · Studio Archives™ · Cost HUD.
