@@ -43,6 +43,23 @@ export function CivilizationEventsLayer({ events, compact = false }: Props) {
         </article>
       ) : null}
 
+      {!compact && events.legends ? (
+        <div className="sw-events-layer__legend" role="status" aria-label="Legends">
+          <p className="sw-events-layer__legend-label">Legends™ · Whisper</p>
+          <p className="sw-events-layer__legend-whisper">{events.legends.publicWhisper}</p>
+          {events.legends.primaryQuestion ? (
+            <p className="sw-events-layer__legend-question">
+              Archive: {events.legends.primaryQuestion.publicQuestion}
+            </p>
+          ) : null}
+          {events.legends.communityMythology.primaryThread ? (
+            <p className="sw-events-layer__legend-mythology">
+              Community: {events.legends.communityMythology.primaryThread.publicTopic}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {!compact && events.theUnknown ? (
         <div className="sw-events-layer__unknown" role="status" aria-label="The Unknown">
           <p className="sw-events-layer__unknown-label">The Unknown™ · World Fog</p>

@@ -6,6 +6,7 @@ import {
   computePublicDiscoveryFramework,
   computePublicDiscoveryCulture,
   computePublicUnknown,
+  computePublicLegends,
   countEligibleRewardGrants,
   evaluateDiscoveryEligibility,
   getInternalRegistry,
@@ -117,6 +118,15 @@ export function computeCivilizationEvents(
     },
     theUnknown
   );
+  const legends = computePublicLegends({
+    warehouseAssetCount: metrics.warehouseAssetCount,
+    knowledgeCapital: input.knowledgeCapital,
+    collaborationCapital: input.collaborationCapital,
+    innovationCapital: input.innovationCapital,
+    civilizationHealth: input.civilizationHealth,
+    mysteryCount: discoveryCulture.mysteryCount,
+    investigationActiveCount: discoveryCulture.investigation.activeCount,
+  });
   const eligibleDiscoveryGrantCount = countEligibleRewardGrants(getInternalRegistry(), {
     innovationCapital: input.innovationCapital,
     knowledgeCapital: input.knowledgeCapital,
@@ -139,6 +149,7 @@ export function computeCivilizationEvents(
     discoveryFramework,
     discoveryCulture,
     theUnknown,
+    legends,
     discoveryEligibility,
     eligibleDiscoveryGrantCount,
     museumExhibits: LIVING_MUSEUM_EXHIBITS,
@@ -155,6 +166,7 @@ export function computeCivilizationEvents(
     }),
     orbDiscoveryLine: discoveryCulture.discoveryOracleLine,
     orbUnknownHint: theUnknown.orbHint,
+    orbLegendRumor: legends.orbRumorLine,
     participationEligible,
   };
 

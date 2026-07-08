@@ -9,6 +9,7 @@ import { DISCOVERY_STATE_ORDER, countByDiscoveryState, discoveryStateLabel, reso
 import { DISCOVERY_PACK_REGISTRY } from '../registry';
 import { DISCOVERY_CULTURE_VERSION } from '../categories';
 import { buildUnknownFrontierWorldGraphNodes, defaultUnknownSlotCounts } from '../the-unknown/world-graph-lifecycle';
+import { buildLegendsWorldGraphNodes } from '../legends/world-graph-confidence';
 
 function provenance(sourceRef: string) {
   return {
@@ -163,4 +164,12 @@ export function buildUnknownWorldGraphExtension(mysteryCount: number, releasedCo
 } {
   const slotCounts = defaultUnknownSlotCounts(mysteryCount, releasedCount);
   return buildUnknownFrontierWorldGraphNodes(slotCounts);
+}
+
+/** Legends™ World Graph extension — knowledge confidence aggregates */
+export function buildLegendsWorldGraphExtension(): {
+  nodes: WorldNode[];
+  edges: WorldEdge[];
+} {
+  return buildLegendsWorldGraphNodes();
 }

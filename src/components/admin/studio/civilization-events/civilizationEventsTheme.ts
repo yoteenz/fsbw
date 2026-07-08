@@ -68,6 +68,47 @@ export const CIVILIZATION_EVENTS_STYLES = `
   color: rgba(212, 196, 160, 0.78);
 }
 
+.sw-events-layer__legend {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--wh-frame-hud-h, 48px) + 100px);
+  transform: translateX(-50%);
+  max-width: min(360px, 48vw);
+  padding: 8px 12px;
+  border: 1px solid rgba(168, 144, 200, 0.3);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  text-align: center;
+}
+
+.sw-events-layer__legend-label {
+  margin: 0 0 4px;
+  font-size: 6px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(168, 144, 200, 0.9);
+}
+
+.sw-events-layer__legend-whisper {
+  margin: 0 0 4px;
+  font-size: 8px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.85);
+  font-style: italic;
+}
+
+.sw-events-layer__legend-question {
+  margin: 0 0 3px;
+  font-size: 7px;
+  color: rgba(168, 196, 184, 0.78);
+}
+
+.sw-events-layer__legend-mythology {
+  margin: 0;
+  font-size: 7px;
+  color: rgba(155, 142, 196, 0.75);
+}
+
 .sw-events-layer__discoveries {
   position: absolute;
   left: calc(var(--sw-rail-w, 168px) + 12px);

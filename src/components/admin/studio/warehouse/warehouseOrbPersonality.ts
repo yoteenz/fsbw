@@ -78,28 +78,11 @@ export function resolveWarehouseOrbPersonality(
 
   const discoveryCulture = civilizationEvents?.discoveryCulture;
   const theUnknown = civilizationEvents?.theUnknown;
+  const legends = civilizationEvents?.legends;
   const worldExpanding = discoveryCulture?.worldExpansionAmbient != null;
-
-  if (theUnknown?.worldFog.signalsBeyondFrontier && civilizationEvents?.orbUnknownHint) {
-    const unknownRoles: Partial<Record<WarehouseWingKind, string>> = {
-      atrium: 'Unknown Oracle',
-      legacy: 'Fog Historian',
-      innovation: 'Frontier Mystic',
-      marketplace: 'Uncharted Cartographer',
-      expansion: 'Horizon Watcher',
-      blueprint: 'Lost Archive Seeker',
-      warehouse: 'Expedition Mystic',
-      genome: 'Signal Analyst',
-      threshold: 'World Greeter',
-    };
-
-    return {
-      ...base,
-      role: unknownRoles[wing] ?? 'Unknown Oracle',
-      greeting: civilizationEvents.orbUnknownHint,
-      accent: '#9b8ec4',
-    };
-  }
+  const legendWhisperActive =
+    legends?.communityMythology.primaryThread.speculationLevel === 'heated' ||
+    (legends?.communityMythology.activeThreadCount ?? 0) >= 2;
 
   if (worldExpanding && civilizationEvents?.orbDiscoveryLine) {
     const oracleRoles: Partial<Record<WarehouseWingKind, string>> = {
@@ -119,6 +102,48 @@ export function resolveWarehouseOrbPersonality(
       role: oracleRoles[wing] ?? 'Discovery Oracle',
       greeting: civilizationEvents.orbDiscoveryLine,
       accent: '#b8d4a8',
+    };
+  }
+
+  if (legendWhisperActive && civilizationEvents?.orbLegendRumor) {
+    const legendRoles: Partial<Record<WarehouseWingKind, string>> = {
+      atrium: 'Legend Keeper',
+      legacy: 'Myth Historian',
+      innovation: 'Rumor Chronicler',
+      marketplace: 'Whisper Cartographer',
+      expansion: 'Frontier Mythologist',
+      blueprint: 'Fragment Archivist',
+      warehouse: 'Expedition Lorekeeper',
+      genome: 'Signal Mythologist',
+      threshold: 'Legend Greeter',
+    };
+
+    return {
+      ...base,
+      role: legendRoles[wing] ?? 'Legend Keeper',
+      greeting: civilizationEvents.orbLegendRumor,
+      accent: '#a890c8',
+    };
+  }
+
+  if (theUnknown?.worldFog.signalsBeyondFrontier && civilizationEvents?.orbUnknownHint) {
+    const unknownRoles: Partial<Record<WarehouseWingKind, string>> = {
+      atrium: 'Unknown Oracle',
+      legacy: 'Fog Historian',
+      innovation: 'Frontier Mystic',
+      marketplace: 'Uncharted Cartographer',
+      expansion: 'Horizon Watcher',
+      blueprint: 'Lost Archive Seeker',
+      warehouse: 'Expedition Mystic',
+      genome: 'Signal Analyst',
+      threshold: 'World Greeter',
+    };
+
+    return {
+      ...base,
+      role: unknownRoles[wing] ?? 'Unknown Oracle',
+      greeting: civilizationEvents.orbUnknownHint,
+      accent: '#9b8ec4',
     };
   }
 

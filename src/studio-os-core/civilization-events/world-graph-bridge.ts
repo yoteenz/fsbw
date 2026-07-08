@@ -5,7 +5,7 @@
 
 import type { WorldEdge, WorldNode } from '../world-graph/types';
 import type { CivilizationEventsSnapshot } from './types';
-import { buildDiscoveryCultureWorldGraphNodes, buildUnknownWorldGraphExtension } from '../discovery-pack-framework/integrations/world-graph';
+import { buildDiscoveryCultureWorldGraphNodes, buildUnknownWorldGraphExtension, buildLegendsWorldGraphExtension } from '../discovery-pack-framework/integrations/world-graph';
 
 function provenance(sourceRef: string) {
   return {
@@ -176,6 +176,36 @@ export function buildCivilizationEventsWorldGraphProjection(
     type: 'references',
     label: 'world-fog',
     provenance: provenance('world-fog-edge'),
+  });
+
+  const legendsGraph = buildLegendsWorldGraphExtension();
+  nodes.push(...legendsGraph.nodes);
+  edges.push(...legendsGraph.edges);
+
+  nodes.push({
+    id: 'W-LEGENDS-whisper-pulse',
+    slug: 'legend-whisper-pulse',
+    displayName: 'Legend Whisper',
+    nodeType: 'milestone',
+    summary: snapshot.legends.publicWhisper,
+    lifecycle: 'architecture',
+    plane: 'canon',
+    version: '1',
+    tags: ['legends', 'whisper'],
+    provenance: provenance('legend-whisper-pulse'),
+    metadata: {
+      legendCount: snapshot.legends.legendCount,
+      confidence: 'legend',
+    },
+  });
+
+  edges.push({
+    id: 'WE-LEGENDS-whisper',
+    from: 'W-LEGENDS-root',
+    to: 'W-LEGENDS-whisper-pulse',
+    type: 'references',
+    label: 'legend-whisper',
+    provenance: provenance('legend-whisper-edge'),
   });
 
   for (const impact of snapshot.worldImpacts) {

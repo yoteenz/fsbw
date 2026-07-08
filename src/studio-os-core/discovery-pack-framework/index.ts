@@ -12,6 +12,7 @@ export * from './community-investigation';
 export * from './discovery-culture-compute';
 export * from './discovery-culture-oracle';
 export * from './the-unknown';
-export { buildDiscoveryPackFrameworkWorldGraphNodes, buildReservedPackGraphScaffold, buildDiscoveryCultureWorldGraphNodes, buildUnknownWorldGraphExtension } from './integrations/world-graph';
+export * from './legends';
+export { buildDiscoveryPackFrameworkWorldGraphNodes, buildReservedPackGraphScaffold, buildDiscoveryCultureWorldGraphNodes, buildUnknownWorldGraphExtension, buildLegendsWorldGraphExtension } from './integrations/world-graph';
 export { buildHallOfDiscoveryScaffold, type HallOfDiscoveryScaffold } from './integrations/hall-of-discovery';
 export { countEligibleRewardGrants, evaluateRewardEligibility } from './integrations/rewards';

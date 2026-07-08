@@ -257,3 +257,108 @@ export type PublicUnknownSnapshot = {
   orbHint: string;
   discoveryLanguageLine: string;
 };
+
+/** Knowledge Confidence™ — World Graph certainty tiers */
+export type KnowledgeConfidence =
+  | 'verified'
+  | 'observed'
+  | 'rumored'
+  | 'legend'
+  | 'unknown'
+  | 'historical';
+
+/** Legend outcomes — possibilities, not promises */
+export type LegendOutcome =
+  | 'possible-pack'
+  | 'never-materialize'
+  | 'evolved-different'
+  | 'unresolved';
+
+export type LegendTheme =
+  | 'forgotten-district'
+  | 'uncharted-region'
+  | 'forgotten-civilization'
+  | 'dormant-intelligence'
+  | 'unexplained-technology'
+  | 'missing-discovery'
+  | 'forgotten-expedition'
+  | 'blueprint-fragment'
+  | 'unfinished-prototype'
+  | 'architectural-anomaly'
+  | 'world-graph-ghost';
+
+/** @internal Legend registry entry — never expose codenames or pack linkage in UI */
+export type LegendRegistryEntry = {
+  legendId: string;
+  internalWhisper: string;
+  publicWhisper: string;
+  theme: LegendTheme;
+  confidence: KnowledgeConfidence;
+  outcome: LegendOutcome;
+  linkedPackId?: string;
+};
+
+export type PublicRumorSnapshot = {
+  observation: string;
+  stance: string;
+  verifiable: false;
+};
+
+export type PublicLostKnowledgeFragment = {
+  id: string;
+  publicTitle: string;
+  publicDescription: string;
+  resolutionStatus: 'unresolved' | 'partially-recovered' | 'disputed';
+};
+
+export type PublicArchiveQuestion = {
+  id: string;
+  publicQuestion: string;
+  category: 'civilization' | 'technology' | 'discovery' | 'theory' | 'blueprint' | 'future';
+};
+
+export type PublicCartographersGuildSnapshot = {
+  status: 'forming' | 'active' | 'expanding' | 'legendary';
+  publicLabel: string;
+  publicPurpose: string;
+  guildPurposes: string[];
+  journalEntryCount: number;
+  activeExpeditionCount: number;
+  forming: boolean;
+};
+
+export type PublicCommunityMythologySnapshot = {
+  activeThreadCount: number;
+  primaryThread: {
+    publicTopic: string;
+    publicFraming: string;
+    speculationLevel: 'emerging' | 'active' | 'heated';
+  };
+  ambientLine: string;
+  naturalEmergence: true;
+};
+
+/** Public-safe Legends™ — mythology layer above Discovery Packs */
+export type PublicLegendsSnapshot = {
+  legendsVersion: string;
+  computedAt: string;
+  philosophy: string;
+  layerFraming: string;
+  promise: string;
+  designPrinciple: string;
+  rumorStance: string;
+  legendCount: number;
+  possiblePackCount: number;
+  unresolvedLegendCount: number;
+  neverMaterializeCount: number;
+  publicWhisper: string;
+  rumor: PublicRumorSnapshot;
+  orbRumorLine: string;
+  lostKnowledge: PublicLostKnowledgeFragment[];
+  lostKnowledgeAmbientLine: string;
+  archiveQuestions: PublicArchiveQuestion[];
+  primaryQuestion: PublicArchiveQuestion | null;
+  archiveAmbientLine: string;
+  cartographersGuild: PublicCartographersGuildSnapshot;
+  communityMythology: PublicCommunityMythologySnapshot;
+};
