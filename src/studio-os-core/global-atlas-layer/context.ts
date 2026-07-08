@@ -2,6 +2,8 @@
  * Global Atlas Layer™ — location-adaptive Atlas context.
  */
 
+import { resolveCompanyRoute } from '../company-routes/resolve';
+import { STUDIO_COMPANIES_BASE } from '../company-routes/constants';
 import type { AtlasMapMode } from '../studio-world-atlas/types';
 import type { StudioWorldFlagshipId } from '../studio-world/types';
 import type { GlobalAtlasLocationContext } from './types';
@@ -85,6 +87,28 @@ const DEFAULT_CONTEXT: GlobalAtlasLocationContext = {
 
 export function resolveAtlasContextForPath(pathname: string): GlobalAtlasLocationContext {
   const p = pathname.toLowerCase();
+  if (p.includes(`${STUDIO_COMPANIES_BASE}/`)) {
+    const resolution = resolveCompanyRoute(pathname);
+    if (resolution.company) {
+      if (p.includes('creative-direction')) {
+        return {
+          ...CONTEXT_BY_FLAGSHIP['creative-direction-studio'],
+          contextLabel: `${resolution.company.companyName} · Creative Direction Studio™`,
+        };
+      }
+      if (p.includes('/departments/')) {
+        return {
+          ...CONTEXT_BY_FLAGSHIP.headquarters,
+          contextLabel: `${resolution.company.companyName} · ${resolution.displayLabel}`,
+          priorityModes: ['organization', 'operations', 'creative-equity', 'company-genome'],
+        };
+      }
+      return {
+        ...CONTEXT_BY_FLAGSHIP.headquarters,
+        contextLabel: `${resolution.company.companyName} · ${resolution.displayLabel}`,
+      };
+    }
+  }
   if (p.includes('creative-direction') || p.includes('/department/creative')) {
     return CONTEXT_BY_FLAGSHIP['creative-direction-studio'];
   }
@@ -163,6 +187,7 @@ export function resolveAtlasContextForPath(pathname: string): GlobalAtlasLocatio
     p.includes('/studio/overview') ||
     p.includes('command-center') ||
     p.includes('world-atlas') ||
+    p.includes('/studio/atlas') ||
     p.includes('constitution')
   ) {
     if (p.includes('world-atlas')) {

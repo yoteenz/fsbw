@@ -43195,15 +43195,16 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Mission Control spatial mode = default after Activation Sequence™; planner modes retain legacy panels
 - Navigation happens through the hologram (building select + spatial annotation TRAVEL); world is the interface
 - Dashboard rails/panels suppressed in `is-mc-spatial`; information emerges via Progressive Presence™ only
+
 ---
 
 ## 2026-07-08 — ARTICLE-A01 Asset Compiler™ production layer
 
-**Context:** This chat has advanced Studio World’s institutional memory and production architecture. Earlier turns implemented **ARTICLE-K21 Architecture Decision Records™**, **ARTICLE-K22 Studio World Knowledge Core™**, and **ARTICLE-K23 Memory System™** so major decisions, knowledge, conversations, extractions, and founder review paths become durable World Graph memory. The latest user request was an **IMPLEMENTATION SPRINT** for **ARTICLE-A01 Asset Compiler™**: Studio World should already leverage its FAL integration so the founder never manually leaves Studio World to generate individual assets or manage prompt engineering, model selection, resolution, transparent backgrounds, file naming, versioning, metadata, folders, downloads/uploads, or registry imports.
+**Context:** This chat has advanced Studio World's institutional memory and production architecture. Earlier turns implemented **ARTICLE-K21 Architecture Decision Records™**, **ARTICLE-K22 Studio World Knowledge Core™**, and **ARTICLE-K23 Memory System™** so major decisions, knowledge, conversations, extractions, and founder review paths become durable World Graph memory. The latest user request was an **IMPLEMENTATION SPRINT** for **ARTICLE-A01 Asset Compiler™**: Studio World should already leverage its FAL integration so the founder never manually leaves Studio World to generate individual assets or manage prompt engineering, model selection, resolution, transparent backgrounds, file naming, versioning, metadata, folders, downloads/uploads, or registry imports.
 
 **Topics covered (entire conversation so far):**
-- **K21 ADRs:** Architecture Decision Records™ as constitutional history, Constitution Hall™, Architect’s Journal™, Decision Graph™, Architect’s Oath™, review stages, and ADR World Graph ingestion.
-- **K22 Knowledge Core:** Canonical internal memory with domains, statuses, prompt memory, Prompt Standards™, Architect’s Memory™, search behavior, versioning, and Knowledge Entry graph ingestion.
+- **K21 ADRs:** Architecture Decision Records™ as constitutional history, Constitution Hall™, Architect's Journal™, Decision Graph™, Architect's Oath™, review stages, and ADR World Graph ingestion.
+- **K22 Knowledge Core:** Canonical internal memory with domains, statuses, prompt memory, Prompt Standards™, Architect's Memory™, search behavior, versioning, and Knowledge Entry graph ingestion.
 - **K23 Memory System:** Conversation Archive™ → Knowledge Ingestion™ → Architect Review™ → Knowledge Core™; first raw archive/extraction report for the Studio World architecture discussion; memory lineage nodes (`conversation-archive`, `knowledge-extraction`, `founder-approval`).
 - **A01 Asset Compiler:** Founder-facing production compiler that accepts only **Asset Name + Generation Recipe™ + optional modifiers** and produces FAL request details, prompt/negative prompt, parameters, metadata, version, storage path, and registry entry.
 
@@ -43297,6 +43298,7 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 **Verification:** `npx tsx scripts/test-studio-orb-radial-layout.ts` passed.
 
 **Conventions:** When changing projection tile dimensions, update **`RADIAL_ITEM_WIDTH` / `RADIAL_ITEM_HEIGHT`** in `studioOrbRadialLayout.ts` and re-run the layout smoke script.
+
 ---
 
 ## 2026-07-08 — ARTICLE-A02 Studio Foundry™ manufacturing boundary
@@ -43363,3 +43365,33 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - Future reusable visual/object generation must flow through **Studio Foundry™**, not standalone libraries or loose files.
 - Orb, Atlas, Mission Control, and UI should consume assets by **asset ID only**.
 - Asset Registry™ is storage/indexing/versioning; Studio Foundry™ is manufacturing; Generation Recipes™ are manufacturing definitions; Asset Compiler™ is internal compilation machinery.
+
+---
+
+## 2026-07-08 — Multi-Company Route Architecture™ (Studio World)
+
+Summary of this chat's implementation sprint: refactor Studio World routing so Frontal Slayer is the **first company instance**, not the only company; all company-specific destinations use canonical **`/admin/studio/companies/{companySlug}/...`** paths.
+
+- **Context:** User requested IMPLEMENTATION SPRINT for Multi-Company Route Architecture™ — CompanyRouteContext, Atlas/Orb/World Graph integration, legacy redirects, no hardcoded Frontal Slayer in components.
+- **Prior arc (same chat):** Mission Control™ holographic transformation on `/admin/studio/world-atlas` (already pushed `300aec8a3`).
+- **Core module** `src/studio-os-core/company-routes/`: `types`, `constants`, `registry` (frontal-slayer + ndxbook), `paths`, `route-catalog`, `resolve`, `redirects`, `breadcrumbs`, `orb-context`, `world-graph`, `CompanyRouteProvider`.
+- **Routing behavior:**
+  - Canonical company URLs **stay in place** — `CompanyRouteContent.tsx` lazy-loads legacy room pages (mission-control, departments, HQ rooms) inside `CompanyRouteShell` + `CompanyRouteProvider`.
+  - Global routes: `command-center`, `archives/*`, `expeditions`, `atlas` (mission-control global = holographic Mission Control).
+  - Legacy redirects via `LegacyRouteRedirect` + `LEGACY_TO_CANONICAL_REDIRECTS` (`/admin/headquarters`, `/admin/studio/mission-control`, `/admin/studio/department/*`, world paths, studio-archives, world-atlas → atlas, etc.).
+- **Integrations:**
+  - `adminStudioRoutes.ts` — re-exports `studioCompanyPath`, `studioCompanyGrandAtriumPath`, etc.; `adminStudioMissionControlPath(companySlug?)` → Grand Atrium; `adminStudioDepartmentVerticalSlicePath(dept, companySlug?)` → canonical department paths.
+  - `resolveOrganizationMissionControlPath()` → `/admin/studio/companies/{slug}/grand-atrium`.
+  - `GlobalAtlasProvider` + `global-atlas-layer/context.ts` — company-aware location/context; Orb guide line includes company narrative.
+  - `StudioOrbProvider` — `buildOrbCompanyContext()` on `document.body.dataset.studioOrbCompanyContext`; `organizationId` from `useCompanyRoute()`.
+  - `studio-world/navigation.ts` — `getCurrentWorldLocation()` resolves via company route legacy mapping.
+  - World Graph — `ingestCompanyRouteNodes()` wired in `builder.ts` alongside Asset Compiler ingest.
+- **Pages:** `companies/page.tsx` index; `CompanyRouteResolver.tsx` + `CompanyRouteContent.tsx`; department page reads `useCompanyRouteOptional()` for back navigation and infers `creative-direction` from pathname.
+- **App.tsx:** `studio/companies/*` catch-all wrapped in `CompanyRouteShell`; removed unused `AdminStudioGlobalRouteResolver` / standalone mission-control lazy route.
+
+**Verification:** `npm run build` passed after rebase merge with Asset Compiler graph nodes.
+
+**Conventions:**
+- Use `useCompanyRoute()` / path builders — never hardcode `frontal-slayer` in new company-scoped UI.
+- Frontal Slayer Grand Atrium: `/admin/studio/companies/frontal-slayer/grand-atrium`.
+- NDXBOOK overrides: grand-atrium → ndxbook mission-control implementation.

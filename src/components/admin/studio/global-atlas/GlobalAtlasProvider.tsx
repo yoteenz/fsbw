@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
+import { useCompanyRouteOptional, buildOrbCompanyContext } from '../../../../studio-os-core/company-routes';
 import {
   buildGlobalAtlasShortcuts,
   formatOrbAtlasGuideLine,
@@ -86,20 +87,23 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { workspace, workspaceId } = useWorkspace();
+  const companyRoute = useCompanyRouteOptional();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [traveling, setTraveling] = useState(false);
   const [travelOverlay, setTravelOverlay] = useState<{ message: string; className: string } | null>(null);
   const [orbGuideLine, setOrbGuideLine] = useState<string | null>(null);
 
-  const companyName = workspace.displayName;
+  const companyName = companyRoute?.companyName ?? workspace.displayName;
+  const organizationId = companyRoute?.companyId ?? workspaceId ?? 'frontal-slayer';
+  const orbCompanyLine = companyRoute ? buildOrbCompanyContext(companyRoute).narrativeLine : null;
   const anchor = useMemo(() => resolveAtlasAnchorForPath(pathname), [pathname]);
   const location = useMemo(() => resolveGlobalAtlasLocation(pathname, companyName), [pathname, companyName]);
   const context = useMemo(() => resolveAtlasContextForPath(pathname), [pathname]);
 
   const atlas = useStudioWorldAtlas({
     companyName,
-    organizationId: workspaceId ?? 'frontal-slayer',
+    organizationId,
     liveRefreshMs: 60_000,
   });
 
@@ -109,8 +113,8 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   );
 
   const atlasCollaborators = useMemo(
-    () => resolveAtlasCollaboratorMarkers(workspaceId ?? 'frontal-slayer'),
-    [workspaceId, isOpen]
+    () => resolveAtlasCollaboratorMarkers(organizationId),
+    [organizationId, isOpen]
   );
 
   const collaboratorLine = useMemo(
@@ -119,9 +123,9 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   );
 
   const atlasLineageSignals = useMemo(() => {
-    const profile = ensureOrganizationInnovationLineageProfile(workspaceId ?? 'frontal-slayer');
+    const profile = ensureOrganizationInnovationLineageProfile(organizationId);
     return resolveAtlasLineageSignals(profile.graphs);
-  }, [workspaceId, isOpen]);
+  }, [organizationId, isOpen]);
 
   const lineageLine = useMemo(
     () => formatAtlasLineageLine(atlasLineageSignals),
@@ -129,9 +133,9 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   );
 
   const atlasConstellationGlows = useMemo(() => {
-    const profile = ensureOrganizationInnovationConstellationsProfile(workspaceId ?? 'frontal-slayer');
+    const profile = ensureOrganizationInnovationConstellationsProfile(organizationId);
     return resolveAtlasConstellationGlows(profile.universe);
-  }, [workspaceId, isOpen]);
+  }, [organizationId, isOpen]);
 
   const constellationLine = useMemo(
     () => formatAtlasConstellationLine(atlasConstellationGlows),
@@ -139,9 +143,9 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   );
 
   const atlasExpeditionJourneys = useMemo(() => {
-    const profile = ensureOrganizationInnovationExpeditionsProfile(workspaceId ?? 'frontal-slayer');
+    const profile = ensureOrganizationInnovationExpeditionsProfile(organizationId);
     return resolveAtlasExpeditionJourneys(profile.expeditions, profile.activeExpeditionId);
-  }, [workspaceId, isOpen]);
+  }, [organizationId, isOpen]);
 
   const expeditionLine = useMemo(
     () => formatAtlasExpeditionLine(atlasExpeditionJourneys),
@@ -163,9 +167,12 @@ export function GlobalAtlasProvider({ children }: { children: ReactNode }) {
   const openAtlas = useCallback(() => {
     syncLocationFocus();
     setIsOpen(true);
-    setOrbGuideLine('Global Atlas Layer™ — one living world. Your current location is highlighted.');
+    const guide = orbCompanyLine
+      ? `Global Atlas Layer™ — ${orbCompanyLine}`
+      : 'Global Atlas Layer™ — one living world. Your current location is highlighted.';
+    setOrbGuideLine(guide);
     document.body.classList.add('global-atlas-layer-open');
-  }, [syncLocationFocus]);
+  }, [syncLocationFocus, orbCompanyLine]);
 
   const closeAtlas = useCallback(() => {
     setIsOpen(false);

@@ -1,5 +1,7 @@
 import { STUDIO_OS_DEFAULT_WORKSPACE_ID } from './storage';
 import { STUDIO_ADMINISTRATION_ROUTES } from '../application/routes';
+import { studioCompanyGrandAtriumPath } from '../company-routes/paths';
+import { resolveCompanySlugFromWorkspaceId } from '../company-routes/registry';
 
 const ADMIN_BASE = '/admin';
 
@@ -48,12 +50,10 @@ export function workspaceStudioEntryPath(workspaceId: string, entryPath: string)
 /** Canonical Mission Control / headquarters home for an organization workspace. */
 export function resolveOrganizationMissionControlPath(workspaceId: string): string {
   if (workspaceId === 'ai-media') {
-    return `${ADMIN_BASE}/studio/ndxbook/mission-control`;
+    return studioCompanyGrandAtriumPath('ndxbook');
   }
-  if (workspaceId === STUDIO_OS_DEFAULT_WORKSPACE_ID) {
-    return `${ADMIN_BASE}/studio/mission-control`;
-  }
-  return workspaceStudioModulePath(workspaceId, 'mission-control');
+  const slug = resolveCompanySlugFromWorkspaceId(workspaceId);
+  return studioCompanyGrandAtriumPath(slug);
 }
 
 /**

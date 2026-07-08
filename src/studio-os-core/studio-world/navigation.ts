@@ -9,6 +9,8 @@ import {
   resolveWorldRouteByPath,
   STUDIO_WORLD_ROUTE_REGISTRY,
 } from './route-registry';
+import { resolveCompanyRoute } from '../company-routes/resolve';
+import { STUDIO_COMPANIES_BASE } from '../company-routes/constants';
 import { STUDIO_WORLD_PIPELINE } from './responsibility-framework';
 import type { StudioWorldNavigationEdge, StudioWorldRouteMapping } from './types';
 
@@ -58,6 +60,13 @@ export function resolveStudioWorldPath(pathname: string): StudioWorldPathResolut
 }
 
 export function getCurrentWorldLocation(pathname: string): StudioWorldRouteMapping | null {
+  if (pathname.includes(`${STUDIO_COMPANIES_BASE}/`)) {
+    const resolution = resolveCompanyRoute(pathname);
+    if (resolution.company && resolution.segments.length > 0) {
+      const legacy = resolveLegacyRouteLocation(resolution.legacyPath);
+      if (legacy) return legacy;
+    }
+  }
   return resolveLegacyRouteLocation(pathname) ?? resolveWorldRouteByPath(pathname);
 }
 

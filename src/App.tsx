@@ -28,6 +28,7 @@ import ProductInventorySync from './components/ProductInventorySync';
 import { PsaChatCopyBootstrap } from './components/psa/PsaChatCopyBootstrap';
 import { DebugModeShell } from './components/debug-mode/DebugModeShell';
 import CreativePreviewBanner from './components/CreativePreviewBanner';
+import { CompanyRouteShell } from './components/admin/studio/company-routes/CompanyRouteShell';
 import { DesktopRouteShell } from './components/desktop-preview/DesktopRouteShell';
 import { DesktopRoomTitlePlacementEditorProvider } from './components/desktop-lobby/DesktopRoomTitlePlacementEditorContext';
 import { DesktopRoomTitlePlacementEditorPanel } from './components/desktop-lobby/DesktopRoomTitlePlacementEditorPanel';
@@ -171,6 +172,9 @@ const AdminStudioNdxbookNewsroom = lazyWithRetry(() => import('./pages/admin/stu
 const AdminStudioNdxbookNewsroomDepartment = lazyWithRetry(() => import('./pages/admin/studio/ndxbook/newsroom/department/page'), 'AdminStudioNdxbookNewsroomDepartment');
 const AdminStudioNdxbookCreativeDirection = lazyWithRetry(() => import('./pages/admin/studio/ndxbook/creative-direction/page'), 'AdminStudioNdxbookCreativeDirection');
 const AdminStudioDepartmentVerticalSlice = lazyWithRetry(() => import('./pages/admin/studio/department/page'), 'AdminStudioDepartmentVerticalSlice');
+const AdminStudioCompaniesIndex = lazyWithRetry(() => import('./pages/admin/studio/companies/page'), 'AdminStudioCompaniesIndex');
+const AdminStudioCompanyRouteResolver = lazyWithRetry(() => import('./pages/admin/studio/companies/CompanyRouteResolver'), 'AdminStudioCompanyRouteResolver');
+const AdminStudioLegacyRouteRedirect = lazyWithRetry(() => import('./pages/admin/studio/LegacyRouteRedirect'), 'AdminStudioLegacyRouteRedirect');
 const AdminStudioTalentNetwork = lazyWithRetry(() => import('./pages/admin/studio/talent-network/page'), 'AdminStudioTalentNetwork');
 const AdminStudioMarketplace = lazyWithRetry(() => import('./pages/admin/studio/marketplace/page'), 'AdminStudioMarketplace');
 const AdminStudioBusinessModelEngine = lazyWithRetry(() => import('./pages/admin/studio/business-model-engine/page'), 'AdminStudioBusinessModelEngine');
@@ -421,7 +425,6 @@ const AdminStudioWarehouse = lazyWithRetry(() => import('./pages/admin/studio/st
 const AdminStudioMuseum = lazyWithRetry(() => import('./pages/admin/studio/studio-museum/page'), 'AdminStudioMuseum');
 const AdminStudioBlueprintManager = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/page'), 'AdminStudioBlueprintManager');
 const AdminStudioBlueprintDetail = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/detail/page'), 'AdminStudioBlueprintDetail');
-const AdminStudioMissionControl = lazyWithRetry(() => import('./pages/admin/studio/mission-control/page'), 'AdminStudioMissionControl');
 const AdminStudioArchitectureObservatory = lazyWithRetry(
   () => import('./pages/admin/studio/architecture-observatory/page'),
   'AdminStudioArchitectureObservatory'
@@ -1497,9 +1500,84 @@ function App() {
               <AdminStudioNdxbookCreativeDirection />
             </Suspense>
           } />
+          <Route path="studio/companies" element={
+            <CompanyRouteShell>
+              <Suspense fallback={<LoadingScreen />}>
+                <AdminStudioCompaniesIndex />
+              </Suspense>
+            </CompanyRouteShell>
+          } />
+          <Route path="studio/companies/:companySlug/creative-direction/story-table" element={
+            <CompanyRouteShell>
+              <Suspense fallback={<LoadingScreen />}>
+                <AdminStudioDepartmentVerticalSlice />
+              </Suspense>
+            </CompanyRouteShell>
+          } />
+          <Route path="studio/companies/:companySlug/creative-direction" element={
+            <CompanyRouteShell>
+              <Suspense fallback={<LoadingScreen />}>
+                <AdminStudioDepartmentVerticalSlice />
+              </Suspense>
+            </CompanyRouteShell>
+          } />
+          <Route path="studio/companies/:companySlug/*" element={
+            <CompanyRouteShell>
+              <Suspense fallback={<LoadingScreen />}>
+                <AdminStudioCompanyRouteResolver />
+              </Suspense>
+            </CompanyRouteShell>
+          } />
+          <Route path="studio/command-center" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioWorldPath />
+            </Suspense>
+          } />
+          <Route path="studio/archives/warehouse" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioWarehouse />
+            </Suspense>
+          } />
+          <Route path="studio/archives/museum" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioMuseum />
+            </Suspense>
+          } />
+          <Route path="studio/archives/hall-of-innovation" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioInnovationLab />
+            </Suspense>
+          } />
+          <Route path="studio/archives/blueprints" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioBlueprintManager />
+            </Suspense>
+          } />
+          <Route path="studio/archives/marketplace" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioMarketplace />
+            </Suspense>
+          } />
+          <Route path="studio/archives" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioWarehouse />
+            </Suspense>
+          } />
+          <Route path="studio/expeditions" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioInnovationExpeditions />
+            </Suspense>
+          } />
+          <Route path="studio/atlas" element={
+            <CompanyRouteShell>
+              <Suspense fallback={<LoadingScreen />}>
+                <AdminStudioWorldAtlas />
+              </Suspense>
+            </CompanyRouteShell>
+          } />
           <Route path="studio/department/:departmentId" element={
             <Suspense fallback={<LoadingScreen />}>
-              <AdminStudioDepartmentVerticalSlice />
+              <AdminStudioLegacyRouteRedirect />
             </Suspense>
           } />
           <Route path="studio/ndxbook/newsroom/:departmentId" element={
@@ -1794,12 +1872,12 @@ function App() {
           } />
           <Route path="studio/studio-archives" element={
             <Suspense fallback={<LoadingScreen />}>
-              <AdminStudioWarehouse />
+              <AdminStudioLegacyRouteRedirect />
             </Suspense>
           } />
           <Route path="studio/studio-warehouse" element={
             <Suspense fallback={<LoadingScreen />}>
-              <AdminStudioWarehouse />
+              <AdminStudioLegacyRouteRedirect />
             </Suspense>
           } />
           <Route path="studio/studio-museum" element={
@@ -2049,7 +2127,7 @@ function App() {
           } />
           <Route path="studio/mission-control" element={
             <Suspense fallback={<LoadingScreen />}>
-              <AdminStudioMissionControl />
+              <AdminStudioLegacyRouteRedirect />
             </Suspense>
           } />
           <Route path="studio/architecture-observatory" element={
@@ -2064,7 +2142,7 @@ function App() {
           } />
           <Route path="studio/world-atlas" element={
             <Suspense fallback={<LoadingScreen />}>
-              <AdminStudioWorldAtlas />
+              <AdminStudioLegacyRouteRedirect />
             </Suspense>
           } />
           <Route path="studio/constitution-hall" element={
@@ -2427,7 +2505,7 @@ function App() {
               <AdminStudioSection />
             </Suspense>
           } />
-          <Route path="studio" element={<Navigate to="/admin/studio/world/command-center" replace />} />
+          <Route path="studio" element={<Navigate to="/admin/studio/command-center" replace />} />
           </Route>
           </Route>
           </Route>

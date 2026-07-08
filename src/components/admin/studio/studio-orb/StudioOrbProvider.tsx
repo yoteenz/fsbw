@@ -19,6 +19,7 @@ import type { VoiceModeState } from '../../../../studio-os-core/voice-mode/types
 import { useCommandDockState } from '../../../../hooks/useCommandDockState';
 import { useStudioOrbRecommendations } from '../../../../hooks/useStudioOrbRecommendations';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
+import { useCompanyRouteOptional, buildOrbCompanyContext } from '../../../../studio-os-core/company-routes';
 import { StudioOrbAwakeningOverlay } from './StudioOrbAwakeningOverlay';
 import type {
   StudioOrbPosition,
@@ -126,9 +127,14 @@ function resolvePresenceState({
 export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const { workspaceId } = useWorkspace();
+  const companyRoute = useCompanyRouteOptional();
+  const orbCompanyContext = useMemo(
+    () => (companyRoute ? buildOrbCompanyContext(companyRoute) : null),
+    [companyRoute]
+  );
   const dock = useCommandDockState();
   const orbRecs = useStudioOrbRecommendations();
-  const organizationId = workspaceId;
+  const organizationId = companyRoute?.companyId ?? workspaceId;
 
   const [radialOpen, setRadialOpen] = useState(false);
   const [activeSurface, setActiveSurface] = useState<StudioOrbSurface>(null);
@@ -188,6 +194,14 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       hasCivilizationSignal,
     ]
   );
+
+  useEffect(() => {
+    if (orbCompanyContext) {
+      document.body.dataset.studioOrbCompanyContext = orbCompanyContext.narrativeLine;
+    } else {
+      delete document.body.dataset.studioOrbCompanyContext;
+    }
+  }, [orbCompanyContext]);
 
   useEffect(() => {
     if (!organizationId) return;

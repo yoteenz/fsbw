@@ -1,6 +1,27 @@
 /** Modular Studio routing — canonical paths and built-section registry. */
 
 import type { AdminStudioSectionId } from './adminStudioDemo';
+import {
+  DEFAULT_COMPANY_SLUG,
+  studioCompanyCreativeDirectionPath,
+  studioCompanyDepartmentPath,
+  studioCompanyDepartmentsPath,
+  studioCompanyGrandAtriumPath,
+  studioCompanyPath,
+  GLOBAL_STUDIO_ROUTES,
+  type CompanyDepartmentId,
+} from '../studio-os-core/company-routes';
+import { resolveCompanySlugFromWorkspaceId } from '../studio-os-core/company-routes/registry';
+
+export {
+  studioCompanyPath,
+  studioCompanyGrandAtriumPath,
+  studioCompanyCreativeDirectionPath,
+  studioCompanyDepartmentPath,
+  studioCompanyDepartmentsPath,
+  GLOBAL_STUDIO_ROUTES,
+};
+export type { CompanyDepartmentId };
 
 export const ADMIN_STUDIO_BASE_PATH = '/admin/studio';
 
@@ -400,8 +421,14 @@ export function adminStudioExecutiveCommandCenterPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/executive-command-center`;
 }
 
-export function adminStudioMissionControlPath(): string {
-  return `${ADMIN_STUDIO_BASE_PATH}/mission-control`;
+export function adminStudioMissionControlPath(companySlug?: string): string {
+  const slug = companySlug ?? DEFAULT_COMPANY_SLUG;
+  return studioCompanyGrandAtriumPath(slug);
+}
+
+/** Resolve canonical Grand Atrium™ path for a workspace id. */
+export function adminStudioMissionControlPathForWorkspace(workspaceId: string): string {
+  return studioCompanyGrandAtriumPath(resolveCompanySlugFromWorkspaceId(workspaceId));
 }
 
 export function adminStudioChiefOfStaffPath(): string {
@@ -635,8 +662,15 @@ export function adminStudioNdxbookCreativeDirectionPath(): string {
 }
 
 /** Studio OS Alpha — immersive department vertical slice (any registered package). */
-export function adminStudioDepartmentVerticalSlicePath(departmentId: string): string {
-  return `${ADMIN_STUDIO_BASE_PATH}/department/${encodeURIComponent(departmentId)}`;
+export function adminStudioDepartmentVerticalSlicePath(
+  departmentId: string,
+  companySlug?: string
+): string {
+  const slug = companySlug ?? DEFAULT_COMPANY_SLUG;
+  if (departmentId === 'creative-direction') {
+    return studioCompanyCreativeDirectionPath(slug);
+  }
+  return studioCompanyDepartmentPath(slug, departmentId as CompanyDepartmentId);
 }
 
 export function adminStudioOsPath(): string {
