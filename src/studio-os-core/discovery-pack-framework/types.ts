@@ -177,3 +177,83 @@ export type PublicInvestigationSnapshot = {
   } | null;
   ambientLine: string | null;
 };
+
+/** Known World™ — Atlas region taxonomy */
+export type AtlasRegionKind =
+  | 'known'
+  | 'unknown'
+  | 'uncharted'
+  | 'restricted'
+  | 'experimental'
+  | 'historical'
+  | 'future';
+
+/** Unknown Frontier Lifecycle™ — World Graph origin story */
+export type UnknownFrontierLifecycle =
+  | 'unknown'
+  | 'discovered'
+  | 'explored'
+  | 'integrated'
+  | 'historic';
+
+export type PublicAtlasRegionSummary = {
+  knownCount: number;
+  unknownCount: number;
+  unchartedCount: number;
+  restrictedCount: number;
+  experimentalCount: number;
+  historicalCount: number;
+  futureCount: number;
+  fogCoveragePct: number;
+  totalRegions: number;
+  chartedRegions: number;
+};
+
+export type PublicWorldFogSnapshot = {
+  activeFogPct: number;
+  explorationProgressPct: number;
+  fogBeyondChartedTerritory: boolean;
+  signalsBeyondFrontier: boolean;
+  ambientQuestion: string;
+  fogFraming: string;
+};
+
+export type PublicCommunityDiscovery = {
+  id: string;
+  publicLabel: string;
+  publicDescription: string;
+  progressPct: number;
+  unlocked: boolean;
+  foundersRequiredHint: string;
+};
+
+export type PublicUnknownMuseumExhibit = {
+  id: string;
+  publicTitle: string;
+  discoveryStory: string;
+  whyHidden: string;
+  contributorFraming: string;
+  worldChange: string;
+  permanent: true;
+};
+
+/** Public-safe The Unknown™ — permanent mystery philosophy, never the full map */
+export type PublicUnknownSnapshot = {
+  unknownVersion: string;
+  computedAt: string;
+  philosophy: string;
+  promise: string;
+  atlasUnderstanding: string;
+  designPrinciple: string;
+  mapNeverComplete: boolean;
+  regionSummary: PublicAtlasRegionSummary;
+  worldFog: PublicWorldFogSnapshot;
+  discoveryConditionsActive: number;
+  approachingConditionCount: number;
+  communityDiscoveries: PublicCommunityDiscovery[];
+  primaryCommunityDiscovery: PublicCommunityDiscovery | null;
+  museumExhibits: PublicUnknownMuseumExhibit[];
+  museumAmbientLine: string | null;
+  orbHint: string;
+  discoveryLanguageLine: string;
+};

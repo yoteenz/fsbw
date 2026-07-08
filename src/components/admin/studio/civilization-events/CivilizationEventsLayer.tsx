@@ -43,6 +43,21 @@ export function CivilizationEventsLayer({ events, compact = false }: Props) {
         </article>
       ) : null}
 
+      {!compact && events.theUnknown ? (
+        <div className="sw-events-layer__unknown" role="status" aria-label="The Unknown">
+          <p className="sw-events-layer__unknown-label">The Unknown™ · World Fog</p>
+          <p className="sw-events-layer__unknown-fog">
+            {events.theUnknown.worldFog.activeFogPct}% beyond charted territory · {events.theUnknown.worldFog.ambientQuestion}
+          </p>
+          {events.theUnknown.primaryCommunityDiscovery ? (
+            <p className="sw-events-layer__unknown-community">
+              Community: {events.theUnknown.primaryCommunityDiscovery.publicLabel} ·{' '}
+              {events.theUnknown.primaryCommunityDiscovery.progressPct}%
+            </p>
+          ) : null}
+        </div>
+      ) : null}
+
       {!compact && events.discoveryCulture ? (
         <div className="sw-events-layer__frontier" role="status" aria-label="Discovery frontier">
           <p className="sw-events-layer__frontier-label">Discovery Culture™ · Frontier</p>

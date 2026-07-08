@@ -77,7 +77,29 @@ export function resolveWarehouseOrbPersonality(
   const base = PERSONALITIES[wing];
 
   const discoveryCulture = civilizationEvents?.discoveryCulture;
+  const theUnknown = civilizationEvents?.theUnknown;
   const worldExpanding = discoveryCulture?.worldExpansionAmbient != null;
+
+  if (theUnknown?.worldFog.signalsBeyondFrontier && civilizationEvents?.orbUnknownHint) {
+    const unknownRoles: Partial<Record<WarehouseWingKind, string>> = {
+      atrium: 'Unknown Oracle',
+      legacy: 'Fog Historian',
+      innovation: 'Frontier Mystic',
+      marketplace: 'Uncharted Cartographer',
+      expansion: 'Horizon Watcher',
+      blueprint: 'Lost Archive Seeker',
+      warehouse: 'Expedition Mystic',
+      genome: 'Signal Analyst',
+      threshold: 'World Greeter',
+    };
+
+    return {
+      ...base,
+      role: unknownRoles[wing] ?? 'Unknown Oracle',
+      greeting: civilizationEvents.orbUnknownHint,
+      accent: '#9b8ec4',
+    };
+  }
 
   if (worldExpanding && civilizationEvents?.orbDiscoveryLine) {
     const oracleRoles: Partial<Record<WarehouseWingKind, string>> = {

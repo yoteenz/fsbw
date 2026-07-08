@@ -160,17 +160,57 @@ export const CIVILIZATION_EVENTS_STYLES = `
   color: rgba(168, 196, 184, 0.78);
 }
 
+.sw-events-layer__unknown {
+  position: absolute;
+  right: max(8px, env(safe-area-inset-right));
+  bottom: calc(var(--wh-frame-teach-h, 56px) + 16px);
+  max-width: min(240px, 32vw);
+  padding: 8px 10px;
+  border: 1px solid rgba(155, 142, 196, 0.32);
+  border-right: 3px solid rgba(155, 142, 196, 0.7);
+  background: rgba(0, 0, 0, 0.62);
+  backdrop-filter: blur(6px);
+}
+
+.sw-events-layer__unknown-label {
+  margin: 0 0 4px;
+  font-size: 6px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(155, 142, 196, 0.9);
+}
+
+.sw-events-layer__unknown-fog {
+  margin: 0 0 4px;
+  font-size: 8px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.82);
+  font-style: italic;
+}
+
+.sw-events-layer__unknown-community {
+  margin: 0;
+  font-size: 7px;
+  color: rgba(168, 196, 184, 0.78);
+}
+
 .wh-world.sw-events--active::after {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 1;
-  background: radial-gradient(
-    ellipse 80% 40% at 50% 0%,
-    rgba(232, 200, 120, 0.05),
-    transparent 65%
-  );
+  background:
+    radial-gradient(
+      ellipse 80% 40% at 50% 0%,
+      rgba(232, 200, 120, 0.05),
+      transparent 65%
+    ),
+    radial-gradient(
+      ellipse 60% 50% at 100% 50%,
+      rgba(155, 142, 196, 0.04),
+      transparent 70%
+    );
 }
 
 .sw-nav-rail__events {

@@ -11,6 +11,7 @@ export * from './discovery-events-language';
 export * from './community-investigation';
 export * from './discovery-culture-compute';
 export * from './discovery-culture-oracle';
-export { buildDiscoveryPackFrameworkWorldGraphNodes, buildReservedPackGraphScaffold, buildDiscoveryCultureWorldGraphNodes } from './integrations/world-graph';
+export * from './the-unknown';
+export { buildDiscoveryPackFrameworkWorldGraphNodes, buildReservedPackGraphScaffold, buildDiscoveryCultureWorldGraphNodes, buildUnknownWorldGraphExtension } from './integrations/world-graph';
 export { buildHallOfDiscoveryScaffold, type HallOfDiscoveryScaffold } from './integrations/hall-of-discovery';
 export { countEligibleRewardGrants, evaluateRewardEligibility } from './integrations/rewards';

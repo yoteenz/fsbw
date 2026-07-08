@@ -8,6 +8,7 @@ import { getPublicReleases } from '../query';
 import { DISCOVERY_STATE_ORDER, countByDiscoveryState, discoveryStateLabel, resolveDiscoveryState } from '../lifecycle';
 import { DISCOVERY_PACK_REGISTRY } from '../registry';
 import { DISCOVERY_CULTURE_VERSION } from '../categories';
+import { buildUnknownFrontierWorldGraphNodes, defaultUnknownSlotCounts } from '../the-unknown/world-graph-lifecycle';
 
 function provenance(sourceRef: string) {
   return {
@@ -153,4 +154,13 @@ export function buildDiscoveryCultureWorldGraphNodes(): {
   }
 
   return { nodes, edges };
+}
+
+/** The Unknown™ World Graph extension — frontier lifecycle aggregates */
+export function buildUnknownWorldGraphExtension(mysteryCount: number, releasedCount: number): {
+  nodes: WorldNode[];
+  edges: WorldEdge[];
+} {
+  const slotCounts = defaultUnknownSlotCounts(mysteryCount, releasedCount);
+  return buildUnknownFrontierWorldGraphNodes(slotCounts);
 }

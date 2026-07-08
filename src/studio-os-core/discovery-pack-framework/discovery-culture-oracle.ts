@@ -3,7 +3,7 @@
  * Builds anticipation around exploration — never software updates.
  */
 
-import type { DiscoveryEligibilitySnapshot, PublicDiscoveryCultureSnapshot } from './types';
+import type { DiscoveryEligibilitySnapshot, PublicDiscoveryCultureSnapshot, PublicUnknownSnapshot } from './types';
 import { frameHiddenDiscovery, frameWorldExpansion } from './discovery-events-language';
 import { selectLegendaryHint } from './legendary';
 
@@ -17,9 +17,24 @@ export function buildDiscoveryOracleLine(
   eligibility: Pick<
     DiscoveryEligibilitySnapshot,
     'frontierSignalsActive' | 'civilizationEventLinked' | 'collaborationEligible'
-  > & { collaborationCapital: number }
+  > & { collaborationCapital: number },
+  theUnknown?: PublicUnknownSnapshot | null
 ): string {
   const insights: OracleInsight[] = [];
+
+  if (theUnknown?.worldFog.signalsBeyondFrontier) {
+    insights.push({
+      priority: 100,
+      line: theUnknown.orbHint,
+    });
+  }
+
+  if (theUnknown && theUnknown.worldFog.activeFogPct >= 55) {
+    insights.push({
+      priority: 96,
+      line: `${theUnknown.worldFog.ambientQuestion} ${theUnknown.atlasUnderstanding}`,
+    });
+  }
 
   if (culture.worldExpansionAmbient) {
     insights.push({

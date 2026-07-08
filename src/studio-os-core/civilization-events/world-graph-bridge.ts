@@ -5,7 +5,7 @@
 
 import type { WorldEdge, WorldNode } from '../world-graph/types';
 import type { CivilizationEventsSnapshot } from './types';
-import { buildDiscoveryCultureWorldGraphNodes } from '../discovery-pack-framework/integrations/world-graph';
+import { buildDiscoveryCultureWorldGraphNodes, buildUnknownWorldGraphExtension } from '../discovery-pack-framework/integrations/world-graph';
 
 function provenance(sourceRef: string) {
   return {
@@ -143,6 +143,39 @@ export function buildCivilizationEventsWorldGraphProjection(
     type: 'references',
     label: 'lore-pulse',
     provenance: provenance('discovery-culture-pulse-edge'),
+  });
+
+  const unknownGraph = buildUnknownWorldGraphExtension(
+    snapshot.discoveryCulture.mysteryCount,
+    snapshot.discoveryFramework.releasedPackCount
+  );
+  nodes.push(...unknownGraph.nodes);
+  edges.push(...unknownGraph.edges);
+
+  nodes.push({
+    id: 'W-UNKNOWN-fog-pulse',
+    slug: 'world-fog-pulse',
+    displayName: 'World Fog™',
+    nodeType: 'milestone',
+    summary: snapshot.theUnknown.worldFog.fogFraming,
+    lifecycle: 'live',
+    plane: 'canon',
+    version: '1',
+    tags: ['the-unknown', 'world-fog'],
+    provenance: provenance('world-fog-pulse'),
+    metadata: {
+      activeFogPct: snapshot.theUnknown.worldFog.activeFogPct,
+      ambientQuestion: snapshot.theUnknown.worldFog.ambientQuestion,
+    },
+  });
+
+  edges.push({
+    id: 'WE-UNKNOWN-fog',
+    from: 'W-UNKNOWN-root',
+    to: 'W-UNKNOWN-fog-pulse',
+    type: 'references',
+    label: 'world-fog',
+    provenance: provenance('world-fog-edge'),
   });
 
   for (const impact of snapshot.worldImpacts) {

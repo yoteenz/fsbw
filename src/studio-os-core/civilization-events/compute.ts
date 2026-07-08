@@ -5,9 +5,11 @@
 import {
   computePublicDiscoveryFramework,
   computePublicDiscoveryCulture,
+  computePublicUnknown,
   countEligibleRewardGrants,
   evaluateDiscoveryEligibility,
   getInternalRegistry,
+  buildDiscoveryOracleLine,
 } from '../discovery-pack-framework';
 import { readCampusEvolutionStore } from '../campus-evolution-engine/store';
 import type { LivingCivilizationSnapshot } from '../living-civilization/types';
@@ -92,6 +94,29 @@ export function computeCivilizationEvents(
     completedGrandChallengeCount: 0,
     discoveryEligibility,
   });
+  const theUnknown = computePublicUnknown({
+    warehouseAssetCount: metrics.warehouseAssetCount,
+    warehouseGoldenBuildTotal: metrics.warehouseGoldenBuildTotal,
+    warehouseFavoriteCount: metrics.warehouseFavoriteCount,
+    knowledgeCapital: input.knowledgeCapital,
+    collaborationCapital: input.collaborationCapital,
+    innovationCapital: input.innovationCapital,
+    civilizationHealth: input.civilizationHealth,
+    activeGrandChallengeCount: grandChallenge?.status === 'active' ? 1 : 0,
+    completedGrandChallengeCount: 0,
+    hiddenActivationCount: discoveryCulture.hiddenActivationCount,
+    worldExpansionActive: discoveryCulture.worldExpansionAmbient != null,
+  });
+  discoveryCulture.discoveryOracleLine = buildDiscoveryOracleLine(
+    discoveryCulture,
+    {
+      collaborationCapital: input.collaborationCapital,
+      frontierSignalsActive: discoveryEligibility.frontierSignalsActive,
+      civilizationEventLinked: discoveryEligibility.civilizationEventLinked,
+      collaborationEligible: discoveryEligibility.collaborationEligible,
+    },
+    theUnknown
+  );
   const eligibleDiscoveryGrantCount = countEligibleRewardGrants(getInternalRegistry(), {
     innovationCapital: input.innovationCapital,
     knowledgeCapital: input.knowledgeCapital,
@@ -113,6 +138,7 @@ export function computeCivilizationEvents(
     crossDisciplineTeams: SEED_CROSS_DISCIPLINE_TEAMS,
     discoveryFramework,
     discoveryCulture,
+    theUnknown,
     discoveryEligibility,
     eligibleDiscoveryGrantCount,
     museumExhibits: LIVING_MUSEUM_EXHIBITS,
@@ -128,6 +154,7 @@ export function computeCivilizationEvents(
       frontierSummary: discoveryFramework.frontierSummary,
     }),
     orbDiscoveryLine: discoveryCulture.discoveryOracleLine,
+    orbUnknownHint: theUnknown.orbHint,
     participationEligible,
   };
 
