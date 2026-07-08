@@ -43892,3 +43892,22 @@ Summary of the **full conversation in this chat**: Career Worlds™ sprint → A
 - **Verification:** `npm run build` passed; World Graph **647 nodes · 1240 edges · PASS**.
 - **Conventions:** Canonical content lives in `bootstrap/canonical-archive/`; new features use `proposeFutureCodexArticle()` then `createCodexArticle()` after Constitution Review.
 
+---
+
+## 2026-07-08 — ARTICLE-C02 Complete Studio World Codex™ architecture sprint
+
+Summary of the **full conversation in this chat**: Career Worlds™ implementation sprint → ARTICLE-C01 Codex First Principle™ architecture → Codex platform infrastructure (`cd07fd388`) → Phase II Canonical Seeding™ (`35ce2e34e`) → **ARTICLE-C02 The Complete Studio World Codex™** architecture sprint to define decades-scale Codex structure after the first ten foundational volumes.
+
+- **Context:** The user said Studio World is no longer a software project; it is becoming a civilization. The Codex must scale as a library for decades without requiring structural redesign. Volumes I-X remain unchanged as the **Foundational Collection™**; future knowledge domains should become independent collections rather than continuously expanding the original books.
+- **Decisions / outcomes:**
+  - Added **ARTICLE-C02 — The Complete Studio World Codex™** as accepted architecture in `docs/studio-os/codex/ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md`.
+  - C02 defines **Codex Collections™** as the top-level expansion unit: stable foundational volumes, specialized future collections, cross-collection relationships, global search, World Graph nodes, and Orb Curator™ discoverability.
+  - Added collection registry **`src/studio-os-core/studio-world-codex/collections.ts`** with `Foundational Collection™` plus planned collections: Company & Headquarters, Product & Commerce, Experience & Interface, Intelligence & Agents, Production & Operations, Professions & Career Worlds, Memory/History/Archive, Economy & Governance, Future Eras.
+  - Added `CodexCollection` / `CodexCollectionStatus` types and exported `listCodexCollections()`, `getCodexCollection()`, `listPlannedCodexCollections()`.
+  - Seeded **ARTICLE-C02** into Volume II canonical archive and linked C01 ↔ C02, C02 → K22, C02 → AR01, C02 → F05 relationships.
+  - World Graph Codex ingestion now emits collection nodes and Foundational Collection → Volume edges; article relationship edges now use real article node IDs when available.
+  - Updated semantic search triggers for `complete codex`, `codex collection`, `collections`, and `library`.
+  - Updated Codex Platform docs and README with collection-based expansion rules.
+- **Verification:** `npm run build` passed; World Graph compile **661 nodes · 1306 edges · PASS**.
+- **Conventions:** Do not create Volume XI in the Foundational Collection by default. When a domain becomes large enough to need independent expansion, add a Codex Collection registry entry and relate it back to the Foundational Collection and governing articles.
+

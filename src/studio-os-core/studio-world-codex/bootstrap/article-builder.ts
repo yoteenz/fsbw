@@ -73,4 +73,4 @@ export function buildRevisionSnapshots(articles: CodexArticleRecord[]): CodexArt
   }));
 }
 
-export const CANONICAL_ARCHIVE_VERSION = '1.2.0';
+export const CANONICAL_ARCHIVE_VERSION = '1.3.0';

@@ -17,6 +17,7 @@ import {
   getCodexOrbRecommendations,
   resolveCodexAdvice,
 } from './orb/curator';
+import { CODEX_COLLECTIONS, getCodexCollection, listCodexCollections } from './collections';
 import { CODEX_VOLUMES, getCodexVolume } from './volumes';
 import type {
   CodexArticleRecord,
@@ -124,7 +125,10 @@ export {
   getCodexWorldGraphSyncPayload,
   getCodexArticle,
   listCodexArticles,
+  listCodexCollections,
+  getCodexCollection,
   getCodexVolume,
+  CODEX_COLLECTIONS,
   CODEX_VOLUMES,
 };
 

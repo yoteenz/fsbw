@@ -9,6 +9,7 @@ It is not documentation. It is the source of truth for approved philosophy, syst
 ## Canon
 
 - [ARTICLE-C01 — The Codex First Principle™](./ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md)
+- [ARTICLE-C02 — The Complete Studio World Codex™](./ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md)
 - [Codex Article™ Template](./CODEX_ARTICLE_TEMPLATE.md)
 
 ---
@@ -26,6 +27,7 @@ Key exports:
 
 - `queryCodex()` — semantic search with filters
 - `createCodexArticle()` / `reviseCodexArticle()` — append-only article lifecycle
+- `listCodexCollections()` / `getCodexCollection()` — complete Codex library structure
 - `getCodexOrbRecommendations()` — Orb Curator™ hooks
 - `getCodexWorldGraphSyncPayload()` — World Graph integration
 - `CODEX_VOLUMES` · `CODEX_PIPELINE_STAGES` · `evaluateCodexReadiness()`

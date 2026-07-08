@@ -1,6 +1,7 @@
 export * from './constants';
 export * from './types';
 export * from './volumes';
+export * from './collections';
 export * from './pipeline';
 export * from './engine';
 export * from './articles';

@@ -28,7 +28,12 @@ const RELATIONSHIP_SEEDS: RelSeed[] = [
   { from: 'ARTICLE-M03', to: 'ARTICLE-K22', type: 'supports', label: 'wisdom-memory' },
 
   // Constitution chain
+  { from: 'ARTICLE-C02', to: 'ARTICLE-C01', type: 'extends', label: 'complete-codex-extends-codex-first' },
+  { from: 'ARTICLE-C02', to: 'ARTICLE-K22', type: 'depends-on', label: 'collection-discovery-memory' },
+  { from: 'ARTICLE-C02', to: 'ARTICLE-AR01', type: 'depends-on', label: 'collection-world-graph' },
+  { from: 'ARTICLE-C02', to: 'ARTICLE-F05', type: 'supports', label: 'decades-scale-roadmap' },
   { from: 'ARTICLE-C01', to: 'ARTICLE-K21', type: 'depends-on' },
+  { from: 'ARTICLE-C01', to: 'ARTICLE-C02', type: 'supports', label: 'codex-expansion-law' },
   { from: 'ARTICLE-C01', to: 'ARTICLE-K22', type: 'supports' },
   { from: 'ARTICLE-C01', to: 'ARTICLE-K23', type: 'depends-on' },
   { from: 'ARTICLE-C01', to: 'ARTICLE-K24', type: 'related-to' },

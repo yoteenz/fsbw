@@ -10,6 +10,7 @@ The Codex is **not documentation**. It is the living constitutional memory of St
 src/studio-os-core/studio-world-codex/
 ├── articles/          # Article schema, registry, create, update
 ├── bootstrap/         # One-time seed (ARTICLE-C01 only — not runtime registry)
+├── collections.ts     # ARTICLE-C02 collection registry
 ├── manifesto/         # Volume I module
 ├── constitution/      # Volume II module
 ├── world-bible/       # Volume III module
@@ -26,7 +27,7 @@ src/studio-os-core/studio-world-codex/
 ├── persistence/       # localStorage store (future: Supabase)
 ├── engine.ts          # Public orchestration API
 ├── types.ts           # Article, relationship, store schemas
-└── volumes.ts         # Ten Codex Volumes™
+└── volumes.ts         # Foundational Collection™ Volumes I-X
 ```
 
 Admin workspace: **`/admin/studio/codex`**
@@ -165,7 +166,7 @@ The Orb acts as **Codex Curator™** — not a folder browser.
 
 ## Volumes
 
-Ten volumes map to module paths under `codex/`:
+The first ten volumes map to module paths under `codex/` and form the **Foundational Collection™**:
 
 | Volume | Module path |
 |--------|-------------|
@@ -182,9 +183,35 @@ Ten volumes map to module paths under `codex/`:
 
 ---
 
+## Complete Codex Collections™
+
+**ARTICLE-C02 — The Complete Studio World Codex™** defines the long-term structure.
+
+Volumes I-X remain unchanged. Future knowledge should not keep expanding the original books by default. New civilization domains become specialized **Codex Collections™** that can each grow independently while remaining searchable, versioned, related, and visible in World Graph™.
+
+Permanent collection registry:
+
+| Collection | Purpose |
+|------------|---------|
+| Foundational Collection™ | First ten universal volumes |
+| Company & Headquarters Collection™ | Companies, HQ, departments, organizational inheritance |
+| Product & Commerce Collection™ | Studio Exchange, licenses, products, commerce governance |
+| Experience & Interface Collection™ | Progressive Presence, Hero Objects, Orb, Atlas, materials, interaction |
+| Intelligence & Agents Collection™ | Orb intelligence, AI councils, model orchestration, mentor AI |
+| Production & Operations Collection™ | QA, releases, render queues, production workflows |
+| Professions & Career Worlds Collection™ | Profession-specific worlds, brains, licenses, simulations |
+| Memory, History & Archive Collection™ | Archives, historical canon, professional memory, wisdom lineage |
+| Economy & Governance Collection™ | Citizen rights, reputation, economies, future civic systems |
+| Future Eras Collection™ | Unbuilt technologies, cross-career worlds, future professions |
+
+Use `listCodexCollections()` and `getCodexCollection()` for collection metadata.
+
+---
+
 ## Bootstrap vs platform
 
-- **Canonical Archive (Phase II):** **`bootstrap/canonical-archive/`** seeds **62 articles** across all ten volumes with typed relationships — loaded on first run or when `canonicalArchiveVersion` migrates (`studioWorldCodex_v2`).
+- **Canonical Archive (Phase II):** **`bootstrap/canonical-archive/`** seeds foundational articles across all ten volumes with typed relationships — loaded on first run or when `canonicalArchiveVersion` migrates (`studioWorldCodex_v2`).
+- **Complete Codex (ARTICLE-C02):** `collections.ts` defines the permanent collection expansion model. Add a new collection only when a domain needs independent growth.
 - **Do not** add articles to hardcoded arrays in engine core outside the canonical archive.
 - **Do** use `createCodexArticle()` for new articles after bootstrap, or `proposeFutureCodexArticle()` for draft proposals.
 - **ARTICLE-C01** and all volume seeds live in the canonical archive — not runtime hardcoding.
@@ -207,5 +234,6 @@ const proposal = proposeFutureCodexArticle({
 ## Related docs
 
 - [ARTICLE-C01 — Codex First Principle](./ARTICLE_C01_CODEX_FIRST_PRINCIPLE.md)
+- [ARTICLE-C02 — Complete Studio World Codex](./ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md)
 - [Codex Article Template](./CODEX_ARTICLE_TEMPLATE.md)
 - [Codex README](./README.md)

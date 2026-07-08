@@ -48,6 +48,22 @@ export type CodexVolume = {
   modulePath: string;
 };
 
+export type CodexCollectionStatus = 'Foundational' | 'Active' | 'Planned';
+
+export type CodexCollection = {
+  id: string;
+  title: string;
+  purpose: string;
+  scope: string[];
+  governanceLevel: 'Foundational' | 'Constitutional' | 'Operational' | 'Future';
+  owningSystems: string[];
+  volumeIds: CodexVolumeId[];
+  relatedCollections: string[];
+  tags: string[];
+  status: CodexCollectionStatus;
+  worldGraphNodeId?: string;
+};
+
 export type CodexArticleRevision = {
   revisionId: string;
   version: string;

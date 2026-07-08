@@ -1,5 +1,5 @@
 import { getCodexBootstrapArticles, getCodexBootstrapRelationships } from '../../studio-world-codex/bootstrap/seeds';
-import { CODEX_VOLUMES } from '../../studio-world-codex';
+import { CODEX_COLLECTIONS, CODEX_VOLUMES } from '../../studio-world-codex';
 import { worldEdgeId, worldNodeId } from '../id';
 import { lifecyclePlane } from '../lifecycle';
 import type { WorldEdge, WorldNode } from '../types';
@@ -62,7 +62,7 @@ export function ingestCodexNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } {
     nodeType: 'engine',
     lifecycle: 'architecture',
     plane: lifecyclePlane('architecture'),
-    version: '1.1.0',
+    version: '1.3.0',
     summary:
       'Constitutional memory of Studio World — every major feature becomes a Codex Article™ before implementation.',
     implementationStatus: 'spec',
@@ -72,10 +72,46 @@ export function ingestCodexNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } {
     tags: ['codex', 'constitutional-memory', 'codex-first', 'platform'],
     metadata: {
       articleCount: articles.length,
+      collectionCount: CODEX_COLLECTIONS.length,
       volumeCount: CODEX_VOLUMES.length,
       lifecycle: 'idea-to-codex-to-production-to-update',
     },
   });
+
+  for (const collection of CODEX_COLLECTIONS) {
+    const collectionId =
+      collection.worldGraphNodeId ?? worldNodeId('knowledge-object', `codex-${collection.id}`);
+
+    nodes.push({
+      id: collectionId,
+      slug: collection.id,
+      displayName: collection.title,
+      nodeType: 'knowledge-object',
+      lifecycle: collection.status === 'Foundational' ? 'approved' : 'architecture',
+      plane: lifecyclePlane(collection.status === 'Foundational' ? 'approved' : 'architecture'),
+      version: '1.3.0',
+      summary: collection.purpose,
+      implementationStatus: collection.status === 'Foundational' ? 'live' : 'spec',
+      codePaths: ['src/studio-os-core/studio-world-codex/collections.ts'],
+      docPaths: ['docs/studio-os/codex/ARTICLE_C02_COMPLETE_STUDIO_WORLD_CODEX.md'],
+      provenance: { source: 'constitution', sourceRef: 'ARTICLE-C02', ingestedAt: ts },
+      tags: ['codex-collection', 'codex', ...collection.tags],
+      metadata: {
+        governanceLevel: collection.governanceLevel,
+        owningSystems: collection.owningSystems,
+        status: collection.status,
+      },
+    });
+
+    edges.push({
+      id: worldEdgeId('owns', codexEngineId, collectionId),
+      type: 'owns',
+      from: codexEngineId,
+      to: collectionId,
+      label: 'codex-collection',
+      provenance: { source: 'constitution', sourceRef: 'ARTICLE-C02', ingestedAt: ts },
+    });
+  }
 
   for (const article of articles) {
     const nodeType = articleNodeType(article);
@@ -126,6 +162,10 @@ export function ingestCodexNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } {
     }
   }
 
+  const foundationalCollectionId =
+    CODEX_COLLECTIONS.find((collection) => collection.id === 'foundational-collection')?.worldGraphNodeId ??
+    worldNodeId('knowledge-object', 'codex-foundational-collection');
+
   for (const volume of CODEX_VOLUMES) {
     const volumeId = worldNodeId('knowledge-object', volume.id);
     nodes.push({
@@ -135,7 +175,7 @@ export function ingestCodexNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } {
       nodeType: 'knowledge-object',
       lifecycle: 'architecture',
       plane: lifecyclePlane('architecture'),
-      version: '1.1.0',
+      version: '1.3.0',
       summary: volume.purpose,
       implementationStatus: 'spec',
       codePaths: [`src/studio-os-core/studio-world-codex/${volume.modulePath}/`],
@@ -157,16 +197,36 @@ export function ingestCodexNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } {
       label: 'codex-volume',
       provenance: { source: 'constitution', sourceRef: volume.id, ingestedAt: ts },
     });
+
+    edges.push({
+      id: worldEdgeId('owns', foundationalCollectionId, volumeId),
+      type: 'owns',
+      from: foundationalCollectionId,
+      to: volumeId,
+      label: 'foundational-volume',
+      provenance: { source: 'constitution', sourceRef: 'ARTICLE-C02', ingestedAt: ts },
+    });
   }
 
   const c01 = articles.find((a) => a.articleId === 'ARTICLE-C01');
   const c01NodeId = c01?.worldGraphNodeId ?? worldNodeId('constitutional-law', 'codex-first-principle');
 
+  const articleNodeIds = new Map(
+    articles.map((article) => {
+      const nodeType = articleNodeType(article);
+      return [
+        article.articleId,
+        article.worldGraphNodeId ??
+          worldNodeId(nodeType === 'constitutional-law' ? 'constitutional-law' : 'knowledge-object', articleSlug(article)),
+      ] as const;
+    })
+  );
+
   for (const rel of relationships) {
     const fromSlug = rel.fromArticleId.toLowerCase().replace(/^article-/, '');
     const toSlug = rel.toArticleId.toLowerCase().replace(/^article-/, '');
-    const fromId = worldNodeId('knowledge-object', fromSlug);
-    const toId = worldNodeId('knowledge-object', toSlug);
+    const fromId = articleNodeIds.get(rel.fromArticleId) ?? worldNodeId('knowledge-object', fromSlug);
+    const toId = articleNodeIds.get(rel.toArticleId) ?? worldNodeId('knowledge-object', toSlug);
     edges.push({
       id: worldEdgeId(mapCodexRelationshipToEdgeType(rel.type), fromId, toId),
       type: mapCodexRelationshipToEdgeType(rel.type),
