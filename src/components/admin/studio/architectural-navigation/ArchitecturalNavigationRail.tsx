@@ -16,6 +16,7 @@ import type { LivingArchitectureSnapshot } from '../../../../studio-os-core/livi
 import type { LivingDistrictEcologySnapshot } from '../../../../studio-os-core/living-district-ecology';
 import { civilizationLayerForDistrict } from '../../../../studio-os-core/living-civilization';
 import type { LivingCivilizationSnapshot } from '../../../../studio-os-core/living-civilization';
+import type { CivilizationEventsSnapshot } from '../../../../studio-os-core/civilization-events';
 import { railWidthForMode } from '../../../../hooks/useArchitecturalNavigationRail';
 
 type Props = {
@@ -31,7 +32,26 @@ type Props = {
   livingArchitecture?: LivingArchitectureSnapshot | null;
   livingEcology?: LivingDistrictEcologySnapshot | null;
   livingCivilization?: LivingCivilizationSnapshot | null;
+  civilizationEvents?: CivilizationEventsSnapshot | null;
 };
+
+function EventsBlock({ events }: { events: CivilizationEventsSnapshot }) {
+  const display = [...events.activeEvents, ...events.upcomingEvents].slice(0, 4);
+  return (
+    <div className="sw-nav-rail__events" aria-label="Civilization Events">
+      <p className="sw-nav-rail__events-title">Civilization Events™</p>
+      {display.map((evt) => (
+        <p
+          key={evt.id}
+          className={`sw-nav-rail__event-row${evt.status === 'active' ? ' is-active' : ''}`}
+        >
+          {evt.status === 'active' ? <span className="sw-nav-rail__event-dot" aria-hidden /> : null}
+          {evt.title}
+        </p>
+      ))}
+    </div>
+  );
+}
 
 function EcologyHealthBlock({ ecology }: { ecology: LivingDistrictEcologySnapshot }) {
   const topMetrics = [...ecology.worldHealth]
@@ -58,6 +78,7 @@ function EcologyHealthBlock({ ecology }: { ecology: LivingDistrictEcologySnapsho
 
 function FrameStatusBlock({ status }: { status: ArchitecturalFrameStatus }) {
   const rows: Array<[string, string | undefined]> = [
+    ['Events', status.eventsSummary],
     ['Civilization', status.civilizationSummary],
     ['Ecosystem', status.ecosystemSummary],
     ['Campus', status.growthSummary],
@@ -122,6 +143,7 @@ export function ArchitecturalNavigationRail({
   livingArchitecture,
   livingEcology,
   livingCivilization,
+  civilizationEvents,
 }: Props) {
   const navigate = useNavigate();
   const atlas = useGlobalAtlasLayerOptional();
@@ -282,6 +304,7 @@ export function ArchitecturalNavigationRail({
                 {activeLayer.vitality}% · {activeLayer.trend}
               </div>
             ) : null}
+            {civilizationEvents ? <EventsBlock events={civilizationEvents} /> : null}
             {livingEcology ? <EcologyHealthBlock ecology={livingEcology} /> : null}
             <footer className="sw-nav-rail__atmosphere" aria-label="Environmental identity">
               <p className="sw-nav-rail__atmosphere-feeling">{district.feeling}</p>

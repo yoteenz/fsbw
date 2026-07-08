@@ -32,8 +32,8 @@ import { useArchitecturalNavigationRail } from '../../../../hooks/useArchitectur
 import {
   livingArchitectureClassForDistrict,
   effectiveCampusTier,
-  useLivingCivilization,
-} from '../../../../hooks/useLivingCivilization';
+  useStudioWorld,
+} from '../../../../hooks/useStudioWorld';
 import {
   LivingArchitectureLayer,
   LIVING_ARCHITECTURE_STYLES,
@@ -46,6 +46,10 @@ import {
   LivingCivilizationLayer,
   LIVING_CIVILIZATION_STYLES,
 } from '../living-civilization';
+import {
+  CivilizationEventsLayer,
+  CIVILIZATION_EVENTS_STYLES,
+} from '../civilization-events';
 import {
   buildWarehouseContextualWings,
   buildWarehouseFrameStatus,
@@ -177,8 +181,12 @@ export function StudioWarehouseRoom() {
   const industrialWing = useMemo(() => industrialWingForZone(wh.activeZoneId), [wh.activeZoneId]);
   const galleryMode = isGalleryZone(wh.activeZoneId);
   const navRail = useArchitecturalNavigationRail();
-  const { architecture: livingArchitecture, ecology: livingEcology, civilization: livingCivilization } =
-    useLivingCivilization(wh.catalog);
+  const {
+    architecture: livingArchitecture,
+    ecology: livingEcology,
+    civilization: livingCivilization,
+    events: civilizationEvents,
+  } = useStudioWorld(wh.catalog);
 
   const navLocation = useMemo(
     () => resolveWarehouseLocationStack(wh.activeZoneId, wh.arrivalComplete),
@@ -191,8 +199,15 @@ export function StudioWarehouseRoom() {
   );
 
   const orbPersonality = useMemo(
-    () => resolveWarehouseOrbPersonality(activeWing, livingArchitecture, livingEcology, livingCivilization),
-    [activeWing, livingArchitecture, livingEcology, livingCivilization]
+    () =>
+      resolveWarehouseOrbPersonality(
+        activeWing,
+        livingArchitecture,
+        livingEcology,
+        livingCivilization,
+        civilizationEvents
+      ),
+    [activeWing, livingArchitecture, livingEcology, livingCivilization, civilizationEvents]
   );
 
   const frameStatus = useMemo(
@@ -208,8 +223,19 @@ export function StudioWarehouseRoom() {
         livingArchitecture,
         livingEcology,
         livingCivilization,
+        civilizationEvents,
       }),
-    [wh.activeZoneId, wh.arrivalComplete, activeZone.label, activePipeline, orbPersonality.role, livingArchitecture, livingEcology, livingCivilization]
+    [
+      wh.activeZoneId,
+      wh.arrivalComplete,
+      activeZone.label,
+      activePipeline,
+      orbPersonality.role,
+      livingArchitecture,
+      livingEcology,
+      livingCivilization,
+      civilizationEvents,
+    ]
   );
 
   const districtThemeId = useMemo(
@@ -224,6 +250,7 @@ export function StudioWarehouseRoom() {
   });
   const ecologyBalanced = livingEcology.ecosystemBalance >= 55;
   const civilizationSelfBalancing = livingCivilization.health.selfBalancing;
+  const eventsActive = civilizationEvents.activeEvents.length > 0;
 
   const campusTitle = useMemo(() => {
     if (industrialWing) {
@@ -583,11 +610,12 @@ export function StudioWarehouseRoom() {
       <style>{LIVING_ARCHITECTURE_STYLES}</style>
       <style>{DISTRICT_ECOLOGY_STYLES}</style>
       <style>{LIVING_CIVILIZATION_STYLES}</style>
+      <style>{CIVILIZATION_EVENTS_STYLES}</style>
       <style>{WAREHOUSE_CAMPUS_STYLES}</style>
       <style>{STUDIO_NAVIGATION_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
-        className={`${worldClass} ${districtClass} ${livingClass}${ecologyBalanced ? ' sw-ecology--balanced' : ''}${civilizationSelfBalancing ? ' sw-civilization--self-balancing' : ''}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
+        className={`${worldClass} ${districtClass} ${livingClass}${ecologyBalanced ? ' sw-ecology--balanced' : ''}${civilizationSelfBalancing ? ' sw-civilization--self-balancing' : ''}${eventsActive ? ' sw-events--active' : ''}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
         data-living-tier={livingTier > 0 ? livingTier : undefined}
         data-ecology-tier={livingTier > 0 ? livingTier : undefined}
         onPointerMove={immersion.onPointerMove}
@@ -631,6 +659,7 @@ export function StudioWarehouseRoom() {
           livingArchitecture={livingArchitecture}
           livingEcology={livingEcology}
           livingCivilization={livingCivilization}
+          civilizationEvents={civilizationEvents}
           onSelectRoom={(roomId) => goToZone(roomId as WarehouseCameraZoneId)}
           onCycleMode={navRail.cycleMode}
         />
@@ -649,7 +678,10 @@ export function StudioWarehouseRoom() {
         <LivingCivilizationLayer
           civilization={livingCivilization}
           districtThemeId={districtThemeId}
+          compact
         />
+
+        <CivilizationEventsLayer events={civilizationEvents} />
 
         <aside className="wh-world__orb-courier" aria-label="Studio Orb courier">
           <p className="wh-world__orb-courier-role" style={{ color: orbPersonality.accent }}>

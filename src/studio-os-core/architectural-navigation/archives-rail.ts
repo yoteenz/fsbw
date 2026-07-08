@@ -10,6 +10,7 @@ import type { ArchitecturalContextualWing, ArchitecturalFrameStatus, Architectur
 import type { LivingArchitectureSnapshot } from '../living-architecture/types';
 import type { LivingDistrictEcologySnapshot } from '../living-district-ecology/types';
 import type { LivingCivilizationSnapshot } from '../living-civilization/types';
+import type { CivilizationEventsSnapshot } from '../civilization-events/types';
 import { resolveArchitecturalDestination } from '../studio-warehouse/campus-nav';
 
 function campusEntry(zoneId: WarehouseCameraZoneId) {
@@ -63,6 +64,7 @@ export function buildWarehouseFrameStatus(input: {
   livingArchitecture?: LivingArchitectureSnapshot | null;
   livingEcology?: LivingDistrictEcologySnapshot | null;
   livingCivilization?: LivingCivilizationSnapshot | null;
+  civilizationEvents?: CivilizationEventsSnapshot | null;
 }): ArchitecturalFrameStatus {
   const loc = resolveWarehouseLocationStack(input.activeZoneId, input.arrivalComplete);
   const entry = campusEntry(input.activeZoneId);
@@ -77,6 +79,7 @@ export function buildWarehouseFrameStatus(input: {
   const living = input.livingArchitecture;
   const ecology = input.livingEcology;
   const civilization = input.livingCivilization;
+  const events = input.civilizationEvents;
   let worldGraphStatus = 'Connected';
   if (living) {
     const expansionCount = living.expansionGraph.length;
@@ -102,5 +105,6 @@ export function buildWarehouseFrameStatus(input: {
     growthSummary: living?.skylineSummary,
     ecosystemSummary: ecology?.ecosystemSummary,
     civilizationSummary: civilization?.civilizationSummary,
+    eventsSummary: events?.eventsSummary,
   };
 }

@@ -2,6 +2,7 @@ import type { WarehouseWingKind } from '../../../../studio-os-core/studio-wareho
 import type { LivingArchitectureSnapshot } from '../../../../studio-os-core/living-architecture';
 import type { LivingDistrictEcologySnapshot } from '../../../../studio-os-core/living-district-ecology';
 import type { LivingCivilizationSnapshot } from '../../../../studio-os-core/living-civilization';
+import type { CivilizationEventsSnapshot } from '../../../../studio-os-core/civilization-events';
 
 export type WarehouseOrbPersonality = {
   role: string;
@@ -70,9 +71,31 @@ export function resolveWarehouseOrbPersonality(
   wing: WarehouseWingKind,
   livingArchitecture?: LivingArchitectureSnapshot | null,
   livingEcology?: LivingDistrictEcologySnapshot | null,
-  livingCivilization?: LivingCivilizationSnapshot | null
+  livingCivilization?: LivingCivilizationSnapshot | null,
+  civilizationEvents?: CivilizationEventsSnapshot | null
 ): WarehouseOrbPersonality {
   const base = PERSONALITIES[wing];
+
+  if (civilizationEvents?.orbCuratorLine) {
+    const curatorRoles: Partial<Record<WarehouseWingKind, string>> = {
+      atrium: 'Civilization Curator',
+      legacy: 'Living Museum Curator',
+      innovation: 'Discovery Curator',
+      marketplace: 'Expo Curator',
+      expansion: 'Grand Challenge Curator',
+      blueprint: 'Knowledge Tournament Curator',
+      warehouse: 'Industry Olympics Curator',
+      genome: 'Collaboration Curator',
+      threshold: 'Civilization Greeter',
+    };
+
+    return {
+      ...base,
+      role: curatorRoles[wing] ?? 'Civilization Curator',
+      greeting: civilizationEvents.orbCuratorLine,
+      accent: '#e8c878',
+    };
+  }
 
   if (livingCivilization?.orbArchitectLine) {
     const architectRoles: Partial<Record<WarehouseWingKind, string>> = {

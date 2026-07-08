@@ -27,6 +27,8 @@ export type ArchitecturalFrameStatus = {
   ecosystemSummary?: string;
   /** Living Civilization™ — self-balancing civilization summary */
   civilizationSummary?: string;
+  /** Civilization Events™ — active world-scale events */
+  eventsSummary?: string;
 };
 
 export type ArchitecturalDestination = {
