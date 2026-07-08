@@ -1,11 +1,14 @@
+import type { DistrictThemeId } from '../../../../studio-os-core/architectural-navigation';
+import { districtCssClass } from '../../../../studio-os-core/architectural-navigation';
 import type { ArchitecturalFrameStatus } from '../../../../studio-os-core/architectural-navigation';
 
 type Props = {
   status: ArchitecturalFrameStatus;
+  districtThemeId: DistrictThemeId;
 };
 
-/** Frame status chips embedded in the architectural HUD — not floating widgets. */
-export function ArchitecturalFrameStatusStrip({ status }: Props) {
+/** Frame status chips embedded in the architectural HUD — district-themed. */
+export function ArchitecturalFrameStatusStrip({ status, districtThemeId }: Props) {
   const chips: string[] = [];
   if (status.department) chips.push(status.department);
   if (status.room) chips.push(status.room);
@@ -18,12 +21,14 @@ export function ArchitecturalFrameStatusStrip({ status }: Props) {
   if (chips.length === 0) return null;
 
   return (
-    <div className="sw-frame-status-strip" aria-label="Architectural frame status">
-      {chips.map((chip) => (
-        <span key={chip} className="sw-frame-status-chip">
-          {chip}
-        </span>
-      ))}
+    <div className={districtCssClass(districtThemeId)}>
+      <div className="sw-frame-status-strip" aria-label="Architectural frame status">
+        {chips.map((chip) => (
+          <span key={chip} className="sw-frame-status-chip">
+            {chip}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

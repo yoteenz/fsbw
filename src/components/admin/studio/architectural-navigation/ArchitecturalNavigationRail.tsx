@@ -3,15 +3,19 @@ import { useGlobalAtlasLayerOptional } from '../global-atlas';
 import {
   ATLAS_DESTINATION,
   PRIMARY_ARCHITECTURAL_DESTINATIONS,
+  getDistrictIdentity,
+  districtCssClass,
   type ArchitecturalContextualWing,
   type ArchitecturalFrameStatus,
   type ArchitecturalLocationStack,
+  type DistrictThemeId,
 } from '../../../../studio-os-core/architectural-navigation';
 import type { ArchitecturalNavRailMode } from '../../../../studio-os-core/architectural-navigation';
 import { railWidthForMode } from '../../../../hooks/useArchitecturalNavigationRail';
 
 type Props = {
   mode: ArchitecturalNavRailMode;
+  districtThemeId: DistrictThemeId;
   location: ArchitecturalLocationStack;
   frameStatus: ArchitecturalFrameStatus;
   contextualWings: ArchitecturalContextualWing[];
@@ -73,6 +77,7 @@ function LocationStack({ location }: { location: ArchitecturalLocationStack }) {
  */
 export function ArchitecturalNavigationRail({
   mode,
+  districtThemeId,
   location,
   frameStatus,
   contextualWings,
@@ -83,6 +88,8 @@ export function ArchitecturalNavigationRail({
 }: Props) {
   const navigate = useNavigate();
   const atlas = useGlobalAtlasLayerOptional();
+  const district = getDistrictIdentity(districtThemeId);
+  const districtClass = districtCssClass(districtThemeId);
 
   const railClass =
     mode === 'hidden'
@@ -93,24 +100,27 @@ export function ArchitecturalNavigationRail({
 
   if (mode === 'hidden') {
     return (
-      <button
-        type="button"
-        className="sw-nav-rail__reveal"
-        onClick={onCycleMode}
-        aria-label="Reveal navigation rail"
-        title="Navigation Rail"
-      >
-        NAV
-      </button>
+      <div className={districtClass}>
+        <button
+          type="button"
+          className="sw-nav-rail__reveal"
+          onClick={onCycleMode}
+          aria-label="Reveal navigation rail"
+          title="Navigation Rail"
+        >
+          NAV
+        </button>
+      </div>
     );
   }
 
   return (
-    <nav
-      className={railClass}
-      aria-label="Architectural Navigation Rail"
-      style={{ width: railWidthForMode(mode) }}
-    >
+    <div className={districtClass}>
+      <nav
+        className={railClass}
+        aria-label={`Architectural Navigation Rail — ${district.campusName}`}
+        style={{ width: railWidthForMode(mode) }}
+      >
       <header className="sw-nav-rail__header">
         {mode === 'expanded' ? (
           <span className="sw-nav-rail__section-title" style={{ margin: 0 }}>
@@ -195,7 +205,14 @@ export function ArchitecturalNavigationRail({
             ))}
           </div>
         ) : null}
+
+        {mode === 'expanded' ? (
+          <footer className="sw-nav-rail__atmosphere" aria-label="Environmental identity">
+            <p className="sw-nav-rail__atmosphere-feeling">{district.feeling}</p>
+          </footer>
+        ) : null}
       </div>
     </nav>
+    </div>
   );
 }

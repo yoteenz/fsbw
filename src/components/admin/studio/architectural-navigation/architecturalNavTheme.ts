@@ -1,4 +1,4 @@
-/** Architectural Navigation Rail™ + Frame Status — museum signage language */
+/** Architectural Navigation Rail™ — universal structure, district-themed via CSS variables */
 
 export const ARCHITECTURAL_NAV_STYLES = `
 :root {
@@ -7,7 +7,7 @@ export const ARCHITECTURAL_NAV_STYLES = `
   --sw-rail-w-compact: 48px;
 }
 
-/* ── Navigation Rail ── */
+/* ── Navigation Rail (structure — materials via district themes) ── */
 .sw-nav-rail {
   position: absolute;
   left: 0;
@@ -18,10 +18,10 @@ export const ARCHITECTURAL_NAV_STYLES = `
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.82) 0%, rgba(0, 0, 0, 0.62) 88%, transparent 100%);
-  border-right: 1px solid rgba(201, 169, 98, 0.28);
+  background: var(--sw-rail-bg);
+  border-right: 1px solid var(--sw-rail-border);
   overflow: hidden;
-  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.4s ease, background 0.4s ease;
   pointer-events: auto;
 }
 
@@ -39,10 +39,10 @@ export const ARCHITECTURAL_NAV_STYLES = `
   z-index: 29;
   width: 14px;
   padding: 12px 2px;
-  border: 1px solid rgba(201, 169, 98, 0.35);
+  border: 1px solid var(--sw-rail-border);
   border-left: none;
-  background: rgba(0, 0, 0, 0.72);
-  color: #c9a962;
+  background: rgba(0, 0, 0, 0.78);
+  color: var(--sw-rail-accent);
   font-size: 8px;
   cursor: pointer;
   pointer-events: auto;
@@ -57,16 +57,16 @@ export const ARCHITECTURAL_NAV_STYLES = `
   justify-content: space-between;
   gap: 4px;
   padding: 8px 6px 6px;
-  border-bottom: 1px solid rgba(201, 169, 98, 0.15);
+  border-bottom: 1px solid var(--sw-rail-border-subtle);
 }
 
 .sw-nav-rail__mode-btn {
   flex-shrink: 0;
   width: 22px;
   height: 22px;
-  border: 1px solid rgba(201, 169, 98, 0.3);
-  background: rgba(0, 0, 0, 0.45);
-  color: #c9a962;
+  border: 1px solid var(--sw-rail-border);
+  background: var(--sw-rail-surface);
+  color: var(--sw-rail-accent);
   font-size: 10px;
   cursor: pointer;
   line-height: 1;
@@ -84,7 +84,6 @@ export const ARCHITECTURAL_NAV_STYLES = `
 
 .sw-nav-rail__scroll::-webkit-scrollbar { display: none; }
 
-/* Atlas — always first */
 .sw-nav-rail__atlas {
   width: 100%;
   display: flex;
@@ -92,12 +91,13 @@ export const ARCHITECTURAL_NAV_STYLES = `
   gap: 6px;
   padding: 8px 6px;
   margin-bottom: 4px;
-  border: 1px solid rgba(201, 169, 98, 0.45);
-  background: linear-gradient(135deg, rgba(201, 169, 98, 0.12), rgba(0, 0, 0, 0.55));
-  color: #f5f0e8;
+  border: 1px solid var(--sw-rail-border);
+  background: var(--sw-rail-atlas-bg);
+  color: var(--sw-rail-text);
   cursor: pointer;
   font-family: inherit;
   text-align: left;
+  transition: border-color 0.3s ease, background 0.3s ease;
 }
 
 .sw-nav-rail.is-compact .sw-nav-rail__atlas {
@@ -105,16 +105,12 @@ export const ARCHITECTURAL_NAV_STYLES = `
   padding: 8px 4px;
 }
 
-.sw-nav-rail__atlas-icon {
-  font-size: 14px;
-  flex-shrink: 0;
-  line-height: 1;
-}
+.sw-nav-rail__atlas-icon { font-size: 14px; flex-shrink: 0; line-height: 1; }
 
 .sw-nav-rail__atlas-label {
   font-size: 6px;
   letter-spacing: 0.12em;
-  color: #c9a962;
+  color: var(--sw-rail-accent);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -122,7 +118,6 @@ export const ARCHITECTURAL_NAV_STYLES = `
 
 .sw-nav-rail.is-compact .sw-nav-rail__atlas-label,
 .sw-nav-rail.is-compact .sw-nav-rail__section-title,
-.sw-nav-rail.is-compact .sw-nav-rail__location-stack,
 .sw-nav-rail.is-compact .sw-nav-rail__frame-status,
 .sw-nav-rail.is-compact .sw-nav-rail__dest-label,
 .sw-nav-rail.is-compact .sw-nav-rail__wing-label,
@@ -130,12 +125,11 @@ export const ARCHITECTURAL_NAV_STYLES = `
   display: none;
 }
 
-/* Location stack */
 .sw-nav-rail__location {
   padding: 6px;
   margin-bottom: 6px;
-  border: 1px solid rgba(201, 169, 98, 0.18);
-  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--sw-rail-border-subtle);
+  background: var(--sw-rail-surface);
   overflow: hidden;
 }
 
@@ -144,29 +138,30 @@ export const ARCHITECTURAL_NAV_STYLES = `
   font-size: 5px;
   letter-spacing: 0.08em;
   line-height: 1.45;
-  color: rgba(245, 240, 232, 0.85);
+  color: var(--sw-rail-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.sw-nav-rail__location-line.is-headquarters { color: #c9a962; font-size: 5.5px; }
+.sw-nav-rail__location-line.is-headquarters { color: var(--sw-rail-accent); font-size: 5.5px; }
 .sw-nav-rail__location-line.is-wing { opacity: 0.75; padding-left: 4px; }
-.sw-nav-rail__location-line.is-room { opacity: 0.92; padding-left: 8px; color: #f5f0e8; }
+.sw-nav-rail__location-line.is-room { opacity: 0.92; padding-left: 8px; }
+
 .sw-nav-rail__location-arrow {
   display: block;
   font-size: 4px;
   opacity: 0.35;
   padding-left: 2px;
   line-height: 1;
+  color: var(--sw-rail-accent-dim);
 }
 
-/* Frame status embedded in rail */
 .sw-nav-rail__frame-status {
   padding: 6px;
   margin-bottom: 8px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid var(--sw-rail-border-subtle);
+  border-bottom: 1px solid var(--sw-rail-border-subtle);
   overflow: hidden;
 }
 
@@ -181,43 +176,32 @@ export const ARCHITECTURAL_NAV_STYLES = `
   min-width: 0;
 }
 
-.sw-nav-rail__status-row span:first-child {
-  flex-shrink: 0;
-  opacity: 0.55;
-}
-
+.sw-nav-rail__status-row span:first-child { flex-shrink: 0; opacity: 0.55; }
 .sw-nav-rail__status-row span:last-child {
   text-align: right;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
-  color: rgba(245, 240, 232, 0.9);
+  color: var(--sw-rail-text);
 }
 
-/* Sections */
-.sw-nav-rail__section {
-  margin-bottom: 8px;
-  overflow: hidden;
-}
+.sw-nav-rail__section { margin-bottom: 8px; overflow: hidden; }
 
 .sw-nav-rail__section-title {
   margin: 0 0 4px 4px;
   font-size: 4px;
   letter-spacing: 0.14em;
-  color: rgba(201, 169, 98, 0.55);
+  color: var(--sw-rail-accent-dim);
 }
 
-.sw-nav-rail__wing {
-  margin-bottom: 4px;
-  overflow: hidden;
-}
+.sw-nav-rail__wing { margin-bottom: 4px; overflow: hidden; }
 
 .sw-nav-rail__wing-label {
   margin: 0 0 2px;
   font-size: 4px;
   letter-spacing: 0.08em;
-  color: rgba(201, 169, 98, 0.65);
+  color: var(--sw-rail-accent-dim);
   padding: 0 2px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -239,9 +223,9 @@ export const ARCHITECTURAL_NAV_STYLES = `
   align-items: center;
   gap: 4px;
   padding: 5px 4px;
-  border: 1px solid rgba(201, 169, 98, 0.12);
-  background: rgba(0, 0, 0, 0.4);
-  color: rgba(245, 240, 232, 0.78);
+  border: 1px solid var(--sw-rail-border-subtle);
+  background: var(--sw-rail-surface);
+  color: var(--sw-rail-text-muted, var(--sw-rail-text));
   font-size: 4px;
   letter-spacing: 0.06em;
   cursor: pointer;
@@ -249,6 +233,7 @@ export const ARCHITECTURAL_NAV_STYLES = `
   text-align: left;
   overflow: hidden;
   min-width: 0;
+  transition: border-color 0.25s ease, background 0.25s ease, color 0.25s ease;
 }
 
 .sw-nav-rail.is-compact .sw-nav-rail__room-btn {
@@ -257,21 +242,13 @@ export const ARCHITECTURAL_NAV_STYLES = `
 }
 
 .sw-nav-rail__room-btn.is-active {
-  border-color: rgba(201, 169, 98, 0.75);
-  color: #c9a962;
-  background: rgba(201, 169, 98, 0.12);
+  border-color: var(--sw-rail-accent);
+  color: var(--sw-rail-accent);
+  background: var(--sw-rail-accent-glow);
 }
 
-.sw-nav-rail__room-btn:disabled {
-  opacity: 0.28;
-  cursor: not-allowed;
-}
-
-.sw-nav-rail__room-dot {
-  flex-shrink: 0;
-  font-size: 5px;
-  opacity: 0.5;
-}
+.sw-nav-rail__room-btn:disabled { opacity: 0.28; cursor: not-allowed; }
+.sw-nav-rail__room-dot { flex-shrink: 0; font-size: 5px; opacity: 0.5; color: var(--sw-rail-accent-dim); }
 
 .sw-nav-rail__room-label {
   overflow: hidden;
@@ -280,7 +257,6 @@ export const ARCHITECTURAL_NAV_STYLES = `
   min-width: 0;
 }
 
-/* Primary destinations */
 .sw-nav-rail__dest-btn {
   width: 100%;
   display: flex;
@@ -288,9 +264,9 @@ export const ARCHITECTURAL_NAV_STYLES = `
   gap: 6px;
   padding: 5px 4px;
   margin-bottom: 2px;
-  border: 1px solid rgba(201, 169, 98, 0.1);
+  border: 1px solid var(--sw-rail-border-subtle);
   background: transparent;
-  color: rgba(245, 240, 232, 0.65);
+  color: var(--sw-rail-text-muted, var(--sw-rail-text));
   font-size: 4px;
   letter-spacing: 0.06em;
   cursor: pointer;
@@ -299,28 +275,15 @@ export const ARCHITECTURAL_NAV_STYLES = `
   overflow: hidden;
 }
 
-.sw-nav-rail.is-compact .sw-nav-rail__dest-btn {
-  justify-content: center;
-}
-
-.sw-nav-rail__dest-icon {
-  flex-shrink: 0;
-  font-size: 11px;
-  line-height: 1;
-}
-
-.sw-nav-rail__dest-label {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+.sw-nav-rail.is-compact .sw-nav-rail__dest-btn { justify-content: center; }
+.sw-nav-rail__dest-icon { flex-shrink: 0; font-size: 11px; line-height: 1; }
+.sw-nav-rail__dest-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .sw-nav-rail__dest-btn:hover {
-  border-color: rgba(201, 169, 98, 0.35);
-  color: #f5f0e8;
+  border-color: var(--sw-rail-border);
+  color: var(--sw-rail-text);
 }
 
-/* Compact active indicator */
 .sw-nav-rail.is-compact .sw-nav-rail__room-btn.is-active::after {
   content: '';
   position: absolute;
@@ -328,14 +291,11 @@ export const ARCHITECTURAL_NAV_STYLES = `
   top: 20%;
   bottom: 20%;
   width: 2px;
-  background: #c9a962;
+  background: var(--sw-rail-accent);
 }
 
-.sw-nav-rail.is-compact .sw-nav-rail__room-btn {
-  position: relative;
-}
+.sw-nav-rail.is-compact .sw-nav-rail__room-btn { position: relative; }
 
-/* HUD frame status strip */
 .sw-frame-status-strip {
   display: flex;
   flex-wrap: wrap;
@@ -349,9 +309,9 @@ export const ARCHITECTURAL_NAV_STYLES = `
   font-size: 3.5px;
   letter-spacing: 0.06em;
   padding: 2px 5px;
-  border: 1px solid rgba(201, 169, 98, 0.2);
-  background: rgba(0, 0, 0, 0.35);
-  color: rgba(245, 240, 232, 0.75);
+  border: 1px solid var(--sw-rail-border-subtle);
+  background: var(--sw-rail-surface);
+  color: var(--sw-rail-text-muted, var(--sw-rail-text));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

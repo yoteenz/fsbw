@@ -25,11 +25,14 @@ import {
   ArchitecturalFrameStatusStrip,
   ArchitecturalNavigationRail,
   ARCHITECTURAL_NAV_STYLES,
+  DISTRICT_THEME_STYLES,
 } from '../architectural-navigation';
 import { useArchitecturalNavigationRail } from '../../../../hooks/useArchitecturalNavigationRail';
 import {
   buildWarehouseContextualWings,
   buildWarehouseFrameStatus,
+  districtCssClass,
+  resolveWarehouseDistrictTheme,
   resolveWarehouseLocationStack,
 } from '../../../../studio-os-core/architectural-navigation';
 import { MuseumWingInteractions } from './MuseumWingInteractions';
@@ -181,6 +184,12 @@ export function StudioWarehouseRoom() {
       }),
     [wh.activeZoneId, wh.arrivalComplete, activeZone.label, activePipeline, orbPersonality.role]
   );
+
+  const districtThemeId = useMemo(
+    () => resolveWarehouseDistrictTheme(wh.activeZoneId),
+    [wh.activeZoneId]
+  );
+  const districtClass = districtCssClass(districtThemeId);
 
   const campusTitle = useMemo(() => {
     if (industrialWing) {
@@ -463,10 +472,11 @@ export function StudioWarehouseRoom() {
       <style>{WAREHOUSE_DESTINATION_STYLES}</style>
       <style>{WAREHOUSE_FRAME_STYLES}</style>
       <style>{ARCHITECTURAL_NAV_STYLES}</style>
+      <style>{DISTRICT_THEME_STYLES}</style>
       <style>{WAREHOUSE_CAMPUS_STYLES}</style>
       <StudioAlphaCostHud snapshot={costSnapshot} />
       <div
-        className={`${worldClass}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
+        className={`${worldClass} ${districtClass}${galleryMode ? ' wh-world--campus-gallery' : ''}${wh.inspectorOpen ? ' wh-world--inspector-open' : ''}${navRail.mode === 'hidden' ? ' wh-world--rail-hidden' : ''}`}
         onPointerMove={immersion.onPointerMove}
         style={immersion.parallaxStyle}
       >
@@ -477,7 +487,7 @@ export function StudioWarehouseRoom() {
           <div className="wh-world__identity">
             <p className="wh-world__title">{campusTitle}</p>
             <p className="wh-world__sub">{STUDIO_ARCHIVES_SUBTITLE}</p>
-            <ArchitecturalFrameStatusStrip status={frameStatus} />
+            <ArchitecturalFrameStatusStrip status={frameStatus} districtThemeId={districtThemeId} />
           </div>
           <button
             type="button"
@@ -500,6 +510,7 @@ export function StudioWarehouseRoom() {
 
         <ArchitecturalNavigationRail
           mode={navRail.mode}
+          districtThemeId={districtThemeId}
           location={navLocation}
           frameStatus={frameStatus}
           contextualWings={contextualWings}

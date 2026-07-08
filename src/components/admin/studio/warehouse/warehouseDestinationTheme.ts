@@ -104,7 +104,7 @@ body.wh-world-active {
   margin: 0;
   font-size: 7px;
   letter-spacing: 0.14em;
-  color: #c9a962;
+  color: var(--wh-accent, #c9a962);
 }
 
 .wh-world__sub {
