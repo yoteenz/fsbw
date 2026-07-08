@@ -98,6 +98,8 @@ Creative Direction Studio™ supports:
 ```
 Definition (this folder)
     ↓
+Creative Production Pipeline (Stages 01–09)
+    ↓
 Studio Asset Compiler™ + FAL
     ↓
 DepartmentPackage.zip
@@ -106,6 +108,8 @@ Validation Loop™
     ↓
 Department Runtime™ + Cursor
 ```
+
+**Production methodology:** [`docs/studio-os/production/`](../../production/README.md)
 
 ---
 
