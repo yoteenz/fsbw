@@ -1,0 +1,237 @@
+/**
+ * Discovery Pack Registry™ — internal catalog. Reserved entries use codenames only.
+ * @internal Full registry — never render reserved/classified entries in founder UI.
+ */
+
+import type { DiscoveryPackRegistryEntry } from './types';
+
+function integrations(
+  partial: Partial<DiscoveryPackRegistryEntry['integrations']> & {
+    worldGraph: DiscoveryPackRegistryEntry['integrations']['worldGraph'];
+  }
+): DiscoveryPackRegistryEntry['integrations'] {
+  return {
+    atlas: { expansionId: null, enabled: true },
+    museum: { exhibitSlotId: null, hallOfDiscovery: true, enabled: true },
+    marketplace: { listingCategory: null, enabled: true },
+    knowledgeCore: { moduleId: null, enabled: true },
+    rewards: { grantTypes: [], enabled: true },
+    ...partial,
+  };
+}
+
+/** Internal registry — decades of expansion capacity reserved. publicName null until reveal. */
+export const DISCOVERY_PACK_REGISTRY: DiscoveryPackRegistryEntry[] = [
+  {
+    packId: 'DP-DIST-001',
+    internalCodename: 'HORIZON-WING',
+    publicName: null,
+    category: 'district',
+    releaseEra: 'ERA 3 — INTELLIGENCE™',
+    status: 'reserved',
+    dependencies: [],
+    unlockMethod: 'global-release',
+    integrations: integrations({
+      worldGraph: { nodeId: 'W-DP-DIST-001', enabled: true },
+      atlas: { expansionId: 'atlas-horizon-wing', enabled: true },
+      museum: { exhibitSlotId: 'hod-dist-001', hallOfDiscovery: true, enabled: true },
+    }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-DIST-001.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-DIST-002',
+    internalCodename: 'RUNWAY-QUARTER',
+    publicName: null,
+    category: 'district',
+    releaseEra: 'ERA 3 — INTELLIGENCE™',
+    status: 'classified',
+    dependencies: ['DP-DIST-001'],
+    unlockMethod: 'community-milestone',
+    integrations: integrations({ worldGraph: { nodeId: 'W-DP-DIST-002', enabled: true } }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-DIST-002.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-CIV-001',
+    internalCodename: 'PROFESSION-NET',
+    publicName: null,
+    category: 'civilization',
+    releaseEra: 'ERA 3 — INTELLIGENCE™',
+    status: 'reserved',
+    dependencies: [],
+    unlockMethod: 'civilization-event',
+    linkedEventId: 'evt-cross-discipline-01',
+    integrations: integrations({
+      worldGraph: { nodeId: 'W-DP-CIV-001', enabled: true },
+      marketplace: { listingCategory: 'civilization-expansion', enabled: true },
+    }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-CIV-001.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-CIV-002',
+    internalCodename: 'SKYBRIDGE-INSTITUTE',
+    publicName: null,
+    category: 'civilization',
+    releaseEra: 'ERA 2 — WORLD™',
+    status: 'scheduled',
+    dependencies: ['DP-CIV-001'],
+    unlockMethod: 'collaboration',
+    linkedEventId: 'evt-cross-discipline-01',
+    integrations: integrations({ worldGraph: { nodeId: 'W-DP-CIV-002', enabled: true } }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-CIV-002.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-INT-001',
+    internalCodename: 'ORB-CURATOR-DEEP',
+    publicName: null,
+    category: 'intelligence',
+    releaseEra: 'ERA 3 — INTELLIGENCE™',
+    status: 'classified',
+    dependencies: [],
+    unlockMethod: 'collaboration',
+    integrations: integrations({
+      worldGraph: { nodeId: 'W-DP-INT-001', enabled: true },
+      knowledgeCore: { moduleId: 'kce-orb-curator', enabled: true },
+      rewards: { grantTypes: ['orb-ability'], enabled: true },
+    }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-INT-001.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-MECH-001',
+    internalCodename: 'PARALLEL-FUTURES-DEEP',
+    publicName: null,
+    category: 'world-mechanics',
+    releaseEra: 'ERA 3 — INTELLIGENCE™',
+    status: 'reserved',
+    dependencies: [],
+    unlockMethod: 'global-release',
+    integrations: integrations({
+      worldGraph: { nodeId: 'W-DP-MECH-001', enabled: true },
+      atlas: { expansionId: 'atlas-parallel-futures', enabled: true },
+    }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-MECH-001.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-CRE-001',
+    internalCodename: 'PARTNER-ATELIER',
+    publicName: null,
+    category: 'creator',
+    releaseEra: 'ERA 3 — INTELLIGENCE™',
+    status: 'reserved',
+    dependencies: [],
+    unlockMethod: 'global-release',
+    integrations: integrations({
+      worldGraph: { nodeId: 'W-DP-CRE-001', enabled: true },
+      marketplace: { listingCategory: 'creator-collaboration', enabled: true },
+    }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-CRE-001.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-EXP-001',
+    internalCodename: 'WORLD-EXPO-FOUNDATION',
+    publicName: null,
+    category: 'experience',
+    releaseEra: 'ERA 2 — WORLD™',
+    status: 'scheduled',
+    dependencies: [],
+    unlockMethod: 'civilization-event',
+    linkedEventId: 'expo-2026',
+    integrations: integrations({
+      worldGraph: { nodeId: 'W-DP-EXP-001', enabled: true },
+      atlas: { expansionId: 'atlas-expo-pavilion', enabled: true },
+      museum: { exhibitSlotId: 'hod-exp-001', hallOfDiscovery: true, enabled: true },
+    }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-EXP-001.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-EXP-002',
+    internalCodename: 'GRAND-CHALLENGE-LEGACY',
+    publicName: null,
+    category: 'experience',
+    releaseEra: 'ERA 2 — WORLD™',
+    status: 'scheduled',
+    dependencies: [],
+    unlockMethod: 'civilization-event',
+    linkedEventId: 'gc-2026-education',
+    integrations: integrations({ worldGraph: { nodeId: 'W-DP-EXP-002', enabled: true } }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-EXP-002.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-EXP-003',
+    internalCodename: 'INNOVATION-OLYMPICS',
+    publicName: null,
+    category: 'experience',
+    releaseEra: 'ERA 3 — INTELLIGENCE™',
+    status: 'reserved',
+    dependencies: ['DP-EXP-001'],
+    unlockMethod: 'civilization-event',
+    linkedEventId: 'evt-industry-olympics-2026',
+    integrations: integrations({
+      worldGraph: { nodeId: 'W-DP-EXP-003', enabled: true },
+    }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-EXP-003.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-EVT-KNOWLEDGE-DEEP',
+    internalCodename: 'BLUEPRINT-LINEAGE-DEEP',
+    publicName: null,
+    category: 'civilization',
+    releaseEra: 'ERA 2 — WORLD™',
+    status: 'classified',
+    dependencies: [],
+    unlockMethod: 'civilization-event',
+    linkedEventId: 'evt-knowledge-tournament-01',
+    integrations: integrations({
+      worldGraph: { nodeId: 'W-DP-EVT-KNOWLEDGE-DEEP', enabled: true },
+      knowledgeCore: { moduleId: 'kce-blueprint-advanced', enabled: true },
+    }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-EVT-KNOWLEDGE-DEEP.md',
+    canonicalHistory: null,
+  },
+  {
+    packId: 'DP-EVT-INNOVATION-VAULT',
+    internalCodename: 'PROTO-VAULT-DEEP',
+    publicName: null,
+    category: 'world-mechanics',
+    releaseEra: 'ERA 2 — WORLD™',
+    status: 'classified',
+    dependencies: [],
+    unlockMethod: 'civilization-event',
+    linkedEventId: 'evt-innovation-challenge-01',
+    integrations: integrations({
+      worldGraph: { nodeId: 'W-DP-EVT-INNOVATION-VAULT', enabled: true },
+      rewards: { grantTypes: ['prototype-technology'], enabled: true },
+    }),
+    documentationRef: 'docs/studio-os/discovery-packs/reserved/DP-EVT-INNOVATION-VAULT.md',
+    canonicalHistory: null,
+  },
+];
+
+export const LEGACY_EVENT_PACK_MAP: Record<string, string> = {
+  'disc-prototype-tech-vault': 'DP-EVT-INNOVATION-VAULT',
+  'disc-profession-monuments': 'DP-EXP-003',
+  'disc-skybridge-research-institute': 'DP-CIV-002',
+  'disc-advanced-blueprint-system': 'DP-EVT-KNOWLEDGE-DEEP',
+  'disc-legendary-materials': 'DP-EXP-001',
+  'disc-orb-curator-mode': 'DP-INT-001',
+  'disc-grand-challenge-district': 'DP-EXP-002',
+  'disc-expo-atlas-pavilion': 'DP-EXP-001',
+};
+
+export function registryEntryById(packId: string): DiscoveryPackRegistryEntry | undefined {
+  return DISCOVERY_PACK_REGISTRY.find((e) => e.packId === packId);
+}
+
+export function registryEntryByLegacyId(legacyId: string): DiscoveryPackRegistryEntry | undefined {
+  const packId = LEGACY_EVENT_PACK_MAP[legacyId];
+  return packId ? registryEntryById(packId) : undefined;
+}

@@ -1,7 +1,9 @@
 /**
  * Civilization Events™ — world-scale events that permanently evolve Studio World.
- * ERA 2 — WORLD™ · Discovery Pack Rewards™ · Living Museum™
+ * ERA 2 — WORLD™ · Civilization Events™ · Discovery Pack Framework™
  */
+
+import type { PublicDiscoveryFrameworkSnapshot, DiscoveryEligibilitySnapshot } from '../discovery-pack-framework/types';
 
 export type CivilizationEventCategory =
   | 'innovation-challenge'
@@ -74,29 +76,6 @@ export type WorldExpo = {
   worldGraphNodeId: string;
 };
 
-export type DiscoveryPackKind =
-  | 'district'
-  | 'technology'
-  | 'orb-ability'
-  | 'architectural-style'
-  | 'museum-exhibit'
-  | 'material'
-  | 'blueprint-system'
-  | 'environment-theme'
-  | 'transportation'
-  | 'atlas-destination';
-
-export type CivilizationDiscovery = {
-  id: string;
-  kind: DiscoveryPackKind;
-  title: string;
-  description: string;
-  earnedOnly: true;
-  unlockedBy: string;
-  worldGraphNodeId: string;
-  permanentEffects: string[];
-};
-
 export type LivingMuseumExhibit = {
   id: string;
   eventId: string;
@@ -146,8 +125,11 @@ export type CivilizationEventsSnapshot = {
   grandChallenge: GrandChallenge | null;
   worldExpo: WorldExpo | null;
   crossDisciplineTeams: CrossDisciplineTeam[];
-  discoveries: CivilizationDiscovery[];
-  unlockedDiscoveries: CivilizationDiscovery[];
+  /** Public-safe — no reserved pack names exposed */
+  discoveryFramework: PublicDiscoveryFrameworkSnapshot;
+  discoveryEligibility: DiscoveryEligibilitySnapshot;
+  /** Count of eligible reward grants — identity hidden until release */
+  eligibleDiscoveryGrantCount: number;
   museumExhibits: LivingMuseumExhibit[];
   collaborationHonors: CollaborationHonor[];
   worldImpacts: EventWorldImpact[];

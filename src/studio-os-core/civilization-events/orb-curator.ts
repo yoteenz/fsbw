@@ -1,7 +1,9 @@
 /**
  * Civilization Curator™ — Orb identifies talent, collaborations, and opportunities.
+ * Never reveals reserved Discovery Pack names.
  */
 
+import type { DiscoveryEligibilitySnapshot } from '../discovery-pack-framework/types';
 import type {
   CivilizationEvent,
   CivilizationEventsSnapshot,
@@ -20,7 +22,8 @@ export function buildOrbCuratorLine(input: {
   crossDisciplineTeams: CrossDisciplineTeam[];
   participationEligible: string[];
   collaborationCapital: number;
-  unlockedDiscoveryCount: number;
+  discoveryEligibility: DiscoveryEligibilitySnapshot;
+  frontierSummary: string;
 }): string | null {
   const insights: CuratorInsight[] = [];
 
@@ -28,22 +31,14 @@ export function buildOrbCuratorLine(input: {
   if (crossEvent && input.collaborationCapital >= 45) {
     insights.push({
       priority: 95,
-      line: `Cross-Discipline Championship™ active — collaboration weighted 2×. I see ${input.crossDisciplineTeams.length} teams forming. Your professions could unite for a civilization discovery.`,
+      line: `Cross-Discipline Championship™ active — collaboration weighted 2×. I see ${input.crossDisciplineTeams.length} teams forming. Victory may unlock a civilization discovery — the world expands, not a feature list.`,
     });
   }
 
   if (input.grandChallenge && input.grandChallenge.status === 'active') {
     insights.push({
       priority: 92,
-      line: `The Grand Challenge™ "${input.grandChallenge.theme}" is ${input.grandChallenge.communityProgressPct}% complete. Winning ideas permanently expand Studio World — not badges, but new districts.`,
-    });
-  }
-
-  const expo = input.activeEvents.find((e) => e.category === 'world-expo');
-  if (expo) {
-    insights.push({
-      priority: 88,
-      line: 'Studio World Expo™ approaching — exhibit your Blueprints, HQ, and AI. Visitors explore, vote, purchase, license, and collaborate.',
+      line: `The Grand Challenge™ "${input.grandChallenge.theme}" is ${input.grandChallenge.communityProgressPct}% complete. Winning ideas permanently expand Studio World.`,
     });
   }
 
@@ -54,18 +49,18 @@ export function buildOrbCuratorLine(input: {
     });
   }
 
+  if (input.discoveryEligibility.civilizationEventLinked > 0) {
+    insights.push({
+      priority: 82,
+      line: `${input.discoveryEligibility.civilizationEventLinked} active event${input.discoveryEligibility.civilizationEventLinked > 1 ? 's' : ''} linked to reserved Discovery Pack slots — frontiers await beyond the horizon.`,
+    });
+  }
+
   const formingTeam = input.crossDisciplineTeams.find((t) => t.status === 'forming');
   if (formingTeam) {
     insights.push({
       priority: 80,
       line: `"${formingTeam.label}" seeks ${formingTeam.professions.slice(-2).join(' + ')} — a community that should meet for cross-profession innovation.`,
-    });
-  }
-
-  if (input.unlockedDiscoveryCount > 0) {
-    insights.push({
-      priority: 75,
-      line: `${input.unlockedDiscoveryCount} Civilization Discoveries™ unlocked — earned rewards that permanently expanded the world.`,
     });
   }
 
@@ -78,7 +73,7 @@ export function buildOrbCuratorLine(input: {
   }
 
   if (insights.length === 0) {
-    return 'Civilization Events™ await — every challenge leaves Studio World smarter than before. I will identify emerging talent and collaborations.';
+    return `${input.frontierSummary} I will identify emerging talent and collaborations.`;
   }
 
   insights.sort((a, b) => b.priority - a.priority);
@@ -91,6 +86,6 @@ export function buildEventsSummary(snapshot: Pick<CivilizationEventsSnapshot, 'a
   if (active > 0) parts.push(`${active} active event${active > 1 ? 's' : ''}`);
   if (snapshot.grandChallenge?.status === 'active') parts.push('Grand Challenge live');
   if (snapshot.worldExpo) parts.push(`Expo ${snapshot.worldExpo.year}`);
-  if (parts.length === 0) return 'Civilization Events™ — discoveries await';
+  if (parts.length === 0) return 'Civilization Events™ — frontiers reserved';
   return `Civilization Events™ — ${parts.join(' · ')}`;
 }

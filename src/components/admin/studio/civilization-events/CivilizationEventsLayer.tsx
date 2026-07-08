@@ -6,7 +6,7 @@ type Props = {
 };
 
 /**
- * Civilization Events™ — world-scale events that permanently evolve Studio World.
+ * Civilization Events™ — world-scale events. Discovery Pack names are never exposed until release.
  */
 export function CivilizationEventsLayer({ events, compact = false }: Props) {
   const primaryEvent = events.activeEvents[0];
@@ -32,26 +32,6 @@ export function CivilizationEventsLayer({ events, compact = false }: Props) {
             Community progress {grand.communityProgressPct}% · {grand.permanentImpact}
           </p>
         </article>
-      ) : null}
-
-      {!compact ? (
-        <div className="sw-events-layer__discoveries" aria-label="Civilization Discoveries">
-          <p className="sw-events-layer__discoveries-title">
-            Civilization Discoveries™ · {events.unlockedDiscoveries.length} unlocked
-          </p>
-          {events.discoveries.slice(0, 4).map((d) => {
-            const unlocked = events.unlockedDiscoveries.some((u) => u.id === d.id);
-            return (
-              <span
-                key={d.id}
-                className={`sw-events-layer__discovery-item${unlocked ? '' : ' is-locked'}`}
-              >
-                {unlocked ? '★ ' : '○ '}
-                {d.title}
-              </span>
-            );
-          })}
-        </div>
       ) : null}
 
       {!compact && competingTeam ? (

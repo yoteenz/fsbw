@@ -1,5 +1,6 @@
 /**
  * Civilization Events™ → World Graph™ — permanent civilization history from events.
+ * Only released Discovery Packs appear in graph — reserved slots stay internal.
  */
 
 import type { WorldEdge, WorldNode } from '../world-graph/types';
@@ -76,27 +77,40 @@ export function buildCivilizationEventsWorldGraphProjection(
     });
   }
 
-  for (const discovery of snapshot.unlockedDiscoveries) {
+  nodes.push({
+    id: 'W-DPF-framework',
+    slug: 'discovery-pack-framework',
+    displayName: 'Discovery Pack Framework™',
+    nodeType: 'engine',
+    summary: snapshot.discoveryFramework.frontierSummary,
+    lifecycle: 'implemented',
+    plane: 'canon',
+    version: '1',
+    tags: ['discovery-pack-framework'],
+    provenance: provenance('discovery-pack-framework'),
+  });
+
+  for (const release of snapshot.discoveryFramework.publicReleases) {
     nodes.push({
-      id: discovery.worldGraphNodeId,
-      slug: discovery.id,
-      displayName: discovery.title,
+      id: `W-DP-${release.packId}`,
+      slug: release.packId.toLowerCase(),
+      displayName: release.publicName,
       nodeType: 'milestone',
-      summary: discovery.description,
-      lifecycle: 'historical',
-      plane: 'historical',
+      summary: `Discovery Pack — ${release.category}`,
+      lifecycle: release.status === 'released' ? 'live' : 'approved',
+      plane: 'canon',
       version: '1',
-      tags: ['civilization-discovery', discovery.kind],
-      provenance: provenance('discovery-pack'),
+      tags: ['discovery-pack-released', release.category],
+      provenance: provenance('discovery-pack-release'),
     });
 
     edges.push({
-      id: `WE-DISC-${discovery.id}`,
-      from: 'W-CIV-EVENTS-root',
-      to: discovery.worldGraphNodeId,
+      id: `WE-DP-${release.packId}`,
+      from: 'W-DPF-framework',
+      to: `W-DP-${release.packId}`,
       type: 'evolved-into',
-      label: 'discovery-unlocked',
-      provenance: provenance('discovery-edge'),
+      label: 'discovery-released',
+      provenance: provenance('discovery-release-edge'),
     });
   }
 

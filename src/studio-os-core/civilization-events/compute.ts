@@ -2,6 +2,12 @@
  * Civilization Events™ — compute world-scale events from civilization state.
  */
 
+import {
+  computePublicDiscoveryFramework,
+  countEligibleRewardGrants,
+  evaluateDiscoveryEligibility,
+  getInternalRegistry,
+} from '../discovery-pack-framework';
 import { readCampusEvolutionStore } from '../campus-evolution-engine/store';
 import type { LivingCivilizationSnapshot } from '../living-civilization/types';
 import {
@@ -11,34 +17,10 @@ import {
   SEED_CROSS_DISCIPLINE_TEAMS,
   WORLD_EXPO_2026,
 } from './catalog';
-import { CIVILIZATION_DISCOVERY_CATALOG, discoveryById } from './discovery-packs';
 import { LIVING_MUSEUM_EXHIBITS } from './living-museum';
 import { buildEventsSummary, buildOrbCuratorLine } from './orb-curator';
-import type { CivilizationDiscovery, CivilizationEventsInput, CivilizationEventsSnapshot } from './types';
+import type { CivilizationEventsInput, CivilizationEventsSnapshot } from './types';
 import { buildEventWorldImpacts } from './world-impact';
-
-function evaluateUnlockedDiscoveries(input: CivilizationEventsInput): CivilizationDiscovery[] {
-  const unlocked: CivilizationDiscovery[] = [];
-
-  if (input.innovationCapital >= 55) {
-    const d = discoveryById('disc-prototype-tech-vault');
-    if (d) unlocked.push(d);
-  }
-  if (input.collaborationCapital >= 60) {
-    const d = discoveryById('disc-orb-curator-mode');
-    if (d) unlocked.push(d);
-  }
-  if (input.knowledgeCapital >= 58) {
-    const d = discoveryById('disc-advanced-blueprint-system');
-    if (d) unlocked.push(d);
-  }
-  if (input.civilizationHealth >= 70) {
-    const d = discoveryById('disc-grand-challenge-district');
-    if (d) unlocked.push(d);
-  }
-
-  return unlocked;
-}
 
 function evaluateParticipationEligible(input: CivilizationEventsInput): string[] {
   const eligible: string[] = [];
@@ -88,7 +70,23 @@ export function computeCivilizationEvents(
   const grandChallenge = GRAND_CHALLENGE_2026;
   const worldExpo = WORLD_EXPO_2026;
 
-  const unlockedDiscoveries = evaluateUnlockedDiscoveries(input);
+  const activeEventIds = activeEvents.map((e) => e.id);
+  const discoveryFramework = computePublicDiscoveryFramework();
+  const discoveryEligibility = evaluateDiscoveryEligibility({
+    innovationCapital: input.innovationCapital,
+    knowledgeCapital: input.knowledgeCapital,
+    collaborationCapital: input.collaborationCapital,
+    civilizationHealth: input.civilizationHealth,
+    activeEventIds,
+  });
+  const eligibleDiscoveryGrantCount = countEligibleRewardGrants(getInternalRegistry(), {
+    innovationCapital: input.innovationCapital,
+    knowledgeCapital: input.knowledgeCapital,
+    collaborationCapital: input.collaborationCapital,
+    civilizationHealth: input.civilizationHealth,
+    activeEventIds,
+  });
+
   const participationEligible = evaluateParticipationEligible(input);
   const worldImpacts = buildEventWorldImpacts(activeEvents, input.companyName);
 
@@ -100,8 +98,9 @@ export function computeCivilizationEvents(
     grandChallenge,
     worldExpo,
     crossDisciplineTeams: SEED_CROSS_DISCIPLINE_TEAMS,
-    discoveries: CIVILIZATION_DISCOVERY_CATALOG,
-    unlockedDiscoveries,
+    discoveryFramework,
+    discoveryEligibility,
+    eligibleDiscoveryGrantCount,
     museumExhibits: LIVING_MUSEUM_EXHIBITS,
     collaborationHonors: COLLABORATION_HONORS,
     worldImpacts,
@@ -111,7 +110,8 @@ export function computeCivilizationEvents(
       crossDisciplineTeams: SEED_CROSS_DISCIPLINE_TEAMS,
       participationEligible,
       collaborationCapital: input.collaborationCapital,
-      unlockedDiscoveryCount: unlockedDiscoveries.length,
+      discoveryEligibility,
+      frontierSummary: discoveryFramework.frontierSummary,
     }),
     participationEligible,
   };
