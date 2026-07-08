@@ -422,6 +422,10 @@ const AdminStudioMuseum = lazyWithRetry(() => import('./pages/admin/studio/studi
 const AdminStudioBlueprintManager = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/page'), 'AdminStudioBlueprintManager');
 const AdminStudioBlueprintDetail = lazyWithRetry(() => import('./pages/admin/studio/blueprint-manager/detail/page'), 'AdminStudioBlueprintDetail');
 const AdminStudioMissionControl = lazyWithRetry(() => import('./pages/admin/studio/mission-control/page'), 'AdminStudioMissionControl');
+const AdminStudioArchitectureObservatory = lazyWithRetry(
+  () => import('./pages/admin/studio/architecture-observatory/page'),
+  'AdminStudioArchitectureObservatory'
+);
 const AdminStudioChiefOfStaff = lazyWithRetry(() => import('./pages/admin/studio/chief-of-staff/page'), 'AdminStudioChiefOfStaff');
 const AdminStudioExecutiveOrganization = lazyWithRetry(() => import('./pages/admin/studio/executive-organization/page'), 'AdminStudioExecutiveOrganization');
 const AdminStudioOrganizationalInheritance = lazyWithRetry(() => import('./pages/admin/studio/organizational-inheritance/page'), 'AdminStudioOrganizationalInheritance');
@@ -2013,6 +2017,11 @@ function App() {
           <Route path="studio/mission-control" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioMissionControl />
+            </Suspense>
+          } />
+          <Route path="studio/architecture-observatory" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioArchitectureObservatory />
             </Suspense>
           } />
           <Route path="studio/chief-of-staff" element={

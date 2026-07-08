@@ -71,6 +71,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'architecture-observatory',
+    title: 'ARCHITECTURE OBSERVATORY',
+    purpose:
+      'Studio World™ architectural guardian — live integrity scores, webpage detection, Scene Stack™ compliance, and migration intelligence.',
+    route: p('architecture-observatory'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'AUDITOR',
+    ctaLabel: 'ENTER OBSERVATORY',
+    featuredOnOverview: true,
+  },
+  {
     id: 'chief-of-staff',
     title: 'CHIEF OF STAFF',
     purpose: 'Founder primary executive — soft approvals, unified briefings, and attention protection before escalations.',

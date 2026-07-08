@@ -158,3 +158,4 @@ export type {
 } from './creative-intelligence-engine';
 
 export * from './studio-world';
+export * from './architecture-auditor';

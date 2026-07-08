@@ -30,6 +30,7 @@ import {
   layerIdToAssetType,
   recordStudioAlphaReuse,
 } from '../studio-os-core/studio-alpha-cost';
+import { gateAfterSceneAssembly, requestArchitectureAudit } from '../studio-os-core/architecture-auditor';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -297,6 +298,9 @@ export function useSceneStack(
         });
 
         bump();
+        void gateAfterSceneAssembly({ departmentId, projectId, stationId }).then(() => {
+          requestArchitectureAudit();
+        });
         return true;
       } catch (err) {
         failStudioAlphaGeneration(

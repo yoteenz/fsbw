@@ -42281,3 +42281,15 @@ User **ARCHITECTURAL ENFORCEMENT SPRINT — Studio World™ V5:** Complete archi
 - **Priority tiers:** P0 Command Center/exec observatories (44) · P1 distribution/archives/production/create (42) · P2 intelligence engines (105) · P3 settings/platform.
 - **No code redesign this sprint** — audit and plan only per user mandate.
 - **Prior arc (same chat):** Studio Command Center overview implementation · Studio World V4 · Archives immersive · Scene Stack stability.
+
+---
+
+## 2026-07-08 — Studio World™ Architecture Auditor™ engine + Architecture Observatory™
+
+User **NEW ENGINE IMPLEMENTATION — Architecture Auditor™:** Permanent architectural intelligence guardian (not QA/debug). Position in pipeline: after Scene Assembly™, before Quality Inspector™. Responsibilities: continuous inspection of routes/scenes/features for Studio World law violations — physical place, building/wing/room, movement navigation, Scene Stack™ completeness, Asset Registry™ reuse, world continuity. Webpage detection (dashboard cards, KPI grids, scroll shells, admin panels). Auto recommendations + self-learning architectural memory. Founder room: **Architecture Observatory™** inside Studio Command Center™ — immersive mission-control (not dashboard).
+
+- **Core engine `src/studio-os-core/architecture-auditor/`:** `types` · `laws` · `webpage-detector` · `scene-stack-auditor` · `route-auditor` (uses migration-audit) · `asset-registry-auditor` · `continuity-auditor` · `recommendation-engine` · `memory-store` (localStorage `studioWorldArchitectureMemory_v1`) · `auditor` (`runStudioWorldArchitectureAudit`, `runArchitectureAuditorGate`) · `pipeline-gate` · `pipeline-stages` (`STUDIO_WORLD_PRODUCTION_PIPELINE` 10 stages).
+- **Pipeline integration:** `useSceneStack` calls `gateAfterSceneAssembly()` + `requestArchitectureAudit()` after each layer assembly; event `studio-world-architecture-audit-requested`.
+- **Founder UI:** `ArchitectureObservatoryRoom` — diegetic health sculpture, wall score projections, violation ticker, migration strip · route `/admin/studio/architecture-observatory` · HUD link from Executive Atrium · nav module ARCHITECTURE OBSERVATORY (live).
+- **Exports:** `studio-os-core/index.ts` · route registry entry · docs `docs/studio-os/architecture-auditor.md`.
+- **Prior arc (same chat):** V5 Migration Report audit sprint · Command Center partial immersive · Studio World V4.

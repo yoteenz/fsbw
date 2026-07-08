@@ -133,6 +133,8 @@ export const STUDIO_WORLD_ROUTE_REGISTRY: StudioWorldRouteMapping[] = [
   m('event-bus', 'Event Bus Room™', 'room', 'studio-command-center', 'scc-operations-wing', 'command-center/operations-wing/systems-dock/events', 'event-bus', 'standard', 'standard-room'),
   m('permission-engine', 'Permission Control Room™', 'room', 'studio-command-center', 'scc-security-center', 'command-center/security-center/permissions', 'permission-engine', 'standard', 'standard-room'),
   m('policy-engine', 'Policy Control Room™', 'room', 'studio-command-center', 'scc-security-center', 'command-center/security-center/policy', 'policy-engine', 'standard', 'standard-room'),
+  m('performance-monitor', 'Infrastructure Observatory™', 'observatory', 'studio-command-center', 'scc-performance-observatory', 'command-center/performance-observatory/monitor', 'performance-monitor', 'standard', 'standard-room'),
+  m('architecture-observatory', 'Architecture Observatory™', 'observatory', 'studio-command-center', 'scc-executive-district', 'command-center/executive-district/architecture-observatory', 'architecture-observatory', 'immersive', 'immersive-partial', 'Architecture Auditor'),
 ];
 
 const worldPathIndex = new Map<string, StudioWorldRouteMapping>();

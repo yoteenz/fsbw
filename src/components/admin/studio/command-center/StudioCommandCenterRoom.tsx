@@ -284,6 +284,13 @@ export function StudioCommandCenterRoom() {
           </div>
           <button
             type="button"
+            className="scc-world__pill-btn"
+            onClick={() => navigate('/admin/studio/architecture-observatory')}
+          >
+            Architecture Observatory™
+          </button>
+          <button
+            type="button"
             className={`scc-world__pill-btn${stackButtonBusy ? ' is-building' : ''}`}
             onClick={() => void stack.ensureStation(activeZoneId)}
             disabled={stackButtonBusy}
