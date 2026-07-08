@@ -13,7 +13,8 @@ export type BehavioralConstitutionalLawId =
   | 'knowledge-review'
   | 'repository-governance'
   | 'approval-workflow'
-  | 'progressive-presence';
+  | 'progressive-presence'
+  | 'architecture-decision-records';
 
 export type BehavioralConstitutionalLaw = {
   id: BehavioralConstitutionalLawId;
@@ -120,5 +121,16 @@ export const BEHAVIORAL_CONSTITUTIONAL_LAWS: BehavioralConstitutionalLaw[] = [
       'Every UI element registers Presence Level™, Priority™, and Required Intent™. Components consult the engine — they do not self-decide visibility. Max three Level 1 ambient elements per room.',
     physicsBasis: ['scene-integrity', 'spatial-continuity'],
     principleBasis: ['progressive-disclosure', 'immersion-over-pages', 'beauty-through-function'],
+  },
+  {
+    id: 'architecture-decision-records',
+    number: 11,
+    title: 'Architecture Decision Records™',
+    summary:
+      'Article K21 — major architectural decisions preserve why they exist, what alternatives were rejected, and how they shaped Studio World.',
+    enforcement:
+      'Flagship decisions generate ADR drafts, accepted ADRs become Constitution Hall™ exhibits, and previous ADRs are never deleted.',
+    physicsBasis: ['world-memory', 'knowledge-conservation', 'temporal-continuity'],
+    principleBasis: ['memory-before-intelligence', 'everything-has-a-home', 'founders-build-worlds'],
   },
 ];

@@ -23,6 +23,7 @@ A monumental architectural chamber — not settings, not documentation. Governin
 
 - **UI:** `src/components/admin/studio/constitution-hall/ConstitutionHallRoom.tsx`
 - **Orb:** Keeper of Studio World — explains principles, evolution, and fit
+- **ADR exhibits:** Accepted Architecture Decision Records™ are preserved here as constitutional history, with Architect Journal™ narratives and Decision Graph™ lineage.
 
 ---
 
@@ -97,6 +98,25 @@ Reviews persist in `studioOsStudioWorldConstitution_v1`.
 - **Responsibility Framework™:** `assertFeatureBelongsToFlagship`, `FLAGSHIP_RESPONSIBILITY_LAWS`
 - **Architecture Auditor™:** complementary guardian for webpage detection and Scene Stack™
 - **Orb:** `resolveOrbPersonalityForPath` returns Keeper in Constitution Hall™
+- **Architecture Decision Records™:** `src/studio-os-core/architecture-decision-records/` preserves accepted decisions as `architectural-decision` nodes.
+
+---
+
+## ARTICLE-K21 — Architecture Decision Records™
+
+Architecture Decision Records™ are constitutional history, not ordinary documentation.
+
+Every accepted ADR records:
+
+- why a major architectural decision exists,
+- what alternatives were considered,
+- what tradeoffs were accepted,
+- what Constitution articles and experience systems were affected,
+- what future ideas originated from the decision.
+
+Accepted ADRs are never deleted. If Studio World evolves, a new ADR supersedes the previous one and the earlier decision remains historical.
+
+Canon text: [ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md](./architecture-decision-records/ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md)
 
 ---
 

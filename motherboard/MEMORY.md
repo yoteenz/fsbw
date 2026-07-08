@@ -42784,3 +42784,68 @@ User follow-up sprint: reinvent World Atlas™ as **Mission Control™** — Stu
 - **Rebase:** merged with remote Spatial Experience™ + Global Experience System™ + Progressive Presence™ work
 - **Prior arc (same chat):** World Atlas Spatial Experience™ · Global Experience System™ · Innovation Constellations™ · Innovation Expeditions™ · Four-layer governance
 
+---
+
+## 2026-07-08 — ARTICLE-K21 Architecture Decision Records™ constitutional history
+
+**Context:** User requested a follow-up institutional-memory sprint for **Studio World**: every major architectural decision must become durable constitutional history, not buried in chat history, commits, or human memory. The requested system was **Architecture Decision Records™ (ADR)**, with Constitution Hall™ as an architectural museum, Architect's Journal™ narratives, Decision Graph™ lineage, living-history rules, automatic ADR drafting for flagship systems, staged review governance, and the Architect's Oath™.
+
+**Topics covered (entire conversation so far):**
+- Loaded motherboard context first, then inspected existing Studio World governance, Constitution Hall, World Graph, canon hierarchy, route registry, and behavioral laws.
+- Confirmed Constitution Hall™ already exists as `/admin/studio/constitution-hall`; implementation extended that location instead of creating a competing page.
+- Confirmed `architectural-decision` already exists as a World Graph node type but there was no ADR registry or ingestion adapter yet.
+- Treated Article K21 as **Era 1 Knowledge™** infrastructure: structured memory, graph truth, docs/canon, and Constitution Hall projection rather than a premature full walkable museum system.
+
+**Decisions / outcomes:**
+- **Architecture Decision Records™ are constitutional history, not documentation.**
+- **ARTICLE-K21** is now Behavioral Constitutional Law #11: major architectural decisions preserve why they exist, rejected alternatives, tradeoffs, affected systems, engineering impact, future expansion, and lessons.
+- Accepted ADRs are never deleted; future changes create new ADRs that supersede older records while preserving history.
+- Every accepted ADR becomes:
+  - a typed record in `src/studio-os-core/architecture-decision-records/`,
+  - a Constitution Hall™ exhibit,
+  - an Architect's Journal™ narrative,
+  - a World Graph™ `architectural-decision` node (`W-DEC-*`),
+  - graph-linked institutional memory governed by Article K21, Documentation First™, Knowledge Review™, Immutability of History™, and World Memory Physics™.
+- First accepted record: **ADR-0001 — Architecture Decision Records™ as Constitutional History**.
+- Automatic ADR draft seeds now include Progressive Presence™, Mission Control™, World Atlas™, Orb™, Scene Graph™, World Compiler™, Knowledge Engine™, Experience Engine™, Discovery Packs™, Parallel Futures™, Marketplace™, and Civilization Events™.
+
+**Changes:**
+- Added ADR core module:
+  - `src/studio-os-core/architecture-decision-records/types.ts`
+  - `src/studio-os-core/architecture-decision-records/records.ts`
+  - `src/studio-os-core/architecture-decision-records/index.ts`
+- Added accepted ADR graph ingestion:
+  - `src/studio-os-core/world-graph/ingestion/architecture-decisions-ingest.ts`
+  - wired into `src/studio-os-core/world-graph/ingestion/index.ts`
+  - wired into `src/studio-os-core/world-graph/builder.ts`
+- Added ARTICLE-K21 to constitutional governance:
+  - `src/studio-os-core/studio-world-constitution/behavioral-laws.ts`
+  - `knowledge/canon/constitution/behavioral-laws.md`
+  - `knowledge/canon/constitution/architecture-decision-records.md`
+- Added canonical documentation:
+  - `docs/studio-os/architecture-decision-records/ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md`
+  - updated `docs/studio-os/studio-world-constitution.md`
+  - updated `docs/studio-os/governance/STUDIO_WORLD_GOVERNANCE_HIERARCHY.md`
+  - updated `docs/studio-os/world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md`
+- Extended Constitution Hall™ with ADR exhibit projection:
+  - `src/components/admin/studio/constitution-hall/ConstitutionHallRoom.tsx`
+  - `src/components/admin/studio/constitution-hall/constitutionHallTheme.ts`
+- Regenerated World Graph artifacts:
+  - `public/studio-os/world-graph/graph.json`
+  - `docs/studio-os/world-graph/WORLD_GRAPH_COMPILE_REPORT.md`
+- Added permanent CORE motherboard note for ADRs:
+  - `motherboard/CORE.md`
+
+**Verification:**
+- `npm run compile-world-graph` passed: **412 nodes · 625 edges · PASS**.
+- `npm run build` passed. Vite emitted the existing large-chunk warning only.
+- Dropped unrelated timestamp-only master-spec generated diffs from the build prestep; retained World Graph generated changes because they include the new ADR nodes/edges.
+
+**Conventions:**
+- Future flagship architecture should answer the **Architect's Oath™** before approval:
+  1. Why are we building this?
+  2. What problem does it solve?
+  3. What alternatives did we reject?
+  4. Will this still make sense five years from now?
+  5. How does it strengthen the civilization?
+- Do not store major architectural rationale only in chat, commits, or MEMORY. Promote accepted foundational decisions into ADRs and World Graph nodes.

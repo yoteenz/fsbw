@@ -40,6 +40,7 @@ World Graph™ (canonical)
     ├── projections → Dependency Maps™
     ├── projections → Timelines™
     ├── projections → Museum Exhibits™
+    ├── projections → Architecture Decision Records™
     └── projections → Search™
 ```
 
@@ -109,6 +110,7 @@ Archivist queries **relationships**, not documents:
 
 - Route registry → room + flagship nodes
 - Studio World Constitution → law nodes
+- Architecture Decision Records™ → architectural-decision nodes
 - Scene Stack assembly law → law node
 - Bootstrap engines, genomes, publications
 - Master Spec milestones (CI compile)
@@ -177,6 +179,7 @@ Full docs: [STUDIO_WORLD_GOVERNANCE_HIERARCHY.md](../governance/STUDIO_WORLD_GOV
 ## See also
 
 - [STUDIO_WORLD_THREE_ERAS_ROADMAP.md](./STUDIO_WORLD_THREE_ERAS_ROADMAP.md) — **guiding principle:** Knowledge™ → World™ → Intelligence™
+- [ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md](../architecture-decision-records/ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md) — ADRs as constitutional history
 - [STUDIO_WORLD_KNOWLEDGE_SYSTEM_ARCHITECTURE.md](../knowledge-system/STUDIO_WORLD_KNOWLEDGE_SYSTEM_ARCHITECTURE.md) — original proposal (subsumed)
 - [world-graph-law.md](../../knowledge/canon/constitution/world-graph-law.md)
 - [three-eras-roadmap.md](../../knowledge/canon/constitution/three-eras-roadmap.md)

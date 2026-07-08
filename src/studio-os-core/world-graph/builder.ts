@@ -1,6 +1,7 @@
 import { finalizeWorldGraph } from './graph';
 import {
   ingestBehavioralConstitutionalNodes,
+  ingestArchitectureDecisionNodes,
   ingestConstitutionalLawNodes,
   ingestDesignPrincipleNodes,
   ingestEraRoadmapNodes,
@@ -45,6 +46,7 @@ export function buildWorldGraph(input: BuildWorldGraphInput = {}): BuildWorldGra
     ingestBehavioralConstitutionalNodes(),
     ingestImplementationStandardNodes(),
     ingestEraRoadmapNodes(),
+    ingestArchitectureDecisionNodes(),
     ingestRouteRegistryNodes(),
   ];
 

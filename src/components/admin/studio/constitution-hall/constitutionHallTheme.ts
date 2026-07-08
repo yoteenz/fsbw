@@ -249,6 +249,103 @@ body.constitution-hall-active {
   pointer-events: none;
 }
 
+.const-hall__adr-panel {
+  margin-top: 12px;
+  padding: 10px 8px;
+  border: 1px solid rgba(201, 169, 98, 0.22);
+  background:
+    linear-gradient(135deg, rgba(28, 22, 14, 0.86), rgba(5, 4, 3, 0.78)),
+    radial-gradient(circle at 20% 0%, rgba(201, 169, 98, 0.12), transparent 42%);
+  box-shadow: inset 0 0 18px rgba(201, 169, 98, 0.05);
+}
+
+.const-hall__adr-eyebrow {
+  margin: 0;
+  font-size: 5px;
+  letter-spacing: 0.16em;
+  color: #c9a962;
+}
+
+.const-hall__adr-title {
+  margin: 4px 0 6px;
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  color: #e8dcc8;
+}
+
+.const-hall__adr-copy,
+.const-hall__adr-selected,
+.const-hall__adr-drafts {
+  margin: 0 0 7px;
+  font-size: 5px;
+  line-height: 1.45;
+  letter-spacing: 0.06em;
+  color: #b8a888;
+}
+
+.const-hall__adr-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.const-hall__adr-chip {
+  border: 1px solid rgba(201, 169, 98, 0.32);
+  background: rgba(0, 0, 0, 0.45);
+  color: #c9a962;
+  font: inherit;
+  font-size: 5px;
+  letter-spacing: 0.1em;
+  padding: 4px 6px;
+  cursor: pointer;
+}
+
+.const-hall__adr-chip.is-active {
+  border-color: rgba(201, 169, 98, 0.75);
+  background: rgba(201, 169, 98, 0.12);
+}
+
+.const-hall__adr-journal-title {
+  margin: 7px 0 4px;
+  font-family: "Covered By Your Grace", cursive;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  color: #d4c4a0;
+  text-transform: none;
+}
+
+.const-hall__adr-journal {
+  margin: 0 0 8px;
+  font-size: 6px;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  color: #d9c9aa;
+  text-transform: none;
+}
+
+.const-hall__oath {
+  display: grid;
+  gap: 4px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(201, 169, 98, 0.18);
+}
+
+.const-hall__oath-title {
+  margin: 0;
+  font-size: 5px;
+  letter-spacing: 0.14em;
+  color: #c9a962;
+}
+
+.const-hall__oath span {
+  font-size: 5px;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  color: #a89878;
+  text-transform: none;
+}
+
 @media (max-width: 400px) {
   .const-hall__laws, .const-hall__scores { width: 30%; }
   .const-hall__law-detail { left: 30%; right: 30%; font-size: 4px; }

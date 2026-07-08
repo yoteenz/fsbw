@@ -2,6 +2,11 @@ import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStudioWorldConstitution } from '../../../../hooks/useStudioWorldConstitution';
 import {
+  ACCEPTED_ARCHITECTURE_DECISION_RECORDS,
+  ARCHITECTS_OATH_QUESTIONS,
+  FLAGSHIP_ADR_DRAFT_SEEDS,
+} from '../../../../studio-os-core/architecture-decision-records';
+import {
   CONSTITUTION_SCORE_LABELS,
   type ConstitutionLaw,
 } from '../../../../studio-os-core/studio-world-constitution';
@@ -27,6 +32,7 @@ export function ConstitutionHallRoom() {
   const navigate = useNavigate();
   const { laws, lastResult, reviewing, keeperLines, reviewProposal } = useStudioWorldConstitution();
   const [activeLaw, setActiveLaw] = useState<ConstitutionLaw>(laws[0]!);
+  const [activeAdr, setActiveAdr] = useState(ACCEPTED_ARCHITECTURE_DECISION_RECORDS[0]!);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
 
@@ -127,6 +133,42 @@ export function ConstitutionHallRoom() {
               </div>
             );
           })}
+
+          <section className="const-hall__adr-panel" aria-label="Architecture Decision Records">
+            <p className="const-hall__adr-eyebrow">ARTICLE-K21</p>
+            <h2 className="const-hall__adr-title">Architecture Decision Records™</h2>
+            <p className="const-hall__adr-copy">
+              Accepted decisions become preserved exhibits. History is never deleted.
+            </p>
+            <div className="const-hall__adr-list">
+              {ACCEPTED_ARCHITECTURE_DECISION_RECORDS.map((adr) => (
+                <button
+                  key={adr.adrNumber}
+                  type="button"
+                  className={`const-hall__adr-chip${
+                    activeAdr.adrNumber === adr.adrNumber ? ' is-active' : ''
+                  }`}
+                  onClick={() => setActiveAdr(adr)}
+                >
+                  {adr.adrNumber}
+                </button>
+              ))}
+            </div>
+            <p className="const-hall__adr-selected">
+              {activeAdr.title} · {activeAdr.status} · {activeAdr.reviewStage}
+            </p>
+            <p className="const-hall__adr-journal-title">{activeAdr.journal.title}</p>
+            <p className="const-hall__adr-journal">{activeAdr.journal.narrative}</p>
+            <div className="const-hall__oath">
+              <p className="const-hall__oath-title">Architect's Oath™</p>
+              {ARCHITECTS_OATH_QUESTIONS.map((question) => (
+                <span key={question}>{question}</span>
+              ))}
+            </div>
+            <p className="const-hall__adr-drafts">
+              Draft queue: {FLAGSHIP_ADR_DRAFT_SEEDS.slice(0, 4).join(' · ')} · more
+            </p>
+          </section>
         </aside>
 
         <footer className="const-hall__dock">

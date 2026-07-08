@@ -14,8 +14,11 @@
 | 8 | Repository Governance™ | Master-only · one deploy per task |
 | 9 | Approval Workflow™ | Founder final authority; no silent canon |
 | 10 | Progressive Presence™ | Article K18 — information earns visibility through intent |
+| 11 | Architecture Decision Records™ | Article K21 — constitutional history preserves architectural reasoning |
 
 **Article K18:** `docs/studio-os/governance/PROGRESSIVE_PRESENCE.md`
+
+**Article K21:** `docs/studio-os/architecture-decision-records/ARTICLE_K21_ARCHITECTURE_DECISION_RECORDS.md`
 
 **Eight Foundational Laws** (flagship governance) remain in `laws.ts`.
 
