@@ -1,10 +1,15 @@
-/** Studio Orb™ presence states — communicates intelligence through motion. */
+/** Studio Orb™ presence states — Living Light™ communicates through motion. */
 export type StudioOrbPresenceState =
   | 'idle'
+  | 'listening'
   | 'thinking'
+  | 'speaking'
   | 'learning'
   | 'opportunity'
   | 'completed'
+  | 'discovery'
+  | 'civilization-event'
+  | 'legendary-discovery'
   | 'focus'
   | 'presentation'
   | 'launch'
@@ -39,27 +44,41 @@ export type StudioOrbRadialActionId =
   | 'history'
   | 'emergency';
 
+/** Premium 3D icon sculpture IDs — never emoji */
+export type StudioOrbIconId =
+  | 'command-dock'
+  | 'page-guide'
+  | 'life-culture'
+  | 'daily-brief'
+  | 'voice'
+  | 'atlas'
+  | 'museum'
+  | 'marketplace'
+  | 'knowledge'
+  | 'innovation'
+  | 'disabled';
+
 export type StudioOrbRadialAction = {
   id: StudioOrbRadialActionId;
   label: string;
-  icon: string;
+  iconId: StudioOrbIconId;
   enabled: boolean;
   hint?: string;
 };
 
 export const STUDIO_ORB_RADIAL_ACTIONS: StudioOrbRadialAction[] = [
-  { id: 'command-dock', label: 'Command Dock', icon: '💬', enabled: true },
-  { id: 'page-guide', label: 'Page Guide', icon: '📖', enabled: true },
-  { id: 'life-culture', label: 'Life & Culture', icon: '✦', enabled: true },
-  { id: 'notifications', label: 'Daily Brief', icon: '🔔', enabled: true },
-  { id: 'voice', label: 'Voice Mode', icon: '🎙', enabled: true },
-  { id: 'world-atlas', label: 'World Atlas', icon: '🌐', enabled: true },
-  { id: 'search', label: 'Search', icon: '🔍', enabled: false, hint: 'Soon' },
-  { id: 'presentation', label: 'Presentation', icon: '◻', enabled: false, hint: 'Soon' },
-  { id: 'founder-mode', label: 'Founder Mode', icon: '★', enabled: false, hint: 'Soon' },
-  { id: 'workspace-switcher', label: 'Workspaces', icon: '⬡', enabled: false, hint: 'Soon' },
-  { id: 'quick-actions', label: 'Quick Actions', icon: '⚡', enabled: false, hint: 'Soon' },
-  { id: 'executive-timeline', label: 'Timeline', icon: '📅', enabled: false, hint: 'Soon' },
-  { id: 'history', label: 'History', icon: '🕐', enabled: false, hint: 'Soon' },
-  { id: 'emergency', label: 'Emergency', icon: '◆', enabled: false, hint: 'Soon' },
+  { id: 'command-dock', label: 'Command Dock', iconId: 'command-dock', enabled: true },
+  { id: 'page-guide', label: 'Page Guide', iconId: 'page-guide', enabled: true },
+  { id: 'life-culture', label: 'Life & Culture', iconId: 'life-culture', enabled: true },
+  { id: 'notifications', label: 'Daily Brief', iconId: 'daily-brief', enabled: true },
+  { id: 'voice', label: 'Voice Mode', iconId: 'voice', enabled: true },
+  { id: 'world-atlas', label: 'World Atlas', iconId: 'atlas', enabled: true },
+  { id: 'search', label: 'Search', iconId: 'disabled', enabled: false, hint: 'Soon' },
+  { id: 'presentation', label: 'Presentation', iconId: 'disabled', enabled: false, hint: 'Soon' },
+  { id: 'founder-mode', label: 'Founder Mode', iconId: 'disabled', enabled: false, hint: 'Soon' },
+  { id: 'workspace-switcher', label: 'Workspaces', iconId: 'disabled', enabled: false, hint: 'Soon' },
+  { id: 'quick-actions', label: 'Quick Actions', iconId: 'disabled', enabled: false, hint: 'Soon' },
+  { id: 'executive-timeline', label: 'Timeline', iconId: 'disabled', enabled: false, hint: 'Soon' },
+  { id: 'history', label: 'History', iconId: 'disabled', enabled: false, hint: 'Soon' },
+  { id: 'emergency', label: 'Emergency', iconId: 'disabled', enabled: false, hint: 'Soon' },
 ];

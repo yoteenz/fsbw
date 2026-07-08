@@ -14,11 +14,17 @@ import {
 } from '../../../../studio-os-core/conversation-engine';
 import { stopVoiceListening } from '../../../../studio-os-core/voice-mode';
 import { readCommandDockStore } from '../../../../studio-os-core/command-dock/store';
+import { getVoiceModeProfile } from '../../../../studio-os-core/voice-mode/store';
+import type { VoiceModeState } from '../../../../studio-os-core/voice-mode/types';
 import { useCommandDockState } from '../../../../hooks/useCommandDockState';
 import { useStudioOrbRecommendations } from '../../../../hooks/useStudioOrbRecommendations';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { StudioOrbAwakeningOverlay } from './StudioOrbAwakeningOverlay';
-import type { StudioOrbPosition, StudioOrbPresenceState, StudioOrbSurface } from './studioOrbTypes';
+import type {
+  StudioOrbPosition,
+  StudioOrbPresenceState,
+  StudioOrbSurface,
+} from './studioOrbTypes';
 import { playStudioOrbSound } from './studioOrbSounds';
 import {
   hasSeenStudioOrbAwakening,
@@ -51,7 +57,66 @@ const StudioOrbContext = createContext<StudioOrbContextValue | null>(null);
 
 const DEFAULT_POSITION: StudioOrbPosition = { bottom: 14, right: 12 };
 
-function resolvePresenceState(store: ReturnType<typeof readCommandDockStore>): StudioOrbPresenceState {
+type PresenceInputs = {
+  store: ReturnType<typeof readCommandDockStore>;
+  radialOpen: boolean;
+  activeSurface: StudioOrbSurface;
+  voiceState: VoiceModeState;
+  ambientInsight: string | null;
+  hasLegendarySignal: boolean;
+  hasCivilizationSignal: boolean;
+};
+
+function classifyAmbientInsight(
+  insight: string | null
+): 'legendary-discovery' | 'civilization-event' | null {
+  if (!insight) return null;
+  const lower = insight.toLowerCase();
+  if (
+    /legendary|legend|myth|lost knowledge|archive of questions|crystalline|cartographer/.test(
+      lower
+    )
+  ) {
+    return 'legendary-discovery';
+  }
+  if (
+    /civilization|milestone|world expansion|discovery oracle|unknown signal|living world/.test(
+      lower
+    )
+  ) {
+    return 'civilization-event';
+  }
+  return null;
+}
+
+function resolvePresenceState({
+  store,
+  radialOpen,
+  activeSurface,
+  voiceState,
+  ambientInsight,
+  hasLegendarySignal,
+  hasCivilizationSignal,
+}: PresenceInputs): StudioOrbPresenceState {
+  if (radialOpen) return 'discovery';
+
+  if (activeSurface === 'voice-mode') {
+    if (voiceState === 'listening') return 'listening';
+    if (voiceState === 'processing') return 'thinking';
+  }
+
+  if (activeSurface === 'command-dock') {
+    if (store.processingActive) return 'thinking';
+    if (store.activeMicrointeraction && !store.processingActive) return 'speaking';
+  }
+
+  if (hasLegendarySignal || classifyAmbientInsight(ambientInsight) === 'legendary-discovery') {
+    return 'legendary-discovery';
+  }
+  if (hasCivilizationSignal || classifyAmbientInsight(ambientInsight) === 'civilization-event') {
+    return 'civilization-event';
+  }
+
   if (store.processingActive) return 'thinking';
   if (store.proactiveSuggestion) return 'opportunity';
   if (store.lastRoutingSummary && !store.pendingRoute) return 'completed';
@@ -72,11 +137,57 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const [awakeningActive, setAwakeningActive] = useState(false);
 
   const store = dock.store;
-  const presenceState = useMemo(() => resolvePresenceState(store), [store]);
+  const [voiceTick, setVoiceTick] = useState(0);
   const conversationMode =
     activeSurface === 'command-dock' || activeSurface === 'voice-mode';
   const ambientInsight =
     orbRecs.topAmbientInsight ?? store.proactiveSuggestion?.insight ?? null;
+
+  const voiceProfile = useMemo(() => {
+    void voiceTick;
+    if (!organizationId) return null;
+    return getVoiceModeProfile(organizationId);
+  }, [organizationId, voiceTick]);
+
+  useEffect(() => {
+    if (activeSurface !== 'voice-mode') return;
+    const id = window.setInterval(() => setVoiceTick((t) => t + 1), 280);
+    return () => window.clearInterval(id);
+  }, [activeSurface]);
+
+  const hasLegendarySignal = useMemo(
+    () => orbRecs.snapshot.recommendations.some((r) => r.isSurprise),
+    [orbRecs.snapshot.recommendations]
+  );
+  const hasCivilizationSignal = useMemo(
+    () =>
+      orbRecs.snapshot.recommendations.some((r) =>
+        ['celebrate-milestone', 'expand-headquarters', 'start-expedition'].includes(r.category)
+      ),
+    [orbRecs.snapshot.recommendations]
+  );
+
+  const presenceState = useMemo(
+    () =>
+      resolvePresenceState({
+        store,
+        radialOpen,
+        activeSurface,
+        voiceState: voiceProfile?.state ?? 'idle',
+        ambientInsight,
+        hasLegendarySignal,
+        hasCivilizationSignal,
+      }),
+    [
+      store,
+      radialOpen,
+      activeSurface,
+      voiceProfile?.state,
+      ambientInsight,
+      hasLegendarySignal,
+      hasCivilizationSignal,
+    ]
+  );
 
   useEffect(() => {
     if (!organizationId) return;

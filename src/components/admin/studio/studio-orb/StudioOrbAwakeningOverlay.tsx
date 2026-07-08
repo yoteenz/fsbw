@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ORB_ANIMATION_CSS, ORB_SIZE_PX, ORB_VISUAL } from './studioOrbTheme';
+import { ORB_ANIMATION_CSS, ORB_SIZE_PX, orbOverlayBackdropStyle, orbPrimaryBtnStyle, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 
 const PHASE_MS = [1200, 1600, 1400, 1800, 1200];
@@ -43,7 +43,8 @@ export function StudioOrbAwakeningOverlay() {
       <div
         className="fixed inset-0 z-[100060] flex flex-col items-center justify-center"
         style={{
-          background: phase < 2 ? 'rgba(10,10,12,0.92)' : 'rgba(255,255,255,0.88)',
+          ...orbOverlayBackdropStyle,
+          background: phase < 2 ? 'rgba(8, 7, 6, 0.92)' : 'rgba(12, 11, 10, 0.78)',
           transition: 'background 1.2s ease',
           animation: 'studio-orb-awaken-fade 0.8s ease-out',
         }}
@@ -53,8 +54,8 @@ export function StudioOrbAwakeningOverlay() {
         {phase >= 1 ? (
           <div
             style={{
-              width: ORB_SIZE_PX,
-              height: ORB_SIZE_PX,
+              width: ORB_SIZE_PX * 2,
+              height: ORB_SIZE_PX * 2,
               borderRadius: '50%',
               position: 'relative',
               animation: phase >= 3 ? 'studio-orb-awaken-ignite 1.4s ease-out forwards' : undefined,
@@ -78,7 +79,7 @@ export function StudioOrbAwakeningOverlay() {
             fontFamily: '"Futura PT Medium"',
             fontSize: '8px',
             letterSpacing: '0.14em',
-            color: phase < 2 ? 'rgba(255,255,255,0.7)' : ORB_VISUAL.brandRed,
+            color: phase < 2 ? 'rgba(255, 248, 240, 0.7)' : ORB_VISUAL.champagne,
             marginTop: 24,
             textTransform: 'uppercase',
           }}
@@ -87,21 +88,7 @@ export function StudioOrbAwakeningOverlay() {
         </p>
 
         {phase >= 4 ? (
-          <button
-            type="button"
-            onClick={completeAwakening}
-            style={{
-              marginTop: 20,
-              fontFamily: '"Futura PT Medium"',
-              fontSize: '7px',
-              letterSpacing: '0.1em',
-              color: ORB_VISUAL.brandRed,
-              background: 'transparent',
-              border: '1px solid rgba(235,28,36,0.4)',
-              padding: '8px 16px',
-              cursor: 'pointer',
-            }}
-          >
+          <button type="button" onClick={completeAwakening} style={{ ...orbPrimaryBtnStyle, marginTop: 20 }}>
             ENTER HEADQUARTERS
           </button>
         ) : (
@@ -113,7 +100,7 @@ export function StudioOrbAwakeningOverlay() {
               fontFamily: '"Futura PT Medium"',
               fontSize: '7px',
               letterSpacing: '0.1em',
-              color: phase < 2 ? 'rgba(255,255,255,0.45)' : 'rgba(235,28,36,0.55)',
+              color: 'rgba(201, 169, 98, 0.55)',
               background: 'transparent',
               border: 'none',
               padding: '8px 16px',

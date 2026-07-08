@@ -17,7 +17,18 @@ import {
   type SensitiveEventResponse,
 } from '../../../../hooks/useLifeCulturePreferencesState';
 import { useStudioOrb } from './StudioOrbProvider';
-import { conversationDockPanelStyle, orbBody, orbGrace, orbLabel, ORB_VISUAL } from './studioOrbTheme';
+import {
+  conversationDockPanelStyle,
+  orbBody,
+  orbChipBtnStyle,
+  orbCloseBtnStyle,
+  orbGrace,
+  orbLabel,
+  orbPrimaryBtnStyle,
+  orbProjectionInnerStyle,
+  orbSecondaryBtnStyle,
+  ORB_VISUAL,
+} from './studioOrbTheme';
 
 const LAYERS: PreferenceLayer[] = ['personal', 'household', 'organization', 'department', 'workspace'];
 const COMM_STYLES = Object.keys(COMMUNICATION_STYLE_LABELS) as CommunicationStyle[];
@@ -59,15 +70,15 @@ export function StudioOrbLifeCulturePanel() {
           maxHeight: 'min(520px, 78vh)',
         }}
       >
-        <div className="px-4 py-3 border-b flex items-start justify-between gap-2" style={{ borderColor: 'rgba(0,0,0,0.06)' }}>
+        <div className="px-4 py-3 border-b flex items-start justify-between gap-2" style={{ borderColor: 'rgba(255,255,255,0.12)' }}>
           <div>
-            <p style={{ ...orbLabel, color: ORB_VISUAL.brandRed, margin: 0 }}>STUDIO ORB · LIFE & CULTURE</p>
+            <p style={{ ...orbLabel, color: ORB_VISUAL.champagne, margin: 0 }}>STUDIO ORB · LIFE & CULTURE</p>
             <p style={{ ...orbGrace, fontSize: '16px', margin: '6px 0 0' }}>Help Studio Intelligence understand what matters to you</p>
             <p style={{ ...orbBody, fontSize: '7px', color: ORB_VISUAL.textMuted, marginTop: 6 }}>
               Emotional Intelligence™ · optional · never assumed
             </p>
           </div>
-          <button type="button" onClick={() => orb.closeSurface()} style={orbCloseBtn}>
+          <button type="button" onClick={() => orb.closeSurface()} style={orbCloseBtnStyle}>
             CLOSE
           </button>
         </div>
@@ -95,8 +106,8 @@ export function StudioOrbLifeCulturePanel() {
                   onClick={() => setActiveLayer(l)}
                   style={{
                     ...chipBtn,
-                    borderColor: activeLayer === l ? ORB_VISUAL.brandRed : 'rgba(0,0,0,0.1)',
-                    color: activeLayer === l ? ORB_VISUAL.brandRed : ORB_VISUAL.text,
+                    borderColor: activeLayer === l ? ORB_VISUAL.champagne : 'rgba(255,255,255,0.28)',
+                    color: activeLayer === l ? ORB_VISUAL.champagne : ORB_VISUAL.text,
                   }}
                 >
                   {LAYER_LABELS[l]}
@@ -115,7 +126,7 @@ export function StudioOrbLifeCulturePanel() {
                   onClick={() => patchLayer(activeLayer, { communicationStyle: style })}
                   style={{
                     ...chipBtn,
-                    borderColor: layer.communicationStyle === style ? ORB_VISUAL.brandRed : 'rgba(0,0,0,0.1)',
+                    borderColor: layer.communicationStyle === style ? ORB_VISUAL.champagne : 'rgba(255,255,255,0.28)',
                   }}
                 >
                   {COMMUNICATION_STYLE_LABELS[style]}
@@ -208,7 +219,7 @@ export function StudioOrbLifeCulturePanel() {
               </button>
               <button
                 type="button"
-                style={{ ...secondaryBtn, color: ORB_VISUAL.brandRed, borderColor: 'rgba(235,28,36,0.35)' }}
+                style={{ ...secondaryBtn, color: ORB_VISUAL.bronze, borderColor: 'rgba(146, 112, 74, 0.45)' }}
                 onClick={() => {
                   if (window.confirm('Permanently delete all Life & Culture Preferences for this organization?')) {
                     deletePreferences();
@@ -230,10 +241,8 @@ export function StudioOrbLifeCulturePanel() {
 }
 
 const sectionStyle: CSSProperties = {
+  ...orbProjectionInnerStyle,
   padding: '12px 14px',
-  borderRadius: 10,
-  background: 'rgba(255,255,255,0.55)',
-  border: '1px solid rgba(255,255,255,0.85)',
 };
 
 const sectionLabel: CSSProperties = {
@@ -241,60 +250,31 @@ const sectionLabel: CSSProperties = {
   fontSize: '7px',
   letterSpacing: '0.1em',
   textTransform: 'uppercase',
-  color: '#808080',
+  color: ORB_VISUAL.textMuted,
   margin: 0,
 };
 
-const chipBtn: CSSProperties = {
-  fontFamily: '"Futura PT Medium"',
-  fontSize: '6px',
-  letterSpacing: '0.06em',
-  textTransform: 'uppercase',
-  padding: '6px 8px',
-  border: '1px solid rgba(0,0,0,0.1)',
-  background: 'rgba(255,255,255,0.85)',
-  borderRadius: 6,
-  cursor: 'pointer',
-};
+const chipBtn: CSSProperties = orbChipBtnStyle;
 
 const selectStyle: CSSProperties = {
   fontFamily: '"Futura PT Book"',
   fontSize: '7px',
   padding: '4px 6px',
   borderRadius: 6,
-  border: '1px solid rgba(0,0,0,0.12)',
-  background: 'white',
+  border: '0.5px solid rgba(255, 255, 255, 0.28)',
+  background: 'rgba(255, 252, 248, 0.08)',
+  color: ORB_VISUAL.text,
   maxWidth: 160,
 };
 
 const primaryBtn: CSSProperties = {
+  ...orbPrimaryBtnStyle,
   marginTop: 12,
-  fontFamily: '"Futura PT Medium"',
-  fontSize: '7px',
-  letterSpacing: '0.08em',
-  textTransform: 'uppercase',
-  padding: '8px 12px',
-  border: '1px solid rgba(235,28,36,0.35)',
-  color: ORB_VISUAL.brandRed,
-  background: 'rgba(255,255,255,0.9)',
   borderRadius: 6,
-  cursor: 'pointer',
 };
 
 const secondaryBtn: CSSProperties = {
-  ...primaryBtn,
+  ...orbSecondaryBtnStyle,
   marginTop: 0,
-  color: ORB_VISUAL.text,
-  borderColor: 'rgba(0,0,0,0.12)',
-};
-
-const orbCloseBtn: CSSProperties = {
-  fontFamily: '"Futura PT Medium"',
-  fontSize: '6px',
-  letterSpacing: '0.08em',
-  border: '1px solid rgba(0,0,0,0.12)',
-  background: 'rgba(255,255,255,0.9)',
-  padding: '6px 8px',
-  cursor: 'pointer',
-  borderRadius: 4,
+  borderRadius: 6,
 };

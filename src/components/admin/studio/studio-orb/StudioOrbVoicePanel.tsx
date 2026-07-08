@@ -3,7 +3,15 @@ import { useCommandDockState } from '../../../../hooks/useCommandDockState';
 import { useConversationEngineState } from '../../../../hooks/useConversationEngineState';
 import { useVoiceModeState } from '../../../../hooks/useConversationEngineState';
 import { useOrganizationContextOptional } from '../../../../studio-os-core/organization-context';
-import { conversationDockPanelStyle, orbLabel, ORB_VISUAL } from './studioOrbTheme';
+import {
+  conversationDockPanelStyle,
+  orbLabel,
+  orbPrimaryBtnStyle,
+  orbProjectionInnerStyle,
+  orbSecondaryBtnStyle,
+  ORB_VISUAL,
+} from './studioOrbTheme';
+import { OrbIconVoice } from './OrbIconSculptures';
 import { useStudioOrb } from './StudioOrbProvider';
 
 /** Voice Mode™ — Orb-native speech interface routed through Conversation Engine™. */
@@ -46,22 +54,25 @@ export function StudioOrbVoicePanel() {
   if (!open) return null;
 
   const latest = profile.transcripts[profile.transcripts.length - 1];
+  const isListening = profile.state === 'listening';
+  const isProcessing = profile.state === 'processing';
 
   return (
     <div
-      className="studio-voice-mode-panel fixed left-1/2 z-[100055] pointer-events-auto"
+      className="studio-voice-mode-panel studio-conversation-dock-panel fixed left-1/2 z-[100055] pointer-events-auto"
       style={{
         ...conversationDockPanelStyle,
         transform: 'translateX(-50%)',
         bottom: 'max(72px, env(safe-area-inset-bottom, 0px) + 56px)',
         width: 'min(92vw, 420px)',
+        padding: '16px 18px',
       }}
       role="dialog"
       aria-label="Voice Mode"
     >
       <div className="flex items-center justify-between mb-3">
-        <p style={{ ...orbLabel, color: ORB_VISUAL.text, margin: 0 }}>VOICE MODE · STUDIO ORB</p>
-        <button type="button" onClick={handleClose} style={{ ...orbLabel, background: 'none', border: 'none', cursor: 'pointer' }}>
+        <p style={{ ...orbLabel, color: ORB_VISUAL.champagne, margin: 0 }}>VOICE MODE · STUDIO ORB</p>
+        <button type="button" onClick={handleClose} style={{ ...orbSecondaryBtnStyle, padding: '6px 10px', fontSize: '6px' }}>
           CLOSE
         </button>
       </div>
@@ -71,48 +82,43 @@ export function StudioOrbVoicePanel() {
       </p>
 
       {!profile.speechSupported ? (
-        <p style={{ ...orbLabel, color: '#EB1C24' }}>VOICE NOT SUPPORTED IN THIS BROWSER · USE COMMAND DOCK</p>
+        <p style={{ ...orbLabel, color: ORB_VISUAL.bronze }}>VOICE NOT SUPPORTED · USE COMMAND DOCK</p>
       ) : null}
 
       {profile.lastError ? (
-        <p style={{ ...orbLabel, color: '#EB1C24', marginBottom: 8 }}>{profile.lastError.toUpperCase()}</p>
+        <p style={{ ...orbLabel, color: ORB_VISUAL.bronze, marginBottom: 8 }}>{profile.lastError.toUpperCase()}</p>
       ) : null}
 
       <div
         style={{
+          ...orbProjectionInnerStyle,
           minHeight: 72,
           padding: 12,
-          borderRadius: 12,
-          background: 'rgba(255,255,255,0.55)',
-          border: '1px solid rgba(255,255,255,0.8)',
           marginBottom: 12,
         }}
       >
         <p style={{ ...orbLabel, color: ORB_VISUAL.text, margin: 0 }}>
-          {latest?.text?.toUpperCase() || 'TAP THE ORB BELOW AND SPEAK'}
+          {latest?.text?.toUpperCase() || 'TAP BELOW AND SPEAK TO THE ORB'}
         </p>
       </div>
 
-      <div className="flex gap-2 justify-center">
+      <div className="flex gap-2 justify-center items-center">
         <button
           type="button"
-          onClick={profile.state === 'listening' ? stopListening : handleListen}
+          onClick={isListening ? stopListening : handleListen}
           style={{
-            ...orbLabel,
-            padding: '10px 18px',
-            borderRadius: 999,
-            border: '1px solid rgba(0,0,0,0.12)',
-            background: profile.state === 'listening' ? 'rgba(235,28,36,0.12)' : 'rgba(255,255,255,0.9)',
-            cursor: 'pointer',
+            ...orbPrimaryBtnStyle,
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            background: isListening ? 'rgba(201, 169, 98, 0.28)' : orbPrimaryBtnStyle.background,
+            boxShadow: isListening ? '0 0 24px rgba(201, 169, 98, 0.22)' : orbPrimaryBtnStyle.boxShadow,
           }}
         >
-          {profile.state === 'listening' ? 'LISTENING…' : profile.state === 'processing' ? 'PROCESSING…' : '🎙 ASK THE ORB'}
+          <OrbIconVoice size={16} />
+          {isListening ? 'LISTENING…' : isProcessing ? 'PROCESSING…' : 'ASK THE ORB'}
         </button>
-        <button
-          type="button"
-          onClick={clear}
-          style={{ ...orbLabel, padding: '10px 14px', borderRadius: 999, border: '1px solid rgba(0,0,0,0.08)', background: 'transparent', cursor: 'pointer' }}
-        >
+        <button type="button" onClick={clear} style={{ ...orbSecondaryBtnStyle, padding: '10px 14px' }}>
           CLEAR
         </button>
       </div>

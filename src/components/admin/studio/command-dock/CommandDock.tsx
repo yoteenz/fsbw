@@ -103,7 +103,7 @@ export function CommandDockConversationPanel() {
           <div className="relative z-10 h-full flex flex-col px-4 py-3 pointer-events-none">
             <div className="flex items-start justify-between gap-2 mb-1 shrink-0">
               <div className="min-w-0">
-                <p style={{ ...orbLabel, color: ORB_VISUAL.brandRed, margin: 0 }}>STUDIO ORB · COMMAND DOCK</p>
+                <p style={{ ...orbLabel, color: ORB_VISUAL.champagne, margin: 0 }}>STUDIO ORB · COMMAND DOCK</p>
                 {pilotBrief ? (
                   <>
                     <p style={{ ...orbGrace, fontSize: '14px', margin: '6px 0 0' }}>{pilotBrief.greeting}</p>

@@ -9,7 +9,17 @@ import {
   type OrbRecommendation,
 } from '../../../../studio-os-core/orb-recommendations';
 import { useStudioOrbRecommendations } from '../../../../hooks/useStudioOrbRecommendations';
-import { orbLabel, ORB_VISUAL } from './studioOrbTheme';
+import {
+  orbBody,
+  orbChipBtnStyle,
+  orbLabel,
+  orbOverlayBackdropStyle,
+  orbPrimaryBtnStyle,
+  orbProjectionInnerStyle,
+  orbProjectionPanelStyle,
+  orbSecondaryBtnStyle,
+  ORB_VISUAL,
+} from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 
 const panelStyle: CSSProperties = {
@@ -21,13 +31,8 @@ const panelStyle: CSSProperties = {
   width: 'min(92vw, 360px)',
   maxHeight: 'min(78vh, 520px)',
   overflow: 'auto',
-  background: 'rgba(255,255,255,0.94)',
-  backdropFilter: 'blur(16px)',
-  WebkitBackdropFilter: 'blur(16px)',
-  border: ORB_VISUAL.border,
-  borderRadius: 14,
-  padding: '14px 16px',
-  boxShadow: '0 16px 48px rgba(0,0,0,0.18)',
+  padding: '16px 18px',
+  ...orbProjectionPanelStyle,
 };
 
 function RecommendationCard({
@@ -40,18 +45,20 @@ function RecommendationCard({
   return (
     <article
       style={{
-        border: '1px solid rgba(0,0,0,0.12)',
-        borderRadius: 10,
+        ...orbProjectionInnerStyle,
         padding: '10px 12px',
         marginBottom: 8,
-        background: rec.isSurprise ? 'rgba(235,28,36,0.04)' : 'rgba(255,255,255,0.6)',
+        borderColor: rec.isSurprise ? 'rgba(201, 169, 98, 0.45)' : 'rgba(255, 255, 255, 0.28)',
+        boxShadow: rec.isSurprise
+          ? '0 0 20px rgba(201, 169, 98, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.35)'
+          : orbProjectionInnerStyle.boxShadow,
       }}
     >
-      <p style={{ ...orbLabel, fontSize: 7, margin: 0, color: ORB_VISUAL.brandRed }}>
+      <p style={{ ...orbLabel, fontSize: 7, margin: 0, color: ORB_VISUAL.champagne }}>
         {rec.isSurprise ? 'SURPRISE DISCOVERY™' : categoryLabel(rec.category)} · {rec.priority}
       </p>
       <p style={{ ...orbLabel, fontSize: 8, margin: '4px 0', lineHeight: 1.35 }}>{rec.title}</p>
-      <p style={{ fontSize: 9, margin: '0 0 6px', lineHeight: 1.4, textTransform: 'none', color: ORB_VISUAL.textMuted }}>
+      <p style={{ ...orbBody, fontSize: 9, margin: '0 0 6px', textTransform: 'none', color: ORB_VISUAL.textMuted }}>
         {rec.reasoning}
       </p>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, fontSize: 7, opacity: 0.75 }}>
@@ -69,16 +76,9 @@ function RecommendationCard({
           type="button"
           onClick={() => onAccept(rec)}
           style={{
+            ...orbPrimaryBtnStyle,
             marginTop: 8,
             width: '100%',
-            padding: '8px 10px',
-            border: ORB_VISUAL.border,
-            background: ORB_VISUAL.brandRed,
-            color: '#fff',
-            fontSize: 7,
-            letterSpacing: '0.1em',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
           }}
         >
           GO →
@@ -88,7 +88,7 @@ function RecommendationCard({
   );
 }
 
-/** Orb Recommendations™ — Daily Brief, focus modes, executive journey. */
+/** Orb Recommendations™ — holographic executive brief projected from the Orb. */
 export function StudioOrbRecommendationsPanel() {
   const { activeSurface, closeSurface } = useStudioOrb();
   const orb = useStudioOrbRecommendations();
@@ -109,25 +109,25 @@ export function StudioOrbRecommendationsPanel() {
         type="button"
         aria-label="Close recommendations"
         className="fixed inset-0 z-[100047]"
-        style={{ background: 'rgba(0,0,0,0.25)', border: 'none', cursor: 'default' }}
+        style={{ ...orbOverlayBackdropStyle, border: 'none', cursor: 'default' }}
         onClick={closeSurface}
       />
-      <div style={panelStyle} role="dialog" aria-label="Studio Orb recommendations">
+      <div className="studio-conversation-dock-panel" style={panelStyle} role="dialog" aria-label="Studio Orb recommendations">
         <header style={{ marginBottom: 10 }}>
-          <p style={{ ...orbLabel, fontSize: 6, margin: 0, color: ORB_VISUAL.gold }}>
+          <p style={{ ...orbLabel, fontSize: 6, margin: 0, color: ORB_VISUAL.champagne }}>
             STUDIO ORB™ · EXECUTIVE CHIEF OF STAFF
           </p>
           <p style={{ ...orbLabel, fontSize: 9, margin: '4px 0 0' }}>ORB RECOMMENDATIONS™</p>
         </header>
 
         <section style={{ marginBottom: 12 }}>
-          <p style={{ fontFamily: '"Covered By Your Grace", cursive', fontSize: 14, margin: '0 0 6px' }}>
+          <p style={{ fontFamily: '"Covered By Your Grace", cursive', fontSize: 14, margin: '0 0 6px', color: ORB_VISUAL.champagne }}>
             {snapshot.dailyBrief.greeting}
           </p>
           {snapshot.dailyBrief.lines.map((line: string) => (
             <p
               key={line}
-              style={{ fontSize: 9, margin: '0 0 4px', lineHeight: 1.4, textTransform: 'none', color: ORB_VISUAL.text }}
+              style={{ ...orbBody, fontSize: 9, margin: '0 0 4px', textTransform: 'none' }}
             >
               {line}
             </p>
@@ -143,13 +143,11 @@ export function StudioOrbRecommendationsPanel() {
                 type="button"
                 onClick={() => orb.changeFocusMode(mode)}
                 style={{
-                  padding: '5px 8px',
-                  fontSize: 6,
-                  letterSpacing: '0.08em',
-                  border: snapshot.focusMode === mode ? `1.3px solid ${ORB_VISUAL.brandRed}` : '1px solid #ccc',
-                  background: snapshot.focusMode === mode ? 'rgba(235,28,36,0.08)' : '#fff',
-                  cursor: 'pointer',
-                  fontFamily: 'inherit',
+                  ...orbChipBtnStyle,
+                  borderColor: snapshot.focusMode === mode ? ORB_VISUAL.champagne : 'rgba(255, 255, 255, 0.28)',
+                  color: snapshot.focusMode === mode ? ORB_VISUAL.champagne : ORB_VISUAL.text,
+                  background:
+                    snapshot.focusMode === mode ? 'rgba(201, 169, 98, 0.16)' : orbChipBtnStyle.background,
                 }}
                 title={ORB_FOCUS_MODE_DESCRIPTIONS[mode]}
               >
@@ -161,7 +159,7 @@ export function StudioOrbRecommendationsPanel() {
 
         <section style={{ marginBottom: 12 }}>
           <p style={{ ...orbLabel, fontSize: 6, margin: '0 0 6px' }}>THE EXECUTIVE JOURNEY™</p>
-          <p style={{ fontSize: 8, margin: '0 0 6px', textTransform: 'none', lineHeight: 1.35 }}>
+          <p style={{ ...orbBody, fontSize: 8, margin: '0 0 6px', textTransform: 'none' }}>
             {snapshot.executiveJourney.reasoning}
           </p>
           <ol style={{ margin: 0, paddingLeft: 16, fontSize: 8, lineHeight: 1.5, textTransform: 'none' }}>
@@ -176,7 +174,7 @@ export function StudioOrbRecommendationsPanel() {
                     padding: 0,
                     cursor: 'pointer',
                     fontSize: 'inherit',
-                    color: ORB_VISUAL.brandRed,
+                    color: ORB_VISUAL.champagne,
                     textDecoration: 'underline',
                     fontFamily: 'inherit',
                   }}
@@ -194,16 +192,9 @@ export function StudioOrbRecommendationsPanel() {
               closeSurface();
             }}
             style={{
+              ...orbSecondaryBtnStyle,
               marginTop: 8,
               width: '100%',
-              padding: '8px 10px',
-              border: ORB_VISUAL.border,
-              background: '#fff',
-              color: ORB_VISUAL.text,
-              fontSize: 7,
-              letterSpacing: '0.1em',
-              cursor: 'pointer',
-              fontFamily: 'inherit',
             }}
           >
             ACCEPT ITINERARY →
@@ -226,20 +217,7 @@ export function StudioOrbRecommendationsPanel() {
           ))}
         </section>
 
-        <button
-          type="button"
-          onClick={closeSurface}
-          style={{
-            marginTop: 10,
-            width: '100%',
-            padding: '8px',
-            border: '1px solid #ccc',
-            background: 'transparent',
-            fontSize: 7,
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-          }}
-        >
+        <button type="button" onClick={closeSurface} style={{ ...orbSecondaryBtnStyle, marginTop: 10, width: '100%' }}>
           CLOSE
         </button>
       </div>

@@ -6,9 +6,10 @@ import {
   readViewportRect,
   type RadialMenuLayout,
 } from './studioOrbRadialLayout';
-import { orbLabel, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';
 import { useGlobalAtlasLayerOptional } from '../global-atlas';
+import { OrbIconSculpture } from './OrbIconSculptures';
+import { StudioOrbProjectionItem } from './StudioOrbProjectionItem';
 
 const PRIMARY_ACTIONS: StudioOrbRadialActionId[] = [
   'world-atlas',
@@ -19,29 +20,25 @@ const PRIMARY_ACTIONS: StudioOrbRadialActionId[] = [
 ];
 
 type Props = {
-  /** Initial orb center from mount — refreshed from DOM on open. */
   orbCenterX: number;
   orbCenterY: number;
 };
 
-const itemShellStyle = {
-  background: 'rgba(255,255,255,0.9)',
-  backdropFilter: 'blur(12px)',
-  WebkitBackdropFilter: 'blur(12px)',
-  border: '1px solid rgba(255,255,255,0.7)',
-  boxShadow: '0 8px 24px rgba(0,0,0,0.12)',
-  borderRadius: 12,
-  padding: '8px 10px',
-  minWidth: 72,
-  cursor: 'pointer',
-} as const;
-
-/** AssistiveTouch-inspired radial menu — viewport-aware, never clipped. */
+/** Orb Projections™ — holographic glass manifestations, not app shortcuts. */
 export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
-  const { radialOpen, closeRadial, openCommandDock, openPageGuide, openLifeCulture, openVoiceMode, openRecommendations } =
-    useStudioOrb();
+  const {
+    radialOpen,
+    closeRadial,
+    openCommandDock,
+    openPageGuide,
+    openLifeCulture,
+    openVoiceMode,
+    openRecommendations,
+  } = useStudioOrb();
   const globalAtlas = useGlobalAtlasLayerOptional();
-  const enabledActions = STUDIO_ORB_RADIAL_ACTIONS.filter((a) => a.enabled && PRIMARY_ACTIONS.includes(a.id));
+  const enabledActions = STUDIO_ORB_RADIAL_ACTIONS.filter(
+    (a) => a.enabled && PRIMARY_ACTIONS.includes(a.id)
+  );
 
   const [layout, setLayout] = useState<RadialMenuLayout>(() =>
     computeRadialMenuLayout(orbCenterX, orbCenterY, enabledActions.length)
@@ -91,14 +88,14 @@ export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
     <>
       <button
         type="button"
-        aria-label="Close Studio Orb menu"
+        aria-label="Close Studio Orb projections"
         className="fixed inset-0 z-[100045]"
         style={{ background: 'transparent', border: 'none', cursor: 'default' }}
         onClick={closeRadial}
       />
       <div
         className="fixed z-[100049] pointer-events-none studio-orb-radial-menu-root"
-        aria-label="Studio Orb quick actions"
+        aria-label="Studio Orb projections"
         role="menu"
         data-layout={layout.mode}
       >
@@ -106,23 +103,18 @@ export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
           const pos = layout.items[index];
           if (!pos) return null;
           return (
-            <button
+            <StudioOrbProjectionItem
               key={action.id}
-              type="button"
-              role="menuitem"
-              className="studio-radial-menu-item pointer-events-auto fixed flex flex-col items-center"
+              label={action.label}
+              icon={<OrbIconSculpture iconId={action.iconId} size={26} />}
+              index={index}
               style={{
                 left: pos.x,
                 top: pos.y,
                 transform: 'translate(-50%, -50%)',
-                animationDelay: `${index * 40}ms`,
-                ...itemShellStyle,
               }}
               onClick={() => handleAction(action.id)}
-            >
-              <span style={{ fontSize: 16, lineHeight: 1 }}>{action.icon}</span>
-              <span style={{ ...orbLabel, fontSize: '5px', marginTop: 4, color: ORB_VISUAL.text }}>{action.label}</span>
-            </button>
+            />
           );
         })}
       </div>

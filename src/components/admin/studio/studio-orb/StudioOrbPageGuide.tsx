@@ -45,7 +45,7 @@ export function StudioOrbPageGuide() {
     >
       <div className="flex items-start justify-between gap-2 mb-2">
         <div>
-          <p style={{ ...orbLabel, color: ORB_VISUAL.brandRed, margin: 0 }}>STUDIO ORB · PAGE GUIDE</p>
+          <p style={{ ...orbLabel, color: ORB_VISUAL.champagne, margin: 0 }}>STUDIO ORB · PAGE GUIDE</p>
           <p style={{ ...orbGrace, margin: '6px 0 0', fontSize: '14px' }}>{title}</p>
         </div>
         <button type="button" onClick={closeSurface} style={{ ...orbLabel, cursor: 'pointer', border: 'none', background: 'none' }}>
