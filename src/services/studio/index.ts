@@ -281,6 +281,9 @@ export type { BlueprintManagerSnapshot, BlueprintManagerSummary } from './bluepr
 export { assetFactoryStudioService, ASSET_FACTORY_INHERITANCE_CHAIN } from './assetFactory/service';
 export type { AssetFactorySnapshot, AssetFactorySummary } from './assetFactory/service';
 
+export { warehouseStudioService } from './warehouse/service';
+export type { WarehouseSnapshot } from './warehouse/service';
+
 export { knowledgeHubStudioService } from './knowledgeHub/service';
 export type { KnowledgeHubQueryInput, KnowledgeHubQueryOutput } from './knowledgeHub/service';
 
@@ -412,6 +415,7 @@ import { designGenomeModuleService } from './designGenomeModule/service';
 import { blueprintManagerStudioService } from './blueprintManager/service';
 import { assetFactoryStudioService } from './assetFactory/service';
 import { socialPublishingStudioService } from './socialPublishing/service';
+import { warehouseStudioService } from './warehouse/service';
 import { knowledgeHubStudioService } from './knowledgeHub/service';
 import { memoryBibleStudioService } from './memoryBible/service';
 import { productPhotographyBibleStudioService } from './productPhotographyBible/service';
@@ -508,6 +512,7 @@ export const STUDIO_SERVICE_REGISTRY: StudioServiceStub[] = [
   designGenomeModuleService,
   blueprintManagerStudioService,
   assetFactoryStudioService,
+  warehouseStudioService,
   socialPublishingStudioService,
   knowledgeHubStudioService,
   memoryBibleStudioService,

@@ -135,6 +135,7 @@ export type StudioOsCoreModuleId =
   | 'workflow-engine'
   | 'state-engine'
   | 'asset-registry'
+  | 'studio-warehouse'
   | 'experience-engine'
   | 'qa-headquarters'
   | 'qa-inspector'
@@ -967,6 +968,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'ASSET REGISTRY™',
     description: 'Asset Registry V1.0 — permanent home for every organizational asset; searchable, versioned, connected.',
     routeSegment: 'asset-registry',
+  },
+  {
+    id: 'studio-warehouse',
+    label: 'STUDIO WAREHOUSE™',
+    description: 'Physical manifestation of Asset Registry™ — immersive warehouse districts, Scene Recipe™, replace workflow.',
+    routeSegment: 'studio-warehouse',
   },
   {
     id: 'experience-engine',

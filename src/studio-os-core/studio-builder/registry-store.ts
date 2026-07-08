@@ -56,3 +56,8 @@ export function getRegistryAsset(
 export function listRegistryAssets(departmentId: string, projectId: string): StudioAssetRegistryEntry[] {
   return readStore().entries.filter((e) => e.departmentId === departmentId && e.projectId === projectId);
 }
+
+/** Studio Warehouse™ — all pipeline-registered assets across departments. */
+export function listAllRegistryAssets(): StudioAssetRegistryEntry[] {
+  return readStore().entries;
+}

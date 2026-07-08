@@ -108,6 +108,7 @@ export type AdminStudioSectionId =
   | 'asset-director'
   | 'blueprint-manager'
   | 'asset-factory'
+  | 'studio-warehouse'
   | 'production-builder'
   | 'director-mode'
   | 'executive-ai-director'

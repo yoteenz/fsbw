@@ -1812,6 +1812,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'studio-warehouse',
+    title: 'STUDIO WAREHOUSE™',
+    purpose: 'Physical manifestation of Asset Registry™ — walk districts, preview objects, reuse before you regenerate.',
+    route: p('studio-warehouse'),
+    groupId: 'visuals',
+    status: 'live',
+    metric: 'IMMERSIVE',
+    ctaLabel: 'ENTER WAREHOUSE',
+    moduleKey: 'studio-warehouse',
+    featuredOnOverview: true,
+  },
+  {
     id: 'experience-engine',
     title: 'EXPERIENCE ENGINE™',
     purpose: 'Emotional and environmental layer — adaptive atmosphere, context-aware modes, subtle transitions.',
