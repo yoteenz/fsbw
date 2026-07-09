@@ -48,6 +48,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/BRAND_DISCOVERY_ENGINE.md](./genesis/BRAND_DISCOVERY_ENGINE.md) | **Brand Discovery Engine™ guide** — discovery pipeline, strategic Brand DNA model, intelligence API, applications, case studies |
 | [../../genesis/articles/STUDIO_INTELLIGENCE_LAYER.md](../../genesis/articles/STUDIO_INTELLIGENCE_LAYER.md) | **Studio Intelligence Layer™** — executive reasoning architecture for Company Operating Manual™, Decision DNA™, Taste Genome™, Canon Engine™, Experience Compiler™, Audience DNA™, Product DNA™, and Creative Genome™ |
 | [genesis/STUDIO_INTELLIGENCE_LAYER.md](./genesis/STUDIO_INTELLIGENCE_LAYER.md) | **Studio Intelligence Layer™ guide** — implementation-facing summary for executive reasoning, canon governance, and intelligence relationships |
+| [../../genesis/articles/NARRATIVE_INTELLIGENCE.md](../../genesis/articles/NARRATIVE_INTELLIGENCE.md) | **Narrative Intelligence™** — experience-design layer for Narrative Genome™, Production Genome™, Moment Map™, Proof System™, and emotional journey |
+| [genesis/NARRATIVE_INTELLIGENCE.md](./genesis/NARRATIVE_INTELLIGENCE.md) | **Narrative Intelligence™ guide** — implementation-facing summary for experience-first narrative architecture before production |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

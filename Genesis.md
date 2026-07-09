@@ -1348,6 +1348,39 @@ Rules:
     direction, financial impact, operational impact, and long-term platform
     implications.
 
+### 9B.18 Narrative Intelligence rule
+
+The canonical narrative experience architecture is defined in
+**[Narrative Intelligence™](./genesis/articles/NARRATIVE_INTELLIGENCE.md)**.
+
+Studio OS must design narrative experiences before producing creative outputs.
+Creative Direction Studio™ should not generate videos first; it should generate
+experiences.
+
+Rules:
+
+1. **Narrative Intelligence™** is the experience-design layer above production
+   systems. It turns company truth, Brand DNA™, Audience DNA™, Product DNA™,
+   Taste Genome™, Creative Genome™, and proof into a resolved Narrative
+   Experience™.
+2. Content formats are output containers. The canonical object is the
+   **Narrative Experience™**, not a video, post, page, campaign, ad, or asset.
+3. The permanent hierarchy is Narrative Intelligence™ → Narrative Genome™ →
+   Production Genome™ → Experience Arc™ → Moment Map™ → Proof System™ →
+   Emotional Journey™ → Production Brief™ → Runtime / Production Execution™.
+4. **Production Genome™** is reusable execution DNA. It may generate many
+   outputs across channels, but it must preserve the same narrative truth.
+5. Every meaningful creative initiative must resolve an Experience Arc™, Moment
+   Map™, Proof System™, Emotional Journey™, and Production Brief™ before
+   production begins.
+6. Experience Runtime™ may express narrative through scene graph placement,
+   motion, Orb language, proof panels, focal objects, and interactions, but it
+   must not invent or canonize narrative truth during render.
+7. Rejected narratives and anti-stories are canonical memory candidates because
+   they protect the brand from repeating wrong creative directions.
+8. Narrative Genome™ and Production Genome™ require founder approval and Canon
+   Engine™ review before becoming canonical.
+
 ---
 
 ## 10. Compilation Model
