@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DependencySystemRecord",
+  "description": "Studio OS Dependency Map system record",
+  "type": "object",
+  "required": ["systemId", "name", "purpose", "status", "buildPhase", "buildOrder", "priority"],
+  "properties": {
+    "systemId": { "type": "string" },
+    "name": { "type": "string" },
+    "purpose": { "type": "string" },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "in_progress", "implemented", "blocked", "deferred"]
+    },
+    "buildPhase": { "type": "integer", "minimum": 0, "maximum": 8 },
+    "buildOrder": { "type": "integer", "minimum": 1 },
+    "priority": { "type": "string", "enum": ["P0", "P1", "P2", "P3", "P4"] },
+    "upstreamDependencies": { "type": "array", "items": { "type": "string" } },
+    "ownedData": { "type": "array", "items": { "type": "string" } },
+    "eventsEmitted": { "type": "array", "items": { "type": "string" } },
+    "eventsConsumed": { "type": "array", "items": { "type": "string" } },
+    "implementationRisk": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "notes": { "type": "string" }
+  }
+}

@@ -227,6 +227,7 @@ export type GenesisStore = {
   interactionModel?: import('./interaction-model/types').InteractionModelStore;
   decisionEngine?: import('./decision-engine/types').DecisionEngineStore;
   coreSystems?: import('./core-systems/types').CoreSystemsStore;
+  dependencyMap?: import('./dependency-map/types').DependencyMapStore;
   bootstrappedAt?: string;
 };
 

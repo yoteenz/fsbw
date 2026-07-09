@@ -10,6 +10,7 @@ import { useObjectModelState } from '../../../../hooks/useObjectModelState';
 import { useInteractionModelState } from '../../../../hooks/useInteractionModelState';
 import { useDecisionEngineState } from '../../../../hooks/useDecisionEngineState';
 import { useCoreSystemsState } from '../../../../hooks/useCoreSystemsState';
+import { useDependencyMapState } from '../../../../hooks/useDependencyMapState';
 
 function GenesisPanel({
   title,
@@ -116,6 +117,23 @@ export function GenesisWorkspace() {
     refresh: refreshCoreSystems,
   } = useCoreSystemsState();
 
+  const {
+    stats: dependencyMapStats,
+    systems: dependencyMapSystems,
+    dependencyGraph,
+    circularDependencies: dependencyMapCircular,
+    missingDependencies: dependencyMapMissing,
+    buildOrder,
+    nextToBuild,
+    blockedSystems,
+    readyToBuild,
+    riskView,
+    readinessSummary,
+    riskSummary,
+    validation: dependencyMapValidation,
+    refresh: refreshDependencyMap,
+  } = useDependencyMapState();
+
   const [activeTab, setActiveTab] = useState<
     | 'overview'
     | 'registry'
@@ -127,6 +145,7 @@ export function GenesisWorkspace() {
     | 'interaction-model'
     | 'decision-engine'
     | 'core-systems'
+    | 'dependency-map'
   >('overview');
   const [lastCompileMessage, setLastCompileMessage] = useState<string | null>(null);
 
@@ -172,6 +191,7 @@ export function GenesisWorkspace() {
               refreshInteractionModel();
               refreshDecisionEngine();
               refreshCoreSystems();
+              refreshDependencyMap();
             }}
             className="rounded-lg border border-violet-500/40 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-200 hover:bg-violet-500/20"
           >
@@ -219,6 +239,7 @@ export function GenesisWorkspace() {
               ['interaction-model', 'Interactions™'],
               ['decision-engine', 'Decisions™'],
               ['core-systems', 'Core Systems™'],
+              ['dependency-map', 'Dependency Map™'],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -1055,6 +1076,143 @@ export function GenesisWorkspace() {
                 <ul className="mt-3 space-y-1 text-xs text-amber-200/80">
                   {coreSystemsValidation.issues.slice(0, 5).map((issue, i) => (
                     <li key={`${issue.code}-${i}`}>{issue.message}</li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'dependency-map' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-6 text-sm">
+            <div>
+              <span className="text-white/40">Systems</span>
+              <p className="font-medium">{dependencyMapStats.systemCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Implemented</span>
+              <p className="font-medium">{dependencyMapStats.implementedCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Ready to build</span>
+              <p className="font-medium">{dependencyMapStats.readyToBuildCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Blocked</span>
+              <p className="font-medium">{dependencyMapStats.blockedCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Avg readiness</span>
+              <p className="font-medium">{readinessSummary.averageScore}%</p>
+            </div>
+            <div>
+              <span className="text-white/40">Circular cycles</span>
+              <p className="font-medium">{dependencyMapStats.circularCycleCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Validation</span>
+              <p className="font-medium">{dependencyMapValidation.valid ? 'PASS' : 'ISSUES'}</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <GenesisPanel title="System Registry">
+              <ul className="max-h-64 space-y-2 overflow-y-auto text-sm">
+                {dependencyMapSystems.map((system) => (
+                  <li key={system.systemId} className="rounded bg-white/5 px-3 py-2">
+                    <span className="font-medium text-violet-200">{system.name}</span>
+                    <span className="ml-2 text-white/40">{system.systemId}</span>
+                    <span className="ml-2 text-xs text-white/30">P{system.buildPhase} · {system.priority}</span>
+                    <span className="ml-2 text-xs text-white/30">{system.status}</span>
+                    <span className="ml-2 text-xs text-emerald-300/80">{system.readinessScore}%</span>
+                  </li>
+                ))}
+              </ul>
+            </GenesisPanel>
+
+            <GenesisPanel title="Build Order View">
+              <p className="mb-2 text-xs text-white/40">Next recommended systems</p>
+              <ul className="space-y-2 text-sm text-white/70">
+                {nextToBuild.length === 0 ? (
+                  <li>No systems ready — resolve upstream dependencies first.</li>
+                ) : (
+                  nextToBuild.map((entry) => (
+                    <li key={entry.systemId}>
+                      #{entry.buildOrder} {entry.name} — {entry.priority} ({entry.readinessScore}%)
+                    </li>
+                  ))
+                )}
+              </ul>
+              <p className="mt-3 text-xs text-white/40">
+                Full order: {buildOrder.length} systems across phases 0–8
+              </p>
+            </GenesisPanel>
+
+            <GenesisPanel title="Ready To Build View">
+              {readyToBuild.length === 0 ? (
+                <p className="text-sm text-white/50">No systems currently ready.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {readyToBuild.slice(0, 8).map((entry) => (
+                    <li key={entry.systemId}>
+                      {entry.name} — order #{entry.buildOrder} · {entry.readinessScore}% ready
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Blocked Systems View">
+              {blockedSystems.length === 0 ? (
+                <p className="text-sm text-white/50">No blocked systems.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {blockedSystems.slice(0, 8).map((entry) => (
+                    <li key={entry.systemId}>
+                      {entry.name} — blocked by {entry.blockedBy.join(', ') || 'unknown'}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Risk View">
+              <p className="mb-2 text-xs text-white/40">
+                Critical: {riskSummary.critical} · High: {riskSummary.high} · Medium:{' '}
+                {riskSummary.medium} · Low: {riskSummary.low}
+              </p>
+              <ul className="space-y-2 text-sm text-white/70">
+                {riskView.slice(0, 8).map((entry) => (
+                  <li key={entry.systemId}>
+                    {entry.name} — {entry.implementationRisk} ({entry.readinessScore}%)
+                  </li>
+                ))}
+              </ul>
+            </GenesisPanel>
+
+            <GenesisPanel title="Dependency Graph & Detectors">
+              <p className="mb-2 text-xs text-white/40">
+                {dependencyGraph.nodes.length} nodes · {dependencyGraph.edges.length} edges
+              </p>
+              {dependencyMapCircular.hasCycles && (
+                <ul className="mb-3 space-y-1 text-xs text-amber-200/80">
+                  {dependencyMapCircular.cycles.slice(0, 3).map((cycle, i) => (
+                    <li key={`cycle-${i}`}>Cycle: {cycle.join(' → ')}</li>
+                  ))}
+                </ul>
+              )}
+              {dependencyMapMissing.length === 0 ? (
+                <p className="text-sm text-white/50">No missing upstream dependencies.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {dependencyMapMissing.slice(0, 6).map((entry) => (
+                    <li key={entry.systemId}>
+                      {entry.name} — missing: {entry.missingUpstream.join(', ') || 'none'}
+                      {entry.unknownUpstream.length > 0 &&
+                        ` · unknown: ${entry.unknownUpstream.join(', ')}`}
+                    </li>
                   ))}
                 </ul>
               )}

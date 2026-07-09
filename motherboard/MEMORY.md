@@ -44326,3 +44326,23 @@ Summary of the **full conversation in this chat**: User first requested **GENESI
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
 - **Conventions:** Future Genesis implementation sprints should consult `STUDIO_OS_DEPENDENCY_MAP.md` before coding. Execution order is: `truth -> knowledge -> graph -> identity -> permission -> mission -> command -> production -> experience -> intelligence -> economy`. Any sprint that jumps ahead must name the stable interface or mock boundary it uses.
 
+---
+
+## 2026-07-09 — Genesis Implementation Sprint Studio OS Dependency Map™ infrastructure
+
+Summary of the **full conversation in this chat**: (1) User requested **GENESIS IMPLEMENTATION SPRINT 6** Core Systems Blueprint™ infrastructure — completed and pushed (`58579b16f`). (2) User requested **GENESIS NEXT SPRINT** Studio OS Dependency Map™ content — canonical article created and pushed (`3d543898b`). (3) User requested **IMPLEMENTATION SPRINT** for Studio OS Dependency Map™ — build reusable dependency mapping/planning infrastructure seeded with canonical Studio OS core systems.
+
+- **Context:** Architecture approved. Build internal dependency registry tracking every core system: dependencies, owned data, events, readiness, build priority, implementation phase. Do not implement every core system — only mapping infrastructure plus seeds. This becomes the planning engine for what to build next.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/genesis/dependency-map/`** with modules: `system-registry/`, `system-dependencies/`, `system-events/`, `build-order/`, `readiness/`, `architecture-risks/`, `bootstrap/seed`, `seeds/studio-os-systems.ts`.
+  - **System record fields:** systemId, name, purpose, status, buildPhase, buildOrder, priority, upstreamDependencies, downstreamDependents (computed), ownedData, eventsEmitted, eventsConsumed, blockedBy (computed), implementationRisk, readinessScore (computed), notes.
+  - **Features:** System Registry, Dependency Graph, Build Order View, Risk View, Blocked Systems View, Ready To Build View, Circular Dependency Detector (`detectDependencyMapCircularities`), Missing Dependency Detector.
+  - **Seeded 36 canonical systems** from `STUDIO_OS_DEPENDENCY_MAP.md`; marked Genesis kernel foundations + Core Systems Registry + Dependency Map as **implemented**; all others **planned/blocked** based on upstream readiness recompute.
+  - **Persistence:** nested `dependencyMap` key inside `genesis_v1`; `ensureDependencyMapSubsystem()` called from `ensureGenesisStore()`; framework module `'dependency-map'`.
+  - **Repo content home:** `genesis/dependency-map/` with READMEs per module + `system-registry/system.schema.json`.
+  - **Admin UI:** Dependency Map™ tab on **`GenesisWorkspace`**; hook **`useDependencyMapState()`**.
+  - **Docs:** **`docs/studio-os/genesis/DEPENDENCY_MAP_PLATFORM.md`**; indexes updated.
+  - Renamed **`detectDependencyMapCircularities`** / **`listDependencyMapOutboundDependencies`** to avoid export collisions with `core-systems`.
+- **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored.
+- **Conventions:** Consult `getReadyToBuildView()` and `getNextSystemsToBuild()` before starting implementation sprints. Next recommended build: **Knowledge Core™ MVP** (World Graph™ may need to precede or mock for Knowledge Core upstream per article — dependency map surfaces this via blocked view).
+

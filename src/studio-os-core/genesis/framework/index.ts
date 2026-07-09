@@ -8,6 +8,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'interaction-model',
   'decision-engine',
   'core-systems',
+  'dependency-map',
   'articles',
   'adr',
   'proposals',
