@@ -136,6 +136,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Experience Engine™](./genesis/articles/EXPERIENCE_ENGINE.md)
     - [Experience Runtime™](./genesis/articles/EXPERIENCE_RUNTIME.md)
     - [Brand Discovery Engine™](./genesis/articles/BRAND_DISCOVERY_ENGINE.md)
+    - [Studio Intelligence Layer™](./genesis/articles/STUDIO_INTELLIGENCE_LAYER.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1308,6 +1309,44 @@ Rules:
    positioning, content, photography, web, customer experience, pricing
    perception, marketplace, academy, launch, Foundry, scene generation, copy, and
    visual direction.
+
+### 9B.17 Studio Intelligence Layer rule
+
+The canonical executive reasoning architecture is defined in
+**[Studio Intelligence Layer™](./genesis/articles/STUDIO_INTELLIGENCE_LAYER.md)**.
+
+Studio OS must understand companies as living executive systems, not merely
+store company information.
+
+Rules:
+
+1. **Studio Intelligence Layer™** is the reasoning layer above Company Genome™,
+   Brand DNA™, Institute of Knowledge™, Experience Engine™, Experience
+   Runtime™, Orb™, Mission Engine™, and Executive Headquarters™.
+2. **Company Operating Manual™** is the living operational doctrine every AI
+   worker must consult before acting.
+3. **Decision DNA™** models founder decision-making: risk, trade-offs,
+   automation, approvals, confidence, history, and outcomes.
+4. **Taste Genome™** models founder creative judgment through approved ideas,
+   rejected ideas, aesthetic preferences, anti-patterns, and confidence.
+5. **Canon Engine™** governs canonization. Nothing becomes canonical
+   automatically; founder approval is required.
+6. **Experience Compiler™** selects and weights Platform DNA, Brand DNA,
+   Department DNA, Scene DNA, Component DNA, Motion DNA, Interaction DNA,
+   Audience DNA, Decision DNA, state, mission, role, and device before runtime
+   assembly.
+7. **Audience DNA™** is the permanent audience intelligence model every
+   marketing, content, product, sales, and experience decision should consult.
+8. **Product DNA™** is the identity layer for products, including purpose,
+   emotional promise, packaging, photography, launch, lifecycle, cross-sell,
+   upsell, positioning, content, and reviews.
+9. **Creative Genome™** is the searchable creative knowledge graph connecting
+   campaigns, assets, references, creative decisions, approvals, rejections, and
+   outcomes.
+10. Executive recommendations must simultaneously consider brand, audience,
+    products, founder preferences, business goals, knowledge, history, creative
+    direction, financial impact, operational impact, and long-term platform
+    implications.
 
 ---
 

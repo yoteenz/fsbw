@@ -30,6 +30,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/EXPERIENCE_ENGINE.md`](./articles/EXPERIENCE_ENGINE.md) | Experience Engine™ — platform-wide generator for branded operating environments from layered Experience DNA™ |
 | [`articles/EXPERIENCE_RUNTIME.md`](./articles/EXPERIENCE_RUNTIME.md) | Experience Runtime™ — execution layer that assembles every Studio OS page, Headquarters, room, workspace, workflow, and application from layered DNA |
 | [`articles/BRAND_DISCOVERY_ENGINE.md`](./articles/BRAND_DISCOVERY_ENGINE.md) | Brand Discovery Engine™ — strategic Brand DNA, Brand Intelligence Layer, elevation, and consistency architecture |
+| [`articles/STUDIO_INTELLIGENCE_LAYER.md`](./articles/STUDIO_INTELLIGENCE_LAYER.md) | Studio Intelligence Layer™ — executive reasoning architecture for operating manuals, Decision DNA, Taste Genome, canon, audience, product, creative, and experience compilation |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -79,6 +80,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `experience-engine/` | Experience Engine™ content home — Brand/Department/Scene/Component/Motion/Interaction DNA inheritance model |
 | `experience-runtime/` | Experience Runtime™ content home — runtime lifecycle, graph assembly, State DNA, live switching, caching, conflict resolution |
 | `brand-discovery-engine/` | Brand Discovery Engine™ content home — strategic Brand DNA, discovery, intelligence layer, elevation, consistency, applications |
+| `studio-intelligence-layer/` | Studio Intelligence Layer™ content home — operating manual, Decision DNA, Taste Genome, Canon Engine, Experience Compiler, Audience/Product/Creative intelligence |
 
 ## Rule
 

@@ -20,4 +20,5 @@
 - [`EXPERIENCE_RUNTIME.md`](./EXPERIENCE_RUNTIME.md) — Experience Runtime™ execution architecture: runtime lifecycle, DNA assembly, State DNA, live switching, caching, and conflict resolution
 - [`EXPERIENCE_RUNTIME_PLATFORM.md`](./EXPERIENCE_RUNTIME_PLATFORM.md) — Experience Runtime runtime platform guide
 - [`BRAND_DISCOVERY_ENGINE.md`](./BRAND_DISCOVERY_ENGINE.md) — Brand Discovery Engine™ architecture: strategic Brand DNA, intelligence layer, elevation, consistency
+- [`STUDIO_INTELLIGENCE_LAYER.md`](./STUDIO_INTELLIGENCE_LAYER.md) — Studio Intelligence Layer™ architecture: executive reasoning, operating manual, Decision DNA, Taste Genome, canon, audience/product/creative intelligence
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter
