@@ -23,6 +23,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
 | `core-systems/` | Core Systems Blueprint runtime content home — system blueprints, dependencies, boundaries, contracts, lifecycle |
 | `dependency-map/` | Studio OS Dependency Map runtime content home — seeded system records, build order, readiness, risks |
+| `build-order/` | Studio OS Build Order Engine runtime content home — 47-system roadmap, critical path, parallel tracks, readiness, rewrite/debt risks |
 
 ## Structure
 
@@ -45,6 +46,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `decision-engine/` | Universal Decision Architecture infrastructure — registries, recommendation/priority/context engines, audit, learning |
 | `core-systems/` | Core Systems Blueprint infrastructure — system/dependency/capability registries, boundaries, contracts, expansion hooks, lifecycle |
 | `dependency-map/` | Studio OS Dependency Map infrastructure — seeded planning registry, dependency graph, build order, readiness, risk views |
+| `build-order/` | Studio OS Build Order Engine infrastructure — dependency resolver, critical path, parallel work, readiness engines, rewrite/debt analyzers |
 
 ## Rule
 

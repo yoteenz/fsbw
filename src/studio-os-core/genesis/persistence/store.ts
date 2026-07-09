@@ -10,6 +10,7 @@ import { emptyInteractionModelStore } from '../interaction-model/persistence';
 import { emptyDecisionEngineStore } from '../decision-engine/persistence';
 import { emptyCoreSystemsStore } from '../core-systems/persistence';
 import { emptyDependencyMapStore } from '../dependency-map/persistence';
+import { emptyBuildOrderStore } from '../build-order/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -64,6 +65,7 @@ export function readGenesisStore(): GenesisStore {
       decisionEngine: parsed.decisionEngine ?? emptyDecisionEngineStore(),
       coreSystems: parsed.coreSystems ?? emptyCoreSystemsStore(),
       dependencyMap: parsed.dependencyMap ?? emptyDependencyMapStore(),
+      buildOrder: parsed.buildOrder ?? emptyBuildOrderStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

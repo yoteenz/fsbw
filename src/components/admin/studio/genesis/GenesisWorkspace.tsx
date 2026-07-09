@@ -11,6 +11,7 @@ import { useInteractionModelState } from '../../../../hooks/useInteractionModelS
 import { useDecisionEngineState } from '../../../../hooks/useDecisionEngineState';
 import { useCoreSystemsState } from '../../../../hooks/useCoreSystemsState';
 import { useDependencyMapState } from '../../../../hooks/useDependencyMapState';
+import { useBuildOrderState } from '../../../../hooks/useBuildOrderState';
 
 function GenesisPanel({
   title,
@@ -134,6 +135,27 @@ export function GenesisWorkspace() {
     refresh: refreshDependencyMap,
   } = useDependencyMapState();
 
+  const {
+    stats: buildOrderStats,
+    systems: buildOrderSystems,
+    roadmap: buildOrderRoadmap,
+    currentSprint,
+    readyToBuild: buildOrderReady,
+    blockedSystems: buildOrderBlocked,
+    criticalPath,
+    parallelWork,
+    rewriteRisks,
+    technicalDebt,
+    architecturalReadiness,
+    implementationReadiness,
+    optimalNext,
+    buildPhases,
+    rewriteRiskSummary,
+    technicalDebtSummary,
+    validation: buildOrderValidation,
+    refresh: refreshBuildOrder,
+  } = useBuildOrderState();
+
   const [activeTab, setActiveTab] = useState<
     | 'overview'
     | 'registry'
@@ -146,6 +168,7 @@ export function GenesisWorkspace() {
     | 'decision-engine'
     | 'core-systems'
     | 'dependency-map'
+    | 'build-order'
   >('overview');
   const [lastCompileMessage, setLastCompileMessage] = useState<string | null>(null);
 
@@ -192,6 +215,7 @@ export function GenesisWorkspace() {
               refreshDecisionEngine();
               refreshCoreSystems();
               refreshDependencyMap();
+              refreshBuildOrder();
             }}
             className="rounded-lg border border-violet-500/40 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-200 hover:bg-violet-500/20"
           >
@@ -240,6 +264,7 @@ export function GenesisWorkspace() {
               ['decision-engine', 'Decisions™'],
               ['core-systems', 'Core Systems™'],
               ['dependency-map', 'Dependency Map™'],
+              ['build-order', 'Build Order™'],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -1216,6 +1241,184 @@ export function GenesisWorkspace() {
                   ))}
                 </ul>
               )}
+            </GenesisPanel>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'build-order' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-6 text-sm">
+            <div>
+              <span className="text-white/40">Systems</span>
+              <p className="font-medium">{buildOrderStats.systemCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Implemented</span>
+              <p className="font-medium">{buildOrderStats.implementedCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Ready to build</span>
+              <p className="font-medium">{buildOrderStats.readyToBuildCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Blocked</span>
+              <p className="font-medium">{buildOrderStats.blockedCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Critical path</span>
+              <p className="font-medium">{buildOrderStats.criticalPathProgress}%</p>
+            </div>
+            <div>
+              <span className="text-white/40">Optimal next</span>
+              <p className="font-medium">{optimalNext?.officialName ?? '—'}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Validation</span>
+              <p className="font-medium">{buildOrderValidation.valid ? 'PASS' : 'ISSUES'}</p>
+            </div>
+          </div>
+
+          <GenesisPanel title="Current Sprint">
+            <p className="text-sm text-violet-200/90">
+              Cycle {currentSprint.cycle}: {currentSprint.primaryBuild}
+            </p>
+            <p className="mt-1 text-xs text-white/50">
+              Parallel: {currentSprint.secondaryParallel.join(' · ')}
+            </p>
+            <p className="mt-2 text-sm text-white/60">Exit: {currentSprint.exitCondition}</p>
+            <p className="mt-2 text-xs text-emerald-300/80">
+              {currentSprint.isPrimaryReady ? 'Primary build is ready' : 'Primary build blocked — resolve upstream first'}
+            </p>
+          </GenesisPanel>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <GenesisPanel title="Overall Roadmap">
+              <ul className="max-h-64 space-y-2 overflow-y-auto text-sm">
+                {buildOrderRoadmap.map((entry) => (
+                  <li key={entry.systemId} className="rounded bg-white/5 px-3 py-2">
+                    <span className="font-medium text-violet-200">#{entry.topologicalOrder} {entry.officialName}</span>
+                    <span className="ml-2 text-xs text-white/30">P{entry.architecturalPhase} · {entry.priority}</span>
+                    <span className="ml-2 text-xs text-white/30">{entry.currentStatus}</span>
+                    {entry.blockedBy.length > 0 && (
+                      <span className="ml-2 text-xs text-amber-200/70">blocked by {entry.blockedBy.length}</span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </GenesisPanel>
+
+            <GenesisPanel title="Ready To Build">
+              {buildOrderReady.length === 0 ? (
+                <p className="text-sm text-white/50">No systems currently ready.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {buildOrderReady.slice(0, 10).map((entry) => (
+                    <li key={entry.systemId}>
+                      #{entry.topologicalOrder} {entry.officialName} — {entry.implementationScore}% · {entry.priority}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Blocked Systems">
+              {buildOrderBlocked.length === 0 ? (
+                <p className="text-sm text-white/50">No blocked systems.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {buildOrderBlocked.slice(0, 10).map((entry) => (
+                    <li key={entry.systemId}>
+                      {entry.officialName} — blocked by {entry.blockedBy.join(', ') || 'unknown'}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Critical Path">
+              <p className="mb-2 text-xs text-white/40">
+                {criticalPath.completedCount}/{criticalPath.totalLength} complete
+              </p>
+              <ol className="space-y-1 text-sm text-white/70">
+                {criticalPath.path.map((entry) => (
+                  <li key={entry.systemId} className={entry.isNext ? 'text-emerald-300' : entry.isComplete ? 'text-white/40 line-through' : ''}>
+                    {entry.position}. {entry.officialName} — {entry.currentStatus}
+                  </li>
+                ))}
+              </ol>
+            </GenesisPanel>
+
+            <GenesisPanel title="Parallel Work Opportunities">
+              {parallelWork.tracks.map((track) => (
+                <div key={track.trackId} className="mb-3 border-b border-white/5 pb-3 last:border-0">
+                  <p className="text-sm font-medium text-violet-200">{track.label}</p>
+                  <p className="text-xs text-white/40">After: {track.canProceedAfter.join(', ')}</p>
+                  {track.readySystemIds.length > 0 ? (
+                    <p className="mt-1 text-xs text-emerald-300/80">Ready: {track.readySystemIds.join(', ')}</p>
+                  ) : (
+                    <p className="mt-1 text-xs text-white/40">No systems ready on this track</p>
+                  )}
+                </div>
+              ))}
+            </GenesisPanel>
+
+            <GenesisPanel title="Build Phases">
+              {buildPhases.map((phase) => (
+                <div key={phase.phase} className="mb-3 border-b border-white/5 pb-3 last:border-0">
+                  <p className="text-sm font-medium text-violet-200">
+                    Phase {phase.phase}: {phase.label}
+                  </p>
+                  <p className="text-xs text-white/40">{phase.systems.length} systems</p>
+                </div>
+              ))}
+            </GenesisPanel>
+
+            <GenesisPanel title="Rewrite Risk Analysis">
+              <p className="mb-2 text-xs text-white/40">
+                Critical: {rewriteRiskSummary.critical} · High: {rewriteRiskSummary.high} · Medium:{' '}
+                {rewriteRiskSummary.medium} · Low: {rewriteRiskSummary.low}
+              </p>
+              <ul className="space-y-2 text-sm text-white/70">
+                {rewriteRisks.slice(0, 6).map((risk) => (
+                  <li key={risk.riskId}>
+                    <span className="text-violet-200">{risk.label}</span> — {risk.severity}
+                    <span className="block text-xs text-white/40">{risk.prevention}</span>
+                  </li>
+                ))}
+              </ul>
+            </GenesisPanel>
+
+            <GenesisPanel title="Technical Debt Forecast">
+              <p className="mb-2 text-xs text-white/40">
+                Critical: {technicalDebtSummary.critical} · High: {technicalDebtSummary.high} · Medium:{' '}
+                {technicalDebtSummary.medium} · Low: {technicalDebtSummary.low}
+              </p>
+              <ul className="space-y-2 text-sm text-white/70">
+                {technicalDebt.slice(0, 6).map((debt) => (
+                  <li key={debt.debtId}>
+                    <span className="text-violet-200">{debt.label}</span> — {debt.severity}
+                    <span className="block text-xs text-white/40">{debt.governanceRule}</span>
+                  </li>
+                ))}
+              </ul>
+            </GenesisPanel>
+
+            <GenesisPanel title="Readiness Engines">
+              <p className="text-sm text-white/60">
+                Architectural avg: {architecturalReadiness.averageScore}% · Implementation avg:{' '}
+                {implementationReadiness.averageScore}%
+              </p>
+              <p className="mt-2 text-xs text-white/40">
+                Shipped: {implementationReadiness.shippedCount} · Ready: {implementationReadiness.readyToBuildCount}
+              </p>
+              <ul className="mt-3 max-h-40 space-y-1 overflow-y-auto text-xs text-white/50">
+                {buildOrderSystems.slice(0, 12).map((system) => (
+                  <li key={system.systemId}>
+                    {system.officialName} — arch {system.architecturalReadiness} / impl {system.implementationReadiness}
+                  </li>
+                ))}
+              </ul>
             </GenesisPanel>
           </div>
         </div>

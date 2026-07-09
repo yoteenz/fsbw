@@ -26,3 +26,4 @@ export * from './interaction-model';
 export * from './decision-engine';
 export * from './core-systems';
 export * from './dependency-map';
+export * from './build-order';

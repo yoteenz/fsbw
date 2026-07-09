@@ -44367,3 +44367,22 @@ Summary of the **full conversation in this chat**: (1) User requested **GENESIS 
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
 - **Conventions:** Before proposing or implementing Studio OS systems, consult `STUDIO_OS_BUILD_ORDER.md`. Prioritize foundational leverage, reusability, long-term maintainability, minimal rewrites, business validation, and compounding architecture over feature excitement.
 
+---
+
+## 2026-07-09 — Studio OS Build Order Engine™ implementation sprint
+
+Summary of the **full conversation in this chat**: (1) User requested **GENESIS IMPLEMENTATION SPRINT 6** Core Systems Blueprint™ — completed (`58579b16f`). (2) User requested **GENESIS NEXT SPRINT** Studio OS Dependency Map™ content — completed (`3d543898b`). (3) User requested **IMPLEMENTATION SPRINT** Studio OS Dependency Map™ runtime — completed (`169e44cd1`). (4) User requested **MASTER ARCHITECTURE PROJECT — Studio OS Build Order™** — canonical article created (`a94aef9b5`). (5) User requested **IMPLEMENTATION SPRINT — Studio OS Build Order Engine™** with architecture approved: internal planning engine that determines what Studio OS should build next from architectural dependencies; roadmap adapts as systems complete.
+
+- **Context:** Build the authoritative Build Order Engine separate from Dependency Map. Required modules: `/build-order`, `/build-phases`, `/dependency-engine`, `/critical-path`, `/parallel-work`, `/readiness`, `/blocked`, `/risks`. Required engines: Build Order Registry™, Dependency Resolver™, Critical Path Analyzer™, Parallel Work Planner™, Architectural Readiness Engine™, Implementation Readiness Engine™, Rewrite Risk Analyzer™, Technical Debt Analyzer™. Every system record stores full planning matrix fields. Interactive views: overall roadmap, current sprint, ready-to-build, blocked, critical path, parallel work, rewrite risk, technical debt forecast.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/genesis/build-order/`** with all submodules, seeded from **`STUDIO_OS_BUILD_ORDER.md`** with **47 systems** across 10 architectural phases (0–9).
+  - **Kernel systems marked implemented/shipped:** Genesis™, Canonical Object Registry™, Universal Interaction Engine™, Universal Decision Engine™, Studio OS Dependency Map™.
+  - **Optimal next build:** **Business Discovery™ MVP** (Cycle 1) via `getOptimalNextSystem()`.
+  - **Persistence:** nested `buildOrder` key inside `genesis_v1`; `ensureBuildOrderSubsystem()` wired into `ensureGenesisStore()`; framework module `'build-order'`.
+  - **Export naming:** prefixed `getBuildOrderReadyView`, `detectBuildOrderCircularities`, `BuildOrderCircularDependencyReport` to avoid collisions with dependency-map exports.
+  - **Repo content home:** `genesis/build-order/` with README + `build-order/system.schema.json`.
+  - **Admin UI:** Build Order™ tab on **`GenesisWorkspace`** with all eight interactive views; hook **`useBuildOrderState()`**.
+  - **Docs:** **`docs/studio-os/genesis/BUILD_ORDER_PLATFORM.md`**; indexes updated in `genesis/README.md`, `docs/studio-os/README.md`, `motherboard/CORE.md`.
+- **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
+- **Conventions:** Use Build Order Engine (`getOptimalNextSystem()`, `updateBuildOrderSystemStatus()`) as authoritative sequencing for implementation sprints; Dependency Map remains complementary planning view. Mark systems `implemented` after shipping to unlock dependents automatically.
+

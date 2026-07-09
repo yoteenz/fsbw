@@ -228,6 +228,7 @@ export type GenesisStore = {
   decisionEngine?: import('./decision-engine/types').DecisionEngineStore;
   coreSystems?: import('./core-systems/types').CoreSystemsStore;
   dependencyMap?: import('./dependency-map/types').DependencyMapStore;
+  buildOrder?: import('./build-order/types').BuildOrderStore;
   bootstrappedAt?: string;
 };
 
