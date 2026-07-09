@@ -18,6 +18,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [../../genesis/articles/FOUNDER_ACCEPTANCE_TESTING.md](../../genesis/articles/FOUNDER_ACCEPTANCE_TESTING.md) | **Founder Acceptance Testing™** — official internal validation methodology before public launch |
 | [../../genesis/articles/LIVE_VALIDATION_SYSTEM.md](../../genesis/articles/LIVE_VALIDATION_SYSTEM.md) | **Live Validation System™** — continuous invisible validation through founder behavior, Founder Diary™, Escape Velocity™, and Genesis learning |
 | [../../genesis/articles/EVOLUTION_ROOM.md](../../genesis/articles/EVOLUTION_ROOM.md) | **The Evolution Room™** — monthly executive strategy room where the founder, company, Studio OS, and Genesis evolve together |
+| [../../genesis/articles/EXECUTIVE_REFLECTION_SUITE.md](../../genesis/articles/EXECUTIVE_REFLECTION_SUITE.md) | **Executive Reflection Suite™** — complete reflective operating environment: Boardroom™, Founder's Annual Summit™, Victory Gallery™, Lessons Learned Library™, Opportunity Observatory™, Future Vision Theater™ |
 | [genesis/GENESIS_PLATFORM.md](./genesis/GENESIS_PLATFORM.md) | **Genesis Platform™** — Canonical Object Model, pipelines, registry, compilation infrastructure |
 | [genesis/CONSTITUTION_PLATFORM.md](./genesis/CONSTITUTION_PLATFORM.md) | **Genesis Constitution™** — constitutional registry, amendments, versioning, relationship graph |
 | [genesis/OBJECT_MODEL_PLATFORM.md](./genesis/OBJECT_MODEL_PLATFORM.md) | **Canonical Object Model™** — object registry, factory, relationship engine, validation, versioning, history |
@@ -34,6 +35,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/FOUNDER_ACCEPTANCE_TESTING.md](./genesis/FOUNDER_ACCEPTANCE_TESTING.md) | **Founder Acceptance Testing™** — validation levels, gates, scorecard, withdrawal/replacement/delight tests, Genesis feedback |
 | [genesis/LIVE_VALIDATION_SYSTEM.md](./genesis/LIVE_VALIDATION_SYSTEM.md) | **Live Validation System™** — Founder Diary™, Escape Velocity™, objective withdrawal metrics, self-evaluation, Genesis proposal loop |
 | [genesis/EVOLUTION_ROOM.md](./genesis/EVOLUTION_ROOM.md) | **The Evolution Room™** — Executive Board Room experience, Evolution Council™, Future Wall™, Legacy Wall™ |
+| [genesis/EXECUTIVE_REFLECTION_SUITE.md](./genesis/EXECUTIVE_REFLECTION_SUITE.md) | **Executive Reflection Suite™** — full reflection wing, rituals, ceremonies, health architecture, Boardroom™, Annual Summit™ |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

@@ -130,6 +130,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Founder Acceptance Testing™](./genesis/articles/FOUNDER_ACCEPTANCE_TESTING.md)
     - [Live Validation System™](./genesis/articles/LIVE_VALIDATION_SYSTEM.md)
     - [The Evolution Room™](./genesis/articles/EVOLUTION_ROOM.md)
+    - [Executive Reflection Suite™](./genesis/articles/EXECUTIVE_REFLECTION_SUITE.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1102,6 +1103,36 @@ Rules:
    history, Genesis evolution, and platform evolution as institutional memory.
 6. The room must feel ceremonial, calm, premium, intelligent, and strategic — never
    like an analytics dashboard.
+
+### 9B.11 Executive Reflection Suite rule
+
+The canonical executive reflection wing architecture is defined in
+**[Executive Reflection Suite™](./genesis/articles/EXECUTIVE_REFLECTION_SUITE.md)**.
+
+The Executive Reflection Suite™ expands The Evolution Room™ into Studio OS's complete
+reflective operating environment. Reflection is not a report. It is a Headquarters
+wing where founders improve themselves, their companies, Studio OS, and Genesis
+through evidence-backed rooms, ceremonies, health systems, memory, and governed
+decisions.
+
+Rules:
+
+1. The Evolution Room™ is the monthly chamber inside the Suite, not the full
+   reflection architecture.
+2. The Boardroom™ is Studio OS's highest-level decision room and is reserved for
+   decisions that permanently shape the company or Genesis.
+3. Founder's Annual Summit™ is the signature annual event and must transform
+   Headquarters into a meaningful year-in-review and next-chapter ceremony.
+4. The Suite must make reflection enjoyable, growth visible, learning permanent,
+   success memorable, and failure valuable.
+5. Failures are not complete until they become Lessons Learned Library™ artifacts or
+   otherwise produce useful institutional wisdom.
+6. Orb must prepare every major reflection ceremony by separating evidence,
+   interpretation, uncertainty, tradeoffs, recommendation, and founder-only judgment.
+7. Genesis Learning Loop™ outputs proposals only; nothing becomes canon
+   automatically.
+8. The Suite must feel like an executive operating environment and luxury
+   Headquarters wing — never like a dashboard suite.
 
 ---
 

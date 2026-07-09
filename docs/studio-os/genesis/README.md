@@ -8,4 +8,6 @@
 - [`LIVE_VALIDATION_SYSTEM.md`](./LIVE_VALIDATION_SYSTEM.md) — continuous invisible validation through Founder Diary™, Escape Velocity™, system self-evaluation, and Genesis learning
 - [`LIVE_VALIDATION_SYSTEM_PLATFORM.md`](./LIVE_VALIDATION_SYSTEM_PLATFORM.md) — Live Validation runtime platform guide
 - [`EVOLUTION_ROOM.md`](./EVOLUTION_ROOM.md) — The Evolution Room™ monthly executive strategy room architecture
+- [`EVOLUTION_ROOM_PLATFORM.md`](./EVOLUTION_ROOM_PLATFORM.md) — The Evolution Room™ runtime platform guide
+- [`EXECUTIVE_REFLECTION_SUITE.md`](./EXECUTIVE_REFLECTION_SUITE.md) — complete Executive Reflection Suite™ architecture: Boardroom™, Annual Summit™, Victory Gallery™, Lessons Library™, Observatory, Future Theater
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter
