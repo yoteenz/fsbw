@@ -4,6 +4,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 
 | Document | Description |
 |----------|-------------|
+| [../../Genesis.md](../../Genesis.md) | **Genesis.md Foundation Framework™** — canonical source-of-truth kernel for Studio World and compiler source for all future documents |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

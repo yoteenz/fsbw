@@ -43987,3 +43987,21 @@ Summary of the **full conversation in this chat**: Career Worlds™ implementati
 - **Verification:** `npm run build` passed; World Graph compile **673 nodes · 1341 edges · PASS**.
 - **Conventions:** Studio OS is operational headquarters, not an admin dashboard. No subsystem promotes to Platform Product without constitutional readiness. Use Headquarters vocabulary in founder-facing UI; maturity records and promotion gates are enforced via `assertPlatformExpansionAllowed()`.
 
+---
+
+## 2026-07-09 — Genesis.md Foundation Framework™ sprint
+
+Summary of the **full conversation in this chat**: ARTICLE-C04 Headquarters + Proof Before Expansion architecture was completed, then the Headquarters Principles™ implementation sprint shipped the operational HQ governance platform, and the user then initiated **GENESIS SPRINT 1 — Foundation Framework™** for `Genesis.md`.
+
+- **Context:** User stated Studio World has entered Genesis Development. The objective was explicitly **not** to write Genesis content, but to design the permanent framework Genesis will use forever as the single canonical source of truth for Studio World. Genesis should function like an operating system kernel; every future document should derive from Genesis.
+- **Decisions / outcomes:**
+  - Created root **`Genesis.md`** as the permanent **Foundation Framework™** for Genesis, positioned as the upstream kernel above compiled outputs such as Constitution, Architect's Brain, Master Specification, World Bible, Developer Docs, SDK Docs, API Docs, Codex, and Institute of Knowledge.
+  - Defined the permanent hierarchy: **Genesis → Collections → Books → Volumes → Chapters → Articles → Systems → Implementations**.
+  - Designed the complete table of contents: Kernel, Constitution, World Bible, Architecture, Canonical Operations, and Appendices.
+  - Defined canonical object categories and schemas for System, Institution, Principle, Article, Profession, Department, Workflow, Capability, World Entity, UI Component, Event, Registry, Policy, Mission, Hero Object, Expansion Pack, Research Paper, Specification, Implementation, ADR, Proposal, Amendment, and Compilation Target.
+  - Defined amendment classes and rules: clarification, extension, correction, repeal, constitutional change, and kernel change.
+  - Defined ADR workflow, proposal workflow, canonical review workflow, relationship model, compilation model, versioning strategy, naming standards, cross-reference standards, and future expansion standards.
+  - Updated **`docs/studio-os/README.md`** to surface `Genesis.md` as the canonical source-of-truth kernel for Studio World.
+- **Verification:** `npm run build` passed; prebuild regenerated master-spec and world-graph artifacts.
+- **Conventions:** Future official Studio World documents should be treated as compiled projections of Genesis. If Genesis and any downstream output disagree, Genesis wins. The Codex and Institute remain crucial publication/governance surfaces, but Genesis is now the canonical source kernel those outputs should derive from.
+

@@ -1,0 +1,1168 @@
+# Genesis.md — Foundation Framework™
+
+**Project:** Genesis.md  
+**Phase:** Foundation Framework™  
+**Status:** Canonical framework, not Genesis content  
+**Version:** 1.0.0  
+**Constitutional posture:** Genesis is the kernel; every downstream document is a compiled projection.
+
+---
+
+## 0. Kernel Doctrine
+
+Genesis is the single canonical source of truth for Studio World.
+
+Genesis is not a documentation folder, a wiki, a backlog, or a book. Genesis is the
+operating system kernel for Studio World knowledge. Every future official document,
+registry, specification, article, guide, SDK reference, API reference, world bible
+entry, and implementation plan must derive from Genesis or explicitly explain why it
+is non-canonical working material.
+
+### 0.1 Constitutional rule
+
+If Genesis and any compiled output disagree, **Genesis wins**.
+
+Compiled outputs may be optimized for different audiences, formats, or tools, but
+they may not create independent truth.
+
+### 0.2 What this sprint defines
+
+This file defines the permanent framework future Genesis authors use:
+
+- Table of contents
+- Hierarchy
+- Canonical objects
+- Schemas
+- Amendment rules
+- ADR workflow
+- Proposal workflow
+- Canonical review workflow
+- Relationship model
+- Compilation model
+- Versioning strategy
+- Naming standards
+- Cross-reference standards
+- Future expansion standards
+
+This file does **not** write the full Genesis canon. It defines how Genesis will be
+authored, reviewed, compiled, versioned, and expanded for years.
+
+---
+
+## 1. Complete Table of Contents
+
+Genesis must remain stable enough to last for years while expandable enough to
+describe a civilization. The top-level table of contents is organized around
+permanent kernel responsibilities, not temporary product areas.
+
+### Part I — Kernel
+
+1. **Genesis Charter**
+   - Purpose
+   - Authority
+   - Relationship to Studio World
+   - Relationship to Codex, Institute, World Graph, and Master Spec
+2. **Genesis Hierarchy**
+   - Collections
+   - Books
+   - Volumes
+   - Chapters
+   - Articles
+   - Systems
+   - Implementations
+3. **Canonical Object Model**
+   - Base object schema
+   - Object-specific schemas
+   - Identity, provenance, and status
+4. **Relationship Model**
+   - Relationship types
+   - Relationship direction
+   - Dependency semantics
+   - Contradiction and supersession
+5. **Compilation Model**
+   - Source graph
+   - Output projections
+   - Compile targets
+   - Validation gates
+
+### Part II — Constitution
+
+6. **Constitutional Principles**
+   - Permanent laws
+   - Founder-approved principles
+   - Prohibited regressions
+7. **Amendment System**
+   - Amendment classes
+   - Proposal requirements
+   - Review thresholds
+   - Deprecation and repeal
+8. **Decision Governance**
+   - ADR workflow
+   - Proposal workflow
+   - Canonical review workflow
+   - Emergency doctrine
+
+### Part III — World Bible
+
+9. **World Entities**
+   - Companies
+   - Institutions
+   - Departments
+   - Professions
+   - Missions
+   - Hero Objects
+   - Events
+10. **World Systems**
+    - Economy
+    - Career Worlds
+    - Headquarters
+    - Orb
+    - Atlas
+    - Knowledge Core
+    - Studio Intelligence
+11. **World Experience**
+    - Spaces
+    - Scenes
+    - Navigation
+    - Atmosphere
+    - UI components
+
+### Part IV — Architecture
+
+12. **System Registry**
+    - System definitions
+    - Capabilities
+    - Workflows
+    - Dependencies
+13. **Implementation Registry**
+    - Code paths
+    - API surfaces
+    - SDK surfaces
+    - Runtime contracts
+14. **Platform Maturity**
+    - Internal Tool
+    - Founder Workflow
+    - Company Capability
+    - Platform Product
+15. **Compilation Targets**
+    - Constitution
+    - Architect's Brain
+    - Master Specification
+    - World Bible
+    - Developer Docs
+    - SDK Docs
+    - API Docs
+    - Codex
+    - Institute of Knowledge
+
+### Part V — Canonical Operations
+
+16. **Naming Standards**
+17. **Cross-Reference Standards**
+18. **Versioning Strategy**
+19. **Release and Edition Strategy**
+20. **Future Expansion Standards**
+21. **Validation and Audit**
+22. **Appendices**
+    - Glossary
+    - ID registry
+    - Object templates
+    - Compile manifest
+    - Review checklists
+
+---
+
+## 2. Permanent Hierarchy
+
+Genesis uses a strict canonical hierarchy:
+
+```text
+Genesis
+  -> Collections
+    -> Books
+      -> Volumes
+        -> Chapters
+          -> Articles
+            -> Systems
+              -> Implementations
+```
+
+### 2.1 Genesis
+
+The root kernel. Genesis defines all canonical truth and all rules for producing
+downstream truth.
+
+### 2.2 Collections
+
+Collections are large, independently expandable domains of civilization knowledge.
+
+Examples:
+
+- Foundational Collection™
+- Company & Headquarters Collection™
+- Professions & Career Worlds Collection™
+- Product & Commerce Collection™
+- Experience & Interface Collection™
+- Intelligence & Agents Collection™
+- Memory, History & Archive Collection™
+- Economy & Governance Collection™
+- Future Eras Collection™
+
+### 2.3 Books
+
+Books are permanent bodies of knowledge inside a collection. Books organize related
+volumes under a stable conceptual purpose.
+
+Example:
+
+```text
+Collection: Professions & Career Worlds Collection™
+Book: Career Civilization Book™
+Volume: Profession Simulation Standards
+```
+
+### 2.4 Volumes
+
+Volumes are durable subject areas. Volumes may compile to Codex volumes,
+Constitution sections, World Bible chapters, or Master Spec sections.
+
+### 2.5 Chapters
+
+Chapters group articles by operational concern.
+
+Examples:
+
+- Governance
+- Runtime Behavior
+- User Experience
+- Persistence
+- Education
+- Economic Design
+
+### 2.6 Articles
+
+Articles are atomic canonical units. Every article protects one coherent truth,
+law, architecture, world concept, standard, or decision.
+
+### 2.7 Systems
+
+Systems are operational capabilities described by articles and realized by
+implementations.
+
+### 2.8 Implementations
+
+Implementations are code, UI, APIs, schemas, docs, prompts, workflows, or runtime
+contracts that execute a Genesis-defined system.
+
+Implementations do not create canonical truth. They implement canonical truth.
+
+---
+
+## 3. Canonical Object Model
+
+Every official object in Studio World must be representable as a Genesis object.
+Objects are graph nodes with stable identity, provenance, relationships, lifecycle,
+and compile behavior.
+
+### 3.1 Required object categories
+
+Genesis must support at least the following canonical object types:
+
+| Object | Purpose |
+|--------|---------|
+| `System` | Operational capability or platform subsystem |
+| `Institution` | Permanent organization with authority or stewardship |
+| `Principle` | Foundational belief or constitutional law |
+| `Article` | Atomic canonical truth unit |
+| `Profession` | Career domain with knowledge, progression, and simulations |
+| `Department` | Organizational or spatial unit inside Headquarters or an institution |
+| `Workflow` | Repeatable operational sequence |
+| `Capability` | Discrete reusable function a system can perform |
+| `WorldEntity` | Canonical person, place, organization, object, district, or world construct |
+| `UIComponent` | Reusable interface component or hero object surface |
+| `Event` | Historical, operational, release, or world timeline event |
+| `Registry` | Canonical directory of objects, systems, policies, or routes |
+| `Policy` | Rule with enforcement expectations |
+| `Mission` | Goal, objective, campaign, or company-level directive |
+| `HeroObject` | High-symbolism object with narrative, UI, or operational power |
+| `ExpansionPack` | Additive domain package that extends a collection without redesigning it |
+| `ResearchPaper` | Institute-governed knowledge artifact with evidence and review |
+| `Specification` | Detailed engineering, API, SDK, design, or data contract |
+| `Implementation` | Realized artifact in code, docs, prompts, APIs, or runtime configuration |
+| `ADR` | Architecture Decision Record derived from Genesis context |
+| `Proposal` | Pre-canonical candidate change |
+| `Amendment` | Formal change to constitutional or kernel-level truth |
+| `CompilationTarget` | Output generated from Genesis |
+
+---
+
+## 4. Standard Schema
+
+All Genesis objects share a base schema. Object-specific schemas extend the base
+schema without replacing it.
+
+### 4.1 Base schema
+
+```yaml
+id: string
+type: GenesisObjectType
+title: string
+canonicalName: string
+status: proposed | draft | review | approved | canonical | superseded | deprecated | archived
+stability: experimental | emerging | stable | constitutional | historical
+summary: string
+purpose: string
+scope:
+  includes: string[]
+  excludes: string[]
+owner:
+  institution: string
+  department: string
+  steward: string
+provenance:
+  createdAt: ISODate
+  updatedAt: ISODate
+  createdBy: string
+  approvedBy: string[]
+version:
+  major: number
+  minor: number
+  patch: number
+  edition: string
+relationships:
+  - relationshipId: string
+    type: GenesisRelationshipType
+    targetId: string
+    required: boolean
+    rationale: string
+tags: string[]
+keywords: string[]
+compiledTo: CompilationTargetId[]
+sourcePaths: string[]
+implementationPaths: string[]
+review:
+  proposalId: string
+  adrIds: string[]
+  reviewState: not-required | pending | passed | failed | returned
+  evidence: string[]
+```
+
+### 4.2 System schema
+
+```yaml
+extends: Base
+system:
+  category: platform | world | intelligence | governance | commerce | education | memory | interface
+  maturityStage: internal-tool | founder-workflow | company-capability | platform-product
+  capabilities: GenesisId[]
+  workflows: GenesisId[]
+  dependencies: GenesisId[]
+  readinessScore: number
+  runtimeSurfaces:
+    routes: string[]
+    APIs: string[]
+    SDKs: string[]
+    stores: string[]
+  invariants: string[]
+  failureModes: string[]
+```
+
+### 4.3 Institution schema
+
+```yaml
+extends: Base
+institution:
+  authority: advisory | operational | canonical | constitutional
+  charter: string
+  divisions: GenesisId[]
+  responsibilities: string[]
+  approvalPowers: string[]
+  governedObjects: GenesisId[]
+```
+
+### 4.4 Principle schema
+
+```yaml
+extends: Base
+principle:
+  constitutionalWeight: advisory | standard | law | supreme-law
+  doctrine: string
+  requiredBehaviors: string[]
+  prohibitedBehaviors: string[]
+  enforcementMechanisms: string[]
+  relatedArticles: GenesisId[]
+```
+
+### 4.5 Article schema
+
+```yaml
+extends: Base
+article:
+  articleCode: string
+  collectionId: GenesisId
+  bookId: GenesisId
+  volumeId: GenesisId
+  chapterId: GenesisId
+  thesis: string
+  guidingPrinciples: string[]
+  architecturalDecisions: string[]
+  operationalRules: string[]
+  implementationRequirements: string[]
+  revisionHistory: GenesisRevision[]
+```
+
+### 4.6 Profession schema
+
+```yaml
+extends: Base
+profession:
+  industry: string
+  careerWorldId: GenesisId
+  skillTreeIds: GenesisId[]
+  certificationIds: GenesisId[]
+  simulationIds: GenesisId[]
+  mentorRoles: string[]
+  researchSources: GenesisId[]
+```
+
+### 4.7 Department schema
+
+```yaml
+extends: Base
+department:
+  parentInstitutionId: GenesisId
+  mandate: string
+  spaces: GenesisId[]
+  systemsOwned: GenesisId[]
+  operatingCadence: string
+```
+
+### 4.8 Workflow schema
+
+```yaml
+extends: Base
+workflow:
+  trigger: string
+  actors: GenesisId[]
+  steps:
+    - order: number
+      action: string
+      systemId: GenesisId
+      output: string
+  completionCriteria: string[]
+  auditEvents: GenesisId[]
+```
+
+### 4.9 Capability schema
+
+```yaml
+extends: Base
+capability:
+  providedBy: GenesisId[]
+  consumedBy: GenesisId[]
+  inputs: string[]
+  outputs: string[]
+  contracts: GenesisId[]
+  qualityBar: string[]
+```
+
+### 4.10 World entity schema
+
+```yaml
+extends: Base
+worldEntity:
+  entityKind: company | place | person | district | scene | object | law | ritual | currency | organization
+  worldGraphNodeId: string
+  description: string
+  narrativeRole: string
+  operationalRole: string
+```
+
+### 4.11 UI component schema
+
+```yaml
+extends: Base
+uiComponent:
+  componentKind: primitive | composition | workspace | hero-object | navigation | feedback | data-display
+  designPrinciples: GenesisId[]
+  propsContract: GenesisId
+  accessibilityRules: string[]
+  states: string[]
+  implementationPaths: string[]
+```
+
+### 4.12 Event schema
+
+```yaml
+extends: Base
+event:
+  eventKind: world-history | product-release | governance | operational | learning | economic | system
+  occurredAt: ISODate
+  actors: GenesisId[]
+  affectedObjects: GenesisId[]
+  chronicleEntry: string
+```
+
+### 4.13 Registry schema
+
+```yaml
+extends: Base
+registry:
+  registeredType: GenesisObjectType
+  uniquenessRule: string
+  requiredFields: string[]
+  validationRules: string[]
+  outputManifests: string[]
+```
+
+### 4.14 Policy schema
+
+```yaml
+extends: Base
+policy:
+  policyLevel: guideline | standard | gate | law
+  appliesTo: GenesisId[]
+  rule: string
+  enforcement: manual | automated | hybrid
+  violations: string[]
+```
+
+### 4.15 Mission schema
+
+```yaml
+extends: Base
+mission:
+  objective: string
+  strategicWhy: string
+  successSignals: string[]
+  relatedSystems: GenesisId[]
+  completionState: planned | active | completed | cancelled | archived
+```
+
+### 4.16 Hero object schema
+
+```yaml
+extends: Base
+heroObject:
+  symbolicMeaning: string
+  interactionRole: string
+  associatedSpace: GenesisId
+  visualLaws: GenesisId[]
+  allowedImplementations: string[]
+```
+
+### 4.17 Expansion pack schema
+
+```yaml
+extends: Base
+expansionPack:
+  extendsCollectionId: GenesisId
+  newObjects: GenesisId[]
+  compatibilityRequirements: string[]
+  migrationRequirements: string[]
+  maturityRequirement: string
+```
+
+### 4.18 Research paper schema
+
+```yaml
+extends: Base
+researchPaper:
+  abstract: string
+  researchQuestion: string
+  evidence: string[]
+  methodology: string
+  findings: string[]
+  limitations: string[]
+  instituteReviewId: GenesisId
+```
+
+### 4.19 Specification schema
+
+```yaml
+extends: Base
+specification:
+  specKind: engineering | api | sdk | design | data | security | content | prompt
+  normativeStatements: string[]
+  contracts: string[]
+  examples: string[]
+  validationTests: string[]
+```
+
+### 4.20 Implementation schema
+
+```yaml
+extends: Base
+implementation:
+  implements: GenesisId[]
+  codePaths: string[]
+  docPaths: string[]
+  runtimeKeys: string[]
+  tests: string[]
+  deploymentSurfaces: string[]
+  driftRisk: low | medium | high
+```
+
+### 4.21 ADR schema
+
+```yaml
+extends: Base
+adr:
+  decisionContext: string
+  optionsConsidered:
+    - option: string
+      tradeoffs: string[]
+  decision: string
+  consequences: string[]
+  supersedesAdrIds: GenesisId[]
+```
+
+### 4.22 Proposal schema
+
+```yaml
+extends: Base
+proposal:
+  problem: string
+  proposedChange: string
+  affectedObjects: GenesisId[]
+  reviewQuestions: string[]
+  requiredEvidence: string[]
+  proposedCompilationTargets: CompilationTargetId[]
+```
+
+### 4.23 Amendment schema
+
+```yaml
+extends: Base
+amendment:
+  amendmentClass: clarification | extension | correction | repeal | constitutional-change | kernel-change
+  affectedGenesisIds: GenesisId[]
+  before: string
+  after: string
+  rationale: string
+  migrationPlan: string
+  approvalRecord: string[]
+```
+
+---
+
+## 5. Amendment Rules
+
+Amendments change canonical truth. They are stricter than ordinary edits.
+
+### 5.1 Amendment classes
+
+| Class | Meaning | Approval bar |
+|-------|---------|--------------|
+| Clarification | Improves wording without changing meaning | Canonical Review |
+| Extension | Adds new compatible truth | Canonical Review + relationship audit |
+| Correction | Fixes wrong or unsafe truth | Institute review + changelog |
+| Repeal | Removes obsolete truth | Historical Archives + supersession path |
+| Constitutional Change | Changes principle, law, or governance | Constitution Office approval |
+| Kernel Change | Changes Genesis framework itself | Founder approval + edition bump |
+
+### 5.2 Amendment invariants
+
+1. Amendments are append-only records.
+2. Superseded truth remains historically accessible.
+3. No amendment may silently alter compiled outputs.
+4. Every amendment must declare affected objects and compilation targets.
+5. Kernel changes require a major version or edition change.
+
+---
+
+## 6. ADR Workflow
+
+ADRs record architecture decisions derived from Genesis context.
+
+```text
+Genesis context -> ADR proposal -> options -> decision -> consequences -> implementation links -> review -> compiled output
+```
+
+### ADR stages
+
+1. **Context drafted** — problem, constraints, affected Genesis objects.
+2. **Options listed** — at least two options unless the decision is forced by law.
+3. **Decision selected** — one explicit decision, not a vague direction.
+4. **Consequences recorded** — tradeoffs, risks, future constraints.
+5. **Relationships attached** — systems, principles, specs, implementations.
+6. **Review passed** — architectural consistency and contradiction audit.
+7. **Compiled** — output to Architect's Brain, Master Spec, Developer Docs, and Codex.
+
+### ADR rule
+
+An ADR may choose implementation strategy, but it may not override Genesis law.
+
+---
+
+## 7. Proposal Workflow
+
+Proposals are pre-canonical candidates.
+
+```text
+Idea -> Proposal -> Triage -> Evidence -> Canonical Review -> Article/System/Spec/ADR -> Compilation
+```
+
+### Required proposal sections
+
+- Problem
+- Proposed change
+- Affected objects
+- New objects required
+- Relationship impact
+- Maturity impact
+- Risks
+- Evidence
+- Required decisions
+- Compilation targets
+
+### Proposal outcomes
+
+| Outcome | Meaning |
+|---------|---------|
+| Accepted | Moves into canonical review |
+| Returned | Needs more evidence or structure |
+| Rejected | Conflicts with Genesis or lacks value |
+| Deferred | Valid but not ready |
+| Split | Too large; becomes multiple proposals |
+
+---
+
+## 8. Canonical Review Workflow
+
+Canonical Review determines whether an object becomes official Genesis truth.
+
+### Review gates
+
+1. **Identity gate** — stable ID, name, type, owner, scope.
+2. **Hierarchy gate** — correct collection/book/volume/chapter placement.
+3. **Schema gate** — base schema and object schema complete.
+4. **Relationship gate** — dependencies, conflicts, supersessions, outputs declared.
+5. **Constitution gate** — no violation of principles or laws.
+6. **Institute gate** — publication/canon authority verified.
+7. **Implementation gate** — if implemented, code/docs/spec paths trace back to Genesis.
+8. **Compilation gate** — downstream outputs generated or marked not applicable.
+9. **Audit gate** — version, changelog, and review record appended.
+
+### Canonical statuses
+
+```text
+Proposed -> Draft -> Review -> Approved -> Canonical -> Superseded/Deprecated/Archived
+```
+
+Only `Canonical` objects may be treated as source-of-truth.
+
+---
+
+## 9. Relationship Model
+
+Genesis is a graph. Folders organize reading; relationships organize truth.
+
+### 9.1 Relationship types
+
+| Type | Meaning |
+|------|---------|
+| `defines` | Source object defines target concept |
+| `implements` | Implementation realizes source object |
+| `governs` | Policy/principle/institution controls target |
+| `depends-on` | Source cannot function without target |
+| `supports` | Source strengthens or enables target |
+| `extends` | Source adds compatible scope to target |
+| `supersedes` | Source replaces target going forward |
+| `contradicts` | Source conflicts with target and requires review |
+| `references` | Source cites target without dependency |
+| `compiled-to` | Source generates target output |
+| `owned-by` | Source is stewarded by institution/department |
+| `validated-by` | Source has been reviewed by target |
+| `blocks` | Source prevents target from advancing |
+| `derived-from` | Source originates from target |
+
+### 9.2 Relationship rules
+
+1. Relationships are directed.
+2. Relationship IDs must be stable.
+3. `contradicts` relationships block canon until resolved.
+4. `supersedes` requires historical preservation.
+5. `depends-on` relationships must compile into implementation and architecture docs.
+6. `compiled-to` relationships must be reproducible.
+
+---
+
+## 10. Compilation Model
+
+Genesis compiles into specialized outputs. These outputs are projections, not
+independent sources.
+
+```text
+Genesis Source Graph
+  -> validation
+  -> relationship resolution
+  -> target filtering
+  -> formatting
+  -> output manifest
+  -> compiled artifacts
+```
+
+### 10.1 Constitution
+
+Compiles from:
+
+- Principles
+- Constitutional articles
+- Policies with law-level authority
+- Amendments
+- Governance workflows
+
+Output purpose: immutable law and governing doctrine.
+
+### 10.2 Architect's Brain
+
+Compiles from:
+
+- Systems
+- ADRs
+- Specifications
+- Dependencies
+- Architectural relationships
+- Implementation constraints
+
+Output purpose: machine- and agent-readable architectural reasoning.
+
+### 10.3 Master Specification
+
+Compiles from:
+
+- Systems
+- Capabilities
+- Workflows
+- Implementations
+- UI components
+- APIs
+- Registries
+
+Output purpose: complete product and platform specification.
+
+### 10.4 World Bible
+
+Compiles from:
+
+- World entities
+- Institutions
+- Departments
+- Missions
+- Hero objects
+- Events
+- Professions
+- Narrative rules
+
+Output purpose: civilization continuity and world coherence.
+
+### 10.5 Developer Docs
+
+Compiles from:
+
+- Implementations
+- Specifications
+- Workflows
+- Policies
+- ADR consequences
+- Code paths
+
+Output purpose: implementation guidance for engineers and agents.
+
+### 10.6 SDK Docs
+
+Compiles from:
+
+- SDK specifications
+- Public capabilities
+- Contracts
+- Examples
+- Versioned interfaces
+
+Output purpose: external and internal SDK usage.
+
+### 10.7 API Docs
+
+Compiles from:
+
+- API specifications
+- Data contracts
+- Auth policies
+- Error contracts
+- Versioning rules
+
+Output purpose: API integration and operational reference.
+
+### 10.8 Codex
+
+Compiles from:
+
+- Articles
+- Principles
+- Systems
+- Relationships
+- Volumes
+- Collections
+
+Output purpose: readable canonical library and civilization memory.
+
+The Codex becomes a projection of Genesis, not the origin of truth.
+
+### 10.9 Institute of Knowledge
+
+Compiles from:
+
+- Canonical objects requiring publication
+- Review records
+- Amendments
+- Research papers
+- Historical editions
+- Publication metadata
+
+Output purpose: governance, publication, validation, archives, and official editions.
+
+### 10.10 Compile manifest
+
+Every compile run must produce a manifest:
+
+```yaml
+compileId: string
+genesisVersion: string
+sourceObjectCount: number
+targets:
+  - targetId: string
+    outputPath: string
+    objectCount: number
+    warnings: string[]
+    errors: string[]
+generatedAt: ISODate
+```
+
+---
+
+## 11. Versioning Strategy
+
+Genesis uses semantic versioning plus editions.
+
+```text
+Edition.Major.Minor.Patch
+```
+
+Example:
+
+```text
+Genesis First Edition — 1.0.0
+```
+
+### 11.1 Version meanings
+
+| Segment | Meaning |
+|---------|---------|
+| Edition | Major era of Studio World truth |
+| Major | Kernel, hierarchy, or constitutional change |
+| Minor | New collections, books, volumes, object types, or major systems |
+| Patch | Clarifications, corrections, relationship updates, small schema refinements |
+
+### 11.2 Object versioning
+
+Every object has its own version. Object versions may advance without advancing the
+Genesis kernel version unless they change framework rules.
+
+### 11.3 Immutability
+
+Canonical versions are immutable. Changes create revisions, amendments, or
+superseding objects.
+
+---
+
+## 12. Naming Standards
+
+### 12.1 Human names
+
+- Use title case for canonical object names.
+- Use ™ only for named Studio World concepts that function as branded doctrine,
+  systems, institutions, or hero objects.
+- Avoid temporary implementation words in canonical names.
+- Prefer names that describe enduring meaning, not current UI placement.
+
+### 12.2 IDs
+
+IDs are stable, uppercase by category, and globally unique.
+
+```text
+GEN-COL-FOUNDATIONAL
+GEN-BOOK-CONSTITUTION
+GEN-VOL-WORLD-BIBLE
+GEN-CH-GOVERNANCE
+GEN-ART-C04
+GEN-SYS-WORLD-GRAPH
+GEN-INST-INSTITUTE-OF-KNOWLEDGE
+GEN-POL-PROOF-BEFORE-EXPANSION
+GEN-ADR-0001
+GEN-SPEC-API-0001
+```
+
+### 12.3 Slugs
+
+Slugs are lowercase kebab-case:
+
+```text
+headquarters-principle
+proof-before-expansion
+institute-of-knowledge
+world-graph
+```
+
+### 12.4 Reserved terms
+
+The following are canonical terms and should not be casually renamed:
+
+- Genesis
+- Studio World
+- Studio OS
+- Company Headquarters™
+- Codex
+- Institute of Knowledge™
+- World Graph™
+- Orb™
+- Atlas™
+- Founder
+
+---
+
+## 13. Cross-Reference Standards
+
+Cross-references must be explicit, stable, and machine-readable.
+
+### 13.1 Reference formats
+
+Human reference:
+
+```text
+ARTICLE-C04 — Headquarters Principle™ & Proof Before Expansion Principle™
+```
+
+Machine reference:
+
+```yaml
+ref: GEN-ART-C04
+label: Headquarters Principle™ & Proof Before Expansion Principle™
+relationship: governs
+```
+
+Markdown reference:
+
+```md
+See [[GEN-ART-C04|Headquarters Principle™ & Proof Before Expansion Principle™]].
+```
+
+### 13.2 Reference rules
+
+1. Reference by stable ID first, title second.
+2. Do not reference by file path alone.
+3. File paths are implementation metadata, not canonical identity.
+4. Every relationship reference must declare relationship type.
+5. Broken references block canonical promotion.
+
+---
+
+## 14. Future Expansion Standards
+
+Genesis must expand by adding structured objects, not by stretching old sections
+until they lose meaning.
+
+### 14.1 When to add a collection
+
+Add a collection when a domain:
+
+- Has its own governance requirements
+- Needs multiple books or volumes
+- Has long-term expansion potential
+- Crosses many systems
+- Would make an existing collection unfocused
+
+### 14.2 When to add a book
+
+Add a book when a collection needs a durable body of knowledge with multiple
+volumes under one conceptual spine.
+
+### 14.3 When to add a volume
+
+Add a volume when a subject area will contain many chapters and articles.
+
+### 14.4 When to add an article
+
+Add an article when a truth is atomic, important, referenceable, reviewable, and
+likely to affect future decisions.
+
+### 14.5 When to add an object type
+
+Add an object type only when existing object types cannot represent the concept
+without ambiguity.
+
+Object type additions are kernel changes and require amendment review.
+
+---
+
+## 15. Permanent Authoring Rules
+
+1. Write canonical truth once in Genesis.
+2. Compile audience-specific docs from Genesis.
+3. Keep objects atomic and relationship-rich.
+4. Prefer stable hierarchy over topical sprawl.
+5. Preserve historical truth through supersession, not deletion.
+6. Require evidence for promotion to canonical status.
+7. Keep implementation paths subordinate to object identity.
+8. Make every future document traceable to Genesis.
+9. Treat contradictions as review events, not silent edits.
+10. Expand through collections, books, volumes, and typed objects.
+
+---
+
+## 16. Minimum Template for Future Genesis Entries
+
+```yaml
+id:
+type:
+title:
+canonicalName:
+status:
+stability:
+summary:
+purpose:
+scope:
+  includes:
+  excludes:
+owner:
+  institution:
+  department:
+  steward:
+relationships:
+compiledTo:
+sourcePaths:
+implementationPaths:
+review:
+```
+
+Every future Genesis entry starts here, then adds the object-specific schema fields
+defined in this framework.
+
+---
+
+## 17. Foundation Framework Completion Criteria
+
+This framework is complete when future agents and contributors can answer:
+
+1. Where does a new truth belong?
+2. What object type is it?
+3. What schema does it use?
+4. Who owns it?
+5. What does it relate to?
+6. What does it compile into?
+7. What review does it need?
+8. How is it versioned?
+9. How does it expand without redesigning Genesis?
+10. How do downstream documents prove they derive from Genesis?
+
+That is the permanent purpose of the Genesis Foundation Framework™.
