@@ -1,10 +1,30 @@
 # Experience Engine™ V1.0 (Milestone 141)
 
 **Route:** `/admin/studio/experience-engine`
+**Canonical architecture:** [`../genesis/articles/EXPERIENCE_ENGINE.md`](../../genesis/articles/EXPERIENCE_ENGINE.md) · [`genesis/EXPERIENCE_ENGINE.md`](./genesis/EXPERIENCE_ENGINE.md)
 
 ## Purpose
 
 **Experience Engine™** is the emotional and environmental layer of Studio OS.
+
+As of the Genesis Experience Engine™ architecture, this milestone is also the
+runtime destination for the platform-wide branding and experience inheritance
+model:
+
+```text
+Experience Engine™
+  -> Brand DNA™
+    -> Department DNA™
+      -> Division DNA™
+        -> Scene DNA™
+          -> Component DNA™
+            -> Motion DNA™
+              -> Interaction DNA™
+                -> Experience™
+```
+
+Studio OS Design DNA™ is not redesigned. It becomes the first official
+Experience DNA™ profile consumed by the engine.
 
 > An operating system should respond to context — not only functionally, but experientially. Studio OS adapts its atmosphere to match the organization's current moment. Technology adapts to people. Not the other way around.
 

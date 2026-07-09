@@ -44618,6 +44618,21 @@ Summary of the **full conversation in this chat**: Built the Launch Stack govern
 
 ---
 
+## 2026-07-09 — Experience Engine™ architecture (multi-brand DNA inheritance)
+
+Summary of the **full conversation in this chat**: Built the Launch Stack governance arc through Architect's Prompt Library™ architecture/runtime; fixed Studio Orb clickability; authored Studio OS Design DNA™ Version 1.0; implemented the Design DNA runtime/registry UI; then responded to the user's **MASTER ARCHITECTURE FOLLOW-UP — Experience Engine™** request by elevating Design DNA into a broader platform-wide multi-brand experience inheritance model.
+
+- **Prior context preserved:** Architect's Prompt Library™ exists at `src/studio-os-core/genesis/architects-prompt-library/` with `/admin/studio/prompt-library`; Orb clickability was fixed in `DepartmentGoldenBuildShell`; Studio OS Design DNA™ canonical architecture and runtime now live at `genesis/articles/STUDIO_OS_DESIGN_DNA.md` + `src/studio-os-core/genesis/studio-os-design-dna/` + `/admin/studio/design-dna`.
+- **Latest user request:** Do **not** redesign Studio OS Design DNA™. Instead, evolve the architecture into **Experience Engine™**, where Studio OS owns an engine that consumes **Experience DNA™** files so every company shares the same underlying operating architecture while expressing its own identity.
+- **New canon:** Added `genesis/articles/EXPERIENCE_ENGINE.md`, content home `genesis/experience-engine/README.md`, compiled guide `docs/studio-os/genesis/EXPERIENCE_ENGINE.md`, and Genesis rule **§9B.14 Experience Engine rule**. Updated `genesis/README.md`, `genesis/articles/README.md`, `docs/studio-os/README.md`, `docs/studio-os/genesis/README.md`, `docs/studio-os/experience-engine.md`, and added Experience Engine relationship notes to the Design DNA article/guide.
+- **Permanent hierarchy:** Experience Engine™ → Brand DNA™ → Department DNA™ → Division DNA™ → Scene DNA™ → Component DNA™ → Motion DNA™ → Interaction DNA™ → Experience™.
+- **Brand DNA spec:** Defines Brand Philosophy, Visual Personality, Emotional Personality, Executive Personality, Writing Voice, Interaction Style, Lighting, Materials, Architectural Style, Typography, Color System, Glass Treatment, Animation Style, Sound Direction, Motion Philosophy, Icon Language, Illustration Style, Orb Personality Overrides, Navigation Tone, Environmental Storytelling, and Design Constraints.
+- **Department / Scene DNA:** Department DNA inherits Brand DNA while specializing department color, lighting, ambient mood, scene identity, particles, notifications, executive/knowledge/creative mood, and animation personality. Scene DNA inherits Brand DNA, Department DNA, Component Library, Layout Template, Hero Object, Capability Panels, Interaction Model, Orb Placement, and Environmental Rules.
+- **Case studies:** Defined Brand DNA examples for Studio OS™ (marble/crystal executive institution), Frontal Slayer™ (luxury beauty mansion / salon concierge), and NDX™ (media command / editorial newsroom). Demonstrated how Executive Headquarters™, Orb™, Institute of Knowledge™, Command Center™, and Content Engine™ share architecture while expressing each brand differently.
+- **Multi-tenant rule:** Studio OS owns the Experience Engine™, schemas, validators, shared component anatomy, token families, and inheritance model. Companies own versioned Experience DNA™ overlays. Brand identity changes atmosphere, voice, material expression, motion, Orb personality, navigation tone, and storytelling — not the underlying operating architecture.
+
+---
+
 ## 2026-07-09 — Executive Reflection Suite™ architecture
 
 Summary of the **full conversation in this chat**: The chat built Studio OS's Launch Stack governance and reflection foundation: Build Order, Identity Engine, Executive Headquarters, Orb, Founder Acceptance Testing architecture/runtime, Live Validation System architecture/runtime, The Evolution Room™ architecture, and The Evolution Room™ implementation. The user then requested **MASTER ARCHITECTURE PROJECT — EXECUTIVE REFLECTION SUITE™**, asking to challenge every assumption and design the complete executive operating environment for founder/company/platform reflection.

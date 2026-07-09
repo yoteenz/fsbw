@@ -1032,6 +1032,7 @@ Critical failures:
 | **Component Registry™** | Canonical components that instantiate the DNA. |
 | **Design Compliance Engine™** | Future automated compliance validator. |
 | **Design DNA Canon™** | Existing customer-facing canon; distinct from Studio OS platform-level DNA. |
+| **Experience Engine™** | Parent generator for multi-brand Experience DNA™. Studio OS Design DNA™ becomes the first official Brand DNA™ profile, not the only possible platform identity. |
 
 ---
 

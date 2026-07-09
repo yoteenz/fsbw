@@ -15,4 +15,5 @@
 - [`ARCHITECTS_PROMPT_LIBRARY_PLATFORM.md`](./ARCHITECTS_PROMPT_LIBRARY_PLATFORM.md) — Architect's Prompt Library runtime platform guide
 - [`STUDIO_OS_DESIGN_DNA.md`](./STUDIO_OS_DESIGN_DNA.md) — Studio OS Design DNA™ constitutional visual grammar
 - [`STUDIO_OS_DESIGN_DNA_PLATFORM.md`](./STUDIO_OS_DESIGN_DNA_PLATFORM.md) — Design DNA runtime platform guide
+- [`EXPERIENCE_ENGINE.md`](./EXPERIENCE_ENGINE.md) — Experience Engine™ branding and experience inheritance architecture
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

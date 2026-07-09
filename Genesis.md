@@ -133,6 +133,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Executive Reflection Suite™](./genesis/articles/EXECUTIVE_REFLECTION_SUITE.md)
     - [The Architect's Prompt Library™](./genesis/articles/ARCHITECTS_PROMPT_LIBRARY.md)
     - [Studio OS Design DNA™](./genesis/articles/STUDIO_OS_DESIGN_DNA.md)
+    - [Experience Engine™](./genesis/articles/EXPERIENCE_ENGINE.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1198,6 +1199,39 @@ Rules:
 9. Design Token Engine™, Component Registry™, and Design Compliance Engine™ are
    implementation mechanisms for this visual constitution.
 10. Accessibility failures are Design DNA failures.
+
+### 9B.14 Experience Engine rule
+
+The canonical platform-wide branding and experience inheritance model is defined
+in **[Experience Engine™](./genesis/articles/EXPERIENCE_ENGINE.md)**.
+
+Studio OS does not own one single visual skin. Studio OS owns an Experience
+Engine™ that consumes layered Experience DNA™ files. Studio OS Design DNA™ is the
+first official Experience DNA™ profile; it must not be redesigned or diluted to
+make the platform generic.
+
+Rules:
+
+1. The hierarchy is permanent: Experience Engine™ → Brand DNA™ → Department DNA™
+   → Division DNA™ → Scene DNA™ → Component DNA™ → Motion DNA™ → Interaction
+   DNA™ → Experience™.
+2. Brand DNA™ defines philosophy, visual/emotional/executive personality,
+   writing voice, lighting, materials, architecture, typography, color, glass,
+   animation, sound, icon language, Orb personality, navigation tone,
+   environmental storytelling, and design constraints.
+3. Department DNA™ inherits Brand DNA™ and specializes department color,
+   lighting, ambient mood, scene identity, particles, notification style,
+   executive/knowledge/creative mood, and animation personality.
+4. Scene DNA™ inherits Brand DNA™, Department DNA™, Component Library, layout
+   template, hero object, capability panels, interaction model, Orb placement,
+   and environmental rules.
+5. Companies own their Experience DNA™; Studio OS owns the engine, schemas,
+   validators, shared component anatomy, token families, and inheritance model.
+6. Experience DNA™ changes brand identity, atmosphere, material expression,
+   motion, voice, Orb personality, and storytelling. It must not fracture the
+   underlying operating architecture.
+7. Multi-tenant experiences are generated from versioned DNA overlays, not
+   handcrafted redesigns or per-company code forks.
 
 ---
 

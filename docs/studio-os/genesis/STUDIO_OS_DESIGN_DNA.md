@@ -273,5 +273,6 @@ Critical failures include generic SaaS dashboard layout, missing department iden
 | Design Token Engine™ | Runtime token implementation |
 | Component Registry™ | Reusable component implementation |
 | Design Compliance Engine™ | Future validation runtime |
+| Experience Engine™ | Parent generator for multi-brand Experience DNA™; Studio OS Design DNA™ is the first official Brand DNA™ profile |
 
 Future work should instantiate the Design DNA™, never reinterpret it.
