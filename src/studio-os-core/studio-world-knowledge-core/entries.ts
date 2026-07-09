@@ -761,7 +761,7 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
       'Headquarters Experience™',
       'Business Discovery Blueprint™',
     ],
-    implementationStatus: 'Specified',
+    implementationStatus: 'Implemented',
     tags: [
       'business-discovery',
       'company-genome',

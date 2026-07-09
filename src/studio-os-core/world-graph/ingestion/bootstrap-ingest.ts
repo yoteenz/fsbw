@@ -110,9 +110,12 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       name: 'Business Discovery™',
       summary:
         'Studio OS signature onboarding experience — an elite consulting-style discovery flow that generates the Company Genome™ and first Headquarters proposal.',
-      lifecycle: 'architecture',
+      lifecycle: 'implemented',
       codePaths: ['src/studio-os-core/business-discovery/'],
-      docPaths: ['docs/studio-os/business-discovery.md'],
+      docPaths: [
+        'docs/studio-os/business-discovery.md',
+        'docs/studio-os/engine/business-discovery/BUSINESS_DISCOVERY_ENGINE.md',
+      ],
       integratesWith: [
         'business-discovery-blueprint',
         'company-genome',

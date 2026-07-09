@@ -1,6 +1,7 @@
 import { STUDIO_WORLD_ROUTE_REGISTRY } from '../studio-world/route-registry';
 import { buildRetentionOrbRecommendations } from '../knowledge-retention-engine/orb-reminders/integration';
 import { buildProfessionalMemoryOrbRecommendations } from '../professional-memory-wisdom-engine/orb-integration/integration';
+import { buildBusinessDiscoveryOrbRecommendations, getBusinessDiscoveryState } from '../business-discovery';
 import type {
   OrbCompanyContext,
   OrbPersonalizationProfile,
@@ -327,6 +328,12 @@ export function buildOrbRecommendations(
   recs.push(...buildRetentionOrbRecommendations(context.organizationId, 'studio-local-learner'));
   recs.push(
     ...buildProfessionalMemoryOrbRecommendations(context.organizationId, 'studio-local-learner')
+  );
+  recs.push(
+    ...buildBusinessDiscoveryOrbRecommendations(
+      getBusinessDiscoveryState(context.organizationId),
+      context.organizationId
+    )
   );
 
   return recs.sort((a, b) => PRIORITY_WEIGHT[b.priority] - PRIORITY_WEIGHT[a.priority]);
