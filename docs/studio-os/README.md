@@ -52,6 +52,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/NARRATIVE_INTELLIGENCE.md](./genesis/NARRATIVE_INTELLIGENCE.md) | **Narrative Intelligence™ guide** — implementation-facing summary for experience-first narrative architecture before production |
 | [../../genesis/articles/STUDIO_PRODUCTION_SYSTEM.md](../../genesis/articles/STUDIO_PRODUCTION_SYSTEM.md) | **Studio Production System™** — AI production company architecture with production departments, Production Packages™, Production Control Room™, QC, distribution, and analytics |
 | [genesis/STUDIO_PRODUCTION_SYSTEM.md](./genesis/STUDIO_PRODUCTION_SYSTEM.md) | **Studio Production System™ guide** — implementation-facing summary for department contracts, team assembly, casting/design/camera/sound/post/distribution intelligence |
+| [../../genesis/articles/CREATIVE_OPERATING_SYSTEM.md](../../genesis/articles/CREATIVE_OPERATING_SYSTEM.md) | **Creative Operating System™** — autonomous creative organization architecture with executive creative board, council, memory, learning, evolution, economy, and headquarters integration |
+| [genesis/CREATIVE_OPERATING_SYSTEM.md](./genesis/CREATIVE_OPERATING_SYSTEM.md) | **Creative Operating System™ guide** — implementation-facing summary for the permanent executive creative organization inside Studio Intelligence™ |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

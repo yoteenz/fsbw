@@ -1417,6 +1417,51 @@ Rules:
    Production Package™, required department gates, QC gate, and founder approval
    policies allow it.
 
+### 9B.20 Creative Operating System rule
+
+The canonical autonomous creative organization architecture is defined in
+**[Creative Operating System™](./genesis/articles/CREATIVE_OPERATING_SYSTEM.md)**.
+
+Creative Direction Studio™ must feel like entering the headquarters of a
+world-class creative company, not like operating software. Studio Production
+System™ executes governed productions; Creative Operating System™ runs the
+continuous creative organization that decides, learns, remembers, evolves, and
+reuses across productions.
+
+Rules:
+
+1. **Creative Operating System™** is the permanent executive creative
+   organization inside Studio Intelligence™.
+2. **Executive Creative Board™** owns permanent creative direction domains:
+   Chief Creative Officer™, Executive Producer™, Creative Strategist™,
+   Narrative Director™, Brand Director™, Audience Director™, Experience
+   Director™, Production Director™, Performance Director™, and Knowledge
+   Director™.
+3. Board recommendations must use evidence, not opinion. The founder always
+   makes the final decision.
+4. **Creative Council™** must convene before major productions and contribute
+   creative opportunities, brand risks, audience considerations, operational
+   impact, resource requirements, performance predictions, narrative
+   consistency, product alignment, educational value, and long-term strategic
+   impact.
+5. Every meaningful production must update **Creative Memory™** and
+   **Production Memory™** with decisions, reasoning, approvals, rejected
+   concepts, performance, audience reactions, lessons learned, visual
+   discoveries, narrative discoveries, production discoveries, and brand
+   discoveries.
+6. **Learning Engine™** and **Creative Evolution Engine™** must compare
+   predictions against outcomes and improve future reasoning across Narrative
+   Intelligence™, Production Genome™, Brand Intelligence™, Audience
+   Intelligence™, Decision DNA™, Taste Genome™, Creative Genome™, and creative
+   patterns.
+7. **Creative Economy™** turns reusable outputs from departments into permanent
+   company resources with provenance, status, version history, performance
+   history, reuse recommendations, and canon state.
+8. Executive Headquarters™, Mission Control™, Institute of Knowledge™, Company
+   Genome™, Studio Foundry™, and Orb™ must be able to see and consume creative
+   initiatives, recommendations, memories, learning events, evolution proposals,
+   and reusable creative economy assets.
+
 ---
 
 ## 10. Compilation Model
