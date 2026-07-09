@@ -5,6 +5,7 @@ import {
   compileGenesisTargets,
 } from '../../../../studio-os-core/genesis';
 import { useGenesisState } from '../../../../hooks/useGenesisState';
+import { useConstitutionState } from '../../../../hooks/useConstitutionState';
 
 function GenesisPanel({
   title,
@@ -46,8 +47,20 @@ export function GenesisWorkspace() {
     refresh,
   } = useGenesisState();
 
+  const {
+    stats: constitutionStats,
+    articles: constitutionArticles,
+    amendments: constitutionAmendments,
+    openAmendments,
+    reviews: constitutionReviews,
+    relationships: constitutionRelationships,
+    historicalArchive,
+    amendmentStages,
+    refresh: refreshConstitution,
+  } = useConstitutionState();
+
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'registry' | 'pipelines' | 'schemas' | 'compiler'
+    'overview' | 'registry' | 'pipelines' | 'schemas' | 'compiler' | 'constitution'
   >('overview');
   const [lastCompileMessage, setLastCompileMessage] = useState<string | null>(null);
 
@@ -86,7 +99,10 @@ export function GenesisWorkspace() {
           </div>
           <button
             type="button"
-            onClick={refresh}
+            onClick={() => {
+              refresh();
+              refreshConstitution();
+            }}
             className="rounded-lg border border-violet-500/40 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-200 hover:bg-violet-500/20"
           >
             Sync Registry
@@ -128,6 +144,7 @@ export function GenesisWorkspace() {
               ['pipelines', 'Pipelines'],
               ['schemas', 'Canonical Object Model™'],
               ['compiler', 'Compilation Pipeline™'],
+              ['constitution', 'Constitution™'],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -292,6 +309,111 @@ export function GenesisWorkspace() {
               </ul>
             </GenesisPanel>
           )}
+        </div>
+      )}
+
+      {activeTab === 'constitution' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-6 text-sm">
+            <div>
+              <span className="text-white/40">Articles</span>
+              <p className="font-medium">{constitutionStats.articleCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Canonical</span>
+              <p className="font-medium">{constitutionStats.canonicalCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Amendments</span>
+              <p className="font-medium">{constitutionStats.amendmentCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Open amendments</span>
+              <p className="font-medium">{constitutionStats.openAmendments}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Relationships</span>
+              <p className="font-medium">{constitutionStats.relationshipCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Historical</span>
+              <p className="font-medium">{constitutionStats.historicalEntries}</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <GenesisPanel title="Constitution Registry™">
+              {constitutionArticles.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  Registry empty — ingest articles via{' '}
+                  <code className="text-violet-300">registerConstitutionArticle()</code> or batch
+                  payload loader. No engineering changes required.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  {constitutionArticles.map((article) => (
+                    <li key={article.articleId} className="rounded bg-white/5 px-3 py-2">
+                      <span className="font-medium text-violet-200">{article.officialName}</span>
+                      <span className="ml-2 text-white/40">{article.articleId}</span>
+                      <span className="ml-2 text-xs text-white/30">{article.canonicalStatus}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Amendment Workflow™">
+              <ol className="mb-3 space-y-1 text-sm text-white/70">
+                {amendmentStages.map((stage) => (
+                  <li key={stage}>{stage}</li>
+                ))}
+              </ol>
+              {constitutionAmendments.length === 0 ? (
+                <p className="text-sm text-white/50">No amendments yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {openAmendments.slice(0, 5).map((a) => (
+                    <li key={a.amendmentId}>
+                      {a.title} — {a.stage} ({a.status})
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Constitution Relationship Graph™">
+              {constitutionRelationships.length === 0 ? (
+                <p className="text-sm text-white/50">No relationships yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {constitutionRelationships.slice(0, 8).map((rel) => (
+                    <li key={rel.id}>
+                      {rel.fromArticleId} → {rel.type} → {rel.toArticleId}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Historical Archive™">
+              {historicalArchive.length === 0 ? (
+                <p className="text-sm text-white/50">No archived revisions yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {historicalArchive.slice(0, 5).map((entry) => (
+                    <li key={entry.historyId}>
+                      {entry.articleId} — {entry.reason}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {constitutionReviews.length > 0 && (
+                <p className="mt-3 text-xs text-white/40">
+                  {constitutionReviews.length} review session(s) pending
+                </p>
+              )}
+            </GenesisPanel>
+          </div>
         </div>
       )}
     </div>

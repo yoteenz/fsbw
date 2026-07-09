@@ -21,6 +21,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `versioning/` | Semantic versions and revision history |
 | `history/` | Historical revisions archive |
 | `compiler/` | Compile manifests and target outputs |
+| `constitution/` | Constitutional Core infrastructure — registry, amendments, versioning, archive |
 
 ## Rule
 

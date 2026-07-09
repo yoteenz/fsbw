@@ -47,6 +47,7 @@ import { listGenesisObjectSchemaTypes, getGenesisObjectSchemaMeta } from './sche
 import { validateGenesisObject } from './schemas/validate';
 import { formatGenesisVersion, INITIAL_GENESIS_VERSION } from './versioning/semver';
 import { createObjectRevision, listHistoricalRevisions } from './versioning/revisions';
+import { ensureConstitutionSubsystem } from './constitution/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -62,6 +63,7 @@ export type GenesisPlatformStats = GenesisRegistryStats & {
 };
 
 export function ensureGenesisStore() {
+  ensureConstitutionSubsystem();
   return readGenesisStore();
 }
 

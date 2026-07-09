@@ -4,6 +4,7 @@ import {
   GENESIS_UPDATED_EVENT,
 } from '../constants';
 import { bootstrapGenesisStoreIfEmpty } from '../bootstrap/seeds';
+import { emptyConstitutionStore } from '../constitution/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -52,6 +53,7 @@ export function readGenesisStore(): GenesisStore {
       reviews: parsed.reviews ?? [],
       compileManifests: parsed.compileManifests ?? [],
       historicalRevisions: parsed.historicalRevisions ?? [],
+      constitution: parsed.constitution ?? emptyConstitutionStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

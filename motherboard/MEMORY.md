@@ -44044,3 +44044,22 @@ Summary of the **full conversation in this chat**: Genesis.md Foundation Framewo
 - **Verification:** `npm run build` passed; prebuild regenerated master-spec and World Graph artifacts.
 - **Conventions:** Future decisions should be checked against the Constitutional Core. Any conflict with GEN-C001 through GEN-C025 is a constitutional review event, not a local implementation preference.
 
+---
+
+## 2026-07-09 — Genesis Implementation Sprint 2 Constitutional Core™ infrastructure
+
+Summary of the **full conversation in this chat**: Genesis.md Foundation Framework sprint → Genesis Implementation Sprint 1 (framework infrastructure) → Genesis Sprint 2 Constitutional Core content (25 articles in markdown) → **GENESIS IMPLEMENTATION SPRINT 2** — implement constitutional **infrastructure only** (no runtime content seeds).
+
+- **Context:** User approved Constitutional Core architecture and requested Genesis Constitution as a first-class subsystem: folder structure, Constitution Registry™, Relationship Graph™, Article Versioning™, Amendment Workflow™, Historical Archive™, Cross References™, review/voting — explicitly **not** constitutional content in runtime.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/genesis/constitution/`** module: `types`, `constants`, `persistence`, `articles/engine`, `registry`, `relationships/graph`, `versioning/article-versioning`, `amendments/workflow`, `review/pipeline`, `voting/workflow`, `history/archive`, `cross-references/resolve`, `content/loader`, `engine`, `index`.
+  - **Article model** stores: articleId, officialName, status, version, category, summary, purpose, constitutionalText, interpretation, examples, antiPatterns, dependencies, relatedArticles, revisionHistory, approvalHistory, canonicalStatus, author, contributors, tags, sourcePath.
+  - **Amendment Workflow™** seven stages: proposal → discussion → architecture-review → founder-approval → genesis-update → codex-update → historical-archive.
+  - **Persistence:** nested `constitution` key inside `genesis_v1` localStorage; `ensureConstitutionSubsystem()` called from `ensureGenesisStore()`; framework module list includes `'constitution'`.
+  - **Repo content home:** `genesis/constitution/` with READMEs for `articles/`, `amendments/`, `review/`, `history/`, `voting/`, `relationships/`; **`genesis/constitution/articles/article.schema.json`** for zero-code article ingest.
+  - **Admin UI:** Constitution tab on **`GenesisWorkspace`**; hook **`useConstitutionState()`** for registry stats, amendments, relationships, archive.
+  - **Docs:** **`docs/studio-os/genesis/CONSTITUTION_PLATFORM.md`**; Studio OS and **`genesis/README.md`** indexes updated.
+  - **Explicitly not done:** No seeding of GEN-C001–C025 into runtime registry (markdown law stays separate until data ingest).
+- **Verification:** `npm run build` passed after fixing import paths (`../../versioning/semver`) and unused parameter in amendment archive.
+- **Conventions:** Constitution is a Genesis subsystem, not a markdown collection. Future articles register via schema-conformant payloads — zero engineering changes. Authored Constitutional Core at `genesis/articles/CONSTITUTIONAL_CORE.md` remains source until explicitly ingested.
+

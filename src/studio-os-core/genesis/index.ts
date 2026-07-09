@@ -20,3 +20,4 @@ export * from './articles/registry';
 export * from './compiler/targets';
 export * from './compiler/pipeline';
 export * from './persistence/store';
+export * from './constitution';

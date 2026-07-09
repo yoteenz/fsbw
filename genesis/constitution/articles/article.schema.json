@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ConstitutionArticlePayload",
+  "type": "object",
+  "required": [
+    "articleId",
+    "officialName",
+    "category",
+    "summary",
+    "purpose",
+    "constitutionalText",
+    "interpretation",
+    "author"
+  ],
+  "properties": {
+    "articleId": { "type": "string", "pattern": "^GEN-C[0-9]{3}$" },
+    "officialName": { "type": "string" },
+    "category": { "type": "string" },
+    "summary": { "type": "string" },
+    "purpose": { "type": "string" },
+    "constitutionalText": { "type": "string" },
+    "interpretation": { "type": "string" },
+    "examples": { "type": "array", "items": { "type": "string" } },
+    "antiPatterns": { "type": "array", "items": { "type": "string" } },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "relatedArticles": { "type": "array", "items": { "type": "string" } },
+    "author": { "type": "string" },
+    "contributors": { "type": "array", "items": { "type": "string" } },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "sourcePath": { "type": "string" }
+  },
+  "additionalProperties": false
+}

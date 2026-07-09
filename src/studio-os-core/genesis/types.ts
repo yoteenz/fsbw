@@ -222,6 +222,7 @@ export type GenesisStore = {
   reviews: GenesisReviewSession[];
   compileManifests: GenesisCompileManifest[];
   historicalRevisions: GenesisHistoricalRevision[];
+  constitution?: import('./constitution/types').ConstitutionStore;
   bootstrappedAt?: string;
 };
 
