@@ -45016,3 +45016,16 @@ Summary of the **full conversation in this chat**: After Studio Production Syste
 - **Integration:** `coordinateProduction()` auto-convenes Board Meeting™ and records production to Creative Memory™; Production Control Room overlay shows org state, executive board, memory, evolution, economy, Studio Intelligence status; evolution cycle via `runPostPublicationEvolution()`.
 - **UI:** `CreativeOperatingSystemWorkspace` + `useCreativeOperatingSystemState`; page `src/pages/admin/studio/creative-operating-system/page.tsx`; routes `/admin/studio/creative-operating-system` + `:roomSlug`; nav + module `creative-operating-system`; cross-links from Studio Intelligence Layer and Studio Production headers; expanded Production Control Room panel.
 - **Verification:** `npm run build` passed.
+
+---
+
+## 2026-07-09 — Experience Lab emergency debug sprint (blank white screen)
+
+Summary of the **full conversation in this chat**: Experience Lab shipped with runtime boot stabilization; user reported **blank white screen** after fallback changes — crash likely before component-level error UI. Emergency debug sprint: no features, no UI redesign, no patching individual undefined values.
+
+- **Prior arc:** Experience Lab (`327d85b0e`); Safari fixes for `selection.brandId` and empty brand registry (`425d6b61e`); runtime boot stabilization with `runtime-boot/` fallbacks (`5e848e149`).
+- **Root cause hypothesis:** Heavy genesis barrel imports at module scope + `emptyExperienceRuntimeStore()` calling `getDefaultRuntimeSeed()` (pulls seed-data during Genesis store normalization) + circular import chain (`persistence/store` ↔ `experience-runtime/persistence`); `useExperienceLabState` / `ExperienceLabWorkspace` imported entire genesis tree synchronously before ErrorBoundary could render.
+- **Debug routes added:** `/admin/studio/experience-lab/health` — zero runtime/DNA/registry imports, renders "Experience Lab Health OK"; `/admin/studio/experience-lab/safe` — incremental dynamic import probe via `probeExperienceLabImports()` showing which module fails.
+- **Safe boot UI:** `ExperienceLabErrorBoundary` (route, message, stack, component stack); `RuntimeSafeMode` + `useRuntimeSafeMode` — lazy boot steps after mount, Runtime Boot Inspector, scene rendering disabled; main `ExperienceLabWorkspace` temporarily renders `RuntimeSafeMode` only.
+- **Module-scope fix:** `emptyExperienceRuntimeStore()` uses inline minimal platform/state DNA (no `getDefaultRuntimeSeed()` at init); main page `recordExperienceLabOpened` via dynamic import of `experience-lab/engine` (no genesis barrel); routes wired in `App.tsx` (health/safe before main lab).
+- **Verification:** `npm run build` passed. Success criteria: no white screen — Health OK, Safe Mode diagnostics, or Runtime Inspector must render.

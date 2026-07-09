@@ -1,6 +1,10 @@
-import { RuntimeSafeMode } from './RuntimeSafeMode';
+import { StudioBootGate } from '../studio-boot/StudioBootGate';
 
-/** Scene rendering disabled — Runtime Safe Mode diagnostics only until boot is stable. */
+/** Experience Lab boots through StudioBootstrap — diagnostics only (no scene render). */
 export function ExperienceLabWorkspace() {
-  return <RuntimeSafeMode />;
+  return (
+    <StudioBootGate through="experience-runtime">
+      {null}
+    </StudioBootGate>
+  );
 }

@@ -282,6 +282,10 @@ const AdminStudioNarrativeIntelligence = lazyWithRetry(
   () => import('./pages/admin/studio/narrative-intelligence/page'),
   'AdminStudioNarrativeIntelligence'
 );
+const AdminStudioHealth = lazyWithRetry(
+  () => import('./pages/admin/studio/health/page'),
+  'AdminStudioHealth'
+);
 const AdminStudioExperienceLabHealth = lazyWithRetry(
   () => import('./pages/admin/studio/experience-lab/health/page'),
   'AdminStudioExperienceLabHealth'
@@ -1262,6 +1266,11 @@ function App() {
           <Route path="backend" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminBackend />
+            </Suspense>
+          } />
+          <Route path="studio/health" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioHealth />
             </Suspense>
           } />
           <Route element={<AdminStudioWorkspaceGuard />}>
