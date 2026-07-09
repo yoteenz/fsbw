@@ -45042,3 +45042,14 @@ Summary of the **full conversation in this chat**: Experience Lab emergency debu
 - **Experience Lab:** `StudioBootGate` + `useStudioBoot` — boots through StudioBootstrap; on failure shows RuntimeDiagnostics (boot sequence, module statuses, missing deps, fallbacks, contract) or RuntimeFailSafe; scene rendering still disabled.
 - **Fallback contract:** studio-os / executive / executive-headquarters / hq-master-scene-v1 / v1 DNA versions when registries partial.
 - **Verification:** `npm run build` passed. HQ/grand-atrium untouched.
+
+---
+
+## 2026-07-09 — Critical routing fix: public debug routes bypass all guards
+
+Summary of the **full conversation in this chat**: Studio Kernel/Bootstrap (`254b9419e`) did not fix visual issues — hypothesis: fixes were behind same broken admin/workspace guard path. User requested **CRITICAL ROUTING FIX** — four temporary **public** debug routes at highest router level, before AdminGuard, AdminStudioWorkspaceGuard, workspace bootstrap, and `lazy import('../workspaces')`.
+
+- **Routes (TEMPORARY — remove when Experience Lab stable):** `/__studio-health` (zero deps, Studio Health OK + deployment/timestamp/browser/url); `/__chunk-debug` (script tags, failed loads, reload/clear storage); `/__boot-debug` (StudioBootstrap module list/status/deps/errors/warnings/fallbacks); `/__experience-lab-safe` (probes StudioBootstrap → BrandRegistry → DepartmentRegistry → SceneRegistry → DNAResolver → SceneAssembler → RuntimeInspector one-at-a-time).
+- **Router wiring:** `main.tsx` → `StudioDebugRoutes` before lazy `App`; `isStudioDebugPath()` skips heavy `main-app-boot.ts` (vision engine, Supabase auth, PSA preload) on debug paths; `App` lazy-loaded only for `*` catch-all.
+- **Diagnostic interpretation:** health OK + admin lab fails → guard/bootstrap; safe OK + admin lab fails → route wrapper; safe fails → runtime import chain.
+- **Verification:** `npm run build` passed.

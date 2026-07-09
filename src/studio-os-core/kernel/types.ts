@@ -1,9 +1,10 @@
 /** Boot module lifecycle status. */
-export type BootModuleStatus = 'idle' | 'loading' | 'ready' | 'failed' | 'fallback';
+export type BootModuleStatus = 'idle' | 'loading' | 'ready' | 'failed' | 'fallback' | 'skipped';
 
 export type BootModuleSnapshot = {
   id: string;
   name: string;
+  label: string;
   status: BootModuleStatus;
   dependencies: string[];
   required: boolean;
@@ -17,6 +18,7 @@ export type BootModuleSnapshot = {
 export type BootModuleContract = {
   id: string;
   name: string;
+  label: string;
   dependencies: string[];
   required: boolean;
   initialize: () => Promise<void>;
@@ -35,6 +37,39 @@ export type StudioBootReport = {
   fallbacksUsed: string[];
   startedAt: number;
   finishedAt?: number;
+  currentModuleId?: string | null;
+  elapsedMs?: number;
+  safeMode?: boolean;
+};
+
+export type StudioBootLiveState = {
+  modules: BootModuleSnapshot[];
+  currentModuleId: string | null;
+  elapsedMs: number;
+  complete: boolean;
+  ready: boolean;
+  errors: string[];
+  warnings: string[];
+  fallbacksUsed: string[];
+  safeMode: boolean;
 };
 
 export const STUDIO_BOOT_EVENT = 'studio-os-boot-updated';
+
+export const BOOT_MODULE_TIMEOUT_MS = 3000;
+
+/** Visible labels for boot diagnostics. */
+export const BOOT_MODULE_DISPLAY_LABELS: Record<string, string> = {
+  storage: 'storage',
+  'auth-session': 'auth',
+  'admin-context': 'user-context',
+  'platform-dna': 'platform-dna',
+  'brand-registry': 'brand-registry',
+  'department-registry': 'department-registry',
+  'scene-registry': 'scene-registry',
+  'state-dna': 'state-dna',
+  'design-dna-resolver': 'design-dna-resolver',
+  'experience-runtime': 'experience-runtime',
+  'workspace-runtime': 'workspace-runtime',
+  'ui-render': 'ui-render',
+};

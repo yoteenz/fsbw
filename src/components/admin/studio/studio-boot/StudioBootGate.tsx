@@ -1,9 +1,10 @@
-import { useStudioBoot } from '../../../../hooks/useStudioBoot';
+import { BootDiagnosticsPanel } from '../../../../studio-os-core/runtime-diagnostics/boot-diagnostics-panel';
 import { RuntimeDiagnostics } from '../../../../studio-os-core/runtime-diagnostics';
 import { RuntimeFailSafe } from '../../../../studio-os-core/runtime-diagnostics';
 import { isDynamicImportChunkFailure } from '../../../../utils/chunkLoadRecovery';
+import { useStudioBoot } from '../../../../hooks/useStudioBoot';
 
-/** Gates Studio routes on StudioBootstrap — diagnostics instead of white screen. */
+/** Gates Studio routes on StudioBootstrap — live diagnostics, never silent hang. */
 export function StudioBootGate({
   children,
   through = 'experience-runtime',
@@ -11,42 +12,85 @@ export function StudioBootGate({
 }: {
   children?: React.ReactNode;
   through?: 'experience-runtime' | 'ui-render';
-  /** When true and boot succeeds, show RuntimeDiagnostics instead of children. */
   diagnosticsWhenReady?: boolean;
 }) {
-  const { loading, readiness, fatalError, retry } = useStudioBoot(through);
+  const { live, readiness, fatalError, retry, continueSafeMode, skipCurrentModule } =
+    useStudioBoot(through);
 
-  if (loading && !readiness) {
+  if (fatalError && isDynamicImportChunkFailure(new Error(fatalError))) {
     return (
-      <div
-        style={{ padding: '24px', fontFamily: 'system-ui, sans-serif', fontSize: '13px' }}
-        data-studio-boot-loading
-      >
-        StudioBootstrap™ initializing…
-      </div>
+      <>
+        <BootDiagnosticsPanel
+          live={live}
+          onRetry={retry}
+          onSafeMode={continueSafeMode}
+          onSkipCurrent={skipCurrentModule}
+        />
+        <RuntimeFailSafe message={fatalError} detail={readiness?.errors.join('\n')} />
+      </>
     );
   }
 
-  if (fatalError && isDynamicImportChunkFailure(new Error(fatalError))) {
-    return <RuntimeFailSafe message={fatalError} detail={readiness?.errors.join('\n')} />;
-  }
+  if (!live.complete || (diagnosticsWhenReady && live.complete)) {
+    if (live.complete && readiness && !readiness.bootReady) {
+      return (
+        <>
+          <BootDiagnosticsPanel
+            live={live}
+            onRetry={retry}
+            onSafeMode={continueSafeMode}
+            onSkipCurrent={skipCurrentModule}
+          />
+          <RuntimeDiagnostics snapshot={readiness} onRetry={retry} />
+        </>
+      );
+    }
 
-  if (!readiness) {
+    if (live.complete && readiness?.bootReady && children && !diagnosticsWhenReady) {
+      return <>{children}</>;
+    }
+
+    if (live.complete && readiness?.bootReady) {
+      return (
+        <>
+          <BootDiagnosticsPanel
+            live={live}
+            onRetry={retry}
+            onSafeMode={continueSafeMode}
+            onSkipCurrent={skipCurrentModule}
+          />
+          {readiness ? <RuntimeDiagnostics snapshot={readiness} onRetry={retry} /> : null}
+        </>
+      );
+    }
+
     return (
-      <RuntimeFailSafe
-        message={fatalError ?? 'Studio boot failed'}
-        detail="No readiness snapshot available"
+      <BootDiagnosticsPanel
+        live={live}
+        onRetry={retry}
+        onSafeMode={continueSafeMode}
+        onSkipCurrent={skipCurrentModule}
       />
     );
   }
 
-  if (!readiness.bootReady) {
-    return <RuntimeDiagnostics snapshot={readiness} onRetry={retry} />;
+  if (!readiness) {
+    return (
+      <BootDiagnosticsPanel
+        live={live}
+        onRetry={retry}
+        onSafeMode={continueSafeMode}
+        onSkipCurrent={skipCurrentModule}
+      />
+    );
   }
 
-  if (children && !diagnosticsWhenReady) {
-    return <>{children}</>;
-  }
-
-  return <RuntimeDiagnostics snapshot={readiness} onRetry={retry} />;
+  return (
+    <BootDiagnosticsPanel
+      live={live}
+      onRetry={retry}
+      onSafeMode={continueSafeMode}
+      onSkipCurrent={skipCurrentModule}
+    />
+  );
 }

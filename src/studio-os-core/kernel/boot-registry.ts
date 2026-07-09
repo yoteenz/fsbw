@@ -1,4 +1,5 @@
 import type { BootModuleContract, BootModuleStatus } from './types';
+import { BOOT_MODULE_DISPLAY_LABELS } from './types';
 
 type ModuleFactory = () => BootModuleContract;
 
@@ -75,13 +76,16 @@ export function createBootModule(config: {
   const mod: BootModuleContract = {
     id: config.id,
     name: config.name,
+    label: BOOT_MODULE_DISPLAY_LABELS[config.id] ?? config.id,
     dependencies: config.dependencies ?? [],
     required: config.required ?? true,
     status: 'idle',
     errors: [],
     warnings: [],
     initialize: config.initialize,
-    isReady: config.isReady ?? (() => mod.status === 'ready' || mod.status === 'fallback'),
+    isReady:
+      config.isReady ??
+      (() => ['ready', 'fallback', 'skipped', 'failed'].includes(mod.status)),
   };
   return mod;
 }
