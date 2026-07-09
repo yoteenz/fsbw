@@ -14,6 +14,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [../../genesis/articles/STUDIO_OS_BUILD_ORDER.md](../../genesis/articles/STUDIO_OS_BUILD_ORDER.md) | **Studio OS Build Order™** — definitive architecture roadmap, critical path, topological order, parallel tracks, hidden dependencies, rewrite risks, and 12-cycle sequence |
 | [../../genesis/articles/IDENTITY_ENGINE.md](../../genesis/articles/IDENTITY_ENGINE.md) | **Identity Engine™** — foundational identity architecture: Identity Graph, Role Model, multi-company, AI identities, integrations (not authentication) |
 | [../../genesis/articles/EXECUTIVE_HEADQUARTERS.md](../../genesis/articles/EXECUTIVE_HEADQUARTERS.md) | **Executive Headquarters™** — Launch Stack Sprint 1 flagship founder experience, room hierarchy, arrival flow, and minimum lovable HQ |
+| [../../genesis/articles/ORB.md](../../genesis/articles/ORB.md) | **Orb™** — Launch Stack Stack 2 Executive Intelligence Layer, permanent founder partner, context/memory/recommendation architecture |
 | [genesis/GENESIS_PLATFORM.md](./genesis/GENESIS_PLATFORM.md) | **Genesis Platform™** — Canonical Object Model, pipelines, registry, compilation infrastructure |
 | [genesis/CONSTITUTION_PLATFORM.md](./genesis/CONSTITUTION_PLATFORM.md) | **Genesis Constitution™** — constitutional registry, amendments, versioning, relationship graph |
 | [genesis/OBJECT_MODEL_PLATFORM.md](./genesis/OBJECT_MODEL_PLATFORM.md) | **Canonical Object Model™** — object registry, factory, relationship engine, validation, versioning, history |
@@ -25,6 +26,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/IDENTITY_ENGINE_ARCHITECTURE.md](./genesis/IDENTITY_ENGINE_ARCHITECTURE.md) | **Identity Engine™** — foundational identity blueprint: actors, entities, graph, roles, multi-company, AI identities, MVP scope |
 | [genesis/IDENTITY_ENGINE_PLATFORM.md](./genesis/IDENTITY_ENGINE_PLATFORM.md) | **Identity Engine™** — runtime platform guide: registry, graph, roles, memberships, invitations, context resolver |
 | [genesis/EXECUTIVE_HEADQUARTERS_ARCHITECTURE.md](./genesis/EXECUTIVE_HEADQUARTERS_ARCHITECTURE.md) | **Executive Headquarters™** — Launch Stack architecture guide: rooms, Orb, Atlas, Command Center, Company Genome, v1 scope |
+| [genesis/ORB_ARCHITECTURE.md](./genesis/ORB_ARCHITECTURE.md) | **Orb™** — Executive Intelligence Layer guide: experience states, context, memory, recommendations, proactivity, relationships |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

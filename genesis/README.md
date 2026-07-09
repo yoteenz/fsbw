@@ -20,6 +20,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/STUDIO_OS_BUILD_ORDER.md`](./articles/STUDIO_OS_BUILD_ORDER.md) | Studio OS Build Order™ — definitive architectural roadmap, critical path, build phases, topological order, parallel opportunities, and rewrite-risk controls |
 | [`articles/IDENTITY_ENGINE.md`](./articles/IDENTITY_ENGINE.md) | Identity Engine™ — foundational identity architecture: actors, entities, Identity Graph, roles, multi-company, AI identities, system integrations |
 | [`articles/EXECUTIVE_HEADQUARTERS.md`](./articles/EXECUTIVE_HEADQUARTERS.md) | Executive Headquarters™ — Studio OS Launch Stack Sprint 1 flagship founder experience and minimum lovable HQ architecture |
+| [`articles/ORB.md`](./articles/ORB.md) | Orb™ — Studio OS Launch Stack Stack 2 Executive Intelligence Layer and permanent founder partner architecture |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -28,6 +29,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `build-order/` | Studio OS Build Order Engine runtime content home — 47-system roadmap, critical path, parallel tracks, readiness, rewrite/debt risks |
 | `identity-engine/` | Identity Engine™ content home — canonical identity architecture (runtime planned Cycle 4) |
 | `executive-headquarters/` | Executive Headquarters™ content home — Launch Stack Sprint 1 flagship experience architecture |
+| `orb/` | Orb™ content home — Launch Stack Stack 2 executive intelligence architecture |
 
 ## Structure
 
@@ -53,6 +55,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `build-order/` | Studio OS Build Order Engine infrastructure — dependency resolver, critical path, parallel work, readiness engines, rewrite/debt analyzers |
 | `identity-engine/` | Identity Engine™ architecture content home — blueprint reference; runtime planned per Build Order Cycle 4 |
 | `executive-headquarters/` | Executive Headquarters™ architecture content home — arrival, rooms, Orb/Atlas/Command relationships, minimum lovable HQ |
+| `orb/` | Orb™ architecture content home — context, memory, recommendations, proactive behavior, Chief of Staff intelligence |
 
 ## Rule
 

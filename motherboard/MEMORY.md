@@ -44463,3 +44463,26 @@ Summary of the **full conversation in this chat**: (1) User requested and approv
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
 - **Conventions:** Use `getExecutiveHeadquartersReadyView()` for shell composition; `openExecutiveHeadquartersRoom()` for spatial navigation. All upstream data via named projections — never duplicate mission/company/permission truth in Headquarters store.
 
+---
+
+## 2026-07-09 — Orb™ Executive Intelligence Layer architecture
+
+Summary of the **full conversation in this chat**: (1) User requested and approved Studio OS Build Order Engine™ implementation — completed and pushed (`2630b07cd`). (2) User requested Identity Engine™ architecture — completed and pushed (`c6ce8680c`). (3) User requested Identity Engine™ runtime — completed and pushed (`3183b0aa6`). (4) User requested Executive Headquarters™ architecture — completed and pushed (`4bb81399b`). (5) User requested Executive Headquarters™ implementation sprint — completed and pushed (`313e130af`). (6) User then requested **MASTER ARCHITECTURE PROJECT — STUDIO OS LAUNCH STACK™ STACK 2 — ORB™**: architect Orb as Studio OS's Executive Intelligence Layer, not a chatbot or floating assistant, but the founder's permanent executive partner and defining Studio OS experience.
+
+- **Context:** Orb must make every Studio OS system more intelligent and should feel like working beside an elite Chief of Staff with institutional memory, multi-company context, strategic judgment, creative direction, operations awareness, research ability, and calm proactive support.
+- **Decisions / outcomes:**
+  - Created **`genesis/articles/ORB.md`** as the canonical Stack 2 Orb architecture blueprint.
+  - Defined doctrine: **Orb is the founder's permanent executive partner; everything in Studio OS becomes more intelligent because Orb exists.**
+  - Explicitly rejected Orb as chatbot, floating assistant, search box, model wrapper, notification bot, or feature menu.
+  - Defined Orb roles: Executive Advisor™, Chief Strategist™, Creative Director™, Operations Advisor™, Research Partner™, Knowledge Guide™, Project Manager™, Mission Coordinator™, Learning Mentor™, Business Architect™, Systems Thinker™, Memory Keeper™.
+  - Designed the full Orb experience: arrival, idle, listening, thinking, recommendation, mission planning, decision support, knowledge retrieval, creative collaboration, business coaching, research, executive briefings, daily planning, meeting prep, project management, and context switching.
+  - Defined `OrbContextBundle` layers: founder, identity, company, organization, room, department, project, mission, creative, conversation, knowledge, memory, calendar, files, blueprints, research, permissions, environment.
+  - Defined Orb memory hierarchy and retention policies: short-term, working, long-term, canonical, company, founder, creative, learning, archived; specified what Orb should never forget and what it must not remember without consent.
+  - Designed recommendation engine requirements: evidence, confidence, alternatives, tradeoffs, risks, source systems, required permission, reversibility, founder override, confidence bands.
+  - Designed proactive behavior rules: when Orb may interrupt, remain silent, recommend, observe, summarize, celebrate, or teach.
+  - Defined relationships: Orb → Company Genome → Institute of Knowledge → Knowledge Core → Mission Engine → Command Center → Executive Headquarters → Content Engine → Studio Foundry → Atlas.
+  - Added content home **`genesis/orb/README.md`** and platform guide **`docs/studio-os/genesis/ORB_ARCHITECTURE.md`**.
+  - Updated **`Genesis.md`** with §9B.7 Orb Executive Intelligence Layer rule; updated `genesis/README.md`, `genesis/articles/README.md`, `docs/studio-os/README.md`, `docs/studio-os/genesis/README.md`, and `motherboard/CORE.md`.
+- **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
+- **Conventions:** Future Orb runtime should use named projections (`OrbFounderContextProjection`, `OrbCompanyContextProjection`, `OrbMissionContextProjection`, `OrbKnowledgeContextProjection`, `OrbMemoryProjection`, `OrbRecommendationProjection`, `OrbBriefingProjection`, `OrbAttentionProjection`) and must not own mission/company/knowledge/permission/command truth.
+

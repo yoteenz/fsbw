@@ -126,6 +126,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Studio OS Build Order™](./genesis/articles/STUDIO_OS_BUILD_ORDER.md)
     - [Identity Engine™](./genesis/articles/IDENTITY_ENGINE.md)
     - [Executive Headquarters™](./genesis/articles/EXECUTIVE_HEADQUARTERS.md)
+    - [Orb™](./genesis/articles/ORB.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1000,6 +1001,30 @@ Rules:
 4. Minimum lovable scope beats feature breadth. Future rooms should appear as intentional
    expansion, not unfinished functionality.
 5. Any v1 projection must name its future source system and replacement plan.
+
+### 9B.7 Orb Executive Intelligence Layer rule
+
+The canonical Launch Stack Stack 2 executive intelligence architecture is defined in
+**[Orb™](./genesis/articles/ORB.md)**.
+
+Orb™ is the founder's permanent executive partner. It is **not** an AI chatbot,
+floating assistant, model wrapper, notification bot, or generic search surface.
+
+Rules:
+
+1. Orb owns intelligence composition only; source truth stays in Company Genome™,
+   Knowledge Core™, Mission Engine™, Command Center™, Identity Engine™, Atlas™,
+   Content Engine™, Studio Foundry™, and other owning systems.
+2. Every Orb recommendation must expose evidence, confidence, alternatives, tradeoffs,
+   source systems, and founder override.
+3. Orb may draft commands but must route material action through Command Center™ and
+   Permissions Engine™.
+4. Orb memory must follow the memory hierarchy: short-term, working, long-term,
+   canonical, company, founder, creative, learning, archived.
+5. Orb must be proactive with restraint: interrupt only for material risk, deadlines,
+   approvals, blockers, stale/contradictory information, or boundary/permission issues.
+6. Orb must never blend company context across company boundaries without authority and
+   explicit labeling.
 
 ---
 
