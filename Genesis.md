@@ -135,6 +135,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Studio OS Design DNA™](./genesis/articles/STUDIO_OS_DESIGN_DNA.md)
     - [Experience Engine™](./genesis/articles/EXPERIENCE_ENGINE.md)
     - [Experience Runtime™](./genesis/articles/EXPERIENCE_RUNTIME.md)
+    - [Brand Discovery Engine™](./genesis/articles/BRAND_DISCOVERY_ENGINE.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1270,6 +1271,43 @@ Rules:
 9. Studio OS™, Frontal Slayer™, and NDX™ Headquarters must be able to share one
    identical Headquarters template and runtime graph while only inherited DNA
    changes.
+
+### 9B.16 Brand Discovery Engine rule
+
+The canonical brand intelligence architecture is defined in
+**[Brand Discovery Engine™](./genesis/articles/BRAND_DISCOVERY_ENGINE.md)**.
+
+Studio OS does not treat branding as colors, fonts, and logos. Studio OS
+understands a brand as a living strategic identity that governs every creative,
+commercial, and experiential decision.
+
+Rules:
+
+1. **Brand Discovery Engine™** discovers canonical **Strategic Brand DNA™** from
+   founder interview, Company Genome™, visual/verbal/market/channel evidence, and
+   Orb Brand Strategist Mode™.
+2. **Strategic Brand DNA™** includes philosophy, mission, vision, values,
+   audience psychology, customer desire, emotional territory, visual personality,
+   writing voice, design/packaging/photography/content language, founder energy,
+   market positioning, price perception, competitive difference, aesthetic rules,
+   anti-patterns, rituals, experience rules, launch/community style, and balance
+   scales (luxury, boldness, editorial/commercial, futuristic/timeless).
+3. **Brand Intelligence Layer™** is the reusable reasoning substrate every Studio
+   OS system consults before creating or shipping brand-related output.
+4. Strategic Brand DNA™ compiles into **Experience Brand DNA™** for Experience
+   Engine™ and Experience Runtime™. Do not redesign those systems; compile
+   downward from strategic intelligence.
+5. **Brand Elevation Engine™** evaluates existing brand health and proposes
+   governed DNA patches — never silent overwrites.
+6. **Brand Consistency Check™** scores every generated asset on visual, voice,
+   audience, luxury, positioning, emotional, market fit, differentiation, and
+   conversion dimensions before approval.
+7. Orb leads discovery and protection as an elite brand strategist; founder
+   approval remains required for canonization.
+8. Brand DNA must influence Headquarters, Orb, packaging, marketing, audiences,
+   positioning, content, photography, web, customer experience, pricing
+   perception, marketplace, academy, launch, Foundry, scene generation, copy, and
+   visual direction.
 
 ---
 

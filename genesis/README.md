@@ -29,6 +29,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/STUDIO_OS_DESIGN_DNA.md`](./articles/STUDIO_OS_DESIGN_DNA.md) | Studio OS Design DNA™ — constitutional visual grammar for all Headquarters, departments, rooms, workspaces, scenes, AI experiences, and future products |
 | [`articles/EXPERIENCE_ENGINE.md`](./articles/EXPERIENCE_ENGINE.md) | Experience Engine™ — platform-wide generator for branded operating environments from layered Experience DNA™ |
 | [`articles/EXPERIENCE_RUNTIME.md`](./articles/EXPERIENCE_RUNTIME.md) | Experience Runtime™ — execution layer that assembles every Studio OS page, Headquarters, room, workspace, workflow, and application from layered DNA |
+| [`articles/BRAND_DISCOVERY_ENGINE.md`](./articles/BRAND_DISCOVERY_ENGINE.md) | Brand Discovery Engine™ — strategic Brand DNA, Brand Intelligence Layer, elevation, and consistency architecture |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -77,6 +78,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `studio-os-design-dna/` | Studio OS Design DNA™ content home — permanent visual constitution and compliance checklist |
 | `experience-engine/` | Experience Engine™ content home — Brand/Department/Scene/Component/Motion/Interaction DNA inheritance model |
 | `experience-runtime/` | Experience Runtime™ content home — runtime lifecycle, graph assembly, State DNA, live switching, caching, conflict resolution |
+| `brand-discovery-engine/` | Brand Discovery Engine™ content home — strategic Brand DNA, discovery, intelligence layer, elevation, consistency, applications |
 
 ## Rule
 
