@@ -32,8 +32,16 @@ export function useExperienceLabState() {
     return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
   }, [refresh]);
 
-  const view = useMemo(() => getExperienceLabReadyView(), [tick]);
+  const view = useMemo(() => {
+    try {
+      return getExperienceLabReadyView();
+    } catch {
+      ensureExperienceLabSubsystem();
+      return getExperienceLabReadyView();
+    }
+  }, [tick]);
   const graph = view.runtimeGraph;
+  const bootError = !graph?.brand?.brandId;
 
   const { ref: sceneRef, switchBrandLive, switchCount: runtimeSwitchCount } = useExperienceRuntimeAssembly({
     brandId: view.selection.brandId,
@@ -43,10 +51,11 @@ export function useExperienceLabState() {
   });
 
   useEffect(() => {
+    if (bootError) return;
     const el = sceneRef.current;
     if (!el) return;
     applyRuntimeGraphToElement(el, graph);
-  }, [graph, sceneRef]);
+  }, [bootError, graph, sceneRef]);
 
   const loadScenario = useCallback(
     (scenarioId: XelabScenarioId) => {
@@ -100,5 +109,6 @@ export function useExperienceLabState() {
     setPanel,
     refresh,
     switchCount: view.switchCount + runtimeSwitchCount,
+    bootError,
   };
 }

@@ -32,19 +32,36 @@ export function emptyExperienceRuntimeStore(): XerStore {
   };
 }
 
+/** Deep-merge persisted runtime DNA so partial localStorage (Safari / upgrades) never drops selection. */
+export function normalizeExperienceRuntimeStore(stored?: Partial<XerStore>): XerStore {
+  const empty = emptyExperienceRuntimeStore();
+  if (!stored) return empty;
+  return {
+    ...empty,
+    ...stored,
+    platformDna: { ...empty.platformDna, ...stored.platformDna },
+    selection: { ...empty.selection, ...stored.selection },
+    stateDnaProfiles:
+      stored.stateDnaProfiles && stored.stateDnaProfiles.length > 0
+        ? stored.stateDnaProfiles
+        : empty.stateDnaProfiles,
+    sessionState: stored.sessionState ?? empty.sessionState,
+    cacheStats: { ...empty.cacheStats, ...stored.cacheStats },
+  };
+}
+
 export function readExperienceRuntimeStore(): XerStore {
   const genesis = readGenesisStore();
-  return genesis.experienceRuntimeDna ?? emptyExperienceRuntimeStore();
+  return normalizeExperienceRuntimeStore(genesis.experienceRuntimeDna);
 }
 
 export function writeExperienceRuntimeStore(store: XerStore): void {
   mutateGenesisStore((genesis) => ({
     ...genesis,
-    experienceRuntimeDna: {
-      ...emptyExperienceRuntimeStore(),
+    experienceRuntimeDna: normalizeExperienceRuntimeStore({
       ...store,
       version: XER_SUBSYSTEM_VERSION,
-    },
+    }),
   }));
 }
 

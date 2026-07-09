@@ -20,7 +20,7 @@ export function seedExperienceLabStore(): void {
 export function ensureExperienceLabStore() {
   ensureExperienceRuntimeSubsystem();
   const current = readExperienceLabStore();
-  if (!current.seededAt) {
+  if (!current.seededAt || !current.selection?.brandId) {
     seedExperienceLabStore();
     return readExperienceLabStore();
   }
@@ -37,8 +37,9 @@ export function recordExperienceLabOpened(): void {
 }
 
 export function applyLabScenario(scenarioId: XelabScenarioId): XelabSelection {
-  const scenario = XELAB_TEST_SCENARIOS.find((s) => s.scenarioId === scenarioId)!;
+  const scenario = XELAB_TEST_SCENARIOS.find((s) => s.scenarioId === scenarioId);
   const store = readExperienceLabStore();
+  if (!scenario) return store.selection;
   const selection: XelabSelection = {
     ...store.selection,
     scenarioId,

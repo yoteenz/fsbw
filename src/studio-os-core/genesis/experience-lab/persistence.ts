@@ -19,19 +19,36 @@ export function emptyExperienceLabStore(): XelabStore {
   };
 }
 
+/** Deep-merge persisted lab DNA so partial localStorage never drops selection or switchers. */
+export function normalizeExperienceLabStore(stored?: Partial<XelabStore>): XelabStore {
+  const empty = emptyExperienceLabStore();
+  if (!stored) return empty;
+  return {
+    ...empty,
+    ...stored,
+    selection: {
+      ...empty.selection,
+      ...stored.selection,
+      switchers: {
+        ...empty.selection.switchers,
+        ...stored.selection?.switchers,
+      },
+    },
+  };
+}
+
 export function readExperienceLabStore(): XelabStore {
   const genesis = readGenesisStore();
-  return genesis.experienceLabDna ?? emptyExperienceLabStore();
+  return normalizeExperienceLabStore(genesis.experienceLabDna);
 }
 
 export function writeExperienceLabStore(store: XelabStore): void {
   mutateGenesisStore((genesis) => ({
     ...genesis,
-    experienceLabDna: {
-      ...emptyExperienceLabStore(),
+    experienceLabDna: normalizeExperienceLabStore({
       ...store,
       version: XELAB_SUBSYSTEM_VERSION,
-    },
+    }),
   }));
 }
 

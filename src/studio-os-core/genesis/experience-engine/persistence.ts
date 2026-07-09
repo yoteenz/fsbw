@@ -26,19 +26,35 @@ export function emptyExperienceEngineDnaStore(): XeeStore {
   };
 }
 
+/** Deep-merge persisted engine DNA so partial localStorage never drops playground or registries. */
+export function normalizeExperienceEngineDnaStore(stored?: Partial<XeeStore>): XeeStore {
+  const empty = emptyExperienceEngineDnaStore();
+  if (!stored) return empty;
+  return {
+    ...empty,
+    ...stored,
+    playground: { ...empty.playground, ...stored.playground },
+    brands: stored.brands?.length ? stored.brands : empty.brands,
+    departments: stored.departments?.length ? stored.departments : empty.departments,
+    scenes: stored.scenes?.length ? stored.scenes : empty.scenes,
+    components: stored.components?.length ? stored.components : empty.components,
+    motions: stored.motions?.length ? stored.motions : empty.motions,
+    interactions: stored.interactions?.length ? stored.interactions : empty.interactions,
+  };
+}
+
 export function readExperienceEngineDnaStore(): XeeStore {
   const genesis = readGenesisStore();
-  return genesis.experienceEngineDna ?? emptyExperienceEngineDnaStore();
+  return normalizeExperienceEngineDnaStore(genesis.experienceEngineDna);
 }
 
 export function writeExperienceEngineDnaStore(store: XeeStore): void {
   mutateGenesisStore((genesis) => ({
     ...genesis,
-    experienceEngineDna: {
-      ...emptyExperienceEngineDnaStore(),
+    experienceEngineDna: normalizeExperienceEngineDnaStore({
       ...store,
       version: XEE_SUBSYSTEM_VERSION,
-    },
+    }),
   }));
 }
 

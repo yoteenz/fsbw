@@ -7,7 +7,8 @@ import {
   resolveMotionDna,
   resolveSceneDna,
 } from './registries';
-import { readExperienceEngineDnaStore } from '../persistence';
+import { ensureExperienceEngineDnaSubsystem } from '../engine';
+import { emptyExperienceEngineDnaStore, readExperienceEngineDnaStore } from '../persistence';
 import { XEE_SHARED_SCENE_ID } from '../constants';
 
 export function buildExperienceCssOutput(
@@ -54,21 +55,38 @@ export function resolveExperienceProfile(input?: {
   sceneId?: string;
   motionDnaId?: string;
 }): XeeExperienceProfile {
+  ensureExperienceEngineDnaSubsystem();
   const store = readExperienceEngineDnaStore();
-  const brandId = input?.brandId ?? store.playground.brandId;
-  const departmentId = input?.departmentId ?? store.playground.departmentId;
-  const sceneId = input?.sceneId ?? store.playground.sceneId ?? XEE_SHARED_SCENE_ID;
-  const motionDnaId = input?.motionDnaId ?? store.playground.motionDnaId;
+  const playground = { ...emptyExperienceEngineDnaStore().playground, ...store.playground };
+  const brandId = input?.brandId ?? playground.brandId;
+  const departmentId = input?.departmentId ?? playground.departmentId;
+  const sceneId = input?.sceneId ?? playground.sceneId ?? XEE_SHARED_SCENE_ID;
+  const motionDnaId = input?.motionDnaId ?? playground.motionDnaId;
 
   const brand = resolveBrandDna(brandId) ?? store.brands[0];
+  if (!brand) {
+    throw new Error('Experience Engine DNA is not seeded — brand registry is empty.');
+  }
   const department =
     resolveDepartmentDna(brand.brandId, departmentId) ??
-    store.departments.find((d) => d.brandId === brand.brandId)!;
+    store.departments.find((d) => d.brandId === brand.brandId);
+  if (!department) {
+    throw new Error(`Experience Engine DNA missing department "${departmentId}" for brand "${brand.brandId}".`);
+  }
   const scene = resolveSceneDna(sceneId) ?? store.scenes[0];
+  if (!scene) {
+    throw new Error(`Experience Engine DNA missing scene "${sceneId}".`);
+  }
   const components = getComponentRegistry(brand.brandId);
   const motion =
-    resolveMotionDna(motionDnaId) ?? store.motions.find((m) => m.brandId === brand.brandId)!;
-  const interaction = resolveInteractionDna(brand.brandId)!;
+    resolveMotionDna(motionDnaId) ?? store.motions.find((m) => m.brandId === brand.brandId);
+  if (!motion) {
+    throw new Error(`Experience Engine DNA missing motion profile for brand "${brand.brandId}".`);
+  }
+  const interaction = resolveInteractionDna(brand.brandId);
+  if (!interaction) {
+    throw new Error(`Experience Engine DNA missing interaction profile for brand "${brand.brandId}".`);
+  }
   const { cssVariables, cssText } = buildExperienceCssOutput(brand, department);
 
   return {

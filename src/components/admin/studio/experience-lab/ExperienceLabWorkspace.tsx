@@ -31,7 +31,22 @@ export function ExperienceLabWorkspace() {
     setPanel,
     refresh,
     switchCount,
+    bootError,
   } = useExperienceLabState();
+
+  if (bootError || !graph?.brand) {
+    return (
+      <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 p-8 text-center">
+        <p style={{ ...hqLabel, color: '#eb1c24', margin: 0 }}>Experience Lab could not assemble runtime DNA</p>
+        <p style={{ fontSize: '12px', color: '#555', maxWidth: '320px' }}>
+          Stored Studio DNA on this device may be incomplete. Tap retry to re-seed the lab from defaults — your cloud account data is safe.
+        </p>
+        <button type="button" className="xelab-btn" onClick={refresh} style={{ borderColor: '#eb1c24', color: '#eb1c24' }}>
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   const brand = graph.brand;
   const activePanel = view.selection.activePanel;

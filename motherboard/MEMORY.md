@@ -44966,6 +44966,7 @@ Summary of the **full conversation in this chat**: After Narrative Intelligence�
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-09 — Creative Operating System™ / Creative Civilization™ architecture
 
 Summary of the **full conversation in this chat**: After Narrative Intelligence™ runtime, Studio Production System™ architecture, and Studio Production System™ runtime, user requested **MASTER ARCHITECTURE FOLLOW-UP** to evolve Studio Production System™ into a complete autonomous creative organization. The instruction was to stop thinking about individual AI agents and instead architect an entire creative company that operates continuously, compounds knowledge, improves experience, and makes every production make the next production smarter.
@@ -44982,3 +44983,12 @@ Summary of the **full conversation in this chat**: After Narrative Intelligence�
 - **HQ integrations:** Creative initiatives, board recommendations, memories, learning events, evolution proposals, and reusable creative economy assets should be visible/consumable by Executive Headquarters™, Mission Control™, Institute of Knowledge™, Company Genome™, Studio Foundry™, and Orb™.
 - **Case studies:** Frontal Slayer™ adapts the framework into a luxury beauty mansion (vanity suite, mirror-glow, transformation ritual, appointment CTA); Studio OS™ adapts it into an executive operating civilization (Grand Atrium, Mission Control, Institute, institutional calm); NDX™ adapts it into an executive media intelligence desk (signal room, data wall, source confidence, evidence-to-action).
 
+=======
+## 2026-07-09 — Experience Lab Safari crash fix (`selection.brandId` undefined)
+
+Summary of the **full conversation in this chat**: Experience Lab implementation sprint shipped (`327d85b0e`); user reported Safari mobile **COMPONENT FAILED TO LOAD** with `undefined is not an object (evaluating 't.brandId')` on fsbw.vercel.app.
+
+- **Root cause:** Partial/corrupted Genesis localStorage on Safari — `experienceRuntimeDna`, `experienceLabDna`, or `experienceEngineDna` could exist without a complete `selection` / `playground`, so runtime assembly accessed `selection.brandId` on `undefined`.
+- **Fix:** Added `normalizeExperienceRuntimeStore`, `normalizeExperienceLabStore`, `normalizeExperienceEngineDnaStore` deep-merge on every read/write; Genesis `readGenesisStore` now normalizes experience subsystems; `ensure*Store` re-seeds when `selection.brandId` or brand registry missing; `resolveExperienceProfile` / `resolveDnaLayers` guard with defaults + ensure seed; Experience Lab hook try/catch re-seed + `bootError` recovery UI with Retry.
+- **Verification:** `npm run build` passed.
+>>>>>>> 0ea17fb21 (Fix Experience Lab Safari crash when Genesis selection DNA is incomplete)

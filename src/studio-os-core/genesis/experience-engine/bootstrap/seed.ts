@@ -35,7 +35,7 @@ export function seedExperienceEngineDnaStore(): void {
 export function ensureExperienceEngineDnaStore() {
   ensureStudioOsDesignDnaSubsystem();
   const store = readExperienceEngineDnaStore();
-  if (!store.seededAt) {
+  if (!store.seededAt || store.brands.length === 0) {
     seedExperienceEngineDnaStore();
     updateBuildOrderSystemStatus('experience-engine', 'implemented');
   }

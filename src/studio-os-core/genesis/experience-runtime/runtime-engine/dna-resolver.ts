@@ -1,6 +1,6 @@
 import { resolveExperienceProfile } from '../../experience-engine/engines/experience-generator';
 import { readExperienceEngineDnaStore } from '../../experience-engine/persistence';
-import { readExperienceRuntimeStore } from '../persistence';
+import { emptyExperienceRuntimeStore, readExperienceRuntimeStore } from '../persistence';
 import { buildPlatformDna } from '../runtime-registry/platform-dna';
 import type {
   XerAssemblyRequest,
@@ -32,7 +32,8 @@ export type XerResolvedDnaLayers = {
 
 export function resolveDnaLayers(request?: XerAssemblyRequest): XerResolvedDnaLayers {
   const runtimeStore = readExperienceRuntimeStore();
-  const selection = runtimeStore.selection;
+  const emptySelection = emptyExperienceRuntimeStore().selection;
+  const selection = { ...emptySelection, ...runtimeStore.selection };
   const brandId = request?.brandId ?? selection.brandId;
   const departmentId = request?.departmentId ?? selection.departmentId;
   const sceneId = request?.sceneId ?? selection.sceneId;
