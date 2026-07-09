@@ -125,6 +125,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Studio OS Dependency Map™](./genesis/articles/STUDIO_OS_DEPENDENCY_MAP.md)
     - [Studio OS Build Order™](./genesis/articles/STUDIO_OS_BUILD_ORDER.md)
     - [Identity Engine™](./genesis/articles/IDENTITY_ENGINE.md)
+    - [Executive Headquarters™](./genesis/articles/EXECUTIVE_HEADQUARTERS.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -980,6 +981,25 @@ Rules:
    derives its identity through Identity Engine.
 5. Implementation follows **Studio OS Build Order™** Cycle 4 after Organization Registry™
    and Company Registry™ MVP contracts stabilize.
+
+### 9B.6 Executive Headquarters Launch Stack rule
+
+The canonical Launch Stack Sprint 1 experience architecture is defined in
+**[Executive Headquarters™](./genesis/articles/EXECUTIVE_HEADQUARTERS.md)**.
+
+Executive Headquarters™ is Studio OS's flagship founder experience. It is **not**
+an admin dashboard, module grid, or generic SaaS reporting page.
+
+Rules:
+
+1. Headquarters owns experience composition only; source truth stays in owning systems.
+2. Launch Stack v1 must prioritize arrival, Orb greeting, briefing, priorities,
+   company health, recommended actions, mission queue, room navigation, and deep work.
+3. Orb™ is the executive presence, Atlas™ is the map, Command Center™ is the action
+   gate, Company Genome™ is the meaning layer, and Mission Engine™ is the operational runway.
+4. Minimum lovable scope beats feature breadth. Future rooms should appear as intentional
+   expansion, not unfinished functionality.
+5. Any v1 projection must name its future source system and replacement plan.
 
 ---
 

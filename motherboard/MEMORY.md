@@ -44427,3 +44427,22 @@ Summary of the **full conversation in this chat**: (1) Build Order Engine implem
 - **Verification:** `npm run build` passed; prebuild artifacts restored.
 - **Conventions:** Use `resolveIdentityContext()` for Authentication/Permissions handoff. Create actors via `createUserIdentity` / `createAiWorkerIdentity`; entities via `createOrganizationIdentity` / `createCompanyIdentity`. Never store sessions or passwords in Identity Engine.
 
+---
+
+## 2026-07-09 — Executive Headquarters™ Launch Stack Sprint 1 architecture
+
+Summary of the **full conversation in this chat**: (1) User requested and approved Studio OS Build Order Engine™ implementation — completed and pushed (`2630b07cd`). (2) User requested Identity Engine™ architecture — completed and pushed (`c6ce8680c`). (3) User requested Identity Engine™ runtime as Studio OS's first production Core System — completed and pushed (`3183b0aa6`). (4) User then requested **MASTER ARCHITECTURE PROJECT — STUDIO OS LAUNCH STACK™ SPRINT 1 — Executive Headquarters™**: design the flagship founder experience, not an admin dashboard, as the operating environment where founders think, plan, build, decide, create, launch, learn, and operate companies.
+
+- **Context:** Executive Headquarters™ should become the first complete production-ready Studio OS experience and the place where everything else eventually lives. Required design areas: arrival sequence, first impression, emotional experience, architecture, room hierarchy, navigation philosophy, information hierarchy, relationship to Orb™, Atlas™, Company Genome™, Command Center™, and a minimum lovable Headquarters™ that avoids feature bloat.
+- **Decisions / outcomes:**
+  - Created **`genesis/articles/EXECUTIVE_HEADQUARTERS.md`** as the canonical Launch Stack Sprint 1 architecture artifact.
+  - Defined the doctrine: **Headquarters is the place; Orb is the presence; Atlas is the map; Command Center is the action gate; Company Genome is the meaning; Mission Engine is the operational runway.**
+  - Defined the founder opening flow: **Arrival → Orb greeting → Executive briefing → Today's priorities → Company health → Recommended actions → Mission queue → Department navigation → Deep work**.
+  - Established Launch Stack v1 / **Minimum Lovable Headquarters™** scope: Executive Atrium™, Founder Office™, Mission Control™, Daily Briefing™, guarded Command Center™, Department Directory™, Knowledge Wing™, Content Studio™, Creative Direction Studio™, Marketing HQ projection, Operations Wing projection, Customer Experience HQ projection, and meaningful locked future rooms.
+  - Deferred Finance Headquarters™, Research Wing™, Automation Lab™, full Meeting Rooms™, Expansion Wings™, Studio Exchange Room, Career Worlds Room, Simulation Room until upstream contracts mature.
+  - Defined room responsibilities, objects owned, dependencies, events, AI behavior, failure modes, success metrics, projection-adapter posture, and source-of-truth boundaries.
+  - Added content home **`genesis/executive-headquarters/README.md`** and platform guide **`docs/studio-os/genesis/EXECUTIVE_HEADQUARTERS_ARCHITECTURE.md`**.
+  - Updated **`Genesis.md`** with §9B.6 Executive Headquarters Launch Stack rule; updated `genesis/README.md`, `genesis/articles/README.md`, `docs/studio-os/README.md`, `docs/studio-os/genesis/README.md`, and `motherboard/CORE.md`.
+- **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
+- **Conventions:** Future Headquarters implementation should build the memorable arrival + room system first, not a module grid. Headquarters owns experience composition only; all data projections must name future owning systems and replacement plans.
+
