@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useMemo, type ComponentType } from 'react';
+import { Suspense, useEffect, useMemo, type ComponentType, type LazyExoticComponent } from 'react';
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import LoadingScreen from '../../../../components/base/LoadingScreen';
 import { CompanyRouteLoadErrorBoundary } from '../../../../components/admin/studio/companies/CompanyRouteLoadErrorBoundary';
@@ -9,29 +9,61 @@ import {
   studioCompanyGrandAtriumPath,
 } from '../../../../studio-os-core/company-routes';
 import { lazyWithRetry } from '../../../../utils/lazyWithRetry';
+import CompanyGrandAtriumPage from './CompanyGrandAtriumPage';
 
-type PageModule = { default: ComponentType };
-
-const LEGACY_SEGMENT_LOADERS: Record<string, () => Promise<PageModule>> = {
-  'executive-headquarters': () => import('../executive-headquarters/page'),
-  'mission-control': () => import('../mission-control/page'),
-  'ndxbook/mission-control': () => import('../ndxbook/mission-control/page'),
-  'chief-of-staff': () => import('../chief-of-staff/page'),
-  'organization-pulse': () => import('../organization-pulse/page'),
-  'concierge-layer': () => import('../concierge-layer/page'),
-  'ambient-awareness': () => import('../ambient-awareness/page'),
-  'department/creative-direction': () => import('../department/page'),
-  'ndxbook/creative-direction': () => import('../ndxbook/creative-direction/page'),
-  overview: () => import('../overview/page'),
-  'brand-architect': () => import('../brand-architect/page'),
-  'business-model-engine': () => import('../business-model-engine/page'),
-  'work-orchestration': () => import('../work-orchestration/page'),
-  production: () => import('../production/page'),
-  'chief-experience-officer': () => import('../chief-experience-officer/page'),
-  'intelligence-engine': () => import('../intelligence-engine/page'),
-  'distribution-network': () => import('../distribution-network/page'),
-  'talent-agency': () => import('../talent-agency/page'),
-  'professional-trust-framework': () => import('../professional-trust-framework/page'),
+/** Module-scoped lazy pages — do not create React.lazy() inside render/useMemo. */
+const LAZY_LEGACY_PAGES: Record<string, LazyExoticComponent<ComponentType>> = {
+  'mission-control': lazyWithRetry(() => import('../mission-control/page'), 'CompanyRoute:mission-control'),
+  'ndxbook/mission-control': lazyWithRetry(
+    () => import('../ndxbook/mission-control/page'),
+    'CompanyRoute:ndxbook/mission-control'
+  ),
+  'chief-of-staff': lazyWithRetry(() => import('../chief-of-staff/page'), 'CompanyRoute:chief-of-staff'),
+  'organization-pulse': lazyWithRetry(
+    () => import('../organization-pulse/page'),
+    'CompanyRoute:organization-pulse'
+  ),
+  'concierge-layer': lazyWithRetry(() => import('../concierge-layer/page'), 'CompanyRoute:concierge-layer'),
+  'ambient-awareness': lazyWithRetry(
+    () => import('../ambient-awareness/page'),
+    'CompanyRoute:ambient-awareness'
+  ),
+  'department/creative-direction': lazyWithRetry(
+    () => import('../department/page'),
+    'CompanyRoute:department/creative-direction'
+  ),
+  'ndxbook/creative-direction': lazyWithRetry(
+    () => import('../ndxbook/creative-direction/page'),
+    'CompanyRoute:ndxbook/creative-direction'
+  ),
+  overview: lazyWithRetry(() => import('../overview/page'), 'CompanyRoute:overview'),
+  'brand-architect': lazyWithRetry(() => import('../brand-architect/page'), 'CompanyRoute:brand-architect'),
+  'business-model-engine': lazyWithRetry(
+    () => import('../business-model-engine/page'),
+    'CompanyRoute:business-model-engine'
+  ),
+  'work-orchestration': lazyWithRetry(
+    () => import('../work-orchestration/page'),
+    'CompanyRoute:work-orchestration'
+  ),
+  production: lazyWithRetry(() => import('../production/page'), 'CompanyRoute:production'),
+  'chief-experience-officer': lazyWithRetry(
+    () => import('../chief-experience-officer/page'),
+    'CompanyRoute:chief-experience-officer'
+  ),
+  'intelligence-engine': lazyWithRetry(
+    () => import('../intelligence-engine/page'),
+    'CompanyRoute:intelligence-engine'
+  ),
+  'distribution-network': lazyWithRetry(
+    () => import('../distribution-network/page'),
+    'CompanyRoute:distribution-network'
+  ),
+  'talent-agency': lazyWithRetry(() => import('../talent-agency/page'), 'CompanyRoute:talent-agency'),
+  'professional-trust-framework': lazyWithRetry(
+    () => import('../professional-trust-framework/page'),
+    'CompanyRoute:professional-trust-framework'
+  ),
 };
 
 function legacyPathToSegment(legacyPath: string): string {
@@ -40,9 +72,9 @@ function legacyPathToSegment(legacyPath: string): string {
   return legacyPath.slice(base.length).split('?')[0]!;
 }
 
-function resolvePageLoader(legacyPath: string): (() => Promise<PageModule>) | null {
+function resolveLazyPage(legacyPath: string): LazyExoticComponent<ComponentType> | null {
   const segment = legacyPathToSegment(legacyPath);
-  return LEGACY_SEGMENT_LOADERS[segment] ?? null;
+  return LAZY_LEGACY_PAGES[segment] ?? null;
 }
 
 /**
@@ -56,6 +88,7 @@ export function CompanyRouteContent() {
   const { enterWorkspace } = useWorkspace();
   const resolution = resolveCompanyRoute(pathname);
   const company = getCompanyBySlug(companySlug);
+  const segment = legacyPathToSegment(resolution.legacyPath);
 
   useEffect(() => {
     document.body.dataset.studioCompanySlug = companySlug;
@@ -70,12 +103,7 @@ export function CompanyRouteContent() {
     }
   }, [company?.workspaceId, enterWorkspace]);
 
-  const LazyPage = useMemo(() => {
-    const loader = resolvePageLoader(resolution.legacyPath);
-    if (!loader) return null;
-    const segment = legacyPathToSegment(resolution.legacyPath);
-    return lazyWithRetry(loader, `CompanyRoute:${segment}`);
-  }, [resolution.legacyPath]);
+  const LazyPage = useMemo(() => resolveLazyPage(resolution.legacyPath), [resolution.legacyPath]);
 
   if (!company && companySlug) {
     return <Navigate to="/admin/studio/companies" replace />;
@@ -83,6 +111,14 @@ export function CompanyRouteContent() {
 
   if (!resolution.segments.length && companySlug) {
     return <Navigate to={studioCompanyGrandAtriumPath(companySlug)} replace />;
+  }
+
+  if (segment === 'executive-headquarters') {
+    return (
+      <CompanyRouteLoadErrorBoundary onBack={() => navigate('/admin/dashboard')}>
+        <CompanyGrandAtriumPage />
+      </CompanyRouteLoadErrorBoundary>
+    );
   }
 
   if (!LazyPage) {

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { Navigate, useLocation, useParams } from 'react-router-dom';
 import {
   CompanyRouteProvider,
@@ -6,6 +6,7 @@ import {
   resolveCompanyRoute,
   studioCompanyGrandAtriumPath,
 } from '../../../../studio-os-core/company-routes';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { CompanyRouteContent } from './CompanyRouteContent';
 
 function CompanyRouteResolverInner() {
@@ -13,6 +14,13 @@ function CompanyRouteResolverInner() {
   const { companySlug = '' } = useParams<{ companySlug: string }>();
   const resolution = resolveCompanyRoute(pathname);
   const company = getCompanyBySlug(companySlug);
+  const { enterWorkspace } = useWorkspace();
+
+  useLayoutEffect(() => {
+    if (company?.workspaceId) {
+      enterWorkspace(company.workspaceId);
+    }
+  }, [company?.workspaceId, enterWorkspace]);
 
   useEffect(() => {
     document.body.dataset.studioCompanySlug = companySlug;

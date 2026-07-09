@@ -27,8 +27,14 @@ export function lazyWithRetry(importFn: () => Promise<{ default: ComponentType<a
           }
           if (chunkFail) {
             if (reloadForStaleChunks()) {
-              return new Promise(() => {
-                /* page reload in progress */
+              return new Promise((_, reject) => {
+                window.setTimeout(() => {
+                  reject(
+                    error instanceof Error
+                      ? error
+                      : new Error(`Failed to load ${componentName} after reload attempt`)
+                  );
+                }, 4000);
               });
             }
             throw error instanceof Error ? error : new Error(`Failed to load ${componentName}`);

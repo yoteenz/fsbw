@@ -44699,3 +44699,17 @@ Summary of the **full conversation in this chat**: Completed Architect's Prompt 
 >>>>>>> 602447b30 (Fix Studio Orb clickability in immersive DepartmentGoldenBuildShell wings)
 - **Verification:** `npm run build` passed.
 
+---
+
+## 2026-07-09 — Grand Atrium infinite loading fix (deploy)
+
+Summary of **this chat**: User reported Grand Atrium URL still stuck on LoadingScreen after first routing fix (`grand-atrium` → `executive-headquarters` lazy load). Follow-up fix was written locally but **never pushed** — production still had nested lazy import of `executive-headquarters/page.tsx` causing circular chunk dependency with `index.js` and Suspense hang.
+
+- **Root causes:** (1) Nested lazy load: `CompanyRouteContent` → `executive-headquarters/page` → imports back into main `index` bundle while index still loading company resolver. (2) `lazyWithRetry` returned never-resolving promise after stale-chunk reload attempt. (3) Optional `workspaceReady` gate could block on `studioEnabled` flicker.
+- **Fix shipped:**
+  - **`CompanyGrandAtriumPage.tsx`** — thin company-scoped wrapper: `DepartmentGoldenBuildShell` + `ExecutiveHeadquartersWorkspace` (no standalone page import).
+  - **`CompanyRouteContent.tsx`** — **synchronous** render for `executive-headquarters` segment (no nested Suspense); module-scoped lazy map for other rooms only.
+  - **`CompanyRouteResolver.tsx`** — `useLayoutEffect` to `enterWorkspace(company.workspaceId)` before content mounts.
+  - **`lazyWithRetry.ts`** — reject after 4s if reload does not occur (error boundary instead of infinite spinner).
+- **Verification:** `npm run build` passed.
+
