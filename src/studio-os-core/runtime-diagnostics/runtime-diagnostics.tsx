@@ -5,7 +5,8 @@ const statusColor: Record<string, string> = {
   ready: '#166534',
   fallback: '#b45309',
   failed: '#eb1c24',
-  loading: '#2563eb',
+  running: '#1d4ed8',
+  starting: '#2563eb',
   idle: '#6b7280',
 };
 

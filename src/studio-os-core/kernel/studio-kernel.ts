@@ -32,9 +32,6 @@ export type StudioBootPhase = (typeof STUDIO_BOOT_ORDER)[number];
 
 const SAFE_MODE_SKIP_MODULES = new Set<string>(['workspace-runtime']);
 
-/** Unique per module load — detect duplicate kernel bundles in boot-debug. */
-export const STUDIO_KERNEL_INSTANCE_ID = `kernel-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
-
 let bootPromise: Promise<StudioBootReport> | null = null;
 let lastReport: StudioBootReport | null = null;
 let lastLiveState: StudioBootLiveState | null = null;
@@ -43,7 +40,6 @@ let currentModuleId: string | null = null;
 let bootRunId = 0;
 let activeBootRunId = 0;
 let bootEventLog: StudioBootEventLogEntry[] = [];
-let lastDispatchAt = 0;
 
 function logBoot(moduleId: string, message: string, detail?: unknown): void {
   console.warn(`[StudioKernel] ${moduleId}: ${message}`, detail ?? '');
@@ -130,7 +126,6 @@ function dispatchBootUpdated(
   opts?: { started?: boolean; waitingForManualStart?: boolean }
 ): void {
   lastLiveState = buildLiveState(order, complete, ready, errors, warnings, fallbacksUsed, safeMode, opts);
-  lastDispatchAt = Date.now();
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent(STUDIO_BOOT_EVENT, { detail: lastLiveState }));
   }
@@ -164,7 +159,7 @@ function applyModuleFallback(mod: BootModuleContract, reason: string): void {
   }
 }
 
-async function runModule(mod: BootModuleContract): Promise<void> {
+async function runModule(mod: BootModuleContract, onProgress: () => void): Promise<void> {
   for (const depId of mod.dependencies) {
     const dep = bootRegistry.get(depId);
     if (!dep?.isReady() && dep?.status !== 'fallback' && dep?.status !== 'skipped' && dep?.status !== 'failed') {
@@ -172,11 +167,17 @@ async function runModule(mod: BootModuleContract): Promise<void> {
     }
   }
 
-  mod.status = 'loading';
+  mod.status = 'starting';
   mod.errors.length = 0;
   currentModuleId = mod.id;
-  appendBootEvent('module', `module started: ${mod.label}`);
-  logBoot(mod.id, 'loading');
+  appendBootEvent('module', `module starting: ${mod.label}`);
+  logBoot(mod.id, 'starting');
+  onProgress();
+
+  mod.status = 'running';
+  appendBootEvent('module', `module running: ${mod.label}`);
+  logBoot(mod.id, 'running');
+  onProgress();
 
   try {
     await withBootTimeout(mod.initialize());
@@ -297,7 +298,9 @@ export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Pr
         dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode, { started: true });
 
         try {
-          await runModule(mod);
+          await runModule(mod, () => {
+            dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode, { started: true });
+          });
           if (!isActiveBootRun(runId)) {
             throw new Error('Boot run superseded');
           }
@@ -391,53 +394,6 @@ export function getStudioBootLiveState(): StudioBootLiveState | null {
     return buildLiveState(STUDIO_BOOT_ORDER, false, false, [], [], [], false, { started: true });
   }
   return null;
-}
-
-/** Alias for boot-debug hydration when events may have fired before listener attach. */
-export function getStudioKernelLastLiveState(): StudioBootLiveState | null {
-  return getStudioBootLiveState();
-}
-
-export type StudioKernelWireDebug = {
-  kernelInstanceId: string;
-  dispatchedEventName: string;
-  lastDispatchAt: number;
-  bootStartedAt: number;
-  hasLastLiveState: boolean;
-  lastStarted: boolean;
-  activeBootRunId: number;
-};
-
-export function getStudioKernelWireDebug(): StudioKernelWireDebug {
-  return {
-    kernelInstanceId: STUDIO_KERNEL_INSTANCE_ID,
-    dispatchedEventName: STUDIO_BOOT_EVENT,
-    lastDispatchAt,
-    bootStartedAt,
-    hasLastLiveState: lastLiveState !== null,
-    lastStarted: lastLiveState?.started ?? bootStartedAt > 0,
-    activeBootRunId,
-  };
-};
-
-export type DebugPrimeBootStartResult = {
-  runId: number;
-  kernelInstanceId: string;
-  dispatchedEventName: string;
-  lastDispatchAt: number;
-  liveSnapshot: StudioBootLiveState | null;
-};
-
-/** Boot-debug only — calls primeBootStart() directly (dispatches started:true). */
-export function debugInvokePrimeBootStart(): DebugPrimeBootStartResult {
-  const runId = primeBootStart(STUDIO_BOOT_ORDER, false);
-  return {
-    runId,
-    kernelInstanceId: STUDIO_KERNEL_INSTANCE_ID,
-    dispatchedEventName: STUDIO_BOOT_EVENT,
-    lastDispatchAt,
-    liveSnapshot: getStudioBootLiveState(),
-  };
 }
 
 export function getInitialBootLiveState(order: readonly string[] = STUDIO_BOOT_ORDER): StudioBootLiveState {

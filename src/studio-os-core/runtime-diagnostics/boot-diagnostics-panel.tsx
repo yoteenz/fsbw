@@ -5,7 +5,8 @@ const statusColor: Record<string, string> = {
   ready: '#166534',
   fallback: '#b45309',
   failed: '#eb1c24',
-  loading: '#2563eb',
+  running: '#1d4ed8',
+  starting: '#2563eb',
   idle: '#6b7280',
   skipped: '#9333ea',
 };
@@ -61,7 +62,7 @@ export function BootDiagnosticsPanel({
             ? '(starting…)'
             : '(waiting)';
 
-  const stuckModule = live.modules.find((m) => m.status === 'loading');
+  const stuckModule = live.modules.find((m) => m.status === 'starting' || m.status === 'running');
   const showManualWaiting = live.waitingForManualStart || (!autoStart && !live.started && !live.complete);
 
   return (
@@ -87,7 +88,7 @@ export function BootDiagnosticsPanel({
       <p style={{ margin: '0 0 4px' }}>
         <strong>Current module:</strong> {currentLabel}
         {stuckModule ? (
-          <span style={{ color: '#2563eb' }}> (loading…)</span>
+          <span style={{ color: '#2563eb' }}> ({stuckModule.status}…)</span>
         ) : null}
       </p>
       <p style={{ margin: '0 0 12px', color: '#555' }}>

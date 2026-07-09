@@ -1,5 +1,12 @@
-/** Boot module lifecycle status. */
-export type BootModuleStatus = 'idle' | 'loading' | 'ready' | 'failed' | 'fallback' | 'skipped';
+/** Boot module lifecycle status — IDLE → STARTING → RUNNING → READY. */
+export type BootModuleStatus =
+  | 'idle'
+  | 'starting'
+  | 'running'
+  | 'ready'
+  | 'failed'
+  | 'fallback'
+  | 'skipped';
 
 export type BootModuleSnapshot = {
   id: string;

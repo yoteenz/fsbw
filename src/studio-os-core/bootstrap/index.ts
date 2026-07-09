@@ -9,10 +9,9 @@ export {
   isStudioBootstrapInProgress,
   appendStudioBootstrapEvent,
   getStudioBootstrapStartBlockReason,
-  getStudioBootstrapLastLiveState,
-  getStudioBootstrapKernelWireDebug,
-  debugCallPrimeBootStart,
-  STUDIO_KERNEL_INSTANCE_ID,
+  ensureStudioBootstrapStarted,
+  subscribeStudioBoot,
+  clearStudioBootstrapOrchestrator,
   STUDIO_BOOT_ORDER,
   STUDIO_BOOT_EVENT,
   BOOT_MODULE_TIMEOUT_MS,
@@ -22,8 +21,6 @@ export {
   type StudioBootLiveState,
   type StudioKernelBootOptions,
   type StudioBootstrapStartSkipReason,
-  type StudioKernelWireDebug,
-  type DebugPrimeBootStartResult,
 } from './studio-bootstrap';
 
 export { registerAllStudioBootModules } from './register-boot-modules';

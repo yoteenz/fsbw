@@ -12,12 +12,6 @@ import {
   STUDIO_BOOT_EVENT,
   BOOT_MODULE_TIMEOUT_MS,
   bootRegistry,
-  STUDIO_KERNEL_INSTANCE_ID,
-  getStudioKernelLastLiveState,
-  getStudioKernelWireDebug,
-  debugInvokePrimeBootStart,
-  type StudioKernelWireDebug,
-  type DebugPrimeBootStartResult,
   type StudioBootPhase,
   type StudioBootReport,
   type StudioBootLiveState,
@@ -53,7 +47,7 @@ export const StudioBootstrap = {
   run: runStudioBootstrap,
   reset: resetStudioBootstrap,
   getLiveState: getStudioBootstrapLiveState,
-  isInProgress: isStudioKernelBootInProgress,
+  isInProgress: isStudioBootstrapInProgress,
   log: appendStudioBootDiagnosticsEvent,
 };
 
@@ -110,23 +104,7 @@ export function getStudioBootstrapStartBlockReason(): StudioBootstrapStartSkipRe
   return null;
 }
 
-export function getStudioBootstrapLastLiveState(): StudioBootLiveState | null {
-  ensureBootModulesRegistered();
-  return getStudioKernelLastLiveState();
-}
-
-export function getStudioBootstrapKernelWireDebug(): StudioKernelWireDebug {
-  ensureBootModulesRegistered();
-  return getStudioKernelWireDebug();
-}
-
-export function debugCallPrimeBootStart(): DebugPrimeBootStartResult {
-  ensureBootModulesRegistered();
-  return debugInvokePrimeBootStart();
-}
-
 export {
-  STUDIO_KERNEL_INSTANCE_ID,
   STUDIO_BOOT_ORDER,
   STUDIO_BOOT_EVENT,
   BOOT_MODULE_TIMEOUT_MS,
@@ -134,8 +112,12 @@ export {
   type StudioBootReport,
   type StudioBootLiveState,
   type StudioKernelBootOptions,
-  type StudioKernelWireDebug,
-  type DebugPrimeBootStartResult,
 };
 
 export { STUDIO_DEFAULT_FALLBACK_CONTRACT } from './default-fallback-contract';
+
+export {
+  ensureStudioBootstrapStarted,
+  subscribeStudioBoot,
+  clearStudioBootstrapOrchestrator,
+} from './studio-bootstrap-init';
