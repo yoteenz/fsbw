@@ -1,0 +1,191 @@
+import { XBD_SUBSYSTEM_VERSION } from '../constants';
+import type { XbdBrandDnaRecord } from '../types';
+
+const now = '2026-07-09T00:00:00.000Z';
+
+function brand(
+  brandId: string,
+  companyId: string,
+  brandName: string,
+  partial: Omit<XbdBrandDnaRecord, 'brandId' | 'companyId' | 'brandName' | 'createdAt' | 'updatedAt' | 'version'>
+): XbdBrandDnaRecord {
+  return {
+    brandId,
+    companyId,
+    brandName,
+    createdAt: now,
+    updatedAt: now,
+    version: '1.0.0',
+    ...partial,
+  };
+}
+
+export const SEED_STRATEGIC_BRAND_DNA: XbdBrandDnaRecord[] = [
+  brand('studio-os', 'studio-os-platform', 'Studio OS™', {
+    brandPhilosophy: 'Preserve expertise. Build legacy. Empower visionaries.',
+    mission: 'Give every visionary a permanent operating civilization.',
+    vision: 'A world where expertise compounds instead of disappearing.',
+    values: ['Permanence', 'Institutional memory', 'Executive clarity', 'Protective intelligence'],
+    audienceProfile: {
+      primaryAudience: 'Visionary founders and institutional builders',
+      secondaryAudiences: ['Operators', 'Department leaders', 'Studio partners'],
+      psychology: 'Wants calm control, legacy, and systems that outlast hype',
+      customerDesire: 'To build something that lasts and feels worthy of their ambition',
+      identitySignals: ['builder', 'protector', 'strategist', 'legacy-minded'],
+    },
+    emotionalTerritory: ['calm', 'intelligent', 'permanent', 'protective'],
+    visualPersonality: ['architectural', 'executive', 'crystalline', 'institutional'],
+    writingVoice: {
+      tone: 'concise executive clarity',
+      cadence: 'measured, institutional',
+      vocabulary: ['legacy', 'institution', 'headquarters', 'operating civilization'],
+      forbiddenLanguage: ['hype', 'disrupt', 'game-changer', 'move fast and break things'],
+      sampleLine: 'Your operating civilization awaits.',
+    },
+    colorSystem: {
+      primary: '#EB1C24',
+      secondary: '#1A1A1A',
+      accent: '#C9A962',
+      background: '#F8F6F3',
+      textPrimary: '#1A1A1A',
+      textSecondary: '#808080',
+    },
+    typography: {
+      displayFont: '"Covered By Your Grace", sans-serif',
+      labelFont: '"Futura PT Medium", sans-serif',
+      bodyFont: '"Futura PT Book", sans-serif',
+      displaySize: '18px',
+      labelSize: '10px',
+      bodySize: '14px',
+    },
+    materials: ['marble', 'glass', 'crystal', 'chrome', 'manuscript paper'],
+    photographyStyle: 'Bright marble daylight, architectural restraint, institutional calm',
+    packagingStyle: 'Manuscript product cards, executive restraint, gold approval accents sparingly',
+    contentStyle: 'Strategic essays, operating principles, legacy framing, no hype',
+    luxuryLevel: 78,
+    positioning: 'Organizational Intelligence Platform — executive headquarters for builders',
+    competitors: ['Generic SaaS dashboards', 'Fragmented tool stacks', 'Consulting decks'],
+    antiPatterns: ['SaaS dashboard imitation', 'Startup hype language', 'Cluttered utility UI'],
+    brandRules: [
+      'One primary action per viewport',
+      'Orb speaks with evidence',
+      'Department color before body copy',
+      'Accessibility is brand integrity',
+    ],
+    status: 'canonical',
+  }),
+  brand('frontal-slayer', 'frontal-slayer', 'Frontal Slayer™', {
+    brandPhilosophy: 'Luxury hair concierge meets digital mansion.',
+    mission: 'Make every client feel personally known, glamorous, and cared for.',
+    vision: 'The world\'s most loved luxury hair headquarters.',
+    values: ['Concierge warmth', 'Editorial polish', 'Personal recognition', 'Founder-led care'],
+    audienceProfile: {
+      primaryAudience: 'Luxury hair clients and appointment-first buyers',
+      secondaryAudiences: ['Beauty enthusiasts', 'Referral clients', 'VIP members'],
+      psychology: 'Wants to feel seen, glamorous, and expertly cared for',
+      customerDesire: 'To feel like the salon remembers them and elevates their look',
+      identitySignals: ['glamorous', 'cared-for', 'confident', 'loyal'],
+    },
+    emotionalTerritory: ['cared for', 'glamorous', 'confident', 'personally known'],
+    visualPersonality: ['editorial beauty', 'mansion luxury', 'red-carpet polish'],
+    writingVoice: {
+      tone: 'intimate, stylish, direct',
+      cadence: 'concierge warmth',
+      vocabulary: ['bestie', 'mansion', 'concierge', 'mirror glow', 'appointment'],
+      forbiddenLanguage: ['generic SaaS', 'users', 'dashboard', 'cheap', 'discount bin'],
+      sampleLine: 'Welcome back, bestie. Your mansion is ready.',
+    },
+    colorSystem: {
+      primary: '#EB1C24',
+      secondary: '#1A1A1A',
+      accent: '#F5E6D3',
+      background: '#FFFBF7',
+      textPrimary: '#1A1A1A',
+      textSecondary: '#6B6B6B',
+    },
+    typography: {
+      displayFont: '"Covered By Your Grace", sans-serif',
+      labelFont: '"Futura PT Medium", sans-serif',
+      bodyFont: '"Futura PT Book", sans-serif',
+      displaySize: '20px',
+      labelSize: '10px',
+      bodySize: '14px',
+    },
+    materials: ['marble', 'glass', 'chrome', 'vanity mirror', 'velvet', 'product cards'],
+    photographyStyle: 'Salon daylight, mirror glow, editorial beauty, soft glam',
+    packagingStyle: 'Gloss white boxes, product cards, founder handwritten warmth, red accent sparingly',
+    contentStyle: 'Editorial beauty, ritual language, founder warmth, appointment flow',
+    luxuryLevel: 88,
+    positioning: 'Luxury hair concierge mansion — not a booking app',
+    competitors: ['Mass-market salons', 'Generic beauty e-commerce', 'Discount wig retailers'],
+    antiPatterns: ['Discount language', 'Clinical coldness', 'Generic SaaS UI', 'Crowded layouts'],
+    brandRules: [
+      'Concierge warmth in every touchpoint',
+      'Mirror-light hero zones',
+      'No generic SaaS copy',
+      'Breathing room is luxury',
+    ],
+    status: 'canonical',
+  }),
+  brand('ndx', 'ndx', 'NDX™', {
+    brandPhilosophy: 'Independent media intelligence and cultural signal command.',
+    mission: 'Detect signal, publish with clarity, command cultural relevance.',
+    vision: 'The definitive independent media operating floor.',
+    values: ['Signal over noise', 'Editorial rigor', 'Cultural awareness', 'Publishing speed with proof'],
+    audienceProfile: {
+      primaryAudience: 'Media strategists, editors, and publishing operators',
+      secondaryAudiences: ['Cultural analysts', 'Newsroom directors', 'Independent creators'],
+      psychology: 'Wants to be first, informed, and analytically sharp',
+      customerDesire: 'To command information flow and publish with authority',
+      identitySignals: ['informed', 'current', 'analytical', 'culturally aware'],
+    },
+    emotionalTerritory: ['informed', 'current', 'sharp', 'culturally aware'],
+    visualPersonality: ['broadcast', 'editorial', 'cinematic', 'kinetic'],
+    writingVoice: {
+      tone: 'crisp media language, headline-aware',
+      cadence: 'rundown rhythm, analytical',
+      vocabulary: ['signal', 'rundown', 'desk', 'publish', 'editorial'],
+      forbiddenLanguage: ['bestie', 'mansion', 'legacy institution', 'generic startup'],
+      sampleLine: 'Signal detected. Your command floor is live.',
+    },
+    colorSystem: {
+      primary: '#2563EB',
+      secondary: '#0F172A',
+      accent: '#FACC15',
+      background: '#0B1220',
+      textPrimary: '#F8FAFC',
+      textSecondary: '#94A3B8',
+    },
+    typography: {
+      displayFont: '"Futura PT Demi", sans-serif',
+      labelFont: '"Futura PT Medium", sans-serif',
+      bodyFont: '"Futura PT Book", sans-serif',
+      displaySize: '16px',
+      labelSize: '9px',
+      bodySize: '13px',
+    },
+    materials: ['dark glass', 'broadcast panels', 'paper stacks', 'monitors', 'metal'],
+    photographyStyle: 'Studio lights, screen reflections, newsroom urgency, broadcast panels',
+    packagingStyle: 'Broadcast panel cards, signal badges, dark acrylic, editorial metadata',
+    contentStyle: 'Headline-aware analysis, rundown structure, signal-first framing',
+    luxuryLevel: 72,
+    positioning: 'Independent media command — not a content mill',
+    competitors: ['Legacy newsrooms', 'Generic social schedulers', 'Clickbait publishers'],
+    antiPatterns: ['Salon luxury language', 'Marble institution cues', 'Vague thought leadership'],
+    brandRules: [
+      'Evidence before urgency',
+      'Dark glass legibility floor',
+      'Headline hierarchy always visible',
+      'Signal badges for status',
+    ],
+    status: 'canonical',
+  }),
+];
+
+export function buildBrandDiscoverySeedStore() {
+  return {
+    version: XBD_SUBSYSTEM_VERSION,
+    brandRegistry: SEED_STRATEGIC_BRAND_DNA,
+    seededAt: new Date().toISOString(),
+  };
+}

@@ -2011,6 +2011,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'brand-discovery-engine',
+    title: 'BRAND DISCOVERY ENGINE™',
+    purpose: 'Strategic Brand DNA discovery, registry, intelligence layer, and consistency across every creative workflow.',
+    route: p('brand-discovery-engine'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'Brand DNA',
+    ctaLabel: 'OPEN BRAND DISCOVERY',
+    moduleKey: 'brand-discovery-engine',
+    featuredOnOverview: true,
+  },
+  {
     id: 'qa-headquarters',
     title: 'QA HEADQUARTERS™',
     purpose: 'Permanent QA operating layer — Trust Scores™, continuous validation, workflow and AI integrity monitoring.',

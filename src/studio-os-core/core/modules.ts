@@ -144,6 +144,7 @@ export type StudioOsCoreModuleId =
   | 'studio-museum'
   | 'experience-engine'
   | 'experience-runtime'
+  | 'brand-discovery-engine'
   | 'qa-headquarters'
   | 'qa-inspector'
   | 'qa-simulation-engine'
@@ -1037,6 +1038,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXPERIENCE RUNTIME™',
     description: 'Experience Runtime V1.0 — real-time assembly from layered DNA; live brand switching without page rebuilds.',
     routeSegment: 'experience-runtime',
+  },
+  {
+    id: 'brand-discovery-engine',
+    label: 'BRAND DISCOVERY ENGINE™',
+    description: 'Brand Discovery V1.0 — strategic Brand DNA discovery, registry, intelligence layer, and consistency across Studio OS.',
+    routeSegment: 'brand-discovery-engine',
   },
   {
     id: 'qa-headquarters',

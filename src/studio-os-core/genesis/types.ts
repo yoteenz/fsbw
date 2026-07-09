@@ -240,6 +240,7 @@ export type GenesisStore = {
   studioOsDesignDna?: import('./studio-os-design-dna/types').DdnaStore;
   experienceEngineDna?: import('./experience-engine/types').XeeStore;
   experienceRuntimeDna?: import('./experience-runtime/types').XerStore;
+  brandDiscoveryEngineDna?: import('./brand-discovery-engine/types').XbdStore;
   bootstrappedAt?: string;
 };
 

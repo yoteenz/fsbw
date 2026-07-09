@@ -65,6 +65,7 @@ import { ensureArchitectsPromptLibrarySubsystem } from './architects-prompt-libr
 import { ensureStudioOsDesignDnaSubsystem } from './studio-os-design-dna/engine';
 import { ensureExperienceEngineDnaSubsystem } from './experience-engine/engine';
 import { ensureExperienceRuntimeSubsystem } from './experience-runtime/engine';
+import { ensureBrandDiscoveryEngineSubsystem } from './brand-discovery-engine/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -98,6 +99,7 @@ export function ensureGenesisStore() {
   ensureStudioOsDesignDnaSubsystem();
   ensureExperienceEngineDnaSubsystem();
   ensureExperienceRuntimeSubsystem();
+  ensureBrandDiscoveryEngineSubsystem();
   return readGenesisStore();
 }
 

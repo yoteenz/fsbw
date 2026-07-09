@@ -2,7 +2,7 @@
 
 **Canonical source:** `genesis/articles/BRAND_DISCOVERY_ENGINE.md`  
 **Content home:** `genesis/brand-discovery-engine/`  
-**Status:** Architecture drafted; implementation planned
+**Status:** Architecture approved · runtime implemented (Genesis `brandDiscoveryEngineDna`)
 
 ---
 

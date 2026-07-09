@@ -38,3 +38,4 @@ export * from './architects-prompt-library';
 export * from './studio-os-design-dna';
 export * from './experience-engine';
 export * from './experience-runtime';
+export * from './brand-discovery-engine';
