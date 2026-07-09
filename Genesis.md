@@ -1588,6 +1588,53 @@ Rules:
    Terra amendment review.
 9. The founder remains final authority for material constitutional direction.
 
+### 9B.24 Company Genome Evolution Lifecycle rule
+
+The permanent governance model for Company Genome™ evolution is defined in
+**[Company Genome Evolution Lifecycle™](./genesis/articles/COMPANY_GENOME_EVOLUTION.md)**.
+
+Company Genome™ must learn continuously without mutating organizational history,
+silently changing behavior, or regenerating unrelated systems.
+
+Rules:
+
+1. Company Genome Evolution Lifecycle™ is a capability of Company Genome™, not
+   an independent peer engine. Evolution Gate™, Projection Planner™, and
+   Constitutional Diff™ are lifecycle capabilities/objects, not separate sources
+   of truth.
+2. Signals may become observations and evidence automatically, but only a
+   governed immutable **Company Genome Revision™** may change active
+   organizational meaning.
+3. Every material revision must include evidence package, semantic version,
+   lineage, snapshot hash, Constitutional Diff™, approval history, Projection
+   Impact Plan™, activation record, and restoration history where applicable.
+4. Evolution Gates™ are proportional: G0 observation, G1 low-impact learning,
+   G2 operational change, G3 material organizational change, G4 constitutional
+   change. G3 requires founder review; G4 requires Constitution First Principle™
+   / ARR review and Genesis amendment.
+5. One company may have only one active Genome revision for a normal operating
+   context. Draft, proposed, historic, simulation, and in-flight pinned revisions
+   may coexist without silently governing the same active decision.
+6. Projection Planner™ computes impact from declared relationships. Consumer
+   systems retain their own compilation, validation, and activation authority.
+   Archive, index, staleness, and safe context refresh may be automatic; changes
+   to authority, workflow behavior, public experience, automation, or founder
+   workspace require approval-based activation.
+7. Workflows, missions, production packages, and runtime sessions pin their
+   authorizing Genome revision. New revisions govern new work by default;
+   in-flight migration requires a dedicated compatibility decision unless safety
+   or compliance requires suspension.
+8. Restoration is forward-only: a prior meaning is restored through a new,
+   governed revision and selective projection plan. Destructive rollback and
+   history mutation are forbidden.
+9. Conflict precedence is domain-specific. Constitution/founder authority and
+   applicable law, policy, privacy, security, rights, and tenant boundaries
+   always constrain evolution. Genome governs organizational meaning; Manual
+   governs doctrine; Workflow Engine governs execution; Brand governs strategic
+   identity/expression; Institute governs evidence corpus; Experience systems
+   govern projections/runtime state. Contradictions become governed decision
+   objects, never silent overrides.
+
 ---
 
 ## 10. Compilation Model

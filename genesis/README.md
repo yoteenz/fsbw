@@ -37,6 +37,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/BUSINESS_AND_OPERATIONS_CONSTITUTION.md`](./articles/BUSINESS_AND_OPERATIONS_CONSTITUTION.md) | Business & Operations Constitutional Amendment™ — Company Genome Business Architecture/Operating Model facets, operational ownership, and no-duplicate-truth doctrine |
 | [`articles/COMPANY_GENOME.md`](./articles/COMPANY_GENOME.md) | Company Genome™ — living organizational genome, semantic source of truth, organization graph, learning ledger, and governed projections |
 | [`articles/CONSTITUTION_FIRST_PRINCIPLE.md`](./articles/CONSTITUTION_FIRST_PRINCIPLE.md) | Constitution First Principle™ — architecture/implementation separation, bounded implementation authority, and Architecture Review Request™ workflow |
+| [`articles/COMPANY_GENOME_EVOLUTION.md`](./articles/COMPANY_GENOME_EVOLUTION.md) | Company Genome Evolution Lifecycle™ — proportional evolution gates, immutable revisions, diffs, selective projections, restoration, and contradiction governance |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -93,6 +94,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `business-and-operations-constitution/` | Business & Operations Constitutional Amendment™ content home — Business Architecture, Operating Model, Operational DNA, doctrine, workflow, and DNA-boundary rules |
 | `company-genome/` | Company Genome™ content home — organizational identity, business architecture, operating model, governance, organization graph, and learning ledger |
 | `constitution-first-principle/` | Constitution First Principle™ content home — constitutional architect/system engineer roles, authority boundaries, and ARR workflow |
+| `company-genome-evolution/` | Company Genome Evolution Lifecycle™ content home — evolution gates, revision/diff/impact plans, restoration, and conflict governance |
 
 ## Rule
 
