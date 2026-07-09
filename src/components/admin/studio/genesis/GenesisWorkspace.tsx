@@ -7,6 +7,7 @@ import {
 import { useGenesisState } from '../../../../hooks/useGenesisState';
 import { useConstitutionState } from '../../../../hooks/useConstitutionState';
 import { useObjectModelState } from '../../../../hooks/useObjectModelState';
+import { useInteractionModelState } from '../../../../hooks/useInteractionModelState';
 
 function GenesisPanel({
   title,
@@ -71,8 +72,28 @@ export function GenesisWorkspace() {
     refresh: refreshObjectModel,
   } = useObjectModelState();
 
+  const {
+    stats: interactionModelStats,
+    interactions: studioInteractions,
+    events: studioEvents,
+    workflows: studioWorkflows,
+    commands: studioCommands,
+    auditLog: interactionAuditLog,
+    interactionTypes: canonicalInteractionTypes,
+    eventCategoryCoverage,
+    validation: interactionModelValidation,
+    refresh: refreshInteractionModel,
+  } = useInteractionModelState();
+
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'registry' | 'pipelines' | 'schemas' | 'compiler' | 'constitution' | 'object-model'
+    | 'overview'
+    | 'registry'
+    | 'pipelines'
+    | 'schemas'
+    | 'compiler'
+    | 'constitution'
+    | 'object-model'
+    | 'interaction-model'
   >('overview');
   const [lastCompileMessage, setLastCompileMessage] = useState<string | null>(null);
 
@@ -115,6 +136,7 @@ export function GenesisWorkspace() {
               refresh();
               refreshConstitution();
               refreshObjectModel();
+              refreshInteractionModel();
             }}
             className="rounded-lg border border-violet-500/40 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-200 hover:bg-violet-500/20"
           >
@@ -159,6 +181,7 @@ export function GenesisWorkspace() {
               ['compiler', 'Compilation Pipeline™'],
               ['constitution', 'Constitution™'],
               ['object-model', 'Object Model™'],
+              ['interaction-model', 'Interactions™'],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -530,6 +553,147 @@ export function GenesisWorkspace() {
                   {objectModelHistory.slice(0, 5).map((entry) => (
                     <li key={entry.historyId}>
                       {entry.objectId} — {entry.reason}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'interaction-model' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-6 text-sm">
+            <div>
+              <span className="text-white/40">Interactions</span>
+              <p className="font-medium">{interactionModelStats.interactionCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Pending</span>
+              <p className="font-medium">{interactionModelStats.pendingInteractionCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Events</span>
+              <p className="font-medium">{interactionModelStats.eventCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Workflows</span>
+              <p className="font-medium">{interactionModelStats.workflowCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Commands</span>
+              <p className="font-medium">{interactionModelStats.commandCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Audit entries</span>
+              <p className="font-medium">{interactionModelStats.auditEntryCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Validation</span>
+              <p className="font-medium">{interactionModelValidation.valid ? 'PASS' : 'ISSUES'}</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <GenesisPanel title="Interaction Registry™">
+              {studioInteractions.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  Registry empty — submit via{' '}
+                  <code className="text-violet-300">submitStudioInteraction()</code> or batch
+                  ingest. {canonicalInteractionTypes.length} interaction types available.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  {studioInteractions.map((interaction) => (
+                    <li key={interaction.interactionId} className="rounded bg-white/5 px-3 py-2">
+                      <span className="font-medium text-violet-200">{interaction.officialName}</span>
+                      <span className="ml-2 text-white/40">{interaction.interactionId}</span>
+                      <span className="ml-2 text-xs text-white/30">{interaction.interactionType}</span>
+                      <span className="ml-2 text-xs text-white/30">{interaction.status}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Event Bus™">
+              <p className="mb-2 text-xs text-white/40">
+                {eventCategoryCoverage.length} event categories · domain, system, user, ai, knowledge,
+                marketplace, company, mission, learning
+              </p>
+              {studioEvents.length === 0 ? (
+                <p className="text-sm text-white/50">No events emitted yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {studioEvents.slice(0, 8).map((event) => (
+                    <li key={event.eventId}>
+                      {event.officialName} — {event.category} ({event.eventType})
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Workflow Composer™">
+              {studioWorkflows.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  No workflows composed yet — use{' '}
+                  <code className="text-violet-300">composeStudioWorkflow()</code>.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {studioWorkflows.map((workflow) => (
+                    <li key={workflow.workflowId}>
+                      {workflow.officialName} — {workflow.status} ({workflow.steps.length} steps)
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Command Registry™">
+              {studioCommands.length === 0 ? (
+                <p className="text-sm text-white/50">No commands issued yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {studioCommands.slice(0, 8).map((command) => (
+                    <li key={command.commandId}>
+                      {command.officialName} — {command.commandType} ({command.status})
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Interaction Types™">
+              <p className="mb-2 text-sm text-white/60">
+                {canonicalInteractionTypes.length} canonical interaction primitives.
+              </p>
+              <ul className="flex flex-wrap gap-1 text-xs text-white/50">
+                {canonicalInteractionTypes.slice(0, 28).map((t) => (
+                  <li key={t.id} className="rounded bg-white/5 px-2 py-0.5">
+                    {t.id}
+                  </li>
+                ))}
+              </ul>
+            </GenesisPanel>
+
+            <GenesisPanel title="Audit Engine™">
+              {!interactionModelValidation.valid && (
+                <ul className="mb-3 space-y-1 text-xs text-amber-200/80">
+                  {interactionModelValidation.issues.slice(0, 5).map((issue, i) => (
+                    <li key={`${issue.code}-${i}`}>{issue.message}</li>
+                  ))}
+                </ul>
+              )}
+              {interactionAuditLog.length === 0 ? (
+                <p className="text-sm text-white/50">No audit entries yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {interactionAuditLog.slice(0, 8).map((entry) => (
+                    <li key={entry.auditId}>
+                      {entry.action} — {entry.level}
                     </li>
                   ))}
                 </ul>

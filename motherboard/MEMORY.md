@@ -44127,3 +44127,24 @@ Summary of the **full conversation in this chat**: Genesis Foundation Framework 
 - **Verification:** `npm run build` passed; generated master-spec/world-graph artifacts were restored so the commit contains only the intended Genesis docs and motherboard updates.
 - **Conventions:** Future AI collaboration, founder workflows, automation, knowledge systems, Career Worlds, marketplace, notifications, missions, World Graph updates, and integrations should be modeled through canonical interaction primitives with visibility, auditability, failure, and recovery semantics.
 
+---
+
+## 2026-07-09 — Genesis Implementation Sprint 4 Universal Interaction Model™ infrastructure
+
+Summary of the **full conversation in this chat**: Genesis Foundation Framework → Genesis Implementation Sprint 1 → Genesis Sprint 2 Constitutional Core content → Genesis Implementation Sprint 2 constitutional infrastructure → Genesis Sprint 3 Canonical Object Model ontology → Genesis Implementation Sprint 3 object-model infrastructure → Genesis Sprint 4 Universal Interaction Model ontology (`genesis/articles/UNIVERSAL_INTERACTION_MODEL.md`, commit `5e274e99a`) → **GENESIS IMPLEMENTATION SPRINT 4** — implement reusable Universal Interaction Model infrastructure (no business logic, no content seeds).
+
+- **Context:** User approved Universal Interaction Model architecture and requested the interaction engine so every subsystem communicates through shared interaction primitives: Interaction Registry™, Event Registry™, Workflow Registry™, Command Registry™, Interaction Engine™, Event Bus™, Audit Engine™, Workflow Composer™. Explicitly **not** business logic or runtime content seeds.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/genesis/interaction-model/`** module with folders matching content home: `interactions/`, `events/`, `workflows/`, `commands/`, `messages/`, `notifications/`, `audit/`, `automation/`, `synchronization/`, plus `interaction-types/`, `content/loader`, `engine`, `index`.
+  - **28 canonical interaction types** and **9 event categories** (domain, system, user, ai, knowledge, marketplace, company, mission, learning) in `constants.ts`.
+  - **Universal interaction envelope** stores: interactionId, interactionType, version, participants, initiator, recipient, inputs, outputs, status, priority, relationshipRefs, visibility, auditHistory, retryStrategy, metadata, correlation/causation/workflow refs.
+  - **Subsystems implemented:** Interaction Registry™ + Interaction Engine™ (`submitStudioInteraction`, advance/complete/fail, validation); Event Registry™ + Event Bus™ (`emitStudioEvent`); Workflow Registry™ + Workflow Composer™ (compose from primitives, orchestrate steps); Command Registry™; Audit Engine™; messages, notifications, automation triggers, synchronization primitives.
+  - **Persistence:** nested `interactionModel` key inside `genesis_v1`; `ensureInteractionModelSubsystem()` called from `ensureGenesisStore()`; framework modules includes `'interaction-model'`.
+  - **Repo content home:** `genesis/interaction-model/` with READMEs per subfolder and **`interactions/interaction.schema.json`** for zero-code ingest.
+  - **Admin UI:** Interactions tab on **`GenesisWorkspace`**; hook **`useInteractionModelState()`**.
+  - **Docs:** **`docs/studio-os/genesis/INTERACTION_MODEL_PLATFORM.md`**; `genesis/README.md` and `docs/studio-os/README.md` indexes updated.
+  - **Bug fixes during impl:** `failStudioInteraction` now correctly patches `retryStrategy` and metadata; type imports fixed (constants vs types); `validateInteractionEnvelope` allows custom interaction type strings.
+  - **Explicitly not done:** No seeding of interactions/events/workflows into runtime registries.
+- **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored.
+- **Conventions:** Every subsystem should adopt interaction primitives rather than custom integrations. Workflow orchestration uses Interaction Engine steps — no hardcoded subsystem dependencies. Registries start empty until ingest.
+

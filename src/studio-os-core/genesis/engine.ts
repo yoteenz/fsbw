@@ -49,6 +49,7 @@ import { formatGenesisVersion, INITIAL_GENESIS_VERSION } from './versioning/semv
 import { createObjectRevision, listHistoricalRevisions } from './versioning/revisions';
 import { ensureConstitutionSubsystem } from './constitution/engine';
 import { ensureObjectModelSubsystem } from './object-model/engine';
+import { ensureInteractionModelSubsystem } from './interaction-model/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -66,6 +67,7 @@ export type GenesisPlatformStats = GenesisRegistryStats & {
 export function ensureGenesisStore() {
   ensureConstitutionSubsystem();
   ensureObjectModelSubsystem();
+  ensureInteractionModelSubsystem();
   return readGenesisStore();
 }
 

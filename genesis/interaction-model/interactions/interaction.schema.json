@@ -1,0 +1,108 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InteractionPayload",
+  "description": "Zero-code ingest schema for Universal Interaction Model™ interactions",
+  "type": "object",
+  "required": ["interactionType", "officialName", "initiatorObjectId", "recipientObjectId"],
+  "properties": {
+    "interactionType": {
+      "type": "string",
+      "description": "One of 28 canonical interaction types (e.g. request, command, workflow) or custom string"
+    },
+    "officialName": { "type": "string" },
+    "initiatorObjectId": { "type": "string" },
+    "recipientObjectId": { "type": "string" },
+    "slug": { "type": "string" },
+    "purpose": { "type": "string" },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "normal", "high", "critical"]
+    },
+    "visibility": {
+      "type": "string",
+      "enum": [
+        "private",
+        "participant-visible",
+        "workspace-visible",
+        "institution-visible",
+        "founder-visible",
+        "public",
+        "canonical"
+      ]
+    },
+    "retryStrategy": {
+      "type": "string",
+      "enum": [
+        "none",
+        "retry",
+        "request_clarification",
+        "human_review",
+        "rollback",
+        "archive_and_supersede",
+        "manual_resolution",
+        "defer",
+        "reroute"
+      ]
+    },
+    "correlationId": { "type": "string" },
+    "causationId": { "type": "string" },
+    "workflowId": { "type": "string" },
+    "relationshipRefs": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "metadata": { "type": "object" },
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["objectId", "role"],
+        "properties": {
+          "objectId": { "type": "string" },
+          "role": {
+            "type": "string",
+            "enum": [
+              "initiator",
+              "recipient",
+              "observer",
+              "approver",
+              "validator",
+              "publisher",
+              "executor",
+              "subject"
+            ]
+          }
+        }
+      }
+    },
+    "inputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "sourceObjectId": { "type": "string" },
+          "value": {},
+          "required": { "type": "boolean" }
+        }
+      }
+    },
+    "outputs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string" },
+          "targetObjectId": { "type": "string" },
+          "persistence": {
+            "type": "string",
+            "enum": ["transient", "event", "memory", "knowledge", "canon", "archive"]
+          },
+          "value": {}
+        }
+      }
+    }
+  }
+}
