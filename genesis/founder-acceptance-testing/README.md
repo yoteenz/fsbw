@@ -2,14 +2,30 @@
 
 **Ontology:** [`../articles/FOUNDER_ACCEPTANCE_TESTING.md`](../articles/FOUNDER_ACCEPTANCE_TESTING.md)  
 **Program:** Studio OS Launch Stack™  
-**Runtime:** *(planned — validation registry / evidence packet implementation sprint)*  
-**Platform guide:** [`../../docs/studio-os/genesis/FOUNDER_ACCEPTANCE_TESTING.md`](../../docs/studio-os/genesis/FOUNDER_ACCEPTANCE_TESTING.md)
+**Runtime:** `src/studio-os-core/genesis/founder-acceptance-testing/`  
+**Platform guide:** [`../../docs/studio-os/genesis/FOUNDER_ACCEPTANCE_TESTING_PLATFORM.md`](../../docs/studio-os/genesis/FOUNDER_ACCEPTANCE_TESTING_PLATFORM.md)  
+**Experience:** `/admin/studio/founder-acceptance-testing`
 
 Founder Acceptance Testing™ is Studio OS's official internal validation methodology.
 
 Studio OS validates itself before customers ever use it.
 
 Validation begins with the founder.
+
+## Runtime structure
+
+| Path | Engine |
+|------|--------|
+| `/validation` | Validation Registry™ |
+| `/founder-testing` | Founder Testing Dashboard™ |
+| `/metrics` | Metric Engine™ |
+| `/withdrawal-test` | Withdrawal Test™ |
+| `/replacement-test` | Replacement Test™ |
+| `/genesis-feedback` | Genesis Feedback Engine™ |
+| `/validation-history` | Validation audit trail |
+| `/graduation` | Graduation Engine™ |
+| `/launch-stack` | Launch Stack Progress™ |
+| `/evidence` | Evidence Engine™ |
 
 ## Validation ladder
 
@@ -41,3 +57,7 @@ Company and Market Validation remain pending until expansion readiness.
 ## Pass threshold
 
 Founder Acceptance passes at **75 / 100** with no critical failures and clear evidence of real founder use.
+
+## Tracked metrics
+
+Daily Usage · Time Saved · Tool Replacement · Task Completion · Automation Success · Knowledge Retrieval · Creative Output · Stress Score · Focus Score · Confidence Score · Reliability · Founder Satisfaction

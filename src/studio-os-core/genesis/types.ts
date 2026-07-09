@@ -232,6 +232,7 @@ export type GenesisStore = {
   identityEngine?: import('./identity-engine/types').IdentityEngineStore;
   executiveHeadquarters?: import('./executive-headquarters/types').ExecutiveHeadquartersStore;
   orb?: import('./orb/types').OrbStore;
+  founderAcceptanceTesting?: import('./founder-acceptance-testing/types').FatStore;
   bootstrappedAt?: string;
 };
 

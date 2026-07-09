@@ -13,6 +13,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'identity-engine',
   'executive-headquarters',
   'orb',
+  'founder-acceptance-testing',
   'articles',
   'adr',
   'proposals',

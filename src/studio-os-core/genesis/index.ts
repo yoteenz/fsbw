@@ -30,3 +30,4 @@ export * from './build-order';
 export * from './identity-engine';
 export * from './executive-headquarters';
 export * from './orb';
+export * from './founder-acceptance-testing';
