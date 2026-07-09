@@ -3,7 +3,7 @@
 **Ontology:** [`../articles/EXPERIENCE_ENGINE.md`](../articles/EXPERIENCE_ENGINE.md)  
 **Program:** Studio OS World Experience™  
 **Parent:** Genesis™ · Studio OS Design DNA™  
-**Runtime:** canonical architecture draft — runtime implementation pending  
+**Runtime:** Genesis subsystem `experienceEngineDna` — see [`../../docs/studio-os/genesis/EXPERIENCE_ENGINE_PLATFORM.md`](../../docs/studio-os/genesis/EXPERIENCE_ENGINE_PLATFORM.md) · UI `/admin/studio/experience-engine`  
 **Compiled guide:** [`../../docs/studio-os/genesis/EXPERIENCE_ENGINE.md`](../../docs/studio-os/genesis/EXPERIENCE_ENGINE.md)
 
 Experience Engine™ is the platform-wide generator for branded operating environments.

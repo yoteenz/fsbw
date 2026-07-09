@@ -16,4 +16,5 @@
 - [`STUDIO_OS_DESIGN_DNA.md`](./STUDIO_OS_DESIGN_DNA.md) — Studio OS Design DNA™ constitutional visual grammar
 - [`STUDIO_OS_DESIGN_DNA_PLATFORM.md`](./STUDIO_OS_DESIGN_DNA_PLATFORM.md) — Design DNA runtime platform guide
 - [`EXPERIENCE_ENGINE.md`](./EXPERIENCE_ENGINE.md) — Experience Engine™ branding and experience inheritance architecture
+- [`EXPERIENCE_ENGINE_PLATFORM.md`](./EXPERIENCE_ENGINE_PLATFORM.md) — Experience Engine runtime platform guide
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

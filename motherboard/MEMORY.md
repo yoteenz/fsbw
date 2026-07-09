@@ -44758,6 +44758,7 @@ Summary of the **full conversation in this chat**: Built Launch Stack governance
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-09 — Grand Atrium freeze fix (Genesis render loop)
 
 Summary: User reported Grand Atrium loads but **freezes / gets stuck** (loading then black/white screen instability).
@@ -44772,3 +44773,19 @@ Summary: User reported Grand Atrium loads but **freezes / gets stuck** (loading 
   - `recordHeadquartersOpened()` no-ops when arrival session already exists (avoids redundant mount writes).
 - **Verification:** `npm run build` passed.
 
+=======
+## 2026-07-09 — Experience Engine™ layered inheritance runtime + Experience Playground™
+
+Summary of the **full conversation in this chat**: Built Launch Stack governance arc through Architect's Prompt Library™; fixed Studio Orb clickability and Grand Atrium routing/rendering; authored Studio OS Design DNA™ Version 1.0 constitutional architecture; implemented Design DNA permanent visual operating system runtime; architected platform-wide Experience Engine™ layered inheritance; then implemented **Experience Engine™ runtime + Experience Playground™** with instant brand switching on a shared scene template.
+
+- **Design DNA context (prior in chat):** Constitutional canon `genesis/articles/STUDIO_OS_DESIGN_DNA.md`, Genesis §9B.13. Runtime `src/studio-os-core/genesis/studio-os-design-dna/` (Genesis key `studioOsDesignDna`), UI `/admin/studio/design-dna` + 9 rooms, hooks `useStudioOsDesignDnaState` / `useDesignDnaSceneInheritance`, scene inheritance API `resolveDesignDnaSceneProfile()` / `applyDesignDnaToElement()`.
+- **Experience Engine architecture (prior commit `44065dcc8`):** `genesis/articles/EXPERIENCE_ENGINE.md`, Genesis §9B.14, content home `genesis/experience-engine/` with brand/department/scene/component/motion/interaction/theme-playground folders. Permanent hierarchy: Experience Engine™ → Brand DNA™ → Department DNA™ → Scene DNA™ → Component DNA™ → Motion DNA™ → Interaction DNA™ → Experience™. Design DNA is **not** redesigned — Studio OS becomes first official Brand DNA profile.
+- **Latest user request:** IMPLEMENTATION FOLLOW-UP — evolve approved Design DNA into reusable **Experience Engine™** with layered inheritance registries (BrandRegistry™, DepartmentRegistry™, SceneRegistry™, ComponentRegistry™, MotionRegistry™, InteractionRegistry™); expand Design DNA Playground into **Experience Playground** with Brand/Department/Scene/Component/Motion/Lighting/Material/Typography/Orb switchers; **required demo:** same scene template, instant switch between Studio OS™, Frontal Slayer™, NDX™ — identical layout, only inherited Brand DNA changes.
+- **Runtime:** `src/studio-os-core/genesis/experience-engine/` — constants (demo brand IDs `studio-os`, `frontal-slayer`, `ndx`; shared scene `hq-master-demonstration-v1`), types (`XeeBrandDna`, `XeeDepartmentDna`, `XeeSceneDna`, `XeeComponentDna`, `XeeMotionDna`, `XeeInteractionDna`, `XeeExperienceProfile`, `XeePlaygroundSelection`), persistence (Genesis key **`experienceEngineDna`**), bootstrap/seed-data (3 Brand DNA profiles, 15 Department DNA rows, 1 shared scene, per-brand component/motion/interaction variants), engines/registries.ts (six registries), engines/experience-generator.ts (`resolveExperienceProfile()`, `applyExperienceProfileToElement()`, `--xee-*` CSS variables), room/ready-view, engine.ts, index.ts.
+- **Genesis wiring:** `ensureExperienceEngineDnaSubsystem()` in `ensureGenesisStore()` chain (after Design DNA); framework module **`experience-engine-dna`**; store merge for `experienceEngineDna`; exports from `genesis/index.ts`.
+- **UI:** `ExperienceEngineDnaWorkspace` — registry rooms + **Experience Playground™** with all required switchers and fixed-layout demo scene validating brand inheritance; hook `useExperienceEngineDnaState`; `useExperienceInheritance()` public API; routes `/admin/studio/experience-engine` + `:roomSlug` (brand-dna, department-dna, scene-dna, component-dna, motion-dna, interaction-dna, theme-playground); replaced prior M141-only page shell with `DepartmentGoldenBuildShell` + new workspace; App.tsx route added.
+- **Naming / coexistence:** Prefix **`Xee`** and Genesis key `experienceEngineDna` avoid collision with legacy M141 adaptive atmosphere runtime at `src/studio-os-core/experience-engine/` (Mission Control panel unchanged).
+- **Docs:** `docs/studio-os/genesis/EXPERIENCE_ENGINE_PLATFORM.md`; updated `genesis/experience-engine/README.md`, genesis README; motherboard CORE updated with runtime facts.
+- **Success criteria met:** Studio OS can generate distinct branded operating environments from one shared architectural engine; playground demonstrates identical scene layout with only Brand DNA changing across Studio OS / Frontal Slayer / NDX profiles.
+- **Verification:** `npm run build` passed.
+>>>>>>> e31a95271 (Implement Experience Engine layered inheritance runtime and Experience Playground with Studio OS, Frontal Slayer, and NDX brand switching)

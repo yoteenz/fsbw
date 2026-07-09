@@ -1,27 +1,31 @@
-import { useNavigate } from 'react-router-dom';
-import { AdminStudioStageShell } from '../../../../components/admin/studio/AdminStudioStageShell';
-import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio/AdminStudioDisclaimerFooter';
-import { ExperienceEngineWorkspace } from '../../../../components/admin/studio/experience-engine/ExperienceEngineWorkspace';
+import { Navigate, useParams } from 'react-router-dom';
+import { DepartmentGoldenBuildShell } from '../../../../components/admin/studio-os/department-vertical-slice/DepartmentGoldenBuildShell';
+import { ExperienceEngineDnaWorkspace } from '../../../../components/admin/studio/experience-engine-dna';
+import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
+import { STUDIO_OS_ROUTES } from '../../../../studio-os-core/workspace/routes';
+import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
+import { isValidXeeRoomPath } from '../../../../studio-os-core/genesis';
 
-const SUBTITLE =
-  'Experience Engine™ — the emotional and environmental layer of Studio OS. Adapts atmosphere to match your organization\'s moment — tasteful, professional, alive without overwhelming.';
-
+/**
+ * Experience Engine™ — layered Experience DNA generator.
+ * `/admin/studio/experience-engine` and registry + playground rooms.
+ */
 export default function AdminStudioExperienceEnginePage() {
-  const navigate = useNavigate();
+  useRequireAdminPageAccess();
+  const { workspace } = useWorkspace();
+  const { roomSlug } = useParams<{ roomSlug?: string }>();
+
+  if (!workspace.studioEnabled) {
+    return <Navigate to={STUDIO_OS_ROUTES.workspaceShell(workspace.id)} replace />;
+  }
+
+  if (roomSlug && !isValidXeeRoomPath(roomSlug)) {
+    return <Navigate to="/admin/studio/experience-engine" replace />;
+  }
 
   return (
-    <AdminStudioStageShell
-      title="EXPERIENCE ENGINE™"
-      subtitle={SUBTITLE}
-      breadcrumbParentLabel="ADMIN"
-      breadcrumbParentPath="/admin/dashboard"
-      onBack={() => navigate('/admin/studio/asset-registry')}
-      navGroupId="intelligence"
-    >
-      <ExperienceEngineWorkspace />
-      <AdminStudioDisclaimerFooter>
-        EXPERIENCE ENGINE™ V1.0 · M141 · INFRASTRUCTURE CHAPTER COMPLETE · TECHNOLOGY ADAPTS TO PEOPLE
-      </AdminStudioDisclaimerFooter>
-    </AdminStudioStageShell>
+    <DepartmentGoldenBuildShell>
+      <ExperienceEngineDnaWorkspace />
+    </DepartmentGoldenBuildShell>
   );
 }

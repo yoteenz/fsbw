@@ -1954,6 +1954,11 @@ function App() {
               <AdminStudioExperienceEngine />
             </Suspense>
           } />
+          <Route path="studio/experience-engine/:roomSlug" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExperienceEngine />
+            </Suspense>
+          } />
           <Route path="studio/qa-headquarters" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioQaHeadquarters />
