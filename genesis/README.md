@@ -18,12 +18,14 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/CORE_SYSTEMS_BLUEPRINT.md`](./articles/CORE_SYSTEMS_BLUEPRINT.md) | Core Systems Blueprint™ — major platform systems, domains, dependency map, ownership, events, metrics, and anti-patterns |
 | [`articles/STUDIO_OS_DEPENDENCY_MAP.md`](./articles/STUDIO_OS_DEPENDENCY_MAP.md) | Studio OS Dependency Map™ — master build order, upstream/downstream dependencies, circular risks, missing foundations, and next sprints |
 | [`articles/STUDIO_OS_BUILD_ORDER.md`](./articles/STUDIO_OS_BUILD_ORDER.md) | Studio OS Build Order™ — definitive architectural roadmap, critical path, build phases, topological order, parallel opportunities, and rewrite-risk controls |
+| [`articles/IDENTITY_ENGINE.md`](./articles/IDENTITY_ENGINE.md) | Identity Engine™ — foundational identity architecture: actors, entities, Identity Graph, roles, multi-company, AI identities, system integrations |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
 | `core-systems/` | Core Systems Blueprint runtime content home — system blueprints, dependencies, boundaries, contracts, lifecycle |
 | `dependency-map/` | Studio OS Dependency Map runtime content home — seeded system records, build order, readiness, risks |
 | `build-order/` | Studio OS Build Order Engine runtime content home — 47-system roadmap, critical path, parallel tracks, readiness, rewrite/debt risks |
+| `identity-engine/` | Identity Engine™ content home — canonical identity architecture (runtime planned Cycle 4) |
 
 ## Structure
 
@@ -47,6 +49,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `core-systems/` | Core Systems Blueprint infrastructure — system/dependency/capability registries, boundaries, contracts, expansion hooks, lifecycle |
 | `dependency-map/` | Studio OS Dependency Map infrastructure — seeded planning registry, dependency graph, build order, readiness, risk views |
 | `build-order/` | Studio OS Build Order Engine infrastructure — dependency resolver, critical path, parallel work, readiness engines, rewrite/debt analyzers |
+| `identity-engine/` | Identity Engine™ architecture content home — blueprint reference; runtime planned per Build Order Cycle 4 |
 
 ## Rule
 

@@ -124,6 +124,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Core Systems Blueprint™](./genesis/articles/CORE_SYSTEMS_BLUEPRINT.md)
     - [Studio OS Dependency Map™](./genesis/articles/STUDIO_OS_DEPENDENCY_MAP.md)
     - [Studio OS Build Order™](./genesis/articles/STUDIO_OS_BUILD_ORDER.md)
+    - [Identity Engine™](./genesis/articles/IDENTITY_ENGINE.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -961,6 +962,24 @@ Every implementation sprint should make future sprints easier. If a proposed spr
 does not improve foundational leverage, reusability, maintainability, business
 validation, or compounding architecture, it should wait until its upstream
 dependencies are complete.
+
+### 9B.5 Identity Engine rule
+
+The canonical identity architecture for Studio OS is defined in
+**[Identity Engine™](./genesis/articles/IDENTITY_ENGINE.md)**.
+
+Identity Engine™ is the foundational platform system for **who and what exists**
+in Studio World. It is **not** user authentication.
+
+Rules:
+
+1. No feature may invent parallel actor, company, or membership records.
+2. Authentication binds sessions to Identity Engine actors; it does not own identity truth.
+3. Permissions Engine™ evaluates authority using Identity Context™ from Identity Engine.
+4. Every AI worker, profession brain, headquarters, room, department, and future entity
+   derives its identity through Identity Engine.
+5. Implementation follows **Studio OS Build Order™** Cycle 4 after Organization Registry™
+   and Company Registry™ MVP contracts stabilize.
 
 ---
 

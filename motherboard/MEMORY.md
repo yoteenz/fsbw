@@ -44386,3 +44386,26 @@ Summary of the **full conversation in this chat**: (1) User requested **GENESIS 
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
 - **Conventions:** Use Build Order Engine (`getOptimalNextSystem()`, `updateBuildOrderSystemStatus()`) as authoritative sequencing for implementation sprints; Dependency Map remains complementary planning view. Mark systems `implemented` after shipping to unlock dependents automatically.
 
+---
+
+## 2026-07-09 — Identity Engine™ Core System Architecture Sprint 1
+
+Summary of the **full conversation in this chat**: (1) User requested **IMPLEMENTATION SPRINT — Studio OS Build Order Engine™** — completed and pushed (`2630b07cd`) with full runtime module, 47-system seed, 8 interactive admin views, Build Order tab. (2) User requested **CORE SYSTEM ARCHITECTURE SPRINT 1 — Identity Engine™** — architect complete Identity Engine as permanent platform capability (NOT authentication) for WHO/WHAT exists in Studio World.
+
+- **Context:** First production-ready Core System blueprint. Must support founders, employees, citizens, AI workers, companies, organizations, departments, HQs, rooms, workspaces, teams, clients, vendors, partners, mentors, students, profession brains, assets, products, communities. Define Identity Graph, Role Model, Permission Philosophy, Ownership, Invitation, Organization/Company membership, multi-company, cross-company, shared assets/permissions, AI identities, and integrations with Orb, Atlas, Company Genome, Command Center, HQ, Knowledge Core, Profession Brains, Studio Exchange, Career Worlds. Must remain stable across industries and future capabilities.
+- **Decisions / outcomes:**
+  - Created **`genesis/articles/IDENTITY_ENGINE.md`** — comprehensive architectural blueprint (~29 sections).
+  - **Three-layer model:** Identity Registry™ + Identity Graph™ + Identity Context™.
+  - **Actor vs Entity kinds** with universal envelope + extensions.
+  - **20 identity types** in master catalog with full definition matrix (Official Name, Purpose, Type, Lifecycle, Relationships, Permissions subject, Roles, Capabilities, Status, Ownership, Visibility, Inheritance, Composition, Dependencies, Events, Security, Audit, Future Expansion).
+  - **Explicit boundaries:** Authentication = session binding; Permissions = authority evaluation; Identity = existence truth.
+  - **Sub-models:** Role Model™ (declarative), Ownership Model™, Invitation Model™, Organization hierarchy, Company Membership™, Multi-company + Cross-company links, Shared assets via graph edges, AI identity classes with no authority escalation.
+  - **Integration matrix** for 15 downstream/upstream systems.
+  - **MVP scope** aligned with Build Order Cycle 4 (actor envelope, org/company entities, membership, roles, invitation, core graph, context resolver).
+  - **Architecture law:** existence → access → authority → command → commerce.
+  - **Content home:** `genesis/identity-engine/README.md`.
+  - **Docs:** `docs/studio-os/genesis/IDENTITY_ENGINE_ARCHITECTURE.md`.
+  - Updated **`Genesis.md`** (§9B.5 Identity Engine rule), **`genesis/README.md`**, **`genesis/articles/README.md`**, **`docs/studio-os/README.md`**, **`motherboard/CORE.md`**.
+- **Verification:** Documentation-only sprint; no runtime code in this task.
+- **Conventions:** No feature invents parallel actor/company/membership records. Runtime implementation deferred to Build Order Cycle 4 after Organization Registry + Company Registry MVP. Identity Engine is first Core System architecture approved for production implementation path.
+

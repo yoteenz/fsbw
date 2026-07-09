@@ -12,6 +12,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [../../genesis/articles/CORE_SYSTEMS_BLUEPRINT.md](../../genesis/articles/CORE_SYSTEMS_BLUEPRINT.md) | **Core Systems Blueprint™** — Studio World's major platform systems, domains, dependencies, ownership, events, metrics, and anti-patterns |
 | [../../genesis/articles/STUDIO_OS_DEPENDENCY_MAP.md](../../genesis/articles/STUDIO_OS_DEPENDENCY_MAP.md) | **Studio OS Dependency Map™** — master build order, dependency sequencing, circular risk controls, missing foundations, and recommended next sprints |
 | [../../genesis/articles/STUDIO_OS_BUILD_ORDER.md](../../genesis/articles/STUDIO_OS_BUILD_ORDER.md) | **Studio OS Build Order™** — definitive architecture roadmap, critical path, topological order, parallel tracks, hidden dependencies, rewrite risks, and 12-cycle sequence |
+| [../../genesis/articles/IDENTITY_ENGINE.md](../../genesis/articles/IDENTITY_ENGINE.md) | **Identity Engine™** — foundational identity architecture: Identity Graph, Role Model, multi-company, AI identities, integrations (not authentication) |
 | [genesis/GENESIS_PLATFORM.md](./genesis/GENESIS_PLATFORM.md) | **Genesis Platform™** — Canonical Object Model, pipelines, registry, compilation infrastructure |
 | [genesis/CONSTITUTION_PLATFORM.md](./genesis/CONSTITUTION_PLATFORM.md) | **Genesis Constitution™** — constitutional registry, amendments, versioning, relationship graph |
 | [genesis/OBJECT_MODEL_PLATFORM.md](./genesis/OBJECT_MODEL_PLATFORM.md) | **Canonical Object Model™** — object registry, factory, relationship engine, validation, versioning, history |
@@ -20,6 +21,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/CORE_SYSTEMS_PLATFORM.md](./genesis/CORE_SYSTEMS_PLATFORM.md) | **Core Systems Blueprint™** — system registries, dependencies, boundaries, integration contracts, expansion hooks, lifecycle |
 | [genesis/DEPENDENCY_MAP_PLATFORM.md](./genesis/DEPENDENCY_MAP_PLATFORM.md) | **Studio OS Dependency Map™** — seeded planning registry, dependency graph, build order, readiness, blocked/ready views, risk detectors |
 | [genesis/BUILD_ORDER_PLATFORM.md](./genesis/BUILD_ORDER_PLATFORM.md) | **Studio OS Build Order Engine™** — 47-system roadmap, critical path, parallel tracks, optimal next build, rewrite/debt forecast |
+| [genesis/IDENTITY_ENGINE_ARCHITECTURE.md](./genesis/IDENTITY_ENGINE_ARCHITECTURE.md) | **Identity Engine™** — foundational identity blueprint: actors, entities, graph, roles, multi-company, AI identities, MVP scope |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |
