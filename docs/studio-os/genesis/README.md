@@ -26,6 +26,7 @@
 - [`CREATIVE_OPERATING_SYSTEM.md`](./CREATIVE_OPERATING_SYSTEM.md) — Creative Operating System™ architecture: executive creative board, council, creative memory, learning, evolution, economy, and headquarters integration
 - [`BUSINESS_AND_OPERATIONS_CONSTITUTION.md`](./BUSINESS_AND_OPERATIONS_CONSTITUTION.md) — Business & Operations Constitutional Amendment™: Company Genome Business Architecture/Operating Model facets and no-duplicate-truth ownership rules
 - [`COMPANY_GENOME.md`](./COMPANY_GENOME.md) — Company Genome™ constitutional specification: living organizational model, organization graph, learning ledger, governed projections, and ownership boundaries
+- [`CONSTITUTION_FIRST_PRINCIPLE.md`](./CONSTITUTION_FIRST_PRINCIPLE.md) — Constitution First Principle™: architecture-before-implementation law, Terra/Composer authority boundary, and Architecture Review Request™ workflow
 - [`STUDIO_INTELLIGENCE_LAYER_PLATFORM.md`](./STUDIO_INTELLIGENCE_LAYER_PLATFORM.md) — Studio Intelligence Layer runtime platform guide
 - [`EXPERIENCE_LAB_PLATFORM.md`](./EXPERIENCE_LAB_PLATFORM.md) — Experience Lab runtime platform guide
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

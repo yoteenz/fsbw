@@ -1548,6 +1548,46 @@ Rules:
    Genome brief, snapshot, manual, workflow, brand brief, or compiled
    experience—never create a duplicate primary organizational model.
 
+### 9B.23 Constitution First Principle rule
+
+The constitutional separation of architecture and implementation is defined in
+**[Constitution First Principle™](./genesis/articles/CONSTITUTION_FIRST_PRINCIPLE.md)**.
+
+Architecture must precede implementation. Implementation may realize approved
+architecture but may not silently redefine architecture.
+
+Rules:
+
+1. **GPT-5.6 Terra** is the Constitutional Architect. Terra governs system
+   purpose, single responsibility, ownership, canonical objects, relationships,
+   dependencies, governance, risks, terminology, and implementation authority.
+2. **Composer 2.5** is the Systems Engineer. Composer implements approved
+   architecture through code, schemas, integrations, migrations, tests,
+   observability, validation, and deployable behavior.
+3. Genesis is the binding architectural source of truth. If code, prompts,
+   tickets, chats, or implementation patterns conflict with Genesis, Genesis
+   wins until a governed amendment changes it.
+4. Composer may make local implementation decisions only when they do not alter
+   ownership, dependency direction, authority, public contract, canonical
+   terminology, governance, tenant boundaries, or approval policy.
+5. Composer must not create new constitutional engines, registries, sources of
+   truth, canonical object types, or material relationships without
+   constitutional approval.
+6. When implementation reveals a conflict, missing dependency, unclear owner,
+   impossibility, unsafe constraint, required new architectural owner, or
+   material permission/automation/compliance change, Composer must stop work on
+   the affected boundary and create an **Architecture Review Request™ (ARR)**.
+7. ARR records must cite affected Genesis references, evidence, impact, safe
+   options, engineering recommendation, requested decision, and interim state.
+   An ARR is resolved only by Terra clarification, bounded exception, Genesis
+   amendment, redesign, dependency sequencing, rejection, or a finding that the
+   issue is non-material.
+8. Material architecture becomes canon through intent → Terra exploration →
+   Genesis proposal/review → founder approval where required → bounded
+   implementation authority → Composer implementation → validation/learning →
+   Terra amendment review.
+9. The founder remains final authority for material constitutional direction.
+
 ---
 
 ## 10. Compilation Model

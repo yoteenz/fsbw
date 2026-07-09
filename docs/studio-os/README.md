@@ -58,6 +58,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/BUSINESS_AND_OPERATIONS_CONSTITUTION.md](./genesis/BUSINESS_AND_OPERATIONS_CONSTITUTION.md) | **Business & Operations Constitutional Amendment™ guide** — responsibility boundaries across Company Genome™, operating manual, workflow, brand, and experience systems |
 | [../../genesis/articles/COMPANY_GENOME.md](../../genesis/articles/COMPANY_GENOME.md) | **Company Genome™** — living organizational genome: canonical organizational meaning, Business Architecture™, Operating Model™, organization graph, and learning ledger |
 | [genesis/COMPANY_GENOME.md](./genesis/COMPANY_GENOME.md) | **Company Genome™ guide** — ownership boundaries, versioned projections, and implementation gates for the organizational digital twin |
+| [../../genesis/articles/CONSTITUTION_FIRST_PRINCIPLE.md](../../genesis/articles/CONSTITUTION_FIRST_PRINCIPLE.md) | **Constitution First Principle™** — permanent law separating constitutional architecture from systems engineering |
+| [genesis/CONSTITUTION_FIRST_PRINCIPLE.md](./genesis/CONSTITUTION_FIRST_PRINCIPLE.md) | **Constitution First Principle™ guide** — Terra/Composer roles, implementation authority, and Architecture Review Request™ workflow |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |
