@@ -17,6 +17,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/UNIVERSAL_DECISION_ARCHITECTURE.md`](./articles/UNIVERSAL_DECISION_ARCHITECTURE.md) | Universal Decision Architecture™ — reasoning principles, decision objects, hierarchy, evidence, confidence, review, and learning |
 | [`articles/CORE_SYSTEMS_BLUEPRINT.md`](./articles/CORE_SYSTEMS_BLUEPRINT.md) | Core Systems Blueprint™ — major platform systems, domains, dependency map, ownership, events, metrics, and anti-patterns |
 | [`articles/STUDIO_OS_DEPENDENCY_MAP.md`](./articles/STUDIO_OS_DEPENDENCY_MAP.md) | Studio OS Dependency Map™ — master build order, upstream/downstream dependencies, circular risks, missing foundations, and next sprints |
+| [`articles/STUDIO_OS_BUILD_ORDER.md`](./articles/STUDIO_OS_BUILD_ORDER.md) | Studio OS Build Order™ — definitive architectural roadmap, critical path, build phases, topological order, parallel opportunities, and rewrite-risk controls |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |

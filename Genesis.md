@@ -123,6 +123,7 @@ permanent kernel responsibilities, not temporary product areas.
 10. **World Systems**
     - [Core Systems Blueprint™](./genesis/articles/CORE_SYSTEMS_BLUEPRINT.md)
     - [Studio OS Dependency Map™](./genesis/articles/STUDIO_OS_DEPENDENCY_MAP.md)
+    - [Studio OS Build Order™](./genesis/articles/STUDIO_OS_BUILD_ORDER.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -919,6 +920,10 @@ That article is the master execution blueprint for build order, first systems,
 systems that should wait, circular dependency risks, missing foundation systems,
 and recommended next implementation sprints.
 
+The definitive architectural roadmap is defined in **[Studio OS Build Order™](./genesis/articles/STUDIO_OS_BUILD_ORDER.md)**.
+That article expands the dependency map into the official build-order doctrine
+for every engineer, AI model, and future contributor.
+
 ### 9B.1 System traceability rule
 
 Every future implementation sprint should trace directly to one or more core system
@@ -949,6 +954,13 @@ the stable interface or mock boundary it is using. Studio OS execution should fo
 ```text
 truth -> knowledge -> graph -> identity -> permission -> mission -> command -> production -> experience -> intelligence -> economy
 ```
+
+### 9B.4 Build order rule
+
+Every implementation sprint should make future sprints easier. If a proposed sprint
+does not improve foundational leverage, reusability, maintainability, business
+validation, or compounding architecture, it should wait until its upstream
+dependencies are complete.
 
 ---
 
