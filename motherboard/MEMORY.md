@@ -44644,3 +44644,18 @@ Summary of the **full conversation in this chat**: Built Launch Stack governance
 - **Docs:** `docs/studio-os/genesis/EXECUTIVE_REFLECTION_SUITE_PLATFORM.md`; updated content home + guide runtime status.
 - **Verification:** `npm run build` passed.
 
+---
+
+## 2026-07-09 — The Architect's Prompt Library™ architecture
+
+Summary of the **full conversation in this chat**: This chat has built Studio OS's Launch Stack governance and self-improvement chain: Build Order, Identity Engine, Executive Headquarters, Orb, Founder Acceptance Testing architecture/runtime, Live Validation System architecture/runtime, Evolution Room architecture/runtime, Executive Reflection Suite architecture/runtime. The latest user request was **MASTER ARCHITECTURE PROJECT — THE ARCHITECT'S PROMPT LIBRARY™**, asking for a complete architecture for Studio OS's permanent repository for architecture, implementation, validation, research, design, and future AI workflow prompts.
+
+- **Strategic challenge:** Rejected the assumption that a prompt library is a folder/searchable list of prompt text. The superior architecture is an **Institute of Knowledge™ institution** where prompts are reusable architectural assets with identity, versioning, relationships, execution history, model intelligence, quality scoring, output artifacts, lessons learned, and Genesis lineage.
+- **New canon:** Added `genesis/articles/ARCHITECTS_PROMPT_LIBRARY.md` and Genesis rule **§9B.12 Architect's Prompt Library rule**. Added content home `genesis/architects-prompt-library/` and guide `docs/studio-os/genesis/ARCHITECTS_PROMPT_LIBRARY.md`; updated Genesis and Studio OS indexes.
+- **Doctrine:** Prompts are architectural assets, not disposable instructions. Studio OS must remember how it was prompted into existence, why each prompt worked, what it produced, and how future prompts should improve.
+- **Information architecture:** Collections™, Categories™, Prompt Templates™, Prompt Versions™, Dependencies™, Relationships™, Execution History™, Generated Outputs™, Follow-up Artifacts™, Validation Results™, Genesis References™, Launch Stack References™, Implementation Status™, Retirement Status™.
+- **Lifecycle:** Draft → Review → Execution → Output Review → Founder Approval → Genesis References Updated → Canonized → Archived. Every stage is tracked; canonical prompts require purpose, explicit context, measurable deliverables, dependencies, reviewed execution, quality threshold, accurate Genesis refs, documented limitations, and owner/steward.
+- **Quality/model intelligence:** Scores Architectural Quality, Implementation Quality, Output Consistency, Reusability, Platform Value, Business Value, Founder Value, Knowledge Value, Validation Readiness, Model Portability. Tracks which models (GPT-5.5, Composer, future models, Studio Foundation/Profession Models, local/offline) perform best by speed, consistency, reasoning, architecture, implementation, creative direction, technical accuracy, long-form output, success rate, instruction adherence.
+- **Orb role:** Orb becomes Library Curator — recommends prompts, explains relationships, identifies missing architectural coverage, surfaces duplicates/outdated/conflicting prompts, suggests improvements, and prepares sprint prompt sequences with context/model guidance.
+- **Governance:** The Library may draft Genesis Improvement Proposals™, but it must never auto-modify Genesis.
+

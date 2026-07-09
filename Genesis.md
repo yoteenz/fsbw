@@ -131,6 +131,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Live Validation System™](./genesis/articles/LIVE_VALIDATION_SYSTEM.md)
     - [The Evolution Room™](./genesis/articles/EVOLUTION_ROOM.md)
     - [Executive Reflection Suite™](./genesis/articles/EXECUTIVE_REFLECTION_SUITE.md)
+    - [The Architect's Prompt Library™](./genesis/articles/ARCHITECTS_PROMPT_LIBRARY.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1133,6 +1134,37 @@ Rules:
    automatically.
 8. The Suite must feel like an executive operating environment and luxury
    Headquarters wing — never like a dashboard suite.
+
+### 9B.12 Architect's Prompt Library rule
+
+The canonical prompt institution architecture is defined in
+**[The Architect's Prompt Library™](./genesis/articles/ARCHITECTS_PROMPT_LIBRARY.md)**.
+
+The Architect's Prompt Library™ is Studio OS's permanent Institute of Knowledge™
+repository for architecture prompts, implementation prompts, validation prompts,
+research prompts, design prompts, and future AI workflows. It is not a folder of
+prompts. It is an institutional knowledge system where prompts become reusable
+architectural assets.
+
+Rules:
+
+1. Prompts are architectural assets, not disposable instructions.
+2. Canonical prompts must be searchable, versioned, connected, reviewable, reusable,
+   and tied to execution history.
+3. Prompt records must preserve purpose, required context, prompt body, expected
+   deliverables, dependencies, Genesis references, related prompts, model guidance,
+   output quality, lessons learned, revision history, and canonical status.
+4. Prompt lifecycle stages must be tracked: Draft → Review → Execution → Output
+   Review → Founder Approval → Genesis References Updated → Canonized → Archived.
+5. Model recommendations must be evidence-backed through execution history and
+   quality scoring, not brand preference.
+6. Orb acts as Library Curator: recommending prompts, explaining relationships,
+   identifying missing coverage, and surfacing duplicate, outdated, or conflicting
+   prompts.
+7. The Library may draft Genesis Improvement Proposals™, but it must never
+   automatically modify Genesis.
+8. The Library belongs inside the Institute of Knowledge™ and should communicate
+   precision, permanence, craftsmanship, and institutional memory.
 
 ---
 

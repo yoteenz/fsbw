@@ -11,4 +11,5 @@
 - [`EVOLUTION_ROOM_PLATFORM.md`](./EVOLUTION_ROOM_PLATFORM.md) — The Evolution Room™ runtime platform guide
 - [`EXECUTIVE_REFLECTION_SUITE.md`](./EXECUTIVE_REFLECTION_SUITE.md) — Executive Reflection Suite™ complete reflection wing architecture
 - [`EXECUTIVE_REFLECTION_SUITE_PLATFORM.md`](./EXECUTIVE_REFLECTION_SUITE_PLATFORM.md) — Executive Reflection Suite runtime platform guide
+- [`ARCHITECTS_PROMPT_LIBRARY.md`](./ARCHITECTS_PROMPT_LIBRARY.md) — The Architect's Prompt Library™ architecture: prompt assets, lifecycle, model intelligence, quality scoring, Genesis references
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

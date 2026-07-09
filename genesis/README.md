@@ -25,6 +25,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/LIVE_VALIDATION_SYSTEM.md`](./articles/LIVE_VALIDATION_SYSTEM.md) | Live Validation System™ — continuous invisible validation through founder behavior, Escape Velocity™, Founder Diary™, and Genesis learning |
 | [`articles/EVOLUTION_ROOM.md`](./articles/EVOLUTION_ROOM.md) | The Evolution Room™ — monthly Executive Board Room where the founder, company, Studio OS, and Genesis evolve together |
 | [`articles/EXECUTIVE_REFLECTION_SUITE.md`](./articles/EXECUTIVE_REFLECTION_SUITE.md) | Executive Reflection Suite™ — complete reflective operating environment: Boardroom™, Annual Summit™, Victory Gallery™, Lessons Library™, Opportunity Observatory™, Future Theater |
+| [`articles/ARCHITECTS_PROMPT_LIBRARY.md`](./articles/ARCHITECTS_PROMPT_LIBRARY.md) | The Architect's Prompt Library™ — Institute of Knowledge prompt institution for architecture, implementation, validation, research, design, and future AI workflows |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -38,6 +39,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `live-validation-system/` | Live Validation System™ content home — continuous validation, Founder Diary™, Escape Velocity™, self-evaluation |
 | `evolution-room/` | The Evolution Room™ content home — monthly strategy room, Evolution Council™, Future Wall™, Legacy Wall™ |
 | `executive-reflection-suite/` | Executive Reflection Suite™ content home — reflection wing, Boardroom™, Annual Summit™, Victory Gallery™, Lessons Library™, Opportunity Observatory™ |
+| `architects-prompt-library/` | The Architect's Prompt Library™ content home — reusable prompt assets, lifecycle, model intelligence, execution history |
 
 ## Structure
 
@@ -68,6 +70,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `live-validation-system/` | Live Validation System™ content home — invisible validation signals, Founder Diary™, Escape Velocity™, Genesis learning loop |
 | `evolution-room/` | The Evolution Room™ content home — executive monthly evolution session inside Headquarters |
 | `executive-reflection-suite/` | Executive Reflection Suite™ content home — complete executive reflection wing and ceremonies |
+| `architects-prompt-library/` | The Architect's Prompt Library™ content home — Institute of Knowledge prompt institution |
 
 ## Rule
 
