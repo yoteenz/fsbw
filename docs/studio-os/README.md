@@ -66,6 +66,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/ORGANIZATIONAL_ATTENTION.md](./genesis/ORGANIZATIONAL_ATTENTION.md) | **Organizational Attention™ guide** — candidate assessment, attention plans, attention classes, consumer boundaries, and outcomes |
 | [../../genesis/articles/ORGANIZATIONAL_MEMORY.md](../../genesis/articles/ORGANIZATIONAL_MEMORY.md) | **Organizational Memory™** — constitutional capability for organizational experience, governed learning, retention, and recall |
 | [genesis/ORGANIZATIONAL_MEMORY.md](./genesis/ORGANIZATIONAL_MEMORY.md) | **Organizational Memory™ guide** — fact/evidence/experience distinctions, learning lifecycle, retention, and consumer boundaries |
+| [../../genesis/articles/GENESIS_V1_CONSTITUTIONAL_CLOSURE.md](../../genesis/articles/GENESIS_V1_CONSTITUTIONAL_CLOSURE.md) | **Genesis v1 Constitutional Closure Audit™** — final missing responsibilities required before a no-new-systems Genesis freeze |
+| [genesis/GENESIS_V1_CONSTITUTIONAL_CLOSURE.md](./genesis/GENESIS_V1_CONSTITUTIONAL_CLOSURE.md) | **Genesis v1 Constitutional Closure Audit™ guide** — closure program, ownership boundaries, and future extensibility rule |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

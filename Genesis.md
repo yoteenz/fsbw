@@ -1719,6 +1719,39 @@ Rules:
    Organizational forgetting reduces operational influence before it erases
    required provenance.
 
+### 9B.27 Genesis v1 Constitutional Closure rule
+
+The complete thirty-year constitutional closure audit is defined in
+**[Genesis v1 Constitutional Closure Audit™](./genesis/articles/GENESIS_V1_CONSTITUTIONAL_CLOSURE.md)**.
+
+Genesis v1 is not constitutionally complete until it closes durable ownership
+for obligations/entity governance, assurance/safety/resilience, domain records,
+data/integration/temporal integrity, and constitutional due process/continuity.
+
+Rules:
+
+1. The audit finding is binding: current constitutional systems sufficiently
+   own organizational meaning, doctrine, decisions, workflows, intelligence,
+   evidence/learning, attention, identity/permissions, and experience. No
+   duplicate systems may be added for these responsibilities.
+2. Before Genesis v1 freeze, establish **Obligation & Entity Governance™** and
+   **Assurance, Safety & Resilience™** as bounded constitutional capabilities;
+   establish **Domain Record Stewardship Framework™**; establish **Data,
+   Integration & Temporal Integrity law**; and extend Constitution Office™ /
+   Canon governance with **Constitutional Due Process & Continuity**.
+3. Domain Record Stewardship Framework™ must define authoritative registered
+   source systems for financial, workforce, customer/relationship, commitment,
+   resource/supply, and content/asset records without creating a universal
+   database or replacing Company Genome™ organizational meaning.
+4. After the closure amendments are ratified, no new peer constitutional engine,
+   source of truth, or responsibility class may be introduced. Future domains
+   must bind to existing permanent responsibility slots and declare authority,
+   stewardship, temporal behavior, evidence/retention, interoperability, and
+   assurance obligations.
+5. A future claim that no existing owner can govern a responsibility is grounds
+   for formal constitutional reopening under Due Process & Continuity—not a
+   reason to silently create an ungoverned engine.
+
 ---
 
 ## 10. Compilation Model
