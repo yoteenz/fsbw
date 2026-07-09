@@ -29,3 +29,4 @@ export * from './dependency-map';
 export * from './build-order';
 export * from './identity-engine';
 export * from './executive-headquarters';
+export * from './orb';

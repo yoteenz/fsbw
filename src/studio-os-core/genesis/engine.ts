@@ -56,6 +56,7 @@ import { ensureDependencyMapSubsystem } from './dependency-map/engine';
 import { ensureBuildOrderSubsystem } from './build-order/engine';
 import { ensureIdentityEngineSubsystem } from './identity-engine/engine';
 import { ensureExecutiveHeadquartersSubsystem } from './executive-headquarters/engine';
+import { ensureOrbSubsystem } from './orb/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -80,6 +81,7 @@ export function ensureGenesisStore() {
   ensureBuildOrderSubsystem();
   ensureIdentityEngineSubsystem();
   ensureExecutiveHeadquartersSubsystem();
+  ensureOrbSubsystem();
   return readGenesisStore();
 }
 

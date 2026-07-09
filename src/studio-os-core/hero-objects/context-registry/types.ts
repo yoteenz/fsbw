@@ -9,7 +9,8 @@ export type OrbSurfaceActionId =
   | 'page-guide'
   | 'voice'
   | 'daily-brief'
-  | 'life-culture';
+  | 'life-culture'
+  | 'executive-workspace';
 
 export type OrbContextAction = {
   id: string;

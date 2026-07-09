@@ -21,6 +21,7 @@ export type StudioOrbSurface =
   | 'life-culture'
   | 'voice-mode'
   | 'recommendations'
+  | 'executive-workspace'
   | null;
 
 export type StudioOrbPosition = {

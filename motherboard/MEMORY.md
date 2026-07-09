@@ -44486,3 +44486,20 @@ Summary of the **full conversation in this chat**: (1) User requested and approv
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
 - **Conventions:** Future Orb runtime should use named projections (`OrbFounderContextProjection`, `OrbCompanyContextProjection`, `OrbMissionContextProjection`, `OrbKnowledgeContextProjection`, `OrbMemoryProjection`, `OrbRecommendationProjection`, `OrbBriefingProjection`, `OrbAttentionProjection`) and must not own mission/company/knowledge/permission/command truth.
 
+---
+
+## 2026-07-09 — Orb™ Executive Intelligence Layer implementation
+
+Summary of the **full conversation in this chat**: (1) Build Order Engine™ implementation (`2630b07cd`). (2) Identity Engine™ architecture (`c6ce8680c`) + runtime (`3183b0aa6`). (3) Executive Headquarters™ architecture (`4bb81399b`) + implementation (`313e130af`). (4) Orb™ architecture (`a230f4db7`). (5) User then requested **IMPLEMENTATION SPRINT — STUDIO OS LAUNCH STACK™ STACK 2 — ORB™**: build Orb as persistent Executive Intelligence Layer across Studio OS — not a chatbot, but an executive partner with context, memory, recommendations, briefings, mission advisor, knowledge retrieval, creative partner, conversation timeline, and decision support.
+
+- **Context:** Architecture approved; deliver Genesis runtime + persistent Orb UX integrating Executive Headquarters™, Identity Engine, and upstream projection adapters.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/genesis/orb/`** with Context Engine, Memory Engine, Recommendation Engine, Executive Briefing Engine, Mission Advisor, Knowledge Retrieval, Creative Partner, Decision Support, Conversation Timeline, Attention Engine, bootstrap seed (generic — no brand hardcoding).
+  - **Persistence:** nested `orb` key inside `genesis_v1`; `ensureOrbSubsystem()` wired into `ensureGenesisStore()`; framework module `'orb'`.
+  - **UI:** `StudioOrbExecutiveWorkspace` expandable intelligence panel (briefing, recommendations, missions, knowledge, creative, memory, decisions, conversation timeline, quick actions); wired into `StudioOrbMount` + `StudioOrbProvider` as `executive-workspace` surface; radial **Orb Partner** action via hero-object context registry.
+  - **Hook:** `useOrbState` for ready view, founder messages, recommendation overrides.
+  - **Integration:** Reuses Executive Headquarters™ projections for company/briefing/missions; attention engine drives Orb presence states (focus guard, recommend, briefing).
+  - **Docs:** `docs/studio-os/genesis/ORB_PLATFORM.md`; updated content home and architecture guide status, `motherboard/CORE.md`.
+- **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
+- **Conventions:** Use `getOrbReadyView(runtimeInput)` for intelligence composition; route material actions through Command Center™; Orb stores memory pointers and conversation timeline only — not upstream source truth.
+

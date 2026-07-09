@@ -7,6 +7,7 @@ import { StudioOrbPageGuide } from './StudioOrbPageGuide';
 import { StudioOrbLifeCulturePanel } from './StudioOrbLifeCulturePanel';
 import { StudioOrbVoicePanel } from './StudioOrbVoicePanel';
 import { StudioOrbRecommendationsPanel } from './StudioOrbRecommendationsPanel';
+import { StudioOrbExecutiveWorkspace } from './StudioOrbExecutiveWorkspace';
 import { StudioOrbDailyBriefOverlay } from './StudioOrbDailyBriefOverlay';
 import { CommandDockConversationPanel } from '../command-dock/CommandDock';
 import { GlobalAtlasLayer } from '../global-atlas/GlobalAtlasLayer';
@@ -31,6 +32,7 @@ export function StudioOrbMount() {
       <StudioOrbLifeCulturePanel />
       <StudioOrbVoicePanel />
       <StudioOrbRecommendationsPanel />
+      <StudioOrbExecutiveWorkspace />
       <CommandDockConversationPanel />
       {radialOpen ? (
         <StudioOrbRadialMenu orbCenterX={menuAnchor.x} orbCenterY={menuAnchor.y} />

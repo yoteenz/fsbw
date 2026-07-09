@@ -40,6 +40,7 @@ export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
     openLifeCulture,
     openVoiceMode,
     openRecommendations,
+    openExecutiveWorkspace,
     orbToolbelt,
     orbContextTransition,
   } = useStudioOrb();
@@ -133,6 +134,7 @@ export function StudioOrbRadialMenu({ orbCenterX, orbCenterY }: Props) {
       closeRadial();
     } else if (surface === 'command-dock') openCommandDock();
     else if (surface === 'daily-brief') openRecommendations();
+    else if (surface === 'executive-workspace') openExecutiveWorkspace();
     else if (surface === 'page-guide') openPageGuide();
     else if (surface === 'life-culture') openLifeCulture();
     else if (surface === 'voice') openVoiceMode();

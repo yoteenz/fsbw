@@ -231,6 +231,7 @@ export type GenesisStore = {
   buildOrder?: import('./build-order/types').BuildOrderStore;
   identityEngine?: import('./identity-engine/types').IdentityEngineStore;
   executiveHeadquarters?: import('./executive-headquarters/types').ExecutiveHeadquartersStore;
+  orb?: import('./orb/types').OrbStore;
   bootstrappedAt?: string;
 };
 

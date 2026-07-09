@@ -2,8 +2,9 @@
 
 **Ontology:** [`../articles/ORB.md`](../articles/ORB.md)  
 **Program:** Studio OS Launch Stack™ — Stack 2  
-**Runtime:** *(planned — Executive Intelligence Layer implementation sprint)*  
-**Platform guide:** [`../../docs/studio-os/genesis/ORB_ARCHITECTURE.md`](../../docs/studio-os/genesis/ORB_ARCHITECTURE.md)
+**Runtime:** `src/studio-os-core/genesis/orb/`  
+**Experience:** Persistent Studio Orb™ + Executive Workspace panel  
+**Platform guide:** [`../../docs/studio-os/genesis/ORB_PLATFORM.md`](../../docs/studio-os/genesis/ORB_PLATFORM.md)
 
 Orb™ is the Executive Intelligence Layer of Studio OS.
 

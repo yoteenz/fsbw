@@ -19,6 +19,7 @@ import { getVoiceModeProfile } from '../../../../studio-os-core/voice-mode/store
 import type { VoiceModeState } from '../../../../studio-os-core/voice-mode/types';
 import { useCommandDockState } from '../../../../hooks/useCommandDockState';
 import { useStudioOrbRecommendations } from '../../../../hooks/useStudioOrbRecommendations';
+import { useOrbState } from '../../../../hooks/useOrbState';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import { useCompanyRouteOptional, buildOrbCompanyContext } from '../../../../studio-os-core/company-routes';
 import {
@@ -57,6 +58,7 @@ type StudioOrbContextValue = {
   openLifeCulture: () => void;
   openVoiceMode: () => void;
   openRecommendations: () => void;
+  openExecutiveWorkspace: () => void;
   closeSurface: () => void;
   completeAwakening: () => void;
   orbToolbelt: ResolvedOrbToolbelt;
@@ -145,6 +147,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
   );
   const dock = useCommandDockState();
   const orbRecs = useStudioOrbRecommendations();
+  const orbIntel = useOrbState();
   const organizationId = companyRoute?.companyId ?? workspaceId;
 
   const [radialOpen, setRadialOpen] = useState(false);
@@ -195,7 +198,10 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
   const conversationMode =
     activeSurface === 'command-dock' || activeSurface === 'voice-mode';
   const ambientInsight =
-    orbRecs.topAmbientInsight ?? store.proactiveSuggestion?.insight ?? null;
+    orbIntel.view.briefing.recommendedAction ??
+    orbRecs.topAmbientInsight ??
+    store.proactiveSuggestion?.insight ??
+    null;
 
   const voiceProfile = useMemo(() => {
     void voiceTick;
@@ -221,27 +227,44 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
     [orbRecs.snapshot.recommendations]
   );
 
-  const presenceState = useMemo(
-    () =>
-      resolvePresenceState({
-        store,
-        radialOpen,
-        activeSurface,
-        voiceState: voiceProfile?.state ?? 'idle',
-        ambientInsight,
-        hasLegendarySignal,
-        hasCivilizationSignal,
-      }),
-    [
+  const presenceState = useMemo(() => {
+    let state = resolvePresenceState({
       store,
       radialOpen,
       activeSurface,
-      voiceProfile?.state,
+      voiceState: voiceProfile?.state ?? 'idle',
       ambientInsight,
       hasLegendarySignal,
       hasCivilizationSignal,
-    ]
-  );
+    });
+
+    if (activeSurface === 'executive-workspace') {
+      const runtimePresence = orbIntel.view.session.presenceState;
+      if (runtimePresence === 'thinking') state = 'thinking';
+      else if (runtimePresence === 'recommending') state = 'opportunity';
+      else if (runtimePresence === 'briefing') state = 'speaking';
+      else if (runtimePresence === 'focus-guard') state = 'focus';
+      else if (runtimePresence === 'listening') state = 'listening';
+      else state = 'idle';
+    } else if (orbIntel.view.attention.presenceState === 'focus-guard') {
+      state = 'focus';
+    } else if (orbIntel.view.attention.shouldInterrupt) {
+      state = 'opportunity';
+    }
+
+    return state;
+  }, [
+    store,
+    radialOpen,
+    activeSurface,
+    voiceProfile?.state,
+    ambientInsight,
+    hasLegendarySignal,
+    hasCivilizationSignal,
+    orbIntel.view.session.presenceState,
+    orbIntel.view.attention.presenceState,
+    orbIntel.view.attention.shouldInterrupt,
+  ]);
 
   useEffect(() => {
     if (orbCompanyContext) {
@@ -320,6 +343,12 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
     playStudioOrbSound('conversation-open');
   }, []);
 
+  const openExecutiveWorkspace = useCallback(() => {
+    setRadialOpen(false);
+    setActiveSurface('executive-workspace');
+    playStudioOrbSound('conversation-open');
+  }, []);
+
   const closeSurface = useCallback(() => {
     if (activeSurface === 'command-dock') {
       dock.dismiss();
@@ -371,6 +400,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       openLifeCulture,
       openVoiceMode,
       openRecommendations,
+      openExecutiveWorkspace,
       closeSurface,
       completeAwakening,
       orbToolbelt,
@@ -394,6 +424,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       openLifeCulture,
       openVoiceMode,
       openRecommendations,
+      openExecutiveWorkspace,
       closeSurface,
       completeAwakening,
       orbToolbelt,

@@ -46,6 +46,7 @@ export function resolveContextActionSurface(actionId: string): OrbSurfaceActionI
     voice: 'voice',
     'daily-brief': 'daily-brief',
     'life-culture': 'life-culture',
+    'executive-workspace': 'executive-workspace',
   };
   return surfaces[actionId] ?? null;
 }

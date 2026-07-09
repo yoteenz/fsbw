@@ -27,6 +27,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/IDENTITY_ENGINE_PLATFORM.md](./genesis/IDENTITY_ENGINE_PLATFORM.md) | **Identity Engine™** — runtime platform guide: registry, graph, roles, memberships, invitations, context resolver |
 | [genesis/EXECUTIVE_HEADQUARTERS_ARCHITECTURE.md](./genesis/EXECUTIVE_HEADQUARTERS_ARCHITECTURE.md) | **Executive Headquarters™** — Launch Stack architecture guide: rooms, Orb, Atlas, Command Center, Company Genome, v1 scope |
 | [genesis/ORB_ARCHITECTURE.md](./genesis/ORB_ARCHITECTURE.md) | **Orb™** — Executive Intelligence Layer guide: experience states, context, memory, recommendations, proactivity, relationships |
+| [genesis/ORB_PLATFORM.md](./genesis/ORB_PLATFORM.md) | **Orb™** — runtime platform guide: context engine, memory, briefing, recommendations, executive workspace UI |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

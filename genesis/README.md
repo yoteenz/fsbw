@@ -29,7 +29,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `build-order/` | Studio OS Build Order Engine runtime content home — 47-system roadmap, critical path, parallel tracks, readiness, rewrite/debt risks |
 | `identity-engine/` | Identity Engine™ content home — canonical identity architecture (runtime planned Cycle 4) |
 | `executive-headquarters/` | Executive Headquarters™ content home — Launch Stack Sprint 1 flagship experience architecture |
-| `orb/` | Orb™ content home — Launch Stack Stack 2 executive intelligence architecture |
+| `orb/` | Orb™ content home — Launch Stack Stack 2 executive intelligence architecture (runtime implemented) |
 
 ## Structure
 

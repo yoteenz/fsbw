@@ -3,7 +3,7 @@
 **Blueprint:** `genesis/articles/ORB.md`  
 **Content home:** `genesis/orb/`  
 **Program:** Studio OS Launch Stack™ — Stack 2  
-**Status:** Architecture approved draft; runtime not yet implemented
+**Status:** Architecture approved; runtime implemented (Launch Stack Stack 2)
 
 ---
 

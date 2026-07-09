@@ -30,6 +30,13 @@ export const UNIVERSAL_ORB_CONTEXT_ACTIONS = {
     relevanceRank: 6,
     heroObjectId: 'world-atlas-globe',
   } satisfies OrbContextAction,
+  executiveWorkspace: {
+    id: 'executive-workspace',
+    label: 'Orb Partner',
+    surface: 'executive-workspace',
+    relevanceRank: 5,
+    heroObjectId: 'daily-brief-lens',
+  } satisfies OrbContextAction,
 } as const;
 
 export const commandCenterContext: OrbContextDefinition = {
@@ -44,12 +51,14 @@ export const commandCenterContext: OrbContextDefinition = {
   ],
   secondaryHeroObjectIds: ['hero-object-vault'],
   contextActions: [
+    UNIVERSAL_ORB_CONTEXT_ACTIONS.executiveWorkspace,
     UNIVERSAL_ORB_CONTEXT_ACTIONS.commandDock,
     UNIVERSAL_ORB_CONTEXT_ACTIONS.pageGuide,
     UNIVERSAL_ORB_CONTEXT_ACTIONS.voice,
   ],
   pathPatterns: [
     '/admin/studio/overview',
+    '/admin/studio/executive-headquarters',
     '/admin/studio/chief-of-staff',
     '/admin/studio/executive',
     '/admin/studio/world-atlas',

@@ -12,6 +12,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'build-order',
   'identity-engine',
   'executive-headquarters',
+  'orb',
   'articles',
   'adr',
   'proposals',

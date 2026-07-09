@@ -13,6 +13,7 @@ import { emptyDependencyMapStore } from '../dependency-map/persistence';
 import { emptyBuildOrderStore } from '../build-order/persistence';
 import { emptyIdentityEngineStore } from '../identity-engine/persistence';
 import { emptyExecutiveHeadquartersStore } from '../executive-headquarters/persistence';
+import { emptyOrbStore } from '../orb/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -70,6 +71,7 @@ export function readGenesisStore(): GenesisStore {
       buildOrder: parsed.buildOrder ?? emptyBuildOrderStore(),
       identityEngine: parsed.identityEngine ?? emptyIdentityEngineStore(),
       executiveHeadquarters: parsed.executiveHeadquarters ?? emptyExecutiveHeadquartersStore(),
+      orb: parsed.orb ?? emptyOrbStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);
