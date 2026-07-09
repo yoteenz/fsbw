@@ -478,6 +478,10 @@ const AdminStudioLiveValidationSystem = lazyWithRetry(
   () => import('./pages/admin/studio/live-validation-system/page'),
   'AdminStudioLiveValidationSystem'
 );
+const AdminStudioEvolutionRoom = lazyWithRetry(
+  () => import('./pages/admin/studio/evolution-room/page'),
+  'AdminStudioEvolutionRoom'
+);
 const AdminStudioKnowledgeCore = lazyWithRetry(
   () => import('./pages/admin/studio/knowledge-core/page'),
   'AdminStudioKnowledgeCore'
@@ -2235,6 +2239,16 @@ function App() {
           <Route path="studio/live-validation-system" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioLiveValidationSystem />
+            </Suspense>
+          } />
+          <Route path="studio/evolution-room" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioEvolutionRoom />
+            </Suspense>
+          } />
+          <Route path="studio/evolution-room/:roomSlug" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioEvolutionRoom />
             </Suspense>
           } />
           <Route path="studio/genesis" element={

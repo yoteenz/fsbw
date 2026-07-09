@@ -234,6 +234,7 @@ export type GenesisStore = {
   orb?: import('./orb/types').OrbStore;
   founderAcceptanceTesting?: import('./founder-acceptance-testing/types').FatStore;
   liveValidationSystem?: import('./live-validation-system/types').LvsStore;
+  evolutionRoom?: import('./evolution-room/types').ErStore;
   bootstrappedAt?: string;
 };
 

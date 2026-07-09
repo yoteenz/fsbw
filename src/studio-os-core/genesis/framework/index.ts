@@ -15,6 +15,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'orb',
   'founder-acceptance-testing',
   'live-validation-system',
+  'evolution-room',
   'articles',
   'adr',
   'proposals',

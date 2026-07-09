@@ -59,6 +59,7 @@ import { ensureExecutiveHeadquartersSubsystem } from './executive-headquarters/e
 import { ensureOrbSubsystem } from './orb/engine';
 import { ensureFounderAcceptanceTestingSubsystem } from './founder-acceptance-testing/engine';
 import { ensureLiveValidationSystemSubsystem } from './live-validation-system/engine';
+import { ensureEvolutionRoomSubsystem } from './evolution-room/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -86,6 +87,7 @@ export function ensureGenesisStore() {
   ensureOrbSubsystem();
   ensureFounderAcceptanceTestingSubsystem();
   ensureLiveValidationSystemSubsystem();
+  ensureEvolutionRoomSubsystem();
   return readGenesisStore();
 }
 

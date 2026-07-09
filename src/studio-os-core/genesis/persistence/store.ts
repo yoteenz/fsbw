@@ -16,6 +16,7 @@ import { emptyExecutiveHeadquartersStore } from '../executive-headquarters/persi
 import { emptyOrbStore } from '../orb/persistence';
 import { emptyFounderAcceptanceTestingStore } from '../founder-acceptance-testing/persistence';
 import { emptyLiveValidationSystemStore } from '../live-validation-system/persistence';
+import { emptyEvolutionRoomStore } from '../evolution-room/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -77,6 +78,7 @@ export function readGenesisStore(): GenesisStore {
       founderAcceptanceTesting:
         parsed.founderAcceptanceTesting ?? emptyFounderAcceptanceTestingStore(),
       liveValidationSystem: parsed.liveValidationSystem ?? emptyLiveValidationSystemStore(),
+      evolutionRoom: parsed.evolutionRoom ?? emptyEvolutionRoomStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

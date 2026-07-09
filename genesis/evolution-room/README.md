@@ -4,8 +4,9 @@
 **Program:** Studio OS Launch Stack™  
 **Parent:** Executive Headquarters™  
 **Depends on:** Live Validation System™, Founder Acceptance Testing™, Orb™, Genesis™, Legacy Vault™  
-**Runtime:** planned — monthly strategic room inside Executive Headquarters™  
-**Architecture guide:** [`../../docs/studio-os/genesis/EVOLUTION_ROOM.md`](../../docs/studio-os/genesis/EVOLUTION_ROOM.md)
+**Runtime:** implemented — `src/studio-os-core/genesis/evolution-room/` · UI `/admin/studio/evolution-room`  
+**Architecture guide:** [`../../docs/studio-os/genesis/EVOLUTION_ROOM.md`](../../docs/studio-os/genesis/EVOLUTION_ROOM.md)  
+**Platform guide:** [`../../docs/studio-os/genesis/EVOLUTION_ROOM_PLATFORM.md`](../../docs/studio-os/genesis/EVOLUTION_ROOM_PLATFORM.md)
 
 The Evolution Room™ is where Studio OS reflects upon itself with the founder.
 

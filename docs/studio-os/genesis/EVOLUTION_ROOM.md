@@ -3,7 +3,7 @@
 **Blueprint:** `genesis/articles/EVOLUTION_ROOM.md`  
 **Content home:** `genesis/evolution-room/`  
 **Parent:** Executive Headquarters™  
-**Runtime status:** architecture approved draft — implementation pending
+**Runtime status:** implemented — `src/studio-os-core/genesis/evolution-room/` · UI `/admin/studio/evolution-room`
 
 ---
 

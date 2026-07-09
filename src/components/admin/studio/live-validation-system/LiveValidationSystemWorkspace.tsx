@@ -67,6 +67,13 @@ export function LiveValidationSystemWorkspace() {
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
+              onClick={() => navigate('/admin/studio/evolution-room')}
+              className="rounded-lg border border-white/20 px-4 py-2 text-sm text-white/70 hover:bg-white/5"
+            >
+              Evolution Room™ →
+            </button>
+            <button
+              type="button"
               onClick={() => navigate('/admin/studio/founder-acceptance-testing')}
               className="rounded-lg border border-white/20 px-4 py-2 text-sm text-white/70 hover:bg-white/5"
             >
