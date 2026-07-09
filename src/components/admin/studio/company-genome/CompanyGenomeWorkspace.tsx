@@ -20,11 +20,19 @@ import {
   ResiliencePanel,
   WorkspaceSelectorPanel,
 } from './CompanyGenomePanels';
+import {
+  BusinessEventsPanel,
+  BusinessGenomeDashboardPanel,
+  BusinessVisualizationSelector,
+  GrowthLoopPanel,
+  renderBusinessVisualization,
+} from './BusinessGenomePanels';
 
-type CgTab = 'dashboard' | 'genetic' | 'health' | 'evolution' | 'relationships' | 'intelligence';
+type CgTab = 'business' | 'dashboard' | 'genetic' | 'health' | 'evolution' | 'relationships' | 'intelligence';
 
 const TABS: { id: CgTab; label: string }[] = [
-  { id: 'dashboard', label: 'DASHBOARD · OVERVIEW' },
+  { id: 'business', label: 'BUSINESS GENOME · LIVING' },
+  { id: 'dashboard', label: 'GENETIC DASHBOARD' },
   { id: 'genetic', label: 'GENETIC MAP · LAYERS' },
   { id: 'health', label: 'HEALTH · RESILIENCE' },
   { id: 'evolution', label: 'EVOLUTION · TIMELINE' },
@@ -33,12 +41,41 @@ const TABS: { id: CgTab; label: string }[] = [
 ];
 
 export function CompanyGenomeWorkspace() {
-  const [tab, setTab] = useState<CgTab>('dashboard');
-  const { store, selectWorkspace, setZoomLevel } = useCompanyGenomeState();
+  const [tab, setTab] = useState<CgTab>('business');
+  const {
+    store,
+    businessStore,
+    businessConsult,
+    selectedBusinessSystem,
+    visualizationFlows,
+    selectWorkspace,
+    setZoomLevel,
+    setVisualization,
+    selectSystem,
+  } = useCompanyGenomeState();
+
   const panelProps = { store, onSelectWorkspace: selectWorkspace, onSetZoomLevel: setZoomLevel };
+  const businessProps = {
+    businessStore,
+    dashboard: businessConsult.dashboard,
+    selectedSystem: selectedBusinessSystem,
+    visualizationFlows,
+    onSetVisualization: setVisualization,
+    onSelectSystem: selectSystem,
+  };
 
   const renderTab = () => {
     switch (tab) {
+      case 'business':
+        return (
+          <>
+            <BusinessGenomeDashboardPanel {...businessProps} />
+            <GrowthLoopPanel {...businessProps} />
+            <BusinessVisualizationSelector {...businessProps} />
+            {renderBusinessVisualization(businessProps)}
+            <BusinessEventsPanel {...businessProps} />
+          </>
+        );
       case 'genetic':
         return (
           <>
@@ -81,9 +118,8 @@ export function CompanyGenomeWorkspace() {
             <GenomeDashboardPanel {...panelProps} />
             <GenomePhilosophyPanel {...panelProps} />
             <WorkspaceSelectorPanel {...panelProps} />
-
             <StudioTabMoreHint accent="rgba(15,23,42,0.04)">
-              MORE SECTIONS ON THE OTHER TABS — DEFAULT VIEW STAYS LIGHT FOR MOBILE
+              GENETIC LAYERS ON OTHER TABS · BUSINESS GENOME ON FIRST TAB
             </StudioTabMoreHint>
             <ConnectedSystemsPanel />
           </>

@@ -4,7 +4,7 @@ import { AdminStudioDisclaimerFooter } from '../../../../components/admin/studio
 import { CompanyGenomeWorkspace } from '../../../../components/admin/studio/company-genome/CompanyGenomeWorkspace';
 
 const COMPANY_GENOME_SUBTITLE =
-  'Living organizational genetics — watch your company evolve as a living system, not another analytics dashboard.';
+  'Living business dependency graph — systems, dependencies, flows, events, risks, and opportunities as one connected organism.';
 
 export default function AdminStudioCompanyGenomePage() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ export default function AdminStudioCompanyGenomePage() {
     >
       <CompanyGenomeWorkspace />
       <AdminStudioDisclaimerFooter>
-        COMPANY GENOME V1.0 · LIVING HEARTBEAT · ORGANIZATIONAL GENETICS · DEMO PLACEHOLDER
+        COMPANY GENOME V2.0 · LIVING BUSINESS DEPENDENCY GRAPH · SYSTEMS · FLOWS · RISKS · OPPORTUNITIES
       </AdminStudioDisclaimerFooter>
     </AdminStudioStageShell>
   );

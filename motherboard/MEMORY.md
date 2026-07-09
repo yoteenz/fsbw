@@ -44206,3 +44206,25 @@ Summary of the **whole conversation so far** in this chat: the user moved throug
 - **Verification:** `npx tsc --noEmit` passed; `npm run compile-world-graph` passed (**614 nodes · 1163 edges · PASS**); `npm run build` passed.
 - **Conventions:** Business Discovery™ is premium consulting-style onboarding, not a setup wizard. Future implementation should generate Company Genome™ evidence first, then Headquarters proposals; Orb participates as strategist/consultant/mentor/business architect, not chatbot. Existing Business Discovery Blueprint™ should stay as a living implementation projection under this master architecture.
 
+---
+
+## 2026-07-09 — Frontal Slayer Company Genome™ infrastructure implementation sprint
+
+Summary of the **full conversation in this chat**: (1) User requested MASTER ARCHITECTURE PROJECT for **FRONTAL SLAYER COMPANY GENOME™** — complete business architecture DNA map focused on the business itself, not software. Agent created **`docs/frontal-slayer/COMPANY_GENOME.md`** with 50 system cards, flows, graph, risks, bottlenecks, automation/AI maps, and Studio OS generator blueprint; indexed in **`docs/frontal-slayer/README.md`**. (2) User approved architecture and requested **IMPLEMENTATION SPRINT** — implement living Company Genome™ infrastructure with registries, dependency graph, flows, events, risks, opportunities, and eight visualization modes reusable for any company.
+
+- **Context:** Existing M57 Company Genome (`src/studio-os-core/company-genome/`) was genetic visualization/demo (NDXBOOK-centric). New sprint adds business-first living dependency graph layer scoped per workspace, seeded for Frontal Slayer from approved blueprint.
+- **Decisions / outcomes:**
+  - Extended **`src/studio-os-core/company-genome/`** with business infrastructure folders: `company-registry/`, `business-systems/` (+ `seeds/frontal-slayer.ts`), `business-dependencies/`, `business-flows/`, `business-events/`, `business-risks/`, `business-opportunities/`.
+  - Implemented registries/engines: **Company Registry™**, **Business System Registry™**, **Dependency Graph™**, **Operational Flow Engine™**, **Business Event Registry™**, **Risk Registry™**, **Automation Registry™**, **AI Opportunity Registry™**.
+  - Every business system stores: systemId, officialName, purpose, owner, dependencies, dependents (computed), ownedData, eventsProduced, eventsConsumed, businessRules, operationalStatus, revenueImpact, customerImpact, automationScore, aiReadiness, expansionReadiness, plus engineClass and systemClass.
+  - Frontal Slayer seed: **30 business systems**, **8 flows**, **10 events**, **7 risks**, **6 automation opportunities**, **6 AI opportunities**, dependency edges derived from system dependencies.
+  - Scoped persistence via **`readScopedStore`/`writeScopedStore`** key `studioOsBusinessCompanyGenome_v1`; `buildBusinessGenomeSeed(orgId)` reusable for any workspace (empty scaffold for unknown orgs).
+  - Engine facade: **`engine.ts`** (`consultBusinessCompanyGenome`, `getBusinessGenomeDashboard`, `getVisualizationFlows`); bootstrap: **`bootstrap-business.ts`** (`bootstrapBusinessCompanyGenomePlatform`, `bootstrapFullCompanyGenomePlatform`).
+  - Updated **`useCompanyGenomeState`** hook with business store, dashboard, visualization flows, system selection.
+  - Updated admin UI at **`/admin/studio/company-genome`**: new default tab **BUSINESS GENOME · LIVING** with **`BusinessGenomePanels.tsx`** and eight visualization modes (interactive genome, dependency graph, revenue flow, customer journey, founder workflow, automation map, risk map, AI opportunity map) plus business events panel.
+  - Updated **`companyGenomeStudioService`** with `getBusinessSnapshot()`; workspace bootstrap now calls `bootstrapFullCompanyGenomePlatform()`.
+  - Added implementation doc **`docs/studio-os/engines/company-genome/BUSINESS_GENOME_IMPLEMENTATION.md`**.
+- **Verification:** `npm run build` passed (tsc + vite).
+- **Changes:** Core module, UI, hook, service, workspace bootstrap, docs, MEMORY.
+- **Conventions:** Business Company Genome is workspace-scoped and separate from M57 genetic visualization layer. New companies add seeds under `business-systems/seeds/`. Dependents are computed from dependencies — never hand-maintained.
+

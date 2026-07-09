@@ -1,15 +1,29 @@
-import {useCallback, useMemo, useState} from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { buildCompanyGenomeSeed } from '../studio-os-core/company-genome/bootstrap';
+import { bootstrapFullCompanyGenomePlatform } from '../studio-os-core/company-genome/bootstrap-business';
+import {
+  consultBusinessCompanyGenome,
+  getSelectedBusinessSystem,
+  getVisualizationFlows,
+} from '../studio-os-core/company-genome/engine';
 import {
   bootstrapCompanyGenomeStore,
   readCompanyGenomeStore,
   selectCompanyGenomeWorkspace,
   setGenomeZoomLevel,
 } from '../studio-os-core/company-genome/store';
+import {
+  readBusinessCompanyGenomeStore,
+  selectBusinessSystem,
+  setBusinessVisualization,
+} from '../studio-os-core/company-genome/business-store';
+import type { BusinessVisualizationId } from '../studio-os-core/company-genome/business-types';
 import type { CompanyGenomeWorkspaceId, GenomeZoomLevel } from '../studio-os-core/company-genome/types';
+import { BUSINESS_COMPANY_GENOME_UPDATED_EVENT } from '../studio-os-core/company-genome/business-constants';
 
 function ensureSeeded(): void {
   bootstrapCompanyGenomeStore(buildCompanyGenomeSeed());
+  bootstrapFullCompanyGenomePlatform();
 }
 
 export function useCompanyGenomeState() {
@@ -18,10 +32,36 @@ export function useCompanyGenomeState() {
     return 0;
   });
 
+  useEffect(() => {
+    const refresh = () => setVersion((v) => v + 1);
+    window.addEventListener(BUSINESS_COMPANY_GENOME_UPDATED_EVENT, refresh);
+    return () => window.removeEventListener(BUSINESS_COMPANY_GENOME_UPDATED_EVENT, refresh);
+  }, []);
+
   const store = useMemo(() => {
     void version;
     return readCompanyGenomeStore();
   }, [version]);
+
+  const businessStore = useMemo(() => {
+    void version;
+    return readBusinessCompanyGenomeStore();
+  }, [version]);
+
+  const businessConsult = useMemo(() => {
+    void version;
+    return consultBusinessCompanyGenome();
+  }, [version]);
+
+  const selectedBusinessSystem = useMemo(
+    () => getSelectedBusinessSystem(businessStore),
+    [businessStore]
+  );
+
+  const visualizationFlows = useMemo(
+    () => getVisualizationFlows(businessStore, businessStore.activeVisualization),
+    [businessStore]
+  );
 
   const selectWorkspace = useCallback((id: CompanyGenomeWorkspaceId) => {
     selectCompanyGenomeWorkspace(id);
@@ -33,5 +73,25 @@ export function useCompanyGenomeState() {
     setVersion((v) => v + 1);
   }, []);
 
-  return { store, selectWorkspace, setZoomLevel };
+  const setVisualization = useCallback((id: BusinessVisualizationId) => {
+    setBusinessVisualization(id);
+    setVersion((v) => v + 1);
+  }, []);
+
+  const selectSystem = useCallback((systemId: string | null) => {
+    selectBusinessSystem(systemId);
+    setVersion((v) => v + 1);
+  }, []);
+
+  return {
+    store,
+    businessStore,
+    businessConsult,
+    selectedBusinessSystem,
+    visualizationFlows,
+    selectWorkspace,
+    setZoomLevel,
+    setVisualization,
+    selectSystem,
+  };
 }

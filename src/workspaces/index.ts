@@ -481,8 +481,8 @@ export function bootstrapWorkspacesPlatform(): void {
     growthArchitect.bootstrapGrowthArchitectPlatform();
     await yieldToMain();
 
-    const companyGenome = await import('../studio-os-core/company-genome/bootstrap');
-    companyGenome.bootstrapCompanyGenomePlatform();
+    const companyGenome = await import('../studio-os-core/company-genome/bootstrap-business');
+    companyGenome.bootstrapFullCompanyGenomePlatform();
     await yieldToMain();
 
     const architectStudio = await import('../studio-os-core/architect-studio/bootstrap');
