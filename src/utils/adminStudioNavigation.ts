@@ -1999,6 +1999,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'experience-runtime',
+    title: 'EXPERIENCE RUNTIME™',
+    purpose: 'Real-time experience assembly from layered DNA — live brand switching without page rebuilds.',
+    route: p('experience-runtime'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'Runtime',
+    ctaLabel: 'OPEN EXPERIENCE RUNTIME',
+    moduleKey: 'experience-runtime',
+    featuredOnOverview: true,
+  },
+  {
     id: 'qa-headquarters',
     title: 'QA HEADQUARTERS™',
     purpose: 'Permanent QA operating layer — Trust Scores™, continuous validation, workflow and AI integrity monitoring.',

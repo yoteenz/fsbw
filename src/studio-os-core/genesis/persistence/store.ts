@@ -21,6 +21,7 @@ import { emptyExecutiveReflectionSuiteStore } from '../executive-reflection-suit
 import { emptyArchitectsPromptLibraryStore } from '../architects-prompt-library/persistence';
 import { emptyStudioOsDesignDnaStore } from '../studio-os-design-dna/persistence';
 import { emptyExperienceEngineDnaStore } from '../experience-engine/persistence';
+import { emptyExperienceRuntimeStore } from '../experience-runtime/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -89,6 +90,7 @@ export function readGenesisStore(): GenesisStore {
         parsed.architectsPromptLibrary ?? emptyArchitectsPromptLibraryStore(),
       studioOsDesignDna: parsed.studioOsDesignDna ?? emptyStudioOsDesignDnaStore(),
       experienceEngineDna: parsed.experienceEngineDna ?? emptyExperienceEngineDnaStore(),
+      experienceRuntimeDna: parsed.experienceRuntimeDna ?? emptyExperienceRuntimeStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

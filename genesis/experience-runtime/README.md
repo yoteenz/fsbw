@@ -2,7 +2,7 @@
 
 **Canonical article:** [`../articles/EXPERIENCE_RUNTIME.md`](../articles/EXPERIENCE_RUNTIME.md)  
 **Parent system:** Experience Engine™  
-**Status:** Architecture drafted; runtime implementation planned  
+**Status:** Architecture drafted; **runtime implemented (2026-07-09)**  
 **Purpose:** Execute Experience Engine™ output in real time by assembling every
 Studio OS page, Headquarters, department, room, workspace, scene, panel,
 workflow, and application from layered DNA.
@@ -30,6 +30,23 @@ Platform DNA
 
 Studio OS should never manually construct branded experiences. Pages become
 runtime-assembled scene graphs.
+
+| `runtime/` | Runtime overview content home |
+| `runtime-engine/` | DNAResolver, ThemeResolver, Scene/Component/Motion/Interaction assemblers |
+| `runtime-cache/` | Versioned runtime graph caches |
+| `runtime-registry/` | Platform DNA registry |
+| `runtime-state/` | State DNA continuity layer |
+| `runtime-preview/` | Runtime Inspector™ |
+| `runtime-playground/` | Live brand switching playground |
+
+---
+
+## Runtime (implemented)
+
+**Path:** `src/studio-os-core/genesis/experience-runtime/`  
+**UI:** `/admin/studio/experience-runtime` (+ subsystem rooms)  
+**Genesis key:** `experienceRuntimeDna`  
+**Guide:** `docs/studio-os/genesis/EXPERIENCE_RUNTIME_PLATFORM.md`
 
 ---
 

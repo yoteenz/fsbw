@@ -20,6 +20,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'architects-prompt-library',
   'studio-os-design-dna',
   'experience-engine-dna',
+  'experience-runtime-dna',
   'articles',
   'adr',
   'proposals',
