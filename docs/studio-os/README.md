@@ -13,6 +13,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/CONSTITUTION_PLATFORM.md](./genesis/CONSTITUTION_PLATFORM.md) | **Genesis Constitution™** — constitutional registry, amendments, versioning, relationship graph |
 | [genesis/OBJECT_MODEL_PLATFORM.md](./genesis/OBJECT_MODEL_PLATFORM.md) | **Canonical Object Model™** — object registry, factory, relationship engine, validation, versioning, history |
 | [genesis/INTERACTION_MODEL_PLATFORM.md](./genesis/INTERACTION_MODEL_PLATFORM.md) | **Universal Interaction Model™** — interaction registries, engine, event bus, workflow composer, audit |
+| [genesis/DECISION_ENGINE_PLATFORM.md](./genesis/DECISION_ENGINE_PLATFORM.md) | **Universal Decision Architecture™** — decision registries, recommendation engine, context, evidence, confidence, audit, learning |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

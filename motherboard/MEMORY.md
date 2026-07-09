@@ -44228,3 +44228,22 @@ Summary of the **full conversation in this chat**: (1) User requested MASTER ARC
 - **Changes:** Core module, UI, hook, service, workspace bootstrap, docs, MEMORY.
 - **Conventions:** Business Company Genome is workspace-scoped and separate from M57 genetic visualization layer. New companies add seeds under `business-systems/seeds/`. Dependents are computed from dependencies — never hand-maintained.
 
+---
+
+## 2026-07-09 — Genesis Implementation Sprint 5 Universal Decision Architecture™ infrastructure
+
+Summary of the **full conversation in this chat**: Genesis Sprint 5 Universal Decision Architecture ontology (`genesis/articles/UNIVERSAL_DECISION_ARCHITECTURE.md`, commit `de99b9cd2`) → user requested **GENESIS IMPLEMENTATION SPRINT 5** — implement reusable Universal Decision Architecture infrastructure (no business-specific logic, no content seeds).
+
+- **Context:** User approved Universal Decision Architecture and requested Studio World's reusable decision engine: Decision Registry™, Recommendation Engine™, Priority Engine™, Context Engine™, Evidence Model™, Confidence Model™, Decision History™, Decision Audit™, Learning Feedback™. Explicitly **not** business-specific logic or runtime seeds.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/genesis/decision-engine/`** module with folders: `decisions/`, `recommendations/`, `priorities/`, `strategies/`, `evidence/`, `context/`, `confidence/`, `review/`, `history/`, `learning/`, `audit/`, plus `decision-types/`, `content/loader`, `engine`, `index`.
+  - **22 canonical decision types** in `constants.ts`; universal decision envelope stores: decisionId, decisionType, intent, context, evidence, confidence, recommendation, alternatives, dependencies, reviewStatus, humanOverrides, auditHistory, learningHistory.
+  - **Subsystems implemented:** Decision Registry™ + Decision Engine (`submitStudioDecision`, advance, human override, evidence attach, validation); Recommendation Engine™; Priority Engine™; Context Engine™; Evidence Model™; Confidence Model™; Decision Review; Decision History™; Decision Audit™; Learning Feedback™; strategy registration.
+  - **Persistence:** nested `decisionEngine` key inside `genesis_v1`; `ensureDecisionEngineSubsystem()` called from `ensureGenesisStore()`; framework modules includes `'decision-engine'`.
+  - **Repo content home:** `genesis/decision-engine/` with READMEs per subfolder and **`decisions/decision.schema.json`** for zero-code ingest.
+  - **Admin UI:** Decisions tab on **`GenesisWorkspace`**; hook **`useDecisionEngineState()`**.
+  - **Docs:** **`docs/studio-os/genesis/DECISION_ENGINE_PLATFORM.md`**; indexes updated.
+  - **Explicitly not done:** No seeding of decisions/recommendations into runtime registries.
+- **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored.
+- **Conventions:** No subsystem should invent its own reasoning model. Human override always available. Decisions improve through learning feedback loops. Registries start empty until ingest.
+

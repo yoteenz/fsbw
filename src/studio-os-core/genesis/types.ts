@@ -225,6 +225,7 @@ export type GenesisStore = {
   constitution?: import('./constitution/types').ConstitutionStore;
   objectModel?: import('./object-model/types').ObjectModelStore;
   interactionModel?: import('./interaction-model/types').InteractionModelStore;
+  decisionEngine?: import('./decision-engine/types').DecisionEngineStore;
   bootstrappedAt?: string;
 };
 

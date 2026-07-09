@@ -8,6 +8,7 @@ import { useGenesisState } from '../../../../hooks/useGenesisState';
 import { useConstitutionState } from '../../../../hooks/useConstitutionState';
 import { useObjectModelState } from '../../../../hooks/useObjectModelState';
 import { useInteractionModelState } from '../../../../hooks/useInteractionModelState';
+import { useDecisionEngineState } from '../../../../hooks/useDecisionEngineState';
 
 function GenesisPanel({
   title,
@@ -85,6 +86,19 @@ export function GenesisWorkspace() {
     refresh: refreshInteractionModel,
   } = useInteractionModelState();
 
+  const {
+    stats: decisionEngineStats,
+    decisions: studioDecisions,
+    recommendations: studioRecommendations,
+    priorities: studioPriorities,
+    strategies: studioStrategies,
+    auditLog: decisionAuditLog,
+    history: decisionHistory,
+    decisionTypes: canonicalDecisionTypes,
+    validation: decisionEngineValidation,
+    refresh: refreshDecisionEngine,
+  } = useDecisionEngineState();
+
   const [activeTab, setActiveTab] = useState<
     | 'overview'
     | 'registry'
@@ -94,6 +108,7 @@ export function GenesisWorkspace() {
     | 'constitution'
     | 'object-model'
     | 'interaction-model'
+    | 'decision-engine'
   >('overview');
   const [lastCompileMessage, setLastCompileMessage] = useState<string | null>(null);
 
@@ -137,6 +152,7 @@ export function GenesisWorkspace() {
               refreshConstitution();
               refreshObjectModel();
               refreshInteractionModel();
+              refreshDecisionEngine();
             }}
             className="rounded-lg border border-violet-500/40 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-200 hover:bg-violet-500/20"
           >
@@ -182,6 +198,7 @@ export function GenesisWorkspace() {
               ['constitution', 'Constitution™'],
               ['object-model', 'Object Model™'],
               ['interaction-model', 'Interactions™'],
+              ['decision-engine', 'Decisions™'],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -694,6 +711,152 @@ export function GenesisWorkspace() {
                   {interactionAuditLog.slice(0, 8).map((entry) => (
                     <li key={entry.auditId}>
                       {entry.action} — {entry.level}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'decision-engine' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-6 text-sm">
+            <div>
+              <span className="text-white/40">Decisions</span>
+              <p className="font-medium">{decisionEngineStats.decisionCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Pending</span>
+              <p className="font-medium">{decisionEngineStats.pendingDecisionCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Recommendations</span>
+              <p className="font-medium">{decisionEngineStats.recommendationCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Priorities</span>
+              <p className="font-medium">{decisionEngineStats.priorityCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Strategies</span>
+              <p className="font-medium">{decisionEngineStats.strategyCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Pending review</span>
+              <p className="font-medium">{decisionEngineStats.pendingReviewCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Validation</span>
+              <p className="font-medium">{decisionEngineValidation.valid ? 'PASS' : 'ISSUES'}</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <GenesisPanel title="Decision Registry™">
+              {studioDecisions.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  Registry empty — submit via{' '}
+                  <code className="text-violet-300">submitStudioDecision()</code> or batch
+                  ingest. {canonicalDecisionTypes.length} decision types available.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  {studioDecisions.map((decision) => (
+                    <li key={decision.decisionId} className="rounded bg-white/5 px-3 py-2">
+                      <span className="font-medium text-violet-200">{decision.officialName}</span>
+                      <span className="ml-2 text-white/40">{decision.decisionId}</span>
+                      <span className="ml-2 text-xs text-white/30">{decision.decisionType}</span>
+                      <span className="ml-2 text-xs text-white/30">{decision.status}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Recommendation Engine™">
+              {studioRecommendations.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  No recommendations yet — use{' '}
+                  <code className="text-violet-300">issueStudioRecommendation()</code>.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {studioRecommendations.slice(0, 8).map((rec) => (
+                    <li key={rec.recommendationId}>
+                      {rec.officialName} — {rec.status} ({rec.confidence.level})
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Priority Engine™">
+              {studioPriorities.length === 0 ? (
+                <p className="text-sm text-white/50">No priority rankings yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {studioPriorities.map((pri) => (
+                    <li key={pri.priorityId}>
+                      {pri.level} — {pri.rankedItems.length} items ranked
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Context & Evidence">
+              <p className="mb-2 text-sm text-white/60">
+                Context Engine™, Evidence Model™, Confidence Model™ — every decision carries
+                intent, context, evidence, and declared confidence.
+              </p>
+              {studioStrategies.length === 0 ? (
+                <p className="text-sm text-white/50">No strategies registered yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {studioStrategies.map((str) => (
+                    <li key={str.strategyId}>
+                      {str.officialName} — {str.status}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Decision Types™">
+              <p className="mb-2 text-sm text-white/60">
+                {canonicalDecisionTypes.length} canonical decision primitives.
+              </p>
+              <ul className="flex flex-wrap gap-1 text-xs text-white/50">
+                {canonicalDecisionTypes.slice(0, 22).map((t) => (
+                  <li key={t.id} className="rounded bg-white/5 px-2 py-0.5">
+                    {t.id}
+                  </li>
+                ))}
+              </ul>
+            </GenesisPanel>
+
+            <GenesisPanel title="Decision Audit & History">
+              {!decisionEngineValidation.valid && (
+                <ul className="mb-3 space-y-1 text-xs text-amber-200/80">
+                  {decisionEngineValidation.issues.slice(0, 5).map((issue, i) => (
+                    <li key={`${issue.code}-${i}`}>{issue.message}</li>
+                  ))}
+                </ul>
+              )}
+              {decisionAuditLog.length === 0 && decisionHistory.length === 0 ? (
+                <p className="text-sm text-white/50">No audit or history entries yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {decisionAuditLog.slice(0, 4).map((entry) => (
+                    <li key={entry.auditId}>
+                      {entry.action} — {entry.level}
+                    </li>
+                  ))}
+                  {decisionHistory.slice(0, 4).map((entry) => (
+                    <li key={entry.historyId}>
+                      {entry.decisionId} — {entry.summary}
                     </li>
                   ))}
                 </ul>

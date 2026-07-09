@@ -6,6 +6,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'constitution',
   'object-model',
   'interaction-model',
+  'decision-engine',
   'articles',
   'adr',
   'proposals',

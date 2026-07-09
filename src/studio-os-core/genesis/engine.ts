@@ -50,6 +50,7 @@ import { createObjectRevision, listHistoricalRevisions } from './versioning/revi
 import { ensureConstitutionSubsystem } from './constitution/engine';
 import { ensureObjectModelSubsystem } from './object-model/engine';
 import { ensureInteractionModelSubsystem } from './interaction-model/engine';
+import { ensureDecisionEngineSubsystem } from './decision-engine/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -68,6 +69,7 @@ export function ensureGenesisStore() {
   ensureConstitutionSubsystem();
   ensureObjectModelSubsystem();
   ensureInteractionModelSubsystem();
+  ensureDecisionEngineSubsystem();
   return readGenesisStore();
 }
 
