@@ -17,4 +17,5 @@
 - [`STUDIO_OS_DESIGN_DNA_PLATFORM.md`](./STUDIO_OS_DESIGN_DNA_PLATFORM.md) — Design DNA runtime platform guide
 - [`EXPERIENCE_ENGINE.md`](./EXPERIENCE_ENGINE.md) — Experience Engine™ branding and experience inheritance architecture
 - [`EXPERIENCE_ENGINE_PLATFORM.md`](./EXPERIENCE_ENGINE_PLATFORM.md) — Experience Engine runtime platform guide
+- [`EXPERIENCE_RUNTIME.md`](./EXPERIENCE_RUNTIME.md) — Experience Runtime™ execution architecture: runtime lifecycle, DNA assembly, State DNA, live switching, caching, and conflict resolution
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

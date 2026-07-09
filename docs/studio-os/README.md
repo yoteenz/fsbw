@@ -42,6 +42,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/STUDIO_OS_DESIGN_DNA.md](./genesis/STUDIO_OS_DESIGN_DNA.md) | **Studio OS Design DNA™ guide** — implementation-facing summary, color framework, scene template, tokens, and compliance checklist |
 | [../../genesis/articles/EXPERIENCE_ENGINE.md](../../genesis/articles/EXPERIENCE_ENGINE.md) | **Experience Engine™** — platform-wide branding and experience inheritance model from layered Experience DNA™ |
 | [genesis/EXPERIENCE_ENGINE.md](./genesis/EXPERIENCE_ENGINE.md) | **Experience Engine™ guide** — Brand DNA, Department DNA, Scene DNA, multi-tenant generation, and case-study identities |
+| [../../genesis/articles/EXPERIENCE_RUNTIME.md](../../genesis/articles/EXPERIENCE_RUNTIME.md) | **Experience Runtime™** — real-time execution layer for assembling every page, Headquarters, room, workspace, workflow, and application from layered DNA |
+| [genesis/EXPERIENCE_RUNTIME.md](./genesis/EXPERIENCE_RUNTIME.md) | **Experience Runtime™ guide** — runtime lifecycle, assembly order, State DNA, caching, live switching, versioning, conflict resolution |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

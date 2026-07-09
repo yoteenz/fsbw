@@ -44758,7 +44758,6 @@ Summary of the **full conversation in this chat**: Built Launch Stack governance
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-09 — Grand Atrium freeze fix (Genesis render loop)
 
 Summary: User reported Grand Atrium loads but **freezes / gets stuck** (loading then black/white screen instability).
@@ -44773,7 +44772,8 @@ Summary: User reported Grand Atrium loads but **freezes / gets stuck** (loading 
   - `recordHeadquartersOpened()` no-ops when arrival session already exists (avoids redundant mount writes).
 - **Verification:** `npm run build` passed.
 
-=======
+---
+
 ## 2026-07-09 — Experience Engine™ layered inheritance runtime + Experience Playground™
 
 Summary of the **full conversation in this chat**: Built Launch Stack governance arc through Architect's Prompt Library™; fixed Studio Orb clickability and Grand Atrium routing/rendering; authored Studio OS Design DNA™ Version 1.0 constitutional architecture; implemented Design DNA permanent visual operating system runtime; architected platform-wide Experience Engine™ layered inheritance; then implemented **Experience Engine™ runtime + Experience Playground™** with instant brand switching on a shared scene template.
@@ -44788,4 +44788,19 @@ Summary of the **full conversation in this chat**: Built Launch Stack governance
 - **Docs:** `docs/studio-os/genesis/EXPERIENCE_ENGINE_PLATFORM.md`; updated `genesis/experience-engine/README.md`, genesis README; motherboard CORE updated with runtime facts.
 - **Success criteria met:** Studio OS can generate distinct branded operating environments from one shared architectural engine; playground demonstrates identical scene layout with only Brand DNA changing across Studio OS / Frontal Slayer / NDX profiles.
 - **Verification:** `npm run build` passed.
->>>>>>> e31a95271 (Implement Experience Engine layered inheritance runtime and Experience Playground with Studio OS, Frontal Slayer, and NDX brand switching)
+
+---
+
+## 2026-07-09 — Experience Runtime™ execution architecture
+
+Summary of the **full conversation in this chat**: Built the Studio OS Design DNA™ constitutional architecture and runtime; evolved it into the multi-brand Experience Engine™ architecture and implementation; then authored **Experience Runtime™** as the execution layer that assembles every future Studio OS page, Headquarters, department, room, workspace, scene, panel, workflow, and application from layered DNA in real time.
+
+- **Prior Design DNA work:** User approved Studio OS Design DNA™ as permanent visual constitution. Built runtime `src/studio-os-core/genesis/studio-os-design-dna/` (Genesis key `studioOsDesignDna`), UI `/admin/studio/design-dna` + 9 rooms, hooks `useStudioOsDesignDnaState` / `useDesignDnaSceneInheritance`, scene inheritance APIs, content folders, docs, Genesis §9B.13.
+- **Prior Experience Engine work:** User asked to evolve approved Design DNA into reusable Experience Engine™ without redesigning Studio OS. Added canonical architecture `genesis/articles/EXPERIENCE_ENGINE.md`, Genesis §9B.14, content home `genesis/experience-engine/`, docs, then implemented `src/studio-os-core/genesis/experience-engine/` with Brand/Department/Scene/Component/Motion/Interaction registries, Genesis key `experienceEngineDna`, hooks `useExperienceEngineDnaState` / `useExperienceInheritance`, route `/admin/studio/experience-engine` + registry rooms + `theme-playground`. Demo brands Studio OS™, Frontal Slayer™, and NDX™ share one scene template and change only inherited Brand DNA.
+- **Latest user request:** MASTER ARCHITECTURE FOLLOW-UP — architect **Experience Runtime™**, the runtime responsible for assembling every Studio OS experience in real time. Do not redesign Experience Engine™; define how it executes. Required pipeline: Platform DNA → Brand DNA → Department DNA → Scene DNA → Component DNA → Motion DNA → Interaction DNA → Runtime Assembly → Rendered Experience, plus lifecycle, assembly order, inheritance/override/conflict/fallback rules, caching, performance, theme switching, live updates, versioning, and live Brand DNA switching without rebuilding pages/regenerating layouts/losing state.
+- **Architecture added:** New canonical article `genesis/articles/EXPERIENCE_RUNTIME.md`; content home `genesis/experience-runtime/README.md`; implementation-facing guide `docs/studio-os/genesis/EXPERIENCE_RUNTIME.md`; Genesis rule **§9B.15 Experience Runtime rule**; indexes updated in `Genesis.md`, `genesis/README.md`, `genesis/articles/README.md`, `docs/studio-os/README.md`, `docs/studio-os/genesis/README.md`; motherboard CORE updated.
+- **Key definitions:** Experience Engine™ defines what experiences are made from; Experience Runtime™ defines how experiences execute. Runtime behaves like a game engine: DNA Loader™, Inheritance Resolver™, Assembly Orchestrator™, Render Adapter™, Live Update Coordinator™, Runtime Experience Graph™, Runtime Assembly Request™, Runtime Graph Patch™, State DNA™.
+- **Runtime rules:** Pages/HQs/departments/rooms/workspaces/scenes/panels/workflows/apps should become runtime-assembled scene graphs, not manually constructed screens. Platform DNA owns route anatomy/layout primitives/accessibility/scene graph contracts; Brand DNA owns atmosphere; Department DNA translates brand into operational wings; Scene DNA owns environment; Component DNA owns object expression without forking anatomy; Motion/Interaction DNA bind behavior; **State DNA™** preserves continuity through stable state slots, hydration, persistence, migrations, and live-switch preservation.
+- **Live switching design:** Founder can change Brand DNA during runtime because platform template and stable runtime node IDs remain mounted; State DNA preserves compatible slots; Brand DNA recompiles into CSS variables, component variant props, material/lighting/typography/motion/voice/Orb context; Runtime applies a graph patch instead of rebuilding the route. No route change, no layout regeneration, no state loss.
+- **Case study:** One identical Headquarters template (`arrival stage`, `executive summary`, `department rail`, `capability grid`, `priority ribbon`, `Orb mount`, `activity/provenance panel`) generates Studio OS™, Frontal Slayer™, and NDX™. Infrastructure, scene graph, component anatomy, route/data loaders, and State DNA slots remain identical; only inherited DNA expression changes.
+- **Cleanup:** Resolved previously-pushed MEMORY conflict markers around the Grand Atrium freeze and Experience Engine entries by preserving both entries and removing `<<<<<<<`, `=======`, `>>>>>>>` markers.

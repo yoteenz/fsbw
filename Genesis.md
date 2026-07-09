@@ -134,6 +134,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [The Architect's Prompt Library™](./genesis/articles/ARCHITECTS_PROMPT_LIBRARY.md)
     - [Studio OS Design DNA™](./genesis/articles/STUDIO_OS_DESIGN_DNA.md)
     - [Experience Engine™](./genesis/articles/EXPERIENCE_ENGINE.md)
+    - [Experience Runtime™](./genesis/articles/EXPERIENCE_RUNTIME.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1232,6 +1233,43 @@ Rules:
    underlying operating architecture.
 7. Multi-tenant experiences are generated from versioned DNA overlays, not
    handcrafted redesigns or per-company code forks.
+
+### 9B.15 Experience Runtime rule
+
+The canonical execution layer for every generated Studio OS experience is
+defined in **[Experience Runtime™](./genesis/articles/EXPERIENCE_RUNTIME.md)**.
+
+Experience Engine™ defines what experiences are made from. Experience Runtime™
+defines how those experiences execute in real time.
+
+Rules:
+
+1. Studio OS pages, Headquarters, departments, rooms, workspaces, scenes,
+   panels, workflows, and applications must become runtime-assembled
+   experiences, not manually constructed screens.
+2. The permanent runtime pipeline is Platform DNA™ → Brand DNA™ → Department
+   DNA™ → Scene DNA™ → Component DNA™ → Motion DNA™ → Interaction DNA™ → State
+   DNA™ → Runtime Assembly → Rendered Experience™.
+3. Platform DNA™ owns shared route anatomy, layout primitives, accessibility
+   floors, scene graph contracts, data slots, and Orb mount contracts.
+4. State DNA™ owns continuity: stable state slots, hydration, persistence,
+   migrations, reset boundaries, and live-switch preservation.
+5. Runtime node identity must remain stable across Brand DNA changes so live
+   switching can update atmosphere without route rebuilds, layout regeneration,
+   or state loss.
+6. The Runtime may patch CSS variables, contexts, component variants, motion,
+   interaction, writing voice, and Orb personality at runtime. It must not fork
+   component anatomy or mutate source DNA during render.
+7. Conflict resolution order is security/tenant isolation, accessibility,
+   Platform DNA invariants, State DNA integrity, approved Brand DNA, Department
+   DNA, Scene DNA, Component DNA, Motion DNA, Interaction DNA, then user/session
+   preferences.
+8. If a DNA layer fails, the Runtime must fall back deterministically to an
+   approved same-layer fallback, parent value, platform default, or safe minimal
+   experience.
+9. Studio OS™, Frontal Slayer™, and NDX™ Headquarters must be able to share one
+   identical Headquarters template and runtime graph while only inherited DNA
+   changes.
 
 ---
 
