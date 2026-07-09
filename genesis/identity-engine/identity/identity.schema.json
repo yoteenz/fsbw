@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IdentityRecord",
+  "type": "object",
+  "required": [
+    "identityId",
+    "identityType",
+    "kind",
+    "displayName",
+    "officialName",
+    "lifecycleState",
+    "status",
+    "ownerIdentityId",
+    "organizationIds",
+    "companyIds",
+    "relationshipIds",
+    "roleAssignmentIds",
+    "permissionRefIds",
+    "metadata",
+    "auditHistoryIds",
+    "createdAt",
+    "updatedAt",
+    "version"
+  ],
+  "properties": {
+    "identityId": { "type": "string" },
+    "identityType": { "type": "string" },
+    "kind": { "enum": ["actor", "entity"] },
+    "displayName": { "type": "string" },
+    "officialName": { "type": "string" },
+    "lifecycleState": {
+      "enum": ["pending", "active", "suspended", "archived", "deprecated"]
+    },
+    "status": {
+      "enum": ["pending", "active", "suspended", "archived", "deprecated"]
+    },
+    "ownerIdentityId": { "type": ["string", "null"] },
+    "organizationIds": { "type": "array", "items": { "type": "string" } },
+    "companyIds": { "type": "array", "items": { "type": "string" } },
+    "relationshipIds": { "type": "array", "items": { "type": "string" } },
+    "roleAssignmentIds": { "type": "array", "items": { "type": "string" } },
+    "permissionRefIds": { "type": "array", "items": { "type": "string" } },
+    "metadata": { "type": "object" },
+    "auditHistoryIds": { "type": "array", "items": { "type": "string" } },
+    "version": { "type": "string" }
+  }
+}

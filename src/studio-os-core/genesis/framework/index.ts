@@ -10,6 +10,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'core-systems',
   'dependency-map',
   'build-order',
+  'identity-engine',
   'articles',
   'adr',
   'proposals',

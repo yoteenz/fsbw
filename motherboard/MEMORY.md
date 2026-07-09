@@ -44409,3 +44409,21 @@ Summary of the **full conversation in this chat**: (1) User requested **IMPLEMEN
 - **Verification:** Documentation-only sprint; no runtime code in this task.
 - **Conventions:** No feature invents parallel actor/company/membership records. Runtime implementation deferred to Build Order Cycle 4 after Organization Registry + Company Registry MVP. Identity Engine is first Core System architecture approved for production implementation path.
 
+---
+
+## 2026-07-09 — Identity Engine™ implementation sprint (first production Core System)
+
+Summary of the **full conversation in this chat**: (1) Build Order Engine implementation sprint completed (`2630b07cd`). (2) Identity Engine architecture sprint completed (`c6ce8680c`) — canonical blueprint at `genesis/articles/IDENTITY_ENGINE.md`. (3) User requested **IMPLEMENTATION SPRINT — Identity Engine™** — build reusable platform infrastructure as Studio OS's first production Core System; no Frontal Slayer hardcoding; no UI polish; platform architecture only.
+
+- **Context:** Implement Identity Engine runtime with modules: identity, users, organizations, companies, roles, permissions, memberships, ownership, invitations, ai-workers. Engines: Identity Registry, Role Engine, Permission Engine (declarative refs only), Organization Engine, Company Membership, Ownership Registry, Invitation System, Identity Graph. Every identity supports unique ID, type, display name, status, owner, relationships, roles, permissions, orgs, companies, metadata, audit history, lifecycle state.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/genesis/identity-engine/`** with all submodules.
+  - **Persistence:** nested `identityEngine` key inside `genesis_v1`; `ensureIdentityEngineSubsystem()` wired into `ensureGenesisStore()`; framework module `'identity-engine'`.
+  - **Permission boundary:** `permissions/permission-engine.ts` stores declarative permission subject refs only — does not evaluate allow/deny (Permissions Engine™ owns evaluation).
+  - **Generic bootstrap seed:** Platform Steward, Studio Platform Tenant, Demo Company, Platform Concierge — no brand-specific hardcoding.
+  - **Build Order sync:** marks `identity-engine` as `implemented` when seeded.
+  - **Content/docs:** updated `genesis/identity-engine/README.md`, `identity/identity.schema.json`, `docs/studio-os/genesis/IDENTITY_ENGINE_PLATFORM.md`, indexes, `motherboard/CORE.md`.
+  - **No admin UI tab** per sprint scope (platform infrastructure only).
+- **Verification:** `npm run build` passed; prebuild artifacts restored.
+- **Conventions:** Use `resolveIdentityContext()` for Authentication/Permissions handoff. Create actors via `createUserIdentity` / `createAiWorkerIdentity`; entities via `createOrganizationIdentity` / `createCompanyIdentity`. Never store sessions or passwords in Identity Engine.
+

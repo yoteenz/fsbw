@@ -22,6 +22,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/DEPENDENCY_MAP_PLATFORM.md](./genesis/DEPENDENCY_MAP_PLATFORM.md) | **Studio OS Dependency Map™** — seeded planning registry, dependency graph, build order, readiness, blocked/ready views, risk detectors |
 | [genesis/BUILD_ORDER_PLATFORM.md](./genesis/BUILD_ORDER_PLATFORM.md) | **Studio OS Build Order Engine™** — 47-system roadmap, critical path, parallel tracks, optimal next build, rewrite/debt forecast |
 | [genesis/IDENTITY_ENGINE_ARCHITECTURE.md](./genesis/IDENTITY_ENGINE_ARCHITECTURE.md) | **Identity Engine™** — foundational identity blueprint: actors, entities, graph, roles, multi-company, AI identities, MVP scope |
+| [genesis/IDENTITY_ENGINE_PLATFORM.md](./genesis/IDENTITY_ENGINE_PLATFORM.md) | **Identity Engine™** — runtime platform guide: registry, graph, roles, memberships, invitations, context resolver |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |
