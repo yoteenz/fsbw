@@ -179,6 +179,7 @@ export type StudioOsCoreModuleId =
   | 'studio-world-codex'
   | 'institute-of-knowledge'
   | 'headquarters-principles'
+  | 'genesis'
   | 'vision-engine'
   | 'legacy-system'
   | 'knowledge-hub'
@@ -1245,6 +1246,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'HEADQUARTERS PRINCIPLES™',
     description: 'ARTICLE-C04 governance — Company Headquarters™ vocabulary, platform maturity registry, readiness scores, Proof Before Expansion gates.',
     routeSegment: 'headquarters-principles',
+  },
+  {
+    id: 'genesis',
+    label: 'GENESIS™',
+    description: 'Genesis Foundation Framework™ — canonical source kernel, object model, pipelines, and compilation infrastructure.',
+    routeSegment: 'genesis',
   },
   {
     id: 'vision-engine',

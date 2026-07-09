@@ -1,0 +1,78 @@
+import {
+  GENESIS_FRAMEWORK_VERSION,
+  GENESIS_STORAGE_KEY,
+  GENESIS_UPDATED_EVENT,
+} from '../constants';
+import { bootstrapGenesisStoreIfEmpty } from '../bootstrap/seeds';
+import type { GenesisStore } from '../types';
+
+function emptyStore(): GenesisStore {
+  return {
+    version: GENESIS_FRAMEWORK_VERSION,
+    frameworkVersion: GENESIS_FRAMEWORK_VERSION,
+    objects: [],
+    relationships: [],
+    proposals: [],
+    adrs: [],
+    reviews: [],
+    compileManifests: [],
+    historicalRevisions: [],
+  };
+}
+
+function dispatchUpdated(): void {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(GENESIS_UPDATED_EVENT));
+  }
+}
+
+export function readGenesisStore(): GenesisStore {
+  if (typeof localStorage === 'undefined') {
+    return bootstrapGenesisStoreIfEmpty(emptyStore());
+  }
+
+  try {
+    const raw = localStorage.getItem(GENESIS_STORAGE_KEY);
+    if (!raw) {
+      const seeded = bootstrapGenesisStoreIfEmpty(emptyStore());
+      writeGenesisStore(seeded);
+      return seeded;
+    }
+
+    const parsed = JSON.parse(raw) as GenesisStore;
+    const merged: GenesisStore = {
+      ...emptyStore(),
+      ...parsed,
+      version: GENESIS_FRAMEWORK_VERSION,
+      frameworkVersion: parsed.frameworkVersion ?? GENESIS_FRAMEWORK_VERSION,
+      objects: parsed.objects ?? [],
+      relationships: parsed.relationships ?? [],
+      proposals: parsed.proposals ?? [],
+      adrs: parsed.adrs ?? [],
+      reviews: parsed.reviews ?? [],
+      compileManifests: parsed.compileManifests ?? [],
+      historicalRevisions: parsed.historicalRevisions ?? [],
+    };
+
+    return bootstrapGenesisStoreIfEmpty(merged);
+  } catch {
+    return bootstrapGenesisStoreIfEmpty(emptyStore());
+  }
+}
+
+export function writeGenesisStore(store: GenesisStore): void {
+  if (typeof localStorage === 'undefined') return;
+  localStorage.setItem(GENESIS_STORAGE_KEY, JSON.stringify(store));
+  dispatchUpdated();
+}
+
+export function mutateGenesisStore(mutator: (store: GenesisStore) => GenesisStore): GenesisStore {
+  const next = mutator(readGenesisStore());
+  writeGenesisStore(next);
+  return next;
+}
+
+export type GenesisPersistenceAdapter = {
+  load: () => Promise<GenesisStore>;
+  save: (store: GenesisStore) => Promise<void>;
+};

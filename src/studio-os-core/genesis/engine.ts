@@ -1,0 +1,129 @@
+import { readGenesisStore } from './persistence/store';
+import { bootstrapGenesisStoreIfEmpty } from './bootstrap/seeds';
+import { getGenesisRegistryStats, listGenesisRegistry, searchGenesisRegistry } from './objects/registry';
+import {
+  createGenesisObject,
+  getGenesisObject,
+  listGenesisObjects,
+  updateGenesisObject,
+} from './objects/factory';
+import { listGenesisRelationships, addGenesisRelationship, findContradictions } from './relationships/graph';
+import {
+  submitGenesisProposal,
+  listGenesisProposals,
+  listOpenProposals,
+  advanceProposalStage,
+  resolveProposal,
+} from './proposals/pipeline';
+import {
+  createGenesisAdr,
+  createAdrFromProposal,
+  listGenesisAdrs,
+  acceptGenesisAdr,
+} from './adr/pipeline';
+import {
+  beginGenesisReview,
+  listPendingReviewSessions,
+  completeGenesisReview,
+  promoteObjectToCanonical,
+  autoRunSchemaReviewGate,
+  GENESIS_REVIEW_GATES,
+} from './reviews/pipeline';
+import {
+  compileGenesisTargets,
+  getLatestCompileManifest,
+  listCompileManifests,
+  getCompilePreview,
+} from './compiler/pipeline';
+import { listCompileTargets } from './compiler/targets';
+import {
+  GENESIS_KERNEL_DOCTRINE,
+  GENESIS_HIERARCHY,
+  listPipelineStages,
+} from './framework/hierarchy';
+import { listGenesisFrameworkModules } from './framework/index';
+import { getLifecycleSummary } from './framework/lifecycle';
+import { listGenesisObjectSchemaTypes, getGenesisObjectSchemaMeta } from './schemas/object-schemas';
+import { validateGenesisObject } from './schemas/validate';
+import { formatGenesisVersion, INITIAL_GENESIS_VERSION } from './versioning/semver';
+import { createObjectRevision, listHistoricalRevisions } from './versioning/revisions';
+import { listGenesisArticles } from './articles/registry';
+import {
+  GENESIS_FRAMEWORK_NAME,
+  GENESIS_FRAMEWORK_VERSION,
+  GENESIS_CHARTER_PATH,
+} from './constants';
+import type { GenesisRegistryStats } from './types';
+
+export type GenesisPlatformStats = GenesisRegistryStats & {
+  frameworkVersion: string;
+  openProposals: number;
+  contradictionCount: number;
+};
+
+export function ensureGenesisStore() {
+  return readGenesisStore();
+}
+
+export function getGenesisPlatformStats(): GenesisPlatformStats {
+  const stats = getGenesisRegistryStats();
+  const store = readGenesisStore();
+
+  return {
+    ...stats,
+    frameworkVersion: store.frameworkVersion,
+    openProposals: listOpenProposals().length,
+    contradictionCount: findContradictions().length,
+  };
+}
+
+export {
+  GENESIS_FRAMEWORK_NAME,
+  GENESIS_FRAMEWORK_VERSION,
+  GENESIS_CHARTER_PATH,
+  GENESIS_KERNEL_DOCTRINE,
+  GENESIS_HIERARCHY,
+  INITIAL_GENESIS_VERSION,
+  GENESIS_REVIEW_GATES,
+  readGenesisStore,
+  bootstrapGenesisStoreIfEmpty,
+  getGenesisRegistryStats,
+  listGenesisRegistry,
+  searchGenesisRegistry,
+  createGenesisObject,
+  getGenesisObject,
+  listGenesisObjects,
+  updateGenesisObject,
+  listGenesisRelationships,
+  addGenesisRelationship,
+  findContradictions,
+  submitGenesisProposal,
+  listGenesisProposals,
+  listOpenProposals,
+  advanceProposalStage,
+  resolveProposal,
+  createGenesisAdr,
+  createAdrFromProposal,
+  listGenesisAdrs,
+  acceptGenesisAdr,
+  beginGenesisReview,
+  listPendingReviewSessions,
+  completeGenesisReview,
+  promoteObjectToCanonical,
+  autoRunSchemaReviewGate,
+  compileGenesisTargets,
+  getLatestCompileManifest,
+  listCompileManifests,
+  getCompilePreview,
+  listCompileTargets,
+  listPipelineStages,
+  listGenesisFrameworkModules,
+  getLifecycleSummary,
+  listGenesisObjectSchemaTypes,
+  getGenesisObjectSchemaMeta,
+  validateGenesisObject,
+  formatGenesisVersion,
+  createObjectRevision,
+  listHistoricalRevisions,
+  listGenesisArticles,
+};

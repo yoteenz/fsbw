@@ -462,6 +462,10 @@ const AdminStudioHeadquartersPrinciples = lazyWithRetry(
   () => import('./pages/admin/studio/headquarters-principles/page'),
   'AdminStudioHeadquartersPrinciples'
 );
+const AdminStudioGenesis = lazyWithRetry(
+  () => import('./pages/admin/studio/genesis/page'),
+  'AdminStudioGenesis'
+);
 const AdminStudioKnowledgeCore = lazyWithRetry(
   () => import('./pages/admin/studio/knowledge-core/page'),
   'AdminStudioKnowledgeCore'
@@ -2199,6 +2203,11 @@ function App() {
           <Route path="studio/headquarters-principles" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioHeadquartersPrinciples />
+            </Suspense>
+          } />
+          <Route path="studio/genesis" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioGenesis />
             </Suspense>
           } />
           <Route path="studio/knowledge-core" element={

@@ -55,6 +55,7 @@ export type AdminStudioSectionId =
   | 'studio-world-codex'
   | 'institute-of-knowledge'
   | 'headquarters-principles'
+  | 'genesis'
   | 'vision-engine'
   | 'executive-command-center'
   | 'mission-control'

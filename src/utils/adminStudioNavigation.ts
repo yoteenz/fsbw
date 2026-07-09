@@ -84,6 +84,19 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'genesis',
+    title: 'GENESIS™',
+    purpose:
+      'Genesis Foundation Framework™ — canonical source kernel, object model, relationship graph, pipelines, and compilation infrastructure.',
+    route: p('genesis'),
+    groupId: 'overview',
+    status: 'live',
+    metric: 'KERNEL',
+    ctaLabel: 'OPEN GENESIS',
+    moduleKey: 'genesis',
+    featuredOnOverview: true,
+  },
+  {
     id: 'experience-observatory',
     title: 'EXPERIENCE OBSERVATORY',
     purpose:

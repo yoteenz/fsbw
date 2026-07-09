@@ -31,6 +31,9 @@ export const STUDIO_HEADQUARTERS_ARRIVAL_PATH = `${ADMIN_STUDIO_BASE_PATH}/overv
 /** Platform maturity registry and constitutional readiness gates. */
 export const STUDIO_HEADQUARTERS_PRINCIPLES_PATH = `${ADMIN_STUDIO_BASE_PATH}/headquarters-principles`;
 
+/** Genesis Foundation Framework™ — canonical source kernel. */
+export const STUDIO_GENESIS_PATH = `${ADMIN_STUDIO_BASE_PATH}/genesis`;
+
 export type AdminStudioBuiltSectionId = Extract<
   AdminStudioSectionId,
   | 'shows'
