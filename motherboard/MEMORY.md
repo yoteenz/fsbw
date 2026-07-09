@@ -45082,3 +45082,17 @@ Summary of the **full conversation in this chat**: Emergency debug sprint (healt
 - **Success criteria:** Opening `/__boot-debug` shows storage IDLE → LOADING/READY within ~1s; elapsed timer runs after start.
 - **Verification:** `npm run build` passed; Playwright smoke on preview — storage READY in 0.4s, Started: yes, console event trail present.
 - **Not done:** No Experience Runtime feature work until boot visibly starts (per user).
+
+---
+
+## 2026-07-09 — Boot debug route wiring fix (/__boot-debug direct start)
+
+Summary of the **full conversation in this chat**: Emergency debug sprint; Studio Kernel/Bootstrap architecture; public debug routes; boot hang fix (3s timeouts, BootDiagnosticsPanel); boot start fix (`87270c2b6`) with kernel event log + `useStudioBootLive` guard. **User still saw** `/__boot-debug` stuck at Started: no, all IDLE, elapsed 0.0s — diagnostics rendered but bootstrap never appeared to start.
+
+- **Root cause:** `/__boot-debug` relied on `useStudioBootLive` + module-level `studioBootAutoStartGuard` — on StrictMode remount or repeat visit the guard called `syncLive()` only (no `StudioBootstrap.start()`), leaving UI on initial idle when kernel live state was null.
+- **Fix (route wiring only — no runtime modules, no Experience Lab):** Rewired `src/pages/debug/boot-debug/page.tsx` to call **`StudioBootstrap.start()` directly** on mount (empty-deps `useLayoutEffect`); removed hook dependency for this route.
+- **Manual control:** Visible **START BOOTSTRAP** button on page calls same `callStudioBootstrapStart('manual')` with `StudioBootstrap.reset()` first.
+- **Route event log (always visible):** boot-debug mounted · start requested · start function called · bootstrap state changed · first module started.
+- **Skip reason display:** `getStudioBootstrapStartBlockReason()` in `studio-bootstrap.ts` — shows already running / already complete / missing registry / missing modules / unknown when start no-ops.
+- **Route registration unchanged:** `StudioDebugRoutes.tsx` → `BootDebugPage` at `/__boot-debug`.
+- **Verification:** `npm run build` passed; Playwright — Started: yes, storage READY, wire log + START BOOTSTRAP button present.

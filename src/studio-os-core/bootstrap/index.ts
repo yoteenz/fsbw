@@ -8,6 +8,7 @@ export {
   resetStudioBootstrap,
   isStudioBootstrapInProgress,
   appendStudioBootstrapEvent,
+  getStudioBootstrapStartBlockReason,
   STUDIO_BOOT_ORDER,
   STUDIO_BOOT_EVENT,
   BOOT_MODULE_TIMEOUT_MS,
@@ -16,6 +17,7 @@ export {
   type StudioBootReport,
   type StudioBootLiveState,
   type StudioKernelBootOptions,
+  type StudioBootstrapStartSkipReason,
 } from './studio-bootstrap';
 
 export { registerAllStudioBootModules } from './register-boot-modules';
