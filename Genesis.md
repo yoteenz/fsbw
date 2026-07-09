@@ -88,6 +88,7 @@ permanent kernel responsibilities, not temporary product areas.
 ### Part II — Constitution
 
 6. **Constitutional Principles**
+   - [Genesis Constitutional Core™](./genesis/articles/CONSTITUTIONAL_CORE.md)
    - Permanent laws
    - Founder-approved principles
    - Prohibited regressions

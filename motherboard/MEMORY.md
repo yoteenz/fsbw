@@ -44027,3 +44027,20 @@ Summary of the **full conversation in this chat**: Genesis.md Foundation Framewo
 - **Verification:** `npm run build` passed; World Graph compile **673 nodes · 1341 edges · PASS**.
 - **Conventions:** Author Genesis truth via pipelines, not ad-hoc docs. Compiled outputs (Codex, Institute, Master Spec) are projections — Genesis wins on conflict. Registry starts empty until proposals create objects.
 
+---
+
+## 2026-07-09 — Genesis Sprint 2 Constitutional Core™
+
+Summary of the **full conversation in this chat**: Genesis.md Foundation Framework sprint established the Genesis kernel, Genesis Implementation Sprint 1 built reusable framework infrastructure, and **GENESIS SPRINT 2 — Constitutional Core™** authored the first official philosophical operating system of Studio World.
+
+- **Context:** User stated the Genesis Framework was established and requested the immutable constitutional laws governing every future architectural, engineering, AI, design, educational, and business decision. This was explicitly **not implementation** and **not documentation** — it should be treated like constitutional law that rarely changes.
+- **Decisions / outcomes:**
+  - Created **`genesis/articles/CONSTITUTIONAL_CORE.md`** as canonical constitutional law, version **1.0.0**, authority **Genesis.md**.
+  - Authored **25 foundational constitutional articles**: Living Software, Civilization, Human First, Citizen, Headquarters, Proof Before Expansion, Reality Defeats Theory, Canonical Truth, Living Knowledge, Knowledge Becomes Wisdom, Institutional Memory, Experience Before Interface, Progressive Presence, Reusable Systems, Compounding Systems, Architectural Integrity, Long-Term Thinking, Mentor, Professional Growth, Legacy, Delightful Utility, Relationship Graph, Stewardship, AI as Amplifier, and Economic Integrity.
+  - Every article includes: Official Name™, Constitutional Purpose, Why It Exists, Core Principle, Practical Interpretation, Architectural Consequences, Systems Governed, Examples, Anti-patterns, Tradeoffs, Future Evolution, Related Articles, and Constitutional Validation.
+  - Updated **`Genesis.md`** Part II to link to the Constitutional Core.
+  - Updated **`genesis/articles/README.md`**, **`genesis/README.md`**, and **`docs/studio-os/README.md`** so the Constitutional Core is discoverable as official Genesis law.
+  - Added a permanent **`motherboard/CORE.md`** note that future features, Genesis articles, ADRs, implementations, Codex outputs, Institute publications, and platform decisions should trace to one or more Constitutional Core articles.
+- **Verification:** `npm run build` passed; prebuild regenerated master-spec and World Graph artifacts.
+- **Conventions:** Future decisions should be checked against the Constitutional Core. Any conflict with GEN-C001 through GEN-C025 is a constitutional review event, not a local implementation preference.
+

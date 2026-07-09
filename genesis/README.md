@@ -4,14 +4,14 @@
 **Runtime:** `src/studio-os-core/genesis/`  
 **Admin workspace:** `/admin/studio/genesis`
 
-Genesis is Studio World's single canonical source of truth. This folder is the **content home** for future Genesis articles. This sprint implements **framework infrastructure only** — no hardcoded Studio World content.
+Genesis is Studio World's single canonical source of truth. This folder is the **content home** for official Genesis articles and governance artifacts.
 
 ## Structure
 
 | Path | Purpose |
 |------|---------|
 | `framework/` | Kernel hierarchy, lifecycle, charter references |
-| `articles/` | Future canonical articles (authored via Genesis pipelines) |
+| `articles/` | Canonical articles authored via Genesis pipelines |
 | `adr/` | Architecture Decision Records |
 | `proposals/` | Pre-canonical change proposals |
 | `reviews/` | Canonical review session records |
