@@ -129,6 +129,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Orb™](./genesis/articles/ORB.md)
     - [Founder Acceptance Testing™](./genesis/articles/FOUNDER_ACCEPTANCE_TESTING.md)
     - [Live Validation System™](./genesis/articles/LIVE_VALIDATION_SYSTEM.md)
+    - [The Evolution Room™](./genesis/articles/EVOLUTION_ROOM.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1077,6 +1078,30 @@ Rules:
    indispensable.
 7. Validated insights must become Genesis improvement proposals with evidence,
    not random feature requests.
+
+### 9B.10 Evolution Room rule
+
+The canonical monthly strategy room architecture is defined in
+**[The Evolution Room™](./genesis/articles/EVOLUTION_ROOM.md)**.
+
+The Evolution Room™ is where Studio OS reflects upon itself with the founder. It is
+not analytics, reporting, or a dashboard. It is the monthly Executive Board Room
+where the founder, company, Studio OS, and Genesis evolve together.
+
+Rules:
+
+1. Orb is the facilitator of the monthly Evolution Room session.
+2. The room presents an Executive Evolution Brief™ that separates evidence,
+   interpretation, recommendation, uncertainty, and founder decision.
+3. Evolution Council™ conversations may draft Genesis proposals, but nothing becomes
+   canon automatically.
+4. Future Wall™ items may become missions, Launch Stack candidates, automations,
+   Headquarters rooms, Institute expansions, Profession Brains, marketplace products,
+   or revenue opportunities only after founder review.
+5. Legacy Wall™ entries preserve launches, milestones, breakthroughs, company
+   history, Genesis evolution, and platform evolution as institutional memory.
+6. The room must feel ceremonial, calm, premium, intelligent, and strategic — never
+   like an analytics dashboard.
 
 ---
 

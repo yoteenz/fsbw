@@ -7,4 +7,5 @@
 - [`FOUNDER_ACCEPTANCE_TESTING.md`](./FOUNDER_ACCEPTANCE_TESTING.md) — Studio OS internal validation methodology
 - [`LIVE_VALIDATION_SYSTEM.md`](./LIVE_VALIDATION_SYSTEM.md) — continuous invisible validation through Founder Diary™, Escape Velocity™, system self-evaluation, and Genesis learning
 - [`LIVE_VALIDATION_SYSTEM_PLATFORM.md`](./LIVE_VALIDATION_SYSTEM_PLATFORM.md) — Live Validation runtime platform guide
+- [`EVOLUTION_ROOM.md`](./EVOLUTION_ROOM.md) — The Evolution Room™ monthly executive strategy room architecture
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

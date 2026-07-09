@@ -44587,3 +44587,19 @@ Summary of the **full conversation in this chat**: Build Order, Identity Engine,
 - **Verification:** `npm run build` passed.
 - **Conventions:** Use `listImprovementProposals()` (not `listGenesisProposals`) to avoid Genesis pipeline name collision; proposals require founder review before any Genesis change.
 
+---
+
+## 2026-07-09 — The Evolution Room™ architecture
+
+Summary of the **full conversation in this chat**: The chat has built Studio OS's Launch Stack governance arc: Build Order, Identity Engine, Executive Headquarters, Orb, Founder Acceptance Testing architecture/runtime, Live Validation System architecture/runtime; then the user requested **MASTER ARCHITECTURE PROJECT — THE EVOLUTION ROOM™** as Studio OS's most strategic room where Studio OS reflects upon itself with the founder monthly.
+
+- **Context:** Design a calm, premium, intelligent, ceremonial Executive Board Room experience — not analytics/reporting/dashboard — where Orb facilitates a monthly strategy session reviewing what Studio OS learned while helping operate the business.
+- **New canon:** Added **`genesis/articles/EVOLUTION_ROOM.md`** as the canonical strategic room architecture and **Genesis.md §9B.10 Evolution Room rule**.
+- **Core doctrine:** The Evolution Room™ reviews and improves four entities together: **the founder, the company, Studio OS, and Genesis**. Nothing becomes canon automatically.
+- **Designed experience:** Arrival, lighting, atmosphere, audio, animations, Orb arrival, executive greeting, presentation flow, conversation flow, review flow, decision flow, and departure. The room is a circular marble/glass board room inside Executive Headquarters™ with Orb at the center, Future Wall™ on one side, Legacy Wall™ on the other, and Genesis Review Table at the far end.
+- **Executive Evolution Brief™:** Orb prepares monthly sections covering accomplishments, Launch Stack progress, company growth, mission completion, knowledge gained, systems used/ignored, automation/creative opportunities, founder habits, decision patterns, time savings, focus/stress, company/knowledge health, content performance, and AI utilization.
+- **Genesis Review:** Orb presents repeated ideas, observed patterns, disproven assumptions, architectural pain points, Genesis amendment candidates, constitutional ideas, platform opportunities, and intentionally rejected ideas.
+- **Evolution Council™:** Conversation protocol: Orb presents evidence; founder discusses/challenges; Orb clarifies source confidence; recommendations are debated; decisions and Genesis proposals are drafted; canon remains founder-reviewed only.
+- **Future Wall™ / Legacy Wall™:** Future Wall proposes next priorities, Launch Stack candidates, automations, future HQ rooms, Institute expansions, Profession Brains, marketplace products, and revenue opportunities. Legacy Wall permanently preserves launches, milestones, breakthroughs, company history, Genesis evolution, platform evolution, and rejected paths as institutional memory.
+- **Docs/indexes:** Added `genesis/evolution-room/README.md`, `docs/studio-os/genesis/EVOLUTION_ROOM.md`, and updated Genesis/studio-os indexes plus `motherboard/CORE.md`.
+

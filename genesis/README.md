@@ -23,6 +23,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/ORB.md`](./articles/ORB.md) | Orb™ — Studio OS Launch Stack Stack 2 Executive Intelligence Layer and permanent founder partner architecture |
 | [`articles/FOUNDER_ACCEPTANCE_TESTING.md`](./articles/FOUNDER_ACCEPTANCE_TESTING.md) | Founder Acceptance Testing™ — official internal validation methodology before public launch |
 | [`articles/LIVE_VALIDATION_SYSTEM.md`](./articles/LIVE_VALIDATION_SYSTEM.md) | Live Validation System™ — continuous invisible validation through founder behavior, Escape Velocity™, Founder Diary™, and Genesis learning |
+| [`articles/EVOLUTION_ROOM.md`](./articles/EVOLUTION_ROOM.md) | The Evolution Room™ — monthly Executive Board Room where the founder, company, Studio OS, and Genesis evolve together |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -34,6 +35,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `orb/` | Orb™ content home — Launch Stack Stack 2 executive intelligence architecture (runtime implemented) |
 | `founder-acceptance-testing/` | Founder Acceptance Testing™ content home — validation levels, gates, scorecards, Genesis feedback |
 | `live-validation-system/` | Live Validation System™ content home — continuous validation, Founder Diary™, Escape Velocity™, self-evaluation |
+| `evolution-room/` | The Evolution Room™ content home — monthly strategy room, Evolution Council™, Future Wall™, Legacy Wall™ |
 
 ## Structure
 
@@ -62,6 +64,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `orb/` | Orb™ architecture content home — context, memory, recommendations, proactive behavior, Chief of Staff intelligence |
 | `founder-acceptance-testing/` | Founder Acceptance Testing™ methodology home — internal validation before expansion |
 | `live-validation-system/` | Live Validation System™ content home — invisible validation signals, Founder Diary™, Escape Velocity™, Genesis learning loop |
+| `evolution-room/` | The Evolution Room™ content home — executive monthly evolution session inside Headquarters |
 
 ## Rule
 
