@@ -7,6 +7,7 @@ import type {
   XpsProductionStage,
   XpsRoomPath,
 } from './constants';
+import type { XcosControlRoomOverlay } from '../creative-operating-system/types';
 import type { XniNarrativeBlueprint } from '../narrative-intelligence/types';
 
 export type XpsDepartmentAssignment = {
@@ -150,6 +151,7 @@ export type XpsReadyView = {
   playground: XpsPlaygroundInput;
   preview?: XpsPlaygroundPreview;
   consumerBindings: { system: XpsConsumerSystem; status: string }[];
+  organizationOverlay?: XcosControlRoomOverlay;
   demoBrandIds: XpsDemoBrandId[];
   orbNote: string;
   constitutionLocked: boolean;

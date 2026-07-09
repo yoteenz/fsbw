@@ -290,6 +290,10 @@ const AdminStudioProductionSystem = lazyWithRetry(
   () => import('./pages/admin/studio/studio-production/page'),
   'AdminStudioProductionSystem'
 );
+const AdminCreativeOperatingSystem = lazyWithRetry(
+  () => import('./pages/admin/studio/creative-operating-system/page'),
+  'AdminCreativeOperatingSystem'
+);
 const AdminStudioQaHeadquarters = lazyWithRetry(
   () => import('./pages/admin/studio/qa-headquarters/page'),
   'AdminStudioQaHeadquarters'
@@ -2045,6 +2049,16 @@ function App() {
           <Route path="studio/studio-production/:roomSlug" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioProductionSystem />
+            </Suspense>
+          } />
+          <Route path="studio/creative-operating-system" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminCreativeOperatingSystem />
+            </Suspense>
+          } />
+          <Route path="studio/creative-operating-system/:roomSlug" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminCreativeOperatingSystem />
             </Suspense>
           } />
           <Route path="studio/qa-headquarters" element={

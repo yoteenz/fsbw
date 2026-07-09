@@ -58,6 +58,7 @@ export function StudioIntelligenceLayerWorkspace() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Link to="/admin/studio/studio-production" className="xsil-btn">Studio Production →</Link>
+          <Link to="/admin/studio/creative-operating-system" className="xsil-btn">Creative Operating System →</Link>
           <Link to="/admin/studio/narrative-intelligence" className="xsil-btn">Narrative Intelligence →</Link>
           <Link to="/admin/studio/brand-discovery-engine" className="xsil-btn">Brand Discovery →</Link>
           <Link to="/admin/studio/experience-runtime" className="xsil-btn">Experience Runtime →</Link>

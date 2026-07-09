@@ -27,6 +27,7 @@ import { emptyStudioIntelligenceLayerStore } from '../studio-intelligence-layer/
 import { emptyNarrativeIntelligenceStore } from '../narrative-intelligence/persistence';
 import { emptyExperienceLabStore, normalizeExperienceLabStore } from '../experience-lab/persistence';
 import { emptyStudioProductionSystemStore } from '../studio-production-system/persistence';
+import { emptyCreativeOperatingSystemStore } from '../creative-operating-system/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -101,6 +102,7 @@ export function readGenesisStore(): GenesisStore {
       narrativeIntelligenceDna: parsed.narrativeIntelligenceDna ?? emptyNarrativeIntelligenceStore(),
       experienceLabDna: normalizeExperienceLabStore(parsed.experienceLabDna ?? emptyExperienceLabStore()),
       studioProductionSystemDna: parsed.studioProductionSystemDna ?? emptyStudioProductionSystemStore(),
+      creativeOperatingSystemDna: parsed.creativeOperatingSystemDna ?? emptyCreativeOperatingSystemStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

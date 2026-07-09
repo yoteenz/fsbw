@@ -2071,6 +2071,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'creative-operating-system',
+    title: 'CREATIVE OPERATING SYSTEM™',
+    purpose: 'Autonomous creative organization — Executive Creative Board™, Council, Creative Memory™, Evolution, Economy, and Governance.',
+    route: p('creative-operating-system'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'Creative Org',
+    ctaLabel: 'OPEN CREATIVE ORGANIZATION',
+    moduleKey: 'creative-operating-system',
+    featuredOnOverview: true,
+  },
+  {
     id: 'qa-headquarters',
     title: 'QA HEADQUARTERS™',
     purpose: 'Permanent QA operating layer — Trust Scores™, continuous validation, workflow and AI integrity monitoring.',

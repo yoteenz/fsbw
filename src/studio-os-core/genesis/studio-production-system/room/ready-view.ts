@@ -10,6 +10,7 @@ import { getNarrativeBlueprint } from '../../narrative-intelligence/engines/narr
 import { listProductionConsumerBindings } from '../engines/production-consumer-engine';
 import { getLastProductionPreview } from '../engines/production-playground-engine';
 import type { XpsControlRoomProduction, XpsReadyView, XpsRuntimeInput } from '../types';
+import { buildCreativeOperatingSystemControlRoomOverlay } from '../../creative-operating-system/room/ready-view';
 
 export function isValidXpsRoomPath(slug: string): slug is XpsRoomPath {
   return (XPS_ROOM_PATHS as readonly string[]).includes(slug);
@@ -62,6 +63,7 @@ export function buildStudioProductionSystemReadyView(input?: XpsRuntimeInput): X
     playground,
     preview,
     consumerBindings: listProductionConsumerBindings(activePkg),
+    organizationOverlay: buildCreativeOperatingSystemControlRoomOverlay(brandId),
     demoBrandIds: [...XPS_DEMO_BRAND_IDS],
     orbNote: buildXpsOrbNote(),
     constitutionLocked: store.constitutionLocked,

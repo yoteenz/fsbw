@@ -149,6 +149,7 @@ export type StudioOsCoreModuleId =
   | 'narrative-intelligence'
   | 'experience-lab'
   | 'studio-production-system'
+  | 'creative-operating-system'
   | 'qa-headquarters'
   | 'qa-inspector'
   | 'qa-simulation-engine'
@@ -1072,6 +1073,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO PRODUCTION SYSTEM™',
     description: 'Studio Production System V1.0 — AI production company with autonomous departments, Production Control Room™, timeline, assets, QC, and distribution.',
     routeSegment: 'studio-production',
+  },
+  {
+    id: 'creative-operating-system',
+    label: 'CREATIVE OPERATING SYSTEM™',
+    description: 'Creative Operating System V1.0 — autonomous creative organization with Executive Creative Board™, Council, Memory, Evolution, Economy, and Governance.',
+    routeSegment: 'creative-operating-system',
   },
   {
     id: 'qa-headquarters',

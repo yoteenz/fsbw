@@ -11,6 +11,7 @@ import { buildPublishingPlan } from './distribution-engine';
 import { evaluateCreativeExecutiveFit } from './creative-executive-engine';
 import { evaluateShowrunnerContinuity } from './showrunner-engine';
 import { mutateStudioProductionSystemStore, readStudioProductionSystemStore } from '../persistence';
+import { autoConveneBoardMeetingForProduction, ensureCreativeOperatingSystemSubsystem, recordProductionToMemory } from '../../creative-operating-system/engine';
 import type { XniNarrativeType } from '../../narrative-intelligence/constants';
 
 function narrativeTypeForPlatform(platform: XpsPlaygroundInput['platform']): XniNarrativeType {
@@ -85,6 +86,14 @@ export function coordinateProduction(input: XpsPlaygroundInput): XpsProductionPa
     ...store,
     packageRegistry: [pkg, ...store.packageRegistry.filter((p) => p.packageId !== pkg.packageId)],
   }));
+
+  try {
+    ensureCreativeOperatingSystemSubsystem();
+    autoConveneBoardMeetingForProduction(pkg);
+    recordProductionToMemory(pkg);
+  } catch {
+    // Creative OS optional during bootstrap
+  }
 
   return pkg;
 }

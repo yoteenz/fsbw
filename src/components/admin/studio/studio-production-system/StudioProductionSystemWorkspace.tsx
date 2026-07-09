@@ -8,6 +8,8 @@ import {
   XPS_ROOM_PATH_LABELS,
   authorizeAssetGeneration,
   saveProductionPackage,
+  runPostPublicationEvolution,
+  type XcosControlRoomOverlay,
   type XpsControlRoomProduction,
   type XpsReadyView,
   type XpsRoomPath,
@@ -58,6 +60,7 @@ export function StudioProductionSystemWorkspace() {
         </div>
         <div className="flex flex-wrap gap-2">
           <Link to="/admin/studio/narrative-intelligence" className="xps-btn">Narrative Intelligence →</Link>
+          <Link to="/admin/studio/creative-operating-system" className="xps-btn">Creative Organization →</Link>
           <Link to="/admin/studio/studio-intelligence-layer" className="xps-btn">Studio Intelligence →</Link>
           <button type="button" className="xps-btn primary" style={{ borderColor: ACCENT, color: ACCENT }} onClick={refresh}>Refresh</button>
         </div>
@@ -95,7 +98,7 @@ export function StudioProductionSystemWorkspace() {
             )}
 
             {(activeSlug === 'production-control-room' || activeSlug === 'studio-production') && (
-              <ControlRoomPanel productions={view.controlRoom} onRefresh={refresh} />
+              <ControlRoomPanel productions={view.controlRoom} organizationOverlay={view.organizationOverlay} onRefresh={refresh} />
             )}
 
             {activeSlug !== 'production-control-room' && activeSlug !== 'production-playground' && activeSlug !== 'studio-production' && activeProduction && (
@@ -174,12 +177,21 @@ function PlaygroundPanel({
   );
 }
 
-function ControlRoomPanel({ productions, onRefresh }: { productions: XpsControlRoomProduction[]; onRefresh: () => void }) {
+function ControlRoomPanel({
+  productions,
+  organizationOverlay,
+  onRefresh,
+}: {
+  productions: XpsControlRoomProduction[];
+  organizationOverlay?: XcosControlRoomOverlay;
+  onRefresh: () => void;
+}) {
   if (productions.length === 0) {
     return (
       <section className="xps-panel">
         <p style={{ ...hqLabel }}>Production Control Room™</p>
         <p style={{ fontSize: '10px' }}>No active productions — use Production Playground to assemble a production company.</p>
+        {organizationOverlay && <OrganizationOverlaySection overlay={organizationOverlay} />}
       </section>
     );
   }
@@ -187,7 +199,8 @@ function ControlRoomPanel({ productions, onRefresh }: { productions: XpsControlR
   return (
     <section className="xps-panel">
       <p style={{ ...hqLabel, color: ACCENT }}>Production Control Room™</p>
-      <div className="space-y-3">
+      {organizationOverlay && <OrganizationOverlaySection overlay={organizationOverlay} />}
+      <div className="space-y-3 mt-3">
         {productions.map((prod) => (
           <div key={prod.package.packageId} className="rounded border p-3" style={{ borderColor: `${ACCENT}22` }}>
             <div className="flex flex-wrap items-start justify-between gap-2">
@@ -209,25 +222,65 @@ function ControlRoomPanel({ productions, onRefresh }: { productions: XpsControlR
                 </span>
               ))}
             </div>
-            <button
-              type="button"
-              className="xps-btn mt-2"
-              onClick={() => {
-                const updated = {
-                  ...prod.package,
-                  approvals: authorizeAssetGeneration(prod.package.approvals),
-                  updatedAt: new Date().toISOString(),
-                };
-                saveProductionPackage(updated);
-                onRefresh();
-              }}
-            >
-              Authorize asset generation
-            </button>
+            <div className="mt-2 flex flex-wrap gap-2">
+              <button
+                type="button"
+                className="xps-btn"
+                onClick={() => {
+                  const updated = {
+                    ...prod.package,
+                    approvals: authorizeAssetGeneration(prod.package.approvals),
+                    updatedAt: new Date().toISOString(),
+                  };
+                  saveProductionPackage(updated);
+                  onRefresh();
+                }}
+              >
+                Authorize asset generation
+              </button>
+              <button
+                type="button"
+                className="xps-btn"
+                onClick={() => {
+                  const updated = {
+                    ...prod.package,
+                    currentStage: 'published' as const,
+                    performance: { completionRate: 0.68, ctaRate: 0.09, watchThrough: 0.57, notes: ['Post-publication review'] },
+                    updatedAt: new Date().toISOString(),
+                  };
+                  saveProductionPackage(updated);
+                  runPostPublicationEvolution(updated);
+                  onRefresh();
+                }}
+              >
+                Run evolution cycle
+              </button>
+            </div>
           </div>
         ))}
       </div>
     </section>
+  );
+}
+
+function OrganizationOverlaySection({ overlay }: { overlay: XcosControlRoomOverlay }) {
+  return (
+    <div className="mb-4 rounded border p-3 text-[9px]" style={{ borderColor: `${ACCENT}33`, background: `${ACCENT}06` }}>
+      <p style={{ ...hqLabel, color: ACCENT }}>Creative Organization — {overlay.orgStateLabel}</p>
+      <div className="mt-2 grid gap-2 sm:grid-cols-4">
+        <div><strong>Executive Board</strong><p>{overlay.executiveBoard.filter((e) => e.status === 'active').length} active</p></div>
+        <div><strong>Founder Decisions</strong><p>{overlay.pendingFounderDecisions} pending</p></div>
+        <div><strong>Creative Memory</strong><p>{overlay.memoryCount} records</p></div>
+        <div><strong>Creative Economy</strong><p>{overlay.economyAssetCount} assets</p></div>
+      </div>
+      <p style={{ marginTop: 8 }}>Studio Intelligence: {overlay.studioIntelligenceStatus} · Institute links: {overlay.instituteLinkCount}</p>
+      {overlay.evolutionInsights.length > 0 && (
+        <p style={{ marginTop: 4 }}>Latest evolution: {overlay.evolutionInsights[0].recommendation}</p>
+      )}
+      {overlay.recentMemory.length > 0 && (
+        <p style={{ marginTop: 4 }}>Recent memory: {overlay.recentMemory[0].summary}</p>
+      )}
+    </div>
   );
 }
 

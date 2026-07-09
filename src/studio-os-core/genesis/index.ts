@@ -42,4 +42,5 @@ export * from './brand-discovery-engine';
 export * from './studio-intelligence-layer';
 export * from './narrative-intelligence';
 export * from './studio-production-system';
+export * from './creative-operating-system';
 export * from './experience-lab';
