@@ -44247,3 +44247,25 @@ Summary of the **full conversation in this chat**: Genesis Sprint 5 Universal De
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored.
 - **Conventions:** No subsystem should invent its own reasoning model. Human override always available. Decisions improve through learning feedback loops. Registries start empty until ingest.
 
+---
+
+## 2026-07-09 — Genesis Sprint 6 Core Systems Blueprint™
+
+Summary of the **full conversation in this chat**: Genesis Sprint 5 Universal Decision Architecture content and runtime implementation were completed and pushed (`de99b9cd2`, `c82112891`), then the user requested **GENESIS SPRINT 6** for `Genesis.md`, phase **Core Systems Blueprint™** — define the major platform systems that run on the now-established Genesis Kernel.
+
+- **Context:** User stated the Constitutional Core, Canonical Object Model, Universal Interaction Model, and Universal Decision Architecture are foundational. The next phase needed a complete architectural blueprint for Studio World's major platform subsystems — not implementation details — so every future implementation can trace back to one of these systems.
+- **Decisions / outcomes:**
+  - Created **`genesis/articles/CORE_SYSTEMS_BLUEPRINT.md`** as canonical Genesis content for Sprint 6.
+  - Defined doctrine: Genesis Kernel defines laws/objects/interactions/decisions; Core Systems Blueprint defines the major organs that run on that kernel. Systems own responsibilities; implementations express responsibilities.
+  - Organized systems into domains: **Executive Command**, **Knowledge and Intelligence**, **Creation and Experience**, **Education and Career**, **Marketplace and Economy**, **Operations and Automation**, **Identity and Trust**, **Discovery and Insight**.
+  - Defined boundary clarifications for duplicate-prone concepts: Studio Exchange™ vs Marketplace Engine™, Workflow Engine™ vs Automation Engine™, Orb™ vs Command Center™, Mission Control™ vs Executive Headquarters™.
+  - Defined every requested foundational system with the required fields: Official Name™, Purpose, Responsibilities, Core Philosophy, Primary Users, Canonical Objects Used, Interactions, Decision Dependencies, Knowledge Dependencies, Data Ownership, Inputs, Outputs, Events, Relationships, Expansion Strategy, Success Metrics, Failure Modes, Anti-patterns, Future Evolution.
+  - Covered the full requested system list: Orb™, Atlas™, Mission Control™, Institute of Knowledge™, Studio Foundry™, Studio Exchange™, Profession Brains™, Professional Memory™, Career Worlds™, Knowledge Core™, World Graph™, Executive Headquarters™, Command Center™, Blueprint Engine™, Simulation Engine™, Experience Engine™, Automation Engine™, Workflow Engine™, Identity Engine™, Permissions Engine™, Marketplace Engine™, Research Engine™, Analytics Engine™, Notification Engine™, Search Engine™, Generation Engine™.
+  - Added a Mermaid dependency graph and dependency classes: Foundational Systems, Supporting Systems, Platform Systems, Experience Systems, Optional Systems, plus circular dependency minimization rules.
+  - Added an Implementation Traceability Rule requiring future sprints to declare which core system blueprint they implement, objects changed, interactions emitted, decisions depended on, knowledge sources, data owner, events, dependencies, anti-patterns avoided, and metrics improved.
+  - Updated **`Genesis.md`** with Core Systems Blueprint link under World Systems and a new **9B. Core Systems Blueprint** kernel section.
+  - Updated **`genesis/README.md`**, **`genesis/articles/README.md`**, and **`docs/studio-os/README.md`** so the article is discoverable beside prior Genesis foundations.
+  - Added a permanent **`motherboard/CORE.md`** note that future implementation sprints should trace to Core Systems Blueprint and orphan systems require a Genesis proposal.
+- **Verification:** `npm run build` passed; generated master-spec/world-graph artifacts were restored so the commit contains only intended Genesis docs and motherboard updates.
+- **Conventions:** Future platform work should identify its core system owner before implementation. Do not create standalone engines/modules without mapping them to these domains or proposing a new Genesis system blueprint.
+

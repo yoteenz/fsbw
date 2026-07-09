@@ -121,6 +121,7 @@ permanent kernel responsibilities, not temporary product areas.
    - Hero Objects
    - Events
 10. **World Systems**
+    - [Core Systems Blueprint™](./genesis/articles/CORE_SYSTEMS_BLUEPRINT.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -899,6 +900,40 @@ Hidden cross-system behavior is non-canonical until modeled as an interaction.
 If a system changes state, updates memory, publishes knowledge, advances a workflow,
 grants certification, changes authority, or updates relationships, it must emit an
 auditable interaction and event record at the appropriate visibility level.
+
+---
+
+## 9B. Core Systems Blueprint
+
+The foundational kernel defines laws, objects, interactions, and decisions. Core
+systems define the major organs that run on that kernel.
+
+The complete platform systems architecture is defined in **[Core Systems Blueprint™](./genesis/articles/CORE_SYSTEMS_BLUEPRINT.md)**.
+That article is the normative blueprint for Studio World's major platform
+subsystems, their domains, responsibilities, dependencies, data ownership, events,
+failure modes, anti-patterns, and future evolution.
+
+### 9B.1 System traceability rule
+
+Every future implementation sprint should trace directly to one or more core system
+blueprints.
+
+Examples:
+
+- A founder command surface traces to Command Center™, Orb™, Permissions Engine™,
+  Decision Engine™, and Workflow Engine™.
+- A knowledge publishing feature traces to Institute of Knowledge™, Knowledge Core™,
+  Research Engine™, World Graph™, and Notification Engine™.
+- A career learning experience traces to Career Worlds™, Profession Brains™,
+  Professional Memory™, Simulation Engine™, and Studio Exchange™.
+- A generation pipeline traces to Studio Foundry™, Generation Engine™, Blueprint
+  Engine™, Experience Engine™, and Review workflows.
+
+### 9B.2 No orphan systems rule
+
+No major feature may become a standalone platform silo. If work cannot trace to an
+existing core system, Genesis must either reject it or require a new system blueprint
+proposal.
 
 ---
 

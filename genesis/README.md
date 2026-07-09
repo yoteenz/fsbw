@@ -15,7 +15,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/CANONICAL_OBJECT_MODEL.md`](./articles/CANONICAL_OBJECT_MODEL.md) | Canonical Object Model™ — complete ontology and relationship language for Studio World |
 | [`articles/UNIVERSAL_INTERACTION_MODEL.md`](./articles/UNIVERSAL_INTERACTION_MODEL.md) | Universal Interaction Model™ — interaction language, event philosophy, workflow composition, system communication, visibility, and audit doctrine |
 | [`articles/UNIVERSAL_DECISION_ARCHITECTURE.md`](./articles/UNIVERSAL_DECISION_ARCHITECTURE.md) | Universal Decision Architecture™ — reasoning principles, decision objects, hierarchy, evidence, confidence, review, and learning |
-| [`articles/UNIVERSAL_DECISION_ARCHITECTURE.md`](./articles/UNIVERSAL_DECISION_ARCHITECTURE.md) | Universal Decision Architecture™ — reasoning principles, decision objects, hierarchy, evidence, confidence, review, and learning |
+| [`articles/CORE_SYSTEMS_BLUEPRINT.md`](./articles/CORE_SYSTEMS_BLUEPRINT.md) | Core Systems Blueprint™ — major platform systems, domains, dependency map, ownership, events, metrics, and anti-patterns |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
