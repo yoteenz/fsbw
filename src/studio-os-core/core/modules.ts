@@ -148,6 +148,7 @@ export type StudioOsCoreModuleId =
   | 'studio-intelligence-layer'
   | 'narrative-intelligence'
   | 'experience-lab'
+  | 'studio-production-system'
   | 'qa-headquarters'
   | 'qa-inspector'
   | 'qa-simulation-engine'
@@ -1065,6 +1066,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'EXPERIENCE LAB™',
     description: 'Experience Lab V1.0 — inspect, test, switch, and validate every Experience Runtime DNA layer before production.',
     routeSegment: 'experience-lab',
+  },
+  {
+    id: 'studio-production-system',
+    label: 'STUDIO PRODUCTION SYSTEM™',
+    description: 'Studio Production System V1.0 — AI production company with autonomous departments, Production Control Room™, timeline, assets, QC, and distribution.',
+    routeSegment: 'studio-production',
   },
   {
     id: 'qa-headquarters',

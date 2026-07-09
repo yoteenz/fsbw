@@ -41,4 +41,5 @@ export * from './experience-runtime';
 export * from './brand-discovery-engine';
 export * from './studio-intelligence-layer';
 export * from './narrative-intelligence';
+export * from './studio-production-system';
 export * from './experience-lab';

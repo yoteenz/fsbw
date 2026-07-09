@@ -25,6 +25,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'studio-intelligence-layer-dna',
   'narrative-intelligence-dna',
   'experience-lab-dna',
+  'studio-production-system-dna',
   'articles',
   'adr',
   'proposals',

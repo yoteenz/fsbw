@@ -26,6 +26,7 @@ import { emptyBrandDiscoveryEngineStore } from '../brand-discovery-engine/persis
 import { emptyStudioIntelligenceLayerStore } from '../studio-intelligence-layer/persistence';
 import { emptyNarrativeIntelligenceStore } from '../narrative-intelligence/persistence';
 import { emptyExperienceLabStore } from '../experience-lab/persistence';
+import { emptyStudioProductionSystemStore } from '../studio-production-system/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -99,6 +100,7 @@ export function readGenesisStore(): GenesisStore {
       studioIntelligenceLayerDna: parsed.studioIntelligenceLayerDna ?? emptyStudioIntelligenceLayerStore(),
       narrativeIntelligenceDna: parsed.narrativeIntelligenceDna ?? emptyNarrativeIntelligenceStore(),
       experienceLabDna: parsed.experienceLabDna ?? emptyExperienceLabStore(),
+      studioProductionSystemDna: parsed.studioProductionSystemDna ?? emptyStudioProductionSystemStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

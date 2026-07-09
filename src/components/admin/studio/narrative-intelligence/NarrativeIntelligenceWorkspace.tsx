@@ -48,6 +48,7 @@ export function NarrativeIntelligenceWorkspace() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link to="/admin/studio/studio-production" className="xni-btn">Studio Production →</Link>
           <Link to="/admin/studio/studio-intelligence-layer" className="xni-btn">Studio Intelligence →</Link>
           <Link to="/admin/studio/brand-discovery-engine" className="xni-btn">Brand Discovery →</Link>
           <button type="button" className="xni-btn primary" style={{ borderColor: ACCENT, color: ACCENT }} onClick={refresh}>Refresh</button>

@@ -2059,6 +2059,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'studio-production-system',
+    title: 'STUDIO PRODUCTION SYSTEM™',
+    purpose: 'AI production company — autonomous departments, Production Control Room™, timeline, asset tracking, QC, and distribution.',
+    route: p('studio-production'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'Production',
+    ctaLabel: 'OPEN PRODUCTION CONTROL ROOM',
+    moduleKey: 'studio-production-system',
+    featuredOnOverview: true,
+  },
+  {
     id: 'qa-headquarters',
     title: 'QA HEADQUARTERS™',
     purpose: 'Permanent QA operating layer — Trust Scores™, continuous validation, workflow and AI integrity monitoring.',

@@ -68,6 +68,7 @@ import { ensureExperienceRuntimeSubsystem } from './experience-runtime/engine';
 import { ensureBrandDiscoveryEngineSubsystem } from './brand-discovery-engine/engine';
 import { ensureStudioIntelligenceLayerSubsystem } from './studio-intelligence-layer/engine';
 import { ensureNarrativeIntelligenceSubsystem } from './narrative-intelligence/engine';
+import { ensureStudioProductionSystemSubsystem } from './studio-production-system/engine';
 import { ensureExperienceLabSubsystem } from './experience-lab/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
@@ -106,6 +107,7 @@ export function ensureGenesisStore() {
   ensureStudioIntelligenceLayerSubsystem();
   ensureNarrativeIntelligenceSubsystem();
   ensureExperienceLabSubsystem();
+  ensureStudioProductionSystemSubsystem();
   return readGenesisStore();
 }
 

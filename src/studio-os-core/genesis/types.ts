@@ -244,6 +244,7 @@ export type GenesisStore = {
   studioIntelligenceLayerDna?: import('./studio-intelligence-layer/types').XsilStore;
   narrativeIntelligenceDna?: import('./narrative-intelligence/types').XniStore;
   experienceLabDna?: import('./experience-lab/types').XelabStore;
+  studioProductionSystemDna?: import('./studio-production-system/types').XpsStore;
   bootstrappedAt?: string;
 };
 
