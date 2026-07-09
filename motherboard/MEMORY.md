@@ -44675,6 +44675,7 @@ Summary of the **full conversation in this chat**: Built Launch Stack governance
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-09 — Grand Atrium routing fix (Executive Headquarters™)
 
 Summary of the **whole conversation in this chat**: User reported **`/admin/studio/companies/frontal-slayer/grand-atrium`** still rendering legacy Mission Control instead of immersive **Executive Headquarters™**; requested routing investigation only — no UI redesign, no duplicate pages.
@@ -44688,5 +44689,13 @@ Summary of the **whole conversation in this chat**: User reported **`/admin/stud
   - `src/pages/admin/studio/companies/CompanyRouteContent.tsx` — added `'executive-headquarters'` lazy loader.
 - **Expected result:** Grand Atrium company URL stays canonical; mounts Executive Headquarters™ while URL remains company-scoped.
 - **Known follow-up (not in scope):** In-room navigation inside `ExecutiveHeadquartersWorkspace` still uses global `/admin/studio/executive-headquarters/:roomSlug` paths.
+=======
+## 2026-07-09 — Studio Orb clickability fix (immersive wings)
+
+Summary of the **full conversation in this chat**: Completed Architect's Prompt Library™ architecture + full runtime implementation; user reported **Studio Orb no longer clickable** on immersive Institute pages.
+
+- **Root cause:** `DepartmentGoldenBuildShell` renders a full-viewport fixed layer (`gb-immersive-portal`, z-index 200) for Prompt Library, Evolution Room, and Executive Reflection Suite. `StudioOrbMount` was a DOM sibling but could sit under the portal's hit layer in practice. Separately, the Prompt Library **Orb Librarian header** showed a decorative "ORB" circle that was never wired to `toggleRadial` — users clicked it expecting the radial menu.
+- **Fix:** Portal `StudioOrbMount` to `document.body` via `createPortal` in `DepartmentGoldenBuildShell.tsx` so the real Studio Orb (z-index 100050) always receives clicks. Wire Prompt Library `OrbLibrarianHeader` decorative orb as a button calling `useStudioOrb().toggleRadial()`.
+>>>>>>> 602447b30 (Fix Studio Orb clickability in immersive DepartmentGoldenBuildShell wings)
 - **Verification:** `npm run build` passed.
 

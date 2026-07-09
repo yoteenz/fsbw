@@ -17,6 +17,7 @@ import {
   type AplVersionComparison,
 } from '../../../../studio-os-core/genesis';
 import { useArchitectsPromptLibraryState } from '../../../../hooks/useArchitectsPromptLibraryState';
+import { useStudioOrb } from '../studio-orb/StudioOrbProvider';
 import { HQ, hqGlassPanel, hqLabel } from '../headquarters-experience/hqExperienceTheme';
 import { HqExperienceStyles } from '../headquarters-experience/HqWingZone';
 
@@ -191,11 +192,19 @@ function LibraryStyles() {
 }
 
 function OrbLibrarianHeader({ brief, librarianMode }: { brief: string; librarianMode: boolean }) {
+  const { toggleRadial } = useStudioOrb();
+
   return (
     <section className="apl-holo p-6 text-center">
-      <div className="apl-orb mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full" style={{ background: 'radial-gradient(circle,#fff,rgba(99,102,241,0.12))' }}>
+      <button
+        type="button"
+        className="apl-orb mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full border-0 cursor-pointer"
+        style={{ background: 'radial-gradient(circle,#fff,rgba(99,102,241,0.12))' }}
+        onClick={toggleRadial}
+        aria-label="Open Studio Orb menu"
+      >
         <span style={{ fontFamily: '"Futura PT Demi"', fontSize: '10px', letterSpacing: '0.2em', color: HQ.accent }}>ORB</span>
-      </div>
+      </button>
       <p style={hqLabel}>Orb Librarian Mode™ {librarianMode ? '· Active' : '· Standby'}</p>
       <p style={{ fontFamily: '"Futura PT Book"', fontSize: '12px', color: HQ.gray, maxWidth: 640, margin: '12px auto 0', lineHeight: 1.6 }}>{brief}</p>
     </section>

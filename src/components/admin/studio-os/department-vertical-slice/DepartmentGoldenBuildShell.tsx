@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRequireAdminPageAccess } from '../../../../hooks/useRequireAdminPageAccess';
 import { shouldShowCommandDock } from '../../studio/command-dock/CommandDock';
@@ -58,7 +59,9 @@ export function DepartmentGoldenBuildShell({ children }: Props) {
           >
             {children}
           </div>
-          {shouldShowCommandDock(pathname) ? <StudioOrbMount /> : null}
+          {shouldShowCommandDock(pathname) && typeof document !== 'undefined'
+            ? createPortal(<StudioOrbMount />, document.body)
+            : null}
         </StudioWorldExperienceProvider>
       </GlobalAtlasProvider>
     </StudioOrbProvider>
