@@ -13,6 +13,7 @@ import { lazyWithRetry } from '../../../../utils/lazyWithRetry';
 type PageModule = { default: ComponentType };
 
 const LEGACY_SEGMENT_LOADERS: Record<string, () => Promise<PageModule>> = {
+  'executive-headquarters': () => import('../executive-headquarters/page'),
   'mission-control': () => import('../mission-control/page'),
   'ndxbook/mission-control': () => import('../ndxbook/mission-control/page'),
   'chief-of-staff': () => import('../chief-of-staff/page'),

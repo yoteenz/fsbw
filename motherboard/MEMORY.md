@@ -44673,3 +44673,20 @@ Summary of the **full conversation in this chat**: Built Launch Stack governance
 - **Docs:** `docs/studio-os/genesis/ARCHITECTS_PROMPT_LIBRARY_PLATFORM.md`; updated content home + guide runtime status.
 - **Verification:** `npm run build` passed.
 
+---
+
+## 2026-07-09 — Grand Atrium routing fix (Executive Headquarters™)
+
+Summary of the **whole conversation in this chat**: User reported **`/admin/studio/companies/frontal-slayer/grand-atrium`** still rendering legacy Mission Control instead of immersive **Executive Headquarters™**; requested routing investigation only — no UI redesign, no duplicate pages.
+
+- **Investigation findings:**
+  - **Current route:** `/admin/studio/companies/:companySlug/grand-atrium` → `CompanyRouteContent` → `resolveCompanyRoute()` → `route-catalog.ts` mapped `grand-atrium` to `legacyPath: /admin/studio/mission-control` → `LEGACY_SEGMENT_LOADERS['mission-control']` → **`MissionControlWorkspace`** in `AdminStudioStageShell` (legacy dashboard).
+  - **Immersive implementation already exists:** `/admin/studio/executive-headquarters` → `AdminStudioExecutiveHeadquartersPage` → **`ExecutiveHeadquartersWorkspace`** + `ExecutiveHeadquartersShell`. Separate surface: `/admin/studio/overview` = **Executive Atrium™** (`StudioCommandCenterRoom`), not the Grand Atrium target.
+  - **Mismatch reason:** Outdated `legacyPath` in `COMPANY_HEADQUARTERS_ROUTES` plus missing `executive-headquarters` entry in `LEGACY_SEGMENT_LOADERS`.
+- **Fix applied:**
+  - `src/studio-os-core/company-routes/route-catalog.ts` — `grand-atrium.legacyPath` → `/admin/studio/executive-headquarters` (ndxbook override unchanged).
+  - `src/pages/admin/studio/companies/CompanyRouteContent.tsx` — added `'executive-headquarters'` lazy loader.
+- **Expected result:** Grand Atrium company URL stays canonical; mounts Executive Headquarters™ while URL remains company-scoped.
+- **Known follow-up (not in scope):** In-room navigation inside `ExecutiveHeadquartersWorkspace` still uses global `/admin/studio/executive-headquarters/:roomSlug` paths.
+- **Verification:** `npm run build` passed.
+

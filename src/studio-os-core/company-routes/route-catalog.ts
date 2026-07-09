@@ -13,7 +13,7 @@ const ADMIN = '/admin/studio';
 
 /** Headquarters rooms → legacy implementation paths */
 export const COMPANY_HEADQUARTERS_ROUTES: Record<string, CompanyRouteTarget> = {
-  'grand-atrium': { legacyPath: `${ADMIN}/mission-control`, displayLabel: 'Grand Atrium™' },
+  'grand-atrium': { legacyPath: `${ADMIN}/executive-headquarters`, displayLabel: 'Grand Atrium™' },
   'founder-office': { legacyPath: `${ADMIN}/chief-of-staff`, displayLabel: 'Founder Office™' },
   'company-pulse': { legacyPath: `${ADMIN}/organization-pulse`, displayLabel: 'Company Pulse™' },
   concierge: { legacyPath: `${ADMIN}/concierge-layer`, displayLabel: 'Concierge™' },
