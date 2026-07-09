@@ -45029,3 +45029,16 @@ Summary of the **full conversation in this chat**: Experience Lab shipped with r
 - **Safe boot UI:** `ExperienceLabErrorBoundary` (route, message, stack, component stack); `RuntimeSafeMode` + `useRuntimeSafeMode` — lazy boot steps after mount, Runtime Boot Inspector, scene rendering disabled; main `ExperienceLabWorkspace` temporarily renders `RuntimeSafeMode` only.
 - **Module-scope fix:** `emptyExperienceRuntimeStore()` uses inline minimal platform/state DNA (no `getDefaultRuntimeSeed()` at init); main page `recordExperienceLabOpened` via dynamic import of `experience-lab/engine` (no genesis barrel); routes wired in `App.tsx` (health/safe before main lab).
 - **Verification:** `npm run build` passed. Success criteria: no white screen — Health OK, Safe Mode diagnostics, or Runtime Inspector must render.
+
+---
+
+## 2026-07-09 — Studio Kernel™ + Studio Bootstrap™ (deterministic boot architecture)
+
+Summary of the **full conversation in this chat**: Experience Lab emergency debug shipped (`e529848cd`); user reported Health page loads Safari but not Chrome — deployment diagnostic found production healthy (commit `e529848cd`, `index.Ba3rGguh.js`, health chunk `page.hAOfaMNG.js` all 200); root cause likely Chrome stale immutable `/assets/*` cache + health route blocked by `AdminStudioWorkspaceGuard` LoadingScreen. User requested **EMERGENCY ARCHITECTURE SPRINT** — Studio Kernel™ + Studio Bootstrap™ for deterministic startup; no UI redesign, no feature visuals, no patching individual undefined values.
+
+- **New architecture:** `src/studio-os-core/kernel/` (StudioKernel™, BootRegistry™, boot contract types/statuses); `src/studio-os-core/bootstrap/` (StudioBootstrap™, 12 ordered boot modules, `STUDIO_DEFAULT_FALLBACK_CONTRACT`); `src/studio-os-core/runtime-readiness/` (RuntimeReadinessEngine™); `src/studio-os-core/runtime-diagnostics/` (RuntimeDiagnostics™, RuntimeFailSafe™ with reload/clear cache/health link); `src/studio-os-core/boot-registry/` (public registry surface).
+- **Strict boot order:** storage → auth-session → admin-context → platform-dna → brand-registry → department-registry → scene-registry → state-dna → design-dna-resolver → experience-runtime → workspace-runtime → ui-render. All registry reads lazy inside `initialize()` — no module-scope reads.
+- **Safe health route:** `/admin/studio/health` — outside `AdminStudioWorkspaceGuard`; zero runtime/DNA/registry imports; shows Studio Health OK + `__GLOBE_EMBED_BUILD__` deployment id + timestamp + browser info.
+- **Experience Lab:** `StudioBootGate` + `useStudioBoot` — boots through StudioBootstrap; on failure shows RuntimeDiagnostics (boot sequence, module statuses, missing deps, fallbacks, contract) or RuntimeFailSafe; scene rendering still disabled.
+- **Fallback contract:** studio-os / executive / executive-headquarters / hq-master-scene-v1 / v1 DNA versions when registries partial.
+- **Verification:** `npm run build` passed. HQ/grand-atrium untouched.

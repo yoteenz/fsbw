@@ -1,0 +1,48 @@
+/**
+ * TEMPORARY public debug routes — remove when Experience Lab is stable.
+ * Registered in main.tsx BEFORE App (no AdminGuard, workspace bootstrap, or admin layout).
+ */
+import { lazy, Suspense } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import StudioHealthDebugPage from '../pages/debug/studio-health/page';
+import ChunkDebugPage from '../pages/debug/chunk-debug/page';
+import BootDebugPage from '../pages/debug/boot-debug/page';
+import ExperienceLabSafeDebugPage from '../pages/debug/experience-lab-safe/page';
+
+const App = lazy(() => import('../App'));
+
+export const STUDIO_DEBUG_PATHS = [
+  '/__studio-health',
+  '/__chunk-debug',
+  '/__boot-debug',
+  '/__experience-lab-safe',
+] as const;
+
+export function isStudioDebugPath(pathname: string): boolean {
+  return (STUDIO_DEBUG_PATHS as readonly string[]).includes(pathname);
+}
+
+function AppLoadingFallback() {
+  return (
+    <div style={{ padding: '24px', fontFamily: 'system-ui, sans-serif' }}>Loading app…</div>
+  );
+}
+
+export default function StudioDebugRoutes() {
+  return (
+    <Routes>
+      <Route path="/__studio-health" element={<StudioHealthDebugPage />} />
+      <Route path="/__chunk-debug" element={<ChunkDebugPage />} />
+      <Route path="/__boot-debug" element={<BootDebugPage />} />
+      <Route path="/__experience-lab-safe" element={<ExperienceLabSafeDebugPage />} />
+      <Route
+        path="*"
+        element={
+          <Suspense fallback={<AppLoadingFallback />}>
+            <App />
+          </Suspense>
+        }
+      />
+    </Routes>
+  );
+}
