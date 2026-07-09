@@ -6,6 +6,7 @@ Workspace-specific documentation for the first studio os production tenant.
 |----------|-------|
 | [OWNERS_MANUAL.md](./OWNERS_MANUAL.md) | Workspace overview and entry flow |
 | [BRAND_RULES.md](./BRAND_RULES.md) | Visual identity and voice |
+| [COMPANY_GENOME.md](./COMPANY_GENOME.md) | Business architecture genome: systems, dependencies, data, events, flows, risks, automation, AI opportunities |
 | [SHOWS_AND_STUDIOS.md](./SHOWS_AND_STUDIOS.md) | Programming and virtual environments |
 | [CONTENT_PACKS.md](./CONTENT_PACKS.md) | Weekly production bundles |
 | [product-photography-bible/](./product-photography-bible/) | Product Photography Bible (Milestone 20.5) |

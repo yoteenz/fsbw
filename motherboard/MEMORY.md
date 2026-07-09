@@ -44148,3 +44148,27 @@ Summary of the **full conversation in this chat**: Genesis Foundation Framework 
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored.
 - **Conventions:** Every subsystem should adopt interaction primitives rather than custom integrations. Workflow orchestration uses Interaction Engine steps — no hardcoded subsystem dependencies. Registries start empty until ingest.
 
+---
+
+## 2026-07-09 — Frontal Slayer Company Genome™ business architecture blueprint
+
+Summary of the **full conversation in this chat**: the user requested a MASTER ARCHITECTURE PROJECT for **FRONTAL SLAYER COMPANY GENOME™** — a complete business architecture DNA map focused on the business itself, not software. The requested output needed to identify every major business system, relationships, dependencies, owned data, produced/consumed events, rules, risks, revenue/customer/founder impact, automation and AI opportunities, end-to-end flows, the Company Genome Graph™, single points of failure, missing systems, duplicate responsibilities, bottlenecks, and a reusable Studio OS pattern for generating a Company Genome™ for any business.
+
+- **Context:** Loaded required motherboard context (`README`, `CORE`, `CODEBASE`, latest `MEMORY`) and existing Frontal Slayer documentation (`OWNERS_MANUAL`, `BRAND_RULES`, existing architecture/product genome docs) before creating a docs-only business architecture artifact.
+- **Decisions / outcomes:**
+  - Created **`docs/frontal-slayer/COMPANY_GENOME.md`** as the formal Company Genome™ blueprint for Frontal Slayer.
+  - Kept the document business-first: Website, Mobile App, AI Concierge, and Studio OS are described as business channels/operating systems rather than the center of the company.
+  - Defined the organism thesis around five connected engines: **Desire Engine**, **Product Engine**, **Client Engine**, **Revenue Engine**, and **Operating Engine**.
+  - Added a **Company Genome Graph™** using Mermaid to show how Founder Office, Vision, Brand, Product Portfolio, Campaigns, Creative, Website/Mobile, Customer Accounts, Profiles, Checkout, Payments, Orders, Fulfillment, Shipping, Reviews, Loyalty, Memberships, Rewards, Affiliate, Support, Finance, Analytics, and Studio OS connect.
+  - Added system class mapping for core, supporting, revenue, customer, knowledge, creative, operational, and expansion systems.
+  - Defined **50 business system cards**, each with the user-requested fields: Official Name™, Purpose, Primary Owner, Inputs, Outputs, Upstream Dependencies, Downstream Dependencies, Owned Data, Events Produced, Events Consumed, Business Rules, Failure Risks, Operational Importance, Revenue Impact, Customer Impact, Founder Impact, Automation Potential, AI Opportunities, and Future Expansion.
+  - Covered the requested systems and expanded them significantly: Brand, Vision, Founder Office, Executive Decisions, Product Portfolio, Collections, Unit Catalog, Build-A-Wig™, Bundles/Closures/Frontals, Gift Cards, Academy™, Certification, Memberships, Rewards, Affiliate Program, Orders, Checkout, Payments, Processing/Fulfillment, Shipping, Inventory, Photography, Creative Assets, Marketing, Email, SMS, Social Media, Campaigns, Content, Launches, Customer Accounts, Client Profiles, Loyalty, Reviews, Support, Policies, Legal, Finance, Analytics, Meetings/Consults, AI Concierge/PSA, Website, Mobile App, Marketplace, Studio OS, Community, Advocacy/Referral, Education, Future Services, and Knowledge/Company Memory.
+  - Mapped end-to-end business flows: Visitor → Customer; Lead → Purchase; Purchase → Authorization; Authorization → Fulfillment; Fulfillment → Delivery; Delivery → Review; Review → Loyalty; Loyalty → Membership; Membership → Rewards; Rewards → Repeat Purchase; Academy → Certification; Certification → Community; Community → Advocacy; Advocacy → Referral; Referral → New Customer; Founder Vision → Campaign → Content → Launch → Revenue.
+  - Added a business event dictionary, single points of failure, missing systems to formalize, duplicate responsibilities, operational/revenue/customer/knowledge bottlenecks, automation opportunities, AI opportunities by horizon, operational importance heat map, future expansion map, and a reusable Studio OS Company Genome generator blueprint.
+  - Updated **`docs/frontal-slayer/README.md`** to index the new Company Genome document.
+- **Changes:** Docs only:
+  - `docs/frontal-slayer/COMPANY_GENOME.md`
+  - `docs/frontal-slayer/README.md`
+  - `motherboard/MEMORY.md`
+- **Conventions:** Future Frontal Slayer business architecture work should treat Company Genome™ systems as business-owned operating objects with explicit data, events, dependencies, risks, and owner impact. Future Studio OS implementations should be able to generate similar business-first genomes for other companies, separating business architecture from software surfaces.
+
