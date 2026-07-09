@@ -2,6 +2,7 @@ import { bootRegistry } from './boot-registry';
 import type {
   BootModuleContract,
   BootModuleSnapshot,
+  StudioBootEventLogEntry,
   StudioBootLiveState,
   StudioBootReport,
 } from './types';
@@ -36,9 +37,23 @@ let lastReport: StudioBootReport | null = null;
 let lastLiveState: StudioBootLiveState | null = null;
 let bootStartedAt = 0;
 let currentModuleId: string | null = null;
+let bootRunId = 0;
+let activeBootRunId = 0;
+let bootEventLog: StudioBootEventLogEntry[] = [];
 
 function logBoot(moduleId: string, message: string, detail?: unknown): void {
   console.warn(`[StudioKernel] ${moduleId}: ${message}`, detail ?? '');
+}
+
+function appendBootEvent(kind: StudioBootEventLogEntry['kind'], message: string): void {
+  const entry: StudioBootEventLogEntry = { ts: Date.now(), kind, message };
+  bootEventLog = [...bootEventLog.slice(-49), entry];
+  const prefix = kind === 'error' ? 'error' : kind === 'warn' ? 'warn' : 'log';
+  console[prefix === 'log' ? 'log' : prefix](`[StudioBootstrap] ${message}`);
+}
+
+function isActiveBootRun(runId: number): boolean {
+  return runId === activeBootRunId;
 }
 
 function snapshotModule(mod: BootModuleContract): BootModuleSnapshot {
@@ -76,18 +91,23 @@ function buildLiveState(
   errors: string[],
   warnings: string[],
   fallbacksUsed: string[],
-  safeMode: boolean
+  safeMode: boolean,
+  opts?: { started?: boolean; waitingForManualStart?: boolean }
 ): StudioBootLiveState {
   const modules = order.map((id) => {
     const mod = bootRegistry.get(id);
     return mod ? snapshotModule(mod) : idleSnapshot(id);
   });
+  const started = opts?.started ?? bootStartedAt > 0;
   return {
     modules,
     currentModuleId,
     elapsedMs: bootStartedAt ? Date.now() - bootStartedAt : 0,
     complete,
     ready,
+    started,
+    waitingForManualStart: opts?.waitingForManualStart ?? false,
+    eventLog: [...bootEventLog],
     errors,
     warnings,
     fallbacksUsed,
@@ -102,9 +122,10 @@ function dispatchBootUpdated(
   errors: string[],
   warnings: string[],
   fallbacksUsed: string[],
-  safeMode: boolean
+  safeMode: boolean,
+  opts?: { started?: boolean; waitingForManualStart?: boolean }
 ): void {
-  lastLiveState = buildLiveState(order, complete, ready, errors, warnings, fallbacksUsed, safeMode);
+  lastLiveState = buildLiveState(order, complete, ready, errors, warnings, fallbacksUsed, safeMode, opts);
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent(STUDIO_BOOT_EVENT, { detail: lastLiveState }));
   }
@@ -149,19 +170,23 @@ async function runModule(mod: BootModuleContract): Promise<void> {
   mod.status = 'loading';
   mod.errors.length = 0;
   currentModuleId = mod.id;
+  appendBootEvent('module', `module started: ${mod.label}`);
   logBoot(mod.id, 'loading');
 
   try {
     await withBootTimeout(mod.initialize());
     if (mod.fallback) {
       mod.status = 'fallback';
+      appendBootEvent('module', `module completed: ${mod.label} (fallback)`);
       logBoot(mod.id, 'ready (fallback)', mod.fallback);
     } else {
       mod.status = 'ready';
+      appendBootEvent('module', `module completed: ${mod.label}`);
       logBoot(mod.id, 'ready');
     }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
+    appendBootEvent('error', `module failed: ${mod.label} — ${msg}`);
     logBoot(mod.id, 'error', msg);
     applyModuleFallback(mod, msg);
     if (msg === 'Boot module timed out') {
@@ -186,7 +211,22 @@ export type StudioKernelBootOptions = {
   force?: boolean;
   skipModuleIds?: string[];
   safeMode?: boolean;
+  /** When false, skip reset if boot is already in progress (StrictMode remount). */
+  allowReset?: boolean;
 };
+
+function primeBootStart(
+  order: readonly string[],
+  safeMode: boolean
+): number {
+  const runId = ++bootRunId;
+  activeBootRunId = runId;
+  bootStartedAt = Date.now();
+  currentModuleId = order[0] ?? null;
+  appendBootEvent('info', 'bootstrap start requested');
+  dispatchBootUpdated(order, false, false, [], [], [], safeMode, { started: true });
+  return runId;
+}
 
 /** StudioKernel™ — deterministic startup orchestrator (never hangs silently). */
 export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Promise<StudioBootReport> {
@@ -199,26 +239,40 @@ export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Pr
     for (const id of SAFE_MODE_SKIP_MODULES) skipIds.add(id);
   }
 
+  const inProgress = Boolean(bootPromise && bootStartedAt > 0 && !lastLiveState?.complete);
+
   if (!options?.force && bootPromise && lastReport?.ready) {
     return lastReport;
   }
 
-  if (options?.force) {
+  if (!options?.force && inProgress) {
+    return bootPromise!;
+  }
+
+  if (options?.force && options?.allowReset !== false) {
+    activeBootRunId = 0;
     bootPromise = null;
+    bootEventLog = [];
     bootRegistry.resetRuntimeState();
+  } else if (options?.force && inProgress) {
+    return bootPromise!;
   }
 
   if (!bootPromise) {
+    const runId = primeBootStart(order, safeMode);
     bootPromise = (async () => {
-      bootStartedAt = Date.now();
-      currentModuleId = null;
       const fallbacksUsed: string[] = [];
       const errors: string[] = [];
       const warnings: string[] = [];
 
-      dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode);
+      if (!isActiveBootRun(runId)) {
+        throw new Error('Boot run superseded');
+      }
 
       for (const id of order) {
+        if (!isActiveBootRun(runId)) {
+          throw new Error('Boot run superseded');
+        }
         const mod = bootRegistry.get(id);
         if (!mod) {
           const msg = `Boot module not registered: ${id}`;
@@ -230,15 +284,18 @@ export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Pr
         if (skipIds.has(id)) {
           markSkipped(mod, 'Skipped by emergency bypass');
           fallbacksUsed.push(`${id}: skipped`);
-          dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode);
+          dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode, { started: true });
           continue;
         }
 
         currentModuleId = id;
-        dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode);
+        dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode, { started: true });
 
         try {
           await runModule(mod);
+          if (!isActiveBootRun(runId)) {
+            throw new Error('Boot run superseded');
+          }
           if (mod.status === 'fallback' && mod.fallback) {
             fallbacksUsed.push(mod.fallback);
           }
@@ -254,7 +311,11 @@ export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Pr
           if (mod.fallback) fallbacksUsed.push(mod.fallback);
         }
 
-        dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode);
+        dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode, { started: true });
+      }
+
+      if (!isActiveBootRun(runId)) {
+        throw new Error('Boot run superseded');
       }
 
       currentModuleId = null;
@@ -282,12 +343,26 @@ export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Pr
       };
 
       lastReport = report;
-      dispatchBootUpdated(order, true, report.ready, errors, warnings, fallbacksUsed, safeMode);
+      appendBootEvent('info', `bootstrap complete (ready=${report.ready ? 'yes' : 'no'})`);
+      dispatchBootUpdated(order, true, report.ready, errors, warnings, fallbacksUsed, safeMode, { started: true });
       return report;
     })().catch((err) => {
+      if (err instanceof Error && err.message === 'Boot run superseded') {
+        return lastReport ?? {
+          ready: false,
+          modules: order.map((id) => idleSnapshot(id)),
+          errors: [],
+          warnings: [],
+          fallbacksUsed: [],
+          startedAt: bootStartedAt,
+          finishedAt: Date.now(),
+          safeMode,
+        };
+      }
       bootPromise = null;
       currentModuleId = null;
       const msg = err instanceof Error ? err.message : String(err);
+      appendBootEvent('error', `bootstrap failed: ${msg}`);
       logBoot('kernel', 'fatal', msg);
       throw err;
     });
@@ -315,6 +390,9 @@ export function getInitialBootLiveState(order: readonly string[] = STUDIO_BOOT_O
     elapsedMs: 0,
     complete: false,
     ready: false,
+    started: false,
+    waitingForManualStart: false,
+    eventLog: [],
     errors: [],
     warnings: [],
     fallbacksUsed: [],
@@ -322,13 +400,41 @@ export function getInitialBootLiveState(order: readonly string[] = STUDIO_BOOT_O
   };
 }
 
+export function isStudioKernelBootInProgress(): boolean {
+  return Boolean(bootPromise && bootStartedAt > 0 && !lastLiveState?.complete);
+}
+
+/** Explicit synchronous kick — sets elapsed timer and dispatches before first module runs. */
+export function startStudioKernelBoot(options?: StudioKernelBootOptions): Promise<StudioBootReport> {
+  return runStudioKernelBoot({ ...options, force: options?.force ?? true });
+}
+
 export function resetStudioKernelBoot(): void {
+  activeBootRunId = 0;
   bootPromise = null;
   lastReport = null;
   lastLiveState = null;
   currentModuleId = null;
   bootStartedAt = 0;
+  bootEventLog = [];
   bootRegistry.resetRuntimeState();
+}
+
+export function appendStudioBootDiagnosticsEvent(message: string): void {
+  appendBootEvent('info', message);
+  const order = STUDIO_BOOT_ORDER;
+  if (lastLiveState) {
+    lastLiveState = { ...lastLiveState, eventLog: [...bootEventLog] };
+  } else {
+    lastLiveState = buildLiveState(order, false, false, [], [], [], false, {
+      started: bootStartedAt > 0,
+      waitingForManualStart: bootStartedAt === 0,
+    });
+    lastLiveState.eventLog = [...bootEventLog];
+  }
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(STUDIO_BOOT_EVENT, { detail: lastLiveState }));
+  }
 }
 
 export { BOOT_MODULE_TIMEOUT_MS, BOOT_MODULE_DISPLAY_LABELS };

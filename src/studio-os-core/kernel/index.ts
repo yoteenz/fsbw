@@ -2,10 +2,13 @@ export * from './types';
 export { bootRegistry, createBootModule } from './boot-registry';
 export {
   runStudioKernelBoot,
+  startStudioKernelBoot,
   getStudioBootReport,
   getStudioBootLiveState,
   getInitialBootLiveState,
   resetStudioKernelBoot,
+  isStudioKernelBootInProgress,
+  appendStudioBootDiagnosticsEvent,
   STUDIO_BOOT_ORDER,
   BOOT_MODULE_TIMEOUT_MS,
   BOOT_MODULE_DISPLAY_LABELS,

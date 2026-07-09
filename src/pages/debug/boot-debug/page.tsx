@@ -6,7 +6,7 @@ import { BootDiagnosticsPanel } from '../../../studio-os-core/runtime-diagnostic
 import { useStudioBootLive } from '../../../hooks/useStudioBootLive';
 
 export default function BootDebugPage() {
-  const { live, retry, continueSafeMode, skipCurrentModule } = useStudioBootLive({
+  const { live, autoStart, start, retry, continueSafeMode, skipCurrentModule } = useStudioBootLive({
     through: 'ui-render',
     autoStart: true,
   });
@@ -16,6 +16,8 @@ export default function BootDebugPage() {
       <BootDiagnosticsPanel
         live={live}
         title="Boot Debug — StudioBootstrap™"
+        autoStart={autoStart}
+        onStart={start}
         onRetry={retry}
         onSafeMode={continueSafeMode}
         onSkipCurrent={skipCurrentModule}

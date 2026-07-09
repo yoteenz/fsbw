@@ -42,12 +42,21 @@ export type StudioBootReport = {
   safeMode?: boolean;
 };
 
+export type StudioBootEventLogEntry = {
+  ts: number;
+  kind: 'info' | 'warn' | 'error' | 'module';
+  message: string;
+};
+
 export type StudioBootLiveState = {
   modules: BootModuleSnapshot[];
   currentModuleId: string | null;
   elapsedMs: number;
   complete: boolean;
   ready: boolean;
+  started: boolean;
+  waitingForManualStart: boolean;
+  eventLog: StudioBootEventLogEntry[];
   errors: string[];
   warnings: string[];
   fallbacksUsed: string[];

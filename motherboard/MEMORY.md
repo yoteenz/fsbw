@@ -45053,3 +45053,32 @@ Summary of the **full conversation in this chat**: Studio Kernel/Bootstrap (`254
 - **Router wiring:** `main.tsx` → `StudioDebugRoutes` before lazy `App`; `isStudioDebugPath()` skips heavy `main-app-boot.ts` (vision engine, Supabase auth, PSA preload) on debug paths; `App` lazy-loaded only for `*` catch-all.
 - **Diagnostic interpretation:** health OK + admin lab fails → guard/bootstrap; safe OK + admin lab fails → route wrapper; safe fails → runtime import chain.
 - **Verification:** `npm run build` passed.
+
+---
+
+## 2026-07-09 — StudioBootstrap boot hang fix (timeout + live diagnostics)
+
+Summary of the **full conversation in this chat**: Public debug routes (`a7fda58a1`) load but user stuck on "StudioBootstrap™ initializing…" — bootstrap never resolved to ready/failed/fallback. **BOOT HANG FIX** sprint: no UI redesign, no features, no runtime work until bootstrap reports clearly.
+
+- **Timeout protection:** Every boot module wrapped in **3000ms** timeout (`BOOT_MODULE_TIMEOUT_MS`); on timeout → `failed` + error "Boot module timed out", then **fallback** and boot **continues** (no silent hang, no break on required module).
+- **Live diagnostics:** `BootDiagnosticsPanel` shows boot sequence, **current module**, **elapsed time**, per-module status (idle/loading/ready/failed/fallback/skipped), errors, warnings — visible **during** loading.
+- **Live state:** `getStudioBootLiveState()`, `STUDIO_BOOT_EVENT` updates, `useStudioBootLive` hook; `/__boot-debug` renders diagnostics **immediately** before bootstrap completes.
+- **Emergency bypass:** Continue in Safe Mode (skips workspace-runtime), Skip failed module, Retry Bootstrap, Go to `/__studio-health`.
+- **Module labels:** storage, auth, user-context, platform-dna, brand-registry, department-registry, scene-registry, state-dna, design-dna-resolver, experience-runtime, workspace-runtime; `[StudioKernel]` console logging per module.
+- **StudioBootGate / useStudioBoot:** Replaced blank "initializing…" with live `BootDiagnosticsPanel`.
+- **Verification:** `npm run build` passed.
+
+---
+
+## 2026-07-09 — Boot start fix: deterministic StudioBootstrap on /__boot-debug
+
+Summary of the **full conversation in this chat**: Emergency debug sprint (health/safe routes, ErrorBoundary, RuntimeSafeMode); deployment diagnostic (Safari vs Chrome stale cache); Studio Kernel™ + Studio Bootstrap™ 12-step architecture; public debug routes (`/__studio-health`, `/__chunk-debug`, `/__boot-debug`, `/__experience-lab-safe`); boot hang fix (3s module timeouts, live BootDiagnosticsPanel). **Latest issue:** Boot Diagnostics UI mounted on `/__boot-debug` but bootstrap never appeared to start — all modules IDLE, elapsed 0.0s, current module "(waiting)".
+
+- **Root cause / hardening:** React StrictMode double-mount + `resetStudioBootstrap()` on each auto-start could orphan in-flight boots and leave UI on initial idle state when `getStudioBootstrapLiveState()` returned null; no explicit `StudioBootstrap.start()` or visible event trail.
+- **Fix — kernel (`studio-kernel.ts`):** `bootRunId` / `activeBootRunId` to abort superseded runs; `primeBootStart()` sets `bootStartedAt` synchronously and dispatches before first module; `appendBootEvent()` + `eventLog` on live state; `startStudioKernelBoot()`, `isStudioKernelBootInProgress()`, `appendStudioBootDiagnosticsEvent()`; module start/complete/fail events logged to console `[StudioBootstrap]`.
+- **Fix — bootstrap API:** `startStudioBootstrap()`, `StudioBootstrap.start/run/reset/getLiveState/isInProgress/log`, `isStudioBootstrapInProgress()`, `allowReset` option to skip reset when boot already in progress (StrictMode remount).
+- **Fix — `useStudioBootLive`:** `useLayoutEffect` + module-level `studioBootAutoStartGuard` for one auto-start per session; exposes `start()` manual trigger; polls live state while incomplete.
+- **Fix — `/__boot-debug` + `BootDiagnosticsPanel`:** Explicit autoStart; **Start Bootstrap** button; **"Bootstrap is waiting for manual start."** when autoStart off; visible **Event log** (diagnostics mounted, bootstrap start requested, module started/completed/failed, bootstrap complete); Started yes/no in header.
+- **Success criteria:** Opening `/__boot-debug` shows storage IDLE → LOADING/READY within ~1s; elapsed timer runs after start.
+- **Verification:** `npm run build` passed; Playwright smoke on preview — storage READY in 0.4s, Started: yes, console event trail present.
+- **Not done:** No Experience Runtime feature work until boot visibly starts (per user).

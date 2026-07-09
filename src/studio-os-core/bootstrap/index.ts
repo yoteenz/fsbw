@@ -1,9 +1,13 @@
 export {
   runStudioBootstrap,
+  startStudioBootstrap,
+  StudioBootstrap,
   getStudioBootstrapReport,
   getStudioBootstrapLiveState,
   getInitialStudioBootstrapLiveState,
   resetStudioBootstrap,
+  isStudioBootstrapInProgress,
+  appendStudioBootstrapEvent,
   STUDIO_BOOT_ORDER,
   STUDIO_BOOT_EVENT,
   BOOT_MODULE_TIMEOUT_MS,

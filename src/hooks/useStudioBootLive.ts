@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   getInitialStudioBootstrapLiveState,
   getStudioBootstrapLiveState,
   resetStudioBootstrap,
-  runStudioBootstrap,
+  startStudioBootstrap,
+  isStudioBootstrapInProgress,
+  appendStudioBootstrapEvent,
   STUDIO_BOOT_EVENT,
   type StudioBootLiveState,
   type StudioBootPhase,
@@ -13,6 +15,9 @@ export type UseStudioBootLiveOptions = {
   through?: StudioBootPhase;
   autoStart?: boolean;
 };
+
+/** Prevents StrictMode remount from resetting an in-flight boot. */
+let studioBootAutoStartGuard = false;
 
 export function useStudioBootLive(options: UseStudioBootLiveOptions = {}) {
   const through = options.through ?? 'ui-render';
@@ -25,8 +30,17 @@ export function useStudioBootLive(options: UseStudioBootLiveOptions = {}) {
 
   const syncLive = useCallback(() => {
     const cached = getStudioBootstrapLiveState();
-    if (cached) setLive(cached);
-  }, []);
+    if (cached) {
+      setLive(cached);
+      return;
+    }
+    if (!autoStart) {
+      setLive((prev) => ({
+        ...prev,
+        waitingForManualStart: !prev.started,
+      }));
+    }
+  }, [autoStart]);
 
   useEffect(() => {
     const onBoot = (event: Event) => {
@@ -44,20 +58,39 @@ export function useStudioBootLive(options: UseStudioBootLiveOptions = {}) {
   }, [live.complete, syncLive]);
 
   const run = useCallback(
-    async (opts?: { force?: boolean; safe?: boolean; skipModuleIds?: string[] }) => {
+    async (opts?: {
+      force?: boolean;
+      safe?: boolean;
+      skipModuleIds?: string[];
+      allowReset?: boolean;
+    }) => {
       const gen = ++bootGenerationRef.current;
-      if (opts?.force) resetStudioBootstrap();
+      const allowReset = opts?.allowReset ?? true;
+      const inProgress = isStudioBootstrapInProgress();
+
+      if (opts?.force && allowReset && !inProgress) {
+        resetStudioBootstrap();
+      } else if (opts?.force && allowReset && inProgress) {
+        resetStudioBootstrap();
+      }
+
       if (opts?.safe) setSafeMode(true);
       if (opts?.skipModuleIds) {
         skipModulesRef.current = [...skipModulesRef.current, ...opts.skipModuleIds];
       }
 
-      setLive(getInitialStudioBootstrapLiveState());
+      if (allowReset || !inProgress) {
+        setLive({
+          ...getInitialStudioBootstrapLiveState(),
+          waitingForManualStart: false,
+        });
+      }
 
       try {
-        await runStudioBootstrap({
+        await startStudioBootstrap({
           through,
           force: opts?.force ?? true,
+          allowReset,
           safeMode: opts?.safe ?? safeMode,
           skipModuleIds: skipModulesRef.current,
         });
@@ -70,18 +103,44 @@ export function useStudioBootLive(options: UseStudioBootLiveOptions = {}) {
     [through, safeMode, syncLive]
   );
 
-  useEffect(() => {
-    if (autoStart) void run({ force: true });
-  }, [autoStart, run]);
+  const start = useCallback(() => {
+    appendStudioBootstrapEvent('manual bootstrap start');
+    void run({ force: true, allowReset: true });
+  }, [run]);
+
+  useLayoutEffect(() => {
+    appendStudioBootstrapEvent('diagnostics mounted');
+
+    if (!autoStart) {
+      setLive((prev) => ({
+        ...prev,
+        waitingForManualStart: true,
+        eventLog: getStudioBootstrapLiveState()?.eventLog ?? prev.eventLog,
+      }));
+      return;
+    }
+
+    if (studioBootAutoStartGuard) {
+      syncLive();
+      return;
+    }
+    studioBootAutoStartGuard = true;
+
+    void run({
+      force: true,
+      allowReset: !isStudioBootstrapInProgress(),
+    });
+  }, [autoStart, run, syncLive]);
 
   const retry = useCallback(() => {
     skipModulesRef.current = [];
     setSafeMode(false);
-    void run({ force: true, safe: false });
+    appendStudioBootstrapEvent('bootstrap retry requested');
+    void run({ force: true, allowReset: true, safe: false });
   }, [run]);
 
   const continueSafeMode = useCallback(() => {
-    void run({ force: true, safe: true });
+    void run({ force: true, allowReset: true, safe: true });
   }, [run]);
 
   const skipCurrentModule = useCallback(() => {
@@ -92,12 +151,14 @@ export function useStudioBootLive(options: UseStudioBootLiveOptions = {}) {
       const loading = live.modules.find((m) => m.status === 'loading');
       if (loading) skipModulesRef.current = [...skipModulesRef.current, loading.id];
     }
-    void run({ force: true, safe: safeMode });
+    void run({ force: true, allowReset: true, safe: safeMode });
   }, [live.currentModuleId, live.modules, run, safeMode]);
 
   return {
     live,
     safeMode,
+    autoStart,
+    start,
     retry,
     continueSafeMode,
     skipCurrentModule,
