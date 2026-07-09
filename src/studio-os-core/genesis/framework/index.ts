@@ -11,6 +11,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'dependency-map',
   'build-order',
   'identity-engine',
+  'executive-headquarters',
   'articles',
   'adr',
   'proposals',

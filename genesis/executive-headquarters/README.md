@@ -2,8 +2,9 @@
 
 **Ontology:** [`../articles/EXECUTIVE_HEADQUARTERS.md`](../articles/EXECUTIVE_HEADQUARTERS.md)  
 **Program:** Studio OS Launch Stack™ — Sprint 1  
-**Runtime:** *(planned — flagship experience implementation sprint)*  
-**Platform guide:** [`../../docs/studio-os/genesis/EXECUTIVE_HEADQUARTERS_ARCHITECTURE.md`](../../docs/studio-os/genesis/EXECUTIVE_HEADQUARTERS_ARCHITECTURE.md)
+**Runtime:** `src/studio-os-core/genesis/executive-headquarters/`  
+**Experience:** `/admin/studio/executive-headquarters`  
+**Platform guide:** [`../../docs/studio-os/genesis/EXECUTIVE_HEADQUARTERS_PLATFORM.md`](../../docs/studio-os/genesis/EXECUTIVE_HEADQUARTERS_PLATFORM.md)
 
 Executive Headquarters™ is Studio OS's flagship founder experience: the place where founders think, plan, build, decide, create, launch, learn, and operate their companies.
 

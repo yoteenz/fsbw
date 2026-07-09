@@ -3,7 +3,7 @@
 **Blueprint:** `genesis/articles/EXECUTIVE_HEADQUARTERS.md`  
 **Content home:** `genesis/executive-headquarters/`  
 **Program:** Studio OS Launch Stack™ — Sprint 1  
-**Status:** Architecture approved; runtime not yet implemented
+**Status:** Architecture approved; runtime implemented (Launch Stack Sprint 1)
 
 ---
 

@@ -44446,3 +44446,20 @@ Summary of the **full conversation in this chat**: (1) User requested and approv
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
 - **Conventions:** Future Headquarters implementation should build the memorable arrival + room system first, not a module grid. Headquarters owns experience composition only; all data projections must name future owning systems and replacement plans.
 
+---
+
+## 2026-07-09 — Executive Headquarters™ Launch Stack Sprint 1 implementation
+
+Summary of the **full conversation in this chat**: (1) User requested and approved Studio OS Build Order Engine™ implementation — completed and pushed (`2630b07cd`). (2) User requested Identity Engine™ architecture — completed and pushed (`c6ce8680c`). (3) User requested Identity Engine™ runtime — completed and pushed (`3183b0aa6`). (4) User requested Executive Headquarters™ architecture — completed and pushed (`4bb81399b`). (5) User then requested **IMPLEMENTATION SPRINT — STUDIO OS LAUNCH STACK™ SPRINT 1 — Executive Headquarters™**: build the first production-ready founder operating environment (not an admin dashboard) with Executive Atrium™, Founder Office™, Mission Control™, Daily Briefing™, Department Directory™, Orb Dock™, Company Pulse™, Mission Queue™, Executive Advisories™, spatial navigation, glass architecture, room routing, department framework, and modular platform infrastructure for Frontal Slayer, NDX, and future companies without architectural redesign.
+
+- **Context:** Architecture was approved; this sprint delivers the Headquarters shell and Genesis runtime with projection adapters while upstream systems mature.
+- **Decisions / outcomes:**
+  - Created **`src/studio-os-core/genesis/executive-headquarters/`** with room registry, spatial navigation, projection adapters (company, briefing, health, mission, room), bootstrap seed (generic — no Frontal Slayer hardcoding), and public engine API.
+  - **Persistence:** nested `executiveHeadquarters` key inside `genesis_v1`; `ensureExecutiveHeadquartersSubsystem()` wired into `ensureGenesisStore()`; framework module `'executive-headquarters'`.
+  - **Build Order sync:** marks `executive-headquarters` as `implemented` when seeded.
+  - **Immersive UI shell:** `ExecutiveHeadquartersWorkspace` + `ExecutiveHeadquartersShell` at **`/admin/studio/executive-headquarters`** (optional `/:roomSlug` for room routing); reuses headquarters-experience glass/marble components; persistent Orb Dock™; spatial room nav sidebar.
+  - **Hook:** `useExecutiveHeadquartersState` for ready view, stats, navigation, and room selection.
+  - **Docs:** `docs/studio-os/genesis/EXECUTIVE_HEADQUARTERS_PLATFORM.md`; updated architecture guide status, content home, `motherboard/CORE.md`.
+- **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
+- **Conventions:** Use `getExecutiveHeadquartersReadyView()` for shell composition; `openExecutiveHeadquartersRoom()` for spatial navigation. All upstream data via named projections — never duplicate mission/company/permission truth in Headquarters store.
+
