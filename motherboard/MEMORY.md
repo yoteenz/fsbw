@@ -44701,15 +44701,14 @@ Summary of the **full conversation in this chat**: Completed Architect's Prompt 
 
 ---
 
-## 2026-07-09 — Grand Atrium infinite loading fix (deploy)
+## 2026-07-09 — Grand Atrium black/white screen fix (dedicated route)
 
-Summary of **this chat**: User reported Grand Atrium URL still stuck on LoadingScreen after first routing fix (`grand-atrium` → `executive-headquarters` lazy load). Follow-up fix was written locally but **never pushed** — production still had nested lazy import of `executive-headquarters/page.tsx` causing circular chunk dependency with `index.js` and Suspense hang.
+Summary: User still saw loading GIF then black/white screen on `/admin/studio/companies/frontal-slayer/grand-atrium` after prior loading fix deployed.
 
-- **Root causes:** (1) Nested lazy load: `CompanyRouteContent` → `executive-headquarters/page` → imports back into main `index` bundle while index still loading company resolver. (2) `lazyWithRetry` returned never-resolving promise after stale-chunk reload attempt. (3) Optional `workspaceReady` gate could block on `studioEnabled` flicker.
-- **Fix shipped:**
-  - **`CompanyGrandAtriumPage.tsx`** — thin company-scoped wrapper: `DepartmentGoldenBuildShell` + `ExecutiveHeadquartersWorkspace` (no standalone page import).
-  - **`CompanyRouteContent.tsx`** — **synchronous** render for `executive-headquarters` segment (no nested Suspense); module-scoped lazy map for other rooms only.
-  - **`CompanyRouteResolver.tsx`** — `useLayoutEffect` to `enterWorkspace(company.workspaceId)` before content mounts.
-  - **`lazyWithRetry.ts`** — reject after 4s if reload does not occur (error boundary instead of infinite spinner).
-- **Verification:** `npm run build` passed.
+- **Root cause:** `DepartmentGoldenBuildShell` wrapped Grand Atrium with `#12100e` dark portal and pulled **514KB `StudioOrbMount`** into the company route resolver bundle; inner Executive HQ light shell failed to paint on mobile → black screen, then error/white flash.
+- **Fix:**
+  - **Dedicated App route** `studio/companies/:companySlug/grand-atrium` (before wildcard) lazy-loads `CompanyGrandAtriumPage` at top level — not nested inside `CompanyRouteResolver`.
+  - **`CompanyGrandAtriumPage`** renders `ExecutiveHeadquartersWorkspace` directly in a light full-viewport wrapper — **no `DepartmentGoldenBuildShell`**, no Orb chunk on this path.
+  - **`CompanyRouteContent`** redirects `executive-headquarters` segment to canonical grand-atrium URL; resolver bundle no longer includes HQ code.
+- **Verification:** `npm run build` passed; Playwright headless — URL stays on grand-atrium, `loading:0`, HQ nav + Executive Headquarters shell render.
 

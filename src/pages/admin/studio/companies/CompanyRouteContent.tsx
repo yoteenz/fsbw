@@ -9,7 +9,6 @@ import {
   studioCompanyGrandAtriumPath,
 } from '../../../../studio-os-core/company-routes';
 import { lazyWithRetry } from '../../../../utils/lazyWithRetry';
-import CompanyGrandAtriumPage from './CompanyGrandAtriumPage';
 
 /** Module-scoped lazy pages — do not create React.lazy() inside render/useMemo. */
 const LAZY_LEGACY_PAGES: Record<string, LazyExoticComponent<ComponentType>> = {
@@ -88,7 +87,6 @@ export function CompanyRouteContent() {
   const { enterWorkspace } = useWorkspace();
   const resolution = resolveCompanyRoute(pathname);
   const company = getCompanyBySlug(companySlug);
-  const segment = legacyPathToSegment(resolution.legacyPath);
 
   useEffect(() => {
     document.body.dataset.studioCompanySlug = companySlug;
@@ -113,12 +111,9 @@ export function CompanyRouteContent() {
     return <Navigate to={studioCompanyGrandAtriumPath(companySlug)} replace />;
   }
 
-  if (segment === 'executive-headquarters') {
-    return (
-      <CompanyRouteLoadErrorBoundary onBack={() => navigate('/admin/dashboard')}>
-        <CompanyGrandAtriumPage />
-      </CompanyRouteLoadErrorBoundary>
-    );
+  /** Grand Atrium is served by dedicated App route — avoid duplicate resolution here. */
+  if (legacyPathToSegment(resolution.legacyPath) === 'executive-headquarters') {
+    return <Navigate to={studioCompanyGrandAtriumPath(companySlug)} replace />;
   }
 
   if (!LazyPage) {

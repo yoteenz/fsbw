@@ -136,6 +136,10 @@ const AdminStudioNdxbookCreativeDirection = lazyWithRetry(() => import('./pages/
 const AdminStudioDepartmentVerticalSlice = lazyWithRetry(() => import('./pages/admin/studio/department/page'), 'AdminStudioDepartmentVerticalSlice');
 const AdminStudioCompaniesIndex = lazyWithRetry(() => import('./pages/admin/studio/companies/page'), 'AdminStudioCompaniesIndex');
 const AdminStudioCompanyRouteResolver = lazyWithRetry(() => import('./pages/admin/studio/companies/CompanyRouteResolver'), 'AdminStudioCompanyRouteResolver');
+const AdminStudioCompanyGrandAtrium = lazyWithRetry(
+  () => import('./pages/admin/studio/companies/CompanyGrandAtriumPage'),
+  'AdminStudioCompanyGrandAtrium'
+);
 const AdminStudioLegacyRouteRedirect = lazyWithRetry(() => import('./pages/admin/studio/LegacyRouteRedirect'), 'AdminStudioLegacyRouteRedirect');
 const AdminStudioTalentNetwork = lazyWithRetry(() => import('./pages/admin/studio/talent-network/page'), 'AdminStudioTalentNetwork');
 const AdminStudioMarketplace = lazyWithRetry(() => import('./pages/admin/studio/marketplace/page'), 'AdminStudioMarketplace');
@@ -1555,6 +1559,13 @@ function App() {
             <CompanyRouteShell>
               <Suspense fallback={<LoadingScreen />}>
                 <AdminStudioDepartmentVerticalSlice />
+              </Suspense>
+            </CompanyRouteShell>
+          } />
+          <Route path="studio/companies/:companySlug/grand-atrium" element={
+            <CompanyRouteShell>
+              <Suspense fallback={<LoadingScreen />}>
+                <AdminStudioCompanyGrandAtrium />
               </Suspense>
             </CompanyRouteShell>
           } />
