@@ -565,27 +565,27 @@ Every system below uses this blueprint envelope:
 - **Anti-patterns:** Automation without audit, hidden business rules, auto-execution with low confidence.
 - **Future Evolution:** Becomes trusted operational acceleration for every subsystem.
 
-### 8.3 Notification Engine™
+### 8.3 Organizational Attention™ (evolved from Notification Engine™)
 
-- **Official Name™:** Notification Engine™
-- **Purpose:** Sends meaningful alerts, prompts, reminders, and signals across Studio World without attention spam.
-- **Responsibilities:** Manage notification intent, audience, priority, channel, timing, status, actionability, learning.
-- **Core Philosophy:** Notifications should protect attention and create action, not noise.
+- **Official Name™:** Organizational Attention™
+- **Purpose:** Allocates finite executive and organizational attention to consequential, actionable, appropriately timed matters; Attention Delivery™ sends the resulting prompts, reminders, and signals.
+- **Responsibilities:** Manage attention candidates, assessment, budgets, routing, notification/delivery intent, audience, timing, status, actionability, and learning.
+- **Core Philosophy:** Attention should protect focus and create accountable action, not noise.
 - **Primary Users:** Founders, teams, learners, customers, AI workers, systems.
 - **Canonical Objects Used:** Notification™, Event™, Decision™, Priority™, Interaction™, Citizen™.
 - **Interactions:** Notification™, Recommendation™, Escalation™, Status Change™, Read/Action Event™.
 - **Decision Dependencies:** Priority™, Context™, Risk™, Timing™, Suggestion™, Human Preference.
 - **Knowledge Dependencies:** Relationship Memory™, Analytics Engine™, Decision Engine™, Mission Control™.
-- **Data Ownership:** Notification records, delivery state, read/action history, preference signals.
-- **Inputs:** Events, decisions, workflow states, user preferences, urgency.
-- **Outputs:** Notifications, reminders, action prompts, digest summaries.
-- **Events:** Notification Created™, Notification Delivered™, Notification Read™, Notification Acted™.
-- **Relationships:** `emits` Notifications™, `supports` Workflows™, `learns_from` User Action™.
-- **Expansion Strategy:** Smart digests, spatial notifications, adaptive timing, cross-channel delivery.
-- **Success Metrics:** Action rate, low dismissal noise, timing relevance, user trust.
-- **Failure Modes:** Spam, missed critical alerts, wrong audience, stale notifications.
-- **Anti-patterns:** Notify everything, alerts without action, notification logic hidden in features.
-- **Future Evolution:** Becomes attention orchestration for Studio World.
+- **Data Ownership:** Attention Candidate™, Assessment™, Plan™, Budget™, Outcome™, delivery state, read/action history, preference signals.
+- **Inputs:** Events, governed decisions, workflow/mission states, user preferences, urgency, importance, risk, authority, and focus context.
+- **Outputs:** Attention briefs, routed actions, notifications, reminders, action prompts, digest summaries.
+- **Events:** Attention Assessed™, Attention Planned™, Notification Delivered™, Attention Acted™, Attention Deferred™.
+- **Relationships:** `routes` Attention™, `emits` Notifications™, `supports` Workflows™, `learns_from` Attention Outcome™.
+- **Expansion Strategy:** Smart digests, spatial briefings, adaptive timing, cross-channel delivery, protected executive attention budgets.
+- **Success Metrics:** Correctly routed action, low interruption noise, timing relevance, focus protection, user trust.
+- **Failure Modes:** Attention spam, missed critical escalation, wrong recipient, stale attention plan, engagement optimization.
+- **Anti-patterns:** Notify everything, attention without action, notification logic hidden in features, duplicate priority/decision ownership.
+- **Constitutional specification:** [Organizational Attention™](./ORGANIZATIONAL_ATTENTION.md).
 
 ---
 

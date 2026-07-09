@@ -90,7 +90,7 @@ Orb may shift role inside a session, but it must make the posture legible.
 Orb owns:
 
 - Context assembly
-- Attention judgment
+- Session-local attention composition and focus guarding for approved Attention Plans™
 - Briefing composition
 - Recommendation generation
 - Explanation and evidence trace

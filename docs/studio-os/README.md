@@ -62,6 +62,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/CONSTITUTION_FIRST_PRINCIPLE.md](./genesis/CONSTITUTION_FIRST_PRINCIPLE.md) | **Constitution First Principle™ guide** — Terra/Composer roles, implementation authority, and Architecture Review Request™ workflow |
 | [../../genesis/articles/COMPANY_GENOME_EVOLUTION.md](../../genesis/articles/COMPANY_GENOME_EVOLUTION.md) | **Company Genome Evolution Lifecycle™** — constitutional lifecycle governance for Genome revision, projection, restoration, and contradiction handling |
 | [genesis/COMPANY_GENOME_EVOLUTION.md](./genesis/COMPANY_GENOME_EVOLUTION.md) | **Company Genome Evolution Lifecycle™ guide** — proportional gates, immutable revision, diff, selective regeneration, and restoration policy |
+| [../../genesis/articles/ORGANIZATIONAL_ATTENTION.md](../../genesis/articles/ORGANIZATIONAL_ATTENTION.md) | **Organizational Attention™** — constitutional governance for executive attention allocation, briefing, protected focus, and delivery |
+| [genesis/ORGANIZATIONAL_ATTENTION.md](./genesis/ORGANIZATIONAL_ATTENTION.md) | **Organizational Attention™ guide** — candidate assessment, attention plans, attention classes, consumer boundaries, and outcomes |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

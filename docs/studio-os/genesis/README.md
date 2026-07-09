@@ -28,6 +28,7 @@
 - [`COMPANY_GENOME.md`](./COMPANY_GENOME.md) — Company Genome™ constitutional specification: living organizational model, organization graph, learning ledger, governed projections, and ownership boundaries
 - [`CONSTITUTION_FIRST_PRINCIPLE.md`](./CONSTITUTION_FIRST_PRINCIPLE.md) — Constitution First Principle™: architecture-before-implementation law, Terra/Composer authority boundary, and Architecture Review Request™ workflow
 - [`COMPANY_GENOME_EVOLUTION.md`](./COMPANY_GENOME_EVOLUTION.md) — Company Genome Evolution Lifecycle™: proportional gates, immutable revisions, constitutional diffs, selective projections, restoration, and conflict governance
+- [`ORGANIZATIONAL_ATTENTION.md`](./ORGANIZATIONAL_ATTENTION.md) — Organizational Attention™: executive attention allocation, protected focus, briefing, delivery, and outcome governance
 - [`STUDIO_INTELLIGENCE_LAYER_PLATFORM.md`](./STUDIO_INTELLIGENCE_LAYER_PLATFORM.md) — Studio Intelligence Layer runtime platform guide
 - [`EXPERIENCE_LAB_PLATFORM.md`](./EXPERIENCE_LAB_PLATFORM.md) — Experience Lab runtime platform guide
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

@@ -1635,6 +1635,48 @@ Rules:
    govern projections/runtime state. Contradictions become governed decision
    objects, never silent overrides.
 
+### 9B.25 Organizational Attention rule
+
+The permanent governance model for executive and organizational attention is
+defined in **[Organizational Attention™](./genesis/articles/ORGANIZATIONAL_ATTENTION.md)**.
+
+Studio OS must allocate scarce attention to actionable, consequential,
+appropriately timed matters—not display every available signal.
+
+Rules:
+
+1. **Organizational Attention™** evolves Notification Engine™ into the
+   constitutional owner of cross-source attention assessment, allocation,
+   routing, timing, batching, suppression, budgets, delivery intent, and
+   Attention Outcomes™. **Attention Delivery™** is its subsystem.
+2. Organizational Attention™ is not a Company Genome™ capability and must not
+   duplicate Company Genome, Manual, Decision, Institute, Mission, Workflow,
+   Studio Intelligence, Orb, or Headquarters truth.
+3. Company Genome™ supplies versioned strategic/organizational context; Company
+   Operating Manual™ supplies decision rights, escalation policy, focus policy,
+   approvals, and delegation thresholds; Organizational Attention™ applies those
+   constraints through pinned briefs.
+4. Priority™, Risk™, Escalation™, Approval™, and Decision™ remain owned by the
+   Universal Decision Engine™. Attention allocation determines whether, when,
+   and to whom these matters consume attention; it does not alter their truth.
+   Urgency and importance must remain distinct.
+5. The canonical attention lifecycle is Candidate → Assessment → Plan → observe,
+   digest, route, briefing, or interrupt → Outcome → calibrated learning. A4
+   interruption requires stated reason, evidence/source, consequence of delay,
+   authorized recipient, and next action/decision.
+6. Orb owns session-local composition, tone, and focus guarding for an approved
+   Attention Plan™; Executive Headquarters™ renders attention projections;
+   neither owns a company-wide attention registry. Orb may not silently suppress
+   mandatory safety, legal, policy, or founder-required attention.
+7. Studio Intelligence Layer™ produces evidence-backed candidates and consumes
+   Attention Outcomes™ for calibration, but must not self-deliver, self-escalate,
+   or self-authorize recommendations.
+8. Organizational Attention™ may route approved priority/deadline constraints
+   to Workflow Engine™, but cannot execute, reorder, or mutate workflows.
+9. Attention must be selective, explainable, auditable, tenant-scoped, policy-
+   constrained, and founder-overridable. It must never optimize for notification
+   volume, opens, clicks, requester seniority, or employee surveillance.
+
 ---
 
 ## 10. Compilation Model
