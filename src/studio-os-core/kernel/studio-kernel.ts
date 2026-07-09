@@ -32,6 +32,9 @@ export type StudioBootPhase = (typeof STUDIO_BOOT_ORDER)[number];
 
 const SAFE_MODE_SKIP_MODULES = new Set<string>(['workspace-runtime']);
 
+/** Unique per module load — detect duplicate kernel bundles in boot-debug. */
+export const STUDIO_KERNEL_INSTANCE_ID = `kernel-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
 let bootPromise: Promise<StudioBootReport> | null = null;
 let lastReport: StudioBootReport | null = null;
 let lastLiveState: StudioBootLiveState | null = null;
@@ -40,6 +43,7 @@ let currentModuleId: string | null = null;
 let bootRunId = 0;
 let activeBootRunId = 0;
 let bootEventLog: StudioBootEventLogEntry[] = [];
+let lastDispatchAt = 0;
 
 function logBoot(moduleId: string, message: string, detail?: unknown): void {
   console.warn(`[StudioKernel] ${moduleId}: ${message}`, detail ?? '');
@@ -126,6 +130,7 @@ function dispatchBootUpdated(
   opts?: { started?: boolean; waitingForManualStart?: boolean }
 ): void {
   lastLiveState = buildLiveState(order, complete, ready, errors, warnings, fallbacksUsed, safeMode, opts);
+  lastDispatchAt = Date.now();
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new CustomEvent(STUDIO_BOOT_EVENT, { detail: lastLiveState }));
   }
@@ -376,10 +381,62 @@ export function getStudioBootReport(): StudioBootReport | null {
 }
 
 export function getStudioBootLiveState(): StudioBootLiveState | null {
-  if (!lastLiveState) return null;
+  if (lastLiveState) {
+    return {
+      ...lastLiveState,
+      elapsedMs: bootStartedAt ? Date.now() - bootStartedAt : lastLiveState.elapsedMs,
+    };
+  }
+  if (bootStartedAt > 0) {
+    return buildLiveState(STUDIO_BOOT_ORDER, false, false, [], [], [], false, { started: true });
+  }
+  return null;
+}
+
+/** Alias for boot-debug hydration when events may have fired before listener attach. */
+export function getStudioKernelLastLiveState(): StudioBootLiveState | null {
+  return getStudioBootLiveState();
+}
+
+export type StudioKernelWireDebug = {
+  kernelInstanceId: string;
+  dispatchedEventName: string;
+  lastDispatchAt: number;
+  bootStartedAt: number;
+  hasLastLiveState: boolean;
+  lastStarted: boolean;
+  activeBootRunId: number;
+};
+
+export function getStudioKernelWireDebug(): StudioKernelWireDebug {
   return {
-    ...lastLiveState,
-    elapsedMs: bootStartedAt ? Date.now() - bootStartedAt : lastLiveState.elapsedMs,
+    kernelInstanceId: STUDIO_KERNEL_INSTANCE_ID,
+    dispatchedEventName: STUDIO_BOOT_EVENT,
+    lastDispatchAt,
+    bootStartedAt,
+    hasLastLiveState: lastLiveState !== null,
+    lastStarted: lastLiveState?.started ?? bootStartedAt > 0,
+    activeBootRunId,
+  };
+};
+
+export type DebugPrimeBootStartResult = {
+  runId: number;
+  kernelInstanceId: string;
+  dispatchedEventName: string;
+  lastDispatchAt: number;
+  liveSnapshot: StudioBootLiveState | null;
+};
+
+/** Boot-debug only — calls primeBootStart() directly (dispatches started:true). */
+export function debugInvokePrimeBootStart(): DebugPrimeBootStartResult {
+  const runId = primeBootStart(STUDIO_BOOT_ORDER, false);
+  return {
+    runId,
+    kernelInstanceId: STUDIO_KERNEL_INSTANCE_ID,
+    dispatchedEventName: STUDIO_BOOT_EVENT,
+    lastDispatchAt,
+    liveSnapshot: getStudioBootLiveState(),
   };
 }
 

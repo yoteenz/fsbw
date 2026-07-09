@@ -45096,3 +45096,15 @@ Summary of the **full conversation in this chat**: Emergency debug sprint; Studi
 - **Skip reason display:** `getStudioBootstrapStartBlockReason()` in `studio-bootstrap.ts` — shows already running / already complete / missing registry / missing modules / unknown when start no-ops.
 - **Route registration unchanged:** `StudioDebugRoutes.tsx` → `BootDebugPage` at `/__boot-debug`.
 - **Verification:** `npm run build` passed; Playwright — Started: yes, storage READY, wire log + START BOOTSTRAP button present.
+
+---
+
+## 2026-07-09 — Final boot wiring trace (/__boot-debug → primeBootStart)
+
+Summary of the **full conversation in this chat**: Emergency debug; Studio Kernel/Bootstrap; public debug routes; boot hang fix; boot start fix (`87270c2b6`); boot debug route wiring (`6a254c4de`). User confirmed `started` becomes true only in `studio-kernel.ts` `primeBootStart()` line 227 but page still showed Started: no — requested full wiring trace.
+
+- **Root cause (listener timing):** Boot-debug registered `STUDIO_BOOT_EVENT` listener in `useEffect` but called `StudioBootstrap.start()` in `useLayoutEffect` — events from `primeBootStart()` fired **before** listener attached; `getStudioBootLiveState()` returned null when `lastLiveState` unset, so panel stayed idle.
+- **Fix — listener first:** `useLayoutEffect` now attaches listener → hydrates from `getStudioBootstrapLastLiveState()` → then calls start.
+- **Fix — kernel debug exports:** `STUDIO_KERNEL_INSTANCE_ID`, `getStudioKernelLastLiveState()`, `getStudioKernelWireDebug()`, `debugInvokePrimeBootStart()` (calls `primeBootStart` directly); bootstrap re-exports as `debugCallPrimeBootStart`, `getStudioBootstrapLastLiveState`, `getStudioBootstrapKernelWireDebug`.
+- **Fix — boot-debug page:** Visible wire diagnostics (kernel instance ids match, event names, listener attached, last event ts, last snapshot started); route log entries (page mounted, calling primeBootStart, primeBootStart returned, boot event received); **CALL primeBootStart()** test button; broken-link banner for duplicate singleton / event mismatch / listener timing.
+- **Verification:** Playwright — Started: yes, instances match, listener yes, boot event received, CALL primeBootStart works.
