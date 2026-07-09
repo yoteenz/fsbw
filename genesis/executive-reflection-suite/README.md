@@ -4,8 +4,9 @@
 **Program:** Studio OS Launch Stack™  
 **Parent:** Executive Headquarters™  
 **Includes:** Evolution Room™, Boardroom™, Founder's Annual Summit™, Victory Gallery™, Lessons Learned Library™, Opportunity Observatory™, Future Vision Theater™, Founder Diary™, Escape Velocity™, Genesis Learning Loop™  
-**Runtime:** architecture approved draft — runtime pending  
-**Architecture guide:** [`../../docs/studio-os/genesis/EXECUTIVE_REFLECTION_SUITE.md`](../../docs/studio-os/genesis/EXECUTIVE_REFLECTION_SUITE.md)
+**Runtime:** implemented — `src/studio-os-core/genesis/executive-reflection-suite/` · UI `/admin/studio/executive-reflection`  
+**Architecture guide:** [`../../docs/studio-os/genesis/EXECUTIVE_REFLECTION_SUITE.md`](../../docs/studio-os/genesis/EXECUTIVE_REFLECTION_SUITE.md)  
+**Platform guide:** [`../../docs/studio-os/genesis/EXECUTIVE_REFLECTION_SUITE_PLATFORM.md`](../../docs/studio-os/genesis/EXECUTIVE_REFLECTION_SUITE_PLATFORM.md)
 
 The Executive Reflection Suite™ is Studio OS's complete reflective operating environment.
 

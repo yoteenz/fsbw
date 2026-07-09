@@ -3,7 +3,7 @@
 **Blueprint:** `genesis/articles/EXECUTIVE_REFLECTION_SUITE.md`  
 **Content home:** `genesis/executive-reflection-suite/`  
 **Parent:** Executive Headquarters™  
-**Runtime status:** architecture approved draft — implementation pending
+**Runtime status:** implemented — `src/studio-os-core/genesis/executive-reflection-suite/` · UI `/admin/studio/executive-reflection`
 
 ---
 

@@ -444,6 +444,10 @@ const AdminStudioEvolutionRoom = lazyWithRetry(
   () => import('./pages/admin/studio/evolution-room/page'),
   'AdminStudioEvolutionRoom'
 );
+const AdminStudioExecutiveReflectionSuite = lazyWithRetry(
+  () => import('./pages/admin/studio/executive-reflection/page'),
+  'AdminStudioExecutiveReflectionSuite'
+);
 const AdminStudioKnowledgeCore = lazyWithRetry(
   () => import('./pages/admin/studio/knowledge-core/page'),
   'AdminStudioKnowledgeCore'
@@ -2236,6 +2240,16 @@ function App() {
           <Route path="studio/evolution-room/:roomSlug" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioEvolutionRoom />
+            </Suspense>
+          } />
+          <Route path="studio/executive-reflection" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExecutiveReflectionSuite />
+            </Suspense>
+          } />
+          <Route path="studio/executive-reflection/:roomSlug" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExecutiveReflectionSuite />
             </Suspense>
           } />
           <Route path="studio/genesis" element={

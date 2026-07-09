@@ -16,6 +16,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'founder-acceptance-testing',
   'live-validation-system',
   'evolution-room',
+  'executive-reflection-suite',
   'articles',
   'adr',
   'proposals',

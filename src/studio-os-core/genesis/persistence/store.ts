@@ -17,6 +17,7 @@ import { emptyOrbStore } from '../orb/persistence';
 import { emptyFounderAcceptanceTestingStore } from '../founder-acceptance-testing/persistence';
 import { emptyLiveValidationSystemStore } from '../live-validation-system/persistence';
 import { emptyEvolutionRoomStore } from '../evolution-room/persistence';
+import { emptyExecutiveReflectionSuiteStore } from '../executive-reflection-suite/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -79,6 +80,8 @@ export function readGenesisStore(): GenesisStore {
         parsed.founderAcceptanceTesting ?? emptyFounderAcceptanceTestingStore(),
       liveValidationSystem: parsed.liveValidationSystem ?? emptyLiveValidationSystemStore(),
       evolutionRoom: parsed.evolutionRoom ?? emptyEvolutionRoomStore(),
+      executiveReflectionSuite:
+        parsed.executiveReflectionSuite ?? emptyExecutiveReflectionSuiteStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

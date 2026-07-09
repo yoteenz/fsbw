@@ -116,9 +116,16 @@ export function EvolutionRoomWorkspace() {
           >
             Live Validation →
           </button>
-          <button
-            type="button"
-            onClick={refresh}
+            <button
+              type="button"
+              onClick={() => navigate('/admin/studio/executive-reflection')}
+              className="rounded-lg border border-amber-500/30 px-4 py-2 text-sm text-amber-200/90 hover:bg-amber-500/10"
+            >
+              Reflection Suite™ →
+            </button>
+            <button
+              type="button"
+              onClick={refresh}
             className="rounded border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-[10px] uppercase tracking-wider text-red-700"
           >
             Refresh Brief

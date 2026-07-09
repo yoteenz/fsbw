@@ -33,3 +33,4 @@ export * from './orb';
 export * from './founder-acceptance-testing';
 export * from './live-validation-system';
 export * from './evolution-room';
+export * from './executive-reflection-suite';

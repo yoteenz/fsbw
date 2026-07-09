@@ -235,6 +235,7 @@ export type GenesisStore = {
   founderAcceptanceTesting?: import('./founder-acceptance-testing/types').FatStore;
   liveValidationSystem?: import('./live-validation-system/types').LvsStore;
   evolutionRoom?: import('./evolution-room/types').ErStore;
+  executiveReflectionSuite?: import('./executive-reflection-suite/types').ErsStore;
   bootstrappedAt?: string;
 };
 
