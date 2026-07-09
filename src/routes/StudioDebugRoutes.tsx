@@ -9,6 +9,7 @@ import ChunkDebugPage from '../pages/debug/chunk-debug/page';
 import BootDebugPage from '../pages/debug/boot-debug/page';
 import ExperienceLabSafeDebugPage from '../pages/debug/experience-lab-safe/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
+import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 
 const App = lazy(() => import('../App'));
 
@@ -46,9 +47,11 @@ export default function StudioDebugRoutes() {
       <Route
         path="*"
         element={
-          <Suspense fallback={<AppLoadingFallback />}>
-            <App />
-          </Suspense>
+          <RootAppErrorBoundary>
+            <Suspense fallback={<AppLoadingFallback />}>
+              <App />
+            </Suspense>
+          </RootAppErrorBoundary>
         }
       />
     </Routes>

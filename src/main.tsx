@@ -29,7 +29,15 @@ if (rootEl) {
   )
 
   // Bootstrap after React is mounted — avoids production chunk init order failures.
-  void import('./studio-os-core/bootstrap/studio-bootstrap-init').then(({ ensureStudioBootstrapStarted }) => {
-    ensureStudioBootstrapStarted({ through: 'ui-render' })
-  })
+  void import('./studio-os-core/bootstrap/studio-bootstrap-init')
+    .then(({ ensureStudioBootstrapStarted }) => ensureStudioBootstrapStarted({ through: 'ui-render' }))
+    .catch((err: unknown) => {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error('[StudioBootstrap] orchestrator failed to start', err);
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(
+          new CustomEvent('studio-bootstrap-start-failed', { detail: { message: msg } })
+        );
+      }
+    });
 }

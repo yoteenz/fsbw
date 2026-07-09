@@ -51,6 +51,8 @@ Studio Bootstrap never left IDLE because **startup orchestration was hook-driven
 
 > **Regression note (2026-07-09):** Dedicated `studio-kernel` / `studio-bootstrap` manualChunks caused a production-only init-order failure — `vendor.js` executed `React.createContext` before `vendor-react` initialized, blanking `/__boot-debug`. Fix: remove those manualChunks; start bootstrap via dynamic import after `ReactDOM.createRoot`.
 
+> **Regression note (2026-07-09, follow-up):** Splitting `vendor` / `vendor-react` / `vendor-router` left a **circular chunk dependency** (`vendor` ↔ `vendor-react`) that can still blank the app after the loading animation. Fix: use a **single `vendor` chunk** for all `node_modules`; add `RootAppErrorBoundary` around lazy `App`; catch bootstrap orchestrator import failures in `main.tsx`.
+
 ---
 
 ## Verification

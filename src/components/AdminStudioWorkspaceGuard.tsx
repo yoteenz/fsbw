@@ -17,6 +17,16 @@ import { getAccessToken } from '../utils/api';
 import LoadingScreen from './base/LoadingScreen';
 
 const MEMBERSHIP_API_TIMEOUT_MS = 2000;
+const WORKSPACE_BOOTSTRAP_TIMEOUT_MS = 15000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      window.setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+    }),
+  ]);
+}
 
 async function resolveMembershipInBackground(accessToken?: string | null): Promise<void> {
   const cached = getCachedOrgMembership();
@@ -55,7 +65,11 @@ export default function AdminStudioWorkspaceGuard() {
 
     void (async () => {
       try {
-        await ensureWorkspacesBootstrapped();
+        await withTimeout(
+          ensureWorkspacesBootstrapped(),
+          WORKSPACE_BOOTSTRAP_TIMEOUT_MS,
+          'Studio workspace bootstrap'
+        );
         if (!cancelled) {
           activateWorkspaceContext(
             resolveBootstrapWorkspaceId(pathname, search, getCachedOrgMembership())
