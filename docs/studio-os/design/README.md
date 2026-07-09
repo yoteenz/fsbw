@@ -28,11 +28,12 @@ When Studio OS visual language evolves, update **one governance layer** — ever
 | # | Document | Role |
 |---|----------|------|
 | 1 | [STUDIO_DESIGN_CONSTITUTION.md](./STUDIO_DESIGN_CONSTITUTION.md) | Governing document — no product may override |
-| 2 | [DESIGN_LANGUAGE_SYSTEM.md](./DESIGN_LANGUAGE_SYSTEM.md) | Permanent principles — survives complete redesigns |
-| 3 | [COMPONENT_CATALOG.md](./COMPONENT_CATALOG.md) | Canonical reusable component library |
-| 4 | [DESIGN_REGISTRY.md](./DESIGN_REGISTRY.md) | Visual source of truth · versions · compatibility |
-| 5 | [DESIGN_REVISION_FRAMEWORK.md](./DESIGN_REVISION_FRAMEWORK.md) | Governed visual change (VDR system) |
-| 6 | [DESIGN_HEALTH.md](./DESIGN_HEALTH.md) | Design Validator™ — PASS · WARNING · FAIL |
+| 2 | [../../../genesis/articles/STUDIO_OS_DESIGN_DNA.md](../../../genesis/articles/STUDIO_OS_DESIGN_DNA.md) | Constitutional visual grammar — instantiate, never reinterpret |
+| 3 | [DESIGN_LANGUAGE_SYSTEM.md](./DESIGN_LANGUAGE_SYSTEM.md) | Permanent principles — survives complete redesigns |
+| 4 | [COMPONENT_CATALOG.md](./COMPONENT_CATALOG.md) | Canonical reusable component library |
+| 5 | [DESIGN_REGISTRY.md](./DESIGN_REGISTRY.md) | Visual source of truth · versions · compatibility |
+| 6 | [DESIGN_REVISION_FRAMEWORK.md](./DESIGN_REVISION_FRAMEWORK.md) | Governed visual change (VDR system) |
+| 7 | [DESIGN_HEALTH.md](./DESIGN_HEALTH.md) | Design Validator™ — PASS · WARNING · FAIL |
 | — | [revisions/vdr-registry.yaml](./revisions/vdr-registry.yaml) | VDR historical record (VDR-000 baseline) |
 
 ---
@@ -43,8 +44,10 @@ When Studio OS visual language evolves, update **one governance layer** — ever
 Studio Constitution™ (architecture)
         ↓ informs
 Studio Design Constitution™ (visual)
+        ↓ constitutionalizes
+Studio OS Design DNA™
         ↓ implements
-Design Language System™ + Component Catalog™
+Design Language System™ + Component Catalog™ + Design Token Engine™
         ↓ tracked in
 Design Registry™
         ↓ changed via

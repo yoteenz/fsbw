@@ -132,6 +132,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [The Evolution Room™](./genesis/articles/EVOLUTION_ROOM.md)
     - [Executive Reflection Suite™](./genesis/articles/EXECUTIVE_REFLECTION_SUITE.md)
     - [The Architect's Prompt Library™](./genesis/articles/ARCHITECTS_PROMPT_LIBRARY.md)
+    - [Studio OS Design DNA™](./genesis/articles/STUDIO_OS_DESIGN_DNA.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1165,6 +1166,38 @@ Rules:
    automatically modify Genesis.
 8. The Library belongs inside the Institute of Knowledge™ and should communicate
    precision, permanence, craftsmanship, and institutional memory.
+
+### 9B.13 Studio OS Design DNA rule
+
+The canonical Studio OS visual grammar is defined in
+**[Studio OS Design DNA™](./genesis/articles/STUDIO_OS_DESIGN_DNA.md)**.
+
+Studio OS Design DNA™ is not a UI style guide. It is the permanent visual
+constitution for every Headquarters, department, room, workspace, scene,
+application, animation, and AI experience.
+
+Rules:
+
+1. Studio OS is its own visual category. It must not imitate traditional SaaS,
+   dashboards, generic operating systems, or disconnected component libraries.
+2. Future work must instantiate Design DNA™; it must not reinterpret the visual
+   constitution without governed Design DNA revision.
+3. Every room must derive from the master scene template: atmosphere, hero
+   environment, architectural frame, primary focal object, executive summary,
+   feature panels, navigation layer, Orb integration, and context ribbon.
+4. Users should recognize location before reading body text through the
+   Cognitive Navigation System™: Department Color™ → Division Shade™ → Room
+   Accent™ → state layers.
+5. Departments own permanent primary colors. Rooms inherit department identity;
+   room accents do not redesign the department.
+6. Marble, architectural glass, crystal/acrylic, fine metal, manuscript/paper,
+   light rails, and holographic fields are the constitutional material families.
+7. Orb must remain persistent, accessible, and contextually useful in Studio OS
+   rooms unless a cinematic sequence intentionally relocates it temporarily.
+8. Every future room must pass Design DNA Compliance before becoming canonical.
+9. Design Token Engine™, Component Registry™, and Design Compliance Engine™ are
+   implementation mechanisms for this visual constitution.
+10. Accessibility failures are Design DNA failures.
 
 ---
 

@@ -38,6 +38,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/EVOLUTION_ROOM.md](./genesis/EVOLUTION_ROOM.md) | **The Evolution Room™** — Executive Board Room experience, Evolution Council™, Future Wall™, Legacy Wall™ |
 | [genesis/EXECUTIVE_REFLECTION_SUITE.md](./genesis/EXECUTIVE_REFLECTION_SUITE.md) | **Executive Reflection Suite™** — full reflection wing, rituals, ceremonies, health architecture, Boardroom™, Annual Summit™ |
 | [genesis/ARCHITECTS_PROMPT_LIBRARY.md](./genesis/ARCHITECTS_PROMPT_LIBRARY.md) | **The Architect's Prompt Library™** — prompt lifecycle, model intelligence, quality scoring, Genesis references, execution history |
+| [../../genesis/articles/STUDIO_OS_DESIGN_DNA.md](../../genesis/articles/STUDIO_OS_DESIGN_DNA.md) | **Studio OS Design DNA™** — constitutional visual grammar for every Headquarters, department, room, workspace, scene, application, animation, and AI experience |
+| [genesis/STUDIO_OS_DESIGN_DNA.md](./genesis/STUDIO_OS_DESIGN_DNA.md) | **Studio OS Design DNA™ guide** — implementation-facing summary, color framework, scene template, tokens, and compliance checklist |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

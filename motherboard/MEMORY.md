@@ -44675,7 +44675,6 @@ Summary of the **full conversation in this chat**: Built Launch Stack governance
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-09 — Grand Atrium routing fix (Executive Headquarters™)
 
 Summary of the **whole conversation in this chat**: User reported **`/admin/studio/companies/frontal-slayer/grand-atrium`** still rendering legacy Mission Control instead of immersive **Executive Headquarters™**; requested routing investigation only — no UI redesign, no duplicate pages.
@@ -44689,14 +44688,15 @@ Summary of the **whole conversation in this chat**: User reported **`/admin/stud
   - `src/pages/admin/studio/companies/CompanyRouteContent.tsx` — added `'executive-headquarters'` lazy loader.
 - **Expected result:** Grand Atrium company URL stays canonical; mounts Executive Headquarters™ while URL remains company-scoped.
 - **Known follow-up (not in scope):** In-room navigation inside `ExecutiveHeadquartersWorkspace` still uses global `/admin/studio/executive-headquarters/:roomSlug` paths.
-=======
+
+---
+
 ## 2026-07-09 — Studio Orb clickability fix (immersive wings)
 
 Summary of the **full conversation in this chat**: Completed Architect's Prompt Library™ architecture + full runtime implementation; user reported **Studio Orb no longer clickable** on immersive Institute pages.
 
 - **Root cause:** `DepartmentGoldenBuildShell` renders a full-viewport fixed layer (`gb-immersive-portal`, z-index 200) for Prompt Library, Evolution Room, and Executive Reflection Suite. `StudioOrbMount` was a DOM sibling but could sit under the portal's hit layer in practice. Separately, the Prompt Library **Orb Librarian header** showed a decorative "ORB" circle that was never wired to `toggleRadial` — users clicked it expecting the radial menu.
 - **Fix:** Portal `StudioOrbMount` to `document.body` via `createPortal` in `DepartmentGoldenBuildShell.tsx` so the real Studio Orb (z-index 100050) always receives clicks. Wire Prompt Library `OrbLibrarianHeader` decorative orb as a button calling `useStudioOrb().toggleRadial()`.
->>>>>>> 602447b30 (Fix Studio Orb clickability in immersive DepartmentGoldenBuildShell wings)
 - **Verification:** `npm run build` passed.
 
 ---
@@ -44711,4 +44711,17 @@ Summary: User still saw loading GIF then black/white screen on `/admin/studio/co
   - **`CompanyGrandAtriumPage`** renders `ExecutiveHeadquartersWorkspace` directly in a light full-viewport wrapper — **no `DepartmentGoldenBuildShell`**, no Orb chunk on this path.
   - **`CompanyRouteContent`** redirects `executive-headquarters` segment to canonical grand-atrium URL; resolver bundle no longer includes HQ code.
 - **Verification:** `npm run build` passed; Playwright headless — URL stays on grand-atrium, `loading:0`, HQ nav + Executive Headquarters shell render.
+
+---
+
+## 2026-07-09 — Studio OS Design DNA™ constitutional architecture
+
+Summary of the **full conversation in this chat**: Implemented The Architect's Prompt Library™ as a permanent Institute of Knowledge™ subsystem; fixed Studio Orb clickability in immersive DepartmentGoldenBuildShell wings; then authored **Studio OS Design DNA™ Version 1.0** as the constitutional visual grammar for every future Studio OS Headquarters, department, room, workspace, scene, AI experience, and product.
+
+- **Prompt Library context:** User requested full implementation of The Architect's Prompt Library™ with Registry, Collections, Versioning, Relationships, Search, Analytics, Quality, Execution History, Comparison, Recommendations, Dependencies, Validation, Canonization, Archiving, and Model Intelligence. Built `src/studio-os-core/genesis/architects-prompt-library/`, UI `/admin/studio/prompt-library` + 12 subrooms, hook `useArchitectsPromptLibraryState`, platform docs, Genesis store integration under `architectsPromptLibrary`, and Orb Librarian Mode™.
+- **Orb fix context:** User reported the Orb was no longer clickable. Root cause was immersive shell hit-layer/portal ordering plus decorative Prompt Library ORB not wired to radial menu. Fixed by portaling `StudioOrbMount` to `document.body` in `DepartmentGoldenBuildShell.tsx` and making Prompt Library header ORB call `useStudioOrb().toggleRadial()`.
+- **Latest user request:** MASTER ARCHITECTURE PROJECT — **Studio OS Design DNA™ Version 1.0**. User specified this is not a UI style guide, but the permanent constitutional design language that every future Headquarters, department, room, workspace, scene, application, animation, and AI experience must inherit; after approval Studio OS should never be redesigned, only instantiated.
+- **New canon:** Added `genesis/articles/STUDIO_OS_DESIGN_DNA.md`, content home `genesis/studio-os-design-dna/README.md`, compiled guide `docs/studio-os/genesis/STUDIO_OS_DESIGN_DNA.md`, and Genesis rule **§9B.13 Studio OS Design DNA rule**. Updated `Genesis.md`, `genesis/README.md`, `genesis/articles/README.md`, `docs/studio-os/README.md`, `docs/studio-os/design/README.md`, `docs/studio-os/design/DESIGN_REGISTRY.md`, `docs/studio-os/developer-handbook/DESIGN_GOVERNANCE.md`, `docs/studio-os/design-token-engine.md`, and motherboard CORE.
+- **Design DNA contents:** Defines prime directive ("Studio OS should never be redesigned"), anti-patterns (no SaaS/dashboard/OS imitation), design philosophy, universal scene grammar, master room template, layout/grid/spacing/visual rhythm, information hierarchy, camera system, environmental storytelling, material language, glass architecture, lighting, typography, iconography/illustration, Orb placement/states, panels/cards/buttons/navigation, Cognitive Navigation System™, permanent department color framework, room archetypes, motion/animation language, interaction/loading/arrival patterns, visual density, accessibility floor, design token families, future extensibility, Design DNA Compliance Checklist™, and governance scoring.
+- **Permanent design fact:** Future Studio OS visual work should instantiate Design DNA™; new rooms must derive from the master scene template and pass Design DNA compliance before becoming canonical. Design Token Engine™, Component Registry™, and Design Compliance Engine™ implement/enforce this visual constitution.
 

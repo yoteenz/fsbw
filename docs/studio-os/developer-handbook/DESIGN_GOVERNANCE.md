@@ -15,11 +15,12 @@
 | # | Document | Path | Role |
 |---|----------|------|------|
 | 1 | Studio Design Constitution™ | `design/STUDIO_DESIGN_CONSTITUTION.md` | Governing visual law |
-| 2 | Design Language System™ | `design/DESIGN_LANGUAGE_SYSTEM.md` | Permanent feel principles |
-| 3 | Component Catalog™ | `design/COMPONENT_CATALOG.md` | `comp-*` canonical library |
-| 4 | Design Registry™ | `design/DESIGN_REGISTRY.md` | Version truth |
-| 5 | Design Revision Framework™ | `design/DESIGN_REVISION_FRAMEWORK.md` | VDR-### system |
-| 6 | Design Health™ | `design/DESIGN_HEALTH.md` | Visual validator |
+| 2 | Studio OS Design DNA™ | `genesis/articles/STUDIO_OS_DESIGN_DNA.md` | Constitutional visual grammar |
+| 3 | Design Language System™ | `design/DESIGN_LANGUAGE_SYSTEM.md` | Permanent feel principles |
+| 4 | Component Catalog™ | `design/COMPONENT_CATALOG.md` | `comp-*` canonical library |
+| 5 | Design Registry™ | `design/DESIGN_REGISTRY.md` | Version truth |
+| 6 | Design Revision Framework™ | `design/DESIGN_REVISION_FRAMEWORK.md` | VDR-### system |
+| 7 | Design Health™ | `design/DESIGN_HEALTH.md` | Visual validator |
 
 **Index:** [design/README.md](../design/README.md)
 
@@ -49,6 +50,12 @@
 ## Design Language System™
 
 Defines **how Studio OS should feel** — not how today's UI looks.
+
+## Studio OS Design DNA™
+
+Defines the constitutional visual grammar every Headquarters, department, room, workspace, scene, AI experience, and product must instantiate.
+
+Core rule: **future work instantiates the Design DNA™; it does not reinterpret it.**
 
 | Area | Principles |
 |------|------------|

@@ -20,6 +20,7 @@ When design evolves, update the registry once. Products inherit through complian
 | Artifact | Current version | Status | Path |
 |----------|-----------------|--------|------|
 | **Studio Design Constitution** | 1.0.0 | frozen | `STUDIO_DESIGN_CONSTITUTION.md` |
+| **Studio OS Design DNA™** | 1.0.0 | constitutional draft | `../../../genesis/articles/STUDIO_OS_DESIGN_DNA.md` |
 | **Design Language System** | 1.0.0 | frozen | `DESIGN_LANGUAGE_SYSTEM.md` |
 | **Component Catalog** | 1.0.0 | current | `COMPONENT_CATALOG.md` |
 | **Design Revision Framework** | 1.0.0 | current | `DESIGN_REVISION_FRAMEWORK.md` |
@@ -87,6 +88,7 @@ Experimental components:
 
 | Date | Package version | Change | VDR |
 |------|-----------------|--------|-----|
+| 2026-07-09 | 1.0.0 | Added Studio OS Design DNA™ as constitutional visual grammar above implementation-facing design governance | VDR pending |
 | 2026-07-07 | 1.0.0 | Initial Design Governance package ratified | VDR-000 |
 
 ---

@@ -11,9 +11,11 @@
 ## Core philosophy
 
 - **Automatic consistency** — spacing, typography, colors, motion, and elevation centralized
-- **Design Bible protected** — immutable brand tokens; pages never redefine core design values
+- **Design DNA protected** — immutable Studio OS Design DNA™ tokens; pages never redefine core visual grammar
 - **Component inheritance** — every registered component binds design tokens via Component Registry™
 - **Future themes** — Light active; Dark and Future themes prepared
+
+Canonical visual source: [`../../genesis/articles/STUDIO_OS_DESIGN_DNA.md`](../../genesis/articles/STUDIO_OS_DESIGN_DNA.md).
 
 ## What centralizes
 

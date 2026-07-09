@@ -26,6 +26,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/EVOLUTION_ROOM.md`](./articles/EVOLUTION_ROOM.md) | The Evolution Room™ — monthly Executive Board Room where the founder, company, Studio OS, and Genesis evolve together |
 | [`articles/EXECUTIVE_REFLECTION_SUITE.md`](./articles/EXECUTIVE_REFLECTION_SUITE.md) | Executive Reflection Suite™ — complete reflective operating environment: Boardroom™, Annual Summit™, Victory Gallery™, Lessons Library™, Opportunity Observatory™, Future Theater |
 | [`articles/ARCHITECTS_PROMPT_LIBRARY.md`](./articles/ARCHITECTS_PROMPT_LIBRARY.md) | The Architect's Prompt Library™ — Institute of Knowledge prompt institution for architecture, implementation, validation, research, design, and future AI workflows |
+| [`articles/STUDIO_OS_DESIGN_DNA.md`](./articles/STUDIO_OS_DESIGN_DNA.md) | Studio OS Design DNA™ — constitutional visual grammar for all Headquarters, departments, rooms, workspaces, scenes, AI experiences, and future products |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -71,6 +72,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `evolution-room/` | The Evolution Room™ content home — executive monthly evolution session inside Headquarters |
 | `executive-reflection-suite/` | Executive Reflection Suite™ content home — complete executive reflection wing and ceremonies |
 | `architects-prompt-library/` | The Architect's Prompt Library™ content home — Institute of Knowledge prompt institution |
+| `studio-os-design-dna/` | Studio OS Design DNA™ content home — permanent visual constitution and compliance checklist |
 
 ## Rule
 
