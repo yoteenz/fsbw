@@ -128,6 +128,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Executive Headquarters™](./genesis/articles/EXECUTIVE_HEADQUARTERS.md)
     - [Orb™](./genesis/articles/ORB.md)
     - [Founder Acceptance Testing™](./genesis/articles/FOUNDER_ACCEPTANCE_TESTING.md)
+    - [Live Validation System™](./genesis/articles/LIVE_VALIDATION_SYSTEM.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1048,6 +1049,34 @@ Rules:
    surprised us, incorrect assumptions, and required system changes.
 6. Company Validation™ and Market Validation™ may only follow after internal founder
    proof unless Genesis explicitly records an exception.
+
+### 9B.9 Live Validation System rule
+
+The canonical continuous validation architecture is defined in
+**[Live Validation System™](./genesis/articles/LIVE_VALIDATION_SYSTEM.md)**.
+
+Live Validation System™ is Phase 2 of Founder Acceptance Testing™. It converts
+Founder Acceptance from a manual checklist into invisible evidence gathered through
+natural founder operation.
+
+Rules:
+
+1. The founder should never feel like they are testing software.
+2. Studio OS should prefer passive evidence and adaptive reflection over repetitive
+   surveys.
+3. Orb may ask Founder Diary™ questions only when recent activity creates a specific
+   learning opportunity.
+4. Escape Velocity™ is the signature metric for meaningful work completed outside
+   Studio OS; every escape should be classified as replace, integrate, defer, accept
+   boundary, or investigate.
+5. Withdrawal Test™ dependency must be measured through objective signals such as
+   immediate replacement, productivity impact, decision quality, recovery time,
+   confidence reduction, and workflow interruption.
+6. Every Launch Stack milestone must periodically self-evaluate whether it is used,
+   valuable, frictionless, time-saving, educational, trusted, and becoming
+   indispensable.
+7. Validated insights must become Genesis improvement proposals with evidence,
+   not random feature requests.
 
 ---
 

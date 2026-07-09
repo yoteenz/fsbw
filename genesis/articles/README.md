@@ -19,3 +19,4 @@ Runtime registry: `src/studio-os-core/genesis/articles/registry.ts`
 | [EXECUTIVE_HEADQUARTERS.md](./EXECUTIVE_HEADQUARTERS.md) | Canonical launch-stack experience draft | Executive Headquarters™ — flagship founder experience, room hierarchy, arrival flow, Orb/Atlas/Command/Genome relationships, minimum lovable HQ |
 | [ORB.md](./ORB.md) | Canonical launch-stack intelligence draft | Orb™ — Executive Intelligence Layer, permanent founder partner, context/memory/recommendation architecture, proactive behavior |
 | [FOUNDER_ACCEPTANCE_TESTING.md](./FOUNDER_ACCEPTANCE_TESTING.md) | Canonical validation methodology draft | Founder Acceptance Testing™ — Studio OS internal quality standard before public launch |
+| [LIVE_VALIDATION_SYSTEM.md](./LIVE_VALIDATION_SYSTEM.md) | Canonical continuous validation architecture draft | Live Validation System™ — invisible founder behavior validation, Founder Diary™, Escape Velocity™, system self-evaluation, Genesis learning loop |
