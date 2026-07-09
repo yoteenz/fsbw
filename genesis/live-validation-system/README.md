@@ -3,8 +3,9 @@
 **Ontology:** [`../articles/LIVE_VALIDATION_SYSTEM.md`](../articles/LIVE_VALIDATION_SYSTEM.md)  
 **Program:** Studio OS Launch Stack™  
 **Parent:** Founder Acceptance Testing™  
-**Runtime:** planned — continuous validation signals, Founder Diary™, Escape Velocity™, self-evaluation loops  
-**Platform guide:** [`../../docs/studio-os/genesis/LIVE_VALIDATION_SYSTEM.md`](../../docs/studio-os/genesis/LIVE_VALIDATION_SYSTEM.md)
+**Runtime:** `src/studio-os-core/genesis/live-validation-system/`  
+**Platform guide:** [`../../docs/studio-os/genesis/LIVE_VALIDATION_SYSTEM_PLATFORM.md`](../../docs/studio-os/genesis/LIVE_VALIDATION_SYSTEM_PLATFORM.md)  
+**Experience:** `/admin/studio/live-validation-system`
 
 Live Validation System™ makes Founder Acceptance Testing™ continuous and invisible.
 

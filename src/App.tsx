@@ -474,6 +474,10 @@ const AdminStudioFounderAcceptanceTesting = lazyWithRetry(
   () => import('./pages/admin/studio/founder-acceptance-testing/page'),
   'AdminStudioFounderAcceptanceTesting'
 );
+const AdminStudioLiveValidationSystem = lazyWithRetry(
+  () => import('./pages/admin/studio/live-validation-system/page'),
+  'AdminStudioLiveValidationSystem'
+);
 const AdminStudioKnowledgeCore = lazyWithRetry(
   () => import('./pages/admin/studio/knowledge-core/page'),
   'AdminStudioKnowledgeCore'
@@ -2226,6 +2230,11 @@ function App() {
           <Route path="studio/founder-acceptance-testing" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioFounderAcceptanceTesting />
+            </Suspense>
+          } />
+          <Route path="studio/live-validation-system" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioLiveValidationSystem />
             </Suspense>
           } />
           <Route path="studio/genesis" element={

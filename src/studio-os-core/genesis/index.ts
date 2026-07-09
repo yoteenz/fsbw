@@ -31,3 +31,4 @@ export * from './identity-engine';
 export * from './executive-headquarters';
 export * from './orb';
 export * from './founder-acceptance-testing';
+export * from './live-validation-system';

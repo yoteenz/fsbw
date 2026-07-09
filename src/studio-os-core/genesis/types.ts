@@ -233,6 +233,7 @@ export type GenesisStore = {
   executiveHeadquarters?: import('./executive-headquarters/types').ExecutiveHeadquartersStore;
   orb?: import('./orb/types').OrbStore;
   founderAcceptanceTesting?: import('./founder-acceptance-testing/types').FatStore;
+  liveValidationSystem?: import('./live-validation-system/types').LvsStore;
   bootstrappedAt?: string;
 };
 

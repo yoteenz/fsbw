@@ -78,6 +78,13 @@ export function FounderAcceptanceTestingWorkspace() {
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
+              onClick={() => navigate('/admin/studio/live-validation-system')}
+              className="rounded-lg border border-violet-500/30 px-4 py-2 text-sm text-violet-200/90 hover:bg-violet-500/10"
+            >
+              Live Validation →
+            </button>
+            <button
+              type="button"
               onClick={() => navigate('/admin/studio/genesis')}
               className="rounded-lg border border-white/20 px-4 py-2 text-sm text-white/70 hover:bg-white/5"
             >
