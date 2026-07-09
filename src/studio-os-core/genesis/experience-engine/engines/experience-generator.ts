@@ -9,6 +9,13 @@ import {
 } from './registries';
 import { ensureExperienceEngineDnaSubsystem } from '../engine';
 import { emptyExperienceEngineDnaStore, readExperienceEngineDnaStore } from '../persistence';
+import {
+  SEED_BRAND_DNA,
+  SEED_DEPARTMENT_DNA,
+  SEED_INTERACTION_DNA,
+  SEED_MOTION_DNA,
+  SEED_SCENE_DNA,
+} from '../bootstrap/seed-data';
 import { XEE_SHARED_SCENE_ID } from '../constants';
 
 export function buildExperienceCssOutput(
@@ -63,30 +70,34 @@ export function resolveExperienceProfile(input?: {
   const sceneId = input?.sceneId ?? playground.sceneId ?? XEE_SHARED_SCENE_ID;
   const motionDnaId = input?.motionDnaId ?? playground.motionDnaId;
 
-  const brand = resolveBrandDna(brandId) ?? store.brands[0];
-  if (!brand) {
-    throw new Error('Experience Engine DNA is not seeded — brand registry is empty.');
-  }
+  const brand =
+    resolveBrandDna(brandId) ??
+    store.brands.find((b) => b.brandId === brandId) ??
+    store.brands[0] ??
+    SEED_BRAND_DNA.find((b) => b.brandId === brandId) ??
+    SEED_BRAND_DNA[0];
   const department =
     resolveDepartmentDna(brand.brandId, departmentId) ??
-    store.departments.find((d) => d.brandId === brand.brandId);
-  if (!department) {
-    throw new Error(`Experience Engine DNA missing department "${departmentId}" for brand "${brand.brandId}".`);
-  }
-  const scene = resolveSceneDna(sceneId) ?? store.scenes[0];
-  if (!scene) {
-    throw new Error(`Experience Engine DNA missing scene "${sceneId}".`);
-  }
+    store.departments.find((d) => d.brandId === brand.brandId && d.departmentId === departmentId) ??
+    store.departments.find((d) => d.brandId === brand.brandId) ??
+    SEED_DEPARTMENT_DNA.find((d) => d.brandId === brand.brandId && d.departmentId === departmentId) ??
+    SEED_DEPARTMENT_DNA.find((d) => d.brandId === brand.brandId)!;
+  const scene =
+    resolveSceneDna(sceneId) ??
+    store.scenes.find((s) => s.sceneId === sceneId) ??
+    store.scenes[0] ??
+    SEED_SCENE_DNA.find((s) => s.sceneId === sceneId) ??
+    SEED_SCENE_DNA[0];
   const components = getComponentRegistry(brand.brandId);
   const motion =
-    resolveMotionDna(motionDnaId) ?? store.motions.find((m) => m.brandId === brand.brandId);
-  if (!motion) {
-    throw new Error(`Experience Engine DNA missing motion profile for brand "${brand.brandId}".`);
-  }
-  const interaction = resolveInteractionDna(brand.brandId);
-  if (!interaction) {
-    throw new Error(`Experience Engine DNA missing interaction profile for brand "${brand.brandId}".`);
-  }
+    resolveMotionDna(motionDnaId) ??
+    store.motions.find((m) => m.brandId === brand.brandId) ??
+    SEED_MOTION_DNA.find((m) => m.motionDnaId === motionDnaId) ??
+    SEED_MOTION_DNA.find((m) => m.brandId === brand.brandId)!;
+  const interaction =
+    resolveInteractionDna(brand.brandId) ??
+    store.interactions.find((i) => i.brandId === brand.brandId) ??
+    SEED_INTERACTION_DNA.find((i) => i.brandId === brand.brandId)!;
   const { cssVariables, cssText } = buildExperienceCssOutput(brand, department);
 
   return {

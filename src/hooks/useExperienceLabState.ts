@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   applyRuntimeGraphToElement,
+  ensureExperienceEngineDnaSubsystem,
   ensureExperienceLabSubsystem,
   getExperienceLabReadyView,
   applyLabScenario,
@@ -19,6 +20,7 @@ export function useExperienceLabState() {
 
   const refresh = useCallback(() => {
     ensureExperienceLabSubsystem();
+    ensureExperienceEngineDnaSubsystem();
     setTick((n) => n + 1);
   }, []);
 
@@ -36,6 +38,7 @@ export function useExperienceLabState() {
     try {
       return getExperienceLabReadyView();
     } catch {
+      ensureExperienceEngineDnaSubsystem();
       ensureExperienceLabSubsystem();
       return getExperienceLabReadyView();
     }

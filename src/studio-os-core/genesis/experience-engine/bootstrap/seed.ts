@@ -34,12 +34,18 @@ export function seedExperienceEngineDnaStore(): void {
 
 export function ensureExperienceEngineDnaStore() {
   ensureStudioOsDesignDnaSubsystem();
-  const store = readExperienceEngineDnaStore();
-  if (!store.seededAt || store.brands.length === 0) {
+  let store = readExperienceEngineDnaStore();
+  const needsPersist =
+    !store.seededAt ||
+    store.brands.length === 0 ||
+    store.departments.length === 0 ||
+    store.scenes.length === 0;
+  if (needsPersist) {
     seedExperienceEngineDnaStore();
     updateBuildOrderSystemStatus('experience-engine', 'implemented');
+    store = readExperienceEngineDnaStore();
   }
-  return readExperienceEngineDnaStore();
+  return store;
 }
 
 export function recordExperienceEngineOpened(): void {
