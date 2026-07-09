@@ -23,4 +23,5 @@
 - [`STUDIO_INTELLIGENCE_LAYER.md`](./STUDIO_INTELLIGENCE_LAYER.md) — Studio Intelligence Layer™ architecture: executive reasoning, operating manual, Decision DNA, Taste Genome, canon, audience/product/creative intelligence
 - [`NARRATIVE_INTELLIGENCE.md`](./NARRATIVE_INTELLIGENCE.md) — Narrative Intelligence™ architecture: experience-first Narrative Genome™, Production Genome™, Moment Map™, Proof System™, and emotional journey
 - [`STUDIO_INTELLIGENCE_LAYER_PLATFORM.md`](./STUDIO_INTELLIGENCE_LAYER_PLATFORM.md) — Studio Intelligence Layer runtime platform guide
+- [`EXPERIENCE_LAB_PLATFORM.md`](./EXPERIENCE_LAB_PLATFORM.md) — Experience Lab runtime platform guide
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

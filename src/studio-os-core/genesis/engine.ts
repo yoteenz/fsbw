@@ -68,6 +68,7 @@ import { ensureExperienceRuntimeSubsystem } from './experience-runtime/engine';
 import { ensureBrandDiscoveryEngineSubsystem } from './brand-discovery-engine/engine';
 import { ensureStudioIntelligenceLayerSubsystem } from './studio-intelligence-layer/engine';
 import { ensureNarrativeIntelligenceSubsystem } from './narrative-intelligence/engine';
+import { ensureExperienceLabSubsystem } from './experience-lab/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -104,6 +105,7 @@ export function ensureGenesisStore() {
   ensureBrandDiscoveryEngineSubsystem();
   ensureStudioIntelligenceLayerSubsystem();
   ensureNarrativeIntelligenceSubsystem();
+  ensureExperienceLabSubsystem();
   return readGenesisStore();
 }
 

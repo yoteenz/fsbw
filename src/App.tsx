@@ -282,6 +282,10 @@ const AdminStudioNarrativeIntelligence = lazyWithRetry(
   () => import('./pages/admin/studio/narrative-intelligence/page'),
   'AdminStudioNarrativeIntelligence'
 );
+const AdminStudioExperienceLab = lazyWithRetry(
+  () => import('./pages/admin/studio/experience-lab/page'),
+  'AdminStudioExperienceLab'
+);
 const AdminStudioQaHeadquarters = lazyWithRetry(
   () => import('./pages/admin/studio/qa-headquarters/page'),
   'AdminStudioQaHeadquarters'
@@ -2022,6 +2026,11 @@ function App() {
           <Route path="studio/narrative-intelligence/:roomSlug" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioNarrativeIntelligence />
+            </Suspense>
+          } />
+          <Route path="studio/experience-lab" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExperienceLab />
             </Suspense>
           } />
           <Route path="studio/qa-headquarters" element={

@@ -2047,6 +2047,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'experience-lab',
+    title: 'EXPERIENCE LAB™',
+    purpose: 'Permanent development environment — inspect, test, switch, and validate Experience Runtime DNA layers in real time.',
+    route: p('experience-lab'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'Lab',
+    ctaLabel: 'OPEN EXPERIENCE LAB',
+    moduleKey: 'experience-lab',
+    featuredOnOverview: true,
+  },
+  {
     id: 'qa-headquarters',
     title: 'QA HEADQUARTERS™',
     purpose: 'Permanent QA operating layer — Trust Scores™, continuous validation, workflow and AI integrity monitoring.',
