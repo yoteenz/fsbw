@@ -12,7 +12,7 @@ import CapSizePage from './pages/build-a-wig/cap-size/page';
 import StylingPage from './pages/build-a-wig/styling/page';
 import AddOnsPage from './pages/build-a-wig/addons/page';
 import { BuildWigCustomizeEditAccessGate } from './components/buildWig/BuildWigCustomizeEditAccessGate';
-import { lazy, Suspense } from 'react';
+import { Suspense } from 'react';
 import LoadingScreen from './components/base/LoadingScreen';
 import AdminGuard from './components/AdminGuard';
 import AdminStudioWorkspaceGuard from './components/AdminStudioWorkspaceGuard';
@@ -52,7 +52,9 @@ import {
   forceReloadForStaleChunks,
   isDynamicImportChunkFailure,
   reloadForStaleChunks,
+  staleChunkReloadRecentlyAttempted,
 } from './utils/chunkLoadRecovery';
+import { lazyWithRetry } from './utils/lazyWithRetry';
 import { isQuotaExceededError } from './utils/safeLocalStorage';
 import { resetLocalStudioCache } from './utils/studioOsBrowserStorage';
 import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/creativePreviewMode';
@@ -65,46 +67,6 @@ import { VisionEngineProvider } from './components/vision-engine/runtime';
 import { VisionEngineDebugGate } from './components/vision-engine/runtime/VisionEngineDebugGate';
 import './components/vision-engine/runtime/vision-engine.css';
 
-/** Lazy route imports with retries for chunk/network failures (common after deploys). */
-const lazyWithRetry = (importFn: () => Promise<any>, componentName: string) => {
-  return lazy(() => {
-    const retryImport = async (retries = 4, delay = 1000): Promise<any> => {
-      for (let i = 0; i < retries; i++) {
-        try {
-          return await importFn();
-        } catch (error: unknown) {
-          const chunkFail = isDynamicImportChunkFailure(error);
-
-          if (chunkFail && i < retries - 1) {
-            await new Promise((resolve) => setTimeout(resolve, delay * (i + 1)));
-            if (typeof window !== 'undefined' && 'caches' in window) {
-              try {
-                const cacheNames = await caches.keys();
-                await Promise.all(cacheNames.map((name) => caches.delete(name)));
-              } catch {
-                // ignore
-              }
-            }
-            continue;
-          }
-          if (chunkFail) {
-            if (reloadForStaleChunks()) {
-              return new Promise(() => {
-                /* page reload in progress */
-              });
-            }
-            throw error instanceof Error ? error : new Error(`Failed to load ${componentName}`);
-          }
-          throw error instanceof Error ? error : new Error(`Failed to load ${componentName}`);
-        }
-      }
-      throw new Error(`Failed to load ${componentName} after ${retries} attempts`);
-    };
-    return retryImport();
-  });
-};
-
-// Use lazy loading for admin pages and noir page (like canonical backup)
 const AdminDashboard = lazyWithRetry(() => import('./pages/admin/dashboard/page'), 'AdminDashboard');
 const AdminBrand = lazyWithRetry(() => import('./pages/admin/brand/page'), 'AdminBrand');
 const AdminClients = lazyWithRetry(() => import('./pages/admin/clients/page'), 'AdminClients');
@@ -710,6 +672,8 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
     if (this.state.hasError) {
       const isChunkError = this.state.error ? isDynamicImportChunkFailure(this.state.error) : false;
       const isQuotaError = this.state.error ? isQuotaExceededError(this.state.error) : false;
+      const recentlyReloaded = staleChunkReloadRecentlyAttempted();
+      const showDeployMessage = isChunkError && !recentlyReloaded;
       
       return (
         <div style={{
@@ -731,7 +695,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
           textTransform: 'uppercase',
         }}>
           <h1 style={{ fontSize: '18px', textAlign: 'center', margin: 0, fontWeight: 600, letterSpacing: '0.12em' }}>
-            {isChunkError ? 'UPDATING THE APP' : 'COMPONENT FAILED TO LOAD'}
+            {showDeployMessage ? 'UPDATING THE APP' : isChunkError ? 'PAGE DID NOT LOAD' : 'COMPONENT FAILED TO LOAD'}
           </h1>
           <p
             style={{
@@ -741,7 +705,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
               lineHeight: 1.4,
               margin: 0,
               letterSpacing: '0.06em',
-              ...(isChunkError
+              ...(isChunkError || showDeployMessage
                 ? {
                     fontFamily: '"Futura PT Book", futuristic-pt, Futura, Inter, sans-serif',
                     color: '#1A1A1A',
@@ -749,33 +713,56 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
                 : { color: '#555', textTransform: 'none' }),
             }}
           >
-            {isChunkError
+            {showDeployMessage
               ? 'A new version was deployed while this tab was open. Tap reload to refresh — your data on this device is kept.'
+              : isChunkError
+                ? 'This page could not load. Try reload, or return to Admin if you are opening Headquarters or Studio.'
               : isQuotaError
                 ? 'This device\'s browser storage is full. Studio OS could not save workspace data locally. Your account data in the cloud is safe.'
                 : this.state.error?.message}
           </p>
           {isChunkError ? (
-            <button
-              type="button"
-              onClick={() => forceReloadForStaleChunks()}
-              style={{
-                marginTop: '8px',
-                padding: 0,
-                fontSize: '16px',
-                backgroundColor: 'transparent',
-                color: '#808080',
-                border: 'none',
-                cursor: 'pointer',
-                fontWeight: 600,
-                letterSpacing: '0.14em',
-                textDecoration: 'underline',
-                textUnderlineOffset: '4px',
-                textTransform: 'uppercase',
-              }}
-            >
-              RELOAD PAGE
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+              <button
+                type="button"
+                onClick={() => forceReloadForStaleChunks()}
+                style={{
+                  marginTop: '8px',
+                  padding: 0,
+                  fontSize: '16px',
+                  backgroundColor: 'transparent',
+                  color: '#808080',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  letterSpacing: '0.14em',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '4px',
+                  textTransform: 'uppercase',
+                }}
+              >
+                RELOAD PAGE
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  window.location.href = '/admin/dashboard';
+                }}
+                style={{
+                  padding: '10px 16px',
+                  fontSize: '11px',
+                  backgroundColor: '#fff',
+                  color: '#1A1A1A',
+                  border: '1px solid #0a0a0a',
+                  cursor: 'pointer',
+                  fontWeight: 600,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                BACK TO ADMIN
+              </button>
+            </div>
           ) : isQuotaError ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
               <button

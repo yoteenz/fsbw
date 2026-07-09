@@ -8,6 +8,18 @@ const CACHE_BUST_FLAG_KEY = 'fsbw_stale_chunk_cache_bust_at';
 const RELOAD_COOLDOWN_MS = 60_000;
 const CACHE_BUST_COOLDOWN_MS = 15_000;
 
+export function staleChunkReloadRecentlyAttempted(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    const prev = sessionStorage.getItem(RELOAD_FLAG_KEY);
+    if (!prev) return false;
+    const t = parseInt(prev, 10);
+    return !Number.isNaN(t) && Date.now() - t < RELOAD_COOLDOWN_MS;
+  } catch {
+    return false;
+  }
+}
+
 export function isDynamicImportChunkFailure(error: unknown): boolean {
   const msg = error instanceof Error ? error.message || '' : String(error || '');
   const name = error instanceof Error ? error.name || '' : '';

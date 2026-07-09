@@ -1,12 +1,14 @@
-import { lazy, Suspense, useEffect, useMemo, type ComponentType } from 'react';
-import { Navigate, useLocation, useParams } from 'react-router-dom';
+import { Suspense, useEffect, useMemo, type ComponentType } from 'react';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import LoadingScreen from '../../../../components/base/LoadingScreen';
+import { CompanyRouteLoadErrorBoundary } from '../../../../components/admin/studio/companies/CompanyRouteLoadErrorBoundary';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 import {
   getCompanyBySlug,
   resolveCompanyRoute,
   studioCompanyGrandAtriumPath,
 } from '../../../../studio-os-core/company-routes';
+import { lazyWithRetry } from '../../../../utils/lazyWithRetry';
 
 type PageModule = { default: ComponentType };
 
@@ -48,6 +50,7 @@ function resolvePageLoader(legacyPath: string): (() => Promise<PageModule>) | nu
  */
 export function CompanyRouteContent() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const { companySlug = '' } = useParams<{ companySlug: string }>();
   const { enterWorkspace } = useWorkspace();
   const resolution = resolveCompanyRoute(pathname);
@@ -69,7 +72,8 @@ export function CompanyRouteContent() {
   const LazyPage = useMemo(() => {
     const loader = resolvePageLoader(resolution.legacyPath);
     if (!loader) return null;
-    return lazy(loader);
+    const segment = legacyPathToSegment(resolution.legacyPath);
+    return lazyWithRetry(loader, `CompanyRoute:${segment}`);
   }, [resolution.legacyPath]);
 
   if (!company && companySlug) {
@@ -85,8 +89,10 @@ export function CompanyRouteContent() {
   }
 
   return (
-    <Suspense fallback={<LoadingScreen />}>
-      <LazyPage />
-    </Suspense>
+    <CompanyRouteLoadErrorBoundary onBack={() => navigate('/admin/dashboard')}>
+      <Suspense fallback={<LoadingScreen />}>
+        <LazyPage />
+      </Suspense>
+    </CompanyRouteLoadErrorBoundary>
   );
 }
