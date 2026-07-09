@@ -270,6 +270,10 @@ const AdminStudioBrandDiscoveryEngine = lazyWithRetry(
   () => import('./pages/admin/studio/brand-discovery-engine/page'),
   'AdminStudioBrandDiscoveryEngine'
 );
+const AdminStudioIntelligenceLayer = lazyWithRetry(
+  () => import('./pages/admin/studio/studio-intelligence-layer/page'),
+  'AdminStudioIntelligenceLayer'
+);
 const AdminStudioQaHeadquarters = lazyWithRetry(
   () => import('./pages/admin/studio/qa-headquarters/page'),
   'AdminStudioQaHeadquarters'
@@ -1985,6 +1989,16 @@ function App() {
           <Route path="studio/brand-discovery-engine/:roomSlug" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioBrandDiscoveryEngine />
+            </Suspense>
+          } />
+          <Route path="studio/studio-intelligence-layer" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioIntelligenceLayer />
+            </Suspense>
+          } />
+          <Route path="studio/studio-intelligence-layer/:roomSlug" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioIntelligenceLayer />
             </Suspense>
           } />
           <Route path="studio/qa-headquarters" element={

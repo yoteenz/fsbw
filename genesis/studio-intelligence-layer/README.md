@@ -1,8 +1,8 @@
 # Studio Intelligence Layer™
 
 **Canonical article:** [`../articles/STUDIO_INTELLIGENCE_LAYER.md`](../articles/STUDIO_INTELLIGENCE_LAYER.md)  
-**Status:** Architecture drafted; runtime implementation planned  
-**Purpose:** Executive reasoning layer that lets Studio OS understand how companies operate, decide, create, sell, learn, and evolve.
+**Status:** Architecture approved · runtime implemented  
+**Runtime:** `src/studio-os-core/genesis/studio-intelligence-layer/` (Genesis key `studioIntelligenceLayerDna`)
 
 ---
 

@@ -2023,6 +2023,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'studio-intelligence-layer',
+    title: 'STUDIO INTELLIGENCE LAYER™',
+    purpose: 'Executive reasoning infrastructure — operating manuals, Decision DNA, taste, canon, audience, product, creative graph.',
+    route: p('studio-intelligence-layer'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'Intelligence',
+    ctaLabel: 'OPEN STUDIO INTELLIGENCE',
+    moduleKey: 'studio-intelligence-layer',
+    featuredOnOverview: true,
+  },
+  {
     id: 'qa-headquarters',
     title: 'QA HEADQUARTERS™',
     purpose: 'Permanent QA operating layer — Trust Scores™, continuous validation, workflow and AI integrity monitoring.',

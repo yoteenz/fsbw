@@ -1,0 +1,1 @@
+export { StudioIntelligenceLayerWorkspace } from './StudioIntelligenceLayerWorkspace';

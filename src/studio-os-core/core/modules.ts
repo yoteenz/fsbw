@@ -145,6 +145,7 @@ export type StudioOsCoreModuleId =
   | 'experience-engine'
   | 'experience-runtime'
   | 'brand-discovery-engine'
+  | 'studio-intelligence-layer'
   | 'qa-headquarters'
   | 'qa-inspector'
   | 'qa-simulation-engine'
@@ -1044,6 +1045,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'BRAND DISCOVERY ENGINE™',
     description: 'Brand Discovery V1.0 — strategic Brand DNA discovery, registry, intelligence layer, and consistency across Studio OS.',
     routeSegment: 'brand-discovery-engine',
+  },
+  {
+    id: 'studio-intelligence-layer',
+    label: 'STUDIO INTELLIGENCE LAYER™',
+    description: 'Studio Intelligence V1.0 — executive reasoning across operating manuals, Decision DNA, taste, canon, audience, product, creative graph, and experience compilation.',
+    routeSegment: 'studio-intelligence-layer',
   },
   {
     id: 'qa-headquarters',

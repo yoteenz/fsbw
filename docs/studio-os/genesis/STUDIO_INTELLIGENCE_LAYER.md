@@ -2,7 +2,7 @@
 
 **Canonical source:** `genesis/articles/STUDIO_INTELLIGENCE_LAYER.md`  
 **Content home:** `genesis/studio-intelligence-layer/`  
-**Status:** Architecture drafted; runtime implementation planned
+**Status:** Architecture approved · runtime implemented (Genesis `studioIntelligenceLayerDna`)
 
 ---
 

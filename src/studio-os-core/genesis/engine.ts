@@ -66,6 +66,7 @@ import { ensureStudioOsDesignDnaSubsystem } from './studio-os-design-dna/engine'
 import { ensureExperienceEngineDnaSubsystem } from './experience-engine/engine';
 import { ensureExperienceRuntimeSubsystem } from './experience-runtime/engine';
 import { ensureBrandDiscoveryEngineSubsystem } from './brand-discovery-engine/engine';
+import { ensureStudioIntelligenceLayerSubsystem } from './studio-intelligence-layer/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -100,6 +101,7 @@ export function ensureGenesisStore() {
   ensureExperienceEngineDnaSubsystem();
   ensureExperienceRuntimeSubsystem();
   ensureBrandDiscoveryEngineSubsystem();
+  ensureStudioIntelligenceLayerSubsystem();
   return readGenesisStore();
 }
 

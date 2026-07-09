@@ -22,6 +22,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'experience-engine-dna',
   'experience-runtime-dna',
   'brand-discovery-engine-dna',
+  'studio-intelligence-layer-dna',
   'articles',
   'adr',
   'proposals',
