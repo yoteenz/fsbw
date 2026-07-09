@@ -122,6 +122,7 @@ permanent kernel responsibilities, not temporary product areas.
    - Events
 10. **World Systems**
     - [Core Systems Blueprint™](./genesis/articles/CORE_SYSTEMS_BLUEPRINT.md)
+    - [Studio OS Dependency Map™](./genesis/articles/STUDIO_OS_DEPENDENCY_MAP.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -913,6 +914,11 @@ That article is the normative blueprint for Studio World's major platform
 subsystems, their domains, responsibilities, dependencies, data ownership, events,
 failure modes, anti-patterns, and future evolution.
 
+The canonical implementation sequence is defined in **[Studio OS Dependency Map™](./genesis/articles/STUDIO_OS_DEPENDENCY_MAP.md)**.
+That article is the master execution blueprint for build order, first systems,
+systems that should wait, circular dependency risks, missing foundation systems,
+and recommended next implementation sprints.
+
 ### 9B.1 System traceability rule
 
 Every future implementation sprint should trace directly to one or more core system
@@ -934,6 +940,15 @@ Examples:
 No major feature may become a standalone platform silo. If work cannot trace to an
 existing core system, Genesis must either reject it or require a new system blueprint
 proposal.
+
+### 9B.3 Dependency order rule
+
+No major implementation sprint may bypass its upstream dependencies without naming
+the stable interface or mock boundary it is using. Studio OS execution should follow:
+
+```text
+truth -> knowledge -> graph -> identity -> permission -> mission -> command -> production -> experience -> intelligence -> economy
+```
 
 ---
 
