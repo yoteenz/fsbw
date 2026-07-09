@@ -718,6 +718,58 @@ export const KNOWLEDGE_CORE_ENTRIES: KnowledgeCoreEntry[] = [
     implementationStatus: 'Specified',
     tags: ['codex', 'codex-first', 'constitutional-memory', 'article-c01'],
   },
+  {
+    id: 'BD01-business-discovery',
+    title: 'Business Discovery™ — Company Genome Onboarding Architecture',
+    domain: 'Architecture™',
+    status: 'Canon',
+    version: 'v1',
+    summary:
+      'Studio OS signature onboarding experience that replaces SaaS setup with a premium consulting-style discovery journey, generating the Company Genome™ and first Headquarters proposal.',
+    reasoning:
+      'Founders should not configure software manually. Studio OS should help founders discover and map their company so the platform begins with strategy, context, relationships, knowledge, and operating intelligence.',
+    finalPrompt:
+      'Design Business Discovery™ for Studio OS: six phases from Founder Discovery™ through Headquarters Generation™, with purpose, questions, information collected, objects created, systems updated, AI reasoning, founder experience, visual experience, success criteria, Orb participation, founder moments, Company Genome outputs, and Headquarters proposals.',
+    architectureAdded: [
+      'Business Discovery™',
+      'Founder Discovery™',
+      'Company Discovery™',
+      'Relationship Discovery™',
+      'Knowledge Discovery™',
+      'Business Genome™',
+      'Headquarters Generation™',
+      'Company Genome™ output maps',
+      'Orb strategist onboarding behavior',
+    ],
+    relatedSystems: [
+      'Business Discovery Blueprint™',
+      'Company Genome™',
+      'Organization Genome™',
+      'Profession Brain™',
+      'World Graph™',
+      'Studio World Atlas™',
+      'Orb™',
+      'Headquarters Experience™',
+      'Organization Inauguration™',
+      'Shadow Mode™',
+    ],
+    constitutionArticles: ['ARTICLE-C01', 'ARTICLE-K22', 'ARTICLE-K23'],
+    adrReferences: ['ADR-0001'],
+    worldBibleReferences: [
+      'Business Discovery™',
+      'Company Genome™',
+      'Headquarters Experience™',
+      'Business Discovery Blueprint™',
+    ],
+    implementationStatus: 'Specified',
+    tags: [
+      'business-discovery',
+      'company-genome',
+      'onboarding',
+      'headquarters-generation',
+      'orb-strategist',
+    ],
+  },
 ];
 
 export function canInfluenceFutureArchitecture(status: KnowledgeCoreStatus): boolean {

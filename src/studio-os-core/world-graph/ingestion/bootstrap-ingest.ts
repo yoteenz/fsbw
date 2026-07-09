@@ -106,6 +106,24 @@ export function ingestEngineNodes(): { nodes: WorldNode[]; edges: WorldEdge[] } 
       integratesWith: ['scene-stack', 'creative-direction-studio'],
     },
     {
+      slug: 'business-discovery',
+      name: 'Business Discovery™',
+      summary:
+        'Studio OS signature onboarding experience — an elite consulting-style discovery flow that generates the Company Genome™ and first Headquarters proposal.',
+      lifecycle: 'architecture',
+      codePaths: ['src/studio-os-core/business-discovery/'],
+      docPaths: ['docs/studio-os/business-discovery.md'],
+      integratesWith: [
+        'business-discovery-blueprint',
+        'company-genome',
+        'organization-genome',
+        'profession-brain',
+        'studio-world-atlas',
+        'orb-recommendations',
+        'headquarters-experience',
+      ],
+    },
+    {
       slug: 'knowledge-registry',
       name: 'Knowledge Registry™',
       summary: 'Registry projection UI over Master Spec and knowledge objects.',

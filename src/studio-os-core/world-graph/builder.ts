@@ -25,6 +25,7 @@ import {
   ingestKnowledgeRetentionNodes,
   ingestStudioExchangeNodes,
   ingestProfessionalMemoryWisdomNodes,
+  ingestBusinessDiscoveryNodes,
   type MasterSpecMilestoneInput,
 } from './ingestion';
 import { validateWorldGraph } from './validator';
@@ -72,6 +73,7 @@ export function buildWorldGraph(input: BuildWorldGraphInput = {}): BuildWorldGra
     ingestKnowledgeRetentionNodes(),
     ingestStudioExchangeNodes(),
     ingestProfessionalMemoryWisdomNodes(),
+    ingestBusinessDiscoveryNodes(),
   ];
 
   if (input.masterSpecMilestones?.length) {

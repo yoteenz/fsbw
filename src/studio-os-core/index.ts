@@ -187,3 +187,4 @@ export * from './studio-world-codex';
 export * from './knowledge-retention-engine';
 export * from './studio-exchange';
 export * from './professional-memory-wisdom-engine';
+export * from './business-discovery';

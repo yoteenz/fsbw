@@ -44193,3 +44193,16 @@ Summary of the **full conversation in this chat**: Genesis Implementation Sprint
 - **Verification:** `npm run build` passed; generated master-spec/world-graph artifacts were restored so the commit contains only intended docs and motherboard updates.
 - **Conventions:** Future decision logic should be modeled through Universal Decision Architecture primitives before implementation. High-impact decisions require evidence, confidence, alternatives, tradeoffs, review, audit, and human override.
 
+---
+
+## 2026-07-09 — Business Discovery™ master architecture project
+
+Summary of the **whole conversation so far** in this chat: the user moved through the lifelong mastery architecture/implementation sequence and then requested a master architecture project for Studio OS Business Discovery™.
+
+- **Context:** Earlier in this chat, E03 Knowledge Retention Engine™ was implemented as modular lifelong retention infrastructure; E04 Professional Memory™ / Wisdom Engine™ was architected and then implemented as persistent professional memory infrastructure. The latest request asked for **MASTER ARCHITECTURE PROJECT — Business Discovery™** as Studio OS’s signature onboarding experience replacing SaaS setup.
+- **Topics covered:** Business Discovery™ mission: founders should not configure software; Studio OS guides them through discovering and mapping their company. The final output becomes the **Company Genome™**, powering Headquarters, Orb, Atlas, mission system, knowledge architecture, and automation architecture. Required phases: Founder Discovery™, Company Discovery™, Relationship Discovery™, Knowledge Discovery™, Business Genome™, Headquarters Generation™.
+- **Decisions / outcomes:** Added a dedicated `src/studio-os-core/business-discovery/` architecture package (types, phases, outputs, architecture aggregator) rather than replacing existing `business-discovery-blueprint/`; the Blueprint remains the implementation projection/living store, while Business Discovery™ is the six-phase master onboarding canon. Added complete architecture doc `docs/studio-os/business-discovery.md`. Added Knowledge Core entry `BD01-business-discovery`. Added World Graph ingest for Business Discovery™ engine relationships, six phase blueprint nodes, Business Genome outputs, and Headquarters generation proposals. Registered engine metadata and era mapping.
+- **Changes:** New core package `business-discovery/`; new graph ingest `business-discovery-ingest.ts`; updated root exports, World Graph builder/ingestion barrel/bootstrap/era map, Knowledge Core entries, graph generated artifacts, master-spec generated artifacts, and docs.
+- **Verification:** `npx tsc --noEmit` passed; `npm run compile-world-graph` passed (**614 nodes · 1163 edges · PASS**); `npm run build` passed.
+- **Conventions:** Business Discovery™ is premium consulting-style onboarding, not a setup wizard. Future implementation should generate Company Genome™ evidence first, then Headquarters proposals; Orb participates as strategist/consultant/mentor/business architect, not chatbot. Existing Business Discovery Blueprint™ should stay as a living implementation projection under this master architecture.
+
