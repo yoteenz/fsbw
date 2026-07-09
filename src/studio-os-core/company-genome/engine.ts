@@ -19,7 +19,7 @@ import {
   FRONTAL_SLAYER_BUSINESS_RISKS,
   FRONTAL_SLAYER_BUSINESS_SYSTEMS,
 } from './business-systems/seeds/frontal-slayer';
-import { readBusinessCompanyGenomeStore } from './business-store';
+import { bootstrapBusinessCompanyGenomeStore, readBusinessCompanyGenomeStore } from './business-store';
 
 export function buildBusinessGenomeSeed(orgId: ModuleTenantId): Partial<BusinessCompanyGenomeStore> {
   if (orgId === 'frontal-slayer') {
@@ -106,4 +106,10 @@ export function getVisualizationFlows(
 export function getSelectedBusinessSystem(store: BusinessCompanyGenomeStore) {
   if (!store.selectedSystemId) return store.systems[0] ?? null;
   return store.systems.find((s) => s.systemId === store.selectedSystemId) ?? null;
+}
+
+/** Seed business genome for a specific workspace (avoids storage race on direct URL loads). */
+export function ensureBusinessCompanyGenomeSeeded(platformWorkspaceId: string): void {
+  const orgId = platformWorkspaceId as ModuleTenantId;
+  bootstrapBusinessCompanyGenomeStore(buildBusinessGenomeSeed(orgId), platformWorkspaceId);
 }

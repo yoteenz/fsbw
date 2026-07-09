@@ -1,5 +1,8 @@
+import { lazy, Suspense } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
+import LoadingScreen from '../../../../components/base/LoadingScreen';
 import { AdminStudioPlaceholderShell } from '../../../../components/admin/studio/AdminStudioPlaceholderShell';
+import { resolveHeadquartersPageModule } from '../../../../studio-os-core/workspace/headquarters-module-resolver';
 import { getAdminStudioSectionById } from '../../../../utils/adminStudioDemo';
 import { ADMIN_STUDIO_BUILT_SECTION_SET } from '../../../../utils/adminStudioRoutes';
 
@@ -65,6 +68,23 @@ export default function AdminStudioSectionPage() {
     if (sectionId === 'brand-assets') {
       return <Navigate to="/admin/studio/brand-assets" replace />;
     }
+    if (sectionId === 'company-genome') {
+      return <Navigate to="/admin/studio/company-genome" replace />;
+    }
+    if (sectionId === 'growth-architect') {
+      return <Navigate to="/admin/studio/growth-architect" replace />;
+    }
+
+    const loader = resolveHeadquartersPageModule(sectionId);
+    if (loader) {
+      const Page = lazy(loader);
+      return (
+        <Suspense fallback={<LoadingScreen />}>
+          <Page />
+        </Suspense>
+      );
+    }
+
     return <Navigate to={`/admin/studio/${sectionId}`} replace />;
   }
 

@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { buildCompanyGenomeSeed } from '../studio-os-core/company-genome/bootstrap';
-import { bootstrapFullCompanyGenomePlatform } from '../studio-os-core/company-genome/bootstrap-business';
+import { bootstrapCompanyGenomeStore } from '../studio-os-core/company-genome/store';
 import {
   consultBusinessCompanyGenome,
+  ensureBusinessCompanyGenomeSeeded,
   getSelectedBusinessSystem,
   getVisualizationFlows,
 } from '../studio-os-core/company-genome/engine';
 import {
-  bootstrapCompanyGenomeStore,
   readCompanyGenomeStore,
   selectCompanyGenomeWorkspace,
   setGenomeZoomLevel,
@@ -20,22 +20,27 @@ import {
 import type { BusinessVisualizationId } from '../studio-os-core/company-genome/business-types';
 import type { CompanyGenomeWorkspaceId, GenomeZoomLevel } from '../studio-os-core/company-genome/types';
 import { BUSINESS_COMPANY_GENOME_UPDATED_EVENT } from '../studio-os-core/company-genome/business-constants';
-
-function ensureSeeded(): void {
-  bootstrapCompanyGenomeStore(buildCompanyGenomeSeed());
-  bootstrapFullCompanyGenomePlatform();
-}
+import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
+import { STUDIO_OS_WORKSPACE_CHANGED } from '../studio-os-core/workspace/context-bridge';
 
 export function useCompanyGenomeState() {
-  const [version, setVersion] = useState(() => {
-    ensureSeeded();
-    return 0;
-  });
+  const { workspaceId } = useWorkspace();
+  const [version, setVersion] = useState(0);
+
+  useEffect(() => {
+    bootstrapCompanyGenomeStore(buildCompanyGenomeSeed());
+    ensureBusinessCompanyGenomeSeeded(workspaceId);
+    setVersion((v) => v + 1);
+  }, [workspaceId]);
 
   useEffect(() => {
     const refresh = () => setVersion((v) => v + 1);
     window.addEventListener(BUSINESS_COMPANY_GENOME_UPDATED_EVENT, refresh);
-    return () => window.removeEventListener(BUSINESS_COMPANY_GENOME_UPDATED_EVENT, refresh);
+    window.addEventListener(STUDIO_OS_WORKSPACE_CHANGED, refresh);
+    return () => {
+      window.removeEventListener(BUSINESS_COMPANY_GENOME_UPDATED_EVENT, refresh);
+      window.removeEventListener(STUDIO_OS_WORKSPACE_CHANGED, refresh);
+    };
   }, []);
 
   const store = useMemo(() => {
@@ -45,13 +50,13 @@ export function useCompanyGenomeState() {
 
   const businessStore = useMemo(() => {
     void version;
-    return readBusinessCompanyGenomeStore();
-  }, [version]);
+    return readBusinessCompanyGenomeStore(workspaceId);
+  }, [version, workspaceId]);
 
   const businessConsult = useMemo(() => {
     void version;
     return consultBusinessCompanyGenome();
-  }, [version]);
+  }, [version, workspaceId]);
 
   const selectedBusinessSystem = useMemo(
     () => getSelectedBusinessSystem(businessStore),

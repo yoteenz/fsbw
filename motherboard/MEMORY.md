@@ -44288,3 +44288,19 @@ Summary of the **full conversation in this chat**: Genesis Sprint 6 Core Systems
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored.
 - **Conventions:** Every implementation sprint traces to a core system blueprint. Platform boundaries registered here — not hardcoded in product features. Cross-system behavior uses Interaction Model; cross-system reasoning uses Decision Architecture.
 
+---
+
+## 2026-07-09 — Company Genome route fix on production (`/admin/studio/company-genome`)
+
+Summary of the **full conversation in this chat**: (1) User requested MASTER ARCHITECTURE PROJECT for **FRONTAL SLAYER COMPANY GENOME™** — agent created **`docs/frontal-slayer/COMPANY_GENOME.md`** with 50 system cards, flows, graph, risks, automation/AI maps, and Studio OS generator blueprint. (2) User approved and requested **IMPLEMENTATION SPRINT** — living Company Genome™ infrastructure with registries, dependency graph, flows, events, risks, opportunities, and eight visualization modes at **`/admin/studio/company-genome`**. (3) User reported the route **isn't working on `fsbw.vercel.app`**.
+
+- **Context:** Production SPA returns HTTP 200 for `/admin/studio/company-genome` (Vercel rewrites OK). Route requires admin auth (`AdminGuard`) and Studio workspace bootstrap (`AdminStudioWorkspaceGuard`). Investigation found two likely failure modes: (a) **redirect loop** when generic `studio/:sectionId` fallback (`AdminStudioSectionPage`) blindly navigated to `/admin/studio/company-genome` for built sections already in `ADMIN_STUDIO_BUILT_SECTION_SET`; (b) **workspace seeding race** — `useCompanyGenomeState` seeded business genome in `useState` initializer before workspace context was guaranteed, potentially writing empty genome to wrong scope on direct URL loads.
+- **Decisions / outcomes:**
+  - Added explicit redirects in **`src/pages/admin/studio/section/page.tsx`** for `company-genome` and `growth-architect`; replaced blind `<Navigate to={/admin/studio/${sectionId}}>` fallback with **`resolveHeadquartersPageModule`** lazy render when a loader exists (prevents redirect loop).
+  - Made business store **workspace-explicit**: `readBusinessCompanyGenomeStore`, `writeBusinessCompanyGenomeStore`, and `bootstrapBusinessCompanyGenomeStore` accept optional `workspaceId`; added **`ensureBusinessCompanyGenomeSeeded(platformWorkspaceId)`** in **`engine.ts`**.
+  - Rewrote **`useCompanyGenomeState`** to use **`useWorkspace()`**, seed in **`useEffect`** when `workspaceId` changes (not in `useState` initializer), read business store scoped to `workspaceId`, and listen to **`STUDIO_OS_WORKSPACE_CHANGED`**.
+  - Cleaned unused imports in **`bootstrap-business.ts`**.
+- **Verification:** `npm run build` passed (tsc + vite).
+- **Changes:** `src/hooks/useCompanyGenomeState.ts`, `src/pages/admin/studio/section/page.tsx`, `src/studio-os-core/company-genome/business-store.ts`, `engine.ts`, `bootstrap-business.ts`, `motherboard/MEMORY.md`.
+- **Conventions:** Direct-load Studio routes must seed scoped stores only after workspace context is available. Built sections in `ADMIN_STUDIO_BUILT_SECTION_SET` need explicit redirects or lazy module resolution — never self-referential Navigate fallbacks. Production testing requires signed-in admin session.
+

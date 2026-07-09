@@ -34,34 +34,56 @@ function emptyStore(): BusinessCompanyGenomeStore {
   };
 }
 
-export function readBusinessCompanyGenomeStore(): BusinessCompanyGenomeStore {
+export function readBusinessCompanyGenomeStore(workspaceId?: string): BusinessCompanyGenomeStore {
   if (typeof window === 'undefined') return emptyStore();
-  const parsed = readScopedStore(BUSINESS_COMPANY_GENOME_STORAGE_KEY, emptyStore);
+  const parsed = readScopedStore(BUSINESS_COMPANY_GENOME_STORAGE_KEY, emptyStore, workspaceId);
   return {
     ...parsed,
     systems: computeDependents(parsed.systems),
   };
 }
 
-export function writeBusinessCompanyGenomeStore(store: BusinessCompanyGenomeStore): void {
+export function writeBusinessCompanyGenomeStore(
+  store: BusinessCompanyGenomeStore,
+  workspaceId?: string
+): void {
   if (typeof window === 'undefined') return;
-  writeScopedStore(BUSINESS_COMPANY_GENOME_STORAGE_KEY, {
-    ...store,
-    systems: computeDependents(store.systems),
-    lastUpdatedAt: new Date().toISOString(),
-    version: BUSINESS_COMPANY_GENOME_VERSION,
-  });
+  writeScopedStore(
+    BUSINESS_COMPANY_GENOME_STORAGE_KEY,
+    {
+      ...store,
+      systems: computeDependents(store.systems),
+      lastUpdatedAt: new Date().toISOString(),
+      version: BUSINESS_COMPANY_GENOME_VERSION,
+    },
+    workspaceId
+  );
 }
 
-export function bootstrapBusinessCompanyGenomeStore(seed: Partial<BusinessCompanyGenomeStore>): void {
-  const existing = readBusinessCompanyGenomeStore();
+export function bootstrapBusinessCompanyGenomeStore(
+  seed: Partial<BusinessCompanyGenomeStore>,
+  workspaceId?: string
+): void {
+  const existing = readBusinessCompanyGenomeStore(workspaceId);
   if (existing.systems.length > 0) return;
-  writeBusinessCompanyGenomeStore({
-    ...emptyStore(),
-    ...seed,
-    systems: computeDependents(seed.systems ?? []),
-    dependencies: seed.dependencies ?? [],
-  });
+  writeBusinessCompanyGenomeStore(
+    {
+      ...emptyStore(),
+      ...seed,
+      organizationId: seed.organizationId ?? existing.organizationId,
+      systems: computeDependents(seed.systems ?? []),
+      dependencies: seed.dependencies ?? [],
+      flows: seed.flows ?? [],
+      events: seed.events ?? [],
+      risks: seed.risks ?? [],
+      automationOpportunities: seed.automationOpportunities ?? [],
+      aiOpportunities: seed.aiOpportunities ?? [],
+      company: seed.company ?? existing.company,
+      activeVisualization: seed.activeVisualization ?? 'interactive-genome',
+      selectedSystemId: seed.selectedSystemId ?? null,
+    },
+    workspaceId
+  );
 }
 
 export function setBusinessVisualization(id: BusinessVisualizationId): void {
