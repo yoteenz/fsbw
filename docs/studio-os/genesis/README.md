@@ -24,6 +24,7 @@
 - [`NARRATIVE_INTELLIGENCE.md`](./NARRATIVE_INTELLIGENCE.md) — Narrative Intelligence™ architecture: experience-first Narrative Genome™, Production Genome™, Moment Map™, Proof System™, and emotional journey
 - [`STUDIO_PRODUCTION_SYSTEM.md`](./STUDIO_PRODUCTION_SYSTEM.md) — Studio Production System™ architecture: AI production company departments, Production Packages™, control room, QC, distribution, and analytics
 - [`CREATIVE_OPERATING_SYSTEM.md`](./CREATIVE_OPERATING_SYSTEM.md) — Creative Operating System™ architecture: executive creative board, council, creative memory, learning, evolution, economy, and headquarters integration
+- [`BUSINESS_AND_OPERATIONS_CONSTITUTION.md`](./BUSINESS_AND_OPERATIONS_CONSTITUTION.md) — Business & Operations Constitutional Amendment™: Company Genome Business Architecture/Operating Model facets and no-duplicate-truth ownership rules
 - [`STUDIO_INTELLIGENCE_LAYER_PLATFORM.md`](./STUDIO_INTELLIGENCE_LAYER_PLATFORM.md) — Studio Intelligence Layer runtime platform guide
 - [`EXPERIENCE_LAB_PLATFORM.md`](./EXPERIENCE_LAB_PLATFORM.md) — Experience Lab runtime platform guide
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

@@ -1462,6 +1462,51 @@ Rules:
    initiatives, recommendations, memories, learning events, evolution proposals,
    and reusable creative economy assets.
 
+### 9B.21 Business & Operations constitutional ownership rule
+
+The canonical business and operations ownership amendment is defined in
+**[Business & Operations Constitutional Amendment™](./genesis/articles/BUSINESS_AND_OPERATIONS_CONSTITUTION.md)**.
+
+Studio OS must understand a company’s value creation and operating shape before
+it proposes departments, AI authority, workflows, headquarters capabilities, or
+experiences. It must accomplish this without creating duplicate company truth.
+
+Rules:
+
+1. **Business DNA™** and **Operations DNA™** must not be introduced as
+   independent peer constitutional engines.
+2. **Company Genome™** is the apex company abstraction below founder context. It
+   owns confidence-scored company beliefs, **Business Architecture™** facet,
+   **Operating Model™** facet, and the learned **Operational DNA™** preference
+   strand.
+3. **Company Operating Manual™** owns operating doctrine: SOPs, decision rights,
+   approvals, playbooks, quality floors, automations, and escalations.
+4. **Workflow Engine™** owns executable process topology, lifecycle, events,
+   state, retries, and audit. It may not invent doctrine.
+5. **Department Operating Charter™** owns a department’s non-visual mandate,
+   interfaces, decision rights, and capacity assumptions. **Experience Department
+   DNA™** remains exclusively an experience-expression layer that inherits from
+   Experience Brand DNA™.
+6. **Strategic Brand DNA™** consumes versioned Business Architecture and
+   Operating Model briefs as constraints; it does not inherit or mutate raw
+   business truth.
+7. Experience Engine™, Experience Compiler™, and Experience Runtime™ may consume
+   compiled expression and role/state constraints only. They must not become
+   owners of raw business facts or operating doctrine.
+8. Business Discovery™ produces provisional, provenance-bearing, confidence-scored
+   Company Genome facets. Founder validation is required before autonomous
+   external action, AI authority activation, workflow execution, or public
+   experience activation.
+9. The single-owner law is:
+
+```text
+Company beliefs and business/operating facts -> Company Genome™
+Operating doctrine                            -> Company Operating Manual™
+Executable process                            -> Workflow Engine™
+Experience expression                         -> Experience Engine™
+Rendered environment                          -> Experience Runtime™
+```
+
 ---
 
 ## 10. Compilation Model
