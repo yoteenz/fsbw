@@ -226,6 +226,7 @@ export type GenesisStore = {
   objectModel?: import('./object-model/types').ObjectModelStore;
   interactionModel?: import('./interaction-model/types').InteractionModelStore;
   decisionEngine?: import('./decision-engine/types').DecisionEngineStore;
+  coreSystems?: import('./core-systems/types').CoreSystemsStore;
   bootstrappedAt?: string;
 };
 

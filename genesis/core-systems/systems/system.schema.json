@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CoreSystemPayload",
+  "description": "Zero-code ingest schema for Core Systems Blueprint™ system envelopes",
+  "type": "object",
+  "required": ["officialName", "domain"],
+  "properties": {
+    "systemId": {
+      "type": "string",
+      "description": "Unique system identifier (kebab-case). Auto-generated from officialName if omitted."
+    },
+    "officialName": { "type": "string" },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "executive-command",
+        "knowledge-intelligence",
+        "creation-experience",
+        "education-career",
+        "marketplace-economy",
+        "operations-automation",
+        "identity-trust",
+        "discovery-insight"
+      ]
+    },
+    "dependencyClass": {
+      "type": "string",
+      "enum": ["foundational", "supporting", "platform", "experience", "optional"]
+    },
+    "purpose": { "type": "string" },
+    "contentHome": { "type": "string" },
+    "responsibilities": { "type": "array", "items": { "type": "string" } },
+    "capabilities": { "type": "array", "items": { "type": "string" } },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "ownedObjects": { "type": "array", "items": { "type": "string" } },
+    "publicInterfaces": { "type": "array", "items": { "type": "string" } },
+    "lifecycleState": {
+      "type": "string",
+      "enum": ["draft", "proposed", "active", "deprecated", "archived", "suspended"]
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["type", "targetSystemId"],
+        "properties": {
+          "type": { "type": "string" },
+          "targetSystemId": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["eventId", "name"],
+        "properties": {
+          "eventId": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "services": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["serviceId", "name"],
+        "properties": {
+          "serviceId": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "publicInterface": { "type": "string" }
+        }
+      }
+    },
+    "expansionPoints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["expansionPointId", "name"],
+        "properties": {
+          "expansionPointId": { "type": "string" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "hookType": {
+            "type": "string",
+            "enum": ["plugin", "adapter", "strategy", "observer", "middleware"]
+          }
+        }
+      }
+    },
+    "metadata": { "type": "object" }
+  }
+}

@@ -19,6 +19,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
+| `core-systems/` | Core Systems Blueprint runtime content home — system blueprints, dependencies, boundaries, contracts, lifecycle |
 
 ## Structure
 
@@ -39,6 +40,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `object-model/` | Canonical Object Model infrastructure — registry, factory, relationships, validation, history |
 | `interaction-model/` | Universal Interaction Model infrastructure — registries, engine, event bus, workflow composer, audit |
 | `decision-engine/` | Universal Decision Architecture infrastructure — registries, recommendation/priority/context engines, audit, learning |
+| `core-systems/` | Core Systems Blueprint infrastructure — system/dependency/capability registries, boundaries, contracts, expansion hooks, lifecycle |
 
 ## Rule
 

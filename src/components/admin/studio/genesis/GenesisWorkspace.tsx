@@ -9,6 +9,7 @@ import { useConstitutionState } from '../../../../hooks/useConstitutionState';
 import { useObjectModelState } from '../../../../hooks/useObjectModelState';
 import { useInteractionModelState } from '../../../../hooks/useInteractionModelState';
 import { useDecisionEngineState } from '../../../../hooks/useDecisionEngineState';
+import { useCoreSystemsState } from '../../../../hooks/useCoreSystemsState';
 
 function GenesisPanel({
   title,
@@ -99,6 +100,22 @@ export function GenesisWorkspace() {
     refresh: refreshDecisionEngine,
   } = useDecisionEngineState();
 
+  const {
+    stats: coreSystemsStats,
+    systems: coreSystems,
+    dependencies: coreSystemDependencies,
+    capabilities: coreSystemCapabilities,
+    boundaries: coreSystemBoundaries,
+    contracts: coreSystemContracts,
+    expansionHooks: coreSystemExpansionHooks,
+    canonicalCoverage: coreSystemCanonicalCoverage,
+    circularDependencies: coreSystemCircularDeps,
+    lifecycleSummary: coreSystemLifecycleSummary,
+    validation: coreSystemsValidation,
+    canonicalSystems,
+    refresh: refreshCoreSystems,
+  } = useCoreSystemsState();
+
   const [activeTab, setActiveTab] = useState<
     | 'overview'
     | 'registry'
@@ -109,6 +126,7 @@ export function GenesisWorkspace() {
     | 'object-model'
     | 'interaction-model'
     | 'decision-engine'
+    | 'core-systems'
   >('overview');
   const [lastCompileMessage, setLastCompileMessage] = useState<string | null>(null);
 
@@ -153,6 +171,7 @@ export function GenesisWorkspace() {
               refreshObjectModel();
               refreshInteractionModel();
               refreshDecisionEngine();
+              refreshCoreSystems();
             }}
             className="rounded-lg border border-violet-500/40 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-200 hover:bg-violet-500/20"
           >
@@ -199,6 +218,7 @@ export function GenesisWorkspace() {
               ['object-model', 'Object Model™'],
               ['interaction-model', 'Interactions™'],
               ['decision-engine', 'Decisions™'],
+              ['core-systems', 'Core Systems™'],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -858,6 +878,183 @@ export function GenesisWorkspace() {
                     <li key={entry.historyId}>
                       {entry.decisionId} — {entry.summary}
                     </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'core-systems' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-6 text-sm">
+            <div>
+              <span className="text-white/40">Systems</span>
+              <p className="font-medium">{coreSystemsStats.systemCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Active</span>
+              <p className="font-medium">{coreSystemsStats.activeSystemCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Dependencies</span>
+              <p className="font-medium">{coreSystemsStats.dependencyCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Capabilities</span>
+              <p className="font-medium">{coreSystemsStats.capabilityCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Boundaries</span>
+              <p className="font-medium">{coreSystemsStats.boundaryCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Contracts</span>
+              <p className="font-medium">{coreSystemsStats.contractCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Validation</span>
+              <p className="font-medium">{coreSystemsValidation.valid ? 'PASS' : 'ISSUES'}</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <GenesisPanel title="System Registry™">
+              {coreSystems.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  Registry empty — register via{' '}
+                  <code className="text-violet-300">registerCoreSystem()</code> or batch
+                  ingest. {canonicalSystems.length} canonical system IDs defined in blueprint.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  {coreSystems.map((system) => (
+                    <li key={system.systemId} className="rounded bg-white/5 px-3 py-2">
+                      <span className="font-medium text-violet-200">{system.officialName}</span>
+                      <span className="ml-2 text-white/40">{system.systemId}</span>
+                      <span className="ml-2 text-xs text-white/30">{system.domain}</span>
+                      <span className="ml-2 text-xs text-white/30">{system.lifecycleState}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Dependency Registry™">
+              {coreSystemDependencies.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  No dependencies registered — use{' '}
+                  <code className="text-violet-300">registerSystemDependency()</code>.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {coreSystemDependencies.slice(0, 8).map((dep) => (
+                    <li key={dep.dependencyId}>
+                      {dep.fromSystemId} → {dep.relationType} → {dep.toSystemId}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {coreSystemCircularDeps.length > 0 && (
+                <p className="mt-2 text-xs text-amber-200/80">
+                  {coreSystemCircularDeps.length} circular dependency cycle(s) detected
+                </p>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Capability Registry™">
+              {coreSystemCapabilities.length === 0 ? (
+                <p className="text-sm text-white/50">No capabilities registered yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {coreSystemCapabilities.slice(0, 8).map((cap) => (
+                    <li key={cap.capabilityId}>
+                      {cap.systemId} — {cap.capabilityKey}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Boundary Definitions™">
+              {coreSystemBoundaries.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  No boundaries defined — use{' '}
+                  <code className="text-violet-300">defineSystemBoundary()</code>.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {coreSystemBoundaries.slice(0, 6).map((bnd) => (
+                    <li key={bnd.boundaryId}>
+                      {bnd.systemId} — owns {bnd.owns.length} object(s)
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Integration Contracts™">
+              {coreSystemContracts.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  No contracts registered — use{' '}
+                  <code className="text-violet-300">registerIntegrationContract()</code>.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {coreSystemContracts.slice(0, 6).map((ctr) => (
+                    <li key={ctr.contractId}>
+                      {ctr.providerSystemId} → {ctr.interfaceName} → {ctr.consumerSystemId} (
+                      {ctr.status})
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Expansion Hooks & Lifecycle">
+              {coreSystemExpansionHooks.length === 0 ? (
+                <p className="text-sm text-white/50">No expansion hooks registered yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {coreSystemExpansionHooks.slice(0, 4).map((hook) => (
+                    <li key={hook.hookId}>
+                      {hook.systemId} — {hook.hookName} ({hook.hookType})
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-3 text-xs text-white/40">Lifecycle summary</p>
+              <ul className="mt-1 flex flex-wrap gap-2 text-xs text-white/50">
+                {coreSystemLifecycleSummary.map((entry) => (
+                  <li key={entry.state} className="rounded bg-white/5 px-2 py-0.5">
+                    {entry.state}: {entry.count}
+                  </li>
+                ))}
+              </ul>
+            </GenesisPanel>
+
+            <GenesisPanel title="Canonical System Coverage">
+              <p className="mb-2 text-sm text-white/60">
+                {coreSystemCanonicalCoverage.filter((c) => c.registered).length} of{' '}
+                {coreSystemCanonicalCoverage.length} blueprint systems registered.
+              </p>
+              <ul className="flex flex-wrap gap-1 text-xs text-white/50">
+                {coreSystemCanonicalCoverage.slice(0, 26).map((item) => (
+                  <li
+                    key={item.systemId}
+                    className={`rounded px-2 py-0.5 ${
+                      item.registered ? 'bg-violet-500/20 text-violet-200' : 'bg-white/5'
+                    }`}
+                  >
+                    {item.systemId}
+                  </li>
+                ))}
+              </ul>
+              {!coreSystemsValidation.valid && (
+                <ul className="mt-3 space-y-1 text-xs text-amber-200/80">
+                  {coreSystemsValidation.issues.slice(0, 5).map((issue, i) => (
+                    <li key={`${issue.code}-${i}`}>{issue.message}</li>
                   ))}
                 </ul>
               )}

@@ -24,3 +24,4 @@ export * from './constitution';
 export * from './object-model';
 export * from './interaction-model';
 export * from './decision-engine';
+export * from './core-systems';

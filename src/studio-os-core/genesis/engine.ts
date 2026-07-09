@@ -51,6 +51,7 @@ import { ensureConstitutionSubsystem } from './constitution/engine';
 import { ensureObjectModelSubsystem } from './object-model/engine';
 import { ensureInteractionModelSubsystem } from './interaction-model/engine';
 import { ensureDecisionEngineSubsystem } from './decision-engine/engine';
+import { ensureCoreSystemsSubsystem } from './core-systems/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -70,6 +71,7 @@ export function ensureGenesisStore() {
   ensureObjectModelSubsystem();
   ensureInteractionModelSubsystem();
   ensureDecisionEngineSubsystem();
+  ensureCoreSystemsSubsystem();
   return readGenesisStore();
 }
 
