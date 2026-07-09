@@ -1381,6 +1381,42 @@ Rules:
 8. Narrative Genome™ and Production Genome™ require founder approval and Canon
    Engine™ review before becoming canonical.
 
+### 9B.19 Studio Production System rule
+
+The canonical AI production company architecture is defined in
+**[Studio Production System™](./genesis/articles/STUDIO_PRODUCTION_SYSTEM.md)**.
+
+Creative Direction Studio™ must operate like a production studio, not a content
+generator. Studio Intelligence™ coordinates the pipeline, assembles departments,
+routes approvals, and prevents downstream systems from creating assets before
+the production company has a governed plan.
+
+Rules:
+
+1. **Studio Production System™** is the permanent production division inside
+   Studio Intelligence™. It turns approved Narrative Blueprints™ and Production
+   Genomes™ into managed Production Packages™.
+2. Every production must move through department contracts: responsibilities,
+   inputs, outputs, approval gates, AI specialists, knowledge sources, success
+   metrics, and escalation rules.
+3. The default flow is Topic → Brand DNA™ → Audience DNA™ → Narrative
+   Intelligence™ → approved Narrative Blueprint™ → Production Genome™ → assign
+   Production Departments™ → generate approved assets → Quality Review™ →
+   Distribution™ → Performance Analytics™.
+4. Casting Intelligence™ must decide when founders, Orb™, AI specialists,
+   virtual experts, customer personas, voice actors, narrators, hosts, guests,
+   brand characters, digital humans, or animated characters appear.
+5. Production Design™, Camera Intelligence™, Sound Intelligence™, Post
+   Production™, and Distribution Intelligence™ must derive their decisions from
+   Brand DNA™, Narrative Blueprint™, Production Genome™, Audience DNA™, and
+   channel constraints.
+6. Production Control Room™ is the founder-facing headquarters for live pipeline
+   visibility across Story, Casting, Production, Editing, Approval, Publishing,
+   and Performance.
+7. No asset may be created or published until the Narrative Blueprint™,
+   Production Package™, required department gates, QC gate, and founder approval
+   policies allow it.
+
 ---
 
 ## 10. Compilation Model

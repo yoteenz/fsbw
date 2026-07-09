@@ -32,6 +32,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/BRAND_DISCOVERY_ENGINE.md`](./articles/BRAND_DISCOVERY_ENGINE.md) | Brand Discovery Engine™ — strategic Brand DNA, Brand Intelligence Layer, elevation, and consistency architecture |
 | [`articles/STUDIO_INTELLIGENCE_LAYER.md`](./articles/STUDIO_INTELLIGENCE_LAYER.md) | Studio Intelligence Layer™ — executive reasoning architecture for operating manuals, Decision DNA, Taste Genome, canon, audience, product, creative, and experience compilation |
 | [`articles/NARRATIVE_INTELLIGENCE.md`](./articles/NARRATIVE_INTELLIGENCE.md) | Narrative Intelligence™ — experience-first narrative architecture, Production Genome™, Moment Map™, Proof System™, and emotional journey |
+| [`articles/STUDIO_PRODUCTION_SYSTEM.md`](./articles/STUDIO_PRODUCTION_SYSTEM.md) | Studio Production System™ — AI production company architecture with departments, Production Packages™, control room, QC, distribution, and analytics |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -83,6 +84,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `brand-discovery-engine/` | Brand Discovery Engine™ content home — strategic Brand DNA, discovery, intelligence layer, elevation, consistency, applications |
 | `studio-intelligence-layer/` | Studio Intelligence Layer™ content home — operating manual, Decision DNA, Taste Genome, Canon Engine, Experience Compiler, Audience/Product/Creative intelligence |
 | `narrative-intelligence/` | Narrative Intelligence™ content home — Narrative Genome, Production Genome, Experience Arc, Moment Map, Proof System, Emotional Journey |
+| `studio-production-system/` | Studio Production System™ content home — production departments, casting, design, camera, sound, post, QC, distribution, performance, control room |
 
 ## Rule
 
