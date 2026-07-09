@@ -130,25 +130,32 @@ permanent kernel responsibilities, not temporary product areas.
     - Navigation
     - Atmosphere
     - UI components
+12. **Universal Interaction Model**
+    - [Universal Interaction Model™](./genesis/articles/UNIVERSAL_INTERACTION_MODEL.md)
+    - Interaction primitives
+    - Event philosophy
+    - Workflow composition
+    - System communication
+    - Visibility and audit doctrine
 
 ### Part IV — Architecture
 
-12. **System Registry**
+13. **System Registry**
     - System definitions
     - Capabilities
     - Workflows
     - Dependencies
-13. **Implementation Registry**
+14. **Implementation Registry**
     - Code paths
     - API surfaces
     - SDK surfaces
     - Runtime contracts
-14. **Platform Maturity**
+15. **Platform Maturity**
     - Internal Tool
     - Founder Workflow
     - Company Capability
     - Platform Product
-15. **Compilation Targets**
+16. **Compilation Targets**
     - Constitution
     - Architect's Brain
     - Master Specification
@@ -161,13 +168,13 @@ permanent kernel responsibilities, not temporary product areas.
 
 ### Part V — Canonical Operations
 
-16. **Naming Standards**
-17. **Cross-Reference Standards**
-18. **Versioning Strategy**
-19. **Release and Edition Strategy**
-20. **Future Expansion Standards**
-21. **Validation and Audit**
-22. **Appendices**
+17. **Naming Standards**
+18. **Cross-Reference Standards**
+19. **Versioning Strategy**
+20. **Release and Edition Strategy**
+21. **Future Expansion Standards**
+22. **Validation and Audit**
+23. **Appendices**
     - Glossary
     - ID registry
     - Object templates
@@ -822,6 +829,38 @@ Genesis is a graph. Folders organize reading; relationships organize truth.
 5. `depends_on` relationships must compile into implementation and architecture docs.
 6. `compiles_into` relationships must be reproducible.
 7. Relationship names in older runtime schemas may use kebab-case aliases, but Genesis authoring uses the Canonical Object Model™ names above.
+
+---
+
+## 9A. Universal Interaction Model
+
+Objects are the nouns of Studio World. Relationships are the graph. Interactions
+are the verbs.
+
+The complete interaction architecture is defined in **[Universal Interaction Model™](./genesis/articles/UNIVERSAL_INTERACTION_MODEL.md)**.
+That article is the normative language for how Studio World systems communicate,
+collaborate, automate, teach, validate, publish, remember, and evolve.
+
+### 9A.1 Interaction rule
+
+Any meaningful exchange between canonical objects must be explicit, observable,
+composable, and recoverable.
+
+Examples:
+
+- A Founder issues a Command™ to a Mission™.
+- Orb™ sends a Request™ to a Profession Brain™.
+- Knowledge Core™ emits a Knowledge Update™ for Institute review.
+- A Workflow™ composes Request™, Validation™, Approval™, Status Change™, and Event™ interactions.
+- A Marketplace Listing™ publishes a Service™ through a Publication™ interaction.
+
+### 9A.2 Hidden behavior rule
+
+Hidden cross-system behavior is non-canonical until modeled as an interaction.
+
+If a system changes state, updates memory, publishes knowledge, advances a workflow,
+grants certification, changes authority, or updates relationships, it must emit an
+auditable interaction and event record at the appropriate visibility level.
 
 ---
 

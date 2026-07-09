@@ -44104,3 +44104,26 @@ Summary of the **full conversation in this chat**: Genesis Foundation Framework 
 - **Verification:** `npm run build` passed.
 - **Conventions:** Model concepts as canonical objects plus relationships before implementation. Relationship types are strings — future verbs need no schema migration. Registry starts empty until data ingest.
 
+---
+
+## 2026-07-09 — Genesis Sprint 4 Universal Interaction Model™
+
+Summary of the **full conversation in this chat**: Genesis Foundation Framework → Genesis Implementation Sprint 1 → Genesis Sprint 2 Constitutional Core content → Genesis Implementation Sprint 2 constitutional infrastructure → Genesis Sprint 3 Canonical Object Model ontology → Genesis Implementation Sprint 3 object-model infrastructure → **GENESIS SPRINT 4** — design the Universal Interaction Model™ for Studio World.
+
+- **Context:** User stated the Constitutional Core and Canonical Object Model are established and requested the next milestone: defining how every canonical object communicates, collaborates, and evolves. The goal is to prevent isolated systems and make every Studio World interaction intentional, composable, observable, reusable, and part of one living ecosystem.
+- **Decisions / outcomes:**
+  - Created **`genesis/articles/UNIVERSAL_INTERACTION_MODEL.md`** as canonical Genesis content for Sprint 4.
+  - Defined doctrine: objects are nouns, relationships are the graph, interactions are the verbs. Hidden cross-system behavior is architectural debt and non-canonical until modeled as explicit interactions.
+  - Defined the universal interaction envelope: ID, official name, interaction type, purpose, participants, initiator, recipient, inputs, outputs, lifecycle, failure states, recovery, visibility, auditability, relationships, and future expansion.
+  - Defined the universal interaction language for: Interaction™, Conversation™, Request™, Response™, Command™, Recommendation™, Notification™, Executive Advisory™, Briefing™, Decision™, Approval™, Review™, Validation™, Promotion™, Deprecation™, Publication™, Learning™, Teaching™, Knowledge Update™, Memory Update™, Mission™, Workflow™, Automation™, Status Change™, Synchronization™, Compilation™, Simulation™, and Relationship Update™.
+  - For every interaction, documented Official Name™, Purpose, Participants, Initiator, Recipient, Inputs, Outputs, Lifecycle, Failure States, Recovery, Visibility, Auditability, Relationships, and Future Expansion.
+  - Added system communication architecture with the explicit chain: Orb™ → Profession Brain™ → Knowledge Core™ → Institute of Knowledge™ → Codex™ → Founder™ → Mission™ → Studio Exchange™, using Request/Conversation, Recommendation/Teaching/Validation, Knowledge Update, Review/Publication/Certification, Compilation, Decision/Approval/Command, Workflow/Status Change/Event, and marketplace publication/fulfillment interactions.
+  - Defined event philosophy and event envelope; canonical events include Mission Created™, Blueprint Published™, Knowledge Approved™, Certification Earned™, Founder Decision™, Expansion Released™, Business Created™, Company Activated™, Memory Updated™, Relationship Updated™, Object Promoted™, Compilation Completed™, Publication Released™, and Automation Halted™.
+  - Defined workflow philosophy: workflows compose reusable interaction primitives rather than one-off logic; examples include knowledge-to-publication, mission workflow, and career certification workflow.
+  - Defined visibility levels (`private`, `participant-visible`, `workspace-visible`, `institution-visible`, `founder-visible`, `public`, `canonical`) and audit levels (`none`, `trace`, `event`, `decision-record`, `review-record`, `canonical-history`), plus standard failure and recovery doctrine.
+  - Updated **`Genesis.md`** TOC and added **9A. Universal Interaction Model** kernel section.
+  - Updated **`genesis/README.md`**, **`genesis/articles/README.md`**, and **`docs/studio-os/README.md`** so the Universal Interaction Model is discoverable beside the Constitutional Core and Canonical Object Model.
+  - Added a permanent **`motherboard/CORE.md`** note that future cross-system behavior should use explicit interactions instead of hidden module side effects.
+- **Verification:** `npm run build` passed; generated master-spec/world-graph artifacts were restored so the commit contains only the intended Genesis docs and motherboard updates.
+- **Conventions:** Future AI collaboration, founder workflows, automation, knowledge systems, Career Worlds, marketplace, notifications, missions, World Graph updates, and integrations should be modeled through canonical interaction primitives with visibility, auditability, failure, and recovery semantics.
+
