@@ -48,3 +48,9 @@ Design Canon, Narrative/Production Genome, rights, and approval provenance.
 
 See the Genesis article for touchpoint adaptation, direct-draft exceptions,
 governance, outcome learning, multi-company scale, and anti-patterns.
+
+## Migration (implementation)
+
+- [Migration audit](../creative-direction-studio/MIGRATION_AUDIT.md)
+- [Production graph](../creative-direction-studio/PRODUCTION_GRAPH.md)
+- [Implementation roadmap](../creative-direction-studio/IMPLEMENTATION_ROADMAP.md)

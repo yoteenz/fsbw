@@ -70,6 +70,9 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/GENESIS_V1_CONSTITUTIONAL_CLOSURE.md](./genesis/GENESIS_V1_CONSTITUTIONAL_CLOSURE.md) | **Genesis v1 Constitutional Closure Audit™ guide** — closure program, ownership boundaries, and future extensibility rule |
 | [../../genesis/articles/CREATIVE_DIRECTION_STUDIO.md](../../genesis/articles/CREATIVE_DIRECTION_STUDIO.md) | **Creative Direction Studio™** — universal creative direction, production orchestration, and cross-touchpoint expression governance |
 | [genesis/CREATIVE_DIRECTION_STUDIO.md](./genesis/CREATIVE_DIRECTION_STUDIO.md) | **Creative Direction Studio™ guide** — creative scope, direction-to-production lifecycle, lineage, and ownership boundaries |
+| [creative-direction-studio/MIGRATION_AUDIT.md](./creative-direction-studio/MIGRATION_AUDIT.md) | **CDS migration audit** — codebase owners, violations, duplicate ownership, deprecations |
+| [creative-direction-studio/PRODUCTION_GRAPH.md](./creative-direction-studio/PRODUCTION_GRAPH.md) | **CDS production graph** — constitutional graph, objects, touchpoints, traceability |
+| [creative-direction-studio/IMPLEMENTATION_ROADMAP.md](./creative-direction-studio/IMPLEMENTATION_ROADMAP.md) | **CDS implementation roadmap** — Phases 1–6 architecture migration plan |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |

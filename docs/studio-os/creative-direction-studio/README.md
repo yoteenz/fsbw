@@ -9,6 +9,21 @@
 
 ---
 
+## Constitutional migration (Genesis §9B.28 — approved)
+
+Creative Direction Studio™ is now **constitutional law**. Implementation must
+conform to the approved production graph—not redesign architecture.
+
+| Document | Purpose |
+|---|---|
+| [MIGRATION_AUDIT.md](./MIGRATION_AUDIT.md) | Codebase audit, per-system owners, violations, deprecations |
+| [PRODUCTION_GRAPH.md](./PRODUCTION_GRAPH.md) | Target graph, objects, touchpoints, traceability |
+| [IMPLEMENTATION_ROADMAP.md](./IMPLEMENTATION_ROADMAP.md) | Phases 1–6 migration plan |
+
+Genesis: [`genesis/articles/CREATIVE_DIRECTION_STUDIO.md`](../../../genesis/articles/CREATIVE_DIRECTION_STUDIO.md) · Rule §9B.28
+
+---
+
 > **Creative Direction Studio™ is no longer a page. It is Studio OS's Creative Intelligence Engine™.**
 
 ---

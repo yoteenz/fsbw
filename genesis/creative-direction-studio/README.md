@@ -13,3 +13,9 @@ owner, or channel-specific engine.
 It composes existing constitutional owners: Creative Operating System™,
 Narrative Intelligence™, Studio Production System™, Foundry/Asset Compiler™,
 Asset Registry™, Content Engine™, and Experience systems.
+
+**Migration (post-approval):**
+
+- [`../../docs/studio-os/creative-direction-studio/MIGRATION_AUDIT.md`](../../docs/studio-os/creative-direction-studio/MIGRATION_AUDIT.md)
+- [`../../docs/studio-os/creative-direction-studio/PRODUCTION_GRAPH.md`](../../docs/studio-os/creative-direction-studio/PRODUCTION_GRAPH.md)
+- [`../../docs/studio-os/creative-direction-studio/IMPLEMENTATION_ROADMAP.md`](../../docs/studio-os/creative-direction-studio/IMPLEMENTATION_ROADMAP.md)
