@@ -265,6 +265,13 @@ The Genome retains versioned, confidence-scored organizational beliefs:
 - strategic/creative/brand/operational discoveries
 - contradiction records and unresolved questions
 
+The Ledger is the canonical retained company-specific organizational learning
+store. Its **Organizational Memory™** capability preserves Experience Cases™,
+Lesson Candidates™, Learned Patterns™, and Wisdom Candidates™ as
+evidence-linked, scoped, revisable learning—not as duplicate operational
+records, automatic doctrine, or unreviewed Genome truth. See
+[Organizational Memory™](./ORGANIZATIONAL_MEMORY.md).
+
 Every entry must have:
 
 - provenance

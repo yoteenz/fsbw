@@ -1677,6 +1677,48 @@ Rules:
    constrained, and founder-overridable. It must never optimize for notification
    volume, opens, clicks, requester seniority, or employee surveillance.
 
+### 9B.26 Organizational Memory rule
+
+The permanent governance model for accumulated organizational experience is
+defined in **[Organizational Memory™](./genesis/articles/ORGANIZATIONAL_MEMORY.md)**.
+
+Studio OS must learn from organizational experience without creating a duplicate
+company truth store or letting history silently govern present behavior.
+
+Rules:
+
+1. Organizational Memory™ is a constitutional **capability**, not a peer engine
+   or independent persistence store. It is realized through native outcome
+   systems, Institute evidence/knowledge, Company Genome™ Organizational Learning
+   Ledger™, and Studio Intelligence™ retrieval/synthesis.
+2. Company Genome™ Organizational Learning Ledger™ is the sole canonical owner
+   of retained company-specific Experience Cases™, accepted/rejected Learned
+   Patterns™, and governed Wisdom Candidates™. Native systems own source facts;
+   Institute of Knowledge™ owns evidence corpus and reviewed knowledge; Studio
+   Intelligence Layer™ owns forecasts, reasoning, and recommendations.
+3. Fact™, Evidence™, Knowledge™, Experience™, Learned Pattern™, Forecast™, and
+   Organizational Wisdom™ must remain distinct. An event is not a lesson, a
+   pattern is not a forecast, and a forecast is not authority to act.
+4. Retained learning must include source/evidence provenance, scope and
+   conditions, outcome/counterexamples, confidence, context/maturity, owner,
+   retention class, review/expiry, and promotion status.
+5. Facts do not decay; relevance may. Patterns, forecasts, and wisdom candidates
+   must decay or be revalidated by recency, context, outcome calibration,
+   counterexamples, and changes to company maturity/capacity/market.
+6. Memory-informed behavior may change only through the appropriate governed
+   owner: Company Genome Evolution Lifecycle™ for organizational truth, Company
+   Operating Manual™ for doctrine, Universal Decision Engine™ for decisions, and
+   their relevant approval paths. Organizational Memory™ never auto-rewrites
+   workflow, policy, brand, experience, or AI authority.
+7. Organizational Attention™, Orb™, Executive Headquarters™, Workflow Engine™,
+   and Experience Engine™ may consume bounded, source-backed Memory Briefs™ but
+   must not create duplicate learning registries or treat historical frequency
+   as current executive urgency.
+8. Retention, archival, access restriction, and deletion are tenant-scoped and
+   governed by legal, privacy, contractual, source-system, and Manual policy.
+   Organizational forgetting reduces operational influence before it erases
+   required provenance.
+
 ---
 
 ## 10. Compilation Model

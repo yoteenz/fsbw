@@ -39,6 +39,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/CONSTITUTION_FIRST_PRINCIPLE.md`](./articles/CONSTITUTION_FIRST_PRINCIPLE.md) | Constitution First Principle™ — architecture/implementation separation, bounded implementation authority, and Architecture Review Request™ workflow |
 | [`articles/COMPANY_GENOME_EVOLUTION.md`](./articles/COMPANY_GENOME_EVOLUTION.md) | Company Genome Evolution Lifecycle™ — proportional evolution gates, immutable revisions, diffs, selective projections, restoration, and contradiction governance |
 | [`articles/ORGANIZATIONAL_ATTENTION.md`](./articles/ORGANIZATIONAL_ATTENTION.md) | Organizational Attention™ — executive attention assessment, routing, protected focus, briefing, delivery, and outcome governance |
+| [`articles/ORGANIZATIONAL_MEMORY.md`](./articles/ORGANIZATIONAL_MEMORY.md) | Organizational Memory™ — governed experience recall, learning retention, pattern revalidation, and wisdom promotion boundaries |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -97,6 +98,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `constitution-first-principle/` | Constitution First Principle™ content home — constitutional architect/system engineer roles, authority boundaries, and ARR workflow |
 | `company-genome-evolution/` | Company Genome Evolution Lifecycle™ content home — evolution gates, revision/diff/impact plans, restoration, and conflict governance |
 | `organizational-attention/` | Organizational Attention™ content home — attention allocation, protected focus, executive briefings, delivery, and outcomes |
+| `organizational-memory/` | Organizational Memory™ content home — evidence-linked experience, learning ledger, patterns, retention, and recall |
 
 ## Rule
 
