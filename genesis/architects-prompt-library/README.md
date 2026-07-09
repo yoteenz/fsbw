@@ -4,8 +4,8 @@
 **Program:** Institute of Knowledge™  
 **Parent:** Institute of Knowledge™  
 **Connects to:** Genesis™, Prompt Registry™, Model Orchestrator™, Executive Reflection Suite™, Launch Stack™, Documentation Registry™, System Registry™  
-**Runtime:** architecture approved draft — runtime pending  
-**Architecture guide:** [`../../docs/studio-os/genesis/ARCHITECTS_PROMPT_LIBRARY.md`](../../docs/studio-os/genesis/ARCHITECTS_PROMPT_LIBRARY.md)
+**Runtime:** implemented — `src/studio-os-core/genesis/architects-prompt-library/` · UI `/admin/studio/prompt-library`  
+**Platform guide:** [`../../docs/studio-os/genesis/ARCHITECTS_PROMPT_LIBRARY_PLATFORM.md`](../../docs/studio-os/genesis/ARCHITECTS_PROMPT_LIBRARY_PLATFORM.md)
 
 The Architect's Prompt Library™ is Studio OS's permanent institutional repository for architecture prompts, implementation prompts, validation prompts, research prompts, design prompts, and future AI workflows.
 

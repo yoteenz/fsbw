@@ -17,6 +17,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'live-validation-system',
   'evolution-room',
   'executive-reflection-suite',
+  'architects-prompt-library',
   'articles',
   'adr',
   'proposals',

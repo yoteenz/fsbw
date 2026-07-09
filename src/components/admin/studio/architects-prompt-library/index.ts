@@ -1,0 +1,1 @@
+export { ArchitectsPromptLibraryWorkspace } from './ArchitectsPromptLibraryWorkspace';

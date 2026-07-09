@@ -44659,3 +44659,17 @@ Summary of the **full conversation in this chat**: This chat has built Studio OS
 - **Orb role:** Orb becomes Library Curator — recommends prompts, explains relationships, identifies missing architectural coverage, surfaces duplicates/outdated/conflicting prompts, suggests improvements, and prepares sprint prompt sequences with context/model guidance.
 - **Governance:** The Library may draft Genesis Improvement Proposals™, but it must never auto-modify Genesis.
 
+---
+
+## 2026-07-09 — The Architect's Prompt Library™ implementation
+
+Summary of the **full conversation in this chat**: Built Launch Stack governance arc (Build Order through Executive Reflection Suite architecture + runtime); architected **The Architect's Prompt Library™** as Institute of Knowledge institution (not a prompt folder); then implemented full runtime + immersive UI as permanent architectural memory subsystem.
+
+- **User request:** IMPLEMENTATION MASTER PLAN — build reusable institutional prompt management for Studio OS with Prompt Registry™, Collections, Versioning, Relationships, Search, Analytics, Quality, Execution History, Comparison, Recommendations, Dependencies, Validation, Canonization, Archiving, Model Intelligence; 13 routes under `/admin/studio/prompt-library/*`; premium glass architectural library aesthetic; Orb librarian mode; every prompt versioned/searchable/with lineage/execution history/Genesis+Launch Stack+Core Systems links/canonization path.
+- **Runtime:** `src/studio-os-core/genesis/architects-prompt-library/` — constants, types, persistence, bootstrap/seed-data (7 canonical seed prompts), intelligence + graph engines, ready-view; nested Genesis key **`architectsPromptLibrary`**; `ensureArchitectsPromptLibrarySubsystem()` in `ensureGenesisStore()`; framework module **`architects-prompt-library`**.
+- **Subsystems implemented:** Registry, Collections, Versioning & Lineage (comparisons), Relationships & Dependencies (knowledge graph), Search, Analytics (coverage/stale/conflict/gap), Quality (8 dimensions + lessons), Execution History (timeline), Model Intelligence, Validation & Canonization (`promotePromptToCanon` gate), Recommendations (Orb Curator), Archives.
+- **UI:** Replaced demo prompt editor with `ArchitectsPromptLibraryWorkspace` — marble/glass Institute of Knowledge wing, three-ring nav (catalog/intelligence/governance), Orb Librarian Mode toggle, room-specific panels; hook `useArchitectsPromptLibraryState`; routes `/admin/studio/prompt-library` + `:roomSlug`.
+- **Integration:** Bootstrap chain depends on Executive Reflection Suite; coexists with legacy Mission Control Prompt Registry (`src/studio-os-core/prompt-registry/` · `/admin/studio/prompt-registry`); export names `aplRoomPathFromSlug` / `buildAplOrbRecommendations` to avoid Genesis index collisions.
+- **Docs:** `docs/studio-os/genesis/ARCHITECTS_PROMPT_LIBRARY_PLATFORM.md`; updated content home + guide runtime status.
+- **Verification:** `npm run build` passed.
+

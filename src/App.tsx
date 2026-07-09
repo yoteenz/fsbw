@@ -1377,6 +1377,11 @@ function App() {
               <AdminStudioPromptLibrary />
             </Suspense>
           } />
+          <Route path="studio/prompt-library/:roomSlug" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioPromptLibrary />
+            </Suspense>
+          } />
           <Route path="studio/asset-library" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioAssetLibrary />

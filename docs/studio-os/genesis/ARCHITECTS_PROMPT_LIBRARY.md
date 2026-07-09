@@ -3,7 +3,8 @@
 **Blueprint:** `genesis/articles/ARCHITECTS_PROMPT_LIBRARY.md`  
 **Content home:** `genesis/architects-prompt-library/`  
 **Parent:** Institute of Knowledge™  
-**Runtime status:** architecture approved draft — implementation pending
+**Runtime status:** implemented — `src/studio-os-core/genesis/architects-prompt-library/` · UI `/admin/studio/prompt-library`  
+**Platform guide:** `docs/studio-os/genesis/ARCHITECTS_PROMPT_LIBRARY_PLATFORM.md`
 
 ---
 

@@ -61,6 +61,7 @@ import { ensureFounderAcceptanceTestingSubsystem } from './founder-acceptance-te
 import { ensureLiveValidationSystemSubsystem } from './live-validation-system/engine';
 import { ensureEvolutionRoomSubsystem } from './evolution-room/engine';
 import { ensureExecutiveReflectionSuiteSubsystem } from './executive-reflection-suite/engine';
+import { ensureArchitectsPromptLibrarySubsystem } from './architects-prompt-library/engine';
 import { listGenesisArticles } from './articles/registry';
 import {
   GENESIS_FRAMEWORK_NAME,
@@ -90,6 +91,7 @@ export function ensureGenesisStore() {
   ensureLiveValidationSystemSubsystem();
   ensureEvolutionRoomSubsystem();
   ensureExecutiveReflectionSuiteSubsystem();
+  ensureArchitectsPromptLibrarySubsystem();
   return readGenesisStore();
 }
 

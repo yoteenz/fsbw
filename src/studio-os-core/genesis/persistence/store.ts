@@ -18,6 +18,7 @@ import { emptyFounderAcceptanceTestingStore } from '../founder-acceptance-testin
 import { emptyLiveValidationSystemStore } from '../live-validation-system/persistence';
 import { emptyEvolutionRoomStore } from '../evolution-room/persistence';
 import { emptyExecutiveReflectionSuiteStore } from '../executive-reflection-suite/persistence';
+import { emptyArchitectsPromptLibraryStore } from '../architects-prompt-library/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -82,6 +83,8 @@ export function readGenesisStore(): GenesisStore {
       evolutionRoom: parsed.evolutionRoom ?? emptyEvolutionRoomStore(),
       executiveReflectionSuite:
         parsed.executiveReflectionSuite ?? emptyExecutiveReflectionSuiteStore(),
+      architectsPromptLibrary:
+        parsed.architectsPromptLibrary ?? emptyArchitectsPromptLibraryStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);
