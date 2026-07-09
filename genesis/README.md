@@ -13,6 +13,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`../Genesis.md`](../Genesis.md) | Foundation Framework™ — kernel hierarchy, authoring rules, review, compilation, and versioning |
 | [`articles/CONSTITUTIONAL_CORE.md`](./articles/CONSTITUTIONAL_CORE.md) | Constitutional Core™ — permanent philosophical operating system |
 | [`articles/CANONICAL_OBJECT_MODEL.md`](./articles/CANONICAL_OBJECT_MODEL.md) | Canonical Object Model™ — complete ontology and relationship language for Studio World |
+| `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 
 ## Structure
 
@@ -30,6 +31,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `history/` | Historical revisions archive |
 | `compiler/` | Compile manifests and target outputs |
 | `constitution/` | Constitutional Core infrastructure — registry, amendments, versioning, archive |
+| `object-model/` | Canonical Object Model infrastructure — registry, factory, relationships, validation, history |
 
 ## Rule
 

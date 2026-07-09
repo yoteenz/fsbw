@@ -21,3 +21,4 @@ export * from './compiler/targets';
 export * from './compiler/pipeline';
 export * from './persistence/store';
 export * from './constitution';
+export * from './object-model';

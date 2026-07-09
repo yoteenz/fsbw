@@ -223,6 +223,7 @@ export type GenesisStore = {
   compileManifests: GenesisCompileManifest[];
   historicalRevisions: GenesisHistoricalRevision[];
   constitution?: import('./constitution/types').ConstitutionStore;
+  objectModel?: import('./object-model/types').ObjectModelStore;
   bootstrappedAt?: string;
 };
 

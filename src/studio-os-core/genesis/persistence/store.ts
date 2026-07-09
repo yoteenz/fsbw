@@ -5,6 +5,7 @@ import {
 } from '../constants';
 import { bootstrapGenesisStoreIfEmpty } from '../bootstrap/seeds';
 import { emptyConstitutionStore } from '../constitution/persistence';
+import { emptyObjectModelStore } from '../object-model/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -54,6 +55,7 @@ export function readGenesisStore(): GenesisStore {
       compileManifests: parsed.compileManifests ?? [],
       historicalRevisions: parsed.historicalRevisions ?? [],
       constitution: parsed.constitution ?? emptyConstitutionStore(),
+      objectModel: parsed.objectModel ?? emptyObjectModelStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CanonicalObjectPayload",
+  "description": "Zero-code ingest schema for Canonical Object Model™ objects",
+  "type": "object",
+  "required": ["objectType", "officialName", "description", "slug", "owner"],
+  "properties": {
+    "objectType": {
+      "type": "string",
+      "description": "One of 56 canonical object types (e.g. system, company, workflow)"
+    },
+    "officialName": { "type": "string" },
+    "description": { "type": "string" },
+    "slug": { "type": "string" },
+    "owner": {
+      "type": "object",
+      "required": ["steward"],
+      "properties": {
+        "steward": { "type": "string" },
+        "institution": { "type": "string" },
+        "department": { "type": "string" }
+      }
+    },
+    "lifecycleState": { "type": "string" },
+    "canonicalStatus": { "type": "string" },
+    "dependencies": { "type": "array", "items": { "type": "string" } },
+    "tags": { "type": "array", "items": { "type": "string" } },
+    "metadata": { "type": "object" },
+    "references": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["refId", "label"],
+        "properties": {
+          "refId": { "type": "string" },
+          "label": { "type": "string" },
+          "relationship": { "type": "string" }
+        }
+      }
+    },
+    "inheritsFrom": { "type": "string" },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["toObjectId", "type"],
+        "properties": {
+          "toObjectId": { "type": "string" },
+          "type": { "type": "string" },
+          "rationale": { "type": "string" },
+          "required": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}

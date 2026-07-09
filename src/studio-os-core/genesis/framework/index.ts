@@ -4,6 +4,7 @@ export { listPipelineStages, getNextPipelineStage } from './hierarchy';
 export const GENESIS_FRAMEWORK_MODULES = [
   'framework',
   'constitution',
+  'object-model',
   'articles',
   'adr',
   'proposals',

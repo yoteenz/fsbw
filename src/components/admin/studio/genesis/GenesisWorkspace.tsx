@@ -6,6 +6,7 @@ import {
 } from '../../../../studio-os-core/genesis';
 import { useGenesisState } from '../../../../hooks/useGenesisState';
 import { useConstitutionState } from '../../../../hooks/useConstitutionState';
+import { useObjectModelState } from '../../../../hooks/useObjectModelState';
 
 function GenesisPanel({
   title,
@@ -59,8 +60,19 @@ export function GenesisWorkspace() {
     refresh: refreshConstitution,
   } = useConstitutionState();
 
+  const {
+    stats: objectModelStats,
+    objects: canonicalObjects,
+    objectTypes: canonicalObjectTypes,
+    relationships: objectModelRelationships,
+    historicalArchive: objectModelHistory,
+    validation: objectModelValidation,
+    coreRelationshipTypes,
+    refresh: refreshObjectModel,
+  } = useObjectModelState();
+
   const [activeTab, setActiveTab] = useState<
-    'overview' | 'registry' | 'pipelines' | 'schemas' | 'compiler' | 'constitution'
+    'overview' | 'registry' | 'pipelines' | 'schemas' | 'compiler' | 'constitution' | 'object-model'
   >('overview');
   const [lastCompileMessage, setLastCompileMessage] = useState<string | null>(null);
 
@@ -102,6 +114,7 @@ export function GenesisWorkspace() {
             onClick={() => {
               refresh();
               refreshConstitution();
+              refreshObjectModel();
             }}
             className="rounded-lg border border-violet-500/40 bg-violet-500/10 px-4 py-2 text-sm font-medium text-violet-200 hover:bg-violet-500/20"
           >
@@ -145,6 +158,7 @@ export function GenesisWorkspace() {
               ['schemas', 'Canonical Object Model™'],
               ['compiler', 'Compilation Pipeline™'],
               ['constitution', 'Constitution™'],
+              ['object-model', 'Object Model™'],
             ] as const
           ).map(([id, label]) => (
             <button
@@ -411,6 +425,114 @@ export function GenesisWorkspace() {
                 <p className="mt-3 text-xs text-white/40">
                   {constitutionReviews.length} review session(s) pending
                 </p>
+              )}
+            </GenesisPanel>
+          </div>
+        </div>
+      )}
+
+      {activeTab === 'object-model' && (
+        <div className="space-y-4">
+          <div className="flex flex-wrap gap-6 text-sm">
+            <div>
+              <span className="text-white/40">Objects</span>
+              <p className="font-medium">{objectModelStats.objectCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Canonical</span>
+              <p className="font-medium">{objectModelStats.canonicalCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Types in use</span>
+              <p className="font-medium">{objectModelStats.typeCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Relationships</span>
+              <p className="font-medium">{objectModelStats.relationshipCount}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Validation</span>
+              <p className="font-medium">{objectModelValidation.valid ? 'PASS' : 'ISSUES'}</p>
+            </div>
+            <div>
+              <span className="text-white/40">Historical</span>
+              <p className="font-medium">{objectModelStats.historicalEntryCount}</p>
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <GenesisPanel title="Canonical Object Registry™">
+              {canonicalObjects.length === 0 ? (
+                <p className="text-sm text-white/50">
+                  Registry empty — register via{' '}
+                  <code className="text-violet-300">registerCanonicalObject()</code> or batch
+                  ingest. {canonicalObjectTypes.length} object types available.
+                </p>
+              ) : (
+                <ul className="space-y-2 text-sm">
+                  {canonicalObjects.map((obj) => (
+                    <li key={obj.objectId} className="rounded bg-white/5 px-3 py-2">
+                      <span className="font-medium text-violet-200">{obj.officialName}</span>
+                      <span className="ml-2 text-white/40">{obj.objectId}</span>
+                      <span className="ml-2 text-xs text-white/30">{obj.objectType}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Relationship Engine™">
+              <p className="mb-2 text-xs text-white/40">
+                {coreRelationshipTypes.length} core verbs · extensible via string type
+              </p>
+              {objectModelRelationships.length === 0 ? (
+                <p className="text-sm text-white/50">No relationships yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {objectModelRelationships.slice(0, 8).map((rel) => (
+                    <li key={rel.id}>
+                      {rel.fromObjectId} → {rel.type} → {rel.toObjectId}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </GenesisPanel>
+
+            <GenesisPanel title="Object Types™">
+              <p className="mb-2 text-sm text-white/60">
+                {canonicalObjectTypes.length} canonical types across kernel, civilization, people,
+                work, experience, economy, and contracts families.
+              </p>
+              <ul className="flex flex-wrap gap-1 text-xs text-white/50">
+                {canonicalObjectTypes.slice(0, 24).map((t) => (
+                  <li key={t.id} className="rounded bg-white/5 px-2 py-0.5">
+                    {t.id}
+                  </li>
+                ))}
+                {canonicalObjectTypes.length > 24 && (
+                  <li className="text-white/30">+{canonicalObjectTypes.length - 24} more</li>
+                )}
+              </ul>
+            </GenesisPanel>
+
+            <GenesisPanel title="Validation & History">
+              {!objectModelValidation.valid && (
+                <ul className="mb-3 space-y-1 text-xs text-amber-200/80">
+                  {objectModelValidation.issues.slice(0, 5).map((issue, i) => (
+                    <li key={`${issue.code}-${i}`}>{issue.message}</li>
+                  ))}
+                </ul>
+              )}
+              {objectModelHistory.length === 0 ? (
+                <p className="text-sm text-white/50">No archived revisions yet.</p>
+              ) : (
+                <ul className="space-y-2 text-sm text-white/70">
+                  {objectModelHistory.slice(0, 5).map((entry) => (
+                    <li key={entry.historyId}>
+                      {entry.objectId} — {entry.reason}
+                    </li>
+                  ))}
+                </ul>
               )}
             </GenesisPanel>
           </div>
