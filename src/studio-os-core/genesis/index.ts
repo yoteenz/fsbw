@@ -35,3 +35,4 @@ export * from './live-validation-system';
 export * from './evolution-room';
 export * from './executive-reflection-suite';
 export * from './architects-prompt-library';
+export * from './studio-os-design-dna';

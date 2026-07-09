@@ -237,6 +237,7 @@ export type GenesisStore = {
   evolutionRoom?: import('./evolution-room/types').ErStore;
   executiveReflectionSuite?: import('./executive-reflection-suite/types').ErsStore;
   architectsPromptLibrary?: import('./architects-prompt-library/types').AplStore;
+  studioOsDesignDna?: import('./studio-os-design-dna/types').DdnaStore;
   bootstrappedAt?: string;
 };
 

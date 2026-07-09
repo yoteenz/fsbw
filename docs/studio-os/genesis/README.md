@@ -12,4 +12,7 @@
 - [`EXECUTIVE_REFLECTION_SUITE.md`](./EXECUTIVE_REFLECTION_SUITE.md) — Executive Reflection Suite™ complete reflection wing architecture
 - [`EXECUTIVE_REFLECTION_SUITE_PLATFORM.md`](./EXECUTIVE_REFLECTION_SUITE_PLATFORM.md) — Executive Reflection Suite runtime platform guide
 - [`ARCHITECTS_PROMPT_LIBRARY.md`](./ARCHITECTS_PROMPT_LIBRARY.md) — The Architect's Prompt Library™ architecture: prompt assets, lifecycle, model intelligence, quality scoring, Genesis references
+- [`ARCHITECTS_PROMPT_LIBRARY_PLATFORM.md`](./ARCHITECTS_PROMPT_LIBRARY_PLATFORM.md) — Architect's Prompt Library runtime platform guide
+- [`STUDIO_OS_DESIGN_DNA.md`](./STUDIO_OS_DESIGN_DNA.md) — Studio OS Design DNA™ constitutional visual grammar
+- [`STUDIO_OS_DESIGN_DNA_PLATFORM.md`](./STUDIO_OS_DESIGN_DNA_PLATFORM.md) — Design DNA runtime platform guide
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

@@ -19,6 +19,7 @@ import { emptyLiveValidationSystemStore } from '../live-validation-system/persis
 import { emptyEvolutionRoomStore } from '../evolution-room/persistence';
 import { emptyExecutiveReflectionSuiteStore } from '../executive-reflection-suite/persistence';
 import { emptyArchitectsPromptLibraryStore } from '../architects-prompt-library/persistence';
+import { emptyStudioOsDesignDnaStore } from '../studio-os-design-dna/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -85,6 +86,7 @@ export function readGenesisStore(): GenesisStore {
         parsed.executiveReflectionSuite ?? emptyExecutiveReflectionSuiteStore(),
       architectsPromptLibrary:
         parsed.architectsPromptLibrary ?? emptyArchitectsPromptLibraryStore(),
+      studioOsDesignDna: parsed.studioOsDesignDna ?? emptyStudioOsDesignDnaStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

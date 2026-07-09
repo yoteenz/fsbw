@@ -20,6 +20,7 @@ export type AdminStudioSectionId =
   | 'content-packs'
   | 'ai-studio'
   | 'prompt-library'
+  | 'design-dna'
   | 'asset-library'
   | 'publishing-queue'
   | 'drafts'
@@ -163,6 +164,13 @@ export const ADMIN_STUDIO_HUB_CARDS: AdminStudioHubCard[] = [
     metric: '63',
     description: 'CURATED PROMPTS FOR PSA, LOUNGE & MARKETING.',
     route: '/admin/studio/prompt-library',
+  },
+  {
+    id: 'design-dna',
+    title: 'STUDIO OS DESIGN DNA',
+    metric: 'DNA',
+    description: 'PERMANENT VISUAL OPERATING SYSTEM — TOKENS, THEMES, SCENE INHERITANCE.',
+    route: '/admin/studio/design-dna',
   },
   {
     id: 'asset-library',

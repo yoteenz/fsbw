@@ -99,6 +99,7 @@ const AdminStudioContentPacks = lazyWithRetry(() => import('./pages/admin/studio
 const AdminStudioContentPackDetail = lazyWithRetry(() => import('./pages/admin/studio/content-packs/detail/page'), 'AdminStudioContentPackDetail');
 const AdminStudioAiStudio = lazyWithRetry(() => import('./pages/admin/studio/ai-studio/page'), 'AdminStudioAiStudio');
 const AdminStudioPromptLibrary = lazyWithRetry(() => import('./pages/admin/studio/prompt-library/page'), 'AdminStudioPromptLibrary');
+const AdminStudioDesignDna = lazyWithRetry(() => import('./pages/admin/studio/design-dna/page'), 'AdminStudioDesignDna');
 const AdminStudioAssetLibrary = lazyWithRetry(() => import('./pages/admin/studio/asset-library/page'), 'AdminStudioAssetLibrary');
 const AdminStudioPublishingQueue = lazyWithRetry(() => import('./pages/admin/studio/publishing-queue/page'), 'AdminStudioPublishingQueue');
 const AdminStudioAnalytics = lazyWithRetry(() => import('./pages/admin/studio/analytics/page'), 'AdminStudioAnalytics');
@@ -1384,6 +1385,16 @@ function App() {
           <Route path="studio/prompt-library/:roomSlug" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioPromptLibrary />
+            </Suspense>
+          } />
+          <Route path="studio/design-dna" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioDesignDna />
+            </Suspense>
+          } />
+          <Route path="studio/design-dna/:roomSlug" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioDesignDna />
             </Suspense>
           } />
           <Route path="studio/asset-library" element={

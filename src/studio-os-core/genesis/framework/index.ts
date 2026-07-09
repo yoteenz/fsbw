@@ -18,6 +18,7 @@ export const GENESIS_FRAMEWORK_MODULES = [
   'evolution-room',
   'executive-reflection-suite',
   'architects-prompt-library',
+  'studio-os-design-dna',
   'articles',
   'adr',
   'proposals',

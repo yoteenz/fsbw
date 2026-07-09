@@ -1807,6 +1807,17 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'design-dna',
+    title: 'STUDIO OS DESIGN DNA™',
+    purpose: 'Permanent visual operating system — tokens, department themes, scene templates, and inheritance for every Headquarters room.',
+    route: p('design-dna'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'DNA 1.0',
+    ctaLabel: 'OPEN DESIGN DNA',
+    featuredOnOverview: true,
+  },
+  {
     id: 'design-token-engine',
     title: 'DESIGN TOKEN ENGINE™',
     purpose: 'Visual source of truth — spacing, typography, colors, motion, elevation, and themes centralized for every Studio OS surface.',

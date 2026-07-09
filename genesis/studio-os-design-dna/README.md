@@ -4,7 +4,7 @@
 **Program:** Studio OS World Experience™  
 **Parent:** Genesis™ · Studio Design Constitution™  
 **Connects to:** Executive Headquarters™, Orb™, Institute of Knowledge™, Design Token Engine™, Component Registry™, Design Compliance Engine™  
-**Runtime:** constitutional architecture approved draft — runtime/token enforcement pending  
+**Runtime:** Genesis subsystem `studioOsDesignDna` — see [`../../docs/studio-os/genesis/STUDIO_OS_DESIGN_DNA_PLATFORM.md`](../../docs/studio-os/genesis/STUDIO_OS_DESIGN_DNA_PLATFORM.md) · UI `/admin/studio/design-dna`  
 **Compiled guide:** [`../../docs/studio-os/genesis/STUDIO_OS_DESIGN_DNA.md`](../../docs/studio-os/genesis/STUDIO_OS_DESIGN_DNA.md)
 
 Studio OS Design DNA™ is the permanent visual constitution for every future Headquarters, department, room, workspace, scene, application, animation, and AI experience.

@@ -40,6 +40,7 @@ export type AdminStudioBuiltSectionId = Extract<
   | 'content-packs'
   | 'ai-studio'
   | 'prompt-library'
+  | 'design-dna'
   | 'asset-library'
   | 'publishing-queue'
   | 'analytics'
@@ -146,6 +147,7 @@ export const ADMIN_STUDIO_BUILT_SECTIONS: readonly AdminStudioBuiltSectionId[] =
   'content-packs',
   'ai-studio',
   'prompt-library',
+  'design-dna',
   'asset-library',
   'publishing-queue',
   'analytics',
@@ -256,6 +258,7 @@ export const ADMIN_STUDIO_ROUTE_PATHS = {
   contentPackDetail: 'studio/content-packs/:packId',
   aiStudio: 'studio/ai-studio',
   promptLibrary: 'studio/prompt-library',
+  designDna: 'studio/design-dna',
   assetLibrary: 'studio/asset-library',
   publishingQueue: 'studio/publishing-queue',
   analytics: 'studio/analytics',
@@ -652,6 +655,11 @@ export function adminStudioConciergeApprovalFlowPath(): string {
 
 export function adminStudioDesignDnaCanonPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/design-dna-canon`;
+}
+
+export function adminStudioDesignDnaPath(roomSlug?: string): string {
+  const base = `${ADMIN_STUDIO_BASE_PATH}/design-dna`;
+  return roomSlug ? `${base}/${roomSlug}` : base;
 }
 
 export function adminStudioDesignGenomePath(): string {
