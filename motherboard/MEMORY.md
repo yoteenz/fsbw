@@ -44172,3 +44172,24 @@ Summary of the **full conversation in this chat**: the user requested a MASTER A
   - `motherboard/MEMORY.md`
 - **Conventions:** Future Frontal Slayer business architecture work should treat Company Genome™ systems as business-owned operating objects with explicit data, events, dependencies, risks, and owner impact. Future Studio OS implementations should be able to generate similar business-first genomes for other companies, separating business architecture from software surfaces.
 
+---
+
+## 2026-07-09 — Genesis Sprint 5 Universal Decision Architecture™
+
+Summary of the **full conversation in this chat**: Genesis Implementation Sprint 4 runtime infrastructure for the Universal Interaction Model™ was completed and pushed (`733f25365`), then the user requested **GENESIS SPRINT 5** for `Genesis.md`, phase **Decision Architecture™** — design the Universal Decision Architecture™ as the reasoning engine behind every Studio World system.
+
+- **Context:** User stated the Constitutional Core, Canonical Object Model, and Universal Interaction Model are established. The next milestone was defining how Studio World makes decisions so recommendations, automations, AI actions, workflows, approvals, priorities, learning paths, missions, notifications, executive advisories, and system behaviors do not contain isolated decision logic.
+- **Decisions / outcomes:**
+  - Created **`genesis/articles/UNIVERSAL_DECISION_ARCHITECTURE.md`** as canonical Genesis content for Sprint 5.
+  - Defined doctrine: objects are what exists, relationships connect objects, interactions move meaning, and decisions explain why Studio World chooses one path over another. Hidden decision logic is architectural debt and non-canonical until modeled as a decision.
+  - Defined the **Universal Decision Envelope** with ID, official name, decision type, status, initiator, decision maker, affected objects, inputs, outputs, context, evidence, confidence, reasoning, tradeoffs, alternatives, dependencies, review, history, learning, visibility, and auditability.
+  - Defined 22 decision objects requested by the user: Decision™, Recommendation™, Suggestion™, Priority™, Mission™, Goal™, Strategy™, Automation™, Delegation™, Approval™, Escalation™, Review™, Observation™, Prediction™, Risk™, Opportunity™, Constraint™, Intent™, Context™, Confidence™, Evidence™, and Tradeoff™. Each includes Official Name™, Purpose, Decision Inputs/Outputs, Decision Context, Evidence, Confidence, Reasoning, Tradeoffs, Alternatives, Dependencies, Review Process, Historical Tracking, and Future Evolution.
+  - Added constitutional decision principles: Human Override, Explainability, Reversible Automation, Transparency by Impact, Learning Loop, Historical Wisdom, Confidence Honesty, Evidence Integrity, Alternative Preservation, Escalation Safety, Constitutional Alignment, and Decision as Memory.
+  - Defined the decision hierarchy: Founder → Orb → Profession Brains™ → Knowledge Core™ → Institute of Knowledge™ → Automation™ → Execution™ → Learning™ → Memory™ → Future Decisions™.
+  - Added decision lifecycle, impact levels, integrations with Constitutional Core / Canonical Object Model / Universal Interaction Model, anti-patterns, and a Canonical Decision Test.
+  - Updated **`Genesis.md`** with Decision Governance link and new **8A. Universal Decision Architecture** kernel section.
+  - Updated **`genesis/README.md`**, **`genesis/articles/README.md`**, and **`docs/studio-os/README.md`** so Universal Decision Architecture is discoverable beside the prior Genesis foundations.
+  - Added a permanent **`motherboard/CORE.md`** note that future decision logic must be explainable, auditable, reviewable, historically tracked, learning-oriented, and human-overridable.
+- **Verification:** `npm run build` passed; generated master-spec/world-graph artifacts were restored so the commit contains only intended docs and motherboard updates.
+- **Conventions:** Future decision logic should be modeled through Universal Decision Architecture primitives before implementation. High-impact decisions require evidence, confidence, alternatives, tradeoffs, review, audit, and human override.
+

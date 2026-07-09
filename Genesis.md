@@ -101,6 +101,10 @@ permanent kernel responsibilities, not temporary product areas.
    - Review thresholds
    - Deprecation and repeal
 8. **Decision Governance**
+   - [Universal Decision Architecture™](./genesis/articles/UNIVERSAL_DECISION_ARCHITECTURE.md)
+   - Decision principles
+   - Decision objects
+   - Decision hierarchy
    - ADR workflow
    - Proposal workflow
    - Canonical review workflow
@@ -761,6 +765,40 @@ Proposed -> Draft -> Review -> Approved -> Canonical -> Superseded/Deprecated/Ar
 ```
 
 Only `Canonical` objects may be treated as source-of-truth.
+
+---
+
+## 8A. Universal Decision Architecture
+
+Objects are what exists. Relationships connect objects. Interactions move meaning
+between objects. Decisions explain why Studio World chooses one path over another.
+
+The complete decision architecture is defined in **[Universal Decision Architecture™](./genesis/articles/UNIVERSAL_DECISION_ARCHITECTURE.md)**.
+That article is the normative reasoning language for recommendations, suggestions,
+priorities, missions, goals, strategy, automation, delegation, approval, escalation,
+review, observation, prediction, risk, opportunity, constraints, intent, context,
+confidence, evidence, and tradeoffs.
+
+### 8A.1 Decision rule
+
+Any meaningful system choice must be explainable, auditable, reviewable, and able to
+improve through learning.
+
+Examples:
+
+- Orb™ recommends a next action and explains evidence, confidence, and tradeoffs.
+- A Profession Brain™ proposes strategy but preserves alternatives for founder review.
+- Automation™ executes only within delegated authority and emits a decision/audit record.
+- A Mission™ is prioritized using goals, risk, opportunity, constraints, and context.
+- A Prediction™ records assumptions and later compares outcome against forecast.
+
+### 8A.2 Hidden decision rule
+
+Hidden decision logic is non-canonical until modeled as a decision.
+
+If a system ranks, recommends, approves, blocks, escalates, delegates, predicts,
+automates, prioritizes, or learns from an outcome, it must preserve the reasoning
+record appropriate to impact.
 
 ---
 
