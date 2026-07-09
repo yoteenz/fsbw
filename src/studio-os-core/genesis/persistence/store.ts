@@ -97,7 +97,10 @@ export function readGenesisStore(): GenesisStore {
 
 export function writeGenesisStore(store: GenesisStore): void {
   if (typeof localStorage === 'undefined') return;
-  localStorage.setItem(GENESIS_STORAGE_KEY, JSON.stringify(store));
+  const serialized = JSON.stringify(store);
+  const existing = localStorage.getItem(GENESIS_STORAGE_KEY);
+  if (existing === serialized) return;
+  localStorage.setItem(GENESIS_STORAGE_KEY, serialized);
   dispatchUpdated();
 }
 

@@ -1,4 +1,3 @@
-import { updateBuildOrderSystemStatus } from '../build-order/build-order/registry';
 import {
   ensureExecutiveHeadquartersStore,
   recordHeadquartersOpened,
@@ -44,11 +43,7 @@ import type {
 } from './types';
 
 export function ensureExecutiveHeadquartersSubsystem() {
-  const store = ensureExecutiveHeadquartersStore();
-  if (store.seededAt && store.rooms.length > 0) {
-    updateBuildOrderSystemStatus('executive-headquarters', 'implemented');
-  }
-  return store;
+  return ensureExecutiveHeadquartersStore();
 }
 
 export function getExecutiveHeadquartersPlatformStats(): ExecutiveHeadquartersStats {
@@ -70,7 +65,6 @@ export function getExecutiveHeadquartersReadyView(
   roomOverride?: HqRoomId
 ): ExecutiveHeadquartersReadyView {
   ensureExecutiveHeadquartersSubsystem();
-  recordHeadquartersOpened();
 
   const store = readExecutiveHeadquartersStore();
   const company = buildHeadquartersCompanyProjection();

@@ -44756,3 +44756,19 @@ Summary of the **full conversation in this chat**: Built Launch Stack governance
 - **Integration:** Bootstrap chain after Architect's Prompt Library; complements Design Token Engine™; distinct from customer Design DNA Canon (`design-dna-canon`). Navigation entry in admin studio nav.
 - **Verification:** `npm run build` passed.
 
+---
+
+## 2026-07-09 — Grand Atrium freeze fix (Genesis render loop)
+
+Summary: User reported Grand Atrium loads but **freezes / gets stuck** (loading then black/white screen instability).
+
+- **Root cause:** Infinite Genesis write loop — `getExecutiveHeadquartersReadyView()` called `recordHeadquartersOpened()` on every React render → `mutateGenesisStore` → `GENESIS_UPDATED_EVENT` → `useExecutiveHeadquartersState` listener → `setTick` → re-render → repeat. `updateBuildOrderSystemStatus` also rewrote Build Order on every call even when status unchanged, amplifying events.
+- **Fix:**
+  - Removed `recordHeadquartersOpened()` from read path `getExecutiveHeadquartersReadyView()`; record once on HQ mount in hook.
+  - `updateBuildOrderSystemStatus()` no-ops when status already matches.
+  - Debounced Genesis event listener in `useExecutiveHeadquartersState` (120ms).
+  - Removed duplicate `useRequireAdminPageAccess` in Grand Atrium content.
+  - `writeGenesisStore()` skips localStorage write + event dispatch when serialized store unchanged.
+  - `recordHeadquartersOpened()` no-ops when arrival session already exists (avoids redundant mount writes).
+- **Verification:** `npm run build` passed.
+

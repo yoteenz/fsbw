@@ -36,6 +36,11 @@ export function updateBuildOrderSystemStatus(
   systemId: string,
   currentStatus: BuildOrderSystemRecord['currentStatus']
 ): BuildOrderSystemRecord | undefined {
+  const existing = getBuildOrderSystem(systemId);
+  if (existing?.currentStatus === currentStatus) {
+    return existing;
+  }
+
   let updated: BuildOrderSystemRecord | undefined;
   mutateBuildOrderStore((store) => {
     const systems = store.systems.map((s) => {

@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ensureExecutiveHeadquartersSubsystem,
   getExecutiveHeadquartersPlatformStats,
   getExecutiveHeadquartersReadyView,
   openExecutiveHeadquartersRoom,
   listHeadquartersNavigationRooms,
+  recordHeadquartersOpened,
   resolveHeadquartersRoomFromSlug,
   buildHeadquartersRoomPath,
   type HqRoomId,
@@ -13,20 +14,31 @@ import {
 
 export function useExecutiveHeadquartersState(roomSlug?: string) {
   const [tick, setTick] = useState(0);
+  const openedRef = useRef(false);
 
   const refresh = useCallback(() => {
-    ensureExecutiveHeadquartersSubsystem();
     setTick((n) => n + 1);
   }, []);
 
   useEffect(() => {
     ensureExecutiveHeadquartersSubsystem();
+    if (!openedRef.current) {
+      openedRef.current = true;
+      recordHeadquartersOpened();
+    }
   }, []);
 
   useEffect(() => {
-    const onUpdate = () => refresh();
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    const onUpdate = () => {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => refresh(), 120);
+    };
     window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-    return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
+    return () => {
+      if (timeout) clearTimeout(timeout);
+      window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
+    };
   }, [refresh]);
 
   const activeRoomId = useMemo(

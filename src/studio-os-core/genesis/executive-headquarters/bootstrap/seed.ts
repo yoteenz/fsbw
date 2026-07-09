@@ -1,4 +1,5 @@
 import { HQ_DEFAULT_ROOM_ID } from '../constants';
+import { updateBuildOrderSystemStatus } from '../../build-order/build-order/registry';
 import type {
   HeadquartersAdvisory,
   HeadquartersArrivalSession,
@@ -123,6 +124,7 @@ export function seedExecutiveHeadquartersStore(): void {
     bootstrappedAt: timestamp,
     lastOpenedAt: timestamp,
   }));
+  updateBuildOrderSystemStatus('executive-headquarters', 'implemented');
 }
 
 export function ensureExecutiveHeadquartersStore() {
@@ -141,10 +143,14 @@ export function ensureExecutiveHeadquartersStore() {
 }
 
 export function recordHeadquartersOpened(): void {
-  mutateExecutiveHeadquartersStore((store) => ({
-    ...store,
+  const store = readExecutiveHeadquartersStore();
+  if (store.arrivalSession) {
+    return;
+  }
+  mutateExecutiveHeadquartersStore((current) => ({
+    ...current,
     lastOpenedAt: now(),
-    arrivalSession: store.arrivalSession ?? createArrivalSession(),
+    arrivalSession: createArrivalSession(),
   }));
 }
 

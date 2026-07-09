@@ -7,7 +7,6 @@ import { getCompanyBySlug } from '../../../../studio-os-core/company-routes';
 import { useWorkspace } from '../../../../studio-os-core/context/WorkspaceProvider';
 
 function CompanyGrandAtriumContent() {
-  useRequireAdminPageAccess();
   const { companySlug = '' } = useParams<{ companySlug: string }>();
   const company = getCompanyBySlug(companySlug);
   const { enterWorkspace } = useWorkspace();
