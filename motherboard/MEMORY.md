@@ -44063,3 +44063,24 @@ Summary of the **full conversation in this chat**: Genesis.md Foundation Framewo
 - **Verification:** `npm run build` passed after fixing import paths (`../../versioning/semver`) and unused parameter in amendment archive.
 - **Conventions:** Constitution is a Genesis subsystem, not a markdown collection. Future articles register via schema-conformant payloads — zero engineering changes. Authored Constitutional Core at `genesis/articles/CONSTITUTIONAL_CORE.md` remains source until explicitly ingested.
 
+---
+
+## 2026-07-09 — Genesis Sprint 3 Canonical Object Model™
+
+Summary of the **full conversation in this chat**: Genesis.md Foundation Framework sprint → Genesis Implementation Sprint 1 (framework infrastructure) → Genesis Sprint 2 Constitutional Core content → Genesis Implementation Sprint 2 constitutional infrastructure → **GENESIS SPRINT 3** — design the complete Canonical Object Model™ for Studio World.
+
+- **Context:** User stated the Genesis Framework and Constitutional Core are established and requested the next milestone: defining the complete ontology of Studio World. The model must become the DNA for every system, company, profession, room, AI, workflow, interaction, capability, and future feature. The user explicitly said not to think in pages/components, but in fundamental operating-system building blocks.
+- **Decisions / outcomes:**
+  - Created **`genesis/articles/CANONICAL_OBJECT_MODEL.md`** as canonical Genesis content for Sprint 3.
+  - Defined a base object envelope with stable ID, official name, type, status, canonical status, version, category, purpose, responsibilities, lifecycle, relationships, ownership, dependencies, inputs, outputs, versioning, extensibility, examples, anti-patterns, revision history, approval history, and compile targets.
+  - Defined the relationship language: `owns`, `contains`, `extends`, `depends_on`, `teaches`, `guides`, `creates`, `publishes`, `governs`, `inherits`, `references`, `validates`, `supersedes`, `belongs_to`, `operates`, `compiles_into`, plus supporting verbs such as `implements`, `requires`, `triggers`, `emits`, `observes`, `archives`, `certifies`, `contradicts`, `composes`, and `routes_to`.
+  - Defined inheritance doctrine: inheritance is rare; composition is default. Approved families include Institution → Institute/Constitution Office, Company → workspace companies, Workspace → Founder Office, Room → Campaign Studio, Asset → Hero Object, Article → Codex/Constitutional/Genesis Article, Decision → ADR, Citizen → Founder/Mentor/AI Worker, and Knowledge Artifact → Research Paper/Specification/Blueprint/Memory.
+  - Defined **56 canonical object types** across kernel/canon/publication, civilization/place, people/intelligence, work/capability, experience/memory, economy/assets/expansion, and contracts/implementation. The catalog includes all user-required minimum objects plus essential primitives such as Article™, Contract™, Identity™, Interface™, Implementation™, State™, and Signal™.
+  - For every object type, documented Official Name™, Purpose, Responsibilities, Lifecycle, Relationships, Ownership, Dependencies, Inputs, Outputs, Versioning, Extensibility, Examples, and Anti-patterns.
+  - Added validation doctrine: future concepts must first be modeled as existing objects plus relationships; a new object type is allowed only when existing types cannot represent the concept without ambiguity, the concept recurs across systems/eras, and Genesis kernel amendment review approves it.
+  - Updated **`Genesis.md`** to point its Canonical Object Model section at the new article, list object families, and align its Relationship Model with the Sprint 3 relationship language.
+  - Updated **`genesis/README.md`**, **`genesis/articles/README.md`**, and **`docs/studio-os/README.md`** so the Canonical Object Model is discoverable beside the Foundation Framework and Constitutional Core.
+  - Added a permanent **`motherboard/CORE.md`** note that `genesis/articles/CANONICAL_OBJECT_MODEL.md` is now the canonical object language and that adding new object types is a kernel-level change.
+- **Verification:** `npm run build` passed; generated master-spec/world-graph artifacts were restored so the commit contains only the intended Genesis docs and motherboard updates.
+- **Conventions:** Future Studio World work should describe concepts as canonical objects and graph relationships before implementation. Pages, components, routes, database tables, prompts, and docs are projections/implementations, not canonical object identity.
+

@@ -6,6 +6,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 |----------|-------------|
 | [../../Genesis.md](../../Genesis.md) | **Genesis.md Foundation Framework™** — canonical source-of-truth kernel for Studio World and compiler source for all future documents |
 | [../../genesis/articles/CONSTITUTIONAL_CORE.md](../../genesis/articles/CONSTITUTIONAL_CORE.md) | **Genesis Constitutional Core™** — permanent philosophical operating system and constitutional law for Studio World |
+| [../../genesis/articles/CANONICAL_OBJECT_MODEL.md](../../genesis/articles/CANONICAL_OBJECT_MODEL.md) | **Canonical Object Model™** — Studio World's complete ontology, relationship language, inheritance doctrine, and object validation test |
 | [genesis/GENESIS_PLATFORM.md](./genesis/GENESIS_PLATFORM.md) | **Genesis Platform™** — Canonical Object Model, pipelines, registry, compilation infrastructure |
 | [genesis/CONSTITUTION_PLATFORM.md](./genesis/CONSTITUTION_PLATFORM.md) | **Genesis Constitution™** — constitutional registry, amendments, versioning, relationship graph |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |

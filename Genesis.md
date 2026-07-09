@@ -71,8 +71,11 @@ permanent kernel responsibilities, not temporary product areas.
    - Systems
    - Implementations
 3. **Canonical Object Model**
-   - Base object schema
-   - Object-specific schemas
+   - [Canonical Object Model™](./genesis/articles/CANONICAL_OBJECT_MODEL.md)
+   - Base object envelope
+   - Canonical object type catalog
+   - Relationship language
+   - Inheritance and composition doctrine
    - Identity, provenance, and status
 4. **Relationship Model**
    - Relationship types
@@ -265,35 +268,29 @@ Every official object in Studio World must be representable as a Genesis object.
 Objects are graph nodes with stable identity, provenance, relationships, lifecycle,
 and compile behavior.
 
-### 3.1 Required object categories
+The complete ontology is defined in **[Canonical Object Model™](./genesis/articles/CANONICAL_OBJECT_MODEL.md)**.
+That article is the normative object language for Studio World. This kernel section
+defines the envelope and framework rules; the article defines the full catalog,
+relationship language, inheritance doctrine, validation test, examples, and
+anti-patterns.
 
-Genesis must support at least the following canonical object types:
+### 3.1 Canonical object families
 
-| Object | Purpose |
-|--------|---------|
-| `System` | Operational capability or platform subsystem |
-| `Institution` | Permanent organization with authority or stewardship |
-| `Principle` | Foundational belief or constitutional law |
-| `Article` | Atomic canonical truth unit |
-| `Profession` | Career domain with knowledge, progression, and simulations |
-| `Department` | Organizational or spatial unit inside Headquarters or an institution |
-| `Workflow` | Repeatable operational sequence |
-| `Capability` | Discrete reusable function a system can perform |
-| `WorldEntity` | Canonical person, place, organization, object, district, or world construct |
-| `UIComponent` | Reusable interface component or hero object surface |
-| `Event` | Historical, operational, release, or world timeline event |
-| `Registry` | Canonical directory of objects, systems, policies, or routes |
-| `Policy` | Rule with enforcement expectations |
-| `Mission` | Goal, objective, campaign, or company-level directive |
-| `HeroObject` | High-symbolism object with narrative, UI, or operational power |
-| `ExpansionPack` | Additive domain package that extends a collection without redesigning it |
-| `ResearchPaper` | Institute-governed knowledge artifact with evidence and review |
-| `Specification` | Detailed engineering, API, SDK, design, or data contract |
-| `Implementation` | Realized artifact in code, docs, prompts, APIs, or runtime configuration |
-| `ADR` | Architecture Decision Record derived from Genesis context |
-| `Proposal` | Pre-canonical candidate change |
-| `Amendment` | Formal change to constitutional or kernel-level truth |
-| `CompilationTarget` | Output generated from Genesis |
+Genesis object types belong to durable operating-system families:
+
+| Family | Canonical objects |
+|--------|-------------------|
+| Kernel and canon | Collection™, Book™, Volume™, Chapter™, Article™, Codex Article™, Knowledge Artifact™, Specification™, Blueprint™, Research Paper™, Decision™, Architecture Decision Record™, Policy™, Rule™, Registry™ |
+| Civilization and place | System™, Institution™, Company™, Headquarters™, Department™, Studio™, Workspace™, Room™, Council™ |
+| People and intelligence | Citizen™, Founder™, AI Worker™, Mentor™, Profession™, Profession Brain™ |
+| Work and capability | Mission™, Workflow™, Capability™, Service™, Journey™, Relationship™ |
+| Experience and memory | Event™, Notification™, Briefing™, Memory™, Simulation™, Scenario™, State™, Signal™ |
+| Economy and expansion | Career World™, Marketplace Listing™, Certification™, Achievement™, Asset™, Hero Object™, Asset Pack™, Expansion Pack™ |
+| Contracts and implementation | Contract™, Identity™, Interface™, Implementation™ |
+
+Future object types are kernel changes. A new type may be added only when the
+Canonical Object Model™ validation doctrine proves existing objects plus
+relationships cannot represent the concept without ambiguity.
 
 ---
 
@@ -301,6 +298,11 @@ Genesis must support at least the following canonical object types:
 
 All Genesis objects share a base schema. Object-specific schemas extend the base
 schema without replacing it.
+
+The complete per-object definitions live in
+**[Canonical Object Model™](./genesis/articles/CANONICAL_OBJECT_MODEL.md)**. The
+schema below is the minimum machine-readable envelope every Genesis object must
+carry regardless of type.
 
 ### 4.1 Base schema
 
@@ -763,20 +765,53 @@ Genesis is a graph. Folders organize reading; relationships organize truth.
 
 | Type | Meaning |
 |------|---------|
-| `defines` | Source object defines target concept |
-| `implements` | Implementation realizes source object |
-| `governs` | Policy/principle/institution controls target |
-| `depends-on` | Source cannot function without target |
-| `supports` | Source strengthens or enables target |
+| `owns` | Source is accountable for target stewardship |
+| `contains` | Source structurally includes target |
 | `extends` | Source adds compatible scope to target |
-| `supersedes` | Source replaces target going forward |
-| `contradicts` | Source conflicts with target and requires review |
+| `depends_on` | Source cannot function correctly without target |
+| `teaches` | Source educates target or provides learning content to target |
+| `guides` | Source gives direction, interpretation, or next action to target |
+| `creates` | Source produces target as an output |
+| `publishes` | Source releases target to an audience or canon surface |
+| `governs` | Source sets rules, constraints, or authority over target |
+| `inherits` | Source receives baseline identity or behavior from target |
 | `references` | Source cites target without dependency |
-| `compiled-to` | Source generates target output |
-| `owned-by` | Source is stewarded by institution/department |
-| `validated-by` | Source has been reviewed by target |
-| `blocks` | Source prevents target from advancing |
-| `derived-from` | Source originates from target |
+| `validates` | Source confirms target through review, evidence, or test |
+| `supersedes` | Source replaces target going forward while preserving history |
+| `belongs_to` | Source is a member, child, or instance within target |
+| `operates` | Source runs, maintains, or executes target |
+| `compiles_into` | Source generates target projection |
+| `implements` | Source realizes target in code, schema, workflow, prompt, route, or document |
+| `requires` | Source needs target as a prerequisite, stricter than `references` |
+| `triggers` | Source starts target lifecycle or workflow |
+| `emits` | Source produces target signal, event, notification, or memory |
+| `observes` | Source watches target without owning or changing it |
+| `archives` | Source preserves target as historical record |
+| `certifies` | Source grants official proof of target competency or completion |
+| `contradicts` | Source conflicts with target and requires review |
+| `composes` | Source is assembled from target without inheritance |
+| `routes_to` | Source directs a user, command, object, or event toward target |
+| `published_by` | Source is published by target institution, registry, or marketplace |
+| `published_as` | Source is exposed through target listing or publication surface |
+| `provided_by` | Source capability or service is provided by target |
+| `used_by` | Source is consumed by target workflow, room, system, or interface |
+| `uses` | Source consumes target capability, contract, asset, or service |
+| `governed_by` | Source is constrained by target policy, rule, article, or institution |
+| `validated_by` | Source has been checked by target rule, registry, review, or institution |
+| `owned_by` | Source is stewarded by target institution, department, or owner |
+| `operated_by` | Source workflow/service is executed by target actor or worker |
+| `emitted_by` | Source event/signal was produced by target object |
+| `created_by` | Source object was produced by target actor, system, or compiler |
+| `issued_by` | Source credential or certification was granted by target authority |
+| `implemented_by` | Source contract/specification/object is realized by target implementation |
+| `learns_from` | Source actor receives teaching or calibration from target |
+| `approves` | Source actor or council grants approval to target |
+| `hosts` | Source room, studio, or environment provides operating space for target |
+| `affects` | Source event, signal, or decision changes target meaning or state |
+| `connects` | Source relationship links target objects |
+| `supports` | Source strengthens or enables target without being required |
+| `blocks` | Source prevents target from advancing until resolved |
+| `renders` | Source interface or implementation displays target asset/object |
 
 ### 9.2 Relationship rules
 
@@ -784,8 +819,9 @@ Genesis is a graph. Folders organize reading; relationships organize truth.
 2. Relationship IDs must be stable.
 3. `contradicts` relationships block canon until resolved.
 4. `supersedes` requires historical preservation.
-5. `depends-on` relationships must compile into implementation and architecture docs.
-6. `compiled-to` relationships must be reproducible.
+5. `depends_on` relationships must compile into implementation and architecture docs.
+6. `compiles_into` relationships must be reproducible.
+7. Relationship names in older runtime schemas may use kebab-case aliases, but Genesis authoring uses the Canonical Object Model™ names above.
 
 ---
 
