@@ -1752,6 +1752,47 @@ Rules:
    for formal constitutional reopening under Due Process & Continuity—not a
    reason to silently create an ungoverned engine.
 
+### 9B.28 Creative Direction Studio rule
+
+The universal creative-direction and production-orchestration architecture is
+defined in **[Creative Direction Studio™](./genesis/articles/CREATIVE_DIRECTION_STUDIO.md)**.
+
+Creative Direction Studio™ must direct coherent organizational expression across
+touchpoints without becoming a monolithic generator or duplicating specialized
+creative ownership.
+
+Rules:
+
+1. **Creative Direction Studio™** is the canonical constitutional name.
+   “Creative Director Studio™” may be an experience label only; Creative
+   Director™ remains a production role, not a duplicate studio system.
+2. Creative Direction Studio™ owns the founder-facing creative initiative
+   workspace, direction alternatives, orchestration plan, review state, and
+   presentation of production status. It does not own strategic Brand DNA,
+   narrative truth, production execution, asset identity/rights, publishing,
+   Experience DNA/runtime, workflow state, or Company Genome truth.
+3. The **Universal Creative Production System™** is a composition—not a new
+   engine—of Creative Direction Studio™, Creative Operating System™, Narrative
+   Intelligence™, Studio Production System™, Foundry/Asset Compiler™, Asset
+   Registry™, Content Engine™, and Experience systems.
+4. Every material expression must trace to pinned Company Genome, Brand DNA,
+   company Design Canon, Narrative/Production Genome, governance/approval,
+   proof/audience, and asset-rights provenance appropriate to its scope.
+5. Material work must follow direction → Production Genome/Package → specialized
+   production → review/registry → publishing or experience delivery. Direct
+   studio generation is permitted only for clearly non-canonical,
+   non-published exploratory drafts.
+6. A material output must declare source-expression, adaptation, or independent
+   expression lineage. Adaptation may change format but may not silently change
+   brand promise, narrative/proof, product/operating constraint, rights,
+   compliance, or canonical direction.
+7. Creative Genome™ is a relationship graph; Organizational Memory™ is learning;
+   Asset Registry™ is asset/right truth. Creative Direction Studio™ must not
+   create duplicate creative-memory, economy, or asset stores.
+8. Future media and touchpoints must bind to established expression, production,
+   registry, publishing, and Experience contracts—not create peer channel
+   engines.
+
 ---
 
 ## 10. Compilation Model

@@ -41,6 +41,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/ORGANIZATIONAL_ATTENTION.md`](./articles/ORGANIZATIONAL_ATTENTION.md) | Organizational Attention™ — executive attention assessment, routing, protected focus, briefing, delivery, and outcome governance |
 | [`articles/ORGANIZATIONAL_MEMORY.md`](./articles/ORGANIZATIONAL_MEMORY.md) | Organizational Memory™ — governed experience recall, learning retention, pattern revalidation, and wisdom promotion boundaries |
 | [`articles/GENESIS_V1_CONSTITUTIONAL_CLOSURE.md`](./articles/GENESIS_V1_CONSTITUTIONAL_CLOSURE.md) | Genesis v1 Constitutional Closure Audit™ — final durable responsibility gaps and no-new-systems closure boundary |
+| [`articles/CREATIVE_DIRECTION_STUDIO.md`](./articles/CREATIVE_DIRECTION_STUDIO.md) | Creative Direction Studio™ — universal creative direction, production orchestration, touchpoint lineage, and ownership boundaries |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -101,6 +102,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `organizational-attention/` | Organizational Attention™ content home — attention allocation, protected focus, executive briefings, delivery, and outcomes |
 | `organizational-memory/` | Organizational Memory™ content home — evidence-linked experience, learning ledger, patterns, retention, and recall |
 | `genesis-v1-constitutional-closure/` | Genesis v1 Constitutional Closure Audit™ content home — responsibility closure program and constitutional freeze boundary |
+| `creative-direction-studio/` | Creative Direction Studio™ content home — universal creative direction and specialized production orchestration |
 
 ## Rule
 

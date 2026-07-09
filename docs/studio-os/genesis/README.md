@@ -31,6 +31,7 @@
 - [`ORGANIZATIONAL_ATTENTION.md`](./ORGANIZATIONAL_ATTENTION.md) — Organizational Attention™: executive attention allocation, protected focus, briefing, delivery, and outcome governance
 - [`ORGANIZATIONAL_MEMORY.md`](./ORGANIZATIONAL_MEMORY.md) — Organizational Memory™: experience retention, evidence-linked learning, pattern revalidation, and bounded recall
 - [`GENESIS_V1_CONSTITUTIONAL_CLOSURE.md`](./GENESIS_V1_CONSTITUTIONAL_CLOSURE.md) — Genesis v1 Constitutional Closure Audit™: final durable responsibility gaps and no-new-systems closure boundary
+- [`CREATIVE_DIRECTION_STUDIO.md`](./CREATIVE_DIRECTION_STUDIO.md) — Creative Direction Studio™: universal creative direction, production orchestration, and touchpoint lineage
 - [`STUDIO_INTELLIGENCE_LAYER_PLATFORM.md`](./STUDIO_INTELLIGENCE_LAYER_PLATFORM.md) — Studio Intelligence Layer runtime platform guide
 - [`EXPERIENCE_LAB_PLATFORM.md`](./EXPERIENCE_LAB_PLATFORM.md) — Experience Lab runtime platform guide
 - [`../../../Genesis.md`](../../../Genesis.md) — Foundation Framework charter

@@ -344,6 +344,9 @@ Production systems may not bypass this brief for meaningful creative work.
 Creative Direction Studio™ becomes the place where narrative experiences are
 designed, not where assets are generated first.
 
+Its universal creative-direction and production-orchestration boundary is
+defined in [Creative Direction Studio™](./CREATIVE_DIRECTION_STUDIO.md).
+
 It should help founders answer:
 
 - What experience are we creating?
