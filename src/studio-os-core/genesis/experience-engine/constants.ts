@@ -35,4 +35,5 @@ export const XEE_DEMO_BRAND_LABELS: Record<XeeDemoBrandId, string> = {
   'ndx': 'NDX™',
 };
 
-export const XEE_SHARED_SCENE_ID = 'hq-master-demonstration-v1';
+export const XEE_SHARED_SCENE_ID = 'executive-headquarters';
+export const XEE_LEGACY_SCENE_ID = 'hq-master-demonstration-v1';

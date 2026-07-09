@@ -12,6 +12,8 @@ import {
   createGraphId,
   patchGraphBrand,
   resolveDnaLayers,
+  safeStateDnaVersion,
+  safePlatformVersion,
 } from './dna-resolver';
 import { resolveThemeBundle, applyThemeToElement } from './theme-resolver';
 import { assembleSceneGraph } from './scene-assembler';
@@ -37,8 +39,8 @@ export function assembleExperienceRuntime(request?: XerAssemblyRequest): XerRunt
     departmentId: layers.department.departmentId,
     sceneId: layers.scene.sceneId,
     motionDnaId: layers.motion.motionDnaId,
-    platformVersion: layers.platformDna.version,
-    stateVersion: layers.stateDna.version,
+    platformVersion: safePlatformVersion(layers.platformDna),
+    stateVersion: safeStateDnaVersion(layers.stateDna),
   });
 
   if (!request?.skipCache) {
@@ -94,7 +96,7 @@ export function assembleExperienceRuntime(request?: XerAssemblyRequest): XerRunt
       brand: layers.brand.brandId,
       department: layers.department.departmentDnaId,
       scene: layers.scene.sceneId,
-      state: layers.stateDna.version,
+      state: safeStateDnaVersion(layers.stateDna),
       runtime: XER_SUBSYSTEM_VERSION,
     },
   };
@@ -113,7 +115,7 @@ export function switchRuntimeBrandLive(brandId: string): XerRuntimeGraph {
   const started = performance.now();
   const store = readExperienceRuntimeStore();
   const previousState = { ...store.sessionState };
-  const sceneId = store.selection.sceneId;
+  const sceneId = store.selection?.sceneId ?? 'executive-headquarters';
 
   const preserved = preserveStateOnBrandSwitch(sceneId, previousState);
   mutateExperienceRuntimeStore((s) => ({
@@ -129,7 +131,7 @@ export function switchRuntimeBrandLive(brandId: string): XerRuntimeGraph {
 
   const currentGraph = assembleExperienceRuntime({
     brandId,
-    departmentId: store.selection.departmentId,
+    departmentId: store.selection?.departmentId,
     sceneId,
     motionDnaId: `motion-${brandId}`,
     skipCache: true,
@@ -141,11 +143,11 @@ export function switchRuntimeBrandLive(brandId: string): XerRuntimeGraph {
 
   const cacheKey = buildRuntimeCacheKey({
     brandId,
-    departmentId: store.selection.departmentId,
+    departmentId: store.selection?.departmentId ?? 'executive',
     sceneId,
     motionDnaId: `motion-${brandId}`,
-    platformVersion: layers.platformDna.version,
-    stateVersion: layers.stateDna.version,
+    platformVersion: safePlatformVersion(layers.platformDna),
+    stateVersion: safeStateDnaVersion(layers.stateDna),
   });
   setCachedRuntimeGraph(cacheKey, patched);
 

@@ -21,7 +21,7 @@ import { emptyExecutiveReflectionSuiteStore } from '../executive-reflection-suit
 import { emptyArchitectsPromptLibraryStore } from '../architects-prompt-library/persistence';
 import { emptyStudioOsDesignDnaStore } from '../studio-os-design-dna/persistence';
 import { emptyExperienceEngineDnaStore, withExperienceEngineSeedFallback } from '../experience-engine/persistence';
-import { emptyExperienceRuntimeStore, normalizeExperienceRuntimeStore } from '../experience-runtime/persistence';
+import { emptyExperienceRuntimeStore, withExperienceRuntimeSeedFallback } from '../experience-runtime/persistence';
 import { emptyBrandDiscoveryEngineStore } from '../brand-discovery-engine/persistence';
 import { emptyStudioIntelligenceLayerStore } from '../studio-intelligence-layer/persistence';
 import { emptyNarrativeIntelligenceStore } from '../narrative-intelligence/persistence';
@@ -96,7 +96,7 @@ export function readGenesisStore(): GenesisStore {
         parsed.architectsPromptLibrary ?? emptyArchitectsPromptLibraryStore(),
       studioOsDesignDna: parsed.studioOsDesignDna ?? emptyStudioOsDesignDnaStore(),
       experienceEngineDna: withExperienceEngineSeedFallback(parsed.experienceEngineDna ?? emptyExperienceEngineDnaStore()),
-      experienceRuntimeDna: normalizeExperienceRuntimeStore(parsed.experienceRuntimeDna ?? emptyExperienceRuntimeStore()),
+      experienceRuntimeDna: withExperienceRuntimeSeedFallback(parsed.experienceRuntimeDna ?? emptyExperienceRuntimeStore()),
       brandDiscoveryEngineDna: parsed.brandDiscoveryEngineDna ?? emptyBrandDiscoveryEngineStore(),
       studioIntelligenceLayerDna: parsed.studioIntelligenceLayerDna ?? emptyStudioIntelligenceLayerStore(),
       narrativeIntelligenceDna: parsed.narrativeIntelligenceDna ?? emptyNarrativeIntelligenceStore(),

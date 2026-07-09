@@ -21,8 +21,8 @@ export function emptyExperienceEngineDnaStore(): XeeStore {
     interactions: [],
     playground: {
       brandId: 'studio-os',
-      departmentId: 'headquarters',
-      sceneId: 'hq-master-demonstration-v1',
+      departmentId: 'executive',
+      sceneId: 'executive-headquarters',
       componentId: 'executive-header',
       motionDnaId: 'motion-studio-os',
       lightingPreset: 'brand-default',

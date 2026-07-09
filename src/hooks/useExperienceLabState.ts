@@ -3,6 +3,7 @@ import {
   applyRuntimeGraphToElement,
   ensureExperienceEngineDnaSubsystem,
   ensureExperienceLabSubsystem,
+  ensureExperienceRuntimeSubsystem,
   getExperienceLabReadyView,
   applyLabScenario,
   updateLabSelection,
@@ -19,12 +20,15 @@ export function useExperienceLabState() {
   const [tick, setTick] = useState(0);
 
   const refresh = useCallback(() => {
-    ensureExperienceLabSubsystem();
     ensureExperienceEngineDnaSubsystem();
+    ensureExperienceRuntimeSubsystem();
+    ensureExperienceLabSubsystem();
     setTick((n) => n + 1);
   }, []);
 
   useEffect(() => {
+    ensureExperienceEngineDnaSubsystem();
+    ensureExperienceRuntimeSubsystem();
     ensureExperienceLabSubsystem();
   }, []);
 
@@ -34,17 +38,10 @@ export function useExperienceLabState() {
     return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
   }, [refresh]);
 
-  const view = useMemo(() => {
-    try {
-      return getExperienceLabReadyView();
-    } catch {
-      ensureExperienceEngineDnaSubsystem();
-      ensureExperienceLabSubsystem();
-      return getExperienceLabReadyView();
-    }
-  }, [tick]);
+  const view = useMemo(() => getExperienceLabReadyView(), [tick]);
   const graph = view.runtimeGraph;
-  const bootError = !graph?.brand?.brandId;
+  const bootReport = view.bootReport;
+  const bootBlocked = !graph?.brand?.brandId;
 
   const { ref: sceneRef, switchBrandLive, switchCount: runtimeSwitchCount } = useExperienceRuntimeAssembly({
     brandId: view.selection.brandId,
@@ -54,11 +51,11 @@ export function useExperienceLabState() {
   });
 
   useEffect(() => {
-    if (bootError) return;
+    if (bootBlocked || !graph) return;
     const el = sceneRef.current;
     if (!el) return;
     applyRuntimeGraphToElement(el, graph);
-  }, [bootError, graph, sceneRef]);
+  }, [bootBlocked, graph, sceneRef]);
 
   const loadScenario = useCallback(
     (scenarioId: XelabScenarioId) => {
@@ -101,17 +98,27 @@ export function useExperienceLabState() {
     [refresh]
   );
 
+  const setScene = useCallback(
+    (sceneId: string) => {
+      updateLabSelection({ sceneId });
+      refresh();
+    },
+    [refresh]
+  );
+
   return {
     view,
     graph,
+    bootReport,
     sceneRef,
     loadScenario,
     setBrand,
     setDepartment,
+    setScene,
     setSwitchers,
     setPanel,
     refresh,
     switchCount: view.switchCount + runtimeSwitchCount,
-    bootError,
+    bootBlocked,
   };
 }

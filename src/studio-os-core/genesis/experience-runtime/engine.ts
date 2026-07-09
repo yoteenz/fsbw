@@ -70,6 +70,14 @@ export {
   updateSessionStateSlot,
 };
 
+export {
+  validateRuntimeBoot,
+  resolveRuntimeSelection,
+  XER_DEFAULT_RUNTIME_CONTRACT,
+} from './runtime-boot';
+
+export type { XerRuntimeBootReport } from './runtime-boot/runtime-boot-validator';
+
 export type {
   XerStore,
   XerReadyView,

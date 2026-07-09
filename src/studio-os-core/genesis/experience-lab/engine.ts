@@ -10,6 +10,7 @@ import {
 } from './bootstrap/seed';
 import { applyLabSwitchersToGraph } from './engines/lab-switchers';
 import { buildExperienceLabReadyView } from './room/ready-view';
+export { validateRuntimeBoot } from './room/ready-view';
 import {
   mutateExperienceLabStore,
   readExperienceLabStore,
@@ -66,3 +67,4 @@ export type {
 } from './types';
 
 export type { XelabPanelId, XelabScenarioId, XelabLabSwitchers } from './constants';
+export type { XerRuntimeBootReport } from '../experience-runtime/runtime-boot/runtime-boot-validator';

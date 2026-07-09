@@ -1,4 +1,4 @@
-import { XEE_SHARED_SCENE_ID, XEE_SUBSYSTEM_VERSION } from '../constants';
+import { XEE_SUBSYSTEM_VERSION } from '../constants';
 import type {
   XeeBrandDna,
   XeeComponentDna,
@@ -281,6 +281,9 @@ export const SEED_DEPARTMENT_DNA: XeeDepartmentDna[] = [
   deptRow('studio-os', 'command-center', 'Command Center', '#EF4444', 'alert-ready calm', 'decisive operations', 'executive operations room', { executiveMood: 'command-ready', animationPersonality: 'precise quick' }),
   deptRow('studio-os', 'creative', 'Creative', '#EC4899', 'studio stage wash', 'studio expression', 'creative stage', { creativeMood: 'fluid', animationPersonality: 'expressive fluid' }),
   deptRow('studio-os', 'operations', 'Operations', '#0D9488', 'workflow stream', 'workflow clarity', 'operations stream', { animationPersonality: 'efficient steady' }),
+  deptRow('studio-os', 'ai', 'Artificial Intelligence', '#7C3AED', 'neural horizon glow', 'intelligent calm', 'AI operations wing', { animationPersonality: 'precise neural pulse' }),
+  deptRow('studio-os', 'executive', 'Executive', '#EB1C24', 'warm marble horizon', 'executive calm', 'marble institution', { particleSystem: 'crystal dust', animationPersonality: 'calm executive reveal' }),
+  deptRow('studio-os', 'command', 'Command', '#EF4444', 'alert-ready calm', 'decisive operations', 'executive operations room', { executiveMood: 'command-ready', animationPersonality: 'precise quick' }),
 
   deptRow('frontal-slayer', 'headquarters', 'The Mansion™', '#EB1C24', 'salon mirror glow', 'concierge warmth', 'beauty mansion lobby', { particleSystem: 'soft shimmer', animationPersonality: 'polished reveal' }),
   deptRow('frontal-slayer', 'knowledge', 'Salon Education Atelier', '#EC4899', 'atelier skylight', 'intimate learning', 'beauty education archive', { knowledgeMood: 'intimate', animationPersonality: 'guided uplifting' }),
@@ -297,8 +300,8 @@ export const SEED_DEPARTMENT_DNA: XeeDepartmentDna[] = [
 
 export const SEED_SCENE_DNA: XeeSceneDna[] = [
   {
-    sceneId: XEE_SHARED_SCENE_ID,
-    officialName: 'Headquarters Master Demonstration Scene™',
+    sceneId: 'executive-headquarters',
+    officialName: 'Executive Headquarters',
     layoutTemplateId: 'hq-master-scene-v1',
     heroObject: 'Primary Focal Object — shared anatomy',
     capabilityPanels: ['Capability Panel A', 'Capability Panel B', 'Capability Panel C'],
@@ -309,6 +312,46 @@ export const SEED_SCENE_DNA: XeeSceneDna[] = [
       'Hero zone 68% viewport',
       'Nav rail 260px',
     ],
+    sharedAcrossBrands: true,
+  },
+  {
+    sceneId: 'institute-of-knowledge',
+    officialName: 'Institute of Knowledge',
+    layoutTemplateId: 'hq-master-scene-v1',
+    heroObject: 'Knowledge focal archive',
+    capabilityPanels: ['Curriculum Panel', 'Archive Panel', 'Canon Panel'],
+    orbPlacement: 'bottom-right persistent',
+    environmentalRules: ['Shared HQ template — institute DNA inheritance only'],
+    sharedAcrossBrands: true,
+  },
+  {
+    sceneId: 'command-center',
+    officialName: 'Command Center',
+    layoutTemplateId: 'hq-master-scene-v1',
+    heroObject: 'Operations command focal',
+    capabilityPanels: ['Mission Panel', 'Signal Panel', 'Decision Panel'],
+    orbPlacement: 'bottom-right persistent',
+    environmentalRules: ['Shared HQ template — command DNA inheritance only'],
+    sharedAcrossBrands: true,
+  },
+  {
+    sceneId: 'content-engine',
+    officialName: 'Content Engine',
+    layoutTemplateId: 'hq-master-scene-v1',
+    heroObject: 'Creative production focal',
+    capabilityPanels: ['Campaign Panel', 'Asset Panel', 'Publish Panel'],
+    orbPlacement: 'bottom-right persistent',
+    environmentalRules: ['Shared HQ template — creative DNA inheritance only'],
+    sharedAcrossBrands: true,
+  },
+  {
+    sceneId: 'orb-room',
+    officialName: 'Orb Room',
+    layoutTemplateId: 'hq-master-scene-v1',
+    heroObject: 'Orb briefing focal',
+    capabilityPanels: ['Briefing Panel', 'Context Panel', 'Action Panel'],
+    orbPlacement: 'center-stage persistent',
+    environmentalRules: ['Shared HQ template — Orb DNA inheritance only'],
     sharedAcrossBrands: true,
   },
 ];

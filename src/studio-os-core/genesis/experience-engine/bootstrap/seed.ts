@@ -39,7 +39,7 @@ export function ensureExperienceEngineDnaStore() {
     !store.seededAt ||
     store.brands.length === 0 ||
     store.departments.length === 0 ||
-    store.scenes.length === 0;
+    store.scenes.length < 5;
   if (needsPersist) {
     seedExperienceEngineDnaStore();
     updateBuildOrderSystemStatus('experience-engine', 'implemented');

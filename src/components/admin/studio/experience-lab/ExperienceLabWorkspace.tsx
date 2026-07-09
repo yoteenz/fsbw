@@ -13,6 +13,7 @@ import {
   type XelabPanelId,
   type XelabReadyView,
   type XelabScenarioId,
+  type XerRuntimeBootReport,
   type XerRuntimeGraph,
 } from '../../../../studio-os-core/genesis';
 import { useExperienceLabState } from '../../../../hooks/useExperienceLabState';
@@ -23,33 +24,29 @@ export function ExperienceLabWorkspace() {
   const {
     view,
     graph,
+    bootReport,
     sceneRef,
     loadScenario,
     setBrand,
     setDepartment,
+    setScene,
     setSwitchers,
     setPanel,
     refresh,
     switchCount,
-    bootError,
+    bootBlocked,
   } = useExperienceLabState();
 
-  if (bootError || !graph?.brand) {
+  const brand = graph?.brand;
+  const activePanel = view.selection.activePanel;
+
+  if (bootBlocked || !brand) {
     return (
-      <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 p-8 text-center">
-        <p style={{ ...hqLabel, color: '#eb1c24', margin: 0 }}>Experience Lab could not assemble runtime DNA</p>
-        <p style={{ fontSize: '12px', color: '#555', maxWidth: '320px' }}>
-          Stored Studio DNA on this device may be incomplete. Tap retry to re-seed the lab from defaults — your cloud account data is safe.
-        </p>
-        <button type="button" className="xelab-btn" onClick={refresh} style={{ borderColor: '#eb1c24', color: '#eb1c24' }}>
-          Retry
-        </button>
+      <div className="min-h-[calc(100vh-120px)] p-4" data-xelab data-xelab-boot="diagnostics">
+        <RuntimeBootDiagnostics bootReport={bootReport} onRetry={refresh} />
       </div>
     );
   }
-
-  const brand = graph.brand;
-  const activePanel = view.selection.activePanel;
 
   return (
     <div
@@ -105,7 +102,14 @@ export function ExperienceLabWorkspace() {
           </p>
         </section>
 
-        <SwitcherBar view={view} brand={brand} setBrand={setBrand} setDepartment={setDepartment} setSwitchers={setSwitchers} />
+        <SwitcherBar
+          view={view}
+          brand={brand}
+          setBrand={setBrand}
+          setDepartment={setDepartment}
+          setScene={setScene}
+          setSwitchers={setSwitchers}
+        />
 
         <div className="flex flex-col gap-4 xl:flex-row">
           <div className="flex min-w-0 flex-1 flex-col gap-4">
@@ -129,7 +133,7 @@ export function ExperienceLabWorkspace() {
                 </button>
               ))}
             </nav>
-            <PanelContent panel={activePanel} view={view} graph={graph} brand={brand} />
+            <PanelContent panel={activePanel} view={view} graph={graph} brand={brand} bootReport={bootReport} />
           </aside>
         </div>
       </div>
@@ -142,12 +146,14 @@ function SwitcherBar({
   brand,
   setBrand,
   setDepartment,
+  setScene,
   setSwitchers,
 }: {
   view: XelabReadyView;
   brand: XeeBrandDna;
   setBrand: (id: string) => void;
   setDepartment: (id: string) => void;
+  setScene: (id: string) => void;
   setSwitchers: (p: Partial<typeof view.selection.switchers>) => void;
 }) {
   const sw = view.selection.switchers;
@@ -157,7 +163,7 @@ function SwitcherBar({
       <div className="grid gap-3 text-[9px] sm:grid-cols-2 lg:grid-cols-3">
         <SwitcherGroup label="Brand" options={XELAB_SWITCHER_OPTIONS.brand} value={view.selection.brandId} onChange={setBrand} labels={XER_DEMO_BRAND_LABELS as Record<string, string>} brand={brand} />
         <SwitcherGroup label="Department" options={XELAB_SWITCHER_OPTIONS.department} value={view.selection.departmentId} onChange={setDepartment} brand={brand} />
-        <SwitcherGroup label="Scene" options={XELAB_SWITCHER_OPTIONS.scene} value={view.selection.sceneId} onChange={() => {}} brand={brand} />
+        <SwitcherGroup label="Scene" options={XELAB_SWITCHER_OPTIONS.scene} value={view.selection.sceneId} onChange={setScene} brand={brand} />
         <SwitcherGroup label="Theme" options={XELAB_SWITCHER_OPTIONS.theme} value={sw.themeVariant} onChange={(v) => setSwitchers({ themeVariant: v as typeof sw.themeVariant })} brand={brand} />
         <SwitcherGroup label="Orb" options={XELAB_SWITCHER_OPTIONS.orb} value={sw.orbVariant} onChange={(v) => setSwitchers({ orbVariant: v as typeof sw.orbVariant })} brand={brand} />
         <SwitcherGroup label="Lighting" options={XELAB_SWITCHER_OPTIONS.lighting} value={sw.lightingVariant} onChange={(v) => setSwitchers({ lightingVariant: v as typeof sw.lightingVariant })} brand={brand} />
@@ -284,11 +290,13 @@ function PanelContent({
   view,
   graph,
   brand,
+  bootReport,
 }: {
   panel: XelabPanelId;
   view: XelabReadyView;
   graph: XerRuntimeGraph;
   brand: XeeBrandDna;
+  bootReport: XerRuntimeBootReport;
 }) {
   const insp = view.inspector;
   const perf = graph.performance;
@@ -297,6 +305,7 @@ function PanelContent({
     return (
       <section className="xelab-panel">
         <p style={{ ...hqLabel }}>Runtime Status™</p>
+        <BootInspectorSection bootReport={bootReport} />
         <div className="mt-2 grid gap-2 text-[10px]">
           <div>Graph: {graph.graphId}</div>
           <div>Brand: {graph.brandId} · Dept: {graph.departmentId}</div>
@@ -319,36 +328,36 @@ function PanelContent({
   }
 
   if (panel === 'platform-dna') {
-    const p = insp.platformDna;
+    const p = insp?.platformDna;
     return (
       <section className="xelab-panel">
         <p style={{ ...hqLabel }}>Platform DNA™</p>
-        <p style={{ fontSize: '10px' }}>{p.platformDnaId}</p>
+        <p style={{ fontSize: '10px' }}>{p?.platformDnaId ?? bootReport.resolvedVersions.platformDna}</p>
         <ul className="mt-2 list-inside list-disc text-[9px]">
-          {p.routeAnatomy.slice(0, 4).map((r) => <li key={r}>{r}</li>)}
+          {(p?.routeAnatomy ?? []).slice(0, 4).map((r) => <li key={r}>{r}</li>)}
         </ul>
       </section>
     );
   }
 
   if (panel === 'department-dna') {
-    const d = insp.departmentDna;
+    const d = insp?.departmentDna;
     return (
       <section className="xelab-panel">
         <p style={{ ...hqLabel }}>Department DNA™</p>
-        <p style={{ fontSize: '10px' }}>{d.officialName}</p>
-        <p style={{ fontSize: '9px' }}>{d.sceneIdentity} · {d.ambientMood}</p>
+        <p style={{ fontSize: '10px' }}>{d?.officialName ?? graph.department.officialName}</p>
+        <p style={{ fontSize: '9px' }}>{d?.sceneIdentity ?? graph.department.sceneIdentity} · {d?.ambientMood ?? graph.department.ambientMood}</p>
       </section>
     );
   }
 
   if (panel === 'scene-dna') {
-    const s = insp.sceneDna;
+    const s = insp?.sceneDna;
     return (
       <section className="xelab-panel">
         <p style={{ ...hqLabel }}>Scene DNA™</p>
-        <p style={{ fontSize: '10px' }}>{s.officialName}</p>
-        <p style={{ fontSize: '9px' }}>Template: {s.layoutTemplateId}</p>
+        <p style={{ fontSize: '10px' }}>{s?.officialName ?? graph.scene.officialName}</p>
+        <p style={{ fontSize: '9px' }}>Template: {s?.layoutTemplateId ?? graph.scene.layoutTemplateId}</p>
       </section>
     );
   }
@@ -358,7 +367,7 @@ function PanelContent({
       <section className="xelab-panel">
         <p style={{ ...hqLabel }}>Component DNA™</p>
         <ul className="text-[9px]">
-          {insp.componentDna.map((c) => (
+          {(insp?.componentDna ?? graph.components).map((c) => (
             <li key={c.componentDnaId}>{c.componentId} · {c.variant}</li>
           ))}
         </ul>
@@ -403,14 +412,77 @@ function PanelContent({
   return (
     <section className="xelab-panel">
       <p style={{ ...hqLabel }}>Runtime Inspector™</p>
-      <p style={{ fontSize: '9px' }}>Tokens: {Object.keys(insp.resolvedTokens).length}</p>
-      <p style={{ fontSize: '9px' }}>Overrides: {insp.activeOverrides.length}</p>
-      <ul className="mt-2 max-h-48 overflow-auto text-[8px]">
-        {insp.renderNodes.map((n) => (
-          <li key={n.nodeId}>{n.nodeId} · {n.role} · {n.variant}</li>
-        ))}
-      </ul>
+      <BootInspectorSection bootReport={bootReport} />
+      {insp ? (
+        <>
+          <p style={{ fontSize: '9px' }}>Tokens: {Object.keys(insp.resolvedTokens).length}</p>
+          <p style={{ fontSize: '9px' }}>Overrides: {insp.activeOverrides.length}</p>
+          <ul className="mt-2 max-h-48 overflow-auto text-[8px]">
+            {insp.renderNodes.map((n) => (
+              <li key={n.nodeId}>{n.nodeId} · {n.role} · {n.variant}</li>
+            ))}
+          </ul>
+        </>
+      ) : null}
     </section>
+  );
+}
+
+function BootInspectorSection({ bootReport }: { bootReport: XerRuntimeBootReport }) {
+  const v = bootReport.resolvedVersions;
+  return (
+    <div className="mt-2 grid gap-1 border-t pt-2 text-[9px]" style={{ borderColor: '#00000012' }}>
+      <p style={{ ...hqLabel, marginBottom: 4 }}>Runtime Boot Inspector</p>
+      <div>Brand: {bootReport.resolved.brandId}</div>
+      <div>Department: {bootReport.resolved.departmentId}</div>
+      <div>Scene: {bootReport.resolved.sceneId}</div>
+      <div>Template: {v.templateId}</div>
+      <div>Platform DNA: {v.platformDna}</div>
+      <div>Brand DNA: {v.brandDna}</div>
+      <div>Department DNA: {v.departmentDna}</div>
+      <div>Scene DNA: {v.sceneDna}</div>
+      <div>State DNA: {v.stateDna}</div>
+      <div>Design DNA: {v.designDna}</div>
+      {bootReport.missingObjects.length > 0 && (
+        <div style={{ color: '#eb1c24' }}>Missing: {bootReport.missingObjects.join(', ')}</div>
+      )}
+      {bootReport.fallbacksUsed.length > 0 && (
+        <div>Fallbacks: {bootReport.fallbacksUsed.join(' · ')}</div>
+      )}
+      {bootReport.warnings.length > 0 && (
+        <ul className="mt-1 list-inside list-disc text-[8px]" style={{ color: '#666' }}>
+          {bootReport.warnings.map((w) => <li key={w}>{w}</li>)}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function RuntimeBootDiagnostics({
+  bootReport,
+  onRetry,
+}: {
+  bootReport: XerRuntimeBootReport;
+  onRetry: () => void;
+}) {
+  return (
+    <div className="mx-auto flex max-w-lg flex-col gap-4 rounded-xl border border-red-200 bg-white p-6 shadow-sm">
+      <div>
+        <p style={{ ...hqLabel, color: '#eb1c24', margin: 0 }}>Runtime Boot Diagnostics</p>
+        <p style={{ fontSize: '12px', color: '#555', marginTop: 8 }}>
+          Experience Lab could not assemble the live preview safely. Bundled DNA fallbacks are active — tap retry to re-seed registries on this device.
+        </p>
+      </div>
+      <BootInspectorSection bootReport={bootReport} />
+      <button
+        type="button"
+        className="xelab-btn self-start"
+        onClick={onRetry}
+        style={{ borderColor: '#eb1c24', color: '#eb1c24', padding: '8px 12px' }}
+      >
+        Retry Boot
+      </button>
+    </div>
   );
 }
 

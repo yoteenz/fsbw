@@ -1,4 +1,5 @@
 import type { XerInspectorView, XerRuntimeGraph } from '../experience-runtime/types';
+import type { XerRuntimeBootReport } from '../experience-runtime/runtime-boot/runtime-boot-validator';
 import type { XelabLabSwitchers, XelabPanelId, XelabScenarioId } from './constants';
 
 export type XelabSelection = {
@@ -25,8 +26,9 @@ export type XelabReadyView = {
   selection: XelabSelection;
   scenarioLabel: string;
   scenarioHeroLabel: string;
-  runtimeGraph: XerRuntimeGraph;
-  inspector: XerInspectorView;
+  runtimeGraph: XerRuntimeGraph | null;
+  inspector: XerInspectorView | null;
+  bootReport: XerRuntimeBootReport;
   switchCount: number;
   orbNote: string;
   constitutionLocked: boolean;

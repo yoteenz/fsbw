@@ -1,28 +1,21 @@
 import { mutateGenesisStore, readGenesisStore } from '../persistence/store';
 import { XER_SUBSYSTEM_VERSION } from './constants';
+import { XER_DEFAULT_RUNTIME_CONTRACT } from './runtime-boot/default-contract';
 import type { XerStore } from './types';
+import { getDefaultRuntimeSeed } from './runtime-boot/default-seed';
 
 export function emptyExperienceRuntimeStore(): XerStore {
+  const seed = getDefaultRuntimeSeed();
   return {
     version: XER_SUBSYSTEM_VERSION,
-    platformDna: {
-      platformDnaId: 'studio-os-platform-v1',
-      version: '1.0.0',
-      routeAnatomy: [],
-      layoutPrimitives: [],
-      accessibilityFloor: [],
-      sceneGraphContract: '',
-      orbMountContract: '',
-      dataSlotContract: '',
-      componentAnatomyIds: [],
-    },
-    stateDnaProfiles: [],
+    platformDna: seed.platformDna,
+    stateDnaProfiles: seed.stateDnaProfiles,
     selection: {
-      brandId: 'studio-os',
-      departmentId: 'headquarters',
-      sceneId: 'hq-master-demonstration-v1',
-      componentId: 'executive-header',
-      motionDnaId: 'motion-studio-os',
+      brandId: XER_DEFAULT_RUNTIME_CONTRACT.brandId,
+      departmentId: XER_DEFAULT_RUNTIME_CONTRACT.departmentId,
+      sceneId: XER_DEFAULT_RUNTIME_CONTRACT.sceneId,
+      componentId: XER_DEFAULT_RUNTIME_CONTRACT.componentId,
+      motionDnaId: XER_DEFAULT_RUNTIME_CONTRACT.motionDnaId,
     },
     sessionId: '',
     sessionState: {},
@@ -39,7 +32,12 @@ export function normalizeExperienceRuntimeStore(stored?: Partial<XerStore>): Xer
   return {
     ...empty,
     ...stored,
-    platformDna: { ...empty.platformDna, ...stored.platformDna },
+    platformDna: {
+      ...empty.platformDna,
+      ...stored.platformDna,
+      platformDnaId: stored.platformDna?.platformDnaId || empty.platformDna.platformDnaId,
+      version: stored.platformDna?.version || empty.platformDna.version,
+    },
     selection: { ...empty.selection, ...stored.selection },
     stateDnaProfiles:
       stored.stateDnaProfiles && stored.stateDnaProfiles.length > 0
@@ -50,19 +48,27 @@ export function normalizeExperienceRuntimeStore(stored?: Partial<XerStore>): Xer
   };
 }
 
+export function withExperienceRuntimeSeedFallback(stored?: Partial<XerStore>): XerStore {
+  return normalizeExperienceRuntimeStore(stored);
+}
+
 export function readExperienceRuntimeStore(): XerStore {
   const genesis = readGenesisStore();
-  return normalizeExperienceRuntimeStore(genesis.experienceRuntimeDna);
+  return withExperienceRuntimeSeedFallback(genesis.experienceRuntimeDna);
 }
 
 export function writeExperienceRuntimeStore(store: XerStore): void {
-  mutateGenesisStore((genesis) => ({
-    ...genesis,
-    experienceRuntimeDna: normalizeExperienceRuntimeStore({
-      ...store,
-      version: XER_SUBSYSTEM_VERSION,
-    }),
-  }));
+  try {
+    mutateGenesisStore((genesis) => ({
+      ...genesis,
+      experienceRuntimeDna: withExperienceRuntimeSeedFallback({
+        ...store,
+        version: XER_SUBSYSTEM_VERSION,
+      }),
+    }));
+  } catch {
+    // Safari quota / private mode — bundled seed still serves reads.
+  }
 }
 
 export function mutateExperienceRuntimeStore(mutator: (store: XerStore) => XerStore): XerStore {

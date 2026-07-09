@@ -19,7 +19,7 @@ export function seedExperienceRuntimeStore(): void {
 export function ensureExperienceRuntimeStore() {
   ensureExperienceEngineDnaSubsystem();
   const current = readExperienceRuntimeStore();
-  if (!current.seededAt || !current.selection?.brandId || current.platformDna.routeAnatomy.length === 0) {
+  if (!current.seededAt || !current.selection?.brandId || !current.platformDna?.platformDnaId || current.stateDnaProfiles.length === 0) {
     seedExperienceRuntimeStore();
     return readExperienceRuntimeStore();
   }

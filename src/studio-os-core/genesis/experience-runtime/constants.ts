@@ -34,7 +34,8 @@ export const XER_DEMO_BRAND_LABELS: Record<XerDemoBrandId, string> = {
   ndx: 'NDX™',
 };
 
-export const XER_SHARED_SCENE_ID = 'hq-master-demonstration-v1';
+export const XER_SHARED_SCENE_ID = 'executive-headquarters';
+export const XER_LEGACY_SCENE_ID = 'hq-master-demonstration-v1';
 export const XER_PLATFORM_DNA_ID = 'studio-os-platform-v1';
 
 /** Stable runtime node IDs — never change when Brand DNA switches */

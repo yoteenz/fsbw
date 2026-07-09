@@ -1,4 +1,4 @@
-import { XER_PLATFORM_DNA_ID, XER_SCENE_NODE_IDS, XER_SHARED_SCENE_ID } from '../constants';
+import { XER_PLATFORM_DNA_ID, XER_SCENE_NODE_IDS } from '../constants';
 import type { XerPlatformDna, XerStateDna } from '../types';
 
 export function buildPlatformDna(): XerPlatformDna {
@@ -44,60 +44,66 @@ export function buildPlatformDna(): XerPlatformDna {
 }
 
 export function buildStateDnaProfiles(): XerStateDna[] {
-  return [
-    {
-      stateDnaId: 'state-hq-demonstration-v1',
-      version: '1.0.0',
-      sceneId: XER_SHARED_SCENE_ID,
-      slots: [
-        {
-          slotId: 'slot-header-note',
-          nodeId: 'node-executive-header',
-          label: 'Executive header note',
-          persistenceScope: 'session',
-          defaultValue: '',
-        },
-        {
-          slotId: 'slot-active-department',
-          nodeId: 'node-navigation-rail',
-          label: 'Active department rail selection',
-          persistenceScope: 'session',
-          defaultValue: 'headquarters',
-        },
-        {
-          slotId: 'slot-hero-caption',
-          nodeId: 'node-primary-focal-object',
-          label: 'Hero focal caption',
-          persistenceScope: 'session',
-          defaultValue: '',
-        },
-        {
-          slotId: 'slot-capability-focus',
-          nodeId: 'node-capability-panels',
-          label: 'Focused capability panel',
-          persistenceScope: 'session',
-          defaultValue: '',
-        },
-        {
-          slotId: 'slot-orb-context',
-          nodeId: 'node-orb-mount',
-          label: 'Orb conversation context',
-          persistenceScope: 'session',
-          defaultValue: 'idle',
-        },
-      ],
-      liveSwitchPolicy: {
-        preserveSlots: [
-          'slot-header-note',
-          'slot-active-department',
-          'slot-hero-caption',
-          'slot-capability-focus',
-          'slot-orb-context',
-        ],
-        resetSlots: [],
+  const sceneIds = [
+    'executive-headquarters',
+    'institute-of-knowledge',
+    'command-center',
+    'content-engine',
+    'orb-room',
+  ] as const;
+
+  return sceneIds.map((sceneId) => ({
+    stateDnaId: `state-${sceneId}-v1`,
+    version: 'v1',
+    sceneId,
+    slots: [
+      {
+        slotId: 'slot-header-note',
+        nodeId: 'node-executive-header',
+        label: 'Executive header note',
+        persistenceScope: 'session' as const,
+        defaultValue: '',
       },
+      {
+        slotId: 'slot-active-department',
+        nodeId: 'node-navigation-rail',
+        label: 'Active department rail selection',
+        persistenceScope: 'session' as const,
+        defaultValue: 'executive',
+      },
+      {
+        slotId: 'slot-hero-caption',
+        nodeId: 'node-primary-focal-object',
+        label: 'Hero focal caption',
+        persistenceScope: 'session' as const,
+        defaultValue: '',
+      },
+      {
+        slotId: 'slot-capability-focus',
+        nodeId: 'node-capability-panels',
+        label: 'Focused capability panel',
+        persistenceScope: 'session' as const,
+        defaultValue: '',
+      },
+      {
+        slotId: 'slot-orb-context',
+        nodeId: 'node-orb-mount',
+        label: 'Orb conversation context',
+        persistenceScope: 'session' as const,
+        defaultValue: 'idle',
+      },
+    ],
+    liveSwitchPolicy: {
+      preserveSlots: [
+        'slot-header-note',
+        'slot-active-department',
+        'slot-hero-caption',
+        'slot-capability-focus',
+        'slot-orb-context',
+      ],
+      resetSlots: [],
     },
-  ];
+  }));
 }
 
 export function listPlatformSceneNodeIds(): readonly string[] {

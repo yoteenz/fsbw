@@ -8,8 +8,8 @@ export function emptyExperienceLabStore(): XelabStore {
     selection: {
       scenarioId: 'studio-os-hq',
       brandId: 'studio-os',
-      departmentId: 'headquarters',
-      sceneId: 'hq-master-demonstration-v1',
+      departmentId: 'executive',
+      sceneId: 'executive-headquarters',
       motionDnaId: 'motion-studio-os',
       switchers: { ...XELAB_DEFAULT_SWITCHERS },
       activePanel: 'runtime-status',

@@ -1,7 +1,15 @@
 import { resolveExperienceProfile } from '../../experience-engine/engines/experience-generator';
 import { readExperienceEngineDnaStore } from '../../experience-engine/persistence';
-import { emptyExperienceRuntimeStore, readExperienceRuntimeStore } from '../persistence';
-import { buildPlatformDna } from '../runtime-registry/platform-dna';
+import { readExperienceRuntimeStore } from '../persistence';
+import {
+  getDefaultRuntimeSeed,
+  safePlatformVersion,
+  safeStateDnaVersion,
+} from '../runtime-boot/default-seed';
+import {
+  resolveRuntimeSelection,
+  toAssemblyRequest,
+} from '../runtime-boot/runtime-fallback-resolver';
 import type {
   XerAssemblyRequest,
   XerPlatformDna,
@@ -30,28 +38,31 @@ export type XerResolvedDnaLayers = {
   profile: ReturnType<typeof resolveExperienceProfile>;
 };
 
+function resolveStateDna(sceneId: string, profiles: XerStateDna[]): XerStateDna {
+  const seed = getDefaultRuntimeSeed();
+  return (
+    profiles.find((p) => p?.sceneId === sceneId) ??
+    seed.stateDnaProfiles.find((p) => p?.sceneId === sceneId) ??
+    seed.defaultStateDna
+  );
+}
+
 export function resolveDnaLayers(request?: XerAssemblyRequest): XerResolvedDnaLayers {
   const runtimeStore = readExperienceRuntimeStore();
-  const emptySelection = emptyExperienceRuntimeStore().selection;
-  const selection = { ...emptySelection, ...runtimeStore.selection };
-  const brandId = request?.brandId ?? selection.brandId;
-  const departmentId = request?.departmentId ?? selection.departmentId;
-  const sceneId = request?.sceneId ?? selection.sceneId;
-  const motionDnaId = request?.motionDnaId ?? selection.motionDnaId;
+  const resolved = resolveRuntimeSelection(request);
+  const assemblyRequest = toAssemblyRequest(resolved);
 
   const profile = resolveExperienceProfile({
-    brandId,
-    departmentId,
-    sceneId,
-    motionDnaId,
+    brandId: assemblyRequest.brandId,
+    departmentId: assemblyRequest.departmentId,
+    sceneId: assemblyRequest.sceneId,
+    motionDnaId: assemblyRequest.motionDnaId,
   });
 
-  const platformDna = runtimeStore.platformDna.platformDnaId
-    ? runtimeStore.platformDna
-    : buildPlatformDna();
-  const stateDna =
-    runtimeStore.stateDnaProfiles.find((p) => p.sceneId === sceneId) ??
-    runtimeStore.stateDnaProfiles[0];
+  const seed = getDefaultRuntimeSeed();
+  const platformDna: XerPlatformDna =
+    runtimeStore.platformDna?.platformDnaId ? runtimeStore.platformDna : seed.platformDna;
+  const stateDna = resolveStateDna(resolved.sceneId, runtimeStore.stateDnaProfiles ?? []);
 
   return {
     platformDna,
@@ -160,3 +171,5 @@ export function patchGraphBrand(
     },
   };
 }
+
+export { safePlatformVersion, safeStateDnaVersion };
