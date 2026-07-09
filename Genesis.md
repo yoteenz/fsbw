@@ -127,6 +127,7 @@ permanent kernel responsibilities, not temporary product areas.
     - [Identity Engine™](./genesis/articles/IDENTITY_ENGINE.md)
     - [Executive Headquarters™](./genesis/articles/EXECUTIVE_HEADQUARTERS.md)
     - [Orb™](./genesis/articles/ORB.md)
+    - [Founder Acceptance Testing™](./genesis/articles/FOUNDER_ACCEPTANCE_TESTING.md)
     - Economy
     - Career Worlds
     - Headquarters
@@ -1025,6 +1026,28 @@ Rules:
    approvals, blockers, stale/contradictory information, or boundary/permission issues.
 6. Orb must never blend company context across company boundaries without authority and
    explicit labeling.
+
+### 9B.8 Founder Acceptance Testing rule
+
+The canonical Studio OS validation methodology is defined in
+**[Founder Acceptance Testing™](./genesis/articles/FOUNDER_ACCEPTANCE_TESTING.md)**.
+
+Studio OS validates itself before customers ever use it. Validation begins with the
+founder.
+
+Rules:
+
+1. No Launch Stack milestone is complete until it has Architecture Validation™,
+   Implementation Validation™, Founder Acceptance status, and Genesis Feedback™.
+2. Founder Acceptance Testing™ asks whether the founder can genuinely operate the
+   company using the system, not merely whether the system exists or demos well.
+3. Founder Acceptance requires evidence: usage, task/mission completion, trust,
+   reliability, withdrawal, replacement, delight, and founder narrative.
+4. Public launch may not be used as the first proof source for core Studio OS systems.
+5. Failed Founder Acceptance must update Genesis with what worked, what failed, what
+   surprised us, incorrect assumptions, and required system changes.
+6. Company Validation™ and Market Validation™ may only follow after internal founder
+   proof unless Genesis explicitly records an exception.
 
 ---
 

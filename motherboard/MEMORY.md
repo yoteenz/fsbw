@@ -44503,3 +44503,25 @@ Summary of the **full conversation in this chat**: (1) Build Order Engine™ imp
 - **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
 - **Conventions:** Use `getOrbReadyView(runtimeInput)` for intelligence composition; route material actions through Command Center™; Orb stores memory pointers and conversation timeline only — not upstream source truth.
 
+---
+
+## 2026-07-09 — Founder Acceptance Testing™ validation methodology
+
+Summary of the **full conversation in this chat**: (1) Studio OS Build Order Engine™ implementation (`2630b07cd`). (2) Identity Engine™ architecture (`c6ce8680c`) and runtime (`3183b0aa6`). (3) Executive Headquarters™ architecture (`4bb81399b`) and implementation (`313e130af`). (4) Orb™ architecture (`a230f4db7`) and implementation (`96baa0620`). (5) User then requested **MASTER ARCHITECTURE PROJECT — FOUNDER ACCEPTANCE TESTING™**: design Studio OS's complete validation methodology so Studio OS validates itself before customers ever use it, validation begins with the founder, and every Launch Stack milestone must pass Founder Acceptance Testing™ before it can be considered complete.
+
+- **Context:** The user wanted an official internal quality standard with Validation Philosophy™, Validation Levels™, Gates, Metrics, Graduation Requirements, Failure Criteria, Continuous Learning, Genesis Feedback, plus Withdrawal / Replacement / Delight tests.
+- **Decisions / outcomes:**
+  - Created **`genesis/articles/FOUNDER_ACCEPTANCE_TESTING.md`** as the canonical validation methodology.
+  - Defined validation ladder: **Level 1 Architectural Validation™**, **Level 2 Implementation Validation™**, **Level 3 Founder Acceptance Testing™**, **Level 4 Company Validation™**, **Level 5 Market Validation™**.
+  - For every level, defined purpose, success criteria, failure criteria, metrics, required evidence, required duration/evidence window, required documentation, and Genesis updates.
+  - Defined Founder Acceptance metrics: daily/weekly usage, task completion, mission completion, time saved, context switching reduction, apps replaced, decision quality, stress reduction, delight, trust, reliability, knowledge retrieval speed, automation success, creative throughput, focus time, founder satisfaction, system confidence.
+  - Created **Withdrawal Test™**: if the system disappeared tomorrow, would the founder immediately miss it? Includes objective criteria such as voluntary reach, old-workflow friction, mission slowdown, lost context/confidence, request for return, increased app switching/open loops.
+  - Created **Replacement Test™**: validates what existing tools/workflows Studio OS replaces (Apple Notes, Notion, Trello, ClickUp, Asana, Google Docs, ChatGPT, Slack, Calendar, Email, spreadsheets).
+  - Created **Delight Test™**: measures surprise, joy, confidence, calm, momentum, and craft pride through founder quotes, repeat use, unprompted positive reaction, stress reduction, trust increase, and system confidence.
+  - Defined Founder Acceptance Scorecard™ with 75/100 pass threshold and no critical failures.
+  - Defined **Genesis Feedback Loop™**: every validation answers what worked, failed, surprised us, which assumptions were wrong, what Genesis should learn, what boundaries changed, and what should be promoted/revised/deprecated/blocked.
+  - Added content home **`genesis/founder-acceptance-testing/README.md`** and platform guide **`docs/studio-os/genesis/FOUNDER_ACCEPTANCE_TESTING.md`**.
+  - Updated **`Genesis.md`** with §9B.8 Founder Acceptance Testing rule; updated `genesis/README.md`, `genesis/articles/README.md`, `docs/studio-os/README.md`, `docs/studio-os/genesis/README.md`, and `motherboard/CORE.md`.
+- **Verification:** `npm run build` passed; prebuild master-spec/world-graph artifacts restored before commit.
+- **Conventions:** Future Launch Stack milestone summaries should report: Architecture Validation, Implementation Validation, Founder Acceptance, Company Validation, Market Validation, Genesis Feedback. A milestone that cannot show this is built, not complete.
+

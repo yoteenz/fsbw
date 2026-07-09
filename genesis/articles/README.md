@@ -18,3 +18,4 @@ Runtime registry: `src/studio-os-core/genesis/articles/registry.ts`
 | [IDENTITY_ENGINE.md](./IDENTITY_ENGINE.md) | Canonical identity architecture draft | Identity Engine™ — foundational WHO/WHAT platform system: Identity Graph, Role Model, ownership, multi-company, AI identities, integrations |
 | [EXECUTIVE_HEADQUARTERS.md](./EXECUTIVE_HEADQUARTERS.md) | Canonical launch-stack experience draft | Executive Headquarters™ — flagship founder experience, room hierarchy, arrival flow, Orb/Atlas/Command/Genome relationships, minimum lovable HQ |
 | [ORB.md](./ORB.md) | Canonical launch-stack intelligence draft | Orb™ — Executive Intelligence Layer, permanent founder partner, context/memory/recommendation architecture, proactive behavior |
+| [FOUNDER_ACCEPTANCE_TESTING.md](./FOUNDER_ACCEPTANCE_TESTING.md) | Canonical validation methodology draft | Founder Acceptance Testing™ — Studio OS internal quality standard before public launch |
