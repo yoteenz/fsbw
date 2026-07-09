@@ -35,6 +35,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | [`articles/STUDIO_PRODUCTION_SYSTEM.md`](./articles/STUDIO_PRODUCTION_SYSTEM.md) | Studio Production System™ — AI production company architecture with departments, Production Packages™, control room, QC, distribution, and analytics |
 | [`articles/CREATIVE_OPERATING_SYSTEM.md`](./articles/CREATIVE_OPERATING_SYSTEM.md) | Creative Operating System™ — autonomous creative organization with executive board, council, memory, learning, evolution, economy, and headquarters integration |
 | [`articles/BUSINESS_AND_OPERATIONS_CONSTITUTION.md`](./articles/BUSINESS_AND_OPERATIONS_CONSTITUTION.md) | Business & Operations Constitutional Amendment™ — Company Genome Business Architecture/Operating Model facets, operational ownership, and no-duplicate-truth doctrine |
+| [`articles/COMPANY_GENOME.md`](./articles/COMPANY_GENOME.md) | Company Genome™ — living organizational genome, semantic source of truth, organization graph, learning ledger, and governed projections |
 | `object-model/` | Canonical Object Model runtime content home — types, registry, factory, relationships, validation |
 | `interaction-model/` | Universal Interaction Model runtime content home — interactions, events, workflows, commands, audit |
 | `decision-engine/` | Universal Decision Architecture runtime content home — decisions, recommendations, priorities, evidence, context |
@@ -89,6 +90,7 @@ Genesis is Studio World's single canonical source of truth. This folder is the *
 | `studio-production-system/` | Studio Production System™ content home — production departments, casting, design, camera, sound, post, QC, distribution, performance, control room |
 | `creative-operating-system/` | Creative Operating System™ content home — executive creative board, council, department leadership, memory, learning, evolution, creative economy, headquarters integration |
 | `business-and-operations-constitution/` | Business & Operations Constitutional Amendment™ content home — Business Architecture, Operating Model, Operational DNA, doctrine, workflow, and DNA-boundary rules |
+| `company-genome/` | Company Genome™ content home — organizational identity, business architecture, operating model, governance, organization graph, and learning ledger |
 
 ## Rule
 

@@ -1507,6 +1507,47 @@ Experience expression                         -> Experience Engine™
 Rendered environment                          -> Experience Runtime™
 ```
 
+### 9B.22 Company Genome™ living organizational genome rule
+
+The canonical Company Genome™ constitutional specification is defined in
+**[Company Genome™](./genesis/articles/COMPANY_GENOME.md)**.
+
+Company Genome™ is the canonical living organizational model and semantic source
+of truth for each company in Studio OS. It defines what the organization is,
+how it creates value, how it is organized, which constraints govern it, and
+what the platform has learned about it with evidence and confidence.
+
+Rules:
+
+1. Company Genome™ is the apex company abstraction below founder context. It
+   owns Organizational Identity, Business Architecture™, Operating Model™,
+   Governance & Constraint Model™, Organization Graph™, and Organizational
+   Learning Ledger™.
+2. Company Genome™ is **not** a universal database. It must not duplicate
+   transactional records, workflow execution state, runtime state, asset
+   binaries, evidence corpus, conversational state, or recommendation state.
+3. Company Operating Manual™ owns operating doctrine and SOPs; Workflow Engine™
+   owns executable workflow lifecycle; Studio Intelligence Layer™ owns reasoning
+   and recommendations; Brand Discovery owns Strategic Brand DNA™; Experience
+   Engine owns experience expression; Experience Runtime™ owns runtime state and
+   rendering; Institute of Knowledge™ owns evidence corpus.
+4. All material projections—manuals, department operating charters, AI workforce
+   authority envelopes, workflow proposals, brand briefs, headquarters
+   requirements, and Experience DNA™—must pin a Company Genome version,
+   snapshot hash, provenance, and staleness policy.
+5. No raw signal or model inference may directly rewrite canonical organization
+   truth. Learning requires evidence assessment, confidence/impact evaluation,
+   required review, and a governed Genome revision.
+6. Contradictions between business reality, brand ambition, capacity, policy, AI
+   authority, or operating constraints must be preserved as governed decision
+   objects rather than averaged away.
+7. Business Discovery™ creates provisional, confidence-scored Genome facets.
+   Founder validation is required before external/high-impact action, AI
+   authority activation, workflow automation, or public experience activation.
+8. Every new constitutional engine must declare whether it consumes a Company
+   Genome brief, snapshot, manual, workflow, brand brief, or compiled
+   experience—never create a duplicate primary organizational model.
+
 ---
 
 ## 10. Compilation Model

@@ -56,6 +56,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | [genesis/CREATIVE_OPERATING_SYSTEM.md](./genesis/CREATIVE_OPERATING_SYSTEM.md) | **Creative Operating System™ guide** — implementation-facing summary for the permanent executive creative organization inside Studio Intelligence™ |
 | [../../genesis/articles/BUSINESS_AND_OPERATIONS_CONSTITUTION.md](../../genesis/articles/BUSINESS_AND_OPERATIONS_CONSTITUTION.md) | **Business & Operations Constitutional Amendment™** — rejects duplicate Business DNA™ / Operations DNA™ engines and establishes Company Genome™ business/operating facets |
 | [genesis/BUSINESS_AND_OPERATIONS_CONSTITUTION.md](./genesis/BUSINESS_AND_OPERATIONS_CONSTITUTION.md) | **Business & Operations Constitutional Amendment™ guide** — responsibility boundaries across Company Genome™, operating manual, workflow, brand, and experience systems |
+| [../../genesis/articles/COMPANY_GENOME.md](../../genesis/articles/COMPANY_GENOME.md) | **Company Genome™** — living organizational genome: canonical organizational meaning, Business Architecture™, Operating Model™, organization graph, and learning ledger |
+| [genesis/COMPANY_GENOME.md](./genesis/COMPANY_GENOME.md) | **Company Genome™ guide** — ownership boundaries, versioned projections, and implementation gates for the organizational digital twin |
 | [platform-vision.md](./platform-vision.md) | **Canonical platform vision** — Business Headquarters OS |
 | [headquarters-engine.md](./headquarters-engine.md) | **Headquarters Engine™** — Expansions · evolution · hierarchy |
 | [headquarters-marketplace.md](./headquarters-marketplace.md) | **Headquarters Marketplace™** — IP economy for business architecture |
