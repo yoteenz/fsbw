@@ -45245,3 +45245,14 @@ Summary of the **full conversation in this chat**: User declared **Platform Stab
 - **Documentation:** `docs/studio-os/platform-stabilization-sprint-1.md` (root cause + correction).
 - **Genesis freeze:** No Genesis implementation migrations in this sprint — orchestration-only fix.
 - **Files touched:** `main.tsx`, `studio-bootstrap-init.ts`, `studio-bootstrap.ts`, `studio-kernel.ts`, `kernel/types.ts`, `useStudioBoot.ts`, `useStudioBootLive.ts`, `boot-diagnostics-panel.tsx`, `runtime-diagnostics.tsx`, `boot-debug/page.tsx`, `vite.config.ts`, docs.
+
+---
+
+## 2026-07-09 — URGENT: /__boot-debug production regression fix
+
+Summary of the **full conversation in this chat**: Platform Stabilization Sprint 1 restored bootstrap locally but user reported **URGENT regression** — `/__boot-debug` no longer loads at all on Vercel production. User required immediate visibility restore (not feature work, do not remove debug route): `/__studio-health` and `/__boot-debug` must load; boot-debug must show live state including READY snapshot; visible error screen on failure.
+
+- **Root cause:** Sprint 1 added Vite `manualChunks` for `studio-os-core/kernel` and `studio-os-core/bootstrap`, and synchronously imported `ensureStudioBootstrapStarted` from `main.tsx`. In **production builds only**, this broke ES module init order: `vendor.js` executed code calling `React.createContext` before `vendor-react` finished initializing → `TypeError: Cannot read properties of undefined (reading 'createContext')` → blank `#root`, empty page. Route was still registered in `StudioDebugRoutes`; not behind auth; not renamed. Dev server unaffected.
+- **Fix:** (1) **Removed** `studio-kernel` / `studio-bootstrap` manualChunks from `vite.config.ts`. (2) **Deferred** bootstrap start to dynamic `import('./studio-os-core/bootstrap/studio-bootstrap-init')` after `ReactDOM.createRoot`. (3) Added `DebugRouteErrorBoundary` wrapping `/__boot-debug` for visible errors. (4) Boot-debug page shows diagnostics even on orchestrator error.
+- **Verification:** Production `vite preview` — `/__studio-health` OK, `/__boot-debug` shows Started/Complete/Ready yes, all modules READY, zero page errors.
+- **Files:** `vite.config.ts`, `main.tsx`, `StudioDebugRoutes.tsx`, `DebugRouteErrorBoundary.tsx`, `boot-debug/page.tsx`, docs note.

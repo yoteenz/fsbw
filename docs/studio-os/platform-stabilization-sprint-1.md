@@ -49,6 +49,8 @@ Studio Bootstrap never left IDLE because **startup orchestration was hook-driven
 | **Build** | Vite `manualChunks` for `studio-os-core/kernel` and `studio-os-core/bootstrap` to preserve singleton. |
 | **Debug cleanup** | Removed temporary wire-trace UI, `debugInvokePrimeBootStart`, and kernel instance ID exports from `/__boot-debug`. |
 
+> **Regression note (2026-07-09):** Dedicated `studio-kernel` / `studio-bootstrap` manualChunks caused a production-only init-order failure — `vendor.js` executed `React.createContext` before `vendor-react` initialized, blanking `/__boot-debug`. Fix: remove those manualChunks; start bootstrap via dynamic import after `ReactDOM.createRoot`.
+
 ---
 
 ## Verification

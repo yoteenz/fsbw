@@ -117,12 +117,6 @@ export default defineConfig(({ mode, command }) => {
         chunkFileNames: 'assets/[name].[hash].js',
         assetFileNames: 'assets/[name].[hash].[ext]',
         manualChunks: (id) => {
-          if (id.includes('studio-os-core/kernel')) {
-            return 'studio-kernel';
-          }
-          if (id.includes('studio-os-core/bootstrap')) {
-            return 'studio-bootstrap';
-          }
           if (!id.includes('node_modules')) return;
           if (
             id.includes('/react-dom/') ||

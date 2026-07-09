@@ -8,6 +8,7 @@ import StudioHealthDebugPage from '../pages/debug/studio-health/page';
 import ChunkDebugPage from '../pages/debug/chunk-debug/page';
 import BootDebugPage from '../pages/debug/boot-debug/page';
 import ExperienceLabSafeDebugPage from '../pages/debug/experience-lab-safe/page';
+import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 
 const App = lazy(() => import('../App'));
 
@@ -33,7 +34,14 @@ export default function StudioDebugRoutes() {
     <Routes>
       <Route path="/__studio-health" element={<StudioHealthDebugPage />} />
       <Route path="/__chunk-debug" element={<ChunkDebugPage />} />
-      <Route path="/__boot-debug" element={<BootDebugPage />} />
+      <Route
+        path="/__boot-debug"
+        element={
+          <DebugRouteErrorBoundary route="/__boot-debug">
+            <BootDebugPage />
+          </DebugRouteErrorBoundary>
+        }
+      />
       <Route path="/__experience-lab-safe" element={<ExperienceLabSafeDebugPage />} />
       <Route
         path="*"
