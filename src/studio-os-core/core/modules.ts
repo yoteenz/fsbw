@@ -146,6 +146,7 @@ export type StudioOsCoreModuleId =
   | 'experience-runtime'
   | 'brand-discovery-engine'
   | 'studio-intelligence-layer'
+  | 'narrative-intelligence'
   | 'qa-headquarters'
   | 'qa-inspector'
   | 'qa-simulation-engine'
@@ -1051,6 +1052,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'STUDIO INTELLIGENCE LAYER™',
     description: 'Studio Intelligence V1.0 — executive reasoning across operating manuals, Decision DNA, taste, canon, audience, product, creative graph, and experience compilation.',
     routeSegment: 'studio-intelligence-layer',
+  },
+  {
+    id: 'narrative-intelligence',
+    label: 'NARRATIVE INTELLIGENCE™',
+    description: 'Narrative Intelligence V1.0 — executive creative reasoning; Narrative Blueprints™, Production Genome™, approval gate before any asset production.',
+    routeSegment: 'narrative-intelligence',
   },
   {
     id: 'qa-headquarters',

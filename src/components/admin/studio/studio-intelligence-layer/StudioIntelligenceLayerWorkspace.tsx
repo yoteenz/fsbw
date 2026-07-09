@@ -57,6 +57,7 @@ export function StudioIntelligenceLayerWorkspace() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          <Link to="/admin/studio/narrative-intelligence" className="xsil-btn">Narrative Intelligence →</Link>
           <Link to="/admin/studio/brand-discovery-engine" className="xsil-btn">Brand Discovery →</Link>
           <Link to="/admin/studio/experience-runtime" className="xsil-btn">Experience Runtime →</Link>
           <button type="button" className="xsil-btn primary" style={{ borderColor: ACCENT, color: ACCENT }} onClick={refresh}>Refresh</button>

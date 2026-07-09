@@ -2035,6 +2035,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'narrative-intelligence',
+    title: 'NARRATIVE INTELLIGENCE™',
+    purpose: 'Executive creative reasoning — Narrative Blueprints™, Production Genome™, scene flow, and approval gate before production.',
+    route: p('narrative-intelligence'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'Narrative',
+    ctaLabel: 'OPEN NARRATIVE INTELLIGENCE',
+    moduleKey: 'narrative-intelligence',
+    featuredOnOverview: true,
+  },
+  {
     id: 'qa-headquarters',
     title: 'QA HEADQUARTERS™',
     purpose: 'Permanent QA operating layer — Trust Scores™, continuous validation, workflow and AI integrity monitoring.',

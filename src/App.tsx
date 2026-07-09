@@ -278,6 +278,10 @@ const AdminStudioIntelligenceLayer = lazyWithRetry(
   () => import('./pages/admin/studio/studio-intelligence-layer/page'),
   'AdminStudioIntelligenceLayer'
 );
+const AdminStudioNarrativeIntelligence = lazyWithRetry(
+  () => import('./pages/admin/studio/narrative-intelligence/page'),
+  'AdminStudioNarrativeIntelligence'
+);
 const AdminStudioQaHeadquarters = lazyWithRetry(
   () => import('./pages/admin/studio/qa-headquarters/page'),
   'AdminStudioQaHeadquarters'
@@ -2008,6 +2012,16 @@ function App() {
           <Route path="studio/studio-intelligence-layer/:roomSlug" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioIntelligenceLayer />
+            </Suspense>
+          } />
+          <Route path="studio/narrative-intelligence" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioNarrativeIntelligence />
+            </Suspense>
+          } />
+          <Route path="studio/narrative-intelligence/:roomSlug" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioNarrativeIntelligence />
             </Suspense>
           } />
           <Route path="studio/qa-headquarters" element={

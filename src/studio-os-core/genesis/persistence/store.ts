@@ -24,6 +24,7 @@ import { emptyExperienceEngineDnaStore } from '../experience-engine/persistence'
 import { emptyExperienceRuntimeStore } from '../experience-runtime/persistence';
 import { emptyBrandDiscoveryEngineStore } from '../brand-discovery-engine/persistence';
 import { emptyStudioIntelligenceLayerStore } from '../studio-intelligence-layer/persistence';
+import { emptyNarrativeIntelligenceStore } from '../narrative-intelligence/persistence';
 import type { GenesisStore } from '../types';
 
 function emptyStore(): GenesisStore {
@@ -95,6 +96,7 @@ export function readGenesisStore(): GenesisStore {
       experienceRuntimeDna: parsed.experienceRuntimeDna ?? emptyExperienceRuntimeStore(),
       brandDiscoveryEngineDna: parsed.brandDiscoveryEngineDna ?? emptyBrandDiscoveryEngineStore(),
       studioIntelligenceLayerDna: parsed.studioIntelligenceLayerDna ?? emptyStudioIntelligenceLayerStore(),
+      narrativeIntelligenceDna: parsed.narrativeIntelligenceDna ?? emptyNarrativeIntelligenceStore(),
     };
 
     return bootstrapGenesisStoreIfEmpty(merged);

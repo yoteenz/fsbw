@@ -1,0 +1,1 @@
+export { NarrativeIntelligenceWorkspace } from './NarrativeIntelligenceWorkspace';

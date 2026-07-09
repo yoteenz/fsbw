@@ -242,6 +242,7 @@ export type GenesisStore = {
   experienceRuntimeDna?: import('./experience-runtime/types').XerStore;
   brandDiscoveryEngineDna?: import('./brand-discovery-engine/types').XbdStore;
   studioIntelligenceLayerDna?: import('./studio-intelligence-layer/types').XsilStore;
+  narrativeIntelligenceDna?: import('./narrative-intelligence/types').XniStore;
   bootstrappedAt?: string;
 };
 

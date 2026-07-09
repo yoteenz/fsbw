@@ -40,3 +40,4 @@ export * from './experience-engine';
 export * from './experience-runtime';
 export * from './brand-discovery-engine';
 export * from './studio-intelligence-layer';
+export * from './narrative-intelligence';
