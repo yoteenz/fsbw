@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { CampusTransitionProvider } from './admin/studio-os/campus/CampusTransitionProvider';
 import { WorkspaceProvider } from '../studio-os-core/context/WorkspaceProvider';
 import { OrganizationContextProvider } from '../studio-os-core/organization-context';
+import { PlatformErrorBoundary } from '../platform-stabilization/PlatformErrorBoundary';
 import {
   ensureWorkspacesBootstrapped,
   isWorkspacesBootstrapped,
@@ -150,9 +151,11 @@ export default function AdminStudioWorkspaceGuard() {
   return (
     <WorkspaceProvider initialWorkspaceId={routeWorkspaceId}>
       <OrganizationContextProvider>
-        <CampusTransitionProvider>
-          <Outlet />
-        </CampusTransitionProvider>
+        <PlatformErrorBoundary boundary="admin-studio-workspace">
+          <CampusTransitionProvider>
+            <Outlet />
+          </CampusTransitionProvider>
+        </PlatformErrorBoundary>
       </OrganizationContextProvider>
     </WorkspaceProvider>
   );

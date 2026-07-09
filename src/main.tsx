@@ -5,6 +5,8 @@ import StudioDebugRoutes, { isStudioDebugPath } from './routes/StudioDebugRoutes
 import './index.css'
 import { registerGlobalChunkLoadRecovery } from './utils/chunkLoadRecovery'
 import { bootstrapStudioOsBrowserStorage } from './utils/studioOsBrowserStorage'
+import { registerPostLoadRenderGuard } from './platform-stabilization/post-load-render-guard'
+import { PlatformErrorBoundary } from './platform-stabilization/PlatformErrorBoundary'
 
 /** TEMPORARY: skip heavy app boot on public debug routes (/__studio-health, etc.). */
 const onStudioDebugRoute =
@@ -13,6 +15,7 @@ const onStudioDebugRoute =
 // Studio OS storage guard — lightweight; safe on debug routes too.
 bootstrapStudioOsBrowserStorage()
 registerGlobalChunkLoadRecovery()
+registerPostLoadRenderGuard()
 
 if (!onStudioDebugRoute) {
   void import('./main-app-boot').then((m) => m.runMainAppBoot())
@@ -22,9 +25,11 @@ const rootEl = document.getElementById('root')
 if (rootEl) {
   ReactDOM.createRoot(rootEl).render(
     <React.StrictMode>
-      <BrowserRouter>
-        <StudioDebugRoutes />
-      </BrowserRouter>
+      <PlatformErrorBoundary boundary="main-shell">
+        <BrowserRouter>
+          <StudioDebugRoutes />
+        </BrowserRouter>
+      </PlatformErrorBoundary>
     </React.StrictMode>
   )
 

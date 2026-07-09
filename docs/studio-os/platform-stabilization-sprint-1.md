@@ -53,6 +53,8 @@ Studio Bootstrap never left IDLE because **startup orchestration was hook-driven
 
 > **Regression note (2026-07-09, follow-up):** Splitting `vendor` / `vendor-react` / `vendor-router` left a **circular chunk dependency** (`vendor` ↔ `vendor-react`) that can still blank the app after the loading animation. Fix: use a **single `vendor` chunk** for all `node_modules`; add `RootAppErrorBoundary` around lazy `App`; catch bootstrap orchestrator import failures in `main.tsx`.
 
+> **Regression note (2026-07-09, post-loading blank):** Loading shell can clear while `#root` stays empty when a guard returns `null`, `data-loading-screen` sticks on `<html>`, or async errors occur outside React boundaries. Fix: `PlatformErrorBoundary` at main shell + admin/workspace routes; `registerPostLoadRenderGuard()`; ref-counted `loadingScreenLock`; **AdminGuard** keeps `LoadingScreen` during redirect instead of `return null`; App `ErrorBoundary` shows stack + component stack.
+
 ---
 
 ## Verification

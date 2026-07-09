@@ -1,0 +1,127 @@
+import { isStudioDebugPath } from '../routes/StudioDebugRoutes';
+import { clearLoadingScreenDocumentLock } from './loadingScreenLock';
+
+type CapturedError = {
+  message: string;
+  stack?: string;
+  source: string;
+};
+
+let lastCaptured: CapturedError | null = null;
+let overlayShown = false;
+
+function captureError(source: string, err: unknown): void {
+  const message = err instanceof Error ? err.message : String(err ?? source);
+  const stack = err instanceof Error ? err.stack : undefined;
+  lastCaptured = { message, stack, source };
+  console.error(`[post-load-render-guard] ${source}`, err);
+}
+
+async function bootStatusLine(): Promise<string> {
+  try {
+    const { getStudioBootstrapLiveState } = await import('../studio-os-core/bootstrap');
+    const live = getStudioBootstrapLiveState();
+    if (!live) return 'no live state';
+    return `started=${live.started} complete=${live.complete} ready=${live.ready} module=${live.currentModuleId ?? 'none'}`;
+  } catch (err) {
+    return err instanceof Error ? err.message : String(err);
+  }
+}
+
+function showOverlay(reason: string, details: Record<string, string>): void {
+  if (overlayShown || typeof document === 'undefined') return;
+  overlayShown = true;
+  clearLoadingScreenDocumentLock();
+
+  const root = document.getElementById('root');
+  const panel = document.createElement('div');
+  panel.setAttribute('data-post-load-render-guard', reason);
+  panel.style.cssText =
+    'min-height:100vh;padding:24px;font-family:system-ui,sans-serif;font-size:13px;color:#111;background:#fff5f5;box-sizing:border-box;';
+  panel.innerHTML = `
+    <h1 style="font-size:16px;margin:0 0 8px;color:#eb1c24">Post-load render failure</h1>
+    <p style="margin:0 0 8px;font-weight:700">Reason</p>
+    <pre style="white-space:pre-wrap;background:#fff;border:1px solid #fecaca;padding:12px;border-radius:6px;font-size:12px">${reason}</pre>
+    ${Object.entries(details)
+      .map(
+        ([k, v]) =>
+          `<p style="margin:12px 0 8px;font-weight:700">${k}</p><pre style="white-space:pre-wrap;background:#fff;border:1px solid #e5e7eb;padding:12px;border-radius:6px;font-size:11px;max-height:200px;overflow:auto">${v.replace(/</g, '&lt;')}</pre>`
+      )
+      .join('')}
+    <p style="margin-top:16px;font-size:12px">
+      <button type="button" id="plrg-reload" style="margin-right:12px;padding:6px 10px">Reload</button>
+      <a href="/__boot-debug">/__boot-debug</a> · <a href="/__studio-health">/__studio-health</a>
+    </p>
+  `;
+  panel.querySelector('#plrg-reload')?.addEventListener('click', () => window.location.reload());
+  if (root && root.childElementCount === 0) {
+    root.appendChild(panel);
+  } else {
+    document.body.appendChild(panel);
+  }
+}
+
+function rootLooksBlank(): boolean {
+  const root = document.getElementById('root');
+  if (!root) return true;
+  if (document.querySelector('.loading-screen-root')) return false;
+  if (document.querySelector('[data-platform-error]')) return false;
+  if (document.querySelector('[data-root-app-error]')) return false;
+  if (document.querySelector('[data-post-load-render-guard]')) return false;
+  const text = root.innerText.trim();
+  const html = root.innerHTML.trim();
+  return html.length < 120 && text.length < 40;
+}
+
+async function audit(reason: string): Promise<void> {
+  if (typeof window === 'undefined') return;
+  if (isStudioDebugPath(window.location.pathname)) return;
+
+  const stuckLoadingAttr =
+    document.documentElement.getAttribute('data-loading-screen') === 'true' &&
+    !document.querySelector('.loading-screen-root');
+
+  if (stuckLoadingAttr) {
+    clearLoadingScreenDocumentLock();
+  }
+
+  if (lastCaptured) {
+    showOverlay(reason, {
+      Error: lastCaptured.message,
+      Source: lastCaptured.source,
+      Stack: lastCaptured.stack ?? '(no stack)',
+      Bootstrap: await bootStatusLine(),
+      Path: window.location.pathname,
+    });
+    return;
+  }
+
+  if (rootLooksBlank()) {
+    showOverlay('blank-root-after-loading', {
+      Bootstrap: await bootStatusLine(),
+      Path: window.location.pathname,
+      Hint: 'React mounted but #root has no visible content after loading shell cleared.',
+    });
+  }
+}
+
+/** Detect blank screen / async crashes after the loading animation. */
+export function registerPostLoadRenderGuard(): void {
+  if (typeof window === 'undefined') return;
+
+  window.addEventListener('error', (event) => {
+    captureError('window.error', event.error ?? event.message);
+  });
+
+  window.addEventListener('unhandledrejection', (event) => {
+    captureError('unhandledrejection', event.reason);
+  });
+
+  window.addEventListener('studio-bootstrap-start-failed', (event) => {
+    const detail = (event as CustomEvent<{ message?: string }>).detail;
+    captureError('studio-bootstrap-start-failed', detail?.message ?? 'bootstrap start failed');
+  });
+
+  window.setTimeout(() => void audit('4s-post-load'), 4000);
+  window.setTimeout(() => void audit('8s-post-load'), 8000);
+}

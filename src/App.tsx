@@ -61,6 +61,7 @@ import { isCreativePreviewMode, seedCreativePreviewDemoSession } from './utils/c
 import { isDesktopPreviewWrapperPath } from './utils/desktopPreview';
 import { DesktopTowerNavProvider } from './components/desktop-tower/DesktopTowerNavProvider';
 import { MobileMansionRoutes } from './routes/MobileMansionRoutes';
+import { PlatformErrorBoundary } from './platform-stabilization/PlatformErrorBoundary';
 import { BAW_TUTORIAL_ROUTE, normalizeBawViewPathname } from './constants/bawTutorialConfig';
 import { TutorialOsProvider, TutorialOsPsaGate } from './tutorial-os';
 import { VisionEngineProvider } from './components/vision-engine/runtime';
@@ -691,10 +692,10 @@ function DesktopRoutesLayout() {
 }
 
 // Error Boundary to catch component errors with auto-recovery
-class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null }> {
+class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boolean; error: Error | null; componentStack: string | null }> {
   constructor(props: { children: ReactNode }) {
     super(props);
-    this.state = { hasError: false, error: null };
+    this.state = { hasError: false, error: null, componentStack: null };
   }
 
   static getDerivedStateFromError(error: Error) {
@@ -703,6 +704,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Error caught by boundary:', error, errorInfo);
+    this.setState({ componentStack: errorInfo.componentStack ?? null });
     if (isDynamicImportChunkFailure(error)) {
       reloadForStaleChunks();
     }
@@ -718,7 +720,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
         return Promise.all(cacheNames.map(name => caches.delete(name)));
       }).catch(() => {});
     }
-    this.setState({ hasError: false, error: null });
+    this.setState({ hasError: false, error: null, componentStack: null });
   };
 
   render() {
@@ -774,6 +776,46 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
                 ? 'This device\'s browser storage is full. Studio OS could not save workspace data locally. Your account data in the cloud is safe.'
                 : this.state.error?.message}
           </p>
+          {!isChunkError && !showDeployMessage && this.state.error?.stack ? (
+            <pre
+              style={{
+                fontSize: '11px',
+                textAlign: 'left',
+                maxWidth: '480px',
+                maxHeight: '200px',
+                overflow: 'auto',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                color: '#333',
+                textTransform: 'none',
+                border: '1px solid #e5e7eb',
+                padding: '12px',
+                margin: 0,
+              }}
+            >
+              {this.state.error.stack}
+            </pre>
+          ) : null}
+          {!isChunkError && !showDeployMessage && this.state.componentStack ? (
+            <pre
+              style={{
+                fontSize: '10px',
+                textAlign: 'left',
+                maxWidth: '480px',
+                maxHeight: '160px',
+                overflow: 'auto',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-word',
+                color: '#555',
+                textTransform: 'none',
+                border: '1px solid #e5e7eb',
+                padding: '12px',
+                margin: 0,
+              }}
+            >
+              {this.state.componentStack}
+            </pre>
+          ) : null}
           {isChunkError ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
               <button
@@ -1154,7 +1196,14 @@ function App() {
         <Route path="/lounge" element={<Navigate to="/lobby/lounge" replace />} />
         <Route path="/lobby" element={<LobbyPage />} />
         {/* Admin routes - protected by AdminGuard (sign-in required, admin role only) */}
-        <Route path="/admin" element={<AdminGuard />}>
+        <Route
+          path="/admin"
+          element={
+            <PlatformErrorBoundary boundary="admin-routes">
+              <AdminGuard />
+            </PlatformErrorBoundary>
+          }
+        >
           <Route index element={<Navigate to="/admin/dashboard" replace />} />
           <Route path="dashboard" element={
             <Suspense fallback={<LoadingScreen />}>

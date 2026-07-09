@@ -1,5 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
+import { acquireLoadingScreenDocumentLock } from '../../platform-stabilization/loadingScreenLock';
 
 const loadingGifStyle: React.CSSProperties = {
   width: '405px',
@@ -24,34 +25,7 @@ type LoadingScreenProps = {
 function useLockPageScroll(active: boolean) {
   React.useEffect(() => {
     if (!active || typeof document === 'undefined') return;
-    const html = document.documentElement;
-    const body = document.body;
-    const root = document.getElementById('root');
-    const prevHtmlOverflow = html.style.overflow;
-    const prevBodyOverflow = body.style.overflow;
-    const prevBodyTouchAction = body.style.touchAction;
-    const prevBodyBg = body.style.backgroundColor;
-    const prevRootOverflow = root?.style.overflow ?? '';
-    const prevHtmlDataLoading = html.getAttribute('data-loading-screen');
-
-    html.setAttribute('data-loading-screen', 'true');
-    html.style.overflow = 'hidden';
-    html.style.backgroundColor = '#ffffff';
-    body.style.overflow = 'hidden';
-    body.style.touchAction = 'none';
-    body.style.backgroundColor = '#ffffff';
-    if (root) root.style.overflow = 'hidden';
-
-    return () => {
-      if (prevHtmlDataLoading == null) html.removeAttribute('data-loading-screen');
-      else html.setAttribute('data-loading-screen', prevHtmlDataLoading);
-      html.style.overflow = prevHtmlOverflow;
-      html.style.backgroundColor = '';
-      body.style.overflow = prevBodyOverflow;
-      body.style.touchAction = prevBodyTouchAction;
-      body.style.backgroundColor = prevBodyBg;
-      if (root) root.style.overflow = prevRootOverflow;
-    };
+    return acquireLoadingScreenDocumentLock();
   }, [active]);
 }
 

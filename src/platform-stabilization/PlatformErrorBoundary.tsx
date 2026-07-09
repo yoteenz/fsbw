@@ -1,9 +1,11 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { forceReloadForStaleChunks, isDynamicImportChunkFailure, reloadForStaleChunks } from '../utils/chunkLoadRecovery';
-import { PlatformErrorScreen } from '../platform-stabilization/PlatformErrorScreen';
+import { PlatformErrorScreen } from './PlatformErrorScreen';
 
 type Props = {
   children: ReactNode;
+  /** Route or shell label for diagnostics. */
+  boundary: string;
 };
 
 type State = {
@@ -11,8 +13,8 @@ type State = {
   componentStack: string | null;
 };
 
-/** Root App shell — never leave a blank #root after lazy App load fails. */
-export class RootAppErrorBoundary extends Component<Props, State> {
+/** Catches render errors in providers/routes — shows stack instead of blank screen. */
+export class PlatformErrorBoundary extends Component<Props, State> {
   state: State = { error: null, componentStack: null };
 
   static getDerivedStateFromError(error: Error): Partial<State> {
@@ -20,7 +22,7 @@ export class RootAppErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    console.error('[RootAppErrorBoundary]', error, info);
+    console.error(`[PlatformErrorBoundary:${this.props.boundary}]`, error, info);
     this.setState({ componentStack: info.componentStack ?? null });
     if (isDynamicImportChunkFailure(error)) {
       reloadForStaleChunks();
@@ -41,13 +43,11 @@ export class RootAppErrorBoundary extends Component<Props, State> {
 
     return (
       <PlatformErrorScreen
-        dataAttr="root-app-error"
-        title="Application failed to load"
+        title="Application error"
         message={this.state.error.message || String(this.state.error)}
         stack={this.state.error.stack}
         componentStack={this.state.componentStack ?? undefined}
-        boundary="RootAppErrorBoundary"
-        extra="The app shell could not start. This is usually a stale deploy tab or a blocked script chunk."
+        boundary={this.props.boundary}
         onRetry={this.handleRetry}
       />
     );

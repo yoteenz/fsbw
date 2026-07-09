@@ -38,7 +38,7 @@ export default function AdminGuard() {
   }
 
   if (!isSignedIn() || !canAccessAdminPages()) {
-    return null;
+    return <LoadingScreen />;
   }
 
   return <Outlet />;
