@@ -266,6 +266,10 @@ const AdminStudioExperienceRuntime = lazyWithRetry(
   () => import('./pages/admin/studio/experience-runtime/page'),
   'AdminStudioExperienceRuntime'
 );
+const AdminStudioExperienceRuntimePlayground = lazyWithRetry(
+  () => import('./pages/admin/studio/experience-runtime/playground/page'),
+  'AdminStudioExperienceRuntimePlayground'
+);
 const AdminStudioBrandDiscoveryEngine = lazyWithRetry(
   () => import('./pages/admin/studio/brand-discovery-engine/page'),
   'AdminStudioBrandDiscoveryEngine'
@@ -1969,6 +1973,11 @@ function App() {
           <Route path="studio/experience-engine/:roomSlug" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioExperienceEngine />
+            </Suspense>
+          } />
+          <Route path="studio/experience-runtime/playground" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioExperienceRuntimePlayground />
             </Suspense>
           } />
           <Route path="studio/experience-runtime" element={

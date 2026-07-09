@@ -44876,3 +44876,16 @@ Summary of the **full conversation in this chat**: Built Design DNA through Expe
 - **UI:** `StudioIntelligenceLayerWorkspace` — `/admin/studio/studio-intelligence-layer` + 15 rooms/playgrounds; company switcher; executive recommendation sidebar; manual/decision/taste/canon/compiler/audience/product/creative panels; Brand DNA playground links to Brand Discovery; nav + module `studio-intelligence-layer`; `recordStudioIntelligenceLayerOpened()` on page mount only.
 - **Docs:** `docs/studio-os/genesis/STUDIO_INTELLIGENCE_LAYER_PLATFORM.md`; updated architecture guide + content home README; `genesis/studio-intelligence-layer/intelligence/README.md`.
 - **Verification:** `npm run build` passed.
+
+---
+
+## 2026-07-09 — Experience Runtime™ Phase 1 (playground spine)
+
+Summary of the **full conversation in this chat**: Grand Atrium fixes; HQ architecture audit; **Phase 1 playground-only spine** at `src/studio-os-core/experience-runtime/` (complements Genesis `experience-runtime-dna` at `/admin/studio/experience-runtime`).
+
+- **Phase 1 runtime spine:** `BrandRegistry.ts`, `SceneRegistry.ts`, `DNAResolver.ts`, `SceneAssembler.tsx`, `ExperienceRuntime.tsx`, `RuntimeInspector.tsx`.
+- **Playground route:** `/admin/studio/experience-runtime/playground` (before `:roomSlug` in App.tsx).
+- **Canonical contract:** Studio OS · Executive → headquarters theme · executive-headquarters · hq-master-scene-v1 · designDNA v1.
+- **Non-goals:** Live Executive HQ / Grand Atrium unchanged.
+- **Verification:** `npm run build` passed.
+

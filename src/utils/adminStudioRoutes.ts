@@ -1083,6 +1083,10 @@ export function adminStudioExperienceEnginePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/experience-engine`;
 }
 
+export function adminStudioExperienceRuntimePlaygroundPath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/experience-runtime/playground`;
+}
+
 export function adminStudioQaHeadquartersPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/qa-headquarters`;
 }
