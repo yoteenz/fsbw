@@ -1,15 +1,40 @@
 import { mutateGenesisStore, readGenesisStore } from '../persistence/store';
 import { XER_SUBSYSTEM_VERSION } from './constants';
 import { XER_DEFAULT_RUNTIME_CONTRACT } from './runtime-boot/default-contract';
-import type { XerStore } from './types';
-import { getDefaultRuntimeSeed } from './runtime-boot/default-seed';
+import type { XerPlatformDna, XerStateDna, XerStore } from './types';
+
+/** Inline minimal defaults — no seed-data import at module init (avoids circular boot). */
+function minimalEmptyPlatformDna(): XerPlatformDna {
+  return {
+    platformDnaId: 'platform-studio-os',
+    version: XER_DEFAULT_RUNTIME_CONTRACT.platformDnaVersion,
+    routeAnatomy: ['route-shell'],
+    layoutPrimitives: ['fixed-scene-grid'],
+    accessibilityFloor: ['keyboard-focus-visible'],
+    sceneGraphContract: 'minimal-empty',
+    orbMountContract: 'minimal-empty',
+    dataSlotContract: 'minimal-empty',
+    componentAnatomyIds: ['executive-header'],
+  };
+}
+
+function minimalEmptyStateProfiles(): XerStateDna[] {
+  return [
+    {
+      stateDnaId: 'state-fallback-v1',
+      version: XER_DEFAULT_RUNTIME_CONTRACT.stateDnaVersion,
+      sceneId: XER_DEFAULT_RUNTIME_CONTRACT.sceneId,
+      slots: [],
+      liveSwitchPolicy: { preserveSlots: [], resetSlots: [] },
+    },
+  ];
+}
 
 export function emptyExperienceRuntimeStore(): XerStore {
-  const seed = getDefaultRuntimeSeed();
   return {
     version: XER_SUBSYSTEM_VERSION,
-    platformDna: seed.platformDna,
-    stateDnaProfiles: seed.stateDnaProfiles,
+    platformDna: minimalEmptyPlatformDna(),
+    stateDnaProfiles: minimalEmptyStateProfiles(),
     selection: {
       brandId: XER_DEFAULT_RUNTIME_CONTRACT.brandId,
       departmentId: XER_DEFAULT_RUNTIME_CONTRACT.departmentId,

@@ -44992,12 +44992,20 @@ Summary of the **full conversation in this chat**: Experience Lab implementation
 
 - **Root cause:** Partial/corrupted Genesis localStorage on Safari — `experienceRuntimeDna`, `experienceLabDna`, or `experienceEngineDna` could exist without a complete `selection` / `playground`, so runtime assembly accessed `selection.brandId` on `undefined`.
 - **Fix:** Added `normalizeExperienceRuntimeStore`, `normalizeExperienceLabStore`, `normalizeExperienceEngineDnaStore` deep-merge on every read/write; Genesis `readGenesisStore` now normalizes experience subsystems; `ensure*Store` re-seeds when `selection.brandId` or brand registry missing; `resolveExperienceProfile` / `resolveDnaLayers` guard with defaults + ensure seed; Experience Lab hook try/catch re-seed + `bootError` recovery UI with Retry.
-- **Follow-up (Safari):** User still saw **Experience Engine DNA is not seeded — brand registry is empty** — localStorage had `seededAt` but empty `brands[]`. Added `withExperienceEngineSeedFallback()` to inject canonical `SEED_*` registries in-memory on every read when persisted arrays are empty; removed hard throws from `resolveExperienceProfile`; `writeExperienceEngineDnaStore` catches quota/private-mode failures; Experience Lab refresh re-runs `ensureExperienceEngineDnaSubsystem()`.
 - **Verification:** `npm run build` passed.
 
 ---
 
-## 2026-07-09 — Creative Operating System™ runtime (autonomous creative organization)
+## 2026-07-09 — Experience Lab runtime boot stabilization (Safari undefined DNA crashes)
+
+Summary of the **full conversation in this chat**: Experience Lab shipped; user hit rotating Safari crashes (`t.brandId`, empty brand registry, `stateDna.version` undefined). Prior fixes added normalize/seed fallbacks; user requested **BUG FIX SPRINT** — stabilize runtime boot (no UI redesign, no new features).
+
+- **Root cause:** Experience Runtime assembled before all DNA layers were seeded/normalized; partial localStorage left empty registries and undefined `stateDna`.
+- **Runtime boot layer:** `src/studio-os-core/genesis/experience-runtime/runtime-boot/` — `default-contract.ts` (canonical default: studio-os + executive + executive-headquarters + hq-master-scene-v1 + v1), `default-seed.ts` (bundled fallbacks for platform/brand/dept/scene/component/motion/interaction/state DNA), `id-aliases.ts`, `RuntimeFallbackResolver`, `RuntimeBootValidator`.
+- **Registries expanded:** 5 scenes (executive-headquarters, institute-of-knowledge, command-center, content-engine, orb-room); departments executive/knowledge/creative/command/ai; state DNA profile per scene with version `v1`; `withExperienceRuntimeSeedFallback` on runtime persistence reads.
+- **Null-safe assembly:** `resolveDnaLayers` uses fallback resolver; `safeStateDnaVersion` / `safePlatformVersion` on cache keys; `resolveExperienceProfile` uses bundled SEED fallbacks (no throws).
+- **Experience Lab UX:** `validateRuntimeBoot` before assembly; `bootReport` on ready view; **Runtime Boot Diagnostics** panel instead of global crash when preview blocked; **Runtime Boot Inspector** section (resolved ids/versions, missing objects, fallbacks, warnings) in Runtime Status + Runtime Inspector panels; scene switcher live.
+- **Verification:** `npm run build` passed.
 
 Summary of the **full conversation in this chat**: After Studio Production System™ runtime and Creative Operating System™ architecture (Genesis §9B.20), user requested **IMPLEMENTATION FOLLOW-UP** — implement the autonomous creative organization inside Studio Intelligence™ so Creative Direction Studio™ becomes a living organization with persistent executive reasoning, continuous collaboration, compounding knowledge, and improving creative quality.
 
