@@ -1,7 +1,7 @@
 /**
  * Persisted state quarantine — diagnostic isolation smoke tests.
  */
-import { describe, expect, it, beforeEach } from 'vitest';
+import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { quarantineIncompatiblePersistedState } from './persisted-state-audit';
 
 const store = new Map<string, string>();
@@ -27,10 +27,9 @@ function installMockStorage() {
       store.clear();
     },
   };
-  (globalThis as typeof globalThis & { window: typeof globalThis; localStorage: typeof ls }).window =
-    globalThis;
-  (globalThis as typeof globalThis & { localStorage: typeof ls }).localStorage = ls;
-  (globalThis as typeof globalThis & { sessionStorage: typeof ls }).sessionStorage = ls;
+  vi.stubGlobal('localStorage', ls);
+  vi.stubGlobal('sessionStorage', ls);
+  vi.stubGlobal('window', globalThis as unknown as Window);
 }
 
 describe('quarantineIncompatiblePersistedState', () => {

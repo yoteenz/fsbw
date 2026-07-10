@@ -45961,3 +45961,17 @@ Summary of **full conversation in this chat** including prior sprints in thread 
 - **No implementation:** No runtime, no REA code, no HQ Upgrade UI, no Experience Lab repair.
 - **Blockers unchanged:** B1 Layer 1 AUTH_REQUIRED; B2 normal-tab diagnostic verification pending.
 
+---
+
+## 2026-07-10 — Vercel build fix: persisted-state-audit.test.ts TS2322
+
+Summary of **full conversation in this chat** including prior sprints plus Studio AI docs sprint and this build fix:
+
+**Prior shipped:** Layer 1 forensic; diagnostic route isolation; ChatGPT Operating Manual; AI Context Capsule v2; AI Context Protocol v1 (`243c23083`); Studio AI bible suite (`3be0e1f88`).
+
+**This turn:** Vercel build failed on commit `243c230` (user log) — `src/diagnostic-entry/persisted-state-audit.test.ts(30,3): error TS2322: Type 'typeof globalThis' is not assignable to type 'Window & typeof globalThis'`.
+
+- **Cause:** Test mock assigned `globalThis` directly to `window` with incorrect cast.
+- **Fix:** Use `vi.stubGlobal('localStorage'|'sessionStorage'|'window', …)` with `globalThis as unknown as Window` for window stub.
+- **Verified:** `npm run build` passes; vitest 3/3 on persisted-state-audit.test.ts.
+
