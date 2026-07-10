@@ -45533,7 +45533,8 @@ User requested visible compile progress in Mode 2 Creative Studio Preview Compil
 
 ---
 
-<<<<<<< HEAD
+---
+
 ## 2026-07-10 — Executive Operating System™ Sprint (P0 Experience Architecture — docs only)
 
 Summary of **full conversation in this chat** (both architecture prompts): (1) **Studio World™ Foundation Sprint** — 12-doc spatial/organizational architecture at `docs/studio-os/foundation-sprint/`; (2) **Executive Operating System™ Sprint** — 11-doc experience architecture at `docs/studio-os/executive-operating-system-sprint/` for the *feeling* of running a company. Both mandates: **DO NOT IMPLEMENT** — architecture only.
@@ -45543,7 +45544,9 @@ Summary of **full conversation in this chat** (both architecture prompts): (1) *
 - **Decisions / outcomes:** **11-document bundle** at `docs/studio-os/executive-operating-system-sprint/` (README + Constitution · Founder Experience Philosophy · Executive Calendar Framework · Meeting Architecture · AI Specialist Governance · Organizational Memory Model · Decision Ownership Matrix · Department Collaboration Framework · Founder Daily Rhythm · Multi-Year Experience Roadmap). Phase 0 complete; Year 1 (Morning Briefing + Calendar rhythm) awaits founder approval. No code changes.
 - **Changes:** `docs/studio-os/executive-operating-system-sprint/` (11 files). `motherboard/CORE.md` pointer. This MEMORY entry.
 - **Conventions:** Executive OS extends Foundation Sprint + Studio World Constitution™; calendar/meeting/chronicle systems are experience architecture until Era 1+ implementation; proactive scheduling must be earned (milestone · blocker · disagreement — not engagement baiting).
-=======
+
+---
+
 ## 2026-07-10 — Experience Engine Main-Thread Freeze Bisect™ (P0 diagnostics)
 
 Summary of **full conversation in this chat**: After Experience Lab shell generation (`70965a583`), Experience Engine normal-browser persistence hotfix (`ceaaee94b`), and Experience Lab pipeline status bar (`6a7cd89b5`), user reported **P0: heartbeat still stops in normal Safari and normal Chrome on iPhone** — main thread freeze, **not** resolved by cache/persist repair. Mandate: **diagnostics only** — no timeouts, watchdogs, cache clears, or production fixes until exact blocking function is isolated. Treat as possible **WebKit-specific synchronous freeze** until disproven.
@@ -45568,4 +45571,26 @@ Summary of **full conversation in this chat**: After Experience Lab shell genera
 
 - **Conventions:** Creative Direction Studio implementation remains paused until EE stable in normal Safari/Chrome. No production EE route changes in this sprint.
 
->>>>>>> be2c66659 (Add Experience Engine main-thread freeze bisect diagnostics (stages 0-12, trace ledger, probe script))
+---
+
+## 2026-07-10 — The Studio World Bible™ (P0 Foundational Experience Constitution — docs only)
+
+Summary of **full conversation in this chat** (three COMPOSER architecture sprints): (1) **Studio World™ Foundation Sprint** — 12-doc spatial architecture at `docs/studio-os/foundation-sprint/`; (2) **Executive Operating System™ Sprint** — 11-doc operating rhythm at `docs/studio-os/executive-operating-system-sprint/`; (3) **The Studio World Bible™** — single permanent constitutional north star at `docs/studio-os/STUDIO_WORLD_BIBLE.md`. All mandates: **DO NOT IMPLEMENT · DO NOT DESIGN UI · DO NOT WRITE CODE**.
+
+- **Context (Bible):** Produce highest-level product vision governing every future Studio World™ implementation — philosophical/experiential/behavioral/emotional constitution (not tech spec/PRD). Should read like founding constitution of living organization; timeless ten-year document; nothing built may contradict it.
+- **Topics covered:** 16 constitutional sections — Vision · Founder Philosophy · Living Organization · Executive OS · AI Philosophy · Meeting Philosophy · Environmental Storytelling · Organizational Memory · Time · Company Identity · Creative Direction Studio™ · Immutable Principles · Anti-patterns · Founder Journey (first login → 5 years) · Implementation Philosophy · Manifesto™. Plus Executive Summary · TOC · Core Principles · Future Roadmap. Synthesizes prior sprints + Studio World Constitution™ + Company Engine manifesto. Notes Knowledge Core™ remains canonical technical truth if promoted canon conflicts (ARTICLE-K09 publication subordination).
+- **Decisions / outcomes:** **`docs/studio-os/STUDIO_WORLD_BIBLE.md`** v1.0.0 — complete polished Bible with Manifesto (*"Read this before writing a single line of code"*). Era 0 constitutional layer complete across all three sprints; Era 1 (Golden Department™ + executive rhythm) awaits founder approval. No code/UI.
+- **Changes:** `docs/studio-os/STUDIO_WORLD_BIBLE.md`. `motherboard/CORE.md` pointer. This MEMORY entry.
+- **Conventions:** Bible = highest-level **experiential** product vision; engineering must reference Bible before implementation; Constitution Review™ + Knowledge Core™ govern technical canon; Bible anti-pattern test: *"Does this make founder feel they run a company or use AI?"*
+
+---
+
+## 2026-07-10 — Studio World Bible Part 1 (canonical architectural spec — docs only)
+
+Summary of **full conversation in this chat** (four architecture sprints): Foundation Sprint · Executive OS Sprint · `STUDIO_WORLD_BIBLE.md` constitution · **Studio World Bible Part 1** governed doc set at `docs/studio-world/`. All mandates: **DO NOT IMPLEMENT · DO NOT DESIGN UI · DO NOT WRITE CODE · no mock data**.
+
+- **Context (Part 1):** Permanent architectural specification — canonical source of truth ensuring every idea, interaction, department, workflow, AI role, meeting, and philosophy exists as governed document before implementation.
+- **Topics covered:** 10 documents — 001 Manifesto (simulation not interface · prompting disappears · departments not tools) · 002 World Architecture (8 zones: executive HQ, department wings, creative floors, meeting rooms, hallways, public, restricted, AI-only) · 003 Departments (16 departments with full schema: Creative Direction, Brand Strategy, Narrative Intelligence, Motion, Packaging, Marketing, Product Design, UX, Research, Architecture, Legal, Production, Foundry, Asset Registry, Executive Office) · 004 AI Specialists (every permanent employee with personality, office, disagreement, justification) · 005 Founder Experience · 006 Meeting System (12 meeting types with full spec + chronicle/replay) · 007 World Rules (28 immutable rules) · 008 World Ambience · 009 Interaction Principles · 010 Implementation Roadmap (Phases 0–6).
+- **Decisions / outcomes:** **`docs/studio-world/`** (README + 001–010). Phase 0 architecture layer now has constitution (`STUDIO_WORLD_BIBLE.md`) + governed specification (`docs/studio-world/`). Phase 1 (Core Simulation) awaits founder approval.
+- **Changes:** `docs/studio-world/` (11 files). `motherboard/CORE.md` pointer. This MEMORY entry.
+- **Conventions:** `docs/studio-world/` = implementable canonical spec; `STUDIO_WORLD_BIBLE.md` = timeless constitution; new departments/specialists/meetings require doc updates before code; Phase gates block rushed foundations.
