@@ -1,7 +1,10 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { resolveManualModuleIdForPath, getManualDefinitionForModule } from '../../../../studio-interactive-manual/buildFromKnowledge';
-import { getModuleGraphEntry } from '../../../../studio-interactive-manual/knowledge-graph/queries';
+import { getManualDefinitionForModule } from '../../../../studio-interactive-manual/buildFromKnowledge';
+import {
+  getModuleGraphEntry,
+  resolveManualModuleIdForPath,
+} from '../../../../studio-interactive-manual/knowledge-graph/queries';
 import { resolveOrbPersonalityForPath } from '../../../../studio-os-core/studio-world/orb-personality';
 import { conversationDockPanelStyle, orbBody, orbGrace, orbLabel, ORB_VISUAL } from './studioOrbTheme';
 import { useStudioOrb } from './StudioOrbProvider';

@@ -34,6 +34,7 @@ import type {
   StudioOrbPresenceState,
   StudioOrbSurface,
 } from './studioOrbTypes';
+import type { OrbPlatformStats, OrbReadyView } from '../../../../studio-os-core/genesis';
 import { playStudioOrbSound } from './studioOrbSounds';
 import {
   hasSeenStudioOrbAwakening,
@@ -65,6 +66,11 @@ type StudioOrbContextValue = {
   orbContextId: string;
   orbContextLabel: string;
   orbContextTransition: OrbContextTransitionPhase;
+  orbView: OrbReadyView;
+  orbStats: OrbPlatformStats;
+  sendFounderOrbMessage: (content: string) => void;
+  dismissOrbRecommendation: (recommendationId: string) => void;
+  refreshOrb: () => void;
 };
 
 const StudioOrbContext = createContext<StudioOrbContextValue | null>(null);
@@ -190,7 +196,7 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       return () => window.clearTimeout(timer);
     }
 
-    setOrbContextTransition('idle');
+    setOrbContextTransition((current) => (current === 'idle' ? current : 'idle'));
   }, [orbContextResolution.contextId]);
 
   const store = dock.store;
@@ -407,6 +413,11 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       orbContextId: orbContextResolution.contextId,
       orbContextLabel: orbContextResolution.contextLabel,
       orbContextTransition,
+      orbView: orbIntel.view,
+      orbStats: orbIntel.stats,
+      sendFounderOrbMessage: orbIntel.sendFounderMessage,
+      dismissOrbRecommendation: orbIntel.dismissRecommendation,
+      refreshOrb: orbIntel.refresh,
     }),
     [
       presenceState,
@@ -431,6 +442,11 @@ export function StudioOrbProvider({ children }: { children: ReactNode }) {
       orbContextResolution.contextId,
       orbContextResolution.contextLabel,
       orbContextTransition,
+      orbIntel.view,
+      orbIntel.stats,
+      orbIntel.sendFounderMessage,
+      orbIntel.dismissRecommendation,
+      orbIntel.refresh,
     ]
   );
 

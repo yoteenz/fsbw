@@ -10,5 +10,5 @@ export { buildManualSearchIndex, searchManualIndex } from './searchIndex';
 export { getManualProgressSummary, readManualProgressStore } from './progressStorage';
 export { readManualMissingTargetLogs } from './targetResolver';
 export { STUDIO_MANUAL_WHATS_NEW, getRecentWhatsNew } from './whatsNew';
-export { resolveManualModuleIdForPath } from './buildFromKnowledge';
+export { resolveManualModuleIdForPath } from './knowledge-graph/queries';
 export * from './knowledge-graph';

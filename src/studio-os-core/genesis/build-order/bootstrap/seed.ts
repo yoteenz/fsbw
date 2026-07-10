@@ -29,13 +29,29 @@ export function recomputeBuildOrder(): void {
       ...system,
       dependents,
       blockedBy,
-      updatedAt: timestamp,
+      updatedAt: system.updatedAt,
     };
   });
 
+  const changed =
+    systems.length !== store.systems.length ||
+    systems.some((s, i) => {
+      const prev = store.systems[i];
+      if (!prev || prev.systemId !== s.systemId) return true;
+      return (
+        s.currentStatus !== prev.currentStatus ||
+        JSON.stringify(s.blockedBy) !== JSON.stringify(prev.blockedBy) ||
+        JSON.stringify(s.dependents) !== JSON.stringify(prev.dependents)
+      );
+    });
+
+  if (!changed) return;
+
+  const nextSystems = systems.map((s) => ({ ...s, updatedAt: timestamp }));
+
   mutateBuildOrderStore((current) => ({
     ...current,
-    systems,
+    systems: nextSystems,
     lastRecomputedAt: timestamp,
   }));
 }
@@ -78,7 +94,8 @@ export function ensureBuildOrderStore() {
       ...current,
       bootstrappedAt: now(),
     }));
+    recomputeBuildOrder();
+    return readBuildOrderStore();
   }
-  recomputeBuildOrder();
-  return readBuildOrderStore();
+  return store;
 }

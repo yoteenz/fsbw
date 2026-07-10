@@ -9,8 +9,7 @@ import {
   NAV,
   type ModuleManualEnrichment,
 } from './moduleEnrichments';
-import { getSubModulePageGuides } from './knowledge-graph/buildGraph';
-import { resolveGraphModuleIdForPath } from './knowledge-graph/queries';
+import { getSubModulePageGuides } from './knowledge-graph/subModuleGuides';
 import { getWhatsNewForModule } from './whatsNew';
 
 function baseNode(
@@ -323,22 +322,4 @@ export function getManualDefinitionForModule(moduleId: string): ManualModuleDefi
   const guide = KNOWLEDGE_PAGE_GUIDES.find((g) => g.moduleId === moduleId);
   if (!guide) return undefined;
   return buildDefinition(guide, MODULE_MANUAL_ENRICHMENTS[moduleId]);
-}
-
-export function resolveManualModuleIdForPath(pathname: string): string | undefined {
-  return resolveGraphModuleIdForPath(pathname) ?? resolveManualModuleIdFromGuides(pathname);
-}
-
-function resolveManualModuleIdFromGuides(pathname: string): string | undefined {
-  const normalized = pathname.split('?')[0];
-  const subGuides = getSubModulePageGuides() as KnowledgePageGuide[];
-  const allGuides = [...KNOWLEDGE_PAGE_GUIDES, ...subGuides];
-  const exact = allGuides.find((g) => g.route.split('?')[0] === normalized);
-  if (exact) return exact.moduleId;
-  const prefix = allGuides
-    .filter(
-      (g) => normalized === g.route.split('?')[0] || normalized.startsWith(`${g.route.split('?')[0]}/`)
-    )
-    .sort((a, b) => b.route.length - a.route.length);
-  return prefix[0]?.moduleId;
 }

@@ -5,7 +5,9 @@ import type {
   KnowledgeGraphWorkflowMap,
   ModuleGraphEntry,
 } from './schema';
+import { KNOWLEDGE_PAGE_GUIDES } from '../../utils/adminStudioKnowledgeHubDemo';
 import { buildKnowledgeGraph } from './buildGraph';
+import { getSubModulePageGuides } from './subModuleGuides';
 import { expandSemanticQuery } from '../../studio-os-core/documentation-sync/semantic-search';
 import { getDocumentationSystem } from '../../studio-os-core/documentation-sync/system-registry';
 
@@ -29,6 +31,26 @@ export function resolveGraphModuleIdForPath(pathname: string): string | undefine
   const prefix = nodes
     .filter((n) => n.route && (normalized === n.route || normalized.startsWith(`${n.route}/`)))
     .sort((a, b) => (b.route!.length - a.route!.length));
+  return prefix[0]?.moduleId;
+}
+
+export function resolveManualModuleIdForPath(pathname: string): string | undefined {
+  return resolveGraphModuleIdForPath(pathname) ?? resolveManualModuleIdFromGuides(pathname);
+}
+
+function resolveManualModuleIdFromGuides(pathname: string): string | undefined {
+  const normalized = pathname.split('?')[0];
+  const subGuides = getSubModulePageGuides();
+  const allGuides = [...KNOWLEDGE_PAGE_GUIDES, ...subGuides];
+  const exact = allGuides.find((g) => g.route?.split('?')[0] === normalized);
+  if (exact?.moduleId) return exact.moduleId;
+  const prefix = allGuides
+    .filter(
+      (g) =>
+        g.route &&
+        (normalized === g.route.split('?')[0] || normalized.startsWith(`${g.route.split('?')[0]}/`))
+    )
+    .sort((a, b) => (b.route?.length ?? 0) - (a.route?.length ?? 0));
   return prefix[0]?.moduleId;
 }
 

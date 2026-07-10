@@ -62,10 +62,8 @@ export function getOrbPlatformStats(input: OrbRuntimeInput = DEFAULT_INPUT): Orb
   };
 }
 
-export function getOrbReadyView(input: OrbRuntimeInput): OrbReadyView {
+function assembleOrbReadyView(input: OrbRuntimeInput): OrbReadyView {
   ensureOrbSubsystem(input);
-  recordOrbOpened(input);
-  updateOrbSessionPath(input.pathname);
 
   const context = buildOrbContextBundle(input);
   const attention = resolveOrbAttentionState(input);
@@ -84,15 +82,6 @@ export function getOrbReadyView(input: OrbRuntimeInput): OrbReadyView {
     lastInteractionAt: new Date().toISOString(),
   };
 
-  mutateOrbStore((current) => ({
-    ...current,
-    session: {
-      ...session,
-      presenceState: attention.presenceState,
-      lastInteractionAt: new Date().toISOString(),
-    },
-  }));
-
   return {
     context,
     attention,
@@ -107,6 +96,38 @@ export function getOrbReadyView(input: OrbRuntimeInput): OrbReadyView {
     quickActions: buildOrbQuickActions(),
     session: { ...session, presenceState: attention.presenceState },
   };
+}
+
+/** Idempotent route sync — only persists when pathname or derived presence actually changes. */
+export function syncOrbRouteContext(input: OrbRuntimeInput): void {
+  ensureOrbSubsystem(input);
+  const attention = resolveOrbAttentionState(input);
+  mutateOrbStore((current) => {
+    const session = current.session;
+    if (!session) return current;
+    const pathnameChanged = session.pathname !== input.pathname;
+    const presenceChanged = session.presenceState !== attention.presenceState;
+    if (!pathnameChanged && !presenceChanged) return current;
+    return {
+      ...current,
+      session: {
+        ...session,
+        pathname: input.pathname,
+        presenceState: attention.presenceState,
+      },
+    };
+  });
+}
+
+/** Read-only Orb view for React render — no genesis persistence during render. */
+export function buildOrbReadyViewSnapshot(input: OrbRuntimeInput): OrbReadyView {
+  return assembleOrbReadyView(input);
+}
+
+/** Imperative Orb read — syncs route context once, then returns snapshot. */
+export function getOrbReadyView(input: OrbRuntimeInput): OrbReadyView {
+  syncOrbRouteContext(input);
+  return assembleOrbReadyView(input);
 }
 
 export {

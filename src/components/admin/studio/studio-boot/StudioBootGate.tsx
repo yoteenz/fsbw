@@ -4,11 +4,11 @@ import { RuntimeFailSafe } from '../../../../studio-os-core/runtime-diagnostics'
 import { isDynamicImportChunkFailure } from '../../../../utils/chunkLoadRecovery';
 import { useStudioBoot } from '../../../../hooks/useStudioBoot';
 
-/** Gates Studio routes on StudioBootstrap — live diagnostics, never silent hang. */
+/** Gates Studio routes on StudioBootstrap — live diagnostics while booting; children when ready. */
 export function StudioBootGate({
   children,
   through = 'experience-runtime',
-  diagnosticsWhenReady = true,
+  diagnosticsWhenReady = false,
 }: {
   children?: React.ReactNode;
   through?: 'experience-runtime' | 'ui-render';
@@ -31,39 +31,7 @@ export function StudioBootGate({
     );
   }
 
-  if (!live.complete || (diagnosticsWhenReady && live.complete)) {
-    if (live.complete && readiness && !readiness.bootReady) {
-      return (
-        <>
-          <BootDiagnosticsPanel
-            live={live}
-            onRetry={retry}
-            onSafeMode={continueSafeMode}
-            onSkipCurrent={skipCurrentModule}
-          />
-          <RuntimeDiagnostics snapshot={readiness} onRetry={retry} />
-        </>
-      );
-    }
-
-    if (live.complete && readiness?.bootReady && children && !diagnosticsWhenReady) {
-      return <>{children}</>;
-    }
-
-    if (live.complete && readiness?.bootReady) {
-      return (
-        <>
-          <BootDiagnosticsPanel
-            live={live}
-            onRetry={retry}
-            onSafeMode={continueSafeMode}
-            onSkipCurrent={skipCurrentModule}
-          />
-          {readiness ? <RuntimeDiagnostics snapshot={readiness} onRetry={retry} /> : null}
-        </>
-      );
-    }
-
+  if (!live.complete) {
     return (
       <BootDiagnosticsPanel
         live={live}
@@ -85,12 +53,33 @@ export function StudioBootGate({
     );
   }
 
-  return (
-    <BootDiagnosticsPanel
-      live={live}
-      onRetry={retry}
-      onSafeMode={continueSafeMode}
-      onSkipCurrent={skipCurrentModule}
-    />
-  );
+  if (!readiness.bootReady) {
+    return (
+      <>
+        <BootDiagnosticsPanel
+          live={live}
+          onRetry={retry}
+          onSafeMode={continueSafeMode}
+          onSkipCurrent={skipCurrentModule}
+        />
+        <RuntimeDiagnostics snapshot={readiness} onRetry={retry} />
+      </>
+    );
+  }
+
+  if (diagnosticsWhenReady) {
+    return (
+      <>
+        <BootDiagnosticsPanel
+          live={live}
+          onRetry={retry}
+          onSafeMode={continueSafeMode}
+          onSkipCurrent={skipCurrentModule}
+        />
+        <RuntimeDiagnostics snapshot={readiness} onRetry={retry} />
+      </>
+    );
+  }
+
+  return <>{children}</>;
 }

@@ -1,12 +1,15 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
+  buildOrbReadyViewSnapshot,
   ensureOrbSubsystem,
   getOrbPlatformStats,
-  getOrbReadyView,
   overrideOrbRecommendation,
   recordFounderOrbMessage,
   recordOrbResponse,
+  syncOrbRouteContext,
+  type OrbPlatformStats,
+  type OrbReadyView,
   type OrbRuntimeInput,
   GENESIS_UPDATED_EVENT,
 } from '../studio-os-core/genesis';
@@ -17,7 +20,7 @@ export function useOrbState() {
   const { pathname } = useLocation();
   const { workspace } = useWorkspace();
   const companyRoute = useCompanyRouteOptional();
-  const [tick, setTick] = useState(0);
+  const genesisListenerRef = useRef<(event: Event) => void>(() => {});
 
   const runtimeInput = useMemo<OrbRuntimeInput>(
     () => ({
@@ -31,23 +34,48 @@ export function useOrbState() {
     [pathname, workspace?.displayName, companyRoute?.companyId, companyRoute?.activeDepartment]
   );
 
-  const refresh = useCallback(() => {
-    ensureOrbSubsystem(runtimeInput);
-    setTick((n) => n + 1);
+  const readSnapshot = useCallback((): { view: OrbReadyView; stats: OrbPlatformStats } => {
+    syncOrbRouteContext(runtimeInput);
+    return {
+      view: buildOrbReadyViewSnapshot(runtimeInput),
+      stats: getOrbPlatformStats(runtimeInput),
+    };
   }, [runtimeInput]);
+
+  const [view, setView] = useState<OrbReadyView>(() => buildOrbReadyViewSnapshot(runtimeInput));
+  const [stats, setStats] = useState<OrbPlatformStats>(() => ({
+    memoryCount: 0,
+    conversationCount: 0,
+    recommendationCount: 0,
+    missionAdviceCount: 0,
+    presenceState: 'idle' as const,
+    activeRole: 'executive-advisor' as const,
+  }));
+
+  const applySnapshot = useCallback(() => {
+    const next = readSnapshot();
+    setView(next.view);
+    setStats(next.stats);
+  }, [readSnapshot]);
 
   useEffect(() => {
     ensureOrbSubsystem(runtimeInput);
   }, [runtimeInput]);
 
   useEffect(() => {
-    const onUpdate = () => refresh();
+    applySnapshot();
+  }, [applySnapshot]);
+
+  useEffect(() => {
+    const onUpdate = () => applySnapshot();
+    genesisListenerRef.current = onUpdate;
     window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
     return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-  }, [refresh]);
+  }, [applySnapshot]);
 
-  const view = useMemo(() => getOrbReadyView(runtimeInput), [runtimeInput, tick]);
-  const stats = useMemo(() => getOrbPlatformStats(runtimeInput), [runtimeInput, tick]);
+  const refresh = useCallback(() => {
+    applySnapshot();
+  }, [applySnapshot]);
 
   const sendFounderMessage = useCallback(
     (content: string) => {
@@ -79,6 +107,5 @@ export function useOrbState() {
     sendFounderMessage,
     dismissRecommendation,
     refresh,
-    tick,
   };
 }

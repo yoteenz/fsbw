@@ -33,13 +33,30 @@ export function recomputeDependencyMap(): void {
       blockedBy,
       readinessScore,
       status,
-      updatedAt: timestamp,
+      updatedAt: system.updatedAt,
     };
   });
 
+  const changed =
+    systems.length !== store.systems.length ||
+    systems.some((s, i) => {
+      const prev = store.systems[i];
+      if (!prev || prev.systemId !== s.systemId) return true;
+      return (
+        s.status !== prev.status ||
+        s.readinessScore !== prev.readinessScore ||
+        JSON.stringify(s.blockedBy) !== JSON.stringify(prev.blockedBy) ||
+        JSON.stringify(s.downstreamDependents) !== JSON.stringify(prev.downstreamDependents)
+      );
+    });
+
+  if (!changed) return;
+
+  const nextSystems = systems.map((s) => ({ ...s, updatedAt: timestamp }));
+
   mutateDependencyMapStore((current) => ({
     ...current,
-    systems,
+    systems: nextSystems,
     lastRecomputedAt: timestamp,
   }));
 }
@@ -86,7 +103,8 @@ export function ensureDependencyMapStore() {
       ...current,
       bootstrappedAt: now(),
     }));
+    recomputeDependencyMap();
+    return readDependencyMapStore();
   }
-  recomputeDependencyMap();
-  return readDependencyMapStore();
+  return store;
 }

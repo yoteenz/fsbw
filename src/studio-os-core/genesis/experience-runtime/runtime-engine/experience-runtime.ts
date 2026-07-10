@@ -2,7 +2,6 @@ import { XER_SUBSYSTEM_VERSION } from '../constants';
 import {
   buildRuntimeCacheKey,
   getCachedRuntimeGraph,
-  getRuntimeCacheStats,
   recordCacheHit,
   recordCacheMiss,
   setCachedRuntimeGraph,
@@ -47,10 +46,6 @@ export function assembleExperienceRuntime(request?: XerAssemblyRequest): XerRunt
     const cached = getCachedRuntimeGraph(cacheKey);
     if (cached) {
       recordCacheHit();
-      mutateExperienceRuntimeStore((s) => ({
-        ...s,
-        cacheStats: getRuntimeCacheStats(),
-      }));
       return cached;
     }
   }
@@ -102,10 +97,6 @@ export function assembleExperienceRuntime(request?: XerAssemblyRequest): XerRunt
   };
 
   setCachedRuntimeGraph(cacheKey, graph);
-  mutateExperienceRuntimeStore((s) => ({
-    ...s,
-    cacheStats: getRuntimeCacheStats(),
-  }));
 
   return graph;
 }

@@ -9,7 +9,6 @@ import {
   updateLabSelection,
   updateLabSwitchers,
   setActiveLabPanel,
-  GENESIS_UPDATED_EVENT,
   type XelabLabSwitchers,
   type XelabPanelId,
   type XelabScenarioId,
@@ -20,9 +19,6 @@ export function useExperienceLabState() {
   const [tick, setTick] = useState(0);
 
   const refresh = useCallback(() => {
-    ensureExperienceEngineDnaSubsystem();
-    ensureExperienceRuntimeSubsystem();
-    ensureExperienceLabSubsystem();
     setTick((n) => n + 1);
   }, []);
 
@@ -32,30 +28,26 @@ export function useExperienceLabState() {
     ensureExperienceLabSubsystem();
   }, []);
 
-  useEffect(() => {
-    const onUpdate = () => refresh();
-    window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-    return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-  }, [refresh]);
-
   const view = useMemo(() => getExperienceLabReadyView(), [tick]);
-  const graph = view.runtimeGraph;
   const bootReport = view.bootReport;
-  const bootBlocked = !graph?.brand?.brandId;
+  const bootBlocked = !view.runtimeGraph?.brand?.brandId;
 
-  const { ref: sceneRef, switchBrandLive, switchCount: runtimeSwitchCount } = useExperienceRuntimeAssembly({
-    brandId: view.selection.brandId,
-    departmentId: view.selection.departmentId,
-    sceneId: view.selection.sceneId,
-    motionDnaId: view.selection.motionDnaId,
-  });
+  const { ref: sceneRef, graph, switchBrandLive, switchCount: runtimeSwitchCount } =
+    useExperienceRuntimeAssembly({
+      brandId: view.selection.brandId,
+      departmentId: view.selection.departmentId,
+      sceneId: view.selection.sceneId,
+      motionDnaId: view.selection.motionDnaId,
+    });
+
+  const displayGraph = graph ?? view.runtimeGraph;
 
   useEffect(() => {
-    if (bootBlocked || !graph) return;
+    if (bootBlocked || !displayGraph) return;
     const el = sceneRef.current;
     if (!el) return;
-    applyRuntimeGraphToElement(el, graph);
-  }, [bootBlocked, graph, sceneRef]);
+    applyRuntimeGraphToElement(el, displayGraph);
+  }, [bootBlocked, displayGraph, sceneRef]);
 
   const loadScenario = useCallback(
     (scenarioId: XelabScenarioId) => {
@@ -108,7 +100,7 @@ export function useExperienceLabState() {
 
   return {
     view,
-    graph,
+    graph: displayGraph,
     bootReport,
     sceneRef,
     loadScenario,

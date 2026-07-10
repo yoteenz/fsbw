@@ -18,7 +18,6 @@ export function useGenesisState() {
   const [tick, setTick] = useState(0);
 
   const refresh = useCallback(() => {
-    ensureGenesisStore();
     setTick((n) => n + 1);
   }, []);
 
@@ -27,10 +26,10 @@ export function useGenesisState() {
   }, []);
 
   useEffect(() => {
-    const onUpdate = () => refresh();
+    const onUpdate = () => setTick((n) => n + 1);
     window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
     return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-  }, [refresh]);
+  }, []);
 
   const stats = useMemo(() => getGenesisPlatformStats(), [tick]);
   const objects = useMemo(() => listGenesisRegistry(), [tick]);

@@ -14,10 +14,6 @@ type Props = {
   children: ReactNode;
 };
 
-/**
- * Full-viewport immersive shell — escapes admin document flow.
- * Includes Studio Orb™ + Global Atlas Layer™ for universal navigation.
- */
 export function DepartmentGoldenBuildShell({ children }: Props) {
   useRequireAdminPageAccess();
   const { pathname } = useLocation();

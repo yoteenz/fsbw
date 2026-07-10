@@ -17,7 +17,6 @@ export function useConstitutionState() {
   const [tick, setTick] = useState(0);
 
   const refresh = useCallback(() => {
-    ensureConstitutionSubsystem();
     setTick((n) => n + 1);
   }, []);
 
@@ -26,10 +25,10 @@ export function useConstitutionState() {
   }, []);
 
   useEffect(() => {
-    const onUpdate = () => refresh();
+    const onUpdate = () => setTick((n) => n + 1);
     window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
     return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-  }, [refresh]);
+  }, []);
 
   const stats = useMemo(() => getConstitutionPlatformStats(), [tick]);
   const articles = useMemo(() => listConstitutionRegistry(), [tick]);

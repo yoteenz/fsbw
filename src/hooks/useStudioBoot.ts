@@ -32,7 +32,10 @@ export function useStudioBoot(through: 'experience-runtime' | 'ui-render' = 'exp
 
   useLayoutEffect(() => {
     const unsub = subscribeStudioBoot(setLive);
-    void ensureStudioBootstrapStarted({ through });
+    const cached = getStudioBootstrapLiveState();
+    if (!cached?.complete) {
+      void ensureStudioBootstrapStarted({ through });
+    }
     return unsub;
   }, [through]);
 
@@ -72,7 +75,12 @@ export function useStudioBoot(through: 'experience-runtime' | 'ui-render' = 'exp
 
   useLayoutEffect(() => {
     if (!live.complete) return;
-    void runtimeReadinessEngine.ensureReady(true).then(setReadiness);
+    const cached = runtimeReadinessEngine.getCachedSnapshot();
+    if (cached?.bootReady) {
+      setReadiness(cached);
+      return;
+    }
+    void runtimeReadinessEngine.ensureReady(false).then(setReadiness);
   }, [live.complete]);
 
   const skipCurrentModule = useCallback(() => {

@@ -74,13 +74,12 @@ export function recordOrbOpened(input: OrbRuntimeInput): void {
 export function updateOrbSessionPath(pathname: string): void {
   mutateOrbStore((store) => {
     const session = store.session;
-    if (!session) return store;
+    if (!session || session.pathname === pathname) return store;
     return {
       ...store,
       session: {
         ...session,
         pathname,
-        lastInteractionAt: now(),
       },
     };
   });

@@ -20,7 +20,6 @@ export function useDecisionEngineState() {
   const [tick, setTick] = useState(0);
 
   const refresh = useCallback(() => {
-    ensureDecisionEngineSubsystem();
     setTick((n) => n + 1);
   }, []);
 
@@ -29,10 +28,10 @@ export function useDecisionEngineState() {
   }, []);
 
   useEffect(() => {
-    const onUpdate = () => refresh();
+    const onUpdate = () => setTick((n) => n + 1);
     window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
     return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-  }, [refresh]);
+  }, []);
 
   const stats = useMemo(() => getDecisionEnginePlatformStats(), [tick]);
   const decisions = useMemo(() => listDecisionRegistry(), [tick]);

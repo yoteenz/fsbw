@@ -1,6 +1,5 @@
 import { useMemo, useState, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useOrbState } from '../../../../hooks/useOrbState';
 import type { OrbRecommendationCard } from '../../../../studio-os-core/genesis';
 import {
   orbBody,
@@ -82,8 +81,13 @@ function RecommendationCard({
 
 /** Orb Executive Workspace™ — expandable intelligence layer, not a chatbot. */
 export function StudioOrbExecutiveWorkspace() {
-  const { activeSurface, closeSurface } = useStudioOrb();
-  const { view, sendFounderMessage, dismissRecommendation } = useOrbState();
+  const {
+    activeSurface,
+    closeSurface,
+    orbView: view,
+    sendFounderOrbMessage: sendFounderMessage,
+    dismissOrbRecommendation: dismissRecommendation,
+  } = useStudioOrb();
   const navigate = useNavigate();
   const [tab, setTab] = useState<WorkspaceTab>('briefing');
   const [draft, setDraft] = useState('');

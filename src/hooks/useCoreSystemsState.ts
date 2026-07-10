@@ -24,7 +24,6 @@ export function useCoreSystemsState() {
   const [tick, setTick] = useState(0);
 
   const refresh = useCallback(() => {
-    ensureCoreSystemsSubsystem();
     setTick((n) => n + 1);
   }, []);
 
@@ -33,10 +32,10 @@ export function useCoreSystemsState() {
   }, []);
 
   useEffect(() => {
-    const onUpdate = () => refresh();
+    const onUpdate = () => setTick((n) => n + 1);
     window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
     return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-  }, [refresh]);
+  }, []);
 
   const stats = useMemo(() => getCoreSystemsPlatformStats(), [tick]);
   const systems = useMemo(() => listSystemRegistry(), [tick]);

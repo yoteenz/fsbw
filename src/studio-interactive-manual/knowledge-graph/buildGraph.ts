@@ -1,6 +1,6 @@
 import { ADMIN_STUDIO_MODULES } from '../../utils/adminStudioNavigation';
-import { KNOWLEDGE_PAGE_GUIDES, type KnowledgePageGuide } from '../../utils/adminStudioKnowledgeHubDemo';
-import { getAllManualModules } from '../registry';
+import { KNOWLEDGE_PAGE_GUIDES } from '../../utils/adminStudioKnowledgeHubDemo';
+import { readCompiledManualModules } from '../manualGraphBridge';
 import type { KnowledgeGraph, KnowledgeGraphEdge, KnowledgeGraphNode } from './schema';
 import {
   SEED_GRAPH_EDGES,
@@ -44,7 +44,7 @@ function moduleToNode(mod: (typeof ADMIN_STUDIO_MODULES)[number]): KnowledgeGrap
 
 function manualStepNodes(): KnowledgeGraphNode[] {
   const nodes: KnowledgeGraphNode[] = [];
-  for (const mod of getAllManualModules()) {
+  for (const mod of readCompiledManualModules()) {
     for (const step of mod.steps) {
       nodes.push({
         id: `step:${mod.id}:${step.id}`,
@@ -128,24 +128,4 @@ export function invalidateKnowledgeGraphCache(): void {
   cachedGraph = null;
 }
 
-export function getSubModulePageGuides(): Partial<KnowledgePageGuide>[] {
-  return SUB_MODULE_GRAPH_NODES.map((n) => ({
-    moduleId: n.moduleId!,
-    title: n.name,
-    route: n.route!,
-    purpose: n.description,
-    whyItExists: n.purpose ?? n.description,
-    whenToUse: [`When working in ${n.name}`],
-    bestPractices: ['Follow Creative DNA before generating', 'Verify Smart Asset Registry after factory runs'],
-    commonMistakes: ['Skipping approval gates', 'Ignoring FALLBACK_USED warnings'],
-    relatedPages: [],
-    exampleWorkflows: [],
-    relatedAssets: [],
-    ownersManualChapter: n.relatedManualChapter ?? `CHAPTER · ${n.name}`,
-    tourSteps: [
-      'Review module purpose and status',
-      'Walk through each tab on the live workspace',
-      'Confirm connected modules in the Knowledge Graph',
-    ],
-  }));
-}
+export { getSubModulePageGuides } from './subModuleGuides';

@@ -17,7 +17,7 @@ import {
   getManualModuleById,
   getManualSteps,
 } from './registry';
-import { resolveManualModuleIdForPath } from './buildFromKnowledge';
+import { resolveManualModuleIdForPath } from './knowledge-graph/queries';
 import {
   clearManualResume,
   markManualNodeCompleted,

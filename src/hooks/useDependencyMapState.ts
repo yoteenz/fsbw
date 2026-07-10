@@ -24,7 +24,6 @@ export function useDependencyMapState() {
   const [tick, setTick] = useState(0);
 
   const refresh = useCallback(() => {
-    ensureDependencyMapSubsystem();
     setTick((n) => n + 1);
   }, []);
 
@@ -33,10 +32,10 @@ export function useDependencyMapState() {
   }, []);
 
   useEffect(() => {
-    const onUpdate = () => refresh();
+    const onUpdate = () => setTick((n) => n + 1);
     window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
     return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-  }, [refresh]);
+  }, []);
 
   const stats = useMemo(() => getDependencyMapPlatformStats(), [tick]);
   const systems = useMemo(() => listDependencySystemRegistry(), [tick]);
