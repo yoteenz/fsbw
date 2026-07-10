@@ -9,10 +9,13 @@
 
 > *This document is not a technical specification. It is not a product requirements document. It is the philosophical, experiential, behavioral, and emotional constitution of Studio World™. Every future design and engineering decision must reference this Bible before implementation. Nothing should be built that contradicts it.*
 
+**Complemented by:** [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) v1.0.0 — **permanent city architecture** (districts, city plan, transportation, AI population, expansion framework, ten-year roadmap). This Bible governs *how Studio World must feel*; the Master Plan governs *where everything lives*.
+
 **Relationship to other canon:**
 
 | Document | Relationship |
 |----------|--------------|
+| [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) | **City architecture** — districts, headquarters blueprint, expansion framework |
 | [Knowledge Core™](./knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md) | Canonical technical truth — if promoted canon conflicts, canon wins |
 | [Studio World Constitution™](./studio-world-constitution.md) | Governance law — Eight Foundational Laws remain binding |
 | [Foundation Sprint](./foundation-sprint/README.md) | Spatial architecture detail |

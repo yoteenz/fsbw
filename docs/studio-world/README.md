@@ -1,8 +1,8 @@
-# Studio World™ — Canonical Architectural Specification (Part 1)
+# Studio World™ — Canonical Architectural Specification
 
 **Status:** Permanent governed documentation — July 2026  
 **Authority:** Canonical source of truth for Studio World™ before implementation  
-**Sprint:** STUDIO WORLD BIBLE (Part 1) — Composer Only
+**Sprint:** STUDIO WORLD™ — The Master Plan (docs only)
 
 ---
 
@@ -12,16 +12,22 @@ Every idea, interaction, department, workflow, AI role, meeting, simulation, and
 
 This is not production code. This is not UI. This is the architectural specification every future sprint must reference.
 
+**Highest-level blueprint:** **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** (v1.0.0) — permanent city architecture, District Atlas, ten-year roadmap.
+
 ---
 
 ## Relationship to Related Canon
 
 | Document | Relationship |
 |----------|--------------|
-| [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) | Founding experience constitution (P0) |
+| **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** | **Master Plan** — permanent headquarters blueprint · districts · city plan · AI population · expansion framework · 10-year roadmap |
+| [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) | Founding experience constitution (P0) — how Studio World must feel |
 | [foundation-sprint/](../studio-os/foundation-sprint/) | Spatial architecture detail |
 | [executive-operating-system-sprint/](../studio-os/executive-operating-system-sprint/) | Daily operating rhythm detail |
 | [studio-world-constitution.md](../studio-os/studio-world-constitution.md) | Governance law · Eight Foundational Laws |
+| [studio-institute/](../studio-institute/) | Studio Institute district canon |
+
+**Read order:** **Master Plan** (where things live) → **World Bible** (how it feels) → Part 1 specs (department detail).
 
 **Rule:** Nothing should be built that contradicts these documents.
 
@@ -31,6 +37,7 @@ This is not production code. This is not UI. This is the architectural specifica
 
 | # | Document | Contents |
 |---|----------|----------|
+| **MP** | **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** | **Master Plan** — headquarters blueprint · District Atlas · city plan · transportation · Executive Elevator · AI population · knowledge/project layers · expansion framework · 10-year roadmap |
 | 001 | [STUDIO_WORLD_MANIFESTO.md](./001_STUDIO_WORLD_MANIFESTO.md) | Vision · why prompting disappears · simulation not interface |
 | 002 | [WORLD_ARCHITECTURE.md](./002_WORLD_ARCHITECTURE.md) | Physical organization · zones · access |
 | 003 | [DEPARTMENTS.md](./003_DEPARTMENTS.md) | Every department · purpose · I/O · relationships |
