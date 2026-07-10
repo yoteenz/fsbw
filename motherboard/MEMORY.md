@@ -45861,6 +45861,7 @@ Summary of **full conversation in this chat**: After studio-world-atlas package 
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-10 — Genesis Core™ / The Genesis Orb (COMPOSER sprint — docs only)
 
 Summary of **full conversation in this chat**: Earlier in chat — Institute intelligence bibles (V3 Cognitive Engine, Learning DNA Global Engine), Studio World Master Plan, Studio Atlas Bible, Living Knowledge Graph Bible, Civilization Layer Bible completed as docs-only sprints. User issued **COMPOSER SPRINT — GENESIS CORE™** — re-architect and visually redesign the Studio Orb. Official names: **Genesis Core™** (system) · **The Genesis Orb** (physical manifestation in Studio World). Not decorative — represents system consciousness, runtime health, AI presence, world generation, reasoning, company intelligence, compiler activity, Studio World awakening. Xbox logo reference = internal illumination sensation only — do **not** copy X cutout, green, silhouette, branding. Mandate: **Do not implement production orb** until three visual directions and canonical architecture are reviewed.
@@ -45870,3 +45871,39 @@ Summary of **full conversation in this chat**: Earlier in chat — Institute int
 - **Architecture decisions:** Replace fragmented **`StudioOrbProvider.resolvePresenceState()`** + **`useOrbState`** as visual authority; keep radial menu / Command Dock UX; future **`GenesisOrbRenderer`** swaps visual in **`src/components/admin/studio/studio-orb/`**. Current orb = CSS gradients/champagne in **`studioOrbTheme.ts`**. Compiler truth = **`src/studio-os-core/scene-stack/world-compiler/constants.ts`**; runtime events = **`experience-lab-render-runtime.ts`**.
 - **Changes:** `docs/studio-os/genesis-core/**`, `docs/studio-os/studio-orb.md`, `motherboard/CORE.md`. No production code (correct per mandate).
 - **Conventions:** One Genesis Core state owner; no separate orb implementations per page; no fake compiler progress or auto-reset loops; founder must review A/B/C before Phase 1 implementation; Experience Lab = live validation surface for Genesis Core.
+=======
+## 2026-07-10 — Diagnostic route isolation + normal-tab storage contamination fix
+
+Summary of **full conversation in this chat**: User reported Studio OS diagnostic routes (`/__studio-os-live-runtime`, `/__studio-os-flight-recorder`, `/__studio-os-session-report`) work in private/incognito but fail in normal Safari/Chrome tabs — evidence of persistent browser-state contamination, not route implementation failure. P0 sprint: prove first normal/private divergence, isolate diagnostics from main app boot, scoped recovery (no blanket browser data clear).
+
+- **Proven first divergence:** Normal tabs retain **stale build artifacts** (`fsbw_lastKnownBuildId_v1` ≠ current deploy `meta[name=app-build-id]`) and/or **corrupt/oversized persisted Studio OS state** (`genesis_v1`, `studioOsFlightRecorderEnvSnapshots_v1`, bisection flags `startupMax`/`startupDisable`) while private tabs start with empty storage and fetch fresh bundles. Prior architecture also ran **`global-boot` synchronously from `main.tsx` before route dispatch**, pulling main-app module graph even for diagnostic URLs; stale cached chunks on dynamic imports then failed with blank screen masked as route failure.
+
+- **Before boot architecture:** `index.html` → `main.tsx` → sync `global-boot` → route check → optional isolated mount (still after heavy sync imports).
+
+- **After boot architecture:** `index.html` → sync **`/pre-main-probe.js`** (storage/SW metadata, no tokens) → minimal **`main.tsx`** → **`entry-dispatch.ts`** → if `/__studio-os-*`: **`diagnostic-main.tsx`** (quarantine → lightweight recorder → isolated React); else **`main-app.tsx`** (global-boot → main-legacy). Main application never mounts for diagnostic routes.
+
+- **New routes/files:** `/__studio-os-recovery` recovery page; `public/pre-main-probe.js`; `src/entry-dispatch.ts`, `src/main-app.tsx`, `src/diagnostic-entry/diagnostic-main.tsx`, `persisted-state-audit.ts`, `service-worker-audit.ts`, `recovery-actions.ts`, `diagnostic-report-export.ts`, `init-diagnostic-recorder.ts`, `mount-recovery.tsx`, `persisted-state-audit.test.ts` (3 tests).
+
+- **Scoped quarantine (not blind clear):** Validates genesis version/JSON, oversized env snapshots, bisection session keys; moves bad records to `studioOsQuarantine_v1_*` namespace. Recovery page actions: unregister SW, clear Studio OS caches, quarantine state, reset Experience Lab / World Compiler transient session keys, reload cleanly. Export: Copy Normal-vs-Private Diff, Boot Timeline, Storage Inventory, JSON/Markdown.
+
+- **Black Box events added:** `PRE_MAIN_ENTRY`, `DIAGNOSTIC_ENTRY_SELECTED`, `MAIN_ENTRY_SELECTED`, `SERVICE_WORKER_FOUND`, `SERVICE_WORKER_VERSION_MISMATCH`, `CACHE_MANIFEST_INSPECTED`, `PERSISTED_STATE_*`, `DIAGNOSTIC_UI_COMMITTED`, `MAIN_BOOT_BYPASSED`.
+
+- **Other guards:** Chunk reload recovery disabled on `/__studio-os-*`; build ID injected via Vite `injectAppBuildIdPlugin` into `meta[name=app-build-id]`.
+
+- **Verify on device:** Normal tab direct-open each diagnostic route + recovery; refresh; navigate from Experience Lab; confirm same build ID as private tab; use recovery if build mismatch flagged.
+
+- **Conventions:** Do not require private tabs; do not resume Experience Lab / World Compiler repair until diagnostic layer reliable in normal tabs.
+
+---
+
+## 2026-07-10 — ChatGPT Operating Manual™ (AI Collaboration Layer — docs only)
+
+Summary of **full conversation in this chat**: User requested permanent ChatGPT onboarding package separate from Studio OS Bible, Genesis docs, Cursor motherboard, and company documentation — goal is brand-new AI conversations achieving near-perfect continuity in minutes ("How to become my AI Creative Director"). Explicit: **no application features** — documentation architecture, maintenance strategy, export specification only.
+
+- **Delivered folder:** `docs/ai-collaboration/` with README index + maintenance strategy.
+- **Core documents:** `CHATGPT_OPERATING_MANUAL.md` (canonical onboarding — communication philosophy, sprint/debug/architecture/design review workflows, escalation, architecture vs implementation); `AI_STYLE_GUIDE.md` (founder formatting/communication/learning/workflow preferences — one code block per Composer/Terra prompt, individual URL blocks); `AI_CONTEXT.md` (Studio OS high-level vision, products, architecture, Genesis, Studio World, Institute, Experience Lab, World Compiler, roadmap, blockers); `CURRENT_HANDOFF.md` (living sprint snapshot — Layer 1 auth blocker, diagnostic verification pending, recent commits); `AI_GLOSSARY.md` (canonical ™ definitions); `AI_CHANGELOG.md` (append-only decision history); `PROMPT_TEMPLATES.md` (Composer, Terra, forensic, creative direction, etc.); `NEW_CHAT_CHECKLIST.md` (5-step new chat ritual + confirmation phrase).
+- **Export:** `EXPORT_SPECIFICATION.md` — AI Context Capsule™ (Markdown, JSON, PDF spec); CLI stub `scripts/export-ai-context-capsule.mjs` + `npm run export:ai-context-capsule` generates md/json to `dist/ai-context-capsule/`; Phase 2+ automation on milestone/sprint/release triggers specified, not implemented in app UI.
+- **Separation:** External AI reads this package; Cursor agents continue using `motherboard/`; product canon remains in `docs/studio-os/`, `docs/studio-world/`, `docs/studio-institute/`.
+- **Maintainer rule:** Update `CURRENT_HANDOFF.md` each sprint; append `AI_CHANGELOG.md` on decisions; glossary on new canon terms.
+
+>>>>>>> 063291508 (Add ChatGPT Operating Manual AI collaboration docs package)

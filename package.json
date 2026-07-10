@@ -14,6 +14,7 @@
     "test": "vitest run",
     "test:department-package-registry": "vitest run src/studio-os-core/department-package/registry.test.ts",
     "verify:department-package-dist": "node scripts/verify-department-package-in-dist.mjs",
+    "export:ai-context-capsule": "node scripts/export-ai-context-capsule.mjs",
     "preview": "vite preview",
     "wig-preview:manifest:noir": "node scripts/generate-noir-wig-preview-manifest.mjs",
     "wig-preview:batch": "node scripts/pregenerate-wig-previews.mjs",
