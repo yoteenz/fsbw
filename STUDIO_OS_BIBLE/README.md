@@ -10,6 +10,7 @@ This folder holds foundational architecture documents that govern how Studio OS,
 | [SPATIAL_ARCHITECTURE_REVIEW.md](./SPATIAL_ARCHITECTURE_REVIEW.md) | **Spatial Architecture Review Engine™** — constitutional enforcement: review before code, Composer as Chief Architect, design score gate |
 | [BRAND_LANGUAGE_ENGINE.md](./BRAND_LANGUAGE_ENGINE.md) | **Brand Language Engine™** — naming constitution: tiers, frameworks, social handle methodology, evaluation scorecard |
 | [THE_LIVING_ORGANIZATION.md](./THE_LIVING_ORGANIZATION.md) | **The Living Organization™** — AI employee ecosystem: workforce registry, directory, relationships, social storytelling, onboarding |
+| [HQX.md](./HQX.md) | **HQX™** — Headquarters Communications & Broadcast Center: place, transmissions, pipeline, archive |
 
 **Related canon (outside this folder):**
 

@@ -470,6 +470,8 @@ Every post reinforces: *Studio is a living organization.*
 | **Achievement** | Employee Achievement · Institute Graduation | *"Dr. Okonkwo's cohort completed the Narrative Architecture certification"* |
 | **Leadership** | Leadership Interview · Founder's Address · HQX Memo | *"Genesis Briefing: what the executive team prepared this quarter"* |
 
+> **HQX canon:** Public communications staging and broadcast law — [HQX.md](./HQX.md). Employee spotlights and memos originate from HQX before external channels.
+
 ### Story template structure
 
 ```
