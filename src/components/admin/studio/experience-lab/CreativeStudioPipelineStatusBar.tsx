@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 import type { RenderPipelineProgress } from '../../../../studio-os-core/creative-studio-preview';
-import type { RenderPipelineRunMeta } from '../../../../hooks/useCreativeStudioRenderPreview';
+import type { RenderPipelineRunMeta } from '../../../../studio-os-core/experience-lab-runtime';
 
 type Props = {
   progress: RenderPipelineProgress;

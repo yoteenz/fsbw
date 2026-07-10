@@ -10,3 +10,4 @@ export { RuntimeSafeMode, useRuntimeSafeMode } from './RuntimeSafeMode';
 export { probeExperienceLabImports } from './safe-import-probe';
 export type { SafeImportProbeResult } from './safe-import-probe';
 export type { ExperienceLabMode } from './ExperienceLabModeShell';
+export { ExperienceLabRenderRuntimeProvider } from './ExperienceLabRenderRuntimeProvider';

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ExperienceLabRuntimeLabPanel } from './ExperienceLabRuntimeLabPanel';
 import { CreativeIntelligencePanel } from './CreativeIntelligencePanel';
+import { ExperienceLabRenderRuntimeProvider } from './ExperienceLabRenderRuntimeProvider';
 
 export type ExperienceLabMode = 'runtime-validation' | 'creative-intelligence';
 
@@ -48,7 +49,13 @@ export function ExperienceLabModeShell() {
         </button>
       </nav>
 
-      {mode === 'runtime-validation' ? <ExperienceLabRuntimeLabPanel /> : <CreativeIntelligencePanel />}
+      {mode === 'runtime-validation' ? (
+        <ExperienceLabRuntimeLabPanel />
+      ) : (
+        <ExperienceLabRenderRuntimeProvider>
+          <CreativeIntelligencePanel />
+        </ExperienceLabRenderRuntimeProvider>
+      )}
     </div>
   );
 }

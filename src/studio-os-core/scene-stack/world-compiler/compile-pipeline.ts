@@ -27,6 +27,8 @@ export type WorldCompileOptions = {
     compilerInstanceId: string;
     renderId: number;
   };
+  /** Experience Lab runtime — emit after each compile stage */
+  onStageComplete?: (stage: WorldCompilerStage, success: boolean) => void;
 };
 
 export type WorldCompileResult = {
@@ -38,9 +40,13 @@ export type WorldCompileResult = {
 async function runStage(
   stage: WorldCompilerStage,
   execute: () => Promise<string> | string,
-  investigation?: WorldCompileOptions['investigation']
+  options?: {
+    investigation?: WorldCompileOptions['investigation'];
+    onStageComplete?: (stage: WorldCompilerStage, success: boolean) => void;
+  }
 ): Promise<WorldCompileStageResult> {
   const start = performance.now();
+  const investigation = options?.investigation;
   logCompilerEvent('COMPILE_STAGE_ENTER', 'compile-pipeline.runStage', {
     stageName: stage,
     detail: investigation
@@ -61,6 +67,7 @@ async function runStage(
       detail: { durationMs: result.durationMs, detail },
     });
     recordStageSuccess(stage);
+    options?.onStageComplete?.(stage, true);
     return result;
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Stage failed';
@@ -69,13 +76,15 @@ async function runStage(
       detail: { error: message },
       stackTrace: err instanceof Error ? err.stack : undefined,
     });
-    return {
+    const result: WorldCompileStageResult = {
       stage,
       label: stage,
       success: false,
       durationMs: Math.round(performance.now() - start),
       detail: message,
     };
+    options?.onStageComplete?.(stage, false);
+    return result;
   }
 }
 
@@ -89,6 +98,8 @@ export async function compileWorldStation(input: {
 }): Promise<WorldCompileResult> {
   const validationMode = input.options?.validationMode ?? isExperienceLabValidationRender();
   const investigation = input.options?.investigation;
+  const onStageComplete = input.options?.onStageComplete;
+  const stageOptions = { investigation, onStageComplete };
   const compileStart = performance.now();
   const stages: WorldCompileStageResult[] = [];
   const shellLock = resolveShellLockState(input.departmentId, input.projectId, input.stationId, {
@@ -115,14 +126,14 @@ export async function compileWorldStation(input: {
         );
       }
       return `Shell v${shellLock.shellVersion} loaded (${shellLock.resolution}) as reference.`;
-    }, investigation)
+    }, stageOptions)
   );
 
   stages.push(
     await runStage('lock-shell', () => {
       if (!shellLock.locked) return 'Shell awaiting approval — not yet locked.';
       return `Shell locked at ${shellLock.lockedAt ?? 'unknown'}.`;
-    }, investigation)
+    }, stageOptions)
   );
 
   const packages = buildComponentPackagesForStation(records, input.stationId, { validationMode });
@@ -153,7 +164,7 @@ export async function compileWorldStation(input: {
         });
         if (mounted.length === 0) return `Stage skipped — no ${stage} components yet.`;
         return `${mounted.length} component package(s) mounted — ${branch?.displayName ?? stage}. No upstream repaint.`;
-      }, investigation)
+      }, stageOptions)
     );
   }
 
@@ -177,7 +188,7 @@ export async function compileWorldStation(input: {
         );
       }
       return `Scene integrity ${validation.sceneIntegrityPct}% — world rebuilt from ${packages.length} component packages.`;
-    }, investigation)
+    }, stageOptions)
   );
 
   const renderTimeMs = Math.round(performance.now() - compileStart);
