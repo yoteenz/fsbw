@@ -45754,3 +45754,32 @@ Summary of **full conversation in this chat**: User issued **STUDIO INSTITUTE™
 - **Canon stack:** V1 = spatial (reference); V2 = *what* Institute is; V3 = per-person cognitive engine; Learning DNA Bible = global adaptive intelligence. All three (V2+V3+Learning DNA) required before implementation.
 - **Changes:** `docs/studio-institute/STUDIO_INSTITUTE_LEARNING_DNA_BIBLE.md`, README, V3 canon note, `motherboard/CORE.md`. No code.
 - **Conventions:** Private DNA vs anonymous global graph boundary; archetypes are tendencies not cages; genome-tagged explanation assets are first-class; Aha not quiz pass; apprentices opt-in with founder approval for new professors.
+
+---
+
+## 2026-07-10 — Studio World Atlas package registration + registry reconciliation (P0)
+
+Summary of **full conversation in this chat**: Evidence-only registration trace proved Experience Lab Mode 2 failed at `requireDepartmentPackage("studio-world-atlas")` — Scene Stack + render bindings referenced `studio-world-atlas` but static `PACKAGES` in `department-package/registry.ts` only had `creative-direction`, `studio-warehouse`, `studio-command-center`. Boot module `department-registry` validates Genesis Experience Engine DNA only — unrelated to executable department packages. P0 sprint: register real `studio-world-atlas` package + reconcile registries with boot-time validation and Black Box diagnostics.
+
+- **Root cause (confirmed):** `ExperienceLabRenderRuntimeProvider` → `SceneStackDriverHost` → `useDepartmentVerticalSlice("studio-world-atlas")` → `requireDepartmentPackage` → null → throw `Department package not registered: studio-world-atlas`. Split registry semantics: Genesis Department DNA Registry vs Department Package Registry.
+
+- **Canonical ownership:** **Genesis Department DNA Registry** (`department-registry` boot module) owns department identity/doctrine/genome data. **Department Package Registry** (`department-package-registry` boot module) owns executable runtime/render packages via singleton `DepartmentPackageRegistry` + explicit `BUNDLED_DEPARTMENT_PACKAGES` array — no import side-effect registration.
+
+- **studio-world-atlas package:** `departmentId: studio-world-atlas`, `packageId: pkg-studio-world-atlas-golden-v1`, observatory spatial layout, holographic-table hero, atlas room DNA/production groups, Scene Stack 16:9 manifest alignment.
+
+- **Registered manifest (4):** `creative-direction` · `studio-warehouse` · `studio-command-center` · **`studio-world-atlas`**.
+
+- **Boot validation:** `validateDepartmentPackageRegistry()` — every Scene Stack `departmentId` + Experience Lab render binding resolves; packageId matches manifest; `departmentDnaRef` present; fails at init with structured report.
+
+- **Black Box events:** `DEPARTMENT_PACKAGE_REGISTRY_INITIALIZED`, `DEPARTMENT_PACKAGE_REGISTERED`, lookup started/resolved/failed, `DEPARTMENT_PACKAGE_VALIDATION_FAILED` (deduped per departmentId for lookups).
+
+- **Dev diagnostics:** `window.__STUDIO_OS_DEPARTMENT_PACKAGE_REGISTRY__` — instanceId, init timestamp, registered IDs, registration source.
+
+- **Tests:** `registry.test.ts` (9 vitest cases) + `scripts/verify-department-package-in-dist.mjs` (production bundle retains atlas markers).
+
+- **Files created:** `bundled-packages.ts`, `department-package-registry.ts`, `registry-errors.ts`, `registry-diagnostics.ts`, `registry-validation.ts`, `initialize.ts`, `registry.test.ts`, `verify-department-package-in-dist.mjs`.
+
+- **Files modified:** `registry.ts`, `index.ts`, `station-manifest.ts`, `register-boot-modules.ts`, `kernel/types.ts`, `diagnostics/types.ts`, `package.json`, `vite.config.ts`.
+
+- **Verification:** `npm run test:department-package-registry` pass · `npm run build` pass · dist verification pass. Mode 2 package lookup blocker **resolved**; any next failure (compiler/runtime beyond lookup) surfaces via existing error boundary + Black Box — not concealed.
+

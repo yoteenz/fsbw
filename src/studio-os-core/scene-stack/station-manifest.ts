@@ -123,3 +123,7 @@ export function getSceneStackStation(
 export function isSceneStackDepartment(departmentId: string): boolean {
   return departmentId in MANIFESTS;
 }
+
+export function listSceneStackDepartmentIds(): string[] {
+  return Object.keys(MANIFESTS).sort();
+}

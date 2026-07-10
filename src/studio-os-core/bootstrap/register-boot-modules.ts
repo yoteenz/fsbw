@@ -1,4 +1,5 @@
 import { bootRegistry, createBootModule } from '../kernel/boot-registry';
+import { isDepartmentPackageRegistryReady } from '../department-package/initialize';
 
 let storageReady = false;
 
@@ -96,11 +97,11 @@ export function registerBrandRegistryBootModule(): void {
   );
 }
 
-export function registerDepartmentRegistryBootModule(): void {
+export function registerGenesisDepartmentDnaRegistryBootModule(): void {
   bootRegistry.register(() =>
     createBootModule({
       id: 'department-registry',
-      name: 'Department Registry',
+      name: 'Genesis Department DNA Registry',
       dependencies: ['brand-registry'],
       required: true,
       initialize: async () => {
@@ -108,10 +109,27 @@ export function registerDepartmentRegistryBootModule(): void {
         const store = withExperienceEngineSeedFallback();
         const mod = bootRegistry.get('department-registry');
         if (!store.departments?.length) {
-          if (mod) mod.fallback = 'Department registry empty — using executive default';
+          if (mod) mod.fallback = 'Genesis department DNA registry empty — using executive default';
           return;
         }
       },
+    })
+  );
+}
+
+/** Executable runtime/render packages — separate from Genesis Department DNA Registry. */
+export function registerDepartmentPackageRegistryBootModule(): void {
+  bootRegistry.register(() =>
+    createBootModule({
+      id: 'department-package-registry',
+      name: 'Department Package Registry',
+      dependencies: ['department-registry'],
+      required: true,
+      initialize: async () => {
+        const { ensureDepartmentPackageRegistryInitialized } = await import('../department-package/initialize');
+        ensureDepartmentPackageRegistryInitialized();
+      },
+      isReady: () => isDepartmentPackageRegistryReady(),
     })
   );
 }
@@ -232,7 +250,8 @@ export function registerAllStudioBootModules(): void {
   registerAdminContextBootModule();
   registerPlatformDnaBootModule();
   registerBrandRegistryBootModule();
-  registerDepartmentRegistryBootModule();
+  registerGenesisDepartmentDnaRegistryBootModule();
+  registerDepartmentPackageRegistryBootModule();
   registerSceneRegistryBootModule();
   registerStateDnaBootModule();
   registerDesignDnaResolverBootModule();

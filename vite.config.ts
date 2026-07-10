@@ -144,7 +144,11 @@ export default defineConfig(({ mode, command }) => {
   },
   logLevel: 'info',
   clearScreen: false,
-  }
+  test: {
+    environment: 'node',
+    include: ['src/**/*.test.ts'],
+  },
+  };
 })
 
 
