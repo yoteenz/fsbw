@@ -65,6 +65,15 @@ export {
 } from './stall-evidence-report';
 export type { StallEvidenceReport } from './stall-evidence-report';
 
+export {
+  buildCompleteInvestigationExport,
+  exportCompleteInvestigationJson,
+  downloadInvestigationExport,
+  isInvestigationInstrumentationReady,
+  markInvestigationInstrumentationReady,
+} from './investigation-export';
+export type { CompleteInvestigationExport, InvestigationExportSummary } from './investigation-export';
+
 export { buildWorldCompilerForensicReport } from './session-report';
 export { COMPILER_PATH_TIMERS, findTimersNearThreeSeconds } from './timer-audit';
 export { WORLD_COMPILER_OWNERSHIP, buildWorldCompilerOwnershipReport } from './ownership-report';

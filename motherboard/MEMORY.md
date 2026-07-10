@@ -46287,5 +46287,19 @@ Summary of **full conversation in this chat**: After forensic analysis (`LOAD_SH
   - **Investigation route:** `/__world-compiler-investigation` — Copy/Download JSON/Markdown, milestone timeline, async boundaries, classification panel; `window.__WC_STALL_EVIDENCE__`
   - **Protocol:** `docs/studio-os/world-compiler/LOAD_SHELL_STALL_EVIDENCE_PROTOCOL.md` — reproduction steps, Black Box browser comparison checklist, deliverable template
 - **Not applied:** P1–P3 repairs, try/finally orphan fix, incremental compileReport, single compile owner, AUTH_REQUIRED fix
-- **Next:** Founder device reproduction → export JSON → fill deliverable template → approve proven root cause → then repair sprint
+---
+
+## 2026-07-10 — AI Context Capsule 0.3.1 — Self-verifying export & packaging validation
+
+Summary of **full conversation in this chat**: User issued **SPRINT: AI Context Capsule v0.2.1 – Validation & Packaging Improvements** (validation/packaging only — no Studio OS production changes). Implemented on **0.3.1** baseline (patch on 0.3.0 verification onboarding).
+
+- **Task 1 — Version sync:** Canonical semver **0.3.1** everywhere in README_FIRST, MANIFEST, AI_CONTEXT, ONBOARDING_REPORT, context-capsule.json, CAPSULE_VALIDATION; stale 0.3.0/0.2.x rejected at packager gate.
+- **Task 2 — Read Verification:** Auto-generated from MANIFEST inventory in CAPSULE_VALIDATION.md (Manifest Count / Read Count / Missing / Extra).
+- **Task 3 — Validation footer:** Capsule Version, Manifest Version, Generated, Validation Passed, operational source-of-truth docs.
+- **Task 4 — Operational Verification:** Auto-generated from CURRENT_HANDOFF + KNOWN_BLOCKERS (stage, blockers, approval YES).
+- **Task 5 — Packaging validation:** Pre-ZIP abort on missing docs, onboarding sections, version sync, manifest inventory, README refs, internal links (core files), post-write JSON match.
+- **Task 6 — Download UI:** ContextCapsuleWorkspace Validation Summary panel (version, generated, validation, manifest, documents, download); API POST message includes version + doc count.
+- **Files:** `scripts/package-ai-context-capsule-zip.mjs`, `api/_lib/contextCapsuleExport.ts`, constants (0.3.1), capsule docs, admin UI.
+- **Artifacts:** `StudioOS_ContextCapsule_v0.3.1.zip`, `latest.zip`, `release.json` updated.
+- **URL:** https://fsbw.vercel.app/downloads/context-capsules/latest.zip
 

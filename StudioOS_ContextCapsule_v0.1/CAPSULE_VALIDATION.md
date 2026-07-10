@@ -8,8 +8,8 @@
 |-------|-------|
 | **Capsule Version** | 0.3.1 |
 | **Manifest Version** | 0.3.1 |
-| **Generation Date (UTC)** | 2026-07-10T19:54:38.660Z |
-| **Repository Commit SHA** | 994250b4c5fea8a57db92d0d394e2e8941d81d4d |
+| **Generation Date (UTC)** | 2026-07-10T20:02:04.180Z |
+| **Repository Commit SHA** | 1ed57e5943c991eddee8042d37ffbc9d626cec59 |
 | **Validation Status** | pass |
 | **Documents Included** | README_FIRST.md, MANIFEST.md, ONBOARDING_REPORT.md, FOUNDER_PROFILE.md, CHATGPT_OPERATING_MANUAL.md, AI_STYLE_GUIDE.md, AI_CONTEXT.md, CURRENT_HANDOFF.md, AI_GLOSSARY.md, PROJECT_DNA.md, PROJECT_CHANGELOG.md, PROMPT_LIBRARY.md, ROADMAP.md, KNOWN_BLOCKERS.md, OPEN_QUESTIONS.md |
 | **Manifest Hash (reading order SHA-256)** | 7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30 |
@@ -57,7 +57,7 @@ Verified:
 
 ### Current Implementation Stage
 
-AI Context Capsule v0.3 — Deterministic Verification Onboarding
+AI Context Capsule 0.3.1 — Self-Verifying Export & Packaging Validation
 
 ### Current Active Blockers
 
@@ -75,7 +75,7 @@ B1, B2
 |-------|-------|
 | **Capsule Version** | 0.3.1 |
 | **Manifest Version** | 0.3.1 |
-| **Generated** | 2026-07-10T19:54:38.660Z |
+| **Generated** | 2026-07-10T20:02:04.180Z |
 | **Validation Passed** | YES |
 | **Operational Source of Truth** | CURRENT_HANDOFF.md · KNOWN_BLOCKERS.md · PROJECT_CHANGELOG.md |
 | **Current Handoff Document** | CURRENT_HANDOFF.md |

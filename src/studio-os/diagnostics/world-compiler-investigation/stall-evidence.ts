@@ -423,6 +423,9 @@ export function installStallEvidenceGlobal(): void {
         buildStallEvidenceReport,
       };
     });
+    import('./investigation-export').then(({ markInvestigationInstrumentationReady }) => {
+      markInvestigationInstrumentationReady();
+    });
   } catch {
     /* ignore */
   }
