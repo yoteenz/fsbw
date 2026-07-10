@@ -495,9 +495,10 @@ Every post reinforces: *Studio is a living organization.*
 ### Approval workflow (proposed)
 
 1. Story references `employeeId` from registry only
-2. Bootstrap check — employee must have internal use evidence
-3. Brand / Press department review (future)
-4. Chronicle cross-link for achievements
+2. **Chronicle event** (`CHR-…`) must exist — [Living Timeline](./THE_LIVING_TIMELINE.md) golden rule
+3. Bootstrap check — employee must have internal use evidence
+4. Brand / Press department review (future)
+5. Chronicle cross-link for achievements
 
 ---
 

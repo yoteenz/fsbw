@@ -46099,3 +46099,15 @@ Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT —
 - **Canon stack:** Extends Spatial Computing Philosophy (place) · Living Organization (presenters) · Genesis Core (briefing substance) · Civilization/Chronicles (history).
 - **Changes:** `STUDIO_OS_BIBLE/HQX.md`, `STUDIO_OS_BIBLE/README.md`, `STUDIO_OS_BIBLE/THE_LIVING_ORGANIZATION.md`, `motherboard/CORE.md`. No code.
 - **Conventions:** HQX vocabulary (broadcast/transmission not post/content); headquarters before hashtags; no auto-publish in architecture phase; spatial review required before HQX set implementation.
+
+---
+
+## 2026-07-10 — The Living Timeline™ (COMPOSER sprint — docs only)
+
+Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT — THE LIVING TIMELINE™** — Social Media as Recorded History. **Not** content strategy, social planning, or marketing — **world-building** sprint. Mission: redefine every Studio public artifact as documentation of real events inside Studio World; Studio does not manufacture content — **records history**. Golden rule: every public post answers *what actually happened in Studio World?* — if nothing happened, nothing posted. North star: civilization people witness — audience follows to see what happens next. Mandate: **Do not implement content generation**.
+
+- **Context:** Documentary model — social platforms are windows into Studio World that exists independently. Event-first pipeline: World event → Studio Chronicle (`CHR-YYYY-NNNNNN`) → Media & Documentary Department capture → HQX broadcast → public channels. Media principle: press photography · BTS · ceremonies — never marketing graphics. Story Arc Engine: promotions · mentorships · careers unfold over years. Annual Company Calendar (Founder Summit · Innovation Week · Graduation · Creative Awards · HQX Conference · Hack Week · etc.) generates authentic content when events occur. Pre-existence: departments work when nobody logged in; social reveals moments. Distinct from **Atlas Living Timeline™** (geographic time scrub/replay).
+- **Delivered:** **`STUDIO_OS_BIBLE/THE_LIVING_TIMELINE.md`** v1.0.0 — all 10 deliverables (bible · documentary philosophy · Chronicle architecture · Media Department structure · event timeline framework · story arc engine · annual calendar · archive strategy · production standards · Phases 0–10 roadmap). **`STUDIO_OS_BIBLE/README.md`** · cross-refs in **`HQX.md`** · **`THE_LIVING_ORGANIZATION.md`**. Proposed module **`src/studio-os-core/living-timeline/chronicle-registry`**. Event gate E1–E5.
+- **Canon stack:** Chronicle truth (Civilization Bible) · HQX distribution · Living Organization identities · Atlas replay layer.
+- **Changes:** `STUDIO_OS_BIBLE/THE_LIVING_TIMELINE.md`, `STUDIO_OS_BIBLE/README.md`, `STUDIO_OS_BIBLE/HQX.md`, `STUDIO_OS_BIBLE/THE_LIVING_ORGANIZATION.md`, `motherboard/CORE.md`. No code.
+- **Conventions:** Event before post; Chronicle never deleted; no filler weeks; CHR-ID required for public coverage; documentary vocabulary only.

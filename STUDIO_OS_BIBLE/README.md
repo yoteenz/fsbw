@@ -11,6 +11,7 @@ This folder holds foundational architecture documents that govern how Studio OS,
 | [BRAND_LANGUAGE_ENGINE.md](./BRAND_LANGUAGE_ENGINE.md) | **Brand Language Engine™** — naming constitution: tiers, frameworks, social handle methodology, evaluation scorecard |
 | [THE_LIVING_ORGANIZATION.md](./THE_LIVING_ORGANIZATION.md) | **The Living Organization™** — AI employee ecosystem: workforce registry, directory, relationships, social storytelling, onboarding |
 | [HQX.md](./HQX.md) | **HQX™** — Headquarters Communications & Broadcast Center: place, transmissions, pipeline, archive |
+| [THE_LIVING_TIMELINE.md](./THE_LIVING_TIMELINE.md) | **The Living Timeline™** — social as recorded history: Chronicle, documentary model, story arcs, event-before-post |
 
 **Related canon (outside this folder):**
 
