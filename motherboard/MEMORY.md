@@ -46182,3 +46182,23 @@ Summary of **full conversation in this chat** (continued from prior Studio HR / 
 
 **Conversation arc (this chat):** Context Capsule Export sprint committed at `b2648f86c`; subsequent Studio OS Bible doc sprints; first deploy fail on `52149ec`; fix attempt `2643dad` (constants isolation); second fail (this entry); fix v2 above.
 
+---
+
+## 2026-07-10 — AI Context Capsule v0.2 — Onboarding, Founder Intelligence & Validation
+
+Summary of **full conversation in this chat**: User shared Vercel deploy log (`2643dad`) — context-capsule API still **1.16GB**; agent fixed bundle (prebuild zip only, no `public/` trace, `97fe41392`). User then issued **SPRINT: AI Context Capsule v0.2** — evolve capsule into deterministic onboarding without changing export architecture.
+
+- **Context:** v0.1 transferred project philosophy/architecture but onboarding reports were inferred; `ONBOARDING_REPORT.md` referenced but not exported; founder workflow partially reconstructed; no confidence/canon verification; export did not gate on onboarding completeness.
+- **Delivered (v0.2.0):**
+  - **`StudioOS_ContextCapsule_v0.1/ONBOARDING_REPORT.md`** — standardized template (Read Confirmation, Project Understanding, Founder Preference Verification, Canon Verification, Questions, Risk, Confidence %, Waiting For Founder Approval).
+  - **`FOUNDER_PROFILE.md`** — expanded operating profile (architecture-before-implementation, forensic-before-repair, prompt style, approval workflow, etc.).
+  - **`README_FIRST.md`** — "Complete ONBOARDING_REPORT.md exactly as provided" (no invented structure).
+  - **`MANIFEST.md`** — v0.2 inventory, reading order includes ONBOARDING_REPORT last, mandatory completion gate.
+  - **`context-capsule.json`** — machine metadata (version, reading order checksum, validation status, generator 0.2.0, futureModules).
+  - **Export validation:** 15 required markdown files + metadata + onboarding section headings; prebuild **exits 1** if missing; API validates checksum/generator/onboarding template.
+  - **Constants sync:** `src/studio-os-core/context-capsule-export/constants.ts` + `api/_lib/contextCapsuleConstants.ts`; updated `AI_ONBOARDING_PROMPT`.
+  - **Packager:** `scripts/package-ai-context-capsule-zip.mjs` writes metadata, validates, produces **`StudioOS_ContextCapsule_v0.2.0.zip`** (~43 KB).
+  - **Docs:** `docs/ai-collaboration/protocol/ONBOARDING_REPORT.md`, `AI_CHANGELOG.md`, capsule `PROJECT_CHANGELOG.md`, `CURRENT_HANDOFF.md`.
+- **Verified:** `npm run package:ai-context-capsule-zip` + `npm run build` pass.
+- **Conventions:** Onboarding must not rely on inference; external AI waits for founder approval; folder name stays `StudioOS_ContextCapsule_v0.1`, version **0.2.0** in manifest/metadata.
+

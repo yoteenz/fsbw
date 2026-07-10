@@ -5,11 +5,23 @@
 
 export const CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY = 'studioOsContextCapsuleExports_v1';
 
-export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.2.0';
+export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.2.1';
 
 export const CONTEXT_CAPSULE_METADATA_FILE = 'context-capsule.json';
 
+export const CONTEXT_CAPSULE_RELEASE_MANIFEST_FILE = 'release.json';
+
+/** Stable alias — always points to newest validated release after prebuild. */
+export const CONTEXT_CAPSULE_LATEST_ALIAS = 'latest.zip';
+
 export const CONTEXT_CAPSULE_DOWNLOAD_BASE = '/downloads/context-capsules';
+
+export const CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH = `${CONTEXT_CAPSULE_DOWNLOAD_BASE}/${CONTEXT_CAPSULE_LATEST_ALIAS}`;
+
+export const CONTEXT_CAPSULE_RELEASE_MANIFEST_PATH = `${CONTEXT_CAPSULE_DOWNLOAD_BASE}/${CONTEXT_CAPSULE_RELEASE_MANIFEST_FILE}`;
+
+/** Supported distribution formats (extensible — ZIP is primary today). */
+export const CONTEXT_CAPSULE_SUPPORTED_FORMATS = ['zip'] as const;
 
 /** Required markdown files — must exist in capsule folder before export. */
 export const CONTEXT_CAPSULE_REQUIRED_FILES = [
@@ -63,7 +75,9 @@ export const CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS = [
   '# Waiting For Founder Approval',
 ] as const;
 
-export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule v0.2.
+export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule (latest release).
+
+Download (permanent URL): https://fsbw.vercel.app/downloads/context-capsules/latest.zip
 
 Follow README_FIRST.md exactly:
 
@@ -77,6 +91,35 @@ export type ContextCapsuleValidationCheck = {
   label: string;
   passed: boolean;
   detail?: string;
+};
+
+export type ContextCapsuleReleaseEntry = {
+  version: string;
+  generatedAt: string;
+  gitCommit: string;
+  checksumSha256: string;
+  sizeBytes: number;
+  downloadPath: string;
+  zipFileName: string;
+  validationStatus: 'pass' | 'fail';
+};
+
+export type ContextCapsuleReleaseManifest = {
+  schemaVersion: 1;
+  currentVersion: string;
+  previousVersion: string | null;
+  generatedAt: string;
+  gitCommit: string;
+  validationStatus: 'pass' | 'fail';
+  documentCount: number;
+  checksumSha256: string;
+  generatorVersion: string;
+  artifact: string;
+  latestAlias: string;
+  latestDownloadPath: string;
+  versionedDownloadPath: string;
+  supportedFormats: readonly string[];
+  releaseHistory: ContextCapsuleReleaseEntry[];
 };
 
 export type ContextCapsuleExportRecord = {
@@ -116,8 +159,17 @@ export type ContextCapsuleStatus = {
   validation: ContextCapsuleValidationCheck[];
   currentDownloadPath: string | null;
   currentZipFileName: string | null;
+  latestDownloadPath: string;
+  validationStatus: 'pass' | 'fail' | 'unknown';
+  gitCommit: string | null;
+  previousVersion: string | null;
+  releaseHistory: ContextCapsuleReleaseEntry[];
 };
 
 export function readingOrderChecksum(): string {
   return CONTEXT_CAPSULE_READING_ORDER.join('\n');
+}
+
+export function versionedZipFileName(version: string): string {
+  return `StudioOS_ContextCapsule_v${version}.zip`;
 }

@@ -3,10 +3,12 @@
   "artifact": "StudioOS_ContextCapsule_v0.2.0.zip",
   "capsuleVersion": "0.2.0",
   "capsuleFolder": "StudioOS_ContextCapsule_v0.1",
-  "generatedAt": "2026-07-10T18:54:20.745Z",
+  "generatedAt": "2026-07-10T18:56:17.565Z",
   "fileCount": 15,
-  "checksumSha256": "555e1d96f36feb82851253809e47542a6d47bd5af4838728523748713eda0eb9",
-  "sizeBytes": 44576,
+  "checksumSha256": "eb93c8dc4fb87d3ca3fa32aca3032ccdcb97c255db02bb4f972fa04af403b630",
+  "sizeBytes": 44654,
   "downloadPath": "/downloads/context-capsules/StudioOS_ContextCapsule_v0.2.0.zip",
-  "generatorVersion": "0.2.0"
+  "latestDownloadPath": "/downloads/context-capsules/latest.zip",
+  "versionedDownloadPath": "/downloads/context-capsules/StudioOS_ContextCapsule_v0.2.0.zip",
+  "generatorVersion": "0.2.1"
 }

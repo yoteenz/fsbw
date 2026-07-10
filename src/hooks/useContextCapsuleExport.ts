@@ -2,14 +2,19 @@ import { useCallback, useEffect, useState } from 'react';
 import { getAccessToken } from '../utils/api';
 import type {
   ContextCapsuleExportRecord,
+  ContextCapsuleReleaseManifest,
   ContextCapsuleStatus,
   ContextCapsuleValidationCheck,
 } from '../studio-os-core/context-capsule-export/constants';
-import { AI_ONBOARDING_PROMPT } from '../studio-os-core/context-capsule-export/constants';
+import {
+  AI_ONBOARDING_PROMPT,
+  CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH,
+} from '../studio-os-core/context-capsule-export/constants';
 
 type ApiResponse = {
   status: ContextCapsuleStatus;
   exports: ContextCapsuleExportRecord[];
+  release: ContextCapsuleReleaseManifest | null;
 };
 
 type ExportResponse = {
@@ -18,6 +23,7 @@ type ExportResponse = {
   validation: ContextCapsuleValidationCheck[];
   export: ContextCapsuleExportRecord;
   status: ContextCapsuleStatus;
+  release: ContextCapsuleReleaseManifest | null;
 };
 
 async function authHeaders(): Promise<HeadersInit> {
@@ -27,6 +33,7 @@ async function authHeaders(): Promise<HeadersInit> {
 
 export function useContextCapsuleExport() {
   const [status, setStatus] = useState<ContextCapsuleStatus | null>(null);
+  const [release, setRelease] = useState<ContextCapsuleReleaseManifest | null>(null);
   const [exports, setExports] = useState<ContextCapsuleExportRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [exporting, setExporting] = useState(false);
@@ -34,6 +41,7 @@ export function useContextCapsuleExport() {
   const [readyMessage, setReadyMessage] = useState<string | null>(null);
   const [lastValidation, setLastValidation] = useState<ContextCapsuleValidationCheck[]>([]);
   const [copiedPrompt, setCopiedPrompt] = useState(false);
+  const [copiedLatestUrl, setCopiedLatestUrl] = useState(false);
 
   const refresh = useCallback(async () => {
     setLoading(true);
@@ -44,6 +52,7 @@ export function useContextCapsuleExport() {
       const data = (await res.json()) as ApiResponse & { error?: string };
       if (!res.ok) throw new Error(data.error ?? 'Failed to load capsule status');
       setStatus(data.status);
+      setRelease(data.release ?? null);
       setExports(data.exports ?? []);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load');
@@ -74,6 +83,7 @@ export function useContextCapsuleExport() {
       setLastValidation(data.validation);
       setReadyMessage(data.message);
       setStatus(data.status);
+      setRelease(data.release ?? null);
       setExports((prev) => [data.export, ...prev.filter((e) => e.id !== data.export.id)]);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Export failed');
@@ -112,43 +122,59 @@ export function useContextCapsuleExport() {
     }
   }, []);
 
-  const downloadExport = useCallback(async (record: ContextCapsuleExportRecord) => {
-    setError(null);
+  const copyLatestUrl = useCallback(async () => {
+    const url = `https://fsbw.vercel.app${status?.latestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH}`;
     try {
-      const headers = await authHeaders();
-      if (record.downloadPath.startsWith('/downloads/')) {
-        const a = document.createElement('a');
-        a.href = record.downloadPath;
-        a.download = record.zipFileName;
-        a.rel = 'noopener';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        return;
-      }
-      const res = await fetch('/api/admin/context-capsule?download=1', { headers });
-      if (!res.ok) {
-        const data = (await res.json()) as { error?: string };
-        throw new Error(data.error ?? 'Download failed');
-      }
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = record.zipFileName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Download failed');
+      await navigator.clipboard.writeText(url);
+      setCopiedLatestUrl(true);
+      window.setTimeout(() => setCopiedLatestUrl(false), 2000);
+    } catch {
+      setError('Could not copy permanent download URL');
     }
+  }, [status?.latestDownloadPath]);
+
+  const downloadPath = useCallback((path: string, fileName: string) => {
+    const a = document.createElement('a');
+    a.href = path;
+    a.download = fileName;
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
   }, []);
+
+  const downloadLatest = useCallback(() => {
+    const path = status?.latestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH;
+    downloadPath(path, 'latest.zip');
+  }, [downloadPath, status?.latestDownloadPath]);
+
+  const downloadExport = useCallback(
+    async (record: ContextCapsuleExportRecord) => {
+      setError(null);
+      try {
+        if (record.downloadPath.startsWith('/downloads/')) {
+          downloadPath(record.downloadPath, record.zipFileName);
+          return;
+        }
+        const headers = await authHeaders();
+        const res = await fetch('/api/admin/context-capsule?download=1', { headers });
+        if (!res.ok) {
+          const data = (await res.json()) as { error?: string };
+          throw new Error(data.error ?? 'Download failed');
+        }
+        downloadPath(status?.latestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH, 'latest.zip');
+      } catch (e) {
+        setError(e instanceof Error ? e.message : 'Download failed');
+      }
+    },
+    [downloadPath, status?.latestDownloadPath],
+  );
 
   const downloadUrl = (record: ContextCapsuleExportRecord) => record.downloadPath;
 
   return {
     status,
+    release,
     exports,
     loading,
     exporting,
@@ -156,10 +182,13 @@ export function useContextCapsuleExport() {
     readyMessage,
     lastValidation,
     copiedPrompt,
+    copiedLatestUrl,
     refresh,
     runExport,
     deleteExport,
     copyOnboardingPrompt,
+    copyLatestUrl,
+    downloadLatest,
     downloadExport,
     downloadUrl,
   };

@@ -8,8 +8,19 @@ import {
 } from '../executive-ia';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { useContextCapsuleExport } from '../../../../hooks/useContextCapsuleExport';
+import { CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH } from '../../../../studio-os-core/context-capsule-export/constants';
 
 const ACCENT = '#92704A';
+
+function triggerDownload(path: string, fileName: string) {
+  const a = document.createElement('a');
+  a.href = path;
+  a.download = fileName;
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
 
 function StatRow({ label, value }: { label: string; value: string }) {
   return (
@@ -17,7 +28,7 @@ function StatRow({ label, value }: { label: string; value: string }) {
       <span className="text-[6px] font-futura uppercase" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
         {label}
       </span>
-      <span className="text-[6px] font-futura uppercase text-right" style={{ fontWeight: 515 }}>
+      <span className="text-[6px] font-futura uppercase text-right break-all" style={{ fontWeight: 515 }}>
         {value}
       </span>
     </div>
@@ -27,6 +38,7 @@ function StatRow({ label, value }: { label: string; value: string }) {
 export function ContextCapsuleWorkspace() {
   const {
     status,
+    release,
     exports,
     loading,
     exporting,
@@ -34,13 +46,19 @@ export function ContextCapsuleWorkspace() {
     readyMessage,
     lastValidation,
     copiedPrompt,
+    copiedLatestUrl,
     runExport,
     deleteExport,
     copyOnboardingPrompt,
+    copyLatestUrl,
+    downloadLatest,
     downloadExport,
   } = useContextCapsuleExport();
 
   const latestExport = exports[0] ?? null;
+  const releaseHistory = release?.releaseHistory ?? status?.releaseHistory ?? [];
+  const latestPath = status?.latestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH;
+  const validationStatus = status?.validationStatus ?? 'unknown';
 
   if (loading && !status) {
     return (
@@ -56,36 +74,65 @@ export function ContextCapsuleWorkspace() {
   return (
     <ExecutivePageShell>
       <ExecutiveHeroCard
-        eyebrow="AI CONTEXT CAPSULE EXPORT SYSTEM™ · v0.1"
+        eyebrow="AI CONTEXT CAPSULE EXPORT SYSTEM™ · v0.2"
         title="AI CONTEXT CAPSULE™"
-        subtitle="One downloadable package — institutional memory for external AI onboarding."
+        subtitle="Stable latest.zip channel + immutable versioned releases."
         progressPct={status?.packageHealth ?? 91}
         stats={[
-          { label: 'VERSION', value: status?.capsuleVersion ?? '—' },
-          { label: 'DOCS', value: String(status?.documentCount ?? 14) },
-          { label: 'HEALTH', value: `${status?.packageHealth ?? 91}%` },
+          { label: 'ACTIVE', value: status?.capsuleVersion ?? '—' },
+          { label: 'DOCS', value: String(status?.documentCount ?? 15) },
+          { label: 'VALIDATION', value: validationStatus.toUpperCase() },
           { label: 'STATUS', value: readyMessage ? 'READY' : status?.generationStatus?.toUpperCase() ?? 'IDLE' },
         ]}
       />
 
+      <ExecutiveFocusPanel
+        title="PERMANENT DOWNLOAD"
+        subtitle="Use this URL for every new AI onboarding — never update after deploy."
+        highlight={release?.currentVersion ? `Active release v${release.currentVersion}` : undefined}
+      >
+        <StatRow label="Latest alias" value={latestPath} />
+        <StatRow
+          label="Full URL"
+          value={`https://fsbw.vercel.app${latestPath}`}
+        />
+        <div className="flex gap-2 mt-2">
+          <button
+            type="button"
+            onClick={() => downloadLatest()}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ borderColor: ACCENT, color: ACCENT, fontWeight: 515 }}
+          >
+            DOWNLOAD LATEST
+          </button>
+          <button
+            type="button"
+            onClick={() => void copyLatestUrl()}
+            className="flex-1 py-2 text-[6px] font-futura uppercase border"
+            style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}
+          >
+            {copiedLatestUrl ? 'URL COPIED' : 'COPY PERMANENT URL'}
+          </button>
+        </div>
+      </ExecutiveFocusPanel>
+
       <div className="flex items-start gap-3 mb-3">
         <ExecutiveHealthRing value={status?.packageHealth ?? 91} size={56} label="CC" accent={ACCENT} />
         <div className="flex-1">
-          <StatRow label="Current Capsule Version" value={status?.capsuleVersion ?? '—'} />
-          <StatRow label="Last Generated" value={status?.lastGenerated ? new Date(status.lastGenerated).toLocaleString() : 'Never'} />
+          <StatRow label="Current Version" value={status?.capsuleVersion ?? '—'} />
+          <StatRow label="Previous Version" value={status?.previousVersion ?? release?.previousVersion ?? '—'} />
+          <StatRow label="Release Date" value={status?.lastGenerated ? new Date(status.lastGenerated).toLocaleString() : 'Never'} />
+          <StatRow label="Validation Status" value={validationStatus.toUpperCase()} />
+          <StatRow label="Document Count" value={String(status?.documentCount ?? 15)} />
+          <StatRow label="Git Commit" value={status?.gitCommit ? `${status.gitCommit.slice(0, 12)}…` : '—'} />
           <StatRow label="Project Version" value={status?.projectVersion ?? '—'} />
-          <StatRow label="Studio OS Version" value={status?.studioOsVersion ?? '—'} />
-          <StatRow label="Document Count" value={String(status?.documentCount ?? 14)} />
           <StatRow label="Package Health" value={`${status?.packageHealth ?? 91}%`} />
           <StatRow
             label="Checksum"
             value={status?.checksumSha256 ? `${status.checksumSha256.slice(0, 12)}…` : '—'}
           />
+          <StatRow label="Versioned ZIP" value={status?.currentZipFileName ?? '—'} />
           <StatRow label="Generation Status" value={exporting ? 'EXPORTING…' : readyMessage ?? status?.generationStatus ?? 'idle'} />
-          <StatRow label="Compatibility" value={status?.compatibility ?? '—'} />
-          <StatRow label="AI Manual Version" value={status?.aiManualVersion ?? '—'} />
-          <StatRow label="Founder Profile Version" value={status?.founderProfileVersion ?? '—'} />
-          <StatRow label="Current Sprint Version" value={status?.sprintVersion ?? '—'} />
         </div>
       </div>
 
@@ -97,27 +144,37 @@ export function ContextCapsuleWorkspace() {
 
       {readyMessage ? (
         <ExecutiveFocusPanel title="CONTEXT CAPSULE READY" highlight={readyMessage}>
-          {latestExport ? (
+          <div className="flex gap-2">
             <button
               type="button"
-              onClick={() => void downloadExport(latestExport)}
-              className="block w-full py-2 text-center text-[7px] font-futura uppercase border mb-2"
+              onClick={() => downloadLatest()}
+              className="flex-1 py-2 text-center text-[7px] font-futura uppercase border"
               style={{ borderColor: ACCENT, color: ACCENT, fontWeight: 515 }}
             >
-              DOWNLOAD PACKAGE
+              DOWNLOAD LATEST
             </button>
-          ) : null}
+            {latestExport ? (
+              <button
+                type="button"
+                onClick={() => void downloadExport(latestExport)}
+                className="flex-1 py-2 text-center text-[7px] font-futura uppercase border"
+                style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}
+              >
+                v{latestExport.version} ZIP
+              </button>
+            ) : null}
+          </div>
         </ExecutiveFocusPanel>
       ) : (
-        <ExecutiveFocusPanel title="EXPORT" subtitle="Package existing capsule documents — no content regeneration.">
+        <ExecutiveFocusPanel title="EXPORT" subtitle="Register prebuilt release — latest.zip updates only on prebuild validation pass.">
           <button
             type="button"
-            disabled={exporting}
+            disabled={exporting || !allPassed}
             onClick={() => void runExport()}
             className="w-full py-2 text-[7px] font-futura uppercase border disabled:opacity-50"
             style={{ borderColor: ACCENT, color: ACCENT, fontWeight: 515 }}
           >
-            {exporting ? 'GENERATING PACKAGE…' : 'EXPORT CONTEXT CAPSULE'}
+            {exporting ? 'REGISTERING RELEASE…' : 'REGISTER CONTEXT CAPSULE RELEASE'}
           </button>
         </ExecutiveFocusPanel>
       )}
@@ -145,16 +202,16 @@ export function ContextCapsuleWorkspace() {
           </ul>
           {!allPassed ? (
             <p className="text-[6px] font-futura mt-2" style={{ color: '#EB1C24' }}>
-              Fix validation before export.
+              Validation failed — latest.zip was not updated. Fix errors and redeploy.
             </p>
           ) : null}
         </ExecutiveCollapsibleSection>
       ) : null}
 
-      <ExecutiveCollapsibleSection title="DOWNLOAD HISTORY" defaultOpen>
-        {exports.length === 0 ? (
+      <ExecutiveCollapsibleSection title="RELEASE HISTORY" defaultOpen>
+        {releaseHistory.length === 0 ? (
           <p className="text-[6px] font-futura" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
-            No exports yet.
+            No versioned releases yet.
           </p>
         ) : (
           <div className="overflow-x-auto">
@@ -163,8 +220,60 @@ export function ContextCapsuleWorkspace() {
                 <tr style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
                   <th className="text-left py-1">Version</th>
                   <th className="text-left py-1">Date</th>
-                  <th className="text-left py-1">Project</th>
-                  <th className="text-left py-1">Studio OS</th>
+                  <th className="text-left py-1">Validation</th>
+                  <th className="text-left py-1">Docs</th>
+                  <th className="text-left py-1">Download</th>
+                </tr>
+              </thead>
+              <tbody>
+                {releaseHistory.map((row) => {
+                  const isActive = row.version === release?.currentVersion;
+                  return (
+                    <tr
+                      key={`${row.version}-${row.generatedAt}`}
+                      className="border-t"
+                      style={{
+                        borderColor: ADMIN_STUDIO_THEME.panelBorder,
+                        background: isActive ? 'rgba(146, 112, 74, 0.08)' : undefined,
+                      }}
+                    >
+                      <td className="py-1">
+                        v{row.version}
+                        {isActive ? ' · ACTIVE' : ''}
+                      </td>
+                      <td className="py-1">{new Date(row.generatedAt).toLocaleString()}</td>
+                      <td className="py-1">{row.validationStatus.toUpperCase()}</td>
+                      <td className="py-1">{status?.documentCount ?? 15}</td>
+                      <td className="py-1">
+                        <button
+                          type="button"
+                          onClick={() => triggerDownload(row.downloadPath, row.zipFileName)}
+                          style={{ color: ACCENT }}
+                        >
+                          ZIP
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </ExecutiveCollapsibleSection>
+
+      <ExecutiveCollapsibleSection title="ADMIN EXPORT LOG" defaultOpen={false}>
+        {exports.length === 0 ? (
+          <p className="text-[6px] font-futura" style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+            No admin registrations yet.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-[6px] font-futura uppercase">
+              <thead>
+                <tr style={{ color: ADMIN_STUDIO_THEME.textSecondary }}>
+                  <th className="text-left py-1">Version</th>
+                  <th className="text-left py-1">Date</th>
                   <th className="text-left py-1">Download</th>
                   <th className="text-left py-1">Delete</th>
                 </tr>
@@ -174,8 +283,6 @@ export function ContextCapsuleWorkspace() {
                   <tr key={row.id} className="border-t" style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder }}>
                     <td className="py-1">{row.version}</td>
                     <td className="py-1">{new Date(row.generatedAt).toLocaleString()}</td>
-                    <td className="py-1 max-w-[80px] truncate">{row.projectVersion}</td>
-                    <td className="py-1 max-w-[60px] truncate">{row.studioOsVersion}</td>
                     <td className="py-1">
                       <button type="button" onClick={() => void downloadExport(row)} style={{ color: ACCENT }}>
                         ZIP

@@ -13,7 +13,10 @@ import {
   CONTEXT_CAPSULE_REQUIRED_FILES,
   CONTEXT_CAPSULE_READING_ORDER,
   CONTEXT_CAPSULE_GENERATOR_VERSION,
+  CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH,
   readingOrderChecksumSeed,
+  versionedZipFileName,
+  type ContextCapsuleReleaseManifest,
   type ContextCapsuleValidationCheck,
 } from './contextCapsuleConstants.js';
 
@@ -41,6 +44,9 @@ export type CapsuleBuildManifest = {
   checksumSha256: string;
   sizeBytes: number;
   downloadPath: string;
+  generatorVersion?: string;
+  latestDownloadPath?: string;
+  versionedDownloadPath?: string;
 };
 
 const LIB_DIR = path.dirname(fileURLToPath(import.meta.url));
@@ -243,12 +249,21 @@ export function validateCapsulePackage(info: CapsuleSourceInfo): ContextCapsuleV
 export function loadBuildManifest(): CapsuleBuildManifest {
   const manifestPath = path.join(LIB_DIR, 'context-capsule-build-manifest.json');
   const raw = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as CapsuleBuildManifest;
-  if (raw.schemaVersion !== 1 || !raw.downloadPath || !raw.checksumSha256) {
+  if (raw.schemaVersion !== 1 || !raw.checksumSha256) {
     throw new Error('Invalid context-capsule-build-manifest.json');
   }
   return raw;
 }
 
+export function loadReleaseManifest(): ContextCapsuleReleaseManifest {
+  const manifestPath = path.join(LIB_DIR, 'context-capsule-release.json');
+  const raw = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as ContextCapsuleReleaseManifest;
+  if (raw.schemaVersion !== 1 || !raw.latestDownloadPath || !raw.currentVersion) {
+    throw new Error('Invalid context-capsule-release.json');
+  }
+  return raw;
+}
+
 export function zipFileName(version: string): string {
-  return `StudioOS_ContextCapsule_v${version}.zip`;
+  return versionedZipFileName(version);
 }

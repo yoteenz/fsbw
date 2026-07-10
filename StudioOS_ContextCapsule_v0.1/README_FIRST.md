@@ -111,12 +111,18 @@ End your report with the required statement in **Waiting For Founder Approval**.
 
 | Platform | Import method |
 |----------|---------------|
-| ChatGPT | Upload **ZIP** (`StudioOS_ContextCapsule_v0.2.0.zip`) or individual `.md` files |
+| ChatGPT | Upload **ZIP** (`latest.zip` or versioned `StudioOS_ContextCapsule_v*.zip`) or individual `.md` files |
 | Claude | Project knowledge — add extracted folder or ZIP |
 | Gemini | Upload ZIP or documents |
 | Cursor | Reference folder path in workspace |
 
-**One-file download (production):**
+**One-file download (permanent — always latest validated release):**
+
+```
+https://fsbw.vercel.app/downloads/context-capsules/latest.zip
+```
+
+**Versioned archive (immutable, for regression testing):**
 
 ```
 https://fsbw.vercel.app/downloads/context-capsules/StudioOS_ContextCapsule_v0.2.0.zip
