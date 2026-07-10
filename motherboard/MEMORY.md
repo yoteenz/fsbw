@@ -46255,3 +46255,21 @@ Summary of **full conversation in this chat**: (1) Forensic shell resolution inv
 - **Release:** v0.3.0 · SHA256 `81378805…` · commit `e641dc7dc` (at package time).
 - **URLs:** `https://fsbw.vercel.app/downloads/context-capsules/latest.zip` · `StudioOS_ContextCapsule_v0.3.0.zip`
 
+---
+
+## 2026-07-10 — LOAD_SHELL stall forensic analysis (no repair)
+
+Summary of **full conversation in this chat**: After preview-scoped shell resolution repair (`e641dc7dc`), user reported new symptom — shell registration succeeds, UI enters **Load Shell**, never advances to **Lock Shell**, **Step stalled** after ~90s, heartbeat alive. User mandated **forensic analysis only** — trace LOAD_SHELL execution path, identify first non-completing operation, document root cause, recommend repair; **no blind fix**, **no instrumentation applied yet**.
+
+- **Executive finding:** `load-shell` in World Compiler is **100% synchronous** (M1–M7 Map lookups + guards). It cannot hang indefinitely. User-visible stall is **progress + runtime state machine desync**, not a pending promise inside the stage body.
+- **Primary root cause (RC-STALL-1):** `runFullPipeline` has **no try/catch/finally** around `await driver.compileStation()`. If `compileWorldStation` throws **before** first `runStage('load-shell')` (e.g. gate: `validationMode && !previewSessionId`), unhandled rejection leaves orphan state: `pipelineRunning=true`, `renderStatus='running'`, `shellPipelinePhase='world-compile'`, frozen `lastStepChangeAt` → UI defaults to load-shell → 90s stall. Fire-and-forget `compileWorldStation` in `generateLayer` (~529) may omit `previewCompileContext`.
+- **Secondary (RC-STALL-2):** `computeRenderPipelineProgress` defaults `currentStepId='load-shell'` when `shellPhase='ready'` (world-compile) and `compileReport?.stages` empty.
+- **Secondary (RC-STALL-3):** `compileReport` only written after full compile; UI ignores `onStageComplete` / `session.currentStage` for step index.
+- **Contributing (RC-STALL-4):** Double compile — `ensureStation` runs full `compileWorldStation` before runtime `compileStation`.
+- **Last successful op (typical):** shell registration + `shellPipelinePhase='world-compile'`.
+- **First never-completes (UI):** `compileReport` update / terminal runtime state / `onStageComplete('load-shell')` if compile throws pre-stage or never runs.
+- **Ruled out:** unresolved promises, hydration deadlock, event listeners, registry mutex, timeouts inside load-shell body.
+- **Document:** `docs/studio-os/world-compiler/LOAD_SHELL_STALL_FORENSIC.md` — execution timeline, dependency table, M1–M7 milestone map, recommended P0–P4 repair (not applied).
+- **Device proof (P0):** Check investigation log for `COMPILE_STAGE_ENTER load-shell` — absent confirms RC-STALL-1; present + complete confirms RC-STALL-2/3 UI desync.
+- **Conventions:** Do not implement LOAD_SHELL repair until founder approves repair sprint following forensic doc.
+

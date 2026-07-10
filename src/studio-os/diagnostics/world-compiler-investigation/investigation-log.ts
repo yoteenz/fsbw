@@ -82,6 +82,7 @@ function baseFields(
   try {
     const win = window as unknown as { __WC_INVESTIGATION__?: CompilerInvestigationEvent[] };
     win.__WC_INVESTIGATION__ = events;
+    void import('./stall-evidence').then(({ installStallEvidenceGlobal }) => installStallEvidenceGlobal());
   } catch {
     /* ignore */
   }

@@ -18,6 +18,12 @@ import type { PreviewCompileContext } from '../preview-compile-context';
 import { assertPreviewSessionInvariant } from '../preview-compile-context';
 import { getValidationEnvironmentShell, verifyEphemeralShellMount } from '../ephemeral-validation-registry';
 import { logCompilerEvent, recordStageSuccess } from '../../../studio-os/diagnostics/world-compiler-investigation';
+import {
+  logLoadShellMilestone,
+  logPipelineLifecycle,
+  recordDuplicateCompileInvocation,
+  type StallEvidenceContext,
+} from '../../../studio-os/diagnostics/world-compiler-investigation/stall-evidence';
 import { emitStudioOsRuntimeEvent } from '../../../studio-os/diagnostics/runtime-emit';
 
 export type WorldCompileOptions = {
@@ -127,7 +133,37 @@ export async function compileWorldStation(input: {
       ? { validationMode, previewSessionId }
       : { validationMode };
 
+  const evidenceCtx: StallEvidenceContext = {
+    previewSessionId: previewSessionId ?? null,
+    compileRunId: investigation?.compileRunId ?? null,
+    stationId: input.stationId,
+    projectId: input.projectId,
+    conceptId: previewContext?.conceptId ?? null,
+    companyId: previewContext?.companyId ?? null,
+    compileOwner: 'compileWorldStation',
+    currentCompilerStage: null,
+  };
+
+  recordDuplicateCompileInvocation('compileWorldStation', evidenceCtx, {
+    validationMode,
+    hasPreviewContext: Boolean(previewContext),
+  });
+
+  logPipelineLifecycle('COMPILE_WORLD_STATION_ENTERED', 'world-compiler.compile-pipeline', evidenceCtx, {
+    validationMode,
+    previewSessionId: previewSessionId ?? null,
+  });
+
+  logLoadShellMilestone('M2', 'world-compiler.compile-pipeline.gate', evidenceCtx, previewSessionId ? 'success' : validationMode ? 'failure' : 'skipped', {
+    gate: 'previewSessionId',
+    validationMode,
+    previewSessionIdPresent: Boolean(previewSessionId),
+  });
+
   if (validationMode && !previewSessionId) {
+    logPipelineLifecycle('COMPILE_WORLD_STATION_GATE_THROW', 'world-compiler.compile-pipeline', evidenceCtx, {
+      code: 'SHELL_RECOVERY_LOOKUP_MISMATCH',
+    });
     throw new Error(
       '[SHELL_RECOVERY_LOOKUP_MISMATCH] compileWorldStation requires previewCompileContext.previewSessionId for validation compiles.'
     );
@@ -145,6 +181,16 @@ export async function compileWorldStation(input: {
 
   stages.push(
     await runStage('load-shell', () => {
+      const milestoneStart = Date.now();
+      logLoadShellMilestone('M1', 'world-compiler.compile-pipeline.load-shell', evidenceCtx, 'success', {
+        milestoneStartedAt: milestoneStart,
+      });
+
+      logLoadShellMilestone('M3', 'world-compiler.compile-pipeline.load-shell', evidenceCtx, 'success', {
+        milestoneStartedAt: milestoneStart,
+        action: 'registry_lookup_started',
+      });
+
       const shellLock = resolveShellLockState(
         input.departmentId,
         input.projectId,
@@ -157,6 +203,14 @@ export async function compileWorldStation(input: {
         input.stationId,
         diagnosticOptions
       );
+
+      logLoadShellMilestone('M4', 'world-compiler.compile-pipeline.load-shell', evidenceCtx, shellLock.shellUrl ? 'success' : 'failure', {
+        milestoneStartedAt: milestoneStart,
+        resolution: shellLock.resolution,
+        shellUrl: shellLock.shellUrl ? 'present' : 'missing',
+        registryNamespace: shellDiagnostic.registryMode ?? null,
+        shellId: shellDiagnostic.requestedShellId ?? null,
+      });
 
       if (validationMode && previewSessionId) {
         const registered = getValidationEnvironmentShell(previewSessionId);
@@ -172,12 +226,29 @@ export async function compileWorldStation(input: {
             projectId: input.projectId,
             stationId: input.stationId,
           });
+          logLoadShellMilestone('M5', 'world-compiler.compile-pipeline.load-shell', evidenceCtx, verification.ok ? 'success' : 'failure', {
+            milestoneStartedAt: milestoneStart,
+            verificationOk: verification.ok,
+            errorCode: verification.errorCode ?? null,
+            registryNamespace: verification.registryNamespace ?? null,
+            shellId: verification.shellId ?? null,
+          });
           if (!verification.ok) {
             throw new Error(
               `[${verification.errorCode ?? 'SHELL_RECOVERY_LOOKUP_MISMATCH'}] ${verification.detail ?? 'Ephemeral shell registration/lookup mismatch.'} registration=${verification.registrationPreviewSessionId} lookup=${verification.lookupPreviewSessionId} shellId=${verification.shellId ?? 'none'} namespace=${verification.registryNamespace} compileRunId=${investigation?.compileRunId ?? 'unknown'}`
             );
           }
+        } else {
+          logLoadShellMilestone('M5', 'world-compiler.compile-pipeline.load-shell', evidenceCtx, 'skipped', {
+            milestoneStartedAt: milestoneStart,
+            reason: 'no registered validation shell for session',
+          });
         }
+      } else {
+        logLoadShellMilestone('M5', 'world-compiler.compile-pipeline.load-shell', evidenceCtx, 'skipped', {
+          milestoneStartedAt: milestoneStart,
+          reason: 'not validation mode or no previewSessionId',
+        });
       }
 
       if (!shellLock.shellUrl) {
@@ -209,6 +280,18 @@ export async function compileWorldStation(input: {
     }, stageOptions)
   );
 
+  const loadShellStage = stages[stages.length - 1];
+  if (loadShellStage?.success) {
+    logLoadShellMilestone('M6', 'world-compiler.compile-pipeline.onStageComplete', evidenceCtx, onStageComplete ? 'success' : 'skipped', {
+      onStageCompleteRegistered: Boolean(onStageComplete),
+      stageSuccess: true,
+    });
+  } else if (loadShellStage?.success === false) {
+    logLoadShellMilestone('M6', 'world-compiler.compile-pipeline.onStageComplete', evidenceCtx, 'failure', {
+      detail: loadShellStage.detail,
+    });
+  }
+
   const shellLock = resolveShellLockState(
     input.departmentId,
     input.projectId,
@@ -229,6 +312,10 @@ export async function compileWorldStation(input: {
 
   stages.push(
     await runStage('lock-shell', () => {
+      logLoadShellMilestone('M7', 'world-compiler.compile-pipeline.lock-shell', evidenceCtx, 'success', {
+        action: 'transition_to_lock_shell',
+        shellLocked: shellLock.locked,
+      });
       if (!shellLock.locked) return 'Shell awaiting approval — not yet locked.';
       return `Shell locked at ${shellLock.lockedAt ?? 'unknown'}.`;
     }, stageOptions)
@@ -315,6 +402,13 @@ export async function compileWorldStation(input: {
       stationId: input.stationId,
     });
   }
+
+  logPipelineLifecycle('COMPILE_WORLD_STATION_COMPLETED', 'world-compiler.compile-pipeline', evidenceCtx, {
+    success: report.success,
+    failedStage: report.failedStage ?? null,
+    stageCount: stages.length,
+    renderTimeMs,
+  });
 
   return {
     graph,

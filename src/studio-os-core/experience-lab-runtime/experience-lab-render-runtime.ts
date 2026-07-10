@@ -45,6 +45,15 @@ import {
   setLayer1RunContext,
   updateActiveShellId,
 } from '../../studio-os/diagnostics/world-compiler-investigation';
+import {
+  beginAsyncBoundary,
+  captureUiCompilerSyncSnapshot,
+  endAsyncBoundary,
+  logPipelineLifecycle,
+  logPipelineOwnership,
+  logStallThresholdReached,
+  type StallEvidenceContext,
+} from '../../studio-os/diagnostics/world-compiler-investigation/stall-evidence';
 
 const WORLD_STAGE_EVENTS: Partial<Record<WorldCompilerStage, RuntimeEventType>> = {
   'load-shell': 'ShellLoaded',
@@ -143,6 +152,53 @@ function publishRuntimeEvent(
   });
 }
 
+function sessionEvidenceCtx(session: SessionState, extra?: Partial<StallEvidenceContext>): StallEvidenceContext {
+  return {
+    previewSessionId: session.previewSessionId,
+    compileRunId: session.compileRunId,
+    stationId: session.key.stationId,
+    projectId: session.key.projectId,
+    conceptId: session.key.conceptId,
+    companyId: session.key.companyId,
+    pipelineRunning: session.pipelineRunning,
+    currentCompilerStage: session.currentStage,
+    ...extra,
+  };
+}
+
+function recordUiCompilerEvidence(
+  session: SessionState,
+  snapshot: ExperienceLabRuntimeSnapshot,
+  evidencePoint: string
+): void {
+  const compileStages = snapshot.compileReport?.stages?.map((s) => s.stage) ?? null;
+  const sync = captureUiCompilerSyncSnapshot('experience-lab-render-runtime.buildSnapshot', {
+    evidencePoint,
+    previewSessionId: session.previewSessionId,
+    compileRunId: session.compileRunId,
+    sessionCurrentStage: session.currentStage,
+    compileReportStages: compileStages,
+    compileReportSuccess: snapshot.compileReport?.success ?? null,
+    compileReportFailedStage: snapshot.compileReport?.failedStage ?? null,
+    uiCurrentStepId: snapshot.renderPipelineProgress.currentStepId,
+    lastCompletedStage: session.completedStages[session.completedStages.length - 1] ?? null,
+    shellPipelinePhase: session.shellPipelinePhase,
+    pipelineRunning: session.pipelineRunning,
+    stepStallMs: snapshot.runMeta.stepStallMs,
+    isStalled: snapshot.runMeta.isStalled,
+    lastUiUpdateAt: Date.now(),
+  });
+  if (snapshot.runMeta.isStalled) {
+    logStallThresholdReached('experience-lab-render-runtime.buildSnapshot', sessionEvidenceCtx(session, {
+      currentUiStep: snapshot.renderPipelineProgress.currentStepId,
+    }), {
+      stepStallMs: snapshot.runMeta.stepStallMs,
+      uiCurrentStepId: snapshot.renderPipelineProgress.currentStepId,
+      syncSnapshot: sync,
+    });
+  }
+}
+
 function buildSnapshot(session: SessionState): ExperienceLabRuntimeSnapshot | null {
   const driver = getSceneStackDriver(session.key.departmentId, session.key.projectId);
   const binding = resolveCreativePreviewRenderBinding(session.key.companyId, session.key.conceptId);
@@ -228,7 +284,7 @@ function buildSnapshot(session: SessionState): ExperienceLabRuntimeSnapshot | nu
   const isBuilding =
     renderPipelineProgress.isRunning || layerPipelineActive || status === 'building' || session.pipelineRunning;
 
-  return {
+  const snapshot: ExperienceLabRuntimeSnapshot = {
     sessionId: session.previewSessionId,
     compileRunId: session.compileRunId,
     binding,
@@ -255,6 +311,16 @@ function buildSnapshot(session: SessionState): ExperienceLabRuntimeSnapshot | nu
     companyId: session.key.companyId,
     conceptId: session.key.conceptId,
   };
+
+  if (
+    session.shellPipelinePhase === 'world-compile' ||
+    session.shellPipelinePhase === 'ensure-station' ||
+    snapshot.runMeta.isStalled
+  ) {
+    recordUiCompilerEvidence(session, snapshot, session.shellPipelinePhase);
+  }
+
+  return snapshot;
 }
 
 function notifySnapshot(session: SessionState): void {
@@ -316,7 +382,19 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   if (session.pipelineRunning) return;
   if (isLayer1Frozen()) return;
 
+  const pipelineCtx = sessionEvidenceCtx(session, { compileOwner: 'runFullPipeline' });
+  logPipelineLifecycle('RUN_FULL_PIPELINE_ENTERED', 'experience-lab-render-runtime.runFullPipeline', pipelineCtx);
+  logPipelineOwnership('experience-lab-render-runtime.runFullPipeline', pipelineCtx, {
+    trigger: isAutoRunDisabled() ? 'manual' : 'auto',
+  });
+
+  const driverBoundary = beginAsyncBoundary('waitForSceneStackDriver', pipelineCtx);
   const driver = await waitForSceneStackDriver(session.key.departmentId, session.key.projectId);
+  endAsyncBoundary(driverBoundary, driver ? 'resolved' : 'rejected', {
+    resolvedCategory: driver ? 'driverReady' : 'driverMissing',
+    rejectionMessage: driver ? undefined : 'Scene stack driver not registered',
+  });
+
   if (!driver) {
     session.errors = ['Scene stack driver not registered — runtime provider required'];
     session.renderStatus = 'failed';
@@ -330,6 +408,7 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   }
 
   session.pipelineRunning = true;
+  logPipelineLifecycle('PIPELINE_RUNNING_SET_TRUE', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session));
   session.compileRunId = newCompileRunId();
   const compilerInstanceId = createCompilerInstanceId();
   session.runAttempt += 1;
@@ -366,6 +445,7 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   publishRuntimeEvent(session, 'RuntimeStarted', { currentStage: 'compile-preview-spec' });
   notifySnapshot(session);
 
+  const shellBoundary = beginAsyncBoundary('runExperienceLabValidationShellPipeline', sessionEvidenceCtx(session));
   const shellResult = await runExperienceLabValidationShellPipeline({
     companyId: session.key.companyId,
     conceptId: session.key.conceptId,
@@ -387,6 +467,11 @@ async function runFullPipeline(session: SessionState): Promise<void> {
     },
   });
 
+  endAsyncBoundary(shellBoundary, shellResult.ok ? 'resolved' : 'rejected', {
+    resolvedCategory: shellResult.ok ? 'shellPipelineOk' : 'shellPipelineFailed',
+    rejectionMessage: shellResult.ok ? undefined : shellResult.errorDetail ?? 'Shell pipeline failed',
+  });
+
   session.shellPipelineResult = shellResult;
 
   if (shellResult.ok && shellResult.shell?.shellId) {
@@ -406,6 +491,9 @@ async function runFullPipeline(session: SessionState): Promise<void> {
     session.renderStatus = 'failed';
     session.errors = [shellResult.errorDetail ?? 'Shell pipeline failed'];
     session.pipelineRunning = false;
+    logPipelineLifecycle('PIPELINE_RUNNING_CLEARED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+      reason: 'shellPipelineFailed',
+    });
     endCompileRun('failed', { failedStage: shellResult.stage, error: session.errors[0] });
     notifySnapshot(session);
     publishRuntimeEvent(session, 'RuntimeError', {
@@ -422,22 +510,39 @@ async function runFullPipeline(session: SessionState): Promise<void> {
 
   const previewContext = sessionPreviewContext(session);
 
-  await driver.ensureStation(session.key.stationId, {
-    validationMode: true,
-    skipEnvironmentShell: true,
-    previewCompileContext: previewContext,
-    investigation: {
-      compileRunId: session.compileRunId,
-      compilerInstanceId,
-      renderId: session.runAttempt,
-    },
-  });
+  const ensureBoundary = beginAsyncBoundary('runFullPipeline.ensureStation', sessionEvidenceCtx(session));
+  try {
+    await driver.ensureStation(session.key.stationId, {
+      validationMode: true,
+      skipEnvironmentShell: true,
+      previewCompileContext: previewContext,
+      investigation: {
+        compileRunId: session.compileRunId,
+        compilerInstanceId,
+        renderId: session.runAttempt,
+      },
+    });
+    endAsyncBoundary(ensureBoundary, 'resolved', { resolvedCategory: 'ensureStationComplete' });
+  } catch (err) {
+    endAsyncBoundary(ensureBoundary, 'rejected', {
+      rejectionMessage: err instanceof Error ? err.message : String(err),
+    });
+    logPipelineLifecycle('RUN_FULL_PIPELINE_UNHANDLED_REJECTION', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+      phase: 'ensureStation',
+      pipelineRunningAfter: session.pipelineRunning,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    throw err;
+  }
 
   if (isLayer1Frozen()) {
     session.shellPipelinePhase = 'failed';
     session.renderStatus = 'failed';
     session.errors = ['Layer 1 (Signature Landmark™) generation failed — see COMPILE STOPPED panel'];
     session.pipelineRunning = false;
+    logPipelineLifecycle('PIPELINE_RUNNING_CLEARED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+      reason: 'layer1Frozen',
+    });
     endCompileRun('failed', { failedStage: 'GENERATION_REQUEST_FAILED', error: session.errors[0] });
     notifySnapshot(session);
     return;
@@ -447,28 +552,50 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   session.lastStepChangeAt = Date.now();
   notifySnapshot(session);
 
-  const compiled = await driver.compileStation(session.key.stationId, {
-    validationMode: true,
-    previewCompileContext: previewContext,
-    investigation: {
-      compileRunId: session.compileRunId,
-      compilerInstanceId,
-      renderId: session.runAttempt,
-    },
-    onStageComplete: (stage, success) => {
-      session.currentStage = stage;
-      session.lastStepChangeAt = Date.now();
-      if (success) {
-        session.completedStages.push(stage);
-        const eventType = WORLD_STAGE_EVENTS[stage];
-        if (eventType) publishRuntimeEvent(session, eventType, { currentStage: stage });
-        if (stage === 'mount-landmark') {
-          publishRuntimeEvent(session, 'ArchitectureGenerated', { currentStage: stage });
+  notifySnapshot(session);
+
+  const compileBoundary = beginAsyncBoundary('runFullPipeline.compileStation', sessionEvidenceCtx(session));
+  let compiled: Awaited<ReturnType<typeof driver.compileStation>>;
+  try {
+    compiled = await driver.compileStation(session.key.stationId, {
+      validationMode: true,
+      previewCompileContext: previewContext,
+      investigation: {
+        compileRunId: session.compileRunId,
+        compilerInstanceId,
+        renderId: session.runAttempt,
+      },
+      onStageComplete: (stage, success) => {
+        session.currentStage = stage;
+        session.lastStepChangeAt = Date.now();
+        logPipelineLifecycle('ON_STAGE_COMPLETE_PUBLISHED', 'experience-lab-render-runtime.onStageComplete', sessionEvidenceCtx(session, {
+          currentCompilerStage: stage,
+        }), { stage, success });
+        if (success) {
+          session.completedStages.push(stage);
+          const eventType = WORLD_STAGE_EVENTS[stage];
+          if (eventType) publishRuntimeEvent(session, eventType, { currentStage: stage });
+          if (stage === 'mount-landmark') {
+            publishRuntimeEvent(session, 'ArchitectureGenerated', { currentStage: stage });
+          }
         }
-      }
-      notifySnapshot(session);
-    },
-  });
+        notifySnapshot(session);
+      },
+    });
+    endAsyncBoundary(compileBoundary, 'resolved', {
+      resolvedCategory: compiled.report.success ? 'compileSuccess' : 'compileFailed',
+    });
+  } catch (err) {
+    endAsyncBoundary(compileBoundary, 'rejected', {
+      rejectionMessage: err instanceof Error ? err.message : String(err),
+    });
+    logPipelineLifecycle('RUN_FULL_PIPELINE_UNHANDLED_REJECTION', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+      phase: 'compileStation',
+      pipelineRunningAfter: session.pipelineRunning,
+      error: err instanceof Error ? err.message : String(err),
+    });
+    throw err;
+  }
 
   if (!compiled.report.success) {
     driver.bump();
@@ -476,6 +603,9 @@ async function runFullPipeline(session: SessionState): Promise<void> {
     session.renderStatus = 'failed';
     session.errors = [compiled.report.failedStageDetail ?? 'World compile failed'];
     session.pipelineRunning = false;
+    logPipelineLifecycle('PIPELINE_RUNNING_CLEARED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+      reason: 'compileFailed',
+    });
     endCompileRun('failed', {
       failedStage: compiled.report.failedStage ?? undefined,
       error: session.errors[0],
@@ -493,6 +623,10 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   session.renderStatus = 'complete';
   session.currentStage = 'complete';
   session.pipelineRunning = false;
+  logPipelineLifecycle('PIPELINE_RUNNING_CLEARED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+    reason: 'success',
+  });
+  logPipelineLifecycle('RUN_FULL_PIPELINE_EXIT_SUCCESS', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session));
   session.lastStepChangeAt = Date.now();
   endCompileRun('success');
   notifySnapshot(session);

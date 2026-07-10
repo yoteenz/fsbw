@@ -27,6 +27,44 @@ export {
   createCompilerInstanceId,
 } from './investigation-log';
 
+export {
+  logPipelineLifecycle,
+  logPipelineOwnership,
+  logLoadShellMilestone,
+  recordDuplicateCompileInvocation,
+  beginAsyncBoundary,
+  endAsyncBoundary,
+  markPendingAsyncBoundariesAtStall,
+  captureUiCompilerSyncSnapshot,
+  logStallThresholdReached,
+  getOpenAsyncBoundaries,
+  getAsyncBoundaryHistory,
+  getLoadShellMilestones,
+  loadStallEvidenceFromSession,
+  installStallEvidenceGlobal,
+  isStallEvidenceRecordingEnabled,
+} from './stall-evidence';
+
+export type {
+  LoadShellMilestoneId,
+  LoadShellMilestoneState,
+  AsyncBoundaryOutcome,
+  PipelineLifecycleEvent,
+  StallEvidenceContext,
+  AsyncBoundaryRecord,
+  UiCompilerSyncSnapshot,
+} from './stall-evidence';
+
+export { classifyLoadShellStall } from './stall-classifier';
+export type { StallClassificationId, StallClassificationResult } from './stall-classifier';
+
+export {
+  buildStallEvidenceReport,
+  exportStallEvidenceJson,
+  exportStallEvidenceMarkdown,
+} from './stall-evidence-report';
+export type { StallEvidenceReport } from './stall-evidence-report';
+
 export { buildWorldCompilerForensicReport } from './session-report';
 export { COMPILER_PATH_TIMERS, findTimersNearThreeSeconds } from './timer-audit';
 export { WORLD_COMPILER_OWNERSHIP, buildWorldCompilerOwnershipReport } from './ownership-report';

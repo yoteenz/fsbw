@@ -62,6 +62,13 @@ import {
   LAYER_1_ID,
   recordLayer1Transition,
 } from '../studio-os/diagnostics/world-compiler-investigation';
+import {
+  beginAsyncBoundary,
+  endAsyncBoundary,
+  logPipelineLifecycle,
+  recordDuplicateCompileInvocation,
+  type StallEvidenceContext,
+} from '../studio-os/diagnostics/world-compiler-investigation/stall-evidence';
 import { VALIDATION_RENDER_AUTHORIZATION } from '../studio-os-core/scene-stack/validation-render';
 
 export type SceneStackPipelineProgress = {
@@ -72,6 +79,26 @@ export type SceneStackPipelineProgress = {
   currentLayerLabel: string | null;
   phase: 'idle' | 'queued' | 'generating';
 };
+
+function buildEvidenceCtx(
+  _departmentId: string,
+  projectId: string,
+  stationId: string,
+  options?: WorldCompileOptions,
+  compileOwner?: string
+): StallEvidenceContext {
+  const previewContext = options?.previewCompileContext;
+  return {
+    previewSessionId: previewContext?.previewSessionId ?? null,
+    compileRunId: previewContext?.compileRunId ?? options?.investigation?.compileRunId ?? null,
+    stationId,
+    projectId,
+    conceptId: previewContext?.conceptId ?? null,
+    companyId: previewContext?.companyId ?? null,
+    compileOwner: compileOwner ?? null,
+    currentCompilerStage: null,
+  };
+}
 
 export function useSceneStack(
   departmentId: string,
@@ -526,6 +553,12 @@ export function useSceneStack(
         if (isLayer1 && isWorldCompilerDiagnosticMode()) {
           recordLayer1Transition('LAYER_1_COMPLETED', { publicUrl: result.publicUrl });
         }
+        recordDuplicateCompileInvocation('generateLayer.fireAndForget', buildEvidenceCtx(departmentId, projectId, stationId, {
+          validationMode,
+          ...(layerCompileOptions?.previewCompileContext
+            ? { previewCompileContext: layerCompileOptions.previewCompileContext }
+            : {}),
+        }), { layerId });
         void compileWorldStation({
           departmentId,
           projectId,
@@ -539,6 +572,17 @@ export function useSceneStack(
           },
         }).then((result) => {
           setCompileReports((prev) => ({ ...prev, [stationId]: result.report }));
+          logPipelineLifecycle(
+            'COMPILE_REPORT_PUBLISHED',
+            'useSceneStack.generateLayer',
+            buildEvidenceCtx(departmentId, projectId, stationId, {
+              validationMode,
+              ...(layerCompileOptions?.previewCompileContext
+                ? { previewCompileContext: layerCompileOptions.previewCompileContext }
+                : {}),
+            }),
+            { compileOwner: 'generateLayer.fireAndForget', success: result.report.success }
+          );
         });
         void gateAfterSceneAssembly({ departmentId, projectId, stationId })
           .then(() => gateAfterArchitectureAudit({ departmentId, projectId, stationId }))
@@ -602,6 +646,13 @@ export function useSceneStack(
         setPipelineLayer({ stationId, layerId: firstPending, phase: 'queued' });
       }
 
+      const evidenceCtx = buildEvidenceCtx(departmentId, projectId, stationId, options, 'ensureStation');
+      const boundaryId = beginAsyncBoundary('ensureStation', evidenceCtx, { layerCount: layerIds.length });
+      logPipelineLifecycle('ENSURE_STATION_ENTERED', 'useSceneStack.ensureStation', evidenceCtx, {
+        layerIds,
+        skipEnvironmentShell: options?.skipEnvironmentShell ?? false,
+      });
+
       try {
         for (const layerId of layerIds) {
           const lookupOptions =
@@ -637,6 +688,22 @@ export function useSceneStack(
           options,
         });
         setCompileReports((prev) => ({ ...prev, [stationId]: compiled.report }));
+        logPipelineLifecycle('COMPILE_REPORT_PUBLISHED', 'useSceneStack.ensureStation', evidenceCtx, {
+          compileOwner: 'ensureStation.innerCompile',
+          success: compiled.report.success,
+        });
+        logPipelineLifecycle('ENSURE_STATION_COMPLETED', 'useSceneStack.ensureStation', evidenceCtx, {
+          success: compiled.report.success,
+        });
+        endAsyncBoundary(boundaryId, 'resolved', { resolvedCategory: 'ensureStationComplete' });
+      } catch (err) {
+        logPipelineLifecycle('ENSURE_STATION_FAILED', 'useSceneStack.ensureStation', evidenceCtx, {
+          error: err instanceof Error ? err.message : String(err),
+        });
+        endAsyncBoundary(boundaryId, 'rejected', {
+          rejectionMessage: err instanceof Error ? err.message : String(err),
+        });
+        throw err;
       } finally {
         setEnsuringStations((prev) => {
           const next = new Set(prev);
@@ -676,16 +743,40 @@ export function useSceneStack(
 
   const compileStation = useCallback(
     async (stationId: string, options?: WorldCompileOptions) => {
-      const blueprint = getStationBlueprint(stationId);
-      const result = await compileWorldStation({
-        departmentId,
-        projectId,
-        stationId,
-        blueprint,
-        options,
-      });
-      setCompileReports((prev) => ({ ...prev, [stationId]: result.report }));
-      return result;
+      const evidenceCtx = buildEvidenceCtx(departmentId, projectId, stationId, options, 'compileStation');
+      const boundaryId = beginAsyncBoundary('compileStation', evidenceCtx);
+      logPipelineLifecycle('COMPILE_STATION_ENTERED', 'useSceneStack.compileStation', evidenceCtx);
+      try {
+        const blueprint = getStationBlueprint(stationId);
+        const result = await compileWorldStation({
+          departmentId,
+          projectId,
+          stationId,
+          blueprint,
+          options,
+        });
+        setCompileReports((prev) => ({ ...prev, [stationId]: result.report }));
+        logPipelineLifecycle('COMPILE_REPORT_PUBLISHED', 'useSceneStack.compileStation', evidenceCtx, {
+          compileOwner: 'compileStation',
+          success: result.report.success,
+          failedStage: result.report.failedStage ?? null,
+        });
+        logPipelineLifecycle('COMPILE_STATION_COMPLETED', 'useSceneStack.compileStation', evidenceCtx, {
+          success: result.report.success,
+        });
+        endAsyncBoundary(boundaryId, 'resolved', {
+          resolvedCategory: result.report.success ? 'compileSuccess' : 'compileFailedStage',
+        });
+        return result;
+      } catch (err) {
+        logPipelineLifecycle('COMPILE_STATION_REJECTED', 'useSceneStack.compileStation', evidenceCtx, {
+          error: err instanceof Error ? err.message : String(err),
+        });
+        endAsyncBoundary(boundaryId, 'rejected', {
+          rejectionMessage: err instanceof Error ? err.message : String(err),
+        });
+        throw err;
+      }
     },
     [departmentId, getStationBlueprint, projectId]
   );
