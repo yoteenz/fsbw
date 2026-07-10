@@ -25,6 +25,13 @@ export {
   type ValidationShellPipelineResult,
 } from './validation-shell-pipeline';
 export {
+  computeRenderPipelineProgress,
+  RENDER_PIPELINE_STEP_DEFS,
+  RENDER_PIPELINE_STALL_MS,
+  type RenderPipelineProgress,
+  type RenderPipelineStep,
+} from './render-pipeline-progress';
+export {
   buildEnvironmentShellRecipe,
   type EnvironmentShellRecipe,
   type ValidationEnvironmentShell,

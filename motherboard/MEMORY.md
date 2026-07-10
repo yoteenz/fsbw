@@ -45495,6 +45495,7 @@ Summary of **full conversation in this chat** spanning Experience Lab Phase 2 (e
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-10 — Studio World™ Foundation Sprint (P0 Architecture — docs only)
 
 Summary of **full conversation in this chat**: User issued **COMPOSER — SPRINT: STUDIO WORLD™ FOUNDATION** — P0 Architecture Sprint for evolving Creative Direction Studio™ into Studio World™. Explicit mandate: **DO NOT WRITE PRODUCTION CODE** — architecture and experience design only. Mission: Studio World is a living creative organization (not dashboard/pages/prompt interface); objective is **presence not realism**; founder should feel like entering Pixar/Apple Park/ILM/NASA Mission Control/Westworld.
@@ -45504,3 +45505,26 @@ Summary of **full conversation in this chat**: User issued **COMPOSER — SPRINT
 - **Decisions / outcomes:** Produced **12-document architecture bundle** at `docs/studio-os/foundation-sprint/` (README + 01 Constitution through 12 Implementation Roadmap). Era 0 (architecture) marked complete; Era 1 (CDS Golden Department™ presence proof) awaits founder approval before any implementation. No React/API/DB changes.
 - **Changes:** `docs/studio-os/foundation-sprint/README.md`, `01_STUDIO_WORLD_CONSTITUTION.md`, `02_EXPERIENCE_PHILOSOPHY.md`, `03_LIVING_ORGANIZATION_ARCHITECTURE.md`, `04_DEPARTMENT_HIERARCHY.md`, `05_AI_ROLE_HIERARCHY.md`, `06_ROOM_TAXONOMY.md`, `07_WORLD_PERSISTENCE_MODEL.md`, `08_ENVIRONMENTAL_STORYTELLING.md`, `09_SPATIAL_COLLABORATION.md`, `10_VISITOR_INTERACTION_MODEL.md`, `11_FOUNDER_WORKFLOW.md`, `12_IMPLEMENTATION_ROADMAP.md`. `motherboard/CORE.md` pointer. This MEMORY entry.
 - **Conventions:** Foundation sprint docs extend — never replace — existing Studio World canon. Implementation begins only after founder approves Era 0 architecture. Presence gates (30-second stranger test, Walk the Room™, Golden Department™) block scale until Era 1 complete.
+=======
+## 2026-07-10 — Experience Engine normal-browser hotfix (P0 persistence)
+
+Summary of **full conversation in this chat** spanning Experience Lab phases, environment shell generation (`70965a583`), and this P0 hotfix: **Experience Engine loads in private/incognito but fails in normal Safari/Chrome** — stale persisted browser state, not route/Suspense/service worker.
+
+- **Root cause (proven):** First divergence at **`persisted-hydration`** — normal sessions carry `localStorage.genesis_v1.experienceEngineDna` with (1) **subsystem version mismatch** (`0.9.0`), (2) **corrupt partial brand registry** (`brands: [{ brandId: 'partial-only' }]`), (3) **invalid playground selection** (`invalid-brand`, `bogus-dept`, `legacy-scene`), and/or empty registries with `seededAt` set. Private sessions have no payload → bundled seeds apply. Experience Lab received full repair in prior sprint; **Experience Engine did not** — only partial boot repair cleared registries but not playground/version; hook never called route-level repair; `writeGenesisStore` could throw on quota in normal full-storage browsers.
+- **Service worker audit:** No service worker registered in codebase (no workbox/sw.js). Failure is **localStorage genesis slice**, not stale SW bundles.
+- **Smallest isolation fix:** Removing/repairing **`genesis_v1.experienceEngineDna`** (and invalid **`studioOsExperienceEngine_v1`**) restores route — verified via `scripts/experience-engine-startup-trace.mjs` corrupt-case auto-repair.
+- **Fix delivered:** (1) **`sanitizeExperienceEngineDnaStore` / `repairExperienceEngineDnaIfNeeded`** — version, registry, playground enum validation; migration ledger `studioOsExperienceEngineMigration_v1`. (2) Boot + route repair wired in `bootstrapStudioOsBrowserStorage`, `ensureExperienceEngineDnaStore`, `useExperienceEngineDnaState`. (3) **Safe genesis writes** — `safeLocalStorageSetItem` (quota no longer crashes init). (4) **`ExperienceEngineRecoveryPanel`** — targeted “Repair Experience Engine State” (EE-owned keys only). (5) **`startup-trace.ts`** + `window.__STUDIO_EE_STARTUP_TRACE__`. (6) **`repairExperienceEngineGlobalStoreIfNeeded`** for M141 `studioOsExperienceEngine_v1`.
+- **Verification:** `npm run build` pass; `npx tsx scripts/experience-engine-startup-trace.mjs` — A fresh-private, B corrupt-engine, B stale-playground **3/3 PASS** (corrupt auto-repairs with console `genesis repair: experienceEngineDna.version:0.9.0→1.0.0; …registry:invalid→bundled-seed-fallback`). Production deploy pending for fsbw.vercel.app normal-session sign-off.
+- **Files:** `experience-engine/repair.ts`, `startup-trace.ts`, `store-repair.ts`, `ExperienceEngineRecoveryPanel.tsx`, `useExperienceEngineDnaState.ts`, `ExperienceEngineDnaWorkspace.tsx`, `genesis-experience-persistence-repair.ts`, `genesis/persistence/store.ts`, `studioOsBrowserStorage.ts`, `experience-engine/persistence.ts`, `bootstrap/seed.ts`, `scripts/experience-engine-startup-trace.mjs`.
+
+---
+
+## 2026-07-10 — Experience Lab render pipeline status bar
+
+User requested visible compile progress in Mode 2 Creative Studio Preview Compiler — footer only showed “Compiling preview spec…” with no percentage, step list, elapsed time, run attempt, or stall detection.
+
+- **Root gap:** `useCreativeStudioRenderPreview` never advanced `shellPipelinePhase` through generate/register (stuck on compile-spec until shell pipeline returned); no unified progress model across shell + World Compiler stages.
+- **Delivered:** `render-pipeline-progress.ts` — 14-step model (compile spec → generate shell → register → mount layers → 10 World Compiler stages → complete); `computeRenderPipelineProgress()` with % and step states. `validation-shell-pipeline` `onStageChange` callback. Hook tracks `runAttempt`, `runStartedAt`, elapsed clock, `stepStallMs` (90s threshold). **`CreativeStudioPipelineStatusBar`** — progress bar, run #, elapsed, step N/M, full step checklist, stall warning. Wired above cinematic viewport in `CreativeStudioRenderPreview`.
+- **Verification:** `npm run build` pass.
+- **Outcome:** Mode 2 previews show exact pipeline position, percent complete, whether a new run started, and if a step appears stuck.
+>>>>>>> 044c59c88 (Experience Lab: add render pipeline progress bar with step tracking and stall detection)

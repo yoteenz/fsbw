@@ -70,8 +70,10 @@ export async function runExperienceLabValidationShellPipeline(input: {
   previewSessionId: string;
   workspaceId?: string;
   forceRegenerate?: boolean;
+  onStageChange?: (stage: ValidationShellPipelineResult['stage']) => void;
 }): Promise<ValidationShellPipelineResult> {
   let stage: ValidationShellPipelineResult['stage'] = 'compile-preview-spec';
+  input.onStageChange?.(stage);
 
   if (!input.forceRegenerate) {
     const existing = getValidationEnvironmentShell(input.previewSessionId);
@@ -102,6 +104,7 @@ export async function runExperienceLabValidationShellPipeline(input: {
   }
 
   stage = 'generate-shell';
+  input.onStageChange?.(stage);
   const generated = await generateShellPublicUrl(recipe, input.workspaceId);
   if (!generated) {
     return {
@@ -115,6 +118,7 @@ export async function runExperienceLabValidationShellPipeline(input: {
   }
 
   stage = 'register-ephemeral';
+  input.onStageChange?.(stage);
   const now = new Date();
   const shell: ValidationEnvironmentShell = {
     ...recipe,
@@ -127,6 +131,7 @@ export async function runExperienceLabValidationShellPipeline(input: {
   };
 
   registerValidationEnvironmentShell(shell);
+  input.onStageChange?.('complete');
 
   return {
     ok: true,

@@ -5,6 +5,7 @@ import { useCreativeStudioRenderPreview } from '../../../../hooks/useCreativeStu
 import { SceneStackViewport } from '../../studio-os/creative-direction-studio/SceneStackViewport';
 import { CDS_GENESIS_INTERACTION_STYLES } from '../../studio-os/creative-direction-studio/cdsInteractionLayerTheme';
 import { CDS_IMMERSION_STYLES } from '../../studio-os/creative-direction-studio/cdsImmersionTheme';
+import { CreativeStudioPipelineStatusBar } from './CreativeStudioPipelineStatusBar';
 
 type Props = {
   companyId: CreativePreviewCompanyId;
@@ -31,13 +32,11 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
     shellPipelinePhase,
     shellPipelineResult,
     retryPipeline,
+    renderPipelineProgress,
+    runMeta,
+    isBuilding,
   } = useCreativeStudioRenderPreview(companyId, conceptId);
 
-  const isBuilding =
-    shellPipelinePhase === 'compile-spec' ||
-    stack.isStationPipelineActive(stationId) ||
-    status === 'building';
-  const approvedCount = layers.filter((l) => l.publicUrl && l.status !== 'failed').length;
   const stageResults = compileReport?.stages ?? [];
   const failedStage = compileReport?.failedStage;
   const showRetry =
@@ -45,28 +44,22 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
     (shellPipelinePhase === 'failed' ||
       status === 'failed' ||
       compileReport?.success === false ||
-      !shellReady);
+      !shellReady ||
+      runMeta.isStalled);
 
   const pipelineSummary = useMemo(() => {
-    if (shellPipelinePhase === 'compile-spec') return 'Compiling preview spec…';
-    if (shellPipelinePhase === 'generate-shell' || shellPipelinePhase === 'register') {
-      return 'Generating ephemeral environment shell…';
-    }
+    if (renderPipelineProgress.isComplete && compileReport?.headline) return compileReport.headline;
+    if (renderPipelineProgress.isFailed && compileReport?.failedStageDetail) return compileReport.failedStageDetail;
     if (shellPipelineResult?.generationMethod) {
-      return `Shell generated (${shellPipelineResult.generationMethod}) · ${shellPipelineResult.shell?.shellId ?? ''}`;
+      return `Shell via ${shellPipelineResult.generationMethod}`;
     }
-    if (isBuilding && pipeline.phase !== 'idle') {
-      return pipeline.currentLayerLabel
-        ? `Generating ${pipeline.currentLayerLabel}…`
-        : 'Compiling environment…';
+    if (isBuilding && pipeline.phase !== 'idle' && pipeline.currentLayerLabel) {
+      return `Layer stack: ${pipeline.currentLayerLabel}`;
     }
-    if (compileReport?.success) return compileReport.headline;
-    if (compileReport?.failedStageDetail) return compileReport.failedStageDetail;
-    if (compileReport?.headline) return compileReport.headline;
-    if (approvedCount > 0) return `Final render — ${approvedCount} layers composed`;
-    if (!shellReady) return 'Awaiting environment-shell mount…';
-    return 'Invoking Creative Studio rendering pipeline…';
-  }, [approvedCount, compileReport, isBuilding, pipeline, shellPipelinePhase, shellPipelineResult, shellReady]);
+    return renderPipelineProgress.currentStepLabel;
+  }, [compileReport, isBuilding, pipeline, renderPipelineProgress, shellPipelineResult]);
+
+  const showStatusBar = !blindMode;
 
   return (
     <div
@@ -82,6 +75,15 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
       <style>{CDS_IMMERSION_STYLES}</style>
       <style>{XELAB_RENDER_SCOPE_STYLES}</style>
+
+      {showStatusBar ? (
+        <CreativeStudioPipelineStatusBar
+          progress={renderPipelineProgress}
+          runMeta={runMeta}
+          summary={binding.pipelineTarget}
+          compact={false}
+        />
+      ) : null}
 
       <div className="xelab-cds-render">
         <SceneStackViewport
