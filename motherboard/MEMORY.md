@@ -46152,6 +46152,7 @@ Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT —
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-10 — Shell Recovery State Machine Audit (COMPOSER sprint — forensic docs only)
 
 Summary of **full conversation in this chat** (continued from prior Studio HR / Living Organization / HQX / Timeline / Studio Team sprints): User issued **COMPOSER SPRINT — SHELL RECOVERY STATE MACHINE AUDIT**. Mandate: **Do NOT fix** missing shell, add retries, or fabricate shell records. Audit why pipeline never advances after recovery; answer 8 forensic questions; produce state transition diagram; verify build; commit; update documentation.
@@ -46162,3 +46163,22 @@ Summary of **full conversation in this chat** (continued from prior Studio HR / 
 - **Delivered:** `docs/studio-os/world-compiler/SHELL_RECOVERY_STATE_MACHINE_AUDIT.md` — full diagram, module map, ranked failure modes, repair directions (NOT APPLIED). Cross-ref in `experience-lab-phase-3-render-pipeline.md`. `motherboard/CORE.md` Experience Lab bullet updated.
 - **Verification:** `npx tsx scripts/verify-experience-lab-shell-resolution.mjs` — 9/9 passed. `npm run build` — `tsc` fails pre-existing vitest imports in `*.test.ts` (env issue, not audit-related).
 - **No code patches** per mandate.
+=======
+## 2026-07-10 — Vercel deploy fix v2: context-capsule still 1.16GB (public/ file trace)
+
+**User report:** Deploy commit `2643dad` — frontend build passed; **`api/admin/context-capsule` still 1.16GB** (250MB limit). Prior src/ import isolation was insufficient.
+
+**Root cause (confirmed):** Serverless handler referenced `public/downloads/context-capsules` paths, used `fs.readdirSync(process.cwd())` for capsule discovery, and **JSZip** runtime zip generation. Vercel Node File Trace bundled ~**1.2GB `public/assets`** alongside the function.
+
+**Fix v2:**
+- Removed **JSZip** from API (`package.json` dependency removed); zip only built at **prebuild** via `scripts/package-ai-context-capsule-zip.mjs` (system `zip`).
+- Added **`api/_lib/context-capsule-build-manifest.json`** (checksum, download path, size) — written by prebuild; API reads via co-located `_lib` path (no `public/` string literals).
+- **`contextCapsuleExport.ts`:** hardcoded `CONTEXT_CAPSULE_FOLDER_NAME`; validation only; no zip build, no public FS writes.
+- **`context-capsule.ts`:** POST registers prebuilt artifact in Supabase; GET `?download=1` → **302** to static `/downloads/...`; DELETE Supabase-only.
+- **`vercel.json`:** `excludeFiles: public/assets/**,dist/**`; `includeFiles` adds build manifest JSON.
+
+**Verified:** `npm run build` passes; local `@vercel/nft` trace of API chain ≈ **0.03 MB**, zero `public/assets` files.
+
+**Conversation arc (this chat):** Context Capsule Export sprint committed at `b2648f86c`; subsequent Studio OS Bible doc sprints; first deploy fail on `52149ec`; fix attempt `2643dad` (constants isolation); second fail (this entry); fix v2 above.
+
+>>>>>>> 149952a17 (fix: shrink context-capsule serverless bundle — prebuild zip only, no public/ trace)

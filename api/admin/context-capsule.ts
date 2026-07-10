@@ -1,17 +1,11 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import fs from 'node:fs';
-import path from 'node:path';
 import { requireAdmin } from '../_lib/adminAuth.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
 import { writeAuditLog } from '../_lib/auditLog.js';
 import {
-  buildCapsuleZipBuffer,
+  loadBuildManifest,
   loadCapsuleSourceInfo,
-  readPublicHistoryIndex,
-  sha256Hex,
-  updatePublicHistoryIndex,
   validateCapsulePackage,
-  writeCapsuleZipToPublicDownloads,
   zipFileName,
 } from '../_lib/contextCapsuleExport.js';
 import {
@@ -58,55 +52,36 @@ async function saveExportsState(state: ContextCapsuleExportsState): Promise<void
   if (error) throw new Error(error.message);
 }
 
-function mergeHistory(
-  cloud: ContextCapsuleExportRecord[],
-  local: ReturnType<typeof readPublicHistoryIndex>,
-): ContextCapsuleExportRecord[] {
-  const byId = new Map<string, ContextCapsuleExportRecord>();
-  for (const row of local) {
-    byId.set(row.id, {
-      ...row,
-      documentCount: CONTEXT_CAPSULE_REQUIRED_FILES.length,
-      validationPassed: true,
-    });
-  }
-  for (const row of cloud) {
-    byId.set(row.id, row);
-  }
-  return [...byId.values()].sort(
-    (a, b) => new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime(),
-  );
-}
-
 function buildStatus(
   info: ReturnType<typeof loadCapsuleSourceInfo>,
   validation: ReturnType<typeof validateCapsulePackage>,
   latest: ContextCapsuleExportRecord | null,
+  buildManifest: ReturnType<typeof loadBuildManifest> | null,
 ): ContextCapsuleStatus {
   const allPassed = validation.every((v) => v.passed);
   return {
     capsuleVersion: info.version,
     capsuleFolder: info.capsuleFolderName,
-    lastGenerated: latest?.generatedAt ?? null,
+    lastGenerated: latest?.generatedAt ?? buildManifest?.generatedAt ?? null,
     projectVersion: info.projectVersion,
     studioOsVersion: info.studioOsVersion,
     documentCount: CONTEXT_CAPSULE_REQUIRED_FILES.length,
     packageHealth: info.packageHealth,
-    checksumSha256: latest?.checksumSha256 ?? null,
+    checksumSha256: latest?.checksumSha256 ?? buildManifest?.checksumSha256 ?? null,
     generationStatus: allPassed ? 'ready' : 'error',
     compatibility: info.compatibility,
     aiManualVersion: info.aiManualVersion,
     founderProfileVersion: info.founderProfileVersion,
     sprintVersion: info.sprintVersion,
     validation,
-    currentDownloadPath: latest?.downloadPath ?? null,
-    currentZipFileName: latest?.zipFileName ?? null,
+    currentDownloadPath: latest?.downloadPath ?? buildManifest?.downloadPath ?? null,
+    currentZipFileName: latest?.zipFileName ?? buildManifest?.artifact ?? null,
   };
 }
 
 /**
  * GET  /api/admin/context-capsule — status + export history
- * POST /api/admin/context-capsule — export + validate + register download
+ * POST /api/admin/context-capsule — validate + register prebuilt download
  * DELETE /api/admin/context-capsule?id= — remove history entry
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -119,31 +94,33 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!admin) return res.status(403).json({ error: 'Forbidden' });
 
   try {
+    let buildManifest: ReturnType<typeof loadBuildManifest> | null = null;
+    try {
+      buildManifest = loadBuildManifest();
+    } catch {
+      buildManifest = null;
+    }
+
     if (req.method === 'GET') {
       const download = typeof req.query.download === 'string' ? req.query.download : '';
       if (download === '1' || download === 'true') {
-        const info = loadCapsuleSourceInfo();
-        const validation = validateCapsulePackage(info);
-        if (!validation.every((v) => v.passed)) {
-          return res.status(400).json({ error: 'Validation failed', validation });
+        if (!buildManifest) {
+          return res.status(503).json({ error: 'Prebuilt capsule artifact not available' });
         }
-        const buffer = await buildCapsuleZipBuffer(info);
-        const fileName = zipFileName(info.version);
-        res.setHeader('Content-Type', 'application/zip');
-        res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
-        res.setHeader('X-Capsule-Checksum-Sha256', sha256Hex(buffer));
-        return res.status(200).send(buffer);
+        res.setHeader('Location', buildManifest.downloadPath);
+        return res.status(302).end();
       }
 
       const info = loadCapsuleSourceInfo();
       const validation = validateCapsulePackage(info);
       const cloudState = await loadExportsState();
-      const localHistory = readPublicHistoryIndex();
-      const exports = mergeHistory(cloudState.exports, localHistory);
+      const exports = [...cloudState.exports].sort(
+        (a, b) => new Date(b.generatedAt).getTime() - new Date(a.generatedAt).getTime(),
+      );
       const latest = exports[0] ?? null;
 
       return res.status(200).json({
-        status: buildStatus(info, validation, latest),
+        status: buildStatus(info, validation, latest, buildManifest),
         exports,
       });
     }
@@ -156,35 +133,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(400).json({
           error: 'Validation failed',
           validation,
-          status: buildStatus(info, validation, null),
+          status: buildStatus(info, validation, null, buildManifest),
         });
       }
 
-      const buffer = await buildCapsuleZipBuffer(info);
-      const checksumSha256 = sha256Hex(buffer);
+      if (!buildManifest) {
+        return res.status(503).json({ error: 'Prebuilt capsule artifact not available' });
+      }
+
       const generatedAt = new Date().toISOString();
       const id = `export-${generatedAt.replace(/[:.]/g, '-')}`;
       const fileName = zipFileName(info.version);
-
-      let downloadPath = `/downloads/context-capsules/${fileName}`;
-      try {
-        const written = writeCapsuleZipToPublicDownloads(buffer, info.version);
-        downloadPath = written.downloadPath;
-        updatePublicHistoryIndex({
-          id,
-          version: info.version,
-          zipFileName: fileName,
-          generatedAt,
-          projectVersion: info.projectVersion,
-          studioOsVersion: info.studioOsVersion,
-          checksumSha256,
-          sizeBytes: buffer.length,
-          downloadPath,
-        });
-      } catch {
-        // Read-only FS on serverless — download via GET ?download=1 or redeploy prebuild artifact
-        downloadPath = `/api/admin/context-capsule?download=1`;
-      }
 
       const record: ContextCapsuleExportRecord = {
         id,
@@ -194,9 +153,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         projectVersion: info.projectVersion,
         studioOsVersion: info.studioOsVersion,
         documentCount: CONTEXT_CAPSULE_REQUIRED_FILES.length,
-        checksumSha256,
-        sizeBytes: buffer.length,
-        downloadPath,
+        checksumSha256: buildManifest.checksumSha256,
+        sizeBytes: buildManifest.sizeBytes,
+        downloadPath: buildManifest.downloadPath,
         validationPassed: true,
       };
 
@@ -215,7 +174,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           action: 'context_capsule.export',
           resourceType: 'ai_context_capsule',
           resourceId: record.id,
-          details: { version: record.version, checksumSha256, sizeBytes: record.sizeBytes },
+          details: { version: record.version, checksumSha256: record.checksumSha256, sizeBytes: record.sizeBytes },
         });
       } catch {
         /* audit optional */
@@ -226,7 +185,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         message: 'Context Capsule Ready',
         validation,
         export: record,
-        status: buildStatus(info, validation, record),
+        status: buildStatus(info, validation, record, buildManifest),
       });
     }
 
@@ -235,40 +194,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!id) return res.status(400).json({ error: 'id required' });
 
       const cloudState = await loadExportsState();
-      const target = cloudState.exports.find((e) => e.id === id);
       cloudState.exports = cloudState.exports.filter((e) => e.id !== id);
       if (cloudState.lastExportId === id) {
         cloudState.lastExportId = cloudState.exports[0]?.id ?? null;
       }
       await saveExportsState(cloudState);
-
-      if (target?.downloadPath.startsWith('/downloads/context-capsules/')) {
-        const absolute = path.join(
-          process.cwd(),
-          'public',
-          target.downloadPath.replace(/^\//, ''),
-        );
-        if (fs.existsSync(absolute)) {
-          try {
-            fs.unlinkSync(absolute);
-          } catch {
-            /* ignore on read-only */
-          }
-        }
-        const indexPath = path.join(process.cwd(), 'public/downloads/context-capsules/history.json');
-        if (fs.existsSync(indexPath)) {
-          try {
-            const history = JSON.parse(fs.readFileSync(indexPath, 'utf8')) as {
-              schemaVersion: number;
-              exports: ContextCapsuleExportRecord[];
-            };
-            history.exports = history.exports.filter((e) => e.id !== id);
-            fs.writeFileSync(indexPath, JSON.stringify(history, null, 2) + '\n');
-          } catch {
-            /* ignore */
-          }
-        }
-      }
 
       return res.status(200).json({ ok: true, deletedId: id });
     }

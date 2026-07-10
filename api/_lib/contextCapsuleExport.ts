@@ -1,13 +1,14 @@
 /**
- * AI Context Capsule™ packager — read-only; never modifies capsule source files.
+ * AI Context Capsule™ — API-safe packager (read-only; no runtime ZIP generation).
+ * Prebuild writes `context-capsule-build-manifest.json`; static zip is served from /downloads/.
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import crypto from 'node:crypto';
-import JSZip from 'jszip';
+import { fileURLToPath } from 'node:url';
 import {
-  CONTEXT_CAPSULE_READING_ORDER,
+  CONTEXT_CAPSULE_FOLDER_NAME,
   CONTEXT_CAPSULE_REQUIRED_FILES,
+  CONTEXT_CAPSULE_READING_ORDER,
   type ContextCapsuleValidationCheck,
 } from './contextCapsuleConstants.js';
 
@@ -25,20 +26,26 @@ export type CapsuleSourceInfo = {
   sprintVersion: string;
 };
 
+export type CapsuleBuildManifest = {
+  schemaVersion: 1;
+  artifact: string;
+  capsuleVersion: string;
+  capsuleFolder: string;
+  generatedAt: string;
+  fileCount: number;
+  checksumSha256: string;
+  sizeBytes: number;
+  downloadPath: string;
+};
+
+const LIB_DIR = path.dirname(fileURLToPath(import.meta.url));
+
 function repoRoot(): string {
   return path.resolve(process.cwd());
 }
 
-export function findCapsuleDir(root = repoRoot()): string {
-  const entries = fs.readdirSync(root, { withFileTypes: true });
-  const dirs = entries
-    .filter((e) => e.isDirectory() && /^StudioOS_ContextCapsule_v/i.test(e.name))
-    .map((e) => e.name)
-    .sort();
-  if (dirs.length === 0) {
-    throw new Error('No StudioOS_ContextCapsule_v* directory at repo root.');
-  }
-  return path.join(root, dirs[dirs.length - 1]!);
+export function getCapsuleDir(root = repoRoot()): string {
+  return path.join(root, CONTEXT_CAPSULE_FOLDER_NAME);
 }
 
 function parseManifestField(manifest: string, label: string): string | null {
@@ -67,8 +74,8 @@ function readHeaderVersion(content: string, fallback: string): string {
 }
 
 export function loadCapsuleSourceInfo(root = repoRoot()): CapsuleSourceInfo {
-  const capsuleDir = findCapsuleDir(root);
-  const capsuleFolderName = path.basename(capsuleDir);
+  const capsuleDir = getCapsuleDir(root);
+  const capsuleFolderName = CONTEXT_CAPSULE_FOLDER_NAME;
   const manifestPath = path.join(capsuleDir, 'MANIFEST.md');
   const manifest = fs.existsSync(manifestPath) ? fs.readFileSync(manifestPath, 'utf8') : '';
 
@@ -168,92 +175,15 @@ export function validateCapsulePackage(info: CapsuleSourceInfo): ContextCapsuleV
   return checks;
 }
 
-export async function buildCapsuleZipBuffer(info: CapsuleSourceInfo): Promise<Buffer> {
-  const zip = new JSZip();
-  const folder = zip.folder(info.capsuleFolderName);
-  if (!folder) throw new Error('Failed to create zip folder');
-
-  for (const file of CONTEXT_CAPSULE_REQUIRED_FILES) {
-    const filePath = path.join(info.capsuleDir, file);
-    if (!fs.existsSync(filePath)) {
-      throw new Error(`Missing required capsule file: ${file}`);
-    }
-    folder.file(file, fs.readFileSync(filePath));
+export function loadBuildManifest(): CapsuleBuildManifest {
+  const manifestPath = path.join(LIB_DIR, 'context-capsule-build-manifest.json');
+  const raw = JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as CapsuleBuildManifest;
+  if (raw.schemaVersion !== 1 || !raw.downloadPath || !raw.checksumSha256) {
+    throw new Error('Invalid context-capsule-build-manifest.json');
   }
-
-  return zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE', compressionOptions: { level: 6 } });
-}
-
-export function sha256Hex(buffer: Buffer): string {
-  return crypto.createHash('sha256').update(buffer).digest('hex');
+  return raw;
 }
 
 export function zipFileName(version: string): string {
   return `StudioOS_ContextCapsule_v${version}.zip`;
-}
-
-export function writeCapsuleZipToPublicDownloads(
-  buffer: Buffer,
-  version: string,
-  root = repoRoot(),
-): { downloadPath: string; absolutePath: string } {
-  const outDir = path.join(root, 'public/downloads/context-capsules');
-  fs.mkdirSync(outDir, { recursive: true });
-  const fileName = zipFileName(version);
-  const absolutePath = path.join(outDir, fileName);
-  fs.writeFileSync(absolutePath, buffer);
-  return {
-    downloadPath: `/downloads/context-capsules/${fileName}`,
-    absolutePath,
-  };
-}
-
-export function updatePublicHistoryIndex(
-  record: {
-    id: string;
-    version: string;
-    zipFileName: string;
-    generatedAt: string;
-    projectVersion: string;
-    studioOsVersion: string;
-    checksumSha256: string;
-    sizeBytes: number;
-    downloadPath: string;
-  },
-  root = repoRoot(),
-): void {
-  const outDir = path.join(root, 'public/downloads/context-capsules');
-  fs.mkdirSync(outDir, { recursive: true });
-  const indexPath = path.join(outDir, 'history.json');
-  let history: { schemaVersion: number; exports: typeof record[] } = { schemaVersion: 1, exports: [] };
-  if (fs.existsSync(indexPath)) {
-    try {
-      history = JSON.parse(fs.readFileSync(indexPath, 'utf8')) as typeof history;
-    } catch {
-      history = { schemaVersion: 1, exports: [] };
-    }
-  }
-  history.exports = [record, ...history.exports.filter((e) => e.id !== record.id)];
-  fs.writeFileSync(indexPath, JSON.stringify(history, null, 2) + '\n');
-}
-
-export function readPublicHistoryIndex(root = repoRoot()): Array<{
-  id: string;
-  version: string;
-  zipFileName: string;
-  generatedAt: string;
-  projectVersion: string;
-  studioOsVersion: string;
-  checksumSha256: string;
-  sizeBytes: number;
-  downloadPath: string;
-}> {
-  const indexPath = path.join(root, 'public/downloads/context-capsules/history.json');
-  if (!fs.existsSync(indexPath)) return [];
-  try {
-    const parsed = JSON.parse(fs.readFileSync(indexPath, 'utf8')) as { exports?: unknown[] };
-    return Array.isArray(parsed.exports) ? (parsed.exports as ReturnType<typeof readPublicHistoryIndex>) : [];
-  } catch {
-    return [];
-  }
 }

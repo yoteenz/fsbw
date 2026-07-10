@@ -7,7 +7,5 @@
   "fileCount": 14,
   "checksumSha256": "d81f3943db23cd7dd2c444f4d17fd08383c1f3eef003233894497c19e3d8b4e6",
   "sizeBytes": 38043,
-  "downloadUrls": {
-    "production": "/downloads/context-capsules/StudioOS_ContextCapsule_v0.1.0.zip"
-  }
+  "downloadPath": "/downloads/context-capsules/StudioOS_ContextCapsule_v0.1.0.zip"
 }

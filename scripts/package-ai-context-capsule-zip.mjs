@@ -137,6 +137,22 @@ function packageCapsule() {
   fs.writeFileSync(path.join(publicOut, 'manifest.json'), JSON.stringify(sidecar, null, 2) + '\n');
   fs.writeFileSync(path.join(releasesOut, 'manifest.json'), JSON.stringify(sidecar, null, 2) + '\n');
 
+  const apiBuildManifest = {
+    schemaVersion: 1,
+    artifact: fileName,
+    capsuleVersion: version,
+    capsuleFolder: capsuleFolderName,
+    generatedAt,
+    fileCount: REQUIRED_FILES.length,
+    checksumSha256,
+    sizeBytes: stat.size,
+    downloadPath,
+  };
+  fs.writeFileSync(
+    path.join(ROOT, 'api/_lib/context-capsule-build-manifest.json'),
+    JSON.stringify(apiBuildManifest, null, 2) + '\n',
+  );
+
   console.log(`\nAI Context Capsule™ packaged: ${downloadPath} (${(stat.size / 1024).toFixed(1)} KB)\n`);
 }
 

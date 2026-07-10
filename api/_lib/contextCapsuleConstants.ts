@@ -5,6 +5,9 @@
 
 export const CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY = 'studioOsContextCapsuleExports_v1';
 
+/** Fixed capsule folder at repo root — included via vercel.json includeFiles. */
+export const CONTEXT_CAPSULE_FOLDER_NAME = 'StudioOS_ContextCapsule_v0.1';
+
 export const CONTEXT_CAPSULE_DOWNLOAD_BASE = '/downloads/context-capsules';
 
 export const CONTEXT_CAPSULE_REQUIRED_FILES = [
