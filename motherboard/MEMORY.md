@@ -46128,6 +46128,14 @@ Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT —
 
 ---
 
+## 2026-07-10 — Studio HR™ (COMPOSER sprint — docs only)
+
+Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT — STUDIO HR™** — Human Resources & Workforce Intelligence System. **Not** support, bug reporting, or customer service — **foundational organizational architecture**. Mission: Studio HR as permanent department ensuring Studio Team health, performance, growth, evolution; founders work with exceptional HR not "report AI problems." Golden rule: never expose model changes — translate infrastructure to organizational evolution (coaching · training · transfer · introduce better-matched professional). Mandate: **Do not implement HR functionality** — philosophy first.
+
+- **Context:** Studio Professionals are living org members — develop · evaluate · mentor · promote · transfer · replace when necessary. HR responsibilities: performance/compatibility/knowledge audits · skill gaps · communication/creative quality reviews · founder feedback · transfers · development · training · mentorship · promotions · hiring · succession · retirement · recognition. Founder requests (*"Ava doesn't understand luxury"*, *"Marcus too technical"*, *"want fashion experience"*, *"strategist not challenging enough"*) = **professional staffing requests**. HR Investigation: conversation · project · communication · knowledge · compatibility · manager · Genesis observations · collaboration · workload · growth. Outcomes in organizational language only.
+- **Delivered:** **`STUDIO_OS_BIBLE/STUDIO_HR.md`** v1.0.0 — Workforce Intelligence Architecture · Performance Review System · Compatibility Engine · Professional Development Framework · Founder Staffing Experience · Succession Planning Strategy · HR case schema (`HR-YYYY-NNNN`) · outcome taxonomy · response templates · Phases 0–10 roadmap. **`STUDIO_OS_BIBLE/README.md`** · cross-refs in **`THE_STUDIO_TEAM.md`** · **`THE_LIVING_ORGANIZATION.md`**. Proposed **`src/studio-os-core/studio-hr/`** gated registry writes. Location: Operations Campus · Studio HR.
+- **Pentad stack:** Living Organization · Studio Team · **Studio HR** · HQX · Living Timeline.
+- **Changes:** `STUDIO_OS_BIBLE/STUDIO_HR.md`, README, cross-refs, `motherboard/CORE.md`. No code.
 - **Conventions:** HR speaks organizational language; development before replacement (unless waiver); continuity narrative on professional transitions; Chronicle on material outcomes.
 
 ---
@@ -46142,3 +46150,15 @@ Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT —
 
 **Verified:** `npm run build` passes.
 
+---
+
+## 2026-07-10 — Shell Recovery State Machine Audit (COMPOSER sprint — forensic docs only)
+
+Summary of **full conversation in this chat** (continued from prior Studio HR / Living Organization / HQX / Timeline / Studio Team sprints): User issued **COMPOSER SPRINT — SHELL RECOVERY STATE MACHINE AUDIT**. Mandate: **Do NOT fix** missing shell, add retries, or fabricate shell records. Audit why pipeline never advances after recovery; answer 8 forensic questions; produce state transition diagram; verify build; commit; update documentation.
+
+- **Context:** Compiler already detects missing shell and reports recovery path. Investigation traced Experience Lab orchestration (`experience-lab-render-runtime.ts` → `validation-shell-pipeline.ts` → `ephemeral-validation-registry.ts` → `store.ts` / `immutable-shell.ts` → `compile-pipeline.ts` → `render-pipeline-progress.ts` / `shell-diagnostics.ts`).
+- **Findings (8 questions):** (1) Ephemeral shell **is generated** when `generate-shell` succeeds. (2) **Registered** via `registerValidationEnvironmentShell`. (3) Executable record **conditional** — `recipeToLayerRecord` produces `draft_ready`+`publicUrl` but `getSceneStackLayerRecord` must resolve overlay (global validation mode + matching `previewSessionId` + station scope). (4) `compileWorldStation` **continues** after `load-shell` failure (stages append) but `report.success` stays false. (5) **Stuck at LOAD_SHELL** semantically — UI/runtime never advance despite later stages running. (6) Recovery callback **does not** return early on success; early return is post-compile `!report.success` gate. (7) Stage controller **waits on divergent signals** — recovery message uses session registry; mount readiness uses overlay lock; `compileFailedStage` pins UI. (8) **Missing transition:** `load-shell (success:true) → report.success → shellPipelinePhase:ready`.
+- **Root cause class:** Registry vs overlay resolution split in `shell-diagnostics.ts` (recovery when `getValidationEnvironmentShell` hits) vs `resolveShellLockState` (needs `getEphemeralLayerRecord`). Contributing: H3 global validation session race (compare mode), H4 `forceRegenerate` invalidation loop, misleading recovery UX.
+- **Delivered:** `docs/studio-os/world-compiler/SHELL_RECOVERY_STATE_MACHINE_AUDIT.md` — full diagram, module map, ranked failure modes, repair directions (NOT APPLIED). Cross-ref in `experience-lab-phase-3-render-pipeline.md`. `motherboard/CORE.md` Experience Lab bullet updated.
+- **Verification:** `npx tsx scripts/verify-experience-lab-shell-resolution.mjs` — 9/9 passed. `npm run build` — `tsc` fails pre-existing vitest imports in `*.test.ts` (env issue, not audit-related).
+- **No code patches** per mandate.

@@ -89,6 +89,12 @@ Run pipeline
 
 Verify: `npx tsx scripts/verify-experience-lab-shell-resolution.mjs`
 
+## Shell Recovery State Machine Audit (2026-07-10)
+
+Forensic audit — **no fix applied**. Documents why recovery messaging can show an ephemeral shell registered while the pipeline remains pinned at **Load Shell™** (registry vs overlay resolution split, runtime `report.success` gate).
+
+See: [`world-compiler/SHELL_RECOVERY_STATE_MACHINE_AUDIT.md`](./world-compiler/SHELL_RECOVERY_STATE_MACHINE_AUDIT.md)
+
 ## Hotfix — LOAD SHELL rejection (2026-07-10)
 
 **Root cause:** World Compiler `load-shell` requires `environment-shell.publicUrl`. Experience Lab (a) skipped `ensureStation` when any non-shell layer existed, (b) ran compile without a shell, (c) treated `draft_ready` shells as unlocked — blocking downstream layer generation and package mount in validation mode.
