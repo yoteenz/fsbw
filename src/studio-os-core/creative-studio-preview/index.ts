@@ -16,6 +16,11 @@ export {
   type EnvironmentSceneVariant,
 } from './environment-scene-profiles';
 export {
+  resolveCreativePreviewRenderBinding,
+  CREATIVE_PREVIEW_RENDER_BINDINGS,
+  type CreativePreviewRenderBinding,
+} from './render-bindings';
+export {
   CREATIVE_PREVIEW_READ_ONLY,
   type CreativePreviewCompanyId,
   type CreativePreviewConcept,

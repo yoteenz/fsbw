@@ -2,14 +2,13 @@ import type { CSSProperties } from 'react';
 import {
   CREATIVE_PREVIEW_COMPANY_IDS,
   CREATIVE_PREVIEW_COMPANY_LABELS,
-  CREATIVE_PREVIEW_READ_ONLY,
   resolveEnvironmentSceneProfile,
   type CreativePreviewCompanyId,
   type CreativePreviewConcept,
   type CreativeStudioPreviewResult,
 } from '../../../../studio-os-core/creative-studio-preview';
 import { useCreativeStudioPreview } from '../../../../hooks/useCreativeStudioPreview';
-import { CreativePreviewEnvironment } from './CreativePreviewEnvironment';
+import { CreativeStudioRenderPreview } from './CreativeStudioRenderPreview';
 
 const sectionStyle: CSSProperties = {
   padding: '0 16px 20px',
@@ -55,8 +54,7 @@ export function CreativeIntelligencePanel() {
         </p>
         <h1 style={{ margin: '4px 0 8px', fontSize: '16px' }}>Environmental Intelligence Validation</h1>
         <p style={{ margin: 0, color: '#555', fontSize: '11px' }}>
-          Cinematic environment previews · {CREATIVE_PREVIEW_READ_ONLY ? 'read-only' : 'write enabled'} · identity
-          without logos, labels, or brand colors
+          Creative Studio render pipeline · World Compiler™ final output · identity without logos or labels
         </p>
         <div style={{ marginTop: 12 }}>
           <button type="button" style={btnStyle} onClick={recompile}>
@@ -232,9 +230,8 @@ function PreviewFlow({
     <>
       <section style={sectionStyle}>
         <h2 style={sectionHeading}>{blindMode ? 'Environment — no branding' : '3. Cinematic environment'}</h2>
-        <CreativePreviewEnvironment
+        <CreativeStudioRenderPreview
           companyId={preview.companyId}
-          archetype={preview.architectureArchetype}
           conceptId={conceptId}
           blindMode={blindMode}
         />
@@ -360,9 +357,8 @@ function CompareAllCompanies({
                 </div>
               )}
               <div style={{ padding: 12 }}>
-                <CreativePreviewEnvironment
+                <CreativeStudioRenderPreview
                   companyId={id}
-                  archetype={p.architectureArchetype}
                   conceptId="a"
                   blindMode={blindMode}
                 />

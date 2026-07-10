@@ -27,7 +27,7 @@ Cinematic environmental preview (a PLACE — not a UI)
 | **Environment scene profiles** | `environment-scene-profiles.ts` | Per-company × Preview A/B/C architectural keywords, atmosphere, circulation |
 | **Hook** | `src/hooks/useCreativeStudioPreview.ts` | Company/concept selection, blind mode, recompile |
 | **Mode shell** | `ExperienceLabModeShell.tsx` | Mode 1 Runtime · Mode 2 Environmental Intelligence |
-| **Cinematic preview** | `CreativePreviewEnvironment.tsx` | CSS/SVG architectural scenes — no wireframes, no in-scene text |
+| **Cinematic preview** | `CreativeStudioRenderPreview.tsx` | World Compiler™ + `SceneStackViewport` — final CDS render (Phase 3) |
 
 ## Company targets
 
