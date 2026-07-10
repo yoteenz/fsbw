@@ -17,6 +17,8 @@ import StudioOsLiveRuntimePage from '../pages/debug/studio-os-live-runtime/page'
 import WorldCompilerInvestigationPage from '../pages/debug/world-compiler-investigation/page';
 import ExpertCapturePage from '../pages/expert-capture/page';
 import AllInOnePermittingCapturePage from '../pages/expert-capture/all-in-one-permitting/page';
+import TaxPreparationCapturePage from '../pages/expert-capture/tax-preparation/page';
+import ExpertCaptureResumePage from '../pages/expert-capture/resume/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import LoadingScreen from '../components/base/LoadingScreen';
@@ -37,6 +39,8 @@ export const STUDIO_DEBUG_PATHS = [
   '/__world-compiler-investigation',
   '/expert-capture',
   '/expert-capture/all-in-one-permitting',
+  '/expert-capture/tax-preparation',
+  '/expert-capture/resume',
 ] as const;
 
 export function isStudioDebugPath(pathname: string): boolean {
@@ -66,6 +70,8 @@ export default function StudioDebugRoutes() {
       <Route path="/__world-compiler-investigation" element={<WorldCompilerInvestigationPage />} />
       <Route path="/expert-capture" element={<ExpertCapturePage />} />
       <Route path="/expert-capture/all-in-one-permitting" element={<AllInOnePermittingCapturePage />} />
+      <Route path="/expert-capture/tax-preparation" element={<TaxPreparationCapturePage />} />
+      <Route path="/expert-capture/resume" element={<ExpertCaptureResumePage />} />
       <Route
         path="*"
         element={

@@ -6,6 +6,8 @@ import { EXPERT_CAPTURE_FUTURE_PLACEHOLDERS } from '../placeholders';
 
 export const DEFAULT_EXPERT_CAPTURE_PROFILE: ExpertCaptureProfile = {
   id: 'generic-v1',
+  companyId: 'studio-os',
+  interviewTemplateVersion: '1',
   sessionStorageKey: 'studioExpertCaptureSession_v1',
   route: EXPERT_CAPTURE_ROUTE,
   branding: {

@@ -38,14 +38,19 @@ export type KnowledgeStatementType =
 
 export type ExpertCapturePhase =
   | 'landing'
+  | 'welcome_back'
   | 'consent'
   | 'media_setup'
   | 'interview'
   | 'understanding_review'
   | 'clarify'
+  | 'interrupted_recovery'
   | 'session_complete'
   | 'knowledge_review'
-  | 'export';
+  | 'export'
+  | 'save_exit'
+  | 'session_dashboard'
+  | 'device_conflict';
 
 export type AnswerConfirmation = 'correct' | 'partial' | 'misunderstood' | null;
 

@@ -46365,3 +46365,15 @@ Summary of **full conversation in this chat**: Investigation recorder boot wirin
 - **Commit:** `870939a49`
 - **URL:** https://fsbw.vercel.app/expert-capture
 
+---
+
+## 2026-07-10 — All In One Permitting Expert Capture (profile-based)
+
+Summary of **full conversation in this chat**: Investigation recorder boot (`8a8d1f0b6`), generic Expert Capture MVP v1 (`870939a49`). User approved **HIGH priority sprint** — dedicated **All In One permitting** Expert Knowledge Capture interview reusing exact MVP UI/architecture; only interview intelligence customized.
+
+- **Architecture:** Profile-based Expert Capture — `ExpertCaptureProfile` in `src/studio-os-core/expert-capture/profiles/` with branding, question bank, session storage key, AI industry context, session summary builder, export bundle builder, future placeholders, optional local follow-ups. Generic MVP unchanged at `/expert-capture`; permitting at `/expert-capture/all-in-one-permitting`.
+- **All In One profile** (`all-in-one-permitting-profile.ts`): branding Studio Institute / Expert Knowledge Capture / Permitting Specialist / All In One / Training Session; locked role+company; **29 permitting questions** covering business overview, intake, permit types, jurisdictions, submission, docs, inspections, revisions, rejections, expediting, contractor/architect/engineering coordination, municipality comms, fees, internal org, software/storage, time/pricing, customer updates, city differences, QA, exceptions, mistakes, delays, escalation, prioritization, never-delegate, lessons learned, never-do; permitting-specific follow-up detector; **16 export MD files** (EXPERT_PROFILE, BUSINESS_OVERVIEW, WORKFLOWS, PERMIT_TYPES, MUNICIPALITY_RULES, DECISION_RULES, DOCUMENT_REQUIREMENTS, QUALITY_CONTROL, CUSTOMER_COMMUNICATION, ESCALATION_RULES, COMMON_FAILURES, BEST_PRACTICES, EDGE_CASES, KNOWLEDGE_GAPS, SESSION_TRANSCRIPT, SESSION_SUMMARY); extended session summary (business areas, municipality rules, best practices, remaining topics); permitting future placeholders (Permit Knowledge Graph, Jurisdiction Database, Studio Permit Worker, etc.).
+- **Extended knowledge types:** municipality_rule, required_document, inspection_rule, submission_rule, escalation_rule, time_estimate, common_failure, best_practice, personal_technique, customer_experience_rule, etc.
+- **Refactors:** `session-storage.ts` profile-aware keys; `useExpertCaptureSession(profile)`; shared `ExpertCaptureInterviewView.tsx`; `export-service.ts` delegates to profile; API `profileId` + `industryContext` for permitting-aware OpenAI prompts; `session.meta.profileId` on all sessions.
+- **URL:** https://fsbw.vercel.app/expert-capture/all-in-one-permitting
+

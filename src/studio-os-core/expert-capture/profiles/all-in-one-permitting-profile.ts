@@ -33,6 +33,8 @@ function buildPermittingFollowUp(transcript: string, question: string): string |
 
 export const ALL_IN_ONE_PERMITTING_PROFILE: ExpertCaptureProfile = {
   id: 'all-in-one-permitting-v1',
+  companyId: 'all-in-one',
+  interviewTemplateVersion: '1',
   sessionStorageKey: ALL_IN_ONE_PERMITTING_SESSION_KEY,
   route: ALL_IN_ONE_PERMITTING_ROUTE,
   branding: {

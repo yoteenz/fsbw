@@ -26,9 +26,11 @@ export type { ExpertCaptureExportBundle } from './export-service';
 export {
   DEFAULT_EXPERT_CAPTURE_PROFILE,
   ALL_IN_ONE_PERMITTING_PROFILE,
+  TAX_PREPARATION_PROFILE,
   getExpertCaptureProfile,
 } from './profiles';
 export type { ExpertCaptureProfile, ExpertCaptureBranding } from './profiles';
+export * from './persistence';
 export {
   requestMediaStream,
   attachMirroredPreview,

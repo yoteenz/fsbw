@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useExpertCaptureSession } from '../../hooks/useExpertCaptureSession';
 import { CONSENT_RETENTION_DAYS, downloadExportBundle, loadMediaBlob } from '../../studio-os-core/expert-capture';
 import type { ExpertCaptureProfile } from '../../studio-os-core/expert-capture/profiles/profile-types';
+import { ExpertCaptureSaveExitButton, ExpertCaptureSaveStatusBar } from './ExpertCapturePersistenceUi';
 
 const styles = {
   page: {
@@ -114,6 +115,199 @@ export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCapture
 
   const displayQuestion =
     cap.pendingFollowUp ?? cap.currentAnswer?.questionText ?? cap.currentQuestion?.text ?? cap.aiMessage;
+
+  const saveBar = (
+    <ExpertCaptureSaveStatusBar
+      status={cap.saveStatus}
+      message={cap.saveMessage}
+      lastSavedAt={cap.lastSavedAt}
+      lastServerConfirmedAt={cap.lastServerConfirmedAt}
+    />
+  );
+
+  if (cap.phase === 'welcome_back' && cap.session) {
+    return (
+      <div style={styles.page}>
+        <div style={styles.container}>
+          {saveBar}
+          <h1 style={styles.h1}>Welcome Back</h1>
+          <p style={styles.sub}>Your interview is saved.</p>
+          <div style={styles.card}>
+            <p style={{ margin: '0 0 8px' }}>
+              <strong>Progress:</strong> {cap.progressPercent}%
+            </p>
+            {cap.lastCompletedSection ? (
+              <p style={{ margin: '0 0 8px' }}>
+                <strong>Last completed section:</strong> {cap.lastCompletedSection}
+              </p>
+            ) : null}
+            {cap.currentQuestionLabel ? (
+              <p style={{ margin: '0 0 8px' }}>
+                <strong>Current question:</strong> {cap.currentQuestionLabel}
+              </p>
+            ) : null}
+            {cap.lastSavedAt ? (
+              <p style={{ margin: 0, fontSize: 13, color: '#737373' }}>
+                <strong>Last saved:</strong> {new Date(cap.lastSavedAt).toLocaleString()}
+              </p>
+            ) : null}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <Btn primary onClick={() => void cap.resumeInterview()}>
+              Resume Interview
+            </Btn>
+            <Btn onClick={cap.goToSessionDashboard}>Review Saved Answers</Btn>
+            <Btn onClick={() => setShowRestartPrompt(true)}>Start Over</Btn>
+            <Btn onClick={() => setShowDeletePrompt(true)}>Delete Session</Btn>
+          </div>
+          {showRestartPrompt ? (
+            <div style={{ ...styles.card, marginTop: 16 }}>
+              <p>Start over?</p>
+              <Btn onClick={() => void cap.restartSession('archive')}>Restart & Archive Draft</Btn>
+              <Btn primary onClick={() => void cap.restartSession('delete')}>
+                Delete Everything & Restart
+              </Btn>
+              <Btn onClick={() => setShowRestartPrompt(false)}>Cancel</Btn>
+            </div>
+          ) : null}
+          {showDeletePrompt ? (
+            <div style={{ ...styles.card, marginTop: 16 }}>
+              <p>Delete this saved session permanently?</p>
+              <Btn primary onClick={() => void cap.restartSession('delete')}>
+                Delete Session
+              </Btn>
+              <Btn onClick={() => setShowDeletePrompt(false)}>Cancel</Btn>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
+
+  if (cap.phase === 'save_exit') {
+    return (
+      <div style={styles.page}>
+        <div style={styles.container}>
+          {saveBar}
+          <h1 style={styles.h1}>Progress Saved</h1>
+          <p style={styles.sub}>Your progress has been saved. You can return anytime using this device or your secure resume link.</p>
+          {cap.resumeLink ? (
+            <div style={styles.card}>
+              <p style={{ fontSize: 13, color: '#525252', wordBreak: 'break-all' }}>{cap.resumeLink}</p>
+              <Btn
+                onClick={() => {
+                  void navigator.clipboard.writeText(cap.resumeLink ?? '');
+                }}
+              >
+                Copy Resume Link
+              </Btn>
+            </div>
+          ) : null}
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <Btn primary onClick={() => void cap.resumeInterview()}>
+              Continue Interview
+            </Btn>
+            <Btn onClick={cap.goToWelcomeBack}>Return to Studio Institute</Btn>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (cap.phase === 'session_dashboard' && cap.session) {
+    const answers = cap.session.answers.filter((a) => !a.deleted);
+    return (
+      <div style={styles.page}>
+        <div style={styles.container}>
+          {saveBar}
+          <h1 style={styles.h1}>Saved Interview</h1>
+          <div style={styles.card}>
+            <p style={{ margin: '0 0 8px' }}>
+              <strong>{branding.captureTitle}</strong> — {branding.company}
+            </p>
+            <p style={{ margin: '0 0 8px' }}>Profession: {branding.profession}</p>
+            <p style={{ margin: '0 0 8px' }}>Status: {cap.session.meta.status}</p>
+            <p style={{ margin: '0 0 8px' }}>Progress: {cap.progressPercent}%</p>
+            <p style={{ margin: '0 0 8px' }}>Approved answers: {answers.filter((a) => a.status === 'approved').length}</p>
+            <p style={{ margin: '0 0 8px' }}>Pending reviews: {answers.filter((a) => a.status !== 'approved' && !a.skipped).length}</p>
+            <p style={{ margin: '0 0 8px' }}>Skipped: {answers.filter((a) => a.skipped).length}</p>
+            {cap.lastSavedAt ? <p style={{ margin: 0 }}>Last saved: {new Date(cap.lastSavedAt).toLocaleString()}</p> : null}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <Btn primary onClick={() => void cap.resumeInterview()}>
+              Resume
+            </Btn>
+            <Btn onClick={cap.goToKnowledgeReview}>Review Answers</Btn>
+            <Btn
+              onClick={() => {
+                if (cap.session) downloadExportBundle(cap.session);
+              }}
+            >
+              Export Current Draft
+            </Btn>
+            <Btn onClick={() => setShowRestartPrompt(true)}>Start Over</Btn>
+            <Btn onClick={() => setShowDeletePrompt(true)}>Delete Session</Btn>
+          </div>
+          {showRestartPrompt ? (
+            <div style={{ ...styles.card, marginTop: 16 }}>
+              <Btn onClick={() => void cap.restartSession('archive')}>Restart & Archive</Btn>
+              <Btn primary onClick={() => void cap.restartSession('delete')}>
+                Delete Everything & Restart
+              </Btn>
+            </div>
+          ) : null}
+          {showDeletePrompt ? (
+            <div style={{ ...styles.card, marginTop: 16 }}>
+              <Btn primary onClick={() => void cap.restartSession('delete')}>
+                Confirm Delete
+              </Btn>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    );
+  }
+
+  if (cap.phase === 'interrupted_recovery' && cap.interruptedAnswer) {
+    const ia = cap.interruptedAnswer;
+    return (
+      <div style={styles.page}>
+        <div style={styles.container}>
+          {saveBar}
+          <h1 style={styles.h1}>Interrupted Answer</h1>
+          <p style={styles.sub}>Your previous recording was interrupted. Partial recordings are never used for training until you approve them.</p>
+          <div style={styles.card}>
+            <p style={{ fontWeight: 600 }}>{ia.questionText}</p>
+            {ia.partialTranscript ? <p style={{ fontSize: 14, color: '#525252' }}>{ia.partialTranscript}</p> : null}
+          </div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            <Btn primary onClick={cap.resumeInterruptedAnswer}>
+              Resume Answer
+            </Btn>
+            <Btn onClick={() => void cap.redoAnswer()}>Redo Answer</Btn>
+            <Btn onClick={cap.discardInterruptedAnswer}>Discard Partial Recording</Btn>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (cap.phase === 'device_conflict') {
+    return (
+      <div style={styles.page}>
+        <div style={styles.container}>
+          <h1 style={styles.h1}>Open on Another Device</h1>
+          <p style={styles.sub}>This interview is open on another device. Continue here only if you intend to work from this device.</p>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            <Btn primary onClick={() => void cap.claimDeviceAndContinue()}>
+              Continue Here
+            </Btn>
+            <Btn onClick={cap.goToWelcomeBack}>Return to Other Device</Btn>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (cap.phase === 'landing') {
     return (
@@ -297,11 +491,12 @@ export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCapture
               Review Knowledge
             </Btn>
             <Btn onClick={() => setShowRestartPrompt(true)}>Restart Session</Btn>
+          <ExpertCaptureSaveExitButton onClick={() => void cap.saveAndExit()} />
           </div>
           {showRestartPrompt ? (
             <div style={{ ...styles.card, marginTop: 16 }}>
               <p>Restart or delete entire session?</p>
-              <Btn primary onClick={() => void cap.restartSession()}>
+              <Btn primary onClick={() => void cap.restartSession('delete')}>
                 Delete Entire Session & Restart
               </Btn>
             </div>
@@ -386,6 +581,7 @@ export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCapture
   return (
     <div style={styles.page}>
       <div style={styles.container}>
+        {saveBar}
         <header style={{ marginBottom: 20, borderBottom: '1px solid #e5e5e5', paddingBottom: 16 }}>
           <p style={{ margin: 0, fontSize: 13, color: '#a3a3a3' }}>{branding.sessionLabel}</p>
           <p style={{ margin: '4px 0', fontSize: 15 }}>
@@ -459,13 +655,14 @@ export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCapture
             Redo Answer
           </Btn>
           <Btn onClick={cap.skipQuestion}>Skip Question</Btn>
+          <ExpertCaptureSaveExitButton onClick={() => void cap.saveAndExit()} disabled={cap.processing} />
           <Btn onClick={() => setShowRestartPrompt(true)}>End Session</Btn>
         </div>
 
         {showRestartPrompt ? (
           <div style={{ ...styles.card, marginTop: 16 }}>
             <p>End session and delete all data?</p>
-            <Btn primary onClick={() => void cap.restartSession()}>
+            <Btn primary onClick={() => void cap.restartSession('delete')}>
               Delete Entire Session
             </Btn>
             <Btn onClick={() => setShowRestartPrompt(false)}>Cancel</Btn>

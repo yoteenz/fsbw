@@ -12,6 +12,8 @@ export type ExpertCaptureBranding = {
 
 export type ExpertCaptureProfile = {
   id: string;
+  companyId: string;
+  interviewTemplateVersion: string;
   sessionStorageKey: string;
   route: string;
   branding: ExpertCaptureBranding;
