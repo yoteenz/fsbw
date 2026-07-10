@@ -7,9 +7,9 @@
 
 ## Current sprint
 
-**AI Context Capsule™ — Universal AI Handoff System (architecture spec v2.0.0)**
+**AI Context Protocol™ — Institutional Memory Transfer (architecture spec v1.0.0)**
 
-Canonical specification for single-file `.studiocapsule` portable AI OS. No HQ Archive UI in this sprint — design only.
+Canonical protocol for onboarding any AI into Studio OS — extends AI Context Capsule™ from documentation export to organizational understanding clone. Fifteen protocol modules + manifest v3 schema. **No implementation** — specification only. Capsule v2 ZIP layout remains; v3 adds protocol paths per `AI_CONTEXT_PROTOCOL_SPECIFICATION.md`.
 
 ---
 

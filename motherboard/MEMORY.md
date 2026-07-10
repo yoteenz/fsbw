@@ -45907,3 +45907,39 @@ Summary of **full conversation in this chat**: User requested permanent ChatGPT 
 - **Separation:** External AI reads this package; Cursor agents continue using `motherboard/`; product canon remains in `docs/studio-os/`, `docs/studio-world/`, `docs/studio-institute/`.
 - **Maintainer rule:** Update `CURRENT_HANDOFF.md` each sprint; append `AI_CHANGELOG.md` on decisions; glossary on new canon terms.
 
+---
+
+## 2026-07-10 — AI Context Capsule™ v2 canonical architecture (docs only)
+
+Summary of **full conversation in this chat**: User requested universal AI handoff system — not documentation scatter, not a zip of loose files, but **one portable AI operating system** (`StudioOS_ContextCapsule_*.studiocapsule`). Single download/upload/import. Future HQ path: Studio Headquarters → Studio Archive → Knowledge Management → Export AI Context Capsule™. Explicit: **no application functionality** — complete architecture design only.
+
+- **Delivered:** `AI_CONTEXT_CAPSULE_SPECIFICATION.md` v2.0.0 — package architecture (ZIP `.studiocapsule`), internal folder layout (Manifest/, Founder/, StudioOS/, Architecture/, CurrentSprint/, Workflow/, Glossary/, History/, Roadmap/, Assets/), all capsule sections (Founder Profile, Operating Manual, Style Guide, Context, Handoff, Glossary, Changelog, Prompt Library, Project DNA, Memory Snapshot), manifest schema, versioning (manifest/capsule/studioOs/project semver + incremental), compression strategy, export/import workflows, smart export types (full, incremental, milestone, release, sprint, founder-only, architecture-only, handoff-only), platform-neutral compatibility, AI onboarding sequence, security/redaction, automation roadmap Phases 0–8.
+- **Schema:** `docs/ai-collaboration/schemas/manifest.v2.schema.json`
+- **New source docs:** `FOUNDER_PROFILE.md`, `PROJECT_DNA.md`, `AI_MEMORY_SNAPSHOT.md`
+- **Updated:** README (v2.0.0 pointer), EXPORT_SPECIFICATION (v1 appendix), NEW_CHAT_CHECKLIST (capsule upload path), CURRENT_HANDOFF, AI_CHANGELOG
+- **Interim:** v1 CLI flat md/json remains until Phase 2 `.studiocapsule` builder
+- **North star:** Founder never manually explains Studio OS to AI again — one capsule upload
+
+---
+
+## 2026-07-10 — AI Context Protocol™ v1.0 (institutional memory transfer — docs only)
+
+Summary of **full conversation in this chat** spanning five related sprints in one thread:
+
+1. **Layer 1 terminal failure trace (code):** Experience Lab failed at Layer 1 (`signature-landmark`); UI showed misleading "Retry Shell Layer." Proven root cause: shell succeeds via canvas fallback; Layer 1 uses `requestStudioBuilderGenerate()` only → production `AUTH_REQUIRED` when `legacyCompatEnabled()` false and no `productionAuthorizationId`. Delivered forensic instrumentation (`layer1-forensic.ts`, `?compilerDiag=1`, `FAILED_AT_LAYER_1` freeze, fixed viewport messaging). Commits `506d77169` / rebased.
+
+2. **Diagnostic route isolation (code):** `/__studio-os-*` routes worked in private/incognito but not normal tabs — stale cached bundles + persisted state; `global-boot` ran before route split. Delivered `pre-main-probe.js`, split entry (`entry-dispatch.ts`, `main-app.tsx`, `diagnostic-main.tsx`), `/__studio-os-recovery`, quarantine, export diagnostics. Commit `ef969cb7d` → rebased `e158ba346`.
+
+3. **ChatGPT Operating Manual / AI collaboration layer (docs):** Permanent external-AI onboarding at `docs/ai-collaboration/` — eight core docs + README, v1 CLI `npm run export:ai-context-capsule`. Commit `e158ba346`.
+
+4. **AI Context Capsule v2 (docs):** Single portable `.studiocapsule` ZIP spec, manifest v2 schema, `FOUNDER_PROFILE.md`, `PROJECT_DNA.md`, `AI_MEMORY_SNAPSHOT.md`. Commit `48a77da3c`.
+
+5. **AI Context Protocol™ v1.0 (this sprint — docs only, no implementation):** User mandate: extend capsule into institutional memory transfer protocol. Official names: **AI Context Protocol™** (standard), **AI Context Capsule™** (implementation), **Institutional Memory Engine™**, **AI Passport™**. North star: "Git clones code; AI Context Protocol clones organizational understanding."
+
+- **Delivered master spec:** `AI_CONTEXT_PROTOCOL_SPECIFICATION.md` v1.0.0 — protocol layers L0–L4, import lifecycle, multi-AI handoff, security invariant, success criteria.
+- **Fifteen module specs under `protocol/`:** CAPSULE_BOOTSTRAP, CAPSULE_HEALTH, MEMORY_GRAPH, DECISION_MEMORY, COLLABORATION_MEMORY, FOUNDER_DNA_MODEL, PROJECT_DNA_MODEL, CANON_ENGINE, MEMORY_TIMELINE, ONBOARDING_REPORT, KNOWLEDGE_DIFF, AI_PASSPORT, INSTITUTIONAL_MEMORY_ENGINE, COMPATIBILITY_MATRIX, EVOLUTION_ROADMAP + module index README.
+- **Schema:** `schemas/manifest.v3.schema.json` — protocol module registry, v3 readOrder (bootstrap + health first).
+- **Updated:** README (protocol pointers), CURRENT_HANDOFF (sprint = AI Context Protocol), AI_CHANGELOG (decision entry), AI_CONTEXT_CAPSULE_SPECIFICATION (Appendix B v3 target).
+- **Active blockers unchanged:** B1 Layer 1 AUTH_REQUIRED (forensic only, repair not started); B2 normal-tab diagnostic verification pending.
+- **Conventions:** Specification only — no CLI v3 builder, no HQ Archive UI, no Experience Lab repair under this sprint. Work on `master`; one commit + push per task.
+

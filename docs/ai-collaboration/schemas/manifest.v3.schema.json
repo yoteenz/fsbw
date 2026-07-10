@@ -1,0 +1,246 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://studio-os.dev/schemas/ai-context-capsule/manifest.v3.json",
+  "title": "AI Context Capsule Manifest (Protocol v3)",
+  "description": "Manifest for StudioOS_ContextCapsule_*.studiocapsule with AI Context Protocol™ modules. Extends manifest v2; platform-neutral.",
+  "type": "object",
+  "required": [
+    "manifestVersion",
+    "capsuleVersion",
+    "capsuleId",
+    "generatedAt",
+    "generator",
+    "studioOsVersion",
+    "projectVersion",
+    "exportType",
+    "checksums",
+    "compatibility",
+    "contents",
+    "readOrder",
+    "protocol"
+  ],
+  "properties": {
+    "manifestVersion": {
+      "type": "integer",
+      "const": 3,
+      "description": "Manifest schema version — includes AI Context Protocol modules"
+    },
+    "capsuleVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver of this capsule format/content bundle (3.x when protocol modules present)"
+    },
+    "capsuleId": {
+      "type": "string",
+      "description": "Unique id: capsule-{iso-date}-{short-sha}"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "generator": {
+      "type": "object",
+      "required": ["name", "source"],
+      "properties": {
+        "name": { "type": "string", "examples": ["studio-os-archive-export", "ime-capsule-builder"] },
+        "source": {
+          "type": "string",
+          "enum": ["cli", "hq-archive", "ci-release", "cursor-agent", "manual", "ime"]
+        },
+        "buildId": { "type": "string" },
+        "gitRef": { "type": "string" }
+      }
+    },
+    "studioOsVersion": { "type": "string" },
+    "projectVersion": { "type": "string" },
+    "incrementalChangeNumber": { "type": "integer", "minimum": 0 },
+    "previousCapsuleReference": {
+      "type": ["object", "null"],
+      "properties": {
+        "capsuleId": { "type": "string" },
+        "capsuleVersion": { "type": "string" },
+        "checksumSha256": { "type": "string" }
+      }
+    },
+    "exportType": {
+      "type": "string",
+      "enum": [
+        "full",
+        "incremental",
+        "milestone",
+        "release",
+        "sprint",
+        "founder-profile-only",
+        "architecture-only",
+        "handoff-only"
+      ]
+    },
+    "diffSummary": { "type": ["string", "null"] },
+    "checksums": {
+      "type": "object",
+      "required": ["archiveSha256", "manifestSha256"],
+      "properties": {
+        "archiveSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "manifestSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "sha256", "bytes"],
+            "properties": {
+              "path": { "type": "string" },
+              "sha256": { "type": "string" },
+              "bytes": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "required": ["minManifestVersion", "platformNeutral", "protocolVersion"],
+      "properties": {
+        "minManifestVersion": { "type": "integer", "minimum": 2 },
+        "maxManifestVersion": { "type": "integer" },
+        "platformNeutral": { "type": "boolean", "const": true },
+        "protocolVersion": {
+          "type": "string",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "description": "AI Context Protocol version (e.g. 1.0.0)"
+        },
+        "testedPlatforms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["chatgpt", "claude", "gemini", "cursor", "studio-ai", "generic-llm"]
+          }
+        },
+        "importWorkflowVersion": { "type": "integer", "default": 1 },
+        "compatibilityMatrix": {
+          "type": "string",
+          "default": "Manifest/compatibility.json",
+          "description": "Internal path to full platform matrix"
+        }
+      }
+    },
+    "protocol": {
+      "type": "object",
+      "required": ["version", "modules"],
+      "description": "AI Context Protocol module registry",
+      "properties": {
+        "version": { "type": "string", "const": "1.0.0" },
+        "projectGeneration": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Institutional maturity generation marker"
+        },
+        "modules": {
+          "type": "object",
+          "required": [
+            "bootstrap",
+            "health",
+            "memoryGraph",
+            "decisions",
+            "collaborationMemory",
+            "founderDna",
+            "projectDna",
+            "canon",
+            "timeline"
+          ],
+          "properties": {
+            "bootstrap": { "type": "string", "const": "Manifest/bootstrap.json" },
+            "health": { "type": "string", "const": "Manifest/health.json" },
+            "memoryGraph": { "type": "string", "const": "Graph/memory-graph.json" },
+            "decisions": { "type": "string", "const": "History/decisions.json" },
+            "collaborationMemory": { "type": "string", "const": "Workflow/collaboration-memory.json" },
+            "founderDna": { "type": "string", "const": "Founder/dna.json" },
+            "projectDna": { "type": "string", "const": "StudioOS/dna.json" },
+            "canon": { "type": "string", "const": "Canon/canon.json" },
+            "timeline": { "type": "string", "const": "History/timeline.json" },
+            "knowledgeDiff": { "type": "string", "const": "Manifest/knowledge-diff.json" },
+            "onboardingReportSchema": { "type": "string", "const": "Manifest/onboarding-report.schema.json" },
+            "passportSchema": { "type": "string", "const": "Manifest/passport.schema.json" }
+          }
+        }
+      }
+    },
+    "contents": {
+      "type": "object",
+      "description": "Map of logical sections to internal paths (v2 + v3 protocol paths)",
+      "properties": {
+        "founderProfile": { "type": "string", "default": "Founder/profile.json" },
+        "founderDna": { "type": "string", "default": "Founder/dna.json" },
+        "operatingManual": { "type": "string", "default": "Workflow/operating-manual.md" },
+        "styleGuide": { "type": "string", "default": "Workflow/style-guide.md" },
+        "context": { "type": "string", "default": "StudioOS/context.md" },
+        "handoff": { "type": "string", "default": "CurrentSprint/handoff.md" },
+        "glossary": { "type": "string", "default": "Glossary/terms.json" },
+        "changelog": { "type": "string", "default": "History/changelog.md" },
+        "promptLibrary": { "type": "string", "default": "Workflow/prompt-library.md" },
+        "projectDnaMd": { "type": "string", "default": "StudioOS/project-dna.md" },
+        "projectDna": { "type": "string", "default": "StudioOS/dna.json" },
+        "memorySnapshot": { "type": "string", "default": "History/memory-snapshot.json" },
+        "roadmap": { "type": "string", "default": "Roadmap/roadmap.md" },
+        "architecture": { "type": "string", "default": "Architecture/overview.md" },
+        "executiveSummaryPdf": { "type": "string", "default": "Assets/executive-summary.pdf" },
+        "executiveSummaryMd": { "type": "string", "default": "Assets/executive-summary.md" },
+        "portableJson": { "type": "string", "default": "Manifest/capsule.json" },
+        "bootstrap": { "type": "string", "default": "Manifest/bootstrap.json" },
+        "health": { "type": "string", "default": "Manifest/health.json" },
+        "memoryGraph": { "type": "string", "default": "Graph/memory-graph.json" },
+        "decisions": { "type": "string", "default": "History/decisions.json" },
+        "collaborationMemory": { "type": "string", "default": "Workflow/collaboration-memory.json" },
+        "canon": { "type": "string", "default": "Canon/canon.json" },
+        "timeline": { "type": "string", "default": "History/timeline.json" },
+        "knowledgeDiff": { "type": "string", "default": "Manifest/knowledge-diff.json" },
+        "compatibilityMatrix": { "type": "string", "default": "Manifest/compatibility.json" }
+      }
+    },
+    "readOrder": {
+      "type": "array",
+      "description": "Canonical AI onboarding read sequence — bootstrap and health first",
+      "items": { "type": "string" },
+      "default": [
+        "Manifest/manifest.json",
+        "Manifest/bootstrap.json",
+        "Manifest/health.json",
+        "Founder/dna.json",
+        "Founder/profile.json",
+        "StudioOS/dna.json",
+        "Workflow/collaboration-memory.json",
+        "Workflow/operating-manual.md",
+        "Workflow/style-guide.md",
+        "StudioOS/context.md",
+        "CurrentSprint/handoff.md",
+        "Graph/memory-graph.json",
+        "Canon/canon.json",
+        "History/decisions.json",
+        "History/timeline.json",
+        "Glossary/terms.json",
+        "Roadmap/roadmap.md",
+        "History/changelog.md",
+        "Workflow/prompt-library.md",
+        "StudioOS/project-dna.md",
+        "History/memory-snapshot.json",
+        "Manifest/knowledge-diff.json"
+      ]
+    },
+    "redaction": {
+      "type": "object",
+      "properties": {
+        "secretsStripped": { "type": "boolean" },
+        "piiStripped": { "type": "boolean" },
+        "memoryEntryLimit": { "type": "integer" },
+        "denylistPatterns": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "healthSummary": {
+      "type": "object",
+      "description": "Inline summary; full report at Manifest/health.json",
+      "properties": {
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "exportBlocked": { "type": "boolean" }
+      }
+    }
+  }
+}

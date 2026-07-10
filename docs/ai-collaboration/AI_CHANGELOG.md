@@ -129,6 +129,22 @@
 
 ---
 
+## 2026-07-10 — AI Context Protocol™ v1.0 (institutional memory — docs only)
+
+**Decision:** AI Context Protocol™ becomes the canonical onboarding standard; AI Context Capsule™ is one implementation. Goal shifts from exporting documentation to transferring institutional memory.
+
+**Reason:** Receiving AI should behave as though it participated for months — knowing why, how decisions were made, and how collaboration works. North star: "Git clones code; AI Context Protocol clones organizational understanding."
+
+**Impact:** `AI_CONTEXT_PROTOCOL_SPECIFICATION.md` v1.0.0 + fifteen module specs under `protocol/` (bootstrap, health, memory graph, decision memory, collaboration memory, Founder DNA, Project DNA, canon engine, timeline, onboarding report, knowledge diff, AI Passport, Institutional Memory Engine, compatibility matrix, evolution roadmap). `schemas/manifest.v3.schema.json` adds protocol module paths. Capsule target layout v3 documented; no CLI/HQ code.
+
+**Files:** `docs/ai-collaboration/AI_CONTEXT_PROTOCOL_SPECIFICATION.md`, `docs/ai-collaboration/protocol/*`, `schemas/manifest.v3.schema.json`, README/CURRENT_HANDOFF updates.
+
+**Supersedes:** Treating capsule as documentation zip only (capsule now implements protocol)
+
+**Dependencies:** Phase 2 capsule builder v3; Phase 3 HQ Archive; B1/B2 unchanged
+
+---
+
 ## Template for new entries
 
 ```markdown

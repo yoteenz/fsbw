@@ -1,8 +1,9 @@
 # AI Context Capsule™ — Canonical System Specification
 
-**Version:** 2.0.0  
+**Version:** 2.0.0 (layout) · **v3 target** adds AI Context Protocol modules  
 **Status:** Architecture specification — **no HQ Archive UI implementation in this sprint**  
 **Authority:** Single source of truth for the portable AI operating system layer  
+**Protocol:** [AI_CONTEXT_PROTOCOL_SPECIFICATION.md](./AI_CONTEXT_PROTOCOL_SPECIFICATION.md) — institutional memory standard this capsule implements  
 **Supersedes:** `EXPORT_SPECIFICATION.md` v1.0 (retained as historical appendix)
 
 ---
@@ -559,4 +560,36 @@ The AI Context Capsule system succeeds when:
 
 ---
 
-*End of AI Context Capsule™ Canonical System Specification v2.0.0*
+## Appendix B — v3 protocol extension (manifest v3)
+
+When **AI Context Protocol™** modules ship, capsule manifest advances to **manifestVersion: 3** and **capsuleVersion: 3.x**.
+
+**Canonical protocol spec:** [AI_CONTEXT_PROTOCOL_SPECIFICATION.md](./AI_CONTEXT_PROTOCOL_SPECIFICATION.md)  
+**Module index:** [protocol/README.md](./protocol/README.md)  
+**Schema:** [schemas/manifest.v3.schema.json](./schemas/manifest.v3.schema.json)
+
+### v3 additive paths
+
+```
+Manifest/bootstrap.json           ← read FIRST after manifest (self-describing)
+Manifest/health.json              ← founder-facing quality report
+Manifest/knowledge-diff.json      ← incremental catch-up
+Manifest/compatibility.json       ← multi-AI platform matrix
+Manifest/onboarding-report.schema.json
+Manifest/passport.schema.json     ← generated on import, not in export
+Graph/memory-graph.json
+Canon/canon.json
+Founder/dna.json                  ← structured Founder DNA (alongside profile.json)
+StudioOS/dna.json                 ← structured Project DNA (alongside project-dna.md)
+History/decisions.json
+History/timeline.json
+Workflow/collaboration-memory.json
+```
+
+v2 paths remain valid. Import tools must support **degraded mode** when `manifestVersion < 3` (no bootstrap → use v2 readOrder).
+
+Implementation phases: [protocol/EVOLUTION_ROADMAP.md](./protocol/EVOLUTION_ROADMAP.md).
+
+---
+
+*End of AI Context Capsule™ Canonical System Specification v2.0.0 (v3 protocol target documented)*

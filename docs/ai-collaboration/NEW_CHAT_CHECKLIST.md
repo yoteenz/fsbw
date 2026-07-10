@@ -81,7 +81,7 @@ Then briefly restate (3–5 bullets):
 | Term definition | `AI_GLOSSARY.md` |
 | Why a decision was made | `AI_CHANGELOG.md` |
 | Copy-paste prompt structure | `PROMPT_TEMPLATES.md` |
-| Full portable bundle | Run **Export AI Context Capsule™** (see `EXPORT_SPECIFICATION.md`) |
+| Full portable bundle | [AI_CONTEXT_CAPSULE_SPECIFICATION.md](./AI_CONTEXT_CAPSULE_SPECIFICATION.md) |
 
 ---
 

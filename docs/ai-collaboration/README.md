@@ -29,12 +29,15 @@ Follow **`NEW_CHAT_CHECKLIST.md`** exactly.
 
 Reference as needed:
 
-- [AI_CONTEXT_CAPSULE_SPECIFICATION.md](./AI_CONTEXT_CAPSULE_SPECIFICATION.md) — **canonical** portable AI OS (.studiocapsule)
+- [AI_CONTEXT_PROTOCOL_SPECIFICATION.md](./AI_CONTEXT_PROTOCOL_SPECIFICATION.md) — **canonical** institutional memory transfer standard
+- [protocol/README.md](./protocol/README.md) — protocol module index (bootstrap, health, graph, canon, …)
+- [AI_CONTEXT_CAPSULE_SPECIFICATION.md](./AI_CONTEXT_CAPSULE_SPECIFICATION.md) — portable AI OS implementation (`.studiocapsule`)
 - [AI_GLOSSARY.md](./AI_GLOSSARY.md) — canonical terminology
 - [AI_CHANGELOG.md](./AI_CHANGELOG.md) — decision history
 - [PROMPT_TEMPLATES.md](./PROMPT_TEMPLATES.md) — reusable prompt structures
 - [EXPORT_SPECIFICATION.md](./EXPORT_SPECIFICATION.md) — v1 flat export appendix
-- [schemas/manifest.v2.schema.json](./schemas/manifest.v2.schema.json) — manifest JSON Schema
+- [schemas/manifest.v2.schema.json](./schemas/manifest.v2.schema.json) — manifest v2 JSON Schema
+- [schemas/manifest.v3.schema.json](./schemas/manifest.v3.schema.json) — manifest v3 + protocol modules
 
 ---
 
@@ -72,6 +75,6 @@ Future triggers: milestone complete, sprint finish, release, founder says **"Exp
 
 | Field | Value |
 |-------|-------|
-| Package version | 2.0.0 |
+| Package version | 3.0.0 (protocol spec) / Capsule v2 layout + v3 target |
 | Created | 2026-07-10 |
 | Maintainer | Founder + Studio OS agents |
