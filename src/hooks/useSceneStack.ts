@@ -40,6 +40,8 @@ import {
   type WorldCompilationReport,
   type ArchitectDebugViewState,
   type ArchitectDebugLayer,
+  isExperienceLabValidationRender,
+  type WorldCompileOptions,
 } from '../studio-os-core/scene-stack';
 import { requestStudioBuilderGenerate } from '../services/studio/studioBuilder/api';
 import {
@@ -253,7 +255,9 @@ export function useSceneStack(
           workspaceId,
         });
 
-        const shellLock = resolveShellLockState(departmentId, projectId, stationId);
+        const shellLock = resolveShellLockState(departmentId, projectId, stationId, {
+          validationMode: isExperienceLabValidationRender(),
+        });
         const shellCheck = assertShellImmutableForLayer(layerId, shellLock);
         if (!shellCheck.ok) {
           failStudioAlphaGeneration(generationId, shellCheck.reason);
@@ -384,6 +388,7 @@ export function useSceneStack(
           projectId,
           stationId,
           blueprint,
+          options: { validationMode: isExperienceLabValidationRender() },
         }).then((result) => {
           setCompileReports((prev) => ({ ...prev, [stationId]: result.report }));
         });
@@ -424,7 +429,7 @@ export function useSceneStack(
   );
 
   const ensureStation = useCallback(
-    async (stationId: string) => {
+    async (stationId: string, options?: WorldCompileOptions) => {
       const station = getSceneStackStation(departmentId, stationId);
       if (!station || ensuringStations.has(stationId)) return;
 
@@ -461,6 +466,7 @@ export function useSceneStack(
           projectId,
           stationId,
           blueprint,
+          options,
         });
         setCompileReports((prev) => ({ ...prev, [stationId]: compiled.report }));
       } finally {
@@ -501,13 +507,14 @@ export function useSceneStack(
   );
 
   const compileStation = useCallback(
-    async (stationId: string) => {
+    async (stationId: string, options?: WorldCompileOptions) => {
       const blueprint = getStationBlueprint(stationId);
       const result = await compileWorldStation({
         departmentId,
         projectId,
         stationId,
         blueprint,
+        options,
       });
       setCompileReports((prev) => ({ ...prev, [stationId]: result.report }));
       return result;

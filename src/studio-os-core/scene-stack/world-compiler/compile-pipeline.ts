@@ -12,6 +12,13 @@ import { resolveShellLockState } from './immutable-shell';
 import { validateCompiledScene } from './render-validation';
 import { buildCompilationReport, type WorldCompilationReport, type WorldCompileStageResult } from './compilation-report';
 import { SCENE_GRAPH_BRANCH_TREE } from './scene-graph-branches';
+import { isExperienceLabValidationRender } from '../validation-render';
+import { diagnoseShellResolution } from '../shell-diagnostics';
+
+export type WorldCompileOptions = {
+  /** Ephemeral validation compile — mounts draft_ready layers, no registry promotion */
+  validationMode?: boolean;
+};
 
 export type WorldCompileResult = {
   graph: SceneGraph;
@@ -50,10 +57,20 @@ export async function compileWorldStation(input: {
   stationId: string;
   blueprint: MasterSceneBlueprint;
   generationCostEstimate?: number;
+  options?: WorldCompileOptions;
 }): Promise<WorldCompileResult> {
+  const validationMode = input.options?.validationMode ?? isExperienceLabValidationRender();
   const compileStart = performance.now();
   const stages: WorldCompileStageResult[] = [];
-  const shellLock = resolveShellLockState(input.departmentId, input.projectId, input.stationId);
+  const shellLock = resolveShellLockState(input.departmentId, input.projectId, input.stationId, {
+    validationMode,
+  });
+  const shellDiagnostic = diagnoseShellResolution(
+    input.departmentId,
+    input.projectId,
+    input.stationId,
+    { validationMode }
+  );
   const records = listSceneStackLayersForStation(
     input.departmentId,
     input.projectId,
@@ -62,8 +79,13 @@ export async function compileWorldStation(input: {
 
   stages.push(
     await runStage('load-shell', () => {
-      if (!shellLock.shellUrl) throw new Error('No shell loaded.');
-      return `Shell v${shellLock.shellVersion} loaded as reference.`;
+      if (!shellLock.shellUrl) {
+        const code = shellLock.resolution === 'missing-record' ? 'SHELL_RECORD_MISSING' : 'SHELL_URL_MISSING';
+        throw new Error(
+          `[${code}] No executable shell loaded. ${shellDiagnostic.failureReason ?? 'environment-shell unresolved.'} Station ${input.stationId} · mode ${shellDiagnostic.authorizationMode}.`
+        );
+      }
+      return `Shell v${shellLock.shellVersion} loaded (${shellLock.resolution}) as reference.`;
     })
   );
 
@@ -74,7 +96,7 @@ export async function compileWorldStation(input: {
     })
   );
 
-  const packages = buildComponentPackagesForStation(records, input.stationId);
+  const packages = buildComponentPackagesForStation(records, input.stationId, { validationMode });
 
   for (const stage of [
     'mount-landmark',
@@ -137,6 +159,8 @@ export async function compileWorldStation(input: {
     packages,
     renderTimeMs,
     generationCostEstimate: input.generationCostEstimate,
+    shellDiagnostic: shellDiagnostic.failureReason ? shellDiagnostic : undefined,
+    validationMode,
   });
 
   return {

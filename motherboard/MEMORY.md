@@ -45449,3 +45449,16 @@ Summary of the **full conversation in this chat**: Continuation of Experience La
 - **Exports:** `environment-scene-profiles` from creative-studio-preview index. **Docs:** updated `experience-lab-phase-2-creative-intelligence.md` for environmental intelligence model.
 - **Verification:** `npm run build` pass.
 - **Outcome:** Experience Lab Mode 2 now validates environmental intelligence via cinematic previews + blind industry test; no production asset/registry writes.
+
+---
+
+## 2026-07-10 — Experience Lab Phase 3: Creative Studio Rendering Pipeline
+
+Summary of the **full conversation in this chat**: After Phase 2 Environmental Intelligence (cinematic CSS previews + blind test, commit `37015c999`), user issued **Phase 3** — Experience Lab must stop at planning stage (schematics/wireframes/placeholders) and invoke the **exact same Creative Studio rendering pipeline** as Creative Direction Studio through final render (Creative DNA → Scene Graph → Layer Stack → World Compiler → SceneStackViewport). Success = indistinguishable from production CDS output.
+
+- **Phase 3 deliverable:** Removed `CreativePreviewEnvironment.tsx` schematic/CSS renderer entirely. Added **`render-bindings.ts`** — maps each company × Preview A/B/C to existing Scene Stack stations (Studio OS → Command Center Atrium/Threshold + World Atlas; Frontal Slayer → CDS Arrival/Mood Wall/Story Table; NDX → CDS Pipeline Board/Reference Library + Warehouse Animation Archive).
+- **`useCreativeStudioRenderPreview.ts`** — wraps `useSceneStack` + `useDepartmentVerticalSlice`; auto `ensureStation` when layers missing; `compileStation` (World Compiler™) when layers mounted; shared project genome with CDS/Command Center (reuses generated layer plates from builder registry).
+- **`CreativeStudioRenderPreview.tsx`** — renders **`SceneStackViewport`** with CDS compositor styles (`CDS_GENESIS_INTERACTION_STYLES` + `CDS_IMMERSION_STYLES`); World Compiler stage chips footer; pipeline retry; blind mode hides footer chrome. **`CreativeIntelligencePanel`** wired to new component.
+- **Docs:** `docs/studio-os/experience-lab-phase-3-render-pipeline.md`; Phase 2 doc updated to reference render pipeline.
+- **Verification:** `npm run build` pass.
+- **Outcome:** Experience Lab Mode 2 validates **finished Creative Studio output** via World Compiler — not layout generators or planning artifacts. Preview compiler specs remain read-only; render path shares Scene Stack with CDS.

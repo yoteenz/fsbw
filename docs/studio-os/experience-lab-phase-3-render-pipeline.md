@@ -64,3 +64,12 @@ Preview must look like a **completed Creative Studio render** — layered FAL pl
 Route: `/admin/studio/experience-lab` → Mode 2
 
 See also: `experience-lab-phase-2-creative-intelligence.md` (compiler + blind validation)
+
+## Hotfix — LOAD SHELL rejection (2026-07-10)
+
+**Root cause:** World Compiler `load-shell` requires `environment-shell.publicUrl`. Experience Lab (a) skipped `ensureStation` when any non-shell layer existed, (b) ran compile without a shell, (c) treated `draft_ready` shells as unlocked — blocking downstream layer generation and package mount in validation mode.
+
+**Fix:** `validation-render.ts` ephemeral validation mode; `resolveShellLockState` accepts `draft_ready` shells in validation; `buildComponentPackagesForStation` includes draft layers; Experience Lab orchestration requires shell before compile; compilation report separates **Render Readiness** (stages) from **Input Integrity** (packages).
+
+Verify: `node scripts/verify-experience-lab-shell-resolution.mjs`
+

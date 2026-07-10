@@ -26,12 +26,20 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
     pipeline,
     sceneGraph,
     compileReport,
+    shellDiagnostic,
+    shellReady,
     retryPipeline,
   } = useCreativeStudioRenderPreview(companyId, conceptId);
 
   const isBuilding = stack.isStationPipelineActive(stationId) || status === 'building';
   const approvedCount = layers.filter((l) => l.publicUrl && l.status !== 'failed').length;
   const stageResults = compileReport?.stages ?? [];
+  const failedStage = compileReport?.failedStage;
+  const showRetry =
+    !isBuilding &&
+    (status === 'failed' ||
+      compileReport?.success === false ||
+      (!shellReady && approvedCount === 0));
 
   const pipelineSummary = useMemo(() => {
     if (isBuilding && pipeline.phase !== 'idle') {
@@ -39,10 +47,13 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
         ? `Generating ${pipeline.currentLayerLabel}…`
         : 'Compiling environment…';
     }
+    if (compileReport?.success) return compileReport.headline;
+    if (compileReport?.failedStageDetail) return compileReport.failedStageDetail;
     if (compileReport?.headline) return compileReport.headline;
     if (approvedCount > 0) return `Final render — ${approvedCount} layers composed`;
+    if (!shellReady) return 'Awaiting environment-shell mount…';
     return 'Invoking Creative Studio rendering pipeline…';
-  }, [approvedCount, compileReport?.headline, isBuilding, pipeline]);
+  }, [approvedCount, compileReport, isBuilding, pipeline, shellReady]);
 
   return (
     <div
@@ -52,6 +63,7 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
       data-blind={blindMode ? 'true' : 'false'}
       data-department={blindMode ? undefined : binding.departmentId}
       data-station={stationId}
+      data-shell-ready={shellReady ? 'true' : 'false'}
       style={shellStyle}
     >
       <style>{CDS_GENESIS_INTERACTION_STYLES}</style>
@@ -66,11 +78,17 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
           pipeline={isBuilding ? pipeline : undefined}
           sceneGraph={sceneGraph}
           compilationHeadline={blindMode ? undefined : compileReport?.headline ?? undefined}
-          sceneIntegrityPct={blindMode ? undefined : compileReport?.sceneIntegrityPct ?? undefined}
+          sceneIntegrityPct={
+            blindMode ? undefined : compileReport?.renderReadinessPct ?? compileReport?.sceneIntegrityPct ?? undefined
+          }
           onRegenerateLayer={
             blindMode
               ? undefined
-              : (layerId) => void stack.regenerateLayer(stationId, layerId as import('../../../../studio-os-core/scene-stack').SceneStackLayerId)
+              : (layerId) =>
+                  void stack.regenerateLayer(
+                    stationId,
+                    layerId as import('../../../../studio-os-core/scene-stack').SceneStackLayerId
+                  )
           }
         />
       </div>
@@ -82,10 +100,14 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
           </p>
           <p style={{ margin: '4px 0 0', fontSize: '10px', color: '#555', lineHeight: 1.5 }}>
             {binding.pipelineTarget} · {pipelineSummary}
-            {compileReport?.sceneIntegrityPct != null
-              ? ` · Integrity ${compileReport.sceneIntegrityPct}%`
-              : ''}
           </p>
+          {compileReport ? (
+            <p style={{ margin: '4px 0 0', fontSize: '10px', color: '#374151', lineHeight: 1.5 }}>
+              Render Readiness {compileReport.renderReadinessPct}% · Input Integrity{' '}
+              {compileReport.sceneIntegrityPct}%
+              {compileReport.validationMode ? ' · Validation mode (ephemeral)' : ''}
+            </p>
+          ) : null}
           {stageResults.length > 0 ? (
             <div style={stageRowStyle}>
               {WORLD_COMPILER_STAGES.map((stage) => {
@@ -109,18 +131,44 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
               })}
             </div>
           ) : null}
-          {(status === 'failed' || (status === 'idle' && approvedCount === 0 && !isBuilding)) ? (
-            <button type="button" style={retryBtnStyle} onClick={retryPipeline}>
-              Run full render pipeline
-            </button>
+          {compileReport?.success === false && failedStage ? (
+            <details open style={{ marginTop: 8, fontSize: '10px', color: '#991b1b' }}>
+              <summary style={{ cursor: 'pointer', fontWeight: 700 }}>
+                LOAD SHELL / compile failure evidence
+              </summary>
+              <dl style={{ margin: '8px 0 0', display: 'grid', gap: 4 }}>
+                <DiagnosticRow label="Error code" value={compileReport.failedStageErrorCode ?? 'STAGE_FAILED'} />
+                <DiagnosticRow label="Failed stage" value={worldCompilerStageLabel(failedStage)} />
+                <DiagnosticRow label="Function" value="compileWorldStation → runStage(load-shell)" />
+                <DiagnosticRow label="File" value="src/studio-os-core/scene-stack/world-compiler/compile-pipeline.ts" />
+                <DiagnosticRow label="Detail" value={compileReport.failedStageDetail ?? '—'} />
+                <DiagnosticRow label="Shell ID" value={shellDiagnostic.requestedShellId} />
+                <DiagnosticRow label="Shell status" value={shellDiagnostic.recordStatus ?? 'none'} />
+                <DiagnosticRow label="Resolution" value={shellDiagnostic.resolution} />
+                <DiagnosticRow label="Validation mode" value={shellDiagnostic.authorizationMode} />
+                <DiagnosticRow label="Registry mode" value={shellDiagnostic.registryMode} />
+                <DiagnosticRow label="Recovery" value={shellDiagnostic.recoveryAction} />
+              </dl>
+            </details>
           ) : null}
-          {approvedCount === 0 && !isBuilding && status !== 'failed' ? (
-            <p style={{ margin: '8px 0 0', fontSize: '10px', color: '#555' }}>
-              Invoking World Compiler™ — Creative DNA → Scene Graph → Layer Stack → final render.
-            </p>
+          {showRetry ? (
+            <button type="button" style={retryBtnStyle} onClick={retryPipeline}>
+              {failedStage === 'load-shell' || !shellReady
+                ? 'Run full render pipeline (generate shell first)'
+                : 'Run full render pipeline'}
+            </button>
           ) : null}
         </footer>
       ) : null}
+    </div>
+  );
+}
+
+function DiagnosticRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <dt style={{ fontWeight: 700, display: 'inline' }}>{label}: </dt>
+      <dd style={{ display: 'inline', margin: 0 }}>{value}</dd>
     </div>
   );
 }
