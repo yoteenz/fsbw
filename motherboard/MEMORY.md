@@ -45675,6 +45675,7 @@ Summary of **full conversation in this chat** (architecture sprints + this imple
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-10 — Black Box Global Flight Recorder™ refactor
 
 Summary of **full conversation in this chat**: After P0 hotfix for blank Black Box diagnostic routes (`854c2378b` — isolated entry path in `src/diagnostic-entry/`), user reported recorder only captured diagnostic page lifecycle (TIMER_REGISTERED spam, missing BOOT_STARTED/EXPERIENCE_LAB/WORLD_COMPILER events). Sprint mandate: refactor into **true global flight recorder** observing entire Studio OS runtime.
@@ -45707,3 +45708,14 @@ Summary of **full conversation in this chat**: User sprint for global Black Box 
 
 - **Verification:** `npm run build` pass. Open live console → navigate Studio OS → events append continuously; returning shows full buffer from global recorder.
 
+=======
+## 2026-07-10 — The Studio Institute Bible™ (Spatial Learning OS — docs only)
+
+Summary of **full conversation in this chat**: User mandated elevation of Studio Institute™ from documentation center / online course / video library to **world's first spatial learning operating system** — immersive environments where invisible systems become visible; explore · break · repair · understand. Mandate: **Do not build yet** — produce complete canonical Bible.
+
+- **Context:** Studio Institute becomes defining pillar of Studio OS — living university inside Studio World™; every concept = building/district/machine/character/ecosystem/simulation (NOT pages/lessons/slides). Inhabitation Cycle: Observe → Explore → Break → Understand → Repair → Apply → View real implementation. 11 teaching modes; AI profiles learner and adapts metaphor (React Context example: office vs Provider tree vs art dept vs company vs family). Runtime Rescue™ — live Studio OS errors open doors to explaining buildings.
+- **Delivered:** **`docs/studio-institute/STUDIO_INSTITUTE_BIBLE.md`** v1.0.0 — 19 sections: philosophy · Learning Engine™ · Adaptive Teaching System™ · campus architecture · full district map (Registry Hall, Compiler Works, AI Research Campus, Creative Studio, Founder Psychology Institute, etc.) · lesson/Inhabitation Cycle · AI Professor faculty · simulations · progression · certifications · founder journey · visual identity · interaction principles · Studio OS integration · anti-patterns · Manifesto · immutable principles · Phases 0–6 roadmap. **`docs/studio-institute/README.md`** index + canon hierarchy.
+- **Canon relationships:** Institute of Knowledge™ = what becomes official; Studio Institute Bible = how truth is inhabited spatially; Profession Simulation Engine™ = career workplace paths; STUDIO_WORLD_BIBLE = organizational presence; M93 `studio-institute.md` = implementation notes subordinate to Bible.
+- **Changes:** `docs/studio-institute/` (2 files). `motherboard/CORE.md` pointer. This MEMORY entry.
+- **Conventions:** No Institute UI/code until founder approves Bible; assessment is behavioral not quiz; professors own buildings; break/repair is mandatory pedagogy; test = learner describes walking buildings not watching modules.
+>>>>>>> 4b99aeaf4 (Studio Institute Bible — spatial learning OS constitution (docs only))
