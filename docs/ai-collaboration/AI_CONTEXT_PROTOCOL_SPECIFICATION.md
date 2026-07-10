@@ -25,6 +25,7 @@ The receiving AI should behave as though it has participated in the project for 
 | **AI Context Capsule™** | Portable single-file implementation (`.studiocapsule`) |
 | **Institutional Memory Engine™** | Long-term platform system that generates and preserves capsules |
 | **AI Passport™** | Import receipt + accountability record per AI session |
+| **Studio AI™** | Persistent intelligence layer — identity, roles, persona ([spec](../studio-os/studio-ai/)) |
 
 **Analogy:**
 

@@ -53,6 +53,7 @@ IME ensures the project never loses memory when people — or AI systems — cha
                               │
                               ▼
                     External AI (ChatGPT, Claude, …)
+                    Studio AI™ (native target) — persistent identity layer
                     AI Passport + Onboarding Report
 ```
 

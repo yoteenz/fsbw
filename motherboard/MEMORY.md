@@ -45943,3 +45943,21 @@ Summary of **full conversation in this chat** spanning five related sprints in o
 - **Active blockers unchanged:** B1 Layer 1 AUTH_REQUIRED (forensic only, repair not started); B2 normal-tab diagnostic verification pending.
 - **Conventions:** Specification only — no CLI v3 builder, no HQ Archive UI, no Experience Lab repair under this sprint. Work on `master`; one commit + push per task.
 
+---
+
+## 2026-07-10 — Studio AI™ Persistent Intelligence Layer (docs only)
+
+Summary of **full conversation in this chat** including prior sprints in thread plus this Studio AI sprint:
+
+**Prior work in thread (already shipped):** Layer 1 forensic trace (`506d77169`); diagnostic route isolation (`ef969cb7d`/`e158ba346`); ChatGPT Operating Manual package (`e158ba346`); AI Context Capsule v2 (`48a77da3c`); AI Context Protocol v1 (`243c23083`) — fifteen protocol modules + manifest v3 schema.
+
+**This sprint — Studio AI™ (user mandate):** Define long-term vision for permanent intelligence layer — NOT an AI model, NOT an LLM. Models evolve; Studio AI persists (memory, founder relationships, projects, culture). Foundation model = replaceable reasoning engine; everything above belongs to Studio AI.
+
+- **Delivered:** `docs/studio-os/studio-ai/` — README index + ten documents: STUDIO_AI_VISION_BIBLE, PERSISTENT_INTELLIGENCE_ARCHITECTURE, REASONING_ENGINE_ABSTRACTION_LAYER, AI_SUCCESSION_SYSTEM, INSTITUTIONAL_MEMORY_ARCHITECTURE, EXECUTIVE_ROLE_MODEL, PERSONA_CONTINUITY_SYSTEM, MODEL_COMPATIBILITY_LAYER, UPGRADE_WORKFLOW, LONG_TERM_ROADMAP.
+- **Key concepts:** AI Succession Ceremony (executive succession for model upgrades); AI Employee Model (Creative Director, Chief Architect, Research Director, Marketing Strategist, Professor Atlas/Motion/Signal/Palette); Persona owned by Studio AI not foundation model; "Upgrade Studio AI" one-command vision; institutional memory as primary asset not prompts/chat logs.
+- **Stack:** Foundation Model → REA → Studio AI Intelligence Layer → IME → Founder/Project DNA → Knowledge Graph → Context Protocol → Studio OS.
+- **Cross-links:** AI Context Protocol, IME module, Genesis Core (visual), ai-collaboration README; CORE.md bullet added.
+- **Updated:** CURRENT_HANDOFF, AI_CHANGELOG, ai-collaboration README + protocol spec cross-refs.
+- **No implementation:** No runtime, no REA code, no HQ Upgrade UI, no Experience Lab repair.
+- **Blockers unchanged:** B1 Layer 1 AUTH_REQUIRED; B2 normal-tab diagnostic verification pending.
+

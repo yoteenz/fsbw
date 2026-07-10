@@ -30,6 +30,7 @@ Follow **`NEW_CHAT_CHECKLIST.md`** exactly.
 Reference as needed:
 
 - [AI_CONTEXT_PROTOCOL_SPECIFICATION.md](./AI_CONTEXT_PROTOCOL_SPECIFICATION.md) — **canonical** institutional memory transfer standard
+- [Studio AI™](../studio-os/studio-ai/README.md) — persistent intelligence layer (identity, succession, roles)
 - [protocol/README.md](./protocol/README.md) — protocol module index (bootstrap, health, graph, canon, …)
 - [AI_CONTEXT_CAPSULE_SPECIFICATION.md](./AI_CONTEXT_CAPSULE_SPECIFICATION.md) — portable AI OS implementation (`.studiocapsule`)
 - [AI_GLOSSARY.md](./AI_GLOSSARY.md) — canonical terminology

@@ -7,9 +7,11 @@
 
 ## Current sprint
 
-**AI Context Protocol™ — Institutional Memory Transfer (architecture spec v1.0.0)**
+**Studio AI™ — Persistent Intelligence Layer (architecture spec v1.0.0)**
 
-Canonical protocol for onboarding any AI into Studio OS — extends AI Context Capsule™ from documentation export to organizational understanding clone. Fifteen protocol modules + manifest v3 schema. **No implementation** — specification only. Capsule v2 ZIP layout remains; v3 adds protocol paths per `AI_CONTEXT_PROTOCOL_SPECIFICATION.md`.
+Canonical blueprint for Studio OS's permanent intelligence layer — not an LLM, not a foundation model. Defines identity, roles, persona, succession, and upgrade workflow atop Institutional Memory Engine + AI Context Protocol. Ten bible documents under `docs/studio-os/studio-ai/`. **No implementation** — specification only.
+
+**Previous sprint (shipped):** AI Context Protocol™ v1.0 — `243c23083`.
 
 ---
 
@@ -46,6 +48,7 @@ Canonical protocol for onboarding any AI into Studio OS — extends AI Context C
 | 2026-07-10 | Layer 1 forensic pass separate from auth repair | Must prove failure before masking with fallback |
 | 2026-07-10 | `studio-world-atlas` bundled in DepartmentPackageRegistry | Scene stack referenced unregistered package |
 | 2026-07-10 | External AI onboarding via `docs/ai-collaboration/` | Separate from motherboard (Cursor) and product bibles |
+| 2026-07-10 | Studio AI as persistent intelligence layer — not foundation model | Models replaceable; identity, roles, memory persist via IME + succession |
 
 ---
 

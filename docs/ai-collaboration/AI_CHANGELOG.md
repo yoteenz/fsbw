@@ -145,6 +145,22 @@
 
 ---
 
+## 2026-07-10 — Studio AI™ v1.0 (persistent intelligence layer — docs only)
+
+**Decision:** Studio AI is the permanent intelligence layer of Studio OS — not an LLM. Foundation models are interchangeable reasoning engines; Studio AI owns identity, roles, persona, and institutional memory continuity.
+
+**Reason:** Models evolve; founder relationships, projects, culture, and memory must persist across upgrades. North star: founders ask "What version of Studio AI?" not "What model are you?"
+
+**Impact:** `docs/studio-os/studio-ai/` — Vision Bible + Persistent Intelligence Architecture, REA, AI Succession System, Institutional Memory Architecture, Executive Role Model, Persona Continuity, Model Compatibility Layer, Upgrade Workflow, Long-Term Roadmap. Succession ceremony treats model upgrades as executive succession. Roles (Creative Director, Professors) survive engine changes.
+
+**Files:** `docs/studio-os/studio-ai/*`, CURRENT_HANDOFF, README cross-links.
+
+**Supersedes:** Identifying platform AI with vendor model names
+
+**Dependencies:** AI Context Protocol + IME (memory transfer); Genesis Core (visual layer); native runtime Phase 2+
+
+---
+
 ## Template for new entries
 
 ```markdown
