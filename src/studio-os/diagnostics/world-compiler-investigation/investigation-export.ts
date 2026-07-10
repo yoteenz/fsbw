@@ -373,4 +373,7 @@ export function markInvestigationInstrumentationReady(): void {
   win.__WC_INVESTIGATION_READY__ = true;
   win.__WC_EXPORT_INVESTIGATION__ = () => buildCompleteInvestigationExport();
   win.__WC_EXPORT_INVESTIGATION_JSON__ = () => exportCompleteInvestigationJson();
+  void import('./investigation-recorder-boot').then(({ initWorldCompilerInvestigationRecorder }) => {
+    initWorldCompilerInvestigationRecorder();
+  });
 }

@@ -46315,3 +46315,20 @@ User requested final investigation tooling improvement before device stall repro
   - **Console:** `window.__WC_EXPORT_INVESTIGATION_JSON__()` · `window.__WC_EXPORT_INVESTIGATION__()`
 - **Not changed:** runtime compile behavior, P1–P3 repairs, AUTH_REQUIRED
 
+---
+
+## 2026-07-10 — Investigation live status panel (pre four-browser stall reproduction)
+
+Summary of **full conversation in this chat**: Continuation of LOAD_SHELL stall evidence work — forensic doc (`345231e67`), instrumentation sprint (`994250b4c`), Context Capsule 0.3.1 (`1ed57e594`), investigation JSON export (`b8db7e607`). User then requested **visibly verifiable recording state** on the investigation page before four-browser reproduction — observe-only, no compiler repair.
+
+- **Delivered:**
+  - **`investigation-live-status.ts`** — live status builder (Investigation Ready, Recording Active, browser mode, session/preview/compileRun IDs, event count + last event/timestamp, compiler/UI stage, milestone progress, stall threshold); run history from sessionStorage; `hasMeaningfulRunData()` gates export; selected-run persistence
+  - **`investigation-export-utils.ts`** — shared M1–M7 timeline helpers (deduped from export)
+  - **`investigation-ready.ts`** — instrumentation readiness check (breaks import cycles)
+  - **`investigation-log.ts`** — `clearInvestigationLog()` (UI-only clear by compileRunId)
+  - **`stall-evidence.ts`** — `clearStallEvidenceSession()` (UI-only)
+  - **Investigation route** `/__world-compiler-investigation` — live status panel (500ms poll), run history list with selectable compileRunId, **Export Investigation** / **Copy Report** / **Clear Current Run**; export/copy disabled when no meaningful run data; data persists via sessionStorage when leaving for Experience Lab and returning
+  - Export scoped to selected compile run; valid report requires compileRunId, milestone timeline, compiler/UI state, captured events
+- **Not changed:** compiler behavior, P1–P3 repairs, AUTH_REQUIRED
+- **URL:** https://fsbw.vercel.app/__world-compiler-investigation
+

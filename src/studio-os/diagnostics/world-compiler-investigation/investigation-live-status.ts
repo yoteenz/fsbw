@@ -15,6 +15,13 @@ import {
 } from './stall-evidence';
 import { deriveMilestoneSummary, buildMilestoneTimeline } from './investigation-export-utils';
 import { isInvestigationInstrumentationReady } from './investigation-ready';
+import {
+  filterRealCompilerEvents,
+  getRecorderSelfTest,
+  isRealCompilerLifecycleEvent,
+  isRecorderConnected,
+  loadInvestigationRecorderBootState,
+} from './investigation-recorder-boot';
 import type { CompilerInvestigationEvent } from './types';
 import type { UiCompilerSyncSnapshot } from './stall-evidence';
 
@@ -38,6 +45,13 @@ export type InvestigationRunSummary = {
 export type InvestigationLiveStatus = {
   investigationReady: boolean;
   recordingActive: boolean;
+  recorderConnected: boolean;
+  compilerEventSourceConnected: boolean;
+  recorderSubscriptionStatus: string;
+  selfTestStatus: 'PASS' | 'FAIL' | 'PENDING';
+  selfTestEventId: number | null;
+  selfTestTimestamp: string | null;
+  selfTestMessage: string | null;
   browserMode: 'normal' | 'private' | 'incognito' | 'unknown';
   investigationSessionId: string;
   previewSessionId: string | null;
@@ -114,10 +128,20 @@ export function getCachedBrowserMode(): InvestigationLiveStatus['browserMode'] {
 }
 
 function latestCompileRunId(events: readonly CompilerInvestigationEvent[]): string | null {
-  for (let i = events.length - 1; i >= 0; i -= 1) {
-    if (events[i]?.compileRunId) return events[i].compileRunId;
+  const real = filterRealCompilerEvents(events);
+  for (let i = real.length - 1; i >= 0; i -= 1) {
+    if (real[i]?.compileRunId) return real[i].compileRunId;
   }
   return getActiveCompileRun()?.compileRunId ?? null;
+}
+
+function latestPreviewSessionId(events: readonly CompilerInvestigationEvent[]): string | null {
+  const real = filterRealCompilerEvents(events);
+  for (let i = real.length - 1; i >= 0; i -= 1) {
+    const fromDetail = real[i]?.detail?.previewSessionId;
+    if (typeof fromDetail === 'string' && fromDetail.length > 0) return fromDetail;
+  }
+  return getActiveCompileRun()?.previewSessionId ?? null;
 }
 
 function pickLatestSync(events: readonly CompilerInvestigationEvent[]): UiCompilerSyncSnapshot | null {
@@ -245,25 +269,32 @@ export function hasMeaningfulRunData(
   events: readonly CompilerInvestigationEvent[],
   compileRunId?: string | null
 ): MeaningfulRunCheck {
-  const runId = compileRunId ?? latestCompileRunId(events);
+  const realEvents = filterRealCompilerEvents(events);
+  const runId = compileRunId ?? latestCompileRunId(realEvents);
   if (!runId) {
     return { ok: false, reason: 'No compileRunId captured yet' };
   }
 
-  const runEvents = events.filter((e) => e.compileRunId === runId || e.compileRunId === null);
-  const scoped = events.filter((e) => e.compileRunId === runId);
-  if (scoped.length === 0 && runEvents.length === 0) {
-    return { ok: false, reason: 'No events for this compile run' };
+  const scoped = realEvents.filter((e) => e.compileRunId === runId);
+  if (scoped.length === 0) {
+    return { ok: false, reason: 'No real compiler lifecycle events for this compile run' };
   }
 
-  const pool = scoped.length > 0 ? scoped : runEvents;
-  if (pool.length === 0) {
-    return { ok: false, reason: 'No captured events' };
+  const previewSessionId = scoped
+    .map((e) => e.detail?.previewSessionId)
+    .find((v): v is string => typeof v === 'string' && v.length > 0);
+  if (!previewSessionId) {
+    return { ok: false, reason: 'No previewSessionId captured for this compile run' };
   }
 
-  const timeline = buildMilestoneTimeline(pool);
+  const lifecycleEvents = scoped.filter(isRealCompilerLifecycleEvent);
+  if (lifecycleEvents.length === 0) {
+    return { ok: false, reason: 'No real compiler lifecycle events recorded' };
+  }
+
+  const timeline = buildMilestoneTimeline(scoped);
   const hasMilestoneActivity = timeline.some((row) => row.status !== 'missing');
-  const hasPipeline = pool.some(
+  const hasPipeline = scoped.some(
     (e) =>
       e.type === 'PIPELINE_LIFECYCLE' ||
       e.type === 'LOAD_SHELL_MILESTONE' ||
@@ -271,13 +302,24 @@ export function hasMeaningfulRunData(
       e.type === 'UI_COMPILER_SYNC'
   );
 
-  if (!hasPipeline && !hasMilestoneActivity) {
-    return { ok: false, reason: 'No pipeline, milestone, or UI sync events recorded' };
+  if (!hasPipeline) {
+    return { ok: false, reason: 'No pipeline or stage events recorded' };
   }
 
-  const lastSync = pickLatestSync(pool);
-  if (!lastSync && !hasMilestoneActivity && pool.length < 2) {
-    return { ok: false, reason: 'Insufficient compiler/UI state evidence' };
+  const lastSync = pickLatestSync(scoped);
+  const hasCompilerState = scoped.some(
+    (e) =>
+      e.type === 'COMPILE_STAGE_ENTER' ||
+      e.type === 'LOAD_SHELL_MILESTONE' ||
+      (e.type === 'PIPELINE_LIFECYCLE' && e.detail?.currentCompilerStage)
+  );
+  const hasUiState = lastSync != null || scoped.some((e) => e.type === 'UI_COMPILER_SYNC');
+
+  if (!hasCompilerState) {
+    return { ok: false, reason: 'Missing compiler state evidence' };
+  }
+  if (!hasUiState && !hasMilestoneActivity) {
+    return { ok: false, reason: 'Missing UI sync / milestone evidence' };
   }
 
   return { ok: true, reason: null };
@@ -288,23 +330,29 @@ export function buildInvestigationLiveStatus(selectedCompileRunId?: string | nul
   loadStallEvidenceFromSession();
 
   const events = [...getInvestigationEvents()];
+  const realEvents = filterRealCompilerEvents(events);
   const activeRun = getActiveCompileRun();
   const compileRunId =
     selectedCompileRunId ?? getSelectedCompileRunId() ?? latestCompileRunId(events);
-  const scopedEvents = compileRunId ? events.filter((e) => e.compileRunId === compileRunId) : events;
-  const pool = scopedEvents.length > 0 ? scopedEvents : events;
+  const scopedEvents = compileRunId ? realEvents.filter((e) => e.compileRunId === compileRunId) : realEvents;
+  const pool = scopedEvents.length > 0 ? scopedEvents : realEvents;
 
-  const lastEvent = pool.length ? pool[pool.length - 1] : events.length ? events[events.length - 1] : null;
-  const lastSync = pickLatestSync(pool.length ? pool : events);
-  const timeline = buildMilestoneTimeline(pool.length ? pool : events);
+  const lastEvent = pool.length ? pool[pool.length - 1] : realEvents.length ? realEvents[realEvents.length - 1] : null;
+  const lastSync = pickLatestSync(pool.length ? pool : realEvents);
+  const timeline = buildMilestoneTimeline(pool.length ? pool : realEvents);
   const milestoneSummary = deriveMilestoneSummary(timeline);
 
+  const bootState = loadInvestigationRecorderBootState();
+  const selfTest = getRecorderSelfTest();
+  const recorderConnected = isRecorderConnected();
+
   const recordingActive =
+    recorderConnected &&
     isStallEvidenceRecordingEnabled() &&
     lastEvent != null &&
     (Date.now() - lastEvent.timestamp < RECORDING_ACTIVE_MS || activeRun?.status === 'running');
 
-  const runHistory = buildRunHistory(events);
+  const runHistory = buildRunHistory(realEvents);
   const meaningful = hasMeaningfulRunData(events, compileRunId);
 
   const firstPending = timeline.find(
@@ -314,15 +362,25 @@ export function buildInvestigationLiveStatus(selectedCompileRunId?: string | nul
   return {
     investigationReady: isInvestigationInstrumentationReady(),
     recordingActive,
+    recorderConnected,
+    compilerEventSourceConnected: bootState?.compilerEventSourceConnected ?? recorderConnected,
+    recorderSubscriptionStatus: recorderConnected
+      ? 'Subscribed via global-boot → logCompilerEvent'
+      : 'Not subscribed — reload app after deploy',
+    selfTestStatus: selfTest.status,
+    selfTestEventId: selfTest.eventId,
+    selfTestTimestamp: selfTest.timestamp,
+    selfTestMessage: selfTest.message,
     browserMode: cachedBrowserMode,
     investigationSessionId: getInvestigationSessionId(),
     previewSessionId:
+      latestPreviewSessionId(events) ??
       lastSync?.previewSessionId ??
       (lastEvent?.detail?.previewSessionId as string | undefined) ??
       activeRun?.previewSessionId ??
       null,
     compileRunId,
-    eventsCaptured: pool.length > 0 ? pool.length : events.length,
+    eventsCaptured: pool.length,
     lastRecordedEvent: lastEvent ? `${lastEvent.type}${lastEvent.stageName ? ` · ${lastEvent.stageName}` : ''}` : null,
     lastEventTimestamp: lastEvent?.isoTime ?? null,
     currentCompilerStage:

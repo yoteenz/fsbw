@@ -335,10 +335,11 @@ function ensureSessionState(key: ExperienceLabSessionKey): SessionState {
   const previewSessionId = buildPreviewSessionId(key);
   let session = sessions.get(previewSessionId);
   if (!session) {
+    const initialCompileRunId = newCompileRunId();
     session = {
       key,
       previewSessionId,
-      compileRunId: newCompileRunId(),
+      compileRunId: initialCompileRunId,
       shellPipelinePhase: 'idle',
       shellPipelineStage: 'compile-preview-spec',
       shellPipelineResult: null,
@@ -354,6 +355,18 @@ function ensureSessionState(key: ExperienceLabSessionKey): SessionState {
       heartbeatUnsub: null,
     };
     sessions.set(previewSessionId, session);
+    const sessionCtx: StallEvidenceContext = {
+      previewSessionId,
+      compileRunId: initialCompileRunId,
+      stationId: key.stationId,
+      projectId: key.projectId,
+      conceptId: key.conceptId,
+      companyId: key.companyId,
+    };
+    logPipelineLifecycle('PREVIEW_SESSION_CREATED', 'experience-lab-render-runtime.ensureSessionState', sessionCtx);
+    logPipelineLifecycle('COMPILE_RUN_CREATED', 'experience-lab-render-runtime.ensureSessionState', sessionCtx, {
+      compileRunId: initialCompileRunId,
+    });
     bumpValidationMode();
     setValidationPreviewSession(previewSessionId);
     startExperienceLabHeartbeat();
@@ -388,6 +401,9 @@ async function runFullPipeline(session: SessionState): Promise<void> {
     trigger: isAutoRunDisabled() ? 'manual' : 'auto',
   });
 
+  let pipelineEntered = false;
+  try {
+  pipelineEntered = true;
   const driverBoundary = beginAsyncBoundary('waitForSceneStackDriver', pipelineCtx);
   const driver = await waitForSceneStackDriver(session.key.departmentId, session.key.projectId);
   endAsyncBoundary(driverBoundary, driver ? 'resolved' : 'rejected', {
@@ -410,6 +426,9 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   session.pipelineRunning = true;
   logPipelineLifecycle('PIPELINE_RUNNING_SET_TRUE', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session));
   session.compileRunId = newCompileRunId();
+  logPipelineLifecycle('COMPILE_RUN_CREATED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+    compileRunId: session.compileRunId,
+  });
   const compilerInstanceId = createCompilerInstanceId();
   session.runAttempt += 1;
   session.runStartedAt = Date.now();
@@ -631,6 +650,21 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   endCompileRun('success');
   notifySnapshot(session);
   publishRuntimeEvent(session, 'RenderCompleted', { progressPct: 100 });
+  } finally {
+    if (pipelineEntered) {
+      logPipelineLifecycle('PIPELINE_FINALLY', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+        pipelineRunning: session.pipelineRunning,
+        renderStatus: session.renderStatus,
+        shellPipelinePhase: session.shellPipelinePhase,
+      });
+      if (!session.pipelineRunning) {
+        logPipelineLifecycle('PIPELINE_OWNER_RELEASED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+          compileRunId: session.compileRunId,
+          previewSessionId: session.previewSessionId,
+        });
+      }
+    }
+  }
 }
 
 export function subscribeCompilerSession(

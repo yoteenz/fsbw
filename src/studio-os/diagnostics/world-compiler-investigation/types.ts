@@ -51,7 +51,8 @@ export type CompilerInvestigationEventType =
   | 'ASYNC_BOUNDARY_START'
   | 'ASYNC_BOUNDARY_END'
   | 'ASYNC_BOUNDARY_STALL'
-  | 'UI_COMPILER_SYNC';
+  | 'UI_COMPILER_SYNC'
+  | 'INVESTIGATION_RECORDER_SELF_TEST';
 
 export type CompilerInvestigationEvent = {
   id: number;

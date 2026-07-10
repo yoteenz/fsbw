@@ -73,6 +73,16 @@ export {
   downloadInvestigationExport,
   markInvestigationInstrumentationReady,
 } from './investigation-export';
+export {
+  initWorldCompilerInvestigationRecorder,
+  isRecorderConnected,
+  getRecorderSelfTest,
+  loadInvestigationRecorderBootState,
+  filterRealCompilerEvents,
+  isSelfTestEvent,
+  isRealCompilerLifecycleEvent,
+} from './investigation-recorder-boot';
+export type { InvestigationRecorderBootState, InvestigationRecorderSelfTest } from './investigation-recorder-boot';
 export { isInvestigationInstrumentationReady } from './investigation-ready';
 export type { CompleteInvestigationExport, InvestigationExportSummary } from './investigation-export';
 

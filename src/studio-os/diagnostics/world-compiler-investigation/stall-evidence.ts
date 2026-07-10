@@ -20,6 +20,8 @@ export type AsyncBoundaryOutcome =
   | 'still-pending-at-stall';
 
 export type PipelineLifecycleEvent =
+  | 'PREVIEW_SESSION_CREATED'
+  | 'COMPILE_RUN_CREATED'
   | 'RUN_FULL_PIPELINE_ENTERED'
   | 'RUN_FULL_PIPELINE_EXIT_SUCCESS'
   | 'RUN_FULL_PIPELINE_EXIT_FAILED'
@@ -42,7 +44,9 @@ export type PipelineLifecycleEvent =
   | 'ON_STAGE_COMPLETE_PUBLISHED'
   | 'DUPLICATE_COMPILE_INVOCATION'
   | 'UI_COMPILER_SYNC_SNAPSHOT'
-  | 'STALL_THRESHOLD_REACHED';
+  | 'STALL_THRESHOLD_REACHED'
+  | 'PIPELINE_FINALLY'
+  | 'PIPELINE_OWNER_RELEASED';
 
 export type StallEvidenceContext = {
   previewSessionId?: string | null;
@@ -448,9 +452,6 @@ export function installStallEvidenceGlobal(): void {
         getAsyncBoundaryHistory,
         buildStallEvidenceReport,
       };
-    });
-    import('./investigation-export').then(({ markInvestigationInstrumentationReady }) => {
-      markInvestigationInstrumentationReady();
     });
   } catch {
     /* ignore */

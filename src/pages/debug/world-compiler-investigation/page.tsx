@@ -11,9 +11,9 @@ import {
   downloadInvestigationExport,
   exportCompleteInvestigationJson,
   getInvestigationEvents,
+  initWorldCompilerInvestigationRecorder,
   isWorldCompilerDiagnosticMode,
   loadInvestigationEventsFromSession,
-  markInvestigationInstrumentationReady,
   refreshBrowserMode,
   setSelectedCompileRunId,
 } from '../../../studio-os/diagnostics/world-compiler-investigation';
@@ -54,8 +54,8 @@ export default function WorldCompilerInvestigationPage() {
   const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
+    initWorldCompilerInvestigationRecorder();
     loadInvestigationEventsFromSession();
-    markInvestigationInstrumentationReady();
     setLiveStatus(buildInvestigationLiveStatus(selectedRunId));
     setStallReport(buildStallEvidenceReport());
   }, [selectedRunId]);
@@ -170,6 +170,27 @@ export default function WorldCompilerInvestigationPage() {
             highlight={liveStatus.investigationReady ? 'ok' : 'warn'}
           />
           <StatusRow
+            label="Recorder Connected"
+            value={yesNo(liveStatus.recorderConnected)}
+            highlight={liveStatus.recorderConnected ? 'ok' : 'warn'}
+          />
+          <StatusRow
+            label="Compiler event source"
+            value={liveStatus.compilerEventSourceConnected ? 'CONNECTED' : 'DISCONNECTED'}
+            highlight={liveStatus.compilerEventSourceConnected ? 'ok' : 'warn'}
+          />
+          <StatusRow label="Recorder subscription" value={liveStatus.recorderSubscriptionStatus} />
+          <StatusRow
+            label="Self-test status"
+            value={liveStatus.selfTestStatus}
+            highlight={liveStatus.selfTestStatus === 'PASS' ? 'ok' : liveStatus.selfTestStatus === 'FAIL' ? 'warn' : 'muted'}
+          />
+          <StatusRow label="Self-test event ID" value={liveStatus.selfTestEventId != null ? String(liveStatus.selfTestEventId) : '—'} />
+          <StatusRow label="Self-test timestamp" value={liveStatus.selfTestTimestamp ?? '—'} />
+          {liveStatus.selfTestMessage ? (
+            <StatusRow label="Self-test detail" value={liveStatus.selfTestMessage} highlight="muted" />
+          ) : null}
+          <StatusRow
             label="Recording Active"
             value={yesNo(liveStatus.recordingActive)}
             highlight={liveStatus.recordingActive ? 'ok' : 'muted'}
@@ -280,10 +301,14 @@ export default function WorldCompilerInvestigationPage() {
 
       {copyStatus ? <p style={{ color: '#4ade80', marginBottom: 12 }}>{copyStatus}</p> : null}
 
-      {!liveStatus?.investigationReady ? (
+      {!liveStatus?.recorderConnected ? (
         <p style={{ color: '#fb923c', marginBottom: 16 }}>
-          Open Experience Lab in this browser first so instrumentation hooks load, then return here before reproducing
-          the stall.
+          Recorder not connected — hard-refresh this tab so global-boot registers the investigation recorder, then
+          confirm Self-test: PASS before reproducing in Experience Lab.
+        </p>
+      ) : !liveStatus.investigationReady ? (
+        <p style={{ color: '#fb923c', marginBottom: 16 }}>
+          Investigation instrumentation boot incomplete — reload and confirm Self-test PASS.
         </p>
       ) : null}
 
