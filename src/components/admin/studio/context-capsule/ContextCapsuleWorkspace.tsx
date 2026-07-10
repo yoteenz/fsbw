@@ -74,7 +74,7 @@ export function ContextCapsuleWorkspace() {
   return (
     <ExecutivePageShell>
       <ExecutiveHeroCard
-        eyebrow="AI CONTEXT CAPSULE EXPORT SYSTEM™ · v0.2"
+        eyebrow="AI CONTEXT CAPSULE EXPORT SYSTEM™ · 0.3.1"
         title="AI CONTEXT CAPSULE™"
         subtitle="Stable latest.zip channel + immutable versioned releases."
         progressPct={status?.packageHealth ?? 91}
@@ -85,6 +85,22 @@ export function ContextCapsuleWorkspace() {
           { label: 'STATUS', value: readyMessage ? 'READY' : status?.generationStatus?.toUpperCase() ?? 'IDLE' },
         ]}
       />
+
+      <ExecutiveFocusPanel
+        title="VALIDATION SUMMARY"
+        subtitle="Prebuild gate — latest.zip updates only when all checks pass."
+        highlight={validationStatus === 'pass' ? 'Validation: PASS' : `Validation: ${validationStatus.toUpperCase()}`}
+      >
+        <StatRow label="Capsule Version" value={status?.capsuleVersion ?? release?.currentVersion ?? '—'} />
+        <StatRow
+          label="Generated"
+          value={status?.lastGenerated ? new Date(status.lastGenerated).toISOString() : '—'}
+        />
+        <StatRow label="Validation" value={validationStatus.toUpperCase()} />
+        <StatRow label="Manifest" value={`${release?.documentCount ?? status?.documentCount ?? 15} docs`} />
+        <StatRow label="Documents" value={String(status?.documentCount ?? 15)} />
+        <StatRow label="Download" value={latestPath} />
+      </ExecutiveFocusPanel>
 
       <ExecutiveFocusPanel
         title="PERMANENT DOWNLOAD"

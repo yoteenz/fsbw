@@ -1,6 +1,6 @@
 # Founder Profile — Operating & Collaboration Layer
 
-**Capsule:** StudioOS_ContextCapsule_v0.1 · v0.3.0  
+**Capsule:** StudioOS_ContextCapsule_v0.1 · 0.3.1  
 **Authority:** This document is the **authoritative source** for how AI should collaborate with the founder.  
 **Rule:** Working preferences and collaboration rules only — **no** sensitive personal information, credentials, or private life details.
 

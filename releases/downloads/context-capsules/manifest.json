@@ -1,17 +1,19 @@
 {
   "schemaVersion": 1,
-  "artifact": "StudioOS_ContextCapsule_v0.3.0.zip",
-  "capsuleVersion": "0.3.0",
+  "artifact": "StudioOS_ContextCapsule_v0.3.1.zip",
+  "capsuleVersion": "0.3.1",
+  "manifestVersion": "0.3.1",
   "capsuleFolder": "StudioOS_ContextCapsule_v0.1",
-  "generatedAt": "2026-07-10T19:50:35.949Z",
+  "generatedAt": "2026-07-10T19:54:38.660Z",
   "fileCount": 15,
-  "checksumSha256": "385fcaa9fc35ba5e2710a9841a21a3419f1f1e4498c2ed9eb54ecda0e967da57",
-  "sizeBytes": 46976,
-  "generatorVersion": "0.3.0",
+  "manifestDocumentCount": 16,
+  "checksumSha256": "c03891538023388ba1fe2cb41c50d5f8c41163a0b435752902e0c8681ade8341",
+  "sizeBytes": 47371,
+  "generatorVersion": "0.3.1",
   "readingOrderChecksum": "7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30",
   "validationStatus": "pass",
   "downloadUrls": {
     "production": "/downloads/context-capsules/latest.zip",
-    "versioned": "/downloads/context-capsules/StudioOS_ContextCapsule_v0.3.0.zip"
+    "versioned": "/downloads/context-capsules/StudioOS_ContextCapsule_v0.3.1.zip"
   }
 }

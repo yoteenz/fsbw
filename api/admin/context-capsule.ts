@@ -210,7 +210,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       return res.status(200).json({
         ok: true,
-        message: 'Context Capsule Ready',
+        message: `Context Capsule Ready — v${release.currentVersion} · validation pass · ${release.documentCount} documents`,
         validation,
         export: record,
         status: buildStatus(info, validation, record, buildManifest, release),

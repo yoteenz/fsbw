@@ -1,8 +1,8 @@
-# README FIRST — AI Context Capsule v0.3
+# README FIRST — AI Context Capsule 0.3.1
 
-**You are opening:** `StudioOS_ContextCapsule_v0.1` (folder name is stable; **capsule version is 0.3.0**)  
+**You are opening:** `StudioOS_ContextCapsule_v0.1` (folder name is stable; **capsule version is 0.3.1**)  
 **Purpose:** Deterministic **verification** onboarding — reconstruct project and founder working style with **minimal inference**  
-**Capsule version:** 0.3.0  
+**Capsule version:** 0.3.1  
 **Generated:** see `CAPSULE_VALIDATION.md` and `context-capsule.json`
 
 ---
@@ -11,7 +11,7 @@
 
 This folder is a **complete AI Context Capsule** — a portable briefing room for Studio OS. It is not source code. It is not permission to guess.
 
-**v0.3 changes:** onboarding is a **verification process**, not a general summary. You must distinguish **documented facts** from **inference**, identify **uncertainty explicitly**, and complete the **compliance checklist** before stopping.
+**0.3.1 changes:** self-verifying export — auto-generated Read Verification, Operational Verification, and Capsule Validation footer in `CAPSULE_VALIDATION.md`. Onboarding remains a **verification process** with documented-vs-inferred labels and compliance checklist.
 
 Check `CAPSULE_VALIDATION.md` to confirm this export passed validation (version, commit SHA, manifest hash, document count).
 
@@ -44,7 +44,7 @@ Open `ONBOARDING_REPORT.md` and **complete every section** using the structure a
 - **Complete the Onboarding Compliance Checklist** near the top.  
 - If information cannot be determined from the capsule, write: **"This information is not documented within the current capsule."** — do not guess.
 
-Required v0.3 sections include:
+Required sections include:
 
 - Onboarding Compliance Checklist  
 - Read Confirmation (missing/skipped docs)  
@@ -141,7 +141,7 @@ https://fsbw.vercel.app/downloads/context-capsules/latest.zip
 **Versioned (immutable):**
 
 ```
-https://fsbw.vercel.app/downloads/context-capsules/StudioOS_ContextCapsule_v0.3.0.zip
+https://fsbw.vercel.app/downloads/context-capsules/StudioOS_ContextCapsule_v0.3.1.zip
 ```
 
 **Regenerate locally:** `npm run download:ai-context-capsule` from repo root.

@@ -128,6 +128,29 @@ export function loadCapsuleSourceInfo(root = repoRoot()): CapsuleSourceInfo {
   };
 }
 
+function parseManifestInventory(manifest: string): string[] {
+  const files: string[] = [];
+  const re = /`\s*([A-Z0-9_]+\.md)\s*`/gi;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(manifest)) !== null) {
+    const name = m[1]!;
+    if (!files.includes(name)) files.push(name);
+  }
+  return files;
+}
+
+function extractMarkdownReferences(content: string): string[] {
+  const refs = new Set<string>();
+  const patterns = [/`([A-Za-z0-9_\-]+\.md)`/g, /\[([^\]]+\.md)\]/g];
+  for (const re of patterns) {
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(content)) !== null) {
+      refs.add(m[1]!);
+    }
+  }
+  return [...refs];
+}
+
 export function validateCapsulePackage(info: CapsuleSourceInfo): ContextCapsuleValidationCheck[] {
   const checks: ContextCapsuleValidationCheck[] = [];
   const present = new Set(
@@ -241,6 +264,71 @@ export function validateCapsulePackage(info: CapsuleSourceInfo): ContextCapsuleV
           ? `${CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS.length} sections present`
           : `Missing sections: ${missingSections.join(', ')}`,
     });
+  }
+
+  const manifestInventory = parseManifestInventory(manifest);
+  const inventoryMissing = manifestInventory.filter((f) => !present.has(f));
+  checks.push({
+    id: 'manifest-inventory',
+    label: 'MANIFEST inventory documents exist',
+    passed: inventoryMissing.length === 0,
+    detail:
+      inventoryMissing.length === 0
+        ? `Manifest Count: ${manifestInventory.length} · Missing: 0`
+        : `Missing: ${inventoryMissing.join(', ')}`,
+  });
+
+  const readmePath = path.join(info.capsuleDir, 'README_FIRST.md');
+  if (fs.existsSync(readmePath)) {
+    const readme = fs.readFileSync(readmePath, 'utf8');
+    const readmeRefs = extractMarkdownReferences(readme).filter((r) => r.endsWith('.md'));
+    const badRefs = readmeRefs.filter((r) => !present.has(r));
+    checks.push({
+      id: 'readme-references',
+      label: 'README references only existing files',
+      passed: badRefs.length === 0,
+      detail: badRefs.length ? `Missing: ${badRefs.join(', ')}` : `${readmeRefs.length} references OK`,
+    });
+  }
+
+  const syncFiles = ['README_FIRST.md', 'MANIFEST.md', 'AI_CONTEXT.md', 'ONBOARDING_REPORT.md'];
+  const staleVersions = ['0.3.0', '0.2.0', '0.2.1', '0.1.0'];
+  let staleFound: string[] = [];
+  for (const file of syncFiles) {
+    const content = fs.readFileSync(path.join(info.capsuleDir, file), 'utf8');
+    for (const stale of staleVersions) {
+      if (content.includes(stale)) staleFound.push(`${file}:${stale}`);
+    }
+  }
+  checks.push({
+    id: 'version-canonical',
+    label: 'No stale capsule version strings in sync files',
+    passed: staleFound.length === 0,
+    detail: staleFound.length ? staleFound.join(', ') : `Canonical ${info.version} only`,
+  });
+
+  if (metadataExists) {
+    try {
+      const meta = JSON.parse(fs.readFileSync(metadataPath, 'utf8')) as {
+        capsuleVersion?: string;
+        manifestVersion?: string;
+        requiredMarkdownFiles?: string[];
+      };
+      const filesMatch =
+        !meta.requiredMarkdownFiles ||
+        meta.requiredMarkdownFiles.length === CONTEXT_CAPSULE_REQUIRED_FILES.length;
+      checks.push({
+        id: 'metadata-documents-match',
+        label: 'context-capsule.json matches exported documents',
+        passed:
+          meta.capsuleVersion === info.version &&
+          (!meta.manifestVersion || meta.manifestVersion === info.version) &&
+          filesMatch,
+        detail: `JSON version ${meta.capsuleVersion ?? 'n/a'} · manifest ${meta.manifestVersion ?? 'n/a'}`,
+      });
+    } catch {
+      /* metadata-parse already reported */
+    }
   }
 
   return checks;

@@ -46273,3 +46273,19 @@ Summary of **full conversation in this chat**: After preview-scoped shell resolu
 - **Device proof (P0):** Check investigation log for `COMPILE_STAGE_ENTER load-shell` — absent confirms RC-STALL-1; present + complete confirms RC-STALL-2/3 UI desync.
 - **Conventions:** Do not implement LOAD_SHELL repair until founder approves repair sprint following forensic doc.
 
+---
+
+## 2026-07-10 — LOAD_SHELL stall evidence-only diagnostic sprint
+
+Summary of **full conversation in this chat**: After forensic analysis (`LOAD_SHELL_STALL_FORENSIC.md`, commit `345231e67`), user mandated **evidence-only pass** before P1–P3 repair — distinguish RC-STALL-1/2/3/4 on device; no runtime repair, no compile ownership changes, no context threading, no progress fixes, no AUTH_REQUIRED resolution.
+
+- **Delivered (instrumentation only):**
+  - **`stall-evidence.ts`** — pipeline ownership, M1–M7 milestones, async boundary tracking, UI/compiler sync snapshots, stall threshold logging
+  - **`stall-classifier.ts`** — proof-based RC-STALL-1…4 classification from events
+  - **`stall-evidence-report.ts`** — JSON + Markdown export bundle
+  - **Instrumented:** `compile-pipeline.ts` (M1–M7, compileWorldStation lifecycle), `experience-lab-render-runtime.ts` (runFullPipeline boundaries, unhandled rejection evidence, stall sync), `useSceneStack.ts` (ensureStation/compileStation/report publication, duplicate compile detection)
+  - **Investigation route:** `/__world-compiler-investigation` — Copy/Download JSON/Markdown, milestone timeline, async boundaries, classification panel; `window.__WC_STALL_EVIDENCE__`
+  - **Protocol:** `docs/studio-os/world-compiler/LOAD_SHELL_STALL_EVIDENCE_PROTOCOL.md` — reproduction steps, Black Box browser comparison checklist, deliverable template
+- **Not applied:** P1–P3 repairs, try/finally orphan fix, incremental compileReport, single compile owner, AUTH_REQUIRED fix
+- **Next:** Founder device reproduction → export JSON → fill deliverable template → approve proven root cause → then repair sprint
+

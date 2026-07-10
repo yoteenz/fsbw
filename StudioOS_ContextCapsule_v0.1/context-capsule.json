@@ -1,8 +1,9 @@
 {
   "schemaVersion": 1,
-  "capsuleVersion": "0.3.0",
+  "capsuleVersion": "0.3.1",
+  "manifestVersion": "0.3.1",
   "capsuleFolder": "StudioOS_ContextCapsule_v0.1",
-  "generatedAt": "2026-07-10T19:50:35.949Z",
+  "generatedAt": "2026-07-10T19:54:38.660Z",
   "projectVersion": "build-a-wig@0.0.0",
   "documentCount": 15,
   "metadataFileCount": 1,
@@ -41,17 +42,22 @@
     "KNOWN_BLOCKERS.md",
     "OPEN_QUESTIONS.md"
   ],
+  "operationalSourceOfTruth": [
+    "CURRENT_HANDOFF.md",
+    "KNOWN_BLOCKERS.md",
+    "PROJECT_CHANGELOG.md"
+  ],
   "validationStatus": "pass",
-  "generatorVersion": "0.3.0",
+  "generatorVersion": "0.3.1",
   "onboardingFeatures": [
-    "verification-onboarding-v0.3",
+    "verification-onboarding-v0.3.1",
+    "read-verification-auto",
+    "operational-verification-auto",
+    "capsule-validation-footer",
     "onboarding-compliance-checklist",
     "operational-source-of-truth-hierarchy",
     "documented-vs-inferred-labels",
     "documentation-review-certainty-tags",
-    "founder-understanding-section",
-    "confidence-assumptions-avoided",
-    "capsule-validation-page",
     "export-validation-gate",
     "stable-latest-alias",
     "release-manifest"

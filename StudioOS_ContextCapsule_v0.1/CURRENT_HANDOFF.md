@@ -8,11 +8,11 @@
 
 ## Current sprint
 
-**AI Context Capsule v0.3 — Deterministic Verification Onboarding**
+**AI Context Capsule 0.3.1 — Self-Verifying Export & Packaging Validation**
 
-Refine onboarding from summary to **verification**: compliance checklist, operational source-of-truth hierarchy, documented-vs-inferred labels, documentation review with certainty tags, auto-generated `CAPSULE_VALIDATION.md`, export version-sync validation.
+Refine export pipeline: canonical version sync, auto-generated Read Verification, Operational Verification, Capsule Validation footer, pre-ZIP validation gate (manifest inventory, link checks, stale version detection).
 
-**Previous:** v0.2 onboarding template + stable `latest.zip` release channel (`700fec5ab`); Experience Lab shell resolution repair (`e641dc7dc`).
+**Previous:** 0.3.0 verification onboarding template + `CAPSULE_VALIDATION.md` auto-page (`f2350d561`).
 
 ---
 

@@ -8,7 +8,7 @@ export const CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY = 'studioOsContextCapsuleExports
 /** Fixed capsule folder at repo root — included via vercel.json includeFiles. */
 export const CONTEXT_CAPSULE_FOLDER_NAME = 'StudioOS_ContextCapsule_v0.1';
 
-export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.3.0';
+export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.3.1';
 
 export const CONTEXT_CAPSULE_METADATA_FILE = 'context-capsule.json';
 

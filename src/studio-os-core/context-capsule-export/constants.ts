@@ -5,7 +5,7 @@
 
 export const CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY = 'studioOsContextCapsuleExports_v1';
 
-export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.3.0';
+export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.3.1';
 
 export const CONTEXT_CAPSULE_METADATA_FILE = 'context-capsule.json';
 
@@ -76,7 +76,7 @@ export const CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS = [
   '# Waiting For Founder Approval',
 ] as const;
 
-export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule v0.3 (latest validated release).
+export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule 0.3.1 (latest validated release).
 
 Download (permanent URL): https://fsbw.vercel.app/downloads/context-capsules/latest.zip
 

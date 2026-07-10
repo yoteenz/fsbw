@@ -1,6 +1,6 @@
 # AI Context — Studio OS High-Level Onboarding
 
-**Capsule:** StudioOS_ContextCapsule_v0.1 · **v0.3.0**  
+**Capsule:** StudioOS_ContextCapsule_v0.1 · **0.3.1**  
 **Last updated:** 2026-07-10  
 **Purpose:** Compressed orientation for external AI — not a substitute for full repo bibles (paths below point to canonical docs in the host repository)
 

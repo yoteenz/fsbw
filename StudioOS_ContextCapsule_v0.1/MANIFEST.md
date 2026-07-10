@@ -1,9 +1,9 @@
 # MANIFEST — StudioOS_ContextCapsule_v0.1
 
-**Capsule ID:** `capsule-2026-07-10-v0.3-verification`  
-**Capsule Version:** 0.3.0  
+**Capsule ID:** `capsule-2026-07-10-v0.3.1-validation`  
+**Capsule Version:** 0.3.1  
 **Format:** Flat Markdown + `context-capsule.json` + `CAPSULE_VALIDATION.md` + ZIP download  
-**Protocol alignment:** AI Context Protocol™ v1.0.0 + v0.3 verification onboarding
+**Protocol alignment:** AI Context Protocol™ 1.0.0 + 0.3.1 verification onboarding
 
 ---
 
@@ -11,12 +11,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Capsule Version** | 0.3.0 |
+| **Capsule Version** | 0.3.1 |
 | **Project Version** | `build-a-wig@0.0.0` (see git SHA at export) |
 | **Studio OS Version** | git SHA on `master` at export |
 | **Generation Date** | See `CAPSULE_VALIDATION.md` |
 | **Generator** | Prebuild packager + admin export |
-| **Generator Version** | 0.3.0 |
+| **Generator Version** | 0.3.1 |
 | **Export Type** | full |
 | **Host deployment** | Frontal Slayer / Build-a-Wig (Vercel) |
 
@@ -40,7 +40,7 @@
 | 11 | `ROADMAP.md` | Phased priorities | Required |
 | 12 | `OPEN_QUESTIONS.md` | Unresolved founder decisions | Required |
 | 13 | `PROMPT_LIBRARY.md` | Composer / Terra / ChatGPT templates | Required |
-| 14 | `ONBOARDING_REPORT.md` | **v0.3 verification template — complete every section** | **Required** |
+| 14 | `ONBOARDING_REPORT.md` | **Verification template — complete every section** | **Required** |
 | — | `context-capsule.json` | Machine-readable export metadata | Required |
 | — | `CAPSULE_VALIDATION.md` | Auto-generated validation page (export integrity) | Required |
 
@@ -74,7 +74,7 @@ Read in this exact sequence after `README_FIRST.md`:
 
 ---
 
-## Onboarding gates (v0.3)
+## Onboarding gates (0.3.1)
 
 | Gate | Requirement |
 |------|-------------|
@@ -94,7 +94,7 @@ Read in this exact sequence after `README_FIRST.md`:
 
 | Score | Value | Notes |
 |-------|-------|-------|
-| **Completeness** | 0.97 | v0.3 verification template + validation page |
+| **Completeness** | 0.98 | 0.3.1 self-verifying validation page |
 | **Freshness** | 0.95 | 2026-07-10 |
 | **Consistency** | 0.94 | Version sync enforced at export |
 | **Coverage** | 0.91 | Core systems + founder + source-of-truth hierarchy |
@@ -110,9 +110,10 @@ Before ZIP packaging, the build validates:
 
 - ✓ `README_FIRST.md`, `MANIFEST.md`, `ONBOARDING_REPORT.md` exist  
 - ✓ Every manifest inventory entry exists on disk  
-- ✓ All v0.3 ONBOARDING_REPORT required sections present  
+- ✓ All ONBOARDING_REPORT required sections present  
 - ✓ Reading order valid; checksum in `context-capsule.json`  
-- ✓ Capsule version **0.3.0** synchronized across README, MANIFEST, AI_CONTEXT, ONBOARDING_REPORT  
+- ✓ Capsule version **0.3.1** synchronized across README, MANIFEST, AI_CONTEXT, ONBOARDING_REPORT  
+- ✓ Read Verification + Operational Verification auto-generated in `CAPSULE_VALIDATION.md`
 - ✓ `CAPSULE_VALIDATION.md` generated with commit SHA, manifest hash, validation status  
 
 If validation fails → **no `latest.zip` update** — errors reported to console.
@@ -132,8 +133,8 @@ If validation fails → **no `latest.zip` update** — errors reported to consol
 
 ## Validation purpose
 
-Success = new ChatGPT session reads capsule, completes v0.3 ONBOARDING_REPORT with compliance checklist, correctly identifies operational source-of-truth hierarchy, separates documented facts from inference, cites B1/B2, reports confidence % and assumptions avoided, and **waits for approval**.
+Success = new ChatGPT session reads capsule, completes ONBOARDING_REPORT with compliance checklist, correctly identifies operational source-of-truth hierarchy, separates documented facts from inference, cites B1/B2, reports confidence % and assumptions avoided, and **waits for approval**.
 
 ---
 
-*End of MANIFEST — StudioOS_ContextCapsule v0.3.0*
+*End of MANIFEST — StudioOS Context Capsule 0.3.1*

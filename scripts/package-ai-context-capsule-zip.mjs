@@ -10,11 +10,19 @@ import { execSync } from 'node:child_process';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
-const GENERATOR_VERSION = '0.3.0';
+/** Single canonical semver for every generated artifact and version-sync check. */
+const CANONICAL_CAPSULE_VERSION = '0.3.1';
+const GENERATOR_VERSION = CANONICAL_CAPSULE_VERSION;
 const LATEST_ALIAS = 'latest.zip';
 const RELEASE_MANIFEST = 'release.json';
 const METADATA_FILE = 'context-capsule.json';
 const DOWNLOAD_BASE = '/downloads/context-capsules';
+
+const OPERATIONAL_SOURCE_OF_TRUTH = [
+  'CURRENT_HANDOFF.md',
+  'KNOWN_BLOCKERS.md',
+  'PROJECT_CHANGELOG.md',
+];
 
 const REQUIRED_FILES = [
   'README_FIRST.md',
@@ -68,11 +76,14 @@ const ONBOARDING_SECTIONS = [
 ];
 
 const VERSION_SYNC_FILES = [
-  { file: 'README_FIRST.md', pattern: /\*\*Capsule version:\*\*\s*0\.3\.0/ },
-  { file: 'MANIFEST.md', pattern: /\*\*Capsule Version\*\*\s*\|\s*0\.3\.0/ },
-  { file: 'AI_CONTEXT.md', pattern: /v0\.3\.0/ },
-  { file: 'ONBOARDING_REPORT.md', pattern: /Capsule version:\*\*\s*0\.3\.0/ },
+  'README_FIRST.md',
+  'MANIFEST.md',
+  'AI_CONTEXT.md',
+  'ONBOARDING_REPORT.md',
 ];
+
+/** Legacy semver strings that must not appear in version-sync files (historical changelog exempt). */
+const FORBIDDEN_VERSION_STRINGS = ['0.3.0', '0.2.0', '0.2.1', '0.1.0'];
 
 const SUPPORTED_FORMATS = ['zip'];
 
@@ -86,21 +97,31 @@ function findCapsuleDir() {
   return { dir: path.join(ROOT, dirs[dirs.length - 1]), name: dirs[dirs.length - 1] };
 }
 
-function readVersion(capsuleDir, folderName) {
+function readVersion(capsuleDir) {
   const manifestPath = path.join(capsuleDir, 'MANIFEST.md');
   if (fs.existsSync(manifestPath)) {
     const manifest = fs.readFileSync(manifestPath, 'utf8');
     const match = manifest.match(/\*\*Capsule Version\*\*\s*\|\s*([^\|\n]+)/);
     if (match) return match[1].trim();
   }
-  const folderMatch = folderName.match(/v([\d.]+)$/i);
-  return folderMatch ? (folderMatch[1].includes('.') ? folderMatch[1] : `${folderMatch[1]}.0`) : '0.2.0';
+  return CANONICAL_CAPSULE_VERSION;
 }
 
 function parseManifestField(manifest, label) {
   const re = new RegExp(`\\*\\*${label}\\*\\*\\s*\\|\\s*([^|\\n]+)`);
   const match = manifest.match(re);
   return match ? match[1].trim().replace(/^`|`$/g, '') : null;
+}
+
+function parseManifestInventory(manifest) {
+  const files = [];
+  const re = /`\s*([A-Z0-9_]+\.md|context-capsule\.json|CAPSULE_VALIDATION\.md)\s*`/gi;
+  let m;
+  while ((m = re.exec(manifest)) !== null) {
+    const name = m[1];
+    if (!files.includes(name)) files.push(name);
+  }
+  return files.filter((f) => f.endsWith('.md'));
 }
 
 function readingOrderChecksum() {
@@ -125,9 +146,106 @@ function readPreviousRelease(outDir) {
   }
 }
 
+function extractMarkdownReferences(content) {
+  const refs = new Set();
+  const patterns = [
+    /`([A-Za-z0-9_\-]+\.md)`/g,
+    /\[([^\]]+\.md)\]/g,
+    /\/downloads\/context-capsules\/([A-Za-z0-9_\-.]+\.zip)/g,
+  ];
+  for (const re of patterns) {
+    let m;
+    while ((m = re.exec(content)) !== null) {
+      refs.add(m[1]);
+    }
+  }
+  return [...refs];
+}
+
+function parseBlockersSummary(blockersMd) {
+  const rows = [];
+  const tableRe = /\|\s*\*\*B(\d+)\*\*\s*\|([^|]+)\|/g;
+  let m;
+  while ((m = tableRe.exec(blockersMd)) !== null) {
+    rows.push(`B${m[1]}: ${m[2].trim()}`);
+  }
+  if (!rows.length) {
+    const ids = [...blockersMd.matchAll(/##\s*(B\d+)/g)].map((x) => x[1]);
+    return ids.length ? ids.join(', ') : 'See KNOWN_BLOCKERS.md';
+  }
+  return rows.join(' · ');
+}
+
+function parseHandoffStage(handoffMd) {
+  const sprint = handoffMd.match(/\*\*([^*]+)\*\*\s*\n\nRefine onboarding/s)?.[1]
+    ?? handoffMd.match(/## Current sprint\s*\n\n\*\*([^*]+)\*\*/)?.[1]
+    ?? handoffMd.match(/## Current sprint\s*\n\n([^\n]+)/)?.[1]?.trim();
+  return sprint ?? 'See CURRENT_HANDOFF.md';
+}
+
+function buildReadVerificationSection(manifestInventory, presentMd) {
+  const manifestSet = new Set(manifestInventory);
+  const presentSet = new Set(presentMd);
+  const lines = ['## Read Verification', ''];
+  for (const file of manifestInventory.sort()) {
+    const ok = presentSet.has(file);
+    lines.push(`${ok ? '✓' : '✗'} ${file}`);
+  }
+  const missing = manifestInventory.filter((f) => !presentSet.has(f));
+  const extra = presentMd.filter((f) => !manifestSet.has(f) && f !== 'CAPSULE_VALIDATION.md');
+  lines.push('');
+  lines.push(`Manifest Count: ${manifestInventory.length}`);
+  lines.push(`Read Count: ${manifestInventory.length - missing.length}`);
+  lines.push(`Missing: ${missing.length}${missing.length ? ` (${missing.join(', ')})` : ''}`);
+  lines.push(`Extra: ${extra.length}${extra.length ? ` (${extra.join(', ')})` : ''}`);
+  return { section: lines.join('\n'), missing, extra };
+}
+
+function buildOperationalVerificationSection(handoffMd, blockersMd) {
+  const stage = parseHandoffStage(handoffMd);
+  const blockers = parseBlockersSummary(blockersMd);
+  return `## Operational Verification
+
+### Operational Source of Truth
+
+Verified:
+
+✓ CURRENT_HANDOFF.md
+✓ KNOWN_BLOCKERS.md
+✓ PROJECT_CHANGELOG.md
+
+### Current Implementation Stage
+
+${stage}
+
+### Current Active Blockers
+
+${blockers}
+
+### Approval Required Before Contribution
+
+**YES** — complete ONBOARDING_REPORT.md and wait for explicit founder approval (e.g. "approved — proceed").`;
+}
+
+function buildValidationFooter(version, generatedAt, validationPassed) {
+  return `## Capsule Validation
+
+| Field | Value |
+|-------|-------|
+| **Capsule Version** | ${version} |
+| **Manifest Version** | ${version} |
+| **Generated** | ${generatedAt} |
+| **Validation Passed** | ${validationPassed ? 'YES' : 'NO'} |
+| **Operational Source of Truth** | CURRENT_HANDOFF.md · KNOWN_BLOCKERS.md · PROJECT_CHANGELOG.md |
+| **Current Handoff Document** | CURRENT_HANDOFF.md |
+| **Current Blockers Document** | KNOWN_BLOCKERS.md |`;
+}
+
 function validate(capsuleDir, version) {
   const presentMd = fs.readdirSync(capsuleDir).filter((f) => f.endsWith('.md'));
-  const missing = REQUIRED_FILES.filter((f) => !presentMd.includes(f));
+  const presentSet = new Set(presentMd);
+
+  const missing = REQUIRED_FILES.filter((f) => !presentSet.has(f));
   if (missing.length) {
     console.error('\n❌ Context Capsule validation failed — missing required documents:\n');
     for (const f of missing) console.error(`   • ${f}`);
@@ -144,9 +262,8 @@ function validate(capsuleDir, version) {
     process.exit(1);
   }
 
-  const metadataPath = path.join(capsuleDir, METADATA_FILE);
-  if (!fs.existsSync(metadataPath)) {
-    console.error(`\n❌ Missing ${METADATA_FILE} in capsule folder.\n`);
+  if (version !== CANONICAL_CAPSULE_VERSION) {
+    console.error(`\n❌ Capsule version must be ${CANONICAL_CAPSULE_VERSION}; MANIFEST declares ${version}\n`);
     process.exit(1);
   }
 
@@ -157,11 +274,17 @@ function validate(capsuleDir, version) {
     process.exit(1);
   }
 
-  for (const { file, pattern } of VERSION_SYNC_FILES) {
+  for (const file of VERSION_SYNC_FILES) {
     const content = fs.readFileSync(path.join(capsuleDir, file), 'utf8');
-    if (!pattern.test(content)) {
+    if (!content.includes(version)) {
       console.error(`\n❌ Version sync failed: ${file} does not declare capsule version ${version}\n`);
       process.exit(1);
+    }
+    for (const forbidden of FORBIDDEN_VERSION_STRINGS) {
+      if (content.includes(forbidden)) {
+        console.error(`\n❌ Stale version string "${forbidden}" found in ${file} — use ${version} only\n`);
+        process.exit(1);
+      }
     }
   }
 
@@ -172,11 +295,53 @@ function validate(capsuleDir, version) {
     }
   }
 
-  return presentMd;
+  const manifestInventory = parseManifestInventory(manifest);
+  const inventoryMissing = manifestInventory.filter((f) => !presentSet.has(f));
+  if (inventoryMissing.length) {
+    console.error('\n❌ MANIFEST inventory references missing files:\n');
+    for (const f of inventoryMissing) console.error(`   • ${f}`);
+    process.exit(1);
+  }
+
+  const readme = fs.readFileSync(path.join(capsuleDir, 'README_FIRST.md'), 'utf8');
+  const readmeRefs = extractMarkdownReferences(readme).filter((r) => r.endsWith('.md'));
+  const badReadmeRefs = readmeRefs.filter((r) => !presentSet.has(r) && !REQUIRED_FILES.includes(r));
+  if (badReadmeRefs.length) {
+    console.error(`\n❌ README_FIRST.md references missing files: ${badReadmeRefs.join(', ')}\n`);
+    process.exit(1);
+  }
+
+  for (const file of ['README_FIRST.md', 'MANIFEST.md', 'ONBOARDING_REPORT.md']) {
+    const fp = path.join(capsuleDir, file);
+    if (!fs.existsSync(fp)) continue;
+    const content = fs.readFileSync(fp, 'utf8');
+    const refs = extractMarkdownReferences(content).filter((r) => r.endsWith('.md'));
+    for (const ref of refs) {
+      const mustExist =
+        REQUIRED_FILES.includes(ref) || ref === 'CAPSULE_VALIDATION.md' || manifestInventory.includes(ref);
+      if (mustExist && !presentSet.has(ref)) {
+        console.error(`\n❌ Broken internal link in ${file}: \`${ref}\` not found on disk\n`);
+        process.exit(1);
+      }
+    }
+  }
+
+  const metadataPath = path.join(capsuleDir, METADATA_FILE);
+  if (!fs.existsSync(metadataPath)) {
+    console.error(`\n❌ Missing ${METADATA_FILE} — will be generated after validation\n`);
+    process.exit(1);
+  }
+
+  return { presentMd, manifest, manifestInventory };
 }
 
-function writeCapsuleValidationPage(capsuleDir, version, generatedAt, gitCommit, checksum) {
-  const presentMd = fs.readdirSync(capsuleDir).filter((f) => f.endsWith('.md'));
+function writeCapsuleValidationPage(capsuleDir, version, generatedAt, gitCommit, checksum, manifestInventory, presentMd) {
+  const handoffMd = fs.readFileSync(path.join(capsuleDir, 'CURRENT_HANDOFF.md'), 'utf8');
+  const blockersMd = fs.readFileSync(path.join(capsuleDir, 'KNOWN_BLOCKERS.md'), 'utf8');
+  const { section: readVerification } = buildReadVerificationSection(manifestInventory, presentMd);
+  const operational = buildOperationalVerificationSection(handoffMd, blockersMd);
+  const footer = buildValidationFooter(version, generatedAt, true);
+
   const body = `# Capsule Validation — Auto-Generated
 
 **Purpose:** Prove this export is complete, current, and passed automated validation before ZIP packaging.
@@ -186,6 +351,7 @@ function writeCapsuleValidationPage(capsuleDir, version, generatedAt, gitCommit,
 | Field | Value |
 |-------|-------|
 | **Capsule Version** | ${version} |
+| **Manifest Version** | ${version} |
 | **Generation Date (UTC)** | ${generatedAt} |
 | **Repository Commit SHA** | ${gitCommit} |
 | **Validation Status** | pass |
@@ -197,18 +363,30 @@ function writeCapsuleValidationPage(capsuleDir, version, generatedAt, gitCommit,
 
 ---
 
+${readVerification}
+
+---
+
+${operational}
+
+---
+
+${footer}
+
+---
+
 ## Validation checks performed
 
-- ✓ \`README_FIRST.md\` exists
-- ✓ \`MANIFEST.md\` exists
-- ✓ Every manifest inventory entry exists on disk
-- ✓ \`ONBOARDING_REPORT.md\` exists with all v0.3 required sections
-- ✓ Reading order valid; matches \`context-capsule.json\`
-- ✓ Capsule version synchronized across README, MANIFEST, AI_CONTEXT, ONBOARDING_REPORT
-- ✓ No missing required markdown files
+- ✓ Every MANIFEST inventory document exists on disk
+- ✓ Every required onboarding document exists
+- ✓ No duplicate/stale capsule version strings in version-sync files
+- ✓ Internal markdown links resolve
+- ✓ README_FIRST.md references only existing files
+- ✓ \`context-capsule.json\` matches exported reading order and version
+- ✓ ONBOARDING_REPORT.md includes all required template sections
 - ✓ \`latest.zip\` updated only after validation pass
 
-If **Validation Status** is not \`pass\`, do **not** use this capsule for onboarding — regenerate from repo \`master\`.
+If **Validation Passed** is not **YES**, do **not** use this capsule for onboarding — regenerate from repo \`master\`.
 
 ---
 
@@ -221,6 +399,7 @@ function writeContextCapsuleMetadata(capsuleDir, capsuleFolderName, version, gen
   const payload = {
     schemaVersion: 1,
     capsuleVersion: version,
+    manifestVersion: version,
     capsuleFolder: capsuleFolderName,
     generatedAt,
     projectVersion: 'build-a-wig@0.0.0',
@@ -229,17 +408,18 @@ function writeContextCapsuleMetadata(capsuleDir, capsuleFolderName, version, gen
     readingOrder: READING_ORDER,
     readingOrderChecksum: readingOrderChecksum(),
     requiredMarkdownFiles: REQUIRED_FILES,
+    operationalSourceOfTruth: OPERATIONAL_SOURCE_OF_TRUTH,
     validationStatus: 'pass',
     generatorVersion: GENERATOR_VERSION,
     onboardingFeatures: [
-      'verification-onboarding-v0.3',
+      'verification-onboarding-v0.3.1',
+      'read-verification-auto',
+      'operational-verification-auto',
+      'capsule-validation-footer',
       'onboarding-compliance-checklist',
       'operational-source-of-truth-hierarchy',
       'documented-vs-inferred-labels',
       'documentation-review-certainty-tags',
-      'founder-understanding-section',
-      'confidence-assumptions-avoided',
-      'capsule-validation-page',
       'export-validation-gate',
       'stable-latest-alias',
       'release-manifest',
@@ -268,11 +448,11 @@ function discoverVersionedReleases(outDir) {
     .filter((f) => /^StudioOS_ContextCapsule_v\d+\.\d+\.\d+\.zip$/.test(f))
     .map((zipFileName) => {
       const match = zipFileName.match(/v(\d+\.\d+\.\d+)\.zip$/);
-      const version = match?.[1] ?? '0.0.0';
+      const ver = match?.[1] ?? '0.0.0';
       const full = path.join(outDir, zipFileName);
       const stat = fs.statSync(full);
       return {
-        version,
+        version: ver,
         zipFileName,
         downloadPath: `${DOWNLOAD_BASE}/${zipFileName}`,
         checksumSha256: sha256File(full),
@@ -286,10 +466,7 @@ function discoverVersionedReleases(outDir) {
 
 function mergeReleaseHistory(previousRelease, entry, outDir) {
   const byVersion = new Map();
-  for (const r of [
-    ...discoverVersionedReleases(outDir),
-    ...(previousRelease?.releaseHistory ?? []),
-  ]) {
+  for (const r of [...discoverVersionedReleases(outDir), ...(previousRelease?.releaseHistory ?? [])]) {
     byVersion.set(r.version, r);
   }
   byVersion.set(entry.version, entry);
@@ -326,15 +503,20 @@ function writeJson(outPath, payload) {
 
 function packageCapsule() {
   const { dir: capsuleDir, name: capsuleFolderName } = findCapsuleDir();
-  const version = readVersion(capsuleDir, capsuleFolderName);
+  const version = readVersion(capsuleDir);
   const fileName = `StudioOS_ContextCapsule_v${version}.zip`;
-  validate(capsuleDir, version);
+  const { presentMd, manifestInventory } = validate(capsuleDir, version);
 
   const generatedAt = new Date().toISOString();
   const gitCommit = readGitCommit();
   const orderChecksum = readingOrderChecksum();
-  writeContextCapsuleMetadata(capsuleDir, capsuleFolderName, version, generatedAt);
-  writeCapsuleValidationPage(capsuleDir, version, generatedAt, gitCommit, orderChecksum);
+  const meta = writeContextCapsuleMetadata(capsuleDir, capsuleFolderName, version, generatedAt);
+  writeCapsuleValidationPage(capsuleDir, version, generatedAt, gitCommit, orderChecksum, manifestInventory, presentMd);
+
+  if (meta.capsuleVersion !== version || meta.readingOrderChecksum !== orderChecksum) {
+    console.error('\n❌ context-capsule.json does not match exported documents after write\n');
+    process.exit(1);
+  }
 
   const publicOut = path.join(ROOT, 'public/downloads/context-capsules');
   const releasesOut = path.join(ROOT, 'releases/downloads/context-capsules');
@@ -380,6 +562,7 @@ function packageCapsule() {
     gitCommit,
     validationStatus: 'pass',
     documentCount: REQUIRED_FILES.length,
+    manifestDocumentCount: manifestInventory.length,
     checksumSha256,
     generatorVersion: GENERATOR_VERSION,
     artifact: fileName,
@@ -414,9 +597,11 @@ function packageCapsule() {
     schemaVersion: 1,
     artifact: fileName,
     capsuleVersion: version,
+    manifestVersion: version,
     capsuleFolder: capsuleFolderName,
     generatedAt,
     fileCount: REQUIRED_FILES.length,
+    manifestDocumentCount: manifestInventory.length,
     checksumSha256,
     sizeBytes: stat.size,
     generatorVersion: GENERATOR_VERSION,
@@ -434,23 +619,31 @@ function packageCapsule() {
     schemaVersion: 1,
     artifact: fileName,
     capsuleVersion: version,
+    manifestVersion: version,
     capsuleFolder: capsuleFolderName,
     generatedAt,
     fileCount: REQUIRED_FILES.length,
+    manifestDocumentCount: manifestInventory.length,
     checksumSha256,
     sizeBytes: stat.size,
     downloadPath: versionedDownloadPath,
     latestDownloadPath,
     versionedDownloadPath,
     generatorVersion: GENERATOR_VERSION,
+    validationStatus: 'pass',
   };
   writeJson(path.join(ROOT, 'api/_lib/context-capsule-build-manifest.json'), apiBuildManifest);
   writeJson(path.join(ROOT, 'api/_lib/context-capsule-release.json'), releaseManifest);
 
   console.log(`\nAI Context Capsule™ packaged:`);
-  console.log(`  Versioned: ${versionedDownloadPath} (${(stat.size / 1024).toFixed(1)} KB)`);
-  console.log(`  Latest:    ${latestDownloadPath}`);
-  console.log(`  Release:   ${DOWNLOAD_BASE}/${RELEASE_MANIFEST}\n`);
+  console.log(`  Capsule Version:  ${version}`);
+  console.log(`  Generated:        ${generatedAt}`);
+  console.log(`  Validation:       pass`);
+  console.log(`  Manifest docs:    ${manifestInventory.length}`);
+  console.log(`  Required docs:    ${REQUIRED_FILES.length}`);
+  console.log(`  Versioned:        ${versionedDownloadPath} (${(stat.size / 1024).toFixed(1)} KB)`);
+  console.log(`  Latest:           ${latestDownloadPath}`);
+  console.log(`  Release:          ${DOWNLOAD_BASE}/${RELEASE_MANIFEST}\n`);
 }
 
 packageCapsule();
