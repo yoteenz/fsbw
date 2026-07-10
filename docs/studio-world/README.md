@@ -2,7 +2,7 @@
 
 **Status:** Permanent governed documentation — July 2026  
 **Authority:** Canonical source of truth for Studio World™ before implementation  
-**Sprint:** STUDIO WORLD™ — The Master Plan (docs only)
+**Sprint:** STUDIO WORLD™ — The Studio Atlas™ (docs only)
 
 ---
 
@@ -12,7 +12,14 @@ Every idea, interaction, department, workflow, AI role, meeting, simulation, and
 
 This is not production code. This is not UI. This is the architectural specification every future sprint must reference.
 
-**Highest-level blueprint:** **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** (v1.0.0) — permanent city architecture, District Atlas, ten-year roadmap.
+**Canon blueprints:**
+
+| Document | Role |
+|----------|------|
+| **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** (v1.0.0) | **City architecture** — districts, city plan, ten-year roadmap |
+| **[STUDIO_ATLAS_BIBLE.md](./STUDIO_ATLAS_BIBLE.md)** (v1.0.0) | **Geographic representation** — living map, zoom scales, knowledge/project geography, Passport, Timeline |
+
+**Read order:** Master Plan (where things live) → Atlas Bible (how the world is mapped) → World Bible (how it feels) → Part 1 specs.
 
 ---
 
@@ -20,6 +27,7 @@ This is not production code. This is not UI. This is the architectural specifica
 
 | Document | Relationship |
 |----------|--------------|
+| **[STUDIO_ATLAS_BIBLE.md](./STUDIO_ATLAS_BIBLE.md)** | **Geographic canon** — living map · eleven zoom scales · knowledge/project geography · Passport · Living Timeline · transportation network |
 | **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** | **Master Plan** — permanent headquarters blueprint · districts · city plan · AI population · expansion framework · 10-year roadmap |
 | [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) | Founding experience constitution (P0) — how Studio World must feel |
 | [foundation-sprint/](../studio-os/foundation-sprint/) | Spatial architecture detail |
@@ -27,7 +35,7 @@ This is not production code. This is not UI. This is the architectural specifica
 | [studio-world-constitution.md](../studio-os/studio-world-constitution.md) | Governance law · Eight Foundational Laws |
 | [studio-institute/](../studio-institute/) | Studio Institute district canon |
 
-**Read order:** **Master Plan** (where things live) → **World Bible** (how it feels) → Part 1 specs (department detail).
+**Read order:** **Master Plan** (where things live) → **Atlas Bible** (how the world is mapped) → **World Bible** (how it feels) → Part 1 specs (department detail).
 
 **Rule:** Nothing should be built that contradicts these documents.
 
@@ -38,6 +46,7 @@ This is not production code. This is not UI. This is the architectural specifica
 | # | Document | Contents |
 |---|----------|----------|
 | **MP** | **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** | **Master Plan** — headquarters blueprint · District Atlas · city plan · transportation · Executive Elevator · AI population · knowledge/project layers · expansion framework · 10-year roadmap |
+| **AB** | **[STUDIO_ATLAS_BIBLE.md](./STUDIO_ATLAS_BIBLE.md)** | **Atlas Bible** — living map · world geography · district architecture · building taxonomy · knowledge/project geography · Passport · Living Timeline · interaction model · 10-phase roadmap |
 | 001 | [STUDIO_WORLD_MANIFESTO.md](./001_STUDIO_WORLD_MANIFESTO.md) | Vision · why prompting disappears · simulation not interface |
 | 002 | [WORLD_ARCHITECTURE.md](./002_WORLD_ARCHITECTURE.md) | Physical organization · zones · access |
 | 003 | [DEPARTMENTS.md](./003_DEPARTMENTS.md) | Every department · purpose · I/O · relationships |

@@ -4,6 +4,8 @@
 **Physical location:** Studio Command Center™ · Executive Atrium™ · Holographic Table  
 **World path:** `/admin/studio/world/command-center/executive-district/world-atlas`
 
+**Canonical geographic blueprint:** [STUDIO_ATLAS_BIBLE.md](../studio-world/STUDIO_ATLAS_BIBLE.md) v1.0.0 — governs zoom scales, knowledge geography, Passport, Timeline, and interaction model. This document is **implementation notes** — subordinate to the Atlas Bible, Master Plan, and World Graph.
+
 ## Purpose
 
 The Atlas is the **living digital twin** of Studio World™ — spatial civilization navigation and the central operating table for every major Studio OS engine. It is **not** a sitemap, sidebar, navigation menu, or file explorer.
