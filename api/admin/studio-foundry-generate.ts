@@ -4,8 +4,8 @@ export const config = {
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
-import { compileAssetIntent } from '../../src/studio-os-core/asset-compiler/compiler.js';
-import { generateStudioBuilderAsset } from '../_lib/studioBuilderGeneration.js';
+import { adaptLegacyFoundryRequest } from '../_lib/creativeProduction/legacy-adapters.js';
+import { executeGovernedGeneration } from '../_lib/creativeProduction/generation-gateway.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {
@@ -24,7 +24,7 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
 
 /**
  * POST /api/admin/studio-foundry-generate
- * Studio Foundry™ FAL adapter — manufactures a single asset via existing integration.
+ * Governed Studio Foundry™ generation — routes through Creative Production Gateway™.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -41,38 +41,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const body = parseBody(req);
   const slug = String(body?.slug || '').trim();
-  const recipeId = String(body?.recipeId || 'hero-icon').trim() as 'hero-icon';
-  const assetName = String(body?.assetName || slug.split('.').pop() || 'Foundry Asset').trim();
-  const promptOverride = typeof body?.prompt === 'string' ? body.prompt.trim() : '';
-
   if (!slug) return res.status(400).json({ ok: false, error: 'Missing slug' });
 
-  const plan = compileAssetIntent({
-    assetId: slug,
-    assetName,
-    recipeId,
-    modifiers: promptOverride ? [promptOverride] : undefined,
-    creator: String(body?.creator || 'Studio Foundry'),
-    organizationId: typeof body?.organizationId === 'string' ? body.organizationId : undefined,
-  });
+  const adapted = adaptLegacyFoundryRequest(body ?? {}, '/api/admin/studio-foundry-generate');
+  if ('error' in adapted) {
+    return res.status(adapted.code === 'AUTH_REQUIRED' ? 403 : 400).json({
+      ok: false,
+      code: adapted.code,
+      error: adapted.error,
+    });
+  }
 
-  const safeSlug = slug.replace(/[^a-zA-Z0-9.-]/g, '_');
-  const result = await generateStudioBuilderAsset({
-    departmentId: 'studio-foundry',
-    packageId: recipeId,
-    projectId: 'hero-icons',
-    productionGroupId: safeSlug,
-    heroAssetId: safeSlug,
-    prompt: plan.metadata.prompt,
-    aspectRatio: plan.metadata.generationParameters.aspectRatio,
-    outputFormat: plan.metadata.generationParameters.outputFormat === 'webp' ? 'webp' : 'png',
+  const result = await executeGovernedGeneration(adapted, {
+    sourceRoute: '/api/admin/studio-foundry-generate',
   });
 
   if (!result.ok) {
-    return res.status(result.error?.includes('FAL_KEY') ? 503 : 500).json({
-      ok: false,
-      error: result.error ?? 'Foundry generation failed',
-    });
+    const status =
+      result.code.startsWith('AUTH_') ? 403 : result.error?.includes('FAL_KEY') ? 503 : 500;
+    return res.status(status).json(result);
   }
 
   return res.status(200).json({
@@ -81,5 +68,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     storagePath: result.storagePath,
     model: result.model,
     slug,
+    productionAuthorizationId: result.audit.productionAuthorizationId,
+    assetRegistryId: result.assetRegistryId,
+    audit: result.audit,
+    legacyCompat: result.audit.legacyCompat ?? false,
   });
 }

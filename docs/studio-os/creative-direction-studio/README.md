@@ -19,6 +19,7 @@ conform to the approved production graph—not redesign architecture.
 | [MIGRATION_AUDIT.md](./MIGRATION_AUDIT.md) | Codebase audit, per-system owners, violations, deprecations |
 | [PRODUCTION_GRAPH.md](./PRODUCTION_GRAPH.md) | Target graph, objects, touchpoints, traceability |
 | [IMPLEMENTATION_ROADMAP.md](./IMPLEMENTATION_ROADMAP.md) | Phases 1–6 migration plan |
+| [DEPRECATIONS.md](./DEPRECATIONS.md) | Phase 1 deprecation registry, legacy route map, forbidden behaviors |
 
 Genesis: [`genesis/articles/CREATIVE_DIRECTION_STUDIO.md`](../../../genesis/articles/CREATIVE_DIRECTION_STUDIO.md) · Rule §9B.28
 

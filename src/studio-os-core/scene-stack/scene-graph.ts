@@ -137,7 +137,7 @@ export function buildSceneGraph(input: {
         qualityStatus: rec?.qualityStatus ?? 'pending',
         qualityIssues: rec?.qualityIssues ?? [],
         version: rec?.version ?? 0,
-        immutable: Boolean(rec?.status === 'approved' && rec.publicUrl),
+        immutable: Boolean(rec?.canonicalStatus === 'promoted' && rec.publicUrl),
         mountType: resolveMountType(def.id),
         referenceOnly: def.id === 'environment-shell' || compositionMode === 'world-compiler',
       };

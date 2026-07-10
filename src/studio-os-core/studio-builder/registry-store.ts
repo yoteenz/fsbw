@@ -57,6 +57,11 @@ function writeStore(store: Store): void {
 export function registerStudioAsset(
   input: Omit<StudioAssetRegistryEntry, 'id' | 'registeredAt' | 'status'> & { status?: StudioAssetRegistryEntry['status'] }
 ): StudioAssetRegistryEntry {
+  if (typeof console !== 'undefined') {
+    console.warn(
+      '[Asset Registry Policy] registerStudioAsset writes to deprecated local cache. Use Supabase Asset Registry via Creative Production Gateway.'
+    );
+  }
   const entry: StudioAssetRegistryEntry = {
     id: uid(),
     registeredAt: new Date().toISOString(),

@@ -4,7 +4,8 @@ export const config = {
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
-import { generateStudioAssetImage } from '../_lib/studioAssetGeneration.js';
+import { adaptLegacyAssetDirectorRequest } from '../_lib/creativeProduction/legacy-adapters.js';
+import { executeGovernedGeneration } from '../_lib/creativeProduction/generation-gateway.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {
@@ -23,7 +24,7 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
 
 /**
  * POST /api/admin/studio-generate-asset
- * Admin-only Fal generation for Asset Director version tiles → Asset Factory pipeline.
+ * Admin Asset Director generation — ephemeral profile via Creative Production Gateway™.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -40,33 +41,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const body = parseBody(req);
   const blueprintId = String(body?.blueprintId || '').trim();
-  const blueprintName = String(body?.blueprintName || '').trim();
   const studioId = String(body?.studioId || '').trim();
   const variantId = String(body?.variantId || '').trim();
   const variantName = String(body?.variantName || '').trim();
-  const referenceImageUrl =
-    typeof body?.referenceImageUrl === 'string' ? body.referenceImageUrl.trim() : undefined;
-  const promptStack = Array.isArray(body?.promptStack)
-    ? body.promptStack.map((line) => String(line).trim()).filter(Boolean)
-    : [];
 
   if (!blueprintId || !studioId || !variantId || !variantName) {
     return res.status(400).json({ error: 'Missing blueprintId, studioId, variantId, or variantName' });
   }
 
-  const result = await generateStudioAssetImage({
-    blueprintId,
-    blueprintName: blueprintName || blueprintId,
-    studioId,
-    variantId,
-    variantName,
-    promptStack,
-    referenceImageUrl,
+  const adapted = adaptLegacyAssetDirectorRequest(body ?? {}, '/api/admin/studio-generate-asset');
+  if ('error' in adapted) {
+    return res.status(adapted.code === 'AUTH_REQUIRED' ? 403 : 400).json({
+      ok: false,
+      code: adapted.code,
+      error: adapted.error,
+    });
+  }
+
+  const result = await executeGovernedGeneration(adapted, {
+    sourceRoute: '/api/admin/studio-generate-asset',
   });
 
   if (!result.ok) {
-    return res.status(result.error?.includes('FAL_KEY') ? 503 : 500).json(result);
+    const status =
+      result.code.startsWith('AUTH_') ? 403 : result.error?.includes('FAL_KEY') ? 503 : 500;
+    return res.status(status).json(result);
   }
 
-  return res.status(200).json(result);
+  return res.status(200).json({
+    ok: true,
+    publicUrl: result.publicUrl,
+    storagePath: result.storagePath,
+    model: result.model,
+    productionAuthorizationId: result.audit.productionAuthorizationId,
+    audit: result.audit,
+    ephemeral: true,
+  });
 }

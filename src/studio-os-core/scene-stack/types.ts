@@ -63,7 +63,10 @@ export type SceneStackManifest = {
   stations: SceneStackStationSpec[];
 };
 
-export type SceneStackLayerStatus = 'idle' | 'generating' | 'approved' | 'failed' | 'discarded';
+export type SceneStackLayerStatus = 'idle' | 'generating' | 'draft_ready' | 'approved' | 'failed' | 'discarded';
+
+/** Canonical classification — Phase 1 hotfix: generated layers are non_canonical until promotion. */
+export type SceneStackCanonicalStatus = 'non_canonical' | 'promoted';
 
 /** Scene Stack Quality Guard™ — per-layer validation outcome */
 export type SceneLayerQualityStatus = 'pending' | 'validated' | 'regenerate_required';
@@ -90,6 +93,8 @@ export type SceneStackLayerRecord = {
   assemblyLawVersion?: string;
   qualityStatus?: SceneLayerQualityStatus;
   qualityIssues?: string[];
+  /** Non-canonical until explicit promotion through Production Authorization (Phase 1). */
+  canonicalStatus?: SceneStackCanonicalStatus;
 };
 
 export type SceneStackLayerView = {

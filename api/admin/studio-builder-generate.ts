@@ -4,7 +4,6 @@ export const config = {
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
-import { generateStudioBuilderAsset } from '../_lib/studioBuilderGeneration.js';
 import { assertSceneStackFalReferencesAllowed } from '../_lib/sceneStackReferenceEnforcement.js';
 import { getSupabaseAdmin } from '../_lib/supabase.js';
 import {
@@ -13,6 +12,8 @@ import {
   persistCreativeDecision,
 } from '../_lib/creativeIntelligenceEngine/decision-engine.js';
 import type { FounderIntentInput } from '../_lib/creativeIntelligenceEngine/types.js';
+import { adaptLegacyBuilderRequest } from '../_lib/creativeProduction/legacy-adapters.js';
+import { executeGovernedGeneration } from '../_lib/creativeProduction/generation-gateway.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {
@@ -31,7 +32,7 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
 
 /**
  * POST /api/admin/studio-builder-generate
- * Department-agnostic Studio Builder generation — reuses FAL + Supabase stack.
+ * Governed Studio Builder generation — routes through Creative Production Gateway™.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -53,12 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const productionGroupId = String(body?.productionGroupId || '').trim();
   const heroAssetId = String(body?.heroAssetId || '').trim();
   const prompt = String(body?.prompt || '').trim();
-  const aspectRatio = String(body?.aspectRatio || '16:9').trim();
-  const outputFormat = body?.outputFormat === 'webp' ? 'webp' : 'png';
   const evaluateOnly = body?.evaluateOnly === true;
-  const skipCie = body?.skipCie === true;
-  const forceGenerate = body?.forceGenerate === true;
-  const cieDecisionId = typeof body?.cieDecisionId === 'string' ? body.cieDecisionId.trim() : '';
   const orgId = typeof body?.org_id === 'string' ? body.org_id.trim() : 'frontal-slayer';
 
   if (!departmentId || !packageId || !projectId || !productionGroupId || !heroAssetId || !prompt) {
@@ -67,12 +63,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  if (!skipCie) {
+  if (evaluateOnly) {
     const supabase = getSupabaseAdmin();
-    let decision = cieDecisionId
-      ? await getPersistedDecision(supabase, orgId, cieDecisionId)
-      : null;
-
+    const cieDecisionId = typeof body?.cieDecisionId === 'string' ? body.cieDecisionId.trim() : '';
+    let decision = cieDecisionId ? await getPersistedDecision(supabase, orgId, cieDecisionId) : null;
     if (!decision) {
       const intent: FounderIntentInput = {
         org_id: orgId,
@@ -89,30 +83,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       decision = await evaluateCreativeDecision(supabase, intent);
       await persistCreativeDecision(supabase, decision);
     }
-
-    if (evaluateOnly) {
-      return res.status(200).json({ ok: true, evaluateOnly: true, decision });
-    }
-
-    const reuseOnly =
-      !forceGenerate &&
-      decision.recommended_strategy === 'reuse_existing' &&
-      decision.assets_missing.length === 0;
-
-    if (reuseOnly || (!forceGenerate && !decision.should_generate)) {
-      return res.status(200).json({
-        ok: false,
-        code: 'CIE_REUSE_RECOMMENDED',
-        error: 'Creative Intelligence Engine recommends reusing existing assets — no generation required.',
-        decision,
-        reusable_assets: decision.reusable_assets.slice(0, 5),
-        founder_messages: decision.founder_messages,
-      });
-    }
-
-    if (cieDecisionId && cieDecisionId !== decision.id) {
-      return res.status(400).json({ error: 'cieDecisionId does not match evaluated decision' });
-    }
+    return res.status(200).json({ ok: true, evaluateOnly: true, decision });
   }
 
   const referenceImageUrls = Array.isArray(body?.referenceImageUrls)
@@ -124,20 +95,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ ok: false, error: refCheck.error, code: 'SCENE_STACK_REFERENCE_LAW' });
   }
 
-  const result = await generateStudioBuilderAsset({
-    departmentId,
-    packageId,
-    projectId,
-    productionGroupId,
-    heroAssetId,
-    prompt,
-    aspectRatio,
-    outputFormat,
-    referenceImageUrls,
+  const adapted = adaptLegacyBuilderRequest(body ?? {}, '/api/admin/studio-builder-generate');
+  if ('error' in adapted) {
+    return res.status(adapted.code === 'AUTH_REQUIRED' ? 403 : 400).json({
+      ok: false,
+      code: adapted.code,
+      error: adapted.error,
+    });
+  }
+
+  if (body?.skipCie === true || body?.forceGenerate === true) {
+    if (adapted.assetIntent.outputClass === 'material') {
+      return res.status(403).json({
+        ok: false,
+        code: body.skipCie ? 'CIE_SKIP_FORBIDDEN' : 'CIE_FORCE_FORBIDDEN',
+        error: `${body.skipCie ? 'skipCie' : 'forceGenerate'} is forbidden on material generation paths`,
+      });
+    }
+  }
+
+  const result = await executeGovernedGeneration(adapted, {
+    sourceRoute: '/api/admin/studio-builder-generate',
   });
 
   if (!result.ok) {
-    return res.status(result.error?.includes('FAL_KEY') ? 503 : 500).json(result);
+    const status =
+      result.code === 'CIE_REUSE_RECOMMENDED'
+        ? 200
+        : result.code === 'AUTH_REQUIRED' || result.code.startsWith('AUTH_')
+          ? 403
+          : result.error?.includes('FAL_KEY')
+            ? 503
+            : 500;
+    return res.status(status).json(result);
   }
 
   return res.status(200).json({
@@ -145,5 +135,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     publicUrl: result.publicUrl,
     storagePath: result.storagePath,
     model: result.model,
+    productionAuthorizationId: result.audit.productionAuthorizationId,
+    assetRegistryId: result.assetRegistryId,
+    audit: result.audit,
+    legacyCompat: result.audit.legacyCompat ?? false,
   });
 }

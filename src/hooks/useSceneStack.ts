@@ -41,7 +41,6 @@ import {
   type ArchitectDebugViewState,
   type ArchitectDebugLayer,
 } from '../studio-os-core/scene-stack';
-import { registerStudioAsset } from '../studio-os-core/studio-builder/registry-store';
 import { requestStudioBuilderGenerate } from '../services/studio/studioBuilder/api';
 import {
   beginStudioAlphaGeneration,
@@ -195,7 +194,7 @@ export function useSceneStack(
       if (generatingKeys.has(key)) return false;
 
       const existing = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
-      if (!force && existing?.status === 'approved' && existing.publicUrl) return true;
+      if (!force && (existing?.status === 'approved' || existing?.status === 'draft_ready') && existing.publicUrl) return true;
 
       if (!force) {
         const reuseEntry = getRegistryAssetForSceneLayer(
@@ -362,12 +361,11 @@ export function useSceneStack(
           stationId,
           layerId,
           version: nextVersion,
-          status: 'approved',
+          status: 'draft_ready',
           publicUrl: result.publicUrl,
           storagePath: result.storagePath,
           model: result.model,
           generatedAt: new Date().toISOString(),
-          approvedAt: new Date().toISOString(),
           promptVersion: compiled.promptVersion,
           productionGroupId: compiled.productionGroupId,
           heroAssetId: compiled.heroAssetId,
@@ -375,23 +373,10 @@ export function useSceneStack(
           assemblyLawVersion: SCENE_ASSEMBLY_LAW_VERSION,
           qualityStatus: quality.status,
           qualityIssues: quality.issues,
+          canonicalStatus: 'non_canonical',
         });
 
-        registerStudioAsset({
-          departmentId,
-          projectId,
-          packageId: pkg.packageId,
-          assetId,
-          productionGroupId: compiled.productionGroupId,
-          category: 'scene-stack-layer',
-          publicUrl: result.publicUrl,
-          storagePath: result.storagePath ?? '',
-          model: result.model ?? 'fal-ai/nano-banana-pro/edit',
-          promptVersion: compiled.promptVersion,
-          status: 'validated',
-          stationId,
-          layerId,
-        });
+        // Phase 1: no auto-register to Asset Registry — promotion requires Production Authorization.
 
         bump();
         void compileWorldStation({
