@@ -1,5 +1,11 @@
 export { ExperienceLabWorkspace } from './ExperienceLabWorkspace';
 export { ExperienceLabErrorBoundary } from './ExperienceLabErrorBoundary';
+export { ExperienceLabModeShell } from './ExperienceLabModeShell';
+export { ExperienceLabRuntimeLabPanel } from './ExperienceLabRuntimeLabPanel';
+export { RuntimeValidationPanel } from './RuntimeValidationPanel';
+export { CreativeIntelligencePanel } from './CreativeIntelligencePanel';
+export { CreativePreviewEnvironment } from './CreativePreviewEnvironment';
 export { RuntimeSafeMode, useRuntimeSafeMode } from './RuntimeSafeMode';
 export { probeExperienceLabImports } from './safe-import-probe';
 export type { SafeImportProbeResult } from './safe-import-probe';
+export type { ExperienceLabMode } from './ExperienceLabModeShell';

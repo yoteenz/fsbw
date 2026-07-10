@@ -45259,6 +45259,7 @@ Summary of the **full conversation in this chat**: Platform Stabilization Sprint
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-09 — Creative Direction Studio™ §9B.28 migration audit
 
 Summary of the **full conversation in this chat**: User conducted a series of Genesis constitutional reviews (Company Genome evolution, Organizational Attention, Organizational Memory, Genesis v1 closure audit) and approved Creative Direction Studio™ as universal creative direction/production orchestration (§9B.28). User then confirmed §9B.28 is binding law and requested implementation migration planning (not architecture redesign): audit all creative/generation systems, per-system migration report, production graph design, and Phased 1–6 roadmap without building everything immediately.
@@ -45424,3 +45425,14 @@ Summary of the **full conversation in this chat**: After Stability Sprint 1 (`17
 - **Production verification:** Pending Vercel deploy of this commit to fsbw.vercel.app; recommend normal-session refresh + repeated visit check post-deploy.
 - **Files modified:** `experience-lab/repair.ts` (new), `platform-stabilization/genesis-experience-persistence-repair.ts` (new), `genesis-store-repair.ts`, `experience-lab/persistence.ts`, `experience-lab/bootstrap/seed.ts`, `experience-lab/engine.ts`, `experience-lab/room/ready-view.ts`, `useExperienceLabState.ts`, `experience-engine/engines/experience-generator.ts`, `experience-engine/persistence.ts`, `scripts/experience-lab-startup-trace.mjs` (new).
 - **Outcome:** Experience Lab normal-session failure addressed at persistence + render-init layer; production sign-off after deploy.
+=======
+## 2026-07-10 — Experience Lab Phase 2: Creative Intelligence Validation
+
+Summary of the **full conversation in this chat**: After Platform Stabilization Sprint 1 (bootstrap restore) and urgent `/__boot-debug` production regression fix (manualChunks init-order), user requested **Experience Lab Phase 2 — Creative Intelligence Validation**. Goal: transition Experience Lab from runtime QA harness to first read-only customer of Creative Direction Studio intelligence. Do NOT build final CDS production UI. Replace theme switching with Creative Studio Preview Compiler; scorecard with evidence; three concepts per company; side-by-side compare (Studio OS, Frontal Slayer, NDX); split into Runtime Validation + Creative Intelligence modes; preserve runtime diagnostics; no production assets/registry/publishing.
+
+- **Creative Studio Preview Compiler™:** New `src/studio-os-core/creative-studio-preview/` — deterministic READ-ONLY compiler pulling Company Registry, Strategic Brand DNA (Experience Engine seeds), operating model, narrative intelligence, design canon, spatial rules, department topology. Outputs Preview Specification (philosophy, architecture, materials, lighting, spatial org, interaction, motion, mood, workflow, signatures), three concepts (A recommended / B alternative / C experimental) with strengths/weaknesses/confidence, Creative Intelligence Scorecard (10 categories + evidence), validation evidence chain. `CREATIVE_PREVIEW_READ_ONLY = true`.
+- **Experience Lab UI:** `ExperienceLabModeShell` — Mode 1 Runtime Validation (`RuntimeValidationPanel`: StudioBootstrap + RuntimeDiagnostics + lab inspector); Mode 2 Creative Intelligence (`CreativeIntelligencePanel`: company switcher, concept switcher, environment proposal, reasoning, scorecard, compare-all). `CreativePreviewEnvironment` — structural archetypes (institutional-crystal / luxury-mansion / broadcast-command) without logos. `ExperienceLabWorkspace` wired through `StudioBootGate` with `diagnosticsWhenReady={false}` so lab content shows after boot READY.
+- **Hook:** `useCreativeStudioPreview.ts` — company/concept selection, recompile, compare mode.
+- **Docs:** `docs/studio-os/experience-lab-phase-2-creative-intelligence.md`.
+- **Verification:** `npm run build` pass.
+>>>>>>> 354ea7625 (Experience Lab Phase 2: Creative Studio Preview Compiler and dual validation modes)
