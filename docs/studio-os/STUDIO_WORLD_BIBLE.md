@@ -190,6 +190,8 @@ Never:
 
 ## Section III — The Living Organization
 
+> **Workforce constitution:** [THE_LIVING_ORGANIZATION.md](../../STUDIO_OS_BIBLE/THE_LIVING_ORGANIZATION.md) — AI Employee Ecosystem, Employee Directory, Relationship Engine, social storytelling, onboarding (July 2026).
+
 ### The Organization Is Already Alive
 
 A company in Studio World™ is not a workspace waiting for input. It is an **operating entity** with departments that work, specialists who advocate, production that continues, and memory that accumulates.

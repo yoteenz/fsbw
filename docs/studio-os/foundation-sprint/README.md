@@ -37,6 +37,7 @@ This sprint **extends** — never replaces — established Studio World law:
 | 1 | Studio World constitutional philosophy | [01_STUDIO_WORLD_CONSTITUTION.md](./01_STUDIO_WORLD_CONSTITUTION.md) |
 | 2 | Environmental design principles | [02_EXPERIENCE_PHILOSOPHY.md](./02_EXPERIENCE_PHILOSOPHY.md) |
 | 3 | Living organization architecture | [03_LIVING_ORGANIZATION_ARCHITECTURE.md](./03_LIVING_ORGANIZATION_ARCHITECTURE.md) |
+| 3b | **AI Employee Ecosystem & workforce** | [THE_LIVING_ORGANIZATION.md](../../../STUDIO_OS_BIBLE/THE_LIVING_ORGANIZATION.md) |
 | 4 | Department taxonomy | [04_DEPARTMENT_HIERARCHY.md](./04_DEPARTMENT_HIERARCHY.md) |
 | 5 | AI role hierarchy | [05_AI_ROLE_HIERARCHY.md](./05_AI_ROLE_HIERARCHY.md) |
 | 6 | Room taxonomy | [06_ROOM_TAXONOMY.md](./06_ROOM_TAXONOMY.md) |
