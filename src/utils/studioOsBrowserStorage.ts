@@ -7,6 +7,7 @@
  * - Never throws QuotaExceededError — app must load even when storage is full or unavailable.
  */
 
+import { traceSync } from '../platform-stabilization/main-thread-diagnostics';
 import {
   isQuotaExceededError,
   safeLocalStorageGetItem,
@@ -245,6 +246,7 @@ export function writeStudioOsJson(key: string, value: unknown): boolean {
 
 /** Remove oversized or corrupted Studio OS keys from localStorage (safe on boot). */
 export function purgeOversizedStudioLocalKeys(): { removed: string[]; freedBytes: number } {
+  return traceSync('purgeOversizedStudioLocalKeys', () => {
   const removed: string[] = [];
   let freedBytes = 0;
   if (typeof window === 'undefined') return { removed, freedBytes };
@@ -298,6 +300,7 @@ export function purgeOversizedStudioLocalKeys(): { removed: string[]; freedBytes
     console.info(`[studioOsBrowserStorage] purged ${removed.length} oversized Studio keys (${freedBytes} bytes)`);
   }
   return { removed, freedBytes };
+  });
 }
 
 /** Full recovery — clears Studio OS local + memory caches; cloud remains source of truth. */

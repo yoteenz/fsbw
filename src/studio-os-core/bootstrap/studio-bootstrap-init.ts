@@ -8,6 +8,9 @@ import {
   type StudioBootReport,
 } from '../kernel';
 import { registerAllStudioBootModules } from './register-boot-modules';
+import {
+  traceSync,
+} from '../../platform-stabilization/main-thread-diagnostics';
 
 export type StudioBootListener = (state: StudioBootLiveState) => void;
 
@@ -22,20 +25,22 @@ function ensureBootModulesRegistered(): void {
 
 /** Subscribe to live boot state — hydrates from kernel snapshot on attach. */
 export function subscribeStudioBoot(listener: StudioBootListener): () => void {
-  if (typeof window === 'undefined') return () => undefined;
+  return traceSync('subscribeStudioBoot', () => {
+    if (typeof window === 'undefined') return () => undefined;
 
-  ensureBootModulesRegistered();
+    ensureBootModulesRegistered();
 
-  const onBoot = (event: Event) => {
-    const detail = (event as CustomEvent<StudioBootLiveState>).detail;
-    if (detail) listener(detail);
-  };
+    const onBoot = (event: Event) => {
+      const detail = (event as CustomEvent<StudioBootLiveState>).detail;
+      if (detail) listener(detail);
+    };
 
-  window.addEventListener(STUDIO_BOOT_EVENT, onBoot);
-  const cached = getStudioBootLiveState();
-  if (cached) listener(cached);
+    window.addEventListener(STUDIO_BOOT_EVENT, onBoot);
+    const cached = getStudioBootLiveState();
+    if (cached) listener(cached);
 
-  return () => window.removeEventListener(STUDIO_BOOT_EVENT, onBoot);
+    return () => window.removeEventListener(STUDIO_BOOT_EVENT, onBoot);
+  });
 }
 
 /** Clears orchestrator guard so a forced retry can start a new run. */

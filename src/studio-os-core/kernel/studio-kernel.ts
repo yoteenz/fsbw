@@ -11,6 +11,16 @@ import {
   BOOT_MODULE_TIMEOUT_MS,
   STUDIO_BOOT_EVENT,
 } from './types';
+import {
+  enterDispatchDepth,
+  exitDispatchDepth,
+  isStartupStageEnabled,
+  setBootstrapPhase,
+  traceSync,
+  assertBootstrapStartOnce,
+  releaseBootstrapStart,
+  type StartupStageId,
+} from '../../platform-stabilization/main-thread-diagnostics';
 
 /** Canonical boot order — strict dependency sequence. */
 export const STUDIO_BOOT_ORDER = [
@@ -31,6 +41,27 @@ export const STUDIO_BOOT_ORDER = [
 export type StudioBootPhase = (typeof STUDIO_BOOT_ORDER)[number];
 
 const SAFE_MODE_SKIP_MODULES = new Set<string>(['workspace-runtime']);
+
+/** Bisection map — boot module id → startup stage flag. */
+const MODULE_STARTUP_STAGE: Record<string, StartupStageId> = {
+  storage: 'E',
+  'auth-session': 'E',
+  'admin-context': 'E',
+  'platform-dna': 'F',
+  'brand-registry': 'G',
+  'department-registry': 'G',
+  'scene-registry': 'G',
+  'state-dna': 'G',
+  'design-dna-resolver': 'G',
+  'experience-runtime': 'J',
+  'workspace-runtime': 'H',
+  'ui-render': 'D',
+};
+
+function isBootModuleStageEnabled(moduleId: string): boolean {
+  const stage = MODULE_STARTUP_STAGE[moduleId] ?? 'D';
+  return isStartupStageEnabled(stage);
+}
 
 let bootPromise: Promise<StudioBootReport> | null = null;
 let lastReport: StudioBootReport | null = null;
@@ -125,9 +156,14 @@ function dispatchBootUpdated(
   safeMode: boolean,
   opts?: { started?: boolean; waitingForManualStart?: boolean }
 ): void {
-  lastLiveState = buildLiveState(order, complete, ready, errors, warnings, fallbacksUsed, safeMode, opts);
-  if (typeof window !== 'undefined') {
-    window.dispatchEvent(new CustomEvent(STUDIO_BOOT_EVENT, { detail: lastLiveState }));
+  enterDispatchDepth('dispatchBootUpdated');
+  try {
+    lastLiveState = buildLiveState(order, complete, ready, errors, warnings, fallbacksUsed, safeMode, opts);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent(STUDIO_BOOT_EVENT, { detail: lastLiveState }));
+    }
+  } finally {
+    exitDispatchDepth();
   }
 }
 
@@ -225,13 +261,16 @@ function primeBootStart(
   order: readonly string[],
   safeMode: boolean
 ): number {
-  const runId = ++bootRunId;
-  activeBootRunId = runId;
-  bootStartedAt = Date.now();
-  currentModuleId = order[0] ?? null;
-  appendBootEvent('info', 'bootstrap start requested');
-  dispatchBootUpdated(order, false, false, [], [], [], safeMode, { started: true });
-  return runId;
+  return traceSync('primeBootStart', () => {
+    const runId = ++bootRunId;
+    activeBootRunId = runId;
+    bootStartedAt = Date.now();
+    currentModuleId = order[0] ?? null;
+    setBootstrapPhase('starting', currentModuleId ?? 'none');
+    appendBootEvent('info', 'bootstrap start requested');
+    dispatchBootUpdated(order, false, false, [], [], [], safeMode, { started: true });
+    return runId;
+  });
 }
 
 /** StudioKernel™ — deterministic startup orchestrator (never hangs silently). */
@@ -265,6 +304,7 @@ export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Pr
   }
 
   if (!bootPromise) {
+    assertBootstrapStartOnce('runStudioKernelBoot');
     const runId = primeBootStart(order, safeMode);
     bootPromise = (async () => {
       const fallbacksUsed: string[] = [];
@@ -294,7 +334,15 @@ export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Pr
           continue;
         }
 
+        if (!isBootModuleStageEnabled(id)) {
+          markSkipped(mod, `Skipped — startup stage ${MODULE_STARTUP_STAGE[id] ?? 'D'} disabled`);
+          fallbacksUsed.push(`${id}: stage-disabled`);
+          dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode, { started: true });
+          continue;
+        }
+
         currentModuleId = id;
+        setBootstrapPhase('module', id);
         dispatchBootUpdated(order, false, false, errors, warnings, fallbacksUsed, safeMode, { started: true });
 
         try {
@@ -352,6 +400,7 @@ export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Pr
 
       lastReport = report;
       appendBootEvent('info', `bootstrap complete (ready=${report.ready ? 'yes' : 'no'})`);
+      setBootstrapPhase('complete', 'none');
       dispatchBootUpdated(order, true, report.ready, errors, warnings, fallbacksUsed, safeMode, { started: true });
       return report;
     })().catch((err) => {
@@ -373,6 +422,8 @@ export async function runStudioKernelBoot(options?: StudioKernelBootOptions): Pr
       appendBootEvent('error', `bootstrap failed: ${msg}`);
       logBoot('kernel', 'fatal', msg);
       throw err;
+    }).finally(() => {
+      releaseBootstrapStart('runStudioKernelBoot');
     });
   }
 
@@ -423,14 +474,17 @@ export function startStudioKernelBoot(options?: StudioKernelBootOptions): Promis
 }
 
 export function resetStudioKernelBoot(): void {
-  activeBootRunId = 0;
-  bootPromise = null;
-  lastReport = null;
-  lastLiveState = null;
-  currentModuleId = null;
-  bootStartedAt = 0;
-  bootEventLog = [];
-  bootRegistry.resetRuntimeState();
+  traceSync('resetStudioKernelBoot', () => {
+    activeBootRunId = 0;
+    bootPromise = null;
+    lastReport = null;
+    lastLiveState = null;
+    currentModuleId = null;
+    bootStartedAt = 0;
+    bootEventLog = [];
+    bootRegistry.resetRuntimeState();
+    setBootstrapPhase('reset', 'none');
+  });
 }
 
 export function appendStudioBootDiagnosticsEvent(message: string): void {

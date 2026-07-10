@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom';
 import StudioHealthDebugPage from '../pages/debug/studio-health/page';
 import ChunkDebugPage from '../pages/debug/chunk-debug/page';
 import BootDebugPage from '../pages/debug/boot-debug/page';
+import ThreadHeartbeatDebugPage from '../pages/debug/thread-heartbeat/page';
 import ExperienceLabSafeDebugPage from '../pages/debug/experience-lab-safe/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
@@ -18,6 +19,7 @@ export const STUDIO_DEBUG_PATHS = [
   '/__studio-health',
   '/__chunk-debug',
   '/__boot-debug',
+  '/__thread-heartbeat',
   '/__experience-lab-safe',
 ] as const;
 
@@ -38,6 +40,7 @@ export default function StudioDebugRoutes() {
           </DebugRouteErrorBoundary>
         }
       />
+      <Route path="/__thread-heartbeat" element={<ThreadHeartbeatDebugPage />} />
       <Route path="/__experience-lab-safe" element={<ExperienceLabSafeDebugPage />} />
       <Route
         path="*"

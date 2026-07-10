@@ -1,3 +1,5 @@
+import { acquireLoadingLockDiagnostic, traceSync } from './main-thread-diagnostics';
+
 let loadingScreenLockCount = 0;
 
 type SavedStyles = {
@@ -12,9 +14,12 @@ let saved: SavedStyles | null = null;
 
 /** Ref-counted document lock for LoadingScreen — prevents stuck white html/body after unmount. */
 export function acquireLoadingScreenDocumentLock(): () => void {
-  if (typeof document === 'undefined') return () => undefined;
+  return traceSync('acquireLoadingScreenDocumentLock', () => {
+    if (typeof document === 'undefined') return () => undefined;
 
-  if (loadingScreenLockCount === 0) {
+    acquireLoadingLockDiagnostic('LoadingScreen');
+
+    if (loadingScreenLockCount === 0) {
     const html = document.documentElement;
     const body = document.body;
     const root = document.getElementById('root');
@@ -39,13 +44,16 @@ export function acquireLoadingScreenDocumentLock(): () => void {
   return () => {
     releaseLoadingScreenDocumentLock();
   };
+  });
 }
 
 export function releaseLoadingScreenDocumentLock(): void {
+  traceSync('releaseLoadingScreenDocumentLock', () => {
   if (typeof document === 'undefined') return;
   loadingScreenLockCount = Math.max(0, loadingScreenLockCount - 1);
   if (loadingScreenLockCount > 0) return;
   clearLoadingScreenDocumentLock();
+  });
 }
 
 export function clearLoadingScreenDocumentLock(): void {
