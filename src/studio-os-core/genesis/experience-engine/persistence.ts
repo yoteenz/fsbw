@@ -51,7 +51,7 @@ export function normalizeExperienceEngineDnaStore(stored?: Partial<XeeStore>): X
   };
 }
 
-/** In-memory canonical seed — used when localStorage has seededAt but empty registries (Safari / partial writes). */
+/** In-memory canonical seed — used when localStorage has seededAt but empty or corrupt registries. */
 export function withExperienceEngineSeedFallback(stored?: Partial<XeeStore>): XeeStore {
   const normalized = normalizeExperienceEngineDnaStore(stored);
   const hasRegistry =
@@ -59,7 +59,10 @@ export function withExperienceEngineSeedFallback(stored?: Partial<XeeStore>): Xe
     normalized.departments.length > 0 &&
     normalized.scenes.length > 0 &&
     normalized.motions.length > 0 &&
-    normalized.interactions.length > 0;
+    normalized.interactions.length > 0 &&
+    normalized.brands.every(
+      (b) => b?.brandId && b.colorSystem?.primary && b.glassStyle?.border && b.typography?.displayFont
+    );
   if (hasRegistry) return normalized;
   return {
     ...normalized,

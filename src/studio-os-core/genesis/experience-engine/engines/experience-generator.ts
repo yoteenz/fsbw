@@ -7,7 +7,6 @@ import {
   resolveMotionDna,
   resolveSceneDna,
 } from './registries';
-import { ensureExperienceEngineDnaSubsystem } from '../engine';
 import { emptyExperienceEngineDnaStore, readExperienceEngineDnaStore } from '../persistence';
 import {
   SEED_BRAND_DNA,
@@ -62,7 +61,6 @@ export function resolveExperienceProfile(input?: {
   sceneId?: string;
   motionDnaId?: string;
 }): XeeExperienceProfile {
-  ensureExperienceEngineDnaSubsystem();
   const store = readExperienceEngineDnaStore();
   const playground = { ...emptyExperienceEngineDnaStore().playground, ...store.playground };
   const brandId = input?.brandId ?? playground.brandId;

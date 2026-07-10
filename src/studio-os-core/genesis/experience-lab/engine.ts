@@ -16,6 +16,11 @@ import {
   readExperienceLabStore,
 } from './persistence';
 import {
+  repairExperienceLabStoreIfNeeded,
+  sanitizeExperienceLabStore,
+  repairGenesisExperienceLabDna,
+} from './repair';
+import {
   XELAB_PANEL_IDS,
   XELAB_PANEL_LABELS,
   XELAB_SUBSYSTEM_NAME,
@@ -34,7 +39,6 @@ export function ensureExperienceLabSubsystem() {
 }
 
 export function getExperienceLabReadyView(input?: import('./types').XelabRuntimeInput) {
-  ensureExperienceLabSubsystem();
   return buildExperienceLabReadyView(input);
 }
 
@@ -57,6 +61,9 @@ export {
   setActiveLabPanel,
   buildExperienceLabReadyView,
   applyLabSwitchersToGraph,
+  repairExperienceLabStoreIfNeeded,
+  sanitizeExperienceLabStore,
+  repairGenesisExperienceLabDna,
 };
 
 export type {

@@ -1,6 +1,7 @@
 import { ensureExperienceRuntimeSubsystem } from '../../experience-runtime/engine';
 import { updateRuntimeSelectionStore } from '../../experience-runtime/bootstrap/seed';
 import { readExperienceLabStore, writeExperienceLabStore } from '../persistence';
+import { repairExperienceLabStoreIfNeeded } from '../repair';
 import { buildExperienceLabSeedStore } from './seed-data';
 import type { XelabLabSwitchers, XelabScenarioId } from '../constants';
 import type { XelabSelection } from '../types';
@@ -19,6 +20,7 @@ export function seedExperienceLabStore(): void {
 
 export function ensureExperienceLabStore() {
   ensureExperienceRuntimeSubsystem();
+  repairExperienceLabStoreIfNeeded();
   const current = readExperienceLabStore();
   if (!current.seededAt || !current.selection?.brandId) {
     seedExperienceLabStore();

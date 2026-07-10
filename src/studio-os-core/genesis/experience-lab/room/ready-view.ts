@@ -1,5 +1,3 @@
-import { ensureExperienceEngineDnaSubsystem } from '../../experience-engine/engine';
-import { ensureExperienceRuntimeSubsystem } from '../../experience-runtime/engine';
 import { assembleExperienceRuntime } from '../../experience-runtime/runtime-engine/experience-runtime';
 import { buildRuntimeInspectorView } from '../../experience-runtime/runtime-preview/inspector-view';
 import { validateRuntimeBoot } from '../../experience-runtime/runtime-boot/runtime-boot-validator';
@@ -13,9 +11,6 @@ export function buildXelabOrbNote(): string {
 }
 
 export function buildExperienceLabReadyView(input?: XelabRuntimeInput): XelabReadyView {
-  ensureExperienceEngineDnaSubsystem();
-  ensureExperienceRuntimeSubsystem();
-
   const store = readExperienceLabStore();
   const selection = input?.selection ? { ...store.selection, ...input.selection } : store.selection;
 

@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   applyRuntimeGraphToElement,
+  buildExperienceLabReadyView,
   ensureExperienceEngineDnaSubsystem,
   ensureExperienceLabSubsystem,
   ensureExperienceRuntimeSubsystem,
-  getExperienceLabReadyView,
+  repairExperienceLabStoreIfNeeded,
   applyLabScenario,
   updateLabSelection,
   updateLabSwitchers,
@@ -23,12 +24,13 @@ export function useExperienceLabState() {
   }, []);
 
   useEffect(() => {
+    repairExperienceLabStoreIfNeeded();
     ensureExperienceEngineDnaSubsystem();
     ensureExperienceRuntimeSubsystem();
     ensureExperienceLabSubsystem();
   }, []);
 
-  const view = useMemo(() => getExperienceLabReadyView(), [tick]);
+  const view = useMemo(() => buildExperienceLabReadyView(), [tick]);
   const bootReport = view.bootReport;
   const bootBlocked = !view.runtimeGraph?.brand?.brandId;
 

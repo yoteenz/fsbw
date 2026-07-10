@@ -6,6 +6,7 @@ import { GENESIS_FRAMEWORK_VERSION, GENESIS_STORAGE_KEY } from '../studio-os-cor
 import { invalidateGenesisStoreCache } from '../studio-os-core/genesis/persistence/store';
 import type { GenesisStore } from '../studio-os-core/genesis/types';
 import { purgeOversizedStudioLocalKeys, writeStudioOsMemoryValue } from '../utils/studioOsBrowserStorage';
+import { repairGenesisExperiencePersistence } from './genesis-experience-persistence-repair';
 
 const MAX_GENESIS_BYTES = 512 * 1024;
 
@@ -67,6 +68,22 @@ export function repairGenesisLocalStorageIfNeeded(): GenesisRepairResult {
     writeStudioOsMemoryValue(`${GENESIS_STORAGE_KEY}_backup_${version}`, raw);
     clearGenesisKey();
     return { repaired: true, reason: `genesis version reset (${version} → ${GENESIS_FRAMEWORK_VERSION})` };
+  }
+
+  const experienceRepair = repairGenesisExperiencePersistence(parsed);
+  if (experienceRepair.repaired) {
+    try {
+      const repairedRaw = JSON.stringify(experienceRepair.genesis);
+      localStorage.setItem(GENESIS_STORAGE_KEY, repairedRaw);
+      invalidateGenesisStoreCache();
+      return {
+        repaired: true,
+        reason: experienceRepair.reasons.join('; '),
+      };
+    } catch {
+      clearGenesisKey();
+      return { repaired: true, reason: 'experience DNA repair write failed — cleared genesis' };
+    }
   }
 
   return { repaired: false };
