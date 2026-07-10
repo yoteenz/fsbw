@@ -1,0 +1,178 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://studio-os.dev/schemas/ai-context-capsule/manifest.v2.json",
+  "title": "AI Context Capsule Manifest",
+  "description": "Canonical manifest for StudioOS_ContextCapsule_*.studiocapsule packages. Platform-neutral; no vendor-specific fields required.",
+  "type": "object",
+  "required": [
+    "manifestVersion",
+    "capsuleVersion",
+    "capsuleId",
+    "generatedAt",
+    "generator",
+    "studioOsVersion",
+    "projectVersion",
+    "exportType",
+    "checksums",
+    "compatibility",
+    "contents",
+    "readOrder"
+  ],
+  "properties": {
+    "manifestVersion": {
+      "type": "integer",
+      "const": 2,
+      "description": "Manifest schema version (increment on breaking manifest changes)"
+    },
+    "capsuleVersion": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver of this capsule format/content bundle"
+    },
+    "capsuleId": {
+      "type": "string",
+      "description": "Unique id: capsule-{iso-date}-{short-sha}"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "generator": {
+      "type": "object",
+      "required": ["name", "source"],
+      "properties": {
+        "name": { "type": "string", "examples": ["studio-os-archive-export"] },
+        "source": {
+          "type": "string",
+          "enum": ["cli", "hq-archive", "ci-release", "cursor-agent", "manual"]
+        },
+        "buildId": { "type": "string" },
+        "gitRef": { "type": "string" }
+      }
+    },
+    "studioOsVersion": {
+      "type": "string",
+      "description": "Studio OS platform semver or git sha"
+    },
+    "projectVersion": {
+      "type": "string",
+      "description": "Monorepo / product version marker"
+    },
+    "incrementalChangeNumber": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Auto-increment per export from same projectVersion"
+    },
+    "previousCapsuleReference": {
+      "type": ["object", "null"],
+      "properties": {
+        "capsuleId": { "type": "string" },
+        "capsuleVersion": { "type": "string" },
+        "checksumSha256": { "type": "string" }
+      }
+    },
+    "exportType": {
+      "type": "string",
+      "enum": [
+        "full",
+        "incremental",
+        "milestone",
+        "release",
+        "sprint",
+        "founder-profile-only",
+        "architecture-only",
+        "handoff-only"
+      ]
+    },
+    "diffSummary": {
+      "type": ["string", "null"],
+      "description": "Human-readable summary vs previousCapsuleReference"
+    },
+    "checksums": {
+      "type": "object",
+      "required": ["archiveSha256", "manifestSha256"],
+      "properties": {
+        "archiveSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "manifestSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["path", "sha256", "bytes"],
+            "properties": {
+              "path": { "type": "string" },
+              "sha256": { "type": "string" },
+              "bytes": { "type": "integer" }
+            }
+          }
+        }
+      }
+    },
+    "compatibility": {
+      "type": "object",
+      "required": ["minManifestVersion", "platformNeutral"],
+      "properties": {
+        "minManifestVersion": { "type": "integer" },
+        "maxManifestVersion": { "type": "integer" },
+        "platformNeutral": { "type": "boolean", "const": true },
+        "testedPlatforms": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["chatgpt", "claude", "gemini", "cursor", "generic-llm"]
+          }
+        },
+        "importWorkflowVersion": { "type": "integer", "default": 1 }
+      }
+    },
+    "contents": {
+      "type": "object",
+      "description": "Map of logical sections to internal paths",
+      "properties": {
+        "founderProfile": { "type": "string", "default": "Founder/profile.json" },
+        "operatingManual": { "type": "string", "default": "Workflow/operating-manual.md" },
+        "styleGuide": { "type": "string", "default": "Workflow/style-guide.md" },
+        "context": { "type": "string", "default": "StudioOS/context.md" },
+        "handoff": { "type": "string", "default": "CurrentSprint/handoff.md" },
+        "glossary": { "type": "string", "default": "Glossary/terms.json" },
+        "changelog": { "type": "string", "default": "History/changelog.md" },
+        "promptLibrary": { "type": "string", "default": "Workflow/prompt-library.md" },
+        "projectDna": { "type": "string", "default": "StudioOS/project-dna.md" },
+        "memorySnapshot": { "type": "string", "default": "History/memory-snapshot.json" },
+        "roadmap": { "type": "string", "default": "Roadmap/roadmap.md" },
+        "architecture": { "type": "string", "default": "Architecture/overview.md" },
+        "executiveSummaryPdf": { "type": "string", "default": "Assets/executive-summary.pdf" },
+        "executiveSummaryMd": { "type": "string", "default": "Assets/executive-summary.md" },
+        "portableJson": { "type": "string", "default": "Manifest/capsule.json" }
+      }
+    },
+    "readOrder": {
+      "type": "array",
+      "description": "Canonical AI onboarding read sequence",
+      "items": { "type": "string" },
+      "default": [
+        "Manifest/manifest.json",
+        "Founder/profile.json",
+        "Workflow/operating-manual.md",
+        "Workflow/style-guide.md",
+        "StudioOS/context.md",
+        "CurrentSprint/handoff.md",
+        "Glossary/terms.json",
+        "Roadmap/roadmap.md",
+        "History/changelog.md",
+        "Workflow/prompt-library.md",
+        "StudioOS/project-dna.md",
+        "History/memory-snapshot.json"
+      ]
+    },
+    "redaction": {
+      "type": "object",
+      "properties": {
+        "secretsStripped": { "type": "boolean" },
+        "piiStripped": { "type": "boolean" },
+        "memoryEntryLimit": { "type": "integer" },
+        "denylistPatterns": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

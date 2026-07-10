@@ -7,9 +7,9 @@
 
 ## Current sprint
 
-**ChatGPT Operating Manual™ — AI Collaboration Layer (docs only)**
+**AI Context Capsule™ — Universal AI Handoff System (architecture spec v2.0.0)**
 
-Creating permanent external-AI onboarding package at `docs/ai-collaboration/`. No application features in this sprint.
+Canonical specification for single-file `.studiocapsule` portable AI OS. No HQ Archive UI in this sprint — design only.
 
 ---
 

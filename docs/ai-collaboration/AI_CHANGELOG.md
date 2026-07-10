@@ -113,6 +113,22 @@
 
 ---
 
+## 2026-07-10 — AI Context Capsule™ v2 canonical architecture (docs only)
+
+**Decision:** Single portable `.studiocapsule` ZIP replaces dozens of loose Markdown exports as the canonical AI continuity layer.
+
+**Reason:** Founder should upload one file; any AI (ChatGPT, Claude, Gemini, Cursor) onboarded in minutes without manual re-explaining Studio OS.
+
+**Impact:** `AI_CONTEXT_CAPSULE_SPECIFICATION.md` v2.0.0 — package layout, manifest v2 schema, versioning, compression, import/export workflows, smart export types, HQ Archive path, automation roadmap. Source docs: `FOUNDER_PROFILE.md`, `PROJECT_DNA.md`, `AI_MEMORY_SNAPSHOT.md`. `EXPORT_SPECIFICATION.md` demoted to v1 appendix.
+
+**Files:** `docs/ai-collaboration/AI_CONTEXT_CAPSULE_SPECIFICATION.md`, `schemas/manifest.v2.schema.json`, supporting sources, README/NEW_CHAT_CHECKLIST updates.
+
+**Supersedes:** Flat md+json as primary deliverable (CLI remains Phase 1 interim)
+
+**Dependencies:** Phase 2 CLI `.studiocapsule` builder; Phase 4 HQ Archive UI
+
+---
+
 ## Template for new entries
 
 ```markdown

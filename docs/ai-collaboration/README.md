@@ -29,10 +29,12 @@ Follow **`NEW_CHAT_CHECKLIST.md`** exactly.
 
 Reference as needed:
 
+- [AI_CONTEXT_CAPSULE_SPECIFICATION.md](./AI_CONTEXT_CAPSULE_SPECIFICATION.md) — **canonical** portable AI OS (.studiocapsule)
 - [AI_GLOSSARY.md](./AI_GLOSSARY.md) — canonical terminology
 - [AI_CHANGELOG.md](./AI_CHANGELOG.md) — decision history
 - [PROMPT_TEMPLATES.md](./PROMPT_TEMPLATES.md) — reusable prompt structures
-- [EXPORT_SPECIFICATION.md](./EXPORT_SPECIFICATION.md) — AI Context Capsule™ export system
+- [EXPORT_SPECIFICATION.md](./EXPORT_SPECIFICATION.md) — v1 flat export appendix
+- [schemas/manifest.v2.schema.json](./schemas/manifest.v2.schema.json) — manifest JSON Schema
 
 ---
 
@@ -54,7 +56,13 @@ Reference as needed:
 
 ## Export: AI Context Capsule™
 
-Portable bundle for any AI platform. **Specification only** — see [EXPORT_SPECIFICATION.md](./EXPORT_SPECIFICATION.md).
+Portable **single-file** AI operating system (`.studiocapsule`). Canonical architecture: [AI_CONTEXT_CAPSULE_SPECIFICATION.md](./AI_CONTEXT_CAPSULE_SPECIFICATION.md).
+
+| Phase | Delivery |
+|-------|----------|
+| Now | Spec + source docs + flat CLI export |
+| Next | `.studiocapsule` ZIP + manifest v2 |
+| Future | HQ → Studio Archive → Knowledge Management → Export button |
 
 Future triggers: milestone complete, sprint finish, release, founder says **"Export AI Context Capsule."**
 
@@ -64,6 +72,6 @@ Future triggers: milestone complete, sprint finish, release, founder says **"Exp
 
 | Field | Value |
 |-------|-------|
-| Package version | 1.0.0 |
+| Package version | 2.0.0 |
 | Created | 2026-07-10 |
 | Maintainer | Founder + Studio OS agents |

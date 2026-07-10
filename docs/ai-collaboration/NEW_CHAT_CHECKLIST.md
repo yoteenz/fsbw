@@ -4,7 +4,19 @@ Use this at the **start of every brand-new AI conversation** (ChatGPT, Claude, o
 
 ---
 
-## Step 1 — Read the Operating Manual
+## Step 1 — Load context (choose one path)
+
+### Path A — AI Context Capsule™ (preferred)
+
+Upload **`StudioOS_ContextCapsule_v*.studiocapsule`** to the AI platform.
+
+The importer follows `Manifest/manifest.json` → `readOrder[]` (see [AI_CONTEXT_CAPSULE_SPECIFICATION.md](./AI_CONTEXT_CAPSULE_SPECIFICATION.md)).
+
+Until `.studiocapsule` export ships: run `npm run export:ai-context-capsule` and upload the generated `.md` or paste executive sections.
+
+**If Path A with a full capsule:** Steps 2–4 below are satisfied by the capsule `readOrder` — proceed to Step 5.
+
+### Path B — Manual read (fallback)
 
 Open and read in full:
 
