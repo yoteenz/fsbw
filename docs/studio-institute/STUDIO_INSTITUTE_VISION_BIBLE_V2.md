@@ -18,6 +18,8 @@
 
 **Supersedes:** [STUDIO_INSTITUTE_BIBLE.md](./STUDIO_INSTITUTE_BIBLE.md) v1.0.0 (spatial learning OS foundation — retained as historical reference)
 
+**Complemented by:** [STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md) v3.0.0 — **Cognitive Engine** (how the AI learns how each human learns). V2 defines *what* Institute is; V3 defines *how* intelligence teaches. **Both are required before implementation.**
+
 **Relationship to other canon:**
 
 | Document | Relationship |

@@ -2,7 +2,7 @@
 
 **Status:** Permanent constitutional north star — July 2026  
 **Authority:** Highest-level product vision for Studio Institute™ before implementation  
-**Sprint:** STUDIO INSTITUTE™ — The Adaptive Learning Engine (docs only)
+**Sprint:** STUDIO INSTITUTE™ — The Cognitive Engine (docs only)
 
 ---
 
@@ -12,9 +12,14 @@ Studio Institute™ is **not** an LMS, online course, YouTube, Udemy, Khan Acade
 
 It is the **Adaptive Learning Engine** of Studio OS™ — built to reinvent how humans learn complex ideas by adapting every explanation to each learner's mind, inside a spatial university where concepts are places, not pages.
 
-**Canonical blueprint:** **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** (v2.0.0)
+**Canonical blueprints:**
 
-**No implementation** until founder approval.
+| Document | Role |
+|----------|------|
+| **[STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md)** (v3.0.0) | **Intelligence canon** — Cognitive Engine: how the AI learns how each human learns |
+| **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** (v2.0.0) | **Product canon** — Adaptive Learning Engine: what Institute is |
+
+**Read order:** V2 (what) → V3 (how). **No implementation** until founder approval.
 
 ---
 
@@ -22,7 +27,8 @@ It is the **Adaptive Learning Engine** of Studio OS™ — built to reinvent how
 
 | Document | Relationship |
 |----------|--------------|
-| **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** | **Canonical blueprint** — Adaptive Learning Engine, Learning DNA, professors, project integration |
+| **[STUDIO_INSTITUTE_VISION_BIBLE_V3.md](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md)** | **Intelligence canon** — Cognitive Engine: Learning DNA architecture, Cognitive Profile™, Memory Engine™, Explanation Engine™, Understanding Loop, Professor Collaboration, Knowledge Galaxy™, Learning Map™, Mastery, Review, Project Integration |
+| **[STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md)** | **Product canon** — Adaptive Learning Engine, professors, project integration |
 | [STUDIO_INSTITUTE_BIBLE.md](./STUDIO_INSTITUTE_BIBLE.md) | v1.0 spatial learning OS foundation — superseded by V2; retained as reference |
 | [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) | Studio World experience constitution — Institute is a defining pillar |
 | [studio-institute.md](../studio-os/studio-institute.md) | M93 learning system — implementation subordinate to Vision Bible V2 |
