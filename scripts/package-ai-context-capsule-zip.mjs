@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Package AI Context Capsule™ — ZIP download artifact (prebuild + CLI).
- * Does not modify capsule source files.
+ * Does not modify capsule markdown source except regenerating context-capsule.json metadata.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -10,9 +10,12 @@ import { execSync } from 'node:child_process';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
+const GENERATOR_VERSION = '0.2.0';
+
 const REQUIRED_FILES = [
   'README_FIRST.md',
   'MANIFEST.md',
+  'ONBOARDING_REPORT.md',
   'FOUNDER_PROFILE.md',
   'CHATGPT_OPERATING_MANUAL.md',
   'AI_STYLE_GUIDE.md',
@@ -26,6 +29,40 @@ const REQUIRED_FILES = [
   'KNOWN_BLOCKERS.md',
   'OPEN_QUESTIONS.md',
 ];
+
+const READING_ORDER = [
+  'README_FIRST.md',
+  'MANIFEST.md',
+  'KNOWN_BLOCKERS.md',
+  'CURRENT_HANDOFF.md',
+  'FOUNDER_PROFILE.md',
+  'PROJECT_DNA.md',
+  'AI_CONTEXT.md',
+  'AI_GLOSSARY.md',
+  'CHATGPT_OPERATING_MANUAL.md',
+  'AI_STYLE_GUIDE.md',
+  'PROJECT_CHANGELOG.md',
+  'ROADMAP.md',
+  'OPEN_QUESTIONS.md',
+  'PROMPT_LIBRARY.md',
+  'ONBOARDING_REPORT.md',
+];
+
+const ONBOARDING_SECTIONS = [
+  '# Read Confirmation',
+  '# Project Understanding',
+  '# Founder Preference Verification',
+  '# Canon Verification',
+  '# Questions',
+  '# Potential Inconsistencies',
+  '# Outdated Documentation',
+  '# Risk Assessment',
+  '# Confidence Assessment',
+  '# Recommended Next Steps',
+  '# Waiting For Founder Approval',
+];
+
+const METADATA_FILE = 'context-capsule.json';
 
 function findCapsuleDir() {
   const dirs = fs
@@ -45,7 +82,7 @@ function readVersion(capsuleDir, folderName) {
     if (match) return match[1].trim();
   }
   const folderMatch = folderName.match(/v([\d.]+)$/i);
-  return folderMatch ? (folderMatch[1].includes('.') ? folderMatch[1] : `${folderMatch[1]}.0`) : '0.1.0';
+  return folderMatch ? (folderMatch[1].includes('.') ? folderMatch[1] : `${folderMatch[1]}.0`) : '0.2.0';
 }
 
 function parseManifestField(manifest, label) {
@@ -54,16 +91,73 @@ function parseManifestField(manifest, label) {
   return match ? match[1].trim().replace(/^`|`$/g, '') : null;
 }
 
+function readingOrderChecksum() {
+  return crypto.createHash('sha256').update(READING_ORDER.join('\n')).digest('hex');
+}
+
 function validate(capsuleDir, version) {
-  const present = fs.readdirSync(capsuleDir).filter((f) => f.endsWith('.md'));
-  const missing = REQUIRED_FILES.filter((f) => !present.includes(f));
-  if (missing.length) throw new Error(`Missing files: ${missing.join(', ')}`);
+  const presentMd = fs.readdirSync(capsuleDir).filter((f) => f.endsWith('.md'));
+  const missing = REQUIRED_FILES.filter((f) => !presentMd.includes(f));
+  if (missing.length) {
+    console.error('\n❌ Context Capsule validation failed — missing required documents:\n');
+    for (const f of missing) console.error(`   • ${f}`);
+    console.error('\nDo not package ZIP until resolved.\n');
+    process.exit(1);
+  }
+
+  const onboarding = fs.readFileSync(path.join(capsuleDir, 'ONBOARDING_REPORT.md'), 'utf8');
+  const missingSections = ONBOARDING_SECTIONS.filter((h) => !onboarding.includes(h));
+  if (missingSections.length) {
+    console.error('\n❌ ONBOARDING_REPORT.md missing required sections:\n');
+    for (const h of missingSections) console.error(`   • ${h}`);
+    process.exit(1);
+  }
+
   const manifest = fs.readFileSync(path.join(capsuleDir, 'MANIFEST.md'), 'utf8');
   const manifestVersion = parseManifestField(manifest, 'Capsule Version');
   if (manifestVersion && manifestVersion !== version) {
     throw new Error(`Version mismatch: package ${version} vs manifest ${manifestVersion}`);
   }
-  return present;
+
+  return presentMd;
+}
+
+function writeContextCapsuleMetadata(capsuleDir, capsuleFolderName, version, generatedAt, validationPassed) {
+  const payload = {
+    schemaVersion: 1,
+    capsuleVersion: version,
+    capsuleFolder: capsuleFolderName,
+    generatedAt,
+    projectVersion: 'build-a-wig@0.0.0',
+    documentCount: REQUIRED_FILES.length,
+    metadataFileCount: 1,
+    readingOrder: READING_ORDER,
+    readingOrderChecksum: readingOrderChecksum(),
+    requiredMarkdownFiles: REQUIRED_FILES,
+    validationStatus: validationPassed ? 'pass' : 'fail',
+    generatorVersion: GENERATOR_VERSION,
+    onboardingFeatures: [
+      'standardized-onboarding-report',
+      'founder-preference-verification',
+      'canon-verification',
+      'confidence-assessment',
+      'export-validation-gate',
+    ],
+    futureModules: [
+      'knowledge-quizzes',
+      'architecture-verification',
+      'founder-updates',
+      'project-health-summary',
+      'governance-checks',
+      'model-compatibility',
+      'onboarding-analytics',
+    ],
+  };
+  fs.writeFileSync(
+    path.join(capsuleDir, METADATA_FILE),
+    JSON.stringify(payload, null, 2) + '\n',
+  );
+  return payload;
 }
 
 function sha256File(filePath) {
@@ -90,6 +184,9 @@ function packageCapsule() {
   const fileName = `StudioOS_ContextCapsule_v${version}.zip`;
   validate(capsuleDir, version);
 
+  const generatedAt = new Date().toISOString();
+  writeContextCapsuleMetadata(capsuleDir, capsuleFolderName, version, generatedAt, true);
+
   const publicOut = path.join(ROOT, 'public/downloads/context-capsules');
   const releasesOut = path.join(ROOT, 'releases/downloads/context-capsules');
   fs.mkdirSync(publicOut, { recursive: true });
@@ -103,7 +200,6 @@ function packageCapsule() {
   fs.copyFileSync(publicZip, path.join(ROOT, 'public/downloads', fileName));
 
   const manifestText = fs.readFileSync(path.join(capsuleDir, 'MANIFEST.md'), 'utf8');
-  const generatedAt = new Date().toISOString();
   const checksumSha256 = sha256File(publicZip);
   const stat = fs.statSync(publicZip);
   const downloadPath = `/downloads/context-capsules/${fileName}`;
@@ -132,6 +228,9 @@ function packageCapsule() {
     fileCount: REQUIRED_FILES.length,
     checksumSha256,
     sizeBytes: stat.size,
+    generatorVersion: GENERATOR_VERSION,
+    readingOrderChecksum: readingOrderChecksum(),
+    validationStatus: 'pass',
     downloadUrls: { production: downloadPath },
   };
   fs.writeFileSync(path.join(publicOut, 'manifest.json'), JSON.stringify(sidecar, null, 2) + '\n');
@@ -147,6 +246,7 @@ function packageCapsule() {
     checksumSha256,
     sizeBytes: stat.size,
     downloadPath,
+    generatorVersion: GENERATOR_VERSION,
   };
   fs.writeFileSync(
     path.join(ROOT, 'api/_lib/context-capsule-build-manifest.json'),

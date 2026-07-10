@@ -8,11 +8,16 @@ export const CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY = 'studioOsContextCapsuleExports
 /** Fixed capsule folder at repo root — included via vercel.json includeFiles. */
 export const CONTEXT_CAPSULE_FOLDER_NAME = 'StudioOS_ContextCapsule_v0.1';
 
+export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.2.0';
+
+export const CONTEXT_CAPSULE_METADATA_FILE = 'context-capsule.json';
+
 export const CONTEXT_CAPSULE_DOWNLOAD_BASE = '/downloads/context-capsules';
 
 export const CONTEXT_CAPSULE_REQUIRED_FILES = [
   'README_FIRST.md',
   'MANIFEST.md',
+  'ONBOARDING_REPORT.md',
   'FOUNDER_PROFILE.md',
   'CHATGPT_OPERATING_MANUAL.md',
   'AI_STYLE_GUIDE.md',
@@ -42,6 +47,21 @@ export const CONTEXT_CAPSULE_READING_ORDER = [
   'ROADMAP.md',
   'OPEN_QUESTIONS.md',
   'PROMPT_LIBRARY.md',
+  'ONBOARDING_REPORT.md',
+] as const;
+
+export const CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS = [
+  '# Read Confirmation',
+  '# Project Understanding',
+  '# Founder Preference Verification',
+  '# Canon Verification',
+  '# Questions',
+  '# Potential Inconsistencies',
+  '# Outdated Documentation',
+  '# Risk Assessment',
+  '# Confidence Assessment',
+  '# Recommended Next Steps',
+  '# Waiting For Founder Approval',
 ] as const;
 
 export type ContextCapsuleValidationCheck = {
@@ -89,3 +109,7 @@ export type ContextCapsuleStatus = {
   currentDownloadPath: string | null;
   currentZipFileName: string | null;
 };
+
+export function readingOrderChecksumSeed(): string {
+  return CONTEXT_CAPSULE_READING_ORDER.join('\n');
+}

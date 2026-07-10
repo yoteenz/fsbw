@@ -1,10 +1,10 @@
-# README FIRST — AI Context Capsule v0.1
+# README FIRST — AI Context Capsule v0.2
 
 **You are opening:** `StudioOS_ContextCapsule_v0.1`  
-**Purpose:** Institutional memory for onboarding any AI into Studio OS / Frontal Slayer collaboration  
-**Capsule version:** 0.1.0 (manual prototype)  
+**Purpose:** Deterministic onboarding — reconstruct project **and** founder working style in every new AI conversation  
+**Capsule version:** 0.2.0  
 **Generated:** 2026-07-10  
-**Git reference:** `3b8fb4fa7`
+**Git reference:** see `MANIFEST.md`
 
 ---
 
@@ -13,6 +13,8 @@
 This folder is a **complete AI Context Capsule** — a portable briefing room for Studio OS. It is not source code. It is not a substitute for reading nothing and guessing.
 
 Treat this package as though Studio OS generated it automatically. Every document is intentional.
+
+**v0.2 adds:** standardized `ONBOARDING_REPORT.md`, expanded founder intelligence, canon verification, confidence scoring, and export validation — onboarding is **repeatable and measurable**, not inferred.
 
 ---
 
@@ -32,25 +34,34 @@ After reading, **do not** write code, architecture proposals, Composer prompts, 
 
 Your job is **understanding first**, not action.
 
-### 3. Generate an onboarding report
+### 3. Complete ONBOARDING_REPORT.md exactly as provided
 
-Produce a structured onboarding report containing:
+Open `ONBOARDING_REPORT.md` and **complete every section** using the structure already in that file.
 
-- **Understanding summary** — Studio OS, Studio World, Institute, Genesis, Experience Lab, World Compiler, collaboration workflow, founder style, blockers, roadmap, philosophy
-- **Questions** — blocking questions first; label priority
-- **Potential inconsistencies** — between documents or vs your prior knowledge
-- **Outdated documentation** — anything that looks stale vs `CURRENT_HANDOFF.md`
-- **Risk assessment** — what you must not do without founder approval
-- **Recommended next steps** — ordered, with owners (founder / ChatGPT / Composer / Terra)
-- **Read confirmation** — list every file read; note any skipped
+**Do not** invent a different report format.  
+**Do not** modify the report structure (headings stay as-is).  
+**Complete every section.**  
+If information cannot be determined from the capsule, **state why** — do not guess.  
+**Do not begin implementation.**
 
-Use the format implied by AI Context Protocol onboarding report (see repo: `docs/ai-collaboration/protocol/ONBOARDING_REPORT.md`).
+The report includes:
+
+- Read confirmation checklist  
+- Project understanding  
+- **Founder Preference Verification** (self-check against `FOUNDER_PROFILE.md`)  
+- **Canon Verification** (blockers, roles, deploy discipline)  
+- Questions (High / Medium / Low priority)  
+- Potential inconsistencies · Outdated documentation · Risk assessment  
+- **Confidence assessment** (overall %, strengths, gaps)  
+- Recommended next steps  
 
 ### 4. Wait for founder approval before contributing
 
-**Stop after the onboarding report.**
+**Stop after completing the onboarding report.**
 
 Do not contribute architecture, prompts, or fixes until the founder explicitly approves your understanding (e.g. "approved — proceed" or assigns a task).
+
+End your report with the required statement in **Waiting For Founder Approval**.
 
 ---
 
@@ -65,11 +76,13 @@ Do not contribute architecture, prompts, or fixes until the founder explicitly a
 | Experience Lab | `AI_CONTEXT.md` §8, `KNOWN_BLOCKERS.md` |
 | World Compiler | `AI_CONTEXT.md` §9, `KNOWN_BLOCKERS.md` |
 | Collaboration workflow | `CHATGPT_OPERATING_MANUAL.md`, `AI_STYLE_GUIDE.md`, `PROMPT_LIBRARY.md` |
-| Founder working style | `FOUNDER_PROFILE.md` |
+| Founder working style | `FOUNDER_PROFILE.md` (authoritative) |
+| Onboarding deliverable | `ONBOARDING_REPORT.md` (complete, do not restructure) |
 | Current blockers | `KNOWN_BLOCKERS.md`, `CURRENT_HANDOFF.md` |
 | Roadmap | `ROADMAP.md` |
 | Decision history | `PROJECT_CHANGELOG.md` |
 | Open questions | `OPEN_QUESTIONS.md` |
+| Machine metadata | `context-capsule.json` |
 
 ---
 
@@ -90,13 +103,15 @@ Do not contribute architecture, prompts, or fixes until the founder explicitly a
 
 > **Models evolve. Studio AI persists.** (Vision — see repo `docs/studio-os/studio-ai/`)
 
+> **No onboarding behavior should rely on inference.**
+
 ---
 
 ## Compatibility
 
 | Platform | Import method |
 |----------|---------------|
-| ChatGPT | Upload **ZIP** (`StudioOS_ContextCapsule_v0.1.0.zip`) or individual `.md` files |
+| ChatGPT | Upload **ZIP** (`StudioOS_ContextCapsule_v0.2.0.zip`) or individual `.md` files |
 | Claude | Project knowledge — add extracted folder or ZIP |
 | Gemini | Upload ZIP or documents |
 | Cursor | Reference folder path in workspace |
@@ -104,12 +119,12 @@ Do not contribute architecture, prompts, or fixes until the founder explicitly a
 **One-file download (production):**
 
 ```
-https://fsbw.vercel.app/downloads/StudioOS_ContextCapsule_v0.1.0.zip
+https://fsbw.vercel.app/downloads/context-capsules/StudioOS_ContextCapsule_v0.2.0.zip
 ```
 
 **Regenerate locally:** `npm run download:ai-context-capsule` from repo root.
 
-Platform-neutral Markdown only. No vendor-specific required fields.
+Platform-neutral Markdown + `context-capsule.json` metadata. No vendor-specific required fields.
 
 ---
 

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "capsuleVersion": "0.2.0",
+  "capsuleFolder": "StudioOS_ContextCapsule_v0.1",
+  "generatedAt": "2026-07-10T18:54:20.745Z",
+  "projectVersion": "build-a-wig@0.0.0",
+  "documentCount": 15,
+  "metadataFileCount": 1,
+  "readingOrder": [
+    "README_FIRST.md",
+    "MANIFEST.md",
+    "KNOWN_BLOCKERS.md",
+    "CURRENT_HANDOFF.md",
+    "FOUNDER_PROFILE.md",
+    "PROJECT_DNA.md",
+    "AI_CONTEXT.md",
+    "AI_GLOSSARY.md",
+    "CHATGPT_OPERATING_MANUAL.md",
+    "AI_STYLE_GUIDE.md",
+    "PROJECT_CHANGELOG.md",
+    "ROADMAP.md",
+    "OPEN_QUESTIONS.md",
+    "PROMPT_LIBRARY.md",
+    "ONBOARDING_REPORT.md"
+  ],
+  "readingOrderChecksum": "7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30",
+  "requiredMarkdownFiles": [
+    "README_FIRST.md",
+    "MANIFEST.md",
+    "ONBOARDING_REPORT.md",
+    "FOUNDER_PROFILE.md",
+    "CHATGPT_OPERATING_MANUAL.md",
+    "AI_STYLE_GUIDE.md",
+    "AI_CONTEXT.md",
+    "CURRENT_HANDOFF.md",
+    "AI_GLOSSARY.md",
+    "PROJECT_DNA.md",
+    "PROJECT_CHANGELOG.md",
+    "PROMPT_LIBRARY.md",
+    "ROADMAP.md",
+    "KNOWN_BLOCKERS.md",
+    "OPEN_QUESTIONS.md"
+  ],
+  "validationStatus": "pass",
+  "generatorVersion": "0.2.0",
+  "onboardingFeatures": [
+    "standardized-onboarding-report",
+    "founder-preference-verification",
+    "canon-verification",
+    "confidence-assessment",
+    "export-validation-gate"
+  ],
+  "futureModules": [
+    "knowledge-quizzes",
+    "architecture-verification",
+    "founder-updates",
+    "project-health-summary",
+    "governance-checks",
+    "model-compatibility",
+    "onboarding-analytics"
+  ]
+}

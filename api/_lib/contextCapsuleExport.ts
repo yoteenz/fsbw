@@ -4,11 +4,16 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import {
   CONTEXT_CAPSULE_FOLDER_NAME,
+  CONTEXT_CAPSULE_METADATA_FILE,
+  CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS,
   CONTEXT_CAPSULE_REQUIRED_FILES,
   CONTEXT_CAPSULE_READING_ORDER,
+  CONTEXT_CAPSULE_GENERATOR_VERSION,
+  readingOrderChecksumSeed,
   type ContextCapsuleValidationCheck,
 } from './contextCapsuleConstants.js';
 
@@ -171,6 +176,66 @@ export function validateCapsulePackage(info: CapsuleSourceInfo): ContextCapsuleV
     label: 'No missing files',
     passed: missing.length === 0,
   });
+
+  const metadataPath = path.join(info.capsuleDir, CONTEXT_CAPSULE_METADATA_FILE);
+  const metadataExists = fs.existsSync(metadataPath);
+  checks.push({
+    id: 'metadata-file',
+    label: 'context-capsule.json exists',
+    passed: metadataExists,
+    detail: metadataExists ? CONTEXT_CAPSULE_METADATA_FILE : `Missing ${CONTEXT_CAPSULE_METADATA_FILE}`,
+  });
+
+  if (metadataExists) {
+    try {
+      const meta = JSON.parse(fs.readFileSync(metadataPath, 'utf8')) as {
+        readingOrderChecksum?: string;
+        validationStatus?: string;
+        generatorVersion?: string;
+      };
+      const expectedChecksum = crypto
+        .createHash('sha256')
+        .update(readingOrderChecksumSeed())
+        .digest('hex');
+      const checksumOk = meta.readingOrderChecksum === expectedChecksum;
+      checks.push({
+        id: 'reading-order-checksum',
+        label: 'Reading order checksum valid',
+        passed: checksumOk,
+        detail: checksumOk ? 'Matches CONTEXT_CAPSULE_READING_ORDER' : 'Regenerate via prebuild',
+      });
+      checks.push({
+        id: 'generator-version',
+        label: 'Generator version current',
+        passed: meta.generatorVersion === CONTEXT_CAPSULE_GENERATOR_VERSION,
+        detail: `Expected ${CONTEXT_CAPSULE_GENERATOR_VERSION} · found ${meta.generatorVersion ?? 'n/a'}`,
+      });
+    } catch {
+      checks.push({
+        id: 'metadata-parse',
+        label: 'context-capsule.json parseable',
+        passed: false,
+        detail: 'Invalid JSON',
+      });
+    }
+  }
+
+  const onboardingPath = path.join(info.capsuleDir, 'ONBOARDING_REPORT.md');
+  if (fs.existsSync(onboardingPath)) {
+    const onboarding = fs.readFileSync(onboardingPath, 'utf8');
+    const missingSections = CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS.filter(
+      (heading) => !onboarding.includes(heading),
+    );
+    checks.push({
+      id: 'onboarding-template',
+      label: 'ONBOARDING_REPORT template complete',
+      passed: missingSections.length === 0,
+      detail:
+        missingSections.length === 0
+          ? `${CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS.length} sections present`
+          : `Missing sections: ${missingSections.join(', ')}`,
+    });
+  }
 
   return checks;
 }

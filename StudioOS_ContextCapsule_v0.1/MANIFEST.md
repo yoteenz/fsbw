@@ -1,9 +1,9 @@
 # MANIFEST — StudioOS_ContextCapsule_v0.1
 
-**Capsule ID:** `capsule-2026-07-10-v0.1-manual`  
-**Capsule Version:** 0.1.0  
-**Format:** Manual flat Markdown prototype + ZIP download (`npm run download:ai-context-capsule`)  
-**Protocol alignment:** AI Context Protocol™ v1.0.0 (conceptual — flat layout)
+**Capsule ID:** `capsule-2026-07-10-v0.2-onboarding`  
+**Capsule Version:** 0.2.0  
+**Format:** Flat Markdown prototype + `context-capsule.json` + ZIP download (`npm run download:ai-context-capsule`)  
+**Protocol alignment:** AI Context Protocol™ v1.0.0 + v0.2 onboarding extensions
 
 ---
 
@@ -11,11 +11,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Capsule Version** | 0.1.0 |
-| **Project Version** | `build-a-wig@0.0.0+3b8fb4fa7` |
-| **Studio OS Version** | `3b8fb4fa7` (git SHA on master) |
-| **Generation Date** | 2026-07-10T16:45:00Z |
-| **Generator** | Manual Composer sprint (prototype) |
+| **Capsule Version** | 0.2.0 |
+| **Project Version** | `build-a-wig@0.0.0` (see git SHA at export) |
+| **Studio OS Version** | git SHA on `master` at export |
+| **Generation Date** | 2026-07-10 |
+| **Generator** | Prebuild packager + admin export |
+| **Generator Version** | 0.2.0 |
 | **Export Type** | full |
 | **Host deployment** | Frontal Slayer / Build-a-Wig (Vercel) |
 
@@ -23,24 +24,27 @@
 
 ## Document inventory
 
-| # | File | Purpose | Approx. priority |
-|---|------|---------|------------------|
+| # | File | Purpose | Required |
+|---|------|---------|----------|
 | 0 | `README_FIRST.md` | Mandatory onboarding protocol | **Read first** |
-| 1 | `MANIFEST.md` | This file — inventory, health, order | Required |
-| 2 | `FOUNDER_PROFILE.md` | Collaboration traits, decision framework | Required |
-| 3 | `CHATGPT_OPERATING_MANUAL.md` | How to be Creative Director | Required |
-| 4 | `AI_STYLE_GUIDE.md` | Formatting, prompts, URLs, tone | Required |
-| 5 | `AI_CONTEXT.md` | Studio OS / World / Institute / compile stack | Required |
-| 6 | `CURRENT_HANDOFF.md` | Live sprint snapshot | Required |
+| 1 | `MANIFEST.md` | Inventory, health, reading order | Required |
+| 2 | `KNOWN_BLOCKERS.md` | P0 gates — do not violate | **Critical** |
+| 3 | `CURRENT_HANDOFF.md` | Live sprint snapshot | Required |
+| 4 | `FOUNDER_PROFILE.md` | Founder operating profile (v0.2 expanded) | Required |
+| 5 | `PROJECT_DNA.md` | Philosophy and civilization traits | Required |
+| 6 | `AI_CONTEXT.md` | Studio OS / World / Institute / compile stack | Required |
 | 7 | `AI_GLOSSARY.md` | Canonical terminology | Required |
-| 8 | `PROJECT_DNA.md` | Philosophy and civilization traits | Required |
-| 9 | `PROJECT_CHANGELOG.md` | Architectural decision history | Required |
-| 10 | `PROMPT_LIBRARY.md` | Composer / Terra / ChatGPT templates | Reference |
+| 8 | `CHATGPT_OPERATING_MANUAL.md` | Creative Director role | Required |
+| 9 | `AI_STYLE_GUIDE.md` | Formatting, prompts, URLs, tone | Required |
+| 10 | `PROJECT_CHANGELOG.md` | Architectural decision history | Required |
 | 11 | `ROADMAP.md` | Phased priorities | Required |
-| 12 | `KNOWN_BLOCKERS.md` | P0 gates — do not violate | **Critical** |
-| 13 | `OPEN_QUESTIONS.md` | Unresolved founder decisions | Reference |
+| 12 | `OPEN_QUESTIONS.md` | Unresolved founder decisions | Required |
+| 13 | `PROMPT_LIBRARY.md` | Composer / Terra / ChatGPT templates | Required |
+| 14 | `ONBOARDING_REPORT.md` | **Standardized onboarding template — complete every section** | **Required** |
+| — | `context-capsule.json` | Machine-readable export metadata | Required |
 
-**Total documents:** 14 (including README_FIRST and MANIFEST)
+**Total markdown documents:** 15 (including README_FIRST and MANIFEST)  
+**Onboarding completeness:** Export validation **fails** if any required file above is missing.
 
 ---
 
@@ -61,8 +65,23 @@ Read in this exact sequence after `README_FIRST.md`:
 11. `ROADMAP.md`
 12. `OPEN_QUESTIONS.md`
 13. `PROMPT_LIBRARY.md`
+14. `ONBOARDING_REPORT.md` — **review structure, then complete every section**
 
-Then generate onboarding report. **Do not contribute until founder approval.**
+**Then stop.** Submit completed report. **Do not contribute until founder approval.**
+
+Completion of `ONBOARDING_REPORT.md` is **mandatory** before any implementation work begins.
+
+---
+
+## Onboarding gates (v0.2)
+
+| Gate | Requirement |
+|------|-------------|
+| **Read gate** | All files in reading order — confirm in report checklist |
+| **Founder Preference Verification** | Summarize working style from `FOUNDER_PROFILE.md` — no inference |
+| **Canon Verification** | State P0 blockers, roles, deploy discipline from capsule |
+| **Confidence Assessment** | Percentage + explicit gaps — no silent guessing |
+| **Approval gate** | Founder explicitly approves before code/architecture contributions |
 
 ---
 
@@ -70,33 +89,40 @@ Then generate onboarding report. **Do not contribute until founder approval.**
 
 | Score | Value | Notes |
 |-------|-------|-------|
-| **Completeness** | 0.92 | All v0.1 required files present |
-| **Freshness** | 0.95 | Generated 2026-07-10; handoff same day |
-| **Consistency** | 0.90 | Cross-checked vs `docs/ai-collaboration/` sources |
-| **Coverage** | 0.88 | Core systems covered; deep bibles summarized not inlined |
-| **Confidence** | 0.91 | Suitable for brand-new ChatGPT onboarding test |
+| **Completeness** | 0.96 | v0.2 onboarding template + metadata |
+| **Freshness** | 0.95 | 2026-07-10 |
+| **Consistency** | 0.92 | Cross-checked vs `docs/ai-collaboration/` |
+| **Coverage** | 0.90 | Core systems + founder intelligence |
+| **Confidence** | 0.93 | Suitable for deterministic onboarding test |
 
-**Overall health:** 🟢 **Upload recommended** for onboarding validation
+**Overall health:** 🟢 **Upload recommended**
 
-**Export blocked:** false
+**Export blocked:** false (when validation passes)
 
 ---
 
-## Known missing sections
+## Export validation (automated)
 
-These exist in future automated capsule (v2/v3) but are **not** in v0.1 flat prototype:
+Before ZIP packaging, the build validates:
 
-| Missing (future) | Reason |
-|------------------|--------|
-| `Manifest/bootstrap.json` | Protocol L0 — v0.1 uses README_FIRST.md instead |
-| `Manifest/health.json` | Machine-readable health — summarized in this MANIFEST |
-| `Graph/memory-graph.json` | Relationship graph — prose in AI_CONTEXT.md |
-| `History/decisions.json` | Structured decisions — PROJECT_CHANGELOG.md covers |
-| `Founder/dna.json` | Structured DNA — FOUNDER_PROFILE.md covers |
-| `Canon/canon.json` | Canon engine — AI_GLOSSARY.md covers |
-| Full product bibles inlined | Too large — AI_CONTEXT points to repo paths |
-| `Assets/executive-summary.pdf` | Not generated in manual sprint |
-| Motherboard MEMORY tail | Redacted — Cursor-only agent history |
+- ✓ Every required markdown file exists (see inventory)  
+- ✓ `ONBOARDING_REPORT.md` exists  
+- ✓ `context-capsule.json` exists and matches reading order checksum  
+- ✓ `MANIFEST.md` capsule version matches package version  
+
+If any required onboarding document is missing → **fail validation**, list missing files, **do not package ZIP**.
+
+---
+
+## Future extensibility (v0.2 design)
+
+The onboarding pipeline supports future modules without breaking flat export compatibility:
+
+- Knowledge quizzes · Architecture verification · Founder updates  
+- Project health summary · Governance checks · Model compatibility  
+- Automatic onboarding analytics  
+
+Add new sections to `ONBOARDING_REPORT.md` or new metadata fields in `context-capsule.json` with schema version bumps — do not remove v0.2 required fields.
 
 ---
 
@@ -104,33 +130,28 @@ These exist in future automated capsule (v2/v3) but are **not** in v0.1 flat pro
 
 | Platform | Support | Notes |
 |----------|---------|-------|
-| ChatGPT | ✅ Tested target | Upload folder or paste read order |
+| ChatGPT | ✅ Primary target | Upload ZIP; complete ONBOARDING_REPORT in thread or file |
 | Claude | ✅ Expected | Project knowledge |
 | Gemini | ✅ Expected | Multi-file upload |
-| Cursor | ⚠️ Partial | Prefer `motherboard/` for in-repo agents; capsule supplements |
-| Studio AI (future) | 🔜 | Native import per `docs/studio-os/studio-ai/` |
+| Cursor | ⚠️ Partial | Prefer `motherboard/` for in-repo agents |
 
-**Minimum viable read:** README_FIRST → KNOWN_BLOCKERS → CURRENT_HANDOFF → FOUNDER_PROFILE → AI_CONTEXT
-
-**Degraded mode:** If only 3 files fit upload limit, use README_FIRST, CURRENT_HANDOFF, AI_CONTEXT.
+**Minimum viable read:** README_FIRST → KNOWN_BLOCKERS → CURRENT_HANDOFF → FOUNDER_PROFILE → AI_CONTEXT → complete ONBOARDING_REPORT
 
 ---
 
 ## Security / redaction
 
-- No credentials, API keys, or env secrets
-- No customer PII
-- Founder profile: collaboration traits only
-- No full motherboard MEMORY dump
+- No credentials, API keys, or env secrets  
+- No customer PII  
+- Founder profile: collaboration traits only  
+- No full motherboard MEMORY dump  
 
 ---
 
 ## Validation purpose
 
-This capsule validates **AI Context Protocol** by onboarding a brand-new AI conversation without the founder re-explaining Studio OS.
-
-Success = onboarding report correctly cites B1, B2, place-over-menu, forensic-before-repair, and one-deploy-per-task.
+Success = new ChatGPT session reads capsule, **completes standardized ONBOARDING_REPORT**, correctly cites **B1/B2**, founder preferences, one-deploy-per-task, forensic-before-repair, reports confidence %, and **waits for approval**.
 
 ---
 
-*End of MANIFEST — StudioOS_ContextCapsule_v0.1*
+*End of MANIFEST — StudioOS_ContextCapsule v0.2.0*

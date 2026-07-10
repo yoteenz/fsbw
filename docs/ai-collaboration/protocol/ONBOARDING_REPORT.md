@@ -1,16 +1,22 @@
 # AI Onboarding Report
 
 **Protocol module:** L3 — Post-read self-assessment  
-**Capsule path:** `Manifest/onboarding-report.schema.json` (schema); report generated at import  
+**Capsule path (authoritative v0.2 template):** `StudioOS_ContextCapsule_v0.1/ONBOARDING_REPORT.md`  
+**Repo spec copy:** this file documents schema + future automation  
 **Rule:** Mandatory **before** contributing code, docs, or architecture.
 
 ---
 
-## Purpose
+## v0.2 flat export (current)
 
-After reading the capsule, the receiving AI automatically generates a structured report proving understanding and surfacing risks.
+For brand-new ChatGPT / Claude / Gemini sessions using the ZIP export:
 
-The founder verifies the AI is aligned before work begins.
+1. Read all files in `MANIFEST.md` reading order.  
+2. **Complete** `ONBOARDING_REPORT.md` **exactly as provided** — do not invent structure.  
+3. Include **Founder Preference Verification**, **Canon Verification**, and **Confidence Assessment**.  
+4. Stop at **Waiting For Founder Approval**.
+
+The capsule template includes all required sections. Export validation **fails** if `ONBOARDING_REPORT.md` or `context-capsule.json` is missing.
 
 ---
 

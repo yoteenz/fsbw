@@ -8,11 +8,11 @@
 
 ## Current sprint
 
-**AI Context Capsule v0.1 — Manual prototype for protocol validation**
+**AI Context Capsule v0.2 — Onboarding, Founder Intelligence & Validation**
 
-First complete manually generated capsule folder for onboarding a brand-new external AI conversation. Validates AI Context Protocol™ without automation or ZIP export. **No application code changes** in this sprint except capsule artifacts in repo.
+Evolve the capsule from documentation export into a **deterministic onboarding system**: standardized `ONBOARDING_REPORT.md`, expanded `FOUNDER_PROFILE.md`, canon/confidence verification, `context-capsule.json` metadata, and export validation that blocks incomplete packages.
 
-**Previous shipped specs:** AI Context Protocol v1 (`243c23083`), Studio AI vision bible (`3be0e1f88`), build fix (`3b8fb4fa7`).
+**Previous:** v0.1 manual prototype (`b2648f86c`); bundle-size API fix (`97fe41392`).
 
 ---
 

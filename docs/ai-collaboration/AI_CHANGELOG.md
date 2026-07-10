@@ -241,6 +241,22 @@
 
 ---
 
+## 2026-07-10 — AI Context Capsule v0.2 — Onboarding & Validation
+
+**Decision:** Standardize onboarding via `ONBOARDING_REPORT.md` template, expand founder operating profile, add `context-capsule.json`, export validation gate.
+
+**Reason:** Deterministic onboarding — no inferred reports; measurable confidence and canon verification.
+
+**Impact:** Capsule v0.2.0 ZIP; admin export validates onboarding completeness.
+
+**Files:** `StudioOS_ContextCapsule_v0.1/`, export constants, prebuild packager
+
+**Supersedes:** v0.1 free-form onboarding report instruction
+
+**Dependencies:** Prebuild packaging script
+
+---
+
 ## Template for new entries
 
 ```markdown

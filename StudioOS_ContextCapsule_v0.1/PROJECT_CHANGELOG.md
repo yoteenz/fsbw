@@ -1,6 +1,6 @@
 # Project Changelog™ — Architectural Decision History
 
-**Capsule:** StudioOS_ContextCapsule_v0.1 · v0.1.0  
+**Capsule:** StudioOS_ContextCapsule_v0.1 · v0.2.0  
 **Format:** Append-only. Newest entries at bottom.  
 **Each entry:** Date · Decision · Reason · Impact · Files/docs · Supersedes · Dependencies
 
@@ -175,6 +175,22 @@
 **Supersedes:** Ad-hoc partial pastes as onboarding path for external AI test
 
 **Dependencies:** Founder onboarding report review; future CLI automation Phase 2
+
+---
+
+## 2026-07-10 — AI Context Capsule v0.2 — Onboarding & Validation
+
+**Decision:** Standardize onboarding via `ONBOARDING_REPORT.md` template, expand `FOUNDER_PROFILE.md`, add `context-capsule.json` metadata, and block ZIP export when required onboarding docs are missing.
+
+**Reason:** v0.1 validation showed strong project transfer but inferred onboarding reports and partial founder workflow reconstruction.
+
+**Impact:** External AI completes fixed report (Founder Preference Verification, Canon Verification, Confidence Assessment) and waits for approval; prebuild validates 15 markdown files + metadata.
+
+**Files:** `StudioOS_ContextCapsule_v0.1/*`, export pipeline, `docs/ai-collaboration/protocol/ONBOARDING_REPORT.md`
+
+**Supersedes:** v0.1 "generate an onboarding report" (invented format)
+
+**Dependencies:** `npm run package:ai-context-capsule-zip` in prebuild
 
 ---
 

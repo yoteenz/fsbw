@@ -5,12 +5,17 @@
 
 export const CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY = 'studioOsContextCapsuleExports_v1';
 
+export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.2.0';
+
+export const CONTEXT_CAPSULE_METADATA_FILE = 'context-capsule.json';
+
 export const CONTEXT_CAPSULE_DOWNLOAD_BASE = '/downloads/context-capsules';
 
-/** Required markdown files — must exist in capsule folder (do not rename). */
+/** Required markdown files — must exist in capsule folder before export. */
 export const CONTEXT_CAPSULE_REQUIRED_FILES = [
   'README_FIRST.md',
   'MANIFEST.md',
+  'ONBOARDING_REPORT.md',
   'FOUNDER_PROFILE.md',
   'CHATGPT_OPERATING_MANUAL.md',
   'AI_STYLE_GUIDE.md',
@@ -40,15 +45,31 @@ export const CONTEXT_CAPSULE_READING_ORDER = [
   'ROADMAP.md',
   'OPEN_QUESTIONS.md',
   'PROMPT_LIBRARY.md',
+  'ONBOARDING_REPORT.md',
 ] as const;
 
-export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule.
+/** Required section headings in ONBOARDING_REPORT.md template (v0.2). */
+export const CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS = [
+  '# Read Confirmation',
+  '# Project Understanding',
+  '# Founder Preference Verification',
+  '# Canon Verification',
+  '# Questions',
+  '# Potential Inconsistencies',
+  '# Outdated Documentation',
+  '# Risk Assessment',
+  '# Confidence Assessment',
+  '# Recommended Next Steps',
+  '# Waiting For Founder Approval',
+] as const;
+
+export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule v0.2.
 
 Follow README_FIRST.md exactly:
 
 1. Read every document in MANIFEST reading order
 2. Do not begin solving problems
-3. Generate an onboarding report
+3. Complete ONBOARDING_REPORT.md exactly as provided — every section, no structure changes
 4. Wait for my approval before contributing`;
 
 export type ContextCapsuleValidationCheck = {
@@ -96,3 +117,7 @@ export type ContextCapsuleStatus = {
   currentDownloadPath: string | null;
   currentZipFileName: string | null;
 };
+
+export function readingOrderChecksum(): string {
+  return CONTEXT_CAPSULE_READING_ORDER.join('\n');
+}
