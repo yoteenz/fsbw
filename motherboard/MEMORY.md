@@ -45478,6 +45478,8 @@ Summary of **full conversation in this chat** including Phase 3 render pipeline 
 
 ---
 
+---
+
 ## 2026-07-10 — Experience Lab Environment Shell Generation (ephemeral validation)
 
 Summary of **full conversation in this chat** spanning Experience Lab Phase 2 (environmental intelligence + cinematic previews), Phase 3 (real Creative Studio render pipeline via World Compiler), LOAD SHELL hotfix (`470847eef`), and this sprint fixing **`SHELL_RECORD_MISSING`** by generating ephemeral environment shells on every preview request.
@@ -45490,3 +45492,15 @@ Summary of **full conversation in this chat** spanning Experience Lab Phase 2 (e
 - **Docs:** `experience-lab-phase-3-render-pipeline.md` — Environment Shell Generation section.
 - **Verification:** `npm run build` pass; `npx tsx scripts/verify-experience-lab-shell-resolution.mjs` — 9/9 passed.
 - **Outcome:** Experience Lab never assumes a production shell exists; generates session-scoped validation shells from Creative Studio Preview Compiler every preview request.
+
+---
+
+## 2026-07-10 — Studio World™ Foundation Sprint (P0 Architecture — docs only)
+
+Summary of **full conversation in this chat**: User issued **COMPOSER — SPRINT: STUDIO WORLD™ FOUNDATION** — P0 Architecture Sprint for evolving Creative Direction Studio™ into Studio World™. Explicit mandate: **DO NOT WRITE PRODUCTION CODE** — architecture and experience design only. Mission: Studio World is a living creative organization (not dashboard/pages/prompt interface); objective is **presence not realism**; founder should feel like entering Pixar/Apple Park/ILM/NASA Mission Control/Westworld.
+
+- **Context:** Define experiential architecture for Studio World™ — constitutional philosophy, environmental design, living organization, department/AI/room taxonomies, persistence, storytelling, spatial collaboration, visitor model, founder workflow, implementation roadmap.
+- **Topics covered:** Ten foundational sprint principles (AI lives somewhere, departments as destinations, world alive before founder, visible work, meetings replace prompting, company-specific HQ, world remembers, visitors as collaborators, spatial creative work, world compilation destiny). Aligned with existing canon: Studio World Constitution™, World Philosophy™, Architecture V4, CDS V3 Creative Intelligence Engine™, World Rules™, Three Eras Roadmap.
+- **Decisions / outcomes:** Produced **12-document architecture bundle** at `docs/studio-os/foundation-sprint/` (README + 01 Constitution through 12 Implementation Roadmap). Era 0 (architecture) marked complete; Era 1 (CDS Golden Department™ presence proof) awaits founder approval before any implementation. No React/API/DB changes.
+- **Changes:** `docs/studio-os/foundation-sprint/README.md`, `01_STUDIO_WORLD_CONSTITUTION.md`, `02_EXPERIENCE_PHILOSOPHY.md`, `03_LIVING_ORGANIZATION_ARCHITECTURE.md`, `04_DEPARTMENT_HIERARCHY.md`, `05_AI_ROLE_HIERARCHY.md`, `06_ROOM_TAXONOMY.md`, `07_WORLD_PERSISTENCE_MODEL.md`, `08_ENVIRONMENTAL_STORYTELLING.md`, `09_SPATIAL_COLLABORATION.md`, `10_VISITOR_INTERACTION_MODEL.md`, `11_FOUNDER_WORKFLOW.md`, `12_IMPLEMENTATION_ROADMAP.md`. `motherboard/CORE.md` pointer. This MEMORY entry.
+- **Conventions:** Foundation sprint docs extend — never replace — existing Studio World canon. Implementation begins only after founder approves Era 0 architecture. Presence gates (30-second stranger test, Walk the Room™, Golden Department™) block scale until Era 1 complete.
