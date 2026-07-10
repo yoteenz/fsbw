@@ -46237,3 +46237,21 @@ Summary of **full conversation in this chat**: (1) Forensic investigation of `SH
 - **Verified:** vitest 8/8, verify script 14/14, `npm run build` pass.
 - **Conventions:** Experience Lab validation compiles **require** `previewCompileContext.previewSessionId`; global `activePreviewSessionId` UI-only, not compiler source of truth.
 
+---
+
+## 2026-07-10 — AI Context Capsule v0.3 — Deterministic verification onboarding
+
+Summary of **full conversation in this chat**: (1) Forensic shell resolution investigation + Composer repair sprint (`e641dc7dc`). (2) User issued **COMPOSER SPRINT — AI CONTEXT CAPSULE v0.3** — documentation-only; improve onboarding verification, no Studio OS production code changes.
+
+- **Delivered:**
+  - **ONBOARDING_REPORT.md** v0.3 — Compliance Checklist, Founder Understanding, Operational Source of Truth hierarchy, Documented vs Inferred, Documentation Review (Confirmed/Likely/Possible/Unknown), assumptions avoided.
+  - **README_FIRST.md** — verification protocol, evidence-first grounding, reduce inference rules.
+  - **MANIFEST.md** — v0.3.0 inventory, gates, validation rules.
+  - **CAPSULE_VALIDATION.md** — auto-generated at export (version, commit SHA, manifest hash, validation status).
+  - **Export packager** — v0.3 section validation, version sync across 4 files, reading-order file checks, generates CAPSULE_VALIDATION before ZIP.
+  - **Constants** — generator 0.3.0, updated onboarding sections + AI_ONBOARDING_PROMPT.
+  - **CURRENT_HANDOFF.md**, **FOUNDER_PROFILE.md**, **PROJECT_CHANGELOG.md**, **docs/ai-collaboration/protocol/ONBOARDING_REPORT.md** synced.
+- **Validation:** `node scripts/package-ai-context-capsule-zip.mjs` pass; `npm run build` pass.
+- **Release:** v0.3.0 · SHA256 `81378805…` · commit `e641dc7dc` (at package time).
+- **URLs:** `https://fsbw.vercel.app/downloads/context-capsules/latest.zip` · `StudioOS_ContextCapsule_v0.3.0.zip`
+
