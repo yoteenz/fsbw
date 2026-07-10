@@ -25,6 +25,7 @@ export {
   logComponentMount,
   logComponentUnmount,
   createCompilerInstanceId,
+  clearInvestigationLog,
 } from './investigation-log';
 
 export {
@@ -43,6 +44,7 @@ export {
   loadStallEvidenceFromSession,
   installStallEvidenceGlobal,
   isStallEvidenceRecordingEnabled,
+  clearStallEvidenceSession,
 } from './stall-evidence';
 
 export type {
@@ -69,10 +71,23 @@ export {
   buildCompleteInvestigationExport,
   exportCompleteInvestigationJson,
   downloadInvestigationExport,
-  isInvestigationInstrumentationReady,
   markInvestigationInstrumentationReady,
 } from './investigation-export';
+export { isInvestigationInstrumentationReady } from './investigation-ready';
 export type { CompleteInvestigationExport, InvestigationExportSummary } from './investigation-export';
+
+export {
+  buildInvestigationLiveStatus,
+  buildRunHistory,
+  loadPersistedRunHistory,
+  hasMeaningfulRunData,
+  refreshBrowserMode,
+  getCachedBrowserMode,
+  getSelectedCompileRunId,
+  setSelectedCompileRunId,
+  clearCurrentInvestigationRun,
+} from './investigation-live-status';
+export type { InvestigationLiveStatus, InvestigationRunSummary, MeaningfulRunCheck } from './investigation-live-status';
 
 export { buildWorldCompilerForensicReport } from './session-report';
 export { COMPILER_PATH_TIMERS, findTimersNearThreeSeconds } from './timer-audit';

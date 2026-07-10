@@ -404,6 +404,32 @@ export function getLoadShellMilestones(events: readonly CompilerInvestigationEve
   return events.filter((e) => e.type === 'LOAD_SHELL_MILESTONE');
 }
 
+/** Clear stall-evidence session data — UI/export only; no compiler behavior change. */
+export function clearStallEvidenceSession(options?: { compileRunId?: string | null; all?: boolean }): void {
+  if (options?.all) {
+    openAsyncBoundaries.clear();
+    asyncBoundaryHistory.splice(0);
+    compileInvocationCounts.clear();
+    stallLoggedRunIds.clear();
+    try {
+      sessionStorage.removeItem(STALL_EVIDENCE_KEY);
+    } catch {
+      /* ignore */
+    }
+    return;
+  }
+
+  if (options?.compileRunId) {
+    const runId = options.compileRunId;
+    for (const [id, rec] of openAsyncBoundaries.entries()) {
+      if (rec.compileRunId === runId) openAsyncBoundaries.delete(id);
+    }
+    const kept = asyncBoundaryHistory.filter((b) => b.compileRunId !== runId);
+    asyncBoundaryHistory.splice(0, asyncBoundaryHistory.length, ...kept);
+    persistStallEvidenceMeta();
+  }
+}
+
 export function installStallEvidenceGlobal(): void {
   if (typeof window === 'undefined') return;
   loadStallEvidenceFromSession();

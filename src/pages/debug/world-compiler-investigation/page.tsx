@@ -4,17 +4,23 @@
  */
 import { useCallback, useEffect, useState } from 'react';
 import {
+  buildInvestigationLiveStatus,
   buildStallEvidenceReport,
   buildWorldCompilerForensicReport,
+  clearCurrentInvestigationRun,
   downloadInvestigationExport,
   exportCompleteInvestigationJson,
   getInvestigationEvents,
-  isInvestigationInstrumentationReady,
   isWorldCompilerDiagnosticMode,
   loadInvestigationEventsFromSession,
   markInvestigationInstrumentationReady,
+  refreshBrowserMode,
+  setSelectedCompileRunId,
 } from '../../../studio-os/diagnostics/world-compiler-investigation';
-import type { StallEvidenceReport } from '../../../studio-os/diagnostics/world-compiler-investigation';
+import type {
+  InvestigationLiveStatus,
+  StallEvidenceReport,
+} from '../../../studio-os/diagnostics/world-compiler-investigation';
 
 async function copyText(text: string): Promise<boolean> {
   try {
@@ -25,22 +31,39 @@ async function copyText(text: string): Promise<boolean> {
   }
 }
 
+function yesNo(value: boolean): string {
+  return value ? 'YES' : 'NO';
+}
+
+function StatusRow({ label, value, highlight }: { label: string; value: string; highlight?: 'ok' | 'warn' | 'muted' }) {
+  const color =
+    highlight === 'ok' ? '#4ade80' : highlight === 'warn' ? '#fb923c' : highlight === 'muted' ? '#78716c' : '#fafaf9';
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: '220px 1fr', gap: 8, padding: '4px 0', borderBottom: '1px solid #292524' }}>
+      <span style={{ color: '#a8a29e' }}>{label}</span>
+      <span style={{ color, wordBreak: 'break-all' }}>{value}</span>
+    </div>
+  );
+}
+
 export default function WorldCompilerInvestigationPage() {
+  const [liveStatus, setLiveStatus] = useState<InvestigationLiveStatus | null>(null);
   const [stallReport, setStallReport] = useState<StallEvidenceReport | null>(null);
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
-  const [instrumentationReady, setInstrumentationReady] = useState(false);
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
     loadInvestigationEventsFromSession();
     markInvestigationInstrumentationReady();
-    setInstrumentationReady(isInvestigationInstrumentationReady());
+    setLiveStatus(buildInvestigationLiveStatus(selectedRunId));
     setStallReport(buildStallEvidenceReport());
-  }, []);
+  }, [selectedRunId]);
 
   useEffect(() => {
+    void refreshBrowserMode();
     refresh();
-    const id = window.setInterval(refresh, 2000);
+    const id = window.setInterval(refresh, 500);
     return () => clearInterval(id);
   }, [refresh]);
 
@@ -48,13 +71,21 @@ export default function WorldCompilerInvestigationPage() {
   const legacyReport = stallReport?.legacyForensicReport ?? buildWorldCompilerForensicReport();
   const diag = isWorldCompilerDiagnosticMode();
   const classification = stallReport?.stallClassification;
+  const exportAllowed = liveStatus?.exportAllowed ?? false;
+  const activeRunId = liveStatus?.selectedCompileRunId ?? liveStatus?.compileRunId ?? null;
+
+  const handleSelectRun = (compileRunId: string) => {
+    setSelectedCompileRunId(compileRunId);
+    setSelectedRunId(compileRunId);
+  };
 
   const handleExportInvestigation = async () => {
+    if (!exportAllowed) return;
     setExporting(true);
     setCopyStatus(null);
     try {
-      const json = await exportCompleteInvestigationJson();
-      downloadInvestigationExport(json, stallReport?.activeCompileRun?.compileRunId ?? undefined);
+      const json = await exportCompleteInvestigationJson(activeRunId);
+      downloadInvestigationExport(json, activeRunId ?? undefined);
       setCopyStatus('Investigation exported — JSON downloaded');
     } catch {
       setCopyStatus('Export failed — try Copy Report');
@@ -65,15 +96,35 @@ export default function WorldCompilerInvestigationPage() {
   };
 
   const handleCopyReport = async () => {
+    if (!exportAllowed) return;
     setCopyStatus(null);
     try {
-      const json = await exportCompleteInvestigationJson();
+      const json = await exportCompleteInvestigationJson(activeRunId);
       const ok = await copyText(json);
       setCopyStatus(ok ? 'Complete investigation report copied to clipboard' : 'Copy failed — use Export Investigation');
     } catch {
       setCopyStatus('Copy failed — refresh and retry');
     }
     window.setTimeout(() => setCopyStatus(null), 4000);
+  };
+
+  const handleClearCurrentRun = () => {
+    if (!activeRunId) {
+      setCopyStatus('No compile run selected to clear');
+      window.setTimeout(() => setCopyStatus(null), 3000);
+      return;
+    }
+    clearCurrentInvestigationRun(activeRunId);
+    setSelectedRunId(null);
+    setSelectedCompileRunId(null);
+    refresh();
+    setCopyStatus(`Cleared run ${activeRunId.slice(0, 12)}…`);
+    window.setTimeout(() => setCopyStatus(null), 4000);
+  };
+
+  const btnDisabledStyle = {
+    opacity: 0.45,
+    cursor: 'not-allowed' as const,
   };
 
   return (
@@ -91,49 +142,136 @@ export default function WorldCompilerInvestigationPage() {
         <h1 style={{ fontSize: 16, margin: 0, color: '#fb923c' }}>
           LOAD_SHELL Stall Evidence — World Compiler Investigation
         </h1>
-        <span
-          style={{
-            padding: '4px 10px',
-            borderRadius: 999,
-            fontSize: 10,
-            fontWeight: 600,
-            background: instrumentationReady ? 'rgba(74, 222, 128, 0.15)' : 'rgba(251, 146, 60, 0.15)',
-            color: instrumentationReady ? '#4ade80' : '#fb923c',
-            border: `1px solid ${instrumentationReady ? '#4ade80' : '#fb923c'}`,
-          }}
-        >
-          {instrumentationReady ? '● Investigation Ready' : '○ Instrumentation loading…'}
-        </span>
       </div>
 
       <p style={{ margin: '0 0 8px', color: '#a8a29e' }}>
-        Evidence-only — <strong>no production repair</strong>. Reproduce stall in Experience Lab, then export from this
-        page (same browser session). Diagnostic mode optional: {diag ? 'ON' : 'OFF'} (
+        Evidence-only — <strong>no production repair</strong>. Reproduce stall in Experience Lab, then return here to
+        verify recording and export (same browser session). Diagnostic mode optional: {diag ? 'ON' : 'OFF'} (
         <code>?compilerDiag=1</code>).
       </p>
       <p style={{ margin: '0 0 12px', color: '#78716c' }}>
         Console: <code>window.__WC_EXPORT_INVESTIGATION_JSON__()</code>
       </p>
 
+      {liveStatus ? (
+        <section
+          style={{
+            marginBottom: 16,
+            padding: 14,
+            background: '#1c1917',
+            borderRadius: 6,
+            border: '1px solid #44403c',
+          }}
+        >
+          <h2 style={{ fontSize: 13, margin: '0 0 10px', color: '#fb923c' }}>Live recording status</h2>
+          <StatusRow
+            label="Investigation Ready"
+            value={yesNo(liveStatus.investigationReady)}
+            highlight={liveStatus.investigationReady ? 'ok' : 'warn'}
+          />
+          <StatusRow
+            label="Recording Active"
+            value={yesNo(liveStatus.recordingActive)}
+            highlight={liveStatus.recordingActive ? 'ok' : 'muted'}
+          />
+          <StatusRow label="Current browser mode" value={liveStatus.browserMode} />
+          <StatusRow label="Current session ID" value={liveStatus.investigationSessionId} />
+          <StatusRow label="Current previewSessionId" value={liveStatus.previewSessionId ?? '—'} />
+          <StatusRow label="Current compileRunId" value={liveStatus.compileRunId ?? '—'} />
+          <StatusRow label="Events captured" value={String(liveStatus.eventsCaptured)} highlight={liveStatus.eventsCaptured > 0 ? 'ok' : 'muted'} />
+          <StatusRow label="Last recorded event" value={liveStatus.lastRecordedEvent ?? '—'} />
+          <StatusRow label="Last event timestamp" value={liveStatus.lastEventTimestamp ?? '—'} />
+          <StatusRow label="Current compiler stage" value={liveStatus.currentCompilerStage ?? '—'} />
+          <StatusRow label="Current UI step" value={liveStatus.currentUiStep ?? '—'} />
+          <StatusRow label="Last successful milestone" value={liveStatus.lastSuccessfulMilestone ?? '—'} />
+          <StatusRow label="First pending milestone" value={liveStatus.firstPendingMilestone ?? '—'} />
+          <StatusRow
+            label="Stall threshold status"
+            value={liveStatus.stallThresholdStatus}
+            highlight={liveStatus.stallThresholdStatus.startsWith('STALLED') ? 'warn' : undefined}
+          />
+          {!exportAllowed && liveStatus.exportBlockReason ? (
+            <p style={{ margin: '10px 0 0', color: '#fb923c', fontSize: 10 }}>
+              Export blocked: {liveStatus.exportBlockReason}
+            </p>
+          ) : null}
+        </section>
+      ) : null}
+
+      <section style={{ marginBottom: 16 }}>
+        <h2 style={{ fontSize: 13, margin: '0 0 8px' }}>Run history (sessionStorage)</h2>
+        {liveStatus?.runHistory.length ? (
+          <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+            {liveStatus.runHistory.map((run) => {
+              const selected = run.compileRunId === activeRunId;
+              return (
+                <li key={run.compileRunId} style={{ marginBottom: 6 }}>
+                  <button
+                    type="button"
+                    onClick={() => handleSelectRun(run.compileRunId)}
+                    style={{
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '8px 10px',
+                      background: selected ? 'rgba(251, 146, 60, 0.15)' : '#1c1917',
+                      border: `1px solid ${selected ? '#fb923c' : '#44403c'}`,
+                      borderRadius: 4,
+                      color: '#fafaf9',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <strong>{run.compileRunId.slice(0, 16)}…</strong>
+                    {' · '}
+                    {run.eventCount} events
+                    {run.stallReached ? ' · STALL' : ''}
+                    {run.previewSessionId ? ` · preview=${run.previewSessionId.slice(0, 10)}…` : ''}
+                    <br />
+                    <span style={{ color: '#78716c', fontSize: 10 }}>
+                      {run.firstEventAt?.slice(11, 23) ?? '?'} → {run.lastEventAt?.slice(11, 23) ?? '?'}
+                      {run.milestonesReached.length ? ` · ${run.milestonesReached.join(', ')}` : ''}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p style={{ color: '#78716c', margin: 0 }}>
+            No runs recorded yet — open Experience Lab in this browser, reproduce the stall, then return here.
+          </p>
+        )}
+      </section>
+
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
         <button
           type="button"
           onClick={() => void handleExportInvestigation()}
-          disabled={exporting}
+          disabled={exporting || !exportAllowed}
           style={{
             padding: '8px 14px',
-            background: '#fb923c',
+            background: exportAllowed ? '#fb923c' : '#57534e',
             color: '#0c0a09',
             border: 'none',
             borderRadius: 4,
             fontWeight: 700,
-            cursor: exporting ? 'wait' : 'pointer',
+            cursor: exporting || !exportAllowed ? 'not-allowed' : 'pointer',
+            ...(exporting || !exportAllowed ? btnDisabledStyle : {}),
           }}
+          title={!exportAllowed ? liveStatus?.exportBlockReason ?? 'No meaningful run data' : undefined}
         >
           {exporting ? 'Exporting…' : 'Export Investigation'}
         </button>
-        <button type="button" onClick={() => void handleCopyReport()}>
+        <button
+          type="button"
+          onClick={() => void handleCopyReport()}
+          disabled={!exportAllowed}
+          style={!exportAllowed ? btnDisabledStyle : undefined}
+          title={!exportAllowed ? liveStatus?.exportBlockReason ?? 'No meaningful run data' : undefined}
+        >
           Copy Report
+        </button>
+        <button type="button" onClick={handleClearCurrentRun} disabled={!activeRunId}>
+          Clear Current Run
         </button>
         <button type="button" onClick={refresh}>
           Refresh
@@ -142,7 +280,7 @@ export default function WorldCompilerInvestigationPage() {
 
       {copyStatus ? <p style={{ color: '#4ade80', marginBottom: 12 }}>{copyStatus}</p> : null}
 
-      {!instrumentationReady ? (
+      {!liveStatus?.investigationReady ? (
         <p style={{ color: '#fb923c', marginBottom: 16 }}>
           Open Experience Lab in this browser first so instrumentation hooks load, then return here before reproducing
           the stall.

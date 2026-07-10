@@ -389,3 +389,54 @@ export function logComponentMount(component: string, detail?: Record<string, unk
 export function logComponentUnmount(component: string, detail?: Record<string, unknown>): void {
   logCompilerEvent('COMPILER_COMPONENT_UNMOUNT', component, { detail, stackTrace: captureStack() });
 }
+
+/** Clear investigation log — UI-only; does not alter compiler runtime behavior. */
+export function clearInvestigationLog(options?: { compileRunId?: string | null; all?: boolean }): {
+  removed: number;
+  remaining: number;
+} {
+  loadInvestigationEventsFromSession();
+  const before = events.length;
+
+  if (options?.all) {
+    events = [];
+    activeRun = null;
+    frozenSnapshot = null;
+    sequence = 0;
+    lastProgressStepIndex = -1;
+    lastLayerLabel = null;
+    tapCount = 0;
+    try {
+      sessionStorage.removeItem(LOG_KEY);
+      sessionStorage.removeItem(STOPPED_KEY);
+    } catch {
+      /* ignore */
+    }
+  } else if (options?.compileRunId) {
+    const runId = options.compileRunId;
+    events = events.filter((e) => e.compileRunId !== runId);
+    if (activeRun?.compileRunId === runId) {
+      activeRun = null;
+    }
+    if (frozenSnapshot?.compileRunId === runId) {
+      frozenSnapshot = null;
+      try {
+        sessionStorage.removeItem(STOPPED_KEY);
+      } catch {
+        /* ignore */
+      }
+    }
+    persistLog();
+  } else {
+    return { removed: 0, remaining: events.length };
+  }
+
+  try {
+    const win = window as unknown as { __WC_INVESTIGATION__?: CompilerInvestigationEvent[] };
+    win.__WC_INVESTIGATION__ = events;
+  } catch {
+    /* ignore */
+  }
+
+  return { removed: before - events.length, remaining: events.length };
+}

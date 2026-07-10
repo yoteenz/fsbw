@@ -9,17 +9,17 @@ import {
 import { classifyLoadShellStall } from './stall-classifier';
 import {
   getAsyncBoundaryHistory,
-  getLoadShellMilestones,
   getOpenAsyncBoundaries,
-  isStallEvidenceRecordingEnabled,
   loadStallEvidenceFromSession,
 } from './stall-evidence';
 import type { UiCompilerSyncSnapshot } from './stall-evidence';
 import { buildWorldCompilerForensicReport } from './session-report';
 import { buildWorldCompilerOwnershipReport } from './ownership-report';
+import { buildMilestoneTimeline, deriveMilestoneSummary } from './investigation-export-utils';
+import { refreshBrowserMode, getCachedBrowserMode } from './investigation-live-status';
+import { isInvestigationInstrumentationReady } from './investigation-ready';
 import type { CompilerInvestigationEvent } from './types';
 
-const MILESTONE_ORDER = ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7'] as const;
 const STUDIO_OS_LS_PREFIXES = ['studio', 'genesis', 'worldCompiler', 'sceneStack', 'validation', 'baw', 'adminStudio'];
 
 export type InvestigationExportSummary = {
@@ -73,35 +73,6 @@ function detectBrowser(userAgent: string): string {
   if (ua.includes('safari') && !ua.includes('chrome')) return 'safari';
   if (ua.includes('firefox')) return 'firefox';
   return 'other';
-}
-
-async function detectBrowserMode(): Promise<'normal' | 'private' | 'incognito' | 'unknown'> {
-  try {
-    const probe = '__wc_investigation_mode_probe__';
-    localStorage.setItem(probe, '1');
-    localStorage.removeItem(probe);
-  } catch {
-    return 'private';
-  }
-
-  try {
-    if (navigator.storage?.estimate) {
-      const { quota } = await navigator.storage.estimate();
-      if (quota != null && quota > 0 && quota < 120_000_000) {
-        return 'incognito';
-      }
-    }
-  } catch {
-    /* ignore */
-  }
-
-  try {
-    if (typeof indexedDB === 'undefined') return 'private';
-  } catch {
-    return 'private';
-  }
-
-  return 'normal';
 }
 
 function readStorageSummary(storage: Storage, label: string, filterStudio = false): Record<string, unknown> {
@@ -185,47 +156,6 @@ async function readServiceWorkerState(): Promise<Record<string, unknown>> {
   } catch (err) {
     return { supported: true, error: err instanceof Error ? err.message : String(err) };
   }
-}
-
-function buildMilestoneTimeline(events: CompilerInvestigationEvent[]): Array<Record<string, unknown>> {
-  const milestones = getLoadShellMilestones(events);
-  const byId = new Map<string, CompilerInvestigationEvent>();
-  for (const ev of milestones) {
-    const id = String(ev.detail?.milestone ?? ev.stageName ?? '');
-    if (id) byId.set(id.replace('load-shell-', ''), ev);
-  }
-  return MILESTONE_ORDER.map((id) => {
-    const ev = byId.get(id);
-    if (!ev) {
-      return { milestone: id, status: 'missing', timestamp: null, compileRunId: null };
-    }
-    return {
-      milestone: id,
-      status: ev.detail?.milestoneState ?? ev.status ?? 'unknown',
-      timestamp: ev.isoTime,
-      elapsedMs: ev.detail?.elapsedMs ?? null,
-      compileRunId: ev.compileRunId,
-      previewSessionId: ev.detail?.previewSessionId ?? null,
-      detail: ev.detail,
-    };
-  });
-}
-
-function deriveMilestoneSummary(timeline: Array<Record<string, unknown>>): {
-  lastSuccessful: string | null;
-  firstMissingOrFailed: string | null;
-} {
-  let lastSuccessful: string | null = null;
-  let firstMissingOrFailed: string | null = null;
-  for (const row of timeline) {
-    const id = String(row.milestone);
-    const status = String(row.status);
-    if (status === 'success') lastSuccessful = id;
-    if (!firstMissingOrFailed && (status === 'missing' || status === 'failure' || status === 'pending')) {
-      firstMissingOrFailed = `${id} (${status})`;
-    }
-  }
-  return { lastSuccessful, firstMissingOrFailed };
 }
 
 function extractCompilerReports(events: CompilerInvestigationEvent[]): Array<Record<string, unknown>> {
@@ -323,14 +253,15 @@ function pickSessionFields(
 }
 
 /** True when stall-evidence instrumentation is active in this browser context. */
-export function isInvestigationInstrumentationReady(): boolean {
-  if (typeof window === 'undefined') return false;
-  if (!isStallEvidenceRecordingEnabled()) return false;
-  const win = window as unknown as {
-    __WC_INVESTIGATION_READY__?: boolean;
-    __WC_EXPORT_INVESTIGATION__?: unknown;
-  };
-  return win.__WC_INVESTIGATION_READY__ === true || typeof win.__WC_EXPORT_INVESTIGATION__ === 'function';
+export { isInvestigationInstrumentationReady } from './investigation-ready';
+
+function scopeEventsToRun(
+  events: CompilerInvestigationEvent[],
+  compileRunId: string | null
+): CompilerInvestigationEvent[] {
+  if (!compileRunId) return events;
+  const scoped = events.filter((e) => e.compileRunId === compileRunId);
+  return scoped.length > 0 ? scoped : events;
 }
 
 export async function buildCompleteInvestigationExport(
@@ -338,9 +269,10 @@ export async function buildCompleteInvestigationExport(
 ): Promise<CompleteInvestigationExport> {
   loadInvestigationEventsFromSession();
   loadStallEvidenceFromSession();
-  const events = [...getInvestigationEvents()];
+  const allEvents = [...getInvestigationEvents()];
   const activeRun = getActiveCompileRun();
   const runId = compileRunId ?? activeRun?.compileRunId ?? null;
+  const events = scopeEventsToRun(allEvents, runId);
 
   const uiReports = extractUiReports(events);
   const lastSync = uiReports.length
@@ -365,7 +297,8 @@ export async function buildCompleteInvestigationExport(
 
   const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : '';
   const browser = detectBrowser(userAgent);
-  const browserMode = typeof window !== 'undefined' ? await detectBrowserMode() : 'unknown';
+  const browserMode =
+    typeof window !== 'undefined' ? await refreshBrowserMode() : getCachedBrowserMode();
 
   const openAsync = getOpenAsyncBoundaries();
   const historyAsync = getAsyncBoundaryHistory();

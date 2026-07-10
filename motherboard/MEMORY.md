@@ -46303,3 +46303,15 @@ Summary of **full conversation in this chat**: User issued **SPRINT: AI Context 
 - **Artifacts:** `StudioOS_ContextCapsule_v0.3.1.zip`, `latest.zip`, `release.json` updated.
 - **URL:** https://fsbw.vercel.app/downloads/context-capsules/latest.zip
 
+---
+
+## 2026-07-10 — Investigation export UX (observe-only, pre-stall reproduction)
+
+User requested final investigation tooling improvement before device stall reproduction — no production repair, no P1–P3, no AUTH_REQUIRED changes.
+
+- **Delivered:**
+  - **`investigation-export.ts`** — single complete JSON export with `summary` block (last/first milestone, compiler/UI state, browser env, evidence confidence) + browser/mode/UA, session IDs, pipeline ownership, M1–M7 timeline, compiler/UI reports, promise/async boundary states, SW/Cache/IDB/localStorage/sessionStorage summaries, full investigation logs, root-cause classification + proof
+  - **Investigation route** `/__world-compiler-investigation` — primary **Export Investigation** (one JSON download), **Copy Report** (clipboard), **Investigation Ready** indicator (green when instrumentation registered)
+  - **Console:** `window.__WC_EXPORT_INVESTIGATION_JSON__()` · `window.__WC_EXPORT_INVESTIGATION__()`
+- **Not changed:** runtime compile behavior, P1–P3 repairs, AUTH_REQUIRED
+
