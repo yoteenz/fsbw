@@ -39,17 +39,18 @@ function buildConcepts(companyId: CreativePreviewCompanyId): CreativePreviewConc
 
   const baseTraits =
     companyId === 'studio-os'
-      ? ['institutional permanence', 'crystal health grid', 'executive calm']
+      ? ['executive atrium', 'constitutional archive', 'institutional scale']
       : companyId === 'frontal-slayer'
-        ? ['mansion room logic', 'mirror-light concierge', 'trust-over-sales warmth']
-        : ['signal desk hierarchy', 'broadcast metadata rails', 'editorial urgency control'];
+        ? ['concierge flagship', 'mirror diagnostics', 'couture showroom']
+        : ['live newsroom', 'signal wall', 'broadcast command'];
 
   return [
     {
       conceptId: 'a',
       tier: 'recommended',
-      label: 'Concept A — Recommended',
-      whyExists: 'Canonical expression of governing DNA with balanced spatial density for founder review.',
+      label: 'Preview A — Most likely production environment',
+      whyExists:
+        'Primary architectural interpretation compiled from governing DNA — the environment most likely built in production.',
       traitsProduced: baseTraits,
       strengths: [
         'Strongest alignment with Company Registry thesis and Brand DNA materials',
@@ -65,8 +66,9 @@ function buildConcepts(companyId: CreativePreviewCompanyId): CreativePreviewConc
     {
       conceptId: 'b',
       tier: 'alternative',
-      label: 'Concept B — Alternative',
-      whyExists: 'Compressed spatial density for operators who prioritize command velocity over ceremony.',
+      label: 'Preview B — Alternative architectural direction',
+      whyExists:
+        'Alternate spatial logic preserving material and industry identity — tests a different circulation and hierarchy.',
       traitsProduced: [...baseTraits, 'higher information density', 'shorter arrival sequence'],
       strengths: [
         'Faster scan path for daily operators',
@@ -82,8 +84,9 @@ function buildConcepts(companyId: CreativePreviewCompanyId): CreativePreviewConc
     {
       conceptId: 'c',
       tier: 'experimental',
-      label: 'Concept C — Experimental',
-      whyExists: 'Expanded spatial narrative to test whether environmental storytelling can carry more emotional weight.',
+      label: 'Preview C — Experimental direction',
+      whyExists:
+        'Exploratory environment pushing architectural storytelling while remaining industry-legible.',
       traitsProduced: [...baseTraits, 'expanded arrival narrative', 'deeper environmental mood'],
       strengths: [
         'Maximum differentiation without logo reliance',

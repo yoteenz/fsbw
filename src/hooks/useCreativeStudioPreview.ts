@@ -12,6 +12,8 @@ export function useCreativeStudioPreview(initialCompany: CreativePreviewCompanyI
   const [companyId, setCompanyId] = useState<CreativePreviewCompanyId>(initialCompany);
   const [conceptId, setConceptId] = useState<'a' | 'b' | 'c'>('a');
   const [compareMode, setCompareMode] = useState(false);
+  const [blindMode, setBlindMode] = useState(false);
+  const [blindTestResult, setBlindTestResult] = useState<'pass' | 'fail' | null>(null);
   const [compileTick, setCompileTick] = useState(0);
 
   const bundle = useMemo(() => compileCreativeStudioPreviewBundle(), [compileTick]);
@@ -34,16 +36,31 @@ export function useCreativeStudioPreview(initialCompany: CreativePreviewCompanyI
     setConceptId('a');
   }, []);
 
+  const toggleBlindMode = useCallback(() => {
+    setBlindMode((on) => {
+      if (on) setBlindTestResult(null);
+      return !on;
+    });
+  }, []);
+
+  const recordBlindTest = useCallback((result: 'pass' | 'fail') => {
+    setBlindTestResult(result);
+  }, []);
+
   return {
     companyId,
     conceptId,
     compareMode,
+    blindMode,
+    blindTestResult,
     preview,
     activeConcept,
     bundle,
     selectCompany,
     setConceptId,
     setCompareMode,
+    toggleBlindMode,
+    recordBlindTest,
     recompile,
   };
 }

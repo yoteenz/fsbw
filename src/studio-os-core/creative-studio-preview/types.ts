@@ -8,7 +8,7 @@ export type CreativePreviewConceptTier = 'recommended' | 'alternative' | 'experi
 
 export type PreviewArchitectureArchetype =
   | 'institutional-crystal'
-  | 'luxury-mansion'
+  | 'luxury-flagship'
   | 'broadcast-command';
 
 export type PreviewSpecification = {
@@ -17,11 +17,17 @@ export type PreviewSpecification = {
   materialSystem: string[];
   lightingLanguage: string;
   spatialOrganization: string;
+  spatialHierarchy: string;
+  circulation: string;
+  furnitureLanguage: string;
+  environmentalStorytelling: string;
+  departmentRelationships: string;
   interactionPhilosophy: string;
   motionBehavior: string;
   environmentalMood: string;
   workflowStructure: string;
   signatureExperiences: string[];
+  emotionalTone: string;
 };
 
 export type CreativePreviewConcept = {

@@ -10,6 +10,12 @@ export {
   resolveArchitectureArchetype,
 } from './company-inputs';
 export {
+  ENVIRONMENT_SCENE_PROFILES,
+  resolveEnvironmentSceneProfile,
+  type EnvironmentSceneProfile,
+  type EnvironmentSceneVariant,
+} from './environment-scene-profiles';
+export {
   CREATIVE_PREVIEW_READ_ONLY,
   type CreativePreviewCompanyId,
   type CreativePreviewConcept,

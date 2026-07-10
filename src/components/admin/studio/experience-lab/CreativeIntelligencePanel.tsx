@@ -3,6 +3,7 @@ import {
   CREATIVE_PREVIEW_COMPANY_IDS,
   CREATIVE_PREVIEW_COMPANY_LABELS,
   CREATIVE_PREVIEW_READ_ONLY,
+  resolveEnvironmentSceneProfile,
   type CreativePreviewCompanyId,
   type CreativePreviewConcept,
   type CreativeStudioPreviewResult,
@@ -27,18 +28,22 @@ const btnStyle: CSSProperties = {
   fontSize: '11px',
 };
 
-/** Mode 2 — Creative Intelligence Validation (preview compiler, scorecard, concepts). */
+/** Mode 2 — Environmental Intelligence Validation (cinematic previews, blind test). */
 export function CreativeIntelligencePanel() {
   const {
     companyId,
     conceptId,
     compareMode,
+    blindMode,
+    blindTestResult,
     preview,
     activeConcept,
     bundle,
     selectCompany,
     setConceptId,
     setCompareMode,
+    toggleBlindMode,
+    recordBlindTest,
     recompile,
   } = useCreativeStudioPreview('studio-os');
 
@@ -48,10 +53,10 @@ export function CreativeIntelligencePanel() {
         <p style={{ margin: 0, fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em', color: '#eb1c24' }}>
           CREATIVE STUDIO PREVIEW COMPILER™
         </p>
-        <h1 style={{ margin: '4px 0 8px', fontSize: '16px' }}>Creative Intelligence Validation</h1>
+        <h1 style={{ margin: '4px 0 8px', fontSize: '16px' }}>Environmental Intelligence Validation</h1>
         <p style={{ margin: 0, color: '#555', fontSize: '11px' }}>
-          READ-ONLY preview · {CREATIVE_PREVIEW_READ_ONLY ? 'no production writes' : 'WRITE ENABLED'} · validates
-          Creative Direction Studio reasoning before asset generation
+          Cinematic environment previews · {CREATIVE_PREVIEW_READ_ONLY ? 'read-only' : 'write enabled'} · identity
+          without logos, labels, or brand colors
         </p>
         <div style={{ marginTop: 12 }}>
           <button type="button" style={btnStyle} onClick={recompile}>
@@ -64,23 +69,73 @@ export function CreativeIntelligencePanel() {
           >
             {compareMode ? 'Single company view' : 'Compare all companies'}
           </button>
+          <button
+            type="button"
+            style={{ ...btnStyle, fontWeight: blindMode ? 800 : 400, borderColor: blindMode ? '#2563eb' : '#333' }}
+            onClick={toggleBlindMode}
+          >
+            {blindMode ? 'Exit blind test' : 'Blind industry test'}
+          </button>
         </div>
       </header>
 
+      {blindMode ? (
+        <BlindValidationBanner
+          result={blindTestResult}
+          onRecord={recordBlindTest}
+          industryTarget={resolveEnvironmentSceneProfile(preview.companyId, conceptId).industryTarget}
+        />
+      ) : null}
+
       {compareMode ? (
-        <CompareAllCompanies bundle={bundle} />
+        <CompareAllCompanies bundle={bundle} blindMode={blindMode} />
       ) : (
         <>
-          <CompanySwitcher companyId={companyId} onSelect={selectCompany} />
-          <ConceptSwitcher
-            concepts={preview.concepts}
-            activeId={conceptId}
-            onSelect={setConceptId}
-          />
-          <PreviewFlow preview={preview} concept={activeConcept} />
+          {!blindMode ? <CompanySwitcher companyId={companyId} onSelect={selectCompany} /> : null}
+          <ConceptSwitcher concepts={preview.concepts} activeId={conceptId} onSelect={setConceptId} blindMode={blindMode} />
+          <PreviewFlow preview={preview} concept={activeConcept} conceptId={conceptId} blindMode={blindMode} />
         </>
       )}
     </div>
+  );
+}
+
+function BlindValidationBanner({
+  result,
+  onRecord,
+  industryTarget,
+}: {
+  result: 'pass' | 'fail' | null;
+  onRecord: (r: 'pass' | 'fail') => void;
+  industryTarget: string;
+}) {
+  return (
+    <section style={{ ...sectionStyle, background: '#eff6ff', borderBottom: '1px solid #bfdbfe', paddingTop: 16 }}>
+      <h2 style={{ ...sectionHeading, color: '#1e40af' }}>Blind pass / fail test</h2>
+      <p style={{ margin: '0 0 12px', lineHeight: 1.6, color: '#1e3a5f' }}>
+        All branding hidden. Show the preview to someone unfamiliar with the project. Can they identify the industry
+        within 5 seconds?
+      </p>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        <button type="button" style={{ ...btnStyle, borderColor: '#16a34a' }} onClick={() => onRecord('pass')}>
+          PASS — industry recognized
+        </button>
+        <button type="button" style={{ ...btnStyle, borderColor: '#dc2626' }} onClick={() => onRecord('fail')}>
+          FAIL — industry unclear
+        </button>
+      </div>
+      {result === 'pass' ? (
+        <p style={{ margin: '12px 0 0', padding: 10, background: '#ecfdf5', borderRadius: 8, color: '#166534' }}>
+          PASS recorded — environmental intelligence validated. Expected industry: {industryTarget}
+        </p>
+      ) : null}
+      {result === 'fail' ? (
+        <p style={{ margin: '12px 0 0', padding: 10, background: '#fef2f2', borderRadius: 8, color: '#991b1b' }}>
+          FAIL recorded — environment did not communicate identity. Revisit architecture, materials, and circulation.
+          Expected: {industryTarget}
+        </p>
+      ) : null}
+    </section>
   );
 }
 
@@ -93,7 +148,7 @@ function CompanySwitcher({
 }) {
   return (
     <section style={sectionStyle}>
-      <h2 style={sectionHeading}>1. Brand</h2>
+      <h2 style={sectionHeading}>1. Company</h2>
       <div>
         {CREATIVE_PREVIEW_COMPANY_IDS.map((id: CreativePreviewCompanyId) => (
           <button
@@ -118,14 +173,16 @@ function ConceptSwitcher({
   concepts,
   activeId,
   onSelect,
+  blindMode,
 }: {
   concepts: CreativePreviewConcept[];
   activeId: 'a' | 'b' | 'c';
   onSelect: (id: 'a' | 'b' | 'c') => void;
+  blindMode: boolean;
 }) {
   return (
     <section style={sectionStyle}>
-      <h2 style={sectionHeading}>2. Creative Studio Preview — concepts</h2>
+      <h2 style={sectionHeading}>{blindMode ? 'Preview variant' : '2. Preview A / B / C'}</h2>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
         {concepts.map((c) => (
           <button
@@ -140,10 +197,16 @@ function ConceptSwitcher({
               background: activeId === c.conceptId ? '#eff6ff' : '#fff',
             }}
           >
-            <strong>{c.label}</strong>
-            <span style={{ display: 'block', fontSize: '10px', color: '#666', marginTop: 4 }}>
-              {c.tier.toUpperCase()} · {c.confidencePct}% confidence
-            </span>
+            <strong>{blindMode ? `Preview ${c.conceptId.toUpperCase()}` : c.label}</strong>
+            {!blindMode ? (
+              <span style={{ display: 'block', fontSize: '10px', color: '#666', marginTop: 4 }}>
+                {c.tier.toUpperCase()} · {c.confidencePct}% confidence
+              </span>
+            ) : (
+              <span style={{ display: 'block', fontSize: '10px', color: '#666', marginTop: 4 }}>
+                {c.confidencePct}% confidence
+              </span>
+            )}
           </button>
         ))}
       </div>
@@ -154,59 +217,125 @@ function ConceptSwitcher({
 function PreviewFlow({
   preview,
   concept,
+  conceptId,
+  blindMode,
 }: {
   preview: CreativeStudioPreviewResult;
   concept: CreativePreviewConcept;
+  conceptId: 'a' | 'b' | 'c';
+  blindMode: boolean;
 }) {
   const spec = concept.specification;
+  const sceneProfile = resolveEnvironmentSceneProfile(preview.companyId, conceptId);
 
   return (
     <>
       <section style={sectionStyle}>
-        <h2 style={sectionHeading}>3. Environment proposal</h2>
+        <h2 style={sectionHeading}>{blindMode ? 'Environment — no branding' : '3. Cinematic environment'}</h2>
         <CreativePreviewEnvironment
           companyId={preview.companyId}
           archetype={preview.architectureArchetype}
-          specification={spec}
+          conceptId={conceptId}
+          blindMode={blindMode}
         />
-        <SpecGrid spec={spec} />
+        {!blindMode ? (
+          <EnvironmentIntelligenceSummary profile={sceneProfile} spec={spec} />
+        ) : null}
+        {!blindMode ? (
+          <details style={{ marginTop: 12 }}>
+            <summary style={{ cursor: 'pointer', fontWeight: 600, fontSize: '11px' }}>Full specification (secondary)</summary>
+            <SpecGrid spec={spec} />
+          </details>
+        ) : null}
       </section>
 
-      <section style={sectionStyle}>
-        <h2 style={sectionHeading}>4. Reasoning</h2>
-        <ConceptReasoning concept={concept} />
-        <ol style={{ margin: '12px 0 0', paddingLeft: 20, color: '#374151' }}>
-          {preview.reasoningChain.map((step: string, i: number) => (
-            <li key={i} style={{ marginBottom: 6 }}>
-              {step}
-            </li>
-          ))}
-        </ol>
-      </section>
+      {!blindMode ? (
+        <>
+          <section style={sectionStyle}>
+            <h2 style={sectionHeading}>4. Reasoning</h2>
+            <ConceptReasoning concept={concept} />
+            <ol style={{ margin: '12px 0 0', paddingLeft: 20, color: '#374151' }}>
+              {preview.reasoningChain.map((step: string, i: number) => (
+                <li key={i} style={{ marginBottom: 6 }}>
+                  {step}
+                </li>
+              ))}
+            </ol>
+          </section>
 
-      <section style={sectionStyle}>
-        <h2 style={sectionHeading}>5. Validation — Creative Intelligence Scorecard</h2>
-        <ScorecardTable scorecard={preview.scorecard} concept={concept} />
-      </section>
+          <section style={sectionStyle}>
+            <h2 style={sectionHeading}>5. Validation — Creative Intelligence Scorecard</h2>
+            <ScorecardTable scorecard={preview.scorecard} concept={concept} />
+          </section>
 
-      <section style={sectionStyle}>
-        <h2 style={sectionHeading}>Validation evidence</h2>
-        <EvidenceBlock title="Governing inputs used" items={preview.governingInputs.map((g) => `${g.source} · ${g.field}: ${g.value.slice(0, 120)}${g.value.length > 120 ? '…' : ''}`)} />
-        <EvidenceBlock title="DNA inheritance" items={preview.dnaInheritance} />
-        <EvidenceBlock title="Rules applied" items={preview.rulesApplied} />
-        <EvidenceBlock title="Constraints respected" items={preview.constraintsRespected} />
-        <p style={{ marginTop: 12, padding: 12, background: '#ecfdf5', borderRadius: 8, color: '#166534' }}>
-          {preview.validationSummary}
-        </p>
-      </section>
+          <section style={sectionStyle}>
+            <h2 style={sectionHeading}>Validation evidence</h2>
+            <EvidenceBlock title="Governing inputs used" items={preview.governingInputs.map((g) => `${g.source} · ${g.field}: ${g.value.slice(0, 120)}${g.value.length > 120 ? '…' : ''}`)} />
+            <EvidenceBlock title="DNA inheritance" items={preview.dnaInheritance} />
+            <EvidenceBlock title="Rules applied" items={preview.rulesApplied} />
+            <EvidenceBlock title="Constraints respected" items={preview.constraintsRespected} />
+            <p style={{ marginTop: 12, padding: 12, background: '#ecfdf5', borderRadius: 8, color: '#166534' }}>
+              {preview.validationSummary}
+            </p>
+          </section>
+        </>
+      ) : null}
     </>
   );
 }
 
-function CompareAllCompanies({ bundle }: { bundle: ReturnType<typeof useCreativeStudioPreview>['bundle'] }) {
+function EnvironmentIntelligenceSummary({
+  profile,
+  spec,
+}: {
+  profile: ReturnType<typeof resolveEnvironmentSceneProfile>;
+  spec: CreativeStudioPreviewResult['concepts'][0]['specification'];
+}) {
+  const rows: [string, string][] = [
+    ['Atmosphere', profile.atmosphere],
+    ['Circulation', profile.circulation],
+    ['Implied workflow', profile.impliedWorkflow],
+    ['Emotional tone', profile.emotionalTone],
+    ['Spatial hierarchy', spec.spatialHierarchy],
+    ['Environmental storytelling', spec.environmentalStorytelling],
+  ];
+
+  return (
+    <dl style={{ margin: '12px 0 0', display: 'grid', gap: 8 }}>
+      {rows.map(([label, value]) => (
+        <div key={label}>
+          <dt style={{ fontWeight: 700, fontSize: '10px', textTransform: 'uppercase', color: '#666' }}>{label}</dt>
+          <dd style={{ margin: '2px 0 0', lineHeight: 1.5 }}>{value}</dd>
+        </div>
+      ))}
+      <div>
+        <dt style={{ fontWeight: 700, fontSize: '10px', textTransform: 'uppercase', color: '#666' }}>Architectural keywords</dt>
+        <dd style={{ margin: '4px 0 0', display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+          {profile.architecturalKeywords.map((kw) => (
+            <span key={kw} style={{ fontSize: '10px', padding: '2px 8px', background: '#f3f4f6', borderRadius: 99 }}>
+              {kw}
+            </span>
+          ))}
+        </dd>
+      </div>
+    </dl>
+  );
+}
+
+function CompareAllCompanies({
+  bundle,
+  blindMode,
+}: {
+  bundle: ReturnType<typeof useCreativeStudioPreview>['bundle'];
+  blindMode: boolean;
+}) {
+  const labels = ['Environment A', 'Environment B', 'Environment C'];
+
   return (
     <section style={sectionStyle}>
-      <h2 style={sectionHeading}>Side-by-side — company identity without logos</h2>
+      <h2 style={sectionHeading}>
+        {blindMode ? 'Side-by-side — identify each industry' : 'Side-by-side — company identity without logos'}
+      </h2>
       <div
         style={{
           display: 'grid',
@@ -214,22 +343,28 @@ function CompareAllCompanies({ bundle }: { bundle: ReturnType<typeof useCreative
           gap: 16,
         }}
       >
-        {CREATIVE_PREVIEW_COMPANY_IDS.map((id) => {
+        {CREATIVE_PREVIEW_COMPANY_IDS.map((id, idx) => {
           const p = bundle.companies[id];
-          const concept = p.concepts[0]!;
           return (
             <div key={id} style={{ border: '1px solid #e5e7eb', borderRadius: 12, overflow: 'hidden' }}>
-              <div style={{ padding: '10px 12px', background: '#fff', borderBottom: '1px solid #eee' }}>
-                <strong>{p.companyLabel}</strong>
-                <span style={{ display: 'block', fontSize: '10px', color: '#666' }}>
-                  {p.scorecard.overallConfidencePct}% overall · {p.architectureArchetype}
-                </span>
-              </div>
+              {!blindMode ? (
+                <div style={{ padding: '10px 12px', background: '#fff', borderBottom: '1px solid #eee' }}>
+                  <strong>{p.companyLabel}</strong>
+                  <span style={{ display: 'block', fontSize: '10px', color: '#666' }}>
+                    {p.scorecard.overallConfidencePct}% overall · Preview A
+                  </span>
+                </div>
+              ) : (
+                <div style={{ padding: '10px 12px', background: '#fff', borderBottom: '1px solid #eee' }}>
+                  <strong>{labels[idx] ?? `Environment ${idx + 1}`}</strong>
+                </div>
+              )}
               <div style={{ padding: 12 }}>
                 <CreativePreviewEnvironment
                   companyId={id}
                   archetype={p.architectureArchetype}
-                  specification={concept.specification}
+                  conceptId="a"
+                  blindMode={blindMode}
                 />
               </div>
             </div>
@@ -247,6 +382,8 @@ function SpecGrid({ spec }: { spec: CreativeStudioPreviewResult['concepts'][0]['
     ['Material system', spec.materialSystem],
     ['Lighting language', spec.lightingLanguage],
     ['Spatial organization', spec.spatialOrganization],
+    ['Furniture language', spec.furnitureLanguage],
+    ['Department relationships', spec.departmentRelationships],
     ['Interaction philosophy', spec.interactionPhilosophy],
     ['Motion behavior', spec.motionBehavior],
     ['Environmental mood', spec.environmentalMood],

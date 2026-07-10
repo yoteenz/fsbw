@@ -37,7 +37,7 @@ export function resolveArchitectureArchetype(
     case 'studio-os':
       return 'institutional-crystal';
     case 'frontal-slayer':
-      return 'luxury-mansion';
+      return 'luxury-flagship';
     case 'ndx':
       return 'broadcast-command';
   }
@@ -53,13 +53,13 @@ const OPERATING_MODEL: Record<CreativePreviewCompanyId, string> = {
 
 const NARRATIVE_INTELLIGENCE: Record<CreativePreviewCompanyId, string> = {
   'studio-os': 'Institutional permanence — expertise preserved, legacy compounding, founder as civilization builder.',
-  'frontal-slayer': 'Trust over sales — intimate concierge, hair bestie warmth, editorial mansion rooms.',
+  'frontal-slayer': 'Trust over sales — intimate concierge, hair bestie warmth, flagship salon hospitality.',
   ndx: 'Stat-forward authority — signal desk clarity, headline-aware urgency without panic loops.',
 };
 
 const DESIGN_CANON: Record<CreativePreviewCompanyId, string> = {
   'studio-os': 'Executive marble/glass/crystal — department color before body text, orb as Chief of Staff.',
-  'frontal-slayer': 'Luxury editorial beauty — mirror-light heroes, mansion corridors, red-carpet polish.',
+  'frontal-slayer': 'Luxury editorial beauty — mirror-light diagnostics, floating acrylic, couture showroom (not mansion pastiche).',
   ndx: 'Broadcast editorial dark — signal-first hierarchy, acrylic panels, ticker metadata always visible.',
 };
 
@@ -67,7 +67,7 @@ const SPATIAL_RULES: Record<CreativePreviewCompanyId, string> = {
   'studio-os':
     'Grand Atrium axial symmetry · wing zones radiate from executive lobby · crystal health grids at center.',
   'frontal-slayer':
-    'Mansion room sequence — arrival salon → concierge desk → service corridors · vanity mirror focal walls.',
+    'Luxury flagship sequence — concierge threshold → mirror diagnostics → editorial salon → couture showroom gallery.',
   ndx: 'Media command desk — story map left · signal wall center · producer console right · rundown ticker base.',
 };
 
@@ -124,91 +124,121 @@ export function collectGoverningInputs(companyId: CreativePreviewCompanyId): Gov
   return inputs;
 }
 
+import { resolveEnvironmentSceneProfile } from './environment-scene-profiles';
+
+function specExtras(companyId: CreativePreviewCompanyId, variant: 'canonical' | 'compressed' | 'expanded') {
+  const conceptId = variant === 'canonical' ? 'a' : variant === 'compressed' ? 'b' : 'c';
+  const scene = resolveEnvironmentSceneProfile(companyId, conceptId);
+  return {
+    spatialHierarchy: scene.architecturalKeywords.slice(0, 4).join(' · '),
+    circulation: scene.circulation,
+    impliedWorkflow: scene.impliedWorkflow,
+    furnitureLanguage:
+      companyId === 'studio-os'
+        ? 'Executive bridge railings · archive shelving · observatory seating at mezzanine'
+        : companyId === 'frontal-slayer'
+          ? 'Concierge acrylic desk · salon chairs · product pedestals · mirror stations'
+          : 'Producer desks · broadcast chairs · story boards · archive stacks',
+    environmentalStorytelling: scene.atmosphere,
+    departmentRelationships: DEPARTMENT_TOPOLOGY[companyId].join(' ↔ '),
+    emotionalTone: scene.emotionalTone,
+  };
+}
+
+type SpecExtras = ReturnType<typeof specExtras>;
+
+function spreadSpecExtras(extras: SpecExtras): Omit<SpecExtras, 'impliedWorkflow'> {
+  const { impliedWorkflow: _, ...rest } = extras;
+  return rest;
+}
+
 export function buildBaseSpecification(
   companyId: CreativePreviewCompanyId,
   variant: 'canonical' | 'compressed' | 'expanded'
 ): PreviewSpecification {
-  const brand = resolveBrandDna(companyId);
+  const extras = specExtras(companyId, variant);
 
   if (companyId === 'studio-os') {
-    const density = variant === 'compressed' ? 'dense command lattice' : variant === 'expanded' ? 'ceremonial wide court' : 'balanced institutional court';
+    const density =
+      variant === 'compressed'
+        ? 'command bridge atrium'
+        : variant === 'expanded'
+          ? 'observatory vault court'
+          : 'executive constitutional atrium';
     return {
       designPhilosophy:
-        'Operating civilization as architecture — every surface communicates permanence, expertise, and delegated intelligence.',
-      interiorArchitecture: `${density} · crystalline column grid · executive lobby as axial spine · department wings as glass chambers`,
-      materialSystem: ['marble', 'crystal', 'chrome', 'manuscript paper', 'frosted glass'],
-      lightingLanguage: brand?.lighting.keyLight ?? 'warm marble daylight with gold approval edge',
+        'Operating civilization as a place — institutional scale where knowledge and command coexist in marble and crystal.',
+      interiorArchitecture: `${density} · glass vault · crystal registry column · constitutional archive flanks · executive bridge span`,
+      materialSystem: ['white marble', 'crystal', 'chrome', 'frosted glass', 'manuscript stone'],
+      lightingLanguage: 'Vault daylight through glass ceiling · crystal refraction · warm stone bounce',
       spatialOrganization:
-        'Hero atrium → health crystal grid → priority mission → operations ring → knowledge archive alcove',
+        'Atrium floor → crystal registry → mezzanine observatory → bridge to command wing → archive galleries',
       interactionPhilosophy:
-        'One decisive action per viewport · orb as persistent Chief of Staff · department color precedes copy',
-      motionBehavior: brand?.motion.philosophy ?? 'Calm executive reveal — state communication only',
-      environmentalMood: 'Institutional calm · protective intelligence · legacy archive atmosphere',
-      workflowStructure:
-        'Genesis boot → workspace selection → genome observation → department mission → executive approval',
+        'Spatial orientation before interface · movement through institution implies workflow',
+      motionBehavior: 'Slow ceremonial reveal — light shifts as you cross the bridge',
+      environmentalMood: extras.environmentalStorytelling,
+      workflowStructure: extras.impliedWorkflow,
       signatureExperiences: [
-        'Grand Atrium arrival without SaaS dashboard regression',
-        'Crystal health grid as living organizational pulse',
-        'Orb radial menu for life-culture-aware executive guidance',
+        'Executive atrium that reads as headquarters without a logo',
+        'Constitutional archive visible from arrival path',
+        'Knowledge observatory mezzanine overlooking the floor',
       ],
+      ...spreadSpecExtras(extras),
     };
   }
 
   if (companyId === 'frontal-slayer') {
-    const roomStyle =
+    const salonStyle =
       variant === 'compressed'
-        ? 'intimate vanity suite'
+        ? 'couture gallery salon'
         : variant === 'expanded'
-          ? 'grand mansion salon'
-          : 'concierge arrival salon';
+          ? 'diagnostic mirror laboratory'
+          : 'concierge flagship arrival';
     return {
       designPhilosophy:
-        'Luxury hair concierge as spatial storytelling — every room is a service moment, never a generic storefront.',
-      interiorArchitecture: `${roomStyle} · mansion corridor depth · mirror-wall diagnostics · product gallery alcoves`,
-      materialSystem: ['marble', 'vanity mirror', 'velvet', 'chrome', 'product cards', 'glass'],
-      lightingLanguage: brand?.lighting.keyLight ?? 'salon daylight + mirror glow',
+        'Luxury beauty as a physical flagship — concierge hospitality, mirror diagnostics, and couture retail in one continuous place.',
+      interiorArchitecture: `${salonStyle} · floating acrylic concierge · mirror diagnostic wall · editorial salon curve · product pedestal gallery`,
+      materialSystem: ['white marble', 'floating acrylic', 'crystal', 'chrome', 'mirror glass', 'velvet'],
+      lightingLanguage: 'Salon daylight · mirror bounce · soft pedestal spots on product forms',
       spatialOrganization:
-        'Concierge arrival → mirror-light hero → service selection corridor → private styling chamber',
-      interactionPhilosophy:
-        'Concierge warmth in copy · trust over sales · personally known client rhythm',
-      motionBehavior: brand?.motion.philosophy ?? 'Polished reveal with soft shimmer',
-      environmentalMood: 'Cared for · glamorous · founder-led mansion hospitality',
-      workflowStructure:
-        'Desire signal → concierge routing → product/customization → appointment → fulfillment → loyalty loop',
+        'Threshold → concierge acrylic → mirror diagnostics arc → consultation salon → showroom loop',
+      interactionPhilosophy: 'Movement implies service sequence — greet, diagnose, consult, reveal',
+      motionBehavior: 'Soft shimmer on mirror surfaces · unhurried salon pace',
+      environmentalMood: extras.environmentalStorytelling,
+      workflowStructure: extras.impliedWorkflow,
       signatureExperiences: [
-        'Mirror-light hair analysis lab without clinical coldness',
-        'Mansion room navigation instead of flat ecommerce grids',
-        'PSA hologram as hair bestie, not sales bot',
+        'Concierge arrival that feels like a fashion house, not a web store',
+        'Mirror diagnostics wall as architectural focal point',
+        'Showroom pedestals without product logos — form tells the story',
       ],
+      ...spreadSpecExtras(extras),
     };
   }
 
-  // ndx
-  const deskLayout =
+  const floorStyle =
     variant === 'compressed'
-      ? 'compact signal desk'
+      ? 'elevated broadcast command deck'
       : variant === 'expanded'
-        ? 'multi-wall broadcast gallery'
-        : 'primary media command desk';
+        ? 'signal research loop floor'
+        : 'live editorial newsroom';
   return {
     designPhilosophy:
-      'Authority media as command environment — signal detection, editorial judgment, and publishing velocity in one spatial logic.',
-    interiorArchitecture: `${deskLayout} · story map spine · monitor wall · paper stack archives · producer console`,
-    materialSystem: ['dark glass', 'broadcast panels', 'metal', 'paper stacks', 'monitor bezels'],
-    lightingLanguage: brand?.lighting.keyLight ?? 'studio lights + neon edge',
+      'Media authority as architecture — the room itself broadcasts urgency, editorial judgment, and story velocity.',
+    interiorArchitecture: `${floorStyle} · signal wall panorama · producer station rows · media archive spine · command tier`,
+    materialSystem: ['dark glass', 'broadcast panels', 'brushed metal', 'paper stacks', 'dynamic display glass'],
+    lightingLanguage: 'Track lights · signal wall glow · desk task pools · archive rear wash',
     spatialOrganization:
-      'Signal ticker base → rundown desk center → editorial archive left → distribution console right',
-    interactionPhilosophy:
-      'Signal-first hierarchy · headline-aware metadata always visible · urgency without panic',
-    motionBehavior: brand?.motion.philosophy ?? 'Switcher cuts and signal pulses',
-    environmentalMood: 'Informed · current · culturally sharp · newsroom director energy',
-    workflowStructure:
-      'Vision → content pipeline → distribution → reader graph → relationship → authority compound',
+      'Editorial floor sweep → producer stations → elevated command → archive visible through spine glass',
+    interactionPhilosophy: 'Circulation speed matches story tempo — scan, assign, lock, broadcast',
+    motionBehavior: 'Signal pulses on displays · kinetic light trails on experimental variant',
+    environmentalMood: extras.environmentalStorytelling,
+    workflowStructure: extras.impliedWorkflow,
     signatureExperiences: [
-      'Live signal desk with editorial metadata rails',
-      'Story map navigation instead of blog category lists',
-      'Reader intelligence surfaced as broadcast confidence, not CRM tables',
+      'Live newsroom floor recognizable without a masthead',
+      'Signal wall as environmental protagonist',
+      'High-energy circulation between stations and command',
     ],
+    ...extras,
   };
 }
 
