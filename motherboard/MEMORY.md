@@ -45344,3 +45344,16 @@ Summary of the **full conversation in this chat**: P0 main-thread freeze trace �
 - **Bootstrap not involved:** Bootstrap completes (`started=yes complete=yes ready=yes`) in dev probe logs **before** lazy chunk throws. Prior investigations targeted bootstrap/startup sequencing; stall is **post-router lazy import + GoldenBuildShell Orb/manual graph bundle**.
 - **Minimal fix (not applied):** (1) Break `registry` ↔ `buildGraph` cycle — lazy-init `ALL_MODULES` or remove `getAllManualModules()` from `buildGraph` init path / defer `StudioOrbPageGuide` manual imports. (2) Restore Experience Lab UI as `StudioBootGate` children via `useExperienceLabState`; set `diagnosticsWhenReady={false}` when boot ready.
 - **Outcome:** Investigation report only — no code patches this task.
+
+---
+
+## 2026-07-10 — P0 Experience Lab circular-dependency verification experiment
+
+Summary of the **full conversation in this chat**: Post-boot render investigation identified circular init in `studio-interactive-manual` (`registry` ↔ `buildGraph`). User requested **single-variable experiment** — temporarily bypass `buildAllManualDefinitions()` / `getSubModulePageGuides()` only; no fixes; prove whether circular dep is the **first and only** blocker.
+
+- **Experiment A** — stub `getSubModulePageGuides()` → `return []`: TDZ moved downstream to `STUDIO_MANUAL_WHATS_NEW` in `buildDefinition` (same circular chain, not sufficient).
+- **Experiment B** — stub `buildAllManualDefinitions()` → `return []` at function entry (only change): **circular init bypassed**; lazy chunk loads; route reaches render phase.
+- **Time-series probe (dev, mocked admin auth):** t≈500ms blank; t≈1500ms **`BootDiagnosticsPanel`** + **`gb-immersive-portal`** + awakening overlay visible (`hasBootDiagnostics=true`, `hasGbPortal=true`); t≈3000ms **PlatformErrorBoundary** — React **#301 too many re-renders**.
+- **Console at crash:** `Cannot update StudioOrbExecutiveWorkspace while rendering StudioOrbProvider`; `useStudioBoot` → `runtimeReadinessEngine.ensureReady` → second `runStudioBootstrap` → **circuit breaker `bootstrap-max-active`**.
+- **Answers:** (1) Circular dependency **isolated and confirmed as FIRST blocker**. (2) Experience Lab **partially mounts** (~1.5s) then crashes — **not stable terminal render**. (3) First rendered components: `AdminStudioExperienceLabPage` → `DepartmentGoldenBuildShell` → `StudioOrbProvider` → `StudioOrbAwakeningOverlay` + `ExperienceLabWorkspace` → `StudioBootGate` → `BootDiagnosticsPanel`. (4) First visible DOM: `[data-studio-boot-diagnostics]` / awakening "STUDIO INTELLIGENCE · AWAKENING". (5) First interactive: **SKIP INTRO** button (awakening overlay). (6) **Next blockers:** Studio Orb render loop (`StudioOrbProvider`/`StudioOrbExecutiveWorkspace` setState-during-render); `useStudioBoot` re-bootstrap via `ensureReady`; terminal UI still `{null}` children in `ExperienceLabWorkspace`. (7) **Fix A conclusively proven as required first step — NOT sufficient alone.**
+- **Outcome:** Experiment stubs **reverted**; no production fix shipped.
