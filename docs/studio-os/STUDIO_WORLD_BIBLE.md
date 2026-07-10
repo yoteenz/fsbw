@@ -9,7 +9,7 @@
 
 > *This document is not a technical specification. It is not a product requirements document. It is the philosophical, experiential, behavioral, and emotional constitution of Studio World™. Every future design and engineering decision must reference this Bible before implementation. Nothing should be built that contradicts it.*
 
-**Complemented by:** [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) v1.0.0 — **permanent city architecture** (districts, city plan, transportation, AI population, expansion framework, ten-year roadmap). This Bible governs *how Studio World must feel*; the Master Plan governs *where everything lives*.
+**Complemented by:** [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) v1.0.0 — **permanent city architecture**; [STUDIO_ATLAS_BIBLE.md](../studio-world/STUDIO_ATLAS_BIBLE.md) v1.0.0 — **geographic map**; [STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md) v1.0.0 — **relational intelligence**; [STUDIO_WORLD_CIVILIZATION_BIBLE.md](../studio-world/STUDIO_WORLD_CIVILIZATION_BIBLE.md) v1.0.0 — **cultural constitution** (pillars, institutions, traditions, Chronicles). This Bible governs *how Studio World must feel*; other bibles govern *where*, *how things connect*, and *culture*.
 
 **Relationship to other canon:**
 

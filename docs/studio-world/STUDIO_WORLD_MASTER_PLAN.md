@@ -23,6 +23,7 @@
 | **Master Plan** (this document) | **Permanent city architecture** — districts, city plan, transportation, AI population, evolution model, ten-year roadmap |
 | [Studio Atlas Bible](./STUDIO_ATLAS_BIBLE.md) | **Geographic representation** — living map, zoom scales, knowledge geography, Passport, Timeline |
 | [Living Knowledge Graph Bible](./STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md) | **Intelligence layer** — relationships, context, discovery, subgraphs |
+| [Civilization Bible](./STUDIO_WORLD_CIVILIZATION_BIBLE.md) | **Culture** — pillars, institutions, traditions, Chronicles, belonging |
 | [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) | **Experience constitution** — how Studio World must always feel |
 | [studio-world/](./) Part 1 specs | **Department & specialist detail** — governed subordinate specifications |
 | [foundation-sprint/](../studio-os/foundation-sprint/) | Spatial architecture implementation detail |
