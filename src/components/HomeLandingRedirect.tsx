@@ -60,6 +60,6 @@ export default function HomeLandingRedirect() {
     };
   }, []);
 
-  if (!target) return <LoadingScreen />;
+  if (!target) return <LoadingScreen source="HomeLandingRedirect" />;
   return <Navigate to={target} replace />;
 }

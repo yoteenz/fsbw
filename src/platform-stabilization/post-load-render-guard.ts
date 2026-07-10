@@ -1,4 +1,8 @@
 import { isStudioDebugPath } from '../routes/StudioDebugRoutes';
+import {
+  forceLoadingTerminalRecovery,
+  getActiveLoadingSources,
+} from './loadingTerminalRegistry';
 import { clearLoadingScreenDocumentLock } from './loadingScreenLock';
 
 type CapturedError = {
@@ -77,12 +81,27 @@ async function audit(reason: string): Promise<void> {
   if (typeof window === 'undefined') return;
   if (isStudioDebugPath(window.location.pathname)) return;
 
+  const loadingOverlay = document.querySelector('.loading-screen-root');
   const stuckLoadingAttr =
     document.documentElement.getAttribute('data-loading-screen') === 'true' &&
-    !document.querySelector('.loading-screen-root');
+    !loadingOverlay;
 
   if (stuckLoadingAttr) {
     clearLoadingScreenDocumentLock();
+  }
+
+  if (loadingOverlay) {
+    const stuck = getActiveLoadingSources();
+    if (stuck.length > 0) {
+      await forceLoadingTerminalRecovery(stuck, `post-load-guard:${reason}`);
+      return;
+    }
+    const source = loadingOverlay.getAttribute('data-loading-source') ?? 'unknown LoadingScreen';
+    await forceLoadingTerminalRecovery(
+      [{ id: source, label: source, since: Date.now() - 12000 }],
+      `post-load-guard:${reason}:orphan-overlay`
+    );
+    return;
   }
 
   if (lastCaptured) {
@@ -124,4 +143,6 @@ export function registerPostLoadRenderGuard(): void {
 
   window.setTimeout(() => void audit('4s-post-load'), 4000);
   window.setTimeout(() => void audit('8s-post-load'), 8000);
+  window.setTimeout(() => void audit('12s-post-load'), 12_000);
+  window.setTimeout(() => void audit('20s-post-load'), 20_000);
 }

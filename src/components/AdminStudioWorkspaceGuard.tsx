@@ -16,6 +16,8 @@ import {
 import { resolveBootstrapWorkspaceId } from '../studio-os-core/workspace/route-workspace-resolver';
 import { getAccessToken } from '../utils/api';
 import LoadingScreen from './base/LoadingScreen';
+import { GuardLoadingRecovery } from '../platform-stabilization/GuardLoadingRecovery';
+import { useGuardLoadingTimeout } from '../platform-stabilization/useGuardLoadingTimeout';
 
 const MEMBERSHIP_API_TIMEOUT_MS = 2000;
 const WORKSPACE_BOOTSTRAP_TIMEOUT_MS = 15000;
@@ -49,6 +51,8 @@ export default function AdminStudioWorkspaceGuard() {
   const { pathname, search } = useLocation();
   const [workspacesReady, setWorkspacesReady] = useState(isWorkspacesBootstrapped);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
+  const workspaceLoading = !bootstrapError && !workspacesReady;
+  const workspaceTimedOut = useGuardLoadingTimeout(workspaceLoading, 'AdminStudioWorkspaceGuard');
 
   const routeWorkspaceId = useMemo(
     () => resolveBootstrapWorkspaceId(pathname, search, getCachedOrgMembership()),
@@ -102,6 +106,19 @@ export default function AdminStudioWorkspaceGuard() {
     activateWorkspaceContext(routeWorkspaceId);
   }, [workspacesReady, routeWorkspaceId]);
 
+  if (workspaceTimedOut && workspaceLoading) {
+    return (
+      <GuardLoadingRecovery
+        guard="AdminStudioWorkspaceGuard"
+        detail="Workspace registry import did not finish. Bootstrap may be READY while workspace lazy import is still pending."
+        onRetry={() => {
+          setBootstrapError(null);
+          setWorkspacesReady(false);
+        }}
+      />
+    );
+  }
+
   if (bootstrapError) {
     return (
       <div
@@ -145,7 +162,7 @@ export default function AdminStudioWorkspaceGuard() {
   }
 
   if (!workspacesReady) {
-    return <LoadingScreen />;
+    return <LoadingScreen source="AdminStudioWorkspaceGuard" />;
   }
 
   return (

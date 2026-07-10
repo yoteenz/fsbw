@@ -10,6 +10,7 @@ import BootDebugPage from '../pages/debug/boot-debug/page';
 import ExperienceLabSafeDebugPage from '../pages/debug/experience-lab-safe/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
+import LoadingScreen from '../components/base/LoadingScreen';
 
 const App = lazy(() => import('../App'));
 
@@ -22,12 +23,6 @@ export const STUDIO_DEBUG_PATHS = [
 
 export function isStudioDebugPath(pathname: string): boolean {
   return (STUDIO_DEBUG_PATHS as readonly string[]).includes(pathname);
-}
-
-function AppLoadingFallback() {
-  return (
-    <div style={{ padding: '24px', fontFamily: 'system-ui, sans-serif' }}>Loading app…</div>
-  );
 }
 
 export default function StudioDebugRoutes() {
@@ -48,7 +43,7 @@ export default function StudioDebugRoutes() {
         path="*"
         element={
           <RootAppErrorBoundary>
-            <Suspense fallback={<AppLoadingFallback />}>
+            <Suspense fallback={<LoadingScreen source="App.lazy" />}>
               <App />
             </Suspense>
           </RootAppErrorBoundary>

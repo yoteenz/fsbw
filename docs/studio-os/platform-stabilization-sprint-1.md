@@ -55,6 +55,8 @@ Studio Bootstrap never left IDLE because **startup orchestration was hook-driven
 
 > **Regression note (2026-07-09, post-loading blank):** Loading shell can clear while `#root` stays empty when a guard returns `null`, `data-loading-screen` sticks on `<html>`, or async errors occur outside React boundaries. Fix: `PlatformErrorBoundary` at main shell + admin/workspace routes; `registerPostLoadRenderGuard()`; ref-counted `loadingScreenLock`; **AdminGuard** keeps `LoadingScreen` during redirect instead of `return null`; App `ErrorBoundary` shows stack + component stack.
 
+> **Regression note (2026-07-09, loading forever):** Bootstrap READY does not guarantee terminal render — **AdminGuard** used async `navigate()` + `LoadingScreen`; 100+ Suspense boundaries use unbounded `LoadingScreen`; post-load guard ignored active GIF. Fix: **sync `<Navigate>` in AdminGuard**; **`loadingTerminalRegistry`** (12s max per loader + watchdog); guard timeouts (`CommerceRouteGuard`, `AccountRouteGuard`, `AdminStudioWorkspaceGuard`); post-load guard audits stuck overlay at 12s/20s. See **`docs/studio-os/RENDER_TERMINAL_TRACE.md`**.
+
 ---
 
 ## Verification

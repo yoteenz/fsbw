@@ -5,6 +5,8 @@ import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isSignedIn as isAppSignedIn } from '../utils/adminAuth';
 import { isCreativePreviewMode } from '../utils/creativePreviewMode';
 import { hydrateCommerceCartForRoute } from '../utils/cartLocalStorage';
+import { GuardLoadingRecovery } from '../platform-stabilization/GuardLoadingRecovery';
+import { useGuardLoadingTimeout } from '../platform-stabilization/useGuardLoadingTimeout';
 
 /**
  * **Shopping bag (`/bag`)** and **checkout** (`/checkout`, `/checkout/bookings`, `/checkout/gift-card`, `/checkout/slay-tickets`):
@@ -32,6 +34,8 @@ function isGuestCommerceAllowedPath(pathname: string): boolean {
 export default function CommerceRouteGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [allowed, setAllowed] = useState<boolean | null>(null);
+  const isLoading = allowed === null;
+  const timedOut = useGuardLoadingTimeout(isLoading, 'CommerceRouteGuard');
 
   useEffect(() => {
     if (isCreativePreviewMode()) {
@@ -107,6 +111,16 @@ export default function CommerceRouteGuard({ children }: { children: React.React
       sub.subscription.unsubscribe();
     };
   }, [location.pathname]);
+
+  if (timedOut && isLoading) {
+    return (
+      <GuardLoadingRecovery
+        guard="CommerceRouteGuard"
+        detail="Session/cart hydration did not resolve. Use Reload or sign in again."
+        onRetry={() => setAllowed(null)}
+      />
+    );
+  }
 
   if (allowed === null) {
     return (

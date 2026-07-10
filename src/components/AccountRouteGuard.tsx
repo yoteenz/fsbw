@@ -14,6 +14,8 @@ import { tryServerSessionRestore } from '../utils/sessionRestore';
 import { signInHrefWithReturnTo } from '../utils/signInReturnTo';
 import { isCreativePreviewMode } from '../utils/creativePreviewMode';
 import { isTutorialOsConciergeBypassActive } from '../tutorial-os/conciergeBypass';
+import { GuardLoadingRecovery } from '../platform-stabilization/GuardLoadingRecovery';
+import { useGuardLoadingTimeout } from '../platform-stabilization/useGuardLoadingTimeout';
 
 const SERVER_RESTORE_ATTEMPT_KEY = 'baw_server_restore_attempted_v1';
 
@@ -38,6 +40,8 @@ function shouldAttemptServerRestoreNow(): boolean {
 export default function AccountRouteGuard({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [recoveryDone, setRecoveryDone] = useState(() => isCreativePreviewMode());
+  const isLoading = !recoveryDone && !isCreativePreviewMode();
+  const timedOut = useGuardLoadingTimeout(isLoading, 'AccountRouteGuard');
 
   useEffect(() => {
     if (isCreativePreviewMode()) {
@@ -112,6 +116,16 @@ export default function AccountRouteGuard({ children }: { children: React.ReactN
 
   if (isTutorialOsConciergeBypassActive()) {
     return <>{children}</>;
+  }
+
+  if (timedOut && isLoading) {
+    return (
+      <GuardLoadingRecovery
+        guard="AccountRouteGuard"
+        detail="Auth session restore did not complete. Try Reload or sign in again."
+        onRetry={() => setRecoveryDone(false)}
+      />
+    );
   }
 
   if (!recoveryDone) {
