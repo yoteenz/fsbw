@@ -12,9 +12,11 @@ import type { IsolatedBlackBoxPath } from './paths';
 
 import StudioOsFlightRecorderPage from '../pages/debug/studio-os-flight-recorder/page';
 import StudioOsSessionReportPage from '../pages/debug/studio-os-session-report/page';
+import StudioOsLiveRuntimePage from '../pages/debug/studio-os-live-runtime/page';
 
 function resolvePage(pathname: IsolatedBlackBoxPath): React.ComponentType {
   if (pathname === '/__studio-os-flight-recorder') return StudioOsFlightRecorderPage;
+  if (pathname === '/__studio-os-live-runtime') return StudioOsLiveRuntimePage;
   return StudioOsSessionReportPage;
 }
 

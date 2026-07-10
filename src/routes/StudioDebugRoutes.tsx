@@ -13,6 +13,7 @@ import ExperienceEngineBisectPage from '../pages/debug/experience-engine-bisect/
 import ExperienceEngineFreezeReportPage from '../pages/debug/experience-engine-freeze-report/page';
 import StudioOsFlightRecorderPage from '../pages/debug/studio-os-flight-recorder/page';
 import StudioOsSessionReportPage from '../pages/debug/studio-os-session-report/page';
+import StudioOsLiveRuntimePage from '../pages/debug/studio-os-live-runtime/page';
 import WorldCompilerInvestigationPage from '../pages/debug/world-compiler-investigation/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
@@ -30,6 +31,7 @@ export const STUDIO_DEBUG_PATHS = [
   '/__experience-engine-freeze-report',
   '/__studio-os-flight-recorder',
   '/__studio-os-session-report',
+  '/__studio-os-live-runtime',
   '/__world-compiler-investigation',
 ] as const;
 
@@ -56,6 +58,7 @@ export default function StudioDebugRoutes() {
       <Route path="/__experience-engine-freeze-report" element={<ExperienceEngineFreezeReportPage />} />
       <Route path="/__studio-os-flight-recorder" element={<StudioOsFlightRecorderPage />} />
       <Route path="/__studio-os-session-report" element={<StudioOsSessionReportPage />} />
+      <Route path="/__studio-os-live-runtime" element={<StudioOsLiveRuntimePage />} />
       <Route path="/__world-compiler-investigation" element={<WorldCompilerInvestigationPage />} />
       <Route
         path="*"

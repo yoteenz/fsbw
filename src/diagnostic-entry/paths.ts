@@ -2,6 +2,7 @@
 export const ISOLATED_BLACK_BOX_PATHS = [
   '/__studio-os-flight-recorder',
   '/__studio-os-session-report',
+  '/__studio-os-live-runtime',
 ] as const;
 
 export type IsolatedBlackBoxPath = (typeof ISOLATED_BLACK_BOX_PATHS)[number];

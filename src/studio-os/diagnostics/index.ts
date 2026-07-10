@@ -35,6 +35,7 @@ export {
 
 export { onFlightEvent } from './flight-recorder/recorder';
 export { FlightRecorderConsole } from './flight-recorder-console/FlightRecorderConsole';
+export { LiveRuntimeConsole } from './flight-recorder-console/LiveRuntimeConsole';
 
 export type {
   FlightEventType,
