@@ -18,6 +18,21 @@ import {
 } from '../studio-os-core/scene-stack';
 import { useDepartmentVerticalSlice } from './useDepartmentVerticalSlice';
 import { useSceneStack } from './useSceneStack';
+import {
+  beginCompileRun,
+  createCompilerInstanceId,
+  detectProgressReset,
+  endCompileRun,
+  isAutoRunDisabled,
+  isAutomaticRetryDisabled,
+  isShellRegenerationAfterRunStartDisabled,
+  logEffectLifecycle,
+  logStateWrite,
+  recordTap,
+  updateActiveShellId,
+  getActiveCompileRun,
+  getCompileStoppedSnapshot,
+} from '../studio-os/diagnostics/world-compiler-investigation';
 
 export type ShellPipelinePhase =
   | 'idle'
@@ -36,6 +51,8 @@ export type RenderPipelineRunMeta = {
   lastStepChangeAt: number | null;
   stepStallMs: number;
   isStalled: boolean;
+  compileRunId: string | null;
+  compilerInstanceId: string | null;
 };
 
 /** Experience Lab — invoke Creative Studio World Compiler™ for a company preview. */
@@ -73,6 +90,11 @@ export function useCreativeStudioRenderPreview(
   const [lastStepChangeAt, setLastStepChangeAt] = useState<number | null>(null);
   const [clockTick, setClockTick] = useState(0);
 
+  const compileRunIdRef = useRef<string | null>(null);
+  const compilerInstanceIdRef = useRef(createCompilerInstanceId());
+  const pipelineRunRef = useRef<string | null>(null);
+  const frozenRef = useRef(false);
+
   const shellDiagnostic = useMemo(
     () => diagnoseShellResolution(departmentId, projectId, stationId, { validationMode: true }),
     [departmentId, projectId, stationId, layers, compileReport, shellPipelinePhase]
@@ -83,7 +105,6 @@ export function useCreativeStudioRenderPreview(
     [departmentId, projectId, stationId, layers, status, shellPipelinePhase]
   );
 
-  const pipelineRunRef = useRef<string | null>(null);
   const layerPipelineActive = stack.isStationPipelineActive(stationId);
   const ensureStationActive =
     shellPipelinePhase === 'ensure-station' || (shellPipelinePhase === 'ready' && status === 'building');
@@ -98,6 +119,13 @@ export function useCreativeStudioRenderPreview(
   const bumpStepClock = useCallback(() => {
     const now = Date.now();
     setLastStepChangeAt(now);
+  }, []);
+
+  const setShellPhaseTraced = useCallback((next: ShellPipelinePhase, caller: string) => {
+    setShellPipelinePhase((prev) => {
+      logStateWrite('shellPipelinePhase', prev, next, caller);
+      return next;
+    });
   }, []);
 
   const renderPipelineProgress: RenderPipelineProgress = useMemo(
@@ -131,6 +159,23 @@ export function useCreativeStudioRenderPreview(
     ]
   );
 
+  useEffect(() => {
+    detectProgressReset({
+      stepIndex: renderPipelineProgress.stepIndex,
+      currentStepId: renderPipelineProgress.currentStepId,
+      layerLabel: pipeline?.currentLayerLabel ?? null,
+      shellId: shellDiagnostic.requestedShellId ?? null,
+      compilerStatus: shellPipelinePhase,
+      caller: 'useCreativeStudioRenderPreview.renderPipelineProgress',
+    });
+  }, [
+    renderPipelineProgress.stepIndex,
+    renderPipelineProgress.currentStepId,
+    pipeline?.currentLayerLabel,
+    shellDiagnostic.requestedShellId,
+    shellPipelinePhase,
+  ]);
+
   const elapsedMs = runStartedAt ? Date.now() - runStartedAt : 0;
   const stepStallMs = lastStepChangeAt ? Date.now() - lastStepChangeAt : 0;
   const isStalled =
@@ -145,6 +190,8 @@ export function useCreativeStudioRenderPreview(
     lastStepChangeAt,
     stepStallMs,
     isStalled,
+    compileRunId: compileRunIdRef.current,
+    compilerInstanceId: compilerInstanceIdRef.current,
   };
 
   useEffect(() => {
@@ -156,9 +203,11 @@ export function useCreativeStudioRenderPreview(
   void clockTick;
 
   useEffect(() => {
+    logEffectLifecycle('EFFECT_STARTED', 'validation-mode-session', [previewSessionId]);
     setValidationRenderMode('experience-lab-validation');
     setValidationPreviewSession(previewSessionId);
     return () => {
+      logEffectLifecycle('EFFECT_CLEANUP', 'validation-mode-session', [previewSessionId]);
       setValidationPreviewSession(null);
       clearValidationPreviewSession(previewSessionId);
       setValidationRenderMode('production');
@@ -166,108 +215,208 @@ export function useCreativeStudioRenderPreview(
   }, [previewSessionId]);
 
   useEffect(() => {
+    logEffectLifecycle('EFFECT_STARTED', 'previewSessionId-reset', [previewSessionId]);
     pipelineRunRef.current = null;
     setShellPipelinePhase('idle');
     setShellPipelineResult(null);
     setShellPipelineStage('compile-preview-spec');
+    frozenRef.current = false;
+    return () => {
+      logEffectLifecycle('EFFECT_CLEANUP', 'previewSessionId-reset', [previewSessionId]);
+    };
   }, [previewSessionId]);
 
-  const runFullPipeline = useCallback(async () => {
-    const started = Date.now();
-    setRunAttempt((n) => n + 1);
-    setRunStartedAt(started);
-    bumpStepClock();
-    setShellPipelinePhase('compile-spec');
-    setShellPipelineStage('compile-preview-spec');
+  const runFullPipeline = useCallback(
+    async (trigger: 'manual' | 'auto' = 'auto') => {
+      if (frozenRef.current || getCompileStoppedSnapshot()) {
+        return;
+      }
 
-    const shellResult = await runExperienceLabValidationShellPipeline({
+      const compileRunId = crypto.randomUUID();
+      compileRunIdRef.current = compileRunId;
+
+      const run = beginCompileRun({
+        compileRunId,
+        compilerInstanceId: compilerInstanceIdRef.current,
+        companyId,
+        conceptId,
+        stationId,
+        previewSessionId,
+        shellId: shellDiagnostic.requestedShellId ?? null,
+        trigger,
+        caller: 'useCreativeStudioRenderPreview.runFullPipeline',
+      });
+
+      if (!run && isAutoRunDisabled()) {
+        return;
+      }
+
+      const started = Date.now();
+      setRunAttempt((n) => n + 1);
+      setRunStartedAt(started);
+      bumpStepClock();
+      setShellPhaseTraced('compile-spec', 'runFullPipeline');
+      setShellPipelineStage('compile-preview-spec');
+
+      const skipForceRegenerate =
+        isShellRegenerationAfterRunStartDisabled() && getActiveCompileRun()?.status === 'running';
+
+      const shellResult = await runExperienceLabValidationShellPipeline({
+        companyId,
+        conceptId,
+        projectId,
+        previewSessionId,
+        workspaceId,
+        forceRegenerate: !skipForceRegenerate,
+        onStageChange: (stage) => {
+          setShellPipelineStage(stage);
+          setShellPhaseTraced(mapShellStageToPhase(stage), 'shellPipeline.onStageChange');
+          bumpStepClock();
+        },
+      });
+
+      setShellPipelineResult(shellResult);
+
+      if (!shellResult.ok) {
+        setShellPhaseTraced('failed', 'runFullPipeline.shellFailed');
+        endCompileRun('failed', {
+          failedStage: shellResult.stage,
+          error: shellResult.errorDetail ?? shellResult.errorCode,
+        });
+        frozenRef.current = isAutomaticRetryDisabled();
+        return;
+      }
+
+      if (shellResult.shell?.shellId) {
+        updateActiveShellId(shellResult.shell.shellId, 'runFullPipeline.shellRegistered');
+      }
+
+      setShellPhaseTraced('ensure-station', 'runFullPipeline.preEnsureStation');
+      bumpStepClock();
+      stack.bump();
+
+      await stack.ensureStation(stationId, {
+        validationMode: true,
+        skipEnvironmentShell: true,
+      });
+
+      setShellPhaseTraced('world-compile', 'runFullPipeline.preCompileStation');
+      bumpStepClock();
+
+      const investigation = {
+        compileRunId,
+        compilerInstanceId: compilerInstanceIdRef.current,
+        renderId: run?.renderId ?? 0,
+      };
+
+      const compiled = await stack.compileStation(stationId, {
+        validationMode: true,
+        investigation,
+      });
+
+      if (!compiled.report.success) {
+        stack.bump();
+        setShellPhaseTraced('failed', 'runFullPipeline.compileFailed');
+        endCompileRun('failed', {
+          failedStage: compiled.report.failedStage ?? undefined,
+          error: compiled.report.failedStageDetail ?? undefined,
+        });
+        frozenRef.current = isAutomaticRetryDisabled();
+        return;
+      }
+
+      setShellPhaseTraced('ready', 'runFullPipeline.success');
+      bumpStepClock();
+      endCompileRun('success');
+    },
+    [
+      bumpStepClock,
+      companyId,
+      conceptId,
+      mapShellStageToPhase,
+      previewSessionId,
+      projectId,
+      setShellPhaseTraced,
+      shellDiagnostic.requestedShellId,
+      stack,
+      stationId,
+      workspaceId,
+    ]
+  );
+
+  useEffect(() => {
+    if (isAutoRunDisabled()) return;
+
+    logEffectLifecycle('EFFECT_STARTED', 'auto-run-pipeline', [
+      previewSessionId,
+      layerPipelineActive,
       companyId,
       conceptId,
       projectId,
-      previewSessionId,
+      stationId,
       workspaceId,
-      forceRegenerate: true,
-      onStageChange: (stage) => {
-        setShellPipelineStage(stage);
-        setShellPipelinePhase(mapShellStageToPhase(stage));
-        bumpStepClock();
-      },
-    });
+    ]);
 
-    setShellPipelineResult(shellResult);
-
-    if (!shellResult.ok) {
-      setShellPipelinePhase('failed');
-      return;
-    }
-
-    setShellPipelinePhase('ensure-station');
-    bumpStepClock();
-    stack.bump();
-
-    await stack.ensureStation(stationId, {
-      validationMode: true,
-      skipEnvironmentShell: true,
-    });
-
-    setShellPipelinePhase('world-compile');
-    bumpStepClock();
-
-    const compiled = await stack.compileStation(stationId, { validationMode: true });
-    if (!compiled.report.success) {
-      stack.bump();
-      setShellPipelinePhase('failed');
-      return;
-    }
-
-    setShellPipelinePhase('ready');
-    bumpStepClock();
-  }, [
-    bumpStepClock,
-    companyId,
-    conceptId,
-    mapShellStageToPhase,
-    previewSessionId,
-    projectId,
-    stack,
-    stationId,
-    workspaceId,
-  ]);
-
-  useEffect(() => {
     if (pipelineRunRef.current === previewSessionId) return;
     if (layerPipelineActive) return;
+    if (frozenRef.current) return;
 
     pipelineRunRef.current = previewSessionId;
     let cancelled = false;
 
     async function run() {
-      await runFullPipeline();
-      if (cancelled) pipelineRunRef.current = null;
+      await runFullPipeline('auto');
+      if (cancelled) {
+        pipelineRunRef.current = null;
+        logEffectLifecycle('EFFECT_RESTARTED', 'auto-run-pipeline-cleanup', [previewSessionId]);
+      }
     }
 
     void run();
 
     return () => {
       cancelled = true;
+      logEffectLifecycle('EFFECT_CLEANUP', 'auto-run-pipeline', [previewSessionId]);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- one auto-run per previewSessionId
   }, [previewSessionId, layerPipelineActive, companyId, conceptId, projectId, stationId, workspaceId]);
 
+  const startManualCompileRun = useCallback(() => {
+    recordTap('useCreativeStudioRenderPreview.startManualCompileRun', {
+      companyId,
+      conceptId,
+      stationId,
+    });
+    if (isAutomaticRetryDisabled() && frozenRef.current) {
+      return;
+    }
+    pipelineRunRef.current = null;
+    frozenRef.current = false;
+    pipelineRunRef.current = previewSessionId;
+    void runFullPipeline('manual');
+  }, [companyId, conceptId, previewSessionId, runFullPipeline, stationId]);
+
   const retryPipeline = useCallback(() => {
+    if (isAutomaticRetryDisabled()) {
+      recordTap('useCreativeStudioRenderPreview.retryPipeline-blocked', { reason: 'diagnostic mode' });
+      return;
+    }
     pipelineRunRef.current = null;
     clearValidationPreviewSession(previewSessionId);
     setShellPipelinePhase('idle');
     setShellPipelineResult(null);
     setShellPipelineStage('compile-preview-spec');
     pipelineRunRef.current = previewSessionId;
-    void runFullPipeline();
+    void runFullPipeline('manual');
   }, [previewSessionId, runFullPipeline]);
 
   const isBuilding =
     renderPipelineProgress.isRunning ||
     layerPipelineActive ||
     status === 'building';
+
+  const compileStopped = getCompileStoppedSnapshot();
+  const diagnosticFrozen = Boolean(compileStopped) || frozenRef.current;
 
   return {
     binding,
@@ -285,8 +434,12 @@ export function useCreativeStudioRenderPreview(
     shellPipelineResult,
     previewSessionId,
     retryPipeline,
+    startManualCompileRun,
     renderPipelineProgress,
     runMeta,
     isBuilding,
+    compileStopped,
+    diagnosticFrozen,
+    compileRunId: compileRunIdRef.current,
   };
 }

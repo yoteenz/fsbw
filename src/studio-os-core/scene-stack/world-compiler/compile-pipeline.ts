@@ -14,12 +14,19 @@ import { buildCompilationReport, type WorldCompilationReport, type WorldCompileS
 import { SCENE_GRAPH_BRANCH_TREE } from './scene-graph-branches';
 import { isExperienceLabValidationRender } from '../validation-render';
 import { diagnoseShellResolution } from '../shell-diagnostics';
+import { logCompilerEvent, recordStageSuccess } from '../../../studio-os/diagnostics/world-compiler-investigation';
 
 export type WorldCompileOptions = {
   /** Ephemeral validation compile — mounts draft_ready layers, no registry promotion */
   validationMode?: boolean;
   /** Skip environment-shell — already registered in ephemeral validation registry */
   skipEnvironmentShell?: boolean;
+  /** Forensic investigation context — logging only */
+  investigation?: {
+    compileRunId: string;
+    compilerInstanceId: string;
+    renderId: number;
+  };
 };
 
 export type WorldCompileResult = {
@@ -30,25 +37,44 @@ export type WorldCompileResult = {
 
 async function runStage(
   stage: WorldCompilerStage,
-  execute: () => Promise<string> | string
+  execute: () => Promise<string> | string,
+  investigation?: WorldCompileOptions['investigation']
 ): Promise<WorldCompileStageResult> {
   const start = performance.now();
+  logCompilerEvent('COMPILE_STAGE_ENTER', 'compile-pipeline.runStage', {
+    stageName: stage,
+    detail: investigation
+      ? { compileRunId: investigation.compileRunId, compilerInstanceId: investigation.compilerInstanceId }
+      : undefined,
+  });
   try {
     const detail = await execute();
-    return {
+    const result: WorldCompileStageResult = {
       stage,
       label: stage,
       success: true,
       durationMs: Math.round(performance.now() - start),
       detail,
     };
+    logCompilerEvent('COMPILE_STAGE_COMPLETE', 'compile-pipeline.runStage', {
+      stageName: stage,
+      detail: { durationMs: result.durationMs, detail },
+    });
+    recordStageSuccess(stage);
+    return result;
   } catch (err) {
+    const message = err instanceof Error ? err.message : 'Stage failed';
+    logCompilerEvent('COMPILE_FAILED', 'compile-pipeline.runStage', {
+      stageName: stage,
+      detail: { error: message },
+      stackTrace: err instanceof Error ? err.stack : undefined,
+    });
     return {
       stage,
       label: stage,
       success: false,
       durationMs: Math.round(performance.now() - start),
-      detail: err instanceof Error ? err.message : 'Stage failed',
+      detail: message,
     };
   }
 }
@@ -62,6 +88,7 @@ export async function compileWorldStation(input: {
   options?: WorldCompileOptions;
 }): Promise<WorldCompileResult> {
   const validationMode = input.options?.validationMode ?? isExperienceLabValidationRender();
+  const investigation = input.options?.investigation;
   const compileStart = performance.now();
   const stages: WorldCompileStageResult[] = [];
   const shellLock = resolveShellLockState(input.departmentId, input.projectId, input.stationId, {
@@ -88,14 +115,14 @@ export async function compileWorldStation(input: {
         );
       }
       return `Shell v${shellLock.shellVersion} loaded (${shellLock.resolution}) as reference.`;
-    })
+    }, investigation)
   );
 
   stages.push(
     await runStage('lock-shell', () => {
       if (!shellLock.locked) return 'Shell awaiting approval — not yet locked.';
       return `Shell locked at ${shellLock.lockedAt ?? 'unknown'}.`;
-    })
+    }, investigation)
   );
 
   const packages = buildComponentPackagesForStation(records, input.stationId, { validationMode });
@@ -126,7 +153,7 @@ export async function compileWorldStation(input: {
         });
         if (mounted.length === 0) return `Stage skipped — no ${stage} components yet.`;
         return `${mounted.length} component package(s) mounted — ${branch?.displayName ?? stage}. No upstream repaint.`;
-      })
+      }, investigation)
     );
   }
 
@@ -150,7 +177,7 @@ export async function compileWorldStation(input: {
         );
       }
       return `Scene integrity ${validation.sceneIntegrityPct}% — world rebuilt from ${packages.length} component packages.`;
-    })
+    }, investigation)
   );
 
   const renderTimeMs = Math.round(performance.now() - compileStart);

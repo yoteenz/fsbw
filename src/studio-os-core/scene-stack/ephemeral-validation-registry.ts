@@ -6,6 +6,7 @@
 import type { ValidationEnvironmentShell } from '../creative-studio-preview/environment-shell';
 import { recipeToLayerRecord } from '../creative-studio-preview/environment-shell';
 import type { SceneStackLayerId, SceneStackLayerRecord } from './types';
+import { logCompilerEvent } from '../../studio-os/diagnostics/world-compiler-investigation';
 
 export const EPHEMERAL_VALIDATION_TTL_MS = 30 * 60 * 1000;
 
@@ -38,10 +39,17 @@ function layerOverlayKey(
 }
 
 export function clearValidationPreviewSession(previewSessionId: string): void {
+  logCompilerEvent('SHELL_DELETED', 'ephemeral-validation-registry.clearValidationPreviewSession', {
+    detail: { previewSessionId },
+  });
   sessions.delete(sessionKey(previewSessionId));
 }
 
 export function registerValidationEnvironmentShell(shell: ValidationEnvironmentShell): void {
+  logCompilerEvent('SHELL_REGISTERED', 'ephemeral-validation-registry.registerValidationEnvironmentShell', {
+    shellId: shell.shellId,
+    detail: { previewSessionId: shell.previewSessionId, stationId: shell.stationId },
+  });
   const key = sessionKey(shell.previewSessionId);
   const layerRec = recipeToLayerRecord(shell, shell);
   const overlays = new Map<string, SceneStackLayerRecord>();

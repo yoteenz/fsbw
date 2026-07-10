@@ -1,4 +1,4 @@
-import { useMemo, type CSSProperties } from 'react';
+import { useEffect, useMemo, useRef, type CSSProperties } from 'react';
 import type { CreativePreviewCompanyId } from '../../../../studio-os-core/creative-studio-preview';
 import { WORLD_COMPILER_STAGES, worldCompilerStageLabel } from '../../../../studio-os-core/scene-stack/world-compiler/constants';
 import { useCreativeStudioRenderPreview } from '../../../../hooks/useCreativeStudioRenderPreview';
@@ -6,6 +6,13 @@ import { SceneStackViewport } from '../../studio-os/creative-direction-studio/Sc
 import { CDS_GENESIS_INTERACTION_STYLES } from '../../studio-os/creative-direction-studio/cdsInteractionLayerTheme';
 import { CDS_IMMERSION_STYLES } from '../../studio-os/creative-direction-studio/cdsImmersionTheme';
 import { CreativeStudioPipelineStatusBar } from './CreativeStudioPipelineStatusBar';
+import {
+  incrementComponentRender,
+  isWorldCompilerDiagnosticMode,
+  logComponentMount,
+  logComponentUnmount,
+  recordTap,
+} from '../../../../studio-os/diagnostics/world-compiler-investigation';
 
 type Props = {
   companyId: CreativePreviewCompanyId;
@@ -18,6 +25,15 @@ type Props = {
  * No wireframes, placeholders, or schematic layouts.
  */
 export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = false }: Props) {
+  const renderCount = useRef(0);
+  renderCount.current += 1;
+  incrementComponentRender('CreativeStudioRenderPreview', `${companyId}-${conceptId}`);
+
+  useEffect(() => {
+    logComponentMount('CreativeStudioRenderPreview', { companyId, conceptId, blindMode });
+    return () => logComponentUnmount('CreativeStudioRenderPreview', { companyId, conceptId });
+  }, [companyId, conceptId, blindMode]);
+
   const {
     binding,
     stack,
@@ -32,14 +48,22 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
     shellPipelinePhase,
     shellPipelineResult,
     retryPipeline,
+    startManualCompileRun,
     renderPipelineProgress,
     runMeta,
     isBuilding,
+    compileStopped,
+    diagnosticFrozen,
+    compileRunId,
   } = useCreativeStudioRenderPreview(companyId, conceptId);
+
+  const diagMode = isWorldCompilerDiagnosticMode();
 
   const stageResults = compileReport?.stages ?? [];
   const failedStage = compileReport?.failedStage;
   const showRetry =
+    !diagMode &&
+    !diagnosticFrozen &&
     !isBuilding &&
     (shellPipelinePhase === 'failed' ||
       status === 'failed' ||
@@ -97,7 +121,7 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
             blindMode ? undefined : compileReport?.renderReadinessPct ?? compileReport?.sceneIntegrityPct ?? undefined
           }
           onRegenerateLayer={
-            blindMode
+            blindMode || diagMode
               ? undefined
               : (layerId) =>
                   void stack.regenerateLayer(
@@ -175,8 +199,44 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
               </dl>
             </details>
           ) : null}
+          {compileStopped || (diagMode && diagnosticFrozen) ? (
+            <div style={compileStoppedStyle}>
+              <p style={{ margin: 0, fontWeight: 800, letterSpacing: '0.08em' }}>COMPILE STOPPED</p>
+              <ul style={{ margin: '8px 0 0', paddingLeft: 16, lineHeight: 1.6 }}>
+                <li>compile run ID: {compileStopped?.compileRunId ?? compileRunId ?? '—'}</li>
+                <li>failed stage: {compileStopped?.failedStage ?? compileReport?.failedStage ?? '—'}</li>
+                <li>failed layer: {compileStopped?.failedLayer ?? '—'}</li>
+                <li>error: {compileStopped?.error ?? compileReport?.failedStageDetail ?? '—'}</li>
+                <li>shell ID: {compileStopped?.shellId ?? shellDiagnostic.requestedShellId ?? '—'}</li>
+                <li>last successful event: {compileStopped?.lastSuccessfulEvent ?? '—'}</li>
+                <li>reset attempted by: {compileStopped?.resetAttemptedBy ?? '—'}</li>
+                <li>reset prevented: {compileStopped?.resetPrevented ? 'yes' : 'no'}</li>
+              </ul>
+            </div>
+          ) : null}
+          {diagMode ? (
+            <button
+              type="button"
+              style={retryBtnStyle}
+              onPointerUp={(e) => {
+                e.preventDefault();
+                recordTap('CreativeStudioRenderPreview.manualCompileButton', { companyId, conceptId });
+                startManualCompileRun();
+              }}
+              disabled={isBuilding && !diagnosticFrozen}
+            >
+              {isBuilding ? 'Compile running…' : 'Start compile run (diagnostic — one tap = one run)'}
+            </button>
+          ) : null}
           {showRetry ? (
-            <button type="button" style={retryBtnStyle} onClick={retryPipeline}>
+            <button
+              type="button"
+              style={retryBtnStyle}
+              onClick={() => {
+                recordTap('CreativeStudioRenderPreview.retryPipeline');
+                retryPipeline();
+              }}
+            >
               {failedStage === 'load-shell' || !shellReady
                 ? 'Run full render pipeline (generate shell first)'
                 : 'Run full render pipeline'}
@@ -229,6 +289,16 @@ const stageChipStyle: CSSProperties = {
   border: '1px solid',
   letterSpacing: '0.04em',
   textTransform: 'uppercase',
+};
+
+const compileStoppedStyle: CSSProperties = {
+  marginTop: 12,
+  padding: 12,
+  background: '#1a0000',
+  color: '#fecaca',
+  borderRadius: 8,
+  border: '1px solid #991b1b',
+  fontSize: 10,
 };
 
 const retryBtnStyle: CSSProperties = {

@@ -60,6 +60,12 @@ export function installTimerInventory(): () => void {
     recordFlightEvent('TIMER_REGISTERED', 'timer-inventory', {
       detail: { timerId: id, kind, intervalMs, caller, purpose: rec.purpose },
     });
+    try {
+      const win = window as unknown as { __STUDIO_OS_TIMER_INVENTORY__?: TimerRecord[] };
+      win.__STUDIO_OS_TIMER_INVENTORY__ = getTimerInventory();
+    } catch {
+      /* ignore */
+    }
     return id;
   };
 

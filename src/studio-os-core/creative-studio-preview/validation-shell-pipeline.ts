@@ -6,6 +6,7 @@ import {
   getValidationEnvironmentShell,
   EPHEMERAL_VALIDATION_TTL_MS,
 } from '../scene-stack/ephemeral-validation-registry';
+import { logCompilerEvent } from '../../studio-os/diagnostics/world-compiler-investigation';
 import {
   buildEnvironmentShellRecipe,
   type EnvironmentShellRecipe,
@@ -83,6 +84,9 @@ export async function runExperienceLabValidationShellPipeline(input: {
   }
 
   clearValidationPreviewSession(input.previewSessionId);
+  logCompilerEvent('SHELL_INVALIDATED', 'validation-shell-pipeline.forceRegenerate', {
+    detail: { previewSessionId: input.previewSessionId },
+  });
 
   let recipe: EnvironmentShellRecipe;
   try {
