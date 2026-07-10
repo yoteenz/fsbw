@@ -1,0 +1,36 @@
+/** Studio OS Black Box Investigation™ — public diagnostic API. Observe-only. */
+export {
+  initStudioOsFlightRecorder,
+  shutdownStudioOsFlightRecorder,
+  recordFlightEvent,
+  registerFlightContext,
+  getFlightEvents,
+  getFlightSessionIdFromRecorder,
+  buildSessionForensicReport,
+  loadLastSessionReport,
+  captureEnvironmentSnapshot,
+  saveEnvironmentSnapshot,
+  loadEnvironmentSnapshots,
+  compareEnvironmentSnapshots,
+  buildEventTimeline,
+  formatTimelineAscii,
+  getTimerInventory,
+  findThreeSecondTimers,
+  getSubscriptionGraph,
+  detectSubscriptionLoops,
+  STATE_OWNERSHIP,
+  buildOwnershipReport,
+} from './init';
+
+export type {
+  FlightEventType,
+  FlightRecorderEvent,
+  EnvironmentSnapshot,
+  TimelineAnalysis,
+  SessionForensicReport,
+  FailureClassification,
+  TimerRecord,
+  SubscriptionEdge,
+  SubscriptionLoop,
+  OwnershipConflict,
+} from './types';

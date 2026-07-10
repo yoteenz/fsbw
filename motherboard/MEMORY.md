@@ -45573,6 +45573,7 @@ Summary of **full conversation in this chat**: After Experience Lab shell genera
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-10 — The Studio World Bible™ (P0 Foundational Experience Constitution — docs only)
 
 Summary of **full conversation in this chat** (three COMPOSER architecture sprints): (1) **Studio World™ Foundation Sprint** — 12-doc spatial architecture at `docs/studio-os/foundation-sprint/`; (2) **Executive Operating System™ Sprint** — 11-doc operating rhythm at `docs/studio-os/executive-operating-system-sprint/`; (3) **The Studio World Bible™** — single permanent constitutional north star at `docs/studio-os/STUDIO_WORLD_BIBLE.md`. All mandates: **DO NOT IMPLEMENT · DO NOT DESIGN UI · DO NOT WRITE CODE**.
@@ -45594,3 +45595,29 @@ Summary of **full conversation in this chat** (four architecture sprints): Found
 - **Decisions / outcomes:** **`docs/studio-world/`** (README + 001–010). Phase 0 architecture layer now has constitution (`STUDIO_WORLD_BIBLE.md`) + governed specification (`docs/studio-world/`). Phase 1 (Core Simulation) awaits founder approval.
 - **Changes:** `docs/studio-world/` (11 files). `motherboard/CORE.md` pointer. This MEMORY entry.
 - **Conventions:** `docs/studio-world/` = implementable canonical spec; `STUDIO_WORLD_BIBLE.md` = timeless constitution; new departments/specialists/meetings require doc updates before code; Phase gates block rushed foundations.
+=======
+## 2026-07-10 — Studio OS Black Box Investigation™ (P0 flight recorder)
+
+Summary of **full conversation in this chat**: After Experience Engine freeze bisect diagnostics (`07d70020d`), user issued **COMPOSER — P0 SPRINT: STUDIO OS BLACK BOX INVESTIGATION™** — build permanent flight recorder before any further fixes. Mandate: **NO implementation fixes, refactoring, heartbeat changes, cache changes, or state management changes**. Investigate like aircraft accident — evidence only until one event **ALWAYS** precedes heartbeat death is proven.
+
+- **Delivered (observe-only diagnostic layer)** at `src/studio-os/diagnostics/`:
+  - **flight-recorder/** — append-only events (IndexedDB + memory mirror + sessionStorage summary); full schema (timestamp, event id/type, source, caller, route, browser, platform, company, station/shell/compile ids, heartbeat state, registry/scene versions, render/subscription counts, URL).
+  - **event-timeline/** — chronological analysis; final successful event, first missing, first abnormal, gap description.
+  - **environment-diff/** — fingerprint capture + compare (cookies, local/session storage keys/sizes, IndexedDB, cache, SW, navigator, genesis bytes, auth/hydration); labels for safari-normal/private, chrome-normal/incognito.
+  - **lifecycle-monitor/** — history API, errors, unhandledrejection, long tasks, root remount detection.
+  - **state-monitor/** — static ownership map (heartbeat, scene stack, compiler, registry, genesis, shell, station, etc.) + passive storage write tap.
+  - **subscription-graph/** — publisher/subscriber edges + loop detection; taps genesis-updated, scene-stack-hydrated, studio-boot, signInStateChanged.
+  - **timer-inventory/** — passive wrap of setTimeout/setInterval/RAF with caller stack + ~3s cadence filter.
+  - **session-report/** — forensic bundle (evidence only, no recommendations); auto on pagehide.
+
+- **Routes:** `/__studio-os-flight-recorder` (live stream + env capture) · `/__studio-os-session-report` (forensic report).
+
+- **Boot wiring:** `initStudioOsFlightRecorder()` in `main-legacy.tsx` — does **not** modify `main-thread-diagnostics.ts` heartbeat. Exposes `window.__STUDIO_OS_RECORD__` and `window.__STUDIO_OS_REGISTER_CONTEXT__` for optional compiler context.
+
+- **Docs:** `docs/studio-os/black-box-investigation.md`
+
+- **Isolation status:** Root cause **not yet proven** — requires normal-tab Safari/Chrome iOS sessions with env snapshots + session report comparing to private mode. No repair authorized until flight recorder identifies invariant pre-failure event.
+
+- **Conventions:** Absolute rule — no repair sprint until "what single event ALWAYS occurs immediately before heartbeat dies?" is answered with evidence, not speculation.
+
+>>>>>>> 9815f2837 (Add Studio OS Black Box flight recorder (observe-only forensic diagnostics))
