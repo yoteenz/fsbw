@@ -41,7 +41,9 @@ If nothing happened, nothing gets posted.
 | **The Living Timeline™** (this bible) | *What the public sees* — documentary model · event-before-post law · narrative arcs |
 | **Studio Chronicle™** | *Canonical truth* — immutable event record both systems read |
 
-**Hierarchy:** Chronicle = truth · Living Timeline = **documentary law** · HQX = **broadcast window** · Atlas = **explore history spatially**.
+**Hierarchy:** Chronicle = truth · Living Timeline = **documentary law** · **Studio Team** = **public identity** · HQX = **broadcast window** · Atlas = **explore history spatially**.
+
+> **Studio Team canon:** Documentary subjects are **Studio Professionals** — [THE_STUDIO_TEAM.md](./THE_STUDIO_TEAM.md). Never "AI spotlight."
 
 ---
 

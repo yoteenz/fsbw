@@ -12,6 +12,7 @@ This folder holds foundational architecture documents that govern how Studio OS,
 | [THE_LIVING_ORGANIZATION.md](./THE_LIVING_ORGANIZATION.md) | **The Living Organization™** — AI employee ecosystem: workforce registry, directory, relationships, social storytelling, onboarding |
 | [HQX.md](./HQX.md) | **HQX™** — Headquarters Communications & Broadcast Center: place, transmissions, pipeline, archive |
 | [THE_LIVING_TIMELINE.md](./THE_LIVING_TIMELINE.md) | **The Living Timeline™** — social as recorded history: Chronicle, documentary model, story arcs, event-before-post |
+| [THE_STUDIO_TEAM.md](./THE_STUDIO_TEAM.md) | **The Studio Team™** — humanizing intelligence: public language, Studio Professional identity, relationship model |
 
 **Related canon (outside this folder):**
 

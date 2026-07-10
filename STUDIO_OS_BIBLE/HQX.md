@@ -31,7 +31,9 @@
 | [STUDIO_WORLD_CIVILIZATION_BIBLE.md](../docs/studio-world/STUDIO_WORLD_CIVILIZATION_BIBLE.md) | Traditions · Chronicles · public ceremonies |
 | [STUDIO_WORLD_MASTER_PLAN.md](../docs/studio-world/STUDIO_WORLD_MASTER_PLAN.md) | District placement · city architecture |
 
-**Hierarchy:** Living Organization = **who speaks** · HQX = **where and how Studio broadcasts** · **Living Timeline** = **events before posts** · Civilization Bible = **Chronicle truth**.
+**Hierarchy:** Living Organization = **who speaks** · **Studio Team** = **founder-facing identity** · HQX = **where and how Studio broadcasts** · **Living Timeline** = **events before posts** · Civilization Bible = **Chronicle truth**.
+
+> **Studio Team canon:** Presenters are **Studio Professionals** — never "AI" on air. [THE_STUDIO_TEAM.md](./THE_STUDIO_TEAM.md)
 
 > **Living Timeline canon:** Public content documents events that already happened — [THE_LIVING_TIMELINE.md](./THE_LIVING_TIMELINE.md). HQX transmits; Chronicle records.
 

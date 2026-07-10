@@ -31,7 +31,9 @@ Studio becomes known for its **people**, not its prompts.
 | [STUDIO_WORLD_CIVILIZATION_BIBLE.md](../docs/studio-world/STUDIO_WORLD_CIVILIZATION_BIBLE.md) | Culture, institutions, traditions, chronicles |
 | [GENESIS_CORE_ARCHITECTURE.md](../docs/studio-os/genesis-core/GENESIS_CORE_ARCHITECTURE.md) | Genesis Core™ coordinates — employees execute |
 
-**Hierarchy:** Civilization Bible = culture · Living Organization = **who works here** · World Bible = **how arrival feels** · Genesis Core = **coordination intelligence**.
+**Hierarchy:** Civilization Bible = culture · Living Organization = **who works here** · **Studio Team** = **how founders experience them** · World Bible = **how arrival feels** · Genesis Core = **coordination intelligence**.
+
+> **Studio Team canon:** Public language and identity — [THE_STUDIO_TEAM.md](./THE_STUDIO_TEAM.md). Founders meet the **Studio Team**, not "AI employees."
 
 **Do not implement employee generation in this sprint.** Architecture first.
 

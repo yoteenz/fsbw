@@ -46111,3 +46111,15 @@ Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT —
 - **Canon stack:** Chronicle truth (Civilization Bible) · HQX distribution · Living Organization identities · Atlas replay layer.
 - **Changes:** `STUDIO_OS_BIBLE/THE_LIVING_TIMELINE.md`, `STUDIO_OS_BIBLE/README.md`, `STUDIO_OS_BIBLE/HQX.md`, `STUDIO_OS_BIBLE/THE_LIVING_ORGANIZATION.md`, `motherboard/CORE.md`. No code.
 - **Conventions:** Event before post; Chronicle never deleted; no filler weeks; CHR-ID required for public coverage; documentary vocabulary only.
+
+---
+
+## 2026-07-10 — The Studio Team™ (COMPOSER sprint — docs only)
+
+Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT — THE STUDIO TEAM™** — Humanizing Intelligence Through Organizational Identity. Extends Living Organization · HQX · Living Timeline as **permanent Studio OS philosophy**. Mission: never present intelligence as "AI" publicly — present world-class **Studio Team**; founders build relationships not hire AI. Golden rule: technology powers experience, people define it. Mandate: **Do not generate individual Studio Professionals** — philosophy first.
+
+- **Context:** Public Language Constitution — eliminate AI Employee/Agent/Assistant/Bot/Virtual Assistant; replace with Studio Professional · Studio Team · role titles (Creative Director · Institute Professor · Brand Strategist · etc.). Human Principle: approachable · competent · warm · confident · distinct · believable — no two professionals communicate identically. Organization Principle: everyone belongs to department (Creative Studios · Institute · HQX · Operations · etc.). Documentary + immersion: team works when founders offline; social documents work (Living Timeline). Cross-platform consistency: same person in World · HQX · Institute · meetings · social. Onboarding: "Meet the Studio Team" not "Meet your AI assistants." North star: *"The Studio Team helped us launch"* not *"The AI did it."*
+- **Delivered:** **`STUDIO_OS_BIBLE/THE_STUDIO_TEAM.md`** v1.0.0 — all 9 deliverables (bible · language constitution · identity framework · communication standards · profile spec · introduction framework · cross-platform consistency · founder onboarding · long-term relationship model + roadmap). **`STUDIO_OS_BIBLE/README.md`** · cross-refs in **`THE_LIVING_ORGANIZATION.md`** · **`HQX.md`** · **`THE_LIVING_TIMELINE.md`**. Proposed module **`src/studio-os-core/studio-team/`**. Internal technical docs may still say Studio AI — founder/public UI forbidden terms list locked in constitution.
+- **Quartet stack:** Living Organization (registry) · Studio Team (identity/language) · HQX (broadcast) · Living Timeline (history).
+- **Changes:** `STUDIO_OS_BIBLE/THE_STUDIO_TEAM.md`, README, three bible cross-refs, `motherboard/CORE.md`. No code.
+- **Conventions:** Permanent philosophy; UI string lint future; presenters are Studio Professionals on air; deception forbidden — registry truth required before public intro.
