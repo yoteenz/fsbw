@@ -16,7 +16,7 @@
 >
 > *This document becomes the lens through which every future feature is evaluated.*
 
-**Complemented by:** [Studio World Bible™](../docs/studio-os/STUDIO_WORLD_BIBLE.md) (experiential north star) · [Foundation Sprint](../docs/studio-os/foundation-sprint/README.md) (spatial architecture detail) · [Genesis Constitutional Core™](../genesis/articles/CONSTITUTIONAL_CORE.md) (philosophical operating system) · [Studio AI Vision Bible™](../docs/studio-os/studio-ai/STUDIO_AI_VISION_BIBLE.md) (persistent intelligence layer) · [Spatial Architecture Review Engine™](./SPATIAL_ARCHITECTURE_REVIEW.md) (enforcement protocol — review before code)
+**Complemented by:** [Studio World Bible™](../docs/studio-os/STUDIO_WORLD_BIBLE.md) (experiential north star) · [Brand Language Engine™](./BRAND_LANGUAGE_ENGINE.md) (naming constitution) · [Foundation Sprint](../docs/studio-os/foundation-sprint/README.md) (spatial architecture detail) · [Genesis Constitutional Core™](../genesis/articles/CONSTITUTIONAL_CORE.md) (philosophical operating system) · [Studio AI Vision Bible™](../docs/studio-os/studio-ai/STUDIO_AI_VISION_BIBLE.md) (persistent intelligence layer) · [Spatial Architecture Review Engine™](./SPATIAL_ARCHITECTURE_REVIEW.md) (enforcement protocol — review before code)
 
 ---
 

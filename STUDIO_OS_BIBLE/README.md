@@ -8,6 +8,7 @@ This folder holds foundational architecture documents that govern how Studio OS,
 |----------|-------------|
 | [THE_SPATIAL_COMPUTING_PHILOSOPHY.md](./THE_SPATIAL_COMPUTING_PHILOSOPHY.md) | **The Spatial Computing Philosophy™** — design constitution: places replace pages, departments replace features, presence replaces productivity |
 | [SPATIAL_ARCHITECTURE_REVIEW.md](./SPATIAL_ARCHITECTURE_REVIEW.md) | **Spatial Architecture Review Engine™** — constitutional enforcement: review before code, Composer as Chief Architect, design score gate |
+| [BRAND_LANGUAGE_ENGINE.md](./BRAND_LANGUAGE_ENGINE.md) | **Brand Language Engine™** — naming constitution: tiers, frameworks, social handle methodology, evaluation scorecard |
 
 **Related canon (outside this folder):**
 
@@ -18,4 +19,4 @@ This folder holds foundational architecture documents that govern how Studio OS,
 | [genesis/](../genesis/) | Genesis constitutional kernel and articles |
 | [docs/studio-os/studio-ai/](../docs/studio-os/studio-ai/) | Studio AI persistent intelligence layer |
 
-**Rule:** Every new feature proposal must answer **Where does it live?** before implementation. See [THE_SPATIAL_COMPUTING_PHILOSOPHY.md](./THE_SPATIAL_COMPUTING_PHILOSOPHY.md). **Enforcement:** [SPATIAL_ARCHITECTURE_REVIEW.md](./SPATIAL_ARCHITECTURE_REVIEW.md) — complete review before code generation.
+**Rule:** Every new feature proposal must answer **Where does it live?** before implementation. See [THE_SPATIAL_COMPUTING_PHILOSOPHY.md](./THE_SPATIAL_COMPUTING_PHILOSOPHY.md). **Enforcement:** [SPATIAL_ARCHITECTURE_REVIEW.md](./SPATIAL_ARCHITECTURE_REVIEW.md) — complete review before code generation. **Naming:** [BRAND_LANGUAGE_ENGINE.md](./BRAND_LANGUAGE_ENGINE.md) — every new canon name passes the Studio Test and scorecard.

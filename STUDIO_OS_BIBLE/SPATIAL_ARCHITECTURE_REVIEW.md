@@ -16,7 +16,7 @@
 >
 > *Composer should stop behaving like an engineer receiving feature requests. Composer should behave like the **Chief Architect of Studio World**.*
 
-**Implements:** [The Spatial Computing Philosophy™](./THE_SPATIAL_COMPUTING_PHILOSOPHY.md) · [Studio World Bible™](../docs/studio-os/STUDIO_WORLD_BIBLE.md) · [Foundation Sprint](../docs/studio-os/foundation-sprint/README.md)
+**Implements:** [The Spatial Computing Philosophy™](./THE_SPATIAL_COMPUTING_PHILOSOPHY.md) (language constitution) · [Brand Language Engine™](./BRAND_LANGUAGE_ENGINE.md) (naming before canon adoption) · [Spatial Architecture Review Engine™](./SPATIAL_ARCHITECTURE_REVIEW.md) (placement before build)
 
 **Future subsystem:** This protocol will become a Studio OS governance module — Genesis pauses implementation when spatial placement cannot be justified.
 

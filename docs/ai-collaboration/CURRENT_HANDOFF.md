@@ -7,11 +7,11 @@
 
 ## Current sprint
 
-**Spatial Architecture Review Engine™ — constitutional design enforcement**
+**Brand Language Engine™ — naming philosophy & identity architecture**
 
-Document: `STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md` — automated review protocol before Studio OS implementation: Composer workflow, 10 review questions, Genesis/world review, design score, red flags, planning prompt integration. Governance sprint only — no UI or feature code. **Do not run during active debugging sprints unless explicitly requested.**
+Document: `STUDIO_OS_BIBLE/BRAND_LANGUAGE_ENGINE.md` — permanent naming constitution: four tiers, product/place/AI/system frameworks, social handle methodology (no final handles), availability workflow, evaluation scorecard, Studio Test, long-term roadmap. Brand architecture sprint only — no logo, social, or marketing execution.
 
-**Previous shipped:** The Spatial Computing Philosophy™ (`b30c93efc`), AI Context Capsule Export System™ (`b2648f86c`).
+**Previous shipped:** Spatial Architecture Review Engine™ (`8a6027b93`), Spatial Computing Philosophy™ (`b30c93efc`).
 
 ---
 

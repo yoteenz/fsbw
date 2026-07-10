@@ -225,6 +225,22 @@
 
 ---
 
+## 2026-07-10 — Brand Language Engine™ (Studio OS Bible)
+
+**Decision:** Permanent naming constitution — tiers, frameworks, scorecard, social handle methodology without generating final handles.
+
+**Reason:** Studio recognizable by coherent language across products, places, systems, and public identities — civilization not feature list.
+
+**Impact:** `STUDIO_OS_BIBLE/BRAND_LANGUAGE_ENGINE.md` — core philosophy, naming constitution (8 articles), four tiers, product/place/AI/system frameworks, social handle engine + availability workflow, Studio Test, north star, roadmap. No usernames generated this sprint.
+
+**Files:** `STUDIO_OS_BIBLE/BRAND_LANGUAGE_ENGINE.md`, `STUDIO_OS_BIBLE/README.md`, cross-refs in studio-os README, STUDIO_WORLD_BIBLE, CURRENT_HANDOFF
+
+**Supersedes:** Ad-hoc product naming without tier discipline
+
+**Dependencies:** Future handle sprint runs methodology Phase 1–4 separately
+
+---
+
 ## Template for new entries
 
 ```markdown
