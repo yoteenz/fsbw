@@ -45533,6 +45533,7 @@ User requested visible compile progress in Mode 2 Creative Studio Preview Compil
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-10 — Executive Operating System™ Sprint (P0 Experience Architecture — docs only)
 
 Summary of **full conversation in this chat** (both architecture prompts): (1) **Studio World™ Foundation Sprint** — 12-doc spatial/organizational architecture at `docs/studio-os/foundation-sprint/`; (2) **Executive Operating System™ Sprint** — 11-doc experience architecture at `docs/studio-os/executive-operating-system-sprint/` for the *feeling* of running a company. Both mandates: **DO NOT IMPLEMENT** — architecture only.
@@ -45542,3 +45543,29 @@ Summary of **full conversation in this chat** (both architecture prompts): (1) *
 - **Decisions / outcomes:** **11-document bundle** at `docs/studio-os/executive-operating-system-sprint/` (README + Constitution · Founder Experience Philosophy · Executive Calendar Framework · Meeting Architecture · AI Specialist Governance · Organizational Memory Model · Decision Ownership Matrix · Department Collaboration Framework · Founder Daily Rhythm · Multi-Year Experience Roadmap). Phase 0 complete; Year 1 (Morning Briefing + Calendar rhythm) awaits founder approval. No code changes.
 - **Changes:** `docs/studio-os/executive-operating-system-sprint/` (11 files). `motherboard/CORE.md` pointer. This MEMORY entry.
 - **Conventions:** Executive OS extends Foundation Sprint + Studio World Constitution™; calendar/meeting/chronicle systems are experience architecture until Era 1+ implementation; proactive scheduling must be earned (milestone · blocker · disagreement — not engagement baiting).
+=======
+## 2026-07-10 — Experience Engine Main-Thread Freeze Bisect™ (P0 diagnostics)
+
+Summary of **full conversation in this chat**: After Experience Lab shell generation (`70965a583`), Experience Engine normal-browser persistence hotfix (`ceaaee94b`), and Experience Lab pipeline status bar (`6a7cd89b5`), user reported **P0: heartbeat still stops in normal Safari and normal Chrome on iPhone** — main thread freeze, **not** resolved by cache/persist repair. Mandate: **diagnostics only** — no timeouts, watchdogs, cache clears, or production fixes until exact blocking function is isolated. Treat as possible **WebKit-specific synchronous freeze** until disproven.
+
+- **Delivered (diagnostics bundle):**
+  - Routes **`/__experience-engine-bisect?stage=0–12`** and **`/__experience-engine-freeze-report`** (registered in `StudioDebugRoutes.tsx`).
+  - Staged loaders **`bisect-stages.ts`** — dynamic imports per stage (DNA repair, runtime ensure, scene stack, brand DNA, graph build, preview compiler, orb snapshot, full UI chunk).
+  - **`BisectStageTree`** — React provider mounting (error boundary, workspace, orb, golden shell + EE workspace) only when stage requires.
+  - **Three freeze signals:** RAF + setTimeout (MTD) + CSS `@keyframes` pulse (`freeze-signals.ts`); interpretation guide on report page.
+  - **Freeze-safe trace ledger** — ring buffer + `sessionStorage` mirror (`eeFreezeLatestCheckpoint_v1`, `eeFreezeBisectReport_v1`); survives tab reopen.
+  - **`BisectInstrument`** — render/effect counters with low-frequency checkpoints.
+  - **`scripts/experience-engine-bisect-probe.mjs`** — headless stage 0–12 probe.
+  - **`docs/studio-os/experience-engine-freeze-bisect.md`** — stage matrix, module-scope audit, WebKit notes, bisect procedure, hypothesis-only repair proposal.
+
+- **Module-scope audit (import graph):** **No Critical import-time mutators** (`ensure*`, `repair*`, `readGenesisStore`, subscriptions). Dominant sync cost = **genesis barrel fan-out** + large seed blobs (`build-order`, `studio-os-design-dna`, `experience-runtime/bootstrap/seed-data` top-level `build*`). Runtime mutators in hooks: `useExperienceEngineDnaState`, `useOrbState` + `GENESIS_UPDATED`, `GlobalAtlasProvider`, `DepartmentGoldenBuildShell` scroll lock.
+
+- **Headless probe result:** All stages 0–12 **PASS** in Chromium (genesis ~139KB in test env) — freeze **not reproduced on desktop**; **iOS normal-tab bisect required on device**.
+
+- **Isolation status:** First failing stage, exact file/function, and normal-vs-private divergence **pending manual iOS WebKit runs**. Working hypothesis (unproven): stage 5–9 or stage 12 runtime with persisted `genesis_v1` → sync parse + `buildExperienceEngineReadyView` or Orb GENESIS_UPDATED loop.
+
+- **Minimal repair proposal (NOT applied):** Narrow genesis barrel imports; lazy seed-data inside `ensure*`; memoize ready-view on genesis revision; break GENESIS_UPDATED ↔ setState cycles.
+
+- **Conventions:** Creative Direction Studio implementation remains paused until EE stable in normal Safari/Chrome. No production EE route changes in this sprint.
+
+>>>>>>> be2c66659 (Add Experience Engine main-thread freeze bisect diagnostics (stages 0-12, trace ledger, probe script))

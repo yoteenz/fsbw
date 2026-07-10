@@ -9,6 +9,8 @@ import ChunkDebugPage from '../pages/debug/chunk-debug/page';
 import BootDebugPage from '../pages/debug/boot-debug/page';
 import ThreadHeartbeatDebugPage from '../pages/debug/thread-heartbeat/page';
 import ExperienceLabSafeDebugPage from '../pages/debug/experience-lab-safe/page';
+import ExperienceEngineBisectPage from '../pages/debug/experience-engine-bisect/page';
+import ExperienceEngineFreezeReportPage from '../pages/debug/experience-engine-freeze-report/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import LoadingScreen from '../components/base/LoadingScreen';
@@ -21,6 +23,8 @@ export const STUDIO_DEBUG_PATHS = [
   '/__boot-debug',
   '/__thread-heartbeat',
   '/__experience-lab-safe',
+  '/__experience-engine-bisect',
+  '/__experience-engine-freeze-report',
 ] as const;
 
 export function isStudioDebugPath(pathname: string): boolean {
@@ -42,6 +46,8 @@ export default function StudioDebugRoutes() {
       />
       <Route path="/__thread-heartbeat" element={<ThreadHeartbeatDebugPage />} />
       <Route path="/__experience-lab-safe" element={<ExperienceLabSafeDebugPage />} />
+      <Route path="/__experience-engine-bisect" element={<ExperienceEngineBisectPage />} />
+      <Route path="/__experience-engine-freeze-report" element={<ExperienceEngineFreezeReportPage />} />
       <Route
         path="*"
         element={
