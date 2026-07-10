@@ -22,9 +22,10 @@
 |---------|---------|
 | [V1 — Spatial Learning OS](./STUDIO_INSTITUTE_BIBLE.md) | First spatial foundation (reference) |
 | [V2 — Adaptive Learning Engine](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md) | **What** Studio Institute is — product, campus, professors, loops |
-| **V3 — Cognitive Engine** (this document) | **How** the AI learns to teach one specific person |
+| [V3 — Cognitive Engine](./STUDIO_INSTITUTE_VISION_BIBLE_V3.md) | **How** the AI learns to teach **one specific person** |
+| [Learning DNA Bible](./STUDIO_INSTITUTE_LEARNING_DNA_BIBLE.md) | **How** the Institute discovers how humans learn — globally |
 
-V2 governs experience. V3 governs intelligence. **Both are required before implementation.**
+V2 governs experience. V3 governs per-person intelligence. Learning DNA Bible governs global adaptive intelligence. **All three are required before implementation.**
 
 ---
 
