@@ -46202,3 +46202,19 @@ Summary of **full conversation in this chat**: User shared Vercel deploy log (`2
 - **Verified:** `npm run package:ai-context-capsule-zip` + `npm run build` pass.
 - **Conventions:** Onboarding must not rely on inference; external AI waits for founder approval; folder name stays `StudioOS_ContextCapsule_v0.1`, version **0.2.0** in manifest/metadata.
 
+---
+
+## 2026-07-10 — Stable Context Capsule downloads & version management
+
+Summary of **full conversation in this chat** (continued from v0.2 onboarding + prior deploy/bundle fixes): User issued **FOLLOW-UP SPRINT: Stable Context Capsule Downloads & Version Management** — permanent `latest.zip` alias + immutable versioned releases + `release.json` + admin UI release channel.
+
+- **Context:** Versioned ZIPs required updating URLs after each deploy; need release-channel model (latest + history).
+- **Delivered:**
+  - **Prebuild packager** (`scripts/package-ai-context-capsule-zip.mjs`): validates first; on pass copies **`latest.zip`** + versioned archive; on fail exits 1 and **does not** touch latest; writes **`release.json`** (current/previous version, git commit, checksum, releaseHistory); seeds history from existing versioned zips on disk; writes `api/_lib/context-capsule-release.json` for serverless.
+  - **Constants/types:** `CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH`, `CONTEXT_CAPSULE_RELEASE_MANIFEST_FILE`, `ContextCapsuleReleaseManifest`, extended `ContextCapsuleStatus`; generator **0.2.1**; onboarding prompt uses permanent latest URL.
+  - **API:** GET returns `release`; download redirect → `latest.zip`; POST requires `release.validationStatus === 'pass'`.
+  - **Admin UI** (`ContextCapsuleWorkspace`): permanent URL panel, Download Latest, release history table (active version highlighted), validation status, admin export log.
+  - **Artifacts:** `public/downloads/context-capsules/latest.zip`, `release.json`, v0.1.0 + v0.2.0 versioned zips preserved.
+- **Permanent URL:** `https://fsbw.vercel.app/downloads/context-capsules/latest.zip`
+- **Verified:** `npm run package:ai-context-capsule-zip` + `npm run build` pass.
+

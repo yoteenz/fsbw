@@ -15,7 +15,11 @@ export type SceneStackDriver = {
   projectId: string;
   ensureStation: (stationId: string, options?: WorldCompileOptions) => Promise<void>;
   compileStation: (stationId: string, options?: WorldCompileOptions) => Promise<WorldCompileResult>;
-  regenerateLayer: (stationId: string, layerId: SceneStackLayerId) => Promise<boolean>;
+  regenerateLayer: (
+    stationId: string,
+    layerId: SceneStackLayerId,
+    options?: Pick<WorldCompileOptions, 'previewCompileContext' | 'validationMode'>
+  ) => Promise<boolean>;
   getLayerViews: (stationId: string) => SceneStackLayerView[];
   getCompositeStatus: (stationId: string) => SceneStackCompositeStatus;
   getStationPipelineProgress: (stationId: string) => SceneStackPipelineProgress;

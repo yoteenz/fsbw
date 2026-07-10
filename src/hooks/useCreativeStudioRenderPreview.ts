@@ -126,8 +126,12 @@ export function useCreativeStudioRenderPreview(
   );
 
   const defaultShellDiagnostic = useMemo(
-    () => diagnoseShellResolution(departmentId, projectId, stationId, { validationMode: true }),
-    [departmentId, projectId, stationId]
+    () =>
+      diagnoseShellResolution(departmentId, projectId, stationId, {
+        validationMode: true,
+        previewSessionId,
+      }),
+    [departmentId, projectId, stationId, previewSessionId]
   );
 
   const defaultRenderPipelineProgress = useMemo(

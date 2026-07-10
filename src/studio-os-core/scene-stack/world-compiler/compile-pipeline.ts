@@ -14,6 +14,9 @@ import { buildCompilationReport, type WorldCompilationReport, type WorldCompileS
 import { SCENE_GRAPH_BRANCH_TREE } from './scene-graph-branches';
 import { isExperienceLabValidationRender } from '../validation-render';
 import { diagnoseShellResolution } from '../shell-diagnostics';
+import type { PreviewCompileContext } from '../preview-compile-context';
+import { assertPreviewSessionInvariant } from '../preview-compile-context';
+import { getValidationEnvironmentShell, verifyEphemeralShellMount } from '../ephemeral-validation-registry';
 import { logCompilerEvent, recordStageSuccess } from '../../../studio-os/diagnostics/world-compiler-investigation';
 import { emitStudioOsRuntimeEvent } from '../../../studio-os/diagnostics/runtime-emit';
 
@@ -22,6 +25,8 @@ export type WorldCompileOptions = {
   validationMode?: boolean;
   /** Skip environment-shell — already registered in ephemeral validation registry */
   skipEnvironmentShell?: boolean;
+  /** Explicit preview-scoped compile identity — required for Experience Lab validation compiles */
+  previewCompileContext?: PreviewCompileContext;
   /** Forensic investigation context — logging only */
   investigation?: {
     compileRunId: string;
@@ -107,9 +112,27 @@ export async function compileWorldStation(input: {
   options?: WorldCompileOptions;
 }): Promise<WorldCompileResult> {
   const validationMode = input.options?.validationMode ?? isExperienceLabValidationRender();
+  const previewContext = input.options?.previewCompileContext;
+  const previewSessionId = previewContext?.previewSessionId;
   const investigation = input.options?.investigation;
   const onStageComplete = input.options?.onStageComplete;
   const stageOptions = { investigation, onStageComplete };
+  const shellResolveOptions = {
+    validationMode,
+    ...(previewSessionId ? { previewSessionId } : {}),
+  };
+  const diagnosticOptions = previewContext
+    ? { previewCompileContext: previewContext }
+    : previewSessionId
+      ? { validationMode, previewSessionId }
+      : { validationMode };
+
+  if (validationMode && !previewSessionId) {
+    throw new Error(
+      '[SHELL_RECOVERY_LOOKUP_MISMATCH] compileWorldStation requires previewCompileContext.previewSessionId for validation compiles.'
+    );
+  }
+
   const compileStart = performance.now();
   emitStudioOsRuntimeEvent('WORLD_COMPILER_STARTED', 'world-compiler.compile-pipeline', {
     stationId: input.stationId,
@@ -119,29 +142,59 @@ export async function compileWorldStation(input: {
     stationId: input.stationId,
   });
   const stages: WorldCompileStageResult[] = [];
-  const shellLock = resolveShellLockState(input.departmentId, input.projectId, input.stationId, {
-    validationMode,
-  });
-  const shellDiagnostic = diagnoseShellResolution(
-    input.departmentId,
-    input.projectId,
-    input.stationId,
-    { validationMode }
-  );
-  const records = listSceneStackLayersForStation(
-    input.departmentId,
-    input.projectId,
-    input.stationId
-  );
 
   stages.push(
     await runStage('load-shell', () => {
+      const shellLock = resolveShellLockState(
+        input.departmentId,
+        input.projectId,
+        input.stationId,
+        shellResolveOptions
+      );
+      const shellDiagnostic = diagnoseShellResolution(
+        input.departmentId,
+        input.projectId,
+        input.stationId,
+        diagnosticOptions
+      );
+
+      if (validationMode && previewSessionId) {
+        const registered = getValidationEnvironmentShell(previewSessionId);
+        if (registered) {
+          assertPreviewSessionInvariant(
+            registered.previewSessionId,
+            previewSessionId,
+            investigation?.compileRunId
+          );
+          const verification = verifyEphemeralShellMount({
+            previewSessionId,
+            departmentId: input.departmentId,
+            projectId: input.projectId,
+            stationId: input.stationId,
+          });
+          if (!verification.ok) {
+            throw new Error(
+              `[${verification.errorCode ?? 'SHELL_RECOVERY_LOOKUP_MISMATCH'}] ${verification.detail ?? 'Ephemeral shell registration/lookup mismatch.'} registration=${verification.registrationPreviewSessionId} lookup=${verification.lookupPreviewSessionId} shellId=${verification.shellId ?? 'none'} namespace=${verification.registryNamespace} compileRunId=${investigation?.compileRunId ?? 'unknown'}`
+            );
+          }
+        }
+      }
+
       if (!shellLock.shellUrl) {
-        const code = shellLock.resolution === 'missing-record' ? 'SHELL_RECORD_MISSING' : 'SHELL_URL_MISSING';
+        let code = shellLock.resolution === 'missing-record' ? 'SHELL_RECORD_MISSING' : 'SHELL_URL_MISSING';
+        if (
+          validationMode &&
+          previewSessionId &&
+          getValidationEnvironmentShell(previewSessionId) &&
+          shellLock.resolution === 'missing-record'
+        ) {
+          code = 'SHELL_RECOVERY_LOOKUP_MISMATCH';
+        }
         throw new Error(
-          `[${code}] No executable shell loaded. ${shellDiagnostic.failureReason ?? 'environment-shell unresolved.'} Station ${input.stationId} · mode ${shellDiagnostic.authorizationMode}.`
+          `[${code}] No executable shell loaded. ${shellDiagnostic.failureReason ?? 'environment-shell unresolved.'} Station ${input.stationId} · preview ${previewSessionId ?? 'none'} · mode ${shellDiagnostic.authorizationMode}.`
         );
       }
+
       emitStudioOsRuntimeEvent('SHELL_CREATED', 'world-compiler.compile-pipeline', {
         stationId: input.stationId,
         shellVersion: shellLock.shellVersion,
@@ -154,6 +207,24 @@ export async function compileWorldStation(input: {
       });
       return `Shell v${shellLock.shellVersion} loaded (${shellLock.resolution}) as reference.`;
     }, stageOptions)
+  );
+
+  const shellLock = resolveShellLockState(
+    input.departmentId,
+    input.projectId,
+    input.stationId,
+    shellResolveOptions
+  );
+  const shellDiagnostic = diagnoseShellResolution(
+    input.departmentId,
+    input.projectId,
+    input.stationId,
+    diagnosticOptions
+  );
+  const records = listSceneStackLayersForStation(
+    input.departmentId,
+    input.projectId,
+    input.stationId
   );
 
   stages.push(

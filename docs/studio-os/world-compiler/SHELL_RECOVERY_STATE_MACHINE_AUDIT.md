@@ -296,3 +296,141 @@ Every auto-run uses `forceRegenerate: true` → `clearValidationPreviewSession` 
 4. Single compile gate: defer `compileWorldStation` until `shellIsMountReady()` is true post-registration.
 
 Enforce: **ONE RUN · ONE RUN ID · ONE SHELL RESOLUTION PATH · ONE TERMINAL RESULT**
+
+---
+
+## Forensic addendum (2026-07-10) — first failure point + verified reproduction
+
+### User-visible symptom (exact)
+
+| Field | Value |
+|-------|-------|
+| Error code | `SHELL_RECORD_MISSING` |
+| Shell status | `none` |
+| Resolution | `missing-record` |
+| Recovery | Ephemeral validation shell registered for this preview session. |
+
+This combination is **not** “registration failed.” It is **registration succeeded at session tier, mount tier failed**.
+
+### Complete lifecycle trace
+
+| Phase | Module | What happens | Status on failure path |
+|-------|--------|--------------|------------------------|
+| 1. Shell ID generation | `environment-shell.ts` | `shellId = xelab-shell-{company}-{concept}-{previewSessionId}` | OK |
+| 2. Session ID generation | `experience-lab-render-runtime.ts` | `{company}:{concept}:{dept}:{station}:{projectId}` | OK |
+| 3. Registration write | `ephemeral-validation-registry.ts` | Session `Map` entry + overlay key `{session}:{dept}:{project}:{station}:environment-shell` | **OK — shell exists** |
+| 4. Persistence | in-memory `sessions` Map only | No localStorage write for ephemeral shell | N/A (not lost on refresh mid-run) |
+| 5. Hydration signal | `dispatchHydrated()` | `studio-os-scene-stack-hydrated` event | Fired; no reader bridges overlay into store |
+| 6. Global context | `validation-render.ts` | `activeMode`, `activePreviewSessionId` singletons | **Failure point (see RC-1, RC-2)** |
+| 7. Registry read (session) | `getValidationEnvironmentShell(sessionId)` | Returns `entry.shell` by session id only | **Succeeds** → recovery text |
+| 8. Registry read (mount) | `getEphemeralLayerRecord(sessionId, dept, project, station, layerId)` | Composite overlay key lookup | **Fails** → `recordStatus: none` |
+| 9. Layer bridge | `store.ts` → `getSceneStackLayerRecord` | Ephemeral path gated by `isExperienceLabValidationRender()` only | Skips or misses overlay |
+| 10. Lock resolution | `immutable-shell.ts` → `resolveShellLockState` | `shell === null` → `missing-record`, `shellUrl: null` | **First authoritative failure for compiler** |
+| 11. Compile gate | `compile-pipeline.ts` `load-shell` | Throws `[SHELL_RECORD_MISSING]` | Terminal for run |
+| 12. Runtime gate | `experience-lab-render-runtime.ts` | `!compiled.report.success` → `shellPipelinePhase: failed` | UI pinned on Load Shell |
+
+**First point where the shell record disappears from the World Compiler’s perspective:** step **8–10** — overlay lookup inside `getEphemeralLayerRecord` (or ephemeral path skipped in `getSceneStackLayerRecord`). The session-level shell object from step 7 is still present.
+
+### Expected path vs actual path
+
+**Expected (happy path):**
+
+```text
+registerValidationEnvironmentShell
+  → overlay key matches compile scope
+  → isExperienceLabValidationRender() === true
+  → getValidationPreviewSession() === shell.previewSessionId
+  → getSceneStackLayerRecord returns draft_ready + publicUrl
+  → resolveShellLockState.shellUrl set
+  → load-shell success → report.success → shellPipelinePhase: ready
+```
+
+**Actual (reported failure):**
+
+```text
+registerValidationEnvironmentShell ✓
+  → getValidationEnvironmentShell(sessionId) ✓  (diagnostics: recovery message)
+  → getEphemeralLayerRecord(globalSession, compileDept, compileProject, compileStation) ✗
+  → getSceneStackLayerRecord → null
+  → resolveShellLockState → missing-record, shellUrl null
+  → load-shell throws SHELL_RECORD_MISSING
+  → report.success false → UI stuck on load-shell
+```
+
+### Verified reproduction (offline, 2026-07-10)
+
+Command: extended checks via `npx tsx` importing registry + diagnostics modules.
+
+**RC-1 — Global session / scope split (compare-mode pattern):**
+
+Register shell for `studio-os` session. Set global `activePreviewSessionId` to that session. Query overlay for `frontal-slayer` dept/station scope.
+
+Result: `session-level shell found: true`, `overlay: false`, `resolution: missing-record`, recovery text matches user UI. **MATCHES USER UI: true**
+
+**RC-2 — Validation flag split:**
+
+Register shell. Set `activeMode = production` while calling `diagnoseShellResolution(..., { validationMode: true })`.
+
+Result: `getSceneStackLayerRecord` returns `null` (ephemeral path skipped), session lookup still finds shell, recovery + `missing-record`. **MATCHES USER UI: true**
+
+**Happy path control:** With `experience-lab-validation` mode, matching session, and matching scope → `resolution: validation-draft`, `publicUrl` present.
+
+Existing script `scripts/verify-experience-lab-shell-resolution.mjs` only proves RC-0 (register + session lookup). It does **not** exercise overlay lookup or global singletons — which is why 9/9 pass while production fails.
+
+### Root causes (ranked, with evidence)
+
+#### RC-1 (primary) — Two-tier registry + global session singleton
+
+**Mechanism:** `registerValidationEnvironmentShell` writes both session shell and station overlay, but consumers use **different lookup functions with different key shapes**:
+
+| Function | Key | Used for |
+|----------|-----|----------|
+| `getValidationEnvironmentShell` | `previewSessionId` only | Recovery UX |
+| `getEphemeralLayerRecord` | `{session}:{dept}:{project}:{station}:{layerId}` | World Compiler mount |
+
+`diagnoseShellResolution`, `getSceneStackLayerRecord`, and `resolveShellLockState` all call `getValidationPreviewSession()` — a **process-wide singleton** last written by whichever preview called `ensureSessionState` most recently (`experience-lab-render-runtime.ts` line 278).
+
+**Compare mode trigger:** `CreativeIntelligencePanel.tsx` mounts up to **three** `CreativeStudioRenderPreview` instances (`CompareAllCompanies`). Each starts `runFullPipeline` with `forceRegenerate: true`. Preview N wins `activePreviewSessionId`. Previews A/B compile with global session id C while querying A/B dept/station overlay keys → overlay miss while session-tier shell for C still exists → exact user symptom on A/B panels.
+
+**Affected files:**
+
+- `src/studio-os-core/scene-stack/validation-render.ts` — global `activePreviewSessionId`
+- `src/studio-os-core/scene-stack/ephemeral-validation-registry.ts` — split session vs overlay maps
+- `src/studio-os-core/scene-stack/store.ts` — overlay bridge
+- `src/studio-os-core/scene-stack/shell-diagnostics.ts` — recovery uses session tier only (lines 51–53)
+- `src/studio-os-core/experience-lab-runtime/experience-lab-render-runtime.ts` — per-session state vs global session id
+- `src/components/admin/studio/experience-lab/CreativeIntelligencePanel.tsx` — multi-preview mount
+
+#### RC-2 (secondary) — Ephemeral bridge ignores explicit `validationMode`
+
+**Mechanism:** `getSceneStackLayerRecord` only enters the ephemeral path when `isExperienceLabValidationRender()` is true. It does **not** accept `validationMode` from callers.
+
+Meanwhile `diagnoseShellResolution` accepts `{ validationMode: true }` and calls `getValidationEnvironmentShell` directly — bypassing the store gate.
+
+**Effect:** Any window where `activeMode === 'production'` but diagnostics pass `validationMode: true` produces recovery text + `missing-record` without any session race.
+
+**Affected files:**
+
+- `src/studio-os-core/scene-stack/store.ts` lines 69–78
+- `src/studio-os-core/scene-stack/shell-diagnostics.ts` lines 38–46, 51–53
+- `src/studio-os-core/scene-stack/world-compiler/immutable-shell.ts` — passes no session id into store
+
+#### RC-3 (contributing) — Misleading recovery UX (F4)
+
+`diagnoseShellResolution` sets `failureReason = null` and recovery message when `ephemeralShell` exists **without** checking `shellIsMountReady()` or `lock.resolution`. Operators interpret recovery as compile-ready when mount tier failed.
+
+#### RC-4 (contributing) — `forceRegenerate` invalidation (F3)
+
+Every auto-run clears the session registry at pipeline start (`validation-shell-pipeline.ts` line 86). Does not explain recovery + missing-record at same snapshot, but can cause intermittent misses if compile races a second pipeline start.
+
+### Recommended fix (document only — not applied)
+
+Priority order for a future sprint:
+
+1. **Single resolution path:** Pass explicit `previewSessionId` from runtime session into `getSceneStackLayerRecord` / `resolveShellLockState` / `compileWorldStation` — never rely on global singleton for overlay reads.
+2. **Per-preview context:** Replace global `activePreviewSessionId` with session-scoped context (or pass through compile options from `ExperienceLabSessionState.previewSessionId`).
+3. **Unify diagnostics with mount readiness:** In `diagnoseShellResolution`, only emit recovery when `lock.resolution === 'validation-draft'` (or `shellIsMountReady()`), not when session-tier shell alone exists.
+4. **Extend verification script:** Assert overlay lookup + `getSceneStackLayerRecord` + compare-mode session isolation — not just `getValidationEnvironmentShell`.
+5. **Compare mode:** Serialize compiles or isolate ephemeral registry per preview instance.
+
+**Do not:** fabricate localStorage shell records, add retry loops, or patch `load-shell` to ignore missing overlay without fixing key alignment.

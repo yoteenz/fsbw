@@ -104,3 +104,88 @@ export function listActiveValidationSessions(): string[] {
   }
   return Array.from(sessions.keys());
 }
+
+export type EphemeralShellMountVerification = {
+  ok: boolean;
+  registrationPreviewSessionId: string;
+  lookupPreviewSessionId: string;
+  shellId: string | null;
+  registryNamespace: string;
+  mountReady: boolean;
+  errorCode?: 'SHELL_RECOVERY_LOOKUP_MISMATCH' | 'SHELL_RECORD_MISSING';
+  detail?: string;
+};
+
+/** Test teardown — clear all ephemeral sessions. */
+export function resetEphemeralValidationRegistryForTests(): void {
+  sessions.clear();
+}
+
+/** Verify registration and overlay lookup resolve under the same previewSessionId. */
+export function verifyEphemeralShellMount(input: {
+  previewSessionId: string;
+  departmentId: string;
+  projectId: string;
+  stationId: string;
+}): EphemeralShellMountVerification {
+  const registryNamespace = `ephemeral-validation:${input.previewSessionId}`;
+  const registered = getValidationEnvironmentShell(input.previewSessionId);
+
+  if (!registered) {
+    return {
+      ok: false,
+      registrationPreviewSessionId: input.previewSessionId,
+      lookupPreviewSessionId: input.previewSessionId,
+      shellId: null,
+      registryNamespace,
+      mountReady: false,
+      errorCode: 'SHELL_RECORD_MISSING',
+      detail: `No session shell for preview ${input.previewSessionId}.`,
+    };
+  }
+
+  if (registered.previewSessionId !== input.previewSessionId) {
+    return {
+      ok: false,
+      registrationPreviewSessionId: registered.previewSessionId,
+      lookupPreviewSessionId: input.previewSessionId,
+      shellId: registered.shellId,
+      registryNamespace,
+      mountReady: false,
+      errorCode: 'SHELL_RECOVERY_LOOKUP_MISMATCH',
+      detail: `Registration previewSessionId ${registered.previewSessionId} !== lookup ${input.previewSessionId}.`,
+    };
+  }
+
+  const overlay = getEphemeralLayerRecord(
+    input.previewSessionId,
+    input.departmentId,
+    input.projectId,
+    input.stationId,
+    'environment-shell'
+  );
+
+  if (!overlay?.publicUrl) {
+    return {
+      ok: false,
+      registrationPreviewSessionId: registered.previewSessionId,
+      lookupPreviewSessionId: input.previewSessionId,
+      shellId: registered.shellId,
+      registryNamespace,
+      mountReady: false,
+      errorCode: 'SHELL_RECOVERY_LOOKUP_MISMATCH',
+      detail: `Overlay miss for ${input.previewSessionId}:${input.departmentId}:${input.projectId}:${input.stationId}:environment-shell`,
+    };
+  }
+
+  const mountReady = overlay.status === 'draft_ready' && Boolean(overlay.publicUrl);
+
+  return {
+    ok: true,
+    registrationPreviewSessionId: registered.previewSessionId,
+    lookupPreviewSessionId: input.previewSessionId,
+    shellId: registered.shellId,
+    registryNamespace,
+    mountReady,
+  };
+}

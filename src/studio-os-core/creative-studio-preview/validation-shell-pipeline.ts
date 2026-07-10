@@ -4,6 +4,7 @@ import {
   clearValidationPreviewSession,
   registerValidationEnvironmentShell,
   getValidationEnvironmentShell,
+  verifyEphemeralShellMount,
   EPHEMERAL_VALIDATION_TTL_MS,
 } from '../scene-stack/ephemeral-validation-registry';
 import { logCompilerEvent } from '../../studio-os/diagnostics/world-compiler-investigation';
@@ -135,6 +136,36 @@ export async function runExperienceLabValidationShellPipeline(input: {
   };
 
   registerValidationEnvironmentShell(shell);
+
+  const verification = verifyEphemeralShellMount({
+    previewSessionId: shell.previewSessionId,
+    departmentId: shell.departmentId,
+    projectId: shell.projectId,
+    stationId: shell.stationId,
+  });
+
+  if (!verification.ok) {
+    return {
+      ok: false,
+      shell,
+      recipe,
+      stage: 'register-ephemeral',
+      errorCode: verification.errorCode ?? 'SHELL_RECOVERY_LOOKUP_MISMATCH',
+      errorDetail: `${verification.detail ?? 'Post-registration lookup failed.'} registration=${verification.registrationPreviewSessionId} lookup=${verification.lookupPreviewSessionId} shellId=${verification.shellId ?? 'none'} namespace=${verification.registryNamespace}`,
+    };
+  }
+
+  if (!verification.mountReady) {
+    return {
+      ok: false,
+      shell,
+      recipe,
+      stage: 'register-ephemeral',
+      errorCode: 'SHELL_RECOVERY_LOOKUP_MISMATCH',
+      errorDetail: `Shell registered but not mount-ready for preview ${shell.previewSessionId}.`,
+    };
+  }
+
   input.onStageChange?.('complete');
 
   return {

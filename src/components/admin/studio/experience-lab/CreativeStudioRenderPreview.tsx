@@ -217,6 +217,10 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
                 <DiagnosticRow label="Validation mode" value={shellDiagnostic.authorizationMode} />
                 <DiagnosticRow label="Registry mode" value={shellDiagnostic.registryMode} />
                 <DiagnosticRow label="Recovery" value={shellDiagnostic.recoveryAction} />
+                <DiagnosticRow label="Recovery phase" value={shellDiagnostic.recoveryPhase} />
+                {shellDiagnostic.previewSessionId ? (
+                  <DiagnosticRow label="Preview session" value={shellDiagnostic.previewSessionId} />
+                ) : null}
               </dl>
             </details>
           ) : null}

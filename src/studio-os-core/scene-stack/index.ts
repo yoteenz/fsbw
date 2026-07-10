@@ -1,4 +1,6 @@
 export * from './validation-render';
+export * from './preview-compile-context';
+export * from './scene-stack-lookup-options';
 export * from './shell-diagnostics';
 export * from './ephemeral-validation-registry';
 export * from './types';

@@ -12,6 +12,7 @@ import {
 } from '../creative-studio-preview';
 import {
   buildSceneGraph,
+  buildPreviewCompileContext,
   diagnoseShellResolution,
   resolveMasterSceneBlueprint,
   shellIsMountReady,
@@ -100,6 +101,18 @@ function releaseValidationMode(): void {
     setValidationRenderMode('production');
     setValidationPreviewSession(null);
   }
+}
+
+function sessionPreviewContext(session: SessionState): ReturnType<typeof buildPreviewCompileContext> {
+  return buildPreviewCompileContext({
+    previewSessionId: session.previewSessionId,
+    departmentId: session.key.departmentId,
+    projectId: session.key.projectId,
+    stationId: session.key.stationId,
+    conceptId: session.key.conceptId,
+    companyId: session.key.companyId,
+    compileRunId: session.compileRunId,
+  });
 }
 
 function mapShellStageToPhase(stage: ValidationShellPipelineResult['stage']): ShellPipelinePhase {
@@ -203,12 +216,13 @@ function buildSnapshot(session: SessionState): ExperienceLabRuntimeSnapshot | nu
     isStalled,
   };
 
+  const previewContext = sessionPreviewContext(session);
   const shellDiagnostic = diagnoseShellResolution(session.key.departmentId, session.key.projectId, stationId, {
-    validationMode: true,
+    previewCompileContext: previewContext,
   });
 
   const shellReady = shellIsMountReady(session.key.departmentId, session.key.projectId, stationId, {
-    validationMode: true,
+    previewCompileContext: previewContext,
   });
 
   const isBuilding =
@@ -406,9 +420,12 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   driver.bump();
   notifySnapshot(session);
 
+  const previewContext = sessionPreviewContext(session);
+
   await driver.ensureStation(session.key.stationId, {
     validationMode: true,
     skipEnvironmentShell: true,
+    previewCompileContext: previewContext,
     investigation: {
       compileRunId: session.compileRunId,
       compilerInstanceId,
@@ -432,6 +449,7 @@ async function runFullPipeline(session: SessionState): Promise<void> {
 
   const compiled = await driver.compileStation(session.key.stationId, {
     validationMode: true,
+    previewCompileContext: previewContext,
     investigation: {
       compileRunId: session.compileRunId,
       compilerInstanceId,
@@ -522,7 +540,23 @@ export function requestRuntimeRegenerateLayer(
 ): void {
   const driver = getSceneStackDriver(key.departmentId, key.projectId);
   if (!driver) return;
-  void driver.regenerateLayer(key.stationId, layerId);
+  const previewSessionId = buildPreviewSessionId(key);
+  const session = sessions.get(previewSessionId);
+  const previewCompileContext = session
+    ? buildPreviewCompileContext({
+        previewSessionId,
+        departmentId: key.departmentId,
+        projectId: key.projectId,
+        stationId: key.stationId,
+        conceptId: key.conceptId,
+        companyId: key.companyId,
+        compileRunId: session.compileRunId,
+      })
+    : undefined;
+  void driver.regenerateLayer(key.stationId, layerId, {
+    validationMode: true,
+    previewCompileContext,
+  });
 }
 
 export function getRuntimeSnapshot(key: ExperienceLabSessionKey): ExperienceLabRuntimeSnapshot | null {

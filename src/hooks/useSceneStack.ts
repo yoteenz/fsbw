@@ -198,11 +198,29 @@ export function useSceneStack(
   );
 
   const generateLayer = useCallback(
-    async (stationId: string, layerId: SceneStackLayerId, force = false): Promise<boolean> => {
+    async (
+      stationId: string,
+      layerId: SceneStackLayerId,
+      force = false,
+      layerCompileOptions?: Pick<WorldCompileOptions, 'previewCompileContext' | 'validationMode'>
+    ): Promise<boolean> => {
       const key = genKey(stationId, layerId);
       if (generatingKeys.has(key)) return false;
 
-      const existing = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
+      const previewSessionId = layerCompileOptions?.previewCompileContext?.previewSessionId;
+      const validationMode = layerCompileOptions?.validationMode ?? isExperienceLabValidationRender();
+      const lookupOptions =
+        validationMode && previewSessionId
+          ? { validationMode: true, previewSessionId }
+          : undefined;
+
+      const existing = getSceneStackLayerRecord(
+        departmentId,
+        projectId,
+        stationId,
+        layerId,
+        lookupOptions
+      );
       if (!force && (existing?.status === 'approved' || existing?.status === 'draft_ready') && existing.publicUrl) return true;
 
       if (!force) {
@@ -268,7 +286,8 @@ export function useSceneStack(
         });
 
         const shellLock = resolveShellLockState(departmentId, projectId, stationId, {
-          validationMode: isExperienceLabValidationRender(),
+          validationMode,
+          ...(previewSessionId ? { previewSessionId } : {}),
         });
         const shellCheck = assertShellImmutableForLayer(layerId, shellLock);
         if (!shellCheck.ok) {
@@ -512,7 +531,12 @@ export function useSceneStack(
           projectId,
           stationId,
           blueprint,
-          options: { validationMode: isExperienceLabValidationRender() },
+          options: {
+            validationMode,
+            ...(layerCompileOptions?.previewCompileContext
+              ? { previewCompileContext: layerCompileOptions.previewCompileContext }
+              : {}),
+          },
         }).then((result) => {
           setCompileReports((prev) => ({ ...prev, [stationId]: result.report }));
         });
@@ -548,7 +572,11 @@ export function useSceneStack(
   );
 
   const regenerateLayer = useCallback(
-    async (stationId: string, layerId: SceneStackLayerId) => generateLayer(stationId, layerId, true),
+    async (
+      stationId: string,
+      layerId: SceneStackLayerId,
+      compileOptions?: Pick<WorldCompileOptions, 'previewCompileContext' | 'validationMode'>
+    ) => generateLayer(stationId, layerId, true, compileOptions),
     [generateLayer]
   );
 
@@ -576,10 +604,23 @@ export function useSceneStack(
 
       try {
         for (const layerId of layerIds) {
-          const rec = getSceneStackLayerRecord(departmentId, projectId, stationId, layerId);
+          const lookupOptions =
+            options?.validationMode && options.previewCompileContext?.previewSessionId
+              ? {
+                  validationMode: true,
+                  previewSessionId: options.previewCompileContext.previewSessionId,
+                }
+              : undefined;
+          const rec = getSceneStackLayerRecord(
+            departmentId,
+            projectId,
+            stationId,
+            layerId,
+            lookupOptions
+          );
           if (!rec?.publicUrl) {
             setPipelineLayer({ stationId, layerId, phase: 'queued' });
-            await generateLayer(stationId, layerId);
+            await generateLayer(stationId, layerId, false, options);
           }
         }
         const blueprint = resolveMasterSceneBlueprint({

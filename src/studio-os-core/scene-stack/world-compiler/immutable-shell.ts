@@ -4,8 +4,13 @@
  */
 
 import { getSceneStackLayerRecord } from '../store';
+import type { SceneStackLayerLookupOptions } from '../scene-stack-lookup-options';
 import type { SceneStackLayerId } from '../types';
 import { isExperienceLabValidationRender } from '../validation-render';
+
+export type ShellLockResolveOptions = SceneStackLayerLookupOptions & {
+  validationMode?: boolean;
+};
 
 export type ShellLockState = {
   locked: boolean;
@@ -22,10 +27,20 @@ export function resolveShellLockState(
   departmentId: string,
   projectId: string,
   stationId: string,
-  options?: { validationMode?: boolean }
+  options?: ShellLockResolveOptions
 ): ShellLockState {
   const validationMode = options?.validationMode ?? isExperienceLabValidationRender();
-  const shell = getSceneStackLayerRecord(departmentId, projectId, stationId, 'environment-shell');
+  const lookupOptions: SceneStackLayerLookupOptions | undefined =
+    options?.previewSessionId && validationMode
+      ? { previewSessionId: options.previewSessionId, validationMode: true }
+      : undefined;
+  const shell = getSceneStackLayerRecord(
+    departmentId,
+    projectId,
+    stationId,
+    'environment-shell',
+    lookupOptions
+  );
 
   if (!shell) {
     return {
