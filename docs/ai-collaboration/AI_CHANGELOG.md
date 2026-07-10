@@ -193,6 +193,22 @@
 
 ---
 
+## 2026-07-10 — The Spatial Computing Philosophy™ (Studio OS Bible)
+
+**Decision:** Permanent design constitution — every capability exists as a real place in Studio World; **Where does it live?** rule before implementation.
+
+**Reason:** Founders should operate a living company, not navigate software; philosophy becomes lens for all future features.
+
+**Impact:** `STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md` — core belief, ecosystem hierarchy, Genesis principle, language constitution, presence/experience principles, design review checklist, marketing implications. Cross-referenced from Studio World Bible, foundation sprint, studio-os README.
+
+**Files:** `STUDIO_OS_BIBLE/*`, `docs/studio-os/README.md`, `STUDIO_WORLD_BIBLE.md`, `foundation-sprint/*`, `CURRENT_HANDOFF.md`
+
+**Supersedes:** Implicit placement rules scattered across sprint docs
+
+**Dependencies:** Future architecture docs must cite spatial alignment block
+
+---
+
 ## Template for new entries
 
 ```markdown

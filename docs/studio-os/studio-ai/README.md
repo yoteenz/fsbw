@@ -3,7 +3,8 @@
 **Status:** Architecture & vision specification — July 2026  
 **Sprint:** COMPOSER — Studio AI™  
 **Authority:** Canonical blueprint for the permanent intelligence layer of Studio OS  
-**Implementation:** **None in this sprint** — specification only
+**Implementation:** **None in this sprint** — specification only  
+**Spatial alignment:** [The Spatial Computing Philosophy™](../../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md) — Genesis is consciousness of Studio World, not a chatbot page
 
 ---
 

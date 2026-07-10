@@ -21,6 +21,7 @@ This sprint **extends** — never replaces — established Studio World law:
 
 | Existing canon | Relationship |
 |----------------|--------------|
+| [The Spatial Computing Philosophy™](../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md) | **Studio OS Bible** — design constitution; **Where does it live?** rule; Genesis principle |
 | [Studio World Constitution™](../studio-world-constitution.md) | Eight Foundational Laws remain binding |
 | [World Philosophy™](../world/world-philosophy.md) | Inhabitation paradigm unchanged |
 | [STUDIO_WORLD_ARCHITECTURE_V4.md](../STUDIO_WORLD_ARCHITECTURE_V4.md) | Campus topology · flagships · room law |

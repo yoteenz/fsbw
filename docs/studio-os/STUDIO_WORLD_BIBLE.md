@@ -9,12 +9,13 @@
 
 > *This document is not a technical specification. It is not a product requirements document. It is the philosophical, experiential, behavioral, and emotional constitution of Studio World™. Every future design and engineering decision must reference this Bible before implementation. Nothing should be built that contradicts it.*
 
-**Complemented by:** [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) v1.0.0 — **permanent city architecture**; [STUDIO_ATLAS_BIBLE.md](../studio-world/STUDIO_ATLAS_BIBLE.md) v1.0.0 — **geographic map**; [STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md) v1.0.0 — **relational intelligence**; [STUDIO_WORLD_CIVILIZATION_BIBLE.md](../studio-world/STUDIO_WORLD_CIVILIZATION_BIBLE.md) v1.0.0 — **cultural constitution** (pillars, institutions, traditions, Chronicles). This Bible governs *how Studio World must feel*; other bibles govern *where*, *how things connect*, and *culture*.
+**Complemented by:** [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) v1.0.0 — **permanent city architecture**; [STUDIO_ATLAS_BIBLE.md](../studio-world/STUDIO_ATLAS_BIBLE.md) v1.0.0 — **geographic map**; [STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md) v1.0.0 — **relational intelligence**; [STUDIO_WORLD_CIVILIZATION_BIBLE.md](../studio-world/STUDIO_WORLD_CIVILIZATION_BIBLE.md) v1.0.0 — **cultural constitution** (pillars, institutions, traditions, Chronicles); [The Spatial Computing Philosophy™](../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md) — **design constitution** (*where does it live?*, Genesis principle, language law). This Bible governs *how Studio World must feel*; other bibles govern *where*, *how things connect*, *culture*, and *spatial placement law*.
 
 **Relationship to other canon:**
 
 | Document | Relationship |
 |----------|--------------|
+| [The Spatial Computing Philosophy™](../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md) | **Design constitution** — placement law, Genesis principle, language constitution, design review checklist |
 | [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) | **City architecture** — districts, headquarters blueprint, expansion framework |
 | [Knowledge Core™](./knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md) | Canonical technical truth — if promoted canon conflicts, canon wins |
 | [Studio World Constitution™](./studio-world-constitution.md) | Governance law — Eight Foundational Laws remain binding |

@@ -4,6 +4,8 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 
 | Document | Description |
 |----------|-------------|
+| [../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md](../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md) | **The Spatial Computing Philosophy™** — Studio OS Bible design constitution: places replace pages, departments replace features, **Where does it live?** rule |
+| [../../STUDIO_OS_BIBLE/README.md](../../STUDIO_OS_BIBLE/README.md) | **Studio OS Bible™** — index of permanent design constitution documents |
 | [../../Genesis.md](../../Genesis.md) | **Genesis.md Foundation Framework™** — canonical source-of-truth kernel for Studio World and compiler source for all future documents |
 | [../../genesis/articles/CONSTITUTIONAL_CORE.md](../../genesis/articles/CONSTITUTIONAL_CORE.md) | **Genesis Constitutional Core™** — permanent philosophical operating system and constitutional law for Studio World |
 | [../../genesis/articles/CANONICAL_OBJECT_MODEL.md](../../genesis/articles/CANONICAL_OBJECT_MODEL.md) | **Canonical Object Model™** — Studio World's complete ontology, relationship language, inheritance doctrine, and object validation test |

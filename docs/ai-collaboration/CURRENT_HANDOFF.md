@@ -7,11 +7,11 @@
 
 ## Current sprint
 
-**AI Context Capsule Export System™ — admin packaging UI**
+**The Spatial Computing Philosophy™ — Studio OS Bible design constitution**
 
-Page: `/admin/studio/context-capsule` — export, validate, download history, copy onboarding prompt. Packages existing `StudioOS_ContextCapsule_v0.1/` without modifying source docs. ZIP output: `/downloads/context-capsules/`.
+Document: `STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md` — permanent design constitution: places replace pages, departments replace features, **Where does it live?** rule, Genesis principle, language constitution, design review checklist, marketing implications. Philosophy sprint only — no UI or feature code.
 
-**Previous shipped:** Manual capsule v0.1 folder (`e60acfb6d`), ZIP CLI (`5a118c85f`).
+**Previous shipped:** AI Context Capsule Export System™ admin page (`b2648f86c`).
 
 ---
 

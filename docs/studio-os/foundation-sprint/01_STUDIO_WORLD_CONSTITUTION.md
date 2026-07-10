@@ -1,7 +1,7 @@
 # Studio World Constitution™ — Foundation Sprint Amendment
 
 **Status:** Constitutional philosophy — P0 Foundation Sprint  
-**Extends:** [Studio World Constitution™](../studio-world-constitution.md) · [World Philosophy™](../world/world-philosophy.md)
+**Extends:** [Studio World Constitution™](../studio-world-constitution.md) · [World Philosophy™](../world/world-philosophy.md) · [The Spatial Computing Philosophy™](../../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md)
 
 ---
 

@@ -6,7 +6,7 @@ This folder is **separate from**:
 
 | Canon | Location | Role |
 |-------|----------|------|
-| Studio OS Bible | `docs/studio-os/` | Product architecture |
+| Studio OS Bible | `STUDIO_OS_BIBLE/`, `docs/studio-os/` | Design constitution + product architecture |
 | Genesis documentation | `docs/studio-os/genesis/` | Constitutional platform design |
 | Cursor / agent context | `motherboard/`, `AGENTS.md` | In-repo agent memory |
 | Company documentation | `docs/frontal-slayer/`, brand docs | Organization-specific |
