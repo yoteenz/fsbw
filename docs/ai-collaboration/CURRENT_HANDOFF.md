@@ -7,11 +7,11 @@
 
 ## Current sprint
 
-**Studio AI™ — Persistent Intelligence Layer (architecture spec v1.0.0)**
+**AI Context Capsule v0.1 — Manual prototype (protocol validation)**
 
-Canonical blueprint for Studio OS's permanent intelligence layer — not an LLM, not a foundation model. Defines identity, roles, persona, succession, and upgrade workflow atop Institutional Memory Engine + AI Context Protocol. Ten bible documents under `docs/studio-os/studio-ai/`. **No implementation** — specification only.
+First complete manually generated capsule at `StudioOS_ContextCapsule_v0.1/` — 14 markdown files for brand-new ChatGPT onboarding test. **No export automation.** Validates AI Context Protocol without ZIP builder.
 
-**Previous sprint (shipped):** AI Context Protocol™ v1.0 — `243c23083`.
+**Previous shipped:** Studio AI vision bible (`3be0e1f88`), AI Context Protocol v1 (`243c23083`), build fix (`3b8fb4fa7`).
 
 ---
 

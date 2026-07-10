@@ -45975,3 +45975,19 @@ Summary of **full conversation in this chat** including prior sprints plus Studi
 - **Fix:** Use `vi.stubGlobal('localStorage'|'sessionStorage'|'window', …)` with `globalThis as unknown as Window` for window stub.
 - **Verified:** `npm run build` passes; vitest 3/3 on persisted-state-audit.test.ts.
 
+---
+
+## 2026-07-10 — AI Context Capsule v0.1 manual prototype (full conversation summary)
+
+Summary of **entire conversation thread** through Studio AI specs, build fix, and capsule v0.1 generation:
+
+**Thread arc:** (1) Layer 1 forensic + diagnostic isolation (code); (2) ChatGPT Operating Manual; (3) AI Context Capsule v2 spec; (4) AI Context Protocol v1 (15 modules); (5) Studio AI vision bible; (6) Vercel build fix `3b8fb4fa7`; (7) **This sprint:** manual Capsule v0.1 for protocol validation.
+
+**User mandate:** Generate first complete AI Context Capsule manually — no export automation, no ZIP — folder `StudioOS_ContextCapsule_v0.1/` with 14 md files. Purpose: validate protocol by onboarding brand-new ChatGPT. README_FIRST must enforce: read all → no solving → onboarding report → wait for founder approval.
+
+- **Delivered:** `StudioOS_ContextCapsule_v0.1/` — README_FIRST.md, MANIFEST.md (version, inventory, reading order, health 0.91, missing sections, compatibility), FOUNDER_PROFILE, CHATGPT_OPERATING_MANUAL, AI_STYLE_GUIDE, AI_CONTEXT (Studio OS/World/Institute/Genesis/Experience Lab/World Compiler), CURRENT_HANDOFF, AI_GLOSSARY (+ Protocol/Studio AI/IME terms), PROJECT_DNA, PROJECT_CHANGELOG, PROMPT_LIBRARY, ROADMAP, KNOWN_BLOCKERS (B1/B2), OPEN_QUESTIONS (Q1–Q6).
+- **Updated:** `docs/ai-collaboration/README.md`, CURRENT_HANDOFF, AI_CHANGELOG.
+- **Not done:** No CLI changes, no HQ export UI, no compression, no automation.
+- **Blockers unchanged:** B1 AUTH_REQUIRED Layer 1; B2 normal-tab diagnostic verification.
+- **Next:** Founder uploads capsule to new ChatGPT; reviews onboarding report; approves before any architecture/implement work.
+

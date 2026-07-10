@@ -1,5 +1,6 @@
-# AI Changelog™ — Project Decision History
+# Project Changelog™ — Architectural Decision History
 
+**Capsule:** StudioOS_ContextCapsule_v0.1 · v0.1.0  
 **Format:** Append-only. Newest entries at bottom.  
 **Each entry:** Date · Decision · Reason · Impact · Files/docs · Supersedes · Dependencies
 
@@ -157,23 +158,23 @@
 
 **Supersedes:** Identifying platform AI with vendor model names
 
-**Dependencies:** Founder onboarding report review; future CLI automation Phase 2
+**Dependencies:** AI Context Protocol + IME (memory transfer); Genesis Core (visual layer); native runtime Phase 2+
 
 ---
 
 ## 2026-07-10 — AI Context Capsule v0.1 manual prototype
 
-**Decision:** First complete manually generated capsule folder for external AI onboarding validation — no export automation.
+**Decision:** First complete manually generated capsule folder (`StudioOS_ContextCapsule_v0.1/`) for protocol validation — no export automation.
 
-**Reason:** Validate AI Context Protocol by onboarding brand-new ChatGPT without re-explaining Studio OS.
+**Reason:** Validate AI Context Protocol by onboarding brand-new ChatGPT without founder re-explaining Studio OS.
 
-**Impact:** `StudioOS_ContextCapsule_v0.1/` — README_FIRST, MANIFEST, 12 content docs, KNOWN_BLOCKERS, OPEN_QUESTIONS. Flat md layout.
+**Impact:** 14 markdown files including README_FIRST (mandatory onboarding protocol), MANIFEST, KNOWN_BLOCKERS, OPEN_QUESTIONS, full collaboration package. Flat layout pre-ZIP.
 
-**Files:** `StudioOS_ContextCapsule_v0.1/*`, `docs/ai-collaboration/README.md`
+**Files:** `StudioOS_ContextCapsule_v0.1/*`
 
-**Supersedes:** Using partial doc pastes for onboarding test
+**Supersedes:** Ad-hoc partial pastes as onboarding path for external AI test
 
-**Dependencies:** Founder reviews onboarding report from test session
+**Dependencies:** Founder onboarding report review; future CLI automation Phase 2
 
 ---
 
