@@ -1783,6 +1783,18 @@ export const ADMIN_STUDIO_MODULES: readonly AdminStudioModule[] = [
     featuredOnOverview: true,
   },
   {
+    id: 'context-capsule',
+    title: 'AI CONTEXT CAPSULE™',
+    purpose: 'Export one downloadable ZIP — institutional memory for external AI onboarding.',
+    route: p('context-capsule'),
+    groupId: 'intelligence',
+    status: 'live',
+    metric: 'v0.1',
+    ctaLabel: 'EXPORT CAPSULE',
+    moduleKey: 'context-capsule',
+    featuredOnOverview: true,
+  },
+  {
     id: 'system-registry',
     title: 'SYSTEM REGISTRY™',
     purpose: 'Master registry of every object, service, module, feature, and system inside Studio OS — nothing exists anonymously.',

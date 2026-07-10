@@ -126,6 +126,7 @@ export type StudioOsCoreModuleId =
   | 'knowledge-registry'
   | 'documentation-registry'
   | 'documentation-governance'
+  | 'context-capsule'
   | 'system-registry'
   | 'component-registry'
   | 'design-token-engine'
@@ -935,6 +936,12 @@ export const STUDIO_OS_CORE_MODULES: readonly StudioOsCoreModule[] = [
     label: 'DOCUMENTATION GOVERNANCE™',
     description: 'Documentation Governance V1.0 — continuous audits, coverage validation, consistency, pre-deploy checks.',
     routeSegment: 'documentation-governance',
+  },
+  {
+    id: 'context-capsule',
+    label: 'AI CONTEXT CAPSULE™',
+    description: 'Export one downloadable ZIP — institutional memory for external AI onboarding.',
+    routeSegment: 'context-capsule',
   },
   {
     id: 'system-registry',

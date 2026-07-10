@@ -46004,3 +46004,26 @@ Summary of **entire conversation thread** through Studio AI specs, build fix, an
 - **Docs:** `releases/downloads/README.md`, `public/downloads/README.md`, ai-collaboration README, capsule README_FIRST + MANIFEST updated with download URL.
 - **Size:** ~37 KB zip. No HQ Export UI — script-only download action.
 
+---
+
+## 2026-07-10 — AI Context Capsule Export System™ (full conversation summary)
+
+Summary of **entire conversation thread** through capsule v0.1 prototype, ZIP script, and this export/distribution sprint:
+
+**Thread arc:** (1) Layer 1 forensic + diagnostic isolation (code); (2) ChatGPT Operating Manual; (3) AI Context Capsule v2 spec; (4) AI Context Protocol v1 (15 modules); (5) Studio AI vision bible; (6) Vercel build fix `3b8fb4fa7`; (7) Manual Capsule v0.1 folder; (8) ZIP packaging script `5a118c85f`; (9) **This sprint:** admin export/distribution system.
+
+**User mandate:** Build packaging, versioning, and download only — DO NOT change capsule contents or regenerate documentation. One downloadable package from Studio OS; version history; validation after export; copy onboarding prompt.
+
+- **Delivered admin page:** `/admin/studio/context-capsule` — title **AI Context Capsule™**; stats (capsule version, last generated, project/Studio OS version, document count, package health, checksum, generation status, compatibility, AI manual/founder profile/sprint versions).
+- **Primary action:** **Export Context Capsule** → `StudioOS_ContextCapsule_v{version}.zip` with all 14 required md files from `StudioOS_ContextCapsule_v0.1/` (read-only packager).
+- **Post-export validation:** all required docs exist, reading order valid, manifest updated, version numbers match, no duplicates, no missing files → **Context Capsule Ready** + **Download Package**.
+- **Storage:** `public/downloads/context-capsules/` + `history.json` + Supabase `app_config` key `studioOsContextCapsuleExports_v1`.
+- **Download history table:** Version, Date, Project Version, Studio OS Version, Download, Delete.
+- **Bonus:** **Copy AI Onboarding Prompt** button (prompt from constants).
+- **Backend:** `api/admin/context-capsule.ts` (GET status/history, POST export, DELETE entry, GET download); `api/_lib/contextCapsuleExport.ts` (JSZip, validation, checksum); `jszip` dependency.
+- **Frontend:** `ContextCapsuleWorkspace.tsx`, `useContextCapsuleExport.ts`, route in `App.tsx`, nav in `adminStudioNavigation.ts`, module `context-capsule` in `studio-os-core/core/modules.ts`.
+- **Build fix:** Added `'context-capsule'` to `StudioOsCoreModuleId`; removed unused type imports in workspace component.
+- **Docs updated (not capsule content):** `docs/ai-collaboration/README.md`, `CURRENT_HANDOFF.md`, `AI_CHANGELOG.md`, `public/downloads/README.md`, `releases/downloads/README.md`.
+- **Verified:** `npm run build` passes; prebuild packages ZIP to `/downloads/context-capsules/`.
+- **Blockers unchanged:** B1 AUTH_REQUIRED Layer 1; B2 normal-tab diagnostic verification.
+

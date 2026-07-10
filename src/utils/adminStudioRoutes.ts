@@ -1010,6 +1010,10 @@ export function adminStudioDocumentationGovernancePath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/documentation-governance`;
 }
 
+export function adminStudioContextCapsulePath(): string {
+  return `${ADMIN_STUDIO_BASE_PATH}/context-capsule`;
+}
+
 export function adminStudioSystemRegistryPath(): string {
   return `${ADMIN_STUDIO_BASE_PATH}/system-registry`;
 }

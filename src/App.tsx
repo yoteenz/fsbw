@@ -203,6 +203,10 @@ const AdminStudioDocumentationGovernance = lazyWithRetry(
   () => import('./pages/admin/studio/documentation-governance/page'),
   'AdminStudioDocumentationGovernance'
 );
+const AdminStudioContextCapsule = lazyWithRetry(
+  () => import('./pages/admin/studio/context-capsule/page'),
+  'AdminStudioContextCapsule'
+);
 const AdminStudioSystemRegistry = lazyWithRetry(
   () => import('./pages/admin/studio/system-registry/page'),
   'AdminStudioSystemRegistry'
@@ -1960,6 +1964,11 @@ function App() {
           <Route path="studio/documentation-governance" element={
             <Suspense fallback={<LoadingScreen />}>
               <AdminStudioDocumentationGovernance />
+            </Suspense>
+          } />
+          <Route path="studio/context-capsule" element={
+            <Suspense fallback={<LoadingScreen />}>
+              <AdminStudioContextCapsule />
             </Suspense>
           } />
           <Route path="studio/system-registry" element={

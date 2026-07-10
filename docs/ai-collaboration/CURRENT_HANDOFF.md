@@ -7,11 +7,11 @@
 
 ## Current sprint
 
-**AI Context Capsule v0.1 — Manual prototype (protocol validation)**
+**AI Context Capsule Export System™ — admin packaging UI**
 
-First complete manually generated capsule at `StudioOS_ContextCapsule_v0.1/` — 14 markdown files for brand-new ChatGPT onboarding test. **No export automation.** Validates AI Context Protocol without ZIP builder.
+Page: `/admin/studio/context-capsule` — export, validate, download history, copy onboarding prompt. Packages existing `StudioOS_ContextCapsule_v0.1/` without modifying source docs. ZIP output: `/downloads/context-capsules/`.
 
-**Previous shipped:** Studio AI vision bible (`3be0e1f88`), AI Context Protocol v1 (`243c23083`), build fix (`3b8fb4fa7`).
+**Previous shipped:** Manual capsule v0.1 folder (`e60acfb6d`), ZIP CLI (`5a118c85f`).
 
 ---
 

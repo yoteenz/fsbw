@@ -1,58 +1,24 @@
 # AI Context Capsule™ — Release Downloads
 
-**Purpose:** Single-file ZIP artifacts for external AI onboarding (ChatGPT, Claude, Gemini).
+**Purpose:** Single-file ZIP artifacts for external AI onboarding.
 
-## Current release
+## Download locations
 
-| Artifact | Version | Command to regenerate |
-|----------|---------|------------------------|
-| `StudioOS_ContextCapsule_v0.1.0.zip` | 0.1.0 | `npm run download:ai-context-capsule` |
+| Location | URL / path |
+|----------|------------|
+| **Admin UI** | `/admin/studio/context-capsule` → Export Context Capsule |
+| **Production static** | `https://fsbw.vercel.app/downloads/context-capsules/StudioOS_ContextCapsule_v0.1.0.zip` |
+| **Legacy static** | `/downloads/StudioOS_ContextCapsule_v0.1.0.zip` (prebuild copy) |
+| **This folder** | `releases/downloads/context-capsules/` |
 
-## Download options
-
-### Production (after Vercel deploy)
-
-```
-https://fsbw.vercel.app/downloads/StudioOS_ContextCapsule_v0.1.0.zip
-```
-
-Same path on your production domain: `/downloads/StudioOS_ContextCapsule_v{version}.zip`
-
-### From this repository
-
-Download `releases/downloads/StudioOS_ContextCapsule_v0.1.0.zip` from GitHub (Browse files → releases/downloads).
-
-### Local generation
+## Commands
 
 ```bash
 npm run download:ai-context-capsule
 ```
 
-Creates/updates:
+Regenerates ZIP + `history.json` + `manifest.json` without modifying capsule markdown source files.
 
-- `public/downloads/StudioOS_ContextCapsule_v{version}.zip` — served as static asset
-- `releases/downloads/StudioOS_ContextCapsule_v{version}.zip` — repo release copy
-- `manifest.json` in each folder — inventory + version metadata
+## Version history
 
-## ZIP contents
-
-The archive preserves the full capsule folder structure:
-
-```
-StudioOS_ContextCapsule_v0.1/
-├── README_FIRST.md
-├── MANIFEST.md
-├── KNOWN_BLOCKERS.md
-├── CURRENT_HANDOFF.md
-├── … (all markdown documents)
-```
-
-## When to regenerate
-
-- After any edit to `StudioOS_ContextCapsule_v*/` markdown files
-- Before sharing with a new ChatGPT conversation
-- Automatically on each production build (`prebuild` hook)
-
-## Protocol
-
-Manual v0.1 flat layout. Future automated exports will use `.studiocapsule` per `docs/ai-collaboration/AI_CONTEXT_CAPSULE_SPECIFICATION.md`.
+See `context-capsules/history.json` — previous exports are retained (not deleted on new export).

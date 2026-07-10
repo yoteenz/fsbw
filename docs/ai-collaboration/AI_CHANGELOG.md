@@ -177,6 +177,22 @@
 
 ---
 
+## 2026-07-10 — AI Context Capsule Export System™ (admin UI)
+
+**Decision:** Studio OS admin page packages existing capsule folder into versioned ZIP with validation, history, and one-click onboarding prompt — no content regeneration.
+
+**Reason:** Founder should never manually download 15 markdown files from GitHub; one downloadable package with version history.
+
+**Impact:** `/admin/studio/context-capsule` — export, validate (6 checks), download history (Supabase + local), copy onboarding prompt. ZIP at `/downloads/context-capsules/StudioOS_ContextCapsule_v{version}.zip`. `prebuild` still packages via script.
+
+**Files:** `api/admin/context-capsule.ts`, `api/_lib/contextCapsuleExport.ts`, `src/pages/admin/studio/context-capsule/`, `src/components/admin/studio/context-capsule/`, `src/hooks/useContextCapsuleExport.ts`, `src/studio-os-core/context-capsule-export/constants.ts`, `scripts/package-ai-context-capsule-zip.mjs`, `public/downloads/context-capsules/`
+
+**Supersedes:** Script-only download (`npm run download:ai-context-capsule`) as sole distribution path
+
+**Dependencies:** Capsule source folder `StudioOS_ContextCapsule_v0.1/` unchanged
+
+---
+
 ## Template for new entries
 
 ```markdown
