@@ -45621,3 +45621,41 @@ Summary of **full conversation in this chat**: After Experience Engine freeze bi
 
 - **Conventions:** Absolute rule — no repair sprint until "what single event ALWAYS occurs immediately before heartbeat dies?" is answered with evidence, not speculation.
 
+---
+
+## 2026-07-10 — World Compiler Three-Second Reset Loop Investigation™ (P0 forensics)
+
+Summary of **full conversation in this chat**: After Experience Engine freeze bisect (`07d70020d`) and Studio OS Black Box flight recorder (`f6b6e0897`), user reported **separate P0**: World Compiler in Experience Lab resets every ~3s at "Generating Landmark… 1/8 Layers" back to Retry Shell Layer / Layer 1 — never reaches layers 2–8. Mandate: **forensic investigation only** — no production fix, no retry logic, no new watchdogs.
+
+- **Delivered:** `src/studio-os/diagnostics/world-compiler-investigation/` — immutable `compileRunId` (crypto.randomUUID), append-only investigation log, RESET_DETECTED with stack traces, shell lifecycle tracing, state write tracing, effect lifecycle audit, timer audit (static + runtime ~3s filter), ownership report, forensic session report.
+- **Diagnostic mode:** `?compilerDiag=1` — disables auto-run, disables automatic retry, freezes first failure (COMPILE STOPPED panel), one manual tap = one run, blocks Retry Shell Layer button.
+- **Instrumentation wired:** `useCreativeStudioRenderPreview`, `compile-pipeline.ts`, `ephemeral-validation-registry`, `validation-shell-pipeline`, `validation-render`, `CreativeStudioRenderPreview`.
+- **Route:** `/__world-compiler-investigation` — live forensic report + event log.
+- **Docs:** `docs/studio-os/world-compiler-reset-investigation.md`
+
+- **Codebase timer audit:** **No ~3000ms timer in compile path**; closest is `BOOT_MODULE_TIMEOUT_MS=3000` (studio-kernel boot). Pipeline clock=1000ms; stall threshold=90s.
+
+- **Leading hypotheses (unproven):** (H1) auto-run effect cleanup + `forceRegenerate` restart loop; (H2) per-layer fire-and-forget `compileWorldStation` during ensureStation causing UI regression; (H3) global validation session race in compare mode; (H4) shell force-regenerate invalidating ephemeral shell each auto-run.
+
+- **Isolation status:** Exact reset caller, measured interval, and layer-1 classification **pending device capture** with `?compilerDiag=1`. No production repair applied.
+
+- **Proposed repair (NOT applied):** ONE RUN / ONE RUN ID / ONE SHELL / ONE STATE OWNER — defer compile until ensureStation complete; per-instance validation session; forceRegenerate only on explicit user action.
+
+---
+
+## 2026-07-10 — Black Box diagnostic routes blank-screen hotfix (P0)
+
+Summary of **full conversation in this chat**: User reported production iOS blank pages on `/__studio-os-flight-recorder` and `/__studio-os-session-report` — MT heartbeat overlay alive but checkpoint frozen at `pre:main-entry`, no diagnostic UI. Mandate: **hotfix only** — make Black Box tools render via isolated entry path; do **not** investigate Experience Lab heartbeat failure yet.
+
+- **Root cause (proven by code path):** Black Box routes previously entered through `main.tsx` → `main-legacy.tsx` → `mountLegacyApp()`. That function sets `pre:main-entry`, then runs **`initStudioOsFlightRecorder()`** and **`bootstrapStudioOsBrowserStorage()`** synchronously **before** `ReactDOM.createRoot` / `markStartupCheckpoint('A', 'react-root')`. On iOS Safari, main-thread work in those boot steps blocked or prevented React mount — blank `#root` while MT overlay (initialized separately) kept running.
+
+- **Fix:** Isolated diagnostic entry in `src/diagnostic-entry/` + early pathname branch in `src/main.tsx`. For the two Black Box paths only: inject plain-DOM loading fallback → dynamic import `mount-isolated-black-box.tsx` (pages are **direct imports**, not lazy) → `DiagnosticRouteErrorBoundary` → `IsolatedDiagnosticShell` → page. Skips App.tsx, legacy router, auth, bootstrap, providers, Suspense. Flight recorder init deferred to `useEffect` after first paint.
+
+- **Checkpoints:** `pre:main-entry` (main.tsx) → `diagnostic:path-detected` → `diagnostic:module-loaded` → `diagnostic:root-created` → `diagnostic:render-requested` → `diagnostic:component-mounted` → `diagnostic:ready`. Plain-DOM shows loading/failed with route, error, stack, bundle version, checkpoint — never blank.
+
+- **Files:** `src/main.tsx`, `src/diagnostic-entry/*` (paths, checkpoints, plain-dom, error boundary, shell, mount). Legacy routes in `StudioDebugRoutes.tsx` unchanged as fallback for non-isolated visits.
+
+- **Verify:** Local preview Playwright — both routes render titles + controls; bundle contains `mount-isolated-black-box` chunk. Vercel rewrite serves `index.html` for deep links (unchanged).
+
+- **Observe-only preserved:** No changes to heartbeat, Experience Lab, compiler, cache/retry policy, or production runtime logic.
+
