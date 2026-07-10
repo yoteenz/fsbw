@@ -15,6 +15,7 @@ import StudioOsFlightRecorderPage from '../pages/debug/studio-os-flight-recorder
 import StudioOsSessionReportPage from '../pages/debug/studio-os-session-report/page';
 import StudioOsLiveRuntimePage from '../pages/debug/studio-os-live-runtime/page';
 import WorldCompilerInvestigationPage from '../pages/debug/world-compiler-investigation/page';
+import ExpertCapturePage from '../pages/expert-capture/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import LoadingScreen from '../components/base/LoadingScreen';
@@ -33,6 +34,7 @@ export const STUDIO_DEBUG_PATHS = [
   '/__studio-os-session-report',
   '/__studio-os-live-runtime',
   '/__world-compiler-investigation',
+  '/expert-capture',
 ] as const;
 
 export function isStudioDebugPath(pathname: string): boolean {
@@ -60,6 +62,7 @@ export default function StudioDebugRoutes() {
       <Route path="/__studio-os-session-report" element={<StudioOsSessionReportPage />} />
       <Route path="/__studio-os-live-runtime" element={<StudioOsLiveRuntimePage />} />
       <Route path="/__world-compiler-investigation" element={<WorldCompilerInvestigationPage />} />
+      <Route path="/expert-capture" element={<ExpertCapturePage />} />
       <Route
         path="*"
         element={

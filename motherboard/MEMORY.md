@@ -46332,3 +46332,20 @@ Summary of **full conversation in this chat**: Continuation of LOAD_SHELL stall 
 - **Not changed:** compiler behavior, P1–P3 repairs, AUTH_REQUIRED
 - **URL:** https://fsbw.vercel.app/__world-compiler-investigation
 
+---
+
+## 2026-07-10 — Investigation recorder boot wiring (observe-only)
+
+Summary of **full conversation in this chat**: LOAD_SHELL forensic + stall evidence instrumentation + Context Capsule 0.3.1 + investigation export UX + live status panel (`372542cf3`). User reported **Investigation Ready YES but 0 events** after Experience Lab stall reproduction — recorder not connected to compiler event stream.
+
+- **Root cause:** “Investigation Ready” was a false positive (`markInvestigationInstrumentationReady` on page visit only); no boot-time subscription to `logCompilerEvent`; recorder depended on lazy first-event side effects; compiler lifecycle events never hydrated investigation page after route navigation.
+- **Fix (instrumentation only):**
+  - **`investigation-recorder-boot.ts`** — boot from `global-boot.ts` before routes; loads sessionStorage log; installs stall-evidence globals; self-test (`INVESTIGATION_RECORDER_SELF_TEST`) verifies write + persist; exposes `__WC_RECORDER_BOOT__`
+  - **`investigation-ready.ts`** — Ready = recorder connected + self-test PASS (not page flag alone)
+  - **Live status** — Recorder Connected, compiler event source, self-test fields; stricter `hasMeaningfulRunData` (requires compileRunId + previewSessionId + real lifecycle events; self-test excluded)
+  - **Lifecycle hooks** — `PREVIEW_SESSION_CREATED`, `COMPILE_RUN_CREATED`, `PIPELINE_FINALLY`, `PIPELINE_OWNER_RELEASED` in experience-lab-render-runtime
+  - **Persistence:** `worldCompilerInvestigationLog_v1` + `worldCompilerInvestigationRecorderBoot_v1` in sessionStorage (tab-scoped)
+- **Canonical event source:** `investigation-log.logCompilerEvent` ← `stall-evidence.logPipelineLifecycle` / compile-pipeline / useSceneStack / experience-lab-render-runtime
+- **Not changed:** compiler stage behavior, ownership, retries, AUTH_REQUIRED, stall repair
+- **URL:** https://fsbw.vercel.app/__world-compiler-investigation
+
