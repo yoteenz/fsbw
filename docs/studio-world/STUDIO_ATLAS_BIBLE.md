@@ -115,11 +115,11 @@ The Atlas is **always one gesture away**:
 - Institute Learning Map — campus projection
 - Observatory — metric terrain links to Atlas addresses
 
-### Projection Law
+**Projection Law**
 
-> **The World Graph™ is truth. The Atlas is its geographic projection.**
+> **The World Graph™ is truth. The Atlas is its geographic projection. The Living Knowledge Graph is its intelligence projection.**
 
-Every Atlas entity maps to a World Graph node with `located-in` edges. The Atlas never maintains a competing registry. See [World Graph Architecture](../studio-os/world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md).
+Every Atlas entity maps to a World Graph node with `located-in` edges. Relationship edges power Context Engine and Discovery. See [Living Knowledge Graph Bible](./STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md) and [World Graph Architecture](../studio-os/world-graph/STUDIO_WORLD_GRAPH_ARCHITECTURE.md).
 
 ### Zoom Scale Hierarchy
 

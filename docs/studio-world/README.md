@@ -2,7 +2,7 @@
 
 **Status:** Permanent governed documentation — July 2026  
 **Authority:** Canonical source of truth for Studio World™ before implementation  
-**Sprint:** STUDIO WORLD™ — The Studio Atlas™ (docs only)
+**Sprint:** STUDIO WORLD™ — The Living Knowledge Graph™ (docs only)
 
 ---
 
@@ -17,9 +17,10 @@ This is not production code. This is not UI. This is the architectural specifica
 | Document | Role |
 |----------|------|
 | **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** (v1.0.0) | **City architecture** — districts, city plan, ten-year roadmap |
-| **[STUDIO_ATLAS_BIBLE.md](./STUDIO_ATLAS_BIBLE.md)** (v1.0.0) | **Geographic representation** — living map, zoom scales, knowledge/project geography, Passport, Timeline |
+| **[STUDIO_ATLAS_BIBLE.md](./STUDIO_ATLAS_BIBLE.md)** (v1.0.0) | **Geographic projection** — living map, zoom scales, Passport, Timeline |
+| **[STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md](./STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md)** (v1.0.0) | **Intelligence layer** — entity taxonomy, relationships, discovery, context, subgraphs |
 
-**Read order:** Master Plan (where things live) → Atlas Bible (how the world is mapped) → World Bible (how it feels) → Part 1 specs.
+**Read order:** Master Plan (where) → Living Knowledge Graph (why/how connects) → Atlas Bible (map projection) → World Bible (how it feels) → Part 1 specs.
 
 ---
 
@@ -27,6 +28,7 @@ This is not production code. This is not UI. This is the architectural specifica
 
 | Document | Relationship |
 |----------|--------------|
+| **[STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md](./STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md)** | **Intelligence canon** — World Graph behavior · entity taxonomy · relationship model · Context Engine · Discovery Engine · Project/Decision/Learning/Human/AI subgraphs |
 | **[STUDIO_ATLAS_BIBLE.md](./STUDIO_ATLAS_BIBLE.md)** | **Geographic canon** — living map · eleven zoom scales · knowledge/project geography · Passport · Living Timeline · transportation network |
 | **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** | **Master Plan** — permanent headquarters blueprint · districts · city plan · AI population · expansion framework · 10-year roadmap |
 | [STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md) | Founding experience constitution (P0) — how Studio World must feel |
@@ -35,7 +37,7 @@ This is not production code. This is not UI. This is the architectural specifica
 | [studio-world-constitution.md](../studio-os/studio-world-constitution.md) | Governance law · Eight Foundational Laws |
 | [studio-institute/](../studio-institute/) | Studio Institute district canon |
 
-**Read order:** **Master Plan** (where things live) → **Atlas Bible** (how the world is mapped) → **World Bible** (how it feels) → Part 1 specs (department detail).
+**Read order:** **Master Plan** (where things live) → **Living Knowledge Graph** (how everything connects) → **Atlas Bible** (how the world is mapped) → **World Bible** (how it feels) → Part 1 specs (department detail).
 
 **Rule:** Nothing should be built that contradicts these documents.
 
@@ -47,6 +49,7 @@ This is not production code. This is not UI. This is the architectural specifica
 |---|----------|----------|
 | **MP** | **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** | **Master Plan** — headquarters blueprint · District Atlas · city plan · transportation · Executive Elevator · AI population · knowledge/project layers · expansion framework · 10-year roadmap |
 | **AB** | **[STUDIO_ATLAS_BIBLE.md](./STUDIO_ATLAS_BIBLE.md)** | **Atlas Bible** — living map · world geography · district architecture · building taxonomy · knowledge/project geography · Passport · Living Timeline · interaction model · 10-phase roadmap |
+| **KG** | **[STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md](./STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md)** | **Living Knowledge Graph Bible** — entity taxonomy · relationship model · constellations · Context Engine · Discovery Engine · Project/Decision/Learning/Human/AI graphs · Studio Universe · 10-phase roadmap |
 | 001 | [STUDIO_WORLD_MANIFESTO.md](./001_STUDIO_WORLD_MANIFESTO.md) | Vision · why prompting disappears · simulation not interface |
 | 002 | [WORLD_ARCHITECTURE.md](./002_WORLD_ARCHITECTURE.md) | Physical organization · zones · access |
 | 003 | [DEPARTMENTS.md](./003_DEPARTMENTS.md) | Every department · purpose · I/O · relationships |

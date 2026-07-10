@@ -11,6 +11,8 @@
 **The World Graph™ is the single canonical source of truth for Studio World civilization.**  
 Everything else — Bible, Atlas, Archives, Orb, Knowledge Library, engineering docs — is a **projection**.
 
+**Intelligence canon:** [STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_KNOWLEDGE_GRAPH_BIBLE.md) v1.0.0 — defines entity taxonomy, relationship behavior, Context Engine, Discovery Engine, and subgraph projections on top of this technical architecture.
+
 ---
 
 ## Civilization model
