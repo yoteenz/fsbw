@@ -49,7 +49,10 @@ export function ensureExperienceEngineDnaStore() {
 }
 
 export function recordExperienceEngineOpened(): void {
-  mutateExperienceEngineDnaStore((s) => ({ ...s, lastOpenedAt: now() }));
+  const current = readExperienceEngineDnaStore();
+  if (current.lastOpenedAt && Date.now() - Date.parse(current.lastOpenedAt) < 60_000) return;
+  const openedAt = now();
+  mutateExperienceEngineDnaStore((s) => ({ ...s, lastOpenedAt: openedAt }));
 }
 
 export function updatePlaygroundSelection(partial: Partial<XeePlaygroundSelection>): XeePlaygroundSelection {

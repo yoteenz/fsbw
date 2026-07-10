@@ -38,8 +38,8 @@ export function ensureExperienceRuntimeSubsystem() {
   return store;
 }
 
+/** Imperative read — call ensureExperienceRuntimeSubsystem() before this when bootstrapping. */
 export function getExperienceRuntimeReadyView(input?: import('./types').XerRuntimeInput) {
-  ensureExperienceRuntimeSubsystem();
   return buildExperienceRuntimeReadyView(input);
 }
 

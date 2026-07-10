@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
+  buildExperienceEngineReadyView,
   ensureExperienceEngineDnaSubsystem,
-  getExperienceEngineReadyView,
+  recordExperienceEngineOpened,
   updatePlaygroundSelection,
-  GENESIS_UPDATED_EVENT,
   type XeePlaygroundSelection,
   type XeeRoomPath,
 } from '../studio-os-core/genesis';
@@ -15,23 +15,17 @@ export function useExperienceEngineDnaState() {
   const [playgroundOverride, setPlaygroundOverride] = useState<Partial<XeePlaygroundSelection>>({});
 
   const refresh = useCallback(() => {
-    ensureExperienceEngineDnaSubsystem();
     setTick((n) => n + 1);
   }, []);
 
   useEffect(() => {
     ensureExperienceEngineDnaSubsystem();
+    recordExperienceEngineOpened();
   }, []);
-
-  useEffect(() => {
-    const onUpdate = () => refresh();
-    window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-    return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-  }, [refresh]);
 
   const view = useMemo(
     () =>
-      getExperienceEngineReadyView({
+      buildExperienceEngineReadyView({
         pathname: location.pathname,
         playground: playgroundOverride,
       }),

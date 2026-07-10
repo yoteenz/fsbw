@@ -1,11 +1,12 @@
 import { ensureExperienceEngineDnaSubsystem } from '../../experience-engine/engine';
+import { ensureRuntimeSessionId } from '../runtime-state/session-state';
 import {
   mutateExperienceRuntimeStore,
   readExperienceRuntimeStore,
   writeExperienceRuntimeStore,
 } from '../persistence';
 import { buildExperienceRuntimeSeedStore } from './seed-data';
-import type { XerStore, XerRuntimeSelection } from '../types';
+import type { XerRuntimeSelection } from '../types';
 
 export function seedExperienceRuntimeStore(): void {
   ensureExperienceEngineDnaSubsystem();
@@ -21,16 +22,19 @@ export function ensureExperienceRuntimeStore() {
   const current = readExperienceRuntimeStore();
   if (!current.seededAt || !current.selection?.brandId || !current.platformDna?.platformDnaId || current.stateDnaProfiles.length === 0) {
     seedExperienceRuntimeStore();
+    ensureRuntimeSessionId();
     return readExperienceRuntimeStore();
   }
-  return current;
+  if (!current.sessionId) {
+    ensureRuntimeSessionId();
+  }
+  return readExperienceRuntimeStore();
 }
 
 export function recordExperienceRuntimeOpened(): void {
   const current = readExperienceRuntimeStore();
-  const next: XerStore = { ...current, lastOpenedAt: new Date().toISOString() };
-  if (next.lastOpenedAt === current.lastOpenedAt) return;
-  writeExperienceRuntimeStore(next);
+  if (current.lastOpenedAt && Date.now() - Date.parse(current.lastOpenedAt) < 60_000) return;
+  writeExperienceRuntimeStore({ ...current, lastOpenedAt: new Date().toISOString() });
 }
 
 export function updateRuntimeSelectionStore(partial: Partial<XerRuntimeSelection>): void {

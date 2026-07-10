@@ -9,6 +9,7 @@ import { StudioWorldExperienceProvider } from '../../studio/global-experience';
 import { resolveExperienceProfileForPath } from '../../../../studio-os-core/studio-world-experience';
 import { StudioOrbMount } from '../../studio/studio-orb/StudioOrbMount';
 import { StudioOrbProvider } from '../../studio/studio-orb/StudioOrbProvider';
+import { clearLoadingScreenDocumentLock } from '../../../../platform-stabilization/loadingScreenLock';
 
 type Props = {
   children: ReactNode;
@@ -20,16 +21,20 @@ export function DepartmentGoldenBuildShell({ children }: Props) {
   const experienceProfile = resolveExperienceProfileForPath(pathname);
 
   useEffect(() => {
+    clearLoadingScreenDocumentLock();
     const html = document.documentElement;
     const body = document.body;
     const prevHtmlOverflow = html.style.overflow;
     const prevBodyOverflow = body.style.overflow;
+    const prevBodyTouchAction = body.style.touchAction;
     html.style.overflow = 'hidden';
     body.style.overflow = 'hidden';
+    body.style.touchAction = 'auto';
     body.classList.add('gb-immersive-active');
     return () => {
       html.style.overflow = prevHtmlOverflow;
       body.style.overflow = prevBodyOverflow;
+      body.style.touchAction = prevBodyTouchAction;
       body.classList.remove('gb-immersive-active');
     };
   }, []);
@@ -40,13 +45,17 @@ export function DepartmentGoldenBuildShell({ children }: Props) {
         <StudioWorldExperienceProvider profile={experienceProfile}>
           <div
             className="gb-immersive-portal"
+            data-gb-scroll-owner="portal"
             style={{
               position: 'fixed',
               inset: 0,
               zIndex: 200,
               width: '100vw',
               height: '100dvh',
-              overflow: 'hidden',
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              WebkitOverflowScrolling: 'touch',
+              overscrollBehaviorY: 'contain',
               background: '#12100e',
             }}
             role="application"

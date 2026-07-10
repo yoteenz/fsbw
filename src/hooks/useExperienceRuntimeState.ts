@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
+  buildExperienceRuntimeReadyView,
   ensureExperienceRuntimeSubsystem,
-  getExperienceRuntimeReadyView,
+  recordExperienceRuntimeOpened,
   updateRuntimeSelectionStore,
-  GENESIS_UPDATED_EVENT,
   type XerRuntimeSelection,
   type XerRoomPath,
 } from '../studio-os-core/genesis';
@@ -15,23 +15,17 @@ export function useExperienceRuntimeState() {
   const [selectionOverride, setSelectionOverride] = useState<Partial<XerRuntimeSelection>>({});
 
   const refresh = useCallback(() => {
-    ensureExperienceRuntimeSubsystem();
     setTick((n) => n + 1);
   }, []);
 
   useEffect(() => {
     ensureExperienceRuntimeSubsystem();
+    recordExperienceRuntimeOpened();
   }, []);
-
-  useEffect(() => {
-    const onUpdate = () => refresh();
-    window.addEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-    return () => window.removeEventListener(GENESIS_UPDATED_EVENT, onUpdate);
-  }, [refresh]);
 
   const view = useMemo(
     () =>
-      getExperienceRuntimeReadyView({
+      buildExperienceRuntimeReadyView({
         pathname: location.pathname,
         selection: selectionOverride,
       }),

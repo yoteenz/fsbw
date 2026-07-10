@@ -19,7 +19,6 @@ import { assembleSceneGraph } from './scene-assembler';
 import { assembleMotionProfile } from './motion-assembler';
 import { assembleInteractionProfile } from './interaction-assembler';
 import {
-  ensureRuntimeSessionId,
   hydrateSessionState,
   preserveStateOnBrandSwitch,
 } from '../runtime-state/session-state';
@@ -30,8 +29,9 @@ import type { XerAssemblyRequest, XerRuntimeGraph, XerRuntimeSelection } from '.
 export function assembleExperienceRuntime(request?: XerAssemblyRequest): XerRuntimeGraph {
   const started = performance.now();
   const runtimeStore = readExperienceRuntimeStore();
-  const sessionId = request?.sessionId ?? ensureRuntimeSessionId();
   const layers = resolveDnaLayers(request);
+  const sessionId =
+    request?.sessionId ?? runtimeStore.sessionId ?? `xer-read-${layers.brand.brandId}`;
 
   const cacheKey = buildRuntimeCacheKey({
     brandId: layers.brand.brandId,

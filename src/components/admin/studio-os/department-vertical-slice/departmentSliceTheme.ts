@@ -6,6 +6,16 @@ body.gb-immersive-active {
   overscroll-behavior: none;
 }
 
+.gb-immersive-portal[data-gb-scroll-owner='portal'] {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+}
+
+body.genesis-active .gb-immersive-portal[data-gb-scroll-owner='portal'] {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 .gb-immersive {
   position: absolute;
   inset: 0;

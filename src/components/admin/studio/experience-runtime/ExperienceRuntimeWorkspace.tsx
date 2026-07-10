@@ -36,27 +36,38 @@ export function ExperienceRuntimeWorkspace() {
   const brand = graph.brand;
   const inspector = view.inspector;
 
-  const { ref: sceneRef, switchBrandLive, switchCount } = useExperienceRuntimeAssembly({
+  const { ref: sceneRef, switchBrandLive, switchCount, graph: liveGraph } = useExperienceRuntimeAssembly({
     brandId: view.selection.brandId,
     departmentId: view.selection.departmentId,
     sceneId: view.selection.sceneId,
     motionDnaId: view.selection.motionDnaId,
   });
 
+  const displayGraph = liveGraph ?? graph;
+
   const switchBrand = (brandId: string) => {
-    switchBrandLive(brandId);
+    const nextGraph = switchBrandLive(brandId);
     setSelection({
       brandId,
       motionDnaId: `motion-${brandId}`,
     });
+    const portal = document.querySelector('[data-gb-scroll-owner="portal"]') as HTMLElement | null;
+    const workspaceRoot = portal?.querySelector('[data-xer-workspace-root]') as HTMLElement | null;
+    if (workspaceRoot && nextGraph) {
+      for (const [key, value] of Object.entries(nextGraph.cssVariables)) {
+        workspaceRoot.style.setProperty(key, value);
+      }
+      workspaceRoot.setAttribute('data-xer-brand', nextGraph.brandId);
+    }
   };
 
   return (
     <div
       className="relative min-h-[calc(100vh-120px)] overflow-hidden"
-      style={{ background: graph.cssVariables['--xer-ambient-gradient'] }}
+      style={{ background: displayGraph.cssVariables['--xer-ambient-gradient'] }}
+      data-xer-workspace-root
       data-xer-runtime
-      data-xer-brand={graph.brandId}
+      data-xer-brand={displayGraph.brandId}
     >
       <HqExperienceStyles />
       <XerStyles />
@@ -130,7 +141,7 @@ export function ExperienceRuntimeWorkspace() {
                 ))}
               </div>
               <p style={{ fontSize: '9px', marginTop: 8, color: brand.colorSystem.textSecondary }}>
-                Live switches: {switchCount} · Assembly: {graph.performance.assemblyMs}ms · Cache: {graph.performance.cacheHit ? 'hit' : 'miss'}
+                Live switches: {switchCount} · Assembly: {displayGraph.performance.assemblyMs}ms · Cache: {displayGraph.performance.cacheHit ? 'hit' : 'miss'}
               </p>
             </section>
 
@@ -141,7 +152,7 @@ export function ExperienceRuntimeWorkspace() {
             {activeSlug === 'runtime-registry' && <RegistryPanel view={view} brand={brand} />}
             {activeSlug === 'runtime-state' && <StatePanel view={view} brand={brand} />}
             {(activeSlug === 'runtime-preview' || activeSlug === 'runtime-playground' || activeSlug === 'experience-runtime') && (
-              <RuntimePlayground view={view} sceneRef={sceneRef} switchBrand={switchBrand} brand={brand} graph={graph} />
+              <RuntimePlayground view={view} sceneRef={sceneRef} switchBrand={switchBrand} brand={brand} graph={displayGraph} />
             )}
           </div>
 
@@ -419,6 +430,9 @@ function XerStyles() {
         text-decoration: none;
         display: inline-block;
         color: inherit;
+        position: relative;
+        z-index: 2;
+        pointer-events: auto;
       }
       .xer-dept-wash {
         position: absolute;

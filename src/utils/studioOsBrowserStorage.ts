@@ -14,6 +14,7 @@ import {
   safeLocalStorageRemoveItem,
   safeLocalStorageSetItem,
 } from './safeLocalStorage';
+import { repairGenesisLocalStorageIfNeeded } from '../platform-stabilization/genesis-store-repair';
 
 /** Max bytes per Studio OS localStorage value (Safari ~5MB total domain quota). */
 export const STUDIO_OS_MAX_LOCAL_VALUE_BYTES = 24 * 1024;
@@ -396,9 +397,13 @@ export function installStudioOsStorageGuard(): void {
   };
 }
 
-/** Boot hook — install guard sync; purge legacy keys on idle (never block first paint). */
+/** Boot hook — install guard sync; purge legacy keys; repair genesis before first read. */
 export function bootstrapStudioOsBrowserStorage(): void {
   installStudioOsStorageGuard();
+  const repair = repairGenesisLocalStorageIfNeeded();
+  if (repair.repaired && repair.reason) {
+    console.info('[studioOsBrowserStorage] genesis repair:', repair.reason);
+  }
   schedulePurgeOversizedStudioLocalKeys();
 }
 

@@ -52,12 +52,11 @@ export function ensureExperienceEngineDnaSubsystem() {
   return store;
 }
 
+/** Imperative read — call ensureExperienceEngineDnaSubsystem() before this when bootstrapping. */
 export function getExperienceEngineReadyView(input?: {
   pathname?: string;
   playground?: Partial<import('./types').XeePlaygroundSelection>;
 }) {
-  ensureExperienceEngineDnaSubsystem();
-  recordExperienceEngineOpened();
   return buildExperienceEngineReadyView(input);
 }
 
