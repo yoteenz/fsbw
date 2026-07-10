@@ -1,5 +1,7 @@
 # The Studio Institute Bible™
 
+> **Superseded by [STUDIO_INSTITUTE_VISION_BIBLE_V2.md](./STUDIO_INSTITUTE_VISION_BIBLE_V2.md) v2.0.0** — retained as spatial-learning foundation reference.
+
 **P0 Foundational Learning Constitution**  
 **Status:** Permanent north star — July 2026  
 **Authority:** Canonical vision for Studio Institute™ — the spatial learning operating system of Studio OS™  

@@ -45675,7 +45675,6 @@ Summary of **full conversation in this chat** (architecture sprints + this imple
 
 ---
 
-<<<<<<< HEAD
 ## 2026-07-10 — Black Box Global Flight Recorder™ refactor
 
 Summary of **full conversation in this chat**: After P0 hotfix for blank Black Box diagnostic routes (`854c2378b` — isolated entry path in `src/diagnostic-entry/`), user reported recorder only captured diagnostic page lifecycle (TIMER_REGISTERED spam, missing BOOT_STARTED/EXPERIENCE_LAB/WORLD_COMPILER events). Sprint mandate: refactor into **true global flight recorder** observing entire Studio OS runtime.
@@ -45708,7 +45707,8 @@ Summary of **full conversation in this chat**: User sprint for global Black Box 
 
 - **Verification:** `npm run build` pass. Open live console → navigate Studio OS → events append continuously; returning shows full buffer from global recorder.
 
-=======
+---
+
 ## 2026-07-10 — The Studio Institute Bible™ (Spatial Learning OS — docs only)
 
 Summary of **full conversation in this chat**: User mandated elevation of Studio Institute™ from documentation center / online course / video library to **world's first spatial learning operating system** — immersive environments where invisible systems become visible; explore · break · repair · understand. Mandate: **Do not build yet** — produce complete canonical Bible.
@@ -45718,4 +45718,3 @@ Summary of **full conversation in this chat**: User mandated elevation of Studio
 - **Canon relationships:** Institute of Knowledge™ = what becomes official; Studio Institute Bible = how truth is inhabited spatially; Profession Simulation Engine™ = career workplace paths; STUDIO_WORLD_BIBLE = organizational presence; M93 `studio-institute.md` = implementation notes subordinate to Bible.
 - **Changes:** `docs/studio-institute/` (2 files). `motherboard/CORE.md` pointer. This MEMORY entry.
 - **Conventions:** No Institute UI/code until founder approves Bible; assessment is behavioral not quiz; professors own buildings; break/repair is mandatory pedagogy; test = learner describes walking buildings not watching modules.
->>>>>>> 4b99aeaf4 (Studio Institute Bible — spatial learning OS constitution (docs only))
