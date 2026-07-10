@@ -4,24 +4,26 @@ const ABNORMAL_TYPES = new Set<string>([
   'HEARTBEAT_STOPPED',
   'HEARTBEAT_TIMEOUT',
   'COMPILER_FAILED',
+  'COMPILER_RESET',
+  'ERROR',
+  'RUNTIME_ERROR',
   'ERROR_BOUNDARY',
+  'UNCAUGHT_EXCEPTION',
+  'UNHANDLED_REJECTION',
   'SHELL_INVALIDATED',
+  'SHELL_DESTROYED',
+  'SESSION_DESTROYED',
 ]);
 
 const EXPECTED_BOOT_FLOW: string[] = [
+  'RECORDER_ATTACHED',
+  'RECORDER_READY',
   'BOOT_STARTED',
-  'AUTH_STARTED',
-  'AUTH_COMPLETED',
-  'GENESIS_LOADED',
-  'REGISTRY_LOADED',
   'BOOT_COMPLETED',
   'HEARTBEAT_STARTED',
-  'SCENE_STACK_CREATED',
-  'STATION_CREATED',
-  'SHELL_CREATED',
-  'COMPILER_STARTED',
-  'COMPILER_STAGE_COMPLETE',
-  'HEARTBEAT_STARTED',
+  'EXPERIENCE_LAB_STARTED',
+  'WORLD_COMPILER_STARTED',
+  'LANDMARK_GENERATED',
 ];
 
 function findFirstMissing(expected: string[], seen: Set<string>): string | null {
@@ -68,6 +70,12 @@ export function buildEventTimeline(events: FlightRecorderEvent[]): TimelineAnaly
     firstAbnormalEvent: firstAbnormal,
     gapDescription,
   };
+}
+
+/** Visual timeline with arrows for console display. */
+export function formatTimelineVertical(events: FlightRecorderEvent[], max = 80): string {
+  const sorted = [...events].sort((a, b) => a.id - b.id).slice(-max);
+  return sorted.map((e) => `${e.isoTime.slice(11, 19)}\n${e.type}`).join('\n\n↓\n\n');
 }
 
 /** ASCII timeline for display. */

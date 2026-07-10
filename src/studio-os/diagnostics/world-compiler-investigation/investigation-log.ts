@@ -302,6 +302,9 @@ export function detectProgressReset(input: {
       layerNumber: input.stepIndex,
       stackTrace: payload.stackTrace,
     });
+    void import('../runtime-emit').then(({ emitStudioOsRuntimeEvent }) => {
+      emitStudioOsRuntimeEvent('COMPILER_RESET', input.caller, { detail: payload });
+    });
   }
 
   lastProgressStepIndex = input.stepIndex;

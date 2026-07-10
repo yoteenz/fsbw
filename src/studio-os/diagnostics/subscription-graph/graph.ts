@@ -34,11 +34,15 @@ export function recordSubscriptionAttach(
   recordFlightEvent('SUBSCRIPTION_ATTACHED', publisher, {
     detail: { subscriber, sideEffect, furtherEvent },
   });
+  recordFlightEvent('SUBSCRIPTION_CREATED', publisher, {
+    detail: { subscriber, sideEffect, furtherEvent },
+  });
 }
 
 export function recordSubscriptionDetach(publisher: string, subscriber: string): void {
   decrementActiveSubscriptions();
   recordFlightEvent('SUBSCRIPTION_DETACHED', publisher, { detail: { subscriber } });
+  recordFlightEvent('SUBSCRIPTION_DESTROYED', publisher, { detail: { subscriber } });
 }
 
 /** Install passive listeners on known publishers. */
@@ -46,7 +50,7 @@ export function installSubscriptionGraphMonitor(): () => void {
   const publishers: Array<{ event: string; publisher: string; mapsTo?: string }> = [
     { event: 'genesis-updated', publisher: 'genesis/persistence/store', mapsTo: 'STORE_UPDATED' },
     { event: 'studio-os-scene-stack-hydrated', publisher: 'scene-stack', mapsTo: 'SCENE_STACK_UPDATED' },
-    { event: 'studio-boot-live-state', publisher: 'studio-kernel', mapsTo: 'BOOT_COMPLETED' },
+    { event: 'studio-os-boot-updated', publisher: 'studio-kernel' },
     { event: 'signInStateChanged', publisher: 'auth-session', mapsTo: 'AUTH_COMPLETED' },
     { event: 'studio-os-experience-engine-updated', publisher: 'experience-engine/store' },
   ];

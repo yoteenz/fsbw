@@ -1,5 +1,4 @@
 import './platform-stabilization/main-thread-diagnostics-init'
-import { initStudioOsFlightRecorder } from './studio-os/diagnostics'
 import {
   isStartupStageEnabled,
   markStartupCheckpoint,
@@ -21,8 +20,6 @@ export function mountLegacyApp(): void {
     typeof window !== 'undefined' && isStudioDebugPath(window.location.pathname)
 
   markStartupCheckpoint('pre', 'main-entry')
-
-  initStudioOsFlightRecorder({ envLabel: 'boot' })
 
   bootstrapStudioOsBrowserStorage()
   registerGlobalChunkLoadRecovery()

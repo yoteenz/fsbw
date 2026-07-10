@@ -14,13 +14,27 @@ export {
   compareEnvironmentSnapshots,
   buildEventTimeline,
   formatTimelineAscii,
+  formatTimelineVertical,
   getTimerInventory,
   findThreeSecondTimers,
   getSubscriptionGraph,
   detectSubscriptionLoops,
   STATE_OWNERSHIP,
   buildOwnershipReport,
+  emitStudioOsRuntimeEvent,
+  pauseRecording,
+  resumeRecording,
+  startRecording,
+  clearRecording,
+  getRecorderRuntimeStatus,
+  getRecordingElapsedMs,
+  isRecorderActive,
+  isRecorderPaused,
+  buildMarkdownFlightReport,
 } from './init';
+
+export { onFlightEvent } from './flight-recorder/recorder';
+export { FlightRecorderConsole } from './flight-recorder-console/FlightRecorderConsole';
 
 export type {
   FlightEventType,

@@ -15,6 +15,7 @@ import { SCENE_GRAPH_BRANCH_TREE } from './scene-graph-branches';
 import { isExperienceLabValidationRender } from '../validation-render';
 import { diagnoseShellResolution } from '../shell-diagnostics';
 import { logCompilerEvent, recordStageSuccess } from '../../../studio-os/diagnostics/world-compiler-investigation';
+import { emitStudioOsRuntimeEvent } from '../../../studio-os/diagnostics/runtime-emit';
 
 export type WorldCompileOptions = {
   /** Ephemeral validation compile — mounts draft_ready layers, no registry promotion */
@@ -53,6 +54,15 @@ async function runStage(
       ? { compileRunId: investigation.compileRunId, compilerInstanceId: investigation.compilerInstanceId }
       : undefined,
   });
+  emitStudioOsRuntimeEvent('COMPILER_STAGE_CHANGED', 'world-compiler.compile-pipeline', {
+    stage,
+    compileRunId: investigation?.compileRunId,
+  });
+  if (stage === 'mount-landmark') {
+    emitStudioOsRuntimeEvent('LANDMARK_GENERATED', 'world-compiler.compile-pipeline', {
+      compileRunId: investigation?.compileRunId,
+    });
+  }
   try {
     const detail = await execute();
     const result: WorldCompileStageResult = {
@@ -101,6 +111,13 @@ export async function compileWorldStation(input: {
   const onStageComplete = input.options?.onStageComplete;
   const stageOptions = { investigation, onStageComplete };
   const compileStart = performance.now();
+  emitStudioOsRuntimeEvent('WORLD_COMPILER_STARTED', 'world-compiler.compile-pipeline', {
+    stationId: input.stationId,
+    compileRunId: investigation?.compileRunId,
+  });
+  emitStudioOsRuntimeEvent('COMPILER_STARTED', 'world-compiler.compile-pipeline', {
+    stationId: input.stationId,
+  });
   const stages: WorldCompileStageResult[] = [];
   const shellLock = resolveShellLockState(input.departmentId, input.projectId, input.stationId, {
     validationMode,
@@ -125,6 +142,10 @@ export async function compileWorldStation(input: {
           `[${code}] No executable shell loaded. ${shellDiagnostic.failureReason ?? 'environment-shell unresolved.'} Station ${input.stationId} · mode ${shellDiagnostic.authorizationMode}.`
         );
       }
+      emitStudioOsRuntimeEvent('SHELL_CREATED', 'world-compiler.compile-pipeline', {
+        stationId: input.stationId,
+        shellVersion: shellLock.shellVersion,
+      });
       return `Shell v${shellLock.shellVersion} loaded (${shellLock.resolution}) as reference.`;
     }, stageOptions)
   );
@@ -202,6 +223,21 @@ export async function compileWorldStation(input: {
     shellDiagnostic: shellDiagnostic.failureReason ? shellDiagnostic : undefined,
     validationMode,
   });
+
+  if (report.success) {
+    emitStudioOsRuntimeEvent('WORLD_COMPILER_STOPPED', 'world-compiler.compile-pipeline', {
+      stationId: input.stationId,
+      renderTimeMs,
+    });
+    emitStudioOsRuntimeEvent('SHELL_LOADED', 'world-compiler.compile-pipeline', {
+      shellVersion: shellLock.shellVersion,
+      stationId: input.stationId,
+    });
+  } else {
+    emitStudioOsRuntimeEvent('COMPILER_FAILED', 'world-compiler.compile-pipeline', {
+      stationId: input.stationId,
+    });
+  }
 
   return {
     graph,

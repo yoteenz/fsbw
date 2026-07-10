@@ -33,14 +33,18 @@ export function installLifecycleMonitor(): () => void {
   });
 
   const onError = (ev: ErrorEvent) => {
-    recordFlightEvent('ERROR_BOUNDARY', 'window.error', {
-      detail: { message: ev.message, filename: ev.filename, lineno: ev.lineno },
-    });
+    const detail = { message: ev.message, filename: ev.filename, lineno: ev.lineno };
+    recordFlightEvent('UNCAUGHT_EXCEPTION', 'window.error', { detail });
+    recordFlightEvent('ERROR', 'window.error', { detail });
+    recordFlightEvent('RUNTIME_ERROR', 'window.error', { detail });
+    recordFlightEvent('ERROR_BOUNDARY', 'window.error', { detail });
   };
   const onRejection = (ev: PromiseRejectionEvent) => {
-    recordFlightEvent('ERROR_BOUNDARY', 'unhandledrejection', {
-      detail: { reason: String(ev.reason) },
-    });
+    const detail = { reason: String(ev.reason) };
+    recordFlightEvent('UNHANDLED_REJECTION', 'unhandledrejection', { detail });
+    recordFlightEvent('ERROR', 'unhandledrejection', { detail });
+    recordFlightEvent('RUNTIME_ERROR', 'unhandledrejection', { detail });
+    recordFlightEvent('ERROR_BOUNDARY', 'unhandledrejection', { detail });
   };
   window.addEventListener('error', onError);
   window.addEventListener('unhandledrejection', onRejection);
@@ -54,6 +58,9 @@ export function installLifecycleMonitor(): () => void {
       for (const entry of list.getEntries()) {
         if (entry.duration < 50) continue;
         recordFlightEvent('LONG_TASK', 'PerformanceObserver', {
+          detail: { durationMs: entry.duration, name: entry.name },
+        });
+        recordFlightEvent('WARNING', 'PerformanceObserver', {
           detail: { durationMs: entry.duration, name: entry.name },
         });
       }

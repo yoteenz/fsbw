@@ -90,6 +90,17 @@ export function getMemoryMirror(): readonly FlightRecorderEvent[] {
   return memoryMirror;
 }
 
+/** Clear in-memory mirror for a fresh recording session (IndexedDB history preserved). */
+export function clearMemoryMirror(): void {
+  memoryMirror = [];
+  writeQueue = [];
+  try {
+    sessionStorage.removeItem(SUMMARY_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
 export async function loadAllEventsForSession(sessionId: string): Promise<FlightRecorderEvent[]> {
   const fromMemory = memoryMirror.filter((e) => e.sessionId === sessionId);
   try {

@@ -7,13 +7,28 @@ export function installStorageObserver(): () => void {
 
   for (const storage of [localStorage, sessionStorage] as Storage[]) {
     const name = storage === localStorage ? 'localStorage' : 'sessionStorage';
+    const writeType = storage === localStorage ? 'LOCAL_STORAGE_WRITE' : 'SESSION_STORAGE_WRITE';
+    const readType = storage === localStorage ? 'LOCAL_STORAGE_READ' : 'SESSION_STORAGE_READ';
     const origSet = storage.setItem.bind(storage);
     const origRemove = storage.removeItem.bind(storage);
+    const origGet = storage.getItem.bind(storage);
+
+    storage.getItem = (key: string) => {
+      const value = origGet(key);
+      if (key.includes('genesis') || key.includes('studio') || key.includes('experience')) {
+        recordFlightEvent(readType, `${name}.getItem`, { detail: { key, hit: value != null } });
+        recordFlightEvent('STORAGE_READ', `${name}.getItem`, { detail: { key, hit: value != null } });
+      }
+      return value;
+    };
 
     storage.setItem = (key: string, value: string) => {
       origSet(key, value);
       if (key.includes('genesis') || key.includes('studio') || key.includes('experience')) {
         recordStateMutation('genesis', `${name}.setItem:${key}`);
+        recordFlightEvent(writeType, `${name}.setItem`, {
+          detail: { key, bytes: value.length },
+        });
         recordFlightEvent('STORAGE_WRITE', `${name}.setItem`, {
           detail: { key, bytes: value.length },
         });
@@ -25,12 +40,14 @@ export function installStorageObserver(): () => void {
 
     storage.removeItem = (key: string) => {
       origRemove(key);
+      recordFlightEvent(writeType, `${name}.removeItem`, { detail: { key } });
       recordFlightEvent('STORAGE_WRITE', `${name}.removeItem`, { detail: { key } });
     };
 
     cleanups.push(() => {
       storage.setItem = origSet;
       storage.removeItem = origRemove;
+      storage.getItem = origGet;
     });
   }
 

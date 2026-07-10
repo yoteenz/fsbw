@@ -45661,6 +45661,7 @@ Summary of **full conversation in this chat**: User reported production iOS blan
 
 ---
 
+<<<<<<< HEAD
 ## 2026-07-10 — DECOUPLE THE WORLD COMPILER™ (Experience Lab runtime separation)
 
 Summary of **full conversation in this chat** (architecture sprints + this implementation sprint): Foundation Sprint · Executive OS Sprint · Studio World Bible · Studio World Bible Part 1 · **DECOUPLE THE WORLD COMPILER™** — architectural separation (not UI redesign). Mandate: Experience Lab owns runtime/lifecycle/session/heartbeat/environment generation; World Compiler™ is passive cinematic visualization only.
@@ -45672,3 +45673,23 @@ Summary of **full conversation in this chat** (architecture sprints + this imple
 - **Verification:** `npm run build` pass. Manual QA: iOS Safari/Chrome + Desktop Chrome/Safari — confirm `document.documentElement.dataset.experienceLabHeartbeat === 'active'` persists after compiler unmount; reconnect resumes snapshot without pipeline restart.
 - **Files:** `experience-lab-runtime/*`, `ExperienceLabRenderRuntimeProvider.tsx`, `useCreativeStudioRenderPreview.ts`, `ExperienceLabModeShell.tsx`, `compile-pipeline.ts`, `CreativeStudioPipelineStatusBar.tsx`, `motherboard/CORE.md`.
 - **Conventions:** World Compiler may animate/display only; may never restart runtime, own heartbeat, own timers, or mutate runtime state. Retry delegates to `requestRuntimeRetry`. Diagnostic mode (`?compilerDiag=1`) manual compile still delegates to runtime retry.
+=======
+## 2026-07-10 — Black Box Global Flight Recorder™ refactor
+
+Summary of **full conversation in this chat**: After P0 hotfix for blank Black Box diagnostic routes (`854c2378b` — isolated entry path in `src/diagnostic-entry/`), user reported recorder only captured diagnostic page lifecycle (TIMER_REGISTERED spam, missing BOOT_STARTED/EXPERIENCE_LAB/WORLD_COMPILER events). Sprint mandate: refactor into **true global flight recorder** observing entire Studio OS runtime.
+
+- **Root cause:** Recorder init was deferred on isolated diagnostic routes (useEffect) and ran after legacy boot on other paths; subscription graph listened to wrong boot event (`studio-boot-live-state` vs kernel's `studio-os-boot-updated`); UI read page-local state only.
+
+- **Architecture:** `main.tsx` → synchronous `global-boot.ts` → `initStudioOsFlightRecorder()` **before any route dispatch**. Singleton append-only recorder + `runtime-emit.ts` global event bus + `recorder-state.ts` / `recorder-controller.ts` (pause/clear). Never tied to React diagnostic pages.
+
+- **Runtime hooks (observe-only):** `studio-os-boot-updated` → BOOT_STARTED/BOOT_COMPLETED; Experience Lab mount → EXPERIENCE_LAB_STARTED/DESTROYED; world compiler pipeline → WORLD_COMPILER_*, COMPILER_STAGE_CHANGED, LANDMARK_GENERATED, SHELL_*; investigation log → COMPILER_RESET; visibility/errors/storage/timer/subscription extended event types.
+
+- **UI:** `FlightRecorderConsole` operational console — Start/Pause/Clear/Copy Report/Export JSON/Download Markdown; lifecycle timeline with arrows; recording indicator (session, elapsed, memory). Both `/__studio-os-flight-recorder` and `/__studio-os-session-report` use console.
+
+- **Copy Report:** `markdown-report.ts` generates ChatGPT-ready Markdown (environment, timeline, errors, heartbeat, compiler, ownership, subscriptions, timers, root cause candidates).
+
+- **Checkpoints:** RECORDER_ATTACHED → RECORDER_READY before BOOT_STARTED (recorder failure if BOOT_STARTED missing after Studio OS boot).
+
+- **Files:** `src/studio-os/diagnostics/global-boot.ts`, `runtime-emit.ts`, `global-event-bus.ts`, `recorder-state.ts`, `recorder-controller.ts`, `markdown-report.ts`, `flight-recorder-console/FlightRecorderConsole.tsx`; updated `init.ts`, `types.ts`, monitors, `main.tsx`, compile-pipeline, ExperienceLabWorkspace.
+
+>>>>>>> 75eab337b (Refactor Black Box into global flight recorder with operational console)

@@ -4,6 +4,7 @@
 import type { FlightEventType, FlightRecorderEvent } from '../types';
 import { gatherContextFields, getFlightSessionId } from './context-snapshot';
 import { persistFlightEvent, getMemoryMirror } from './persistence';
+import { isRecorderActive } from '../recorder-state';
 
 let sequence = 0;
 let initialized = false;
@@ -28,6 +29,37 @@ export function recordFlightEvent(
     detail?: Record<string, unknown>;
   }
 ): FlightRecorderEvent {
+  if (!isRecorderActive()) {
+    const ctx = gatherContextFields();
+    return {
+      id: sequence,
+      eventId: `${ctx.sessionId}:${sequence}`,
+      timestamp: Date.now(),
+      isoTime: new Date().toISOString(),
+      type,
+      source,
+      caller: options?.caller ?? 'paused',
+      route: ctx.route,
+      browser: ctx.browser,
+      platform: ctx.platform,
+      company: ctx.company,
+      stationId: ctx.stationId,
+      shellId: ctx.shellId,
+      compileRunId: ctx.compileRunId,
+      heartbeatState: ctx.heartbeatState,
+      registryVersion: ctx.registryVersion,
+      sceneStackVersion: ctx.sceneStackVersion,
+      reactRenderCount: ctx.reactRenderCount,
+      activeSubscriptions: ctx.activeSubscriptions,
+      contextVersion: ctx.contextVersion,
+      url: ctx.url,
+      sessionId: ctx.sessionId,
+      bundleVersion: ctx.bundleVersion,
+      reactVersion: ctx.reactVersion,
+      detail: options?.detail,
+    };
+  }
+
   sequence += 1;
   const ctx = gatherContextFields();
   const event: FlightRecorderEvent = {
@@ -84,6 +116,10 @@ export function isFlightRecorderInitialized(): boolean {
 
 export function markFlightRecorderInitialized(): void {
   initialized = true;
+}
+
+export function resetFlightRecorderSequence(): void {
+  sequence = 0;
 }
 
 export function getFlightSessionIdFromRecorder(): string {

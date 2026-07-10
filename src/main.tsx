@@ -1,7 +1,9 @@
 /**
  * Entry dispatcher — Shell V2 (/v2/*) never loads the legacy startup tree.
  * Black Box diagnostic routes use an isolated entry (no legacy bootstrap).
+ * Global flight recorder boots synchronously before any route dispatch.
  */
+import './studio-os/diagnostics/global-boot';
 import { isShellV2Path } from './shell-v2/shellV2Matrix';
 import { isIsolatedBlackBoxPath } from './diagnostic-entry/paths';
 import { markDiagnosticCheckpoint } from './diagnostic-entry/checkpoints';

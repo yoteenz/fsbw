@@ -3,6 +3,7 @@ import { recordFlightEvent } from '../flight-recorder/recorder';
 
 let nextTimerId = 1;
 const timers = new Map<number, TimerRecord>();
+const nativeToInventory = new Map<number, number>();
 
 function captureCaller(): string {
   try {
@@ -70,22 +71,35 @@ export function installTimerInventory(): () => void {
   };
 
   window.setTimeout = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => {
-    register('timeout', timeout ?? 0);
-    return origSetTimeout(handler as Parameters<typeof setTimeout>[0], timeout, ...(args as []));
+    const invId = register('timeout', timeout ?? 0);
+    const nativeId = origSetTimeout(handler as Parameters<typeof setTimeout>[0], timeout, ...(args as []));
+    nativeToInventory.set(nativeId, invId);
+    return nativeId;
   }) as typeof window.setTimeout;
 
   window.setInterval = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) => {
-    register('interval', timeout ?? 0);
-    return origSetInterval(handler as Parameters<typeof setInterval>[0], timeout, ...(args as []));
+    const invId = register('interval', timeout ?? 0);
+    const nativeId = origSetInterval(handler as Parameters<typeof setInterval>[0], timeout, ...(args as []));
+    nativeToInventory.set(nativeId, invId);
+    return nativeId;
   }) as typeof window.setInterval;
 
   window.requestAnimationFrame = ((callback: FrameRequestCallback) => {
-    register('raf', null);
+    recordFlightEvent('REQUEST_ANIMATION_FRAME', 'timer-inventory', {
+      detail: { caller: captureCaller() },
+    });
     return origRaf(callback);
   }) as typeof window.requestAnimationFrame;
 
-  window.clearTimeout = ((id: number) => origClearTimeout(id)) as typeof window.clearTimeout;
-  window.clearInterval = ((id: number) => origClearInterval(id)) as typeof window.clearInterval;
+  const clearNative = (kind: 'timeout' | 'interval', id: number) => {
+    const invId = nativeToInventory.get(id);
+    recordFlightEvent('TIMER_CLEARED', 'timer-inventory', { detail: { kind, timerId: invId ?? id } });
+    if (kind === 'timeout') origClearTimeout(id);
+    else origClearInterval(id);
+  };
+
+  window.clearTimeout = ((id: number) => clearNative('timeout', id)) as typeof window.clearTimeout;
+  window.clearInterval = ((id: number) => clearNative('interval', id)) as typeof window.clearInterval;
 
   return () => {
     window.setTimeout = origSetTimeout;

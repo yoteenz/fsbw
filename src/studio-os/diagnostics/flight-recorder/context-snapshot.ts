@@ -11,6 +11,15 @@ export function getFlightSessionId(): string {
   return sessionId;
 }
 
+export function resetFlightSession(): string {
+  sessionId = `session-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  bootStartedAt = Date.now();
+  contextOverlay = {};
+  reactRenderCount = 0;
+  activeSubscriptionCount = 0;
+  return sessionId;
+}
+
 export function getBootStartedAt(): number {
   return bootStartedAt;
 }

@@ -1,7 +1,6 @@
 /**
- * Studio OS Black Box Investigation™ — observe-only init.
- * Installs flight recorder, timeline, env diff, lifecycle, state, subscription, timer monitors.
- * Does NOT modify heartbeat, cache, state management, or retry logic.
+ * Studio OS Black Box Investigation™ — global flight recorder init.
+ * Installs monitors at earliest boot; never tied to diagnostic React pages.
  */
 import { recordFlightEvent, markFlightRecorderInitialized } from './flight-recorder/recorder';
 import { installLifecycleMonitor } from './lifecycle-monitor/lifecycle';
@@ -9,13 +8,18 @@ import { installStorageObserver } from './state-monitor/storage-observer';
 import { installSubscriptionGraphMonitor } from './subscription-graph/graph';
 import { installTimerInventory } from './timer-inventory/timer-hook';
 import { refreshHeartbeatState, registerFlightContext } from './flight-recorder/context-snapshot';
-import { WINDOW_EVENT_MAP, STUDIO_BOOT_EVENT } from './flight-recorder/event-types';
+import { WINDOW_EVENT_MAP } from './flight-recorder/event-types';
 import { captureEnvironmentSnapshot, saveEnvironmentSnapshot } from './environment-diff/capture';
 import { buildSessionForensicReport } from './session-report/builder';
+import { installGlobalRuntimeEventBus } from './global-event-bus';
+import { flushPendingRuntimeEvents } from './runtime-emit';
+import { STUDIO_BOOT_EVENT } from '../../studio-os-core/kernel/types';
+import type { StudioBootLiveState } from '../../studio-os-core/kernel/types';
 
 let installed = false;
 let heartbeatWasAlive = false;
 let heartbeatStartedRecorded = false;
+let bootStartedRecorded = false;
 let cleanupFns: Array<() => void> = [];
 
 function installWindowEventTap(): () => void {
@@ -37,15 +41,43 @@ function installWindowEventTap(): () => void {
   };
 }
 
-function installBootListener(): () => void {
+function installStudioBootListener(): () => void {
   const fn = (ev: Event) => {
-    const detail = (ev as CustomEvent).detail;
-    recordFlightEvent('BOOT_COMPLETED', 'studio-kernel', {
-      detail: typeof detail === 'object' && detail ? { ...(detail as object) } : { detail },
-    });
+    const detail = (ev as CustomEvent<StudioBootLiveState>).detail;
+    if (!detail) return;
+
+    if (detail.started && !bootStartedRecorded) {
+      bootStartedRecorded = true;
+      recordFlightEvent('BOOT_STARTED', 'studio-kernel', {
+        detail: { currentModuleId: detail.currentModuleId, elapsedMs: detail.elapsedMs },
+      });
+      recordFlightEvent('SESSION_CREATED', 'studio-kernel', { detail: { sessionId: detail.currentModuleId } });
+    }
+
+    if (detail.complete) {
+      recordFlightEvent('BOOT_COMPLETED', 'studio-kernel', {
+        detail: { ready: detail.ready, errors: detail.errors, warnings: detail.warnings },
+      });
+    }
   };
   window.addEventListener(STUDIO_BOOT_EVENT, fn);
   return () => window.removeEventListener(STUDIO_BOOT_EVENT, fn);
+}
+
+function installVisibilityObserver(): () => void {
+  const fn = () => {
+    const state = document.visibilityState;
+    recordFlightEvent('VISIBILITY_CHANGED', 'document.visibilityState', {
+      detail: { state },
+    });
+    if (state === 'hidden') {
+      recordFlightEvent('PAGE_HIDDEN', 'document.visibilityState');
+    } else {
+      recordFlightEvent('PAGE_VISIBLE', 'document.visibilityState');
+    }
+  };
+  document.addEventListener('visibilitychange', fn);
+  return () => document.removeEventListener('visibilitychange', fn);
 }
 
 function installServiceWorkerObserver(): () => void {
@@ -75,6 +107,11 @@ function installHeartbeatObserver(): () => void {
 
     const alive = snap.heartbeat > lastHb || snap.rafCount > lastRaf;
     if (alive) {
+      if (heartbeatWasAlive === false && heartbeatStartedRecorded) {
+        recordFlightEvent('HEARTBEAT_RESTARTED', 'heartbeat-observer', {
+          detail: { heartbeat: snap.heartbeat, rafCount: snap.rafCount },
+        });
+      }
       heartbeatWasAlive = true;
       staleSince = null;
     } else if (heartbeatWasAlive && snap.heartbeat === lastHb) {
@@ -103,32 +140,45 @@ function installHeartbeatObserver(): () => void {
 
 function installSessionReportOnUnload(): () => void {
   const fn = () => {
+    recordFlightEvent('SESSION_DESTROYED', 'window.pagehide');
     void buildSessionForensicReport();
   };
   window.addEventListener('pagehide', fn);
   return () => window.removeEventListener('pagehide', fn);
 }
 
-/** Install all Black Box monitors — call once at app boot. Observe-only. */
+/** Install global Black Box recorder — call once at earliest main entry. Observe-only. */
 export function initStudioOsFlightRecorder(options?: { envLabel?: string }): void {
   if (installed || typeof window === 'undefined') return;
   installed = true;
+
+  (window as unknown as {
+    __STUDIO_OS_RECORD__?: typeof recordFlightEvent;
+    __STUDIO_OS_REGISTER_CONTEXT__?: typeof registerFlightContext;
+  }).__STUDIO_OS_RECORD__ = recordFlightEvent;
+  (window as unknown as { __STUDIO_OS_REGISTER_CONTEXT__?: typeof registerFlightContext }).__STUDIO_OS_REGISTER_CONTEXT__ =
+    registerFlightContext;
+
+  recordFlightEvent('RECORDER_ATTACHED', 'global-flight-recorder');
   markFlightRecorderInitialized();
 
-  recordFlightEvent('BOOT_STARTED', 'initStudioOsFlightRecorder');
-  recordFlightEvent('AUTH_STARTED', 'initStudioOsFlightRecorder');
-
   cleanupFns = [
+    installGlobalRuntimeEventBus(),
     installTimerInventory(),
     installStorageObserver(),
     installLifecycleMonitor(),
     installSubscriptionGraphMonitor(),
     installWindowEventTap(),
-    installBootListener(),
+    installStudioBootListener(),
+    installVisibilityObserver(),
     installServiceWorkerObserver(),
     installHeartbeatObserver(),
     installSessionReportOnUnload(),
   ];
+
+  recordFlightEvent('SESSION_CREATED', 'global-flight-recorder', {
+    detail: { phase: 'recorder-attached' },
+  });
 
   void captureEnvironmentSnapshot(options?.envLabel ?? 'boot').then((snap) => {
     saveEnvironmentSnapshot(snap);
@@ -139,28 +189,23 @@ export function initStudioOsFlightRecorder(options?: { envLabel?: string }): voi
 
   try {
     if (localStorage.getItem('isSignedIn') === 'true' || localStorage.getItem('currentUser')) {
-      recordFlightEvent('AUTH_COMPLETED', 'initStudioOsFlightRecorder');
-      recordFlightEvent('SESSION_RESTORED', 'initStudioOsFlightRecorder');
+      recordFlightEvent('AUTH_COMPLETED', 'global-flight-recorder');
+      recordFlightEvent('SESSION_RESTORED', 'global-flight-recorder');
     }
     if (localStorage.getItem('genesis_v1')) {
-      recordFlightEvent('GENESIS_LOADED', 'initStudioOsFlightRecorder', {
+      recordFlightEvent('GENESIS_LOADED', 'global-flight-recorder', {
         detail: { bytes: localStorage.getItem('genesis_v1')?.length ?? 0 },
       });
-      recordFlightEvent('REGISTRY_LOADED', 'initStudioOsFlightRecorder');
+      recordFlightEvent('REGISTRY_LOADED', 'global-flight-recorder');
     }
   } catch {
     /* private mode */
   }
 
-  (window as unknown as {
-    __STUDIO_OS_FLIGHT_RECORDER__?: true;
-    __STUDIO_OS_RECORD__?: typeof recordFlightEvent;
-    __STUDIO_OS_REGISTER_CONTEXT__?: typeof registerFlightContext;
-  }).__STUDIO_OS_FLIGHT_RECORDER__ = true;
-  (window as unknown as { __STUDIO_OS_RECORD__?: typeof recordFlightEvent }).__STUDIO_OS_RECORD__ =
-    recordFlightEvent;
-  (window as unknown as { __STUDIO_OS_REGISTER_CONTEXT__?: typeof registerFlightContext }).__STUDIO_OS_REGISTER_CONTEXT__ =
-    registerFlightContext;
+  recordFlightEvent('RECORDER_READY', 'global-flight-recorder');
+  flushPendingRuntimeEvents();
+
+  (window as unknown as { __STUDIO_OS_FLIGHT_RECORDER__?: true }).__STUDIO_OS_FLIGHT_RECORDER__ = true;
 }
 
 export function shutdownStudioOsFlightRecorder(): void {
@@ -174,7 +219,19 @@ export { registerFlightContext } from './flight-recorder/context-snapshot';
 export { buildSessionForensicReport, loadLastSessionReport } from './session-report/builder';
 export { captureEnvironmentSnapshot, saveEnvironmentSnapshot, loadEnvironmentSnapshots } from './environment-diff/capture';
 export { compareEnvironmentSnapshots } from './environment-diff/compare';
-export { buildEventTimeline, formatTimelineAscii } from './event-timeline/timeline';
+export { buildEventTimeline, formatTimelineAscii, formatTimelineVertical } from './event-timeline/timeline';
 export { getTimerInventory, findThreeSecondTimers } from './timer-inventory/timer-hook';
 export { getSubscriptionGraph, detectSubscriptionLoops } from './subscription-graph/graph';
 export { STATE_OWNERSHIP, buildOwnershipReport } from './state-monitor/ownership-registry';
+export { emitStudioOsRuntimeEvent } from './runtime-emit';
+export {
+  pauseRecording,
+  resumeRecording,
+  startRecording,
+  clearRecording,
+  getRecorderRuntimeStatus,
+  getRecordingElapsedMs,
+  isRecorderActive,
+  isRecorderPaused,
+} from './recorder-controller';
+export { buildMarkdownFlightReport } from './markdown-report';

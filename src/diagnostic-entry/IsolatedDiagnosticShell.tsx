@@ -12,15 +12,6 @@ export function IsolatedDiagnosticShell({ route, children }: Props) {
   useEffect(() => {
     clearDiagnosticPlainDom();
     markDiagnosticCheckpoint('diagnostic:component-mounted', route);
-
-    try {
-      void import('../studio-os/diagnostics').then(({ initStudioOsFlightRecorder }) => {
-        initStudioOsFlightRecorder({ envLabel: 'isolated-diagnostic' });
-      });
-    } catch {
-      /* flight recorder optional on isolated path */
-    }
-
     markDiagnosticCheckpoint('diagnostic:ready', route);
   }, [route]);
 
