@@ -16,6 +16,7 @@ import StudioOsSessionReportPage from '../pages/debug/studio-os-session-report/p
 import StudioOsLiveRuntimePage from '../pages/debug/studio-os-live-runtime/page';
 import WorldCompilerInvestigationPage from '../pages/debug/world-compiler-investigation/page';
 import ExpertCapturePage from '../pages/expert-capture/page';
+import AllInOnePermittingCapturePage from '../pages/expert-capture/all-in-one-permitting/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import LoadingScreen from '../components/base/LoadingScreen';
@@ -35,6 +36,7 @@ export const STUDIO_DEBUG_PATHS = [
   '/__studio-os-live-runtime',
   '/__world-compiler-investigation',
   '/expert-capture',
+  '/expert-capture/all-in-one-permitting',
 ] as const;
 
 export function isStudioDebugPath(pathname: string): boolean {
@@ -63,6 +65,7 @@ export default function StudioDebugRoutes() {
       <Route path="/__studio-os-live-runtime" element={<StudioOsLiveRuntimePage />} />
       <Route path="/__world-compiler-investigation" element={<WorldCompilerInvestigationPage />} />
       <Route path="/expert-capture" element={<ExpertCapturePage />} />
+      <Route path="/expert-capture/all-in-one-permitting" element={<AllInOnePermittingCapturePage />} />
       <Route
         path="*"
         element={

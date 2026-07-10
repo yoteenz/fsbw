@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   applyKnowledgeExtraction,
   approveAnswerKnowledge,
-  buildSessionSummary,
   callInterviewAi,
   clearAllMediaBlobs,
   clearSessionStorage,
@@ -25,15 +24,23 @@ import {
   type ExpertCapturePhase,
   type ExpertCaptureSession,
 } from '../studio-os-core/expert-capture';
+import type { ExpertCaptureProfile } from '../studio-os-core/expert-capture/profiles/profile-types';
 import {
   attachMirroredPreview,
   createMicLevelMonitor,
   requestMediaStream,
 } from '../studio-os-core/expert-capture/recording-service';
 
-export function useExpertCaptureSession() {
-  const [session, setSession] = useState<ExpertCaptureSession | null>(() => loadSession());
-  const [phase, setPhase] = useState<ExpertCapturePhase>(() => (loadSession() ? 'interview' : 'landing'));
+function aiContext(profile: ExpertCaptureProfile) {
+  return {
+    profileId: profile.id,
+    industryContext: profile.aiIndustryContext,
+  };
+}
+
+export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
+  const [session, setSession] = useState<ExpertCaptureSession | null>(() => loadSession(profile));
+  const [phase, setPhase] = useState<ExpertCapturePhase>(() => (loadSession(profile) ? 'interview' : 'landing'));
   const [currentAnswer, setCurrentAnswer] = useState<ExpertCaptureAnswer | null>(null);
   const [aiSpeaking, setAiSpeaking] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -54,10 +61,13 @@ export function useExpertCaptureSession() {
   const stopMicRef = useRef<(() => void) | null>(null);
   const recordStartedRef = useRef<number | null>(null);
 
-  const persist = useCallback((next: ExpertCaptureSession) => {
-    saveSession(next);
-    setSession(next);
-  }, []);
+  const persist = useCallback(
+    (next: ExpertCaptureSession) => {
+      saveSession(next, profile);
+      setSession(next);
+    },
+    [profile]
+  );
 
   const attachStream = useCallback(async () => {
     const stream = await requestMediaStream();
@@ -77,11 +87,18 @@ export function useExpertCaptureSession() {
 
   const startSession = useCallback(
     (expertName: string, expertRole: string) => {
-      const next = createEmptySession({ expertName, expertRole });
+      const next = createEmptySession(
+        {
+          expertName,
+          expertRole: profile.lockRole ? profile.defaultExpertRole : expertRole,
+          organizationLabel: profile.defaultOrganization,
+        },
+        profile
+      );
       persist(next);
       setPhase('consent');
     },
-    [persist]
+    [persist, profile]
   );
 
   const acceptConsent = useCallback(() => {
@@ -120,6 +137,7 @@ export function useExpertCaptureSession() {
           action: 'greet',
           expertName: next.meta.expertName,
           expertRole: next.meta.expertRole,
+          ...aiContext(profile),
         });
         setAiMessage(greet.text);
         await speakText(greet.text);
@@ -132,7 +150,7 @@ export function useExpertCaptureSession() {
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Camera/microphone access failed');
     }
-  }, [attachStream, session, persist]);
+  }, [attachStream, session, persist, profile]);
 
   const beginAnswer = useCallback(() => {
     if (!session) return;
@@ -207,6 +225,7 @@ export function useExpertCaptureSession() {
       question: draft.questionText,
       transcript: finalTranscript,
       expertRole: session.meta.expertRole,
+      ...aiContext(profile),
     });
 
     draft = {
@@ -218,11 +237,16 @@ export function useExpertCaptureSession() {
       draft = applyKnowledgeExtraction(draft, analysis.knowledgeItems);
     }
 
+    const followUp =
+      analysis.followUpQuestion ??
+      profile.buildLocalFollowUp?.(finalTranscript, draft.questionText) ??
+      null;
+
     setCurrentAnswer(draft);
-    setPendingFollowUp(analysis.followUpQuestion ?? null);
+    setPendingFollowUp(followUp);
     setPhase('understanding_review');
     setProcessing(false);
-  }, [session, currentAnswer, liveTranscript]);
+  }, [session, currentAnswer, liveTranscript, profile]);
 
   const confirmUnderstanding = useCallback(
     (confirmation: 'correct' | 'partial' | 'misunderstood') => {
@@ -252,6 +276,7 @@ export function useExpertCaptureSession() {
       transcript: currentAnswer.transcript,
       misunderstanding: currentAnswer.aiUnderstanding ?? '',
       expertCorrection: clarifyDraft.trim(),
+      ...aiContext(profile),
     });
     let updated: ExpertCaptureAnswer = {
       ...currentAnswer,
@@ -270,7 +295,7 @@ export function useExpertCaptureSession() {
     setClarifyDraft('');
     setPhase('understanding_review');
     setProcessing(false);
-  }, [session, currentAnswer, clarifyDraft]);
+  }, [session, currentAnswer, clarifyDraft, profile]);
 
   const continueAfterReview = useCallback(() => {
     if (!session || !currentAnswer) return;
@@ -281,7 +306,10 @@ export function useExpertCaptureSession() {
       meta: {
         ...session.meta,
         currentQuestionIndex: session.meta.currentQuestionIndex + 1,
-        estimatedMinutesRemaining: estimateRemainingMinutes({ ...session, answers }),
+        estimatedMinutesRemaining: estimateRemainingMinutes(
+          { ...session, answers },
+          profile.minutesPerQuestion
+        ),
       },
     };
 
@@ -301,7 +329,7 @@ export function useExpertCaptureSession() {
       nextSession = {
         ...nextSession,
         meta: { ...nextSession.meta, status: 'completed', endedAt: new Date().toISOString() },
-        summary: buildSessionSummary({ ...nextSession, answers }),
+        summary: profile.buildSessionSummary({ ...nextSession, answers }),
       };
       persist(nextSession);
       setPhase('session_complete');
@@ -311,7 +339,7 @@ export function useExpertCaptureSession() {
     setPhase('interview');
     setAiMessage(remaining.text);
     void speakText(remaining.text);
-  }, [session, currentAnswer, pendingFollowUp, persist]);
+  }, [session, currentAnswer, pendingFollowUp, persist, profile]);
 
   const redoAnswer = useCallback(async () => {
     if (!currentAnswer) return;
@@ -338,7 +366,13 @@ export function useExpertCaptureSession() {
       setCurrentAnswer(null);
       setPendingFollowUp(null);
       if (mode === 'skip') {
-        const skipped = createAnswerForQuestion(session, { id: currentAnswer.questionId, text: currentAnswer.questionText, category: '', order: 0, optional: true });
+        const skipped = createAnswerForQuestion(session, {
+          id: currentAnswer.questionId,
+          text: currentAnswer.questionText,
+          category: '',
+          order: 0,
+          optional: true,
+        });
         skipped.skipped = true;
         skipped.status = 'skipped';
         persist({ ...session, answers: [...answers, skipped] });
@@ -363,7 +397,7 @@ export function useExpertCaptureSession() {
       meta: {
         ...session.meta,
         currentQuestionIndex: session.meta.currentQuestionIndex + 1,
-        estimatedMinutesRemaining: estimateRemainingMinutes({ ...session, answers }),
+        estimatedMinutesRemaining: estimateRemainingMinutes({ ...session, answers }, profile.minutesPerQuestion),
       },
     });
     setCurrentAnswer(null);
@@ -374,7 +408,7 @@ export function useExpertCaptureSession() {
     }
     setAiMessage(remaining.text);
     setPhase('interview');
-  }, [session, persist]);
+  }, [session, persist, profile]);
 
   const editTranscript = useCallback(
     (text: string) => {
@@ -389,13 +423,8 @@ export function useExpertCaptureSession() {
     [currentAnswer]
   );
 
-  const goToKnowledgeReview = useCallback(() => {
-    setPhase('knowledge_review');
-  }, []);
-
-  const goToExport = useCallback(() => {
-    setPhase('export');
-  }, []);
+  const goToKnowledgeReview = useCallback(() => setPhase('knowledge_review'), []);
+  const goToExport = useCallback(() => setPhase('export'), []);
 
   const approveAnswer = useCallback(
     (answerId: string) => {
@@ -428,7 +457,7 @@ export function useExpertCaptureSession() {
 
   const restartSession = useCallback(async () => {
     await clearAllMediaBlobs();
-    clearSessionStorage();
+    clearSessionStorage(profile);
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
     setSession(null);
@@ -436,12 +465,13 @@ export function useExpertCaptureSession() {
     setPhase('landing');
     setPendingFollowUp(null);
     setLiveTranscript('');
-  }, []);
+  }, [profile]);
 
   const progress = session ? countProgress(session) : { current: 0, total: 0 };
   const currentQuestion = session ? getCurrentQuestion(session) : null;
 
   return {
+    profile,
     session,
     phase,
     setPhase,

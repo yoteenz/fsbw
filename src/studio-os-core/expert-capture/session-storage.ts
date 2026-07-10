@@ -1,4 +1,4 @@
-import { BASE_INTERVIEW_QUESTIONS, EXPERT_CAPTURE_SESSION_KEY } from './constants';
+import type { ExpertCaptureProfile } from './profiles/profile-types';
 import type {
   ExpertCaptureAnswer,
   ExpertCaptureQuestion,
@@ -11,17 +11,25 @@ function newId(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export function createEmptySession(input: {
-  expertName: string;
-  expertRole: string;
-  organizationLabel?: string;
-}): ExpertCaptureSession {
+export function createEmptySession(
+  input: {
+    expertName: string;
+    expertRole: string;
+    organizationLabel?: string;
+  },
+  profile: ExpertCaptureProfile
+): ExpertCaptureSession {
   const now = new Date().toISOString();
   const meta: ExpertCaptureSessionMeta = {
     id: newId('session'),
+    profileId: profile.id,
     expertName: input.expertName.trim() || 'Expert',
-    expertRole: input.expertRole.trim() || 'Professional',
-    organizationLabel: input.organizationLabel?.trim() || 'Studio OS',
+    expertRole: profile.lockRole
+      ? profile.defaultExpertRole
+      : input.expertRole.trim() || profile.defaultExpertRole,
+    organizationLabel: profile.lockOrganization
+      ? profile.defaultOrganization
+      : input.organizationLabel?.trim() || profile.defaultOrganization,
     createdAt: now,
     updatedAt: now,
     consentAcceptedAt: null,
@@ -30,34 +38,38 @@ export function createEmptySession(input: {
     pausedAt: null,
     status: 'draft',
     currentQuestionIndex: 0,
-    estimatedMinutesRemaining: BASE_INTERVIEW_QUESTIONS.length * 3,
+    estimatedMinutesRemaining: profile.questions.length * profile.minutesPerQuestion,
     aiGreetingDelivered: false,
   };
   return {
     meta,
-    questions: BASE_INTERVIEW_QUESTIONS.map((q) => ({ ...q })),
+    questions: profile.questions.map((q) => ({ ...q })),
     answers: [],
     summary: null,
   };
 }
 
-export function loadSession(): ExpertCaptureSession | null {
+export function loadSession(profile: ExpertCaptureProfile): ExpertCaptureSession | null {
   try {
-    const raw = localStorage.getItem(EXPERT_CAPTURE_SESSION_KEY);
+    const raw = localStorage.getItem(profile.sessionStorageKey);
     if (!raw) return null;
-    return JSON.parse(raw) as ExpertCaptureSession;
+    const parsed = JSON.parse(raw) as ExpertCaptureSession;
+    if (!parsed.meta.profileId) {
+      parsed.meta.profileId = profile.id;
+    }
+    return parsed;
   } catch {
     return null;
   }
 }
 
-export function saveSession(session: ExpertCaptureSession): void {
+export function saveSession(session: ExpertCaptureSession, profile: ExpertCaptureProfile): void {
   session.meta.updatedAt = new Date().toISOString();
-  localStorage.setItem(EXPERT_CAPTURE_SESSION_KEY, JSON.stringify(session));
+  localStorage.setItem(profile.sessionStorageKey, JSON.stringify(session));
 }
 
-export function clearSessionStorage(): void {
-  localStorage.removeItem(EXPERT_CAPTURE_SESSION_KEY);
+export function clearSessionStorage(profile: ExpertCaptureProfile): void {
+  localStorage.removeItem(profile.sessionStorageKey);
 }
 
 export function getActiveQuestions(session: ExpertCaptureSession): ExpertCaptureQuestion[] {
@@ -74,9 +86,12 @@ export function getCurrentQuestion(session: ExpertCaptureSession): ExpertCapture
   return active[idx] ?? null;
 }
 
-export function estimateRemainingMinutes(session: ExpertCaptureSession): number {
+export function estimateRemainingMinutes(
+  session: ExpertCaptureSession,
+  minutesPerQuestion = 3
+): number {
   const remaining = getActiveQuestions(session).length;
-  return Math.max(1, remaining * 3);
+  return Math.max(1, remaining * minutesPerQuestion);
 }
 
 export function createAnswerForQuestion(

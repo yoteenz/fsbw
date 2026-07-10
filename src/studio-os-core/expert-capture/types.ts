@@ -15,13 +15,26 @@ export type KnowledgeStatus =
 
 export type KnowledgeStatementType =
   | 'workflow_step'
+  | 'workflow'
   | 'decision_rule'
   | 'quality_control'
+  | 'quality_check'
   | 'edge_case'
   | 'communication_style'
+  | 'communication_rule'
+  | 'customer_experience_rule'
   | 'exception'
   | 'principle'
-  | 'gap';
+  | 'gap'
+  | 'municipality_rule'
+  | 'required_document'
+  | 'inspection_rule'
+  | 'submission_rule'
+  | 'time_estimate'
+  | 'common_failure'
+  | 'best_practice'
+  | 'personal_technique'
+  | 'escalation_rule';
 
 export type ExpertCapturePhase =
   | 'landing'
@@ -38,6 +51,7 @@ export type AnswerConfirmation = 'correct' | 'partial' | 'misunderstood' | null;
 
 export type ExpertCaptureSessionMeta = {
   id: string;
+  profileId: string;
   expertName: string;
   expertRole: string;
   organizationLabel: string;
@@ -113,6 +127,11 @@ export type SessionSummaryReport = {
   questionsCorrected: number;
   questionsApproved: number;
   totalAnswers: number;
+  /** Permitting profile extensions */
+  businessAreasCovered?: string[];
+  municipalityRules?: string[];
+  bestPractices?: string[];
+  remainingTopics?: string[];
 };
 
 export type ExpertCaptureSession = {
@@ -123,10 +142,25 @@ export type ExpertCaptureSession = {
 };
 
 export type InterviewAiRequest =
-  | { action: 'greet'; expertName: string; expertRole: string }
-  | { action: 'analyze_answer'; question: string; transcript: string; expertRole: string }
-  | { action: 'follow_up'; question: string; transcript: string; understanding: string }
-  | { action: 'clarify'; question: string; transcript: string; misunderstanding: string; expertCorrection: string };
+  | { action: 'greet'; expertName: string; expertRole: string; profileId?: string; industryContext?: string }
+  | {
+      action: 'analyze_answer';
+      question: string;
+      transcript: string;
+      expertRole: string;
+      profileId?: string;
+      industryContext?: string;
+    }
+  | { action: 'follow_up'; question: string; transcript: string; understanding: string; profileId?: string; industryContext?: string }
+  | {
+      action: 'clarify';
+      question: string;
+      transcript: string;
+      misunderstanding: string;
+      expertCorrection: string;
+      profileId?: string;
+      industryContext?: string;
+    };
 
 export type InterviewAiResponse = {
   text: string;

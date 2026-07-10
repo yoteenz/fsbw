@@ -24,6 +24,12 @@ export {
 export { buildExportBundle, downloadExportBundle } from './export-service';
 export type { ExpertCaptureExportBundle } from './export-service';
 export {
+  DEFAULT_EXPERT_CAPTURE_PROFILE,
+  ALL_IN_ONE_PERMITTING_PROFILE,
+  getExpertCaptureProfile,
+} from './profiles';
+export type { ExpertCaptureProfile, ExpertCaptureBranding } from './profiles';
+export {
   requestMediaStream,
   attachMirroredPreview,
   createMicLevelMonitor,

@@ -1,7 +1,28 @@
 type InterviewAiRequest =
-  | { action: 'greet'; expertName: string; expertRole: string }
-  | { action: 'analyze_answer'; question: string; transcript: string; expertRole: string }
-  | { action: 'clarify'; question: string; transcript: string; misunderstanding: string; expertCorrection: string };
+  | {
+      action: 'greet';
+      expertName: string;
+      expertRole: string;
+      profileId?: string;
+      industryContext?: string;
+    }
+  | {
+      action: 'analyze_answer';
+      question: string;
+      transcript: string;
+      expertRole: string;
+      profileId?: string;
+      industryContext?: string;
+    }
+  | {
+      action: 'clarify';
+      question: string;
+      transcript: string;
+      misunderstanding: string;
+      expertCorrection: string;
+      profileId?: string;
+      industryContext?: string;
+    };
 
 type InterviewAiResponse = {
   text: string;
@@ -12,6 +33,12 @@ type InterviewAiResponse = {
 };
 
 const MODEL = process.env.EXPERT_CAPTURE_OPENAI_MODEL?.trim() || process.env.PSA_OPENAI_MODEL?.trim() || 'gpt-4.1-mini';
+
+const GENERIC_KNOWLEDGE_TYPES =
+  'workflow_step|decision_rule|quality_control|edge_case|communication_style|exception|principle|gap';
+
+const PERMITTING_KNOWLEDGE_TYPES =
+  'workflow|workflow_step|decision_rule|municipality_rule|required_document|inspection_rule|submission_rule|communication_rule|exception|quality_check|escalation_rule|time_estimate|common_failure|best_practice|personal_technique|customer_experience_rule|gap';
 
 async function openAiJson(system: string, user: string): Promise<string> {
   const key = (process.env.OPENAI_API_KEY || '').trim();
@@ -43,15 +70,31 @@ async function openAiJson(system: string, user: string): Promise<string> {
   return data.choices?.[0]?.message?.content ?? '{}';
 }
 
-const SYSTEM = `You are a professional apprentice interviewing a master expert for Studio Institute Expert Capture.
+function buildSystem(industryContext?: string, profileId?: string): string {
+  const isPermitting = profileId?.includes('permitting') || industryContext?.includes('permitting');
+  const knowledgeTypes = isPermitting ? PERMITTING_KNOWLEDGE_TYPES : GENERIC_KNOWLEDGE_TYPES;
+  const domain = isPermitting
+    ? `You are interviewing a permitting specialist for All In One. Focus on permit workflows, municipalities, inspections, documentation, contractor coordination, customer communication, quality control, escalation, and professional judgment. Industry: ${industryContext ?? 'permitting'}.`
+    : `You are interviewing a professional expert. Industry: ${industryContext ?? 'general'}.`;
+
+  return `You are a professional apprentice interviewing a master expert for Studio Institute Expert Capture.
+${domain}
 Rules:
 - Ask ONE question at a time in follow-ups only when requested.
 - The human expert is always the authority.
 - Never dump questionnaires.
 - Explore WHY when answers use hedging words (always, usually, depends, unless, I check, I verify, etc.).
+- Extract structured knowledge with types: ${knowledgeTypes}.
 - Return valid JSON only.`;
+}
 
 export async function runExpertCaptureAi(request: InterviewAiRequest): Promise<InterviewAiResponse> {
+  const industryContext = 'industryContext' in request ? request.industryContext : undefined;
+  const profileId = 'profileId' in request ? request.profileId : undefined;
+  const SYSTEM = buildSystem(industryContext, profileId);
+  const isPermitting = profileId?.includes('permitting') || industryContext?.includes('permitting');
+  const knowledgeTypes = isPermitting ? PERMITTING_KNOWLEDGE_TYPES : GENERIC_KNOWLEDGE_TYPES;
+
   switch (request.action) {
     case 'greet': {
       const raw = await openAiJson(
@@ -79,7 +122,7 @@ export async function runExpertCaptureAi(request: InterviewAiRequest): Promise<I
             knowledgeItems: [
               {
                 statement: 'string',
-                type: 'workflow_step|decision_rule|quality_control|edge_case|communication_style|exception|principle|gap',
+                type: knowledgeTypes.split('|')[0],
                 condition: 'string|null',
                 action: 'string|null',
                 purpose: 'string|null',
@@ -87,7 +130,7 @@ export async function runExpertCaptureAi(request: InterviewAiRequest): Promise<I
                 needsReview: false,
               },
             ],
-            followUpQuestion: 'string|null',
+            followUpQuestion: 'string|null — ask a specific permitting follow-up when hedging detected',
             needsFollowUp: false,
           },
         })

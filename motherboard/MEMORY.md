@@ -46349,3 +46349,19 @@ Summary of **full conversation in this chat**: LOAD_SHELL forensic + stall evide
 - **Not changed:** compiler stage behavior, ownership, retries, AUTH_REQUIRED, stall repair
 - **URL:** https://fsbw.vercel.app/__world-compiler-investigation
 
+---
+
+## 2026-07-10 — Studio Institute Expert Capture Interview MVP v1
+
+Summary of **full conversation in this chat**: Investigation recorder boot wiring (`8a8d1f0b6`). User approved **HIGH priority sprint** — Expert Capture Interview MVP: lightweight production interview for real experts (starting with founder's sister) to transfer professional knowledge via natural conversation — not forms, not immersive campus.
+
+- **Delivered:**
+  - **Modular core** `src/studio-os-core/expert-capture/` — session metadata (localStorage), media blobs (IndexedDB), interview engine, follow-up detector (always/depends/unless/I check…), recording (mirrored camera preview, MediaRecorder, Web Speech transcription, mic meter, TTS), knowledge extraction (structured items + status lifecycle), export (9 MD files)
+  - **Hook** `useExpertCaptureSession.ts` — consent → media → one-question interview → understanding review (correct/partial/misunderstood) → clarify → redo/delete/skip/pause/resume/end → knowledge review → export
+  - **Page** `/expert-capture` — minimal white calm UI (Apple/OpenAI/Notion-inspired), mobile-first
+  - **API** `POST /api/expert-capture/interview` (OpenAI + client fallback)
+  - **Docs** `docs/studio-institute/EXPERT_CAPTURE_MVP.md`
+  - **Future placeholders** only in `placeholders.ts` (certification, knowledge graph, avatar, immersive office, etc.)
+- **Commit:** `870939a49`
+- **URL:** https://fsbw.vercel.app/expert-capture
+

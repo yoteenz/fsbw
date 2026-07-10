@@ -29,6 +29,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         action: 'greet',
         expertName: String(body.expertName ?? 'Expert'),
         expertRole: String(body.expertRole ?? 'Professional'),
+        profileId: typeof body.profileId === 'string' ? body.profileId : undefined,
+        industryContext: typeof body.industryContext === 'string' ? body.industryContext : undefined,
       });
       return res.status(200).json(result);
     }
@@ -39,6 +41,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         question: String(body.question ?? ''),
         transcript: String(body.transcript ?? ''),
         expertRole: String(body.expertRole ?? 'Professional'),
+        profileId: typeof body.profileId === 'string' ? body.profileId : undefined,
+        industryContext: typeof body.industryContext === 'string' ? body.industryContext : undefined,
       });
       return res.status(200).json(result);
     }
@@ -50,6 +54,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         transcript: String(body.transcript ?? ''),
         misunderstanding: String(body.misunderstanding ?? ''),
         expertCorrection: String(body.expertCorrection ?? ''),
+        profileId: typeof body.profileId === 'string' ? body.profileId : undefined,
+        industryContext: typeof body.industryContext === 'string' ? body.industryContext : undefined,
       });
       return res.status(200).json(result);
     }
