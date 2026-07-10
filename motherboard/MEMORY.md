@@ -45317,3 +45317,16 @@ Summary of the **full conversation in this chat**: User approved CDS §9B.28 mig
 - **Bisection (local production build):** All stages A–K pass heartbeat; first long-task ~224–254ms during App lazy load + bootstrap module init — heartbeat continues throughout. Production Vercel pre-deploy probe: bootstrap completes; diagnostics not yet on prod until this deploy.
 - **Verification (local `vite preview`):** Heartbeat alive on `/`, `/__boot-debug`, `/__thread-heartbeat` (READY); startup bisect all OK; heavy localStorage probe completes with heartbeat alive.
 - **Files:** `main-thread-diagnostics*.ts`, `main.tsx`, `StudioDebugRoutes.tsx`, `thread-heartbeat/page.tsx`, `studio-kernel.ts`, `studio-bootstrap-init.ts`, `loadingScreenLock.ts`, `studioOsBrowserStorage.ts`, `genesis/persistence/store.ts`, probe scripts.
+
+---
+
+## 2026-07-10 — P0 clean-shell isolation: StudioAppShellV2 Phase 1
+
+Summary of the **full conversation in this chat**: CDS §9B.28 docs → P0 platform stability (loading blank, frozen GIF, main-thread freeze). Prior work: vendor chunk, error boundaries, loading terminal registry, main-thread diagnostics + genesis read cache (`readGenesisStore` 900+ uncached JSON.parse storm). User reported prior stabilization did not restore reliable production render — **stop patching legacy startup tree**; no more guards/watchdogs/error boundaries on current shell.
+
+- **Strategy:** Isolated **StudioAppShellV2** beside legacy; incremental provider matrix; replace defective subsystem when proven — not surround with patches. Creative Direction Studio **paused**.
+- **Phase 1 (this commit):** `src/shell-v2/` — minimal shell: React root, BrowserRouter, `/v2` public static route, `/v2/diagnostic` (heartbeat + matrix), plain `shell-v2.css`, plain-DOM heartbeat (`shellV2Heartbeat.ts`). **No** auth, Studio Bootstrap, workspace, DNA, loading screen, or legacy imports on `/v2/*`.
+- **Entry split:** `main.tsx` dispatcher — `/v2/*` → dynamic `shell-v2/mount` only; else → `main-legacy.tsx` (legacy tree unchanged, not patched this task).
+- **Matrix:** `shellV2Matrix.ts` + `docs/studio-os/SHELL_V2_MATRIX.md` — stages 0–10 defined; stage 0 **PASS**; stages 1–10 pending (one commit each: error boundary → auth → guards → bootstrap → DNA → registries → workspace → admin → experience runtime → app routes). Override: `?v2Stage=N`.
+- **Verification:** `npm run build` pass; `node scripts/shell-v2-probe.mjs` — `/v2` and `/v2/diagnostic` heartbeat alive, diagnostic shows READY; legacy `/` still loads via `main-legacy`.
+- **Next:** Stage 1 — wire `ShellV2ErrorBoundary` at `isShellV2StageEnabled(1)` / default max stage 1 after prod smoke test.

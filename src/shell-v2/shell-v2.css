@@ -1,0 +1,106 @@
+/* StudioAppShellV2 — plain CSS only (no Tailwind, no global app styles). */
+
+.shell-v2-root {
+  min-height: 100vh;
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #111;
+  background: #fafafa;
+}
+
+.shell-v2-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.shell-v2-header h1 {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.shell-v2-header p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.shell-v2-main {
+  padding: 24px;
+  max-width: 720px;
+}
+
+.shell-v2-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+}
+
+.shell-v2-card h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.shell-v2-ok {
+  color: #059669;
+  font-weight: 600;
+}
+
+.shell-v2-link {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.shell-v2-link:hover {
+  text-decoration: underline;
+}
+
+.shell-v2-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.shell-v2-matrix th,
+.shell-v2-matrix td {
+  border: 1px solid #e5e7eb;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.shell-v2-matrix th {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+
+.shell-v2-status-pass {
+  color: #059669;
+}
+
+.shell-v2-status-pending {
+  color: #d97706;
+}
+
+.shell-v2-status-fail {
+  color: #dc2626;
+}
+
+#shell-v2-heartbeat-overlay {
+  position: fixed;
+  bottom: 8px;
+  right: 8px;
+  z-index: 2147483646;
+  background: rgba(0, 0, 0, 0.82);
+  color: #0f0;
+  font: 11px/1.35 ui-monospace, monospace;
+  padding: 6px 8px;
+  border-radius: 4px;
+  pointer-events: none;
+}
