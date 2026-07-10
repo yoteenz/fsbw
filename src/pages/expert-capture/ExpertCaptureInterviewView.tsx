@@ -2,10 +2,13 @@
  * Shared Expert Capture interview UI — profile drives branding only.
  */
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useExpertCaptureSession } from '../../hooks/useExpertCaptureSession';
+import { useKnowledgeMirror, identityFromSession } from '../../hooks/useKnowledgeMirror';
 import { CONSENT_RETENTION_DAYS, downloadExportBundle, loadMediaBlob } from '../../studio-os-core/expert-capture';
 import type { ExpertCaptureProfile } from '../../studio-os-core/expert-capture/profiles/profile-types';
 import { ExpertCaptureSaveExitButton, ExpertCaptureSaveStatusBar } from './ExpertCapturePersistenceUi';
+import { mirrorNavLinks } from './knowledge-mirror/resolve-profile';
 
 const styles = {
   page: {
@@ -107,6 +110,9 @@ function MicMeter({ level }: { level: number }) {
 export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCaptureProfile }) {
   const cap = useExpertCaptureSession(profile);
   const { branding } = profile;
+  const mirrorNav = mirrorNavLinks(profile);
+  const mirrorIdentity = cap.session ? identityFromSession(cap.session) : null;
+  const km = useKnowledgeMirror(profile, mirrorIdentity);
   const [name, setName] = useState('');
   const [role, setRole] = useState(profile.defaultExpertRole);
   const [editDraft, setEditDraft] = useState('');
@@ -506,13 +512,35 @@ export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCapture
     );
   }
 
+  const mirrorNavBar = cap.session?.meta.expertName ? (
+    <nav style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16, fontSize: 13 }}>
+      <Link to={mirrorNav.stream} style={{ color: '#525252' }}>
+        Knowledge Stream
+      </Link>
+      <Link to={mirrorNav.confessional} style={{ color: '#525252' }}>
+        Confessional
+      </Link>
+      <Link to={mirrorNav.ownerMirror} style={{ color: '#525252' }}>
+        Owner Mirror
+      </Link>
+    </nav>
+  ) : null;
+
   if (cap.phase === 'knowledge_review') {
     const answers = cap.session?.answers.filter((a) => !a.deleted && !a.skipped) ?? [];
     return (
       <div style={styles.page}>
         <div style={styles.container}>
+          {mirrorNavBar}
           <h1 style={styles.h1}>Knowledge Review</h1>
-          <p style={styles.sub}>Review each answer like a pull request — approve before training use.</p>
+          <p style={styles.sub}>
+            Review each answer like a pull request — approve before training use. Approved answers sync to the Living
+            Knowledge Mirror.
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+            <Btn onClick={() => km.submitAllExpertApproved()}>Submit All for Owner Review</Btn>
+            <Btn onClick={() => (window.location.href = mirrorNav.ownerMirror)}>Open Owner Mirror</Btn>
+          </div>
           {answers.map((a) => (
             <div key={a.id} style={{ ...styles.card, background: '#fff' }}>
               <p style={{ fontWeight: 600, margin: '0 0 8px' }}>{a.questionText}</p>
@@ -582,6 +610,7 @@ export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCapture
     <div style={styles.page}>
       <div style={styles.container}>
         {saveBar}
+        {mirrorNavBar}
         <header style={{ marginBottom: 20, borderBottom: '1px solid #e5e5e5', paddingBottom: 16 }}>
           <p style={{ margin: 0, fontSize: 13, color: '#a3a3a3' }}>{branding.sessionLabel}</p>
           <p style={{ margin: '4px 0', fontSize: 15 }}>

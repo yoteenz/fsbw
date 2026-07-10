@@ -41,6 +41,7 @@ import {
   type ExpertCaptureSaveStatus,
 } from '../studio-os-core/expert-capture/persistence';
 import type { ExpertCaptureProfile } from '../studio-os-core/expert-capture/profiles/profile-types';
+import { syncKnowledgeMirrorFromSession } from './useKnowledgeMirror';
 import {
   attachMirroredPreview,
   createMicLevelMonitor,
@@ -164,6 +165,14 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
       if (next.meta.id) setResumeLink(buildResumeLink(next.meta.id, profile.route));
     },
     [profile, buildRuntime, getAutosaveManager, mediaRefs, sessionVersion]
+  );
+
+  const syncKnowledgeMirror = useCallback(
+    (next: ExpertCaptureSession) => {
+      if (!next.meta.expertName.trim()) return;
+      void syncKnowledgeMirrorFromSession(profile, next);
+    },
+    [profile]
   );
 
   const applyLoadedDocument = useCallback(
@@ -694,27 +703,33 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
       const answers = session.answers.map((a) =>
         a.id === answerId ? approveAnswerKnowledge({ ...a, confirmation: 'correct' }) : a
       );
-      persist({ ...session, answers });
+      const next = { ...session, answers };
+      persist(next);
+      syncKnowledgeMirror(next);
     },
-    [session, persist]
+    [session, persist, syncKnowledgeMirror]
   );
 
   const rejectAnswer = useCallback(
     (answerId: string) => {
       if (!session) return;
       const answers = session.answers.map((a) => (a.id === answerId ? rejectAnswerKnowledge(a) : a));
-      persist({ ...session, answers });
+      const next = { ...session, answers };
+      persist(next);
+      syncKnowledgeMirror(next);
     },
-    [session, persist]
+    [session, persist, syncKnowledgeMirror]
   );
 
   const needsClarificationAnswer = useCallback(
     (answerId: string) => {
       if (!session) return;
       const answers = session.answers.map((a) => (a.id === answerId ? markNeedsClarification(a) : a));
-      persist({ ...session, answers });
+      const next = { ...session, answers };
+      persist(next);
+      syncKnowledgeMirror(next);
     },
-    [session, persist]
+    [session, persist, syncKnowledgeMirror]
   );
 
   const saveAndExit = useCallback(async () => {

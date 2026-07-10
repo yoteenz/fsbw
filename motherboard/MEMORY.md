@@ -46377,3 +46377,19 @@ Summary of **full conversation in this chat**: Investigation recorder boot (`8a8
 - **Refactors:** `session-storage.ts` profile-aware keys; `useExpertCaptureSession(profile)`; shared `ExpertCaptureInterviewView.tsx`; `export-service.ts` delegates to profile; API `profileId` + `industryContext` for permitting-aware OpenAI prompts; `session.meta.profileId` on all sessions.
 - **URL:** https://fsbw.vercel.app/expert-capture/all-in-one-permitting
 
+---
+
+## 2026-07-10 — Expert Capture Save, Exit & Resume (shared persistence)
+
+Summary of **full conversation in this chat**: Investigation recorder boot, generic Expert Capture MVP (`870939a49`), All In One permitting profile (`d50385519`). User approved **Save, Exit & Resume** sprint for Tax Preparation + All In One Permitting + all future Expert Capture professions — no UI redesign, no interview intelligence changes.
+
+- **Canonical model:** `ExpertCapturePersistedDocument` v2 — session + runtime state + indexes + drafts + mediaRefs + recovery status + sessionVersion/lastMutationId; Supabase tables `expert_capture_sessions`, `expert_capture_media`, `expert_capture_session_archives`, `expert_capture_audit` — migration `20260710230000_expert_capture_sessions.sql`
+- **Autosave:** `ExpertCaptureAutosaveManager` — debounced save on every persist, 12s interval during recording, pagehide flush; visible status (Saving/Saved/Failed/Offline/Uploading)
+- **Server API:** `GET/POST/DELETE /api/expert-capture/session`, `POST /api/expert-capture/media` — guest resume token (SHA-256 hash, 90-day TTL), optimistic concurrency (sessionVersion), device claim, archive on start-over
+- **Media:** per-answer segments, SHA-256 checksum, Supabase Storage bucket `expert-capture-media`, partial/interrupted flagged never training-eligible
+- **UI (same layout):** Welcome Back, Save & Exit, session dashboard, interrupted-answer recovery, device conflict, save status bar
+- **Tax Preparation profile:** `/expert-capture/tax-preparation` — 12 tax questions, shared persistence
+- **Resume entry:** `/expert-capture/resume?token=…`
+- **Docs:** `docs/studio-institute/EXPERT_CAPTURE_PERSISTENCE.md`
+- **URLs:** permitting https://fsbw.vercel.app/expert-capture/all-in-one-permitting · tax https://fsbw.vercel.app/expert-capture/tax-preparation · resume https://fsbw.vercel.app/expert-capture/resume
+

@@ -19,6 +19,15 @@ import ExpertCapturePage from '../pages/expert-capture/page';
 import AllInOnePermittingCapturePage from '../pages/expert-capture/all-in-one-permitting/page';
 import TaxPreparationCapturePage from '../pages/expert-capture/tax-preparation/page';
 import ExpertCaptureResumePage from '../pages/expert-capture/resume/page';
+import ExpertCaptureKnowledgeStreamPage from '../pages/expert-capture/knowledge-stream/page';
+import ExpertCaptureConfessionalPage from '../pages/expert-capture/confessional/page';
+import ExpertCaptureOwnerMirrorPage from '../pages/expert-capture/owner-mirror/page';
+import TaxKnowledgeStreamPage from '../pages/expert-capture/tax-preparation/knowledge-stream/page';
+import TaxConfessionalPage from '../pages/expert-capture/tax-preparation/confessional/page';
+import TaxOwnerMirrorPage from '../pages/expert-capture/tax-preparation/owner-mirror/page';
+import PermittingKnowledgeStreamPage from '../pages/expert-capture/all-in-one-permitting/knowledge-stream/page';
+import PermittingConfessionalPage from '../pages/expert-capture/all-in-one-permitting/confessional/page';
+import PermittingOwnerMirrorPage from '../pages/expert-capture/all-in-one-permitting/owner-mirror/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import LoadingScreen from '../components/base/LoadingScreen';
@@ -41,6 +50,15 @@ export const STUDIO_DEBUG_PATHS = [
   '/expert-capture/all-in-one-permitting',
   '/expert-capture/tax-preparation',
   '/expert-capture/resume',
+  '/expert-capture/knowledge-stream',
+  '/expert-capture/confessional',
+  '/expert-capture/owner-mirror',
+  '/expert-capture/tax-preparation/knowledge-stream',
+  '/expert-capture/tax-preparation/confessional',
+  '/expert-capture/tax-preparation/owner-mirror',
+  '/expert-capture/all-in-one-permitting/knowledge-stream',
+  '/expert-capture/all-in-one-permitting/confessional',
+  '/expert-capture/all-in-one-permitting/owner-mirror',
 ] as const;
 
 export function isStudioDebugPath(pathname: string): boolean {
@@ -72,6 +90,15 @@ export default function StudioDebugRoutes() {
       <Route path="/expert-capture/all-in-one-permitting" element={<AllInOnePermittingCapturePage />} />
       <Route path="/expert-capture/tax-preparation" element={<TaxPreparationCapturePage />} />
       <Route path="/expert-capture/resume" element={<ExpertCaptureResumePage />} />
+      <Route path="/expert-capture/knowledge-stream" element={<ExpertCaptureKnowledgeStreamPage />} />
+      <Route path="/expert-capture/confessional" element={<ExpertCaptureConfessionalPage />} />
+      <Route path="/expert-capture/owner-mirror" element={<ExpertCaptureOwnerMirrorPage />} />
+      <Route path="/expert-capture/tax-preparation/knowledge-stream" element={<TaxKnowledgeStreamPage />} />
+      <Route path="/expert-capture/tax-preparation/confessional" element={<TaxConfessionalPage />} />
+      <Route path="/expert-capture/tax-preparation/owner-mirror" element={<TaxOwnerMirrorPage />} />
+      <Route path="/expert-capture/all-in-one-permitting/knowledge-stream" element={<PermittingKnowledgeStreamPage />} />
+      <Route path="/expert-capture/all-in-one-permitting/confessional" element={<PermittingConfessionalPage />} />
+      <Route path="/expert-capture/all-in-one-permitting/owner-mirror" element={<PermittingOwnerMirrorPage />} />
       <Route
         path="*"
         element={
