@@ -160,6 +160,7 @@ STUDIO WORLD™ → COMPANY™ → HEADQUARTERS™ → DISTRICT → BUILDING →
 | System | Owns | Does not own |
 |--------|------|--------------|
 | **Living Organization (this bible)** | Identity, directory, relationships, social canon, onboarding narrative |
+| **Studio HR™** | Performance, compatibility, transfers, succession — [STUDIO_HR.md](./STUDIO_HR.md) |
 | **Genesis Core™** | Coordination, runtime health, compiler sync, executive briefings |
 | **Profession Brain™ / Role Intelligence™** | Domain reasoning templates |
 | **Company Genome™** | Organizational truth for *founder's company* — not Studio platform staff |

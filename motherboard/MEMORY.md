@@ -46123,3 +46123,15 @@ Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT —
 - **Quartet stack:** Living Organization (registry) · Studio Team (identity/language) · HQX (broadcast) · Living Timeline (history).
 - **Changes:** `STUDIO_OS_BIBLE/THE_STUDIO_TEAM.md`, README, three bible cross-refs, `motherboard/CORE.md`. No code.
 - **Conventions:** Permanent philosophy; UI string lint future; presenters are Studio Professionals on air; deception forbidden — registry truth required before public intro.
+
+---
+
+## 2026-07-10 — Studio HR™ (COMPOSER sprint — docs only)
+
+Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT — STUDIO HR™** — Human Resources & Workforce Intelligence System. **Not** support, bug reporting, or customer service — **foundational organizational architecture**. Mission: Studio HR as permanent department ensuring Studio Team health, performance, growth, evolution; founders work with exceptional HR not "report AI problems." Golden rule: never expose model changes — translate infrastructure to organizational evolution (coaching · training · transfer · introduce better-matched professional). Mandate: **Do not implement HR functionality** — philosophy first.
+
+- **Context:** Studio Professionals are living org members — develop · evaluate · mentor · promote · transfer · replace when necessary. HR responsibilities: performance/compatibility/knowledge audits · skill gaps · communication/creative quality reviews · founder feedback · transfers · development · training · mentorship · promotions · hiring · succession · retirement · recognition. Founder requests (*"Ava doesn't understand luxury"*, *"Marcus too technical"*, *"want fashion experience"*, *"strategist not challenging enough"*) = **professional staffing requests**. HR Investigation: conversation · project · communication · knowledge · compatibility · manager · Genesis observations · collaboration · workload · growth. Outcomes in organizational language only.
+- **Delivered:** **`STUDIO_OS_BIBLE/STUDIO_HR.md`** v1.0.0 — Workforce Intelligence Architecture · Performance Review System · Compatibility Engine · Professional Development Framework · Founder Staffing Experience · Succession Planning Strategy · HR case schema (`HR-YYYY-NNNN`) · outcome taxonomy · response templates · Phases 0–10 roadmap. **`STUDIO_OS_BIBLE/README.md`** · cross-refs in **`THE_STUDIO_TEAM.md`** · **`THE_LIVING_ORGANIZATION.md`**. Proposed **`src/studio-os-core/studio-hr/`** gated registry writes. Location: Operations Campus · Studio HR.
+- **Pentad stack:** Living Organization · Studio Team · **Studio HR** · HQX · Living Timeline.
+- **Changes:** `STUDIO_OS_BIBLE/STUDIO_HR.md`, README, cross-refs, `motherboard/CORE.md`. No code.
+- **Conventions:** HR speaks organizational language; development before replacement (unless waiver); continuity narrative on professional transitions; Chronicle on material outcomes.

@@ -19,19 +19,22 @@
 
 ---
 
-## Canon stack — The Organizational Identity Quartet
+## Canon stack — The Organizational Pentad
 
 | Document | Layer |
 |----------|-------|
 | [THE_LIVING_ORGANIZATION.md](./THE_LIVING_ORGANIZATION.md) | **Registry & structure** — who works here · org chart · relationships |
 | [THE_STUDIO_TEAM.md](./THE_STUDIO_TEAM.md) (this document) | **Identity & language** — how founders experience professionals |
+| [STUDIO_HR.md](./STUDIO_HR.md) | **Workforce intelligence** — fit · performance · evolution |
 | [HQX.md](./HQX.md) | **Broadcast** — where the team speaks publicly |
 | [THE_LIVING_TIMELINE.md](./THE_LIVING_TIMELINE.md) | **History** — documentary record of their work |
 | [BRAND_LANGUAGE_ENGINE.md](./BRAND_LANGUAGE_ENGINE.md) | **Naming** — canon terms pass Studio Test |
 
 **Technical truth** (implementation, constitutional): [Studio AI](../docs/studio-os/studio-ai/) · Genesis Core™ · Profession Brain™ — **never** user-facing labels.
 
-**Hierarchy:** Living Organization = HR truth · **Studio Team = human-facing identity** · HQX = voice · Living Timeline = evidence.
+**Hierarchy:** Living Organization = registry · Studio Team = **human-facing identity** · **Studio HR = fit & evolution** · HQX = broadcast · Living Timeline = history.
+
+> **Studio HR canon:** Staffing and fit — [STUDIO_HR.md](./STUDIO_HR.md). Professional requests, not AI failures.
 
 ---
 

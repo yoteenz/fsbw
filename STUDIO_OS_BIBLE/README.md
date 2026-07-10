@@ -13,6 +13,7 @@ This folder holds foundational architecture documents that govern how Studio OS,
 | [HQX.md](./HQX.md) | **HQX™** — Headquarters Communications & Broadcast Center: place, transmissions, pipeline, archive |
 | [THE_LIVING_TIMELINE.md](./THE_LIVING_TIMELINE.md) | **The Living Timeline™** — social as recorded history: Chronicle, documentary model, story arcs, event-before-post |
 | [THE_STUDIO_TEAM.md](./THE_STUDIO_TEAM.md) | **The Studio Team™** — humanizing intelligence: public language, Studio Professional identity, relationship model |
+| [STUDIO_HR.md](./STUDIO_HR.md) | **Studio HR™** — workforce intelligence: performance, compatibility, development, succession |
 
 **Related canon (outside this folder):**
 
