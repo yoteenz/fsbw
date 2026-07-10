@@ -1,9 +1,9 @@
 # MANIFEST — StudioOS_ContextCapsule_v0.1
 
-**Capsule ID:** `capsule-2026-07-10-v0.2-onboarding`  
-**Capsule Version:** 0.2.0  
-**Format:** Flat Markdown prototype + `context-capsule.json` + ZIP download (`npm run download:ai-context-capsule`)  
-**Protocol alignment:** AI Context Protocol™ v1.0.0 + v0.2 onboarding extensions
+**Capsule ID:** `capsule-2026-07-10-v0.3-verification`  
+**Capsule Version:** 0.3.0  
+**Format:** Flat Markdown + `context-capsule.json` + `CAPSULE_VALIDATION.md` + ZIP download  
+**Protocol alignment:** AI Context Protocol™ v1.0.0 + v0.3 verification onboarding
 
 ---
 
@@ -11,12 +11,12 @@
 
 | Field | Value |
 |-------|-------|
-| **Capsule Version** | 0.2.0 |
+| **Capsule Version** | 0.3.0 |
 | **Project Version** | `build-a-wig@0.0.0` (see git SHA at export) |
 | **Studio OS Version** | git SHA on `master` at export |
-| **Generation Date** | 2026-07-10 |
+| **Generation Date** | See `CAPSULE_VALIDATION.md` |
 | **Generator** | Prebuild packager + admin export |
-| **Generator Version** | 0.2.0 |
+| **Generator Version** | 0.3.0 |
 | **Export Type** | full |
 | **Host deployment** | Frontal Slayer / Build-a-Wig (Vercel) |
 
@@ -26,11 +26,11 @@
 
 | # | File | Purpose | Required |
 |---|------|---------|----------|
-| 0 | `README_FIRST.md` | Mandatory onboarding protocol | **Read first** |
+| 0 | `README_FIRST.md` | Mandatory verification onboarding protocol | **Read first** |
 | 1 | `MANIFEST.md` | Inventory, health, reading order | Required |
 | 2 | `KNOWN_BLOCKERS.md` | P0 gates — do not violate | **Critical** |
 | 3 | `CURRENT_HANDOFF.md` | Live sprint snapshot | Required |
-| 4 | `FOUNDER_PROFILE.md` | Founder operating profile (v0.2 expanded) | Required |
+| 4 | `FOUNDER_PROFILE.md` | Founder operating profile | Required |
 | 5 | `PROJECT_DNA.md` | Philosophy and civilization traits | Required |
 | 6 | `AI_CONTEXT.md` | Studio OS / World / Institute / compile stack | Required |
 | 7 | `AI_GLOSSARY.md` | Canonical terminology | Required |
@@ -40,11 +40,12 @@
 | 11 | `ROADMAP.md` | Phased priorities | Required |
 | 12 | `OPEN_QUESTIONS.md` | Unresolved founder decisions | Required |
 | 13 | `PROMPT_LIBRARY.md` | Composer / Terra / ChatGPT templates | Required |
-| 14 | `ONBOARDING_REPORT.md` | **Standardized onboarding template — complete every section** | **Required** |
+| 14 | `ONBOARDING_REPORT.md` | **v0.3 verification template — complete every section** | **Required** |
 | — | `context-capsule.json` | Machine-readable export metadata | Required |
+| — | `CAPSULE_VALIDATION.md` | Auto-generated validation page (export integrity) | Required |
 
-**Total markdown documents:** 15 (including README_FIRST and MANIFEST)  
-**Onboarding completeness:** Export validation **fails** if any required file above is missing.
+**Total markdown documents for onboarding:** 15  
+**Export validation fails** if any required file above is missing or version-sync checks fail.
 
 ---
 
@@ -67,21 +68,25 @@ Read in this exact sequence after `README_FIRST.md`:
 13. `PROMPT_LIBRARY.md`
 14. `ONBOARDING_REPORT.md` — **review structure, then complete every section**
 
-**Then stop.** Submit completed report. **Do not contribute until founder approval.**
+**Optional reference (not in reading order):** `CAPSULE_VALIDATION.md` — confirm export integrity.
 
-Completion of `ONBOARDING_REPORT.md` is **mandatory** before any implementation work begins.
+**Then stop.** Submit completed report. **Do not contribute until founder approval.**
 
 ---
 
-## Onboarding gates (v0.2)
+## Onboarding gates (v0.3)
 
 | Gate | Requirement |
 |------|-------------|
-| **Read gate** | All files in reading order — confirm in report checklist |
-| **Founder Preference Verification** | Summarize working style from `FOUNDER_PROFILE.md` — no inference |
-| **Canon Verification** | State P0 blockers, roles, deploy discipline from capsule |
-| **Confidence Assessment** | Percentage + explicit gaps — no silent guessing |
-| **Approval gate** | Founder explicitly approves before code/architecture contributions |
+| **Compliance checklist** | All items verified in ONBOARDING_REPORT |
+| **Read gate** | All files in reading order — confirm with missing/skipped list |
+| **Evidence gate** | Documented vs Inferred vs Unknown labeled |
+| **Source-of-truth gate** | Operational hierarchy identified — not generic "capsule is truth" |
+| **Founder Understanding** | From `FOUNDER_PROFILE.md` only |
+| **Canon Verification** | P0 blockers, roles, deploy discipline — tagged Documented/Inferred |
+| **Confidence Assessment** | Percentage + assumptions avoided |
+| **Documentation Review** | Observations tagged Confirmed/Likely/Possible/Unknown |
+| **Approval gate** | Founder explicitly approves before contributions |
 
 ---
 
@@ -89,15 +94,13 @@ Completion of `ONBOARDING_REPORT.md` is **mandatory** before any implementation 
 
 | Score | Value | Notes |
 |-------|-------|-------|
-| **Completeness** | 0.96 | v0.2 onboarding template + metadata |
+| **Completeness** | 0.97 | v0.3 verification template + validation page |
 | **Freshness** | 0.95 | 2026-07-10 |
-| **Consistency** | 0.92 | Cross-checked vs `docs/ai-collaboration/` |
-| **Coverage** | 0.90 | Core systems + founder intelligence |
-| **Confidence** | 0.93 | Suitable for deterministic onboarding test |
+| **Consistency** | 0.94 | Version sync enforced at export |
+| **Coverage** | 0.91 | Core systems + founder + source-of-truth hierarchy |
+| **Confidence** | 0.94 | Suitable for deterministic onboarding test |
 
 **Overall health:** 🟢 **Upload recommended**
-
-**Export blocked:** false (when validation passes)
 
 ---
 
@@ -105,24 +108,14 @@ Completion of `ONBOARDING_REPORT.md` is **mandatory** before any implementation 
 
 Before ZIP packaging, the build validates:
 
-- ✓ Every required markdown file exists (see inventory)  
-- ✓ `ONBOARDING_REPORT.md` exists  
-- ✓ `context-capsule.json` exists and matches reading order checksum  
-- ✓ `MANIFEST.md` capsule version matches package version  
+- ✓ `README_FIRST.md`, `MANIFEST.md`, `ONBOARDING_REPORT.md` exist  
+- ✓ Every manifest inventory entry exists on disk  
+- ✓ All v0.3 ONBOARDING_REPORT required sections present  
+- ✓ Reading order valid; checksum in `context-capsule.json`  
+- ✓ Capsule version **0.3.0** synchronized across README, MANIFEST, AI_CONTEXT, ONBOARDING_REPORT  
+- ✓ `CAPSULE_VALIDATION.md` generated with commit SHA, manifest hash, validation status  
 
-If any required onboarding document is missing → **fail validation**, list missing files, **do not package ZIP**.
-
----
-
-## Future extensibility (v0.2 design)
-
-The onboarding pipeline supports future modules without breaking flat export compatibility:
-
-- Knowledge quizzes · Architecture verification · Founder updates  
-- Project health summary · Governance checks · Model compatibility  
-- Automatic onboarding analytics  
-
-Add new sections to `ONBOARDING_REPORT.md` or new metadata fields in `context-capsule.json` with schema version bumps — do not remove v0.2 required fields.
+If validation fails → **no `latest.zip` update** — errors reported to console.
 
 ---
 
@@ -130,28 +123,17 @@ Add new sections to `ONBOARDING_REPORT.md` or new metadata fields in `context-ca
 
 | Platform | Support | Notes |
 |----------|---------|-------|
-| ChatGPT | ✅ Primary target | Upload ZIP; complete ONBOARDING_REPORT in thread or file |
+| ChatGPT | ✅ Primary | Upload ZIP; complete ONBOARDING_REPORT |
 | Claude | ✅ Expected | Project knowledge |
 | Gemini | ✅ Expected | Multi-file upload |
 | Cursor | ⚠️ Partial | Prefer `motherboard/` for in-repo agents |
-
-**Minimum viable read:** README_FIRST → KNOWN_BLOCKERS → CURRENT_HANDOFF → FOUNDER_PROFILE → AI_CONTEXT → complete ONBOARDING_REPORT
-
----
-
-## Security / redaction
-
-- No credentials, API keys, or env secrets  
-- No customer PII  
-- Founder profile: collaboration traits only  
-- No full motherboard MEMORY dump  
 
 ---
 
 ## Validation purpose
 
-Success = new ChatGPT session reads capsule, **completes standardized ONBOARDING_REPORT**, correctly cites **B1/B2**, founder preferences, one-deploy-per-task, forensic-before-repair, reports confidence %, and **waits for approval**.
+Success = new ChatGPT session reads capsule, completes v0.3 ONBOARDING_REPORT with compliance checklist, correctly identifies operational source-of-truth hierarchy, separates documented facts from inference, cites B1/B2, reports confidence % and assumptions avoided, and **waits for approval**.
 
 ---
 
-*End of MANIFEST — StudioOS_ContextCapsule v0.2.0*
+*End of MANIFEST — StudioOS_ContextCapsule v0.3.0*

@@ -46218,3 +46218,22 @@ Summary of **full conversation in this chat** (continued from v0.2 onboarding + 
 - **Permanent URL:** `https://fsbw.vercel.app/downloads/context-capsules/latest.zip`
 - **Verified:** `npm run package:ai-context-capsule-zip` + `npm run build` pass.
 
+---
+
+## 2026-07-10 — Experience Lab preview-scoped shell resolution repair
+
+Summary of **full conversation in this chat**: (1) Forensic investigation of `SHELL_RECORD_MISSING` with recovery text showing ephemeral shell registered but `missing-record` at compile — root cause: two-tier registry (session vs overlay) + global `activePreviewSessionId` singleton; compare mode cross-contamination. (2) User issued **COMPOSER SPRINT — REPAIR PREVIEW-SCOPED SHELL RESOLUTION** — implement documented fix, no re-investigation.
+
+- **Root cause (confirmed):** Shell registered under `previewSessionId` A; compiler/diagnostics read overlay via global session or wrong scope → `getValidationEnvironmentShell` succeeds (recovery UX) but `getEphemeralLayerRecord` fails → `SHELL_RECORD_MISSING`.
+- **Delivered:**
+  - **`PreviewCompileContext`** (`preview-compile-context.ts`) — immutable per-run context: `previewSessionId`, dept/project/station, concept/company, `compileRunId`, validation/registry mode.
+  - **Explicit threading:** `WorldCompileOptions.previewCompileContext` → `compileWorldStation` → `load-shell` → `resolveShellLockState` → `getSceneStackLayerRecord(..., { previewSessionId, validationMode })` — **no global singleton for compiler reads**.
+  - **`getSceneStackLayerRecord`:** ephemeral path only when explicit `previewSessionId` + `validationMode`; removed `getValidationPreviewSession()` from store.
+  - **Atomic registration:** `verifyEphemeralShellMount()` after register; `SHELL_RECOVERY_LOOKUP_MISMATCH` with registration/lookup ids, shellId, namespace, compileRunId.
+  - **Diagnostics:** `recoveryPhase` states; recovery-complete only when `validation-draft` + mount-ready; UI shows recovery phase + preview session id.
+  - **Runtime:** `sessionPreviewContext()` passed to ensureStation, compileStation, diagnostics, layer regen.
+  - **Tests:** `preview-shell-resolution.test.ts` (8 scenarios); extended `scripts/verify-experience-lab-shell-resolution.mjs` (14 checks).
+- **Commit:** `e641dc7dc` — Fix Experience Lab preview-scoped shell resolution and compare-mode isolation.
+- **Verified:** vitest 8/8, verify script 14/14, `npm run build` pass.
+- **Conventions:** Experience Lab validation compiles **require** `previewCompileContext.previewSessionId`; global `activePreviewSessionId` UI-only, not compiler source of truth.
+

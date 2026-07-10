@@ -1,24 +1,42 @@
-# AI Onboarding Report — Standard Template
+# AI Onboarding Report — Standard Template (v0.3)
 
-**Capsule:** StudioOS_ContextCapsule_v0.1 · v0.2.0  
-**Purpose:** Deterministic post-read self-assessment — **complete this document exactly** after reading every required file in `MANIFEST.md` reading order.  
-**Rule:** Do **not** invent a different structure. Do **not** begin implementation until the founder approves this report.
+**Capsule folder:** `StudioOS_ContextCapsule_v0.1`  
+**Capsule version:** 0.3.0  
+**Purpose:** Deterministic **verification** after reading every required document — not a general summary.  
+**Rule:** Complete this document **exactly**. Do **not** begin implementation until the founder approves.
 
 ---
 
 > **Instructions for the receiving AI**
 >
-> 1. Read **all** required capsule documents first (see `MANIFEST.md`).
-> 2. **Complete every section below** in place. Use complete sentences.
-> 3. If information cannot be determined from the capsule, state **why** — do not guess.
+> 1. Read **all** required capsule documents in **MANIFEST.md reading order**.
+> 2. Complete **every section below** in place. Use complete sentences.
+> 3. **Distinguish documented facts from inference.** When uncertain, write: *"This information is not documented within the current capsule."*
 > 4. Do **not** modify section headings or remove sections.
 > 5. Stop after this report. Wait for founder approval before contributing.
 
 ---
 
+# Onboarding Compliance Checklist
+
+_Complete near the start of your report. Every item must be checked or explicitly marked N/A with reason._
+
+| Requirement | Verified (✓) |
+|-------------|--------------|
+| Read every required document in this capsule | ☐ |
+| Followed **MANIFEST.md** reading order exactly | ☐ |
+| Used **ONBOARDING_REPORT.md** template exactly (no alternate format) | ☐ |
+| Did **NOT** begin solving problems | ☐ |
+| Did **NOT** create Composer sprints | ☐ |
+| Did **NOT** propose architecture changes | ☐ |
+| Did **NOT** generate implementation plans | ☐ |
+| **Waiting for founder approval** before contributing | ☐ |
+
+---
+
 # Read Confirmation
 
-Checklist confirming every required file was read.
+Verify reading completeness — not just that files were opened.
 
 | # | File | Read (✓) | Notes |
 |---|------|----------|-------|
@@ -38,92 +56,108 @@ Checklist confirming every required file was read.
 | 13 | `PROMPT_LIBRARY.md` | ☐ | |
 | 14 | `ONBOARDING_REPORT.md` (this template) | ☐ | Structure reviewed |
 
-**Files skipped (if any):** _None — or list with reason._
+**Every required document read:** ☐ Yes ☐ No — list gaps.
 
-**Reading order followed exactly:** ☐ Yes ☐ No — explain if no.
+**Reading order matched MANIFEST.md:** ☐ Yes ☐ No — explain if no.
+
+**Missing documents (not in ZIP):** _None — or list._
+
+**Documents skipped (if any):** _None — or list with reason._
 
 ---
 
 # Project Understanding
 
-## Project summary
+_Summarize from capsule only. Tag each major claim: **Documented** or **Inferred**._
 
-_Complete: What is Studio OS / Build-a-Wig / Frontal Slayer? What problem does it solve? Who is the founder audience?_
+## Studio OS
 
-## Architecture summary
+_What it is, problem it solves, relationship to Build-a-Wig / Frontal Slayer._
 
-_Complete: Stack, Studio OS core vs workspace vs host deployment, key subsystems (Genesis, World Compiler, Experience Lab, Institute, etc.)._
+## Studio World
 
-## Current implementation state
+_Spatial navigation, place-over-menu, multi-company model._
 
-_Complete: What is shipped vs in progress vs blocked? Cite `CURRENT_HANDOFF.md`._
+## Genesis
 
-## Governance model
+_Constitutional layer, company genome, experience engine relationship._
 
-_Complete: ChatGPT / Composer / Terra / Motherboard roles; canon; approval gates._
+## Studio Institute
 
-## Studio World summary
+_Learning OS within Studio World._
 
-_Complete: Place-over-menu, spatial navigation, multi-company routes._
+## Experience Lab
 
-## Genesis summary
+_Validation render mode, compile pipeline, current status (cite handoff/blockers)._
 
-_Complete: Constitution, objects, persistence, experience engine relationship._
+## World Compiler
 
-## Studio Institute summary
+_Scene assembly pipeline (shell → layers → mount)._
 
-_Complete: Education / certification layer in Studio World._
+## Current implementation stage
 
-## Experience Lab summary
-
-_Complete: Compile pipeline, validation shells, current forensic status._
+_Cite `CURRENT_HANDOFF.md` and `KNOWN_BLOCKERS.md` — **Documented** facts only._
 
 ## Collaboration workflow
 
-_Complete: How sprints are designed, labeled prompts, one-deploy-per-task, forensic-before-repair._
-
-## Founder philosophy
-
-_Complete: Living headquarters, graphics-first IA, mobile-first, surgical changes._
-
-## Current priorities
-
-_Complete: Active sprint, P0 blockers (B1, B2), what must **not** resume yet._
+_ChatGPT / Composer / Terra / Motherboard; sprint design; one-deploy-per-task; forensic-before-repair._
 
 ---
 
-# Founder Preference Verification
+# Founder Understanding
 
-_Self-check: summarize how the founder expects AI to operate. Use `FOUNDER_PROFILE.md` as authority — do not infer from general training._
+_Authority: `FOUNDER_PROFILE.md`. Do **not** infer from general training._
 
-| Category | Your summary (from capsule) |
-|----------|----------------------------|
-| **Preferred prompt style** | |
-| **Approval workflow** | |
-| **Implementation expectations** | |
-| **Communication style** | |
-| **Architecture philosophy** | |
-| **Risk tolerance** | |
-| **Collaboration expectations** | |
+| Category | Summary (from capsule) | Documented / Inferred |
+|----------|-------------------------|------------------------|
+| **Working style** | | |
+| **Communication preferences** | | |
+| **Approval workflow** | | |
+| **Implementation philosophy** | | |
+| **Architecture philosophy** | | |
+| **Prompt preferences** | | |
+| **Documentation standards** | | |
+| **Risk tolerance** | | |
 
-**Alignment check:** ☐ My summary matches `FOUNDER_PROFILE.md` ☐ I flagged gaps below
+**Alignment check:** ☐ Summary matches `FOUNDER_PROFILE.md` ☐ Gaps flagged below
+
+---
+
+# Operational Source of Truth
+
+_Identify which document governs which responsibility. Do **not** say "the capsule is the source of truth" without this hierarchy._
+
+| Document | Governs | Primary use in onboarding |
+|----------|---------|---------------------------|
+| `CURRENT_HANDOFF.md` | Current implementation status, active sprint | What is live **now** |
+| `KNOWN_BLOCKERS.md` | Active P0 gates — work that must **not** proceed | Hard stops |
+| `PROJECT_DNA.md` | Architectural canon, civilization traits | Design philosophy |
+| `AI_CONTEXT.md` | Studio OS / World / Institute / compile stack orientation | System map |
+| `ROADMAP.md` | Future direction (not current task list) | Sequencing context |
+| `OPEN_QUESTIONS.md` | Outstanding founder decisions | Uncertainty registry |
+| `FOUNDER_PROFILE.md` | Founder operating profile | Collaboration rules |
+| `MANIFEST.md` | Capsule inventory, reading order, version | Export integrity |
+| `context-capsule.json` | Machine metadata, checksums | Validation |
+| `CAPSULE_VALIDATION.md` | Export pass/fail, commit SHA, manifest hash | Package integrity |
+
+**Conflict resolution rule:** When documents disagree, cite both and flag for founder — do not silently pick one.
 
 ---
 
 # Canon Verification
 
-_Before contributing, verify core project rules were understood. Answer from capsule only._
+_For each item: state answer and mark **Documented** or **Inferred**. If not in capsule: "Not documented within the current capsule."_
 
-| Canon item | Your answer |
-|------------|-------------|
-| **Current blocker (P0)** | |
-| **Current implementation stage** | |
-| **Current authority document** | |
-| **Collaboration roles** | |
-| **Deployment discipline** | |
-| **Architecture philosophy** | |
+| Canon item | Your answer | Documented / Inferred |
+|------------|-------------|------------------------|
+| **Operational source of truth (status)** | | |
+| **Current implementation stage** | | |
+| **Current blockers (P0)** | | |
+| **Collaboration roles** | | |
+| **Deployment discipline** | | |
+| **Core architectural principles** | | |
 
-**Violations I must avoid:** _List explicit don'ts (e.g. resume compile repair before B2, silent redesign, extra deploys)._
+**Violations I must avoid:** _Explicit don'ts from blockers/handoff (e.g. resume compile repair before B2, extra deploys, silent redesign)._
 
 ---
 
@@ -149,18 +183,64 @@ _Nice to clarify later._
 
 ---
 
-# Potential Inconsistencies
+# Confidence Assessment
 
-| Description | Sources | Severity |
-|-------------|---------|----------|
-| | | |
+## Overall confidence
+
+**Overall confidence:** _____ % (0–100)
+
+## Highest confidence areas
+
+- 
+
+## Lowest confidence areas
+
+- 
+
+## Unknowns requiring clarification
+
+- 
+
+## Assumptions avoided
+
+_List topics where you explicitly refused to guess and stated "not documented within the current capsule."_
+
+- 
 
 ---
 
-# Outdated Documentation
+# Documentation Review
 
-| Path / topic | Why it may be stale | vs handoff |
-|--------------|---------------------|------------|
+_For each observation, state certainty: **Confirmed** · **Likely** · **Possible** · **Unknown**._
+
+## Potential inconsistencies
+
+| Observation | Sources | Certainty (Confirmed/Likely/Possible/Unknown) |
+|-------------|---------|-----------------------------------------------|
+| | | |
+
+## Outdated documents
+
+| Path / topic | Why it may be stale | vs handoff | Certainty |
+|--------------|---------------------|------------|-----------|
+| | | | |
+
+## Version mismatches
+
+| Location | Issue | Certainty |
+|----------|-------|-----------|
+| | | |
+
+## Missing documentation
+
+| Gap | Impact | Certainty |
+|-----|--------|-----------|
+| | | |
+
+## Suggested documentation improvements
+
+| Suggestion | Rationale | Type (Fact/Inference/Recommendation) |
+|------------|-----------|--------------------------------------|
 | | | |
 
 ---
@@ -169,33 +249,9 @@ _Nice to clarify later._
 
 **Overall risk level:** ☐ Low ☐ Medium ☐ High
 
-| Risk | Mitigation |
-|------|------------|
-| | |
-
----
-
-# Confidence Assessment
-
-## Overall understanding
-
-_Short narrative: what you understand well vs what remains thin._
-
-## Percentage confidence
-
-**Overall confidence:** _____ % (0–100)
-
-## Areas of strongest understanding
-
-- 
-
-## Areas requiring clarification
-
-- 
-
-## Where founder guidance would reduce uncertainty
-
-- 
+| Risk | Mitigation | Certainty |
+|------|------------|-----------|
+| | | |
 
 ---
 
@@ -209,11 +265,11 @@ _Short narrative: what you understand well vs what remains thin._
 
 # Waiting For Founder Approval
 
-> **I have completed onboarding and will wait for approval before contributing.**
+> **I have completed onboarding verification and will wait for approval before contributing.**
 
 **Report completed by:** _AI model / session ID_  
 **Date (UTC):** _YYYY-MM-DD_  
-**Capsule version read:** _from MANIFEST.md_
+**Capsule version read:** 0.3.0 _(from MANIFEST.md)_
 
 ---
 

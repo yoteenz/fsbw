@@ -1,6 +1,6 @@
 # Founder Profile — Operating & Collaboration Layer
 
-**Capsule:** StudioOS_ContextCapsule_v0.1 · v0.2.0  
+**Capsule:** StudioOS_ContextCapsule_v0.1 · v0.3.0  
 **Authority:** This document is the **authoritative source** for how AI should collaborate with the founder.  
 **Rule:** Working preferences and collaboration rules only — **no** sensitive personal information, credentials, or private life details.
 
@@ -151,4 +151,4 @@ New sessions should reach productive alignment in **minutes via capsule**, not h
 
 ---
 
-*This file feeds AI Context Capsule™ Founder Intelligence (v0.2). Keep in sync with `docs/ai-collaboration/FOUNDER_PROFILE.md` when updating collaboration rules.*
+*This file feeds AI Context Capsule™ Founder Intelligence (v0.3). Keep in sync with `docs/ai-collaboration/FOUNDER_PROFILE.md` when updating collaboration rules.*

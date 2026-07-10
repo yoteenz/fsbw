@@ -1,6 +1,6 @@
 # Project Changelog™ — Architectural Decision History
 
-**Capsule:** StudioOS_ContextCapsule_v0.1 · v0.2.0  
+**Capsule:** StudioOS_ContextCapsule_v0.1 · v0.3.0  
 **Format:** Append-only. Newest entries at bottom.  
 **Each entry:** Date · Decision · Reason · Impact · Files/docs · Supersedes · Dependencies
 
@@ -189,6 +189,22 @@
 **Files:** `StudioOS_ContextCapsule_v0.1/*`, export pipeline, `docs/ai-collaboration/protocol/ONBOARDING_REPORT.md`
 
 **Supersedes:** v0.1 "generate an onboarding report" (invented format)
+
+**Dependencies:** `npm run package:ai-context-capsule-zip` in prebuild
+
+---
+
+## 2026-07-10 — AI Context Capsule v0.3 — Deterministic verification onboarding
+
+**Decision:** Upgrade onboarding from summary-style to **verification-style** — compliance checklist, operational source-of-truth hierarchy, documented-vs-inferred labels, documentation review with certainty tags, auto-generated `CAPSULE_VALIDATION.md`.
+
+**Reason:** v0.2 still allowed false confidence (recovery-style summaries, generic "capsule is truth"); ChatGPT sessions needed stricter evidence-first protocol.
+
+**Impact:** ONBOARDING_REPORT restructured; export validation checks version sync + v0.3 sections; generator 0.3.0; versioned ZIP `StudioOS_ContextCapsule_v0.3.0.zip`.
+
+**Files:** `StudioOS_ContextCapsule_v0.1/README_FIRST.md`, `ONBOARDING_REPORT.md`, `MANIFEST.md`, `CAPSULE_VALIDATION.md`, `scripts/package-ai-context-capsule-zip.mjs`, `context-capsule-export/constants.ts`
+
+**Supersedes:** v0.2 onboarding template sections (Founder Preference Verification → Founder Understanding; added Compliance Checklist, Operational Source of Truth, Documentation Review)
 
 **Dependencies:** `npm run package:ai-context-capsule-zip` in prebuild
 

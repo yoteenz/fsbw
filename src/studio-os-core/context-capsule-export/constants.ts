@@ -5,7 +5,7 @@
 
 export const CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY = 'studioOsContextCapsuleExports_v1';
 
-export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.2.1';
+export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.3.0';
 
 export const CONTEXT_CAPSULE_METADATA_FILE = 'context-capsule.json';
 
@@ -60,22 +60,23 @@ export const CONTEXT_CAPSULE_READING_ORDER = [
   'ONBOARDING_REPORT.md',
 ] as const;
 
-/** Required section headings in ONBOARDING_REPORT.md template (v0.2). */
+/** Required section headings in ONBOARDING_REPORT.md template (v0.3). */
 export const CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS = [
+  '# Onboarding Compliance Checklist',
   '# Read Confirmation',
   '# Project Understanding',
-  '# Founder Preference Verification',
+  '# Founder Understanding',
+  '# Operational Source of Truth',
   '# Canon Verification',
   '# Questions',
-  '# Potential Inconsistencies',
-  '# Outdated Documentation',
-  '# Risk Assessment',
   '# Confidence Assessment',
+  '# Documentation Review',
+  '# Risk Assessment',
   '# Recommended Next Steps',
   '# Waiting For Founder Approval',
 ] as const;
 
-export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule (latest release).
+export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule v0.3 (latest validated release).
 
 Download (permanent URL): https://fsbw.vercel.app/downloads/context-capsules/latest.zip
 
@@ -83,8 +84,9 @@ Follow README_FIRST.md exactly:
 
 1. Read every document in MANIFEST reading order
 2. Do not begin solving problems
-3. Complete ONBOARDING_REPORT.md exactly as provided — every section, no structure changes
-4. Wait for my approval before contributing`;
+3. Complete ONBOARDING_REPORT.md exactly — including the Compliance Checklist and Operational Source of Truth sections
+4. Distinguish documented facts from inference; state "not documented within the current capsule" when uncertain
+5. Wait for my approval before contributing`;
 
 export type ContextCapsuleValidationCheck = {
   id: string;

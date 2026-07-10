@@ -1,20 +1,19 @@
-# README FIRST — AI Context Capsule v0.2
+# README FIRST — AI Context Capsule v0.3
 
-**You are opening:** `StudioOS_ContextCapsule_v0.1`  
-**Purpose:** Deterministic onboarding — reconstruct project **and** founder working style in every new AI conversation  
-**Capsule version:** 0.2.0  
-**Generated:** 2026-07-10  
-**Git reference:** see `MANIFEST.md`
+**You are opening:** `StudioOS_ContextCapsule_v0.1` (folder name is stable; **capsule version is 0.3.0**)  
+**Purpose:** Deterministic **verification** onboarding — reconstruct project and founder working style with **minimal inference**  
+**Capsule version:** 0.3.0  
+**Generated:** see `CAPSULE_VALIDATION.md` and `context-capsule.json`
 
 ---
 
 ## What this is
 
-This folder is a **complete AI Context Capsule** — a portable briefing room for Studio OS. It is not source code. It is not a substitute for reading nothing and guessing.
+This folder is a **complete AI Context Capsule** — a portable briefing room for Studio OS. It is not source code. It is not permission to guess.
 
-Treat this package as though Studio OS generated it automatically. Every document is intentional.
+**v0.3 changes:** onboarding is a **verification process**, not a general summary. You must distinguish **documented facts** from **inference**, identify **uncertainty explicitly**, and complete the **compliance checklist** before stopping.
 
-**v0.2 adds:** standardized `ONBOARDING_REPORT.md`, expanded founder intelligence, canon verification, confidence scoring, and export validation — onboarding is **repeatable and measurable**, not inferred.
+Check `CAPSULE_VALIDATION.md` to confirm this export passed validation (version, commit SHA, manifest hash, document count).
 
 ---
 
@@ -22,46 +21,76 @@ Treat this package as though Studio OS generated it automatically. Every documen
 
 **Follow these steps in order. Do not skip.**
 
-### 1. Read every document
+### 1. Read every document in MANIFEST order
 
-Read **all** files in this folder, in the **Reading Order** listed in `MANIFEST.md`.
+Read **all** files listed in `MANIFEST.md` **Reading order**, in that exact sequence.
 
-Do not skim. Do not start with the user's task. Do not assume training data is accurate for this project.
+- Do not skim.  
+- Do not start with the user's task.  
+- Do not assume training data is accurate for this project.
 
 ### 2. Do not begin solving problems
 
 After reading, **do not** write code, architecture proposals, Composer prompts, or implementation plans.
 
-Your job is **understanding first**, not action.
+Your job is **verification and understanding first**, not action.
 
 ### 3. Complete ONBOARDING_REPORT.md exactly as provided
 
 Open `ONBOARDING_REPORT.md` and **complete every section** using the structure already in that file.
 
-**Do not** invent a different report format.  
-**Do not** modify the report structure (headings stay as-is).  
-**Complete every section.**  
-If information cannot be determined from the capsule, **state why** — do not guess.  
-**Do not begin implementation.**
+- **Do not** invent a different report format.  
+- **Do not** modify section headings.  
+- **Complete the Onboarding Compliance Checklist** near the top.  
+- If information cannot be determined from the capsule, write: **"This information is not documented within the current capsule."** — do not guess.
 
-The report includes:
+Required v0.3 sections include:
 
-- Read confirmation checklist  
-- Project understanding  
-- **Founder Preference Verification** (self-check against `FOUNDER_PROFILE.md`)  
-- **Canon Verification** (blockers, roles, deploy discipline)  
-- Questions (High / Medium / Low priority)  
-- Potential inconsistencies · Outdated documentation · Risk assessment  
-- **Confidence assessment** (overall %, strengths, gaps)  
-- Recommended next steps  
+- Onboarding Compliance Checklist  
+- Read Confirmation (missing/skipped docs)  
+- Project Understanding (Studio OS, World, Genesis, Institute, Experience Lab, World Compiler, stage, workflow)  
+- Founder Understanding  
+- **Operational Source of Truth** (document hierarchy — not "the capsule is truth")  
+- Canon Verification (**Documented vs Inferred**)  
+- Confidence Assessment (assumptions avoided)  
+- Documentation Review (Confirmed / Likely / Possible / Unknown)  
+- Waiting For Founder Approval  
 
-### 4. Wait for founder approval before contributing
+### 4. Evidence-first grounding
+
+Throughout onboarding, label statements clearly:
+
+| Label | Meaning |
+|-------|---------|
+| **Documented fact** | Directly stated in a named capsule file |
+| **Inference** | Reasonable conclusion — must be labeled and minimized |
+| **Unknown** | Not in capsule — say so explicitly |
+| **Recommendation** | Suggestion only — never present as fact |
+
+**Never mix these categories in the same sentence without labeling.**
+
+When uncertain: **do not infer · do not generalize · do not assume.**
+
+### 5. Wait for founder approval before contributing
 
 **Stop after completing the onboarding report.**
 
-Do not contribute architecture, prompts, or fixes until the founder explicitly approves your understanding (e.g. "approved — proceed" or assigns a task).
+Do not contribute architecture, prompts, or fixes until the founder explicitly approves (e.g. "approved — proceed").
 
-End your report with the required statement in **Waiting For Founder Approval**.
+---
+
+## Operational source of truth (quick reference)
+
+| Document | Governs |
+|----------|---------|
+| `CURRENT_HANDOFF.md` | Current implementation status |
+| `KNOWN_BLOCKERS.md` | Active blockers (P0 gates) |
+| `PROJECT_DNA.md` | Architectural canon |
+| `AI_CONTEXT.md` | Collaboration + system context |
+| `ROADMAP.md` | Future direction |
+| `OPEN_QUESTIONS.md` | Outstanding decisions |
+
+See full hierarchy in `ONBOARDING_REPORT.md` § Operational Source of Truth.
 
 ---
 
@@ -70,30 +99,26 @@ End your report with the required statement in **Waiting For Founder Approval**.
 | Domain | Primary files |
 |--------|----------------|
 | Studio OS platform | `AI_CONTEXT.md`, `PROJECT_DNA.md` |
-| Studio World spatial canon | `AI_CONTEXT.md` §5, `AI_GLOSSARY.md` |
+| Studio World | `AI_CONTEXT.md` §5, `AI_GLOSSARY.md` |
 | Studio Institute | `AI_CONTEXT.md` §6, `AI_GLOSSARY.md` |
-| Genesis Core | `AI_CONTEXT.md` §4, §7, `AI_GLOSSARY.md` |
+| Genesis | `AI_CONTEXT.md` §4, §7, `AI_GLOSSARY.md` |
 | Experience Lab | `AI_CONTEXT.md` §8, `KNOWN_BLOCKERS.md` |
 | World Compiler | `AI_CONTEXT.md` §9, `KNOWN_BLOCKERS.md` |
 | Collaboration workflow | `CHATGPT_OPERATING_MANUAL.md`, `AI_STYLE_GUIDE.md`, `PROMPT_LIBRARY.md` |
 | Founder working style | `FOUNDER_PROFILE.md` (authoritative) |
-| Onboarding deliverable | `ONBOARDING_REPORT.md` (complete, do not restructure) |
-| Current blockers | `KNOWN_BLOCKERS.md`, `CURRENT_HANDOFF.md` |
-| Roadmap | `ROADMAP.md` |
-| Decision history | `PROJECT_CHANGELOG.md` |
-| Open questions | `OPEN_QUESTIONS.md` |
-| Machine metadata | `context-capsule.json` |
+| Onboarding deliverable | `ONBOARDING_REPORT.md` |
+| Export integrity | `CAPSULE_VALIDATION.md`, `context-capsule.json` |
 
 ---
 
-## Agent roles (this project)
+## Agent roles
 
 | Agent | Role |
 |-------|------|
 | **You (external AI)** | Creative Director — architecture, sprint design, prompts; **no code commits** |
 | **Composer** | Cursor Cloud implementer — code, tests, one deploy per task |
 | **Terra** | Governance — canon alignment before risky changes |
-| **Motherboard** | Cursor in-repo memory (`motherboard/`) — separate from this capsule |
+| **Motherboard** | Cursor in-repo memory — separate from this capsule |
 
 ---
 
@@ -101,36 +126,25 @@ End your report with the required statement in **Waiting For Founder Approval**.
 
 > **Software preserves code. Studio OS preserves understanding.**
 
-> **Models evolve. Studio AI persists.** (Vision — see repo `docs/studio-os/studio-ai/`)
-
 > **No onboarding behavior should rely on inference.**
 
 ---
 
-## Compatibility
+## Download URLs
 
-| Platform | Import method |
-|----------|---------------|
-| ChatGPT | Upload **ZIP** (`latest.zip` or versioned `StudioOS_ContextCapsule_v*.zip`) or individual `.md` files |
-| Claude | Project knowledge — add extracted folder or ZIP |
-| Gemini | Upload ZIP or documents |
-| Cursor | Reference folder path in workspace |
-
-**One-file download (permanent — always latest validated release):**
+**Permanent (always latest validated release):**
 
 ```
 https://fsbw.vercel.app/downloads/context-capsules/latest.zip
 ```
 
-**Versioned archive (immutable, for regression testing):**
+**Versioned (immutable):**
 
 ```
-https://fsbw.vercel.app/downloads/context-capsules/StudioOS_ContextCapsule_v0.2.0.zip
+https://fsbw.vercel.app/downloads/context-capsules/StudioOS_ContextCapsule_v0.3.0.zip
 ```
 
 **Regenerate locally:** `npm run download:ai-context-capsule` from repo root.
-
-Platform-neutral Markdown + `context-capsule.json` metadata. No vendor-specific required fields.
 
 ---
 

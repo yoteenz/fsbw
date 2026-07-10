@@ -1,22 +1,24 @@
 # AI Onboarding Report
 
 **Protocol module:** L3 — Post-read self-assessment  
-**Capsule path (authoritative v0.2 template):** `StudioOS_ContextCapsule_v0.1/ONBOARDING_REPORT.md`  
+**Capsule path (authoritative v0.3 template):** `StudioOS_ContextCapsule_v0.1/ONBOARDING_REPORT.md`  
 **Repo spec copy:** this file documents schema + future automation  
 **Rule:** Mandatory **before** contributing code, docs, or architecture.
 
 ---
 
-## v0.2 flat export (current)
+## v0.3 flat export (current)
 
 For brand-new ChatGPT / Claude / Gemini sessions using the ZIP export:
 
 1. Read all files in `MANIFEST.md` reading order.  
-2. **Complete** `ONBOARDING_REPORT.md` **exactly as provided** — do not invent structure.  
-3. Include **Founder Preference Verification**, **Canon Verification**, and **Confidence Assessment**.  
-4. Stop at **Waiting For Founder Approval**.
+2. Complete **Onboarding Compliance Checklist** and every section in `ONBOARDING_REPORT.md` **exactly as provided**.  
+3. Identify **Operational Source of Truth** hierarchy — do not say "the capsule is truth" without document roles.  
+4. Label **Documented fact** vs **Inference** vs **Unknown**; state *"not documented within the current capsule"* when uncertain.  
+5. Include **Documentation Review** with Confirmed/Likely/Possible/Unknown tags.  
+6. Stop at **Waiting For Founder Approval**.
 
-The capsule template includes all required sections. Export validation **fails** if `ONBOARDING_REPORT.md` or `context-capsule.json` is missing.
+Export validation **fails** if required sections, version sync, or manifest entries are missing. See `CAPSULE_VALIDATION.md` in each export.
 
 ---
 

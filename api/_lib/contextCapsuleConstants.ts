@@ -8,7 +8,7 @@ export const CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY = 'studioOsContextCapsuleExports
 /** Fixed capsule folder at repo root — included via vercel.json includeFiles. */
 export const CONTEXT_CAPSULE_FOLDER_NAME = 'StudioOS_ContextCapsule_v0.1';
 
-export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.2.1';
+export const CONTEXT_CAPSULE_GENERATOR_VERSION = '0.3.0';
 
 export const CONTEXT_CAPSULE_METADATA_FILE = 'context-capsule.json';
 
@@ -59,15 +59,16 @@ export const CONTEXT_CAPSULE_READING_ORDER = [
 ] as const;
 
 export const CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS = [
+  '# Onboarding Compliance Checklist',
   '# Read Confirmation',
   '# Project Understanding',
-  '# Founder Preference Verification',
+  '# Founder Understanding',
+  '# Operational Source of Truth',
   '# Canon Verification',
   '# Questions',
-  '# Potential Inconsistencies',
-  '# Outdated Documentation',
-  '# Risk Assessment',
   '# Confidence Assessment',
+  '# Documentation Review',
+  '# Risk Assessment',
   '# Recommended Next Steps',
   '# Waiting For Founder Approval',
 ] as const;

@@ -10,7 +10,7 @@ import { execSync } from 'node:child_process';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
-const GENERATOR_VERSION = '0.2.1';
+const GENERATOR_VERSION = '0.3.0';
 const LATEST_ALIAS = 'latest.zip';
 const RELEASE_MANIFEST = 'release.json';
 const METADATA_FILE = 'context-capsule.json';
@@ -53,17 +53,25 @@ const READING_ORDER = [
 ];
 
 const ONBOARDING_SECTIONS = [
+  '# Onboarding Compliance Checklist',
   '# Read Confirmation',
   '# Project Understanding',
-  '# Founder Preference Verification',
+  '# Founder Understanding',
+  '# Operational Source of Truth',
   '# Canon Verification',
   '# Questions',
-  '# Potential Inconsistencies',
-  '# Outdated Documentation',
-  '# Risk Assessment',
   '# Confidence Assessment',
+  '# Documentation Review',
+  '# Risk Assessment',
   '# Recommended Next Steps',
   '# Waiting For Founder Approval',
+];
+
+const VERSION_SYNC_FILES = [
+  { file: 'README_FIRST.md', pattern: /\*\*Capsule version:\*\*\s*0\.3\.0/ },
+  { file: 'MANIFEST.md', pattern: /\*\*Capsule Version\*\*\s*\|\s*0\.3\.0/ },
+  { file: 'AI_CONTEXT.md', pattern: /v0\.3\.0/ },
+  { file: 'ONBOARDING_REPORT.md', pattern: /Capsule version:\*\*\s*0\.3\.0/ },
 ];
 
 const SUPPORTED_FORMATS = ['zip'];
@@ -149,7 +157,64 @@ function validate(capsuleDir, version) {
     process.exit(1);
   }
 
+  for (const { file, pattern } of VERSION_SYNC_FILES) {
+    const content = fs.readFileSync(path.join(capsuleDir, file), 'utf8');
+    if (!pattern.test(content)) {
+      console.error(`\n❌ Version sync failed: ${file} does not declare capsule version ${version}\n`);
+      process.exit(1);
+    }
+  }
+
+  for (const doc of READING_ORDER) {
+    if (!fs.existsSync(path.join(capsuleDir, doc))) {
+      console.error(`\n❌ Reading order reference missing on disk: ${doc}\n`);
+      process.exit(1);
+    }
+  }
+
   return presentMd;
+}
+
+function writeCapsuleValidationPage(capsuleDir, version, generatedAt, gitCommit, checksum) {
+  const presentMd = fs.readdirSync(capsuleDir).filter((f) => f.endsWith('.md'));
+  const body = `# Capsule Validation — Auto-Generated
+
+**Purpose:** Prove this export is complete, current, and passed automated validation before ZIP packaging.
+
+> **Note:** Regenerated on every export by \`scripts/package-ai-context-capsule-zip.mjs\`. Do not edit manually.
+
+| Field | Value |
+|-------|-------|
+| **Capsule Version** | ${version} |
+| **Generation Date (UTC)** | ${generatedAt} |
+| **Repository Commit SHA** | ${gitCommit} |
+| **Validation Status** | pass |
+| **Documents Included** | ${REQUIRED_FILES.join(', ')} |
+| **Manifest Hash (reading order SHA-256)** | ${checksum} |
+| **Total Markdown Files** | ${presentMd.length} |
+| **Generator Version** | ${GENERATOR_VERSION} |
+| **Export Completed** | yes |
+
+---
+
+## Validation checks performed
+
+- ✓ \`README_FIRST.md\` exists
+- ✓ \`MANIFEST.md\` exists
+- ✓ Every manifest inventory entry exists on disk
+- ✓ \`ONBOARDING_REPORT.md\` exists with all v0.3 required sections
+- ✓ Reading order valid; matches \`context-capsule.json\`
+- ✓ Capsule version synchronized across README, MANIFEST, AI_CONTEXT, ONBOARDING_REPORT
+- ✓ No missing required markdown files
+- ✓ \`latest.zip\` updated only after validation pass
+
+If **Validation Status** is not \`pass\`, do **not** use this capsule for onboarding — regenerate from repo \`master\`.
+
+---
+
+*End of CAPSULE_VALIDATION — reference only; onboarding follows README_FIRST.md.*
+`;
+  fs.writeFileSync(path.join(capsuleDir, 'CAPSULE_VALIDATION.md'), body);
 }
 
 function writeContextCapsuleMetadata(capsuleDir, capsuleFolderName, version, generatedAt) {
@@ -167,10 +232,14 @@ function writeContextCapsuleMetadata(capsuleDir, capsuleFolderName, version, gen
     validationStatus: 'pass',
     generatorVersion: GENERATOR_VERSION,
     onboardingFeatures: [
-      'standardized-onboarding-report',
-      'founder-preference-verification',
-      'canon-verification',
-      'confidence-assessment',
+      'verification-onboarding-v0.3',
+      'onboarding-compliance-checklist',
+      'operational-source-of-truth-hierarchy',
+      'documented-vs-inferred-labels',
+      'documentation-review-certainty-tags',
+      'founder-understanding-section',
+      'confidence-assumptions-avoided',
+      'capsule-validation-page',
       'export-validation-gate',
       'stable-latest-alias',
       'release-manifest',
@@ -262,7 +331,10 @@ function packageCapsule() {
   validate(capsuleDir, version);
 
   const generatedAt = new Date().toISOString();
+  const gitCommit = readGitCommit();
+  const orderChecksum = readingOrderChecksum();
   writeContextCapsuleMetadata(capsuleDir, capsuleFolderName, version, generatedAt);
+  writeCapsuleValidationPage(capsuleDir, version, generatedAt, gitCommit, orderChecksum);
 
   const publicOut = path.join(ROOT, 'public/downloads/context-capsules');
   const releasesOut = path.join(ROOT, 'releases/downloads/context-capsules');
@@ -283,7 +355,6 @@ function packageCapsule() {
   const stat = fs.statSync(publicZip);
   const versionedDownloadPath = `${DOWNLOAD_BASE}/${fileName}`;
   const latestDownloadPath = `${DOWNLOAD_BASE}/${LATEST_ALIAS}`;
-  const gitCommit = readGitCommit();
 
   fs.copyFileSync(publicZip, path.join(publicOut, LATEST_ALIAS));
   fs.copyFileSync(publicZip, path.join(releasesOut, fileName));

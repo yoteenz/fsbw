@@ -8,11 +8,11 @@
 
 ## Current sprint
 
-**AI Context Capsule v0.2 — Onboarding, Founder Intelligence & Validation**
+**AI Context Capsule v0.3 — Deterministic Verification Onboarding**
 
-Evolve the capsule from documentation export into a **deterministic onboarding system**: standardized `ONBOARDING_REPORT.md`, expanded `FOUNDER_PROFILE.md`, canon/confidence verification, `context-capsule.json` metadata, and export validation that blocks incomplete packages.
+Refine onboarding from summary to **verification**: compliance checklist, operational source-of-truth hierarchy, documented-vs-inferred labels, documentation review with certainty tags, auto-generated `CAPSULE_VALIDATION.md`, export version-sync validation.
 
-**Previous:** v0.1 manual prototype (`b2648f86c`); bundle-size API fix (`97fe41392`).
+**Previous:** v0.2 onboarding template + stable `latest.zip` release channel (`700fec5ab`); Experience Lab shell resolution repair (`e641dc7dc`).
 
 ---
 

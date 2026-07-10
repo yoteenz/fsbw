@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "capsuleVersion": "0.2.0",
+  "capsuleVersion": "0.3.0",
   "capsuleFolder": "StudioOS_ContextCapsule_v0.1",
-  "generatedAt": "2026-07-10T19:18:21.472Z",
+  "generatedAt": "2026-07-10T19:24:03.284Z",
   "projectVersion": "build-a-wig@0.0.0",
   "documentCount": 15,
   "metadataFileCount": 1,
@@ -42,12 +42,16 @@
     "OPEN_QUESTIONS.md"
   ],
   "validationStatus": "pass",
-  "generatorVersion": "0.2.1",
+  "generatorVersion": "0.3.0",
   "onboardingFeatures": [
-    "standardized-onboarding-report",
-    "founder-preference-verification",
-    "canon-verification",
-    "confidence-assessment",
+    "verification-onboarding-v0.3",
+    "onboarding-compliance-checklist",
+    "operational-source-of-truth-hierarchy",
+    "documented-vs-inferred-labels",
+    "documentation-review-certainty-tags",
+    "founder-understanding-section",
+    "confidence-assumptions-avoided",
+    "capsule-validation-page",
     "export-validation-gate",
     "stable-latest-alias",
     "release-manifest"
