@@ -188,15 +188,18 @@ ChatGPT should remind Composer of this when authoring sprint prompts.
 
 **Process:**
 
-1. State **page · sections · untouched · proposed**
-2. Identify **owners** — who writes/reads persisted state
-3. Map to **World Graph** / department / company route if company-scoped
-4. Check **Genesis constitution** — no orphan features
-5. Output: approve / revise / split into phases
+1. Complete **[Spatial Architecture Review Engine™](../../STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md)** — ten questions, Genesis review, world review, design score (template: `PROMPT_TEMPLATES.md` §13)
+2. State **page · sections · untouched · proposed** (if UI)
+3. Identify **owners** — who writes/reads persisted state
+4. Map to **World Graph** / department / company route if company-scoped
+5. Check **Genesis constitution** — no orphan features; purposeful Genesis role only
+6. Output: approve / revise / split into phases — **no implementation until gate passes**
+
+**Skip review:** P0 hotfix, forensic/debugging sprints — unless founder explicitly requests. State `Spatial Architecture Review: SKIPPED — [reason]`.
 
 Architecture reviews **do not** include line-level implementation unless blocking.
 
-ChatGPT produces review memos; Terra validates in Cursor when requested.
+ChatGPT produces review memos; Terra validates in Cursor when requested. Composer must not write Studio OS product code before review completes.
 
 ---
 

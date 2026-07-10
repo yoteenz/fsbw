@@ -37,3 +37,11 @@ For full command details and protocol, see **`motherboard/README.md`**.
 - Cloud agents should use the repo environment hook in **`.cursor/environment.json`**, which runs **`./scripts/cloud-update.sh`** on startup.
 - The install hook uses **`npm ci`** at repo root so local project binaries like **`tsc`** and **`vite`** are available before verification commands such as **`npm run build`**.
 - Keep secrets in Cursor web environment settings, not in this repository.
+
+## Spatial Architecture Review (Studio OS)
+
+For **Studio OS product work** (new modules, admin pages, Genesis integration, navigation), read **`STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md`** and complete the review artifact **before** implementation code.
+
+- **Skip** for P0 hotfixes, forensic/debugging sprints, and bug fixes with no new surfaces — unless the founder explicitly requests review.
+- When skipping, state: **`Spatial Architecture Review: SKIPPED — [reason]`**
+- See **`.cursor/rules/spatial-architecture-review.mdc`** for the full gate.

@@ -16,7 +16,7 @@
 >
 > *This document becomes the lens through which every future feature is evaluated.*
 
-**Complemented by:** [Studio World Bible™](../docs/studio-os/STUDIO_WORLD_BIBLE.md) (experiential north star) · [Foundation Sprint](../docs/studio-os/foundation-sprint/README.md) (spatial architecture detail) · [Genesis Constitutional Core™](../genesis/articles/CONSTITUTIONAL_CORE.md) (philosophical operating system) · [Studio AI Vision Bible™](../docs/studio-os/studio-ai/STUDIO_AI_VISION_BIBLE.md) (persistent intelligence layer)
+**Complemented by:** [Studio World Bible™](../docs/studio-os/STUDIO_WORLD_BIBLE.md) (experiential north star) · [Foundation Sprint](../docs/studio-os/foundation-sprint/README.md) (spatial architecture detail) · [Genesis Constitutional Core™](../genesis/articles/CONSTITUTIONAL_CORE.md) (philosophical operating system) · [Studio AI Vision Bible™](../docs/studio-os/studio-ai/STUDIO_AI_VISION_BIBLE.md) (persistent intelligence layer) · [Spatial Architecture Review Engine™](./SPATIAL_ARCHITECTURE_REVIEW.md) (enforcement protocol — review before code)
 
 ---
 
@@ -467,6 +467,7 @@ These laws cannot be waived by convenience, deadline, or technical debt.
 5. **Workflows are events that happen somewhere.**
 6. **No feature ships without passing the Design Review Checklist.**
 7. **Marketing sells presence and ownership — not AI dashboards.**
+8. **No Studio OS implementation begins without [Spatial Architecture Review™](./SPATIAL_ARCHITECTURE_REVIEW.md).**
 
 ---
 

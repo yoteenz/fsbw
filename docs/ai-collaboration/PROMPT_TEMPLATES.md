@@ -7,9 +7,19 @@
 
 ## 1. Composer sprint (standard)
 
+**Prerequisite:** Complete [Spatial Architecture Review](../../STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md) (template §13) **before** implementation — unless P0 hotfix / forensic / debugging sprint.
+
 ```
 # COMPOSER SPRINT — [TITLE]
 ## [Subtitle / system area]
+
+SPATIAL ARCHITECTURE REVIEW
+
+Status: APPROVED | APPROVED WITH MITIGATIONS | SKIPPED — [reason]
+Where it lives: [building · wing · room]
+Department owner: [department]
+Genesis role: Initiate | Observe | Coordinate | Present | Ignore
+Overall World Score: [1–5]
 
 CURRENT PRODUCTION BEHAVIOR
 
@@ -351,6 +361,65 @@ Export AI Context Capsule
 ```
 
 See `EXPORT_SPECIFICATION.md` for generation details (future automation).
+
+---
+
+## 13. Spatial Architecture Review (before Studio OS implementation)
+
+**Usage:** ChatGPT or Composer completes **before** any Studio OS feature code. Skip only for P0 hotfix / forensic / debugging unless founder requests.
+
+```
+# SPATIAL ARCHITECTURE REVIEW — [FEATURE NAME]
+
+Status: APPROVED | APPROVED WITH MITIGATIONS | REJECTED | SKIPPED — [reason]
+Canon: STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md
+
+AUTOMATIC REVIEW (answer all 10)
+
+1. Where does this live inside Studio World?
+2. Which department owns it?
+3. Who interacts? (Founder / employee / Genesis / guest / client)
+4. What physical place represents this?
+5. Reinforces immersion? Yes/No
+6. Makes Studio World feel larger? Yes/No
+7. Sensible without traditional UI? Yes/No
+8. Creates another dashboard? No — if YES → REDESIGN
+9. Belongs in existing department instead?
+10. What experience is the user actually having?
+
+GENESIS REVIEW
+
+• Why does Genesis know about this?
+• Role: Initiate | Observe | Coordinate | Present | Ignore
+
+WORLD REVIEW
+
+• Classification: new place | existing place | new department | new floor | new district | infrastructure only
+
+DESIGN REVIEW OUTPUT
+
+• Spatial Placement:
+• Department Owner:
+• Genesis Relationship:
+• Founder Journey:
+• Physical Environment:
+• Expected Emotional Response:
+• Architecture Risks:
+
+DESIGN SCORE (1–5 each)
+
+Spatial Integrity · Immersion · Department Clarity · Genesis Integration
+Emotional Presence · Architectural Consistency · Future Expandability
+Overall World Score:
+
+RED FLAGS: None | [list]
+
+IMPLEMENTATION GATE
+
+• Score ≥ 3.0 (or founder override)
+• No unresolved red flags
+• Implementation may begin: YES | NO
+```
 
 ---
 

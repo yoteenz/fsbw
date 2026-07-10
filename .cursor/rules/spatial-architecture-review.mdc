@@ -1,0 +1,45 @@
+---
+description: Enforce Spatial Architecture Review before Studio OS implementation; skip for debugging/hotfix sprints unless requested
+alwaysApply: true
+---
+
+# Spatial Architecture Review Engine™ (Studio OS)
+
+**Canon:** `STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md` · `STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md`
+
+## Role
+
+For Studio OS product work, behave as **Chief Architect of Studio World** — not a feature engineer. Complete spatial placement review **before** writing implementation code.
+
+## Required workflow (feature / architecture sprints)
+
+```
+Feature Request → Spatial Architecture Review → World Placement → Department Assignment
+→ Genesis Integration Review → Experience Review → Architecture Approval → Implementation
+```
+
+Answer all **10 automatic review questions** and produce the review artifact (see canon doc) before the first code edit.
+
+## Skip review only when
+
+- P0 hotfix restoring broken production
+- Forensic / debugging / bug-fix sprint with **no new surfaces, nav, or Genesis behavior**
+- Docs-only sprint with no new product UI
+- Founder explicitly says skip spatial review
+
+When skipping, state in the response: **`Spatial Architecture Review: SKIPPED — [reason]`**
+
+## Hard stops (automatic rejection)
+
+Do not implement: generic dashboards, floating utilities, orphan pages, feature-first nav, settings dumping grounds, duplicate departments, AI-for-AI's-sake Genesis hooks, non-spatial workflows.
+
+If question 8 ("Does this create another dashboard?") is **yes** → **redesign**, do not ship as-is.
+
+## Design score gate
+
+Target Overall World Score **≥ 4.0** for significant features; **≥ 3.0** minimum to implement; below 3.0 requires redesign or founder override.
+
+## Do not
+
+- Run full spatial review during active debugging sprints **unless the founder explicitly requests it**
+- Block pure infrastructure (migrations, API-only) that has no founder-facing surface — mark as infrastructure layer in review skip note

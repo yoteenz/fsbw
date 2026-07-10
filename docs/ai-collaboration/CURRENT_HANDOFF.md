@@ -7,11 +7,11 @@
 
 ## Current sprint
 
-**The Spatial Computing Philosophy™ — Studio OS Bible design constitution**
+**Spatial Architecture Review Engine™ — constitutional design enforcement**
 
-Document: `STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md` — permanent design constitution: places replace pages, departments replace features, **Where does it live?** rule, Genesis principle, language constitution, design review checklist, marketing implications. Philosophy sprint only — no UI or feature code.
+Document: `STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md` — automated review protocol before Studio OS implementation: Composer workflow, 10 review questions, Genesis/world review, design score, red flags, planning prompt integration. Governance sprint only — no UI or feature code. **Do not run during active debugging sprints unless explicitly requested.**
 
-**Previous shipped:** AI Context Capsule Export System™ admin page (`b2648f86c`).
+**Previous shipped:** The Spatial Computing Philosophy™ (`b30c93efc`), AI Context Capsule Export System™ (`b2648f86c`).
 
 ---
 

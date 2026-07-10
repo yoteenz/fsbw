@@ -209,6 +209,22 @@
 
 ---
 
+## 2026-07-10 — Spatial Architecture Review Engine™ (Studio OS Bible)
+
+**Decision:** Constitutional enforcement protocol — complete Spatial Architecture Review before any Studio OS implementation; Composer acts as Chief Architect.
+
+**Reason:** Philosophy alone does not prevent dashboard drift; automated review gate before code generation.
+
+**Impact:** `STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md` — workflow, 10 questions, Genesis/world review, design score (7 dimensions + Overall World Score), red flags, review template. Integrated: `AGENTS.md`, `.cursor/rules/spatial-architecture-review.mdc`, `PROMPT_TEMPLATES.md` §13, `CHATGPT_OPERATING_MANUAL.md` §9. Skip for P0/debugging unless founder requests.
+
+**Files:** `STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md`, `STUDIO_OS_BIBLE/README.md`, `THE_SPATIAL_COMPUTING_PHILOSOPHY.md`, planning docs
+
+**Supersedes:** Ad-hoc architecture review without scored gate
+
+**Dependencies:** Future Studio OS subsystem (Genesis pre-flight) builds on this protocol
+
+---
+
 ## Template for new entries
 
 ```markdown

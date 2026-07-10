@@ -46043,3 +46043,20 @@ Summary of **entire conversation thread** through Context Capsule export system 
 - **No code changes** — documentation only.
 - **Blockers unchanged:** B1 AUTH_REQUIRED Layer 1; B2 normal-tab diagnostic verification.
 
+---
+
+## 2026-07-10 — Spatial Architecture Review Engine™ (full conversation summary)
+
+Summary of **entire conversation thread** through Spatial Computing Philosophy and this governance sprint:
+
+**Thread arc:** (1) Prior sprints through Context Capsule Export (`b2648f86c`); (2) Spatial Computing Philosophy (`b30c93efc`); (3) **This sprint:** Spatial Architecture Review Engine — enforcement before implementation.
+
+**User mandate:** Architectural governance sprint — NOT coding, NOT UI. Create automated review system enforcing Spatial Computing Philosophy before code generation. Composer behaves as Chief Architect of Studio World. Do NOT auto-run during active debugging sprints unless explicitly requested.
+
+- **Delivered:** `STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md` v1.0.0.
+- **Content:** Composer workflow (Feature Request → Review → Placement → Department → Genesis → Experience → Approval → Implementation); 10 automatic review questions; Genesis review matrix; world review classifications; design review output fields; red flags (auto-reject dashboards, orphan pages, etc.); design score (7 dimensions + Overall World Score, gate ≥3.0); review output template; long-term vision (future Genesis pre-flight subsystem).
+- **Planning integration:** `AGENTS.md` spatial review section; `.cursor/rules/spatial-architecture-review.mdc` (always apply, skip rules for hotfix/debug); `PROMPT_TEMPLATES.md` §13 + Composer sprint prerequisite block; `CHATGPT_OPERATING_MANUAL.md` §9 updated.
+- **Cross-references:** `STUDIO_OS_BIBLE/README.md`, `THE_SPATIAL_COMPUTING_PHILOSOPHY.md` (immutable law #8), `docs/studio-os/README.md`, `STUDIO_WORLD_BIBLE.md`, `CURRENT_HANDOFF.md`, `AI_CHANGELOG.md`.
+- **No product code** — documentation and agent rules only.
+- **Blockers unchanged:** B1 AUTH_REQUIRED Layer 1; B2 normal-tab diagnostic verification.
+

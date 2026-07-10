@@ -16,6 +16,7 @@
 | Document | Relationship |
 |----------|--------------|
 | [The Spatial Computing Philosophy™](../../STUDIO_OS_BIBLE/THE_SPATIAL_COMPUTING_PHILOSOPHY.md) | **Design constitution** — placement law, Genesis principle, language constitution, design review checklist |
+| [Spatial Architecture Review Engine™](../../STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md) | **Enforcement protocol** — review before code, design score, red flags |
 | [STUDIO_WORLD_MASTER_PLAN.md](../studio-world/STUDIO_WORLD_MASTER_PLAN.md) | **City architecture** — districts, headquarters blueprint, expansion framework |
 | [Knowledge Core™](./knowledge-core/ARTICLE_K22_STUDIO_WORLD_KNOWLEDGE_CORE.md) | Canonical technical truth — if promoted canon conflicts, canon wins |
 | [Studio World Constitution™](./studio-world-constitution.md) | Governance law — Eight Foundational Laws remain binding |
