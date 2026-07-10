@@ -45991,3 +45991,16 @@ Summary of **entire conversation thread** through Studio AI specs, build fix, an
 - **Blockers unchanged:** B1 AUTH_REQUIRED Layer 1; B2 normal-tab diagnostic verification.
 - **Next:** Founder uploads capsule to new ChatGPT; reviews onboarding report; approves before any architecture/implement work.
 
+---
+
+## 2026-07-10 — Download AI Context Capsule ZIP action
+
+**User request:** Package entire `StudioOS_ContextCapsule_v0.1/` into single ZIP `StudioOS_ContextCapsule_v{version}.zip` for one-file download (not individual markdown files).
+
+- **Delivered:** `scripts/package-ai-context-capsule-zip.mjs` — zips capsule folder preserving structure (14 md files).
+- **npm scripts:** `download:ai-context-capsule` and `package:ai-context-capsule-zip` (same action).
+- **Outputs:** `public/downloads/StudioOS_ContextCapsule_v0.1.0.zip` (Vercel static URL `/downloads/...`) + `releases/downloads/` repo copy + `manifest.json` sidecar.
+- **prebuild:** Regenerates ZIP on every production deploy.
+- **Docs:** `releases/downloads/README.md`, `public/downloads/README.md`, ai-collaboration README, capsule README_FIRST + MANIFEST updated with download URL.
+- **Size:** ~37 KB zip. No HQ Export UI — script-only download action.
+

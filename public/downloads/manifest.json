@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "artifact": "StudioOS_ContextCapsule_v0.1.0.zip",
+  "capsuleVersion": "0.1.0",
+  "capsuleFolder": "StudioOS_ContextCapsule_v0.1",
+  "generatedAt": "2026-07-10T16:52:32.196Z",
+  "fileCount": 14,
+  "files": [
+    "AI_CONTEXT.md",
+    "AI_GLOSSARY.md",
+    "AI_STYLE_GUIDE.md",
+    "CHATGPT_OPERATING_MANUAL.md",
+    "CURRENT_HANDOFF.md",
+    "FOUNDER_PROFILE.md",
+    "KNOWN_BLOCKERS.md",
+    "MANIFEST.md",
+    "OPEN_QUESTIONS.md",
+    "PROJECT_CHANGELOG.md",
+    "PROJECT_DNA.md",
+    "PROMPT_LIBRARY.md",
+    "README_FIRST.md",
+    "ROADMAP.md"
+  ],
+  "downloadUrls": {
+    "production": "/downloads/StudioOS_ContextCapsule_v0.1.0.zip",
+    "note": "After deploy, fetch from https://fsbw.vercel.app/downloads/StudioOS_ContextCapsule_v0.1.0.zip"
+  }
+}

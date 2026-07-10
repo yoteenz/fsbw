@@ -96,10 +96,18 @@ Do not contribute architecture, prompts, or fixes until the founder explicitly a
 
 | Platform | Import method |
 |----------|---------------|
-| ChatGPT | Upload all `.md` files or paste README_FIRST + read order |
-| Claude | Project knowledge — add entire folder |
-| Gemini | Upload documents |
+| ChatGPT | Upload **ZIP** (`StudioOS_ContextCapsule_v0.1.0.zip`) or individual `.md` files |
+| Claude | Project knowledge — add extracted folder or ZIP |
+| Gemini | Upload ZIP or documents |
 | Cursor | Reference folder path in workspace |
+
+**One-file download (production):**
+
+```
+https://fsbw.vercel.app/downloads/StudioOS_ContextCapsule_v0.1.0.zip
+```
+
+**Regenerate locally:** `npm run download:ai-context-capsule` from repo root.
 
 Platform-neutral Markdown only. No vendor-specific required fields.
 

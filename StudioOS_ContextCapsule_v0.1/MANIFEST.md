@@ -2,7 +2,7 @@
 
 **Capsule ID:** `capsule-2026-07-10-v0.1-manual`  
 **Capsule Version:** 0.1.0  
-**Format:** Manual flat Markdown prototype (pre-ZIP automation)  
+**Format:** Manual flat Markdown prototype + ZIP download (`npm run download:ai-context-capsule`)  
 **Protocol alignment:** AI Context Protocol™ v1.0.0 (conceptual — flat layout)
 
 ---

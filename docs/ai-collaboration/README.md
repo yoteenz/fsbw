@@ -64,7 +64,7 @@ Portable **single-file** AI operating system (`.studiocapsule`). Canonical archi
 
 | Phase | Delivery |
 |-------|----------|
-| **Now** | **Manual prototype:** [`StudioOS_ContextCapsule_v0.1/`](../../StudioOS_ContextCapsule_v0.1/) (flat md folder) |
+| **Now** | **Manual prototype:** [`StudioOS_ContextCapsule_v0.1/`](../../StudioOS_ContextCapsule_v0.1/) + **one-file ZIP:** [`npm run download:ai-context-capsule`](../../package.json) → `/downloads/StudioOS_ContextCapsule_v0.1.0.zip` |
 | Next | Spec + v1 flat CLI export + `.studiocapsule` ZIP manifest v2 |
 | Future | HQ → Studio Archive → Knowledge Management → Export button |
 
