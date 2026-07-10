@@ -5,6 +5,11 @@ import type {
   CompilerInvestigationEventType,
 } from './types';
 import { isWorldCompilerDiagnosticMode, shouldFreezeOnFirstFailure } from './diagnostic-mode';
+import {
+  getLayer1ForensicSnapshot,
+  layer1ForensicToCompileStopped,
+  loadLayer1ForensicFromSession,
+} from './layer1-forensic';
 
 const LOG_KEY = 'worldCompilerInvestigationLog_v1';
 const STOPPED_KEY = 'worldCompilerInvestigationStopped_v1';
@@ -358,6 +363,9 @@ export function loadInvestigationEventsFromSession(): CompilerInvestigationEvent
 }
 
 export function getCompileStoppedSnapshot(): CompileStoppedSnapshot | null {
+  const layer1 = getLayer1ForensicSnapshot() ?? loadLayer1ForensicFromSession();
+  if (layer1) return layer1ForensicToCompileStopped(layer1);
+
   if (frozenSnapshot) return frozenSnapshot;
   try {
     const raw = sessionStorage.getItem(STOPPED_KEY);

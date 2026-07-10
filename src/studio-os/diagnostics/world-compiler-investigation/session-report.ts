@@ -55,10 +55,14 @@ export function buildWorldCompilerForensicReport(): WorldCompilerForensicReport 
   const instanceIds = new Set(runStarts.map((e) => e.detail?.compilerInstanceId as string).filter(Boolean));
 
   let layer1Classification = 'Insufficient evidence — run with ?compilerDiag=1 on failing device';
+  const genFailed = events.filter((e) => e.stageName === 'GENERATION_REQUEST_FAILED');
   const stageEnters = events.filter((e) => e.type === 'COMPILE_STAGE_ENTER');
   const mountLandmark = stageEnters.filter((e) => e.stageName === 'mount-landmark');
   const loadShell = stageEnters.filter((e) => e.stageName === 'load-shell');
-  if (loadShell.length > 1 && mountLandmark.length === 0) {
+  if (genFailed.length > 0) {
+    const code = (genFailed[0].detail?.code as string) ?? (genFailed[0].detail?.error as string) ?? 'unknown';
+    layer1Classification = `F. Layer 1 generation request failed — ${code} (shell may have used preview-canvas fallback)`;
+  } else if (loadShell.length > 1 && mountLandmark.length === 0) {
     layer1Classification = 'B. Layer 1 (load-shell) completes then restarts — load-shell entered multiple times, mount-landmark never entered';
   } else if (mountLandmark.length === 0 && loadShell.length >= 1) {
     layer1Classification = 'A. Layer 1 never completes — mount-landmark never entered';

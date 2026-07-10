@@ -30,6 +30,17 @@ export {
 export { buildWorldCompilerForensicReport } from './session-report';
 export { COMPILER_PATH_TIMERS, findTimersNearThreeSeconds } from './timer-audit';
 export { WORLD_COMPILER_OWNERSHIP, buildWorldCompilerOwnershipReport } from './ownership-report';
+export {
+  getLayer1ForensicSnapshot,
+  isLayer1Frozen,
+  formatLayer1DiagnosticsMarkdown,
+  setLayer1RunContext,
+  freezeLayer1Failure,
+  recordLayer1Transition,
+  LAYER_1_ID,
+  LAYER_1_DISPLAY,
+  type Layer1ForensicSnapshot,
+} from './layer1-forensic';
 
 export type {
   CompilerInvestigationEvent,

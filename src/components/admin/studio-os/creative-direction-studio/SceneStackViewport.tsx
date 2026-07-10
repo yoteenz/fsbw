@@ -31,6 +31,20 @@ type Props = {
   onDebugLayerToggle?: (layer: import('../../../../studio-os-core/scene-stack/world-compiler/debug-view').ArchitectDebugLayer) => void;
   compilationHeadline?: string | null;
   sceneIntegrityPct?: number | null;
+  /** Terminal Layer 1 failure — diagnostic / forensic display */
+  layer1Failure?: {
+    state: 'FAILED_AT_LAYER_1';
+    failedLayerId: string;
+    failedLayerLabel: string;
+    errorCode: string | null;
+    errorMessage: string;
+    compileRunId: string | null;
+    shellId: string | null;
+    failedTransition: string;
+    lastSuccessfulTransition: string | null;
+    failedFunction: string;
+    onCopyDiagnostics?: () => void;
+  } | null;
 };
 
 function layerPlane(layerId: string): 'rear' | 'mid' | 'fore' {
@@ -107,6 +121,7 @@ export function SceneStackViewport({
   onDebugLayerToggle,
   compilationHeadline,
   sceneIntegrityPct,
+  layer1Failure,
 }: Props) {
   const approvedLayers = layers.filter((l) => l.publicUrl && l.status !== 'failed');
   const generatableLayers = layers.filter((l) => l.definition.generatable);
@@ -222,16 +237,67 @@ export function SceneStackViewport({
 
       {status === 'failed' ? (
         <div className="cds-stack__viewport-error">
-          <p>Layer generation failed.</p>
-          {onRegenerateLayer ? (
-            <button
-              type="button"
-              className="cds-genesis__btn"
-              onClick={() => onRegenerateLayer('environment-shell')}
-            >
-              Retry Shell Layer
-            </button>
-          ) : null}
+          {layer1Failure?.state === 'FAILED_AT_LAYER_1' ? (
+            <>
+              <p style={{ fontWeight: 800, letterSpacing: '0.06em' }}>LANDMARK GENERATION FAILED</p>
+              <p style={{ marginTop: 6, fontSize: 11, lineHeight: 1.5 }}>
+                Layer 1 ({layer1Failure.failedLayerLabel}) failed after shell loaded successfully.
+              </p>
+              <dl style={{ margin: '8px 0 0', fontSize: 10, lineHeight: 1.6, textAlign: 'left' }}>
+                <div>
+                  <dt style={{ display: 'inline', fontWeight: 700 }}>Error code: </dt>
+                  <dd style={{ display: 'inline', margin: 0 }}>{layer1Failure.errorCode ?? 'UNKNOWN'}</dd>
+                </div>
+                <div>
+                  <dt style={{ display: 'inline', fontWeight: 700 }}>Failed stage: </dt>
+                  <dd style={{ display: 'inline', margin: 0 }}>{layer1Failure.failedTransition}</dd>
+                </div>
+                <div>
+                  <dt style={{ display: 'inline', fontWeight: 700 }}>Function: </dt>
+                  <dd style={{ display: 'inline', margin: 0 }}>{layer1Failure.failedFunction}</dd>
+                </div>
+                <div>
+                  <dt style={{ display: 'inline', fontWeight: 700 }}>Compile run: </dt>
+                  <dd style={{ display: 'inline', margin: 0 }}>{layer1Failure.compileRunId ?? '—'}</dd>
+                </div>
+                <div>
+                  <dt style={{ display: 'inline', fontWeight: 700 }}>Shell ID: </dt>
+                  <dd style={{ display: 'inline', margin: 0 }}>{layer1Failure.shellId ?? '—'}</dd>
+                </div>
+                <div>
+                  <dt style={{ display: 'inline', fontWeight: 700 }}>Last success: </dt>
+                  <dd style={{ display: 'inline', margin: 0 }}>{layer1Failure.lastSuccessfulTransition ?? '—'}</dd>
+                </div>
+                <div>
+                  <dt style={{ display: 'inline', fontWeight: 700 }}>Detail: </dt>
+                  <dd style={{ display: 'inline', margin: 0 }}>{layer1Failure.errorMessage}</dd>
+                </div>
+              </dl>
+              {layer1Failure.onCopyDiagnostics ? (
+                <button
+                  type="button"
+                  className="cds-genesis__btn"
+                  style={{ marginTop: 10 }}
+                  onClick={layer1Failure.onCopyDiagnostics}
+                >
+                  Copy Layer 1 diagnostics
+                </button>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <p>Layer generation failed.</p>
+              {onRegenerateLayer ? (
+                <button
+                  type="button"
+                  className="cds-genesis__btn"
+                  onClick={() => onRegenerateLayer('environment-shell')}
+                >
+                  Retry Shell Layer
+                </button>
+              ) : null}
+            </>
+          )}
         </div>
       ) : null}
 

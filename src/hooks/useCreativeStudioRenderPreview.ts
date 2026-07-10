@@ -17,6 +17,8 @@ import {
 } from '../studio-os-core/experience-lab-runtime';
 import {
   getCompileStoppedSnapshot,
+  getLayer1ForensicSnapshot,
+  formatLayer1DiagnosticsMarkdown,
   isAutomaticRetryDisabled,
   isWorldCompilerDiagnosticMode,
   recordTap,
@@ -137,8 +139,10 @@ export function useCreativeStudioRenderPreview(
   );
 
   const compileStopped = getCompileStoppedSnapshot();
+  const layer1Forensic = getLayer1ForensicSnapshot();
   const diagnosticFrozen =
     Boolean(compileStopped) ||
+    Boolean(layer1Forensic) ||
     (isWorldCompilerDiagnosticMode() && s?.renderStatus === 'failed');
 
   const runMeta: CreativeStudioRenderRunMeta = {
@@ -185,5 +189,11 @@ export function useCreativeStudioRenderPreview(
     compileStopped,
     diagnosticFrozen,
     compileRunId: s?.compileRunId ?? null,
+    layer1Forensic,
+    copyLayer1Diagnostics: layer1Forensic
+      ? () => {
+          void navigator.clipboard?.writeText(formatLayer1DiagnosticsMarkdown(layer1Forensic));
+        }
+      : undefined,
   };
 }

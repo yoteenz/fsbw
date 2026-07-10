@@ -9,6 +9,7 @@ import { CreativeStudioPipelineStatusBar } from './CreativeStudioPipelineStatusB
 import {
   incrementComponentRender,
   isWorldCompilerDiagnosticMode,
+  LAYER_1_DISPLAY,
   logComponentMount,
   logComponentUnmount,
   recordTap,
@@ -55,6 +56,8 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
     compileStopped,
     diagnosticFrozen,
     compileRunId,
+    layer1Forensic,
+    copyLayer1Diagnostics,
   } = useCreativeStudioRenderPreview(companyId, conceptId);
 
   const diagMode = isWorldCompilerDiagnosticMode();
@@ -64,6 +67,7 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
   const showRetry =
     !diagMode &&
     !diagnosticFrozen &&
+    !layer1Forensic &&
     !isBuilding &&
     (shellPipelinePhase === 'failed' ||
       status === 'failed' ||
@@ -119,6 +123,23 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
           compilationHeadline={blindMode ? undefined : compileReport?.headline ?? undefined}
           sceneIntegrityPct={
             blindMode ? undefined : compileReport?.renderReadinessPct ?? compileReport?.sceneIntegrityPct ?? undefined
+          }
+          layer1Failure={
+            layer1Forensic
+              ? {
+                  state: 'FAILED_AT_LAYER_1',
+                  failedLayerId: layer1Forensic.layerId,
+                  failedLayerLabel: LAYER_1_DISPLAY,
+                  errorCode: layer1Forensic.errorCode,
+                  errorMessage: layer1Forensic.errorMessage,
+                  compileRunId: layer1Forensic.compileRunId,
+                  shellId: layer1Forensic.shellId,
+                  failedTransition: layer1Forensic.failedTransition,
+                  lastSuccessfulTransition: layer1Forensic.lastSuccessfulTransition,
+                  failedFunction: layer1Forensic.failedFunction,
+                  onCopyDiagnostics: copyLayer1Diagnostics,
+                }
+              : null
           }
           onRegenerateLayer={
             blindMode || diagMode
@@ -201,17 +222,27 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
           ) : null}
           {compileStopped || (diagMode && diagnosticFrozen) ? (
             <div style={compileStoppedStyle}>
-              <p style={{ margin: 0, fontWeight: 800, letterSpacing: '0.08em' }}>COMPILE STOPPED</p>
+              <p style={{ margin: 0, fontWeight: 800, letterSpacing: '0.08em' }}>
+                {layer1Forensic ? 'FAILED_AT_LAYER_1 — COMPILE STOPPED' : 'COMPILE STOPPED'}
+              </p>
               <ul style={{ margin: '8px 0 0', paddingLeft: 16, lineHeight: 1.6 }}>
-                <li>compile run ID: {compileStopped?.compileRunId ?? compileRunId ?? '—'}</li>
-                <li>failed stage: {compileStopped?.failedStage ?? compileReport?.failedStage ?? '—'}</li>
-                <li>failed layer: {compileStopped?.failedLayer ?? '—'}</li>
-                <li>error: {compileStopped?.error ?? compileReport?.failedStageDetail ?? '—'}</li>
-                <li>shell ID: {compileStopped?.shellId ?? shellDiagnostic.requestedShellId ?? '—'}</li>
-                <li>last successful event: {compileStopped?.lastSuccessfulEvent ?? '—'}</li>
+                <li>compile run ID: {layer1Forensic?.compileRunId ?? compileStopped?.compileRunId ?? compileRunId ?? '—'}</li>
+                <li>failed transition: {layer1Forensic?.failedTransition ?? compileStopped?.failedStage ?? '—'}</li>
+                <li>failed layer: {layer1Forensic ? LAYER_1_DISPLAY : compileStopped?.failedLayer ?? '—'}</li>
+                <li>error code: {layer1Forensic?.errorCode ?? '—'}</li>
+                <li>error: {layer1Forensic?.errorMessage ?? compileStopped?.error ?? compileReport?.failedStageDetail ?? '—'}</li>
+                <li>adapter: {layer1Forensic?.adapter ?? '—'}</li>
+                <li>shell ID: {layer1Forensic?.shellId ?? compileStopped?.shellId ?? shellDiagnostic.requestedShellId ?? '—'}</li>
+                <li>shell remained valid: {layer1Forensic ? (layer1Forensic.shellRemainedValid ? 'yes' : 'no') : '—'}</li>
+                <li>last successful event: {layer1Forensic?.lastSuccessfulTransition ?? compileStopped?.lastSuccessfulEvent ?? '—'}</li>
                 <li>reset attempted by: {compileStopped?.resetAttemptedBy ?? '—'}</li>
-                <li>reset prevented: {compileStopped?.resetPrevented ? 'yes' : 'no'}</li>
+                <li>reset prevented: {compileStopped?.resetPrevented || layer1Forensic ? 'yes' : 'no'}</li>
               </ul>
+              {layer1Forensic && copyLayer1Diagnostics ? (
+                <button type="button" style={retryBtnStyle} onClick={copyLayer1Diagnostics}>
+                  Copy Layer 1 diagnostics
+                </button>
+              ) : null}
             </div>
           ) : null}
           {diagMode ? (

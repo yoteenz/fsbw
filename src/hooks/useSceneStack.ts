@@ -56,6 +56,13 @@ import {
   gateAfterArchitectureAudit,
   requestExperienceIntelligenceAudit,
 } from '../studio-os-core/experience-intelligence-engine';
+import {
+  freezeLayer1Failure,
+  isWorldCompilerDiagnosticMode,
+  LAYER_1_ID,
+  recordLayer1Transition,
+} from '../studio-os/diagnostics/world-compiler-investigation';
+import { VALIDATION_RENDER_AUTHORIZATION } from '../studio-os-core/scene-stack/validation-render';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -247,6 +254,11 @@ export function useSceneStack(
       });
 
       try {
+        const isLayer1 = layerId === LAYER_1_ID;
+        if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+          recordLayer1Transition('LAYER_1_ENTERED', { stationId, departmentId, projectId });
+        }
+
         const station = getSceneStackStation(departmentId, stationId);
         const blueprint = resolveMasterSceneBlueprint({
           departmentId,
@@ -262,6 +274,19 @@ export function useSceneStack(
         if (!shellCheck.ok) {
           failStudioAlphaGeneration(generationId, shellCheck.reason);
           setErrors((prev) => ({ ...prev, [key]: shellCheck.reason }));
+          if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+            freezeLayer1Failure({
+              failedTransition: 'LAYER_1_ENTERED',
+              errorCode: shellCheck.code,
+              errorMessage: shellCheck.reason,
+              failedFunction: 'assertShellImmutableForLayer',
+              failedFile: 'src/studio-os-core/scene-stack/world-compiler/immutable-shell.ts',
+              adapter: 'shell-immutability-guard',
+              shellRemainedValid: Boolean(shellLock.shellUrl),
+              requestInput: { layerId, shellLock },
+              responseOutput: null,
+            });
+          }
           return false;
         }
 
@@ -287,6 +312,19 @@ export function useSceneStack(
           const msg = refEnforcement.violations.join(' ');
           failStudioAlphaGeneration(generationId, msg);
           setErrors((prev) => ({ ...prev, [key]: msg }));
+          if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+            freezeLayer1Failure({
+              failedTransition: 'LANDMARK_REQUEST_CREATED',
+              errorCode: 'SCENE_STACK_REFERENCE_LAW',
+              errorMessage: msg,
+              failedFunction: 'enforceFalReferenceLaw',
+              failedFile: 'src/studio-os-core/scene-stack/reference-enforcement.ts',
+              adapter: 'fal-reference-enforcement',
+              shellRemainedValid: Boolean(shellLock.shellUrl),
+              requestInput: { layerId, rawReferenceUrls, violations: refEnforcement.violations },
+              responseOutput: null,
+            });
+          }
           return false;
         }
 
@@ -301,7 +339,7 @@ export function useSceneStack(
           referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
         });
 
-        const result = await requestStudioBuilderGenerate({
+        const generationPayload = {
           departmentId,
           packageId: pkg.packageId,
           projectId,
@@ -312,12 +350,82 @@ export function useSceneStack(
           outputFormat: compiled.outputFormat,
           forceGenerate: force || !existing?.publicUrl,
           referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
-        });
+        };
+
+        const requestInputForensic = {
+          schemaVersion: 'scene-stack-layer-generate-v1',
+          layerId,
+          stationId,
+          departmentId,
+          packageId: pkg.packageId,
+          projectId,
+          compiledProductionGroupId: compiled.productionGroupId,
+          compiledHeroAssetId: compiled.heroAssetId,
+          blueprintId: compiled.blueprintId,
+          promptVersion: compiled.promptVersion,
+          aspectRatio: compiled.aspectRatio,
+          outputFormat: compiled.outputFormat,
+          referenceImageUrls,
+          referenceUrlScheme: referenceImageUrls.map((u) => (u.startsWith('data:') ? 'data-url' : u.startsWith('http') ? 'http' : 'other')),
+          validationMode: isExperienceLabValidationRender(),
+          authorizationMode: VALIDATION_RENDER_AUTHORIZATION,
+          generationProvider: 'POST /api/admin/studio-builder-generate',
+          modelAdapter: 'fal-ai/nano-banana-pro/edit via executeGovernedGeneration → generateStudioBuilderAsset',
+          forceGenerate: generationPayload.forceGenerate,
+        };
+
+        if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+          recordLayer1Transition('LANDMARK_REQUEST_CREATED', { requestInputForensic });
+          recordLayer1Transition('GENERATION_REQUEST_STARTED', {
+            endpoint: '/api/admin/studio-builder-generate',
+          });
+        }
+
+        const result = await requestStudioBuilderGenerate(generationPayload);
+
+        if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+          if (result.ok && result.publicUrl) {
+            recordLayer1Transition('GENERATION_REQUEST_COMPLETED', {
+              publicUrl: result.publicUrl,
+              model: result.model,
+              code: result.code,
+            });
+          } else {
+            recordLayer1Transition('GENERATION_REQUEST_FAILED', {
+              error: result.error,
+              code: result.code,
+            });
+          }
+        }
 
         if (!result.ok || !result.publicUrl) {
-          failStudioAlphaGeneration(generationId, result.error ?? 'Layer generation failed');
-          setErrors((prev) => ({ ...prev, [key]: result.error ?? 'Layer generation failed' }));
+          const errMsg = result.error ?? 'Layer generation failed';
+          failStudioAlphaGeneration(generationId, errMsg);
+          setErrors((prev) => ({ ...prev, [key]: errMsg }));
+          if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+            freezeLayer1Failure({
+              failedTransition: 'GENERATION_REQUEST_FAILED',
+              errorCode: result.code ?? 'GENERATION_FAILED',
+              errorMessage: errMsg,
+              failedFunction: 'requestStudioBuilderGenerate',
+              failedFile: 'src/services/studio/studioBuilder/api.ts',
+              adapter: 'studio-builder-generate → executeGovernedGeneration (FAL nano-banana-pro/edit)',
+              shellRemainedValid: Boolean(shellLock.shellUrl),
+              requestInput: requestInputForensic,
+              responseOutput: {
+                ok: result.ok,
+                code: result.code,
+                error: result.error,
+                publicUrl: result.publicUrl ?? null,
+                model: result.model ?? null,
+              },
+            });
+          }
           return false;
+        }
+
+        if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+          recordLayer1Transition('LANDMARK_VALIDATION_STARTED', { publicUrl: result.publicUrl });
         }
 
         const quality = await validateSceneLayerQuality({
@@ -330,6 +438,19 @@ export function useSceneStack(
           const msg = formatQualityGuardSummary(quality);
           failStudioAlphaGeneration(generationId, msg);
           setErrors((prev) => ({ ...prev, [key]: msg }));
+          if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+            freezeLayer1Failure({
+              failedTransition: 'LANDMARK_VALIDATION_FAILED',
+              errorCode: 'QUALITY_REGENERATE_REQUIRED',
+              errorMessage: msg,
+              failedFunction: 'validateSceneLayerQuality',
+              failedFile: 'src/studio-os-core/scene-stack/quality-guard.ts',
+              adapter: 'scene-layer-quality-guard',
+              shellRemainedValid: Boolean(shellLock.shellUrl),
+              requestInput: requestInputForensic,
+              responseOutput: { publicUrl: result.publicUrl, quality },
+            });
+          }
           saveSceneStackLayerRecord({
             departmentId,
             projectId,
@@ -383,6 +504,9 @@ export function useSceneStack(
         // Phase 1: no auto-register to Asset Registry — promotion requires Production Authorization.
 
         bump();
+        if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+          recordLayer1Transition('LAYER_1_COMPLETED', { publicUrl: result.publicUrl });
+        }
         void compileWorldStation({
           departmentId,
           projectId,

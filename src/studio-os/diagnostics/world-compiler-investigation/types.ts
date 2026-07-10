@@ -36,7 +36,15 @@ export type CompilerInvestigationEventType =
   | 'CONTEXT_UPDATED'
   | 'TAP_DETECTED'
   | 'TAP_BLOCKED_OVERLAP'
-  | 'TIMER_NEAR_RESET_CADENCE';
+  | 'TIMER_NEAR_RESET_CADENCE'
+  | 'LAYER_1_ENTERED'
+  | 'LANDMARK_REQUEST_CREATED'
+  | 'GENERATION_REQUEST_STARTED'
+  | 'GENERATION_REQUEST_COMPLETED'
+  | 'GENERATION_REQUEST_FAILED'
+  | 'LANDMARK_VALIDATION_STARTED'
+  | 'LANDMARK_VALIDATION_FAILED'
+  | 'COMPILER_TERMINATED';
 
 export type CompilerInvestigationEvent = {
   id: number;
@@ -91,6 +99,7 @@ export type CompileStoppedSnapshot = {
   resetAttemptedBy: string | null;
   resetPrevented: boolean;
   frozenAt: string;
+  layer1Forensic?: import('./layer1-forensic').Layer1ForensicSnapshot;
 };
 
 export type ResetDetectedPayload = {

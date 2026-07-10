@@ -146,6 +146,12 @@ export async function compileWorldStation(input: {
         stationId: input.stationId,
         shellVersion: shellLock.shellVersion,
       });
+      emitStudioOsRuntimeEvent('SHELL_RESOLVED', 'world-compiler.compile-pipeline', {
+        stationId: input.stationId,
+        compileRunId: investigation?.compileRunId,
+        shellVersion: shellLock.shellVersion,
+        resolution: shellLock.resolution,
+      });
       return `Shell v${shellLock.shellVersion} loaded (${shellLock.resolution}) as reference.`;
     }, stageOptions)
   );
