@@ -16,6 +16,10 @@ export default function StudioOsFlightRecorderPage() {
         <a href="/__studio-os-session-report" style={{ color: '#7dd3fc' }}>
           /__studio-os-session-report
         </a>
+        {' · '}
+        <a href="/__studio-os-recovery" style={{ color: '#7dd3fc' }}>
+          /__studio-os-recovery
+        </a>
       </p>
     </div>
   );

@@ -50,6 +50,7 @@ export function isDynamicImportChunkFailure(error: unknown): boolean {
 /** Hard reload at most once per cooldown window (sessionStorage). Returns true if reload was invoked. */
 export function hardReloadOnceForStaleChunks(): boolean {
   if (typeof window === 'undefined') return false;
+  if (window.location.pathname.startsWith('/__studio-os-')) return false;
   try {
     const now = Date.now();
     const prev = sessionStorage.getItem(RELOAD_FLAG_KEY);

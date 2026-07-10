@@ -1,6 +1,7 @@
 import { useEffect, type ReactNode } from 'react';
 import { getLastDiagnosticCheckpoint, markDiagnosticCheckpoint } from './checkpoints';
 import { clearDiagnosticPlainDom, getBundleVersionLabel } from './plain-dom';
+import { recordDiagnosticBootEvent } from './boot-events';
 
 type Props = {
   route: string;
@@ -13,6 +14,7 @@ export function IsolatedDiagnosticShell({ route, children }: Props) {
     clearDiagnosticPlainDom();
     markDiagnosticCheckpoint('diagnostic:component-mounted', route);
     markDiagnosticCheckpoint('diagnostic:ready', route);
+    recordDiagnosticBootEvent('DIAGNOSTIC_UI_COMMITTED', { route });
   }, [route]);
 
   return (

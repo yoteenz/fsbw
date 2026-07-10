@@ -305,6 +305,10 @@ export function LiveRuntimeConsole() {
         <a href="/__studio-os-session-report" style={{ color: '#7dd3fc' }}>
           Session Report
         </a>
+        {' · '}
+        <a href="/__studio-os-recovery" style={{ color: '#7dd3fc' }}>
+          Recovery
+        </a>
       </p>
     </div>
   );

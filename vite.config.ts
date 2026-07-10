@@ -95,12 +95,24 @@ export default defineConfig(({ mode, command }) => {
     process.env.CF_PAGES_COMMIT_SHA ||
     Date.now().toString(36)
 
+  function injectAppBuildIdPlugin() {
+    return {
+      name: 'inject-app-build-id',
+      transformIndexHtml(html: string) {
+        return html.replace(/__APP_BUILD_ID__/g, globeEmbedBuild)
+      },
+    }
+  }
+
   return {
   define: {
     /** Bust admin globe iframe cache on every production deploy (inlined at build time). */
     __GLOBE_EMBED_BUILD__: JSON.stringify(globeEmbedBuild),
+    'import.meta.env.VITE_APP_BUILD_ID': JSON.stringify(globeEmbedBuild),
+    'import.meta.env.VITE_APP_VERSION': JSON.stringify(globeEmbedBuild),
   },
   plugins: [
+    injectAppBuildIdPlugin(),
     ...(command === 'serve' ? [logDevApiProxyPlugin(apiTarget)] : []),
     apiDevNoProxyGuard(apiTarget),
     liveReloadPolling(),
