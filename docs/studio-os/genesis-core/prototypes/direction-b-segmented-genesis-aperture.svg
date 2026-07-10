@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-label="Genesis Orb Direction B  Segmented Genesis Aperture">
+  <defs>
+    <radialGradient id="b-inner" cx="50%" cy="50%" r="40%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="50%" stop-color="#FFFDF8"/>
+      <stop offset="100%" stop-color="#F8EEDB" stop-opacity="0.2"/>
+    </radialGradient>
+    <linearGradient id="b-plate" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#E8DFD0" stop-opacity="0.35"/>
+    </linearGradient>
+    <filter id="b-glow"><feGaussianBlur stdDeviation="3"/></filter>
+  </defs>
+  <!-- inner energy visible through gaps -->
+  <circle cx="60" cy="60" r="28" fill="url(#b-inner)" filter="url(#b-glow)"/>
+  <circle cx="60" cy="60" r="10" fill="#FFFFFF"/>
+  <!-- three curved shell segments (120deg arcs)  NOT X shape -->
+  <path d="M60 16 A44 44 0 0 1 98 74 A38 38 0 0 0 60 22 Z" fill="url(#b-plate)" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="0.6"/>
+  <path d="M98 74 A44 44 0 0 1 22 74 A38 38 0 0 0 92 68 Z" fill="url(#b-plate)" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="0.6"/>
+  <path d="M22 74 A44 44 0 0 1 60 16 A38 38 0 0 0 28 68 Z" fill="url(#b-plate)" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="0.6"/>
+  <!-- light channels between segments -->
+  <path d="M60 22 L60 50" stroke="#FFFDF8" stroke-width="2" opacity="0.5" stroke-linecap="round"/>
+  <path d="M92 68 L68 58" stroke="#FFF9EE" stroke-width="1.5" opacity="0.45" stroke-linecap="round"/>
+  <path d="M28 68 L52 58" stroke="#FFF9EE" stroke-width="1.5" opacity="0.45" stroke-linecap="round"/>
+  <!-- outer shell ring -->
+  <circle cx="60" cy="60" r="44" fill="none" stroke="#FFFFFF" stroke-opacity="0.4" stroke-width="1"/>
+  <ellipse cx="48" cy="40" rx="14" ry="8" fill="#FFFFFF" opacity="0.28"/>
+</svg>

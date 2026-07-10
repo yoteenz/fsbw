@@ -1,5 +1,7 @@
 # Studio Orb™ — Command Dock Reimagined
 
+> **Genesis Core™ supersession (2026-07-10):** Intelligence **visual architecture** and **state ownership** for the orb are being re-architected under **Genesis Core™** / **The Genesis Orb**. Radial menu, Command Dock, Conversation Mode, Voice, and Hero Object toolbelt behavior in this doc remain current. Canonical visual/state spec: **`docs/studio-os/genesis-core/`**. Production orb swap waits on founder review of Directions A/B/C.
+
 Design revision (not a new milestone). Replaces the permanently visible bottom Command Dock with **Studio Orb™** — the physical manifestation of Studio Intelligence™.
 
 ## Interaction model

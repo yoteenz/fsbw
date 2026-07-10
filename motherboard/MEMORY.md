@@ -45835,6 +45835,8 @@ Summary of **full conversation in this chat**: Earlier in chat — Institute bib
 
 ---
 
+---
+
 ## 2026-07-10 — Layer 1 terminal failure trace (Experience Lab forensic pass)
 
 Summary of **full conversation in this chat**: After studio-world-atlas package registration fix (`03726eaf9`), user reported Experience Lab reaches Layer 1 then crashes and UI shows misleading **Retry Shell Layer**. P0 forensic sprint — preserve first Layer 1 failure as terminal diagnostic state; do not repair generation path (forensic + display fix only).
@@ -45857,3 +45859,14 @@ Summary of **full conversation in this chat**: After studio-world-atlas package 
 
 - **Smallest repair recommendation (not applied):** Either enable **`CREATIVE_PRODUCTION_ALLOW_LEGACY_COMPAT=1`** on production for Experience Lab validation drafts, or issue ephemeral **`productionAuthorizationId`** for validation-mode layer generation — **do not** add canvas fallback for Landmark (would mask governed-generation contract).
 
+---
+
+## 2026-07-10 — Genesis Core™ / The Genesis Orb (COMPOSER sprint — docs only)
+
+Summary of **full conversation in this chat**: Earlier in chat — Institute intelligence bibles (V3 Cognitive Engine, Learning DNA Global Engine), Studio World Master Plan, Studio Atlas Bible, Living Knowledge Graph Bible, Civilization Layer Bible completed as docs-only sprints. User issued **COMPOSER SPRINT — GENESIS CORE™** — re-architect and visually redesign the Studio Orb. Official names: **Genesis Core™** (system) · **The Genesis Orb** (physical manifestation in Studio World). Not decorative — represents system consciousness, runtime health, AI presence, world generation, reasoning, company intelligence, compiler activity, Studio World awakening. Xbox logo reference = internal illumination sensation only — do **not** copy X cutout, green, silhouette, branding. Mandate: **Do not implement production orb** until three visual directions and canonical architecture are reviewed.
+
+- **Context:** 5-layer material architecture (inner energy core · diffusion · translucent crystal body · clear protective shell · atmospheric field). Warm ivory/cream emission (#FFFFFF–#F8EEDB) — no yellow/gold/green/cold-blue primary. Sphere silhouette; original structural language (apertures, nucleus, rings) — no logo inside orb. Living behaviors: idle breathing 6–8s, listening/thinking/speaking/success/warning/critical states with restrained motion. World Compiler stages must **accumulate** visually (no reset between layers). Single canonical state owner — subscribe to shared runtime; no duplicate timers/heartbeat/compiler mutation during render. Mobile: tiered quality, pause offscreen, reduced-motion, cap DPR, no Safari crashes.
+- **Delivered:** **`docs/studio-os/genesis-core/`** — README · **GENESIS_CORE_ARCHITECTURE.md** (single owner `src/studio-os-core/genesis-core/`, bridges to `experience-lab-runtime`, compiler events; SVG/CSS primary rendering; High/Medium/Low/Static tiers) · **GENESIS_ORB_VISUAL_LANGUAGE.md** · **GENESIS_CORE_STATE_MODEL.md** (11 modes + compiler fields) · **GENESIS_COMPILER_STATE_MAPPING.md** (maps `WORLD_COMPILER_STAGES`, accumulating progress) · **GENESIS_ORB_VISUAL_DIRECTIONS.md** (A Luminous Crystal Nucleus · B Segmented Genesis Aperture · C Living Energy Sphere — **Direction A recommended**) · **GENESIS_CORE_IMPLEMENTATION_ROADMAP.md** (Phases 0–6, files to create/modify) · **GENESIS_CORE_VERIFICATION_PLAN.md** (Experience Lab harness). Three review SVG prototypes in **`prototypes/`**. **`studio-orb.md`** supersession note · **`motherboard/CORE.md`** pointer.
+- **Architecture decisions:** Replace fragmented **`StudioOrbProvider.resolvePresenceState()`** + **`useOrbState`** as visual authority; keep radial menu / Command Dock UX; future **`GenesisOrbRenderer`** swaps visual in **`src/components/admin/studio/studio-orb/`**. Current orb = CSS gradients/champagne in **`studioOrbTheme.ts`**. Compiler truth = **`src/studio-os-core/scene-stack/world-compiler/constants.ts`**; runtime events = **`experience-lab-render-runtime.ts`**.
+- **Changes:** `docs/studio-os/genesis-core/**`, `docs/studio-os/studio-orb.md`, `motherboard/CORE.md`. No production code (correct per mandate).
+- **Conventions:** One Genesis Core state owner; no separate orb implementations per page; no fake compiler progress or auto-reset loops; founder must review A/B/C before Phase 1 implementation; Experience Lab = live validation surface for Genesis Core.
