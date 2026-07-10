@@ -1,13 +1,12 @@
 /**
- * AI Context Capsule™ export constants — packaging only (does not modify capsule content).
- * API mirror: api/_lib/contextCapsuleConstants.ts (keep in sync).
+ * AI Context Capsule™ export constants — API-safe (no src/ imports).
+ * Keep in sync with src/studio-os-core/context-capsule-export/constants.ts
  */
 
 export const CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY = 'studioOsContextCapsuleExports_v1';
 
 export const CONTEXT_CAPSULE_DOWNLOAD_BASE = '/downloads/context-capsules';
 
-/** Required markdown files — must exist in capsule folder (do not rename). */
 export const CONTEXT_CAPSULE_REQUIRED_FILES = [
   'README_FIRST.md',
   'MANIFEST.md',
@@ -41,15 +40,6 @@ export const CONTEXT_CAPSULE_READING_ORDER = [
   'OPEN_QUESTIONS.md',
   'PROMPT_LIBRARY.md',
 ] as const;
-
-export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule.
-
-Follow README_FIRST.md exactly:
-
-1. Read every document in MANIFEST reading order
-2. Do not begin solving problems
-3. Generate an onboarding report
-4. Wait for my approval before contributing`;
 
 export type ContextCapsuleValidationCheck = {
   id: string;

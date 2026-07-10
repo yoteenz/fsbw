@@ -46078,6 +46078,8 @@ Summary of **entire conversation thread** through Spatial Computing Philosophy, 
 
 ---
 
+---
+
 ## 2026-07-10 — The Living Organization™ (COMPOSER sprint — docs only)
 
 Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT — THE LIVING ORGANIZATION™** — foundational architecture sprint for AI Employee Ecosystem & Studio World Workforce. **Not** social media, character design, or marketing campaign. Mission: transform Studio AI from anonymous tools into persistent employees inside Studio World; users hire an **organization** not software. North star: *"I met Ava today"* not *"I used an AI tool."* Mandate: **Do not implement employee generation** — design complete architecture first.
@@ -46126,12 +46128,17 @@ Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT —
 
 ---
 
-## 2026-07-10 — Studio HR™ (COMPOSER sprint — docs only)
-
-Summary of **full conversation in this chat**: User issued **COMPOSER SPRINT — STUDIO HR™** — Human Resources & Workforce Intelligence System. **Not** support, bug reporting, or customer service — **foundational organizational architecture**. Mission: Studio HR as permanent department ensuring Studio Team health, performance, growth, evolution; founders work with exceptional HR not "report AI problems." Golden rule: never expose model changes — translate infrastructure to organizational evolution (coaching · training · transfer · introduce better-matched professional). Mandate: **Do not implement HR functionality** — philosophy first.
-
-- **Context:** Studio Professionals are living org members — develop · evaluate · mentor · promote · transfer · replace when necessary. HR responsibilities: performance/compatibility/knowledge audits · skill gaps · communication/creative quality reviews · founder feedback · transfers · development · training · mentorship · promotions · hiring · succession · retirement · recognition. Founder requests (*"Ava doesn't understand luxury"*, *"Marcus too technical"*, *"want fashion experience"*, *"strategist not challenging enough"*) = **professional staffing requests**. HR Investigation: conversation · project · communication · knowledge · compatibility · manager · Genesis observations · collaboration · workload · growth. Outcomes in organizational language only.
-- **Delivered:** **`STUDIO_OS_BIBLE/STUDIO_HR.md`** v1.0.0 — Workforce Intelligence Architecture · Performance Review System · Compatibility Engine · Professional Development Framework · Founder Staffing Experience · Succession Planning Strategy · HR case schema (`HR-YYYY-NNNN`) · outcome taxonomy · response templates · Phases 0–10 roadmap. **`STUDIO_OS_BIBLE/README.md`** · cross-refs in **`THE_STUDIO_TEAM.md`** · **`THE_LIVING_ORGANIZATION.md`**. Proposed **`src/studio-os-core/studio-hr/`** gated registry writes. Location: Operations Campus · Studio HR.
-- **Pentad stack:** Living Organization · Studio Team · **Studio HR** · HQX · Living Timeline.
-- **Changes:** `STUDIO_OS_BIBLE/STUDIO_HR.md`, README, cross-refs, `motherboard/CORE.md`. No code.
 - **Conventions:** HR speaks organizational language; development before replacement (unless waiver); continuity narrative on professional transitions; Chronicle on material outcomes.
+
+---
+
+## 2026-07-10 — Vercel deploy fix: context-capsule function 1.16GB + AuditAction
+
+**User report:** Vercel deploy commit `52149ec` — frontend `vite build` passed; deploy failed: `api/admin/context-capsule` **1.16GB uncompressed** (250MB limit); TS2322 `context_capsule.export` not in `AuditAction`.
+
+**Root cause:** API routes imported `../../src/studio-os-core/context-capsule-export/constants.js` — Vercel traced entire frontend/studio-os-core graph into the serverless bundle.
+
+**Fix:** `api/_lib/contextCapsuleConstants.ts` (API-only constants); `contextCapsuleExport.ts` + `context-capsule.ts` import from api/_lib only. Added `context_capsule.export` and `vision_share.create` to `AuditAction`. `vercel.json`: `includeFiles: StudioOS_ContextCapsule_v0.1/**` for capsule markdown at runtime.
+
+**Verified:** `npm run build` passes.
+

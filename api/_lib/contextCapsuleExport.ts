@@ -9,7 +9,7 @@ import {
   CONTEXT_CAPSULE_READING_ORDER,
   CONTEXT_CAPSULE_REQUIRED_FILES,
   type ContextCapsuleValidationCheck,
-} from '../../src/studio-os-core/context-capsule-export/constants.js';
+} from './contextCapsuleConstants.js';
 
 export type CapsuleSourceInfo = {
   rootDir: string;

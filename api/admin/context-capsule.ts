@@ -20,7 +20,7 @@ import {
   type ContextCapsuleExportRecord,
   type ContextCapsuleExportsState,
   type ContextCapsuleStatus,
-} from '../../src/studio-os-core/context-capsule-export/constants.js';
+} from '../_lib/contextCapsuleConstants.js';
 
 const EMPTY_STATE: ContextCapsuleExportsState = {
   schemaVersion: 1,

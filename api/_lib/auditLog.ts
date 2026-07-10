@@ -28,7 +28,9 @@ export type AuditAction =
   | 'social.post.save'
   | 'social.post.approve'
   | 'social.post.schedule'
-  | 'social.post.publish';
+  | 'social.post.publish'
+  | 'context_capsule.export'
+  | 'vision_share.create';
 
 export async function writeAuditLog(params: {
   actorId: string | null;

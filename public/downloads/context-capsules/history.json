@@ -2,24 +2,13 @@
   "schemaVersion": 1,
   "exports": [
     {
-      "id": "prebuild-2026-07-10T18-06-29-522Z",
+      "id": "prebuild-2026-07-10T18-09-47-022Z",
       "version": "0.1.0",
       "zipFileName": "StudioOS_ContextCapsule_v0.1.0.zip",
-      "generatedAt": "2026-07-10T18:06:29.522Z",
+      "generatedAt": "2026-07-10T18:09:47.022Z",
       "projectVersion": "build-a-wig@0.0.0+3b8fb4fa7",
       "studioOsVersion": "3b8fb4fa7` (git SHA on master)",
-      "checksumSha256": "83ef18f6f92799abaff757d80a554439bf4059497e7b3188e86a907f5d2235ea",
-      "sizeBytes": 38043,
-      "downloadPath": "/downloads/context-capsules/StudioOS_ContextCapsule_v0.1.0.zip"
-    },
-    {
-      "id": "prebuild-2026-07-10T18-03-18-650Z",
-      "version": "0.1.0",
-      "zipFileName": "StudioOS_ContextCapsule_v0.1.0.zip",
-      "generatedAt": "2026-07-10T18:03:18.650Z",
-      "projectVersion": "build-a-wig@0.0.0+3b8fb4fa7",
-      "studioOsVersion": "3b8fb4fa7` (git SHA on master)",
-      "checksumSha256": "83ef18f6f92799abaff757d80a554439bf4059497e7b3188e86a907f5d2235ea",
+      "checksumSha256": "d81f3943db23cd7dd2c444f4d17fd08383c1f3eef003233894497c19e3d8b4e6",
       "sizeBytes": 38043,
       "downloadPath": "/downloads/context-capsules/StudioOS_ContextCapsule_v0.1.0.zip"
     },
