@@ -45462,3 +45462,16 @@ Summary of the **full conversation in this chat**: After Phase 2 Environmental I
 - **Docs:** `docs/studio-os/experience-lab-phase-3-render-pipeline.md`; Phase 2 doc updated to reference render pipeline.
 - **Verification:** `npm run build` pass.
 - **Outcome:** Experience Lab Mode 2 validates **finished Creative Studio output** via World Compiler — not layout generators or planning artifacts. Preview compiler specs remain read-only; render path shares Scene Stack with CDS.
+
+---
+
+## 2026-07-10 — Experience Lab LOAD SHELL hotfix (World Compile Rejected)
+
+Summary of **full conversation in this chat** including Phase 3 render pipeline (`5826177e8`) and P0 hotfix for **World Compile Rejected™ at LOAD SHELL** (Frontal Slayer / all companies).
+
+- **Observed failure:** Pipeline panel showed `World Compile Rejected™ · Integrity 100%`, failed stage LOAD SHELL, Retry Shell Layer. Later stages never ran.
+- **Proven root cause (runtime path):** `compileWorldStation` → `runStage('load-shell')` throws when `resolveShellLockState().shellUrl` is null (`compile-pipeline.ts` ~line 64). Contributing bugs: (1) `useCreativeStudioRenderPreview` skipped `ensureStation` if *any* layer had `publicUrl` (non-shell layers from registry) while `environment-shell` missing; (2) `compileStation` ran without shell; (3) generated shells saved as `draft_ready` — production path requires `approved` for lock, so downstream `assertShellImmutableForLayer` blocked remaining layers; (4) `buildComponentPackagesForStation` filtered out `draft_ready` layers; (5) **Integrity 100%** was `validateCompiledScene` package schema score with zero errors — unrelated to stage success (misleading UI).
+- **Not the cause:** Preview compiler metadata-only output; ProductionAuthorization/Asset Registry gates (failure was local scene-stack shell resolution, not CIE); wrong adapter (correct `SceneStackViewport` path).
+- **Fix:** `validation-render.ts` + `experience-lab-validation` mode (ephemeral mount, no registry promotion); `resolveShellLockState` / `assertShellImmutableForLayer` accept `draft_ready` shell in validation; `buildComponentPackagesForStation` includes draft in validation; `shell-diagnostics.ts`; compilation report v2 — **Render Readiness** vs **Input Integrity**, `failedStage` + error codes; Experience Lab hook sets validation mode, requires shell before compile, passes `validationMode` to `ensureStation`/`compileStation`; footer exposes failure evidence (code, stage, file, shell ID, recovery).
+- **Verification:** `npm run build` pass; `npx tsx scripts/verify-experience-lab-shell-resolution.mjs`.
+- **Outcome:** Validation-only previews can compile through real World Compiler when shell generates as draft_ready; production gates unchanged globally.

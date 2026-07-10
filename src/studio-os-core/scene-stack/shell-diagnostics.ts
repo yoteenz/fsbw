@@ -4,7 +4,8 @@
 
 import { getSceneStackLayerRecord } from './store';
 import { resolveShellLockState } from './world-compiler/immutable-shell';
-import { isExperienceLabValidationRender } from './validation-render';
+import { getValidationEnvironmentShell } from './ephemeral-validation-registry';
+import { getValidationPreviewSession, isExperienceLabValidationRender } from './validation-render';
 
 export type ShellResolutionDiagnostic = {
   departmentId: string;
@@ -21,7 +22,7 @@ export type ShellResolutionDiagnostic = {
   shellLocked: boolean;
   validationMode: boolean;
   authorizationMode: 'production' | 'experience-lab-validation';
-  registryMode: 'local-scene-stack';
+  registryMode: 'local-scene-stack' | 'ephemeral-validation';
   failureReason: string | null;
   recoveryAction: string;
   sourceFunction: string;
@@ -35,13 +36,22 @@ export function diagnoseShellResolution(
   options?: { validationMode?: boolean }
 ): ShellResolutionDiagnostic {
   const validationMode = options?.validationMode ?? isExperienceLabValidationRender();
+  const previewSessionId = getValidationPreviewSession();
+  const ephemeralShell =
+    validationMode && previewSessionId
+      ? getValidationEnvironmentShell(previewSessionId)
+      : null;
+
   const shell = getSceneStackLayerRecord(departmentId, projectId, stationId, 'environment-shell');
   const lock = resolveShellLockState(departmentId, projectId, stationId, { validationMode });
 
   let failureReason: string | null = null;
-  let recoveryAction = 'Run full render pipeline — generates environment-shell first.';
+  let recoveryAction = 'Run full render pipeline — generates environment shell from preview spec first.';
 
-  if (lock.resolution === 'missing-record') {
+  if (ephemeralShell) {
+    failureReason = null;
+    recoveryAction = 'Ephemeral validation shell registered for this preview session.';
+  } else if (lock.resolution === 'missing-record') {
     failureReason = 'No environment-shell layer record for this station/project.';
     recoveryAction = 'Invoke ensureStation to generate environment-shell via Creative Studio layer stack.';
   } else if (lock.resolution === 'missing-url') {
@@ -70,7 +80,7 @@ export function diagnoseShellResolution(
     shellLocked: lock.locked,
     validationMode,
     authorizationMode: validationMode ? 'experience-lab-validation' : 'production',
-    registryMode: 'local-scene-stack',
+    registryMode: ephemeralShell ? 'ephemeral-validation' : 'local-scene-stack',
     failureReason,
     recoveryAction,
     sourceFunction: 'resolveShellLockState',

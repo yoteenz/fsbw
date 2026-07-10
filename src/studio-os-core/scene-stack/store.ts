@@ -1,4 +1,6 @@
 import { readStudioOsJson, writeStudioOsJson } from '../../utils/studioOsBrowserStorage';
+import { getEphemeralLayerRecord } from './ephemeral-validation-registry';
+import { getValidationPreviewSession, isExperienceLabValidationRender } from './validation-render';
 import type { SceneStackLayerId, SceneStackLayerRecord } from './types';
 
 const STORAGE_KEY = 'studioOsSceneStack_v1';
@@ -64,6 +66,17 @@ export function getSceneStackLayerRecord(
   stationId: string,
   layerId: SceneStackLayerId
 ): SceneStackLayerRecord | null {
+  if (isExperienceLabValidationRender()) {
+    const ephemeral = getEphemeralLayerRecord(
+      getValidationPreviewSession(),
+      departmentId,
+      projectId,
+      stationId,
+      layerId
+    );
+    if (ephemeral) return ephemeral;
+  }
+
   const records = readStore().layers.filter(
     (l) =>
       l.departmentId === departmentId &&

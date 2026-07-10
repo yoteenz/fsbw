@@ -65,11 +65,35 @@ Route: `/admin/studio/experience-lab` → Mode 2
 
 See also: `experience-lab-phase-2-creative-intelligence.md` (compiler + blind validation)
 
+## Environment Shell Generation (2026-07-10)
+
+Experience Lab **never assumes** a pre-existing `environment-shell` record. Each preview request runs:
+
+```
+Run pipeline
+  → Compile Preview Spec (buildEnvironmentShellRecipe)
+  → Generate Environment Shell (studio-builder API → preview-canvas fallback)
+  → Register ephemeral shell (validation registry only)
+  → Load Shell → Lock Shell → … → Render Final Scene
+```
+
+| Module | Path | Role |
+|--------|------|------|
+| **Shell recipe** | `environment-shell.ts` | `EnvironmentShellRecipe` + `ValidationEnvironmentShell` from preview compiler |
+| **Canvas fallback** | `validation-shell-canvas.ts` | Company-specific raster shells (Studio OS / Frontal Slayer / NDX) |
+| **Shell pipeline** | `validation-shell-pipeline.ts` | `runExperienceLabValidationShellPipeline()` |
+| **Ephemeral registry** | `ephemeral-validation-registry.ts` | Session-scoped in-memory overlay — **not** Asset Registry |
+| **Store overlay** | `scene-stack/store.ts` | `getSceneStackLayerRecord` resolves ephemeral shell in validation mode |
+
+**Guarantees:** No Production Authorization, no publish, no Asset Registry write. Shell TTL 30 min; cleared on unmount / company switch. Each company × concept gets a unique `shellId` (`xelab-shell-{company}-{concept}-{session}`).
+
+Verify: `npx tsx scripts/verify-experience-lab-shell-resolution.mjs`
+
 ## Hotfix — LOAD SHELL rejection (2026-07-10)
 
 **Root cause:** World Compiler `load-shell` requires `environment-shell.publicUrl`. Experience Lab (a) skipped `ensureStation` when any non-shell layer existed, (b) ran compile without a shell, (c) treated `draft_ready` shells as unlocked — blocking downstream layer generation and package mount in validation mode.
 
 **Fix:** `validation-render.ts` ephemeral validation mode; `resolveShellLockState` accepts `draft_ready` shells in validation; `buildComponentPackagesForStation` includes draft layers; Experience Lab orchestration requires shell before compile; compilation report separates **Render Readiness** (stages) from **Input Integrity** (packages).
 
-Verify: `node scripts/verify-experience-lab-shell-resolution.mjs`
+Verify: `npx tsx scripts/verify-experience-lab-shell-resolution.mjs`
 

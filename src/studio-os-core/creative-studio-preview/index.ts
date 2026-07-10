@@ -21,6 +21,15 @@ export {
   type CreativePreviewRenderBinding,
 } from './render-bindings';
 export {
+  runExperienceLabValidationShellPipeline,
+  type ValidationShellPipelineResult,
+} from './validation-shell-pipeline';
+export {
+  buildEnvironmentShellRecipe,
+  type EnvironmentShellRecipe,
+  type ValidationEnvironmentShell,
+} from './environment-shell';
+export {
   CREATIVE_PREVIEW_READ_ONLY,
   type CreativePreviewCompanyId,
   type CreativePreviewConcept,

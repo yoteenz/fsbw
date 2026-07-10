@@ -433,11 +433,14 @@ export function useSceneStack(
       const station = getSceneStackStation(departmentId, stationId);
       if (!station || ensuringStations.has(stationId)) return;
 
-      const layerIds = listGeneratableLayerIdsForStation(
+      let layerIds = listGeneratableLayerIdsForStation(
         departmentId,
         stationId,
         station.layerPrompts
       );
+      if (options?.skipEnvironmentShell) {
+        layerIds = layerIds.filter((id) => id !== 'environment-shell');
+      }
 
       setEnsuringStations((prev) => new Set(prev).add(stationId));
       const firstPending = layerIds.find(

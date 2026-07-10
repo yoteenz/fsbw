@@ -28,20 +28,33 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
     compileReport,
     shellDiagnostic,
     shellReady,
+    shellPipelinePhase,
+    shellPipelineResult,
     retryPipeline,
   } = useCreativeStudioRenderPreview(companyId, conceptId);
 
-  const isBuilding = stack.isStationPipelineActive(stationId) || status === 'building';
+  const isBuilding =
+    shellPipelinePhase === 'compile-spec' ||
+    stack.isStationPipelineActive(stationId) ||
+    status === 'building';
   const approvedCount = layers.filter((l) => l.publicUrl && l.status !== 'failed').length;
   const stageResults = compileReport?.stages ?? [];
   const failedStage = compileReport?.failedStage;
   const showRetry =
     !isBuilding &&
-    (status === 'failed' ||
+    (shellPipelinePhase === 'failed' ||
+      status === 'failed' ||
       compileReport?.success === false ||
-      (!shellReady && approvedCount === 0));
+      !shellReady);
 
   const pipelineSummary = useMemo(() => {
+    if (shellPipelinePhase === 'compile-spec') return 'Compiling preview spec…';
+    if (shellPipelinePhase === 'generate-shell' || shellPipelinePhase === 'register') {
+      return 'Generating ephemeral environment shell…';
+    }
+    if (shellPipelineResult?.generationMethod) {
+      return `Shell generated (${shellPipelineResult.generationMethod}) · ${shellPipelineResult.shell?.shellId ?? ''}`;
+    }
     if (isBuilding && pipeline.phase !== 'idle') {
       return pipeline.currentLayerLabel
         ? `Generating ${pipeline.currentLayerLabel}…`
@@ -53,7 +66,7 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
     if (approvedCount > 0) return `Final render — ${approvedCount} layers composed`;
     if (!shellReady) return 'Awaiting environment-shell mount…';
     return 'Invoking Creative Studio rendering pipeline…';
-  }, [approvedCount, compileReport, isBuilding, pipeline, shellReady]);
+  }, [approvedCount, compileReport, isBuilding, pipeline, shellPipelinePhase, shellPipelineResult, shellReady]);
 
   return (
     <div
@@ -130,6 +143,15 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
                 );
               })}
             </div>
+          ) : null}
+          {shellPipelineResult && !shellPipelineResult.ok ? (
+            <details open style={{ marginTop: 8, fontSize: '10px', color: '#991b1b' }}>
+              <summary style={{ cursor: 'pointer', fontWeight: 700 }}>
+                Shell generation failure ({shellPipelineResult.errorCode ?? 'UNKNOWN'})
+              </summary>
+              <p style={{ margin: '6px 0 0' }}>{shellPipelineResult.errorDetail}</p>
+              <p style={{ margin: '4px 0 0' }}>Stage: {shellPipelineResult.stage}</p>
+            </details>
           ) : null}
           {compileReport?.success === false && failedStage ? (
             <details open style={{ marginTop: 8, fontSize: '10px', color: '#991b1b' }}>

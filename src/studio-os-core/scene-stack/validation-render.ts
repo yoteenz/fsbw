@@ -19,6 +19,16 @@ export function isExperienceLabValidationRender(): boolean {
   return activeMode === 'experience-lab-validation';
 }
 
+let activePreviewSessionId: string | null = null;
+
+export function setValidationPreviewSession(sessionId: string | null): void {
+  activePreviewSessionId = sessionId;
+}
+
+export function getValidationPreviewSession(): string | null {
+  return activePreviewSessionId;
+}
+
 export const VALIDATION_RENDER_AUTHORIZATION = {
   assetRegistryWrites: false,
   productionAuthorization: false,

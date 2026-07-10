@@ -18,6 +18,8 @@ import { diagnoseShellResolution } from '../shell-diagnostics';
 export type WorldCompileOptions = {
   /** Ephemeral validation compile — mounts draft_ready layers, no registry promotion */
   validationMode?: boolean;
+  /** Skip environment-shell — already registered in ephemeral validation registry */
+  skipEnvironmentShell?: boolean;
 };
 
 export type WorldCompileResult = {

@@ -1,16 +1,22 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useWorkspace } from '../studio-os-core/context/WorkspaceProvider';
 import {
   resolveCreativePreviewRenderBinding,
+  runExperienceLabValidationShellPipeline,
   type CreativePreviewCompanyId,
+  type ValidationShellPipelineResult,
 } from '../studio-os-core/creative-studio-preview';
 import {
   setValidationRenderMode,
+  setValidationPreviewSession,
+  clearValidationPreviewSession,
   shellIsMountReady,
   diagnoseShellResolution,
 } from '../studio-os-core/scene-stack';
 import { useDepartmentVerticalSlice } from './useDepartmentVerticalSlice';
 import { useSceneStack } from './useSceneStack';
+
+export type ShellPipelinePhase = 'idle' | 'compile-spec' | 'generate-shell' | 'register' | 'ready' | 'failed';
 
 /** Experience Lab — invoke Creative Studio World Compiler™ for a company preview. */
 export function useCreativeStudioRenderPreview(
@@ -30,64 +36,122 @@ export function useCreativeStudioRenderPreview(
   const projectId = slice.project.projectId;
   const departmentId = binding.departmentId;
 
+  const previewSessionId = `${companyId}:${conceptId}:${departmentId}:${stationId}:${projectId}`;
+
   const layers = stack.getLayerViews(stationId);
   const status = stack.getCompositeStatus(stationId);
   const pipeline = stack.getStationPipelineProgress(stationId);
   const sceneGraph = stack.getStationSceneGraph(stationId);
   const compileReport = stack.getStationCompileReport(stationId);
 
+  const [shellPipelinePhase, setShellPipelinePhase] = useState<ShellPipelinePhase>('idle');
+  const [shellPipelineResult, setShellPipelineResult] = useState<ValidationShellPipelineResult | null>(null);
+
   const shellDiagnostic = useMemo(
     () => diagnoseShellResolution(departmentId, projectId, stationId, { validationMode: true }),
-    [departmentId, projectId, stationId, layers, compileReport]
+    [departmentId, projectId, stationId, layers, compileReport, shellPipelinePhase]
   );
 
   const shellReady = useMemo(
     () => shellIsMountReady(departmentId, projectId, stationId, { validationMode: true }),
-    [departmentId, projectId, stationId, layers, status]
+    [departmentId, projectId, stationId, layers, status, shellPipelinePhase]
   );
 
-  const ensureAttemptedRef = useRef<string | null>(null);
+  const pipelineRunRef = useRef<string | null>(null);
   const compileAttemptedRef = useRef<string | null>(null);
-
-  const stationKey = `${departmentId}:${stationId}:${projectId}`;
 
   useEffect(() => {
     setValidationRenderMode('experience-lab-validation');
-    return () => setValidationRenderMode('production');
-  }, []);
+    setValidationPreviewSession(previewSessionId);
+    return () => {
+      setValidationPreviewSession(null);
+      clearValidationPreviewSession(previewSessionId);
+      setValidationRenderMode('production');
+    };
+  }, [previewSessionId]);
 
   useEffect(() => {
-    ensureAttemptedRef.current = null;
+    pipelineRunRef.current = null;
     compileAttemptedRef.current = null;
-  }, [stationKey]);
+    setShellPipelinePhase('idle');
+    setShellPipelineResult(null);
+  }, [previewSessionId]);
 
   useEffect(() => {
-    if (ensureAttemptedRef.current === stationKey) return;
+    if (pipelineRunRef.current === previewSessionId) return;
     if (stack.isStationPipelineActive(stationId)) return;
 
-    if (status === 'ready' && shellReady) {
-      ensureAttemptedRef.current = stationKey;
-      return;
+    pipelineRunRef.current = previewSessionId;
+    let cancelled = false;
+
+    async function run() {
+      setShellPipelinePhase('compile-spec');
+      const shellResult = await runExperienceLabValidationShellPipeline({
+        companyId,
+        conceptId,
+        projectId,
+        previewSessionId,
+        workspaceId,
+        forceRegenerate: true,
+      });
+
+      if (cancelled) return;
+
+      setShellPipelineResult(shellResult);
+
+      if (!shellResult.ok) {
+        setShellPipelinePhase('failed');
+        return;
+      }
+
+      setShellPipelinePhase('ready');
+      stack.bump();
+
+      await stack.ensureStation(stationId, {
+        validationMode: true,
+        skipEnvironmentShell: true,
+      });
+
+      if (cancelled) return;
+
+      const compiled = await stack.compileStation(stationId, { validationMode: true });
+      if (!cancelled && !compiled.report.success) {
+        stack.bump();
+      }
     }
 
-    ensureAttemptedRef.current = stationKey;
-    void stack.ensureStation(stationId, { validationMode: true });
-  }, [shellReady, stack, stationId, stationKey, status]);
+    void run();
 
-  useEffect(() => {
-    if (compileAttemptedRef.current === stationKey) return;
-    if (stack.isStationPipelineActive(stationId)) return;
-    if (!shellReady) return;
-
-    compileAttemptedRef.current = stationKey;
-    void stack.compileStation(stationId, { validationMode: true });
-  }, [shellReady, stack, stationId, stationKey]);
+    return () => {
+      cancelled = true;
+    };
+  }, [companyId, conceptId, previewSessionId, projectId, stack, stationId, workspaceId]);
 
   const retryPipeline = useCallback(() => {
-    ensureAttemptedRef.current = null;
+    pipelineRunRef.current = null;
     compileAttemptedRef.current = null;
-    void stack.ensureStation(stationId, { validationMode: true });
-  }, [stack, stationId]);
+    clearValidationPreviewSession(previewSessionId);
+    setShellPipelinePhase('idle');
+    setShellPipelineResult(null);
+    void runExperienceLabValidationShellPipeline({
+      companyId,
+      conceptId,
+      projectId,
+      previewSessionId,
+      workspaceId,
+      forceRegenerate: true,
+    }).then(async (shellResult) => {
+      setShellPipelineResult(shellResult);
+      if (!shellResult.ok) {
+        setShellPipelinePhase('failed');
+        return;
+      }
+      setShellPipelinePhase('ready');
+      stack.bump();
+      await stack.ensureStation(stationId, { validationMode: true, skipEnvironmentShell: true });
+      await stack.compileStation(stationId, { validationMode: true });
+    });
+  }, [companyId, conceptId, previewSessionId, projectId, stack, stationId, workspaceId]);
 
   return {
     binding,
@@ -100,6 +164,9 @@ export function useCreativeStudioRenderPreview(
     compileReport,
     shellDiagnostic,
     shellReady,
+    shellPipelinePhase,
+    shellPipelineResult,
+    previewSessionId,
     retryPipeline,
   };
 }
