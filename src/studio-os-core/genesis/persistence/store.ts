@@ -1,3 +1,4 @@
+import { safeLocalStorageSetItem } from '../../../utils/safeLocalStorage';
 import { recordTraceEvent, traceSync } from '../../../platform-stabilization/main-thread-diagnostics';
 import {
   GENESIS_FRAMEWORK_VERSION,
@@ -169,7 +170,10 @@ export function writeGenesisStore(store: GenesisStore): void {
 
   const existing = localStorage.getItem(GENESIS_STORAGE_KEY);
   if (existing === serialized) return;
-  localStorage.setItem(GENESIS_STORAGE_KEY, serialized);
+  if (!safeLocalStorageSetItem(GENESIS_STORAGE_KEY, serialized)) {
+    console.warn('[genesis] localStorage write skipped (quota) — in-memory cache only');
+    return;
+  }
   dispatchUpdated();
 }
 

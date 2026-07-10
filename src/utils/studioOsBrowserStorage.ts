@@ -15,6 +15,7 @@ import {
   safeLocalStorageSetItem,
 } from './safeLocalStorage';
 import { repairGenesisLocalStorageIfNeeded } from '../platform-stabilization/genesis-store-repair';
+import { repairExperienceEngineGlobalStoreIfNeeded } from '../studio-os-core/experience-engine/store-repair';
 
 /** Max bytes per Studio OS localStorage value (Safari ~5MB total domain quota). */
 export const STUDIO_OS_MAX_LOCAL_VALUE_BYTES = 24 * 1024;
@@ -403,6 +404,10 @@ export function bootstrapStudioOsBrowserStorage(): void {
   const repair = repairGenesisLocalStorageIfNeeded();
   if (repair.repaired && repair.reason) {
     console.info('[studioOsBrowserStorage] genesis repair:', repair.reason);
+  }
+  const eeGlobal = repairExperienceEngineGlobalStoreIfNeeded();
+  if (eeGlobal.repaired && eeGlobal.reason) {
+    console.info('[studioOsBrowserStorage] experience engine store repair:', eeGlobal.reason);
   }
   schedulePurgeOversizedStudioLocalKeys();
 }

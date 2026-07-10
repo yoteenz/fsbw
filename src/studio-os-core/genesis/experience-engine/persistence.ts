@@ -1,5 +1,5 @@
 import { mutateGenesisStore, readGenesisStore } from '../persistence/store';
-import { XEE_SUBSYSTEM_VERSION } from './constants';
+import { XEE_SUBSYSTEM_VERSION, XEE_DEMO_BRAND_IDS } from './constants';
 import type { XeeStore } from './types';
 import {
   SEED_BRAND_DNA,
@@ -55,14 +55,15 @@ export function normalizeExperienceEngineDnaStore(stored?: Partial<XeeStore>): X
 export function withExperienceEngineSeedFallback(stored?: Partial<XeeStore>): XeeStore {
   const normalized = normalizeExperienceEngineDnaStore(stored);
   const hasRegistry =
-    normalized.brands.length > 0 &&
+    normalized.brands.length >= SEED_BRAND_DNA.length &&
     normalized.departments.length > 0 &&
-    normalized.scenes.length > 0 &&
+    normalized.scenes.length >= 5 &&
     normalized.motions.length > 0 &&
     normalized.interactions.length > 0 &&
     normalized.brands.every(
       (b) => b?.brandId && b.colorSystem?.primary && b.glassStyle?.border && b.typography?.displayFont
-    );
+    ) &&
+    XEE_DEMO_BRAND_IDS.every((id) => normalized.brands.some((b) => b.brandId === id));
   if (hasRegistry) return normalized;
   return {
     ...normalized,

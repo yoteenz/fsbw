@@ -2,10 +2,9 @@
  * Boot-time repair for Experience Engine / Runtime / Lab nested genesis DNA.
  */
 
-import type { XeeBrandDna } from '../studio-os-core/genesis/experience-engine/types';
-import { SEED_BRAND_DNA } from '../studio-os-core/genesis/experience-engine/bootstrap/seed-data';
 import { XER_DEFAULT_RUNTIME_CONTRACT } from '../studio-os-core/genesis/experience-runtime/runtime-boot/default-contract';
 import { repairGenesisExperienceLabDna } from '../studio-os-core/genesis/experience-lab/repair';
+import { repairGenesisExperienceEngineDna } from '../studio-os-core/genesis/experience-engine/repair';
 import type { GenesisStore } from '../studio-os-core/genesis/types';
 
 export type GenesisExperiencePersistenceRepairResult = {
@@ -13,47 +12,6 @@ export type GenesisExperiencePersistenceRepairResult = {
   repaired: boolean;
   reasons: string[];
 };
-
-function hasValidBrandRegistry(brands: XeeBrandDna[] | undefined): boolean {
-  if (!brands?.length) return false;
-  const requiredIds = new Set(SEED_BRAND_DNA.map((b) => b.brandId));
-  for (const brand of brands) {
-    if (!brand?.brandId || !requiredIds.has(brand.brandId)) return false;
-    if (!brand.colorSystem?.primary || !brand.glassStyle?.border || !brand.typography?.displayFont) {
-      return false;
-    }
-  }
-  return brands.length >= SEED_BRAND_DNA.length;
-}
-
-function repairExperienceEngineDna(genesis: GenesisStore, reasons: string[]): GenesisStore {
-  const engine = genesis.experienceEngineDna;
-  if (!engine) return genesis;
-
-  const invalidRegistry =
-    !hasValidBrandRegistry(engine.brands) ||
-    !engine.departments?.length ||
-    !engine.scenes?.length ||
-    !engine.motions?.length ||
-    !engine.interactions?.length;
-
-  if (!invalidRegistry) return genesis;
-
-  reasons.push('experienceEngineDna:invalid-registry→bundled-seed-fallback');
-  return {
-    ...genesis,
-    experienceEngineDna: {
-      ...engine,
-      brands: [],
-      departments: [],
-      scenes: [],
-      components: [],
-      motions: [],
-      interactions: [],
-      seededAt: undefined,
-    },
-  };
-}
 
 function repairExperienceRuntimeDna(genesis: GenesisStore, reasons: string[]): GenesisStore {
   const runtime = genesis.experienceRuntimeDna;
@@ -105,9 +63,10 @@ export function repairGenesisExperiencePersistence(
   const reasons: string[] = [];
   let current = genesis;
 
-  const engineRepair = repairExperienceEngineDna(current, reasons);
-  if (engineRepair !== current) {
-    current = engineRepair;
+  const engineRepair = repairGenesisExperienceEngineDna(current);
+  if (engineRepair.repaired) {
+    current = engineRepair.genesis;
+    reasons.push(...engineRepair.reasons);
   }
 
   const runtimeRepair = repairExperienceRuntimeDna(current, reasons);

@@ -45475,3 +45475,18 @@ Summary of **full conversation in this chat** including Phase 3 render pipeline 
 - **Fix:** `validation-render.ts` + `experience-lab-validation` mode (ephemeral mount, no registry promotion); `resolveShellLockState` / `assertShellImmutableForLayer` accept `draft_ready` shell in validation; `buildComponentPackagesForStation` includes draft in validation; `shell-diagnostics.ts`; compilation report v2 — **Render Readiness** vs **Input Integrity**, `failedStage` + error codes; Experience Lab hook sets validation mode, requires shell before compile, passes `validationMode` to `ensureStation`/`compileStation`; footer exposes failure evidence (code, stage, file, shell ID, recovery).
 - **Verification:** `npm run build` pass; `npx tsx scripts/verify-experience-lab-shell-resolution.mjs`.
 - **Outcome:** Validation-only previews can compile through real World Compiler when shell generates as draft_ready; production gates unchanged globally.
+
+---
+
+## 2026-07-10 — Experience Lab Environment Shell Generation (ephemeral validation)
+
+Summary of **full conversation in this chat** spanning Experience Lab Phase 2 (environmental intelligence + cinematic previews), Phase 3 (real Creative Studio render pipeline via World Compiler), LOAD SHELL hotfix (`470847eef`), and this sprint fixing **`SHELL_RECORD_MISSING`** by generating ephemeral environment shells on every preview request.
+
+- **Root cause (this sprint):** Renderer assumed a pre-existing `environment-shell` record. Pipeline ran Load Shell before any shell existed → `compileWorldStation` → `runStage('load-shell')` failed with missing record.
+- **Correct flow:** Run pipeline → Compile Preview Spec → Generate Environment Shell → Register ephemeral shell → Load Shell → Lock Shell → Mount Landmark → … → Render Final Scene.
+- **New modules:** `environment-shell.ts` (`EnvironmentShellRecipe`, `ValidationEnvironmentShell`, `buildEnvironmentShellRecipe`, `recipeToLayerRecord`); `validation-shell-canvas.ts` (company-specific canvas fallback: institutional / luxury / media); `validation-shell-pipeline.ts` (`runExperienceLabValidationShellPipeline` — studio-builder API then canvas); `ephemeral-validation-registry.ts` (in-memory session registry, 30 min TTL, **not** Asset Registry).
+- **Integration:** `store.getSceneStackLayerRecord` overlays ephemeral shell in validation mode; `validation-render.ts` tracks `previewSessionId`; `useCreativeStudioRenderPreview` runs shell pipeline first (`forceRegenerate: true`), then `ensureStation({ skipEnvironmentShell: true })`, then `compileStation`; `useSceneStack.ensureStation` accepts `skipEnvironmentShell`; footer shows shell generation phase + failure evidence; `shell-diagnostics.registryMode` includes `ephemeral-validation`.
+- **Guarantees:** No Production Authorization, no publish, no Asset Registry write; `canonicalStatus: non_canonical`; unique `shellId` per company × concept × session (Studio OS, Frontal Slayer, NDX verified in script).
+- **Docs:** `experience-lab-phase-3-render-pipeline.md` — Environment Shell Generation section.
+- **Verification:** `npm run build` pass; `npx tsx scripts/verify-experience-lab-shell-resolution.mjs` — 9/9 passed.
+- **Outcome:** Experience Lab never assumes a production shell exists; generates session-scoped validation shells from Creative Studio Preview Compiler every preview request.

@@ -2,6 +2,7 @@ import { updateBuildOrderSystemStatus } from '../../build-order/build-order/regi
 import { ensureStudioOsDesignDnaSubsystem } from '../../studio-os-design-dna/engine';
 import { XEE_SUBSYSTEM_VERSION } from '../constants';
 import { mutateExperienceEngineDnaStore, readExperienceEngineDnaStore } from '../persistence';
+import { repairExperienceEngineDnaIfNeeded } from '../repair';
 import type { XeePlaygroundSelection, XeeStore } from '../types';
 import {
   SEED_BRAND_DNA,
@@ -33,6 +34,7 @@ export function seedExperienceEngineDnaStore(): void {
 }
 
 export function ensureExperienceEngineDnaStore() {
+  repairExperienceEngineDnaIfNeeded();
   ensureStudioOsDesignDnaSubsystem();
   let store = readExperienceEngineDnaStore();
   const needsPersist =

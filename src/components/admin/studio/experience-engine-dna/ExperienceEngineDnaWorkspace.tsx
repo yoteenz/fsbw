@@ -4,10 +4,12 @@ import {
   XEE_ROOM_PATH_LABELS,
   XEE_SHARED_SCENE_ID,
   type XeeBrandDna,
+  type XeeReadyView,
   type XeeRoomPath,
 } from '../../../../studio-os-core/genesis';
 import { useExperienceEngineDnaState } from '../../../../hooks/useExperienceEngineDnaState';
 import { hqGlassPanel, hqLabel } from '../headquarters-experience/hqExperienceTheme';
+import { ExperienceEngineRecoveryPanel } from './ExperienceEngineRecoveryPanel';
 import { HqExperienceStyles } from '../headquarters-experience/HqWingZone';
 
 const BASE = '/admin/studio/experience-engine';
@@ -25,8 +27,21 @@ const WING_NAV: { slug: XeeRoomPath; label: string; ring: 'engine' | 'registries
 
 export function ExperienceEngineDnaWorkspace() {
   const { roomSlug } = useParams<{ roomSlug?: string }>();
-  const { view, setPlayground, refresh } = useExperienceEngineDnaState();
+  const { view: engineView, setPlayground, refresh, bootBlocked, bootError, repairReasons, retryAfterRepair } =
+    useExperienceEngineDnaState();
   const activeSlug = (roomSlug ?? 'experience-engine') as XeeRoomPath;
+
+  if (!engineView || bootBlocked) {
+    return (
+      <ExperienceEngineRecoveryPanel
+        reasons={repairReasons}
+        bootError={bootError}
+        onRepaired={retryAfterRepair}
+      />
+    );
+  }
+
+  const view = engineView;
   const profile = view.experienceProfile;
   const brand = profile.brand;
 
@@ -46,6 +61,7 @@ export function ExperienceEngineDnaWorkspace() {
       style={{ background: profile.cssVariables['--xee-ambient-gradient'] }}
       data-xee-scene={profile.scene.sceneId}
       data-xee-brand={profile.brandId}
+      data-xee-ready="1"
     >
       <HqExperienceStyles />
       <XeeStyles />
@@ -142,7 +158,7 @@ function ArrivalPanel({
   view,
   onSwitchBrand,
 }: {
-  view: ReturnType<typeof useExperienceEngineDnaState>['view'];
+  view: XeeReadyView;
   onSwitchBrand: (id: string) => void;
 }) {
   return (
@@ -203,7 +219,7 @@ function BrandRegistryPanel({
   );
 }
 
-function DepartmentPanel({ departments, brand }: { departments: ReturnType<typeof useExperienceEngineDnaState>['view']['departments']; brand: XeeBrandDna }) {
+function DepartmentPanel({ departments, brand }: { departments: XeeReadyView['departments']; brand: XeeBrandDna }) {
   return (
     <section className="xee-panel">
       <p style={{ ...hqLabel, color: brand.colorSystem.primary }}>Department Registry™ · {brand.officialName}</p>
@@ -219,7 +235,7 @@ function DepartmentPanel({ departments, brand }: { departments: ReturnType<typeo
   );
 }
 
-function ScenePanel({ scenes }: { scenes: ReturnType<typeof useExperienceEngineDnaState>['view']['scenes'] }) {
+function ScenePanel({ scenes }: { scenes: XeeReadyView['scenes'] }) {
   return (
     <section className="xee-panel">
       <p style={{ ...hqLabel }}>Scene Registry™</p>
@@ -238,7 +254,7 @@ function ScenePanel({ scenes }: { scenes: ReturnType<typeof useExperienceEngineD
   );
 }
 
-function ComponentPanel({ components, brand }: { components: ReturnType<typeof useExperienceEngineDnaState>['view']['components']; brand: XeeBrandDna }) {
+function ComponentPanel({ components, brand }: { components: XeeReadyView['components']; brand: XeeBrandDna }) {
   return (
     <section className="xee-panel">
       <p style={{ ...hqLabel }}>Component Registry™ · {brand.officialName}</p>
@@ -253,7 +269,7 @@ function ComponentPanel({ components, brand }: { components: ReturnType<typeof u
   );
 }
 
-function MotionPanel({ motions, brand }: { motions: ReturnType<typeof useExperienceEngineDnaState>['view']['motions']; brand: XeeBrandDna }) {
+function MotionPanel({ motions, brand }: { motions: XeeReadyView['motions']; brand: XeeBrandDna }) {
   return (
     <section className="xee-panel">
       <p style={{ ...hqLabel }}>Motion Registry™</p>
@@ -267,7 +283,7 @@ function MotionPanel({ motions, brand }: { motions: ReturnType<typeof useExperie
   );
 }
 
-function InteractionPanel({ interactions, brand }: { interactions: ReturnType<typeof useExperienceEngineDnaState>['view']['interactions']; brand: XeeBrandDna }) {
+function InteractionPanel({ interactions, brand }: { interactions: XeeReadyView['interactions']; brand: XeeBrandDna }) {
   return (
     <section className="xee-panel">
       <p style={{ ...hqLabel }}>Interaction Registry™</p>
@@ -285,7 +301,7 @@ function ExperiencePlayground({
   setPlayground,
   switchBrand,
 }: {
-  view: ReturnType<typeof useExperienceEngineDnaState>['view'];
+  view: XeeReadyView;
   setPlayground: ReturnType<typeof useExperienceEngineDnaState>['setPlayground'];
   switchBrand: (id: string) => void;
 }) {

@@ -52,7 +52,7 @@ export function ensureExperienceEngineDnaSubsystem() {
   return store;
 }
 
-/** Imperative read — call ensureExperienceEngineDnaSubsystem() before this when bootstrapping. */
+/** Imperative read — passive; does not mutate genesis during render. */
 export function getExperienceEngineReadyView(input?: {
   pathname?: string;
   playground?: Partial<import('./types').XeePlaygroundSelection>;
