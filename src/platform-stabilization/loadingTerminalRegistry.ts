@@ -75,6 +75,7 @@ export async function forceLoadingTerminalRecovery(
     <pre style="white-space:pre-wrap;background:#fff;border:1px solid #e5e7eb;padding:12px;border-radius:6px;font-size:11px">${bootstrap.replace(/</g, '&lt;')}</pre>
     <p style="margin-top:16px;font-size:12px">
       <button type="button" id="ltr-reload" style="margin-right:12px;padding:6px 10px">Reload</button>
+      <a href="/__studio-os-recovery" style="margin-right:12px">Clear stale site data</a>
       <a href="/__boot-debug">/__boot-debug</a> · <a href="/__studio-health">/__studio-health</a>
     </p>
   `;

@@ -9,6 +9,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import StudioDebugRoutes from './routes/StudioDebugRoutes'
 import { isIsolatedStudioRoute } from './routes/studio-institute-paths'
+import { runBootHygiene } from './platform-stabilization/boot-hygiene'
 import './index.css'
 import { registerGlobalChunkLoadRecovery } from './utils/chunkLoadRecovery'
 import { bootstrapStudioOsBrowserStorage } from './utils/studioOsBrowserStorage'
@@ -22,6 +23,7 @@ export function mountLegacyApp(): void {
 
   markStartupCheckpoint('pre', 'main-entry')
 
+  runBootHygiene({ quarantine: true })
   bootstrapStudioOsBrowserStorage()
   registerGlobalChunkLoadRecovery()
 
@@ -69,7 +71,7 @@ export function mountLegacyApp(): void {
       )
     }
 
-    if (isStartupStageEnabled('D')) {
+    if (isStartupStageEnabled('D') && !onStudioDebugRoute) {
       markStartupCheckpoint('D', 'studio-bootstrap-start')
       void import('./studio-os-core/bootstrap/studio-bootstrap-init')
         .then(({ ensureStudioBootstrapStarted }) => ensureStudioBootstrapStarted({ through: 'ui-render' }))

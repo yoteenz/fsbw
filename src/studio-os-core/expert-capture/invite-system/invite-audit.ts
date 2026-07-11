@@ -1,4 +1,5 @@
 import type { ExpertInvite, InviteAuditEventType } from './types';
+import { ownerAuthHeaders } from './owner-password';
 
 export type InviteAuditEntry = {
   id: string;

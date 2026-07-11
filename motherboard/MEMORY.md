@@ -46599,3 +46599,23 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **URLs:** `https://fsbw.vercel.app/studio-institute/invites`
 
+---
+
+## 2026-07-11 — Normal-tab boot reliability (stale storage vs incognito)
+
+**Context:** User asked how to resolve incognito-works / normal-tab-fails on Studio Institute, Expert Capture, and main routes — stale localStorage/sessionStorage, stuck `data-loading-screen`, background Studio bootstrap on isolated routes.
+
+**Root causes identified:**
+- `quarantineIncompatiblePersistedState()` only ran on `/__studio-os-*` diagnostic entry, not main app
+- `ensureStudioBootstrapStarted()` still ran on isolated routes (`/studio-institute/*`, `/expert-capture/*`) adding main-thread load
+- `post-load-render-guard` skipped **all** `isStudioDebugPath` routes — stuck loading lock never cleared on invite/expert pages
+
+**Fix shipped:**
+- `src/platform-stabilization/boot-hygiene.ts` — `runBootHygiene()` on every `main-legacy` boot: clear orphan `data-loading-screen`, quarantine corrupt genesis/scene-stack JSON, clear stale bisection session keys on deploy
+- `main-legacy.tsx` — skip Studio bootstrap stage D on isolated routes; run boot hygiene before storage guard
+- `post-load-render-guard.ts` — run stuck-loader recovery on **all** routes (removed isolated-path skip)
+- Recovery panels link to `/__studio-os-recovery` (“Clear stale site data”)
+- Fixed missing `ownerAuthHeaders` import in `invite-audit.ts`
+
+**Manual recovery (one-time per browser):** `https://fsbw.vercel.app/__studio-os-recovery` → Quarantine incompatible state + Clear obsolete caches. Or site settings → clear data for fsbw.vercel.app.
+

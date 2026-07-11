@@ -1,7 +1,7 @@
 import type { CreateExpertInviteInput, ExpertInvite } from './types';
 import { createInviteRecord, regenerateInviteToken } from './invite-manager';
 import { hashInvitePin } from './invite-crypto';
-import { getOwnerAuthToken, ownerAuthHeaders } from './owner-password';
+import { getOwnerAuthToken } from './owner-password';
 
 const STORAGE_KEY = 'studioInstituteInvites_v1';
 

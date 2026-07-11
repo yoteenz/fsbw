@@ -1,4 +1,3 @@
-import { isStudioDebugPath } from '../routes/StudioDebugRoutes';
 import {
   forceLoadingTerminalRecovery,
   getActiveLoadingSources,
@@ -54,6 +53,7 @@ function showOverlay(reason: string, details: Record<string, string>): void {
       .join('')}
     <p style="margin-top:16px;font-size:12px">
       <button type="button" id="plrg-reload" style="margin-right:12px;padding:6px 10px">Reload</button>
+      <a href="/__studio-os-recovery" style="margin-right:12px">Clear stale site data</a>
       <a href="/__boot-debug">/__boot-debug</a> · <a href="/__studio-health">/__studio-health</a>
     </p>
   `;
@@ -79,7 +79,6 @@ function rootLooksBlank(): boolean {
 
 async function audit(reason: string): Promise<void> {
   if (typeof window === 'undefined') return;
-  if (isStudioDebugPath(window.location.pathname)) return;
 
   const loadingOverlay = document.querySelector('.loading-screen-root');
   const stuckLoadingAttr =
