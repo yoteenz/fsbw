@@ -46725,3 +46725,32 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — onboarding capsule packaging and download infrastructure; no new Studio OS product surfaces or Genesis behavior.
 
+---
+
+## 2026-07-11 — Incremental Context Update System (Delta Context Capsule v1.0)
+
+**Context:** Approved Composer sprint after Collaboration Intelligence Capsule ship. Full Unified Onboarding Pack works but re-reading entire pack after every change does not scale. Founder approved **Delta Capsule** system for already-onboarded AI to sync only meaningful changes.
+
+**Delta Context Capsule v1.0:**
+- **Packager:** `scripts/package-delta-context-capsule-zip.mjs` — change detection, classification, zip publish, validation
+- **Baseline:** `api/_lib/delta-context-baseline.json` — normalized file fingerprints per capsule; bootstrapped from pre–Collaboration Intelligence commit (`c939dbfbe`) for first delta
+- **Skips:** auto-generated `*VALIDATION.md` and `*-capsule.json` metadata (formatting/timestamp noise)
+- **Structure:** `StudioOS_ContextUpdate/` zip with README_FIRST, UPDATE_SUMMARY, CHANGELOG, CHANGED_FILES, UPDATED_* sections, `changes/` payloads, `delta-context.json`, VALIDATION.md
+- **Classification:** 19+ categories (Architecture, Collaboration Memory, Canon, Handoff, Marketplace, Experience Lab, etc.)
+- **Version compatibility:** base onboarding required vs current pack; rejects incompatible deltas
+- **No-op:** when no meaningful changes since last delta, keeps published release (prebuild-safe)
+
+**Routes & UI:**
+- Permanent download: `/context-updates/latest` → `public/downloads/context-updates/latest.zip`
+- Dashboard: `/context-updates` — latest delta, compatibility, categories, history, Copy Update Prompt
+- Constants: `src/studio-os-core/delta-context-export/constants.ts`, `api/_lib/deltaContextConstants.ts`
+- `DELTA_CONTEXT_UPDATE_PROMPT` for one-click AI sync instructions
+- Prebuild: runs after onboarding pack; `sync-capsule-latest-vercel-routes.mjs` includes `/context-updates/latest`
+- Onboarding hub links to delta updates
+
+**Example delta v1.0.0:** 25 changes — entire Collaboration Intelligence Capsule added since onboarding v1.0.0 baseline; compatible with onboarding pack v1.1.0.
+
+**Verify after deploy:** https://fsbw.vercel.app/context-updates and https://fsbw.vercel.app/context-updates/latest
+
+**Spatial Architecture Review:** SKIPPED — packaging/download infrastructure; no new Studio OS product surfaces.
+

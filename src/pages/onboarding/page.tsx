@@ -177,6 +177,10 @@ export default function OnboardingPackPage() {
               <a href="/collaboration-intelligence">Collaboration Intelligence</a> —{' '}
               <a href="/collaboration-intelligence/latest">/collaboration-intelligence/latest</a>
             </li>
+            <li>
+              <a href="/context-updates">Delta Context Updates</a> —{' '}
+              <a href="/context-updates/latest">/context-updates/latest</a>
+            </li>
           </ul>
         </div>
       </div>

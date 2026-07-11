@@ -47,6 +47,7 @@ import ContextCapsuleDownloadPage from '../pages/context/page';
 import FounderIntelligenceDownloadPage from '../pages/founder-intelligence/page';
 import CollaborationIntelligenceDownloadPage from '../pages/collaboration-intelligence/page';
 import OnboardingPackPage from '../pages/onboarding/page';
+import ContextUpdatesPage from '../pages/context-updates/page';
 import { isStudioInstitutePath } from '../studio-os-core/expert-capture/invite-system/config';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
@@ -96,6 +97,7 @@ export function isStudioDebugPath(pathname: string): boolean {
   if (pathname === '/founder-intelligence') return true;
   if (pathname === '/collaboration-intelligence') return true;
   if (pathname === '/onboarding') return true;
+  if (pathname === '/context-updates') return true;
   return (STUDIO_DEBUG_PATHS as readonly string[]).includes(pathname);
 }
 
@@ -152,6 +154,7 @@ export default function StudioDebugRoutes() {
       <Route path="/founder-intelligence" element={<FounderIntelligenceDownloadPage />} />
       <Route path="/collaboration-intelligence" element={<CollaborationIntelligenceDownloadPage />} />
       <Route path="/onboarding" element={<OnboardingPackPage />} />
+      <Route path="/context-updates" element={<ContextUpdatesPage />} />
       <Route
         path="*"
         element={

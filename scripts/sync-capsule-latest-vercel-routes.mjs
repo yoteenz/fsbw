@@ -40,6 +40,12 @@ const ROUTES = [
     manifest: 'api/_lib/collaboration-intelligence-capsule-release.json',
     fallbackArtifact: 'Collaboration_Intelligence_Capsule_v1.0.0.zip',
   },
+  {
+    source: '/context-updates/latest',
+    destination: '/downloads/context-updates/latest.zip',
+    manifest: 'api/_lib/delta-context-release.json',
+    fallbackArtifact: 'StudioOS_ContextUpdate_v1.0.0.zip',
+  },
 ];
 
 function readManifest(rel) {
