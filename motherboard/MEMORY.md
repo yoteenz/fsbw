@@ -46663,3 +46663,23 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Files:** `api/_lib/creativeProduction/ephemeral-validation-auth.ts`, `api/admin/experience-lab-ephemeral-authorization.ts`, `legacy-adapters.ts`, `generation-gateway.ts`, `ephemeral-compile-auth-session.ts`, `ephemeralAuthorizationApi.ts`, `validation-render.ts`, `experience-lab-render-runtime.ts`, `validation-shell-pipeline.ts`, `useSceneStack.ts`, `studioBuilder/api.ts`, `types.ts`, deleted `validation-authorization.ts`
 
+---
+
+## 2026-07-11 — Experience Lab B1 regression fix: remove blocking pre-pipeline auth call
+
+**Context:** After B1 deploy (`49e48c7e4`), founder reported pipeline failing on **first step** (Compile preview spec, ~400ms, 7 events) — worse than prior Layer 1 `AUTH_REQUIRED`. Mobile forensic: `PIPELINE_FAILED` at 0%, compile-preview-spec red.
+
+**Root cause of regression:** `experience-lab-render-runtime.ts` blocked entire pipeline on `POST /api/admin/experience-lab-ephemeral-authorization` before shell pipeline. That new Vercel function returned `FUNCTION_INVOCATION_FAILED` (500 on OPTIONS/POST) — pipeline died at compile-preview-spec with `AUTH_ISSUE_FAILED`/`AUTH_ISSUE_PARSE`.
+
+**Fix:**
+- **Removed** blocking pre-pipeline auth call from runtime — shell pipeline runs immediately again
+- **Added** `ensureValidationEphemeralAuth()` in `legacy-adapters.ts` — server issues ephemeral auth **lazily** on first `studio-builder-generate` when `validationMode` + `compileRunId` + compile context present (still server-issued, signed, auditable)
+- **Fixed** `attachEphemeralCompileAuth()` to always send validation context (`validationMode`, `compileRunId`, scope fields) even without client in-memory grant — enables lazy server issuance
+- **Simplified** `experience-lab-ephemeral-authorization.ts` to delegate to `ensureValidationEphemeralAuth` (optional explicit grant endpoint)
+
+**Policy preserved:** No hardcoded IDs, no legacy compat, no permanent elevation, `exploratory_draft` output class, compile-scoped `auth-xelab-{compileRunId}`.
+
+**Tests:** 9 passing in `ephemeral-compile-auth.test.ts` (added lazy issuance + validation context without grant).
+
+**Verify after deploy:** Pipeline should progress past compile-preview-spec to shell + Layer 1; governed requests auto-receive ephemeral auth on server.
+

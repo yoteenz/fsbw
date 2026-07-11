@@ -10,6 +10,7 @@ import {
   issueEphemeralValidationAuthorization,
   validateEphemeralValidationAuthorization,
 } from '../../../api/_lib/creativeProduction/ephemeral-validation-auth.js';
+import { ensureValidationEphemeralAuth } from '../../../api/_lib/creativeProduction/legacy-adapters.js';
 
 function sampleGrant(compileRunId: string): EphemeralCompileAuthGrant {
   const issued = issueEphemeralValidationAuthorization({
@@ -37,6 +38,24 @@ function sampleGrant(compileRunId: string): EphemeralCompileAuthGrant {
 describe('ephemeral compile auth session', () => {
   beforeEach(() => {
     clearActiveEphemeralCompileAuthorization();
+  });
+
+  it('passes validation context without client grant for server lazy issuance', () => {
+    const payload = attachEphemeralCompileAuth(
+      { prompt: 'landmark' },
+      {
+        validationMode: true,
+        compileRunId: 'run-lazy',
+        previewSessionId: 'studio-os:a:creative-direction:station-a:proj-1',
+        organizationId: 'studio-os',
+        departmentId: 'creative-direction',
+        stationId: 'station-a',
+        projectId: 'proj-1',
+      }
+    );
+    expect(payload.validationMode).toBe(true);
+    expect(payload.compileRunId).toBe('run-lazy');
+    expect(payload.productionAuthorizationId).toBeUndefined();
   });
 
   it('attaches server-issued authorization to governed generation payload', () => {
@@ -84,6 +103,26 @@ describe('ephemeral compile auth session', () => {
     grant.expiresAt = new Date(Date.now() - 1000).toISOString();
     setActiveEphemeralCompileAuthorization(grant);
     expect(getActiveEphemeralCompileAuthorization('run-expired')).toBeNull();
+  });
+});
+
+describe('ensureValidationEphemeralAuth (server lazy)', () => {
+  it('issues authorization when validation compile context is complete', () => {
+    const body = ensureValidationEphemeralAuth(
+      {
+        validationMode: true,
+        compileRunId: 'run-lazy-server',
+        previewSessionId: 'sess-1',
+        org_id: 'studio-os',
+        departmentId: 'creative-direction',
+        stationId: 'station-a',
+        projectId: 'proj-1',
+        prompt: 'test',
+      },
+      { id: 'user-1', email: 'a@example.com' }
+    );
+    expect(body.productionAuthorizationId).toBe('auth-xelab-run-lazy-server');
+    expect(body.productionAuthorization).toBeDefined();
   });
 });
 

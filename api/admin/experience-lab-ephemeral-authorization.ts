@@ -4,10 +4,7 @@ export const config = {
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { resolveAdminAuth } from '../_lib/adminAuth.js';
-import {
-  auditEphemeralAuthEvent,
-  issueEphemeralValidationAuthorization,
-} from '../_lib/creativeProduction/ephemeral-validation-auth.js';
+import { ensureValidationEphemeralAuth } from '../_lib/creativeProduction/legacy-adapters.js';
 
 function parseBody(req: VercelRequest): Record<string, unknown> | null {
   if (typeof req.body === 'object' && req.body !== null && !Array.isArray(req.body)) {
@@ -26,7 +23,7 @@ function parseBody(req: VercelRequest): Record<string, unknown> | null {
 
 /**
  * POST /api/admin/experience-lab-ephemeral-authorization
- * Issues a compile-scoped ephemeral ProductionAuthorization for Experience Lab validation only.
+ * Optional explicit grant for Experience Lab validation — same issuance as studio-builder lazy path.
  */
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -57,25 +54,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
   }
 
-  const grant = issueEphemeralValidationAuthorization({
-    compileRunId,
-    previewSessionId,
-    organizationId,
-    departmentId,
-    stationId,
-    projectId,
-    actorId: auth.user.id,
-    actorEmail: auth.user.email,
-  });
+  const enriched = ensureValidationEphemeralAuth(
+    {
+      ...body,
+      validationMode: true,
+      compileRunId,
+      previewSessionId,
+      org_id: organizationId,
+      departmentId,
+      stationId,
+      projectId,
+    },
+    { id: auth.user.id, email: auth.user.email }
+  );
 
-  auditEphemeralAuthEvent('issued', {
-    productionAuthorizationId: grant.productionAuthorizationId,
-    compileRunId: grant.compileRunId,
-    previewSessionId: grant.previewSessionId,
-    organizationId: grant.organizationId,
-    actorEmail: auth.user.email,
-    expiresAt: grant.expiresAt,
-  });
+  const productionAuthorizationId =
+    typeof enriched.productionAuthorizationId === 'string' ? enriched.productionAuthorizationId : '';
+  const productionAuthorization = enriched.productionAuthorization;
 
-  return res.status(200).json({ ok: true, grant });
+  if (!productionAuthorizationId || !productionAuthorization) {
+    return res.status(500).json({
+      ok: false,
+      code: 'AUTH_ISSUE_FAILED',
+      error: 'Failed to issue ephemeral compile authorization',
+    });
+  }
+
+  return res.status(200).json({
+    ok: true,
+    grant: {
+      productionAuthorizationId,
+      productionAuthorization,
+      compileRunId,
+      previewSessionId,
+      organizationId,
+      expiresAt:
+        typeof productionAuthorization === 'object' &&
+        productionAuthorization !== null &&
+        'expiresAt' in productionAuthorization &&
+        typeof (productionAuthorization as { expiresAt?: string }).expiresAt === 'string'
+          ? (productionAuthorization as { expiresAt: string }).expiresAt
+          : new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+      issuedAt:
+        typeof productionAuthorization === 'object' &&
+        productionAuthorization !== null &&
+        'issuedAt' in productionAuthorization &&
+        typeof (productionAuthorization as { issuedAt?: string }).issuedAt === 'string'
+          ? (productionAuthorization as { issuedAt: string }).issuedAt
+          : new Date().toISOString(),
+      pipeline: 'experience-lab-validation' as const,
+    },
+  });
 }

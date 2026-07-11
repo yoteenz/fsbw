@@ -14,6 +14,7 @@ import {
 import {
   auditEphemeralAuthEvent,
   isExperienceLabEphemeralAuthorization,
+  issueEphemeralValidationAuthorization,
   validateEphemeralValidationAuthorization,
   type EphemeralValidationBody,
 } from './ephemeral-validation-auth.js';
@@ -44,13 +45,66 @@ function parseEmbeddedAuthorization(body: LegacyBuilderBody): ProductionAuthoriz
 }
 
 function resolveKnownDemoAuthorization(
-  explicitId: string
+  _explicitId: string
 ): { authorization: ProductionAuthorization; legacyCompat: boolean } {
   const initiative = createDemoCreativeInitiative();
   const authorization = issueDemoProductionAuthorization(
     createDemoProductionAuthorizationPayload(initiative)
   );
   return { authorization, legacyCompat: false };
+}
+
+export function ensureValidationEphemeralAuth(
+  body: LegacyBuilderBody,
+  actor?: { id: string; email: string }
+): LegacyBuilderBody {
+  if (body.validationMode !== true) return body;
+
+  const compileRunId = String(body.compileRunId ?? '').trim();
+  if (!compileRunId) return body;
+
+  const explicitId = resolveProductionAuthorizationId(body);
+  if (explicitId && body.productionAuthorization) return body;
+  if (!actor?.id) return body;
+
+  const previewSessionId = String(body.previewSessionId ?? '').trim();
+  const departmentId = String(body.departmentId ?? '').trim();
+  const stationId = String(body.stationId ?? '').trim();
+  const projectId = String(body.projectId ?? '').trim();
+  const organizationId = String(body.org_id ?? body.organizationId ?? 'frontal-slayer').trim();
+
+  if (!previewSessionId || !departmentId || !stationId || !projectId) return body;
+
+  const grant = issueEphemeralValidationAuthorization({
+    compileRunId,
+    previewSessionId,
+    organizationId,
+    departmentId,
+    stationId,
+    projectId,
+    actorId: actor.id,
+    actorEmail: actor.email,
+  });
+
+  auditEphemeralAuthEvent('issued', {
+    productionAuthorizationId: grant.productionAuthorizationId,
+    compileRunId: grant.compileRunId,
+    previewSessionId: grant.previewSessionId,
+    organizationId: grant.organizationId,
+    actorEmail: actor.email,
+    issuedVia: 'studio-builder-generate-lazy',
+    expiresAt: grant.expiresAt,
+  });
+
+  return {
+    ...body,
+    productionAuthorizationId: grant.productionAuthorizationId,
+    productionAuthorization: grant.productionAuthorization,
+    validationMode: true,
+    compileRunId,
+    previewSessionId,
+    org_id: organizationId,
+  };
 }
 
 export function resolveLegacyCompatAuthorization(

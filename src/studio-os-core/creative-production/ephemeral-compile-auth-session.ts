@@ -64,18 +64,27 @@ export function attachEphemeralCompileAuth<T extends Record<string, unknown>>(
   if (!options.validationMode) return payload;
 
   const grant = getActiveEphemeralCompileAuthorization(options.compileRunId);
-  if (!grant) return payload;
-
-  return {
-    ...payload,
-    productionAuthorizationId: grant.productionAuthorizationId,
-    productionAuthorization: grant.productionAuthorization,
-    validationMode: true,
-    compileRunId: grant.compileRunId,
-    previewSessionId: options.previewSessionId ?? grant.previewSessionId,
-    org_id: options.organizationId ?? grant.organizationId,
+  const validationContext = {
+    validationMode: true as const,
+    compileRunId: options.compileRunId ?? grant?.compileRunId,
+    previewSessionId: options.previewSessionId ?? grant?.previewSessionId,
+    org_id: options.organizationId ?? grant?.organizationId,
     departmentId: options.departmentId,
     stationId: options.stationId,
     projectId: options.projectId,
+  };
+
+  if (!grant) {
+    return { ...payload, ...validationContext };
+  }
+
+  return {
+    ...payload,
+    ...validationContext,
+    productionAuthorizationId: grant.productionAuthorizationId,
+    productionAuthorization: grant.productionAuthorization,
+    compileRunId: grant.compileRunId,
+    previewSessionId: validationContext.previewSessionId ?? grant.previewSessionId,
+    org_id: validationContext.org_id ?? grant.organizationId,
   };
 }
