@@ -46867,3 +46867,13 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Conventions:** Machine-readable layer supplements but does not replace reading documents. External AI should validate structure via `onboarding-state.json` first, then read `MASTER_MANIFEST.md` order.
 
+---
+
+## 2026-07-11 — P0 Retry Shell Layer convergence forensic (no repair)
+
+**Context:** Founder verified production still fails for both Creative Studio and Experience Engine at "Retry Shell Layer." Prior restoration claim (`b3e4fe33c`) invalidated.
+
+**Findings:** Retry Shell Layer is UI mislabel (`SceneStackViewport.tsx`) for any layer `failed`, not a compiler stage. Both clients share `experience-lab-render-runtime.runFullPipeline`. Shell canvas fallback can succeed while post-shell gates fail. Primary failure candidates: `assertShellImmutableForLayer` (`SHELL_NOT_LOCKED`), landmark `AUTH_REQUIRED`, or load-shell `SHELL_RECOVERY_LOOKUP_MISMATCH`.
+
+**Deliverable:** `docs/studio-os/forensics/RETRY_SHELL_LAYER_CONVERGENCE.md` (commit `d5650705c`). No repair deployed.
+

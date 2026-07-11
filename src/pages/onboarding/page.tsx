@@ -161,6 +161,7 @@ export default function OnboardingPackPage() {
           </p>
         </div>
 
+        <div style={styles.card}>
           <h2 style={{ margin: '0 0 12px', fontSize: 18 }}>Included capsules</h2>
           <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
             {(release?.includedCapsules ?? []).map((c) => (
