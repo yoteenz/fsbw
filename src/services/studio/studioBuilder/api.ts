@@ -17,6 +17,9 @@ export type StudioBuilderGeneratePayload = {
   forceGenerate?: boolean;
   /** Shell placement URL only — Scene Assembly Law: never prior generative layers */
   referenceImageUrls?: string[];
+  /** Experience Lab validation compile — ephemeral exploratory_draft path */
+  validationMode?: boolean;
+  productionAuthorizationId?: string;
 };
 
 export type StudioBuilderGenerateApiResponse = {

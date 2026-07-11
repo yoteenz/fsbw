@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "currentVersion": "0.3.1",
   "previousVersion": "0.3.0",
-  "generatedAt": "2026-07-11T03:58:12.028Z",
-  "gitCommit": "7c0a90658e4e7ee9bc268284cc491d4e3258d154",
+  "generatedAt": "2026-07-11T04:13:59.882Z",
+  "gitCommit": "7f4e73553838bd436932527d178ea1b780a4bc72",
   "validationStatus": "pass",
   "documentCount": 15,
   "manifestDocumentCount": 16,
-  "checksumSha256": "bfffeef82d3b0ebd2ae4df58ffc2fa65a0315b2e3cf784a804311ed6481cf92c",
+  "checksumSha256": "b645ffe40b07c0ab00ecd53213ee228ef9ae75033e96b2f5c7c104aac23260bc",
   "generatorVersion": "0.3.1",
   "artifact": "StudioOS_ContextCapsule_v0.3.1.zip",
   "latestAlias": "latest.zip",
@@ -22,10 +22,10 @@
   "releaseHistory": [
     {
       "version": "0.3.1",
-      "generatedAt": "2026-07-11T03:58:12.028Z",
-      "gitCommit": "7c0a90658e4e7ee9bc268284cc491d4e3258d154",
-      "checksumSha256": "bfffeef82d3b0ebd2ae4df58ffc2fa65a0315b2e3cf784a804311ed6481cf92c",
-      "sizeBytes": 47797,
+      "generatedAt": "2026-07-11T04:13:59.882Z",
+      "gitCommit": "7f4e73553838bd436932527d178ea1b780a4bc72",
+      "checksumSha256": "b645ffe40b07c0ab00ecd53213ee228ef9ae75033e96b2f5c7c104aac23260bc",
+      "sizeBytes": 47796,
       "downloadPath": "/downloads/context-capsules/archive/StudioOS_ContextCapsule_v0.3.1.zip",
       "zipFileName": "StudioOS_ContextCapsule_v0.3.1.zip",
       "validationStatus": "pass"
@@ -36,7 +36,7 @@
       "downloadPath": "/downloads/context-capsules/archive/StudioOS_ContextCapsule_v0.3.0.zip",
       "checksumSha256": "385fcaa9fc35ba5e2710a9841a21a3419f1f1e4498c2ed9eb54ecda0e967da57",
       "sizeBytes": 46976,
-      "generatedAt": "2026-07-11T00:22:00.189Z",
+      "generatedAt": "2026-07-11T03:56:39.137Z",
       "gitCommit": "unknown",
       "validationStatus": "pass"
     },
@@ -46,7 +46,7 @@
       "downloadPath": "/downloads/context-capsules/archive/StudioOS_ContextCapsule_v0.2.0.zip",
       "checksumSha256": "e99eddbcc31ee975e00a0701184fd6b511810366072b2cc92afa9e7ee1d33480",
       "sizeBytes": 44654,
-      "generatedAt": "2026-07-11T00:22:00.189Z",
+      "generatedAt": "2026-07-11T03:56:39.137Z",
       "gitCommit": "unknown",
       "validationStatus": "pass"
     },
@@ -56,7 +56,7 @@
       "downloadPath": "/downloads/context-capsules/archive/StudioOS_ContextCapsule_v0.1.0.zip",
       "checksumSha256": "d81f3943db23cd7dd2c444f4d17fd08383c1f3eef003233894497c19e3d8b4e6",
       "sizeBytes": 38043,
-      "generatedAt": "2026-07-11T00:22:00.189Z",
+      "generatedAt": "2026-07-11T03:56:39.137Z",
       "gitCommit": "unknown",
       "validationStatus": "pass"
     }

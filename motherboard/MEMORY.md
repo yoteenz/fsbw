@@ -46619,3 +46619,23 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Manual recovery (one-time per browser):** `https://fsbw.vercel.app/__studio-os-recovery` → Quarantine incompatible state + Clear obsolete caches. Or site settings → clear data for fsbw.vercel.app.
 
+---
+
+## 2026-07-11 — Experience Lab B1 fix: Option A ephemeral validation authorization
+
+**Context:** User hit `FAILED_AT_LAYER_1` on Experience Engine (validation mode, `GENERATION_FAILED` / non-JSON 500). Discussed blocker B1 — production governed generation requires `productionAuthorizationId`; user has `FAL_KEY` + Supabase env set; chose **Option A** (ephemeral auth for validation compiles) over Vercel `CREATIVE_PRODUCTION_ALLOW_LEGACY_COMPAT=1`.
+
+**Topics covered (full chat):** Layer 0 shell canvas fallback vs Layer 1 no-fallback; forensic diagnostics (`run-1783742811760-pw5ryc`, empty `responseOutput.code`); Vercel build TS fix for `ownerAuthHeaders` (already on `7f4e73553`); founder Q on whether to add legacy compat env var (no — intentional gate).
+
+**Option A implementation:**
+- `VALIDATION_EPHEMERAL_AUTHORIZATION_ID` (`auth-experience-lab-validation-ephemeral-v1`) in `validation-authorization.ts`
+- Client: `withValidationEphemeralAuth()` — validation compile POSTs include `productionAuthorizationId` + `validationMode: true` (`useSceneStack.ts`, `validation-shell-pipeline.ts`)
+- Server: `legacy-adapters.ts` recognizes validation ephemeral ID + `validationMode` → signs exploratory_draft authorization (no Asset Registry writes); allows `forceGenerate`; gateway re-resolve via ID-only body
+- Shell placement fix: `getLockedReferenceUrlsForLayer` passes validation lookup options so ephemeral shell URL can reach FAL when http(s)
+
+**Decisions:** No `CREATIVE_PRODUCTION_ALLOW_LEGACY_COMPAT` on production. Admin session still required (`resolveAdminAuth`). Material/production paths unchanged.
+
+**Changes:** `validation-authorization.ts`, `validation-render.ts`, `legacy-adapters.ts`, `api.ts` (studioBuilder), `useSceneStack.ts`, `validation-shell-pipeline.ts`, `reference-chain.ts`
+
+**Verify after deploy:** Experience Lab `?compilerDiag=1` compile — Layer 1 should return JSON with `publicUrl` or structured FAL error (not bare `Generation failed (500)`).
+

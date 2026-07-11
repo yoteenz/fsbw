@@ -11,6 +11,10 @@ import {
   DEMO_AUTHORIZATION_ID,
 } from '../../../src/studio-os-core/creative-production/demo-seed.js';
 import {
+  isValidationEphemeralAuthorizationId,
+  VALIDATION_EPHEMERAL_AUTHORIZATION_ID,
+} from '../../../src/studio-os-core/creative-production/validation-authorization.js';
+import {
   issueDemoProductionAuthorization,
   signProductionAuthorization,
   verifyProductionAuthorizationSignature,
@@ -31,17 +35,66 @@ export function resolveProductionAuthorizationId(body: LegacyBuilderBody): strin
   return id;
 }
 
+function isValidationCompileRequest(body: LegacyBuilderBody): boolean {
+  return body.validationMode === true;
+}
+
+function issueValidationEphemeralAuthorization(): ProductionAuthorization {
+  const initiative = createDemoCreativeInitiative();
+  const payload = createDemoProductionAuthorizationPayload(initiative);
+  return signProductionAuthorization({
+    ...payload,
+    id: VALIDATION_EPHEMERAL_AUTHORIZATION_ID,
+    issuedBy: {
+      actorId: 'experience-lab-validation',
+      role: 'validation-ephemeral',
+      issuedVia: 'validation-compile',
+    },
+  });
+}
+
+function isGatewayAuthReResolve(body: LegacyBuilderBody): boolean {
+  const keys = Object.keys(body);
+  return keys.length === 1 && keys[0] === 'productionAuthorizationId';
+}
+
+function resolveKnownEphemeralAuthorization(
+  explicitId: string,
+  body: LegacyBuilderBody
+): { authorization: ProductionAuthorization; legacyCompat: boolean } | { error: string; code: string } {
+  if (isValidationEphemeralAuthorizationId(explicitId)) {
+    if (!isValidationCompileRequest(body) && !isGatewayAuthReResolve(body)) {
+      return {
+        error: 'Validation ephemeral authorization requires validationMode: true',
+        code: 'AUTH_VALIDATION_SCOPE',
+      };
+    }
+    return { authorization: issueValidationEphemeralAuthorization(), legacyCompat: false };
+  }
+
+  if (explicitId === DEMO_AUTHORIZATION_ID) {
+    const initiative = createDemoCreativeInitiative();
+    const authorization = issueDemoProductionAuthorization(
+      createDemoProductionAuthorizationPayload(initiative)
+    );
+    return { authorization, legacyCompat: false };
+  }
+
+  return {
+    error: `Unknown productionAuthorizationId "${explicitId}" — embed signed authorization or enable legacy compat`,
+    code: 'AUTH_NOT_FOUND',
+  };
+}
+
 export function resolveLegacyCompatAuthorization(
   body: LegacyBuilderBody
 ): { authorization: ProductionAuthorization; legacyCompat: boolean } | { error: string; code: string } {
   const explicitId = resolveProductionAuthorizationId(body);
   if (explicitId) {
-    if (explicitId === DEMO_AUTHORIZATION_ID) {
-      const initiative = createDemoCreativeInitiative();
-      const authorization = issueDemoProductionAuthorization(
-        createDemoProductionAuthorizationPayload(initiative)
-      );
-      return { authorization, legacyCompat: false };
+    if (isValidationEphemeralAuthorizationId(explicitId) || explicitId === DEMO_AUTHORIZATION_ID) {
+      const known = resolveKnownEphemeralAuthorization(explicitId, body);
+      if ('error' in known) return known;
+      return known;
     }
     const embedded = body.productionAuthorization;
     if (embedded && typeof embedded === 'object') {
@@ -51,10 +104,7 @@ export function resolveLegacyCompatAuthorization(
       }
       return { authorization: auth, legacyCompat: false };
     }
-    return {
-      error: `Unknown productionAuthorizationId "${explicitId}" — embed signed authorization or enable legacy compat`,
-      code: 'AUTH_NOT_FOUND',
-    };
+    return resolveKnownEphemeralAuthorization(explicitId, body);
   }
 
   if (!legacyCompatEnabled()) {
@@ -97,7 +147,10 @@ export function adaptLegacyBuilderRequest(
   const intent = createDemoAssetIntent(initiative.id);
   intent.id = `intent-${heroAssetId}`;
   intent.recipeSlug = `${departmentId}/${packageId}/${productionGroupId}`;
-  intent.outputClass = legacyCompat ? 'exploratory_draft' : 'material';
+  const explicitId = resolveProductionAuthorizationId(body);
+  const validationEphemeral =
+    isValidationCompileRequest(body) && isValidationEphemeralAuthorizationId(explicitId);
+  intent.outputClass = validationEphemeral || legacyCompat ? 'exploratory_draft' : 'material';
 
   return {
     productionAuthorizationId: authorization.id,

@@ -1,4 +1,5 @@
 import type { SceneStackLayerId } from './types';
+import type { SceneStackLayerLookupOptions } from './scene-stack-lookup-options';
 import { getSceneStackLayerRecord } from './store';
 
 /** Layer IDs that must anchor to the approved environment shell (never regenerate from marble alone). */
@@ -24,11 +25,18 @@ export function getLockedReferenceUrlsForLayer(
   projectId: string,
   stationId: string,
   targetLayerId: SceneStackLayerId,
-  _layerPrompts: Partial<Record<SceneStackLayerId, unknown>>
+  _layerPrompts: Partial<Record<SceneStackLayerId, unknown>>,
+  lookupOptions?: SceneStackLayerLookupOptions
 ): string[] {
   if (targetLayerId === ANCHOR_LAYER_ID) return [];
 
-  const shell = getSceneStackLayerRecord(departmentId, projectId, stationId, ANCHOR_LAYER_ID);
+  const shell = getSceneStackLayerRecord(
+    departmentId,
+    projectId,
+    stationId,
+    ANCHOR_LAYER_ID,
+    lookupOptions
+  );
   return shell?.publicUrl ? [shell.publicUrl] : [];
 }
 

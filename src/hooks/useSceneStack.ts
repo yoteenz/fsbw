@@ -69,7 +69,11 @@ import {
   recordDuplicateCompileInvocation,
   type StallEvidenceContext,
 } from '../studio-os/diagnostics/world-compiler-investigation/stall-evidence';
-import { VALIDATION_RENDER_AUTHORIZATION } from '../studio-os-core/scene-stack/validation-render';
+import {
+  VALIDATION_RENDER_AUTHORIZATION,
+  VALIDATION_EPHEMERAL_AUTHORIZATION_ID,
+  withValidationEphemeralAuth,
+} from '../studio-os-core/scene-stack/validation-render';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -342,7 +346,12 @@ export function useSceneStack(
               projectId,
               stationId,
               layerId,
-              station.layerPrompts
+              station.layerPrompts,
+              validationMode && previewSessionId
+                ? { validationMode: true, previewSessionId }
+                : validationMode
+                  ? { validationMode: true }
+                  : undefined
             )
           : [];
 
@@ -385,18 +394,21 @@ export function useSceneStack(
           referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
         });
 
-        const generationPayload = {
-          departmentId,
-          packageId: pkg.packageId,
-          projectId,
-          productionGroupId: `scene-stack-${stationId}-${layerId}`,
-          heroAssetId: compiled.heroAssetId,
-          prompt: compiled.prompt,
-          aspectRatio: compiled.aspectRatio,
-          outputFormat: compiled.outputFormat,
-          forceGenerate: force || !existing?.publicUrl,
-          referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
-        };
+        const generationPayload = withValidationEphemeralAuth(
+          {
+            departmentId,
+            packageId: pkg.packageId,
+            projectId,
+            productionGroupId: `scene-stack-${stationId}-${layerId}`,
+            heroAssetId: compiled.heroAssetId,
+            prompt: compiled.prompt,
+            aspectRatio: compiled.aspectRatio,
+            outputFormat: compiled.outputFormat,
+            forceGenerate: force || !existing?.publicUrl,
+            referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
+          },
+          validationMode
+        );
 
         const requestInputForensic = {
           schemaVersion: 'scene-stack-layer-generate-v1',
@@ -415,6 +427,9 @@ export function useSceneStack(
           referenceUrlScheme: referenceImageUrls.map((u) => (u.startsWith('data:') ? 'data-url' : u.startsWith('http') ? 'http' : 'other')),
           validationMode: isExperienceLabValidationRender(),
           authorizationMode: VALIDATION_RENDER_AUTHORIZATION,
+          productionAuthorizationId: validationMode
+            ? VALIDATION_EPHEMERAL_AUTHORIZATION_ID
+            : null,
           generationProvider: 'POST /api/admin/studio-builder-generate',
           modelAdapter: 'fal-ai/nano-banana-pro/edit via executeGovernedGeneration → generateStudioBuilderAsset',
           forceGenerate: generationPayload.forceGenerate,

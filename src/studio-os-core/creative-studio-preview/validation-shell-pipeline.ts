@@ -14,6 +14,7 @@ import {
   type ValidationEnvironmentShell,
 } from './environment-shell';
 import { renderValidationShellCanvas } from './validation-shell-canvas';
+import { withValidationEphemeralAuth } from '../scene-stack/validation-render';
 import type { CreativePreviewCompanyId } from './types';
 
 export type ValidationShellPipelineResult = {
@@ -35,17 +36,22 @@ async function generateShellPublicUrl(
   const pkg = requireDepartmentPackage(recipe.departmentId);
 
   try {
-    const api = await requestStudioBuilderGenerate({
-      departmentId: recipe.departmentId,
-      packageId: pkg.packageId,
-      projectId: recipe.projectId,
-      productionGroupId: recipe.shellPrompt.productionGroupId,
-      heroAssetId: recipe.shellPrompt.heroAssetId,
-      prompt: recipe.shellPrompt.primary,
-      aspectRatio: recipe.aspectRatio,
-      outputFormat: recipe.renderTarget.format,
-      forceGenerate: true,
-    });
+    const api = await requestStudioBuilderGenerate(
+      withValidationEphemeralAuth(
+        {
+          departmentId: recipe.departmentId,
+          packageId: pkg.packageId,
+          projectId: recipe.projectId,
+          productionGroupId: recipe.shellPrompt.productionGroupId,
+          heroAssetId: recipe.shellPrompt.heroAssetId,
+          prompt: recipe.shellPrompt.primary,
+          aspectRatio: recipe.aspectRatio,
+          outputFormat: recipe.renderTarget.format,
+          forceGenerate: true,
+        },
+        true
+      )
+    );
 
     if (api.ok && api.publicUrl) {
       return { publicUrl: api.publicUrl, method: 'studio-builder' };
