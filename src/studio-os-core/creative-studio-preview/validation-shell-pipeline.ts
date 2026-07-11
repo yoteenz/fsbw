@@ -31,6 +31,14 @@ const SHELL_TTL_MS = EPHEMERAL_VALIDATION_TTL_MS;
 
 async function generateShellPublicUrl(
   recipe: EnvironmentShellRecipe,
+  authCtx: {
+    compileRunId: string;
+    previewSessionId: string;
+    organizationId: string;
+    departmentId: string;
+    stationId: string;
+    projectId: string;
+  },
   workspaceId?: string
 ): Promise<{ publicUrl: string; method: ValidationEnvironmentShell['generationMethod'] } | null> {
   const pkg = requireDepartmentPackage(recipe.departmentId);
@@ -49,7 +57,15 @@ async function generateShellPublicUrl(
           outputFormat: recipe.renderTarget.format,
           forceGenerate: true,
         },
-        true
+        {
+          validationMode: true,
+          compileRunId: authCtx.compileRunId,
+          previewSessionId: authCtx.previewSessionId,
+          organizationId: authCtx.organizationId,
+          departmentId: authCtx.departmentId,
+          stationId: authCtx.stationId,
+          projectId: authCtx.projectId,
+        }
       )
     );
 
@@ -76,6 +92,9 @@ export async function runExperienceLabValidationShellPipeline(input: {
   conceptId: 'a' | 'b' | 'c';
   projectId: string;
   previewSessionId: string;
+  compileRunId: string;
+  departmentId: string;
+  stationId: string;
   workspaceId?: string;
   forceRegenerate?: boolean;
   onStageChange?: (stage: ValidationShellPipelineResult['stage']) => void;
@@ -116,7 +135,18 @@ export async function runExperienceLabValidationShellPipeline(input: {
 
   stage = 'generate-shell';
   input.onStageChange?.(stage);
-  const generated = await generateShellPublicUrl(recipe, input.workspaceId);
+  const generated = await generateShellPublicUrl(
+    recipe,
+    {
+      compileRunId: input.compileRunId,
+      previewSessionId: input.previewSessionId,
+      organizationId: input.companyId,
+      departmentId: input.departmentId,
+      stationId: input.stationId,
+      projectId: input.projectId,
+    },
+    input.workspaceId
+  );
   if (!generated) {
     return {
       ok: false,

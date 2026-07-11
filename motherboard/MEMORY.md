@@ -46639,3 +46639,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Verify after deploy:** Experience Lab `?compilerDiag=1` compile — Layer 1 should return JSON with `publicUrl` or structured FAL error (not bare `Generation failed (500)`).
 
+---
+
+## 2026-07-11 — Experience Lab B1 repair: server-issued ephemeral ProductionAuthorization
+
+**Context:** Composer sprint to repair remaining Experience Lab compiler blocker B1 after B2 (normal-tab load) verified. Creative Studio Preview Compiler failed at Signature Landmark™ with `AUTH_REQUIRED` — not FAL billing, not browser. Founder approved **server-issued ephemeral `productionAuthorizationId`** policy (org/pipeline/user/compile-scoped, auditable, auto-expiring, non-canonical, no permanent elevation).
+
+**Topics covered (full chat):** `FAILED_AT_LAYER_1` / `GENERATION_REQUEST_FAILED` forensics; Layer 0 canvas fallback vs Layer 1 governed FAL gate; `CREATIVE_PRODUCTION_ALLOW_LEGACY_COMPAT` intentionally off in production; prior Option A hardcoded `auth-experience-lab-validation-ephemeral-v1` (superseded); normal-tab stale storage vs incognito (B2 cleared via site data); Vercel build `ownerAuthHeaders` fix on prior commit.
+
+**Root cause:** `legacyCompatEnabled()` false in production → `POST /api/admin/studio-builder-generate` without signed `productionAuthorizationId` + embedded `productionAuthorization` returns `AUTH_REQUIRED`. Validation compiles had no server-issued grant.
+
+**B1 repair (founder policy):**
+- **Issue:** `POST /api/admin/experience-lab-ephemeral-authorization` (admin auth) → `issueEphemeralValidationAuthorization()` — ID `auth-xelab-{compileRunId}`, 30min TTL, `issuedVia: experience-lab-ephemeral`, scope: org/dept/station/project/previewSessionId/ephemeralCompileRunId, `outputClass: exploratory_draft`
+- **Client session:** `ephemeral-compile-auth-session.ts` in-memory only (not localStorage); set at compile start, cleared in `runFullPipeline` finally
+- **Runtime:** `experience-lab-render-runtime.ts` issues grant after `compileRunId` created, before shell pipeline
+- **Attach:** `withValidationEphemeralAuth()` / `attachEphemeralCompileAuth()` on shell pipeline + `useSceneStack` layer generation → `studio-builder-generate` payload includes `productionAuthorizationId`, `productionAuthorization`, `validationMode`, `compileRunId`, `previewSessionId`, `org_id`
+- **Validate:** `legacy-adapters.ts` + `validateEphemeralValidationAuthorization()` — signature, compile/org/preview scope; audit JSON logs (`issued`/`validated`/`rejected`)
+- **Removed:** hardcoded `validation-authorization.ts` / `VALIDATION_EPHEMERAL_AUTHORIZATION_ID`
+
+**Tests:** `ephemeral-compile-auth.test.ts` (7 tests — attach, scope mismatch, clear, expiry, server issue/validate)
+
+**Verify after deploy:** Experience Lab compile — no `AUTH_REQUIRED`; Layer 1 reaches FAL; new compileRunId → new auth id; auth cleared after pipeline ends.
+
+**Files:** `api/_lib/creativeProduction/ephemeral-validation-auth.ts`, `api/admin/experience-lab-ephemeral-authorization.ts`, `legacy-adapters.ts`, `generation-gateway.ts`, `ephemeral-compile-auth-session.ts`, `ephemeralAuthorizationApi.ts`, `validation-render.ts`, `experience-lab-render-runtime.ts`, `validation-shell-pipeline.ts`, `useSceneStack.ts`, `studioBuilder/api.ts`, `types.ts`, deleted `validation-authorization.ts`
+

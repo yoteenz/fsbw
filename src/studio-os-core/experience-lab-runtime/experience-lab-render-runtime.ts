@@ -42,9 +42,15 @@ import {
   endCompileRun,
   isAutoRunDisabled,
   isLayer1Frozen,
+  logCompilerEvent,
   setLayer1RunContext,
   updateActiveShellId,
 } from '../../studio-os/diagnostics/world-compiler-investigation';
+import { requestExperienceLabEphemeralAuthorization } from '../../services/studio/ephemeralAuthorizationApi';
+import {
+  clearActiveEphemeralCompileAuthorization,
+  setActiveEphemeralCompileAuthorization,
+} from '../creative-production/ephemeral-compile-auth-session';
 import {
   beginAsyncBoundary,
   captureUiCompilerSyncSnapshot,
@@ -461,6 +467,48 @@ async function runFullPipeline(session: SessionState): Promise<void> {
     conceptId: session.key.conceptId,
   });
 
+  const authBoundary = beginAsyncBoundary('issueEphemeralCompileAuthorization', sessionEvidenceCtx(session));
+  const authResult = await requestExperienceLabEphemeralAuthorization({
+    compileRunId: session.compileRunId,
+    previewSessionId: session.previewSessionId,
+    organizationId: session.key.companyId,
+    departmentId: session.key.departmentId,
+    stationId: session.key.stationId,
+    projectId: session.key.projectId,
+  });
+  endAsyncBoundary(authBoundary, authResult.ok ? 'resolved' : 'rejected', {
+    resolvedCategory: authResult.ok ? 'ephemeralAuthIssued' : 'ephemeralAuthFailed',
+    rejectionMessage: authResult.ok ? undefined : authResult.error,
+  });
+
+  if (!authResult.ok) {
+    session.shellPipelinePhase = 'failed';
+    session.renderStatus = 'failed';
+    session.errors = [authResult.error ?? 'Failed to issue ephemeral compile authorization'];
+    session.pipelineRunning = false;
+    logPipelineLifecycle('PIPELINE_RUNNING_CLEARED', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
+      reason: 'ephemeralAuthFailed',
+      code: authResult.code,
+    });
+    endCompileRun('failed', { failedStage: 'compile-preview-spec', error: session.errors[0] });
+    notifySnapshot(session);
+    publishRuntimeEvent(session, 'RuntimeError', {
+      errorCode: authResult.code ?? 'AUTH_ISSUE_FAILED',
+      detail: session.errors[0],
+    });
+    return;
+  }
+
+  setActiveEphemeralCompileAuthorization(authResult.grant);
+  logCompilerEvent('CONTEXT_UPDATED', 'experience-lab-render-runtime.ephemeralAuth', {
+    detail: {
+      event: 'EPHEMERAL_AUTH_ACTIVE',
+      productionAuthorizationId: authResult.grant.productionAuthorizationId,
+      expiresAt: authResult.grant.expiresAt,
+      compileRunId: session.compileRunId,
+    },
+  });
+
   publishRuntimeEvent(session, 'RuntimeStarted', { currentStage: 'compile-preview-spec' });
   notifySnapshot(session);
 
@@ -471,6 +519,9 @@ async function runFullPipeline(session: SessionState): Promise<void> {
     projectId: session.key.projectId,
     previewSessionId: session.previewSessionId,
     workspaceId: session.key.workspaceId,
+    compileRunId: session.compileRunId,
+    departmentId: session.key.departmentId,
+    stationId: session.key.stationId,
     forceRegenerate: true,
     onStageChange: (stage) => {
       session.shellPipelineStage = stage;
@@ -652,6 +703,12 @@ async function runFullPipeline(session: SessionState): Promise<void> {
   publishRuntimeEvent(session, 'RenderCompleted', { progressPct: 100 });
   } finally {
     if (pipelineEntered) {
+      if (session.compileRunId) {
+        clearActiveEphemeralCompileAuthorization(session.compileRunId);
+        logCompilerEvent('CONTEXT_UPDATED', 'experience-lab-render-runtime.ephemeralAuth', {
+          detail: { event: 'EPHEMERAL_AUTH_CLEARED', compileRunId: session.compileRunId },
+        });
+      }
       logPipelineLifecycle('PIPELINE_FINALLY', 'experience-lab-render-runtime.runFullPipeline', sessionEvidenceCtx(session), {
         pipelineRunning: session.pipelineRunning,
         renderStatus: session.renderStatus,

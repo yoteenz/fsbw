@@ -4,6 +4,7 @@
  */
 
 import type { GovernedGenerationRequest } from '../../../src/studio-os-core/creative-production/types.js';
+import type { ProductionAuthorization } from '../../../src/studio-os-core/creative-production/types.js';
 import {
   createDemoAssetIntent,
   createDemoCreativeInitiative,
@@ -11,15 +12,16 @@ import {
   DEMO_AUTHORIZATION_ID,
 } from '../../../src/studio-os-core/creative-production/demo-seed.js';
 import {
-  isValidationEphemeralAuthorizationId,
-  VALIDATION_EPHEMERAL_AUTHORIZATION_ID,
-} from '../../../src/studio-os-core/creative-production/validation-authorization.js';
+  auditEphemeralAuthEvent,
+  isExperienceLabEphemeralAuthorization,
+  validateEphemeralValidationAuthorization,
+  type EphemeralValidationBody,
+} from './ephemeral-validation-auth.js';
 import {
   issueDemoProductionAuthorization,
   signProductionAuthorization,
   verifyProductionAuthorizationSignature,
 } from './authorization-signing.js';
-import type { ProductionAuthorization } from '../../../src/studio-os-core/creative-production/types.js';
 
 export type LegacyBuilderBody = Record<string, unknown>;
 
@@ -35,76 +37,68 @@ export function resolveProductionAuthorizationId(body: LegacyBuilderBody): strin
   return id;
 }
 
-function isValidationCompileRequest(body: LegacyBuilderBody): boolean {
-  return body.validationMode === true;
+function parseEmbeddedAuthorization(body: LegacyBuilderBody): ProductionAuthorization | null {
+  const embedded = body.productionAuthorization;
+  if (!embedded || typeof embedded !== 'object') return null;
+  return embedded as ProductionAuthorization;
 }
 
-function issueValidationEphemeralAuthorization(): ProductionAuthorization {
+function resolveKnownDemoAuthorization(
+  explicitId: string
+): { authorization: ProductionAuthorization; legacyCompat: boolean } {
   const initiative = createDemoCreativeInitiative();
-  const payload = createDemoProductionAuthorizationPayload(initiative);
-  return signProductionAuthorization({
-    ...payload,
-    id: VALIDATION_EPHEMERAL_AUTHORIZATION_ID,
-    issuedBy: {
-      actorId: 'experience-lab-validation',
-      role: 'validation-ephemeral',
-      issuedVia: 'validation-compile',
-    },
-  });
-}
-
-function isGatewayAuthReResolve(body: LegacyBuilderBody): boolean {
-  const keys = Object.keys(body);
-  return keys.length === 1 && keys[0] === 'productionAuthorizationId';
-}
-
-function resolveKnownEphemeralAuthorization(
-  explicitId: string,
-  body: LegacyBuilderBody
-): { authorization: ProductionAuthorization; legacyCompat: boolean } | { error: string; code: string } {
-  if (isValidationEphemeralAuthorizationId(explicitId)) {
-    if (!isValidationCompileRequest(body) && !isGatewayAuthReResolve(body)) {
-      return {
-        error: 'Validation ephemeral authorization requires validationMode: true',
-        code: 'AUTH_VALIDATION_SCOPE',
-      };
-    }
-    return { authorization: issueValidationEphemeralAuthorization(), legacyCompat: false };
-  }
-
-  if (explicitId === DEMO_AUTHORIZATION_ID) {
-    const initiative = createDemoCreativeInitiative();
-    const authorization = issueDemoProductionAuthorization(
-      createDemoProductionAuthorizationPayload(initiative)
-    );
-    return { authorization, legacyCompat: false };
-  }
-
-  return {
-    error: `Unknown productionAuthorizationId "${explicitId}" — embed signed authorization or enable legacy compat`,
-    code: 'AUTH_NOT_FOUND',
-  };
+  const authorization = issueDemoProductionAuthorization(
+    createDemoProductionAuthorizationPayload(initiative)
+  );
+  return { authorization, legacyCompat: false };
 }
 
 export function resolveLegacyCompatAuthorization(
   body: LegacyBuilderBody
 ): { authorization: ProductionAuthorization; legacyCompat: boolean } | { error: string; code: string } {
   const explicitId = resolveProductionAuthorizationId(body);
+  const embedded = parseEmbeddedAuthorization(body);
+
+  if (explicitId && embedded) {
+    if (!verifyProductionAuthorizationSignature(embedded)) {
+      return { error: 'Invalid ProductionAuthorization signature', code: 'AUTH_SIGNATURE_INVALID' };
+    }
+    if (embedded.id !== explicitId) {
+      return {
+        error: 'productionAuthorizationId does not match embedded authorization id',
+        code: 'AUTH_ID_MISMATCH',
+      };
+    }
+
+    const ephemeralCheck = validateEphemeralValidationAuthorization(embedded, body as EphemeralValidationBody);
+    if (!ephemeralCheck.ok) {
+      auditEphemeralAuthEvent('rejected', {
+        code: ephemeralCheck.code,
+        productionAuthorizationId: explicitId,
+        compileRunId: body.compileRunId,
+      });
+      return { error: ephemeralCheck.error, code: ephemeralCheck.code };
+    }
+
+    if (isExperienceLabEphemeralAuthorization(embedded)) {
+      auditEphemeralAuthEvent('validated', {
+        productionAuthorizationId: explicitId,
+        compileRunId: embedded.scope.ephemeralCompileRunId,
+        previewSessionId: embedded.scope.previewSessionId,
+      });
+    }
+
+    return { authorization: embedded, legacyCompat: false };
+  }
+
   if (explicitId) {
-    if (isValidationEphemeralAuthorizationId(explicitId) || explicitId === DEMO_AUTHORIZATION_ID) {
-      const known = resolveKnownEphemeralAuthorization(explicitId, body);
-      if ('error' in known) return known;
-      return known;
+    if (explicitId === DEMO_AUTHORIZATION_ID) {
+      return resolveKnownDemoAuthorization(explicitId);
     }
-    const embedded = body.productionAuthorization;
-    if (embedded && typeof embedded === 'object') {
-      const auth = embedded as ProductionAuthorization;
-      if (!verifyProductionAuthorizationSignature(auth)) {
-        return { error: 'Invalid ProductionAuthorization signature', code: 'AUTH_SIGNATURE_INVALID' };
-      }
-      return { authorization: auth, legacyCompat: false };
-    }
-    return resolveKnownEphemeralAuthorization(explicitId, body);
+    return {
+      error: `Unknown productionAuthorizationId "${explicitId}" — embed signed authorization from /api/admin/experience-lab-ephemeral-authorization`,
+      code: 'AUTH_NOT_FOUND',
+    };
   }
 
   if (!legacyCompatEnabled()) {
@@ -143,17 +137,20 @@ export function adaptLegacyBuilderRequest(
   const heroAssetId = String(body.heroAssetId || 'unknown');
   const prompt = String(body.prompt || '');
   const orgId = typeof body.org_id === 'string' ? body.org_id.trim() : 'frontal-slayer';
+  const compileRunId = typeof body.compileRunId === 'string' ? body.compileRunId.trim() : undefined;
+  const validationMode = body.validationMode === true;
 
   const intent = createDemoAssetIntent(initiative.id);
   intent.id = `intent-${heroAssetId}`;
   intent.recipeSlug = `${departmentId}/${packageId}/${productionGroupId}`;
-  const explicitId = resolveProductionAuthorizationId(body);
-  const validationEphemeral =
-    isValidationCompileRequest(body) && isValidationEphemeralAuthorizationId(explicitId);
-  intent.outputClass = validationEphemeral || legacyCompat ? 'exploratory_draft' : 'material';
+  const ephemeralCompile = isExperienceLabEphemeralAuthorization(authorization);
+  intent.outputClass = ephemeralCompile || legacyCompat ? 'exploratory_draft' : 'material';
 
   return {
     productionAuthorizationId: authorization.id,
+    productionAuthorization: authorization,
+    compileRunId,
+    validationMode,
     assetIntent: intent,
     orgId,
     sourceRoute,

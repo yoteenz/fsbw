@@ -25,10 +25,8 @@ export function signProductionAuthorization(
 export function verifyProductionAuthorizationSignature(
   authorization: ProductionAuthorization
 ): boolean {
-  const expected = signProductionAuthorization({
-    ...authorization,
-    signature: '',
-  }).signature;
+  const { signature: _ignored, ...unsigned } = authorization;
+  const expected = signProductionAuthorization(unsigned).signature;
   try {
     const a = Buffer.from(authorization.signature, 'utf8');
     const b = Buffer.from(expected, 'utf8');

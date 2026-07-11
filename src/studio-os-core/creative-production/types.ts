@@ -101,8 +101,8 @@ export type CreativeInitiative = {
 export type AuthorityRecord = {
   actorId: string;
   actorEmail?: string;
-  role: 'founder' | 'delegated' | 'system' | 'compat-legacy';
-  issuedVia: 'studio-production-system' | 'demo-seed' | 'legacy-adapter';
+  role: 'founder' | 'delegated' | 'system' | 'compat-legacy' | 'validation-ephemeral';
+  issuedVia: 'studio-production-system' | 'demo-seed' | 'legacy-adapter' | 'experience-lab-ephemeral';
 };
 
 /** Immutable authorization to manufacture — generation APIs must verify. */
@@ -120,6 +120,14 @@ export type ProductionAuthorization = {
     touchpoints: TouchpointKind[];
     assetIntents: string[];
     maxCost?: number;
+    /** Experience Lab ephemeral compile — server-issued only */
+    pipeline?: 'experience-lab-validation';
+    ephemeralCompileRunId?: string;
+    previewSessionId?: string;
+    organizationId?: string;
+    departmentId?: string;
+    stationId?: string;
+    projectId?: string;
   };
   genomeRefs: {
     companyGenome: VersionPin;
@@ -225,6 +233,10 @@ export type GovernedGenerationAudit = {
 
 export type GovernedGenerationRequest = {
   productionAuthorizationId: string;
+  /** Server-signed authorization object — required for ephemeral validation compiles */
+  productionAuthorization?: ProductionAuthorization;
+  compileRunId?: string;
+  validationMode?: boolean;
   assetIntent: Omit<AssetIntent, 'id' | 'productionAuthorizationId'> & { id?: string };
   orgId: string;
   sourceRoute: string;

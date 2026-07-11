@@ -71,8 +71,8 @@ import {
 } from '../studio-os/diagnostics/world-compiler-investigation/stall-evidence';
 import {
   VALIDATION_RENDER_AUTHORIZATION,
-  VALIDATION_EPHEMERAL_AUTHORIZATION_ID,
   withValidationEphemeralAuth,
+  getActiveEphemeralCompileAuthorization,
 } from '../studio-os-core/scene-stack/validation-render';
 
 export type SceneStackPipelineProgress = {
@@ -407,7 +407,20 @@ export function useSceneStack(
             forceGenerate: force || !existing?.publicUrl,
             referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
           },
-          validationMode
+          {
+            validationMode,
+            compileRunId: layerCompileOptions?.previewCompileContext?.compileRunId ?? null,
+            previewSessionId: previewSessionId ?? null,
+            organizationId:
+              layerCompileOptions?.previewCompileContext?.companyId ??
+              getActiveEphemeralCompileAuthorization(
+                layerCompileOptions?.previewCompileContext?.compileRunId ?? null
+              )?.organizationId ??
+              'frontal-slayer',
+            departmentId,
+            stationId,
+            projectId,
+          }
         );
 
         const requestInputForensic = {
@@ -427,9 +440,10 @@ export function useSceneStack(
           referenceUrlScheme: referenceImageUrls.map((u) => (u.startsWith('data:') ? 'data-url' : u.startsWith('http') ? 'http' : 'other')),
           validationMode: isExperienceLabValidationRender(),
           authorizationMode: VALIDATION_RENDER_AUTHORIZATION,
-          productionAuthorizationId: validationMode
-            ? VALIDATION_EPHEMERAL_AUTHORIZATION_ID
-            : null,
+          productionAuthorizationId:
+            getActiveEphemeralCompileAuthorization(
+              layerCompileOptions?.previewCompileContext?.compileRunId ?? null
+            )?.productionAuthorizationId ?? null,
           generationProvider: 'POST /api/admin/studio-builder-generate',
           modelAdapter: 'fal-ai/nano-banana-pro/edit via executeGovernedGeneration → generateStudioBuilderAsset',
           forceGenerate: generationPayload.forceGenerate,

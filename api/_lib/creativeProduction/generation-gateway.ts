@@ -156,6 +156,18 @@ export async function executeGovernedGeneration(
 ): Promise<GovernedGenerationResult> {
   const authResolve = resolveLegacyCompatAuthorization({
     productionAuthorizationId: request.productionAuthorizationId,
+    productionAuthorization: request.productionAuthorization,
+    validationMode: request.validationMode,
+    compileRunId: request.compileRunId,
+    org_id: request.orgId,
+    previewSessionId:
+      typeof request.execution.previewSessionId === 'string'
+        ? request.execution.previewSessionId
+        : request.productionAuthorization?.scope.previewSessionId,
+    departmentId:
+      typeof request.execution.departmentId === 'string' ? request.execution.departmentId : undefined,
+    stationId: typeof request.execution.stationId === 'string' ? request.execution.stationId : undefined,
+    projectId: typeof request.execution.projectId === 'string' ? request.execution.projectId : undefined,
   });
   if ('error' in authResolve) {
     return { ok: false, code: authResolve.code, error: authResolve.error };
@@ -263,6 +275,18 @@ export function representGovernedGenerationOnly(
 ): GovernedGenerationResult {
   const authResolve = resolveLegacyCompatAuthorization({
     productionAuthorizationId: request.productionAuthorizationId,
+    productionAuthorization: request.productionAuthorization,
+    validationMode: request.validationMode,
+    compileRunId: request.compileRunId,
+    org_id: request.orgId,
+    previewSessionId:
+      typeof request.execution.previewSessionId === 'string'
+        ? request.execution.previewSessionId
+        : request.productionAuthorization?.scope.previewSessionId,
+    departmentId:
+      typeof request.execution.departmentId === 'string' ? request.execution.departmentId : undefined,
+    stationId: typeof request.execution.stationId === 'string' ? request.execution.stationId : undefined,
+    projectId: typeof request.execution.projectId === 'string' ? request.execution.projectId : undefined,
   });
   if ('error' in authResolve) {
     return { ok: false, code: authResolve.code, error: authResolve.error };

@@ -4,6 +4,8 @@ import {
   ensureApiAccessToken,
 } from '../../../utils/api';
 
+import type { ProductionAuthorization } from '../../../studio-os-core/creative-production/types';
+
 export type StudioBuilderGeneratePayload = {
   departmentId: string;
   packageId: string;
@@ -17,9 +19,14 @@ export type StudioBuilderGeneratePayload = {
   forceGenerate?: boolean;
   /** Shell placement URL only — Scene Assembly Law: never prior generative layers */
   referenceImageUrls?: string[];
-  /** Experience Lab validation compile — ephemeral exploratory_draft path */
+  /** Experience Lab validation compile — server-issued ephemeral authorization */
   validationMode?: boolean;
   productionAuthorizationId?: string;
+  productionAuthorization?: ProductionAuthorization;
+  compileRunId?: string;
+  previewSessionId?: string;
+  org_id?: string;
+  stationId?: string;
 };
 
 export type StudioBuilderGenerateApiResponse = {
