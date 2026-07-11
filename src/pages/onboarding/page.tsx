@@ -13,6 +13,7 @@ type OnboardingRelease = {
   generatedAt: string;
   validationStatus: 'pass' | 'fail';
   contentCoverageStatus?: string;
+  machineReadableValidation?: string;
   documentCount: number;
   artifact?: string;
   checksumSha256?: string;
@@ -91,6 +92,7 @@ export default function OnboardingPackPage() {
         <h1 style={{ fontSize: 32, fontWeight: 600, margin: '8px 0' }}>Complete AI Onboarding</h1>
         <p style={{ color: '#64748b', lineHeight: 1.55 }}>
           One pack · one reading order · one report. Context + Founder Intelligence + Collaboration Intelligence (+ DNA when included).
+          v1.2 adds machine-readable index files for coverage verification before reading.
         </p>
 
         <div style={styles.card}>
@@ -109,6 +111,10 @@ export default function OnboardingPackPage() {
           <div style={styles.row}>
             <span style={{ color: '#64748b' }}>Coverage</span>
             <strong>{release?.contentCoverageStatus ?? '—'}</strong>
+          </div>
+          <div style={styles.row}>
+            <span style={{ color: '#64748b' }}>Machine-readable index</span>
+            <strong>{release?.machineReadableValidation === 'pass' ? 'Verified' : '—'}</strong>
           </div>
           <p style={{ fontSize: 13, color: '#64748b', margin: '16px 0 8px' }}>Permanent URL</p>
           <code style={{ ...styles.mono, display: 'block', marginBottom: 16 }}>{permanentUrl}</code>
@@ -148,6 +154,13 @@ export default function OnboardingPackPage() {
         </div>
 
         <div style={styles.card}>
+          <h2 style={{ margin: '0 0 12px', fontSize: 18 }}>Machine-readable index (v1.2)</h2>
+          <p style={{ fontSize: 14, color: '#64748b', lineHeight: 1.6, margin: '0 0 12px' }}>
+            Inside the pack: onboarding-state.json, onboarding-index.json, coverage-map.json, cross-capsule-map.json,
+            topic-index.json, source-of-truth-map.json — validate structure before reading full documents.
+          </p>
+        </div>
+
           <h2 style={{ margin: '0 0 12px', fontSize: 18 }}>Included capsules</h2>
           <ul style={{ margin: 0, paddingLeft: 18, lineHeight: 1.8 }}>
             {(release?.includedCapsules ?? []).map((c) => (

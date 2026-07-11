@@ -3,7 +3,7 @@
  * Keep in sync with api/_lib/onboardingPackConstants.ts
  */
 
-export const ONBOARDING_PACK_VERSION = '1.1.0';
+export const ONBOARDING_PACK_VERSION = '1.2.0';
 
 export const ONBOARDING_PACK_DOWNLOAD_BASE = '/downloads/onboarding-packs';
 
@@ -19,15 +19,17 @@ Download: https://fsbw.vercel.app/onboarding/latest
 
 Follow START_HERE.md exactly:
 
-1. Read every file in MASTER_MANIFEST.md order — completely, not skimmed
-2. Order: AI Context → Founder Intelligence → Studio DNA (if included) → Collaboration Intelligence → CURRENT_HANDOFF
-3. Read ONBOARDING_GUIDE.md for source-of-truth hierarchy and fact classification
-4. Do NOT stop after inspecting archive contents
-5. Do NOT produce intermediate summaries
-6. Do NOT begin implementation, sprints, or architecture changes
-7. Use ONBOARDING_REPORT_TEMPLATE.md as the required structure — populate every section in your own words
-8. Generate ONE final onboarding report for the entire pack
-9. Stop and wait for my approval before contributing`;
+1. Validate pack structure using onboarding-state.json and companion index files (onboarding-index.json, coverage-map.json, cross-capsule-map.json, topic-index.json, source-of-truth-map.json)
+2. Read every file in MASTER_MANIFEST.md order — completely, not skimmed
+3. Order: AI Context → Founder Intelligence → Studio DNA (if included) → Collaboration Intelligence → CURRENT_HANDOFF
+4. Read ONBOARDING_GUIDE.md for source-of-truth hierarchy and fact classification
+5. Do NOT stop after inspecting archive contents
+6. Do NOT produce intermediate summaries
+7. Do NOT begin implementation, sprints, or architecture changes
+8. Use ONBOARDING_REPORT_TEMPLATE.md as the required structure — populate every section in your own words
+9. Generate ONE final onboarding report for the entire pack
+10. Cite which capsule informed each major understanding area
+11. Stop and wait for my approval before contributing`;
 
 export function versionedOnboardingPackZipFileName(version: string): string {
   return `StudioOS_OnboardingPack_v${version}.zip`;

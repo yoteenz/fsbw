@@ -46843,3 +46843,27 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Files:** `api/studio-institute/invites.ts`, invite-system types/store/access, landing + interview + invites pages, tests.
 
+---
+
+## 2026-07-11 — Unified Onboarding Pack v1.2.0 machine-readable index layer (COMPOSER SPRINT)
+
+**Context:** Approved P0 sprint — onboarding pack had grown large enough that external AI models could not efficiently verify complete coverage before producing onboarding reports. Sprint goal: make pack self-describing and machine-ingestable without reducing documentation.
+
+**Topics covered (full chat arc):** Prior work included P0 forensic sprint (shared generation pipeline regression restoration `b3e4fe33c`), invite engagement tracking (`0e410ba8b`), and shell-lock forensic Q&A (dual registry: ephemeral vs localStorage; `clearValidationPreviewSession` + `skipEnvironmentShell` causing lock-shell failures). This task: **Unified Onboarding Pack v2 — Machine-Readable Onboarding State & Coverage Index**.
+
+**Shipped v1.2.0:**
+- New generator: `scripts/lib/onboarding-pack-machine-readable.mjs` — produces 6 JSON index files + validates report-section coverage, CI first-class presence, cross-references, JSON validity
+- Generated files in pack (phase 0): `onboarding-state.json`, `onboarding-index.json`, `coverage-map.json`, `cross-capsule-map.json`, `topic-index.json`, `source-of-truth-map.json`
+- Updated `scripts/package-onboarding-pack-zip.mjs` — v1.2.0, 93 required files, fails packaging if report sections not answerable, CI missing from any inventory, or JSON validation fails
+- Updated `MASTER_MANIFEST.md` generation — machine-readable index section, 19 expected report sections
+- Updated `START_HERE.md` — validate via JSON index before reading documents
+- Updated `UNIFIED_ONBOARDING_PROMPT`, `api/_lib/onboardingPackConstants.ts`, onboarding hub `/onboarding`, docs `docs/studio-os/unified-onboarding-pack/README.md`
+- Release manifest schema v2 with `machineReadableValidation: pass`
+- Stable download route unchanged: `/onboarding/latest`
+
+**Validation gates:** Every required document exists; every manifest entry on disk; every topic resolves; every capsule contributes; Collaboration Intelligence in state/index/coverage/cross-capsule/topic maps; all 19 report sections answerable from indexed documents; all JSON validates.
+
+**Commit at pack build:** `0e410ba8b` (pre-sprint); new commit pending deploy.
+
+**Conventions:** Machine-readable layer supplements but does not replace reading documents. External AI should validate structure via `onboarding-state.json` first, then read `MASTER_MANIFEST.md` order.
+

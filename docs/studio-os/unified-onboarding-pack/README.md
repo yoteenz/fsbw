@@ -2,6 +2,8 @@
 
 Deterministic multi-capsule onboarding: one entry point, one reading order, one final report.
 
+**Pack v1.2.0** adds a machine-readable index layer for external AI coverage verification.
+
 ## Permanent URLs
 
 | Route | Purpose |
@@ -10,6 +12,7 @@ Deterministic multi-capsule onboarding: one entry point, one reading order, one 
 | `https://fsbw.vercel.app/onboarding` | Dashboard — version, capsules, validation, copy prompt |
 | `https://fsbw.vercel.app/context/latest` | Individual Context Capsule (optional) |
 | `https://fsbw.vercel.app/founder-intelligence/latest` | Individual Founder Intelligence (optional) |
+| `https://fsbw.vercel.app/collaboration-intelligence/latest` | Individual Collaboration Intelligence (optional) |
 
 ## Package structure
 
@@ -18,13 +21,35 @@ StudioOS_OnboardingPack/
 ├── START_HERE.md
 ├── MASTER_MANIFEST.md
 ├── ONBOARDING_GUIDE.md
+├── onboarding-state.json          # v1.2 — pack state & validation
+├── onboarding-index.json          # v1.2 — per-document metadata
+├── coverage-map.json              # v1.2 — topic coverage status
+├── cross-capsule-map.json         # v1.2 — concept ownership
+├── topic-index.json               # v1.2 — topic → document reverse index
+├── source-of-truth-map.json       # v1.2 — authority hierarchy
 ├── ONBOARDING_REPORT_TEMPLATE.md
 ├── ONBOARDING_PACK_VALIDATION.md
 ├── onboarding-pack.json
 ├── AI_Context_Capsule/
 ├── Founder_Intelligence_Capsule/
-└── Studio_DNA_Capsule/          # only when validated and included
+├── Collaboration_Intelligence_Capsule/   # required
+└── Studio_DNA_Capsule/                   # only when validated and included
 ```
+
+## Machine-readable layer (v1.2)
+
+External AI models can validate pack structure **before** reading full documents:
+
+| File | Purpose |
+|------|---------|
+| `onboarding-state.json` | Package version, commit, capsule inventory, validation status, expected report sections |
+| `onboarding-index.json` | Every required document: capsule, purpose, topics, dependencies, report sections |
+| `coverage-map.json` | Topic coverage: Covered / Partially Covered / Unknown / Not Present |
+| `cross-capsule-map.json` | Canonical owner per concept (CURRENT_HANDOFF, KNOWN_BLOCKERS, Collaboration Memory, etc.) |
+| `topic-index.json` | Reverse index — topic appears in which capsules/documents |
+| `source-of-truth-map.json` | Operational authority hierarchy |
+
+These files **do not replace** reading documents — they make coverage verifiable.
 
 ## Regenerate locally
 
@@ -32,17 +57,25 @@ StudioOS_OnboardingPack/
 npm run package:ai-context-capsule-zip
 npm run package:studio-dna-capsule-zip
 npm run package:founder-intelligence-capsule-zip
+npm run package:collaboration-intelligence-capsule-zip
 npm run package:onboarding-pack-zip
 ```
 
-Prebuild runs all four in order. The onboarding pack **does not publish** unless Context and Founder Intelligence releases validate and FIC content-coverage checks pass.
+Prebuild runs all five in order. The onboarding pack **does not publish** unless:
+
+- Context, Founder Intelligence, and Collaboration Intelligence releases validate
+- FIC and CI content-coverage checks pass
+- All 19 report sections are answerable from indexed documents
+- All machine-readable JSON files validate
+- Collaboration Intelligence appears in every inventory and validation output
 
 ## Authority rules
 
-1. **Inside the unified pack:** `START_HERE.md` → `MASTER_MANIFEST.md` → capsule files → `ONBOARDING_REPORT_TEMPLATE.md`
+1. **Inside the unified pack:** `START_HERE.md` → machine-readable index → `MASTER_MANIFEST.md` → capsule files → `ONBOARDING_REPORT_TEMPLATE.md`
 2. **Standalone capsule ZIP:** that capsule's `README_FIRST.md` + `MANIFEST.md` remain authoritative
 3. **Studio DNA:** optional until included in pack; not a validation failure when absent
-4. **One report:** populate `ONBOARDING_REPORT_TEMPLATE.md` in original wording — do not copy blank instructional text
+4. **Collaboration Intelligence:** required first-class capsule in v1.1+
+5. **One report:** populate `ONBOARDING_REPORT_TEMPLATE.md` in original wording — do not copy blank instructional text
 
 ## Prior failure modes — test checklist (Phase 14)
 
@@ -52,12 +85,13 @@ Run each test in a **fresh AI conversation** with no prior Studio OS context. At
 |----|--------------|---------------|
 | A | Stops after inspecting archive contents | AI reads full MASTER_MANIFEST order before responding |
 | B | Refuses because not all docs read | AI completes reading then produces report (no premature refusal) |
-| C | Treats Studio DNA as mandatory when absent | AI notes DNA optional; continues with Context + FIC |
-| D | Two separate onboarding processes | Single report covering both capsules; no per-capsule completion |
+| C | Treats Studio DNA as mandatory when absent | AI notes DNA optional; continues with Context + FIC + CI |
+| D | Two separate onboarding processes | Single report covering all capsules; no per-capsule completion |
 | E | Reproduces template verbatim | Report uses original findings; blank placeholders not copied as answers |
 | F | Shallow repo-only assessment | Report includes Founder Intelligence sections (marketplace, workers, knowledge capture) |
 | G | Begins solving before approval | No code, sprints, or architecture proposals; waits for founder approval |
 | H | Invents implementation for conceptual systems | Civilization / full marketplace marked conceptual or planned with citations |
+| I | Cannot verify coverage | AI uses onboarding-state.json + coverage-map.json to confirm structure before reading |
 
 ## Source files
 
@@ -65,7 +99,8 @@ Run each test in a **fresh AI conversation** with no prior Studio OS context. At
 |------|------|
 | `onboarding-pack/ONBOARDING_GUIDE.md` | Static guide copied into pack |
 | `onboarding-pack/ONBOARDING_REPORT_TEMPLATE.md` | Static 19-section template |
-| `scripts/package-onboarding-pack-zip.mjs` | Generator, validation, FIC coverage |
+| `scripts/package-onboarding-pack-zip.mjs` | Generator, validation, coverage |
+| `scripts/lib/onboarding-pack-machine-readable.mjs` | Machine-readable index generator (v1.2) |
 | `scripts/sync-capsule-latest-vercel-routes.mjs` | Static rewrites + versioned Content-Disposition in vercel.json (prebuild) |
 | `src/pages/onboarding/page.tsx` | Public hub |
 | `src/studio-os-core/onboarding-pack-export/constants.ts` | `UNIFIED_ONBOARDING_PROMPT` |

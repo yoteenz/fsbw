@@ -7,10 +7,15 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execSync } from 'node:child_process';
+import {
+  generateMachineReadableLayer,
+  validateReportTemplateSections,
+  REPORT_SECTIONS,
+} from './lib/onboarding-pack-machine-readable.mjs';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
-const PACK_VERSION = '1.1.0';
+const PACK_VERSION = '1.2.0';
 const PACK_FOLDER = 'StudioOS_OnboardingPack';
 const LATEST_ALIAS = 'latest.zip';
 const DOWNLOAD_BASE = '/downloads/onboarding-packs';
@@ -262,6 +267,12 @@ function buildMasterManifestEntries(includeDna) {
   add('START_HERE.md', 0);
   add('MASTER_MANIFEST.md', 0);
   add('ONBOARDING_GUIDE.md', 0);
+  add('onboarding-state.json', 0);
+  add('onboarding-index.json', 0);
+  add('coverage-map.json', 0);
+  add('cross-capsule-map.json', 0);
+  add('topic-index.json', 0);
+  add('source-of-truth-map.json', 0);
 
   for (const f of CONTEXT_READING) add(`AI_Context_Capsule/${f}`, 1);
   add('AI_Context_Capsule/context-capsule.json', 1);
@@ -333,13 +344,29 @@ ${dnaLine}
 
 ---
 
+## Machine-readable index (verify before reading)
+
+Before reading capsule documents, inspect these generated JSON files to verify pack structure and coverage:
+
+- **onboarding-state.json** — pack state, capsule inventory, validation status
+- **onboarding-index.json** — per-document metadata and report-section mapping
+- **coverage-map.json** — topic coverage status
+- **cross-capsule-map.json** — concept ownership across capsules
+- **topic-index.json** — reverse topic → document index
+- **source-of-truth-map.json** — operational authority hierarchy
+
+These files do **not** replace reading the documents — they make coverage verifiable.
+
+---
+
 ## Where to go next
 
-1. **MASTER_MANIFEST.md** — full reading order  
-2. **ONBOARDING_GUIDE.md** — how to classify facts, sources, and implementation state  
-3. Read every manifest entry in order  
-4. **ONBOARDING_REPORT_TEMPLATE.md** — complete your single final report  
-5. **Stop** — wait for founder approval
+1. **onboarding-state.json** — validate pack structure  
+2. **MASTER_MANIFEST.md** — full reading order  
+3. **ONBOARDING_GUIDE.md** — how to classify facts, sources, and implementation state  
+4. Read every manifest entry in order  
+5. **ONBOARDING_REPORT_TEMPLATE.md** — complete your single final report  
+6. **Stop** — wait for founder approval
 
 ---
 
@@ -365,9 +392,24 @@ function generateMasterManifest(entries, meta) {
     `| **Required file count** | ${entries.length} |`,
     `| **Manifest checksum** | ${meta.manifestChecksum} |`,
     '',
+    '## Machine-readable index (phase 0)',
+    '',
+    '| File | Purpose |',
+    '|------|---------|',
+    '| `onboarding-state.json` | Pack state, validation, capsule inventory |',
+    '| `onboarding-index.json` | Per-document metadata and report mapping |',
+    '| `coverage-map.json` | Topic coverage verification |',
+    '| `cross-capsule-map.json` | Concept ownership across capsules |',
+    '| `topic-index.json` | Topic → document reverse index |',
+    '| `source-of-truth-map.json` | Operational authority hierarchy |',
+    '',
     '## Per-capsule counts',
     '',
     ...Object.entries(meta.perCapsuleFileCounts).map(([k, v]) => `- **${k}:** ${v} files`),
+    '',
+    `## Expected report sections (${REPORT_SECTIONS.length})`,
+    '',
+    ...REPORT_SECTIONS.map((s) => `- ${s.number}. ${s.title}`),
     '',
     '## Complete reading order',
     '',
@@ -406,10 +448,13 @@ ${meta.missingOptionalCapsules.length ? meta.missingOptionalCapsules.map((c) => 
 ## Checks
 
 - ✓ START_HERE.md, MASTER_MANIFEST.md, ONBOARDING_GUIDE.md, ONBOARDING_REPORT_TEMPLATE.md present
-- ✓ Required capsules present
+- ✓ Machine-readable index layer (onboarding-state.json + 5 companion files) generated
+- ✓ Required capsules present (including Collaboration Intelligence Capsule)
 - ✓ Master manifest entries exist on disk
 - ✓ Founder Intelligence content coverage validated
 - ✓ Collaboration Intelligence content coverage validated
+- ✓ All ${REPORT_SECTIONS.length} report sections answerable from indexed documents
+- ✓ Topic index, cross-capsule map, and source-of-truth map validated
 - ✓ Single final report template defined
 - ✓ No mandatory reference to absent capsules
 
@@ -477,6 +522,7 @@ function packageOnboardingPack() {
     'AI Context': CONTEXT_READING.length + 2,
     'Founder Intelligence': FIC_READING.length + 1,
     'Collaboration Intelligence': CI_READING.length + 1,
+    'Machine-Readable Index': 6,
   };
   if (includeDna) perCapsuleFileCounts['Studio DNA'] = DNA_READING.length + 1;
 
@@ -490,12 +536,49 @@ function packageOnboardingPack() {
     perCapsuleFileCounts,
   };
 
+  const templateErrors = validateReportTemplateSections(packDir);
+  if (templateErrors.length) {
+    console.error('\n❌ ONBOARDING_REPORT_TEMPLATE validation failed:\n');
+    for (const e of templateErrors) console.error(`   • ${e}`);
+    process.exit(1);
+  }
+
+  const machineReadable = generateMachineReadableLayer({
+    packDir,
+    packVersion: PACK_VERSION,
+    gitCommit,
+    generatedAt,
+    manifestEntries,
+    manifestChecksum,
+    includeDna,
+    contextReading: CONTEXT_READING,
+    ficReading: FIC_READING,
+    dnaReading: DNA_READING,
+    ciReading: CI_READING,
+    capsuleReleases: {
+      context: contextRelease,
+      founderIntelligence: ficRelease,
+      collaborationIntelligence: ciRelease,
+      studioDna: includeDna ? loadRelease('api/_lib/studio-dna-capsule-release.json') : null,
+    },
+    includedCapsules,
+    missingOptionalCapsules: missingOptional,
+    archiveChecksum: null,
+  });
+
+  if (!machineReadable.validation.pass) {
+    console.error('\n❌ Machine-readable onboarding validation failed:\n');
+    for (const e of machineReadable.validation.errors) console.error(`   • ${e}`);
+    process.exit(1);
+  }
+
   fs.writeFileSync(path.join(packDir, 'MASTER_MANIFEST.md'), generateMasterManifest(manifestEntries, meta));
 
   const actualFileCount = manifestEntries.length;
   const onboardingPackJson = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     packVersion: PACK_VERSION,
+    machineReadableSchemaVersion: 2,
     canonVersion: contextRelease.currentVersion,
     buildNumber: gitCommit.slice(0, 7),
     generatedAt,
@@ -521,7 +604,16 @@ function packageOnboardingPack() {
     contentCoverageStatus: 'pass',
     operationalAuthorityMap: OPERATIONAL_AUTHORITY_MAP,
     reportTemplatePath: 'ONBOARDING_REPORT_TEMPLATE.md',
-    compatibilityVersion: '1.0.0',
+    reportSectionCount: REPORT_SECTIONS.length,
+    machineReadableFiles: [
+      'onboarding-state.json',
+      'onboarding-index.json',
+      'coverage-map.json',
+      'cross-capsule-map.json',
+      'topic-index.json',
+      'source-of-truth-map.json',
+    ],
+    compatibilityVersion: '1.2.0',
     permanentLatestUrl: PERMANENT_LATEST_PATH,
     capsules: {
       context: { version: contextRelease.currentVersion, artifact: contextRelease.artifact },
@@ -534,6 +626,7 @@ function packageOnboardingPack() {
   meta.actualFileCount = actualFileCount;
   meta.requiredFileCount = manifestEntries.length;
   writeValidation(packDir, meta, true);
+
   fs.writeFileSync(path.join(packDir, 'onboarding-pack.json'), JSON.stringify(onboardingPackJson, null, 2) + '\n');
 
   for (const entry of manifestEntries) {
@@ -559,7 +652,15 @@ function packageOnboardingPack() {
   const archiveChecksum = sha256File(zipPath);
   const stat = fs.statSync(zipPath);
   onboardingPackJson.archiveChecksum = archiveChecksum;
+  onboardingPackJson.machineReadableValidation = machineReadable.validation.pass ? 'pass' : 'fail';
   fs.writeFileSync(path.join(packDir, 'onboarding-pack.json'), JSON.stringify(onboardingPackJson, null, 2) + '\n');
+
+  const statePath = path.join(packDir, 'onboarding-state.json');
+  const state = JSON.parse(fs.readFileSync(statePath, 'utf8'));
+  state.checksumValidation.archiveChecksumSha256 = archiveChecksum;
+  state.checksumValidation.status = 'pass';
+  fs.writeFileSync(statePath, JSON.stringify(state, null, 2) + '\n');
+  writeValidation(packDir, { ...meta, actualFileCount, archiveChecksum }, true);
 
   const stagingLatest = path.join(publicOut, '.latest-staging.zip');
   fs.copyFileSync(zipPath, stagingLatest);
@@ -571,13 +672,14 @@ function packageOnboardingPack() {
   fs.mkdirSync(publicOnboardingDir, { recursive: true });
 
   const releaseManifest = {
-    schemaVersion: 1,
+    schemaVersion: 2,
     packType: 'unified-onboarding',
     currentVersion: PACK_VERSION,
     generatedAt,
     gitCommit,
     validationStatus: 'pass',
     contentCoverageStatus: 'pass',
+    machineReadableValidation: 'pass',
     documentCount: actualFileCount,
     checksumSha256: archiveChecksum,
     artifact: fileName,
@@ -609,7 +711,8 @@ function packageOnboardingPack() {
   console.log(`  Included:         ${includedCapsules.join(', ')}`);
   console.log(`  Required files:   ${actualFileCount}`);
   console.log(`  Permanent latest: ${PERMANENT_LATEST_PATH}`);
-  console.log(`  Dashboard:        /onboarding\n`);
+  console.log(`  Dashboard:        /onboarding`);
+  console.log(`  Report sections:  ${REPORT_SECTIONS.length}\n`);
 }
 
 packageOnboardingPack();

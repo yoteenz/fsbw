@@ -1,18 +1,19 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "packType": "unified-onboarding",
-  "currentVersion": "1.1.0",
-  "generatedAt": "2026-07-11T16:13:39.765Z",
-  "gitCommit": "3051691d2b056bf710890c3afec3d75c115137c3",
+  "currentVersion": "1.2.0",
+  "generatedAt": "2026-07-11T16:40:57.056Z",
+  "gitCommit": "0e410ba8b3b8cbea314e9dcc5c1ac2a8e860b69f",
   "validationStatus": "pass",
   "contentCoverageStatus": "pass",
-  "documentCount": 87,
-  "checksumSha256": "7cf3f37590c92dc2ab2c08d278743ff4347c738b1f31610b044f9d66eb42bd78",
-  "artifact": "StudioOS_OnboardingPack_v1.1.0.zip",
+  "machineReadableValidation": "pass",
+  "documentCount": 93,
+  "checksumSha256": "20acc6a1ab8236430ace69201cb2743ad098daf0dbe4cb54c4c53cafe03f26b4",
+  "artifact": "StudioOS_OnboardingPack_v1.2.0.zip",
   "permanentLatestUrl": "/onboarding/latest",
   "latestDownloadPath": "/onboarding/latest",
   "legacyLatestDownloadPath": "/downloads/onboarding-packs/latest.zip",
-  "versionedDownloadPath": "/downloads/onboarding-packs/archive/StudioOS_OnboardingPack_v1.1.0.zip",
+  "versionedDownloadPath": "/downloads/onboarding-packs/archive/StudioOS_OnboardingPack_v1.2.0.zip",
   "includedCapsules": [
     {
       "name": "AI Context Capsule",
@@ -34,5 +35,5 @@
   "missingOptionalCapsules": [],
   "packageHealth": 100,
   "readyForAiOnboarding": true,
-  "sizeBytes": 153109
+  "sizeBytes": 172837
 }
