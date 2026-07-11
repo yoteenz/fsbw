@@ -13,6 +13,7 @@ import {
   INVITE_UNAVAILABLE_MESSAGE,
   verifyInvitePin,
   storeActiveInviteToken,
+  trackInviteEngagement,
   type ExpertInvite,
 } from '../../../../studio-os-core/expert-capture/invite-system';
 import { getInviteProfileLabel } from '../../../../studio-os-core/expert-capture/invite-system/invite-profiles';
@@ -43,6 +44,7 @@ export default function StudioInstituteInviteLandingPage() {
       else {
         setInvite(inv);
         if (isOwnerPreview && inv) recordInviteAudit(inv.id, 'invite_previewed');
+        else if (inv && (!inv.hasPin && !inv.pinHash)) void trackInviteEngagement(token, 'link_opened');
         if (!inv?.hasPin && !inv?.pinHash) setPinOk(true);
       }
       setLoading(false);
@@ -55,6 +57,7 @@ export default function StudioInstituteInviteLandingPage() {
     if (ok) {
       setPinOk(true);
       setPinError(null);
+      if (!isOwnerPreview && token) void trackInviteEngagement(token, 'link_opened');
     } else {
       setPinError('Incorrect PIN. Please try again.');
     }
@@ -110,6 +113,7 @@ export default function StudioInstituteInviteLandingPage() {
 
   const continueInterview = () => {
     if (isOwnerPreview) return;
+    void trackInviteEngagement(invite.token, 'interview_started');
     storeActiveInviteToken(invite.token);
     navigate(STUDIO_INSTITUTE_ROUTES.interview);
   };

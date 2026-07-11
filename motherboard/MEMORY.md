@@ -46826,3 +46826,20 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Remaining:** Experience Engine Layer 1 separate sprint after founder mobile verify of Creative Studio on normal Safari/Chrome.
 
+---
+
+## 2026-07-11 — Studio Institute invite link opened / interview started tracking
+
+**Context:** User asked to see whether an interview invite link has been opened, viewed, or started from Invite Manager.
+
+**Shipped:**
+- DB columns `link_opened_at`, `interview_started_at` on `studio_institute_invites` (migration `20260711120000_studio_institute_invite_engagement.sql`, applied to Supabase)
+- Expert-side `trackInviteEngagement(token, 'link_opened' | 'interview_started')` — no owner password; API `PATCH` action `track_engagement`
+- Landing page records **link opened** after PIN (if any) or on load; **interview started** on Continue
+- Interview page records **interview started** on mount (resume path)
+- Invite Manager shows engagement badge: Not opened · Link opened · Interview started · In progress · Completed, with timestamps and Refresh button
+- New status value `started` between `not_started` and `in_progress`
+- Audit events: `invite_link_opened`, `interview_started`
+
+**Files:** `api/studio-institute/invites.ts`, invite-system types/store/access, landing + interview + invites pages, tests.
+

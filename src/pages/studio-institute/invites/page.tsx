@@ -11,6 +11,8 @@ import {
   createInviteRecord,
   deleteInviteOnServer,
   displayInviteStatus,
+  formatInviteEngagementTimestamps,
+  resolveInviteEngagementStage,
   fetchAllInvites,
   InviteApiError,
   loadLocalInvites,
@@ -506,14 +508,35 @@ export default function StudioInstituteInvitesPage() {
           {error ? <p style={{ color: '#dc2626', fontSize: 14, marginTop: 8 }}>{error}</p> : null}
         </div>
 
-        <h2 style={{ fontSize: 18, fontWeight: 600 }}>All invites ({invites.length})</h2>
-        {invites.map((inv) => (
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 600, margin: 0 }}>All invites ({invites.length})</h2>
+          <SiBtn onClick={() => void load()} disabled={loading}>
+            Refresh
+          </SiBtn>
+        </div>
+        {invites.map((inv) => {
+          const engagement = resolveInviteEngagementStage(inv);
+          const engagementColor =
+            engagement === 'completed'
+              ? '#059669'
+              : engagement === 'in_progress' || engagement === 'started'
+                ? '#2563eb'
+                : engagement === 'link_opened'
+                  ? '#d97706'
+                  : '#94a3b8';
+          const engagementTimestamps = formatInviteEngagementTimestamps(inv);
+          return (
           <div key={inv.id} style={siStyles.card}>
             <div style={{ marginBottom: 10 }}>
               <strong>{inv.inviteeName}</strong> · {inv.businessName}
               <p style={{ margin: '6px 0', fontSize: 13, color: '#64748b' }}>
-                {getInviteProfileLabel(inv.profileId)} · {displayInviteStatus(inv)} · {inv.progressPercent}% progress
+                {getInviteProfileLabel(inv.profileId)} ·{' '}
+                <span style={{ color: engagementColor, fontWeight: 600 }}>{displayInviteStatus(inv)}</span>
+                {inv.progressPercent > 0 ? ` · ${inv.progressPercent}% progress` : ''}
               </p>
+              {engagementTimestamps ? (
+                <p style={{ margin: '4px 0', fontSize: 12, color: '#64748b' }}>{engagementTimestamps}</p>
+              ) : null}
               <p style={{ margin: 0, fontSize: 12, color: '#94a3b8' }}>
                 Worker: {inv.workerBeingCreated || '—'}
                 {inv.lastActiveAt ? ` · Last active ${new Date(inv.lastActiveAt).toLocaleString()}` : ''}
@@ -591,7 +614,8 @@ export default function StudioInstituteInvitesPage() {
 
             {expandedId === inv.id ? <InviteSharePanel invite={inv} compact={false} /> : null}
           </div>
-        ))}
+        );
+        })}
       </div>
     </div>
   );

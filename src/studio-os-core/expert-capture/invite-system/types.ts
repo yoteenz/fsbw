@@ -1,6 +1,6 @@
 /** Private Expert Invite System — canonical types */
 
-export type ExpertInviteProgressStatus = 'not_started' | 'in_progress' | 'completed' | 'archived';
+export type ExpertInviteProgressStatus = 'not_started' | 'started' | 'in_progress' | 'completed' | 'archived';
 
 export type InviteAccessStatus =
   | 'active'
@@ -36,6 +36,10 @@ export type ExpertInvite = {
   currentQuestionIndex: number | null;
   timeSpentMinutes: number;
   lastActiveAt: string | null;
+  /** First time expert opened the invite landing page */
+  linkOpenedAt: string | null;
+  /** First time expert continued into the interview */
+  interviewStartedAt: string | null;
   latestLesson: string | null;
   knowledgeExtractedCount: number;
   archivedAt: string | null;
@@ -78,6 +82,8 @@ export type InviteAuditEventType =
   | 'message_copied'
   | 'share_initiated'
   | 'invite_previewed'
+  | 'invite_link_opened'
+  | 'interview_started'
   | 'link_regenerated'
   | 'access_paused'
   | 'access_resumed'

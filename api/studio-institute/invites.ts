@@ -25,6 +25,8 @@ type InviteRow = {
   current_question_index: number | null;
   time_spent_minutes: number;
   last_active_at: string | null;
+  link_opened_at: string | null;
+  interview_started_at: string | null;
   latest_lesson: string | null;
   knowledge_extracted_count: number;
   expires_at: string | null;
@@ -44,6 +46,8 @@ const AUDIT_EVENTS = new Set([
   'message_copied',
   'share_initiated',
   'invite_previewed',
+  'invite_link_opened',
+  'interview_started',
   'link_regenerated',
   'access_paused',
   'access_resumed',
@@ -104,6 +108,8 @@ function rowToInvite(row: InviteRow, opts: { includePinHash?: boolean } = {}) {
     currentQuestionIndex: row.current_question_index,
     timeSpentMinutes: Number(row.time_spent_minutes ?? 0),
     lastActiveAt: row.last_active_at,
+    linkOpenedAt: row.link_opened_at,
+    interviewStartedAt: row.interview_started_at,
     latestLesson: row.latest_lesson,
     knowledgeExtractedCount: row.knowledge_extracted_count ?? 0,
     expiresAt: row.expires_at,
@@ -355,6 +361,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const now = new Date().toISOString();
     let audit_log = row.audit_log ?? [];
 
+    if (!owner && token && action === 'track_engagement') {
+      const trackEvent = typeof body.trackEvent === 'string' ? body.trackEvent : '';
+      if (trackEvent !== 'link_opened' && trackEvent !== 'interview_started') {
+        return res.status(400).json({ error: 'Invalid trackEvent' });
+      }
+      const update: Record<string, unknown> = { updated_at: now };
+      let nextAudit = audit_log;
+      if (trackEvent === 'link_opened' && !row.link_opened_at) {
+        update.link_opened_at = now;
+        nextAudit = appendAudit({ ...row, audit_log: nextAudit }, 'invite_link_opened');
+      }
+      if (trackEvent === 'interview_started') {
+        if (!row.link_opened_at && !update.link_opened_at) {
+          update.link_opened_at = now;
+          nextAudit = appendAudit({ ...row, audit_log: nextAudit }, 'invite_link_opened');
+        }
+        if (!row.interview_started_at) {
+          update.interview_started_at = now;
+          if (row.status === 'not_started') update.status = 'started';
+          nextAudit = appendAudit({ ...row, audit_log: nextAudit }, 'interview_started');
+        }
+      }
+      if (nextAudit !== audit_log) update.audit_log = nextAudit;
+      if (Object.keys(update).length === 1) {
+        return res.status(200).json({ invite: rowToInvite(row) });
+      }
+      const { data, error } = await admin
+        .from('studio_institute_invites')
+        .update(update)
+        .eq('id', row.id)
+        .select('*')
+        .single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ invite: rowToInvite(data as InviteRow) });
+    }
+
     if (owner && action === 'regenerate_token') {
       const oldToken = row.token;
       let newToken = generateToken();
@@ -397,6 +439,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'latestLesson',
       'knowledgeExtractedCount',
       'status',
+      'linkOpenedAt',
+      'interviewStartedAt',
     ];
 
     const update: Record<string, unknown> = { updated_at: now };
@@ -407,6 +451,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       currentQuestionIndex: 'current_question_index',
       timeSpentMinutes: 'time_spent_minutes',
       lastActiveAt: 'last_active_at',
+      linkOpenedAt: 'link_opened_at',
+      interviewStartedAt: 'interview_started_at',
       latestLesson: 'latest_lesson',
       knowledgeExtractedCount: 'knowledge_extracted_count',
       status: 'status',

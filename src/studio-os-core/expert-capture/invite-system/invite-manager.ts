@@ -39,6 +39,8 @@ export function createInviteRecord(
     currentQuestionIndex: null,
     timeSpentMinutes: 0,
     lastActiveAt: null,
+    linkOpenedAt: null,
+    interviewStartedAt: null,
     latestLesson: null,
     knowledgeExtractedCount: 0,
     archivedAt: null,
@@ -77,5 +79,7 @@ export function deriveInviteStatusFromProgress(
   if (current === 'archived') return 'archived';
   if (sessionCompleted) return 'completed';
   if (progressPercent > 0) return 'in_progress';
+  if (current === 'started') return 'started';
+  if (current === 'in_progress') return 'started';
   return current === 'completed' ? 'completed' : 'not_started';
 }

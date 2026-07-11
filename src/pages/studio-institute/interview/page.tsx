@@ -8,6 +8,7 @@ import {
   fetchInviteByToken,
   readActiveInviteToken,
   STUDIO_INSTITUTE_ROUTES,
+  trackInviteEngagement,
   type ExpertInvite,
 } from '../../../studio-os-core/expert-capture/invite-system';
 import { ExpertCaptureInterviewView } from '../../expert-capture/ExpertCaptureInterviewView';
@@ -26,6 +27,7 @@ export default function StudioInstituteInterviewPage() {
     }
     void fetchInviteByToken(token).then((inv) => {
       setInvite(inv);
+      if (inv) void trackInviteEngagement(token, 'interview_started');
       setLoading(false);
     });
   }, []);

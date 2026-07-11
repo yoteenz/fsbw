@@ -13,6 +13,8 @@ import {
   isInviteExpired,
   regenerateInviteToken,
   resolveInviteAccess,
+  resolveInviteEngagementStage,
+  displayInviteEngagement,
   studioInstitutePath,
 } from './index';
 
@@ -63,9 +65,31 @@ describe('Studio Institute Invite System', () => {
 
   it('derives invite status from session progress', () => {
     expect(deriveInviteStatusFromProgress('not_started', 0, false)).toBe('not_started');
+    expect(deriveInviteStatusFromProgress('started', 0, false)).toBe('started');
     expect(deriveInviteStatusFromProgress('not_started', 25, false)).toBe('in_progress');
     expect(deriveInviteStatusFromProgress('in_progress', 80, true)).toBe('completed');
     expect(deriveInviteStatusFromProgress('archived', 50, false)).toBe('archived');
+  });
+
+  it('reports engagement stage for owner dashboard', () => {
+    const invite = createInviteRecord({
+      inviteeName: 'Jane',
+      businessName: 'Acme',
+      role: 'CPA',
+      workerBeingCreated: 'Worker',
+      profileId: TAX_PREPARATION_PROFILE.id,
+      companyId: TAX_PREPARATION_PROFILE.companyId,
+    });
+    expect(resolveInviteEngagementStage(invite)).toBe('not_opened');
+    expect(displayInviteEngagement(invite)).toBe('Not opened');
+    invite.linkOpenedAt = new Date().toISOString();
+    expect(resolveInviteEngagementStage(invite)).toBe('link_opened');
+    invite.interviewStartedAt = new Date().toISOString();
+    invite.status = 'started';
+    expect(resolveInviteEngagementStage(invite)).toBe('started');
+    invite.progressPercent = 10;
+    invite.status = 'in_progress';
+    expect(resolveInviteEngagementStage(invite)).toBe('in_progress');
   });
 
   it('syncs invite progress from expert capture session', () => {

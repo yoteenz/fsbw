@@ -43,7 +43,42 @@ export function accessStatusLabel(status: InviteAccessStatus): string {
 export function displayInviteStatus(invite: ExpertInvite): string {
   const access = resolveInviteAccess(invite);
   if (!access.ok) return accessStatusLabel(access.reason === 'not_found' ? 'revoked' : access.reason);
-  if (invite.status === 'completed') return 'Completed';
-  if (invite.progressPercent > 0) return 'In Progress';
-  return 'Active';
+  return displayInviteEngagement(invite);
+}
+
+export type InviteEngagementStage = 'not_opened' | 'link_opened' | 'started' | 'in_progress' | 'completed';
+
+export function resolveInviteEngagementStage(invite: ExpertInvite): InviteEngagementStage {
+  if (invite.status === 'completed') return 'completed';
+  if (invite.progressPercent > 0 || invite.status === 'in_progress') return 'in_progress';
+  if (invite.interviewStartedAt || invite.status === 'started') return 'started';
+  if (invite.linkOpenedAt) return 'link_opened';
+  return 'not_opened';
+}
+
+export function displayInviteEngagement(invite: ExpertInvite): string {
+  const stage = resolveInviteEngagementStage(invite);
+  switch (stage) {
+    case 'not_opened':
+      return 'Not opened';
+    case 'link_opened':
+      return 'Link opened';
+    case 'started':
+      return 'Interview started';
+    case 'in_progress':
+      return `In progress · ${invite.progressPercent}%`;
+    case 'completed':
+      return 'Completed';
+  }
+}
+
+export function formatInviteEngagementTimestamps(invite: ExpertInvite): string | null {
+  const parts: string[] = [];
+  if (invite.linkOpenedAt) {
+    parts.push(`Opened ${new Date(invite.linkOpenedAt).toLocaleString()}`);
+  }
+  if (invite.interviewStartedAt) {
+    parts.push(`Started ${new Date(invite.interviewStartedAt).toLocaleString()}`);
+  }
+  return parts.length ? parts.join(' · ') : null;
 }

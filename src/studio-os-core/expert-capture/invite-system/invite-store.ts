@@ -24,6 +24,8 @@ function normalizeInvite(inv: ExpertInvite): ExpertInvite {
     pinHash: inv.pinHash ?? null,
     hasPin: inv.hasPin ?? Boolean(inv.pinHash),
     revokedTokens: inv.revokedTokens ?? [],
+    linkOpenedAt: inv.linkOpenedAt ?? null,
+    interviewStartedAt: inv.interviewStartedAt ?? null,
   };
 }
 
@@ -230,6 +232,8 @@ export async function syncInviteProgress(invite: ExpertInvite): Promise<ExpertIn
           latestLesson: invite.latestLesson,
           knowledgeExtractedCount: invite.knowledgeExtractedCount,
           status: invite.status,
+          linkOpenedAt: invite.linkOpenedAt,
+          interviewStartedAt: invite.interviewStartedAt,
         },
       }),
     });
@@ -242,6 +246,41 @@ export async function syncInviteProgress(invite: ExpertInvite): Promise<ExpertIn
     saveLocalInvite(invite);
   }
   return invite;
+}
+
+export type InviteEngagementTrackEvent = 'link_opened' | 'interview_started';
+
+/** Expert-side: record first open or start (no owner password required). */
+export async function trackInviteEngagement(
+  token: string,
+  trackEvent: InviteEngagementTrackEvent
+): Promise<ExpertInvite | null> {
+  try {
+    const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, action: 'track_engagement', trackEvent }),
+    });
+    if (res.ok) {
+      const data = (await res.json()) as { invite: ExpertInvite };
+      saveLocalInvite(data.invite);
+      return data.invite;
+    }
+  } catch {
+    /* offline — update local cache best-effort */
+  }
+  const local = findLocalInviteByToken(token);
+  if (!local || local.token !== token) return null;
+  const now = new Date().toISOString();
+  const next: ExpertInvite = {
+    ...local,
+    linkOpenedAt: trackEvent === 'link_opened' ? (local.linkOpenedAt ?? now) : local.linkOpenedAt,
+    interviewStartedAt:
+      trackEvent === 'interview_started' ? (local.interviewStartedAt ?? now) : local.interviewStartedAt,
+    status:
+      trackEvent === 'interview_started' && local.status === 'not_started' ? 'started' : local.status,
+  };
+  return saveLocalInvite(next);
 }
 
 export function storeActiveInviteToken(token: string): void {
