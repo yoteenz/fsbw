@@ -46451,4 +46451,25 @@ Summary of **full conversation in this chat**: Investigation recorder boot, gene
 - **Docs:** `docs/studio-institute/EXPERT_CAPTURE_INVITE_SYSTEM.md`
 - **Env:** set `STUDIO_INSTITUTE_OWNER_KEY` on Vercel for owner API
 - **URLs:** https://fsbw.vercel.app/studio-institute/invite · https://fsbw.vercel.app/studio-institute/invite/{TOKEN}
+- **Commit:** `c3a2c87fb`
+
+---
+
+## 2026-07-11 — Invite Sharing, Copy Link & Ready-to-Send Messages
+
+Summary of **full conversation in this chat**: Expert Capture stack (MVP through Trust/Vault), Private Expert Invite System Phase 1 (`c3a2c87fb`). User approved **Invite Sharing sprint** — extend invite system only (no interview/Knowledge Vault redesign): effortless owner create → copy link → copy/share professional invitation message; mobile-first.
+
+- **Routes:** `/studio-institute/invites` (owner management) · `/studio-institute/invite/:token` (expert landing) · `/studio-institute/invite/:token?preview=owner` (owner preview, Continue disabled) · legacy `/studio-institute/invite` redirects to `/invites`
+- **URL config:** `VITE_PUBLIC_APP_BASE_URL` / `VITE_PUBLIC_APP_ORIGIN` via `getPublicAppOrigin()` — no hardcoded fsbw.vercel.app
+- **Form fields:** invitee, business, role, interview type (profile registry), worker, optional welcome note, expiration, optional PIN, access status
+- **Success screen:** invite details + Copy Link · Copy Message · Share · Open Invite · Create Another · Return to Dashboard
+- **Messages:** `invite-messages.ts` default + tax + permitting variants; editable textarea; Reset to Default; mentions save/resume + approved-knowledge-only training eligibility
+- **Share:** Web Share API with copy fallback (`invite-share.ts`, `invite-clipboard.ts`)
+- **Dashboard actions:** Copy/Share panel per invite, pause/resume access, regenerate link (revokes old token, preserves session/progress), archive, duplicate, delete
+- **Access:** `accessStatus` active/paused/revoked/archived/deleted/expired/completed; calm unavailable message on landing; PIN gate via SHA-256 hash
+- **Audit:** local + server `audit_log` — created, link_copied, message_copied, share_initiated, previewed, regenerated, paused/resumed, revoked
+- **Core additions:** `invite-profiles.ts`, `invite-access.ts`, `invite-audit.ts`, `invite-crypto.ts`; migration `20260711010000_studio_institute_invites_sharing.sql`
+- **UI:** `InviteSharePanel`, `InviteSuccessScreen`, expanded `invites/page.tsx`, mobile tap targets (44px min-height buttons)
+- **Tests:** `invite-system.test.ts` (12 cases — messages, regenerate, access, URLs)
+- **Docs:** `docs/studio-institute/EXPERT_CAPTURE_INVITE_SHARING.md`
 

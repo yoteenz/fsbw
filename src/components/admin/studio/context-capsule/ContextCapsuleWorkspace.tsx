@@ -9,6 +9,7 @@ import {
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { useContextCapsuleExport } from '../../../../hooks/useContextCapsuleExport';
 import { CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH } from '../../../../studio-os-core/context-capsule-export/constants';
+import { STUDIO_DNA_CAPSULE_LATEST_DOWNLOAD_PATH } from '../../../../studio-os-core/studio-dna-capsule-export/constants';
 
 const ACCENT = '#92704A';
 
@@ -128,6 +129,26 @@ export function ContextCapsuleWorkspace() {
             style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}
           >
             {copiedLatestUrl ? 'URL COPIED' : 'COPY PERMANENT URL'}
+          </button>
+        </div>
+      </ExecutiveFocusPanel>
+
+      <ExecutiveFocusPanel
+        title="STUDIO DNA CAPSULE™"
+        subtitle="HOW Studio OS thinks — philosophy, canon policy, quality bar. Pair with Context Capsule."
+        highlight="Studio DNA Capsule v1.0.0"
+      >
+        <StatRow label="Purpose" value="Founder philosophy + canon preservation" />
+        <StatRow label="Latest download" value={STUDIO_DNA_CAPSULE_LATEST_DOWNLOAD_PATH} />
+        <StatRow label="Full URL" value={`https://fsbw.vercel.app${STUDIO_DNA_CAPSULE_LATEST_DOWNLOAD_PATH}`} />
+        <div className="flex gap-2 mt-2">
+          <button
+            type="button"
+            onClick={() => triggerDownload(STUDIO_DNA_CAPSULE_LATEST_DOWNLOAD_PATH, 'StudioOS_StudioDNACapsule_latest.zip')}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ borderColor: ACCENT, color: ACCENT, fontWeight: 515 }}
+          >
+            DOWNLOAD DNA CAPSULE
           </button>
         </div>
       </ExecutiveFocusPanel>

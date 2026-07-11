@@ -51,8 +51,15 @@ Studio OS should still make sense in ten years — expansion via infill district
 
 ## AI collaboration DNA
 
-The founder should never manually re-explain the entire project to a new AI. The **AI Context Capsule™** is the portable operating system for that continuity — one file, one upload, immediate collaboration.
+The founder should never manually re-explain the entire project to a new AI. Two capsules work together:
+
+| Capsule | Preserves |
+|---------|-----------|
+| **AI Context Capsule™** (v0.3.1) | WHAT the project knows |
+| **Studio DNA Capsule™** (v1.0.0) | HOW Studio OS thinks |
+
+Download both from `/admin/studio/context-capsule` or `/downloads/context-capsules/latest.zip` + `/downloads/studio-dna-capsules/latest.zip`.
 
 ---
 
-*Feeds capsule `StudioOS/project-dna.md`.*
+*Legacy note: this file remains in the Context Capsule for backward compatibility. Full philosophy lives in Studio DNA Capsule.*

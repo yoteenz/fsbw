@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "capsuleType": "studio-dna",
+  "capsuleVersion": "1.0.0",
+  "manifestVersion": "1.0.0",
+  "capsuleFolder": "StudioOS_StudioDNACapsule_v1.0",
+  "generatedAt": "2026-07-11T00:17:00.011Z",
+  "companionCapsule": {
+    "type": "ai-context",
+    "version": "0.3.1"
+  },
+  "documentCount": 14,
+  "readingOrder": [
+    "README_FIRST.md",
+    "MANIFEST.md",
+    "RELATIONSHIP_TO_CONTEXT_CAPSULE.md",
+    "CANON_PRESERVATION_POLICY.md",
+    "FOUNDER_DESIGN_PHILOSOPHY.md",
+    "ARCHITECTURE_DNA.md",
+    "CREATIVE_DIRECTION_DNA.md",
+    "FOUNDER_DECISION_PATTERNS.md",
+    "COMMUNICATION_DNA.md",
+    "QUALITY_STANDARDS.md",
+    "INSTITUTIONAL_VALUES.md",
+    "AI_COLLABORATION_DNA.md",
+    "CANON_REGISTRY.md",
+    "EVOLUTION.md",
+    "DNA_VALIDATION.md"
+  ],
+  "readingOrderChecksum": "667e270ba42347d632ea871c23dba9c3a909c98310cf5dba9398c2c9453eb8af",
+  "requiredMarkdownFiles": [
+    "README_FIRST.md",
+    "MANIFEST.md",
+    "RELATIONSHIP_TO_CONTEXT_CAPSULE.md",
+    "FOUNDER_DESIGN_PHILOSOPHY.md",
+    "ARCHITECTURE_DNA.md",
+    "CREATIVE_DIRECTION_DNA.md",
+    "FOUNDER_DECISION_PATTERNS.md",
+    "COMMUNICATION_DNA.md",
+    "QUALITY_STANDARDS.md",
+    "INSTITUTIONAL_VALUES.md",
+    "AI_COLLABORATION_DNA.md",
+    "CANON_PRESERVATION_POLICY.md",
+    "CANON_REGISTRY.md",
+    "EVOLUTION.md"
+  ],
+  "validationStatus": "pass",
+  "generatorVersion": "1.0.0"
+}
