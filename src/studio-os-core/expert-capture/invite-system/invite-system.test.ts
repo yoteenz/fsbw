@@ -145,6 +145,59 @@ describe('Studio Institute Invite System', () => {
     expect(resolveInviteAccess(next, invite.token).ok).toBe(false);
     expect(resolveInviteAccess(next, next.token).ok).toBe(true);
   });
+
+  it('builds owner capture export bundle with answers and media refs', async () => {
+    const { buildOwnerCaptureExportBundle } = await import('./invite-capture-api');
+    const bundle = buildOwnerCaptureExportBundle({
+      ok: true,
+      invite: { id: 'inv-1', inviteeName: 'Karea', progressPercent: 25 },
+      session: {
+        id: 'sess-1',
+        status: 'in_progress',
+        expertName: 'Karea',
+        progressPercent: 25,
+        lastSavedAt: '2026-07-11T12:33:15.000Z',
+        recoveryStatus: 'in_progress',
+        answerCount: 1,
+        recordedCount: 1,
+        approvedCount: 0,
+        answers: [
+          {
+            id: 'ans-1',
+            questionId: 'q-1',
+            questionText: 'Walk me through your workflow',
+            transcript: 'Sample transcript',
+            correctedTranscript: null,
+            aiUnderstanding: 'AI summary',
+            clarificationNotes: null,
+            status: 'awaiting_approval',
+            recordedAt: '2026-07-11T12:30:00.000Z',
+            skipped: false,
+            deleted: false,
+            durationMs: 12000,
+            media: [
+              {
+                id: 'med-1',
+                answerId: 'ans-1',
+                questionId: 'q-1',
+                mimeType: 'video/webm',
+                byteSize: 1024,
+                uploadStatus: 'uploaded',
+                isPartial: false,
+                uploadedAt: '2026-07-11T12:30:05.000Z',
+                storagePath: 'sess-1/ans-1/med-1.webm',
+                playbackUrl: 'https://signed.example/play',
+              },
+            ],
+          },
+        ],
+      },
+    });
+    expect(bundle.schemaVersion).toBe('studio-institute-owner-capture-export-v1');
+    const session = bundle.session as { answers: Array<{ media: unknown[] }> };
+    expect(session.answers).toHaveLength(1);
+    expect(session.answers[0].media).toHaveLength(1);
+  });
 });
 
 describe('Invite sharing messages', () => {

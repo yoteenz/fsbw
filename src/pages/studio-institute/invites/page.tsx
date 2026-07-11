@@ -33,6 +33,7 @@ import {
   type ExpertInvite,
 } from '../../../studio-os-core/expert-capture/invite-system';
 import { InviteSharePanel, InviteSuccessScreen } from '../components/InviteSharePanel';
+import { InviteCaptureReviewPanel } from '../components/InviteCaptureReviewPanel';
 import { siStyles, SiBtn } from '../studio-institute-styles';
 
 type View = 'dashboard' | 'success';
@@ -49,6 +50,7 @@ export default function StudioInstituteInvitesPage() {
   const [view, setView] = useState<View>('dashboard');
   const [createdInvite, setCreatedInvite] = useState<ExpertInvite | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [reviewInviteId, setReviewInviteId] = useState<string | null>(null);
   const [confirmRegenerate, setConfirmRegenerate] = useState<string | null>(null);
   const [recoverySecret, setRecoverySecret] = useState('');
 
@@ -549,6 +551,12 @@ export default function StudioInstituteInvitesPage() {
             </div>
 
             <div style={siStyles.btnRow}>
+              <SiBtn
+                primary={reviewInviteId === inv.id}
+                onClick={() => setReviewInviteId(reviewInviteId === inv.id ? null : inv.id)}
+              >
+                {reviewInviteId === inv.id ? 'Hide captured work' : 'View captured work'}
+              </SiBtn>
               <SiBtn onClick={() => setExpandedId(expandedId === inv.id ? null : inv.id)}>
                 {expandedId === inv.id ? 'Hide actions' : 'Copy / Share'}
               </SiBtn>
@@ -613,6 +621,9 @@ export default function StudioInstituteInvitesPage() {
             </div>
 
             {expandedId === inv.id ? <InviteSharePanel invite={inv} compact={false} /> : null}
+            {reviewInviteId === inv.id ? (
+              <InviteCaptureReviewPanel invite={inv} onClose={() => setReviewInviteId(null)} />
+            ) : null}
           </div>
         );
         })}

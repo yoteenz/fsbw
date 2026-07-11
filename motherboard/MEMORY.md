@@ -46887,3 +46887,25 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Note:** Prior forensic MEMORY entry and report commit `d5650705c` landed separately; this fix unblocks production deploy for v1.2.0 onboarding pack.
 
+---
+
+## 2026-07-11 — P0 Forensic Sprint: Generation failed (500) trace (Layer 1 signature-landmark)
+
+**Context:** Founder supplied World Compiler Investigation export proving M1–M7 shell pipeline succeeded (`shellLocked`, `compileWorldStation` complete). First failure at Layer 1 `signature-landmark`: `GENERATION_REQUEST_STARTED` → `GENERATION_REQUEST_FAILED`, `errorCode: GENERATION_FAILED`, `failedFunction: requestStudioBuilderGenerate()`, message `Generation failed (500)`. Sprint directive: trace exact source only — **no repair**, do not continue shell locking/registry/retry UI investigation as primary.
+
+**Topics covered (full chat):** Prior shell/retry forensics superseded by new Black Box evidence; static trace of `requestStudioBuilderGenerate` → `POST /api/admin/studio-builder-generate` → `executeGovernedGeneration` → `generateStudioBuilderAsset` → FAL `nano-banana-pro/edit`; every error translation collapse point; request payload field verification; shell canvas fallback vs Layer 1 no-fallback.
+
+**Key findings:**
+- `Generation failed (500)` is **client-synthesized** at `src/services/studio/studioBuilder/api.ts:61–62` when HTTP 500 body is **non-JSON** (or empty) — original provider/server exception **lost** before Black Box
+- If server returned structured JSON `{ code: 'GENERATION_FAILED', error: '...' }`, client would show `error` string — **not** the `(500)` suffix
+- Founder symptom implies **Vercel platform non-JSON 500** (`FUNCTION_INVOCATION_FAILED` / timeout) during `studio-builder-generate` invocation, not proven FAL HTTP 500 at browser boundary
+- Shell success compatible with same API failing → `validation-shell-pipeline.ts` canvas fallback; Layer 1 has no fallback
+- Error collapse chain: FAL catch keeps `e.message` only (`studioBuilderGeneration.ts:165`) → gateway `GENERATION_FAILED` → handler JSON **if invocation completes** → client parse catch masks all
+- `AUTH_REQUIRED` ruled out for this exact message (would be 403 JSON)
+
+**Black Box improvement (instrumentation only):** `generation-request-forensic.ts` — in `?compilerDiag=1`, captures `httpStatus`, `responseBodyPreview`, `jsonParseSucceeded`, `parsedCode`/`parsedError`, `elapsedMs`, `translationLayer` on `GENERATION_REQUEST_FAILED` / `freezeLayer1Failure.responseOutput.httpForensic`
+
+**Deliverable:** `docs/studio-os/forensics/GENERATION_FAILED_500_TRACE.md` — all 12 sprint deliverables + smallest repair recommendation (try/catch JSON on handler, vercel `includeFiles` for marble, confirm maxDuration) — **not implemented**
+
+**Classification:** Server/Platform + Client serialization; likely environment (function timeout during FAL subscribe). Awaiting founder approval before repair.
+
