@@ -38,15 +38,20 @@ export type CapsuleBuildManifest = {
   schemaVersion: 1;
   artifact: string;
   capsuleVersion: string;
+  manifestVersion?: string;
   capsuleFolder: string;
   generatedAt: string;
   fileCount: number;
+  manifestDocumentCount?: number;
   checksumSha256: string;
   sizeBytes: number;
   downloadPath: string;
   generatorVersion?: string;
   latestDownloadPath?: string;
+  permanentLatestUrl?: string;
+  legacyLatestDownloadPath?: string;
   versionedDownloadPath?: string;
+  validationStatus?: 'pass' | 'fail';
 };
 
 const LIB_DIR = path.dirname(fileURLToPath(import.meta.url));

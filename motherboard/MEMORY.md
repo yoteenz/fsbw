@@ -46473,3 +46473,18 @@ Summary of **full conversation in this chat**: Expert Capture stack (MVP through
 - **Tests:** `invite-system.test.ts` (12 cases — messages, regenerate, access, URLs)
 - **Docs:** `docs/studio-institute/EXPERT_CAPTURE_INVITE_SHARING.md`
 
+---
+
+## 2026-07-11 — Studio DNA Capsule™ + Canon Preservation Policy (Sections 20–21)
+
+Summary of **full conversation in this chat**: Expert Capture stack through Trust/Vault, Private Expert Invite System Phase 1 (`c3a2c87fb`), Invite Sharing sprint (`de02448fb`). User approved **Studio DNA Capsule™** (Section 20) + **Canon Preservation Policy** (Section 21) — second export alongside AI Context Capsule: Context = WHAT; DNA = HOW (founder philosophy, architecture judgment, creative instincts, decision patterns, communication, quality, institutional values, AI collaboration DNA).
+
+- **StudioOS_StudioDNACapsule_v1.0/** — 14 markdown files: README_FIRST, MANIFEST, RELATIONSHIP_TO_CONTEXT_CAPSULE, FOUNDER_DESIGN_PHILOSOPHY, ARCHITECTURE_DNA, CREATIVE_DIRECTION_DNA, FOUNDER_DECISION_PATTERNS, COMMUNICATION_DNA, QUALITY_STANDARDS, INSTITUTIONAL_VALUES, AI_COLLABORATION_DNA, CANON_PRESERVATION_POLICY, CANON_REGISTRY (starter entries C-001–C-015), EVOLUTION
+- **Packaging:** `scripts/package-studio-dna-capsule-zip.mjs` — prebuild alongside context capsule; `/downloads/studio-dna-capsules/latest.zip` + versioned zip
+- **Constants:** `src/studio-os-core/studio-dna-capsule-export/constants.ts`, `api/_lib/studioDnaCapsuleConstants.ts`
+- **Admin:** Context Capsule workspace panel — Download DNA Capsule
+- **Docs:** `docs/studio-os/studio-dna-capsule/README.md`, CANON_PRESERVATION_POLICY mirror
+- **Canon policy:** ideas do not auto-become canon; registry tracks maturity Concept→Implemented; explicit founder approval required
+- **Cross-ref:** Context Capsule `PROJECT_DNA.md` updated to point to DNA Capsule pair
+- **npm:** `package:studio-dna-capsule-zip`, `download:studio-dna-capsule`
+

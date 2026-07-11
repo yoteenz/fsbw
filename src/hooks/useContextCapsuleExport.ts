@@ -8,7 +8,7 @@ import type {
 } from '../studio-os-core/context-capsule-export/constants';
 import {
   AI_ONBOARDING_PROMPT,
-  CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH,
+  CONTEXT_CAPSULE_PERMANENT_LATEST_PATH,
 } from '../studio-os-core/context-capsule-export/constants';
 
 type ApiResponse = {
@@ -123,7 +123,7 @@ export function useContextCapsuleExport() {
   }, []);
 
   const copyLatestUrl = useCallback(async () => {
-    const url = `https://fsbw.vercel.app${status?.latestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH}`;
+    const url = `https://fsbw.vercel.app${status?.permanentLatestUrl ?? status?.latestDownloadPath ?? CONTEXT_CAPSULE_PERMANENT_LATEST_PATH}`;
     try {
       await navigator.clipboard.writeText(url);
       setCopiedLatestUrl(true);
@@ -131,7 +131,7 @@ export function useContextCapsuleExport() {
     } catch {
       setError('Could not copy permanent download URL');
     }
-  }, [status?.latestDownloadPath]);
+  }, [status?.permanentLatestUrl, status?.latestDownloadPath]);
 
   const downloadPath = useCallback((path: string, fileName: string) => {
     const a = document.createElement('a');
@@ -144,9 +144,9 @@ export function useContextCapsuleExport() {
   }, []);
 
   const downloadLatest = useCallback(() => {
-    const path = status?.latestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH;
-    downloadPath(path, 'latest.zip');
-  }, [downloadPath, status?.latestDownloadPath]);
+    const path = status?.permanentLatestUrl ?? status?.latestDownloadPath ?? CONTEXT_CAPSULE_PERMANENT_LATEST_PATH;
+    downloadPath(path, 'StudioOS_ContextCapsule_latest.zip');
+  }, [downloadPath, status?.permanentLatestUrl, status?.latestDownloadPath]);
 
   const downloadExport = useCallback(
     async (record: ContextCapsuleExportRecord) => {
@@ -162,12 +162,12 @@ export function useContextCapsuleExport() {
           const data = (await res.json()) as { error?: string };
           throw new Error(data.error ?? 'Download failed');
         }
-        downloadPath(status?.latestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH, 'latest.zip');
+        downloadPath(status?.permanentLatestUrl ?? status?.latestDownloadPath ?? CONTEXT_CAPSULE_PERMANENT_LATEST_PATH, 'StudioOS_ContextCapsule_latest.zip');
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Download failed');
       }
     },
-    [downloadPath, status?.latestDownloadPath],
+    [downloadPath, status?.permanentLatestUrl, status?.latestDownloadPath],
   );
 
   const downloadUrl = (record: ContextCapsuleExportRecord) => record.downloadPath;

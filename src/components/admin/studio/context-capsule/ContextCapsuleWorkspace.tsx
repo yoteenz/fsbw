@@ -8,7 +8,11 @@ import {
 } from '../executive-ia';
 import { ADMIN_STUDIO_THEME } from '../../../../utils/adminStudioTheme';
 import { useContextCapsuleExport } from '../../../../hooks/useContextCapsuleExport';
-import { CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH } from '../../../../studio-os-core/context-capsule-export/constants';
+import {
+  CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH,
+  CONTEXT_CAPSULE_PERMANENT_LATEST_PATH,
+  CONTEXT_CAPSULE_PUBLIC_HUB_PATH,
+} from '../../../../studio-os-core/context-capsule-export/constants';
 import { STUDIO_DNA_CAPSULE_LATEST_DOWNLOAD_PATH } from '../../../../studio-os-core/studio-dna-capsule-export/constants';
 
 const ACCENT = '#92704A';
@@ -58,7 +62,8 @@ export function ContextCapsuleWorkspace() {
 
   const latestExport = exports[0] ?? null;
   const releaseHistory = release?.releaseHistory ?? status?.releaseHistory ?? [];
-  const latestPath = status?.latestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH;
+  const latestPath = status?.permanentLatestUrl ?? status?.latestDownloadPath ?? CONTEXT_CAPSULE_PERMANENT_LATEST_PATH;
+  const legacyPath = status?.legacyLatestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH;
   const validationStatus = status?.validationStatus ?? 'unknown';
 
   if (loading && !status) {
@@ -77,7 +82,7 @@ export function ContextCapsuleWorkspace() {
       <ExecutiveHeroCard
         eyebrow="AI CONTEXT CAPSULE EXPORT SYSTEM™ · 0.3.1"
         title="AI CONTEXT CAPSULE™"
-        subtitle="Stable latest.zip channel + immutable versioned releases."
+        subtitle="Stable /context/latest channel + immutable versioned archives."
         progressPct={status?.packageHealth ?? 91}
         stats={[
           { label: 'ACTIVE', value: status?.capsuleVersion ?? '—' },
@@ -108,7 +113,9 @@ export function ContextCapsuleWorkspace() {
         subtitle="Use this URL for every new AI onboarding — never update after deploy."
         highlight={release?.currentVersion ? `Active release v${release.currentVersion}` : undefined}
       >
-        <StatRow label="Latest alias" value={latestPath} />
+        <StatRow label="Permanent URL" value={latestPath} />
+        <StatRow label="Legacy alias" value={legacyPath} />
+        <StatRow label="Public hub" value={CONTEXT_CAPSULE_PUBLIC_HUB_PATH} />
         <StatRow
           label="Full URL"
           value={`https://fsbw.vercel.app${latestPath}`}

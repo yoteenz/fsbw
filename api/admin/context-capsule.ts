@@ -12,6 +12,7 @@ import {
 import {
   CONTEXT_CAPSULE_EXPORTS_CONFIG_KEY,
   CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH,
+  CONTEXT_CAPSULE_PERMANENT_LATEST_PATH,
   CONTEXT_CAPSULE_REQUIRED_FILES,
   type ContextCapsuleExportRecord,
   type ContextCapsuleExportsState,
@@ -82,8 +83,29 @@ function buildStatus(
     currentDownloadPath:
       release?.versionedDownloadPath ?? latest?.downloadPath ?? buildManifest?.versionedDownloadPath ?? buildManifest?.downloadPath ?? null,
     currentZipFileName: release?.artifact ?? latest?.zipFileName ?? buildManifest?.artifact ?? null,
-    latestDownloadPath: release?.latestDownloadPath ?? buildManifest?.latestDownloadPath ?? CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH,
+    latestDownloadPath:
+      release?.permanentLatestUrl ??
+      release?.latestDownloadPath ??
+      buildManifest?.permanentLatestUrl ??
+      buildManifest?.latestDownloadPath ??
+      CONTEXT_CAPSULE_PERMANENT_LATEST_PATH,
+    permanentLatestUrl:
+      release?.permanentLatestUrl ??
+      buildManifest?.permanentLatestUrl ??
+      CONTEXT_CAPSULE_PERMANENT_LATEST_PATH,
+    legacyLatestDownloadPath:
+      release?.legacyLatestDownloadPath ??
+      buildManifest?.legacyLatestDownloadPath ??
+      CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH,
+    archiveBasePath: release?.archiveBasePath,
+    manifestDocumentCount: release?.manifestDocumentCount ?? release?.documentCount,
+    versionedDownloadPath:
+      release?.versionedDownloadPath ??
+      buildManifest?.versionedDownloadPath ??
+      buildManifest?.downloadPath ??
+      '',
     validationStatus: release?.validationStatus ?? (allPassed ? 'pass' : 'fail'),
+    readyForAiOnboarding: release?.readyForAiOnboarding ?? (releasePassed && allPassed),
     gitCommit: release?.gitCommit ?? null,
     previousVersion: release?.previousVersion ?? null,
     releaseHistory: release?.releaseHistory ?? [],

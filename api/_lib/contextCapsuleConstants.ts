@@ -18,7 +18,20 @@ export const CONTEXT_CAPSULE_LATEST_ALIAS = 'latest.zip';
 
 export const CONTEXT_CAPSULE_DOWNLOAD_BASE = '/downloads/context-capsules';
 
+export const CONTEXT_CAPSULE_ARCHIVE_SUBPATH = 'archive';
+
+/** Permanent URL — never changes; always serves newest validated capsule (via Vercel rewrite). */
+export const CONTEXT_CAPSULE_PERMANENT_LATEST_PATH = '/context/latest';
+
+/** Legacy alias — same underlying file as permanent latest. */
 export const CONTEXT_CAPSULE_LATEST_DOWNLOAD_PATH = `${CONTEXT_CAPSULE_DOWNLOAD_BASE}/${CONTEXT_CAPSULE_LATEST_ALIAS}`;
+
+export const CONTEXT_CAPSULE_RELEASE_MANIFEST_PATH = `${CONTEXT_CAPSULE_DOWNLOAD_BASE}/${CONTEXT_CAPSULE_RELEASE_MANIFEST_FILE}`;
+
+/** Public download hub + release.json mirror for the founder workflow. */
+export const CONTEXT_CAPSULE_PUBLIC_HUB_PATH = '/context';
+
+export const CONTEXT_CAPSULE_PUBLIC_RELEASE_PATH = '/context/release.json';
 
 export const CONTEXT_CAPSULE_SUPPORTED_FORMATS = ['zip'] as const;
 
@@ -99,12 +112,18 @@ export type ContextCapsuleReleaseManifest = {
   gitCommit: string;
   validationStatus: 'pass' | 'fail';
   documentCount: number;
+  manifestDocumentCount?: number;
   checksumSha256: string;
   generatorVersion: string;
   artifact: string;
   latestAlias: string;
   latestDownloadPath: string;
+  permanentLatestUrl?: string;
+  legacyLatestDownloadPath?: string;
   versionedDownloadPath: string;
+  archiveBasePath?: string;
+  packageHealth?: number;
+  readyForAiOnboarding?: boolean;
   supportedFormats: readonly string[];
   releaseHistory: ContextCapsuleReleaseEntry[];
 };
@@ -147,7 +166,13 @@ export type ContextCapsuleStatus = {
   currentDownloadPath: string | null;
   currentZipFileName: string | null;
   latestDownloadPath: string;
+  permanentLatestUrl?: string;
+  legacyLatestDownloadPath?: string;
+  archiveBasePath?: string;
+  manifestDocumentCount?: number;
+  versionedDownloadPath: string;
   validationStatus: 'pass' | 'fail' | 'unknown';
+  readyForAiOnboarding?: boolean;
   gitCommit: string | null;
   previousVersion: string | null;
   releaseHistory: ContextCapsuleReleaseEntry[];

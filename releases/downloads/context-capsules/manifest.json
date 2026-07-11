@@ -4,16 +4,18 @@
   "capsuleVersion": "0.3.1",
   "manifestVersion": "0.3.1",
   "capsuleFolder": "StudioOS_ContextCapsule_v0.1",
-  "generatedAt": "2026-07-11T00:16:59.974Z",
+  "generatedAt": "2026-07-11T00:23:55.761Z",
   "fileCount": 15,
   "manifestDocumentCount": 16,
-  "checksumSha256": "b9560766eccd619e1084c04b4a593838c92be415ae0161e74f9b10f86276c4a8",
+  "checksumSha256": "0ff0e22bac3b839872d6851c24adcd9a516e64e8d87322d52d63ce4a721fe0dd",
   "sizeBytes": 47458,
   "generatorVersion": "0.3.1",
   "readingOrderChecksum": "7b10d8a919668fc98dd4f47c7383353032cd3d69e8f39f73ff026a55b12e9b30",
   "validationStatus": "pass",
   "downloadUrls": {
-    "production": "/downloads/context-capsules/latest.zip",
-    "versioned": "/downloads/context-capsules/StudioOS_ContextCapsule_v0.3.1.zip"
+    "permanent": "/context/latest",
+    "production": "/context/latest",
+    "legacy": "/downloads/context-capsules/latest.zip",
+    "versioned": "/downloads/context-capsules/archive/StudioOS_ContextCapsule_v0.3.1.zip"
   }
 }

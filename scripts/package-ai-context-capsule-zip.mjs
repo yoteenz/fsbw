@@ -17,6 +17,9 @@ const LATEST_ALIAS = 'latest.zip';
 const RELEASE_MANIFEST = 'release.json';
 const METADATA_FILE = 'context-capsule.json';
 const DOWNLOAD_BASE = '/downloads/context-capsules';
+const ARCHIVE_SUBDIR = 'archive';
+/** Permanent public URL — never changes; file behind it updates on each validated release. */
+const PERMANENT_LATEST_PATH = '/context/latest';
 
 const OPERATIONAL_SOURCE_OF_TRUTH = [
   'CURRENT_HANDOFF.md',
@@ -442,31 +445,62 @@ function sha256File(filePath) {
 }
 
 function discoverVersionedReleases(outDir) {
-  if (!fs.existsSync(outDir)) return [];
-  return fs
-    .readdirSync(outDir)
-    .filter((f) => /^StudioOS_ContextCapsule_v\d+\.\d+\.\d+\.zip$/.test(f))
-    .map((zipFileName) => {
+  const archiveDir = path.join(outDir, ARCHIVE_SUBDIR);
+  const dirs = [archiveDir, outDir].filter((d) => fs.existsSync(d));
+  const found = new Map();
+  for (const dir of dirs) {
+    for (const zipFileName of fs.readdirSync(dir)) {
+      if (!/^StudioOS_ContextCapsule_v\d+\.\d+\.\d+\.zip$/.test(zipFileName)) continue;
+      if (found.has(zipFileName)) continue;
       const match = zipFileName.match(/v(\d+\.\d+\.\d+)\.zip$/);
       const ver = match?.[1] ?? '0.0.0';
-      const full = path.join(outDir, zipFileName);
+      const full = path.join(dir, zipFileName);
       const stat = fs.statSync(full);
-      return {
+      const inArchive = dir === archiveDir;
+      found.set(zipFileName, {
         version: ver,
         zipFileName,
-        downloadPath: `${DOWNLOAD_BASE}/${zipFileName}`,
+        downloadPath: inArchive
+          ? `${DOWNLOAD_BASE}/${ARCHIVE_SUBDIR}/${zipFileName}`
+          : `${DOWNLOAD_BASE}/${zipFileName}`,
         checksumSha256: sha256File(full),
         sizeBytes: stat.size,
         generatedAt: stat.mtime.toISOString(),
         gitCommit: 'unknown',
         validationStatus: 'pass',
-      };
-    });
+      });
+    }
+  }
+  return [...found.values()];
+}
+
+function verifyZipIntegrity(zipPath) {
+  const stat = fs.statSync(zipPath);
+  if (stat.size < 1024) {
+    throw new Error(`ZIP too small (${stat.size} bytes) — aborting latest publish`);
+  }
+  try {
+    execSync(`unzip -t ${JSON.stringify(zipPath)}`, { stdio: 'pipe' });
+  } catch {
+    throw new Error('ZIP integrity check failed (unzip -t) — aborting latest publish');
+  }
+}
+
+function migrateVersionedZipsToArchive(publicOut, archiveOut) {
+  fs.mkdirSync(archiveOut, { recursive: true });
+  if (!fs.existsSync(publicOut)) return;
+  for (const f of fs.readdirSync(publicOut)) {
+    if (!/^StudioOS_ContextCapsule_v\d+\.\d+\.\d+\.zip$/.test(f)) continue;
+    const src = path.join(publicOut, f);
+    const dest = path.join(archiveOut, f);
+    if (!fs.existsSync(dest)) fs.copyFileSync(src, dest);
+    fs.unlinkSync(src);
+  }
 }
 
 function mergeReleaseHistory(previousRelease, entry, outDir) {
   const byVersion = new Map();
-  for (const r of [...discoverVersionedReleases(outDir), ...(previousRelease?.releaseHistory ?? [])]) {
+  for (const r of [...(previousRelease?.releaseHistory ?? []), ...discoverVersionedReleases(outDir)]) {
     byVersion.set(r.version, r);
   }
   byVersion.set(entry.version, entry);
@@ -519,9 +553,13 @@ function packageCapsule() {
   }
 
   const publicOut = path.join(ROOT, 'public/downloads/context-capsules');
+  const archiveOut = path.join(publicOut, ARCHIVE_SUBDIR);
   const releasesOut = path.join(ROOT, 'releases/downloads/context-capsules');
   fs.mkdirSync(publicOut, { recursive: true });
+  fs.mkdirSync(archiveOut, { recursive: true });
   fs.mkdirSync(releasesOut, { recursive: true });
+
+  migrateVersionedZipsToArchive(publicOut, archiveOut);
 
   const previousRelease = readPreviousRelease(publicOut);
   let previousVersion = previousRelease?.currentVersion ?? null;
@@ -529,19 +567,30 @@ function packageCapsule() {
     previousVersion = previousRelease?.previousVersion ?? null;
   }
 
-  const publicZip = path.join(publicOut, fileName);
+  const publicZip = path.join(archiveOut, fileName);
   const zipCmd = `zip -r -q ${JSON.stringify(publicZip)} ${JSON.stringify(capsuleFolderName)}`;
   execSync(zipCmd, { cwd: ROOT, stdio: 'inherit' });
 
+  verifyZipIntegrity(publicZip);
+
   const checksumSha256 = sha256File(publicZip);
   const stat = fs.statSync(publicZip);
-  const versionedDownloadPath = `${DOWNLOAD_BASE}/${fileName}`;
-  const latestDownloadPath = `${DOWNLOAD_BASE}/${LATEST_ALIAS}`;
+  const versionedDownloadPath = `${DOWNLOAD_BASE}/${ARCHIVE_SUBDIR}/${fileName}`;
+  const legacyLatestDownloadPath = `${DOWNLOAD_BASE}/${LATEST_ALIAS}`;
 
-  fs.copyFileSync(publicZip, path.join(publicOut, LATEST_ALIAS));
-  fs.copyFileSync(publicZip, path.join(releasesOut, fileName));
-  fs.copyFileSync(publicZip, path.join(releasesOut, LATEST_ALIAS));
-  fs.copyFileSync(publicZip, path.join(ROOT, 'public/downloads', fileName));
+  const stagingLatest = path.join(publicOut, '.latest-staging.zip');
+  fs.copyFileSync(publicZip, stagingLatest);
+  verifyZipIntegrity(stagingLatest);
+  fs.copyFileSync(stagingLatest, path.join(publicOut, LATEST_ALIAS));
+  fs.unlinkSync(stagingLatest);
+
+  const releasesArchive = path.join(releasesOut, ARCHIVE_SUBDIR);
+  fs.mkdirSync(releasesArchive, { recursive: true });
+  fs.copyFileSync(publicZip, path.join(releasesArchive, fileName));
+  fs.copyFileSync(path.join(publicOut, LATEST_ALIAS), path.join(releasesOut, LATEST_ALIAS));
+
+  const contextPublicDir = path.join(ROOT, 'public/context');
+  fs.mkdirSync(contextPublicDir, { recursive: true });
 
   const releaseEntry = {
     version,
@@ -567,14 +616,20 @@ function packageCapsule() {
     generatorVersion: GENERATOR_VERSION,
     artifact: fileName,
     latestAlias: LATEST_ALIAS,
-    latestDownloadPath,
+    permanentLatestUrl: PERMANENT_LATEST_PATH,
+    latestDownloadPath: PERMANENT_LATEST_PATH,
+    legacyLatestDownloadPath,
     versionedDownloadPath,
+    archiveBasePath: `${DOWNLOAD_BASE}/${ARCHIVE_SUBDIR}`,
     supportedFormats: SUPPORTED_FORMATS,
     releaseHistory: mergeReleaseHistory(previousRelease, releaseEntry, publicOut),
+    packageHealth: 100,
+    readyForAiOnboarding: true,
   };
 
   writeJson(path.join(publicOut, RELEASE_MANIFEST), releaseManifest);
   writeJson(path.join(releasesOut, RELEASE_MANIFEST), releaseManifest);
+  writeJson(path.join(contextPublicDir, RELEASE_MANIFEST), releaseManifest);
 
   const manifestText = fs.readFileSync(path.join(capsuleDir, 'MANIFEST.md'), 'utf8');
 
@@ -608,7 +663,9 @@ function packageCapsule() {
     readingOrderChecksum: readingOrderChecksum(),
     validationStatus: 'pass',
     downloadUrls: {
-      production: latestDownloadPath,
+      permanent: PERMANENT_LATEST_PATH,
+      production: PERMANENT_LATEST_PATH,
+      legacy: legacyLatestDownloadPath,
       versioned: versionedDownloadPath,
     },
   };
@@ -627,7 +684,9 @@ function packageCapsule() {
     checksumSha256,
     sizeBytes: stat.size,
     downloadPath: versionedDownloadPath,
-    latestDownloadPath,
+    latestDownloadPath: PERMANENT_LATEST_PATH,
+    permanentLatestUrl: PERMANENT_LATEST_PATH,
+    legacyLatestDownloadPath,
     versionedDownloadPath,
     generatorVersion: GENERATOR_VERSION,
     validationStatus: 'pass',
@@ -641,9 +700,11 @@ function packageCapsule() {
   console.log(`  Validation:       pass`);
   console.log(`  Manifest docs:    ${manifestInventory.length}`);
   console.log(`  Required docs:    ${REQUIRED_FILES.length}`);
-  console.log(`  Versioned:        ${versionedDownloadPath} (${(stat.size / 1024).toFixed(1)} KB)`);
-  console.log(`  Latest:           ${latestDownloadPath}`);
-  console.log(`  Release:          ${DOWNLOAD_BASE}/${RELEASE_MANIFEST}\n`);
+  console.log(`  Versioned archive: ${versionedDownloadPath} (${(stat.size / 1024).toFixed(1)} KB)`);
+  console.log(`  Permanent latest:  ${PERMANENT_LATEST_PATH}`);
+  console.log(`  Legacy latest:     ${legacyLatestDownloadPath}`);
+  console.log(`  Download hub:      /context`);
+  console.log(`  Release:           ${DOWNLOAD_BASE}/${RELEASE_MANIFEST}\n`);
 }
 
 packageCapsule();

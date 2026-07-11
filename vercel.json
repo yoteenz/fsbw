@@ -62,11 +62,28 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api/|assets/|tiktok[^/]*\\.txt|ne_110m_land\\.geojson|ne_110m_admin_0_boundary_lines_land\\.geojson|ne_110m_admin_1_states_provinces_lines\\.geojson).*)",
+      "source": "/context/latest",
+      "destination": "/downloads/context-capsules/latest.zip"
+    },
+    {
+      "source": "/((?!api/|assets/|downloads/|context/release\\.json|tiktok[^/]*\\.txt|ne_110m_land\\.geojson|ne_110m_admin_0_boundary_lines_land\\.geojson|ne_110m_admin_1_states_provinces_lines\\.geojson).*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/context/latest",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"StudioOS_ContextCapsule_latest.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
     {
       "source": "/index.html",
       "headers": [
