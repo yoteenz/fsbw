@@ -82,7 +82,25 @@ export async function checkOwnerPasswordConfiguredOnServer(): Promise<boolean> {
   }
 }
 
+export async function verifyOwnerPasswordOnServer(passwordHash: string): Promise<boolean> {
+  try {
+    const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verify_owner_password', passwordHash }),
+    });
+    if (!res.ok) return false;
+    const data = (await res.json()) as { valid?: boolean };
+    return Boolean(data.valid);
+  } catch {
+    return false;
+  }
+}
+
+/** @deprecated Prefer verifyOwnerPasswordOnServer — kept for header-based list probe */
 export async function verifyOwnerAuthOnServer(passwordHash: string): Promise<boolean> {
+  const verified = await verifyOwnerPasswordOnServer(passwordHash);
+  if (verified) return true;
   try {
     const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
       headers: { 'X-Studio-Institute-Owner-Key': passwordHash },
@@ -90,6 +108,32 @@ export async function verifyOwnerAuthOnServer(passwordHash: string): Promise<boo
     return res.ok;
   } catch {
     return false;
+  }
+}
+
+export async function resetOwnerPasswordOnServer(
+  passwordHash: string,
+  recoverySecret?: string
+): Promise<'ok' | 'denied' | 'offline' | 'failed'> {
+  try {
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (recoverySecret?.trim()) {
+      headers['X-Studio-Institute-Recovery-Secret'] = recoverySecret.trim();
+    }
+    const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        action: 'reset_owner_password',
+        passwordHash,
+        recoverySecret: recoverySecret?.trim() || undefined,
+      }),
+    });
+    if (res.status === 403) return 'denied';
+    if (res.ok) return 'ok';
+    return 'failed';
+  } catch {
+    return 'offline';
   }
 }
 
@@ -102,17 +146,54 @@ export async function unlockWithOwnerPassword(password: string): Promise<'ok' | 
     return 'ok';
   }
 
-  const authed = await verifyOwnerAuthOnServer(hash);
+  let authed = false;
+  try {
+    authed = await verifyOwnerPasswordOnServer(hash);
+  } catch {
+    return 'offline';
+  }
+
   if (authed) {
     localStorage.setItem(PASSWORD_HASH_KEY, hash);
     setOwnerAuthToken(hash);
     return 'ok';
   }
 
-  const serverConfigured = await checkOwnerPasswordConfiguredOnServer();
+  let serverConfigured = false;
+  try {
+    serverConfigured = await checkOwnerPasswordConfiguredOnServer();
+  } catch {
+    return 'offline';
+  }
+
   if (serverConfigured) return 'wrong';
   if (stored) return 'wrong';
   return 'offline';
+}
+
+export async function setupOwnerPasswordFirstTime(
+  password: string
+): Promise<'ok' | 'exists_mismatch' | 'exists_unlocked' | 'offline' | 'failed'> {
+  const hash = await hashOwnerPassword(password);
+  const serverConfigured = await checkOwnerPasswordConfiguredOnServer();
+
+  if (serverConfigured) {
+    const matchesServer = await verifyOwnerPasswordOnServer(hash);
+    if (matchesServer) {
+      localStorage.setItem(PASSWORD_HASH_KEY, hash);
+      setOwnerAuthToken(hash);
+      return 'exists_unlocked';
+    }
+    return 'exists_mismatch';
+  }
+
+  const bootstrap = await bootstrapOwnerPasswordOnServer(hash);
+  if (bootstrap === 'offline') return 'offline';
+  if (bootstrap !== 'ok') return 'failed';
+
+  localStorage.setItem(PASSWORD_HASH_KEY, hash);
+  setOwnerAuthToken(hash);
+  return 'ok';
 }
 
 export function ownerAuthHeaders(): Record<string, string> {

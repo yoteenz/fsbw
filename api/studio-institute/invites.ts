@@ -1,7 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createHash } from 'crypto';
 import { getAuthUser } from '../_lib/auth.js';
-import { isAdminEmail } from '../_lib/adminAuth.js';
+import { isAdminEmail, resolveAdminAuth } from '../_lib/adminAuth.js';
 import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase.js';
 
 type InviteRow = {
@@ -68,7 +68,7 @@ function parseBody(req: VercelRequest): Record<string, unknown> {
 function cors(res: VercelResponse): void {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Studio-Institute-Owner-Key');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Studio-Institute-Owner-Key, X-Studio-Institute-Recovery-Secret');
 }
 
 function generateToken(): string {
@@ -165,6 +165,49 @@ async function setupOwnerPassword(
   return { ok: true };
 }
 
+async function resetOwnerPassword(
+  admin: ReturnType<typeof getSupabaseAdminServiceRole>,
+  passwordHash: string
+): Promise<{ ok: true } | { ok: false; status: number; error: string }> {
+  if (!PASSWORD_HASH_RE.test(passwordHash)) {
+    return { ok: false, status: 400, error: 'Invalid password hash' };
+  }
+  const now = new Date().toISOString();
+  const { error } = await admin.from('app_config').upsert(
+    { key: OWNER_PASSWORD_CONFIG_KEY, value: passwordHash, updated_at: now },
+    { onConflict: 'key' }
+  );
+  if (error) return { ok: false, status: 500, error: error.message };
+  return { ok: true };
+}
+
+async function canResetOwnerPassword(req: VercelRequest): Promise<boolean> {
+  if (await isOwner(req)) return true;
+  const recoverySecret = process.env.STUDIO_INSTITUTE_OWNER_RECOVERY_SECRET?.trim();
+  const body = parseBody(req);
+  const provided =
+    typeof body.recoverySecret === 'string'
+      ? body.recoverySecret.trim()
+      : typeof req.headers['x-studio-institute-recovery-secret'] === 'string'
+        ? req.headers['x-studio-institute-recovery-secret'].trim()
+        : '';
+  if (recoverySecret && provided && provided === recoverySecret) return true;
+  const envKey = process.env.STUDIO_INSTITUTE_OWNER_KEY;
+  const header = req.headers['x-studio-institute-owner-key'];
+  if (envKey && typeof header === 'string' && header === envKey) return true;
+  const adminAuth = await resolveAdminAuth(req);
+  return adminAuth.ok;
+}
+
+async function verifyOwnerPasswordHash(
+  admin: ReturnType<typeof getSupabaseAdminServiceRole>,
+  passwordHash: string
+): Promise<boolean> {
+  if (!PASSWORD_HASH_RE.test(passwordHash)) return false;
+  const storedHash = await getStoredOwnerPasswordHash(admin);
+  return Boolean(storedHash && passwordHash === storedHash);
+}
+
 function isExpired(row: InviteRow): boolean {
   if (!row.expires_at) return false;
   return new Date(row.expires_at).getTime() < Date.now();
@@ -231,6 +274,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const result = await setupOwnerPassword(admin, passwordHash);
       if (!result.ok) return res.status(result.status).json({ error: result.error });
       return res.status(201).json({ ok: true });
+    }
+
+    if (body.action === 'verify_owner_password') {
+      const passwordHash = typeof body.passwordHash === 'string' ? body.passwordHash.trim() : '';
+      const valid = await verifyOwnerPasswordHash(admin, passwordHash);
+      return res.status(200).json({ valid });
+    }
+
+    if (body.action === 'reset_owner_password') {
+      if (!(await canResetOwnerPassword(req))) {
+        return res.status(403).json({ error: 'Owner password reset not authorized' });
+      }
+      const passwordHash = typeof body.passwordHash === 'string' ? body.passwordHash.trim() : '';
+      const result = await resetOwnerPassword(admin, passwordHash);
+      if (!result.ok) return res.status(result.status).json({ error: result.error });
+      return res.status(200).json({ ok: true, reset: true });
     }
 
     if (!(await isOwner(req))) return res.status(401).json({ error: 'Owner access required' });

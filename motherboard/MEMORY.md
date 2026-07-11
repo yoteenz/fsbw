@@ -46754,3 +46754,23 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — packaging/download infrastructure; no new Studio OS product surfaces.
 
+---
+
+## 2026-07-11 — Invite Manager password: private tab still wrong + founder recovery
+
+**Context:** User set owner password on phone but private tab still shows "Incorrect password." Prior fix addressed stale localStorage; this confirmed **server hash mismatch** — not a cache issue.
+
+**Root cause:**
+- Supabase `app_config.studio_institute_owner_password_hash` set **2026-07-11 ~04:12 UTC** (likely desktop first setup)
+- Phone "setup" saved a **different** password locally; `bootstrapOwnerPasswordOnServer` returned **409** but UI **ignored** it and appeared to succeed
+- Private tab has no localStorage → only server verify → fails with phone password
+
+**Fix shipped:**
+- `setupOwnerPasswordFirstTime()` — if server already configured, verify password matches before saving; `exists_mismatch` shows clear message
+- `POST verify_owner_password` — dedicated server verify (not list-invites probe)
+- `POST reset_owner_password` — replace server hash when authorized via: current owner password, `STUDIO_INSTITUTE_OWNER_RECOVERY_SECRET`, legacy `STUDIO_INSTITUTE_OWNER_KEY` header, or admin Supabase session
+- UI: **Reset password (recovery code)** on login screen; improved error copy
+- **Founder unblock:** add `STUDIO_INSTITUTE_OWNER_RECOVERY_SECRET` in Vercel env, redeploy, use Reset flow on phone — OR enter original desktop password
+
+**Files:** `api/studio-institute/invites.ts`, `owner-password.ts`, `src/pages/studio-institute/invites/page.tsx`
+

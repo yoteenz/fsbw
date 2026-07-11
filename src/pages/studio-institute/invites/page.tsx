@@ -4,7 +4,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   INVITE_PROFILE_OPTIONS,
-  bootstrapOwnerPasswordOnServer,
   checkOwnerPasswordConfiguredOnServer,
   clearOwnerSession,
   createInviteLocal,
@@ -23,6 +22,8 @@ import {
   regenerateInviteOnServer,
   saveLocalInvite,
   saveOwnerPassword,
+  setupOwnerPasswordFirstTime,
+  resetOwnerPasswordOnServer,
   unlockWithOwnerPassword,
   type CreateExpertInviteInput,
   type ExpertInvite,
@@ -31,7 +32,7 @@ import { InviteSharePanel, InviteSuccessScreen } from '../components/InviteShare
 import { siStyles, SiBtn } from '../studio-institute-styles';
 
 type View = 'dashboard' | 'success';
-type AuthMode = 'loading' | 'setup' | 'login';
+type AuthMode = 'loading' | 'setup' | 'login' | 'reset';
 
 export default function StudioInstituteInvitesPage() {
   const [authMode, setAuthMode] = useState<AuthMode>('loading');
@@ -45,6 +46,7 @@ export default function StudioInstituteInvitesPage() {
   const [createdInvite, setCreatedInvite] = useState<ExpertInvite | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [confirmRegenerate, setConfirmRegenerate] = useState<string | null>(null);
+  const [recoverySecret, setRecoverySecret] = useState('');
 
   const [form, setForm] = useState<CreateExpertInviteInput & { accessPin?: string }>({
     inviteeName: '',
@@ -105,17 +107,65 @@ export default function StudioInstituteInvitesPage() {
           setError('Passwords do not match.');
           return;
         }
+        const result = await setupOwnerPasswordFirstTime(password);
+        if (result === 'exists_unlocked' || result === 'ok') {
+          setPassword('');
+          setConfirmPassword('');
+          await load();
+          return;
+        }
+        if (result === 'exists_mismatch') {
+          setError(
+            'A password was already set (often on another device). Enter that original password below, or use Reset password if you need a new one.'
+          );
+          setAuthMode('login');
+          return;
+        }
+        if (result === 'offline') {
+          setError('Could not reach the server. Check your connection and try again.');
+          return;
+        }
+        setError('Could not save password. Try again.');
+        return;
+      }
+
+      if (authMode === 'reset') {
+        if (password !== confirmPassword) {
+          setError('Passwords do not match.');
+          return;
+        }
+        if (!recoverySecret.trim()) {
+          setError('Enter your recovery code to reset the owner password.');
+          return;
+        }
         const hash = await saveOwnerPassword(password);
-        await bootstrapOwnerPasswordOnServer(hash);
-        setPassword('');
-        setConfirmPassword('');
-        await load();
+        const reset = await resetOwnerPasswordOnServer(hash, recoverySecret);
+        if (reset === 'ok') {
+          setPassword('');
+          setConfirmPassword('');
+          setRecoverySecret('');
+          setAuthMode('login');
+          setError(null);
+          await load();
+          return;
+        }
+        if (reset === 'denied') {
+          setError('Recovery code not accepted. Check Vercel STUDIO_INSTITUTE_OWNER_RECOVERY_SECRET or use admin login.');
+          return;
+        }
+        if (reset === 'offline') {
+          setError('Could not reach the server. Check your connection and try again.');
+          return;
+        }
+        setError('Password reset failed. Try again.');
         return;
       }
 
       const result = await unlockWithOwnerPassword(password);
       if (result === 'wrong') {
-        setError('Incorrect password.');
+        setError(
+          'Incorrect password. The server may have a different password than this device — try your original password or Reset password.'
+        );
         return;
       }
       if (result === 'offline') {
@@ -235,10 +285,14 @@ export default function StudioInstituteInvitesPage() {
           <p style={siStyles.sub}>
             {authMode === 'setup'
               ? 'Create your owner password once. You will use it to unlock this dashboard on any device.'
-              : 'Enter your owner password to manage expert invites.'}
+              : authMode === 'reset'
+                ? 'Set a new owner password. Requires your recovery code (STUDIO_INSTITUTE_OWNER_RECOVERY_SECRET in Vercel).'
+                : 'Enter your owner password to manage expert invites.'}
           </p>
           <div style={siStyles.card}>
-            <label style={siStyles.label}>{authMode === 'setup' ? 'Create password' : 'Password'}</label>
+            <label style={siStyles.label}>
+              {authMode === 'setup' ? 'Create password' : authMode === 'reset' ? 'New password' : 'Password'}
+            </label>
             <input
               style={siStyles.input}
               type="password"
@@ -247,7 +301,7 @@ export default function StudioInstituteInvitesPage() {
               placeholder={`At least ${MIN_OWNER_PASSWORD_LENGTH} characters`}
               autoComplete={authMode === 'setup' ? 'new-password' : 'current-password'}
             />
-            {authMode === 'setup' ? (
+            {authMode === 'setup' || authMode === 'reset' ? (
               <>
                 <label style={siStyles.label}>Confirm password</label>
                 <input
@@ -260,9 +314,71 @@ export default function StudioInstituteInvitesPage() {
                 />
               </>
             ) : null}
+            {authMode === 'reset' ? (
+              <>
+                <label style={siStyles.label}>Recovery code</label>
+                <input
+                  style={siStyles.input}
+                  type="password"
+                  value={recoverySecret}
+                  onChange={(e) => setRecoverySecret(e.target.value)}
+                  placeholder="From Vercel env STUDIO_INSTITUTE_OWNER_RECOVERY_SECRET"
+                  autoComplete="off"
+                />
+              </>
+            ) : null}
             <SiBtn primary fullWidth onClick={() => void handleAuth()} disabled={loading || !password.trim()}>
-              {authMode === 'setup' ? 'Save password & unlock' : 'Unlock dashboard'}
+              {authMode === 'setup'
+                ? 'Save password & unlock'
+                : authMode === 'reset'
+                  ? 'Reset password & unlock'
+                  : 'Unlock dashboard'}
             </SiBtn>
+            {authMode === 'login' ? (
+              <button
+                type="button"
+                style={{
+                  marginTop: 12,
+                  background: 'none',
+                  border: 'none',
+                  color: '#64748b',
+                  fontSize: 14,
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+                onClick={() => {
+                  setAuthMode('reset');
+                  setError(null);
+                  setConfirmPassword('');
+                }}
+              >
+                Reset password (recovery code)
+              </button>
+            ) : null}
+            {authMode === 'reset' ? (
+              <button
+                type="button"
+                style={{
+                  marginTop: 12,
+                  background: 'none',
+                  border: 'none',
+                  color: '#64748b',
+                  fontSize: 14,
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+                onClick={() => {
+                  setAuthMode('login');
+                  setError(null);
+                  setRecoverySecret('');
+                  setConfirmPassword('');
+                }}
+              >
+                Back to unlock
+              </button>
+            ) : null}
             {error ? <p style={{ color: '#dc2626', fontSize: 14 }}>{error}</p> : null}
           </div>
         </div>
