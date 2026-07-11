@@ -46431,3 +46431,24 @@ Summary of **full conversation in this chat**: Living Knowledge Mirror (`c5446d4
 - **Tests:** `trust-vault.test.ts`
 - **URLs:** https://fsbw.vercel.app/expert-capture/tax-preparation/knowledge-vault · https://fsbw.vercel.app/expert-capture/all-in-one-permitting/trust-dashboard
 
+---
+
+## 2026-07-11 — Private Expert Invite System (Phase 1)
+
+Summary of **full conversation in this chat**: Investigation recorder boot, generic Expert Capture MVP, All In One permitting profile, Save/Exit/Resume persistence, Living Knowledge Mirror (`c5446d419`), Expert Trust Framework + Knowledge Vault (`715ab6f4b`). User approved **Private Expert Invite System (Phase 1)** sprint — lightweight invite-only knowledge acquisition on existing FSBW Vercel deployment under isolated `/studio-institute` routes; DocuSign/Loom-style private access (not public forms); migration-ready for future Studio OS domain (no FSBW hardcoding in architecture).
+
+- **Routes (hidden from public nav):** `/studio-institute` → Invite Manager · `/studio-institute/invite` (owner dashboard) · `/studio-institute/invite/:token` (invitee landing) · `/studio-institute/interview` · `/studio-institute/knowledge-vault`
+- **Config:** `STUDIO_INSTITUTE_BASE_PATH`, `VITE_PUBLIC_APP_ORIGIN`, `VITE_STUDIO_INSTITUTE_BASE_PATH` — `buildInviteUrl()` for migration-ready links
+- **Auth Phase 1:** invite token = invitee access; owner dashboard via `STUDIO_INSTITUTE_OWNER_KEY` header or admin email; scaffolded `InviteAccessGrant` / `OwnerAccessGrant` for future Studio Accounts / OAuth / 2FA
+- **Invite Manager:** random 8-char tokens; fields (invitee, business, role, worker, status, progress %, current question, time spent, last active, session link, archive/delete/duplicate)
+- **Core** `src/studio-os-core/expert-capture/invite-system/` — types, config, invite-manager, invite-store (localStorage + API sync), invite-sync from Expert Capture session
+- **API** `api/studio-institute/invites.ts` — GET by token (public) · owner CRUD · PATCH progress by token (autosave)
+- **Migration** `supabase/migrations/20260711000000_studio_institute_invites.sql` — `studio_institute_invites` table
+- **UI:** Studio Institute minimal branding (`studio-institute-styles.tsx`); owner Invite Manager; invitee welcome (protection summary, resume hint); invite-gated interview reuses `ExpertCaptureInterviewView` + trust flow; vault route
+- **Resume:** `startSessionFromInvite` loads server `sessionId` when present; hook accepts `inviteSessionId`; continuous autosave via existing Expert Capture persistence + invite progress PATCH
+- **Isolation:** `isIsolatedStudioRoute()` skips main storefront bootstrap on `/studio-institute/*`; routes in `StudioDebugRoutes.tsx` only
+- **Tests:** `invite-system.test.ts` (6 cases)
+- **Docs:** `docs/studio-institute/EXPERT_CAPTURE_INVITE_SYSTEM.md`
+- **Env:** set `STUDIO_INSTITUTE_OWNER_KEY` on Vercel for owner API
+- **URLs:** https://fsbw.vercel.app/studio-institute/invite · https://fsbw.vercel.app/studio-institute/invite/{TOKEN}
+

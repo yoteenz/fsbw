@@ -11,7 +11,11 @@ export function generateInviteToken(length = 8): string {
   return Array.from(bytes, (b) => INVITE_TOKEN_CHARSET[b % INVITE_TOKEN_CHARSET.length]).join('');
 }
 
-export function createInviteRecord(input: CreateExpertInviteInput, token = generateInviteToken()): ExpertInvite {
+export function createInviteRecord(
+  input: CreateExpertInviteInput,
+  token = generateInviteToken(),
+  pinHash: string | null = null
+): ExpertInvite {
   const now = new Date().toISOString();
   return {
     id: newId('inv'),
@@ -24,7 +28,11 @@ export function createInviteRecord(input: CreateExpertInviteInput, token = gener
     companyId: input.companyId,
     createdAt: now,
     expiresAt: input.expiresAt ?? null,
+    welcomeNote: input.welcomeNote?.trim() || null,
+    pinHash,
+    hasPin: Boolean(pinHash),
     status: 'not_started',
+    accessStatus: input.accessStatus ?? 'active',
     sessionId: null,
     progressPercent: 0,
     currentQuestionLabel: null,
@@ -34,6 +42,17 @@ export function createInviteRecord(input: CreateExpertInviteInput, token = gener
     latestLesson: null,
     knowledgeExtractedCount: 0,
     archivedAt: null,
+    revokedTokens: [],
+  };
+}
+
+/** Regenerate token while preserving session + progress */
+export function regenerateInviteToken(invite: ExpertInvite, newToken = generateInviteToken()): ExpertInvite {
+  return {
+    ...invite,
+    token: newToken,
+    revokedTokens: [...(invite.revokedTokens ?? []), invite.token],
+    accessStatus: invite.accessStatus === 'revoked' ? 'active' : invite.accessStatus,
   };
 }
 

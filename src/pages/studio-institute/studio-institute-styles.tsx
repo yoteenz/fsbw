@@ -48,6 +48,35 @@ export const siStyles = {
   },
   label: { display: 'block', fontSize: 13, color: '#64748b', marginBottom: 6 } as const,
   table: { width: '100%', borderCollapse: 'collapse' as const, fontSize: 13 },
+  btnRow: {
+    display: 'flex',
+    flexWrap: 'wrap' as const,
+    gap: 10,
+    marginTop: 8,
+  },
+  urlInput: {
+    width: '100%',
+    padding: '12px 14px',
+    borderRadius: 8,
+    border: '1px solid #cbd5e1',
+    fontSize: 13,
+    fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+    marginBottom: 8,
+    boxSizing: 'border-box' as const,
+    wordBreak: 'break-all' as const,
+  },
+  textarea: {
+    width: '100%',
+    padding: '12px 14px',
+    borderRadius: 8,
+    border: '1px solid #cbd5e1',
+    fontSize: 14,
+    lineHeight: 1.55,
+    marginBottom: 8,
+    boxSizing: 'border-box' as const,
+    minHeight: 200,
+    resize: 'vertical' as const,
+  },
 };
 
 export function SiBtn({
@@ -55,11 +84,13 @@ export function SiBtn({
   onClick,
   primary,
   disabled,
+  fullWidth,
 }: {
   children: ReactNode;
   onClick?: () => void;
   primary?: boolean;
   disabled?: boolean;
+  fullWidth?: boolean;
 }) {
   return (
     <button
@@ -70,6 +101,9 @@ export function SiBtn({
         ...(primary ? siStyles.btnPrimary : siStyles.btn),
         opacity: disabled ? 0.5 : 1,
         cursor: disabled ? 'not-allowed' : 'pointer',
+        minHeight: 44,
+        minWidth: fullWidth ? '100%' : undefined,
+        flex: fullWidth ? '1 1 100%' : undefined,
       }}
     >
       {children}

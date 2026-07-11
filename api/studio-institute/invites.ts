@@ -1,4 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createHash } from 'crypto';
 import { getAuthUser } from '../_lib/auth.js';
 import { isAdminEmail } from '../_lib/adminAuth.js';
 import { getSupabaseAdminServiceRole, hasSupabaseServiceRole } from '../_lib/supabase.js';
@@ -13,6 +14,11 @@ type InviteRow = {
   profile_id: string;
   company_id: string;
   status: string;
+  access_status: string;
+  welcome_note: string | null;
+  pin_hash: string | null;
+  revoked_tokens: string[] | null;
+  audit_log: AuditRow[] | null;
   session_id: string | null;
   progress_percent: number;
   current_question_label: string | null;
@@ -27,7 +33,22 @@ type InviteRow = {
   updated_at: string;
 };
 
+type AuditRow = { event: string; at: string };
+
 const TOKEN_CHARSET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const AUDIT_EVENTS = new Set([
+  'invite_created',
+  'link_copied',
+  'message_copied',
+  'share_initiated',
+  'invite_previewed',
+  'link_regenerated',
+  'access_paused',
+  'access_resumed',
+  'invite_revoked',
+  'invite_archived',
+  'invite_deleted',
+]);
 
 function parseBody(req: VercelRequest): Record<string, unknown> {
   const body = req.body;
@@ -56,7 +77,11 @@ function generateToken(): string {
   return out;
 }
 
-function rowToInvite(row: InviteRow) {
+function hashPin(pin: string): string {
+  return createHash('sha256').update(pin.trim()).digest('hex');
+}
+
+function rowToInvite(row: InviteRow, opts: { includePinHash?: boolean } = {}) {
   return {
     id: row.id,
     token: row.token,
@@ -67,6 +92,10 @@ function rowToInvite(row: InviteRow) {
     profileId: row.profile_id,
     companyId: row.company_id,
     status: row.status,
+    accessStatus: row.access_status ?? 'active',
+    welcomeNote: row.welcome_note,
+    pinHash: opts.includePinHash ? row.pin_hash : null,
+    hasPin: Boolean(row.pin_hash),
     sessionId: row.session_id,
     progressPercent: Number(row.progress_percent ?? 0),
     currentQuestionLabel: row.current_question_label,
@@ -78,7 +107,14 @@ function rowToInvite(row: InviteRow) {
     expiresAt: row.expires_at,
     archivedAt: row.archived_at,
     createdAt: row.created_at,
+    revokedTokens: Array.isArray(row.revoked_tokens) ? row.revoked_tokens : [],
   };
+}
+
+function appendAudit(row: InviteRow, event: string): AuditRow[] {
+  if (!AUDIT_EVENTS.has(event)) return row.audit_log ?? [];
+  const next = [...(row.audit_log ?? []), { event, at: new Date().toISOString() }];
+  return next.slice(-100);
 }
 
 async function isOwner(req: VercelRequest): Promise<boolean> {
@@ -93,6 +129,15 @@ async function isOwner(req: VercelRequest): Promise<boolean> {
 function isExpired(row: InviteRow): boolean {
   if (!row.expires_at) return false;
   return new Date(row.expires_at).getTime() < Date.now();
+}
+
+function accessBlocked(row: InviteRow): string | null {
+  if (row.access_status === 'deleted') return 'unavailable';
+  if (row.access_status === 'revoked') return 'unavailable';
+  if (row.access_status === 'paused') return 'unavailable';
+  if (row.access_status === 'archived' || row.status === 'archived') return 'unavailable';
+  if (isExpired(row) || row.access_status === 'expired') return 'unavailable';
+  return null;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -110,19 +155,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (token) {
       const { data, error } = await admin.from('studio_institute_invites').select('*').eq('token', token).maybeSingle();
       if (error) return res.status(500).json({ error: error.message });
-      if (!data) return res.status(404).json({ error: 'Invite not found' });
-      if (isExpired(data as InviteRow)) return res.status(410).json({ error: 'Invite expired' });
-      if (data.status === 'archived') return res.status(410).json({ error: 'Invite archived' });
-      return res.status(200).json({ invite: rowToInvite(data as InviteRow) });
+      if (!data) {
+        const { data: revokedHit } = await admin
+          .from('studio_institute_invites')
+          .select('*')
+          .contains('revoked_tokens', [token])
+          .maybeSingle();
+        if (revokedHit) return res.status(410).json({ error: 'Invite link revoked', unavailable: true });
+        return res.status(404).json({ error: 'Invite not found' });
+      }
+      const row = data as InviteRow;
+      if (accessBlocked(row)) return res.status(410).json({ error: 'Invite unavailable', unavailable: true });
+      return res.status(200).json({ invite: rowToInvite(row) });
     }
 
     if (!(await isOwner(req))) return res.status(401).json({ error: 'Owner access required' });
     const { data, error } = await admin
       .from('studio_institute_invites')
       .select('*')
+      .neq('access_status', 'deleted')
       .order('updated_at', { ascending: false });
     if (error) return res.status(500).json({ error: error.message });
-    return res.status(200).json({ invites: (data ?? []).map((r) => rowToInvite(r as InviteRow)) });
+    return res.status(200).json({ invites: (data ?? []).map((r) => rowToInvite(r as InviteRow, { includePinHash: true })) });
   }
 
   if (req.method === 'POST') {
@@ -136,6 +190,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!existing) break;
       token = generateToken();
     }
+    const pinFromBody = typeof body.pinHash === 'string' ? body.pinHash : null;
+    const accessPin = typeof body.accessPin === 'string' ? body.accessPin.trim() : '';
+    const pin_hash = pinFromBody || (accessPin ? hashPin(accessPin) : null);
     const row = {
       id,
       token,
@@ -146,6 +203,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       profile_id: String(body.profileId ?? 'generic-v1'),
       company_id: String(body.companyId ?? 'studio-os'),
       status: 'not_started',
+      access_status: String(body.accessStatus ?? 'active'),
+      welcome_note: typeof body.welcomeNote === 'string' ? body.welcomeNote.trim() || null : null,
+      pin_hash,
+      revoked_tokens: [],
+      audit_log: [{ event: 'invite_created', at: now }],
       expires_at: typeof body.expiresAt === 'string' ? body.expiresAt : null,
       created_at: now,
       updated_at: now,
@@ -155,18 +217,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     const { data, error } = await admin.from('studio_institute_invites').insert(row).select('*').single();
     if (error) return res.status(500).json({ error: error.message });
-    return res.status(201).json({ invite: rowToInvite(data as InviteRow) });
+    return res.status(201).json({ invite: rowToInvite(data as InviteRow, { includePinHash: true }) });
   }
 
   if (req.method === 'PATCH') {
     const body = parseBody(req);
     const id = typeof body.id === 'string' ? body.id : null;
     const token = typeof body.token === 'string' ? body.token : null;
+    const action = typeof body.action === 'string' ? body.action : null;
+    const auditEvent = typeof body.auditEvent === 'string' ? body.auditEvent : null;
     const patch = (body.patch ?? {}) as Record<string, unknown>;
     const owner = await isOwner(req);
 
     if (!id && !token) return res.status(400).json({ error: 'Missing id or token' });
-
     if (!owner && !token) return res.status(401).json({ error: 'Unauthorized' });
 
     let query = admin.from('studio_institute_invites').select('*');
@@ -176,6 +239,42 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { data: existing, error: loadErr } = await query.maybeSingle();
     if (loadErr) return res.status(500).json({ error: loadErr.message });
     if (!existing) return res.status(404).json({ error: 'Invite not found' });
+
+    const row = existing as InviteRow;
+    const now = new Date().toISOString();
+    let audit_log = row.audit_log ?? [];
+
+    if (owner && action === 'regenerate_token') {
+      const oldToken = row.token;
+      let newToken = generateToken();
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const { data: clash } = await admin.from('studio_institute_invites').select('id').eq('token', newToken).maybeSingle();
+        if (!clash) break;
+        newToken = generateToken();
+      }
+      const revoked_tokens = [...(Array.isArray(row.revoked_tokens) ? row.revoked_tokens : []), oldToken];
+      audit_log = appendAudit({ ...row, audit_log }, 'link_regenerated');
+      const { data, error } = await admin
+        .from('studio_institute_invites')
+        .update({ token: newToken, revoked_tokens, audit_log, updated_at: now })
+        .eq('id', row.id)
+        .select('*')
+        .single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ invite: rowToInvite(data as InviteRow, { includePinHash: true }) });
+    }
+
+    if (owner && action === 'audit' && auditEvent && AUDIT_EVENTS.has(auditEvent)) {
+      audit_log = appendAudit({ ...row, audit_log }, auditEvent);
+      const { data, error } = await admin
+        .from('studio_institute_invites')
+        .update({ audit_log, updated_at: now })
+        .eq('id', row.id)
+        .select('*')
+        .single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json({ invite: rowToInvite(data as InviteRow, { includePinHash: true }) });
+    }
 
     const allowedForInvitee = [
       'sessionId',
@@ -189,7 +288,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       'status',
     ];
 
-    const update: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    const update: Record<string, unknown> = { updated_at: now };
     const map: Record<string, string> = {
       sessionId: 'session_id',
       progressPercent: 'progress_percent',
@@ -200,7 +299,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       latestLesson: 'latest_lesson',
       knowledgeExtractedCount: 'knowledge_extracted_count',
       status: 'status',
+      accessStatus: 'access_status',
       archivedAt: 'archived_at',
+      welcomeNote: 'welcome_note',
     };
 
     for (const [key, col] of Object.entries(map)) {
@@ -210,25 +311,46 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     if (owner && patch.status === 'archived') {
-      update.archived_at = new Date().toISOString();
+      update.archived_at = now;
+      update.access_status = 'archived';
+      audit_log = appendAudit({ ...row, audit_log }, 'invite_archived');
+      update.audit_log = audit_log;
+    }
+    if (owner && patch.accessStatus === 'paused') {
+      audit_log = appendAudit({ ...row, audit_log }, 'access_paused');
+      update.audit_log = audit_log;
+    }
+    if (owner && patch.accessStatus === 'active' && row.access_status === 'paused') {
+      audit_log = appendAudit({ ...row, audit_log }, 'access_resumed');
+      update.audit_log = audit_log;
+    }
+    if (owner && patch.accessStatus === 'revoked') {
+      audit_log = appendAudit({ ...row, audit_log }, 'invite_revoked');
+      update.audit_log = audit_log;
     }
 
     const { data, error } = await admin
       .from('studio_institute_invites')
       .update(update)
-      .eq('id', (existing as InviteRow).id)
+      .eq('id', row.id)
       .select('*')
       .single();
     if (error) return res.status(500).json({ error: error.message });
-    return res.status(200).json({ invite: rowToInvite(data as InviteRow) });
+    return res.status(200).json({ invite: rowToInvite(data as InviteRow, { includePinHash: owner }) });
   }
 
   if (req.method === 'DELETE') {
     if (!(await isOwner(req))) return res.status(401).json({ error: 'Owner access required' });
     const id = typeof req.query.id === 'string' ? req.query.id : null;
     if (!id) return res.status(400).json({ error: 'Missing id' });
-    const { error } = await admin.from('studio_institute_invites').delete().eq('id', id);
-    if (error) return res.status(500).json({ error: error.message });
+    const { data: existing } = await admin.from('studio_institute_invites').select('*').eq('id', id).maybeSingle();
+    if (existing) {
+      const audit_log = appendAudit(existing as InviteRow, 'invite_deleted');
+      await admin
+        .from('studio_institute_invites')
+        .update({ access_status: 'deleted', audit_log, updated_at: new Date().toISOString() })
+        .eq('id', id);
+    }
     return res.status(200).json({ ok: true });
   }
 

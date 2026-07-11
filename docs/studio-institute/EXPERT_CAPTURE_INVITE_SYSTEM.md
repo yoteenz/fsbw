@@ -7,7 +7,8 @@ Lightweight invite-only knowledge acquisition under **Studio Institute** routes 
 | Route | Purpose |
 |-------|---------|
 | `/studio-institute` | Redirects to Invite Manager |
-| `/studio-institute/invite` | Owner dashboard (Invite Manager) |
+| `/studio-institute/invite` | Owner dashboard (legacy — redirects to `/invites`) |
+| `/studio-institute/invites` | Owner dashboard (Invite Manager) |
 | `/studio-institute/invite/:token` | Invitee welcome / resume landing |
 | `/studio-institute/interview` | Invite-gated interview (Expert Capture) |
 | `/studio-institute/knowledge-vault` | Invite-gated Knowledge Vault |

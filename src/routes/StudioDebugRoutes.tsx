@@ -38,7 +38,8 @@ import PermittingKnowledgeVaultPage from '../pages/expert-capture/all-in-one-per
 import PermittingTrustDashboardPage from '../pages/expert-capture/all-in-one-permitting/trust-dashboard/page';
 import PermittingLivingWorkerPage from '../pages/expert-capture/all-in-one-permitting/living-worker/page';
 import StudioInstituteHomePage from '../pages/studio-institute/page';
-import StudioInstituteInviteManagerPage from '../pages/studio-institute/invite/page';
+import StudioInstituteInviteManagerPage from '../pages/studio-institute/invites/page';
+import StudioInstituteInviteLegacyRedirect from '../pages/studio-institute/invite/page';
 import StudioInstituteInviteLandingPage from '../pages/studio-institute/invite/landing/page';
 import StudioInstituteInterviewPage from '../pages/studio-institute/interview/page';
 import StudioInstituteVaultPage from '../pages/studio-institute/knowledge-vault/page';
@@ -134,7 +135,8 @@ export default function StudioDebugRoutes() {
       <Route path="/expert-capture/all-in-one-permitting/trust-dashboard" element={<PermittingTrustDashboardPage />} />
       <Route path="/expert-capture/all-in-one-permitting/living-worker" element={<PermittingLivingWorkerPage />} />
       <Route path="/studio-institute" element={<StudioInstituteHomePage />} />
-      <Route path="/studio-institute/invite" element={<StudioInstituteInviteManagerPage />} />
+      <Route path="/studio-institute/invites" element={<StudioInstituteInviteManagerPage />} />
+      <Route path="/studio-institute/invite" element={<StudioInstituteInviteLegacyRedirect />} />
       <Route path="/studio-institute/invite/:token" element={<StudioInstituteInviteLandingPage />} />
       <Route path="/studio-institute/interview" element={<StudioInstituteInterviewPage />} />
       <Route path="/studio-institute/knowledge-vault" element={<StudioInstituteVaultPage />} />

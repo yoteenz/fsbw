@@ -1,4 +1,6 @@
 import type { CreateExpertInviteInput, ExpertInvite } from './types';
+import { createInviteRecord, regenerateInviteToken } from './invite-manager';
+import { hashInvitePin } from './invite-crypto';
 
 const STORAGE_KEY = 'studioInstituteInvites_v1';
 
@@ -6,10 +8,22 @@ function readAll(): ExpertInvite[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
-    return JSON.parse(raw) as ExpertInvite[];
+    const parsed = JSON.parse(raw) as ExpertInvite[];
+    return parsed.map(normalizeInvite);
   } catch {
     return [];
   }
+}
+
+function normalizeInvite(inv: ExpertInvite): ExpertInvite {
+  return {
+    ...inv,
+    accessStatus: inv.accessStatus ?? 'active',
+    welcomeNote: inv.welcomeNote ?? null,
+    pinHash: inv.pinHash ?? null,
+    hasPin: inv.hasPin ?? Boolean(inv.pinHash),
+    revokedTokens: inv.revokedTokens ?? [],
+  };
 }
 
 function writeAll(invites: ExpertInvite[]): void {
@@ -22,12 +36,13 @@ export function loadLocalInvites(): ExpertInvite[] {
 }
 
 export function saveLocalInvite(invite: ExpertInvite): ExpertInvite {
+  const normalized = normalizeInvite(invite);
   const all = readAll();
-  const idx = all.findIndex((i) => i.id === invite.id || i.token === invite.token);
-  if (idx >= 0) all[idx] = invite;
-  else all.push(invite);
+  const idx = all.findIndex((i) => i.id === normalized.id || i.token === normalized.token);
+  if (idx >= 0) all[idx] = normalized;
+  else all.push(normalized);
   writeAll(all);
-  return invite;
+  return normalized;
 }
 
 export function deleteLocalInvite(id: string): void {
@@ -35,7 +50,9 @@ export function deleteLocalInvite(id: string): void {
 }
 
 export function findLocalInviteByToken(token: string): ExpertInvite | null {
-  return readAll().find((i) => i.token === token) ?? null;
+  const direct = readAll().find((i) => i.token === token);
+  if (direct) return direct;
+  return readAll().find((i) => i.revokedTokens?.includes(token)) ?? null;
 }
 
 function apiBase(): string {
@@ -52,10 +69,16 @@ export async function fetchInviteByToken(token: string): Promise<ExpertInvite | 
         return data.invite;
       }
     }
+    if (res.status === 410 || res.status === 404) {
+      const stale = findLocalInviteByToken(token);
+      if (stale?.revokedTokens?.includes(token)) return null;
+    }
   } catch {
     /* offline fallback */
   }
-  return findLocalInviteByToken(token);
+  const local = findLocalInviteByToken(token);
+  if (local && local.token === token) return local;
+  return null;
 }
 
 export async function fetchAllInvites(ownerKey: string): Promise<ExpertInvite[]> {
@@ -65,7 +88,7 @@ export async function fetchAllInvites(ownerKey: string): Promise<ExpertInvite[]>
     });
     if (res.ok) {
       const data = (await res.json()) as { invites?: ExpertInvite[] };
-      const invites = data.invites ?? [];
+      const invites = (data.invites ?? []).map(normalizeInvite);
       writeAll(invites);
       return invites;
     }
@@ -79,13 +102,15 @@ export async function createInviteOnServer(
   ownerKey: string,
   input: CreateExpertInviteInput
 ): Promise<ExpertInvite> {
+  const pinHash = input.accessPin?.trim() ? await hashInvitePin(input.accessPin.trim()) : null;
+  const payload = { ...input, pinHash, accessPin: undefined };
   const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'X-Studio-Institute-Owner-Key': ownerKey,
     },
-    body: JSON.stringify(input),
+    body: JSON.stringify(payload),
   });
   if (!res.ok) {
     const err = (await res.json().catch(() => ({}))) as { error?: string };
@@ -94,6 +119,11 @@ export async function createInviteOnServer(
   const data = (await res.json()) as { invite: ExpertInvite };
   saveLocalInvite(data.invite);
   return data.invite;
+}
+
+export async function createInviteLocal(input: CreateExpertInviteInput): Promise<ExpertInvite> {
+  const pinHash = input.accessPin?.trim() ? await hashInvitePin(input.accessPin.trim()) : null;
+  return saveLocalInvite(createInviteRecord(input, undefined, pinHash));
 }
 
 export async function patchInviteOnServer(
@@ -110,6 +140,28 @@ export async function patchInviteOnServer(
     body: JSON.stringify({ id, patch }),
   });
   if (!res.ok) throw new Error('Failed to update invite');
+  const data = (await res.json()) as { invite: ExpertInvite };
+  saveLocalInvite(data.invite);
+  return data.invite;
+}
+
+export async function regenerateInviteOnServer(ownerKey: string, id: string): Promise<ExpertInvite> {
+  const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Studio-Institute-Owner-Key': ownerKey,
+    },
+    body: JSON.stringify({ id, action: 'regenerate_token' }),
+  });
+  if (!res.ok) {
+    const local = readAll().find((i) => i.id === id);
+    if (local) {
+      const next = saveLocalInvite(regenerateInviteToken(local));
+      return next;
+    }
+    throw new Error('Failed to regenerate link');
+  }
   const data = (await res.json()) as { invite: ExpertInvite };
   saveLocalInvite(data.invite);
   return data.invite;
