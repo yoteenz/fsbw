@@ -74,6 +74,7 @@ import {
   withValidationEphemeralAuth,
   getActiveEphemeralCompileAuthorization,
 } from '../studio-os-core/scene-stack/validation-render';
+import { resolveValidationCompileMode } from '../studio-os-core/creative-production/validation-compile-context';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -239,7 +240,18 @@ export function useSceneStack(
       if (generatingKeys.has(key)) return false;
 
       const previewSessionId = layerCompileOptions?.previewCompileContext?.previewSessionId;
-      const validationMode = layerCompileOptions?.validationMode ?? isExperienceLabValidationRender();
+      const previewCtx = layerCompileOptions?.previewCompileContext;
+      const validationMode = resolveValidationCompileMode(layerCompileOptions?.validationMode, {
+        compileRunId: previewCtx?.compileRunId ?? null,
+        previewSessionId: previewCtx?.previewSessionId ?? null,
+        organizationId:
+          previewCtx?.companyId ??
+          getActiveEphemeralCompileAuthorization(previewCtx?.compileRunId ?? null)?.organizationId ??
+          null,
+        departmentId,
+        stationId,
+        projectId,
+      });
       const lookupOptions =
         validationMode && previewSessionId
           ? { validationMode: true, previewSessionId }
@@ -438,7 +450,7 @@ export function useSceneStack(
           outputFormat: compiled.outputFormat,
           referenceImageUrls,
           referenceUrlScheme: referenceImageUrls.map((u) => (u.startsWith('data:') ? 'data-url' : u.startsWith('http') ? 'http' : 'other')),
-          validationMode: isExperienceLabValidationRender(),
+          validationMode: isExperienceLabValidationRender() && validationMode,
           authorizationMode: VALIDATION_RENDER_AUTHORIZATION,
           productionAuthorizationId:
             getActiveEphemeralCompileAuthorization(

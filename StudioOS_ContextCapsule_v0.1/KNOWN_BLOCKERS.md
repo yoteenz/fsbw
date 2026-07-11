@@ -1,103 +1,70 @@
 # KNOWN BLOCKERS — Do Not Violate
 
-**Last updated:** 2026-07-10  
-**Authority:** Overrides feature work, compile repair, and optimistic assumptions  
-**Git reference:** `3b8fb4fa7`
+**Last updated:** 2026-07-11  
+**Authority:** Overrides feature work, compile repair, and optimistic assumptions
 
 ---
 
 ## Gate rule
 
-**Do not resume** Experience Lab compile repair, Layer 1 auth fixes, or Creative Direction Studio feature work until:
+**Creative Studio** governed validation compiles: verify on production mobile **after restoration deploy** before resuming Experience Engine repair.
 
-1. **B2** — founder verifies diagnostic routes in **normal** mobile tabs  
-2. **B1** — approved repair sprint exists for Layer 1 auth  
-
-Forensic and documentation sprints are allowed. Feature resume is not.
+**Experience Engine Layer 1** remains blocked until Black Box traces confirm whether failure is auth-scope, provider, or compiler-state — **separate sprint**.
 
 ---
 
-## B1 — Layer 1 AUTH_REQUIRED (P0)
+## B1-Creative-Studio — Shared pipeline regression (P0 — RESTORATION SHIPPED)
 
 | Field | Detail |
 |-------|--------|
-| **ID** | B1 |
-| **Symptom** | Experience Lab compile reaches Layer 1 (`signature-landmark`) then fails |
-| **UI state** | `FAILED_AT_LAYER_1` — "LANDMARK GENERATION FAILED" (not shell retry) |
-| **Proven root cause** | Shell succeeds via **canvas fallback**; Layer 1 uses governed generation API only → server returns **`AUTH_REQUIRED`** because client sends no `productionAuthorizationId` and `legacyCompatEnabled()` is false in production |
-| **Owner** | Composer (future approved sprint) |
-| **Unblock options** | Ephemeral `productionAuthorizationId` for validation mode **OR** scoped legacy compat for Experience Lab drafts (founder policy decision) |
-| **Forensic status** | ✅ Complete (`506d77169`, `layer1-forensic.ts`, `?compilerDiag=1`) |
-| **Repair status** | ❌ Not started |
+| **ID** | B1-Creative-Studio |
+| **Symptom** | Creative Studio at `/admin/studio/experience-lab` failed shell/layer governed generation after B1 auth commits |
+| **Proven root cause** | `2408310f3` leaked `validationMode` + validation fields into shared `studio-builder-generate` without guaranteed server auth; `49e48c7e4` blocked pipeline at Compile Preview Spec when ephemeral auth endpoint failed |
+| **Restoration** | Complete-scope gating (`validation-compile-context.ts`); lazy `ensureValidationEphemeralAuth` hardened; adapter execution context propagation |
+| **Forensic report** | `docs/studio-os/forensics/SHARED_GENERATION_PIPELINE_REGRESSION.md` |
+| **Verify** | Normal mobile Safari + Chrome on https://fsbw.vercel.app/admin/studio/experience-lab |
+| **Status** | ⏳ Pending founder production verify |
 
 ### Do not
 
-- Add canvas fallback for Layer 1 to mask auth failure without governance review  
-- Silent auth bypass on governed generation routes  
-- Treat "shell loaded" as compile success  
-- Resume full compile pipeline work before B2 verified + B1 sprint approved  
+- Reintroduce blocking pre-pipeline `experience-lab-ephemeral-authorization` call before shell pipeline
+- Default `validationMode` from global render mode without complete compile scope
+- Disable authorization or add canvas fallback for Layer 1 to mask auth failure
+
+---
+
+## B1-Experience-Engine — Layer 1 remaining failure (P0 — ISOLATED)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-Experience-Engine |
+| **Symptom** | Experience Engine Layer 1 (`signature-landmark`) may still fail after shared-path restoration |
+| **Distinction** | **Not** the same as Creative Studio shell regression; triage with Black Box after Creative Studio verified |
+| **Classification candidates** | A authorization issuance · C scope mismatch · G provider · I UI/compiler desync |
+| **Owner** | Composer (separate approved sprint) |
+| **Unblock** | Founder approves EE repair after Creative Studio mobile verify + trace review |
+| **Status** | ❌ Not repaired in this sprint |
 
 ### Verify compile diagnostic
 
 ```
-?compilerDiag=1
+https://fsbw.vercel.app/__world-compiler-investigation
 ```
+
+Optional query: `?compilerDiag=1` on Experience Lab route.
 
 ---
 
-## B2 — Diagnostic normal-tab verification (P0)
+## B2 — Diagnostic normal-tab verification
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B2 |
-| **Symptom** | `/__studio-os-*` routes worked in private/incognito but failed in normal tabs |
-| **Fix shipped** | Pre-main probe + split entry (`ef969cb7d`) — diagnostic routes bypass `main-app.tsx` |
-| **Owner** | Founder (device verification) |
-| **Unblock** | Confirm all diagnostic routes load on **iOS Safari / Chrome normal tabs** (not private) |
-| **If stale cache** | Use recovery page first |
-
-### Recovery URL
-
-```
-/__studio-os-recovery
-```
-
-### Other diagnostic URLs
-
-```
-/__studio-os-flight-recorder
-```
-
-```
-/__studio-os-live-runtime
-```
-
-```
-/__studio-os-session-report
-```
+| **Recovery URL** | https://fsbw.vercel.app/__studio-os-recovery |
+| **Status** | ⏳ Pending founder device verification |
 
 ---
 
-## Resolved (context — not active blockers)
+## Historical reference (superseded for Creative Studio path)
 
-| Item | Commit | Notes |
-|------|--------|-------|
-| `studio-world-atlas` package missing from registry | `03726eaf9` | Fixed — was failing before Layer 1 |
-| Misleading "Retry Shell Layer" UI | `506d77169` | Fixed — shows landmark failure |
-| Vercel build TS2322 in diagnostic test | `3b8fb4fa7` | Fixed — window stub |
-
----
-
-## Risk matrix
-
-| Risk | Mitigation |
-|------|------------|
-| Stale asset cache after deploy | Build ID meta + `/__studio-os-recovery` |
-| Oversized `genesis_v1` breaks boot | Quarantine on diagnostic entry |
-| Multiple Vercel deploys per task | One commit + one push per founder request |
-| ChatGPT contradicts canon | Glossary + changelog + this file |
-| Canvas shell fallback masks auth gap | Do not extend fallback to Landmark |
-
----
-
-*If blockers in this file conflict with chat memory, this file wins.*
+Pre-2026-07-11 B1 entry documented Layer 1 `AUTH_REQUIRED` with shell canvas fallback masking. Shared-path restoration addresses **governed validation** auth issuance; Experience Engine Layer 1 may still need separate work.

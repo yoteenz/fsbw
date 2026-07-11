@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "deltaSequence": 1,
+  "deltaSequence": 2,
   "onboardingPackVersion": "1.1.0",
-  "publishedAt": "2026-07-11T15:36:30.082Z",
-  "gitCommit": "46f260c85730cf95aabac81eea3b78e95f55784d",
+  "publishedAt": "2026-07-11T16:13:39.831Z",
+  "gitCommit": "3051691d2b056bf710890c3afec3d75c115137c3",
   "capsuleVersions": {
     "ai-context": "0.3.1",
     "founder-intelligence": "1.0.0",
@@ -15,13 +15,13 @@
     "ai-context:AI_GLOSSARY.md": "451870b1a4468f35fddf36c95566fd49b470a702e338590ac4941c398855c1e1",
     "ai-context:AI_STYLE_GUIDE.md": "1dc9c1d20dfc195dfa67a826304a98bebd86c8b3550871aa0036577ecab9103d",
     "ai-context:CHATGPT_OPERATING_MANUAL.md": "2b5d827d939a3a9710e47469f4011e861e6a2ac8d12581c1f45241070b0289d8",
-    "ai-context:CURRENT_HANDOFF.md": "b378e9dd7bd1789b919b72d6c0a0f0e7bf28aef2d6207514188b1358a7dd7995",
+    "ai-context:CURRENT_HANDOFF.md": "1855b192a1642d7e3319f851c3ac193e8a41ca22acb2a4ee5fd813528129d43b",
     "ai-context:FOUNDER_PROFILE.md": "ee66fff379d3bc92ff15b40064d69ceec6824908db88c30a3d312432e6756295",
-    "ai-context:KNOWN_BLOCKERS.md": "680bdb7bb571f3da42c82a6623e1c4b247f449668011f9807ec945bfba7159a1",
+    "ai-context:KNOWN_BLOCKERS.md": "459e679d84f85b6368fa2eba049b5cde98d3e5bd21a5276819fd5ca3ae713cd3",
     "ai-context:MANIFEST.md": "2a9b0582b17154db32c7bf7ddb090b52837bb97fcfdd51cdffe8088a31747b11",
     "ai-context:ONBOARDING_REPORT.md": "e96e8271842e2fc44aa3f745331d9fdb5d6cf74b2c1a0b16b79dd6cd6af7017c",
     "ai-context:OPEN_QUESTIONS.md": "985c3e458d89d1284bbfa9b802a69c9ef1a574ba1af4f74e1c66749ca2b70220",
-    "ai-context:PROJECT_CHANGELOG.md": "6f024820b822c88c7fae1cfda84448e26c2f3282d824600e2110a5942959cad3",
+    "ai-context:PROJECT_CHANGELOG.md": "c19b4d2a467312304ecd7a8e5293da3a9e38ab3fe1b2b137ff61cf29b5f30b3c",
     "ai-context:PROJECT_DNA.md": "ef2cd9e58226ba2918c0dc36c3d4b6148a34ef6152ccd85d006d7c3e8053c2b5",
     "ai-context:PROMPT_LIBRARY.md": "65de4d629d85fd59cc53d410266dacf9707ae96ceb7c5f280f3db0b29e757e18",
     "ai-context:README_FIRST.md": "b98140988989d12ab2b7da7fd947b42255ab362f263046c8cfcbedd864ece8ce",
@@ -88,5 +88,5 @@
     "collaboration-intelligence:RELATIONSHIP_TO_FOUNDER_INTELLIGENCE_CAPSULE.md": "e627d2c73dbac546f26f57b79532305e562dd1f71e9e3effede8eb0d0b21ae85",
     "collaboration-intelligence:SEARCH_INDEX.md": "724ce8786859dcc183563aa7a2f96ce61d78c0e22b186e939870bb25f1bc753c"
   },
-  "lastDeltaVersion": "1.0.0"
+  "lastDeltaVersion": "1.0.1"
 }

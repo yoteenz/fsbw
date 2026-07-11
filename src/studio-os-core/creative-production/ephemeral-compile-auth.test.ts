@@ -58,6 +58,19 @@ describe('ephemeral compile auth session', () => {
     expect(payload.productionAuthorizationId).toBeUndefined();
   });
 
+  it('does not leak validationMode when compile context is incomplete', () => {
+    const payload = attachEphemeralCompileAuth(
+      { prompt: 'landmark' },
+      {
+        validationMode: true,
+        compileRunId: 'run-partial',
+        previewSessionId: 'sess-1',
+      }
+    );
+    expect(payload.validationMode).toBeUndefined();
+    expect(payload.compileRunId).toBeUndefined();
+  });
+
   it('attaches server-issued authorization to governed generation payload', () => {
     const compileRunId = 'run-test-001';
     setActiveEphemeralCompileAuthorization(sampleGrant(compileRunId));

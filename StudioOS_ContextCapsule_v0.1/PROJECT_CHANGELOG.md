@@ -210,6 +210,22 @@
 
 ---
 
+## 2026-07-11 — Shared Generation Pipeline Regression (Creative Studio restoration)
+
+**Decision:** Gate Experience Lab `validationMode` on complete compile scope (compileRunId, previewSessionId, organizationId, departmentId, stationId, projectId). Retain lazy `ensureValidationEphemeralAuth` on `studio-builder-generate`; do not restore blocking pre-pipeline ephemeral auth call.
+
+**Reason:** B1 commits `2408310f3`–`ff19d5016` leaked validation fields into shared governed generation, causing `AUTH_REQUIRED` on Creative Studio and blocking Compile Preview Spec when the ephemeral auth endpoint failed on Vercel.
+
+**Impact:** Creative Studio validation compiles receive server-issued ephemeral authorization when scope is complete; incomplete scope no longer poisons shared requests. Experience Engine Layer 1 remains a separate blocker.
+
+**Files:** `docs/studio-os/forensics/SHARED_GENERATION_PIPELINE_REGRESSION.md`, `src/studio-os-core/creative-production/validation-compile-context.ts`, `api/_lib/creativeProduction/legacy-adapters.ts`, `src/hooks/useSceneStack.ts`, `shared-generation-pipeline-regression.test.ts`
+
+**Supersedes:** Unscoped global `isExperienceLabValidationRender()` default for generation payloads
+
+**Dependencies:** Founder mobile verify on `/admin/studio/experience-lab`; Black Box at `/__world-compiler-investigation`
+
+---
+
 ## Template for new entries
 
 ```markdown

@@ -46797,3 +46797,32 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Files:** `invite-store.ts`, `src/pages/studio-institute/invites/page.tsx`, Supabase migration applied
 
+---
+
+## 2026-07-11 — P0 Forensic Sprint: Shared Generation Pipeline Regression (Creative Studio restoration)
+
+**Context:** User approved P0 forensic sprint after B1 Experience Lab auth repairs broke Creative Studio alongside Experience Engine on the shared `studio-builder-generate` governed generation path. Mission: contain regression, prove first bad commit, restore Creative Studio, preserve Black Box evidence, isolate remaining Experience Engine failure — no speculative shared-pipeline repairs.
+
+**Timeline verified:**
+- `7f4e73553` — last known good Creative Studio shell (canvas fallback when governed auth missing; Layer 1 already AUTH_REQUIRED per prior B1 blocker doc)
+- `2408310f3` — first bad: client leaked `validationMode` + validation fields into shared gateway via `withValidationEphemeralAuth`
+- `49e48c7e4` — pipeline-blocking: pre-pipeline `experience-lab-ephemeral-authorization` → FUNCTION_INVOCATION_FAILED at Compile Preview Spec
+- `ff19d5016` — lazy `ensureValidationEphemeralAuth` on generate (removed blocking call) but mode leakage remained
+
+**Root cause:** Experience Lab validation mode and scope fields applied to shared `studio-builder-generate` without guaranteed server-issued authorization; `useSceneStack` defaulted `validationMode` from global `isExperienceLabValidationRender()` without complete compile scope; production `legacyCompatEnabled() === false` → `AUTH_REQUIRED` on governed shell/layer paths.
+
+**Restoration shipped:**
+- `validation-compile-context.ts` — `hasCompleteValidationCompileContext`, `resolveValidationCompileMode`
+- `ephemeral-compile-auth-session.ts` — no `validationMode` leak without complete scope or grant
+- `useSceneStack.ts` — explicit scope required for validation generation payloads
+- `legacy-adapters.ts` — server lazy auth gated on complete scope; execution carries previewSessionId/stationId/compileRunId
+- Tests: `shared-generation-pipeline-regression.test.ts` (7) + updated `ephemeral-compile-auth.test.ts` (17 total pass)
+- Forensic report: `docs/studio-os/forensics/SHARED_GENERATION_PIPELINE_REGRESSION.md`
+- Updated `CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md` (B1-Creative-Studio restored vs B1-Experience-Engine isolated), `PROJECT_CHANGELOG.md`
+
+**Not changed:** Model Orchestrator, Scene Stack architecture, no auth bypass, no duplicate gateway, Black Box preserved.
+
+**Founder routes:** Creative Studio + Experience Lab `/admin/studio/experience-lab`; Black Box `/__world-compiler-investigation`; recovery `/__studio-os-recovery`.
+
+**Remaining:** Experience Engine Layer 1 separate sprint after founder mobile verify of Creative Studio on normal Safari/Chrome.
+

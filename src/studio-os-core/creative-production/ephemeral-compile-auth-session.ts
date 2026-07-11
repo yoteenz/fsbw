@@ -4,6 +4,7 @@
  */
 
 import type { ProductionAuthorization } from './types';
+import { hasCompleteValidationCompileContext } from './validation-compile-context';
 
 export type EphemeralCompileAuthGrant = {
   productionAuthorizationId: string;
@@ -64,6 +65,17 @@ export function attachEphemeralCompileAuth<T extends Record<string, unknown>>(
   if (!options.validationMode) return payload;
 
   const grant = getActiveEphemeralCompileAuthorization(options.compileRunId);
+  const hasCompleteContext = hasCompleteValidationCompileContext({
+    validationMode: true,
+    compileRunId: options.compileRunId,
+    previewSessionId: options.previewSessionId,
+    organizationId: options.organizationId,
+    departmentId: options.departmentId,
+    stationId: options.stationId,
+    projectId: options.projectId,
+  });
+
+  if (!grant && !hasCompleteContext) return payload;
   const validationContext = {
     validationMode: true as const,
     compileRunId: options.compileRunId ?? grant?.compileRunId,

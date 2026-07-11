@@ -23,6 +23,7 @@ import {
   signProductionAuthorization,
   verifyProductionAuthorizationSignature,
 } from './authorization-signing.js';
+import { hasCompleteValidationCompileContext } from '../../../src/studio-os-core/creative-production/validation-compile-context.js';
 
 export type LegacyBuilderBody = Record<string, unknown>;
 
@@ -73,7 +74,19 @@ export function ensureValidationEphemeralAuth(
   const projectId = String(body.projectId ?? '').trim();
   const organizationId = String(body.org_id ?? body.organizationId ?? 'frontal-slayer').trim();
 
-  if (!previewSessionId || !departmentId || !stationId || !projectId) return body;
+  if (
+    !hasCompleteValidationCompileContext({
+      validationMode: true,
+      compileRunId,
+      previewSessionId,
+      organizationId,
+      departmentId,
+      stationId,
+      projectId,
+    })
+  ) {
+    return body;
+  }
 
   const grant = issueEphemeralValidationAuthorization({
     compileRunId,
@@ -193,6 +206,9 @@ export function adaptLegacyBuilderRequest(
   const orgId = typeof body.org_id === 'string' ? body.org_id.trim() : 'frontal-slayer';
   const compileRunId = typeof body.compileRunId === 'string' ? body.compileRunId.trim() : undefined;
   const validationMode = body.validationMode === true;
+  const previewSessionId =
+    typeof body.previewSessionId === 'string' ? body.previewSessionId.trim() : undefined;
+  const stationId = typeof body.stationId === 'string' ? body.stationId.trim() : undefined;
 
   const intent = createDemoAssetIntent(initiative.id);
   intent.id = `intent-${heroAssetId}`;
@@ -225,6 +241,9 @@ export function adaptLegacyBuilderRequest(
       referenceImageUrls: body.referenceImageUrls,
       model: 'fal-ai/nano-banana-pro/edit',
       legacyCompat,
+      ...(previewSessionId ? { previewSessionId } : {}),
+      ...(stationId ? { stationId } : {}),
+      ...(compileRunId ? { compileRunId } : {}),
     },
   };
 }
