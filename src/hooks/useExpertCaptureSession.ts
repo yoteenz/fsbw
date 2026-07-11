@@ -41,6 +41,13 @@ import {
   type ExpertCaptureSaveStatus,
 } from '../studio-os-core/expert-capture/persistence';
 import type { ExpertCaptureProfile } from '../studio-os-core/expert-capture/profiles/profile-types';
+import {
+  appendAuditEntry,
+  createEmptyTrustRecord,
+  isTrustFrameworkComplete,
+  TRUST_AGREEMENT_VERSION,
+} from '../studio-os-core/expert-capture/trust-vault';
+import type { TrustAgreementId } from '../studio-os-core/expert-capture/trust-vault';
 import { syncKnowledgeMirrorFromSession } from './useKnowledgeMirror';
 import {
   attachMirroredPreview,
@@ -58,6 +65,11 @@ function aiContext(profile: ExpertCaptureProfile) {
 function initialPhase(profile: ExpertCaptureProfile): ExpertCapturePhase {
   const local = loadSession(profile);
   if (!local) return 'landing';
+  if (!isTrustFrameworkComplete(local)) {
+    if (!local.meta.trustFramework?.welcomeCompletedAt) return 'trust_welcome';
+    if (!local.meta.trustFramework?.agreementsSignedAt) return 'trust_agreements';
+    if (!local.meta.trustFramework?.vaultIntroCompletedAt) return 'vault_gate';
+  }
   if (local.meta.consentAcceptedAt && local.meta.startedAt) return 'welcome_back';
   if (local.meta.consentAcceptedAt) return 'welcome_back';
   return 'welcome_back';
@@ -303,14 +315,82 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
         },
         profile
       );
+      next.meta.trustFramework = createEmptyTrustRecord();
       setSessionVersion(1);
-      void autosaveNow(next, { phase: 'consent', workflowStage: 'consent' }, true);
+      void autosaveNow(next, { phase: 'trust_welcome', workflowStage: 'consent' }, true);
       setSession(next);
       saveSession(next, profile);
-      setPhase('consent');
+      setPhase('trust_welcome');
     },
     [profile, autosaveNow]
   );
+
+  const completeTrustWelcome = useCallback(() => {
+    if (!session) return;
+    const now = new Date().toISOString();
+    const next = {
+      ...session,
+      meta: {
+        ...session.meta,
+        trustFramework: {
+          ...(session.meta.trustFramework ?? createEmptyTrustRecord()),
+          welcomeCompletedAt: now,
+        },
+      },
+    };
+    persist(next, { phase: 'trust_agreements' });
+    setPhase('trust_agreements');
+  }, [session, persist]);
+
+  const signTrustAgreements = useCallback(
+    (signatureName: string, agreementsAccepted: Record<TrustAgreementId, boolean>) => {
+      if (!session) return;
+      const now = new Date().toISOString();
+      const next = {
+        ...session,
+        meta: {
+          ...session.meta,
+          consentAcceptedAt: now,
+          trustFramework: {
+            ...(session.meta.trustFramework ?? createEmptyTrustRecord()),
+            welcomeCompletedAt: session.meta.trustFramework?.welcomeCompletedAt ?? now,
+            agreementsSignedAt: now,
+            signatureName,
+            agreementsAccepted,
+            agreementVersion: TRUST_AGREEMENT_VERSION,
+          },
+        },
+      };
+      appendAuditEntry(profile.companyId, profile.id, {
+        user: signatureName,
+        worker: null,
+        purpose: 'Trust Framework',
+        action: 'Agreements signed — Knowledge Vault initialized',
+        resourceType: 'legal_agreements',
+        resourceId: session.meta.id,
+      });
+      persist(next, { phase: 'vault_gate' });
+      setPhase('vault_gate');
+    },
+    [session, persist, profile.companyId, profile.id]
+  );
+
+  const completeVaultGate = useCallback(() => {
+    if (!session) return;
+    const now = new Date().toISOString();
+    const next = {
+      ...session,
+      meta: {
+        ...session.meta,
+        trustFramework: {
+          ...(session.meta.trustFramework ?? createEmptyTrustRecord()),
+          vaultIntroCompletedAt: now,
+        },
+      },
+    };
+    persist(next, { phase: 'consent' });
+    setPhase('consent');
+  }, [session, persist]);
 
   const acceptConsent = useCallback(() => {
     if (!session) return;
@@ -815,6 +895,20 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
       setPhase('understanding_review');
       return;
     }
+    if (!isTrustFrameworkComplete(session)) {
+      if (!session.meta.trustFramework?.welcomeCompletedAt) {
+        setPhase('trust_welcome');
+        return;
+      }
+      if (!session.meta.trustFramework?.agreementsSignedAt) {
+        setPhase('trust_agreements');
+        return;
+      }
+      if (!session.meta.trustFramework?.vaultIntroCompletedAt) {
+        setPhase('vault_gate');
+        return;
+      }
+    }
     if (session.meta.status === 'completed') {
       setPhase('session_complete');
       return;
@@ -927,6 +1021,9 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
     resumeLink,
     videoRef,
     startSession,
+    completeTrustWelcome,
+    signTrustAgreements,
+    completeVaultGate,
     acceptConsent,
     enableMedia,
     beginAnswer,

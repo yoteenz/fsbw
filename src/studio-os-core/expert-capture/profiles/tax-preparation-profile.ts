@@ -45,6 +45,10 @@ export const TAX_PREPARATION_PROFILE: ExpertCaptureProfile = {
   defaultOrganization: 'Tax Preparation Practice',
   lockRole: true,
   lockOrganization: true,
+  workerDefinition: {
+    workerDisplayName: '{organization} Tax Preparation Professional',
+    isolationPolicy: 'organization',
+  },
   questions: TAX_PREPARATION_QUESTIONS.map((q) => ({ ...q })),
   futurePlaceholders: TAX_PREPARATION_FUTURE_PLACEHOLDERS,
   aiIndustryContext:

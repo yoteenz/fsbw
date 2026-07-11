@@ -43,5 +43,8 @@ export function mirrorNavLinks(profile: ExpertCaptureProfile) {
     stream: `${prefix}/knowledge-stream`,
     confessional: `${prefix}/confessional`,
     ownerMirror: `${prefix}/owner-mirror`,
+    knowledgeVault: `${prefix}/knowledge-vault`,
+    trustDashboard: `${prefix}/trust-dashboard`,
+    livingWorker: `${prefix}/living-worker`,
   };
 }

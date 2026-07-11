@@ -40,6 +40,7 @@ export function createEmptySession(
     currentQuestionIndex: 0,
     estimatedMinutesRemaining: profile.questions.length * profile.minutesPerQuestion,
     aiGreetingDelivered: false,
+    trustFramework: null,
   };
   return {
     meta,
@@ -56,6 +57,9 @@ export function loadSession(profile: ExpertCaptureProfile): ExpertCaptureSession
     const parsed = JSON.parse(raw) as ExpertCaptureSession;
     if (!parsed.meta.profileId) {
       parsed.meta.profileId = profile.id;
+    }
+    if (parsed.meta.trustFramework === undefined) {
+      parsed.meta.trustFramework = null;
     }
     return parsed;
   } catch {

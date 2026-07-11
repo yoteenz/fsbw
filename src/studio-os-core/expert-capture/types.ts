@@ -1,5 +1,7 @@
 /** Studio Institute — Expert Capture Interview (MVP v1) */
 
+import type { ExpertTrustRecord } from './trust-vault/types';
+
 export type KnowledgeStatus =
   | 'recorded'
   | 'transcribed'
@@ -39,6 +41,9 @@ export type KnowledgeStatementType =
 export type ExpertCapturePhase =
   | 'landing'
   | 'welcome_back'
+  | 'trust_welcome'
+  | 'trust_agreements'
+  | 'vault_gate'
   | 'consent'
   | 'media_setup'
   | 'interview'
@@ -70,6 +75,7 @@ export type ExpertCaptureSessionMeta = {
   currentQuestionIndex: number;
   estimatedMinutesRemaining: number;
   aiGreetingDelivered: boolean;
+  trustFramework: ExpertTrustRecord | null;
 };
 
 export type StructuredKnowledgeItem = {

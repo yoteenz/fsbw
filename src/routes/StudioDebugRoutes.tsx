@@ -28,6 +28,15 @@ import TaxOwnerMirrorPage from '../pages/expert-capture/tax-preparation/owner-mi
 import PermittingKnowledgeStreamPage from '../pages/expert-capture/all-in-one-permitting/knowledge-stream/page';
 import PermittingConfessionalPage from '../pages/expert-capture/all-in-one-permitting/confessional/page';
 import PermittingOwnerMirrorPage from '../pages/expert-capture/all-in-one-permitting/owner-mirror/page';
+import ExpertCaptureKnowledgeVaultRoute from '../pages/expert-capture/knowledge-vault/page';
+import ExpertCaptureTrustDashboardRoute from '../pages/expert-capture/trust-dashboard/page';
+import ExpertCaptureLivingWorkerRoute from '../pages/expert-capture/living-worker/page';
+import TaxKnowledgeVaultPage from '../pages/expert-capture/tax-preparation/knowledge-vault/page';
+import TaxTrustDashboardPage from '../pages/expert-capture/tax-preparation/trust-dashboard/page';
+import TaxLivingWorkerPage from '../pages/expert-capture/tax-preparation/living-worker/page';
+import PermittingKnowledgeVaultPage from '../pages/expert-capture/all-in-one-permitting/knowledge-vault/page';
+import PermittingTrustDashboardPage from '../pages/expert-capture/all-in-one-permitting/trust-dashboard/page';
+import PermittingLivingWorkerPage from '../pages/expert-capture/all-in-one-permitting/living-worker/page';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import LoadingScreen from '../components/base/LoadingScreen';
@@ -59,6 +68,15 @@ export const STUDIO_DEBUG_PATHS = [
   '/expert-capture/all-in-one-permitting/knowledge-stream',
   '/expert-capture/all-in-one-permitting/confessional',
   '/expert-capture/all-in-one-permitting/owner-mirror',
+  '/expert-capture/knowledge-vault',
+  '/expert-capture/trust-dashboard',
+  '/expert-capture/living-worker',
+  '/expert-capture/tax-preparation/knowledge-vault',
+  '/expert-capture/tax-preparation/trust-dashboard',
+  '/expert-capture/tax-preparation/living-worker',
+  '/expert-capture/all-in-one-permitting/knowledge-vault',
+  '/expert-capture/all-in-one-permitting/trust-dashboard',
+  '/expert-capture/all-in-one-permitting/living-worker',
 ] as const;
 
 export function isStudioDebugPath(pathname: string): boolean {
@@ -99,6 +117,15 @@ export default function StudioDebugRoutes() {
       <Route path="/expert-capture/all-in-one-permitting/knowledge-stream" element={<PermittingKnowledgeStreamPage />} />
       <Route path="/expert-capture/all-in-one-permitting/confessional" element={<PermittingConfessionalPage />} />
       <Route path="/expert-capture/all-in-one-permitting/owner-mirror" element={<PermittingOwnerMirrorPage />} />
+      <Route path="/expert-capture/knowledge-vault" element={<ExpertCaptureKnowledgeVaultRoute />} />
+      <Route path="/expert-capture/trust-dashboard" element={<ExpertCaptureTrustDashboardRoute />} />
+      <Route path="/expert-capture/living-worker" element={<ExpertCaptureLivingWorkerRoute />} />
+      <Route path="/expert-capture/tax-preparation/knowledge-vault" element={<TaxKnowledgeVaultPage />} />
+      <Route path="/expert-capture/tax-preparation/trust-dashboard" element={<TaxTrustDashboardPage />} />
+      <Route path="/expert-capture/tax-preparation/living-worker" element={<TaxLivingWorkerPage />} />
+      <Route path="/expert-capture/all-in-one-permitting/knowledge-vault" element={<PermittingKnowledgeVaultPage />} />
+      <Route path="/expert-capture/all-in-one-permitting/trust-dashboard" element={<PermittingTrustDashboardPage />} />
+      <Route path="/expert-capture/all-in-one-permitting/living-worker" element={<PermittingLivingWorkerPage />} />
       <Route
         path="*"
         element={

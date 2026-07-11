@@ -10,6 +10,13 @@ export type ExpertCaptureBranding = {
   consentPurpose: string;
 };
 
+/** Enterprise-ready worker definition — profession profiles extend this, never hardcode in UI */
+export type ExpertCaptureWorkerDefinition = {
+  workerDisplayName: string;
+  /** Use {organization} token for org-scoped worker title */
+  isolationPolicy: 'organization';
+};
+
 export type ExpertCaptureProfile = {
   id: string;
   companyId: string;
@@ -21,6 +28,7 @@ export type ExpertCaptureProfile = {
   defaultOrganization: string;
   lockRole: boolean;
   lockOrganization: boolean;
+  workerDefinition?: ExpertCaptureWorkerDefinition;
   questions: ExpertCaptureQuestion[];
   futurePlaceholders: readonly string[];
   aiIndustryContext: string;

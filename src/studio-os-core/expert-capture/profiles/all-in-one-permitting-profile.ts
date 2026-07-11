@@ -52,6 +52,10 @@ export const ALL_IN_ONE_PERMITTING_PROFILE: ExpertCaptureProfile = {
   defaultOrganization: 'All In One',
   lockRole: true,
   lockOrganization: true,
+  workerDefinition: {
+    workerDisplayName: '{organization} Permit Professional',
+    isolationPolicy: 'organization',
+  },
   questions: ALL_IN_ONE_PERMITTING_QUESTIONS.map((q) => ({ ...q })),
   futurePlaceholders: ALL_IN_ONE_PERMITTING_FUTURE_PLACEHOLDERS,
   aiIndustryContext:

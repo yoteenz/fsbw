@@ -46393,3 +46393,23 @@ Summary of **full conversation in this chat**: Investigation recorder boot, gene
 - **Docs:** `docs/studio-institute/EXPERT_CAPTURE_PERSISTENCE.md`
 - **URLs:** permitting https://fsbw.vercel.app/expert-capture/all-in-one-permitting · tax https://fsbw.vercel.app/expert-capture/tax-preparation · resume https://fsbw.vercel.app/expert-capture/resume
 
+---
+
+## 2026-07-10 — Living Knowledge Mirror™ (Expert Capture dual-sided knowledge)
+
+Summary of **full conversation in this chat**: Investigation recorder boot, generic Expert Capture MVP, All In One permitting profile (`d50385519`), Save/Exit/Resume persistence (`6699fe8e3`). User approved **HIGH priority Living Knowledge Mirror™ sprint** — evolve Expert Capture from one-time interview into permanent dual-sided knowledge relationship (Expert View + Owner View): incremental training packets, versioning, confessional mode, owner training mirror, competencies, authorizations, governance lifecycle. Applies to Tax Preparation, All In One Permitting, and all future Expert Capture professions.
+
+- **Architecture:** Shared platform `KnowledgeProgram` document (entries, versions, packets, competencies, authorizations, notifications, conflicts) — one canonical store per `profileId + companyId + expertName`; localStorage cache + Supabase `expert_capture_knowledge_programs` via `GET/POST /api/expert-capture/knowledge-mirror`; migration `20260710234500_expert_capture_knowledge_mirror.sql`
+- **Core modules** `src/studio-os-core/expert-capture/knowledge-mirror/` — types, lifecycle governance (`canEnterWorkerTraining`), sync-from-session, training-packets (rebuild, supersede, outdated, conflict detection), competency-core (partial authorizations), confessional-service, owner-mirror-data + sandbox Q&A, program-orchestrator, owner-workflow, store
+- **Hook** `useKnowledgeMirror.ts` + `syncKnowledgeMirrorFromSession` wired into `useExpertCaptureSession` on approve/reject/clarify
+- **Production routes (9 new):**
+  - Generic: `/expert-capture/knowledge-stream`, `/expert-capture/confessional`, `/expert-capture/owner-mirror`
+  - Tax: `/expert-capture/tax-preparation/knowledge-stream|confessional|owner-mirror`
+  - Permitting: `/expert-capture/all-in-one-permitting/knowledge-stream|confessional|owner-mirror`
+- **UI:** Knowledge Stream (expert chronological record), Knowledge Confessional (quick mobile-first updates, private draft support), Owner Training Mirror (review queue, packet approval, competency/authorization panels, training sandbox)
+- **Interview integration:** Nav links (Stream, Confessional, Owner Mirror) + Knowledge Review “Submit All for Owner Review” in `ExpertCaptureInterviewView`
+- **Governance:** Only `approved_for_training` / `scenario_tested` / `active_knowledge` enters worker training; supersession preserves prior versions; conflicts flagged not auto-replaced
+- **Tests:** `knowledge-mirror-scenarios.test.ts` — all 20 required sprint scenarios
+- **Docs:** `docs/studio-institute/EXPERT_CAPTURE_KNOWLEDGE_MIRROR.md`
+- **URLs:** https://fsbw.vercel.app/expert-capture/tax-preparation/owner-mirror · https://fsbw.vercel.app/expert-capture/all-in-one-permitting/knowledge-stream
+

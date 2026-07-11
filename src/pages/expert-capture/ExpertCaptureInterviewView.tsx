@@ -8,7 +8,10 @@ import { useKnowledgeMirror, identityFromSession } from '../../hooks/useKnowledg
 import { CONSENT_RETENTION_DAYS, downloadExportBundle, loadMediaBlob } from '../../studio-os-core/expert-capture';
 import type { ExpertCaptureProfile } from '../../studio-os-core/expert-capture/profiles/profile-types';
 import { ExpertCaptureSaveExitButton, ExpertCaptureSaveStatusBar } from './ExpertCapturePersistenceUi';
-import { mirrorNavLinks } from './knowledge-mirror/resolve-profile';
+import { mirrorNavLinks, profileSlug } from './knowledge-mirror/resolve-profile';
+import { ExpertTrustWelcome } from './trust-vault/ExpertTrustWelcome';
+import { ExpertTrustAgreements } from './trust-vault/ExpertTrustAgreements';
+import KnowledgeVaultPage from './trust-vault/KnowledgeVaultPage';
 
 const styles = {
   page: {
@@ -360,14 +363,40 @@ export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCapture
     );
   }
 
+  if (cap.phase === 'trust_welcome') {
+    return <ExpertTrustWelcome instituteLabel={branding.instituteLabel} onContinue={cap.completeTrustWelcome} />;
+  }
+
+  if (cap.phase === 'trust_agreements' && cap.session) {
+    return (
+      <ExpertTrustAgreements
+        expertName={cap.session.meta.expertName}
+        onSign={(signature, accepted) => cap.signTrustAgreements(signature, accepted)}
+      />
+    );
+  }
+
+  if (cap.phase === 'vault_gate') {
+    return (
+      <KnowledgeVaultPage
+        profileSlug={profileSlug(profile)}
+        gateMode
+        onContinueInterview={cap.completeVaultGate}
+      />
+    );
+  }
+
   if (cap.phase === 'consent') {
     return (
       <div style={styles.page}>
         <div style={styles.container}>
-          <h1 style={{ ...styles.h1, fontSize: 22 }}>Consent & Privacy</h1>
+          <h1 style={{ ...styles.h1, fontSize: 22 }}>Session Confirmation</h1>
           <div style={styles.card}>
             <p style={{ margin: '0 0 12px', lineHeight: 1.6 }}>
               <strong>Purpose:</strong> {branding.consentPurpose}
+            </p>
+            <p style={{ margin: '0 0 12px', lineHeight: 1.6 }}>
+              <strong>Your vault:</strong> Agreements are signed. Your Knowledge Vault™ is active with organization-isolated worker training.
             </p>
             <p style={{ margin: '0 0 12px', lineHeight: 1.6 }}>
               <strong>Recorded:</strong> Video, audio, and transcript of your answers.
@@ -519,6 +548,12 @@ export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCapture
       </Link>
       <Link to={mirrorNav.confessional} style={{ color: '#525252' }}>
         Confessional
+      </Link>
+      <Link to={mirrorNav.knowledgeVault} style={{ color: '#525252' }}>
+        Knowledge Vault
+      </Link>
+      <Link to={mirrorNav.trustDashboard} style={{ color: '#525252' }}>
+        Trust Dashboard
       </Link>
       <Link to={mirrorNav.ownerMirror} style={{ color: '#525252' }}>
         Owner Mirror

@@ -24,6 +24,10 @@ export const DEFAULT_EXPERT_CAPTURE_PROFILE: ExpertCaptureProfile = {
   defaultOrganization: 'Studio OS',
   lockRole: false,
   lockOrganization: false,
+  workerDefinition: {
+    workerDisplayName: '{organization} Professional',
+    isolationPolicy: 'organization',
+  },
   questions: BASE_INTERVIEW_QUESTIONS.map((q) => ({ ...q })),
   futurePlaceholders: EXPERT_CAPTURE_FUTURE_PLACEHOLDERS,
   aiIndustryContext: 'general professional expertise',
