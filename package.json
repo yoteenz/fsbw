@@ -7,7 +7,7 @@
     "dev": "cross-env VITE_DEV_PROXY_TARGET=https://fsbw.vercel.app vite --port 3001 --host",
     "dev:no-proxy": "vite --port 3001 --host",
     "dev:proxy": "cross-env VITE_DEV_PROXY_TARGET=https://fsbw.vercel.app vite --port 3001 --host",
-    "prebuild": "python scripts/fix_encoding.py src/pages/desktop-lobby/page.tsx src/pages/desktop/lounge/page.tsx scripts/generate_lobby_bg.py src/components/desktop-lobby/PSAConciergePanel.tsx src/components/desktop-lobby/ZoneLoungeReveal.tsx || true && node scripts/compile-master-spec.mjs && node scripts/compile-world-graph.mjs && node scripts/package-ai-context-capsule-zip.mjs && node scripts/package-studio-dna-capsule-zip.mjs && node scripts/package-founder-intelligence-capsule-zip.mjs && node scripts/package-onboarding-pack-zip.mjs",
+    "prebuild": "python scripts/fix_encoding.py src/pages/desktop-lobby/page.tsx src/pages/desktop/lounge/page.tsx scripts/generate_lobby_bg.py src/components/desktop-lobby/PSAConciergePanel.tsx src/components/desktop-lobby/ZoneLoungeReveal.tsx || true && node scripts/compile-master-spec.mjs && node scripts/compile-world-graph.mjs && node scripts/package-ai-context-capsule-zip.mjs && node scripts/package-studio-dna-capsule-zip.mjs && node scripts/package-founder-intelligence-capsule-zip.mjs && node scripts/package-onboarding-pack-zip.mjs && node scripts/sync-capsule-latest-vercel-routes.mjs",
     "compile-master-spec": "node scripts/compile-master-spec.mjs",
     "compile-world-graph": "node scripts/compile-world-graph.mjs",
     "build": "tsc --noEmit && vite build",

@@ -66,6 +66,6 @@ Run each test in a **fresh AI conversation** with no prior Studio OS context. At
 | `onboarding-pack/ONBOARDING_GUIDE.md` | Static guide copied into pack |
 | `onboarding-pack/ONBOARDING_REPORT_TEMPLATE.md` | Static 19-section template |
 | `scripts/package-onboarding-pack-zip.mjs` | Generator, validation, FIC coverage |
-| `api/capsules/onboarding-latest.ts` | Permanent download handler |
+| `scripts/sync-capsule-latest-vercel-routes.mjs` | Static rewrites + versioned Content-Disposition in vercel.json (prebuild) |
 | `src/pages/onboarding/page.tsx` | Public hub |
 | `src/studio-os-core/onboarding-pack-export/constants.ts` | `UNIFIED_ONBOARDING_PROMPT` |

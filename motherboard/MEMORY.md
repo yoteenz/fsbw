@@ -46556,6 +46556,7 @@ Summary of **full conversation in this chat**: Continuation of capsule/onboardin
 
 **No Studio OS application behavior changes** — onboarding architecture, documentation, packaging, validation, stable downloads only.
 
+---
 
 ## 2026-07-11 — Versioned download filenames on permanent capsule URLs
 
@@ -46564,4 +46565,12 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 - **API:** `api/capsules/context-latest.ts`, `api/capsules/founder-intelligence-latest.ts` + `api/_lib/serveCapsuleLatest.ts` — read release manifest `artifact`, stream `latest.zip`, set `Content-Disposition: attachment; filename="<artifact>"`
 - **vercel.json:** rewrites permanent URLs → API (removed static Content-Disposition headers); `includeFiles` bundles zip + manifest per function
 - **UI:** hub pages + `useContextCapsuleExport` use `release.artifact` for download filename; FIC admin uses `location.assign` to honor server filename
+
+---
+
+## 2026-07-11 — Fix Vercel deploy: capsule latest routes static (1.16GB function bundle)
+
+**Context:** Deploy of Unified Onboarding Pack (`b97bd34`) built successfully (prebuild + vite) but **failed at deploy** — `api/capsules/context-latest` uncompressed **1.16GB** (250MB limit). Root cause: dynamic `fs.readFileSync(path.join(process.cwd(), 'public', config.latestZipPublicPath))` in `serveCapsuleLatest.ts` caused Vercel NFT to bundle entire `public/` (~1.2GB assets).
+
+**Fix:** Removed serverless capsule download handlers. Added `scripts/sync-capsule-latest-vercel-routes.mjs` (runs end of prebuild) — reads release manifests, writes **static rewrites** + **Content-Disposition headers** to `vercel.json` for `/context/latest`, `/onboarding/latest`, `/founder-intelligence/latest`, `/founder/latest`. Versioned save-as filename preserved from `artifact` at build time. Deleted `api/capsules/*.ts` and `api/_lib/serveCapsuleLatest.ts`.
 

@@ -48,15 +48,6 @@
       "maxDuration": 60,
       "includeFiles": "StudioOS_ContextCapsule_v0.1/**,api/_lib/context-capsule-build-manifest.json,api/_lib/context-capsule-release.json",
       "excludeFiles": "public/assets/**,dist/**"
-    },
-    "api/capsules/context-latest.ts": {
-      "includeFiles": "public/downloads/context-capsules/latest.zip,api/_lib/context-capsule-release.json"
-    },
-    "api/capsules/founder-intelligence-latest.ts": {
-      "includeFiles": "public/downloads/founder-intelligence-capsules/latest.zip,api/_lib/founder-intelligence-capsule-release.json"
-    },
-    "api/capsules/onboarding-latest.ts": {
-      "includeFiles": "public/downloads/onboarding-packs/latest.zip,api/_lib/onboarding-pack-release.json"
     }
   },
   "crons": [
@@ -72,19 +63,19 @@
   "rewrites": [
     {
       "source": "/context/latest",
-      "destination": "/api/capsules/context-latest"
+      "destination": "/downloads/context-capsules/latest.zip"
     },
     {
       "source": "/onboarding/latest",
-      "destination": "/api/capsules/onboarding-latest"
+      "destination": "/downloads/onboarding-packs/latest.zip"
     },
     {
       "source": "/founder-intelligence/latest",
-      "destination": "/api/capsules/founder-intelligence-latest"
+      "destination": "/downloads/founder-intelligence-capsules/latest.zip"
     },
     {
       "source": "/founder/latest",
-      "destination": "/api/capsules/founder-intelligence-latest"
+      "destination": "/downloads/founder-intelligence-capsules/latest.zip"
     },
     {
       "source": "/((?!api/|assets/|downloads/|context/release\\.json|founder-intelligence/release\\.json|onboarding/release\\.json|tiktok[^/]*\\.txt|ne_110m_land\\.geojson|ne_110m_admin_0_boundary_lines_land\\.geojson|ne_110m_admin_1_states_provinces_lines\\.geojson).*)",
@@ -107,6 +98,106 @@
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/context/latest",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"StudioOS_ContextCapsule_v0.3.1.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/zip"
+        },
+        {
+          "key": "X-Capsule-Version",
+          "value": "0.3.1"
+        },
+        {
+          "key": "X-Capsule-Artifact",
+          "value": "StudioOS_ContextCapsule_v0.3.1.zip"
+        }
+      ]
+    },
+    {
+      "source": "/onboarding/latest",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"StudioOS_OnboardingPack_v1.0.0.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/zip"
+        },
+        {
+          "key": "X-Capsule-Version",
+          "value": "1.0.0"
+        },
+        {
+          "key": "X-Capsule-Artifact",
+          "value": "StudioOS_OnboardingPack_v1.0.0.zip"
+        }
+      ]
+    },
+    {
+      "source": "/founder-intelligence/latest",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"Founder_Intelligence_Capsule_v1.0.0.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/zip"
+        },
+        {
+          "key": "X-Capsule-Version",
+          "value": "1.0.0"
+        },
+        {
+          "key": "X-Capsule-Artifact",
+          "value": "Founder_Intelligence_Capsule_v1.0.0.zip"
+        }
+      ]
+    },
+    {
+      "source": "/founder/latest",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"Founder_Intelligence_Capsule_v1.0.0.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/zip"
+        },
+        {
+          "key": "X-Capsule-Version",
+          "value": "1.0.0"
+        },
+        {
+          "key": "X-Capsule-Artifact",
+          "value": "Founder_Intelligence_Capsule_v1.0.0.zip"
         }
       ]
     }
