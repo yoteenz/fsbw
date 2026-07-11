@@ -97,8 +97,7 @@ export async function unlockWithOwnerPassword(password: string): Promise<'ok' | 
   const hash = await hashOwnerPassword(password);
   const stored = getStoredOwnerPasswordHash();
 
-  if (stored) {
-    if (hash !== stored) return 'wrong';
+  if (stored && hash === stored) {
     setOwnerAuthToken(hash);
     return 'ok';
   }
@@ -112,6 +111,7 @@ export async function unlockWithOwnerPassword(password: string): Promise<'ok' | 
 
   const serverConfigured = await checkOwnerPasswordConfiguredOnServer();
   if (serverConfigured) return 'wrong';
+  if (stored) return 'wrong';
   return 'offline';
 }
 

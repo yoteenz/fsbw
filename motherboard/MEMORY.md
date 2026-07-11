@@ -46683,3 +46683,19 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Verify after deploy:** Pipeline should progress past compile-preview-spec to shell + Layer 1; governed requests auto-receive ephemeral auth on server.
 
+---
+
+## 2026-07-11 — Invite Manager false "Incorrect password" (stale localStorage hash)
+
+**Context:** User reported `/studio-institute/invites` shows "Incorrect password" on phone despite knowing the password; asked if deploy reset it.
+
+**Findings:** Supabase `app_config.studio_institute_owner_password_hash` still present (set 2026-07-11 ~04:12 UTC) — **password was not reset** by B1 or other recent commits. `setup_owner_password` returns 409 if hash already exists (no overwrite).
+
+**Root cause:** `unlockWithOwnerPassword()` returned `'wrong'` immediately when **localStorage** hash (`studioInstituteOwnerPasswordHash_v1`) did not match — **without checking server**. Stale/wrong per-device cache (e.g. earlier setup attempt, different device canonical password, partial site data) blocks unlock even when server hash is correct.
+
+**Fix:** Reordered unlock — local match short-circuits success; otherwise always verify against server; on server success, refresh localStorage hash. Wrong only when server configured and server rejects.
+
+**Workaround before deploy:** Private tab (no stale local hash) or clear site data for fsbw.vercel.app.
+
+**File:** `src/studio-os-core/expert-capture/invite-system/owner-password.ts`
+
