@@ -46488,3 +46488,19 @@ Summary of **full conversation in this chat**: Expert Capture stack through Trus
 - **Cross-ref:** Context Capsule `PROJECT_DNA.md` updated to point to DNA Capsule pair
 - **npm:** `package:studio-dna-capsule-zip`, `download:studio-dna-capsule`
 
+---
+
+## 2026-07-11 — Stable Latest Context Capsule URL (`/context/latest`)
+
+Summary of **full conversation in this chat**: Expert Capture through Trust/Vault; Private Expert Invite Phase 1 (`c3a2c87fb`); Invite Sharing sprint (`de02448fb`); Studio DNA Capsule + Canon Policy (`93f49d4e6`). User sprint: **one permanent AI Context Capsule download URL** — never change bookmarks; archives preserved; validation gate before latest updates; public hub page.
+
+- **Permanent URL:** `https://fsbw.vercel.app/context/latest` — Vercel rewrite → `/downloads/context-capsules/latest.zip` with attachment headers; legacy alias `/downloads/context-capsules/latest.zip` unchanged
+- **Public hub:** `/context` — version, validation badge, checksum, ZIP size, permanent URL copy, archive list; fetches `/context/release.json`
+- **Archives:** versioned ZIPs under `/downloads/context-capsules/archive/`; root versioned copies migrated then removed on prebuild
+- **Packaging:** `scripts/package-ai-context-capsule-zip.mjs` — staging + `unzip -t` integrity before replacing `latest.zip`; writes `public/context/release.json` mirror; release manifest fields: `permanentLatestUrl`, `legacyLatestDownloadPath`, `archiveBasePath`, `packageHealth`, `readyForAiOnboarding`
+- **Constants:** `CONTEXT_CAPSULE_PERMANENT_LATEST_PATH`, `CONTEXT_CAPSULE_PUBLIC_HUB_PATH`, `CONTEXT_CAPSULE_PUBLIC_RELEASE_PATH` in src + `api/_lib/contextCapsuleConstants.ts`
+- **Admin:** `ContextCapsuleWorkspace` + `useContextCapsuleExport` promote `/context/latest`; onboarding prompt uses permanent URL
+- **Routing:** `StudioDebugRoutes` `/context`; `isIsolatedStudioRoute` fast boot; `vercel.json` rewrite before SPA catch-all
+- **Docs:** `docs/studio-os/context-capsule-distribution.md`
+- **Founder workflow:** bookmark `/context/latest` once → attach ZIP in ChatGPT → paste onboarding prompt — no new link per release
+

@@ -66,7 +66,11 @@
       "destination": "/downloads/context-capsules/latest.zip"
     },
     {
-      "source": "/((?!api/|assets/|downloads/|context/release\\.json|tiktok[^/]*\\.txt|ne_110m_land\\.geojson|ne_110m_admin_0_boundary_lines_land\\.geojson|ne_110m_admin_1_states_provinces_lines\\.geojson).*)",
+      "source": "/founder-intelligence/latest",
+      "destination": "/downloads/founder-intelligence-capsules/latest.zip"
+    },
+    {
+      "source": "/((?!api/|assets/|downloads/|context/release\\.json|founder-intelligence/release\\.json|tiktok[^/]*\\.txt|ne_110m_land\\.geojson|ne_110m_admin_0_boundary_lines_land\\.geojson|ne_110m_admin_1_states_provinces_lines\\.geojson).*)",
       "destination": "/index.html"
     }
   ],
@@ -77,6 +81,19 @@
         {
           "key": "Content-Disposition",
           "value": "attachment; filename=\"StudioOS_ContextCapsule_latest.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/founder-intelligence/latest",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"Founder_Intelligence_Capsule_latest.zip\""
         },
         {
           "key": "Cache-Control",

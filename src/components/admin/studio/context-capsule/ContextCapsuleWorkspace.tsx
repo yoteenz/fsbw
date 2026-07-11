@@ -14,6 +14,10 @@ import {
   CONTEXT_CAPSULE_PUBLIC_HUB_PATH,
 } from '../../../../studio-os-core/context-capsule-export/constants';
 import { STUDIO_DNA_CAPSULE_LATEST_DOWNLOAD_PATH } from '../../../../studio-os-core/studio-dna-capsule-export/constants';
+import {
+  FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH,
+  FOUNDER_INTELLIGENCE_CAPSULE_PUBLIC_HUB_PATH,
+} from '../../../../studio-os-core/founder-intelligence-capsule-export/constants';
 
 const ACCENT = '#92704A';
 
@@ -156,6 +160,32 @@ export function ContextCapsuleWorkspace() {
             style={{ borderColor: ACCENT, color: ACCENT, fontWeight: 515 }}
           >
             DOWNLOAD DNA CAPSULE
+          </button>
+        </div>
+      </ExecutiveFocusPanel>
+
+      <ExecutiveFocusPanel
+        title="FOUNDER INTELLIGENCE CAPSULE™"
+        subtitle="WHY Studio OS exists — strategy, vision, business model, institutional memory."
+        highlight="Founder Intelligence Capsule v1.0.0"
+      >
+        <StatRow label="Purpose" value="Founder reasoning + long-term vision" />
+        <StatRow label="Permanent URL" value={FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH} />
+        <StatRow label="Full URL" value={`https://fsbw.vercel.app${FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH}`} />
+        <StatRow label="Public hub" value={FOUNDER_INTELLIGENCE_CAPSULE_PUBLIC_HUB_PATH} />
+        <div className="flex gap-2 mt-2">
+          <button
+            type="button"
+            onClick={() =>
+              triggerDownload(
+                FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH,
+                'Founder_Intelligence_Capsule_latest.zip',
+              )
+            }
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ borderColor: ACCENT, color: ACCENT, fontWeight: 515 }}
+          >
+            DOWNLOAD FIC
           </button>
         </div>
       </ExecutiveFocusPanel>

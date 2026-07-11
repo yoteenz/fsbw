@@ -1,18 +1,11 @@
 # Relationship to AI Context Capsule™
 
-Studio OS maintains **two complementary exports**. Neither replaces the other.
+Studio OS maintains **three complementary exports**. None replaces the others.
 
----
-
-## Division of labor
-
-| Dimension | AI Context Capsule™ | Studio DNA Capsule™ |
-|-----------|----------------------|---------------------|
-| **Question answered** | What is true right now? | How should we decide? |
-| **Primary content** | Handoff, blockers, architecture map, glossary | Philosophy, taste, patterns, canon policy |
-| **Changes when** | Sprints ship, blockers move, structure shifts | Founder principles clarify or evolve |
-| **Risk if missing** | AI guesses project state | AI guesses founder intent and quality bar |
-| **Typical reader order** | First (facts) | Second (judgment) |
+| Dimension | Context | DNA | Founder Intelligence |
+|-----------|---------|-----|----------------------|
+| **Question** | What is true? | How to decide? | Why we exist? |
+| **Reader order** | 1st | 2nd | 3rd |
 
 ---
 

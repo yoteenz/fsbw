@@ -89,9 +89,12 @@ export const CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS = [
 
 export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule (latest validated release).
 
-Download (permanent URL — always current): https://fsbw.vercel.app/context/latest
+Download all three onboarding capsules (permanent URLs — always current):
+1. Context (WHAT): https://fsbw.vercel.app/context/latest
+2. DNA (HOW): https://fsbw.vercel.app/downloads/studio-dna-capsules/latest.zip
+3. Founder Intelligence (WHY): https://fsbw.vercel.app/founder-intelligence/latest
 
-Follow README_FIRST.md exactly:
+Follow README_FIRST.md in the Context Capsule exactly:
 
 1. Read every document in MANIFEST reading order
 2. Do not begin solving problems

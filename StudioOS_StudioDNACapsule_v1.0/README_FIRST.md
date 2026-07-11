@@ -3,7 +3,7 @@
 **You are opening:** `StudioOS_StudioDNACapsule_v1.0`  
 **Purpose:** Transfer **how Studio OS thinks** — founder philosophy, creative instincts, architectural judgment, quality standards, and design principles that **cannot be reconstructed from source code alone**.  
 **Capsule version:** 1.0.0  
-**Companion artifact:** `StudioOS_ContextCapsule_v0.3.1` (WHAT the project knows — read both for full continuity)
+**Companion artifacts:** `StudioOS_ContextCapsule_v0.3.1` (WHAT) · `founder-intelligence/` v1.0.0 (WHY)
 
 ---
 
@@ -13,6 +13,7 @@
 |----------|-----------|
 | **AI Context Capsule™** | WHAT Studio OS knows — architecture, handoff, blockers, glossary, operational truth |
 | **Studio DNA Capsule™** | HOW Studio OS thinks — philosophy, instincts, decision patterns, quality bar, canon rules |
+| **Founder Intelligence Capsule™** | WHY Studio OS exists — strategy, business model, vision, decision history |
 
 This folder is **not** implementation documentation. It is **institutional judgment** encoded for future AI collaborators and human partners.
 

@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "capsuleType": "founder-intelligence",
+  "artifact": "Founder_Intelligence_Capsule_v1.0.0.zip",
+  "capsuleVersion": "1.0.0",
+  "capsuleFolder": "founder-intelligence",
+  "generatedAt": "2026-07-11T01:53:38.371Z",
+  "fileCount": 27,
+  "checksumSha256": "21f688355201f50ca7bfdece505e8eec781bddab82c87550aa01098f7e47f276",
+  "sizeBytes": 35177,
+  "downloadPath": "/downloads/founder-intelligence-capsules/archive/Founder_Intelligence_Capsule_v1.0.0.zip",
+  "latestDownloadPath": "/founder-intelligence/latest",
+  "permanentLatestUrl": "/founder-intelligence/latest",
+  "legacyLatestDownloadPath": "/downloads/founder-intelligence-capsules/latest.zip",
+  "versionedDownloadPath": "/downloads/founder-intelligence-capsules/archive/Founder_Intelligence_Capsule_v1.0.0.zip",
+  "generatorVersion": "1.0.0",
+  "validationStatus": "pass"
+}

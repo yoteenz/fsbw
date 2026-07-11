@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "capsuleType": "founder-intelligence",
+  "currentVersion": "1.0.0",
+  "generatedAt": "2026-07-11T01:53:38.371Z",
+  "gitCommit": "c764f558437fe6842836a325c75abba902b58936",
+  "validationStatus": "pass",
+  "documentCount": 27,
+  "checksumSha256": "21f688355201f50ca7bfdece505e8eec781bddab82c87550aa01098f7e47f276",
+  "generatorVersion": "1.0.0",
+  "artifact": "Founder_Intelligence_Capsule_v1.0.0.zip",
+  "latestAlias": "latest.zip",
+  "permanentLatestUrl": "/founder-intelligence/latest",
+  "latestDownloadPath": "/founder-intelligence/latest",
+  "legacyLatestDownloadPath": "/downloads/founder-intelligence-capsules/latest.zip",
+  "versionedDownloadPath": "/downloads/founder-intelligence-capsules/archive/Founder_Intelligence_Capsule_v1.0.0.zip",
+  "archiveBasePath": "/downloads/founder-intelligence-capsules/archive",
+  "supportedFormats": [
+    "zip"
+  ],
+  "packageHealth": 100,
+  "readyForAiOnboarding": true,
+  "releaseHistory": [
+    {
+      "version": "1.0.0",
+      "generatedAt": "2026-07-11T01:53:38.371Z",
+      "gitCommit": "c764f558437fe6842836a325c75abba902b58936",
+      "checksumSha256": "21f688355201f50ca7bfdece505e8eec781bddab82c87550aa01098f7e47f276",
+      "sizeBytes": 35177,
+      "downloadPath": "/downloads/founder-intelligence-capsules/archive/Founder_Intelligence_Capsule_v1.0.0.zip",
+      "zipFileName": "Founder_Intelligence_Capsule_v1.0.0.zip",
+      "validationStatus": "pass"
+    }
+  ]
+}

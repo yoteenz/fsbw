@@ -44,6 +44,7 @@ import StudioInstituteInviteLandingPage from '../pages/studio-institute/invite/l
 import StudioInstituteInterviewPage from '../pages/studio-institute/interview/page';
 import StudioInstituteVaultPage from '../pages/studio-institute/knowledge-vault/page';
 import ContextCapsuleDownloadPage from '../pages/context/page';
+import FounderIntelligenceDownloadPage from '../pages/founder-intelligence/page';
 import { isStudioInstitutePath } from '../studio-os-core/expert-capture/invite-system/config';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
@@ -90,6 +91,7 @@ export const STUDIO_DEBUG_PATHS = [
 export function isStudioDebugPath(pathname: string): boolean {
   if (isStudioInstitutePath(pathname)) return true;
   if (pathname === '/context') return true;
+  if (pathname === '/founder-intelligence') return true;
   return (STUDIO_DEBUG_PATHS as readonly string[]).includes(pathname);
 }
 
@@ -143,6 +145,7 @@ export default function StudioDebugRoutes() {
       <Route path="/studio-institute/interview" element={<StudioInstituteInterviewPage />} />
       <Route path="/studio-institute/knowledge-vault" element={<StudioInstituteVaultPage />} />
       <Route path="/context" element={<ContextCapsuleDownloadPage />} />
+      <Route path="/founder-intelligence" element={<FounderIntelligenceDownloadPage />} />
       <Route
         path="*"
         element={
