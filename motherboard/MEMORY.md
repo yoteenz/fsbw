@@ -46574,3 +46574,28 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Fix:** Removed serverless capsule download handlers. Added `scripts/sync-capsule-latest-vercel-routes.mjs` (runs end of prebuild) — reads release manifests, writes **static rewrites** + **Content-Disposition headers** to `vercel.json` for `/context/latest`, `/onboarding/latest`, `/founder-intelligence/latest`, `/founder/latest`. Versioned save-as filename preserved from `artifact` at build time. Deleted `api/capsules/*.ts` and `api/_lib/serveCapsuleLatest.ts`.
 
+---
+
+## 2026-07-11 — Studio Institute Invite Manager: founder password auth (no Vercel env)
+
+**Context:** User on phone could not unlock `/studio-institute/invites` — dashboard required `STUDIO_INSTITUTE_OWNER_KEY` in Vercel. Asked to **enter & confirm password once** as the official owner key instead.
+
+**Topics covered:** Prior session built Unified Onboarding Pack v1.0.0 and fixed Vercel deploy (static capsule routes). User Q&A on invite/interview URLs and why incognito worked (stale localStorage vs owner-key gate). This task: replace env-key gate with founder-set password.
+
+**Decisions / outcomes:**
+- **First visit:** password + confirm → SHA-256 hash saved in `localStorage` + one-time bootstrap to Supabase `app_config` key `studio_institute_owner_password_hash` via `POST { action: 'setup_owner_password' }` (409 if already set).
+- **Return visit:** enter password → session hash in `sessionStorage` → full server-backed invite list.
+- **New device:** enter existing password → verified against server → hash cached locally.
+- **Legacy:** `STUDIO_INSTITUTE_OWNER_KEY` env + admin email auth still work on API.
+- **Lock** button clears session; local password hash retained.
+
+**Changes:**
+- `src/studio-os-core/expert-capture/invite-system/owner-password.ts` — hash, save, verify, bootstrap, server check, unlock helpers
+- `api/studio-institute/invites.ts` — password hash in `isOwner()`, `GET ?owner_auth_status=1`, `setup_owner_password` action
+- `src/pages/studio-institute/invites/page.tsx` — setup/login UI, Lock button
+- `invite-store.ts`, `invite-audit.ts`, `index.ts` — use password auth token header
+- Docs: `EXPERT_CAPTURE_INVITE_SYSTEM.md`, `EXPERT_CAPTURE_INVITE_SHARING.md`
+- Test: owner password hash determinism in `invite-system.test.ts`
+
+**URLs:** `https://fsbw.vercel.app/studio-institute/invites`
+

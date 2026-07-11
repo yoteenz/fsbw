@@ -1,6 +1,7 @@
 import type { CreateExpertInviteInput, ExpertInvite } from './types';
 import { createInviteRecord, regenerateInviteToken } from './invite-manager';
 import { hashInvitePin } from './invite-crypto';
+import { getOwnerAuthToken, ownerAuthHeaders } from './owner-password';
 
 const STORAGE_KEY = 'studioInstituteInvites_v1';
 
@@ -81,10 +82,12 @@ export async function fetchInviteByToken(token: string): Promise<ExpertInvite | 
   return null;
 }
 
-export async function fetchAllInvites(ownerKey: string): Promise<ExpertInvite[]> {
+export async function fetchAllInvites(ownerAuthToken?: string): Promise<ExpertInvite[]> {
+  const auth = ownerAuthToken ?? getOwnerAuthToken();
+  if (!auth) return loadLocalInvites();
   try {
     const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
-      headers: { 'X-Studio-Institute-Owner-Key': ownerKey },
+      headers: { 'X-Studio-Institute-Owner-Key': auth },
     });
     if (res.ok) {
       const data = (await res.json()) as { invites?: ExpertInvite[] };
@@ -99,7 +102,7 @@ export async function fetchAllInvites(ownerKey: string): Promise<ExpertInvite[]>
 }
 
 export async function createInviteOnServer(
-  ownerKey: string,
+  ownerAuthToken: string,
   input: CreateExpertInviteInput
 ): Promise<ExpertInvite> {
   const pinHash = input.accessPin?.trim() ? await hashInvitePin(input.accessPin.trim()) : null;
@@ -108,7 +111,7 @@ export async function createInviteOnServer(
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Studio-Institute-Owner-Key': ownerKey,
+      'X-Studio-Institute-Owner-Key': ownerAuthToken,
     },
     body: JSON.stringify(payload),
   });
@@ -127,7 +130,7 @@ export async function createInviteLocal(input: CreateExpertInviteInput): Promise
 }
 
 export async function patchInviteOnServer(
-  ownerKey: string,
+  ownerAuthToken: string,
   id: string,
   patch: Partial<ExpertInvite>
 ): Promise<ExpertInvite> {
@@ -135,7 +138,7 @@ export async function patchInviteOnServer(
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'X-Studio-Institute-Owner-Key': ownerKey,
+      'X-Studio-Institute-Owner-Key': ownerAuthToken,
     },
     body: JSON.stringify({ id, patch }),
   });
@@ -145,12 +148,12 @@ export async function patchInviteOnServer(
   return data.invite;
 }
 
-export async function regenerateInviteOnServer(ownerKey: string, id: string): Promise<ExpertInvite> {
+export async function regenerateInviteOnServer(ownerAuthToken: string, id: string): Promise<ExpertInvite> {
   const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
-      'X-Studio-Institute-Owner-Key': ownerKey,
+      'X-Studio-Institute-Owner-Key': ownerAuthToken,
     },
     body: JSON.stringify({ id, action: 'regenerate_token' }),
   });
@@ -167,10 +170,10 @@ export async function regenerateInviteOnServer(ownerKey: string, id: string): Pr
   return data.invite;
 }
 
-export async function deleteInviteOnServer(ownerKey: string, id: string): Promise<void> {
+export async function deleteInviteOnServer(ownerAuthToken: string, id: string): Promise<void> {
   const res = await fetch(`${apiBase()}/api/studio-institute/invites?id=${encodeURIComponent(id)}`, {
     method: 'DELETE',
-    headers: { 'X-Studio-Institute-Owner-Key': ownerKey },
+    headers: { 'X-Studio-Institute-Owner-Key': ownerAuthToken },
   });
   if (!res.ok) throw new Error('Failed to delete invite');
   deleteLocalInvite(id);

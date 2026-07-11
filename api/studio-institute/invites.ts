@@ -36,6 +36,8 @@ type InviteRow = {
 type AuditRow = { event: string; at: string };
 
 const TOKEN_CHARSET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const OWNER_PASSWORD_CONFIG_KEY = 'studio_institute_owner_password_hash';
+const PASSWORD_HASH_RE = /^[a-f0-9]{64}$/i;
 const AUDIT_EVENTS = new Set([
   'invite_created',
   'link_copied',
@@ -117,13 +119,50 @@ function appendAudit(row: InviteRow, event: string): AuditRow[] {
   return next.slice(-100);
 }
 
+async function getStoredOwnerPasswordHash(admin: ReturnType<typeof getSupabaseAdminServiceRole>): Promise<string | null> {
+  const { data, error } = await admin.from('app_config').select('value').eq('key', OWNER_PASSWORD_CONFIG_KEY).maybeSingle();
+  if (error || !data?.value) return null;
+  const value = data.value;
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object' && value !== null && 'hash' in value) {
+    const hash = (value as { hash?: unknown }).hash;
+    return typeof hash === 'string' ? hash : null;
+  }
+  return null;
+}
+
 async function isOwner(req: VercelRequest): Promise<boolean> {
   const key = req.headers['x-studio-institute-owner-key'];
-  const envKey = process.env.STUDIO_INSTITUTE_OWNER_KEY;
-  if (envKey && typeof key === 'string' && key === envKey) return true;
+  if (typeof key === 'string' && key.length > 0) {
+    const envKey = process.env.STUDIO_INSTITUTE_OWNER_KEY;
+    if (envKey && key === envKey) return true;
+    const admin = getSupabaseAdminServiceRole();
+    const storedHash = await getStoredOwnerPasswordHash(admin);
+    if (storedHash && key === storedHash) return true;
+  }
   const user = await getAuthUser(req);
   if (user?.email && isAdminEmail(user.email)) return true;
   return false;
+}
+
+async function setupOwnerPassword(
+  admin: ReturnType<typeof getSupabaseAdminServiceRole>,
+  passwordHash: string
+): Promise<{ ok: true } | { ok: false; status: number; error: string }> {
+  if (!PASSWORD_HASH_RE.test(passwordHash)) {
+    return { ok: false, status: 400, error: 'Invalid password hash' };
+  }
+  const existing = await getStoredOwnerPasswordHash(admin);
+  if (existing) {
+    return { ok: false, status: 409, error: 'Owner password already configured' };
+  }
+  const now = new Date().toISOString();
+  const { error } = await admin.from('app_config').upsert(
+    { key: OWNER_PASSWORD_CONFIG_KEY, value: passwordHash, updated_at: now },
+    { onConflict: 'key' }
+  );
+  if (error) return { ok: false, status: 500, error: error.message };
+  return { ok: true };
 }
 
 function isExpired(row: InviteRow): boolean {
@@ -151,6 +190,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const admin = getSupabaseAdminServiceRole();
 
   if (req.method === 'GET') {
+    if (req.query.owner_auth_status === '1') {
+      const storedHash = await getStoredOwnerPasswordHash(admin);
+      const envConfigured = Boolean(process.env.STUDIO_INSTITUTE_OWNER_KEY);
+      return res.status(200).json({ configured: Boolean(storedHash) || envConfigured });
+    }
+
     const token = typeof req.query.token === 'string' ? req.query.token : null;
     if (token) {
       const { data, error } = await admin.from('studio_institute_invites').select('*').eq('token', token).maybeSingle();
@@ -180,8 +225,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   if (req.method === 'POST') {
-    if (!(await isOwner(req))) return res.status(401).json({ error: 'Owner access required' });
     const body = parseBody(req);
+    if (body.action === 'setup_owner_password') {
+      const passwordHash = typeof body.passwordHash === 'string' ? body.passwordHash.trim() : '';
+      const result = await setupOwnerPassword(admin, passwordHash);
+      if (!result.ok) return res.status(result.status).json({ error: result.error });
+      return res.status(201).json({ ok: true });
+    }
+
+    if (!(await isOwner(req))) return res.status(401).json({ error: 'Owner access required' });
     const now = new Date().toISOString();
     const id = `inv-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     let token = generateToken();

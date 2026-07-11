@@ -18,9 +18,7 @@ Override base path with `VITE_STUDIO_INSTITUTE_BASE_PATH`. Override public origi
 ## Authentication (Phase 1)
 
 - **Invitees:** invite link token = access (no accounts/passwords).
-- **Owner dashboard:** `X-Studio-Institute-Owner-Key` header or admin email via Supabase auth.
-
-Set **`STUDIO_INSTITUTE_OWNER_KEY`** in Vercel environment variables for owner API access.
+- **Owner dashboard:** founder-set password (enter + confirm once on first visit). Password hash is stored locally and in Supabase `app_config` (`studio_institute_owner_password_hash`). Return visits: enter password to unlock. API auth uses `X-Studio-Institute-Owner-Key` with the SHA-256 hash. Admin email via Supabase auth also works. Legacy `STUDIO_INSTITUTE_OWNER_KEY` env var is still accepted if set.
 
 Future auth (Studio Accounts, OAuth, magic links, 2FA) is scaffolded via `InviteAccessGrant` / `OwnerAccessGrant` types without rewriting the app.
 

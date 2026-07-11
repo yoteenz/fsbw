@@ -54,7 +54,7 @@ Local + optional server: invite_created, link_copied, message_copied, share_init
 
 ## Environment
 
-- `STUDIO_INSTITUTE_OWNER_KEY` — owner API access
+- **Owner password** — set once at `/studio-institute/invites` (no Vercel env required). Optional legacy `STUDIO_INSTITUTE_OWNER_KEY` env var still works.
 - Run migration `20260711010000_studio_institute_invites_sharing.sql`
 
 ## Tests

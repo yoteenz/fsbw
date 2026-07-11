@@ -4,6 +4,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   INVITE_PROFILE_OPTIONS,
+  bootstrapOwnerPasswordOnServer,
+  checkOwnerPasswordConfiguredOnServer,
+  clearOwnerSession,
   createInviteLocal,
   createInviteOnServer,
   createInviteRecord,
@@ -11,23 +14,30 @@ import {
   displayInviteStatus,
   fetchAllInvites,
   getInviteProfileLabel,
+  getOwnerAuthToken,
+  getStoredOwnerPasswordHash,
+  hasOwnerPasswordConfigured,
+  MIN_OWNER_PASSWORD_LENGTH,
   patchInviteOnServer,
   recordInviteAudit,
   regenerateInviteOnServer,
   saveLocalInvite,
+  saveOwnerPassword,
+  unlockWithOwnerPassword,
   type CreateExpertInviteInput,
   type ExpertInvite,
 } from '../../../studio-os-core/expert-capture/invite-system';
 import { InviteSharePanel, InviteSuccessScreen } from '../components/InviteSharePanel';
 import { siStyles, SiBtn } from '../studio-institute-styles';
 
-const OWNER_KEY_STORAGE = 'studioInstituteOwnerKey_v1';
-
 type View = 'dashboard' | 'success';
+type AuthMode = 'loading' | 'setup' | 'login';
 
 export default function StudioInstituteInvitesPage() {
-  const [ownerKey, setOwnerKey] = useState(() => sessionStorage.getItem(OWNER_KEY_STORAGE) ?? '');
+  const [authMode, setAuthMode] = useState<AuthMode>('loading');
   const [unlocked, setUnlocked] = useState(false);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [invites, setInvites] = useState<ExpertInvite[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -49,26 +59,83 @@ export default function StudioInstituteInvitesPage() {
     accessStatus: 'active',
   });
 
-  const load = useCallback(async (key: string) => {
+  const ownerAuthToken = () => getOwnerAuthToken() ?? '';
+
+  const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const list = await fetchAllInvites(key);
+      const list = await fetchAllInvites();
       setInvites(list.filter((i) => i.accessStatus !== 'deleted'));
       setUnlocked(true);
-      sessionStorage.setItem(OWNER_KEY_STORAGE, key);
     } catch {
       setError('Could not load invites. Using local cache if available.');
       setInvites([]);
+      setUnlocked(true);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    const saved = sessionStorage.getItem(OWNER_KEY_STORAGE);
-    if (saved) void load(saved);
+    const init = async () => {
+      const sessionToken = getOwnerAuthToken();
+      const storedHash = getStoredOwnerPasswordHash();
+      if (sessionToken && storedHash && sessionToken === storedHash) {
+        await load();
+        return;
+      }
+      const serverConfigured = await checkOwnerPasswordConfiguredOnServer();
+      setAuthMode(hasOwnerPasswordConfigured() || serverConfigured ? 'login' : 'setup');
+    };
+    void init();
   }, [load]);
+
+  const handleAuth = async () => {
+    setError(null);
+    if (password.length < MIN_OWNER_PASSWORD_LENGTH) {
+      setError(`Password must be at least ${MIN_OWNER_PASSWORD_LENGTH} characters.`);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (authMode === 'setup') {
+        if (password !== confirmPassword) {
+          setError('Passwords do not match.');
+          return;
+        }
+        const hash = await saveOwnerPassword(password);
+        await bootstrapOwnerPasswordOnServer(hash);
+        setPassword('');
+        setConfirmPassword('');
+        await load();
+        return;
+      }
+
+      const result = await unlockWithOwnerPassword(password);
+      if (result === 'wrong') {
+        setError('Incorrect password.');
+        return;
+      }
+      if (result === 'offline') {
+        setError('Could not verify password. Check your connection and try again.');
+        return;
+      }
+      setPassword('');
+      await load();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const lockDashboard = () => {
+    clearOwnerSession();
+    setUnlocked(false);
+    setPassword('');
+    setConfirmPassword('');
+    setAuthMode(hasOwnerPasswordConfigured() ? 'login' : 'setup');
+  };
 
   const updateInvite = (next: ExpertInvite) => {
     setInvites((prev) => prev.map((i) => (i.id === next.id ? next : i)));
@@ -93,7 +160,7 @@ export default function StudioInstituteInvitesPage() {
       };
       let invite: ExpertInvite;
       try {
-        invite = await createInviteOnServer(ownerKey, input);
+        invite = await createInviteOnServer(ownerAuthToken(), input);
       } catch {
         invite = await createInviteLocal(input);
       }
@@ -119,7 +186,7 @@ export default function StudioInstituteInvitesPage() {
 
   const patchInvite = async (id: string, patch: Partial<ExpertInvite>, audit?: Parameters<typeof recordInviteAudit>[1]) => {
     try {
-      const updated = await patchInviteOnServer(ownerKey, id, patch);
+      const updated = await patchInviteOnServer(ownerAuthToken(), id, patch);
       updateInvite(updated);
       if (audit) recordInviteAudit(id, audit);
     } catch {
@@ -135,7 +202,7 @@ export default function StudioInstituteInvitesPage() {
   const regenerateLink = async (id: string) => {
     setLoading(true);
     try {
-      const updated = await regenerateInviteOnServer(ownerKey, id);
+      const updated = await regenerateInviteOnServer(ownerAuthToken(), id);
       updateInvite(updated);
       recordInviteAudit(id, 'link_regenerated');
       if (createdInvite?.id === id) setCreatedInvite(updated);
@@ -147,25 +214,54 @@ export default function StudioInstituteInvitesPage() {
     }
   };
 
+  if (authMode === 'loading' && !unlocked) {
+    return (
+      <div style={siStyles.page}>
+        <div style={siStyles.container}>
+          <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Studio Institute · Private</p>
+          <h1 style={siStyles.h1}>Invite Manager</h1>
+          <p style={siStyles.sub}>Loading…</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!unlocked) {
     return (
       <div style={siStyles.page}>
         <div style={siStyles.container}>
           <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Studio Institute · Private</p>
           <h1 style={siStyles.h1}>Invite Manager</h1>
-          <p style={siStyles.sub}>Owner access only. Enter your Studio Institute owner key to manage expert invites.</p>
+          <p style={siStyles.sub}>
+            {authMode === 'setup'
+              ? 'Create your owner password once. You will use it to unlock this dashboard on any device.'
+              : 'Enter your owner password to manage expert invites.'}
+          </p>
           <div style={siStyles.card}>
-            <label style={siStyles.label}>Owner key</label>
+            <label style={siStyles.label}>{authMode === 'setup' ? 'Create password' : 'Password'}</label>
             <input
               style={siStyles.input}
               type="password"
-              value={ownerKey}
-              onChange={(e) => setOwnerKey(e.target.value)}
-              placeholder="Set STUDIO_INSTITUTE_OWNER_KEY in Vercel"
-              autoComplete="off"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={`At least ${MIN_OWNER_PASSWORD_LENGTH} characters`}
+              autoComplete={authMode === 'setup' ? 'new-password' : 'current-password'}
             />
-            <SiBtn primary fullWidth onClick={() => void load(ownerKey)} disabled={!ownerKey.trim()}>
-              Unlock dashboard
+            {authMode === 'setup' ? (
+              <>
+                <label style={siStyles.label}>Confirm password</label>
+                <input
+                  style={siStyles.input}
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Re-enter password"
+                  autoComplete="new-password"
+                />
+              </>
+            ) : null}
+            <SiBtn primary fullWidth onClick={() => void handleAuth()} disabled={loading || !password.trim()}>
+              {authMode === 'setup' ? 'Save password & unlock' : 'Unlock dashboard'}
             </SiBtn>
             {error ? <p style={{ color: '#dc2626', fontSize: 14 }}>{error}</p> : null}
           </div>
@@ -197,9 +293,14 @@ export default function StudioInstituteInvitesPage() {
   return (
     <div style={siStyles.page}>
       <div style={siStyles.container}>
-        <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Studio Institute · Invite Manager</p>
-        <h1 style={siStyles.h1}>Expert Invites</h1>
-        <p style={siStyles.sub}>Create, copy, and share private interview invitations — optimized for mobile.</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+          <div>
+            <p style={{ fontSize: 13, color: '#94a3b8', margin: 0 }}>Studio Institute · Invite Manager</p>
+            <h1 style={siStyles.h1}>Expert Invites</h1>
+            <p style={siStyles.sub}>Create, copy, and share private interview invitations — optimized for mobile.</p>
+          </div>
+          <SiBtn onClick={lockDashboard}>Lock</SiBtn>
+        </div>
 
         <div style={siStyles.card}>
           <h3 style={{ margin: '0 0 16px' }}>Create invite</h3>
@@ -342,7 +443,7 @@ export default function StudioInstituteInvitesPage() {
               </SiBtn>
               <SiBtn
                 onClick={() => {
-                  void deleteInviteOnServer(ownerKey, inv.id).then(() => {
+                  void deleteInviteOnServer(ownerAuthToken(), inv.id).then(() => {
                     recordInviteAudit(inv.id, 'invite_deleted');
                     setInvites((prev) => prev.filter((i) => i.id !== inv.id));
                   });

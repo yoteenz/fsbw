@@ -9,6 +9,7 @@ import {
   createInviteRecord,
   deriveInviteStatusFromProgress,
   generateInviteToken,
+  hashOwnerPassword,
   isInviteExpired,
   regenerateInviteToken,
   resolveInviteAccess,
@@ -90,6 +91,15 @@ describe('Studio Institute Invite System', () => {
     expect(patched.progressPercent).toBeGreaterThan(0);
     expect(patched.status).toBe('in_progress');
     expect(patched.currentQuestionLabel).toBeTruthy();
+  });
+
+  it('hashes owner password deterministically', async () => {
+    const a = await hashOwnerPassword('my-secret-key');
+    const b = await hashOwnerPassword('my-secret-key');
+    const c = await hashOwnerPassword('other-key');
+    expect(a).toHaveLength(64);
+    expect(a).toBe(b);
+    expect(a).not.toBe(c);
   });
 
   it('regenerates token and revokes old link while preserving session', () => {

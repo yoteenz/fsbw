@@ -42,12 +42,11 @@ function apiBase(): string {
 
 async function syncAuditToServer(inviteId: string, event: InviteAuditEventType): Promise<void> {
   try {
-    const ownerKey = sessionStorage.getItem('studioInstituteOwnerKey_v1');
     await fetch(`${apiBase()}/api/studio-institute/invites`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        ...(ownerKey ? { 'X-Studio-Institute-Owner-Key': ownerKey } : {}),
+        ...ownerAuthHeaders(),
       },
       body: JSON.stringify({
         id: inviteId,

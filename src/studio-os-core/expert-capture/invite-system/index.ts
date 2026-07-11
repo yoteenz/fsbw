@@ -10,3 +10,4 @@ export * from './invite-clipboard';
 export * from './invite-share';
 export * from './invite-audit';
 export * from './invite-crypto';
+export * from './owner-password';
