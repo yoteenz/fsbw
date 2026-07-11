@@ -46524,6 +46524,39 @@ Summary of **full conversation in this chat**: Expert Capture through Studio DNA
 
 ---
 
+## 2026-07-11 — Unified Onboarding Pack v1.0.0 (COMPOSER SPRINT)
+
+Summary of **full conversation in this chat**: Continuation of capsule/onboarding work after Stable Context URL (`c764f5584`), Founder Intelligence Capsule v1.0 (`eb8466cf3`), and versioned download filenames (`96f739c94`). User approved **COMPOSER SPRINT: Studio OS Unified Onboarding Pack** — repair onboarding architecture so a new AI processes AI Context + Founder Intelligence together without conflicting READMEs/MANIFESTs, ambiguous reading order, or Studio DNA treated as mandatory when absent.
+
+**Problem solved:** Two capsules operated as separate onboarding systems; FIC referenced Studio DNA not always included; ONBOARDING_REPORT.md ambiguous (template vs completed report).
+
+**Unified pack (`StudioOS_OnboardingPack_v1.0.0.zip`):**
+- Root authority: `START_HERE.md`, `MASTER_MANIFEST.md` (auto-generated reading order), `ONBOARDING_GUIDE.md`, `ONBOARDING_REPORT_TEMPLATE.md` (19 sections), `ONBOARDING_PACK_VALIDATION.md`, `onboarding-pack.json`
+- Subdirs: `AI_Context_Capsule/`, `Founder_Intelligence_Capsule/`, `Studio_DNA_Capsule/` (included only when DNA release validates)
+- Context reading order excludes standalone `ONBOARDING_REPORT.md` (pack uses root template)
+- FIC content-coverage validation (`FIC_COVERAGE` in packager) — substantive docs for marketplace, revenue, workers, knowledge capture, expert trust, etc.
+- `founder-intelligence/EXPERT_TRUST_AND_GOVERNANCE.md` added for coverage
+
+**Generator:** `scripts/package-onboarding-pack-zip.mjs` — prebuild after individual capsule packagers; aborts if Context/FIC not validated or coverage fails; does not update latest on failure
+
+**Conditional DNA references:** FIC + Context + DNA README_FIRST, RELATIONSHIP_TO_DNA, PRODUCT_PHILOSOPHY, COMMUNICATION_STYLE, VISION, MANIFEST, PROJECT_DNA — DNA optional unless MASTER_MANIFEST lists DNA files
+
+**Routes & API:**
+- `https://fsbw.vercel.app/onboarding/latest` → `api/capsules/onboarding-latest.ts`
+- Hub `/onboarding` — version, validation, capsules, download, copy URL, **Copy Onboarding Prompt**
+- `UNIFIED_ONBOARDING_PROMPT` in `src/studio-os-core/onboarding-pack-export/constants.ts` — references START_HERE, MASTER_MANIFEST, ONBOARDING_GUIDE, ONBOARDING_REPORT_TEMPLATE; no verbatim template reproduction; founder approval boundary
+- Admin Context Capsule workspace — Unified Onboarding Pack panel
+- Context + FIC hub pages promote unified pack as preferred handoff
+
+**Docs:** `docs/studio-os/unified-onboarding-pack/README.md` — structure, regen commands, Phase 14 failure-mode test checklist (A–H)
+
+**Permanent URLs unchanged for individuals:** `/context/latest`, `/founder-intelligence/latest` (alias `/founder/latest`)
+
+**Validation pass:** 67 required files when DNA included; `validationStatus: pass`, `contentCoverageStatus: pass`
+
+**No Studio OS application behavior changes** — onboarding architecture, documentation, packaging, validation, stable downloads only.
+
+
 ## 2026-07-11 — Versioned download filenames on permanent capsule URLs
 
 User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intelligence/latest`) but save files with **version in the filename** (e.g. `StudioOS_ContextCapsule_v0.3.1.zip`) so founder can track which copy they have.

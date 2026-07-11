@@ -1,5 +1,7 @@
 # AI Onboarding Report — Standard Template (0.3.1)
 
+> **Unified Onboarding Pack:** If you received **StudioOS_OnboardingPack**, use **ONBOARDING_REPORT_TEMPLATE.md** at the pack root instead of this file. This file remains for **standalone Context Capsule** onboarding only.
+
 **Capsule folder:** `StudioOS_ContextCapsule_v0.1`  
 **Capsule version:** 0.3.1  
 **Purpose:** Deterministic **verification** after reading every required document — not a general summary.  

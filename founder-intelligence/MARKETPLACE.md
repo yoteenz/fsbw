@@ -34,9 +34,17 @@ How businesses join, earn, and expand through expertise.
 | **Templates & playbooks** | Knowledge Commerce products |
 | **Workflows** | Approved automation blueprints |
 
-## Studio commissions
+## Studio commissions & transaction fees
 
-Platform facilitates discovery, trust, and transaction plumbing — experts retain IP. Commission structure TBD per launch phase; document in Context when implemented.
+Platform facilitates discovery, trust, and transaction plumbing — experts retain IP. **Transaction fees** and **Studio commissions** apply to marketplace commerce (consultations, digital products, memberships) — rates TBD per launch phase; document in Context when implemented.
+
+## Creator royalties & knowledge licensing
+
+**Knowledge licensing** allows approved Profession Brain modules, templates, and courses to be licensed to other organizations. **Creator royalties** flow to the originating expert/org when licensed content is consumed — attribution permanent per Legacy Network™ principles.
+
+## Enterprise licensing
+
+**Enterprise licensing** covers multi-org deployments, white-label expert networks, and isolated Profession Brain hosting for large accounts — separate from Headquarters License (see REVENUE_MODEL.md).
 
 ## Subscriptions & digital products
 

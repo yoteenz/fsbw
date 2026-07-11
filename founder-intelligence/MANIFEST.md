@@ -5,7 +5,7 @@
 | **Capsule Version** | 1.0.0 |
 | **Capsule Type** | Founder Intelligence Capsule™ |
 | **Generator** | `scripts/package-founder-intelligence-capsule-zip.mjs` |
-| **Document Count** | 27 required markdown files |
+| **Document Count** | 28 required markdown files |
 | **Companion: Context** | `StudioOS_ContextCapsule_v0.3.1` — `/context/latest` |
 | **Companion: DNA** | `StudioOS_StudioDNACapsule_v1.0` |
 
@@ -35,13 +35,14 @@ Read in this exact sequence:
 18. `STUDIO_WORKERS.md`
 19. `KNOWLEDGE_CAPTURE.md`
 20. `INTERVIEW_ENGINE.md`
-21. `DECISION_HISTORY.md`
-22. `COMMUNICATION_STYLE.md`
-23. `FOUNDER_PREFERENCES.md`
-24. `AI_COLLABORATION.md`
-25. `FUTURE_IDEAS.md`
-26. `LONG_TERM_ROADMAP.md`
-27. `FOUNDER_VALIDATION.md` *(auto-generated at export)*
+21. `EXPERT_TRUST_AND_GOVERNANCE.md`
+22. `DECISION_HISTORY.md`
+23. `COMMUNICATION_STYLE.md`
+24. `FOUNDER_PREFERENCES.md`
+25. `AI_COLLABORATION.md`
+26. `FUTURE_IDEAS.md`
+27. `LONG_TERM_ROADMAP.md`
+28. `FOUNDER_VALIDATION.md` *(auto-generated at export)*
 
 ---
 
@@ -77,7 +78,7 @@ Read in this exact sequence:
 ## Cross-reference rule
 
 When operational facts conflict, **AI Context Capsule** wins for *what is built today*.  
-When design judgment conflicts, **Studio DNA Capsule** wins for *how work should feel*.  
+When design judgment conflicts and **Studio DNA Capsule** is included, DNA wins for *how work should feel*; otherwise use Founder Intelligence design docs and Context canon.  
 When strategy or *why* conflicts, **this capsule** wins — but flag ambiguity to the founder.
 
 ---

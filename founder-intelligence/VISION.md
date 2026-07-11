@@ -35,7 +35,7 @@ When a new AI or employee arrives, the founder re-explains everything. **That fr
 Two halves preserved equally:
 
 1. **Repository intelligence** — AI Context Capsule  
-2. **Founder intelligence** — this capsule (+ Studio DNA for judgment)
+2. **Founder intelligence** — this capsule (+ Studio DNA for judgment when included in the Unified Onboarding Pack)
 
 Together: complete onboarding in minutes, not weeks.
 

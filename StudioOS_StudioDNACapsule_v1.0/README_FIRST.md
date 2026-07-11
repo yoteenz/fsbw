@@ -1,11 +1,13 @@
 # README FIRST — Studio DNA Capsule 1.0.0
 
+> **Unified Onboarding Pack notice:** If this capsule is inside **StudioOS_OnboardingPack/**, follow the pack-level **START_HERE.md** and **MASTER_MANIFEST.md**. Do not begin or complete a separate onboarding process from this capsule alone.
+
 **You are opening:** `StudioOS_StudioDNACapsule_v1.0`  
 **Purpose:** Transfer **how Studio OS thinks** — founder philosophy, creative instincts, architectural judgment, quality standards, and design principles that **cannot be reconstructed from source code alone**.  
 **Capsule version:** 1.0.0  
-**Companion artifacts:** `StudioOS_ContextCapsule_v0.3.1` (WHAT) · `founder-intelligence/` v1.0.0 (WHY)
+**Companion artifacts:** `StudioOS_ContextCapsule_v0.3.1` (WHAT) · `founder-intelligence/` v1.0.0 (WHY) · optional Studio DNA when included in Unified Onboarding Pack
 
----
+If this capsule is **not** in the Unified Onboarding Pack, it remains optional — absence does not block onboarding unless MASTER_MANIFEST lists DNA as required.
 
 ## What this is — and what it is not
 

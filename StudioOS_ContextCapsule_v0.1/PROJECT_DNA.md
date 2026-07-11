@@ -51,18 +51,19 @@ Studio OS should still make sense in ten years — expansion via infill district
 
 ## AI collaboration DNA
 
-The founder should never manually re-explain the entire project to a new AI. **Three capsules** work together:
+The founder should never manually re-explain the entire project to a new AI. Use the **Unified Onboarding Pack** for complete handoff:
 
-| Capsule | Preserves |
-|---------|-----------|
-| **AI Context Capsule™** (v0.3.1) | WHAT the project knows |
-| **Studio DNA Capsule™** (v1.0.0) | HOW Studio OS thinks |
-| **Founder Intelligence Capsule™** (v1.0.0) | WHY the project exists — founder strategy & vision |
+| Capsule | Preserves | Required in pack |
+|---------|-----------|------------------|
+| **AI Context Capsule™** (v0.3.1) | WHAT the project knows | Yes |
+| **Founder Intelligence Capsule™** (v1.0.0) | WHY the project exists — founder strategy & vision | Yes |
+| **Studio DNA Capsule™** (v1.0.0) | HOW Studio OS thinks | Only if included |
 
 Downloads:
+- **Unified pack (preferred):** `https://fsbw.vercel.app/onboarding/latest`
 - Context: `https://fsbw.vercel.app/context/latest`
-- DNA: `/downloads/studio-dna-capsules/latest.zip`
 - Founder Intelligence: `https://fsbw.vercel.app/founder-intelligence/latest`
+- DNA (optional): `/downloads/studio-dna-capsules/latest.zip`
 
 Admin panel: `/admin/studio/context-capsule`
 

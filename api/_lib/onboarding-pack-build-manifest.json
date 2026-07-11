@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "packType": "unified-onboarding",
+  "currentVersion": "1.0.0",
+  "generatedAt": "2026-07-11T02:57:06.135Z",
+  "gitCommit": "96f739c944dd8bb036fa89b652894a4b53b7d2a0",
+  "validationStatus": "pass",
+  "contentCoverageStatus": "pass",
+  "documentCount": 67,
+  "checksumSha256": "c05437a8772144fb06f1571eaf403c0edf2e819907893d9c4821c511cf34575f",
+  "artifact": "StudioOS_OnboardingPack_v1.0.0.zip",
+  "permanentLatestUrl": "/onboarding/latest",
+  "latestDownloadPath": "/onboarding/latest",
+  "legacyLatestDownloadPath": "/downloads/onboarding-packs/latest.zip",
+  "versionedDownloadPath": "/downloads/onboarding-packs/archive/StudioOS_OnboardingPack_v1.0.0.zip",
+  "includedCapsules": [
+    {
+      "name": "AI Context Capsule",
+      "version": "0.3.1"
+    },
+    {
+      "name": "Founder Intelligence Capsule",
+      "version": "1.0.0"
+    },
+    {
+      "name": "Studio DNA Capsule",
+      "version": "1.0.0"
+    }
+  ],
+  "missingOptionalCapsules": [],
+  "packageHealth": 100,
+  "readyForAiOnboarding": true,
+  "sizeBytes": 121862
+}

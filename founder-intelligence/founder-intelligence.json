@@ -4,7 +4,7 @@
   "capsuleVersion": "1.0.0",
   "manifestVersion": "1.0.0",
   "capsuleFolder": "founder-intelligence",
-  "generatedAt": "2026-07-11T02:13:45.625Z",
+  "generatedAt": "2026-07-11T02:57:06.084Z",
   "companionCapsules": {
     "context": {
       "version": "0.3.1",
@@ -15,7 +15,7 @@
       "latestPath": "/downloads/studio-dna-capsules/latest.zip"
     }
   },
-  "documentCount": 27,
+  "documentCount": 28,
   "readingOrder": [
     "README_FIRST.md",
     "MANIFEST.md",
@@ -37,6 +37,7 @@
     "STUDIO_WORKERS.md",
     "KNOWLEDGE_CAPTURE.md",
     "INTERVIEW_ENGINE.md",
+    "EXPERT_TRUST_AND_GOVERNANCE.md",
     "DECISION_HISTORY.md",
     "COMMUNICATION_STYLE.md",
     "FOUNDER_PREFERENCES.md",
@@ -45,7 +46,7 @@
     "LONG_TERM_ROADMAP.md",
     "FOUNDER_VALIDATION.md"
   ],
-  "readingOrderChecksum": "f4d3a7599dfd8baf8b0391b0710c8515cd98abff3387508ed4a46a8b578206ce",
+  "readingOrderChecksum": "29bc8a2ecf4464baad955a73cbe73aa0454878ed34a5b7f1324cb0728c3dd09b",
   "requiredMarkdownFiles": [
     "README_FIRST.md",
     "MANIFEST.md",
@@ -68,6 +69,7 @@
     "STUDIO_WORKERS.md",
     "KNOWLEDGE_CAPTURE.md",
     "INTERVIEW_ENGINE.md",
+    "EXPERT_TRUST_AND_GOVERNANCE.md",
     "DECISION_HISTORY.md",
     "COMMUNICATION_STYLE.md",
     "FOUNDER_PREFERENCES.md",

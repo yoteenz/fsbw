@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   ExecutiveCollapsibleSection,
   ExecutiveFocusPanel,
@@ -18,6 +19,11 @@ import {
   FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH,
   FOUNDER_INTELLIGENCE_CAPSULE_PUBLIC_HUB_PATH,
 } from '../../../../studio-os-core/founder-intelligence-capsule-export/constants';
+import {
+  ONBOARDING_PACK_PERMANENT_LATEST_PATH,
+  ONBOARDING_PACK_PUBLIC_HUB_PATH,
+  UNIFIED_ONBOARDING_PROMPT,
+} from '../../../../studio-os-core/onboarding-pack-export/constants';
 
 const ACCENT = '#92704A';
 
@@ -63,6 +69,7 @@ export function ContextCapsuleWorkspace() {
     downloadLatest,
     downloadExport,
   } = useContextCapsuleExport();
+  const [copiedUnifiedPrompt, setCopiedUnifiedPrompt] = useState(false);
 
   const latestExport = exports[0] ?? null;
   const releaseHistory = release?.releaseHistory ?? status?.releaseHistory ?? [];
@@ -95,6 +102,39 @@ export function ContextCapsuleWorkspace() {
           { label: 'STATUS', value: readyMessage ? 'READY' : status?.generationStatus?.toUpperCase() ?? 'IDLE' },
         ]}
       />
+
+      <ExecutiveFocusPanel
+        title="UNIFIED ONBOARDING PACK™"
+        subtitle="Preferred complete handoff — one START_HERE, one MASTER_MANIFEST, one report."
+        highlight="StudioOS_OnboardingPack v1.0.0"
+      >
+        <StatRow label="Permanent URL" value={ONBOARDING_PACK_PERMANENT_LATEST_PATH} />
+        <StatRow label="Full URL" value={`https://fsbw.vercel.app${ONBOARDING_PACK_PERMANENT_LATEST_PATH}`} />
+        <StatRow label="Dashboard" value={ONBOARDING_PACK_PUBLIC_HUB_PATH} />
+        <div className="flex gap-2 mt-2">
+          <button
+            type="button"
+            onClick={() => window.location.assign(ONBOARDING_PACK_PERMANENT_LATEST_PATH)}
+            className="flex-1 py-2 text-[7px] font-futura uppercase border"
+            style={{ borderColor: ACCENT, color: ACCENT, fontWeight: 515 }}
+          >
+            DOWNLOAD PACK
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              void navigator.clipboard.writeText(UNIFIED_ONBOARDING_PROMPT).then(() => {
+                setCopiedUnifiedPrompt(true);
+                window.setTimeout(() => setCopiedUnifiedPrompt(false), 2000);
+              });
+            }}
+            className="flex-1 py-2 text-[6px] font-futura uppercase border"
+            style={{ borderColor: ADMIN_STUDIO_THEME.panelBorder, color: ADMIN_STUDIO_THEME.textSecondary }}
+          >
+            {copiedUnifiedPrompt ? 'PROMPT COPIED' : 'COPY ONBOARDING PROMPT'}
+          </button>
+        </div>
+      </ExecutiveFocusPanel>
 
       <ExecutiveFocusPanel
         title="VALIDATION SUMMARY"

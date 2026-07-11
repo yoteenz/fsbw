@@ -26,7 +26,7 @@ Preferred response styles, critique, and collaboration expectations.
 |------|-------------|
 | Implementation | `COMPOSER SPRINT` |
 | Review | `TERRA REVIEW` / architecture review |
-| External AI onboarding | Three capsules + ONBOARDING_REPORT |
+| External AI onboarding | Unified Onboarding Pack → ONBOARDING_REPORT_TEMPLATE (one report) |
 
 - One testing URL per code block  
 - User-facing copy-paste prompts in ` ```text ` fences  

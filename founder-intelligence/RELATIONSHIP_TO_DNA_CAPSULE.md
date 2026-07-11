@@ -2,6 +2,8 @@
 
 How Founder Intelligence complements the DNA Capsule (HOW vs WHY).
 
+> **Unified Onboarding Pack:** If no Studio DNA Capsule is included in your pack, continue onboarding with the capsules present. DNA is **optional** unless MASTER_MANIFEST.md lists DNA files as required.
+
 ---
 **Last Updated:** 2026-07-11  
 **Confidence Level:** High  

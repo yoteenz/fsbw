@@ -30,8 +30,9 @@ Master map of every category in the Founder Intelligence Capsule v1.0.0.
 | **Monetization** | MONETIZATION.md | Headquarters license, packs, digital payroll |
 | **Marketplace** | MARKETPLACE.md | Expert marketplace, knowledge economy |
 | **Studio Workers** | STUDIO_WORKERS.md | Digital workforce lifecycle |
-| **Knowledge capture** | KNOWLEDGE_CAPTURE.md | Vault, memory, institutional learning |
+| **Knowledge capture** | KNOWLEDGE_CAPTURE.md | Vault, mirror, confessional, training |
 | **Interview engine** | INTERVIEW_ENGINE.md | Expert capture, Studio Institute invites |
+| **Expert trust** | EXPERT_TRUST_AND_GOVERNANCE.md | Isolation, authorization, migration |
 | **Decision history** | DECISION_HISTORY.md | Explainable architecture log |
 | **Communication** | COMMUNICATION_STYLE.md | Response style, critique, teaching |
 | **Preferences** | FOUNDER_PREFERENCES.md | Working rhythms and non-negotiables |

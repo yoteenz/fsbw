@@ -31,8 +31,8 @@ Studio OS (platform)
 
 ## Host vs platform
 
-- **fsbw.vercel.app** runs Frontal Slayer customer surfaces + founder admin  
-- **Studio Administration** (`/admin/studio-os/...`) is portfolio-owner platform scope — never substitute for org Headquarters  
+- **fsbw.vercel.app** runs Frontal Slayer customer surfaces + founder admin (**temporary deployment** for Expert Capture / Studio Institute — migration-ready to dedicated Studio OS domain)
+- **Digital property & expansion** — each organization owns its Headquarters district; platform adds infill districts without redesign
 - **HEADQUARTERS** card always launches host org Mission Control  
 
 ## Onboarding path

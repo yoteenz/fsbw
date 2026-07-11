@@ -18,8 +18,9 @@ Revenue streams and flow — platform and host.
 | Stream | Mechanism |
 |--------|-----------|
 | **Product sales** | Wig units, gift cards, bundles |
+| **Business subscriptions** | Stripe membership tiers on `/checkout/upgrade` |
 | **Services** | Consultations, premium appointments, installs |
-| **Memberships** | Stripe subscription tiers on `/checkout/upgrade` |
+| **Memberships** | Recurring subscriber access to premium gates |
 | **Consult add-ons** | Style analysis ($20 / $60 tiers) |
 
 ## Platform (Studio OS)
@@ -28,10 +29,11 @@ Revenue streams and flow — platform and host.
 |--------|-----------|
 | **Headquarters License** | Recurring platform lease |
 | **Department Packs** | One-time permanent expansions |
-| **Digital Payroll** | Recurring per active concierge/worker |
+| **Digital Payroll** | Recurring per active concierge/worker — **AI worker subscriptions** |
 | **Marketplace** | Expert consultations, academies, memberships |
-| **Knowledge licensing** | Templates, playbooks, brain modules (approved surfaces only) |
-| **Enterprise** | Multi-org deployment, isolation, support |
+| **Knowledge licensing** | Licensed brain modules, templates, courses |
+| **Transaction fees** | Platform commission on marketplace transactions |
+| **Enterprise licensing** | Multi-org deployment, isolation, support |
 
 ## Revenue flow principle
 

@@ -6,15 +6,17 @@
 The repository documents **what** Studio OS is.  
 This folder documents **why** it exists and **how the founder thinks**.
 
-## Three-capsule onboarding
+## Onboarding
 
-| # | Capsule | Question |
-|---|---------|----------|
-| 1 | AI Context Capsule | What is this project? |
-| 2 | Studio DNA Capsule | How does Studio OS think? |
-| 3 | Founder Intelligence Capsule | Why does this project exist? |
+**Preferred:** [Unified Onboarding Pack](https://fsbw.vercel.app/onboarding/latest) — one START_HERE, one MASTER_MANIFEST, one report.
 
-Start with `README_FIRST.md`, then `MANIFEST.md`.
+| Capsule | Question | Required |
+|---------|----------|----------|
+| AI Context Capsule | What is this project? | Yes |
+| Founder Intelligence Capsule | Why does this project exist? | Yes |
+| Studio DNA Capsule | How does Studio OS think? | Only if included in pack |
+
+Start with `README_FIRST.md`, then `MANIFEST.md` (standalone). Inside the unified pack, follow **START_HERE.md** at pack root.
 
 ---
 **Last Updated:** 2026-07-11  

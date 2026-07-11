@@ -54,6 +54,9 @@
     },
     "api/capsules/founder-intelligence-latest.ts": {
       "includeFiles": "public/downloads/founder-intelligence-capsules/latest.zip,api/_lib/founder-intelligence-capsule-release.json"
+    },
+    "api/capsules/onboarding-latest.ts": {
+      "includeFiles": "public/downloads/onboarding-packs/latest.zip,api/_lib/onboarding-pack-release.json"
     }
   },
   "crons": [
@@ -72,11 +75,19 @@
       "destination": "/api/capsules/context-latest"
     },
     {
+      "source": "/onboarding/latest",
+      "destination": "/api/capsules/onboarding-latest"
+    },
+    {
       "source": "/founder-intelligence/latest",
       "destination": "/api/capsules/founder-intelligence-latest"
     },
     {
-      "source": "/((?!api/|assets/|downloads/|context/release\\.json|founder-intelligence/release\\.json|tiktok[^/]*\\.txt|ne_110m_land\\.geojson|ne_110m_admin_0_boundary_lines_land\\.geojson|ne_110m_admin_1_states_provinces_lines\\.geojson).*)",
+      "source": "/founder/latest",
+      "destination": "/api/capsules/founder-intelligence-latest"
+    },
+    {
+      "source": "/((?!api/|assets/|downloads/|context/release\\.json|founder-intelligence/release\\.json|onboarding/release\\.json|tiktok[^/]*\\.txt|ne_110m_land\\.geojson|ne_110m_admin_0_boundary_lines_land\\.geojson|ne_110m_admin_1_states_provinces_lines\\.geojson).*)",
       "destination": "/index.html"
     }
   ],

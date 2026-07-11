@@ -32,9 +32,29 @@ Interview Engine, vaults, and institutional memory evolution.
 - **Institutional memory** — Profession Brain + Operating Manual™  
 - **Knowledge evolution** — Living sync; version history never silent overwrite  
 
-## Experience inheritance
+## Expert capture modalities
 
-Expert Capture sessions (tax, permitting, etc.) feed brains that outlive the interview — **approved knowledge only** trains downstream workers.
+| Modality | Status |
+|----------|--------|
+| **Structured text interviews** | Studio Institute invite Phase 1 |
+| **Video expert interviews** | Planned — capture pipeline supports media ingestion |
+| **Audio expert interviews** | Planned — transcript pipeline |
+
+## Session controls
+
+- **Save and resume** — experts can pause and continue across sessions  
+- **Transcript correction** — owner/expert can fix captured text before approval  
+- **Answer deletion & redo** — remove bad captures without polluting training data  
+- **Incremental training** — approved segments only flow to Profession Brain / workers  
+
+## Living Knowledge Mirror & Confessional Mode
+
+- **Living Knowledge Mirror** — reflects captured expert reasoning back to owner for review before canonization  
+- **Confessional Mode** — private expert reflection channel (expert-capture routes) isolated from public surfaces  
+
+## Continuing education
+
+When Profession Brain updates, **Studio Institute** sync generates updated learning paths for workers and humans — continued education is not a one-time onboarding event.
 
 ## Founder memory goal
 

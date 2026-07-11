@@ -5,6 +5,7 @@ export function isIsolatedStudioRoute(pathname: string): boolean {
   if (isStudioInstitutePath(pathname)) return true;
   if (pathname === '/context') return true;
   if (pathname === '/founder-intelligence') return true;
+  if (pathname === '/onboarding') return true;
   if (pathname.startsWith('/expert-capture')) return true;
   if (pathname.startsWith('/__')) return true;
   return false;

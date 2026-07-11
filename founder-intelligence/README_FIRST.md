@@ -1,15 +1,23 @@
 # README FIRST — Founder Intelligence Capsule 1.0.0
 
+> **Unified Onboarding Pack notice:** If this capsule is inside **StudioOS_OnboardingPack/**, follow the pack-level **START_HERE.md** and **MASTER_MANIFEST.md**. Do not begin or complete a separate onboarding process from this capsule alone.
+
 **You are opening:** `founder-intelligence/` (Founder Intelligence Capsule™)  
 **Purpose:** Preserve **why Studio OS exists** and **how the Founder thinks** — reasoning, strategy, creative direction, business model, institutional memory, and long-term vision that live across years of collaboration, not only in the repository.  
 **Capsule version:** 1.0.0  
-**Companions (read all three for complete onboarding):**
+**Companions:**
 
-| Capsule | Answers |
-|---------|---------|
-| **AI Context Capsule™** v0.3.1 | *What is this project?* — architecture, handoff, blockers, governance |
-| **Studio DNA Capsule™** v1.0.0 | *How does Studio OS think?* — design judgment, quality bar, canon rules |
-| **Founder Intelligence Capsule™** v1.0.0 | *Why does this project exist?* — founder strategy, vision, decisions, business |
+| Capsule | Answers | When required |
+|---------|---------|---------------|
+| **AI Context Capsule™** | *What is this project?* | Always — pair with this capsule |
+| **Founder Intelligence Capsule™** | *Why does this project exist?* | This document |
+| **Studio DNA Capsule™** | *How does Studio OS think?* | **Only if included** in Unified Onboarding Pack — see MASTER_MANIFEST |
+
+This capsule complements the AI Context Capsule.
+
+If a validated **Studio DNA Capsule** is included in the Unified Onboarding Pack, follow the reading order in **MASTER_MANIFEST.md**.
+
+If no Studio DNA Capsule is included, continue onboarding using the capsules present. Its absence is **not** a validation failure unless MASTER_MANIFEST.md lists DNA files as required.
 
 ---
 
@@ -21,17 +29,17 @@ It does **not** replace the AI Context Capsule or Studio DNA Capsule. It **compl
 
 ---
 
-## Mandatory reading protocol
+## Mandatory reading protocol (standalone capsule)
 
 1. Read **MANIFEST.md** reading order in sequence.
 2. Read **FOUNDER_INTELLIGENCE_INDEX.md** for category map.
 3. Cross-reference **AI Context Capsule** for operational truth (`CURRENT_HANDOFF.md`, `KNOWN_BLOCKERS.md`).
-4. Cross-reference **Studio DNA Capsule** for design judgment and canon policy.
-5. Complete onboarding only after all three capsules — then wait for founder approval before contributing.
+4. If **Studio DNA Capsule** is included in your pack, cross-reference it for design judgment — otherwise skip.
+5. Complete onboarding per **START_HERE.md** (unified pack) or Context capsule protocol (standalone).
 
 ---
 
-## Onboarding stack
+## Onboarding stack (when all included capsules are present)
 
 ```
 New AI session
@@ -45,9 +53,10 @@ Founder Intelligence   →  WHY, strategy, vision, business, history
 Founder approval       →  then contribute
 ```
 
-**Permanent downloads:**  
+**Preferred handoff:** `https://fsbw.vercel.app/onboarding/latest` (Unified Onboarding Pack)
+
+Individual capsule URLs (optional):
 - Context: `https://fsbw.vercel.app/context/latest`  
-- DNA: `/downloads/studio-dna-capsules/latest.zip`  
 - Founder Intelligence: `https://fsbw.vercel.app/founder-intelligence/latest`
 
 ---

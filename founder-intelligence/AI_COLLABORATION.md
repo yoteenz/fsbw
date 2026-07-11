@@ -21,13 +21,13 @@ Roles, capsules, and onboarding workflow.
 | **Composer / Cursor** | Implementation — labeled sprints | Repo commits |
 | **External AI** | Onboarding — read capsules, report, wait | ZIP upload |
 
-## Three-capsule onboarding (mandatory)
+## Three-capsule onboarding (when distributed together)
 
-1. **AI Context Capsule** — `https://fsbw.vercel.app/context/latest`  
-2. **Studio DNA Capsule** — `/downloads/studio-dna-capsules/latest.zip`  
-3. **Founder Intelligence Capsule** — `/founder-intelligence/latest`  
+Download the **Unified Onboarding Pack**: `https://fsbw.vercel.app/onboarding/latest`
 
-Then: complete Context `ONBOARDING_REPORT.md` → founder approval → contribute.
+Then read **START_HERE.md** → **MASTER_MANIFEST.md** → every required file → populate **ONBOARDING_REPORT_TEMPLATE.md** in your own words → wait for founder approval.
+
+Optional individual capsules: Context `/context/latest`, Founder Intelligence `/founder-intelligence/latest`, DNA `/downloads/studio-dna-capsules/latest.zip`.
 
 ## Studio AI vision (canon)
 

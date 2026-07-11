@@ -1,5 +1,7 @@
 # README FIRST — AI Context Capsule 0.3.1
 
+> **Unified Onboarding Pack notice:** If this capsule is inside **StudioOS_OnboardingPack/**, follow the pack-level **START_HERE.md** and **MASTER_MANIFEST.md**. Do not begin or complete a separate onboarding process from this capsule alone. Use **ONBOARDING_REPORT_TEMPLATE.md** at the pack root — populate in your own words.
+
 **You are opening:** `StudioOS_ContextCapsule_v0.1` (folder name is stable; **capsule version is 0.3.1**)  
 **Purpose:** Deterministic **verification** onboarding — reconstruct project and founder working style with **minimal inference**  
 **Capsule version:** 0.3.1  
@@ -35,14 +37,11 @@ After reading, **do not** write code, architecture proposals, Composer prompts, 
 
 Your job is **verification and understanding first**, not action.
 
-### 3. Complete ONBOARDING_REPORT.md exactly as provided
+### 3. Complete the onboarding report (standalone capsule only)
 
-Open `ONBOARDING_REPORT.md` and **complete every section** using the structure already in that file.
+**If inside the Unified Onboarding Pack:** skip this step here — use **ONBOARDING_REPORT_TEMPLATE.md** at pack root after reading MASTER_MANIFEST.
 
-- **Do not** invent a different report format.  
-- **Do not** modify section headings.  
-- **Complete the Onboarding Compliance Checklist** near the top.  
-- If information cannot be determined from the capsule, write: **"This information is not documented within the current capsule."** — do not guess.
+**If using this capsule alone:** open `ONBOARDING_REPORT.md` and complete every section using the structure provided — populate in your own words; do not copy blank instructional text as answers.
 
 Required sections include:
 

@@ -169,17 +169,23 @@ export default function FounderIntelligenceDownloadPage() {
         {error ? <p style={{ color: '#dc2626' }}>{error}</p> : null}
 
         <div style={styles.card}>
-          <h2 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 600 }}>Complete onboarding (three capsules)</h2>
+          <h2 style={{ margin: '0 0 12px', fontSize: 18, fontWeight: 600 }}>Complete onboarding</h2>
+          <p style={{ margin: '0 0 12px', fontSize: 14, lineHeight: 1.7 }}>
+            <strong>Preferred:</strong>{' '}
+            <a href="/onboarding/latest">Unified Onboarding Pack</a> — one START_HERE, one MASTER_MANIFEST, one report.
+          </p>
+          <p style={{ margin: '0 0 8px', fontSize: 13, color: '#64748b' }}>Individual capsules (optional):</p>
           <ol style={{ margin: 0, paddingLeft: 18, fontSize: 14, lineHeight: 1.9 }}>
             <li>
               <a href="/context/latest">AI Context Capsule</a> — what the project is
             </li>
             <li>
-              <a href="/downloads/studio-dna-capsules/latest.zip">Studio DNA Capsule</a> — how Studio OS thinks
-            </li>
-            <li>
               <a href={FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH}>Founder Intelligence Capsule</a> — why it
               exists
+            </li>
+            <li>
+              <a href="/downloads/studio-dna-capsules/latest.zip">Studio DNA Capsule</a> — how Studio OS thinks (included
+              in unified pack when validated)
             </li>
           </ol>
         </div>

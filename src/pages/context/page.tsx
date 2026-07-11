@@ -199,9 +199,13 @@ export default function ContextCapsuleDownloadPage() {
         </div>
 
         <p style={{ fontSize: 13, color: '#94a3b8', lineHeight: 1.6 }}>
-          Workflow: download all three capsules → attach ZIPs → paste onboarding prompt from{' '}
-          <code style={styles.mono}>/admin/studio/context-capsule</code>. Pair with{' '}
-          <a href="/founder-intelligence">Founder Intelligence</a> and Studio DNA for WHY + HOW.
+          <strong>Preferred workflow:</strong> download the{' '}
+          <a href="/onboarding/latest" style={{ color: '#64748b' }}>
+            Unified Onboarding Pack
+          </a>{' '}
+          → attach ZIP → copy onboarding prompt from <a href="/onboarding">/onboarding</a> or{' '}
+          <code style={styles.mono}>/admin/studio/context-capsule</code>. Individual capsules remain available at{' '}
+          <a href="/founder-intelligence">Founder Intelligence</a> and Studio DNA when needed.
         </p>
       </div>
     </div>

@@ -87,20 +87,19 @@ export const CONTEXT_CAPSULE_ONBOARDING_REPORT_SECTIONS = [
   '# Waiting For Founder Approval',
 ] as const;
 
-export const AI_ONBOARDING_PROMPT = `I uploaded the AI Context Capsule (latest validated release).
+export const AI_ONBOARDING_PROMPT = `I uploaded the Studio OS Unified Onboarding Pack (latest validated release).
 
-Download all three onboarding capsules (permanent URLs — always current):
-1. Context (WHAT): https://fsbw.vercel.app/context/latest
-2. DNA (HOW): https://fsbw.vercel.app/downloads/studio-dna-capsules/latest.zip
-3. Founder Intelligence (WHY): https://fsbw.vercel.app/founder-intelligence/latest
+Download: https://fsbw.vercel.app/onboarding/latest
 
-Follow README_FIRST.md in the Context Capsule exactly:
+Follow START_HERE.md exactly:
 
-1. Read every document in MANIFEST reading order
-2. Do not begin solving problems
-3. Complete ONBOARDING_REPORT.md exactly — including the Compliance Checklist and Operational Source of Truth sections
-4. Distinguish documented facts from inference; state "not documented within the current capsule" when uncertain
-5. Wait for my approval before contributing`;
+1. Read every file in MASTER_MANIFEST.md order — completely
+2. Read ONBOARDING_GUIDE.md for source-of-truth hierarchy
+3. Do NOT stop after inspecting archive contents or produce intermediate summaries
+4. Do NOT begin implementation, sprints, or architecture changes
+5. Use ONBOARDING_REPORT_TEMPLATE.md as the required structure — populate every section in your own words. Do not copy blank instructional text as answers.
+6. Generate ONE final onboarding report for the entire pack
+7. Stop and wait for my approval before contributing`;
 
 export type ContextCapsuleValidationCheck = {
   id: string;

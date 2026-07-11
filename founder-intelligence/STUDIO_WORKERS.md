@@ -1,6 +1,6 @@
-# Studio Workers — Digital Workforce Lifecycle
+# Studio Workers — Digital Workforce & Studio HR
 
-Recruitment through retirement — digital employees as institutional roles.
+Recruitment through retirement — digital employees, Studio Team, and Studio HR lifecycle.
 
 ---
 **Last Updated:** 2026-07-11  
@@ -13,6 +13,10 @@ Recruitment through retirement — digital employees as institutional roles.
 
 ---
 
+## Studio Team & Studio HR
+
+**Studio Team** = the organization's combined human + digital workforce. **Studio HR** governs hiring, training, reassignment, promotion, replacement, and retirement — for both digital concierges and human roles documented in Blueprint.
+
 ## Lifecycle stages
 
 | Stage | Description |
@@ -23,6 +27,8 @@ Recruitment through retirement — digital employees as institutional roles.
 | **Knowledge transfer** | Brain updates, Wisdom Capture™, Memory Engine™ |
 | **Apprenticeship** | Low-confidence tasks with human approval |
 | **Promotion** | Higher autonomy when confidence thresholds met |
+| **Reassignment** | Studio HR moves workers across departments with brain context preserved |
+| **Replacement** | Succession Mode™ flags uncaptured knowledge before role change |
 | **Continued education** | Brain sync when regulations/processes change |
 | **Specialization** | Department-specific concierges (Marketing, Finance, etc.) |
 | **Performance** | Knowledge Confidence™ scores, transparency logs |

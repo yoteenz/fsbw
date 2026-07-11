@@ -23,7 +23,11 @@ export function versionedFounderIntelligenceZipFileName(version: string): string
   return `Founder_Intelligence_Capsule_v${version}.zip`;
 }
 
-export const FOUNDER_INTELLIGENCE_ONBOARDING_NOTE = `Complete onboarding requires all three capsules:
-1. AI Context Capsule — https://fsbw.vercel.app/context/latest
-2. Studio DNA Capsule — https://fsbw.vercel.app/downloads/studio-dna-capsules/latest.zip
-3. Founder Intelligence Capsule — https://fsbw.vercel.app/founder-intelligence/latest`;
+export const FOUNDER_INTELLIGENCE_ONBOARDING_NOTE = `Preferred complete handoff: Unified Onboarding Pack — https://fsbw.vercel.app/onboarding/latest
+
+Follow START_HERE.md → MASTER_MANIFEST.md → ONBOARDING_GUIDE.md → ONBOARDING_REPORT_TEMPLATE.md (one report, then wait for approval).
+
+Individual capsules (optional):
+1. AI Context — https://fsbw.vercel.app/context/latest
+2. Founder Intelligence — https://fsbw.vercel.app/founder-intelligence/latest
+3. Studio DNA — only if included in unified pack or downloaded separately`;

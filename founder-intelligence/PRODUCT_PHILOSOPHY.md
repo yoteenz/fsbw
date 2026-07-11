@@ -41,4 +41,4 @@ What Studio OS builds — and refuses to build.
 
 ## Success metric
 
-A new AI reads three capsules and can explain **how the project works**, **why it exists**, and **how the founder thinks** — then waits for approval before acting.
+A new AI reads the **Unified Onboarding Pack** (Context + Founder Intelligence, plus Studio DNA when included) and can explain **how the project works**, **why it exists**, and **how the founder thinks** — then waits for approval before acting. If Studio DNA is not in the pack, design judgment comes from Founder Intelligence and Context documents instead.
