@@ -12,6 +12,8 @@ import { mirrorNavLinks, profileSlug } from './knowledge-mirror/resolve-profile'
 import { ExpertTrustWelcome } from './trust-vault/ExpertTrustWelcome';
 import { ExpertTrustAgreements } from './trust-vault/ExpertTrustAgreements';
 import KnowledgeVaultPage from './trust-vault/KnowledgeVaultPage';
+import type { ExpertInvite } from '../../studio-os-core/expert-capture/invite-system';
+import { STUDIO_INSTITUTE_ROUTES } from '../../studio-os-core/expert-capture/invite-system/config';
 
 const styles = {
   page: {
@@ -110,10 +112,23 @@ function MicMeter({ level }: { level: number }) {
   );
 }
 
-export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCaptureProfile }) {
-  const cap = useExpertCaptureSession(profile);
+export function ExpertCaptureInterviewView({
+  profile,
+  inviteContext,
+}: {
+  profile: ExpertCaptureProfile;
+  inviteContext?: { invite: ExpertInvite; organizationLabel: string };
+}) {
+  const cap = useExpertCaptureSession(profile, {
+    inviteSessionId: inviteContext?.invite.sessionId ?? null,
+  });
   const { branding } = profile;
-  const mirrorNav = mirrorNavLinks(profile);
+  const mirrorNav = inviteContext
+    ? {
+        ...mirrorNavLinks(profile),
+        knowledgeVault: STUDIO_INSTITUTE_ROUTES.knowledgeVault,
+      }
+    : mirrorNavLinks(profile);
   const mirrorIdentity = cap.session ? identityFromSession(cap.session) : null;
   const km = useKnowledgeMirror(profile, mirrorIdentity);
   const [name, setName] = useState('');
@@ -313,6 +328,30 @@ export function ExpertCaptureInterviewView({ profile }: { profile: ExpertCapture
             </Btn>
             <Btn onClick={cap.goToWelcomeBack}>Return to Other Device</Btn>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (cap.phase === 'landing' && inviteContext) {
+    const inv = inviteContext.invite;
+    return (
+      <div style={styles.page}>
+        <div style={styles.container}>
+          <p style={{ fontSize: 13, color: '#a3a3a3' }}>Studio Institute · Private invite</p>
+          <h1 style={styles.h1}>Ready to begin, {inv.inviteeName}?</h1>
+          <p style={styles.sub}>
+            Documenting knowledge for {inv.businessName}. Worker: {inv.workerBeingCreated}. Your progress saves
+            automatically — you can close and return anytime via your invite link.
+          </p>
+          <Btn
+            primary
+            onClick={() => {
+              void cap.startSessionFromInvite(inv);
+            }}
+          >
+            {inv.progressPercent > 0 || inv.sessionId ? 'Resume protected interview' : 'Begin protected interview'}
+          </Btn>
         </div>
       </div>
     );

@@ -46,8 +46,10 @@ import {
   createEmptyTrustRecord,
   isTrustFrameworkComplete,
   TRUST_AGREEMENT_VERSION,
+  type TrustAgreementId,
 } from '../studio-os-core/expert-capture/trust-vault';
-import type { TrustAgreementId } from '../studio-os-core/expert-capture/trust-vault';
+import { findLocalInviteByToken, syncInviteFromSession } from '../studio-os-core/expert-capture/invite-system';
+import type { ExpertInvite } from '../studio-os-core/expert-capture/invite-system';
 import { syncKnowledgeMirrorFromSession } from './useKnowledgeMirror';
 import {
   attachMirroredPreview,
@@ -75,7 +77,15 @@ function initialPhase(profile: ExpertCaptureProfile): ExpertCapturePhase {
   return 'welcome_back';
 }
 
-export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
+export type UseExpertCaptureSessionOptions = {
+  /** Server session id from invite record — enables resume on a fresh browser */
+  inviteSessionId?: string | null;
+};
+
+export function useExpertCaptureSession(
+  profile: ExpertCaptureProfile,
+  options?: UseExpertCaptureSessionOptions
+) {
   const [session, setSession] = useState<ExpertCaptureSession | null>(() => loadSession(profile));
   const [phase, setPhase] = useState<ExpertCapturePhase>(() => initialPhase(profile));
   const [currentAnswer, setCurrentAnswer] = useState<ExpertCaptureAnswer | null>(null);
@@ -175,6 +185,10 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
         sessionVersion,
       });
       if (next.meta.id) setResumeLink(buildResumeLink(next.meta.id, profile.route));
+      if (next.meta.inviteToken) {
+        const inv = findLocalInviteByToken(next.meta.inviteToken);
+        if (inv) syncInviteFromSession(next, inv);
+      }
     },
     [profile, buildRuntime, getAutosaveManager, mediaRefs, sessionVersion]
   );
@@ -219,7 +233,8 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
     void (async () => {
       const params = new URLSearchParams(window.location.search);
       const token = params.get('token');
-      const sessionId = params.get('sessionId') ?? loadSession(profile)?.meta.id;
+      const sessionId =
+        params.get('sessionId') ?? options?.inviteSessionId ?? loadSession(profile)?.meta.id;
       if (token) {
         const loaded = await loadExpertCaptureDocument({ resumeToken: token });
         if (!cancelled && loaded) applyLoadedDocument(loaded);
@@ -233,7 +248,7 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
       cancelled = true;
       autosaveRef.current?.dispose();
     };
-  }, [profile, applyLoadedDocument]);
+  }, [profile, applyLoadedDocument, options?.inviteSessionId]);
 
   useEffect(() => {
     const flush = () => {
@@ -304,6 +319,41 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
       streamRef.current?.getTracks().forEach((t) => t.stop());
     };
   }, []);
+
+  const startSessionFromInvite = useCallback(
+    async (invite: ExpertInvite) => {
+      if (invite.sessionId) {
+        const loaded = await loadExpertCaptureDocument({ sessionId: invite.sessionId });
+        if (loaded?.document?.session) {
+          applyLoadedDocument(loaded);
+          return;
+        }
+      }
+      const local = loadSession(profile);
+      if (local?.meta.inviteToken === invite.token) {
+        setSession(local);
+        setPhase(initialPhase(profile));
+        return;
+      }
+      const next = createEmptySession(
+        {
+          expertName: invite.inviteeName,
+          expertRole: invite.role,
+          organizationLabel: invite.businessName,
+        },
+        profile
+      );
+      next.meta.trustFramework = createEmptyTrustRecord();
+      next.meta.inviteId = invite.id;
+      next.meta.inviteToken = invite.token;
+      setSessionVersion(1);
+      void autosaveNow(next, { phase: 'trust_welcome', workflowStage: 'consent' }, true);
+      setSession(next);
+      saveSession(next, profile);
+      setPhase('trust_welcome');
+    },
+    [profile, autosaveNow, applyLoadedDocument]
+  );
 
   const startSession = useCallback(
     (expertName: string, expertRole: string) => {
@@ -1021,6 +1071,7 @@ export function useExpertCaptureSession(profile: ExpertCaptureProfile) {
     resumeLink,
     videoRef,
     startSession,
+    startSessionFromInvite,
     completeTrustWelcome,
     signTrustAgreements,
     completeVaultGate,

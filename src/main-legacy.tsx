@@ -7,7 +7,8 @@ import {
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import StudioDebugRoutes, { isStudioDebugPath } from './routes/StudioDebugRoutes'
+import StudioDebugRoutes from './routes/StudioDebugRoutes'
+import { isIsolatedStudioRoute } from './routes/studio-institute-paths'
 import './index.css'
 import { registerGlobalChunkLoadRecovery } from './utils/chunkLoadRecovery'
 import { bootstrapStudioOsBrowserStorage } from './utils/studioOsBrowserStorage'
@@ -17,7 +18,7 @@ import { PlatformErrorBoundary } from './platform-stabilization/PlatformErrorBou
 /** Legacy application entry — not loaded for /v2/* (see main.tsx dispatcher). */
 export function mountLegacyApp(): void {
   const onStudioDebugRoute =
-    typeof window !== 'undefined' && isStudioDebugPath(window.location.pathname)
+    typeof window !== 'undefined' && isIsolatedStudioRoute(window.location.pathname)
 
   markStartupCheckpoint('pre', 'main-entry')
 

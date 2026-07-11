@@ -46413,3 +46413,21 @@ Summary of **full conversation in this chat**: Investigation recorder boot, gene
 - **Docs:** `docs/studio-institute/EXPERT_CAPTURE_KNOWLEDGE_MIRROR.md`
 - **URLs:** https://fsbw.vercel.app/expert-capture/tax-preparation/owner-mirror · https://fsbw.vercel.app/expert-capture/all-in-one-permitting/knowledge-stream
 
+---
+
+## 2026-07-10 — Expert Trust Framework™ + Knowledge Vault™ (Studio Institute v1.1)
+
+Summary of **full conversation in this chat**: Living Knowledge Mirror (`c5446d419`). User approved **Expert Trust Framework™ + Knowledge Vault™ sprint** — evolve Expert Capture into a secure institutional knowledge platform experts trust for 20+ years; extend (not redesign) interview; legal placeholders, vault archive, worker isolation, trust dashboard, living worker, exports.
+
+- **Expert Trust Framework™** (pre-interview): `trust_welcome` → 10 glass protection cards · `trust_agreements` → 5 agreements (legal placeholders) + checkbox + e-signature · `vault_gate` → Knowledge Vault intro · then existing consent + interview flow unchanged
+- **Session meta:** `trustFramework` on `ExpertCaptureSessionMeta` (welcome/agreements/vault timestamps, signature, agreement version `studio-institute-trust-v1.1`)
+- **Knowledge Vault™:** 22 sections (recordings, transcripts, published/draft/retired knowledge, audit, exports, legal agreements, etc.); timeline; search; JSON exports
+- **Core modules** `src/studio-os-core/expert-capture/trust-vault/` — types, protection-cards, agreements, worker-isolation, audit-log, vault-builder, vault-exports, trust-helpers
+- **Worker isolation:** `workerDefinition` on profiles (`{organization} Permit Professional`, etc.); proprietary knowledge never crosses org boundary
+- **UI:** glass-styled ExpertTrustWelcome, ExpertTrustAgreements, KnowledgeVaultPage, TrustDashboardPage, LivingWorkerPage (evolution versions + continuous education links to Confessional)
+- **Routes (9 new):** `/expert-capture/knowledge-vault`, `/trust-dashboard`, `/living-worker` + tax + permitting variants
+- **Hook:** `completeTrustWelcome`, `signTrustAgreements`, `completeVaultGate` in `useExpertCaptureSession`; resume respects incomplete trust
+- **Docs:** `docs/studio-institute/EXPERT_TRUST_FRAMEWORK_KNOWLEDGE_VAULT.md`
+- **Tests:** `trust-vault.test.ts`
+- **URLs:** https://fsbw.vercel.app/expert-capture/tax-preparation/knowledge-vault · https://fsbw.vercel.app/expert-capture/all-in-one-permitting/trust-dashboard
+

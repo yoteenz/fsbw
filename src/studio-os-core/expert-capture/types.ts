@@ -76,6 +76,8 @@ export type ExpertCaptureSessionMeta = {
   estimatedMinutesRemaining: number;
   aiGreetingDelivered: boolean;
   trustFramework: ExpertTrustRecord | null;
+  inviteId: string | null;
+  inviteToken: string | null;
 };
 
 export type StructuredKnowledgeItem = {

@@ -43,5 +43,6 @@ export { EXPERT_CAPTURE_FUTURE_PLACEHOLDERS } from './placeholders';
 export { EXPERT_CAPTURE_ROUTE, BASE_INTERVIEW_QUESTIONS, CONSENT_RETENTION_DAYS } from './constants';
 export * from './knowledge-mirror';
 export * from './trust-vault';
+export * from './invite-system';
 
 export type * from './types';

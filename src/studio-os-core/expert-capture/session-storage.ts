@@ -41,6 +41,8 @@ export function createEmptySession(
     estimatedMinutesRemaining: profile.questions.length * profile.minutesPerQuestion,
     aiGreetingDelivered: false,
     trustFramework: null,
+    inviteId: null,
+    inviteToken: null,
   };
   return {
     meta,
@@ -61,6 +63,8 @@ export function loadSession(profile: ExpertCaptureProfile): ExpertCaptureSession
     if (parsed.meta.trustFramework === undefined) {
       parsed.meta.trustFramework = null;
     }
+    if (parsed.meta.inviteId === undefined) parsed.meta.inviteId = null;
+    if (parsed.meta.inviteToken === undefined) parsed.meta.inviteToken = null;
     return parsed;
   } catch {
     return null;

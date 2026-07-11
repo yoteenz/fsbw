@@ -37,6 +37,12 @@ import TaxLivingWorkerPage from '../pages/expert-capture/tax-preparation/living-
 import PermittingKnowledgeVaultPage from '../pages/expert-capture/all-in-one-permitting/knowledge-vault/page';
 import PermittingTrustDashboardPage from '../pages/expert-capture/all-in-one-permitting/trust-dashboard/page';
 import PermittingLivingWorkerPage from '../pages/expert-capture/all-in-one-permitting/living-worker/page';
+import StudioInstituteHomePage from '../pages/studio-institute/page';
+import StudioInstituteInviteManagerPage from '../pages/studio-institute/invite/page';
+import StudioInstituteInviteLandingPage from '../pages/studio-institute/invite/landing/page';
+import StudioInstituteInterviewPage from '../pages/studio-institute/interview/page';
+import StudioInstituteVaultPage from '../pages/studio-institute/knowledge-vault/page';
+import { isStudioInstitutePath } from '../studio-os-core/expert-capture/invite-system/config';
 import { DebugRouteErrorBoundary } from '../pages/debug/DebugRouteErrorBoundary';
 import { RootAppErrorBoundary } from './RootAppErrorBoundary';
 import LoadingScreen from '../components/base/LoadingScreen';
@@ -80,6 +86,7 @@ export const STUDIO_DEBUG_PATHS = [
 ] as const;
 
 export function isStudioDebugPath(pathname: string): boolean {
+  if (isStudioInstitutePath(pathname)) return true;
   return (STUDIO_DEBUG_PATHS as readonly string[]).includes(pathname);
 }
 
@@ -126,6 +133,11 @@ export default function StudioDebugRoutes() {
       <Route path="/expert-capture/all-in-one-permitting/knowledge-vault" element={<PermittingKnowledgeVaultPage />} />
       <Route path="/expert-capture/all-in-one-permitting/trust-dashboard" element={<PermittingTrustDashboardPage />} />
       <Route path="/expert-capture/all-in-one-permitting/living-worker" element={<PermittingLivingWorkerPage />} />
+      <Route path="/studio-institute" element={<StudioInstituteHomePage />} />
+      <Route path="/studio-institute/invite" element={<StudioInstituteInviteManagerPage />} />
+      <Route path="/studio-institute/invite/:token" element={<StudioInstituteInviteLandingPage />} />
+      <Route path="/studio-institute/interview" element={<StudioInstituteInterviewPage />} />
+      <Route path="/studio-institute/knowledge-vault" element={<StudioInstituteVaultPage />} />
       <Route
         path="*"
         element={
