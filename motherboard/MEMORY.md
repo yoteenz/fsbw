@@ -46877,3 +46877,13 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Deliverable:** `docs/studio-os/forensics/RETRY_SHELL_LAYER_CONVERGENCE.md` (commit `d5650705c`). No repair deployed.
 
+---
+
+## 2026-07-11 — Onboarding hub JSX fix (Vercel build)
+
+**Context:** Vercel deploy of `be4df1375` (Unified Onboarding Pack v1.2.0) failed at `tsc` — `src/pages/onboarding/page.tsx(200,5): error TS1005: ')' expected` from broken JSX when Machine-readable index card was added (missing opening `<div style={styles.card}>` on Included capsules section).
+
+**Fix:** Restored wrapper `<div style={styles.card}>` around Included capsules block in `src/pages/onboarding/page.tsx`. `npm run build` passes locally.
+
+**Note:** Prior forensic MEMORY entry and report commit `d5650705c` landed separately; this fix unblocks production deploy for v1.2.0 onboarding pack.
+

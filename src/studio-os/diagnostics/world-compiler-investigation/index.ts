@@ -114,6 +114,13 @@ export {
   type Layer1ForensicSnapshot,
 } from './layer1-forensic';
 
+export {
+  getLastGenerationRequestHttpForensic,
+  clearGenerationRequestHttpForensic,
+  recordGenerationRequestHttpForensic,
+  type GenerationRequestHttpForensic,
+} from './generation-request-forensic';
+
 export type {
   CompilerInvestigationEvent,
   CompilerInvestigationEventType,

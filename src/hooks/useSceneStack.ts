@@ -62,6 +62,7 @@ import {
   LAYER_1_ID,
   recordLayer1Transition,
 } from '../studio-os/diagnostics/world-compiler-investigation';
+import { getLastGenerationRequestHttpForensic } from '../studio-os/diagnostics/world-compiler-investigation/generation-request-forensic';
 import {
   beginAsyncBoundary,
   endAsyncBoundary,
@@ -478,9 +479,11 @@ export function useSceneStack(
               code: result.code,
             });
           } else {
+            const httpForensic = getLastGenerationRequestHttpForensic();
             recordLayer1Transition('GENERATION_REQUEST_FAILED', {
               error: result.error,
               code: result.code,
+              httpForensic,
             });
           }
         }
@@ -490,6 +493,7 @@ export function useSceneStack(
           failStudioAlphaGeneration(generationId, errMsg);
           setErrors((prev) => ({ ...prev, [key]: errMsg }));
           if (isLayer1 && isWorldCompilerDiagnosticMode()) {
+            const httpForensic = getLastGenerationRequestHttpForensic();
             freezeLayer1Failure({
               failedTransition: 'GENERATION_REQUEST_FAILED',
               errorCode: result.code ?? 'GENERATION_FAILED',
@@ -505,6 +509,7 @@ export function useSceneStack(
                 error: result.error,
                 publicUrl: result.publicUrl ?? null,
                 model: result.model ?? null,
+                httpForensic,
               },
             });
           }

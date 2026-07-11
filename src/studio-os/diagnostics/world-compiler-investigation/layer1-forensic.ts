@@ -243,6 +243,15 @@ export function formatLayer1DiagnosticsMarkdown(snap: Layer1ForensicSnapshot): s
     JSON.stringify(snap.responseOutput, null, 2),
     '```',
     '',
+    snap.responseOutput?.httpForensic
+      ? [
+          '## HTTP forensic (pre-translation)',
+          '```json',
+          JSON.stringify(snap.responseOutput.httpForensic, null, 2),
+          '```',
+          '',
+        ].join('\n')
+      : '',
     snap.stackTrace ? `## Stack\n\`\`\`\n${snap.stackTrace}\n\`\`\`` : '',
   ].join('\n');
 }

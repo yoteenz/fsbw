@@ -3,6 +3,7 @@ import {
   apiFetch,
   ensureApiAccessToken,
 } from '../../../utils/api';
+import { recordGenerationRequestHttpForensic } from '../../../studio-os/diagnostics/world-compiler-investigation/generation-request-forensic';
 
 import type { ProductionAuthorization } from '../../../studio-os-core/creative-production/types';
 
@@ -50,23 +51,56 @@ export async function requestStudioBuilderGenerate(
     };
   }
 
-  const res = await apiFetch('/api/admin/studio-builder-generate', {
+  const endpoint = '/api/admin/studio-builder-generate';
+  const startedAt = typeof performance !== 'undefined' ? performance.now() : Date.now();
+  const res = await apiFetch(endpoint, {
     method: 'POST',
     body: payload,
   });
   const text = await res.text();
+  const elapsedMs = Math.round(
+    (typeof performance !== 'undefined' ? performance.now() : Date.now()) - startedAt
+  );
+  const contentType = res.headers.get('content-type');
   let data: StudioBuilderGenerateApiResponse = { ok: false };
+  let jsonParseSucceeded = true;
   try {
     data = text ? (JSON.parse(text) as StudioBuilderGenerateApiResponse) : { ok: false };
   } catch {
+    jsonParseSucceeded = false;
     data = { ok: false, error: `Generation failed (${res.status})` };
   }
   if (!res.ok) {
-    return {
+    const failure: StudioBuilderGenerateApiResponse = {
       ok: false,
-      error: adminApiAuthErrorMessage(res.status, data.error, data.code) || data.error || `Generation failed (${res.status})`,
+      error:
+        adminApiAuthErrorMessage(res.status, data.error, data.code) ||
+        data.error ||
+        `Generation failed (${res.status})`,
       code: data.code,
     };
+    recordGenerationRequestHttpForensic({
+      endpoint,
+      httpStatus: res.status,
+      responseText: text,
+      contentType,
+      elapsedMs,
+      jsonParseSucceeded,
+      parsed: data,
+      returnedToCaller: failure,
+    });
+    return failure;
   }
-  return data;
+  const success = data;
+  recordGenerationRequestHttpForensic({
+    endpoint,
+    httpStatus: res.status,
+    responseText: text,
+    contentType,
+    elapsedMs,
+    jsonParseSucceeded,
+    parsed: data,
+    returnedToCaller: success,
+  });
+  return success;
 }
