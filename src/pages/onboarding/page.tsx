@@ -90,7 +90,7 @@ export default function OnboardingPackPage() {
         <p style={{ fontSize: 13, color: '#64748b', margin: 0 }}>Studio OS · Unified Onboarding Pack</p>
         <h1 style={{ fontSize: 32, fontWeight: 600, margin: '8px 0' }}>Complete AI Onboarding</h1>
         <p style={{ color: '#64748b', lineHeight: 1.55 }}>
-          One pack · one reading order · one report. Context + Founder Intelligence (+ DNA when included).
+          One pack · one reading order · one report. Context + Founder Intelligence + Collaboration Intelligence (+ DNA when included).
         </p>
 
         <div style={styles.card}>
@@ -172,6 +172,10 @@ export default function OnboardingPackPage() {
             <li>
               <a href="/founder-intelligence">Founder Intelligence</a> —{' '}
               <a href="/founder-intelligence/latest">/founder-intelligence/latest</a>
+            </li>
+            <li>
+              <a href="/collaboration-intelligence">Collaboration Intelligence</a> —{' '}
+              <a href="/collaboration-intelligence/latest">/collaboration-intelligence/latest</a>
             </li>
           </ul>
         </div>

@@ -78,6 +78,10 @@
       "destination": "/downloads/founder-intelligence-capsules/latest.zip"
     },
     {
+      "source": "/collaboration-intelligence/latest",
+      "destination": "/downloads/collaboration-intelligence-capsules/latest.zip"
+    },
+    {
       "source": "/((?!api/|assets/|downloads/|context/release\\.json|founder-intelligence/release\\.json|onboarding/release\\.json|tiktok[^/]*\\.txt|ne_110m_land\\.geojson|ne_110m_admin_0_boundary_lines_land\\.geojson|ne_110m_admin_1_states_provinces_lines\\.geojson).*)",
       "destination": "/index.html"
     }
@@ -131,7 +135,7 @@
       "headers": [
         {
           "key": "Content-Disposition",
-          "value": "attachment; filename=\"StudioOS_OnboardingPack_v1.0.0.zip\""
+          "value": "attachment; filename=\"StudioOS_OnboardingPack_v1.1.0.zip\""
         },
         {
           "key": "Cache-Control",
@@ -143,11 +147,11 @@
         },
         {
           "key": "X-Capsule-Version",
-          "value": "1.0.0"
+          "value": "1.1.0"
         },
         {
           "key": "X-Capsule-Artifact",
-          "value": "StudioOS_OnboardingPack_v1.0.0.zip"
+          "value": "StudioOS_OnboardingPack_v1.1.0.zip"
         }
       ]
     },
@@ -198,6 +202,31 @@
         {
           "key": "X-Capsule-Artifact",
           "value": "Founder_Intelligence_Capsule_v1.0.0.zip"
+        }
+      ]
+    },
+    {
+      "source": "/collaboration-intelligence/latest",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment; filename=\"Collaboration_Intelligence_Capsule_v1.0.0.zip\""
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, must-revalidate"
+        },
+        {
+          "key": "Content-Type",
+          "value": "application/zip"
+        },
+        {
+          "key": "X-Capsule-Version",
+          "value": "1.0.0"
+        },
+        {
+          "key": "X-Capsule-Artifact",
+          "value": "Collaboration_Intelligence_Capsule_v1.0.0.zip"
         }
       ]
     }

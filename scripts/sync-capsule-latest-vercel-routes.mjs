@@ -20,7 +20,7 @@ const ROUTES = [
     source: '/onboarding/latest',
     destination: '/downloads/onboarding-packs/latest.zip',
     manifest: 'api/_lib/onboarding-pack-release.json',
-    fallbackArtifact: 'StudioOS_OnboardingPack_v1.0.0.zip',
+    fallbackArtifact: 'StudioOS_OnboardingPack_v1.1.0.zip',
   },
   {
     source: '/founder-intelligence/latest',
@@ -33,6 +33,12 @@ const ROUTES = [
     destination: '/downloads/founder-intelligence-capsules/latest.zip',
     manifest: 'api/_lib/founder-intelligence-capsule-release.json',
     fallbackArtifact: 'Founder_Intelligence_Capsule_v1.0.0.zip',
+  },
+  {
+    source: '/collaboration-intelligence/latest',
+    destination: '/downloads/collaboration-intelligence-capsules/latest.zip',
+    manifest: 'api/_lib/collaboration-intelligence-capsule-release.json',
+    fallbackArtifact: 'Collaboration_Intelligence_Capsule_v1.0.0.zip',
   },
 ];
 

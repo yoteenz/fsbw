@@ -1,18 +1,18 @@
 {
   "schemaVersion": 1,
   "packType": "unified-onboarding",
-  "currentVersion": "1.0.0",
-  "generatedAt": "2026-07-11T15:19:05.637Z",
-  "gitCommit": "49e48c7e494989a45fb7907bbd24c93b55d3b2fd",
+  "currentVersion": "1.1.0",
+  "generatedAt": "2026-07-11T15:30:02.878Z",
+  "gitCommit": "c939dbfbe1e7e95b74a67f9b33f1d9f6cd6d0d90",
   "validationStatus": "pass",
   "contentCoverageStatus": "pass",
-  "documentCount": 67,
-  "checksumSha256": "f762e4883d4dc5d5d34fc0c01377ef66974747bae0e0116f0b162c2a13f036a3",
-  "artifact": "StudioOS_OnboardingPack_v1.0.0.zip",
+  "documentCount": 87,
+  "checksumSha256": "32ce226cf196376dcac15704d8e5242223357c8c810016dacbf6e6f4180f59ab",
+  "artifact": "StudioOS_OnboardingPack_v1.1.0.zip",
   "permanentLatestUrl": "/onboarding/latest",
   "latestDownloadPath": "/onboarding/latest",
   "legacyLatestDownloadPath": "/downloads/onboarding-packs/latest.zip",
-  "versionedDownloadPath": "/downloads/onboarding-packs/archive/StudioOS_OnboardingPack_v1.0.0.zip",
+  "versionedDownloadPath": "/downloads/onboarding-packs/archive/StudioOS_OnboardingPack_v1.1.0.zip",
   "includedCapsules": [
     {
       "name": "AI Context Capsule",
@@ -25,10 +25,14 @@
     {
       "name": "Studio DNA Capsule",
       "version": "1.0.0"
+    },
+    {
+      "name": "Collaboration Intelligence Capsule",
+      "version": "1.0.0"
     }
   ],
   "missingOptionalCapsules": [],
   "packageHealth": 100,
   "readyForAiOnboarding": true,
-  "sizeBytes": 121864
+  "sizeBytes": 152899
 }

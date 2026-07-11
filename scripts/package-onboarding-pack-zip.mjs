@@ -10,7 +10,7 @@ import { execSync } from 'node:child_process';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 
-const PACK_VERSION = '1.0.0';
+const PACK_VERSION = '1.1.0';
 const PACK_FOLDER = 'StudioOS_OnboardingPack';
 const LATEST_ALIAS = 'latest.zip';
 const DOWNLOAD_BASE = '/downloads/onboarding-packs';
@@ -20,6 +20,7 @@ const PERMANENT_LATEST_PATH = '/onboarding/latest';
 const CONTEXT_SRC = 'StudioOS_ContextCapsule_v0.1';
 const FIC_SRC = 'founder-intelligence';
 const DNA_SRC = 'StudioOS_StudioDNACapsule_v1.0';
+const CI_SRC = 'collaboration-intelligence';
 
 const CONTEXT_READING = [
   'README_FIRST.md',
@@ -85,6 +86,38 @@ const DNA_READING = [
   'CANON_REGISTRY.md',
   'EVOLUTION.md',
   'DNA_VALIDATION.md',
+];
+
+const CI_READING = [
+  'README_FIRST.md',
+  'MANIFEST.md',
+  'RELATIONSHIP_TO_CONTEXT_CAPSULE.md',
+  'RELATIONSHIP_TO_FOUNDER_INTELLIGENCE_CAPSULE.md',
+  'RELATIONSHIP_TO_DNA_CAPSULE.md',
+  'COLLABORATION_INTELLIGENCE_INDEX.md',
+  'COLLABORATION_GLOSSARY.md',
+  'DECISION_HISTORY.md',
+  'EVOLUTION_TIMELINE.md',
+  'FOUNDER_PREFERENCES.md',
+  'AI_LESSONS.md',
+  'GOOSEBUMP_MOMENTS.md',
+  'HISTORICAL_CONTEXT.md',
+  'RELATIONSHIP_MEMORY.md',
+  'IMPORTANT_CONVERSATIONS.md',
+  'COLLABORATION_PATTERNS.md',
+  'MEMORY_MATURITY.md',
+  'SEARCH_INDEX.md',
+  'COLLABORATION_VALIDATION.md',
+];
+
+/** Substantive coverage checks across Collaboration Intelligence */
+const CI_COVERAGE = [
+  { topic: 'Black Box glossary', file: 'COLLABORATION_GLOSSARY.md', keywords: ['Black Box', 'World Compiler'] },
+  { topic: 'Composer Sprint', file: 'COLLABORATION_GLOSSARY.md', keywords: ['Composer Sprint'] },
+  { topic: 'Goosebump moments', file: 'GOOSEBUMP_MOMENTS.md', minChars: 400, keywords: ['Marketplace', 'Studio Workers'] },
+  { topic: 'Decision history', file: 'DECISION_HISTORY.md', minChars: 500, keywords: ['ephemeral', 'one deploy'] },
+  { topic: 'Collaboration patterns', file: 'COLLABORATION_PATTERNS.md', keywords: ['Composer Sprint', 'Verification'] },
+  { topic: 'Search index', file: 'SEARCH_INDEX.md', keywords: ['Experience Lab', 'Motherboard'] },
 ];
 
 /** Substantive coverage checks across Founder Intelligence */
@@ -199,6 +232,29 @@ function validateFicCoverage(ficDir) {
   return errors;
 }
 
+function validateCiCoverage(ciDir) {
+  const errors = [];
+  for (const check of CI_COVERAGE) {
+    const fp = path.join(ciDir, check.file);
+    if (!fs.existsSync(fp)) {
+      errors.push(`Coverage missing file: ${check.file} (${check.topic})`);
+      continue;
+    }
+    const body = fs.readFileSync(fp, 'utf8');
+    if (check.minChars && body.length < check.minChars) {
+      errors.push(`Coverage too thin: ${check.topic} in ${check.file} (${body.length} chars)`);
+    }
+    if (check.keywords) {
+      for (const kw of check.keywords) {
+        if (!body.toLowerCase().includes(kw.toLowerCase())) {
+          errors.push(`Coverage keyword missing "${kw}" in ${check.file} (${check.topic})`);
+        }
+      }
+    }
+  }
+  return errors;
+}
+
 function buildMasterManifestEntries(includeDna) {
   const entries = [];
   const add = (rel, phase) => entries.push({ path: rel.replace(/\\/g, '/'), phase });
@@ -219,9 +275,14 @@ function buildMasterManifestEntries(includeDna) {
     add('Studio_DNA_Capsule/studio-dna-capsule.json', 3);
   }
 
-  add('ONBOARDING_REPORT_TEMPLATE.md', 4);
-  add('ONBOARDING_PACK_VALIDATION.md', 4);
-  add('onboarding-pack.json', 4);
+  const ciPhase = includeDna ? 4 : 3;
+  for (const f of CI_READING) add(`Collaboration_Intelligence_Capsule/${f}`, ciPhase);
+  add('Collaboration_Intelligence_Capsule/collaboration-intelligence.json', ciPhase);
+
+  const finalPhase = includeDna ? 5 : 4;
+  add('ONBOARDING_REPORT_TEMPLATE.md', finalPhase);
+  add('ONBOARDING_PACK_VALIDATION.md', finalPhase);
+  add('onboarding-pack.json', finalPhase);
 
   return entries;
 }
@@ -252,6 +313,7 @@ function generateStartHere(includeDna, capsules) {
 8. **Populate each section with your own findings** — do **not** copy blank instructional text as answers.
 9. Generate **one** final onboarding report for the **entire pack** — not one per capsule.
 10. **Stop and wait for founder approval** after completing the report.
+11. After all capsules, read **CURRENT_HANDOFF.md** (AI Context) before any implementation.
 
 > Use ONBOARDING_REPORT_TEMPLATE.md as the required structure. Populate each section with your own findings based on the documents you read. Do not copy the blank instructional text as the answer.
 
@@ -259,10 +321,14 @@ If a capsule is **not present** in this package, do not treat it as a missing re
 
 ---
 
-## Included capsules
+## Included capsules (reading order)
 
-- **AI Context Capsule** — WHAT the project knows *(required)*
-- **Founder Intelligence Capsule** — WHY the project exists *(required)*
+1. **AI Context Capsule** — WHAT the project knows *(required)*
+2. **Founder Intelligence Capsule** — WHY the project exists *(required)*
+3. **Studio DNA Capsule** — HOW decisions should feel *(optional when included)*
+4. **Collaboration Intelligence Capsule** — HOW Founder and AI built it together *(required)*
+5. **CURRENT_HANDOFF.md** — operational truth *(AI Context — read before acting)*
+
 ${dnaLine}
 
 ---
@@ -343,6 +409,7 @@ ${meta.missingOptionalCapsules.length ? meta.missingOptionalCapsules.map((c) => 
 - ✓ Required capsules present
 - ✓ Master manifest entries exist on disk
 - ✓ Founder Intelligence content coverage validated
+- ✓ Collaboration Intelligence content coverage validated
 - ✓ Single final report template defined
 - ✓ No mandatory reference to absent capsules
 
@@ -358,16 +425,27 @@ function verifyZip(zipPath) {
 function packageOnboardingPack() {
   const contextRelease = loadRelease('api/_lib/context-capsule-release.json');
   const ficRelease = loadRelease('api/_lib/founder-intelligence-capsule-release.json');
-  if (contextRelease?.validationStatus !== 'pass' || ficRelease?.validationStatus !== 'pass') {
+  const ciRelease = loadRelease('api/_lib/collaboration-intelligence-capsule-release.json');
+  if (
+    contextRelease?.validationStatus !== 'pass' ||
+    ficRelease?.validationStatus !== 'pass' ||
+    ciRelease?.validationStatus !== 'pass'
+  ) {
     console.error('\n❌ Required capsule releases not validated — aborting onboarding pack\n');
     process.exit(1);
   }
 
   const includeDna = validateDnaAvailable();
   const ficCoverageErrors = validateFicCoverage(path.join(ROOT, FIC_SRC));
+  const ciCoverageErrors = validateCiCoverage(path.join(ROOT, CI_SRC));
   if (ficCoverageErrors.length) {
     console.error('\n❌ Founder Intelligence content coverage failed:\n');
     for (const e of ficCoverageErrors) console.error(`   • ${e}`);
+    process.exit(1);
+  }
+  if (ciCoverageErrors.length) {
+    console.error('\n❌ Collaboration Intelligence content coverage failed:\n');
+    for (const e of ciCoverageErrors) console.error(`   • ${e}`);
     process.exit(1);
   }
 
@@ -379,12 +457,13 @@ function packageOnboardingPack() {
   copyDir(path.join(ROOT, CONTEXT_SRC), path.join(packDir, 'AI_Context_Capsule'));
   copyDir(path.join(ROOT, FIC_SRC), path.join(packDir, 'Founder_Intelligence_Capsule'));
   if (includeDna) copyDir(path.join(ROOT, DNA_SRC), path.join(packDir, 'Studio_DNA_Capsule'));
+  copyDir(path.join(ROOT, CI_SRC), path.join(packDir, 'Collaboration_Intelligence_Capsule'));
 
   fs.copyFileSync(path.join(ROOT, 'onboarding-pack/ONBOARDING_GUIDE.md'), path.join(packDir, 'ONBOARDING_GUIDE.md'));
   fs.copyFileSync(path.join(ROOT, 'onboarding-pack/ONBOARDING_REPORT_TEMPLATE.md'), path.join(packDir, 'ONBOARDING_REPORT_TEMPLATE.md'));
 
-  const includedCapsules = ['AI Context Capsule', 'Founder Intelligence Capsule'];
-  if (includeDna) includedCapsules.push('Studio DNA Capsule');
+  const includedCapsules = ['AI Context Capsule', 'Founder Intelligence Capsule', 'Collaboration Intelligence Capsule'];
+  if (includeDna) includedCapsules.splice(2, 0, 'Studio DNA Capsule');
   const missingOptional = includeDna ? [] : ['Studio DNA Capsule (optional — not included)'];
 
   fs.writeFileSync(path.join(packDir, 'START_HERE.md'), generateStartHere(includeDna, includedCapsules));
@@ -397,6 +476,7 @@ function packageOnboardingPack() {
   const perCapsuleFileCounts = {
     'AI Context': CONTEXT_READING.length + 2,
     'Founder Intelligence': FIC_READING.length + 1,
+    'Collaboration Intelligence': CI_READING.length + 1,
   };
   if (includeDna) perCapsuleFileCounts['Studio DNA'] = DNA_READING.length + 1;
 
@@ -427,7 +507,9 @@ function packageOnboardingPack() {
           ? contextRelease.currentVersion
           : name === 'Founder Intelligence Capsule'
             ? ficRelease.currentVersion
-            : '1.0.0',
+            : name === 'Collaboration Intelligence Capsule'
+              ? ciRelease.currentVersion
+              : '1.0.0',
     })),
     optionalCapsules: ['Studio DNA Capsule'],
     missingOptionalCapsules: missingOptional,
@@ -444,6 +526,7 @@ function packageOnboardingPack() {
     capsules: {
       context: { version: contextRelease.currentVersion, artifact: contextRelease.artifact },
       founderIntelligence: { version: ficRelease.currentVersion, artifact: ficRelease.artifact },
+      collaborationIntelligence: { version: ciRelease.currentVersion, artifact: ciRelease.artifact },
       studioDna: includeDna ? { version: '1.0.0', included: true } : { included: false },
     },
   };

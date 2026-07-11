@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "capsuleType": "collaboration-intelligence",
+  "capsuleVersion": "1.0.0",
+  "manifestVersion": "1.0.0",
+  "capsuleFolder": "collaboration-intelligence",
+  "generatedAt": "2026-07-11T15:30:02.832Z",
+  "companionCapsules": {
+    "context": {
+      "version": "0.3.1",
+      "permanentUrl": "/context/latest"
+    },
+    "founderIntelligence": {
+      "version": "1.0.0",
+      "permanentUrl": "/founder-intelligence/latest"
+    },
+    "studioDna": {
+      "version": "1.0.0",
+      "latestPath": "/downloads/studio-dna-capsules/latest.zip"
+    }
+  },
+  "searchTerms": [
+    "Black Box",
+    "The Mansion",
+    "Motherboard",
+    "Goosebump",
+    "Composer Sprint",
+    "Terra",
+    "Marketplace",
+    "Studio Workers",
+    "Experience Lab",
+    "World Compiler",
+    "Living Knowledge Mirror",
+    "Collaboration Intelligence",
+    "ephemeral auth",
+    "B1",
+    "one deploy"
+  ],
+  "documentCount": 19,
+  "readingOrder": [
+    "README_FIRST.md",
+    "MANIFEST.md",
+    "RELATIONSHIP_TO_CONTEXT_CAPSULE.md",
+    "RELATIONSHIP_TO_FOUNDER_INTELLIGENCE_CAPSULE.md",
+    "RELATIONSHIP_TO_DNA_CAPSULE.md",
+    "COLLABORATION_INTELLIGENCE_INDEX.md",
+    "COLLABORATION_GLOSSARY.md",
+    "DECISION_HISTORY.md",
+    "EVOLUTION_TIMELINE.md",
+    "FOUNDER_PREFERENCES.md",
+    "AI_LESSONS.md",
+    "GOOSEBUMP_MOMENTS.md",
+    "HISTORICAL_CONTEXT.md",
+    "RELATIONSHIP_MEMORY.md",
+    "IMPORTANT_CONVERSATIONS.md",
+    "COLLABORATION_PATTERNS.md",
+    "MEMORY_MATURITY.md",
+    "SEARCH_INDEX.md",
+    "COLLABORATION_VALIDATION.md"
+  ],
+  "readingOrderChecksum": "f18cd12e9f983875542c4055ab1cef11a9f236da5144e125c74292e0fd7ba097",
+  "requiredMarkdownFiles": [
+    "README_FIRST.md",
+    "MANIFEST.md",
+    "README.md",
+    "RELATIONSHIP_TO_CONTEXT_CAPSULE.md",
+    "RELATIONSHIP_TO_FOUNDER_INTELLIGENCE_CAPSULE.md",
+    "RELATIONSHIP_TO_DNA_CAPSULE.md",
+    "COLLABORATION_INTELLIGENCE_INDEX.md",
+    "COLLABORATION_GLOSSARY.md",
+    "DECISION_HISTORY.md",
+    "EVOLUTION_TIMELINE.md",
+    "FOUNDER_PREFERENCES.md",
+    "AI_LESSONS.md",
+    "GOOSEBUMP_MOMENTS.md",
+    "HISTORICAL_CONTEXT.md",
+    "RELATIONSHIP_MEMORY.md",
+    "IMPORTANT_CONVERSATIONS.md",
+    "COLLABORATION_PATTERNS.md",
+    "MEMORY_MATURITY.md",
+    "SEARCH_INDEX.md"
+  ],
+  "validationStatus": "pass",
+  "generatorVersion": "1.0.0",
+  "permanentLatestUrl": "/collaboration-intelligence/latest",
+  "readyForAiOnboarding": true,
+  "packageHealth": 100
+}

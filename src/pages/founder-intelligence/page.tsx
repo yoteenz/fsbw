@@ -115,7 +115,7 @@ export default function FounderIntelligenceDownloadPage() {
         <h1 style={styles.h1}>Founder Intelligence</h1>
         <p style={styles.sub}>
           Why Studio OS exists — strategy, vision, business model, and institutional memory. Pair with the AI Context
-          Capsule (what) and Studio DNA Capsule (how).
+          Capsule (what), Studio DNA Capsule (how), and Collaboration Intelligence (how we built it together).
         </p>
 
         <div style={styles.card}>
@@ -186,6 +186,10 @@ export default function FounderIntelligenceDownloadPage() {
             <li>
               <a href="/downloads/studio-dna-capsules/latest.zip">Studio DNA Capsule</a> — how Studio OS thinks (included
               in unified pack when validated)
+            </li>
+            <li>
+              <a href="/collaboration-intelligence/latest">Collaboration Intelligence Capsule</a> — how Founder and AI
+              built Studio OS together
             </li>
           </ol>
         </div>

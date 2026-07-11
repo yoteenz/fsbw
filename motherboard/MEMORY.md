@@ -46699,3 +46699,29 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **File:** `src/studio-os-core/expert-capture/invite-system/owner-password.ts`
 
+---
+
+## 2026-07-11 — Collaboration Intelligence Capsule v1.0 + Unified Onboarding Pack v1.1
+
+**Context:** Approved Composer sprint to create the fourth onboarding capsule — **Collaboration Intelligence Capsule™** — capturing institutional collaboration memory (shared vocabulary, decisions, evolution, patterns, goosebump moments) so future AI understands Founder references without months of chat history. Same chat also covered Experience Lab B1 ephemeral auth, B1 regression fix, and Invite Manager stale localStorage password bug (all shipped in prior commits).
+
+**Collaboration Intelligence Capsule v1.0:**
+- **Purpose:** Curated HOW-we-built-it-together memory — not transcripts, not chat dumps
+- **Sections:** Glossary, Decision History, Evolution Timeline, Founder Preferences, AI Lessons, Goosebump Moments, Historical Context, Relationship Memory, Important Conversations, Collaboration Patterns, Memory Maturity, Search Index
+- **Source:** `collaboration-intelligence/` (19 required markdown + auto-generated `COLLABORATION_VALIDATION.md` + `collaboration-intelligence.json`)
+- **Packager:** `scripts/package-collaboration-intelligence-capsule-zip.mjs` — metadata validation, reading order, coverage terms, latest.zip publish
+- **Permanent URL:** `/collaboration-intelligence/latest` · hub `/collaboration-intelligence`
+- **Constants:** `src/studio-os-core/collaboration-intelligence-capsule-export/constants.ts` + `api/_lib/collaborationIntelligenceCapsuleConstants.ts`
+
+**Unified Onboarding Pack v1.1.0:**
+- **Fourth required capsule** in reading order: AI Context → Founder Intelligence → Studio DNA (optional) → **Collaboration Intelligence** → CURRENT_HANDOFF
+- **Packager:** `scripts/package-onboarding-pack-zip.mjs` — `CI_READING`, `CI_COVERAGE`, `Collaboration_Intelligence_Capsule/` staging, 87 required files when DNA included
+- **Prebuild:** `package-collaboration-intelligence-capsule-zip.mjs` runs before onboarding pack in `package.json` prebuild
+- **Vercel sync:** `scripts/sync-capsule-latest-vercel-routes.mjs` — `/collaboration-intelligence/latest` rewrite + Content-Disposition headers
+- **UI:** `src/pages/collaboration-intelligence/page.tsx`, route in `StudioDebugRoutes.tsx`; onboarding + founder-intelligence hubs link to CI capsule
+- **Prompt:** `UNIFIED_ONBOARDING_PROMPT` updated in `onboarding-pack-export/constants.ts`; `api/_lib/onboardingPackConstants.ts` synced to `1.1.0`
+
+**Verify after deploy:** `/collaboration-intelligence/latest` downloads validated zip; `/onboarding/latest` lists Collaboration Intelligence Capsule v1.0.0 in included capsules; fresh AI onboarding follows 4-capsule order.
+
+**Spatial Architecture Review:** SKIPPED — onboarding capsule packaging and download infrastructure; no new Studio OS product surfaces or Genesis behavior.
+

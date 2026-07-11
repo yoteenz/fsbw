@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "capsuleType": "collaboration-intelligence",
+  "currentVersion": "1.0.0",
+  "generatedAt": "2026-07-11T15:30:02.832Z",
+  "gitCommit": "c939dbfbe1e7e95b74a67f9b33f1d9f6cd6d0d90",
+  "validationStatus": "pass",
+  "documentCount": 19,
+  "checksumSha256": "e458f084a8cb76f2d84ee3fde3de075fd1cc2255fc3999fe30dea83dc573e117",
+  "generatorVersion": "1.0.0",
+  "artifact": "Collaboration_Intelligence_Capsule_v1.0.0.zip",
+  "latestAlias": "latest.zip",
+  "permanentLatestUrl": "/collaboration-intelligence/latest",
+  "latestDownloadPath": "/collaboration-intelligence/latest",
+  "legacyLatestDownloadPath": "/downloads/collaboration-intelligence-capsules/latest.zip",
+  "versionedDownloadPath": "/downloads/collaboration-intelligence-capsules/archive/Collaboration_Intelligence_Capsule_v1.0.0.zip",
+  "archiveBasePath": "/downloads/collaboration-intelligence-capsules/archive",
+  "supportedFormats": [
+    "zip"
+  ],
+  "packageHealth": 100,
+  "readyForAiOnboarding": true,
+  "releaseHistory": [
+    {
+      "version": "1.0.0",
+      "generatedAt": "2026-07-11T15:30:02.832Z",
+      "gitCommit": "c939dbfbe1e7e95b74a67f9b33f1d9f6cd6d0d90",
+      "checksumSha256": "e458f084a8cb76f2d84ee3fde3de075fd1cc2255fc3999fe30dea83dc573e117",
+      "sizeBytes": 29249,
+      "downloadPath": "/downloads/collaboration-intelligence-capsules/archive/Collaboration_Intelligence_Capsule_v1.0.0.zip",
+      "zipFileName": "Collaboration_Intelligence_Capsule_v1.0.0.zip",
+      "validationStatus": "pass"
+    }
+  ]
+}
