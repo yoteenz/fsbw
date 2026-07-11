@@ -46774,3 +46774,26 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Files:** `api/studio-institute/invites.ts`, `owner-password.ts`, `src/pages/studio-institute/invites/page.tsx`
 
+---
+
+## 2026-07-11 — Invite links "Invitation unavailable" — missing DB migration + silent local fallback
+
+**Context:** User creates invite on phone, opens link → **Invitation unavailable** (even private tab). Separate from password unlock issue.
+
+**Root causes:**
+1. **Supabase migration `20260711010000_studio_institute_invites_sharing.sql` never applied** — `access_status`, `pin_hash`, `revoked_tokens`, `audit_log`, `welcome_note` missing; API INSERT failed
+2. **`studio_institute_invites` table had zero rows** — nothing persisted server-side
+3. **Client silently fell back to `createInviteLocal`** on any server error — invite existed only in device localStorage; expert opening link got 404 → unavailable
+4. Owner auth mismatch (401) also triggered silent local fallback
+
+**Fix:**
+- Applied sharing migration to production Supabase via MCP
+- `InviteApiError` typed errors in `invite-store.ts` — distinguish auth / offline / server
+- **No silent local fallback** on 401/403/500 — only on true offline
+- `createInvite` shows clear error if owner password wrong; offline-only warns link won't work for experts
+- `load()` re-prompts login on 401 instead of fake unlock
+
+**User action:** Unlock Invite Manager with correct owner password (or reset via recovery secret), then **create a new invite** — old local-only links cannot be recovered.
+
+**Files:** `invite-store.ts`, `src/pages/studio-institute/invites/page.tsx`, Supabase migration applied
+

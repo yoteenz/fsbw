@@ -60,6 +60,25 @@ function apiBase(): string {
   return (import.meta.env.VITE_API_BASE?.replace(/\/$/, '') ?? '') as string;
 }
 
+export type InviteApiErrorCode = 'auth' | 'offline' | 'server';
+
+export class InviteApiError extends Error {
+  readonly code: InviteApiErrorCode;
+  readonly status?: number;
+
+  constructor(message: string, code: InviteApiErrorCode, status?: number) {
+    super(message);
+    this.name = 'InviteApiError';
+    this.code = code;
+    this.status = status;
+  }
+}
+
+async function parseApiError(res: Response): Promise<string> {
+  const body = (await res.json().catch(() => ({}))) as { error?: string };
+  return body.error ?? `Request failed (${res.status})`;
+}
+
 export async function fetchInviteByToken(token: string): Promise<ExpertInvite | null> {
   try {
     const res = await fetch(`${apiBase()}/api/studio-institute/invites?token=${encodeURIComponent(token)}`);
@@ -89,16 +108,20 @@ export async function fetchAllInvites(ownerAuthToken?: string): Promise<ExpertIn
     const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
       headers: { 'X-Studio-Institute-Owner-Key': auth },
     });
+    if (res.status === 401 || res.status === 403) {
+      throw new InviteApiError('Owner access required — unlock with your password', 'auth', res.status);
+    }
     if (res.ok) {
       const data = (await res.json()) as { invites?: ExpertInvite[] };
       const invites = (data.invites ?? []).map(normalizeInvite);
       writeAll(invites);
       return invites;
     }
-  } catch {
-    /* fallback */
+    throw new InviteApiError(await parseApiError(res), 'server', res.status);
+  } catch (e) {
+    if (e instanceof InviteApiError) throw e;
+    return loadLocalInvites();
   }
-  return loadLocalInvites();
 }
 
 export async function createInviteOnServer(
@@ -107,17 +130,28 @@ export async function createInviteOnServer(
 ): Promise<ExpertInvite> {
   const pinHash = input.accessPin?.trim() ? await hashInvitePin(input.accessPin.trim()) : null;
   const payload = { ...input, pinHash, accessPin: undefined };
-  const res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Studio-Institute-Owner-Key': ownerAuthToken,
-    },
-    body: JSON.stringify(payload),
-  });
+  let res: Response;
+  try {
+    res = await fetch(`${apiBase()}/api/studio-institute/invites`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Studio-Institute-Owner-Key': ownerAuthToken,
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new InviteApiError('Could not reach invite server', 'offline');
+  }
+  if (res.status === 401 || res.status === 403) {
+    throw new InviteApiError(
+      'Owner access required — unlock Invite Manager with the correct password, then try again',
+      'auth',
+      res.status,
+    );
+  }
   if (!res.ok) {
-    const err = (await res.json().catch(() => ({}))) as { error?: string };
-    throw new Error(err.error ?? 'Failed to create invite');
+    throw new InviteApiError(await parseApiError(res), 'server', res.status);
   }
   const data = (await res.json()) as { invite: ExpertInvite };
   saveLocalInvite(data.invite);

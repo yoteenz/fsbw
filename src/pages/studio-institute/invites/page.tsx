@@ -12,6 +12,8 @@ import {
   deleteInviteOnServer,
   displayInviteStatus,
   fetchAllInvites,
+  InviteApiError,
+  loadLocalInvites,
   getInviteProfileLabel,
   getOwnerAuthToken,
   getStoredOwnerPasswordHash,
@@ -70,9 +72,16 @@ export default function StudioInstituteInvitesPage() {
       const list = await fetchAllInvites();
       setInvites(list.filter((i) => i.accessStatus !== 'deleted'));
       setUnlocked(true);
-    } catch {
-      setError('Could not load invites. Using local cache if available.');
-      setInvites([]);
+    } catch (e) {
+      if (e instanceof InviteApiError && e.code === 'auth') {
+        clearOwnerSession();
+        setUnlocked(false);
+        setAuthMode('login');
+        setError(e.message);
+        return;
+      }
+      setError('Could not load invites. Check your connection and try again.');
+      setInvites(loadLocalInvites().filter((i) => i.accessStatus !== 'deleted'));
       setUnlocked(true);
     } finally {
       setLoading(false);
@@ -209,10 +218,21 @@ export default function StudioInstituteInvitesPage() {
         accessStatus: 'active',
       };
       let invite: ExpertInvite;
+      const auth = ownerAuthToken();
+      if (!auth) {
+        throw new InviteApiError('Unlock Invite Manager before creating shareable invites', 'auth');
+      }
       try {
-        invite = await createInviteOnServer(ownerAuthToken(), input);
-      } catch {
-        invite = await createInviteLocal(input);
+        invite = await createInviteOnServer(auth, input);
+      } catch (e) {
+        if (e instanceof InviteApiError && e.code === 'offline') {
+          invite = await createInviteLocal(input);
+          setError(
+            'Saved on this device only — link will not work for experts until you are online and unlocked with the server password.',
+          );
+        } else {
+          throw e;
+        }
       }
       recordInviteAudit(invite.id, 'invite_created');
       setInvites((prev) => [invite, ...prev.filter((i) => i.id !== invite.id)]);
