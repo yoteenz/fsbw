@@ -12,6 +12,7 @@ type FicReleaseManifest = {
   generatedAt: string;
   validationStatus: 'pass' | 'fail';
   documentCount: number;
+  artifact?: string;
   checksumSha256?: string;
   packageHealth?: number;
   releaseHistory?: { version: string; generatedAt: string; downloadPath: string; sizeBytes?: number }[];
@@ -148,7 +149,11 @@ export default function FounderIntelligenceDownloadPage() {
           <p style={{ margin: '20px 0 8px', fontSize: 13, color: '#64748b' }}>Permanent download URL</p>
           <code style={{ ...styles.mono, display: 'block', marginBottom: 16 }}>{permanentUrl}</code>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            <a href={FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH} style={styles.btn} download>
+            <a
+              href={FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH}
+              style={styles.btn}
+              download={release?.artifact ?? undefined}
+            >
               Download Founder Intelligence Capsule
             </a>
             <button

@@ -46504,3 +46504,31 @@ Summary of **full conversation in this chat**: Expert Capture through Trust/Vaul
 - **Docs:** `docs/studio-os/context-capsule-distribution.md`
 - **Founder workflow:** bookmark `/context/latest` once → attach ZIP in ChatGPT → paste onboarding prompt — no new link per release
 
+---
+
+## 2026-07-11 — Founder Intelligence Capsule (FIC) v1.0
+
+Summary of **full conversation in this chat**: Expert Capture through Studio DNA Capsule; Stable Context URL sprint (`c764f5584` — `/context/latest`, `/context` hub, archives, validation gate). User sprint: **Founder Intelligence Capsule v1.0** — third onboarding package documenting *why* Studio OS exists (founder strategy, vision, business, institutional memory) alongside Context (WHAT) and DNA (HOW).
+
+- **Source folder:** `founder-intelligence/` — 27 category docs (FOUNDER_PROFILE, VISION, DESIGN_LANGUAGE, CREATIVE_DIRECTION, STUDIO_WORLD, CIVILIZATION, COMPANIES, BUSINESS_MODEL, REVENUE_MODEL, MONETIZATION, MARKETPLACE, STUDIO_WORKERS, KNOWLEDGE_CAPTURE, INTERVIEW_ENGINE, DECISION_HISTORY, COMMUNICATION_STYLE, FOUNDER_PREFERENCES, AI_COLLABORATION, FUTURE_IDEAS, LONG_TERM_ROADMAP, etc.) + README_FIRST, MANIFEST, INDEX, relationship docs
+- **Metadata standard:** every doc includes Last Updated, Confidence Level, Source, Status, Version, Related Documents, Future Questions
+- **Export:** `Founder_Intelligence_Capsule_v1.0.0.zip` + `founder-intelligence.json` + auto `FOUNDER_VALIDATION.md`
+- **Packaging:** `scripts/package-founder-intelligence-capsule-zip.mjs` — prebuild validation (required docs, metadata, version sync, orphans, internal links, ZIP integrity); archives under `/downloads/founder-intelligence-capsules/archive/`
+- **Permanent URL:** `https://fsbw.vercel.app/founder-intelligence/latest` — Vercel rewrite + hub `/founder-intelligence`
+- **Constants:** `src/studio-os-core/founder-intelligence-capsule-export/constants.ts`, `api/_lib/founderIntelligenceCapsuleConstants.ts`
+- **Admin:** Context Capsule workspace — FIC download panel; onboarding prompt updated for all three capsules
+- **Cross-refs:** Context `PROJECT_DNA.md`, DNA `README_FIRST.md` + relationship doc; FIC references Context/DNA paths
+- **Docs:** `docs/studio-os/founder-intelligence-capsule/README.md`
+- **npm:** `package:founder-intelligence-capsule-zip`, `download:founder-intelligence-capsule`
+- **Three-capsule onboarding:** Context → DNA → Founder Intelligence → ONBOARDING_REPORT → founder approval
+
+---
+
+## 2026-07-11 — Versioned download filenames on permanent capsule URLs
+
+User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intelligence/latest`) but save files with **version in the filename** (e.g. `StudioOS_ContextCapsule_v0.3.1.zip`) so founder can track which copy they have.
+
+- **API:** `api/capsules/context-latest.ts`, `api/capsules/founder-intelligence-latest.ts` + `api/_lib/serveCapsuleLatest.ts` — read release manifest `artifact`, stream `latest.zip`, set `Content-Disposition: attachment; filename="<artifact>"`
+- **vercel.json:** rewrites permanent URLs → API (removed static Content-Disposition headers); `includeFiles` bundles zip + manifest per function
+- **UI:** hub pages + `useContextCapsuleExport` use `release.artifact` for download filename; FIC admin uses `location.assign` to honor server filename
+

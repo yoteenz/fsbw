@@ -65,4 +65,4 @@ npm run build
 
 ## Vercel routing
 
-`vercel.json` rewrites `/context/latest` → `/downloads/context-capsules/latest.zip` with `Content-Disposition: attachment`. The `/context` hub is a React route in `StudioDebugRoutes.tsx`.
+`vercel.json` rewrites `/context/latest` and `/founder-intelligence/latest` to API handlers that set `Content-Disposition` with the versioned `artifact` filename from each release manifest (e.g. `StudioOS_ContextCapsule_v0.3.1.zip`). The URL never changes; only the saved filename updates per release.

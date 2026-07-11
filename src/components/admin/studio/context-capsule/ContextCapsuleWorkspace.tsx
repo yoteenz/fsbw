@@ -176,12 +176,7 @@ export function ContextCapsuleWorkspace() {
         <div className="flex gap-2 mt-2">
           <button
             type="button"
-            onClick={() =>
-              triggerDownload(
-                FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH,
-                'Founder_Intelligence_Capsule_latest.zip',
-              )
-            }
+            onClick={() => window.location.assign(FOUNDER_INTELLIGENCE_CAPSULE_PERMANENT_LATEST_PATH)}
             className="flex-1 py-2 text-[7px] font-futura uppercase border"
             style={{ borderColor: ACCENT, color: ACCENT, fontWeight: 515 }}
           >

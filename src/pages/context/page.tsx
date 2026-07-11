@@ -165,7 +165,11 @@ export default function ContextCapsuleDownloadPage() {
           <code style={{ ...styles.mono, display: 'block', marginBottom: 16 }}>{permanentUrl}</code>
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            <a href={CONTEXT_CAPSULE_PERMANENT_LATEST_PATH} style={styles.btn} download>
+            <a
+              href={CONTEXT_CAPSULE_PERMANENT_LATEST_PATH}
+              style={styles.btn}
+              download={release?.artifact ?? undefined}
+            >
               Download latest capsule
             </a>
             <button type="button" style={{ ...styles.btn, background: '#fff', color: '#0f172a', border: '1px solid #cbd5e1' }} onClick={() => void copyUrl()}>

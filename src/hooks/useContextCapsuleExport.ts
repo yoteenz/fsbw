@@ -145,8 +145,13 @@ export function useContextCapsuleExport() {
 
   const downloadLatest = useCallback(() => {
     const path = status?.permanentLatestUrl ?? status?.latestDownloadPath ?? CONTEXT_CAPSULE_PERMANENT_LATEST_PATH;
-    downloadPath(path, 'StudioOS_ContextCapsule_latest.zip');
-  }, [downloadPath, status?.permanentLatestUrl, status?.latestDownloadPath]);
+    const fileName = release?.artifact ?? status?.currentZipFileName ?? undefined;
+    if (fileName) {
+      downloadPath(path, fileName);
+    } else {
+      window.location.assign(path);
+    }
+  }, [downloadPath, release?.artifact, status?.currentZipFileName, status?.permanentLatestUrl, status?.latestDownloadPath]);
 
   const downloadExport = useCallback(
     async (record: ContextCapsuleExportRecord) => {
@@ -162,12 +167,15 @@ export function useContextCapsuleExport() {
           const data = (await res.json()) as { error?: string };
           throw new Error(data.error ?? 'Download failed');
         }
-        downloadPath(status?.permanentLatestUrl ?? status?.latestDownloadPath ?? CONTEXT_CAPSULE_PERMANENT_LATEST_PATH, 'StudioOS_ContextCapsule_latest.zip');
+        downloadPath(
+          status?.permanentLatestUrl ?? status?.latestDownloadPath ?? CONTEXT_CAPSULE_PERMANENT_LATEST_PATH,
+          release?.artifact ?? status?.currentZipFileName ?? 'StudioOS_ContextCapsule.zip',
+        );
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Download failed');
       }
     },
-    [downloadPath, status?.permanentLatestUrl, status?.latestDownloadPath],
+    [downloadPath, release?.artifact, status?.currentZipFileName, status?.permanentLatestUrl, status?.latestDownloadPath],
   );
 
   const downloadUrl = (record: ContextCapsuleExportRecord) => record.downloadPath;
