@@ -78,7 +78,29 @@
 
 ---
 
-## B1-Experience-Engine — Layer 1 (merged into B1-Layer1)
+## B1-Shell — Shell foundation construction stall (BLACK BOX SHIPPED — REPAIR NOT STARTED)
+
+| Field | Detail |
+|-------|--------|
+| **ID** | B1-Shell |
+| **Symptom** | Pipeline stops at **Building Shell** — shell never completes (CDS + Experience Lab) |
+| **Instrumentation** | `shell-foundation-black-box.ts` + `ShellFoundationBlackBoxPanel.tsx` (`compilerDiag=1`) |
+| **Forensic** | `SHELL_FOUNDATION_BLACK_BOX.md` |
+| **Verify** | Mobile `?compilerDiag=1` — last successful stage + timeline terminus visible |
+| **Status** | **In Progress** — observe only; repair awaits founder evidence |
+
+### Documented Fact
+
+- Completion authority repair now honestly shows shell stall (no false 100%)
+- Black box does **not** change shell behavior, timing, retries, or APIs
+
+### Do not
+
+- Implement shell repair without black box evidence from founder device
+- Treat instrumentation as incident resolution
+
+---
+
 
 Experience Lab validation runtime shares `useSceneStack` driver and `studio-builder-generate` with CDS. See **B1-Layer1** and **B1-E2E-Completion**.
 

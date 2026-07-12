@@ -47195,53 +47195,22 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Not declared restored:** Creative Studio, Experience Lab, incident — authenticated device verification still required (B1-Layer1).
 
 **Spatial Architecture Review:** SKIPPED — completion authority only, no new surfaces.
-## 2026-07-12 — Studio World Living Systems™ canon integration sprint
-
-**Context:** Founder Vision implementation-planning sprint — integrate Living Systems™ into Studio World constitutional documentation, architecture roadmap, and educational philosophy. Documentation only; no runtime implementation.
-
-**Authoritative foundation:** Studio Institute LOS · Studio World Method™ · students as contributors · organizations as workplaces + classrooms · Living Systems™ = Planned (never production · never modifies live org data).
-
-**Topics covered (Parts I–X):**
-- **Part I:** Living Systems™ definition — governed shared-simulation layer; ≠ Production; ≠ Sandbox; = Persistent Educational Simulation
-- **Part II:** Three Realities — Production (real ops) · Living Systems™ (shared replayable assessed simulations) · Sandbox (private resettable experimentation)
-- **Part III:** Principles — Scoped Authority · Attribution (learner/cohort/timestamp/org/role/decision/rationale/result) · Replay · Rollback · Analysis · Governance (AI simulates, humans define stakes/ethics/grading)
-- **Part IV:** Simulation model — orgs as persistent educational environments; Frontal Slayer, Studio Finance, Creative Services, etc.; students operate simulations not production
-- **Part V:** Phase 1 Prototype — Frontal Slayer Seasonal Launch (Marketing→Demand→Finance→Budget→Ops→Inventory→Fulfillment→Creative→CX→Results→Reflection→Replay→Alternatives) — Planned, not implemented
-- **Part VI:** Causal learning — systems thinking; canonical chain Marketing→Demand→Inventory→Fulfillment→CX→Revenue→Growth→Hiring→Expansion
-- **Part VII:** Living Histories™ — permanent simulation archives across cohorts — Planned/Conceptual
-- **Part VIII:** Studio World Passport™ (educational journey layer) — distinct from Atlas Studio Passport™ — Conceptual
-- **Part IX:** Curriculum integration template — org, simulation, disciplines, decision points, causal relationships, reflection, replay, assessment, internship bridge
-- **Part X:** Canon integration — hierarchy, locations, not in HANDOFF/BLOCKERS
-
-**Changes:**
-- **Created:** `docs/studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md` (v1.0.0)
-- **Updated:** `docs/studio-world/README.md`, `docs/studio-world/010_IMPLEMENTATION_ROADMAP.md` (Phase E), `docs/studio-os/STUDIO_WORLD_BIBLE.md`, `docs/studio-institute/README.md`, `docs/studio-institute/STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md`, `founder-intelligence/EDUCATIONAL_PHILOSOPHY.md`, `founder-intelligence/STUDIO_WORLD.md`, `motherboard/CORE.md`
-
-**Conventions:** Living Systems™ is Planned — never describe as production. Three Realities permanently distinct. Simulation branches isolated from production stores.
-
-**Spatial Architecture Review:** SKIPPED — docs-only constitutional sprint, no new surfaces.
 
 ---
 
-## 2026-07-12 — Studio World Digital Twin Founder Canon Correction
+## 2026-07-12 — P0 Shell Foundation Black Box instrumentation sprint
 
-**Context:** Founder clarification sprint — Studio World is NOT primarily a simulated city of fictional organizations. It is the digital operational world where **real organizations** establish digital headquarters via Studio OS (digital twin of real economy). Documentation only.
+**Context:** After completion-authority repair, production honestly stalls at **Building Shell** (CDS + Experience Lab). Founder needs mobile-visible forensic cameras on shell construction — observe only, no repair.
 
-**Authoritative corrections:**
-- Studio World = persistent digital operational world · real businesses · real customers · real commerce
-- Organizations (Frontal Slayer, Bella Hair Studio, future) = **real businesses** — not decorative/fictional
-- Studio Institute prepares learners to **contribute to real organizations** — not "build Studio World"
-- Living Systems™ repositioned: exists **within Studio Institute** — NOT Studio World; simulations inspired by real orgs
-- Learning Partners™ introduced (Planned) — voluntary real-org participation in Institute
-- Contribution pipeline canonized: Learn→Practice→Simulation→…→Real Organization Project→Internship→Professional Contribution→…
-- Digital Twin chain: Real Businesses → Studio OS → Digital HQ → Studio World
+**Instrumentation:**
+- `shell-foundation-black-box.ts` — stages A–J data (timeline, function trace, await tracker, network, state snapshots, dependencies, errors, heartbeat, stall detector); sessionStorage persistence
+- `validation-shell-pipeline.ts` — `traceShellAsync` at each shell phase (no behavior change)
+- `ShellFoundationBlackBoxPanel.tsx` — collapsible mobile panel under `compilerDiag=1` in CreativeStudioRenderPreview
+- `SHELL_FOUNDATION_BLACK_BOX.md` forensic doc
 
-**Changes:**
-- **Created:** `docs/studio-world/STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md` (v1.0.0)
-- **Updated:** `STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md` (v1.1.0), `STUDIO_WORLD_BIBLE.md`, LOS Constitution, `docs/studio-world/README.md`, `docs/studio-institute/README.md`, `010_IMPLEMENTATION_ROADMAP.md`, `founder-intelligence/STUDIO_WORLD.md`, `founder-intelligence/EDUCATIONAL_PHILOSOPHY.md`, `motherboard/CORE.md`
-- **Not updated:** CURRENT_HANDOFF, KNOWN_BLOCKERS
+**Tests:** 8 in `shell-foundation-black-box.test.ts`; build pass.
 
-**Conventions:** Never conflate production organizations with Living Systems simulations. Living Systems is Institute-only.
+**Operational:** B1-Shell blocker added; CURRENT_HANDOFF updated. Shell failure unresolved; repair not performed.
 
-**Spatial Architecture Review:** SKIPPED — docs-only canon correction, no new surfaces.
+**Spatial Architecture Review:** SKIPPED — diagnostic instrumentation only.
 

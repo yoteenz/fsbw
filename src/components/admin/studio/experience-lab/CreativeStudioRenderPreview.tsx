@@ -6,6 +6,7 @@ import { SceneStackViewport } from '../../studio-os/creative-direction-studio/Sc
 import { CDS_GENESIS_INTERACTION_STYLES } from '../../studio-os/creative-direction-studio/cdsInteractionLayerTheme';
 import { CDS_IMMERSION_STYLES } from '../../studio-os/creative-direction-studio/cdsImmersionTheme';
 import { CreativeStudioPipelineStatusBar } from './CreativeStudioPipelineStatusBar';
+import { ShellFoundationBlackBoxPanel } from './ShellFoundationBlackBoxPanel';
 import {
   incrementComponentRender,
   isWorldCompilerDiagnosticMode,
@@ -58,6 +59,7 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
     compileRunId,
     layer1Forensic,
     copyLayer1Diagnostics,
+    runtimeHeartbeat,
   } = useCreativeStudioRenderPreview(companyId, conceptId);
 
   const diagMode = isWorldCompilerDiagnosticMode();
@@ -262,6 +264,17 @@ export function CreativeStudioRenderPreview({ companyId, conceptId, blindMode = 
             >
               {isBuilding ? 'Compile running…' : 'Start compile run (diagnostic — one tap = one run)'}
             </button>
+          ) : null}
+          {diagMode ? (
+            <ShellFoundationBlackBoxPanel
+              compileRunId={compileRunId}
+              shellPipelinePhase={shellPipelinePhase}
+              pipelinePhase={pipeline.phase}
+              layersComplete={pipeline.layersComplete}
+              layersTotal={pipeline.layersTotal}
+              compositeStatus={status}
+              heartbeatTick={runtimeHeartbeat}
+            />
           ) : null}
           {showRetry ? (
             <button

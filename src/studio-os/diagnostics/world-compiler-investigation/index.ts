@@ -73,6 +73,34 @@ export {
   downloadInvestigationExport,
   markInvestigationInstrumentationReady,
 } from './investigation-export';
+
+export {
+  beginShellFoundationRun,
+  buildShellFoundationBlackBoxState,
+  clearShellFoundationBlackBox,
+  completeShellFoundationRun,
+  copyShellFoundationBlackBox,
+  exportShellFoundationBlackBoxJson,
+  loadShellFoundationBlackBoxFromSession,
+  recordShellError,
+  recordShellFunctionEnter,
+  recordShellFunctionExit,
+  recordShellGenerationNetworkFromForensic,
+  recordShellNetwork,
+  recordShellStage,
+  recordShellStateSnapshot,
+  setShellDependencies,
+  subscribeShellFoundationBlackBox,
+  traceShellAsync,
+  SHELL_FOUNDATION_STAGE_DEFS,
+} from './shell-foundation-black-box';
+
+export type {
+  ShellFoundationBlackBoxState,
+  ShellFoundationStageId,
+  ShellStageRecord,
+  ShellTimelineEntry,
+} from './shell-foundation-black-box';
 export {
   initWorldCompilerInvestigationRecorder,
   isRecorderConnected,
