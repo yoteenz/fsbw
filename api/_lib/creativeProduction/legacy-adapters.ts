@@ -20,6 +20,15 @@ import {
   type EphemeralValidationBody,
 } from './ephemeral-validation-auth.js';
 import {
+  auditCreativeStudioStackAuthEvent,
+  buildCreativeStudioStackRunId,
+  buildCreativeStudioStackSessionId,
+  isCreativeStudioStackAuthorization,
+  issueCreativeStudioStackAuthorization,
+  validateCreativeStudioStackAuthorization,
+  type CreativeStudioStackAuthBody,
+} from './creative-studio-stack-auth.js';
+import {
   issueDemoProductionAuthorization,
   signProductionAuthorization,
   verifyProductionAuthorizationSignature,
@@ -120,6 +129,65 @@ export function ensureValidationEphemeralAuth(
   };
 }
 
+export function ensureCreativeStudioStackAuth(
+  body: LegacyBuilderBody,
+  actor?: { id: string; email: string }
+): LegacyBuilderBody {
+  if (body.creativeStudioStackMode !== true) return body;
+
+  const explicitId = resolveProductionAuthorizationId(body);
+  if (explicitId && body.productionAuthorization) return body;
+  if (!actor?.id) return body;
+
+  const departmentId = String(body.departmentId ?? '').trim();
+  const stationId = String(body.stationId ?? '').trim();
+  const projectId = String(body.projectId ?? '').trim();
+  const organizationId = String(body.org_id ?? body.organizationId ?? 'frontal-slayer').trim();
+
+  if (!departmentId || !stationId || !projectId) return body;
+
+  const stackRunId =
+    String(body.stackRunId ?? '').trim() ||
+    buildCreativeStudioStackRunId({ departmentId, projectId, stationId });
+  const stackSessionId =
+    String(body.stackSessionId ?? '').trim() ||
+    buildCreativeStudioStackSessionId({ organizationId, departmentId, projectId, stationId });
+
+  const grant = issueCreativeStudioStackAuthorization({
+    stackRunId,
+    stackSessionId,
+    organizationId,
+    departmentId,
+    stationId,
+    projectId,
+    actorId: actor.id,
+    actorEmail: actor.email,
+  });
+
+  auditCreativeStudioStackAuthEvent('issued', {
+    productionAuthorizationId: grant.productionAuthorizationId,
+    stackRunId: grant.stackRunId,
+    stackSessionId: grant.stackSessionId,
+    organizationId: grant.organizationId,
+    actorEmail: actor.email,
+    issuedVia: 'studio-builder-generate-lazy',
+    expiresAt: grant.expiresAt,
+  });
+
+  return {
+    ...body,
+    productionAuthorizationId: grant.productionAuthorizationId,
+    productionAuthorization: grant.productionAuthorization,
+    creativeStudioStackMode: true,
+    stackRunId,
+    stackSessionId,
+    org_id: organizationId,
+    departmentId,
+    stationId,
+    projectId,
+  };
+}
+
 export function resolveLegacyCompatAuthorization(
   body: LegacyBuilderBody
 ): { authorization: ProductionAuthorization; legacyCompat: boolean } | { error: string; code: string } {
@@ -147,11 +215,29 @@ export function resolveLegacyCompatAuthorization(
       return { error: ephemeralCheck.error, code: ephemeralCheck.code };
     }
 
+    const stackCheck = validateCreativeStudioStackAuthorization(embedded, body as CreativeStudioStackAuthBody);
+    if (!stackCheck.ok) {
+      auditCreativeStudioStackAuthEvent('rejected', {
+        code: stackCheck.code,
+        productionAuthorizationId: explicitId,
+        stackRunId: body.stackRunId,
+      });
+      return { error: stackCheck.error, code: stackCheck.code };
+    }
+
     if (isExperienceLabEphemeralAuthorization(embedded)) {
       auditEphemeralAuthEvent('validated', {
         productionAuthorizationId: explicitId,
         compileRunId: embedded.scope.ephemeralCompileRunId,
         previewSessionId: embedded.scope.previewSessionId,
+      });
+    }
+
+    if (isCreativeStudioStackAuthorization(embedded)) {
+      auditCreativeStudioStackAuthEvent('validated', {
+        productionAuthorizationId: explicitId,
+        stackRunId: embedded.scope.ephemeralCompileRunId,
+        stackSessionId: embedded.scope.previewSessionId,
       });
     }
 
@@ -213,7 +299,8 @@ export function adaptLegacyBuilderRequest(
   const intent = createDemoAssetIntent(initiative.id);
   intent.id = `intent-${heroAssetId}`;
   intent.recipeSlug = `${departmentId}/${packageId}/${productionGroupId}`;
-  const ephemeralCompile = isExperienceLabEphemeralAuthorization(authorization);
+  const ephemeralCompile =
+    isExperienceLabEphemeralAuthorization(authorization) || isCreativeStudioStackAuthorization(authorization);
   intent.outputClass = ephemeralCompile || legacyCompat ? 'exploratory_draft' : 'material';
 
   return {

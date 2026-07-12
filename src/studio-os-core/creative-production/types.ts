@@ -101,8 +101,13 @@ export type CreativeInitiative = {
 export type AuthorityRecord = {
   actorId: string;
   actorEmail?: string;
-  role: 'founder' | 'delegated' | 'system' | 'compat-legacy' | 'validation-ephemeral';
-  issuedVia: 'studio-production-system' | 'demo-seed' | 'legacy-adapter' | 'experience-lab-ephemeral';
+  role: 'founder' | 'delegated' | 'system' | 'compat-legacy' | 'validation-ephemeral' | 'creative-studio-stack-ephemeral';
+  issuedVia:
+    | 'studio-production-system'
+    | 'demo-seed'
+    | 'legacy-adapter'
+    | 'experience-lab-ephemeral'
+    | 'creative-studio-stack-ephemeral';
 };
 
 /** Immutable authorization to manufacture — generation APIs must verify. */
@@ -120,8 +125,8 @@ export type ProductionAuthorization = {
     touchpoints: TouchpointKind[];
     assetIntents: string[];
     maxCost?: number;
-    /** Experience Lab ephemeral compile — server-issued only */
-    pipeline?: 'experience-lab-validation';
+    /** Ephemeral compile pipelines — server-issued only */
+    pipeline?: 'experience-lab-validation' | 'creative-studio-stack';
     ephemeralCompileRunId?: string;
     previewSessionId?: string;
     organizationId?: string;

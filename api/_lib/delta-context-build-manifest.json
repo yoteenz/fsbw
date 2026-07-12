@@ -1,24 +1,28 @@
 {
   "schemaVersion": 1,
   "capsuleType": "delta-context",
-  "currentVersion": "1.0.4",
-  "generatedAt": "2026-07-12T21:37:53.480Z",
-  "gitCommit": "4101ba17a3374a7e63b50332551afed1211a18a9",
+  "currentVersion": "1.0.5",
+  "generatedAt": "2026-07-12T21:45:04.401Z",
+  "gitCommit": "f944066ab4e9334dd0b8f11899d9136a2b9ffb87",
   "validationStatus": "pass",
-  "changeCount": 1,
-  "checksumSha256": "90780292592a245d1903435c3801a33f59f37dcb3e17527a33c5e649df685a44",
-  "artifact": "StudioOS_ContextUpdate_v1.0.4.zip",
+  "changeCount": 3,
+  "checksumSha256": "714c95d7c18cb9779550d5ffcd6c0388f60fa25f85556a65284c7f9e3c4541ba",
+  "artifact": "StudioOS_ContextUpdate_v1.0.5.zip",
   "baseOnboardingVersionRequired": "1.2.2",
   "currentOnboardingPackVersion": "1.2.2",
   "compatibilityStatus": "compatible",
   "permanentLatestUrl": "/context-updates/latest",
   "latestDownloadPath": "/context-updates/latest",
   "legacyLatestDownloadPath": "/downloads/context-updates/latest.zip",
-  "versionedDownloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.4.zip",
+  "versionedDownloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.5.zip",
   "categoriesIncluded": [
     "Architecture",
+    "Blockers",
     "Business Model",
     "Canon",
+    "Current Handoff",
+    "Documentation",
+    "Experience Lab",
     "Genesis",
     "Implementation Status",
     "Marketplace",
@@ -29,6 +33,19 @@
   "packageHealth": 100,
   "readyForDeltaSync": true,
   "releaseHistory": [
+    {
+      "version": "1.0.5",
+      "generatedAt": "2026-07-12T21:45:04.401Z",
+      "gitCommit": "f944066ab4e9334dd0b8f11899d9136a2b9ffb87",
+      "checksumSha256": "714c95d7c18cb9779550d5ffcd6c0388f60fa25f85556a65284c7f9e3c4541ba",
+      "sizeBytes": 24241,
+      "changeCount": 3,
+      "baseOnboardingVersion": "1.2.2",
+      "compatibilityStatus": "compatible",
+      "downloadPath": "/downloads/context-updates/archive/StudioOS_ContextUpdate_v1.0.5.zip",
+      "zipFileName": "StudioOS_ContextUpdate_v1.0.5.zip",
+      "validationStatus": "pass"
+    },
     {
       "version": "1.0.4",
       "generatedAt": "2026-07-12T21:37:53.480Z",
@@ -134,6 +151,6 @@
       "validationStatus": "pass"
     }
   ],
-  "sizeBytes": 12767,
-  "deltaSequence": 5
+  "sizeBytes": 24241,
+  "deltaSequence": 6
 }

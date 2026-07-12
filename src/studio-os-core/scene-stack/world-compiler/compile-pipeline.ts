@@ -33,6 +33,8 @@ export type WorldCompileOptions = {
   skipEnvironmentShell?: boolean;
   /** Explicit preview-scoped compile identity — required for Experience Lab validation compiles */
   previewCompileContext?: PreviewCompileContext;
+  /** Creative Direction Studio Scene Stack — server-issued ephemeral stack authorization */
+  creativeStudioStackMode?: boolean;
   /** Forensic investigation context — logging only */
   investigation?: {
     compileRunId: string;

@@ -12,7 +12,7 @@ import {
   persistCreativeDecision,
 } from '../_lib/creativeIntelligenceEngine/decision-engine.js';
 import type { FounderIntentInput } from '../_lib/creativeIntelligenceEngine/types.js';
-import { adaptLegacyBuilderRequest, ensureValidationEphemeralAuth } from '../_lib/creativeProduction/legacy-adapters.js';
+import { adaptLegacyBuilderRequest, ensureValidationEphemeralAuth, ensureCreativeStudioStackAuth } from '../_lib/creativeProduction/legacy-adapters.js';
 import { executeGovernedGeneration } from '../_lib/creativeProduction/generation-gateway.js';
 import {
   isAsyncGovernedGenerationEnabledForRequest,
@@ -110,10 +110,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ ok: false, error: refCheck.error, code: 'SCENE_STACK_REFERENCE_LAW' });
   }
 
-  const governedBody = ensureValidationEphemeralAuth(body ?? {}, {
-    id: auth.user.id,
-    email: auth.user.email,
-  });
+  const governedBody = ensureCreativeStudioStackAuth(
+    ensureValidationEphemeralAuth(body ?? {}, {
+      id: auth.user.id,
+      email: auth.user.email,
+    }),
+    { id: auth.user.id, email: auth.user.email }
+  );
 
   const adapted = adaptLegacyBuilderRequest(governedBody, '/api/admin/studio-builder-generate');
   if ('error' in adapted) {

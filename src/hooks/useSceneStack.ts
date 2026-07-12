@@ -76,6 +76,7 @@ import {
   getActiveEphemeralCompileAuthorization,
 } from '../studio-os-core/scene-stack/validation-render';
 import { resolveValidationCompileMode } from '../studio-os-core/creative-production/validation-compile-context';
+import { attachCreativeStudioStackAuth } from '../studio-os-core/creative-production/creative-studio-stack-auth-session';
 
 export type SceneStackPipelineProgress = {
   stationId: string;
@@ -235,7 +236,7 @@ export function useSceneStack(
       stationId: string,
       layerId: SceneStackLayerId,
       force = false,
-      layerCompileOptions?: Pick<WorldCompileOptions, 'previewCompileContext' | 'validationMode'>
+      layerCompileOptions?: Pick<WorldCompileOptions, 'previewCompileContext' | 'validationMode' | 'creativeStudioStackMode'>
     ): Promise<boolean> => {
       const key = genKey(stationId, layerId);
       if (generatingKeys.has(key)) return false;
@@ -407,23 +408,37 @@ export function useSceneStack(
           referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
         });
 
-        const generationPayload = withValidationEphemeralAuth(
+        const generationPayload = attachCreativeStudioStackAuth(
+          withValidationEphemeralAuth(
+            {
+              departmentId,
+              packageId: pkg.packageId,
+              projectId,
+              productionGroupId: `scene-stack-${stationId}-${layerId}`,
+              heroAssetId: compiled.heroAssetId,
+              prompt: compiled.prompt,
+              aspectRatio: compiled.aspectRatio,
+              outputFormat: compiled.outputFormat,
+              forceGenerate: force || !existing?.publicUrl,
+              referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
+            },
+            {
+              validationMode,
+              compileRunId: layerCompileOptions?.previewCompileContext?.compileRunId ?? null,
+              previewSessionId: previewSessionId ?? null,
+              organizationId:
+                layerCompileOptions?.previewCompileContext?.companyId ??
+                getActiveEphemeralCompileAuthorization(
+                  layerCompileOptions?.previewCompileContext?.compileRunId ?? null
+                )?.organizationId ??
+                'frontal-slayer',
+              departmentId,
+              stationId,
+              projectId,
+            }
+          ),
           {
-            departmentId,
-            packageId: pkg.packageId,
-            projectId,
-            productionGroupId: `scene-stack-${stationId}-${layerId}`,
-            heroAssetId: compiled.heroAssetId,
-            prompt: compiled.prompt,
-            aspectRatio: compiled.aspectRatio,
-            outputFormat: compiled.outputFormat,
-            forceGenerate: force || !existing?.publicUrl,
-            referenceImageUrls: referenceImageUrls.length ? referenceImageUrls : undefined,
-          },
-          {
-            validationMode,
-            compileRunId: layerCompileOptions?.previewCompileContext?.compileRunId ?? null,
-            previewSessionId: previewSessionId ?? null,
+            creativeStudioStackMode: layerCompileOptions?.creativeStudioStackMode === true,
             organizationId:
               layerCompileOptions?.previewCompileContext?.companyId ??
               getActiveEphemeralCompileAuthorization(
@@ -670,7 +685,7 @@ export function useSceneStack(
     async (
       stationId: string,
       layerId: SceneStackLayerId,
-      compileOptions?: Pick<WorldCompileOptions, 'previewCompileContext' | 'validationMode'>
+      compileOptions?: Pick<WorldCompileOptions, 'previewCompileContext' | 'validationMode' | 'creativeStudioStackMode'>
     ) => generateLayer(stationId, layerId, true, compileOptions),
     [generateLayer]
   );

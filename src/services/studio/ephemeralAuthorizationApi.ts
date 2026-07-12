@@ -1,5 +1,6 @@
 import { apiFetch, ensureApiAccessToken } from '../../utils/api';
 import type { EphemeralCompileAuthGrant } from '../../studio-os-core/creative-production/ephemeral-compile-auth-session';
+import type { CreativeStudioStackAuthGrant } from '../../studio-os-core/creative-production/creative-studio-stack-auth-session';
 
 export type IssueEphemeralAuthPayload = {
   compileRunId: string;
@@ -35,6 +36,47 @@ export async function requestExperienceLabEphemeralAuthorization(
     return {
       ok: false,
       error: data.error ?? `Authorization issue failed (${res.status})`,
+      code: data.code,
+    };
+  }
+
+  return { ok: true, grant: data.grant };
+}
+
+export type IssueCreativeStudioStackAuthPayload = {
+  organizationId: string;
+  departmentId: string;
+  stationId: string;
+  projectId: string;
+  stackRunId?: string;
+  stackSessionId?: string;
+};
+
+export async function requestCreativeStudioStackAuthorization(
+  payload: IssueCreativeStudioStackAuthPayload
+): Promise<{ ok: true; grant: CreativeStudioStackAuthGrant } | { ok: false; error: string; code?: string }> {
+  const token = await ensureApiAccessToken();
+  if (!token) {
+    return { ok: false, error: 'Sign in required to issue Creative Studio stack authorization', code: 'MISSING_TOKEN' };
+  }
+
+  const res = await apiFetch('/api/admin/creative-studio-stack-authorization', {
+    method: 'POST',
+    body: payload,
+  });
+
+  const text = await res.text();
+  let data: { ok?: boolean; grant?: CreativeStudioStackAuthGrant; error?: string; code?: string } = {};
+  try {
+    data = text ? (JSON.parse(text) as typeof data) : {};
+  } catch {
+    return { ok: false, error: `Stack authorization issue failed (${res.status})`, code: 'AUTH_ISSUE_PARSE' };
+  }
+
+  if (!res.ok || !data.ok || !data.grant) {
+    return {
+      ok: false,
+      error: data.error ?? `Stack authorization issue failed (${res.status})`,
       code: data.code,
     };
   }

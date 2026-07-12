@@ -47414,3 +47414,22 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Branch policy:** `master` only; one `./scripts/agent-commit.sh` deploy.
 
+---
+
+## 2026-07-12 — CD Studio stack auth rejection fix (full conversation)
+
+**Context:** After Immune System sprint (`f944066ab`), founder reported CD Studio still shows `WORLD COMPILE REJECTED™` / `LAYER GENERATION FAILED` / `STACK 0/6` with all layers RETRY on mobile (`fsbw.vercel.app`). Experience Lab validation jobs completing in production; **zero** `surface: creative-studio` jobs — CD Studio never reached async job persistence.
+
+**Root cause:** CD Studio uses `useSceneStack` without `validationMode` and without `productionAuthorizationId`. Production `legacyCompatEnabled()` is false → governed generation returns `AUTH_REQUIRED` (403) before FAL/async. Immune System table repair does not apply — this is authorization gap, not missing schema.
+
+**Fix shipped:**
+- `creative-studio-stack-auth.ts` — server-issued ephemeral stack authorization (exploratory_draft path)
+- `POST /api/admin/creative-studio-stack-authorization`
+- `ensureCreativeStudioStackAuth` lazy issuance on `studio-builder-generate`
+- Client session + `requestCreativeStudioStackAuthorization`
+- `CreativeDirectionStudioRoom` issues auth before Stack build / layer retry
+- `useSceneStack` attaches `creativeStudioStackMode` + auth to generation payload
+- Tests: `creative-studio-stack-auth.test.ts` (3 cases)
+
+**Founder follow-up for mobile transport:** set `ASYNC_GOVERNED_GENERATION_CREATIVE_STUDIO=1` on Vercel (with `ASYNC_GOVERNED_GENERATION_V1=1`) so CD Studio uses 202 work orders instead of long sync fetch.
+

@@ -78,6 +78,8 @@
 | **Reference migration** | `20260712180000_studio_governed_generation_jobs` |
 | **Files** | `src/studio-os-core/immune-system/`, `api/_lib/immuneSystem/`, `async-governed-generation.ts` |
 | **Env** | `IMMUNE_SYSTEM_AUTO_REPAIR=1` + `SUPABASE_DB_URL` or `DATABASE_URL` (preferred) or Management API token |
+| **CD Studio auth** | Separate fix — `POST /api/admin/creative-studio-stack-authorization` before stack build (not Immune System) |
+| **CD Studio async** | `ASYNC_GOVERNED_GENERATION_CREATIVE_STUDIO=1` + `ASYNC_GOVERNED_GENERATION_V1=1` for 202 transport |
 | **Verify** | Isolated reference-recovery test passes; production proof requires env + missing-table scenario (do not drop prod table) |
 | **Status** | **In Progress** — code shipped; Vercel env + live auto-repair proof pending |
 | **Rollback** | `IMMUNE_SYSTEM_AUTO_REPAIR=0` — detection/escalation only, no DDL apply |

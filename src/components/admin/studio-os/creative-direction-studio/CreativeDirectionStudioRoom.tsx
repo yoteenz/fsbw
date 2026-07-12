@@ -10,6 +10,8 @@ import { useCreativeApprovalPipeline } from '../../../../hooks/useCreativeApprov
 import { useLivingMoodWall } from '../../../../hooks/useLivingMoodWall';
 import { useStudioFounderNotes } from '../../../../hooks/useStudioFounderNotesObject';
 import { useSceneStack } from '../../../../hooks/useSceneStack';
+import { requestCreativeStudioStackAuthorization } from '../../../../services/studio/ephemeralAuthorizationApi';
+import { setActiveCreativeStudioStackAuthorization } from '../../../../studio-os-core/creative-production/creative-studio-stack-auth-session';
 import type { SceneStackHotspotBounds, SceneStackLayerId } from '../../../../studio-os-core/scene-stack';
 import type { MoodWallInspiration } from '../../../../studio-os-core/studio-objects/living-mood-wall';
 import type { FounderNote } from '../../../../studio-os-core/studio-objects/founder-notes';
@@ -112,6 +114,40 @@ export function CreativeDirectionStudioRoom() {
     [stack, activeZoneId]
   );
   const stackButtonBusy = stack.isStationPipelineActive(activeZoneId);
+
+  const handleEnsureStation = useCallback(async () => {
+    const auth = await requestCreativeStudioStackAuthorization({
+      organizationId: workspaceId,
+      departmentId: DEPARTMENT_ID,
+      stationId: activeZoneId,
+      projectId: slice.project.projectId,
+    });
+    if (!auth.ok) {
+      console.error('[CDS] stack authorization failed', auth.error, auth.code);
+      return;
+    }
+    setActiveCreativeStudioStackAuthorization(auth.grant);
+    await stack.ensureStation(activeZoneId, { creativeStudioStackMode: true });
+  }, [activeZoneId, slice.project.projectId, stack, workspaceId]);
+
+  const handleRegenerateLayer = useCallback(
+    async (stationId: string, layerId: SceneStackLayerId) => {
+      const auth = await requestCreativeStudioStackAuthorization({
+        organizationId: workspaceId,
+        departmentId: DEPARTMENT_ID,
+        stationId,
+        projectId: slice.project.projectId,
+      });
+      if (!auth.ok) {
+        console.error('[CDS] stack authorization failed', auth.error, auth.code);
+        return;
+      }
+      setActiveCreativeStudioStackAuthorization(auth.grant);
+      await stack.regenerateLayer(stationId, layerId, { creativeStudioStackMode: true });
+    },
+    [slice.project.projectId, stack, workspaceId]
+  );
+
   const immersion = useCdsImmersion(true, stack.isAnyPipelineActive);
 
   const costSnapshot = useStudioAlphaCost({
@@ -427,7 +463,7 @@ export function CreativeDirectionStudioRoom() {
           <button
             type="button"
             className={`cds-genesis__pill cds-genesis__pill-btn cds-genesis__stack-btn${stackButtonBusy ? ' is-building' : ''}`}
-            onClick={() => void stack.ensureStation(activeZoneId)}
+            onClick={() => void handleEnsureStation()}
             disabled={stackButtonBusy}
             title="Golden Build™ Scene Stack™ — builds missing layers for this zone"
             aria-busy={stackButtonBusy}
@@ -489,7 +525,7 @@ export function CreativeDirectionStudioRoom() {
                         : undefined
                     }
                     onRegenerateLayer={(layerId) =>
-                      void stack.regenerateLayer(zone.id, layerId as SceneStackLayerId)
+                      void handleRegenerateLayer(zone.id, layerId as SceneStackLayerId)
                     }
                   />
                   <div className="cds-genesis__interaction-layer">{renderZoneInteractions(zone.id)}</div>
