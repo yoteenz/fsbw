@@ -108,6 +108,9 @@ Global append-only operational event recorder. Routes: `/__studio-os-flight-reco
 ### Studio OS Nervous System™
 **Planned** permanent operational intelligence layer — every subsystem explains itself; every organization knows its health. Canon: `docs/studio-os/STUDIO_OS_NERVOUS_SYSTEM.md`. Black Box evolves into this; not temporary debug mode.
 
+### Studio World Data Plane™
+**Planned** constitutional data architecture — Control Plane (identity, policy, governance) vs Data Plane (business data, media, knowledge, archives per organization). Eight data domains; Active → Warm → Archived → Purged lifecycle; vendor-neutral. Canon: `docs/studio-os/STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md`. Nervous System observes; Data Plane stores.
+
 ### FAILED_AT_LAYER_1
 Terminal diagnostic freeze state when Layer 1 generation fails in compiler diagnostic mode.
 

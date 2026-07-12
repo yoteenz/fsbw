@@ -20,6 +20,7 @@ Organizations                ← Frontal Slayer, NDXBOOK, VXD INC, All In One En
 |-------|------|----------------|
 | Platform core | `src/studio-os-core/` | Reusable OS logic — modules, tenant isolation, feature inheritance |
 | Diagnostics precursor | `src/studio-os/diagnostics/` | Black Box / Flight Recorder — **Documented Fact**; evolves into [Nervous System™](./STUDIO_OS_NERVOUS_SYSTEM.md) (**Planned**) |
+| Data Plane constitution | [STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md](./STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md) | Control Plane vs Data Plane; eight domains; lifecycle; org isolation — **Founder Vision** (**Planned** enforcement) |
 | Runtime diagnostics | `src/studio-os-core/runtime-diagnostics/` | Boot diagnostics panel, fail-safe — **Documented Fact** |
 | Application shell | `src/studio-os-core/application/` | Product hierarchy, portfolio access, application routes |
 | Workspace registry | `src/workspaces/` | Per-organization configs and data adapters |
@@ -145,6 +146,8 @@ Studio OS content products share a **production pipeline**, not a page-centric p
 
 ## Related Docs
 
+- [Studio World Data Plane Constitution™](./STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md)
+- [Studio OS Nervous System™](./STUDIO_OS_NERVOUS_SYSTEM.md)
 - [Studio Production Engine™](./studio-production-engine.md)
 - [Department workspaces](./studio-production-engine-departments.md)
 - [Master Content Pipeline™](./master-content-pipeline.md)

@@ -448,6 +448,7 @@ It is where **real companies live digitally** — and where the university prepa
 
 ```
 STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md     ← Operational identity (this document)
+    ├── STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md  ← Data governance (docs/studio-os/)
     ├── STUDIO_WORLD_BIBLE.md                 ← How Studio World must feel
     ├── STUDIO_WORLD_MASTER_PLAN.md           ← Where things live (city architecture)
     └── Production organizations (Frontal Slayer, future real businesses)

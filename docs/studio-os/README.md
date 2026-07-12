@@ -5,6 +5,7 @@ Platform documentation for the studio os multi-brand operating system. **No Work
 | Document | Description |
 |----------|-------------|
 | [STUDIO_OS_NERVOUS_SYSTEM.md](./STUDIO_OS_NERVOUS_SYSTEM.md) | **Studio OS Nervous System™** — Planned operational intelligence; Black Box evolution; org health; Institute education tie-in |
+| [STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md](./STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md) | **Studio World Data Plane Constitution™** — Control Plane vs Data Plane; eight data domains; lifecycle; governance; vendor-neutral storage law (**Planned** enforcement) |
 | [black-box-investigation.md](./black-box-investigation.md) | **Black Box / Flight Recorder™** — Documented Fact forensic precursor to Nervous System |
 | [../../STUDIO_OS_BIBLE/README.md](../../STUDIO_OS_BIBLE/README.md) | **Studio OS Bible™** — index of permanent design constitution documents |
 | [../../STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md](../../STUDIO_OS_BIBLE/SPATIAL_ARCHITECTURE_REVIEW.md) | **Spatial Architecture Review Engine™** — review before code; Composer as Chief Architect; design score gate |

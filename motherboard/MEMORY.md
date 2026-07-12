@@ -47325,3 +47325,21 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 **Spatial Architecture Review:** SKIPPED — P0 forensic reliability sprint, no new surfaces.
 >>>>>>> 0e621c05a (Add independent forensic recorder for trustworthy shell execution evidence)
 
+---
+
+## 2026-07-12 — Studio World Data Plane Constitution sprint
+
+**Context:** Founder requested P0 constitutional architecture sprint establishing permanent data governance for Studio OS — where data lives, how it moves, ages, is protected, and scales. Documentation only; no runtime, migrations, APIs, schema changes, or infrastructure.
+
+**Non-negotiable rules honored:** No implementation · no migration · no API changes · no breaking schema · no infrastructure · vendor-neutral · constitutional architecture only.
+
+**Canon created:** `docs/studio-os/STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md` v1.0.0 — Control Plane vs Data Plane · organizational data isolation · eight data domains (Operational · Creative Assets · Knowledge · Runtime State · Diagnostics · Archives · Backups · System Metadata) · lifecycle (Active→Warm→Archived→Purged) · Hot/Warm/Cold/Purged tiers · temporary storage · retention policies · storage governance · org storage budgets · deduplication principles · regional architecture (Conceptual) · BYOS · Nervous System integration (observes) · Immune System responsibilities · Memory responsibilities · executive visibility (Conceptual) · Mansion translations · ten foundational principles.
+
+**Classifications:** Constitutional framework = Founder Vision; tenant isolation partial = Documented Fact; all enforcement engines = Planned; Founder Dashboard storage surfaces = Conceptual.
+
+**Cross-refs updated:** `docs/studio-os/README.md`, `architecture.md`, `STUDIO_OS_NERVOUS_SYSTEM.md`, `STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md`, `STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md`, `docs/studio-world/README.md`, `AI_GLOSSARY.md`, `founder-intelligence/PRODUCT_PHILOSOPHY.md`, `motherboard/CORE.md`.
+
+**Not updated:** CURRENT_HANDOFF, KNOWN_BLOCKERS (canon sprint).
+
+**Spatial Architecture Review:** SKIPPED — docs-only constitutional sprint; no new surfaces or nav.
+

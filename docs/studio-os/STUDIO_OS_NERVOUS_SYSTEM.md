@@ -220,6 +220,8 @@ Every **real organization** inside Studio World inherits the Nervous System thro
 
 **Digital Twin alignment:** Real businesses operate in Studio World. The Nervous System ensures each digital headquarters **knows its own condition** — mirroring how real organizations need operational awareness.
 
+**Data Plane alignment:** The [Data Plane Constitution™](./STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md) defines **what** organizations store (eight domains, lifecycle, isolation). The Nervous System **observes** Data Plane health — storage growth, retention compliance, archive health, recovery confidence — without becoming a storage engine.
+
 ### 🏛 Mansion Translation
 
 Every company that opens a headquarters in the city gets the same nervous system — Concierge sensors, Elevator monitors, Security gates — whether it is Frontal Slayer or the next business that moves in.
@@ -330,6 +332,7 @@ Diagnostic instrumentation installed during Experience Engine forensics is the *
 | `docs/studio-os/architecture.md` | Cross-reference |
 | `AI_GLOSSARY.md` | Nervous System term |
 | `STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md` | Education cross-ref |
+| `STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md` | Data Plane observability — Nervous System observes; Data Plane stores |
 | `STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md` | Org inheritance |
 | `founder-intelligence/PRODUCT_PHILOSOPHY.md` | Core belief |
 | `motherboard/CORE.md` | Permanent fact |
@@ -348,6 +351,7 @@ Studio OS Nervous System™ (this document)
     └── Planned: Operational Intelligence Layer → Org Health → Founder Dashboard (Conceptual)
 
 Studio World (real organizations)
+    ├── Data Plane Constitution (Founder Vision — each org owns its Data Plane)
     └── Each org inherits Nervous System governance
 
 Studio Institute (LOS)

@@ -23,7 +23,7 @@ Every idea, interaction, department, workflow, AI role, meeting, and design phil
 | **[STUDIO_ATLAS_BIBLE.md](./STUDIO_ATLAS_BIBLE.md)** (v1.0.0) | **Geographic projection** — living map, zoom scales, Passport, Timeline |
 | **[STUDIO_WORLD_CIVILIZATION_BIBLE.md](./STUDIO_WORLD_CIVILIZATION_BIBLE.md)** (v1.0.0) | **Cultural constitution** — pillars, institutions, traditions, citizens, chronicles, belonging |
 
-**Read order:** **Digital Twin** (what Studio World is) → Master Plan (where) → Institute LOS (learn) → Living Systems (simulate) → Knowledge Graph → Atlas → Civilization → World Bible (feel) → Part 1 specs.
+**Read order:** **Digital Twin** (what Studio World is) → **Data Plane** (where data lives) → Master Plan (where) → Institute LOS (learn) → Living Systems (simulate) → Knowledge Graph → Atlas → Civilization → World Bible (feel) → Part 1 specs.
 
 ---
 
@@ -62,6 +62,7 @@ Studio World → Digital operational world
 | # | Document | Contents |
 |---|----------|----------|
 | **DT** | **[STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md](./STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md)** | **Digital Twin** — operational identity · real organizations · Institute role · Living Systems scope · Learning Partners · contribution pipeline |
+| **DP** | **[STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md](../studio-os/STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md)** | **Data Plane** — Control Plane vs Data Plane · eight domains · lifecycle · governance · vendor-neutral storage law |
 | **MP** | **[STUDIO_WORLD_MASTER_PLAN.md](./STUDIO_WORLD_MASTER_PLAN.md)** | **Master Plan** |
 | **LS** | **[STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](./STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md)** | **Living Systems™** (within Institute) |
 | **AB** | **[STUDIO_ATLAS_BIBLE.md](./STUDIO_ATLAS_BIBLE.md)** | **Atlas Bible** |

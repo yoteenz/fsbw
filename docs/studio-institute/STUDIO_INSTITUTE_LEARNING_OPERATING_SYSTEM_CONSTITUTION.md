@@ -37,6 +37,7 @@ This document is the **educational constitution** of Studio World. It does not r
 | Document | Relationship |
 |----------|--------------|
 | **[STUDIO_OS_NERVOUS_SYSTEM.md](../studio-os/STUDIO_OS_NERVOUS_SYSTEM.md)** | **Operational intelligence** — how real organizations observe and explain themselves; Institute teaches via Nervous System |
+| **[STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md](../studio-os/STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md)** | **Data governance** — Control Plane vs Data Plane; eight domains; lifecycle; org isolation; Knowledge domain includes Institute content |
 | **[STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md](../studio-world/STUDIO_WORLD_DIGITAL_TWIN_CONSTITUTION.md)** | **Operational identity** — Studio World = digital twin of real economy; real organizations |
 | **[STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md](../studio-world/STUDIO_WORLD_LIVING_SYSTEMS_BIBLE.md)** | **Living Systems™** — simulations within Institute; **Planned**, never production |
 | **[STUDIO_WORLD_BIBLE.md](../studio-os/STUDIO_WORLD_BIBLE.md)** | Studio World experience constitution — Institute is a defining pillar of the living city |

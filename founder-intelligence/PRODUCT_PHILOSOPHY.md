@@ -22,6 +22,7 @@ What Studio OS builds — and refuses to build.
 | **Governance over generation** | Material assets need authorization |
 | **Memory over repetition** | Capsules + motherboard replace re-explaining |
 | **Self-observability** | Diagnostics become [Nervous System™](../docs/studio-os/STUDIO_OS_NERVOUS_SYSTEM.md) — systems explain themselves (**Planned**; Black Box **Documented Fact**) |
+| **Data governance** | [Data Plane Constitution™](../docs/studio-os/STUDIO_WORLD_DATA_PLANE_CONSTITUTION.md) — platform controls policy; organizations own data; every asset has a lifecycle (**Planned** enforcement) |
 | **Mobile-first product** | Implementation and QA default to real phones |
 
 ## What we build
@@ -32,6 +33,7 @@ What Studio OS builds — and refuses to build.
 - Multi-company routing and organization boundaries  
 - Institutional export (Context, DNA, Founder Intelligence capsules)  
 - **Studio OS Nervous System™** — operational intelligence; org self-observability (**Planned** architecture)  
+- **Studio World Data Plane Constitution™** — where data lives, how it ages, how it scales (**Planned** enforcement; constitutional law only)  
 
 ## What we refuse
 
