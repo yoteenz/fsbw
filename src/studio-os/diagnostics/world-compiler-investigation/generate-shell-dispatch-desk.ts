@@ -3,6 +3,14 @@
  * Observe-only: does not change shell behavior, timing, retries, or API contracts.
  */
 import { isWorldCompilerDiagnosticMode } from './diagnostic-mode';
+import {
+  buildGenerateShellPackageMicroTraceState,
+  classifyGspuMicroStall,
+  isKnownInstrumentationWrapperPair,
+  resetGenerateShellPackageMicroTrace,
+  restoreGenerateShellPackageMicroTraceFromSnapshot,
+  type GenerateShellPackageMicroTraceState,
+} from './generate-shell-package-micro-trace';
 
 export type GspuSubStageId =
   | 'GSPU-01-enter'
@@ -136,6 +144,7 @@ export type GspuStallClassification =
   | 'L-other';
 
 export type GenerateShellDispatchDeskState = {
+  packageMicroTrace: GenerateShellPackageMicroTraceState;
   invocations: GspuInvocationRecord[];
   subStages: GspuSubStageRecord[];
   currentSubStageId: GspuSubStageId | null;
@@ -311,6 +320,7 @@ export function resetGenerateShellDispatchDesk(): void {
   lastStateTransitionAt = null;
   inFlightRequests.clear();
   initSubStages();
+  resetGenerateShellPackageMicroTrace();
 }
 
 /** Restore in-memory dispatch desk from persisted black box snapshot. */
@@ -348,6 +358,9 @@ export function restoreGenerateShellDispatchDeskFromSnapshot(snapshot: GenerateS
   fetchForensic = snapshot.fetch ? { ...defaultFetch(), ...snapshot.fetch } : defaultFetch();
   lastStateTransition = snapshot.lastStateTransition;
   lastStateTransitionAt = snapshot.lastStateTransitionAt;
+  if (snapshot.packageMicroTrace) {
+    restoreGenerateShellPackageMicroTraceFromSnapshot(snapshot.packageMicroTrace);
+  }
   activeInvocationId =
     invocations.find((i) => !i.completedAt && i.source === 'function-body')?.invocationId ??
     invocations.find((i) => !i.completedAt)?.invocationId ??
@@ -590,16 +603,50 @@ export function classifyGspuStall(): {
   classification: GspuStallClassification;
   detail: string;
 } {
-  const running = [...subStages.values()].filter((s) => s.status === 'running');
-  const lastRunning = running[running.length - 1];
-  const dup = invocations.filter((i) => i.source === 'function-body' || i.source === 'traceShellAsync-wrapper');
-
-  if (dup.length >= 2 && dup.some((i) => !i.completedAt) && dup.some((i) => i.parentInvocationId)) {
+  const microRunning = buildGenerateShellPackageMicroTraceState();
+  if (microRunning.currentMicroMarkerId) {
+    const micro = classifyGspuMicroStall();
+    const microMap: Record<string, GspuStallClassification> = {
+      'A-pre-package-context-read': 'B-context-preparation-wait',
+      'B-package-key-computation': 'B-context-preparation-wait',
+      'C-registry-access': 'B-context-preparation-wait',
+      'D-registry-readiness-wait': 'K-lost-event-deferred-resolution',
+      'E-package-lookup': 'B-context-preparation-wait',
+      'F-lazy-package-load': 'B-context-preparation-wait',
+      'G-package-validation': 'B-context-preparation-wait',
+      'H-lost-readiness-event': 'K-lost-event-deferred-resolution',
+      'I-circular-dependency-lock': 'D-in-flight-promise-deadlock',
+      'J-other': 'L-other',
+    };
     return {
-      classification: 'J-duplicate-invocation-collision',
-      detail: 'Wrapper and inner invocation both active; inner may wait on wrapper await',
+      classification: microMap[micro.classification] ?? 'L-other',
+      detail: `[micro:${microRunning.currentMicroMarkerId}] ${micro.detail}`,
     };
   }
+
+  const wrappers = invocations.filter((i) => i.source === 'traceShellAsync-wrapper' && !i.completedAt);
+  const bodies = invocations.filter((i) => i.source === 'function-body' && !i.completedAt);
+  const parentLinked = bodies.some(
+    (b) => b.parentInvocationId && wrappers.some((w) => w.invocationId === b.parentInvocationId)
+  );
+  if (
+    !isKnownInstrumentationWrapperPair({
+      wrapperActive: wrappers.length > 0,
+      bodyActive: bodies.length > 0,
+      parentLinked,
+    })
+  ) {
+    const dup = invocations.filter((i) => i.source === 'function-body' || i.source === 'traceShellAsync-wrapper');
+    if (dup.length >= 2 && dup.some((i) => !i.completedAt) && dup.some((i) => i.parentInvocationId) && !parentLinked) {
+      return {
+        classification: 'J-duplicate-invocation-collision',
+        detail: 'Multiple unlinked invocations active',
+      };
+    }
+  }
+
+  const running = [...subStages.values()].filter((s) => s.status === 'running');
+  const lastRunning = running[running.length - 1];
 
   if (promiseForensic?.reused && promiseForensic.state === 'pending') {
     return {
@@ -613,7 +660,10 @@ export function classifyGspuStall(): {
     return { classification: 'L-other', detail: 'No running sub-stage recorded' };
   }
 
-  if (stage.startsWith('GSPU-01') || stage.startsWith('GSPU-02') || stage.startsWith('GSPU-03')) {
+  if (stage.startsWith('GSPU-01') || stage === 'GSPU-02-stage-create-shell-request') {
+    return { classification: 'B-context-preparation-wait', detail: `Stuck at ${stage} — see package micro-trace` };
+  }
+  if (stage.startsWith('GSPU-03')) {
     return { classification: 'B-context-preparation-wait', detail: `Stuck at ${stage}` };
   }
   if (
@@ -641,28 +691,31 @@ export function classifyGspuStall(): {
   return { classification: 'L-other', detail: `Unhandled running stage ${stage}` };
 }
 
-function buildDuplicateExplanation(): { detected: boolean; explanation: string | null } {
+function buildDuplicateExplanation(): { detected: boolean; explanation: string | null; isInstrumentationOnly: boolean } {
   const wrappers = invocations.filter((i) => i.source === 'traceShellAsync-wrapper');
   const bodies = invocations.filter((i) => i.source === 'function-body');
   if (wrappers.length === 0 && bodies.length <= 1) {
-    return { detected: false, explanation: null };
+    return { detected: false, explanation: null, isInstrumentationOnly: false };
   }
   const wrap = wrappers[wrappers.length - 1];
   const body = bodies[bodies.length - 1];
   if (wrap && body) {
     return {
       detected: true,
-      explanation: `Category F: traceShellAsync wrapper (${wrap.invocationId}) plus inner function-body (${body.invocationId}) — duplicate function trace entries, not two independent callers`,
+      isInstrumentationOnly: true,
+      explanation: `Category F (instrumentation only): traceShellAsync wrapper (${wrap.invocationId}) + inner function-body (${body.invocationId}) — one logical call, not a stall cause`,
     };
   }
   if (bodies.length >= 2) {
     return {
       detected: true,
+      isInstrumentationOnly: false,
       explanation: `Category B/C: ${bodies.length} function-body invocations — ${bodies.map((b) => b.invocationId).join(', ')}`,
     };
   }
   return {
     detected: true,
+    isInstrumentationOnly: false,
     explanation: 'Duplicate entry detected — see invocation records',
   };
 }
@@ -673,6 +726,7 @@ export function buildGenerateShellDispatchDeskState(): GenerateShellDispatchDesk
   const hasRunning = [...subStages.values()].some((s) => s.status === 'running');
 
   return {
+    packageMicroTrace: buildGenerateShellPackageMicroTraceState(),
     invocations: [...invocations],
     subStages: SUB_STAGE_DEFS.map((d) => subStages.get(d.id)!).filter(Boolean),
     currentSubStageId: hasRunning ? currentSubStageId : null,
@@ -692,8 +746,10 @@ export function buildGenerateShellDispatchDeskState(): GenerateShellDispatchDesk
 }
 
 function heartbeatStalled(): boolean {
+  const micro = buildGenerateShellPackageMicroTraceState();
   return (
     currentSubStageId !== null ||
+    micro.currentMicroMarkerId !== null ||
     (promiseForensic?.state === 'pending' && (promiseForensic.ageMs ?? 0) > 0)
   );
 }

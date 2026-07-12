@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0 — Generate Shell Public URL Dispatch Desk forensics**
+**P0 — Department Package Resolution micro-forensic**
 
 **Status: Complete (instrumentation shipped) — shell stall unresolved.**
 
-Dispatch Desk sub-stage telemetry inside `generateShellPublicUrl()` for `?compilerDiag=1`. Proves exact internal await before network.
+Contractor Directory micro-trace between GSPU-02 and GSPU-03. Corrected false duplicate-collision classifier.
 
-**Previous:** Shell Foundation Black Box (`e00443074`).
+**Previous:** Generate Shell Public URL Dispatch Desk (`695636f1c`).
 
 ---
 
@@ -24,7 +24,7 @@ Dispatch Desk sub-stage telemetry inside `generateShellPublicUrl()` for `?compil
 |----|---------|--------|
 | **B0-PreHandler** | Dispatch JSON | **Cleared** |
 | **B1-Layer1** | Layer 1 governed E2E | Founder device verify pending |
-| **B1-Shell** | Shell construction never finishes | **In Progress** — Dispatch Desk shipped; repair awaits proven sub-stage |
+| **B1-Shell** | Shell construction never finishes | **In Progress** — micro-trace shipped; repair awaits proven micro-marker |
 | **B1-E2E-Completion** | Completion authority | Repair shipped; device verify pending |
 
 ---
@@ -36,7 +36,7 @@ Dispatch Desk sub-stage telemetry inside `generateShellPublicUrl()` for `?compil
 ```
 
 1. Tap **Start compile run**
-2. Open **Shell Foundation Black Box™** → **GENERATE SHELL PUBLIC URL — DISPATCH DESK**
+2. Open **Dispatch Desk** → **CONTRACTOR DIRECTORY MICRO-TRACE**
 3. Screenshot / Copy / Export JSON
 
 ---
@@ -45,4 +45,3 @@ Dispatch Desk sub-stage telemetry inside `generateShellPublicUrl()` for `?compil
 
 - `docs/studio-os/forensics/GENERATE_SHELL_DISPATCH_DESK.md`
 - `docs/studio-os/forensics/SHELL_FOUNDATION_BLACK_BOX.md`
-- `docs/studio-os/forensics/END_TO_END_PIPELINE_RECONCILIATION.md`

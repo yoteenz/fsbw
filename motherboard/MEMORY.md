@@ -47241,3 +47241,24 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — forensic instrumentation sprint.
 
+---
+
+## 2026-07-12 — P0 Department Package Resolution micro-forensic sprint
+
+**Context:** Post-Dispatch Desk evidence proved stall after GSPU-02, before GSPU-03. Auth/token/fetch not reached. False J-duplicate-invocation-collision from wrapper+body pair. Founder requested micro-trace on GSPU-02→03 boundary — forensic only.
+
+**Documented Fact:** GSPU-01 succeeds; GSPU-02 running; GSPU-03 never begins; no requestStudioBuilderGenerate/ensureApiAccessToken/fetch; duplicate entries are traceShellAsync wrapper + function-body (not independent callers).
+
+**Instrumentation:**
+- `generate-shell-package-micro-trace.ts` — GSPU-02a…03g micro-markers, registry forensics, micro stall classifier (A–J)
+- `validation-shell-pipeline.ts` — statement-level markers in GSPU-02→03 window
+- `department-package/initialize.ts`, `department-package-registry.ts` — boot readiness + lookup forensics
+- `generate-shell-dispatch-desk.ts` — classifier fix (wrapper+body not collision); micro-trace in export
+- `ShellFoundationBlackBoxPanel.tsx` — CONTRACTOR DIRECTORY MICRO-TRACE section
+
+**Tests:** 8 micro-trace + 15 dispatch desk; registry tests pass; build pass.
+
+**Repair status:** None. Next sprint targets proven micro-marker boundary.
+
+**Spatial Architecture Review:** SKIPPED — forensic instrumentation only.
+

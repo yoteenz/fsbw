@@ -28,6 +28,12 @@ import {
   recordGspuSubStage,
 } from '../../studio-os/diagnostics/world-compiler-investigation/generate-shell-dispatch-desk';
 import {
+  bindGenerateShellPackageMicroTraceContext,
+  recordGspuMicroMarker,
+  recordGspuPackageRegistryForensic,
+  setGspuMicroTraceInvocationId,
+} from '../../studio-os/diagnostics/world-compiler-investigation/generate-shell-package-micro-trace';
+import {
   buildEnvironmentShellRecipe,
   type EnvironmentShellRecipe,
   type ValidationEnvironmentShell,
@@ -66,16 +72,46 @@ async function generateShellPublicUrl(
     callerFile: FILE,
     source: 'function-body',
   });
+  bindGenerateShellPackageMicroTraceContext({
+    compileRunId: authCtx.compileRunId,
+    invocationId,
+    stationId: authCtx.stationId,
+    companyId: authCtx.organizationId,
+    departmentId: recipe.departmentId,
+    projectId: authCtx.projectId,
+    requestKey: `shell-${authCtx.previewSessionId}`,
+  });
+  setGspuMicroTraceInvocationId(invocationId);
   recordGspuSubStage('GSPU-01-enter', 'running');
   recordShellFunctionEnter('generateShellPublicUrl', FILE, { source: 'function-body' });
   recordGspuSubStage('GSPU-01-enter', 'success');
   recordGspuSubStage('GSPU-02-stage-create-shell-request', 'running');
+
+  recordGspuMicroMarker('GSPU-02a-before-record-shell-stage', 'running');
   recordShellStage('create-shell-request', 'running');
+  recordGspuMicroMarker('GSPU-02a-before-record-shell-stage', 'success');
+  recordGspuMicroMarker('GSPU-02b-after-record-shell-stage', 'success', { resultSummary: 'recordShellStage returned' });
 
   try {
+    recordGspuMicroMarker('GSPU-02c-before-gspu02-success', 'running');
     recordGspuSubStage('GSPU-02-stage-create-shell-request', 'success');
+    recordGspuMicroMarker('GSPU-02c-before-gspu02-success', 'success');
+    recordGspuMicroMarker('GSPU-02d-after-gspu02-success', 'success');
+
+    recordGspuMicroMarker('GSPU-02e-before-gspu03-running', 'running');
     recordGspuSubStage('GSPU-03-resolve-package', 'running');
-    const pkg = requireDepartmentPackage(recipe.departmentId);
+    recordGspuMicroMarker('GSPU-02e-before-gspu03-running', 'success');
+    recordGspuMicroMarker('GSPU-02f-after-gspu03-running', 'success');
+
+    recordGspuMicroMarker('GSPU-03a-read-department-id', 'running');
+    const departmentKey = recipe.departmentId;
+    recordGspuPackageRegistryForensic({
+      expectedPackageKey: departmentKey,
+      actualPackageKey: departmentKey,
+    });
+    recordGspuMicroMarker('GSPU-03a-read-department-id', 'success', { resultSummary: departmentKey });
+
+    const pkg = requireDepartmentPackage(departmentKey);
     recordGspuSubStage('GSPU-03-resolve-package', 'success', pkg.packageId);
 
     recordGspuSubStage('GSPU-04-build-payload', 'running');

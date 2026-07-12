@@ -1,6 +1,6 @@
 # Generate Shell Public URL — Dispatch Desk Forensic Report
 
-**Sprint:** P0 — “Camera Over the Dispatch Desk”  
+**Sprint:** P0 — “Camera Over the Dispatch Desk” + Contractor Directory micro-trace  
 **Report date:** 2026-07-12  
 **Classification:** Instrumentation only — **no repair**
 
@@ -20,9 +20,47 @@ Prove the **exact first unresolved internal operation** inside `generateShellPub
 
 Shell Foundation Black Box panel → **GENERATE SHELL PUBLIC URL — DISPATCH DESK** section.
 
+Shell Foundation Black Box panel → **GENERATE SHELL PUBLIC URL — DISPATCH DESK** → **CONTRACTOR DIRECTORY MICRO-TRACE**.
+
 ---
 
-## Internal step map (GSPU)
+## GSPU-02 → GSPU-03 micro-marker map
+
+| ID | Statement |
+|----|-----------|
+| GSPU-02a | Before `recordShellStage('create-shell-request', 'running')` |
+| GSPU-02b | After `recordShellStage` returns |
+| GSPU-02c | Before GSPU-02 success marker (try entry) |
+| GSPU-02d | After GSPU-02 success marker |
+| GSPU-02e | Before GSPU-03 running marker |
+| GSPU-02f | After GSPU-03 running marker |
+| GSPU-03a | Read `recipe.departmentId` (package key) |
+| GSPU-03b | Before `ensureDepartmentPackageRegistryInitialized` |
+| GSPU-03c | After registry init |
+| GSPU-03d | Registry readiness check |
+| GSPU-03e | Before `loadDepartmentPackage` Map lookup |
+| GSPU-03f | After lookup returns |
+| GSPU-03g | `requireDepartmentPackage` validation / throw |
+
+---
+
+## Documented Fact (post-Dispatch Desk evidence)
+
+- Stall occurs **after GSPU-02** and **before GSPU-03**
+- Auth, token, request helper, and fetch are **not reached**
+- Duplicate-collision classification **was false** (wrapper + body instrumentation pair)
+- Prior authorization/token theory **superseded**
+
+## Inference
+
+- If GSPU-02 remains running, stall is at `recordShellStage` (GSPU-02a/02b) or before try-entry (GSPU-02c)
+- Package registry init is synchronous singleton — no promise unless `recordShellStage` notify blocks
+
+## Unknown
+
+- Exact active micro-marker on founder device until post-deploy mobile run
+
+---
 
 | ID | Label | Category |
 |----|-------|----------|
@@ -58,12 +96,14 @@ Shell Foundation Black Box panel → **GENERATE SHELL PUBLIC URL — DISPATCH DE
 
 | Layer | File | Role |
 |-------|------|------|
+| Package micro-trace | `generate-shell-package-micro-trace.ts` | GSPU-02a…03g statement markers |
 | Dispatch desk store | `generate-shell-dispatch-desk.ts` | Sub-stages, invocations, promise/auth/fetch forensics, stall classifier |
+| Department package | `initialize.ts`, `department-package-registry.ts` | Registry boot + Map lookup forensics |
 | Black box integration | `shell-foundation-black-box.ts` | `dispatchDesk` in export; wrapper invocation marker in `traceShellAsync` |
-| Shell pipeline | `validation-shell-pipeline.ts` | `generateShellPublicUrl()` sub-stage telemetry |
+| Shell pipeline | `validation-shell-pipeline.ts` | `generateShellPublicUrl()` sub-stage + micro telemetry |
 | Studio Builder API | `studioBuilder/api.ts` | Token, fetch, parse boundaries |
 | Token path | `utils/api.ts` | `ensureApiAccessToken` await tracking |
-| UI panel | `ShellFoundationBlackBoxPanel.tsx` | Dispatch Desk founder view |
+| UI panel | `ShellFoundationBlackBoxPanel.tsx` | Dispatch Desk + Contractor Directory micro-trace |
 
 ---
 
@@ -122,7 +162,7 @@ L — Other
 
 ## Tests
 
-- `generate-shell-dispatch-desk.test.ts` — sub-stages, awaits, promise reuse, auth, fetch, duplicate invocation, stall classifier
+- `generate-shell-dispatch-desk.test.ts`, `generate-shell-package-micro-trace.test.ts` — sub-stages, micro-markers, classifier correction, stalls, persistence
 - `shell-foundation-black-box.test.ts` — dispatch desk in black box export
 
 ---

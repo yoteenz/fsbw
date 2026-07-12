@@ -8,6 +8,7 @@ import {
   type ShellFoundationBlackBoxState,
 } from '../../../../studio-os/diagnostics/world-compiler-investigation/shell-foundation-black-box';
 import type { GenerateShellDispatchDeskState } from '../../../../studio-os/diagnostics/world-compiler-investigation/generate-shell-dispatch-desk';
+import type { GenerateShellPackageMicroTraceState } from '../../../../studio-os/diagnostics/world-compiler-investigation/generate-shell-package-micro-trace';
 
 type Props = {
   compileRunId: string | null;
@@ -72,6 +73,51 @@ const stageColor: Record<string, string> = {
   skipped: '#a8a29e',
 };
 
+function ContractorDirectoryMicroTrace({ micro }: { micro: GenerateShellPackageMicroTraceState }) {
+  const current = micro.markers.find((m) => m.markerId === micro.currentMicroMarkerId);
+  const lastSuccess = micro.markers.find((m) => m.markerId === micro.lastSuccessfulMicroMarkerId);
+  const reg = micro.packageRegistry;
+
+  return (
+    <div data-contractor-directory-micro-trace style={{ marginTop: 10, paddingTop: 8, borderTop: '1px solid #44403c' }}>
+      <p style={{ margin: '0 0 6px', fontWeight: 800, color: '#a3e635' }}>CONTRACTOR DIRECTORY MICRO-TRACE</p>
+      <Row label="Current micro-marker" value={current ? `${current.markerId} · ${current.label}` : '—'} />
+      <Row label="Source" value={current?.sourceLabel ?? '—'} />
+      <Row
+        label="Last success"
+        value={lastSuccess ? `${lastSuccess.markerId} · ${lastSuccess.label}` : micro.lastSuccessfulMicroMarkerId ?? '—'}
+      />
+      <Row label="Package key" value={reg.actualPackageKey ?? reg.expectedPackageKey ?? '—'} />
+      <Row label="Registry name" value={reg.registryName} />
+      <Row label="Registry ready" value={reg.registryReady == null ? '—' : reg.registryReady ? 'Yes' : 'No'} />
+      <Row label="Package present" value={reg.keyPresent == null ? '—' : reg.keyPresent ? 'Yes' : 'No'} />
+      <Row label="Lookup started" value={reg.lookupStarted ? 'Yes' : 'No'} />
+      <Row label="Lookup returned" value={reg.lookupReturned ? 'Yes' : 'No'} />
+      <Row label="Lookup duration" value={reg.lookupDurationMs != null ? `${reg.lookupDurationMs}ms` : '—'} />
+      <Row label="Boot/init state" value={`${reg.initializationPromiseState} · settled=${String(reg.initSettled)}`} />
+      <Row label="Lock state" value={reg.lockState ? `${reg.lockState}${reg.lockOwner ? ` (${reg.lockOwner})` : ''}` : '—'} />
+      <Row label="Last transition" value={micro.lastStateTransition ?? '—'} />
+      {micro.microStallClassification ? (
+        <p style={{ margin: '6px 0 0', color: '#f87171', fontWeight: 700 }}>
+          Micro stall: {micro.microStallClassification}
+          {micro.microStallClassificationDetail ? ` — ${micro.microStallClassificationDetail}` : ''}
+        </p>
+      ) : null}
+      <div style={{ marginTop: 6, maxHeight: 100, overflowY: 'auto' }}>
+        {micro.markers
+          .filter((m) => m.status !== 'pending')
+          .map((m) => (
+            <div key={m.markerId} style={{ color: stageColor[m.status] ?? '#d6d3d1', padding: '2px 0', fontSize: 9 }}>
+              {m.markerId} · {m.status}
+              {m.durationMs != null ? ` · ${m.durationMs}ms` : ''}
+              {m.resultSummary ? ` · ${m.resultSummary}` : ''}
+            </div>
+          ))}
+      </div>
+    </div>
+  );
+}
+
 function DispatchDeskSection({ desk }: { desk: GenerateShellDispatchDeskState }) {
   const currentStage = desk.subStages.find((s) => s.subStageId === desk.currentSubStageId);
   const lastSuccess = desk.subStages.find((s) => s.subStageId === desk.lastSuccessfulSubStageId);
@@ -121,8 +167,8 @@ function DispatchDeskSection({ desk }: { desk: GenerateShellDispatchDeskState })
       <Row label="Elapsed" value={desk.elapsedMs != null ? `${desk.elapsedMs}ms` : '—'} />
       <Row label="Last transition" value={desk.lastStateTransition ?? '—'} />
       {desk.duplicateCallDetected ? (
-        <p style={{ margin: '6px 0', color: '#fb923c' }}>
-          Duplicate call: Yes — {desk.duplicateCallExplanation ?? 'see invocations'}
+        <p style={{ margin: '6px 0', color: '#a8a29e' }}>
+          Instrumentation pair: {desk.duplicateCallExplanation ?? 'wrapper + body'}
         </p>
       ) : (
         <Row label="Duplicate call" value="No" />
@@ -133,6 +179,7 @@ function DispatchDeskSection({ desk }: { desk: GenerateShellDispatchDeskState })
           {desk.stallClassificationDetail ? ` — ${desk.stallClassificationDetail}` : ''}
         </p>
       ) : null}
+      <ContractorDirectoryMicroTrace micro={desk.packageMicroTrace} />
       <div style={{ marginTop: 8, maxHeight: 120, overflowY: 'auto' }}>
         {desk.subStages
           .filter((s) => s.status !== 'pending')

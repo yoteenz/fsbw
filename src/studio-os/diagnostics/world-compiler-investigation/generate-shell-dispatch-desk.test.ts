@@ -159,7 +159,10 @@ describe('generate shell dispatch desk', () => {
     expect(state.invocations[1]?.parentInvocationId).toBe(wrapId);
     expect(state.invocations[1]?.invocationId).toBe(bodyId);
     expect(state.duplicateCallDetected).toBe(true);
-    expect(state.duplicateCallExplanation).toContain('Category F');
+    expect(state.duplicateCallExplanation).toContain('instrumentation only');
+
+    const stall = classifyGspuStall();
+    expect(stall.classification).not.toBe('J-duplicate-invocation-collision');
   });
 
   it('preserves parent child relationships', () => {

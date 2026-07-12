@@ -12,6 +12,11 @@ import {
   emitRegistryInitialized,
   publishDevRegistryDiagnostics,
 } from './registry-diagnostics';
+import { isWorldCompilerDiagnosticMode } from '../../studio-os/diagnostics/world-compiler-investigation/diagnostic-mode';
+import {
+  recordGspuMicroMarker,
+  recordGspuPackageRegistryForensic,
+} from '../../studio-os/diagnostics/world-compiler-investigation/generate-shell-package-micro-trace';
 
 let instanceCounter = 0;
 
@@ -102,6 +107,19 @@ export class DepartmentPackageRegistry {
   }
 
   loadDepartmentPackage(departmentId: string): DepartmentPackage | null {
+    const diag = isWorldCompilerDiagnosticMode();
+    if (diag) {
+      recordGspuMicroMarker('GSPU-03e-before-package-lookup', 'running');
+      recordGspuPackageRegistryForensic({
+        lookupStarted: true,
+        registryName: 'DepartmentPackageRegistry',
+        actualPackageKey: departmentId,
+        registrySize: this.byDepartmentId.size,
+        keyPresent: this.byDepartmentId.has(departmentId),
+        matchingRegisteredKeys: this.listRegisteredDepartmentIds().filter((id) => id === departmentId),
+      });
+    }
+
     emitLookupStarted(departmentId, {
       registryInstanceId: this.instanceId,
       registeredPackageIds: this.listRegisteredDepartmentIds(),
@@ -122,17 +140,42 @@ export class DepartmentPackageRegistry {
       });
     }
 
+    if (diag) {
+      recordGspuMicroMarker('GSPU-03e-before-package-lookup', 'success');
+      recordGspuMicroMarker('GSPU-03f-after-package-lookup', pkg ? 'success' : 'failed', {
+        resultSummary: pkg ? pkg.packageId : 'not-found',
+        errorDetail: pkg ? undefined : 'departmentId not in registry Map',
+      });
+      recordGspuPackageRegistryForensic({
+        lookupReturned: true,
+        lookupResultType: pkg ? 'DepartmentPackage' : 'null',
+        packageStatus: pkg ? 'registered' : 'missing',
+        packageReady: Boolean(pkg),
+        keyPresent: Boolean(pkg),
+      });
+    }
+
     return pkg;
   }
 
   requireDepartmentPackage(departmentId: string): DepartmentPackage {
+    const diag = isWorldCompilerDiagnosticMode();
+    if (diag) recordGspuMicroMarker('GSPU-03g-package-validation', 'running');
     const pkg = this.loadDepartmentPackage(departmentId);
     if (!pkg) {
+      if (diag) {
+        recordGspuMicroMarker('GSPU-03g-package-validation', 'failed', {
+          errorDetail: `DepartmentPackageNotRegisteredError: ${departmentId}`,
+        });
+      }
       throw new DepartmentPackageNotRegisteredError(
         departmentId,
         this.listRegisteredDepartmentIds(),
         this.instanceId
       );
+    }
+    if (diag) {
+      recordGspuMicroMarker('GSPU-03g-package-validation', 'success', { resultSummary: pkg.packageId });
     }
     return pkg;
   }
