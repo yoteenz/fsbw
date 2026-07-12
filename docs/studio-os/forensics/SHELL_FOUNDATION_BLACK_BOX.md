@@ -45,6 +45,7 @@ https://fsbw.vercel.app/admin/studio/experience-lab?compilerDiag=1
 | Section | Content |
 |---------|---------|
 | **Dispatch Desk** | GSPU sub-stages, invocations, auth/fetch/promise state, stall classification |
+| **Job Board** | RSS micro-markers inside `recordShellStage`, subscribers, persistence, reentrancy |
 | A | Shell pipeline stages (pending/running/success/failed/skipped + duration) |
 | B | Function enter/exit/throw trace |
 | C | Await tracker (pending highlight >5s) |

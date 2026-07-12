@@ -78,17 +78,17 @@
 
 ---
 
-## B1-Shell — Shell foundation construction stall (MICRO-TRACE SHIPPED — REPAIR NOT STARTED)
+## B1-Shell — Shell foundation construction stall (RSS JOB BOARD SHIPPED — REPAIR NOT STARTED)
 
 | Field | Detail |
 |-------|--------|
 | **ID** | B1-Shell |
-| **Symptom** | Pipeline stops at **Building Shell** — stall after GSPU-02, before GSPU-03 |
-| **Instrumentation** | `generate-shell-package-micro-trace.ts` + Dispatch Desk panel (`compilerDiag=1`) |
-| **Forensic** | `GENERATE_SHELL_DISPATCH_DESK.md` (GSPU-02→03 micro-map) |
-| **Verify** | Mobile `?compilerDiag=1` — Contractor Directory micro-trace shows current/last micro-marker, registry state |
-| **Status** | **In Progress** — observe only; repair awaits founder micro-marker evidence |
-| **Superseded** | Authorization/token theory; false J-duplicate-invocation-collision |
+| **Symptom** | Pipeline stops at **Building Shell** — stall at `recordShellStage('create-shell-request')` |
+| **Instrumentation** | `record-shell-stage-forensic.ts` + Job Board panel section (`compilerDiag=1`) |
+| **Forensic** | `RECORD_SHELL_STAGE_JOB_BOARD.md`, `GENERATE_SHELL_DISPATCH_DESK.md` |
+| **Verify** | Mobile `?compilerDiag=1` — JOB BOARD FORENSICS shows RSS marker, subscriber, persistence state |
+| **Status** | **In Progress** — observe only; repair awaits founder RSS evidence |
+| **Superseded** | Package-resolution-first theory when RSS proves notify/persist boundary |
 
 ### Documented Fact
 

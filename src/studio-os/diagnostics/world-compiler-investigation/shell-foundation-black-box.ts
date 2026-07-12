@@ -12,6 +12,25 @@ import {
 } from './generate-shell-dispatch-desk';
 import { isWorldCompilerDiagnosticMode } from './diagnostic-mode';
 import { getLastGenerationRequestHttpForensic } from './generation-request-forensic';
+import {
+  beginRecordShellStageInvocation,
+  beginRssSubscriberCallback,
+  bindRecordShellStageForensicContext,
+  buildRecordShellStageForensicState,
+  endRecordShellStageInvocation,
+  endRssSubscriberCallback,
+  recordRssDerivedState,
+  recordRssMicroMarker,
+  recordRssPersistence,
+  recordRssReactStore,
+  registerRssSubscriber,
+  resetRecordShellStageForensic,
+  restoreRecordShellStageForensicFromSnapshot,
+  incrementRssSubscriberNotificationCount,
+  shouldSkipRssSubscribersForTest,
+  unregisterRssSubscriber,
+  type RecordShellStageForensicState,
+} from './record-shell-stage-forensic';
 
 const STORAGE_KEY = 'shellFoundationBlackBox_v1';
 const MAX_TIMELINE = 400;
@@ -173,6 +192,7 @@ export type ShellTimelineEntry = {
 };
 
 export type ShellFoundationBlackBoxState = {
+  recordShellStageForensic: RecordShellStageForensicState;
   dispatchDesk: GenerateShellDispatchDeskState;
   runStartedAt: number | null;
   runContext: {
@@ -275,20 +295,116 @@ function elapsedSinceRun(): number {
 
 function persist(): void {
   if (!enabled()) return;
+  recordRssMicroMarker('RSS-09a-persist-enter', 'running');
+  recordRssPersistence({ persistencePhase: 'persist-enter', storageKey: STORAGE_KEY });
+  const persistStarted = Date.now();
   try {
-    sessionStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(buildShellFoundationBlackBoxState())
-    );
-  } catch {
-    /* quota */
+    recordRssMicroMarker('RSS-09a1-build-snapshot', 'running');
+    recordRssDerivedState({ phase: 'build-snapshot' });
+    recordRssReactStore({ getSnapshotStarted: true });
+    const snapshotStarted = Date.now();
+    const snapshot = buildShellFoundationBlackBoxStateForPersist();
+    const snapshotMs = Date.now() - snapshotStarted;
+    recordRssDerivedState({ buildSnapshotDurationMs: snapshotMs });
+    recordRssReactStore({ getSnapshotCompleted: true, getSnapshotDurationMs: snapshotMs });
+    recordRssMicroMarker('RSS-09a1-build-snapshot', 'success', { resultSummary: `${snapshotMs}ms` });
+
+    recordRssMicroMarker('RSS-09a2-json-stringify', 'running');
+    recordRssPersistence({ serializationStarted: true });
+    const stringifyStarted = Date.now();
+    const json = JSON.stringify(snapshot);
+    const stringifyMs = Date.now() - stringifyStarted;
+    recordRssPersistence({
+      serializationCompleted: true,
+      serializationDurationMs: stringifyMs,
+      payloadByteSize: json.length,
+    });
+    recordRssMicroMarker('RSS-09a2-json-stringify', 'success', { resultSummary: `${json.length}b/${stringifyMs}ms` });
+
+    recordRssMicroMarker('RSS-09a3-session-storage-write', 'running');
+    recordRssPersistence({ storageWriteStarted: true });
+    const writeStarted = Date.now();
+    sessionStorage.setItem(STORAGE_KEY, json);
+    const writeMs = Date.now() - writeStarted;
+    recordRssPersistence({
+      storageWriteCompleted: true,
+      storageWriteDurationMs: writeMs,
+      persistencePhase: 'persist-complete',
+    });
+    recordRssMicroMarker('RSS-09a3-session-storage-write', 'success', { resultSummary: `${writeMs}ms` });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    const isQuota = /quota/i.test(message);
+    const isCircular = /circular|cyclic/i.test(message);
+    recordRssPersistence({
+      storageException: message,
+      quotaError: isQuota,
+      circularReferenceError: isCircular,
+      persistencePhase: 'persist-failed',
+    });
+    recordRssMicroMarker('RSS-09a2-json-stringify', isCircular ? 'failed' : 'skipped', { errorSummary: message });
+    recordRssMicroMarker('RSS-09a3-session-storage-write', isQuota ? 'failed' : 'skipped', { errorSummary: message });
   }
+  recordRssMicroMarker('RSS-09a-persist-exit', 'success', { resultSummary: `${Date.now() - persistStarted}ms` });
+}
+
+/** Build state for persistence — avoids re-entering full forensic persist path. */
+function buildShellFoundationBlackBoxStateForPersist(): Omit<ShellFoundationBlackBoxState, 'recordShellStageForensic'> & {
+  recordShellStageForensic?: RecordShellStageForensicState;
+} {
+  detectStalls();
+  const dispatchStarted = Date.now();
+  const dispatchDesk = buildGenerateShellDispatchDeskState();
+  recordRssDerivedState({ dispatchDeskBuildDurationMs: Date.now() - dispatchStarted });
+  return {
+    dispatchDesk,
+    runStartedAt,
+    runContext: { ...runContext },
+    stages: SHELL_FOUNDATION_STAGE_DEFS.map((def) => stages.get(def.id)!).filter(Boolean),
+    functionTraces: [...functionTraces],
+    awaitTracks: [...awaitTracks],
+    network: [...networkRecords],
+    stateSnapshots: [...stateSnapshots],
+    dependencies: [...dependencies],
+    errors: [...errors],
+    heartbeat: { ...heartbeat },
+    stallSignals: [...stallSignals],
+    timeline: [...timeline],
+    lastSuccessfulStageId,
+    lastVisibleEvent,
+    pipelineComplete,
+    pipelineOk,
+  };
 }
 
 function notify(): void {
+  recordRssMicroMarker('RSS-09-notify-enter', 'running', { subscriberCount: listeners.size });
   persist();
-  for (const listener of listeners) listener();
+  if (!shouldSkipRssSubscribersForTest()) {
+    recordRssMicroMarker('RSS-09b-subscriber-notify', 'running', { subscriberCount: listeners.size });
+    incrementRssSubscriberNotificationCount();
+    let index = 0;
+    for (const listener of listeners) {
+      const entry = [...subscriberListenerIds.entries()].find(([, fn]) => fn === listener);
+      const subscriberId = entry?.[0] ?? `rss-sub-notify-${index}`;
+      index += 1;
+      beginRssSubscriberCallback(subscriberId);
+      try {
+        listener();
+        endRssSubscriberCallback(subscriberId, false);
+      } catch (err) {
+        endRssSubscriberCallback(subscriberId, true);
+        throw err;
+      }
+    }
+    recordRssMicroMarker('RSS-09b-subscriber-notify', 'success', { resultSummary: `${listeners.size} callbacks` });
+  } else {
+    recordRssMicroMarker('RSS-09b-subscriber-notify', 'skipped', { resultSummary: 'test harness skip' });
+  }
+  recordRssMicroMarker('RSS-09-notify-exit', 'success');
 }
+
+const subscriberListenerIds = new Map<string, Listener>();
 
 function pushTimeline(
   label: string,
@@ -364,7 +480,13 @@ function detectStalls(): void {
 
 export function subscribeShellFoundationBlackBox(listener: Listener): () => void {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+  const subscriberId = registerRssSubscriber('ShellFoundationBlackBoxPanel.subscribe');
+  subscriberListenerIds.set(subscriberId, listener);
+  return () => {
+    listeners.delete(listener);
+    unregisterRssSubscriber(subscriberId);
+    subscriberListenerIds.delete(subscriberId);
+  };
 }
 
 export function loadShellFoundationBlackBoxFromSession(): void {
@@ -391,6 +513,9 @@ export function loadShellFoundationBlackBoxFromSession(): void {
     pipelineOk = parsed.pipelineOk;
     if (parsed.dispatchDesk) {
       restoreGenerateShellDispatchDeskFromSnapshot(parsed.dispatchDesk);
+    }
+    if (parsed.recordShellStageForensic) {
+      restoreRecordShellStageForensicFromSnapshot(parsed.recordShellStageForensic);
     }
     functionSeq = functionTraces.length;
     networkSeq = networkRecords.length;
@@ -420,6 +545,8 @@ export function clearShellFoundationBlackBox(): void {
   pipelineOk = null;
   lastProgressAt = null;
   resetGenerateShellDispatchDesk();
+  resetRecordShellStageForensic();
+  subscriberListenerIds.clear();
   heartbeat = {
     lastProgressEvent: null,
     lastProgressAt: null,
@@ -436,6 +563,8 @@ export function clearShellFoundationBlackBox(): void {
   } catch {
     /* ignore */
   }
+  listeners.clear();
+  subscriberListenerIds.clear();
   notify();
 }
 
@@ -483,6 +612,7 @@ export function beginShellFoundationRun(ctx: {
     requestKey: `shell-${ctx.previewSessionId}`,
     surface: ctx.surface ?? 'experience-lab-validation',
   });
+  bindRecordShellStageForensicContext({ compileRunId: ctx.compileRunId });
   pushTimeline('Shell foundation run started', 'state', 'running', ctx.compileRunId);
   recordShellStateSnapshot('run-started', {
     pipelinePhase: 'shell-pipeline',
@@ -496,9 +626,22 @@ export function recordShellStage(
   status: ShellStageStatus,
   detail?: { detail?: string; errorCode?: string }
 ): void {
-  if (!enabled()) return;
+  const rssInvocationId = beginRecordShellStageInvocation(id, status);
+  recordRssMicroMarker('RSS-01b-enabled-guard', 'running', { invocationId: rssInvocationId, stageId: id, stageStatus: status });
+  if (!enabled()) {
+    recordRssMicroMarker('RSS-01b-enabled-guard', 'skipped', { resultSummary: 'diagnostics off' });
+    endRecordShellStageInvocation(rssInvocationId);
+    return;
+  }
+  recordRssMicroMarker('RSS-01b-enabled-guard', 'success');
+
+  recordRssMicroMarker('RSS-01-enter', 'success', { invocationId: rssInvocationId });
+  recordRssMicroMarker('RSS-02-locate-stage-def', 'running', { invocationId: rssInvocationId });
   const def = SHELL_FOUNDATION_STAGE_DEFS.find((s) => s.id === id);
+  recordRssMicroMarker('RSS-02-locate-stage-def', 'success', { resultSummary: def?.label ?? id });
+
   const now = Date.now();
+  recordRssMicroMarker('RSS-03-get-existing-stage', 'running', { invocationId: rssInvocationId });
   const existing = stages.get(id) ?? {
     id,
     label: def?.label ?? id,
@@ -508,7 +651,9 @@ export function recordShellStage(
     durationMs: null,
     timestamp: null,
   };
+  recordRssMicroMarker('RSS-03-get-existing-stage', 'success');
 
+  recordRssMicroMarker('RSS-04-mutate-stage', 'running', { invocationId: rssInvocationId });
   if (status === 'running') {
     existing.status = 'running';
     existing.startedAt = now;
@@ -522,13 +667,29 @@ export function recordShellStage(
     if (detail?.detail) existing.detail = detail.detail;
     if (detail?.errorCode) existing.errorCode = detail.errorCode;
   }
+  recordRssMicroMarker('RSS-04-mutate-stage', 'success', { resultSummary: status });
 
+  recordRssMicroMarker('RSS-05-stages-set', 'running', { invocationId: rssInvocationId });
   stages.set(id, existing);
+  recordRssMicroMarker('RSS-05-stages-set', 'success');
+
+  recordRssMicroMarker('RSS-06-push-timeline', 'running', { invocationId: rssInvocationId });
   pushTimeline(def?.label ?? id, 'stage', status, detail?.detail ?? detail?.errorCode);
+  recordRssMicroMarker('RSS-06-push-timeline', 'success');
+
+  recordRssMicroMarker('RSS-07-heartbeat-update', 'running', { invocationId: rssInvocationId });
   heartbeat.lastStateTransition = `${def?.label ?? id} → ${status}`;
   heartbeat.lastStateTransitionAt = now;
+  recordRssMicroMarker('RSS-07-heartbeat-update', 'success');
+
+  recordRssMicroMarker('RSS-08-detect-stalls', 'running', { invocationId: rssInvocationId });
+  const detectStarted = Date.now();
   detectStalls();
+  recordRssDerivedState({ detectStallsDurationMs: Date.now() - detectStarted, phase: 'detect-stalls' });
+  recordRssMicroMarker('RSS-08-detect-stalls', 'success');
+
   notify();
+  endRecordShellStageInvocation(rssInvocationId);
 }
 
 export function recordShellFunctionEnter(
@@ -791,9 +952,15 @@ export function completeShellFoundationRun(ok: boolean, detail?: string): void {
 }
 
 export function buildShellFoundationBlackBoxState(): ShellFoundationBlackBoxState {
+  const detectStarted = Date.now();
   detectStalls();
+  recordRssDerivedState({ detectStallsDurationMs: Date.now() - detectStarted });
+  const dispatchStarted = Date.now();
+  const dispatchDesk = buildGenerateShellDispatchDeskState();
+  recordRssDerivedState({ dispatchDeskBuildDurationMs: Date.now() - dispatchStarted });
   return {
-    dispatchDesk: buildGenerateShellDispatchDeskState(),
+    recordShellStageForensic: buildRecordShellStageForensicState(),
+    dispatchDesk,
     runStartedAt,
     runContext: { ...runContext },
     stages: SHELL_FOUNDATION_STAGE_DEFS.map((def) => stages.get(def.id)!).filter(Boolean),

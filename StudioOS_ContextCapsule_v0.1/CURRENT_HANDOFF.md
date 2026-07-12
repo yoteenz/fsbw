@@ -8,13 +8,13 @@
 
 ## Current sprint
 
-**P0 — Department Package Resolution micro-forensic**
+**P0 — recordShellStage reentrancy / subscriber stall forensics**
 
 **Status: Complete (instrumentation shipped) — shell stall unresolved.**
 
-Contractor Directory micro-trace between GSPU-02 and GSPU-03. Corrected false duplicate-collision classifier.
+Job Board RSS micro-trace around `recordShellStage` — subscribers, persistence, reentrancy.
 
-**Previous:** Generate Shell Public URL Dispatch Desk (`695636f1c`).
+**Previous:** Department Package micro-trace (`bee29d366`).
 
 ---
 
@@ -22,10 +22,7 @@ Contractor Directory micro-trace between GSPU-02 and GSPU-03. Corrected false du
 
 | ID | Blocker | Status |
 |----|---------|--------|
-| **B0-PreHandler** | Dispatch JSON | **Cleared** |
-| **B1-Layer1** | Layer 1 governed E2E | Founder device verify pending |
-| **B1-Shell** | Shell construction never finishes | **In Progress** — micro-trace shipped; repair awaits proven micro-marker |
-| **B1-E2E-Completion** | Completion authority | Repair shipped; device verify pending |
+| **B1-Shell** | Shell construction never finishes | **In Progress** — RSS job-board forensics shipped; repair awaits proven RSS marker |
 
 ---
 

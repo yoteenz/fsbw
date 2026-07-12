@@ -9,6 +9,8 @@ import {
 } from '../../../../studio-os/diagnostics/world-compiler-investigation/shell-foundation-black-box';
 import type { GenerateShellDispatchDeskState } from '../../../../studio-os/diagnostics/world-compiler-investigation/generate-shell-dispatch-desk';
 import type { GenerateShellPackageMicroTraceState } from '../../../../studio-os/diagnostics/world-compiler-investigation/generate-shell-package-micro-trace';
+import type { RecordShellStageForensicState } from '../../../../studio-os/diagnostics/world-compiler-investigation/record-shell-stage-forensic';
+import { incrementRssRenderLoopCount } from '../../../../studio-os/diagnostics/world-compiler-investigation/record-shell-stage-forensic';
 
 type Props = {
   compileRunId: string | null;
@@ -72,6 +74,58 @@ const stageColor: Record<string, string> = {
   failed: '#f87171',
   skipped: '#a8a29e',
 };
+
+function JobBoardForensicsSection({ rss }: { rss: RecordShellStageForensicState }) {
+  const current = rss.markers.find((m) => m.markerId === rss.currentMicroMarkerId);
+  const lastSuccess = rss.markers.find((m) => m.markerId === rss.lastSuccessfulMicroMarkerId);
+
+  return (
+    <div data-job-board-forensics style={{ marginBottom: 10, paddingBottom: 8, borderBottom: '1px solid #44403c' }}>
+      <p style={{ margin: '0 0 6px', fontWeight: 800, color: '#38bdf8' }}>JOB BOARD FORENSICS — recordShellStage</p>
+      <Row label="Current RSS marker" value={current ? `${current.markerId} · ${current.label}` : '—'} />
+      <Row
+        label="Last success"
+        value={lastSuccess ? `${lastSuccess.markerId} · ${lastSuccess.label}` : rss.lastSuccessfulMicroMarkerId ?? '—'}
+      />
+      <Row label="recordShellStage returned" value={rss.recordShellStageReturned == null ? '—' : rss.recordShellStageReturned ? 'Yes' : 'No'} />
+      <Row label="Active invocations" value={String(rss.activeInvocationCount)} />
+      <Row label="Reentrancy depth" value={String(rss.reentrancyDepth)} />
+      <Row label="Reentrancy class" value={rss.reentrancyClassification ?? '—'} />
+      <Row label="Subscriber count" value={String(rss.subscribers.length)} />
+      <Row label="Current subscriber" value={rss.currentSubscriberId ?? '—'} />
+      <Row
+        label="Slowest subscriber"
+        value={
+          rss.slowestSubscriberId
+            ? `${rss.slowestSubscriberId}${rss.slowestSubscriberDurationMs != null ? ` · ${rss.slowestSubscriberDurationMs}ms` : ''}`
+            : '—'
+        }
+      />
+      <Row label="Persistence phase" value={rss.persistence.persistencePhase ?? '—'} />
+      <Row
+        label="Serialization"
+        value={
+          rss.persistence.serializationDurationMs != null
+            ? `${rss.persistence.payloadByteSize ?? 0}b · ${rss.persistence.serializationDurationMs}ms`
+            : '—'
+        }
+      />
+      <Row
+        label="Storage write"
+        value={rss.persistence.storageWriteDurationMs != null ? `${rss.persistence.storageWriteDurationMs}ms` : '—'}
+      />
+      <Row label="Derived-state phase" value={rss.derivedState.phase ?? '—'} />
+      <Row label="React notifications" value={String(rss.reactStore.subscriberNotificationCount)} />
+      <Row label="Panel mounted" value={rss.reactStore.panelMounted ? 'Yes' : 'No'} />
+      {rss.rssStallClassification ? (
+        <p style={{ margin: '6px 0 0', color: '#f87171', fontWeight: 700 }}>
+          RSS stall: {rss.rssStallClassification}
+          {rss.rssStallClassificationDetail ? ` — ${rss.rssStallClassificationDetail}` : ''}
+        </p>
+      ) : null}
+    </div>
+  );
+}
 
 function ContractorDirectoryMicroTrace({ micro }: { micro: GenerateShellPackageMicroTraceState }) {
   const current = micro.markers.find((m) => m.markerId === micro.currentMicroMarkerId);
@@ -209,6 +263,7 @@ export function ShellFoundationBlackBoxPanel({
   const [copyMsg, setCopyMsg] = useState<string | null>(null);
 
   const refresh = useCallback(() => {
+    incrementRssRenderLoopCount();
     loadShellFoundationBlackBoxFromSession();
     setState(buildShellFoundationBlackBoxState());
   }, []);
@@ -272,6 +327,10 @@ export function ShellFoundationBlackBoxPanel({
         {' · '}
         Last event: <strong>{state.lastVisibleEvent ?? lastEvent?.label ?? '—'}</strong>
       </p>
+
+      <Section title="JOB BOARD FORENSICS — recordShellStage" defaultOpen>
+        <JobBoardForensicsSection rss={state.recordShellStageForensic} />
+      </Section>
 
       <Section title="GENERATE SHELL PUBLIC URL — DISPATCH DESK" defaultOpen>
         <DispatchDeskSection desk={state.dispatchDesk} />

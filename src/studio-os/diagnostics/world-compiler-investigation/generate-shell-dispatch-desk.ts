@@ -11,6 +11,10 @@ import {
   restoreGenerateShellPackageMicroTraceFromSnapshot,
   type GenerateShellPackageMicroTraceState,
 } from './generate-shell-package-micro-trace';
+import {
+  buildRecordShellStageForensicState,
+  classifyRssStall,
+} from './record-shell-stage-forensic';
 
 export type GspuSubStageId =
   | 'GSPU-01-enter'
@@ -605,6 +609,27 @@ export function classifyGspuStall(): {
 } {
   const microRunning = buildGenerateShellPackageMicroTraceState();
   if (microRunning.currentMicroMarkerId) {
+    const rss = buildRecordShellStageForensicState();
+    if (rss.currentMicroMarkerId || rss.recordShellStageReturned === false) {
+      const rssStall = classifyRssStall();
+      const rssMap: Record<string, GspuStallClassification> = {
+        'A-stage-lookup': 'B-context-preparation-wait',
+        'B-stage-mutation': 'B-context-preparation-wait',
+        'C-timeline-append': 'B-context-preparation-wait',
+        'D-serialization': 'K-lost-event-deferred-resolution',
+        'E-session-storage-write': 'K-lost-event-deferred-resolution',
+        'F-subscriber-notification': 'K-lost-event-deferred-resolution',
+        'G-subscriber-callback': 'K-lost-event-deferred-resolution',
+        'H-reentrant-recursion': 'D-in-flight-promise-deadlock',
+        'I-derived-state-feedback-loop': 'K-lost-event-deferred-resolution',
+        'J-react-external-store-snapshot': 'K-lost-event-deferred-resolution',
+        'K-other': 'L-other',
+      };
+      return {
+        classification: rssMap[rssStall.classification] ?? 'L-other',
+        detail: `[rss:${rss.currentMicroMarkerId ?? rssStall.detail}] ${rssStall.detail}`,
+      };
+    }
     const micro = classifyGspuMicroStall();
     const microMap: Record<string, GspuStallClassification> = {
       'A-pre-package-context-read': 'B-context-preparation-wait',

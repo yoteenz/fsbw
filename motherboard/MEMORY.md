@@ -47262,3 +47262,17 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — forensic instrumentation only.
 
+---
+
+## 2026-07-12 — P0 recordShellStage job-board forensic sprint
+
+**Context:** Micro-trace proved stall before GSPU-03; leading suspect `recordShellStage('create-shell-request','running')`. Founder requested RSS instrumentation on reentrancy, subscribers, persistence — forensic only.
+
+**Instrumentation:** `record-shell-stage-forensic.ts` (RSS-01…10 markers), instrumented `recordShellStage`/`persist`/`notify`/`subscribe` in `shell-foundation-black-box.ts`, Job Board panel section, RSS stall classifier, `RECORD_SHELL_STAGE_JOB_BOARD.md`.
+
+**Tests:** `record-shell-stage-forensic.test.ts` — markers, reentrancy, subscribers, persistence, skip-subscriber comparison.
+
+**Repair status:** None.
+
+**Spatial Architecture Review:** SKIPPED — forensic instrumentation only.
+
