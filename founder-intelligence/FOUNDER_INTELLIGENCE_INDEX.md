@@ -23,6 +23,7 @@ Master map of every category in the Founder Intelligence Capsule v1.0.0.
 | **Design language** | DESIGN_LANGUAGE.md | Recurring design principles |
 | **Creative direction** | CREATIVE_DIRECTION.md | Typography, luxury, motion, approval patterns |
 | **Studio World** | STUDIO_WORLD.md | Districts, destinations, navigation philosophy |
+| **Educational philosophy** | EDUCATIONAL_PHILOSOPHY.md | Studio Institute LOS, Studio World Method™, learning doctrine |
 | **Civilization** | CIVILIZATION.md | Long-horizon world-building intent |
 | **Companies** | COMPANIES.md | Multi-org platform; Frontal Slayer as first host |
 | **Business model** | BUSINESS_MODEL.md | Revenue layers today and tomorrow |

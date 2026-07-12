@@ -30,7 +30,7 @@ Software features without geography feel disposable. Studio World gives every mo
 |----------|---------|
 | **Grand Atrium / Mission Control** | Executive HQ per organization |
 | **Creative Direction Studio** | Brand and visual production |
-| **Studio Institute** | Learning woven through the city |
+| **Studio Institute** | Learning Operating System (LOS) — learning woven through the city; see `EDUCATIONAL_PHILOSOPHY.md` |
 | **Expert Capture / Studio Institute invites** | Private expert interviews |
 | **Experience Lab** | Runtime experiments (isolated debug routes) |
 | **Archives & Legacy** | Permanent memory, museum, time capsules |

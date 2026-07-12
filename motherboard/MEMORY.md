@@ -47093,3 +47093,40 @@ User request: keep permanent URLs unchanged (`/context/latest`, `/founder-intell
 
 **Spatial Architecture Review:** SKIPPED — P0 bundle repair, no new surfaces.
 
+---
+
+## 2026-07-12 — Studio Institute LOS Constitution & Studio World educational philosophy canonization
+
+**Context:** Founder Vision & Canon sprint — establish permanent educational philosophy, learning model, institutional identity, and world integration for Studio Institute. Documentation only; no implementation, no UI, no code.
+
+**Topics covered (full sprint):**
+- **Part I — Learning Operating System:** Studio Institute defined as LOS for Studio World; purpose (systems before skills); mission; guiding principles; long-term vision; Studio OS operates businesses / Institute develops people
+- **Part II — Persistent World Learning:** Learning inside persistent world; discipline-to-organization map (Hair Science→Frontal Slayer, Marketing→Studio Agency, Software→Experience Engineering, Finance→Studio Finance, Architecture→Studio Construction, AI→Creative Services HQ, Government→Studio Administration, Security→Studio Security, Innovation→Innovation Labs, etc.); Mansion retained as iconic case study but methodology broadened beyond mansion-only
+- **Part III — Studio World Method™:** Five laws (understanding, context, mapping, intuition, terminology); 7-step practice flow; discipline-agnostic; replaces mansion-only educational thinking
+- **Part IV — Learning Journey:** Replaces Enroll→Learn→Graduate with Discover→Learn→Practice→Simulate→Apply→Intern→Contribute→Build→Lead→Mentor→Teach; non-linear, no terminal graduation
+- **Part V — Internships:** Permanent educational layer; every organization = workplace + classroom; discipline-to-internship map (Planned)
+- **Part VI — Residency Model:** Student→Intern→Resident→Junior Professional→Professional→Senior Professional→Master→Mentor→Faculty (Planned/Conceptual)
+- **Part VII — AI as Educator:** Teacher, Coach, Mentor, Simulator, Guide, Reviewer, Role-player, Case-study facilitator, Creative collaborator; human-AI complementarity; subordinate to V3 + Learning DNA for implementation
+- **Part VIII — Institutional Principles:** Motto (*Explore the world. Understand the systems.*); mission; 10 guiding principles; 7 core values; 11 wall inscriptions; graduation-as-promotion philosophy; 10 institutional promises
+- **Part IX — Founder Manifesto:** Why persistent-world education, contextual learning, systems thinking, organizations as classrooms, experience before abstraction
+- **Part X — Canon Integration:** Hierarchy (LOS Constitution → V2 → V3 → Learning DNA → implementation); locations in `docs/studio-institute/`, `founder-intelligence/`, Studio World canon; explicitly NOT in CURRENT_HANDOFF or KNOWN_BLOCKERS
+- **Classification:** Documented Fact / Founder Vision / Educational Philosophy / Planned / Conceptual throughout
+- **Studio World Translations:** Included in every major section
+
+**Decisions / outcomes:**
+- Studio Institute permanently established as Learning Operating System (LOS) — constitutional layer above V2/V3/Learning DNA Bibles
+- Studio World Method™ canonized as canonical teaching methodology for all disciplines
+- Students positioned as future contributors, not customers
+- Internships and residency documented as Planned/Conceptual — not represented as implemented
+
+**Changes:**
+- **Created:** `docs/studio-institute/STUDIO_INSTITUTE_LEARNING_OPERATING_SYSTEM_CONSTITUTION.md` (v1.0.0)
+- **Updated:** `docs/studio-institute/README.md` (canon index, read order, deliverables)
+- **Created:** `founder-intelligence/EDUCATIONAL_PHILOSOPHY.md` (strategic cross-reference)
+- **Updated:** `founder-intelligence/FOUNDER_INTELLIGENCE_INDEX.md`, `founder-intelligence/STUDIO_WORLD.md`
+- **Updated:** `motherboard/CORE.md` (M93 LOS constitution reference, read order)
+
+**Conventions:** Institute canon read order: LOS Constitution → V2 → V3 → Learning DNA Bible. Do not describe Planned/Conceptual educational systems as implemented. Mansion is case study; Studio World Method™ is the methodology.
+
+**Spatial Architecture Review:** SKIPPED — docs-only constitutional sprint, no new surfaces.
+
